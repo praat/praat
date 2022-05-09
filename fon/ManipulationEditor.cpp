@@ -31,11 +31,11 @@
 
 Thing_implement (ManipulationEditor, FunctionEditor, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "ManipulationEditor_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "ManipulationEditor_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "ManipulationEditor_prefs.h"
 
 /*

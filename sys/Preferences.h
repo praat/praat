@@ -21,10 +21,10 @@
 #include "melder.h"
 
 /*
- * All strings added with Preferences_addString should have the following buffer size,
- * which conveniently equals the size of the path buffer in MelderFile so that
- * file paths can be used as preferences.
- */
+	All strings added with Preferences_addString should have the following buffer size,
+	which conveniently equals the size of the path buffer in MelderFile so that
+	file paths can be used as preferences.
+*/
 #define Preferences_STRING_BUFFER_SIZE 1+kMelder_MAXPATH
 
 void Preferences_addByte     (conststring32 string /* cattable */, signed char *value, signed char defaultValue);
@@ -49,6 +49,109 @@ void Preferences_read (MelderFile file);
 void Preferences_write (MelderFile file);
 
 void Preferences_exit_optimizeByLeaking ();
+
+/*
+	Macros for preferences that are included in Things.
+*/
+
+#define Prefs_begin(Klas) \
+	public: static void f_preferences (); \
+	void v_copyPreferencesToInstance () override;
+
+#define Prefs_addAny_default_(DefaultType,name) \
+	private: \
+		static DefaultType _classDefault_##name; \
+		virtual DefaultType _v_default_##name() { return our _classDefault_##name; } \
+	public: \
+		DefaultType default_##name() { return our _v_default_##name(); }
+#define Prefs_overrideAny_default_(DefaultType,name) \
+	private: \
+		static DefaultType _classDefault_##name; \
+		DefaultType _v_default_##name () override { return our _classDefault_##name; }
+
+using EditorPrefsString = char32 [Preferences_STRING_BUFFER_SIZE];
+#define EditorPref_copyPlain(from,to) \
+	to = from;
+#define EditorPref_copyString(from,to) \
+	str32ncpy (to, from, Preferences_STRING_BUFFER_SIZE); \
+	to [Preferences_STRING_BUFFER_SIZE - 1] = U'\0';
+
+/*
+	The use of one _classPref_##name both for classes and for instances prevents the following two declarations in a single class:
+		ClassPrefs_addDouble (foo)
+		InstancePrefs_addDouble (foo)
+	The differential use of _v_classPref1_##name for classes and _v_classPref2_##name for instances prevents the use of
+		ClassPrefs_addDouble (foo)
+	in a base class and
+		InstancePrefs_overrideDouble (foo)
+	in a derived class (or the reverse).
+ */
+
+#define ClassPrefs_addAny_(StorageType,ArgumentType,DefaultType,name,CopyMethod) \
+	Prefs_addAny_default_ (DefaultType, name) \
+	private: \
+		static StorageType _classPref_##name; \
+		virtual StorageType & _v_classPref1_##name() { return our _classPref_##name; } \
+	public: \
+		ArgumentType classPref_##name() { return our _v_classPref1_##name(); } \
+		void setClassPref_##name (ArgumentType newValue) { \
+			EditorPref_copy##CopyMethod (newValue, our _v_classPref1_##name()) \
+		}
+#define ClassPrefs_overrideAny_(StorageType,ArgumentType,DefaultType,name) \
+	Prefs_overrideAny_default_ (DefaultType, name) \
+	private: \
+		static StorageType _classPref_##name; \
+		StorageType & _v_classPref1_##name () override { return our _classPref_##name; }
+#define InstancePrefs_addAny_(StorageType,ArgumentType,DefaultType,name,CopyMethod) \
+	Prefs_addAny_default_ (DefaultType, name) \
+	private: \
+		static StorageType _classPref_##name; \
+		virtual StorageType & _v_classPref2_##name () { return our _classPref_##name; } \
+		StorageType _instancePref_##name; \
+	public: \
+		ArgumentType instancePref_##name () { return our _instancePref_##name; } \
+		void setInstancePref_##name (ArgumentType newValue) { \
+			EditorPref_copy##CopyMethod (newValue, our _v_classPref2_##name()) \
+			EditorPref_copy##CopyMethod (newValue, our _instancePref_##name) \
+		}
+#define InstancePrefs_overrideAny_(StorageType,ArgumentType,DefaultType,name) \
+	Prefs_overrideAny_default_ (DefaultType, name) \
+	private: \
+		static StorageType _classPref_##name; \
+		StorageType & _v_classPref2_##name () override { return our _classPref_##name; }
+
+#define ClassPrefs_addInt(Klas,name,version,default)              ClassPrefs_addAny_         (int, int, conststring32, name, Plain)
+#define ClassPrefs_overrideInt(Klas,name,version,default)         ClassPrefs_overrideAny_    (int, int, conststring32, name)
+#define InstancePrefs_addInt(Klas,name,version,default)           InstancePrefs_addAny_      (int, int, conststring32, name, Plain)
+#define InstancePrefs_overrideInt(Klas,name,version,default)      InstancePrefs_overrideAny_ (int, int, conststring32, name)
+
+#define ClassPrefs_addInteger(Klas,name,version,default)          ClassPrefs_addAny_         (integer, integer, conststring32, name, Plain)
+#define ClassPrefs_overrideInteger(Klas,name,version,default)     ClassPrefs_overrideAny_    (integer, integer, conststring32, name)
+#define InstancePrefs_addInteger(Klas,name,version,default)       InstancePrefs_addAny_      (integer, integer, conststring32, name, Plain)
+#define InstancePrefs_overrideInteger(Klas,name,version,default)  InstancePrefs_overrideAny_ (integer, integer, conststring32, name)
+
+#define ClassPrefs_addDouble(Klas,name,version,default)           ClassPrefs_addAny_         (double, double, conststring32, name, Plain)
+#define ClassPrefs_overrideDouble(Klas,name,version,default)      ClassPrefs_overrideAny_    (double, double, conststring32, name)
+#define InstancePrefs_addDouble(Klas,name,version,default)        InstancePrefs_addAny_      (double, double, conststring32, name, Plain)
+#define InstancePrefs_overrideDouble(Klas,name,version,default)   InstancePrefs_overrideAny_ (double, double, conststring32, name)
+
+#define ClassPrefs_addBool(Klas,name,version,default)             ClassPrefs_addAny_         (bool, bool, bool, name, Plain)
+#define ClassPrefs_overrideBool(Klas,name,version,default)        ClassPrefs_overrideAny_    (bool, bool, bool, name)
+#define InstancePrefs_addBool(Klas,name,version,default)          InstancePrefs_addAny_      (bool, bool, bool, name, Plain)
+#define InstancePrefs_overrideBool(Klas,name,version,default)     InstancePrefs_overrideAny_ (bool, bool, bool, name)
+
+#define ClassPrefs_addEnum(Klas,name,version,kEnumerated,default)          ClassPrefs_addAny_         (enum kEnumerated, enum kEnumerated, enum kEnumerated, name, Plain)
+#define ClassPrefs_overrideEnum(Klas,name,version,kEnumerated,default)     ClassPrefs_overrideAny_    (enum kEnumerated, enum kEnumerated, enum kEnumerated, name)
+#define InstancePrefs_addEnum(Klas,name,version,kEnumerated,default)       InstancePrefs_addAny_      (enum kEnumerated, enum kEnumerated, enum kEnumerated, name, Plain)
+#define InstancePrefs_overrideEnum(Klas,name,version,kEnumerated,default)  InstancePrefs_overrideAny_ (enum kEnumerated, enum kEnumerated, enum kEnumerated, name)
+
+#define ClassPrefs_addString(Klas,name,version,default)             ClassPrefs_addAny_         (EditorPrefsString, conststring32, conststring32, name, String)
+#define ClassPrefs_overrideString(Klas,name,version,default)        ClassPrefs_overrideAny_    (EditorPrefsString, conststring32, conststring32, name)
+#define InstancePrefs_addString(Klas,name,version,default)          InstancePrefs_addAny_      (EditorPrefsString, conststring32, conststring32, name, String)
+#define InstancePrefs_overrideString(Klas,name,version,default)     InstancePrefs_overrideAny_ (EditorPrefsString, conststring32, conststring32, name)
+
+#define Prefs_end(Klas) \
+	public:
 
 /* End of file Preferences.h */
 #endif

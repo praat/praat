@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (KlattGrid_IntensityTierArea)
+Prefs_begin (KlattGrid_IntensityTierArea)
 
-	EditorInstancePrefs_overrideDouble (KlattGrid_IntensityTierArea, dataFreeMinimum, 1, U"50.0")
-	EditorInstancePrefs_overrideDouble (KlattGrid_IntensityTierArea, dataFreeMaximum, 1, U"100.0")
+	InstancePrefs_overrideDouble (KlattGrid_IntensityTierArea, dataFreeMinimum, 1, U"50.0")
+	InstancePrefs_overrideDouble (KlattGrid_IntensityTierArea, dataFreeMaximum, 1, U"100.0")
 
-EditorPrefs_end (KlattGrid_IntensityTierArea)
+Prefs_end (KlattGrid_IntensityTierArea)
 
 /* End of file KlattGrid_IntensityTierArea_prefs.h */

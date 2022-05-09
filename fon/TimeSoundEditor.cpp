@@ -28,11 +28,11 @@
 
 Thing_implement_pureVirtual (TimeSoundEditor, FunctionEditor, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "TimeSoundEditor_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "TimeSoundEditor_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "TimeSoundEditor_prefs.h"
 
 /********** Thing methods **********/

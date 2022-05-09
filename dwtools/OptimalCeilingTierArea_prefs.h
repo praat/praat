@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (OptimalCeilingTierArea)
+Prefs_begin (OptimalCeilingTierArea)
 
-	EditorInstancePrefs_overrideDouble (OptimalCeilingTierArea, dataFreeMinimum, 1, U"4000.0")
-	EditorInstancePrefs_overrideDouble (OptimalCeilingTierArea, dataFreeMaximum, 1, U"6000.0")
+	InstancePrefs_overrideDouble (OptimalCeilingTierArea, dataFreeMinimum, 1, U"4000.0")
+	InstancePrefs_overrideDouble (OptimalCeilingTierArea, dataFreeMaximum, 1, U"6000.0")
 
-EditorPrefs_end (OptimalCeilingTierArea)
+Prefs_end (OptimalCeilingTierArea)
 
 /* End of file OptimalCeilingTierArea_prefs.h */

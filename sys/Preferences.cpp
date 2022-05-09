@@ -48,7 +48,8 @@ static void Preferences_add (conststring32 string, int type, void *value, int mi
 	autoPreference me = Thing_new (Preference);
 	my string = Melder_dup (string);
 	for (char32 *p = & my string [0]; *p != U'\0'; p ++)
-		if (*p == U'_') *p = U'.';
+		if (*p == U'_')
+			*p = U'.';
 	my type = type;
 	my value = value;
 	my min = min;
@@ -96,11 +97,12 @@ void _Preferences_addEnum (conststring32 string, int *value, int min, int max,
 
 void Preferences_read (MelderFile file) {
 	/*
-	 * It is possible (see praat.cpp) that this routine is called
-	 * before any preferences have been registered.
-	 * In that case, do nothing.
-	 */
-	if (thePreferences.size == 0) return;
+		It is possible (see praat.cpp) that this routine is called
+		before any preferences have been registered.
+		In that case, do nothing.
+	*/
+	if (thePreferences.size == 0)
+		return;
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		for (;;) {
@@ -120,7 +122,8 @@ void Preferences_read (MelderFile file) {
 				if (Melder_nequ (line, U"FunctionEditor.", 15))
 					ipref = thePreferences. lookUp (Melder_cat (U"TimeSoundAnalysisEditor.", line + 15));
 			}
-			if (ipref == 0) continue;   // skip unrecognized keys
+			if (ipref == 0)
+				continue;   // skip unrecognized keys
 			Preference pref = thePreferences.at [ipref];
 			switch (pref -> type) {
 				case bytewa: * (signed char *) pref -> value =

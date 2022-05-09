@@ -22,7 +22,7 @@
 #include "Gui.h"
 #include "Ui.h"
 #include "Graphics.h"
-#include "EditorPrefs.h"
+#include "Preferences.h"
 
 #include "Editor_enums.h"
 

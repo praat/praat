@@ -16,21 +16,21 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (TimeSoundEditor)
+Prefs_begin (TimeSoundEditor)
 
-	EditorInstancePrefs_addEnum    (TimeSoundEditor, sound_scalingStrategy,  1, kTimeSoundEditor_scalingStrategy, DEFAULT)
-	EditorInstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_height,   1, U"2.0")
-	EditorInstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_minimum,  1, U"-1.0")
-	EditorInstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_maximum,  1, U"1.0")
-	EditorClassPrefs_addBool       (TimeSoundEditor, picture_preserveTimes,  1, true)
-	EditorClassPrefs_addDouble     (TimeSoundEditor, picture_bottom,         1, U"0.0")
-	EditorClassPrefs_addDouble     (TimeSoundEditor, picture_top,            1, U"0.0 (= auto)")
-	EditorClassPrefs_addBool       (TimeSoundEditor, picture_garnish,        1, true)
-	EditorClassPrefs_addEnum       (TimeSoundEditor, extract_windowShape,    1, kSound_windowShape, DEFAULT)
-	EditorClassPrefs_addDouble     (TimeSoundEditor, extract_relativeWidth,  1, U"1.0")
-	EditorClassPrefs_addBool       (TimeSoundEditor, extract_preserveTimes,  1, true)
-	EditorClassPrefs_addDouble     (TimeSoundEditor, extract_overlap,        1, U"0.01")
+	InstancePrefs_addEnum    (TimeSoundEditor, sound_scalingStrategy,  1, kTimeSoundEditor_scalingStrategy, DEFAULT)
+	InstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_height,   1, U"2.0")
+	InstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_minimum,  1, U"-1.0")
+	InstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_maximum,  1, U"1.0")
+	ClassPrefs_addBool       (TimeSoundEditor, picture_preserveTimes,  1, true)
+	ClassPrefs_addDouble     (TimeSoundEditor, picture_bottom,         1, U"0.0")
+	ClassPrefs_addDouble     (TimeSoundEditor, picture_top,            1, U"0.0 (= auto)")
+	ClassPrefs_addBool       (TimeSoundEditor, picture_garnish,        1, true)
+	ClassPrefs_addEnum       (TimeSoundEditor, extract_windowShape,    1, kSound_windowShape, DEFAULT)
+	ClassPrefs_addDouble     (TimeSoundEditor, extract_relativeWidth,  1, U"1.0")
+	ClassPrefs_addBool       (TimeSoundEditor, extract_preserveTimes,  1, true)
+	ClassPrefs_addDouble     (TimeSoundEditor, extract_overlap,        1, U"0.01")
 
-EditorPrefs_end (TimeSoundEditor)
+Prefs_end (TimeSoundEditor)
 
 /* End of file TimeSoundEditor_prefs.h */

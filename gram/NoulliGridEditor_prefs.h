@@ -16,13 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (NoulliGridEditor)
+Prefs_begin (NoulliGridEditor)
 
-	EditorInstancePrefs_overrideDouble  (NoulliGridEditor, arrowScrollStep,                  1, U"1.0")
-	EditorInstancePrefs_overrideBool    (NoulliGridEditor, showSelectionViewer,              1, true)
+	InstancePrefs_overrideDouble  (NoulliGridEditor, arrowScrollStep,                  1, U"1.0")
+	InstancePrefs_overrideBool    (NoulliGridEditor, showSelectionViewer,              1, true)
 
-	EditorInstancePrefs_addEnum         (NoulliGridEditor, showCategoryInSelectionViewerAs,  1, kNoulliGridEditor_showCategoryInSelectionViewerAs, DEFAULT)
+	InstancePrefs_addEnum         (NoulliGridEditor, showCategoryInSelectionViewerAs,  1, kNoulliGridEditor_showCategoryInSelectionViewerAs, DEFAULT)
 
-EditorPrefs_end (NoulliGridEditor)
+Prefs_end (NoulliGridEditor)
 
 /* End of file NoulliGridEditor_prefs.h */
