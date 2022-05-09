@@ -405,9 +405,9 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 		SENTENCE (parameters_string, U"Coefficients by track", my default_modeler_numberOfParametersPerTrack())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
 	EDITOR_OK
-		SET_STRING (parameters_string, my p_modeler_numberOfParametersPerTrack)
+		SET_STRING (parameters_string, my instancePref_modeler_numberOfParametersPerTrack())
 	EDITOR_DO
-	pref_str32cpy2 (my pref_modeler_numberOfParametersPerTrack (), my p_modeler_numberOfParametersPerTrack, parameters_string);
+	my setInstancePref_modeler_numberOfParametersPerTrack (parameters_string);
 	my setInstancePref_modeler_varianceExponent (varianceExponent);
 	FunctionEditor_redraw (me);
 	EDITOR_END
@@ -447,7 +447,7 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 	EDITOR_OK
 	EDITOR_DO
 		FormantPath formantPath = (FormantPath) my data;
-		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
+		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight,
 				intensityModulationStepSize, windowLength, parameters.get(), my instancePref_modeler_varianceExponent());
 		my d_formant = FormantPath_extractFormant (formantPath);
@@ -475,7 +475,7 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		Graphics_setInner (my pictureGraphics);
 		double startTime, endTime, xCursor, yCursor;
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, & xCursor, & yCursor);
-		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
+		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
 		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my instancePref_modeler_draw_maximumFrequency(), 1, 5,
 			my instancePref_modeler_draw_showBandwidths(), Melder_RED, Melder_PURPLE, 0, 0,
@@ -496,7 +496,7 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DI
 			startTime = my startWindow;
 			endTime = my endWindow;
 		}
-		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
+		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		const integer numberOfStressDecimals = 2, numberOfTimeDecimals = 6;
 		autoTable stressTable = FormantPath_downTo_Table_stresses (formantPath, startTime, endTime, parameters.get(),
 				my instancePref_modeler_varianceExponent(), numberOfStressDecimals, true, numberOfTimeDecimals);
@@ -506,14 +506,14 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DI
 
 static void menu_cb_FormantColourSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
-		WORD (oddPathColour_string, U"Dots in F1, F3, F5", my default_formant_path_oddColour ())
-		WORD (evenPathColour_string, U"Dots in F2, F4", my default_formant_path_evenColour ())
+		WORD (oddPathColour_string, U"Dots in F1, F3, F5", my default_formant_path_oddColour())
+		WORD (evenPathColour_string, U"Dots in F2, F4", my default_formant_path_evenColour())
 	EDITOR_OK
-		SET_STRING (oddPathColour_string, my p_formant_path_oddColour)
-		SET_STRING (evenPathColour_string, my p_formant_path_evenColour)
+		SET_STRING (oddPathColour_string, my instancePref_formant_path_oddColour())
+		SET_STRING (evenPathColour_string, my instancePref_formant_path_evenColour())
 	EDITOR_DO
-		pref_str32cpy2 (my pref_formant_path_oddColour (), my p_formant_path_oddColour, oddPathColour_string);
-		pref_str32cpy2 (my pref_formant_path_evenColour (), my p_formant_path_evenColour, evenPathColour_string);
+		my setInstancePref_formant_path_oddColour (oddPathColour_string);
+		my setInstancePref_formant_path_evenColour (evenPathColour_string);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -742,9 +742,9 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	const integer nrow = 0, ncol = 0;
 	if (startTime != previousStartTime || endTime != previousEndTime)
 		our selectedCandidate = 0;
-	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (our p_modeler_numberOfParametersPerTrack);
-	MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
-	MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
+	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (our instancePref_modeler_numberOfParametersPerTrack());
+	MelderColour oddColour = MelderColour_fromColourName (our instancePref_formant_path_oddColour());
+	MelderColour evenColour = MelderColour_fromColourName (our instancePref_formant_path_evenColour());
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
 		our instancePref_modeler_draw_maximumFrequency(), 1, 5, our instancePref_modeler_draw_showBandwidths(), oddColour, evenColour,
 		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_modeler_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
@@ -781,8 +781,8 @@ void structFormantPathEditor :: v_draw_analysis_formants () {
 	if (our instancePref_formant_show()) {
 		Graphics_setColour (our graphics.get(), Melder_RED);
 		Graphics_setSpeckleSize (our graphics.get(), our instancePref_formant_dotSize());
-		MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
-		MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
+		MelderColour oddColour = MelderColour_fromColourName (our instancePref_formant_path_oddColour());
+		MelderColour evenColour = MelderColour_fromColourName (our instancePref_formant_path_evenColour());
 	
 		Formant_drawSpeckles_inside (our d_formant.get(), our graphics.get(), our startWindow, our endWindow,
 			our instancePref_spectrogram_viewFrom(), our instancePref_spectrogram_viewTo(), our instancePref_formant_dynamicRange(),
@@ -953,16 +953,16 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 			my textgrid = Data_copy (textgrid);
 			my textGridView = TextGridView_create (my textgrid.get());
 		}
-		if (my p_modeler_numberOfParametersPerTrack [0] == U'\0')
-			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
-		if (my p_formant_default_colour [0] == U'\0')
-			pref_str32cpy2 (my p_formant_default_colour, my pref_formant_default_colour (), my default_formant_default_colour ());
-		if (my p_formant_path_oddColour [0] == U'\0')
-			pref_str32cpy2 (my p_formant_path_oddColour, my pref_formant_path_oddColour (), my default_formant_path_oddColour ());
-		if (my p_formant_path_evenColour [0] == U'\0')
-			pref_str32cpy2 (my p_formant_path_evenColour, my pref_formant_path_evenColour (), my default_formant_path_evenColour ());
-		if (my p_formant_selected_colour [0] == U'\0')
-			pref_str32cpy2 (my p_formant_selected_colour, my pref_formant_selected_colour (), my default_formant_selected_colour ());
+		if (my instancePref_modeler_numberOfParametersPerTrack() [0] == U'\0')
+			my setInstancePref_modeler_numberOfParametersPerTrack (my default_modeler_numberOfParametersPerTrack());
+		if (my instancePref_formant_default_colour() [0] == U'\0')
+			my setInstancePref_formant_default_colour (my default_formant_default_colour ());
+		if (my instancePref_formant_path_oddColour() [0] == U'\0')
+			my setInstancePref_formant_path_oddColour (my default_formant_path_oddColour ());
+		if (my instancePref_formant_path_evenColour() [0] == U'\0')
+			my setInstancePref_formant_path_evenColour (my default_formant_path_evenColour ());
+		if (my instancePref_formant_selected_colour() [0] == U'\0')
+			my setInstancePref_formant_selected_colour (my default_formant_selected_colour ());
 		my selectedTier = 1;
 		if (my endWindow - my startWindow > 5.0) {
 			my endWindow = my startWindow + 5.0;

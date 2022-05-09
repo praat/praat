@@ -213,7 +213,7 @@ static void Trajectory_setColour (Trajectory me, double startTime, double endTim
 static void VowelEditor_create_twoFormantSchwa (VowelEditor me) {
 	try {
 		my trajectory = Trajectory_create (my instancePref_trajectory_minimumDuration());
-		MelderColour colour = MelderColour_fromColourNameOrRGBString (my p_trajectory_colour);
+		MelderColour colour = MelderColour_fromColourNameOrRGBString (my instancePref_trajectory_colour());
 		Trajectory_addPoint (my trajectory.get(), 0.0, 500.0, 1500.0, colour);
 		Trajectory_addPoint (my trajectory.get(), my instancePref_trajectory_minimumDuration(), 500.0, 1500.0, colour);
 	} catch (MelderError) {
@@ -511,10 +511,10 @@ static void Table_addColumnIfNotExists_colour (Table me, conststring32 colour) {
 
 static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
 	try {
-		Melder_require (str32len (my p_marks_fileName) > 0,
+		Melder_require (str32len (my instancePref_marks_fileName()) > 0,
 			U"No file with vowel marks has been defined.");
 		structMelderFile file { };
-		Melder_pathToFile (my p_marks_fileName, & file);
+		Melder_pathToFile (my instancePref_marks_fileName(), & file);
 		autoDaata data = Data_readFromFile (& file);
 		Melder_require (Thing_isa (data.get(), classTable),
 			U"\"", MelderFile_name (& file), U"\" is not a Table file");
@@ -570,7 +570,7 @@ static void VowelEditor_getMarks (VowelEditor me) {
 	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
 
 	Table_addColumnIfNotExists_size (newMarks.get(), my instancePref_marks_fontSize());
-	Table_addColumnIfNotExists_colour (newMarks.get(), my p_marks_colour);
+	Table_addColumnIfNotExists_colour (newMarks.get(), my instancePref_marks_colour());
 	my marks = newMarks.move();
 }
 
@@ -605,7 +605,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 					conststring32 colourString = Table_getStringValue_Assert (my marks.get(), irow, col_colour);
 					MelderColour colour = MelderColour_fromColourNameOrNumberStringOrRGBString (colourString);
 					if (! colour. valid())
-						colour = MelderColour_fromColourName (my p_marks_colour);
+						colour = MelderColour_fromColourName (my instancePref_marks_colour());
 					Graphics_setColour (g, colour);
 				}
 				Graphics_setFontSize (g, size);
@@ -737,7 +737,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		SET_BOOLEAN (soundFollowsMouse, my instancePref_soundFollowsMouse())
 		SET_REAL (q1, my instancePref_synthesis_q1())
 		SET_REAL (q2, my instancePref_synthesis_q2())
-		SET_STRING (extraFrequencyBandwidthPairs_string, my p_synthesis_extraFBPairs)
+		SET_STRING (extraFrequencyBandwidthPairs_string, my instancePref_synthesis_extraFBPairs())
 		SET_INTEGER (numberOfFormants, my instancePref_synthesis_numberOfFormants())
 	EDITOR_DO
 		my setInstancePref_soundFollowsMouse (soundFollowsMouse);
@@ -767,7 +767,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		/*
 			Formants and bandwidths are valid. It is safe to copy them.
 		*/
-		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, extraFrequencyBandwidthPairs_string);
+		my setInstancePref_synthesis_extraFBPairs (extraFrequencyBandwidthPairs_string);
 		my setInstancePref_synthesis_numberOfFormants (numberOfFormants);
 		my extraFrequencyBandwidthPairs = extraFrequencyBandwidthPairs.move();
 	EDITOR_END
@@ -894,12 +894,12 @@ static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 		SET_ENUM (dataSet, kVowelEditor_marksDataSet, my instancePref_marks_dataSet())
 		SET_ENUM (speaker, kVowelEditor_speakerType, my instancePref_marks_speakerType())
 		SET_REAL (fontSize, my instancePref_marks_fontSize())
-		SET_STRING (colour_string, my p_trajectory_colour)
+		SET_STRING (colour_string, my instancePref_trajectory_colour())
 	EDITOR_DO
 		my setInstancePref_marks_dataSet (dataSet);
 		my setInstancePref_marks_speakerType (speaker);
 		my setInstancePref_marks_fontSize (fontSize);
-		pref_str32cpy2 (my pref_marks_colour (), my p_marks_colour, colour_string);
+		my setInstancePref_marks_colour (colour_string);
 		VowelEditor_getMarks (me);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -908,7 +908,7 @@ static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
-		pref_str32cpy2 (my pref_marks_fileName (), my p_marks_fileName, Melder_fileToPath (file));
+		my setInstancePref_marks_fileName (Melder_fileToPath (file));
 		my setInstancePref_marks_speakerType (kVowelEditor_speakerType::UNKNOWN);
 		my setInstancePref_marks_dataSet (kVowelEditor_marksDataSet::OTHER);
 		VowelEditor_getVowelMarksFromFile (me);
@@ -966,7 +966,7 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		WORD (colour_string, U"Colour", my default_trajectory_colour());
 	EDITOR_OK
 		SET_REAL (newDuration, my instancePref_trajectory_newDuration())
-		SET_STRING (colour_string, my p_trajectory_colour)   // TODO SET_COLOUR
+		SET_STRING (colour_string, my instancePref_trajectory_colour())   // TODO SET_COLOUR
 	EDITOR_DO
 		clipF1F2 (me, & startF1, & startF2);
 		MelderColour colour = MelderColour_fromColourNameOrRGBString (colour_string);
@@ -976,7 +976,7 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		Trajectory_addPoint (my trajectory.get(), newDuration, endF1, endF2, colour);
 		GuiText_setString (my durationTextField, Melder_fixed (newDuration, 6));
 		my setInstancePref_trajectory_newDuration (newDuration);
-		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
+		my setInstancePref_trajectory_colour (colour_string);
 		updateInfoLabels (me);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -990,7 +990,7 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		WORD (colour_string, U"Colour", my default_trajectory_colour());
 	EDITOR_OK
 		SET_REAL (extendDuration, my instancePref_trajectory_extendDuration())
-		SET_STRING (colour_string, my p_trajectory_colour)   // TODO SET_COLOUR
+		SET_STRING (colour_string, my instancePref_trajectory_colour())   // TODO SET_COLOUR
 	EDITOR_DO
 		MelderColour colour = MelderColour_fromColourNameOrRGBString (colour_string);
 		TrajectoryPoint startPoint = my trajectory -> points.at [my trajectory -> points.size];
@@ -1003,7 +1003,7 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		GuiText_setString (my extendTextField, Melder_fixed (extendDuration, 6));
 		my setInstancePref_trajectory_extendDuration (extendDuration);
 		my setInstancePref_trajectory_duration (endTime);   // TODO: justify why this is a preference
-		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
+		my setInstancePref_trajectory_colour (colour_string);
 		updateInfoLabels (me);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -1053,9 +1053,9 @@ static void menu_cb_trajectory_colour (VowelEditor me, EDITOR_ARGS_FORM) {
 		WORD (colour_string, U"Colour", my default_trajectory_colour())
 	EDITOR_OK
 		SET_REAL (endTime, my instancePref_trajectory_duration())
-		SET_STRING (colour_string, my p_trajectory_colour)   // TODO SET_COLOUR
+		SET_STRING (colour_string, my instancePref_trajectory_colour())   // TODO SET_COLOUR
 	EDITOR_DO
-		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
+		my setInstancePref_trajectory_colour (colour_string);
 		Trajectory_setColour (my trajectory.get(), startTime, endTime, MelderColour_fromColourNameOrRGBString(colour_string));
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -1133,7 +1133,7 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 	Melder_clip (0.0, & mouseY, 1.0);
 	double f1, f2;
 	VowelEditor_getF1F2FromXY (me, mouseX, mouseY, & f1, & f2);
-	MelderColour colour = MelderColour_fromColourNameOrRGBString (my p_trajectory_colour);
+	MelderColour colour = MelderColour_fromColourNameOrRGBString (my instancePref_trajectory_colour());
 	if (event -> isClick()) {
 		my anchorTime = Melder_clock ();
 		if (event -> shiftKeyPressed) {
@@ -1324,7 +1324,7 @@ void structVowelEditor :: v_repairPreferences () {
 	}
 	if (our instancePref_marks_fontSize() <= 0)
 		our setInstancePref_marks_fontSize (Melder_atof (our default_marks_fontSize()));
-	if (Melder_equ (our p_marks_fileName, U"") && our instancePref_marks_dataSet() < kVowelEditor_marksDataSet::MIN) {
+	if (Melder_equ (our instancePref_marks_fileName(), U"") && our instancePref_marks_dataSet() < kVowelEditor_marksDataSet::MIN) {
 		our setInstancePref_marks_dataSet (our default_marks_dataSet());
 		our setInstancePref_marks_speakerType (our default_marks_speakerType());
 	}
@@ -1370,9 +1370,9 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 			my setInstancePref_synthesis_q1 (Melder_atof (my default_synthesis_q1()));
 			my setInstancePref_synthesis_q2 (Melder_atof (my default_synthesis_q2()));
 		}
-		if (str32len (my p_synthesis_extraFBPairs) == 0)
-			pref_str32cpy (my p_synthesis_extraFBPairs, my default_synthesis_extraFBPairs ());
-		my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my p_synthesis_extraFBPairs);
+		if (str32len (my instancePref_synthesis_extraFBPairs()) == 0)
+			my setInstancePref_synthesis_extraFBPairs (my default_synthesis_extraFBPairs ());
+		my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my instancePref_synthesis_extraFBPairs());
 		Melder_assert (my extraFrequencyBandwidthPairs.size >= 4);   // for deprecated Set F3 & F4
 		//my p_soundFollowsMouse = true;   // no real preference yet  // ppgb 20220504: what does this mean?
 		VowelEditor_create_twoFormantSchwa (me.get());
