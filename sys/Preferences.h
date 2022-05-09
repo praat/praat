@@ -26,6 +26,7 @@
 	file paths can be used as preferences.
 */
 #define Preferences_STRING_BUFFER_SIZE 1+kMelder_MAXPATH
+using PrefsString = char32 [Preferences_STRING_BUFFER_SIZE];
 
 void Preferences_addByte     (conststring32 string /* cattable */, signed char *value, signed char defaultValue);
 void Preferences_addShort    (conststring32 string /* cattable */, short *value, short defaultValue);
@@ -69,12 +70,12 @@ void Preferences_exit_optimizeByLeaking ();
 		static DefaultType _classDefault_##name; \
 		DefaultType _v_default_##name () override { return our _classDefault_##name; }
 
-using EditorPrefsString = char32 [Preferences_STRING_BUFFER_SIZE];
-#define EditorPref_copyPlain(from,to) \
-	to = from;
-#define EditorPref_copyString(from,to) \
+#define Pref_copyPlain(from,to) \
+	to = from
+inline void Pref_copyString (conststring32 from, mutablestring32 to) {
 	str32ncpy (to, from, Preferences_STRING_BUFFER_SIZE); \
 	to [Preferences_STRING_BUFFER_SIZE - 1] = U'\0';
+}
 
 /*
 	The use of one _classPref_##name both for classes and for instances prevents the following two declarations in a single class:
@@ -95,7 +96,7 @@ using EditorPrefsString = char32 [Preferences_STRING_BUFFER_SIZE];
 	public: \
 		ArgumentType classPref_##name() { return our _v_classPref1_##name(); } \
 		void setClassPref_##name (ArgumentType newValue) { \
-			EditorPref_copy##CopyMethod (newValue, our _v_classPref1_##name()) \
+			Pref_copy##CopyMethod (newValue, our _v_classPref1_##name()); \
 		}
 #define ClassPrefs_overrideAny_(StorageType,ArgumentType,DefaultType,name) \
 	Prefs_overrideAny_default_ (DefaultType, name) \
@@ -111,8 +112,8 @@ using EditorPrefsString = char32 [Preferences_STRING_BUFFER_SIZE];
 	public: \
 		ArgumentType instancePref_##name () { return our _instancePref_##name; } \
 		void setInstancePref_##name (ArgumentType newValue) { \
-			EditorPref_copy##CopyMethod (newValue, our _v_classPref2_##name()) \
-			EditorPref_copy##CopyMethod (newValue, our _instancePref_##name) \
+			Pref_copy##CopyMethod (newValue, our _v_classPref2_##name()); \
+			Pref_copy##CopyMethod (newValue, our _instancePref_##name); \
 		}
 #define InstancePrefs_overrideAny_(StorageType,ArgumentType,DefaultType,name) \
 	Prefs_overrideAny_default_ (DefaultType, name) \
@@ -145,10 +146,10 @@ using EditorPrefsString = char32 [Preferences_STRING_BUFFER_SIZE];
 #define InstancePrefs_addEnum(Klas,name,version,kEnumerated,default)       InstancePrefs_addAny_      (enum kEnumerated, enum kEnumerated, enum kEnumerated, name, Plain)
 #define InstancePrefs_overrideEnum(Klas,name,version,kEnumerated,default)  InstancePrefs_overrideAny_ (enum kEnumerated, enum kEnumerated, enum kEnumerated, name)
 
-#define ClassPrefs_addString(Klas,name,version,default)             ClassPrefs_addAny_         (EditorPrefsString, conststring32, conststring32, name, String)
-#define ClassPrefs_overrideString(Klas,name,version,default)        ClassPrefs_overrideAny_    (EditorPrefsString, conststring32, conststring32, name)
-#define InstancePrefs_addString(Klas,name,version,default)          InstancePrefs_addAny_      (EditorPrefsString, conststring32, conststring32, name, String)
-#define InstancePrefs_overrideString(Klas,name,version,default)     InstancePrefs_overrideAny_ (EditorPrefsString, conststring32, conststring32, name)
+#define ClassPrefs_addString(Klas,name,version,default)             ClassPrefs_addAny_         (PrefsString, conststring32, conststring32, name, String)
+#define ClassPrefs_overrideString(Klas,name,version,default)        ClassPrefs_overrideAny_    (PrefsString, conststring32, conststring32, name)
+#define InstancePrefs_addString(Klas,name,version,default)          InstancePrefs_addAny_      (PrefsString, conststring32, conststring32, name, String)
+#define InstancePrefs_overrideString(Klas,name,version,default)     InstancePrefs_overrideAny_ (PrefsString, conststring32, conststring32, name)
 
 #define Prefs_end(Klas) \
 	public:

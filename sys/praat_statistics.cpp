@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 static struct {
 	integer batchSessions, interactiveSessions;
 	double memory;
-	char32 dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
+	PrefsString dateOfFirstSession;
 } statistics;
 
 void praat_statistics_prefs () {
