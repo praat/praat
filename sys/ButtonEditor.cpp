@@ -40,31 +40,26 @@ static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, integer i) {
 	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? (cmd -> uniqueID ? U"REMOVED" : U"HIDDEN") : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	MelderString_empty (& text);
-	if (cmd -> unhidable) {
+	if (cmd -> unhidable)
 		MelderString_append (& text, U"#unhidable ");
-	} else {
+	else
 		MelderString_append (& text, U"@@m", i, U"|", clickText, U"@ ");
-	}
 	MelderString_append (& text, cmd -> window.get(), U": ");
-	if (cmd -> menu) {
+	if (cmd -> menu)
 		MelderString_append (& text, cmd -> menu.get(), U": ");
-	}
 	if (cmd -> title) {
-		if (cmd -> executable) {
+		if (cmd -> executable)
 			MelderString_append (& text, U"@@p", i, U"|", cmd -> title.get(), U"@");
-		} else {
+		else
 			MelderString_append (& text, cmd -> title.get());
-		}
 	} else {
 		MelderString_append (& text, U"---------");
 	}
-	if (cmd -> after) {
+	if (cmd -> after)
 		MelderString_append (& text, U", %%%%after \"", cmd -> after.get(), U"\"%%");
-	}
-	if (cmd -> script) {
+	if (cmd -> script)
 		MelderString_append (& text, U", script \"", Melder_peekExpandBackslashes (cmd -> script.get()), U"\"");
-	}
-	HyperPage_any (me, text.string, my p_font, my instancePref_fontSize(), cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
+	HyperPage_any (me, text.string, my instancePref_font(), my instancePref_fontSize(), cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 
@@ -76,53 +71,45 @@ static void drawAction (ButtonEditor me, Praat_Command cmd, integer i) {
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	integer n1 = cmd -> n1;
 	MelderString_empty (& text);
-	if (cmd -> class4) {
+	if (cmd -> class4)
 		MelderString_append (& text, U"#unhidable ");
-	} else {
+	else
 		MelderString_append (& text, U"@@a", i, U"|", clickText, U"@ ");
-	}
 	MelderString_append (& text, cmd -> class1 -> className);
-	if (n1) {
+	if (n1)
 		MelderString_append (& text, U" (", n1, U")");
-	}
 	if (cmd -> class2) {
 		integer n2 = cmd -> n2;
 		MelderString_append (& text, U" & ", cmd -> class2 -> className);
-		if (n2) {
+		if (n2)
 			MelderString_append (& text, U" (", n2, U")");
-		}
 	}
 	if (cmd -> class3) {
 		integer n3 = cmd -> n3;
 		MelderString_append (& text, U" & ", cmd -> class3 -> className);
-		if (n3) {
+		if (n3)
 			MelderString_append (& text, U" (", n3, U")");
-		}
 	}
 	if (cmd -> class4) {
 		integer n4 = cmd -> n4;
 		MelderString_append (& text, U" & ", cmd -> class4 -> className);
-		if (n4) {
+		if (n4)
 			MelderString_append (& text, U" (", n4, U")");
-		}
 	}
 	MelderString_append (& text, U": ");
 	if (cmd -> title) {
-		if (cmd -> executable) {
+		if (cmd -> executable)
 			MelderString_append (& text, U"@@e", i, U"|", cmd -> title.get(), U"@");
-		} else {
+		else
 			MelderString_append (& text, cmd -> title.get());
-		}
 	} else {
 		MelderString_append (& text, U"---------");
 	}
-	if (cmd -> after) {
+	if (cmd -> after)
 		MelderString_append (& text, U", %%%%after \"", cmd -> after.get(), U"\"%%");
-	}
-	if (cmd -> script) {
+	if (cmd -> script)
 		MelderString_append (& text, U", script \"", Melder_peekExpandBackslashes (cmd -> script.get()), U"\"");
-	}
-	HyperPage_any (me, text.string, my p_font, my instancePref_fontSize(), cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
+	HyperPage_any (me, text.string, my instancePref_font(), my instancePref_fontSize(), cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 

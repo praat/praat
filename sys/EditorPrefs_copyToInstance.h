@@ -18,9 +18,6 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef prefs_add_enum
-#undef prefs_add_enum_with_data
-#undef prefs_override_enum
 #undef prefs_add_string
 #undef prefs_add_string_with_data
 #undef prefs_override_string
@@ -48,15 +45,6 @@
 #undef  EditorInstancePrefs_overrideInteger
 #define EditorInstancePrefs_overrideInteger(Klas,name,version,default)
 
-#undef  EditorClassPrefs_addBool
-#define EditorClassPrefs_addBool(Klas,name,version,default)
-#undef  EditorClassPrefs_overrideBool
-#define EditorClassPrefs_overrideBool(Klas,name,version,default)
-#undef  EditorInstancePrefs_addBool
-#define EditorInstancePrefs_addBool(Klas,name,version,default)  our _copyPrefToInstance_##name ();
-#undef  EditorInstancePrefs_overrideBool
-#define EditorInstancePrefs_overrideBool(Klas,name,version,default)
-
 #undef  EditorClassPrefs_addDouble
 #define EditorClassPrefs_addDouble(Klas,name,version,default)
 #undef  EditorClassPrefs_overrideDouble
@@ -66,9 +54,23 @@
 #undef  EditorInstancePrefs_overrideDouble
 #define EditorInstancePrefs_overrideDouble(Klas,name,version,default)
 
-#define prefs_add_enum(Klas,name,version,enumerated,default)
-#define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  our p_##name = our pref_##name ();
-#define prefs_override_enum(Klas,name,version,enumerated,default)
+#undef  EditorClassPrefs_addBool
+#define EditorClassPrefs_addBool(Klas,name,version,default)
+#undef  EditorClassPrefs_overrideBool
+#define EditorClassPrefs_overrideBool(Klas,name,version,default)
+#undef  EditorInstancePrefs_addBool
+#define EditorInstancePrefs_addBool(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#undef  EditorInstancePrefs_overrideBool
+#define EditorInstancePrefs_overrideBool(Klas,name,version,default)
+
+#undef  EditorClassPrefs_addEnum
+#define EditorClassPrefs_addEnum(Klas,name,version,kEnumerated,default)
+#undef  EditorClassPrefs_overrideEnum
+#define EditorClassPrefs_overrideEnum(Klas,name,version,kEnumerated,default)
+#undef  EditorInstancePrefs_addEnum
+#define EditorInstancePrefs_addEnum(Klas,name,version,kEnumerated,default)  our _copyPrefToInstance_##name ();
+#undef  EditorInstancePrefs_overrideEnum
+#define EditorInstancePrefs_overrideEnum(Klas,name,version,kEnumerated,default)
 
 #define prefs_add_string(Klas,name,version,default)
 #define prefs_add_string_with_data(Klas,name,version,default)  str32cpy (& our p_##name [0], our pref_##name ());

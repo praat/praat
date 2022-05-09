@@ -42,7 +42,7 @@
 		static Type _classPref_##name; \
 		virtual Type & _v_classPref1_##name() { return our _classPref_##name; } \
 	public: \
-		virtual DefaultType default_##name() { return our _v_default_##name(); } \
+		DefaultType default_##name() { return our _v_default_##name(); } \
 		Type classPref_##name() { return our _v_classPref1_##name(); } \
 		void setClassPref_##name (Type newValue) { our _v_classPref1_##name() = newValue; }
 #define EditorClassPrefs_overrideAny(Type,DefaultType,name) \
@@ -60,7 +60,7 @@
 		Type _instancePref_##name; \
 		void _copyPrefToInstance_##name () { our _instancePref_##name = our _v_classPref2_##name(); } \
 	public: \
-		virtual DefaultType default_##name() { return our _v_default_##name(); } \
+		DefaultType default_##name() { return our _v_default_##name(); } \
 		Type instancePref_##name () { return our _instancePref_##name; } \
 		void setInstancePref_##name (Type newValue) { our _v_classPref2_##name() = our _instancePref_##name = newValue; }
 #define EditorInstancePrefs_overrideAny(Type,DefaultType,name) \
@@ -90,13 +90,10 @@
 #define EditorInstancePrefs_addBool(Klas,name,version,default)          EditorInstancePrefs_addAny      (bool, bool, name)
 #define EditorInstancePrefs_overrideBool(Klas,name,version,default)     EditorInstancePrefs_overrideAny (bool, bool, name)
 
-#define prefs_add_enum(Klas,name,version,enumerated,default) \
-	private: static enum enumerated s_##name; public: virtual enum enumerated & pref_##name () { return s_##name; } \
-	private: static enum enumerated sdefault_##name; public: virtual enum enumerated default_##name () { return sdefault_##name; }
-#define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  public: enumerated p_##name; prefs_add_enum (Klas, name, version, enumerated, default)
-#define prefs_override_enum(Klas,name,version,enumerated,default) \
-	private: static enum enumerated s_##name; public: enum enumerated & pref_##name () override { return s_##name; } \
-	private: static enum enumerated sdefault_##name; public: enum enumerated default_##name () override { return sdefault_##name; }
+#define EditorClassPrefs_addEnum(Klas,name,version,kEnumerated,default)          EditorClassPrefs_addAny         (enum kEnumerated, enum kEnumerated, name)
+#define EditorClassPrefs_overrideEnum(Klas,name,version,kEnumerated,default)     EditorClassPrefs_overrideAny    (enum kEnumerated, enum kEnumerated, name)
+#define EditorInstancePrefs_addEnum(Klas,name,version,kEnumerated,default)       EditorInstancePrefs_addAny      (enum kEnumerated, enum kEnumerated, name)
+#define EditorInstancePrefs_overrideEnum(Klas,name,version,kEnumerated,default)  EditorInstancePrefs_overrideAny (enum kEnumerated, enum kEnumerated, name)
 
 #define prefs_add_string(Klas,name,version,default) \
 	private: static char32 s_##name [Preferences_STRING_BUFFER_SIZE]; public: virtual char32 * pref_##name () { return & s_##name [0]; } \

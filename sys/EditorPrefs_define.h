@@ -18,9 +18,6 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef prefs_add_enum
-#undef prefs_add_enum_with_data
-#undef prefs_override_enum
 #undef prefs_add_string
 #undef prefs_add_string_with_data
 #undef prefs_override_string
@@ -59,8 +56,6 @@
 #undef  EditorInstancePrefs_overrideDouble
 #define EditorInstancePrefs_overrideDouble(Klas,name,version,default)   EditorPrefs_defineNumericType_ (double, Klas, name, default)
 
-//#undef EditorPrefs_defineNumericType_
-
 #undef  EditorClassPrefs_addBool
 #define EditorClassPrefs_addBool(Klas,name,version,default) \
 	bool struct##Klas :: _classDefault_##name = default; \
@@ -72,14 +67,16 @@
 #undef  EditorInstancePrefs_overrideBool
 #define EditorInstancePrefs_overrideBool(Klas,name,version,default)     EditorClassPrefs_addBool (Klas, name, version, default)
 
-
-#define prefs_add_enum(Klas,name,version,enumerated,default) \
-	enum enumerated struct##Klas :: s_##name; \
-	enum enumerated struct##Klas :: sdefault_##name = enumerated :: default;
-#define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  prefs_add_enum (Klas, name, version, enumerated, default)
-#define prefs_override_enum(Klas,name,version,enumerated,default) \
-	enum enumerated struct##Klas :: s_##name; \
-	enum enumerated struct##Klas :: sdefault_##name = enumerated :: default;
+#undef  EditorClassPrefs_addEnum
+#define EditorClassPrefs_addEnum(Klas,name,version,kEnumerated,default) \
+	enum kEnumerated struct##Klas :: _classDefault_##name = kEnumerated :: default; \
+	enum kEnumerated struct##Klas :: _classPref_##name;
+#undef  EditorClassPrefs_overrideEnum
+#define EditorClassPrefs_overrideEnum(Klas,name,version,kEnumerated,default)     EditorClassPrefs_addEnum (Klas, name, version, kEnumerated, default)
+#undef  EditorInstancePrefs_addEnum
+#define EditorInstancePrefs_addEnum(Klas,name,version,kEnumerated,default)       EditorClassPrefs_addEnum (Klas, name, version, kEnumerated, default)
+#undef  EditorInstancePrefs_overrideEnum
+#define EditorInstancePrefs_overrideEnum(Klas,name,version,kEnumerated,default)  EditorClassPrefs_addEnum (Klas, name, version, kEnumerated, default)
 
 #define prefs_add_string(Klas,name,version,default) \
 	char32 struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \

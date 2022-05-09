@@ -1,6 +1,6 @@
 /* ERPWindow_prefs.h
  *
- * Copyright (C) 2013,2014,2015,2017,2022 Paul Boersma
+ * Copyright (C) 2013-2015,2017,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 EditorPrefs_begin (ERPWindow)
 
 	EditorInstancePrefs_overrideBool    (ERPWindow, showSelectionViewer,            1, true)
-	prefs_override_enum    (ERPWindow, sound_scalingStrategy,          1, kTimeSoundEditor_scalingStrategy, DEFAULT)
+	EditorInstancePrefs_overrideEnum    (ERPWindow, sound_scalingStrategy,          1, kTimeSoundEditor_scalingStrategy, DEFAULT)
 	EditorInstancePrefs_overrideDouble  (ERPWindow, sound_scaling_height,           1, U"20e-6")
 	EditorInstancePrefs_overrideDouble  (ERPWindow, sound_scaling_minimum,          1, U"-10e-6")
 	EditorInstancePrefs_overrideDouble  (ERPWindow, sound_scaling_maximum,          1, U"10e-6")
@@ -32,15 +32,15 @@ EditorPrefs_begin (ERPWindow)
 	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_dynamicRange,       1, U"40.0")   // dB
 	EditorInstancePrefs_overrideInteger (ERPWindow, spectrogram_timeSteps,          1, U"1000")
 	EditorInstancePrefs_overrideInteger (ERPWindow, spectrogram_frequencySteps,     1, U"250")
-	prefs_override_enum    (ERPWindow, spectrogram_method,             1, kSound_to_Spectrogram_method, DEFAULT)
-	prefs_override_enum    (ERPWindow, spectrogram_windowShape,        1, kSound_to_Spectrogram_windowShape, DEFAULT)
+	EditorInstancePrefs_overrideEnum    (ERPWindow, spectrogram_method,             1, kSound_to_Spectrogram_method, DEFAULT)
+	EditorInstancePrefs_overrideEnum    (ERPWindow, spectrogram_windowShape,        1, kSound_to_Spectrogram_windowShape, DEFAULT)
 	EditorInstancePrefs_overrideBool    (ERPWindow, spectrogram_autoscaling,        1, true)
 	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_maximum,            1, U"100.0")   // dB/Hz
 	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_preemphasis,        1, U"0.0")   // dB/octave
 	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_dynamicCompression, 1, U"0.0")
 	EditorInstancePrefs_overrideBool    (ERPWindow, spectrogram_picture_garnish,    1, true)
 
-	prefs_add_enum_with_data (ERPWindow, scalp_colourScale,           1, kGraphics_colourScale, BLUE_TO_RED)
+	EditorInstancePrefs_addEnum         (ERPWindow, scalp_colourScale,              1, kGraphics_colourScale, BLUE_TO_RED)
 
 EditorPrefs_end (ERPWindow)
 

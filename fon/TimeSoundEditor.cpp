@@ -46,7 +46,7 @@ void structTimeSoundEditor :: v_destroy () noexcept {
 void structTimeSoundEditor :: v_info () {
 	TimeSoundEditor_Parent :: v_info ();
 	/* Sound flags: */
-	MelderInfo_writeLine (U"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (our p_sound_scalingStrategy));
+	MelderInfo_writeLine (U"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (our instancePref_sound_scalingStrategy()));
 }
 
 enum {
@@ -179,14 +179,14 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed (TimeSoundEditor 
 		POSITIVE (relativeWidth, U"Relative width", my default_extract_relativeWidth())
 		BOOLEAN (preserveTimes, U"Preserve times", my default_extract_preserveTimes())
 	EDITOR_OK
-		SET_ENUM (windowShape, kSound_windowShape, my pref_extract_windowShape())
+		SET_ENUM (windowShape, kSound_windowShape, my classPref_extract_windowShape())
 		SET_REAL (relativeWidth, my classPref_extract_relativeWidth())
 		SET_BOOLEAN (preserveTimes, my classPref_extract_preserveTimes())
 	EDITOR_DO
 		Sound sound = my d_sound.data;
 		Melder_assert (sound);
 		CONVERT_DATA_TO_ONE
-			my pref_extract_windowShape () = windowShape;
+			my setClassPref_extract_windowShape (windowShape);
 			my setClassPref_extract_relativeWidth (relativeWidth);
 			my setClassPref_extract_preserveTimes (preserveTimes);
 			autoSound result = Sound_extractPart (sound, my startSelection, my endSelection, windowShape, relativeWidth, preserveTimes);
@@ -445,12 +445,12 @@ static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 		REAL (minimum, U"Minimum", my default_sound_scaling_minimum ())
 		REAL (maximum, U"Maximum", my default_sound_scaling_maximum ())
 	EDITOR_OK
-		SET_ENUM (scalingStrategy, kTimeSoundEditor_scalingStrategy, my p_sound_scalingStrategy)
+		SET_ENUM (scalingStrategy, kTimeSoundEditor_scalingStrategy, my instancePref_sound_scalingStrategy())
 		SET_REAL (height,  my instancePref_sound_scaling_height())
 		SET_REAL (minimum, my instancePref_sound_scaling_minimum())
 		SET_REAL (maximum, my instancePref_sound_scaling_maximum())
 	EDITOR_DO
-		my pref_sound_scalingStrategy () = my p_sound_scalingStrategy = scalingStrategy;
+		my setInstancePref_sound_scalingStrategy (scalingStrategy) ;
 		my setInstancePref_sound_scaling_height (height);
 		my setInstancePref_sound_scaling_minimum (minimum);
 		my setInstancePref_sound_scaling_maximum (maximum);
@@ -553,7 +553,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	const integer firstVisibleChannel = my d_sound.channelOffset + 1;
 	const integer lastVisibleChannel = Melder_clippedRight (my d_sound.channelOffset + numberOfVisibleChannels, numberOfChannels);
 	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
-	if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW) {
+	if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::BY_WINDOW) {
 		if (longSound)
 			LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, firstVisibleChannel, & visibleMinimum, & visibleMaximum);
 		else
@@ -579,7 +579,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);
 		bool horizontal = false;
 		double minimum = ( sound ? globalMinimum : -1.0 ), maximum = ( sound ? globalMaximum : 1.0 );
-		if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW) {
+		if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::BY_WINDOW) {
 			if (numberOfChannels > 2) {
 				if (longSound)
 					LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
@@ -594,12 +594,12 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 				minimum = visibleMinimum;
 				maximum = visibleMaximum;
 			}
-		} else if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW_AND_CHANNEL) {
+		} else if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::BY_WINDOW_AND_CHANNEL) {
 			if (longSound)
 				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
 			else
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-		} else if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
+		} else if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
 			if (longSound)
 				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
 			else
@@ -608,7 +608,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			const double middle = 0.5 * (minimum + maximum);
 			minimum = middle - 0.5 * channelExtent;
 			maximum = middle + 0.5 * channelExtent;
-		} else if (my p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
+		} else if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
 			minimum = my instancePref_sound_scaling_minimum();
 			maximum = my instancePref_sound_scaling_maximum();
 		}
