@@ -77,7 +77,7 @@
 #undef  ClassPrefs_addString
 #define ClassPrefs_addString(Klas,name,version,default) \
 	conststring32 struct##Klas :: _classDefault_##name = default; \
-	EditorPrefsString struct##Klas :: _classPref_##name;
+	PrefsString struct##Klas :: _classPref_##name;
 #undef  ClassPrefs_overrideString
 #define ClassPrefs_overrideString(Klas,name,version,default)     ClassPrefs_addString (Klas, name, version, default)
 #undef  InstancePrefs_addString

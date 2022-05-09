@@ -234,11 +234,11 @@ static void menu_cb_deleteLogFile2 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRE
 }
 
 static void do_log (TimeSoundAnalysisEditor me, int which) {
-	char32 format [Preferences_STRING_BUFFER_SIZE], *p;
+	PrefsString format;
 	double tmin, tmax;
 	const int part = makeQueriable (me, true, & tmin, & tmax);
 	str32cpy (format, which == 1 ? my instancePref_log1_format() : my instancePref_log2_format());
-	for (p = format; *p != U'\0'; p ++) if (*p == U'\'') {
+	for (char32 *p = format; *p != U'\0'; p ++) if (*p == U'\'') {
 		/*
 			Found a left quote. Search for a matching right quote.
 		*/

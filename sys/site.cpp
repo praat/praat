@@ -1,6 +1,6 @@
 /* site.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 #include <string.h>
 #include "site.h"
 
-static char32 printCommand [Preferences_STRING_BUFFER_SIZE];
+static PrefsString printCommand;
 
 char32 * Site_getPrintCommand () { return printCommand; }
 
-void Site_setPrintCommand (conststring32 text) { str32cpy (printCommand, text); }
+void Site_setPrintCommand (conststring32 text) { Pref_copyString (text, printCommand); }
 
 void Site_prefs () {
 	Preferences_addString (U"Site.printCommand", printCommand, U"lp -c %s");

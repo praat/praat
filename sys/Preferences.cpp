@@ -1,6 +1,6 @@
 /* Preferences.cpp
  *
- * Copyright (C) 1996-2013,2015-2020 Paul Boersma
+ * Copyright (C) 1996-2013,2015-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,8 +151,7 @@ void Preferences_read (MelderFile file) {
 						Melder_a8tof (Melder_peek32to8 (value));
 				break;
 				case stringwa: {
-					str32ncpy ((char32 *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
-					((char32 *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = U'\0';
+					Pref_copyString (value, (char32 *) pref -> value);
 				}
 				break;
 				case enumwa: {
