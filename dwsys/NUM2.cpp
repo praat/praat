@@ -1296,30 +1296,6 @@ double NUMlnBeta (double a, double b) {
 	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
-static void MATscaledResiduals (MAT const& residuals, constMAT const& data, constMAT const& covariance, constVEC const& means) {
-	try {
-		Melder_require (residuals.nrow == data.nrow && residuals.ncol == data.ncol,
-			U"The data and the residuals should have the same dimensions.");
-		Melder_require (covariance.ncol == means.size && data.ncol == means.size,
-			U"The dimensions of the means and the covariance have to conform with the data.");
-		autoVEC dif = raw_VEC (data.ncol);
-		autoMAT lowerInverse = copy_MAT (covariance);
-		MATlowerCholeskyInverse_inplace (lowerInverse.get(), nullptr);
-		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			dif.all()  <<=  data.row (irow)  -  means;
-			residuals.row (irow)  <<=  0.0;
-			if (lowerInverse.nrow == 1) { // diagonal matrix is one row matrix
-				residuals.row (irow)  <<=  lowerInverse.row (1)  *  dif.get();
-			} else {// square matrix
-				for (integer icol = 1; icol <= data.ncol; icol ++)
-					residuals [irow] [icol] = NUMinner (lowerInverse.row (icol).part (1, icol), dif.part (1, icol));
-			}
-		}
-	} catch (MelderError) {
-		Melder_throw (U"MATscaleResiduals: not performed.");
-	}
-}
-
 /*************** Hz <--> other freq reps *********************/
 
 double NUMmelToHertz3 (double mel) {

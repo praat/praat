@@ -39,7 +39,6 @@ void Proximity_init (Proximity me, integer numberOfPoints) {
 Thing_implement (Dissimilarity, Proximity, 0);
 
 static bool Dissimilarity_hasNoNegativeValues (Dissimilarity me) {
-	bool noNegatives = true;
 	for (integer i = 1; i <= my numberOfRows - 1; i ++)
 		for (integer j = i + 1; j <= my numberOfRows; j ++)
 			if (my data [i] [j] < 0.0)

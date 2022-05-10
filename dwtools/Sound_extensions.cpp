@@ -1318,16 +1318,6 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	return rxy;
 }
 
-
-static double interpolate2 (Sound me, integer i1, integer channel, double level)
-/* Precondition: my z [1] [i1] != my z [1] [i1 + 1]; */
-{
-	const integer i2 = i1 + 1;
-	const double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
-	const double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
-	return x1 + (x2 - x1) * (y1 - level) / (y1 - y2);   // linear
-}
-
 double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection) {
 	const double *amplitude = & my z [channel] [0];
 	const integer leftSample = Sampled_xToLowIndex (me, position);
@@ -1701,7 +1691,6 @@ autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeSt
 					bool unionContinues = true;
 					while (unionContinues && vadIndex <= vadNumberOfIntervals) {
 						const TextInterval vadTextInterval = vadTier -> intervals.at [vadIndex];
-						const double vadStartTime = vadTextInterval -> xmin;
 						const conststring32 vadLabel = vadTextInterval -> text.get();
 						const double vadEndTime = vadTextInterval -> xmax;
 						if (vadEndTime > silenceEndTime - timeMargin) {
@@ -2000,71 +1989,6 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 				Graphics_markLeft (g, 0.0, false, true, true, nullptr);
 		}
 		Graphics_rectangle (g, xmin, xmax, ymin, ymax);
-	}
-}
-
-static void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, bool fromStart) {	
-	Melder_require (channel >= 0 && channel <= my ny,
-		U"Invalid channel number: ", channel, U".");
-	const integer channelFrom = channel == 0 ? 1 : channel;
-	const integer channelTo = channel == 0 ? my ny : channel;
-	
-	double startTime = time > my xmax ? my xmax : ( time < my xmin ? my xmin : time );
-	double endTime = startTime + fadeTime;
-	if (startTime > endTime)
-		std::swap (startTime, endTime);
-	
-	Melder_require (startTime < my xmax,
-		U"Fade-in should start before the end time of the sound.");
-	
-	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
-	autoVEC fadeWindow = raw_VEC (numberOfSamplesFade);
-	
-	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
-		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*(1.0 + (isamp - 1.0)/ (numberOfSamplesFade - 1))));
-	
-	const integer startSample = Sampled_xToNearestIndex (me, startTime);
-	integer endSample = startSample + numberOfSamplesFade - 1;
-	endSample = std::min (endSample, my nx);
-	
-	for (integer ichannel = channelFrom; ichannel <= channelTo; ichannel ++) {
-		my z [channel].part (startSample, endSample)  *=  fadeWindow.part (1, endSample - startSample + 1);
-		if (fromStart && startSample > 1)
-			my z [channel].part (1, startSample - 1)  <<=  0.0;
-	}
-}
-
-static void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime, bool toEnd) {
-	Melder_require (channel >= 0 && channel <= my ny,
-		U"Invalid channel number: ", channel, U".");
-	const integer channelFrom = channel == 0 ? 1 : channel;
-	const integer channelTo = channel == 0 ? my ny : channel;
-	
-	Melder_assert (my xmax >= my xmin);   // for Melder_clipped
-	double startTime = Melder_clipped (my xmin, time, my xmax);
-	double endTime = startTime + fadeTime;
-	if (startTime > endTime)
-		std::swap (startTime, endTime);
-	
-	Melder_require (endTime > my xmin,
-		U"Fade-out should end after the start time of the sound."); 
-	
-	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
-	autoVEC fadeWindow = raw_VEC (numberOfSamplesFade);
-	
-	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
-		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*((isamp - 1.0)/ (numberOfSamplesFade - 1))));
-	
-	const integer startSample = Sampled_xToNearestIndex (me, startTime);
-	integer endSample = startSample + numberOfSamplesFade - 1;
-	endSample = std::min (endSample, my nx);
-	Melder_require (endSample > 0, 
-		U"The fade-out interval should not be located before the start time of the sound.");
-	
-	for (integer ichannel = channelFrom; ichannel <= channelTo; ichannel ++) {
-		my z [channel].part (startSample, endSample)  *=  fadeWindow.part (1, endSample - startSample + 1);
-		if (toEnd && endSample < my nx)
-			my z [channel].part (endSample + 1, my nx)  <<=  0.0;
 	}
 }
 

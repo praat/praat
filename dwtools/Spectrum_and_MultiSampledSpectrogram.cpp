@@ -126,8 +126,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 					Fill with values from 0 Hz to the mid of the first window.
 					Multiply with a window only the part that overlaps with the first half of the first window.
 				*/
-				const integer numberOfRestSamples = Sampled_getWindowSamples (me, 
-					my xmin, 0.5 * (spectrum_fmin + spectrum_fmax), & spectrum_imin, & spectrum_imax);
+				const integer numberOfRestSamples = Sampled_getWindowSamples (me, my xmin, 0.5 * (spectrum_fmin + spectrum_fmax), & spectrum_imin, & spectrum_imax);
 				const integer newWindowSize = std::min (numberOfRestSamples, window.size / 2);
 				VEC partialWindow = window.part (window.size - newWindowSize + 1, window.size);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, partialWindow);
@@ -143,8 +142,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 					Fill with the part from the mid of the last window to the end.
 					Multiply with a window only the part that overlaps with the last half of the last window.
 				*/
-				const integer numberOfRestSamples = Sampled_getWindowSamples (me, 
-					0.5 * (spectrum_fmin + spectrum_fmax), my xmax, & spectrum_imin, & spectrum_imax);
+				const integer numberOfRestSamples = Sampled_getWindowSamples (me, 0.5 * (spectrum_fmin + spectrum_fmax), my xmax, & spectrum_imin, & spectrum_imax);
 				const integer newWindowSize = std::min (numberOfRestSamples, window.size / 2);
 				VEC partialWindow = window.part (1, newWindowSize);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, partialWindow);
