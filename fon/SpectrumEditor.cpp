@@ -22,11 +22,11 @@
 
 Thing_implement (SpectrumEditor, FunctionEditor, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "SpectrumEditor_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "SpectrumEditor_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "SpectrumEditor_prefs.h"
 
 static void updateRange (SpectrumEditor me) {

@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (KlattGrid_PitchTierArea)
+Prefs_begin (KlattGrid_PitchTierArea)
 
-	EditorInstancePrefs_overrideDouble (KlattGrid_PitchTierArea, dataFreeMinimum, 1, U"50.0")
-	EditorInstancePrefs_overrideDouble (KlattGrid_PitchTierArea, dataFreeMaximum, 1, U"600.0")
+	InstancePrefs_overrideDouble (KlattGrid_PitchTierArea, dataFreeMinimum, 1, U"50.0")
+	InstancePrefs_overrideDouble (KlattGrid_PitchTierArea, dataFreeMaximum, 1, U"600.0")
 
-EditorPrefs_end (KlattGrid_PitchTierArea)
+Prefs_end (KlattGrid_PitchTierArea)
 
 /* End of file KlattGrid_PitchTierArea_prefs.h */

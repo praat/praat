@@ -16,14 +16,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (SoundRecorder)
+Prefs_begin (SoundRecorder)
 
-	EditorInstancePrefs_addEnum   (SoundRecorder, meter_which,                    1, kSoundRecorder_meter, INTENSITY)
-	EditorInstancePrefs_addDouble (SoundRecorder, meter_intensity_minimum,  1, U"50.0")   // dB
-	EditorInstancePrefs_addDouble (SoundRecorder, meter_intensity_maximum,  1, U"94.0")   // dB
-	EditorInstancePrefs_addDouble (SoundRecorder, meter_centreOfGravity_minimum,  1,  U"500.0")   // Hz
-	EditorInstancePrefs_addDouble (SoundRecorder, meter_centreOfGravity_maximum,  1, U"8000.0")   // Hz
+	InstancePrefs_addEnum   (SoundRecorder, meter_which,                    1, kSoundRecorder_meter, INTENSITY)
+	InstancePrefs_addDouble (SoundRecorder, meter_intensity_minimum,  1, U"50.0")   // dB
+	InstancePrefs_addDouble (SoundRecorder, meter_intensity_maximum,  1, U"94.0")   // dB
+	InstancePrefs_addDouble (SoundRecorder, meter_centreOfGravity_minimum,  1,  U"500.0")   // Hz
+	InstancePrefs_addDouble (SoundRecorder, meter_centreOfGravity_maximum,  1, U"8000.0")   // Hz
 
-EditorPrefs_end (SoundRecorder)
+Prefs_end (SoundRecorder)
 
 /* End of file SoundRecorder_prefs.h */

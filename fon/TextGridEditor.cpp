@@ -32,11 +32,11 @@
 
 Thing_implement (TextGridEditor, TimeSoundAnalysisEditor, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "TextGridEditor_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "TextGridEditor_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "TextGridEditor_prefs.h"
 
 void structTextGridEditor :: v_info () {
@@ -657,7 +657,7 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	const AnyTier tier = static_cast <AnyTier> (grid -> tiers->at [my selectedTier]);
 	if (tier -> classInfo != classIntervalTier)
 		Melder_throw (U"Alignment works only for interval tiers, whereas tier ", my selectedTier, U" is a point tier.\nSelect an interval tier instead.");
-	integer intervalNumber = getSelectedInterval (me);
+	const integer intervalNumber = getSelectedInterval (me);
 	if (! intervalNumber)
 		Melder_throw (U"Select an interval first");
 	if (! my instancePref_align_includeWords() && ! my instancePref_align_includePhonemes())
@@ -669,7 +669,7 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 			anySound = my d_longSound.data;
 		Editor_save (me, U"Align interval");
 		TextGrid_anySound_alignInterval (grid, anySound, my selectedTier, intervalNumber,
-			my pref_align_language(), my instancePref_align_includeWords(), my instancePref_align_includePhonemes());
+			my instancePref_align_language(), my instancePref_align_includeWords(), my instancePref_align_includePhonemes());
 	}
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -685,7 +685,7 @@ static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 		BOOLEAN (includePhonemes, U"Include phonemes", my default_align_includePhonemes ())
 		BOOLEAN (allowSilences,   U"Allow silences",   my default_align_allowSilences ())
 	EDITOR_OK
-		int prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), my p_align_language);
+		int prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), my instancePref_align_language());
 		if (prefVoice == 0)
 			prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
 		SET_OPTION (language, prefVoice)
@@ -693,7 +693,7 @@ static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 		SET_BOOLEAN (includePhonemes, my instancePref_align_includePhonemes())
 		SET_BOOLEAN (allowSilences, my instancePref_align_allowSilences())
 	EDITOR_DO
-		pref_str32cpy2 (my pref_align_language (), my p_align_language, espeakdata_languages_names -> strings [language].get());
+		my setInstancePref_align_language (espeakdata_languages_names -> strings [language].get());
 		my setInstancePref_align_includeWords (includeWords);
 		my setInstancePref_align_includePhonemes (includePhonemes);
 		my setInstancePref_align_allowSilences (allowSilences);
@@ -1347,7 +1347,8 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 		/* mutable clip */ double startInterval = interval -> xmin, endInterval = interval -> xmax;
 		if (endInterval > my startWindow && startInterval < my endWindow) {   // interval visible?
 			const bool intervalIsSelected = ( iinterval == selectedInterval );
-			const bool labelDoesMatch = Melder_stringMatchesCriterion (interval -> text.get(), my instancePref_greenMethod(), my p_greenString, true);
+			const bool labelDoesMatch = Melder_stringMatchesCriterion (interval -> text.get(),
+					my instancePref_greenMethod(), my instancePref_greenString(), true);
 			Melder_clipLeft (my startWindow, & startInterval);
 			Melder_clipRight (& endInterval, my endWindow);
 			if (labelDoesMatch) {
@@ -2151,7 +2152,7 @@ OPTIONMENU_VARIABLE (v_prefs_addFields__useTextStyles)
 OPTIONMENU_VARIABLE (v_prefs_addFields__shiftDragMultiple)
 OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf)
 OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel)
-SENTENCE_VARIABLE (v_prefs_addFields_theText)
+SENTENCE_VARIABLE (v_prefs_addFields__theText)
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
 	POSITIVE_FIELD (v_prefs_addFields__fontSize, U"Font size (points)", our default_fontSize())
@@ -2167,7 +2168,7 @@ void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
 	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel,
 			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
-	SENTENCE_FIELD (v_prefs_addFields_theText, U"...the text", our default_greenString ())
+	SENTENCE_FIELD (v_prefs_addFields__theText, U"...the text", our default_greenString())
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields__useTextStyles, our instancePref_useTextStyles() + 1)
@@ -2176,7 +2177,7 @@ void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields__shiftDragMultiple, our instancePref_shiftDragMultiple() + 1)
 	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our instancePref_showNumberOf())
 	SET_ENUM (v_prefs_addFields__paintIntervalsGreenWhoseLabel, kMelder_string, our instancePref_greenMethod())
-	SET_STRING (v_prefs_addFields_theText, our p_greenString)
+	SET_STRING (v_prefs_addFields__theText, our instancePref_greenString())
 }
 void structTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our setInstancePref_useTextStyles (v_prefs_addFields__useTextStyles - 1);
@@ -2185,7 +2186,7 @@ void structTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our setInstancePref_shiftDragMultiple (v_prefs_addFields__shiftDragMultiple - 1);
 	our setInstancePref_showNumberOf (v_prefs_addFields__showNumberOf);
 	our setInstancePref_greenMethod (v_prefs_addFields__paintIntervalsGreenWhoseLabel);
-	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
+	our setInstancePref_greenString (v_prefs_addFields__theText);
 }
 
 void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {

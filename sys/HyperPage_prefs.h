@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (HyperPage)
+Prefs_begin (HyperPage)
 
-	EditorInstancePrefs_addEnum   (HyperPage, font,     1, kGraphics_font, DEFAULT)
-	EditorInstancePrefs_addDouble (HyperPage, fontSize, 1, U"12")
+	InstancePrefs_addEnum   (HyperPage, font,     1, kGraphics_font, DEFAULT)
+	InstancePrefs_addDouble (HyperPage, fontSize, 1, U"12")
 
-EditorPrefs_end (HyperPage)
+Prefs_end (HyperPage)
 
 /* End of file HyperPage_prefs.h */

@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (KlattGrid_DecibelTierArea)
+Prefs_begin (KlattGrid_DecibelTierArea)
 
-	EditorInstancePrefs_overrideDouble (KlattGrid_DecibelTierArea, dataFreeMinimum, 1, U"-30.0")
-	EditorInstancePrefs_overrideDouble (KlattGrid_DecibelTierArea, dataFreeMaximum, 1, U"30.0")
+	InstancePrefs_overrideDouble (KlattGrid_DecibelTierArea, dataFreeMinimum, 1, U"-30.0")
+	InstancePrefs_overrideDouble (KlattGrid_DecibelTierArea, dataFreeMaximum, 1, U"30.0")
 
-EditorPrefs_end (KlattGrid_DecibelTierArea)
+Prefs_end (KlattGrid_DecibelTierArea)
 
 /* End of file KlattGrid_DecibelTierArea_prefs.h */

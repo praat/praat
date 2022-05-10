@@ -22,11 +22,11 @@
 
 Thing_implement (ERPWindow, SoundEditor, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "ERPWindow_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "ERPWindow_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "ERPWindow_prefs.h"
 
 typedef struct { int inclination, azimuth; double topX, topY; } BiosemiLocationData;

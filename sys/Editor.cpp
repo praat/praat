@@ -30,11 +30,11 @@
 
 Thing_implement (Editor, Thing, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "Editor_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "Editor_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "Editor_prefs.h"
 
 /********** class EditorCommand **********/

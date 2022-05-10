@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (DurationTierArea)
+Prefs_begin (DurationTierArea)
 
-	EditorInstancePrefs_overrideDouble (DurationTierArea, dataFreeMinimum, 1, U"0.25")
-	EditorInstancePrefs_overrideDouble (DurationTierArea, dataFreeMaximum, 1, U"3.0")
+	InstancePrefs_overrideDouble (DurationTierArea, dataFreeMinimum, 1, U"0.25")
+	InstancePrefs_overrideDouble (DurationTierArea, dataFreeMaximum, 1, U"3.0")
 
-EditorPrefs_end (DurationTierArea)
+Prefs_end (DurationTierArea)
 
 /* End of file DurationTierArea_prefs.h */

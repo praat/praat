@@ -21,11 +21,11 @@
 
 Thing_implement (EEGWindow, TextGridEditor, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "EEGWindow_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "EEGWindow_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "EEGWindow_prefs.h"
 
 static void menu_cb_EEGWindowHelp (EEGWindow, EDITOR_ARGS_DIRECT) { Melder_help (U"EEG window"); }

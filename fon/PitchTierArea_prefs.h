@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (PitchTierArea)
+Prefs_begin (PitchTierArea)
 
-	EditorInstancePrefs_overrideDouble (PitchTierArea, dataFreeMinimum, 1, U"50.0")   // Hz
-	EditorInstancePrefs_overrideDouble (PitchTierArea, dataFreeMaximum, 1, U"300.0")   // Hz
+	InstancePrefs_overrideDouble (PitchTierArea, dataFreeMinimum, 1, U"50.0")   // Hz
+	InstancePrefs_overrideDouble (PitchTierArea, dataFreeMaximum, 1, U"300.0")   // Hz
 
-EditorPrefs_end (PitchTierArea)
+Prefs_end (PitchTierArea)
 
 /* End of file PitchTierArea_prefs.h */

@@ -16,10 +16,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (TextEditor)
+Prefs_begin (TextEditor)
 
-	EditorInstancePrefs_addDouble (TextEditor, fontSize, 1, U"12")
+	InstancePrefs_addDouble (TextEditor, fontSize, 1, U"12")
 
-EditorPrefs_end (TextEditor)
+Prefs_end (TextEditor)
 
 /* End of file TextEditor_prefs.h */

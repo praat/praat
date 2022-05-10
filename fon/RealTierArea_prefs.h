@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (RealTierArea)
+Prefs_begin (RealTierArea)
 
-	EditorInstancePrefs_addDouble (RealTierArea, dataFreeMinimum, 1, U"-100.0")
-	EditorInstancePrefs_addDouble (RealTierArea, dataFreeMaximum, 1, U"100.0")
+	InstancePrefs_addDouble (RealTierArea, dataFreeMinimum, 1, U"-100.0")
+	InstancePrefs_addDouble (RealTierArea, dataFreeMaximum, 1, U"100.0")
 
-EditorPrefs_end (RealTierArea)
+Prefs_end (RealTierArea)
 
 /* End of file RealTierArea_prefs.h */
