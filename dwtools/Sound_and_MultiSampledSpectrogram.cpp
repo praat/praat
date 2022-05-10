@@ -43,7 +43,6 @@ autoSound MultiSampledSpectrogram_to_Sound (MultiSampledSpectrogram me) {
 		} else {
 			Melder_throw (U"The synthesized number of samples is too low!");
 		}
-		thy z.get()  /=  my frequencyResolutionInBins;
 		return thee;
 		
 	} catch (MelderError) {
@@ -79,7 +78,7 @@ autoGaborSpectrogram Sound_to_GaborSpectrogram (Sound me, double fmax, double fi
 	try {
 		const double nyquistFrequency = 0.5 / my dx;
 		bool resample = true;
-		if (fmax <= 0.0 || fmax > nyquistFrequency) {
+		if (fmax <= 0.0 || fmax >= nyquistFrequency) {
 			fmax = nyquistFrequency;
 			resample = false;
 		}
@@ -87,7 +86,7 @@ autoGaborSpectrogram Sound_to_GaborSpectrogram (Sound me, double fmax, double fi
 		autoSound resampled;
 		if (resample)
 			resampled = Sound_resample (me, 2.0 * fmax, 50);
-		autoSpectrum him = Sound_to_Spectrum ((resampled ? resampled.get() : me), true);
+		autoSpectrum him = Sound_to_Spectrum ((resample ? resampled.get() : me), true);
 		Spectrum_into_MultiSampledSpectrogram (him.get(), thee.get(), timeOversamplingFactor, filterShape);
 		return thee;
 	} catch (MelderError) {

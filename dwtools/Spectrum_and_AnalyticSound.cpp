@@ -45,23 +45,22 @@ autoAnalyticSound Spectrum_to_AnalyticSound_demodulateBand (Spectrum me, integer
 		Melder_clipRight (& endSample, my nx);
 		Melder_require (startSample < endSample,
 			U"The start spectral sample should lie before the end spectral sample.");
-		const integer extraSpectralSamples = ( startSample > 1 ? 1 : 0 ); // first value cannot be imaginary in a Spectrum
+		const integer extraSpectralSample = ( startSample > 1 ? 1 : 0 ); // first spectral value cannot be imaginary
 		const integer numberOfSamplesFromSpectrum = endSample - startSample + 1;
 		Melder_require (window.size <= numberOfSamplesFromSpectrum,
 			U"The window size should not exceed the number of selected spectral values.");
-		const integer numberOfValuesInBand = extraSpectralSamples + ( approximateOverSampling <= 1.0 ? numberOfSamplesFromSpectrum :
+		const integer numberOfValuesInBand = extraSpectralSample + ( approximateOverSampling <= 1.0 ? numberOfSamplesFromSpectrum :
 			 Melder_iroundUp (approximateOverSampling * numberOfSamplesFromSpectrum) );
 		const integer numberOfSamplesFFT = Melder_iroundUpToPowerOfTwo (numberOfValuesInBand);
 		const integer numberOfFrequencies = numberOfSamplesFFT + 1;
-		double demod_fmax = (endSample - startSample + 1) * my dx * numberOfSamplesFFT / numberOfSamplesFromSpectrum;
+		const double demod_fmax = my dx * numberOfSamplesFFT;
 		autoSpectrum demodSpectrum = Spectrum_create (demod_fmax, numberOfFrequencies);
-		const integer demodStart = 1 + extraSpectralSamples, demodEnd = demodStart + numberOfSamplesFromSpectrum - 1;
-		demodSpectrum -> z.part (1, 2, demodStart, demodEnd)  <<=  my z.part (1, 2, startSample, endSample);
+		demodSpectrum -> z.part (1, 2, 1 + extraSpectralSample, numberOfSamplesFromSpectrum + extraSpectralSample)  
+			<<=  my z.part (1, 2, startSample, endSample);
 		if (window.size > 0) {
 			const integer startWindowing = ( startSample == 1 ? numberOfSamplesFromSpectrum - window.size + 1 : 2 );
 			const integer endWindowing = startWindowing + window.size - 1;
-			demodSpectrum -> z [1].part (startWindowing, endWindowing)  *=  window;
-			demodSpectrum -> z [2].part (startWindowing, endWindowing)  *=  window;
+			demodSpectrum -> z.part (1, 2, startWindowing, endWindowing)  *=  window;
 		}
 		return Spectrum_to_AnalyticSound (demodSpectrum.get());
 	} catch (MelderError) {
