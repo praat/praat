@@ -124,14 +124,16 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				/*
 					DC_BIN:
 					Fill with values from 0 Hz to the mid of the first window.
-					Multiply with a window only the part that overlaps with the first window.
+					Multiply with a window only the part that overlaps with the first half of the first window.
 				*/
-				(void) Sampled_getWindowSamples (me, my xmin, 0.5 * (spectrum_fmin + spectrum_fmax), & spectrum_imin, & spectrum_imax);
-				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
-					 	window.part ((window.size + 1) / 2 + 1, window.size));
-				thy frequencyAmplifications.part (1, spectrum_imax - window.size / 2)  +=  1.0;
-				thy frequencyAmplifications.part (spectrum_imax - window.size / 2 + 1, spectrum_imax)  +=
-					window.part ((window.size + 1) / 2 + 1, window.size);
+				const integer numberOfRestSamples = Sampled_getWindowSamples (me, 
+					my xmin, 0.5 * (spectrum_fmin + spectrum_fmax), & spectrum_imin, & spectrum_imax);
+				const integer newWindowSize = std::min (numberOfRestSamples, window.size / 2);
+				VEC partialWindow = window.part (window.size - newWindowSize + 1, window.size);
+				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, partialWindow);
+				thy frequencyAmplifications.part (spectrum_imax - newWindowSize + 1, spectrum_imax)  += partialWindow;
+				if (numberOfRestSamples > newWindowSize)
+					thy frequencyAmplifications.part (1, spectrum_imax - newWindowSize )  +=  1.0;
 				thy zeroBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 				thy zeroBin -> z = his z.move();
 			} 
@@ -139,14 +141,16 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				/*
 					NYQUIST_BIN:
 					Fill with the part from the mid of the last window to the end.
-					Window only the part that overlaps the last window.
+					Multiply with a window only the part that overlaps with the last half of the last window.
 				*/
-				(void) Sampled_getWindowSamples (me, 0.5 * (spectrum_fmin + spectrum_fmax), my xmax, & spectrum_imin, & spectrum_imax);
-				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
-					 	window.part (1 , window.size / 2));
-				thy frequencyAmplifications.part (spectrum_imin, spectrum_imin + window.size / 2 - 1)  += 
-					window.part (1 , window.size / 2);
-				thy frequencyAmplifications.part (spectrum_imin + window.size / 2, spectrum_imax)  +=  1.0;
+				const integer numberOfRestSamples = Sampled_getWindowSamples (me, 
+					0.5 * (spectrum_fmin + spectrum_fmax), my xmax, & spectrum_imin, & spectrum_imax);
+				const integer newWindowSize = std::min (numberOfRestSamples, window.size / 2);
+				VEC partialWindow = window.part (1, newWindowSize);
+				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, partialWindow);
+				thy frequencyAmplifications.part (spectrum_imin, spectrum_imin + newWindowSize - 1)  += partialWindow;
+				if (numberOfRestSamples > newWindowSize)
+					thy frequencyAmplifications.part (spectrum_imin + newWindowSize, spectrum_imax)  +=  1.0;
 				thy nyquistBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 				thy nyquistBin -> z = his z.move();
 			}
@@ -169,20 +173,19 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 		Melder_assert (numberOfSpectralValues == my numberOfSpectralValues);
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfSpectralValues);
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
-			integer extraSample = 1;
+			integer iflow, ifhigh;
 			const FrequencyBin frequencyBin = my frequencyBins.at [ifreq];			
 			double flow, fhigh;
 			MultiSampledSpectrogram_getFrequencyBand (me, ifreq, & flow, & fhigh);
 			auto fillSpectrumPart = [&] (FrequencyBin fbin) {
 				autoSound sound = FrequencyBin_to_Sound (fbin);
 				autoSpectrum filter = Sound_to_Spectrum (sound.get(), false);
-				integer iflow, ifhigh;
 				(void) Sampled_getWindowSamples (thee.get(), flow, fhigh, & iflow, & ifhigh);
+				const integer extraSample = ( iflow > 1 ? 1 : 0 );
 				thy z.part (1, 2, iflow, ifhigh)  +=  filter -> z.part (1, 2, 1 + extraSample, ifhigh - iflow + 1 + extraSample);
 			};
 			fillSpectrumPart (frequencyBin);
 			if (ifreq == 1) {
-				extraSample = 0;
 				fhigh = 0.5 * (flow + fhigh); 
 				flow = 0.0;
 				fillSpectrumPart (my zeroBin.get());
