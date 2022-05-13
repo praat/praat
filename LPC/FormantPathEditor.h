@@ -123,6 +123,8 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_restoreData ()
 		override;
+	void v_reset_analysis ()
+		override;
 	#include "FormantPathEditor_prefs.h"
 };
 

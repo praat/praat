@@ -43,6 +43,14 @@ void structFormantPathEditor :: v_info () {
 	FormantPathEditor_Parent :: v_info ();
 }
 
+void structFormantPathEditor :: v_reset_analysis () {
+	our d_spectrogram. reset();
+	our d_pitch. reset();
+	our d_intensity. reset();
+	our d_pulses. reset();
+	// not my formant!
+}
+
 /*
 	MelderColour markedCandidatesColour = MelderColour (0.984, 0.951, 0.020); // Melder_YELLOW
 	In the selectionViewer, the following light yellow colour combines better with the chosen colours 
