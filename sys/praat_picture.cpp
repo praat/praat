@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ DIRECT (GRAPHICS_NONE__Courier) {
 /***** "Font" MENU: size part *****/
 
 static GuiMenuItem praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
+
 static void updateSizeMenu () {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10.0);
@@ -165,6 +166,7 @@ DO
 /***** "Select" MENU *****/
 
 static GuiMenuItem praatButton_innerViewport, praatButton_outerViewport;
+
 static void updateViewportMenu () {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenuItem_check (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0);
@@ -334,7 +336,7 @@ DO
 	Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 	Graphics_setTextRotation (GRAPHICS, rotation);
 	Graphics_text (GRAPHICS, horizontalAlignment == 0 ? 0.0 : horizontalAlignment == 1 ? 0.5 : 1.0,
-		verticalAlignment == 0 ? 0.0 : verticalAlignment == 1 ? 0.5 : 1.0, text);
+			verticalAlignment == 0 ? 0.0 : verticalAlignment == 1 ? 0.5 : 1.0, text);
 	Graphics_setTextRotation (GRAPHICS, 0.0);
 	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
 	END_NO_NEW_DATA
@@ -346,7 +348,6 @@ static GuiMenuItem praatButton_lines [4];
 static GuiMenuItem praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
 	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime, praatButton_navy,
 	praatButton_teal, praatButton_purple, praatButton_olive, praatButton_pink, praatButton_silver, praatButton_grey;
-
 
 static void updatePenMenu () {
 	if (! theCurrentPraatApplication -> batch) {
@@ -1193,13 +1194,13 @@ FORM (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/rig
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dy;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.2 * (y2WC - y1WC);
+	const double dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy)
 		Melder_throw (U"\"Position\" must be between ", y1WC, U" and ", y2WC, U".");
 	GRAPHICS_NONE
@@ -1215,13 +1216,13 @@ FORM (GRAPHICS_OneMarkRight, U"Praat picture: One mark right", U"One mark left/r
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dy;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.2 * (y2WC - y1WC);
+	const double dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy)
 		Melder_throw (U"\"Position\" must be between ", y1WC, U" and ", y2WC, U".");
 	GRAPHICS_NONE
@@ -1237,13 +1238,13 @@ FORM (GRAPHICS_OneMarkTop, U"Praat picture: One mark top", U"One mark left/right
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dx;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;   // WHY?
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.2 * (x2WC - x1WC);
+	const double dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx)
 		Melder_throw (U"\"Position\" must be between ", x1WC, U" and ", x2WC, U".");
 	GRAPHICS_NONE
@@ -1259,13 +1260,13 @@ FORM (GRAPHICS_OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dx;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.2 * (x2WC - x1WC);
+	const double dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx)
 		Melder_throw (U"\"Position\" must be between ", x1WC, U" and ", x2WC, U".");
 	GRAPHICS_NONE
@@ -1281,13 +1282,13 @@ FORM (GRAPHICS_OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark lef
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dy;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.2 * (y2WC - y1WC);
+	const double dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
 		Melder_throw (U"\"Position\" must be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
 	GRAPHICS_NONE
@@ -1303,13 +1304,13 @@ FORM (GRAPHICS_OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark ri
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dy;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.2 * (y2WC - y1WC);
+	const double dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
 		Melder_throw (U"\"Position\" must be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
 	GRAPHICS_NONE
@@ -1325,13 +1326,13 @@ FORM (GRAPHICS_OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top"
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dx;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.2 * (x2WC - x1WC);
+	const double dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
 		Melder_throw (U"\"Position\" must be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
 	GRAPHICS_NONE
@@ -1347,13 +1348,13 @@ FORM (GRAPHICS_OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark b
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dx;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.2 * (x2WC - x1WC);
+	const double dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
 		Melder_throw (U"\"Position\" must be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
 	GRAPHICS_NONE
@@ -1555,9 +1556,8 @@ static void cb_selectionChanged (Picture p, void * /* closure */,
 	theCurrentPraatPicture -> y2NDC = sely2;
 	if (praat_mouseSelectsInnerViewport) {
 		const double fontSize = Graphics_inqFontSize (GRAPHICS);
-		double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
-		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
-		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+		const double xmargin = Melder_clippedRight (fontSize * 4.2 / 72.0, 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC));
+		const double ymargin = Melder_clippedRight (fontSize * 2.8 / 72.0, 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC));
 		UiHistory_write (U"\nSelect inner viewport: ");
 		UiHistory_write (Melder_single (theCurrentPraatPicture -> x1NDC + xmargin));
 		UiHistory_write (U", ");
@@ -1683,18 +1683,21 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 		Gui_getWindowPositioningBounds (& screenX, & screenY, & screenWidth, & screenHeight);
 		resolution = Gui_getResolution (nullptr);
 		#if defined (macintosh)
-			margin = 2, width = 6 * resolution + 20;
+			margin = 2;
+			width = 6 * resolution + 20;
 			height = Machine_getMenuBarBottom () + 9 * resolution + 24;
 			x = screenX + screenWidth - width - 14;
 			y = screenY + 0;
 			width += margin * 2;
 		#elif defined (_WIN32)
-			margin = 2, width = 6 * resolution + 22;
+			margin = 2;
+			width = 6 * resolution + 22;
 			height = 9 * resolution + 24;
 			x = screenX + screenWidth - width - 17;
 			y = screenY + 0;
 		#else
-			margin = 0, width = 6 * resolution + 30;
+			margin = 0;
+			width = 6 * resolution + 30;
 			height = width * 3 / 2 + Machine_getTitleBarHeight ();
 			x = screenX + screenWidth - width - 10;
 			y = screenY + 0;
