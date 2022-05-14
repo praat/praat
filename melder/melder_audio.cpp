@@ -74,7 +74,6 @@ static struct {
 	enum kMelder_asynchronicityLevel maximumAsynchronicity;
 	enum kMelder_inputSoundSystem inputSoundSystem;
 	enum kMelder_outputSoundSystem outputSoundSystem;
-	bool useInternalSpeaker;
 	double silenceBefore, silenceAfter;
 } preferences;
 
@@ -82,7 +81,6 @@ void Melder_audio_prefs () {
 	Preferences_addEnum (U"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, kMelder_asynchronicityLevel::DEFAULT);
 	Preferences_addEnum (U"Audio.inputSoundSystem", & preferences. inputSoundSystem, kMelder_inputSoundSystem, kMelder_inputSoundSystem::DEFAULT);
 	Preferences_addEnum (U"Audio.outputSoundSystem", & preferences. outputSoundSystem, kMelder_outputSoundSystem, kMelder_outputSoundSystem::DEFAULT);
-	Preferences_addBool (U"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
 	Preferences_addDouble (U"Audio.silenceBefore2", & preferences. silenceBefore, kMelderAudio_outputSilenceBefore_DEFAULT);
 	Preferences_addDouble (U"Audio.silenceAfter2", & preferences. silenceAfter, kMelderAudio_outputSilenceAfter_DEFAULT);
 }
@@ -109,12 +107,6 @@ void MelderAudio_setOutputSoundSystem (enum kMelder_outputSoundSystem outputSoun
 enum kMelder_outputSoundSystem MelderAudio_getOutputSoundSystem () {
 	return preferences. outputSoundSystem;
 }
-
-void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker) {
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	preferences. useInternalSpeaker = useInternalSpeaker;
-}
-bool MelderAudio_getUseInternalSpeaker () { return preferences. useInternalSpeaker; }
 
 void MelderAudio_setOutputSilenceBefore (double silenceBefore) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
