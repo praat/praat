@@ -190,14 +190,15 @@ struct CollectionOf : structDaata {
 	}
 	void _makeRoomForOneMoreItem (integer pos) {
 		if (our size >= our _capacity) {
-			integer newCapacity = 2 * our _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
+			const integer newCapacity = 2 * our _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
 			T** oldItem_base0 = ( our at._elements ? our at._elements + 1 : nullptr );   // convert from base-1 to base-0
 			T** newItem_base0 = (T**) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (T*));
 			our at._elements = newItem_base0 - 1;   // convert from base-0 to base-1
 			our _capacity = newCapacity;
 		}
 		our size ++;
-		for (integer i = our size; i > pos; i --) our at [i] = our at [i - 1];
+		for (integer i = our size; i > pos; i --)
+			our at [i] = our at [i - 1];
 	}
 	T* _insertItem_move (autoSomeThing <T> data, integer pos) {
 		our _initializeOwnership (true);
@@ -223,7 +224,7 @@ struct CollectionOf : structDaata {
 	*/
 	void addItem_ref (T* thing) {
 		Melder_assert (thing);
-		integer index = our _v_position (thing);
+		const integer index = our _v_position (thing);
 		if (index != 0)
 			our _insertItem_ref (thing, index);
 		else
@@ -245,7 +246,7 @@ struct CollectionOf : structDaata {
 	*/
 	T* addItem_move (autoSomeThing<T> thing) {
 		T* thingRef = thing.get();
-		integer index = our _v_position (thingRef);
+		const integer index = our _v_position (thingRef);
 		if (index != 0) {
 			return our _insertItem_move (thing.move(), index);
 		} else {
@@ -326,7 +327,8 @@ struct CollectionOf : structDaata {
 	*/
 	void removeItem (integer pos) {
 		Melder_assert (pos >= 1 && pos <= our size);
-		if (our _ownItems) _Thing_forget (our at [pos]);
+		if (our _ownItems)
+			_Thing_forget (our at [pos]);
 		for (integer i = pos; i < our size; i ++)
 			our at [i] = our at [i + 1];
 		our size --;
@@ -339,10 +341,9 @@ struct CollectionOf : structDaata {
 			my _capacity not changed;
 	*/
 	void removeAllItems () {
-		if (our _ownItems) {
+		if (our _ownItems)
 			for (integer i = 1; i <= our size; i ++)
 				_Thing_forget (our at [i]);
-		}
 		our size = 0;
 	}
 
@@ -358,14 +359,11 @@ struct CollectionOf : structDaata {
 		our at --;
 	}
 	void sort (int (*compare) (T*, T*)) {
-		integer l, r, j, i;
-		T* k;
-		T** a = our at._elements;
-		integer n = our size;
-		if (n < 2)
+		if (our size < 2)
 			return;
-		l = (n >> 1) + 1;
-		r = n;
+		T** a = our at._elements;
+		integer l = (our size >> 1) + 1, r = our size, i, j;
+		T* k;
 		for (;;) {
 			if (l > 1) {
 				l --;
@@ -583,7 +581,7 @@ struct SortedOf : CollectionOf <T> {
 		*/
 		integer left = 1, right = our size;
 		while (left < right - 1) {
-			integer mid = (left + right) / 2;
+			const integer mid = (left + right) / 2;
 			if (compare (data, our at [mid]) >= 0)
 				left = mid;
 			else
@@ -625,7 +623,7 @@ struct SortedSetOf : SortedOf <T> {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
 		if (our size == 0)
 			return 1;   // empty set? then 'data' is going to be the first item
-		int where = compare (data, our at [our size]);   // compare with last item
+		const int where = compare (data, our at [our size]);   // compare with last item
 		if (where > 0)
 			return our size + 1;   // insert at end
 		if (where == 0)
@@ -634,7 +632,7 @@ struct SortedSetOf : SortedOf <T> {
 			return 1;   // compare with first item
 		integer left = 1, right = our size;
 		while (left < right - 1) {
-			integer mid = (left + right) / 2;
+			const integer mid = (left + right) / 2;
 			if (compare (data, our at [mid]) >= 0)
 				left = mid;
 			else
@@ -748,27 +746,25 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
 
 	integer lookUp (conststring32 string) {
-		integer numberOfItems = our size;
-		integer left = 1, right = numberOfItems;
-		int atStart, atEnd;
-		if (numberOfItems == 0)
+		if (our size == 0)
 			return 0;
 
-		atEnd = str32cmp (string, our at [numberOfItems] -> string.get());
+		const int atEnd = str32cmp (string, our at [our size] -> string.get());
 		if (atEnd > 0)
 			return 0;
 		if (atEnd == 0)
-			return numberOfItems;
+			return our size;
 
-		atStart = str32cmp (string, our at [1] -> string.get());
+		const int atStart = str32cmp (string, our at [1] -> string.get());
 		if (atStart < 0)
 			return 0;
 		if (atStart == 0)
 			return 1;
 
+		integer left = 1, right = our size;
 		while (left < right - 1) {
-			integer mid = (left + right) / 2;
-			int here = str32cmp (string, our at [mid] -> string.get());
+			const integer mid = (left + right) / 2;
+			const int here = str32cmp (string, our at [mid] -> string.get());
 			if (here == 0)
 				return mid;
 			if (here > 0)
