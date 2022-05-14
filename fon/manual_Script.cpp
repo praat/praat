@@ -1772,7 +1772,6 @@ LIST_ITEM1 (U"@@Scripting 7.2. Scripting an editor from within")
 LIST_ITEM (U"@@Scripting 8. Controlling Praat from another program")
 LIST_ITEM1 (U"@@Scripting 8.1. The sendpraat subroutine")
 LIST_ITEM1 (U"@@Scripting 8.2. The sendpraat program")
-LIST_ITEM1 (U"@@Scripting 8.3. The sendpraat directive")
 // 9. Hiding your script
 // 9.1 Incorporating your script into Praat
 // 9.2 Incorporating many scripts into Praat (plug-ins)
@@ -4180,14 +4179,13 @@ MAN_BEGIN (U"sendpraat", U"ppgb", 20000927)
 NORMAL (U"See @@Scripting 8. Controlling Praat from another program@.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 8. Controlling Praat from another program", U"ppgb", 20220101)
+MAN_BEGIN (U"Scripting 8. Controlling Praat from another program", U"ppgb", 20220514)
 INTRO (U"Sendpraat is a function for sending messages to a %running Praat. "
 	"It is also a Windows, MacOS, or Linux console program with the same purpose.")
 NORMAL (U"As sendpraat cannot start up a new instance of Praat, you may often want to use "
 	"$$praat --send$ instead (see @@Scripting 6.9. Calling from the command line@).")
 LIST_ITEM (U"@@Scripting 8.1. The sendpraat subroutine")
 LIST_ITEM (U"@@Scripting 8.2. The sendpraat program")
-LIST_ITEM (U"@@Scripting 8.3. The sendpraat directive")
 MAN_END
 
 MAN_BEGIN (U"Scripting 8.1. The sendpraat subroutine", U"ppgb", 20211207)
@@ -4277,38 +4275,6 @@ NORMAL (U"This causes the program #Praat to execute the script ##doAll.praat# wi
 ENTRY (U"How to download")
 NORMAL (U"You can download the sendpraat program "
 	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
-MAN_END
-
-MAN_BEGIN (U"Scripting 8.3. The sendpraat directive", U"ppgb", 20140112)
-INTRO (U"Besides being a subroutine (@@Scripting 8.1. The sendpraat subroutine@) "
-	"and a program (@@Scripting 8.2. The sendpraat program@), @sendpraat "
-	"can also be called from within a Praat script.")
-ENTRY (U"Example 1: killing a program")
-NORMAL (U"Suppose we are in the Praat-shell program #Als, which is a browser for dictionaries, "
-	"and we want to kill the Praat-shell program #Praat, which is a program for phonetics research:")
-CODE (U"beginSendpraat: \"Praat\"")
-CODE1 (U"Quit")
-CODE (U"endSendpraat")
-ENTRY (U"Example 2: playing a sound")
-NORMAL (U"Suppose we are in the Praat-shell program #Als, which is a browser for dictionaries, "
-	"and has no idea of what a %sound is. From this program, we can play a sound file "
-	"by sending a message to the Praat-shell program #Praat, which does know about sounds:")
-CODE (U"fileName\\$  = chooseReadFile\\$ : \"Play a sound file\"")
-CODE (U"beginSendpraat: \"Praat\", \"fileName\\$ \"")
-CODE1 (U"Read from file: fileName\\$ ")
-CODE1 (U"Play")
-CODE1 (U"Remove")
-CODE (U"endSendpraat")
-NORMAL (U"After #beginSendpraat, you first mention the name of the receiving program (here \"Praat\"), "
-        "then the names of the variables you want the receiving program to know about.")
-NORMAL (U"To have the receiving program return information to you, specify the variables that are to be handed back:")
-CODE (U"fileName\\$  = chooseReadFile\\$ : \"Measure a sound file\"")
-CODE (U"beginSendpraat: \"Praat\", \"fileName\\$ \"")
-CODE1 (U"Read from file: fileName\\$ ")
-CODE1 (U"duration = Get total duration")
-CODE1 (U"Remove")
-CODE (U"endSendpraat: \"duration\"")
-CODE (U"writeInfoLine: \"That sound file lasts \", duration, \" seconds.\"")
 MAN_END
 
 /*

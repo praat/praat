@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2021 Paul Boersma
+ * Copyright (C) 1993-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 #include "praatP.h"
 #include "praat_script.h"
-#include "sendpraat.h"
 #include "sendsocket.h"
 #include "UiPause.h"
 #include "DemoEditor.h"
@@ -317,31 +316,6 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"endeditor\" is not available inside manuals.");
 			praatP. editor = nullptr;
-		} else if (str32nequ (command, U"sendpraat ", 10)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command \"sendpraat\" is not available inside manuals.");
-			char32 programName [41], *q = & programName [0];
-			#ifdef macintosh
-				#define SENDPRAAT_TIMEOUT  10
-			#else
-				#define SENDPRAAT_TIMEOUT  0
-			#endif
-			const char32 *p = command + 10;
-			while (*p == U' ' || *p == U'\t') p ++;
-			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < programName + 39)
-				*q ++ = *p ++;
-			*q = U'\0';
-			if (q == & programName [0])
-				Melder_throw (U"Missing program name after `sendpraat'.");
-			while (*p == U' ' || *p == U'\t') p ++;
-			if (*p == U'\0')
-				Melder_throw (U"Missing command after `sendpraat'.");
-			#if motif
-			char *result = sendpraat (XtDisplay (theCurrentPraatApplication -> topShell), Melder_peek32to8 (programName),
-				SENDPRAAT_TIMEOUT, Melder_peek32to8 (p));
-			if (result)
-				Melder_throw (Melder_peek8to32 (result), U"\nMessage to ", programName, U" not completed.");
-			#endif
 		} else if (str32nequ (command, U"sendsocket ", 11)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"sendsocket\" is not available inside manuals.");
