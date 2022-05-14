@@ -34,8 +34,6 @@
  djmw 20111110 Use autostringvector
 */
 
-#define CategoriesEditor_TEXTMAXLENGTH 100
-
 #include "CategoriesEditor.h"
 #include "EditorM.h"
 #include "NUM2.h"
