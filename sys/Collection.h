@@ -2,7 +2,7 @@
 #define _Collection_h_
 /* Collection.h
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,11 +224,10 @@ struct CollectionOf : structDaata {
 	void addItem_ref (T* thing) {
 		Melder_assert (thing);
 		integer index = our _v_position (thing);
-		if (index != 0) {
+		if (index != 0)
 			our _insertItem_ref (thing, index);
-		} else {
+		else
 			our _initializeOwnership (false);
-		}
 	}
 
 	/**
@@ -268,9 +267,8 @@ struct CollectionOf : structDaata {
 	void undangleItem (Thing thing) {
 		for (integer i = our size; i > 0; i --) {
 			if (our at [i] == thing) {
-				for (integer j = i; j < our size; j ++) {
+				for (integer j = i; j < our size; j ++)
 					our at [j] = our at [j + 1];
-				}
 				our size --;
 			}
 		}
@@ -364,7 +362,8 @@ struct CollectionOf : structDaata {
 		T* k;
 		T** a = our at._elements;
 		integer n = our size;
-		if (n < 2) return;
+		if (n < 2)
+			return;
 		l = (n >> 1) + 1;
 		r = n;
 		for (;;) {
@@ -375,15 +374,21 @@ struct CollectionOf : structDaata {
 				k = a [r];
 				a [r] = a [1];
 				r --;
-				if (r == 1) { a [1] = k; return; }
+				if (r == 1) {
+					a [1] = k;
+					return;
+				}
 			}
 			j = l;
 			for (;;) {
 				i = j;
 				j = j << 1;
-				if (j > r) break;
-				if (j < r && compare (a [j], a [j + 1]) < 0) j ++;
-				if (compare (k, a [j]) >= 0) break;
+				if (j > r)
+					break;
+				if (j < r && compare (a [j], a [j + 1]) < 0)
+					j ++;
+				if (compare (k, a [j]) >= 0)
+					break;
 				a [i] = a [j];
 			}
 			a [i] = k;
@@ -569,13 +574,20 @@ struct SortedOf : CollectionOf <T> {
 
 	integer _v_position (T* data) override {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
-		if (our size == 0 || compare (data, our at [our size]) >= 0) return our size + 1;
-		if (compare (data, our at [1]) < 0) return 1;
-		/* Binary search. */
+		if (our size == 0 || compare (data, our at [our size]) >= 0)
+			return our size + 1;
+		if (compare (data, our at [1]) < 0)
+			return 1;
+		/*
+			Binary search.
+		*/
 		integer left = 1, right = our size;
 		while (left < right - 1) {
 			integer mid = (left + right) / 2;
-			if (compare (data, our at [mid]) >= 0) left = mid; else right = mid;
+			if (compare (data, our at [mid]) >= 0)
+				left = mid;
+			else
+				right = mid;
 		}
 		Melder_assert (right == left + 1);
 		return right;
@@ -611,11 +623,15 @@ struct SortedSetOf : SortedOf <T> {
 	*/
 	integer _v_position (T* data) override {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
-		if (our size == 0) return 1;   // empty set? then 'data' is going to be the first item
+		if (our size == 0)
+			return 1;   // empty set? then 'data' is going to be the first item
 		int where = compare (data, our at [our size]);   // compare with last item
-		if (where > 0) return our size + 1;   // insert at end
-		if (where == 0) return 0;
-		if (compare (data, our at [1]) < 0) return 1;   // compare with first item
+		if (where > 0)
+			return our size + 1;   // insert at end
+		if (where == 0)
+			return 0;
+		if (compare (data, our at [1]) < 0)
+			return 1;   // compare with first item
 		integer left = 1, right = our size;
 		while (left < right - 1) {
 			integer mid = (left + right) / 2;
@@ -643,29 +659,26 @@ struct SortedSetOf : SortedOf <T> {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
 		integer n = 0, ifrom = 1;
 		for (integer i = 1; i <= our size; i ++) {
-			if (i == our size || compare (our at [i], our at [i + 1]))
-			{
+			if (i == our size || compare (our at [i], our at [i + 1])) {
 				/*
-				 * Detected a change.
-				 */
+					Detected a change.
+				*/
 				n ++;
 				integer ito = i;
 				/*
-				 * Move item 'ifrom' to 'n'.
-				 */
+					Move item 'ifrom' to 'n'.
+				*/
 				Melder_assert (ifrom >= n);
 				if (ifrom != n) {
 					our at [n] = our at [ifrom];   // surface copy
 					our at [ifrom] = nullptr;   // undangle
 				}
 				/*
-				 * Purge items from 'ifrom'+1 to 'ito'.
-				 */
-				if (our _ownItems) {
-					for (integer j = ifrom + 1; j <= ito; j ++) {
+					Purge items from 'ifrom'+1 to 'ito'.
+				*/
+				if (our _ownItems)
+					for (integer j = ifrom + 1; j <= ito; j ++)
 						_Thing_forget (our at [j]);
-					}
-				}
 				ifrom = ito + 1;
 			}
 		}
@@ -691,8 +704,10 @@ struct SortedSetOfIntegerOf : SortedSetOf <T> {
 	}
 	SortedSetOfIntegerOf<T>&& move () noexcept { return static_cast <SortedSetOfIntegerOf<T>&&> (*this); }
 	static int s_compareHook (SimpleInteger me, SimpleInteger thee) noexcept {
-		if (my number < thy number) return -1;
-		if (my number > thy number) return +1;
+		if (my number < thy number)
+			return -1;
+		if (my number > thy number)
+			return +1;
 		return 0;
 	}
 	typename SortedOf<T>::CompareHook v_getCompareHook ()
@@ -708,8 +723,10 @@ struct SortedSetOfDoubleOf : SortedSetOf <T> {
 	}
 	SortedSetOfDoubleOf<T>&& move () noexcept { return static_cast <SortedSetOfDoubleOf<T>&&> (*this); }
 	static int s_compareHook (SimpleDouble me, SimpleDouble thee) noexcept {
-		if (my number < thy number) return -1;
-		if (my number > thy number) return +1;
+		if (my number < thy number)
+			return -1;
+		if (my number > thy number)
+			return +1;
 		return 0;
 	}
 	typename SortedOf<T>::CompareHook v_getCompareHook ()
@@ -734,21 +751,30 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 		integer numberOfItems = our size;
 		integer left = 1, right = numberOfItems;
 		int atStart, atEnd;
-		if (numberOfItems == 0) return 0;
+		if (numberOfItems == 0)
+			return 0;
 
 		atEnd = str32cmp (string, our at [numberOfItems] -> string.get());
-		if (atEnd > 0) return 0;
-		if (atEnd == 0) return numberOfItems;
+		if (atEnd > 0)
+			return 0;
+		if (atEnd == 0)
+			return numberOfItems;
 
 		atStart = str32cmp (string, our at [1] -> string.get());
-		if (atStart < 0) return 0;
-		if (atStart == 0) return 1;
+		if (atStart < 0)
+			return 0;
+		if (atStart == 0)
+			return 1;
 
 		while (left < right - 1) {
 			integer mid = (left + right) / 2;
 			int here = str32cmp (string, our at [mid] -> string.get());
-			if (here == 0) return mid;
-			if (here > 0) left = mid; else right = mid;
+			if (here == 0)
+				return mid;
+			if (here > 0)
+				left = mid;
+			else
+				right = mid;
 		}
 		Melder_assert (right == left + 1);
 		return 0;
