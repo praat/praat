@@ -34,8 +34,6 @@
  djmw 20111110 Use autostringvector
 */
 
-#define CategoriesEditor_TEXTMAXLENGTH 100
-
 #include "CategoriesEditor.h"
 #include "EditorM.h"
 #include "NUM2.h"
@@ -273,10 +271,7 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 			}
 			top += deltaTopPos;
 		}
-		if (top + visible > size)
-			top = size - visible + 1;
-		if (top < 1)
-			top = 1;
+		Melder_clip (1_integer, & top, size - visible + 1);
 		GuiList_setTopPosition (my list, top);
 	}
 }

@@ -407,9 +407,9 @@ DO \
 #define KlattGrid_FORMULA_ADD_REMOVE_FBA(Name,namef,formantType)  \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Frequencies, frequencies, U"if row = 2 then self + 200 else self fi", formantType, U" ") \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Bandwidths, bandwidths, U"self / 10 ; 10% of frequency", formantType, U"Warning: self is formant frequency.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType, U"500.0", (Hz), (value>0), U"Frequency should be greater than zero.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType, U"50.0", (Hz), (value>0), U"Bandwidth should be greater than zero.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Amplitude, Amplitude, amplitude, formantType, U"0.0", (dB), (isdefined(value)), U"Amplitude should be defined.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType, U"500.0", (Hz), (value > 0.0), U"Frequency should be greater than zero.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType, U"50.0", (Hz), (value > 0.0), U"Bandwidth should be greater than zero.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Amplitude, Amplitude, amplitude, formantType, U"0.0", (dB), (isdefined (value)), U"Amplitude should be defined.") \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType) \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType) \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Amplitude, Amplitude, amplitude, formantType) \
@@ -424,8 +424,8 @@ KlattGrid_ADD_FORMANT_AMPLITUDETIER (Name, namef, formantType)
 #define KlattGrid_FORMULA_ADD_REMOVE_FB(Name,namef,formantType)  \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Frequencies, frequencies, U"if row = 2 then self + 200 else self fi",formantType, U" ") \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Bandwidths, bandwidths, U"self / 10 ; 10% of frequency",formantType, U"Warning: self is formant frequency.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, U"500.0", (Hz), (value>0), U"Frequency should be greater than zero.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  U"50.0", (Hz), (value>0), U"Bandwidth should be greater than zero.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, U"500.0", (Hz), (value > 0.0), U"Frequency should be greater than zero.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  U"50.0", (Hz), (value > 0.0), U"Bandwidth should be greater than zero.") \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType) \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType) \
 KlattGrid_ADD_FORMANT(Name,namef,formantType) \
@@ -436,8 +436,8 @@ KlattGrid_REMOVE_FORMANT (Name, namef, formantType)
 #define KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA(Name,namef,formantType)  \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Frequencies, frequencies, U"if row = 2 then self + 200 else self fi",formantType, U" ") \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Bandwidths, bandwidths, U"self / 10 ; 10% of frequency",formantType, U"Warning: self is formant frequency.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, U"-100.0", (Hz), (isdefined(value)), U"Frequency should be defined.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  U"-50.0", (Hz), (isdefined(value)), U"Bandwidth should be defined.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, U"-100.0", (Hz), (isdefined (value)), U"Frequency should be defined.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  U"-50.0", (Hz), (isdefined (value)), U"Bandwidth should be defined.") \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType) \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType) \
 KlattGrid_ADD_FORMANT_FREQUENCYANDBANDWIDTHTIERS (Name, namef, formantType) \
@@ -657,8 +657,8 @@ DO \
 	MODIFY_EACH_END \
 }
 
-KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, U" (Hz)", U"500.0", (value > 0), U"Frequency should be greater than zero.")
-KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (value > 0), U"Bandwidth should be greater than zero.")
+KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, U" (Hz)", U"500.0", (value > 0.0), U"Frequency should be greater than zero.")
+KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (value > 0.0), U"Bandwidth should be greater than zero.")
 
 #undef KlattGrid_FORMANT_GET_ADD_REMOVE
 
