@@ -592,19 +592,18 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		Graphics_setLineWidth (g, 1.0);
 		/*
 			Mark ceiling & stress
+			TODO Adapt font size to window size
 		*/
 		autoMelderString info;
-		const double tLeftPos = tmin - 0.01 * (tmax - tmin), tRightPos = tmax + 0.01 * (tmax - tmin);
 		if (garnish) {
+			const double tLeftPos = tmin - 0.01 * (tmax - tmin);
+			MelderString_append (& info, U"Ceiling = ", Melder_fixed (my ceilings [iformant], 0), U" Hz");
 			if (showStress && numberOfSamples > 0) {
 				const double stress = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
-				MelderString_append (& info, U"Fit=", Melder_fixed (stress, 2));
-				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_BOTTOM);
-				Graphics_text (g, tRightPos, fmax, info.string);
+				MelderString_append (& info, U"\nFit = ", Melder_fixed (stress, 2));
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_TOP);
 			}
-			MelderString_empty (& info);
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_BOTTOM);
-			MelderString_append (& info, U"Ceiling=", Melder_fixed (my ceilings [iformant], 0), U" Hz");
 			Graphics_text (g, tLeftPos, fmax, info.string);
 		}
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
