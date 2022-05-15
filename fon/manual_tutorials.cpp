@@ -2330,7 +2330,58 @@ CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
 MAN_END
 
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20211016)
+MAN_BEGIN (U"Unicode Inc. license agreement", U"ppgb", 20220515)
+NORMAL (U"The Praat source code contains a copy of the Unicode Character Database, "
+	"as well as derived software (see @Acknowledgments). "
+	"Here is the Unicode Inc. license text:")
+CODE (U"UNICODE, INC. LICENSE AGREEMENT - DATA FILES AND SOFTWARE")
+CODE (U"")
+CODE (U"See Terms of Use <https://www.unicode.org/copyright.html> "
+	"for definitions of Unicode Inc.’s Data Files and Software.")
+CODE (U"")
+CODE (U"NOTICE TO USER: Carefully read the following legal agreement.")
+CODE (U"BY DOWNLOADING, INSTALLING, COPYING OR OTHERWISE USING UNICODE INC.'S "
+	"DATA FILES (\"DATA FILES\"), AND/OR SOFTWARE (\"SOFTWARE\"), "
+	"YOU UNEQUIVOCALLY ACCEPT, AND AGREE TO BE BOUND BY, ALL OF THE "
+	"TERMS AND CONDITIONS OF THIS AGREEMENT.")
+CODE (U"IF YOU DO NOT AGREE, DO NOT DOWNLOAD, INSTALL, COPY, DISTRIBUTE OR USE "
+	"THE DATA FILES OR SOFTWARE.")
+CODE (U"")
+CODE (U"COPYRIGHT AND PERMISSION NOTICE")
+CODE (U"")
+CODE (U"Copyright © 1991-2022 Unicode, Inc. All rights reserved.")
+CODE (U"Distributed under the Terms of Use in https://www.unicode.org/copyright.html.")
+CODE (U"")
+CODE (U"Permission is hereby granted, free of charge, to any person obtaining "
+	"a copy of the Unicode data files and any associated documentation "
+	"(the \"Data Files\") or Unicode software and any associated documentation "
+	"(the \"Software\") to deal in the Data Files or Software "
+	"without restriction, including without limitation the rights to use, "
+	"copy, modify, merge, publish, distribute, and/or sell copies of "
+	"the Data Files or Software, and to permit persons to whom the Data Files "
+	"or Software are furnished to do so, provided that either")
+CODE (U"(a) this copyright and permission notice appear with all copies "
+	"of the Data Files or Software, or")
+CODE (U"(b) this copyright and permission notice appear in associated Documentation.")
+CODE (U"")
+CODE (U"THE DATA FILES AND SOFTWARE ARE PROVIDED \"AS IS\", WITHOUT WARRANTY OF "
+	"ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE "
+	"WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "
+	"NONINFRINGEMENT OF THIRD PARTY RIGHTS.")
+CODE (U"IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS "
+	"NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL "
+	"DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, "
+	"DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER "
+	"TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR "
+	"PERFORMANCE OF THE DATA FILES OR SOFTWARE.")
+CODE (U"")
+CODE (U"Except as contained in this notice, the name of a copyright holder "
+	"shall not be used in advertising or otherwise to promote the sale, "
+	"use or other dealings in these Data Files or Software without prior "
+	"written authorization of the copyright holder.")
+MAN_END
+
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20220515)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -2354,8 +2405,8 @@ LIST_ITEM (U"XIPA: IPA font for Unix by Fukui Rei (GPL).")
 LIST_ITEM (U"GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL 3 or later).")
 LIST_ITEM (U"GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL 3 or later); "
 	"contains AMD software by the same author (LGPL 2.1 or later).")
-LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs "
-	"(CC-BY-like license).")
+LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs, "
+	"version 19.7.0 of April 2021 (CC-BY-like license).")
 LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington and Reece Dunn (GPL 3 or later).")
 LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).")
 LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson and Xiph.Org, version 1.3.3 (@@FLAC BSD 3-clause license@).")
@@ -2365,8 +2416,10 @@ LIST_ITEM (U"Opus: audio compression by Jean-Marc Valin, Gregory Maxwell, Christ
 LIST_ITEM (U"SILK: audio compression by Skype Limited (@@Skype Limited BSD 3-clause license@).")
 LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber, translated to C by Christopher Montgomery.")
 LIST_ITEM (U"@LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
-	"Courant Institute, Argonne National Lab, and Rice University.")
+	"Courant Institute, Argonne National Lab, and Rice University, "
+	"C edition by Peng Du, Keith Seymour and Julie Langdou, version 3.2.1 of June 2009.")
 LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).")
+LIST_ITEM (U"Unicode Character Database by Unicode Inc., version 14.0 of September 2021 (@@Unicode Inc. license agreement@)")
 NORMAL (U"Most of the source code of Praat is distributed under the General Public License, version 2 or later. "
 	"However, as Praat includes the above software written by others, "
 	"the whole of Praat is distributed under the General Public License, version 3 or later.")
