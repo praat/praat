@@ -1,5 +1,5 @@
 File generate/Unicode/README.TXT
-Paul Boersma 2021-12-19
+Paul Boersma 2022-05-15
 
 Steps to generate the source file UCD_features_generated.h,
 which is to be put in the kar folder:
@@ -16,10 +16,10 @@ After that, the Table can be viewed with "View & Edit",
 and it is easy to extract information with commands such as
 "Extract rows where column (text)..." and "Extract rows where...".
 
-For information on the meanings of the features, see the folloiwn attached files (from June 2017):
-- UAX #44: Unicode Character Database.html
+For information on the meanings of the features, see the following attached files (from 2021):
+- UAX #44: Unicode Character Database 14.html
 - UnicodeData File Format.html
-- UnicodeStandard-10.0.pdf
+- UnicodeStandard-14.0.pdf
 
 3. Run the script UCD_features_generated_h.praat. This creates UCD_features_generated.h.
 The details of the process are discussed in UCD_features_generated_h.praat.
@@ -31,4 +31,4 @@ Praat scripting language.
 
 The measured time on my 2018 MacBook Pro with 2.9 GHz Intel Core i9:
 
-Praat 6.2.04: 26 seconds.
+Praat 6.2.12: 24.6 seconds.
