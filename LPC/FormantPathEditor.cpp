@@ -485,7 +485,8 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, & xCursor, & yCursor);
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.2;
-		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my instancePref_modeler_draw_maximumFrequency(), 1, 5,
+		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, 
+			my instancePref_modeler_draw_maximumFrequency(), 1, 5,
 			my instancePref_modeler_draw_showBandwidths(), Melder_RED, Melder_PURPLE, 0, 0,
 			xSpace_fraction, ySpace_fraction, my instancePref_modeler_draw_yGridLineEvery_Hz(),
 			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true,
