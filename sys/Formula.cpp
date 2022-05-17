@@ -3401,7 +3401,7 @@ static void do_##function () { \
 				"not a matrix. Did you mean to use " #function "## instead?"); \
 	} else { \
 		Melder_throw (message, x->whichText(), \
-				U". The function " #function " requires a numeric argument"); \
+				U". The function " #function " requires a numeric argument."); \
 	} \
 } \
 static void do_##function##_VEC () { \
@@ -3424,8 +3424,8 @@ static void do_##function##_VEC () { \
 			pushNumericVector (result.move()); \
 		} \
 	} else { \
-		Melder_throw (message, x->whichText(), \
-				U". The function " #function " requires a vector argument"); \
+		Melder_throw (U"The function " #function "# requires a vector argument, not ", \
+				x->whichText(), U"."); \
 	} \
 } \
 static void do_##function##_MAT () { \
@@ -3452,8 +3452,8 @@ static void do_##function##_MAT () { \
 			pushNumericMatrix (result.move()); \
 		} \
 	} else { \
-		Melder_throw (message, x->whichText(), \
-				U". The function " #function " requires a matrix argument"); \
+		Melder_throw (U"The function " #function "## requires a matrix argument, not ", \
+				x->whichText(), U"."); \
 	} \
 }
 DO_NUM_WITH_TENSORS (abs, fabs (xvalue), U"Cannot take the absolute value (abs) of ")
@@ -5749,6 +5749,12 @@ static void do_tensorLiteral () {
 		}
 		pushNumericVector (result.move());
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		/*@praat
+			a# = zero# (0)   ; edge case
+			a## = { a#, a# }
+			assert numberOfRows (a##) = 2
+			assert numberOfColumns (a##) = 0
+		@*/
 		const integer sharedNumberOfColumns = last->numericVector.size;
 		autoMAT result = raw_MAT (numberOfElements, sharedNumberOfColumns);
 		result.row (numberOfElements)  <<=  last->numericVector;
