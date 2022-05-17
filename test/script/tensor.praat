@@ -11,6 +11,9 @@ assert a# = { 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256
 asserterror Vector b# does not exist.
 b# [5] = 3
 
+asserterror Unknown variable:'newline$'« xyz#
+xyz# = xyz# + 5
+
 asserterror A vector index cannot be less than 1 (the index you supplied is 0).
 a# [0] = 932875289
 
