@@ -5749,6 +5749,12 @@ static void do_tensorLiteral () {
 		}
 		pushNumericVector (result.move());
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		/*@praat
+			a# = zero# (0)   ; edge case
+			a## = { a#, a# }
+			assert numberOfRows (a##) = 2
+			assert numberOfColumns (a##) = 0
+		@*/
 		const integer sharedNumberOfColumns = last->numericVector.size;
 		autoMAT result = raw_MAT (numberOfElements, sharedNumberOfColumns);
 		result.row (numberOfElements)  <<=  last->numericVector;

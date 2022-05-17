@@ -68,6 +68,11 @@ e# = a# + d#
 ;speaker$ [1] = "JM"
 ;speaker$ [2] = "PB"
 
+a# = zero# (0)
+a## = { a#, a# }
+assert numberOfRows (a##) = 2
+assert numberOfColumns (a##) = 0
+
 #
 # outer##
 #

@@ -2,7 +2,7 @@
 #define _melder_tensor_h_
 /* melder_tensor.h
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -763,7 +763,7 @@ struct automatrix {
 	}
 	vector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
-		Melder_assert (our cells);
+		Melder_assert (our cells || our ncol == 0);
 		return vector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
 	}
 	vectorview<T> column (integer columnNumber) const {
