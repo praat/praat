@@ -14,6 +14,12 @@ b# [5] = 3
 asserterror Unknown variable:'newline$'« xyz#
 xyz# = xyz# + 5
 
+asserterror Unknown variable:'newline$'« xyz##
+xyz## = xyz## + 5
+
+asserterror Unknown variable:'newline$'« xyz$#
+xyz$# = xyz$# + "hello"
+
 asserterror A vector index cannot be less than 1 (the index you supplied is 0).
 a# [0] = 932875289
 
