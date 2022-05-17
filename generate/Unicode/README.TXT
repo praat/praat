@@ -17,7 +17,7 @@ and it is easy to extract information with commands such as
 "Extract rows where column (text)..." and "Extract rows where...".
 
 For information on the meanings of the features, see the following attached files (version 14, from 2021):
-- UAX #44  Unicode Character Database.html  (replaced colon by space in file name)
+- UAX #44 Unicode Character Database.html  (remove colon from original file name)
 - UnicodeData File Format.html
 - UnicodeStandard.pdf
 
