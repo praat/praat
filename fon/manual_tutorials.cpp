@@ -22,8 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220417)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220518)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.13# (18 May 2022)")
+LIST_ITEM (U"• Playing a sound on the Mac: prevented an audible click at the end of audio output (appending a silence at the end is no longer needed).")
+LIST_ITEM (U"• FormantPath window: more flexible visualization.")
+LIST_ITEM (U"• New versions of PortAudio and Unicode.")
+LIST_ITEM (U"• Removed the sendpraat directive.")
+LIST_ITEM (U"• Removed several small interface bugs, and improved manual.")
 NORMAL (U"##6.2.12# (17 April 2022)")
 LIST_ITEM (U"• Table: Get sum...")
 LIST_ITEM (U"• Scripting an editor window can now query analyses that are not visible (e.g. after zooming).")
