@@ -2115,16 +2115,16 @@ bool structTimeSoundAnalysisEditor :: v_mouseInWideDataView (GuiDrawingArea_Mous
 }
 
 void structTimeSoundAnalysisEditor :: v_repairPreferences () {
-	if (our instancePref_pitch_floor() >= our instancePref_pitch_ceiling()) {
+	if (! (our instancePref_pitch_floor() < our instancePref_pitch_ceiling())) {   // NaN-safe test
 		our setInstancePref_pitch_floor (Melder_atof (our default_pitch_floor()));
 		our setInstancePref_pitch_ceiling (Melder_atof (our default_pitch_ceiling()));
 		our setInstancePref_pitch_unit (kPitch_unit::HERTZ);
 	}
-	if (our instancePref_spectrogram_viewFrom() >= our instancePref_spectrogram_viewTo()) {
+	if (! (our instancePref_spectrogram_viewFrom() < our instancePref_spectrogram_viewTo())) {   // NaN-safe test
 		our setInstancePref_spectrogram_viewFrom (Melder_atof (our default_spectrogram_viewFrom()));
 		our setInstancePref_spectrogram_viewTo (Melder_atof (our default_spectrogram_viewTo()));
 	}
-	if (our instancePref_intensity_viewFrom() >= our instancePref_intensity_viewTo()) {
+	if (! (our instancePref_intensity_viewFrom() < our instancePref_intensity_viewTo())) {   // NaN-safe test
 		our setInstancePref_intensity_viewFrom (Melder_atof (our default_intensity_viewFrom()));
 		our setInstancePref_intensity_viewTo (Melder_atof (our default_intensity_viewTo()));
 	}

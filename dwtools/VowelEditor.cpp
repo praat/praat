@@ -1314,39 +1314,39 @@ void structVowelEditor :: v_createChildren ()
 }
 
 void structVowelEditor :: v_repairPreferences () {
-	if (our instancePref_window_f1min() >= our instancePref_window_f1max()) {
+	if (! (our instancePref_window_f1min() < our instancePref_window_f1max())) {   // NaN-safe test
 		our setInstancePref_window_f1min (Melder_atof (our default_window_f1min()));
 		our setInstancePref_window_f1max (Melder_atof (our default_window_f1max()));
 	}
-	if (our instancePref_window_f2min() >= our instancePref_window_f2max()) {
+	if (! (our instancePref_window_f2min() < our instancePref_window_f2max())) {   // NaN-safe test
 		our setInstancePref_window_f2min (Melder_atof (our default_window_f2min()));
 		our setInstancePref_window_f2max (Melder_atof (our default_window_f2max()));
 	}
-	if (our instancePref_marks_fontSize() <= 0)
+	if (! (our instancePref_marks_fontSize() > 0.0))   // NaN-safe test
 		our setInstancePref_marks_fontSize (Melder_atof (our default_marks_fontSize()));
 	if (Melder_equ (our instancePref_marks_fileName(), U"") && our instancePref_marks_dataSet() < kVowelEditor_marksDataSet::MIN) {
 		our setInstancePref_marks_dataSet (our default_marks_dataSet());
 		our setInstancePref_marks_speakerType (our default_marks_speakerType());
 	}
-	if (our instancePref_synthesis_samplingFrequency() <= 0.0)
+	if (! (our instancePref_synthesis_samplingFrequency() > 0.0))   // NaN-safe test
 		our setInstancePref_synthesis_samplingFrequency (Melder_atof (our default_synthesis_samplingFrequency()));
-	if (our instancePref_trajectory_minimumDuration() <= 0.0)
+	if (! (our instancePref_trajectory_minimumDuration() > 0.0))   // NaN-safe test
 		our setInstancePref_trajectory_minimumDuration (Melder_atof (our default_trajectory_minimumDuration()));
-	if (our instancePref_trajectory_extendDuration() <= 0.0 || our instancePref_trajectory_markEvery() <= 0.0) {
+	if (! (our instancePref_trajectory_extendDuration() > 0.0 && our instancePref_trajectory_markEvery() > 0.0)) {   // NaN-safe test
 		our setInstancePref_trajectory_extendDuration (Melder_atof (our default_trajectory_extendDuration()));
 		our setInstancePref_trajectory_markEvery (Melder_atof (our default_trajectory_markEvery()));
 	}
-	if (our instancePref_f0_start() <= 0)
+	if (! (our instancePref_f0_start() > 0.0))   // NaN-safe test
 		our setInstancePref_f0_start (Melder_atof (our default_f0_start()));
-	if (our instancePref_f0_slope() <= 0)
+	if (! (our instancePref_f0_slope() > 0.0))   // NaN-safe test
 		our setInstancePref_f0_slope (Melder_atof (our default_f0_slope()));
-	if (our instancePref_f0_minimum() <= 0 || our instancePref_f0_maximum() <= 0) {
+	if (! (our instancePref_f0_minimum() > 0.0 && our instancePref_f0_maximum() > 0.0)) {   // NaN-safe test
 		our setInstancePref_f0_minimum (Melder_atof (our default_f0_minimum()));
 		our setInstancePref_f0_maximum (Melder_atof (our default_f0_maximum()));
 	}
-	if (our instancePref_grid_df1() <= 0)
+	if (! (our instancePref_grid_df1() > 0.0))   // NaN-safe test
 		our setInstancePref_grid_df1 (Melder_atof (our default_grid_df1()));
-	if (our instancePref_grid_df2() <= 0)
+	if (! (our instancePref_grid_df2() > 0.0))   // NaN-safe test
 		our setInstancePref_grid_df2 (Melder_atof (our default_grid_df2()));
 }
 
