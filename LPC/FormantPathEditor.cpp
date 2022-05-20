@@ -304,11 +304,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my setClassPref_function_picture_garnish (garnish);
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		Melder_require (my d_pitch,
-			U"Cannot compute pitch.");
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		Editor_openPraatPicture (me);
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
 				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
