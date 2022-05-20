@@ -23,8 +23,8 @@ Prefs_begin (EEGWindow)
 	InstancePrefs_overrideDouble  (EEGWindow, sound_scaling_height,           1, U"20e-6")
 	InstancePrefs_overrideDouble  (EEGWindow, sound_scaling_minimum,          1, U"-10e-6")
 	InstancePrefs_overrideDouble  (EEGWindow, sound_scaling_maximum,          1, U"10e-6")
-	ClassPrefs_overrideDouble     (EEGWindow, picture_bottom,                 1, U"0.0")
-	ClassPrefs_overrideDouble     (EEGWindow, picture_top,                    1, U"0.0 (= auto)")
+	ClassPrefs_overrideDouble     (EEGWindow, sound_picture_bottom,           1, U"0.0")
+	ClassPrefs_overrideDouble     (EEGWindow, sound_picture_top,              1, U"0.0 (= auto)")
 	InstancePrefs_overrideBool    (EEGWindow, spectrogram_show,               1, false);
 	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewFrom,           1, U"0.0")   // Hz
 	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewTo,             1, U"60.0")   // Hz
