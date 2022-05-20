@@ -43,12 +43,6 @@ Thing_implement_pureVirtual (TimeSoundAnalysisEditor, TimeSoundEditor, 0);
 #include "Prefs_copyToInstance.h"
 #include "TimeSoundAnalysisEditor_prefs.h"
 
-static const conststring32 theMessage_Cannot_compute_spectrogram = U"The spectrogram is not defined at the edge of the sound.";
-static const conststring32 theMessage_Cannot_compute_pitch = U"The pitch contour is not defined at the edge of the sound.";
-static const conststring32 theMessage_Cannot_compute_formant = U"The formants are not defined at the edge of the sound.";
-static const conststring32 theMessage_Cannot_compute_intensity = U"The intensity curve is not defined at the edge of the sound.";
-static const conststring32 theMessage_Cannot_compute_pulses = U"The pulses are not defined at the edge of the sound.";
-
 void structTimeSoundAnalysisEditor :: v_destroy () noexcept {
 	our TimeSoundAnalysisEditor_Parent :: v_destroy ();
 }
@@ -277,47 +271,30 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		} else if (str32equ (varName, U"editor$")) {
 			stringValue = my name.get();
 		} else if (str32equ (varName, U"f0")) {
-			if (! my instancePref_pitch_show())
-				Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-			if (! my d_pitch)
-				Melder_throw (theMessage_Cannot_compute_pitch);
-			if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
+			TimeSoundAnalysisEditor_haveVisiblePitch (me);
+			if (part == TimeSoundAnalysisEditor_PART_CURSOR)
 				value = Pitch_getValueAtTime (my d_pitch.get(), tmin, my instancePref_pitch_unit(), 1);
-			} else {
+			else
 				value = Pitch_getMean (my d_pitch.get(), tmin, tmax, my instancePref_pitch_unit());
-			}
 		} else if (varName [0] == U'f' && varName [1] >= U'1' && varName [1] <= U'5' && varName [2] == U'\0') {
-			if (! my instancePref_formant_show())
-				Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
-			if (! my d_formant)
-				Melder_throw (theMessage_Cannot_compute_formant);
-			if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
+			TimeSoundAnalysisEditor_haveVisibleFormants (me);
+			if (part == TimeSoundAnalysisEditor_PART_CURSOR)
 				value = Formant_getValueAtTime (my d_formant.get(), (int) (varName [1] - U'0'), tmin, kFormant_unit::HERTZ);
-			} else {
+			else
 				value = Formant_getMean (my d_formant.get(), (int) (varName [1] - U'0'), tmin, tmax, kFormant_unit::HERTZ);
-			}
 		} else if (varName [0] == U'b' && varName [1] >= U'1' && varName [1] <= U'5' && varName [2] == U'\0') {
-			if (! my instancePref_formant_show())
-				Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
-			if (! my d_formant)
-				Melder_throw (theMessage_Cannot_compute_formant);
+			TimeSoundAnalysisEditor_haveVisibleFormants (me);
 			value = Formant_getBandwidthAtTime (my d_formant.get(), (int) (varName [1] - U'0'), 0.5 * (tmin + tmax), kFormant_unit::HERTZ);
 		} else if (str32equ (varName, U"intensity")) {
-			if (! my instancePref_intensity_show())
-				Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
-			if (! my d_intensity)
-				Melder_throw (theMessage_Cannot_compute_intensity);
-			if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
+			TimeSoundAnalysisEditor_haveVisibleIntensity (me);
+			if (part == TimeSoundAnalysisEditor_PART_CURSOR)
 				value = Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, kVector_valueInterpolation :: LINEAR);
-			} else {
+			else
 				value = Intensity_getAverage (my d_intensity.get(), tmin, tmax, (int) my instancePref_intensity_averagingMethod());
-			}
 		} else if (str32equ (varName, U"power")) {
-			if (! my instancePref_spectrogram_show())
-				Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
-			if (! my d_spectrogram)
-				Melder_throw (theMessage_Cannot_compute_spectrogram);
-			if (part != TimeSoundAnalysisEditor_PART_CURSOR) Melder_throw (U"Click inside the spectrogram first.");
+			TimeSoundAnalysisEditor_haveVisibleSpectrogram (me);
+			if (part != TimeSoundAnalysisEditor_PART_CURSOR)
+				Melder_throw (U"Click inside the spectrogram first.");
 			value = Matrix_getValueAtXY (my d_spectrogram.get(), tmin, my d_spectrogram_cursor);
 		}
 		if (isdefined (value)) {
@@ -535,11 +512,7 @@ static void QUERY_DATA_FOR_REAL__getSpectralPowerAtCursorCross (TimeSoundAnalysi
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
-		if (! my instancePref_spectrogram_show())
-			Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
-		TimeSoundAnalysisEditor_haveSpectrogram (me);
-		if (! my d_spectrogram)
-			Melder_throw (theMessage_Cannot_compute_spectrogram);
+		TimeSoundAnalysisEditor_haveVisibleSpectrogram (me);
 		if (part != TimeSoundAnalysisEditor_PART_CURSOR)
 			Melder_throw (U"Click inside the spectrogram first.");
 		const double result = Matrix_getValueAtXY (my d_spectrogram.get(), tmin, my d_spectrogram_cursor);
@@ -575,11 +548,7 @@ static autoSound extractSound (TimeSoundAnalysisEditor me, double tmin, double t
 
 static void CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		if (! my instancePref_spectrogram_show())
-			Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
-		TimeSoundAnalysisEditor_haveSpectrogram (me);
-		if (! my d_spectrogram)
-			Melder_throw (theMessage_Cannot_compute_spectrogram);
+		TimeSoundAnalysisEditor_haveVisibleSpectrogram (me);
 		autoSpectrogram result = Data_copy (my d_spectrogram.get());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
@@ -624,11 +593,7 @@ static void menu_cb_paintVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_spectrogram_picture_garnish (garnish);
-		if (! my instancePref_spectrogram_show())
-			Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
-		TimeSoundAnalysisEditor_haveSpectrogram (me);
-		if (! my d_spectrogram)
-			Melder_throw (theMessage_Cannot_compute_spectrogram);
+		TimeSoundAnalysisEditor_haveVisibleSpectrogram (me);
 		Editor_openPraatPicture (me);
 		Spectrogram_paint (my d_spectrogram.get(), my pictureGraphics, my startWindow, my endWindow,
 			my instancePref_spectrogram_viewFrom(), my instancePref_spectrogram_viewTo(),
@@ -753,11 +718,7 @@ static void INFO_DATA__pitchListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIR
 	INFO_DATA
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		if (! my d_pitch)
-			Melder_throw (theMessage_Cannot_compute_pitch);
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Time_s   F0_",
 				Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit(), Function_UNIT_TEXT_SHORT));
@@ -783,11 +744,7 @@ static void QUERY_DATA_FOR_REAL__getPitch (TimeSoundAnalysisEditor me, EDITOR_AR
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		if (! my d_pitch)
-			Melder_throw (theMessage_Cannot_compute_pitch);
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		double result =
 			part == TimeSoundAnalysisEditor_PART_CURSOR
 				? Pitch_getValueAtTime (my d_pitch.get(), tmin, my instancePref_pitch_unit(), true)
@@ -806,11 +763,7 @@ static void QUERY_DATA_FOR_REAL__getMinimumPitch (TimeSoundAnalysisEditor me, ED
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		if (! my d_pitch)
-			Melder_throw (theMessage_Cannot_compute_pitch);
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		double result = Pitch_getMinimum (my d_pitch.get(), tmin, tmax, my instancePref_pitch_unit(), true);
 		result = Function_convertToNonlogarithmic (my d_pitch.get(), result, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 	QUERY_DATA_FOR_REAL_END (U" ", Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit(), 0),
@@ -821,11 +774,7 @@ static void QUERY_DATA_FOR_REAL__getMaximumPitch (TimeSoundAnalysisEditor me, ED
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		if (! my d_pitch)
-			Melder_throw (theMessage_Cannot_compute_pitch);   // BUG
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);   // BUG
 		double result = Pitch_getMaximum (my d_pitch.get(), tmin, tmax, my instancePref_pitch_unit(), true);
 		result = Function_convertToNonlogarithmic (my d_pitch.get(), result, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 	QUERY_DATA_FOR_REAL_END (U" ", Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit(), 0),
@@ -834,11 +783,7 @@ static void QUERY_DATA_FOR_REAL__getMaximumPitch (TimeSoundAnalysisEditor me, ED
 
 static void menu_cb_moveCursorToMinimumPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		if (! my d_pitch)
-			Melder_throw (theMessage_Cannot_compute_pitch);
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		if (my startSelection == my endSelection) {
 			Melder_throw (U"Empty selection.");
 		} else {
@@ -856,11 +801,7 @@ static void menu_cb_moveCursorToMinimumPitch (TimeSoundAnalysisEditor me, EDITOR
 
 static void menu_cb_moveCursorToMaximumPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		if (! my d_pitch)
-			Melder_throw (theMessage_Cannot_compute_pitch);
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		if (my startSelection == my endSelection) {
 			Melder_throw (U"Empty selection.");
 		} else {
@@ -878,11 +819,7 @@ static void menu_cb_moveCursorToMaximumPitch (TimeSoundAnalysisEditor me, EDITOR
 
 static void CONVERT_DATA_TO_ONE__ExtractVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		if (! my d_pitch)
-			Melder_throw (theMessage_Cannot_compute_pitch);
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		autoPitch result = Data_copy (my d_pitch.get());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
@@ -907,11 +844,7 @@ static void menu_cb_drawVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_pitch_picture_garnish (garnish);
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-		TimeSoundAnalysisEditor_havePitch (me);
-		if (! my d_pitch)
-			Melder_throw (theMessage_Cannot_compute_pitch);
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		Editor_openPraatPicture (me);
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
 				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
@@ -973,11 +906,7 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 
 static void CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		if (! my instancePref_intensity_show())
-			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
-		TimeSoundAnalysisEditor_haveIntensity (me);
-		if (! my d_intensity)
-			Melder_throw (theMessage_Cannot_compute_intensity);
+		TimeSoundAnalysisEditor_haveVisibleIntensity (me);
 		autoIntensity result = Data_copy (my d_intensity.get());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
@@ -998,11 +927,7 @@ static void menu_cb_drawVisibleIntensityContour (TimeSoundAnalysisEditor me, EDI
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_intensity_picture_garnish (garnish);
-		if (! my instancePref_intensity_show())
-			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
-		TimeSoundAnalysisEditor_haveIntensity (me);
-		if (! my d_intensity)
-			Melder_throw (theMessage_Cannot_compute_intensity);
+		TimeSoundAnalysisEditor_haveVisibleIntensity (me);
 		Editor_openPraatPicture (me);
 		Intensity_draw (my d_intensity.get(), my pictureGraphics, my startWindow, my endWindow,
 				my instancePref_intensity_viewFrom(), my instancePref_intensity_viewTo(), garnish);
@@ -1015,11 +940,7 @@ static void INFO_DATA__intensityListing (TimeSoundAnalysisEditor me, EDITOR_ARGS
 	INFO_DATA
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
-		if (! my instancePref_intensity_show())
-			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
-		TimeSoundAnalysisEditor_haveIntensity (me);
-		if (! my d_intensity)
-			Melder_throw (theMessage_Cannot_compute_intensity);
+		TimeSoundAnalysisEditor_haveVisibleIntensity (me);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Time_s   Intensity_dB");
 		if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
@@ -1042,11 +963,7 @@ static void QUERY_DATA_FOR_REAL__getIntensity (TimeSoundAnalysisEditor me, EDITO
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
-		if (! my instancePref_intensity_show())
-			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
-		TimeSoundAnalysisEditor_haveIntensity (me);
-		if (! my d_intensity)
-			Melder_throw (theMessage_Cannot_compute_intensity);
+		TimeSoundAnalysisEditor_haveVisibleIntensity (me);
 		const double result = ( part == TimeSoundAnalysisEditor_PART_CURSOR
 			? Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, kVector_valueInterpolation :: LINEAR)
 			: Intensity_getAverage (my d_intensity.get(), tmin, tmax, (int) my instancePref_intensity_averagingMethod())
@@ -1063,11 +980,7 @@ static void QUERY_DATA_FOR_REAL__getMinimumIntensity (TimeSoundAnalysisEditor me
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
-		if (! my instancePref_intensity_show())
-			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
-		TimeSoundAnalysisEditor_haveIntensity (me);
-		if (! my d_intensity)
-			Melder_throw (theMessage_Cannot_compute_intensity);
+		TimeSoundAnalysisEditor_haveVisibleIntensity (me);
 		const double result = Vector_getMinimum (my d_intensity.get(), tmin, tmax, kVector_peakInterpolation :: PARABOLIC);
 	QUERY_DATA_FOR_REAL_END (U" dB (minimum intensity ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 }
@@ -1076,11 +989,7 @@ static void QUERY_DATA_FOR_REAL__getMaximumIntensity (TimeSoundAnalysisEditor me
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
-		if (! my instancePref_intensity_show())
-			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
-		TimeSoundAnalysisEditor_haveIntensity (me);
-		if (! my d_intensity)
-			Melder_throw (theMessage_Cannot_compute_intensity);
+		TimeSoundAnalysisEditor_haveVisibleIntensity (me);
 		const double result = Vector_getMaximum (my d_intensity.get(), tmin, tmax, kVector_peakInterpolation :: PARABOLIC);
 	QUERY_DATA_FOR_REAL_END (U" dB (maximum intensity ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 }
@@ -1149,11 +1058,7 @@ static void menu_cb_advancedFormantSettings (TimeSoundAnalysisEditor me, EDITOR_
 
 static void CONVERT_DATA_TO_ONE__ExtractVisibleFormantContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		if (! my instancePref_formant_show())
-			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
-		TimeSoundAnalysisEditor_haveFormants (me);
-		if (! my d_formant)
-			Melder_throw (theMessage_Cannot_compute_formant);
+		TimeSoundAnalysisEditor_haveVisibleFormants (me);
 		autoFormant result = Data_copy (my d_formant.get());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
@@ -1174,11 +1079,7 @@ static void menu_cb_drawVisibleFormantContour (TimeSoundAnalysisEditor me, EDITO
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_formant_picture_garnish (garnish);
-		if (! my instancePref_formant_show())
-			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
-		TimeSoundAnalysisEditor_haveFormants (me);
-		if (! my d_formant)
-			Melder_throw (theMessage_Cannot_compute_formant);
+		TimeSoundAnalysisEditor_haveVisibleFormants (me);
 		Editor_openPraatPicture (me);
 		Formant_drawSpeckles (my d_formant.get(), my pictureGraphics, my startWindow, my endWindow,
 			my instancePref_spectrogram_viewTo(), my instancePref_formant_dynamicRange(),
@@ -1193,11 +1094,7 @@ static void INFO_DATA__formantListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_D
 	INFO_DATA
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
-		if (! my instancePref_formant_show())
-			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
-		TimeSoundAnalysisEditor_haveFormants (me);
-		if (! my d_formant)
-			Melder_throw (theMessage_Cannot_compute_formant);
+		TimeSoundAnalysisEditor_haveVisibleFormants (me);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
 		if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
@@ -1226,11 +1123,7 @@ static void do_getFormant (TimeSoundAnalysisEditor me, integer iformant, Interpr
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
-		if (! my instancePref_formant_show())
-			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
-		TimeSoundAnalysisEditor_haveFormants (me);
-		if (! my d_formant)
-			Melder_throw (theMessage_Cannot_compute_formant);
+		TimeSoundAnalysisEditor_haveVisibleFormants (me);
 		const double result = ( part == TimeSoundAnalysisEditor_PART_CURSOR
 			? Formant_getValueAtTime (my d_formant.get(), iformant, tmin, kFormant_unit::HERTZ)
 			: Formant_getMean (my d_formant.get(), iformant, tmin, tmax, kFormant_unit::HERTZ)
@@ -1244,11 +1137,7 @@ static void do_getBandwidth (TimeSoundAnalysisEditor me, integer iformant, Inter
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
-		if (! my instancePref_formant_show())
-			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
-		TimeSoundAnalysisEditor_haveFormants (me);
-		if (! my d_formant)
-			Melder_throw (theMessage_Cannot_compute_formant);
+		TimeSoundAnalysisEditor_haveVisibleFormants (me);
 		const double result = ( part == TimeSoundAnalysisEditor_PART_CURSOR
 			? Formant_getBandwidthAtTime (my d_formant.get(), iformant, tmin, kFormant_unit::HERTZ)
 			: Formant_getBandwidthAtTime (my d_formant.get(), iformant, 0.5 * (tmin + tmax), kFormant_unit::HERTZ)
@@ -1328,11 +1217,7 @@ static void menu_cb_advancedPulsesSettings (TimeSoundAnalysisEditor me, EDITOR_A
 
 static void CONVERT_DATA_TO_ONE__ExtractVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		if (! my instancePref_pulses_show())
-			Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
-		TimeSoundAnalysisEditor_havePulses (me);
-		if (! my d_pulses)
-			Melder_throw (theMessage_Cannot_compute_pulses);
+		TimeSoundAnalysisEditor_haveVisiblePulses (me);
 		autoPointProcess result = Data_copy (my d_pulses.get());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
@@ -1353,11 +1238,7 @@ static void menu_cb_drawVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_pulses_picture_garnish (garnish);
-		if (! my instancePref_pulses_show())
-			Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
-		TimeSoundAnalysisEditor_havePulses (me);
-		if (! my d_pulses)
-			Melder_throw (theMessage_Cannot_compute_pulses);
+		TimeSoundAnalysisEditor_haveVisiblePulses (me);
 		Editor_openPraatPicture (me);
 		PointProcess_draw (my d_pulses.get(), my pictureGraphics, my startWindow, my endWindow, garnish);
 		FunctionEditor_garnish (me);
@@ -1370,11 +1251,7 @@ static void INFO_DATA__voiceReport (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRE
 		time_t today = time (nullptr);
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
-		if (! my instancePref_pulses_show())
-			Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
-		TimeSoundAnalysisEditor_havePulses (me);
-		if (! my d_pulses)
-			Melder_throw (theMessage_Cannot_compute_pulses);
+		TimeSoundAnalysisEditor_haveVisiblePulses (me);
 		autoSound sound = extractSound (me, tmin, tmax);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"-- Voice report for ", my name.get(), U" --\nDate: ", Melder_peek8to32 (ctime (& today)));
@@ -1395,11 +1272,7 @@ static void INFO_DATA__pulseListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIR
 	INFO_DATA
 		double tmin, tmax;
 		makeQueriable (me, false, & tmin, & tmax);
-		if (! my instancePref_pulses_show())
-			Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
-		TimeSoundAnalysisEditor_havePulses (me);
-		if (! my d_pulses)
-			Melder_throw (theMessage_Cannot_compute_pulses);
+		TimeSoundAnalysisEditor_haveVisiblePulses (me);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Time_s");
 		const integer i1 = PointProcess_getHighIndex (my d_pulses.get(), tmin);
@@ -1415,13 +1288,7 @@ static void INFO_DATA__pulseListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIR
 /*
 static void cb_getJitter_xx (TimeSoundAnalysisEditor me, double (*PointProcess_getJitter_xx) (PointProcess, double, double, double, double, double)) {
 	double minimumPeriod = 0.8 / my p_pitch_ceiling, maximumPeriod = 1.25 / my p_pitch_floor;
-	if (! my p_pulses_show)
-		Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
-	if (! my d_pulses) {
-		computePulses (me);
-		if (! my d_pulses)
-			Melder_throw (theMessage_Cannot_compute_pulses);
-	}
+	TimeSoundAnalysisEditor_haveVisiblePulses (me);
 	if (my startSelection == my endSelection)
 		Melder_throw (U"Make a selection first.");
 	makeQueriable
@@ -1436,13 +1303,7 @@ DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ddp) { cb_getJitter_xx (me, PointP
 
 static void cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_Sound_getShimmer_xx) (PointProcess, Sound, double, double, double, double, double)) {
 	double minimumPeriod = 0.8 / my p_pitch_ceiling, maximumPeriod = 1.25 / my p_pitch_floor;
-	if (! my p_pulses_show)
-		Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
-	if (! my d_pulses) {
-		computePulses (me);
-		if (! my d_pulses)
-			Melder_throw (theMessage_Cannot_compute_pulses);
-	}
+	TimeSoundAnalysisEditor_haveVisiblePulses (me);
 	if (my startSelection == my endSelection)
 		Melder_throw (U"Make a selection first.");
 	makeQueriable
@@ -1647,29 +1508,41 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_pulses_picture (EditorMe
 	EditorMenu_addCommand (menu, U"Draw visible pulses...", 0, menu_cb_drawVisiblePulses);
 }
 
-void TimeSoundAnalysisEditor_haveSpectrogram (TimeSoundAnalysisEditor me) {
+static void tryToComputeSpectrogram (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
-	if (my instancePref_spectrogram_show() && ! my d_spectrogram && my endWindow - my startWindow <= my instancePref_longestAnalysis()) {
-		const double margin = ( my instancePref_spectrogram_windowShape() == kSound_to_Spectrogram_windowShape::GAUSSIAN ?
-				my instancePref_spectrogram_windowLength() : 0.5 * my instancePref_spectrogram_windowLength() );
-		try {
-			autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-			my d_spectrogram = Sound_to_Spectrogram (sound.get(),
-				my instancePref_spectrogram_windowLength(),
-				my instancePref_spectrogram_viewTo(),
-				(my endWindow - my startWindow) / my instancePref_spectrogram_timeSteps(),
-				my instancePref_spectrogram_viewTo() / my instancePref_spectrogram_frequencySteps(),
-				my instancePref_spectrogram_windowShape(), 8.0, 8.0
-			);
-			my d_spectrogram -> xmin = my startWindow;
-			my d_spectrogram -> xmax = my endWindow;
-		} catch (MelderError) {
-			Melder_clearError ();
-		}
+	const double margin = ( my instancePref_spectrogram_windowShape() == kSound_to_Spectrogram_windowShape::GAUSSIAN ?
+			my instancePref_spectrogram_windowLength() : 0.5 * my instancePref_spectrogram_windowLength() );
+	try {
+		autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
+		my d_spectrogram = Sound_to_Spectrogram (sound.get(),
+			my instancePref_spectrogram_windowLength(),
+			my instancePref_spectrogram_viewTo(),
+			(my endWindow - my startWindow) / my instancePref_spectrogram_timeSteps(),
+			my instancePref_spectrogram_viewTo() / my instancePref_spectrogram_frequencySteps(),
+			my instancePref_spectrogram_windowShape(), 8.0, 8.0
+		);
+		my d_spectrogram -> xmin = my startWindow;
+		my d_spectrogram -> xmax = my endWindow;
+	} catch (MelderError) {
+		Melder_clearError ();
 	}
 }
 
-static void computePitch_inside (TimeSoundAnalysisEditor me) {
+static void tryToHaveSpectrogram (TimeSoundAnalysisEditor me) {
+	if (! my d_spectrogram && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputeSpectrogram (me);
+}
+
+void TimeSoundAnalysisEditor_haveVisibleSpectrogram (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_spectrogram_show())
+		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+	tryToHaveSpectrogram (me);
+	if (! my d_spectrogram)
+		Melder_throw (U"The spectrogram is not defined at the edge of the sound.");
+}
+
+static void tryToComputePitch (TimeSoundAnalysisEditor me) {
+	autoMelderProgressOff progress;
 	const double margin = ( my instancePref_pitch_veryAccurate() ? 3.0 / my instancePref_pitch_floor() : 1.5 / my instancePref_pitch_floor() );
 	try {
 		autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
@@ -1694,78 +1567,118 @@ static void computePitch_inside (TimeSoundAnalysisEditor me) {
 	}
 }
 
-void TimeSoundAnalysisEditor_havePitch (TimeSoundAnalysisEditor me) {
-	autoMelderProgressOff progress;
-	if (my instancePref_pitch_show() && ! my d_pitch && my endWindow - my startWindow <= my instancePref_longestAnalysis())
-		computePitch_inside (me);
+static void tryToHavePitch (TimeSoundAnalysisEditor me) {
+	if (! my d_pitch && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputePitch (me);
 }
 
-void TimeSoundAnalysisEditor_haveIntensity (TimeSoundAnalysisEditor me) {
+void TimeSoundAnalysisEditor_haveVisiblePitch (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_pitch_show())
+		Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+	tryToHavePitch (me);
+	if (! my d_pitch)
+		Melder_throw (U"The pitch contour is not defined at the edge of the sound.");
+}
+
+static void tryToComputeIntensity (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
-	if (my instancePref_intensity_show() && ! my d_intensity && my endWindow - my startWindow <= my instancePref_longestAnalysis()) {
-		const double margin = 3.2 / my instancePref_pitch_floor();
+	const double margin = 3.2 / my instancePref_pitch_floor();
+	try {
+		autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
+		my d_intensity = Sound_to_Intensity (sound.get(), my instancePref_pitch_floor(),
+			my endWindow - my startWindow > my instancePref_longestAnalysis() ? (my endWindow - my startWindow) / 100 : 0.0,
+			my instancePref_intensity_subtractMeanPressure()
+		);
+		my d_intensity -> xmin = my startWindow;
+		my d_intensity -> xmax = my endWindow;
+	} catch (MelderError) {
+		Melder_clearError ();
+	}
+}
+
+static void tryToHaveIntensity (TimeSoundAnalysisEditor me) {
+	if (! my d_intensity && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputeIntensity (me);
+}
+
+void TimeSoundAnalysisEditor_haveVisibleIntensity (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_intensity_show())
+		Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+	tryToHaveIntensity (me);
+	if (! my d_intensity)
+		Melder_throw (U"The intensity curve is not defined at the edge of the sound.");
+}
+
+static void tryToComputeFormants (TimeSoundAnalysisEditor me) {
+	autoMelderProgressOff progress;
+	const double margin = my instancePref_formant_windowLength();
+	try {
+		autoSound sound = ( my endWindow - my startWindow > my instancePref_longestAnalysis() ?
+			extractSound (me,
+				0.5 * (my startWindow + my endWindow - my instancePref_longestAnalysis()) - margin,
+				0.5 * (my startWindow + my endWindow + my instancePref_longestAnalysis()) + margin
+			) :
+			extractSound (me, my startWindow - margin, my endWindow + margin)
+		);
+		const double formantTimeStep = (
+			my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
+			my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my instancePref_numberOfTimeStepsPerView() :
+			0.0   // the default: determined by analysis window length
+		);
+		my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
+			Melder_iround (my instancePref_formant_numberOfFormants() * 2.0), my instancePref_formant_ceiling(),
+			my instancePref_formant_windowLength(), (int) my instancePref_formant_method(), my instancePref_formant_preemphasisFrom(), 50.0
+		);
+		my d_formant -> xmin = my startWindow;
+		my d_formant -> xmax = my endWindow;
+	} catch (MelderError) {
+		Melder_clearError ();
+	}
+}
+
+static void tryToHaveFormants (TimeSoundAnalysisEditor me) {
+	if (! my d_formant && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputeFormants (me);
+}
+
+void TimeSoundAnalysisEditor_haveVisibleFormants (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_formant_show())
+		Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+	tryToHaveFormants (me);
+	if (! my d_formant)
+		Melder_throw (U"The formants are not defined at the edge of the sound.");
+}
+
+static void tryToComputePulses (TimeSoundAnalysisEditor me) {
+	if (! my d_pitch)
+		tryToComputePitch (me);
+	if (my d_pitch) {
+		autoMelderProgressOff progress;
 		try {
-			autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-			my d_intensity = Sound_to_Intensity (sound.get(), my instancePref_pitch_floor(),
-				my endWindow - my startWindow > my instancePref_longestAnalysis() ? (my endWindow - my startWindow) / 100 : 0.0,
-				my instancePref_intensity_subtractMeanPressure()
-			);
-			my d_intensity -> xmin = my startWindow;
-			my d_intensity -> xmax = my endWindow;
+			autoSound sound = extractSound (me, my startWindow, my endWindow);
+			my d_pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), my d_pitch.get());
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
 	}
 }
 
-void TimeSoundAnalysisEditor_haveFormants (TimeSoundAnalysisEditor me) {
-	autoMelderProgressOff progress;
-	if (my instancePref_formant_show() && ! my d_formant && my endWindow - my startWindow <= my instancePref_longestAnalysis()) {
-		const double margin = my instancePref_formant_windowLength();
-		try {
-			autoSound sound = ( my endWindow - my startWindow > my instancePref_longestAnalysis() ?
-				extractSound (me,
-					0.5 * (my startWindow + my endWindow - my instancePref_longestAnalysis()) - margin,
-					0.5 * (my startWindow + my endWindow + my instancePref_longestAnalysis()) + margin
-				) :
-				extractSound (me, my startWindow - margin, my endWindow + margin)
-			);
-			const double formantTimeStep = (
-				my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
-				my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my instancePref_numberOfTimeStepsPerView() :
-				0.0   // the default: determined by analysis window length
-			);
-			my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
-				Melder_iround (my instancePref_formant_numberOfFormants() * 2.0), my instancePref_formant_ceiling(),
-				my instancePref_formant_windowLength(), (int) my instancePref_formant_method(), my instancePref_formant_preemphasisFrom(), 50.0
-			);
-			my d_formant -> xmin = my startWindow;
-			my d_formant -> xmax = my endWindow;
-		} catch (MelderError) {
-			Melder_clearError ();
-		}
-	}
+static void tryToHavePulses (TimeSoundAnalysisEditor me) {
+	if (! my d_pulses && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputePulses (me);
 }
 
-void TimeSoundAnalysisEditor_havePulses (TimeSoundAnalysisEditor me) {
-	autoMelderProgressOff progress;
-	if (my instancePref_pulses_show() && ! my d_pulses && my endWindow - my startWindow <= my instancePref_longestAnalysis()) {
-		if (! my d_pitch)
-			computePitch_inside (me);
-		if (my d_pitch) {
-			try {
-				autoSound sound = extractSound (me, my startWindow, my endWindow);
-				my d_pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), my d_pitch.get());
-			} catch (MelderError) {
-				Melder_clearError ();
-			}
-		}
-	}
+void TimeSoundAnalysisEditor_haveVisiblePulses (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_pulses_show())
+		Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
+	tryToHavePulses (me);
+	if (! my d_pulses)
+		Melder_throw (U"The pulses are not defined at the edge of the sound.");
 }
 
 static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me) {
 	/*
-		d_pitch may not exist yet (if shown at all, it may be going to be created in TimeSoundAnalysisEditor_havePitch (),
+		d_pitch may not exist yet (if shown at all, it may be going to be created in tryToHavePitch (),
 		and even if that fails the user should see what the pitch settings are). So we use a dummy object.
 	*/
 	const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch),
@@ -1798,7 +1711,8 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_setFontSize (my graphics.get(), 12);
 		return;
 	}
-	TimeSoundAnalysisEditor_haveSpectrogram (me);
+	if (my instancePref_spectrogram_show())
+		tryToHaveSpectrogram (me);
 	if (my instancePref_spectrogram_show() && my d_spectrogram) {
 		Spectrogram_paintInside (my d_spectrogram.get(), my graphics.get(), my startWindow, my endWindow,
 			my instancePref_spectrogram_viewFrom(), my instancePref_spectrogram_viewTo(),
@@ -1807,7 +1721,8 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			my instancePref_spectrogram_dynamicCompression()
 		);
 	}
-	TimeSoundAnalysisEditor_havePitch (me);
+	if (my instancePref_pitch_show())
+		tryToHavePitch (me);
 	if (my instancePref_pitch_show() && my d_pitch) {
 		const double periodsPerAnalysisWindow = ( my instancePref_pitch_method() == kTimeSoundAnalysisEditor_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0 );
 		const double greatestNonUndersamplingTimeStep = 0.5 * periodsPerAnalysisWindow / my instancePref_pitch_floor();
@@ -1845,7 +1760,8 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		}
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 	}
-	TimeSoundAnalysisEditor_haveIntensity (me);
+	if (my instancePref_intensity_show())
+		tryToHaveIntensity (me);
 	if (my instancePref_intensity_show() && my d_intensity) {
 		Graphics_setColour (my graphics.get(), my instancePref_spectrogram_show() ? Melder_YELLOW : Melder_LIME);
 		Graphics_setLineWidth (my graphics.get(), my instancePref_spectrogram_show() ? 1.0 : 3.0);
@@ -1998,7 +1914,8 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis () {
 }
 
 void structTimeSoundAnalysisEditor :: v_draw_analysis_formants () {
-	TimeSoundAnalysisEditor_haveFormants (this);
+	if (our instancePref_formant_show())
+		tryToHaveFormants (this);
 	if (our instancePref_formant_show() && our d_formant) {
 		Graphics_setSpeckleSize (our graphics.get(), our instancePref_formant_dotSize());
 		Formant_drawSpeckles_inside (our d_formant.get(), our graphics.get(), our startWindow, our endWindow,
@@ -2010,7 +1927,8 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis_formants () {
 }
 
 void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {
-	TimeSoundAnalysisEditor_havePulses (this);
+	if (our instancePref_pulses_show())
+		tryToHavePulses (this);
 	if (our instancePref_pulses_show() && our endWindow - our startWindow <= our instancePref_longestAnalysis() && our d_pulses) {
 		PointProcess point = our d_pulses.get();
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, -1.0, 1.0);

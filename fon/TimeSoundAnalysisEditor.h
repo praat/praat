@@ -87,11 +87,11 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me,
 	conststring32 title, Function data, Sampled sound, bool ownSound);
 
-void TimeSoundAnalysisEditor_haveSpectrogram (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_havePitch (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_haveIntensity (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_haveFormants (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_havePulses (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_haveVisibleSpectrogram (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_haveVisiblePitch (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_haveVisibleIntensity (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_haveVisibleFormants (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_haveVisiblePulses (TimeSoundAnalysisEditor me);
 
 /* End of file TimeSoundAnalysisEditor.h */
 #endif
