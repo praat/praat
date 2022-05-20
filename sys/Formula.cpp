@@ -3815,7 +3815,7 @@ static void do_do () {
 		//praat_updateSelection ();
 		double value = undefined;
 		if (valueString.string [0] == 1) {   // nothing written with MelderInfo by praat_doAction or praat_doMenuCommand? then the return value is the ID of the selected object
-			int IOBJECT, result = 0, found = 0;
+			integer IOBJECT, result = 0, found = 0;
 			WHERE (SELECTED) {
 				result = IOBJECT;
 				found += 1;
