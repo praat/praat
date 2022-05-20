@@ -646,14 +646,14 @@ DO_ALTERNATIVE (GRAPHICS_EACH__old_Sound_draw)
 
 static void cb_SoundEditor_publication (Editor /* me */, autoDaata publication) {
 	/*
-	 * Keep the gate for error handling.
-	 */
+		Keep the gate for error handling.
+	*/
 	try {
 		const bool isaSpectrum = Thing_isa (publication.get(), classSpectrum);
 		praat_new (publication.move(), U"");
 		praat_updateSelection ();
 		if (isaSpectrum) {
-			int IOBJECT;
+			integer IOBJECT;
 			FIND_ONE_WITH_IOBJECT (Spectrum)
 			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 			praat_installEditor (editor2.get(), IOBJECT);
