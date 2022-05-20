@@ -490,7 +490,7 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 		if (! my instancePref_pitch_show())
 			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my d_pitch) {
-			TimeSoundAnalysisEditor_computePitch (me);
+			TimeSoundAnalysisEditor_havePitch (me);
 			if (! my d_pitch)
 				Melder_throw (U"Cannot compute pitch.");
 		}
