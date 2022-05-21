@@ -1508,6 +1508,17 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_pulses_picture (EditorMe
 	EditorMenu_addCommand (menu, U"Draw visible pulses...", 0, menu_cb_drawVisiblePulses);
 }
 
+/*
+	Some tryToCompute<Analysis>() functions.
+	The "try" means that any exceptions that are generated, will be ignored;
+	this is necessary because these functions have to be used in an editor window,
+	where they have to work in the background,
+	because they are not explicly called by a user action.
+
+	Postcondition:
+		- If a tryToCompute<Analysis>() function fails, the <Analysis> should be null;
+		  this is how tryToCompute<Analysis>() signals failure.
+*/
 static void tryToComputeSpectrogram (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
 	const double margin = ( my instancePref_spectrogram_windowShape() == kSound_to_Spectrogram_windowShape::GAUSSIAN ?
@@ -1524,23 +1535,10 @@ static void tryToComputeSpectrogram (TimeSoundAnalysisEditor me) {
 		my d_spectrogram -> xmin = my startWindow;
 		my d_spectrogram -> xmax = my endWindow;
 	} catch (MelderError) {
+		my d_spectrogram. reset();   // signal a failure
 		Melder_clearError ();
 	}
 }
-
-static void tryToHaveSpectrogram (TimeSoundAnalysisEditor me) {
-	if (! my d_spectrogram && my endWindow - my startWindow <= my instancePref_longestAnalysis())
-		tryToComputeSpectrogram (me);
-}
-
-void TimeSoundAnalysisEditor_haveVisibleSpectrogram (TimeSoundAnalysisEditor me) {
-	if (! my instancePref_spectrogram_show())
-		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
-	tryToHaveSpectrogram (me);
-	if (! my d_spectrogram)
-		Melder_throw (U"The spectrogram is not defined at the edge of the sound.");
-}
-
 static void tryToComputePitch (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
 	const double margin = ( my instancePref_pitch_veryAccurate() ? 3.0 / my instancePref_pitch_floor() : 1.5 / my instancePref_pitch_floor() );
@@ -1563,23 +1561,10 @@ static void tryToComputePitch (TimeSoundAnalysisEditor me) {
 		my d_pitch -> xmin = my startWindow;
 		my d_pitch -> xmax = my endWindow;
 	} catch (MelderError) {
+		my d_pitch. reset();   // signal a failure
 		Melder_clearError ();
 	}
 }
-
-static void tryToHavePitch (TimeSoundAnalysisEditor me) {
-	if (! my d_pitch && my endWindow - my startWindow <= my instancePref_longestAnalysis())
-		tryToComputePitch (me);
-}
-
-void TimeSoundAnalysisEditor_haveVisiblePitch (TimeSoundAnalysisEditor me) {
-	if (! my instancePref_pitch_show())
-		Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-	tryToHavePitch (me);
-	if (! my d_pitch)
-		Melder_throw (U"The pitch contour is not defined at the edge of the sound.");
-}
-
 static void tryToComputeIntensity (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
 	const double margin = 3.2 / my instancePref_pitch_floor();
@@ -1592,23 +1577,10 @@ static void tryToComputeIntensity (TimeSoundAnalysisEditor me) {
 		my d_intensity -> xmin = my startWindow;
 		my d_intensity -> xmax = my endWindow;
 	} catch (MelderError) {
+		my d_intensity. reset();   // signal a failure
 		Melder_clearError ();
 	}
 }
-
-static void tryToHaveIntensity (TimeSoundAnalysisEditor me) {
-	if (! my d_intensity && my endWindow - my startWindow <= my instancePref_longestAnalysis())
-		tryToComputeIntensity (me);
-}
-
-void TimeSoundAnalysisEditor_haveVisibleIntensity (TimeSoundAnalysisEditor me) {
-	if (! my instancePref_intensity_show())
-		Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
-	tryToHaveIntensity (me);
-	if (! my d_intensity)
-		Melder_throw (U"The intensity curve is not defined at the edge of the sound.");
-}
-
 static void tryToComputeFormants (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
 	const double margin = my instancePref_formant_windowLength();
@@ -1632,23 +1604,10 @@ static void tryToComputeFormants (TimeSoundAnalysisEditor me) {
 		my d_formant -> xmin = my startWindow;
 		my d_formant -> xmax = my endWindow;
 	} catch (MelderError) {
+		my d_formant. reset();   // signal a failure
 		Melder_clearError ();
 	}
 }
-
-static void tryToHaveFormants (TimeSoundAnalysisEditor me) {
-	if (! my d_formant && my endWindow - my startWindow <= my instancePref_longestAnalysis())
-		tryToComputeFormants (me);
-}
-
-void TimeSoundAnalysisEditor_haveVisibleFormants (TimeSoundAnalysisEditor me) {
-	if (! my instancePref_formant_show())
-		Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
-	tryToHaveFormants (me);
-	if (! my d_formant)
-		Melder_throw (U"The formants are not defined at the edge of the sound.");
-}
-
 static void tryToComputePulses (TimeSoundAnalysisEditor me) {
 	if (! my d_pitch)
 		tryToComputePitch (me);
@@ -1658,16 +1617,79 @@ static void tryToComputePulses (TimeSoundAnalysisEditor me) {
 			autoSound sound = extractSound (me, my startWindow, my endWindow);
 			my d_pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), my d_pitch.get());
 		} catch (MelderError) {
+			my d_pulses. reset();   // signal a failure
 			Melder_clearError ();
 		}
 	}
 }
 
+/*
+	Some tryToHave<Analysis>() functions.
+	The "try" again means that any exceptions that are generated, will be ignored;
+	failure is again signalled by the Analysis being null.
+	The "have" means that these functions do nothing if the Analysis already exists,
+	but will (try to) create an Analysis if it does not exist.
+*/
+static void tryToHaveSpectrogram (TimeSoundAnalysisEditor me) {
+	if (! my d_spectrogram && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputeSpectrogram (me);
+}
+static void tryToHavePitch (TimeSoundAnalysisEditor me) {
+	if (! my d_pitch && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputePitch (me);
+}
+static void tryToHaveIntensity (TimeSoundAnalysisEditor me) {
+	if (! my d_intensity && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputeIntensity (me);
+}
+static void tryToHaveFormants (TimeSoundAnalysisEditor me) {
+	if (! my d_formant && my endWindow - my startWindow <= my instancePref_longestAnalysis())
+		tryToComputeFormants (me);
+}
 static void tryToHavePulses (TimeSoundAnalysisEditor me) {
 	if (! my d_pulses && my endWindow - my startWindow <= my instancePref_longestAnalysis())
 		tryToComputePulses (me);
 }
 
+/*
+	Some TimeSoundAnalysisEditor_haveVisible<Analysis>() functions.
+	These add error reporting that is specific to having editor windows,
+	thereby replacing the ignored errors that would have been generated
+	if the analysis had been performed by an explicit user action.
+
+	These can be used for querying, extracting, and drawing to the Picture window,
+	because those require the user to be aware of the need to have a visible Analysis.
+	They cannot be used when drawing into the analysis part of the editor window,
+	because of the low degree of explicitness of the need to draw an Analysis there.
+*/
+void TimeSoundAnalysisEditor_haveVisibleSpectrogram (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_spectrogram_show())
+		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+	tryToHaveSpectrogram (me);
+	if (! my d_spectrogram)
+		Melder_throw (U"The spectrogram is not defined at the edge of the sound.");
+}
+void TimeSoundAnalysisEditor_haveVisiblePitch (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_pitch_show())
+		Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+	tryToHavePitch (me);
+	if (! my d_pitch)
+		Melder_throw (U"The pitch contour is not defined at the edge of the sound.");
+}
+void TimeSoundAnalysisEditor_haveVisibleIntensity (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_intensity_show())
+		Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+	tryToHaveIntensity (me);
+	if (! my d_intensity)
+		Melder_throw (U"The intensity curve is not defined at the edge of the sound.");
+}
+void TimeSoundAnalysisEditor_haveVisibleFormants (TimeSoundAnalysisEditor me) {
+	if (! my instancePref_formant_show())
+		Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+	tryToHaveFormants (me);
+	if (! my d_formant)
+		Melder_throw (U"The formants are not defined at the edge of the sound.");
+}
 void TimeSoundAnalysisEditor_haveVisiblePulses (TimeSoundAnalysisEditor me) {
 	if (! my instancePref_pulses_show())
 		Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
