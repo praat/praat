@@ -322,38 +322,40 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	@property (nonatomic, retain) NSTrackingArea *trackingArea;
 	@end
 	@implementation GuiCocoaDrawingArea {
-		GuiDrawingArea d_userData;
+		GuiDrawingArea userData;
 	}
+	@synthesize inited;
+	@synthesize trackingArea;
 	- (id) initWithFrame: (NSRect) frame {
 		self = [super initWithFrame: frame];
 		if (self) {
-			_trackingArea = [[[NSTrackingArea alloc]
+			[self setTrackingArea: [[[NSTrackingArea alloc]
 				initWithRect: [self visibleRect]
 				options: NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingInVisibleRect | NSTrackingActiveAlways
 				owner: self
 				userInfo: nil]
-				autorelease];
-			[self   addTrackingArea: _trackingArea];
+				autorelease]];
+			[self addTrackingArea: [self trackingArea]];
 		}
 		return self;
 	}
 	- (void) dealloc {   // override
-		GuiDrawingArea me = d_userData;
+		GuiDrawingArea me = self -> userData;
 		if (Melder_debug == 55)
 			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (self), U" dealloc for ", Melder_pointer (me));
 		forget (me);
-		[self removeTrackingArea: _trackingArea];
+		[self removeTrackingArea: [self trackingArea]];
 		trace (U"deleting a drawing area");
 		[super dealloc];
 	}
 	- (GuiThing) getUserData {
-		return d_userData;
+		return self -> userData;
 	}
-	- (void) setUserData: (GuiThing) userData {
-		d_userData = static_cast <GuiDrawingArea> (userData);
+	- (void) setUserData: (GuiThing) newUserData {
+		self -> userData = static_cast <GuiDrawingArea> (newUserData);
 	}
 	- (void) resizeCallback: (NSRect) rect {
-		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		GuiDrawingArea me = (GuiDrawingArea) self -> userData;
 		if (me && my d_resizeCallback) {
 			structGuiDrawingArea_ResizeEvent event = { me, 0, 0 };
 			event. width = rect. size. width;
@@ -367,15 +369,15 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	- (void) drawRect: (NSRect) dirtyRect {
 		trace (U"dirtyRect: ", dirtyRect.origin.x, U", ", dirtyRect.origin.y, U", ", dirtyRect.size.width, U", ", dirtyRect.size.height);
-		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		GuiDrawingArea me = (GuiDrawingArea) self -> userData;
 		if (Melder_debug == 55)
 			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (self), U" draw to ", Melder_pointer (me));
-		if (! _inited) {
+		if (! [self inited]) {
 			// Last chance to do this. Is there a better place?
-			[self   resizeCallback: self. frame];
-			_inited = YES;
+			[self resizeCallback: [self frame]];
+			[self setInited: YES];
 		}
-		if (me && my d_exposeCallback && my numberOfGraphicses > 0) {
+		if (me && my d_exposeCallback && my numberOfGraphicses > 0) {   // asserting my numberOfGraphicses could crash if Editor_init gives a warning
 			structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
 			if (Melder_debug == 55)
 				Melder_casual (U"\t", Thing_messageNameAndAddress (me), U" draw for ", Melder_pointer (my d_exposeBoss));
@@ -401,8 +403,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 	}
 	- (void) setFrame: (NSRect) rect {
-		[self   resizeCallback: rect];
-		[super   setFrame: rect];
+		[self resizeCallback: rect];
+		[super setFrame: rect];
 	}
 	- (BOOL) acceptsFirstResponder {
 		/*
@@ -416,7 +418,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		 * (a side effect of this implementation is that the drawing area of the Manual window does not take away
 		 * the key focus from the Search field, a situation that cannot hurt).
 		 */
-		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		GuiDrawingArea me = (GuiDrawingArea) self -> userData;
 		return !! my d_keyCallback;
 	}
 	- (void) mouseEntered: (NSEvent *) nsEvent {
@@ -428,7 +430,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		[[NSCursor currentCursor] pop];
 	}
 	- (void) mouse: (NSEvent *) nsEvent inPhase: (structGuiDrawingArea_MouseEvent::Phase) phase {
-		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		GuiDrawingArea me = (GuiDrawingArea) self -> userData;
 		if (me && my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event = { me, 0, 0, phase, false, false, false };
 			NSPoint local_point = [self   convertPoint: [nsEvent locationInWindow]   fromView: nil];
@@ -463,7 +465,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	 	[self   mouse: nsEvent   inPhase: structGuiDrawingArea_MouseEvent::Phase::DROP];
 	}
 	- (void) scrollWheel: (NSEvent *) nsEvent {
-		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		GuiDrawingArea me = (GuiDrawingArea) self -> userData;
 		if (me && (my d_horizontalScrollBar || my d_verticalScrollBar)) {
 			if (my d_horizontalScrollBar) {
 				GuiCocoaScrollBar *cocoaScrollBar = (GuiCocoaScrollBar *) my d_horizontalScrollBar -> d_widget;
@@ -478,7 +480,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 	}
 	- (void) magnifyWithEvent: (NSEvent *) nsEvent {
-		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		GuiDrawingArea me = (GuiDrawingArea) self -> userData;
 		if (me && (my d_horizontalScrollBar || my d_verticalScrollBar)) {
 			if (my d_horizontalScrollBar) {
 				GuiCocoaScrollBar *cocoaScrollBar = (GuiCocoaScrollBar *) my d_horizontalScrollBar -> d_widget;
@@ -497,14 +499,18 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	- (void) keyDown: (NSEvent *) nsEvent {
 		trace (U"key pressed ");
-		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		GuiDrawingArea me = (GuiDrawingArea) self -> userData;
 		if (me && my d_keyCallback) {
 			structGuiDrawingArea_KeyEvent event = { me, U'\0', false, false, false };
 			event. key = [[nsEvent charactersIgnoringModifiers]   characterAtIndex: 0];
-			if (event. key == NSLeftArrowFunctionKey)  event. key = 0x2190;
-			if (event. key == NSRightArrowFunctionKey) event. key = 0x2192;
-			if (event. key == NSUpArrowFunctionKey)    event. key = 0x2191;
-			if (event. key == NSDownArrowFunctionKey)  event. key = 0x2193;
+			if (event. key == NSLeftArrowFunctionKey)
+				event. key = 0x2190;
+			if (event. key == NSRightArrowFunctionKey)
+				event. key = 0x2192;
+			if (event. key == NSUpArrowFunctionKey)
+				event. key = 0x2191;
+			if (event. key == NSDownArrowFunctionKey)
+				event. key = 0x2193;
 			trace (U"key ", event. key);
 			NSUInteger modifiers = [nsEvent modifierFlags];
 			event. shiftKeyPressed = modifiers & NSShiftKeyMask;
