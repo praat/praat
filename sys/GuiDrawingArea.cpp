@@ -318,24 +318,24 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 #elif cocoa
 #pragma mark - COCOA CALLBACKS (WITH QUARTZ)
 	@interface GuiCocoaDrawingArea ()
-	@property (nonatomic, assign) BOOL inited;
-	@property (nonatomic, retain) NSTrackingArea *trackingArea;
 	@end
 	@implementation GuiCocoaDrawingArea {
 		GuiDrawingArea userData;
+		bool inited;
+		NSTrackingArea *trackingArea;
 	}
-	@synthesize inited;
-	@synthesize trackingArea;
 	- (id) initWithFrame: (NSRect) frame {
 		self = [super initWithFrame: frame];
 		if (self) {
-			[self setTrackingArea: [[[NSTrackingArea alloc]
+			self -> trackingArea = [[NSTrackingArea alloc]
 				initWithRect: [self visibleRect]
 				options: NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingInVisibleRect | NSTrackingActiveAlways
 				owner: self
-				userInfo: nil]
-				autorelease]];
-			[self addTrackingArea: [self trackingArea]];
+				userInfo: nil
+			];
+			trace (U"Retain count of tracking area after creation: ", [self -> trackingArea   retainCount]);   // probably 1
+			[self addTrackingArea: self -> trackingArea];
+			trace (U"Retain count of tracking area after inclusion: ", [self -> trackingArea   retainCount]);   // probably 2
 		}
 		return self;
 	}
@@ -344,7 +344,10 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		if (Melder_debug == 55)
 			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (self), U" dealloc for ", Melder_pointer (me));
 		forget (me);
-		[self removeTrackingArea: [self trackingArea]];
+		trace (U"Retain count of tracking area before exclusion: ", [self -> trackingArea   retainCount]);   // probably 2
+		[self removeTrackingArea: self -> trackingArea];
+		trace (U"Retain count of tracking area before destruction: ", [self -> trackingArea   retainCount]);   // probably 1
+		[self -> trackingArea   release];
 		trace (U"deleting a drawing area");
 		[super dealloc];
 	}
@@ -372,10 +375,10 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		GuiDrawingArea me = (GuiDrawingArea) self -> userData;
 		if (Melder_debug == 55)
 			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (self), U" draw to ", Melder_pointer (me));
-		if (! [self inited]) {
+		if (! self -> inited) {
 			// Last chance to do this. Is there a better place?
 			[self resizeCallback: [self frame]];
-			[self setInited: YES];
+			self -> inited = true;
 		}
 		if (me && my d_exposeCallback && my numberOfGraphicses > 0) {   // asserting my numberOfGraphicses could crash if Editor_init gives a warning
 			structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
