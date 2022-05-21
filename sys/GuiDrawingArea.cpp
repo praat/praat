@@ -325,6 +325,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		NSTrackingArea *trackingArea;
 	}
 	- (id) initWithFrame: (NSRect) frame {
+		//TRACE
 		self = [super initWithFrame: frame];
 		if (self) {
 			self -> trackingArea = [[NSTrackingArea alloc]
@@ -334,20 +335,22 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				userInfo: nil
 			];
 			trace (U"Retain count of tracking area after creation: ", [self -> trackingArea   retainCount]);   // probably 1
-			[self addTrackingArea: self -> trackingArea];
+			[self addTrackingArea: self -> trackingArea];   // this retains the tracking area
 			trace (U"Retain count of tracking area after inclusion: ", [self -> trackingArea   retainCount]);   // probably 2
+			[self -> trackingArea   release];
+			trace (U"Retain count of tracking area after release: ", [self -> trackingArea   retainCount]);   // probably 1
 		}
 		return self;
 	}
 	- (void) dealloc {   // override
+		//TRACE
 		GuiDrawingArea me = self -> userData;
 		if (Melder_debug == 55)
 			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (self), U" dealloc for ", Melder_pointer (me));
 		forget (me);
-		trace (U"Retain count of tracking area before exclusion: ", [self -> trackingArea   retainCount]);   // probably 2
-		[self removeTrackingArea: self -> trackingArea];
-		trace (U"Retain count of tracking area before destruction: ", [self -> trackingArea   retainCount]);   // probably 1
-		[self -> trackingArea   release];
+		trace (U"Retain count of tracking area before exclusion: ", [self -> trackingArea   retainCount]);   // probably 1
+		[self removeTrackingArea: self -> trackingArea];   // this releases the tracking area
+		//trace (U"Retain count of tracking area before destruction: ", [self -> trackingArea   retainCount]);   // probably 0 (a crash)
 		trace (U"deleting a drawing area");
 		[super dealloc];
 	}
