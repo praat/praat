@@ -375,12 +375,11 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			[self   resizeCallback: self. frame];
 			_inited = YES;
 		}
-		if (me && my d_exposeCallback) {
+		if (me && my d_exposeCallback && my numberOfGraphicses > 0) {
 			structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
 			if (Melder_debug == 55)
 				Melder_casual (U"\t", Thing_messageNameAndAddress (me), U" draw for ", Melder_pointer (my d_exposeBoss));
 			try {
-				Melder_assert (my numberOfGraphicses > 0);
 				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++) {
 					GraphicsScreen graphics = static_cast <GraphicsScreen> (my graphicses [igraphics]);
 					if (graphics -> d_macView) {
