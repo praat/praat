@@ -883,7 +883,6 @@ void FunctionEditor_scrollToView (FunctionEditor me, double t) {
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_shift()
 		FunctionEditor_shift (me, t - my endWindow + 0.618 * (my endWindow - my startWindow), true);
 	} else {
-		my v_windowChanged ();
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 	}
