@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,10 +121,7 @@ constexpr bool theCommandKeyIsToTheLeftOfTheOptionKey =
 	@interface GuiCocoaCheckButton : NSButton <GuiCocoaAny> @end
 	@interface GuiCocoaDrawingArea : NSView <GuiCocoaAny> @end
 	@interface GuiCocoaLabel : NSTextField <GuiCocoaAny> @end
-	@interface GuiCocoaList : NSView <GuiCocoaAny, NSTableViewDataSource, NSTableViewDelegate>
-		@property (nonatomic, retain) NSMutableArray *contents;
-		@property (nonatomic, retain) NSTableView *tableView;
-	@end
+	@interface GuiCocoaList : NSView <GuiCocoaAny, NSTableViewDataSource, NSTableViewDelegate> @end
 	@interface GuiCocoaMenu : NSMenu <GuiCocoaAny> @end
 	@interface GuiCocoaMenuButton : NSPopUpButton <GuiCocoaAny> @end
 	@interface GuiCocoaMenuItem : NSMenuItem <GuiCocoaAny> @end
