@@ -174,7 +174,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 		}
 		my anchorIsNearPoint = true;
 		my draggingSelection = event -> shiftKeyPressed &&
-			clickedPoint -> number >= my startSelection() && clickedPoint -> number <= my endSelection();
+				clickedPoint -> number >= my startSelection() && clickedPoint -> number <= my endSelection();
 		if (my draggingSelection) {
 			AnyTier_getWindowPoints (tier->asAnyTier(), my startSelection(), my endSelection(), & my firstSelected, & my lastSelected);
 			my save (U"Drag points");   // TODO: title can be more specific

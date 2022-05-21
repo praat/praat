@@ -1,6 +1,6 @@
 /* AmplitudeTierEditor.cpp
  *
- * Copyright (C) 2003-2012,2014-2016,2018,2020,2021 Paul Boersma
+ * Copyright (C) 2003-2012,2014-2016,2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,8 @@ void structAmplitudeTierEditor :: v_play (double startTime, double endTime) {
 autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
-		RealTierEditor_init (me.get(), classAmplitudeTierArea, title, amplitude, sound, ownSound);
+		autoAmplitudeTierArea area = AmplitudeTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
+		RealTierEditor_init (me.get(), area.move(), title, amplitude, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AmplitudeTier window not created.");

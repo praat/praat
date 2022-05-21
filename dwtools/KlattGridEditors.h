@@ -2,7 +2,7 @@
 #define _KlattGridEditors_h_
 /* KlattGridEditors.h
  *
- * Copyright (C) 2009-2011 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2009-2011 David Weenink, 2017,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
 	void v_play (double startTime, double endTime)
 		override;
 };
-void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, ClassInfo areaClass, conststring32 title, KlattGrid klattgrid, RealTier data);
+void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, autoKlattGrid_RealTierArea area, conststring32 title, KlattGrid klattgrid, RealTier data);
 
 Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 	conststring32 v_quantityText ()
@@ -132,7 +132,7 @@ Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
 	conststring32 v_maximumLabelText ()
 		override { return U"Maximum intensity (dB)"; }
 };
-void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, ClassInfo viewClass, conststring32 title, KlattGrid klattgrid, RealTier tier);
+void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, autoKlattGrid_IntensityTierArea area, conststring32 title, KlattGrid klattgrid, RealTier tier);
 
 Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 	conststring32 v_quantityText ()

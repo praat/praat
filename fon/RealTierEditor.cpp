@@ -146,16 +146,6 @@ void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, cons
 	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
 }
 
-void RealTierEditor_init (RealTierEditor me, ClassInfo realTierAreaClass, conststring32 title, RealTier data, Sound sound, bool ownSound) {
-	Melder_assert (data);
-	Melder_assert (Thing_isa (data, classRealTier));
-	TimeSoundEditor_init (me, title, data, sound, ownSound);
-	my realTierArea = Thing_newFromClass (realTierAreaClass). static_cast_move <structRealTierArea>();
-	RealTierArea_init (my realTierArea.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
-	RealTierEditor_updateScaling (me);
-	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
-}
-
 autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier tier, Sound sound, bool ownSound) {
 	try {
 		autoRealTierEditor me = Thing_new (RealTierEditor);
