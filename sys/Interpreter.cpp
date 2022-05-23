@@ -1396,8 +1396,11 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 		if (! status) {
 			value = undefined;
 		} else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
-			int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
-			WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
+			integer IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
+			WHERE (SELECTED) {
+				selectedObject = IOBJECT;
+				numberOfSelectedObjects += 1;
+			}
 			if (numberOfSelectedObjects > 1)
 				Melder_throw (U"Multiple objects selected. Cannot assign object IDs to vector element. "
 						"Perhaps use a vector variable instead.");
@@ -1532,8 +1535,11 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 		if (! status) {
 			value = undefined;
 		} else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
-			int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
-			WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
+			integer IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
+			WHERE (SELECTED) {
+				selectedObject = IOBJECT;
+				numberOfSelectedObjects += 1;
+			}
 			if (numberOfSelectedObjects > 1)
 				Melder_throw (U"Multiple objects selected. Cannot assign object IDs to matrix element. "
 						"Perhaps use a vector variable instead.");
@@ -2738,7 +2744,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										var -> numericVectorValue = autoVEC();   // anything can have happened, including an incorrect returnType
 									else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
 										var -> numericVectorValue = autoVEC();
-										int IOBJECT;
+										integer IOBJECT;
 										WHERE (SELECTED)
 											*var -> numericVectorValue. append() = ID;
 									} else if (my returnType == kInterpreter_ReturnType::REALVECTOR_)
@@ -2935,8 +2941,11 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							if (! status) {
 								value = undefined;   // anything can have happened, including an incorrect return type
 							} else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
-								int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
-								WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
+								integer IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
+								WHERE (SELECTED) {
+									selectedObject = IOBJECT;
+									numberOfSelectedObjects += 1;
+								}
 								if (numberOfSelectedObjects > 1)
 									Melder_throw (U"Multiple objects selected. Cannot assign object IDs to numeric variable. "
 											"Perhaps use a vector variable instead.");

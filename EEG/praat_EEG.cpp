@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2018,2020,2021 Paul Boersma
+ * Copyright (C) 2011-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication
 		praat_new (publication.move());
 		praat_updateSelection ();
 		if (isaSpectralSlice) {
-			int IOBJECT;
+			integer IOBJECT;
 			FIND_ONE_WITH_IOBJECT (Spectrum)
 			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 			praat_installEditor (editor2.get(), IOBJECT);
@@ -350,7 +350,7 @@ static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication
 		praat_new (publication.move());
 		praat_updateSelection ();
 		if (isaSpectralSlice) {
-			int IOBJECT;
+			integer IOBJECT;
 			FIND_ONE_WITH_IOBJECT (Spectrum)
 			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 			praat_installEditor (editor2.get(), IOBJECT);

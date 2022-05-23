@@ -2,7 +2,7 @@
 #define _OptimalCeilingTierArea_h_
 /* OptimalCeilingTierArea.h
  *
- * Copyright (C) 2015 David Weenink, 2017,2020,2021 Paul Boersma
+ * Copyright (C) 2015 David Weenink, 2017,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,12 @@ Thing_define (OptimalCeilingTierArea, RealTierArea) {
 
 	#include "OptimalCeilingTierArea_prefs.h"
 };
+
+inline autoOptimalCeilingTierArea OptimalCeilingTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	autoOptimalCeilingTierArea me = Thing_new (OptimalCeilingTierArea);
+	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	return me;
+}
 
 /* End of file OptimalCeilingTierArea.h */
 #endif

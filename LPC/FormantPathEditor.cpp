@@ -175,17 +175,17 @@ static void menu_cb_DrawVisibleTextGrid (FormantPathEditor me, EDITOR_ARGS_FORM)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish())
+		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish())
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_picture_garnish())
+		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my setClassPref_picture_garnish (garnish);
+		my setClassPref_function_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		TextGrid_Sound_draw (my textGridView.get(), nullptr, my pictureGraphics,
 				my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
@@ -199,17 +199,17 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantPathEditor me, EDITOR_AR
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish())
+		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish())
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_picture_garnish())
+		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my setClassPref_picture_garnish (garnish);
+		my setClassPref_function_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		{// scope
 			autoSound sound = my d_longSound.data ?
@@ -289,28 +289,22 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 		BOOLEAN (speckle, U"Speckle", my default_picture_pitch_speckle());
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
+		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		SET_BOOLEAN (showBoundariesAndPoints, my instancePref_picture_showBoundaries())
 		SET_BOOLEAN (speckle, my instancePref_picture_pitch_speckle())
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_picture_garnish())
+		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my setInstancePref_picture_showBoundaries (showBoundariesAndPoints);
 		my setInstancePref_picture_pitch_speckle (speckle);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my setClassPref_picture_garnish (garnish);
-		if (! my instancePref_pitch_show())
-			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
-		if (! my d_pitch) {
-			TimeSoundAnalysisEditor_computePitch (me);
-			Melder_require (my d_pitch,
-				U"Cannot compute pitch.");
-		}
+		my setClassPref_function_picture_garnish (garnish);
+		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		Editor_openPraatPicture (me);
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
 				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
@@ -469,15 +463,15 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		BOOLEAN (crossHairs, U"Draw cross hairs", 0)
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
+		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
-		SET_BOOLEAN (garnish, my classPref_picture_garnish())
+		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
-		my setClassPref_picture_garnish (garnish);
+		my setClassPref_function_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		FormantPath formantPath = (FormantPath) my data;
 		Graphics_setInner (my pictureGraphics);

@@ -100,7 +100,7 @@ Editor praat_findEditorFromString (conststring32 string) {
 }
 
 Editor praat_findEditorById (integer id) {
-	int IOBJECT;
+	integer IOBJECT;
 	WHERE (1) {
 		if (ID == id) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {

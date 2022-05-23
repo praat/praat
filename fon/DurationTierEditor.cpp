@@ -1,6 +1,6 @@
 /* DurationTierEditor.cpp
  *
- * Copyright (C) 1992-2012,2014-2016,2018,2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2016,2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,8 @@ void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier duration, Sound sound, bool ownSound) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
-		RealTierEditor_init (me.get(), classDurationTierArea, title, duration, sound, ownSound);
+		autoDurationTierArea area = DurationTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
+		RealTierEditor_init (me.get(), area.move(), title, duration, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DurationTier window not created.");
