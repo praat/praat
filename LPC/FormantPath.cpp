@@ -571,11 +571,11 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 		if (iformant == 1) {
-			const double pointsPerMillimetre = g -> resolution / (10.0 * 2.54);
+			const double pointsPerMillimetre = 72.0 / (10.0 * 2.54);
 			const double areaWidth_points = Graphics_dxWCtoMM (g, tmax - tmin) * pointsPerMillimetre;
 			const double areaHeight_points = Graphics_dyWCtoMM (g, spaceBetweenFraction_y * (fmax - fmin)) * pointsPerMillimetre;
 			const double maxNumberOfCharacters_line = 18.0, maxNumberOfLines = 2.5;
-			newFontSize = std::min (areaHeight_points / maxNumberOfLines , areaWidth_points / maxNumberOfCharacters_line);
+			newFontSize = std::min (areaHeight_points / maxNumberOfLines , 2.0 * areaWidth_points / maxNumberOfCharacters_line);
 			Graphics_setFontSize (g, newFontSize);
 		}
 
