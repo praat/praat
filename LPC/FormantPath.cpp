@@ -571,14 +571,9 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 		if (iformant == 1) {
-			const double pointsPerMillimetre = 72.0 / (10.0 * 2.54);
-			const double areaWidth_points = Graphics_dxWCtoMM (g, tmax - tmin) * pointsPerMillimetre;
-			const double areaHeight_points = Graphics_dyWCtoMM (g, spaceBetweenFraction_y * (fmax - fmin)) * pointsPerMillimetre;
-			const double maxNumberOfCharacters_line = 18.0, maxNumberOfLines = 2.5;
-			newFontSize = std::min (areaHeight_points / maxNumberOfLines , 2.0 * areaWidth_points / maxNumberOfCharacters_line);
+			const double newFontSize = Graphics_getFontSizeInsideBox (g, tmax - tmin, spaceBetweenFraction_y * (fmax - fmin), 18.0, 3.0);
 			Graphics_setFontSize (g, newFontSize);
 		}
-
 		if (garnish && markCandidatesWithinPath) {
 			for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
 				TextInterval textInterval = intervalTier -> intervals.at [interval];

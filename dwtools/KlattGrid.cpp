@@ -32,6 +32,7 @@
 
 #include "FormantGrid_extensions.h"
 #include "Formula.h"
+#include "Graphics_extensions.h"
 #include "KlattGrid.h"
 #include "KlattTable.h"
 #include "Resonator.h"
@@ -736,7 +737,7 @@ static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin
 	(void) me;
 	// { voicingBox, line, tiltBox, connection, summer }
 	autoVEC relativeWidths { 1.0, 0.5, 1.0, 0.5, 0.5 }, accumulatedWidths = zero_VEC (5);
-
+	double oldFontSize = Graphics_inqFontSize (g);
 	connections thee = connections_create (2);
 
 	scaleRelativeAndAccumulatedWidths (relativeWidths.get(), accumulatedWidths.get(), xmax - xmin);
@@ -745,6 +746,9 @@ static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin
 	double x1 = xmin, x2 = x1 + relativeWidths [1];
 	double y2 = ymax, y1 = y2 - dy;
 	autoSTRVEC voicingText { U"Voicing" };
+	double newFontSize = Graphics_getFontSizeInsideBox (g, relativeWidths [1], dy, 7.0, 1.5);
+	if (newFontSize < oldFontSize)
+		Graphics_setFontSize (g, newFontSize);
 	drawLinesInBox (g, x1, x2, y1, y2, voicingText.get());
 
 	x1 = x2;
@@ -777,7 +781,9 @@ static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin
 
 	summer_drawConnections (g, xs, ys, r, thee, arrow, 0.4);
 	connections_free (thee);
-
+	
+	Graphics_setFontSize (g, oldFontSize); // restore
+	
 	if (out_y)
 		*out_y = ys;
 }
@@ -1330,6 +1336,10 @@ static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, 
 	
 	const double dx = (xmax - xmin) / (numberOfFilters + 1);
 	const double boxWidth = (xmax - xmin) / (numberOfFilters + 1 + (nsx - 1) * ddx);
+	const double oldFontSize = Graphics_inqFontSize (g);
+	double newFontSize = Graphics_getFontSizeInsideBox (g, boxWidth, ymax - ymin, 4.0, 4.0);
+	if (newFontSize < oldFontSize)
+		Graphics_setFontSize (g, newFontSize);
 
 	x1 = xmin;
 	for (integer isection = 1; isection <= nf.size; isection ++) {
@@ -1352,6 +1362,7 @@ static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, 
 	}
 	if (x1 < xmax)
 		Graphics_line (g, x1, ymid, xmax, ymid);
+	Graphics_setFontSize (g, oldFontSize);
 }
 
 static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *out_yin, double *out_yout) {
@@ -1395,6 +1406,14 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 	double x3 = xmin + accumulatedWidths [4];
 	integer ic = 0;
 	autoSTRVEC fbLines (2);
+	double numberOfCharacters = 9.0 + (numberOfOralFormants < 10 ? 0 : 3 );
+	double oldFontSize = Graphics_inqFontSize (g);
+	double fontSizeFormants = Graphics_getFontSizeInsideBox (g, relativeWidths [6], dy, numberOfCharacters, 2.5);
+	const double fontSizePreEmphasis = Graphics_getFontSizeInsideBox (g, relativeWidths [3], dy, 13.0, 1.5);
+	double newFontSize = std::min (fontSizePreEmphasis, fontSizeFormants);
+	if (newFontSize < oldFontSize)
+		Graphics_setFontSize (g, newFontSize);
+	
 	for (integer isection = 1; isection <= nffrom.size; isection ++) {
 		const integer ifrom = nffrom [isection], ito = nfto [isection];
 		if (ito < ifrom)
@@ -1459,7 +1478,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 
 	connections_free (local_out);
 	connections_free (local_in);
-
+	Graphics_setFontSize (g, oldFontSize);
 	if (out_yin)
 		*out_yin = y1;
 	if (out_yout)
@@ -1864,7 +1883,8 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 	// dum noise, connections, filter, connections, adder
 	autoVEC relativeWidths { 2, 0.6, 1.5, 0.6, 0.5 }, accumulatedWidths = zero_VEC (relativeWidths.size);
 	double x1, y1, x2, y2, x3, ymid = (ymin + ymax) / 2.0;
-
+	double oldFontSize = Graphics_inqFontSize (g);
+	
 	scaleRelativeAndAccumulatedWidths (relativeWidths.get(), accumulatedWidths.get(), xmax - xmin);
 
 	dy = std::max (dy, 0.0);
@@ -1879,6 +1899,12 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 	x2 = x1 + relativeWidths [1];
 	y1 = ymid - 0.5 * dy;
 	y2 = y1 + dy;
+	
+	double fontSizeFrication = Graphics_getFontSizeInsideBox (g, relativeWidths [1], dy, 10.0, 2.0);
+	double fontSizeFormants = Graphics_getFontSizeInsideBox (g, relativeWidths [3], dy, 9.0, 1.5);
+	double newFontSize = std::min (fontSizeFrication, fontSizeFormants);
+	if (newFontSize < oldFontSize)
+		Graphics_setFontSize (g, newFontSize);
 	autoSTRVEC fricationNoise { U"Frication", U"noise" };
 	drawLinesInBox (g, x1, x2, y1, y2, fricationNoise.get());
 
@@ -1894,6 +1920,7 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 	y2 = ymax;
 	autoMelderString fba;
 	autoSTRVEC fbai { U"" };
+	
 	for (integer i = 1; i <= numberOfParts; i ++) {
 		conststring32 fi = Melder_integer (i + 1);
 		y1 = y2 - dy;
@@ -1920,7 +1947,7 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 		Graphics_line (g, cp -> x [1], cp -> y [1], xs + r, ys);
 
 	connections_free (cp);
-
+	Graphics_setFontSize (g, oldFontSize);
 	if (yout)
 		*yout = ys;
 }
