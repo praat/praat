@@ -24,6 +24,9 @@ void manual_tutorials_init (ManPages me) {
 
 MAN_BEGIN (U"What's new?", U"ppgb", 20220518)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.14# (24 May 2022)")
+LIST_ITEM (U"• TextGrid window: repaired a bug introduced in 6.2.10 by which a click on the boundary insertion circle "
+	"would copy the contents of a new interval from another tier (if that other tier stood selected).")
 NORMAL (U"##6.2.13# (18 May 2022)")
 LIST_ITEM (U"• Playing a sound on the Mac: prevented an audible click at the end of audio output (appending a silence at the end is no longer needed).")
 LIST_ITEM (U"• FormantPath window: more flexible visualization.")
