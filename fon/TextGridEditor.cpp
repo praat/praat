@@ -1694,6 +1694,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	const double soundY = _TextGridEditor_computeSoundY (this);
 	const bool mouseIsInWideSoundOrAnalysisPart = ( yWC > soundY );
 	const bool mouseIsInWideTextGridPart = ! mouseIsInWideSoundOrAnalysisPart;
+	const integer oldSelectedTier = our selectedTier;
 
 	constexpr double clickingVicinityRadius_mm = 1.0;
 	constexpr double draggingVicinityRadius_mm = clickingVicinityRadius_mm + 0.2;   // must be greater than `clickingVicinityRadius_mm`
@@ -1852,8 +1853,9 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				because we are not 'nearBoundaryOrPoint'.
 			*/
 			Melder_assert (isdefined (our startSelection));   // precondition of v_updateText()
+			if (our selectedTier != oldSelectedTier)
+				our v_updateText();   // this puts the text of the newly clicked tier into the text area
 			insertBoundaryOrPoint (this, mouseTier, our startSelection, our startSelection, false);
-			our v_updateText();
 			//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
 			//FunctionEditor_marksChanged (this, true);
 			Editor_broadcastDataChanged (this);
@@ -1930,9 +1932,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		*/
 		if (our startSelection == our endSelection && our startSelection != our anchorTime) {
 			const double mouseDistanceToCursor = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - our startSelection));
-			if (mouseDistanceToCursor < droppingVicinityRadius_mm) {
+			if (mouseDistanceToCursor < droppingVicinityRadius_mm)
 				xWC = our startSelection;
-			}
 		}
 		/*
 			If the user wiggled near the anchor, we snap to the anchor and bail out
