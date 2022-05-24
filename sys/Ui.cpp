@@ -1414,7 +1414,7 @@ void UiForm_finish (UiForm me) {
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
-					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_LEFT_DIALOG_SPACING - 100,
 					ylabel, ylabel + textFieldHeight,
 					theFinishBuffer.string, 0
 				);
@@ -1432,7 +1432,7 @@ void UiForm_finish (UiForm me) {
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
-					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_LEFT_DIALOG_SPACING - 100,
 					ylabel, ylabel + textFieldHeight,
 					theFinishBuffer.string, 0
 				);
@@ -1450,7 +1450,7 @@ void UiForm_finish (UiForm me) {
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
-					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_LEFT_DIALOG_SPACING - 100,
 					ylabel, ylabel + textFieldHeight,
 					theFinishBuffer.string, 0
 				);
