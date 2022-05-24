@@ -691,11 +691,11 @@ static void updateInfoLabels (VowelEditor me) {
 	if (! my graphics)
 		return;   // could be the case in the very beginning
 	MelderString_append (& statusInfo, U"Start (F1,F2,f0) = (", Melder_fixed (startPoint -> f1, 1), U", ", 
-		Melder_fixed (startPoint -> f2, 1), U", ", startF0, U")");
+		Melder_fixed (startPoint -> f2, 1), U", ", Melder_fixed (startF0, 1), U")");
 	GuiLabel_setText (my startInfo, statusInfo.string);
 	MelderString_empty (& statusInfo);
 	MelderString_append (& statusInfo, U"End (F1,F2,f0) = (", Melder_fixed (endPoint -> f1, 1), U", ", 
-		Melder_fixed (endPoint -> f2, 1), U", ", endF0, U")");
+		Melder_fixed (endPoint -> f2, 1), U", ", Melder_fixed (endF0, 1), U")");
 	GuiLabel_setText (my endInfo, statusInfo.string);	
 }
 
