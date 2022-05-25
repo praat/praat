@@ -546,9 +546,10 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
 		FormantPath_getGridDimensions (me, & nrow, & ncol);
-	double x1NDC, x2NDC, y1NDC, y2NDC, newFontSize;
+	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	const double fontSize_old = Graphics_inqFontSize (g);
+	double newFontSize = fontSize_old;
 	
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
@@ -571,7 +572,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 		if (iformant == 1) {
-			const double newFontSize = Graphics_getFontSizeInsideBox (g, tmax - tmin, spaceBetweenFraction_y * (fmax - fmin), 18.0, 3.0);
+			newFontSize = Graphics_getFontSizeInsideBox (g, tmax - tmin, spaceBetweenFraction_y * (fmax - fmin), 18.0, 3.0);
 			Graphics_setFontSize (g, newFontSize);
 		}
 		if (garnish && markCandidatesWithinPath) {
