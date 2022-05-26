@@ -61,8 +61,7 @@ MelderColour markedCandidatesColour =  MelderColour (0.984,0.984, 0.7);
 void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	/*FormantPath formantPath = (FormantPath) our data;
 	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
-	bool navigationPossible = ( navigator && IntervalTierNavigator_isNavigationPossible (navigator) &&
-		our textGridView && TextGridView_hasTierInView (our textGridView.get(), formantPath -> navigationTierNumber) );
+	const bool navigationPossible = ( navigator && IntervalTierNavigator_isNavigationPossible (navigator), formantPath -> navigationTierNumber) );
 	bool nextSensitive = false;
 	bool previousSensitive = false;
 	if (navigationPossible) {
@@ -122,7 +121,7 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_
 }
 
 static void checkTierSelection (FormantPathEditor me, conststring32 verbPhrase) {
-	if (my selectedTier < 1 || my selectedTier > my textGridView -> tiers -> size)
+	if (my selectedTier < 1 || my selectedTier > my textgrid -> tiers -> size)
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
 }
 
@@ -134,8 +133,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (FormantP
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
-		autoTextGrid grid = TextGridView_to_TextGrid (my textGridView.get());
-		autoTextGrid result = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, true);
+		autoTextGrid result = TextGrid_extractPart (my textgrid.get(), my startSelection, my endSelection, true);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -143,8 +141,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (FormantPa
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
-		autoTextGrid grid = TextGridView_to_TextGrid (my textGridView.get());
-		autoTextGrid result = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, false);
+		autoTextGrid result = TextGrid_extractPart (my textgrid.get(), my startSelection, my endSelection, false);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -158,10 +155,9 @@ void structFormantPathEditor :: v_createMenuItems_file_extract (EditorMenu menu)
 
 static void menu_cb_WriteToTextFile (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
-		Melder_sprint (defaultName,300, my textGridView -> name.get(), U".TextGrid");
+		Melder_sprint (defaultName,300, my textgrid -> name.get(), U".TextGrid");
 	EDITOR_DO_SAVE
-		autoTextGrid grid = TextGridView_to_TextGrid (my textGridView.get());
-		Data_writeToTextFile (grid.get(), file);
+		Data_writeToTextFile (my textgrid.get(), file);
 	EDITOR_END
 }
 
@@ -187,7 +183,7 @@ static void menu_cb_DrawVisibleTextGrid (FormantPathEditor me, EDITOR_ARGS_FORM)
 		my v_do_pictureSelection (cmd);
 		my setClassPref_function_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw (my textGridView.get(), nullptr, my pictureGraphics,
+		TextGrid_Sound_draw (my textgrid.get(), nullptr, my pictureGraphics,
 				my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -216,7 +212,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantPathEditor me, EDITOR_AR
 				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
 				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
 						kSound_windowShape::RECTANGULAR, 1.0, true);
-			TextGrid_Sound_draw (my textGridView.get(), sound.get(), my pictureGraphics,
+			TextGrid_Sound_draw (my textgrid.get(), sound.get(), my pictureGraphics,
 					my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
 		}
 		FunctionEditor_garnish (me);
@@ -316,7 +312,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
 		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
-		TextGrid_Pitch_drawSeparately (my textGridView.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
+		TextGrid_Pitch_drawSeparately (my textgrid.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
 			speckle, my instancePref_pitch_unit()
 		);
@@ -328,7 +324,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 /***** SEARCH MENU *****/
 
 static void findInTier (FormantPathEditor me) {
-	const TextGrid grid =  my textGridView.get();
+	const TextGrid grid =  my textgrid.get();
 	checkTierSelection (me, U"find a text");
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -654,7 +650,7 @@ void structFormantPathEditor :: v_createChildren () {
 }
 
 void structFormantPathEditor :: v_dataChanged () {
-	const TextGrid grid = our textGridView.get();
+	const TextGrid grid = our textgrid.get();
 	/*
 		Perform a minimal selection change.
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
@@ -952,10 +948,8 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 		
 		TimeSoundAnalysisEditor_init (me.get(), title, formantPath, sound, false);
 		my d_formant = FormantPath_extractFormant (formantPath);
-		if (textgrid) {
+		if (textgrid)
 			my textgrid = Data_copy (textgrid);
-			my textGridView = TextGridView_create (my textgrid.get());
-		}
 		if (my instancePref_modeler_numberOfParametersPerTrack() [0] == U'\0')
 			my setInstancePref_modeler_numberOfParametersPerTrack (my default_modeler_numberOfParametersPerTrack());
 		if (my instancePref_formant_default_colour() [0] == U'\0')
