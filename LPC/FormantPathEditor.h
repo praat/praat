@@ -2,7 +2,7 @@
 #define _FormantPathEditor_h_
 /* FormantPathEditor.h
  *
- * Copyright (C) 2020-2021 David Weenink
+ * Copyright (C) 2020-2022 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #include "Sound.h"
 #include "LPC.h"
 #include "TextGrid.h"
-#include "TextGridView.h"
 #include "TimeSoundAnalysisEditor.h"
 
 #include "TextGridEditor_enums.h"
@@ -48,7 +47,6 @@
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	autoTextGrid textgrid;
-	autoTextGridView textGridView, previousTextGridView;
 	autoFormant previousFormant;
 	Graphics_Viewport selectionViewer_viewport;
 	integer selectedTier, selectedCandidate;
