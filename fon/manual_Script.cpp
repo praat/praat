@@ -1276,7 +1276,7 @@ CODE (U"writeInfoLine: \"The sum of the cells along the diagonal is \", sumDiago
 NORMAL (U"The first version, which accesses the contents directly, is not only two lines shorter, but also three times faster.")
 MAN_END
 
-MAN_BEGIN (U"Functions", U"ppgb", 20211207)
+MAN_BEGIN (U"Functions", U"ppgb", 20220527)
 NORMAL (U"A growing list of functions that you can use in @formulas and @scripting...")
 LIST_ITEM (U"##abs (%x)#  \\-- absolute value")
 LIST_ITEM (U"##abs\\#  (%%vector\\# %)#  \\-- absolute value of each element of %%vector\\# %")
@@ -1397,9 +1397,10 @@ LIST_ITEM (U"##mid\\$  (%%string\\$ %, %from, %n)# \\-- the %n characters in %%s
 LIST_ITEM (U"##min (%x, ...)# \\-- minimum")
 LIST_ITEM (U"##mul\\# \\#  (%%a\\# \\# %, %%b\\# \\# %)# \\-- matrix multiplication")
 LIST_ITEM (U"##number (%%a\\$ %)# \\-- interpret a string as a number")
+LIST_ITEM (U"##number\\#  (%%a\\$ \\# %)# \\-- interpret strings as numbers")
 LIST_ITEM (U"##numberOfColumns (%%matrix\\# \\# %)#")
 LIST_ITEM (U"##numberOfRows (%%matrix\\# \\# %)#")
-LIST_ITEM (U"##outer\\#  (%%a\\# %, %%b\\# %)# \\-- outer product, i.e. %%result__ij_% = %%a__i_%%%b__j_%")
+LIST_ITEM (U"##outer\\# \\#  (%%a\\# %, %%b\\# %)# \\-- outer product, i.e. %%result__ij_% = %%a__i_%%%b__j_%")
 LIST_ITEM (U"##percent\\$  (%number, %precision)# \\-- format a number as a string, "
 	"with a trailing percent sign and %precision digits after the decimal point")
 LIST_ITEM (U"##phonToDifferenceLimens (%x)# \\-- from perceptual loudness to jnd-scale")

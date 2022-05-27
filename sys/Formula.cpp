@@ -113,7 +113,7 @@ enum { NO_SYMBOL_,
 		ERB_, HERTZ_TO_ERB_, ERB_TO_HERTZ_,
 		SUM_, MEAN_, STDEV_, CENTER_,
 		EVALUATE_, EVALUATE_NOCHECK_, EVALUATE_STR_, EVALUATE_NOCHECK_STR_,
-		STRING_STR_, SLEEP_, UNICODE_, UNICODE_STR_,
+		STRING_STR_, NUMBERS_VEC_, SLEEP_, UNICODE_, UNICODE_STR_,
 	#define HIGH_FUNCTION_1  UNICODE_STR_
 
 	/* Functions of 2 variables; if you add, update the #defines. */
@@ -268,7 +268,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"erb", U"hertzToErb", U"erbToHertz",
 	U"sum", U"mean", U"stdev", U"center",
 	U"evaluate", U"evaluate_nocheck", U"evaluate$", U"evaluate_nocheck$",
-	U"string$", U"sleep", U"unicode", U"unicode$",
+	U"string$", U"numbers#", U"sleep", U"unicode", U"unicode$",
 	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial", U"randomGamma",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
@@ -5581,6 +5581,21 @@ static void do_string_STR () {
 		Melder_throw (U"The function \"string$\" requires a number, not ", value->whichText(), U".");
 	}
 }
+static void do_numbers_VEC () {
+	/*
+		result# = numbers# (strings$#)
+	*/
+	const Stackel stringsel = pop;
+	if (stringsel->which == Stackel_STRING_ARRAY) {
+		const constSTRVEC strings = stringsel->stringArray;
+		autoVEC result = zero_VEC (strings.size);
+		for (integer i = 1; i <= strings.size; i ++)
+			result [i] = Melder_atof (strings [i]);
+		pushNumericVector (result.move());
+	} else {
+		Melder_throw (U"The function \"numbers#\" requires a string array, not ", stringsel->whichText(), U".");
+	}
+}
 static void do_sleep () {
 	const Stackel value = pop;
 	if (value->which == Stackel_NUMBER) {
@@ -7517,6 +7532,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case OBJECT_ROW_STR_: { do_object_row_STR ();
 } break; case OBJECT_COL_STR_: { do_object_col_STR ();
 } break; case STRING_STR_: { do_string_STR ();
+} break; case NUMBERS_VEC_: { do_numbers_VEC ();
 } break; case SLEEP_: { do_sleep ();
 } break; case UNICODE_: { do_unicode ();
 } break; case UNICODE_STR_: { do_unicode_STR ();
