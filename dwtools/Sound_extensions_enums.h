@@ -1,6 +1,6 @@
 /* Sound_extensions_enums.h
  *
- * Copyright (C) 2018 David Weenink
+ * Copyright (C) 2018-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,5 @@ enums_end (kSoundDrawingDirection, 4, LEFT_TO_RIGHT)
 enums_begin (kSoundNoiseReductionMethod, 1)
 	enums_add (kSoundNoiseReductionMethod, 1, SPECTRAL_SUBTRACTION, U"spectral-subtraction")
 enums_end (kSoundNoiseReductionMethod, 1, SPECTRAL_SUBTRACTION)
-
-enums_begin (kSoundSearchDirection, 1)
-	enums_add (kSoundSearchDirection, 1, LEFT, U"left")
-	enums_add (kSoundSearchDirection, 2, RIGHT, U"right")
-	enums_add (kSoundSearchDirection, 3, NEAREST, U"nearest")
-enums_end (kSoundSearchDirection, 3, NEAREST)
 
 /* End of file Sound_extensions_enums.h */
