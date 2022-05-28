@@ -1318,66 +1318,6 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	return rxy;
 }
 
-double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection) {
-	const double *amplitude = & my z [channel] [0];
-	const integer leftSample = Sampled_xToLowIndex (me, position);
-	if (leftSample > my nx)
-		return undefined;
-	const integer rightSample = leftSample + 1;
-	
-	auto interpolateLinear = [&] (integer i1) -> double {
-		const integer i2 = i1 + 1;
-		const double x1 = Sampled_indexToX (me, i1); // x2 = x1 + dx
-		const double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
-		/*
-			y = x1 + (x2 - x1) * (y1 - level) / (y1 - y2) = x1 + dx * (y1 - level) / (y1 - y2)
-		*/
-		return x1 + my dx * (y1 - level) / (y1 - y2);   // y1 <> y2!
-	};
-	/*
-		Are we already at a level crossing?
-	*/
-	if (leftSample >= 1 && rightSample <= my nx &&
-			(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level)) 
-	{
-		const double crossing = interpolateLinear (leftSample);
-		return searchDirection == kSoundSearchDirection::LEFT ?
-			( crossing <= position ? crossing : undefined ) :
-			( crossing >= position ? crossing : undefined );
-	}
-	
-	double leftCrossing = undefined;
-	if (searchDirection == kSoundSearchDirection::LEFT || searchDirection == kSoundSearchDirection::NEAREST) {
-		for (integer ileft = leftSample - 1; ileft >= 1; ileft --)
-			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level)) {
-				leftCrossing = interpolateLinear (ileft);
-				break;
-			}
-		if (searchDirection == kSoundSearchDirection::LEFT)
-			return leftCrossing;
-	}
-	
-	if (rightSample < 1)
-		return undefined;
-	double rightCrossing = undefined;
-	if (searchDirection == kSoundSearchDirection::RIGHT || searchDirection == kSoundSearchDirection::NEAREST) {
-		for (integer iright = rightSample + 1; iright <= my nx; iright ++)
-			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level)) {
-				rightCrossing = interpolateLinear (iright - 1);
-				break;
-			}
-		if (searchDirection == kSoundSearchDirection::RIGHT)
-			return rightCrossing;
-	}
-
-	return
-		isdefined (leftCrossing) && isdefined (rightCrossing) ?
-				( position - leftCrossing < rightCrossing - position ? leftCrossing : rightCrossing )
-		: isdefined (leftCrossing) ? leftCrossing
-		: isdefined (rightCrossing) ? rightCrossing
-		: undefined;
-}
-
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference) {
 	integer n1 = Sampled_xToNearestIndex (me, fromTime);
 	integer n2 = Sampled_xToNearestIndex (me, toTime);

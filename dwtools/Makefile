@@ -56,7 +56,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Discriminant.o TableOfReal_and_Permutation.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \
-	TextGridTierNavigator.o TextGridNavigator.o VowelEditor.o \
+	TextGridTierNavigator.o TextGridNavigator.o Vector_extensions.o VowelEditor.o \
 	praat_MDS_init.o praat_BSS_init.o praat_HMM_init.o \
 	praat_KlattGrid_init.o praat_MultiSampledSpectrogram.o praat_DataModeler_init.o praat_David_init.o
 

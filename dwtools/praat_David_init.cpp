@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2021 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2022 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,6 +127,7 @@
 #include "TextGrid_extensions.h"
 #include "TextGridTierNavigator.h"
 #include "TextGridNavigator.h"
+#include "Vector_extensions.h"
 
 #include "Categories_and_Strings.h"
 #include "CCA_and_Correlation.h"
@@ -5684,13 +5685,13 @@ FORM (QUERY_ONE_FOR_REAL__Sound_getNearestLevelCrossing, U"Sound: Get nearest le
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
 	REAL (time, U"Time (s)", U"0.1")
 	REAL (level, U"Level", U"0.1")
-	OPTIONMENU_ENUM (kSoundSearchDirection, searchDirection, U"Search direction", kSoundSearchDirection::DEFAULT)
+	OPTIONMENU_ENUM (kVectorSearchDirection, searchDirection, U"Search direction", kVectorSearchDirection::DEFAULT)
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Sound)
 		Melder_require (channel > 0 && channel <= my ny,
 			U"The channel number should be between 1 and ", my ny, U".");
-		const double result = Sound_getNearestLevelCrossing (me, channel, time, level, searchDirection);
+		const double result = Vector_getNearestLevelCrossing (me, channel, time, level, searchDirection);
 	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 

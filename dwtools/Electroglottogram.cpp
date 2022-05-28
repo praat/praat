@@ -1,6 +1,6 @@
 /* Electroglottogram.cpp
  *
- * Copyright (C) 2019 David Weenink
+ * Copyright (C) 2019-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "Sound_and_Spectrum.h"
 #include "Sound_extensions.h"
 #include "Sound_to_PointProcess.h"
+#include "Vector_extensions.h"
 
 #include "enums_getText.h"
 #include "Electroglottogram_enums.h"
@@ -233,8 +234,8 @@ autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram 
 			double closingTime = undefined, openingTime = undefined;
 			if (peakAmplitude > minimumPeakAmplitude) {
 				const double level = RealTier_getValueAtTime (levels.get(), peakPosition);
-				closingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::LEFT);
-				openingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::RIGHT);
+				closingTime = Vector_getNearestLevelCrossing (me, 1, peakPosition, level, kVectorSearchDirection::LEFT);
+				openingTime = Vector_getNearestLevelCrossing (me, 1, peakPosition, level, kVectorSearchDirection::RIGHT);
 				if (isdefined (closingTime) && isdefined (openingTime) && closingTime != previousOpeningTime) {
 					IntervalTier_insertBoundary (intervalTier.get(), closingTime);
 					IntervalTier_insertBoundary (intervalTier.get(), openingTime);
