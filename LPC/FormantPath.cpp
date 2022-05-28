@@ -208,9 +208,8 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		/*
 			Backtrack
 		*/
-		for (integer itime = my nx; itime > 1; itime --) {
+		for (integer itime = my nx; itime > 1; itime --)
 			path [itime - 1] = psi [path [itime]] [itime];
-		}
 		if (out_delta)
 			*out_delta = thee.move();
 		return path;
@@ -319,7 +318,7 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) 
 				const integer currentNumberOfFormants = std::min (numberOfTracks, frame -> numberOfFormants);
 				longdouble qsum = 0.0;
 				for (integer itrack = 1; itrack <= currentNumberOfFormants; itrack ++)
-					qsum += frame -> formant [itrack] . frequency / frame-> formant [itrack]. bandwidth;
+					qsum += frame -> formant [itrack]. frequency / frame -> formant [itrack]. bandwidth;
 				thy z [iformant] [itime] = ( currentNumberOfFormants > 0 ? (double) (qsum / currentNumberOfFormants) : 0.0 );
 			}
 		}
@@ -345,10 +344,10 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTra
 					const integer ntracks = std::min (ffj -> numberOfFormants, numberOfTracks_i);
 					longdouble transitionCosts = 0.0;
 					for (integer itrack = 1; itrack <= ntracks; itrack ++) {
-						const double fi = ffi -> formant [itrack].frequency, fj = ffj -> formant [itrack] . frequency;
+						const double fi = ffi -> formant [itrack]. frequency, fj = ffj -> formant [itrack]. frequency;
 						const double dif = fabs (fi  - fj);
 						const double sum = fi  + fj;
-						const double bw = sqrt (ffi -> formant [itrack] . bandwidth * ffj -> formant [itrack] . bandwidth);
+						const double bw = sqrt (ffi -> formant [itrack]. bandwidth * ffj -> formant [itrack]. bandwidth);
 						double cost = bw * dif / sum;
 						if (Melder_debug == -3)
 							cost = fabs (NUMlog2 (fi / fj));
@@ -377,7 +376,8 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 		const integer numberOfDataPoints = (windowLength + 0.5 * my dx) / my dx;
 		Melder_require (numberOfDataPoints >= maximumNumberOfCoefficients,
 			U"The window length is too short for the number of coefficients you use in the stress determination (",
-			maximumNumberOfCoefficients, U"). Either increase your window length or decrease the number of coefficents per track.");
+			maximumNumberOfCoefficients, U"). Either increase your window length or decrease the number of coefficents per track."
+		);
 		while (fromFormant <= parameters.size && parameters [fromFormant] <= 0)
 			fromFormant ++;
 		integer toFormant = parameters.size;
