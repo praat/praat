@@ -118,17 +118,16 @@ void structRealTierEditor :: v_draw () {
 }
 
 bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
-	static bool clickedInWideRealTierArea = false;
 	if (event -> isClick ())
-		clickedInWideRealTierArea = our realTierArea -> y_fraction_globalIsInside (globalY_fraction);
+		our clickedInWideRealTierArea = our realTierArea -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
-	if (clickedInWideRealTierArea) {
+	if (our clickedInWideRealTierArea) {
 		result = RealTierArea_mouse (our realTierArea.get(), our realTier(), event, x_world, globalY_fraction);
 	} else {
 		result = our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
 	if (event -> isDrop())
-		clickedInWideRealTierArea = false;
+		our clickedInWideRealTierArea = false;
 	return result;
 }
 

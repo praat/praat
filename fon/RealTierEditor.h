@@ -29,6 +29,10 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 
 	autoRealTierArea realTierArea;
 	constexpr static double SOUND_HEIGHT = 0.382;
+	/*
+		mouse state
+	*/
+	bool clickedInWideRealTierArea = false;
 
 	void v_createMenus ()
 		override;
