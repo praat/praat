@@ -25,16 +25,17 @@
 #include "Vector_extensions_enums.h"
 
 double Vector_getNearestLevelCrossing (Vector me, integer channel, double position, double level, kVectorSearchDirection searchDirection) {
-	const double *amplitude = & my z [channel] [0];
-	const integer leftSample = Sampled_xToLowIndex (me, position);
-	if (leftSample > my nx)
+	if (position < my xmin || position > my xmax)
 		return undefined;
+	VEC amplitude = my channel (channel);
+	integer leftSample = Sampled_xToLowIndex (me, position);
+	Melder_clipRight (& leftSample, my nx - 1);
+	Melder_clipLeft (1_integer, & leftSample);
 	const integer rightSample = leftSample + 1;
 	
 	auto interpolateLinear = [&] (integer i1) -> double {
-		const integer i2 = i1 + 1;
 		const double x1 = Sampled_indexToX (me, i1); // x2 = x1 + dx
-		const double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
+		const double y1 = amplitude [i1], y2 = amplitude [i1 + 1];
 		/*
 			y = x1 + (x2 - x1) * (y1 - level) / (y1 - y2) = x1 + dx * (y1 - level) / (y1 - y2)
 		*/
@@ -63,8 +64,6 @@ double Vector_getNearestLevelCrossing (Vector me, integer channel, double positi
 			return leftCrossing;
 	}
 	
-	if (rightSample < 1)
-		return undefined;
 	double rightCrossing = undefined;
 	if (searchDirection == kVectorSearchDirection::RIGHT || searchDirection == kVectorSearchDirection::NEAREST) {
 		for (integer iright = rightSample + 1; iright <= my nx; iright ++)
