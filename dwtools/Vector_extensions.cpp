@@ -25,6 +25,8 @@
 #include "Vector_extensions_enums.h"
 
 double Vector_getNearestLevelCrossing (Vector me, integer channel, double position, double level, kVectorSearchDirection searchDirection) {
+	if (position < my xmin || position > my xmax)
+		return undefined;
 	VEC amplitude = my channel (channel);
 	integer leftSample = Sampled_xToLowIndex (me, position);
 	Melder_clipRight (& leftSample, my nx - 1);

@@ -15,7 +15,7 @@ time = Get nearest level crossing: 1, -1, level, "left"
 assert time = undefined
 # time is outside right
 time = Get nearest level crossing: 1, 1, level, "left"
-assert not (time = undefined)
+assert time = undefined
 # level to high
 time = Get nearest level crossing: 1, 0.05, 1.1, "left"
 assert time = undefined

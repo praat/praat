@@ -24,5 +24,4 @@
 
 double Vector_getNearestLevelCrossing (Vector me, integer channel, double position, double level, kVectorSearchDirection searchDirection);
 
-
 #endif /* _Vector_extensions_h_ */
