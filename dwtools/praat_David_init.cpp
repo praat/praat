@@ -3243,6 +3243,17 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+FORM (QUERY_ONE_FOR_REAL__Intensity_getNearestLevelCrossing, U"Intensity: Get nearest level crossing", U"") {
+	REAL (time, U"Time (s)", U"0.1")
+	REAL (level, U"Level (dB)", U"60")
+	OPTIONMENU_ENUM (kVectorSearchDirection, searchDirection, U"Search direction", kVectorSearchDirection::DEFAULT)
+	OK
+DO
+	QUERY_ONE_FOR_REAL (Intensity)
+		const double result = Vector_getNearestLevelCrossing (me, 1, time, level, searchDirection);
+	QUERY_ONE_FOR_REAL_END (U" seconds")
+}
+
 /***************** IntensityTier ***************************************************/
 
 FORM (CONVERT_EACH_TO_ONE__IntensityTier_to_TextGrid_silences, U"IntensityTier: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
@@ -9637,6 +9648,8 @@ void praat_David_init () {
 
 	praat_addAction1 (classIntensity, 0, U"To TextGrid (silences)...", U"To IntensityTier (valleys)", 0,
 			CONVERT_EACH_TO_ONE__Intensity_to_TextGrid_silences);
+	praat_addAction1 (classIntensity, 0, U"Get nearest level crossing...", U"Get time of maximum...", 1,
+			QUERY_ONE_FOR_REAL__Intensity_getNearestLevelCrossing);
 	praat_addAction1 (classIntensityTier, 0, U"To TextGrid (silences)...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__IntensityTier_to_TextGrid_silences);
 	praat_addAction1 (classIntensityTier, 0, U"To Intensity...", nullptr, praat_HIDDEN,

@@ -15,7 +15,7 @@ time = Get nearest level crossing: 1, -1, level, "left"
 assert time = undefined
 # time is outside right
 time = Get nearest level crossing: 1, 1, level, "left"
-assert time = undefined
+assert not (time = undefined)
 # level to high
 time = Get nearest level crossing: 1, 0.05, 1.1, "left"
 assert time = undefined
@@ -25,9 +25,13 @@ assert time = undefined
 # no crossing to the left
 time = Get nearest level crossing: 1, 1 / (4 * frequency), level, "left"
 assert time = undefined
+time = Get nearest level crossing: 1, 1 / (4 * frequency), level, "nearest"
+assert not (time = undefined)
 # no crossing to the right
 time = Get nearest level crossing: 1, endTime - 1 / (4 * frequency), level, "right"
 assert time = undefined
+time = Get nearest level crossing: 1, endTime - 1 / (4 * frequency), level, "nearest"
+assert not (time = undefined)
 
 delta = 1e-5
 for i to 9

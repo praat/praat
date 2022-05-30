@@ -26,9 +26,9 @@
 
 double Vector_getNearestLevelCrossing (Vector me, integer channel, double position, double level, kVectorSearchDirection searchDirection) {
 	VEC amplitude = my channel (channel);
-	const integer leftSample = Sampled_xToLowIndex (me, position);
-	if (leftSample > my nx)
-		return undefined;
+	integer leftSample = Sampled_xToLowIndex (me, position);
+	Melder_clipRight (& leftSample, my nx - 1);
+	Melder_clipLeft (1_integer, & leftSample);
 	const integer rightSample = leftSample + 1;
 	
 	auto interpolateLinear = [&] (integer i1) -> double {
@@ -62,8 +62,6 @@ double Vector_getNearestLevelCrossing (Vector me, integer channel, double positi
 			return leftCrossing;
 	}
 	
-	if (rightSample < 1)
-		return undefined;
 	double rightCrossing = undefined;
 	if (searchDirection == kVectorSearchDirection::RIGHT || searchDirection == kVectorSearchDirection::NEAREST) {
 		for (integer iright = rightSample + 1; iright <= my nx; iright ++)
