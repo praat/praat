@@ -393,11 +393,12 @@ void structSoundEditor :: v_play (double startTime, double endTime) {
 	}
 }
 
-bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC) {
-	if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && yWC < 0.5 && xWC > our startWindow && xWC < our endWindow)
+bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+	constexpr double ANALYSIS_HEIGHT = 0.5;
+	if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && y_fraction < ANALYSIS_HEIGHT && x_world > our startWindow && x_world < our endWindow)
 		our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
-				2.0 * yWC * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
-	return SoundEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
+				2.0 * y_fraction * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
+	return SoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
 void structSoundEditor :: v_highlightSelection (double left, double right, double bottom, double top) {

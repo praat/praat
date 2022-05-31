@@ -1643,7 +1643,7 @@ DO
 
 FORM (MODIFY_RealTier_addPoint, U"Add one point", U"RealTier: Add point...") {
 	REAL (time, U"Time (s)", U"0.5")
-	REAL (intensity, U"Intensity (dB)", U"75")
+	REAL (intensity, U"Y value", U"75")
 	OK
 DO
 	MODIFY_EACH (RealTier)
