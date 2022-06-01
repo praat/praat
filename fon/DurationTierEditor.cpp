@@ -40,7 +40,8 @@ autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationT
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
 		autoDurationTierArea area = DurationTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		RealTierEditor_init (me.get(), area.move(), title, duration, sound, ownSound);
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, duration, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DurationTier window not created.");

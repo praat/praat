@@ -2,7 +2,7 @@
 #define _TimeSoundEditor_h_
 /* TimeSoundEditor.h
  *
- * Copyright (C) 1992-2007,2009-2019 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
  */
 
 #include "FunctionEditor.h"
+#include "SoundArea.h"
 #include "Sound.h"
 #include "LongSound.h"
 
@@ -32,9 +33,16 @@ struct TimeSoundEditor_sound {
 };
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
+	/*
+		Access inherited attributes by their derived type.
+	*/
+	Sampled sound() { return our d_sound. data ? Sampled (our d_sound. data) : Sampled (our d_longSound. data); }
+	autoSoundArea soundArea;
+
 	bool d_ownSound;
 	struct TimeSoundEditor_sound d_sound;
 	struct { LongSound data; } d_longSound;
+
 	GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
 	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 
@@ -64,7 +72,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	#include "TimeSoundEditor_prefs.h"
 };
 
-void TimeSoundEditor_init (TimeSoundEditor me, conststring32 title, Function data, Sampled sound, bool ownSound);
+void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title, Function data, Sampled sound, bool ownSound);
 
 void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
 

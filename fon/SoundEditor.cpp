@@ -413,7 +413,8 @@ void SoundEditor_init (SoundEditor me, conststring32 title, Sampled data) {
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
 	 * because createMenus expects that one of them is not null.
 	 */
-	TimeSoundAnalysisEditor_init (me, title, data, data, false);
+	autoSoundArea soundArea = SoundArea_create (me, 0.0, 1.0);
+	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, data, data, false);
 	if (my d_longSound.data && my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
 		if (my startWindow == my tmin)

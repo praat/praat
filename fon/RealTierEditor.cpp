@@ -136,10 +136,10 @@ void structRealTierEditor :: v_play (double startTime, double endTime) {
 		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
-void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, conststring32 title, RealTier data, Sound sound, bool ownSound) {
+void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, autoSoundArea soundArea, conststring32 title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classRealTier));
-	TimeSoundEditor_init (me, title, data, sound, ownSound);
+	TimeSoundEditor_init (me, soundArea.move(), title, data, sound, ownSound);
 	my realTierArea = realTierArea.move();
 	RealTierEditor_updateScaling (me);
 	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
@@ -148,8 +148,9 @@ void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, cons
 autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier tier, Sound sound, bool ownSound) {
 	try {
 		autoRealTierEditor me = Thing_new (RealTierEditor);
-		autoRealTierArea area = RealTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		RealTierEditor_init (me.get(), area.move(), title, tier, sound, ownSound);
+		autoRealTierArea realTierArea = RealTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		RealTierEditor_init (me.get(), realTierArea.move(), soundArea.move(), title, tier, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"RealTier window not created.");

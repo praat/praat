@@ -52,7 +52,7 @@ void structKlattGrid_RealTierEditor :: v_play (double startTime, double endTime)
 
 void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, autoKlattGrid_RealTierArea area, conststring32 title, KlattGrid klattgrid, RealTier data) {
 	my klattgrid = klattgrid;
-	RealTierEditor_init (me, area.move(), title, data, nullptr, false);
+	RealTierEditor_init (me, area.move(), autoSoundArea(), title, data, nullptr, false);
 }
 
 /************************** KlattGrid_PitchTierEditor *********************************/

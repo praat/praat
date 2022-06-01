@@ -112,7 +112,8 @@ void structMovieWindow :: v_play (double startTime, double endTime) {
 
 void MovieWindow_init (MovieWindow me, conststring32 title, Movie movie) {
 	Melder_assert (movie);
-	TimeSoundAnalysisEditor_init (me, title, movie, movie -> d_sound.get(), false);
+	autoSoundArea soundArea = ( movie -> d_sound ? SoundArea_create (me, 0.5, 1.0) : autoSoundArea() );
+	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, movie, movie -> d_sound.get(), false);
 }
 
 autoMovieWindow MovieWindow_create (conststring32 title, Movie movie) {

@@ -42,7 +42,8 @@ autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, Amplitu
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
 		autoAmplitudeTierArea area = AmplitudeTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		RealTierEditor_init (me.get(), area.move(), title, amplitude, sound, ownSound);
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, amplitude, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AmplitudeTier window not created.");
