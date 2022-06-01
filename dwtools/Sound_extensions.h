@@ -113,8 +113,6 @@ double Sound_correlateParts (Sound me, double t1, double t2, double duration);
 
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference);
 
-double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection);
-
 autoSound Sound_localAverage (Sound me, double averaginginterval, int windowType);
 /* y [n] = sum(i=-n, i=n, x [n+i]) / (2*n+1) */
 
