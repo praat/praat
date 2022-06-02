@@ -187,7 +187,8 @@ void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 void NoulliGridEditor_init (NoulliGridEditor me, conststring32 title, NoulliGrid data, Sound sound, bool ownSound) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classNoulliGrid));
-	TimeSoundEditor_init (me, title, data, sound, ownSound);
+	autoSoundArea soundArea = ( sound ? SoundArea_create (me, 1.0 - SOUND_HEIGHT, 1.0) : autoSoundArea() );
+	TimeSoundEditor_init (me, soundArea.move(), title, data, sound, ownSound);
 }
 
 autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid grid, Sound sound, bool ownSound) {

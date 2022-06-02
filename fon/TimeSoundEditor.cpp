@@ -733,7 +733,7 @@ bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent e
 	return TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
-void TimeSoundEditor_init (TimeSoundEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
+void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title, Function data, Sampled sound, bool ownSound) {
 	my d_ownSound = ownSound;
 	if (sound) {
 		integer numberOfChannels = 1;
@@ -757,6 +757,7 @@ void TimeSoundEditor_init (TimeSoundEditor me, conststring32 title, Function dat
 		my d_sound.muteChannels = zero_BOOLVEC (numberOfChannels);
 	}
 	FunctionEditor_init (me, title, data);
+	my soundArea = soundArea.move();
 }
 
 /* End of file TimeSoundEditor.cpp */

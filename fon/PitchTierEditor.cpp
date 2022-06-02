@@ -1,6 +1,6 @@
 /* PitchTierEditor.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,8 @@ autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
 		autoPitchTierArea area = PitchTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		RealTierEditor_init (me.get(), area.move(), title, pitch, sound, ownSound);
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, pitch, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier window not created.");

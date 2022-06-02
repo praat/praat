@@ -2022,8 +2022,8 @@ void structTimeSoundAnalysisEditor :: v_repairPreferences () {
 	}
 }
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
-	TimeSoundEditor_init (me, title, data, sound, ownSound);
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, autoSoundArea soundArea, conststring32 title, Function data, Sampled sound, bool ownSound) {
+	TimeSoundEditor_init (me, soundArea.move(), title, data, sound, ownSound);
 }
 
 /* End of file TimeSoundAnalysisEditor.cpp */

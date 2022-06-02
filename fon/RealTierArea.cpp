@@ -17,7 +17,6 @@
  */
 
 #include "RealTierArea.h"
-#include "RealTierEditor.h"
 
 Thing_implement (RealTierArea, FunctionArea, 0);
 
