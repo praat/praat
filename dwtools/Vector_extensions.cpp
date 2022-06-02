@@ -28,9 +28,10 @@ double Vector_getNearestLevelCrossing (Vector me, integer channel, double positi
 	if (position < my xmin || position > my xmax)
 		return undefined;
 	VEC amplitude = my channel (channel);
+	if (my nx == 1)
+		return ( amplitude [1] == level ? my x1 : undefined ); 
 	integer leftSample = Sampled_xToLowIndex (me, position);
-	Melder_clipRight (& leftSample, my nx - 1);
-	Melder_clipLeft (1_integer, & leftSample);
+	Melder_clip (1_integer, & leftSample, my nx - 1);
 	const integer rightSample = leftSample + 1;
 	
 	auto interpolateLinear = [&] (integer i1) -> double {
