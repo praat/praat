@@ -2,7 +2,7 @@
 #define _FormantGridEditor_h_
 /* FormantGridEditor.h
  *
- * Copyright (C) 2008-2018,2020 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2018,2020,2022 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 	integer selectedFormant;
 
 	void v_createMenus ()
+		override;
+	void v_distributeAreas ()
 		override;
 	void v_draw ()
 		override;

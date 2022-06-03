@@ -46,9 +46,11 @@ void structPitchTierEditor :: v_play (double startTime, double endTime) {
 autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch, Sound sound, bool ownSound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		autoPitchTierArea area = PitchTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		autoPitchTierArea area = PitchTierArea_create (me.get());
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
+		Melder_assert (!! soundArea == !! sound);
 		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, pitch, sound, ownSound);
+		Melder_assert (!! my soundArea == !! my d_sound.data);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier window not created.");

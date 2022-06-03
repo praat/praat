@@ -33,20 +33,28 @@ Thing_implement (NoulliGridEditor, TimeSoundEditor, 0);
 #include "Prefs_copyToInstance.h"
 #include "NoulliGridEditor_prefs.h"
 
-#define SOUND_HEIGHT  0.2
-
 /********** DRAWING AREA **********/
+
+void structNoulliGridEditor :: v_distributeAreas () {
+	if (our d_sound.data) {
+		constexpr double yminSound_fraction = 0.8;
+		//our noulliGridArea -> setGlobalYRange_fraction (0.0, yminSound_fraction);
+		our soundArea -> setGlobalYRange_fraction (yminSound_fraction, 1.0);
+	} else {
+		//our noulliGridArea -> setGlobalYRange_fraction (0.0, 1.0);
+	}
+}
 
 void structNoulliGridEditor :: v_draw () {
 	NoulliGrid data = (NoulliGrid) our data;
 	if (our d_sound.data) {
-		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
+		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.8, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), viewport);
-		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
+		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.8);   // BUG: should be our noulliGridArea -> viewport()
 	}
 	NoulliGrid_paintInside (data, our graphics.get(), our startWindow, our endWindow);
 	our v_updateMenuItems_file ();
@@ -187,7 +195,7 @@ void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 void NoulliGridEditor_init (NoulliGridEditor me, conststring32 title, NoulliGrid data, Sound sound, bool ownSound) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classNoulliGrid));
-	autoSoundArea soundArea = ( sound ? SoundArea_create (me, 1.0 - SOUND_HEIGHT, 1.0) : autoSoundArea() );
+	autoSoundArea soundArea = ( sound ? SoundArea_create (me) : autoSoundArea() );
 	TimeSoundEditor_init (me, soundArea.move(), title, data, sound, ownSound);
 }
 

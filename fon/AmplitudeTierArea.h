@@ -2,7 +2,7 @@
 #define _AmplitudeTierArea_h_
 /* AmplitudeTierArea.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ Thing_define (AmplitudeTierArea, RealTierArea) {
 	#include "AmplitudeTierArea_prefs.h"
 };
 
-inline autoAmplitudeTierArea AmplitudeTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+inline autoAmplitudeTierArea AmplitudeTierArea_create (FunctionEditor editor) {
 	autoAmplitudeTierArea me = Thing_new (AmplitudeTierArea);
-	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	RealTierArea_init (me.get(), editor);
 	return me;
 }
 

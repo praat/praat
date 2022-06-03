@@ -38,8 +38,8 @@ void structOptimalCeilingTierEditor :: v_play (double startTime, double endTime)
 autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 title, OptimalCeilingTier octier, Sound sound, bool ownSound) {
 	try {
 		autoOptimalCeilingTierEditor me = Thing_new (OptimalCeilingTierEditor);
-		autoOptimalCeilingTierArea area = OptimalCeilingTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		autoOptimalCeilingTierArea area = OptimalCeilingTierArea_create (me.get());
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
 		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, octier, sound, ownSound);
 		return me;
 	} catch (MelderError) {

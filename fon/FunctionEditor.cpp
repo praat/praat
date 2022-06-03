@@ -353,6 +353,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	/*
 		Start of inner drawing.
 	*/
+	my v_distributeAreas ();
 	my viewDataAsWorldByFraction ();
 	my v_draw ();
 
@@ -1355,6 +1356,7 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 		my viewDataAsWorldByFraction ();
 		double x_world, y_fraction;
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x_world, & y_fraction);
+		my v_distributeAreas ();
 		my v_mouseInWideDataView (event, x_world, y_fraction);
 		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();

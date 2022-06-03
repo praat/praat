@@ -40,15 +40,15 @@ void SoundArea_draw (SoundArea me, Sound sound);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline void SoundArea_init (SoundArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	FunctionArea_init (me, editor, ymin_fraction, ymax_fraction);
+inline void SoundArea_init (SoundArea me, FunctionEditor editor) {
+	FunctionArea_init (me, editor);
 	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
 	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
 }
 
-inline autoSoundArea SoundArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+inline autoSoundArea SoundArea_create (FunctionEditor editor) {
 	autoSoundArea me = Thing_new (SoundArea);
-	SoundArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	SoundArea_init (me.get(), editor);
 	return me;
 }
 

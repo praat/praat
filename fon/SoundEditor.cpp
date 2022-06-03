@@ -410,10 +410,10 @@ void structSoundEditor :: v_highlightSelection (double left, double right, doubl
 
 void SoundEditor_init (SoundEditor me, conststring32 title, Sampled data) {
 	/*
-	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
-	 * because createMenus expects that one of them is not null.
-	 */
-	autoSoundArea soundArea = SoundArea_create (me, 0.0, 1.0);
+		my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
+		because createMenus expects that one of them is not null.
+	*/
+	autoSoundArea soundArea = SoundArea_create (me);
 	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, data, data, false);
 	if (my d_longSound.data && my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;

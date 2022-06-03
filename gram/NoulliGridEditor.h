@@ -2,7 +2,7 @@
 #define _NoulliGridEditor_h_
 /* NoulliGridEditor.h
  *
- * Copyright (C) 2018,2020,2021 Paul Boersma
+ * Copyright (C) 2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 #include "NoulliGridEditor_enums.h"
 
 Thing_define (NoulliGridEditor, TimeSoundEditor) {
+	void v_distributeAreas ()
+		override;
 	void v_draw ()
 		override;
 	void v_play (double startTime, double endTime)

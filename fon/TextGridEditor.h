@@ -54,6 +54,8 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_prepareDraw ()
 		override;
+	void v_distributeAreas ()
+		override;
 	void v_draw ()
 		override;
 	bool v_hasSelectionViewer ()

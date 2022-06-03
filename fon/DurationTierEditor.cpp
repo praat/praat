@@ -39,8 +39,8 @@ void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier duration, Sound sound, bool ownSound) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
-		autoDurationTierArea area = DurationTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		autoDurationTierArea area = DurationTierArea_create (me.get());
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
 		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, duration, sound, ownSound);
 		return me;
 	} catch (MelderError) {
