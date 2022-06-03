@@ -2,7 +2,7 @@
 #define _MovieWindow_h_
 /* MovieWindow.h
  *
- * Copyright (C) 2011,2012,2014-2016,2018,2020 Paul Boersma
+ * Copyright (C) 2011,2012,2014-2016,2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
 	void v_createMenus ()
+		override;
+	void v_distributeAreas ()
 		override;
 	void v_draw ()
 		override;

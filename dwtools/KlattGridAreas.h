@@ -2,7 +2,7 @@
 #define _KlattGridAreas_h_
 /* KlattGridAreas.h
  *
- * Copyright (C) 2009-2011 David Weenink, 2017,2021 Paul Boersma
+ * Copyright (C) 2009-2011 David Weenink, 2017,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 Thing_define (KlattGrid_RealTierArea, RealTierArea) {
 };
 inline void KlattGrid_RealTierArea_init (KlattGrid_RealTierArea me, FunctionEditor editor) {
-	RealTierArea_init (me, editor, 0.0, 1.0);
+	RealTierArea_init (me, editor);
 }
 
 Thing_define (KlattGrid_OpenPhaseTierArea, KlattGrid_RealTierArea) {

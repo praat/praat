@@ -146,6 +146,7 @@ Thing_define (FunctionEditor, Editor) {
 	void v_dataChanged ()
 		override;
 
+	virtual void v_distributeAreas () { }
 	virtual void v_draw () = 0;
 	virtual void v_windowChanged () { }
 	virtual bool v_hasSelectionViewer () { return false; }

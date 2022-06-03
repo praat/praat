@@ -2,7 +2,7 @@
 #define _FunctionArea_h_
 /* FunctionArea.h
  *
- * Copyright (C) 1992-2005,2007-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2015-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,15 @@
 #include "FunctionEditor.h"
 
 Thing_define (FunctionArea, Thing) {
-	void init (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	void init (FunctionEditor editor) {
 		_editor = editor;
+		_ymin_fraction = undefined;   // to be set just before drawing or tracking
+		_ymax_fraction = undefined;   // to be set just before drawing or tracking
+	}
+	/*
+		To be called just before drawing or tracking:
+	*/
+	void setGlobalYRange_fraction (double ymin_fraction, double ymax_fraction) {
 		_ymin_fraction = ymin_fraction;
 		_ymax_fraction = ymax_fraction;
 	}
@@ -78,8 +85,8 @@ private:
 	}
 };
 
-inline void FunctionArea_init (FunctionArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	my init (editor, ymin_fraction, ymax_fraction);
+inline void FunctionArea_init (FunctionArea me, FunctionEditor editor) {
+	my init (editor);
 	my v_copyPreferencesToInstance ();
 	my v_repairPreferences ();
 }

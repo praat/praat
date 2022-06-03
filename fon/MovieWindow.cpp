@@ -47,6 +47,15 @@ static double _MovieWindow_getSoundBottomPosition (MovieWindow me) {
 	return movie -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
 }
 
+void structMovieWindow :: v_distributeAreas () {
+	if (our soundArea) {
+		const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
+				our instancePref_intensity_show() || our instancePref_formant_show();
+		const double yminSound_fraction = ( showAnalysis ? 0.7 : 0.3 );
+		our soundArea -> setGlobalYRange_fraction (yminSound_fraction, 1.0);
+	}
+}
+
 void structMovieWindow :: v_draw () {
 	Movie movie = (Movie) our data;
 	bool showAnalysis = (our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) && movie -> d_sound;
@@ -71,10 +80,9 @@ void structMovieWindow :: v_draw () {
 		if (firstFrame < 1) firstFrame = 1;
 		if (lastFrame > movie -> nx) lastFrame = movie -> nx;
 		for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
-			double time = Sampled_indexToX (movie, iframe);
-			double timeLeft = time - 0.5 * movie -> dx, timeRight = time + 0.5 * movie -> dx;
-			if (timeLeft < our startWindow) timeLeft = our startWindow;
-			if (timeRight > our endWindow) timeRight = our endWindow;
+			const double time = Sampled_indexToX (movie, iframe);
+			const double timeLeft = Melder_clippedLeft (our startWindow, time - 0.5 * movie -> dx);
+			const double timeRight = Melder_clippedRight (time + 0.5 * movie -> dx, our endWindow);
 			Movie_paintOneImageInside (movie, our graphics.get(), iframe, timeLeft, timeRight, 0.0, 1.0);
 		}
 		Graphics_resetViewport (our graphics.get(), viewport);
@@ -112,7 +120,7 @@ void structMovieWindow :: v_play (double startTime, double endTime) {
 
 void MovieWindow_init (MovieWindow me, conststring32 title, Movie movie) {
 	Melder_assert (movie);
-	autoSoundArea soundArea = ( movie -> d_sound ? SoundArea_create (me, 0.5, 1.0) : autoSoundArea() );
+	autoSoundArea soundArea = ( movie -> d_sound ? SoundArea_create (me) : autoSoundArea() );
 	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, movie, movie -> d_sound.get(), false);
 }
 

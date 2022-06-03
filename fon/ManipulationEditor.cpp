@@ -569,6 +569,12 @@ void structManipulationEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 /********** DRAWING AREA **********/
 
+void structManipulationEditor :: v_distributeAreas () {
+	our pitchTierArea -> setGlobalYRange_fraction (( our duration() ? 0.17 : 0.0 ), 0.67);
+	if (our duration())
+		our durationTierArea -> setGlobalYRange_fraction (0.0, 0.17);
+}
+
 static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_Viewport viewport = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -775,9 +781,9 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		FunctionEditor_init (me.get(), title, manipulation);
-		my pitchTierArea = PitchTierArea_create (me.get(), ( manipulation -> duration ? 0.17 : 0.0 ), 0.67);
+		my pitchTierArea = PitchTierArea_create (me.get());
 		if (manipulation -> duration)
-			my durationTierArea = DurationTierArea_create (me.get(), 0.0, 0.17);
+			my durationTierArea = DurationTierArea_create (me.get());
 
 		/*
 			If needed, fix preferences to sane values.

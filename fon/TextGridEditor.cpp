@@ -1318,6 +1318,14 @@ void structTextGridEditor :: v_prepareDraw () {
 	}
 }
 
+void structTextGridEditor :: v_distributeAreas () {
+	const bool showAnalysis = v_hasAnalysis () &&
+			(instancePref_spectrogram_show() || instancePref_pitch_show() || instancePref_intensity_show() || instancePref_formant_show()) &&
+			(d_longSound.data || d_sound.data);
+	const double soundY = _TextGridEditor_computeSoundY (this);
+	const double soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
+}
+
 static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer itier) {
 	#if gtk || defined (macintosh)
 		constexpr bool platformUsesAntiAliasing = true;
@@ -2230,7 +2238,7 @@ void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid,
 	my spellingChecker = spellingChecker;   // set in time
 	my callbackSocket = Melder_dup (callbackSocket);
 
-	autoSoundArea soundArea = ( sound ? SoundArea_create (me, 0.5, 1.0) : autoSoundArea() );
+	autoSoundArea soundArea = ( sound ? SoundArea_create (me) : autoSoundArea() );
 	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, grid, sound, ownSound);
 
 	my selectedTier = 1;

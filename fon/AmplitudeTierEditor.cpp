@@ -41,8 +41,8 @@ void structAmplitudeTierEditor :: v_play (double startTime, double endTime) {
 autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
-		autoAmplitudeTierArea area = AmplitudeTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		autoAmplitudeTierArea area = AmplitudeTierArea_create (me.get());
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
 		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, amplitude, sound, ownSound);
 		return me;
 	} catch (MelderError) {

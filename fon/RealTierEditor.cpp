@@ -94,15 +94,30 @@ void structRealTierEditor :: v_dataChanged () {
 
 /* MARK: - DRAWING AREA */
 
+/*
+	This is called just before v_draw() and just before v_mouseInWideDataView().
+*/
+void structRealTierEditor :: v_distributeAreas () {
+	Melder_assert (!! our soundArea == !! our d_sound.data);
+	if (our d_sound.data) {
+		constexpr double yminSound_fraction = 0.618;
+		our realTierArea -> setGlobalYRange_fraction (0.0, yminSound_fraction);
+		Melder_assert (our soundArea);
+		our soundArea -> setGlobalYRange_fraction (yminSound_fraction, 1.0);
+	} else {
+		our realTierArea -> setGlobalYRange_fraction (0.0, 1.0);
+	}
+}
+
 void structRealTierEditor :: v_draw () {
 	if (our d_sound.data) {
-		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
+		our soundArea -> setViewport ();
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 	}
-	our realTierArea -> setViewport();
+	our realTierArea -> setViewport ();
 
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
@@ -136,10 +151,14 @@ void structRealTierEditor :: v_play (double startTime, double endTime) {
 		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
-void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, autoSoundArea soundArea, conststring32 title, RealTier data, Sound sound, bool ownSound) {
+void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, autoSoundArea soundArea, conststring32 title,
+	RealTier data, Sound sound, bool ownSound)
+{
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classRealTier));
+	Melder_assert (!! soundArea == !! sound);
 	TimeSoundEditor_init (me, soundArea.move(), title, data, sound, ownSound);
+	Melder_assert (!! my soundArea == !! my d_sound.data);
 	my realTierArea = realTierArea.move();
 	RealTierEditor_updateScaling (me);
 	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
@@ -148,8 +167,8 @@ void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, auto
 autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier tier, Sound sound, bool ownSound) {
 	try {
 		autoRealTierEditor me = Thing_new (RealTierEditor);
-		autoRealTierArea realTierArea = RealTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), 1.0 - structRealTierEditor::SOUND_HEIGHT, 1.0) : autoSoundArea() );
+		autoRealTierArea realTierArea = RealTierArea_create (me.get());
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
 		RealTierEditor_init (me.get(), realTierArea.move(), soundArea.move(), title, tier, sound, ownSound);
 		return me;
 	} catch (MelderError) {

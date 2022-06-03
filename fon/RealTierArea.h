@@ -55,15 +55,15 @@ void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier);
 
 bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	FunctionArea_init (me, editor, ymin_fraction, ymax_fraction);
+inline void RealTierArea_init (RealTierArea me, FunctionEditor editor) {
+	FunctionArea_init (me, editor);
 	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
 	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
 }
 
-inline autoRealTierArea RealTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+inline autoRealTierArea RealTierArea_create (FunctionEditor editor) {
 	autoRealTierArea me = Thing_new (RealTierArea);
-	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	RealTierArea_init (me.get(), editor);
 	return me;
 }
 

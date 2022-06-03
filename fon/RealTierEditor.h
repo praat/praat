@@ -28,13 +28,13 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	RealTier & realTier() { return * reinterpret_cast <RealTier *> (& our data); }
 
 	autoRealTierArea realTierArea;
-	autoSoundArea soundArea;
-	constexpr static double SOUND_HEIGHT = 0.382;
 	/*
 		mouse state
 	*/
 	bool clickedInWideRealTierArea = false;
 
+	void v_distributeAreas ()
+		override;
 	void v_createMenus ()
 		override;
 	void v_dataChanged ()

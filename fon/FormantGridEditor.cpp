@@ -192,6 +192,9 @@ void structFormantGridEditor :: v_createMenus () {
 
 /********** DRAWING AREA **********/
 
+void structFormantGridEditor :: v_distributeAreas () {
+}
+
 void structFormantGridEditor :: v_draw () {
 	FormantGrid grid = (FormantGrid) our data;
 	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & grid -> bandwidths : & grid -> formants );
@@ -285,7 +288,7 @@ void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantG
 	FunctionEditor_init (me, title, data);
 	my selectedFormant = 1;
 	my formantGridArea = Thing_new (FormantGridArea);
-	RealTierArea_init (my formantGridArea.get(), me, 0.0, 1.0);
+	RealTierArea_init (my formantGridArea.get(), me);
 	my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
 }
 

@@ -2,7 +2,7 @@
 #define _PitchTierArea_h_
 /* PitchTierArea.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ Thing_define (PitchTierArea, RealTierArea) {
 	#include "PitchTierArea_prefs.h"
 };
 
-inline autoPitchTierArea PitchTierArea_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
+inline autoPitchTierArea PitchTierArea_create (FunctionEditor editor) {
 	autoPitchTierArea me = Thing_new (PitchTierArea);
-	RealTierArea_init (me.get(), editor, bottom_fraction, top_fraction);
+	RealTierArea_init (me.get(), editor);
 	return me;
 }
 
