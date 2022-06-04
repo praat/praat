@@ -1,4 +1,4 @@
-/* SoundArea_prefs.h
+/* ERPArea.cpp
  *
  * Copyright (C) 2022 Paul Boersma
  *
@@ -16,16 +16,20 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (SoundArea)
+#include "ERPArea.h"
 
-	InstancePrefs_addDouble  (SoundArea, dataFreeMinimum, 1, U"-100.0")
-	InstancePrefs_addDouble  (SoundArea, dataFreeMaximum, 1, U"100.0")
+Thing_implement (ERPArea, SoundArea, 0);
 
-	InstancePrefs_addEnum    (SoundArea, sound_scalingStrategy, 1, kSoundArea_scalingStrategy, DEFAULT)
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_height,        1, U"2.0")
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_minimum,       1, U"-1.0")
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_maximum,       1, U"1.0")
+#include "Prefs_define.h"
+#include "ERPArea_prefs.h"
+#include "Prefs_install.h"
+#include "ERPArea_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "ERPArea_prefs.h"
 
-Prefs_end (SoundArea)
+conststring32 structERPArea :: v_getChannelName (integer channelNumber) {
+	Melder_assert (our erp);
+	return our erp -> channelNames [channelNumber].get();
+}
 
-/* End of file SoundArea_prefs.h */
+/* End of file ERPArea.cpp */

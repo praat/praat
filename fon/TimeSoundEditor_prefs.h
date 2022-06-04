@@ -18,10 +18,6 @@
 
 Prefs_begin (TimeSoundEditor)
 
-	InstancePrefs_addEnum    (TimeSoundEditor, sound_scalingStrategy,       1, kTimeSoundEditor_scalingStrategy, DEFAULT)
-	InstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_height,        1, U"2.0")
-	InstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_minimum,       1, U"-1.0")
-	InstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_maximum,       1, U"1.0")
 	ClassPrefs_addBool       (TimeSoundEditor, sound_picture_preserveTimes, 1, true)
 	ClassPrefs_addDouble     (TimeSoundEditor, sound_picture_bottom,        1, U"0.0")
 	ClassPrefs_addDouble     (TimeSoundEditor, sound_picture_top,           1, U"0.0 (= auto)")

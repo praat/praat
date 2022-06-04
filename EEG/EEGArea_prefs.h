@@ -1,4 +1,4 @@
-/* SoundArea_prefs.h
+/* EEGArea_prefs.h
  *
  * Copyright (C) 2022 Paul Boersma
  *
@@ -16,16 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (SoundArea)
+Prefs_begin (EEGArea)
 
-	InstancePrefs_addDouble  (SoundArea, dataFreeMinimum, 1, U"-100.0")
-	InstancePrefs_addDouble  (SoundArea, dataFreeMaximum, 1, U"100.0")
+	InstancePrefs_overrideEnum    (EEGArea, sound_scalingStrategy,          1, kSoundArea_scalingStrategy, DEFAULT)
+	InstancePrefs_overrideDouble  (EEGArea, sound_scaling_height,           1, U"20e-6")
+	InstancePrefs_overrideDouble  (EEGArea, sound_scaling_minimum,          1, U"-10e-6")
+	InstancePrefs_overrideDouble  (EEGArea, sound_scaling_maximum,          1, U"10e-6")
 
-	InstancePrefs_addEnum    (SoundArea, sound_scalingStrategy, 1, kSoundArea_scalingStrategy, DEFAULT)
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_height,        1, U"2.0")
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_minimum,       1, U"-1.0")
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_maximum,       1, U"1.0")
+Prefs_end (EEGArea)
 
-Prefs_end (SoundArea)
-
-/* End of file SoundArea_prefs.h */
+/* End of file EEGArea_prefs.h */

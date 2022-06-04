@@ -19,14 +19,11 @@
  */
 
 #include "SoundEditor.h"
-#include "ERP.h"
+#include "ERPArea.h"
 
 Thing_define (ERPWindow, SoundEditor) {
-	conststring32 v_getChannelName (integer channelNumber)
-		override {
-			ERP erp = (ERP) our data;
-			return erp -> channelNames [channelNumber].get();
-		}
+	autoERPArea erpArea;
+
 	bool v_hasSelectionViewer ()
 		override { return true; }
 	void v_drawSelectionViewer ()

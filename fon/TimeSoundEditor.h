@@ -23,13 +23,9 @@
 #include "Sound.h"
 #include "LongSound.h"
 
-#include "TimeSoundEditor_enums.h"
-
 struct TimeSoundEditor_sound {
 	Sound data;
 	double minimum, maximum;
-	integer channelOffset;
-	autoBOOLVEC muteChannels;
 };
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
@@ -67,14 +63,11 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 
 	virtual void v_createMenuItems_view_sound (EditorMenu menu);
 	virtual void v_updateMenuItems_file ();
-	virtual conststring32 v_getChannelName (integer /* channelNumber */) { return nullptr; }
 
 	#include "TimeSoundEditor_prefs.h"
 };
 
 void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title, Function data, Sampled sound, bool ownSound);
-
-void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
 
 /* End of file TimeSoundEditor.h */
 #endif

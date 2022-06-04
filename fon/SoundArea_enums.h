@@ -1,6 +1,6 @@
-/* SoundArea_prefs.h
+/* SoundArea_enums.h
  *
- * Copyright (C) 2022 Paul Boersma
+ * Copyright (C) 2012,2015,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (SoundArea)
+enums_begin (kSoundArea_scalingStrategy, 1)
+	enums_add (kSoundArea_scalingStrategy, 1, BY_WHOLE, U"by whole")
+	enums_add (kSoundArea_scalingStrategy, 2, BY_WINDOW, U"by window")
+	enums_add (kSoundArea_scalingStrategy, 3, BY_WINDOW_AND_CHANNEL, U"by window and channel")
+	enums_add (kSoundArea_scalingStrategy, 4, FIXED_HEIGHT, U"fixed height")
+	enums_add (kSoundArea_scalingStrategy, 5, FIXED_RANGE, U"fixed range")
+enums_end (kSoundArea_scalingStrategy, 5, BY_WINDOW)
 
-	InstancePrefs_addDouble  (SoundArea, dataFreeMinimum, 1, U"-100.0")
-	InstancePrefs_addDouble  (SoundArea, dataFreeMaximum, 1, U"100.0")
-
-	InstancePrefs_addEnum    (SoundArea, sound_scalingStrategy, 1, kSoundArea_scalingStrategy, DEFAULT)
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_height,        1, U"2.0")
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_minimum,       1, U"-1.0")
-	InstancePrefs_addDouble  (SoundArea, sound_scaling_maximum,       1, U"1.0")
-
-Prefs_end (SoundArea)
-
-/* End of file SoundArea_prefs.h */
+/* End of file SoundArea_enums.h */

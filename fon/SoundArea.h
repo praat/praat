@@ -20,13 +20,19 @@
 
 #include "FunctionArea.h"
 #include "Sound.h"
+#include "LongSound.h"
+#include "SoundArea_enums.h"
 
 Thing_define (SoundArea, FunctionArea) {
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
 	virtual conststring32 v_rightTickUnits () { return U"Pa"; }
 
-	double ymin, ymax, ycursor;
+	double ymin, ymax;
+	integer channelOffset;
+	autoBOOLVEC muteChannels;
+	
+	virtual conststring32 v_getChannelName (integer /* channelNumber */) { return nullptr; }
 
 	void viewSoundAsWorldByWorld () const {
 		our setViewport ();
@@ -36,7 +42,9 @@ Thing_define (SoundArea, FunctionArea) {
 	#include "SoundArea_prefs.h"
 };
 
-void SoundArea_draw (SoundArea me, Sound sound);
+void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units);
+
+void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double globalMinimum, double globalMaximum);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 

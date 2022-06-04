@@ -1584,15 +1584,6 @@ void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 
 	Graphics_text (my graphics.get(), my endWindow, yWC, text.string);
 }
 
-void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units) {
-	Graphics_setColour (my graphics.get(), Melder_CYAN);
-	Graphics_line (my graphics.get(), my startWindow, yWC, 0.99 * my startWindow + 0.01 * my endWindow, yWC);
-	Graphics_fillCircle_mm (my graphics.get(), 0.5 * (my startSelection + my endSelection), yWC, 1.5);
-	Graphics_setColour (my graphics.get(), Melder_BLUE);
-	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (my graphics.get(), my startWindow, yWC,   yWC_string, units);
-}
-
 void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, double minimum, double maximum) {
 	double textX = my endWindow, textY = yWC;
 	const bool tooHigh = ( Graphics_dyWCtoMM (my graphics.get(), maximum - textY) < 5.0 );
