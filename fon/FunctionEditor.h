@@ -293,7 +293,6 @@ void FunctionEditor_ungroup (Daata data);
 		default line type, default line width, undefined colour, undefined text alignment.
 */
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment);
-void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units);
 void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, double minimum, double maximum);
 void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units);
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);

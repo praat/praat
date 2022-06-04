@@ -815,6 +815,8 @@ void praat_EEG_init () {
 	praat_addAction2 (classERPTier, 1, classTable, 1, U"Extract events where column (number)...", nullptr, 1, NEW1_ERPTier_Table_extractEventsWhereColumn_number);
 	praat_addAction2 (classERPTier, 1, classTable, 1, U"Extract events where column (text)...", nullptr, 1, NEW1_ERPTier_Table_extractEventsWhereColumn_text);
 
+	structEEGArea   :: f_preferences ();
+	structERPArea   :: f_preferences ();
 	structEEGWindow :: f_preferences ();
 	structERPWindow :: f_preferences ();
 }

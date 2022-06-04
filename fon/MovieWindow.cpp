@@ -65,7 +65,7 @@ void structMovieWindow :: v_draw () {
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		TimeSoundEditor_drawSound (this, -1.0, 1.0);
+		SoundArea_draw (our soundArea.get(), movie -> d_sound.get(), nullptr, -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), viewport);
 	}
 	if (true) {
@@ -75,10 +75,8 @@ void structMovieWindow :: v_draw () {
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-		integer firstFrame = Sampled_xToNearestIndex (movie, our startWindow);
-		integer lastFrame = Sampled_xToNearestIndex (movie, our endWindow);
-		if (firstFrame < 1) firstFrame = 1;
-		if (lastFrame > movie -> nx) lastFrame = movie -> nx;
+		const integer firstFrame = Melder_clippedLeft (1_integer, Sampled_xToNearestIndex (movie, our startWindow));
+		const integer lastFrame = Melder_clippedRight (Sampled_xToNearestIndex (movie, our endWindow), movie -> nx);
 		for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 			const double time = Sampled_indexToX (movie, iframe);
 			const double timeLeft = Melder_clippedLeft (our startWindow, time - 0.5 * movie -> dx);
@@ -95,7 +93,7 @@ void structMovieWindow :: v_draw () {
 		if (our instancePref_pulses_show()) {
 			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
 			our v_draw_analysis_pulses ();
-			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
+			SoundArea_draw (our soundArea.get(), movie -> d_sound.get(), nullptr, -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_resetViewport (our graphics.get(), viewport);
 		}
 	}

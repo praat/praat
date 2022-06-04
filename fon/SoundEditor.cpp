@@ -341,7 +341,7 @@ void structSoundEditor :: v_draw () {
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	if (our instancePref_pulses_show())
 		our v_draw_analysis_pulses ();
-	TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);
+	SoundArea_draw (our soundArea.get(), our d_sound.data, our d_longSound.data, our d_sound.minimum, our d_sound.maximum);
 	if (showAnalysis) {
 		Graphics_resetViewport (our graphics.get(), viewport);
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.5);
@@ -366,9 +366,9 @@ void structSoundEditor :: v_draw () {
 void structSoundEditor :: v_play (double startTime, double endTime) {
 	const integer numberOfChannels = ( our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny );
 	integer numberOfMuteChannels = 0;
-	Melder_assert (our d_sound.muteChannels.size == numberOfChannels);
+	Melder_assert (our soundArea -> muteChannels.size == numberOfChannels);
 	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
-		if (our d_sound.muteChannels [ichan])
+		if (our soundArea -> muteChannels [ichan])
 			numberOfMuteChannels ++;
 	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
 	Melder_require (numberOfChannelsToPlay > 0,
@@ -377,7 +377,7 @@ void structSoundEditor :: v_play (double startTime, double endTime) {
 		if (numberOfMuteChannels > 0) {
 			autoSound part = LongSound_extractPart (our d_longSound.data, startTime, endTime, 1);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
+			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
 			Sound_MixingMatrix_playPart (part.get(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
 			LongSound_playPart (our d_longSound.data, startTime, endTime, theFunctionEditor_playCallback, this);
@@ -385,7 +385,7 @@ void structSoundEditor :: v_play (double startTime, double endTime) {
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
+			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
 			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
 			Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);

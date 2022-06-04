@@ -39,11 +39,6 @@ void structEEGWindow :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"EEGWindow help", '?', menu_cb_EEGWindowHelp);
 }
 
-conststring32 structEEGWindow :: v_getChannelName (integer channelNumber) {
-	Melder_assert (our eeg != nullptr);
-	return our eeg -> channelNames [channelNumber].get();
-}
-
 static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
@@ -76,6 +71,8 @@ void structEEGWindow :: v_updateMenuItems_file () {
 
 void EEGWindow_init (EEGWindow me, conststring32 title, EEG eeg) {
 	my eeg = eeg;   // before initing, because initing will already draw!
+	my eegArea = EEGArea_create (me);
+	my eegArea -> eeg = eeg;   // BUG: double
 	TextGridEditor_init (me, title, eeg -> textgrid.get(), eeg -> sound.get(), false, nullptr, nullptr);
 }
 

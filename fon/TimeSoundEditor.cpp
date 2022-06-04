@@ -19,12 +19,6 @@
 #include "NUM2.h"
 #include "TimeSoundEditor.h"
 #include "EditorM.h"
-#include "../kar/UnicodeData.h"
-
-#include "enums_getText.h"
-#include "TimeSoundEditor_enums.h"
-#include "enums_getValue.h"
-#include "TimeSoundEditor_enums.h"
 
 Thing_implement_pureVirtual (TimeSoundEditor, FunctionEditor, 0);
 
@@ -46,7 +40,8 @@ void structTimeSoundEditor :: v_destroy () noexcept {
 void structTimeSoundEditor :: v_info () {
 	TimeSoundEditor_Parent :: v_info ();
 	/* Sound flags: */
-	MelderInfo_writeLine (U"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (our instancePref_sound_scalingStrategy()));
+	MelderInfo_writeLine (U"Sound scaling strategy: ",
+			kSoundArea_scalingStrategy_getText (our soundArea -> instancePref_sound_scalingStrategy()));
 }
 
 enum {
@@ -437,23 +432,23 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 
 static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Sound scaling", nullptr)
-		OPTIONMENU_ENUM (kTimeSoundEditor_scalingStrategy, scalingStrategy,
-				U"Scaling strategy", my default_sound_scalingStrategy ())
+		OPTIONMENU_ENUM (kSoundArea_scalingStrategy, scalingStrategy,
+				U"Scaling strategy", my soundArea -> default_sound_scalingStrategy ())
 		LABEL (U"For \"fixed height\":")
-		POSITIVE (height, U"Height", my default_sound_scaling_height ())
+		POSITIVE (height, U"Height", my soundArea -> default_sound_scaling_height ())
 		LABEL (U"For \"fixed range\":")
-		REAL (minimum, U"Minimum", my default_sound_scaling_minimum ())
-		REAL (maximum, U"Maximum", my default_sound_scaling_maximum ())
+		REAL (minimum, U"Minimum", my soundArea -> default_sound_scaling_minimum ())
+		REAL (maximum, U"Maximum", my soundArea -> default_sound_scaling_maximum ())
 	EDITOR_OK
-		SET_ENUM (scalingStrategy, kTimeSoundEditor_scalingStrategy, my instancePref_sound_scalingStrategy())
-		SET_REAL (height,  my instancePref_sound_scaling_height())
-		SET_REAL (minimum, my instancePref_sound_scaling_minimum())
-		SET_REAL (maximum, my instancePref_sound_scaling_maximum())
+		SET_ENUM (scalingStrategy, kSoundArea_scalingStrategy, my soundArea -> instancePref_sound_scalingStrategy())
+		SET_REAL (height,  my soundArea -> instancePref_sound_scaling_height())
+		SET_REAL (minimum, my soundArea -> instancePref_sound_scaling_minimum())
+		SET_REAL (maximum, my soundArea -> instancePref_sound_scaling_maximum())
 	EDITOR_DO
-		my setInstancePref_sound_scalingStrategy (scalingStrategy) ;
-		my setInstancePref_sound_scaling_height (height);
-		my setInstancePref_sound_scaling_minimum (minimum);
-		my setInstancePref_sound_scaling_maximum (maximum);
+		my soundArea -> setInstancePref_sound_scalingStrategy (scalingStrategy) ;
+		my soundArea -> setInstancePref_sound_scaling_height (height);
+		my soundArea -> setInstancePref_sound_scaling_minimum (minimum);
+		my soundArea -> setInstancePref_sound_scaling_maximum (maximum);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -464,12 +459,12 @@ static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 	EDITOR_DO
 		const integer numberOfChannels = ( my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny );
-		Melder_assert (my d_sound.muteChannels.size == numberOfChannels);
+		Melder_assert (my soundArea -> muteChannels.size == numberOfChannels);
 		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
-			my d_sound.muteChannels [ichan] = false;
+			my soundArea -> muteChannels [ichan] = false;
 		for (integer ichan = 1; ichan <= channels.size; ichan ++)
 			if (channels [ichan] >= 1 && channels [ichan] <= numberOfChannels)
-				my d_sound.muteChannels [channels [ichan]] = true;
+				my soundArea -> muteChannels [channels [ichan]] = true;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -515,187 +510,6 @@ void structTimeSoundEditor :: v_updateMenuItems_file () {
 	GuiThing_setSensitive (our writeFlacButton, selectedSamples != 0);
 }
 
-void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double globalMaximum) {
-	Sound sound = my d_sound.data;
-	LongSound longSound = my d_longSound.data;
-	Melder_assert (!! sound != !! longSound);
-	const integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
-	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
-	bool fits;
-	try {
-		fits = ( sound ? true : LongSound_haveWindow (longSound, my startWindow, my endWindow) );
-	} catch (MelderError) {
-		const bool outOfMemory = !! str32str (Melder_getError (), U"memory");
-		if (Melder_debug == 9)
-			Melder_flushError ();
-		else
-			Melder_clearError ();
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics.get(), 0.5, 0.5, outOfMemory ? U"(out of memory)" : U"(cannot read sound file)");
-		return;
-	}
-	if (! fits) {
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics.get(), 0.5, 0.5, U"(window too large; zoom in to see the data)");
-		return;
-	}
-	integer first, last;
-	if (Sampled_getWindowSamples (sound ? (Sampled) sound : (Sampled) longSound, my startWindow, my endWindow, & first, & last) <= 1) {
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics.get(), 0.5, 0.5, U"(zoom out to see the data)");
-		return;
-	}
-	const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, 8_integer);
-	const integer firstVisibleChannel = my d_sound.channelOffset + 1;
-	const integer lastVisibleChannel = Melder_clippedRight (my d_sound.channelOffset + numberOfVisibleChannels, numberOfChannels);
-	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
-	if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::BY_WINDOW) {
-		if (longSound)
-			LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, firstVisibleChannel, & visibleMinimum, & visibleMaximum);
-		else
-			Matrix_getWindowExtrema (sound, first, last, firstVisibleChannel, firstVisibleChannel, & visibleMinimum, & visibleMaximum);
-		for (integer ichan = firstVisibleChannel + 1; ichan <= lastVisibleChannel; ichan ++) {
-			double visibleChannelMinimum, visibleChannelMaximum;
-			if (longSound)
-				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & visibleChannelMinimum, & visibleChannelMaximum);
-			else
-				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & visibleChannelMinimum, & visibleChannelMaximum);
-			if (visibleChannelMinimum < visibleMinimum)
-				visibleMinimum = visibleChannelMinimum;
-			if (visibleChannelMaximum > visibleMaximum)
-				visibleMaximum = visibleChannelMaximum;
-		}
-		maximumExtent = visibleMaximum - visibleMinimum;
-	}
-	for (integer ichan = firstVisibleChannel; ichan <= lastVisibleChannel; ichan ++) {
-		const double cursorFunctionValue = ( longSound ? 0.0 :
-				Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, kVector_valueInterpolation :: SINC70) );
-		const double ymin = (double) (numberOfVisibleChannels - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
-		const double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
-		Graphics_Viewport vp = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);
-		bool horizontal = false;
-		double minimum = ( sound ? globalMinimum : -1.0 ), maximum = ( sound ? globalMaximum : 1.0 );
-		if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::BY_WINDOW) {
-			if (numberOfChannels > 2) {
-				if (longSound)
-					LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
-				else
-					Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-				if (maximumExtent > 0.0) {
-					const double middle = 0.5 * (minimum + maximum);
-					minimum = middle - 0.5 * maximumExtent;
-					maximum = middle + 0.5 * maximumExtent;
-				}
-			} else {
-				minimum = visibleMinimum;
-				maximum = visibleMaximum;
-			}
-		} else if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::BY_WINDOW_AND_CHANNEL) {
-			if (longSound)
-				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
-			else
-				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-		} else if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
-			if (longSound)
-				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
-			else
-				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-			const double channelExtent = my instancePref_sound_scaling_height();
-			const double middle = 0.5 * (minimum + maximum);
-			minimum = middle - 0.5 * channelExtent;
-			maximum = middle + 0.5 * channelExtent;
-		} else if (my instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
-			minimum = my instancePref_sound_scaling_minimum();
-			maximum = my instancePref_sound_scaling_maximum();
-		}
-		if (minimum == maximum) {
-			horizontal = true;
-			minimum -= 1.0;
-			maximum += 1.0;
-		}
-		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum, maximum);
-		if (horizontal) {
-			Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
-			const double mid = 0.5 * (minimum + maximum);
-			Graphics_text (my graphics.get(), my startWindow, mid, Melder_float (Melder_half (mid)));
-		} else {
-			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics.get(), cursorFunctionValue - minimum) > 5.0) {
-				Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_BOTTOM);
-				Graphics_text (my graphics.get(), my startWindow, minimum, Melder_float (Melder_half (minimum)));
-			}
-			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics.get(), maximum - cursorFunctionValue) > 5.0) {
-				Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
-				Graphics_text (my graphics.get(), my startWindow, maximum, Melder_float (Melder_half (maximum)));
-			}
-		}
-		if (minimum < 0 && maximum > 0 && ! horizontal) {
-			Graphics_setWindow (my graphics.get(), 0.0, 1.0, minimum, maximum);
-			if (! cursorVisible || isundef (cursorFunctionValue) || fabs (Graphics_dyWCtoMM (my graphics.get(), cursorFunctionValue - 0.0)) > 3.0) {
-				Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
-				Graphics_text (my graphics.get(), 0.0, 0.0, U"0");
-			}
-			Graphics_setColour (my graphics.get(), Melder_CYAN);
-			Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
-			Graphics_line (my graphics.get(), 0.0, 0.0, 1.0, 0.0);
-			Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
-		}
-		/*
-			Garnish the drawing area of each channel.
-		*/
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Melder_CYAN);
-		Graphics_innerRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Melder_BLACK);
-		if (numberOfChannels > 1) {
-			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
-			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
-			conststring32 channelName = my v_getChannelName (ichan);
-			static MelderString channelLabel;
-			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Ch " ), ichan);
-			if (channelName)
-				MelderString_append (& channelLabel, U": ", channelName);
-			MelderString_append (& channelLabel, U" ",
-					( my d_sound.muteChannels [ichan] ? UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE : UNITEXT_SPEAKER ));
-			if (ichan > 8 && ichan - my d_sound.channelOffset == 1)
-				MelderString_append (& channelLabel, U"      " UNITEXT_UPWARDS_ARROW);
-			else if (numberOfChannels >= 8 && ichan - my d_sound.channelOffset == 8 && ichan < numberOfChannels)
-				MelderString_append (& channelLabel, U"      " UNITEXT_DOWNWARDS_ARROW);
-			Graphics_text (my graphics.get(), 1.0, 0.5, channelLabel.string);
-		}
-		/*
-			Draw a very thin separator line underneath.
-		*/
-		if (ichan < numberOfChannels) {
-			/*Graphics_setColour (my graphics.get(), Melder_BLACK);*/
-			Graphics_line (my graphics.get(), 0.0, 0.0, 1.0, 0.0);
-		}
-		/*
-			Draw the samples.
-		*/
-		/*if (ichan == 1) FunctionEditor_SoundAnalysis_drawPulses (this);*/
-		if (sound) {
-			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum, maximum);
-			if (cursorVisible && isdefined (cursorFunctionValue))
-				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), U"");
-			Graphics_setColour (my graphics.get(), Melder_BLACK);
-			Graphics_function (my graphics.get(), & sound -> z [ichan] [0], first, last,
-					Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
-		} else {
-			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum * 32768, maximum * 32768);
-			Graphics_function16 (my graphics.get(),
-					longSound -> buffer.asArgumentToFunctionThatExpectsZeroBasedArray() - longSound -> imin * numberOfChannels + (ichan - 1),
-					numberOfChannels, first, last, Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
-		}
-		Graphics_resetViewport (my graphics.get(), vp);
-	}
-	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-}
-
 bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	if (event -> isClick()) {
 		Sound sound = our d_sound.data;
@@ -707,23 +521,23 @@ bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent e
 				if (numberOfChannels > 1) {
 					const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, 8_integer);
 					Melder_assert (numberOfVisibleChannels >= 1);   // for Melder_clipped
-					const integer clickedChannel = our d_sound.channelOffset +
+					const integer clickedChannel = our soundArea -> channelOffset +
 							Melder_clipped (1_integer, Melder_ifloor ((1.0 - y_fraction) * numberOfVisibleChannels + 1), numberOfVisibleChannels);
-					const integer firstVisibleChannel = our d_sound.channelOffset + 1;
-					const integer lastVisibleChannel = Melder_clippedRight (our d_sound.channelOffset + numberOfVisibleChannels, numberOfChannels);
+					const integer firstVisibleChannel = our soundArea -> channelOffset + 1;
+					const integer lastVisibleChannel = Melder_clippedRight (our soundArea -> channelOffset + numberOfVisibleChannels, numberOfChannels);
 					if (clickedChannel >= firstVisibleChannel && clickedChannel <= lastVisibleChannel) {
-						our d_sound.muteChannels [clickedChannel] = ! our d_sound.muteChannels [clickedChannel];
+						our soundArea -> muteChannels [clickedChannel] = ! our soundArea -> muteChannels [clickedChannel];
 						return FunctionEditor_UPDATE_NEEDED;
 					}
 				}
 			} else {
 				if (numberOfChannels > 8) {
-					if (x_world >= our endWindow && y_fraction > 0.875 && y_fraction <= 1.000 && our d_sound.channelOffset > 0) {
-						our d_sound.channelOffset -= 8;
+					if (x_world >= our endWindow && y_fraction > 0.875 && y_fraction <= 1.000 && our soundArea -> channelOffset > 0) {
+						our soundArea -> channelOffset -= 8;
 						return FunctionEditor_UPDATE_NEEDED;
 					}
-					if (x_world >= our endWindow && y_fraction > 0.000 && y_fraction <= 0.125 && our d_sound.channelOffset < numberOfChannels - 8) {
-						our d_sound.channelOffset += 8;
+					if (x_world >= our endWindow && y_fraction > 0.000 && y_fraction <= 0.125 && our soundArea -> channelOffset < numberOfChannels - 8) {
+						our soundArea -> channelOffset += 8;
 						return FunctionEditor_UPDATE_NEEDED;
 					}
 				}
@@ -736,6 +550,7 @@ bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent e
 void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title,
 	Function data, Sampled sound, bool ownSound)
 {
+	my soundArea = soundArea.move();
 	my d_ownSound = ownSound;
 	if (sound) {
 		integer numberOfChannels = 1;
@@ -756,10 +571,9 @@ void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststr
 		} else {
 			Melder_fatal (U"Invalid sound class in TimeSoundEditor::init.");
 		}
-		my d_sound.muteChannels = zero_BOOLVEC (numberOfChannels);
+		my soundArea -> muteChannels = zero_BOOLVEC (numberOfChannels);
 	}
 	FunctionEditor_init (me, title, data);
-	my soundArea = soundArea.move();
 	Melder_assert (!! my soundArea == ( my d_sound.data || my d_longSound.data ));
 }
 

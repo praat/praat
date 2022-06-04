@@ -1,6 +1,6 @@
-/* TimeSoundEditor_enums.h
+/* ERPArea_prefs.h
  *
- * Copyright (C) 2012,2015 Paul Boersma
+ * Copyright (C) 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kTimeSoundEditor_scalingStrategy, 1)
-	enums_add (kTimeSoundEditor_scalingStrategy, 1, BY_WHOLE, U"by whole")
-	enums_add (kTimeSoundEditor_scalingStrategy, 2, BY_WINDOW, U"by window")
-	enums_add (kTimeSoundEditor_scalingStrategy, 3, BY_WINDOW_AND_CHANNEL, U"by window and channel")
-	enums_add (kTimeSoundEditor_scalingStrategy, 4, FIXED_HEIGHT, U"fixed height")
-	enums_add (kTimeSoundEditor_scalingStrategy, 5, FIXED_RANGE, U"fixed range")
-enums_end (kTimeSoundEditor_scalingStrategy, 5, BY_WINDOW)
+Prefs_begin (ERPArea)
 
-/* End of file TimeSoundEditor_enums.h */
+	InstancePrefs_overrideEnum    (ERPArea, sound_scalingStrategy,          1, kSoundArea_scalingStrategy, DEFAULT)
+	InstancePrefs_overrideDouble  (ERPArea, sound_scaling_height,           1, U"20e-6")
+	InstancePrefs_overrideDouble  (ERPArea, sound_scaling_minimum,          1, U"-10e-6")
+	InstancePrefs_overrideDouble  (ERPArea, sound_scaling_maximum,          1, U"10e-6")
+
+Prefs_end (ERPArea)
+
+/* End of file ERPArea_prefs.h */

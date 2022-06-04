@@ -326,13 +326,13 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	double absoluteExtremum = std::max (- minimum, maximum);
-	if (our instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
-		minimum = our instancePref_sound_scaling_minimum();
-		maximum = our instancePref_sound_scaling_maximum();
-	} else if (our instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
+	if (our erpArea -> instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_RANGE) {
+		minimum = our erpArea -> instancePref_sound_scaling_minimum();
+		maximum = our erpArea -> instancePref_sound_scaling_maximum();
+	} else if (our erpArea -> instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
 		const double mean = 0.5 * (minimum + maximum);
-		minimum = mean - 0.5 * our instancePref_sound_scaling_height();
-		maximum = mean + 0.5 * our instancePref_sound_scaling_height();
+		minimum = mean - 0.5 * our erpArea -> instancePref_sound_scaling_height();
+		maximum = mean + 0.5 * our erpArea -> instancePref_sound_scaling_height();
 	} else {
 		minimum = - absoluteExtremum;
 		maximum = absoluteExtremum;
@@ -400,6 +400,8 @@ autoERPWindow ERPWindow_create (conststring32 title, ERP data) {
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
 		SoundEditor_init (me.get(), title, data);
+		my erpArea = ERPArea_create (me.get());
+		my erpArea -> erp = data;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");

@@ -677,19 +677,20 @@ void structFormantPathEditor :: v_prepareDraw () {
 void structFormantPathEditor :: v_draw () {
 	Graphics_Viewport vp1;
 	const bool showAnalysis = our v_hasAnalysis () &&
-			(our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) &&
-			(our d_longSound.data || our d_sound.data);
+		(our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) &&
+		(our d_longSound.data || our d_sound.data)
+	;
 	const double soundBottom = our v_getBottomOfSoundArea ();
 
 	/*
 		Draw the sound.
 	*/
-	if (d_longSound.data || d_sound.data) {
+	if (our d_sound.data || our d_longSound.data) {
 		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundBottom, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		TimeSoundEditor_drawSound (this, -1.0, 1.0);
+		SoundArea_draw (our soundArea.get(), our d_sound.data, our d_longSound.data, -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), vp1);
 	}
 
@@ -705,7 +706,7 @@ void structFormantPathEditor :: v_draw () {
 		if (our instancePref_pulses_show()) {
 			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundBottom, 1.0);
 			our v_draw_analysis_pulses ();
-			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
+			SoundArea_draw (our soundArea.get(), our d_sound.data, our d_longSound.data, -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_resetViewport (our graphics.get(), vp1);
 		}
 	}
@@ -849,9 +850,9 @@ void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
 		return;
 	const integer numberOfChannels = ( our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny );
 	integer numberOfMuteChannels = 0;
-	Melder_assert (our d_sound.muteChannels.size == numberOfChannels);
+	Melder_assert (our soundArea -> muteChannels.size == numberOfChannels);
 	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
-		if (our d_sound.muteChannels [ichan])
+		if (our soundArea -> muteChannels [ichan])
 			numberOfMuteChannels ++;
 	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
 	Melder_require (numberOfChannelsToPlay > 0,
@@ -860,7 +861,7 @@ void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
 		if (numberOfMuteChannels > 0) {
 			autoSound part = LongSound_extractPart (our d_longSound.data, tmin_, tmax_, true);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
+			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
 			Sound_MixingMatrix_playPart (part.get(), thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
 		} else {
 			LongSound_playPart (our d_longSound.data, tmin_, tmax_, theFunctionEditor_playCallback, this);
@@ -868,7 +869,7 @@ void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
+			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
 			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
 		} else {
 			Sound_playPart (our d_sound.data, tmin_, tmax_, theFunctionEditor_playCallback, this);

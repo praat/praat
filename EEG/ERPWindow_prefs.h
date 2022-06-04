@@ -19,10 +19,6 @@
 Prefs_begin (ERPWindow)
 
 	InstancePrefs_overrideBool    (ERPWindow, showSelectionViewer,            1, true)
-	InstancePrefs_overrideEnum    (ERPWindow, sound_scalingStrategy,          1, kTimeSoundEditor_scalingStrategy, DEFAULT)
-	InstancePrefs_overrideDouble  (ERPWindow, sound_scaling_height,           1, U"20e-6")
-	InstancePrefs_overrideDouble  (ERPWindow, sound_scaling_minimum,          1, U"-10e-6")
-	InstancePrefs_overrideDouble  (ERPWindow, sound_scaling_maximum,          1, U"10e-6")
 	ClassPrefs_overrideDouble     (ERPWindow, sound_picture_bottom,           1, U"0.0")
 	ClassPrefs_overrideDouble     (ERPWindow, sound_picture_top,              1, U"0.0 (= auto)")
 	InstancePrefs_overrideBool    (ERPWindow, spectrogram_show,               1, false);
