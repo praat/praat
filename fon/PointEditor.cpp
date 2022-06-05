@@ -254,9 +254,12 @@ autoPointEditor PointEditor_create (conststring32 title, PointProcess pointProce
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
 		my pointProcess = pointProcess;
-		if (sound)
+		autoSoundArea soundArea;
+		if (sound) {
 			my monoSound = Sound_convertToMono (sound);
-		TimeSoundEditor_init (me.get(), autoSoundArea(), title, (Function *) & my pointProcess, my monoSound.get(), false);
+			soundArea = SoundArea_create (me.get());
+		}
+		TimeSoundEditor_init (me.get(), soundArea.move(), title, (Function *) & my pointProcess, my monoSound.get(), false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess window not created.");
