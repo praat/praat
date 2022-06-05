@@ -26,17 +26,14 @@
 #include "ManipulationEditor_enums.h"
 
 Thing_define (ManipulationEditor, FunctionEditor) {
-	/*
-		Access inherited attributes by their derived types.
-	*/
-	Manipulation & manipulation() { return * reinterpret_cast <Manipulation *> (& our data); }
+	Manipulation manipulation;
 	/*
 		Quick access to internal objects.
 	*/
-	autoSound & sound() { return our manipulation() -> sound; }
-	autoPointProcess & pulses() { return our manipulation() -> pulses; }
-	autoPitchTier & pitch() { return our manipulation() -> pitch; }
-	autoDurationTier & duration() { return our manipulation() -> duration; }
+	autoSound & sound() { return our manipulation -> sound; }
+	autoPointProcess & pulses() { return our manipulation -> pulses; }
+	autoPitchTier & pitch() { return our manipulation -> pitch; }
+	autoDurationTier & duration() { return our manipulation -> duration; }
 
 	autoPointProcess previousPulses;
 	autoPitchTier previousPitch;

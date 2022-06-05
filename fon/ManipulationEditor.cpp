@@ -119,7 +119,7 @@ static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDI
 
 static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		autoSound result = Manipulation_to_Sound (my manipulation(), my synthesisMethod);
+		autoSound result = Manipulation_to_Sound (my manipulation, my synthesisMethod);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -465,7 +465,7 @@ static void menu_cb_addDurationPointAt (ManipulationEditor me, EDITOR_ARGS_FORM)
 
 static void menu_cb_newDuration (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"New duration");
-	my duration() = DurationTier_create (my manipulation() -> xmin, my manipulation() -> xmax);
+	my duration() = DurationTier_create (my manipulation -> xmin, my manipulation -> xmax);
 	RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -695,7 +695,7 @@ static void drawPitchArea (ManipulationEditor me) {
 }
 
 static void drawDurationArea (ManipulationEditor me) {
-	DurationTier duration = my manipulation() -> duration.get();
+	DurationTier duration = my manipulation -> duration.get();
 	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
 
 	my durationTierArea -> setViewport();
@@ -753,11 +753,11 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	}
 	bool result = false;
 	if (clickedInWidePitchArea) {
-		result = RealTierArea_mouse (our pitchTierArea.get(), our manipulation() -> pitch.get(), event, x_world, globalY_fraction);
-		RealTierArea_updateScaling (our pitchTierArea.get(), our manipulation() -> pitch.get());
+		result = RealTierArea_mouse (our pitchTierArea.get(), our manipulation -> pitch.get(), event, x_world, globalY_fraction);
+		RealTierArea_updateScaling (our pitchTierArea.get(), our manipulation -> pitch.get());
 	} else if (clickedInWideDurationArea) {
-		result = RealTierArea_mouse (our durationTierArea.get(), our manipulation() -> duration.get(), event, x_world, globalY_fraction);
-		RealTierArea_updateScaling (our durationTierArea.get(), our manipulation() -> duration.get());
+		result = RealTierArea_mouse (our durationTierArea.get(), our manipulation -> duration.get(), event, x_world, globalY_fraction);
+		RealTierArea_updateScaling (our durationTierArea.get(), our manipulation -> duration.get());
 	} else {
 		result = our ManipulationEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
@@ -770,17 +770,18 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 
 void structManipulationEditor :: v_play (double startTime, double endTime) {
 	if (our clickWasModifiedByShiftKey) {
-		if (our manipulation() -> sound)
-			Sound_playPart (our manipulation() -> sound.get(), startTime, endTime, theFunctionEditor_playCallback, this);
+		if (our manipulation -> sound)
+			Sound_playPart (our manipulation -> sound.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
-		Manipulation_playPart (our manipulation(), startTime, endTime, our synthesisMethod);
+		Manipulation_playPart (our manipulation, startTime, endTime, our synthesisMethod);
 	}
 }
 
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
-		FunctionEditor_init (me.get(), title, manipulation);
+		my manipulation = manipulation;
+		FunctionEditor_init (me.get(), title, (Function *) & my manipulation);
 		my pitchTierArea = PitchTierArea_create (me.get());
 		if (manipulation -> duration)
 			my durationTierArea = DurationTierArea_create (me.get());

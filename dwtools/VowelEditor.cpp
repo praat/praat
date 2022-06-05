@@ -1350,12 +1350,12 @@ void structVowelEditor :: v_repairPreferences () {
 		our setInstancePref_grid_df2 (Melder_atof (our default_grid_df2()));
 }
 
-autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
+autoVowelEditor VowelEditor_create (conststring32 title) {
 	try {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
 		Melder_assert (me.get());
-		Editor_init (me.get(), 0, 0, 0, 0, title, data);
+		Editor_init (me.get(), 0, 0, 0, 0, title, nullptr);
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif

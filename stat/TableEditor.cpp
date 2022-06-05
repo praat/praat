@@ -44,19 +44,17 @@ void structTableEditor :: v_info () {
 }
 
 static void updateVerticalScrollBar (TableEditor me) {
-	Table table = static_cast<Table> (my data);
-	GuiScrollBar_set (my verticalScrollBar, undefined, table -> rows.size + 1, my topRow, undefined, undefined, undefined);
+	GuiScrollBar_set (my verticalScrollBar, undefined, my table -> rows.size + 1, my topRow, undefined, undefined, undefined);
 }
 
 static void updateHorizontalScrollBar (TableEditor me) {
-	Table table = static_cast<Table> (my data);
-	GuiScrollBar_set (my horizontalScrollBar, undefined, table -> numberOfColumns + 1, my leftColumn, undefined, undefined, undefined);
+	Table table = static_cast<Table> (my table);
+	GuiScrollBar_set (my horizontalScrollBar, undefined, my table -> numberOfColumns + 1, my leftColumn, undefined, undefined, undefined);
 }
 
 void structTableEditor :: v_dataChanged () {
-	Table table = static_cast<Table> (our data);
-	Melder_clipRight (& our topRow, table -> rows.size);
-	Melder_clipRight (& our leftColumn, table -> numberOfColumns);
+	Melder_clipRight (& our topRow, our table -> rows.size);
+	Melder_clipRight (& our leftColumn, our table -> numberOfColumns);
 	updateVerticalScrollBar (this);
 	updateHorizontalScrollBar (this);
 	Graphics_updateWs (our graphics.get());
@@ -108,7 +106,6 @@ static void menu_cb_TableEditorHelp (TableEditor, EDITOR_ARGS_DIRECT) {
 /********** DRAWING AREA **********/
 
 void structTableEditor :: v_draw () {
-	Table table = static_cast<Table> (data);
 	double spacing = 2.0;   // millimetres at both edges
 	double columnWidth, cellWidth;
 	/*
@@ -116,8 +113,8 @@ void structTableEditor :: v_draw () {
 	*/
 	integer rowmin = topRow, rowmax = rowmin + 197;
 	integer colmin = leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	Melder_clipRight (& rowmax, table -> rows.size);
-	Melder_clipRight (& colmax, table -> numberOfColumns);
+	Melder_clipRight (& rowmax, our table -> rows.size);
+	Melder_clipRight (& colmax, our table -> numberOfColumns);
 	Graphics_clearWs (graphics.get());
 	Graphics_setTextAlignment (graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	Graphics_setWindow (graphics.get(), 0.0, 1.0, rowmin + 197.5, rowmin - 2.5);
@@ -144,7 +141,7 @@ void structTableEditor :: v_draw () {
 		Determine the widths of the columns.
 	*/
 	for (integer icol = colmin; icol <= colmax; icol ++) {
-		conststring32 columnLabel = table -> columnHeaders [icol]. label.get();
+		conststring32 columnLabel = our table -> columnHeaders [icol]. label.get();
 		columnWidth = Graphics_textWidth (graphics.get(), Melder_integer (icol));
 		if (! columnLabel)
 			columnLabel = U"";
@@ -152,7 +149,7 @@ void structTableEditor :: v_draw () {
 		if (cellWidth > columnWidth)
 			columnWidth = cellWidth;
 		for (integer irow = rowmin; irow <= rowmax; irow ++) {
-			conststring32 cell = Table_getStringValue_Assert (table, irow, icol);
+			conststring32 cell = Table_getStringValue_Assert (our table, irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0')
 				cell = U"?";
@@ -182,7 +179,7 @@ void structTableEditor :: v_draw () {
 	*/
 	for (integer icol = colmin; icol <= colmax; icol ++) {
 		const double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
-		conststring32 columnLabel = table -> columnHeaders [icol]. label.get();
+		conststring32 columnLabel = our table -> columnHeaders [icol]. label.get();
 		if (! columnLabel || columnLabel [0] == U'\0')
 			columnLabel = U"?";
 		Graphics_text (graphics.get(), mid, rowmin - 2, icol);
@@ -201,7 +198,7 @@ void structTableEditor :: v_draw () {
 				Graphics_setColour (graphics.get(), Melder_BLACK);
 			}
 			const double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2.0;
-			conststring32 cell = Table_getStringValue_Assert (table, irow, icol);
+			conststring32 cell = Table_getStringValue_Assert (our table, irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0')
 				cell = U"?";
@@ -211,7 +208,6 @@ void structTableEditor :: v_draw () {
 }
 
 bool structTableEditor :: v_clickCell (integer row, integer column, bool /* shiftKeyPressed */) {
-	Table table = static_cast<Table> (our data);
 	our selectedRow = row;
 	our selectedColumn = column;
 	return true;
@@ -228,15 +224,14 @@ static void gui_drawingarea_cb_expose (TableEditor me, GuiDrawingArea_ExposeEven
 }
 
 static void gui_drawingarea_cb_mouse (TableEditor me, GuiDrawingArea_MouseEvent event) {
-	Table table = static_cast<Table> (my data);
 	if (! my graphics)
 		return;   // could be the case in the very beginning
 	if (! event -> isClick())
 		return;
 	integer rowmin = my topRow, rowmax = rowmin + 197;
 	integer colmin = my leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	Melder_clipRight (& rowmax, table -> rows.size);
-	Melder_clipRight (& colmax, table -> numberOfColumns);
+	Melder_clipRight (& rowmax, my table -> rows.size);
+	Melder_clipRight (& colmax, my table -> numberOfColumns);
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
 	if (yWC < rowmin - 0.45 || yWC > rowmax + 0.55)
@@ -275,7 +270,6 @@ static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
 }
 
 void structTableEditor :: v_createChildren () {
-	Table table = static_cast<Table> (data);
 	int y = Machine_getMenuBarBottom () + 4, scrollWidth = Machine_getScrollBarWidth ();
 
 	our text = GuiText_createShown (our windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
@@ -319,7 +313,8 @@ void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 autoTableEditor TableEditor_create (conststring32 title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
-		Editor_init (me.get(), 0, 0, 700, 500, title, table);
+		my table = table;
+		Editor_init (me.get(), 0, 0, 700, 500, title, (Daata *) & my table);
 		#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 		#endif

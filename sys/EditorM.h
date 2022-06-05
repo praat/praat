@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2013,2015-2021 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -421,7 +421,7 @@ _form_inited_: \
 #define VOID_EDITOR_END
 
 #define DATA_BEGIN__  \
-	Melder_assert (my data);
+	Melder_assert (my pData && *my pData);
 
 #define PLAY_DATA  \
 	DATA_BEGIN__

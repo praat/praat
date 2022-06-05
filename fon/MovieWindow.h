@@ -22,6 +22,8 @@
 #include "Movie.h"
 
 Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
+	Movie movie;
+	
 	void v_createMenus ()
 		override;
 	void v_distributeAreas ()
@@ -37,8 +39,6 @@ Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
 	void v_highlightSelection (double left, double right, double bottom, double top)
 		override;
 };
-
-void MovieWindow_init (MovieWindow me, conststring32 title, Movie movie);
 
 autoMovieWindow MovieWindow_create (conststring32 title, Movie movie);
 

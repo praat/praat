@@ -417,9 +417,9 @@ static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WIT
 
 void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	TimeSoundEditor_Parent :: v_createMenuItems_query_info (menu);
-	if (our d_sound.data && our d_sound.data != data) {
+	if (our d_sound.data && our d_sound.data != *our pData) {
 		EditorMenu_addCommand (menu, U"Sound info", 0, INFO_DATA__SoundInfo);
-	} else if (our d_longSound.data && our d_longSound.data != data) {
+	} else if (our d_longSound.data && our d_longSound.data != *our pData) {
 		EditorMenu_addCommand (menu, U"LongSound info", 0, INFO_DATA__LongSoundInfo);
 	}
 	if (our d_sound.data) {
@@ -548,7 +548,7 @@ bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent e
 }
 
 void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title,
-	Function data, Sampled sound, bool ownSound)
+	Function *pFunction, Sampled sound, bool ownSound)
 {
 	my soundArea = soundArea.move();
 	my d_ownSound = ownSound;
@@ -573,7 +573,7 @@ void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststr
 		}
 		my soundArea -> muteChannels = zero_BOOLVEC (numberOfChannels);
 	}
-	FunctionEditor_init (me, title, data);
+	FunctionEditor_init (me, title, pFunction);
 	Melder_assert (!! my soundArea == ( my d_sound.data || my d_longSound.data ));
 }
 

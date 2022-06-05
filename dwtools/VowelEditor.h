@@ -72,6 +72,6 @@ Thing_define (VowelEditor, Editor) {
 	double dt;
 };
 
-autoVowelEditor VowelEditor_create (conststring32 title, Daata data);
+autoVowelEditor VowelEditor_create (conststring32 title);
 
 #endif /* _VowelEditor_h_ */

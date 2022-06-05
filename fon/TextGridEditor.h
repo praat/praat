@@ -26,6 +26,8 @@
 #include "TextGridEditor_enums.h"
 
 Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
+	TextGrid textGrid;
+
 	SpellingChecker spellingChecker;
 	integer selectedTier;
 	bool suppressRedraw;

@@ -1,6 +1,6 @@
 /* OTGrammarEditor.cpp
  *
- * Copyright (C) 1997-2005,2007-2020 Paul Boersma
+ * Copyright (C) 1997-2005,2007-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ static void menu_cb_evaluate (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 	EDITOR_DO
 		Editor_save (me, U"Evaluate");
-		OTGrammar_newDisharmonies ((OTGrammar) my data, noise);
+		OTGrammar_newDisharmonies (my otGrammar, noise);
 		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -41,21 +41,21 @@ static void menu_cb_evaluate (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_evaluate_noise_2_0 (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (noise 2.0)");
-	OTGrammar_newDisharmonies ((OTGrammar) my data, 2.0);
+	OTGrammar_newDisharmonies (my otGrammar, 2.0);
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_evaluate_tinyNoise (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (tiny noise)");
-	OTGrammar_newDisharmonies ((OTGrammar) my data, 1e-9);
+	OTGrammar_newDisharmonies (my otGrammar, 1e-9);
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_evaluate_zeroNoise (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Evaluate (zero noise)");
-	OTGrammar_newDisharmonies ((OTGrammar) my data, 0.0);
+	OTGrammar_newDisharmonies (my otGrammar, 0.0);
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
@@ -67,23 +67,20 @@ static void menu_cb_editConstraint (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 		REAL (disharmony, U"Disharmony", U"100.0");
 		REAL (plasticity, U"Plasticity", U"1.0");
 	EDITOR_OK
-		OTGrammar ot = (OTGrammar) my data;
-		OTGrammarConstraint constraint;
-		if (my selected < 1 || my selected > ot -> numberOfConstraints)
+		if (my selected < 1 || my selected > my otGrammar -> numberOfConstraints)
 			Melder_throw (U"Select a constraint first.");
-		constraint = & ot -> constraints [ot -> index [my selected]];
+		OTGrammarConstraint constraint = & my otGrammar -> constraints [my otGrammar -> index [my selected]];
 		SET_STRING (constraintLabel, constraint -> name.get())
 		SET_REAL (rankingValue, constraint -> ranking)
 		SET_REAL (disharmony, constraint -> disharmony)
 		SET_REAL (plasticity, constraint -> plasticity)
 	EDITOR_DO
-		OTGrammar ot = (OTGrammar) my data;
-		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [my selected]];
+		OTGrammarConstraint constraint = & my otGrammar -> constraints [my otGrammar -> index [my selected]];
 		Editor_save (me, U"Edit constraint");
 		constraint -> ranking = rankingValue;
 		constraint -> disharmony = disharmony;
 		constraint -> plasticity = plasticity;
-		OTGrammar_sort (ot);
+		OTGrammar_sort (my otGrammar);
 		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -104,10 +101,10 @@ static void menu_cb_learnOne (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 	EDITOR_DO
 		Editor_save (me, U"Learn one");
-		OTGrammar_learnOne ((OTGrammar) my data, inputString, outputString,
+		OTGrammar_learnOne (my otGrammar, inputString, outputString,
 			evaluationNoise, updateRule, honourLocalRankings,
 			plasticity, relativePlasticitySpreading, true, true, nullptr);
-		OTGrammar_sort ((OTGrammar) my data);
+		OTGrammar_sort (my otGrammar);
 		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -127,23 +124,22 @@ static void menu_cb_learnOneFromPartialOutput (OTGrammarEditor me, EDITOR_ARGS_F
 	EDITOR_OK
 	EDITOR_DO
 		Editor_save (me, U"Learn one from partial output");
-		OTGrammar_learnOneFromPartialOutput ((OTGrammar) my data, partialOutput,
+		OTGrammar_learnOneFromPartialOutput (my otGrammar, partialOutput,
 			evaluationNoise, updateRule, honourLocalRankings,
 			plasticity, relativePlasticitySpreading, numberOfChews, true);
-		OTGrammar_sort ((OTGrammar) my data);
+		OTGrammar_sort (my otGrammar);
 		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
 static void menu_cb_removeConstraint (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
-	OTGrammar ot = (OTGrammar) my data;
 	OTGrammarConstraint constraint;
-	if (my selected < 1 || my selected > ot -> numberOfConstraints)
+	if (my selected < 1 || my selected > my otGrammar -> numberOfConstraints)
 		Melder_throw (U"Select a constraint first.");
-	constraint = & ot -> constraints [ot -> index [my selected]];
+	constraint = & my otGrammar -> constraints [my otGrammar -> index [my selected]];
 	Editor_save (me, U"Remove constraint");
-	OTGrammar_removeConstraint (ot, constraint -> name.get());
+	OTGrammar_removeConstraint (my otGrammar, constraint -> name.get());
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
@@ -154,7 +150,7 @@ static void menu_cb_resetAllRankings (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 	EDITOR_DO
 		Editor_save (me, U"Reset all rankings");
-		OTGrammar_reset ((OTGrammar) my data, ranking);
+		OTGrammar_reset (my otGrammar, ranking);
 		Graphics_updateWs (my graphics.get());
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -194,19 +190,18 @@ static void drawTableau (Graphics g) {
 }
 
 void structOTGrammarEditor :: v_draw () {
-	OTGrammar ot = (OTGrammar) data;
 	static char32 text [1000];
-	if (ot -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
-		ot -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
+	if (our otGrammar -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
+		our otGrammar -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 	{
 		HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity\t   %%e^^disharmony");
 	} else {
 		HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	}
-	for (integer icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
-		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [icons]];
-		if (ot -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
-			ot -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
+	for (integer icons = 1; icons <= our otGrammar -> numberOfConstraints; icons ++) {
+		OTGrammarConstraint constraint = & our otGrammar -> constraints [our otGrammar -> index [icons]];
+		if (our otGrammar -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
+			our otGrammar -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 		{
 			Melder_sprint (text,1000,
 				U"\t", icons == selected ? U"♠︎ " : U"   ",
@@ -228,11 +223,11 @@ void structOTGrammarEditor :: v_draw () {
 		HyperPage_listItem (this, text);
 	}
 	Graphics_setAtSignIsLink (graphics.get(), false);
-	for (integer itab = 1; itab <= ot -> numberOfTableaus; itab ++) {
-		OTGrammarTableau tableau = & ot -> tableaus [itab];
+	for (integer itab = 1; itab <= our otGrammar -> numberOfTableaus; itab ++) {
+		OTGrammarTableau tableau = & our otGrammar -> tableaus [itab];
 		double rowHeight = 0.25;
 		double tableauHeight = rowHeight * (tableau -> numberOfCandidates + 2);
-		drawTableau_ot = ot;
+		drawTableau_ot = our otGrammar;
 		drawTableau_input = tableau -> input.get();
 		drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
 		HyperPage_picture (this, 20, tableauHeight, drawTableau);
@@ -247,11 +242,11 @@ int structOTGrammarEditor :: v_goToPage (conststring32 title) {
 	return 1;
 }
 
-autoOTGrammarEditor OTGrammarEditor_create (conststring32 title, OTGrammar ot) {
+autoOTGrammarEditor OTGrammarEditor_create (conststring32 title, OTGrammar otGrammar) {
 	try {
 		autoOTGrammarEditor me = Thing_new (OTGrammarEditor);
-		my data = ot;
-		HyperPage_init (me.get(), title, ot);
+		my otGrammar = otGrammar;
+		HyperPage_init (me.get(), title, (Daata *) & my otGrammar);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OTGrammar window not created.");

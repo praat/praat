@@ -8530,7 +8530,7 @@ static void cb_publish (Editor /*editor*/, autoDaata publish) {
 
 DIRECT (CREATION_WINDOW__VowelEditor_create) {
 	CREATION_WINDOW (a,Sound)
-		autoVowelEditor creationWindow = VowelEditor_create (U"VowelEditor", nullptr);
+		autoVowelEditor creationWindow = VowelEditor_create (U"VowelEditor");
 		Editor_setPublicationCallback (creationWindow.get(), cb_publish);
 	CREATION_WINDOW_END
 }
