@@ -18,13 +18,10 @@
 
 Prefs_begin (SoundArea)
 
-	InstancePrefs_addDouble  (SoundArea, dataFreeMinimum, 1, U"-100.0")
-	InstancePrefs_addDouble  (SoundArea, dataFreeMaximum, 1, U"100.0")
-
 	InstancePrefs_addEnum    (SoundArea, scalingStrategy, 1, kSoundArea_scalingStrategy, DEFAULT)
-	InstancePrefs_addDouble  (SoundArea, scaling_height,        1, U"2.0")
-	InstancePrefs_addDouble  (SoundArea, scaling_minimum,       1, U"-1.0")
-	InstancePrefs_addDouble  (SoundArea, scaling_maximum,       1, U"1.0")
+	InstancePrefs_addDouble  (SoundArea, scaling_height,  1, U"2.0")
+	InstancePrefs_addDouble  (SoundArea, scaling_minimum, 1, U"-1.0")
+	InstancePrefs_addDouble  (SoundArea, scaling_maximum, 1, U"1.0")
 
 Prefs_end (SoundArea)
 

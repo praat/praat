@@ -34,8 +34,6 @@ Thing_define (ERPArea, SoundArea) {
 
 inline void ERPArea_init (ERPArea me, FunctionEditor editor) {
 	FunctionArea_init (me, editor);
-	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
-	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
 }
 
 inline autoERPArea ERPArea_create (FunctionEditor editor) {

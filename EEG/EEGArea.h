@@ -34,8 +34,6 @@ Thing_define (EEGArea, SoundArea) {
 
 inline void EEGArea_init (EEGArea me, FunctionEditor editor) {
 	FunctionArea_init (me, editor);
-	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
-	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
 }
 
 inline autoEEGArea EEGArea_create (FunctionEditor editor) {
