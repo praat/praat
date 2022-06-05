@@ -2233,12 +2233,12 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
+void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststring32 title,
+	TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	my spellingChecker = spellingChecker;   // set in time
 	my callbackSocket = Melder_dup (callbackSocket);
 
-	autoSoundArea soundArea = ( sound ? SoundArea_create (me) : autoSoundArea() );
 	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, grid, sound, ownSound);
 
 	my selectedTier = 1;
@@ -2265,7 +2265,8 @@ void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid,
 autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
-		TextGridEditor_init (me.get(), title, grid, sound, ownSound, spellingChecker, callbackSocket);
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
+		TextGridEditor_init (me.get(), soundArea.move(), title, grid, sound, ownSound, spellingChecker, callbackSocket);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid window not created.");

@@ -408,12 +408,11 @@ void structSoundEditor :: v_highlightSelection (double left, double right, doubl
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-void SoundEditor_init (SoundEditor me, conststring32 title, Sampled data) {
+void SoundEditor_init (SoundEditor me, autoSoundArea soundArea, conststring32 title, Sampled data) {
 	/*
 		my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
 		because createMenus expects that one of them is not null.
 	*/
-	autoSoundArea soundArea = SoundArea_create (me);
 	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, data, data, false);
 	if (my d_longSound.data && my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
@@ -427,7 +426,8 @@ autoSoundEditor SoundEditor_create (conststring32 title, Sampled data) {
 	Melder_assert (data);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
-		SoundEditor_init (me.get(), title, data);
+		autoSoundArea soundArea = SoundArea_create (me.get());
+		SoundEditor_init (me.get(), soundArea.move(), title, data);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound window not created.");

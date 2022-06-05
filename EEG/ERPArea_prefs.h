@@ -18,10 +18,10 @@
 
 Prefs_begin (ERPArea)
 
-	InstancePrefs_overrideEnum    (ERPArea, sound_scalingStrategy,          1, kSoundArea_scalingStrategy, DEFAULT)
-	InstancePrefs_overrideDouble  (ERPArea, sound_scaling_height,           1, U"20e-6")
-	InstancePrefs_overrideDouble  (ERPArea, sound_scaling_minimum,          1, U"-10e-6")
-	InstancePrefs_overrideDouble  (ERPArea, sound_scaling_maximum,          1, U"10e-6")
+	InstancePrefs_overrideEnum    (ERPArea, scalingStrategy, 1, kSoundArea_scalingStrategy, DEFAULT)
+	InstancePrefs_overrideDouble  (ERPArea, scaling_height,  1, U"20e-6")
+	InstancePrefs_overrideDouble  (ERPArea, scaling_minimum, 1, U"-10e-6")
+	InstancePrefs_overrideDouble  (ERPArea, scaling_maximum, 1, U"10e-6")
 
 Prefs_end (ERPArea)
 

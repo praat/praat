@@ -2,7 +2,7 @@
 #define _SoundEditor_h_
 /* SoundEditor.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2014-2016,2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2014-2016,2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 		override;
 };
 
-void SoundEditor_init (SoundEditor me,
+void SoundEditor_init (SoundEditor me, autoSoundArea soundArea,
 	conststring32 title,
 	Sampled data
 );

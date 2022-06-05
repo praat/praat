@@ -23,7 +23,7 @@
 
 Thing_define (EEGWindow, TextGridEditor) {
 	EEG eeg;
-	autoEEGArea eegArea;
+	//autoEEGArea eegArea; BUG: this will have to return once EEGWindow no longer inherits from TextGridEditor
 	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
 
 	bool v_hasPitch ()
@@ -46,7 +46,7 @@ Thing_define (EEGWindow, TextGridEditor) {
 	#include "EEGWindow_prefs.h"
 };
 
-void EEGWindow_init (EEGWindow me, conststring32 title, EEG eeg);
+void EEGWindow_init (EEGWindow me, autoEEGArea eegArea, conststring32 title, EEG eeg);
 
 autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg);
 

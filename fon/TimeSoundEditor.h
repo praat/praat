@@ -29,10 +29,6 @@ struct TimeSoundEditor_sound {
 };
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
-	/*
-		Access inherited attributes by their derived type.
-	*/
-	Sampled sound() { return our d_sound. data ? Sampled (our d_sound. data) : Sampled (our d_longSound. data); }
 	autoSoundArea soundArea;
 
 	bool d_ownSound;
@@ -67,7 +63,8 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	#include "TimeSoundEditor_prefs.h"
 };
 
-void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title, Function data, Sampled sound, bool ownSound);
+void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title,
+		Function data, Sampled sound, bool ownSound);
 
 /* End of file TimeSoundEditor.h */
 #endif
