@@ -785,15 +785,6 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		if (manipulation -> duration)
 			my durationTierArea = DurationTierArea_create (me.get());
 
-		/*
-			If needed, fix preferences to sane values.
-		*/
-		if (my durationTierArea -> instancePref_dataFreeMinimum() > 1.0)
-			my durationTierArea -> setInstancePref_dataFreeMinimum (Melder_atof (my durationTierArea -> default_dataFreeMinimum()));   // sanity
-		if (my durationTierArea -> instancePref_dataFreeMaximum() < 1.0)
-			my durationTierArea -> setInstancePref_dataFreeMaximum (Melder_atof (my durationTierArea -> default_dataFreeMaximum()));
-		Melder_assert (my durationTierArea -> instancePref_dataFreeMinimum() < my durationTierArea -> instancePref_dataFreeMaximum());
-
 		my durationTierArea -> ycursor = 1.0;
 
 		my synthesisMethod = prefs_synthesisMethod;

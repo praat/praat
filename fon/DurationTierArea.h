@@ -28,6 +28,7 @@ Thing_define (DurationTierArea, RealTierArea) {
 		override { return U""; }
 
 	#include "DurationTierArea_prefs.h"
+	void v_repairPreferences () override;
 };
 
 inline autoDurationTierArea DurationTierArea_create (FunctionEditor editor) {

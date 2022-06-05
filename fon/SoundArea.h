@@ -24,8 +24,6 @@
 #include "SoundArea_enums.h"
 
 Thing_define (SoundArea, FunctionArea) {
-	virtual double v_minimumLegalY () { return undefined; }
-	virtual double v_maximumLegalY () { return undefined; }
 	virtual conststring32 v_rightTickUnits () { return U"Pa"; }
 
 	double ymin, ymax;
@@ -50,8 +48,6 @@ bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event
 
 inline void SoundArea_init (SoundArea me, FunctionEditor editor) {
 	FunctionArea_init (me, editor);
-	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
-	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
 }
 
 inline autoSoundArea SoundArea_create (FunctionEditor editor) {
