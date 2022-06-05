@@ -54,8 +54,6 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 
 	Graphics_Viewport inset;
 
-	void v_distributeAreas ()
-		override;
 	void v_createMenus ()
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
@@ -63,6 +61,8 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	void v_saveData ()
 		override;
 	void v_restoreData ()
+		override;
+	void v_distributeAreas ()
 		override;
 	void v_draw ()
 		override;

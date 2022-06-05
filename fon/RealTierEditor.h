@@ -33,11 +33,11 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	*/
 	bool clickedInWideRealTierArea = false;
 
-	void v_distributeAreas ()
-		override;
 	void v_createMenus ()
 		override;
 	void v_dataChanged ()
+		override;
+	void v_distributeAreas ()
 		override;
 	void v_draw ()
 		override;

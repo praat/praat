@@ -32,6 +32,8 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_prepareDraw ()
 		override;
+	void v_distributeAreas ()
+		override;
 	void v_draw ()
 		override;
 	void v_play (double tmin, double tmax)

@@ -50,10 +50,11 @@ static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	try {
 		Sound sound = (Sound) my data;
-		integer first, last, selectionNumberOfSamples = Sampled_getWindowSamples (sound,
+		integer first, last;
+		const integer selectionNumberOfSamples = Sampled_getWindowSamples (sound,
 				my startSelection, my endSelection, & first, & last);
-		integer oldNumberOfSamples = sound -> nx;
-		integer newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
+		const integer oldNumberOfSamples = sound -> nx;
+		const integer newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
 		if (newNumberOfSamples < 1)
 			Melder_throw (U"You cannot cut all of the signal away,\n"
 				U"because you cannot create a Sound with 0 samples.\n"
@@ -108,9 +109,9 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 				Update the window.
 			*/
 			{
-				double t1 = (first - 1) * sound -> dx;
-				double t2 = last * sound -> dx;
-				double windowLength = my endWindow - my startWindow;   // > 0
+				const double t1 = (first - 1) * sound -> dx;
+				const double t2 = last * sound -> dx;
+				const double windowLength = my endWindow - my startWindow;   // > 0
 				if (t1 > my startWindow)
 					if (t2 < my endWindow)
 						my startWindow -= 0.5 * (t2 - t1);
@@ -151,7 +152,7 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Sound sound = (Sound) my data;
 	integer leftSample = Sampled_xToLowIndex (sound, my endSelection);
-	integer oldNumberOfSamples = sound -> nx, newNumberOfSamples;
+	const integer oldNumberOfSamples = sound -> nx;
 	if (! Sound_clipboard) {
 		Melder_warning (U"Clipboard is empty; nothing pasted.");
 		return;
@@ -167,7 +168,7 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 		U"the sampling frequency of the edited sound."
 	);
 	Melder_clip (0_integer, & leftSample, oldNumberOfSamples);
-	newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
+	const integer newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
 	/*
 		Check without change.
 	*/
@@ -297,6 +298,9 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 /********** UPDATE **********/
+
+void structSoundEditor :: v_distributeAreas () {
+}
 
 void structSoundEditor :: v_prepareDraw () {
 	if (our d_longSound.data) {
