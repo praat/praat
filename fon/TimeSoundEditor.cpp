@@ -41,7 +41,7 @@ void structTimeSoundEditor :: v_info () {
 	TimeSoundEditor_Parent :: v_info ();
 	/* Sound flags: */
 	MelderInfo_writeLine (U"Sound scaling strategy: ",
-			kSoundArea_scalingStrategy_getText (our soundArea -> instancePref_sound_scalingStrategy()));
+			kSoundArea_scalingStrategy_getText (our soundArea -> instancePref_scalingStrategy()));
 }
 
 enum {
@@ -433,22 +433,22 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Sound scaling", nullptr)
 		OPTIONMENU_ENUM (kSoundArea_scalingStrategy, scalingStrategy,
-				U"Scaling strategy", my soundArea -> default_sound_scalingStrategy ())
+				U"Scaling strategy", my soundArea -> default_scalingStrategy())
 		LABEL (U"For \"fixed height\":")
-		POSITIVE (height, U"Height", my soundArea -> default_sound_scaling_height ())
+		POSITIVE (height, U"Height", my soundArea -> default_scaling_height())
 		LABEL (U"For \"fixed range\":")
-		REAL (minimum, U"Minimum", my soundArea -> default_sound_scaling_minimum ())
-		REAL (maximum, U"Maximum", my soundArea -> default_sound_scaling_maximum ())
+		REAL (minimum, U"Minimum", my soundArea -> default_scaling_minimum())
+		REAL (maximum, U"Maximum", my soundArea -> default_scaling_maximum())
 	EDITOR_OK
-		SET_ENUM (scalingStrategy, kSoundArea_scalingStrategy, my soundArea -> instancePref_sound_scalingStrategy())
-		SET_REAL (height,  my soundArea -> instancePref_sound_scaling_height())
-		SET_REAL (minimum, my soundArea -> instancePref_sound_scaling_minimum())
-		SET_REAL (maximum, my soundArea -> instancePref_sound_scaling_maximum())
+		SET_ENUM (scalingStrategy, kSoundArea_scalingStrategy, my soundArea -> instancePref_scalingStrategy())
+		SET_REAL (height,  my soundArea -> instancePref_scaling_height())
+		SET_REAL (minimum, my soundArea -> instancePref_scaling_minimum())
+		SET_REAL (maximum, my soundArea -> instancePref_scaling_maximum())
 	EDITOR_DO
-		my soundArea -> setInstancePref_sound_scalingStrategy (scalingStrategy) ;
-		my soundArea -> setInstancePref_sound_scaling_height (height);
-		my soundArea -> setInstancePref_sound_scaling_minimum (minimum);
-		my soundArea -> setInstancePref_sound_scaling_maximum (maximum);
+		my soundArea -> setInstancePref_scalingStrategy (scalingStrategy) ;
+		my soundArea -> setInstancePref_scaling_height (height);
+		my soundArea -> setInstancePref_scaling_minimum (minimum);
+		my soundArea -> setInstancePref_scaling_maximum (maximum);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }

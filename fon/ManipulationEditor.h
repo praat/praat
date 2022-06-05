@@ -74,7 +74,7 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	#include "ManipulationEditor_prefs.h"
 };
 
-autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation ana);
+autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation);
 
 /* End of file ManipulationEditor.h */
 #endif

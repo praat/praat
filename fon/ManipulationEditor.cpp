@@ -596,7 +596,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, 1.0);
 		Graphics_setColour (my graphics.get(), Melder_BLUE);
 		for (integer i = 1; i <= my pulses() -> nt; i ++) {
-			double t = my pulses() -> t [i];
+			const double t = my pulses() -> t [i];
 			if (t >= my startWindow && t <= my endWindow)
 				Graphics_line (my graphics.get(), t, 0.05, t, 0.95);
 		}

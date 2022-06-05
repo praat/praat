@@ -326,13 +326,13 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	double absoluteExtremum = std::max (- minimum, maximum);
-	if (our erpArea -> instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_RANGE) {
-		minimum = our erpArea -> instancePref_sound_scaling_minimum();
-		maximum = our erpArea -> instancePref_sound_scaling_maximum();
-	} else if (our erpArea -> instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
+	if (our erpArea -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_RANGE) {
+		minimum = our erpArea -> instancePref_scaling_minimum();
+		maximum = our erpArea -> instancePref_scaling_maximum();
+	} else if (our erpArea -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
 		const double mean = 0.5 * (minimum + maximum);
-		minimum = mean - 0.5 * our erpArea -> instancePref_sound_scaling_height();
-		maximum = mean + 0.5 * our erpArea -> instancePref_sound_scaling_height();
+		minimum = mean - 0.5 * our erpArea -> instancePref_scaling_height();
+		maximum = mean + 0.5 * our erpArea -> instancePref_scaling_height();
 	} else {
 		minimum = - absoluteExtremum;
 		maximum = absoluteExtremum;
@@ -395,13 +395,13 @@ void structERPWindow :: v_prefs_getValues (EditorCommand /* cmd */) {
 	setInstancePref_scalp_colourScale (v_prefs__scalpColourSpace);
 }
 
-autoERPWindow ERPWindow_create (conststring32 title, ERP data) {
-	Melder_assert (data);
+autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
+	Melder_assert (erp);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		SoundEditor_init (me.get(), title, data);
-		my erpArea = ERPArea_create (me.get());
-		my erpArea -> erp = data;
+		autoERPArea erpArea = ERPArea_create (me.get());
+		erpArea -> erp = erp;
+		SoundEditor_init (me.get(), erpArea.move(), title, erp);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");

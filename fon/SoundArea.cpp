@@ -81,7 +81,7 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 	const integer firstVisibleChannel = my channelOffset + 1;
 	const integer lastVisibleChannel = Melder_clippedRight (my channelOffset + numberOfVisibleChannels, numberOfChannels);
 	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
-	if (my instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
+	if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
 		if (longSound)
 			LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), firstVisibleChannel,
 					& visibleMinimum, & visibleMaximum);
@@ -110,7 +110,7 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics(), 0.0, 1.0, ymin, ymax);
 		bool horizontal = false;
 		double minimum = ( sound ? globalMinimum : -1.0 ), maximum = ( sound ? globalMaximum : 1.0 );
-		if (my instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
+		if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
 			if (numberOfChannels > 2) {
 				if (longSound)
 					LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), ichan, & minimum, & maximum);
@@ -125,23 +125,23 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 				minimum = visibleMinimum;
 				maximum = visibleMaximum;
 			}
-		} else if (my instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW_AND_CHANNEL) {
+		} else if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW_AND_CHANNEL) {
 			if (longSound)
 				LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), ichan, & minimum, & maximum);
 			else
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-		} else if (my instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
+		} else if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
 			if (longSound)
 				LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), ichan, & minimum, & maximum);
 			else
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
-			const double channelExtent = my instancePref_sound_scaling_height();
+			const double channelExtent = my instancePref_scaling_height();
 			const double middle = 0.5 * (minimum + maximum);
 			minimum = middle - 0.5 * channelExtent;
 			maximum = middle + 0.5 * channelExtent;
-		} else if (my instancePref_sound_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_RANGE) {
-			minimum = my instancePref_sound_scaling_minimum();
-			maximum = my instancePref_sound_scaling_maximum();
+		} else if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_RANGE) {
+			minimum = my instancePref_scaling_minimum();
+			maximum = my instancePref_scaling_maximum();
 		}
 		if (minimum == maximum) {
 			horizontal = true;
