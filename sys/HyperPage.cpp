@@ -912,9 +912,9 @@ void structHyperPage :: v_createChildren () {
 	GuiDrawingArea_setSwipable (drawingArea, nullptr, our verticalScrollBar);
 }
 
-void HyperPage_init (HyperPage me, conststring32 title, Daata data) {
+void HyperPage_init (HyperPage me, conststring32 title, Daata *pData) {
 	resolution = Gui_getResolution (nullptr);
-	Editor_init (me, 0, 0, (int) floor (6 * resolution + 30), 800, title, data);
+	Editor_init (me, 0, 0, (int) floor (6 * resolution + 30), 800, title, pData);
 	#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif

@@ -1,6 +1,6 @@
 /* StringsEditor.cpp
  *
- * Copyright (C) 2007-2012,2015-2021 Paul Boersma
+ * Copyright (C) 2007-2012,2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,24 +36,22 @@ void structStringsEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 static void updateList (StringsEditor me) {
-	Strings strings = (Strings) my data;
 	GuiList_deleteAllItems (my list);
-	for (integer i = 1; i <= strings -> numberOfStrings; i ++)
-		GuiList_insertItem (my list, strings -> strings [i].get(), 0);
+	for (integer i = 1; i <= my strings -> numberOfStrings; i ++)
+		GuiList_insertItem (my list, my strings -> strings [i].get(), 0);
 }
 
 static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) {
-	Strings strings = (Strings) my data;
 	/*
 		Find the first selected item.
 	*/
 	autoINTVEC selected = GuiList_getSelectedPositions (my list);
-	integer position = ( selected.size >= 1 ? selected [1] : strings -> numberOfStrings + 1 );
+	integer position = ( selected.size >= 1 ? selected [1] : my strings -> numberOfStrings + 1 );
 	autostring32 text = GuiText_getString (my text);
 	/*
 		Change the data.
 	*/
-	Strings_insert (strings, position, text.get());
+	Strings_insert (my strings, position, text.get());
 	/*
 		Change the list.
 	*/
@@ -67,18 +65,17 @@ static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) 
 }
 
 static void gui_button_cb_append (StringsEditor me, GuiButtonEvent /* event */) {
-	Strings strings = (Strings) my data;
 	autostring32 text = GuiText_getString (my text);
 	/*
 		Change the data.
 	*/
-	Strings_insert (strings, 0, text.get());
+	Strings_insert (my strings, 0, text.get());
 	/*
 		Change the list.
 	*/
 	GuiList_insertItem (my list, text.get(), 0);
 	GuiList_deselectAllItems (my list);
-	GuiList_selectItem (my list, strings -> numberOfStrings);
+	GuiList_selectItem (my list, my strings -> numberOfStrings);
 	/*
 		Clean up.
 	*/
@@ -88,26 +85,24 @@ static void gui_button_cb_append (StringsEditor me, GuiButtonEvent /* event */) 
 static void gui_button_cb_remove (StringsEditor me, GuiButtonEvent /* event */) {
 	autoINTVEC selected = GuiList_getSelectedPositions (my list);
 	for (integer iselected = selected.size; iselected >= 1; iselected --)
-		Strings_remove ((Strings) my data, selected [iselected]);
+		Strings_remove (my strings, selected [iselected]);
 	updateList (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void gui_button_cb_replace (StringsEditor me, GuiButtonEvent /* event */) {
-	Strings strings = (Strings) my data;
 	autoINTVEC selected = GuiList_getSelectedPositions (my list);
 	autostring32 text = GuiText_getString (my text);
 	for (integer iselected = 1; iselected <= selected.size; iselected ++) {
-		Strings_replace (strings, selected [iselected], text.get());
+		Strings_replace (my strings, selected [iselected], text.get());
 		GuiList_replaceItem (my list, text.get(), selected [iselected]);
 	}
 	Editor_broadcastDataChanged (me);
 }
 
 static void gui_list_cb_doubleClick (StringsEditor me, GuiList_DoubleClickEvent /* event */) {
-	Strings strings = (Strings) my data;
-	//if (event -> position <= strings -> numberOfStrings)   // FIXME
-	//	GuiText_setString (my text, strings -> strings [event -> position]);
+	//if (event -> position <= my strings -> numberOfStrings)   // FIXME
+	//	GuiText_setString (my text, my strings -> strings [event -> position]);
 }
 
 void structStringsEditor :: v_createChildren () {
@@ -126,10 +121,11 @@ void structStringsEditor :: v_dataChanged () {
 	updateList (this);
 }
 
-autoStringsEditor StringsEditor_create (conststring32 title, Strings data) {
+autoStringsEditor StringsEditor_create (conststring32 title, Strings strings) {
 	try {
 		autoStringsEditor me = Thing_new (StringsEditor);
-		Editor_init (me.get(), 20, 40, 600, 600, title, data);
+		my strings = strings;
+		Editor_init (me.get(), 20, 40, 600, 600, title, (Daata *) & my strings);
 		updateList (me.get());
 		return me;
 	} catch (MelderError) {

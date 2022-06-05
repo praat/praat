@@ -23,6 +23,8 @@
 #include "Categories.h"
 
 Thing_define (CategoriesEditor, Editor) {
+	Categories categories;
+	
 	autoCommandHistory history;
 	integer position;
 	GuiList list;

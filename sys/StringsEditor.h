@@ -2,7 +2,7 @@
 #define _StringsEditor_h_
 /* StringsEditor.h
  *
- * Copyright (C) 1993-2011,2015 David Weenink & Paul Boersma
+ * Copyright (C) 1993-2011,2015,2016,2018,2022 David Weenink & Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #include "Strings_.h"
 
 Thing_define (StringsEditor, Editor) {
+	Strings strings;
+
 	GuiList list;
 	GuiText text;
 

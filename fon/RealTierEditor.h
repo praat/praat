@@ -22,22 +22,18 @@
 #include "RealTierArea.h"
 
 Thing_define (RealTierEditor, TimeSoundEditor) {
-	/*
-		Access inherited attributes by their derived type.
-	*/
-	RealTier & realTier() { return * reinterpret_cast <RealTier *> (& our data); }
-
+	RealTier realTier;
 	autoRealTierArea realTierArea;
 	/*
 		mouse state
 	*/
 	bool clickedInWideRealTierArea = false;
 
-	void v_distributeAreas ()
-		override;
 	void v_createMenus ()
 		override;
 	void v_dataChanged ()
+		override;
+	void v_distributeAreas ()
 		override;
 	void v_draw ()
 		override;

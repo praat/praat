@@ -64,7 +64,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 };
 
 void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title,
-		Function data, Sampled sound, bool ownSound);
+		Function *pFunction, Sampled sound, bool ownSound);
 
 /* End of file TimeSoundEditor.h */
 #endif

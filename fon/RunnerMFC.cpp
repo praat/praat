@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2021 Paul Boersma
+ * Copyright (C) 2001-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,10 +42,10 @@ void structRunnerMFC :: v_dataChanged () {
 }
 
 static int RunnerMFC_startExperiment (RunnerMFC me) {
-	my data = my experiments->at [my iexperiment];
-	Melder_assert (my data -> classInfo == classExperimentMFC);
-	ExperimentMFC_start ((ExperimentMFC) my data);
-	Thing_setName (me, ((ExperimentMFC) my data) -> name.get());
+	my experiment = my experiments->at [my iexperiment];
+	Melder_assert (my experiment -> classInfo == classExperimentMFC);
+	ExperimentMFC_start (my experiment);
+	Thing_setName (me, my experiment -> name.get());
 	Editor_broadcastDataChanged (me);
 	Graphics_updateWs (my graphics.get());
 	return 1;
@@ -63,38 +63,38 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 static void drawNow (RunnerMFC me) {
 	if (! my graphics)
 		return;   // could be the case in the very beginning
-	ExperimentMFC experiment = (ExperimentMFC) my data;
 	integer iresponse;
-	if (! my data)
+	if (! my experiment)
 		return;
 	Graphics_setGrey (my graphics.get(), 0.8);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setGrey (my graphics.get(), 0.0);
 	if (my blanked)
 		return;
-	if (experiment -> trial == 0) {
+	if (my experiment -> trial == 0) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics.get(), 24);
-		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> startText.get());
-	} else if (experiment -> pausing) {
+		Graphics_text (my graphics.get(), 0.5, 0.5, my experiment -> startText.get());
+	} else if (my experiment -> pausing) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics.get(), 24);
-		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> pauseText.get());
-		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
+		Graphics_text (my graphics.get(), 0.5, 0.5, my experiment -> pauseText.get());
+		if (my experiment -> oops_right > my experiment -> oops_left && my experiment -> trial > 1) {
 			drawControlButton (me,
-				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
-				experiment -> oops_label.get()
+				my experiment -> oops_left, my experiment -> oops_right,
+				my experiment -> oops_bottom, my experiment -> oops_top,
+				my experiment -> oops_label.get()
 			);
 		}
-	} else if (experiment -> trial <= experiment -> numberOfTrials) {
-		conststring32 visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText.get();
+	} else if (my experiment -> trial <= my experiment -> numberOfTrials) {
+		conststring32 visibleText = my experiment -> stimulus [my experiment -> stimuli [my experiment -> trial]]. visibleText.get();
 		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
 		conststring32 visibleText_p = visibleText_dup.get();
 		Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (my graphics.get(), 10);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
-		Graphics_text (my graphics.get(), 0.0, 1.0,   experiment -> trial, U" / ", experiment -> numberOfTrials);
+		Graphics_text (my graphics.get(), 0.0, 1.0,   my experiment -> trial, U" / ", my experiment -> numberOfTrials);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_TOP);
 		Graphics_setFontSize (my graphics.get(), 24);
 		/*
@@ -104,17 +104,17 @@ static void drawNow (RunnerMFC me) {
 			char32 *visibleText_q = str32chr (visibleText_p, U'|');
 			if (visibleText_q)
 				*visibleText_q = U'\0';
-			Graphics_text (my graphics.get(), 0.5, 1.0, visibleText_p [0] != U'\0' ? visibleText_p : experiment -> runText.get());
+			Graphics_text (my graphics.get(), 0.5, 1.0, visibleText_p [0] != U'\0' ? visibleText_p : my experiment -> runText.get());
 			if (visibleText_q)
 				visibleText_p = visibleText_q + 1;
 			else
 				visibleText_p += str32len (visibleText_p);
 		} else {
-			Graphics_text (my graphics.get(), 0.5, 1.0, experiment -> runText.get());
+			Graphics_text (my graphics.get(), 0.5, 1.0, my experiment -> runText.get());
 		}
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
-			const ResponseMFC response = & experiment -> response [iresponse];
+		for (iresponse = 1; iresponse <= my experiment -> numberOfDifferentResponses; iresponse ++) {
+			const ResponseMFC response = & my experiment -> response [iresponse];
 			conststring32 textToDraw = response -> label.get();   // can be overridden
 			if (visibleText_p [0] != U'\0') {
 				char32 *visibleText_q = str32chr (visibleText_p, U'|');
@@ -126,13 +126,13 @@ static void drawNow (RunnerMFC me) {
 			}
 			if (str32nequ (textToDraw, U"\\FI", 3)) {
 				structMelderFile file { };
-				MelderDir_relativePathToFile (& experiment -> rootDirectory, textToDraw + 3, & file);
+				MelderDir_relativePathToFile (& my experiment -> rootDirectory, textToDraw + 3, & file);
 				Graphics_imageFromFile (my graphics.get(), Melder_fileToPath (& file), response -> left, response -> right, response -> bottom, response -> top);
 			} else {
 				Graphics_setColour (my graphics.get(),
 					response -> name [0] == U'\0' ? Melder_SILVER :
-					experiment -> responses [experiment -> trial] == iresponse ? Melder_RED :
-					experiment -> ok_right > experiment -> ok_left || experiment -> responses [experiment -> trial] == 0 ?
+					my experiment -> responses [my experiment -> trial] == iresponse ? Melder_RED :
+					my experiment -> ok_right > my experiment -> ok_left || my experiment -> responses [my experiment -> trial] == 0 ?
 					Melder_YELLOW : Melder_SILVER
 				);
 				Graphics_setLineWidth (my graphics.get(), 3.0);
@@ -145,10 +145,10 @@ static void drawNow (RunnerMFC me) {
 			}
 			Graphics_setFontSize (my graphics.get(), 24);
 		}
-		for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-			const GoodnessMFC goodness = & experiment -> goodness [iresponse];
-			Graphics_setColour (my graphics.get(), experiment -> responses [experiment -> trial] == 0 ? Melder_SILVER :
-					experiment -> goodnesses [experiment -> trial] == iresponse ? Melder_RED : Melder_YELLOW);
+		for (iresponse = 1; iresponse <= my experiment -> numberOfGoodnessCategories; iresponse ++) {
+			const GoodnessMFC goodness = & my experiment -> goodness [iresponse];
+			Graphics_setColour (my graphics.get(), my experiment -> responses [my experiment -> trial] == 0 ? Melder_SILVER :
+					my experiment -> goodnesses [my experiment -> trial] == iresponse ? Melder_RED : Melder_YELLOW);
 			Graphics_setLineWidth (my graphics.get(), 3.0);
 			Graphics_fillRectangle (my graphics.get(), goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
 			Graphics_setColour (my graphics.get(), Melder_MAROON);
@@ -161,35 +161,39 @@ static void drawNow (RunnerMFC me) {
 			);
 			Graphics_setFontSize (my graphics.get(), 24);
 		}
-		if (experiment -> replay_right > experiment -> replay_left && my numberOfReplays < experiment -> maximumNumberOfReplays) {
+		if (my experiment -> replay_right > my experiment -> replay_left && my numberOfReplays < my experiment -> maximumNumberOfReplays) {
 			drawControlButton (me,
-				experiment -> replay_left, experiment -> replay_right, experiment -> replay_bottom, experiment -> replay_top,
-				experiment -> replay_label.get()
+				my experiment -> replay_left, my experiment -> replay_right,
+				my experiment -> replay_bottom, my experiment -> replay_top,
+				my experiment -> replay_label.get()
 			);
 		}
-		if (experiment -> ok_right > experiment -> ok_left &&
-		    experiment -> responses [experiment -> trial] != 0 &&
-		    (experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
+		if (my experiment -> ok_right > my experiment -> ok_left &&
+		    my experiment -> responses [my experiment -> trial] != 0 &&
+		    (my experiment -> numberOfGoodnessCategories == 0 || my experiment -> goodnesses [my experiment -> trial] != 0))
 		{
 			drawControlButton (me,
-				experiment -> ok_left, experiment -> ok_right, experiment -> ok_bottom, experiment -> ok_top,
-				experiment -> ok_label.get()
+				my experiment -> ok_left, my experiment -> ok_right,
+				my experiment -> ok_bottom, my experiment -> ok_top,
+				my experiment -> ok_label.get()
 			);
 		}
-		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
+		if (my experiment -> oops_right > my experiment -> oops_left && my experiment -> trial > 1) {
 			drawControlButton (me,
-				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
-				experiment -> oops_label.get()
+				my experiment -> oops_left, my experiment -> oops_right,
+				my experiment -> oops_bottom, my experiment -> oops_top,
+				my experiment -> oops_label.get()
 			);
 		}
 	} else {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics.get(), 24);
-		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> endText.get());
-		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
+		Graphics_text (my graphics.get(), 0.5, 0.5, my experiment -> endText.get());
+		if (my experiment -> oops_right > my experiment -> oops_left && my experiment -> trial > 1) {
 			drawControlButton (me,
-				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
-				experiment -> oops_label.get()
+				my experiment -> oops_left, my experiment -> oops_right,
+				my experiment -> oops_bottom, my experiment -> oops_top,
+				my experiment -> oops_label.get()
 			);
 		}
 	}
@@ -210,30 +214,29 @@ static void gui_drawingarea_cb_resize (RunnerMFC me, GuiDrawingArea_ResizeEvent 
 }
 
 static void do_ok (RunnerMFC me) {
-	const ExperimentMFC experiment = (ExperimentMFC) my data;
-	Melder_assert (experiment -> trial >= 1 && experiment -> trial <= experiment -> numberOfTrials);
+	Melder_assert (my experiment -> trial >= 1 && my experiment -> trial <= my experiment -> numberOfTrials);
 	my numberOfReplays = 0;
-	if (experiment -> trial == experiment -> numberOfTrials) {
-		experiment -> trial ++;
+	if (my experiment -> trial == my experiment -> numberOfTrials) {
+		my experiment -> trial ++;
 		Editor_broadcastDataChanged (me);
 		Graphics_updateWs (my graphics.get());
-	} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
-		experiment -> pausing = true;
+	} else if (my experiment -> breakAfterEvery != 0 && my experiment -> trial % my experiment -> breakAfterEvery == 0) {
+		my experiment -> pausing = true;
 		Editor_broadcastDataChanged (me);
 		Graphics_updateWs (my graphics.get());
 	} else {
-		experiment -> trial ++;
+		my experiment -> trial ++;
 		Editor_broadcastDataChanged (me);
-		if (experiment -> blankWhilePlaying) {
+		if (my experiment -> blankWhilePlaying) {
 			my blanked = true;
 			Graphics_updateWs (my graphics.get());
 			GuiShell_drain (my windowForm);
 		}
-		if (experiment -> stimuliAreSounds) {
+		if (my experiment -> stimuliAreSounds) {
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
-			if (experiment -> blankWhilePlaying)
+			if (my experiment -> blankWhilePlaying)
 				 MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
-			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+			ExperimentMFC_playStimulus (my experiment, my experiment -> stimuli [my experiment -> trial]);
 		}
 		my blanked = false;
 		Graphics_updateWs (my graphics.get());
@@ -241,48 +244,46 @@ static void do_ok (RunnerMFC me) {
 }
 
 static void do_oops (RunnerMFC me) {
-	ExperimentMFC experiment = (ExperimentMFC) my data;
-	Melder_assert (experiment -> trial >= 2 && experiment -> trial <= experiment -> numberOfTrials + 1);
-	if (experiment -> trial <= experiment -> numberOfTrials) {
-		experiment -> responses [experiment -> trial] = 0;
-		experiment -> goodnesses [experiment -> trial] = 0;
+	Melder_assert (my experiment -> trial >= 2 && my experiment -> trial <= my experiment -> numberOfTrials + 1);
+	if (my experiment -> trial <= my experiment -> numberOfTrials) {
+		my experiment -> responses [my experiment -> trial] = 0;
+		my experiment -> goodnesses [my experiment -> trial] = 0;
 	}
-	experiment -> trial --;
-	experiment -> responses [experiment -> trial] = 0;
-	experiment -> goodnesses [experiment -> trial] = 0;
-	experiment -> pausing = false;
+	my experiment -> trial --;
+	my experiment -> responses [my experiment -> trial] = 0;
+	my experiment -> goodnesses [my experiment -> trial] = 0;
+	my experiment -> pausing = false;
 	my numberOfReplays = 0;
 	Editor_broadcastDataChanged (me);
-	if (experiment -> blankWhilePlaying) {
+	if (my experiment -> blankWhilePlaying) {
 		my blanked = true;
 		Graphics_updateWs (my graphics.get());
 		GuiShell_drain (my windowForm);
 	}
-	if (experiment -> stimuliAreSounds) {
+	if (my experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
-		if (experiment -> blankWhilePlaying)
+		if (my experiment -> blankWhilePlaying)
 			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
-		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+		ExperimentMFC_playStimulus (my experiment, my experiment -> stimuli [my experiment -> trial]);
 	}
 	my blanked = false;
 	Graphics_updateWs (my graphics.get());
 }
 
 static void do_replay (RunnerMFC me) {
-	ExperimentMFC experiment = (ExperimentMFC) my data;
-	Melder_assert (experiment -> trial >= 1 && experiment -> trial <= experiment -> numberOfTrials);
+	Melder_assert (my experiment -> trial >= 1 && my experiment -> trial <= my experiment -> numberOfTrials);
 	my numberOfReplays ++;
 	Editor_broadcastDataChanged (me);
-	if (experiment -> blankWhilePlaying) {
+	if (my experiment -> blankWhilePlaying) {
 		my blanked = true;
 		Graphics_updateWs (my graphics.get());
 		GuiShell_drain (my windowForm);
 	}
-	if (experiment -> stimuliAreSounds) {
+	if (my experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
-		if (experiment -> blankWhilePlaying)
+		if (my experiment -> blankWhilePlaying)
 			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
-		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+		ExperimentMFC_playStimulus (my experiment, my experiment -> stimuli [my experiment -> trial]);
 	}
 	my blanked = false;
 	Graphics_updateWs (my graphics.get());
@@ -291,91 +292,90 @@ static void do_replay (RunnerMFC me) {
 static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent event) {
 	if (! my graphics)
 		return;   // could be the case in the very beginning
-	ExperimentMFC experiment = (ExperimentMFC) my data;
-	if (! my data)
+	if (! my experiment)
 		return;
 	if (! event -> isClick())
 		return;
 	double x, y;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x, & y);
-	if (experiment -> trial == 0) {   // the first click of the experiment
-		experiment -> trial ++;
+	if (my experiment -> trial == 0) {   // the first click of the experiment
+		my experiment -> trial ++;
 		Editor_broadcastDataChanged (me);
-		if (experiment -> blankWhilePlaying) {
+		if (my experiment -> blankWhilePlaying) {
 			my blanked = true;
 			Graphics_updateWs (my graphics.get());
 			GuiShell_drain (my windowForm);
 		}
-		if (experiment -> stimuliAreSounds) {
-			if (experiment -> numberOfTrials < 1) {
+		if (my experiment -> stimuliAreSounds) {
+			if (my experiment -> numberOfTrials < 1) {
 				Melder_flushError (U"There are zero trials in this experiment.");
 				forget (me);
 				return;
 			}
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
-			if (experiment -> blankWhilePlaying)
+			if (my experiment -> blankWhilePlaying)
 				MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
-			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);   // works only if there is at least one trial
+			ExperimentMFC_playStimulus (my experiment, my experiment -> stimuli [1]);   // works only if there is at least one trial
 		}
-		if (experiment -> responsesAreSounds)
-			experiment -> startingTime = Melder_clock ();
+		if (my experiment -> responsesAreSounds)
+			my experiment -> startingTime = Melder_clock ();
 		my blanked = false;
 		Graphics_updateWs (my graphics.get());
-	} else if (experiment -> pausing) {   // a click to leave the break
-		if (x > experiment -> oops_left && x < experiment -> oops_right &&
-			y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
+	} else if (my experiment -> pausing) {   // a click to leave the break
+		if (x > my experiment -> oops_left && x < my experiment -> oops_right &&
+			y > my experiment -> oops_bottom && y < my experiment -> oops_top && my experiment -> trial > 1)
 		{
 			do_oops (me);
 		} else {
-			experiment -> pausing = false;
-			experiment -> trial ++;
+			my experiment -> pausing = false;
+			my experiment -> trial ++;
 			Editor_broadcastDataChanged (me);
-			if (experiment -> blankWhilePlaying) {
+			if (my experiment -> blankWhilePlaying) {
 				my blanked = true;
 				Graphics_updateWs (my graphics.get());
 				GuiShell_drain (my windowForm);
 			}
-			if (experiment -> stimuliAreSounds) {
+			if (my experiment -> stimuliAreSounds) {
 				autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
-				if (experiment -> blankWhilePlaying)
+				if (my experiment -> blankWhilePlaying)
 					MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
-				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
+				ExperimentMFC_playStimulus (my experiment, my experiment -> stimuli [my experiment -> trial]);
 			}
-			if (experiment -> responsesAreSounds)
-				experiment -> startingTime = Melder_clock ();
+			if (my experiment -> responsesAreSounds)
+				my experiment -> startingTime = Melder_clock ();
 			my blanked = false;
 			Graphics_updateWs (my graphics.get());
 		}
-	} else if (experiment -> trial <= experiment -> numberOfTrials) {
-		if (x > experiment -> ok_left && x < experiment -> ok_right &&
-			y > experiment -> ok_bottom && y < experiment -> ok_top &&
-			experiment -> responses [experiment -> trial] != 0 &&
-			(experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
+	} else if (my experiment -> trial <= my experiment -> numberOfTrials) {
+		if (x > my experiment -> ok_left && x < my experiment -> ok_right &&
+			y > my experiment -> ok_bottom && y < my experiment -> ok_top &&
+			my experiment -> responses [my experiment -> trial] != 0 &&
+			(my experiment -> numberOfGoodnessCategories == 0 || my experiment -> goodnesses [my experiment -> trial] != 0))
 		{
-			if (experiment -> responsesAreSounds)
-				experiment -> reactionTimes [experiment -> trial] = Melder_clock () - experiment -> startingTime;
+			if (my experiment -> responsesAreSounds)
+				my experiment -> reactionTimes [my experiment -> trial] = Melder_clock () - my experiment -> startingTime;
 			do_ok (me);
-		} else if (x > experiment -> replay_left && x < experiment -> replay_right &&
-			y > experiment -> replay_bottom && y < experiment -> replay_top &&
-			my numberOfReplays < experiment -> maximumNumberOfReplays)
+		} else if (x > my experiment -> replay_left && x < my experiment -> replay_right &&
+			y > my experiment -> replay_bottom && y < my experiment -> replay_top &&
+			my numberOfReplays < my experiment -> maximumNumberOfReplays)
 		{
 			do_replay (me);
-		} else if (x > experiment -> oops_left && x < experiment -> oops_right &&
-			y > experiment -> oops_bottom && y < experiment -> oops_top)
+		} else if (x > my experiment -> oops_left && x < my experiment -> oops_right &&
+			y > my experiment -> oops_bottom && y < my experiment -> oops_top)
 		{
-			if (experiment -> trial > 1)
+			if (my experiment -> trial > 1)
 				do_oops (me);
-		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
-			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
-				const ResponseMFC response = & experiment -> response [iresponse];
+		} else if (my experiment -> responses [my experiment -> trial] == 0 || my experiment -> ok_right > my experiment -> ok_left) {
+			for (integer iresponse = 1; iresponse <= my experiment -> numberOfDifferentResponses; iresponse ++) {
+				const ResponseMFC response = & my experiment -> response [iresponse];
 				if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
-					experiment -> responses [experiment -> trial] = iresponse;
-					experiment -> reactionTimes [experiment -> trial] = Melder_clock () - experiment -> startingTime;
-					if (! experiment -> blankWhilePlaying)
-						experiment -> reactionTimes [experiment -> trial] -= experiment -> stimulusInitialSilenceDuration;
-					if (experiment -> responsesAreSounds)
-						ExperimentMFC_playResponse (experiment, iresponse);
-					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
+					my experiment -> responses [my experiment -> trial] = iresponse;
+					my experiment -> reactionTimes [my experiment -> trial] = Melder_clock () - my experiment -> startingTime;
+					if (! my experiment -> blankWhilePlaying)
+						my experiment -> reactionTimes [my experiment -> trial] -= my experiment -> stimulusInitialSilenceDuration;
+					if (my experiment -> responsesAreSounds)
+						ExperimentMFC_playResponse (my experiment, iresponse);
+					if (my experiment -> ok_right <= my experiment -> ok_left && my experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
 						Editor_broadcastDataChanged (me);
@@ -383,29 +383,29 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 					}
 				}
 			}
-			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
-				for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-					const GoodnessMFC cat = & experiment -> goodness [iresponse];
+			if (my experiment -> responses [my experiment -> trial] != 0 && my experiment -> ok_right > my experiment -> ok_left) {
+				for (integer iresponse = 1; iresponse <= my experiment -> numberOfGoodnessCategories; iresponse ++) {
+					const GoodnessMFC cat = & my experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
-						experiment -> goodnesses [experiment -> trial] = iresponse;
+						my experiment -> goodnesses [my experiment -> trial] = iresponse;
 						Editor_broadcastDataChanged (me);
 						Graphics_updateWs (my graphics.get());
 					}
 				}
 			}
-		} else if (experiment -> responses [experiment -> trial] != 0) {
-			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
-			for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-				const GoodnessMFC cat = & experiment -> goodness [iresponse];
+		} else if (my experiment -> responses [my experiment -> trial] != 0) {
+			Melder_assert (my experiment -> ok_right <= my experiment -> ok_left);
+			for (integer iresponse = 1; iresponse <= my experiment -> numberOfGoodnessCategories; iresponse ++) {
+				const GoodnessMFC cat = & my experiment -> goodness [iresponse];
 				if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
-					experiment -> goodnesses [experiment -> trial] = iresponse;
+					my experiment -> goodnesses [my experiment -> trial] = iresponse;
 					do_ok (me);
 				}
 			}
 		}
 	} else {
-		if (x > experiment -> oops_left && x < experiment -> oops_right &&
-			y > experiment -> oops_bottom && y < experiment -> oops_top)
+		if (x > my experiment -> oops_left && x < my experiment -> oops_right &&
+			y > my experiment -> oops_bottom && y < my experiment -> oops_top)
 		{
 			do_oops (me);
 			return;
@@ -424,41 +424,40 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event) {
 	if (! my graphics)
 		return;   // could be the case in the very beginning
-	const ExperimentMFC experiment = (ExperimentMFC) my data;
-	if (! my data)
+	if (! my experiment)
 		return;
-	if (experiment -> trial == 0) {
-		if (experiment -> responsesAreSounds)
-			experiment -> startingTime = Melder_clock ();
-	} else if (experiment -> pausing) {
-		if (experiment -> responsesAreSounds)
-			experiment -> startingTime = Melder_clock ();
-	} else if (experiment -> trial <= experiment -> numberOfTrials) {
-		if (experiment -> ok_key && experiment -> ok_key [0] == event -> key &&
-			experiment -> responses [experiment -> trial] != 0 &&
-			(experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
+	if (my experiment -> trial == 0) {
+		if (my experiment -> responsesAreSounds)
+			my experiment -> startingTime = Melder_clock ();
+	} else if (my experiment -> pausing) {
+		if (my experiment -> responsesAreSounds)
+			my experiment -> startingTime = Melder_clock ();
+	} else if (my experiment -> trial <= my experiment -> numberOfTrials) {
+		if (my experiment -> ok_key && my experiment -> ok_key [0] == event -> key &&
+			my experiment -> responses [my experiment -> trial] != 0 &&
+			(my experiment -> numberOfGoodnessCategories == 0 || my experiment -> goodnesses [my experiment -> trial] != 0))
 		{
-			if (experiment -> responsesAreSounds)
-				experiment -> reactionTimes [experiment -> trial] = Melder_clock () - experiment -> startingTime;
+			if (my experiment -> responsesAreSounds)
+				my experiment -> reactionTimes [my experiment -> trial] = Melder_clock () - my experiment -> startingTime;
 			do_ok (me);
-		} else if (experiment -> replay_key && experiment -> replay_key [0] == event -> key &&
-			my numberOfReplays < experiment -> maximumNumberOfReplays)
+		} else if (my experiment -> replay_key && my experiment -> replay_key [0] == event -> key &&
+			my numberOfReplays < my experiment -> maximumNumberOfReplays)
 		{
 			do_replay (me);
-		} else if (experiment -> oops_key && experiment -> oops_key [0] == event -> key) {
-			if (experiment -> trial > 1)
+		} else if (my experiment -> oops_key && my experiment -> oops_key [0] == event -> key) {
+			if (my experiment -> trial > 1)
 				do_oops (me);
-		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
-			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
-				const ResponseMFC response = & experiment -> response [iresponse];
+		} else if (my experiment -> responses [my experiment -> trial] == 0 || my experiment -> ok_right > my experiment -> ok_left) {
+			for (integer iresponse = 1; iresponse <= my experiment -> numberOfDifferentResponses; iresponse ++) {
+				const ResponseMFC response = & my experiment -> response [iresponse];
 				if (response -> key && response -> key [0] == event -> key) {
-					experiment -> responses [experiment -> trial] = iresponse;
-					experiment -> reactionTimes [experiment -> trial] = Melder_clock () - experiment -> startingTime;
-					if (! experiment -> blankWhilePlaying)
-						experiment -> reactionTimes [experiment -> trial] -= experiment -> stimulusInitialSilenceDuration;
-					if (experiment -> responsesAreSounds)
-						ExperimentMFC_playResponse (experiment, iresponse);
-					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
+					my experiment -> responses [my experiment -> trial] = iresponse;
+					my experiment -> reactionTimes [my experiment -> trial] = Melder_clock () - my experiment -> startingTime;
+					if (! my experiment -> blankWhilePlaying)
+						my experiment -> reactionTimes [my experiment -> trial] -= my experiment -> stimulusInitialSilenceDuration;
+					if (my experiment -> responsesAreSounds)
+						ExperimentMFC_playResponse (my experiment, iresponse);
+					if (my experiment -> ok_right <= my experiment -> ok_left && my experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
 						Editor_broadcastDataChanged (me);
@@ -466,22 +465,22 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 					}
 				}
 			}
-			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
-				for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-					const GoodnessMFC cat = & experiment -> goodness [iresponse];
+			if (my experiment -> responses [my experiment -> trial] != 0 && my experiment -> ok_right > my experiment -> ok_left) {
+				for (integer iresponse = 1; iresponse <= my experiment -> numberOfGoodnessCategories; iresponse ++) {
+					const GoodnessMFC cat = & my experiment -> goodness [iresponse];
 					if (cat -> key && cat -> key [0] == event -> key) {
-						experiment -> goodnesses [experiment -> trial] = iresponse;
+						my experiment -> goodnesses [my experiment -> trial] = iresponse;
 						Editor_broadcastDataChanged (me);
 						Graphics_updateWs (my graphics.get());
 					}
 				}
 			}
-		} else if (experiment -> responses [experiment -> trial] != 0) {
-			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
-			for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
-				const GoodnessMFC cat = & experiment -> goodness [iresponse];
+		} else if (my experiment -> responses [my experiment -> trial] != 0) {
+			Melder_assert (my experiment -> ok_right <= my experiment -> ok_left);
+			for (integer iresponse = 1; iresponse <= my experiment -> numberOfGoodnessCategories; iresponse ++) {
+				const GoodnessMFC cat = & my experiment -> goodness [iresponse];
 				if (cat -> key && cat -> key [0] == event -> key) {
-					experiment -> goodnesses [experiment -> trial] = iresponse;
+					my experiment -> goodnesses [my experiment -> trial] = iresponse;
 					do_ok (me);
 				}
 			}

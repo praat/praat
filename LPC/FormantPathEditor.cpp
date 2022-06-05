@@ -444,11 +444,10 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 		POSITIVE (windowLength, U"Window length", U"0.035")
 	EDITOR_OK
 	EDITOR_DO
-		FormantPath formantPath = (FormantPath) my data;
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
-		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight,
+		FormantPath_pathFinder (my formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight,
 				intensityModulationStepSize, windowLength, parameters.get(), my instancePref_modeler_varianceExponent());
-		my d_formant = FormantPath_extractFormant (formantPath);
+		my d_formant = FormantPath_extractFormant (my formantPath);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -469,13 +468,12 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		my v_do_pictureMargins (cmd);
 		my setClassPref_function_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
-		FormantPath formantPath = (FormantPath) my data;
 		Graphics_setInner (my pictureGraphics);
 		double startTime, endTime, xCursor, yCursor;
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, & xCursor, & yCursor);
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.2;
-		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, 
+		FormantPath_drawAsGrid_inside (my formantPath, my pictureGraphics, startTime, endTime,
 			my instancePref_modeler_draw_maximumFrequency(), 1, 5,
 			my instancePref_modeler_draw_showBandwidths(), Melder_RED, Melder_PURPLE, 0, 0,
 			xSpace_fraction, ySpace_fraction, my instancePref_modeler_draw_yGridLineEvery_Hz(),
@@ -489,7 +487,6 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 
 static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
-		FormantPath formantPath = (FormantPath) my data;
 		double startTime = my startSelection, endTime = my endSelection;
 		if (my startSelection == my endSelection) {
 			startTime = my startWindow;
@@ -497,7 +494,7 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DI
 		}
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		const integer numberOfStressDecimals = 2, numberOfTimeDecimals = 6;
-		autoTable stressTable = FormantPath_downTo_Table_stresses (formantPath, startTime, endTime, parameters.get(),
+		autoTable stressTable = FormantPath_downTo_Table_stresses (my formantPath, startTime, endTime, parameters.get(),
 				my instancePref_modeler_varianceExponent(), numberOfStressDecimals, true, numberOfTimeDecimals);
 		Table_list (stressTable.get(), false);
 	INFO_DATA_END
@@ -738,14 +735,13 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	double startTime, endTime = endWindow, xCursor, yCursor;
 	FormantPathEditor_getDrawingData (this, & startTime, & endTime, & xCursor, & yCursor);
 	Graphics_setInner (our graphics.get());
-	FormantPath formantPath = (FormantPath) our data;
 	const integer nrow = 0, ncol = 0;
 	if (startTime != previousStartTime || endTime != previousEndTime)
 		our selectedCandidate = 0;
 	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (our instancePref_modeler_numberOfParametersPerTrack());
 	MelderColour oddColour = MelderColour_fromColourName (our instancePref_formant_path_oddColour());
 	MelderColour evenColour = MelderColour_fromColourName (our instancePref_formant_path_evenColour());
-	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
+	FormantPath_drawAsGrid_inside (our formantPath, our graphics.get(), startTime, endTime,
 		our instancePref_modeler_draw_maximumFrequency(), 1, 5, our instancePref_modeler_draw_showBandwidths(), oddColour, evenColour,
 		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_modeler_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
 		parameters.get(), true, true, our instancePref_modeler_varianceExponent(), our instancePref_modeler_draw_estimatedModels(), true
@@ -756,8 +752,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 }
 
 static void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tmin, double tmax, double fmin, double fmax) {
-	FormantPath formantPath = (FormantPath) my data;
-	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (formantPath, tmin, tmax);
+	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (my formantPath, tmin, tmax);
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BASELINE);
 	Graphics_setColour (g, Melder_RED);
@@ -767,8 +762,8 @@ static void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, do
 		conststring32 label = textInterval -> text.get();
 		if (label) {
 			const integer index = Melder_atoi (label);
-			if (index > 0 && index <= formantPath -> ceilings.size) {
-				const double ceiling = formantPath -> ceilings [index];
+			if (index > 0 && index <= my formantPath -> ceilings.size) {
+				const double ceiling = my formantPath -> ceilings [index];
 				Graphics_line (g, textInterval -> xmin, ceiling, textInterval -> xmax, ceiling);
 				Graphics_text (g, 0.5 * (textInterval -> xmin + textInterval -> xmax), ceiling + 50.0, Melder_fixed (ceiling, 0));
 			}
@@ -818,9 +813,8 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	/*
 		On which of the modelers was the click?
 	*/
-	FormantPath formantPath = (FormantPath) our data;
 	integer numberOfRows, numberOfColums;
-	FormantPath_getGridDimensions (formantPath, & numberOfRows, & numberOfColums);
+	FormantPath_getGridDimensions (our formantPath, & numberOfRows, & numberOfColums);
 	const integer icol = 1 + (int) (xWC * numberOfColums);
 	if (icol < 1 || icol > numberOfColums)
 		return;
@@ -828,7 +822,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	if (irow < 1 || irow > numberOfRows)
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
-	if (index > 0 && index <= formantPath -> formants.size) {
+	if (index > 0 && index <= our formantPath -> formants.size) {
 		double tmin_ = our startWindow, tmax_ = our endWindow;
 		if (our startSelection < our endSelection) {
 			tmin_ = our startSelection;
@@ -837,10 +831,10 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		our selectedCandidate = index;
 		// Editor_save (this, U"insert interval by selection viewer"); // we need complete undo of every command!
 		integer itmin, itmax;
-		Sampled_getWindowSamples (formantPath, tmin_, tmax_, & itmin, & itmax);
+		Sampled_getWindowSamples (our formantPath, tmin_, tmax_, & itmin, & itmax);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++)
-			formantPath -> path [iframe] = our selectedCandidate;
-		Formant source = reinterpret_cast<Formant> (formantPath -> formants.at [our selectedCandidate]);
+			our formantPath -> path [iframe] = our selectedCandidate;
+		Formant source = reinterpret_cast<Formant> (our formantPath -> formants.at [our selectedCandidate]);
 		Formant_replaceFrames (d_formant.get(), itmin, itmax, source);
 	}
 }
@@ -946,9 +940,9 @@ void structFormantPathEditor :: v_updateMenuItems_file () {
 autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound sound, TextGrid textgrid) {
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
-		
+		my formantPath = formantPath;
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
-		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title, formantPath, sound, false);
+		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title, (Function *) & my formantPath, sound, false);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		if (textgrid)
 			my textgrid = Data_copy (textgrid);

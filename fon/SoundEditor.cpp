@@ -27,10 +27,11 @@ Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
 /********** METHODS **********/
 
 void structSoundEditor :: v_dataChanged () {
-	Sound sound = (Sound) data;
-	Melder_assert (sound);
-	if (sound -> classInfo == classSound)   // LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
+	Melder_assert (our sampled);
+	if (our sampled -> classInfo == classSound) {   // LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
+		Sound sound = (Sound) our sampled;
 		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & d_sound.minimum, & d_sound.maximum);   // BUG unreadable
+	}
 	SoundEditor_Parent :: v_dataChanged ();
 }
 
@@ -39,8 +40,8 @@ void structSoundEditor :: v_dataChanged () {
 static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	try {
 		Sound_clipboard = ( my d_longSound.data
-			? LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, false)
-			: Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape::RECTANGULAR, 1.0, false)
+			? LongSound_extractPart ((LongSound) my sampled, my startSelection, my endSelection, false)
+			: Sound_extractPart ((Sound) my sampled, my startSelection, my endSelection, kSound_windowShape::RECTANGULAR, 1.0, false)
 		);
 	} catch (MelderError) {
 		Melder_throw (U"Sound selection not copied to clipboard.");
@@ -48,12 +49,13 @@ static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
+	Sound sound = (Sound) my sampled;
 	try {
-		Sound sound = (Sound) my data;
-		integer first, last, selectionNumberOfSamples = Sampled_getWindowSamples (sound,
+		integer first, last;
+		const integer selectionNumberOfSamples = Sampled_getWindowSamples (sound,
 				my startSelection, my endSelection, & first, & last);
-		integer oldNumberOfSamples = sound -> nx;
-		integer newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
+		const integer oldNumberOfSamples = sound -> nx;
+		const integer newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
 		if (newNumberOfSamples < 1)
 			Melder_throw (U"You cannot cut all of the signal away,\n"
 				U"because you cannot create a Sound with 0 samples.\n"
@@ -65,7 +67,7 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 				Create without change.
 			*/
 			autoSound publish = Sound_create (sound -> ny, 0.0, selectionNumberOfSamples * sound -> dx,
-							selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
+					selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
 			for (integer channel = 1; channel <= sound -> ny; channel ++) {
 				integer j = 0;
 				for (integer i = first; i <= last; i ++)
@@ -108,9 +110,9 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 				Update the window.
 			*/
 			{
-				double t1 = (first - 1) * sound -> dx;
-				double t2 = last * sound -> dx;
-				double windowLength = my endWindow - my startWindow;   // > 0
+				const double t1 = (first - 1) * sound -> dx;
+				const double t2 = last * sound -> dx;
+				const double windowLength = my endWindow - my startWindow;   // > 0
 				if (t1 > my startWindow)
 					if (t2 < my endWindow)
 						my startWindow -= 0.5 * (t2 - t1);
@@ -137,7 +139,7 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 			*/
 			Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
 			my v_reset_analysis ();
-			FunctionEditor_ungroup (my data);
+			FunctionEditor_ungroup (my sampled);
 			FunctionEditor_marksChanged (me, false);
 			Editor_broadcastDataChanged (me);
 		} else {
@@ -149,9 +151,9 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	Sound sound = (Sound) my data;
+	Sound sound = (Sound) my sampled;
 	integer leftSample = Sampled_xToLowIndex (sound, my endSelection);
-	integer oldNumberOfSamples = sound -> nx, newNumberOfSamples;
+	const integer oldNumberOfSamples = sound -> nx;
 	if (! Sound_clipboard) {
 		Melder_warning (U"Clipboard is empty; nothing pasted.");
 		return;
@@ -167,7 +169,7 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 		U"the sampling frequency of the edited sound."
 	);
 	Melder_clip (0_integer, & leftSample, oldNumberOfSamples);
-	newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
+	const integer newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
 	/*
 		Check without change.
 	*/
@@ -207,13 +209,13 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	*/
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
 	my v_reset_analysis ();
-	FunctionEditor_ungroup (my data);
+	FunctionEditor_ungroup (my sampled);
 	FunctionEditor_marksChanged (me, false);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_SetSelectionToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	Sound sound = (Sound) my data;
+	Sound sound = (Sound) my sampled;
 	integer first, last;
 	Sampled_getWindowSamples (sound, my startSelection, my endSelection, & first, & last);
 	Editor_save (me, U"Set to zero");
@@ -225,7 +227,7 @@ static void menu_cb_SetSelectionToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_ReverseSelection (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Reverse selection");
-	Sound_reverse ((Sound) my data, my startSelection, my endSelection);
+	Sound_reverse ((Sound) my sampled, my startSelection, my endSelection);
 	my v_reset_analysis ();
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -234,7 +236,7 @@ static void menu_cb_ReverseSelection (SoundEditor me, EDITOR_ARGS_DIRECT) {
 /***** SELECT MENU *****/
 
 static void menu_cb_MoveCursorToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing ((Sound) my data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
+	const double zero = Sound_getNearestZeroCrossing ((Sound) my sampled, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me, true);
@@ -242,7 +244,7 @@ static void menu_cb_MoveCursorToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_MoveBtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing ((Sound) my data, my startSelection, 1);   // STEREO BUG
+	const double zero = Sound_getNearestZeroCrossing ((Sound) my sampled, my startSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my startSelection = zero;
 		Melder_sort (& my startSelection, & my endSelection);
@@ -251,7 +253,7 @@ static void menu_cb_MoveBtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_MoveEtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing ((Sound) my data, my endSelection, 1);   // STEREO BUG
+	const double zero = Sound_getNearestZeroCrossing ((Sound) my sampled, my endSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my endSelection = zero;
 		Melder_sort (& my startSelection, & my endSelection);
@@ -266,7 +268,7 @@ static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Meld
 
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();
-	Melder_assert (our data);
+	Melder_assert (our sampled);
 	Melder_assert (our d_sound.data || our d_longSound.data);
 
 	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
@@ -298,6 +300,9 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 /********** UPDATE **********/
 
+void structSoundEditor :: v_distributeAreas () {
+}
+
 void structSoundEditor :: v_prepareDraw () {
 	if (our d_longSound.data) {
 		try {
@@ -309,11 +314,10 @@ void structSoundEditor :: v_prepareDraw () {
 }
 
 void structSoundEditor :: v_draw () {
-	Sampled eitherData = (Sampled) our data;
 	Graphics_Viewport viewport;
 	const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
 			our instancePref_intensity_show() || our instancePref_formant_show();
-	Melder_assert (eitherData);
+	Melder_assert (our sampled);
 	Melder_assert (our d_sound.data || our d_longSound.data);
 
 	/*
@@ -353,7 +357,7 @@ void structSoundEditor :: v_draw () {
 		Update buttons.
 	*/
 	integer first, last;
-	const integer selectedSamples = Sampled_getWindowSamples (eitherData, our startSelection, our endSelection, & first, & last);
+	const integer selectedSamples = Sampled_getWindowSamples (our sampled, our startSelection, our endSelection, & first, & last);
 	v_updateMenuItems_file ();
 	if (our d_sound.data) {
 		GuiThing_setSensitive (cutButton     , selectedSamples != 0 && selectedSamples < our d_sound.data -> nx);
@@ -408,26 +412,20 @@ void structSoundEditor :: v_highlightSelection (double left, double right, doubl
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-void SoundEditor_init (SoundEditor me, autoSoundArea soundArea, conststring32 title, Sampled data) {
-	/*
-		my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
-		because createMenus expects that one of them is not null.
-	*/
-	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, data, data, false);
-	if (my d_longSound.data && my endWindow - my startWindow > 30.0) {
-		my endWindow = my startWindow + 30.0;
-		if (my startWindow == my tmin)
-			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-		FunctionEditor_marksChanged (me, false);
-	}
-}
-
-autoSoundEditor SoundEditor_create (conststring32 title, Sampled data) {
-	Melder_assert (data);
+autoSoundEditor SoundEditor_create (conststring32 title, Sampled sampled) {
+	Melder_assert (sampled);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
+		my sampled = sampled;
 		autoSoundArea soundArea = SoundArea_create (me.get());
-		SoundEditor_init (me.get(), soundArea.move(), title, data);
+		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title,
+				(Function *) & my sampled, sampled, false);
+		if (my d_longSound.data && my endWindow - my startWindow > 30.0) {
+			my endWindow = my startWindow + 30.0;
+			if (my startWindow == my tmin)
+				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
+			FunctionEditor_marksChanged (me.get(), false);
+		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound window not created.");

@@ -85,7 +85,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 };
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, autoSoundArea soundArea,
-	conststring32 title, Function data, Sampled sound, bool ownSound);
+	conststring32 title, Function *pFunction, Sampled sampled, bool ownSound);
 
 void TimeSoundAnalysisEditor_haveVisibleSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_haveVisiblePitch (TimeSoundAnalysisEditor me);

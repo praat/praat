@@ -1,6 +1,6 @@
 /* SpectrogramEditor.cpp
  *
- * Copyright (C) 1992-2005,2007-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@
 Thing_implement (SpectrogramEditor, FunctionEditor, 0);
 
 void structSpectrogramEditor :: v_draw () {
-	Spectrogram spectrogram = (Spectrogram) our data;
-
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -30,15 +28,15 @@ void structSpectrogramEditor :: v_draw () {
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 	integer itmin, itmax;
-	Sampled_getWindowSamples (spectrogram, our startWindow, our endWindow, & itmin, & itmax);
+	Sampled_getWindowSamples (our spectrogram, our startWindow, our endWindow, & itmin, & itmax);
 
 	/*
 		Autoscale frequency axis.
 	*/
-	our maximum = spectrogram -> ymax;
+	our maximum = our spectrogram -> ymax;
 
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, our maximum);
-	Spectrogram_paintInside (spectrogram, our graphics.get(), our startWindow, our endWindow, 0, 0, 0.0, true,
+	Spectrogram_paintInside (our spectrogram, our graphics.get(), our startWindow, our endWindow, 0, 0, 0.0, true,
 		 60, 6.0, 0);
 
 	/*
@@ -66,19 +64,19 @@ void structSpectrogramEditor :: v_draw () {
 
 bool structSpectrogramEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	if (event -> isClick()) {
-		Spectrogram spectrogram = (Spectrogram) our data;
-		double clickedFrequency = y_fraction * our maximum;
+		const double clickedFrequency = y_fraction * our maximum;
 		Melder_assert (spectrogram -> nx >= 1);
-		const integer clickedFrame = Melder_clipped (1_integer, Sampled_xToNearestIndex (spectrogram, x_world), spectrogram -> nx);
+		const integer clickedFrame = Melder_clipped (1_integer, Sampled_xToNearestIndex (our spectrogram, x_world), spectrogram -> nx);
 		// TODO
 	}
 	return our SpectrogramEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
-autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram data) {
+autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram spectrogram) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
-		FunctionEditor_init (me.get(), title, data);
+		my spectrogram = spectrogram;
+		FunctionEditor_init (me.get(), title, (Function *) & my spectrogram);
 		my maximum = 10000.0;
 		return me;
 	} catch (MelderError) {

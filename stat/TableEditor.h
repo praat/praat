@@ -24,6 +24,7 @@
 #define kTableEditor_MAXNUM_VISIBLE_COLUMNS  100
 
 Thing_define (TableEditor, Editor) {
+	Table table;
 	integer topRow, leftColumn, selectedRow, selectedColumn;
 	GuiText text;
 	GuiDrawingArea drawingArea;

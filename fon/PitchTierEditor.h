@@ -2,7 +2,7 @@
 #define _PitchTierEditor_h_
 /* PitchTierEditor.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,7 @@
 #include "Sound.h"
 
 Thing_define (PitchTierEditor, RealTierEditor) {
-	/*
-		Access inherited attributes by their derived type.
-	*/
-	PitchTier & pitchTier() { return * reinterpret_cast <PitchTier *> (& our data); }
+	PitchTier & pitchTier() { return * reinterpret_cast <PitchTier *> (& our realTier); }
 	autoPitchTierArea & pitchTierArea() { return * reinterpret_cast <autoPitchTierArea *> (& our realTierArea); }
 
 	void v_createHelpMenuItems (EditorMenu menu)

@@ -32,7 +32,7 @@ Thing_define (FunctionEditor, Editor) {
 		Inherited attributes:
 			data: must be a Function.
 	*/
-	Function & function() { return * reinterpret_cast <Function *> (& our data); }
+	Function & function() { return * reinterpret_cast <Function *> (our pData); }
 
 	/*
 		Subclasses may change the following attributes,
@@ -207,7 +207,7 @@ int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTi
 #define FunctionEditor_UPDATE_NEEDED  true
 #define FunctionEditor_NO_UPDATE_NEEDED  false
 
-void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data);
+void FunctionEditor_init (FunctionEditor me, conststring32 title, Function *pFunction);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.

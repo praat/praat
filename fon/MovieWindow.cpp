@@ -42,9 +42,9 @@ void structMovieWindow :: v_createMenus () {
  * @returns a value between 0.0 and 1.0; depends on whether the Sound and/or analyses are visible
  */
 static double _MovieWindow_getSoundBottomPosition (MovieWindow me) {
-	Movie movie = (Movie) my data;
-	const bool showAnalysis = (my instancePref_spectrogram_show() || my instancePref_pitch_show() || my instancePref_intensity_show() || my instancePref_formant_show()) && movie -> d_sound;
-	return movie -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
+	const bool showAnalysis = ( (my instancePref_spectrogram_show() || my instancePref_pitch_show() ||
+		my instancePref_intensity_show() || my instancePref_formant_show()) && my movie -> d_sound );
+	return my movie -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
 }
 
 void structMovieWindow :: v_distributeAreas () {
@@ -57,15 +57,14 @@ void structMovieWindow :: v_distributeAreas () {
 }
 
 void structMovieWindow :: v_draw () {
-	Movie movie = (Movie) our data;
-	bool showAnalysis = (our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) && movie -> d_sound;
-	double soundY = _MovieWindow_getSoundBottomPosition (this);
-	if (movie -> d_sound) {
+	const bool showAnalysis = (our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) && movie -> d_sound;
+	const double soundY = _MovieWindow_getSoundBottomPosition (this);
+	if (our movie -> d_sound) {
 		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		SoundArea_draw (our soundArea.get(), movie -> d_sound.get(), nullptr, -1.0, 1.0);
+		SoundArea_draw (our soundArea.get(), our movie -> d_sound.get(), nullptr, -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), viewport);
 	}
 	if (true) {
@@ -75,13 +74,13 @@ void structMovieWindow :: v_draw () {
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-		const integer firstFrame = Melder_clippedLeft (1_integer, Sampled_xToNearestIndex (movie, our startWindow));
-		const integer lastFrame = Melder_clippedRight (Sampled_xToNearestIndex (movie, our endWindow), movie -> nx);
+		const integer firstFrame = Melder_clippedLeft (1_integer, Sampled_xToNearestIndex (our movie, our startWindow));
+		const integer lastFrame = Melder_clippedRight (Sampled_xToNearestIndex (our movie, our endWindow), our movie -> nx);
 		for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
-			const double time = Sampled_indexToX (movie, iframe);
+			const double time = Sampled_indexToX (our movie, iframe);
 			const double timeLeft = Melder_clippedLeft (our startWindow, time - 0.5 * movie -> dx);
-			const double timeRight = Melder_clippedRight (time + 0.5 * movie -> dx, our endWindow);
-			Movie_paintOneImageInside (movie, our graphics.get(), iframe, timeLeft, timeRight, 0.0, 1.0);
+			const double timeRight = Melder_clippedRight (time + 0.5 * our movie -> dx, our endWindow);
+			Movie_paintOneImageInside (our movie, our graphics.get(), iframe, timeLeft, timeRight, 0.0, 1.0);
 		}
 		Graphics_resetViewport (our graphics.get(), viewport);
 	}
@@ -93,7 +92,7 @@ void structMovieWindow :: v_draw () {
 		if (our instancePref_pulses_show()) {
 			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
 			our v_draw_analysis_pulses ();
-			SoundArea_draw (our soundArea.get(), movie -> d_sound.get(), nullptr, -1.0, 1.0);   // second time, partially across the pulses
+			SoundArea_draw (our soundArea.get(), our movie -> d_sound.get(), nullptr, -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_resetViewport (our graphics.get(), viewport);
 		}
 	}
@@ -112,20 +111,16 @@ bool structMovieWindow :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 }
 
 void structMovieWindow :: v_play (double startTime, double endTime) {
-	Movie movie = (Movie) data;
-	Movie_play (movie, our graphics.get(), startTime, endTime, theFunctionEditor_playCallback, this);
-}
-
-void MovieWindow_init (MovieWindow me, conststring32 title, Movie movie) {
-	Melder_assert (movie);
-	autoSoundArea soundArea = ( movie -> d_sound ? SoundArea_create (me) : autoSoundArea() );
-	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, movie, movie -> d_sound.get(), false);
+	Movie_play (our movie, our graphics.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
 autoMovieWindow MovieWindow_create (conststring32 title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
-		MovieWindow_init (me.get(), title, movie);
+		my movie = movie;
+		autoSoundArea soundArea = ( my movie -> d_sound ? SoundArea_create (me.get()) : autoSoundArea() );
+		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title,
+				(Function *) & my movie, my movie -> d_sound.get(), false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie window not created.");

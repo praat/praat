@@ -21,6 +21,8 @@
 #include "TimeSoundAnalysisEditor.h"
 
 Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
+	Sampled sampled;
+
 	GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
 	double maxBuffer;
 
@@ -31,6 +33,8 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 	void v_dataChanged ()
 		override;
 	void v_prepareDraw ()
+		override;
+	void v_distributeAreas ()
 		override;
 	void v_draw ()
 		override;

@@ -27,6 +27,7 @@ Thing_define (FormantGridArea, RealTierArea) {
 
 Thing_define (FormantGridEditor, FunctionEditor) {
 	autoFormantGridArea formantGridArea;
+	FormantGrid formantGrid;
 
 	bool editingBandwidths;
 	GuiMenuItem d_bandwidthsToggle;
@@ -48,9 +49,9 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 	#include "FormantGridEditor_prefs.h"
 };
 
-void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid data);
+void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid formantGrid);
 
-autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid data);
+autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid);
 
 /* End of file FormantGridEditor.h */
 #endif
