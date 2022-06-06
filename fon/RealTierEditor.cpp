@@ -156,7 +156,8 @@ void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, auto
 {
 	my realTier = realTier;
 	Melder_assert (!! soundArea == !! sound);
-	TimeSoundEditor_init (me, soundArea.move(), title, (Function *) & my realTier, sound, ownSound);
+	TimeSoundEditor_init (me, soundArea.move(), title,
+			MelderPointerToPointerCast <structFunction> (& my realTier), sound, ownSound);
 	Melder_assert (!! my soundArea == !! my d_sound.data);
 	my realTierArea = realTierArea.move();
 	RealTierEditor_updateScaling (me);

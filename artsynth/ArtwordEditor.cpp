@@ -142,7 +142,7 @@ autoArtwordEditor ArtwordEditor_create (conststring32 title, Artword artword) {
 	try {
 		autoArtwordEditor me = Thing_new (ArtwordEditor);
 		my artword = artword;
-		Editor_init (me.get(), 20, 40, 650, 600, title, (Daata *) & my artword);
+		Editor_init (me.get(), 20, 40, 650, 600, title, MelderPointerToPointerCast <structDaata> (& my artword));
 		//XtUnmanageChild (my menuBar);
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 		updateList (me.get());

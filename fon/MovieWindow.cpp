@@ -120,7 +120,7 @@ autoMovieWindow MovieWindow_create (conststring32 title, Movie movie) {
 		my movie = movie;
 		autoSoundArea soundArea = ( my movie -> d_sound ? SoundArea_create (me.get()) : autoSoundArea() );
 		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title,
-				(Function *) & my movie, my movie -> d_sound.get(), false);
+				MelderPointerToPointerCast <structFunction> (& my movie), my movie -> d_sound.get(), false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie window not created.");

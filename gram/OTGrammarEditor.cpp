@@ -246,7 +246,7 @@ autoOTGrammarEditor OTGrammarEditor_create (conststring32 title, OTGrammar otGra
 	try {
 		autoOTGrammarEditor me = Thing_new (OTGrammarEditor);
 		my otGrammar = otGrammar;
-		HyperPage_init (me.get(), title, (Daata *) & my otGrammar);
+		HyperPage_init (me.get(), title, MelderPointerToPointerCast <structDaata> (& my otGrammar));
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OTGrammar window not created.");

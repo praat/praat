@@ -324,7 +324,7 @@ autoPitchEditor PitchEditor_create (conststring32 title, Pitch pitch) {
 	try {
 		autoPitchEditor me = Thing_new (PitchEditor);
 		my pitch = pitch;
-		FunctionEditor_init (me.get(), title, (Function *) & my pitch);
+		FunctionEditor_init (me.get(), title, MelderPointerToPointerCast <structFunction> (& my pitch));
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Pitch window not created.");

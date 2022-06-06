@@ -942,7 +942,8 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
 		my formantPath = formantPath;
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
-		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title, (Function *) & my formantPath, sound, false);
+		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title,
+				MelderPointerToPointerCast <structFunction> (& my formantPath), sound, false);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		if (textgrid)
 			my textgrid = Data_copy (textgrid);

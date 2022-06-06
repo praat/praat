@@ -280,7 +280,7 @@ void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantG
 	Melder_assert (formantGrid);
 	Melder_assert (Thing_isa (formantGrid, classFormantGrid));
 	my formantGrid = formantGrid;
-	FunctionEditor_init (me, title, (Function *) & my formantGrid);
+	FunctionEditor_init (me, title, MelderPointerToPointerCast <structFunction> (& my formantGrid));
 	my selectedFormant = 1;
 	my formantGridArea = Thing_new (FormantGridArea);
 	RealTierArea_init (my formantGridArea.get(), me);

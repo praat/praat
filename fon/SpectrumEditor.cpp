@@ -190,7 +190,7 @@ autoSpectrumEditor SpectrumEditor_create (conststring32 title, Spectrum spectrum
 	try {
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
 		my spectrum = spectrum;
-		FunctionEditor_init (me.get(), title, (Function *) & my spectrum);
+		FunctionEditor_init (me.get(), title, MelderPointerToPointerCast <structFunction> (& my spectrum));
 		my cursorHeight = -1000;
 		updateRange (me.get());
 		return me;

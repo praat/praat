@@ -401,7 +401,7 @@ autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
 		autoERPArea erpArea = ERPArea_create (me.get());
 		erpArea -> erp = erp;
 		TimeSoundAnalysisEditor_init (me.get(), erpArea.move(), title,
-				(Function *) & erpArea -> erp, erpArea -> erp, false);
+				MelderPointerToPointerCast <structFunction> (& erpArea -> erp), erpArea -> erp, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");

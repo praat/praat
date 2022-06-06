@@ -125,7 +125,7 @@ autoStringsEditor StringsEditor_create (conststring32 title, Strings strings) {
 	try {
 		autoStringsEditor me = Thing_new (StringsEditor);
 		my strings = strings;
-		Editor_init (me.get(), 20, 40, 600, 600, title, (Daata *) & my strings);
+		Editor_init (me.get(), 20, 40, 600, 600, title, MelderPointerToPointerCast <structDaata> (& my strings));
 		updateList (me.get());
 		return me;
 	} catch (MelderError) {

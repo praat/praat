@@ -1515,7 +1515,7 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function *pFun
 	my tmin = (*pFunction) -> xmin;   // set before adding children (see group button)
 	my tmax = (*pFunction) -> xmax;
 	Editor_init (me, 0, 0, my classPref_shellWidth(), my classPref_shellHeight(), title,
-			(Daata *) pFunction);
+			MelderPointerToPointerCast <structDaata> (pFunction));
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;

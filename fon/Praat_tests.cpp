@@ -609,6 +609,22 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 					const double d = c_vy [2];
 					//VEC c_vy2 = VEC (py, 2);   // ruled out: "No matching constructor for initialization of VEC" (2021-04-03)
 				}
+				{
+					structSampled sampled {};
+					structFunction function {};
+					structFunction *pFunction = & sampled;
+					structSampled *pSampled = & sampled;
+					//structFunction **ppFunction = MelderPointerToPointerCast<structSampled> (& pFunction);   // not allowed
+					structFunction **ppSampled = MelderPointerToPointerCast<structFunction> (& pSampled);   // allowed
+				}
+				{
+					const structSampled sampled {};
+					const structFunction function {};
+					const structFunction *const pFunction = & sampled;
+					const structSampled *const pSampled = & sampled;
+					const structFunction *const *const ppFunction = & pFunction;
+					//const structFunction *const *const ppSampled = & pSampled;   // forbidden
+				}
 
 				VEC h;
 				autoVEC j;

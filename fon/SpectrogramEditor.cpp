@@ -76,7 +76,7 @@ autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
 		my spectrogram = spectrogram;
-		FunctionEditor_init (me.get(), title, (Function *) & my spectrogram);
+		FunctionEditor_init (me.get(), title, MelderPointerToPointerCast <structFunction> (& my spectrogram));
 		my maximum = 10000.0;
 		return me;
 	} catch (MelderError) {

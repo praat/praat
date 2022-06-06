@@ -314,7 +314,7 @@ autoTableEditor TableEditor_create (conststring32 title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
 		my table = table;
-		Editor_init (me.get(), 0, 0, 700, 500, title, (Daata *) & my table);
+		Editor_init (me.get(), 0, 0, 700, 500, title, MelderPointerToPointerCast <structDaata> (& my table));
 		#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 		#endif
