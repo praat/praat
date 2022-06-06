@@ -69,7 +69,7 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 		return;
 	}
 	integer first, last;
-	if (Sampled_getWindowSamples (sound ? (Sampled) sound : (Sampled) longSound,
+	if (Sampled_getWindowSamples (sound ? (SampledXY) sound : (SampledXY) longSound,
 		my startWindow(), my endWindow(), & first, & last) <= 1)
 	{
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);

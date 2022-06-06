@@ -2198,7 +2198,7 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 /********** EXPORTED **********/
 
 void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststring32 title,
-	TextGrid textGrid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
+	TextGrid textGrid, SampledXY sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	my textGrid = textGrid;
 	my spellingChecker = spellingChecker;   // set in time
@@ -2228,7 +2228,7 @@ void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststrin
 			U"to shift the starting time of the TextGrid to zero.");
 }
 
-autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid, Sampled soundOrLongSound, bool ownSound,
+autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid, SampledXY soundOrLongSound, bool ownSound,
 	SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	try {

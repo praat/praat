@@ -412,7 +412,7 @@ void structSoundEditor :: v_highlightSelection (double left, double right, doubl
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-autoSoundEditor SoundEditor_create (conststring32 title, Sampled sampled) {
+autoSoundEditor SoundEditor_create (conststring32 title, SampledXY sampled) {
 	Melder_assert (sampled);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
