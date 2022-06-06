@@ -782,9 +782,9 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		my manipulation = manipulation;
 		FunctionEditor_init (me.get(), title, MelderPointerToPointerCast <structFunction> (& my manipulation));
-		my pitchTierArea = PitchTierArea_create (me.get());
+		my pitchTierArea = PitchTierArea_create (me.get(), manipulation -> pitch.get());
 		if (manipulation -> duration)
-			my durationTierArea = DurationTierArea_create (me.get());
+			my durationTierArea = DurationTierArea_create (me.get(), manipulation -> duration.get());
 
 		my durationTierArea -> ycursor = 1.0;
 

@@ -194,7 +194,7 @@ autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid no
 	try {
 		autoNoulliGridEditor me = Thing_new (NoulliGridEditor);
 		my noulliGrid = noulliGrid;
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
 		TimeSoundEditor_init (me.get(), soundArea.move(), title,
 				MelderPointerToPointerCast <structFunction> (& my noulliGrid), sound, ownSound);
 		return me;

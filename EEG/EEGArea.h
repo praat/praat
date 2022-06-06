@@ -22,9 +22,7 @@
 #include "EEG.h"
 
 Thing_define (EEGArea, SoundArea) {
-	EEG eeg;
-
-	virtual conststring32 v_rightTickUnits () { return U"V"; }
+	EEG & eeg() { return * reinterpret_cast <EEG *> (& our function); }
 
 	conststring32 v_getChannelName (integer /* channelNumber */)
 		override;
@@ -34,8 +32,7 @@ Thing_define (EEGArea, SoundArea) {
 
 inline autoEEGArea EEGArea_create (FunctionEditor editor, EEG eeg) {
 	autoEEGArea me = Thing_new (EEGArea);
-	FunctionArea_init (me.get(), editor);
-	my eeg = eeg;   // BUG: where is my sound?
+	FunctionArea_init (me.get(), editor, eeg);
 	return me;
 }
 

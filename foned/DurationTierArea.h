@@ -31,9 +31,9 @@ Thing_define (DurationTierArea, RealTierArea) {
 	void v_repairPreferences () override;
 };
 
-inline autoDurationTierArea DurationTierArea_create (FunctionEditor editor) {
+inline autoDurationTierArea DurationTierArea_create (FunctionEditor editor, DurationTier durationTier) {
 	autoDurationTierArea me = Thing_new (DurationTierArea);
-	RealTierArea_init (me.get(), editor);
+	RealTierArea_init (me.get(), editor, durationTier);
 	return me;
 }
 
