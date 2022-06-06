@@ -17,16 +17,16 @@ OBJECTS = SoundRecorder.o \
 
 .PHONY: all clean
 
-all: libfon.a
+all: libfoned.a
 
 clean:
 	$(RM) $(OBJECTS)
-	$(RM) libfon.a
+	$(RM) libfoned.a
 
 libfon.a: $(OBJECTS)
-	touch libfon.a
-	rm libfon.a
-	$(AR) cq libfon.a $(OBJECTS)
-	$(RANLIB) libfon.a
+	touch libfoned.a
+	rm libfoned.a
+	$(AR) cq libfoned.a $(OBJECTS)
+	$(RANLIB) libfoned.a
 
-$(OBJECTS): *.h ../external/portaudio/*.h ../kar/*.h ../melder/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../external/flac/*.h ../external/mp3/mp3.h
+$(OBJECTS): *.h ../external/portaudio/*.h ../kar/*.h ../melder/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../fon/*.h ../external/flac/*.h ../external/mp3/mp3.h
