@@ -23,7 +23,7 @@ clean:
 	$(RM) $(OBJECTS)
 	$(RM) libfoned.a
 
-libfon.a: $(OBJECTS)
+libfoned.a: $(OBJECTS)
 	touch libfoned.a
 	rm libfoned.a
 	$(AR) cq libfoned.a $(OBJECTS)

@@ -1,8 +1,7 @@
 # File: Makefile
 
-# Makefile for Praat (with sources from espeak-work/espeak-ng-work)
-# Paul Boersma, 24 May 2020
-# David Weenink, 14 December 2021
+# Makefile for Praat
+# Paul Boersma & David Weenink, 6 June 2022
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -18,8 +17,8 @@ all: all-external all-self
 		artsynth/libartsynth.a FFNet/libFFNet.a \
 		gram/libgram.a EEG/libEEG.a \
 		LPC/libLPC.a dwtools/libdwtools.a \
-		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
-		sys/libsys.a melder/libmelder.a kar/libkar.a \
+		foned/libfoned.a fon/libfon.a stat/libstat.a \
+		dwsys/libdwsys.a sys/libsys.a melder/libmelder.a kar/libkar.a \
 		external/espeak/libespeak.a \
 		external/portaudio/libportaudio.a \
 		external/flac/libflac.a external/mp3/libmp3.a \
@@ -48,6 +47,7 @@ all-self:
 	$(MAKE) -C dwsys
 	$(MAKE) -C stat
 	$(MAKE) -C fon
+	$(MAKE) -C foned
 	$(MAKE) -C dwtools
 	$(MAKE) -C LPC
 	$(MAKE) -C EEG
@@ -77,6 +77,7 @@ clean-self:
 	$(MAKE) -C dwsys clean
 	$(MAKE) -C stat clean
 	$(MAKE) -C fon clean
+	$(MAKE) -C foned clean
 	$(MAKE) -C dwtools clean
 	$(MAKE) -C LPC clean
 	$(MAKE) -C EEG clean
