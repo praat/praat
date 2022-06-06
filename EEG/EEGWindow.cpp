@@ -69,17 +69,12 @@ void structEEGWindow :: v_updateMenuItems_file () {
 	GuiThing_setSensitive (our extractSelectedEEGTimeFromZeroButton,  our endSelection > our startSelection);
 }
 
-void EEGWindow_init (EEGWindow me, autoEEGArea eegArea, conststring32 title, EEG eeg) {
-	my eeg = eeg;   // before initing, because initing will already draw!
-	eegArea -> eeg = eeg;   // BUG: double
-	TextGridEditor_init (me, eegArea.move(), title, eeg -> textgrid.get(), eeg -> sound.get(), false, nullptr, nullptr);
-}
-
 autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 	try {
 		autoEEGWindow me = Thing_new (EEGWindow);
-		autoEEGArea eegArea = EEGArea_create (me.get());
-		EEGWindow_init (me.get(), eegArea.move(), title, eeg);
+		autoEEGArea eegArea = EEGArea_create (me.get(), eeg);
+		my eeg = eeg;   // before initing, because initing will already draw!
+		TextGridEditor_init (me.get(), eegArea.move(), title, eeg -> textgrid.get(), eeg -> sound.get(), false, nullptr, nullptr);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EEG window not created.");

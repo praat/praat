@@ -2228,7 +2228,9 @@ void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststrin
 			U"to shift the starting time of the TextGrid to zero.");
 }
 
-autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket) {
+autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid, Sampled sound, bool ownSound,
+	SpellingChecker spellingChecker, conststring32 callbackSocket)
+{
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );

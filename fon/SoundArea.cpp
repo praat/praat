@@ -163,7 +163,7 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 				Graphics_text (my graphics(), my startWindow(), maximum, Melder_float (Melder_half (maximum)));
 			}
 		}
-		if (minimum < 0 && maximum > 0 && ! horizontal) {
+		if (minimum < 0.0 && maximum > 0.0 && ! horizontal) {
 			Graphics_setWindow (my graphics(), 0.0, 1.0, minimum, maximum);
 			if (! cursorVisible || isundef (cursorFunctionValue) || fabs (Graphics_dyWCtoMM (my graphics(), cursorFunctionValue - 0.0)) > 3.0) {
 				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);

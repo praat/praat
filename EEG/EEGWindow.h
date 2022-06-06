@@ -46,8 +46,6 @@ Thing_define (EEGWindow, TextGridEditor) {
 	#include "EEGWindow_prefs.h"
 };
 
-void EEGWindow_init (EEGWindow me, autoEEGArea eegArea, conststring32 title, EEG eeg);
-
 autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg);
 
 /* End of file EEGWindow.h */

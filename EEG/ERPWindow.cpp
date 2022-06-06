@@ -269,8 +269,8 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	const integer numberOfDrawableChannels =
-			our erpArea -> erp -> ny >= 64 && Melder_equ (our erpArea -> erp -> channelNames [64].get(), U"O2") ? 64 :
-			our erpArea -> erp -> ny >= 32 && Melder_equ (our erpArea -> erp -> channelNames [32].get(), U"Cz") ? 32 :
+			our erpArea() -> erp -> ny >= 64 && Melder_equ (our erpArea() -> erp -> channelNames [64].get(), U"O2") ? 64 :
+			our erpArea() -> erp -> ny >= 32 && Melder_equ (our erpArea() -> erp -> channelNames [32].get(), U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
@@ -288,9 +288,9 @@ void structERPWindow :: v_drawSelectionViewer () {
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++)
 		means [ichan] =
 			our startSelection == our endSelection ?
-				Sampled_getValueAtX (our erpArea -> erp, our startSelection, ichan, 0, true) :
-				Vector_getMean (our erpArea -> erp, our startSelection, our endSelection, ichan);
-	autoMAT image = raw_MAT (n, n);
+				Sampled_getValueAtX (our erpArea() -> erp, our startSelection, ichan, 0, true) :
+				Vector_getMean (our erpArea() -> erp, our startSelection, our endSelection, ichan);
+	autoMAT image = zero_MAT (n, n);
 	for (integer irow = 1; irow <= n; irow ++) {
 		const double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
@@ -319,19 +319,19 @@ void structERPWindow :: v_drawSelectionViewer () {
 	double minimum = 0.0, maximum = 0.0;
 	for (integer irow = 1; irow <= n; irow ++) {
 		for (integer icol = 1; icol <= n; icol ++) {
-			double value = image [irow] [icol];
+			const double value = image [irow] [icol];
 			if (value < minimum) minimum = value;
 			else if (value > maximum) maximum = value;
 		}
 	}
-	double absoluteExtremum = std::max (- minimum, maximum);
-	if (our erpArea -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_RANGE) {
-		minimum = our erpArea -> instancePref_scaling_minimum();
-		maximum = our erpArea -> instancePref_scaling_maximum();
-	} else if (our erpArea -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
+	const double absoluteExtremum = std::max (- minimum, maximum);
+	if (our erpArea() -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_RANGE) {
+		minimum = our erpArea() -> instancePref_scaling_minimum();
+		maximum = our erpArea() -> instancePref_scaling_maximum();
+	} else if (our erpArea() -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
 		const double mean = 0.5 * (minimum + maximum);
-		minimum = mean - 0.5 * our erpArea -> instancePref_scaling_height();
-		maximum = mean + 0.5 * our erpArea -> instancePref_scaling_height();
+		minimum = mean - 0.5 * our erpArea() -> instancePref_scaling_height();
+		maximum = mean + 0.5 * our erpArea() -> instancePref_scaling_height();
 	} else {
 		minimum = - absoluteExtremum;
 		maximum = absoluteExtremum;
@@ -398,10 +398,11 @@ autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
 	Melder_assert (erp);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		autoERPArea erpArea = ERPArea_create (me.get());
-		erpArea -> erp = erp;
+		my sampled = erp;
+		autoERPArea erpArea = ERPArea_create (me.get(), erp);
+		ERP *pErp = & erpArea -> erp;   // save before move
 		TimeSoundAnalysisEditor_init (me.get(), erpArea.move(), title,
-				MelderPointerToPointerCast <structFunction> (& erpArea -> erp), erpArea -> erp, false);
+				MelderPointerToPointerCast <structFunction> (pErp), erp, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");
