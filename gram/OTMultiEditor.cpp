@@ -217,7 +217,7 @@ autoOTMultiEditor OTMultiEditor_create (conststring32 title, OTMulti otMulti) {
 		my otMulti = otMulti;
 		my form1 = Melder_dup (U"");
 		my form2 = Melder_dup (U"");
-		HyperPage_init (me.get(), title, (Daata *) & my otMulti);
+		HyperPage_init (me.get(), title, MelderPointerToPointerCast <structDaata> (& my otMulti));
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OTMulti window not created.");

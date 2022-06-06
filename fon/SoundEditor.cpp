@@ -419,7 +419,7 @@ autoSoundEditor SoundEditor_create (conststring32 title, Sampled sampled) {
 		my sampled = sampled;
 		autoSoundArea soundArea = SoundArea_create (me.get());
 		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title,
-				(Function *) & my sampled, sampled, false);
+				MelderPointerToPointerCast <structFunction> (& my sampled), sampled, false);
 		if (my d_longSound.data && my endWindow - my startWindow > 30.0) {
 			my endWindow = my startWindow + 30.0;
 			if (my startWindow == my tmin)

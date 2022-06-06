@@ -2,7 +2,7 @@
 #define _melder_templates_h_
 /* melder_templates.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +83,11 @@ class MelderCompareHook {
 	private:
 		FunctionType _f;
 };
+
+template <typename T, typename Y  Melder_ENABLE_IF_ISA(Y,T)>
+T** MelderPointerToPointerCast (Y **thing) {
+	return (T**) thing;
+}
 
 /* End of file melder_templates.h */
 #endif

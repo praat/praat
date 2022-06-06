@@ -498,7 +498,7 @@ autoManual Manual_create (conststring32 title, ManPages manPages, bool ownManPag
 			Melder_sprint (windowTitle,101, U"Praat Manual");
 		}
 		my ownManPages = ownManPages;
-		HyperPage_init (me.get(), windowTitle, (Daata *) & my manPages);
+		HyperPage_init (me.get(), windowTitle, MelderPointerToPointerCast <structDaata> (& my manPages));
 		MelderDir_copy (& my manPages -> rootDirectory, & my rootDirectory);
 		my history [0]. page = Melder_dup_f (title);   // BAD
 		return me;

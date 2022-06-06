@@ -686,7 +686,7 @@ autoCategoriesEditor CategoriesEditor_create (conststring32 title, Categories ca
 	try {
 		autoCategoriesEditor me = Thing_new (CategoriesEditor);
 		my categories = categories;
-		Editor_init (me.get(), 20, 40, 600, 600, title, (Daata *) & my categories);
+		Editor_init (me.get(), 20, 40, 600, 600, title, MelderPointerToPointerCast <structDaata> (& my categories));
 		my history = CommandHistory_create ();
 		autoINTVEC select;
 		update (me.get(), 0, 0, select.get(), 0);

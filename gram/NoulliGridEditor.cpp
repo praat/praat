@@ -195,7 +195,8 @@ autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid no
 		autoNoulliGridEditor me = Thing_new (NoulliGridEditor);
 		my noulliGrid = noulliGrid;
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
-		TimeSoundEditor_init (me.get(), soundArea.move(), title, (Function *) & my noulliGrid, sound, ownSound);
+		TimeSoundEditor_init (me.get(), soundArea.move(), title,
+				MelderPointerToPointerCast <structFunction> (& my noulliGrid), sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NoulliGrid window not created.");

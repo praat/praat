@@ -2204,7 +2204,8 @@ void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststrin
 	my spellingChecker = spellingChecker;   // set in time
 	my callbackSocket = Melder_dup (callbackSocket);
 
-	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, (Function *) & my textGrid, sound, ownSound);
+	TimeSoundAnalysisEditor_init (me, soundArea.move(), title,
+			MelderPointerToPointerCast <structFunction> (& my textGrid), sound, ownSound);
 
 	my selectedTier = 1;
 	my draggingTime = undefined;
