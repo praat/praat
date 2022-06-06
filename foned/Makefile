@@ -1,0 +1,32 @@
+# Makefile of the library "foned"
+# Paul Boersma, 6 June 2022
+
+include ../makefile.defs
+
+CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../external/portaudio -I ../external/flac -I ../external/mp3 -I ../external/espeak
+
+OBJECTS = SoundRecorder.o \
+   FunctionArea.o SoundArea.o \
+   RealTierArea.o PitchTierArea.o IntensityTierArea.o DurationTierArea.o AmplitudeTierArea.o \
+   FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \
+   PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
+   RealTierEditor.o PitchTierEditor.o IntensityTierEditor.o \
+   DurationTierEditor.o AmplitudeTierEditor.o \
+   ManipulationEditor.o TextGridEditor.o FormantGridEditor.o \
+   RunnerMFC.o MovieWindow.o
+
+.PHONY: all clean
+
+all: libfon.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libfon.a
+
+libfon.a: $(OBJECTS)
+	touch libfon.a
+	rm libfon.a
+	$(AR) cq libfon.a $(OBJECTS)
+	$(RANLIB) libfon.a
+
+$(OBJECTS): *.h ../external/portaudio/*.h ../kar/*.h ../melder/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../external/flac/*.h ../external/mp3/mp3.h

@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 1 June 2022
+# Paul Boersma, 6 June 2022
 
 include ../makefile.defs
 
@@ -21,19 +21,11 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    Excitation.o Cochleagram.o Cochleagram_and_Excitation.o Excitation_to_Formant.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \
-   SoundRecorder.o Sound_enhance.o VoiceAnalysis.o \
-   FunctionArea.o \
-   RealTierArea.o PitchTierArea.o IntensityTierArea.o DurationTierArea.o AmplitudeTierArea.o \
-   SoundArea.o \
-   FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \
-   PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
-   RealTierEditor.o PitchTierEditor.o IntensityTierEditor.o \
-   DurationTierEditor.o AmplitudeTierEditor.o \
-   ManipulationEditor.o TextGridEditor.o FormantGridEditor.o \
+   Sound_enhance.o VoiceAnalysis.o \
    WordList.o SpellingChecker.o \
    FujisakiPitch.o \
-   ExperimentMFC.o RunnerMFC.o manual_ExperimentMFC.o praat_ExperimentMFC.o \
-   Photo.o Movie.o MovieWindow.o \
+   ExperimentMFC.o manual_ExperimentMFC.o praat_ExperimentMFC.o \
+   Photo.o Movie.o \
    Corpus.o \
    manual_Picture.o manual_Manual.o manual_Script.o \
    manual_soundFiles.o manual_tutorials.o manual_references.o \
