@@ -43,13 +43,13 @@ void structPitchTierEditor :: v_play (double startTime, double endTime) {
 		PitchTier_playPart (our pitchTier(), startTime, endTime, false);
 }
 
-autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch, Sound sound, bool ownSound) {
+autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitchTier, Sound sound, bool ownSound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		autoPitchTierArea area = PitchTierArea_create (me.get());
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
+		autoPitchTierArea area = PitchTierArea_create (me.get(), pitchTier);
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
 		Melder_assert (!! soundArea == !! sound);
-		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, pitch, sound, ownSound);
+		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, pitchTier, sound, ownSound);
 		Melder_assert (!! my soundArea == !! my d_sound.data);
 		return me;
 	} catch (MelderError) {

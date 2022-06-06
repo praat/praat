@@ -32,7 +32,7 @@ Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
 	void v_play (double startTime, double endTime)
 		override;
 };
-void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, autoKlattGrid_RealTierArea area, conststring32 title, KlattGrid klattgrid, RealTier data);
+void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, autoKlattGrid_RealTierArea area, conststring32 title, KlattGrid klattgrid, RealTier realTier);
 
 Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 	conststring32 v_quantityText ()
@@ -132,7 +132,7 @@ Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
 	conststring32 v_maximumLabelText ()
 		override { return U"Maximum intensity (dB)"; }
 };
-void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, autoKlattGrid_IntensityTierArea area, conststring32 title, KlattGrid klattgrid, RealTier tier);
+void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, autoKlattGrid_IntensityTierArea area, conststring32 title, KlattGrid klattgrid, IntensityTier intensityTier);
 
 Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 	conststring32 v_quantityText ()
@@ -144,7 +144,7 @@ Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 	conststring32 v_maximumLabelText ()
 		override { return U"Maximum amplitude (dB)"; }
 };
-autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring32 title, KlattGrid klattgrid, RealTier data);
+autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring32 title, KlattGrid klattgrid, IntensityTier decibelTier);
 
 Thing_define (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };

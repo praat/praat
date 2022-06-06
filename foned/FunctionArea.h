@@ -21,10 +21,13 @@
 #include "FunctionEditor.h"
 
 Thing_define (FunctionArea, Thing) {
-	void init (FunctionEditor editor) {
-		_editor = editor;
-		_ymin_fraction = undefined;   // to be set just before drawing or tracking
-		_ymax_fraction = undefined;   // to be set just before drawing or tracking
+	Function function;
+
+	void init (FunctionEditor editor, Function function) {
+		our _editor = editor;
+		our function = function;
+		our _ymin_fraction = undefined;   // to be set just before drawing or tracking
+		our _ymax_fraction = undefined;   // to be set just before drawing or tracking
 	}
 	/*
 		To be called just before drawing or tracking:
@@ -85,8 +88,8 @@ private:
 	}
 };
 
-inline void FunctionArea_init (FunctionArea me, FunctionEditor editor) {
-	my init (editor);
+inline void FunctionArea_init (FunctionArea me, FunctionEditor editor, Function function) {
+	my init (editor, function);
 	my v_copyPreferencesToInstance ();
 	my v_repairPreferences ();
 }

@@ -2228,13 +2228,14 @@ void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststrin
 			U"to shift the starting time of the TextGrid to zero.");
 }
 
-autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid, Sampled sound, bool ownSound,
+autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid, Sampled soundOrLongSound, bool ownSound,
 	SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
-		TextGridEditor_init (me.get(), soundArea.move(), title, textGrid, sound, ownSound, spellingChecker, callbackSocket);
+		autoSoundArea soundArea = ( soundOrLongSound ? SoundArea_create (me.get(), soundOrLongSound) : autoSoundArea() );
+		TextGridEditor_init (me.get(), soundArea.move(), title,
+				textGrid, soundOrLongSound, ownSound, spellingChecker, callbackSocket);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid window not created.");

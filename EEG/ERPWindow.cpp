@@ -269,8 +269,8 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	const integer numberOfDrawableChannels =
-			our erpArea() -> erp -> ny >= 64 && Melder_equ (our erpArea() -> erp -> channelNames [64].get(), U"O2") ? 64 :
-			our erpArea() -> erp -> ny >= 32 && Melder_equ (our erpArea() -> erp -> channelNames [32].get(), U"Cz") ? 32 :
+			our erpArea() -> erp() -> ny >= 64 && Melder_equ (our erpArea() -> erp() -> channelNames [64].get(), U"O2") ? 64 :
+			our erpArea() -> erp() -> ny >= 32 && Melder_equ (our erpArea() -> erp() -> channelNames [32].get(), U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
@@ -288,8 +288,8 @@ void structERPWindow :: v_drawSelectionViewer () {
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++)
 		means [ichan] =
 			our startSelection == our endSelection ?
-				Sampled_getValueAtX (our erpArea() -> erp, our startSelection, ichan, 0, true) :
-				Vector_getMean (our erpArea() -> erp, our startSelection, our endSelection, ichan);
+				Sampled_getValueAtX (our erpArea() -> erp(), our startSelection, ichan, 0, true) :
+				Vector_getMean (our erpArea() -> erp(), our startSelection, our endSelection, ichan);
 	autoMAT image = zero_MAT (n, n);
 	for (integer irow = 1; irow <= n; irow ++) {
 		const double y = -1.0 + (irow - 1) * d;
@@ -400,9 +400,9 @@ autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
 		autoERPWindow me = Thing_new (ERPWindow);
 		my sampled = erp;
 		autoERPArea erpArea = ERPArea_create (me.get(), erp);
-		ERP *pErp = & erpArea -> erp;   // save before move
+		Function *pFunction = & erpArea -> function;   // save before move
 		TimeSoundAnalysisEditor_init (me.get(), erpArea.move(), title,
-				MelderPointerToPointerCast <structFunction> (pErp), erp, false);
+				MelderPointerToPointerCast <structFunction> (pFunction), erp, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");

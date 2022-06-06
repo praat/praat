@@ -164,12 +164,12 @@ void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, auto
 	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
 }
 
-autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier tier, Sound sound, bool ownSound) {
+autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier realTier, Sound sound, bool ownSound) {
 	try {
 		autoRealTierEditor me = Thing_new (RealTierEditor);
-		autoRealTierArea realTierArea = RealTierArea_create (me.get());
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
-		RealTierEditor_init (me.get(), realTierArea.move(), soundArea.move(), title, tier, sound, ownSound);
+		autoRealTierArea realTierArea = RealTierArea_create (me.get(), realTier);
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
+		RealTierEditor_init (me.get(), realTierArea.move(), soundArea.move(), title, realTier, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"RealTier window not created.");

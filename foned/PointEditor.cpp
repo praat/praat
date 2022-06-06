@@ -257,7 +257,7 @@ autoPointEditor PointEditor_create (conststring32 title, PointProcess pointProce
 		autoSoundArea soundArea;
 		if (sound) {
 			my monoSound = Sound_convertToMono (sound);
-			soundArea = SoundArea_create (me.get());
+			soundArea = SoundArea_create (me.get(), my monoSound.get());
 		}
 		TimeSoundEditor_init (me.get(), soundArea.move(), title,
 				MelderPointerToPointerCast <structFunction> (& my pointProcess), my monoSound.get(), false);

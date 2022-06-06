@@ -28,8 +28,8 @@ Thing_implement (ERPArea, SoundArea, 0);
 #include "ERPArea_prefs.h"
 
 conststring32 structERPArea :: v_getChannelName (integer channelNumber) {
-	Melder_assert (our erp);
-	return our erp -> channelNames [channelNumber].get();
+	Melder_assert (our erp());
+	return our erp() -> channelNames [channelNumber].get();
 }
 
 /* End of file ERPArea.cpp */

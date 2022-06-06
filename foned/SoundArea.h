@@ -24,8 +24,6 @@
 #include "SoundArea_enums.h"
 
 Thing_define (SoundArea, FunctionArea) {
-	virtual conststring32 v_rightTickUnits () { return U"Pa"; }
-
 	double ymin, ymax;
 	integer channelOffset;
 	autoBOOLVEC muteChannels;
@@ -46,9 +44,9 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline autoSoundArea SoundArea_create (FunctionEditor editor) {
+inline autoSoundArea SoundArea_create (FunctionEditor editor, Sampled soundOrLongSound) {
 	autoSoundArea me = Thing_new (SoundArea);
-	FunctionArea_init (me.get(), editor);
+	FunctionArea_init (me.get(), editor, soundOrLongSound);
 	return me;
 }
 

@@ -22,9 +22,7 @@
 #include "ERP.h"
 
 Thing_define (ERPArea, SoundArea) {
-	ERP erp;
-
-	virtual conststring32 v_rightTickUnits () { return U"V"; }
+	ERP & erp() { return * reinterpret_cast <ERP *> (& our function); }
 
 	conststring32 v_getChannelName (integer /* channelNumber */)
 		override;
@@ -34,8 +32,7 @@ Thing_define (ERPArea, SoundArea) {
 
 inline autoERPArea ERPArea_create (FunctionEditor editor, ERP erp) {
 	autoERPArea me = Thing_new (ERPArea);
-	FunctionArea_init (me.get(), editor);
-	my erp = erp;
+	FunctionArea_init (me.get(), editor, erp);
 	return me;
 }
 

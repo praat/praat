@@ -941,7 +941,7 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
 		my formantPath = formantPath;
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get()) : autoSoundArea() );
+		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
 		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title,
 				MelderPointerToPointerCast <structFunction> (& my formantPath), sound, false);
 		my d_formant = FormantPath_extractFormant (formantPath);

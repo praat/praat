@@ -28,9 +28,9 @@ Thing_define (OptimalCeilingTierArea, RealTierArea) {
 	#include "OptimalCeilingTierArea_prefs.h"
 };
 
-inline autoOptimalCeilingTierArea OptimalCeilingTierArea_create (FunctionEditor editor) {
+inline autoOptimalCeilingTierArea OptimalCeilingTierArea_create (FunctionEditor editor, OptimalCeilingTier optimalCeilingTier) {
 	autoOptimalCeilingTierArea me = Thing_new (OptimalCeilingTierArea);
-	RealTierArea_init (me.get(), editor);
+	RealTierArea_init (me.get(), editor, optimalCeilingTier);
 	return me;
 }
 
