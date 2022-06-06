@@ -481,7 +481,7 @@ void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
 }
 
 void structTimeSoundEditor :: v_updateMenuItems_file () {
-	Sampled sound;
+	SampledXY sound;
 	if (our d_sound.data)   // cannot do this with "?:", because d_sound.data and d_longSound.data have different types
 		sound = our d_sound.data;
 	else
@@ -548,7 +548,7 @@ bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent e
 }
 
 void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title,
-	Function *pFunction, Sampled sound, bool ownSound)
+	Function *pFunction, SampledXY sound, bool ownSound)
 {
 	my soundArea = soundArea.move();
 	my d_ownSound = ownSound;

@@ -44,7 +44,7 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline autoSoundArea SoundArea_create (FunctionEditor editor, Sampled soundOrLongSound) {
+inline autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound) {
 	autoSoundArea me = Thing_new (SoundArea);
 	FunctionArea_init (me.get(), editor, soundOrLongSound);
 	return me;

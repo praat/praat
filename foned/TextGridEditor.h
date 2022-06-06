@@ -107,11 +107,11 @@ private:
 };
 
 void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststring32 title,
-	TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket
+	TextGrid grid, SampledXY sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket
 );
 
 autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid grid,
-	Sampled sound,   // either a Sound or a LongSound, or null
+	SampledXY sound,   // either a Sound or a LongSound, or null
 	bool ownSound,
 	SpellingChecker spellingChecker,
 	conststring32 callbackSocket

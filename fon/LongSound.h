@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2019 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2017,2019,2022 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
 struct _MP3_FILE;
 
-Thing_define (LongSound, Sampled) {
+Thing_define (LongSound, SampledXY) {
 	structMelderFile file;
 	FILE *f;
 	int audioFileType, encoding, numberOfBytesPerSamplePoint;
@@ -81,7 +81,7 @@ void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, integer 
 void LongSound_readAudioToFloat (LongSound me, MAT buffer, integer firstSample);
 void LongSound_readAudioToShort (LongSound me, int16 *buffer, integer firstSample, integer numberOfSamples);
 
-Collection_define (SoundAndLongSoundList, OrderedOf, Sampled) {
+Collection_define (SoundAndLongSoundList, OrderedOf, SampledXY) {
 };
 
 void LongSound_concatenate (SoundAndLongSoundList collection, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);

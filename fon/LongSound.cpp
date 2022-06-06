@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2008,2010-2019,2021 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2008,2010-2019,2021,2022 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@
 #include "../external/flac/flac_FLAC_stream_decoder.h"
 #include "../external/mp3/mp3.h"
 
-Thing_implement (LongSound, Sampled, 0);
+Thing_implement (LongSound, SampledXY, 0);
 Thing_implement (SoundAndLongSoundList, Ordered, 0);
 
 #define MARGIN  0.01
@@ -216,9 +216,14 @@ static void LongSound_init (LongSound me, MelderFile file) {
 	if (my nx < 1)
 		Melder_throw (U"Audio file contains 0 samples.");
 	my xmin = 0.0;
-	my dx = 1 / my sampleRate;
+	my dx = 1.0 / my sampleRate;
 	my xmax = my nx * my dx;
 	my x1 = 0.5 * my dx;
+	my ymin = 1.0;
+	my ymax = my numberOfChannels;  // TODO: rid numberOfChannels
+	my ny = my numberOfChannels;
+	my dy = 1.0;
+	my y1 = 1.0;
 	my numberOfBytesPerSamplePoint = Melder_bytesPerSamplePoint (my encoding);
 	my bufferLength = prefs_bufferLength;
 	for (;;) {
@@ -664,7 +669,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		/*
 			The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 		*/
-		Sampled data = my at [1];
+		SampledXY data = my at [1];
 		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
 			sampleRate = Melder_iround (1.0 / sound -> dx);

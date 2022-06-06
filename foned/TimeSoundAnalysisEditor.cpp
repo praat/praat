@@ -2022,7 +2022,7 @@ void structTimeSoundAnalysisEditor :: v_repairPreferences () {
 	}
 }
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, autoSoundArea soundArea, conststring32 title, Function *pFunction, Sampled sound, bool ownSound) {
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, autoSoundArea soundArea, conststring32 title, Function *pFunction, SampledXY sound, bool ownSound) {
 	TimeSoundEditor_init (me, soundArea.move(), title, pFunction, sound, ownSound);
 }
 

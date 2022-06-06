@@ -21,7 +21,7 @@
 #include "TimeSoundAnalysisEditor.h"
 
 Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
-	Sampled sampled;
+	SampledXY sampled;
 
 	GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
 	double maxBuffer;
@@ -48,12 +48,12 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 
 void SoundEditor_init (SoundEditor me, autoSoundArea soundArea,
 	conststring32 title,
-	Sampled data
+	SampledXY data
 );
 
 autoSoundEditor SoundEditor_create (
 	conststring32 title,
-	Sampled data   // either a Sound or a LongSound
+	SampledXY data   // either a Sound or a LongSound
 );
 
 /* End of file SoundEditor.h */
