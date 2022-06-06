@@ -24,6 +24,10 @@
 #include "SoundArea_enums.h"
 
 Thing_define (SoundArea, FunctionArea) {
+	SampledXY & soundOrLongSound() { return * reinterpret_cast <SampledXY *> (& our function); }
+	Sound sound() { return Thing_isa (our soundOrLongSound(), classSound) ? (Sound) soundOrLongSound() : nullptr; }
+	LongSound longSound() { return Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) soundOrLongSound() : nullptr; }
+
 	double ymin, ymax;
 	integer channelOffset;
 	autoBOOLVEC muteChannels;
@@ -40,7 +44,7 @@ Thing_define (SoundArea, FunctionArea) {
 
 void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units);
 
-void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double globalMinimum, double globalMaximum);
+void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 

@@ -1498,7 +1498,7 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		SoundArea_draw (our soundArea.get(), our d_sound.data, our d_longSound.data, -1.0, 1.0);
+		SoundArea_draw (our soundArea.get(), -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), vp1);
 	}
 
@@ -1594,7 +1594,7 @@ void structTextGridEditor :: v_draw () {
 		if (our instancePref_pulses_show()) {
 			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY2, 1.0);
 			v_draw_analysis_pulses ();
-			SoundArea_draw (our soundArea.get(), our d_sound.data, our d_longSound.data, -1.0, 1.0);   // second time, partially across the pulses
+			SoundArea_draw (our soundArea.get(), -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_resetViewport (our graphics.get(), vp1);
 		}
 	}

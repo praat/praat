@@ -115,7 +115,7 @@ void structRealTierEditor :: v_draw () {
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		SoundArea_draw (our soundArea.get(), our d_sound.data, nullptr, -1.0, 1.0);
+		SoundArea_draw (our soundArea.get(), -1.0, 1.0);
 	}
 	our realTierArea -> setViewport ();
 

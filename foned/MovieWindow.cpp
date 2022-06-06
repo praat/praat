@@ -64,7 +64,7 @@ void structMovieWindow :: v_draw () {
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		SoundArea_draw (our soundArea.get(), our movie -> d_sound.get(), nullptr, -1.0, 1.0);
+		SoundArea_draw (our soundArea.get(), -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), viewport);
 	}
 	if (true) {
@@ -92,7 +92,7 @@ void structMovieWindow :: v_draw () {
 		if (our instancePref_pulses_show()) {
 			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
 			our v_draw_analysis_pulses ();
-			SoundArea_draw (our soundArea.get(), our movie -> d_sound.get(), nullptr, -1.0, 1.0);   // second time, partially across the pulses
+			SoundArea_draw (our soundArea.get(), -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_resetViewport (our graphics.get(), viewport);
 		}
 	}

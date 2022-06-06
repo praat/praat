@@ -345,7 +345,7 @@ void structSoundEditor :: v_draw () {
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	if (our instancePref_pulses_show())
 		our v_draw_analysis_pulses ();
-	SoundArea_draw (our soundArea.get(), our d_sound.data, our d_longSound.data, our d_sound.minimum, our d_sound.maximum);
+	SoundArea_draw (our soundArea.get(), our d_sound.minimum, our d_sound.maximum);
 	if (showAnalysis) {
 		Graphics_resetViewport (our graphics.get(), viewport);
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.5);
