@@ -32,13 +32,10 @@ Thing_define (ERPArea, SoundArea) {
 	#include "ERPArea_prefs.h"
 };
 
-inline void ERPArea_init (ERPArea me, FunctionEditor editor) {
-	FunctionArea_init (me, editor);
-}
-
-inline autoERPArea ERPArea_create (FunctionEditor editor) {
+inline autoERPArea ERPArea_create (FunctionEditor editor, ERP erp) {
 	autoERPArea me = Thing_new (ERPArea);
-	ERPArea_init (me.get(), editor);
+	FunctionArea_init (me.get(), editor);
+	my erp = erp;
 	return me;
 }
 

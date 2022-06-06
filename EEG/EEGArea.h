@@ -32,13 +32,10 @@ Thing_define (EEGArea, SoundArea) {
 	#include "EEGArea_prefs.h"
 };
 
-inline void EEGArea_init (EEGArea me, FunctionEditor editor) {
-	FunctionArea_init (me, editor);
-}
-
-inline autoEEGArea EEGArea_create (FunctionEditor editor) {
+inline autoEEGArea EEGArea_create (FunctionEditor editor, EEG eeg) {
 	autoEEGArea me = Thing_new (EEGArea);
-	EEGArea_init (me.get(), editor);
+	FunctionArea_init (me.get(), editor);
+	my eeg = eeg;   // BUG: where is my sound?
 	return me;
 }
 

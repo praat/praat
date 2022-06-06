@@ -398,8 +398,7 @@ autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
 	Melder_assert (erp);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		autoERPArea erpArea = ERPArea_create (me.get());
-		erpArea -> erp = erp;
+		autoERPArea erpArea = ERPArea_create (me.get(), erp);
 		TimeSoundAnalysisEditor_init (me.get(), erpArea.move(), title,
 				MelderPointerToPointerCast <structFunction> (& erpArea -> erp), erpArea -> erp, false);
 		return me;
