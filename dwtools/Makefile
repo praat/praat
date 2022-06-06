@@ -1,10 +1,10 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 28 February 2022
+# 6 June 2022
 
 include ../makefile.defs
 
-CPPFLAGS = -I . -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG -I ../external/vorbis -I ../external/opusfile
+CPPFLAGS = -I . -I ../kar -I ../melder -I ../LPC -I ../fon -I ../foned -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG -I ../external/vorbis -I ../external/opusfile
 
 OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Categories.o CategoriesEditor.o \
@@ -74,5 +74,5 @@ libdwtools.a: $(OBJECTS)
 	$(AR) cq libdwtools.a $(OBJECTS)
 	$(RANLIB) libdwtools.a
 
-$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h
+$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../sys/*.h ../fon/*.h ../foned/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h
 
