@@ -129,7 +129,7 @@ void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum) {
 			if (my longSound())
 				LongSound_getWindowExtrema (my longSound(), my startWindow(), my endWindow(), ichan, & minimum, & maximum);
 			else
-				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
+				Matrix_getWindowExtrema (my sound(), first, last, ichan, ichan, & minimum, & maximum);
 		} else if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
 			if (my longSound())
 				LongSound_getWindowExtrema (my longSound(), my startWindow(), my endWindow(), ichan, & minimum, & maximum);
@@ -214,7 +214,7 @@ void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum) {
 				SoundArea_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), U"");
 			Graphics_setColour (my graphics(), Melder_BLACK);
 			Graphics_function (my graphics(), & my sound() -> z [ichan] [0], first, last,
-					Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+					Sampled_indexToX (my sound(), first), Sampled_indexToX (my sound(), last));
 		} else {
 			Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), minimum * 32768, maximum * 32768);
 			Graphics_function16 (my graphics(),
