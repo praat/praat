@@ -42,15 +42,15 @@ void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 
 	Graphics_text (my graphics(), my startWindow(), yWC,   yWC_string, units);
 }
 
-void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double globalMinimum, double globalMaximum) {
-	Melder_assert (!! sound != !! longSound);
-	const integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
+void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum) {
+	Melder_assert (!! my sound() != !! my longSound());
+	const integer numberOfChannels = my soundOrLongSound() -> ny;
 	const bool cursorVisible = ( my startSelection() == my endSelection() &&
 			my startSelection() >= my startWindow() && my startSelection() <= my endWindow() );
 	Graphics_setColour (my graphics(), Melder_BLACK);
 	bool fits;
 	try {
-		fits = ( sound ? true : LongSound_haveWindow (longSound, my startWindow(), my endWindow()) );
+		fits = ( my sound() ? true : LongSound_haveWindow (my longSound(), my startWindow(), my endWindow()) );
 	} catch (MelderError) {
 		const bool outOfMemory = !! str32str (Melder_getError (), U"memory");
 		if (Melder_debug == 9)
@@ -69,7 +69,7 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 		return;
 	}
 	integer first, last;
-	if (Sampled_getWindowSamples (sound ? (SampledXY) sound : (SampledXY) longSound,
+	if (Sampled_getWindowSamples (my soundOrLongSound(),
 		my startWindow(), my endWindow(), & first, & last) <= 1)
 	{
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
@@ -82,19 +82,19 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 	const integer lastVisibleChannel = Melder_clippedRight (my channelOffset + numberOfVisibleChannels, numberOfChannels);
 	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
 	if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
-		if (longSound)
-			LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), firstVisibleChannel,
+		if (my longSound())
+			LongSound_getWindowExtrema (my longSound(), my startWindow(), my endWindow(), firstVisibleChannel,
 					& visibleMinimum, & visibleMaximum);
 		else
-			Matrix_getWindowExtrema (sound, first, last, firstVisibleChannel, firstVisibleChannel,
+			Matrix_getWindowExtrema (my sound(), first, last, firstVisibleChannel, firstVisibleChannel,
 					& visibleMinimum, & visibleMaximum);
 		for (integer ichan = firstVisibleChannel + 1; ichan <= lastVisibleChannel; ichan ++) {
 			double visibleChannelMinimum, visibleChannelMaximum;
-			if (longSound)
-				LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), ichan,
+			if (my longSound())
+				LongSound_getWindowExtrema (my longSound(), my startWindow(), my endWindow(), ichan,
 						& visibleChannelMinimum, & visibleChannelMaximum);
 			else
-				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & visibleChannelMinimum, & visibleChannelMaximum);
+				Matrix_getWindowExtrema (my sound(), first, last, ichan, ichan, & visibleChannelMinimum, & visibleChannelMaximum);
 			if (visibleChannelMinimum < visibleMinimum)
 				visibleMinimum = visibleChannelMinimum;
 			if (visibleChannelMaximum > visibleMaximum)
@@ -103,19 +103,19 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 		maximumExtent = visibleMaximum - visibleMinimum;
 	}
 	for (integer ichan = firstVisibleChannel; ichan <= lastVisibleChannel; ichan ++) {
-		const double cursorFunctionValue = ( longSound ? 0.0 :
-				Vector_getValueAtX (sound, 0.5 * (my startSelection() + my endSelection()), ichan, kVector_valueInterpolation :: SINC70) );
+		const double cursorFunctionValue = ( my longSound() ? 0.0 :
+				Vector_getValueAtX (my sound(), 0.5 * (my startSelection() + my endSelection()), ichan, kVector_valueInterpolation :: SINC70) );
 		const double ymin = (double) (numberOfVisibleChannels - ichan + my channelOffset) / numberOfVisibleChannels;
 		const double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my channelOffset) / numberOfVisibleChannels;
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics(), 0.0, 1.0, ymin, ymax);
 		bool horizontal = false;
-		double minimum = ( sound ? globalMinimum : -1.0 ), maximum = ( sound ? globalMaximum : 1.0 );
+		double minimum = ( my sound() ? globalMinimum : -1.0 ), maximum = ( my sound() ? globalMaximum : 1.0 );
 		if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
 			if (numberOfChannels > 2) {
-				if (longSound)
-					LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), ichan, & minimum, & maximum);
+				if (my longSound())
+					LongSound_getWindowExtrema (my longSound(), my startWindow(), my endWindow(), ichan, & minimum, & maximum);
 				else
-					Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
+					Matrix_getWindowExtrema (my sound(), first, last, ichan, ichan, & minimum, & maximum);
 				if (maximumExtent > 0.0) {
 					const double middle = 0.5 * (minimum + maximum);
 					minimum = middle - 0.5 * maximumExtent;
@@ -126,15 +126,15 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 				maximum = visibleMaximum;
 			}
 		} else if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW_AND_CHANNEL) {
-			if (longSound)
-				LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), ichan, & minimum, & maximum);
+			if (my longSound())
+				LongSound_getWindowExtrema (my longSound(), my startWindow(), my endWindow(), ichan, & minimum, & maximum);
 			else
-				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
+				Matrix_getWindowExtrema (my sound(), first, last, ichan, ichan, & minimum, & maximum);
 		} else if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
-			if (longSound)
-				LongSound_getWindowExtrema (longSound, my startWindow(), my endWindow(), ichan, & minimum, & maximum);
+			if (my longSound())
+				LongSound_getWindowExtrema (my longSound(), my startWindow(), my endWindow(), ichan, & minimum, & maximum);
 			else
-				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
+				Matrix_getWindowExtrema (my sound(), first, last, ichan, ichan, & minimum, & maximum);
 			const double channelExtent = my instancePref_scaling_height();
 			const double middle = 0.5 * (minimum + maximum);
 			minimum = middle - 0.5 * channelExtent;
@@ -208,18 +208,18 @@ void SoundArea_draw (SoundArea me, Sound sound, LongSound longSound, double glob
 			Draw the samples.
 		*/
 		/*if (ichan == 1) FunctionEditor_SoundAnalysis_drawPulses (this);*/
-		if (sound) {
+		if (my sound()) {
 			Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), minimum, maximum);
 			if (cursorVisible && isdefined (cursorFunctionValue))
 				SoundArea_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), U"");
 			Graphics_setColour (my graphics(), Melder_BLACK);
-			Graphics_function (my graphics(), & sound -> z [ichan] [0], first, last,
-					Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+			Graphics_function (my graphics(), & my sound() -> z [ichan] [0], first, last,
+					Sampled_indexToX (my sound(), first), Sampled_indexToX (my sound(), last));
 		} else {
 			Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), minimum * 32768, maximum * 32768);
 			Graphics_function16 (my graphics(),
-					longSound -> buffer.asArgumentToFunctionThatExpectsZeroBasedArray() - longSound -> imin * numberOfChannels + (ichan - 1),
-					numberOfChannels, first, last, Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
+					my longSound() -> buffer.asArgumentToFunctionThatExpectsZeroBasedArray() - my longSound() -> imin * numberOfChannels + (ichan - 1),
+					numberOfChannels, first, last, Sampled_indexToX (my longSound(), first), Sampled_indexToX (my longSound(), last));
 		}
 		Graphics_resetViewport (my graphics(), vp);
 	}
