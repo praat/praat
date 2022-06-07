@@ -657,7 +657,7 @@ void structFormantPathEditor :: v_dataChanged () {
 	}
 	our d_formant = FormantPath_extractFormant (our formantPath());
 	our v_updateMenuItems_navigation ();
-	FormantPathEditor_Parent :: v_dataChanged ();   // does all the updating
+	FormantPathEditor_Parent :: v_dataChanged ();
 }
 
 /********** DRAWING AREA **********/
