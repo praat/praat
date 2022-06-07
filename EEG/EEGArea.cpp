@@ -28,8 +28,8 @@ Thing_implement (EEGArea, SoundArea, 0);
 #include "EEGArea_prefs.h"
 
 conststring32 structEEGArea :: v_getChannelName (integer channelNumber) {
-	Melder_assert (our eeg());
-	return our eeg() -> channelNames [channelNumber].get();
+	Melder_assert (our eeg);
+	return our eeg -> channelNames [channelNumber].get();
 }
 
 /* End of file EEGArea.cpp */

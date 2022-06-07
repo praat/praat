@@ -22,7 +22,8 @@
 #include "EEGArea.h"
 
 Thing_define (EEGWindow, TextGridEditor) {
-	EEG eeg;
+	EEG eeg() { return static_cast <EEG> (our data); }
+
 	//autoEEGArea eegArea; BUG: this will have to return once EEGWindow no longer inherits from TextGridEditor
 	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
 

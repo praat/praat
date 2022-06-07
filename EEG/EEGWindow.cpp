@@ -43,7 +43,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_preserveTimes (EEGWindow me,
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
-		autoEEG result = EEG_extractPart (my eeg, my startSelection, my endSelection, true);
+		autoEEG result = EEG_extractPart (my eeg(), my startSelection, my endSelection, true);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -51,7 +51,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_timeFromZero (EEGWindow me, 
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
-		autoEEG result = EEG_extractPart (my eeg, my startSelection, my endSelection, false);
+		autoEEG result = EEG_extractPart (my eeg(), my startSelection, my endSelection, false);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -72,9 +72,9 @@ void structEEGWindow :: v_updateMenuItems_file () {
 autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 	try {
 		autoEEGWindow me = Thing_new (EEGWindow);
-		autoEEGArea eegArea = EEGArea_create (me.get(), eeg);
-		my eeg = eeg;   // before initing, because initing will already draw!
-		TextGridEditor_init (me.get(), eegArea.move(), title, eeg -> textgrid.get(), eeg -> sound.get(), false, nullptr, nullptr);
+		autoEEGArea eggArea = EEGArea_create (me.get(), eeg -> sound.get(), eeg);
+		TextGridEditor_init (me.get(), eggArea.move(), title, eeg -> textgrid.get(), eeg -> sound.get(), false, nullptr, nullptr);
+		my data = eeg -> textgrid.get();   // BUG: short fix
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EEG window not created.");
