@@ -29,19 +29,19 @@ void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void structDurationTierEditor :: v_play (double fromTime, double toTime) {
-	if (our d_sound.data) {
-		Sound_playPart (our d_sound.data, fromTime, toTime, nullptr, nullptr);
+	if (our sound()) {
+		Sound_playPart (our sound(), fromTime, toTime, nullptr, nullptr);
 	} else {
 		//DurationTier_playPart (data, fromTime, toTime, false);
 	}
 }
 
-autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier durationTier, Sound sound, bool ownSound) {
+autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier durationTier, Sound sound) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
-		autoDurationTierArea area = DurationTierArea_create (me.get(), durationTier);
+		autoDurationTierArea mainArea = DurationTierArea_create (me.get(), durationTier);
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
-		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, durationTier, sound, ownSound);
+		RealTierEditor_init (me.get(), mainArea.move(), soundArea.move(), title, true);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DurationTier window not created.");

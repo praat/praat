@@ -20,26 +20,16 @@
 
 #include "FunctionEditor.h"
 #include "SoundArea.h"
-#include "Sound.h"
-#include "LongSound.h"
-
-struct TimeSoundEditor_sound {
-	Sound data;
-	double minimum, maximum;
-};
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
 	autoSoundArea soundArea;
-
-	bool d_ownSound;
-	struct TimeSoundEditor_sound d_sound;
-	struct { LongSound data; } d_longSound;
+	SampledXY soundOrLongSound() { return our soundArea -> soundOrLongSound(); }
+	Sound sound() { return our soundArea -> sound(); }
+	LongSound longSound() { return our soundArea -> longSound(); }
 
 	GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
 	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 
-	void v_destroy () noexcept
-		override;
 	void v_info ()
 		override;
 	void v_createMenuItems_file (EditorMenu menu)
@@ -64,7 +54,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 };
 
 void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title,
-		Function *pFunction, SampledXY sound, bool ownSound);
+		Function function, bool ownSound);
 
 /* End of file TimeSoundEditor.h */
 #endif

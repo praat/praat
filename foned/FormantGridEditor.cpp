@@ -35,18 +35,18 @@ Thing_implement (FormantGridEditor, FunctionEditor, 0);
 
 static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove point(s)");
-	OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid -> bandwidths : & my formantGrid -> formants );
-	RealTier tier = tiers->at [my selectedFormant];
-	RealTierArea_removePoints (my formantGridArea.get(), tier);
+	OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid() -> bandwidths : & my formantGrid() -> formants );
+	my formantGridArea -> function = tiers->at [my selectedFormant];
+	RealTierArea_removePoints (my formantGridArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAtCursor (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Add point");
-	OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid -> bandwidths : & my formantGrid -> formants );
-	RealTier tier = tiers->at [my selectedFormant];
-	RealTierArea_addPointAtCursor (my formantGridArea.get(), tier);
+	OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid() -> bandwidths : & my formantGrid() -> formants );
+	my formantGridArea -> function = tiers->at [my selectedFormant];
+	RealTierArea_addPointAtCursor (my formantGridArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -60,9 +60,9 @@ static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (frequency, my formantGridArea -> ycursor)
 	EDITOR_DO
 		Editor_save (me, U"Add point");
-		OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid -> bandwidths : & my formantGrid -> formants );
-		RealTier tier = tiers->at [my selectedFormant];
-		RealTierArea_addPointAt (my formantGridArea.get(), tier, time, frequency);
+		OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid() -> bandwidths : & my formantGrid() -> formants );
+		my formantGridArea -> function = tiers->at [my selectedFormant];
+		RealTierArea_addPointAt (my formantGridArea.get(), time, frequency);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -103,7 +103,7 @@ static void menu_cb_showBandwidths (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void selectFormantOrBandwidth (FormantGridEditor me, integer iformant) {
-	const integer numberOfFormants = my formantGrid -> formants.size;
+	const integer numberOfFormants = my formantGrid() -> formants.size;
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
 	my selectedFormant = iformant;
@@ -192,7 +192,7 @@ void structFormantGridEditor :: v_distributeAreas () {
 }
 
 void structFormantGridEditor :: v_draw () {
-	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & our formantGrid -> bandwidths : & our formantGrid -> formants );
+	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & our formantGrid() -> bandwidths : & our formantGrid() -> formants );
 	RealTier selectedTier = tiers->at [our selectedFormant];
 	our formantGridArea -> ymin = ( our editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
 	our formantGridArea -> ymax = ( our editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
@@ -210,7 +210,7 @@ void structFormantGridEditor :: v_draw () {
 	//		Melder_float (Melder_half (our formantGridArea -> ycursor)));
 	Graphics_setLineWidth (our graphics.get(), 1.0);
 	Graphics_setColour (our graphics.get(), Melder_GREY);
-	for (integer iformant = 1; iformant <= our formantGrid -> formants.size; iformant ++) if (iformant != our selectedFormant) {
+	for (integer iformant = 1; iformant <= our formantGrid() -> formants.size; iformant ++) if (iformant != our selectedFormant) {
 		RealTier tier = tiers->at [iformant];
 		integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our startWindow);
 		integer imax = AnyTier_timeToLowIndex (tier->asAnyTier(), our endWindow);
@@ -240,14 +240,15 @@ void structFormantGridEditor :: v_draw () {
 			}
 		}
 	}
-	RealTierArea_draw (our formantGridArea.get(), selectedTier);
+	our formantGridArea -> function = selectedTier;
+	RealTierArea_draw (our formantGridArea.get());
 	if (isdefined (our formantGridArea -> anchorTime))
-		RealTierArea_drawWhileDragging (our formantGridArea.get(), selectedTier);
+		RealTierArea_drawWhileDragging (our formantGridArea.get());
 }
 
 bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
-	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & our formantGrid -> bandwidths : & our formantGrid -> formants );
-	RealTier tier = tiers->at [selectedFormant];
+	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & our formantGrid() -> bandwidths : & our formantGrid() -> formants );
+	our formantGridArea -> function = tiers->at [selectedFormant];
 	our formantGridArea -> ymin = ( our editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
 	our formantGridArea -> ymax = ( our editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
 
@@ -256,7 +257,7 @@ bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		clickedInWideRealTierArea = our formantGridArea -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
 	if (clickedInWideRealTierArea) {
-		result = RealTierArea_mouse (our formantGridArea.get(), tier, event, x_world, globalY_fraction);
+		result = RealTierArea_mouse (our formantGridArea.get(), event, x_world, globalY_fraction);
 	} else {
 		result = our FormantGridEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
@@ -266,7 +267,7 @@ bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 }
 
 void structFormantGridEditor :: v_play (double startTime, double endTime) {
-	FormantGrid_playPart (our formantGrid, startTime, endTime, our instancePref_play_samplingFrequency(),
+	FormantGrid_playPart (our formantGrid(), startTime, endTime, our instancePref_play_samplingFrequency(),
 		our instancePref_source_pitch_tStart(), our instancePref_source_pitch_f0Start(),
 		our instancePref_source_pitch_tMid(),   our instancePref_source_pitch_f0Mid(),
 		our instancePref_source_pitch_tEnd(),   our instancePref_source_pitch_f0End(),
@@ -276,11 +277,10 @@ void structFormantGridEditor :: v_play (double startTime, double endTime) {
 		theFunctionEditor_playCallback, this);
 }
 
-void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid formantGrid) {
+void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid formantGrid) {   // BUG: rid
 	Melder_assert (formantGrid);
 	Melder_assert (Thing_isa (formantGrid, classFormantGrid));
-	my formantGrid = formantGrid;
-	FunctionEditor_init (me, title, MelderPointerToPointerCast <structFunction> (& my formantGrid));
+	FunctionEditor_init (me, title, formantGrid);
 	my selectedFormant = 1;
 	my formantGridArea = Thing_new (FormantGridArea);
 	RealTierArea_init (my formantGridArea.get(), me, formantGrid -> formants.at [my selectedFormant]);

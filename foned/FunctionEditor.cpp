@@ -1509,13 +1509,12 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 	Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-void FunctionEditor_init (FunctionEditor me, conststring32 title, Function *pFunction) {
+void FunctionEditor_init (FunctionEditor me, conststring32 title, Function function) {
 	if (Melder_debug == 55)
 		Melder_casual (Thing_messageNameAndAddress (me), U" init");
-	my tmin = (*pFunction) -> xmin;   // set before adding children (see group button)
-	my tmax = (*pFunction) -> xmax;
-	Editor_init (me, 0, 0, my classPref_shellWidth(), my classPref_shellHeight(), title,
-			MelderPointerToPointerCast <structDaata> (pFunction));
+	my tmin = function -> xmin;   // set before adding children (see group button)
+	my tmax = function -> xmax;
+	Editor_init (me, 0, 0, my classPref_shellWidth(), my classPref_shellHeight(), title, function);
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;
@@ -1561,7 +1560,7 @@ void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
 void FunctionEditor_ungroup (Daata data) {
 	for (integer ieditor = 1; ieditor <= THE_MAXIMUM_GROUP_SIZE; ieditor ++) {
 		const FunctionEditor me = theGroupMembers [ieditor];
-		if (me && my group && my pData && *my pData == data) {   // BUG: this may not be precise enough, in case an editor is editing multiple objects
+		if (me && my group && my data == data) {   // BUG: this may not be precise enough, in case an editor is editing multiple objects
 			my group = false;
 			GuiCheckButton_setValue (my groupButton, false);
 			theGroupMembers [ieditor] = nullptr;

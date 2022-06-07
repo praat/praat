@@ -208,9 +208,9 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantPathEditor me, EDITOR_AR
 		my setClassPref_function_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		{// scope
-			autoSound sound = my d_longSound.data ?
-				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
-				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
+			autoSound sound = my longSound() ?
+				LongSound_extractPart (my longSound(), my startWindow, my endWindow, true) :
+				Sound_extractPart (my sound(), my startWindow, my endWindow,
 						kSound_windowShape::RECTANGULAR, 1.0, true);
 			TextGrid_Sound_draw (my textgrid.get(), sound.get(), my pictureGraphics,
 					my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
@@ -223,7 +223,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantPathEditor me, EDITOR_AR
 void structFormantPathEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 	FormantPathEditor_Parent :: v_createMenuItems_file_draw (menu);
 	EditorMenu_addCommand (menu, U"Draw visible TextGrid...", 0, menu_cb_DrawVisibleTextGrid);
-	if (d_sound.data || d_longSound.data)
+	if (our soundOrLongSound())
 		EditorMenu_addCommand (menu, U"Draw visible sound and TextGrid...", 0, menu_cb_DrawVisibleSoundAndTextGrid);
 }
 
@@ -616,7 +616,7 @@ void structFormantPathEditor :: v_createMenus () {
 //	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
 //	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 
-	if (our d_sound.data || our d_longSound.data) {
+	if (our soundOrLongSound()) {
 		if (our v_hasAnalysis ())
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
@@ -662,9 +662,9 @@ void structFormantPathEditor :: v_dataChanged () {
 /********** DRAWING AREA **********/
 
 void structFormantPathEditor :: v_prepareDraw () {
-	if (our d_longSound.data) {
+	if (our longSound()) {
 		try {
-			LongSound_haveWindow (our d_longSound.data, our startWindow, our endWindow);
+			LongSound_haveWindow (our longSound(), our startWindow, our endWindow);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -675,14 +675,14 @@ void structFormantPathEditor :: v_draw () {
 	Graphics_Viewport vp1;
 	const bool showAnalysis = our v_hasAnalysis () &&
 		(our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) &&
-		(our d_longSound.data || our d_sound.data)
+		our soundOrLongSound()
 	;
 	const double soundBottom = our v_getBottomOfSoundArea ();
 
 	/*
 		Draw the sound.
 	*/
-	if (our d_sound.data || our d_longSound.data) {
+	if (our soundOrLongSound()) {
 		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundBottom, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -708,7 +708,7 @@ void structFormantPathEditor :: v_draw () {
 		}
 	}
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-	/*if (our d_longSound.data || our d_sound.data) {
+	/*if (our soundOrLongSound()) {
 		Graphics_line (our graphics.get(), our startWindow, soundBottom, our endWindow, soundBottom);
 		if (showAnalysis) {
 			Graphics_line (our graphics.get(), our startWindow, soundBottom2, our endWindow, soundBottom2);
@@ -840,9 +840,9 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 }
 
 void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
-	if (! our d_sound.data && ! our d_longSound.data)
+	if (! our soundOrLongSound())
 		return;
-	const integer numberOfChannels = ( our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny );
+	const integer numberOfChannels = our soundOrLongSound() -> ny;
 	integer numberOfMuteChannels = 0;
 	Melder_assert (our soundArea -> muteChannels.size == numberOfChannels);
 	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
@@ -851,22 +851,22 @@ void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
 	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
 	Melder_require (numberOfChannelsToPlay > 0,
 		U"Please select at least one channel to play.");
-	if (our d_longSound.data) {
+	if (our longSound()) {
 		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (our d_longSound.data, tmin_, tmax_, true);
+			autoSound part = LongSound_extractPart (our longSound(), tmin_, tmax_, true);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
 			Sound_MixingMatrix_playPart (part.get(), thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
 		} else {
-			LongSound_playPart (our d_longSound.data, tmin_, tmax_, theFunctionEditor_playCallback, this);
+			LongSound_playPart (our longSound(), tmin_, tmax_, theFunctionEditor_playCallback, this);
 		}
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
-			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (our sound(), thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
 		} else {
-			Sound_playPart (our d_sound.data, tmin_, tmax_, theFunctionEditor_playCallback, this);
+			Sound_playPart (our sound(), tmin_, tmax_, theFunctionEditor_playCallback, this);
 		}
 	}
 }
@@ -907,7 +907,7 @@ void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu me
 }
 
 void structFormantPathEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our instancePref_spectrogram_show() && (our d_longSound.data || our d_sound.data))
+	if (our v_hasAnalysis () && our instancePref_spectrogram_show() && our soundOrLongSound())
 		Graphics_highlight (our graphics.get(), left, right, bottom + (top - bottom) * our v_getBottomOfSoundArea (), top);
 	else
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);
@@ -917,11 +917,11 @@ double structFormantPathEditor :: v_getBottomOfSoundArea () {
 	/*
 		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid
 	*/
-	return (our d_longSound.data ||our d_sound.data) ? 0.7 : 1.0;
+	return our soundOrLongSound() ? 0.7 : 1.0;
 }
 
 double structFormantPathEditor :: v_getBottomOfSoundAndAnalysisArea () {
-	return (our textgrid ? 0.3 : 0.0);
+	return our textgrid ? 0.3 : 0.0;
 }
 
 void structFormantPathEditor :: v_createMenuItems_pitch_picture (EditorMenu menu) {
@@ -942,8 +942,7 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
 		my formantPath = formantPath;
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
-		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title,
-				MelderPointerToPointerCast <structFunction> (& my formantPath), sound, false);
+		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title, formantPath, false);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		if (textgrid)
 			my textgrid = Data_copy (textgrid);

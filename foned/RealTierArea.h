@@ -22,6 +22,8 @@
 #include "RealTier.h"
 
 Thing_define (RealTierArea, FunctionArea) {
+	RealTier realTier() { return static_cast <RealTier> (our function); }
+
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
 	virtual conststring32 v_rightTickUnits () { return U""; }
@@ -41,19 +43,19 @@ Thing_define (RealTierArea, FunctionArea) {
 	#include "RealTierArea_prefs.h"
 };
 
-void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY);
+void RealTierArea_addPointAt (RealTierArea me, double time, double desiredY);
 
-void RealTierArea_removePoints (RealTierArea me, RealTier tier);
+void RealTierArea_removePoints (RealTierArea me);
 
-void RealTierArea_addPointAtCursor (RealTierArea me, RealTier tier);
+void RealTierArea_addPointAtCursor (RealTierArea me);
 
-void RealTierArea_updateScaling (RealTierArea me, RealTier tier);
+void RealTierArea_updateScaling (RealTierArea me);
 
-void RealTierArea_draw (RealTierArea me, RealTier tier);
+void RealTierArea_draw (RealTierArea me);
 
-void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier);
+void RealTierArea_drawWhileDragging (RealTierArea me);
 
-bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
+bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
 inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, RealTier realTier) {
 	FunctionArea_init (me, editor, realTier);

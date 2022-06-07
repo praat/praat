@@ -35,7 +35,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_local (PointEditor me, EDITOR_ARGS_DI
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure jitter, make a selection first.");
-		const double result = PointProcess_getJitter_local (my pointProcess, my startSelection, my endSelection, 1e-4, 0.02, 1.3);
+		const double result = PointProcess_getJitter_local (my pointProcess(), my startSelection, my endSelection, 1e-4, 0.02, 1.3);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
@@ -43,7 +43,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_local_absolute (PointEditor me, EDITO
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure jitter, make a selection first.");
-		const double result = PointProcess_getJitter_local_absolute (my pointProcess, my startSelection, my endSelection, 1e-4, 0.02, 1.3);
+		const double result = PointProcess_getJitter_local_absolute (my pointProcess(), my startSelection, my endSelection, 1e-4, 0.02, 1.3);
 	QUERY_DATA_FOR_REAL_END (U" seconds");
 }
 
@@ -51,7 +51,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_rap (PointEditor me, EDITOR_ARGS_DIRE
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure jitter, make a selection first.");
-		const double result = PointProcess_getJitter_rap (my pointProcess, my startSelection, my endSelection, 1e-4, 0.02, 1.3);
+		const double result = PointProcess_getJitter_rap (my pointProcess(), my startSelection, my endSelection, 1e-4, 0.02, 1.3);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
@@ -59,7 +59,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_ppq5 (PointEditor me, EDITOR_ARGS_DIR
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure jitter, make a selection first.");
-		const double result = PointProcess_getJitter_ppq5 (my pointProcess, my startSelection, my endSelection, 1e-4, 0.02, 1.3);
+		const double result = PointProcess_getJitter_ppq5 (my pointProcess(), my startSelection, my endSelection, 1e-4, 0.02, 1.3);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
@@ -67,7 +67,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_ddp (PointEditor me, EDITOR_ARGS_DIRE
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure jitter, make a selection first.");
-		const double result = PointProcess_getJitter_ddp (my pointProcess, my startSelection, my endSelection, 1e-4, 0.02, 1.3);
+		const double result = PointProcess_getJitter_ddp (my pointProcess(), my startSelection, my endSelection, 1e-4, 0.02, 1.3);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
@@ -75,7 +75,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_local (PointEditor me, EDITOR_ARGS_D
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure shimmer, make a selection first.");
-		const double result = PointProcess_Sound_getShimmer_local (my pointProcess, my d_sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
+		const double result = PointProcess_Sound_getShimmer_local (my pointProcess(), my sound(), my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
@@ -83,7 +83,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_local_dB (PointEditor me, EDITOR_ARG
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure shimmer, make a selection first.");
-		const double result = PointProcess_Sound_getShimmer_local_dB (my pointProcess, my d_sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
+		const double result = PointProcess_Sound_getShimmer_local_dB (my pointProcess(), my sound(), my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
 	QUERY_DATA_FOR_REAL_END (U" dB")
 }
 
@@ -91,7 +91,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_apq3 (PointEditor me, EDITOR_ARGS_DI
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure shimmer, make a selection first.");
-		const double result = PointProcess_Sound_getShimmer_apq3 (my pointProcess, my d_sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
+		const double result = PointProcess_Sound_getShimmer_apq3 (my pointProcess(), my sound(), my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
@@ -99,7 +99,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_apq5 (PointEditor me, EDITOR_ARGS_DI
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure shimmer, make a selection first.");
-		const double result = PointProcess_Sound_getShimmer_apq5 (my pointProcess, my d_sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
+		const double result = PointProcess_Sound_getShimmer_apq5 (my pointProcess(), my sound(), my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
@@ -107,7 +107,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_apq11 (PointEditor me, EDITOR_ARGS_D
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure shimmer, make a selection first.");
-		const double result = PointProcess_Sound_getShimmer_apq11 (my pointProcess, my d_sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
+		const double result = PointProcess_Sound_getShimmer_apq11 (my pointProcess(), my sound(), my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
@@ -115,22 +115,22 @@ static void QUERY_DATA_FOR_REAL__getShimmer_dda (PointEditor me, EDITOR_ARGS_DIR
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection != my endSelection,
 			U"To measure shimmer, make a selection first.");
-		const double result = PointProcess_Sound_getShimmer_dda (my pointProcess, my d_sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
+		const double result = PointProcess_Sound_getShimmer_dda (my pointProcess(), my sound(), my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6);
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
 static void MODIFY_DATA__removePoints (PointEditor me, EDITOR_ARGS_DIRECT) {
 	MODIFY_DATA (U"Remove point(s)")
 		if (my startSelection == my endSelection)
-			PointProcess_removePointNear (my pointProcess, my startSelection);
+			PointProcess_removePointNear (my pointProcess(), my startSelection);
 		else
-			PointProcess_removePointsBetween (my pointProcess, my startSelection, my endSelection);
+			PointProcess_removePointsBetween (my pointProcess(), my startSelection, my endSelection);
 	MODIFY_DATA_END
 }
 
 static void MODIFY_DATA__addPointAtCursor (PointEditor me, EDITOR_ARGS_DIRECT) {
 	MODIFY_DATA (U"Add point")
-		PointProcess_addPoint (my pointProcess, 0.5 * (my startSelection + my endSelection));
+		PointProcess_addPoint (my pointProcess(), 0.5 * (my startSelection + my endSelection));
 	MODIFY_DATA_END
 }
 
@@ -141,7 +141,7 @@ static void MODIFY_DATA__addPointAt (PointEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (position, 0.5 * (my startSelection + my endSelection));
 	EDITOR_DO
 		MODIFY_DATA (U"Add point")
-			PointProcess_addPoint (my pointProcess, position);
+			PointProcess_addPoint (my pointProcess(), position);
 		MODIFY_DATA_END
 	EDITOR_END
 }
@@ -164,7 +164,7 @@ void structPointEditor :: v_createMenus () {
 			QUERY_DATA_FOR_REAL__getJitter_ppq5);
 	Editor_addCommand (this, U"Query", U"Get jitter (ddp)", 0,
 			QUERY_DATA_FOR_REAL__getJitter_ddp);
-	if (d_sound.data) {
+	if (our sound()) {
 		Editor_addCommand (this, U"Query", U"-- query shimmer --", 0, nullptr);
 		Editor_addCommand (this, U"Query", U"Get shimmer (local)", 0,
 				QUERY_DATA_FOR_REAL__getShimmer_local);
@@ -199,17 +199,16 @@ void structPointEditor :: v_createHelpMenuItems (EditorMenu menu) {
 #pragma mark - DRAW
 
 void structPointEditor :: v_draw () {
-	Sound sound = our d_sound.data;
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	double minimum = -1.0, maximum = +1.0;
-	if (sound && (our soundArea -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW ||
+	if (our sound() && (our soundArea -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW ||
 			our soundArea -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW_AND_CHANNEL))
 	{
 		integer first, last;
-		if (Sampled_getWindowSamples (sound, our startWindow, our endWindow, & first, & last) >= 1) {
-			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
+		if (Sampled_getWindowSamples (our sound(), our startWindow, our endWindow, & first, & last) >= 1) {
+			Matrix_getWindowExtrema (our sound(), first, last, 1, 1, & minimum, & maximum);
 			if (minimum == maximum) {
 				minimum -= 1.0;
 				maximum += 1.0;
@@ -218,20 +217,20 @@ void structPointEditor :: v_draw () {
 	}
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, minimum, maximum);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	if (sound) {
+	if (our sound()) {
 		integer first, last;
-		if (Sampled_getWindowSamples (sound, our startWindow, our endWindow, & first, & last) > 1) {
+		if (Sampled_getWindowSamples (our sound(), our startWindow, our endWindow, & first, & last) > 1) {
 			Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 			Graphics_line (our graphics.get(), our startWindow, 0.0, our endWindow, 0.0);
 			Graphics_setLineType (our graphics.get(), Graphics_DRAWN);
-			Graphics_function (our graphics.get(), & sound -> z [1] [0], first, last,
-				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+			Graphics_function (our graphics.get(), & our sound() -> z [1] [0], first, last,
+				Sampled_indexToX (our sound(), first), Sampled_indexToX (our sound(), last));
 		}
 	}
 	Graphics_setColour (our graphics.get(), Melder_BLUE);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, -1.0, +1.0);
-	for (integer i = 1; i <= our pointProcess -> nt; i ++) {
-		const double t = our pointProcess -> t [i];
+	for (integer i = 1; i <= our pointProcess() -> nt; i ++) {
+		const double t = our pointProcess() -> t [i];
 		if (t >= our startWindow && t <= our endWindow)
 			Graphics_line (our graphics.get(), t, -0.9, t, +0.9);
 	}
@@ -242,10 +241,10 @@ void structPointEditor :: v_draw () {
 #pragma mark - PLAY
 
 void structPointEditor :: v_play (double startTime, double endTime) {
-	if (d_sound.data)
-		Sound_playPart (d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
+	if (our sound())
+		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	else
-		PointProcess_playPart (our pointProcess, startTime, endTime);
+		PointProcess_playPart (our pointProcess(), startTime, endTime);
 }
 
 #pragma mark - CREATE
@@ -253,14 +252,12 @@ void structPointEditor :: v_play (double startTime, double endTime) {
 autoPointEditor PointEditor_create (conststring32 title, PointProcess pointProcess, Sound sound) {
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
-		my pointProcess = pointProcess;
 		autoSoundArea soundArea;
 		if (sound) {
 			my monoSound = Sound_convertToMono (sound);
 			soundArea = SoundArea_create (me.get(), my monoSound.get());
 		}
-		TimeSoundEditor_init (me.get(), soundArea.move(), title,
-				MelderPointerToPointerCast <structFunction> (& my pointProcess), my monoSound.get(), false);
+		TimeSoundEditor_init (me.get(), soundArea.move(), title, pointProcess, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess window not created.");

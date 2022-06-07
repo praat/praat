@@ -37,8 +37,8 @@ void structStringsEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 static void updateList (StringsEditor me) {
 	GuiList_deleteAllItems (my list);
-	for (integer i = 1; i <= my strings -> numberOfStrings; i ++)
-		GuiList_insertItem (my list, my strings -> strings [i].get(), 0);
+	for (integer i = 1; i <= my strings() -> numberOfStrings; i ++)
+		GuiList_insertItem (my list, my strings() -> strings [i].get(), 0);
 }
 
 static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) {
@@ -46,12 +46,12 @@ static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) 
 		Find the first selected item.
 	*/
 	autoINTVEC selected = GuiList_getSelectedPositions (my list);
-	integer position = ( selected.size >= 1 ? selected [1] : my strings -> numberOfStrings + 1 );
+	integer position = ( selected.size >= 1 ? selected [1] : my strings() -> numberOfStrings + 1 );
 	autostring32 text = GuiText_getString (my text);
 	/*
 		Change the data.
 	*/
-	Strings_insert (my strings, position, text.get());
+	Strings_insert (my strings(), position, text.get());
 	/*
 		Change the list.
 	*/
@@ -69,13 +69,13 @@ static void gui_button_cb_append (StringsEditor me, GuiButtonEvent /* event */) 
 	/*
 		Change the data.
 	*/
-	Strings_insert (my strings, 0, text.get());
+	Strings_insert (my strings(), 0, text.get());
 	/*
 		Change the list.
 	*/
 	GuiList_insertItem (my list, text.get(), 0);
 	GuiList_deselectAllItems (my list);
-	GuiList_selectItem (my list, my strings -> numberOfStrings);
+	GuiList_selectItem (my list, my strings() -> numberOfStrings);
 	/*
 		Clean up.
 	*/
@@ -85,7 +85,7 @@ static void gui_button_cb_append (StringsEditor me, GuiButtonEvent /* event */) 
 static void gui_button_cb_remove (StringsEditor me, GuiButtonEvent /* event */) {
 	autoINTVEC selected = GuiList_getSelectedPositions (my list);
 	for (integer iselected = selected.size; iselected >= 1; iselected --)
-		Strings_remove (my strings, selected [iselected]);
+		Strings_remove (my strings(), selected [iselected]);
 	updateList (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -94,7 +94,7 @@ static void gui_button_cb_replace (StringsEditor me, GuiButtonEvent /* event */)
 	autoINTVEC selected = GuiList_getSelectedPositions (my list);
 	autostring32 text = GuiText_getString (my text);
 	for (integer iselected = 1; iselected <= selected.size; iselected ++) {
-		Strings_replace (my strings, selected [iselected], text.get());
+		Strings_replace (my strings(), selected [iselected], text.get());
 		GuiList_replaceItem (my list, text.get(), selected [iselected]);
 	}
 	Editor_broadcastDataChanged (me);
@@ -124,8 +124,7 @@ void structStringsEditor :: v_dataChanged () {
 autoStringsEditor StringsEditor_create (conststring32 title, Strings strings) {
 	try {
 		autoStringsEditor me = Thing_new (StringsEditor);
-		my strings = strings;
-		Editor_init (me.get(), 20, 40, 600, 600, title, MelderPointerToPointerCast <structDaata> (& my strings));
+		Editor_init (me.get(), 20, 40, 600, 600, title, strings);
 		updateList (me.get());
 		return me;
 	} catch (MelderError) {

@@ -56,7 +56,7 @@ Thing_define (Editor, Thing) {
 	GuiWindow windowForm;
 	GuiMenuItem undoButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
-	Daata *pData;   // the data that can be displayed and edited
+	Daata data;   // the data that can be displayed and edited
 	autoDaata previousData;   // the data that can be displayed and edited
 	char32 undoText [100];
 	Graphics pictureGraphics;
@@ -201,7 +201,7 @@ inline void Editor_broadcastPublication (Editor me, autoDaata publication)
 /***** For inheritors. *****/
 
 void Editor_init (Editor me, int x, int y , int width, int height,
-	conststring32 title, Daata *pData);
+	conststring32 title, Daata data);
 /*
 	This creates my shell and my windowForm,
 	calls the v_createMenus and v_createChildren methods,
@@ -219,7 +219,7 @@ void Editor_init (Editor me, int x, int y , int width, int height,
 	if 'y' < 0, |'y'| is the distance to the bottom of the screen;
 	if 'y' is 0, the editor is vertically centred on the screen;
 	This routine does not transfer ownership of '*pData' to the Editor,
-	and the Editor will not destroy '*pData' when the Editor itself is destroyed.
+	and the Editor will not destroy 'data' when the Editor itself is destroyed.
 */
 
 void Editor_save (Editor me, conststring32 text);   // for Undo

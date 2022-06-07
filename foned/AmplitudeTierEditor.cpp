@@ -31,19 +31,19 @@ void structAmplitudeTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void structAmplitudeTierEditor :: v_play (double startTime, double endTime) {
-	if (our d_sound.data) {
-		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
+	if (our sound()) {
+		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
 		//AmplitudeTier_playPart (data, startTime, endTime, false);
 	}
 }
 
-autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitudeTier, Sound sound, bool ownSound) {
+autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitudeTier, Sound sound) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
 		autoAmplitudeTierArea area = AmplitudeTierArea_create (me.get(), amplitudeTier);
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
-		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, amplitudeTier, sound, ownSound);
+		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, true);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AmplitudeTier window not created.");

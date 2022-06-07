@@ -22,7 +22,8 @@
 #include "PointProcess.h"
 
 Thing_define (PointEditor, TimeSoundEditor) {
-	PointProcess pointProcess;
+	PointProcess pointProcess() { return static_cast <PointProcess> (our data); }
+	
 	autoSound monoSound;
 	GuiObject addPointAtDialog;
 

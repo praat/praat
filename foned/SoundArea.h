@@ -24,14 +24,24 @@
 #include "SoundArea_enums.h"
 
 Thing_define (SoundArea, FunctionArea) {
-	SampledXY & soundOrLongSound() { return * reinterpret_cast <SampledXY *> (& our function); }
+	SampledXY soundOrLongSound() { return static_cast <SampledXY> (our function); }
 	Sound sound() { return Thing_isa (our soundOrLongSound(), classSound) ? (Sound) soundOrLongSound() : nullptr; }
 	LongSound longSound() { return Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) soundOrLongSound() : nullptr; }
 
+	bool ownSound;
+	struct {
+		bool valid;
+		double globalMinimum, globalMaximum;
+		void invalidate () { our valid = false; }
+	} cache;
+	
 	double ymin, ymax;
 	integer channelOffset;
 	autoBOOLVEC muteChannels;
 	
+	void v_destroy () noexcept
+		override;
+
 	virtual conststring32 v_getChannelName (integer /* channelNumber */) { return nullptr; }
 
 	void viewSoundAsWorldByWorld () const {

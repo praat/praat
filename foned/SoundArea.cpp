@@ -33,6 +33,12 @@ Thing_implement (SoundArea, FunctionArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "SoundArea_prefs.h"
 
+void structSoundArea :: v_destroy () noexcept {
+	if (our ownSound)
+		forget (our function);
+	SoundArea_Parent :: v_destroy ();
+}
+
 void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units) {
 	Graphics_setColour (my graphics(), Melder_CYAN);
 	Graphics_line (my graphics(), my startWindow(), yWC, 0.99 * my startWindow() + 0.01 * my endWindow(), yWC);

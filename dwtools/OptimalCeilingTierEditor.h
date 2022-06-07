@@ -2,7 +2,7 @@
 #define _OptimalCeilingTierEditor_h_
 /* OptimalCeilingTierEditor.h
  *
- * Copyright (C) 2015 David Weenink, 2017,2020,2021 Paul Boersma
+ * Copyright (C) 2015 David Weenink, 2017,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 };
 
 autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 title,
-	OptimalCeilingTier amplitude,
-	Sound sound,   // may be null
-	bool ownSound);
+	OptimalCeilingTier optimalCeilingTier,   // main data
+	Sound sound   // may be null
+);
 
 /* End of file OptimalCeilingTierEditor.h */
 #endif

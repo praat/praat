@@ -17,7 +17,6 @@
  */
 
 #include <time.h>
-#include "TimeSoundAnalysisEditor.h"
 #include "Preferences.h"
 #include "EditorM.h"
 #include "Sound_and_Spectrogram.h"
@@ -28,6 +27,7 @@
 #include "Pitch_to_PointProcess.h"
 #include "VoiceAnalysis.h"
 #include "praat_script.h"
+#include "TimeSoundAnalysisEditor.h"
 
 #include "enums_getText.h"
 #include "TimeSoundAnalysisEditor_enums.h"
@@ -534,14 +534,14 @@ static void menu_cb_moveFrequencyCursorTo (TimeSoundAnalysisEditor me, EDITOR_AR
 
 static autoSound extractSound (TimeSoundAnalysisEditor me, double tmin, double tmax) {
 	autoSound sound;
-	if (my d_longSound.data) {
-		Melder_clipLeft (my d_longSound.data -> xmin, & tmin);
-		Melder_clipRight (& tmax, my d_longSound.data -> xmax);
-		sound = LongSound_extractPart (my d_longSound.data, tmin, tmax, true);
-	} else if (my d_sound.data) {
-		Melder_clipLeft (my d_sound.data -> xmin, & tmin);
-		Melder_clipRight (& tmax, my d_sound.data -> xmax);
-		sound = Sound_extractPart (my d_sound.data, tmin, tmax, kSound_windowShape::RECTANGULAR, 1.0, true);
+	if (my longSound()) {
+		Melder_clipLeft (my longSound() -> xmin, & tmin);
+		Melder_clipRight (& tmax, my longSound() -> xmax);
+		sound = LongSound_extractPart (my longSound(), tmin, tmax, true);
+	} else if (my sound()) {
+		Melder_clipLeft (my sound() -> xmin, & tmin);
+		Melder_clipRight (& tmax, my sound() -> xmax);
+		sound = Sound_extractPart (my sound(), tmin, tmax, kSound_windowShape::RECTANGULAR, 1.0, true);
 	}
 	return sound;
 }
@@ -573,7 +573,7 @@ static void CONVERT_DATA_TO_ONE__ViewSpectralSlice (TimeSoundAnalysisEditor me, 
 			my instancePref_spectrogram_windowShape() == kSound_to_Spectrogram_windowShape::GAUSSIAN ? kSound_windowShape::GAUSSIAN_2 : kSound_windowShape::RECTANGULAR
 		);
 		autoSpectrum result = Sound_to_Spectrum (sound.get(), true);
-	CONVERT_DATA_TO_ONE_END (Melder_cat (( *my pData ? (*my pData) -> name.get() : U"untitled" ),
+	CONVERT_DATA_TO_ONE_END (Melder_cat (( my data ? my data -> name.get() : U"untitled" ),
 			U"_", Melder_fixed (0.5 * (my startSelection + my endSelection), 3)))
 }
 
@@ -1333,7 +1333,7 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_view_sound_analysis (Edi
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_query (EditorMenu menu) {
 	TimeSoundAnalysisEditor_Parent :: v_createMenuItems_query (menu);
-	if (d_sound.data || d_longSound.data)
+	if (our soundOrLongSound())
 		v_createMenuItems_query_log (menu);
 }
 
@@ -2022,8 +2022,8 @@ void structTimeSoundAnalysisEditor :: v_repairPreferences () {
 	}
 }
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, autoSoundArea soundArea, conststring32 title, Function *pFunction, SampledXY sound, bool ownSound) {
-	TimeSoundEditor_init (me, soundArea.move(), title, pFunction, sound, ownSound);
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, autoSoundArea soundArea, conststring32 title, Function function, bool ownSound) {
+	TimeSoundEditor_init (me, soundArea.move(), title, function, ownSound);
 }
 
 /* End of file TimeSoundAnalysisEditor.cpp */

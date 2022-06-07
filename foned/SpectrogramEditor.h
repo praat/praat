@@ -22,7 +22,8 @@
 #include "Spectrogram.h"
 
 Thing_define (SpectrogramEditor, FunctionEditor) {
-	Spectrogram spectrogram;
+	Spectrogram spectrogram() { return static_cast <Spectrogram> (our data); }
+	
 	double maximum;
 
 	void v_draw ()

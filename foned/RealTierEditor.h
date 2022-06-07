@@ -22,8 +22,8 @@
 #include "RealTierArea.h"
 
 Thing_define (RealTierEditor, TimeSoundEditor) {
-	RealTier realTier;
 	autoRealTierArea realTierArea;
+
 	/*
 		mouse state
 	*/
@@ -57,7 +57,7 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 */
 
 void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, autoSoundArea soundArea,
-		conststring32 title, RealTier data, Sound sound, bool ownSound);
+		conststring32 title, bool ownSound);
 /*
 	`sound` may be null;
 	if `ownSound` is `true`, the editor will contain a deep copy of the Sound,
