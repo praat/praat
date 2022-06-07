@@ -46,7 +46,8 @@
 */
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
-	FormantPath formantPath;
+	FormantPath formantPath() { return static_cast <FormantPath> (our data); }
+
 	autoTextGrid textgrid;
 	autoFormant previousFormant;
 	Graphics_Viewport selectionViewer_viewport;
