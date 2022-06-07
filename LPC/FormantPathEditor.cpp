@@ -647,14 +647,14 @@ void structFormantPathEditor :: v_createChildren () {
 }
 
 void structFormantPathEditor :: v_dataChanged () {
-	const TextGrid grid = our textgrid.get();
-	/*
-		Perform a minimal selection change.
-		Most changes will involve intervals and boundaries; however, there may also be tier removals.
-		Do a simple guess.
-	*/
-	if (our selectedTier > grid -> tiers->size)
-		our selectedTier = grid -> tiers->size;
+	if (our textgrid) {
+		/*
+			Perform a minimal selection change.
+			Most changes will involve intervals and boundaries; however, there may also be tier removals.
+			Do a simple guess.
+		*/
+		Melder_clipRight (& our selectedTier, our textgrid -> tiers->size);
+	}
 	our v_updateMenuItems_navigation ();
 	FormantPathEditor_Parent :: v_dataChanged ();   // does all the updating
 }
@@ -834,7 +834,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		Sampled_getWindowSamples (our formantPath, tmin_, tmax_, & itmin, & itmax);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++)
 			our formantPath -> path [iframe] = our selectedCandidate;
-		Formant source = reinterpret_cast<Formant> (our formantPath -> formants.at [our selectedCandidate]);
+		Formant source = our formantPath -> formants.at [our selectedCandidate];
 		Formant_replaceFrames (d_formant.get(), itmin, itmax, source);
 	}
 }
