@@ -1,6 +1,6 @@
 /* Thing.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -241,7 +241,7 @@ void Thing_setName (Thing me, conststring32 name /* cattable */) {
 
 void Thing_swap (Thing me, Thing thee) {
 	Melder_assert (my classInfo == thy classInfo);
-	integer n = my classInfo -> size;
+	const integer n = my classInfo -> size;
 	char *p, *q;
 	integer i;
 	for (p = (char *) me, q = (char *) thee, i = n; i > 0; i --, p ++, q ++) {

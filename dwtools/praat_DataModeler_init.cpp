@@ -901,7 +901,7 @@ DO
 
 DIRECT (EDITOR_ONE_WITH_ONE_OptimalCeilingTier_edit) {
 	EDITOR_ONE_WITH_ONE (an,OptimalCeilingTier, Sound)   // Sound may be null
-		autoOptimalCeilingTierEditor editor = OptimalCeilingTierEditor_create (ID_AND_FULL_NAME, me, you, true);
+		autoOptimalCeilingTierEditor editor = OptimalCeilingTierEditor_create (ID_AND_FULL_NAME, me, you);
 	EDITOR_ONE_WITH_ONE_END
 }
 

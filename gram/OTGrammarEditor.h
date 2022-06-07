@@ -22,7 +22,7 @@
 #include "OTGrammar.h"
 
 Thing_define (OTGrammarEditor, HyperPage) {
-	OTGrammar otGrammar;
+	OTGrammar otGrammar() { return static_cast <OTGrammar> (our data); }
 
 	integer selected;
 	bool d_constraintsAreDrawnVertically;

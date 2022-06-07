@@ -398,11 +398,8 @@ autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
 	Melder_assert (erp);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		my sampled = erp;
 		autoERPArea erpArea = ERPArea_create (me.get(), erp);
-		Function *pFunction = & erpArea -> function;   // save before move
-		TimeSoundAnalysisEditor_init (me.get(), erpArea.move(), title,
-				MelderPointerToPointerCast <structFunction> (pFunction), erp, false);
+		TimeSoundAnalysisEditor_init (me.get(), erpArea.move(), title, erp, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");

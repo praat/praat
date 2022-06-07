@@ -26,8 +26,8 @@ Thing_define (FormantGridArea, RealTierArea) {
 };
 
 Thing_define (FormantGridEditor, FunctionEditor) {
+	FormantGrid formantGrid() { return static_cast <FormantGrid> (our data); }
 	autoFormantGridArea formantGridArea;
-	FormantGrid formantGrid;
 
 	bool editingBandwidths;
 	GuiMenuItem d_bandwidthsToggle;

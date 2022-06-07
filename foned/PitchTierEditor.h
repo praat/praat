@@ -23,8 +23,8 @@
 #include "Sound.h"
 
 Thing_define (PitchTierEditor, RealTierEditor) {
-	PitchTier & pitchTier() { return * reinterpret_cast <PitchTier *> (& our realTier); }
 	autoPitchTierArea & pitchTierArea() { return * reinterpret_cast <autoPitchTierArea *> (& our realTierArea); }
+	PitchTier pitchTier() { return our pitchTierArea() -> pitchTier(); }
 
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;

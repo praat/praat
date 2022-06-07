@@ -30,7 +30,7 @@ Thing_implement (SpectrumEditor, FunctionEditor, 0);
 #include "SpectrumEditor_prefs.h"
 
 static void updateRange (SpectrumEditor me) {
-	if (Spectrum_getPowerDensityRange (my spectrum, & my minimum, & my maximum)) {
+	if (Spectrum_getPowerDensityRange (my spectrum(), & my minimum, & my maximum)) {
 		my minimum = my maximum - my instancePref_dynamicRange();
 	} else {
 		my minimum = -1000.0;
@@ -49,7 +49,7 @@ void structSpectrumEditor :: v_draw () {
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Spectrum_drawInside (our spectrum, our graphics.get(), our startWindow, our endWindow, our minimum, our maximum);
+	Spectrum_drawInside (our spectrum(), our graphics.get(), our startWindow, our endWindow, our minimum, our maximum);
 	FunctionEditor_drawRangeMark (this, our maximum, Melder_fixed (maximum, 1), U" dB", Graphics_TOP);
 	FunctionEditor_drawRangeMark (this, our minimum, Melder_fixed (minimum, 1), U" dB", Graphics_BOTTOM);
 	if (our cursorHeight > our minimum && our cursorHeight < our maximum)
@@ -61,7 +61,7 @@ void structSpectrumEditor :: v_draw () {
 		TODO: this is not about drawing, so improve the logic.
 	*/
 	integer first, last;
-	const integer selectedSamples = Sampled_getWindowSamples (our spectrum, our startSelection, our endSelection, & first, & last);
+	const integer selectedSamples = Sampled_getWindowSamples (our spectrum(), our startSelection, our endSelection, & first, & last);
 	GuiThing_setSensitive (our publishBandButton,  selectedSamples != 0);
 	GuiThing_setSensitive (our publishSoundButton, selectedSamples != 0);
 }
@@ -90,19 +90,19 @@ static autoSound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) 
 }
 
 void structSpectrumEditor :: v_play (double fmin, double fmax) {
-	autoSound sound = Spectrum_to_Sound_part (our spectrum, fmin, fmax);
+	autoSound sound = Spectrum_to_Sound_part (our spectrum(), fmin, fmax);
 	Sound_play (sound.get(), nullptr, nullptr);
 }
 
 static void CONVERT_DATA_TO_ONE__PublishBand (SpectrumEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		autoSpectrum result = Spectrum_band (my spectrum, my startSelection, my endSelection);
+		autoSpectrum result = Spectrum_band (my spectrum(), my startSelection, my endSelection);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 static void CONVERT_DATA_TO_ONE__PublishSound (SpectrumEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		autoSound result = Spectrum_to_Sound_part (my spectrum, my startSelection, my endSelection);
+		autoSound result = Spectrum_to_Sound_part (my spectrum(), my startSelection, my endSelection);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -116,7 +116,7 @@ static void menu_cb_passBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 		Melder_require (my endSelection > my startSelection,
 			U"To apply a band-pass filter, first make a selection.");
 		Editor_save (me, U"Pass band");
-		Spectrum_passHannBand (my spectrum, my startSelection, my endSelection, my instancePref_bandSmoothing());
+		Spectrum_passHannBand (my spectrum(), my startSelection, my endSelection, my instancePref_bandSmoothing());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -132,14 +132,14 @@ static void menu_cb_stopBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 		Melder_require (my endSelection > my startSelection,
 			U"To apply a band-stop filter, first make a selection.");
 		Editor_save (me, U"Stop band");
-		Spectrum_stopHannBand (my spectrum, my startSelection, my endSelection, my instancePref_bandSmoothing());
+		Spectrum_stopHannBand (my spectrum(), my startSelection, my endSelection, my instancePref_bandSmoothing());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
 static void menu_cb_moveCursorToPeak (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
-	MelderPoint peak = Spectrum_getNearestMaximum (my spectrum, 0.5 * (my startSelection + my endSelection));
+	MelderPoint peak = Spectrum_getNearestMaximum (my spectrum(), 0.5 * (my startSelection + my endSelection));
 	my startSelection = my endSelection = peak. x;
 	my cursorHeight = peak. y;
 	FunctionEditor_marksChanged (me, true);
@@ -189,8 +189,7 @@ void structSpectrumEditor :: v_createHelpMenuItems (EditorMenu menu) {
 autoSpectrumEditor SpectrumEditor_create (conststring32 title, Spectrum spectrum) {
 	try {
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
-		my spectrum = spectrum;
-		FunctionEditor_init (me.get(), title, MelderPointerToPointerCast <structFunction> (& my spectrum));
+		FunctionEditor_init (me.get(), title, spectrum);
 		my cursorHeight = -1000;
 		updateRange (me.get());
 		return me;

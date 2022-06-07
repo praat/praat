@@ -38,7 +38,7 @@ Thing_define (IntensityTierEditor, RealTierEditor) {
 };
 
 autoIntensityTierEditor IntensityTierEditor_create (conststring32 title,
-	IntensityTier intensity, Sound sound, bool ownSound);
+		IntensityTier intensity, Sound sound);
 /*
 	'sound' may be null.
 */

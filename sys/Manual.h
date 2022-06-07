@@ -22,7 +22,8 @@
 #include "ManPages.h"
 
 Thing_define (Manual, HyperPage) {
-	ManPages manPages;
+	ManPages manPages() { return static_cast <ManPages> (our data); }
+
 	bool ownManPages;
 	integer visiblePageNumber;
 	GuiText searchText;

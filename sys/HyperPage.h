@@ -111,7 +111,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 int HyperPage_goToPage (HyperPage me, conststring32 title);
 void HyperPage_goToPage_number (HyperPage me, integer goToPageNumber);
 
-void HyperPage_init (HyperPage me, conststring32 title, Daata *pData);
+void HyperPage_init (HyperPage me, conststring32 title, Daata data);
 
 void HyperPage_setEntryHint (HyperPage me, conststring32 entry);
 void HyperPage_initSheetOfPaper (HyperPage me);

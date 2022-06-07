@@ -31,19 +31,19 @@ void structIntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void structIntensityTierEditor :: v_play (double startTime, double endTime) {
-	if (our d_sound.data) {
-		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
+	if (our sound()) {
+		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
 		//IntensityTier_playPart (our data, startTime, endTime, false);
 	}
 }
 
-autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensityTier, Sound sound, bool ownSound) {
+autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensityTier, Sound sound) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
-		autoIntensityTierArea area = IntensityTierArea_create (me.get(), intensityTier);
+		autoIntensityTierArea mainArea = IntensityTierArea_create (me.get(), intensityTier);
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
-		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, intensityTier, sound, ownSound);
+		RealTierEditor_init (me.get(), mainArea.move(), soundArea.move(), title, true);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier window not created.");

@@ -55,7 +55,7 @@ DIRECT (HELP_AmplitudeTier_help) {
 
 DIRECT (EDITOR_ONE_WITH_ONE_AmplitudeTier_viewAndEdit) {
 	EDITOR_ONE_WITH_ONE (an,AmplitudeTier, Sound)   // Sound may be null
-		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, you, true);
+		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, you);
 	EDITOR_ONE_WITH_ONE_END
 }
 
@@ -257,7 +257,7 @@ DIRECT (HELP_DurationTier_help) {
 
 DIRECT (EDITOR_ONE_WITH_ONE_DurationTier_edit) {
 	EDITOR_ONE_WITH_ONE (a,DurationTier, Sound)   // Sound may be null
-		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, you, true);
+		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, you);
 	EDITOR_ONE_WITH_ONE_END
 }
 
@@ -618,7 +618,7 @@ DIRECT (HELP_IntensityTier_help) {
 
 DIRECT (EDITOR_ONE_WITH_ONE_IntensityTier_viewAndEdit) {
 	EDITOR_ONE_WITH_ONE (an,IntensityTier, Sound)   // Sound may be null
-		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, you, true);
+		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, you);
 	EDITOR_ONE_WITH_ONE_END
 }
 

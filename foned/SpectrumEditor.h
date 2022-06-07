@@ -22,7 +22,8 @@
 #include "Spectrum.h"
 
 Thing_define (SpectrumEditor, FunctionEditor) {
-	Spectrum spectrum;
+	Spectrum spectrum() { return static_cast <Spectrum> (our data); }
+	
 	double minimum, maximum, cursorHeight;
 	GuiMenuItem publishBandButton, publishSoundButton;
 

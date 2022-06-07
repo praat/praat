@@ -37,8 +37,8 @@ void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void structPitchTierEditor :: v_play (double startTime, double endTime) {
-	if (our d_sound.data)
-		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
+	if (our sound())
+		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	else
 		PitchTier_playPart (our pitchTier(), startTime, endTime, false);
 }
@@ -46,11 +46,9 @@ void structPitchTierEditor :: v_play (double startTime, double endTime) {
 autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitchTier, Sound sound, bool ownSound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		autoPitchTierArea area = PitchTierArea_create (me.get(), pitchTier);
+		autoPitchTierArea pitchTierArea = PitchTierArea_create (me.get(), pitchTier);
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
-		Melder_assert (!! soundArea == !! sound);
-		RealTierEditor_init (me.get(), area.move(), soundArea.move(), title, pitchTier, sound, ownSound);
-		Melder_assert (!! my soundArea == !! my d_sound.data);
+		RealTierEditor_init (me.get(), pitchTierArea.move(), soundArea.move(), title, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier window not created.");

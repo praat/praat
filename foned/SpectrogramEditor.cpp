@@ -28,15 +28,15 @@ void structSpectrogramEditor :: v_draw () {
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 	integer itmin, itmax;
-	Sampled_getWindowSamples (our spectrogram, our startWindow, our endWindow, & itmin, & itmax);
+	Sampled_getWindowSamples (our spectrogram(), our startWindow, our endWindow, & itmin, & itmax);
 
 	/*
 		Autoscale frequency axis.
 	*/
-	our maximum = our spectrogram -> ymax;
+	our maximum = our spectrogram() -> ymax;
 
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, our maximum);
-	Spectrogram_paintInside (our spectrogram, our graphics.get(), our startWindow, our endWindow, 0, 0, 0.0, true,
+	Spectrogram_paintInside (our spectrogram(), our graphics.get(), our startWindow, our endWindow, 0, 0, 0.0, true,
 		 60, 6.0, 0);
 
 	/*
@@ -65,8 +65,9 @@ void structSpectrogramEditor :: v_draw () {
 bool structSpectrogramEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	if (event -> isClick()) {
 		const double clickedFrequency = y_fraction * our maximum;
-		Melder_assert (spectrogram -> nx >= 1);
-		const integer clickedFrame = Melder_clipped (1_integer, Sampled_xToNearestIndex (our spectrogram, x_world), spectrogram -> nx);
+		Melder_assert (spectrogram() -> nx >= 1);
+		const integer clickedFrame = Melder_clipped (1_integer, Sampled_xToNearestIndex (our spectrogram(), x_world),
+				our spectrogram() -> nx);
 		// TODO
 	}
 	return our SpectrogramEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
@@ -75,8 +76,7 @@ bool structSpectrogramEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram spectrogram) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
-		my spectrogram = spectrogram;
-		FunctionEditor_init (me.get(), title, MelderPointerToPointerCast <structFunction> (& my spectrogram));
+		FunctionEditor_init (me.get(), title, spectrogram);
 		my maximum = 10000.0;
 		return me;
 	} catch (MelderError) {

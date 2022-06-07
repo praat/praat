@@ -231,9 +231,9 @@ void structEditor :: v_info () {
 	MelderInfo_writeLine (U"Editor name: ", our name ? our name.get() : U"<no name>");
 	time_t today = time (nullptr);
 	MelderInfo_writeLine (U"Date: ", Melder_peek8to32 (ctime (& today)));   // includes a newline
-	if (our pData && *our pData) {
-		MelderInfo_writeLine (U"Data type: ", (*our pData) -> classInfo -> className);
-		MelderInfo_writeLine (U"Data name: ", (*our pData) -> name.get());
+	if (our data) {
+		MelderInfo_writeLine (U"Data type: ", our data -> classInfo -> className);
+		MelderInfo_writeLine (U"Data name: ", our data -> name.get());
 	}
 }
 
@@ -243,22 +243,22 @@ void structEditor :: v_nameChanged () {
 }
 
 void structEditor :: v_saveData () {
-	if (! our pData || ! *our pData)
+	if (! our data)
 		return;
-	our previousData = Data_copy (*our pData);
+	our previousData = Data_copy (our data);
 }
 
 void structEditor :: v_restoreData () {
-	if (our pData && *our pData && our previousData)
-		Thing_swap (*our pData, our previousData.get());
+	if (our data && our previousData)
+		Thing_swap (our data, our previousData.get());
 }
 
 static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
-	if (my pData && *my pData) {
+	if (my data) {
 		structMelderFile file { };
 		MelderDir_getFile (& Melder_preferencesFolder, U"praat_backToCaller.Data", & file);
-		Data_writeToTextFile (*my pData, & file);
-		sendsocket (Melder_peek32to8 (my callbackSocket.get()), Melder_peek32to8 ((*my pData) -> name.get()));
+		Data_writeToTextFile (my data, & file);
+		sendsocket (Melder_peek32to8 (my callbackSocket.get()), Melder_peek32to8 (my data -> name.get()));
 	}
 	my v_goAway ();
 }
@@ -309,7 +309,7 @@ void structEditor :: v_createMenuItems_file (EditorMenu /* menu */) {
 }
 
 void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
-	if (our pData && *our pData)
+	if (our data)
 		our undoButton = EditorMenu_addCommand (menu, U"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
@@ -321,8 +321,8 @@ static void INFO_EDITOR__settingsReport (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTP
 
 static void INFO_DATA__info (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
-		if (my pData)
-			Thing_info (*my pData);
+		if (my data)
+			Thing_info (my data);
 	INFO_DATA_END
 }
 
@@ -333,8 +333,8 @@ void structEditor :: v_createMenuItems_query (EditorMenu menu) {
 void structEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Editor info", 0, INFO_EDITOR__settingsReport);
 	EditorMenu_addCommand (menu, U"Settings report", Editor_HIDDEN, INFO_EDITOR__settingsReport);
-	if (our pData && *our pData)
-		EditorMenu_addCommand (menu, Melder_cat (Thing_className (*our pData), U" info"), 0, INFO_DATA__info);
+	if (our data)
+		EditorMenu_addCommand (menu, Melder_cat (Thing_className (our data), U" info"), 0, INFO_DATA__info);
 }
 
 void structEditor :: v_createMenus () {
@@ -382,7 +382,7 @@ static void gui_window_cb_goAway (Editor me) {
 }
 
 void praat_addCommandsToEditor (Editor me);
-void Editor_init (Editor me, int x, int y, int width, int height, conststring32 title, Daata *pData) {
+void Editor_init (Editor me, int x, int y, int width, int height, conststring32 title, Daata data) {
 	my v_copyPreferencesToInstance ();
 	my v_repairPreferences ();
 	/*
@@ -463,7 +463,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	#endif
 	my windowForm = GuiWindow_create (left, top, width, height, 450, 350, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
 	Thing_setName (me, title);
-	my pData = pData;
+	my data = data;
 
 	/*
 		Create menus.
@@ -516,14 +516,14 @@ void Editor_openPraatPicture (Editor me) {
 	my pictureGraphics = praat_picture_editor_open (my instancePref_picture_eraseFirst());
 }
 void Editor_closePraatPicture (Editor me) {
-	if (my pData && *my pData && my classPref_picture_writeNameAtTop() != kEditor_writeNameAtTop::NO_) {
+	if (my data && my classPref_picture_writeNameAtTop() != kEditor_writeNameAtTop::NO_) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
 			my classPref_picture_writeNameAtTop() == kEditor_writeNameAtTop::FAR_,
-			(*my pData) -> name.get()
+			my data -> name.get()
 		);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, true);

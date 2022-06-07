@@ -32,10 +32,10 @@ static void menu_cb_setCeiling (PitchEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Change ceiling", nullptr)
 		POSITIVE (ceiling, U"Ceiling (Hz)", U"600.0")
 	EDITOR_OK
-		SET_REAL (ceiling, my pitch -> ceiling)
+		SET_REAL (ceiling, my pitch() -> ceiling)
 	EDITOR_DO
 		Editor_save (me, U"Change ceiling");
-		Pitch_setCeiling (my pitch, ceiling);
+		Pitch_setCeiling (my pitch(), ceiling);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -51,10 +51,10 @@ static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (ceiling, U"Ceiling (Hz)", U"600.0")
 		BOOLEAN (pullFormants, U"Pull formants", false)
 	EDITOR_OK
-		SET_REAL (ceiling, my pitch -> ceiling)
+		SET_REAL (ceiling, my pitch() -> ceiling)
 	EDITOR_DO
 		Editor_save (me, U"Path finder");
-		Pitch_pathFinder (my pitch, silenceThreshold, voicingThreshold,
+		Pitch_pathFinder (my pitch(), silenceThreshold, voicingThreshold,
 			octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, pullFormants);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -64,46 +64,46 @@ static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 static void QUERY_DATA_FOR_REAL__getPitch (PitchEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		const double result = ( my startSelection == my endSelection
-			? Pitch_getValueAtTime (my pitch, my startSelection, kPitch_unit::HERTZ, 1)
-			: Pitch_getMean (my pitch, my startSelection, my endSelection, kPitch_unit::HERTZ)
+			? Pitch_getValueAtTime (my pitch(), my startSelection, kPitch_unit::HERTZ, 1)
+			: Pitch_getMean (my pitch(), my startSelection, my endSelection, kPitch_unit::HERTZ)
 		);
 	QUERY_DATA_FOR_REAL_END (U" Hz")
 }
 
 static void menu_cb_octaveUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Octave up");
-	Pitch_step (my pitch, 2.0, 0.1, my startSelection, my endSelection);
+	Pitch_step (my pitch(), 2.0, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_fifthUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Fifth up");
-	Pitch_step (my pitch, 1.5, 0.1, my startSelection, my endSelection);
+	Pitch_step (my pitch(), 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_fifthDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Fifth down");
-	Pitch_step (my pitch, 1 / 1.5, 0.1, my startSelection, my endSelection);
+	Pitch_step (my pitch(), 1 / 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_octaveDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Octave down");
-	Pitch_step (my pitch, 0.5, 0.1, my startSelection, my endSelection);
+	Pitch_step (my pitch(), 0.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_voiceless (PitchEditor me, EDITOR_ARGS_DIRECT) {
-	const integer ileft = std::max (1_integer, Sampled_xToHighIndex (my pitch, my startSelection));
-	const integer iright = std::min (Sampled_xToLowIndex (my pitch, my endSelection), my pitch -> nx);
+	const integer ileft = Melder_clippedLeft (1_integer, Sampled_xToHighIndex (my pitch(), my startSelection));
+	const integer iright = Melder_clippedRight (Sampled_xToLowIndex (my pitch(), my endSelection), my pitch() -> nx);
 	Editor_save (me, U"Unvoice");
 	for (integer iframe = ileft; iframe <= iright; iframe ++) {
-		const Pitch_Frame frame = & my pitch -> frames [iframe];
+		const Pitch_Frame frame = & my pitch() -> frames [iframe];
 		for (integer cand = 1; cand <= frame -> nCandidates; cand ++)
 			if (frame -> candidates [cand]. frequency == 0.0)
 				std::swap (frame -> candidates [1], frame -> candidates [cand]);
@@ -153,28 +153,29 @@ void structPitchEditor :: v_draw () {
 	const double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
 
 	integer it1, it2;
-	Sampled_getWindowSamples (pitch, our startWindow, our endWindow, & it1, & it2);
+	Sampled_getWindowSamples (our pitch(), our startWindow, our endWindow, & it1, & it2);
 
 	/*
 		Show pitch.
 	*/
 	{
 		const double df =
-			pitch -> ceiling > 10000.0 ? 2000.0 :
-			pitch -> ceiling > 5000.0 ? 1000.0 :
-			pitch -> ceiling > 2000.0 ? 500.0 :
-			pitch -> ceiling > 800.0 ? 200.0 :
-			pitch -> ceiling > 400.0 ? 100.0 :
-			50.0;
+			our pitch() -> ceiling > 10000.0 ? 2000.0 :
+			our pitch() -> ceiling > 5000.0 ? 1000.0 :
+			our pitch() -> ceiling > 2000.0 ? 500.0 :
+			our pitch() -> ceiling > 800.0 ? 200.0 :
+			our pitch() -> ceiling > 400.0 ? 100.0 :
+			50.0
+		;
 		Graphics_Viewport previous;
 		previous = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, dyUnv, 1.0 - dyIntens);
-		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, pitch -> ceiling);
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, our pitch() -> ceiling);
 		const double radius = Graphics_dxMMtoWC (our graphics.get(), RADIUS);
 
 		/* Horizontal hair at current pitch. */
 
 		if (our startSelection == our endSelection && our startSelection >= our startWindow && our startSelection <= our endWindow) {
-			const double frequency = Pitch_getValueAtTime (pitch, our startSelection, kPitch_unit::HERTZ, Pitch_LINEAR);
+			const double frequency = Pitch_getValueAtTime (our pitch(), our startSelection, kPitch_unit::HERTZ, Pitch_LINEAR);
 			if (isdefined (frequency)) {
 				Graphics_setColour (our graphics.get(), Melder_RED);
 				Graphics_line (our graphics.get(), our startWindow - radius, frequency, our endWindow, frequency);
@@ -188,7 +189,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_setColour (our graphics.get(), Melder_BLUE);
 		Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
-		for (double frequency = df; frequency <= pitch -> ceiling; frequency += df) {
+		for (double frequency = df; frequency <= our pitch() -> ceiling; frequency += df) {
 			Graphics_line (our graphics.get(), our startWindow, frequency, our endWindow, frequency);
 			Graphics_text (our graphics.get(), our endWindow + 0.5 * radius, frequency,   frequency, U" Hz");
 		}
@@ -198,10 +199,10 @@ void structPitchEditor :: v_draw () {
 			Show candidates.
 		*/
 		for (integer it = it1; it <= it2; it ++) {
-			const Pitch_Frame frame = & pitch -> frames [it];
-			const double time = Sampled_indexToX (pitch, it);
+			const Pitch_Frame frame = & our pitch() -> frames [it];
+			const double time = Sampled_indexToX (our pitch(), it);
 			double frequency = frame -> candidates [1]. frequency;
-			if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling)) {
+			if (Pitch_util_frequencyIsVoiced (frequency, our pitch() -> ceiling)) {
 				Graphics_setColour (our graphics.get(), Melder_MAGENTA);
 				Graphics_fillCircle_mm (our graphics.get(), time, frequency, RADIUS * 2.0);
 			}
@@ -209,7 +210,7 @@ void structPitchEditor :: v_draw () {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 			for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
 				frequency = frame -> candidates [icand]. frequency;
-				if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling)) {
+				if (Pitch_util_frequencyIsVoiced (frequency, our pitch() -> ceiling)) {
 					const integer strength = Melder_clippedRight (Melder_iround (10.0 * frame -> candidates [icand]. strength),
 							9_integer);   // map 0.0-1.0 to 0-9
 					Graphics_text (our graphics.get(), time, frequency,   strength);
@@ -232,8 +233,8 @@ void structPitchEditor :: v_draw () {
 		Graphics_text (our graphics.get(), our endWindow, 0.5, U"intens");
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		for (integer it = it1; it <= it2; it ++) {
-			const Pitch_Frame frame = & pitch -> frames [it];
-			const double time = Sampled_indexToX (pitch, it);
+			const Pitch_Frame frame = & our pitch() -> frames [it];
+			const double time = Sampled_indexToX (our pitch(), it);
 			const integer strength = Melder_clippedRight (Melder_iround (10.0 * frame -> intensity + 0.5),
 					9_integer);   // map 0.0-1.0 to 1-9
 			Graphics_text (our graphics.get(), time, 0.5,   strength);
@@ -243,7 +244,7 @@ void structPitchEditor :: v_draw () {
 
 	if (it1 > 1)
 		it1 -= 1;
-	if (it2 < pitch -> nx)
+	if (it2 < our pitch() -> nx)
 		it2 += 1;
 
 	/*
@@ -258,11 +259,11 @@ void structPitchEditor :: v_draw () {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our endWindow, 0.5, U"Unv");
 		for (integer it = it1; it <= it2; it ++) {
-			const Pitch_Frame frame = & pitch -> frames [it];
-			const double time = Sampled_indexToX (pitch, it);
-			double tleft = time - 0.5 * pitch -> dx, tright = time + 0.5 * pitch -> dx;
+			const Pitch_Frame frame = & our pitch() -> frames [it];
+			const double time = Sampled_indexToX (our pitch(), it);
+			double tleft = time - 0.5 * our pitch() -> dx, tright = time + 0.5 * our pitch() -> dx;
 			double frequency = frame -> candidates [1]. frequency;
-			if (Pitch_util_frequencyIsVoiced (frequency, pitch -> ceiling) || tright <= our startWindow || tleft >= our endWindow)
+			if (Pitch_util_frequencyIsVoiced (frequency, our pitch() -> ceiling) || tright <= our startWindow || tleft >= our endWindow)
 				continue;
 			Melder_clipLeft (our startWindow, & tleft);
 			Melder_clipRight (& tright, our endWindow);
@@ -274,7 +275,7 @@ void structPitchEditor :: v_draw () {
 }
 
 void structPitchEditor :: v_play (double a_tmin, double a_tmax) {
-	Pitch_hum (our pitch, a_tmin, a_tmax);
+	Pitch_hum (our pitch(), a_tmin, a_tmax);
 }
 
 bool structPitchEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
@@ -282,15 +283,15 @@ bool structPitchEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 		return PitchEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);   // move cursor or drag selection
 	const double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
 	const double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
-	const double clickedFrequency = (y_fraction - dyUnv) / (1.0 - dyIntens - dyUnv) * our pitch -> ceiling;
+	const double clickedFrequency = (y_fraction - dyUnv) / (1.0 - dyIntens - dyUnv) * our pitch() -> ceiling;
 	double minimumDf = 1e30;
 	integer bestCandidate = -1;
 
-	integer ibestFrame = Sampled_xToNearestIndex (our pitch, x_world);
-	Melder_clip (1_integer, & ibestFrame, our pitch -> nx);
-	const Pitch_Frame bestFrame = & our pitch -> frames [ibestFrame];
+	integer ibestFrame = Sampled_xToNearestIndex (our pitch(), x_world);
+	Melder_clip (1_integer, & ibestFrame, our pitch() -> nx);
+	const Pitch_Frame bestFrame = & our pitch() -> frames [ibestFrame];
 
-	const double tmid = Sampled_indexToX (our pitch, ibestFrame);
+	const double tmid = Sampled_indexToX (our pitch(), ibestFrame);
 	for (integer icand = 1; icand <= bestFrame -> nCandidates; icand ++) {
 		const Pitch_Candidate candidate = & bestFrame -> candidates [icand];
 		const double df = clickedFrequency - candidate -> frequency;
@@ -301,10 +302,10 @@ bool structPitchEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 	}
 	if (bestCandidate != -1) {
 		const double bestFrequency = bestFrame -> candidates [bestCandidate]. frequency;
-		const double distanceWC = (clickedFrequency - bestFrequency) / our pitch -> ceiling * (1.0 - dyIntens - dyUnv);
+		const double distanceWC = (clickedFrequency - bestFrequency) / our pitch() -> ceiling * (1.0 - dyIntens - dyUnv);
 		const double dx_mm = Graphics_dxWCtoMM (our graphics.get(), x_world - tmid), dy_mm = Graphics_dyWCtoMM (our graphics.get(), distanceWC);
-		if (bestFrequency < our pitch -> ceiling &&   // above ceiling: ignore
-		    ((bestFrequency <= 0.0 && fabs (x_world - tmid) <= 0.5 * our pitch -> dx && clickedFrequency <= 0.0) ||   // voiceless: click within frame
+		if (bestFrequency < our pitch() -> ceiling &&   // above ceiling: ignore
+		    ((bestFrequency <= 0.0 && fabs (x_world - tmid) <= 0.5 * our pitch() -> dx && clickedFrequency <= 0.0) ||   // voiceless: click within frame
 		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   // voiced: click within circle
 		{
 			Editor_save (this, U"Change path");
@@ -323,8 +324,7 @@ bool structPitchEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 autoPitchEditor PitchEditor_create (conststring32 title, Pitch pitch) {
 	try {
 		autoPitchEditor me = Thing_new (PitchEditor);
-		my pitch = pitch;
-		FunctionEditor_init (me.get(), title, MelderPointerToPointerCast <structFunction> (& my pitch));
+		FunctionEditor_init (me.get(), title, pitch);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Pitch window not created.");

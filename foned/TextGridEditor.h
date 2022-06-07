@@ -26,7 +26,7 @@
 #include "TextGridEditor_enums.h"
 
 Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
-	TextGrid textGrid;
+	TextGrid textGrid() { return static_cast <TextGrid> (our data); }
 
 	SpellingChecker spellingChecker;
 	integer selectedTier;

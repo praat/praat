@@ -89,7 +89,7 @@ static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, ED
 	CONVERT_DATA_TO_ONE
 		if (! my sound())
 			return;
-		autoSound result = Data_copy (my sound().get());
+		autoSound result = Data_copy (my sound());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -97,7 +97,7 @@ static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_AR
 	CONVERT_DATA_TO_ONE
 		if (! my pulses())
 			return;
-		autoPointProcess result = Data_copy (my pulses().get());
+		autoPointProcess result = Data_copy (my pulses());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -105,7 +105,7 @@ static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR
 	CONVERT_DATA_TO_ONE
 		if (! my pitch())
 			return;
-		autoPitchTier result = Data_copy (my pitch().get());
+		autoPitchTier result = Data_copy (my pitch());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
@@ -113,28 +113,28 @@ static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDI
 	CONVERT_DATA_TO_ONE
 		if (! my duration())
 			return;
-		autoDurationTier result = Data_copy (my duration().get());
+		autoDurationTier result = Data_copy (my duration());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
-		autoSound result = Manipulation_to_Sound (my manipulation, my synthesisMethod);
+		autoSound result = Manipulation_to_Sound (my manipulation(), my synthesisMethod);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 /***** EDIT MENU *****/
 
 void structManipulationEditor :: v_saveData () {
-	our previousPulses   = Data_copy (our pulses().get());     // could be null
-	our previousPitch    = Data_copy (our pitch().get());      // could be null
-	our previousDuration = Data_copy (our duration().get());   // could be null
+	our previousPulses   = Data_copy (our pulses());     // could be null
+	our previousPitch    = Data_copy (our pitch());      // could be null
+	our previousDuration = Data_copy (our duration());   // could be null
 }
 
 void structManipulationEditor :: v_restoreData () {
-	std::swap (our pulses(),   our previousPulses);     // could be null
-	std::swap (our pitch(),    our previousPitch);      // could be null
-	std::swap (our duration(), our previousDuration);   // could be null
+	std::swap (our manipulation() -> pulses,   our previousPulses);     // could be null
+	std::swap (our manipulation() -> pitch,    our previousPitch);      // could be null
+	std::swap (our manipulation() -> duration, our previousDuration);   // could be null
 }
 
 /***** PULSES MENU *****/
@@ -144,9 +144,9 @@ static void menu_cb_removePulses (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 		return;
 	Editor_save (me, U"Remove pulse(s)");
 	if (my startSelection == my endSelection)
-		PointProcess_removePointNear (my pulses().get(), my startSelection);
+		PointProcess_removePointNear (my pulses(), my startSelection);
 	else
-		PointProcess_removePointsBetween (my pulses().get(), my startSelection, my endSelection);
+		PointProcess_removePointsBetween (my pulses(), my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -154,7 +154,7 @@ static void menu_cb_removePulses (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_addPulseAtCursor (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	if (! my pulses()) return;
 	Editor_save (me, U"Add pulse");
-	PointProcess_addPoint (my pulses().get(), 0.5 * (my startSelection + my endSelection));
+	PointProcess_addPoint (my pulses(), 0.5 * (my startSelection + my endSelection));
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -168,7 +168,7 @@ static void menu_cb_addPulseAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		if (! my pulses())
 			return;
 		Editor_save (me, U"Add pulse");
-		PointProcess_addPoint (my pulses().get(), position);
+		PointProcess_addPoint (my pulses(), position);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -184,7 +184,7 @@ static void menu_cb_removePitchPoints (ManipulationEditor me, EDITOR_ARGS_DIRECT
 		AnyTier_removePointNear (my pitch()->asAnyTier(), my startSelection);
 	else
 		AnyTier_removePointsBetween (my pitch()->asAnyTier(), my startSelection, my endSelection);
-	RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+	RealTierArea_updateScaling (my pitchTierArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -193,8 +193,8 @@ static void menu_cb_addPitchPointAtCursor (ManipulationEditor me, EDITOR_ARGS_DI
 	if (! my pitch())
 		return;
 	Editor_save (me, U"Add pitch point");
-	RealTier_addPoint (my pitch().get(), 0.5 * (my startSelection + my endSelection), my pitchTierArea -> ycursor);
-	RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+	RealTier_addPoint (my pitch(), 0.5 * (my startSelection + my endSelection), my pitchTierArea -> ycursor);
+	RealTierArea_updateScaling (my pitchTierArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -204,7 +204,7 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 		Melder_throw (U"There are no pulses.");
 	if (! my pitch())
 		return;
-	const integer ileft = PointProcess_getLowIndex (my pulses().get(), 0.5 * (my startSelection + my endSelection));
+	const integer ileft = PointProcess_getLowIndex (my pulses(), 0.5 * (my startSelection + my endSelection));
 	const integer iright = ileft + 1, nt = my pulses() -> nt;
 	constVEC t = my pulses() -> t.get();
 	double desiredY = my pitchTierArea -> ycursor;   // default
@@ -245,8 +245,8 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 		else if (tright != 0.0)
 			desiredY = 1.0 / tright;   // median of 1
 	}
-	RealTierArea_addPointAt (my pitchTierArea.get(), my pitch().get(), 0.5 * (my startSelection + my endSelection), desiredY);
-	RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+	RealTierArea_addPointAt (my pitchTierArea.get(), 0.5 * (my startSelection + my endSelection), desiredY);
+	RealTierArea_updateScaling (my pitchTierArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }	
@@ -262,8 +262,8 @@ static void menu_cb_addPitchPointAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		if (! my pitch())
 			return;
 		Editor_save (me, U"Add pitch point");
-		RealTierArea_addPointAt (my pitchTierArea.get(), my pitch().get(), time, frequency);
-		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+		RealTierArea_addPointAt (my pitchTierArea.get(), time, frequency);
+		RealTierArea_updateScaling (my pitchTierArea.get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -284,8 +284,8 @@ static void menu_cb_stylizePitch (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		Editor_save (me, U"Stylize pitch");
 		my setInstancePref_pitch_stylize_frequencyResolution (frequencyResolution);
 		my setInstancePref_pitch_stylize_useSemitones (units - 1);
-		PitchTier_stylize (my pitch().get(), frequencyResolution, my instancePref_pitch_stylize_useSemitones());
-		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+		PitchTier_stylize (my pitch(), frequencyResolution, my instancePref_pitch_stylize_useSemitones());
+		RealTierArea_updateScaling (my pitchTierArea.get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -295,8 +295,8 @@ static void menu_cb_stylizePitch_2st (ManipulationEditor me, EDITOR_ARGS_DIRECT)
 	if (! my pitch())
 		return;
 	Editor_save (me, U"Stylize pitch");
-	PitchTier_stylize (my pitch().get(), 2.0, true);
-	RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+	PitchTier_stylize (my pitch(), 2.0, true);
+	RealTierArea_updateScaling (my pitchTierArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -316,8 +316,8 @@ static void menu_cb_interpolateQuadratically (ManipulationEditor me, EDITOR_ARGS
 		Editor_save (me, U"Interpolate quadratically");
 		my setInstancePref_pitch_interpolateQuadratically_numberOfPointsPerParabola (numberOfPointsPerParabola);
 		my setInstancePref_pitch_stylize_useSemitones (units - 1);
-		RealTier_interpolateQuadratically (my pitch().get(), numberOfPointsPerParabola, my instancePref_pitch_stylize_useSemitones());
-		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+		RealTier_interpolateQuadratically (my pitch(), numberOfPointsPerParabola, my instancePref_pitch_stylize_useSemitones());
+		RealTierArea_updateScaling (my pitchTierArea.get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -344,13 +344,13 @@ static void menu_cb_shiftPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FO
 			return;
 		Editor_save (me, U"Shift pitch frequencies");
 		try {
-			PitchTier_shiftFrequencies (my pitch().get(), my startSelection, my endSelection, frequencyShift, unit);
-			RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+			PitchTier_shiftFrequencies (my pitch(), my startSelection, my endSelection, frequencyShift, unit);
+			RealTierArea_updateScaling (my pitchTierArea.get());
 			FunctionEditor_redraw (me);
 			Editor_broadcastDataChanged (me);
 		} catch (MelderError) {
 			// the PitchTier may have partially changed
-			RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+			RealTierArea_updateScaling (my pitchTierArea.get());
 			FunctionEditor_redraw (me);
 			Editor_broadcastDataChanged (me);
 			throw;
@@ -367,8 +367,8 @@ static void menu_cb_multiplyPitchFrequencies (ManipulationEditor me, EDITOR_ARGS
 		if (! my pitch())
 			return;
 		Editor_save (me, U"Multiply pitch frequencies");
-		PitchTier_multiplyFrequencies (my pitch().get(), my startSelection, my endSelection, factor);
-		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+		PitchTier_multiplyFrequencies (my pitch(), my startSelection, my endSelection, factor);
+		RealTierArea_updateScaling (my pitchTierArea.get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -384,7 +384,7 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		my pitchTierArea -> setInstancePref_dataFreeMinimum (dataFreeMinimum);
 		my pitchTierArea -> setInstancePref_dataFreeMaximum (dataFreeMaximum);
-		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
+		RealTierArea_updateScaling (my pitchTierArea.get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -407,7 +407,7 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 			Melder_throw (U"Maximum relative duration should be greater than minimum.");
 		my durationTierArea -> setInstancePref_dataFreeMinimum (dataFreeMinimum);
 		my durationTierArea -> setInstancePref_dataFreeMaximum (dataFreeMaximum);
-		RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
+		RealTierArea_updateScaling (my durationTierArea.get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -431,7 +431,7 @@ static void menu_cb_removeDurationPoints (ManipulationEditor me, EDITOR_ARGS_DIR
 		AnyTier_removePointNear (my duration()->asAnyTier(), 0.5 * (my startSelection + my endSelection));
 	else
 		AnyTier_removePointsBetween (my duration()->asAnyTier(), my startSelection, my endSelection);
-	RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
+	RealTierArea_updateScaling (my durationTierArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -440,8 +440,8 @@ static void menu_cb_addDurationPointAtCursor (ManipulationEditor me, EDITOR_ARGS
 	if (! my duration())
 		return;
 	Editor_save (me, U"Add duration point");
-	RealTier_addPoint (my duration().get(), 0.5 * (my startSelection + my endSelection), my durationTierArea -> ycursor);
-	RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
+	RealTier_addPoint (my duration(), 0.5 * (my startSelection + my endSelection), my durationTierArea -> ycursor);
+	RealTierArea_updateScaling (my durationTierArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -456,8 +456,8 @@ static void menu_cb_addDurationPointAt (ManipulationEditor me, EDITOR_ARGS_FORM)
 		if (! my duration())
 			return;
 		Editor_save (me, U"Add duration point");
-		RealTierArea_addPointAt (my durationTierArea.get(), my duration().get(), time, relativeDuration);
-		RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
+		RealTierArea_addPointAt (my durationTierArea.get(), time, relativeDuration);
+		RealTierArea_updateScaling (my durationTierArea.get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -465,15 +465,17 @@ static void menu_cb_addDurationPointAt (ManipulationEditor me, EDITOR_ARGS_FORM)
 
 static void menu_cb_newDuration (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"New duration");
-	my duration() = DurationTier_create (my manipulation -> xmin, my manipulation -> xmax);
-	RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
+	my manipulation() -> duration = DurationTier_create (my manipulation() -> xmin, my manipulation() -> xmax);
+	my durationTierArea -> function = my manipulation() -> duration.get();
+	RealTierArea_updateScaling (my durationTierArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_forgetDuration (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Forget duration");
-	my duration() = autoDurationTier();
+	my manipulation() -> duration = autoDurationTier();
+	my durationTierArea -> function = my manipulation() -> duration.get();
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -606,9 +608,9 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		Draw sound.
 	*/
 	integer first, last;
-	if (my sound() && Sampled_getWindowSamples (my sound().get(), my startWindow, my endWindow, & first, & last) > 1) {
+	if (my sound() && Sampled_getWindowSamples (my sound(), my startWindow, my endWindow, & first, & last) > 1) {
 		double minimum, maximum, scaleMin, scaleMax;
-		Matrix_getWindowExtrema (my sound().get(), first, last, 1, 1, & minimum, & maximum);
+		Matrix_getWindowExtrema (my sound(), first, last, 1, 1, & minimum, & maximum);
 		if (minimum == maximum) {
 			minimum = -0.5;
 			maximum = +0.5;
@@ -635,7 +637,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		*/
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_function (my graphics.get(), & my sound() -> z [1] [0], first, last,
-				Sampled_indexToX (my sound().get(), first), Sampled_indexToX (my sound().get(), last));
+				Sampled_indexToX (my sound(), first), Sampled_indexToX (my sound(), last));
 	}
 
 	Graphics_resetViewport (my graphics.get(), viewport);
@@ -682,20 +684,19 @@ static void drawPitchArea (ManipulationEditor me) {
 
 	FunctionEditor_drawGridLine (me, minimumFrequency);
 	if (cursorVisible && n > 0) {
-		const double y = RealTier_getValueAtTime (my pitch().get(), my startSelection);
+		const double y = RealTier_getValueAtTime (my pitch(), my startSelection);
 		FunctionEditor_insertCursorFunctionValue (me, y,
 			Melder_fixed (y, 1), U" Hz",
 			my pitchTierArea -> ymin, my pitchTierArea -> ymax);
 	}
-	RealTierArea_draw (my pitchTierArea.get(), my pitch().get());
+	RealTierArea_draw (my pitchTierArea.get());
 	if (isdefined (my pitchTierArea -> anchorTime))
-		RealTierArea_drawWhileDragging (my pitchTierArea.get(), my pitch().get());
+		RealTierArea_drawWhileDragging (my pitchTierArea.get());
 
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 }
 
 static void drawDurationArea (ManipulationEditor me) {
-	DurationTier duration = my manipulation -> duration.get();
 	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
 
 	my durationTierArea -> setViewport();
@@ -718,15 +719,15 @@ static void drawDurationArea (ManipulationEditor me) {
 	//FunctionEditor_drawRangeMark (me, my durationTierArea -> ymin, Melder_fixed (my durationTierArea -> ymin, 3), U"", Graphics_HALF);
 	//if (my startSelection == my endSelection && my durationTierArea -> ycursor >= my durationTierArea -> ymin && my durationTierArea -> ycursor <= my durationTierArea -> ymax)
 	//	FunctionEditor_drawHorizontalHair (me, my durationTierArea -> ycursor, Melder_fixed (my durationTierArea -> ycursor, 3), U"");
-	if (cursorVisible && duration -> points.size > 0) {
-		const double y = RealTier_getValueAtTime (duration, my startSelection);
+	if (cursorVisible && my duration() -> points.size > 0) {
+		const double y = RealTier_getValueAtTime (my duration(), my startSelection);
 		FunctionEditor_insertCursorFunctionValue (me, y, Melder_fixed (y, 3), U"", my durationTierArea -> ymin, my durationTierArea -> ymax);
 	}
 
 	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my durationTierArea -> ymin, my durationTierArea -> ymax);
-	RealTierArea_draw (my durationTierArea.get(), duration);
+	RealTierArea_draw (my durationTierArea.get());
 	if (isdefined (my durationTierArea -> anchorTime))
-		RealTierArea_drawWhileDragging (my durationTierArea.get(), duration);
+		RealTierArea_drawWhileDragging (my durationTierArea.get());
 
 	Graphics_setLineWidth (my graphics.get(), 1.0);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
@@ -753,11 +754,11 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	}
 	bool result = false;
 	if (clickedInWidePitchArea) {
-		result = RealTierArea_mouse (our pitchTierArea.get(), our manipulation -> pitch.get(), event, x_world, globalY_fraction);
-		RealTierArea_updateScaling (our pitchTierArea.get(), our manipulation -> pitch.get());
+		result = RealTierArea_mouse (our pitchTierArea.get(), event, x_world, globalY_fraction);
+		RealTierArea_updateScaling (our pitchTierArea.get());
 	} else if (clickedInWideDurationArea) {
-		result = RealTierArea_mouse (our durationTierArea.get(), our manipulation -> duration.get(), event, x_world, globalY_fraction);
-		RealTierArea_updateScaling (our durationTierArea.get(), our manipulation -> duration.get());
+		result = RealTierArea_mouse (our durationTierArea.get(), event, x_world, globalY_fraction);
+		RealTierArea_updateScaling (our durationTierArea.get());
 	} else {
 		result = our ManipulationEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
@@ -770,18 +771,17 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 
 void structManipulationEditor :: v_play (double startTime, double endTime) {
 	if (our clickWasModifiedByShiftKey) {
-		if (our manipulation -> sound)
-			Sound_playPart (our manipulation -> sound.get(), startTime, endTime, theFunctionEditor_playCallback, this);
+		if (our sound())
+			Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
-		Manipulation_playPart (our manipulation, startTime, endTime, our synthesisMethod);
+		Manipulation_playPart (our manipulation(), startTime, endTime, our synthesisMethod);
 	}
 }
 
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
-		my manipulation = manipulation;
-		FunctionEditor_init (me.get(), title, MelderPointerToPointerCast <structFunction> (& my manipulation));
+		FunctionEditor_init (me.get(), title, manipulation);
 		my pitchTierArea = PitchTierArea_create (me.get(), manipulation -> pitch.get());
 		if (manipulation -> duration)
 			my durationTierArea = DurationTierArea_create (me.get(), manipulation -> duration.get());
@@ -795,9 +795,9 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 			my soundmin = -1.0;
 			my soundmax = +1.0;
 		}
-		RealTierArea_updateScaling (my pitchTierArea.get(), manipulation -> pitch.get());
+		RealTierArea_updateScaling (my pitchTierArea.get());
 		if (manipulation -> duration)
-			RealTierArea_updateScaling (my durationTierArea.get(), manipulation -> duration.get());
+			RealTierArea_updateScaling (my durationTierArea.get());
 		updateMenus (me.get());
 		return me;
 	} catch (MelderError) {

@@ -2,7 +2,7 @@
 #define _DurationTierEditor_h_
 /* DurationTierEditor.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2014-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2014-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +38,9 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 };
 
 autoDurationTierEditor DurationTierEditor_create (conststring32 title,
-	DurationTier duration, Sound sound, bool ownSound);
-/*
-	'sound' may be null.
-*/
+	DurationTier duration,   // the main data
+	Sound sound   // may be null
+);
 
 /* End of file DurationTierEditor.h */
 #endif

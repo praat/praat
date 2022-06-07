@@ -24,7 +24,7 @@ Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 /* MARK: - MENU COMMANDS */
 
 static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	RealTierArea_removePoints (my realTierArea.get(), my realTier);
+	RealTierArea_removePoints (my realTierArea.get());
 	Editor_save (me, U"Remove point(s)");
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
@@ -33,7 +33,7 @@ static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 	MODIFY_DATA (U"Add point")
-		RealTierArea_addPointAtCursor (my realTierArea.get(), my realTier);
+		RealTierArea_addPointAtCursor (my realTierArea.get());
 		RealTierEditor_updateScaling (me);
 	MODIFY_DATA_END
 }
@@ -47,7 +47,7 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (desiredY, my realTierArea -> ycursor)
 	EDITOR_DO
 		MODIFY_DATA (U"Add point")
-			RealTierArea_addPointAt (my realTierArea.get(), my realTier, time, desiredY);
+			RealTierArea_addPointAt (my realTierArea.get(), time, desiredY);
 			RealTierEditor_updateScaling (me);
 		MODIFY_DATA_END
 	EDITOR_END
@@ -84,7 +84,7 @@ void structRealTierEditor :: v_createMenus () {
 }
 
 void RealTierEditor_updateScaling (RealTierEditor me) {
-	RealTierArea_updateScaling (my realTierArea.get(), my realTier);
+	RealTierArea_updateScaling (my realTierArea.get());
 }
 
 void structRealTierEditor :: v_dataChanged () {
@@ -98,8 +98,7 @@ void structRealTierEditor :: v_dataChanged () {
 	This is called just before v_draw() and just before v_mouseInWideDataView().
 */
 void structRealTierEditor :: v_distributeAreas () {
-	Melder_assert (!! our soundArea == !! our d_sound.data);
-	if (our d_sound.data) {
+	if (our sound()) {
 		constexpr double yminSound_fraction = 0.618;
 		our realTierArea -> setGlobalYRange_fraction (0.0, yminSound_fraction);
 		Melder_assert (our soundArea);
@@ -110,7 +109,7 @@ void structRealTierEditor :: v_distributeAreas () {
 }
 
 void structRealTierEditor :: v_draw () {
-	if (our d_sound.data) {
+	if (our sound()) {
 		our soundArea -> setViewport ();
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
@@ -126,9 +125,9 @@ void structRealTierEditor :: v_draw () {
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our realTierArea -> ymin, our realTierArea -> ymax);
-	RealTierArea_draw (our realTierArea.get(), our realTier);
+	RealTierArea_draw (our realTierArea.get());
 	if (isdefined (our realTierArea -> anchorTime))
-		RealTierArea_drawWhileDragging (our realTierArea.get(), our realTier);
+		RealTierArea_drawWhileDragging (our realTierArea.get());
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
 }
 
@@ -137,7 +136,7 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		our clickedInWideRealTierArea = our realTierArea -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
 	if (our clickedInWideRealTierArea) {
-		result = RealTierArea_mouse (our realTierArea.get(), our realTier, event, x_world, globalY_fraction);
+		result = RealTierArea_mouse (our realTierArea.get(), event, x_world, globalY_fraction);
 	} else {
 		result = our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
@@ -147,18 +146,14 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 }
 
 void structRealTierEditor :: v_play (double startTime, double endTime) {
-	if (our d_sound.data)
-		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
+	if (our sound())
+		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
 void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, autoSoundArea soundArea, conststring32 title,
-	RealTier realTier, Sound sound, bool ownSound)
+	bool ownSound)
 {
-	my realTier = realTier;
-	Melder_assert (!! soundArea == !! sound);
-	TimeSoundEditor_init (me, soundArea.move(), title,
-			MelderPointerToPointerCast <structFunction> (& my realTier), sound, ownSound);
-	Melder_assert (!! my soundArea == !! my d_sound.data);
+	TimeSoundEditor_init (me, soundArea.move(), title, realTierArea -> function, ownSound);
 	my realTierArea = realTierArea.move();
 	RealTierEditor_updateScaling (me);
 	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
@@ -169,7 +164,7 @@ autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier realTier
 		autoRealTierEditor me = Thing_new (RealTierEditor);
 		autoRealTierArea realTierArea = RealTierArea_create (me.get(), realTier);
 		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
-		RealTierEditor_init (me.get(), realTierArea.move(), soundArea.move(), title, realTier, sound, ownSound);
+		RealTierEditor_init (me.get(), realTierArea.move(), soundArea.move(), title, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"RealTier window not created.");

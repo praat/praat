@@ -26,14 +26,15 @@
 #include "ManipulationEditor_enums.h"
 
 Thing_define (ManipulationEditor, FunctionEditor) {
-	Manipulation manipulation;
+	Manipulation manipulation() { return static_cast <Manipulation> (our data); }
+
 	/*
 		Quick access to internal objects.
 	*/
-	autoSound & sound() { return our manipulation -> sound; }
-	autoPointProcess & pulses() { return our manipulation -> pulses; }
-	autoPitchTier & pitch() { return our manipulation -> pitch; }
-	autoDurationTier & duration() { return our manipulation -> duration; }
+	Sound sound() { return our manipulation() -> sound.get(); }
+	PointProcess pulses() { return our manipulation() -> pulses.get(); }
+	PitchTier pitch() { return our manipulation() -> pitch.get(); }
+	DurationTier duration() { return our manipulation() -> duration.get(); }
 
 	autoPointProcess previousPulses;
 	autoPitchTier previousPitch;

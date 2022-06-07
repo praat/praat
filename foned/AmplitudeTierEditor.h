@@ -2,7 +2,7 @@
 #define _AmplitudeTierEditor_h_
 /* AmplitudeTierEditor.h
  *
- * Copyright (C) 2003-2005,2007,2009-2012,2014-2018,2020 Paul Boersma
+ * Copyright (C) 2003-2005,2007,2009-2012,2014-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 };
 
 autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title,
-	AmplitudeTier amplitude,
-	Sound sound,   // may be null
-	bool ownSound);
+	AmplitudeTier amplitude,   // the main data
+	Sound sound   // may be null
+);
 
 /* End of file AmplitudeTierEditor.h */
 #endif
