@@ -1324,8 +1324,6 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 	my viewAllAsPixelettes ();
 	double x_pxlt, y_pxlt;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x_pxlt, & y_pxlt);
-	static bool anchorIsInSelectionViewer = false;
-	static bool anchorIsInWideDataView = false;
 	if (event -> isClick()) {
 		if (my v_hasSelectionViewer() || my instancePref_showSelectionViewer()) {
 			const double left = my width_pxlt - my space + 9.0, right = my width_pxlt - 3.0;
@@ -1338,10 +1336,10 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 			}
 		}
 		my clickWasModifiedByShiftKey = event -> shiftKeyPressed;
-		anchorIsInSelectionViewer = my isInSelectionViewer (x_pxlt);
-		anchorIsInWideDataView = ( y_pxlt > my dataBottom_pxlt() && y_pxlt < my dataTop_pxlt() );
+		my anchorIsInSelectionViewer = my isInSelectionViewer (x_pxlt);
+		my anchorIsInWideDataView = ( y_pxlt > my dataBottom_pxlt() && y_pxlt < my dataTop_pxlt() );
 	}
-	if (anchorIsInSelectionViewer) {
+	if (my anchorIsInSelectionViewer) {
 		my viewInnerSelectionViewerAsFractionByFraction ();
 		double x_fraction, y_fraction;
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x_fraction, & y_fraction);
@@ -1352,7 +1350,7 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 			FunctionEditor_redraw (me);
 			updateGroup (me);
 		} else;   // no dragging (yet?) in any selection viewer
-	} else if (anchorIsInWideDataView) {
+	} else if (my anchorIsInWideDataView) {
 		my viewDataAsWorldByFraction ();
 		double x_world, y_fraction;
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x_world, & y_fraction);

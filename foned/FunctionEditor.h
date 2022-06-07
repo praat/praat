@@ -117,6 +117,8 @@ Thing_define (FunctionEditor, Editor) {
 	bool clickWasModifiedByShiftKey;   // information for drag-and-drop and for start of play
 	bool duringPlay, backgroundIsUpToDate;
 	struct FunctionEditor_picture picture;
+	bool anchorIsInSelectionViewer = false;
+	bool anchorIsInWideDataView = false;
 
 	/* Private: */
 	GuiDrawingArea drawingArea;
