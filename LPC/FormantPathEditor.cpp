@@ -943,8 +943,11 @@ void structFormantPathEditor :: v_updateMenuItems_file () {
 autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound sound, TextGrid textgrid) {
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
-		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title, formantPath, false);
+		if (sound)
+			my soundArea = SoundArea_create (me.get(), sound, true);
+		if (textgrid)
+			;   // BUG: implement TextGridArea
+		FunctionEditor_init (me.get(), title, formantPath);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		if (textgrid)
 			my textgrid = Data_copy (textgrid);

@@ -84,9 +84,6 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	void v_repairPreferences () override;
 };
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, autoSoundArea soundArea,
-	conststring32 title, Function function, bool ownSound);
-
 void TimeSoundAnalysisEditor_haveVisibleSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_haveVisiblePitch (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_haveVisibleIntensity (TimeSoundAnalysisEditor me);

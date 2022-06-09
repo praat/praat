@@ -237,4 +237,33 @@ bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound) {
+	FunctionArea_init (me, editor, soundOrLongSound);
+	if (ownSound) {
+		Melder_assert (my sound());   // LongSounds cannot be owned
+		/*
+			Replace the reference to our sound with a deep copy (which we own);
+		*/
+		my function = Data_copy (my sound()).releaseToAmbiguousOwner();
+		my ownSound = ownSound;
+		Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
+				& my cache. globalMinimum, & my cache. globalMaximum);
+	} else if (my sound()) {
+		Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
+				& my cache. globalMinimum, & my cache. globalMaximum);
+	} else if (my longSound()) {
+		my cache. globalMinimum = -1.0;
+		my cache. globalMaximum = 1.0;
+	} else {
+		Melder_fatal (U"Invalid sound class in SoundArea_create().");
+	}
+	my muteChannels = zero_BOOLVEC (soundOrLongSound -> ny);
+}
+
+autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound) {
+	autoSoundArea me = Thing_new (SoundArea);
+	SoundArea_init (me.get(), editor, soundOrLongSound, ownSound);
+	return me;
+}
+
 /* End of file SoundArea.cpp */

@@ -43,8 +43,8 @@ void structMovieWindow :: v_createMenus () {
  */
 static double _MovieWindow_getSoundBottomPosition (MovieWindow me) {
 	const bool showAnalysis = ( (my instancePref_spectrogram_show() || my instancePref_pitch_show() ||
-		my instancePref_intensity_show() || my instancePref_formant_show()) && my movie -> d_sound );
-	return my movie -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
+			my instancePref_intensity_show() || my instancePref_formant_show()) && my movie() -> d_sound );
+	return my movie() -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
 }
 
 void structMovieWindow :: v_distributeAreas () {
@@ -57,9 +57,10 @@ void structMovieWindow :: v_distributeAreas () {
 }
 
 void structMovieWindow :: v_draw () {
-	const bool showAnalysis = (our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) && movie -> d_sound;
+	const bool showAnalysis = (our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
+			our instancePref_intensity_show() || our instancePref_formant_show()) && our movie() -> d_sound;
 	const double soundY = _MovieWindow_getSoundBottomPosition (this);
-	if (our movie -> d_sound) {
+	if (our movie() -> d_sound) {
 		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -74,13 +75,13 @@ void structMovieWindow :: v_draw () {
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-		const integer firstFrame = Melder_clippedLeft (1_integer, Sampled_xToNearestIndex (our movie, our startWindow));
-		const integer lastFrame = Melder_clippedRight (Sampled_xToNearestIndex (our movie, our endWindow), our movie -> nx);
+		const integer firstFrame = Melder_clippedLeft (1_integer, Sampled_xToNearestIndex (our movie(), our startWindow));
+		const integer lastFrame = Melder_clippedRight (Sampled_xToNearestIndex (our movie(), our endWindow), our movie() -> nx);
 		for (integer iframe = firstFrame; iframe <= lastFrame; iframe ++) {
-			const double time = Sampled_indexToX (our movie, iframe);
-			const double timeLeft = Melder_clippedLeft (our startWindow, time - 0.5 * movie -> dx);
-			const double timeRight = Melder_clippedRight (time + 0.5 * our movie -> dx, our endWindow);
-			Movie_paintOneImageInside (our movie, our graphics.get(), iframe, timeLeft, timeRight, 0.0, 1.0);
+			const double time = Sampled_indexToX (our movie(), iframe);
+			const double timeLeft = Melder_clippedLeft (our startWindow, time - 0.5 * movie() -> dx);
+			const double timeRight = Melder_clippedRight (time + 0.5 * our movie() -> dx, our endWindow);
+			Movie_paintOneImageInside (our movie(), our graphics.get(), iframe, timeLeft, timeRight, 0.0, 1.0);
 		}
 		Graphics_resetViewport (our graphics.get(), viewport);
 	}
@@ -111,15 +112,18 @@ bool structMovieWindow :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 }
 
 void structMovieWindow :: v_play (double startTime, double endTime) {
-	Movie_play (our movie, our graphics.get(), startTime, endTime, theFunctionEditor_playCallback, this);
+	Movie_play (our movie(), our graphics.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
 autoMovieWindow MovieWindow_create (conststring32 title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
-		my movie = movie;
-		autoSoundArea soundArea = ( my movie -> d_sound ? SoundArea_create (me.get(), my movie -> d_sound.get()) : autoSoundArea() );
-		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title, movie, false);
+		if (movie -> d_sound)
+			my soundArea = SoundArea_create (me.get(),
+				movie -> d_sound.get(),   // a pointer to the internal sound (BUG: change if data changes)
+				false   // owned by movie
+			);
+		FunctionEditor_init (me.get(), title, movie);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie window not created.");

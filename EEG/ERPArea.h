@@ -32,7 +32,7 @@ Thing_define (ERPArea, SoundArea) {
 
 inline autoERPArea ERPArea_create (FunctionEditor editor, ERP erp) {
 	autoERPArea me = Thing_new (ERPArea);
-	FunctionArea_init (me.get(), editor, erp);
+	SoundArea_init (me.get(), editor, erp, false);
 	return me;
 }
 

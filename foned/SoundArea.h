@@ -32,7 +32,6 @@ Thing_define (SoundArea, FunctionArea) {
 	struct {
 		bool valid;
 		double globalMinimum, globalMaximum;
-		void invalidate () { our valid = false; }
 	} cache;
 	
 	double ymin, ymax;
@@ -49,6 +48,11 @@ Thing_define (SoundArea, FunctionArea) {
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 	}
 
+	void v_functionChanged () override {
+		our cache.valid = false;
+		SoundArea_Parent :: v_functionChanged ();
+	}
+
 	#include "SoundArea_prefs.h"
 };
 
@@ -58,11 +62,9 @@ void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound) {
-	autoSoundArea me = Thing_new (SoundArea);
-	FunctionArea_init (me.get(), editor, soundOrLongSound);
-	return me;
-}
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound);
+
+autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound);
 
 /* End of file SoundArea.h */
 #endif

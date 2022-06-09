@@ -56,16 +56,10 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 	Call after every change in the data.
 */
 
-void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, autoSoundArea soundArea,
-		conststring32 title, bool ownSound);
+autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier tier, Sound sound);
 /*
-	`sound` may be null;
-	if `ownSound` is `true`, the editor will contain a deep copy of the Sound,
-	which the editor will destroy when the editor is destroyed.
+	`sound` may be null
 */
-
-autoRealTierEditor RealTierEditor_create (conststring32 title,
-	RealTier tier, Sound sound, bool ownSound);
 
 /* End of file RealTierEditor.h */
 #endif

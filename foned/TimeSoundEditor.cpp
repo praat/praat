@@ -534,32 +534,4 @@ bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent e
 	return TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
-void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title,
-	Function function, bool ownSound)
-{
-	my soundArea = soundArea.move();
-	if (my soundOrLongSound()) {
-		if (ownSound) {
-			Melder_assert (my sound());   // LongSounds cannot be owned
-			/*
-				Replace the reference to our sound with a deep copy (which we own);
-			*/
-			my soundArea -> function = Data_copy (my sound()).releaseToAmbiguousOwner();
-			my soundArea -> ownSound = ownSound;
-			Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
-					& my soundArea -> cache. globalMinimum, & my soundArea -> cache. globalMaximum);
-		} else if (my sound()) {
-			Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
-					& my soundArea -> cache. globalMinimum, & my soundArea -> cache. globalMaximum);
-		} else if (my longSound()) {
-			my soundArea -> cache. globalMinimum = -1.0;
-			my soundArea -> cache. globalMaximum = 1.0;
-		} else {
-			Melder_fatal (U"Invalid sound class in TimeSoundEditor::init.");
-		}
-		my soundArea -> muteChannels = zero_BOOLVEC (my soundOrLongSound() -> ny);
-	}
-	FunctionEditor_init (me, title, function);
-}
-
 /* End of file TimeSoundEditor.cpp */

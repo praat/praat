@@ -698,7 +698,7 @@ static void cb_TextGridEditor_publication (Editor /* editor */, autoDaata public
 }
 DIRECT (EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit) {
 	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be null
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, nullptr);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 	EDITOR_ONE_WITH_ONE_END
 }
@@ -708,7 +708,7 @@ FORM (EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback, U"TextGrid: View & E
 	OK
 DO
 	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be null
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, callbackText);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, nullptr, callbackText);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 	EDITOR_ONE_WITH_ONE_END
 }
@@ -725,7 +725,7 @@ DIRECT (WINDOW_TextGrid_LongSound_viewAndEdit) {
 	Melder_assert (ilongSound != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam_LOOP (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, nullptr, nullptr);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 		praat_installEditor2 (editor.get(), IOBJECT, ilongSound);
 		editor.releaseToUser();
@@ -748,7 +748,7 @@ DIRECT (WINDOW_TextGrid_SpellingChecker_viewAndEdit) {
 	Melder_assert (ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam_LOOP (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, spellingChecker, nullptr);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, spellingChecker, nullptr);
 		praat_installEditor2 (editor.get(), IOBJECT, ispellingChecker);
 		editor.releaseToUser();
 	}
@@ -770,7 +770,7 @@ DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
 	Melder_assert (ilongSound != 0 && ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam_LOOP (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, spellingChecker, nullptr);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, spellingChecker, nullptr);
 		praat_installEditor3 (editor.get(), IOBJECT, ilongSound, ispellingChecker);
 		editor.releaseToUser();
 	}

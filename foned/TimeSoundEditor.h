@@ -53,8 +53,5 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	#include "TimeSoundEditor_prefs.h"
 };
 
-void TimeSoundEditor_init (TimeSoundEditor me, autoSoundArea soundArea, conststring32 title,
-		Function function, bool ownSound);
-
 /* End of file TimeSoundEditor.h */
 #endif

@@ -150,21 +150,13 @@ void structRealTierEditor :: v_play (double startTime, double endTime) {
 		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
-void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, autoSoundArea soundArea, conststring32 title,
-	bool ownSound)
-{
-	TimeSoundEditor_init (me, soundArea.move(), title, realTierArea -> function, ownSound);
-	my realTierArea = realTierArea.move();
-	RealTierEditor_updateScaling (me);
-	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
-}
-
-autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier realTier, Sound sound, bool ownSound) {
+autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier realTier, Sound sound) {
 	try {
 		autoRealTierEditor me = Thing_new (RealTierEditor);
-		autoRealTierArea realTierArea = RealTierArea_create (me.get(), realTier);
-		autoSoundArea soundArea = ( sound ? SoundArea_create (me.get(), sound) : autoSoundArea() );
-		RealTierEditor_init (me.get(), realTierArea.move(), soundArea.move(), title, ownSound);
+		my realTierArea = RealTierArea_create (me.get(), realTier);
+		if (sound)
+			my soundArea = SoundArea_create (me.get(), sound, true);
+		FunctionEditor_init (me.get(), title, realTier);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"RealTier window not created.");

@@ -48,11 +48,9 @@ Thing_define (NoulliGridEditor, TimeSoundEditor) {
 	#include "NoulliGridEditor_prefs.h"
 };
 
-autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid grid, Sound sound, bool ownSound);
+autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid grid, Sound sound);
 /*
-	`sound` may be null;
-	if `ownSound` is `true`, the editor will contain a deep copy of the Sound,
-	which the editor will destroy when the editor is destroyed.
+	`sound` may be null
 */
 
 /* End of file NoulliGridEditor.h */
