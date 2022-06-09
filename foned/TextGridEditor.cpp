@@ -2191,13 +2191,12 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststring32 title,
-	TextGrid textGrid, SampledXY sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
+void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid textGrid,
+	SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
-	my spellingChecker = spellingChecker;   // set in time
+	my spellingChecker = spellingChecker;   // set before FunctionEditor_init, which may install spellingChecker menus
 	my callbackSocket = Melder_dup (callbackSocket);
-
-	TimeSoundAnalysisEditor_init (me, soundArea.move(), title, textGrid, ownSound);
+	FunctionEditor_init (me, title, textGrid);
 
 	my selectedTier = 1;
 	my draggingTime = undefined;
@@ -2212,7 +2211,11 @@ void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststrin
 	}
 	if (spellingChecker)
 		GuiText_setSelection (my textArea, 0, 0);
-	if (sound && sound -> xmin == 0.0 && my textGrid() -> xmin != 0.0 && my textGrid() -> xmax > sound -> xmax)
+	if (my soundOrLongSound() &&
+		my soundOrLongSound() -> xmin == 0.0 &&
+		my textGrid() -> xmin != 0.0 &&
+		my textGrid() -> xmax > my soundOrLongSound() -> xmax
+	)
 		Melder_warning (U"The time domain of the TextGrid (starting at ",
 			Melder_fixed (my textGrid() -> xmin, 6), U" seconds) does not overlap with that of the sound "
 			U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
@@ -2220,14 +2223,14 @@ void TextGridEditor_init (TextGridEditor me, autoSoundArea soundArea, conststrin
 			U"to shift the starting time of the TextGrid to zero.");
 }
 
-autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid, SampledXY soundOrLongSound, bool ownSound,
-	SpellingChecker spellingChecker, conststring32 callbackSocket)
+autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid,
+	SampledXY soundOrLongSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
-		autoSoundArea soundArea = ( soundOrLongSound ? SoundArea_create (me.get(), soundOrLongSound) : autoSoundArea() );
-		TextGridEditor_init (me.get(), soundArea.move(), title,
-				textGrid, soundOrLongSound, ownSound, spellingChecker, callbackSocket);
+		if (soundOrLongSound)
+			my soundArea = SoundArea_create (me.get(), soundOrLongSound, true);
+		TextGridEditor_init (me.get(), title, textGrid, spellingChecker, callbackSocket);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid window not created.");

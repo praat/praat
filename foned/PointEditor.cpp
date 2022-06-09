@@ -252,12 +252,11 @@ void structPointEditor :: v_play (double startTime, double endTime) {
 autoPointEditor PointEditor_create (conststring32 title, PointProcess pointProcess, Sound sound) {
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
-		autoSoundArea soundArea;
 		if (sound) {
 			my monoSound = Sound_convertToMono (sound);
-			soundArea = SoundArea_create (me.get(), my monoSound.get());
+			my soundArea = SoundArea_create (me.get(), my monoSound.get(), false);   // PointEditor will delete the sound
 		}
-		TimeSoundEditor_init (me.get(), soundArea.move(), title, pointProcess, false);
+		FunctionEditor_init (me.get(), title, pointProcess);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess window not created.");

@@ -811,7 +811,7 @@ DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 
 DIRECT (EDITOR_ONE_WITH_ONE_PitchTier_viewAndEdit) {
 	EDITOR_ONE_WITH_ONE (a,PitchTier, Sound)   // Sound may be null
-		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
+		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you);
 	EDITOR_ONE_WITH_ONE_END
 }
 
@@ -1608,7 +1608,7 @@ DIRECT (HELP_RealTier_help) {
 
 DIRECT (EDITOR_ONE_WITH_ONE_RealTier_viewAndEdit) {
 	EDITOR_ONE_WITH_ONE (a,RealTier, Sound)   // Sound may be null
-		autoRealTierEditor editor = RealTierEditor_create (ID_AND_FULL_NAME, me, you, true);
+		autoRealTierEditor editor = RealTierEditor_create (ID_AND_FULL_NAME, me, you);
 	EDITOR_ONE_WITH_ONE_END
 }
 

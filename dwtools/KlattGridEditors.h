@@ -25,14 +25,13 @@
 #include "FormantGridEditor.h"
 
 Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
-	KlattGrid klattgrid;
+	KlattGrid klattgrid() { return static_cast <KlattGrid> (our data); }
 
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
 	void v_play (double startTime, double endTime)
 		override;
 };
-void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, autoKlattGrid_RealTierArea area, conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 	conststring32 v_quantityText ()

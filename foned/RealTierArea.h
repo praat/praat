@@ -61,6 +61,8 @@ inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, RealTier 
 	FunctionArea_init (me, editor, realTier);
 	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
 	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
+	RealTierArea_updateScaling (me);
+	my ycursor = 0.382 * my ymin + 0.618 * my ymax;
 }
 
 inline autoRealTierArea RealTierArea_create (FunctionEditor editor, RealTier realTier) {

@@ -1618,7 +1618,7 @@ DO
 
 DIRECT (EDITOR_ONE_WITH_ONE__NoulliGrid_viewAndEdit) {
 	EDITOR_ONE_WITH_ONE (a,NoulliGrid, Sound)   // Sound may be null
-		autoNoulliGridEditor editor = NoulliGridEditor_create (ID_AND_FULL_NAME, me, you, true);
+		autoNoulliGridEditor editor = NoulliGridEditor_create (ID_AND_FULL_NAME, me, you);
 	EDITOR_ONE_WITH_ONE_END
 }
 

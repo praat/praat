@@ -42,8 +42,8 @@ Thing_define (PitchTierEditor, RealTierEditor) {
 
 autoPitchTierEditor PitchTierEditor_create (conststring32 title,
 	PitchTier pitch,
-	Sound sound,   // may be null
-	bool ownSound);
+	Sound sound   // may be null
+);
 
 /* End of file PitchTierEditor.h */
 #endif

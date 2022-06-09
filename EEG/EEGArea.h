@@ -32,7 +32,7 @@ Thing_define (EEGArea, SoundArea) {
 
 inline autoEEGArea EEGArea_create (FunctionEditor editor, Sound sound, EEG eeg) {
 	autoEEGArea me = Thing_new (EEGArea);
-	FunctionArea_init (me.get(), editor, sound);
+	SoundArea_init (me.get(), editor, sound, false);
 	my eeg = eeg;
 	return me;
 }

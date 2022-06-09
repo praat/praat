@@ -422,8 +422,9 @@ autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSo
 	Melder_assert (soundOrLongSound);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
-		autoSoundArea soundArea = SoundArea_create (me.get(), soundOrLongSound);
-		TimeSoundAnalysisEditor_init (me.get(), soundArea.move(), title, soundOrLongSound, false);
+		my soundArea = SoundArea_create (me.get(), soundOrLongSound, false);
+		FunctionEditor_init (me.get(), title, soundOrLongSound);
+
 		if (my longSound() && my endWindow - my startWindow > 30.0) {
 			my endWindow = my startWindow + 30.0;
 			if (my startWindow == my tmin)

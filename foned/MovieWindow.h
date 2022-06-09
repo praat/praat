@@ -22,7 +22,7 @@
 #include "Movie.h"
 
 Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
-	Movie movie;
+	Movie movie() { return static_cast <Movie> (our data); }
 	
 	void v_createMenus ()
 		override;

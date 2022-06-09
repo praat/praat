@@ -69,6 +69,7 @@ Thing_define (FunctionArea, Thing) {
 		return (y_pxlt - our bottom_pxlt()) / (our top_pxlt() - our bottom_pxlt());
 	}
 protected:
+	virtual void v_functionChanged () { }
 private:
 	FunctionEditor _editor;
 	double _ymin_fraction, _ymax_fraction;
