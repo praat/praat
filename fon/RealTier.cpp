@@ -163,10 +163,13 @@ double RealTier_getMaximumValue (RealTier me) {
 }
 
 double RealTier_getMinimumValue (RealTier me) {
+	Melder_assert (me);
 	double result = undefined;
 	integer n = my points.size;
 	for (integer i = 1; i <= n; i ++) {
+		Melder_assert (my points.at._elements);
 		RealPoint point = my points.at [i];
+		Melder_assert (point);
 		if (isundef (result) || point -> value < result)
 			result = point -> value;
 	}

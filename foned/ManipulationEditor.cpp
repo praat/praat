@@ -782,12 +782,12 @@ void structManipulationEditor :: v_play (double startTime, double endTime) {
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
-		FunctionEditor_init (me.get(), title, manipulation);
 		my pitchTierArea = PitchTierArea_create (me.get(), manipulation -> pitch.get());
-		if (manipulation -> duration)
+		if (manipulation -> duration) {
 			my durationTierArea = DurationTierArea_create (me.get(), manipulation -> duration.get());
-
-		my durationTierArea -> ycursor = 1.0;
+			my durationTierArea -> ycursor = 1.0;
+		}
+		FunctionEditor_init (me.get(), title, manipulation);
 
 		my synthesisMethod = prefs_synthesisMethod;
 		if (manipulation -> sound)
