@@ -36,6 +36,18 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	PitchTier pitch() { return our manipulation() -> pitch.get(); }
 	DurationTier duration() { return our manipulation() -> duration.get(); }
 
+	/*
+		Areas.
+	*/
+	autoPitchTierArea pitchTierArea;
+	autoDurationTierArea durationTierArea;
+	void v_dataChanged () override {
+		our pitchTierArea -> function = our pitch();
+		if (our durationTierArea)
+			our durationTierArea -> function = our duration();
+		ManipulationEditor_Parent :: v_dataChanged ();
+	}
+
 	autoPointProcess previousPulses;
 	autoPitchTier previousPitch;
 	autoDurationTier previousDuration;
@@ -47,8 +59,6 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	GuiMenuItem synthPulsesPitchButton, synthPulsesPitchHumButton;
 	GuiMenuItem synthOverlapAddNodurButton, synthOverlapAddButton;
 	GuiMenuItem synthPitchLpcButton;
-	autoPitchTierArea pitchTierArea;
-	autoDurationTierArea durationTierArea;
 
 	Graphics_Viewport inset;
 
