@@ -87,14 +87,6 @@ bool structFormantPathEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 	return FormantPathEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 }
 
-void structFormantPathEditor :: v_saveData () {
-	
-}
-
-void structFormantPathEditor :: v_restoreData () {
-	
-}
-
 /********** UTILITIES **********/
 
 static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_startTime, double *out_endTime, double *out_xCursor, double *out_yCursor) {
@@ -830,7 +822,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 			tmax_ = our endSelection;
 		}
 		our selectedCandidate = index;
-		// Editor_save (this, U"insert interval by selection viewer"); // we need complete undo of every command!
+		Editor_save (this, U"Change ceiling");
 		integer itmin, itmax;
 		Sampled_getWindowSamples (our formantPath(), tmin_, tmax_, & itmin, & itmax);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++)

@@ -152,7 +152,8 @@ static void menu_cb_removePulses (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_addPulseAtCursor (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
-	if (! my pulses()) return;
+	if (! my pulses())
+		return;
 	Editor_save (me, U"Add pulse");
 	PointProcess_addPoint (my pulses(), 0.5 * (my startSelection + my endSelection));
 	FunctionEditor_redraw (me);
