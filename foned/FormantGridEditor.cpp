@@ -280,11 +280,12 @@ void structFormantGridEditor :: v_play (double startTime, double endTime) {
 void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid formantGrid) {   // BUG: rid
 	Melder_assert (formantGrid);
 	Melder_assert (Thing_isa (formantGrid, classFormantGrid));
-	FunctionEditor_init (me, title, formantGrid);
 	my selectedFormant = 1;
 	my formantGridArea = Thing_new (FormantGridArea);
 	RealTierArea_init (my formantGridArea.get(), me, formantGrid -> formants.at [my selectedFormant]);
+	my formantGridArea -> setGlobalYRange_fraction (0.0, 1.0);
 	my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
+	FunctionEditor_init (me, title, formantGrid);
 }
 
 autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid) {
