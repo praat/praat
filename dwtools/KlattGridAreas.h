@@ -142,7 +142,8 @@ Thing_define (KlattGrid_DecibelTierArea, KlattGrid_IntensityTierArea) {
 		override { return U" dB"; }
 	#include "KlattGrid_DecibelTierArea_prefs.h"
 };
-inline autoKlattGrid_DecibelTierArea KlattGrid_DecibelTierArea_create (FunctionEditor editor, IntensityTier decibelTier) {
+inline autoKlattGrid_DecibelTierArea KlattGrid_DecibelTierArea_create (FunctionEditor editor, IntensityTier decibelTier)
+{
 	autoKlattGrid_DecibelTierArea me = Thing_new (KlattGrid_DecibelTierArea);
 	KlattGrid_RealTierArea_init (me.get(), editor, decibelTier);
 	return me;

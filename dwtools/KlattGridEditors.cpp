@@ -62,6 +62,11 @@ static void menu_cb_PitchTierHelp (KlattGrid_PitchTierEditor, EDITOR_ARGS_DIRECT
 	Melder_help (U"PitchTier");
 }
 
+void structKlattGrid_PitchTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> pitch.get();
+	KlattGrid_PitchTierEditor_Parent :: v_dataChanged ();
+}
+
 void structKlattGrid_PitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"PitchTierEditor help", 0, menu_cb_KlattGrid_PitchTierEditorHelp);
 	EditorMenu_addCommand (menu, U"PitchTier help", 0, menu_cb_PitchTierHelp);
@@ -95,10 +100,20 @@ void structKlattGrid_IntensityTierEditor :: v_createHelpMenuItems (EditorMenu me
 
 Thing_implement (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor, 0);
 
-autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring32 title, KlattGrid klattgrid, IntensityTier decibelTier) {
+void structKlattGrid_DecibelTierEditor :: v_dataChanged () {
+	our realTierArea -> function = KlattGrid_getAddressOfAmplitudes (our klattgrid(), our formantType)->at [our iformant];
+	KlattGrid_DecibelTierEditor_Parent :: v_dataChanged ();
+}
+
+autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring32 title, KlattGrid klattgrid,
+	kKlattGridFormantType formantType, integer iformant)
+{
 	try {
 		autoKlattGrid_DecibelTierEditor me = Thing_new (KlattGrid_DecibelTierEditor);
-		my realTierArea = KlattGrid_DecibelTierArea_create (me.get(), decibelTier);
+		my realTierArea = KlattGrid_DecibelTierArea_create (me.get(),
+				KlattGrid_getAddressOfAmplitudes (klattgrid, formantType)->at [iformant]);
+		my formantType = formantType;
+		my iformant = iformant;
 		FunctionEditor_init (me.get(), title, klattgrid);
 		return me;
 	} catch (MelderError) {
@@ -109,6 +124,11 @@ autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring3
 /************************** KlattGrid_VoicingAmplitudeTierEditor *********************************/
 
 Thing_implement (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEditor, 0);
+
+void structKlattGrid_VoicingAmplitudeTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> voicingAmplitude.get();
+	KlattGrid_VoicingAmplitudeTierEditor_Parent :: v_dataChanged ();
+}
 
 autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
@@ -125,6 +145,11 @@ autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_cr
 
 Thing_implement (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEditor, 0);
 
+void structKlattGrid_AspirationAmplitudeTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> aspirationAmplitude.get();
+	KlattGrid_AspirationAmplitudeTierEditor_Parent :: v_dataChanged ();
+}
+
 autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_AspirationAmplitudeTierEditor me = Thing_new (KlattGrid_AspirationAmplitudeTierEditor);
@@ -139,6 +164,11 @@ autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEdi
 /************************** KlattGrid_BreathinessAmplitudeTierEditor *********************************/
 
 Thing_implement (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierEditor, 0);
+
+void structKlattGrid_BreathinessAmplitudeTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> breathinessAmplitude.get();
+	KlattGrid_BreathinessAmplitudeTierEditor_Parent :: v_dataChanged ();
+}
 
 autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
@@ -155,6 +185,11 @@ autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierE
 
 Thing_implement (KlattGrid_SpectralTiltTierEditor, KlattGrid_IntensityTierEditor, 0);
 
+void structKlattGrid_SpectralTiltTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> spectralTilt.get();
+	KlattGrid_SpectralTiltTierEditor_Parent :: v_dataChanged ();
+}
+
 autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_SpectralTiltTierEditor me = Thing_new (KlattGrid_SpectralTiltTierEditor);
@@ -169,6 +204,11 @@ autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (co
 /************************** KlattGrid_FricationBypassTierEditor *********************************/
 
 Thing_implement (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor, 0);
+
+void structKlattGrid_FricationBypassTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> frication -> bypass.get();
+	KlattGrid_FricationBypassTierEditor_Parent :: v_dataChanged ();
+}
 
 autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
@@ -185,6 +225,11 @@ autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_crea
 
 Thing_implement (KlattGrid_FricationAmplitudeTierEditor, KlattGrid_IntensityTierEditor, 0);
 
+void structKlattGrid_FricationAmplitudeTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> frication -> fricationAmplitude.get();
+	KlattGrid_FricationAmplitudeTierEditor_Parent :: v_dataChanged ();
+}
+
 autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_FricationAmplitudeTierEditor me = Thing_new (KlattGrid_FricationAmplitudeTierEditor);
@@ -199,6 +244,11 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 /************************** KlattGrid_OpenPhaseTierEditor *********************************/
 
 Thing_implement (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor, 0);
+
+void structKlattGrid_OpenPhaseTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> openPhase.get();
+	KlattGrid_OpenPhaseTierEditor_Parent :: v_dataChanged ();
+}
 
 autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
@@ -215,6 +265,11 @@ autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststr
 
 Thing_implement (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor, 0);
 
+void structKlattGrid_CollisionPhaseTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> collisionPhase.get();
+	KlattGrid_CollisionPhaseTierEditor_Parent :: v_dataChanged ();
+}
+
 autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_CollisionPhaseTierEditor me = Thing_new (KlattGrid_CollisionPhaseTierEditor);
@@ -229,6 +284,11 @@ autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create
 /************************** KlattGrid_Power1TierEditor *********************************/
 
 Thing_implement (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor, 0);
+
+void structKlattGrid_Power1TierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> power1.get();
+	KlattGrid_Power1TierEditor_Parent :: v_dataChanged ();
+}
 
 autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
@@ -245,6 +305,11 @@ autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 
 
 Thing_implement (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor, 0);
 
+void structKlattGrid_Power2TierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> power2.get();
+	KlattGrid_Power2TierEditor_Parent :: v_dataChanged ();
+}
+
 autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_Power2TierEditor me = Thing_new (KlattGrid_Power2TierEditor);
@@ -260,6 +325,11 @@ autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 
 
 Thing_implement (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor, 0);
 
+void structKlattGrid_FlutterTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> flutter.get();
+	KlattGrid_FlutterTierEditor_Parent :: v_dataChanged ();
+}
+
 autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_FlutterTierEditor me = Thing_new (KlattGrid_FlutterTierEditor);
@@ -274,6 +344,11 @@ autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring3
 /************************** KlattGrid_DoublePulsingTierEditor *********************************/
 
 Thing_implement (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor, 0);
+
+void structKlattGrid_DoublePulsingTierEditor :: v_dataChanged () {
+	our realTierArea -> function = our klattgrid() -> phonation -> doublePulsing.get();
+	KlattGrid_DoublePulsingTierEditor_Parent :: v_dataChanged ();
+}
 
 autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (conststring32 title, KlattGrid klattgrid) {
 	try {
@@ -292,6 +367,11 @@ Thing_implement (KlattGrid_FormantGridEditor, FormantGridEditor, 0);
 
 static bool FormantGrid_isEmpty (FormantGrid me) {
 	return my formants.size == 0 || my bandwidths.size == 0;
+}
+
+void structKlattGrid_FormantGridEditor :: v_dataChanged () {
+	//our realTierArea -> function = BUG: ... perhaps automatic?
+	KlattGrid_FormantGridEditor_Parent :: v_dataChanged ();
 }
 
 void structKlattGrid_FormantGridEditor :: v_play (double startTime, double endTime) {

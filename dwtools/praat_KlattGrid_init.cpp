@@ -223,10 +223,13 @@ FORM (EDITOR_ONE_KlattGrid_edit##Name##FormantAmplitudeTier, U"KlattGrid: View &
 DO \
 	EDITOR_ONE (a,KlattGrid) \
 		OrderedOf<structIntensityTier>* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
-		if (! amp) Melder_throw (U"Unknown formant type"); \
-		if (formantNumber > amp->size) Melder_throw (U"Formant number does not exist."); \
+		if (! amp) \
+			Melder_throw (U"Unknown formant type"); \
+		if (formantNumber > amp->size) \
+			Melder_throw (U"Formant number does not exist."); \
 		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" amplitude tier"); \
-		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, amp->at [formantNumber]); \
+		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, \
+				formantType, formantNumber); \
 	EDITOR_ONE_END \
 }
 

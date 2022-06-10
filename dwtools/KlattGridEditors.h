@@ -34,6 +34,8 @@ Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
 };
 
 Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
+	void v_dataChanged ()
+		override;
 	conststring32 v_quantityText ()
 		override { return U"Open phase (0..1)"; }
 	conststring32 v_setRangeTitle ()
@@ -46,6 +48,8 @@ Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor) {
+	void v_dataChanged ()
+		override;
 	conststring32 v_quantityText ()
 		override { return U"Collision phase (0..1)"; }
 	conststring32 v_setRangeTitle ()
@@ -58,6 +62,8 @@ Thing_define (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor) {
+	void v_dataChanged ()
+		override;
 	conststring32 v_quantityText ()
 		override { return U"Power1"; }
 	conststring32 v_setRangeTitle ()
@@ -70,6 +76,8 @@ Thing_define (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor) {
+	void v_dataChanged ()
+		override;
 	conststring32 v_quantityText ()
 		override { return U"Power2"; }
 	conststring32 v_setRangeTitle ()
@@ -82,6 +90,8 @@ Thing_define (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor) {
+	void v_dataChanged ()
+		override;
 	conststring32 v_quantityText ()
 		override { return U"Double pulsing (0..1)"; }
 	conststring32 v_setRangeTitle ()
@@ -94,6 +104,8 @@ Thing_define (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
+	void v_dataChanged ()
+		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
 	conststring32 v_quantityText ()
@@ -108,6 +120,8 @@ Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor) {
+	void v_dataChanged ()
+		override;
 	conststring32 v_quantityText ()
 		override { return U"Flutter (0..1)"; }
 	conststring32 v_setRangeTitle ()
@@ -134,6 +148,11 @@ Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
 void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, autoKlattGrid_IntensityTierArea area, conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
+	kKlattGridFormantType formantType;
+	integer iformant;
+
+	void v_dataChanged ()
+		override;
 	conststring32 v_quantityText ()
 		override { return U"Amplitude (dB)"; }
 	conststring32 v_setRangeTitle ()
@@ -143,34 +162,49 @@ Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 	conststring32 v_maximumLabelText ()
 		override { return U"Maximum amplitude (dB)"; }
 };
-autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring32 title, KlattGrid klattgrid, IntensityTier decibelTier);
+autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring32 title, KlattGrid klattgrid,
+		kKlattGridFormantType formantType, integer iformant);
 
 Thing_define (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
+	void v_dataChanged ()
+		override;
 };
 autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
+	void v_dataChanged ()
+		override;
 };
 autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
+	void v_dataChanged ()
+		override;
 };
 autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_SpectralTiltTierEditor, KlattGrid_IntensityTierEditor) {
+	void v_dataChanged ()
+		override;
 };
 autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor) {
+	void v_dataChanged ()
+		override;
 };
 autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_FricationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
+	void v_dataChanged ()
+		override;
 };
 autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
-	KlattGrid klattgrid;
+	void v_dataChanged ()
+		override;
+	KlattGrid klattgrid;   // BUG: shouldn't be here
 	void v_play (double startTime, double endTime)
 		override;
 	bool v_hasSourceMenu ()
