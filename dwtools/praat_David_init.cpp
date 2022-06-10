@@ -7165,7 +7165,7 @@ FORM (GRAPHICS_EACH__Table_drawEllipsesWhere, U"Table: Draw ellipses where", nul
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	SENTENCE (factorColumn_string, U"Factor column", U"Vowel")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
-	REAL (fontSize, U"Font size", U"12 (0 = no label)")
+	REAL (fontSize, U"Font size", U"12 ; (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"Use data only in rows where the following condition holds.")
 	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
