@@ -119,10 +119,6 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	void v_createMenuItems_formant (EditorMenu menu)
 		override;
 	virtual void v_updateMenuItems_navigation ();
-	void v_saveData () 
-		override;
-	void v_restoreData ()
-		override;
 	void v_reset_analysis ()
 		override;
 	#include "FormantPathEditor_prefs.h"
