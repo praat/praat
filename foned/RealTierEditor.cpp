@@ -24,11 +24,10 @@ Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 /* MARK: - MENU COMMANDS */
 
 static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	RealTierArea_removePoints (my realTierArea.get());
-	Editor_save (me, U"Remove point(s)");
-	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
+	MODIFY_DATA (U"Remove point(s)")
+		RealTierArea_removePoints (my realTierArea.get());
+		RealTierEditor_updateScaling (me);
+	MODIFY_DATA_END
 }
 
 static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
