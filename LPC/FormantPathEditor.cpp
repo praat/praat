@@ -112,281 +112,7 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_
 				my d_spectrogram_cursor < my instancePref_spectrogram_viewTo() ? my d_spectrogram_cursor : -1000.0 );
 }
 
-static void checkTierSelection (FormantPathEditor me, conststring32 verbPhrase) {
-	if (my selectedTier < 1 || my selectedTier > my textgrid -> tiers -> size)
-		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
-}
-
 /********** METHODS **********/
-
-/***** FILE MENU *****/
-
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (FormantPathEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		if (my endSelection <= my startSelection)
-			Melder_throw (U"No selection.");
-		autoTextGrid result = TextGrid_extractPart (my textgrid.get(), my startSelection, my endSelection, true);
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (FormantPathEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		if (my endSelection <= my startSelection)
-			Melder_throw (U"No selection.");
-		autoTextGrid result = TextGrid_extractPart (my textgrid.get(), my startSelection, my endSelection, false);
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-void structFormantPathEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
-	FormantPathEditor_Parent :: v_createMenuItems_file_extract (menu);
-	extractSelectedTextGridPreserveTimesButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (preserve times)", 0,
-			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes);
-	extractSelectedTextGridTimeFromZeroButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (time from 0)", 0,
-			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero);
-}
-
-static void menu_cb_WriteToTextFile (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
-		Melder_sprint (defaultName,300, my textgrid -> name.get(), U".TextGrid");
-	EDITOR_DO_SAVE
-		Data_writeToTextFile (my textgrid.get(), file);
-	EDITOR_END
-}
-
-void structFormantPathEditor :: v_createMenuItems_file_write (EditorMenu menu) {
-	FormantPathEditor_Parent :: v_createMenuItems_file_write (menu);
-	EditorMenu_addCommand (menu, U"Save TextGrid as text file...", 'S', menu_cb_WriteToTextFile);
-}
-
-static void menu_cb_DrawVisibleTextGrid (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Draw visible TextGrid", nullptr)
-		my v_form_pictureWindow (cmd);
-		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish())
-	EDITOR_OK
-		my v_ok_pictureWindow (cmd);
-		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
-	EDITOR_DO
-		my v_do_pictureWindow (cmd);
-		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
-		my setClassPref_function_picture_garnish (garnish);
-		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw (my textgrid.get(), nullptr, my pictureGraphics,
-				my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
-	EDITOR_END
-}
-
-static void menu_cb_DrawVisibleSoundAndTextGrid (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Draw visible sound and TextGrid", nullptr)
-		my v_form_pictureWindow (cmd);
-		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish())
-	EDITOR_OK
-		my v_ok_pictureWindow (cmd);
-		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
-	EDITOR_DO
-		my v_do_pictureWindow (cmd);
-		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
-		my setClassPref_function_picture_garnish (garnish);
-		Editor_openPraatPicture (me);
-		{// scope
-			autoSound sound = my longSound() ?
-				LongSound_extractPart (my longSound(), my startWindow, my endWindow, true) :
-				Sound_extractPart (my sound(), my startWindow, my endWindow,
-						kSound_windowShape::RECTANGULAR, 1.0, true);
-			TextGrid_Sound_draw (my textgrid.get(), sound.get(), my pictureGraphics,
-					my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
-		}
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
-	EDITOR_END
-}
-
-void structFormantPathEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
-	FormantPathEditor_Parent :: v_createMenuItems_file_draw (menu);
-	EditorMenu_addCommand (menu, U"Draw visible TextGrid...", 0, menu_cb_DrawVisibleTextGrid);
-	if (our soundOrLongSound())
-		EditorMenu_addCommand (menu, U"Draw visible sound and TextGrid...", 0, menu_cb_DrawVisibleSoundAndTextGrid);
-}
-
-/***** QUERY MENU *****/
-#if 0
-static void menu_cb_GetStartingPointOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my textGridView.get();
-	checkTierSelection (me, U"query the starting point of an interval");
-	const Function anyTier = grid -> tiers->at [my selectedTier];
-	if (anyTier -> classInfo == classIntervalTier) {
-		const IntervalTier tier = (IntervalTier) anyTier;
-		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		const double time = ( iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
-				tier -> intervals.at [iinterval] -> xmin );
-		Melder_informationReal (time, U"seconds");
-	} else {
-		Melder_throw (U"The selected tier is not an interval tier.");
-	}
-}
-
-static void menu_cb_GetEndPointOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my textGridView.get();
-	checkTierSelection (me, U"query the end point of an interval");
-	const Function anyTier = grid -> tiers->at [my selectedTier];
-	if (anyTier -> classInfo == classIntervalTier) {
-		const IntervalTier tier = (IntervalTier) anyTier;
-		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		const double time = ( iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
-				tier -> intervals.at [iinterval] -> xmax );
-		Melder_informationReal (time, U"seconds");
-	} else {
-		Melder_throw (U"The selected tier is not an interval tier.");
-	}
-}
-
-static void menu_cb_GetLabelOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my textGridView.get();
-	checkTierSelection (me, U"query the label of an interval");
-	const Function anyTier = grid -> tiers->at [my selectedTier];
-	if (anyTier -> classInfo == classIntervalTier) {
-		const IntervalTier tier = (IntervalTier) anyTier;
-		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		const conststring32 label = ( iinterval < 1 || iinterval > tier -> intervals.size ? U"" :
-				tier -> intervals.at [iinterval] -> text.get() );
-		Melder_information (label);
-	} else {
-		Melder_throw (U"The selected tier is not an interval tier.");
-	}
-}
-#endif
-/***** PITCH MENU *****/
-
-static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Draw TextGrid and Pitch separately", nullptr)
-		my v_form_pictureWindow (cmd);
-		LABEL (U"TextGrid:")
-		BOOLEAN (showBoundariesAndPoints, U"Show boundaries and points", my default_picture_showBoundaries ());
-		LABEL (U"Pitch:")
-		BOOLEAN (speckle, U"Speckle", my default_picture_pitch_speckle());
-		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish());
-	EDITOR_OK
-		my v_ok_pictureWindow (cmd);
-		SET_BOOLEAN (showBoundariesAndPoints, my instancePref_picture_showBoundaries())
-		SET_BOOLEAN (speckle, my instancePref_picture_pitch_speckle())
-		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
-	EDITOR_DO
-		my v_do_pictureWindow (cmd);
-		my setInstancePref_picture_showBoundaries (showBoundariesAndPoints);
-		my setInstancePref_picture_pitch_speckle (speckle);
-		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
-		my setClassPref_function_picture_garnish (garnish);
-		TimeSoundAnalysisEditor_haveVisiblePitch (me);
-		Editor_openPraatPicture (me);
-		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
-				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
-		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
-				my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
-		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(),
-				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
-		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(),
-				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
-		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
-		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
-		TextGrid_Pitch_drawSeparately (my textgrid.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
-			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
-			speckle, my instancePref_pitch_unit()
-		);
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
-	EDITOR_END
-}
-
-/***** SEARCH MENU *****/
-
-static void findInTier (FormantPathEditor me) {
-	const TextGrid grid =  my textgrid.get();
-	checkTierSelection (me, U"find a text");
-	Function anyTier = grid -> tiers->at [my selectedTier];
-	if (anyTier -> classInfo == classIntervalTier) {
-		const IntervalTier tier = (IntervalTier) anyTier;
-		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
-		while (iinterval <= tier -> intervals.size) {
-			TextInterval interval = tier -> intervals.at [iinterval];
-			conststring32 text = interval -> text.get();
-			if (text) {
-				const char32 *position = str32str (text, my findString.get());
-				if (position) {
-					my startSelection = interval -> xmin;
-					my endSelection = interval -> xmax;
-					FunctionEditor_scrollToView (me, my startSelection);
-					GuiText_setSelection (my textArea, position - text, position - text + str32len (my findString.get()));
-					return;
-				}
-			}
-			iinterval ++;
-		}
-		if (iinterval > tier -> intervals.size)
-			Melder_beep ();
-	} else {
-		TextTier tier = (TextTier) anyTier;
-		integer ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection) + 1;
-		while (ipoint <= tier -> points.size) {
-			const TextPoint point = tier->points.at [ipoint];
-			conststring32 text = point -> mark.get();
-			if (text) {
-				const char32 * const position = str32str (text, my findString.get());
-				if (position) {
-					my startSelection = my endSelection = point -> number;
-					FunctionEditor_scrollToView (me, point -> number);
-					GuiText_setSelection (my textArea, position - text, position - text + str32len (my findString.get()));
-					return;
-				}
-			}
-			ipoint ++;
-		}
-		if (ipoint > tier -> points.size)
-			Melder_beep ();
-	}
-}
-
-static void do_find (FormantPathEditor me) {
-	if (my findString && my textArea) {
-		integer left, right;
-		autostring32 label = GuiText_getStringAndSelectionPosition (my textArea, & left, & right);
-		const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
-		if (position) {
-			GuiText_setSelection (my textArea, position - label.get(), position - label.get() + str32len (my findString.get()));
-		} else {
-			findInTier (me);
-		}
-	}
-}
-
-static void menu_cb_Find (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Find text", nullptr)
-		TEXTFIELD (findString, U"Text", U"", 3)
-	EDITOR_OK
-	EDITOR_DO
-		my findString = Melder_dup (findString);
-		do_find (me);
-	EDITOR_END
-}
-
-static void menu_cb_FindAgain (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	do_find (me);
-}
 
 /***** TIER MENU *****/
 
@@ -588,9 +314,9 @@ static void menu_cb_AboutTextStyles (FormantPathEditor, EDITOR_ARGS_DIRECT) { Me
 void structFormantPathEditor :: v_createMenus () {
 	FormantPathEditor_Parent :: v_createMenus ();
 	EditorMenu menu;
-	Editor_addCommand (this, U"Edit", U"-- search --", 0, nullptr);
-	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
-	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
+//	Editor_addCommand (this, U"Edit", U"-- search --", 0, nullptr);
+//	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
+//	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
 
 //	Editor_addCommand (this, U"Query", U"-- query interval --", 0, nullptr);
 //	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
@@ -639,14 +365,14 @@ void structFormantPathEditor :: v_createChildren () {
 }
 
 void structFormantPathEditor :: v_dataChanged () {
-	if (our textgrid) {
+	//if (our textgrid) {
 		/*
 			Perform a minimal selection change.
 			Most changes will involve intervals and boundaries; however, there may also be tier removals.
 			Do a simple guess.
 		*/
-		Melder_clipRight (& our selectedTier, our textgrid -> tiers->size);
-	}
+	//	Melder_clipRight (& our selectedTier, our textgrid -> tiers->size);
+	//}
 	our d_formant = FormantPath_extractFormant (our formantPath());
 	our v_updateMenuItems_navigation ();
 	FormantPathEditor_Parent :: v_dataChanged ();
@@ -687,9 +413,9 @@ void structFormantPathEditor :: v_draw () {
 	/*
 		Draw tiers.
 	*/
-	if (our textgrid) {}
+	//if (our textgrid) {}
 	if (showAnalysis) {
-		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, (our textgrid ? 0.3 : 0.0), soundBottom);
+		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, /* our textgrid ? 0.3 : */ 0.0, soundBottom);
 		our v_draw_analysis ();
 		Graphics_resetViewport (our graphics.get(), vp1);
 		/* Draw pulses. */
@@ -916,18 +642,7 @@ double structFormantPathEditor :: v_getBottomOfSoundArea () {
 }
 
 double structFormantPathEditor :: v_getBottomOfSoundAndAnalysisArea () {
-	return our textgrid ? 0.3 : 0.0;
-}
-
-void structFormantPathEditor :: v_createMenuItems_pitch_picture (EditorMenu menu) {
-	FormantPathEditor_Parent :: v_createMenuItems_pitch_picture (menu);
-	EditorMenu_addCommand (menu, U"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
-}
-
-void structFormantPathEditor :: v_updateMenuItems_file () {
-	FormantPathEditor_Parent :: v_updateMenuItems_file ();
-	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our endSelection > our startSelection);
-	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection > our startSelection);
+	return 0.0;  //our textgrid ? 0.3 : 0.0;
 }
 
 /********** EXPORTED **********/
@@ -941,8 +656,8 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 			;   // BUG: implement TextGridArea
 		FunctionEditor_init (me.get(), title, formantPath);
 		my d_formant = FormantPath_extractFormant (formantPath);
-		if (textgrid)
-			my textgrid = Data_copy (textgrid);
+		//if (textgrid)
+		//	my textgrid = Data_copy (textgrid);
 		if (my instancePref_modeler_numberOfParametersPerTrack() [0] == U'\0')
 			my setInstancePref_modeler_numberOfParametersPerTrack (my default_modeler_numberOfParametersPerTrack());
 		if (my instancePref_formant_default_colour() [0] == U'\0')
