@@ -42,7 +42,7 @@
 	be calculated whenever they are needed from the information in the tiers.
 	
 	Multichannel sounds don't make sense with respect to the analysis part. If both channels are the same sound, one is redundant.
-	If two different sounds? May be only copy channel 1?
+	If two different sounds, then average (convert to mono), as in other editors.
 */
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
