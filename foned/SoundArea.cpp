@@ -233,17 +233,14 @@ bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event
 
 void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound) {
 	FunctionArea_init (me, editor, soundOrLongSound);
-	if (ownSound) {
-		Melder_assert (my sound());   // LongSounds cannot be owned
-		my soundCopy = Data_copy (my sound());
-		Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
-				& my cache. globalMinimum, & my cache. globalMaximum);
-	} else if (my sound()) {
-		Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
-				& my cache. globalMinimum, & my cache. globalMaximum);
-	} else if (my longSound()) {
+	if (my longSound()) {
 		my cache. globalMinimum = -1.0;
 		my cache. globalMaximum = 1.0;
+	} else if (my sound()) {
+		if (ownSound)
+			my soundCopy = Data_copy (my sound());
+		Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
+				& my cache. globalMinimum, & my cache. globalMaximum);
 	} else {
 		Melder_fatal (U"Invalid sound class in SoundArea_create().");
 	}
