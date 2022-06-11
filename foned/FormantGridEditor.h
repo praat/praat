@@ -23,15 +23,15 @@
 #include "RealTierArea.h"
 
 Thing_define (FormantGridArea, RealTierArea) {
+	bool editingBandwidths;
+	integer selectedFormant;
 };
 
 Thing_define (FormantGridEditor, FunctionEditor) {
 	FormantGrid formantGrid() { return static_cast <FormantGrid> (our data); }
 	autoFormantGridArea formantGridArea;
 
-	bool editingBandwidths;
 	GuiMenuItem d_bandwidthsToggle;
-	integer selectedFormant;
 
 	void v_createMenus ()
 		override;
@@ -47,6 +47,18 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 	virtual bool v_hasSourceMenu () { return true; }
 
 	#include "FormantGridEditor_prefs.h"
+};
+
+Thing_define (FormantGridEditor_FormantGridArea, FormantGridArea) {
+	FormantGridEditor formantGridEditor() { return static_cast <FormantGridEditor> (our _editor); }
+	Function v_function() override {
+		OrderedOf<structRealTier>* tiers = (
+			our editingBandwidths ?
+			& our formantGridEditor() -> formantGrid() -> bandwidths :
+			& our formantGridEditor() -> formantGrid() -> formants
+		);
+		return tiers->at [our selectedFormant];
+	}
 };
 
 void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid formantGrid);

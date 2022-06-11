@@ -33,12 +33,6 @@ Thing_implement (SoundArea, FunctionArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "SoundArea_prefs.h"
 
-void structSoundArea :: v_destroy () noexcept {
-	if (our ownSound)
-		forget (our function);
-	SoundArea_Parent :: v_destroy ();
-}
-
 void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units) {
 	Graphics_setColour (my graphics(), Melder_CYAN);
 	Graphics_line (my graphics(), my startWindow(), yWC, 0.99 * my startWindow() + 0.01 * my endWindow(), yWC);
@@ -241,11 +235,7 @@ void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongS
 	FunctionArea_init (me, editor, soundOrLongSound);
 	if (ownSound) {
 		Melder_assert (my sound());   // LongSounds cannot be owned
-		/*
-			Replace the reference to our sound with a deep copy (which we own);
-		*/
-		my function = Data_copy (my sound()).releaseToAmbiguousOwner();
-		my ownSound = ownSound;
+		my soundCopy = Data_copy (my sound());
 		Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
 				& my cache. globalMinimum, & my cache. globalMaximum);
 	} else if (my sound()) {

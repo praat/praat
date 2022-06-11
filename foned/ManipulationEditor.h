@@ -41,12 +41,6 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	*/
 	autoPitchTierArea pitchTierArea;
 	autoDurationTierArea durationTierArea;
-	void v_dataChanged () override {
-		our pitchTierArea -> function = our pitch();
-		if (our durationTierArea)
-			our durationTierArea -> function = our duration();
-		ManipulationEditor_Parent :: v_dataChanged ();
-	}
 
 	autoPointProcess previousPulses;
 	autoPitchTier previousPitch;
@@ -80,6 +74,17 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		override;
 
 	#include "ManipulationEditor_prefs.h"
+};
+
+Thing_define (ManipulationEditor_PitchTierArea, PitchTierArea) {
+	Function v_function() override {
+		return ((ManipulationEditor) our _editor) -> pitch();
+	}
+};
+Thing_define (ManipulationEditor_DurationTierArea, DurationTierArea) {
+	Function v_function() override {
+		return ((ManipulationEditor) our _editor) -> duration();
+	}
 };
 
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation);

@@ -52,6 +52,7 @@ void RealTierArea_updateScaling (RealTierArea me) {
 	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
 	my ymin = my instancePref_dataFreeMinimum();
 	my ymax = my instancePref_dataFreeMaximum();
+	Melder_assert (my realTier());
 	if (my realTier() -> points.size > 0) {
 		Melder_assert (! (my v_maximumLegalY() < my v_minimumLegalY()));   // NaN-safe
 		const double minimumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMinimumValue (my realTier()), my v_maximumLegalY());

@@ -23,6 +23,7 @@
 Thing_implement (FormantGridArea, RealTierArea, 0);
 
 Thing_implement (FormantGridEditor, FunctionEditor, 0);
+Thing_implement (FormantGridEditor_FormantGridArea, FormantGridArea, 0);
 
 #include "Prefs_define.h"
 #include "FormantGridEditor_prefs.h"
@@ -35,8 +36,6 @@ Thing_implement (FormantGridEditor, FunctionEditor, 0);
 
 static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove point(s)");
-	OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid() -> bandwidths : & my formantGrid() -> formants );
-	my formantGridArea -> function = tiers->at [my selectedFormant];
 	RealTierArea_removePoints (my formantGridArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -44,8 +43,6 @@ static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_addPointAtCursor (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Add point");
-	OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid() -> bandwidths : & my formantGrid() -> formants );
-	my formantGridArea -> function = tiers->at [my selectedFormant];
 	RealTierArea_addPointAtCursor (my formantGridArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -60,8 +57,6 @@ static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (frequency, my formantGridArea -> ycursor)
 	EDITOR_DO
 		Editor_save (me, U"Add point");
-		OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & my formantGrid() -> bandwidths : & my formantGrid() -> formants );
-		my formantGridArea -> function = tiers->at [my selectedFormant];
 		RealTierArea_addPointAt (my formantGridArea.get(), time, frequency);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -97,8 +92,8 @@ static void menu_cb_setBandwidthRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_showBandwidths (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
-	my editingBandwidths = ! my editingBandwidths;
-	GuiMenuItem_check (my d_bandwidthsToggle, my editingBandwidths);
+	my formantGridArea -> editingBandwidths = ! my formantGridArea -> editingBandwidths;
+	GuiMenuItem_check (my d_bandwidthsToggle, my formantGridArea -> editingBandwidths);
 	FunctionEditor_redraw (me);
 }
 
@@ -106,7 +101,7 @@ static void selectFormantOrBandwidth (FormantGridEditor me, integer iformant) {
 	const integer numberOfFormants = my formantGrid() -> formants.size;
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
-	my selectedFormant = iformant;
+	my formantGridArea -> selectedFormant = iformant;
 	FunctionEditor_redraw (me);
 }
 
@@ -123,7 +118,7 @@ static void menu_cb_selectFormantOrBandwidth (FormantGridEditor me, EDITOR_ARGS_
 	EDITOR_FORM (U"Select formant or bandwidth", nullptr)
 		NATURAL (formantNumber, U"Formant number", U"1")
 	EDITOR_OK
-		SET_INTEGER (formantNumber, my selectedFormant)
+		SET_INTEGER (formantNumber, my formantGridArea -> selectedFormant)
 	EDITOR_DO
 		selectFormantOrBandwidth (me, formantNumber);
 		FunctionEditor_redraw (me);
@@ -192,10 +187,8 @@ void structFormantGridEditor :: v_distributeAreas () {
 }
 
 void structFormantGridEditor :: v_draw () {
-	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & our formantGrid() -> bandwidths : & our formantGrid() -> formants );
-	RealTier selectedTier = tiers->at [our selectedFormant];
-	our formantGridArea -> ymin = ( our editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
-	our formantGridArea -> ymax = ( our editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
+	our formantGridArea -> ymin = ( our formantGridArea -> editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
+	our formantGridArea -> ymax = ( our formantGridArea -> editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
 
 	our formantGridArea -> setViewport();
 
@@ -210,20 +203,21 @@ void structFormantGridEditor :: v_draw () {
 	//		Melder_float (Melder_half (our formantGridArea -> ycursor)));
 	Graphics_setLineWidth (our graphics.get(), 1.0);
 	Graphics_setColour (our graphics.get(), Melder_GREY);
-	for (integer iformant = 1; iformant <= our formantGrid() -> formants.size; iformant ++) if (iformant != our selectedFormant) {
+	OrderedOf<structRealTier>* tiers = ( our formantGridArea -> editingBandwidths ? & our formantGrid() -> bandwidths : & our formantGrid() -> formants );
+	for (integer iformant = 1; iformant <= our formantGrid() -> formants.size; iformant ++) if (iformant != our formantGridArea -> selectedFormant) {
 		RealTier tier = tiers->at [iformant];
-		integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our startWindow);
-		integer imax = AnyTier_timeToLowIndex (tier->asAnyTier(), our endWindow);
-		integer n = tier -> points.size;
+		const integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our startWindow);
+		const integer imax = AnyTier_timeToLowIndex (tier->asAnyTier(), our endWindow);
+		const integer n = tier -> points.size;
 		if (n == 0) {
 		} else if (imax < imin) {
-			double yleft = RealTier_getValueAtTime (tier, our startWindow);
-			double yright = RealTier_getValueAtTime (tier, our endWindow);
+			const double yleft = RealTier_getValueAtTime (tier, our startWindow);
+			const double yright = RealTier_getValueAtTime (tier, our endWindow);
 			Graphics_line (our graphics.get(), our startWindow, yleft, our endWindow, yright);
 		} else {
 			for (integer i = imin; i <= imax; i ++) {
 				RealPoint point = tier -> points.at [i];
-				double t = point -> number, y = point -> value;
+				const double t = point -> number, y = point -> value;
 				Graphics_fillCircle_mm (our graphics.get(), t, y, 2.0);
 				if (i == 1)
 					Graphics_line (our graphics.get(), our startWindow, y, t, y);
@@ -240,17 +234,14 @@ void structFormantGridEditor :: v_draw () {
 			}
 		}
 	}
-	our formantGridArea -> function = selectedTier;
 	RealTierArea_draw (our formantGridArea.get());
 	if (isdefined (our formantGridArea -> anchorTime))
 		RealTierArea_drawWhileDragging (our formantGridArea.get());
 }
 
 bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
-	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & our formantGrid() -> bandwidths : & our formantGrid() -> formants );
-	our formantGridArea -> function = tiers->at [selectedFormant];
-	our formantGridArea -> ymin = ( our editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
-	our formantGridArea -> ymax = ( our editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
+	our formantGridArea -> ymin = ( our formantGridArea -> editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
+	our formantGridArea -> ymax = ( our formantGridArea -> editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
 
 	static bool clickedInWideRealTierArea = false;
 	if (event -> isClick ())
@@ -280,9 +271,11 @@ void structFormantGridEditor :: v_play (double startTime, double endTime) {
 void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid formantGrid) {   // BUG: rid
 	Melder_assert (formantGrid);
 	Melder_assert (Thing_isa (formantGrid, classFormantGrid));
-	my selectedFormant = 1;
-	my formantGridArea = Thing_new (FormantGridArea);
-	RealTierArea_init (my formantGridArea.get(), me, formantGrid -> formants.at [my selectedFormant]);
+	my data = formantGrid;
+	my formantGridArea = Thing_new (FormantGridEditor_FormantGridArea);
+	my formantGridArea -> editingBandwidths = false;
+	my formantGridArea -> selectedFormant = 1;
+	RealTierArea_init (my formantGridArea.get(), me, formantGrid -> formants.at [1]);
 	my formantGridArea -> setGlobalYRange_fraction (0.0, 1.0);
 	my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
 	FunctionEditor_init (me, title, formantGrid);

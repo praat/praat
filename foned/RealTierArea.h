@@ -22,7 +22,7 @@
 #include "RealTier.h"
 
 Thing_define (RealTierArea, FunctionArea) {
-	RealTier realTier() { return static_cast <RealTier> (our function); }
+	RealTier realTier() { return static_cast <RealTier> (our function()); }
 
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
