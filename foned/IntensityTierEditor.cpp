@@ -41,10 +41,11 @@ void structIntensityTierEditor :: v_play (double startTime, double endTime) {
 autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensityTier, Sound sound) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
+		my data = intensityTier;
 		my realTierArea = IntensityTierArea_create (me.get(), intensityTier);
 		if (sound)
 			my soundArea = SoundArea_create (me.get(), sound, true);
-		FunctionEditor_init (me.get(), title, intensityTier);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier window not created.");

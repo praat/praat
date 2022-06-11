@@ -2194,9 +2194,10 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid textGrid,
 	SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
+	my data = textGrid;
 	my spellingChecker = spellingChecker;   // set before FunctionEditor_init, which may install spellingChecker menus
 	my callbackSocket = Melder_dup (callbackSocket);
-	FunctionEditor_init (me, title, textGrid);
+	FunctionEditor_init (me, title);
 
 	my selectedTier = 1;
 	my draggingTime = undefined;

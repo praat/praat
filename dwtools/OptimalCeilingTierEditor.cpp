@@ -40,10 +40,11 @@ autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 titl
 {
 	try {
 		autoOptimalCeilingTierEditor me = Thing_new (OptimalCeilingTierEditor);
+		my data = optimalCeilingTier;
 		my realTierArea = OptimalCeilingTierArea_create (me.get(), optimalCeilingTier);
 		if (sound)
 			my soundArea = SoundArea_create (me.get(), sound, true);
-		FunctionEditor_init (me.get(), title, optimalCeilingTier);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OptimalCeilingTier window not created.");

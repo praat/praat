@@ -19,8 +19,8 @@
  */
 
 #include "FunctionEditor.h"
-#include "PitchTierEditor.h"
-#include "DurationTierEditor.h"
+#include "PitchTierArea.h"
+#include "DurationTierArea.h"
 #include "Manipulation.h"
 
 #include "ManipulationEditor_enums.h"

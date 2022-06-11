@@ -334,11 +334,30 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 #pragma mark - KlattGrid_FormantGridEditor
 
 Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
-	KlattGrid klattgrid;   // BUG: shouldn't be here
+	FormantGrid v_formantGrid() override {
+		return KlattGrid_getAddressOfFormantGrid (static_cast <KlattGrid> (our data), our formantType)->get();
+	}
+	kKlattGridFormantType formantType;
 	void v_play (double startTime, double endTime)
 		override;
 	bool v_hasSourceMenu ()
 		override { return false; }
+};
+Thing_define (KlattGrid_FormantGridArea, FormantGridArea) {
+	Function v_function() override {
+		KlattGrid_FormantGridEditor editor = (KlattGrid_FormantGridEditor) our _editor;
+		FormantGrid formantGrid = KlattGrid_getAddressOfFormantGrid (static_cast <KlattGrid> (editor -> data), editor -> formantType)->get();
+		Melder_assert (Thing_isa (formantGrid, classFormantGrid));
+		OrderedOf<structRealTier>* tiers = (
+			our editingBandwidths ?
+			& formantGrid -> bandwidths :
+			& formantGrid -> formants
+		);
+		Melder_assert (our selectedFormant >= 1);
+		RealTier tier = tiers->at [our selectedFormant];
+		Melder_assert (Thing_isa (tier, classRealTier));
+		return tier;
+	}
 };
 autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, kKlattGridFormantType formantType);
 

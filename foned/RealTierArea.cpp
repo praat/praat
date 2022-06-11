@@ -48,6 +48,8 @@ void RealTierArea_addPointAtCursor (RealTierArea me) {
 }
 
 void RealTierArea_updateScaling (RealTierArea me) {
+	Melder_assert (me);
+	Melder_assert (Thing_isa (me, classRealTierArea));
 	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
 	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
 	my ymin = my instancePref_dataFreeMinimum();

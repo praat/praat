@@ -118,12 +118,13 @@ void structMovieWindow :: v_play (double startTime, double endTime) {
 autoMovieWindow MovieWindow_create (conststring32 title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
+		my data = movie;
 		if (movie -> d_sound)
 			my soundArea = SoundArea_create (me.get(),
 				movie -> d_sound.get(),   // a pointer to the internal sound (BUG: change if data changes)
 				false   // owned by movie
 			);
-		FunctionEditor_init (me.get(), title, movie);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie window not created.");

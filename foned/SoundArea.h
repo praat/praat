@@ -60,7 +60,7 @@ void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound);
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound = nullptr, bool ownSound = false);
 
 autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound);
 

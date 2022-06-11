@@ -26,9 +26,16 @@ Thing_define (FormantGridArea, RealTierArea) {
 	bool editingBandwidths;
 	integer selectedFormant;
 };
+inline void FormantGridArea_init (FormantGridArea me, FunctionEditor editor) {
+	my editingBandwidths = false;
+	my selectedFormant = 1;
+	RealTierArea_init (me, editor);
+	my setGlobalYRange_fraction (0.0, 1.0);
+}
 
 Thing_define (FormantGridEditor, FunctionEditor) {
-	FormantGrid formantGrid() { return static_cast <FormantGrid> (our data); }
+	virtual FormantGrid v_formantGrid() { return static_cast <FormantGrid> (our data); }
+	FormantGrid formantGrid() { return our v_formantGrid(); }
 	autoFormantGridArea formantGridArea;
 
 	GuiMenuItem d_bandwidthsToggle;
@@ -54,14 +61,14 @@ Thing_define (FormantGridEditor_FormantGridArea, FormantGridArea) {
 	Function v_function() override {
 		OrderedOf<structRealTier>* tiers = (
 			our editingBandwidths ?
-			& our formantGridEditor() -> formantGrid() -> bandwidths :
-			& our formantGridEditor() -> formantGrid() -> formants
+			& static_cast <FormantGrid> (our formantGridEditor() -> data) -> bandwidths :
+			& static_cast <FormantGrid> (our formantGridEditor() -> data) -> formants
 		);
-		return tiers->at [our selectedFormant];
+		RealTier tier = tiers->at [our selectedFormant];
+		Melder_assert (Thing_isa (tier, classRealTier));
+		return tier;
 	}
 };
-
-void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid formantGrid);
 
 autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid);
 

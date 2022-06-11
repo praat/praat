@@ -76,7 +76,8 @@ bool structSpectrogramEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram spectrogram) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
-		FunctionEditor_init (me.get(), title, spectrogram);
+		my data = spectrogram;
+		FunctionEditor_init (me.get(), title);
 		my maximum = 10000.0;
 		return me;
 	} catch (MelderError) {
