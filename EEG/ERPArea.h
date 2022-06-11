@@ -22,7 +22,7 @@
 #include "ERP.h"
 
 Thing_define (ERPArea, SoundArea) {
-	ERP & erp() { return * reinterpret_cast <ERP *> (& our function); }
+	ERP erp() { return static_cast <ERP> (our function()); }
 
 	conststring32 v_getChannelName (integer /* channelNumber */)
 		override;

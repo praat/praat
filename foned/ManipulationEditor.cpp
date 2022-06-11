@@ -30,6 +30,8 @@
 #include "ManipulationEditor_enums.h"
 
 Thing_implement (ManipulationEditor, FunctionEditor, 0);
+Thing_implement (ManipulationEditor_PitchTierArea, PitchTierArea, 0);
+Thing_implement (ManipulationEditor_DurationTierArea, PitchTierArea, 0);
 
 #include "Prefs_define.h"
 #include "ManipulationEditor_prefs.h"
@@ -467,7 +469,6 @@ static void menu_cb_addDurationPointAt (ManipulationEditor me, EDITOR_ARGS_FORM)
 static void menu_cb_newDuration (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"New duration");
 	my manipulation() -> duration = DurationTier_create (my manipulation() -> xmin, my manipulation() -> xmax);
-	my durationTierArea -> function = my manipulation() -> duration.get();
 	RealTierArea_updateScaling (my durationTierArea.get());
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -476,7 +477,6 @@ static void menu_cb_newDuration (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_forgetDuration (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Forget duration");
 	my manipulation() -> duration = autoDurationTier();
-	my durationTierArea -> function = my manipulation() -> duration.get();
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -782,9 +782,12 @@ void structManipulationEditor :: v_play (double startTime, double endTime) {
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
-		my pitchTierArea = PitchTierArea_create (me.get(), manipulation -> pitch.get());
+		my data = manipulation;
+		my pitchTierArea = Thing_new (ManipulationEditor_PitchTierArea);
+		RealTierArea_init (my pitchTierArea.get(), me.get(), manipulation -> pitch.get());
 		if (manipulation -> duration) {
-			my durationTierArea = DurationTierArea_create (me.get(), manipulation -> duration.get());
+			my durationTierArea = Thing_new (ManipulationEditor_DurationTierArea);
+			RealTierArea_init (my durationTierArea.get(), me.get(), manipulation -> duration.get());
 			my durationTierArea -> ycursor = 1.0;
 		}
 		FunctionEditor_init (me.get(), title, manipulation);
@@ -796,9 +799,6 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 			my soundmin = -1.0;
 			my soundmax = +1.0;
 		}
-		RealTierArea_updateScaling (my pitchTierArea.get());
-		if (manipulation -> duration)
-			RealTierArea_updateScaling (my durationTierArea.get());
 		updateMenus (me.get());
 		return me;
 	} catch (MelderError) {

@@ -21,11 +21,13 @@
 #include "FunctionEditor.h"
 
 Thing_define (FunctionArea, Thing) {
-	Function function;
+	Function function___;
+	virtual Function v_function() { return our function___; }
+	Function function() { return our v_function(); }
 
 	void init (FunctionEditor editor, Function function) {
 		our _editor = editor;
-		our function = function;
+		our function___ = function;
 		our _ymin_fraction = undefined;   // to be set just before drawing or tracking
 		our _ymax_fraction = undefined;   // to be set just before drawing or tracking
 	}
@@ -70,8 +72,8 @@ Thing_define (FunctionArea, Thing) {
 	}
 protected:
 	virtual void v_functionChanged () { }
-private:
 	FunctionEditor _editor;
+private:
 	double _ymin_fraction, _ymax_fraction;
 	double globalY_fraction_to_pxlt (double globalY_fraction) const {
 		return _editor -> dataBottom_pxlt() +

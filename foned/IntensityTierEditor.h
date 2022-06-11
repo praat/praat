@@ -23,6 +23,8 @@
 #include "Sound.h"
 
 Thing_define (IntensityTierEditor, RealTierEditor) {
+	IntensityTier intensityTier() { return static_cast <IntensityTier> (our data); }   // the `data` pointer will never change
+
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
 	void v_play (double tmin, double tmax)

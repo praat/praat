@@ -22,7 +22,7 @@
 #include "PitchTier.h"
 
 Thing_define (PitchTierArea, RealTierArea) {
-	PitchTier pitchTier() { return static_cast <PitchTier> (our function); }
+	PitchTier pitchTier() { return static_cast <PitchTier> (our function()); }
 
 	double v_minimumLegalY ()
 		override { return 0.0; }
