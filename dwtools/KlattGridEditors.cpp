@@ -446,7 +446,7 @@ autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring3
 		autoKlattGrid_FormantGridEditor me = Thing_new (KlattGrid_FormantGridEditor);
 		my data = klattgrid;
 		my formantGridArea = Thing_new (KlattGrid_FormantGridArea);
-		my formantType = formantType;   // before init()
+		((KlattGrid_FormantGridArea) my formantGridArea.get()) -> formantType = formantType;   // BUG: one cast too many
 		FormantGridArea_init (my formantGridArea.get(), me.get());
 		my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
 		FunctionEditor_init (me.get(), title);

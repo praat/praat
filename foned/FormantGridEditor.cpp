@@ -98,7 +98,7 @@ static void menu_cb_showBandwidths (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void selectFormantOrBandwidth (FormantGridEditor me, integer iformant) {
-	const integer numberOfFormants = my formantGrid() -> formants.size;
+	const integer numberOfFormants = my formantGridArea -> formantGrid() -> formants.size;
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
 	my formantGridArea -> selectedFormant = iformant;
@@ -203,8 +203,12 @@ void structFormantGridEditor :: v_draw () {
 	//		Melder_float (Melder_half (our formantGridArea -> ycursor)));
 	Graphics_setLineWidth (our graphics.get(), 1.0);
 	Graphics_setColour (our graphics.get(), Melder_GREY);
-	OrderedOf<structRealTier>* tiers = ( our formantGridArea -> editingBandwidths ? & our formantGrid() -> bandwidths : & our formantGrid() -> formants );
-	for (integer iformant = 1; iformant <= our formantGrid() -> formants.size; iformant ++) if (iformant != our formantGridArea -> selectedFormant) {
+	OrderedOf<structRealTier>* tiers = (
+		our formantGridArea -> editingBandwidths ?
+		& our formantGridArea -> formantGrid() -> bandwidths :
+		& our formantGridArea -> formantGrid() -> formants
+	);
+	for (integer iformant = 1; iformant <= our formantGridArea -> formantGrid() -> formants.size; iformant ++) if (iformant != our formantGridArea -> selectedFormant) {
 		RealTier tier = tiers->at [iformant];
 		Melder_assert (Thing_isa (tier, classRealTier));
 		const integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our startWindow);
@@ -259,7 +263,7 @@ bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 }
 
 void structFormantGridEditor :: v_play (double startTime, double endTime) {
-	FormantGrid_playPart (our formantGrid(), startTime, endTime, our instancePref_play_samplingFrequency(),
+	FormantGrid_playPart (our formantGridArea -> formantGrid(), startTime, endTime, our instancePref_play_samplingFrequency(),
 		our instancePref_source_pitch_tStart(), our instancePref_source_pitch_f0Start(),
 		our instancePref_source_pitch_tMid(),   our instancePref_source_pitch_f0Mid(),
 		our instancePref_source_pitch_tEnd(),   our instancePref_source_pitch_f0End(),
