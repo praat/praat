@@ -1507,7 +1507,11 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 	Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-void FunctionEditor_init (FunctionEditor me, conststring32 title, Function function) {
+void FunctionEditor_init (FunctionEditor me, conststring32 title) {
+	Melder_assert (my data);
+	Function function = static_cast <Function> (my data);
+	Melder_assert (Thing_isa (function, classFunction));
+
 	if (Melder_debug == 55)
 		Melder_casual (Thing_messageNameAndAddress (me), U" init");
 	my tmin = function -> xmin;   // set before adding children (see group button)

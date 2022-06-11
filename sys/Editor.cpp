@@ -463,7 +463,8 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	#endif
 	my windowForm = GuiWindow_create (left, top, width, height, 450, 350, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
 	Thing_setName (me, title);
-	my data = data;
+	if (data)
+		my data = data;   // keep any old data that may have bene initialized before Editor_init()
 
 	/*
 		Create menus.

@@ -23,9 +23,9 @@
 #include "Sound.h"
 
 Thing_define (PitchTierEditor, RealTierEditor) {
-	PitchTier pitchTier() { return static_cast <PitchTier> (our data); }
+	autoSound soundCopy;
 
-	autoPitchTierArea & pitchTierArea() { return * reinterpret_cast <autoPitchTierArea *> (& our realTierArea); }
+	PitchTierArea pitchTierArea() { return static_cast <PitchTierArea> (our realTierArea.get()); }
 
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
@@ -39,6 +39,16 @@ Thing_define (PitchTierEditor, RealTierEditor) {
 		override { return U"Minimum frequency (Hz)"; }
 	conststring32 v_maximumLabelText ()
 		override { return U"Maximum frequency (Hz)"; }
+};
+Thing_define (PitchTierEditor_PitchTierArea, PitchTierArea) {
+	Function v_function() override {
+		return static_cast <Function> (static_cast <PitchTierEditor> (our _editor) -> data);
+	}
+};
+Thing_define (PitchTierEditor_SoundArea, SoundArea) {
+	Function v_function() override {
+		return static_cast <PitchTierEditor> (our _editor) -> soundCopy.get();
+	}
 };
 
 autoPitchTierEditor PitchTierEditor_create (conststring32 title,

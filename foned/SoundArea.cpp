@@ -244,7 +244,7 @@ void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongS
 	} else {
 		Melder_fatal (U"Invalid sound class in SoundArea_create().");
 	}
-	my muteChannels = zero_BOOLVEC (soundOrLongSound -> ny);
+	my muteChannels = zero_BOOLVEC (my soundOrLongSound() -> ny);
 }
 
 autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound) {

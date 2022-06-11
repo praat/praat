@@ -21,6 +21,8 @@
 #include "EditorM.h"
 
 Thing_implement (PitchTierEditor, RealTierEditor, 0);
+Thing_implement (PitchTierEditor_PitchTierArea, PitchTierArea, 0);
+Thing_implement (PitchTierEditor_SoundArea, SoundArea, 0);
 
 static void menu_cb_PitchTierEditorHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) {
 	HELP (U"PitchTierEditor")
@@ -40,16 +42,22 @@ void structPitchTierEditor :: v_play (double startTime, double endTime) {
 	if (our sound())
 		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	else
-		PitchTier_playPart (our pitchTier(), startTime, endTime, false);
+		PitchTier_playPart (our pitchTierArea() -> pitchTier(), startTime, endTime, false);
 }
 
 autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitchTier, Sound sound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		my realTierArea = PitchTierArea_create (me.get(), pitchTier);
+		my data = pitchTier;
 		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true);
-		FunctionEditor_init (me.get(), title, pitchTier);
+			my soundCopy = Data_copy (sound);
+		my realTierArea = Thing_new (PitchTierEditor_PitchTierArea);
+		RealTierArea_init (my realTierArea.get(), me.get());
+		if (sound) {
+			my soundArea = Thing_new (PitchTierEditor_SoundArea);
+			SoundArea_init (my soundArea.get(), me.get());
+		}
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier window not created.");

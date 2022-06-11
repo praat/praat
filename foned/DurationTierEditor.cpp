@@ -39,10 +39,11 @@ void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier durationTier, Sound sound) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
+		my data = durationTier;
 		my realTierArea = DurationTierArea_create (me.get(), durationTier);
 		if (sound)
 			my soundArea = SoundArea_create (me.get(), sound, true);
-		FunctionEditor_init (me.get(), title, durationTier);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DurationTier window not created.");

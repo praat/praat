@@ -97,7 +97,7 @@ autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (conststring32 ti
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_PitchTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> pitch.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid pitch window not created.");
@@ -117,7 +117,7 @@ autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_cr
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_VoicingAmplitudeTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> voicingAmplitude.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid voicing amplitude window not created.");
@@ -143,7 +143,7 @@ autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring3
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_FlutterTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> flutter.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid flutter window not created.");
@@ -169,7 +169,7 @@ autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_Power1TierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> power1.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid power1 window not created.");
@@ -195,7 +195,7 @@ autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_Power2TierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> power2.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid power2 window not created.");
@@ -221,7 +221,7 @@ autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststr
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_OpenPhaseTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> openPhase.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid open phase window not created.");
@@ -247,7 +247,7 @@ autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_CollisionPhaseTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> collisionPhase.get());   // BUG: last arg not needed
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid collision phase window not created.");
@@ -273,7 +273,7 @@ autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_DoublePulsingTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> doublePulsing.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid double pulsing window not created.");
@@ -299,7 +299,7 @@ autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (co
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_SpectralTiltTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> spectralTilt.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid spectral tilt window not created.");
@@ -318,7 +318,7 @@ autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEdi
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_AspirationAmplitudeTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> aspirationAmplitude.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid aspiration amplitude window not created.");
@@ -338,7 +338,7 @@ autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierE
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_BreathinessAmplitudeTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> breathinessAmplitude.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid breathiness amplitude window not created.");
@@ -369,7 +369,7 @@ autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring3
 		my realTierArea = Thing_new (KlattGrid_DecibelTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(),
 				KlattGrid_getAddressOfAmplitudes (klattgrid, formantType)->at [iformant]);   // BUG: last arg superfluous
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid decibel window not created.");
@@ -395,7 +395,7 @@ autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_crea
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_FricationBypassTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> frication -> bypass.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid frication bypass window not created.");
@@ -415,7 +415,7 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_FricationAmplitudeTierArea);
 		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> frication -> fricationAmplitude.get());
-		FunctionEditor_init (me.get(), title, klattgrid);
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid frication amplitude window not created.");
@@ -426,25 +426,30 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 #pragma mark - KlattGrid_FormantGridEditor
 
 Thing_implement (KlattGrid_FormantGridEditor, FormantGridEditor, 0);
+Thing_implement (KlattGrid_FormantGridArea, FormantGridArea, 0);
 
 static bool FormantGrid_isEmpty (FormantGrid me) {
 	return my formants.size == 0 || my bandwidths.size == 0;
 }
 
 void structKlattGrid_FormantGridEditor :: v_play (double startTime, double endTime) {
-	KlattGrid_Editor_defaultPlay (klattgrid, startTime, endTime);
+	KlattGrid_Editor_defaultPlay (static_cast <KlattGrid> (our data), startTime, endTime);
 }
 
-autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, kKlattGridFormantType formantType) {
+autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid klattgrid, kKlattGridFormantType formantType) {
 	try {
-		Melder_assert (data);
-		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (data, formantType);
+		Melder_assert (klattgrid);
+		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (klattgrid, formantType);
 		Melder_require (! FormantGrid_isEmpty (fg -> get()),
 			U"Cannot edit an empty formant grid.");
 		
 		autoKlattGrid_FormantGridEditor me = Thing_new (KlattGrid_FormantGridEditor);
-		my klattgrid = data;
-		FormantGridEditor_init (me.get(), title, fg->get());
+		my data = klattgrid;
+		my formantGridArea = Thing_new (KlattGrid_FormantGridArea);
+		my formantType = formantType;   // before init()
+		FormantGridArea_init (my formantGridArea.get(), me.get());
+		my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid formant window not created.");

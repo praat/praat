@@ -790,7 +790,7 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 			RealTierArea_init (my durationTierArea.get(), me.get(), manipulation -> duration.get());
 			my durationTierArea -> ycursor = 1.0;
 		}
-		FunctionEditor_init (me.get(), title, manipulation);
+		FunctionEditor_init (me.get(), title);
 
 		my synthesisMethod = prefs_synthesisMethod;
 		if (manipulation -> sound)

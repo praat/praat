@@ -27,7 +27,8 @@ Thing_define (FunctionArea, Thing) {
 
 	void init (FunctionEditor editor, Function function) {
 		our _editor = editor;
-		our function___ = function;
+		if (function)
+			our function___ = function;
 		our _ymin_fraction = undefined;   // to be set just before drawing or tracking
 		our _ymax_fraction = undefined;   // to be set just before drawing or tracking
 	}
@@ -91,7 +92,7 @@ private:
 	}
 };
 
-inline void FunctionArea_init (FunctionArea me, FunctionEditor editor, Function function) {
+inline void FunctionArea_init (FunctionArea me, FunctionEditor editor, Function function = nullptr) {
 	my init (editor, function);
 	my v_copyPreferencesToInstance ();
 	my v_repairPreferences ();

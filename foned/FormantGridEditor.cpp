@@ -206,6 +206,7 @@ void structFormantGridEditor :: v_draw () {
 	OrderedOf<structRealTier>* tiers = ( our formantGridArea -> editingBandwidths ? & our formantGrid() -> bandwidths : & our formantGrid() -> formants );
 	for (integer iformant = 1; iformant <= our formantGrid() -> formants.size; iformant ++) if (iformant != our formantGridArea -> selectedFormant) {
 		RealTier tier = tiers->at [iformant];
+		Melder_assert (Thing_isa (tier, classRealTier));
 		const integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our startWindow);
 		const integer imax = AnyTier_timeToLowIndex (tier->asAnyTier(), our endWindow);
 		const integer n = tier -> points.size;
@@ -268,23 +269,14 @@ void structFormantGridEditor :: v_play (double startTime, double endTime) {
 		theFunctionEditor_playCallback, this);
 }
 
-void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid formantGrid) {   // BUG: rid
-	Melder_assert (formantGrid);
-	Melder_assert (Thing_isa (formantGrid, classFormantGrid));
-	my data = formantGrid;
-	my formantGridArea = Thing_new (FormantGridEditor_FormantGridArea);
-	my formantGridArea -> editingBandwidths = false;
-	my formantGridArea -> selectedFormant = 1;
-	RealTierArea_init (my formantGridArea.get(), me, formantGrid -> formants.at [1]);
-	my formantGridArea -> setGlobalYRange_fraction (0.0, 1.0);
-	my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
-	FunctionEditor_init (me, title, formantGrid);
-}
-
 autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid) {
 	try {
 		autoFormantGridEditor me = Thing_new (FormantGridEditor);
-		FormantGridEditor_init (me.get(), title, formantGrid);
+		my data = formantGrid;
+		my formantGridArea = Thing_new (FormantGridEditor_FormantGridArea);
+		FormantGridArea_init (my formantGridArea.get(), me.get());
+		my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
+		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantGrid window not created.");
