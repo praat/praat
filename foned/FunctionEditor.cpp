@@ -1509,8 +1509,7 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 
 void FunctionEditor_init (FunctionEditor me, conststring32 title) {
 	Melder_assert (my data);
-	Function function = static_cast <Function> (my data);
-	Melder_assert (Thing_isa (function, classFunction));
+	Thing_cast (Function, function, my data);
 
 	if (Melder_debug == 55)
 		Melder_casual (Thing_messageNameAndAddress (me), U" init");

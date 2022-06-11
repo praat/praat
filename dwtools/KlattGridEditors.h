@@ -64,7 +64,8 @@ Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
 };
 Thing_define (KlattGrid_PitchTierArea, PitchTierArea) {
 	Function v_function() override {
-		return ((KlattGrid_PitchTierEditor) our _editor) -> klattgrid() -> phonation -> pitch.get();
+		Thing_cast (KlattGrid_PitchTierEditor, editor, our _editor);
+		return editor -> klattgrid() -> phonation -> pitch.get();
 	}
 	#include "KlattGrid_PitchTierArea_prefs.h"
 };
@@ -334,29 +335,18 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 #pragma mark - KlattGrid_FormantGridEditor
 
 Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
-	FormantGrid v_formantGrid() override {
-		return KlattGrid_getAddressOfFormantGrid (static_cast <KlattGrid> (our data), our formantType)->get();
-	}
-	kKlattGridFormantType formantType;
 	void v_play (double startTime, double endTime)
 		override;
 	bool v_hasSourceMenu ()
 		override { return false; }
 };
 Thing_define (KlattGrid_FormantGridArea, FormantGridArea) {
-	Function v_function() override {
-		KlattGrid_FormantGridEditor editor = (KlattGrid_FormantGridEditor) our _editor;
-		FormantGrid formantGrid = KlattGrid_getAddressOfFormantGrid (static_cast <KlattGrid> (editor -> data), editor -> formantType)->get();
-		Melder_assert (Thing_isa (formantGrid, classFormantGrid));
-		OrderedOf<structRealTier>* tiers = (
-			our editingBandwidths ?
-			& formantGrid -> bandwidths :
-			& formantGrid -> formants
-		);
-		Melder_assert (our selectedFormant >= 1);
-		RealTier tier = tiers->at [our selectedFormant];
-		Melder_assert (Thing_isa (tier, classRealTier));
-		return tier;
+	kKlattGridFormantType formantType;
+	FormantGrid v_formantGrid() override {
+		Thing_cast (KlattGrid_FormantGridEditor, editor, our _editor);
+		Thing_cast (KlattGrid, klattgrid, editor -> data);
+		FormantGrid formantgrid = KlattGrid_getAddressOfFormantGrid (klattgrid, our formantType)->get();
+		return formantgrid;
 	}
 };
 autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, kKlattGridFormantType formantType);
