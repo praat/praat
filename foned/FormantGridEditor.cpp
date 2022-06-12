@@ -20,7 +20,7 @@
 #include "EditorM.h"
 #include "PointProcess_and_Sound.h"
 
-Thing_implement (FormantGridArea, RealTierArea, 0);
+Thing_implement_pureVirtual (FormantGridArea, RealTierArea, 0);
 
 Thing_implement (FormantGridEditor, FunctionEditor, 0);
 Thing_implement (FormantGridEditor_FormantGridArea, FormantGridArea, 0);

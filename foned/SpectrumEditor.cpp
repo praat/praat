@@ -117,7 +117,7 @@ static void menu_cb_passBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 			U"To apply a band-pass filter, first make a selection.");
 		Editor_save (me, U"Pass band");
 		Spectrum_passHannBand (my spectrum(), my startSelection, my endSelection, my instancePref_bandSmoothing());
-		FunctionEditor_redraw (me);
+		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -133,7 +133,7 @@ static void menu_cb_stopBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 			U"To apply a band-stop filter, first make a selection.");
 		Editor_save (me, U"Stop band");
 		Spectrum_stopHannBand (my spectrum(), my startSelection, my endSelection, my instancePref_bandSmoothing());
-		FunctionEditor_redraw (me);
+		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }

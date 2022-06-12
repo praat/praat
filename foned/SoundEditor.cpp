@@ -28,9 +28,8 @@ Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
 
 void structSoundEditor :: v_dataChanged () {
 	Melder_assert (our soundOrLongSound());
-	if (our sound())   // LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
-		Matrix_getWindowExtrema (our sound(), 1, our sound() -> nx, 1, our sound() -> ny,
-				& our soundArea -> cache. globalMinimum, & our soundArea -> cache. globalMaximum);   // BUG unreadable
+	if (our soundArea)   // LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
+		our soundArea -> invalidateAllDerivedDataCaches ();
 	SoundEditor_Parent :: v_dataChanged ();
 }
 
@@ -138,8 +137,6 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 			/*
 				Force FunctionEditor to show changes.
 			*/
-			Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
-					& my soundArea -> cache. globalMinimum, & my soundArea -> cache. globalMaximum);
 			my v_reset_analysis ();
 			FunctionEditor_ungroup (my sound());
 			FunctionEditor_marksChanged (me, false);
@@ -209,8 +206,6 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	/*
 		Force FunctionEditor to show changes.
 	*/
-	Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
-			& my soundArea -> cache. globalMinimum, & my soundArea -> cache. globalMaximum);
 	my v_reset_analysis ();
 	FunctionEditor_ungroup (my sound());
 	FunctionEditor_marksChanged (me, false);
@@ -222,9 +217,9 @@ static void menu_cb_SetSelectionToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	integer first, last;
 	Sampled_getWindowSamples (my sound(), my startSelection, my endSelection, & first, & last);
 	Editor_save (me, U"Set to zero");
-	my sound() -> z.verticalBand	(first, last)  <<=  0.0;
+	my sound() -> z.verticalBand (first, last)  <<=  0.0;
 	my v_reset_analysis ();
-	FunctionEditor_redraw (me);
+	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -233,7 +228,7 @@ static void menu_cb_ReverseSelection (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Reverse selection");
 	Sound_reverse (my sound(), my startSelection, my endSelection);
 	my v_reset_analysis ();
-	FunctionEditor_redraw (me);
+	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -350,7 +345,7 @@ void structSoundEditor :: v_draw () {
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	if (our instancePref_pulses_show())
 		our v_draw_analysis_pulses ();
-	SoundArea_draw (our soundArea.get(), our soundArea -> cache. globalMinimum, our soundArea -> cache. globalMaximum);
+	SoundArea_draw (our soundArea.get());
 	if (showAnalysis) {
 		Graphics_resetViewport (our graphics.get(), viewport);
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.5);

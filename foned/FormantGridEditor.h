@@ -23,7 +23,7 @@
 #include "RealTierArea.h"
 
 Thing_define (FormantGridArea, RealTierArea) {
-	virtual FormantGrid v_formantGrid() { Melder_fatal (U"v_formantGrid() not implemented."); return nullptr; }
+	virtual FormantGrid v_formantGrid() = 0;
 	FormantGrid formantGrid() { return our v_formantGrid(); }
 
 	bool editingBandwidths;
