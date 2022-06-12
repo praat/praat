@@ -261,7 +261,7 @@ static void menu_cb_ConvertToBackslashTrigraphs (TextGridEditor me, EDITOR_ARGS_
 	TextGrid_convertToBackslashTrigraphs (my textGrid());
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
+	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -270,7 +270,7 @@ static void menu_cb_ConvertToUnicode (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid_convertToUnicode (my textGrid());
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
+	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -647,7 +647,7 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 		TextGrid_anySound_alignInterval (my textGrid(), my soundOrLongSound(), my selectedTier, intervalNumber,
 				my instancePref_align_language(), my instancePref_align_includeWords(), my instancePref_align_includePhonemes());
 	}
-	FunctionEditor_redraw (me);
+	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -700,7 +700,7 @@ static void menu_cb_RemovePointOrBoundary (TextGridEditor me, EDITOR_ARGS_DIRECT
 	}
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
+	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -971,7 +971,7 @@ static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 
 		Thing_setName (tier, newName);
 
-		FunctionEditor_redraw (me);
+		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -999,7 +999,7 @@ static void menu_cb_RemoveAllTextFromTier (TextGridEditor me, EDITOR_ARGS_DIRECT
 
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
+	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -1014,7 +1014,7 @@ static void menu_cb_RemoveTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	my selectedTier = 1;
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
+	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -1038,7 +1038,7 @@ static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		my selectedTier = position;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 		FunctionEditor_updateText (me);
-		FunctionEditor_redraw (me);
+		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -1063,7 +1063,7 @@ static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		my selectedTier = position;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 		FunctionEditor_updateText (me);
-		FunctionEditor_redraw (me);
+		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -1092,7 +1092,7 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		my selectedTier = position;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 		FunctionEditor_updateText (me);
-		FunctionEditor_redraw (me);
+		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -1231,7 +1231,7 @@ static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 				//Melder_casual (U"gui_text_cb_change 3 in editor ", Melder_pointer (me));
 				TextInterval_setText (interval, text.get());
 				//Melder_casual (U"gui_text_cb_change 4 in editor ", Melder_pointer (me));
-				FunctionEditor_redraw (me);
+				//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 				//Melder_casual (U"gui_text_cb_change 5 in editor ", Melder_pointer (me));
 				Editor_broadcastDataChanged (me);
 				//Melder_casual (U"gui_text_cb_change 6 in editor ", Melder_pointer (me));
@@ -1243,7 +1243,7 @@ static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 				point -> mark. reset();
 				if (Melder_findInk (text.get()))   // any visible characters?
 					point -> mark = Melder_dup_f (text.get());
-				FunctionEditor_redraw (me);
+				//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 				Editor_broadcastDataChanged (me);
 			}
 		}
@@ -2016,7 +2016,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 					GuiText_setSelection (our textArea, first + 1, first + 1);
 					our suppressRedraw = false;
 
-					FunctionEditor_redraw (this);
+					//FunctionEditor_redraw (this); TRY OUT 2022-06-12
 					Editor_broadcastDataChanged (this);
 				}
 			} else {
@@ -2033,7 +2033,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 					GuiText_setSelection (our textArea, first + 1, first + 1);
 					our suppressRedraw = false;
 
-					FunctionEditor_redraw (this);
+					//FunctionEditor_redraw (this); TRY OUT 2022-06-12
 					Editor_broadcastDataChanged (this);
 				}
 			}
@@ -2050,7 +2050,7 @@ void structTextGridEditor :: v_play (double startTime, double endTime) {
 	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
 		if (our soundArea -> muteChannels [ichan])
 			numberOfMuteChannels ++;
-	integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
+	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
 	Melder_require (numberOfChannelsToPlay > 0,
 		U"Please select at least one channel to play.");
 	if (our longSound()) {

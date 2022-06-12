@@ -646,11 +646,13 @@ static void cb_Editor_dataChanged (Editor me) {
 			editingThisObject |= ( theCurrentPraatObjects -> list [iobject]. editors [ieditor] == me );
 		if (editingThisObject) {
 			/*
-				Notify all other editors associated with this object.
+				Notify all editors associated with this object,
+				*including myself*.
+				(last checked 2022-06-12)
 			*/
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor otherEditor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];
-				if (otherEditor && otherEditor != me)
+				if (otherEditor /*&& otherEditor != me*/)
 					Editor_dataChanged (otherEditor);
 			}
 		}
