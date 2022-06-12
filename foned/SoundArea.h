@@ -29,12 +29,32 @@ Thing_define (SoundArea, FunctionArea) {
 			Thing_isa (our soundOrLongSound(), classSound) ? (Sound) soundOrLongSound() : nullptr; }
 	LongSound longSound() { return Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) soundOrLongSound() : nullptr; }
 
-	autoSound soundCopy;
+	void v_invalidateAllDerivedDataCaches () override {
+		our invalidateGlobalExtremaCache ();
+		SoundArea_Parent :: v_invalidateAllDerivedDataCaches ();
+	}
 	struct {
 		bool valid;
-		double globalMinimum, globalMaximum;
-	} cache;
-	
+		double minimum, maximum;
+	} globalExtremaCache;
+	void invalidateGlobalExtremaCache () {
+		our globalExtremaCache. valid = false;
+	}
+	void validateGlobalExtremaCache () {
+		if (! our globalExtremaCache. valid) {
+			if (our sound()) {
+				Matrix_getWindowExtrema (our sound(), 1, our sound() -> nx, 1, our sound() -> ny,
+						& our globalExtremaCache. minimum, & our globalExtremaCache. maximum);
+			} else if (our longSound()) {
+				our globalExtremaCache. minimum = -1.0;
+				our globalExtremaCache. maximum = +1.0;
+			}
+			our globalExtremaCache. valid = true;
+		}
+	}
+
+	autoSound soundCopy;
+
 	double ymin, ymax;
 	integer channelOffset;
 	autoBOOLVEC muteChannels;
@@ -46,17 +66,12 @@ Thing_define (SoundArea, FunctionArea) {
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 	}
 
-	void v_functionChanged () override {
-		our cache.valid = false;
-		SoundArea_Parent :: v_functionChanged ();
-	}
-
 	#include "SoundArea_prefs.h"
 };
 
 void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units);
 
-void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum);
+void SoundArea_draw (SoundArea me);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 

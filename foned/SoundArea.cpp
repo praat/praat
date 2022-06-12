@@ -42,7 +42,7 @@ void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 
 	Graphics_text (my graphics(), my startWindow(), yWC,   yWC_string, units);
 }
 
-void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum) {
+void SoundArea_draw (SoundArea me) {
 	Melder_assert (!! my sound() != !! my longSound());
 	const integer numberOfChannels = my soundOrLongSound() -> ny;
 	const bool cursorVisible = ( my startSelection() == my endSelection() &&
@@ -109,8 +109,12 @@ void SoundArea_draw (SoundArea me, double globalMinimum, double globalMaximum) {
 		const double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my channelOffset) / numberOfVisibleChannels;
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics(), 0.0, 1.0, ymin, ymax);
 		bool horizontal = false;
-		double minimum = ( my sound() ? globalMinimum : -1.0 ), maximum = ( my sound() ? globalMaximum : 1.0 );
-		if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
+		double minimum = -1.0, maximum = +1.0;
+		if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WHOLE) {
+			my validateGlobalExtremaCache ();
+			minimum = my globalExtremaCache. minimum;
+			maximum = my globalExtremaCache. maximum;
+		} else if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
 			if (numberOfChannels > 2) {
 				if (my longSound())
 					LongSound_getWindowExtrema (my longSound(), my startWindow(), my endWindow(), ichan, & minimum, & maximum);
@@ -233,15 +237,10 @@ bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event
 
 void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound) {
 	FunctionArea_init (me, editor, soundOrLongSound);
-	if (my longSound()) {
-		my cache. globalMinimum = -1.0;
-		my cache. globalMaximum = 1.0;
-	} else if (my sound()) {
+	if (my sound()) {
 		if (ownSound)
 			my soundCopy = Data_copy (my sound());
-		Matrix_getWindowExtrema (my sound(), 1, my sound() -> nx, 1, my sound() -> ny,
-				& my cache. globalMinimum, & my cache. globalMaximum);
-	} else {
+	} else if (! my longSound ()) {
 		Melder_fatal (U"Invalid sound class in SoundArea_create().");
 	}
 	my muteChannels = zero_BOOLVEC (my soundOrLongSound() -> ny);

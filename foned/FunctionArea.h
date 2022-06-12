@@ -22,8 +22,10 @@
 
 Thing_define (FunctionArea, Thing) {
 	Function function___;
-	virtual Function v_function() { return our function___; }
-	Function function() { return our v_function(); }
+	private: virtual Function v_function() { return our function___; }
+	public: Function function() { return our v_function(); }
+	protected: virtual void v_invalidateAllDerivedDataCaches () { }
+	public: void invalidateAllDerivedDataCaches () { our v_invalidateAllDerivedDataCaches (); }
 
 	void init (FunctionEditor editor, Function function) {
 		our _editor = editor;
@@ -72,7 +74,6 @@ Thing_define (FunctionArea, Thing) {
 		return (y_pxlt - our bottom_pxlt()) / (our top_pxlt() - our bottom_pxlt());
 	}
 protected:
-	virtual void v_functionChanged () { }
 	FunctionEditor _editor;
 private:
 	double _ymin_fraction, _ymax_fraction;
