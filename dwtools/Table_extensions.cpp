@@ -4682,8 +4682,18 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 		}
 		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.get());
 		constexpr bool confidence = false;
-		if (ymax == ymin)   // autoscaling
-			SSCPList_getEllipsesBoundingBoxCoordinates (him.get(), numberOfSigmas, confidence, & xmin, & xmax, & ymin, & ymax);
+		if (xmax == xmin || ymax == ymin) {  // autoscaling
+			double xmin_as, xmax_as, ymin_as, ymax_as;
+			SSCPList_getEllipsesBoundingBoxCoordinates (him.get(), numberOfSigmas, confidence, & xmin_as, & xmax_as, & ymin_as, & ymax_as);
+			if (xmax == xmin) {
+				xmax = xmax_as;
+				xmin = xmin_as;
+			}
+			if (ymax == ymin) {
+				ymax = ymax_as;
+				ymin = ymin_as;
+			}
+		}
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		for (integer i = 1; i <= his size; i ++) {
