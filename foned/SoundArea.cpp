@@ -235,20 +235,15 @@ bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound) {
-	FunctionArea_init (me, editor, soundOrLongSound);
-	if (my sound()) {
-		if (ownSound)
-			my soundCopy = Data_copy (my sound());
-	} else if (! my longSound ()) {
-		Melder_fatal (U"Invalid sound class in SoundArea_create().");
-	}
-	my muteChannels = zero_BOOLVEC (my soundOrLongSound() -> ny);
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy) {
+	Melder_assert (! (makeCopy && Thing_isa (soundOrLongSound, classLongSound)));
+	FunctionArea_init (me, editor, soundOrLongSound, makeCopy);
+	my functionChanged (nullptr);
 }
 
-autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound) {
+autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy) {
 	autoSoundArea me = Thing_new (SoundArea);
-	SoundArea_init (me.get(), editor, soundOrLongSound, ownSound);
+	SoundArea_init (me.get(), editor, soundOrLongSound, makeCopy);
 	return me;
 }
 

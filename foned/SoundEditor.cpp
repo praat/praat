@@ -137,7 +137,6 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 			/*
 				Force FunctionEditor to show changes.
 			*/
-			my v_reset_analysis ();
 			FunctionEditor_ungroup (my sound());
 			FunctionEditor_marksChanged (me, false);
 			Editor_broadcastDataChanged (me);
@@ -206,7 +205,6 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	/*
 		Force FunctionEditor to show changes.
 	*/
-	my v_reset_analysis ();
 	FunctionEditor_ungroup (my sound());
 	FunctionEditor_marksChanged (me, false);
 	Editor_broadcastDataChanged (me);
@@ -218,8 +216,6 @@ static void menu_cb_SetSelectionToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Sampled_getWindowSamples (my sound(), my startSelection, my endSelection, & first, & last);
 	Editor_save (me, U"Set to zero");
 	my sound() -> z.verticalBand (first, last)  <<=  0.0;
-	my v_reset_analysis ();
-	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
@@ -227,8 +223,6 @@ static void menu_cb_ReverseSelection (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Melder_assert (my sound());
 	Editor_save (me, U"Reverse selection");
 	Sound_reverse (my sound(), my startSelection, my endSelection);
-	my v_reset_analysis ();
-	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 	Editor_broadcastDataChanged (me);
 }
 
