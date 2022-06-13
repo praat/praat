@@ -26,10 +26,13 @@ Thing_implement (FormantGridEditor, FunctionEditor, 0);
 Thing_implement (FormantGridEditor_FormantGridArea, FormantGridArea, 0);
 
 #include "Prefs_define.h"
+#include "FormantGridArea_prefs.h"
 #include "FormantGridEditor_prefs.h"
 #include "Prefs_install.h"
+#include "FormantGridArea_prefs.h"
 #include "FormantGridEditor_prefs.h"
 #include "Prefs_copyToInstance.h"
+#include "FormantGridArea_prefs.h"
 #include "FormantGridEditor_prefs.h"
 
 /********** MENU COMMANDS **********/

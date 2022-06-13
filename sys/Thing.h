@@ -113,7 +113,7 @@ struct structThing {
 		*/
 	virtual void v_nameChanged () { }
 		/*
-			derived::v_nameChanged may call base::_nameChanged at start, middle or end
+			derived::v_nameChanged may call base::v_nameChanged at start, middle or end
 		*/
 	virtual void v_copyPreferencesToInstance () { }
 		/*

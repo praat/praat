@@ -25,14 +25,17 @@
 
 Thing_define (SoundArea, FunctionArea) {
 	SampledXY soundOrLongSound() { return static_cast <SampledXY> (our function()); }
-	Sound sound() { return our soundCopy ? our soundCopy.get() :
-			Thing_isa (our soundOrLongSound(), classSound) ? (Sound) soundOrLongSound() : nullptr; }
-	LongSound longSound() { return Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) soundOrLongSound() : nullptr; }
-
-	void v_invalidateAllDerivedDataCaches () override {
-		our invalidateGlobalExtremaCache ();
-		SoundArea_Parent :: v_invalidateAllDerivedDataCaches ();
+	Sound sound() {
+		return Thing_isa (our soundOrLongSound(), classSound) ? (Sound) soundOrLongSound() : nullptr;
 	}
+	LongSound longSound() {
+		return Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) soundOrLongSound() : nullptr;
+	}
+
+	/*
+		One derived data cache, namely for global extrema.
+		TODO: add a second cache, namely for channel extrema.
+	*/
 	struct {
 		bool valid;
 		double minimum, maximum;
@@ -52,13 +55,30 @@ Thing_define (SoundArea, FunctionArea) {
 			our globalExtremaCache. valid = true;
 		}
 	}
+	/*
+		Maintain the derived data caches.
+	*/
+	void v_invalidateAllDerivedDataCaches () override {
+		our invalidateGlobalExtremaCache ();
+		SoundArea_Parent :: v_invalidateAllDerivedDataCaches ();
+	}
 
-	autoSound soundCopy;
-
-	double ymin, ymax;
+	/*
+		Auxiliary data.
+	*/
 	integer channelOffset;
 	autoBOOLVEC muteChannels;
-	
+	/*
+		Maintain the auxiliary data.
+	*/
+	void v_computeAuxiliaryData () override {
+		Melder_clip (0_integer, & our channelOffset, (our soundOrLongSound() -> ny - 1) / 8 * 8);
+		if (our muteChannels.size == 0 || our muteChannels.size != our soundOrLongSound() -> ny)
+			our muteChannels = zero_BOOLVEC (our soundOrLongSound() -> ny);
+	}
+
+	double ymin, ymax;
+
 	virtual conststring32 v_getChannelName (integer /* channelNumber */) { return nullptr; }
 
 	void viewSoundAsWorldByWorld () const {
@@ -75,9 +95,9 @@ void SoundArea_draw (SoundArea me);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound = nullptr, bool ownSound = false);
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy);
 
-autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool ownSound);
+autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy);
 
 /* End of file SoundArea.h */
 #endif

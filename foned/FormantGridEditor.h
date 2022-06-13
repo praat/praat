@@ -35,6 +35,13 @@ Thing_define (FormantGridArea, RealTierArea) {
 		RealTier tier = tiers->at [our selectedFormant];
 		return tier;
 	}
+	
+	double v_minimumLegalY ()
+		override { return 0.0; }
+	conststring32 v_rightTickUnits ()
+		override { return U" Hz"; }
+
+	#include "FormantGridArea_prefs.h"
 };
 inline void FormantGridArea_init (FormantGridArea me, FunctionEditor editor) {
 	my editingBandwidths = false;
