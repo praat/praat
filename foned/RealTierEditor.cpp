@@ -78,11 +78,6 @@ void structRealTierEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'T', menu_cb_removePoints);
 }
 
-void structRealTierEditor :: v_dataChanged () {
-	RealTierArea_updateScaling (our realTierArea.get());
-	RealTierEditor_Parent :: v_dataChanged ();
-}
-
 /* MARK: - DRAWING AREA */
 
 /*

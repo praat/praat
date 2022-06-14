@@ -1533,6 +1533,8 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title) {
 	if (group_equalDomain (my tmin, my tmax))
 		gui_checkbutton_cb_group (me, nullptr);   // BUG: nullptr
 	my enableUpdates = true;
+
+	my v_dataChanged ();   // only to self, not to the other editors
 }
 
 void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup) {

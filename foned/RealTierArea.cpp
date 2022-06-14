@@ -47,25 +47,6 @@ void RealTierArea_addPointAtCursor (RealTierArea me) {
 	RealTierArea_addPointAt (me, cursorTime, my ycursor);
 }
 
-void RealTierArea_updateScaling (RealTierArea me) {
-	Melder_assert (me);
-	Melder_assert (Thing_isa (me, classRealTierArea));
-	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
-	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
-	my ymin = my instancePref_dataFreeMinimum();
-	my ymax = my instancePref_dataFreeMaximum();
-	Melder_assert (my realTier());
-	if (my realTier() -> points.size > 0) {
-		Melder_assert (! (my v_maximumLegalY() < my v_minimumLegalY()));   // NaN-safe
-		const double minimumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMinimumValue (my realTier()), my v_maximumLegalY());
-		const double maximumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMaximumValue (my realTier()), my v_maximumLegalY());
-		Melder_clipRight (& my ymin, minimumValue);
-		Melder_clipLeft (maximumValue, & my ymax);
-	}
-	if (my ycursor <= my ymin || my ycursor >= my ymax)
-		my ycursor = 0.382 * my ymin + 0.618 * my ymax;
-}
-
 void RealTierArea_draw (RealTierArea me) {
 	Graphics_setColour (my graphics(), Melder_RED);
 	Graphics_line (my graphics(), my startWindow(), my ycursor, my endWindow(), my ycursor);
@@ -242,7 +223,6 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 			}
 
 			my broadcastDataChanged ();
-			//RealTierArea_updateScaling (me);
 		}
 	}
 	return FunctionEditor_UPDATE_NEEDED;
