@@ -72,6 +72,7 @@ Thing_define (SoundArea, FunctionArea) {
 		Maintain the auxiliary data.
 	*/
 	void v_computeAuxiliaryData () override {
+		Melder_assert (our soundOrLongSound ());
 		Melder_clip (0_integer, & our channelOffset, (our soundOrLongSound() -> ny - 1) / 8 * 8);
 		if (our muteChannels.size == 0 || our muteChannels.size != our soundOrLongSound() -> ny)
 			our muteChannels = zero_BOOLVEC (our soundOrLongSound() -> ny);

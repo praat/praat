@@ -280,13 +280,6 @@ static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
 	#elif cocoa
 		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#endif
-	/*
-		Send a message to myself (e.g., I will redraw myself).
-	*/
-	my v_dataChanged ();
-	/*
-		Send a message to my boss (e.g., she will notify the others that depend on me).
-	*/
 	Editor_broadcastDataChanged (me);
 }
 

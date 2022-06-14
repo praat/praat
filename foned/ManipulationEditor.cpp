@@ -30,8 +30,6 @@
 #include "ManipulationEditor_enums.h"
 
 Thing_implement (ManipulationEditor, FunctionEditor, 0);
-Thing_implement (ManipulationEditor_PitchTierArea, PitchTierArea, 0);
-Thing_implement (ManipulationEditor_DurationTierArea, PitchTierArea, 0);
 
 #include "Prefs_define.h"
 #include "ManipulationEditor_prefs.h"
@@ -754,10 +752,10 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		my data = manipulation;
-		my pitchTierArea = Thing_new (ManipulationEditor_PitchTierArea);
+		my pitchTierArea = Thing_new (PitchTierArea);
 		RealTierArea_init (my pitchTierArea.get(), me.get(), manipulation -> pitch.get());
 		if (manipulation -> duration) {
-			my durationTierArea = Thing_new (ManipulationEditor_DurationTierArea);
+			my durationTierArea = Thing_new (DurationTierArea);
 			RealTierArea_init (my durationTierArea.get(), me.get(), manipulation -> duration.get());
 			my durationTierArea -> ycursor = 1.0;
 		}

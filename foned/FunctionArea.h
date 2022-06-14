@@ -23,30 +23,14 @@
 Thing_define (FunctionArea, Thing) {
 	Function functionReference;
 	autoFunction functionCopy;
-	private: virtual Function v_function() { return nullptr; }
-	public: Function function() {
-		Function result = our v_function();   // a special option for complicated editors (e.g. a data member)
-		if (result)
-			return result;
-		if (our functionReference)   // the most common option
-			return our functionReference;
-		if (our functionCopy)   // also a common option (e.g. a Sound at the top)
-			return our functionCopy.get();
-		return static_cast <Function> (our _editor -> data);   // the fourth option is last resort, and will crash if the data is not the function
-	}
+	Function function() { return our functionReference; }
 
 	protected: virtual void v_invalidateAllDerivedDataCaches () { }
 	public: void invalidateAllDerivedDataCaches () { our v_invalidateAllDerivedDataCaches (); }
 
 	virtual void v_computeAuxiliaryData () { }
 	void functionChanged (Function newFunction) {
-		if (newFunction) {
-			our functionReference = newFunction;
-		} else {
-			newFunction = our v_function();
-			if (newFunction)
-				our functionReference = newFunction;
-		}
+		our functionReference = ( our functionCopy ? our functionCopy.get() : newFunction);
 		our v_invalidateAllDerivedDataCaches ();
 		our v_computeAuxiliaryData ();
 	}

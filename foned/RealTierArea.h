@@ -36,8 +36,7 @@ Thing_define (RealTierArea, FunctionArea) {
 		Melder_assert (isdefined (our instancePref_dataFreeMaximum()));
 		our ymin = our instancePref_dataFreeMinimum();
 		our ymax = our instancePref_dataFreeMaximum();
-		Melder_assert (our realTier());
-		if (our realTier() -> points.size > 0) {
+		if (our realTier() && our realTier() -> points.size > 0) {
 			Melder_assert (! (our v_maximumLegalY() < our v_minimumLegalY()));   // NaN-safe
 			const double minimumValue = Melder_clipped (our v_minimumLegalY(), RealTier_getMinimumValue (our realTier()), our v_maximumLegalY());
 			const double maximumValue = Melder_clipped (our v_minimumLegalY(), RealTier_getMaximumValue (our realTier()), our v_maximumLegalY());
