@@ -50,6 +50,10 @@ void RealTierArea_removePoints (RealTierArea me);
 void RealTierArea_addPointAtCursor (RealTierArea me);
 
 void RealTierArea_updateScaling (RealTierArea me);
+/*
+	Computes the ymin and ymax values on the basis of the data.
+	Call after every change in the data.
+*/
 
 void RealTierArea_draw (RealTierArea me);
 

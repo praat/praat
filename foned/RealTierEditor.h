@@ -50,12 +50,6 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	virtual conststring32 v_maximumLabelText () { return U"Maximum"; }   // normally includes units
 };
 
-void RealTierEditor_updateScaling (RealTierEditor me);
-/*
-	Computes the ymin and ymax values on the basis of the data.
-	Call after every change in the data.
-*/
-
 autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier tier, Sound sound);
 /*
 	`sound` may be null

@@ -242,7 +242,7 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 			}
 
 			my broadcastDataChanged ();
-			RealTierArea_updateScaling (me);
+			//RealTierArea_updateScaling (me);
 		}
 	}
 	return FunctionEditor_UPDATE_NEEDED;

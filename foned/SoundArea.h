@@ -34,7 +34,7 @@ Thing_define (SoundArea, FunctionArea) {
 
 	/*
 		One derived data cache, namely for global extrema.
-		TODO: add a second cache, namely for channel extrema.
+		TODO: add a second cache, namely for channel extrema (or profile the scrolling speed).
 	*/
 	struct {
 		bool valid;

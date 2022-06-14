@@ -26,14 +26,12 @@ Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 	MODIFY_DATA (U"Remove point(s)")
 		RealTierArea_removePoints (my realTierArea.get());
-		RealTierEditor_updateScaling (me);
 	MODIFY_DATA_END
 }
 
 static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 	MODIFY_DATA (U"Add point")
 		RealTierArea_addPointAtCursor (my realTierArea.get());
-		RealTierEditor_updateScaling (me);
 	MODIFY_DATA_END
 }
 
@@ -47,7 +45,6 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		MODIFY_DATA (U"Add point")
 			RealTierArea_addPointAt (my realTierArea.get(), time, desiredY);
-			RealTierEditor_updateScaling (me);
 		MODIFY_DATA_END
 	EDITOR_END
 }
@@ -62,7 +59,6 @@ static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		my realTierArea -> setInstancePref_dataFreeMinimum (ymin);
 		my realTierArea -> setInstancePref_dataFreeMaximum (ymax);
-		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -82,12 +78,8 @@ void structRealTierEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'T', menu_cb_removePoints);
 }
 
-void RealTierEditor_updateScaling (RealTierEditor me) {
-	RealTierArea_updateScaling (my realTierArea.get());
-}
-
 void structRealTierEditor :: v_dataChanged () {
-	RealTierEditor_updateScaling (this);
+	RealTierArea_updateScaling (our realTierArea.get());
 	RealTierEditor_Parent :: v_dataChanged ();
 }
 
