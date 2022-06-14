@@ -26,9 +26,33 @@ Thing_define (RealTierArea, FunctionArea) {
 
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
-	virtual conststring32 v_rightTickUnits () { return U""; }
 
 	double ymin, ymax, ycursor;
+	void updateScaling () {
+		/*
+			Computes ymin, ymax and ycursor on the basis of the data.
+		*/
+		Melder_assert (isdefined (our instancePref_dataFreeMinimum()));
+		Melder_assert (isdefined (our instancePref_dataFreeMaximum()));
+		our ymin = our instancePref_dataFreeMinimum();
+		our ymax = our instancePref_dataFreeMaximum();
+		if (our realTier() && our realTier() -> points.size > 0) {
+			Melder_assert (! (our v_maximumLegalY() < our v_minimumLegalY()));   // NaN-safe
+			const double minimumValue = Melder_clipped (our v_minimumLegalY(), RealTier_getMinimumValue (our realTier()), our v_maximumLegalY());
+			const double maximumValue = Melder_clipped (our v_minimumLegalY(), RealTier_getMaximumValue (our realTier()), our v_maximumLegalY());
+			Melder_clipRight (& our ymin, minimumValue);
+			Melder_clipLeft (maximumValue, & our ymax);
+		}
+		if (our ycursor <= our ymin || our ycursor >= our ymax)
+			our ycursor = 0.382 * our ymin + 0.618 * our ymax;
+	}
+	void v_computeAuxiliaryData () override {
+		our RealTierArea_Parent :: v_computeAuxiliaryData ();
+		our updateScaling ();
+	}
+
+	virtual conststring32 v_rightTickUnits () { return U""; }
+
 	double anchorTime = undefined, anchorY;
 	bool anchorIsInFreePart, anchorIsNearPoint;   // only in cb_mouse
 	bool draggingSelection;
@@ -49,8 +73,6 @@ void RealTierArea_removePoints (RealTierArea me);
 
 void RealTierArea_addPointAtCursor (RealTierArea me);
 
-void RealTierArea_updateScaling (RealTierArea me);
-
 void RealTierArea_draw (RealTierArea me);
 
 void RealTierArea_drawWhileDragging (RealTierArea me);
@@ -61,7 +83,6 @@ inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, RealTier 
 	FunctionArea_init (me, editor, realTier, makeCopy);
 	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
 	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
-	RealTierArea_updateScaling (me);
 	my ycursor = 0.382 * my ymin + 0.618 * my ymax;
 }
 

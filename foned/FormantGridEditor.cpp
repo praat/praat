@@ -40,14 +40,12 @@ Thing_implement (FormantGridEditor_FormantGridArea, FormantGridArea, 0);
 static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove point(s)");
 	RealTierArea_removePoints (my formantGridArea.get());
-	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAtCursor (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Add point");
 	RealTierArea_addPointAtCursor (my formantGridArea.get());
-	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
@@ -61,7 +59,6 @@ static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		Editor_save (me, U"Add point");
 		RealTierArea_addPointAt (my formantGridArea.get(), time, frequency);
-		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -97,7 +94,7 @@ static void menu_cb_setBandwidthRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_showBandwidths (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	my formantGridArea -> editingBandwidths = ! my formantGridArea -> editingBandwidths;
 	GuiMenuItem_check (my d_bandwidthsToggle, my formantGridArea -> editingBandwidths);
-	FunctionEditor_redraw (me);
+	Editor_broadcastDataChanged (me);   // BUG: the data themselves have not changed, but the view on them has
 }
 
 static void selectFormantOrBandwidth (FormantGridEditor me, integer iformant) {
@@ -105,7 +102,7 @@ static void selectFormantOrBandwidth (FormantGridEditor me, integer iformant) {
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
 	my formantGridArea -> selectedFormant = iformant;
-	FunctionEditor_redraw (me);
+	Editor_broadcastDataChanged (me);   // BUG: the data themselves have not changed, but the view on them has
 }
 
 static void menu_cb_selectFirst   (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 1); }
@@ -124,7 +121,7 @@ static void menu_cb_selectFormantOrBandwidth (FormantGridEditor me, EDITOR_ARGS_
 		SET_INTEGER (formantNumber, my formantGridArea -> selectedFormant)
 	EDITOR_DO
 		selectFormantOrBandwidth (me, formantNumber);
-		FunctionEditor_redraw (me);
+		Editor_broadcastDataChanged (me);   // BUG: the data themselves have not changed, but the view on them has
 	EDITOR_END
 }
 

@@ -31,8 +31,11 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 
 	void v_createMenus ()
 		override;
-	void v_dataChanged ()
-		override;
+	void v_dataChanged () override {
+		our RealTierEditor_Parent :: v_dataChanged ();
+		our realTierArea -> functionChanged (static_cast <RealTier> (our data));
+	}
+
 	void v_distributeAreas ()
 		override;
 	void v_draw ()
@@ -49,12 +52,6 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	virtual conststring32 v_minimumLabelText () { return U"Minimum"; }   // normally includes units
 	virtual conststring32 v_maximumLabelText () { return U"Maximum"; }   // normally includes units
 };
-
-void RealTierEditor_updateScaling (RealTierEditor me);
-/*
-	Computes the ymin and ymax values on the basis of the data.
-	Call after every change in the data.
-*/
 
 autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier tier, Sound sound);
 /*

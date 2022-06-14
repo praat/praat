@@ -124,8 +124,8 @@ void structTimeSoundAnalysisEditor :: v_info () {
 }
 
 void structTimeSoundAnalysisEditor :: v_dataChanged () {
-	our v_reset_analysis ();
 	our TimeSoundAnalysisEditor_Parent :: v_dataChanged ();
+	our v_reset_analysis ();
 }
 
 void structTimeSoundAnalysisEditor :: v_reset_analysis () {

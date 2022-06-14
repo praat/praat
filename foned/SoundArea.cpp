@@ -238,7 +238,7 @@ bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event
 void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy) {
 	Melder_assert (! (makeCopy && Thing_isa (soundOrLongSound, classLongSound)));
 	FunctionArea_init (me, editor, soundOrLongSound, makeCopy);
-	my functionChanged (nullptr);
+	my functionChanged (soundOrLongSound);
 }
 
 autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy) {
