@@ -18,8 +18,10 @@
 
 Prefs_begin (FormantGridArea)
 
-	InstancePrefs_overrideDouble (FormantGridArea, dataFreeMinimum, 1, U"0.0")
-	InstancePrefs_overrideDouble (FormantGridArea, dataFreeMaximum, 1, U"5500.0")
+	InstancePrefs_addDouble  (FormantGridArea, formantFloor,                    1, U"0.0")   // Hz
+	InstancePrefs_addDouble  (FormantGridArea, formantCeiling,                  1, U"11000.0")   // Hz
+	InstancePrefs_addDouble  (FormantGridArea, bandwidthFloor,                  1, U"0.0")   // Hz
+	InstancePrefs_addDouble  (FormantGridArea, bandwidthCeiling,                1, U"1000.0")   // Hz
 
 Prefs_end (FormantGridArea)
 

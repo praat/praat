@@ -32,11 +32,5 @@ Thing_define (PitchTierArea, RealTierArea) {
 	#include "PitchTierArea_prefs.h"
 };
 
-inline autoPitchTierArea PitchTierArea_create (FunctionEditor editor, PitchTier pitchTier) {
-	autoPitchTierArea me = Thing_new (PitchTierArea);
-	RealTierArea_init (me.get(), editor, pitchTier);
-	return me;
-}
-
 /* End of file PitchTierArea.h */
 #endif

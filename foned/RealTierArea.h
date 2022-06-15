@@ -28,7 +28,8 @@ Thing_define (RealTierArea, FunctionArea) {
 	virtual double v_maximumLegalY () { return undefined; }
 
 	double ymin, ymax, ycursor;
-	void updateScaling () {
+public:   // BUG: should be "protected" (now public because it is sometimes used as a message)
+	virtual void v_updateScaling () {
 		/*
 			Computes ymin, ymax and ycursor on the basis of the data.
 		*/
@@ -46,11 +47,13 @@ Thing_define (RealTierArea, FunctionArea) {
 		if (our ycursor <= our ymin || our ycursor >= our ymax)
 			our ycursor = 0.382 * our ymin + 0.618 * our ymax;
 	}
+protected:
 	void v_computeAuxiliaryData () override {
 		our RealTierArea_Parent :: v_computeAuxiliaryData ();
-		our updateScaling ();
+		our v_updateScaling ();
 	}
 
+public:
 	virtual conststring32 v_rightTickUnits () { return U""; }
 
 	double anchorTime = undefined, anchorY;
@@ -81,9 +84,6 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 
 inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, RealTier realTier = nullptr, bool makeCopy = false) {
 	FunctionArea_init (me, editor, realTier, makeCopy);
-	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
-	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
-	my ycursor = 0.382 * my ymin + 0.618 * my ymax;
 }
 
 inline autoRealTierArea RealTierArea_create (FunctionEditor editor, RealTier realTier) {

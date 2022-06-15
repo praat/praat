@@ -111,9 +111,7 @@ void SoundArea_draw (SoundArea me) {
 		bool horizontal = false;
 		double minimum = -1.0, maximum = +1.0;
 		if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WHOLE) {
-			my validateGlobalExtremaCache ();
-			minimum = my globalExtremaCache. minimum;
-			maximum = my globalExtremaCache. maximum;
+			my getGlobalExtrema (& minimum, & maximum);
 		} else if (my instancePref_scalingStrategy() == kSoundArea_scalingStrategy::BY_WINDOW) {
 			if (numberOfChannels > 2) {
 				if (my longSound())

@@ -65,28 +65,28 @@ static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setFormantRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set formant range", nullptr)
-		REAL (minimumFormant, U"Minimum formant (Hz)", my default_formantFloor())
-		REAL (maximumFormant, U"Maximum formant (Hz)", my default_formantCeiling())
+		REAL (minimumFormant, U"Minimum formant (Hz)", my formantGridArea -> default_formantFloor())
+		REAL (maximumFormant, U"Maximum formant (Hz)", my formantGridArea -> default_formantCeiling())
 	EDITOR_OK
-		SET_REAL (minimumFormant, my instancePref_formantFloor())
-		SET_REAL (maximumFormant, my instancePref_formantCeiling())
+		SET_REAL (minimumFormant, my formantGridArea -> instancePref_formantFloor())
+		SET_REAL (maximumFormant, my formantGridArea -> instancePref_formantCeiling())
 	EDITOR_DO
-		my setInstancePref_formantFloor (minimumFormant);
-		my setInstancePref_formantCeiling (maximumFormant);
+		my formantGridArea -> setInstancePref_formantFloor (minimumFormant);
+		my formantGridArea -> setInstancePref_formantCeiling (maximumFormant);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static void menu_cb_setBandwidthRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set bandwidth range", nullptr)
-		REAL (minimumBandwidth, U"Minimum bandwidth (Hz)", my default_bandwidthFloor())
-		REAL (maximumBandwidth, U"Maximum bandwidth (Hz)", my default_bandwidthCeiling())
+		REAL (minimumBandwidth, U"Minimum bandwidth (Hz)", my formantGridArea -> default_bandwidthFloor())
+		REAL (maximumBandwidth, U"Maximum bandwidth (Hz)", my formantGridArea -> default_bandwidthCeiling())
 	EDITOR_OK
-		SET_REAL (minimumBandwidth, my instancePref_bandwidthFloor())
-		SET_REAL (maximumBandwidth, my instancePref_bandwidthCeiling())
+		SET_REAL (minimumBandwidth, my formantGridArea -> instancePref_bandwidthFloor())
+		SET_REAL (maximumBandwidth, my formantGridArea -> instancePref_bandwidthCeiling())
 	EDITOR_DO
-		my setInstancePref_bandwidthFloor (minimumBandwidth);
-		my setInstancePref_bandwidthCeiling (maximumBandwidth);
+		my formantGridArea -> setInstancePref_bandwidthFloor (minimumBandwidth);
+		my formantGridArea -> setInstancePref_bandwidthCeiling (maximumBandwidth);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -102,7 +102,7 @@ static void selectFormantOrBandwidth (FormantGridEditor me, integer iformant) {
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
 	my formantGridArea -> selectedFormant = iformant;
-	Editor_broadcastDataChanged (me);   // BUG: the data themselves have not changed, but the view on them has
+	Editor_dataChanged (me);   // BUG: the data themselves have not changed, but the view on them has
 }
 
 static void menu_cb_selectFirst   (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 1); }
@@ -187,9 +187,6 @@ void structFormantGridEditor :: v_distributeAreas () {
 }
 
 void structFormantGridEditor :: v_draw () {
-	our formantGridArea -> ymin = ( our formantGridArea -> editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
-	our formantGridArea -> ymax = ( our formantGridArea -> editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
-
 	our formantGridArea -> setViewport();
 
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
@@ -245,9 +242,6 @@ void structFormantGridEditor :: v_draw () {
 }
 
 bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
-	our formantGridArea -> ymin = ( our formantGridArea -> editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
-	our formantGridArea -> ymax = ( our formantGridArea -> editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
-
 	static bool clickedInWideRealTierArea = false;
 	if (event -> isClick ())
 		clickedInWideRealTierArea = our formantGridArea -> y_fraction_globalIsInside (globalY_fraction);
@@ -279,7 +273,6 @@ autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid
 		my data = formantGrid;
 		my formantGridArea = Thing_new (FormantGridEditor_FormantGridArea);
 		FormantGridArea_init (my formantGridArea.get(), me.get());
-		my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

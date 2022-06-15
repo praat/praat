@@ -29,6 +29,29 @@ Thing_define (FormantGridArea, RealTierArea) {
 	bool editingBandwidths;
 	integer selectedFormant;
 
+	void v_updateScaling () override {
+		if (our editingBandwidths) {
+			Melder_assert (isdefined (our instancePref_bandwidthFloor()));
+			Melder_assert (isdefined (our instancePref_bandwidthCeiling()));
+			our ymin = our instancePref_bandwidthFloor();
+			our ymax = our instancePref_bandwidthCeiling();
+		} else {
+			Melder_assert (isdefined (our instancePref_formantFloor()));
+			Melder_assert (isdefined (our instancePref_formantCeiling()));
+			our ymin = our instancePref_formantFloor();
+			our ymax = our instancePref_formantCeiling();
+		}
+		if (our realTier() && our realTier() -> points.size > 0) {
+			Melder_assert (! (our v_maximumLegalY() < our v_minimumLegalY()));   // NaN-safe
+			const double minimumValue = Melder_clipped (our v_minimumLegalY(), RealTier_getMinimumValue (our realTier()), our v_maximumLegalY());
+			const double maximumValue = Melder_clipped (our v_minimumLegalY(), RealTier_getMaximumValue (our realTier()), our v_maximumLegalY());
+			Melder_clipRight (& our ymin, minimumValue);
+			Melder_clipLeft (maximumValue, & our ymax);
+		}
+		if (our ycursor <= our ymin || our ycursor >= our ymax)
+			our ycursor = 0.382 * our ymin + 0.618 * our ymax;
+	}
+
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()

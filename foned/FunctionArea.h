@@ -25,16 +25,21 @@ Thing_define (FunctionArea, Thing) {
 	autoFunction functionCopy;
 	Function function() { return our functionReference; }
 
-	protected: virtual void v_invalidateAllDerivedDataCaches () { }
-	public: void invalidateAllDerivedDataCaches () { our v_invalidateAllDerivedDataCaches (); }
-
-	virtual void v_computeAuxiliaryData () { }
+public:
 	void functionChanged (Function newFunction) {
 		our functionReference = ( our functionCopy ? our functionCopy.get() : newFunction);
 		our v_invalidateAllDerivedDataCaches ();
 		our v_computeAuxiliaryData ();
 	}
+	void invalidateAllDerivedDataCaches () {
+		our v_invalidateAllDerivedDataCaches ();
+	}
 
+protected:
+	virtual void v_invalidateAllDerivedDataCaches () { }   // derived classes can call inherited at end
+	virtual void v_computeAuxiliaryData () { }   // derived classes can call inherited at start
+
+public:
 	void init (FunctionEditor editor, Function function, bool makeCopy) {
 		our _editor = editor;
 		if (makeCopy) {
