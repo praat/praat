@@ -365,7 +365,7 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		my pitchTierArea -> setInstancePref_dataFreeMinimum (dataFreeMinimum);
 		my pitchTierArea -> setInstancePref_dataFreeMaximum (dataFreeMaximum);
-		my pitchTierArea -> updateScaling ();
+		my pitchTierArea -> v_updateScaling ();   // BUG: should be viewChanged()
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -388,7 +388,7 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 			Melder_throw (U"Maximum relative duration should be greater than minimum.");
 		my durationTierArea -> setInstancePref_dataFreeMinimum (dataFreeMinimum);
 		my durationTierArea -> setInstancePref_dataFreeMaximum (dataFreeMaximum);
-		my durationTierArea -> updateScaling ();
+		my durationTierArea -> v_updateScaling ();
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -725,10 +725,10 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	bool result = false;
 	if (clickedInWidePitchArea) {
 		result = RealTierArea_mouse (our pitchTierArea.get(), event, x_world, globalY_fraction);
-		our pitchTierArea -> updateScaling ();
+		our pitchTierArea -> v_updateScaling ();
 	} else if (clickedInWideDurationArea) {
 		result = RealTierArea_mouse (our durationTierArea.get(), event, x_world, globalY_fraction);
-		our durationTierArea -> updateScaling ();
+		our durationTierArea -> v_updateScaling ();   // BUG: this is a method instead of a message
 	} else {
 		result = our ManipulationEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}

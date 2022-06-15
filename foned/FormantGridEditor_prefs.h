@@ -18,10 +18,6 @@
 
 Prefs_begin (FormantGridEditor)
 
-	InstancePrefs_addDouble  (FormantGridEditor, formantFloor,                    1, U"0.0")   // Hz
-	InstancePrefs_addDouble  (FormantGridEditor, formantCeiling,                  1, U"11000.0")   // Hz
-	InstancePrefs_addDouble  (FormantGridEditor, bandwidthFloor,                  1, U"0.0")   // Hz
-	InstancePrefs_addDouble  (FormantGridEditor, bandwidthCeiling,                1, U"1000.0")   // Hz
 	InstancePrefs_addDouble  (FormantGridEditor, play_samplingFrequency,          1, U"44100.0")   // Hz
 	InstancePrefs_addDouble  (FormantGridEditor, source_pitch_tStart,             1, U"0.0%")   // relative time
 	InstancePrefs_addDouble  (FormantGridEditor, source_pitch_f0Start,            1, U"150.0")   // Hz

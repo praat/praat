@@ -23,69 +23,113 @@
 #include "LongSound.h"
 #include "SoundArea_enums.h"
 
+/*
+	One derived data cache, namely for global extrema.
+	TODO: add a second cache, namely for channel extrema (or profile the scrolling speed).
+*/
+struct SoundArea_GlobalExtremaCache {
+	void get (Sound sound, LongSound longSound, double *out_minimum, double *out_maximum) {
+		if (! _valid) {
+			_compute (sound, longSound);
+			_valid = true;
+		}
+		*out_minimum = _minimum;
+		*out_maximum = _maximum;
+	}
+	void invalidate () {
+		_valid = false;
+	}
+private:
+	bool _valid;
+	double _minimum, _maximum;
+	void _compute (Sound sound, LongSound longSound) {
+		if (sound) {
+			Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & _minimum, & _maximum);
+		} else {
+			Melder_assert (longSound);
+			_minimum = -1.0;
+			_maximum = +1.0;
+		}
+	}
+};
+
 Thing_define (SoundArea, FunctionArea) {
+	/*
+		Accessors.
+	*/
 	SampledXY soundOrLongSound() { return static_cast <SampledXY> (our function()); }
 	Sound sound() {
-		return Thing_isa (our soundOrLongSound(), classSound) ? (Sound) soundOrLongSound() : nullptr;
+		return Thing_isa (our soundOrLongSound(), classSound) ? (Sound) our soundOrLongSound() : nullptr;
 	}
 	LongSound longSound() {
-		return Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) soundOrLongSound() : nullptr;
+		return Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) our soundOrLongSound() : nullptr;
 	}
 
 	/*
-		One derived data cache, namely for global extrema.
-		TODO: add a second cache, namely for channel extrema (or profile the scrolling speed).
+		Derived data cache: global extrema.
 	*/
-	struct {
-		bool valid;
-		double minimum, maximum;
-	} globalExtremaCache;
-	void invalidateGlobalExtremaCache () {
-		our globalExtremaCache. valid = false;
-	}
-	void validateGlobalExtremaCache () {
-		if (! our globalExtremaCache. valid) {
-			if (our sound()) {
-				Matrix_getWindowExtrema (our sound(), 1, our sound() -> nx, 1, our sound() -> ny,
-						& our globalExtremaCache. minimum, & our globalExtremaCache. maximum);
-			} else if (our longSound()) {
-				our globalExtremaCache. minimum = -1.0;
-				our globalExtremaCache. maximum = +1.0;
-			}
-			our globalExtremaCache. valid = true;
-		}
+private:
+	SoundArea_GlobalExtremaCache _globalExtremaCache;
+public:
+	void getGlobalExtrema (double *out_minimum, double *out_maximum) {
+		_globalExtremaCache. get (our sound(), our longSound(), out_minimum, out_maximum);
 	}
 	/*
-		Maintain the derived data caches.
+		Manage all derived data caches.
 	*/
+protected:
 	void v_invalidateAllDerivedDataCaches () override {
-		our invalidateGlobalExtremaCache ();
+		_globalExtremaCache. invalidate ();
 		SoundArea_Parent :: v_invalidateAllDerivedDataCaches ();
 	}
 
 	/*
-		Auxiliary data.
+		Auxiliary data: channelOffset.
+
+		For multi-channel sounds, Praat will never show more than 8 channels at a time:
+		if there are more than 8 channels, the user can scroll through them, in groups of 8.
+		The value of channelOffset is determined as follows:
+		- if there are at most 8 channels, channelOffset will always be 0;
+		- if there are more than 8 channels, channelOffset will be an integer multiple of 8;
+			for instance, if there are 30 channels, channelOffset can have the following values:
+			- 0 to show channels 1 throguh 8 (the first 8 channels);
+			- 8 to show channels 9 through 16 (the second 8 channels);
+			- 16 to show channels 17 through 24 (the third 8 channels);
+			- 24 to show channels 25 through 30 (the last 6 channels).
+		At initialization, channelOffset stays at zero, i.e. only the first 8 channels are shown.
 	*/
+public:
 	integer channelOffset;
-	autoBOOLVEC muteChannels;
+private:
+	void _computeChannelOffset () {
+		Melder_assert (our soundOrLongSound() && our soundOrLongSound() -> ny);
+		Melder_clip (0_integer, & our channelOffset, (our soundOrLongSound() -> ny - 1) / 8 * 8);   // works correctly even during initialization (offset will stay 0)
+	}
 	/*
-		Maintain the auxiliary data.
+		Auxiliary data: muteChannels.
+
+		At initialization, no channels are muted.
 	*/
-	void v_computeAuxiliaryData () override {
-		Melder_assert (our soundOrLongSound ());
-		Melder_clip (0_integer, & our channelOffset, (our soundOrLongSound() -> ny - 1) / 8 * 8);
-		if (our muteChannels.size == 0 || our muteChannels.size != our soundOrLongSound() -> ny)
+public:
+	autoBOOLVEC muteChannels;
+private:
+	void _computeMuteChannels () {
+		Melder_assert (our soundOrLongSound() && our soundOrLongSound() -> ny != 0);
+		if (our muteChannels.size != our soundOrLongSound() -> ny)   // condition works correctly even during initialization (when size is still 0, but ny is not)
 			our muteChannels = zero_BOOLVEC (our soundOrLongSound() -> ny);
 	}
-
-	double ymin, ymax;
-
-	virtual conststring32 v_getChannelName (integer /* channelNumber */) { return nullptr; }
-
-	void viewSoundAsWorldByWorld () const {
-		our setViewport ();
-		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
+	/*
+		Maintain all auxiliary data.
+	*/
+protected:
+	void v_computeAuxiliaryData () override {
+		SoundArea_Parent :: v_computeAuxiliaryData ();
+		_computeChannelOffset ();
+		_computeMuteChannels ();
 	}
+
+public:
+	virtual conststring32 v_getChannelName (integer /* channelNumber */) { return nullptr; }
 
 	#include "SoundArea_prefs.h"
 };
