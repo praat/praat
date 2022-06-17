@@ -43,16 +43,16 @@ void structPitchTierEditor :: v_play (double startTime, double endTime) {
 		PitchTier_playPart (our pitchTierArea() -> pitchTier(), startTime, endTime, false);
 }
 
-autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitchTier, Sound sound) {
+autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitchTier, Sound soundToCopy) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
 		my data = pitchTier;
 
 		my realTierArea = Thing_new (PitchTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), pitchTier, false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 
-		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true, false);
+		if (soundToCopy)
+			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
 
 		FunctionEditor_init (me.get(), title);
 		return me;

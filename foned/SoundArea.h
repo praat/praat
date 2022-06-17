@@ -140,9 +140,9 @@ void SoundArea_draw (SoundArea me);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy, bool editable);
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSoundToCopy, bool editable);
 
-autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy, bool editable);
+autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSoundToCopy, bool editable);
 
 /* End of file SoundArea.h */
 #endif

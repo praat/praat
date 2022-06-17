@@ -272,7 +272,7 @@ autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid
 		autoFormantGridEditor me = Thing_new (FormantGridEditor);
 		my data = formantGrid;
 		my formantGridArea = Thing_new (FormantGridEditor_FormantGridArea);
-		FormantGridArea_init (my formantGridArea.get(), me.get(), false, true);
+		FormantGridArea_init (my formantGridArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

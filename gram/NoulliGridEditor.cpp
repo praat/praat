@@ -190,12 +190,12 @@ void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our setInstancePref_showCategoryInSelectionViewerAs (v_prefs_addFields__showCategoryInSelectionViewerAs);
 }
 
-autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid noulliGrid, Sound sound) {
+autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid noulliGrid, Sound soundToCopy) {
 	try {
 		autoNoulliGridEditor me = Thing_new (NoulliGridEditor);
 		my data = noulliGrid;
-		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true, false);
+		if (soundToCopy)
+			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

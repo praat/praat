@@ -36,14 +36,14 @@ void structOptimalCeilingTierEditor :: v_play (double startTime, double endTime)
 }
 
 autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 title,
-	OptimalCeilingTier optimalCeilingTier, Sound sound)
+	OptimalCeilingTier optimalCeilingTier, Sound soundToCopy)
 {
 	try {
 		autoOptimalCeilingTierEditor me = Thing_new (OptimalCeilingTierEditor);
 		my data = optimalCeilingTier;
-		my realTierArea = OptimalCeilingTierArea_create (me.get(), optimalCeilingTier);
-		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true, false);
+		my realTierArea = OptimalCeilingTierArea_create (me.get(), nullptr, true);
+		if (soundToCopy)
+			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

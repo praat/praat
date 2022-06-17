@@ -24,7 +24,21 @@
 Thing_define (EEGWindow, TextGridEditor) {
 	EEG eeg() { return static_cast <EEG> (our data); }
 
-	//autoEEGArea eegArea; BUG: this will have to return once EEGWindow no longer inherits from TextGridEditor
+	void v_dataChanged () override {
+		TRACE trace(1);
+		our structTextGridEditor :: v_dataChanged ();
+		trace(2);
+		Melder_assert (our eeg());
+		trace(Thing_className(our eeg()));
+
+		Sound sound = our eeg() -> sound.get();
+		Melder_assert (sound);
+		trace(Thing_className(sound));
+		Melder_assert (Thing_isa (sound, classSound));
+		trace (sound -> nx, U" ", sound -> ny);
+		our soundArea -> functionChanged (our eeg() -> sound.get());
+	}
+
 	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
 
 	bool v_hasPitch ()
