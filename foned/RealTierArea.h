@@ -83,13 +83,9 @@ void RealTierArea_drawWhileDragging (RealTierArea me);
 
 bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, RealTier realTierToCopy, bool editable) {
-	FunctionArea_init (me, editor, realTierToCopy, editable);
-}
-
 inline autoRealTierArea RealTierArea_create (FunctionEditor editor, RealTier realTierToCopy, bool editable) {
 	autoRealTierArea me = Thing_new (RealTierArea);
-	RealTierArea_init (me.get(), editor, realTierToCopy, editable);
+	FunctionArea_init (me.get(), editor, realTierToCopy, editable);
 	return me;
 }
 

@@ -30,7 +30,7 @@ Thing_define (IntensityTierArea, RealTierArea) {
 
 inline autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, IntensityTier intensityTierToCopy, bool editable) {
 	autoIntensityTierArea me = Thing_new (IntensityTierArea);
-	RealTierArea_init (me.get(), editor, intensityTierToCopy, editable);
+	FunctionArea_init (me.get(), editor, intensityTierToCopy, editable);
 	return me;
 }
 

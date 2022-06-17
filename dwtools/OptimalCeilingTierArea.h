@@ -30,7 +30,7 @@ Thing_define (OptimalCeilingTierArea, RealTierArea) {
 
 inline autoOptimalCeilingTierArea OptimalCeilingTierArea_create (FunctionEditor editor, OptimalCeilingTier optimalCeilingTierToCopy, bool editable) {
 	autoOptimalCeilingTierArea me = Thing_new (OptimalCeilingTierArea);
-	RealTierArea_init (me.get(), editor, optimalCeilingTierToCopy, editable);
+	FunctionArea_init (me.get(), editor, optimalCeilingTierToCopy, editable);
 	return me;
 }
 
