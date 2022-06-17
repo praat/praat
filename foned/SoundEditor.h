@@ -28,8 +28,6 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	void v_dataChanged ()
-		override;
 	void v_prepareDraw ()
 		override;
 	void v_distributeAreas ()
