@@ -26,13 +26,6 @@ Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
 
 /********** METHODS **********/
 
-void structSoundEditor :: v_dataChanged () {
-	Melder_assert (our soundArea);
-	if (our soundArea)   // BUG: LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
-		our soundArea -> invalidateAllDerivedDataCaches ();
-	SoundEditor_Parent :: v_dataChanged ();
-}
-
 /***** EDIT MENU *****/
 
 static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
@@ -416,7 +409,7 @@ autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSo
 		FunctionEditor_init (me.get(), title);
 
 		Melder_assert (my soundOrLongSound());
-		if (my longSound() && my endWindow - my startWindow > 30.0) {
+		if (my longSound() && my endWindow - my startWindow > 30.0) {   // BUG: should be in dataChanged?
 			my endWindow = my startWindow + 30.0;
 			if (my startWindow == my tmin)
 				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);

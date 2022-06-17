@@ -752,13 +752,14 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		my data = manipulation;
+
 		my pitchTierArea = Thing_new (PitchTierArea);
 		RealTierArea_init (my pitchTierArea.get(), me.get(), manipulation -> pitch.get(), false, true);
-		if (manipulation -> duration) {
-			my durationTierArea = Thing_new (DurationTierArea);
-			RealTierArea_init (my durationTierArea.get(), me.get(), manipulation -> duration.get(), false, true);
-			my durationTierArea -> ycursor = 1.0;
-		}
+
+		my durationTierArea = Thing_new (DurationTierArea);
+		RealTierArea_init (my durationTierArea.get(), me.get(), manipulation -> duration.get(), false, true);
+		my durationTierArea -> ycursor = 1.0;
+
 		FunctionEditor_init (me.get(), title);
 
 		my synthesisMethod = prefs_synthesisMethod;
