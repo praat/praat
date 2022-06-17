@@ -164,7 +164,7 @@ void structPointEditor :: v_createMenus () {
 			QUERY_DATA_FOR_REAL__getJitter_ppq5);
 	Editor_addCommand (this, U"Query", U"Get jitter (ddp)", 0,
 			QUERY_DATA_FOR_REAL__getJitter_ddp);
-	if (our sound()) {
+	if (our soundArea) {   // BUG: not LongSound
 		Editor_addCommand (this, U"Query", U"-- query shimmer --", 0, nullptr);
 		Editor_addCommand (this, U"Query", U"Get shimmer (local)", 0,
 				QUERY_DATA_FOR_REAL__getShimmer_local);
@@ -255,7 +255,7 @@ autoPointEditor PointEditor_create (conststring32 title, PointProcess pointProce
 		my data = pointProcess;
 		if (sound) {
 			my monoSound = Sound_convertToMono (sound);
-			my soundArea = SoundArea_create (me.get(), my monoSound.get(), false);   // PointEditor will delete the sound
+			my soundArea = SoundArea_create (me.get(), my monoSound.get(), false, false);   // PointEditor will delete the sound
 		}
 		FunctionEditor_init (me.get(), title);
 		return me;

@@ -27,9 +27,10 @@ Thing_define (RealTierArea, FunctionArea) {
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
 
-	double ymin, ymax, ycursor;
+	double ymin, ymax, ycursor;   // BUG: this should be in a cache
 public:   // BUG: should be "protected" (now public because it is sometimes used as a message)
 	virtual void v_updateScaling () {
+		TRACE trace(U"");
 		/*
 			Computes ymin, ymax and ycursor on the basis of the data.
 		*/
@@ -82,13 +83,13 @@ void RealTierArea_drawWhileDragging (RealTierArea me);
 
 bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, RealTier realTier = nullptr, bool makeCopy = false) {
-	FunctionArea_init (me, editor, realTier, makeCopy);
+inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, RealTier realTier, bool makeCopy, bool editable) {
+	FunctionArea_init (me, editor, realTier, makeCopy, editable);
 }
 
 inline autoRealTierArea RealTierArea_create (FunctionEditor editor, RealTier realTier) {
 	autoRealTierArea me = Thing_new (RealTierArea);
-	RealTierArea_init (me.get(), editor, realTier);
+	RealTierArea_init (me.get(), editor, realTier, false, true);
 	return me;
 }
 

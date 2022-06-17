@@ -30,7 +30,7 @@ Thing_define (AmplitudeTierArea, RealTierArea) {
 
 inline autoAmplitudeTierArea AmplitudeTierArea_create (FunctionEditor editor, AmplitudeTier amplitudeTier) {
 	autoAmplitudeTierArea me = Thing_new (AmplitudeTierArea);
-	RealTierArea_init (me.get(), editor, amplitudeTier);
+	RealTierArea_init (me.get(), editor, amplitudeTier, false, true);
 	return me;
 }
 

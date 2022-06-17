@@ -1529,12 +1529,12 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title) {
 	my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
 
 	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
-	my v_updateText ();
+	my v_updateText ();   // BUG: superfluous because of Editor_dataChanged below? and too early if function pointers not yet set?
 	if (group_equalDomain (my tmin, my tmax))
 		gui_checkbutton_cb_group (me, nullptr);   // BUG: nullptr
-	my enableUpdates = true;
+	my enableUpdates = true;   // BUG: explain why still needed
 
-	Editor_dataChanged (me);   // only to self, not to the other editors
+	Editor_dataChanged (me);   // only to self, not to the other editors; BUG: should be in Editor_init?
 }
 
 void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup) {

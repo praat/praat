@@ -42,9 +42,9 @@ autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, Intensi
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
 		my data = intensityTier;
-		my realTierArea = IntensityTierArea_create (me.get(), intensityTier);
+		my realTierArea = IntensityTierArea_create (me.get(), intensityTier, false, true);
 		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true);
+			my soundArea = SoundArea_create (me.get(), sound, true, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

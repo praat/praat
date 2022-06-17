@@ -59,10 +59,10 @@ Thing_define (SoundArea, FunctionArea) {
 	*/
 	SampledXY soundOrLongSound() { return static_cast <SampledXY> (our function()); }
 	Sound sound() {
-		return Thing_isa (our soundOrLongSound(), classSound) ? (Sound) our soundOrLongSound() : nullptr;
+		return our soundOrLongSound() && Thing_isa (our soundOrLongSound(), classSound) ? (Sound) our soundOrLongSound() : nullptr;
 	}
 	LongSound longSound() {
-		return Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) our soundOrLongSound() : nullptr;
+		return our soundOrLongSound() && Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) our soundOrLongSound() : nullptr;
 	}
 
 	/*
@@ -140,9 +140,9 @@ void SoundArea_draw (SoundArea me);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy);
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy, bool editable);
 
-autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy);
+autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy, bool editable);
 
 /* End of file SoundArea.h */
 #endif

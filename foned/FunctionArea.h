@@ -21,13 +21,36 @@
 #include "FunctionEditor.h"
 
 Thing_define (FunctionArea, Thing) {
-	Function functionReference;
-	autoFunction functionCopy;
-	Function function() { return our functionReference; }
+	/*
+		Accessors.
+	*/
+public:
+	Function function() { return _function; }   // readonly
+	bool editable() { return _editable; }   // editable
+private:
+	Function _function;
+	bool _editable;
+
+	/*
+		Initialization.
+	*/
+public:
+	void init (FunctionEditor editor, Function function, bool makeCopy, bool editable) {
+		our _editor = editor;
+		if (makeCopy) {
+			our _functionCopy = Data_copy (function);
+			//our _function = our _functionCopy.get();
+		} else {
+			//our _function = function;
+		}
+		our _editable = editable;
+	}
+private:
+	autoFunction _functionCopy;
 
 public:
 	void functionChanged (Function newFunction) {
-		our functionReference = ( our functionCopy ? our functionCopy.get() : newFunction);
+		our _function = ( our _functionCopy ? our _functionCopy.get() : newFunction);
 		our v_invalidateAllDerivedDataCaches ();
 		our v_computeAuxiliaryData ();
 	}
@@ -40,17 +63,6 @@ protected:
 	virtual void v_computeAuxiliaryData () { }   // derived classes can call inherited at start
 
 public:
-	void init (FunctionEditor editor, Function function, bool makeCopy) {
-		our _editor = editor;
-		if (makeCopy) {
-			our functionCopy = Data_copy (function);
-			our functionReference = our functionCopy.get();
-		} else {
-			our functionReference = function;
-		}
-		our _ymin_fraction = undefined;   // to be set just before drawing or tracking
-		our _ymax_fraction = undefined;   // to be set just before drawing or tracking
-	}
 	/*
 		To be called just before drawing or tracking:
 	*/
@@ -110,8 +122,8 @@ private:
 	}
 };
 
-inline void FunctionArea_init (FunctionArea me, FunctionEditor editor, Function function, bool makeCopy) {
-	my init (editor, function, makeCopy);
+inline void FunctionArea_init (FunctionArea me, FunctionEditor editor, Function function, bool makeCopy, bool editable) {
+	my init (editor, function, makeCopy, editable);
 	my v_copyPreferencesToInstance ();
 	my v_repairPreferences ();
 }
