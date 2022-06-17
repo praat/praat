@@ -127,7 +127,7 @@ autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_cr
 
 #pragma mark - KlattGrid_FlutterTierEditor
 
-Thing_implement (KlattGrid_FlutterTierArea, KlattGrid_RealTierArea, 0);
+Thing_implement (KlattGrid_FlutterTierArea, RealTierArea, 0);
 #include "Prefs_define.h"
 #include "KlattGrid_FlutterTierArea_prefs.h"
 #include "Prefs_install.h"
@@ -153,7 +153,7 @@ autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring3
 
 #pragma mark - KlattGrid_Power1TierEditor
 
-Thing_implement (KlattGrid_Power1TierArea, KlattGrid_RealTierArea, 0);
+Thing_implement (KlattGrid_Power1TierArea, RealTierArea, 0);
 #include "Prefs_define.h"
 #include "KlattGrid_Power1TierArea_prefs.h"
 #include "Prefs_install.h"
@@ -179,7 +179,7 @@ autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 
 
 #pragma mark - KlattGrid_Power2TierEditor
 
-Thing_implement (KlattGrid_Power2TierArea, KlattGrid_RealTierArea, 0);
+Thing_implement (KlattGrid_Power2TierArea, RealTierArea, 0);
 #include "Prefs_define.h"
 #include "KlattGrid_Power2TierArea_prefs.h"
 #include "Prefs_install.h"
@@ -231,7 +231,7 @@ autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststr
 
 #pragma mark - KlattGrid_CollisionPhaseTierEditor
 
-Thing_implement (KlattGrid_CollisionPhaseTierArea, KlattGrid_RealTierArea, 0);
+Thing_implement (KlattGrid_CollisionPhaseTierArea, RealTierArea, 0);
 #include "Prefs_define.h"
 #include "KlattGrid_CollisionPhaseTierArea_prefs.h"
 #include "Prefs_install.h"
@@ -257,7 +257,7 @@ autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create
 
 #pragma mark - KlattGrid_DoublePulsingTierEditor
 
-Thing_implement (KlattGrid_DoublePulsingTierArea, KlattGrid_RealTierArea, 0);
+Thing_implement (KlattGrid_DoublePulsingTierArea, RealTierArea, 0);
 #include "Prefs_define.h"
 #include "KlattGrid_DoublePulsingTierArea_prefs.h"
 #include "Prefs_install.h"

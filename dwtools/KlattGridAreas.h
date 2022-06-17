@@ -21,13 +21,7 @@
 #include "RealTierArea.h"
 #include "KlattGrid.h"
 
-Thing_define (KlattGrid_RealTierArea, RealTierArea) {
-};
-inline void KlattGrid_RealTierArea_init (KlattGrid_RealTierArea me, FunctionEditor editor, RealTier realTier) {
-	RealTierArea_init (me, editor, realTier, false, true);
-}
-
-Thing_define (KlattGrid_IntensityTierArea, KlattGrid_RealTierArea) {
+Thing_define (KlattGrid_IntensityTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
 	#include "KlattGrid_IntensityTierArea_prefs.h"

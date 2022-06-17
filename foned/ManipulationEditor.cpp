@@ -758,7 +758,7 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 
 		my durationTierArea = Thing_new (DurationTierArea);
 		RealTierArea_init (my durationTierArea.get(), me.get(), manipulation -> duration.get(), false, true);
-		my durationTierArea -> ycursor = 1.0;
+		my durationTierArea -> ycursor = 1.0;   // BUG: should be in v_dataChanged() or in member initialization (undefined there, perhaps?)
 
 		FunctionEditor_init (me.get(), title);
 

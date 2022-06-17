@@ -18,9 +18,7 @@
 
 #include "KlattGridAreas.h"
 
-Thing_implement (KlattGrid_RealTierArea, RealTierArea, 0);
-
-Thing_implement (KlattGrid_IntensityTierArea, KlattGrid_RealTierArea, 0);
+Thing_implement (KlattGrid_IntensityTierArea, RealTierArea, 0);
 #include "Prefs_define.h"
 #include "KlattGrid_IntensityTierArea_prefs.h"
 #include "Prefs_install.h"
