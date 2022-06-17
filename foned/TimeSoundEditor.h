@@ -20,6 +20,7 @@
 
 #include "FunctionEditor.h"
 #include "SoundArea.h"
+#include "LongSoundArea.h"
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
 	autoSoundArea soundArea;

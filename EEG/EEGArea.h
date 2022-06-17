@@ -35,7 +35,7 @@ Thing_define (EEGArea, SoundArea) {
 
 inline autoEEGArea EEGArea_create (FunctionEditor editor, Sound soundToCopy, bool editable) {
 	autoEEGArea me = Thing_new (EEGArea);
-	SoundArea_init (me.get(), editor, soundToCopy, editable);
+	FunctionArea_init (me.get(), editor, soundToCopy, editable);
 	return me;
 }
 

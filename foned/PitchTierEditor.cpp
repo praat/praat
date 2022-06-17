@@ -49,7 +49,7 @@ autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch
 		my data = pitchTier;
 
 		my realTierArea = Thing_new (PitchTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
 
 		if (soundToCopy)
 			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
