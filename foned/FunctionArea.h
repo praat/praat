@@ -35,9 +35,9 @@ private:
 		Initialization.
 	*/
 public:
-	friend void FunctionArea_init (FunctionArea me, FunctionEditor editor, Function function, bool makeCopy, bool editable) {
+	friend void FunctionArea_init (FunctionArea me, FunctionEditor editor, Function function, bool editable) {
 		my _editor = editor;
-		if (makeCopy)
+		if (function)
 			my _functionCopy = Data_copy (function);
 		my _editable = editable;
 		my v_copyPreferencesToInstance ();

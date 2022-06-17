@@ -255,7 +255,7 @@ autoPointEditor PointEditor_create (conststring32 title, PointProcess pointProce
 		my data = pointProcess;
 		if (sound) {
 			my monoSound = Sound_convertToMono (sound);
-			my soundArea = SoundArea_create (me.get(), my monoSound.get(), false, false);   // PointEditor will delete the sound
+			my soundArea = SoundArea_create (me.get(), nullptr, false);   // PointEditor will delete the sound
 		}
 		FunctionEditor_init (me.get(), title);
 		return me;

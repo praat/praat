@@ -28,9 +28,9 @@ Thing_define (AmplitudeTierArea, RealTierArea) {
 	#include "AmplitudeTierArea_prefs.h"
 };
 
-inline autoAmplitudeTierArea AmplitudeTierArea_create (FunctionEditor editor, AmplitudeTier amplitudeTier) {
+inline autoAmplitudeTierArea AmplitudeTierArea_create (FunctionEditor editor, AmplitudeTier amplitudeTierToCopy, bool editable) {
 	autoAmplitudeTierArea me = Thing_new (AmplitudeTierArea);
-	RealTierArea_init (me.get(), editor, amplitudeTier, false, true);
+	RealTierArea_init (me.get(), editor, amplitudeTierToCopy, editable);
 	return me;
 }
 

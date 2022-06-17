@@ -136,13 +136,13 @@ void structRealTierEditor :: v_play (double startTime, double endTime) {
 		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
-autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier realTier, Sound sound) {
+autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier realTier, Sound soundToCopy) {
 	try {
 		autoRealTierEditor me = Thing_new (RealTierEditor);
 		my data = realTier;
-		my realTierArea = RealTierArea_create (me.get(), realTier);
-		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true, false);
+		my realTierArea = RealTierArea_create (me.get(), nullptr, true);
+		if (soundToCopy)
+			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

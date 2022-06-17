@@ -405,7 +405,7 @@ autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSo
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
 		my data = soundOrLongSound;
-		my soundArea = SoundArea_create (me.get(), soundOrLongSound, false, true);
+		my soundArea = SoundArea_create (me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 
 		Melder_assert (my soundOrLongSound());

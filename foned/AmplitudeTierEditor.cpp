@@ -38,13 +38,13 @@ void structAmplitudeTierEditor :: v_play (double startTime, double endTime) {
 	}
 }
 
-autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitudeTier, Sound sound) {
+autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitudeTier, Sound soundToCopy) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
 		my data = amplitudeTier;
-		my realTierArea = AmplitudeTierArea_create (me.get(), amplitudeTier);
-		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true, false);
+		my realTierArea = AmplitudeTierArea_create (me.get(), amplitudeTier, true);
+		if (soundToCopy)
+			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

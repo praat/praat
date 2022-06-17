@@ -38,13 +38,13 @@ void structIntensityTierEditor :: v_play (double startTime, double endTime) {
 	}
 }
 
-autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensityTier, Sound sound) {
+autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensityTier, Sound soundToCopy) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
 		my data = intensityTier;
-		my realTierArea = IntensityTierArea_create (me.get(), intensityTier, false, true);
-		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true, false);
+		my realTierArea = IntensityTierArea_create (me.get(), nullptr, true);
+		if (soundToCopy)
+			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

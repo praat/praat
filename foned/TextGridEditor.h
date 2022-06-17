@@ -106,7 +106,7 @@ private:
 	double leftDraggingBoundary = undefined, rightDraggingBoundary = undefined;   // initial dragging range
 };
 
-void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid textGrid,
+void TextGridEditor_init (TextGridEditor me, conststring32 title,
 	SpellingChecker spellingChecker, conststring32 callbackSocket
 );
 

@@ -647,12 +647,12 @@ double structFormantPathEditor :: v_getBottomOfSoundAndAnalysisArea () {
 
 /********** EXPORTED **********/
 
-autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound sound, TextGrid textgrid) {
+autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound soundToCopy, TextGrid textgrid) {
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
 		my data = formantPath;
-		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true, false);
+		if (soundToCopy)
+			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
 		if (textgrid)
 			;   // BUG: implement TextGridArea
 		FunctionEditor_init (me.get(), title);

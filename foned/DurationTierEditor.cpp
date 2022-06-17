@@ -36,13 +36,13 @@ void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 	}
 }
 
-autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier durationTier, Sound sound) {
+autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier durationTier, Sound soundToCopy) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
 		my data = durationTier;
-		my realTierArea = DurationTierArea_create (me.get(), durationTier);
-		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true, false);
+		my realTierArea = DurationTierArea_create (me.get(), nullptr, true);
+		if (soundToCopy)
+			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

@@ -27,6 +27,12 @@ Thing_define (PointEditor, TimeSoundEditor) {
 	autoSound monoSound;
 	GuiObject addPointAtDialog;
 
+	void v_dataChanged () override {
+		PointEditor_Parent :: v_dataChanged ();
+		if (our soundArea)
+			our soundArea -> functionChanged (our monoSound.get());
+	}
+
 	void v_destroy () noexcept
 		override;
 	void v_createMenus ()

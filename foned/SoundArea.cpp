@@ -233,13 +233,13 @@ bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy, bool editable) {
-	FunctionArea_init (me, editor, soundOrLongSound, makeCopy, editable);
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSoundToCopy, bool editable) {
+	FunctionArea_init (me, editor, soundOrLongSoundToCopy, editable);
 }
 
-autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy, bool editable) {
+autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSoundToCopy, bool editable) {
 	autoSoundArea me = Thing_new (SoundArea);
-	SoundArea_init (me.get(), editor, soundOrLongSound, makeCopy, editable);
+	SoundArea_init (me.get(), editor, soundOrLongSoundToCopy, editable);
 	return me;
 }
 

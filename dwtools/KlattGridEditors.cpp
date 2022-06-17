@@ -96,7 +96,7 @@ autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (conststring32 ti
 		autoKlattGrid_PitchTierEditor me = Thing_new (KlattGrid_PitchTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_PitchTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> pitch.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -116,7 +116,7 @@ autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_cr
 		autoKlattGrid_VoicingAmplitudeTierEditor me = Thing_new (KlattGrid_VoicingAmplitudeTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_VoicingAmplitudeTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> voicingAmplitude.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -142,7 +142,7 @@ autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring3
 		autoKlattGrid_FlutterTierEditor me = Thing_new (KlattGrid_FlutterTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_FlutterTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> flutter.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -168,7 +168,7 @@ autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 
 		autoKlattGrid_Power1TierEditor me = Thing_new (KlattGrid_Power1TierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_Power1TierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> power1.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -194,7 +194,7 @@ autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 
 		autoKlattGrid_Power2TierEditor me = Thing_new (KlattGrid_Power2TierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_Power2TierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> power2.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -220,7 +220,7 @@ autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststr
 		autoKlattGrid_OpenPhaseTierEditor me = Thing_new (KlattGrid_OpenPhaseTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_OpenPhaseTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> openPhase.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -246,7 +246,7 @@ autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create
 		autoKlattGrid_CollisionPhaseTierEditor me = Thing_new (KlattGrid_CollisionPhaseTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_CollisionPhaseTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> collisionPhase.get(), false, true);   // BUG: last arg not needed
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);   // BUG: last arg not needed
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -272,7 +272,7 @@ autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (
 		autoKlattGrid_DoublePulsingTierEditor me = Thing_new (KlattGrid_DoublePulsingTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_DoublePulsingTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> doublePulsing.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -298,7 +298,7 @@ autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (co
 		autoKlattGrid_SpectralTiltTierEditor me = Thing_new (KlattGrid_SpectralTiltTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_SpectralTiltTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> spectralTilt.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -317,7 +317,7 @@ autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEdi
 		autoKlattGrid_AspirationAmplitudeTierEditor me = Thing_new (KlattGrid_AspirationAmplitudeTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_AspirationAmplitudeTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> aspirationAmplitude.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -337,7 +337,7 @@ autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierE
 		autoKlattGrid_BreathinessAmplitudeTierEditor me = Thing_new (KlattGrid_BreathinessAmplitudeTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_BreathinessAmplitudeTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> phonation -> breathinessAmplitude.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -367,10 +367,7 @@ autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring3
 		my formantType = formantType;   // before RealTierArea_init()
 		my iformant = iformant;
 		my realTierArea = Thing_new (KlattGrid_DecibelTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(),
-			KlattGrid_getAddressOfAmplitudes (klattgrid, formantType)->at [iformant],   // BUG: superfluous
-			false, true
-		);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -396,7 +393,7 @@ autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_crea
 		autoKlattGrid_FricationBypassTierEditor me = Thing_new (KlattGrid_FricationBypassTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_FricationBypassTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> frication -> bypass.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -416,7 +413,7 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 		autoKlattGrid_FricationAmplitudeTierEditor me = Thing_new (KlattGrid_FricationAmplitudeTierEditor);
 		my data = klattgrid;
 		my realTierArea = Thing_new (KlattGrid_FricationAmplitudeTierArea);
-		RealTierArea_init (my realTierArea.get(), me.get(), klattgrid -> frication -> fricationAmplitude.get(), false, true);
+		RealTierArea_init (my realTierArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -449,7 +446,7 @@ autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring3
 		my data = klattgrid;
 		my formantType = formantType;
 		my formantGridArea = Thing_new (KlattGrid_FormantGridArea);
-		FormantGridArea_init (my formantGridArea.get(), me.get(), false, true);
+		FormantGridArea_init (my formantGridArea.get(), me.get(), nullptr, true);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
