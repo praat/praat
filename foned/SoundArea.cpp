@@ -233,15 +233,15 @@ bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy) {
-	Melder_assert (! (makeCopy && Thing_isa (soundOrLongSound, classLongSound)));
-	FunctionArea_init (me, editor, soundOrLongSound, makeCopy);
-	my functionChanged (soundOrLongSound);
+void SoundArea_init (SoundArea me, FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy, bool editable) {
+	//Melder_assert (! (makeCopy && Thing_isa (soundOrLongSound, classLongSound)));
+	FunctionArea_init (me, editor, soundOrLongSound, makeCopy, editable);
+	//my functionChanged (soundOrLongSound);
 }
 
-autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy) {
+autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSound, bool makeCopy, bool editable) {
 	autoSoundArea me = Thing_new (SoundArea);
-	SoundArea_init (me.get(), editor, soundOrLongSound, makeCopy);
+	SoundArea_init (me.get(), editor, soundOrLongSound, makeCopy, editable);
 	return me;
 }
 

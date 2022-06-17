@@ -223,7 +223,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridEditor me, EDITOR_ARGS_
 			autoSound sound = my longSound() ?
 				LongSound_extractPart (my longSound(), my startWindow, my endWindow, true) :
 				Sound_extractPart (my sound(), my startWindow, my endWindow,
-					kSound_windowShape::RECTANGULAR, 1.0, true);
+						kSound_windowShape::RECTANGULAR, 1.0, true);
 			TextGrid_Sound_draw (my textGrid(), sound.get(), my pictureGraphics,
 					my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
 		}
@@ -1126,7 +1126,7 @@ void structTextGridEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
 	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
 
-	if (our sound()) {
+	if (our soundArea) {   // BUG: not LongSounds
 		Editor_addCommand (this, U"Select", U"-- move to zero --", 0, 0);
 		Editor_addCommand (this, U"Select", U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
 		Editor_addCommand (this, U"Select", U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
@@ -1143,7 +1143,7 @@ void structTextGridEditor :: v_createMenus () {
 			QUERY_DATA_FOR_STRING__GetLabelOfInterval);
 
 	menu = Editor_addMenu (this, U"Interval", 0);
-	if (our soundOrLongSound()) {
+	if (our soundArea) {
 		EditorMenu_addCommand (menu, U"Align interval", 'D', menu_cb_AlignInterval);
 		EditorMenu_addCommand (menu, U"Alignment settings...", 0, menu_cb_AlignmentSettings);
 		EditorMenu_addCommand (menu, U"-- add interval --", 0, nullptr);
@@ -1160,7 +1160,7 @@ void structTextGridEditor :: v_createMenus () {
 	menu = Editor_addMenu (this, U"Boundary", 0);
 	/*EditorMenu_addCommand (menu, U"Move to B", 0, menu_cb_MoveToB);
 	EditorMenu_addCommand (menu, U"Move to E", 0, menu_cb_MoveToE);*/
-	if (our sound()) {
+	if (our soundArea) {   // BUG: not for LongSounds
 		EditorMenu_addCommand (menu, U"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
 		EditorMenu_addCommand (menu, U"-- insert boundary --", 0, nullptr);
 	}
@@ -1199,7 +1199,7 @@ void structTextGridEditor :: v_createMenus () {
 		EditorMenu_addCommand (menu, U"Add selected word to user dictionary", 0, menu_cb_AddToUserDictionary);
 	}
 
-	if (our soundOrLongSound()) {
+	if (our soundArea) {
 		if (our v_hasAnalysis ())
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
@@ -2230,7 +2230,7 @@ autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		if (soundOrLongSound)
-			my soundArea = SoundArea_create (me.get(), soundOrLongSound, true);
+			my soundArea = SoundArea_create (me.get(), soundOrLongSound, true, false);
 		TextGridEditor_init (me.get(), title, textGrid, spellingChecker, callbackSocket);
 		return me;
 	} catch (MelderError) {

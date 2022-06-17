@@ -42,7 +42,7 @@ autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationT
 		my data = durationTier;
 		my realTierArea = DurationTierArea_create (me.get(), durationTier);
 		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true);
+			my soundArea = SoundArea_create (me.get(), sound, true, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

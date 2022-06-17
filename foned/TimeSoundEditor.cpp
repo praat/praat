@@ -33,9 +33,9 @@ Thing_implement_pureVirtual (TimeSoundEditor, FunctionEditor, 0);
 
 void structTimeSoundEditor :: v_info () {
 	TimeSoundEditor_Parent :: v_info ();
-	/* Sound flags: */
-	MelderInfo_writeLine (U"Sound scaling strategy: ",
-			kSoundArea_scalingStrategy_getText (our soundArea -> instancePref_scalingStrategy()));
+	if (our soundArea)
+		MelderInfo_writeLine (U"Sound scaling strategy: ",
+				kSoundArea_scalingStrategy_getText (our soundArea -> instancePref_scalingStrategy()));
 }
 
 enum {
@@ -295,7 +295,7 @@ static void menu_cb_WriteFlac (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 
 void structTimeSoundEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
-	if (our soundOrLongSound()) {
+	if (our soundArea) {
 		EditorMenu_addCommand (menu, U"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
 		our drawButton = EditorMenu_addCommand (menu, U"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
 	}
@@ -304,7 +304,7 @@ void structTimeSoundEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 void structTimeSoundEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
 			CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes /* dummy */);
-	if (our soundOrLongSound()) {
+	if (our soundArea) {
 		our publishPreserveButton = EditorMenu_addCommand (menu, U"Extract selected sound (preserve times)", 0,
 				CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes);
 			EditorMenu_addCommand (menu, U"Extract sound selection (preserve times)", Editor_HIDDEN,
@@ -319,7 +319,7 @@ void structTimeSoundEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 					CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero);
 			EditorMenu_addCommand (menu, U"Extract selection", Editor_HIDDEN,
 					CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero);
-		if (our sound()) {
+		if (true) {   // BUG: not for LongSounds!
 			our publishWindowButton = EditorMenu_addCommand (menu, U"Extract selected sound (windowed)...", 0,
 					CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed);
 				EditorMenu_addCommand (menu, U"Extract windowed sound selection...", Editor_HIDDEN,
@@ -334,12 +334,12 @@ void structTimeSoundEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 
 void structTimeSoundEditor :: v_createMenuItems_file_write (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Save to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */);
-	if (our soundOrLongSound()) {
+	if (our soundArea) {
 		our writeWavButton = EditorMenu_addCommand (menu, U"Save selected sound as WAV file...", 0, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, U"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, U"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, U"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
-		if (our sound()) {
+		if (true) {   // BUG: not for LongSound?
 			our saveAs24BitWavButton = EditorMenu_addCommand (menu, U"Save selected sound as 24-bit WAV file...", 0, menu_cb_SaveAs24BitWav);
 			our saveAs32BitWavButton = EditorMenu_addCommand (menu, U"Save selected sound as 32-bit WAV file...", 0, menu_cb_SaveAs32BitWav);
 		}
@@ -410,12 +410,12 @@ static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WIT
 
 void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	TimeSoundEditor_Parent :: v_createMenuItems_query_info (menu);
-	if (our sound() && our sound() != our data) {
+	if (our soundArea /*&& our sound() != our data && not LongSound) {   // BUG:
 		EditorMenu_addCommand (menu, U"Sound info", 0, INFO_DATA__SoundInfo);
-	} else if (our longSound() && our longSound() != our data) {
+	} else if (our soundArea /*our longSound() && our longSound() != our data*/) {   // BUG:
 		EditorMenu_addCommand (menu, U"LongSound info", 0, INFO_DATA__LongSoundInfo);
 	}
-	if (our sound()) {
+	if (our soundArea) {   // BUG: not or LongSound
 		EditorMenu_addCommand (menu, U"-- sound query --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Get amplitude(s)", 0, INFO_DATA__getAmplitudes);
 	}
@@ -463,7 +463,7 @@ static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 }
 
 void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
-	if (our soundOrLongSound())
+	if (our soundArea)
 		our v_createMenuItems_view_sound (menu);
 	TimeSoundEditor_Parent :: v_createMenuItems_view (menu);
 }

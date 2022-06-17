@@ -122,7 +122,8 @@ autoMovieWindow MovieWindow_create (conststring32 title, Movie movie) {
 		if (movie -> d_sound)
 			my soundArea = SoundArea_create (me.get(),
 				movie -> d_sound.get(),   // a pointer to the internal sound (BUG: change if data changes)
-				false   // owned by movie
+				false,   // owned by movie
+				false
 			);
 		FunctionEditor_init (me.get(), title);
 		return me;

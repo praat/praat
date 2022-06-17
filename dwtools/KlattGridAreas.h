@@ -24,7 +24,7 @@
 Thing_define (KlattGrid_RealTierArea, RealTierArea) {
 };
 inline void KlattGrid_RealTierArea_init (KlattGrid_RealTierArea me, FunctionEditor editor, RealTier realTier) {
-	RealTierArea_init (me, editor, realTier);
+	RealTierArea_init (me, editor, realTier, false, true);
 }
 
 Thing_define (KlattGrid_IntensityTierArea, KlattGrid_RealTierArea) {

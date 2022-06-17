@@ -44,7 +44,7 @@ autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, Amplitu
 		my data = amplitudeTier;
 		my realTierArea = AmplitudeTierArea_create (me.get(), amplitudeTier);
 		if (sound)
-			my soundArea = SoundArea_create (me.get(), sound, true);
+			my soundArea = SoundArea_create (me.get(), sound, true, false);
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

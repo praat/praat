@@ -27,8 +27,8 @@ Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
 /********** METHODS **********/
 
 void structSoundEditor :: v_dataChanged () {
-	Melder_assert (our soundOrLongSound());
-	if (our soundArea)   // LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
+	Melder_assert (our soundArea);
+	if (our soundArea)   // BUG: LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
 		our soundArea -> invalidateAllDerivedDataCaches ();
 	SoundEditor_Parent :: v_dataChanged ();
 }
@@ -264,20 +264,20 @@ static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Meld
 
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();
-	Melder_assert (our soundOrLongSound());
+	Melder_assert (our soundArea);
 
 	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
-	if (our sound())
+	if (our soundArea && our soundArea -> editable())
 		cutButton = Editor_addCommand (this, U"Edit", U"Cut", 'X', menu_cb_Cut);
 	copyButton = Editor_addCommand (this, U"Edit", U"Copy selection to Sound clipboard", 'C', menu_cb_Copy);
-	if (our sound())
+	if (our soundArea && our soundArea -> editable())
 		pasteButton = Editor_addCommand (this, U"Edit", U"Paste after selection", 'V', menu_cb_Paste);
-	if (our sound()) {
+	if (our soundArea && our soundArea -> editable()) {
 		Editor_addCommand (this, U"Edit", U"-- zero --", 0, nullptr);
 		zeroButton = Editor_addCommand (this, U"Edit", U"Set selection to zero", 0, menu_cb_SetSelectionToZero);
 		reverseButton = Editor_addCommand (this, U"Edit", U"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
-	if (our sound()) {
+	if (our soundArea) {   // BUG: not LongSound
 		Editor_addCommand (this, U"Select", U"-- move to zero --", 0, 0);
 		Editor_addCommand (this, U"Select", U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
 		Editor_addCommand (this, U"Select", U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
@@ -412,9 +412,10 @@ autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSo
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
 		my data = soundOrLongSound;
-		my soundArea = SoundArea_create (me.get(), soundOrLongSound, false);
+		my soundArea = SoundArea_create (me.get(), soundOrLongSound, false, true);
 		FunctionEditor_init (me.get(), title);
 
+		Melder_assert (my soundOrLongSound());
 		if (my longSound() && my endWindow - my startWindow > 30.0) {
 			my endWindow = my startWindow + 30.0;
 			if (my startWindow == my tmin)

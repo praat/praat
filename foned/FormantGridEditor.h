@@ -59,10 +59,10 @@ Thing_define (FormantGridArea, RealTierArea) {
 
 	#include "FormantGridArea_prefs.h"
 };
-inline void FormantGridArea_init (FormantGridArea me, FunctionEditor editor) {
+inline void FormantGridArea_init (FormantGridArea me, FunctionEditor editor, bool makeCopy, bool editable) {
 	my editingBandwidths = false;
 	my selectedFormant = 1;
-	RealTierArea_init (me, editor);
+	RealTierArea_init (me, editor, nullptr, makeCopy, editable);
 	my setGlobalYRange_fraction (0.0, 1.0);
 }
 

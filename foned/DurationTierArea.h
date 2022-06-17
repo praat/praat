@@ -33,7 +33,7 @@ Thing_define (DurationTierArea, RealTierArea) {
 
 inline autoDurationTierArea DurationTierArea_create (FunctionEditor editor, DurationTier durationTier) {
 	autoDurationTierArea me = Thing_new (DurationTierArea);
-	RealTierArea_init (me.get(), editor, durationTier);
+	RealTierArea_init (me.get(), editor, durationTier, false, true);
 	return me;
 }
 
