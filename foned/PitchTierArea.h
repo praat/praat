@@ -32,5 +32,7 @@ Thing_define (PitchTierArea, RealTierArea) {
 	#include "PitchTierArea_prefs.h"
 };
 
+DEFINE_FunctionArea_create (PitchTierArea, PitchTier)
+
 /* End of file PitchTierArea.h */
 #endif

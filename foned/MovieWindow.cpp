@@ -120,7 +120,7 @@ autoMovieWindow MovieWindow_create (conststring32 title, Movie movie) {
 		autoMovieWindow me = Thing_new (MovieWindow);
 		my data = movie;
 		if (movie -> d_sound)
-			my soundArea = SoundArea_create (me.get(), nullptr, false);
+			my soundArea = SoundArea_create (false, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

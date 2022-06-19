@@ -30,11 +30,7 @@ Thing_define (ERPArea, SoundArea) {
 	#include "ERPArea_prefs.h"
 };
 
-inline autoERPArea ERPArea_create (FunctionEditor editor, ERP erpToCopy, bool editable) {
-	autoERPArea me = Thing_new (ERPArea);
-	FunctionArea_init (me.get(), editor, erpToCopy, editable);
-	return me;
-}
+DEFINE_FunctionArea_create (ERPArea, ERP)
 
 /* End of file ERPArea.h */
 #endif

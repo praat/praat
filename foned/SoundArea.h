@@ -140,11 +140,7 @@ void SoundArea_draw (SoundArea me);
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline autoSoundArea SoundArea_create (FunctionEditor editor, SampledXY soundOrLongSoundToCopy, bool editable) {
-	autoSoundArea me = Thing_new (SoundArea);
-	FunctionArea_init (me.get(), editor, soundOrLongSoundToCopy, editable);
-	return me;
-}
+DEFINE_FunctionArea_create (SoundArea, Sound)
 
 /* End of file SoundArea.h */
 #endif

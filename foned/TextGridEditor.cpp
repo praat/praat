@@ -1262,8 +1262,8 @@ void structTextGridEditor :: v_dataChanged () {
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
 		Do a simple guess.
 	*/
-	Melder_clipRight (& our selectedTier, our textGrid() -> tiers->size);
 	TextGridEditor_Parent :: v_dataChanged ();   // does all the updating
+	Melder_clipRight (& our selectedTier, our textGrid() -> tiers->size);
 }
 
 /********** DRAWING AREA **********/
@@ -2224,13 +2224,17 @@ void TextGridEditor_init (TextGridEditor me, conststring32 title,
 }
 
 autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid,
-	SampledXY soundOrLongSoundToCopy, SpellingChecker spellingChecker, conststring32 callbackSocket)
+	SampledXY optionalSoundOrLongSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		my data = textGrid;
-		if (soundOrLongSoundToCopy)
-			my soundArea = SoundArea_create (me.get(), soundOrLongSoundToCopy, false);
+		if (optionalSoundOrLongSound) {
+			if (Thing_isa (optionalSoundOrLongSound, classSound))
+				my soundArea = SoundArea_create (true, static_cast <Sound> (optionalSoundOrLongSound), me.get());
+			else
+				my soundArea = LongSoundArea_create (false, static_cast <LongSound> (optionalSoundOrLongSound), me.get());
+		}
 		TextGridEditor_init (me.get(), title, spellingChecker, callbackSocket);
 		return me;
 	} catch (MelderError) {

@@ -140,9 +140,9 @@ autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier realTier
 	try {
 		autoRealTierEditor me = Thing_new (RealTierEditor);
 		my data = realTier;
-		my realTierArea = RealTierArea_create (me.get(), nullptr, true);
+		my realTierArea = RealTierArea_create (true, nullptr, me.get());
 		if (soundToCopy)
-			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
+			my soundArea = SoundArea_create (false, soundToCopy, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

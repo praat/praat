@@ -42,9 +42,9 @@ autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, Amplitu
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
 		my data = amplitudeTier;
-		my realTierArea = AmplitudeTierArea_create (me.get(), amplitudeTier, true);
+		my realTierArea = AmplitudeTierArea_create (true, nullptr, me.get());
 		if (soundToCopy)
-			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
+			my soundArea = SoundArea_create (false, soundToCopy, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

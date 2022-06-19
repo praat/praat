@@ -95,8 +95,7 @@ autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (conststring32 ti
 	try {
 		autoKlattGrid_PitchTierEditor me = Thing_new (KlattGrid_PitchTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_PitchTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_PitchTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -115,8 +114,7 @@ autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_cr
 	try {
 		autoKlattGrid_VoicingAmplitudeTierEditor me = Thing_new (KlattGrid_VoicingAmplitudeTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_VoicingAmplitudeTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_VoicingAmplitudeTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -141,8 +139,7 @@ autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring3
 	try {
 		autoKlattGrid_FlutterTierEditor me = Thing_new (KlattGrid_FlutterTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_FlutterTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_FlutterTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -167,8 +164,7 @@ autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 
 	try {
 		autoKlattGrid_Power1TierEditor me = Thing_new (KlattGrid_Power1TierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_Power1TierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_Power1TierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -193,8 +189,7 @@ autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 
 	try {
 		autoKlattGrid_Power2TierEditor me = Thing_new (KlattGrid_Power2TierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_Power2TierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_Power2TierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -219,8 +214,7 @@ autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststr
 	try {
 		autoKlattGrid_OpenPhaseTierEditor me = Thing_new (KlattGrid_OpenPhaseTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_OpenPhaseTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_OpenPhaseTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -245,8 +239,7 @@ autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create
 	try {
 		autoKlattGrid_CollisionPhaseTierEditor me = Thing_new (KlattGrid_CollisionPhaseTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_CollisionPhaseTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);   // BUG: last arg not needed
+		my realTierArea = KlattGrid_CollisionPhaseTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -271,8 +264,7 @@ autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (
 	try {
 		autoKlattGrid_DoublePulsingTierEditor me = Thing_new (KlattGrid_DoublePulsingTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_DoublePulsingTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_DoublePulsingTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -297,8 +289,7 @@ autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (co
 	try {
 		autoKlattGrid_SpectralTiltTierEditor me = Thing_new (KlattGrid_SpectralTiltTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_SpectralTiltTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_SpectralTiltTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -316,8 +307,7 @@ autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEdi
 	try {
 		autoKlattGrid_AspirationAmplitudeTierEditor me = Thing_new (KlattGrid_AspirationAmplitudeTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_AspirationAmplitudeTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_AspirationAmplitudeTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -336,8 +326,7 @@ autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierE
 	try {
 		autoKlattGrid_BreathinessAmplitudeTierEditor me = Thing_new (KlattGrid_BreathinessAmplitudeTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_BreathinessAmplitudeTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_BreathinessAmplitudeTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -366,8 +355,7 @@ autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring3
 		my data = klattgrid;
 		my formantType = formantType;   // before FunctionArea_init()
 		my iformant = iformant;
-		my realTierArea = Thing_new (KlattGrid_DecibelTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_DecibelTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -392,8 +380,7 @@ autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_crea
 	try {
 		autoKlattGrid_FricationBypassTierEditor me = Thing_new (KlattGrid_FricationBypassTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_FricationBypassTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_FricationBypassTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -412,8 +399,7 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 	try {
 		autoKlattGrid_FricationAmplitudeTierEditor me = Thing_new (KlattGrid_FricationAmplitudeTierEditor);
 		my data = klattgrid;
-		my realTierArea = Thing_new (KlattGrid_FricationAmplitudeTierArea);
-		FunctionArea_init (my realTierArea.get(), me.get(), nullptr, true);
+		my realTierArea = KlattGrid_FricationAmplitudeTierArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
@@ -445,8 +431,7 @@ autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring3
 		autoKlattGrid_FormantGridEditor me = Thing_new (KlattGrid_FormantGridEditor);
 		my data = klattgrid;
 		my formantType = formantType;
-		my formantGridArea = Thing_new (KlattGrid_FormantGridArea);
-		FormantGridArea_init (my formantGridArea.get(), me.get(), nullptr, true);
+		my formantGridArea = KlattGrid_FormantGridArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

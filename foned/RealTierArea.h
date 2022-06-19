@@ -83,11 +83,7 @@ void RealTierArea_drawWhileDragging (RealTierArea me);
 
 bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
-inline autoRealTierArea RealTierArea_create (FunctionEditor editor, RealTier realTierToCopy, bool editable) {
-	autoRealTierArea me = Thing_new (RealTierArea);
-	FunctionArea_init (me.get(), editor, realTierToCopy, editable);
-	return me;
-}
+DEFINE_FunctionArea_create (RealTierArea, RealTier)
 
 /* End of file RealTierArea.h */
 #endif

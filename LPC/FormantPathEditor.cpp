@@ -652,7 +652,7 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
 		my data = formantPath;
 		if (soundToCopy)
-			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
+			my soundArea = SoundArea_create (false, soundToCopy, me.get());
 		if (textgrid)
 			;   // BUG: implement TextGridArea
 		FunctionEditor_init (me.get(), title);

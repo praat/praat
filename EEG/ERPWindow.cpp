@@ -399,7 +399,7 @@ autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
 		my data = erp;
-		my soundArea = ERPArea_create (me.get(), nullptr, true);
+		my soundArea = ERPArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {

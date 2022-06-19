@@ -35,10 +35,10 @@ private:
 		Initialization.
 	*/
 public:
-	friend void FunctionArea_init (FunctionArea me, FunctionEditor editor, Function function, bool editable) {
-		my _editor = editor;
-		if (function)
-			my _functionCopy = Data_copy (function);
+	friend void FunctionArea_init (FunctionArea me, bool editable, Function functionToCopy, FunctionEditor boss) {
+		my _editor = boss;
+		if (functionToCopy)
+			my _functionCopy = Data_copy (functionToCopy);
 		my _editable = editable;
 		my v_copyPreferencesToInstance ();
 		my v_repairPreferences ();   // BUG: collapse with previous into Thing_installSensiblePreferencesIntoInstance
@@ -119,6 +119,13 @@ private:
 		return globalY_fraction_to_pxlt (_ymax_fraction) - our verticalSpacing_pxlt();
 	}
 };
+
+#define DEFINE_FunctionArea_create(FunctionAreaType, FunctionType) \
+inline auto##FunctionAreaType FunctionAreaType##_create (bool editable, FunctionType functionToCopy, FunctionEditor boss) { \
+	auto##FunctionAreaType me = Thing_new (FunctionAreaType); \
+	FunctionArea_init (me.get(), editable, functionToCopy, boss); \
+	return me; \
+}
 
 /* End of file FunctionArea.h */
 #endif

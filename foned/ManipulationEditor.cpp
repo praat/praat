@@ -753,11 +753,9 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		my data = manipulation;
 
-		my pitchTierArea = Thing_new (PitchTierArea);
-		FunctionArea_init (my pitchTierArea.get(), me.get(), nullptr, true);
+		my pitchTierArea = PitchTierArea_create (true, nullptr, me.get());
 
-		my durationTierArea = Thing_new (DurationTierArea);
-		FunctionArea_init (my durationTierArea.get(), me.get(), nullptr, true);
+		my durationTierArea = DurationTierArea_create (true, nullptr, me.get());
 		my durationTierArea -> ycursor = 1.0;   // BUG: should be in v_dataChanged() or in member initialization (undefined there, perhaps?)
 
 		FunctionEditor_init (me.get(), title);

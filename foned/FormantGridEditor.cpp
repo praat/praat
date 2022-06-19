@@ -20,19 +20,13 @@
 #include "EditorM.h"
 #include "PointProcess_and_Sound.h"
 
-Thing_implement_pureVirtual (FormantGridArea, RealTierArea, 0);
-
 Thing_implement (FormantGridEditor, FunctionEditor, 0);
-Thing_implement (FormantGridEditor_FormantGridArea, FormantGridArea, 0);
 
 #include "Prefs_define.h"
-#include "FormantGridArea_prefs.h"
 #include "FormantGridEditor_prefs.h"
 #include "Prefs_install.h"
-#include "FormantGridArea_prefs.h"
 #include "FormantGridEditor_prefs.h"
 #include "Prefs_copyToInstance.h"
-#include "FormantGridArea_prefs.h"
 #include "FormantGridEditor_prefs.h"
 
 /********** MENU COMMANDS **********/
@@ -183,9 +177,6 @@ void structFormantGridEditor :: v_createMenus () {
 
 /********** DRAWING AREA **********/
 
-void structFormantGridEditor :: v_distributeAreas () {
-}
-
 void structFormantGridEditor :: v_draw () {
 	our formantGridArea -> setViewport();
 
@@ -265,19 +256,6 @@ void structFormantGridEditor :: v_play (double startTime, double endTime) {
 		our instancePref_source_phonation_openPhase(),   our instancePref_source_phonation_collisionPhase(),
 		our instancePref_source_phonation_power1(),      our instancePref_source_phonation_power2(),
 		theFunctionEditor_playCallback, this);
-}
-
-autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid) {
-	try {
-		autoFormantGridEditor me = Thing_new (FormantGridEditor);
-		my data = formantGrid;
-		my formantGridArea = Thing_new (FormantGridEditor_FormantGridArea);
-		FormantGridArea_init (my formantGridArea.get(), me.get(), nullptr, true);
-		FunctionEditor_init (me.get(), title);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"FormantGrid window not created.");
-	}
 }
 
 /* End of file FormantGridEditor.cpp */

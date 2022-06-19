@@ -195,7 +195,7 @@ autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid no
 		autoNoulliGridEditor me = Thing_new (NoulliGridEditor);
 		my data = noulliGrid;
 		if (soundToCopy)
-			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
+			my soundArea = SoundArea_create (false, soundToCopy, me.get());
 		FunctionEditor_init (me.get(), title);
 		return me;
 	} catch (MelderError) {
