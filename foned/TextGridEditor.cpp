@@ -1262,8 +1262,8 @@ void structTextGridEditor :: v_dataChanged () {
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
 		Do a simple guess.
 	*/
-	Melder_clipRight (& our selectedTier, our textGrid() -> tiers->size);
 	TextGridEditor_Parent :: v_dataChanged ();   // does all the updating
+	Melder_clipRight (& our selectedTier, our textGrid() -> tiers->size);
 }
 
 /********** DRAWING AREA **********/
@@ -2191,12 +2191,12 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void TextGridEditor_init (TextGridEditor me, conststring32 title,
+void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid textGrid,
 	SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	my spellingChecker = spellingChecker;   // set before FunctionEditor_init, which may install spellingChecker menus
 	my callbackSocket = Melder_dup (callbackSocket);
-	FunctionEditor_init (me, title);
+	FunctionEditor_init (me, title, textGrid);
 
 	my selectedTier = 1;
 	my draggingTime = undefined;
@@ -2224,14 +2224,18 @@ void TextGridEditor_init (TextGridEditor me, conststring32 title,
 }
 
 autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid,
-	SampledXY soundOrLongSoundToCopy, SpellingChecker spellingChecker, conststring32 callbackSocket)
+	SampledXY optionalSoundOrLongSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
 {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		my data = textGrid;
-		if (soundOrLongSoundToCopy)
-			my soundArea = SoundArea_create (me.get(), soundOrLongSoundToCopy, false);
-		TextGridEditor_init (me.get(), title, spellingChecker, callbackSocket);
+		if (optionalSoundOrLongSound) {
+			if (Thing_isa (optionalSoundOrLongSound, classSound))
+				my soundArea = SoundArea_create (true, static_cast <Sound> (optionalSoundOrLongSound), me.get());
+			else
+				my soundArea = LongSoundArea_create (false, static_cast <LongSound> (optionalSoundOrLongSound), me.get());
+		}
+		TextGridEditor_init (me.get(), title, textGrid, spellingChecker, callbackSocket);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid window not created.");

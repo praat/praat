@@ -209,7 +209,7 @@ int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTi
 #define FunctionEditor_UPDATE_NEEDED  true
 #define FunctionEditor_NO_UPDATE_NEEDED  false
 
-void FunctionEditor_init (FunctionEditor me, conststring32 title);
+void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.

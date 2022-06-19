@@ -23,11 +23,7 @@
 Thing_define (LongSoundArea, SoundArea) {
 };
 
-inline autoLongSoundArea LongSoundArea_create (FunctionEditor editor, LongSound longSoundToCopy, bool editable) {
-	autoLongSoundArea me = Thing_new (LongSoundArea);
-	FunctionArea_init (me.get(), editor, longSoundToCopy, editable);
-	return me;
-}
+DEFINE_FunctionArea_create (LongSoundArea, LongSound)
 
 /* End of file LongSoundArea.h */
 #endif

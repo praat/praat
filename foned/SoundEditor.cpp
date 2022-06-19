@@ -404,12 +404,11 @@ autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSo
 	Melder_assert (soundOrLongSound);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
-		my data = soundOrLongSound;
 		if (Thing_isa (soundOrLongSound, classSound))
-			my soundArea = SoundArea_create (me.get(), nullptr, true);
+			my soundArea = SoundArea_create (true, nullptr, me.get());
 		else
-			my soundArea = LongSoundArea_create (me.get(), nullptr, false);
-		FunctionEditor_init (me.get(), title);
+			my soundArea = LongSoundArea_create (false, nullptr, me.get());
+		FunctionEditor_init (me.get(), title, soundOrLongSound);
 
 		Melder_assert (my soundOrLongSound());
 		if (my longSound() && my endWindow - my startWindow > 30.0) {   // BUG: should be in dataChanged?

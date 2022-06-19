@@ -139,11 +139,10 @@ void structRealTierEditor :: v_play (double startTime, double endTime) {
 autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier realTier, Sound soundToCopy) {
 	try {
 		autoRealTierEditor me = Thing_new (RealTierEditor);
-		my data = realTier;
-		my realTierArea = RealTierArea_create (me.get(), nullptr, true);
+		my realTierArea = RealTierArea_create (true, nullptr, me.get());
 		if (soundToCopy)
-			my soundArea = SoundArea_create (me.get(), soundToCopy, false);
-		FunctionEditor_init (me.get(), title);
+			my soundArea = SoundArea_create (false, soundToCopy, me.get());
+		FunctionEditor_init (me.get(), title, realTier);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"RealTier window not created.");

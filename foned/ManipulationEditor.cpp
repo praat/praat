@@ -751,18 +751,12 @@ void structManipulationEditor :: v_play (double startTime, double endTime) {
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
-		my data = manipulation;
-
-		my pitchTierArea = Thing_new (PitchTierArea);
-		FunctionArea_init (my pitchTierArea.get(), me.get(), nullptr, true);
-
-		my durationTierArea = Thing_new (DurationTierArea);
-		FunctionArea_init (my durationTierArea.get(), me.get(), nullptr, true);
+		my pitchTierArea = PitchTierArea_create (true, nullptr, me.get());
+		my durationTierArea = DurationTierArea_create (true, nullptr, me.get());
 		my durationTierArea -> ycursor = 1.0;   // BUG: should be in v_dataChanged() or in member initialization (undefined there, perhaps?)
+		FunctionEditor_init (me.get(), title, manipulation);
 
-		FunctionEditor_init (me.get(), title);
-
-		my synthesisMethod = prefs_synthesisMethod;
+		my synthesisMethod = prefs_synthesisMethod; // BUG: should be in v_dataChanged()
 		if (manipulation -> sound)
 			Matrix_getWindowExtrema (manipulation -> sound.get(), 0, 0, 0, 0, & my soundmin, & my soundmax);
 		if (my soundmin == my soundmax) {

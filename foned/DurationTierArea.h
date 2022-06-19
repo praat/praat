@@ -31,11 +31,7 @@ Thing_define (DurationTierArea, RealTierArea) {
 	void v_repairPreferences () override;
 };
 
-inline autoDurationTierArea DurationTierArea_create (FunctionEditor editor, DurationTier durationTierToCopy, bool editable) {
-	autoDurationTierArea me = Thing_new (DurationTierArea);
-	FunctionArea_init (me.get(), editor, durationTierToCopy, editable);
-	return me;
-}
+DEFINE_FunctionArea_create (DurationTierArea, DurationTier)
 
 /* End of file DurationTierArea.h */
 #endif

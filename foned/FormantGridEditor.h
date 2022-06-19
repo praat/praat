@@ -19,52 +19,7 @@
  */
 
 #include "FunctionEditor.h"
-#include "FormantGrid.h"
-#include "RealTierArea.h"
-
-Thing_define (FormantGridArea, RealTierArea) {
-	FormantGrid _formantGrid;
-	FormantGrid formantGrid() { return our _formantGrid; }
-
-	bool editingBandwidths;
-	integer selectedFormant;
-
-	void v_updateScaling () override {
-		if (our editingBandwidths) {
-			Melder_assert (isdefined (our instancePref_bandwidthFloor()));
-			Melder_assert (isdefined (our instancePref_bandwidthCeiling()));
-			our ymin = our instancePref_bandwidthFloor();
-			our ymax = our instancePref_bandwidthCeiling();
-		} else {
-			Melder_assert (isdefined (our instancePref_formantFloor()));
-			Melder_assert (isdefined (our instancePref_formantCeiling()));
-			our ymin = our instancePref_formantFloor();
-			our ymax = our instancePref_formantCeiling();
-		}
-		if (our realTier() && our realTier() -> points.size > 0) {
-			Melder_assert (! (our v_maximumLegalY() < our v_minimumLegalY()));   // NaN-safe
-			const double minimumValue = Melder_clipped (our v_minimumLegalY(), RealTier_getMinimumValue (our realTier()), our v_maximumLegalY());
-			const double maximumValue = Melder_clipped (our v_minimumLegalY(), RealTier_getMaximumValue (our realTier()), our v_maximumLegalY());
-			Melder_clipRight (& our ymin, minimumValue);
-			Melder_clipLeft (maximumValue, & our ymax);
-		}
-		if (our ycursor <= our ymin || our ycursor >= our ymax)
-			our ycursor = 0.382 * our ymin + 0.618 * our ymax;
-	}
-
-	double v_minimumLegalY ()
-		override { return 0.0; }
-	conststring32 v_rightTickUnits ()
-		override { return U" Hz"; }
-
-	#include "FormantGridArea_prefs.h"
-};
-inline void FormantGridArea_init (FormantGridArea me, FunctionEditor editor, FormantGrid formantGridToCopy, bool editable) {
-	my editingBandwidths = false;
-	my selectedFormant = 1;
-	FunctionArea_init (me, editor, formantGridToCopy, editable);
-	my setGlobalYRange_fraction (0.0, 1.0);
-}
+#include "FormantGridArea.h"
 
 Thing_define (FormantGridEditor, FunctionEditor) {
 	autoFormantGridArea formantGridArea;
@@ -81,8 +36,9 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 
 	void v_createMenus ()
 		override;
-	void v_distributeAreas ()
-		override;
+	void v_distributeAreas () {
+		our formantGridArea -> setGlobalYRange_fraction (0.0, 1.0);
+	}
 	void v_draw ()
 		override;
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction)
@@ -95,10 +51,16 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 	#include "FormantGridEditor_prefs.h"
 };
 
-Thing_define (FormantGridEditor_FormantGridArea, FormantGridArea) {
-};
-
-autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid);
+inline autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid) {
+	try {
+		autoFormantGridEditor me = Thing_new (FormantGridEditor);
+		my formantGridArea = FormantGridArea_create (true, nullptr, me.get());
+		FunctionEditor_init (me.get(), title, formantGrid);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"FormantGrid window not created.");
+	}
+}
 
 /* End of file FormantGridEditor.h */
 #endif

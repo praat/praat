@@ -189,9 +189,8 @@ void structSpectrumEditor :: v_createHelpMenuItems (EditorMenu menu) {
 autoSpectrumEditor SpectrumEditor_create (conststring32 title, Spectrum spectrum) {
 	try {
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
-		my data = spectrum;
-		FunctionEditor_init (me.get(), title);
-		my cursorHeight = -1000;
+		FunctionEditor_init (me.get(), title, spectrum);
+		my cursorHeight = -1000;   // BUG: move
 		updateRange (me.get());
 		return me;
 	} catch (MelderError) {

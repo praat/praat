@@ -28,11 +28,7 @@ Thing_define (IntensityTierArea, RealTierArea) {
 	#include "IntensityTierArea_prefs.h"
 };
 
-inline autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, IntensityTier intensityTierToCopy, bool editable) {
-	autoIntensityTierArea me = Thing_new (IntensityTierArea);
-	FunctionArea_init (me.get(), editor, intensityTierToCopy, editable);
-	return me;
-}
+DEFINE_FunctionArea_create (IntensityTierArea, IntensityTier)
 
 /* End of file IntensityTierArea.h */
 #endif

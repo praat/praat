@@ -1,8 +1,6 @@
-#ifndef _AmplitudeTierArea_h_
-#define _AmplitudeTierArea_h_
-/* AmplitudeTierArea.h
+/* FormantGridArea.cpp
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020-2022 Paul Boersma
+ * Copyright (C) 2008-2022 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "RealTierArea.h"
-#include "AmplitudeTier.h"
+#include "FormantGridArea.h"
 
-Thing_define (AmplitudeTierArea, RealTierArea) {
-	conststring32 v_rightTickUnits ()
-		override { return U" Pa"; }
+Thing_implement (FormantGridArea, RealTierArea, 0);
 
-	#include "AmplitudeTierArea_prefs.h"
-};
+#include "Prefs_define.h"
+#include "FormantGridArea_prefs.h"
+#include "Prefs_install.h"
+#include "FormantGridArea_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "FormantGridArea_prefs.h"
 
-DEFINE_FunctionArea_create (AmplitudeTierArea, AmplitudeTier)
-
-/* End of file AmplitudeTierArea.h */
-#endif
+/* End of file FormantGridArea.cpp */

@@ -398,9 +398,8 @@ autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
 	Melder_assert (erp);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		my data = erp;
-		my soundArea = ERPArea_create (me.get(), nullptr, true);
-		FunctionEditor_init (me.get(), title);
+		my soundArea = ERPArea_create (true, nullptr, me.get());
+		FunctionEditor_init (me.get(), title, erp);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");
