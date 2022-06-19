@@ -410,10 +410,15 @@ static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WIT
 
 void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	TimeSoundEditor_Parent :: v_createMenuItems_query_info (menu);
-	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea) && ! our soundArea -> editable()) {
-		EditorMenu_addCommand (menu, U"Sound info", 0, INFO_DATA__SoundInfo);
-	} else if (our soundArea && Thing_isa (our soundArea.get(), classLongSoundArea) && ! our soundArea -> editable()) {
-		EditorMenu_addCommand (menu, U"LongSound info", 0, INFO_DATA__LongSoundInfo);
+	/*
+		If the Sound or LongSound has been copied, then it's not the main data,
+		so we should add an entry for its info, as Editor will not do that.
+	*/
+	if (our soundArea && our soundArea -> functionHasBeenCopied()) {
+		if (Thing_isa (our soundArea.get(), classLongSoundArea))
+			EditorMenu_addCommand (menu, U"LongSound info", 0, INFO_DATA__LongSoundInfo);
+		else
+			EditorMenu_addCommand (menu, U"Sound info", 0, INFO_DATA__SoundInfo);
 	}
 	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {
 		EditorMenu_addCommand (menu, U"-- sound query --", 0, nullptr);

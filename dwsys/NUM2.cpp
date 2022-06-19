@@ -1170,15 +1170,7 @@ double NUMfisherQ (double f, double df1, double df2) {
 }
 
 double NUMinvGaussQ (double p) {
-	double pc = p;
-	if (p <= 0.0 || p >= 1.0)
-		return undefined;
-	if (p > 0.5)
-		pc = 1.0 - p;
-	double t = sqrt (- 2.0 * log (pc));
-	t -= (2.515517 + (0.802853 + 0.010328 * t) * t) /
-		 (1.0 + (1.432788 + (0.189269 + 0.001308 * t) * t) * t);
-	return p > 0.5 ? -t : t;
+	return gsl_cdf_ugaussian_Qinv (p);
 }
 
 static double studentQ_func (double x, void *voidParams) {

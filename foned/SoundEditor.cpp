@@ -270,7 +270,7 @@ void structSoundEditor :: v_createMenus () {
 		zeroButton = Editor_addCommand (this, U"Edit", U"Set selection to zero", 0, menu_cb_SetSelectionToZero);
 		reverseButton = Editor_addCommand (this, U"Edit", U"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
-	if (our soundArea) {   // BUG: not LongSound
+	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {
 		Editor_addCommand (this, U"Select", U"-- move to zero --", 0, 0);
 		Editor_addCommand (this, U"Select", U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
 		Editor_addCommand (this, U"Select", U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
