@@ -50,6 +50,9 @@ public:
 		my v_copyPreferencesToInstance ();
 		my v_repairPreferences ();   // BUG: collapse with previous into Thing_installSensiblePreferencesIntoInstance
 	}
+	bool functionHasBeenCopied () {
+		return !! _functionCopy;
+	}
 protected:
 	FunctionEditor _editor;
 private:
