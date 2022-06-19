@@ -16,9 +16,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <time.h>
-#include "Preferences.h"
+#include "TimeSoundAnalysisEditor.h"
 #include "EditorM.h"
+//#include <time.h>
 #include "Sound_and_Spectrogram.h"
 #include "Sound_and_Spectrum.h"
 #include "Sound_to_Pitch.h"
@@ -27,7 +27,6 @@
 #include "Pitch_to_PointProcess.h"
 #include "VoiceAnalysis.h"
 #include "praat_script.h"
-#include "TimeSoundAnalysisEditor.h"
 
 #include "enums_getText.h"
 #include "TimeSoundAnalysisEditor_enums.h"
