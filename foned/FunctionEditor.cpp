@@ -1507,8 +1507,9 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 	Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-void FunctionEditor_init (FunctionEditor me, conststring32 title) {
-	Melder_assert (my data);
+void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data) {
+	Melder_assert (data);
+	my data = data;   // has to go before Editor_init and Editor_dataChanged
 	Thing_cast (Function, function, my data);
 
 	if (Melder_debug == 55)

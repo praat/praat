@@ -72,7 +72,6 @@ void structEEGWindow :: v_updateMenuItems_file () {
 autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 	try {
 		autoEEGWindow me = Thing_new (EEGWindow);
-		my data = eeg;
 
 		Sound sound = eeg -> sound.get();
 		Melder_assert (sound);
@@ -81,6 +80,7 @@ autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 		my soundArea = EEGArea_create (me.get(), nullptr, false);
 
 		TextGridEditor_init (me.get(), title,
+			eeg -> textgrid.get(),   // BUG: data should be EEG, but TextGridEditor expects TextGrid
 			nullptr,   // no spelling checker
 			nullptr   // no callback socket
 		);

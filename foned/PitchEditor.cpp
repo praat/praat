@@ -324,8 +324,7 @@ bool structPitchEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 autoPitchEditor PitchEditor_create (conststring32 title, Pitch pitch) {
 	try {
 		autoPitchEditor me = Thing_new (PitchEditor);
-		my data = pitch;
-		FunctionEditor_init (me.get(), title);
+		FunctionEditor_init (me.get(), title, pitch);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Pitch window not created.");

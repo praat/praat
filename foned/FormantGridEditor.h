@@ -54,9 +54,8 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 inline autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid) {
 	try {
 		autoFormantGridEditor me = Thing_new (FormantGridEditor);
-		my data = formantGrid;
 		my formantGridArea = FormantGridArea_create (true, nullptr, me.get());
-		FunctionEditor_init (me.get(), title);
+		FunctionEditor_init (me.get(), title, formantGrid);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantGrid window not created.");

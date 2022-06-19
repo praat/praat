@@ -319,7 +319,7 @@ void structTimeSoundEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 					CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero);
 			EditorMenu_addCommand (menu, U"Extract selection", Editor_HIDDEN,
 					CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero);
-		if (true) {   // BUG: not for LongSounds!
+		if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {
 			our publishWindowButton = EditorMenu_addCommand (menu, U"Extract selected sound (windowed)...", 0,
 					CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed);
 				EditorMenu_addCommand (menu, U"Extract windowed sound selection...", Editor_HIDDEN,
@@ -339,7 +339,7 @@ void structTimeSoundEditor :: v_createMenuItems_file_write (EditorMenu menu) {
 			EditorMenu_addCommand (menu, U"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, U"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, U"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
-		if (true) {   // BUG: not for LongSound?
+		if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {   // BUG: why not for LongSound?
 			our saveAs24BitWavButton = EditorMenu_addCommand (menu, U"Save selected sound as 24-bit WAV file...", 0, menu_cb_SaveAs24BitWav);
 			our saveAs32BitWavButton = EditorMenu_addCommand (menu, U"Save selected sound as 32-bit WAV file...", 0, menu_cb_SaveAs32BitWav);
 		}
@@ -410,12 +410,12 @@ static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WIT
 
 void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	TimeSoundEditor_Parent :: v_createMenuItems_query_info (menu);
-	if (our soundArea /*&& our sound() != our data && not LongSound) {   // BUG:
+	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea) && ! our soundArea -> editable()) {
 		EditorMenu_addCommand (menu, U"Sound info", 0, INFO_DATA__SoundInfo);
-	} else if (our soundArea /*our longSound() && our longSound() != our data*/) {   // BUG:
+	} else if (our soundArea && Thing_isa (our soundArea.get(), classLongSoundArea) && ! our soundArea -> editable()) {
 		EditorMenu_addCommand (menu, U"LongSound info", 0, INFO_DATA__LongSoundInfo);
 	}
-	if (our soundArea) {   // BUG: not or LongSound
+	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {
 		EditorMenu_addCommand (menu, U"-- sound query --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Get amplitude(s)", 0, INFO_DATA__getAmplitudes);
 	}

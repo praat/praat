@@ -46,14 +46,10 @@ void structPitchTierEditor :: v_play (double startTime, double endTime) {
 autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitchTier, Sound soundToCopy) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		my data = pitchTier;
-
 		my realTierArea = PitchTierArea_create (true, nullptr, me.get());
-
 		if (soundToCopy)
 			my soundArea = SoundArea_create (false, soundToCopy, me.get());
-
-		FunctionEditor_init (me.get(), title);
+		FunctionEditor_init (me.get(), title, pitchTier);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier window not created.");

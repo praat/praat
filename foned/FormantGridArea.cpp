@@ -1,6 +1,6 @@
-/* EEGArea.cpp
+/* FormantGridArea.cpp
  *
- * Copyright (C) 2022 Paul Boersma
+ * Copyright (C) 2008-2022 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "EEGArea.h"
+#include "FormantGridArea.h"
 
-Thing_implement (EEGArea, SoundArea, 0);
+Thing_implement (FormantGridArea, RealTierArea, 0);
 
 #include "Prefs_define.h"
-#include "EEGArea_prefs.h"
+#include "FormantGridArea_prefs.h"
 #include "Prefs_install.h"
-#include "EEGArea_prefs.h"
+#include "FormantGridArea_prefs.h"
 #include "Prefs_copyToInstance.h"
-#include "EEGArea_prefs.h"
+#include "FormantGridArea_prefs.h"
 
-/* End of file EEGArea.cpp */
+/* End of file FormantGridArea.cpp */

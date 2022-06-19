@@ -24,9 +24,16 @@ Thing_define (FunctionArea, Thing) {
 	/*
 		Accessors.
 	*/
-public:
-	Function function() { return _function; }   // readonly
-	bool editable() { return _editable; }   // editable
+public:   // all readonly
+	Function function() { return _function; }
+	bool editable() { return _editable; }
+	double startWindow() const { return _editor -> startWindow; }
+	double endWindow() const { return _editor -> endWindow; }
+	double startSelection() const { return _editor -> startSelection; }
+	double endSelection() const { return _editor -> endSelection; }
+	double tmin() const { return _editor -> tmin; }
+	double tmax() const { return _editor -> tmax; }
+	Graphics graphics() const { return _editor -> graphics.get(); }
 private:
 	Function _function;
 	bool _editable;
@@ -43,6 +50,8 @@ public:
 		my v_copyPreferencesToInstance ();
 		my v_repairPreferences ();   // BUG: collapse with previous into Thing_installSensiblePreferencesIntoInstance
 	}
+protected:
+	FunctionEditor _editor;
 private:
 	autoFunction _functionCopy;
 
@@ -68,13 +77,6 @@ public:
 		_ymin_fraction = ymin_fraction;
 		_ymax_fraction = ymax_fraction;
 	}
-	double startWindow() const { return _editor -> startWindow; }
-	double endWindow() const { return _editor -> endWindow; }
-	double startSelection() const { return _editor -> startSelection; }
-	double endSelection() const { return _editor -> endSelection; }
-	double tmin() const { return _editor -> tmin; }
-	double tmax() const { return _editor -> tmax; }
-	Graphics graphics() const { return _editor -> graphics.get(); }
 	void setViewport() const {
 		Graphics_setViewport (our graphics(), our left_pxlt(), our right_pxlt(), our bottom_pxlt(), our top_pxlt());
 	}
@@ -100,8 +102,6 @@ public:
 		const double y_pxlt = globalY_fraction_to_pxlt (globalY_fraction);
 		return (y_pxlt - our bottom_pxlt()) / (our top_pxlt() - our bottom_pxlt());
 	}
-protected:
-	FunctionEditor _editor;
 private:
 	double _ymin_fraction, _ymax_fraction;
 	double globalY_fraction_to_pxlt (double globalY_fraction) const {

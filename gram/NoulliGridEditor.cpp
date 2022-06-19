@@ -193,10 +193,9 @@ void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid noulliGrid, Sound soundToCopy) {
 	try {
 		autoNoulliGridEditor me = Thing_new (NoulliGridEditor);
-		my data = noulliGrid;
 		if (soundToCopy)
 			my soundArea = SoundArea_create (false, soundToCopy, me.get());
-		FunctionEditor_init (me.get(), title);
+		FunctionEditor_init (me.get(), title, noulliGrid);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NoulliGrid window not created.");
