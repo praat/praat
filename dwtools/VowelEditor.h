@@ -51,8 +51,6 @@ Thing_define (VowelEditor, Editor) {
 	GuiText f0TextField, f0SlopeTextField, durationTextField, extendTextField;
 	GuiLabel startInfo, endInfo;
 
-	void v_destroy () noexcept
-		override;
 	bool v_scriptable ()
 		override { return false; }
 	void v_createChildren ()

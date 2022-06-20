@@ -385,7 +385,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 
 /********** METHODS **********/
 
-void structFunctionEditor :: v_destroy () noexcept {
+void structFunctionEditor :: v9_destroy () noexcept {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	if (our group) {   // undangle
 		integer i = 1;
@@ -397,8 +397,8 @@ void structFunctionEditor :: v_destroy () noexcept {
 		theGroupSize --;
 	}
 	if (Melder_debug == 55)
-		Melder_casual (Thing_messageNameAndAddress (this), U" v_destroy");
-	FunctionEditor_Parent :: v_destroy ();
+		Melder_casual (Thing_messageNameAndAddress (this), U" v9_destroy");
+	FunctionEditor_Parent :: v9_destroy ();
 }
 
 void structFunctionEditor :: v_info () {

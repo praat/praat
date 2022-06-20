@@ -27,10 +27,10 @@ static DemoEditor theReferenceToTheOnlyDemoEditor;
 
 /***** DemoEditor methods *****/
 
-void structDemoEditor :: v_destroy () noexcept {
+void structDemoEditor :: v9_destroy () noexcept {
 	Melder_free (praatPicture);
 	theReferenceToTheOnlyDemoEditor = nullptr;
-	DemoEditor_Parent :: v_destroy ();
+	DemoEditor_Parent :: v9_destroy ();
 }
 
 void structDemoEditor :: v_info () {

@@ -65,7 +65,7 @@ Thing_define (Editor, Thing) {
 	Editor_PublicationCallback d_publicationCallback;
 	autostring32 callbackSocket;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 	void v_info ()
 		override;
@@ -165,7 +165,7 @@ inline void Editor_broadcastDestruction (Editor me)
 	/*
 	 * Message to boss: "I am destroying all my members and will free myself shortly."
 	 *
-	 * The editor calls this once, namely in Editor::v_destroy().
+	 * The editor calls this once, namely in Editor::v9_destroy().
 	 */
 	{
 		if (my d_destructionCallback)

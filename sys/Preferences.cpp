@@ -26,15 +26,9 @@ Thing_define (Preference, SimpleString) {
 	conststring32 (*getText) (int value);
 	int (*getValue) (conststring32 text);
 
-	void v_destroy () noexcept
-		override;
 	/* Warning: copy methods etc. not implemented. */
 };
 Thing_implement (Preference, SimpleString, 0);
-
-void structPreference :: v_destroy () noexcept {
-	Preference_Parent :: v_destroy ();
-}
 
 static SortedSetOfStringOf <structPreference> thePreferences;
 

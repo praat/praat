@@ -49,7 +49,7 @@ Thing_define (LongSound, SampledXY) {
 	double *compressedFloats [2];
 	int16 *compressedShorts;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 	void v_info ()
 		override;

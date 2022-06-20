@@ -22,9 +22,9 @@ Thing_implement (InfoEditor, TextEditor, 0);
 
 static InfoEditor theReferenceToTheOnlyInfoEditor;
 
-void structInfoEditor :: v_destroy () noexcept {
+void structInfoEditor :: v9_destroy () noexcept {
 	theReferenceToTheOnlyInfoEditor = nullptr;   // undangle
-	InfoEditor_Parent :: v_destroy ();
+	InfoEditor_Parent :: v9_destroy ();
 }
 
 void structInfoEditor :: v_clear () {

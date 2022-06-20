@@ -190,7 +190,7 @@ void Editor_doMenuCommand (Editor me, conststring32 commandTitle, integer narg, 
 
 /********** class Editor **********/
 
-void structEditor :: v_destroy () noexcept {
+void structEditor :: v9_destroy () noexcept {
 	trace (U"enter");
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	/*
@@ -223,7 +223,7 @@ void structEditor :: v_destroy () noexcept {
 			}
 		#endif
 	}
-	Editor_Parent :: v_destroy ();
+	Editor_Parent :: v9_destroy ();
 }
 
 void structEditor :: v_info () {

@@ -35,11 +35,11 @@ static CollectionOf <structTextEditor> theReferencesToAllOpenTextEditors;
 
 /***** TextEditor methods *****/
 
-void structTextEditor :: v_destroy () noexcept {
+void structTextEditor :: v9_destroy () noexcept {
 	our openDialog.reset();   // don't delay till delete
 	our saveDialog.reset();   // don't delay till delete
 	theReferencesToAllOpenTextEditors. undangleItem (this);
-	TextEditor_Parent :: v_destroy ();
+	TextEditor_Parent :: v9_destroy ();
 }
 
 void structTextEditor :: v_nameChanged () {

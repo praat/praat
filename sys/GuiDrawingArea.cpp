@@ -535,14 +535,14 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	@end
 #endif
 
-void structGuiDrawingArea :: v_destroy () noexcept {
+void structGuiDrawingArea :: v9_destroy () noexcept {
 	if (Melder_debug == 55)
-		Melder_casual (U"\t", Thing_messageNameAndAddress (this), U" v_destroy");
+		Melder_casual (U"\t", Thing_messageNameAndAddress (this), U" v9_destroy");
 	#if cocoa
 		if (our d_widget)
 			[our d_widget setUserData: nullptr];   // undangle reference to this
 	#endif
-	GuiDrawingArea_Parent :: v_destroy ();
+	GuiDrawingArea_Parent :: v9_destroy ();
 }
 
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,

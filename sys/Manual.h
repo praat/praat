@@ -33,7 +33,7 @@ Thing_define (Manual, HyperPage) {
 	bool suppressLinksHither;
 	conststring32 printPagesStartingWith;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 	bool v_scriptable ()
 		override { return false; }

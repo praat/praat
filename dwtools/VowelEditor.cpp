@@ -1182,10 +1182,6 @@ static void updateWidgets (void *void_me) {
 	(void) me;
 }
 
-void structVowelEditor :: v_destroy () noexcept {
-	VowelEditor_Parent :: v_destroy ();
-}
-
 void structVowelEditor :: v_createMenus () {
 	VowelEditor_Parent :: v_createMenus ();
 

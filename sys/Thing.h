@@ -90,9 +90,19 @@ struct structThing {
 	*/
 	virtual ~structThing () noexcept { }
 
-	virtual void v_destroy () noexcept { }
+	virtual void v9_destroy () noexcept { }
 		/*
-			derived::v_destroy calls base::v_destroy at end
+			This method should destroy all members that are not destroyed automatically
+			(any autoThing is destroyed automatically), and to remove danling links to self.
+			Destroying *all* members means that we have to destroy all members that the
+			derived class has added, as well as all members of the base class,
+			and so on recursively; v9_destroy therefore has to call the inherited v9_destroy.
+			The convention is to call the parent's v9_destroy at our end;
+			this makes sense because the destruction of an added member might depend
+			on the presence of a member from the base class.
+			Thus, v9_destroy is called recursively up the inheritance hierarchy,
+			and this is implemented by calling the parent's v9_destroy at the end,
+			i.e. at position "9" (hence the name).
 		*/
 	virtual void v_info ();
 		/*

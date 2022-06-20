@@ -176,7 +176,7 @@
 	struct struct##klas : public struct##parent {
 
 #define oo_END_CLASS(Class) \
-		void v_destroy () noexcept override; \
+		void v9_destroy () noexcept override; \
 		void v_copy (Daata data_to) override; \
 		bool v_equal (Daata otherData) override; \
 		static Data_Description s_description; \

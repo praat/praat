@@ -234,7 +234,7 @@ static void stopRecording (SoundRecorder me) {
 	}
 }
 
-void structSoundRecorder :: v_destroy () noexcept {
+void structSoundRecorder :: v9_destroy () noexcept {
 	stopRecording (this);   // must occur before freeing our buffer
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // must also occur before freeing our buffer
 	#if cocoa
@@ -265,7 +265,7 @@ void structSoundRecorder :: v_destroy () noexcept {
 				close (our fd);
 		#endif
 	}
-	our SoundRecorder_Parent :: v_destroy ();
+	our SoundRecorder_Parent :: v9_destroy ();
 }
 
 static void showMaximum (SoundRecorder me, int channel, double maximum) {

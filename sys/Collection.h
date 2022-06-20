@@ -80,10 +80,10 @@ struct CollectionOf : structDaata {
 	virtual ~ CollectionOf () {
 		/*
 			We cannot simply do
-				//our v_destroy ();
+				//our v9_destroy ();
 			because C++ will implicitly call the destructor for structDaata,
-			whereas structCollection::v_destroy explicitly calls structDaata::v_destroy;
-			calling v_destroy here would therefore free structThing::name twice,
+			whereas structCollection::v9_destroy explicitly calls structDaata::v9_destroy;
+			calling v9_destroy here would therefore free structThing::name twice,
 			which may not crash Praat (assuming that `name` is nulled the first time)
 			but which is not how destruction should be organized.
 		*/
@@ -436,14 +436,14 @@ struct CollectionOf : structDaata {
 		MelderInfo_writeLine (our size, U" items");
 	}
 
-	void v_destroy () noexcept override {
+	void v9_destroy () noexcept override {
 		/*
 			The items are destroyed automatically by the destructor,
 			which is called by delete, which is called by forget().
 			So we only have to destroy the members of Daata,
 			many of which are not destroyed automatically.
 		*/
-		structDaata::v_destroy ();
+		structDaata::v9_destroy ();
 	}
 
 

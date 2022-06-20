@@ -20,10 +20,6 @@
 
 Thing_implement (DoublyLinkedNode, Daata, 0);
 
-void structDoublyLinkedNode :: v_destroy () noexcept {
-	DoublyLinkedNode_Parent :: v_destroy ();
-}
-
 void structDoublyLinkedNode :: v_copy (Daata thee_Daata) {
 	DoublyLinkedNode thee = static_cast <DoublyLinkedNode> (thee_Daata);
 	thy data = Data_copy (our data.get());
@@ -31,14 +27,14 @@ void structDoublyLinkedNode :: v_copy (Daata thee_Daata) {
 
 Thing_implement (DoublyLinkedList, Thing, 0);
 
-void structDoublyLinkedList :: v_destroy () noexcept {
+void structDoublyLinkedList :: v9_destroy () noexcept {
 	DoublyLinkedNode v = front;
 	while (v) {
 		DoublyLinkedNode cur = v;
 		v = v -> next;
 		forget (cur);
 	}
-	DoublyLinkedList_Parent :: v_destroy ();
+	DoublyLinkedList_Parent :: v9_destroy ();
 }
 
 int structDoublyLinkedList :: s_compareHook (Daata /* node1 */, Daata /* node2 */) noexcept {

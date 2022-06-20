@@ -285,16 +285,10 @@ Thing_define (CategoriesEditorCommand, Command) {
 		override {};
 	void v_undo ()
 		override {};
-	void v_destroy () noexcept
-		override;
 };
 
 
 Thing_implement (CategoriesEditorCommand, Command, 0);
-
-void structCategoriesEditorCommand :: v_destroy () noexcept {
-	CategoriesEditorCommand_Parent :: v_destroy ();
-}
 
 static void CategoriesEditorCommand_init (CategoriesEditorCommand me, conststring32 name, Thing boss,
 	integer /*nCategories*/, integer nSelected) 
@@ -597,10 +591,6 @@ static void gui_button_cb_redo (CategoriesEditor me, GuiButtonEvent /* event */)
 }
 
 #pragma mark - Editor methods
-
-void structCategoriesEditor :: v_destroy () noexcept {
-	CategoriesEditor_Parent :: v_destroy ();
-}
 
 void structCategoriesEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	CategoriesEditor_Parent :: v_createHelpMenuItems (menu);

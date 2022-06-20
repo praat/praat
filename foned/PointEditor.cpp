@@ -23,12 +23,6 @@
 
 Thing_implement (PointEditor, TimeSoundEditor, 0);
 
-#pragma mark - DESTROY
-
-void structPointEditor :: v_destroy () noexcept {
-	PointEditor_Parent :: v_destroy ();
-}
-
 #pragma mark - MENU COMMANDS
 
 static void QUERY_DATA_FOR_REAL__getJitter_local (PointEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
