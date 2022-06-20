@@ -37,9 +37,9 @@ void Graphics_prefs () {
 	Preferences_addEnum (U"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, (int) kGraphics_cjkFontStyle::DEFAULT);
 }
 
-void structGraphics :: v_destroy () noexcept {
+void structGraphics :: v9_destroy () noexcept {
 	Melder_free (record);
-	Graphics_Parent :: v_destroy ();
+	Graphics_Parent :: v9_destroy ();
 }
 
 static void computeTrafo (Graphics me) {

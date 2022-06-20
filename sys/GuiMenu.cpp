@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2005,2007-2021 Paul Boersma,
+ * Copyright (C) 1992-2005,2007-2022 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -21,10 +21,6 @@
 #include "praatP.h"   // BUG
 
 Thing_implement (GuiMenu, GuiThing, 0);
-
-void structGuiMenu :: v_destroy () noexcept {
-	our GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, nullptr); GuiObject_destroy (d_widget); }
-}
 
 #if gtk
 	static void _guiGtkMenu_destroyCallback (GuiObject widget, gpointer void_me) {

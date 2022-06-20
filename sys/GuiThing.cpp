@@ -19,10 +19,6 @@
 #include "GuiP.h"
 #include "machine.h"
 
-void structGuiThing :: v_destroy () noexcept {
-	GuiThing_Parent :: v_destroy ();
-}
-
 void structGuiThing :: v_hide () {
 	#if gtk
 		GuiObject parent = gtk_widget_get_parent (GTK_WIDGET (d_widget));

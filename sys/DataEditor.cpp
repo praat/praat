@@ -53,14 +53,14 @@ static inline conststring32 strip_d (conststring32 s) {
 
 Thing_implement (DataSubEditor, Editor, 0);
 
-void structDataSubEditor :: v_destroy () noexcept {
+void structDataSubEditor :: v9_destroy () noexcept {
 	//for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
 	//	Melder_free (d_fieldData [i]. history);
 	if (our root)
 		for (integer i = our root -> children.size; i > 0; i --)
 			if (our root -> children.at [i] == this)
 				our root -> children.subtractItem_ref (i);
-	DataSubEditor_Parent :: v_destroy ();
+	DataSubEditor_Parent :: v9_destroy ();
 }
 
 static void update (DataSubEditor me) {
@@ -822,7 +822,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 			that is linear in the number of children. So we would end up with quadratic complexity,
 			whereas the procedure that we use above has linear complexity.
 			
-			This linear complexity makes this procedure good enough for `v_destroy()`
+			This linear complexity makes this procedure good enough for `v9_destroy()`
 			(where obtaining linear complexity would have been easy anyway),
 			and nice enough for `v_dataChanged()`.
 			
@@ -832,9 +832,9 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 	}
 }
 
-void structDataEditor :: v_destroy () noexcept {
+void structDataEditor :: v9_destroy () noexcept {
 	DataEditor_destroyAllChildren (this);
-	DataEditor_Parent :: v_destroy ();
+	DataEditor_Parent :: v9_destroy ();
 }
 
 void structDataEditor :: v_dataChanged () {

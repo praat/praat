@@ -42,10 +42,6 @@ Thing_implement_pureVirtual (TimeSoundAnalysisEditor, TimeSoundEditor, 0);
 #include "Prefs_copyToInstance.h"
 #include "TimeSoundAnalysisEditor_prefs.h"
 
-void structTimeSoundAnalysisEditor :: v_destroy () noexcept {
-	our TimeSoundAnalysisEditor_Parent :: v_destroy ();
-}
-
 void structTimeSoundAnalysisEditor :: v_info () {
 	our TimeSoundAnalysisEditor_Parent :: v_info ();
 	MelderInfo_writeLine (U"Longest analysis: ", our instancePref_longestAnalysis(), U" seconds");

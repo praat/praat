@@ -33,10 +33,6 @@ Thing_implement (TableEditor, Editor, 0);
 
 /********** EDITOR METHODS **********/
 
-void structTableEditor :: v_destroy () noexcept {
-	TableEditor_Parent :: v_destroy ();
-}
-
 void structTableEditor :: v_info () {
 	our TableEditor_Parent :: v_info ();
 	MelderInfo_writeLine (U"Table uses text styles: ", our instancePref_useTextStyles());

@@ -34,7 +34,7 @@ static bool isSingleWordCharacter (char32 c) {
 
 static integer lookUp_unsorted (ManPages me, conststring32 title);
 
-void structManPages :: v_destroy () noexcept {
+void structManPages :: v9_destroy () noexcept {
 	for (integer ipage = 1; ipage <= our pages.size; ipage ++) {
 		ManPage page = our pages.at [ipage];
 		for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
@@ -44,7 +44,7 @@ void structManPages :: v_destroy () noexcept {
 		page -> linksHither. reset();   // TODO automate
 		page -> linksThither. reset();
 	}
-	ManPages_Parent :: v_destroy ();
+	ManPages_Parent :: v9_destroy ();
 }
 
 static conststring32 extractLink (conststring32 text, const char32 *p, char32 *link) {

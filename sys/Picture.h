@@ -47,9 +47,6 @@ Thing_define (Picture, Thing) {
 	void (*selectionChangedCallback) (Picture, void *, double, double, double, double);
 	void *selectionChangedClosure;
 	bool mouseSelectsInnerViewport;
-
-	void v_destroy () noexcept
-		override;
 };
 
 autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive);

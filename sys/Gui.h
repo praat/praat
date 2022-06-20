@@ -313,9 +313,6 @@ Thing_define (GuiThing, Thing) {
 	GuiThing d_parent;
 	GuiObject d_widget;
 
-	void v_destroy () noexcept
-		override;
-
 	virtual void v_show ();
 	virtual void v_hide ();
 	virtual void v_setSensitive (bool sensitive);
@@ -361,7 +358,7 @@ Thing_define (GuiShell, GuiForm) {
 	Thing d_goAwayBoss;
 	GuiDrawingArea drawingArea;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 };
 
@@ -517,7 +514,7 @@ Thing_define (GuiDrawingArea, GuiControl) {
 	constexpr static integer MAXIMUM_NUMBER_OF_GRAPHICSES = 10;
 	Graphics graphicses [1+MAXIMUM_NUMBER_OF_GRAPHICSES];
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 };
 
@@ -663,8 +660,6 @@ Thing_define (GuiMenu, GuiThing) {
 		GuiObject d_xmMenuBar;   // in case the menu is in a form
 	#endif
 
-	void v_destroy () noexcept
-		override;
 	void v_show ()
 		override;
 	void v_hide ()

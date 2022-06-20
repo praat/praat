@@ -113,7 +113,7 @@ static void exitPage (GraphicsPostscript me) {
 	my loadedXipa = false;   // FIXME: include this because of the unpredictable page order with DSC?
 }
 
-void structGraphicsPostscript :: v_destroy () noexcept {
+void structGraphicsPostscript :: v9_destroy () noexcept {
 	exitPage (this);
 	if (our d_file) {
 		if (our job) {
@@ -123,7 +123,7 @@ void structGraphicsPostscript :: v_destroy () noexcept {
 		our d_printf (our d_file, "%%%%EOF\n");   // BUG. Correct according to DSC. But not good in EPS files?
 		fclose (our d_file);
 	}
-	GraphicsPostscript_Parent :: v_destroy ();
+	GraphicsPostscript_Parent :: v9_destroy ();
 }
 
 autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, kGraphicsPostscript_spots spots,

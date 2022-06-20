@@ -158,7 +158,7 @@ void _Thing_forget_nozero (Thing me) {
 	if (Melder_debug == 40)
 		Melder_casual (U"destroying ", my classInfo -> className);
 	//Melder_casual (U"_Thing_forget_nozero before");
-	my v_destroy ();
+	my v9_destroy ();
 	//Melder_casual (U"_Thing_forget_nozero after");
 	theTotalNumberOfThings -= 1;
 }
@@ -168,7 +168,7 @@ void _Thing_forget (Thing me) {
 		return;
 	if (Melder_debug == 40)
 		Melder_casual (U"destroying ", my classInfo -> className);
-	my v_destroy ();
+	my v9_destroy ();
 	trace (U"destroyed ", my classInfo -> className, U" ", Melder_pointer (me));
 	//Melder_free (me);
 	delete me;

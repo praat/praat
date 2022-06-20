@@ -34,10 +34,10 @@ bool ScriptEditors_dirty () {
 	return false;
 }
 
-void structScriptEditor :: v_destroy () noexcept {
+void structScriptEditor :: v9_destroy () noexcept {
 	our argsDialog.reset();   // don't delay till delete
 	theReferencesToAllOpenScriptEditors. undangleItem (this);
-	ScriptEditor_Parent :: v_destroy ();
+	ScriptEditor_Parent :: v9_destroy ();
 }
 
 void structScriptEditor :: v_nameChanged () {

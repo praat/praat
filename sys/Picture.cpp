@@ -213,11 +213,6 @@ void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerView
 	my mouseSelectsInnerViewport = mouseSelectsInnerViewport;
 }
 
-void structPicture :: v_destroy () noexcept {
-	//Picture_erase (this);   // dangerous if called from automatic destructor
-	Picture_Parent :: v_destroy ();
-}
-
 Graphics Picture_peekGraphics (Picture me) { return my graphics.get(); }
 
 void Picture_erase (Picture me) {

@@ -33,8 +33,6 @@ Thing_define (PointEditor, TimeSoundEditor) {
 			our soundArea -> functionChanged (our monoSound.get());
 	}
 
-	void v_destroy () noexcept
-		override;
 	void v_createMenus ()
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)

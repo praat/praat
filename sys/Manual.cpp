@@ -26,10 +26,10 @@
 
 Thing_implement (Manual, HyperPage, 0);
 
-void structManual :: v_destroy () noexcept {
+void structManual :: v9_destroy () noexcept {
 	if (our ownManPages)
 		forget (our data);
-	Manual_Parent :: v_destroy ();
+	Manual_Parent :: v9_destroy ();
 }
 
 #define SEARCH_PAGE  0

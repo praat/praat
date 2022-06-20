@@ -71,7 +71,7 @@ void LongSound_setBufferSizePref_seconds (integer size) {
 	prefs_bufferLength = Melder_clipped (minimumBufferDuration, size, maximumBufferDuration);
 }
 
-void structLongSound :: v_destroy () noexcept {
+void structLongSound :: v9_destroy () noexcept {
 	/*
 		The play callback may contain a pointer to my buffer.
 		That pointer is about to dangle, so kill the playback.
@@ -85,7 +85,7 @@ void structLongSound :: v_destroy () noexcept {
 	} else if (f) {
 		fclose (f);
 	}
-	LongSound_Parent :: v_destroy ();
+	LongSound_Parent :: v9_destroy ();
 }
 
 void structLongSound :: v_info () {

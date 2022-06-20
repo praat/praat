@@ -21,10 +21,6 @@
 
 Thing_implement (ArtwordEditor, Editor, 0);
 
-void structArtwordEditor :: v_destroy () noexcept {
-	ArtwordEditor_Parent :: v_destroy ();
-}
-
 static void updateList (ArtwordEditor me) {
 	ArtwordData a = & my artword -> data [(int) my muscle];
 	GuiList_deleteAllItems (my list);

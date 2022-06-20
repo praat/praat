@@ -45,7 +45,7 @@
 
 Thing_implement (GraphicsScreen, Graphics, 0);
 
-void structGraphicsScreen :: v_destroy () noexcept {
+void structGraphicsScreen :: v9_destroy () noexcept {
 	#if cairo
 		if (d_cairoGraphicsContext) {
 			cairo_destroy (d_cairoGraphicsContext);
@@ -199,7 +199,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 		Melder_free (d_bits);
 	#endif
 	trace (U"destroying parent");
-	GraphicsScreen_Parent :: v_destroy ();
+	GraphicsScreen_Parent :: v9_destroy ();
 	trace (U"exit");
 }
 

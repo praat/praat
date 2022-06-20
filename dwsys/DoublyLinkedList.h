@@ -25,8 +25,6 @@ Thing_define (DoublyLinkedNode, Daata) {
 	DoublyLinkedNode next, prev;
 	autoDaata data;
 
-	void v_destroy () noexcept
-		override;
 	void v_copy (Daata data_to)
 		override;
 };
@@ -35,7 +33,7 @@ Thing_define (DoublyLinkedList, Thing) {
 	integer numberOfNodes;
 	DoublyLinkedNode front, back;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 
 	static int s_compareHook (Daata /* data1 */, Daata /* data2 */) noexcept;
