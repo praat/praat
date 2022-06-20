@@ -55,8 +55,8 @@
 #include "oo_DESCRIPTION.h"
 #include "CCA_def.h"
 
-void structCCA :: v_info () {
-	structDaata :: v_info ();
+void structCCA :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of coefficients: ", numberOfCoefficients);
 	MelderInfo_writeLine (U"ny: ", y -> dimension);
 	MelderInfo_writeLine (U"nx: ", x -> dimension);

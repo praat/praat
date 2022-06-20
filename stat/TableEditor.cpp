@@ -33,8 +33,8 @@ Thing_implement (TableEditor, Editor, 0);
 
 /********** EDITOR METHODS **********/
 
-void structTableEditor :: v_info () {
-	our TableEditor_Parent :: v_info ();
+void structTableEditor :: v1_info () {
+	TableEditor_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Table uses text styles: ", our instancePref_useTextStyles());
 	//MelderInfo_writeLine (U"Table font size: ", our p_fontSize);
 }

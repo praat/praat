@@ -2,7 +2,7 @@
 #define _Distributions_h_
 /* Distributions.h
  *
- * Copyright (C) 1997-2011,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1997-2012,2014-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "TableOfReal.h"
 
 Thing_define (Distributions, TableOfReal) {
-	void v_info ()
+	void v1_info ()
 		override;
 };
 

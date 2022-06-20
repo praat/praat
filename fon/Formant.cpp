@@ -44,8 +44,8 @@
 
 Thing_implement (Formant, Sampled, 2);   // version 1 = with intensity, 2 = double
 
-void structFormant :: v_info () {
-	structDaata :: v_info ();
+void structFormant :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");

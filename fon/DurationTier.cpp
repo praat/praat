@@ -1,6 +1,6 @@
 /* DurationTier.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2015-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2015-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 Thing_implement (DurationTier, RealTier, 0);
 
-void structDurationTier :: v_info () {
-	our structDaata :: v_info ();
+void structDurationTier :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");

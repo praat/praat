@@ -22,7 +22,7 @@
 #include "Confusion.h"
 
 Thing_define (ContingencyTable, TableOfReal) {
-	void v_info ()
+	void v1_info ()
 		override;
 };
 

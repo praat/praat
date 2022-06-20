@@ -31,7 +31,7 @@ oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 	oo_OBJECT (FrequencyBin, 0, nyquistBin)	// needs special treatment
 	
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		double v_getValueAtSample (integer ifreq, integer iframe, int unit)
 			override;

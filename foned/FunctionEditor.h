@@ -133,7 +133,7 @@ Thing_define (FunctionEditor, Editor) {
 
 	void v9_destroy () noexcept
 		override;
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_createMenus ()
 		override;

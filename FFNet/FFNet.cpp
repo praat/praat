@@ -177,8 +177,8 @@ static void bookkeeping (FFNet me) {
 	FFNet_selectAllWeights (me);
 }
 
-void structFFNet :: v_info () {
-	our structDaata :: v_info ();
+void structFFNet :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of layers: ", our numberOfLayers);
 	MelderInfo_writeLine (U"Total number of units: ", FFNet_getNumberOfUnits (this));
 	MelderInfo_writeLine (U"   Number of units in layer ", our numberOfLayers, U" (output): ",

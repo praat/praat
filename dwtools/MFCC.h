@@ -31,7 +31,7 @@
 #include "TableOfReal.h"
 
 Thing_define (MFCC, CC) {
-	void v_info ()
+	void v1_info ()
 		override;
 };
 

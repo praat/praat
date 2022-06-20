@@ -51,7 +51,7 @@ Thing_define (LongSound, SampledXY) {
 
 	void v9_destroy () noexcept
 		override;
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_copy (Daata data_to)
 		override;

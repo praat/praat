@@ -94,9 +94,8 @@
 #include "enums_getValue.h"
 #include "OTGrammar_enums.h"
 
-void structOTGrammar :: v_info ()
-{
-	structDaata :: v_info ();
+void structOTGrammar :: v1_info () {
+	structDaata :: v1_info ();
 	integer numberOfCandidates = 0, numberOfViolations = 0;
 	for (integer itab = 1; itab <= numberOfTableaus; itab ++) {
 		numberOfCandidates += our tableaus [itab]. numberOfCandidates;

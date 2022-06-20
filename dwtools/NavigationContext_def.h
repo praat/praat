@@ -35,7 +35,7 @@ oo_DEFINE_CLASS (NavigationContext, Daata)
 	oo_BOOLEAN (excludeTopicMatch)
 	
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 	

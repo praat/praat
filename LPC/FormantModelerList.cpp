@@ -43,8 +43,8 @@ void structFormantModelerListDrawingSpecification :: v_readBinary (FILE *_filePo
 void structFormantModelerList :: v_readBinary (FILE *_filePointer_, int _formatVersion_) {}
 
 */
-void structFormantModelerList :: v_info () {
-	
+void structFormantModelerList :: v1_info () {
+	// do nothing
 };
 
 Thing_implement (FormantModelerList, Function, 0);

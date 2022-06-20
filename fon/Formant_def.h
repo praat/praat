@@ -60,7 +60,7 @@ oo_DEFINE_CLASS (Formant, Sampled)
 	oo_STRUCTVEC (Formant_Frame, frames, nx)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }

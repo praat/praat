@@ -22,7 +22,7 @@ oo_DEFINE_CLASS (TextGridNavigator, Function)
 	oo_COLLECTION_OF (OrderedOf, tierNavigators, TextGridTierNavigator, 0)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

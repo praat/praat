@@ -39,8 +39,8 @@
 
 Thing_implement (Function, Daata, 0);
 
-void structFunction :: v_info () {
-	Function_Parent :: v_info ();
+void structFunction :: v1_info () {
+	Function_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Domain:");
 	MelderInfo_writeLine (U"   xmin: ", xmin);
 	MelderInfo_writeLine (U"   xmax: ", xmax);

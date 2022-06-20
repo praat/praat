@@ -24,7 +24,7 @@ oo_DEFINE_CLASS (Configuration, TableOfReal)
 	oo_VEC (w, numberOfColumns)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

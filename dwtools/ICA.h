@@ -31,12 +31,12 @@ Thing_define (Diagonalizer, TableOfReal) {
 };
 
 Thing_define (CrossCorrelationTable, SSCP) {
-	void v_info ()
+	void v1_info ()
 		override;
 };
 
 Collection_define (CrossCorrelationTableList, OrderedOf, CrossCorrelationTable) {
-	void v_info ()
+	void v1_info ()
 		override;
 };
 

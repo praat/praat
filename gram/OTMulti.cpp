@@ -1,6 +1,6 @@
 /* OTMulti.cpp
  *
- * Copyright (C) 2005-2021 Paul Boersma
+ * Copyright (C) 2005-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +51,8 @@
 #include "oo_DESCRIPTION.h"
 #include "OTMulti_def.h"
 
-void structOTMulti :: v_info ()
-{
-	structDaata :: v_info ();
+void structOTMulti :: v1_info () {
+	structDaata :: v1_info ();
 	integer numberOfViolations = 0;
 	for (integer icand = 1; icand <= our numberOfCandidates; icand ++)
 		for (integer icons = 1; icons <= our numberOfConstraints; icons ++)

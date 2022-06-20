@@ -53,7 +53,7 @@ oo_DEFINE_CLASS (DataModeler, Function)
 		double (*f_evaluate) (DataModeler me, double x, vector<structDataModelerParameter> p);
 		void (*f_evaluateBasisFunctions) (DataModeler me, double x, VEC term) { };
 		void (*fit) (DataModeler me);
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

@@ -22,8 +22,7 @@
 
 integer theTotalNumberOfThings;
 
-void structThing :: v_info ()
-{
+void structThing :: v1_info () {
 	MelderInfo_writeLine (U"Object type: ", Thing_className (this));
 	MelderInfo_writeLine (U"Object name: ", this -> name ? this -> name.get() : U"<no name>");
 	time_t today = time (nullptr);
@@ -196,7 +195,7 @@ void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file) {
 		MelderInfo_writeLine (U"Object id: ", id);
 	if (! MelderFile_isNull (file))
 		MelderInfo_writeLine (U"Associated file: ", Melder_fileToPath (file));
-	my v_info ();
+	my v1_info ();
 	MelderInfo_close ();
 }
 

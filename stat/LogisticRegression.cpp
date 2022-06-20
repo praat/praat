@@ -1,6 +1,6 @@
 /* LogisticRegression.cpp
  *
- * Copyright (C) 2005-2012,2015-2021 Paul Boersma
+ * Copyright (C) 2005-2012,2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
 
 Thing_implement (LogisticRegression, Regression, 0);
 
-void structLogisticRegression :: v_info () {
-	LogisticRegression_Parent :: v_info ();
+void structLogisticRegression :: v1_info () {
+	LogisticRegression_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Dependent 1: ", our dependent1.get());
 	MelderInfo_writeLine (U"Dependent 2: ", our dependent2.get());
 	MelderInfo_writeLine (U"Interpretation:");

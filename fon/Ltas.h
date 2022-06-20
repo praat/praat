@@ -24,7 +24,7 @@
 #include "Collection.h"
 
 Thing_define (Ltas, Vector) {
-	void v_info ()
+	void v1_info ()
 		override;
 	int v_domainQuantity ()
 		override { return MelderQuantity_FREQUENCY_HERTZ; }

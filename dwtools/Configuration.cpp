@@ -59,8 +59,8 @@
 
 Thing_implement (Configuration, TableOfReal, 0);
 
-void structConfiguration :: v_info () {
-	structDaata :: v_info ();
+void structConfiguration :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of points: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of dimensions: ", numberOfColumns);
 	MelderInfo_writeLine (U"Metric: ", metric);

@@ -42,8 +42,8 @@ Thing_implement_pureVirtual (TimeSoundAnalysisEditor, TimeSoundEditor, 0);
 #include "Prefs_copyToInstance.h"
 #include "TimeSoundAnalysisEditor_prefs.h"
 
-void structTimeSoundAnalysisEditor :: v_info () {
-	our TimeSoundAnalysisEditor_Parent :: v_info ();
+void structTimeSoundAnalysisEditor :: v1_info () {
+	TimeSoundAnalysisEditor_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Longest analysis: ", our instancePref_longestAnalysis(), U" seconds");
 	if (v_hasSpectrogram ()) {
 		/* Spectrogram flag: */

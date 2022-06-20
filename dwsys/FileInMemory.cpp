@@ -40,8 +40,8 @@
 
 Thing_implement (FileInMemory, Daata, 0);
 
-void structFileInMemory :: v_info () {
-	our structDaata :: v_info ();
+void structFileInMemory :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"File name: ", our d_path.get());
 	MelderInfo_writeLine (U"Id: ", our d_id.get());
 	MelderInfo_writeLine (U"Number of bytes: ", our d_numberOfBytes);

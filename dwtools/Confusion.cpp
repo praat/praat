@@ -36,7 +36,8 @@
 
 Thing_implement (Confusion, TableOfReal, 0);
 
-void structConfusion :: v_info () {
+void structConfusion :: v1_info () {
+	// BUG: skipping parent classes
 	double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, frac;
 	integer nCorrect;
 

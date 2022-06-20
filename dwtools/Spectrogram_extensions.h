@@ -42,7 +42,7 @@
 #define BandFilterSpectrogram_MEL   3
 
 Thing_define (BandFilterSpectrogram, Matrix) {
-	void v_info ()
+	void v1_info ()
 		override;
 	double v_getValueAtSample (integer icol, integer irow, int units)
 		override;
@@ -53,7 +53,7 @@ Thing_define (BandFilterSpectrogram, Matrix) {
 };
 
 Thing_define (BarkSpectrogram, BandFilterSpectrogram) {
-	void v_info ()
+	void v1_info ()
 		override;
 	double v_frequencyToHertz (double f)
 		override { return NUMbarkToHertz (f); }
@@ -64,7 +64,7 @@ Thing_define (BarkSpectrogram, BandFilterSpectrogram) {
 };
 
 Thing_define (MelSpectrogram, BandFilterSpectrogram) {
-	void v_info ()
+	void v1_info ()
 		override;
 	double v_frequencyToHertz (double f)
 		override { return NUMmelToHertz2 (f); }

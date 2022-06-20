@@ -58,10 +58,10 @@ double Excitation_soundPressureToPhon (double soundPressure, double bark) {
 	return result;
 }
 
-void structExcitation :: v_info () {
+void structExcitation :: v1_info () {
+	structDaata :: v1_info ();
 	constVEC y = z.row (1);
 	integer numberOfMaxima = 0;
-	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Loudness: ", Melder_half (Excitation_getLoudness (this)), U" sones");
 	for (integer i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		if (++ numberOfMaxima > 15)

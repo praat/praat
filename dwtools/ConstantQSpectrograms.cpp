@@ -21,8 +21,8 @@
 
 Thing_implement (ConstantQLog2FSpectrogram, MultiSampledSpectrogram, 0);
 
-void structConstantQLog2FSpectrogram :: v_info () {
-	structMultiSampledSpectrogram :: v_info ();
+void structConstantQLog2FSpectrogram :: v1_info () {
+	ConstantQLog2FSpectrogram_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Frequency resolution in bins: ", frequencyResolutionInBins);
 	MelderInfo_writeLine (U"Quality factor Q: ", ConstantQLog2FSpectrogram_getQualityFactor (this));
 }
@@ -133,8 +133,8 @@ autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (Const
 
 Thing_implement (GaborSpectrogram, MultiSampledSpectrogram, 0);
 
-void structGaborSpectrogram :: v_info () {
-	structMultiSampledSpectrogram :: v_info ();
+void structGaborSpectrogram :: v1_info () {
+	MultiSampledSpectrogram_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Frequency resolution in bins: ", frequencyResolutionInBins);
 }
 

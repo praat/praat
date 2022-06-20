@@ -1,6 +1,6 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013-2020 Paul Boersma
+ * Copyright (C) 2013-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@
 
 Thing_implement (Photo, SampledXY, 0);
 
-void structPhoto :: v_info () {
-	our structDaata :: v_info ();
+void structPhoto :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"xmin: ", our xmin);
 	MelderInfo_writeLine (U"xmax: ", our xmax);
 	MelderInfo_writeLine (U"Number of columns: ", our nx);

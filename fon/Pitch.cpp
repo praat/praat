@@ -344,9 +344,9 @@ MelderFraction Pitch_getFractionOfLocallyUnvoicedFrames (
 	return fraction;
 }
 
-void structPitch :: v_info () {
+void structPitch :: v1_info () {
+	structDaata :: v1_info ();
 	autoVEC frequencies = Sampled_getSortedValues (this, 0.0, 0.0, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
-	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");

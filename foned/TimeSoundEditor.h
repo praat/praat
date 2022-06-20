@@ -36,7 +36,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		if (our soundArea)
 			our soundArea -> functionChanged (static_cast <SampledXY> (our data));   // arg crucially ignored if our sound is a copy
 	}
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_createMenuItems_file (EditorMenu menu)
 		override;

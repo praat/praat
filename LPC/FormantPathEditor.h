@@ -54,7 +54,7 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	integer selectedTier, selectedCandidate;
 	GuiMenuItem navigateSettingsButton, navigateNextButton, navigatePreviousButton;
 
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_createChildren ()
 		override;

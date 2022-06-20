@@ -52,7 +52,8 @@
 
 Thing_implement (FormantModeler, Function, 0);
 
-void structFormantModeler :: v_info () {
+void structFormantModeler :: v1_info () {
+	// skipping parent classes
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
@@ -60,7 +61,7 @@ void structFormantModeler :: v_info () {
 	for (integer iformant = 1; iformant <= trackmodelers.size; iformant ++) {
 		DataModeler ffi = trackmodelers.at [iformant];
 		MelderInfo_writeLine (U"Formant ", iformant);
-		ffi -> v_info();
+		ffi -> v1_info();
 	}
 }
 

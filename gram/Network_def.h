@@ -111,7 +111,7 @@ oo_DEFINE_CLASS (Network, Daata)
 	oo_STRUCTVEC (NetworkConnection, connections, numberOfConnections)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		void checkNodeNumber (integer nodeNumber) {
 			Melder_require (nodeNumber >= 1 && nodeNumber <= our numberOfNodes,

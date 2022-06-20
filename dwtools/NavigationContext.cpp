@@ -65,7 +65,8 @@ static bool STRVEChasMatch (constSTRVEC const& labels, conststring32 label, kMel
 	return match;
 }
 
-void structNavigationContext :: v_info () {
+void structNavigationContext :: v1_info () {
+	// skipping parent classes
 	if (topicLabels && topicLabels -> strings.size > 0) {
 		MelderInfo_writeLine (U"\tTopic criterion: ", kMelder_string_getText (topicCriterion));
 		MelderInfo_writeLine (U"\tTopic match boolean: ", kMatchBoolean_getText (topicMatchBoolean));

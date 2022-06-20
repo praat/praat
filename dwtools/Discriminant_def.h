@@ -39,7 +39,7 @@ oo_DEFINE_CLASS (Discriminant, Daata)
 	oo_MAT (costs, numberOfGroups, numberOfGroups)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

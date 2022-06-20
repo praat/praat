@@ -24,7 +24,7 @@
 /********** class DurationTier **********/
 
 Thing_define (DurationTier, RealTier) {
-	void v_info ()
+	void v1_info ()
 		override;
 	int v_domainQuantity ()
 		override { return MelderQuantity_TIME_SECONDS; }

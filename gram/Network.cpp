@@ -55,9 +55,8 @@
 #include "enums_getValue.h"
 #include "Network_enums.h"
 
-void structNetwork :: v_info ()
-{
-	structDaata :: v_info ();
+void structNetwork :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Spreading rate: ", our spreadingRate);
 	MelderInfo_writeLine (U"Activity clipping rule: ", kNetwork_activityClippingRule_getText (our activityClippingRule));
 	MelderInfo_writeLine (U"Minimum activity: ", our minimumActivity);
