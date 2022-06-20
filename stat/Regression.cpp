@@ -1,6 +1,6 @@
 /* Regression.cpp
  *
- * Copyright (C) 2005-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2005-2012,2014-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
 
 Thing_implement (RegressionParameter, Daata, 0);
 
-void structRegression :: v_info () {
-	Regression_Parent :: v_info ();
+void structRegression :: v1_info () {
+	Regression_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Factors:");
 	MelderInfo_writeLine (U"   Number of factors: ", our parameters.size);
 	for (integer ivar = 1; ivar <= our parameters.size; ivar ++) {

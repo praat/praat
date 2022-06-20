@@ -1,6 +1,6 @@
 /* SpectrumTier.cpp
  *
- * Copyright (C) 20072008,2010-2012,2015,2016,2018,2020 Paul Boersma
+ * Copyright (C) 20072008,2010-2012,2015,2016,2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 Thing_implement (SpectrumTier, RealTier, 0);
 
-void structSpectrumTier :: v_info () {
-	our structDaata :: v_info ();
+void structSpectrumTier :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", our xmin, U" Hz");
 	MelderInfo_writeLine (U"   Highest frequency: ", our xmax, U" Hz");

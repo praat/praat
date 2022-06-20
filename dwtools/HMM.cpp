@@ -360,8 +360,8 @@ autoStrings HMMStateSequence_to_Strings (HMMStateSequence me) {
 
 /**************** HMM ******************************/
 
-void structHMM :: v_info () {
-	structDaata :: v_info ();
+void structHMM :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of states: ", numberOfStates);
 	for (integer i = 1; i <= numberOfStates; i ++) {
 		const HMMState hmms = our states->at [i];

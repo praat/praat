@@ -101,7 +101,7 @@ oo_DEFINE_CLASS (FFNet, Daata)
 	#endif
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

@@ -93,23 +93,24 @@ struct structThing {
 	virtual void v9_destroy () noexcept { }
 		/*
 			This method should destroy all members that are not destroyed automatically
-			(any autoThing is destroyed automatically), and to remove danling links to self.
+			(any autoThing is destroyed automatically), and to remove dangling links to self.
 			Destroying *all* members means that we have to destroy all members that the
 			derived class has added, as well as all members of the base class,
 			and so on recursively; v9_destroy therefore has to call the inherited v9_destroy.
-			The convention is to call the parent's v9_destroy at our end;
+			The convention is to call the parent's v9_destroy at our end, i.e. to chain up;
 			this makes sense because the destruction of an added member might depend
 			on the presence of a member from the base class.
 			Thus, v9_destroy is called recursively up the inheritance hierarchy,
 			and this is implemented by calling the parent's v9_destroy at the end,
 			i.e. at position "9" (hence the name).
 		*/
-	virtual void v_info ();
+	virtual void v1_info ();
 		/*
 			Implement as follows: call a set of MelderInfo_writeXXX describing your data.
 
-			Thing::v_info writes object id, object name, and date;
-			derived::v_info often calls base::v_info at start and then writes information on the new data,
+			Thing::v1_info writes object id, object name, and date;
+			derived::v1_info often calls base::v1_info at start
+			and then writes information on the new data (i.e., it chains down),
 			but a few ancestors can be skipped if their data have new meanings.
 		*/
 	virtual void v_assertInvariants () { }

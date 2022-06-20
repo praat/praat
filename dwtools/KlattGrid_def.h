@@ -87,7 +87,7 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 	#endif
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 
@@ -130,7 +130,7 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 	#endif
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 
@@ -176,7 +176,7 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 	#endif
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 
@@ -213,7 +213,7 @@ oo_DEFINE_CLASS (FricationGrid, Function)
 	#endif
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 
@@ -252,7 +252,7 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 	#endif
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

@@ -51,8 +51,8 @@ autoRealPoint RealPoint_create (double time, double value) {
 
 /********** class RealTier **********/
 
-void structRealTier :: v_info () {
-	structFunction :: v_info ();
+void structRealTier :: v1_info () {
+	structFunction :: v1_info ();
 	MelderInfo_writeLine (U"Number of points: ", our points.size);
 	MelderInfo_writeLine (U"Minimum value: ", RealTier_getMinimumValue (this));
 	MelderInfo_writeLine (U"Maximum value: ", RealTier_getMaximumValue (this));

@@ -23,7 +23,8 @@ oo_DEFINE_CLASS (MultiSampled, Function)
 	oo_COLLECTION_OF (OrderedOf, multisampled, Sampled, 0)
 
 	#if oo_DECLARING
-		virtual void v_info ();
+		void v1_info ()
+			override;
 	#endif
 
 oo_END_CLASS(MultiSampled)

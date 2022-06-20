@@ -26,7 +26,7 @@ oo_DEFINE_CLASS (MDSVec, Daata)
 	oo_INTVEC (columnIndex, numberOfProximities)
 	
 	#if oo_DECLARING
-	void v_info ()
+	void v1_info ()
 		override;
 	#endif
 oo_END_CLASS (MDSVec)

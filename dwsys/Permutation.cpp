@@ -66,8 +66,8 @@ void Permutation_checkInvariant (Permutation me) {
 			me, U": is not a valid permutation.");
 }
 
-void structPermutation :: v_info () {
-	structDaata :: v_info ();
+void structPermutation :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of elements: ", numberOfElements);
 }
 

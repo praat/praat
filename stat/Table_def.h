@@ -1,6 +1,6 @@
 /* Table_def.h
  *
- * Copyright (C) 2002-2007,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 2002-2007,2011,2012,2014-2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ oo_DEFINE_CLASS (Table, Daata)
 	oo_COLLECTION_OF (OrderedOf, rows, TableRow, 0)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		bool v_hasGetNrow ()
 			override { return true; }

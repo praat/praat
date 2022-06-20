@@ -1,6 +1,6 @@
 /* VocalTract.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 Thing_implement (VocalTract, Vector, 2);
 
-void structVocalTract :: v_info () {
-	structDaata :: v_info ();
+void structVocalTract :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Vocal tract length: ", Melder_single (xmax), U" metres");
 	MelderInfo_writeLine (U"Number of sections: ", nx);
 	MelderInfo_writeLine (U"Section length: ", Melder_single (dx), U" metres");

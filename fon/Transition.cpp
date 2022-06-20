@@ -1,6 +1,6 @@
 /* Transition.cpp
  *
- * Copyright (C) 1997-2012,2015-2020 Paul Boersma
+ * Copyright (C) 1997-2012,2015-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@
 
 Thing_implement (Transition, Daata, 0);
 
-void structTransition :: v_info () {
-	structDaata :: v_info ();
+void structTransition :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of states: ", numberOfStates);
 }
 

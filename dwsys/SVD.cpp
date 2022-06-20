@@ -60,7 +60,8 @@
 #include "oo_DESCRIPTION.h"
 #include "SVD_def.h"
 
-void structSVD :: v_info () {
+void structSVD :: v1_info () {
+	// skipping parent classes
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 	MelderInfo_writeLine (U"This matrix is", (isTransposed ? U"" : U" not "), U" transposed.");
@@ -387,7 +388,7 @@ double SVD_getEffectiveDegreesOfFreedom (SVD me, double shrinkageParameter) {
 
 Thing_implement (GSVD, Daata, 0);
 
-void structGSVD :: v_info () {
+void structGSVD :: v1_info () {
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }
 

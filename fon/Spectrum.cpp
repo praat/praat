@@ -1,6 +1,6 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +47,8 @@
 
 Thing_implement (Spectrum, Matrix, 2);
 
-void structSpectrum :: v_info () {
-	structDaata :: v_info ();
+void structSpectrum :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", xmin, U" Hz");
 	MelderInfo_writeLine (U"   Highest frequency: ", xmax, U" Hz");

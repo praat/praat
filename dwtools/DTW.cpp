@@ -65,8 +65,8 @@ Thing_implement (DTW, Matrix, 2);
 
 #define DTW_BIG 1e308
 
-void structDTW :: v_info () {
-	structDaata :: v_info ();
+void structDTW :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Domain of prototype: ", ymin, U" to ", ymax, U" (s).");   // ppgb: Wat is een domain prototype?
 	MelderInfo_writeLine (U"Domain of candidate: ", xmin, U" to ", xmax, U" (s).");   // ppgb: Wat is een domain candidate?
 	MelderInfo_writeLine (U"Number of frames in prototype: ", ny);

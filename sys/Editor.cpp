@@ -226,7 +226,8 @@ void structEditor :: v9_destroy () noexcept {
 	Editor_Parent :: v9_destroy ();
 }
 
-void structEditor :: v_info () {
+void structEditor :: v1_info () {
+	// skipping parent classes
 	MelderInfo_writeLine (U"Editor type: ", Thing_className (this));
 	MelderInfo_writeLine (U"Editor name: ", our name ? our name.get() : U"<no name>");
 	time_t today = time (nullptr);

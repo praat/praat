@@ -24,7 +24,7 @@ oo_DEFINE_CLASS (FormantPath, Sampled)
 	oo_INTVEC (path, nx)
 	
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }

@@ -51,7 +51,7 @@ oo_DEFINE_CLASS (Cepstrumc, Sampled)
 	oo_STRUCTVEC (Cepstrumc_Frame, frame, nx)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

@@ -27,8 +27,8 @@
 
 Thing_implement (BandFilterSpectrogram, Matrix, 2);
 
-void structBandFilterSpectrogram :: v_info () {
-	structDaata :: v_info ();
+void structBandFilterSpectrogram :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
@@ -39,8 +39,8 @@ void structBandFilterSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"   First time slice (frame centre) at: ", x1, U" seconds");
 }
 
-void structBarkSpectrogram :: v_info () {
-	structBandFilterSpectrogram :: v_info ();
+void structBarkSpectrogram :: v1_info () {
+	structBandFilterSpectrogram :: v1_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", ymin, U" ", v_getFrequencyUnit ());
 	MelderInfo_writeLine (U"   Highest frequency: ", ymax, U" ", v_getFrequencyUnit ());
@@ -51,8 +51,8 @@ void structBarkSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"   First frequency band around (bin centre at): ", y1, U" ", v_getFrequencyUnit ());
 }
 
-void structMelSpectrogram :: v_info () {
-	structBandFilterSpectrogram :: v_info ();
+void structMelSpectrogram :: v1_info () {
+	structBandFilterSpectrogram :: v1_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", ymin, U" ", v_getFrequencyUnit ());
 	MelderInfo_writeLine (U"   Highest frequency: ", ymax, U" ", v_getFrequencyUnit ());

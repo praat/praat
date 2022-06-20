@@ -157,8 +157,8 @@ integer WarpingPath_getRowsFromColumnIndex (WarpingPath me, integer ix, integer 
 
 Thing_implement (EditCostsTable, TableOfReal, 0);
 
-void structEditCostsTable :: v_info () {
-	EditDistanceTable_Parent :: v_info ();
+void structEditCostsTable :: v1_info () {
+	EditCostsTable_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Target:", numberOfRows - 2, U" symbols.");
 	MelderInfo_writeLine (U"Source:", numberOfColumns - 2, U" symbols.");
 }
@@ -326,8 +326,8 @@ autoTableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
 
 Thing_implement (EditDistanceTable, TableOfReal, 0);
 
-void structEditDistanceTable :: v_info () {
-	EditDistanceTable_Parent :: v_info ();
+void structEditDistanceTable :: v1_info () {
+	EditDistanceTable_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Target:", numberOfRows, U" symbols.");
 	MelderInfo_writeLine (U"Source:", numberOfColumns, U" symbols.");
 }

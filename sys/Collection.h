@@ -432,7 +432,7 @@ struct CollectionOf : structDaata {
 		as an independent pointer-to-object created with XXX_create ().
 	*/
 
-	void v_info () override {
+	void v1_info () override {
 		MelderInfo_writeLine (our size, U" items");
 	}
 

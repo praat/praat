@@ -24,7 +24,7 @@
 #include "Matrix.h"
 
 Thing_define (Confusion, TableOfReal) {
-	void v_info ()
+	void v1_info ()
 		override;
 };
 

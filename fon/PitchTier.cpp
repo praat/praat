@@ -1,6 +1,6 @@
 /* PitchTier.cpp
  *
- * Copyright (C) 1992-2008,2010-2013,2015-2018,2021 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2013,2015-2018,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 Thing_implement (PitchTier, RealTier, 0);
 
-void structPitchTier :: v_info () {
-	structDaata :: v_info ();
+void structPitchTier :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");

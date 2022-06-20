@@ -34,7 +34,7 @@ oo_DEFINE_CLASS (FormantModelerListDrawingSpecification, Daata)
 	#endif
 
 	#if oo_DECLARING
-		void v_info () override { }
+		void v1_info () override { }
 	#endif
 	
 oo_END_CLASS (FormantModelerListDrawingSpecification)
@@ -50,13 +50,11 @@ oo_DEFINE_CLASS (FormantModelerList, Function)
 	oo_COLLECTION_OF (OrderedOf, formantModelers, FormantModeler, 0)
 	
 	#if oo_DECLARING || oo_DESTROYING
-	
 		oo_OBJECT (FormantModelerListDrawingSpecification, 0, drawingSpecification)
-	
 	#endif
 	
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

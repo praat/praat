@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,8 +249,8 @@ integer IntervalTier_hasBoundary (IntervalTier me, double t) {
 	return 0;   // not found
 }
 
-void structTextGrid :: v_info () {
-	structDaata :: v_info ();
+void structTextGrid :: v1_info () {
+	structDaata :: v1_info ();
 
 	integer intervalTierCount = 0, pointTierCount = 0, intervalCount = 0, pointCount = 0;
 	for (integer itier = 1; itier <= our tiers->size; itier ++) {

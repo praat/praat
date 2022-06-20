@@ -67,7 +67,7 @@ Thing_define (Editor, Thing) {
 
 	void v9_destroy () noexcept
 		override;
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_nameChanged ()
 		override;   // sets the window and icon titles to reflect the new name

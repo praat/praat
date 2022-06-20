@@ -168,8 +168,8 @@ void EspeakVoice_into_voice (EspeakVoice me, voice_t *voicet) {   // BUG unused 
 
 Thing_implement (SpeechSynthesizer, Daata, 1);
 
-void structSpeechSynthesizer :: v_info () {
-	our SpeechSynthesizer_Parent :: v_info ();
+void structSpeechSynthesizer :: v1_info () {
+	SpeechSynthesizer_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Synthesizer version: espeak-ng ", our d_synthesizerVersion.get());
 	MelderInfo_writeLine (U"Language: ", our d_languageName.get());
 	MelderInfo_writeLine (U"Voice: ", our d_voiceName.get());

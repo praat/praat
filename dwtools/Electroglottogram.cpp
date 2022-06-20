@@ -127,8 +127,8 @@ void IntervalTier_setIntervalText (IntervalTier me, integer intervalNumber, cons
 	}
 }
 
-void structElectroglottogram :: v_info () {
-	structDaata :: v_info ();
+void structElectroglottogram :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");

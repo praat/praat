@@ -24,7 +24,7 @@
 #include "melder.h"
 
 Thing_define (ConstantQLog2FSpectrogram, MultiSampledSpectrogram) {
-	void v_info ()
+	void v1_info ()
 		override;
 	double v_getValueAtSample (integer ifreq, integer iframe, int unit)
 		override;
@@ -47,7 +47,7 @@ void ConstantQLog2FSpectrogram_formula_part (ConstantQLog2FSpectrogram me, doubl
 autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (ConstantQLog2FSpectrogram me, double fromTime, double toTime, double fromFrequency, double shiftNumberOfBins);
 
 Thing_define (GaborSpectrogram, MultiSampledSpectrogram) {
-	void v_info ()
+	void v1_info ()
 		override;
 	double v_myFrequencyUnitToHertz (double f)
 		override { return f; }

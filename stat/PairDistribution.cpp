@@ -1,6 +1,6 @@
 /* PairDistribution.cpp
  *
- * Copyright (C) 1997-2012,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1997-2013,2015-2019,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ Thing_implement (PairProbability, Daata, 0);
 
 Thing_implement (PairDistribution, Daata, 0);
 
-void structPairDistribution :: v_info () {
-	PairDistribution_Parent :: v_info ();
+void structPairDistribution :: v1_info () {
+	PairDistribution_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Number of pairs: ", pairs.size);
 }
 

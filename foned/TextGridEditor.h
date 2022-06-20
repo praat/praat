@@ -38,7 +38,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	autoBOOLVEC draggingTiers;
 	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_createChildren ()
 		override;

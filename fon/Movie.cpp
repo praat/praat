@@ -1,6 +1,6 @@
 /* Movie.cpp
  *
- * Copyright (C) 2011-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2011-2012,2014-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,9 +39,8 @@
 
 Thing_implement (Movie, Sampled, 0);
 
-void structMovie :: v_info ()
-{
-	structDaata :: v_info ();
+void structMovie :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"End time: ", xmax, U" seconds");
 	MelderInfo_writeLine (U"Total duration: ", xmax - xmin, U" seconds");

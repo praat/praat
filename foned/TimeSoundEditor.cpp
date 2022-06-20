@@ -31,8 +31,8 @@ Thing_implement_pureVirtual (TimeSoundEditor, FunctionEditor, 0);
 
 /********** Thing methods **********/
 
-void structTimeSoundEditor :: v_info () {
-	TimeSoundEditor_Parent :: v_info ();
+void structTimeSoundEditor :: v1_info () {
+	TimeSoundEditor_Parent :: v1_info ();
 	if (our soundArea)
 		MelderInfo_writeLine (U"Sound scaling strategy: ",
 				kSoundArea_scalingStrategy_getText (our soundArea -> instancePref_scalingStrategy()));

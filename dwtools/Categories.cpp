@@ -23,8 +23,8 @@
 
 #include "Categories.h"
 
-void structCategories :: v_info () {
-	structDaata :: v_info ();
+void structCategories :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of strings: ", our size);
 	autoStringSet set = StringList_to_StringSet (this);
 	MelderInfo_writeLine (U"Number of unique categories: ", set->size);

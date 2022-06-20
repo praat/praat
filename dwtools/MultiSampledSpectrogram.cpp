@@ -50,8 +50,8 @@ double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which, 
 
 Thing_implement (MultiSampledSpectrogram, Sampled, 0);
 
-void structMultiSampledSpectrogram :: v_info () {
-	structDaata :: v_info ();
+void structMultiSampledSpectrogram :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Minimum frequency (Hz): ", v_myFrequencyUnitToHertz (xmin), U" Hz");
 	MelderInfo_writeLine (U"Maximum frequency (Hz): ", v_myFrequencyUnitToHertz (xmax), U" Hz");
 	MelderInfo_writeLine (U"First frequency (Hz): ", v_myFrequencyUnitToHertz (x1), U" Hz");

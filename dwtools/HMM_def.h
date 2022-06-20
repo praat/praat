@@ -65,7 +65,7 @@ oo_DEFINE_CLASS (HMM, Daata)
 	oo_OBJECT (HMMObservationList, 0, observationSymbols)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

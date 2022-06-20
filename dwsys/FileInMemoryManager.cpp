@@ -47,8 +47,8 @@
 
 Thing_implement (FileInMemoryManager, Daata, 0);
 
-void structFileInMemoryManager :: v_info () {
-	FileInMemoryManager_Parent :: v_info ();
+void structFileInMemoryManager :: v1_info () {
+	FileInMemoryManager_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Number of files: ", files -> size);
 	MelderInfo_writeLine (U"Total number of bytes: ", FileInMemorySet_getTotalNumberOfBytes (files.get()));
 }

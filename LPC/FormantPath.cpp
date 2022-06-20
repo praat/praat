@@ -47,8 +47,8 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantPath_def.h"
 
-void structFormantPath :: v_info () {
-	structDaata :: v_info ();
+void structFormantPath :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of Formant objects: ", formants . size);
 	for (integer ic = 1; ic <= ceilings.size; ic ++)
 		MelderInfo_writeLine (U"Ceiling ", ic, U": ", ceilings [ic], U" Hz");
@@ -61,7 +61,6 @@ double structFormantPath :: v_getValueAtSample (integer iframe, integer which, i
 
 conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*/, uint32 /*flags*/) {
 	return U"Frequency (Hz)";
-	
 };
 
 Thing_implement (FormantPath, Sampled, 0);

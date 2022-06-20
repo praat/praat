@@ -65,7 +65,7 @@ oo_DEFINE_CLASS (DTW, Matrix)
 	#endif
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

@@ -401,8 +401,8 @@ void structFunctionEditor :: v9_destroy () noexcept {
 	FunctionEditor_Parent :: v9_destroy ();
 }
 
-void structFunctionEditor :: v_info () {
-	FunctionEditor_Parent :: v_info ();
+void structFunctionEditor :: v1_info () {
+	FunctionEditor_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Editor start: ", our tmin, U" ", v_format_units_long());
 	MelderInfo_writeLine (U"Editor end: ", our tmax, U" ", v_format_units_long());
 	MelderInfo_writeLine (U"Window start: ", our startWindow, U" ", v_format_units_long());

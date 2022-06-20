@@ -1,6 +1,6 @@
 /* Photo_def.h
  *
- * Copyright (C) 2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2013-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ oo_DEFINE_CLASS (Photo, SampledXY)
 	oo_OBJECT (Matrix, 2, d_transparency)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		bool v_hasGetNrow ()
 			override { return true; }

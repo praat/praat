@@ -39,7 +39,7 @@ Thing_define (Minimizer, Thing) {
 	Thing afterBoss;
 	Graphics gmonitor;   /* graphics to monitor the minimization process */
 
-	void v_info ()
+	void v1_info ()
 		override { }
 
 	virtual void v_minimize () { }   /* does the work */

@@ -24,8 +24,8 @@ Thing_implement (ContingencyTable, TableOfReal, 0);
 
 #define TINY 1e-30
 
-void structContingencyTable :: v_info () {
-	structDaata :: v_info ();
+void structContingencyTable :: v1_info () {
+	structDaata :: v1_info ();
 
 	double ndf;
 	double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, chisq;

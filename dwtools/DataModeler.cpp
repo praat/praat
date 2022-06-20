@@ -50,7 +50,8 @@
 
 Thing_implement (DataModeler, Function, 1);
 
-void structDataModeler :: v_info () {
+void structDataModeler :: v1_info () {
+	// skipping parent classes?
 	MelderInfo_writeLine (U"   Time domain:");
 	MelderInfo_writeLine (U"      Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"      End time: ", xmax, U" seconds");

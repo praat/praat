@@ -88,7 +88,8 @@ void structLongSound :: v9_destroy () noexcept {
 	LongSound_Parent :: v9_destroy ();
 }
 
-void structLongSound :: v_info () {
+void structLongSound :: v1_info () {
+	structDaata :: v1_info ();
 	static const conststring32 encodingStrings [1+22] = { U"none",
 		U"linear 8 bit signed", U"linear 8 bit unsigned",
 		U"linear 16 bit big-endian", U"linear 16 bit little-endian",
@@ -98,7 +99,6 @@ void structLongSound :: v_info () {
 		U"IEEE float 32 bit big-endian", U"IEEE float 32 bit little-endian",
 		U"IEEE float 64 bit big-endian", U"IEEE float 64 bit little-endian",
 		U"FLAC", U"FLAC", U"FLAC", U"MP3", U"MP3", U"MP3" };
-	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Duration: ", xmax - xmin, U" seconds");
 	MelderInfo_writeLine (U"File name: ", Melder_fileToPath (& file));
 	MelderInfo_writeLine (U"File type: ", audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? U"unknown" : Melder_audioFileTypeString (audioFileType));

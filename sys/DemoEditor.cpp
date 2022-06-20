@@ -33,8 +33,8 @@ void structDemoEditor :: v9_destroy () noexcept {
 	DemoEditor_Parent :: v9_destroy ();
 }
 
-void structDemoEditor :: v_info () {
-	DemoEditor_Parent :: v_info ();
+void structDemoEditor :: v1_info () {
+	DemoEditor_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Colour: ", MelderColour_name (((PraatPicture) praatPicture) -> colour));
 	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
 	MelderInfo_writeLine (U"Font size: ", ((PraatPicture) praatPicture) -> fontSize);

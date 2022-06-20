@@ -103,7 +103,7 @@ oo_DEFINE_CLASS (OTGrammar, Daata)
 	#endif
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		void checkConstraintNumber (integer constraintNumber) {
 			Melder_require (constraintNumber >= 1,

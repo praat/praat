@@ -50,8 +50,8 @@
 static const conststring32 undefinedClassLabel = U"";
 Thing_implement (Index, Daata, 0);
 
-void structIndex :: v_info () {
-	structDaata :: v_info ();
+void structIndex :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of items: ", our numberOfItems);
 }
 

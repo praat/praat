@@ -1,6 +1,6 @@
 /* Movie_def.h
  *
- * Copyright (C) 2011,2015 Paul Boersma
+ * Copyright (C) 2011,2012,2014-2016,2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ oo_DEFINE_CLASS (Movie, Sampled)
 	oo_OBJECT (Strings, 0, d_fileNames)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

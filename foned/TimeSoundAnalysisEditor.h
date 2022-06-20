@@ -36,7 +36,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	autoPointProcess d_pulses;
 	GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
 
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_dataChanged ()
 		override;

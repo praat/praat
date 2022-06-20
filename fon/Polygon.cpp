@@ -1,6 +1,6 @@
 /* Polygon.cpp
  *
- * Copyright (C) 1992-2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@
 
 Thing_implement (Polygon, Daata, 1);
 
-void structPolygon :: v_info () {
-	our structDaata :: v_info ();
+void structPolygon :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of points: ", our numberOfPoints);
 	MelderInfo_writeLine (U"Perimeter: ", Melder_single (Polygon_perimeter (this)));
 }

@@ -82,8 +82,8 @@ static integer SampledXY_getWindowExtrema (SampledXY me, constMAT z, integer ixm
 	return (ixmax - ixmin + 1) * (iymax - iymin + 1);
 }
 
-void structSPINET :: v_info () {
-	structDaata :: v_info ();
+void structSPINET :: v1_info () {
+	structDaata :: v1_info ();
 	double miny, maxy, mins, maxs;
 	if (! SampledXY_getWindowExtrema (this, y.get(), 1, nx, 1, ny, & miny, & maxy) ||
 		! SampledXY_getWindowExtrema (this, s.get(), 1, nx, 1, ny, & mins, & maxs))

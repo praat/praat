@@ -23,7 +23,7 @@
 #include "Graphics.h"
 
 Thing_define (Categories, StringList) {
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_readText (MelderReadText text, int formatVersion)
 		override;

@@ -39,8 +39,8 @@ Thing_implement (TextGridEditor, TimeSoundAnalysisEditor, 0);
 #include "Prefs_copyToInstance.h"
 #include "TextGridEditor_prefs.h"
 
-void structTextGridEditor :: v_info () {
-	TextGridEditor_Parent :: v_info ();
+void structTextGridEditor :: v1_info () {
+	TextGridEditor_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Selected tier: ", our selectedTier);
 	MelderInfo_writeLine (U"TextGrid uses text styles: ", our instancePref_useTextStyles());
 	MelderInfo_writeLine (U"TextGrid font size: ", our instancePref_fontSize());

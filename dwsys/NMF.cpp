@@ -46,7 +46,8 @@
 #include "enums_getValue.h"
 #include "NMF_enums.h"
 
-void structNMF :: v_info () {
+void structNMF :: v1_info () {
+	// skipping parent classes
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 	MelderInfo_writeLine (U"Number of features: ", numberOfFeatures);

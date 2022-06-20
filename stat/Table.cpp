@@ -44,8 +44,8 @@ Thing_implement (TableRow, Daata, 0);
 
 Thing_implement (Table, Daata, 0);
 
-void structTable :: v_info () {
-	our structDaata :: v_info ();
+void structTable :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of rows: ", our rows.size);
 	MelderInfo_writeLine (U"Number of columns: ", our numberOfColumns);
 }

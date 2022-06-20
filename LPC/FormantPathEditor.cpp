@@ -39,8 +39,8 @@ Thing_implement (FormantPathEditor, TimeSoundAnalysisEditor, 0);
 #include "Prefs_copyToInstance.h"
 #include "FormantPathEditor_prefs.h"
 
-void structFormantPathEditor :: v_info () {
-	FormantPathEditor_Parent :: v_info ();
+void structFormantPathEditor :: v1_info () {
+	FormantPathEditor_Parent :: v1_info ();
 }
 
 void structFormantPathEditor :: v_reset_analysis () {

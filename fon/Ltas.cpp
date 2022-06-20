@@ -27,9 +27,8 @@
 
 Thing_implement (Ltas, Vector, 2);
 
-void structLtas :: v_info () {
-	double meanPowerDensity;
-	structDaata :: v_info ();
+void structLtas :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", xmin, U" Hz");
 	MelderInfo_writeLine (U"   Highest frequency: ", xmax, U" Hz");
@@ -38,7 +37,7 @@ void structLtas :: v_info () {
 	MelderInfo_writeLine (U"   Number of frequency bands: ", nx);
 	MelderInfo_writeLine (U"   Width of each band: ", dx, U" Hz");
 	MelderInfo_writeLine (U"   First band centred at: ", x1, U" Hz");
-	meanPowerDensity = Sampled_getMean (this, xmin, xmax, 0, 1, false);
+	const double meanPowerDensity = Sampled_getMean (this, xmin, xmax, 0, 1, false);
 	MelderInfo_writeLine (U"Total SPL: ", Melder_single (10.0 * log10 (meanPowerDensity * (xmax - xmin))), U" dB");
 }
 
