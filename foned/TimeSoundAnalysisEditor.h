@@ -38,7 +38,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 
 	void v1_info ()
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 	void v_createMenuItems_query (EditorMenu menu)
 		override;

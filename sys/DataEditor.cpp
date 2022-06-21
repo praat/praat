@@ -824,7 +824,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 			
 			This linear complexity makes this procedure good enough for `v9_destroy()`
 			(where obtaining linear complexity would have been easy anyway),
-			and nice enough for `v_dataChanged()`.
+			and nice enough for `v1_dataChanged()`.
 			
 			Something to note is that this procedure doesn't care whether the autoCollection
 			`children` owns its items or not.
@@ -837,7 +837,7 @@ void structDataEditor :: v9_destroy () noexcept {
 	DataEditor_Parent :: v9_destroy ();
 }
 
-void structDataEditor :: v_dataChanged () {
+void structDataEditor :: v1_dataChanged () {
 	/*
 		Someone else changed our data.
 		We know that the top-level data is still accessible,

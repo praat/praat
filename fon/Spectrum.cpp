@@ -313,7 +313,7 @@ autoSpectrum Matrix_to_Spectrum (Matrix me) {
 		if (my ny != 2)
 			Melder_throw (U"The Matrix should have exactly 2 rows.");
 		autoSpectrum thee = Thing_new (Spectrum);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrum.");
@@ -323,7 +323,7 @@ autoSpectrum Matrix_to_Spectrum (Matrix me) {
 autoMatrix Spectrum_to_Matrix (Spectrum me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

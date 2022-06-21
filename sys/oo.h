@@ -177,11 +177,11 @@
 
 #define oo_END_CLASS(Class) \
 		void v9_destroy () noexcept override; \
-		void v_copy (Daata data_to) override; \
-		bool v_equal (Daata otherData) override; \
+		void v1_copy (Daata data_to) override; \
+		bool v1_equal (Daata otherData) override; \
 		static Data_Description s_description; \
 		Data_Description v_description () override { return s_description; } \
-		bool v_canWriteAsEncoding (int outputEncoding) override; \
+		bool v1_canWriteAsEncoding (int outputEncoding) override; \
 		void v1_writeText (MelderFile openFile) override; \
 		void v1_readText (MelderReadText text, int formatVersion) override; \
 		void v1_writeBinary (FILE *f) override; \

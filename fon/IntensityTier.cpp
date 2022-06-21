@@ -124,7 +124,7 @@ autoSound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, bool 
 autoIntensityTier RealTier_to_IntensityTier (RealTier me) {
 	try {
 		autoIntensityTier thee = Thing_new (IntensityTier);
-		my structRealTier :: v_copy (thee.get());
+		my structRealTier :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to IntensityTier.");

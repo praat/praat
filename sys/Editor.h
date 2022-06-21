@@ -85,7 +85,7 @@ Thing_define (Editor, Thing) {
 	virtual void v_createMenus ();
 	virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
 	virtual void v_createChildren () { }
-	virtual void v_dataChanged () { }
+	virtual void v1_dataChanged () { }
 	virtual void v_saveData ();
 	virtual void v_restoreData ();
 	virtual void v_form_pictureWindow (EditorCommand cmd);
@@ -126,7 +126,7 @@ inline void Editor_dataChanged (Editor me)
 	 *    so you may e.g. like to redraw yourself."
 	 */
 	{
-		my v_dataChanged ();
+		my v1_dataChanged ();
 	}
 inline void Editor_setDataChangedCallback (Editor me, Editor_DataChangedCallback dataChangedCallback)
 	/*

@@ -1,6 +1,6 @@
 /* Data.cpp
  *
- * Copyright (C) 1992-2018,2021 Paul Boersma
+ * Copyright (C) 1992-2018,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,23 +20,12 @@
 
 Thing_implement (Daata, Thing, 0);
 
-void structDaata :: v_copy (Daata /* thee */) {
-}
-
-bool structDaata :: v_equal (Daata /* thee */) {
-	return true;
-}   // names of "identical" objects are allowed to be different
-
-bool structDaata :: v_canWriteAsEncoding (int /* encoding */) {
-	return true;
-}
-
 autoDaata _Data_copy (Daata me) {
 	try {
 		if (! me)
 			return autoDaata();
 		autoDaata thee = Thing_newFromClass (my classInfo).static_cast_move <structDaata> ();
-		my v_copy (thee.get());
+		my v1_copy (thee.get());
 		Thing_setName (thee.get(), my name.get());
 		return thee;
 	} catch (MelderError) {
@@ -50,11 +39,11 @@ bool Data_equal (Daata me, Daata thee) {
 	int offset = sizeof (struct structDaata);   // we already compared the methods, and are going to skip the names
 	if (! memcmp ((char *) me + offset, (char *) thee + offset, my classInfo -> size - offset))   // BUG: not necessarily portable
 		return true;   // no shallow differences
-	return my v_equal (thee);
+	return my v1_equal (thee);
 }
 
 bool Data_canWriteAsEncoding (Daata me, int encoding) {
-	return my v_canWriteAsEncoding (encoding);
+	return my v1_canWriteAsEncoding (encoding);
 }
 
 bool Data_canWriteText (Daata me) {

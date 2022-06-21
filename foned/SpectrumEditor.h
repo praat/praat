@@ -31,7 +31,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 	void v_draw ()
 		override;

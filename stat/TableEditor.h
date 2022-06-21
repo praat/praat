@@ -41,7 +41,7 @@ Thing_define (TableEditor, Editor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 
 	virtual void v_draw ();

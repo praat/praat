@@ -385,7 +385,7 @@ autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 		Melder_require (TableOfReal_isNonNegative (me),
 			U"No cell in the table should be negative.");
 		autoConfusion thee = Thing_new (Confusion);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Confusion.");

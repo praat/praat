@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 
 /********** class Collection **********/
 
-void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
-	thy at._elements = nullptr;   // set to null in case the inherited v_copy crashes
-	my structDaata :: v_copy (thee);
+void _CollectionOfDaata_v1_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
+	thy at._elements = nullptr;   // set to null in case the inherited v1_copy crashes
+	my structDaata :: v1_copy (thee);
 	thy _ownershipInitialized = my _ownershipInitialized;
 	thy _ownItems = my _ownItems;
 	thy _capacity = my _capacity;
@@ -44,8 +44,8 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 	}
 }
 
-bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
-	if (! my structDaata :: v_equal (thee))
+bool _CollectionOfDaata_v1_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
+	if (! my structDaata :: v1_equal (thee))
 		return false;
 	if (my size != thy size)
 		return false;

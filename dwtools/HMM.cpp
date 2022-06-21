@@ -350,7 +350,7 @@ autoHMMStateSequence HMMStateSequence_create (integer numberOfItems) {
 autoStrings HMMStateSequence_to_Strings (HMMStateSequence me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		my structStrings :: v_copy (thee.get());
+		my structStrings :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Strings created.");

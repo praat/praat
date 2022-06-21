@@ -711,7 +711,7 @@ void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, 
 autoTableOfReal SSCP_to_TableOfReal (SSCP me) {
 	try {
 		autoTableOfReal thee = Thing_new (TableOfReal);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
@@ -732,7 +732,7 @@ autoTableOfReal SSCP_extractCentroid (SSCP me) {
 autoSSCP Covariance_to_SSCP (Covariance me) {
 	try {
 		autoSSCP thee = Thing_new (SSCP);
-		my structSSCP :: v_copy (thee.get());
+		my structSSCP :: v1_copy (thee.get());
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
 			for (integer icol = irow; icol <= my numberOfColumns; icol ++)
 				thy data [icol] [irow] = thy data [irow] [icol] *= my numberOfObservations - 1;

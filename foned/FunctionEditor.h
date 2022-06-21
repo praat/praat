@@ -145,7 +145,7 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu)
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 
 	virtual void v_distributeAreas () { }

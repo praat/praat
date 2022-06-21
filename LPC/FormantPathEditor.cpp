@@ -364,7 +364,8 @@ void structFormantPathEditor :: v_createChildren () {
 		GuiText_setChangedCallback (our text, gui_text_cb_changed, this);*/
 }
 
-void structFormantPathEditor :: v_dataChanged () {
+void structFormantPathEditor :: v1_dataChanged () {
+	FormantPathEditor_Parent :: v1_dataChanged ();
 	//if (our textgrid) {
 		/*
 			Perform a minimal selection change.
@@ -375,7 +376,6 @@ void structFormantPathEditor :: v_dataChanged () {
 	//}
 	our d_formant = FormantPath_extractFormant (our formantPath());
 	our v_updateMenuItems_navigation ();
-	FormantPathEditor_Parent :: v_dataChanged ();
 }
 
 /********** DRAWING AREA **********/

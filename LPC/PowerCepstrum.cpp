@@ -471,7 +471,7 @@ double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, dou
 autoMatrix PowerCepstrum_to_Matrix (PowerCepstrum me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix created.");
@@ -483,7 +483,7 @@ autoPowerCepstrum Matrix_to_PowerCepstrum (Matrix me) {
 		Melder_require (my ny == 1,
 			U"Matrix should have exactly 1 row.");
 		autoPowerCepstrum thee = Thing_new (PowerCepstrum);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PowerCepstrum.");

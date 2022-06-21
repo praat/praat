@@ -113,9 +113,9 @@
 	}
 
 #define oo_DEFINE_CLASS(Class, Parent)  \
-	void struct##Class :: v_copy (Daata _thee_Daata) { \
+	void struct##Class :: v1_copy (Daata _thee_Daata) { \
 		Class thee = static_cast <Class> (_thee_Daata); \
-		Class##_Parent :: v_copy (thee);
+		Class##_Parent :: v1_copy (thee);
 
 #define oo_END_CLASS(Class)  \
 	}

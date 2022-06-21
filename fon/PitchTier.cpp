@@ -153,7 +153,7 @@ void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, doub
 autoPitchTier RealTier_to_PitchTier (RealTier me) {
 	try {
 		autoPitchTier thee = Thing_new (PitchTier);
-		my structRealTier :: v_copy (thee.get());
+		my structRealTier :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PitchTier.");

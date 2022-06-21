@@ -38,9 +38,9 @@ static void updateRange (SpectrumEditor me) {
 	}
 }
 
-void structSpectrumEditor :: v_dataChanged () {
+void structSpectrumEditor :: v1_dataChanged () {
+	SpectrumEditor_Parent :: v1_dataChanged ();
 	updateRange (this);
-	SpectrumEditor_Parent :: v_dataChanged ();
 }
 
 void structSpectrumEditor :: v_draw () {

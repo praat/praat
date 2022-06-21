@@ -24,8 +24,8 @@
 Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
 	Movie movie() { return static_cast <Movie> (our data); }
 
-	void v_dataChanged () override {
-		MovieWindow_Parent :: v_dataChanged ();
+	void v1_dataChanged () override {
+		MovieWindow_Parent :: v1_dataChanged ();
 		our soundArea -> functionChanged (our movie() -> d_sound.get());
 	}
 

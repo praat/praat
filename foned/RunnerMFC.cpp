@@ -33,7 +33,7 @@
 
 Thing_implement (RunnerMFC, Editor, 0);
 
-void structRunnerMFC :: v_dataChanged () {
+void structRunnerMFC :: v1_dataChanged () {
 	Graphics_updateWs (our graphics.get());
 }
 

@@ -97,7 +97,7 @@ Thing_define (DataEditor, ClassEditor) {
 
 	void v9_destroy () noexcept
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 };
 

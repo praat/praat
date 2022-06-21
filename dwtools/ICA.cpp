@@ -451,7 +451,7 @@ autoCovariance Sound_to_Covariance_channels (Sound me, double startTime, double 
         const double lagStep = 0.0;
         autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, startTime, endTime, lagStep);
         autoCovariance him = Thing_new (Covariance);
-        thy structCrossCorrelationTable :: v_copy (him.get());
+        thy structCrossCorrelationTable :: v1_copy (him.get());
         return him;
     } catch (MelderError) {
         Melder_throw (me, U": no Covariance created.");
@@ -567,7 +567,7 @@ autoMixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me) {
 		Melder_require (my numberOfColumns == my numberOfRows,
 			U"Number of rows and columns should be equal.");
 		autoMixingMatrix thee = Thing_new (MixingMatrix);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to MixingMatrix.");
