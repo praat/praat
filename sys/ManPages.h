@@ -29,7 +29,7 @@ Thing_define (ManPages, Daata) {
 
 	void v9_destroy () noexcept
 		override;
-	void v_readText (MelderReadText text, int formatVersion)
+	void v1_readText (MelderReadText text, int formatVersion)
 		override;
 };
 

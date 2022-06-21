@@ -2,7 +2,7 @@
 #define _Categories_h_
 /* Categories.h
  *
- * Copyright (C) 1993-2017 David Weenink, 2015,2018 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2015,2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 Thing_define (Categories, StringList) {
 	void v1_info ()
 		override;
-	void v_readText (MelderReadText text, int formatVersion)
+	void v1_readText (MelderReadText text, int formatVersion)
 		override;
-	void v_writeText (MelderFile file)
+	void v1_writeText (MelderFile file)
 		override;
 };
 

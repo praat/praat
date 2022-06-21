@@ -57,7 +57,7 @@ void structWordList :: v1_info () {
 	MelderInfo_writeLine (U"Number of characters: ", length - n);
 }
 
-void structWordList :: v_readBinary (FILE *f, int formatVersion) {
+void structWordList :: v1_readBinary (FILE *f, int formatVersion) {
 	if (formatVersion <= 0) {
 		our length = bingeti32 (f);
 		if (our length < 0)

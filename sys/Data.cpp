@@ -31,21 +31,10 @@ bool structDaata :: v_canWriteAsEncoding (int /* encoding */) {
 	return true;
 }
 
-void structDaata :: v_writeText (MelderFile /* openFile */) {
-}
-
-void structDaata :: v_readText (MelderReadText, int /* formatVersion */) {
-}
-
-void structDaata :: v_writeBinary (FILE *) {
-}
-
-void structDaata :: v_readBinary (FILE *, int /*formatVersion*/) {
-}
-
 autoDaata _Data_copy (Daata me) {
 	try {
-		if (! me) return autoDaata();
+		if (! me)
+			return autoDaata();
 		autoDaata thee = Thing_newFromClass (my classInfo).static_cast_move <structDaata> ();
 		my v_copy (thee.get());
 		Thing_setName (thee.get(), my name.get());
@@ -56,7 +45,8 @@ autoDaata _Data_copy (Daata me) {
 }
 
 bool Data_equal (Daata me, Daata thee) {
-	if (my classInfo != thy classInfo) return false;   // different class: not equal
+	if (my classInfo != thy classInfo)
+		return false;   // different class: not equal
 	int offset = sizeof (struct structDaata);   // we already compared the methods, and are going to skip the names
 	if (! memcmp ((char *) me + offset, (char *) thee + offset, my classInfo -> size - offset))   // BUG: not necessarily portable
 		return true;   // no shallow differences
@@ -72,7 +62,7 @@ bool Data_canWriteText (Daata me) {
 }
 
 void Data_writeText (Daata me, MelderFile openFile) {
-	my v_writeText (openFile);
+	my v1_writeText (openFile);
 	if (ferror (openFile -> filePointer))
 		Melder_throw (U"I/O error.");
 }
@@ -143,7 +133,7 @@ bool Data_canWriteBinary (Daata me) {
 }
 
 void Data_writeBinary (Daata me, FILE *f) {
-	my v_writeBinary (f);
+	my v1_writeBinary (f);
 	if (ferror (f))
 		Melder_throw (U"I/O error.");
 }
@@ -173,7 +163,7 @@ bool Data_canReadText (Daata me) {
 
 void Data_readText (Daata me, MelderReadText text, int formatVersion) {
 	try {
-		my v_readText (text, formatVersion);
+		my v1_readText (text, formatVersion);
 		my v_repair ();
 	} catch (MelderError) {
 		Melder_throw (Thing_className (me), U" not read.");
@@ -222,7 +212,7 @@ bool Data_canReadBinary (Daata me) {
 
 void Data_readBinary (Daata me, FILE *f, int formatVersion) {
 	try {
-		my v_readBinary (f, formatVersion);
+		my v1_readBinary (f, formatVersion);
 		if (feof (f))
 			Melder_throw (U"Early end of file.");
 		if (ferror (f))

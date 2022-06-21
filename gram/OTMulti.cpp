@@ -63,7 +63,7 @@ void structOTMulti :: v1_info () {
 	MelderInfo_writeLine (U"Number of violation marks: ", numberOfViolations);
 }
 
-void structOTMulti :: v_writeText (MelderFile file) {
+void structOTMulti :: v1_writeText (MelderFile file) {
 	MelderFile_write (file, U"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
 		U">\n", leak, U" ! leak\n", our numberOfConstraints, U" constraints");
 	for (integer icons = 1; icons <= our numberOfConstraints; icons ++) {
@@ -99,8 +99,8 @@ void OTMulti_checkIndex (OTMulti me) {
 	OTMulti_sort (me);
 }
 
-void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
-	OTMulti_Parent :: v_readText (text, formatVersion);
+void structOTMulti :: v1_readText (MelderReadText text, int formatVersion) {
+	OTMulti_Parent :: v1_readText (text, formatVersion);
 	if (formatVersion >= 1) {
 		try {
 			decisionStrategy = (kOTGrammar_decisionStrategy) texgete8 (text, (enum_generic_getValue) kOTGrammar_decisionStrategy_getValue);

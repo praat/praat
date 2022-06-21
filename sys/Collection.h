@@ -456,16 +456,16 @@ struct CollectionOf : structDaata {
 	bool v_canWriteAsEncoding (int outputEncoding) override {
 		return _CollectionOfDaata_v_canWriteAsEncoding (reinterpret_cast<_CollectionOfDaata*> (this), outputEncoding);
 	}
-	void v_writeText (MelderFile openFile) override {
+	void v1_writeText (MelderFile openFile) override {
 		_CollectionOfDaata_v_writeText (reinterpret_cast<_CollectionOfDaata*> (this), openFile);
 	}
-	void v_readText (MelderReadText text, int formatVersion) override {
+	void v1_readText (MelderReadText text, int formatVersion) override {
 		_CollectionOfDaata_v_readText (reinterpret_cast<_CollectionOfDaata*> (this), text, formatVersion);
 	}
-	void v_writeBinary (FILE *f) override {
+	void v1_writeBinary (FILE *f) override {
 		_CollectionOfDaata_v_writeBinary (reinterpret_cast<_CollectionOfDaata*> (this), f);
 	}
-	void v_readBinary (FILE *f, int formatVersion) override {
+	void v1_readBinary (FILE *f, int formatVersion) override {
 		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
 	}
 	Data_Description v_description () override {

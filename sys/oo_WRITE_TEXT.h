@@ -117,7 +117,7 @@
 	for (integer _i = 1; _i <= our x.size; _i ++) { \
 		ItemClass data = our x.at [_i]; \
 		texputintro (_file_, U"" #x U" [", Melder_integer (_i), U"]:"); \
-		data -> struct##ItemClass :: v_writeText (_file_); \
+		data -> struct##ItemClass :: v1_writeText (_file_); \
 		texexdent (_file_); \
 	}
 
@@ -127,7 +127,7 @@
 		for (integer _i = 1; _i <= our x->size; _i ++) { \
 			ItemClass data = our x->at [_i]; \
 			texputintro (_file_, U"" #x U" [", Melder_integer (_i), U"]:"); \
-			data -> struct##ItemClass :: v_writeText (_file_); \
+			data -> struct##ItemClass :: v1_writeText (_file_); \
 			texexdent (_file_); \
 		} \
 	}
@@ -143,8 +143,8 @@
 	}
 
 #define oo_DEFINE_CLASS(Class, Parent)  \
-	void struct##Class :: v_writeText (MelderFile _file_) { \
-		Class##_Parent :: v_writeText (_file_);
+	void struct##Class :: v1_writeText (MelderFile _file_) { \
+		Class##_Parent :: v1_writeText (_file_);
 
 #define oo_END_CLASS(Class)  \
 	}

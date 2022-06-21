@@ -190,12 +190,12 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 	} else {
 		int32 l_size = bingeti32 (f);
 		if (Melder_debug == 44)
-			Melder_casual (U"structCollection :: v_readBinary: Reading ", l_size, U" objects");
+			Melder_casual (U"structCollection :: v1_readBinary: Reading ", l_size, U" objects");
 		my _grow (l_size);
 		for (int32 i = 1; i <= l_size; i ++) {
 			autostring8 klas = bingets8 (f);
 			if (Melder_debug == 44)
-				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.get()));
+				Melder_casual (U"structCollection :: v1_readBinary: Reading object of type ", Melder_peek8to32 (klas.get()));
 			int elementFormatVersion;
 			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas.get()), & elementFormatVersion).releaseToAmbiguousOwner();
 			my size ++;
@@ -203,7 +203,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 				U"Objects of class ", Thing_className (my at [i]), U" cannot be read.");
 			autostring32 name = bingetw16 (f);
 			if (Melder_debug == 44)
-				Melder_casual (U"structCollection :: v_readBinary: Reading object with name ", name.get());
+				Melder_casual (U"structCollection :: v1_readBinary: Reading object with name ", name.get());
 			Thing_setName (my at [i], name.get());
 			Data_readBinary (my at [i], f, elementFormatVersion);
 		}

@@ -30,7 +30,7 @@ void structCategories :: v1_info () {
 	MelderInfo_writeLine (U"Number of unique categories: ", set->size);
 }
 
-void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
+void structCategories :: v1_readText (MelderReadText a_text, int /*formatVersion*/) {
 	integer l_size = texgeti32 (a_text);
 	if (l_size == 0)
 		(void) 0;
@@ -41,17 +41,17 @@ void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*
 
 	for (integer i = 1; i <= l_size; i ++) {
 		autoSimpleString itemi = Thing_new (SimpleString);
-		itemi -> v_readText (a_text, 0);
+		itemi -> v1_readText (a_text, 0);
 		our addItemAtPosition_move (itemi.move(), i);
 	}
 }
 
-void structCategories :: v_writeText (MelderFile file) {
+void structCategories :: v1_writeText (MelderFile file) {
 	texputi32 (file, our size, U"size");
 	for (integer i = 1; i <= our size; i ++) {
 		SimpleString data = our at [i];
 		texputintro (file, U"item [", Melder_integer (i), U"]:");
-		data -> structSimpleString :: v_writeText (file);
+		data -> structSimpleString :: v1_writeText (file);
 		texexdent (file);
 	}
 }
