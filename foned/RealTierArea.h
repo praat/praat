@@ -64,7 +64,7 @@ public:
 	integer firstSelected, lastSelected;
 
 	void viewRealTierAsWorldByWorld () const {
-		our setViewport ();
+		FunctionArea_setViewport (this);
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 	}
 

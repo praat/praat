@@ -100,7 +100,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 
 void Strings_writeToRawTextFile (Strings me, MelderFile file) {
 	try {
-		my assertInvariants ();
+		Thing_assertInvariants (me);
 		autoMelderString buffer;
 		for (integer i = 1; i <= my numberOfStrings; i ++)
 			MelderString_append (& buffer, my strings [i].get(), U"\n");

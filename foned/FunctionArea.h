@@ -80,8 +80,8 @@ public:
 		_ymin_fraction = ymin_fraction;
 		_ymax_fraction = ymax_fraction;
 	}
-	void setViewport() const {
-		Graphics_setViewport (our graphics(), our left_pxlt(), our right_pxlt(), our bottom_pxlt(), our top_pxlt());
+	friend void FunctionArea_setViewport (constFunctionArea me) {
+		Graphics_setViewport (my graphics(), my left_pxlt(), my right_pxlt(), my bottom_pxlt(), my top_pxlt());
 	}
 	void setSelection (double startSelection, double endSelection) {
 		_editor -> startSelection = startSelection;

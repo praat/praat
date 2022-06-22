@@ -96,13 +96,13 @@ void structRealTierEditor :: v_distributeAreas () {
 
 void structRealTierEditor :: v_draw () {
 	if (our sound()) {
-		our soundArea -> setViewport ();
+		FunctionArea_setViewport (our soundArea.get());
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		SoundArea_draw (our soundArea.get());
 	}
-	our realTierArea -> setViewport ();
+	FunctionArea_setViewport (our realTierArea.get());
 
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);

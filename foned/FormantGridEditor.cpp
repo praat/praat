@@ -178,7 +178,7 @@ void structFormantGridEditor :: v_createMenus () {
 /********** DRAWING AREA **********/
 
 void structFormantGridEditor :: v_draw () {
-	our formantGridArea -> setViewport();
+	FunctionArea_setViewport (our formantGridArea.get());
 
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);

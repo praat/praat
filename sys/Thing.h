@@ -50,6 +50,7 @@ struct structClassInfo {
 
 #define Thing_declare(klas) \
 	typedef struct struct##klas *klas; \
+	typedef const struct struct##klas *const##klas; \
 	typedef autoSomeThing <struct##klas> auto##klas; \
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
@@ -72,7 +73,8 @@ struct structClassInfo {
 	Thing has no parent class, so instead of using the Thing_define macro
 	we write out the stuff that does exist.
 */
-typedef struct structThing *Thing;
+typedef struct structThing *Thing;   // we need an explicit "struct" here, because this is a forward declaration
+typedef const struct structThing *constThing;
 extern ClassInfo classThing;
 extern struct structClassInfo theClassInfo_Thing;
 struct structThing {
@@ -117,7 +119,9 @@ struct structThing {
 		/*
 			derived::v1_assertInvariants typically calls base::v1_assertInvariants at start
 		*/
-	void assertInvariants () { our v1_assertInvariants (); }
+	friend void Thing_assertInvariants (Thing me) {
+		my v1_assertInvariants ();
+	}
 	virtual void v_checkConstraints () { }
 		/*
 			derived::v_checkConstraints typically calls base::v_checkConstraints at start
