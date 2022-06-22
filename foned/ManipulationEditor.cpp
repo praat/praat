@@ -618,7 +618,7 @@ static void drawPitchArea (ManipulationEditor me) {
 	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
 	const double minimumFrequency = 50.0;
 
-	my pitchTierArea -> setViewport();
+	FunctionArea_setViewport (my pitchTierArea.get());
 
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_WHITE);
@@ -669,7 +669,7 @@ static void drawPitchArea (ManipulationEditor me) {
 static void drawDurationArea (ManipulationEditor me) {
 	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
 
-	my durationTierArea -> setViewport();
+	FunctionArea_setViewport (my durationTierArea.get());
 
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_WHITE);
