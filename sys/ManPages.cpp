@@ -220,7 +220,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		}
 	}
 }
-void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
+void structManPages :: v1_readText (MelderReadText text, int /*formatVersion*/) {
 	our dynamic = true;
 	MelderDir_copy (& Data_directoryBeingRead, & our rootDirectory);
 	readOnePage (this, text);

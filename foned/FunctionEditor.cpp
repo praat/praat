@@ -1450,7 +1450,7 @@ void structFunctionEditor :: v_createChildren () {
 	GuiDrawingArea_setSwipable (our drawingArea, our scrollBar, nullptr);
 }
 
-void structFunctionEditor :: v_dataChanged () {
+void structFunctionEditor :: v1_dataChanged () {
 	Melder_assert (Thing_isa (our function(), classFunction));
 	our tmin = our function() -> xmin;
  	our tmax = our function() -> xmax;

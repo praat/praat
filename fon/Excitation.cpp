@@ -1,6 +1,6 @@
 /* Excitation.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ void Excitation_draw (Excitation me, Graphics g,
 autoMatrix Excitation_to_Matrix (Excitation me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());   // BUG: safe, but compiler should be able to check
+		my structMatrix :: v1_copy (thee.get());   // BUG: safe, but compiler should be able to check
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -145,7 +145,7 @@ autoMatrix Excitation_to_Matrix (Excitation me) {
 autoExcitation Matrix_to_Excitation (Matrix me) {
 	try {
 		autoExcitation thee = Thing_new (Excitation);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Excitation.");

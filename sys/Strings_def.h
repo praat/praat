@@ -26,8 +26,8 @@ oo_DEFINE_CLASS (Strings, Daata)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		void v_assertInvariants () override {
-			our structDaata :: v_assertInvariants ();
+		void v1_assertInvariants () override {
+			our Strings_Parent :: v1_assertInvariants ();
 			Melder_assert (our strings.size == our numberOfStrings);
 		}
 		void maintainInvariants () {

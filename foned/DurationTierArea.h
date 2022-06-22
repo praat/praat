@@ -28,7 +28,7 @@ Thing_define (DurationTierArea, RealTierArea) {
 		override { return U""; }
 
 	#include "DurationTierArea_prefs.h"
-	void v_repairPreferences () override;
+	void v9_repairPreferences () override;
 };
 
 DEFINE_FunctionArea_create (DurationTierArea, DurationTier)

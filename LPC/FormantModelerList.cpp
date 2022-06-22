@@ -37,10 +37,10 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantModelerList_def.h"
 /*
-void structFormantModelerListDrawingSpecification :: v_writeBinary (FILE *_filePointer_) {}
-void structFormantModelerList :: v_writeBinary (FILE *_filePointer_) {}
-void structFormantModelerListDrawingSpecification :: v_readBinary (FILE *_filePointer_, int _formatVersion_) {}
-void structFormantModelerList :: v_readBinary (FILE *_filePointer_, int _formatVersion_) {}
+void structFormantModelerListDrawingSpecification :: v1_writeBinary (FILE *_filePointer_) {}
+void structFormantModelerList :: v1_writeBinary (FILE *_filePointer_) {}
+void structFormantModelerListDrawingSpecification :: v1_readBinary (FILE *_filePointer_, int _formatVersion_) {}
+void structFormantModelerList :: v1_readBinary (FILE *_filePointer_, int _formatVersion_) {}
 
 */
 void structFormantModelerList :: v1_info () {

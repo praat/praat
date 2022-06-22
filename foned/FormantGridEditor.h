@@ -23,8 +23,8 @@
 
 Thing_define (FormantGridEditor, FunctionEditor) {
 	autoFormantGridArea formantGridArea;
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our formantGridArea -> _formantGrid = static_cast <FormantGrid> (our data);
 		OrderedOf<structRealTier>* tiers =
 				( our formantGridArea -> editingBandwidths ? & our formantGridArea -> _formantGrid -> bandwidths : & our formantGridArea -> _formantGrid -> formants );
@@ -36,7 +36,7 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 
 	void v_createMenus ()
 		override;
-	void v_distributeAreas () {
+	void v_distributeAreas () override {
 		our formantGridArea -> setGlobalYRange_fraction (0.0, 1.0);
 	}
 	void v_draw ()

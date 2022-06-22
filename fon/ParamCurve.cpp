@@ -54,12 +54,12 @@ void structParamCurve :: v1_info () {
 	MelderInfo_writeLine (U"   Maximum y: ", yextrema.max);
 }
 
-void structParamCurve :: v_writeText (MelderFile file) {
+void structParamCurve :: v1_writeText (MelderFile file) {
 	Data_writeText (our x.get(), file);
 	Data_writeText (our y.get(), file);
 }
 
-void structParamCurve :: v_readText (MelderReadText text, int formatVersion) {
+void structParamCurve :: v1_readText (MelderReadText text, int formatVersion) {
 	our x = Thing_new (Sound);
 	our y = Thing_new (Sound);
 	Data_readText (our x.get(), text, formatVersion);
@@ -68,12 +68,12 @@ void structParamCurve :: v_readText (MelderReadText text, int formatVersion) {
 	our xmax = our x -> xmax < our y -> xmax ? our x -> xmax : our y -> xmax;
 }
 
-void structParamCurve :: v_writeBinary (FILE *f) {
+void structParamCurve :: v1_writeBinary (FILE *f) {
 	Data_writeBinary (x.get(), f);
 	Data_writeBinary (y.get(), f);
 }
 
-void structParamCurve :: v_readBinary (FILE *f, int /*formatVersion*/) {
+void structParamCurve :: v1_readBinary (FILE *f, int /*formatVersion*/) {
 	our x = Thing_new (Sound);
 	our y = Thing_new (Sound);
 	Data_readBinary (our x.get(), f, 2);

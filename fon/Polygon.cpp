@@ -41,7 +41,7 @@ void structPolygon :: v1_info () {
 	MelderInfo_writeLine (U"Perimeter: ", Melder_single (Polygon_perimeter (this)));
 }
   
-void structPolygon :: v_writeText (MelderFile file) {
+void structPolygon :: v1_writeText (MelderFile file) {
 	texputi32 (file, our numberOfPoints, U"numberOfPoints");
 	for (integer i = 1; i <= our numberOfPoints; i ++) {
 		texputr64 (file, our x [i], U"x [", Melder_integer (i), U"]");
@@ -49,7 +49,7 @@ void structPolygon :: v_writeText (MelderFile file) {
 	}
 }
 
-void structPolygon :: v_readText (MelderReadText text, int /*formatVersion*/) {
+void structPolygon :: v1_readText (MelderReadText text, int /*formatVersion*/) {
 	our numberOfPoints = texgeti32 (text);
 	if (our numberOfPoints < 1)
 		Melder_throw (U"Cannot read a Polygon with only ", our numberOfPoints, U" points.");

@@ -44,7 +44,7 @@ void structTransition :: v1_info () {
 	MelderInfo_writeLine (U"Number of states: ", numberOfStates);
 }
 
-void structTransition :: v_writeText (MelderFile file) {
+void structTransition :: v1_writeText (MelderFile file) {
 	texputi32 (file, numberOfStates, U"numberOfStates");
 	MelderFile_write (file, U"\nstateLabels []: ");
 	if (numberOfStates < 1) MelderFile_write (file, U"(empty)");

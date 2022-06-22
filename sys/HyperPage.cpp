@@ -939,7 +939,7 @@ void HyperPage_clear (HyperPage me) {
 	Graphics_updateWs (my graphics.get());
 }
 
-void structHyperPage :: v_dataChanged () {
+void structHyperPage :: v1_dataChanged () {
 	const bool oldError = Melder_hasError ();   // this method can be called during error time
 	(void) our v_goToPage (our currentPageTitle.get());
 	if (Melder_hasError () && ! oldError)

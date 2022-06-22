@@ -1,6 +1,6 @@
 /* ERPTier.cpp
  *
- * Copyright (C) 2011-2012,2014-2019,2021 Paul Boersma
+ * Copyright (C) 2011-2012,2014-2019,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -235,7 +235,7 @@ autoERP ERPTier_extractERP (ERPTier me, integer eventNumber) {
 		ERPPoint event = my points.at [eventNumber];
 		Melder_assert (event -> erp -> ny == my numberOfChannels);
 		autoERP thee = Thing_new (ERP);
-		event -> erp -> structSound :: v_copy (thee.get());
+		event -> erp -> structSound :: v1_copy (thee.get());
 		thy channelNames = copy_STRVEC (my channelNames.get());
 		return thee;
 	} catch (MelderError) {
@@ -251,7 +251,7 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 		ERPPoint firstEvent = my points.at [1];
 		Melder_assert (firstEvent -> erp -> ny == my numberOfChannels);
 		autoERP mean = Thing_new (ERP);
-		firstEvent -> erp -> structSound :: v_copy (mean.get());
+		firstEvent -> erp -> structSound :: v1_copy (mean.get());
 		Melder_assert (mean -> ny == my numberOfChannels);
 		for (integer ievent = 2; ievent <= numberOfEvents; ievent ++) {
 			ERPPoint event = my points.at [ievent];

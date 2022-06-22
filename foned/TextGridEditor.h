@@ -46,7 +46,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 	void v_createMenuItems_file_extract (EditorMenu menu)
 		override;

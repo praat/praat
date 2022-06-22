@@ -45,7 +45,7 @@ static void fprintquotedstring (MelderFile file, conststring32 s) {
 	MelderFile_writeCharacter (file, U'\"');
 }
 
-void structTableOfReal :: v_writeText (MelderFile file) {
+void structTableOfReal :: v1_writeText (MelderFile file) {
 	texputi32 (file, our numberOfColumns, U"numberOfColumns");
 	MelderFile_write (file, U"\ncolumnLabels []: ");
 	if (our numberOfColumns < 1) MelderFile_write (file, U"(empty)");
@@ -65,7 +65,7 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 	}
 }
 
-void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
+void structTableOfReal :: v1_readText (MelderReadText a_text, int /*formatVersion*/) {
 	our numberOfColumns = texgeti32 (a_text);
 	if (our numberOfColumns >= 1) {
 		our columnLabels = autoSTRVEC (our numberOfColumns);

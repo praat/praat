@@ -1256,13 +1256,13 @@ void structTextGridEditor :: v_createChildren () {
 		GuiText_setChangedCallback (our textArea, gui_text_cb_changed, this);
 }
 
-void structTextGridEditor :: v_dataChanged () {
+void structTextGridEditor :: v1_dataChanged () {
 	/*
 		Perform a minimal selection change.
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
 		Do a simple guess.
 	*/
-	TextGridEditor_Parent :: v_dataChanged ();   // does all the updating
+	TextGridEditor_Parent :: v1_dataChanged ();   // does all the updating
 	Melder_clipRight (& our selectedTier, our textGrid() -> tiers->size);
 }
 

@@ -31,8 +31,8 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 
 	void v_createMenus ()
 		override;
-	void v_dataChanged () override {
-		our RealTierEditor_Parent :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our RealTierEditor_Parent :: v1_dataChanged ();
 		our realTierArea -> functionChanged (static_cast <RealTier> (our data));
 	}
 

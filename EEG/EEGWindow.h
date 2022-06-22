@@ -24,9 +24,9 @@
 Thing_define (EEGWindow, TextGridEditor) {
 	EEG eeg() { return static_cast <EEG> (our data); }
 
-	void v_dataChanged () override {
+	void v1_dataChanged () override {
 		TRACE trace(1);
-		our structTextGridEditor :: v_dataChanged ();
+		our structTextGridEditor :: v1_dataChanged ();
 		trace(2);
 		Melder_assert (our eeg());
 		trace(Thing_className(our eeg()));

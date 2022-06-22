@@ -1309,7 +1309,7 @@ void structVowelEditor :: v_createChildren ()
 	our height = GuiControl_getHeight (drawingArea);
 }
 
-void structVowelEditor :: v_repairPreferences () {
+void structVowelEditor :: v9_repairPreferences () {
 	if (! (our instancePref_window_f1min() < our instancePref_window_f1max())) {   // NaN-safe test
 		our setInstancePref_window_f1min (Melder_atof (our default_window_f1min()));
 		our setInstancePref_window_f1max (Melder_atof (our default_window_f1max()));
@@ -1344,6 +1344,7 @@ void structVowelEditor :: v_repairPreferences () {
 		our setInstancePref_grid_df1 (Melder_atof (our default_grid_df1()));
 	if (! (our instancePref_grid_df2() > 0.0))   // NaN-safe test
 		our setInstancePref_grid_df2 (Melder_atof (our default_grid_df2()));
+	VowelEditor_Parent :: v9_repairPreferences ();
 }
 
 autoVowelEditor VowelEditor_create (conststring32 title) {

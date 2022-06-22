@@ -1,6 +1,6 @@
 /* ERP.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2011-2012,2014-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int
 autoSound ERP_downto_Sound (ERP me) {
 	try {
 		autoSound thee = Thing_new (Sound);
-		my structSound :: v_copy (thee.get());
+		my structSound :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");

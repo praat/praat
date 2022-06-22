@@ -42,8 +42,8 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	autoPitchTierArea pitchTierArea;
 	autoDurationTierArea durationTierArea;
 
-	void v_dataChanged () override {
-		ManipulationEditor_Parent :: v_dataChanged ();
+	void v1_dataChanged () override {
+		ManipulationEditor_Parent :: v1_dataChanged ();
 		our pitchTierArea -> functionChanged (our pitch());
 		our durationTierArea -> functionChanged (our duration());
 	}

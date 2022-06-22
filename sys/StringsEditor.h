@@ -31,7 +31,7 @@ Thing_define (StringsEditor, Editor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 };
 

@@ -113,11 +113,11 @@ struct structThing {
 			and then writes information on the new data (i.e., it chains down),
 			but a few ancestors can be skipped if their data have new meanings.
 		*/
-	virtual void v_assertInvariants () { }
+	virtual void v1_assertInvariants () { }
 		/*
-			derived::v_assertInvariants typically calls base::v_assertInvariants at start
+			derived::v1_assertInvariants typically calls base::v1_assertInvariants at start
 		*/
-	void assertInvariants () { our v_assertInvariants (); }
+	void assertInvariants () { our v1_assertInvariants (); }
 	virtual void v_checkConstraints () { }
 		/*
 			derived::v_checkConstraints typically calls base::v_checkConstraints at start
@@ -126,13 +126,16 @@ struct structThing {
 		/*
 			derived::v_nameChanged may call base::v_nameChanged at start, middle or end
 		*/
-	virtual void v_copyPreferencesToInstance () { }
+	virtual void v1_copyPreferencesToInstance () { }
 		/*
-			derived::v_copyPreferencesToInstance calls base::v_copyPreferencesToInstance at start
+			derived::v1_copyPreferencesToInstance calls base::v1_copyPreferencesToInstance at *start*,
+			because specifications at derived level have to override those of the base level
 		*/
-	virtual void v_repairPreferences () { }
+	virtual void v9_repairPreferences () { }
 		/*
-			derived::v_repairPreferences may call base::v_repairPreferences at start
+			derived::v9_repairPreferences may call base::v9_repairPreferences at *end*,
+			because restrictions at base level may be laxer than restrictions at derived level
+			(preferences will be overridden only if their current value violates a restriction)
 		*/
 };
 

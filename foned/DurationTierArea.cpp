@@ -27,12 +27,13 @@ Thing_implement (DurationTierArea, RealTierArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "DurationTierArea_prefs.h"
 
-void structDurationTierArea :: v_repairPreferences () {
+void structDurationTierArea :: v9_repairPreferences () {
 	if (our instancePref_dataFreeMinimum() > 1.0)
 		our setInstancePref_dataFreeMinimum (Melder_atof (our default_dataFreeMinimum()));
 	if (our instancePref_dataFreeMaximum() < 1.0)
 		our setInstancePref_dataFreeMaximum (Melder_atof (our default_dataFreeMaximum()));
 	Melder_assert (our instancePref_dataFreeMinimum() < our instancePref_dataFreeMaximum());
+	DurationTierArea_Parent :: v9_repairPreferences ();
 }
 
 /* End of file DurationTierArea.cpp */

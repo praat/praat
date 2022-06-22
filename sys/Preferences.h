@@ -57,7 +57,7 @@ void Preferences_exit_optimizeByLeaking ();
 
 #define Prefs_begin(Klas) \
 	public: static void f_preferences (); \
-	void v_copyPreferencesToInstance () override;
+	void v1_copyPreferencesToInstance () override;
 
 #define Prefs_addAny_default_(DefaultType,name) \
 	private: \

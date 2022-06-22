@@ -274,7 +274,7 @@ autoCovariance SSCP_to_Covariance (SSCP me, integer numberOfConstraints) {
 	try {
 		Melder_assert (numberOfConstraints >= 0);
 		autoCovariance thee = Thing_new (Covariance);
-		my structSSCP :: v_copy (thee.get());
+		my structSSCP :: v1_copy (thee.get());
 
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
 			for (integer icol = irow; icol <= my numberOfColumns; icol ++)   // a covariance matrix is symmetric

@@ -67,7 +67,7 @@ autoIntensity Intensity_create (double tmin, double tmax, integer nt, double dt,
 autoMatrix Intensity_to_Matrix (Intensity me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -77,7 +77,7 @@ autoMatrix Intensity_to_Matrix (Intensity me) {
 autoIntensity Matrix_to_Intensity (Matrix me) {
 	try {
 		autoIntensity thee = Thing_new (Intensity);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Intensity.");

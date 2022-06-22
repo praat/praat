@@ -20,8 +20,8 @@
 
 #undef  Prefs_begin
 #define Prefs_begin(Klas) \
-	void struct##Klas :: v_copyPreferencesToInstance () { \
-		Klas##_Parent :: v_copyPreferencesToInstance ();
+	void struct##Klas :: v1_copyPreferencesToInstance () { \
+		Klas##_Parent :: v1_copyPreferencesToInstance ();
 
 #undef  ClassPrefs_addInt
 #define ClassPrefs_addInt(Klas,name,version,default)

@@ -445,7 +445,7 @@ autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 		Melder_require (TableOfReal_isNonNegative (me),
 			U"No cell in the table should be negative.");
 		autoDissimilarity thee = Thing_new (Dissimilarity);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Dissimilarity.");
@@ -459,7 +459,7 @@ autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 		Melder_require (TableOfReal_isNonNegative (me),
 			U"No cell in the table should be negative.");
 		autoSimilarity thee = Thing_new (Similarity);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Similarity.");
@@ -473,7 +473,7 @@ autoDistance TableOfReal_to_Distance (TableOfReal me) {
 		Melder_require (TableOfReal_isNonNegative (me),
 			U"No cell in the table should be negative.");
 		autoDistance thee = Thing_new (Distance);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Distance.");
@@ -485,7 +485,7 @@ autoSalience TableOfReal_to_Salience (TableOfReal me) {
 		Melder_require (TableOfReal_isNonNegative (me),
 			U"No cell in the table should be negative.");
 		autoSalience thee = Thing_new (Salience);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Salience.");
@@ -497,7 +497,7 @@ autoWeight TableOfReal_to_Weight (TableOfReal me) {
 		Melder_require (TableOfReal_isNonNegative (me),
 			U"No cell in the table should be negative.");
 		autoWeight thee = Thing_new (Weight);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Weight.");
@@ -509,7 +509,7 @@ autoScalarProduct TableOfReal_to_ScalarProduct (TableOfReal me) {
 		Melder_require (my numberOfRows == my numberOfColumns,
 			U"TableOfReal should be a square table.");
 		autoScalarProduct thee = Thing_new (ScalarProduct);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ScalarProduct.");

@@ -51,8 +51,8 @@ void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, autoK
 # pragma mark - KlattGrid_PitchTierEditor
 
 Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> pitch.get());
 	}
 	void v_createHelpMenuItems (EditorMenu menu)
@@ -72,8 +72,8 @@ autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (conststring32 ti
 #pragma mark - KlattGrid_VoicingAmplitudeTierEditor
 
 Thing_define (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> voicingAmplitude.get());
 	}
 };
@@ -83,8 +83,8 @@ autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_cr
 #pragma mark - KlattGrid_FlutterTierEditor
 
 Thing_define (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> flutter.get());
 	}
 	conststring32 v_quantityText ()
@@ -102,8 +102,8 @@ autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring3
 #pragma mark - KlattGrid_Power1TierEditor
 
 Thing_define (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> power1.get());
 	}
 	conststring32 v_quantityText ()
@@ -121,8 +121,8 @@ autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 
 #pragma mark - KlattGrid_Power2TierEditor
 
 Thing_define (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> power2.get());
 	}
 	conststring32 v_quantityText ()
@@ -140,8 +140,8 @@ autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 
 #pragma mark - KlattGrid_OpenPhaseTierEditor
 
 Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> openPhase.get());
 	}
 	conststring32 v_quantityText ()
@@ -159,8 +159,8 @@ autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststr
 #pragma mark - KlattGrid_CollisionPhaseTierEditor
 
 Thing_define (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> collisionPhase.get());
 	}
 	conststring32 v_quantityText ()
@@ -178,8 +178,8 @@ autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create
 #pragma mark - KlattGrid_DoublePulsingTierEditor
 
 Thing_define (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> doublePulsing.get());
 	}
 	conststring32 v_quantityText ()
@@ -197,8 +197,8 @@ autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (
 #pragma mark - KlattGrid_SpectralTiltTierEditor
 
 Thing_define (KlattGrid_SpectralTiltTierEditor, KlattGrid_IntensityTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> spectralTilt.get());
 	}
 };
@@ -208,8 +208,8 @@ autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (co
 #pragma mark - KlattGrid_AspirationAmplitudeTierEditor
 
 Thing_define (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> aspirationAmplitude.get());
 	}
 };
@@ -219,8 +219,8 @@ autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEdi
 #pragma mark - KlattGrid_BreathinessAmplitudeTierEditor
 
 Thing_define (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> breathinessAmplitude.get());
 	}
 };
@@ -232,8 +232,8 @@ autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierE
 Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 	kKlattGridFormantType formantType;
 	integer iformant;
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (
 				KlattGrid_getAddressOfAmplitudes (our klattgrid(), our formantType)->at [our iformant]);
 	}
@@ -253,8 +253,8 @@ autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring3
 #pragma mark - KlattGrid_FricationBypassTierEditor
 
 Thing_define (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> frication -> bypass.get());
 	}
 };
@@ -264,8 +264,8 @@ autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_crea
 #pragma mark - KlattGrid_FricationAmplitudeTierArea
 
 Thing_define (KlattGrid_FricationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> frication -> fricationAmplitude.get());
 	}
 };
@@ -278,8 +278,8 @@ Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
 	KlattGrid klattgrid() { return static_cast <KlattGrid> (our data); }
 	kKlattGridFormantType formantType;
 
-	void v_dataChanged () override {
-		our structFunctionEditor :: v_dataChanged ();
+	void v1_dataChanged () override {
+		our structFunctionEditor :: v1_dataChanged ();
 		our formantGridArea -> _formantGrid = KlattGrid_getAddressOfFormantGrid (our klattgrid(), our formantType)->get();
 		OrderedOf<structRealTier>* tiers =
 				( our formantGridArea -> editingBandwidths ? & our formantGridArea -> _formantGrid -> bandwidths : & our formantGridArea -> _formantGrid -> formants );

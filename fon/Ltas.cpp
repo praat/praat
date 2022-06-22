@@ -1,6 +1,6 @@
 /* Ltas.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environme
 autoMatrix Ltas_to_Matrix (Ltas me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -109,7 +109,7 @@ autoMatrix Ltas_to_Matrix (Ltas me) {
 autoLtas Matrix_to_Ltas (Matrix me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
-		my structMatrix :: v_copy (thee.get());   // because copying to a descendant of Matrix with additional members should not crash
+		my structMatrix :: v1_copy (thee.get());   // because copying to a descendant of Matrix with additional members should not crash
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Ltas.");

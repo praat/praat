@@ -306,7 +306,7 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 autoMatrix PowerCepstrogram_to_Matrix (PowerCepstrogram me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -328,7 +328,7 @@ autoPowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, 
 autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 	try {
 		autoPowerCepstrogram thee = Thing_new (PowerCepstrogram);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PowerCepstrogram.");

@@ -1,6 +1,6 @@
 /* AmplitudeTier.cpp
  *
- * Copyright (C) 2003-2012,2014-2021 Paul Boersma
+ * Copyright (C) 2003-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ autoAmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double sound
 autoAmplitudeTier RealTier_to_AmplitudeTier (RealTier me) {
 	try {
 		autoAmplitudeTier thee = Thing_new (AmplitudeTier);
-		my structRealTier :: v_copy (thee.get());
+		my structRealTier :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to AmplitudeTier.");
@@ -58,7 +58,7 @@ autoAmplitudeTier RealTier_to_AmplitudeTier (RealTier me) {
 autoAmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 	try {
 		autoAmplitudeTier thee = Thing_new (AmplitudeTier);
-		my structRealTier :: v_copy (thee.get());
+		my structRealTier :: v1_copy (thee.get());
 		for (integer i = 1; i <= thy points.size; i ++) {
 			RealPoint point = thy points.at [i];
 			point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
@@ -73,7 +73,7 @@ autoIntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double thres
 	try {
 		double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   // often zero!
 		autoIntensityTier thee = Thing_new (IntensityTier);
-		my structRealTier :: v_copy (thee.get());
+		my structRealTier :: v1_copy (thee.get());
 		for (integer i = 1; i <= thy points.size; i ++) {
 			RealPoint point = thy points.at [i];
 			double absoluteValue = fabs (point -> value);

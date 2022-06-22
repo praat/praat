@@ -61,7 +61,7 @@ autoDurationTier PointProcess_upto_DurationTier (PointProcess me) {
 autoDurationTier RealTier_to_DurationTier (RealTier me) {
 	try {
 		autoDurationTier thee = Thing_new (DurationTier);
-		my structRealTier :: v_copy (thee.get());
+		my structRealTier :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to DurationTier.");

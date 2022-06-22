@@ -342,7 +342,7 @@ autoSound Matrix_to_Sound_mono (Matrix me, integer rowNumber) {
 autoSound Matrix_to_Sound (Matrix me) {
 	try {
 		autoSound thee = Thing_new (Sound);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
@@ -352,7 +352,7 @@ autoSound Matrix_to_Sound (Matrix me) {
 autoMatrix Sound_to_Matrix (Sound me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
