@@ -1981,7 +1981,7 @@ bool structTimeSoundAnalysisEditor :: v_mouseInWideDataView (GuiDrawingArea_Mous
 	return TimeSoundAnalysisEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
-void structTimeSoundAnalysisEditor :: v_repairPreferences () {
+void structTimeSoundAnalysisEditor :: v9_repairPreferences () {
 	if (! (our instancePref_pitch_floor() < our instancePref_pitch_ceiling())) {   // NaN-safe test
 		our setInstancePref_pitch_floor (Melder_atof (our default_pitch_floor()));
 		our setInstancePref_pitch_ceiling (Melder_atof (our default_pitch_ceiling()));
@@ -2015,6 +2015,7 @@ void structTimeSoundAnalysisEditor :: v_repairPreferences () {
 		if (! our v_hasPulses ())
 			our setInstancePref_pulses_show (false);
 	}
+	TimeSoundAnalysisEditor_Parent :: v9_repairPreferences ();
 }
 
 /* End of file TimeSoundAnalysisEditor.cpp */

@@ -79,7 +79,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
 
 	#include "TimeSoundAnalysisEditor_prefs.h"
-	void v_repairPreferences () override;
+	void v9_repairPreferences () override;
 };
 
 void TimeSoundAnalysisEditor_haveVisibleSpectrogram (TimeSoundAnalysisEditor me);

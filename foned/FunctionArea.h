@@ -47,8 +47,8 @@ public:
 		if (functionToCopy)
 			my _functionCopy = Data_copy (functionToCopy);
 		my _editable = editable;
-		my v_copyPreferencesToInstance ();
-		my v_repairPreferences ();   // BUG: collapse with previous into Thing_installSensiblePreferencesIntoInstance
+		my v1_copyPreferencesToInstance ();
+		my v9_repairPreferences ();   // BUG: collapse with previous into Thing_installSensiblePreferencesIntoInstance
 	}
 	bool functionHasBeenCopied () {
 		return !! _functionCopy;

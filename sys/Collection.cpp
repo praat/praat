@@ -64,7 +64,7 @@ bool _CollectionOfDaata_v1_equal (_CollectionOfDaata* me, _CollectionOfDaata* th
 	return true;
 }
 
-bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
+bool _CollectionOfDaata_v1_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
 	for (integer i = 1; i <= my size; i ++) {
 		Daata data = my at [i];
 		if (data -> name && ! Melder_isEncodable (data -> name.get(), encoding))
@@ -75,7 +75,7 @@ bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encodi
 	return true;
 }
 
-void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
+void _CollectionOfDaata_v1_writeText (_CollectionOfDaata* me, MelderFile file) {
 	texputi32 (file, my size, U"size");
 	texputintro (file, U"item []: ", my size ? nullptr : U"(empty)");
 	for (integer i = 1; i <= my size; i ++) {
@@ -96,7 +96,7 @@ void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
 	texexdent (file);
 }
 
-void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion) {
+void _CollectionOfDaata_v1_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion) {
 	if (formatVersion < 0) {
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
 		integer l_size;
@@ -153,7 +153,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 	}
 }
 
-void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
+void _CollectionOfDaata_v1_writeBinary (_CollectionOfDaata* me, FILE *f) {
 	binputi32 (my size, f);
 	for (integer i = 1; i <= my size; i ++) {
 		Daata thing = my at [i];
@@ -167,7 +167,7 @@ void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
 	}
 }
 
-void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion) {
+void _CollectionOfDaata_v1_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion) {
 	if (formatVersion < 0) {
 		int32 l_size = bingeti32 (f);
 		if (l_size < 0)

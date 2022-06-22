@@ -61,7 +61,7 @@ Thing_define (VowelEditor, Editor) {
 		override;
 
 	#include "VowelEditor_prefs.h"
-	void v_repairPreferences () override;
+	void v9_repairPreferences () override;
 
 	/* only in cb_mouse: */
 	double anchorTime;
