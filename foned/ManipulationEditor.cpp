@@ -24,6 +24,8 @@
 #include "Pitch_to_PointProcess.h"
 #include "EditorM.h"
 
+Thing_implement (ManipulationPitchTierArea, PitchTierArea, 0);
+
 Thing_implement (ManipulationDurationTierArea, DurationTierArea, 0);
 
 #include "enums_getText.h"
@@ -615,57 +617,55 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_resetViewport (my graphics.get(), viewport);
 }
 
-static void drawPitchArea (ManipulationEditor me) {
-	const integer n = ( my pitch() ? my pitch() -> points.size : 0 );
-	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
-	const double minimumFrequency = 50.0;
+void structManipulationPitchTierArea :: v_drawOverFrame () {
+	const bool cursorVisible = (
+		our startSelection() == our endSelection() &&
+		our startSelection() >= our startWindow() &&
+		our startSelection() <= our endWindow()
+	);
 
-	FunctionArea_setViewport (my pitchTierArea.get());
+	Graphics_setWindow (graphics(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (graphics(), Melder_BLUE);
+	Graphics_setFont (graphics(), kGraphics_font::TIMES);
+	Graphics_setTextAlignment (graphics(), Graphics_RIGHT, Graphics_TOP);
+	Graphics_text (graphics(), 1.0, 1.0, U"%%Pitch manip");
+	Graphics_setColour (graphics(), MelderColour (0.7));
+	Graphics_text (graphics(), 1.0, 1.0 - Graphics_dyMMtoWC (graphics(), 3.0), U"%%Pitch from pulses");
+	Graphics_setFont (graphics(), kGraphics_font::HELVETICA);
 
-	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_WHITE);
-	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
-	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-
-	Graphics_setColour (my graphics.get(), Melder_BLUE);
-	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
-	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Pitch manip");
-	Graphics_setGrey (my graphics.get(), 0.7);
-	Graphics_text (my graphics.get(), 1.0, 1.0 - Graphics_dyMMtoWC (my graphics.get(), 3), U"%%Pitch from pulses");
-	Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
-
-	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my pitchTierArea -> ymin, my pitchTierArea -> ymax);
+	Graphics_setWindow (graphics(), startWindow(), endWindow(), our ymin, our ymax);
 
 	/*
 		Draw pitch contour based on pulses.
 	*/
-	Graphics_setGrey (my graphics.get(), 0.7);
-	if (my pulses()) for (integer i = 1; i < my pulses() -> nt; i ++) {
-		const double tleft = my pulses() -> t [i], tright = my pulses() -> t [i + 1], t = 0.5 * (tleft + tright);
-		if (t >= my startWindow && t <= my endWindow) {
+	Graphics_setGrey (graphics(), 0.7);
+	/* BUG: should inlcude grey dots */
+	constPointProcess pulses = ((ManipulationEditor) _editor) -> pulses();
+	if (pulses) for (integer i = 1; i < pulses -> nt; i ++) {
+		const double tleft = pulses -> t [i], tright = pulses -> t [i + 1], t = 0.5 * (tleft + tright);
+		if (t >= startWindow() && t <= endWindow()) {
 			if (tleft != tright) {
 				const double y = 1.0 / (tright - tleft);
-				if (y >= my pitchTierArea -> ymin && y <= my pitchTierArea -> ymax)
-					Graphics_fillCircle_mm (my graphics.get(), t, y, 1.0);
+				if (y >= our ymin && y <= our ymax)
+					Graphics_fillCircle_mm (graphics(), t, y, 1.0);
 			}
 		}
 	}
-	Graphics_setGrey (my graphics.get(), 0.0);
+	Graphics_setGrey (graphics(), 0.0);
 
-	FunctionEditor_drawGridLine (me, minimumFrequency);
+	constexpr double minimumFrequency = 50.0;
+	FunctionEditor_drawGridLine (_editor, minimumFrequency);
+
+	const integer n = ( our pitchTier() ? our pitchTier() -> points.size : 0 );
 	if (cursorVisible && n > 0) {
-		const double y = RealTier_getValueAtTime (my pitch(), my startSelection);
-		FunctionEditor_insertCursorFunctionValue (me, y,
+		const double y = RealTier_getValueAtTime (pitchTier(), startSelection());
+		FunctionEditor_insertCursorFunctionValue (_editor, y,
 			Melder_fixed (y, 1), U" Hz",
-			my pitchTierArea -> ymin, my pitchTierArea -> ymax);
+			our ymin, our ymax);
 	}
-	RealTierArea_draw (my pitchTierArea.get());
-	if (isdefined (my pitchTierArea -> anchorTime))
-		RealTierArea_drawWhileDragging (my pitchTierArea.get());
-
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
+	ManipulationPitchTierArea_Parent :: v_drawOverFrame ();
+	if (isdefined (our anchorTime))
+		RealTierArea_drawWhileDragging (this);
 }
 
 void structManipulationDurationTierArea :: v_drawOverFrame () {
@@ -700,32 +700,30 @@ void structManipulationEditor :: v_draw () {
 	if (our sound())
 		drawSoundArea (this, ysoundmin, ysoundmax);
 	if (our pitch())
-		drawPitchArea (this);
+		FunctionArea_draw (our pitchTierArea.get());
 	if (our duration())
 		FunctionArea_draw (our durationTierArea.get());
 	updateMenus (this);
 }
 
 bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
-	static bool clickedInWidePitchArea = false;
-	static bool clickedInWideDurationArea = false;
 	if (event -> isClick()) {
-		clickedInWidePitchArea = our pitchTierArea -> y_fraction_globalIsInside (globalY_fraction);
-		clickedInWideDurationArea = our durationTierArea -> y_fraction_globalIsInside (globalY_fraction);
+		our clickedInWidePitchArea = our pitchTierArea -> y_fraction_globalIsInside (globalY_fraction);
+		our clickedInWideDurationArea = our durationTierArea -> y_fraction_globalIsInside (globalY_fraction);
 	}
 	bool result = false;
-	if (clickedInWidePitchArea) {
+	if (our clickedInWidePitchArea) {
 		result = RealTierArea_mouse (our pitchTierArea.get(), event, x_world, globalY_fraction);
 		our pitchTierArea -> v_updateScaling ();
-	} else if (clickedInWideDurationArea) {
+	} else if (our clickedInWideDurationArea) {
 		result = RealTierArea_mouse (our durationTierArea.get(), event, x_world, globalY_fraction);
 		our durationTierArea -> v_updateScaling ();   // BUG: this is a method instead of a message
 	} else {
 		result = our ManipulationEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
 	if (event -> isDrop()) {
-		clickedInWidePitchArea = false;
-		clickedInWideDurationArea = false;
+		our clickedInWidePitchArea = false;
+		our clickedInWideDurationArea = false;
 	}
 	return result;
 }
@@ -742,7 +740,7 @@ void structManipulationEditor :: v_play (double startTime, double endTime) {
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
-		my pitchTierArea = PitchTierArea_create (true, nullptr, me.get());
+		my pitchTierArea = ManipulationPitchTierArea_create (true, nullptr, me.get());
 		my durationTierArea = ManipulationDurationTierArea_create (true, nullptr, me.get());
 		my durationTierArea -> ycursor = 1.0;   // BUG: should be in v1_dataChanged() or in member initialization (undefined there, perhaps?)
 		FunctionEditor_init (me.get(), title, manipulation);
