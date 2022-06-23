@@ -24,6 +24,8 @@
 #include "Pitch_to_PointProcess.h"
 #include "EditorM.h"
 
+Thing_implement (ManipulationDurationTierArea, DurationTierArea, 0);
+
 #include "enums_getText.h"
 #include "ManipulationEditor_enums.h"
 #include "enums_getValue.h"
@@ -666,41 +668,30 @@ static void drawPitchArea (ManipulationEditor me) {
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 }
 
-static void drawDurationArea (ManipulationEditor me) {
-	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
+void structManipulationDurationTierArea :: v_drawOverFrame () {
+	const bool cursorVisible = (
+		startSelection() == endSelection() &&
+		startSelection() >= startWindow() &&
+		startSelection() <= endWindow()
+	);
 
-	FunctionArea_setViewport (my durationTierArea.get());
+	Graphics_setWindow (graphics(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (graphics(), Melder_BLUE);
+	Graphics_setFont (graphics(), kGraphics_font::TIMES);
+	Graphics_setTextAlignment (graphics(), Graphics_RIGHT, Graphics_TOP);
+	Graphics_text (graphics(), 1.0, 1.0, U"%%Duration manip");
+	Graphics_setFont (graphics(), kGraphics_font::HELVETICA);
 
-	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_WHITE);
-	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
-	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-
-	Graphics_setColour (my graphics.get(), Melder_BLUE);
-	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
-	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Duration manip");
-	Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
-
-	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my durationTierArea -> ymin, my durationTierArea -> ymax);
-	FunctionEditor_drawGridLine (me, 1.0);
-	//FunctionEditor_drawRangeMark (me, my durationTierArea -> ymax, Melder_fixed (my durationTierArea -> ymax, 3), U"", Graphics_HALF);
-	//FunctionEditor_drawRangeMark (me, my durationTierArea -> ymin, Melder_fixed (my durationTierArea -> ymin, 3), U"", Graphics_HALF);
-	//if (my startSelection == my endSelection && my durationTierArea -> ycursor >= my durationTierArea -> ymin && my durationTierArea -> ycursor <= my durationTierArea -> ymax)
-	//	FunctionEditor_drawHorizontalHair (me, my durationTierArea -> ycursor, Melder_fixed (my durationTierArea -> ycursor, 3), U"");
-	if (cursorVisible && my duration() -> points.size > 0) {
-		const double y = RealTier_getValueAtTime (my duration(), my startSelection);
-		FunctionEditor_insertCursorFunctionValue (me, y, Melder_fixed (y, 3), U"", my durationTierArea -> ymin, my durationTierArea -> ymax);
+	Graphics_setWindow (graphics(), startWindow(), endWindow(), our ymin, our ymax);
+	FunctionEditor_drawGridLine (_editor, 1.0);   // BUG: should move to FunctionArea
+	if (cursorVisible && durationTier() -> points.size > 0) {
+		const double y = RealTier_getValueAtTime (durationTier(), startSelection());
+		FunctionEditor_insertCursorFunctionValue (_editor, y,   // BUG: should move to FunctionArea
+				Melder_fixed (y, 3), U"", our ymin, our ymax);
 	}
-
-	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my durationTierArea -> ymin, my durationTierArea -> ymax);
-	RealTierArea_draw (my durationTierArea.get());
-	if (isdefined (my durationTierArea -> anchorTime))
-		RealTierArea_drawWhileDragging (my durationTierArea.get());
-
-	Graphics_setLineWidth (my graphics.get(), 1.0);
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
+	ManipulationDurationTierArea_Parent :: v_drawOverFrame ();
+	if (isdefined (our anchorTime))
+		RealTierArea_drawWhileDragging (this);
 }
 
 void structManipulationEditor :: v_draw () {
@@ -711,7 +702,7 @@ void structManipulationEditor :: v_draw () {
 	if (our pitch())
 		drawPitchArea (this);
 	if (our duration())
-		drawDurationArea (this);
+		FunctionArea_draw (our durationTierArea.get());
 	updateMenus (this);
 }
 
@@ -752,7 +743,7 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		my pitchTierArea = PitchTierArea_create (true, nullptr, me.get());
-		my durationTierArea = DurationTierArea_create (true, nullptr, me.get());
+		my durationTierArea = ManipulationDurationTierArea_create (true, nullptr, me.get());
 		my durationTierArea -> ycursor = 1.0;   // BUG: should be in v1_dataChanged() or in member initialization (undefined there, perhaps?)
 		FunctionEditor_init (me.get(), title, manipulation);
 

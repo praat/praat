@@ -131,6 +131,9 @@ protected:
 public:
 	virtual conststring32 v_getChannelName (integer /* channelNumber */) { return nullptr; }
 
+protected:
+	void v_drawBehindFrame ()
+		override;
 	#include "SoundArea_prefs.h"
 };
 

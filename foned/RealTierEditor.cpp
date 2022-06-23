@@ -95,23 +95,9 @@ void structRealTierEditor :: v_distributeAreas () {
 }
 
 void structRealTierEditor :: v_draw () {
-	if (our sound()) {
-		FunctionArea_setViewport (our soundArea.get());
-		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
-		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		SoundArea_draw (our soundArea.get());
-	}
-	FunctionArea_setViewport (our realTierArea.get());
-
-	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Melder_WHITE);
-	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our realTierArea -> ymin, our realTierArea -> ymax);
-	RealTierArea_draw (our realTierArea.get());
+	if (our sound())
+		FunctionArea_draw (our soundArea.get());
+	FunctionArea_draw (our realTierArea.get());
 	if (isdefined (our realTierArea -> anchorTime))
 		RealTierArea_drawWhileDragging (our realTierArea.get());
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
