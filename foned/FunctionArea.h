@@ -83,6 +83,35 @@ public:
 	friend void FunctionArea_setViewport (constFunctionArea me) {
 		Graphics_setViewport (my graphics(), my left_pxlt(), my right_pxlt(), my bottom_pxlt(), my top_pxlt());
 	}
+private:
+	friend void FunctionArea_draw (FunctionArea me) {
+		Graphics_setViewport (my graphics(), my left_pxlt(), my right_pxlt(), my bottom_pxlt(), my top_pxlt());
+		my _drawBackground ();
+		my v_drawBehindFrame ();
+		my _drawCadre ();
+		my v_drawOverFrame ();
+	}
+	void _drawBackground () {
+		Graphics_setWindow (graphics(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (graphics(), Melder_WHITE);
+		Graphics_fillRectangle (graphics(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setLineWidth (graphics(), 1.0);
+		if (_editable) {
+			Graphics_setColour (graphics(), Melder_CYAN);
+			Graphics_innerRectangle (graphics(), 0.0, 1.0, 0.0, 1.0);
+		}
+		Graphics_setColour (graphics(), Melder_BLACK);
+	}
+	void _drawCadre () {
+		Graphics_setWindow (graphics(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setLineWidth (graphics(), 1.0);
+		Graphics_setColour (graphics(), Melder_BLACK);
+		Graphics_rectangle (graphics(), 0.0, 1.0, 0.0, 1.0);
+	}
+protected:
+	virtual void v_drawBehindFrame () { }
+	virtual void v_drawOverFrame () { }
+public:
 	void setSelection (double startSelection, double endSelection) {
 		_editor -> startSelection = startSelection;
 		_editor -> endSelection = endSelection;

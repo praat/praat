@@ -47,7 +47,12 @@ void RealTierArea_addPointAtCursor (RealTierArea me) {
 	RealTierArea_addPointAt (me, cursorTime, my ycursor);
 }
 
+void structRealTierArea :: v_drawOverFrame () {
+	RealTierArea_draw (this);
+}
+
 void RealTierArea_draw (RealTierArea me) {
+	Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), my ymin, my ymax);
 	Graphics_setColour (my graphics(), Melder_RED);
 	Graphics_line (my graphics(), my startWindow(), my ycursor, my endWindow(), my ycursor);
 	Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);

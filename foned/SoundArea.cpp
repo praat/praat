@@ -44,6 +44,10 @@ void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 
 	Graphics_text (my graphics(), my startWindow(), yWC,   yWC_string, units);
 }
 
+void structSoundArea :: v_drawBehindFrame () {
+	SoundArea_draw (this);
+}
+
 void SoundArea_draw (SoundArea me) {
 	Melder_assert (!! my sound() != !! my longSound());
 	const integer numberOfChannels = my soundOrLongSound() -> ny;
@@ -181,9 +185,6 @@ void SoundArea_draw (SoundArea me) {
 		/*
 			Garnish the drawing area of each channel.
 		*/
-		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics(), Melder_CYAN);
-		Graphics_innerRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (my graphics(), Melder_BLACK);
 		if (numberOfChannels > 1) {
 			Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
@@ -227,8 +228,8 @@ void SoundArea_draw (SoundArea me) {
 		}
 		Graphics_resetViewport (my graphics(), vp);
 	}
-	Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
+	//Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
+	//Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 }
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {

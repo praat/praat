@@ -81,6 +81,11 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 
 	#include "ManipulationEditor_prefs.h"
 };
+Thing_define (ManipulationDurationTierArea, DurationTierArea) {
+	void v_drawOverFrame ()
+		override;
+};
+DEFINE_FunctionArea_create (ManipulationDurationTierArea, PitchTier)
 
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation);
 

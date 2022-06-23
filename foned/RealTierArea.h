@@ -30,7 +30,6 @@ Thing_define (RealTierArea, FunctionArea) {
 	double ymin, ymax, ycursor;   // BUG: this should be in a cache
 public:   // BUG: should be "protected" (now public because it is sometimes used as a message)
 	virtual void v_updateScaling () {
-		TRACE trace(U"");
 		/*
 			Computes ymin, ymax and ycursor on the basis of the data.
 		*/
@@ -67,7 +66,8 @@ public:
 		FunctionArea_setViewport (this);
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 	}
-
+	void v_drawOverFrame ()
+		override;
 	#include "RealTierArea_prefs.h"
 };
 
