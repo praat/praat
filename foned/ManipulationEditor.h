@@ -25,6 +25,19 @@
 
 #include "ManipulationEditor_enums.h"
 
+Thing_define (ManipulationPitchTierArea, PitchTierArea) {
+	void v_drawOverFrame ()
+		override;
+};
+DEFINE_FunctionArea_create (ManipulationPitchTierArea, PitchTier)
+
+Thing_define (ManipulationDurationTierArea, DurationTierArea) {
+	void v_drawOverFrame ()
+		override;
+};
+DEFINE_FunctionArea_create (ManipulationDurationTierArea, DurationTier)
+
+
 Thing_define (ManipulationEditor, FunctionEditor) {
 	Manipulation manipulation() { return static_cast <Manipulation> (our data); }
 
@@ -41,6 +54,8 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	*/
 	autoPitchTierArea pitchTierArea;
 	autoDurationTierArea durationTierArea;
+	bool clickedInWidePitchArea = false;
+	bool clickedInWideDurationArea = false;
 
 	void v1_dataChanged () override {
 		ManipulationEditor_Parent :: v1_dataChanged ();
@@ -81,11 +96,6 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 
 	#include "ManipulationEditor_prefs.h"
 };
-Thing_define (ManipulationDurationTierArea, DurationTierArea) {
-	void v_drawOverFrame ()
-		override;
-};
-DEFINE_FunctionArea_create (ManipulationDurationTierArea, PitchTier)
 
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation);
 

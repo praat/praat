@@ -380,16 +380,6 @@ void structFormantPathEditor :: v1_dataChanged () {
 
 /********** DRAWING AREA **********/
 
-void structFormantPathEditor :: v_prepareDraw () {
-	if (our longSound()) {
-		try {
-			LongSound_haveWindow (our longSound(), our startWindow, our endWindow);
-		} catch (MelderError) {
-			Melder_clearError ();
-		}
-	}
-}
-
 void structFormantPathEditor :: v_draw () {
 	Graphics_Viewport vp1;
 	const bool showAnalysis = our v_hasAnalysis () &&

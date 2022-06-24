@@ -54,8 +54,6 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_createMenuItems_file_draw (EditorMenu menu)
 		override;
-	void v_prepareDraw ()
-		override;
 	void v_distributeAreas ()
 		override;
 	void v_draw ()

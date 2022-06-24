@@ -54,13 +54,13 @@ Thing_implement (SoundAndLongSoundList, Ordered, 0);
 #define USE_MEMMOVE  1
 
 constexpr integer minimumBufferDuration = 10;   // seconds
-constexpr integer defaultBufferDuration = 60;   // seconds
+constexpr integer defaultBufferDuration = 600;   // seconds
 constexpr integer maximumBufferDuration = 10000;   // seconds
 
 static integer prefs_bufferLength;
 
 void LongSound_preferences () {
-	Preferences_addInteger (U"LongSound.bufferLength", & prefs_bufferLength, defaultBufferDuration);
+	Preferences_addInteger (U"LongSound.bufferLength2", & prefs_bufferLength, defaultBufferDuration);
 }
 
 integer LongSound_getBufferSizePref_seconds () {

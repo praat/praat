@@ -291,16 +291,6 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 void structSoundEditor :: v_distributeAreas () {
 }
 
-void structSoundEditor :: v_prepareDraw () {
-	if (our longSound()) {
-		try {
-			LongSound_haveWindow (our longSound(), our startWindow, our endWindow);
-		} catch (MelderError) {
-			Melder_clearError ();
-		}
-	}
-}
-
 void structSoundEditor :: v_draw () {
 	Graphics_Viewport viewport;
 	const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||

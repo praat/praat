@@ -169,6 +169,7 @@
 
 #define oo_DEFINE_CLASS(klas,parent) \
 	typedef struct struct##klas *klas; \
+	typedef const struct struct##klas *const##klas; \
 	typedef autoSomeThing <struct##klas> auto##klas; \
 	typedef struct##parent klas##_Parent; \
 	extern struct structClassInfo theClassInfo_##klas; \

@@ -154,7 +154,6 @@ Thing_define (FunctionEditor, Editor) {
 	virtual bool v_hasSelectionViewer () { return false; }
 	virtual void v_drawSelectionViewer () { }
 	virtual void v_drawRealTimeSelectionViewer (double /* time */) { }
-	virtual void v_prepareDraw () { }   // for less flashing
 	virtual conststring32 v_domainName () { return U"time"; }
 	virtual conststring32 v_selectionViewerName () { return U"selection viewer"; }
 	virtual conststring32 v_format_domain () { return U"Time domain:"; }
