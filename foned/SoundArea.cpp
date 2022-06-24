@@ -50,6 +50,15 @@ void structSoundArea :: v_drawBehindFrame () {
 
 void SoundArea_draw (SoundArea me) {
 	Melder_assert (!! my sound() != !! my longSound());
+
+	if (my longSound()) {
+		try {
+			LongSound_haveWindow (my longSound(), my startWindow(), my endWindow());
+		} catch (MelderError) {
+			Melder_clearError ();
+		}
+	}
+
 	const integer numberOfChannels = my soundOrLongSound() -> ny;
 	const bool cursorVisible = ( my startSelection() == my endSelection() &&
 			my startSelection() >= my startWindow() && my startSelection() <= my endWindow() );

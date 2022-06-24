@@ -346,11 +346,6 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 
 	/*
-		To reduce flashing, give our descendants the opportunity to prepare their data.
-	*/
-	my v_prepareDraw ();
-
-	/*
 		Start of inner drawing.
 	*/
 	my v_distributeAreas ();

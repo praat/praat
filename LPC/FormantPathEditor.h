@@ -64,8 +64,6 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v1_dataChanged ()
 		override;
-	void v_prepareDraw ()
-		override;
 	void v_draw ()
 		override;
 	bool v_hasSelectionViewer ()

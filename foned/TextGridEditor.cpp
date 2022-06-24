@@ -1268,16 +1268,6 @@ void structTextGridEditor :: v1_dataChanged () {
 
 /********** DRAWING AREA **********/
 
-void structTextGridEditor :: v_prepareDraw () {
-	if (our longSound()) {
-		try {
-			LongSound_haveWindow (our longSound(), our startWindow, our endWindow);
-		} catch (MelderError) {
-			Melder_clearError ();
-		}
-	}
-}
-
 void structTextGridEditor :: v_distributeAreas () {
 	const bool showAnalysis = v_hasAnalysis () &&
 		(instancePref_spectrogram_show() || instancePref_pitch_show() || instancePref_intensity_show() || instancePref_formant_show()) &&
