@@ -1,4 +1,4 @@
-/* AnyTextGridEditor_enums.h
+/* TextGridArea_enums.h
  *
  * Copyright (C) 1992-2005,2007,2013,2015,2016,2020,2022 Paul Boersma
  *
@@ -16,10 +16,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kTextGridEditor_showNumberOf, 1)
-	enums_add (kTextGridEditor_showNumberOf, 1, NOTHING, U"nothing")
-	enums_add (kTextGridEditor_showNumberOf, 2, INTERVALS_OR_POINTS, U"intervals or points")
-	enums_add (kTextGridEditor_showNumberOf, 3, NONEMPTY_INTERVALS_OR_POINTS, U"non-empty intervals or points")
-enums_end (kTextGridEditor_showNumberOf, 3, INTERVALS_OR_POINTS)
+enums_begin (kTextGridArea_showNumberOf, 1)
+	enums_add (kTextGridArea_showNumberOf, 1, NOTHING, U"nothing")
+	enums_add (kTextGridArea_showNumberOf, 2, INTERVALS_OR_POINTS, U"intervals or points")
+	enums_add (kTextGridArea_showNumberOf, 3, NONEMPTY_INTERVALS_OR_POINTS, U"non-empty intervals or points")
+enums_end (kTextGridArea_showNumberOf, 3, INTERVALS_OR_POINTS)
 
-/* End of file AnyTextGridEditor_enums.h */
+/* End of file TextGridArea_enums.h */

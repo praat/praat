@@ -23,7 +23,7 @@
 #include "SpellingChecker.h"
 #include "Preferences.h"
 
-#include "AnyTextGridEditor_enums.h"
+#include "TextGridArea_enums.h"
 
 Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 	TextGrid textGrid() { return static_cast <TextGrid> (our data); }

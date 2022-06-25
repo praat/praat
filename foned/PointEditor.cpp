@@ -247,8 +247,8 @@ autoPointEditor PointEditor_create (conststring32 title, PointProcess pointProce
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
 		if (sound) {
-			my monoSound = Sound_convertToMono (sound);
-			my soundArea = SoundArea_create (false, nullptr, me.get());   // PointEditor will delete the sound
+			autoSound monoSound = Sound_convertToMono (sound);
+			my soundArea = SoundArea_create (false, monoSound.get(), me.get());   // BUG: double copy
 		}
 		FunctionEditor_init (me.get(), title, pointProcess);
 		return me;

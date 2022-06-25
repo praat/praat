@@ -42,25 +42,24 @@ private:
 		Initialization.
 	*/
 public:
-	friend void FunctionArea_init (FunctionArea me, bool editable, Function functionToCopy, FunctionEditor boss) {
+	friend void FunctionArea_init (FunctionArea me, bool editable, Function optionalFunctionToCopy, FunctionEditor boss) {
 		my _editable = editable;
-		if (functionToCopy)
-			my _functionCopy = Data_copy (functionToCopy);
+		my _optionalFunctionCopy = Data_copy (optionalFunctionToCopy);
 		my _editor = boss;
 		my v1_copyPreferencesToInstance ();
 		my v9_repairPreferences ();   // BUG: collapse with previous into Thing_installSensiblePreferencesIntoInstance
 	}
 	bool functionHasBeenCopied () {
-		return !! _functionCopy;
+		return !! _optionalFunctionCopy;
 	}
 protected:
 	FunctionEditor _editor;
 private:
-	autoFunction _functionCopy;
+	autoFunction _optionalFunctionCopy;
 
 public:
 	void functionChanged (Function newFunction) {
-		our _function = ( our _functionCopy ? our _functionCopy.get() : newFunction);
+		our _function = ( our _optionalFunctionCopy ? our _optionalFunctionCopy.get() : newFunction);
 		our v_invalidateAllDerivedDataCaches ();
 		our v_computeAuxiliaryData ();
 	}

@@ -6,7 +6,7 @@ include ../makefile.defs
 CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../external/portaudio -I ../external/flac -I ../external/mp3 -I ../external/espeak
 
 OBJECTS = SoundRecorder.o \
-   FunctionArea.o SoundArea.o \
+   FunctionArea.o SoundArea.o TextGridArea.o \
    RealTierArea.o PitchTierArea.o IntensityTierArea.o DurationTierArea.o AmplitudeTierArea.o \
    FormantGridArea.o \
    FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \

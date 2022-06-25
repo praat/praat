@@ -585,7 +585,7 @@ void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
 POSITIVE_VARIABLE (v_prefs_addFields__fontSize)
 OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals)
 OPTIONMENU_VARIABLE (v_prefs_addFields__useTextStyles)
-OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf)
+OPTIONMENU_ENUM_VARIABLE (kTextGridArea_showNumberOf, v_prefs_addFields__showNumberOf)
 void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
 	POSITIVE_FIELD (v_prefs_addFields__fontSize, U"Font size (points)", our default_fontSize ())
@@ -594,15 +594,15 @@ void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 	OPTIONMENU_FIELD (v_prefs_addFields__useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles() + 1)
 		OPTION (U"are shown as typed")
 		OPTION (U"mean italic/bold/sub/super")
-	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf,
-			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kTextGridArea_showNumberOf, v_prefs_addFields__showNumberOf,
+			U"Show number of", kTextGridArea_showNumberOf::DEFAULT)
 }
 
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields__useTextStyles, our instancePref_useTextStyles() + 1)
 	SET_REAL (v_prefs_addFields__fontSize, our instancePref_fontSize())
 	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our instancePref_alignment())
-	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our instancePref_showNumberOf())
+	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridArea_showNumberOf, our instancePref_showNumberOf())
 }
 
 void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
