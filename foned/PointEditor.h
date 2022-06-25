@@ -28,7 +28,7 @@ Thing_define (PointEditor, TimeSoundEditor) {
 	GuiObject addPointAtDialog;
 
 	void v1_dataChanged () override {
-		PointEditor_Parent :: v1_dataChanged ();
+		structFunctionEditor :: v1_dataChanged ();   // crucially skipping TimeSoundEditor::v1_dataChanged(), because its functionChanged() would crash
 		if (our soundArea)
 			our soundArea -> functionChanged (our monoSound.get());
 	}

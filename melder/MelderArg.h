@@ -2,7 +2,7 @@
 #define _melder_arg_h_
 /* MelderArg.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
  */
 
 typedef class structThing *Thing;   // forward declaration
-conststring32 Thing_messageName (Thing me);
+typedef const class structThing *constThing;   // forward declaration
+conststring32 Thing_messageName (constThing me);
 
 struct MelderArg {
 	const conststring32 _arg;
@@ -48,7 +49,7 @@ struct MelderArg {
 	MelderArg (VECVU const&              arg) : _arg (Melder_VEC             (arg)) { }
 	MelderArg (MATVU const&              arg) : _arg (Melder_MAT             (arg)) { }
 	MelderArg (STRVEC const&             arg) : _arg (Melder_STRVEC          (arg)) { }
-	MelderArg (Thing                     arg) : _arg (Thing_messageName      (arg)) { }
+	MelderArg (constThing                arg) : _arg (Thing_messageName      (arg)) { }
 	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName (arg)) { }
 	/*
 		There could be more types of arguments, but those are rare;

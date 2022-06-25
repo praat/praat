@@ -21,7 +21,7 @@
 
 /********** class Collection **********/
 
-void _CollectionOfDaata_v1_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
+void _CollectionOfDaata_v1_copy (const _CollectionOfDaata* me, _CollectionOfDaata* thee) {
 	thy at._elements = nullptr;   // set to null in case the inherited v1_copy crashes
 	my structDaata :: v1_copy (thee);
 	thy _ownershipInitialized = my _ownershipInitialized;

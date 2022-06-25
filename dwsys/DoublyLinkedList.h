@@ -25,7 +25,7 @@ Thing_define (DoublyLinkedNode, Daata) {
 	DoublyLinkedNode next, prev;
 	autoDaata data;
 
-	void v1_copy (Daata data_to)
+	void v1_copy (Daata data_to) const
 		override;
 };
 

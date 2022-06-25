@@ -1,5 +1,5 @@
 # Makefile of the library "foned"
-# Paul Boersma, 19 June 2022
+# Paul Boersma, 25 June 2022
 
 include ../makefile.defs
 
@@ -13,7 +13,7 @@ OBJECTS = SoundRecorder.o \
    PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
    RealTierEditor.o PitchTierEditor.o IntensityTierEditor.o \
    DurationTierEditor.o AmplitudeTierEditor.o \
-   ManipulationEditor.o TextGridEditor.o FormantGridEditor.o \
+   ManipulationEditor.o AnyTextGridEditor.o TextGridEditor.o FormantGridEditor.o \
    RunnerMFC.o MovieWindow.o
 
 .PHONY: all clean

@@ -497,13 +497,13 @@ Thing_define (Vertex, Daata) {
 	int intersect, entry;
 	bool processed;
 
-	void v1_copy (Daata data_to)
+	void v1_copy (Daata data_to) const
 		override;
 };
 
 Thing_implement (Vertex, Daata, 0);
 
-void structVertex :: v1_copy (Daata thee_Daata) {
+void structVertex :: v1_copy (Daata thee_Daata) const {
 	Vertex thee = static_cast <Vertex> (thee_Daata);
 	thy x = our x;
 	thy y = our y;

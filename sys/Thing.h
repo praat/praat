@@ -216,7 +216,7 @@ Thing _Thing_dummyObject (ClassInfo classInfo);
 
 conststring32 Thing_getName (Thing me);
 /* Return a pointer to your internal name (which can be null). */
-conststring32 Thing_messageName (Thing me);
+conststring32 Thing_messageName (constThing me);
 conststring32 Thing_messageNameAndAddress (Thing me);   // for debugging
 
 void Thing_setName (Thing me, conststring32 name /* cattable */);

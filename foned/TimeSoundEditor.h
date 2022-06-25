@@ -31,11 +31,6 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
 	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 
-	void v1_dataChanged () override {
-		our TimeSoundEditor_Parent :: v1_dataChanged ();
-		if (our soundArea)
-			our soundArea -> functionChanged (static_cast <SampledXY> (our data));   // arg crucially ignored if our sound is a copy
-	}
 	void v1_info ()
 		override;
 	void v_createMenuItems_file (EditorMenu menu)

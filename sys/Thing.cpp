@@ -207,7 +207,7 @@ conststring32 Thing_getName (Thing me) {
 	return my name.get();
 }
 
-conststring32 Thing_messageName (Thing me) {
+conststring32 Thing_messageName (constThing me) {
 	static MelderString buffers [19];
 	static int ibuffer = 0;
 	if (++ ibuffer == 19)

@@ -24,6 +24,11 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 	GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
 	double maxBuffer;
 
+	void v1_dataChanged () override {
+		SoundEditor_Parent :: v1_dataChanged ();
+		Thing_cast (SampledXY, soundOrLongSound, our data);
+		our soundArea -> functionChanged (soundOrLongSound);
+	}
 	void v_createMenus ()
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
