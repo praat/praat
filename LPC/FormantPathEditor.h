@@ -29,7 +29,7 @@
 #include "TextGrid.h"
 #include "TimeSoundAnalysisEditor.h"
 
-#include "TextGridEditor_enums.h"
+#include "AnyTextGridEditor_enums.h"
 /*
 	We might add one tier named formant-log if the input textgrid does not have our specific log tier.
 	

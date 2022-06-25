@@ -18,15 +18,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TextGridEditor.h"
+#include "AnyTextGridEditor.h"
 #include "EEGArea.h"
 
-Thing_define (EEGWindow, TextGridEditor) {
+Thing_define (EEGWindow, AnyTextGridEditor) {
 	EEG eeg() { return static_cast <EEG> (our data); }
 
 	void v1_dataChanged () override {
 		TRACE trace(1);
-		our structTextGridEditor :: v1_dataChanged ();
+		our EEGWindow_Parent :: v1_dataChanged ();
 		trace(2);
 		Melder_assert (our eeg());
 		trace(Thing_className(our eeg()));

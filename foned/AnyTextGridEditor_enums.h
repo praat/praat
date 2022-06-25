@@ -1,6 +1,6 @@
-/* TextGridEditor_enums.h
+/* AnyTextGridEditor_enums.h
  *
- * Copyright (C) 1992-2005,2007,2013,2015,2016,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2013,2015,2016,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,4 +22,4 @@ enums_begin (kTextGridEditor_showNumberOf, 1)
 	enums_add (kTextGridEditor_showNumberOf, 3, NONEMPTY_INTERVALS_OR_POINTS, U"non-empty intervals or points")
 enums_end (kTextGridEditor_showNumberOf, 3, INTERVALS_OR_POINTS)
 
-/* End of file TextGridEditor_enums.h */
+/* End of file AnyTextGridEditor_enums.h */

@@ -19,7 +19,7 @@
 #include "EEGWindow.h"
 #include "EditorM.h"
 
-Thing_implement (EEGWindow, TextGridEditor, 0);
+Thing_implement (EEGWindow, AnyTextGridEditor, 0);
 
 #include "Prefs_define.h"
 #include "EEGWindow_prefs.h"
@@ -35,7 +35,7 @@ void structEEGWindow :: v_createMenus () {
 }
 
 void structEEGWindow :: v_createHelpMenuItems (EditorMenu menu) {
-	TextGridEditor_Parent :: v_createHelpMenuItems (menu);
+	AnyTextGridEditor_Parent :: v_createHelpMenuItems (menu);   // BUG: skips TextGridEditor help (without any)
 	EditorMenu_addCommand (menu, U"EEGWindow help", '?', menu_cb_EEGWindowHelp);
 }
 
@@ -79,7 +79,7 @@ autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 		TRACE trace(Melder_pointer(eeg -> sound.get()));
 		my soundArea = EEGArea_create (me.get(), nullptr, false);
 
-		TextGridEditor_init (me.get(), title,
+		AnyTextGridEditor_init (me.get(), title,
 			eeg -> textgrid.get(),   // BUG: data should be EEG, but TextGridEditor expects TextGrid
 			nullptr,   // no spelling checker
 			nullptr   // no callback socket
