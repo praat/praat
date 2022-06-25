@@ -24,13 +24,12 @@
 Thing_define (PointEditor, TimeSoundEditor) {
 	PointProcess pointProcess() { return static_cast <PointProcess> (our data); }
 	
-	autoSound monoSound;
 	GuiObject addPointAtDialog;
 
 	void v1_dataChanged () override {
-		structFunctionEditor :: v1_dataChanged ();   // crucially skipping TimeSoundEditor::v1_dataChanged(), because its functionChanged() would crash
+		PointEditor_Parent :: v1_dataChanged ();
 		if (our soundArea)
-			our soundArea -> functionChanged (our monoSound.get());
+			our soundArea -> functionChanged (nullptr);
 	}
 
 	void v_createMenus ()

@@ -1558,7 +1558,7 @@ DIRECT (NEW_WordList_upto_SpellingChecker) {
 void praat_uvafon_TextGrid_init () {
 	Thing_recognizeClassByOtherName (classTextTier, U"MarkTier");
 
-	structTextGridEditor :: f_preferences ();
+	structAnyTextGridEditor :: f_preferences ();
 
 	praat_addAction1 (classIntervalTier, 1, U"Save as Xwaves label file...", nullptr, 0, SAVE_IntervalTier_writeToXwaves);
 	praat_addAction1 (classIntervalTier, 1,   U"Write to Xwaves label file...", nullptr, praat_DEPRECATED_2011, SAVE_IntervalTier_writeToXwaves);

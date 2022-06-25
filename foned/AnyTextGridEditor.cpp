@@ -25,11 +25,6 @@
 #include "TextGrid_Sound.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
 
-#include "enums_getText.h"
-#include "AnyTextGridEditor_enums.h"
-#include "enums_getValue.h"
-#include "AnyTextGridEditor_enums.h"
-
 Thing_implement (AnyTextGridEditor, TimeSoundAnalysisEditor, 0);
 
 #include "Prefs_define.h"
@@ -1519,12 +1514,12 @@ void structAnyTextGridEditor :: v_draw () {
 		Graphics_setFontSize (our graphics.get(), oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
-					our instancePref_showNumberOf() == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
+					our instancePref_showNumberOf() == kTextGridArea_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
 			Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name.get());
 		}
-		if (our instancePref_showNumberOf() != kTextGridEditor_showNumberOf::NOTHING) {
+		if (our instancePref_showNumberOf() != kTextGridArea_showNumberOf::NOTHING) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
-			if (our instancePref_showNumberOf() == kTextGridEditor_showNumberOf::INTERVALS_OR_POINTS) {
+			if (our instancePref_showNumberOf() == kTextGridArea_showNumberOf::INTERVALS_OR_POINTS) {
 				integer count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals.size : ((TextTier) anyTier) -> points.size;
 				integer position = itier == selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0;
 				if (position)
@@ -1532,7 +1527,7 @@ void structAnyTextGridEditor :: v_draw () {
 				else
 					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", count, U")");
 			} else {
-				Melder_assert (our instancePref_showNumberOf() == kTextGridEditor_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
+				Melder_assert (our instancePref_showNumberOf() == kTextGridArea_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
 				integer count = 0;
 				if (isIntervalTier) {
 					const IntervalTier tier = (IntervalTier) anyTier;
@@ -2101,7 +2096,7 @@ POSITIVE_VARIABLE (v_prefs_addFields__fontSize)
 OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals)
 OPTIONMENU_VARIABLE (v_prefs_addFields__useTextStyles)
 OPTIONMENU_VARIABLE (v_prefs_addFields__shiftDragMultiple)
-OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf)
+OPTIONMENU_ENUM_VARIABLE (kTextGridArea_showNumberOf, v_prefs_addFields__showNumberOf)
 OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel)
 SENTENCE_VARIABLE (v_prefs_addFields__theText)
 void structAnyTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
@@ -2115,8 +2110,8 @@ void structAnyTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	OPTIONMENU_FIELD (v_prefs_addFields__shiftDragMultiple, U"With the shift key, you drag", our default_shiftDragMultiple() + 1)
 		OPTION (U"a single boundary")
 		OPTION (U"multiple boundaries")
-	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf,
-			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kTextGridArea_showNumberOf, v_prefs_addFields__showNumberOf,
+			U"Show number of", kTextGridArea_showNumberOf::DEFAULT)
 	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel,
 			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
 	SENTENCE_FIELD (v_prefs_addFields__theText, U"...the text", our default_greenString())
@@ -2126,7 +2121,7 @@ void structAnyTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_REAL (v_prefs_addFields__fontSize, our instancePref_fontSize())
 	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our instancePref_alignment())
 	SET_OPTION (v_prefs_addFields__shiftDragMultiple, our instancePref_shiftDragMultiple() + 1)
-	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our instancePref_showNumberOf())
+	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridArea_showNumberOf, our instancePref_showNumberOf())
 	SET_ENUM (v_prefs_addFields__paintIntervalsGreenWhoseLabel, kMelder_string, our instancePref_greenMethod())
 	SET_STRING (v_prefs_addFields__theText, our instancePref_greenString())
 }

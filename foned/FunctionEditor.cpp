@@ -552,7 +552,7 @@ static void gui_button_cb_zoomIn (FunctionEditor me, GuiButtonEvent /* event */)
 
 static void do_zoomOut (FunctionEditor me) {
 	const double shift = (my endWindow - my startWindow) / 2.0;
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // quickly, before window changes
+	//MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // quickly, before window changes; ppgb 2022-06-25: why was this here?
 	my startWindow -= shift;
 	if (my startWindow < my tmin + 1e-12)
 		my startWindow = my tmin;

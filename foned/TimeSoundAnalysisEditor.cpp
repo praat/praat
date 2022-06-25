@@ -1919,7 +1919,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		if (our endSelection > our startWindow && our endSelection < our endWindow && our endSelection != our startSelection)
 			Graphics_line (our graphics, our endSelection, our p_spectrogram_viewFrom, our endSelection, our p_spectrogram_viewTo);*/
 		/*
-			Cadre.
+			Frame.
 		*/
 		Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
