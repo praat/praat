@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2013,2015-2020 Paul Boersma
+ * Copyright (C) 1994-2013,2015-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,10 +153,11 @@
 
 #define oo_DEFINE_STRUCT(T) \
 	typedef struct struct##T *T; \
+	typedef const struct struct##T *const##T; \
 	struct struct##T {
 #define oo_END_STRUCT(T) \
 		void destroy (); \
-		void copy (T data_to); \
+		void copy (T data_to) const; \
 		bool equal (T otherData); \
 		Data_Description description (); \
 		static Data_Description s_description; \
@@ -178,7 +179,7 @@
 
 #define oo_END_CLASS(Class) \
 		void v9_destroy () noexcept override; \
-		void v1_copy (Daata data_to) override; \
+		void v1_copy (Daata data_to) const override; \
 		bool v1_equal (Daata otherData) override; \
 		static Data_Description s_description; \
 		Data_Description v_description () override { return s_description; } \

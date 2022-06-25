@@ -204,11 +204,11 @@ static void _LongSound_MP3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNE
 	my compressedSamplesLeft -= numberOfSamples;
 }
 
-static void LongSound_init (LongSound me, MelderFile file) {
+static void LongSound_init (LongSound me, constMelderFile file) {
 	MelderFile_copy (file, & my file);
-	MelderFile_open (file);   // BUG: should be auto, but that requires an implemented .transfer()
-	my f = file -> filePointer;
-	my audioFileType = MelderFile_checkSoundFile (file, & my numberOfChannels, & my encoding, & my sampleRate, & my startOfData, & my nx);
+	MelderFile_open (& my file);
+	my f = my file. filePointer;
+	my audioFileType = MelderFile_checkSoundFile (& my file, & my numberOfChannels, & my encoding, & my sampleRate, & my startOfData, & my nx);
 	if (my audioFileType == 0)
 		Melder_throw (U"File not recognized (LongSound only supports AIFF, AIFC, WAV, NeXT/Sun, NIST and FLAC).");
 	if (my encoding == Melder_SHORTEN || my encoding == Melder_POLYPHONE)
@@ -257,11 +257,11 @@ static void LongSound_init (LongSound me, MelderFile file) {
 	}
 }
 
-void structLongSound :: v1_copy (Daata thee_Daata) {
+void structLongSound :: v1_copy (Daata thee_Daata) const {
 	LongSound thee = static_cast <LongSound> (thee_Daata);
 	thy f = nullptr;
 	thy buffer.releaseToAmbiguousOwner();   // this may have been shallow-copied, so undangle and nullify
-	LongSound_init (thee, & our file);   // this recreates a new buffer
+	//LongSound_init (thee, & our file);   // this recreates a new buffer
 }
 
 autoLongSound LongSound_open (MelderFile file) {

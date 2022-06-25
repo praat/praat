@@ -20,7 +20,7 @@
 
 Thing_implement (DoublyLinkedNode, Daata, 0);
 
-void structDoublyLinkedNode :: v1_copy (Daata thee_Daata) {
+void structDoublyLinkedNode :: v1_copy (Daata thee_Daata) const {
 	DoublyLinkedNode thee = static_cast <DoublyLinkedNode> (thee_Daata);
 	thy data = Data_copy (our data.get());
 }

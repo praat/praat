@@ -25,7 +25,7 @@
 #pragma mark - class Autosegment
 
 Thing_define (Autosegment, Function) {
-	void v1_copy (Daata data_to)
+	void v1_copy (Daata data_to) const
 		override;
 	bool v1_equal (Daata otherData)
 		override;

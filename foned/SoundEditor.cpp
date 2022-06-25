@@ -289,16 +289,22 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 /********** UPDATE **********/
 
 void structSoundEditor :: v_distributeAreas () {
+	const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
+			our instancePref_intensity_show() || our instancePref_formant_show();
+	if (showAnalysis) {
+		our soundArea -> setGlobalYRange_fraction (0.5, 1.0);
+	} else {
+		our soundArea -> setGlobalYRange_fraction (0.0, 1.0);
+	}
 }
 
 void structSoundEditor :: v_draw () {
-	Graphics_Viewport viewport;
 	const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
 			our instancePref_intensity_show() || our instancePref_formant_show();
 	Melder_assert (our soundOrLongSound());
 
 	/*
-		We check beforehand whether the window fits the LongSound buffer.
+		We check beforehand whether the window fits the LongSound buffer. BUG: should be in LongSoundArea
 	*/
 	if (our longSound() && our endWindow - our startWindow > our longSound() -> bufferLength) {
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
@@ -315,23 +321,20 @@ void structSoundEditor :: v_draw () {
 	/*
 		Draw data.
 	*/
-	if (showAnalysis)
-		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.5, 1.0);
-	Graphics_setColour (our graphics.get(), Melder_WHITE);
-	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	FunctionArea_setViewport (our soundArea.get());
+	FunctionArea_drawBackground (our soundArea.get());
 	if (our instancePref_pulses_show())
 		our v_draw_analysis_pulses ();
-	SoundArea_draw (our soundArea.get());
+	FunctionArea_drawBehindFrame (our soundArea.get());
+	FunctionArea_drawFrame (our soundArea.get());
 	if (showAnalysis) {
-		Graphics_resetViewport (our graphics.get(), viewport);
-		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.5);
+		our soundArea -> setGlobalYRange_fraction (0.0, 0.5);   // BUG: should be in SoundAnalysisArea
+		FunctionArea_setViewport (our soundArea.get());
 		v_draw_analysis ();
-		Graphics_resetViewport (our graphics.get(), viewport);
 	}
 
 	/*
-		Update buttons.
+		Update buttons. BUG: move to right place
 	*/
 	integer first, last;
 	const integer selectedSamples = Sampled_getWindowSamples (our soundOrLongSound(),

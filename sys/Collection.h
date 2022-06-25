@@ -40,7 +40,7 @@
 template <typename T> struct CollectionOf;
 
 typedef CollectionOf<structDaata> _CollectionOfDaata;
-extern void _CollectionOfDaata_v1_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
+extern void _CollectionOfDaata_v1_copy (const _CollectionOfDaata* me, _CollectionOfDaata* thee);
 extern bool _CollectionOfDaata_v1_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
 extern bool _CollectionOfDaata_v1_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
 extern void _CollectionOfDaata_v1_writeText (_CollectionOfDaata* me, MelderFile openFile);
@@ -447,8 +447,8 @@ struct CollectionOf : structDaata {
 	}
 
 
-	void v1_copy (Daata data_to) override {   // copies all the items
-		_CollectionOfDaata_v1_copy (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data_to));
+	void v1_copy (Daata data_to) const override {   // copies all the items
+		_CollectionOfDaata_v1_copy (reinterpret_cast<const _CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data_to));
 	}
 	bool v1_equal (Daata data2) override {   // compares 'my item [i]' with 'thy item [i]', i = 1..size
 		return _CollectionOfDaata_v1_equal (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data2));

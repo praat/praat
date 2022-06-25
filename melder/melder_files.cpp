@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2008,2010-2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2008,2010-2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -235,11 +235,11 @@ conststring32 Melder_fileToPath (MelderFile file) {
 	return & file -> path [0];
 }
 
-void MelderFile_copy (MelderFile file, MelderFile copy) {
+void MelderFile_copy (constMelderFile file, MelderFile copy) {
 	str32cpy (copy -> path, file -> path);
 }
 
-void MelderDir_copy (MelderDir dir, MelderDir copy) {
+void MelderDir_copy (constMelderDir dir, MelderDir copy) {
 	str32cpy (copy -> path, dir -> path);
 }
 
@@ -895,44 +895,44 @@ autostring32 MelderFile_readText (MelderFile file, autostring8 *string8) {
 			text = autostring32 (length + 1);
 			if (type == 1) {
 				for (int64 i = 0; i < length; i ++) {
-					char16 kar1 = bingetu16 (f);
+					const char16 kar1 = bingetu16 (f);
 					if (kar1 < 0xD800) {
-						text [i] = (char32) kar1;   // convert up without sign extension
+						text [i] = (const char32) kar1;   // convert up without sign extension
 					} else if (kar1 < 0xDC00) {
 						length --;
-						char16 kar2 = bingetu16 (f);
+						const char16 kar2 = bingetu16 (f);
 						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-							text [i] = (char32) (0x010000 +
-									(char32) (((char32) kar1 & 0x0003FF) << 10) +
-									(char32)  ((char32) kar2 & 0x0003FF));
+							text [i] = (const char32) (0x010000 +
+									(const char32) (((const char32) kar1 & 0x0003FF) << 10) +
+									(const char32)  ((const char32) kar2 & 0x0003FF));
 						} else {
 							text [i] = UNICODE_REPLACEMENT_CHARACTER;
 						}
 					} else if (kar1 < 0xE000) {
 						text [i] = UNICODE_REPLACEMENT_CHARACTER;
 					} else {
-						text [i] = (char32) kar1;   // convert up without sign extension
+						text [i] = (const char32) kar1;   // convert up without sign extension
 					}
 				}
 			} else {
 				for (int64 i = 0; i < length; i ++) {
-					char16 kar1 = bingetu16LE (f);
+					const char16 kar1 = bingetu16LE (f);
 					if (kar1 < 0xD800) {
-						text [i] = (char32) kar1;   // convert up without sign extension
+						text [i] = (const char32) kar1;   // convert up without sign extension
 					} else if (kar1 < 0xDC00) {
 						length --;
-						char16 kar2 = bingetu16LE (f);
+						const char16 kar2 = bingetu16LE (f);
 						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-							text [i] = (char32) (0x01'0000 +
-								(char32) (((char32) kar1 & 0x00'03FF) << 10) +
-								(char32)  ((char32) kar2 & 0x00'03FF));
+							text [i] = (const char32) (0x01'0000 +
+								(const char32) (((const char32) kar1 & 0x00'03FF) << 10) +
+								(const char32)  ((const char32) kar2 & 0x00'03FF));
 						} else {
 							text [i] = UNICODE_REPLACEMENT_CHARACTER;
 						}
 					} else if (kar1 < 0xE000) {
 						text [i] = UNICODE_REPLACEMENT_CHARACTER;
 					} else if (kar1 <= 0xFFFF) {
-						text [i] = (char32) kar1;   // convert up without sign extension
+						text [i] = (const char32) kar1;   // convert up without sign extension
 					} else {
 						Melder_fatal (U"MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
 					}
@@ -957,7 +957,7 @@ void Melder_fwrite32to8 (conststring32 string, FILE *f) {
 	 *    but the characters that are written may be incorrect.
 	 */
 	for (const char32* p = string; *p != U'\0'; p ++) {
-		char32 kar = *p;
+		const char32 kar = *p;
 		if (kar <= 0x00'007F) {
 			#ifdef _WIN32
 				if (kar == U'\n')
@@ -995,7 +995,7 @@ void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutp
 			#define putc_unlocked  putc
 		#endif
 		flockfile (f);
-		integer n = str32len (text);
+		const integer n = str32len (text);
 		for (integer i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
@@ -1007,7 +1007,7 @@ void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutp
 		funlockfile (f);
 	} else {
 		binputu16 (0xFEFF, f);   // Byte Order Mark
-		integer n = str32len (text);
+		const integer n = str32len (text);
 		for (integer i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
@@ -1062,9 +1062,9 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 				Append ASCII or ISOLatin1 text to ASCII or ISOLatin1 file.
 			*/
 			autofile f2 = Melder_fopen (file, "ab");
-			int64 n = str32len (text);
+			const int64 n = str32len (text);
 			for (int64 i = 0; i < n; i ++) {
-				char32 kar = text [i];
+				const char32 kar = text [i];
 				#ifdef _WIN32
 					if (kar == U'\n')
 						fputc (13, f2);
@@ -1117,7 +1117,7 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 		}
 	} else {
 		autofile f2 = Melder_fopen (file, "ab");
-		int64 n = str32len (text);
+		const int64 n = str32len (text);
 		for (int64 i = 0; i < n; i ++) {
 			if (type == 1) {
 				char32 kar = text [i];

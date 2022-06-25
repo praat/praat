@@ -20,7 +20,7 @@
 
 Thing_implement (Daata, Thing, 0);
 
-autoDaata _Data_copy (Daata me) {
+autoDaata _Data_copy (constDaata me) {
 	try {
 		if (! me)
 			return autoDaata();

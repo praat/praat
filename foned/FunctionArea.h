@@ -25,8 +25,8 @@ Thing_define (FunctionArea, Thing) {
 		Accessors.
 	*/
 public:   // all readonly
-	Function function() { return _function; }
-	bool editable() { return _editable; }
+	Function function() const { return _function; }
+	bool editable() const { return _editable; }
 	double startWindow() const { return _editor -> startWindow; }
 	double endWindow() const { return _editor -> endWindow; }
 	double startSelection() const { return _editor -> startSelection; }
@@ -43,10 +43,10 @@ private:
 	*/
 public:
 	friend void FunctionArea_init (FunctionArea me, bool editable, Function functionToCopy, FunctionEditor boss) {
-		my _editor = boss;
+		my _editable = editable;
 		if (functionToCopy)
 			my _functionCopy = Data_copy (functionToCopy);
-		my _editable = editable;
+		my _editor = boss;
 		my v1_copyPreferencesToInstance ();
 		my v9_repairPreferences ();   // BUG: collapse with previous into Thing_installSensiblePreferencesIntoInstance
 	}
@@ -83,30 +83,35 @@ public:
 	friend void FunctionArea_setViewport (constFunctionArea me) {
 		Graphics_setViewport (my graphics(), my left_pxlt(), my right_pxlt(), my bottom_pxlt(), my top_pxlt());
 	}
-private:
 	friend void FunctionArea_draw (FunctionArea me) {
-		Graphics_setViewport (my graphics(), my left_pxlt(), my right_pxlt(), my bottom_pxlt(), my top_pxlt());
-		my _drawBackground ();
-		my v_drawBehindFrame ();
-		my _drawCadre ();
-		my v_drawOverFrame ();
+		FunctionArea_setViewport (me);
+		FunctionArea_drawBackground (me);
+		FunctionArea_drawBehindFrame (me);
+		FunctionArea_drawFrame (me);
+		FunctionArea_drawOverFrame (me);
 	}
-	void _drawBackground () {
-		Graphics_setWindow (graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (graphics(), Melder_WHITE);
-		Graphics_fillRectangle (graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setLineWidth (graphics(), 1.0);
-		if (_editable) {
-			Graphics_setColour (graphics(), Melder_CYAN);
-			Graphics_innerRectangle (graphics(), 0.0, 1.0, 0.0, 1.0);
+	friend void FunctionArea_drawBackground (constFunctionArea me) {
+		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my graphics(), Melder_WHITE);
+		Graphics_fillRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setLineWidth (my graphics(), 1.0);
+		if (my editable()) {
+			Graphics_setColour (my graphics(), Melder_CYAN);
+			Graphics_innerRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		}
-		Graphics_setColour (graphics(), Melder_BLACK);
+		Graphics_setColour (my graphics(), Melder_BLACK);
 	}
-	void _drawCadre () {
-		Graphics_setWindow (graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setLineWidth (graphics(), 1.0);
-		Graphics_setColour (graphics(), Melder_BLACK);
-		Graphics_rectangle (graphics(), 0.0, 1.0, 0.0, 1.0);
+	friend void FunctionArea_drawBehindFrame (FunctionArea me) {
+		my v_drawBehindFrame ();
+	}
+	friend void FunctionArea_drawFrame (constFunctionArea me) {
+		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setLineWidth (my graphics(), 1.0);
+		Graphics_setColour (my graphics(), Melder_BLACK);
+		Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
+	}
+	friend void FunctionArea_drawOverFrame (FunctionArea me) {
+		my v_drawOverFrame ();
 	}
 protected:
 	virtual void v_drawBehindFrame () { }
@@ -142,13 +147,13 @@ private:
 	}
 	double left_pxlt() const { return _editor -> dataLeft_pxlt(); }
 	double right_pxlt() const { return _editor -> dataRight_pxlt(); }
-	double verticalSpacing_pxlt() const { return 11; }
+	virtual double v_verticalSpacing_pxlt() const { return 11; }
 	double bottom_pxlt() const {
-		const double bottomSpacing_pxlt = ( _ymin_fraction == 0.0 ? 0.0 : our verticalSpacing_pxlt() );
+		const double bottomSpacing_pxlt = ( _ymin_fraction == 0.0 ? 0.0 : our v_verticalSpacing_pxlt() );
 		return globalY_fraction_to_pxlt (_ymin_fraction) + bottomSpacing_pxlt;
 	}
 	double top_pxlt() const {
-		return globalY_fraction_to_pxlt (_ymax_fraction) - our verticalSpacing_pxlt();
+		return globalY_fraction_to_pxlt (_ymax_fraction) - our v_verticalSpacing_pxlt();
 	}
 };
 
