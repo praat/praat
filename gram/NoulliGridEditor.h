@@ -24,7 +24,7 @@
 #include "NoulliGridEditor_enums.h"
 
 Thing_define (NoulliGridEditor, TimeSoundEditor) {
-	NoulliGrid noulliGrid () { return static_cast <NoulliGrid> (our data); }
+	NoulliGrid noulliGrid () { return static_cast <NoulliGrid> (our data()); }
 
 	void v_distributeAreas ()
 		override;

@@ -28,7 +28,7 @@ Thing_implement (Manual, HyperPage, 0);
 
 void structManual :: v9_destroy () noexcept {
 	if (our ownManPages)
-		forget (our data);
+		forget_nozero (our data());
 	Manual_Parent :: v9_destroy ();
 }
 

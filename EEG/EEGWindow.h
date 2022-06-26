@@ -22,7 +22,7 @@
 #include "EEGArea.h"
 
 Thing_define (EEGWindow, AnyTextGridEditor) {
-	EEG eeg() { return static_cast <EEG> (our data); }
+	EEG eeg() { return static_cast <EEG> (our data()); }
 
 	void v1_dataChanged () override {
 		TRACE trace(1);

@@ -22,7 +22,7 @@
 #include "PointProcess.h"
 
 Thing_define (PointEditor, TimeSoundEditor) {
-	PointProcess pointProcess() { return static_cast <PointProcess> (our data); }
+	PointProcess pointProcess() { return static_cast <PointProcess> (our data()); }
 	
 	GuiObject addPointAtDialog;
 

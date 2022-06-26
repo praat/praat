@@ -22,7 +22,7 @@
 #include "OTMulti.h"
 
 Thing_define (OTMultiEditor, HyperPage) {
-	OTMulti otMulti() { return static_cast <OTMulti> (our data); }
+	OTMulti otMulti() { return static_cast <OTMulti> (our data()); }
 
 	autostring32 form1, form2;
 	GuiText form1Text, form2Text;

@@ -19,14 +19,12 @@
  */
 
 #include "TimeSoundAnalysisEditor.h"
-#include "TextGrid.h"
-#include "SpellingChecker.h"
-#include "Preferences.h"
-
-#include "TextGridArea_enums.h"
+#include "TextGridArea.h"
 
 Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
-	TextGrid textGrid() { return static_cast <TextGrid> (our data); }
+	TextGrid textGrid() { return static_cast <TextGrid> (our data()); }
+
+	autoTextGridArea textGridArea;
 
 	SpellingChecker spellingChecker;
 	integer selectedTier;

@@ -568,7 +568,7 @@ static void CONVERT_DATA_TO_ONE__ViewSpectralSlice (TimeSoundAnalysisEditor me, 
 			my instancePref_spectrogram_windowShape() == kSound_to_Spectrogram_windowShape::GAUSSIAN ? kSound_windowShape::GAUSSIAN_2 : kSound_windowShape::RECTANGULAR
 		);
 		autoSpectrum result = Sound_to_Spectrum (sound.get(), true);
-	CONVERT_DATA_TO_ONE_END (Melder_cat (( my data ? my data -> name.get() : U"untitled" ),
+	CONVERT_DATA_TO_ONE_END (Melder_cat (( my data() ? my data() -> name.get() : U"untitled" ),
 			U"_", Melder_fixed (0.5 * (my startSelection + my endSelection), 3)))
 }
 

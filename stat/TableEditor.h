@@ -24,7 +24,7 @@
 #define kTableEditor_MAXNUM_VISIBLE_COLUMNS  100
 
 Thing_define (TableEditor, Editor) {
-	Table table() { return static_cast <Table> (our data); }
+	Table table() { return static_cast <Table> (our data()); }
 
 	integer topRow, leftColumn, selectedRow, selectedColumn;
 	GuiText text;
