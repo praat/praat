@@ -163,13 +163,10 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 		my anchorIsNearPoint = true;
 		my draggingSelection = event -> shiftKeyPressed &&
 				clickedPoint -> number >= my startSelection() && clickedPoint -> number <= my endSelection();
-		if (my draggingSelection) {
+		if (my draggingSelection)
 			AnyTier_getWindowPoints (my realTier()->asAnyTier(), my startSelection(), my endSelection(), & my firstSelected, & my lastSelected);
-			my save (U"Drag points");   // TODO: title can be more specific
-		} else {
+		else
 			my firstSelected = my lastSelected = inearestPoint;
-			my save (U"Drag point");   // TODO: title can be more specific
-		}
 		my anchorTime = x_world;
 		my anchorY = y_world;
 		my dt = 0.0;
@@ -186,32 +183,39 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 
 		if (event -> isDrop()) {
 			my anchorTime = undefined;
-			const double leftNewTime = my realTier() -> points.at [my firstSelected] -> number + my dt;
-			const double rightNewTime = my realTier() -> points.at [my lastSelected] -> number + my dt;
-			const bool offLeft = ( leftNewTime < my tmin() );
-			const bool offRight = ( rightNewTime > my tmax() );
-			const bool draggedPastLeftNeighbour = ( my firstSelected > 1 && leftNewTime <= my realTier() -> points.at [my firstSelected - 1] -> number );
-			const bool draggedPastRightNeighbour = ( my lastSelected < my realTier() -> points.size && rightNewTime >= my realTier() -> points.at [my lastSelected + 1] -> number );
-			if (offLeft || offRight || draggedPastLeftNeighbour || draggedPastRightNeighbour) {
-				Melder_beep ();
-				return FunctionEditor_UPDATE_NEEDED;
+
+			const bool somethingHasMoved = ( my dt != 0.0 || my dy != 0.0 );
+			if (somethingHasMoved) {
+				if (my draggingSelection)
+					my save (U"Drag points");   // TODO: title can be more specific
+				else
+					my save (U"Drag point");   // TODO: title can be more specific
+				const double leftNewTime = my realTier() -> points.at [my firstSelected] -> number + my dt;
+				const double rightNewTime = my realTier() -> points.at [my lastSelected] -> number + my dt;
+				const bool offLeft = ( leftNewTime < my tmin() );
+				const bool offRight = ( rightNewTime > my tmax() );
+				const bool draggedPastLeftNeighbour = ( my firstSelected > 1 && leftNewTime <= my realTier() -> points.at [my firstSelected - 1] -> number );
+				const bool draggedPastRightNeighbour = ( my lastSelected < my realTier() -> points.size && rightNewTime >= my realTier() -> points.at [my lastSelected + 1] -> number );
+				if (offLeft || offRight || draggedPastLeftNeighbour || draggedPastRightNeighbour) {
+					Melder_beep ();
+					return FunctionEditor_UPDATE_NEEDED;
+				}
+
+				for (integer i = my firstSelected; i <= my lastSelected; i ++) {
+					RealPoint point = my realTier() -> points.at [i];
+					point -> number += my dt;
+					double pointY = point -> value;
+					pointY += my dy;
+					Melder_clip (my v_minimumLegalY(), & pointY, my v_maximumLegalY());
+					point -> value = pointY;
+				}
+
+				/*
+					Make sure that the same points are still selected (a problem with Undo...).
+				*/
+				if (my draggingSelection)
+					my setSelection (my startSelection() + my dt, my endSelection() + my dt);
 			}
-
-			for (integer i = my firstSelected; i <= my lastSelected; i ++) {
-				RealPoint point = my realTier() -> points.at [i];
-				point -> number += my dt;
-				double pointY = point -> value;
-				pointY += my dy;
-				Melder_clip (my v_minimumLegalY(), & pointY, my v_maximumLegalY());
-				point -> value = pointY;
-			}
-
-			/*
-				Make sure that the same points are still selected (a problem with Undo...).
-			*/
-
-			if (my draggingSelection)
-				my setSelection (my startSelection() + my dt, my endSelection() + my dt);
 			if (my firstSelected == my lastSelected) {
 				/*
 					Move crosshair to only selected point.
