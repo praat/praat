@@ -421,7 +421,7 @@ _form_inited_: \
 #define VOID_EDITOR_END
 
 #define DATA_BEGIN__  \
-	Melder_assert (my data);
+	Melder_assert (my data());
 
 #define PLAY_DATA  \
 	DATA_BEGIN__

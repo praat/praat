@@ -404,7 +404,7 @@ static bool FormantGrid_isEmpty (FormantGrid me) {
 }
 
 void structKlattGrid_FormantGridEditor :: v_play (double startTime, double endTime) {
-	KlattGrid_Editor_defaultPlay (static_cast <KlattGrid> (our data), startTime, endTime);
+	KlattGrid_Editor_defaultPlay (static_cast <KlattGrid> (our data()), startTime, endTime);
 }
 
 autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid klattgrid, kKlattGridFormantType formantType) {

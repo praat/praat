@@ -25,7 +25,7 @@
 #include "FormantGridEditor.h"
 
 Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
-	KlattGrid klattgrid() { return static_cast <KlattGrid> (our data); }
+	KlattGrid klattgrid() { return static_cast <KlattGrid> (our data()); }
 
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
@@ -275,7 +275,7 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 #pragma mark - KlattGrid_FormantGridEditor
 
 Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
-	KlattGrid klattgrid() { return static_cast <KlattGrid> (our data); }
+	KlattGrid klattgrid() { return static_cast <KlattGrid> (our data()); }
 	kKlattGridFormantType formantType;
 
 	void v1_dataChanged () override {

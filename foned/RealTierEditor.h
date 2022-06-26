@@ -33,7 +33,7 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 		override;
 	void v1_dataChanged () override {
 		our RealTierEditor_Parent :: v1_dataChanged ();
-		our realTierArea -> functionChanged (static_cast <RealTier> (our data));
+		our realTierArea -> functionChanged (static_cast <RealTier> (our data()));
 		if (our soundArea)
 			our soundArea -> functionChanged (nullptr);
 	}

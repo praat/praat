@@ -134,7 +134,7 @@ public:
 protected:
 	void v_drawBehindFrame ()
 		override;
-	double v_verticalSpacing_pxlt() const override { return 0; }
+	//double v_verticalSpacing_pxlt() const override { return 0; }
 
 	#include "SoundArea_prefs.h"
 };

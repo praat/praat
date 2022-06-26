@@ -18,15 +18,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DataGui.h"
 #include "FunctionEditor.h"
 
-Thing_define (FunctionArea, Thing) {
+Thing_define (FunctionArea, DataGui) {
 	/*
 		Accessors.
 	*/
 public:   // all readonly
 	Function function() const { return _function; }
-	bool editable() const { return _editable; }
 	double startWindow() const { return _editor -> startWindow; }
 	double endWindow() const { return _editor -> endWindow; }
 	double startSelection() const { return _editor -> startSelection; }
@@ -36,18 +36,15 @@ public:   // all readonly
 	Graphics graphics() const { return _editor -> graphics.get(); }
 private:
 	Function _function;
-	bool _editable;
 
 	/*
 		Initialization.
 	*/
 public:
 	friend void FunctionArea_init (FunctionArea me, bool editable, Function optionalFunctionToCopy, FunctionEditor boss) {
-		my _editable = editable;
+		DataGui_init (me, nullptr, editable);
 		my _optionalFunctionCopy = Data_copy (optionalFunctionToCopy);
-		my _editor = boss;
-		my v1_copyPreferencesToInstance ();
-		my v9_repairPreferences ();   // BUG: collapse with previous into Thing_installSensiblePreferencesIntoInstance
+		my _editor = boss;   // BUG: move into DataGui
 	}
 	bool functionHasBeenCopied () {
 		return !! _optionalFunctionCopy;
@@ -91,14 +88,16 @@ public:
 	}
 	friend void FunctionArea_drawBackground (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics(), Melder_WHITE);
+		Graphics_setColour (my graphics(), DataGuiColour_BACKGROUND);
 		Graphics_fillRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setLineWidth (my graphics(), 1.0);
 		if (my editable()) {
-			Graphics_setColour (my graphics(), Melder_CYAN);
-			Graphics_innerRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setLineWidth (my graphics(), 3.0);
+			Graphics_setColour (my graphics(), DataGuiColour_EDITABLE);
+			//Graphics_innerRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		}
-		Graphics_setColour (my graphics(), Melder_BLACK);
+		Graphics_setColour (my graphics(), DataGuiColour_DEFAULT_FOREGROUND);
+		Graphics_setLineWidth (my graphics(), 1.0);
 	}
 	friend void FunctionArea_drawBehindFrame (FunctionArea me) {
 		my v_drawBehindFrame ();
@@ -106,8 +105,8 @@ public:
 	friend void FunctionArea_drawFrame (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setLineWidth (my graphics(), 1.0);
-		Graphics_setColour (my graphics(), Melder_BLACK);
-		Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my graphics(), DataGuiColour_DEFAULT_FOREGROUND);
+		//Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 	}
 	friend void FunctionArea_drawOverFrame (FunctionArea me) {
 		my v_drawOverFrame ();

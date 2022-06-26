@@ -25,7 +25,7 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 	autoFormantGridArea formantGridArea;
 	void v1_dataChanged () override {
 		our structFunctionEditor :: v1_dataChanged ();
-		our formantGridArea -> _formantGrid = static_cast <FormantGrid> (our data);
+		our formantGridArea -> _formantGrid = static_cast <FormantGrid> (our data());
 		OrderedOf<structRealTier>* tiers =
 				( our formantGridArea -> editingBandwidths ? & our formantGridArea -> _formantGrid -> bandwidths : & our formantGridArea -> _formantGrid -> formants );
 		RealTier tier = tiers->at [our formantGridArea -> selectedFormant];

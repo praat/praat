@@ -1446,6 +1446,7 @@ void structFunctionEditor :: v_createChildren () {
 }
 
 void structFunctionEditor :: v1_dataChanged () {
+	Melder_assert (our function());
 	Melder_assert (Thing_isa (our function(), classFunction));
 	our tmin = our function() -> xmin;
  	our tmax = our function() -> xmax;
@@ -1504,8 +1505,7 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 
 void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data) {
 	Melder_assert (data);
-	my data = data;   // has to go before Editor_init and Editor_dataChanged
-	Thing_cast (Function, function, my data);
+	Thing_cast (Function, function, data);
 
 	if (Melder_debug == 55)
 		Melder_casual (Thing_messageNameAndAddress (me), U" init");
@@ -1559,7 +1559,7 @@ void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
 void FunctionEditor_ungroup (Daata data) {
 	for (integer ieditor = 1; ieditor <= THE_MAXIMUM_GROUP_SIZE; ieditor ++) {
 		const FunctionEditor me = theGroupMembers [ieditor];
-		if (me && my group && my data == data) {   // BUG: this may not be precise enough, in case an editor is editing multiple objects
+		if (me && my group && my data() == data) {   // BUG: this may not be precise enough, in case an editor is editing multiple objects
 			my group = false;
 			GuiCheckButton_setValue (my groupButton, false);
 			theGroupMembers [ieditor] = nullptr;

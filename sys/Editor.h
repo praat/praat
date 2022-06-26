@@ -18,6 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DataGui.h"
 #include "Collection.h"
 #include "Gui.h"
 #include "Ui.h"
@@ -52,11 +53,10 @@ typedef MelderCallback <void, structEditor> Editor_DestructionCallback;
 
 typedef MelderCallback <void, structEditor, autoDaata /* publication */> Editor_PublicationCallback;
 
-Thing_define (Editor, Thing) {
+Thing_define (Editor, DataGui) {
 	GuiWindow windowForm;
 	GuiMenuItem undoButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
-	Daata data;   // the data that can be displayed and edited
 	autoDaata previousData;   // the data that can be displayed and edited
 	char32 undoText [100];
 	Graphics pictureGraphics;

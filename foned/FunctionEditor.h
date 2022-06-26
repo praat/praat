@@ -32,7 +32,7 @@ Thing_define (FunctionEditor, Editor) {
 		Inherited attributes:
 			data: must be a Function.
 	*/
-	Function function() { return static_cast <Function> (our data); }
+	Function function() { return static_cast <Function> (our data()); }
 
 	/*
 		Subclasses may change the following attributes,

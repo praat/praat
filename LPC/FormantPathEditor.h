@@ -46,7 +46,7 @@
 */
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
-	FormantPath formantPath() { return static_cast <FormantPath> (our data); }
+	FormantPath formantPath() { return static_cast <FormantPath> (our data()); }
 
 	//autoTextGrid textgrid;
 	autoFormant previousFormant;

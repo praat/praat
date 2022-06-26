@@ -22,7 +22,7 @@
 #include "Strings_.h"
 
 Thing_define (StringsEditor, Editor) {
-	Strings strings() { return static_cast <Strings> (our data); }
+	Strings strings() { return static_cast <Strings> (our data()); }
 
 	GuiList list;
 	GuiText text;

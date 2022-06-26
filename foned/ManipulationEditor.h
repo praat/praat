@@ -39,7 +39,7 @@ DEFINE_FunctionArea_create (ManipulationDurationTierArea, DurationTier)
 
 
 Thing_define (ManipulationEditor, FunctionEditor) {
-	Manipulation manipulation() { return static_cast <Manipulation> (our data); }
+	Manipulation manipulation() { return static_cast <Manipulation> (our data()); }
 
 	/*
 		Quick access to internal objects.

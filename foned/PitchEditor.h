@@ -22,7 +22,7 @@
 #include "Pitch.h"
 
 Thing_define (PitchEditor, FunctionEditor) {
-	Pitch pitch() { return static_cast <Pitch> (our data); }
+	Pitch pitch() { return static_cast <Pitch> (our data()); }
 
 	void v_createMenus ()
 		override;

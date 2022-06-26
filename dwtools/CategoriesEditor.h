@@ -23,7 +23,7 @@
 #include "Categories.h"
 
 Thing_define (CategoriesEditor, Editor) {
-	Categories categories() { return static_cast <Categories> (our data); }
+	Categories categories() { return static_cast <Categories> (our data()); }
 	
 	autoCommandHistory history;
 	integer position;
