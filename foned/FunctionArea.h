@@ -26,37 +26,33 @@ Thing_define (FunctionArea, DataGui) {
 		Accessors.
 	*/
 public:   // all readonly
-	Function function() const { return _function; }
-	double startWindow() const { return _editor -> startWindow; }
-	double endWindow() const { return _editor -> endWindow; }
-	double startSelection() const { return _editor -> startSelection; }
-	double endSelection() const { return _editor -> endSelection; }
-	double tmin() const { return _editor -> tmin; }
-	double tmax() const { return _editor -> tmax; }
-	Graphics graphics() const { return _editor -> graphics.get(); }
-private:
-	Function _function;
+	Function function() const { Thing_cast (Function, function, our data()); return function; }
+	FunctionEditor functionEditor() const { Thing_cast (FunctionEditor, functionEditor, our boss()); return functionEditor; }
+	double startWindow() const { return functionEditor() -> startWindow; }
+	double endWindow() const { return functionEditor() -> endWindow; }
+	double startSelection() const { return functionEditor() -> startSelection; }
+	double endSelection() const { return functionEditor() -> endSelection; }
+	double tmin() const { return functionEditor() -> tmin; }
+	double tmax() const { return functionEditor() -> tmax; }
+	Graphics graphics() const { return functionEditor() -> graphics.get(); }
 
 	/*
 		Initialization.
 	*/
 public:
 	friend void FunctionArea_init (FunctionArea me, bool editable, Function optionalFunctionToCopy, FunctionEditor boss) {
-		DataGui_init (me, nullptr, editable);
+		DataGui_init (me, nullptr, editable, boss);
 		my _optionalFunctionCopy = Data_copy (optionalFunctionToCopy);
-		my _editor = boss;   // BUG: move into DataGui
 	}
 	bool functionHasBeenCopied () {
 		return !! _optionalFunctionCopy;
 	}
-protected:
-	FunctionEditor _editor;
 private:
 	autoFunction _optionalFunctionCopy;
 
 public:
 	void functionChanged (Function newFunction) {
-		our _function = ( our _optionalFunctionCopy ? our _optionalFunctionCopy.get() : newFunction);
+		our setData (our _optionalFunctionCopy ? our _optionalFunctionCopy.get() : newFunction);
 		our v_invalidateAllDerivedDataCaches ();
 		our v_computeAuxiliaryData ();
 	}
@@ -116,18 +112,18 @@ protected:
 	virtual void v_drawOverFrame () { }
 public:
 	void setSelection (double startSelection, double endSelection) {
-		_editor -> startSelection = startSelection;
-		_editor -> endSelection = endSelection;
+		functionEditor() -> startSelection = startSelection;
+		functionEditor() -> endSelection = endSelection;
 	}
 	bool defaultMouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
-		_editor -> viewDataAsWorldByFraction ();
-		return _editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);
+		functionEditor() -> viewDataAsWorldByFraction ();
+		return functionEditor() -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);
 	}
 	void save (conststring32 undoText) {
-		Editor_save (_editor, undoText);
+		Editor_save (functionEditor(), undoText);
 	}
 	void broadcastDataChanged () {
-		Editor_broadcastDataChanged (_editor);
+		Editor_broadcastDataChanged (functionEditor());
 	}
 	bool y_fraction_globalIsInside (double globalY_fraction) const {
 		const double y_pxlt = globalY_fraction_to_pxlt (globalY_fraction);
@@ -140,11 +136,11 @@ public:
 private:
 	double _ymin_fraction, _ymax_fraction;
 	double globalY_fraction_to_pxlt (double globalY_fraction) const {
-		return _editor -> dataBottom_pxlt() +
-				globalY_fraction * (_editor -> dataTop_pxlt() - _editor -> dataBottom_pxlt());
+		return functionEditor() -> dataBottom_pxlt() +
+				globalY_fraction * (functionEditor() -> dataTop_pxlt() - functionEditor() -> dataBottom_pxlt());
 	}
-	double left_pxlt() const { return _editor -> dataLeft_pxlt(); }
-	double right_pxlt() const { return _editor -> dataRight_pxlt(); }
+	double left_pxlt() const { return functionEditor() -> dataLeft_pxlt(); }
+	double right_pxlt() const { return functionEditor() -> dataRight_pxlt(); }
 	virtual double v_verticalSpacing_pxlt() const { return 11; }
 	double bottom_pxlt() const {
 		const double bottomSpacing_pxlt = ( _ymin_fraction == 0.0 ? 0.0 : our v_verticalSpacing_pxlt() );

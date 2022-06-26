@@ -640,7 +640,7 @@ void structManipulationPitchTierArea :: v_drawOverFrame () {
 	*/
 	Graphics_setGrey (graphics(), 0.7);
 	/* BUG: should inlcude grey dots */
-	constPointProcess pulses = ((ManipulationEditor) _editor) -> pulses();
+	constPointProcess pulses = ((ManipulationEditor) functionEditor()) -> pulses();
 	if (pulses) for (integer i = 1; i < pulses -> nt; i ++) {
 		const double tleft = pulses -> t [i], tright = pulses -> t [i + 1], t = 0.5 * (tleft + tright);
 		if (t >= startWindow() && t <= endWindow()) {
@@ -654,12 +654,12 @@ void structManipulationPitchTierArea :: v_drawOverFrame () {
 	Graphics_setGrey (graphics(), 0.0);
 
 	constexpr double minimumFrequency = 50.0;
-	FunctionEditor_drawGridLine (_editor, minimumFrequency);
+	FunctionEditor_drawGridLine (functionEditor(), minimumFrequency);
 
 	const integer n = ( our pitchTier() ? our pitchTier() -> points.size : 0 );
 	if (cursorVisible && n > 0) {
 		const double y = RealTier_getValueAtTime (pitchTier(), startSelection());
-		FunctionEditor_insertCursorFunctionValue (_editor, y,
+		FunctionEditor_insertCursorFunctionValue (functionEditor(), y,
 			Melder_fixed (y, 1), U" Hz",
 			our ymin, our ymax);
 	}
@@ -683,10 +683,10 @@ void structManipulationDurationTierArea :: v_drawOverFrame () {
 	Graphics_setFont (graphics(), kGraphics_font::HELVETICA);
 
 	Graphics_setWindow (graphics(), startWindow(), endWindow(), our ymin, our ymax);
-	FunctionEditor_drawGridLine (_editor, 1.0);   // BUG: should move to FunctionArea
+	FunctionEditor_drawGridLine (functionEditor(), 1.0);   // BUG: should move to FunctionArea
 	if (cursorVisible && durationTier() -> points.size > 0) {
 		const double y = RealTier_getValueAtTime (durationTier(), startSelection());
-		FunctionEditor_insertCursorFunctionValue (_editor, y,   // BUG: should move to FunctionArea
+		FunctionEditor_insertCursorFunctionValue (functionEditor(), y,   // BUG: should move to FunctionArea
 				Melder_fixed (y, 3), U"", our ymin, our ymax);
 	}
 	ManipulationDurationTierArea_Parent :: v_drawOverFrame ();

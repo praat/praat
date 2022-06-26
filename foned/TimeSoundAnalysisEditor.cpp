@@ -1713,13 +1713,11 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	const double pitchViewTo_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch),
 			Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit()) ? log10 (pitchViewTo_overt) : pitchViewTo_overt;
 
-	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
-	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 	if (my endWindow - my startWindow > my instancePref_longestAnalysis()) {
+		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
 		Graphics_setFontSize (my graphics.get(), 10);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -1811,14 +1809,14 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 				);
 			}
 			if (isundef (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics.get(), pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
-				Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+				Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 				Graphics_text (my graphics.get(), my endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my graphics.get(), 0.5),
 					Melder_float (Melder_half (pitchViewFrom_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit(), Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL)
 				);
 			}
 			if (isundef (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics.get(), pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
-				Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
+				Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 				Graphics_text (my graphics.get(), my endWindow, pitchViewTo_hidden,
 					Melder_float (Melder_half (pitchViewTo_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit(), Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL)
@@ -1836,19 +1834,23 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	if (my instancePref_intensity_show()) {
 		double intensityCursor = undefined;
 		MelderColour textColour;
-		kGraphics_horizontalAlignment alignment;
+		kGraphics_horizontalAlignment hor;
+		int vert;
 		double y;
 		if (! my instancePref_pitch_show()) {
 			textColour = Melder_GREEN;
-			alignment = Graphics_LEFT;
+			hor = Graphics_LEFT;
+			vert = Graphics_HALF;
 			y = my endWindow;
 		} else if (! my instancePref_spectrogram_show() && ! my instancePref_formant_show()) {
 			textColour = Melder_GREEN;
-			alignment = Graphics_RIGHT;
+			hor = Graphics_RIGHT;
+			vert = Graphics_HALF;
 			y = my startWindow;
 		} else {
 			textColour = ( my instancePref_spectrogram_show() ? Melder_LIME : Melder_GREEN );
-			alignment = Graphics_RIGHT;
+			hor = Graphics_RIGHT;
+			vert = -1;
 			y = my endWindow;
 		}
 		if (my instancePref_intensity_viewTo() > my instancePref_intensity_viewFrom()) {
@@ -1865,19 +1867,19 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 					intensityCursor > my instancePref_intensity_viewFrom() && intensityCursor < my instancePref_intensity_viewTo() );
 			if (intensityCursorVisible) {
 				static const conststring32 methodString [] = { U" (.5)", U" (μE)", U" (μS)", U" (μ)" };
-				Graphics_setTextAlignment (my graphics.get(), alignment, Graphics_HALF);
+				Graphics_setTextAlignment (my graphics.get(), hor, Graphics_HALF);
 				Graphics_text (my graphics.get(), y, intensityCursor,
 					Melder_float (Melder_half (intensityCursor)), U" dB",
 					my startSelection == my endSelection ? U"" : methodString [(int) my instancePref_intensity_averagingMethod()]
 				);
 			}
 			if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics.get(), intensityCursor - my instancePref_intensity_viewFrom()) > 5.0) {
-				Graphics_setTextAlignment (my graphics.get(), alignment, Graphics_BOTTOM);
+				Graphics_setTextAlignment (my graphics.get(), hor, vert == -1 ? Graphics_BOTTOM : Graphics_HALF);
 				Graphics_text (my graphics.get(), y, my instancePref_intensity_viewFrom() - Graphics_dyMMtoWC (my graphics.get(), 0.5),
 						Melder_float (Melder_half (my instancePref_intensity_viewFrom())), U" dB");
 			}
 			if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my instancePref_intensity_viewTo() - intensityCursor) > 5.0) {
-				Graphics_setTextAlignment (my graphics.get(), alignment, Graphics_TOP);
+				Graphics_setTextAlignment (my graphics.get(), hor, vert == -1 ? Graphics_TOP : Graphics_HALF);
 				Graphics_text (my graphics.get(), y, my instancePref_intensity_viewTo(),
 						Melder_float (Melder_half (my instancePref_intensity_viewTo())), U" dB");
 			}
@@ -1893,12 +1895,12 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my d_spectrogram_cursor - my instancePref_spectrogram_viewFrom()) > 5.0) {
-			Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_BOTTOM);
+			Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
 			Graphics_text (my graphics.get(), my startWindow, my instancePref_spectrogram_viewFrom() - Graphics_dyMMtoWC (my graphics.get(), 0.5),
 					Melder_float (Melder_half (my instancePref_spectrogram_viewFrom())), U" Hz");
 		}
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my instancePref_spectrogram_viewTo() - my d_spectrogram_cursor) > 5.0) {
-			Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
+			Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
 			Graphics_text (my graphics.get(), my startWindow, my instancePref_spectrogram_viewTo(),
 					Melder_float (Melder_half (my instancePref_spectrogram_viewTo())), U" Hz");
 		}
@@ -1918,12 +1920,6 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			Graphics_line (our graphics, our startSelection, our p_spectrogram_viewFrom, our startSelection, our p_spectrogram_viewTo);
 		if (our endSelection > our startWindow && our endSelection < our endWindow && our endSelection != our startSelection)
 			Graphics_line (our graphics, our endSelection, our p_spectrogram_viewFrom, our endSelection, our p_spectrogram_viewTo);*/
-		/*
-			Frame.
-		*/
-		Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
-		Graphics_setColour (my graphics.get(), Melder_BLACK);
-		Graphics_rectangle (my graphics.get(), my startWindow, my endWindow, my instancePref_spectrogram_viewFrom(), my instancePref_spectrogram_viewTo());
 	}
 }
 void structTimeSoundAnalysisEditor :: v_draw_analysis () {

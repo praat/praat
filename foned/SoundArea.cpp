@@ -172,11 +172,11 @@ void SoundArea_draw (SoundArea me) {
 			Graphics_text (my graphics(), my startWindow(), mid, Melder_float (Melder_half (mid)));
 		} else {
 			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics(), cursorFunctionValue - minimum) > 5.0) {
-				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_BOTTOM);
+				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
 				Graphics_text (my graphics(), my startWindow(), minimum, Melder_float (Melder_half (minimum)));
 			}
 			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics(), maximum - cursorFunctionValue) > 5.0) {
-				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_TOP);
+				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
 				Graphics_text (my graphics(), my startWindow(), maximum, Melder_float (Melder_half (maximum)));
 			}
 		}
@@ -232,13 +232,12 @@ void SoundArea_draw (SoundArea me) {
 		} else {
 			Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), minimum * 32768, maximum * 32768);
 			Graphics_function16 (my graphics(),
-					my longSound() -> buffer.asArgumentToFunctionThatExpectsZeroBasedArray() - my longSound() -> imin * numberOfChannels + (ichan - 1),
-					numberOfChannels, first, last, Sampled_indexToX (my longSound(), first), Sampled_indexToX (my longSound(), last));
+				my longSound() -> buffer.asArgumentToFunctionThatExpectsZeroBasedArray() - my longSound() -> imin * numberOfChannels + (ichan - 1),
+				numberOfChannels, first, last, Sampled_indexToX (my longSound(), first), Sampled_indexToX (my longSound(), last)
+			);
 		}
 		Graphics_resetViewport (my graphics(), vp);
 	}
-	//Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
-	//Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 }
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
