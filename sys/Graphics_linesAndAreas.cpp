@@ -588,18 +588,12 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		/*
 			This is pixel-precise drawing, and may therefore be different on retina displays than on 100 dpi displays.
 		*/
-		#if 1
-			const bool isRetinaDisplay = [[our d_macView window] backingScaleFactor] == 2.0;
-		#else
-			const bool isRetinaDisplay = false;
-		#endif
+		//const bool isRetinaDisplay = [[our d_macView window] backingScaleFactor] == 2.0;
 
 		CGContextSetLineWidth (our d_macGraphicsContext, 1.0);
 		CGContextSetAllowsAntialiasing (our d_macGraphicsContext, false);   // because we want to draw by pixel
         CGFloat red = 0.3, green = 0.3, blue = 0.2;
         CGContextSetRGBStrokeColor (our d_macGraphicsContext, red, green, blue, 1.0);
-		if (! isRetinaDisplay)
-			x1DC -= 1.0;
 		x1DC += 0.5;
 		x2DC -= 0.5;
 		y1DC -= 0.5;
@@ -631,11 +625,6 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
             CGContextAddLineToPoint (our d_macGraphicsContext, x2DC, y2DC);
             CGContextStrokePath (our d_macGraphicsContext);
 			if (width > 2.0 && height > 2.0) {
-				if (! isRetinaDisplay) {
-					x1DC += 1.0;
-					width = x2DC - x1DC;
-					height = y1DC - y2DC;
-				}
 				red = 0.75, green = 0.75, blue = 0.65;
 				CGContextSetRGBFillColor (our d_macGraphicsContext, red, green, blue, 1.0);
 				rect = CGRectMake (x1DC, y2DC, width, height);
