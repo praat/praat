@@ -31,13 +31,18 @@ Thing_define (DataGui, Thing) {
 public:
 	Daata data() const { return _data; }
 	bool editable() const { return _editable; }
+	DataGui boss() const { return _boss; }
+protected:
+	void setData (Daata data) { _data = data; }
 private:
 	Daata _data;   // the data that can be displayed and edited
 	bool _editable;
+	DataGui _boss;
 
-	friend void DataGui_init (DataGui me, Daata data, bool editable) {
+	friend void DataGui_init (DataGui me, Daata data, bool editable, DataGui boss) {
 		my _data = data;
 		my _editable = editable;
+		my _boss = boss;
 		my v1_copyPreferencesToInstance ();
 		my v9_repairPreferences ();
 	}

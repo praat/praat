@@ -377,7 +377,7 @@ static void gui_window_cb_goAway (Editor me) {
 
 void praat_addCommandsToEditor (Editor me);
 void Editor_init (Editor me, int x, int y, int width, int height, conststring32 title, Daata data) {
-	DataGui_init (me, data, true);   // BUG: check editability
+	DataGui_init (me, data, true, me);   // I am my own boss! BUG: check editability
 	/*
 		Zero widths are taken from the preferences.
 	*/
