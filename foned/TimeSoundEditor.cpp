@@ -390,110 +390,108 @@ static void INFO_DATA__getAmplitudes (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTP
 
 #pragma mark - SoundArea Draw menu
 
-static void menu_cb_DrawVisibleSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_DrawVisibleSound (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible sound", nullptr)
 		my v_form_pictureWindow (cmd);
 		LABEL (U"Sound:")
-		BOOLEAN (preserveTimes, U"Preserve times", my default_sound_picture_preserveTimes());
-		REAL (bottom, U"left Vertical range", my default_sound_picture_bottom())
-		REAL (top, U"right Vertical range", my default_sound_picture_top())
+		BOOLEAN (preserveTimes, U"Preserve times", my default_picture_preserveTimes());
+		REAL (bottom, U"left Vertical range", my default_picture_bottom())
+		REAL (top, U"right Vertical range", my default_picture_top())
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_BOOLEAN (preserveTimes, my classPref_sound_picture_preserveTimes())
-		SET_REAL (bottom,  my classPref_sound_picture_bottom())
-		SET_REAL (top,     my classPref_sound_picture_top())
+		SET_BOOLEAN (preserveTimes, my classPref_picture_preserveTimes())
+		SET_REAL (bottom,  my classPref_picture_bottom())
+		SET_REAL (top,     my classPref_picture_top())
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my setClassPref_sound_picture_preserveTimes (preserveTimes);
-		my setClassPref_sound_picture_bottom (bottom);
-		my setClassPref_sound_picture_top (top);
+		my setClassPref_picture_preserveTimes (preserveTimes);
+		my setClassPref_picture_bottom (bottom);
+		my setClassPref_picture_top (top);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my setClassPref_function_picture_garnish (garnish);
+		my setClassPref_picture_garnish (garnish);
 		if (! my soundOrLongSound())
 			Melder_throw (U"There is no sound to draw.");
 		autoSound publish = my longSound() ?
-			LongSound_extractPart (my longSound(), my startWindow, my endWindow, preserveTimes) :
-			Sound_extractPart (my sound(), my startWindow, my endWindow, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes
+			LongSound_extractPart (my longSound(), my startWindow(), my endWindow(), preserveTimes) :
+			Sound_extractPart (my sound(), my startWindow(), my endWindow(), kSound_windowShape::RECTANGULAR, 1.0, preserveTimes
 		);
-		Editor_openPraatPicture (me);
-		Sound_draw (publish.get(), my pictureGraphics, 0.0, 0.0, bottom, top, garnish, U"Curve");
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
+		Editor_openPraatPicture (my functionEditor());
+		Sound_draw (publish.get(), my functionEditor() -> pictureGraphics, 0.0, 0.0, bottom, top, garnish, U"Curve");
+		FunctionEditor_garnish (my functionEditor());
+		Editor_closePraatPicture (my functionEditor());
 	EDITOR_END
 }
 
-static void menu_cb_DrawSelectedSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_DrawSelectedSound (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw selected sound", nullptr)
 		my v_form_pictureWindow (cmd);
 		LABEL (U"Sound:")
-		BOOLEAN (preserveTimes, U"Preserve times",       my default_sound_picture_preserveTimes());
-		REAL    (bottom,        U"left Vertical range",  my default_sound_picture_bottom());
-		REAL    (top,           U"right Vertical range", my default_sound_picture_top());
+		BOOLEAN (preserveTimes, U"Preserve times",       my default_picture_preserveTimes());
+		REAL    (bottom,        U"left Vertical range",  my default_picture_bottom());
+		REAL    (top,           U"right Vertical range", my default_picture_top());
 		my v_form_pictureMargins (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_BOOLEAN (preserveTimes, my classPref_sound_picture_preserveTimes());
-		SET_REAL (bottom, my classPref_sound_picture_bottom());
-		SET_REAL (top,    my classPref_sound_picture_top());
+		SET_BOOLEAN (preserveTimes, my classPref_picture_preserveTimes());
+		SET_REAL (bottom, my classPref_picture_bottom());
+		SET_REAL (top,    my classPref_picture_top());
 		my v_ok_pictureMargins (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish());
+		SET_BOOLEAN (garnish, my classPref_picture_garnish());
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my setClassPref_sound_picture_preserveTimes (preserveTimes);
-		my setClassPref_sound_picture_bottom (bottom);
-		my setClassPref_sound_picture_top (top);
+		my setClassPref_picture_preserveTimes (preserveTimes);
+		my setClassPref_picture_bottom (bottom);
+		my setClassPref_picture_top (top);
 		my v_do_pictureMargins (cmd);
-		my setClassPref_function_picture_garnish (garnish);
+		my setClassPref_picture_garnish (garnish);
 		if (! my soundOrLongSound())
 			Melder_throw (U"There is no sound to draw.");
 		autoSound publish = my longSound() ?
-			LongSound_extractPart (my longSound(), my startSelection, my endSelection, preserveTimes) :
-			Sound_extractPart (my sound(), my startSelection, my endSelection,
+			LongSound_extractPart (my longSound(), my startSelection(), my endSelection(), preserveTimes) :
+			Sound_extractPart (my sound(), my startSelection(), my endSelection(),
 					kSound_windowShape::RECTANGULAR, 1.0, preserveTimes
 		);
-		Editor_openPraatPicture (me);
-		Sound_draw (publish.get(), my pictureGraphics, 0.0, 0.0, bottom, top, garnish, U"Curve");
-		Editor_closePraatPicture (me);
+		Editor_openPraatPicture (my functionEditor());
+		Sound_draw (publish.get(), my functionEditor() -> pictureGraphics, 0.0, 0.0, bottom, top, garnish, U"Curve");
+		Editor_closePraatPicture (my functionEditor());
 	EDITOR_END
 }
 
 
 #pragma mark - SoundArea Select menu
 
-static void menu_cb_MoveStartOfSelectionToNearestZeroCrossing (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my sound(), my startSelection, 1);   // STEREO BUG
+static void menu_cb_MoveStartOfSelectionToNearestZeroCrossing (SoundArea me, EDITOR_ARGS_DIRECT) {
+	const double zero = Sound_getNearestZeroCrossing (my sound(), my startSelection(), 1);   // STEREO BUG
 	if (isdefined (zero)) {
-		my startSelection = zero;
-		Melder_sort (& my startSelection, & my endSelection);
-		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (me, true);
+		my setSelection (zero, my endSelection());
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+		FunctionEditor_marksChanged (my functionEditor(), true);
 	}
 }
 
-static void menu_cb_MoveCursorToNearestZeroCrossing (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my sound(), 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
+static void menu_cb_MoveCursorToNearestZeroCrossing (SoundArea me, EDITOR_ARGS_DIRECT) {
+	const double zero = Sound_getNearestZeroCrossing (my sound(), 0.5 * (my startSelection() + my endSelection()), 1);   // STEREO BUG
 	if (isdefined (zero)) {
-		my startSelection = my endSelection = zero;
-		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (me, true);
+		my setSelection (zero, zero);
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+		FunctionEditor_marksChanged (my functionEditor(), true);
 	}
 }
 
-static void menu_cb_MoveEndOfSelectionToNearestZeroCrossing (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my sound(), my endSelection, 1);   // STEREO BUG
+static void menu_cb_MoveEndOfSelectionToNearestZeroCrossing (SoundArea me, EDITOR_ARGS_DIRECT) {
+	const double zero = Sound_getNearestZeroCrossing (my sound(), my endSelection(), 1);   // STEREO BUG
 	if (isdefined (zero)) {
-		my endSelection = zero;
-		Melder_sort (& my startSelection, & my endSelection);
-		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (me, true);
+		my setSelection (my startSelection(), zero);
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+		FunctionEditor_marksChanged (my functionEditor(), true);
 	}
 }
 
@@ -513,25 +511,25 @@ void structTimeSoundEditor:: v_createMenus () {
 		menu SOUND SELECT
 	*/
 	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {
-		EditorMenu_addCommand (menu, U"-- sound select --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_MoveStartOfSelectionToNearestZeroCrossing /* dummy */);
-		EditorMenu_addCommand (menu, U"Move start of selection to nearest zero crossing", ',',
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"-- sound select --", 0, nullptr);
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_MoveStartOfSelectionToNearestZeroCrossing /* dummy */);
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Move start of selection to nearest zero crossing", ',',
 				menu_cb_MoveStartOfSelectionToNearestZeroCrossing);
-		EditorMenu_addCommand (menu, U"Move begin of selection to nearest zero crossing", Editor_HIDDEN,
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Move begin of selection to nearest zero crossing", Editor_HIDDEN,
 				menu_cb_MoveStartOfSelectionToNearestZeroCrossing);
-		EditorMenu_addCommand (menu, U"Move cursor to nearest zero crossing", '0',
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Move cursor to nearest zero crossing", '0',
 				menu_cb_MoveCursorToNearestZeroCrossing);
-		EditorMenu_addCommand (menu, U"Move end of selection to nearest zero crossing", '.',
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Move end of selection to nearest zero crossing", '.',
 				menu_cb_MoveEndOfSelectionToNearestZeroCrossing);
 	}
 	/*
 		menu SOUND DRAW
 	*/
-	EditorMenu_addCommand (menu, U"-- sound draw --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
+	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"-- sound draw --", 0, nullptr);
+	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
 	if (our soundArea) {
-		EditorMenu_addCommand (menu, U"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
-		our drawButton = EditorMenu_addCommand (menu, U"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
+		our drawButton = FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
 	}
 }
 

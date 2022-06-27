@@ -17,13 +17,39 @@
  */
 
 #include "FunctionArea.h"
+#include "EditorM.h"
 
 Thing_implement (FunctionArea, Thing, 0);
+
+#include "Prefs_define.h"
+#include "FunctionArea_prefs.h"
+#include "Prefs_install.h"
+#include "FunctionArea_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "FunctionArea_prefs.h"
 
 GuiMenuItem FunctionAreaMenu_addCommand (FunctionArea sender, EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
 		FunctionAreaCommandCallback commandCallback)
 {
 	return DataGuiMenu_addCommand (me, itemTitle, flags, commandCallback.get(), sender);
 }
+
+static bool v_form_pictureSelection__drawSelectionTimes;
+static bool v_form_pictureSelection__drawSelectionHairs;
+void structFunctionArea :: v_form_pictureSelection (EditorCommand cmd) {
+	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection__drawSelectionTimes, nullptr, U"Draw selection times", true);
+	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection__drawSelectionHairs, nullptr, U"Draw selection hairs", true);
+}
+void structFunctionArea :: v_ok_pictureSelection (EditorCommand cmd) {
+	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
+	SET_BOOLEAN (v_form_pictureSelection__drawSelectionTimes, my classPref_picture_drawSelectionTimes())
+	SET_BOOLEAN (v_form_pictureSelection__drawSelectionHairs, my classPref_picture_drawSelectionHairs())
+}
+void structFunctionArea :: v_do_pictureSelection (EditorCommand cmd) {
+	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
+	my setClassPref_picture_drawSelectionTimes (v_form_pictureSelection__drawSelectionTimes);
+	my setClassPref_picture_drawSelectionHairs (v_form_pictureSelection__drawSelectionHairs);
+}
+
 
 /* End of file FunctionArea.cpp */

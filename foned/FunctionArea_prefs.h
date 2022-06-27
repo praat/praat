@@ -1,4 +1,4 @@
-/* TimeSoundEditor_prefs.h
+/* FunctionArea_prefs.h
  *
  * Copyright (C) 2013,2015,2016,2022 Paul Boersma
  *
@@ -16,13 +16,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (TimeSoundEditor)
+Prefs_begin (FunctionArea)
 
-	ClassPrefs_addEnum       (TimeSoundEditor, extract_windowShape,         1, kSound_windowShape, DEFAULT)
-	ClassPrefs_addDouble     (TimeSoundEditor, extract_relativeWidth,       1, U"1.0")
-	ClassPrefs_addBool       (TimeSoundEditor, extract_preserveTimes,       1, true)
-	ClassPrefs_addDouble     (TimeSoundEditor, extract_overlap,             1, U"0.01")
+	ClassPrefs_addBool       (FunctionArea, picture_drawSelectionTimes, 1, true)
+	ClassPrefs_addBool       (FunctionArea, picture_drawSelectionHairs, 1, true)
+	ClassPrefs_addBool       (FunctionArea, picture_garnish,            1, true)
 
-Prefs_end (TimeSoundEditor)
+Prefs_end (FunctionArea)
 
-/* End of file TimeSoundEditor_prefs.h */
+/* End of file FunctionArea_prefs.h */

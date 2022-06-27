@@ -576,17 +576,17 @@ static void menu_cb_paintVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_
 	EDITOR_FORM (U"Paint visible spectrogram", nullptr)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
+		//my v_form_pictureSelection (cmd);   // BUG: move to area
 		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
+		//my v_ok_pictureSelection (cmd);   // BUG: move to area
 		SET_BOOLEAN (garnish, my instancePref_spectrogram_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
+		//my v_do_pictureSelection (cmd);   // BUG: move to area
 		my setInstancePref_spectrogram_picture_garnish (garnish);
 		TimeSoundAnalysisEditor_haveVisibleSpectrogram (me);
 		Editor_openPraatPicture (me);
@@ -825,19 +825,19 @@ static void menu_cb_drawVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_
 		LABEL (U"Pitch:")
 		BOOLEAN (speckle, U"Speckle", false)
 		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
+		my soundArea -> v_form_pictureSelection (cmd);
 		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		SET_BOOLEAN (speckle, my instancePref_pitch_picture_speckle())
 		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
+		my soundArea -> v_ok_pictureSelection (cmd);
 		SET_BOOLEAN (garnish, my instancePref_pitch_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my setInstancePref_pitch_picture_speckle (speckle);
 		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
+		my soundArea -> v_do_pictureSelection (cmd);
 		my setInstancePref_pitch_picture_garnish (garnish);
 		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		Editor_openPraatPicture (me);
@@ -910,17 +910,17 @@ static void menu_cb_drawVisibleIntensityContour (TimeSoundAnalysisEditor me, EDI
 	EDITOR_FORM (U"Draw visible intensity contour", nullptr)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
+		my soundArea -> v_form_pictureSelection (cmd);
 		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
+		my soundArea -> v_ok_pictureSelection (cmd);
 		SET_BOOLEAN (garnish, my instancePref_intensity_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
+		my soundArea -> v_do_pictureSelection (cmd);
 		my setInstancePref_intensity_picture_garnish (garnish);
 		TimeSoundAnalysisEditor_haveVisibleIntensity (me);
 		Editor_openPraatPicture (me);
@@ -1062,17 +1062,17 @@ static void menu_cb_drawVisibleFormantContour (TimeSoundAnalysisEditor me, EDITO
 	EDITOR_FORM (U"Draw visible formant contour", nullptr)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
+		my soundArea -> v_form_pictureSelection (cmd);
 		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
+		my soundArea -> v_ok_pictureSelection (cmd);
 		SET_BOOLEAN (garnish, my instancePref_formant_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
+		my soundArea -> v_do_pictureSelection (cmd);
 		my setInstancePref_formant_picture_garnish (garnish);
 		TimeSoundAnalysisEditor_haveVisibleFormants (me);
 		Editor_openPraatPicture (me);
@@ -1219,19 +1219,19 @@ static void CONVERT_DATA_TO_ONE__ExtractVisiblePulses (TimeSoundAnalysisEditor m
 
 static void menu_cb_drawVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible pulses", nullptr)
-		my v_form_pictureWindow (cmd);
-		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
+		my soundArea -> v_form_pictureWindow (cmd);
+		my soundArea -> v_form_pictureMargins (cmd);
+		my soundArea -> v_form_pictureSelection (cmd);
 		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
-		my v_ok_pictureWindow (cmd);
-		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
+		my soundArea -> v_ok_pictureWindow (cmd);
+		my soundArea -> v_ok_pictureMargins (cmd);
+		my soundArea -> v_ok_pictureSelection (cmd);
 		SET_BOOLEAN (garnish, my instancePref_pulses_picture_garnish())
 	EDITOR_DO
-		my v_do_pictureWindow (cmd);
-		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
+		my soundArea -> v_do_pictureWindow (cmd);
+		my soundArea -> v_do_pictureMargins (cmd);
+		my soundArea -> v_do_pictureSelection (cmd);
 		my setInstancePref_pulses_picture_garnish (garnish);
 		TimeSoundAnalysisEditor_haveVisiblePulses (me);
 		Editor_openPraatPicture (me);

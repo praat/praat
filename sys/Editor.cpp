@@ -346,31 +346,6 @@ void structEditor :: v_createMenus () {
 	}
 }
 
-BOOLEAN_VARIABLE (v_form_pictureWindow__eraseFirst)
-void structEditor :: v_form_pictureWindow (EditorCommand cmd) {
-	LABEL (U"Picture window:")
-	BOOLEAN_FIELD (v_form_pictureWindow__eraseFirst, U"Erase first", true)
-}
-void structEditor :: v_ok_pictureWindow (EditorCommand cmd) {
-	SET_BOOLEAN (v_form_pictureWindow__eraseFirst, our instancePref_picture_eraseFirst())
-}
-void structEditor :: v_do_pictureWindow (EditorCommand /* cmd */) {
-	our setInstancePref_picture_eraseFirst (v_form_pictureWindow__eraseFirst);
-}
-
-OPTIONMENU_ENUM_VARIABLE (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop)
-void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
-	LABEL (U"Margins:")
-	OPTIONMENU_ENUM_FIELD (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop,
-			U"Write name at top", kDataGui_writeNameAtTop::DEFAULT)
-}
-void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (v_form_pictureMargins__writeNameAtTop, kDataGui_writeNameAtTop, our classPref_picture_writeNameAtTop())
-}
-void structEditor :: v_do_pictureMargins (EditorCommand /* cmd */) {
-	our setClassPref_picture_writeNameAtTop (v_form_pictureMargins__writeNameAtTop);
-}
-
 static void gui_window_cb_goAway (Editor me) {
 	Melder_assert (me);
 	Melder_assert (Thing_isa (me, classEditor));

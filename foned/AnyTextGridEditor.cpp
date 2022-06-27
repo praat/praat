@@ -175,20 +175,20 @@ void structAnyTextGridEditor :: v_createMenuItems_file_write (EditorMenu menu) {
 
 static void menu_cb_DrawVisibleTextGrid (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible TextGrid", nullptr)
-		my v_form_pictureWindow (cmd);
-		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish())
+		my textGridArea -> v_form_pictureWindow (cmd);
+		my textGridArea -> v_form_pictureMargins (cmd);
+		my textGridArea -> v_form_pictureSelection (cmd);
+		BOOLEAN (garnish, U"Garnish", my textGridArea -> default_picture_garnish())
 	EDITOR_OK
-		my v_ok_pictureWindow (cmd);
-		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
+		my textGridArea -> v_ok_pictureWindow (cmd);
+		my textGridArea -> v_ok_pictureMargins (cmd);
+		my textGridArea -> v_ok_pictureSelection (cmd);
+		SET_BOOLEAN (garnish, my textGridArea -> classPref_picture_garnish())
 	EDITOR_DO
-		my v_do_pictureWindow (cmd);
-		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
-		my setClassPref_function_picture_garnish (garnish);
+		my textGridArea -> v_do_pictureWindow (cmd);
+		my textGridArea -> v_do_pictureMargins (cmd);
+		my textGridArea -> v_do_pictureSelection (cmd);
+		my textGridArea -> setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		TextGrid_Sound_draw (my textGrid(), nullptr, my pictureGraphics,
 				my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
@@ -199,20 +199,20 @@ static void menu_cb_DrawVisibleTextGrid (AnyTextGridEditor me, EDITOR_ARGS_FORM)
 
 static void menu_cb_DrawVisibleSoundAndTextGrid (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible sound and TextGrid", nullptr)
-		my v_form_pictureWindow (cmd);
-		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish())
+		my textGridArea -> v_form_pictureWindow (cmd);
+		my textGridArea -> v_form_pictureMargins (cmd);
+		my textGridArea -> v_form_pictureSelection (cmd);
+		BOOLEAN (garnish, U"Garnish", my textGridArea -> default_picture_garnish())
 	EDITOR_OK
-		my v_ok_pictureWindow (cmd);
-		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
+		my textGridArea -> v_ok_pictureWindow (cmd);
+		my textGridArea -> v_ok_pictureMargins (cmd);
+		my textGridArea -> v_ok_pictureSelection (cmd);
+		SET_BOOLEAN (garnish, my textGridArea -> classPref_picture_garnish())
 	EDITOR_DO
-		my v_do_pictureWindow (cmd);
-		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
-		my setClassPref_function_picture_garnish (garnish);
+		my textGridArea -> v_do_pictureWindow (cmd);
+		my textGridArea -> v_do_pictureMargins (cmd);
+		my textGridArea -> v_do_pictureSelection (cmd);
+		my textGridArea -> setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		{// scope
 			autoSound sound = my longSound() ?
@@ -418,28 +418,28 @@ static void menu_cb_ExtendSelectNextInterval (AnyTextGridEditor me, EDITOR_ARGS_
 
 static void menu_cb_DrawTextGridAndPitch (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw TextGrid and Pitch separately", nullptr)
-		my v_form_pictureWindow (cmd);
+		my textGridArea -> v_form_pictureWindow (cmd);
 		LABEL (U"TextGrid:")
 		BOOLEAN (showBoundariesAndPoints, U"Show boundaries and points", my default_picture_showBoundaries ());
 		LABEL (U"Pitch:")
 		BOOLEAN (speckle, U"Speckle", my default_picture_pitch_speckle ());
-		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish ());
+		my textGridArea -> v_form_pictureMargins (cmd);
+		my textGridArea -> v_form_pictureSelection (cmd);
+		BOOLEAN (garnish, U"Garnish", my textGridArea -> default_picture_garnish ());
 	EDITOR_OK
-		my v_ok_pictureWindow (cmd);
+		my textGridArea -> v_ok_pictureWindow (cmd);
 		SET_BOOLEAN (showBoundariesAndPoints, my classPref_picture_showBoundaries())
 		SET_BOOLEAN (speckle, my classPref_picture_pitch_speckle())
-		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
+		my textGridArea -> v_ok_pictureMargins (cmd);
+		my textGridArea -> v_ok_pictureSelection (cmd);
+		SET_BOOLEAN (garnish, my textGridArea -> classPref_picture_garnish())
 	EDITOR_DO
-		my v_do_pictureWindow (cmd);
+		my textGridArea -> v_do_pictureWindow (cmd);
 		my setClassPref_picture_showBoundaries (showBoundariesAndPoints);   // set prefs even if analyses are missing (it would be annoying not to)
 		my setClassPref_picture_pitch_speckle (speckle);
-		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
-		my setClassPref_function_picture_garnish (garnish);
+		my textGridArea -> v_do_pictureMargins (cmd);
+		my textGridArea -> v_do_pictureSelection (cmd);
+		my textGridArea -> setClassPref_picture_garnish (garnish);
 		TimeSoundAnalysisEditor_haveVisiblePitch (me);
 		Editor_openPraatPicture (me);
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
