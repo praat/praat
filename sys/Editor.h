@@ -70,6 +70,8 @@ Thing_define (Editor, DataGui) {
 		override;
 	void v_nameChanged ()
 		override;   // sets the window and icon titles to reflect the new name
+	void v_createMenus ()
+		override;
 
 	virtual void v_goAway () { forget_nozero (this); }
 	virtual bool v_hasMenuBar () { return true; }
@@ -81,7 +83,6 @@ Thing_define (Editor, DataGui) {
 	virtual bool v_hasQueryMenu () { return true; }
 	virtual void v_createMenuItems_query (EditorMenu menu);
 	virtual void v_createMenuItems_query_info (EditorMenu menu);
-	virtual void v_createMenus ();
 	virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
 	virtual void v_createChildren () { }
 	virtual void v1_dataChanged () { }

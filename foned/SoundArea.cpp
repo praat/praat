@@ -19,6 +19,7 @@
 #include "SoundArea.h"
 #include "LongSoundArea.h"
 #include "../kar/UnicodeData.h"
+#include "EditorM.h"
 
 Thing_implement (SoundArea, FunctionArea, 0);
 Thing_implement (LongSoundArea, FunctionArea, 0);
@@ -242,6 +243,236 @@ void SoundArea_draw (SoundArea me) {
 
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	return FunctionEditor_UPDATE_NEEDED;
+}
+
+#pragma mark - SoundArea Settings menu
+
+static void menu_cb_soundScaling (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Sound scaling", nullptr)
+		OPTIONMENU_ENUM (kSoundArea_scalingStrategy, scalingStrategy,
+				U"Scaling strategy", my default_scalingStrategy())
+		LABEL (U"For \"fixed height\":")
+		POSITIVE (height, U"Height", my default_scaling_height())
+		LABEL (U"For \"fixed range\":")
+		REAL (minimum, U"Minimum", my default_scaling_minimum())
+		REAL (maximum, U"Maximum", my default_scaling_maximum())
+	EDITOR_OK
+		SET_ENUM (scalingStrategy, kSoundArea_scalingStrategy, my instancePref_scalingStrategy())
+		SET_REAL (height,  my instancePref_scaling_height())
+		SET_REAL (minimum, my instancePref_scaling_minimum())
+		SET_REAL (maximum, my instancePref_scaling_maximum())
+	EDITOR_DO
+		my setInstancePref_scalingStrategy (scalingStrategy) ;
+		my setInstancePref_scaling_height (height);
+		my setInstancePref_scaling_minimum (minimum);
+		my setInstancePref_scaling_maximum (maximum);
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+static void menu_cb_soundMuteChannels (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Mute channels", nullptr)
+		NATURALVECTOR (channels, U"Channels to mute", WHITESPACE_SEPARATED_, U"2")
+	EDITOR_OK
+	EDITOR_DO
+		const integer numberOfChannels = my soundOrLongSound() -> ny;
+		Melder_assert (my muteChannels.size == numberOfChannels);
+		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
+			my muteChannels [ichan] = false;
+		for (integer ichan = 1; ichan <= channels.size; ichan ++)
+			if (channels [ichan] >= 1 && channels [ichan] <= numberOfChannels)
+				my muteChannels [channels [ichan]] = true;
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+static void addSoundSettingsMenu (SoundArea me, EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"Sound scaling...", 0, menu_cb_soundScaling, me);
+	FunctionAreaMenu_addCommand (menu, U"Mute channels...", 0, menu_cb_soundMuteChannels, me);
+}
+
+
+#pragma mark - SoundArea Query menu
+
+enum {
+	TimeSoundEditor_PART_CURSOR = 1,
+	TimeSoundEditor_PART_SELECTION = 2
+};
+static int makeQueriable (SoundArea me, bool allowCursor, double *tmin, double *tmax) {
+	if (my startSelection() == my endSelection()) {
+		if (allowCursor) {
+			*tmin = *tmax = my startSelection();
+			return TimeSoundEditor_PART_CURSOR;
+		} else {
+			Melder_throw (U"Make a selection first.");
+		}
+	} else if (my startSelection() < my startWindow() || my endSelection() > my endWindow()) {
+		Melder_throw (U"Command ambiguous: a part of the selection (", my startSelection(), U", ", my endSelection(), U") "
+			U"is outside of the window (", my startWindow(), U", ", my endWindow(), U"). "
+			U"Either zoom or re-select.");
+	}
+	*tmin = my startSelection();
+	*tmax = my endSelection();
+	return TimeSoundEditor_PART_SELECTION;
+}
+static void INFO_DATA__getAmplitudes (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	INFO_DATA
+		double tmin, tmax;
+		const int part = makeQueriable (me, true, & tmin, & tmax);
+		if (! my sound())
+			Melder_throw (U"No Sound object is visible (a LongSound cannot be queried).");
+		MelderInfo_open ();
+		if (part == TimeSoundEditor_PART_CURSOR)
+			for (integer ichan = 1; ichan <= my sound() -> ny; ichan ++)
+				MelderInfo_writeLine (Vector_getValueAtX (my sound(), 0.5 * (my startSelection() + my endSelection()), ichan, kVector_valueInterpolation :: SINC70),
+						U" (interpolated amplitude at CURSOR in channel ", ichan, U")");
+		else
+			for (integer ichan = 1; ichan <= my sound() -> ny; ichan ++)
+				MelderInfo_writeLine (Sampled_getMean (my sound(), my startSelection(), my endSelection(), ichan, 0, true),
+						U" (mean amplitude in SELECTION in channel ", ichan, U")");
+		MelderInfo_close ();
+	INFO_DATA_END
+}
+static void addSoundQueryMenu (SoundArea me, EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- sound query --", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Query selected sound:", GuiMenu_INSENSITIVE,
+			INFO_DATA__getAmplitudes /* dummy */, me);
+	FunctionAreaMenu_addCommand (menu, U"Get amplitude(s)", 0,
+			INFO_DATA__getAmplitudes, me);
+}
+
+
+#pragma mark - SoundArea Select menu
+
+static void menu_cb_MoveStartOfSelectionToNearestZeroCrossing (SoundArea me, EDITOR_ARGS_DIRECT) {
+	const double zero = Sound_getNearestZeroCrossing (my sound(), my startSelection(), 1);   // STEREO BUG
+	if (isdefined (zero)) {
+		my setSelection (zero, my endSelection());
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+		FunctionEditor_marksChanged (my functionEditor(), true);
+	}
+}
+static void menu_cb_MoveCursorToNearestZeroCrossing (SoundArea me, EDITOR_ARGS_DIRECT) {
+	const double zero = Sound_getNearestZeroCrossing (my sound(), 0.5 * (my startSelection() + my endSelection()), 1);   // STEREO BUG
+	if (isdefined (zero)) {
+		my setSelection (zero, zero);
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+		FunctionEditor_marksChanged (my functionEditor(), true);
+	}
+}
+static void menu_cb_MoveEndOfSelectionToNearestZeroCrossing (SoundArea me, EDITOR_ARGS_DIRECT) {
+	const double zero = Sound_getNearestZeroCrossing (my sound(), my endSelection(), 1);   // STEREO BUG
+	if (isdefined (zero)) {
+		my setSelection (my startSelection(), zero);
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+		FunctionEditor_marksChanged (my functionEditor(), true);
+	}
+}
+static void addSoundSelectMenu (SoundArea me, EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- sound select --", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_MoveStartOfSelectionToNearestZeroCrossing /* dummy */, me);
+	FunctionAreaMenu_addCommand (menu, U"Move start of selection to nearest zero crossing", ',',
+			menu_cb_MoveStartOfSelectionToNearestZeroCrossing, me);
+	FunctionAreaMenu_addCommand (menu, U"Move begin of selection to nearest zero crossing", Editor_HIDDEN,
+			menu_cb_MoveStartOfSelectionToNearestZeroCrossing, me);
+	FunctionAreaMenu_addCommand (menu, U"Move cursor to nearest zero crossing", '0',
+			menu_cb_MoveCursorToNearestZeroCrossing, me);
+	FunctionAreaMenu_addCommand (menu, U"Move end of selection to nearest zero crossing", '.',
+			menu_cb_MoveEndOfSelectionToNearestZeroCrossing, me);
+}
+
+
+#pragma mark - SoundArea Draw menu
+
+static void menu_cb_DrawVisibleSound (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw visible sound", nullptr)
+		my v_form_pictureWindow (cmd);
+		LABEL (U"Sound:")
+		BOOLEAN (preserveTimes, U"Preserve times", my default_picture_preserveTimes());
+		REAL (bottom, U"left Vertical range", my default_picture_bottom())
+		REAL (top, U"right Vertical range", my default_picture_top())
+		my v_form_pictureMargins (cmd);
+		my v_form_pictureSelection (cmd);
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
+	EDITOR_OK
+		my v_ok_pictureWindow (cmd);
+		SET_BOOLEAN (preserveTimes, my classPref_picture_preserveTimes())
+		SET_REAL (bottom,  my classPref_picture_bottom())
+		SET_REAL (top,     my classPref_picture_top())
+		my v_ok_pictureMargins (cmd);
+		my v_ok_pictureSelection (cmd);
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
+	EDITOR_DO
+		my v_do_pictureWindow (cmd);
+		my setClassPref_picture_preserveTimes (preserveTimes);
+		my setClassPref_picture_bottom (bottom);
+		my setClassPref_picture_top (top);
+		my v_do_pictureMargins (cmd);
+		my v_do_pictureSelection (cmd);
+		my setClassPref_picture_garnish (garnish);
+		if (! my soundOrLongSound())
+			Melder_throw (U"There is no sound to draw.");
+		autoSound publish = my longSound() ?
+			LongSound_extractPart (my longSound(), my startWindow(), my endWindow(), preserveTimes) :
+			Sound_extractPart (my sound(), my startWindow(), my endWindow(), kSound_windowShape::RECTANGULAR, 1.0, preserveTimes
+		);
+		Editor_openPraatPicture (my functionEditor());
+		Sound_draw (publish.get(), my functionEditor() -> pictureGraphics, 0.0, 0.0, bottom, top, garnish, U"Curve");
+		FunctionEditor_garnish (my functionEditor());
+		Editor_closePraatPicture (my functionEditor());
+	EDITOR_END
+}
+static void menu_cb_DrawSelectedSound (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw selected sound", nullptr)
+		my v_form_pictureWindow (cmd);
+		LABEL (U"Sound:")
+		BOOLEAN (preserveTimes, U"Preserve times",       my default_picture_preserveTimes());
+		REAL    (bottom,        U"left Vertical range",  my default_picture_bottom());
+		REAL    (top,           U"right Vertical range", my default_picture_top());
+		my v_form_pictureMargins (cmd);
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
+	EDITOR_OK
+		my v_ok_pictureWindow (cmd);
+		SET_BOOLEAN (preserveTimes, my classPref_picture_preserveTimes());
+		SET_REAL (bottom, my classPref_picture_bottom());
+		SET_REAL (top,    my classPref_picture_top());
+		my v_ok_pictureMargins (cmd);
+		SET_BOOLEAN (garnish, my classPref_picture_garnish());
+	EDITOR_DO
+		my v_do_pictureWindow (cmd);
+		my setClassPref_picture_preserveTimes (preserveTimes);
+		my setClassPref_picture_bottom (bottom);
+		my setClassPref_picture_top (top);
+		my v_do_pictureMargins (cmd);
+		my setClassPref_picture_garnish (garnish);
+		if (! my soundOrLongSound())
+			Melder_throw (U"There is no sound to draw.");
+		autoSound publish = my longSound() ?
+			LongSound_extractPart (my longSound(), my startSelection(), my endSelection(), preserveTimes) :
+			Sound_extractPart (my sound(), my startSelection(), my endSelection(),
+					kSound_windowShape::RECTANGULAR, 1.0, preserveTimes
+		);
+		Editor_openPraatPicture (my functionEditor());
+		Sound_draw (publish.get(), my functionEditor() -> pictureGraphics, 0.0, 0.0, bottom, top, garnish, U"Curve");
+		Editor_closePraatPicture (my functionEditor());
+	EDITOR_END
+}
+static void addSoundDrawMenu (SoundArea me, EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- sound draw --", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */, me);
+	FunctionAreaMenu_addCommand (menu, U"Draw visible sound...", 0, menu_cb_DrawVisibleSound, me);
+	my drawButton = FunctionAreaMenu_addCommand (menu, U"Draw selected sound...", 0, menu_cb_DrawSelectedSound, me);
+}
+
+
+#pragma mark - SoundArea all menus
+
+void structSoundArea :: v_createMenus () {
+	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Sound", 0);
+	addSoundSettingsMenu (this, menu);
+	if (! Thing_isa (this, classLongSoundArea))
+		addSoundQueryMenu (this, menu);
+	if (! Thing_isa (this, classLongSoundArea))
+		addSoundSelectMenu (this, menu);
+	addSoundDrawMenu (this, menu);
 }
 
 /* End of file SoundArea.cpp */

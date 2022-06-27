@@ -334,6 +334,7 @@ void structEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 }
 
 void structEditor :: v_createMenus () {
+	Editor_Parent :: v_createMenus ();
 	EditorMenu menu = Editor_addMenu (this, U"File", 0);
 	v_createMenuItems_file (menu);
 	if (v_editable ()) {

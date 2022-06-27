@@ -28,10 +28,10 @@ Thing_implement (FunctionArea, Thing, 0);
 #include "Prefs_copyToInstance.h"
 #include "FunctionArea_prefs.h"
 
-GuiMenuItem FunctionAreaMenu_addCommand (FunctionArea sender, EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
-		FunctionAreaCommandCallback commandCallback)
+GuiMenuItem FunctionAreaMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+		FunctionAreaCommandCallback commandCallback, FunctionArea commandBoss)
 {
-	return DataGuiMenu_addCommand (me, itemTitle, flags, commandCallback.get(), sender);
+	return DataGuiMenu_addCommand (me, itemTitle, flags, commandCallback.get(), commandBoss);
 }
 
 static bool v_form_pictureSelection__drawSelectionTimes;
