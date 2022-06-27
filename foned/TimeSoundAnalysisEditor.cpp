@@ -1314,9 +1314,9 @@ DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq11) { cb_getShimmer_xx (me, Po
 DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_dda) { cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_dda); END }
 */
 
-void structTimeSoundAnalysisEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
-	TimeSoundAnalysisEditor_Parent :: v_createMenuItems_view_sound (menu);
+void structTimeSoundAnalysisEditor :: v_createMenuItems_view (EditorMenu menu) {
 	v_createMenuItems_view_sound_analysis (menu);
+	TimeSoundAnalysisEditor_Parent :: v_createMenuItems_view (menu);
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_view_sound_analysis (EditorMenu menu) {

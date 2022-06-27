@@ -467,13 +467,9 @@ static void menu_cb_soundMuteChannels (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
-	if (our soundArea)
-		our v_createMenuItems_view_sound (menu);
-	TimeSoundEditor_Parent :: v_createMenuItems_view (menu);   // BUG: to SoundArea (v_createMenuItems_view declared in DataGui)
-}
-
-void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
+void structTimeSoundEditor:: v_createMenus () {
+	TimeSoundEditor_Parent :: v_createMenus ();
+	EditorMenu menu = Editor_addMenu (this, U"Sound", 0);
 	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Sound scaling...", 0, menu_cb_soundScaling);
 	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Mute channels...", 0, menu_cb_soundMuteChannels);
 }
