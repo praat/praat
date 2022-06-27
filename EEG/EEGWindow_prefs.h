@@ -19,8 +19,8 @@
 Prefs_begin (EEGWindow)
 
 	InstancePrefs_overrideBool    (EEGWindow, showSelectionViewer,            1, false)
-	ClassPrefs_overrideDouble     (EEGWindow, sound_picture_bottom,           1, U"0.0")
-	ClassPrefs_overrideDouble     (EEGWindow, sound_picture_top,              1, U"0.0 (= auto)")
+	ClassPrefs_addDouble     (EEGWindow, picture_bottom,           1, U"0.0")   // BUG: should override in area
+	ClassPrefs_addDouble     (EEGWindow, picture_top,              1, U"0.0 (= auto)")   // BUG: should override in area
 	InstancePrefs_overrideBool    (EEGWindow, spectrogram_show,               1, false);
 	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewFrom,           1, U"0.0")   // Hz
 	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewTo,             1, U"60.0")   // Hz

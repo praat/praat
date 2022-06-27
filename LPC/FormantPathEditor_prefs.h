@@ -20,7 +20,7 @@ Prefs_begin (FormantPathEditor)
 
 	ClassPrefs_overrideInt        (FormantPathEditor, shellWidth,                        1, U"800")
 	ClassPrefs_overrideInt        (FormantPathEditor, shellHeight,                       1, U"600")
-	ClassPrefs_overrideBool       (FormantPathEditor, function_picture_garnish,          1, true)
+	ClassPrefs_addBool       (FormantPathEditor, picture_garnish,          1, true)   // BUG: should override in area
 	InstancePrefs_overrideBool    (FormantPathEditor, showSelectionViewer,               1, true)
 	InstancePrefs_overrideBool    (FormantPathEditor, spectrogram_show,                  1, true)
 	InstancePrefs_overrideBool    (FormantPathEditor, formant_show,                      1, true)

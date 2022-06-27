@@ -17,6 +17,8 @@
  */
 
 #include "DataGui.h"
+#include "Editor.h"
+#include "EditorM.h"
 
 #include "enums_getText.h"
 #include "DataGui_enums.h"
@@ -31,5 +33,30 @@ Thing_implement_pureVirtual (DataGui, Thing, 0);
 #include "DataGui_prefs.h"
 #include "Prefs_copyToInstance.h"
 #include "DataGui_prefs.h"
+
+BOOLEAN_VARIABLE (v_form_pictureWindow__eraseFirst)
+void structDataGui :: v_form_pictureWindow (EditorCommand cmd) {
+	LABEL (U"Picture window:")
+	BOOLEAN_FIELD (v_form_pictureWindow__eraseFirst, U"Erase first", true)
+}
+void structDataGui :: v_ok_pictureWindow (EditorCommand cmd) {
+	SET_BOOLEAN (v_form_pictureWindow__eraseFirst, our instancePref_picture_eraseFirst())
+}
+void structDataGui :: v_do_pictureWindow (EditorCommand /* cmd */) {
+	our setInstancePref_picture_eraseFirst (v_form_pictureWindow__eraseFirst);
+}
+
+OPTIONMENU_ENUM_VARIABLE (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop)
+void structDataGui :: v_form_pictureMargins (EditorCommand cmd) {
+	LABEL (U"Margins:")
+	OPTIONMENU_ENUM_FIELD (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop,
+			U"Write name at top", kDataGui_writeNameAtTop::DEFAULT)
+}
+void structDataGui :: v_ok_pictureMargins (EditorCommand cmd) {
+	SET_ENUM (v_form_pictureMargins__writeNameAtTop, kDataGui_writeNameAtTop, our classPref_picture_writeNameAtTop())
+}
+void structDataGui :: v_do_pictureMargins (EditorCommand /* cmd */) {
+	our setClassPref_picture_writeNameAtTop (v_form_pictureMargins__writeNameAtTop);
+}
 
 /* End of file DataGui.cpp */

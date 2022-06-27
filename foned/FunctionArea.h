@@ -110,6 +110,7 @@ protected:
 	virtual void v_drawInside () { }
 public:
 	void setSelection (double startSelection, double endSelection) {
+		Melder_sort (& startSelection, & endSelection);
 		functionEditor() -> startSelection = startSelection;
 		functionEditor() -> endSelection = endSelection;
 	}
@@ -147,6 +148,12 @@ private:
 	double top_pxlt() const {
 		return globalY_fraction_to_pxlt (_ymax_fraction) - our v_verticalSpacing_pxlt();
 	}
+public:
+	virtual void v_form_pictureSelection (EditorCommand);
+	virtual void v_ok_pictureSelection (EditorCommand);
+	virtual void v_do_pictureSelection (EditorCommand);
+
+	#include "FunctionArea_prefs.h"
 };
 
 #define DEFINE_FunctionArea_create(FunctionAreaType, FunctionType) \

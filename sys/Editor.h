@@ -87,12 +87,6 @@ Thing_define (Editor, DataGui) {
 	virtual void v1_dataChanged () { }
 	virtual void v_saveData ();
 	virtual void v_restoreData ();
-	virtual void v_form_pictureWindow (EditorCommand cmd);
-	virtual void v_ok_pictureWindow (EditorCommand cmd);
-	virtual void v_do_pictureWindow (EditorCommand cmd);
-	virtual void v_form_pictureMargins (EditorCommand cmd);
-	virtual void v_ok_pictureMargins (EditorCommand cmd);
-	virtual void v_do_pictureMargins (EditorCommand cmd);
 
 	#include "Editor_prefs.h"
 };

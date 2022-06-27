@@ -20,7 +20,7 @@ Prefs_begin (AnyTextGridEditor)
 
 	ClassPrefs_overrideInt        (AnyTextGridEditor, shellWidth,               1, U"800")
 	ClassPrefs_overrideInt        (AnyTextGridEditor, shellHeight,              1, U"600")
-	ClassPrefs_overrideBool       (AnyTextGridEditor, function_picture_garnish, 1, true)
+	//ClassPrefs_overrideBool       (AnyTextGridEditor, picture_garnish, 1, true) BUG: move to TextGridArea
 	InstancePrefs_overrideBool    (AnyTextGridEditor, showSelectionViewer,      1, true)
 
 	InstancePrefs_addBool         (AnyTextGridEditor, useTextStyles,            1, false)

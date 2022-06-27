@@ -28,6 +28,7 @@ inline static MelderColour DataGuiColour_EDITABLE = Melder_CYAN;
 inline static MelderColour DataGuiColour_DEFAULT_FOREGROUND = Melder_BLACK;
 
 Thing_declare (Editor);
+Thing_declare (EditorCommand);
 
 Thing_define (DataGui, Thing) {
 	/*
@@ -51,6 +52,13 @@ private:
 		my v1_copyPreferencesToInstance ();
 		my v9_repairPreferences ();
 	}
+public:
+	virtual void v_form_pictureWindow (EditorCommand cmd);
+	virtual void v_ok_pictureWindow (EditorCommand cmd);
+	virtual void v_do_pictureWindow (EditorCommand cmd);
+	virtual void v_form_pictureMargins (EditorCommand cmd);
+	virtual void v_ok_pictureMargins (EditorCommand cmd);
+	virtual void v_do_pictureMargins (EditorCommand cmd);
 
 	#include "DataGui_prefs.h"
 };

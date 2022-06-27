@@ -176,15 +176,15 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		BOOLEAN (crossHairs, U"Draw cross hairs", 0)
-		BOOLEAN (garnish, U"Garnish", my default_function_picture_garnish());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
-		SET_BOOLEAN (garnish, my classPref_function_picture_garnish())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
-		my setClassPref_function_picture_garnish (garnish);
+		my setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		Graphics_setInner (my pictureGraphics);
 		double startTime, endTime, xCursor, yCursor;
@@ -237,17 +237,17 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathEditor me, EDITOR_ARGS
 	EDITOR_FORM (U"Draw visible formant contour", nullptr)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
-		my v_form_pictureSelection (cmd);
+		//my v_form_pictureSelection (cmd);   // BUG: move to area
 		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
-		my v_ok_pictureSelection (cmd);
+		//my v_ok_pictureSelection (cmd);   // BUG: move to area
 		SET_BOOLEAN (garnish, my instancePref_formant_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
-		my v_do_pictureSelection (cmd);
+		//my v_do_pictureSelection (cmd);   // BUG: move to area
 		my setInstancePref_formant_picture_garnish (garnish);
 		if (! my instancePref_formant_show())
 			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
