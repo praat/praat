@@ -53,7 +53,7 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 		UiHistory_write_colonize (my itemTitle.get());
 	}
 	try {
-		my commandCallback (my d_editor, me, nullptr, 0, nullptr, nullptr, nullptr);
+		my commandCallback (my sender___, me, nullptr, 0, nullptr, nullptr, nullptr);
 	} catch (MelderError) {
 		if (! Melder_hasError (U"Script exited."))
 			Melder_appendError (U"Menu command \"", my itemTitle.get(), U"\" not completed.");
@@ -61,10 +61,12 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 	}
 }
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags, EditorCommandCallback commandCallback)
+GuiMenuItem EditorMenu_addCommand_ (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+	EditorCommandCallback commandCallback, DataGui optionalSender)
 {
 	autoEditorCommand thee = Thing_new (EditorCommand);
 	thy d_editor = my d_editor;
+	thy sender___ = ( optionalSender ? optionalSender : thy d_editor );
 	thy menu = me;
 	thy itemTitle = Melder_dup (itemTitle);
 	thy itemWidget =
@@ -75,6 +77,11 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cat
 	GuiMenuItem result = thy itemWidget;
 	my commands. addItem_move (thee.move());
 	return result;
+}
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+	EditorCommandCallback commandCallback)
+{
+	return EditorMenu_addCommand_ (me, itemTitle, flags, commandCallback, nullptr);
 }
 
 /*GuiObject EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/

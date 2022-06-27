@@ -88,7 +88,7 @@ static void commonOutfileCallback (UiForm sendingForm, integer narg, Stackel arg
 	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure)
 {
 	EditorCommand command = (EditorCommand) closure;
-	command -> commandCallback (command -> d_editor, command, sendingForm, narg, args, sendingString, interpreter);
+	command -> commandCallback (command -> sender___, command, sendingForm, narg, args, sendingString, interpreter);
 }
 
 autoUiForm UiOutfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle) {

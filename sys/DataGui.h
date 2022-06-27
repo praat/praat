@@ -24,6 +24,8 @@ inline static MelderColour DataGuiColour_BACKGROUND = Melder_WHITE;
 inline static MelderColour DataGuiColour_EDITABLE = Melder_CYAN;
 inline static MelderColour DataGuiColour_DEFAULT_FOREGROUND = Melder_BLACK;
 
+Thing_declare (Editor);
+
 Thing_define (DataGui, Thing) {
 	/*
 		Accessors.
@@ -31,15 +33,15 @@ Thing_define (DataGui, Thing) {
 public:
 	Daata data() const { return _data; }
 	bool editable() const { return _editable; }
-	DataGui boss() const { return _boss; }
+	Editor boss() const { return _boss; }
 protected:
 	void setData (Daata data) { _data = data; }
 private:
 	Daata _data;   // the data that can be displayed and edited
 	bool _editable;
-	DataGui _boss;
+	Editor _boss;
 
-	friend void DataGui_init (DataGui me, Daata data, bool editable, DataGui boss) {
+	friend void DataGui_init (DataGui me, Daata data, bool editable, Editor boss) {
 		my _data = data;
 		my _editable = editable;
 		my _boss = boss;

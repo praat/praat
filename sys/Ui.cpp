@@ -914,7 +914,7 @@ static void commonOkCallback (UiForm /* dia */, integer /* narg */, Stackel /* a
 	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure)
 {
 	EditorCommand cmd = (EditorCommand) closure;
-	cmd -> commandCallback (cmd -> d_editor, cmd, cmd -> d_uiform.get(), 0, nullptr, nullptr, interpreter);
+	cmd -> commandCallback (cmd -> sender___, cmd, cmd -> d_uiform.get(), 0, nullptr, nullptr, interpreter);
 }
 
 autoUiForm UiForm_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle) {

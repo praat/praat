@@ -428,26 +428,26 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 
 /********** VIEW MENU **********/
 
-static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_soundScaling (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Sound scaling", nullptr)
 		OPTIONMENU_ENUM (kSoundArea_scalingStrategy, scalingStrategy,
-				U"Scaling strategy", my soundArea -> default_scalingStrategy())
+				U"Scaling strategy", my default_scalingStrategy())
 		LABEL (U"For \"fixed height\":")
-		POSITIVE (height, U"Height", my soundArea -> default_scaling_height())
+		POSITIVE (height, U"Height", my default_scaling_height())
 		LABEL (U"For \"fixed range\":")
-		REAL (minimum, U"Minimum", my soundArea -> default_scaling_minimum())
-		REAL (maximum, U"Maximum", my soundArea -> default_scaling_maximum())
+		REAL (minimum, U"Minimum", my default_scaling_minimum())
+		REAL (maximum, U"Maximum", my default_scaling_maximum())
 	EDITOR_OK
-		SET_ENUM (scalingStrategy, kSoundArea_scalingStrategy, my soundArea -> instancePref_scalingStrategy())
-		SET_REAL (height,  my soundArea -> instancePref_scaling_height())
-		SET_REAL (minimum, my soundArea -> instancePref_scaling_minimum())
-		SET_REAL (maximum, my soundArea -> instancePref_scaling_maximum())
+		SET_ENUM (scalingStrategy, kSoundArea_scalingStrategy, my instancePref_scalingStrategy())
+		SET_REAL (height,  my instancePref_scaling_height())
+		SET_REAL (minimum, my instancePref_scaling_minimum())
+		SET_REAL (maximum, my instancePref_scaling_maximum())
 	EDITOR_DO
-		my soundArea -> setInstancePref_scalingStrategy (scalingStrategy) ;
-		my soundArea -> setInstancePref_scaling_height (height);
-		my soundArea -> setInstancePref_scaling_minimum (minimum);
-		my soundArea -> setInstancePref_scaling_maximum (maximum);
-		FunctionEditor_redraw (me);
+		my setInstancePref_scalingStrategy (scalingStrategy) ;
+		my setInstancePref_scaling_height (height);
+		my setInstancePref_scaling_minimum (minimum);
+		my setInstancePref_scaling_maximum (maximum);
+		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
 
@@ -474,7 +474,7 @@ void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
 }
 
 void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"Sound scaling...", 0, menu_cb_soundScaling);
+	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Sound scaling...", 0, menu_cb_soundScaling);
 	EditorMenu_addCommand (menu, U"Mute channels...", 0, menu_cb_soundMuteChannels);
 }
 

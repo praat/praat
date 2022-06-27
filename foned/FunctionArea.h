@@ -158,5 +158,11 @@ inline auto##FunctionAreaType FunctionAreaType##_create (bool editable, Function
 	return me; \
 }
 
+typedef MelderCallback <void, structFunctionArea, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, conststring32,
+		Interpreter> FunctionAreaCommandCallback;
+
+GuiMenuItem FunctionAreaMenu_addCommand (FunctionArea sender, EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+		FunctionAreaCommandCallback commandCallback);
+
 /* End of file FunctionArea.h */
 #endif
