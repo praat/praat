@@ -40,11 +40,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		override;
 	void v1_dataChanged ()
 		override;
-	void v_createMenuItems_query (EditorMenu menu)
-		override;
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
-		override;
-	void v_createMenuItems_view_sound (EditorMenu menu)
 		override;
 	double v_getBottomOfSoundArea ()
 		override
@@ -73,10 +69,8 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	virtual void v_draw_analysis ();
 	virtual void v_draw_analysis_pulses ();
 	virtual void v_draw_analysis_formants ();
-	virtual void v_createMenuItems_query_log (EditorMenu menu);
 	virtual void v_createMenus_analysis ();
 	virtual void v_createMenuItems_formant (EditorMenu menu);
-	virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
 
 	#include "TimeSoundAnalysisEditor_prefs.h"
 	void v9_repairPreferences () override;

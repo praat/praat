@@ -20,8 +20,6 @@ Prefs_begin (Editor)
 
 	ClassPrefs_addInt        (Editor, shellWidth,             1, U"260")
 	ClassPrefs_addInt        (Editor, shellHeight,            1, U"260")
-	InstancePrefs_addBool    (Editor, picture_eraseFirst,     1, true)
-	ClassPrefs_addEnum       (Editor, picture_writeNameAtTop, 1, kEditor_writeNameAtTop, DEFAULT)
 
 Prefs_end (Editor)
 

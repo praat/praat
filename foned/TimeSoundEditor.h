@@ -33,6 +33,8 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 
 	void v1_info ()
 		override;
+	void v_createMenus ()
+		override;
 	void v_createMenuItems_file (EditorMenu menu)
 		override;
 	void v_createMenuItems_query_info (EditorMenu menu)
@@ -43,12 +45,9 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		override;
 	void v_createMenuItems_file_write (EditorMenu menu)
 		override;
-	void v_createMenuItems_view (EditorMenu menu)
-		override;
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
 		override;   // catch channel scrolling and channel muting (last checked 2020-07-22)
 
-	virtual void v_createMenuItems_view_sound (EditorMenu menu);
 	virtual void v_updateMenuItems_file ();
 
 	#include "TimeSoundEditor_prefs.h"

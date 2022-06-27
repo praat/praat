@@ -19,10 +19,15 @@
  */
 
 #include "Data.h"
+#include "Preferences.h"
+
+#include "DataGui_enums.h"
 
 inline static MelderColour DataGuiColour_BACKGROUND = Melder_WHITE;
 inline static MelderColour DataGuiColour_EDITABLE = Melder_CYAN;
 inline static MelderColour DataGuiColour_DEFAULT_FOREGROUND = Melder_BLACK;
+
+Thing_declare (Editor);
 
 Thing_define (DataGui, Thing) {
 	/*
@@ -31,15 +36,15 @@ Thing_define (DataGui, Thing) {
 public:
 	Daata data() const { return _data; }
 	bool editable() const { return _editable; }
-	DataGui boss() const { return _boss; }
+	Editor boss() const { return _boss; }
 protected:
 	void setData (Daata data) { _data = data; }
 private:
 	Daata _data;   // the data that can be displayed and edited
 	bool _editable;
-	DataGui _boss;
+	Editor _boss;
 
-	friend void DataGui_init (DataGui me, Daata data, bool editable, DataGui boss) {
+	friend void DataGui_init (DataGui me, Daata data, bool editable, Editor boss) {
 		my _data = data;
 		my _editable = editable;
 		my _boss = boss;
@@ -47,18 +52,7 @@ private:
 		my v9_repairPreferences ();
 	}
 
-protected:
-	virtual void v1_copyPreferencesToInstance () { }
-		/*
-			derived::v1_copyPreferencesToInstance calls base::v1_copyPreferencesToInstance at *start*,
-			because specifications at derived level have to override those of the base level
-		*/
-	virtual void v9_repairPreferences () { }
-		/*
-			derived::v9_repairPreferences may call base::v9_repairPreferences at *end*,
-			because restrictions at base level may be laxer than restrictions at derived level
-			(preferences will be overridden only if their current value violates a restriction)
-		*/
+	#include "DataGui_prefs.h"
 };
 
 /* End of file DataGui.h */

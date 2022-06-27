@@ -1,6 +1,6 @@
-/* FunctionArea.cpp
+/* DataGui.cpp
  *
- * Copyright (C) 2022 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,20 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "FunctionArea.h"
+#include "DataGui.h"
 
-Thing_implement (FunctionArea, Thing, 0);
+#include "enums_getText.h"
+#include "DataGui_enums.h"
+#include "enums_getValue.h"
+#include "DataGui_enums.h"
 
-GuiMenuItem FunctionAreaMenu_addCommand (FunctionArea sender, EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
-		FunctionAreaCommandCallback commandCallback)
-{
-	return DataGuiMenu_addCommand (me, itemTitle, flags, commandCallback.get(), sender);
-}
+Thing_implement_pureVirtual (DataGui, Thing, 0);
 
-/* End of file FunctionArea.cpp */
+#include "Prefs_define.h"
+#include "DataGui_prefs.h"
+#include "Prefs_install.h"
+#include "DataGui_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "DataGui_prefs.h"
+
+/* End of file DataGui.cpp */

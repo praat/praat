@@ -96,8 +96,8 @@ void structRealTierEditor :: v_distributeAreas () {
 
 void structRealTierEditor :: v_draw () {
 	if (our sound())
-		FunctionArea_draw (our soundArea.get());
-	FunctionArea_draw (our realTierArea.get());
+		FunctionArea_drawOne (our soundArea.get());
+	FunctionArea_drawOne (our realTierArea.get());
 	if (isdefined (our realTierArea -> anchorTime))
 		RealTierArea_drawWhileDragging (our realTierArea.get());
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
