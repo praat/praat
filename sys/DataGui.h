@@ -53,6 +53,8 @@ private:
 		my v9_repairPreferences ();
 	}
 public:
+	virtual void v_createMenus () { }
+
 	virtual void v_form_pictureWindow (EditorCommand cmd);
 	virtual void v_ok_pictureWindow (EditorCommand cmd);
 	virtual void v_do_pictureWindow (EditorCommand cmd);

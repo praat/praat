@@ -28,7 +28,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	Sound sound() { return our soundArea ? our soundArea -> sound() : nullptr; }
 	LongSound longSound() { return our soundArea ? our soundArea -> longSound() : nullptr; }
 
-	GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
+	GuiMenuItem publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
 	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 
 	void v1_info ()

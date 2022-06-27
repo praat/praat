@@ -134,6 +134,10 @@ public:
 protected:
 	void v_drawInside ()
 		override;
+public:
+	void v_createMenus ()
+		override;
+	GuiMenuItem drawButton;
 
 	#include "SoundArea_prefs.h"
 };
