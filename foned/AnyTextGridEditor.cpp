@@ -414,35 +414,6 @@ static void menu_cb_ExtendSelectNextInterval (AnyTextGridEditor me, EDITOR_ARGS_
 	do_selectAdjacentInterval (me, false, true);
 }
 
-static void menu_cb_MoveBtoZero (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my sound(), my startSelection, 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		my startSelection = zero;
-		Melder_sort (& my startSelection, & my endSelection);
-		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
-static void menu_cb_MoveCursorToZero (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my sound(), 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		my startSelection = my endSelection = zero;
-		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
-static void menu_cb_MoveEtoZero (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my sound(), my endSelection, 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		my endSelection = zero;
-		Melder_sort (& my startSelection, & my endSelection);
-		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
 /***** PITCH MENU *****/
 
 static void menu_cb_DrawTextGridAndPitch (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
@@ -1120,14 +1091,6 @@ void structAnyTextGridEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"-- search --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
 	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
-
-	if (our soundArea) {   // BUG: not LongSounds
-		Editor_addCommand (this, U"Select", U"-- move to zero --", 0, 0);
-		Editor_addCommand (this, U"Select", U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
-		Editor_addCommand (this, U"Select", U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
-		Editor_addCommand (this, U"Select", U"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
-		Editor_addCommand (this, U"Select", U"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
-	}
 
 	Editor_addCommand (this, U"Query", U"-- query interval --", 0, nullptr);
 	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0,

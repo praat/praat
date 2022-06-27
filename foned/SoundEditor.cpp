@@ -219,37 +219,6 @@ static void menu_cb_ReverseSelection (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastDataChanged (me);
 }
 
-/***** SELECT MENU *****/
-
-static void menu_cb_MoveCursorToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_assert (my sound());
-	const double zero = Sound_getNearestZeroCrossing (my sound(), 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		my startSelection = my endSelection = zero;
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
-static void menu_cb_MoveBtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_assert (my sound());
-	const double zero = Sound_getNearestZeroCrossing (my sound(), my startSelection, 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		my startSelection = zero;
-		Melder_sort (& my startSelection, & my endSelection);
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
-static void menu_cb_MoveEtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_assert (my sound());
-	const double zero = Sound_getNearestZeroCrossing (my sound(), my endSelection, 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		my endSelection = zero;
-		Melder_sort (& my startSelection, & my endSelection);
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
 /***** HELP MENU *****/
 
 static void menu_cb_SoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"SoundEditor"); }
@@ -269,13 +238,6 @@ void structSoundEditor :: v_createMenus () {
 		Editor_addCommand (this, U"Edit", U"-- zero --", 0, nullptr);
 		zeroButton = Editor_addCommand (this, U"Edit", U"Set selection to zero", 0, menu_cb_SetSelectionToZero);
 		reverseButton = Editor_addCommand (this, U"Edit", U"Reverse selection", 'R', menu_cb_ReverseSelection);
-	}
-	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {
-		Editor_addCommand (this, U"Select", U"-- move to zero --", 0, 0);
-		Editor_addCommand (this, U"Select", U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
-		Editor_addCommand (this, U"Select", U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
-		Editor_addCommand (this, U"Select", U"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
-		Editor_addCommand (this, U"Select", U"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
 	}
 	v_createMenus_analysis ();
 }
@@ -321,14 +283,13 @@ void structSoundEditor :: v_draw () {
 	/*
 		Draw data.
 	*/
-	FunctionArea_setViewport (our soundArea.get());
-	FunctionArea_drawBackground (our soundArea.get());
+	FunctionArea_prepareCanvas (our soundArea.get());
 	if (our instancePref_pulses_show())
 		our v_draw_analysis_pulses ();
 	FunctionArea_drawInside (our soundArea.get());
 	if (showAnalysis) {
 		our soundArea -> setGlobalYRange_fraction (0.0, 0.5);   // BUG: should be in SoundAnalysisArea
-		FunctionArea_setViewport (our soundArea.get());
+		FunctionArea_prepareCanvas (our soundArea.get());
 		v_draw_analysis ();
 	}
 
