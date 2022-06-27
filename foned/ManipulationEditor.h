@@ -26,13 +26,13 @@
 #include "ManipulationEditor_enums.h"
 
 Thing_define (ManipulationPitchTierArea, PitchTierArea) {
-	void v_drawOverFrame ()
+	void v_drawInside ()
 		override;
 };
 DEFINE_FunctionArea_create (ManipulationPitchTierArea, PitchTier)
 
 Thing_define (ManipulationDurationTierArea, DurationTierArea) {
-	void v_drawOverFrame ()
+	void v_drawInside ()
 		override;
 };
 DEFINE_FunctionArea_create (ManipulationDurationTierArea, DurationTier)

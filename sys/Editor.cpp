@@ -61,8 +61,8 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 	}
 }
 
-GuiMenuItem EditorMenu_addCommand_ (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
-	EditorCommandCallback commandCallback, DataGui optionalSender)
+GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+	DataGuiCommandCallback commandCallback, DataGui optionalSender)
 {
 	autoEditorCommand thee = Thing_new (EditorCommand);
 	thy d_editor = my d_editor;
@@ -81,7 +81,7 @@ GuiMenuItem EditorMenu_addCommand_ (EditorMenu me, conststring32 itemTitle /* ca
 GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
 	EditorCommandCallback commandCallback)
 {
-	return EditorMenu_addCommand_ (me, itemTitle, flags, commandCallback, nullptr);
+	return DataGuiMenu_addCommand (me, itemTitle, flags, commandCallback.get(), nullptr);
 }
 
 /*GuiObject EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/

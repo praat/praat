@@ -36,7 +36,8 @@ Thing_define (EditorMenu, Thing) {
 	OrderedOf<structEditorCommand> commands;
 };
 
-typedef MelderCallback <void, structDataGui, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, conststring32, Interpreter> EditorCommandCallback;
+typedef MelderCallback <void, structDataGui, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, conststring32, Interpreter> DataGuiCommandCallback;
+typedef MelderCallback <void, structEditor, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, conststring32, Interpreter> EditorCommandCallback;
 
 Thing_define (EditorCommand, Thing) {
 	Editor d_editor;
@@ -44,7 +45,7 @@ Thing_define (EditorCommand, Thing) {
 	EditorMenu menu;
 	autostring32 itemTitle;
 	GuiMenuItem itemWidget;
-	EditorCommandCallback commandCallback;
+	DataGuiCommandCallback commandCallback;
 	autostring32 script;
 	autoUiForm d_uiform;
 };
@@ -99,8 +100,8 @@ Thing_define (Editor, DataGui) {
 	#include "Editor_prefs.h"
 };
 
-GuiMenuItem EditorMenu_addCommand_ (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
-		EditorCommandCallback commandCallback, DataGui sender);
+GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+		DataGuiCommandCallback commandCallback, DataGui sender);
 GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
 		EditorCommandCallback commandCallback);
 GuiMenuItem EditorCommand_getItemWidget (EditorCommand me);

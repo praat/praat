@@ -47,7 +47,7 @@ void RealTierArea_addPointAtCursor (RealTierArea me) {
 	RealTierArea_addPointAt (me, cursorTime, my ycursor);
 }
 
-void structRealTierArea :: v_drawOverFrame () {
+void structRealTierArea :: v_drawInside () {
 	RealTierArea_draw (this);
 }
 

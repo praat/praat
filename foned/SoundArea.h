@@ -132,9 +132,8 @@ public:
 	virtual conststring32 v_getChannelName (integer /* channelNumber */) { return nullptr; }
 
 protected:
-	void v_drawBehindFrame ()
+	void v_drawInside ()
 		override;
-	//double v_verticalSpacing_pxlt() const override { return 0; }
 
 	#include "SoundArea_prefs.h"
 };

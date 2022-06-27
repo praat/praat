@@ -72,44 +72,42 @@ public:
 		_ymin_fraction = ymin_fraction;
 		_ymax_fraction = ymax_fraction;
 	}
+	/*
+		FunctionArea_setViewport() is used both for drawing and for mousing.
+	*/
 	friend void FunctionArea_setViewport (constFunctionArea me) {
 		Graphics_setViewport (my graphics(), my left_pxlt(), my right_pxlt(), my bottom_pxlt(), my top_pxlt());
 	}
-	friend void FunctionArea_draw (FunctionArea me) {
+	friend void FunctionArea_drawOne (FunctionArea me) {
+		FunctionArea_prepareCanvas (me);
+		FunctionArea_drawInside (me);
+	}
+	friend void FunctionArea_drawTwo (FunctionArea me, FunctionArea you) {
+		FunctionArea_prepareCanvas (me);
+		FunctionArea_drawInside (me);
+		FunctionArea_drawInside (you);
+	}
+	friend void FunctionArea_prepareCanvas (FunctionArea me) {
 		FunctionArea_setViewport (me);
 		FunctionArea_drawBackground (me);
-		FunctionArea_drawBehindFrame (me);
-		FunctionArea_drawFrame (me);
-		FunctionArea_drawOverFrame (me);
 	}
 	friend void FunctionArea_drawBackground (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (my graphics(), DataGuiColour_BACKGROUND);
 		Graphics_fillRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		if (my editable()) {
-			Graphics_setLineWidth (my graphics(), 3.0);
+			Graphics_setLineWidth (my graphics(), 2.0);
 			Graphics_setColour (my graphics(), DataGuiColour_EDITABLE);
-			//Graphics_innerRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 			Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		}
 		Graphics_setColour (my graphics(), DataGuiColour_DEFAULT_FOREGROUND);
 		Graphics_setLineWidth (my graphics(), 1.0);
 	}
-	friend void FunctionArea_drawBehindFrame (FunctionArea me) {
-		my v_drawBehindFrame ();
-	}
-	friend void FunctionArea_drawFrame (constFunctionArea me) {
-		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setLineWidth (my graphics(), 1.0);
-		Graphics_setColour (my graphics(), DataGuiColour_DEFAULT_FOREGROUND);
-		//Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
-	}
-	friend void FunctionArea_drawOverFrame (FunctionArea me) {
-		my v_drawOverFrame ();
+	friend void FunctionArea_drawInside (FunctionArea me) {
+		my v_drawInside ();
 	}
 protected:
-	virtual void v_drawBehindFrame () { }
-	virtual void v_drawOverFrame () { }
+	virtual void v_drawInside () { }
 public:
 	void setSelection (double startSelection, double endSelection) {
 		functionEditor() -> startSelection = startSelection;

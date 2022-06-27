@@ -325,8 +325,7 @@ void structSoundEditor :: v_draw () {
 	FunctionArea_drawBackground (our soundArea.get());
 	if (our instancePref_pulses_show())
 		our v_draw_analysis_pulses ();
-	FunctionArea_drawBehindFrame (our soundArea.get());
-	FunctionArea_drawFrame (our soundArea.get());
+	FunctionArea_drawInside (our soundArea.get());
 	if (showAnalysis) {
 		our soundArea -> setGlobalYRange_fraction (0.0, 0.5);   // BUG: should be in SoundAnalysisArea
 		FunctionArea_setViewport (our soundArea.get());

@@ -617,7 +617,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_resetViewport (my graphics.get(), viewport);
 }
 
-void structManipulationPitchTierArea :: v_drawOverFrame () {
+void structManipulationPitchTierArea :: v_drawInside () {
 	const bool cursorVisible = (
 		our startSelection() == our endSelection() &&
 		our startSelection() >= our startWindow() &&
@@ -663,12 +663,12 @@ void structManipulationPitchTierArea :: v_drawOverFrame () {
 			Melder_fixed (y, 1), U" Hz",
 			our ymin, our ymax);
 	}
-	ManipulationPitchTierArea_Parent :: v_drawOverFrame ();
+	ManipulationPitchTierArea_Parent :: v_drawInside ();
 	if (isdefined (our anchorTime))
 		RealTierArea_drawWhileDragging (this);
 }
 
-void structManipulationDurationTierArea :: v_drawOverFrame () {
+void structManipulationDurationTierArea :: v_drawInside () {
 	const bool cursorVisible = (
 		startSelection() == endSelection() &&
 		startSelection() >= startWindow() &&
@@ -689,7 +689,7 @@ void structManipulationDurationTierArea :: v_drawOverFrame () {
 		FunctionEditor_insertCursorFunctionValue (functionEditor(), y,   // BUG: should move to FunctionArea
 				Melder_fixed (y, 3), U"", our ymin, our ymax);
 	}
-	ManipulationDurationTierArea_Parent :: v_drawOverFrame ();
+	ManipulationDurationTierArea_Parent :: v_drawInside ();
 	if (isdefined (our anchorTime))
 		RealTierArea_drawWhileDragging (this);
 }
@@ -700,9 +700,9 @@ void structManipulationEditor :: v_draw () {
 	if (our sound())
 		drawSoundArea (this, ysoundmin, ysoundmax);
 	if (our pitch())
-		FunctionArea_draw (our pitchTierArea.get());
+		FunctionArea_drawOne (our pitchTierArea.get());
 	if (our duration())
-		FunctionArea_draw (our durationTierArea.get());
+		FunctionArea_drawOne (our durationTierArea.get());
 	updateMenus (this);
 }
 

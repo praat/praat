@@ -451,31 +451,31 @@ static void menu_cb_soundScaling (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_soundMuteChannels (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Mute channels", nullptr)
 		NATURALVECTOR (channels, U"Channels to mute", WHITESPACE_SEPARATED_, U"2")
 	EDITOR_OK
 	EDITOR_DO
 		const integer numberOfChannels = my soundOrLongSound() -> ny;
-		Melder_assert (my soundArea -> muteChannels.size == numberOfChannels);
+		Melder_assert (my muteChannels.size == numberOfChannels);
 		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
-			my soundArea -> muteChannels [ichan] = false;
+			my muteChannels [ichan] = false;
 		for (integer ichan = 1; ichan <= channels.size; ichan ++)
 			if (channels [ichan] >= 1 && channels [ichan] <= numberOfChannels)
-				my soundArea -> muteChannels [channels [ichan]] = true;
-		FunctionEditor_redraw (me);
+				my muteChannels [channels [ichan]] = true;
+		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
 
 void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
 	if (our soundArea)
 		our v_createMenuItems_view_sound (menu);
-	TimeSoundEditor_Parent :: v_createMenuItems_view (menu);
+	TimeSoundEditor_Parent :: v_createMenuItems_view (menu);   // BUG: to SoundArea (v_createMenuItems_view declared in DataGui)
 }
 
 void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Sound scaling...", 0, menu_cb_soundScaling);
-	EditorMenu_addCommand (menu, U"Mute channels...", 0, menu_cb_soundMuteChannels);
+	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Mute channels...", 0, menu_cb_soundMuteChannels);
 }
 
 void structTimeSoundEditor :: v_updateMenuItems_file () {
@@ -536,7 +536,7 @@ bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent e
 			}
 		}
 	}
-	return TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
+	return TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);   // BUG: use FunctionEditor_defaultMouseInWideDataView()
 }
 
 /* End of file TimeSoundEditor.cpp */

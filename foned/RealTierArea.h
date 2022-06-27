@@ -66,7 +66,7 @@ public:
 		FunctionArea_setViewport (this);
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 	}
-	void v_drawOverFrame ()
+	void v_drawInside ()
 		override;
 	#include "RealTierArea_prefs.h"
 };

@@ -44,7 +44,7 @@ void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 
 	Graphics_text (my graphics(), my startWindow(), yWC,   yWC_string, units);
 }
 
-void structSoundArea :: v_drawBehindFrame () {
+void structSoundArea :: v_drawInside () {
 	SoundArea_draw (this);
 }
 

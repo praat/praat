@@ -23,7 +23,7 @@ Thing_implement (FunctionArea, Thing, 0);
 GuiMenuItem FunctionAreaMenu_addCommand (FunctionArea sender, EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
 		FunctionAreaCommandCallback commandCallback)
 {
-	return EditorMenu_addCommand_ (me, itemTitle, flags, commandCallback.get(), sender);
+	return DataGuiMenu_addCommand (me, itemTitle, flags, commandCallback.get(), sender);
 }
 
 /* End of file FunctionArea.cpp */
