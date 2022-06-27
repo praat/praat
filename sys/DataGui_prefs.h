@@ -1,4 +1,4 @@
-/* Editor_prefs.h
+/* DataGui_prefs.h
  *
  * Copyright (C) 2013,2015,2016,2022 Paul Boersma
  *
@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (Editor)
+Prefs_begin (DataGui)
 
-	ClassPrefs_addInt        (Editor, shellWidth,             1, U"260")
-	ClassPrefs_addInt        (Editor, shellHeight,            1, U"260")
+	InstancePrefs_addBool    (DataGui, picture_eraseFirst,     1, true)
+	ClassPrefs_addEnum       (DataGui, picture_writeNameAtTop, 1, kDataGui_writeNameAtTop, DEFAULT)
 
-Prefs_end (Editor)
+Prefs_end (DataGui)
 
-/* End of file Editor_prefs.h */
+/* End of file DataGui_prefs.h */

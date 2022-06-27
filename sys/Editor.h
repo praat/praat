@@ -23,9 +23,6 @@
 #include "Gui.h"
 #include "Ui.h"
 #include "Graphics.h"
-#include "Preferences.h"
-
-#include "Editor_enums.h"
 
 Thing_declare (Editor);
 

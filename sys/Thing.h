@@ -130,6 +130,19 @@ struct structThing {
 		/*
 			derived::v_nameChanged may call base::v_nameChanged at start, middle or end
 		*/
+protected:
+	virtual void v1_copyPreferencesToInstance () { }
+		/*
+			derived::v1_copyPreferencesToInstance calls base::v1_copyPreferencesToInstance at *start*,
+			because specifications at derived level have to override those of the base level
+		*/
+	virtual void v9_repairPreferences () { }
+		/*
+			derived::v9_repairPreferences may call base::v9_repairPreferences at *end*,
+			because restrictions at base level may be laxer than restrictions at derived level
+			(preferences will be overridden only if their current value violates a restriction)
+		*/
+
 };
 
 #define forget(thing)  do { _Thing_forget (thing); thing = nullptr; } while (false)

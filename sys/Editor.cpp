@@ -23,12 +23,7 @@
 #include "praat_script.h"
 #include "sendsocket.h"
 
-#include "enums_getText.h"
-#include "Editor_enums.h"
-#include "enums_getValue.h"
-#include "Editor_enums.h"
-
-Thing_implement (Editor, Thing, 0);
+Thing_implement (Editor, DataGui, 0);
 
 #include "Prefs_define.h"
 #include "Editor_prefs.h"
@@ -363,14 +358,14 @@ void structEditor :: v_do_pictureWindow (EditorCommand /* cmd */) {
 	our setInstancePref_picture_eraseFirst (v_form_pictureWindow__eraseFirst);
 }
 
-OPTIONMENU_ENUM_VARIABLE (kEditor_writeNameAtTop, v_form_pictureMargins__writeNameAtTop)
+OPTIONMENU_ENUM_VARIABLE (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop)
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
 	LABEL (U"Margins:")
-	OPTIONMENU_ENUM_FIELD (kEditor_writeNameAtTop, v_form_pictureMargins__writeNameAtTop,
-			U"Write name at top", kEditor_writeNameAtTop::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop,
+			U"Write name at top", kDataGui_writeNameAtTop::DEFAULT)
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (v_form_pictureMargins__writeNameAtTop, kEditor_writeNameAtTop, our classPref_picture_writeNameAtTop())
+	SET_ENUM (v_form_pictureMargins__writeNameAtTop, kDataGui_writeNameAtTop, our classPref_picture_writeNameAtTop())
 }
 void structEditor :: v_do_pictureMargins (EditorCommand /* cmd */) {
 	our setClassPref_picture_writeNameAtTop (v_form_pictureMargins__writeNameAtTop);
@@ -515,13 +510,13 @@ void Editor_openPraatPicture (Editor me) {
 	my pictureGraphics = praat_picture_editor_open (my instancePref_picture_eraseFirst());
 }
 void Editor_closePraatPicture (Editor me) {
-	if (my data() && my classPref_picture_writeNameAtTop() != kEditor_writeNameAtTop::NO_) {
+	if (my data() && my classPref_picture_writeNameAtTop() != kDataGui_writeNameAtTop::NO_) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
-			my classPref_picture_writeNameAtTop() == kEditor_writeNameAtTop::FAR_,
+			my classPref_picture_writeNameAtTop() == kDataGui_writeNameAtTop::FAR_,
 			my data() -> name.get()
 		);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);

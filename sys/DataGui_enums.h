@@ -1,4 +1,4 @@
-/* Editor_enums.h
+/* DataGui_enums.h
  *
  * Copyright (C) 1992-2007,2013,2015,2017 Paul Boersma
  *
@@ -16,10 +16,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kEditor_writeNameAtTop, 0)
-	enums_add (kEditor_writeNameAtTop, 0, NO_, U"no")
-	enums_add (kEditor_writeNameAtTop, 1, FAR_, U"far")
-	enums_add (kEditor_writeNameAtTop, 2, NEAR_, U"near")
-enums_end (kEditor_writeNameAtTop, 2, FAR_)
+enums_begin (kDataGui_writeNameAtTop, 0)
+	enums_add (kDataGui_writeNameAtTop, 0, NO_, U"no")
+	enums_add (kDataGui_writeNameAtTop, 1, FAR_, U"far")
+	enums_add (kDataGui_writeNameAtTop, 2, NEAR_, U"near")
+enums_end (kDataGui_writeNameAtTop, 2, FAR_)
 
-/* End of file Editor_enums.h */
+/* End of file DataGui_enums.h */

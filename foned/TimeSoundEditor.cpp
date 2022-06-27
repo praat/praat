@@ -38,29 +38,6 @@ void structTimeSoundEditor :: v1_info () {
 				kSoundArea_scalingStrategy_getText (our soundArea -> instancePref_scalingStrategy()));
 }
 
-enum {
-	TimeSoundEditor_PART_CURSOR = 1,
-	TimeSoundEditor_PART_SELECTION = 2
-};
-
-static int makeQueriable (TimeSoundEditor me, bool allowCursor, double *tmin, double *tmax) {
-	if (my startSelection == my endSelection) {
-		if (allowCursor) {
-			*tmin = *tmax = my startSelection;
-			return TimeSoundEditor_PART_CURSOR;
-		} else {
-			Melder_throw (U"Make a selection first.");
-		}
-	} else if (my startSelection < my startWindow || my endSelection > my endWindow) {
-		Melder_throw (U"Command ambiguous: a part of the selection (", my startSelection, U", ", my endSelection, U") "
-			U"is outside of the window (", my startWindow, U", ", my endWindow, U"). "
-			U"Either zoom or re-select.");
-	}
-	*tmin = my startSelection;
-	*tmax = my endSelection;
-	return TimeSoundEditor_PART_SELECTION;
-}
-
 /***** FILE MENU *****/
 
 static autoSound do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
@@ -365,7 +342,33 @@ static void menu_cb_soundMuteChannels (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+
+#pragma mark - SoundArea Query menu
+
+enum {
+	TimeSoundEditor_PART_CURSOR = 1,
+	TimeSoundEditor_PART_SELECTION = 2
+};
+
+static int makeQueriable (SoundArea me, bool allowCursor, double *tmin, double *tmax) {
+	if (my startSelection() == my endSelection()) {
+		if (allowCursor) {
+			*tmin = *tmax = my startSelection();
+			return TimeSoundEditor_PART_CURSOR;
+		} else {
+			Melder_throw (U"Make a selection first.");
+		}
+	} else if (my startSelection() < my startWindow() || my endSelection() > my endWindow()) {
+		Melder_throw (U"Command ambiguous: a part of the selection (", my startSelection(), U", ", my endSelection(), U") "
+			U"is outside of the window (", my startWindow(), U", ", my endWindow(), U"). "
+			U"Either zoom or re-select.");
+	}
+	*tmin = my startSelection();
+	*tmax = my endSelection();
+	return TimeSoundEditor_PART_SELECTION;
+}
+
+static void INFO_DATA__getAmplitudes (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -374,15 +377,18 @@ static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WIT
 		MelderInfo_open ();
 		if (part == TimeSoundEditor_PART_CURSOR)
 			for (integer ichan = 1; ichan <= my sound() -> ny; ichan ++)
-				MelderInfo_writeLine (Vector_getValueAtX (my sound(), 0.5 * (my startSelection + my endSelection), ichan, kVector_valueInterpolation :: SINC70),
+				MelderInfo_writeLine (Vector_getValueAtX (my sound(), 0.5 * (my startSelection() + my endSelection()), ichan, kVector_valueInterpolation :: SINC70),
 						U" (interpolated amplitude at CURSOR in channel ", ichan, U")");
 		else
 			for (integer ichan = 1; ichan <= my sound() -> ny; ichan ++)
-				MelderInfo_writeLine (Sampled_getMean (my sound(), my startSelection, my endSelection, ichan, 0, true),
+				MelderInfo_writeLine (Sampled_getMean (my sound(), my startSelection(), my endSelection(), ichan, 0, true),
 						U" (mean amplitude in SELECTION in channel ", ichan, U")");
 		MelderInfo_close ();
 	INFO_DATA_END
 }
+
+
+#pragma mark - SoundArea Draw menu
 
 static void menu_cb_DrawVisibleSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible sound", nullptr)
@@ -459,7 +465,10 @@ static void menu_cb_DrawSelectedSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_MoveBtoZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+
+#pragma mark - SoundArea Select menu
+
+static void menu_cb_MoveStartOfSelectionToNearestZeroCrossing (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my sound(), my startSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my startSelection = zero;
@@ -469,7 +478,7 @@ static void menu_cb_MoveBtoZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
 	}
 }
 
-static void menu_cb_MoveCursorToZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_MoveCursorToNearestZeroCrossing (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my sound(), 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my startSelection = my endSelection = zero;
@@ -478,7 +487,7 @@ static void menu_cb_MoveCursorToZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
 	}
 }
 
-static void menu_cb_MoveEtoZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_MoveEndOfSelectionToNearestZeroCrossing (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my sound(), my endSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my endSelection = zero;
@@ -494,21 +503,26 @@ void structTimeSoundEditor:: v_createMenus () {
 	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Sound scaling...", 0, menu_cb_soundScaling);
 	FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Mute channels...", 0, menu_cb_soundMuteChannels);
 	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {
-		EditorMenu_addCommand (menu, U"-- sound query --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Query selected sound:", GuiMenu_INSENSITIVE,
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"-- sound query --", 0, nullptr);
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Query selected sound:", GuiMenu_INSENSITIVE,
 				INFO_DATA__getAmplitudes /* dummy */);
-		EditorMenu_addCommand (menu, U"Get amplitude(s)", 0, INFO_DATA__getAmplitudes);
+		FunctionAreaMenu_addCommand (our soundArea.get(), menu, U"Get amplitude(s)", 0,
+				INFO_DATA__getAmplitudes);
 	}
 	/*
 		menu SOUND SELECT
 	*/
 	if (our soundArea && ! Thing_isa (our soundArea.get(), classLongSoundArea)) {
 		EditorMenu_addCommand (menu, U"-- sound select --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_MoveBtoZero /* dummy */);
-		EditorMenu_addCommand (menu, U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
-		EditorMenu_addCommand (menu, U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
-		EditorMenu_addCommand (menu, U"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
-		EditorMenu_addCommand (menu, U"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
+		EditorMenu_addCommand (menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_MoveStartOfSelectionToNearestZeroCrossing /* dummy */);
+		EditorMenu_addCommand (menu, U"Move start of selection to nearest zero crossing", ',',
+				menu_cb_MoveStartOfSelectionToNearestZeroCrossing);
+		EditorMenu_addCommand (menu, U"Move begin of selection to nearest zero crossing", Editor_HIDDEN,
+				menu_cb_MoveStartOfSelectionToNearestZeroCrossing);
+		EditorMenu_addCommand (menu, U"Move cursor to nearest zero crossing", '0',
+				menu_cb_MoveCursorToNearestZeroCrossing);
+		EditorMenu_addCommand (menu, U"Move end of selection to nearest zero crossing", '.',
+				menu_cb_MoveEndOfSelectionToNearestZeroCrossing);
 	}
 	/*
 		menu SOUND DRAW

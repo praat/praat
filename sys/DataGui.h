@@ -19,6 +19,9 @@
  */
 
 #include "Data.h"
+#include "Preferences.h"
+
+#include "DataGui_enums.h"
 
 inline static MelderColour DataGuiColour_BACKGROUND = Melder_WHITE;
 inline static MelderColour DataGuiColour_EDITABLE = Melder_CYAN;
@@ -49,18 +52,7 @@ private:
 		my v9_repairPreferences ();
 	}
 
-protected:
-	virtual void v1_copyPreferencesToInstance () { }
-		/*
-			derived::v1_copyPreferencesToInstance calls base::v1_copyPreferencesToInstance at *start*,
-			because specifications at derived level have to override those of the base level
-		*/
-	virtual void v9_repairPreferences () { }
-		/*
-			derived::v9_repairPreferences may call base::v9_repairPreferences at *end*,
-			because restrictions at base level may be laxer than restrictions at derived level
-			(preferences will be overridden only if their current value violates a restriction)
-		*/
+	#include "DataGui_prefs.h"
 };
 
 /* End of file DataGui.h */

@@ -1,6 +1,6 @@
-/* Editor_prefs.h
+/* DataGui.cpp
  *
- * Copyright (C) 2013,2015,2016,2022 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,20 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (Editor)
+#include "DataGui.h"
 
-	ClassPrefs_addInt        (Editor, shellWidth,             1, U"260")
-	ClassPrefs_addInt        (Editor, shellHeight,            1, U"260")
+#include "enums_getText.h"
+#include "DataGui_enums.h"
+#include "enums_getValue.h"
+#include "DataGui_enums.h"
 
-Prefs_end (Editor)
+Thing_implement_pureVirtual (DataGui, Thing, 0);
 
-/* End of file Editor_prefs.h */
+#include "Prefs_define.h"
+#include "DataGui_prefs.h"
+#include "Prefs_install.h"
+#include "DataGui_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "DataGui_prefs.h"
+
+/* End of file DataGui.cpp */
