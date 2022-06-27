@@ -1314,35 +1314,6 @@ DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq11) { cb_getShimmer_xx (me, Po
 DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_dda) { cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_dda); END }
 */
 
-void structTimeSoundAnalysisEditor :: v_createMenuItems_view (EditorMenu menu) {
-	v_createMenuItems_view_sound_analysis (menu);
-	TimeSoundAnalysisEditor_Parent :: v_createMenuItems_view (menu);
-}
-
-void structTimeSoundAnalysisEditor :: v_createMenuItems_view_sound_analysis (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"Analysis window:", GuiMenu_INSENSITIVE, menu_cb_showAnalyses);
-	EditorMenu_addCommand (menu, U"Show analyses...", 0, menu_cb_showAnalyses);
-	EditorMenu_addCommand (menu, U"Time step settings...", 0, menu_cb_timeStepSettings);
-	EditorMenu_addCommand (menu, U"-- sound analysis --", 0, 0);
-}
-
-void structTimeSoundAnalysisEditor :: v_createMenuItems_query (EditorMenu menu) {
-	TimeSoundAnalysisEditor_Parent :: v_createMenuItems_query (menu);
-	if (our soundOrLongSound())
-		v_createMenuItems_query_log (menu);
-}
-
-void structTimeSoundAnalysisEditor :: v_createMenuItems_query_log (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- query log --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Log settings...", 0, menu_cb_logSettings);
-	EditorMenu_addCommand (menu, U"Delete log file 1", 0, menu_cb_deleteLogFile1);
-	EditorMenu_addCommand (menu, U"Delete log file 2", 0, menu_cb_deleteLogFile2);
-	EditorMenu_addCommand (menu, U"Log 1", GuiMenu_F12, menu_cb_log1);
-	EditorMenu_addCommand (menu, U"Log 2", GuiMenu_F12 | GuiMenu_SHIFT, menu_cb_log2);
-	EditorMenu_addCommand (menu, U"Log script 3 (...)", GuiMenu_F12 | GuiMenu_OPTION, menu_cb_logScript3);
-	EditorMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 | GuiMenu_COMMAND, menu_cb_logScript4);
-}
-
 void structTimeSoundAnalysisEditor :: v_createMenuItems_formant (EditorMenu menu) {
 	formantToggle = EditorMenu_addCommand (menu, U"Show formants",
 			GuiMenu_CHECKBUTTON | (instancePref_formant_show() ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
@@ -1370,7 +1341,17 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_formant (EditorMenu menu
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
-	EditorMenu menu;
+	EditorMenu menu = Editor_addMenu (this, U"Analysis", 0);
+	EditorMenu_addCommand (menu, U"Show analyses...", 0, menu_cb_showAnalyses);
+	EditorMenu_addCommand (menu, U"Time step settings...", 0, menu_cb_timeStepSettings);
+	EditorMenu_addCommand (menu, U"-- query log --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Log settings...", 0, menu_cb_logSettings);
+	EditorMenu_addCommand (menu, U"Delete log file 1", 0, menu_cb_deleteLogFile1);
+	EditorMenu_addCommand (menu, U"Delete log file 2", 0, menu_cb_deleteLogFile2);
+	EditorMenu_addCommand (menu, U"Log 1", GuiMenu_F12, menu_cb_log1);
+	EditorMenu_addCommand (menu, U"Log 2", GuiMenu_F12 | GuiMenu_SHIFT, menu_cb_log2);
+	EditorMenu_addCommand (menu, U"Log script 3 (...)", GuiMenu_F12 | GuiMenu_OPTION, menu_cb_logScript3);
+	EditorMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 | GuiMenu_COMMAND, menu_cb_logScript4);
 
 	if (v_hasSpectrogram ()) {
 		menu = Editor_addMenu (this, U"Spectrum", 0);
