@@ -255,8 +255,10 @@ void structSoundEditor :: v_distributeAreas () {
 			our instancePref_intensity_show() || our instancePref_formant_show();
 	if (showAnalysis) {
 		our soundArea -> setGlobalYRange_fraction (0.5, 1.0);
+		our soundAnalysisArea -> setGlobalYRange_fraction (0.0, 0.5);
 	} else {
 		our soundArea -> setGlobalYRange_fraction (0.0, 1.0);
+		our soundAnalysisArea -> setGlobalYRange_fraction (0.0, 0.0);
 	}
 }
 
@@ -288,9 +290,9 @@ void structSoundEditor :: v_draw () {
 		our v_draw_analysis_pulses ();
 	FunctionArea_drawInside (our soundArea.get());
 	if (showAnalysis) {
-		our soundArea -> setGlobalYRange_fraction (0.0, 0.5);   // BUG: should be in SoundAnalysisArea
-		FunctionArea_prepareCanvas (our soundArea.get());
-		v_draw_analysis ();
+		our soundAnalysisArea -> setGlobalYRange_fraction (0.0, 0.5);
+		FunctionArea_prepareCanvas (our soundAnalysisArea.get());
+		our v_draw_analysis ();
 	}
 
 	/*
@@ -343,6 +345,9 @@ bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 	if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && y_fraction < ANALYSIS_HEIGHT && x_world > our startWindow && x_world < our endWindow)
 		our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
 				2.0 * y_fraction * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
+	const double y_fraction_withinSoundAnalysisArea = our soundAnalysisArea -> y_fraction_globalToLocal (y_fraction);
+	our d_spectrogram_cursor = (1.0 - y_fraction_withinSoundAnalysisArea) * our instancePref_spectrogram_viewFrom()
+			+ y_fraction_withinSoundAnalysisArea * our instancePref_spectrogram_viewTo();
 	return SoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
@@ -361,6 +366,7 @@ autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSo
 			my soundArea = SoundArea_create (true, nullptr, me.get());
 		else
 			my soundArea = LongSoundArea_create (false, nullptr, me.get());
+		my soundAnalysisArea = SoundAnalysisArea_create (false, nullptr, me.get());
 		FunctionEditor_init (me.get(), title, soundOrLongSound);
 
 		Melder_assert (my soundOrLongSound());

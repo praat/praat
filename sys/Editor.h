@@ -78,7 +78,6 @@ Thing_define (Editor, DataGui) {
 	virtual bool v_canFullScreen () { return false; }
 	virtual bool v_editable () { return true ; }
 	virtual bool v_scriptable () { return true; }
-	virtual void v_createMenuItems_file (EditorMenu menu);
 	virtual void v_createMenuItems_edit (EditorMenu menu);
 	virtual bool v_hasQueryMenu () { return true; }
 	virtual void v_createMenuItems_query (EditorMenu menu);

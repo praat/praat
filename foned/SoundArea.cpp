@@ -36,6 +36,15 @@ Thing_implement (LongSoundArea, FunctionArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "SoundArea_prefs.h"
 
+
+#pragma mark - SoundArea info
+
+void structSoundArea :: v1_info () {
+	MelderInfo_writeLine (U"Sound scaling strategy: ", kSoundArea_scalingStrategy_getText (our instancePref_scalingStrategy()));
+}
+
+#pragma mark - SoundArea drawing
+
 void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units) {
 	Graphics_setColour (my graphics(), Melder_CYAN);
 	Graphics_line (my graphics(), my startWindow(), yWC, 0.99 * my startWindow() + 0.01 * my endWindow(), yWC);
@@ -241,9 +250,13 @@ void SoundArea_draw (SoundArea me) {
 	}
 }
 
+
+#pragma mark - SoundArea tracking
+
 bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	return FunctionEditor_UPDATE_NEEDED;
 }
+
 
 #pragma mark - SoundArea Settings menu
 
@@ -292,6 +305,16 @@ static void addSoundSettingsMenu (SoundArea me, EditorMenu menu) {
 
 #pragma mark - SoundArea Query menu
 
+static void INFO_DATA__SoundInfo (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	INFO_DATA
+		Thing_info (my sound());
+	INFO_DATA_END
+}
+static void INFO_DATA__LongSoundInfo (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	INFO_DATA
+		Thing_info (my longSound());
+	INFO_DATA_END
+}
 enum {
 	TimeSoundEditor_PART_CURSOR = 1,
 	TimeSoundEditor_PART_SELECTION = 2
@@ -333,8 +356,14 @@ static void INFO_DATA__getAmplitudes (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTP
 }
 static void addSoundQueryMenu (SoundArea me, EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- sound query --", 0, nullptr, me);
-	FunctionAreaMenu_addCommand (menu, U"Query selected sound:", GuiMenu_INSENSITIVE,
+	FunctionAreaMenu_addCommand (menu, U"Sound query:", GuiMenu_INSENSITIVE,
 			INFO_DATA__getAmplitudes /* dummy */, me);
+	if (Thing_isa (me, classLongSoundArea))
+		FunctionAreaMenu_addCommand (menu, U"Info on whole LongSound", 0,
+				INFO_DATA__LongSoundInfo, me);
+	else
+		FunctionAreaMenu_addCommand (menu, U"Info on whole Sound", 0,
+				INFO_DATA__SoundInfo, me);
 	FunctionAreaMenu_addCommand (menu, U"Get amplitude(s)", 0,
 			INFO_DATA__getAmplitudes, me);
 }
@@ -463,6 +492,241 @@ static void addSoundDrawMenu (SoundArea me, EditorMenu menu) {
 }
 
 
+#pragma mark - SoundArea Extract menu
+
+static autoSound do_ExtractSelectedSound (SoundArea me, bool preserveTimes) {
+	if (my endSelection() <= my startSelection())
+		Melder_throw (U"No selection.");
+	if (my longSound())
+		return LongSound_extractPart (my longSound(), my startSelection(), my endSelection(), preserveTimes);
+	else if (my sound())
+		return Sound_extractPart (my sound(), my startSelection(), my endSelection(),
+				kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
+	Melder_fatal (U"No Sound or LongSound available.");
+	return autoSound();   // never reached
+}
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = do_ExtractSelectedSound (me, false);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = do_ExtractSelectedSound (me, true);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Extract selected sound (windowed)", nullptr)
+		WORD (name, U"Name", U"slice")
+		OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", my default_extract_windowShape())
+		POSITIVE (relativeWidth, U"Relative width", my default_extract_relativeWidth())
+		BOOLEAN (preserveTimes, U"Preserve times", my default_extract_preserveTimes())
+	EDITOR_OK
+		SET_ENUM (windowShape, kSound_windowShape, my classPref_extract_windowShape())
+		SET_REAL (relativeWidth, my classPref_extract_relativeWidth())
+		SET_BOOLEAN (preserveTimes, my classPref_extract_preserveTimes())
+	EDITOR_DO
+		Melder_assert (my sound());   // no LongSound
+		CONVERT_DATA_TO_ONE
+			my setClassPref_extract_windowShape (windowShape);
+			my setClassPref_extract_relativeWidth (relativeWidth);
+			my setClassPref_extract_preserveTimes (preserveTimes);
+			autoSound result = Sound_extractPart (my sound(), my startSelection(), my endSelection(),
+					windowShape, relativeWidth, preserveTimes);
+		CONVERT_DATA_TO_ONE_END (name)
+	EDITOR_END
+}
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSoundForOverlap (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Extract selected sound for overlap)", nullptr)
+		WORD (name, U"Name", U"slice")
+		POSITIVE (overlap, U"Overlap (s)", my default_extract_overlap())
+	EDITOR_OK
+		SET_REAL (overlap, my classPref_extract_overlap())
+	EDITOR_DO
+		Melder_assert (my sound());   // no LongSound
+		CONVERT_DATA_TO_ONE
+			my setClassPref_extract_overlap (overlap);
+			autoSound result = Sound_extractPartForOverlap (my sound(), my startSelection(), my endSelection(), overlap);
+		CONVERT_DATA_TO_ONE_END (name)
+	EDITOR_END
+}
+static void addSoundExtractMenu (SoundArea me, EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- sound extract --", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
+			CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes /* dummy */, me);
+	my publishPreserveButton = FunctionAreaMenu_addCommand (menu, U"Extract selected sound (preserve times)", 0,
+			CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes, me);
+		FunctionAreaMenu_addCommand (menu, U"Extract sound selection (preserve times)", Editor_HIDDEN,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes, me);
+		FunctionAreaMenu_addCommand (menu, U"Extract selection (preserve times)", Editor_HIDDEN,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes, me);
+	my publishButton = FunctionAreaMenu_addCommand (menu, U"Extract selected sound (time from 0)", 0,
+			CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero, me);
+		FunctionAreaMenu_addCommand (menu, U"Extract sound selection (time from 0)", Editor_HIDDEN,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero, me);
+		FunctionAreaMenu_addCommand (menu, U"Extract selection (time from 0)", Editor_HIDDEN,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero, me);
+		FunctionAreaMenu_addCommand (menu, U"Extract selection", Editor_HIDDEN,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero, me);
+	if (! Thing_isa (me, classLongSoundArea)) {
+		my publishWindowButton = FunctionAreaMenu_addCommand (menu, U"Extract selected sound (windowed)...", 0,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed, me);
+			FunctionAreaMenu_addCommand (menu, U"Extract windowed sound selection...", Editor_HIDDEN,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed, me);
+			FunctionAreaMenu_addCommand (menu, U"Extract windowed selection...", Editor_HIDDEN,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed, me);
+		my publishOverlapButton = FunctionAreaMenu_addCommand (menu, U"Extract selected sound for overlap...", 0,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSoundForOverlap, me);
+	}
+}
+
+
+#pragma mark - SoundArea File menu
+
+static void do_write (SoundArea me, MelderFile file, int format, int numberOfBitsPerSamplePoint) {
+	if (my startSelection() >= my endSelection())
+		Melder_throw (U"No samples selected.");
+	if (my longSound()) {
+		LongSound_savePartAsAudioFile (my longSound(), format, my startSelection(), my endSelection(),
+				file, numberOfBitsPerSamplePoint);
+	} else if (my sound()) {
+		double margin = 0.0;
+		integer nmargin = Melder_ifloor (margin / my sound() -> dx);
+		integer first, last;
+		const integer numberOfSamples = Sampled_getWindowSamples (my sound(),
+				my startSelection(), my endSelection(), & first, & last) + nmargin * 2;
+		first -= nmargin;
+		last += nmargin;
+		if (numberOfSamples) {
+			autoSound save = Sound_create (my sound() -> ny, 0.0,
+					numberOfSamples * my sound() -> dx, numberOfSamples, my sound() -> dx, 0.5 * my sound() -> dx);
+			integer offset = first - 1;
+			if (first < 1)
+				first = 1;   // TODO: check logic, i.e. whether `offset` outdates or not
+			if (last > my sound() -> nx)
+				last = my sound() -> nx;
+			for (integer channel = 1; channel <= my sound() -> ny; channel ++) {
+				for (integer i = first; i <= last; i ++)
+					save -> z [channel] [i - offset] = my sound() -> z [channel] [i];
+			}
+			Sound_saveAsAudioFile (save.get(), file, format, numberOfBitsPerSamplePoint);
+		}
+	}
+}
+static void menu_cb_WriteWav (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save selected sound as WAV file", nullptr)
+		Melder_sprint (defaultName,300, my soundOrLongSound() -> name.get(), U".wav");
+	EDITOR_DO_SAVE
+		do_write (me, file, Melder_WAV, 16);
+	EDITOR_END
+}
+static void menu_cb_SaveAs24BitWav (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save selected sound as 24-bit WAV file", nullptr)
+		Melder_assert (! my longSound() && my sound());
+		Melder_sprint (defaultName,300, my sound() -> name.get(), U".wav");
+	EDITOR_DO_SAVE
+		do_write (me, file, Melder_WAV, 24);
+	EDITOR_END
+}
+static void menu_cb_SaveAs32BitWav (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save selected sound as 32-bit WAV file", nullptr)
+		Melder_assert (! my longSound() && my sound());
+		Melder_sprint (defaultName,300, my sound() -> name.get(), U".wav");
+	EDITOR_DO_SAVE
+		do_write (me, file, Melder_WAV, 32);
+	EDITOR_END
+}
+static void menu_cb_WriteAiff (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save selected sound as AIFF file", nullptr)
+		Melder_sprint (defaultName,300, my soundOrLongSound() -> name.get(), U".aiff");
+	EDITOR_DO_SAVE
+		do_write (me, file, Melder_AIFF, 16);
+	EDITOR_END
+}
+static void menu_cb_WriteAifc (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save selected sound as AIFC file", nullptr)
+		Melder_sprint (defaultName,300, my soundOrLongSound() -> name.get(), U".aifc");
+	EDITOR_DO_SAVE
+		do_write (me, file, Melder_AIFC, 16);
+	EDITOR_END
+}
+static void menu_cb_WriteNextSun (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save selected sound as NeXT/Sun file", nullptr)
+		Melder_sprint (defaultName,300, my soundOrLongSound() -> name.get(), U".au");
+	EDITOR_DO_SAVE
+		do_write (me, file, Melder_NEXT_SUN, 16);
+	EDITOR_END
+}
+static void menu_cb_WriteNist (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save selected sound as NIST file", nullptr)
+		Melder_sprint (defaultName,300, my soundOrLongSound() -> name.get(), U".nist");
+	EDITOR_DO_SAVE
+		do_write (me, file, Melder_NIST, 16);
+	EDITOR_END
+}
+static void menu_cb_WriteFlac (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save selected sound as FLAC file", nullptr)
+		Melder_sprint (defaultName,300, my soundOrLongSound() -> name.get(), U".flac");
+	EDITOR_DO_SAVE
+		do_write (me, file, Melder_FLAC, 16);
+	EDITOR_END
+}
+static void addSoundSaveMenu (SoundArea me, EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"Save to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */, me);
+	my writeWavButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as WAV file...", 0, menu_cb_WriteWav, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav, me);
+		FunctionAreaMenu_addCommand (menu, U"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav, me);
+	if (! Thing_isa (me, classLongSoundArea)) {   // BUG: why not for LongSound?
+		my saveAs24BitWavButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as 24-bit WAV file...", 0, menu_cb_SaveAs24BitWav, me);
+		my saveAs32BitWavButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as 32-bit WAV file...", 0, menu_cb_SaveAs32BitWav, me);
+	}
+	my writeAiffButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as AIFF file...", 0, menu_cb_WriteAiff, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selected sound to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff, me);
+		FunctionAreaMenu_addCommand (menu, U"Write sound selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff, me);
+	my writeAifcButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as AIFC file...", 0, menu_cb_WriteAifc, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selected sound to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc, me);
+		FunctionAreaMenu_addCommand (menu, U"Write sound selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc, me);
+	my writeNextSunButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as NeXT/Sun file...", 0, menu_cb_WriteNextSun, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selected sound to NeXT/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun, me);
+		FunctionAreaMenu_addCommand (menu, U"Write sound selection to NeXT/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selection to NeXT/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun, me);
+	my writeNistButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as NIST file...", 0, menu_cb_WriteNist, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selected sound to NIST file...", Editor_HIDDEN, menu_cb_WriteNist, me);
+		FunctionAreaMenu_addCommand (menu, U"Write sound selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist, me);
+	my writeFlacButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as FLAC file...", 0, menu_cb_WriteFlac, me);
+		FunctionAreaMenu_addCommand (menu, U"Write selected sound to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, me);
+		FunctionAreaMenu_addCommand (menu, U"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, me);
+}
+void structSoundArea :: v_updateMenuItems_file () {
+	integer first, last;
+	const integer selectedSamples = Sampled_getWindowSamples (our soundOrLongSound(),
+			our startSelection(), our endSelection(), & first, & last);
+	if (our drawButton) {
+		GuiThing_setSensitive (our drawButton, selectedSamples != 0);
+		GuiThing_setSensitive (our publishButton, selectedSamples != 0);
+		GuiThing_setSensitive (our publishPreserveButton, selectedSamples != 0);
+		if (our publishWindowButton)
+			GuiThing_setSensitive (our publishWindowButton, selectedSamples != 0);
+		if (our publishOverlapButton)
+			GuiThing_setSensitive (our publishOverlapButton, selectedSamples != 0);
+	}
+	GuiThing_setSensitive (our writeWavButton, selectedSamples != 0);
+	if (our saveAs24BitWavButton)
+		GuiThing_setSensitive (our saveAs24BitWavButton, selectedSamples != 0);
+	if (our saveAs32BitWavButton)
+		GuiThing_setSensitive (our saveAs32BitWavButton, selectedSamples != 0);
+	GuiThing_setSensitive (our writeAiffButton, selectedSamples != 0);
+	GuiThing_setSensitive (our writeAifcButton, selectedSamples != 0);
+	GuiThing_setSensitive (our writeNextSunButton, selectedSamples != 0);
+	GuiThing_setSensitive (our writeNistButton, selectedSamples != 0);
+	GuiThing_setSensitive (our writeFlacButton, selectedSamples != 0);
+}
+
+
 #pragma mark - SoundArea all menus
 
 void structSoundArea :: v_createMenus () {
@@ -473,6 +737,10 @@ void structSoundArea :: v_createMenus () {
 	if (! Thing_isa (this, classLongSoundArea))
 		addSoundSelectMenu (this, menu);
 	addSoundDrawMenu (this, menu);
+	addSoundExtractMenu (this, menu);
+}
+void structSoundArea :: v_createMenuItems_file (EditorMenu menu) {
+	addSoundSaveMenu (this, menu);
 }
 
 /* End of file SoundArea.cpp */

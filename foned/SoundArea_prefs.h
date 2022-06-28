@@ -25,6 +25,10 @@ Prefs_begin (SoundArea)
 	ClassPrefs_addBool       (SoundArea, picture_preserveTimes, 1, true)
 	ClassPrefs_addDouble     (SoundArea, picture_bottom,        1, U"0.0")
 	ClassPrefs_addDouble     (SoundArea, picture_top,           1, U"0.0 (= auto)")
+	ClassPrefs_addEnum       (SoundArea, extract_windowShape,   1, kSound_windowShape, DEFAULT)
+	ClassPrefs_addDouble     (SoundArea, extract_relativeWidth, 1, U"1.0")
+	ClassPrefs_addBool       (SoundArea, extract_preserveTimes, 1, true)
+	ClassPrefs_addDouble     (SoundArea, extract_overlap,       1, U"0.01")
 
 Prefs_end (SoundArea)
 

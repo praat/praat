@@ -28,6 +28,7 @@ inline static MelderColour DataGuiColour_EDITABLE = Melder_CYAN;
 inline static MelderColour DataGuiColour_DEFAULT_FOREGROUND = Melder_BLACK;
 
 Thing_declare (Editor);
+Thing_declare (EditorMenu);
 Thing_declare (EditorCommand);
 
 Thing_define (DataGui, Thing) {
@@ -54,6 +55,8 @@ private:
 	}
 public:
 	virtual void v_createMenus () { }
+	virtual void v_createMenuItems_file (EditorMenu /* menu */) { }
+	virtual void v_updateMenuItems_file () { }
 
 	virtual void v_form_pictureWindow (EditorCommand cmd);
 	virtual void v_ok_pictureWindow (EditorCommand cmd);

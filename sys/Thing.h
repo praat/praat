@@ -131,6 +131,12 @@ struct structThing {
 			derived::v_nameChanged may call base::v_nameChanged at start, middle or end
 		*/
 protected:
+	/*
+		The following two functions look like they belong in DataGui instead of in Thing,
+		but their content is automated via a macro that includes "override",
+		and some of that overridden content already appears in DataGui,
+		so we introduce these two functions here.
+	*/
 	virtual void v1_copyPreferencesToInstance () { }
 		/*
 			derived::v1_copyPreferencesToInstance calls base::v1_copyPreferencesToInstance at *start*,
@@ -142,7 +148,6 @@ protected:
 			because restrictions at base level may be laxer than restrictions at derived level
 			(preferences will be overridden only if their current value violates a restriction)
 		*/
-
 };
 
 #define forget(thing)  do { _Thing_forget (thing); thing = nullptr; } while (false)

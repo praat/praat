@@ -1,6 +1,6 @@
-/* TimeSoundEditor_prefs.h
+/* SoundAnalysisArea.cpp
  *
- * Copyright (C) 2013,2015,2016,2022 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (TimeSoundEditor)
+#include "SoundAnalysisArea.h"
 
-	ClassPrefs_addEnum       (TimeSoundEditor, extract_windowShape,         1, kSound_windowShape, DEFAULT)
-	ClassPrefs_addDouble     (TimeSoundEditor, extract_relativeWidth,       1, U"1.0")
-	ClassPrefs_addBool       (TimeSoundEditor, extract_preserveTimes,       1, true)
-	ClassPrefs_addDouble     (TimeSoundEditor, extract_overlap,             1, U"0.01")
+Thing_implement (SoundAnalysisArea, FunctionArea, 0);
 
-Prefs_end (TimeSoundEditor)
+//#include "enums_getText.h"
+//#include "SoundAnalysisArea_enums.h"
+//#include "enums_getValue.h"
+//#include "SoundAnalysisArea_enums.h"
 
-/* End of file TimeSoundEditor_prefs.h */
+/* End of file SoundAnalysisArea.cpp */
