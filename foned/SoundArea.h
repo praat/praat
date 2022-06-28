@@ -135,9 +135,17 @@ protected:
 	void v_drawInside ()
 		override;
 public:
+	void v1_info ()
+		override;
 	void v_createMenus ()
 		override;
+	void v_createMenuItems_file (EditorMenu menu)
+		override;
+	void v_updateMenuItems_file ()
+		override;
 	GuiMenuItem drawButton;
+	GuiMenuItem publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
+	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 
 	#include "SoundArea_prefs.h"
 };

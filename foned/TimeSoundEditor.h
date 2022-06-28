@@ -28,29 +28,16 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	Sound sound() { return our soundArea ? our soundArea -> sound() : nullptr; }
 	LongSound longSound() { return our soundArea ? our soundArea -> longSound() : nullptr; }
 
-	GuiMenuItem publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
-	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
-
 	void v1_info ()
 		override;
 	void v_createMenus ()
 		override;
 	void v_createMenuItems_file (EditorMenu menu)
 		override;
-	void v_createMenuItems_query_info (EditorMenu menu)
-		override;
-	void v_createMenuItems_file_draw (EditorMenu menu)
-		override;
-	void v_createMenuItems_file_extract (EditorMenu menu)
-		override;
-	void v_createMenuItems_file_write (EditorMenu menu)
+	void v_updateMenuItems_file ()
 		override;
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
 		override;   // catch channel scrolling and channel muting (last checked 2020-07-22)
-
-	virtual void v_updateMenuItems_file ();
-
-	#include "TimeSoundEditor_prefs.h"
 };
 
 /* End of file TimeSoundEditor.h */

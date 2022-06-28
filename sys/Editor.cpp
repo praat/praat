@@ -301,9 +301,6 @@ static void menu_cb_openScript (Editor me, EDITOR_ARGS_DIRECT) {
 	scriptEditor.releaseToUser();
 }
 
-void structEditor :: v_createMenuItems_file (EditorMenu /* menu */) {
-}
-
 void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
 	if (our data())
 		our undoButton = EditorMenu_addCommand (menu, U"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);

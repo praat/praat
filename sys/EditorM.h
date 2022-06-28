@@ -503,7 +503,7 @@ _form_inited_: \
 	Editor_save (me, undoTitle);
 #define MODIFY_DATA_END  \
 	FunctionEditor_redraw (me); \
-	Editor_broadcastDataChanged (me);
+	Editor_broadcastDataChanged (my boss());
 
 #define CONVERT_DATA_TO_ONE  \
 	DATA_BEGIN__
@@ -511,14 +511,14 @@ _form_inited_: \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	Thing_setName (result.get(), __VA_ARGS__); \
-	Editor_broadcastPublication (me, result.move());
+	Editor_broadcastPublication (my boss(), result.move());
 
 #define CREATE_ONE
 #define CREATE_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	Thing_setName (result.get(), __VA_ARGS__); \
-	Editor_broadcastPublication (me, result.move());
+	Editor_broadcastPublication (my boss(), result.move());
 
 #define HELP(title)  \
 	Melder_help (title);
