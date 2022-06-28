@@ -19,6 +19,7 @@
  */
 
 #include "TimeSoundEditor.h"
+#include "SoundAnalysisArea.h"
 #include "Sound_and_Spectrogram.h"
 #include "Pitch.h"
 #include "Intensity.h"
@@ -35,6 +36,8 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	autoFormant d_formant;
 	autoPointProcess d_pulses;
 	GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+
+	autoSoundAnalysisArea soundAnalysisArea;
 
 	void v1_info ()
 		override;
