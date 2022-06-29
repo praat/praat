@@ -54,10 +54,9 @@ static double _TextGridEditor_computeSoundY (AnyTextGridEditor me) {
 	return my soundOrLongSound() ? numberOfTiers / (2.0 * numberOfVisibleChannels + numberOfTiers * (showAnalysis ? 1.8 : 1.3)) : 1.0;
 }
 
-static integer _TextGridEditor_yWCtoTier (AnyTextGridEditor me, double yWC) {
+static integer _TextGridEditor_y_fraction_local_toTier (AnyTextGridEditor me, double y_fraction_local) {
 	const integer numberOfTiers = my textGrid() -> tiers->size;
-	const double soundY = _TextGridEditor_computeSoundY (me);
-	integer tierNumber = numberOfTiers - Melder_ifloor (yWC / soundY * (double) numberOfTiers);
+	integer tierNumber = numberOfTiers - Melder_ifloor (y_fraction_local * (double) numberOfTiers);
 	Melder_clip (1_integer, & tierNumber, numberOfTiers);
 	return tierNumber;
 }
@@ -1227,12 +1226,31 @@ void structAnyTextGridEditor :: v1_dataChanged () {
 /********** DRAWING AREA **********/
 
 void structAnyTextGridEditor :: v_distributeAreas () {
-	const bool showAnalysis = v_hasAnalysis () &&
-		(instancePref_spectrogram_show() || instancePref_pitch_show() || instancePref_intensity_show() || instancePref_formant_show()) &&
-		our soundOrLongSound()
-	;
-	const double soundY = _TextGridEditor_computeSoundY (this);
-	const double soundY2 = ( showAnalysis ? 0.5 * (1.0 + soundY) : soundY );
+	if (our soundArea) {
+		Melder_assert (our soundOrLongSound());
+		Melder_assert (our soundAnalysisArea);
+		const bool showAnalysis = v_hasAnalysis () &&
+			(instancePref_spectrogram_show() ||
+			 instancePref_pitch_show() ||
+			 instancePref_intensity_show() ||
+			 instancePref_formant_show()
+		);
+		const integer numberOfTiers = our textGrid() -> tiers->size;
+		const integer numberOfVisibleChannels = Melder_clippedRight (our soundOrLongSound() -> ny, 8_integer);
+		const double soundY = numberOfTiers / (2.0 * numberOfVisibleChannels +
+				numberOfTiers * ( showAnalysis ? 1.8 : 1.3 ));
+		if (showAnalysis) {
+			our textGridArea -> setGlobalYRange_fraction (0.0, soundY);
+			const double soundY2 = 0.5 * (1.0 + soundY);
+			our soundAnalysisArea -> setGlobalYRange_fraction (soundY, soundY2);
+			our soundArea -> setGlobalYRange_fraction (soundY2, 1.0);
+		} else {
+			our soundAnalysisArea -> setGlobalYRange_fraction (soundY, soundY);
+			our soundArea -> setGlobalYRange_fraction (soundY, 1.0);
+		}
+	} else {
+		our textGridArea -> setGlobalYRange_fraction (0.0, 1.0);
+	}
 }
 
 static void do_drawIntervalTier (AnyTextGridEditor me, IntervalTier tier, integer itier) {
@@ -1430,33 +1448,25 @@ void structAnyTextGridEditor :: v_draw () {
 		(our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) &&
 		our soundOrLongSound()  // BUG: collapse
 	;
-	const double soundY = _TextGridEditor_computeSoundY (this), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
 
 	/*
 		Draw optional sound.
 	*/
 	if (our soundOrLongSound() || our instancePref_pulses_show()) {
-		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY2, 1.0);
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
-		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		FunctionArea_prepareCanvas (our soundArea.get());
 		if (our instancePref_pulses_show())
-			v_draw_analysis_pulses ();
-		if (our soundOrLongSound())
-			SoundArea_draw (our soundArea.get());
-		Graphics_resetViewport (our graphics.get(), vp1);
+			our v_draw_analysis_pulses ();
+		FunctionArea_drawInside (our soundArea.get());
+		if (showAnalysis) {
+			FunctionArea_prepareCanvas (our soundAnalysisArea.get());
+			our v_draw_analysis ();
+		}
 	}
 
 	/*
 		Draw tiers.
 	*/
-	if (our soundOrLongSound())
-		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, soundY);
-	Graphics_setColour (our graphics.get(), Melder_WHITE);
-	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	FunctionArea_prepareCanvas (our textGridArea.get());
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 		const Function anyTier = our textGrid() -> tiers->at [itier];
@@ -1528,36 +1538,22 @@ void structAnyTextGridEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_setFont (our graphics.get(), oldFont);
 	Graphics_setFontSize (our graphics.get(), oldFontSize);
-	if (our soundOrLongSound())
-		Graphics_resetViewport (our graphics.get(), vp1);
 
-	if (showAnalysis) {
-		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, soundY2);
-		v_draw_analysis ();
-		Graphics_resetViewport (our graphics.get(), vp1);
-	}
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-	if (our soundOrLongSound()) {
-		Graphics_line (our graphics.get(), our startWindow, soundY, our endWindow, soundY);
-		if (showAnalysis) {
-			Graphics_line (our graphics.get(), our startWindow, soundY2, our endWindow, soundY2);
-			Graphics_line (our graphics.get(), our startWindow, soundY, our startWindow, soundY2);
-			Graphics_line (our graphics.get(), our endWindow, soundY, our endWindow, soundY2);
-		}
-	}
 	if (isdefined (our draggingTime) && hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+		FunctionArea_setViewport (our textGridArea.get());
 		Graphics_xorOn (our graphics.get(), Melder_MAROON);
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 			if (our draggingTiers [itier]) {
-				const double ymin = soundY * (1.0 - (double) itier / numberOfTiers);
-				const double ymax = soundY * (1.0 - (double) (itier - 1) / numberOfTiers);
+				const double ymin = 1.0 - (double) itier / numberOfTiers;
+				const double ymax = 1.0 - (double) (itier - 1) / numberOfTiers;
 				Graphics_setLineWidth (our graphics.get(), 7.0);
 				Graphics_line (our graphics.get(), our draggingTime, ymin, our draggingTime, ymax);
 			}
 		}
-		Graphics_setLineWidth (our graphics.get(), 1);
-		Graphics_line (our graphics.get(), our draggingTime, 0.0, our draggingTime, 1.01);
-		Graphics_text (our graphics.get(), our draggingTime, 1.01, Melder_fixed (our draggingTime, 6));
+		our viewDataAsWorldByFraction ();
+		Graphics_setLineWidth (our graphics.get(), 1.0);
+		Graphics_line (our graphics.get(), our draggingTime, 0.0, our draggingTime, 1.0);
+		Graphics_text (our graphics.get(), our draggingTime, 1.0, Melder_fixed (our draggingTime, 6));
 		Graphics_xorOff (our graphics.get());
 	}
 
@@ -1601,11 +1597,16 @@ void structAnyTextGridEditor :: v_drawSelectionViewer () {
 			Graphics_text (our graphics.get(), 0.0 + 1.0 * icol, 13.0 - 1.0 * irow, characters [irow-1] [icol-1]);
 }
 
-bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC) {
+bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event,
+	double x_world, double y_fraction_global)
+{
 	const integer numberOfTiers = our textGrid() -> tiers->size;
-	const double soundY = _TextGridEditor_computeSoundY (this);
-	const bool mouseIsInWideSoundOrAnalysisPart = ( yWC > soundY );
-	const bool mouseIsInWideTextGridPart = ! mouseIsInWideSoundOrAnalysisPart;
+	const bool mouseIsInWideSoundPart =
+			our soundArea && our soundArea -> y_fraction_globalIsInside (y_fraction_global);
+	const bool mouseIsInWideSoundAnalysisPart =
+			our soundAnalysisArea && our soundAnalysisArea -> y_fraction_globalIsInside (y_fraction_global);
+	const bool mouseIsInWideSoundOrAnalysisPart = mouseIsInWideSoundPart || mouseIsInWideSoundAnalysisPart;
+	const bool mouseIsInWideTextGridPart = our textGridArea -> y_fraction_globalIsInside (y_fraction_global);
 	const integer oldSelectedTier = our selectedTier;
 
 	constexpr double clickingVicinityRadius_mm = 1.0;
@@ -1616,18 +1617,17 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		our anchorIsInWideSoundOrAnalysisPart = mouseIsInWideSoundOrAnalysisPart;
 		our anchorIsInWideTextGridPart = mouseIsInWideTextGridPart;
 	}
-	if (mouseIsInWideSoundOrAnalysisPart) {
-		const bool mouseIsInWideAnalysisPart = ( yWC < 0.5 * (soundY + 1.0) );
-		if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && mouseIsInWideAnalysisPart) {
-			our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
-					2.0 * (yWC - soundY) / (1.0 - soundY) * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
+	if (mouseIsInWideSoundAnalysisPart) {
+		if (our instancePref_spectrogram_show() || our instancePref_formant_show()) {
+			const double y_fraction_withinAnalysesArea = our soundAnalysisArea -> y_fraction_globalToLocal (y_fraction_global);
+			our d_spectrogram_cursor = y_fraction_withinAnalysesArea * our instancePref_spectrogram_viewTo()
+					+ (1.0 - y_fraction_withinAnalysesArea) * our instancePref_spectrogram_viewFrom();
 		}
 	}
-	if (our anchorIsInWideSoundOrAnalysisPart)
-		return our AnyTextGridEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 	if (! our anchorIsInWideTextGridPart)
-		Melder_throw (U"Unexpected order of events: drag or drop without preceding click (\"anchor is not in wide TextGrid part\").");
-	const integer mouseTier = _TextGridEditor_yWCtoTier (this, yWC);
+		return our AnyTextGridEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction_global);
+	const double y_fraction_withinTextGridArea = our textGridArea -> y_fraction_globalToLocal (y_fraction_global);
+	const integer mouseTier = _TextGridEditor_y_fraction_local_toTier (this, y_fraction_withinTextGridArea);
 
 	our draggingTime = undefined;   // information to next expose event
 	if (event -> isClick()) {
@@ -1642,15 +1642,15 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		*/
 		our selectedTier = mouseTier;
 		double startInterval, endInterval;
-		_TextGridEditor_timeToInterval (this, xWC, our selectedTier, & startInterval, & endInterval);
+		_TextGridEditor_timeToInterval (this, x_world, our selectedTier, & startInterval, & endInterval);
 
 		if (event -> isLeftBottomFunctionKeyPressed()) {
-			our startSelection = ( xWC - startInterval < endInterval - xWC ? startInterval : endInterval );   // to nearest boundary
+			our startSelection = ( x_world - startInterval < endInterval - x_world ? startInterval : endInterval );   // to nearest boundary
 			Melder_sort (& our startSelection, & our endSelection);
 			return FunctionEditor_UPDATE_NEEDED;
 		}
 		if (event -> isRightBottomFunctionKeyPressed()) {
-			our endSelection = ( xWC - startInterval < endInterval - xWC ? startInterval : endInterval );
+			our endSelection = ( x_world - startInterval < endInterval - x_world ? startInterval : endInterval );
 			Melder_sort (& our startSelection, & our endSelection);
 			return FunctionEditor_UPDATE_NEEDED;
 		}
@@ -1659,19 +1659,19 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		TextTier selectedTextTier;
 		AnyTextGridTier_identifyClass (our textGrid() -> tiers->at [our selectedTier], & selectedIntervalTier, & selectedTextTier);
 
-		if (xWC <= our startWindow || xWC >= our endWindow)
+		if (x_world <= our startWindow || x_world >= our endWindow)
 			return FunctionEditor_UPDATE_NEEDED;
 
 		/*
 			Get the time of the nearest boundary or point.
 		*/
 		if (selectedIntervalTier) {
-			const integer clickedIntervalNumber = IntervalTier_timeToIndex (selectedIntervalTier, xWC);
+			const integer clickedIntervalNumber = IntervalTier_timeToIndex (selectedIntervalTier, x_world);
 			const bool theyClickedOutsidetheTimeDomainOfTheIntervals = ( clickedIntervalNumber == 0 );
 			if (theyClickedOutsidetheTimeDomainOfTheIntervals)
 				return FunctionEditor_UPDATE_NEEDED;
 			const TextInterval interval = selectedIntervalTier -> intervals.at [clickedIntervalNumber];
-			if (xWC > 0.5 * (interval -> xmin + interval -> xmax)) {
+			if (x_world > 0.5 * (interval -> xmin + interval -> xmax)) {
 				our anchorTime = interval -> xmax;
 				our clickedLeftBoundary = clickedIntervalNumber + 1;
 			} else {
@@ -1679,7 +1679,7 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 				our clickedLeftBoundary = clickedIntervalNumber;
 			}
 		} else {
-			const integer clickedPointNumber = AnyTier_timeToNearestIndex (selectedTextTier->asAnyTier(), xWC);
+			const integer clickedPointNumber = AnyTier_timeToNearestIndex (selectedTextTier->asAnyTier(), x_world);
 			if (clickedPointNumber != 0) {
 				const TextPoint point = selectedTextTier -> points.at [clickedPointNumber];
 				our anchorTime = point -> number;
@@ -1687,10 +1687,18 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		}
 		Melder_assert (! (selectedIntervalTier && our clickedLeftBoundary == 0));
 
-		const bool nearBoundaryOrPoint = ( isdefined (our anchorTime) && fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - our anchorTime)) < 1.5 );
-		const bool nearCursorCircle = ( our startSelection == our endSelection && Graphics_distanceWCtoMM (our graphics.get(), xWC, yWC,
+		const bool nearBoundaryOrPoint = ( isdefined (our anchorTime) &&
+				fabs (Graphics_dxWCtoMM (our graphics.get(), x_world - our anchorTime)) < 1.5 );
+		FunctionArea_setViewport (our textGridArea.get());
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
+		const double distanceToCursorCircle = ( our startSelection != our endSelection ? undefined :
+			Graphics_distanceWCtoMM (our graphics.get(), x_world, y_fraction_withinTextGridArea,
 				our startSelection,
-				(numberOfTiers + 1 - our selectedTier) * soundY / numberOfTiers - Graphics_dyMMtoWC (our graphics.get(), 1.5)) < 1.5 );
+				(numberOfTiers + 1 - our selectedTier) / double (numberOfTiers) -
+				Graphics_dyMMtoWC (our graphics.get(), 1.5))
+		);
+		trace (y_fraction_withinTextGridArea, U" ", distanceToCursorCircle);
+		const bool nearCursorCircle = ( distanceToCursorCircle < 1.5 );
 
 		if (nearBoundaryOrPoint) {
 			/*
@@ -1783,9 +1791,9 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		}
 	} else if (event -> isDrag ()) {
 		if (isdefined (our anchorTime) && our draggingTiers.size > 0) {
-			our draggingTime = xWC;
+			our draggingTime = x_world;
 			if (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
-				const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - our anchorTime));
+				const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), x_world - our anchorTime));
 				if (distanceToAnchor_mm > draggingVicinityRadius_mm)
 					our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
 			}
@@ -1812,17 +1820,17 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 			If the user dropped near an existing boundary in an unselected tier,
 			we snap to that mark.
 		*/
-		const integer itierDrop = _TextGridEditor_yWCtoTier (this, yWC);
+		const integer itierDrop = _TextGridEditor_y_fraction_local_toTier (this, y_fraction_withinTextGridArea);
 		bool droppedOnABoundaryOrPointInsideAnUnselectedTier = false;
-		if (yWC > 0.0 && yWC < soundY && ! our draggingTiers [itierDrop]) {   // dropped inside an unselected tier?
+		if (x_world > 0.0 && our textGridArea -> y_fraction_globalIsInside (y_fraction_global) && ! our draggingTiers [itierDrop]) {   // dropped inside an unselected tier?
 			const Function anyTierDrop = our textGrid() -> tiers->at [itierDrop];
 			if (anyTierDrop -> classInfo == classIntervalTier) {
 				const IntervalTier tierDrop = (IntervalTier) anyTierDrop;
 				for (integer ibound = 1; ibound < tierDrop -> intervals.size; ibound ++) {
 					const TextInterval left = tierDrop -> intervals.at [ibound];
-					const double mouseDistanceToBoundary = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - left -> xmax));
+					const double mouseDistanceToBoundary = fabs (Graphics_dxWCtoMM (our graphics.get(), x_world - left -> xmax));
 					if (mouseDistanceToBoundary < droppingVicinityRadius_mm) {
-						xWC = left -> xmax;   // snap to boundary
+						x_world = left -> xmax;   // snap to boundary
 						droppedOnABoundaryOrPointInsideAnUnselectedTier = true;
 					}
 				}
@@ -1830,9 +1838,9 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 				const TextTier tierDrop = (TextTier) anyTierDrop;
 				for (integer ipoint = 1; ipoint <= tierDrop -> points.size; ipoint ++) {
 					const TextPoint point = tierDrop -> points.at [ipoint];
-					const double mouseDistanceToPoint_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - point -> number));
+					const double mouseDistanceToPoint_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), x_world - point -> number));
 					if (mouseDistanceToPoint_mm < droppingVicinityRadius_mm) {
-						xWC = point -> number;   // snap to point
+						x_world = point -> number;   // snap to point
 						droppedOnABoundaryOrPointInsideAnUnselectedTier = true;
 					}
 				}
@@ -1843,9 +1851,9 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 			we snap to the cursor.
 		*/
 		if (our startSelection == our endSelection && our startSelection != our anchorTime) {
-			const double mouseDistanceToCursor = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - our startSelection));
+			const double mouseDistanceToCursor = fabs (Graphics_dxWCtoMM (our graphics.get(), x_world - our startSelection));
 			if (mouseDistanceToCursor < droppingVicinityRadius_mm)
-				xWC = our startSelection;
+				x_world = our startSelection;
 		}
 		/*
 			If the user wiggled near the anchor, we snap to the anchor and bail out
@@ -1863,7 +1871,7 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		/*
 			We cannot move a boundary out of the dragging range.
 		*/
-		if (xWC <= our leftDraggingBoundary || xWC >= our rightDraggingBoundary) {
+		if (x_world <= our leftDraggingBoundary || x_world >= our rightDraggingBoundary) {
 			Melder_beep ();
 			our draggingTime = undefined;
 			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
@@ -1884,7 +1892,7 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 					for (integer ibound = 2; ibound <= numberOfIntervals; ibound ++) {
 						TextInterval left = intervalTier -> intervals.at [ibound - 1], right = intervalTier -> intervals.at [ibound];
 						if (left -> xmax == our anchorTime) {   // boundary dragged?
-							left -> xmax = right -> xmin = xWC;   // move boundary to drop site
+							left -> xmax = right -> xmin = x_world;   // move boundary to drop site
 							break;
 						}
 					}
@@ -1892,8 +1900,8 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 					Melder_assert (isdefined (our anchorTime));
 					const integer iDraggedPoint = AnyTier_hasPoint (textTier->asAnyTier(), our anchorTime);
 					if (iDraggedPoint) {
-						Melder_assert (isdefined (xWC));
-						const integer dropSiteHasPoint = AnyTier_hasPoint (textTier->asAnyTier(), xWC);
+						Melder_assert (isdefined (x_world));
+						const integer dropSiteHasPoint = AnyTier_hasPoint (textTier->asAnyTier(), x_world);
 						if (dropSiteHasPoint != 0) {
 							Melder_warning (U"Cannot drop point on an existing point.");
 						} else {
@@ -1902,7 +1910,7 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 								Move point to drop site. May have passed another point.
 							*/
 							autoTextPoint newPoint = Data_copy (point);
-							newPoint -> number = xWC;   // move point to drop site
+							newPoint -> number = x_world;   // move point to drop site
 							textTier -> points. removeItem (iDraggedPoint);
 							textTier -> points. addItem_move (newPoint.move());
 						}
@@ -1914,7 +1922,7 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		/*
 			Select the drop site.
 		*/
-		our startSelection = our endSelection = xWC;
+		our startSelection = our endSelection = x_world;
 		Melder_sort (& our startSelection, & our endSelection);
 		our draggingTime = undefined;
 		our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
@@ -2102,24 +2110,6 @@ void structAnyTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu me
 	EditorMenu_addCommand (menu, U"Select next interval", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_SelectNextInterval);
 	EditorMenu_addCommand (menu, U"Extend-select left", GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
 	EditorMenu_addCommand (menu, U"Extend-select right", GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
-}
-
-void structAnyTextGridEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our instancePref_spectrogram_show() && our soundOrLongSound()) {
-		const double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
-		//Graphics_highlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
-		Graphics_highlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
-	} else {
-		Graphics_highlight (our graphics.get(), left, right, bottom, top);
-	}
-}
-
-double structAnyTextGridEditor :: v_getBottomOfSoundArea () {
-	return _TextGridEditor_computeSoundY (this);
-}
-
-double structAnyTextGridEditor :: v_getBottomOfSoundAndAnalysisArea () {
-	return _TextGridEditor_computeSoundY (this);
 }
 
 void structAnyTextGridEditor :: v_createMenuItems_pitch_picture (EditorMenu menu) {

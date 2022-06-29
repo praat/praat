@@ -76,6 +76,8 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 }
 
 bool structFormantPathEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC) {
+	#if 0
+	// BUG: NYI
 	const double spectrogramTop = our v_getBottomOfSoundArea (), spectrogramBottom = our v_getBottomOfSoundAndAnalysisArea ();
 	if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && yWC < spectrogramTop && yWC > spectrogramBottom &&
 			xWC > our startWindow && xWC < our endWindow)
@@ -84,6 +86,7 @@ bool structFormantPathEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
 				yFractionFromBottomOfSpectrogram  * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
 	}
+	#endif
 	return FormantPathEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 }
 
@@ -386,7 +389,7 @@ void structFormantPathEditor :: v_draw () {
 		(our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) &&
 		our soundOrLongSound()
 	;
-	const double soundBottom = our v_getBottomOfSoundArea ();
+	const double soundBottom = 0.3;   // BUG: our v_getBottomOfSoundArea ();
 
 	/*
 		Draw the sound.
@@ -617,23 +620,12 @@ void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu me
 	FormantPathEditor_Parent :: v_createMenuItems_view_timeDomain (menu);
 }
 
-void structFormantPathEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our instancePref_spectrogram_show() && our soundOrLongSound())
-		Graphics_highlight (our graphics.get(), left, right, bottom + (top - bottom) * our v_getBottomOfSoundArea (), top);
-	else
-		Graphics_highlight (our graphics.get(), left, right, bottom, top);
-}
-
-double structFormantPathEditor :: v_getBottomOfSoundArea () {
-	/*
-		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid
-	*/
-	return our soundOrLongSound() ? 0.7 : 1.0;
-}
-
-double structFormantPathEditor :: v_getBottomOfSoundAndAnalysisArea () {
-	return 0.0;  //our textgrid ? 0.3 : 0.0;
-}
+//double structFormantPathEditor :: v_getBottomOfSoundArea () {
+//	/*
+//		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid
+//	*/
+//	return our soundOrLongSound() ? 0.7 : 1.0;   // BUG: NYI
+//}
 
 /********** EXPORTED **********/
 

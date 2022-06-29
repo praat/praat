@@ -92,12 +92,6 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override { return U"Formant candidates"; }
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
 		override;
-	void v_highlightSelection (double left, double right, double bottom, double top)
-		override;
-	double v_getBottomOfSoundArea ()
-		override;
-	double v_getBottomOfSoundAndAnalysisArea ()
-		override;
 	void v_createMenuItems_formant (EditorMenu menu)
 		override;
 	virtual void v_updateMenuItems_navigation ();

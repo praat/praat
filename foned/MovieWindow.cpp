@@ -100,13 +100,6 @@ void structMovieWindow :: v_draw () {
 	our v_updateMenuItems_file ();
 }
 
-void structMovieWindow :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our instancePref_spectrogram_show())
-		Graphics_highlight (our graphics.get(), left, right, 0.3 * bottom + 0.7 * top, top);
-	else
-		Graphics_highlight (our graphics.get(), left, right, 0.7 * bottom + 0.3 * top, top);
-}
-
 bool structMovieWindow :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	return our MovieWindow_Parent :: v_mouseInWideDataView(event, x_world, y_fraction);
 }

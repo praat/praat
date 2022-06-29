@@ -340,22 +340,15 @@ void structSoundEditor :: v_play (double startTime, double endTime) {
 	}
 }
 
-bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
-	constexpr double ANALYSIS_HEIGHT = 0.5;
-	if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && y_fraction < ANALYSIS_HEIGHT && x_world > our startWindow && x_world < our endWindow)
-		our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
-				2.0 * y_fraction * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
-	const double y_fraction_withinSoundAnalysisArea = our soundAnalysisArea -> y_fraction_globalToLocal (y_fraction);
-	our d_spectrogram_cursor = (1.0 - y_fraction_withinSoundAnalysisArea) * our instancePref_spectrogram_viewFrom()
-			+ y_fraction_withinSoundAnalysisArea * our instancePref_spectrogram_viewTo();
-	return SoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
-}
-
-void structSoundEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our instancePref_spectrogram_show())
-		Graphics_highlight (our graphics.get(), left, right, 0.5 * (bottom + top), top);
-	else
-		Graphics_highlight (our graphics.get(), left, right, bottom, top);
+bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction_global) {
+	if (our soundAnalysisArea -> y_fraction_globalIsInside (y_fraction_global) &&
+		x_world > our startWindow && x_world < our endWindow
+	) {
+		const double y_fraction_insideAnalysesArea = our soundAnalysisArea -> y_fraction_globalToLocal (y_fraction_global);
+		our d_spectrogram_cursor = y_fraction_insideAnalysesArea * our instancePref_spectrogram_viewTo()
+				+ (1.0 - y_fraction_insideAnalysesArea) * our instancePref_spectrogram_viewFrom();
+	}
+	return SoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction_global);
 }
 
 autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSound) {

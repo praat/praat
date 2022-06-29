@@ -45,12 +45,6 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		override;
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
 		override;
-	double v_getBottomOfSoundArea ()
-		override
-	{
-		return our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
-				our instancePref_intensity_show() || our instancePref_formant_show() ? 0.5 : 0.0;
-	}
 	void v_windowChanged ()
 		override
 	{

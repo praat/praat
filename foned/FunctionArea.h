@@ -126,7 +126,7 @@ public:
 	}
 	bool y_fraction_globalIsInside (double globalY_fraction) const {
 		const double y_pxlt = globalY_fraction_to_pxlt (globalY_fraction);
-		return y_pxlt >= our bottom_pxlt() && y_pxlt <= our top_pxlt();
+		return y_pxlt >= our bottom_pxlt() && y_pxlt < our top_pxlt();
 	}
 	double y_fraction_globalToLocal (double globalY_fraction) const {
 		const double y_pxlt = globalY_fraction_to_pxlt (globalY_fraction);
