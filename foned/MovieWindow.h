@@ -41,8 +41,6 @@ Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
 		override;
 	void v_createMenuItems_view (EditorMenu menu)
 		override;
-	void v_highlightSelection (double left, double right, double bottom, double top)
-		override;
 };
 
 autoMovieWindow MovieWindow_create (conststring32 title, Movie movie);

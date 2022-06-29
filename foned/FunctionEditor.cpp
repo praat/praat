@@ -358,13 +358,12 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	my viewDataAsWorldByFraction ();
 	Graphics_setColour (my graphics.get(), Melder_RED);
 	Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
-	const double bottom = my v_getBottomOfSoundAndAnalysisArea ();
 	if (cursorIsVisible)
-		Graphics_line (my graphics.get(), my startSelection, bottom, my startSelection, 1.0);
+		Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
 	if (startIsVisible)
-		Graphics_line (my graphics.get(), my startSelection, bottom, my startSelection, 1.0);
+		Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
 	if (endIsVisible)
-		Graphics_line (my graphics.get(), my endSelection, bottom, my endSelection, 1.0);
+		Graphics_line (my graphics.get(), my endSelection, 0.0, my endSelection, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 

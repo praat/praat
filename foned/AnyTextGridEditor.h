@@ -80,12 +80,6 @@ Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 		override { return U"IPA chart"; }
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
 		override;
-	void v_highlightSelection (double left, double right, double bottom, double top)
-		override;
-	double v_getBottomOfSoundArea ()
-		override;
-	double v_getBottomOfSoundAndAnalysisArea ()
-		override;
 	void v_updateMenuItems_file ()
 		override;
 	void v_createMenuItems_pitch_picture (EditorMenu menu)

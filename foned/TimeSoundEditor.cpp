@@ -60,7 +60,7 @@ void structTimeSoundEditor :: v_updateMenuItems_file () {
 bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	if (event -> isClick()) {
 		if (our soundOrLongSound()) {
-			y_fraction = (y_fraction - v_getBottomOfSoundArea ()) / (1.0 - v_getBottomOfSoundArea ());
+			y_fraction = our soundArea -> y_fraction_globalToLocal (y_fraction);
 			const integer numberOfChannels = our soundOrLongSound() -> ny;
 			if (event -> commandKeyPressed) {
 				if (numberOfChannels > 1) {

@@ -41,8 +41,6 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 		override;
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC)
 		override;
-	void v_highlightSelection (double left, double right, double bottom, double top)
-		override;
 };
 
 void SoundEditor_init (SoundEditor me, autoSoundArea soundArea,

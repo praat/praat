@@ -35,7 +35,7 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 		our RealTierEditor_Parent :: v1_dataChanged ();
 		our realTierArea -> functionChanged (static_cast <RealTier> (our data()));
 		if (our soundArea)
-			our soundArea -> functionChanged (nullptr);
+			our soundArea -> functionChanged (nullptr);   // BUG: the copy probably doesn't change
 	}
 
 	void v_distributeAreas ()
