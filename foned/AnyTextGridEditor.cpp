@@ -1239,8 +1239,8 @@ void structAnyTextGridEditor :: v_distributeAreas () {
 		const integer numberOfVisibleChannels = Melder_clippedRight (our soundOrLongSound() -> ny, 8_integer);
 		const double soundY = numberOfTiers / (2.0 * numberOfVisibleChannels +
 				numberOfTiers * ( showAnalysis ? 1.8 : 1.3 ));
+		our textGridArea -> setGlobalYRange_fraction (0.0, soundY);
 		if (showAnalysis) {
-			our textGridArea -> setGlobalYRange_fraction (0.0, soundY);
 			const double soundY2 = 0.5 * (1.0 + soundY);
 			our soundAnalysisArea -> setGlobalYRange_fraction (soundY, soundY2);
 			our soundArea -> setGlobalYRange_fraction (soundY2, 1.0);
