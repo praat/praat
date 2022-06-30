@@ -1984,7 +1984,7 @@ void structTimeSoundAnalysisEditor :: v9_repairPreferences () {
 	}
 	if (our v_hasAnalysis ()) {
 		if (! our v_hasSpectrogram ())
-			our setInstancePref_spectrogram_show (false);   // TODO: dubious, becasue what other editors will be affected?
+			our setInstancePref_spectrogram_show (false);   // TODO: dubious, because what other editors will be affected?
 		if (! our v_hasPitch ())
 			our setInstancePref_pitch_show (false);
 		if (! our v_hasIntensity ())
