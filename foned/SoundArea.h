@@ -154,7 +154,7 @@ void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 
 
 void SoundArea_draw (SoundArea me);
 
-bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
+bool SoundArea_mouse (SoundArea me, GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction);
 
 DEFINE_FunctionArea_create (SoundArea, Sound)
 

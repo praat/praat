@@ -38,6 +38,8 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		override;
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
 		override;   // catch channel scrolling and channel muting (last checked 2020-07-22)
+
+	bool clickedInWideSoundArea = false;
 };
 
 /* End of file TimeSoundEditor.h */

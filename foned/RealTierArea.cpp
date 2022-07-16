@@ -187,9 +187,9 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 			const bool somethingHasMoved = ( my dt != 0.0 || my dy != 0.0 );
 			if (somethingHasMoved) {
 				if (my draggingSelection)
-					my save (U"Drag points");   // TODO: title can be more specific
+					FunctionArea_save (me, U"Drag points");   // TODO: title can be more specific
 				else
-					my save (U"Drag point");   // TODO: title can be more specific
+					FunctionArea_save (me, U"Drag point");   // TODO: title can be more specific
 				const double leftNewTime = my realTier() -> points.at [my firstSelected] -> number + my dt;
 				const double rightNewTime = my realTier() -> points.at [my lastSelected] -> number + my dt;
 				const bool offLeft = ( leftNewTime < my tmin() );
@@ -231,7 +231,7 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 				Melder_clip (my v_minimumLegalY(), & my ycursor, my v_maximumLegalY());   // NaN-safe
 			}
 
-			my broadcastDataChanged ();
+			FunctionArea_broadcastDataChanged (me);
 		}
 	}
 	return FunctionEditor_UPDATE_NEEDED;
