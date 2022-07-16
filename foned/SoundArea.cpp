@@ -253,8 +253,37 @@ void SoundArea_draw (SoundArea me) {
 
 #pragma mark - SoundArea tracking
 
-bool SoundArea_mouse (SoundArea me, Sound sound, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
-	return FunctionEditor_UPDATE_NEEDED;
+bool SoundArea_mouse (SoundArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+	if (event -> isClick()) {
+		y_fraction = my y_fraction_globalToLocal (y_fraction);
+		const integer numberOfChannels = my soundOrLongSound() -> ny;
+		if (event -> commandKeyPressed) {
+			if (numberOfChannels > 1) {
+				const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, 8_integer);
+				Melder_assert (numberOfVisibleChannels >= 1);   // for Melder_clipped
+				const integer clickedChannel = my channelOffset +
+						Melder_clipped (1_integer, Melder_ifloor ((1.0 - y_fraction) * numberOfVisibleChannels + 1), numberOfVisibleChannels);
+				const integer firstVisibleChannel = my channelOffset + 1;
+				const integer lastVisibleChannel = Melder_clippedRight (my channelOffset + numberOfVisibleChannels, numberOfChannels);
+				if (clickedChannel >= firstVisibleChannel && clickedChannel <= lastVisibleChannel) {
+					my muteChannels [clickedChannel] = ! my muteChannels [clickedChannel];
+					return FunctionEditor_UPDATE_NEEDED;
+				}
+			}
+		} else {
+			if (numberOfChannels > 8) {
+				if (x_world >= my endWindow() && y_fraction > 0.875 && y_fraction <= 1.000 && my channelOffset > 0) {
+					my channelOffset -= 8;
+					return FunctionEditor_UPDATE_NEEDED;
+				}
+				if (x_world >= my endWindow() && y_fraction > 0.000 && y_fraction <= 0.125 && my channelOffset < numberOfChannels - 8) {
+					my channelOffset += 8;
+					return FunctionEditor_UPDATE_NEEDED;
+				}
+			}
+		}
+	}
+	return my defaultMouseInWideDataView (event, x_world, y_fraction);
 }
 
 

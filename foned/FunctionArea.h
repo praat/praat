@@ -118,12 +118,6 @@ public:
 		functionEditor() -> viewDataAsWorldByFraction ();
 		return functionEditor() -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);
 	}
-	void save (conststring32 undoText) {
-		Editor_save (functionEditor(), undoText);
-	}
-	void broadcastDataChanged () {
-		Editor_broadcastDataChanged (functionEditor());
-	}
 	bool y_fraction_globalIsInside (double globalY_fraction) const {
 		const double y_pxlt = globalY_fraction_to_pxlt (globalY_fraction);
 		return y_pxlt >= our bottom_pxlt() && y_pxlt < our top_pxlt();
@@ -152,6 +146,21 @@ public:
 	virtual void v_form_pictureSelection (EditorCommand);
 	virtual void v_ok_pictureSelection (EditorCommand);
 	virtual void v_do_pictureSelection (EditorCommand);
+
+public:
+	/*
+		The data handling functions assume that editable functions
+		are identical to or part of the data of the editor,
+		hence that if the function changes, the data has changed.
+	*/
+	friend void FunctionArea_save (FunctionArea me, conststring32 undoText) {
+		Melder_assert (my editable());
+		Editor_save (my functionEditor(), undoText);
+	}
+	friend void FunctionArea_broadcastDataChanged (FunctionArea me) {
+		Melder_assert (my editable());
+		Editor_broadcastDataChanged (my functionEditor());
+	}
 
 	#include "FunctionArea_prefs.h"
 };

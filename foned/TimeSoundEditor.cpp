@@ -41,9 +41,9 @@ void structTimeSoundEditor:: v_createMenus () {
 }
 void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
 	our TimeSoundEditor_Parent :: v_createMenuItems_file (menu);
-	our v_createMenuItems_file_draw (menu);
+	our v_createMenuItems_file_draw (menu);   // BUG: to be removed (drawing should not be in the File menu(
 	EditorMenu_addCommand (menu, U"-- after file draw --", 0, nullptr);
-	our v_createMenuItems_file_extract (menu);
+	our v_createMenuItems_file_extract (menu);   // BUG: to be removed (extracting should not be in the File menu(
 	EditorMenu_addCommand (menu, U"-- after file extract --", 0, nullptr);
 	our v_createMenuItems_file_write (menu);
 	if (our soundArea)
@@ -57,39 +57,18 @@ void structTimeSoundEditor :: v_updateMenuItems_file () {
 		our soundArea -> v_updateMenuItems_file ();
 }
 
-bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
-	if (event -> isClick()) {
-		if (our soundOrLongSound()) {
-			y_fraction = our soundArea -> y_fraction_globalToLocal (y_fraction);
-			const integer numberOfChannels = our soundOrLongSound() -> ny;
-			if (event -> commandKeyPressed) {
-				if (numberOfChannels > 1) {
-					const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, 8_integer);
-					Melder_assert (numberOfVisibleChannels >= 1);   // for Melder_clipped
-					const integer clickedChannel = our soundArea -> channelOffset +
-							Melder_clipped (1_integer, Melder_ifloor ((1.0 - y_fraction) * numberOfVisibleChannels + 1), numberOfVisibleChannels);
-					const integer firstVisibleChannel = our soundArea -> channelOffset + 1;
-					const integer lastVisibleChannel = Melder_clippedRight (our soundArea -> channelOffset + numberOfVisibleChannels, numberOfChannels);
-					if (clickedChannel >= firstVisibleChannel && clickedChannel <= lastVisibleChannel) {
-						our soundArea -> muteChannels [clickedChannel] = ! our soundArea -> muteChannels [clickedChannel];
-						return FunctionEditor_UPDATE_NEEDED;
-					}
-				}
-			} else {
-				if (numberOfChannels > 8) {
-					if (x_world >= our endWindow && y_fraction > 0.875 && y_fraction <= 1.000 && our soundArea -> channelOffset > 0) {
-						our soundArea -> channelOffset -= 8;
-						return FunctionEditor_UPDATE_NEEDED;
-					}
-					if (x_world >= our endWindow && y_fraction > 0.000 && y_fraction <= 0.125 && our soundArea -> channelOffset < numberOfChannels - 8) {
-						our soundArea -> channelOffset += 8;
-						return FunctionEditor_UPDATE_NEEDED;
-					}
-				}
-			}
-		}
+bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
+	if (event -> isClick ())
+		our clickedInWideSoundArea = our soundArea -> y_fraction_globalIsInside (globalY_fraction);
+	bool result = false;
+	if (our clickedInWideSoundArea) {
+		result = SoundArea_mouse (our soundArea.get(), event, x_world, globalY_fraction);
+	} else {
+		result = our TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
-	return TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);   // BUG: use FunctionEditor_defaultMouseInWideDataView()
+	if (event -> isDrop())
+		our clickedInWideSoundArea = false;
+	return result;
 }
 
 /* End of file TimeSoundEditor.cpp */
