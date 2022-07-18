@@ -19,6 +19,7 @@
 #include "SoundArea.h"
 #include "LongSoundArea.h"
 #include "../kar/UnicodeData.h"
+#include "Sound_and_MixingMatrix.h"
 #include "EditorM.h"
 
 Thing_implement (SoundArea, FunctionArea, 0);
@@ -45,7 +46,7 @@ void structSoundArea :: v1_info () {
 
 #pragma mark - SoundArea drawing
 
-void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units) {
+static void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units) {
 	Graphics_setColour (my graphics(), Melder_CYAN);
 	Graphics_line (my graphics(), my startWindow(), yWC, 0.99 * my startWindow() + 0.01 * my endWindow(), yWC);
 	Graphics_fillCircle_mm (my graphics(), 0.5 * (my startSelection() + my endSelection()), yWC, 1.5);
@@ -284,6 +285,36 @@ bool SoundArea_mouse (SoundArea me, GuiDrawingArea_MouseEvent event, double x_wo
 		}
 	}
 	return my defaultMouseInWideDataView (event, x_world, y_fraction);
+}
+
+
+#pragma mark - SoundArea playing
+
+void SoundArea_play (SoundArea me, double startTime, double endTime) {
+	const integer numberOfChannels = my soundOrLongSound() -> ny;
+	integer numberOfMuteChannels = 0;
+	Melder_assert (my muteChannels.size == numberOfChannels);
+	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
+		if (my muteChannels [ichan])
+			numberOfMuteChannels ++;
+	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
+	Melder_require (numberOfChannelsToPlay > 0,
+		U"Please select at least one channel to play.");
+	if (numberOfMuteChannels > 0) {
+		autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
+		MixingMatrix_muteAndActivateChannels (thee.get(), my muteChannels.get());
+		if (my longSound()) {
+			autoSound part = LongSound_extractPart (my longSound(), startTime, endTime, true);
+			Sound_MixingMatrix_playPart (part.get(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, my functionEditor());
+		} else {
+			Sound_MixingMatrix_playPart (my sound(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, my functionEditor());
+		}
+	} else {
+		if (my longSound())
+			LongSound_playPart (my longSound(), startTime, endTime, theFunctionEditor_playCallback, my functionEditor());
+		else
+			Sound_playPart (my sound(), startTime, endTime, theFunctionEditor_playCallback, my functionEditor());
+	}
 }
 
 
