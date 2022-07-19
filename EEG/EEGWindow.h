@@ -55,7 +55,7 @@ Thing_define (EEGWindow, AnyTextGridEditor) {
 		override;
 	void v_createMenuItems_file_extract (EditorMenu menu)
 		override;
-	void v_updateMenuItems_file ()
+	void v_updateMenuItems ()
 		override;
 
 	#include "EEGWindow_prefs.h"

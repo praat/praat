@@ -714,10 +714,8 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	bool result = false;
 	if (our clickedInWidePitchArea) {
 		result = RealTierArea_mouse (our pitchTierArea.get(), event, x_world, globalY_fraction);
-		our pitchTierArea -> v_updateScaling ();
 	} else if (our clickedInWideDurationArea) {
 		result = RealTierArea_mouse (our durationTierArea.get(), event, x_world, globalY_fraction);
-		our durationTierArea -> v_updateScaling ();   // BUG: this is a method instead of a message
 	} else {
 		result = our ManipulationEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}

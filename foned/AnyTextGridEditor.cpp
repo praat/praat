@@ -1560,7 +1560,7 @@ void structAnyTextGridEditor :: v_draw () {
 	/*
 		Finally, us usual, update the menus.
 	*/
-	our v_updateMenuItems_file ();
+	our v_updateMenuItems ();
 }
 
 static const conststring32 characters [12] [10] = {
@@ -1994,35 +1994,8 @@ void structAnyTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 }
 
 void structAnyTextGridEditor :: v_play (double startTime, double endTime) {
-	if (! our soundOrLongSound())
-		return;
-	const integer numberOfChannels = our soundOrLongSound() -> ny;
-	integer numberOfMuteChannels = 0;
-	Melder_assert (our soundArea -> muteChannels.size == numberOfChannels);
-	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
-		if (our soundArea -> muteChannels [ichan])
-			numberOfMuteChannels ++;
-	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
-	Melder_require (numberOfChannelsToPlay > 0,
-		U"Please select at least one channel to play.");
-	if (our longSound()) {
-		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (our longSound(), startTime, endTime, true);
-			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
-			Sound_MixingMatrix_playPart (part.get(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
-		} else {
-			LongSound_playPart (our longSound(), startTime, endTime, theFunctionEditor_playCallback, this);
-		}
-	} else {
-		if (numberOfMuteChannels > 0) {
-			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
-			Sound_MixingMatrix_playPart (our sound(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
-		} else {
-			Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
-		}
-	}
+	if (our soundArea)
+		SoundArea_play (our soundArea.get(), startTime, endTime);
 }
 
 void structAnyTextGridEditor :: v_updateText () {
@@ -2117,8 +2090,8 @@ void structAnyTextGridEditor :: v_createMenuItems_pitch_picture (EditorMenu menu
 	EditorMenu_addCommand (menu, U"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 }
 
-void structAnyTextGridEditor :: v_updateMenuItems_file () {
-	AnyTextGridEditor_Parent :: v_updateMenuItems_file ();
+void structAnyTextGridEditor :: v_updateMenuItems () {
+	AnyTextGridEditor_Parent :: v_updateMenuItems ();
 	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our endSelection > our startSelection);
 	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection > our startSelection);
 }

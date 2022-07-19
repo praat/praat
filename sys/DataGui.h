@@ -56,7 +56,8 @@ private:
 public:
 	virtual void v_createMenus () { }
 	virtual void v_createMenuItems_file (EditorMenu /* menu */) { }
-	virtual void v_updateMenuItems_file () { }
+	virtual void v_createMenuItems_edit (EditorMenu /* menu */) { }
+	virtual void v_updateMenuItems () { }
 
 	virtual void v_form_pictureWindow (EditorCommand cmd);
 	virtual void v_ok_pictureWindow (EditorCommand cmd);

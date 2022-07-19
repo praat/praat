@@ -141,20 +141,23 @@ public:
 		override;
 	void v_createMenuItems_file (EditorMenu menu)
 		override;
-	void v_updateMenuItems_file ()
+	void v_createMenuItems_edit (EditorMenu menu)
 		override;
+	void v_updateMenuItems ()
+		override;
+	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
+	GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
 	GuiMenuItem drawButton;
 	GuiMenuItem publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
-	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 
 	#include "SoundArea_prefs.h"
 };
 
-void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units);
-
 void SoundArea_draw (SoundArea me);
 
 bool SoundArea_mouse (SoundArea me, GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction);
+
+void SoundArea_play (SoundArea me, double startTime, double endTime);
 
 DEFINE_FunctionArea_create (SoundArea, Sound)
 

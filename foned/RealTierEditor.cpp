@@ -100,7 +100,7 @@ void structRealTierEditor :: v_draw () {
 	FunctionArea_drawOne (our realTierArea.get());
 	if (isdefined (our realTierArea -> anchorTime))
 		RealTierArea_drawWhileDragging (our realTierArea.get());
-	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
+	our v_updateMenuItems ();   // TODO: this is not about drawing; improve logic? 2020-07-23
 }
 
 bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {

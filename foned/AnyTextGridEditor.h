@@ -80,7 +80,7 @@ Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 		override { return U"IPA chart"; }
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
 		override;
-	void v_updateMenuItems_file ()
+	void v_updateMenuItems ()
 		override;
 	void v_createMenuItems_pitch_picture (EditorMenu menu)
 		override;

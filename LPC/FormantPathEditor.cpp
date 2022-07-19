@@ -58,7 +58,8 @@ void structFormantPathEditor :: v_reset_analysis () {
 */
 MelderColour markedCandidatesColour =  MelderColour (0.984,0.984, 0.7);
 
-void structFormantPathEditor :: v_updateMenuItems_navigation () {
+void structFormantPathEditor :: v_updateMenuItems () {
+	FormantPathEditor_Parent :: v_updateMenuItems ();
 	/*FormantPath formantPath = (FormantPath) our data;
 	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
 	const bool navigationPossible = ( navigator && IntervalTierNavigator_isNavigationPossible (navigator), formantPath -> navigationTierNumber) );
@@ -378,7 +379,7 @@ void structFormantPathEditor :: v1_dataChanged () {
 	//	Melder_clipRight (& our selectedTier, our textgrid -> tiers->size);
 	//}
 	our d_formant = FormantPath_extractFormant (our formantPath());
-	our v_updateMenuItems_navigation ();
+	our v_updateMenuItems ();
 }
 
 /********** DRAWING AREA **********/
@@ -432,8 +433,7 @@ void structFormantPathEditor :: v_draw () {
 	/*
 		Finally, us usual, update the menus.
 	*/
-	our v_updateMenuItems_file ();
-	our v_updateMenuItems_navigation ();
+	our v_updateMenuItems ();
 }
 
 void structFormantPathEditor :: v_drawSelectionViewer () {
@@ -553,36 +553,9 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	Editor_broadcastDataChanged (this);
 }
 
-void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
-	if (! our soundOrLongSound())
-		return;
-	const integer numberOfChannels = our soundOrLongSound() -> ny;
-	integer numberOfMuteChannels = 0;
-	Melder_assert (our soundArea -> muteChannels.size == numberOfChannels);
-	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
-		if (our soundArea -> muteChannels [ichan])
-			numberOfMuteChannels ++;
-	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
-	Melder_require (numberOfChannelsToPlay > 0,
-		U"Please select at least one channel to play.");
-	if (our longSound()) {
-		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (our longSound(), tmin_, tmax_, true);
-			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
-			Sound_MixingMatrix_playPart (part.get(), thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
-		} else {
-			LongSound_playPart (our longSound(), tmin_, tmax_, theFunctionEditor_playCallback, this);
-		}
-	} else {
-		if (numberOfMuteChannels > 0) {
-			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
-			MixingMatrix_muteAndActivateChannels (thee.get(), our soundArea -> muteChannels.get());
-			Sound_MixingMatrix_playPart (our sound(), thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
-		} else {
-			Sound_playPart (our sound(), tmin_, tmax_, theFunctionEditor_playCallback, this);
-		}
-	}
+void structFormantPathEditor :: v_play (double startingTime, double endTime) {
+	if (our soundArea)
+		SoundArea_play (our soundArea.get(), startingTime, endTime);
 }
 
 POSITIVE_VARIABLE (v_prefs_addFields__fontSize)
