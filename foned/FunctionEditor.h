@@ -135,16 +135,27 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 	void v1_info ()
 		override;
-	void v_createMenus ()
-		override;
+
+	bool v_hasViewMenu    () override { return true; }
+	bool v_hasSelectMenu  () override { return true; }
+	bool v_hasDrawMenu    () override { return true; }
+	bool v_hasExtractMenu () override { return true; }
 	void v_createMenuItems_file (EditorMenu)
 		override;
+	virtual void v_createMenuItems_file_write (EditorMenu) { }
 	void v_createMenuItems_query (EditorMenu)
+		override;
+	void v_createMenuItems_view (EditorMenu)
+		override;
+	virtual void v_createMenuItems_view_timeDomain (EditorMenu);
+	virtual void v_createMenuItems_view_audio (EditorMenu);
+	void v_createMenuItems_select (EditorMenu)
 		override;
 	void v_createChildren ()
 		override;
 	void v_createHelpMenuItems (EditorMenu)
 		override;
+
 	void v1_dataChanged ()
 		override;
 
@@ -182,12 +193,6 @@ Thing_define (FunctionEditor, Editor) {
 	virtual void v_prefs_addFields (EditorCommand) { }
 	virtual void v_prefs_setValues (EditorCommand) { }
 	virtual void v_prefs_getValues (EditorCommand) { }
-	virtual void v_createMenuItems_file_draw (EditorMenu) { }
-	virtual void v_createMenuItems_file_extract (EditorMenu) { }
-	virtual void v_createMenuItems_file_write (EditorMenu) { }
-	virtual void v_createMenuItems_view (EditorMenu);
-	virtual void v_createMenuItems_view_timeDomain (EditorMenu);
-	virtual void v_createMenuItems_view_audio (EditorMenu);
 	virtual void v_highlightSelection (double left, double right, double bottom, double top);
 
     #include "FunctionEditor_prefs.h"

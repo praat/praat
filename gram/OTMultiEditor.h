@@ -29,7 +29,7 @@ Thing_define (OTMultiEditor, HyperPage) {
 	integer selectedConstraint;
 	bool d_constraintsAreDrawnVertically;
 
-	bool v_editable ()
+	bool v_hasEditMenu ()
 		override { return true; }
 	void v_createChildren ()
 		override;

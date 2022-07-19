@@ -52,7 +52,7 @@ Thing_define (HyperPage, Editor) {
 
 	void v9_destroy () noexcept
 		override;
-	bool v_editable ()
+	bool v_hasEditMenu ()
 		override { return false; }
 	void v_createMenus ()
 		override;

@@ -55,8 +55,13 @@ private:
 	}
 public:
 	virtual void v_createMenus () { }
-	virtual void v_createMenuItems_file (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_edit (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_file    (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_edit    (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_query   (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_view    (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_select  (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_draw    (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_extract (EditorMenu /* menu */) { }
 	virtual void v_updateMenuItems () { }
 
 	virtual void v_form_pictureWindow (EditorCommand cmd);
