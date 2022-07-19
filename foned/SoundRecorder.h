@@ -2,7 +2,7 @@
 #define _SoundRecorder_h_
 /* SoundRecorder.h
  *
- * Copyright (C) 1992-2005,2008-2013,2015-2017,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2008-2013,2015-2017,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ Thing_define (SoundRecorder, Editor) {
 
 	void v9_destroy () noexcept
 		override;
-	bool v_editable ()
+	bool v_hasEditMenu ()
 		override { return false; }
 	bool v_scriptable ()
 		override { return false; }

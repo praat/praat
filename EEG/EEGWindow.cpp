@@ -55,8 +55,8 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_timeFromZero (EEGWindow me, 
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-void structEEGWindow :: v_createMenuItems_file_extract (EditorMenu menu) {
-	EEGWindow_Parent :: v_createMenuItems_file_extract (menu);
+void structEEGWindow :: v_createMenuItems_extract (EditorMenu menu) {
+	EEGWindow_Parent :: v_createMenuItems_extract (menu);
 	our extractSelectedEEGPreserveTimesButton = EditorMenu_addCommand (menu, U"Extract selected EEG (preserve times)", 0,
 			CONVERT_DATA_TO_ONE__ExtractSelectedEEG_preserveTimes);
 	our extractSelectedEEGTimeFromZeroButton = EditorMenu_addCommand (menu, U"Extract selected EEG (time from zero)", 0,

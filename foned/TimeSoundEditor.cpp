@@ -41,10 +41,6 @@ void structTimeSoundEditor:: v_createMenus () {
 }
 void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
 	our TimeSoundEditor_Parent :: v_createMenuItems_file (menu);
-	our v_createMenuItems_file_draw (menu);   // BUG: to be removed (drawing should not be in the File menu(
-	EditorMenu_addCommand (menu, U"-- after file draw --", 0, nullptr);
-	our v_createMenuItems_file_extract (menu);   // BUG: to be removed (extracting should not be in the File menu(
-	EditorMenu_addCommand (menu, U"-- after file extract --", 0, nullptr);
 	our v_createMenuItems_file_write (menu);
 	if (our soundArea)
 		our soundArea -> v_createMenuItems_file (menu);

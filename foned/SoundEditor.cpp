@@ -94,7 +94,7 @@ void structSoundEditor :: v_draw () {
 	integer first, last;
 	const integer selectedSamples = Sampled_getWindowSamples (our soundOrLongSound(),
 			our startSelection, our endSelection, & first, & last);
-	v_updateMenuItems ();
+	our v_updateMenuItems ();
 }
 
 void structSoundEditor :: v_play (double startTime, double endTime) {

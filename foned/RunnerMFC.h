@@ -31,7 +31,7 @@ Thing_define (RunnerMFC, Editor) {
 	integer numberOfReplays;
 	bool blanked;
 
-	bool v_editable ()
+	bool v_hasEditMenu ()
 		override { return false; }
 	bool v_scriptable ()
 		override { return false; }

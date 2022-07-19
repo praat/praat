@@ -151,8 +151,8 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (AnyTextGr
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-void structAnyTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
-	AnyTextGridEditor_Parent :: v_createMenuItems_file_extract (menu);
+void structAnyTextGridEditor :: v_createMenuItems_extract (EditorMenu menu) {
+	AnyTextGridEditor_Parent :: v_createMenuItems_extract (menu);
 	extractSelectedTextGridPreserveTimesButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (preserve times)", 0,
 			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes);
 	extractSelectedTextGridTimeFromZeroButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (time from 0)", 0,
@@ -226,8 +226,8 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (AnyTextGridEditor me, EDITOR_AR
 	EDITOR_END
 }
 
-void structAnyTextGridEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
-	AnyTextGridEditor_Parent :: v_createMenuItems_file_draw (menu);
+void structAnyTextGridEditor :: v_createMenuItems_draw (EditorMenu menu) {
+	AnyTextGridEditor_Parent :: v_createMenuItems_draw (menu);
 	EditorMenu_addCommand (menu, U"Draw visible TextGrid...", 0, menu_cb_DrawVisibleTextGrid);
 	if (our soundOrLongSound())
 		EditorMenu_addCommand (menu, U"Draw visible sound and TextGrid...", 0, menu_cb_DrawVisibleSoundAndTextGrid);

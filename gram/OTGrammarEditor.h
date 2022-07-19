@@ -27,7 +27,7 @@ Thing_define (OTGrammarEditor, HyperPage) {
 	integer selected;
 	bool d_constraintsAreDrawnVertically;
 
-	bool v_editable ()
+	bool v_hasEditMenu ()
 		override { return true; }
 	void v_createMenus ()
 		override;

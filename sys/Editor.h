@@ -70,21 +70,32 @@ Thing_define (Editor, DataGui) {
 		override;
 	void v_nameChanged ()
 		override;   // sets the window and icon titles to reflect the new name
+
+	virtual void v_goAway () { forget_nozero (this); }
+	virtual bool v_canFullScreen () { return false; }
+	virtual bool v_scriptable () { return true; }
+
+	virtual bool v_hasMenuBar () { return true; }
+	virtual bool v_hasFileMenu () { return true; }
+	virtual bool v_hasEditMenu () { return true; }
+	virtual bool v_hasQueryMenu () { return true; }
+	virtual bool v_hasViewMenu () { return false; }
+	virtual bool v_hasSelectMenu () { return false; }
+	virtual bool v_hasDrawMenu () { return false; }
+	virtual bool v_hasExtractMenu () { return false; }
+	virtual bool v_hasHelpMenu () { return true; }
+	EditorMenu fileMenu, editMenu, queryMenu, viewMenu, selectMenu, drawMenu, extractMenu, helpMenu;
 	void v_createMenus ()
 		override;
 	void v_createMenuItems_edit (EditorMenu menu)
 		override;
-
-	virtual void v_goAway () { forget_nozero (this); }
-	virtual bool v_hasMenuBar () { return true; }
-	virtual bool v_canFullScreen () { return false; }
-	virtual bool v_editable () { return true ; }
-	virtual bool v_scriptable () { return true; }
-	virtual bool v_hasQueryMenu () { return true; }
-	virtual void v_createMenuItems_query (EditorMenu menu);
+	void v_createMenuItems_query (EditorMenu menu)
+		override;
 	virtual void v_createMenuItems_query_info (EditorMenu menu);
 	virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
+
 	virtual void v_createChildren () { }
+
 	virtual void v1_dataChanged () { }
 	virtual void v_saveData ();
 	virtual void v_restoreData ();

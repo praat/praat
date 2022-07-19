@@ -1080,6 +1080,16 @@ void structFunctionEditor :: v_createMenuItems_file (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"-- after preferences --", 0, nullptr);
 }
 
+void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
+	FunctionEditor_Parent :: v_createMenuItems_query (menu);
+	EditorMenu_addCommand (menu, U"-- query selection --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Get start of selection", 0, QUERY_EDITOR_FOR_REAL__getB);
+	EditorMenu_addCommand (menu, U"Get begin of selection", Editor_HIDDEN, QUERY_EDITOR_FOR_REAL__getB);
+	EditorMenu_addCommand (menu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);
+	EditorMenu_addCommand (menu, U"Get end of selection", 0, QUERY_EDITOR_FOR_REAL__getE);
+	EditorMenu_addCommand (menu, U"Get selection length", 0, QUERY_EDITOR_FOR_REAL__getSelectionDuration);
+}
+
 void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
 	EditorMenu_addCommand (menu, v_format_domain (), GuiMenu_INSENSITIVE, menu_cb_zoom /* dummy */);
 	EditorMenu_addCommand (menu, U"Zoom...", 0, menu_cb_zoom);
@@ -1106,43 +1116,25 @@ void structFunctionEditor :: v_createMenuItems_view (EditorMenu menu) {
 	v_createMenuItems_view_audio (menu);
 }
 
-void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
-	FunctionEditor_Parent :: v_createMenuItems_query (menu);
-	EditorMenu_addCommand (menu, U"-- query selection --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Get start of selection", 0, QUERY_EDITOR_FOR_REAL__getB);
-	EditorMenu_addCommand (menu, U"Get begin of selection", Editor_HIDDEN, QUERY_EDITOR_FOR_REAL__getB);
-	EditorMenu_addCommand (menu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);
-	EditorMenu_addCommand (menu, U"Get end of selection", 0, QUERY_EDITOR_FOR_REAL__getE);
-	EditorMenu_addCommand (menu, U"Get selection length", 0, QUERY_EDITOR_FOR_REAL__getSelectionDuration);
-}
-
-void structFunctionEditor :: v_createMenus () {
-	FunctionEditor_Parent :: v_createMenus ();
-	EditorMenu menu;
-
-	menu = Editor_addMenu (this, U"View", 0);
-	v_createMenuItems_view (menu);
-
-	Editor_addMenu (this, U"Select", 0);
-	Editor_addCommand (this, U"Select", U"Select...", 0, menu_cb_select);
-	Editor_addCommand (this, U"Select", U"Widen or shrink selection...", 0, menu_cb_widenOrShrinkSelection);
-	Editor_addCommand (this, U"Select", U"Move cursor to start of selection", 0, menu_cb_moveCursorToStartOfSelection);
-	Editor_addCommand (this, U"Select", U"Move cursor to begin of selection", Editor_HIDDEN, menu_cb_moveCursorToStartOfSelection);
-	Editor_addCommand (this, U"Select", U"Move cursor to end of selection", 0, menu_cb_moveCursorToEndOfSelection);
-	Editor_addCommand (this, U"Select", U"Move cursor to...", 0, menu_cb_moveCursorTo);
-	Editor_addCommand (this, U"Select", U"Move cursor by...", 0, menu_cb_moveCursorBy);
-	Editor_addCommand (this, U"Select", U"Move start of selection by...", 0, menu_cb_moveStartOfSelectionBy);
-	Editor_addCommand (this, U"Select", U"Move begin of selection by...", Editor_HIDDEN, menu_cb_moveStartOfSelectionBy);
-	Editor_addCommand (this, U"Select", U"Move end of selection by...", 0, menu_cb_moveEndOfSelectionBy);
-	/*Editor_addCommand (this, U"Select", U"Move cursor back by half a second", motif_, menu_cb_moveCursorBy);*/
-	Editor_addCommand (this, U"Select", U"Select earlier", GuiMenu_UP_ARROW, menu_cb_selectEarlier);
-	Editor_addCommand (this, U"Select", U"Select later", GuiMenu_DOWN_ARROW, menu_cb_selectLater);
-	Editor_addCommand (this, U"Select", U"Move start of selection left", GuiMenu_SHIFT | GuiMenu_UP_ARROW, menu_cb_moveStartOfSelectionLeft);
-	Editor_addCommand (this, U"Select", U"Move begin of selection left", Editor_HIDDEN, menu_cb_moveStartOfSelectionLeft);
-	Editor_addCommand (this, U"Select", U"Move start of selection right", GuiMenu_SHIFT | GuiMenu_DOWN_ARROW, menu_cb_moveStartOfSelectionRight);
-	Editor_addCommand (this, U"Select", U"Move begin of selection right", Editor_HIDDEN, menu_cb_moveStartOfSelectionRight);
-	Editor_addCommand (this, U"Select", U"Move end of selection left", GuiMenu_COMMAND | GuiMenu_UP_ARROW, menu_cb_moveEndOfSelectionLeft);
-	Editor_addCommand (this, U"Select", U"Move end of selection right", GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
+void structFunctionEditor :: v_createMenuItems_select (EditorMenu menu) {
+	EditorMenu_addCommand (menu, U"Select...", 0, menu_cb_select);
+	EditorMenu_addCommand (menu, U"Widen or shrink selection...", 0, menu_cb_widenOrShrinkSelection);
+	EditorMenu_addCommand (menu, U"Move cursor to start of selection", 0, menu_cb_moveCursorToStartOfSelection);
+	EditorMenu_addCommand (menu, U"Move cursor to begin of selection", Editor_HIDDEN, menu_cb_moveCursorToStartOfSelection);
+	EditorMenu_addCommand (menu, U"Move cursor to end of selection", 0, menu_cb_moveCursorToEndOfSelection);
+	EditorMenu_addCommand (menu, U"Move cursor to...", 0, menu_cb_moveCursorTo);
+	EditorMenu_addCommand (menu, U"Move cursor by...", 0, menu_cb_moveCursorBy);
+	EditorMenu_addCommand (menu, U"Move start of selection by...", 0, menu_cb_moveStartOfSelectionBy);
+	EditorMenu_addCommand (menu, U"Move begin of selection by...", Editor_HIDDEN, menu_cb_moveStartOfSelectionBy);
+	EditorMenu_addCommand (menu, U"Move end of selection by...", 0, menu_cb_moveEndOfSelectionBy);
+	EditorMenu_addCommand (menu, U"Select earlier", GuiMenu_UP_ARROW, menu_cb_selectEarlier);
+	EditorMenu_addCommand (menu, U"Select later", GuiMenu_DOWN_ARROW, menu_cb_selectLater);
+	EditorMenu_addCommand (menu, U"Move start of selection left", GuiMenu_SHIFT | GuiMenu_UP_ARROW, menu_cb_moveStartOfSelectionLeft);
+	EditorMenu_addCommand (menu, U"Move begin of selection left", Editor_HIDDEN, menu_cb_moveStartOfSelectionLeft);
+	EditorMenu_addCommand (menu, U"Move start of selection right", GuiMenu_SHIFT | GuiMenu_DOWN_ARROW, menu_cb_moveStartOfSelectionRight);
+	EditorMenu_addCommand (menu, U"Move begin of selection right", Editor_HIDDEN, menu_cb_moveStartOfSelectionRight);
+	EditorMenu_addCommand (menu, U"Move end of selection left", GuiMenu_COMMAND | GuiMenu_UP_ARROW, menu_cb_moveEndOfSelectionLeft);
+	EditorMenu_addCommand (menu, U"Move end of selection right", GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
 }
 
 void structFunctionEditor :: v_createHelpMenuItems (EditorMenu menu) {

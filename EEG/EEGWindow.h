@@ -53,7 +53,7 @@ Thing_define (EEGWindow, AnyTextGridEditor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	void v_createMenuItems_file_extract (EditorMenu menu)
+	void v_createMenuItems_extract (EditorMenu menu)
 		override;
 	void v_updateMenuItems ()
 		override;

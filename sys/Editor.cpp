@@ -331,16 +331,34 @@ void structEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 }
 
 void structEditor :: v_createMenus () {
-	Editor_Parent :: v_createMenus ();
-	EditorMenu menu = Editor_addMenu (this, U"File", 0);
-	v_createMenuItems_file (menu);
-	if (v_editable ()) {
-		menu = Editor_addMenu (this, U"Edit", 0);
-		v_createMenuItems_edit (menu);
+	Editor_Parent :: v_createMenus ();   // does nothing (last checked 2022-07-19)
+	if (our v_hasFileMenu()) {
+		our fileMenu = Editor_addMenu (this, U"File", 0);
+		v_createMenuItems_file (our fileMenu);
 	}
-	if (v_hasQueryMenu ()) {
-		menu = Editor_addMenu (this, U"Query", 0);
-		v_createMenuItems_query (menu);
+	if (our v_hasEditMenu ()) {
+		our editMenu = Editor_addMenu (this, U"Edit", 0);
+		v_createMenuItems_edit (our editMenu);
+	}
+	if (our v_hasQueryMenu ()) {
+		our queryMenu = Editor_addMenu (this, U"Query", 0);
+		v_createMenuItems_query (our queryMenu);
+	}
+	if (our v_hasViewMenu ()) {
+		our viewMenu = Editor_addMenu (this, U"View", 0);
+		v_createMenuItems_view (our viewMenu);
+	}
+	if (our v_hasSelectMenu ()) {
+		our selectMenu = Editor_addMenu (this, U"Select", 0);
+		v_createMenuItems_select (our selectMenu);
+	}
+	if (our v_hasDrawMenu ()) {
+		our drawMenu = Editor_addMenu (this, U"Draw", 0);
+		v_createMenuItems_draw (our drawMenu);
+	}
+	if (our v_hasExtractMenu ()) {
+		our extractMenu = Editor_addMenu (this, U"Extract", 0);
+		v_createMenuItems_extract (our extractMenu);
 	}
 }
 
@@ -448,17 +466,17 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 		EditorMenu_addCommand (helpMenu, U"-- search --", 0, nullptr);
 		my searchButton = EditorMenu_addCommand (helpMenu, U"Search manual...", 'M', menu_cb_searchManual);
 		if (my v_scriptable ()) {
-			Editor_addCommand (me, U"File", U"New editor script", 0, menu_cb_newScript);
-			Editor_addCommand (me, U"File", U"Open editor script...", 0, menu_cb_openScript);
-			Editor_addCommand (me, U"File", U"-- after script --", 0, 0);
+			EditorMenu_addCommand (my fileMenu, U"New editor script", 0, menu_cb_newScript);
+			EditorMenu_addCommand (my fileMenu, U"Open editor script...", 0, menu_cb_openScript);
+			EditorMenu_addCommand (my fileMenu, U"-- after script --", 0, 0);
 		}
 		/*
 			Add the scripted commands.
 		*/
 		praat_addCommandsToEditor (me);
 		if (my callbackSocket)
-			Editor_addCommand (me, U"File", U"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
-		Editor_addCommand (me, U"File", U"Close", 'W', menu_cb_close);
+			EditorMenu_addCommand (my fileMenu, U"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
+		EditorMenu_addCommand (my fileMenu, U"Close", 'W', menu_cb_close);
 	}
 	GuiThing_show (my windowForm);
 }
