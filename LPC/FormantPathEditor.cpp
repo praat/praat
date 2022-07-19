@@ -58,7 +58,8 @@ void structFormantPathEditor :: v_reset_analysis () {
 */
 MelderColour markedCandidatesColour =  MelderColour (0.984,0.984, 0.7);
 
-void structFormantPathEditor :: v_updateMenuItems_navigation () {
+void structFormantPathEditor :: v_updateMenuItems () {
+	FormantPathEditor_Parent :: v_updateMenuItems ();
 	/*FormantPath formantPath = (FormantPath) our data;
 	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
 	const bool navigationPossible = ( navigator && IntervalTierNavigator_isNavigationPossible (navigator), formantPath -> navigationTierNumber) );
@@ -378,7 +379,7 @@ void structFormantPathEditor :: v1_dataChanged () {
 	//	Melder_clipRight (& our selectedTier, our textgrid -> tiers->size);
 	//}
 	our d_formant = FormantPath_extractFormant (our formantPath());
-	our v_updateMenuItems_navigation ();
+	our v_updateMenuItems ();
 }
 
 /********** DRAWING AREA **********/
@@ -432,8 +433,7 @@ void structFormantPathEditor :: v_draw () {
 	/*
 		Finally, us usual, update the menus.
 	*/
-	our v_updateMenuItems_file ();
-	our v_updateMenuItems_navigation ();
+	our v_updateMenuItems ();
 }
 
 void structFormantPathEditor :: v_drawSelectionViewer () {

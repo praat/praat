@@ -761,7 +761,7 @@ static void addSoundSaveMenu (SoundArea me, EditorMenu menu) {
 		FunctionAreaMenu_addCommand (menu, U"Write selected sound to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, me);
 		FunctionAreaMenu_addCommand (menu, U"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, me);
 }
-void structSoundArea :: v_updateMenuItems_file () {
+void structSoundArea :: v_updateMenuItems () {
 	integer first, last;
 	const integer selectedSamples = Sampled_getWindowSamples (our soundOrLongSound(),
 			our startSelection(), our endSelection(), & first, & last);
@@ -784,8 +784,217 @@ void structSoundArea :: v_updateMenuItems_file () {
 	GuiThing_setSensitive (our writeNextSunButton, selectedSamples != 0);
 	GuiThing_setSensitive (our writeNistButton, selectedSamples != 0);
 	GuiThing_setSensitive (our writeFlacButton, selectedSamples != 0);
+
+	if (our sound()) {
+		GuiThing_setSensitive (cutButton     , selectedSamples != 0 && selectedSamples < our sound() -> nx);
+		GuiThing_setSensitive (copyButton    , selectedSamples != 0);
+		GuiThing_setSensitive (zeroButton    , selectedSamples != 0);
+		GuiThing_setSensitive (reverseButton , selectedSamples != 0);
+	}
 }
 
+
+#pragma mark - SoundArea Edit menu
+
+static void menu_cb_Copy (SoundArea me, EDITOR_ARGS_DIRECT) {
+	try {
+		Sound_clipboard = ( my longSound()
+			? LongSound_extractPart (my longSound(), my startSelection(), my endSelection(), false)
+			: Sound_extractPart (my sound(), my startSelection(), my endSelection(), kSound_windowShape::RECTANGULAR, 1.0, false)
+		);
+	} catch (MelderError) {
+		Melder_throw (U"Sound selection not copied to clipboard.");
+	}
+}
+static void menu_cb_Cut (SoundArea me, EDITOR_ARGS_DIRECT) {
+	Melder_assert (my sound());
+	try {
+		integer first, last;
+		const integer selectionNumberOfSamples = Sampled_getWindowSamples (my sound(),
+				my startSelection(), my endSelection(), & first, & last);
+		const integer oldNumberOfSamples = my sound() -> nx;
+		const integer newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
+		if (newNumberOfSamples < 1)
+			Melder_throw (U"You cannot cut all of the signal away,\n"
+				U"because you cannot create a Sound with 0 samples.\n"
+				U"You could consider using Copy instead."
+			);
+
+		if (selectionNumberOfSamples > 0) {
+			/*
+				Create without change.
+			*/
+			autoSound publish = Sound_create (my sound() -> ny,
+				0.0, selectionNumberOfSamples * my sound() -> dx,
+				selectionNumberOfSamples, my sound() -> dx, 0.5 * my sound() -> dx
+			);
+			for (integer channel = 1; channel <= my sound() -> ny; channel ++) {
+				integer j = 0;
+				for (integer i = first; i <= last; i ++)
+					publish -> z [channel] [++ j] = my sound() -> z [channel] [i];
+			}
+			autoMAT newData = raw_MAT (my sound() -> ny, newNumberOfSamples);
+			for (integer channel = 1; channel <= my sound() -> ny; channel ++) {
+				integer j = 0;
+				for (integer i = 1; i < first; i ++)
+					newData [channel] [++ j] = my sound() -> z [channel] [i];
+				for (integer i = last + 1; i <= oldNumberOfSamples; i ++)
+					newData [channel] [++ j] = my sound() -> z [channel] [i];
+				Melder_assert (j == newData.ncol);
+			}
+			FunctionArea_save (me, U"Cut");
+			/*
+				Change without error.
+			*/
+			my sound() -> xmin = 0.0;
+			my sound() -> xmax = newNumberOfSamples * my sound() -> dx;
+			my sound() -> nx = newNumberOfSamples;
+			my sound() -> x1 = 0.5 * my sound() -> dx;
+			my sound() -> z = newData.move();
+			Sound_clipboard = publish.move();
+
+			/*
+				Start updating the markers of the FunctionEditor, respecting the invariants.
+			*/
+			my functionEditor() -> tmin = my sound() -> xmin;
+			my functionEditor() -> tmax = my sound() -> xmax;
+
+			/*
+				Collapse the selection,
+				so that the Cut operation can immediately be undone by a Paste.
+				The exact position will be half-way in between two samples.
+			*/
+			const double cursor = my sound() -> xmin + (first - 1) * my sound() -> dx;
+			my setSelection (cursor, cursor);
+
+			/*
+				Update the window.
+			*/
+			{
+				const double t1 = (first - 1) * my sound() -> dx;
+				const double t2 = last * my sound() -> dx;
+				const double windowLength = my endWindow() - my startWindow();   // > 0
+				if (t1 > my startWindow())
+					if (t2 < my endWindow())
+						my functionEditor() -> startWindow -= 0.5 * (t2 - t1);
+					else
+						(void) 0;
+				else if (t2 < my endWindow())
+					my functionEditor() -> startWindow -= t2 - t1;
+				else   /* Cut overlaps entire window: centre. */
+					my functionEditor() -> startWindow = my functionEditor() -> startSelection - 0.5 * windowLength;
+				my functionEditor() -> endWindow = my startWindow() + windowLength;   // first try
+				if (my endWindow() > my tmax()) {
+					my functionEditor() -> startWindow -= my endWindow() - my tmax();   // second try
+					Melder_clipLeft (my tmin(), & my functionEditor() -> startWindow);   // third try
+					my functionEditor() -> endWindow = my tmax();   // second try
+				} else if (my startWindow() < my tmin()) {
+					my functionEditor() -> endWindow -= my startWindow() - my tmin();   // second try
+					Melder_clipRight (& my functionEditor() -> endWindow, my tmax());   // third try
+					my functionEditor() -> startWindow = my tmin();   // second try
+				}
+			}
+
+			/*
+				Force FunctionEditor to show changes.
+			*/
+			FunctionEditor_ungroup (my sound());
+			FunctionEditor_marksChanged (my functionEditor(), false);
+			FunctionArea_broadcastDataChanged (me);
+		} else {
+			Melder_warning (U"No samples selected.");
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Sound selection not cut to clipboard.");
+	}
+}
+static void menu_cb_Paste (SoundArea me, EDITOR_ARGS_DIRECT) {
+	Melder_assert (my sound());
+	integer leftSample = Sampled_xToLowIndex (my sound(), my endSelection());
+	const integer oldNumberOfSamples = my sound() -> nx;
+	if (! Sound_clipboard) {
+		Melder_warning (U"Clipboard is empty; nothing pasted.");
+		return;
+	}
+	Melder_require (Sound_clipboard -> ny == my sound() -> ny,
+		U"Cannot paste, because\n"
+		U"the number of channels of the clipboard is not equal to\n"
+		U"the number of channels of the edited sound."
+	);
+	Melder_require (Sound_clipboard -> dx == my sound() -> dx,
+		U"Cannot paste, because\n"
+		U"the sampling frequency of the clipboard is not equal to\n"
+		U"the sampling frequency of the edited sound."
+	);
+	Melder_clip (0_integer, & leftSample, oldNumberOfSamples);
+	const integer newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
+	/*
+		Check without change.
+	*/
+	autoMAT newData = raw_MAT (my sound() -> ny, newNumberOfSamples);
+	for (integer channel = 1; channel <= my sound() -> ny; channel ++) {
+		integer j = 0;
+		for (integer i = 1; i <= leftSample; i ++)
+			newData [channel] [++ j] = my sound() -> z [channel] [i];
+		for (integer i = 1; i <= Sound_clipboard -> nx; i ++)
+			newData [channel] [++ j] = Sound_clipboard -> z [channel] [i];
+		for (integer i = leftSample + 1; i <= oldNumberOfSamples; i ++)
+			newData [channel] [++ j] = my sound() -> z [channel] [i];
+		Melder_assert (j == newData.ncol);
+	}
+	FunctionArea_save (me, U"Paste");
+	/*
+		Change without error.
+	*/
+	my sound() -> xmin = 0.0;
+	my sound() -> xmax = newNumberOfSamples * my sound() -> dx;
+	my sound() -> nx = newNumberOfSamples;
+	my sound() -> x1 = 0.5 * my sound() -> dx;
+	my sound() -> z = newData.move();
+
+	/*
+		Start updating the markers of the FunctionEditor, respecting the invariants.
+	*/
+	my functionEditor() -> tmin = my sound() -> xmin;
+	my functionEditor() -> tmax = my sound() -> xmax;
+	Melder_clipLeft (my tmin(), & my functionEditor() -> startWindow);
+	Melder_clipRight (& my functionEditor() -> endWindow, my tmax());
+	my setSelection (leftSample * my sound() -> dx, (leftSample + Sound_clipboard -> nx) * my sound() -> dx);
+
+	/*
+		Force FunctionEditor to show changes.
+	*/
+	FunctionEditor_ungroup (my sound());
+	FunctionEditor_marksChanged (my functionEditor(), false);
+	FunctionArea_broadcastDataChanged (me);
+}
+static void menu_cb_SetSelectionToZero (SoundArea me, EDITOR_ARGS_DIRECT) {
+	Melder_assert (my sound());
+	integer first, last;
+	Sampled_getWindowSamples (my sound(), my startSelection(), my endSelection(), & first, & last);
+	FunctionArea_save (me, U"Set to zero");
+	my sound() -> z.verticalBand (first, last)  <<=  0.0;
+	FunctionArea_broadcastDataChanged (me);
+}
+static void menu_cb_ReverseSelection (SoundArea me, EDITOR_ARGS_DIRECT) {
+	Melder_assert (my sound());
+	FunctionArea_save (me, U"Reverse selection");
+	Sound_reverse (my sound(), my startSelection(), my endSelection());
+	FunctionArea_broadcastDataChanged (me);
+}
+static void addSoundEditMenu (SoundArea me, EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- cut copy paste --", 0, nullptr, me);
+	if (my editable())
+		my cutButton = FunctionAreaMenu_addCommand (menu, U"Cut", 'X', menu_cb_Cut, me);
+	my copyButton = FunctionAreaMenu_addCommand (menu, U"Copy selection to Sound clipboard", 'C', menu_cb_Copy, me);
+	if (my editable())
+		my pasteButton = FunctionAreaMenu_addCommand (menu, U"Paste after selection", 'V', menu_cb_Paste, me);
+	if (my editable()) {
+		FunctionAreaMenu_addCommand (menu, U"-- zero --", 0, nullptr, me);
+		my zeroButton = FunctionAreaMenu_addCommand (menu, U"Set selection to zero", 0, menu_cb_SetSelectionToZero, me);
+		my reverseButton = FunctionAreaMenu_addCommand (menu, U"Reverse selection", 'R', menu_cb_ReverseSelection, me);
+	}
+}
 
 #pragma mark - SoundArea all menus
 
@@ -801,6 +1010,9 @@ void structSoundArea :: v_createMenus () {
 }
 void structSoundArea :: v_createMenuItems_file (EditorMenu menu) {
 	addSoundSaveMenu (this, menu);
+}
+void structSoundArea :: v_createMenuItems_edit (EditorMenu menu) {
+	addSoundEditMenu (this, menu);
 }
 
 /* End of file SoundArea.cpp */

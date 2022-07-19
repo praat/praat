@@ -1560,7 +1560,7 @@ void structAnyTextGridEditor :: v_draw () {
 	/*
 		Finally, us usual, update the menus.
 	*/
-	our v_updateMenuItems_file ();
+	our v_updateMenuItems ();
 }
 
 static const conststring32 characters [12] [10] = {
@@ -2090,8 +2090,8 @@ void structAnyTextGridEditor :: v_createMenuItems_pitch_picture (EditorMenu menu
 	EditorMenu_addCommand (menu, U"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 }
 
-void structAnyTextGridEditor :: v_updateMenuItems_file () {
-	AnyTextGridEditor_Parent :: v_updateMenuItems_file ();
+void structAnyTextGridEditor :: v_updateMenuItems () {
+	AnyTextGridEditor_Parent :: v_updateMenuItems ();
 	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our endSelection > our startSelection);
 	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection > our startSelection);
 }

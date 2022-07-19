@@ -50,11 +50,16 @@ void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
 		our soundArea -> v_createMenuItems_file (menu);
 	EditorMenu_addCommand (menu, U"-- after file write --", 0, nullptr);
 }
-void structTimeSoundEditor :: v_updateMenuItems_file () {
+void structTimeSoundEditor :: v_createMenuItems_edit (EditorMenu menu) {
+	TimeSoundEditor_Parent :: v_createMenuItems_edit (menu);
+	if (our soundArea)
+		our soundArea -> v_createMenuItems_edit (menu);
+}
+void structTimeSoundEditor :: v_updateMenuItems () {
 	if (! our soundOrLongSound())
 		return;
 	if (our soundArea)
-		our soundArea -> v_updateMenuItems_file ();
+		our soundArea -> v_updateMenuItems ();
 }
 
 bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {

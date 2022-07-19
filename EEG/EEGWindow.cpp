@@ -63,8 +63,8 @@ void structEEGWindow :: v_createMenuItems_file_extract (EditorMenu menu) {
 			CONVERT_DATA_TO_ONE__ExtractSelectedEEG_timeFromZero);
 }
 
-void structEEGWindow :: v_updateMenuItems_file () {
-	EEGWindow_Parent :: v_updateMenuItems_file ();
+void structEEGWindow :: v_updateMenuItems () {
+	EEGWindow_Parent :: v_updateMenuItems ();
 	GuiThing_setSensitive (our extractSelectedEEGPreserveTimesButton, our endSelection > our startSelection);
 	GuiThing_setSensitive (our extractSelectedEEGTimeFromZeroButton,  our endSelection > our startSelection);
 }

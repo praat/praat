@@ -97,7 +97,7 @@ void structMovieWindow :: v_draw () {
 			Graphics_resetViewport (our graphics.get(), viewport);
 		}
 	}
-	our v_updateMenuItems_file ();
+	our v_updateMenuItems ();
 }
 
 bool structMovieWindow :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {

@@ -21,7 +21,6 @@
 #include "TimeSoundAnalysisEditor.h"
 
 Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
-	GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
 	double maxBuffer;
 
 	void v1_dataChanged () override {

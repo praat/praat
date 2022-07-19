@@ -229,7 +229,7 @@ void structPointEditor :: v_draw () {
 			Graphics_line (our graphics.get(), t, -0.9, t, +0.9);
 	}
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	v_updateMenuItems_file ();
+	v_updateMenuItems ();
 }
 
 #pragma mark - PLAY
