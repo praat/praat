@@ -416,7 +416,7 @@ static void INFO_DATA__getAmplitudes (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTP
 }
 static void addSoundQueryMenu (SoundArea me, EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- sound query --", 0, nullptr, me);
-	FunctionAreaMenu_addCommand (menu, U"Sound query:", GuiMenu_INSENSITIVE,
+	FunctionAreaMenu_addCommand (menu, U"Query sound:", GuiMenu_INSENSITIVE,
 			INFO_DATA__getAmplitudes /* dummy */, me);
 	if (Thing_isa (me, classLongSoundArea))
 		FunctionAreaMenu_addCommand (menu, U"Info on whole LongSound", 0,
@@ -457,7 +457,7 @@ static void menu_cb_MoveEndOfSelectionToNearestZeroCrossing (SoundArea me, EDITO
 }
 static void addSoundSelectMenu (SoundArea me, EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- sound select --", 0, nullptr, me);
-	FunctionAreaMenu_addCommand (menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_MoveStartOfSelectionToNearestZeroCrossing /* dummy */, me);
+	FunctionAreaMenu_addCommand (menu, U"Select sound:", GuiMenu_INSENSITIVE, menu_cb_MoveStartOfSelectionToNearestZeroCrossing /* dummy */, me);
 	FunctionAreaMenu_addCommand (menu, U"Move start of selection to nearest zero crossing", ',',
 			menu_cb_MoveStartOfSelectionToNearestZeroCrossing, me);
 	FunctionAreaMenu_addCommand (menu, U"Move begin of selection to nearest zero crossing", Editor_HIDDEN,
@@ -546,7 +546,7 @@ static void menu_cb_DrawSelectedSound (SoundArea me, EDITOR_ARGS_FORM) {
 }
 static void addSoundDrawMenu (SoundArea me, EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- sound draw --", 0, nullptr, me);
-	FunctionAreaMenu_addCommand (menu, U"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */, me);
+	FunctionAreaMenu_addCommand (menu, U"Draw sound to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */, me);
 	FunctionAreaMenu_addCommand (menu, U"Draw visible sound...", 0, menu_cb_DrawVisibleSound, me);
 	my drawButton = FunctionAreaMenu_addCommand (menu, U"Draw selected sound...", 0, menu_cb_DrawSelectedSound, me);
 }
@@ -612,7 +612,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedSoundForOverlap (SoundArea me, E
 }
 static void addSoundExtractMenu (SoundArea me, EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- sound extract --", 0, nullptr, me);
-	FunctionAreaMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
+	FunctionAreaMenu_addCommand (menu, U"Extract sound to objects window:", GuiMenu_INSENSITIVE,
 			CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes /* dummy */, me);
 	my publishPreserveButton = FunctionAreaMenu_addCommand (menu, U"Extract selected sound (preserve times)", 0,
 			CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes, me);
@@ -732,7 +732,8 @@ static void menu_cb_WriteFlac (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 static void addSoundSaveMenu (SoundArea me, EditorMenu menu) {
-	FunctionAreaMenu_addCommand (menu, U"Save to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */, me);
+	FunctionAreaMenu_addCommand (menu, U"-- sound file --", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Save sound to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */, me);
 	my writeWavButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as WAV file...", 0, menu_cb_WriteWav, me);
 		FunctionAreaMenu_addCommand (menu, U"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav, me);
 		FunctionAreaMenu_addCommand (menu, U"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav, me);
@@ -786,10 +787,13 @@ void structSoundArea :: v_updateMenuItems () {
 	GuiThing_setSensitive (our writeFlacButton, selectedSamples != 0);
 
 	if (our sound()) {
-		GuiThing_setSensitive (cutButton     , selectedSamples != 0 && selectedSamples < our sound() -> nx);
-		GuiThing_setSensitive (copyButton    , selectedSamples != 0);
-		GuiThing_setSensitive (zeroButton    , selectedSamples != 0);
-		GuiThing_setSensitive (reverseButton , selectedSamples != 0);
+		if (our editable())
+			GuiThing_setSensitive (cutButton, selectedSamples != 0 && selectedSamples < our sound() -> nx);
+		GuiThing_setSensitive (copyButton, selectedSamples != 0);
+		if (our editable()) {
+			GuiThing_setSensitive (zeroButton, selectedSamples != 0);
+			GuiThing_setSensitive (reverseButton, selectedSamples != 0);
+		}
 	}
 }
 
@@ -989,8 +993,11 @@ static void addSoundEditMenu (SoundArea me, EditorMenu menu) {
 	my copyButton = FunctionAreaMenu_addCommand (menu, U"Copy selection to Sound clipboard", 'C', menu_cb_Copy, me);
 	if (my editable())
 		my pasteButton = FunctionAreaMenu_addCommand (menu, U"Paste after selection", 'V', menu_cb_Paste, me);
+}
+static void addSoundModifyMenu (SoundArea me, EditorMenu menu) {
 	if (my editable()) {
-		FunctionAreaMenu_addCommand (menu, U"-- zero --", 0, nullptr, me);
+		FunctionAreaMenu_addCommand (menu, U"-- sound modify --", 0, nullptr, me);
+		FunctionAreaMenu_addCommand (menu, U"Modify sound:", GuiMenu_INSENSITIVE, menu_cb_SetSelectionToZero /* dummy */, me);
 		my zeroButton = FunctionAreaMenu_addCommand (menu, U"Set selection to zero", 0, menu_cb_SetSelectionToZero, me);
 		my reverseButton = FunctionAreaMenu_addCommand (menu, U"Reverse selection", 'R', menu_cb_ReverseSelection, me);
 	}
@@ -999,14 +1006,22 @@ static void addSoundEditMenu (SoundArea me, EditorMenu menu) {
 #pragma mark - SoundArea all menus
 
 void structSoundArea :: v_createMenus () {
-	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Sound", 0);
-	addSoundSettingsMenu (this, menu);
-	if (! Thing_isa (this, classLongSoundArea))
-		addSoundQueryMenu (this, menu);
-	if (! Thing_isa (this, classLongSoundArea))
-		addSoundSelectMenu (this, menu);
-	addSoundDrawMenu (this, menu);
-	addSoundExtractMenu (this, menu);
+	EditorMenu soundMenu = Editor_addMenu (our functionEditor(), U"Sound", 0);
+	addSoundSettingsMenu (this, soundMenu);
+	addSoundModifyMenu (this, soundMenu);
+	addSoundModifyMenu (this, our functionEditor() -> editMenu);
+	if (! Thing_isa (this, classLongSoundArea)) {
+		addSoundQueryMenu (this, soundMenu);
+		addSoundQueryMenu (this, our functionEditor() -> queryMenu);
+	}
+	if (! Thing_isa (this, classLongSoundArea)) {
+		addSoundSelectMenu (this, soundMenu);
+		addSoundSelectMenu (this, our functionEditor() -> selectMenu);
+	}
+	addSoundDrawMenu (this, soundMenu);
+	addSoundDrawMenu (this, our functionEditor() -> drawMenu);
+	addSoundExtractMenu (this, soundMenu);
+	addSoundExtractMenu (this, our functionEditor() -> extractMenu);
 }
 void structSoundArea :: v_createMenuItems_file (EditorMenu menu) {
 	addSoundSaveMenu (this, menu);
