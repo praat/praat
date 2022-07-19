@@ -180,9 +180,26 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 		(void) toggle;   // no difference between toggling and normal menu items on Cocoa
 		NSString *string = (NSString *) Melder_peek32toCfstring (title);
 		GuiCocoaMenuItem *menuItem = [[GuiCocoaMenuItem alloc]
-			initWithTitle:string
+			initWithTitle: string
 			action: nullptr
 			keyEquivalent: @""];
+		if (title [0] != U'\0' && title [str32len (title) - 1] == U':') {
+			static NSMutableDictionary *underliningAttributes;
+			if (! underliningAttributes) {
+				underliningAttributes = [[NSMutableDictionary alloc] init];
+				[underliningAttributes
+					setObject: [NSNumber numberWithInt: NSUnderlineStyleSingle]
+					forKey: NSUnderlineStyleAttributeName
+				];
+			}
+			NSAttributedString *underlinedString = [
+				[NSAttributedString alloc]
+				initWithString: string
+				attributes: underliningAttributes
+			];
+			[menuItem setAttributedTitle: underlinedString];
+			[underlinedString release];
+		}
 		//Melder_assert ([string retainCount] == 2 || [string retainCount] == -1);   // the menu item retains the string (assertion can fail on 10.6)
 		trace (U"string retain count = ", [string retainCount]);
 		my d_widget = menuItem;
