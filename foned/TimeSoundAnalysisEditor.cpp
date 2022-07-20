@@ -1694,10 +1694,6 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	const double pitchViewTo_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch),
 			Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit()) ? log10 (pitchViewTo_overt) : pitchViewTo_overt;
 
-	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_WHITE);
-	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-
 	if (my endWindow - my startWindow > my instancePref_longestAnalysis()) {
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);

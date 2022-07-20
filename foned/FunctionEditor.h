@@ -193,7 +193,6 @@ Thing_define (FunctionEditor, Editor) {
 	virtual void v_prefs_addFields (EditorCommand) { }
 	virtual void v_prefs_setValues (EditorCommand) { }
 	virtual void v_prefs_getValues (EditorCommand) { }
-	virtual void v_highlightSelection (double left, double right, double bottom, double top);
 
     #include "FunctionEditor_prefs.h"
 

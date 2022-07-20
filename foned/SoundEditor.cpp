@@ -82,10 +82,11 @@ void structSoundEditor :: v_draw () {
 	if (our instancePref_pulses_show())
 		our v_draw_analysis_pulses ();
 	FunctionArea_drawInside (our soundArea.get());
+	FunctionArea_highlightSelection (our soundArea.get());
 	if (showAnalysis) {
-		our soundAnalysisArea -> setGlobalYRange_fraction (0.0, 0.5);
 		FunctionArea_prepareCanvas (our soundAnalysisArea.get());
 		our v_draw_analysis ();
+		FunctionArea_highlightSelection (our soundAnalysisArea.get());
 	}
 
 	/*
