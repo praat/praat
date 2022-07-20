@@ -23,10 +23,6 @@
 
 #include "DataGui_enums.h"
 
-inline static MelderColour DataGuiColour_BACKGROUND = Melder_WHITE;
-inline static MelderColour DataGuiColour_EDITABLE = Melder_CYAN;
-inline static MelderColour DataGuiColour_DEFAULT_FOREGROUND = Melder_BLACK;
-
 Thing_declare (Editor);
 Thing_declare (EditorMenu);
 Thing_declare (EditorCommand);
@@ -72,6 +68,15 @@ public:
 	virtual void v_do_pictureMargins (EditorCommand cmd);
 
 	#include "DataGui_prefs.h"
+
+	/*
+		The following colours cannot be static data,
+		because static data might be initialized before the standard extern MelderColours are (bug on Linux 2022-09-19).
+		So they are static *functions* instead.
+	*/
+	static MelderColour Colour_BACKGROUND() { return Melder_WHITE; }
+	static MelderColour Colour_EDITABLE() { return Melder_CYAN; }
+	static MelderColour Colour_DEFAULT_FOREGROUND() { return Melder_BLACK; }
 };
 
 /* End of file DataGui.h */

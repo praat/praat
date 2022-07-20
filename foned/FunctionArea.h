@@ -93,14 +93,14 @@ public:
 	}
 	friend void FunctionArea_drawBackground (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics(), DataGuiColour_BACKGROUND);
+		Graphics_setColour (my graphics(), structDataGui::Colour_BACKGROUND());
 		Graphics_fillRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		if (my editable()) {
 			Graphics_setLineWidth (my graphics(), 2.0);
-			Graphics_setColour (my graphics(), DataGuiColour_EDITABLE);
+			Graphics_setColour (my graphics(), structDataGui::Colour_EDITABLE());
 			Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		}
-		Graphics_setColour (my graphics(), DataGuiColour_DEFAULT_FOREGROUND);
+		Graphics_setColour (my graphics(), structDataGui::Colour_DEFAULT_FOREGROUND());
 		Graphics_setLineWidth (my graphics(), 1.0);
 	}
 	friend void FunctionArea_drawInside (FunctionArea me) {

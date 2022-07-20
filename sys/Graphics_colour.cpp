@@ -1,6 +1,6 @@
 /* Graphics_colour.cpp
  *
- * Copyright (C) 1992-2005,2007-2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2005,2007-2020,2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,12 +97,12 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 		#if cairo
 			if (! my d_cairoGraphicsContext)
 				return;
-			int width = x2DC - x1DC, height = y1DC - y2DC;
+			const int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0)
 				return;
 			if (! my d_cairoGraphicsContext)
 				return;
-			cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.7, 0.7, 0.5);
+			cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.7, 0.7, 0.5);   // using transparency
 			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC, width, height);
 			cairo_fill (my d_cairoGraphicsContext);
 		#elif gdi
@@ -113,25 +113,29 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 				highlightBrush = CreateSolidBrush (RGB (255, 210, 210));
 			SelectPen (my d_gdiGraphicsContext, GetStockPen (NULL_PEN));
 			SelectBrush (my d_gdiGraphicsContext, highlightBrush);
-			SetROP2 (my d_gdiGraphicsContext, R2_NOTXORPEN);
+			SetROP2 (my d_gdiGraphicsContext, R2_MASKPEN);   // using a built-in pixel-combination formula; both R2_NOTXORPEN and R2_MASKPEN make some sense
 			Rectangle (my d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
 			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   // superfluous?
 		#elif quartz
-			int width = x2DC - x1DC, height = y1DC - y2DC;
+			const int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0)
 				return;
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (! drawingArea)
 				return;
-			NSRect rect = NSMakeRect (x1DC, y2DC, width, height);
+			const NSRect rect = NSMakeRect (x1DC, y2DC, width, height);
 			CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 			if (context) {
 				CGContextSaveGState (context);
-				CGContextSetBlendMode (context, kCGBlendModeDarken);
 				CGContextSetShouldAntialias (context, false);
-				CGContextSetRGBFillColor (context, 1.0, 0.83, 0.83, 1.0);
+				if ((true)) {
+					CGContextSetBlendMode (context, kCGBlendModeDarken);   // using a built-in pixel-combination formula
+					CGContextSetRGBFillColor (context, 1.0, 0.83, 0.83, 1.0);
+				} else {
+					CGContextSetRGBFillColor (context, 1.0, 0.5, 0.5, 0.3);   // using transparency
+				}
 				CGContextFillRect (context, rect);
 				CGContextRestoreGState (context);
 			}
@@ -154,7 +158,7 @@ static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y
 		#if cairo
 			if (! my d_cairoGraphicsContext)
 				return;
-			int width = x2DC - x1DC, height = y1DC - y2DC;
+			const int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0)
 				return;
 			cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.7, 0.7, 0.5);
@@ -187,8 +191,12 @@ static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y
 			NSRect leftRect  = NSMakeRect (x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner);
 			NSRect rightRect = NSMakeRect (x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner);
 			NSRect lowerRect = NSMakeRect (x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner);
-			NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
-			double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
+			#if 0
+				NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+				const double red   = 0.5 + 0.5 * colour.redComponent;
+				const double green = 0.5 + 0.5 * colour.greenComponent;
+				const double blue  = 0.5 + 0.5 * colour.blueComponent;
+			#endif
 			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDarken);
 			CGContextSetRGBFillColor (my d_macGraphicsContext, 1.0, 0.83, 0.83, 1.0);
 			CGContextFillRect (my d_macGraphicsContext, upperRect);
