@@ -129,7 +129,7 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 			CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 			if (context) {
 				CGContextSaveGState (context);
-				CGContextSetShouldAntialias (context, false);
+				//CGContextSetShouldAntialias (context, false);
 				if ((true)) {
 					CGContextSetBlendMode (context, kCGBlendModeDarken);   // using a built-in pixel-combination formula
 					CGContextSetRGBFillColor (context, 1.0, 0.83, 0.83, 1.0);

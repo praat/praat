@@ -366,15 +366,6 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		Graphics_line (my graphics.get(), my endSelection, 0.0, my endSelection, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
-
-	/*
-		Highlight selection.
-	*/
-	if (selectionIsNonempty && my startSelection < my endWindow && my endSelection > my startWindow) {
-		const double left = Melder_clippedLeft (my startWindow, my startSelection);
-		const double right = Melder_clippedRight (my endSelection, my endWindow);
-		my v_highlightSelection (left, right, 0.0, 1.0);
-	}
 }
 
 /********** METHODS **********/
@@ -1471,10 +1462,6 @@ int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, d
 
 int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTime, double endTime, double currentTime) {
 	return my v_playCallback (phase, startTime, endTime, currentTime);
-}
-
-void structFunctionEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
 void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data) {
