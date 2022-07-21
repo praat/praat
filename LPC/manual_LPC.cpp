@@ -308,25 +308,25 @@ MAN_END
 
 #define PowerCepstrum_manual_quefrencyAveragingWindow \
 	U"determines the width of the averaging window in the quefrency domain. " \
-	"By chosing a value smaller than the quefrency distance, you can prevent any smoothing in the quefrency dimension."
+	"By chosing a value of zero, you can prevent any smoothing in the quefrency dimension."
 
 #define PowerCepstrogram_manual_timeAveraging \
 	U"determines the width of the averaging window in the time domain. The result " \
 	"of the smoothing will be that in the new smoothed PowerCepstrogram each cepstral value is the average of the cepstral values " \
 	"within the averaging window that was positioned symmetrically around the center of this frame in the selected PowerCepstrogram. " \
-	"By chosing a value smaller than the time between two frames, you can prevent any smoothing in the time dimension. "
+	"By chosing a value of zero, you can prevent any smoothing in the time dimension. "
 		
 MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. "
 	"Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20201216)
+MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20220721)
 INTRO (U"A command to get the cepstral peak prominence (CPP) of the selected @@PowerCepstrogram@. ")
 NORMAL (U"The returned value is the average of the cepstral peak prominences of the individual frames.")
 ENTRY (U"Settings")
 TAG (U"##Subtract trend before smoothing#")
-DEFINITION (U"determines whether the smoothing should be performed on the Cepstrogram after the trend of each PowerCepstrum frame has been removed. ")
+DEFINITION (U"determines whether the smoothing should be performed on the Cepstrogram after the trend of each PowerCepstrum frame has been removed. Because, in general, the trends in the analysis frames will not be equal, the value of CPPS will be different whether or not smoothing is performed. If no smoothing is going on the result should be independent of this setting. ")
 TAG (U"##Time averaging window (s)#")
 DEFINITION (PowerCepstrogram_manual_timeAveraging)
 TAG (U"##Quefrency averaging window (s)#")
