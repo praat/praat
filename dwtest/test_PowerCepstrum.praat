@@ -1,5 +1,5 @@
 # test_PowerCepstrum.praat
-# djmw 20190910
+# djmw 20190910, 20220721
 
 appendInfoLine: "test_PowerCepstrum.praat"
 
@@ -14,17 +14,10 @@ powercepstrum = To PowerCepstrum (slice): 0.1
 peak_dB = Get peak: 60, 333, "Parabolic"
 peak_q = Get quefrency of peak: 60, 333, "Parabolic"
 
-lineType$ = "Exponential decay"
-peak_prominence = Get peak prominence: 60, 333.3, "Parabolic", 0.001, 0, lineType$, "Robust"
-appendInfoLine: tab$, "Prominence: ", peak_prominence, " dB (exponential, robust)"
-peak_prominence = Get peak prominence: 60, 333.3, "Parabolic", 0.001, 0, lineType$, "Least squares"
-appendInfoLine: tab$, "Prominence: ", peak_prominence, " dB (exponential, least squares)"
-peak_prominence = Get peak prominence: 60, 333.3, "Parabolic", 0.001, 0, lineType$, "Robust slow"
-appendInfoLine: tab$, "Prominence: ", peak_prominence, " dB (exponential, robust slow)"
-peak_prominence = Get peak prominence: 60, 333.3, "Parabolic", 0.001, 0, "Straight", "Robust slow"
-appendInfoLine: tab$, "Prominence: ", peak_prominence, " dB (straight, robust)"
+@before_after_subtract_trend: powercepstrum
 
 # old commands
+selectObject: powercepstrum
 slope_old = Get tilt line slope: 0.001, 0, "Exponential decay", "Robust"
 slope = Get trend line slope: 0.001, 0, "Exponential decay", "Robust"
 assert (slope_old = slope)
@@ -50,6 +43,32 @@ Debug: "no", 0
 removeObject: powercepstrum, powercepstrogram, toneComplex
 
 appendInfoLine: "test_PowerCepstrum.praat OK"
+
+procedure before_after_subtract_trend: .powercepstrum
+	appendInfoLine: tab$, "test prominence before and after subtracting trend"
+	.trendType$# = { "Straight", "Exponential decay" }
+	.fitMethod$# = { "Robust", "Robust slow" }
+	.interpolation$# = { "none", "parabolic", "cubic" }
+	for .interpolation to size (.interpolation$#)
+		.interpolation$ = .interpolation$# [.interpolation]
+		for .trendType to size (.trendType$#)
+			.trendType$ = .trendType$# [.trendType]
+			for .fitMethod to size (.fitMethod$#)
+				.fitMethod$ = .fitMethod$# [.fitMethod]
+				selectObject: .powercepstrum				
+				.prominence1 = Get peak prominence: 60, 333.3, .interpolation$, 
+					... 0.001, 0.05, .trendType$, .fitMethod$
+				.trendRemoved = Subtract trend: 0.001, 0.05, .trendType$, .fitMethod$
+				.prominence2 = Get peak prominence: 60, 333.3, .interpolation$, 
+					... 0.001, 0.05, .trendType$, .fitMethod$
+				# the assertion fails for the least squares fit. 
+				assert abs (.prominence1 - .prominence2) < 1e-10; '.interpolation$' '.trendType$' '.fitMethod$'
+				removeObject: .trendRemoved
+			endfor
+		endfor
+	endfor
+	appendInfoLine: tab$, "test prominence before and after subtracting trend OK"
+endproc
 
 procedure draw_powercepstrum: .pc
 	selectObject: .pc
