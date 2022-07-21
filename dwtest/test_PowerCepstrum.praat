@@ -5,7 +5,13 @@ appendInfoLine: "test_PowerCepstrum.praat"
 
 toneComplex = Create Sound as tone complex: "toneComplex", 0, 1, 44100, "cosine", 100, 0, 0, 0
 powercepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50
+
+cpps_subtractTrend = Get CPPS: "yes", 0, 0, 60, 333.3, 0.05, "parabolic", 0.001, 0.05, "Straight", "Robust slow"
+cpps_nosubtractTrend = Get CPPS: "no", 0, 0, 60, 333.3, 0.05, "parabolic", 0.001, 0.05, "Straight", "Robust slow"
+assert abs (cpps_subtractTrend - cpps_nosubtractTrend) < 1e-10
+
 cpps = Get CPPS: "yes", 0.02, 0.0005, 60, 333.3, 0.05, "parabolic", 0.001, 0.05, "Straight", "Robust slow"
+assert cpps <= cpps_subtractTrend
 appendInfoLine: tab$, "CPPS from Cepstrogram: ", cpps, " dB"
 table = To Table (cepstral peak prominences): "yes", "yes", 6, 3, "yes", 3, 60, 330, 0.05, "parabolic", 0.001, 0.05, "Straight", "Robust slow"
 removeObject: table
