@@ -81,13 +81,11 @@ public:
 	friend void FunctionArea_drawOne (FunctionArea me) {
 		FunctionArea_prepareCanvas (me);
 		FunctionArea_drawInside (me);
-		FunctionArea_highlightSelection (me);
 	}
 	friend void FunctionArea_drawTwo (FunctionArea me, FunctionArea you) {
 		FunctionArea_prepareCanvas (me);
 		FunctionArea_drawInside (me);
 		FunctionArea_drawInside (you);
-		FunctionArea_highlightSelection (me);
 	}
 	friend void FunctionArea_prepareCanvas (FunctionArea me) {
 		FunctionArea_setViewport (me);
@@ -96,16 +94,9 @@ public:
 	friend void FunctionArea_drawInside (FunctionArea me) {
 		my v_drawInside ();
 	}
-	friend void FunctionArea_highlightSelection (constFunctionArea me) {
-		if (my endSelection() <= my startSelection() || my startSelection() >= my endWindow() || my endSelection() <= my startWindow())
-			return;
-		Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), 0.0, 1.0);
-		const double left = Melder_clippedLeft (my startWindow(), my startSelection());
-		const double right = Melder_clippedRight (my endSelection(), my endWindow());
-		Graphics_highlight (my graphics(), left, right, 0.0, 1.0);
-	}
 	friend void FunctionArea_drawBackground (constFunctionArea me) {
 		FunctionArea_eraseBackground (me);
+		FunctionArea_highlightSelectionBackground (me);
 		if (my editable())
 			FunctionArea_drawEditableFrame (me);
 	}
@@ -115,6 +106,16 @@ public:
 		Graphics_fillRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (my graphics(), structDataGui::Colour_DEFAULT_FOREGROUND());
 	}
+	friend void FunctionArea_highlightSelectionBackground (constFunctionArea me) {
+		Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), 0.0, 1.0);
+		my v_specializedHighlightSelectionBackground ();
+		double left = my startSelection(), right = my endSelection();
+		if (left < right && left < my endWindow() && right > my startWindow()) {
+			Melder_clipLeft (my startWindow(), & left);
+			Melder_clipRight (& right, my endWindow());
+			Graphics_highlight (my graphics(), left, right, 0.0, 1.0);
+		}
+	}
 	friend void FunctionArea_drawEditableFrame (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setLineWidth (my graphics(), 2.0);
@@ -123,6 +124,8 @@ public:
 		Graphics_setColour (my graphics(), structDataGui::Colour_DEFAULT_FOREGROUND());
 		Graphics_setLineWidth (my graphics(), 1.0);
 	}
+private:
+	virtual void v_specializedHighlightSelectionBackground () const { }
 protected:
 	virtual void v_drawInside () { }
 public:

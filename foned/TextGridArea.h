@@ -26,10 +26,26 @@
 #include "TextGridArea_enums.h"
 
 Thing_define (TextGridArea, FunctionArea) {
-	TextGrid textGrid() { return static_cast <TextGrid> (our function()); }
+	TextGrid textGrid() const { return static_cast <TextGrid> (our function()); }
+
+	integer selectedTier;
+
+private:
+	void v_specializedHighlightSelectionBackground () const
+		override;
 };
 
 DEFINE_FunctionArea_create (TextGridArea, TextGrid)
+
+/*
+	BUG: The following should move to TextGridArea.cpp, once AnyTextGridEditor.cpp no longer needs it.
+*/
+static integer getSelectedInterval (constTextGridArea me) {
+	Melder_assert (my selectedTier >= 1 || my selectedTier <= my textGrid() -> tiers->size);
+	const IntervalTier tier = (IntervalTier) my textGrid() -> tiers->at [my selectedTier];
+	Melder_assert (tier -> classInfo == classIntervalTier);
+	return IntervalTier_timeToIndex (tier, my startSelection());
+}
 
 /* End of file TextGridArea.h */
 #endif

@@ -27,7 +27,6 @@ Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 	autoTextGridArea textGridArea;
 
 	SpellingChecker spellingChecker;
-	integer selectedTier;
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
