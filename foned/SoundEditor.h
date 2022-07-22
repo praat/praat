@@ -27,6 +27,7 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 		SoundEditor_Parent :: v1_dataChanged ();
 		Thing_cast (SampledXY, soundOrLongSound, our data());
 		our soundArea -> functionChanged (soundOrLongSound);
+		our soundAnalysisArea -> functionChanged (soundOrLongSound);
 	}
 	void v_createMenus ()
 		override;
