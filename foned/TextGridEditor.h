@@ -28,7 +28,7 @@ Thing_define (TextGridEditor, AnyTextGridEditor) {
 		if (our soundArea)
 			our soundArea -> functionChanged (nullptr);   // BUG: this function has not actually changed
 		if (our soundAnalysisArea)
-			our soundAnalysisArea -> functionChanged (nullptr);
+			our soundAnalysisArea -> functionChanged (our soundArea -> function());
 	}
 };
 
