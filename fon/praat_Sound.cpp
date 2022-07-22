@@ -2106,11 +2106,13 @@ void praat_Sound_init () {
 	Data_recognizeFileType (bellLabsFileRecognizer);
 	Data_recognizeFileType (kayFileRecognizer);
 
+	structSoundArea               :: f_preferences ();
+	structSoundAnalysisArea       :: f_preferences ();
+
 	SoundRecorder_preferences ();
 	structSoundRecorder           :: f_preferences ();
 	structFunctionEditor          :: f_preferences ();
 	LongSound_preferences ();
-	structSoundArea               :: f_preferences ();
 	structTimeSoundEditor         :: f_preferences ();
 	structTimeSoundAnalysisEditor :: f_preferences ();
 
