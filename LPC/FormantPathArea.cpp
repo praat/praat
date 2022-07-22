@@ -1,6 +1,6 @@
-/* ERPWindow_prefs.h
+/* FormantPathArea.cpp
  *
- * Copyright (C) 2013-2015,2017,2022 Paul Boersma
+ * Copyright (C) 2020-2021 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,16 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (ERPWindow)
+#include "FormantPathArea.h"
+#include "EditorM.h"
 
-	InstancePrefs_overrideBool    (ERPWindow, showSelectionViewer,            1, true)
-	ClassPrefs_addDouble     (ERPWindow, sound_picture_bottom,           1, U"0.0")   // BUG: should override in area
-	ClassPrefs_addDouble     (ERPWindow, sound_picture_top,              1, U"0.0 (= auto)")   // BUG: should override in area
+Thing_implement (FormantPathArea, SoundAnalysisArea, 0);
 
-	InstancePrefs_addEnum         (ERPWindow, scalp_colourScale,              1, kGraphics_colourScale, BLUE_TO_RED)
+#include "Prefs_define.h"
+#include "FormantPathArea_prefs.h"
+#include "Prefs_install.h"
+#include "FormantPathArea_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "FormantPathArea_prefs.h"
 
-Prefs_end (ERPWindow)
-
-/* End of file ERPWindow_prefs.h */
+/* End of file FormantPathArea.cpp */

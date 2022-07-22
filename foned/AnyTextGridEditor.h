@@ -81,8 +81,6 @@ Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_updateMenuItems ()
 		override;
-	void v_createMenuItems_pitch_picture (EditorMenu menu)
-		override;
 
 	#include "AnyTextGridEditor_prefs.h"
 

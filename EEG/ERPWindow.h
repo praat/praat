@@ -28,14 +28,6 @@ Thing_define (ERPWindow, SoundEditor) {
 		override { return true; }
 	void v_drawSelectionViewer ()
 		override;
-	bool v_hasPitch ()
-		override { return false; }
-	bool v_hasIntensity ()
-		override { return false; }
-	bool v_hasFormants ()
-		override { return false; }
-	bool v_hasPulses ()
-		override { return false; }
 	void v_prefs_addFields (EditorCommand cmd)
 		override;
 	void v_prefs_setValues (EditorCommand cmd)

@@ -183,7 +183,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 			initWithTitle: string
 			action: nullptr
 			keyEquivalent: @""];
-		if (title [0] != U'\0' && title [str32len (title) - 1] == U':') {
+		if (flags & GuiMenu_UNDERLINED) {
 			static NSMutableDictionary *underliningAttributes;
 			if (! underliningAttributes) {
 				underliningAttributes = [[NSMutableDictionary alloc] init];

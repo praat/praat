@@ -57,11 +57,11 @@ Thing_define (SoundArea, FunctionArea) {
 	/*
 		Accessors.
 	*/
-	SampledXY soundOrLongSound() { return static_cast <SampledXY> (our function()); }
-	Sound sound() {
+	SampledXY soundOrLongSound() const { return static_cast <SampledXY> (our function()); }
+	Sound sound() const {
 		return our soundOrLongSound() && Thing_isa (our soundOrLongSound(), classSound) ? (Sound) our soundOrLongSound() : nullptr;
 	}
-	LongSound longSound() {
+	LongSound longSound() const {
 		return our soundOrLongSound() && Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) our soundOrLongSound() : nullptr;
 	}
 

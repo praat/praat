@@ -26,7 +26,15 @@ Thing_implement (TextGridArea, FunctionArea, 0);
 #include "enums_getValue.h"
 #include "TextGridArea_enums.h"
 
-void structTextGridArea :: v_specializedHighlightSelectionBackground () const {
+#include "Prefs_define.h"
+#include "TextGridArea_prefs.h"
+#include "Prefs_install.h"
+#include "TextGridArea_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "TextGridArea_prefs.h"
+
+
+void structTextGridArea :: v_specializedHighlightBackground () const {
 	Melder_assert (our textGrid());
 	const integer numberOfTiers = our textGrid() -> tiers->size;
 	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
@@ -45,7 +53,7 @@ void structTextGridArea :: v_specializedHighlightSelectionBackground () const {
 			if (endInterval > our startWindow() && startInterval < our endWindow()) {   // interval visible?
 				const bool intervalIsSelected = ( iinterval == selectedInterval );
 				const bool labelDoesMatch = Melder_stringMatchesCriterion (interval -> text.get(),
-						((AnyTextGridEditor) our functionEditor()) -> instancePref_greenMethod(), ((AnyTextGridEditor) our functionEditor()) -> instancePref_greenString(), true);
+						our instancePref_greenMethod(), our instancePref_greenString(), true);
 				Melder_clipLeft (our startWindow(), & startInterval);
 				Melder_clipRight (& endInterval, our endWindow());
 				const double bottom = 1.0 - double (itier) / numberOfTiers;

@@ -30,10 +30,6 @@ Thing_implement (EEGWindow, AnyTextGridEditor, 0);
 
 static void menu_cb_EEGWindowHelp (EEGWindow, EDITOR_ARGS_DIRECT) { Melder_help (U"EEG window"); }
 
-void structEEGWindow :: v_createMenus () {
-	EEGWindow_Parent :: v_createMenus ();
-}
-
 void structEEGWindow :: v_createHelpMenuItems (EditorMenu menu) {
 	AnyTextGridEditor_Parent :: v_createHelpMenuItems (menu);   // BUG: skips TextGridEditor help (without any)
 	EditorMenu_addCommand (menu, U"EEGWindow help", '?', menu_cb_EEGWindowHelp);

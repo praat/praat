@@ -1082,7 +1082,7 @@ void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
 }
 
 void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
-	EditorMenu_addCommand (menu, v_format_domain (), GuiMenu_INSENSITIVE, menu_cb_zoom /* dummy */);
+	EditorMenu_addCommand (menu, v_format_domain (), 0, nullptr);
 	EditorMenu_addCommand (menu, U"Zoom...", 0, menu_cb_zoom);
 	EditorMenu_addCommand (menu, U"Show all", 'A', menu_cb_showAll);
 	EditorMenu_addCommand (menu, U"Zoom in", 'I', menu_cb_zoomIn);
@@ -1095,7 +1095,7 @@ void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 
 void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"-- play --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Audio:", GuiMenu_INSENSITIVE, PLAY_DATA__play /* dummy */);
+	EditorMenu_addCommand (menu, U"Audio:", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Play...", 0, PLAY_DATA__play);
 	EditorMenu_addCommand (menu, U"Play or stop", GuiMenu_TAB, PLAY_DATA__playOrStop);
 	EditorMenu_addCommand (menu, U"Play window", GuiMenu_SHIFT | GuiMenu_TAB, PLAY_DATA__playWindow);

@@ -38,25 +38,14 @@ Thing_define (EEGWindow, AnyTextGridEditor) {
 		trace (sound -> nx, U" ", sound -> ny);
 		our soundArea -> functionChanged (our eeg() -> sound.get());
 	}
-
-	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
-
-	bool v_hasPitch ()
-		override { return false; }
-	bool v_hasIntensity ()
-		override { return false; }
-	bool v_hasFormants ()
-		override { return false; }
-	bool v_hasPulses ()
-		override { return false; }
-	void v_createMenus ()
-		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
 	void v_createMenuItems_extract (EditorMenu menu)
 		override;
 	void v_updateMenuItems ()
 		override;
+
+	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
 
 	#include "EEGWindow_prefs.h"
 };

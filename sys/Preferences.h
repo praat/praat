@@ -62,13 +62,13 @@ void Preferences_exit_optimizeByLeaking ();
 #define Prefs_addAny_default_(DefaultType,name) \
 	private: \
 		static DefaultType _classDefault_##name; \
-		virtual DefaultType _v_default_##name() { return our _classDefault_##name; } \
+		virtual DefaultType _v_default_##name() const { return our _classDefault_##name; } \
 	public: \
-		DefaultType default_##name() { return our _v_default_##name(); }
+		DefaultType default_##name() const { return our _v_default_##name(); }
 #define Prefs_overrideAny_default_(DefaultType,name) \
 	private: \
 		static DefaultType _classDefault_##name; \
-		DefaultType _v_default_##name () override { return our _classDefault_##name; }
+		DefaultType _v_default_##name () const override { return our _classDefault_##name; }
 
 #define Pref_copyPlain(from,to) \
 	to = from
@@ -92,9 +92,9 @@ inline void Pref_copyString (conststring32 from, mutablestring32 to) {
 	Prefs_addAny_default_ (DefaultType, name) \
 	private: \
 		static StorageType _classPref_##name; \
-		virtual StorageType & _v_classPref1_##name() { return our _classPref_##name; } \
+		virtual StorageType & _v_classPref1_##name() const { return our _classPref_##name; } \
 	public: \
-		ArgumentType classPref_##name() { return our _v_classPref1_##name(); } \
+		ArgumentType classPref_##name() const { return our _v_classPref1_##name(); } \
 		void setClassPref_##name (ArgumentType newValue) { \
 			Pref_copy##CopyMethod (newValue, our _v_classPref1_##name()); \
 		}
@@ -102,15 +102,15 @@ inline void Pref_copyString (conststring32 from, mutablestring32 to) {
 	Prefs_overrideAny_default_ (DefaultType, name) \
 	private: \
 		static StorageType _classPref_##name; \
-		StorageType & _v_classPref1_##name () override { return our _classPref_##name; }
+		StorageType & _v_classPref1_##name () const override { return our _classPref_##name; }
 #define InstancePrefs_addAny_(StorageType,ArgumentType,DefaultType,name,CopyMethod) \
 	Prefs_addAny_default_ (DefaultType, name) \
 	private: \
 		static StorageType _classPref_##name; \
-		virtual StorageType & _v_classPref2_##name () { return our _classPref_##name; } \
+		virtual StorageType & _v_classPref2_##name () const { return our _classPref_##name; } \
 		StorageType _instancePref_##name; \
 	public: \
-		ArgumentType instancePref_##name () { return our _instancePref_##name; } \
+		ArgumentType instancePref_##name () const { return our _instancePref_##name; } \
 		void setInstancePref_##name (ArgumentType newValue) { \
 			Pref_copy##CopyMethod (newValue, our _v_classPref2_##name()); \
 			Pref_copy##CopyMethod (newValue, our _instancePref_##name); \
@@ -119,7 +119,7 @@ inline void Pref_copyString (conststring32 from, mutablestring32 to) {
 	Prefs_overrideAny_default_ (DefaultType, name) \
 	private: \
 		static StorageType _classPref_##name; \
-		StorageType & _v_classPref2_##name () override { return our _classPref_##name; }
+		StorageType & _v_classPref2_##name () const override { return our _classPref_##name; }
 
 #define ClassPrefs_addInt(Klas,name,version,default)              ClassPrefs_addAny_         (int, int, conststring32, name, Plain)
 #define ClassPrefs_overrideInt(Klas,name,version,default)         ClassPrefs_overrideAny_    (int, int, conststring32, name)
