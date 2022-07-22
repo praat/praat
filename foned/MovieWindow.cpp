@@ -33,7 +33,7 @@ void structMovieWindow :: v_createMenus () {
 	our MovieWindow_Parent :: v_createMenus ();
 	//EditorMenu menu = Editor_addMenu (this, L"Movie", 0);
 	//EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
-	our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the Movie menus
+	our soundAnalysisArea -> v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the Movie menus
 }
 
 /********** DRAWING AREA **********/
@@ -42,23 +42,23 @@ void structMovieWindow :: v_createMenus () {
  * @returns a value between 0.0 and 1.0; depends on whether the Sound and/or analyses are visible
  */
 static double _MovieWindow_getSoundBottomPosition (MovieWindow me) {
-	const bool showAnalysis = ( (my instancePref_spectrogram_show() || my instancePref_pitch_show() ||
-			my instancePref_intensity_show() || my instancePref_formant_show()) && my movie() -> d_sound );
+	const bool showAnalysis = ( (my soundAnalysisArea -> instancePref_spectrogram_show() || my soundAnalysisArea -> instancePref_pitch_show() ||
+			my soundAnalysisArea -> instancePref_intensity_show() || my soundAnalysisArea -> instancePref_formant_show()) && my movie() -> d_sound );
 	return my movie() -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
 }
 
 void structMovieWindow :: v_distributeAreas () {
 	if (our soundArea) {
-		const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
-				our instancePref_intensity_show() || our instancePref_formant_show();
+		const bool showAnalysis = our soundAnalysisArea -> instancePref_spectrogram_show() || our soundAnalysisArea -> instancePref_pitch_show() ||
+				our soundAnalysisArea -> instancePref_intensity_show() || our soundAnalysisArea -> instancePref_formant_show();
 		const double yminSound_fraction = ( showAnalysis ? 0.7 : 0.3 );
 		our soundArea -> setGlobalYRange_fraction (yminSound_fraction, 1.0);
 	}
 }
 
 void structMovieWindow :: v_draw () {
-	const bool showAnalysis = (our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
-			our instancePref_intensity_show() || our instancePref_formant_show()) && our movie() -> d_sound;
+	const bool showAnalysis = (our soundAnalysisArea -> instancePref_spectrogram_show() || our soundAnalysisArea -> instancePref_pitch_show() ||
+			our soundAnalysisArea -> instancePref_intensity_show() || our soundAnalysisArea -> instancePref_formant_show()) && our movie() -> d_sound;
 	const double soundY = _MovieWindow_getSoundBottomPosition (this);
 	if (our movie() -> d_sound) {
 		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
@@ -87,12 +87,12 @@ void structMovieWindow :: v_draw () {
 	}
 	if (showAnalysis) {
 		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.3, soundY);
-		our v_draw_analysis ();
+		our soundAnalysisArea -> v_draw_analysis ();
 		Graphics_resetViewport (our graphics.get(), viewport);
 		/* Draw pulses. */
-		if (our instancePref_pulses_show()) {
+		if (our soundAnalysisArea -> instancePref_pulses_show()) {
 			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
-			our v_draw_analysis_pulses ();
+			our soundAnalysisArea -> v_draw_analysis_pulses ();
 			SoundArea_draw (our soundArea.get());   // second time, partially across the pulses
 			Graphics_resetViewport (our graphics.get(), viewport);
 		}

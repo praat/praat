@@ -704,8 +704,9 @@ Thing_define (GuiMenuItem, GuiThing) {
 #define GuiMenu_CHECKBUTTON  (1 << 9)
 #define GuiMenu_TOGGLE_ON  (1 << 10)
 #define GuiMenu_ATTRACTIVE  (1 << 11)
-#define GuiMenu_RADIO_FIRST  (1 << 12)
-#define GuiMenu_RADIO_NEXT  (1 << 13)
+#define GuiMenu_UNDERLINED  (1 << 12)
+#define GuiMenu_RADIO_FIRST  (1 << 13)
+#define GuiMenu_RADIO_NEXT  (1 << 14)
 #define GuiMenu_BUTTON_STATE_MASK  (GuiMenu_INSENSITIVE|GuiMenu_CHECKBUTTON|GuiMenu_TOGGLE_ON|GuiMenu_ATTRACTIVE|GuiMenu_RADIO_FIRST|GuiMenu_RADIO_NEXT)
 
 /* Accelerators: */

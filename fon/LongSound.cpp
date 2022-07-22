@@ -388,12 +388,10 @@ static void writePartToOpenFile (LongSound me, int audioFileType, integer imin, 
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
-		if (tmin < my xmin)
-			tmin = my xmin;
-		if (tmax > my xmax)
-			tmax = my xmax;
+		Melder_clipLeft (my xmin, & tmin);
+		Melder_clipRight (& tmax, my xmax);
 		integer imin, imax;
-		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+		const integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1)
 			Melder_throw (U"Less than 1 sample selected.");
 		autoMelderFile mfile = MelderFile_create (file);

@@ -64,10 +64,17 @@ GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* ca
 	thy sender___ = ( optionalSender ? optionalSender : thy d_editor );
 	thy menu = me;
 	thy itemTitle = Melder_dup (itemTitle);
+	if (! commandCallback)
+		flags |= GuiMenu_INSENSITIVE;
+	const bool titleIsHeader = Melder_stringMatchesCriterion (itemTitle, kMelder_string::ENDS_WITH, U":", true);
+	if (titleIsHeader)
+		flags |= GuiMenu_UNDERLINED;
 	thy itemWidget =
-			! commandCallback ? GuiMenu_addSeparator (my menuWidget) :
-			flags & Editor_HIDDEN ? nullptr :
-			GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.get());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
+		titleIsHeader ? GuiMenu_addItem (my menuWidget, itemTitle, flags, nullptr, nullptr) :
+		! commandCallback ? GuiMenu_addSeparator (my menuWidget) :
+		flags & Editor_HIDDEN ? nullptr :
+		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.get())
+	;   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
 	GuiMenuItem result = thy itemWidget;
 	my commands. addItem_move (thee.move());

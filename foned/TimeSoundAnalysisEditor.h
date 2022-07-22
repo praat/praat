@@ -26,17 +26,7 @@
 #include "Formant.h"
 #include "PointProcess.h"
 
-#include "TimeSoundAnalysisEditor_enums.h"
-
 Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
-	autoSpectrogram d_spectrogram;
-	double d_spectrogram_cursor;
-	autoPitch d_pitch;
-	autoIntensity d_intensity;
-	autoFormant d_formant;
-	autoPointProcess d_pulses;
-	GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
-
 	autoSoundAnalysisArea soundAnalysisArea;
 
 	void v1_info ()
@@ -48,36 +38,9 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	void v_windowChanged ()
 		override
 	{
-		our v_reset_analysis ();
+		our soundAnalysisArea -> v_reset_analysis ();
 	}
-
-	virtual bool v_hasAnalysis    () { return true; }
-	virtual bool v_hasSpectrogram () { return true; }
-	virtual bool v_hasPitch       () { return true; }
-	virtual bool v_hasIntensity   () { return true; }
-	virtual bool v_hasFormants    () { return true; }
-	virtual bool v_hasPulses      () { return true; }
-	virtual void v_reset_analysis ();
-	virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
-	virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
-	virtual void v_createMenuItems_intensity_picture (EditorMenu menu);
-	virtual void v_createMenuItems_formant_picture (EditorMenu menu);
-	virtual void v_createMenuItems_pulses_picture (EditorMenu menu);
-	virtual void v_draw_analysis ();
-	virtual void v_draw_analysis_pulses ();
-	virtual void v_draw_analysis_formants ();
-	virtual void v_createMenus_analysis ();
-	virtual void v_createMenuItems_formant (EditorMenu menu);
-
-	#include "TimeSoundAnalysisEditor_prefs.h"
-	void v9_repairPreferences () override;
 };
-
-void TimeSoundAnalysisEditor_haveVisibleSpectrogram (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_haveVisiblePitch (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_haveVisibleIntensity (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_haveVisibleFormants (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_haveVisiblePulses (TimeSoundAnalysisEditor me);
 
 /* End of file TimeSoundAnalysisEditor.h */
 #endif

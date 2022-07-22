@@ -108,7 +108,7 @@ public:
 	}
 	friend void FunctionArea_highlightSelectionBackground (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), 0.0, 1.0);
-		my v_specializedHighlightSelectionBackground ();
+		my v_specializedHighlightBackground ();
 		double left = my startSelection(), right = my endSelection();
 		if (left < right && left < my endWindow() && right > my startWindow()) {
 			Melder_clipLeft (my startWindow(), & left);
@@ -125,7 +125,7 @@ public:
 		Graphics_setLineWidth (my graphics(), 1.0);
 	}
 private:
-	virtual void v_specializedHighlightSelectionBackground () const { }
+	virtual void v_specializedHighlightBackground () const { }
 protected:
 	virtual void v_drawInside () { }
 public:

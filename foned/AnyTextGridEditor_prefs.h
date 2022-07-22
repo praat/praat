@@ -20,22 +20,7 @@ Prefs_begin (AnyTextGridEditor)
 
 	ClassPrefs_overrideInt        (AnyTextGridEditor, shellWidth,               1, U"800")
 	ClassPrefs_overrideInt        (AnyTextGridEditor, shellHeight,              1, U"600")
-	//ClassPrefs_overrideBool       (AnyTextGridEditor, picture_garnish, 1, true) BUG: move to TextGridArea
 	InstancePrefs_overrideBool    (AnyTextGridEditor, showSelectionViewer,      1, true)
-
-	InstancePrefs_addBool         (AnyTextGridEditor, useTextStyles,            1, false)
-	InstancePrefs_addDouble       (AnyTextGridEditor, fontSize,                 1, U"18")
-	InstancePrefs_addEnum         (AnyTextGridEditor, alignment,                1, kGraphics_horizontalAlignment, DEFAULT)
-	InstancePrefs_addBool         (AnyTextGridEditor, shiftDragMultiple,        1, true)
-	InstancePrefs_addEnum         (AnyTextGridEditor, showNumberOf,             1, kTextGridArea_showNumberOf, DEFAULT)
-	InstancePrefs_addEnum         (AnyTextGridEditor, greenMethod,              1, kMelder_string, DEFAULT)
-	InstancePrefs_addString       (AnyTextGridEditor, greenString,              1, U"some text here for green paint")
-	ClassPrefs_addBool            (AnyTextGridEditor, picture_showBoundaries,   1, true)
-	ClassPrefs_addBool            (AnyTextGridEditor, picture_pitch_speckle,    1, false)
-	InstancePrefs_addString       (AnyTextGridEditor, align_language,           1, U"English")
-	InstancePrefs_addBool         (AnyTextGridEditor, align_includeWords,       1, true)
-	InstancePrefs_addBool         (AnyTextGridEditor, align_includePhonemes,    1, false)
-	InstancePrefs_addBool         (AnyTextGridEditor, align_allowSilences,      1, false)
 
 Prefs_end (AnyTextGridEditor)
 

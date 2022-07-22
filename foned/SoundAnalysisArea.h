@@ -19,16 +19,65 @@
  */
 
 #include "FunctionArea.h"
-#include "Preferences.h"
-#include "Sound.h"
+#include "Sound_and_Spectrogram.h"
+#include "Pitch.h"
+#include "Intensity.h"
+#include "Formant.h"
+#include "PointProcess.h"
+#include "LongSound.h"
 
-//#include "SoundAnalysisArea_enums.h"
+#include "SoundAnalysisArea_enums.h"
 
 Thing_define (SoundAnalysisArea, FunctionArea) {
-	Sound sound() { return static_cast <Sound> (our function()); }
+	SampledXY soundOrLongSound() const { return static_cast <SampledXY> (our function()); }
+	Sound sound() const {
+		return our soundOrLongSound() && Thing_isa (our soundOrLongSound(), classSound) ? (Sound) our soundOrLongSound() : nullptr;
+	}
+	LongSound longSound() const {
+		return our soundOrLongSound() && Thing_isa (our soundOrLongSound(), classLongSound) ? (LongSound) our soundOrLongSound() : nullptr;
+	}
+
+	autoSpectrogram d_spectrogram;
+	double d_spectrogram_cursor;
+	autoPitch d_pitch;
+	autoIntensity d_intensity;
+	autoFormant d_formant;
+	autoPointProcess d_pulses;
+	GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+
+	virtual bool v_hasSpectrogram () { return true; }
+	virtual bool v_hasPitch       () { return true; }
+	virtual bool v_hasIntensity   () { return true; }
+	virtual bool v_hasFormants    () { return true; }
+	virtual bool v_hasPulses      () { return true; }
+	virtual void v_reset_analysis ();
+
+public:
+	void v1_info ()
+		override;
+	virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
+	virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
+	virtual void v_createMenuItems_intensity_picture (EditorMenu menu);
+	virtual void v_createMenuItems_formant_picture (EditorMenu menu);
+	virtual void v_createMenuItems_pulses_picture (EditorMenu menu);
+	virtual void v_draw_analysis ();
+	virtual void v_draw_analysis_pulses ();
+	virtual void v_draw_analysis_formants ();
+	virtual void v_createMenus_analysis ();
+	virtual void v_createMenuItems_formant (EditorMenu menu);
+
+	#include "SoundAnalysisArea_prefs.h"
+
+	void v9_repairPreferences () override;
 };
 
 DEFINE_FunctionArea_create (SoundAnalysisArea, Sound)
+
+void SoundAnalysisArea_haveVisibleSpectrogram (SoundAnalysisArea me);
+void SoundAnalysisArea_haveVisiblePitch (SoundAnalysisArea me);
+void SoundAnalysisArea_haveVisibleIntensity (SoundAnalysisArea me);
+void SoundAnalysisArea_haveVisibleFormants (SoundAnalysisArea me);
+void SoundAnalysisArea_haveVisiblePulses (SoundAnalysisArea me);
 
 /* End of file SoundAnalysisArea.h */
 #endif

@@ -32,7 +32,7 @@ static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Meld
 
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();
-	v_createMenus_analysis ();
+	our soundAnalysisArea -> v_createMenus_analysis ();
 }
 
 void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -44,8 +44,8 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 /********** UPDATE **********/
 
 void structSoundEditor :: v_distributeAreas () {
-	const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
-			our instancePref_intensity_show() || our instancePref_formant_show();
+	const bool showAnalysis = our soundAnalysisArea -> instancePref_spectrogram_show() || our soundAnalysisArea -> instancePref_pitch_show() ||
+			our soundAnalysisArea -> instancePref_intensity_show() || our soundAnalysisArea -> instancePref_formant_show();
 	if (showAnalysis) {
 		our soundArea -> setGlobalYRange_fraction (0.5, 1.0);
 		our soundAnalysisArea -> setGlobalYRange_fraction (0.0, 0.5);
@@ -56,8 +56,8 @@ void structSoundEditor :: v_distributeAreas () {
 }
 
 void structSoundEditor :: v_draw () {
-	const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
-			our instancePref_intensity_show() || our instancePref_formant_show();
+	const bool showAnalysis = our soundAnalysisArea -> instancePref_spectrogram_show() || our soundAnalysisArea -> instancePref_pitch_show() ||
+			our soundAnalysisArea -> instancePref_intensity_show() || our soundAnalysisArea -> instancePref_formant_show();
 	Melder_assert (our soundOrLongSound());
 
 	/*
@@ -79,12 +79,12 @@ void structSoundEditor :: v_draw () {
 		Draw data.
 	*/
 	FunctionArea_prepareCanvas (our soundArea.get());
-	if (our instancePref_pulses_show())
-		our v_draw_analysis_pulses ();
+	if (our soundAnalysisArea -> instancePref_pulses_show())
+		our soundAnalysisArea -> v_draw_analysis_pulses ();
 	FunctionArea_drawInside (our soundArea.get());
 	if (showAnalysis) {
 		FunctionArea_prepareCanvas (our soundAnalysisArea.get());
-		our v_draw_analysis ();
+		our soundAnalysisArea -> v_draw_analysis ();
 	}
 
 	/*
@@ -106,8 +106,8 @@ bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 		x_world > our startWindow && x_world < our endWindow
 	) {
 		const double y_fraction_insideAnalysesArea = our soundAnalysisArea -> y_fraction_globalToLocal (y_fraction_global);
-		our d_spectrogram_cursor = y_fraction_insideAnalysesArea * our instancePref_spectrogram_viewTo()
-				+ (1.0 - y_fraction_insideAnalysesArea) * our instancePref_spectrogram_viewFrom();
+		our soundAnalysisArea -> d_spectrogram_cursor = y_fraction_insideAnalysesArea * our soundAnalysisArea -> instancePref_spectrogram_viewTo()
+				+ (1.0 - y_fraction_insideAnalysesArea) * our soundAnalysisArea -> instancePref_spectrogram_viewFrom();
 	}
 	return SoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction_global);
 }
