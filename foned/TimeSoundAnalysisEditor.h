@@ -29,15 +29,17 @@
 Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	autoSoundAnalysisArea soundAnalysisArea;
 
-	void v1_info ()
-		override;
-	void v1_dataChanged ()
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
-		override;
-	void v_windowChanged ()
-		override
-	{
+	void v1_info () override {
+		our TimeSoundAnalysisEditor_Parent :: v1_info ();
+		if (our soundAnalysisArea)
+			our soundAnalysisArea -> v1_info ();
+	}
+	void v1_dataChanged () override {
+		our TimeSoundAnalysisEditor_Parent :: v1_dataChanged ();
+		if (our soundAnalysisArea)
+			our soundAnalysisArea -> v_reset_analysis ();
+	}
+	void v_windowChanged () override {
 		if (our soundAnalysisArea)
 			our soundAnalysisArea -> v_reset_analysis ();
 	}

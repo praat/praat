@@ -59,6 +59,7 @@ public:
 	void invalidateAllDerivedDataCaches () {
 		our v_invalidateAllDerivedDataCaches ();
 	}
+	virtual void v_windowChanged () { }
 
 protected:
 	virtual void v_invalidateAllDerivedDataCaches () { }   // derived classes can call inherited at end
@@ -134,6 +135,7 @@ public:
 		functionEditor() -> startSelection = startSelection;
 		functionEditor() -> endSelection = endSelection;
 	}
+	bool isClickAnchor = false;
 	bool defaultMouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 		functionEditor() -> viewDataAsWorldByFraction ();
 		return functionEditor() -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);

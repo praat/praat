@@ -253,6 +253,34 @@ void SoundAnalysisArea_haveVisiblePulses (SoundAnalysisArea me) {
 }
 
 
+#pragma mark - SoundAnalysisArea tracking
+
+bool SoundAnalysisArea_mouse (SoundAnalysisArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+	y_fraction = my y_fraction_globalToLocal (y_fraction);
+	if (event -> isClick()) {
+		if (my instancePref_pitch_show()) {
+			if (x_world >= my endWindow() && y_fraction > 0.96 && y_fraction <= 1.00) {
+				my setInstancePref_pitch_ceiling (my instancePref_pitch_ceiling() * 1.26);
+				my d_pitch. reset();
+				my d_intensity.reset();
+				my d_pulses. reset();
+				return FunctionEditor_UPDATE_NEEDED;
+			}
+			if (x_world >= my endWindow() && y_fraction > 0.92 && y_fraction <= 0.96) {
+				my setInstancePref_pitch_ceiling (my instancePref_pitch_ceiling() / 1.26);
+				my d_pitch. reset();
+				my d_intensity. reset();
+				my d_pulses. reset();
+				return FunctionEditor_UPDATE_NEEDED;
+			}
+		}
+	}
+	if (x_world > my startWindow() && x_world < my endWindow())
+		my d_spectrogram_cursor = y_fraction * my instancePref_spectrogram_viewTo()
+				+ (1.0 - y_fraction) * my instancePref_spectrogram_viewFrom();
+	return my defaultMouseInWideDataView (event, x_world, y_fraction);
+}
+
 #pragma mark - SoundAnalysisArea info
 
 void structSoundAnalysisArea :: v1_info () {
