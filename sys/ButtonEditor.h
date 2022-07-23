@@ -2,7 +2,7 @@
 #define _ButtonEditor_h_
 /* ButtonEditor.h
  *
- * Copyright (C) 1996-2005,2009-2012,2015,2016,2018,2019 Paul Boersma
+ * Copyright (C) 1996-2005,2009-2012,2015,2016,2018,2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ Thing_define (ButtonEditor, HyperPage) {
 		override { return false; }
 	void v_createChildren ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_draw ()
 		override;

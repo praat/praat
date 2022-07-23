@@ -42,8 +42,8 @@ static void menu_cb_KlattGridHelp (KlattGrid_RealTierEditor, EDITOR_ARGS_DIRECT)
 	Melder_help (U"KlattGrid");
 }
 
-void structKlattGrid_RealTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	KlattGrid_RealTierEditor_Parent :: v_createHelpMenuItems (menu);
+void structKlattGrid_RealTierEditor :: v_createMenuItems_help (EditorMenu menu) {
+	KlattGrid_RealTierEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"KlattGrid help", 0, menu_cb_KlattGridHelp);
 }
 
@@ -60,8 +60,8 @@ static void menu_cb_IntensityTierHelp (KlattGrid_IntensityTierEditor, EDITOR_ARG
 	Melder_help (U"IntensityTier");
 }
 
-void structKlattGrid_IntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	KlattGrid_IntensityTierEditor_Parent :: v_createHelpMenuItems (menu);
+void structKlattGrid_IntensityTierEditor :: v_createMenuItems_help (EditorMenu menu) {
+	KlattGrid_IntensityTierEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"IntensityTier help", 0, menu_cb_IntensityTierHelp);
 }
 
@@ -86,7 +86,7 @@ static void menu_cb_PitchTierHelp (KlattGrid_PitchTierEditor, EDITOR_ARGS_DIRECT
 	Melder_help (U"PitchTier");
 }
 
-void structKlattGrid_PitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
+void structKlattGrid_PitchTierEditor :: v_createMenuItems_help (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"PitchTierEditor help", 0, menu_cb_KlattGrid_PitchTierEditorHelp);
 	EditorMenu_addCommand (menu, U"PitchTier help", 0, menu_cb_PitchTierHelp);
 }

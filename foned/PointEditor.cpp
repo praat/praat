@@ -184,8 +184,8 @@ void structPointEditor :: v_createMenus () {
 			MODIFY_DATA__removePoints);
 }
 
-void structPointEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	PointEditor_Parent :: v_createHelpMenuItems (menu);
+void structPointEditor :: v_createMenuItems_help (EditorMenu menu) {
+	PointEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"PointEditor help", '?',
 			HELP__PointEditorHelp);
 }
@@ -229,7 +229,6 @@ void structPointEditor :: v_draw () {
 			Graphics_line (our graphics.get(), t, -0.9, t, +0.9);
 	}
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	our v_updateMenuItems ();
 }
 
 #pragma mark - PLAY

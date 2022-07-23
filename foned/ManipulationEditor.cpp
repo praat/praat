@@ -537,8 +537,8 @@ void structManipulationEditor :: v_createMenus () {
 	our synthPitchLpcButton = Editor_addCommand (this, U"Synth", U"LPC -- Pitch  (\"LPC pitch manipulation\")", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch_Lpc);
 }
 
-void structManipulationEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	ManipulationEditor_Parent :: v_createHelpMenuItems (menu);
+void structManipulationEditor :: v_createMenuItems_help (EditorMenu menu) {
+	ManipulationEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"ManipulationEditor help", '?', menu_cb_ManipulationEditorHelp);
 	EditorMenu_addCommand (menu, U"Manipulation help", 0, menu_cb_ManipulationHelp);
 }

@@ -38,7 +38,7 @@ Thing_define (EEGWindow, AnyTextGridEditor) {
 		trace (sound -> nx, U" ", sound -> ny);
 		our soundArea -> functionChanged (our eeg() -> sound.get());
 	}
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_createMenuItems_extract (EditorMenu menu)
 		override;

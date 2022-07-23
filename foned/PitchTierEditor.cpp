@@ -30,8 +30,8 @@ static void menu_cb_PitchTierHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) {
 	HELP (U"PitchTier")
 }
 
-void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	PitchTierEditor_Parent :: v_createHelpMenuItems (menu);
+void structPitchTierEditor :: v_createMenuItems_help (EditorMenu menu) {
+	PitchTierEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"PitchTierEditor help", 0, menu_cb_PitchTierEditorHelp);
 	EditorMenu_addCommand (menu, U"PitchTier help", 0, menu_cb_PitchTierHelp);
 }

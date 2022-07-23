@@ -52,6 +52,11 @@ Thing_define (SoundAnalysisArea, FunctionArea) {
 	virtual bool v_hasPulses      () { return true; }
 	virtual void v_reset_analysis ();
 
+	bool hasContentToShow () {
+		return our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
+				our instancePref_intensity_show() || our instancePref_formant_show();
+	}
+
 public:
 	void v1_info ()
 		override;
@@ -63,7 +68,8 @@ public:
 	virtual void v_draw_analysis ();
 	virtual void v_draw_analysis_pulses ();
 	virtual void v_draw_analysis_formants ();
-	virtual void v_createMenus_analysis ();
+	void v_createMenus ()
+		override;
 	virtual void v_createMenuItems_formant (EditorMenu menu);
 
 	#include "SoundAnalysisArea_prefs.h"

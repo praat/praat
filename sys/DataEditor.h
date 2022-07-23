@@ -2,7 +2,7 @@
 #define _DataEditor_h_
 /* DataEditor.h
  *
- * Copyright (C) 1995-2011,2012,2015 Paul Boersma
+ * Copyright (C) 1995-2012,2014-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ Thing_define (DataSubEditor, Editor) {
 		override { return false; }
 	void v_createChildren ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 
 	virtual integer v_countFields () { return 0; }

@@ -128,7 +128,7 @@ Thing_define (SoundRecorder, Editor) {
 		override;
 	void v_createMenus ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 
 	#include "SoundRecorder_prefs.h"

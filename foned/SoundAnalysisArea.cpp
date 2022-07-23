@@ -350,8 +350,11 @@ static const conststring32 SoundAnalysisArea_partString_locative (int part) {
 
 static int makeQueriable (SoundAnalysisArea me, bool allowCursor, double *tmin, double *tmax) {
 	if (my endWindow() - my startWindow() > my instancePref_longestAnalysis())
-		Melder_throw (U"Window too long to show analyses. Zoom in to at most ", Melder_half (my instancePref_longestAnalysis()), U" seconds "
-			U"or set the \"longest analysis\" to at least ", Melder_half (my endWindow() - my startWindow()), U" seconds (with \"Show analyses\" in the View menu).");
+		Melder_throw (U"Window too long to show analyses. "
+			U"Zoom in to at most ", Melder_half (my instancePref_longestAnalysis()), U" seconds "
+			U"or set the \"longest analysis\" to at least ", Melder_half (my endWindow() - my startWindow()),
+			U" seconds (with \"Show analyses\" in the Analysis menu)."
+		);
 	if (my startSelection() == my endSelection()) {
 		if (allowCursor) {
 			*tmin = *tmax = my startSelection();
@@ -1553,7 +1556,7 @@ void structSoundAnalysisArea :: v_createMenuItems_formant (EditorMenu menu) {
 			CONVERT_DATA_TO_ONE__ExtractVisibleFormantContour, this);
 }
 
-void structSoundAnalysisArea :: v_createMenus_analysis () {
+void structSoundAnalysisArea :: v_createMenus () {
 	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Analysis", 0);
 	FunctionAreaMenu_addCommand (menu, U"Show analyses...", 0, menu_cb_showAnalyses, this);
 	FunctionAreaMenu_addCommand (menu, U"Time step settings...", 0, menu_cb_timeStepSettings, this);

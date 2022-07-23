@@ -25,7 +25,7 @@
 Thing_define (PitchTierEditor, RealTierEditor) {
 	PitchTierArea pitchTierArea() { return static_cast <PitchTierArea> (our realTierArea.get()); }
 
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_play (double tmin, double tmax)
 		override;

@@ -23,7 +23,7 @@
 #include "Sound.h"
 
 Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_play (double startTime, double endTime)
 		override;

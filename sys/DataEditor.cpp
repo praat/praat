@@ -1,6 +1,6 @@
 /* DataEditor.cpp
  *
- * Copyright (C) 1995-2021 Paul Boersma
+ * Copyright (C) 1995-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -334,8 +334,8 @@ void structDataSubEditor :: v_createChildren () {
 
 static void menu_cb_help (DataSubEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Inspect"); }
 
-void structDataSubEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	DataSubEditor_Parent :: v_createHelpMenuItems (menu);
+void structDataSubEditor :: v_createMenuItems_help (EditorMenu menu) {
+	DataSubEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"DataEditor help", '?', menu_cb_help);
 }
 

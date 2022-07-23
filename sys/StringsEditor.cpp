@@ -26,8 +26,8 @@ static void menu_cb_help (StringsEditor /* me */, EDITOR_ARGS_DIRECT) {
 	HELP (U"StringsEditor")
 }
 
-void structStringsEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	StringsEditor_Parent :: v_createHelpMenuItems (menu);
+void structStringsEditor :: v_createMenuItems_help (EditorMenu menu) {
+	StringsEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"StringsEditor help", U'?', menu_cb_help);
 }
 

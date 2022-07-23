@@ -25,8 +25,8 @@ static void HELP_AmplitudeTierHelp (AmplitudeTierEditor /* me */, EDITOR_ARGS_DI
 	HELP (U"AmplitudeTier")
 }
 
-void structAmplitudeTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	AmplitudeTierEditor_Parent :: v_createHelpMenuItems (menu);
+void structAmplitudeTierEditor :: v_createMenuItems_help (EditorMenu menu) {
+	AmplitudeTierEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"AmplitudeTier help", 0, HELP_AmplitudeTierHelp);
 }
 

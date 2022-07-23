@@ -1,6 +1,6 @@
 /* SoundArea.cpp
  *
- * Copyright (C) 2022 Paul Boersma
+ * Copyright (C) 2022 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,16 @@ void SoundArea_draw (SoundArea me) {
 	const bool cursorVisible = ( my startSelection() == my endSelection() &&
 			my startSelection() >= my startWindow() && my startSelection() <= my endWindow() );
 	Graphics_setColour (my graphics(), Melder_BLACK);
+	if (my longSound() && my endWindow() - my startWindow() > my longSound() -> bufferLength) {
+		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my graphics(), Melder_BLACK);
+		Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (my graphics(), 0.5, 0.5,   U"(window longer than ",
+				Melder_float (Melder_single (my longSound() -> bufferLength)), U" seconds)");
+		Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_TOP);
+		Graphics_text (my graphics(), 0.5, 0.5, U"(zoom in to see the samples)");
+		return;
+	}
 	bool fits;
 	try {
 		fits = ( my sound() ? true : LongSound_haveWindow (my longSound(), my startWindow(), my endWindow()) );

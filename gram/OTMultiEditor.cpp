@@ -166,8 +166,8 @@ void structOTMultiEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Remove constraint", 0, menu_cb_removeConstraint);
 }
 
-void structOTMultiEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	OTMultiEditor_Parent :: v_createHelpMenuItems (menu);
+void structOTMultiEditor :: v_createMenuItems_help (EditorMenu menu) {
+	OTMultiEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"OT learning tutorial", 0, menu_cb_OTLearningTutorial);
 }
 

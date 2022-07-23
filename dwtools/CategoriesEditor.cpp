@@ -592,8 +592,8 @@ static void gui_button_cb_redo (CategoriesEditor me, GuiButtonEvent /* event */)
 
 #pragma mark - Editor methods
 
-void structCategoriesEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	CategoriesEditor_Parent :: v_createHelpMenuItems (menu);
+void structCategoriesEditor :: v_createMenuItems_help (EditorMenu menu) {
+	CategoriesEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"CategoriesEditor help", '?', menu_cb_help);
 }
 
