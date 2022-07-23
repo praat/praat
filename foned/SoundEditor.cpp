@@ -19,16 +19,10 @@
 #include "SoundEditor.h"
 #include "EditorM.h"
 
-Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
+Thing_implement (SoundEditor, FunctionEditor, 0);
 
 static void menu_cb_SoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"SoundEditor"); }
 static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"LongSoundEditor"); }
-
-void structSoundEditor :: v_createMenus () {
-	structFunctionEditor :: v_createMenus ();
-	our soundArea -> v_createMenus ();
-	our soundAnalysisArea -> v_createMenus ();
-}
 
 void structSoundEditor :: v_createMenuItems_help (EditorMenu menu) {
 	structFunctionEditor :: v_createMenuItems_help (menu);
@@ -62,15 +56,24 @@ void structSoundEditor :: v_play (double startTime, double endTime) {
 	SoundArea_play (our soundArea.get(), startTime, endTime);
 }
 
-bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction_global) {
-	if (our soundAnalysisArea -> y_fraction_globalIsInside (y_fraction_global) &&
-		x_world > our startWindow && x_world < our endWindow
-	) {
-		const double y_fraction_insideAnalysesArea = our soundAnalysisArea -> y_fraction_globalToLocal (y_fraction_global);
-		our soundAnalysisArea -> d_spectrogram_cursor = y_fraction_insideAnalysesArea * our soundAnalysisArea -> instancePref_spectrogram_viewTo()
-				+ (1.0 - y_fraction_insideAnalysesArea) * our soundAnalysisArea -> instancePref_spectrogram_viewFrom();
+bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
+	if (event -> isClick ()) {
+		our soundArea -> isClickAnchor = our soundArea -> y_fraction_globalIsInside (globalY_fraction);
+		our soundAnalysisArea -> isClickAnchor = our soundAnalysisArea -> y_fraction_globalIsInside (globalY_fraction);
 	}
-	return SoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction_global);
+	bool result = false;
+	if (our soundArea -> isClickAnchor) {
+		result = SoundArea_mouse (our soundArea.get(), event, x_world, globalY_fraction);
+	} else if (our soundAnalysisArea && our soundAnalysisArea -> isClickAnchor) {
+		result = SoundAnalysisArea_mouse (our soundAnalysisArea.get(), event, x_world, globalY_fraction);
+	} else {
+		result = our structFunctionEditor :: v_mouseInWideDataView (event, x_world, globalY_fraction);
+	}
+	if (event -> isDrop()) {
+		our soundArea -> isClickAnchor = false;
+		our soundAnalysisArea -> isClickAnchor = false;
+	}
+	return result;
 }
 
 autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSound) {

@@ -2113,8 +2113,6 @@ void praat_Sound_init () {
 	structSoundRecorder           :: f_preferences ();
 	structFunctionEditor          :: f_preferences ();
 	LongSound_preferences ();
-	structTimeSoundEditor         :: f_preferences ();
-	structTimeSoundAnalysisEditor :: f_preferences ();
 
 	Melder_setRecordProc (recordProc);
 	Melder_setRecordFromFileProc (recordFromFileProc);

@@ -28,20 +28,51 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	Sound sound() { return our soundArea ? our soundArea -> sound() : nullptr; }
 	LongSound longSound() { return our soundArea ? our soundArea -> longSound() : nullptr; }
 
-	void v1_info ()
-		override;
-	void v_createMenus ()
-		override;
-	void v_createMenuItems_file (EditorMenu menu)
-		override;
-	void v_createMenuItems_edit (EditorMenu menu)
-		override;
-	void v_updateMenuItems ()
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
-		override;   // catch channel scrolling and channel muting (last checked 2020-07-22)
-
-	bool clickedInWideSoundArea = false;
+	void v1_info () override {
+		structFunctionEditor :: v1_info ();
+		if (our soundArea)
+			our soundArea -> v1_info ();
+	}
+	void v_createMenus () override {
+		structFunctionEditor :: v_createMenus ();
+		if (our soundArea)
+			our soundArea -> v_createMenus ();
+	}
+	void v_createMenuItems_file (EditorMenu menu) override {
+		structFunctionEditor :: v_createMenuItems_file (menu);
+		our v_createMenuItems_file_write (menu);
+		if (our soundArea)
+			our soundArea -> v_createMenuItems_file (menu);
+		EditorMenu_addCommand (menu, U"-- after file write --", 0, nullptr);
+	}
+	void v_createMenuItems_edit (EditorMenu menu) override {
+		structFunctionEditor :: v_createMenuItems_edit (menu);
+		if (our soundArea)
+			our soundArea -> v_createMenuItems_edit (menu);
+	}
+	void v_updateMenuItems () override {
+		if (! our soundOrLongSound())
+			return;
+		if (our soundArea)
+			our soundArea -> v_updateMenuItems ();
+	}
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) override {
+		if (event -> isClick ()) {
+			if (our soundArea)
+				our soundArea -> isClickAnchor = our soundArea -> y_fraction_globalIsInside (globalY_fraction);
+		}
+		bool result = false;
+		if (our soundArea && our soundArea -> isClickAnchor) {
+			result = SoundArea_mouse (our soundArea.get(), event, x_world, globalY_fraction);
+		} else {
+			result = our TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
+		}
+		if (event -> isDrop()) {
+			if (our soundArea)
+				our soundArea -> isClickAnchor = false;
+		}
+		return result;
+	}
 };
 
 /* End of file TimeSoundEditor.h */

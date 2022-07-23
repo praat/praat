@@ -231,8 +231,7 @@ static void menu_cb_ConvertToBackslashTrigraphs (AnyTextGridEditor me, EDITOR_AR
 	Editor_save (me, U"Convert to Backslash Trigraphs");
 	TextGrid_convertToBackslashTrigraphs (my textGrid());
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
-	FunctionEditor_updateText (me);
-	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
 	Editor_broadcastDataChanged (me);
 }
 
@@ -240,8 +239,7 @@ static void menu_cb_ConvertToUnicode (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) 
 	Editor_save (me, U"Convert to Unicode");
 	TextGrid_convertToUnicode (my textGrid());
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
-	FunctionEditor_updateText (me);
-	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
 	Editor_broadcastDataChanged (me);
 }
 
@@ -641,8 +639,7 @@ static void menu_cb_RemovePointOrBoundary (AnyTextGridEditor me, EDITOR_ARGS_DIR
 		tier -> points. removeItem (selectedPoint);
 	}
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
-	FunctionEditor_updateText (me);
-	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
 	Editor_broadcastDataChanged (me);
 }
 
@@ -913,7 +910,6 @@ static void menu_cb_RenameTier (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
 
 		Thing_setName (tier, newName);
 
-		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -940,8 +936,7 @@ static void menu_cb_RemoveAllTextFromTier (AnyTextGridEditor me, EDITOR_ARGS_DIR
 		TextTier_removeText (textTier);
 
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
-	FunctionEditor_updateText (me);
-	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
 	Editor_broadcastDataChanged (me);
 }
 
@@ -953,10 +948,9 @@ static void menu_cb_RemoveTier (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove tier");
 	my textGrid() -> tiers-> removeItem (my textGridArea -> selectedTier);
 
-	my textGridArea -> selectedTier = 1;
+	//my textGridArea -> selectedTier = 1; TRY OUT 2022-07-23
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
-	FunctionEditor_updateText (me);
-	//FunctionEditor_redraw (me); TRY OUT 2022-06-12
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
 	Editor_broadcastDataChanged (me);
 }
 
@@ -979,8 +973,7 @@ static void menu_cb_AddIntervalTier (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
 
 		my textGridArea -> selectedTier = position;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
-		FunctionEditor_updateText (me);
-		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
+		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -1004,8 +997,7 @@ static void menu_cb_AddPointTier (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
 
 		my textGridArea -> selectedTier = position;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
-		FunctionEditor_updateText (me);
-		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
+		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -1033,8 +1025,7 @@ static void menu_cb_DuplicateTier (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
 
 		my textGridArea -> selectedTier = position;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
-		FunctionEditor_updateText (me);
-		//FunctionEditor_redraw (me); TRY OUT 2022-06-12
+		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
@@ -1196,8 +1187,8 @@ void structAnyTextGridEditor :: v1_dataChanged () {
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
 		Do a simple guess.
 	*/
+	Melder_clipRight (& our textGridArea -> selectedTier, our textGrid() -> tiers->size);   // crucial: before v_updateText (bug 2022-07-23)!
 	AnyTextGridEditor_Parent :: v1_dataChanged ();   // does all the updating
-	Melder_clipRight (& our textGridArea -> selectedTier, our textGrid() -> tiers->size);
 }
 
 /********** DRAWING AREA **********/
@@ -1392,7 +1383,7 @@ void structAnyTextGridEditor :: v_draw () {
 	const integer numberOfTiers = our textGrid() -> tiers->size;
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
 	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
-	const bool showAnalysis = (
+	const bool showAnalysis = our soundAnalysisArea && (
 		our soundAnalysisArea -> instancePref_spectrogram_show() ||
 		our soundAnalysisArea -> instancePref_pitch_show() ||
 		our soundAnalysisArea -> instancePref_intensity_show() ||
@@ -1403,9 +1394,9 @@ void structAnyTextGridEditor :: v_draw () {
 	/*
 		Draw optional sound.
 	*/
-	if (our soundOrLongSound() || our soundAnalysisArea -> instancePref_pulses_show()) {
+	if (our soundOrLongSound() || our soundAnalysisArea && our soundAnalysisArea -> instancePref_pulses_show()) {
 		FunctionArea_prepareCanvas (our soundArea.get());
-		if (our soundAnalysisArea -> instancePref_pulses_show())
+		if (our soundAnalysisArea && our soundAnalysisArea -> instancePref_pulses_show())
 			our soundAnalysisArea -> v_draw_analysis_pulses ();
 		FunctionArea_drawInside (our soundArea.get());
 		if (showAnalysis) {

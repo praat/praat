@@ -52,6 +52,15 @@ Thing_define (SoundAnalysisArea, FunctionArea) {
 	virtual bool v_hasPulses      () { return true; }
 	virtual void v_reset_analysis ();
 
+protected:
+	void v_computeAuxiliaryData () override {
+		our v_reset_analysis ();
+	}
+
+public:
+	void v_windowChanged () override {
+		our v_reset_analysis ();
+	}
 	bool hasContentToShow () {
 		return our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
 				our instancePref_intensity_show() || our instancePref_formant_show();
@@ -84,6 +93,8 @@ void SoundAnalysisArea_haveVisiblePitch (SoundAnalysisArea me);
 void SoundAnalysisArea_haveVisibleIntensity (SoundAnalysisArea me);
 void SoundAnalysisArea_haveVisibleFormants (SoundAnalysisArea me);
 void SoundAnalysisArea_haveVisiblePulses (SoundAnalysisArea me);
+
+bool SoundAnalysisArea_mouse (SoundAnalysisArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
 /* End of file SoundAnalysisArea.h */
 #endif

@@ -18,19 +18,55 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TimeSoundAnalysisEditor.h"
+#include "FunctionEditor.h"
+#include "LongSoundArea.h"
+#include "SoundAnalysisArea.h"
 
-Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
+Thing_define (SoundEditor, FunctionEditor) {
+	SampledXY soundOrLongSound() { return our soundArea ? our soundArea -> soundOrLongSound() : nullptr; }
+	Sound sound() { return our soundArea ? our soundArea -> sound() : nullptr; }
+	LongSound longSound() { return our soundArea ? our soundArea -> longSound() : nullptr; }
+
+	autoSoundArea soundArea;
+	autoSoundAnalysisArea soundAnalysisArea;
+
 	void v1_dataChanged () override {
 		SoundEditor_Parent :: v1_dataChanged ();
 		Thing_cast (SampledXY, soundOrLongSound, our data());
 		our soundArea -> functionChanged (soundOrLongSound);
 		our soundAnalysisArea -> functionChanged (soundOrLongSound);
 	}
-	void v_createMenus ()
-		override;
+	void v_windowChanged () override {
+		our soundArea -> v_windowChanged ();
+		our soundAnalysisArea -> v_windowChanged ();
+	}
+	void v1_info () override {
+		structFunctionEditor :: v1_info ();
+		our soundArea -> v1_info ();
+		our soundAnalysisArea -> v1_info ();
+	}
+	void v_createMenus () override {
+		structFunctionEditor :: v_createMenus ();
+		our soundArea -> v_createMenus ();
+		our soundAnalysisArea -> v_createMenus ();
+	}
+	void v_createMenuItems_file (EditorMenu menu) override {
+		structFunctionEditor :: v_createMenuItems_file (menu);
+		our v_createMenuItems_file_write (menu);
+		if (our soundArea)
+			our soundArea -> v_createMenuItems_file (menu);
+		EditorMenu_addCommand (menu, U"-- after file write --", 0, nullptr);
+	}
+	void v_createMenuItems_edit (EditorMenu menu) override {
+		structFunctionEditor :: v_createMenuItems_edit (menu);
+		if (our soundArea)
+			our soundArea -> v_createMenuItems_edit (menu);
+	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
+	void v_updateMenuItems () override {
+		our soundArea -> v_updateMenuItems ();
+	}
 	void v_distributeAreas ()
 		override;
 	void v_draw ()
