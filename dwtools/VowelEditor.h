@@ -18,11 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20070130 First
- djmw 20110306 Latest modification.
-*/
-
 #include "RealTier.h"
 #include "Table.h"
 #include "Editor.h"
@@ -57,7 +52,7 @@ Thing_define (VowelEditor, Editor) {
 		override;
 	void v_createMenus ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 
 	#include "VowelEditor_prefs.h"

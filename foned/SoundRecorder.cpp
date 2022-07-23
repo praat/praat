@@ -1008,8 +1008,8 @@ void structSoundRecorder :: v_createMenus () {
 		Editor_addCommand (this, U"Meter", U"Centre of gravity ~ intensity", GuiMenu_RADIO_NEXT, menu_cb_centreOfGravityVersusIntensity);
 }
 
-void structSoundRecorder :: v_createHelpMenuItems (EditorMenu menu) {
-	SoundRecorder_Parent :: v_createHelpMenuItems (menu);
+void structSoundRecorder :: v_createMenuItems_help (EditorMenu menu) {
+	SoundRecorder_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"SoundRecorder help", '?', menu_cb_SoundRecorder_help);
 }
 

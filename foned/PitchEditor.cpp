@@ -134,8 +134,8 @@ void structPitchEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Selection", U"Octave down", 0, menu_cb_octaveDown);
 }
 
-void structPitchEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	PitchEditor_Parent :: v_createHelpMenuItems (menu);
+void structPitchEditor :: v_createMenuItems_help (EditorMenu menu) {
+	PitchEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"PitchEditor help", U'?', menu_cb_PitchEditorHelp);
 	EditorMenu_addCommand (menu, U"Pitch help", 0, menu_cb_PitchHelp);
 }

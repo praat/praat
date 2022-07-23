@@ -180,8 +180,8 @@ void structSpectrumEditor :: v_createMenuItems_view (EditorMenu menu) {
 	SpectrumEditor_Parent :: v_createMenuItems_view (menu);
 }
 
-void structSpectrumEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	SpectrumEditor_Parent :: v_createHelpMenuItems (menu);
+void structSpectrumEditor :: v_createMenuItems_help (EditorMenu menu) {
+	SpectrumEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"SpectrumEditor help", '?', menu_cb_help_SpectrumEditor);
 	EditorMenu_addCommand (menu, U"Spectrum help", 0, menu_cb_help_Spectrum);
 }

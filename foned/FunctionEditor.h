@@ -153,7 +153,7 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 	void v_createChildren ()
 		override;
-	void v_createHelpMenuItems (EditorMenu)
+	void v_createMenuItems_help (EditorMenu)
 		override;
 
 	void v1_dataChanged ()

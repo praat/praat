@@ -336,7 +336,7 @@ void structFormantPathEditor :: v_createMenus () {
 //	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 
 	if (our soundOrLongSound())
-		our soundAnalysisArea -> v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
+		our soundAnalysisArea -> v_createMenus ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	menu = Editor_addMenu (this, U"Candidates", 0);
 	EditorMenu_addCommand (menu, U"Candidate modelling settings...", 0, menu_cb_candidate_modellingSettings);
 	EditorMenu_addCommand (menu, U"Advanced candidate drawing settings...", 0, menu_cb_AdvancedCandidateDrawingSettings);
@@ -347,8 +347,8 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Stress of fits listing", 0, INFO_DATA__stressOfFitsListing);
 }
 
-void structFormantPathEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	FormantPathEditor_Parent :: v_createHelpMenuItems (menu);
+void structFormantPathEditor :: v_createMenuItems_help (EditorMenu menu) {
+	FormantPathEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"FormantPathEditor help", '?', menu_cb_FormantPathEditorHelp);
 	EditorMenu_addCommand (menu, U"About special symbols", 0, menu_cb_AboutSpecialSymbols);
 	EditorMenu_addCommand (menu, U"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
@@ -374,7 +374,6 @@ void structFormantPathEditor :: v1_dataChanged () {
 	//	Melder_clipRight (& our selectedTier, our textgrid -> tiers->size);
 	//}
 	our soundAnalysisArea -> d_formant = FormantPath_extractFormant (our formantPath());
-	our v_updateMenuItems ();
 }
 
 /********** DRAWING AREA **********/
@@ -427,11 +426,6 @@ void structFormantPathEditor :: v_draw () {
 			Graphics_line (our graphics.get(), our endWindow, soundBottom, our endWindow, soundBottom2);
 		}
 	}*/
-
-	/*
-		Finally, us usual, update the menus.
-	*/
-	our v_updateMenuItems ();
 }
 
 void structFormantPathEditor :: v_drawSelectionViewer () {

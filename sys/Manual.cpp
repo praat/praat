@@ -406,8 +406,8 @@ void structManual :: v_createMenus () {
 	Editor_addCommand (this, U"Go to", U"Search for page (list)...", 0, menu_cb_searchForPageList);
 }
 
-void structManual :: v_createHelpMenuItems (EditorMenu menu) {
-	Manual_Parent :: v_createHelpMenuItems (menu);
+void structManual :: v_createMenuItems_help (EditorMenu menu) {
+	Manual_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"Manual help", '?', menu_cb_help);
 }
 

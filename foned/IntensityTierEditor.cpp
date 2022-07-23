@@ -25,8 +25,8 @@ static void HELP_IntensityTierHelp (IntensityTierEditor, EDITOR_ARGS_DIRECT) {
 	HELP (U"IntensityTier")
 }
 
-void structIntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	IntensityTierEditor_Parent :: v_createHelpMenuItems (menu);
+void structIntensityTierEditor :: v_createMenuItems_help (EditorMenu menu) {
+	IntensityTierEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"IntensityTier help", 0, HELP_IntensityTierHelp);
 }
 

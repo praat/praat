@@ -23,8 +23,8 @@ Thing_implement (OptimalCeilingTierEditor, RealTierEditor, 0);
 
 static void menu_cb_OptimalCeilingTierHelp (OptimalCeilingTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"OptimalCeilingTier"); }
 
-void structOptimalCeilingTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	OptimalCeilingTierEditor_Parent :: v_createHelpMenuItems (menu);
+void structOptimalCeilingTierEditor :: v_createMenuItems_help (EditorMenu menu) {
+	OptimalCeilingTierEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"OptimalCeilingTier help", 0, menu_cb_OptimalCeilingTierHelp);
 }
 

@@ -43,7 +43,7 @@ Thing_define (Manual, HyperPage) {
 		override;
 	bool v_hasQueryMenu ()
 		override { return false; }
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_draw ()
 		override;

@@ -25,7 +25,7 @@
 Thing_define (IntensityTierEditor, RealTierEditor) {
 	IntensityTier intensityTier() { return static_cast <IntensityTier> (our data()); }
 
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_play (double tmin, double tmax)
 		override;

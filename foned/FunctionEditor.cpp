@@ -1128,8 +1128,8 @@ void structFunctionEditor :: v_createMenuItems_select (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Move end of selection right", GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
 }
 
-void structFunctionEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	FunctionEditor_Parent :: v_createHelpMenuItems (menu);
+void structFunctionEditor :: v_createMenuItems_help (EditorMenu menu) {
+	FunctionEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"Praat Intro", 0, HELP__intro);
 }
 
@@ -1220,6 +1220,12 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 		else
 			my v_drawSelectionViewer ();
 	}
+
+	/*
+		Not really drawing, but until further notice we believe that updating the menu items
+		(i.e. making them sensitive or insensitive) could be done as often as redrawing).
+	*/
+	my v_updateMenuItems ();
 }
 
 bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double mouseTime, double /* mouseY_fraction */) {

@@ -92,7 +92,6 @@ Thing_define (Editor, DataGui) {
 	void v_createMenuItems_query (EditorMenu menu)
 		override;
 	virtual void v_createMenuItems_query_info (EditorMenu menu);
-	virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
 
 	virtual void v_createChildren () { }
 

@@ -469,7 +469,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	if (my v_hasMenuBar ()) {
 		my v_createMenus ();
 		EditorMenu helpMenu = Editor_addMenu (me, U"Help", 0);
-		my v_createHelpMenuItems (helpMenu);
+		my v_createMenuItems_help (helpMenu);
 		EditorMenu_addCommand (helpMenu, U"-- search --", 0, nullptr);
 		my searchButton = EditorMenu_addCommand (helpMenu, U"Search manual...", 'M', menu_cb_searchManual);
 		if (my v_scriptable ()) {

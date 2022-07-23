@@ -1136,11 +1136,11 @@ void structAnyTextGridEditor :: v_createMenus () {
 	}
 
 	if (our soundArea)
-		our soundAnalysisArea -> v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
+		our soundAnalysisArea -> v_createMenus ();   // insert some of the ancestor's menus *after* the TextGrid menus
 }
 
-void structAnyTextGridEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	AnyTextGridEditor_Parent :: v_createHelpMenuItems (menu);
+void structAnyTextGridEditor :: v_createMenuItems_help (EditorMenu menu) {
+	AnyTextGridEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
 	EditorMenu_addCommand (menu, U"About special symbols", 0, menu_cb_AboutSpecialSymbols);
 	EditorMenu_addCommand (menu, U"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
@@ -1507,11 +1507,6 @@ void structAnyTextGridEditor :: v_draw () {
 		Graphics_text (our graphics.get(), our draggingTime, 1.0, Melder_fixed (our draggingTime, 6));
 		Graphics_xorOff (our graphics.get());
 	}
-
-	/*
-		Finally, us usual, update the menus.
-	*/
-	our v_updateMenuItems ();
 }
 
 static const conststring32 characters [12] [10] = {

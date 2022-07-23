@@ -300,8 +300,8 @@ void structTableEditor :: v_createMenus () {
 	#endif
 }
 
-void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	TableEditor_Parent :: v_createHelpMenuItems (menu);
+void structTableEditor :: v_createMenuItems_help (EditorMenu menu) {
+	TableEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"TableEditor help", U'?', menu_cb_TableEditorHelp);
 }
 

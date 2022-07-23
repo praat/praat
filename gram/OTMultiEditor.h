@@ -35,7 +35,7 @@ Thing_define (OTMultiEditor, HyperPage) {
 		override;
 	void v_createMenus ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_draw ()
 		override;

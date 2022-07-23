@@ -23,8 +23,8 @@ Thing_implement (DurationTierEditor, RealTierEditor, 0);
 
 static void menu_cb_DurationTierHelp (DurationTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"DurationTier"); }
 
-void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	DurationTierEditor_Parent :: v_createHelpMenuItems (menu);
+void structDurationTierEditor :: v_createMenuItems_help (EditorMenu menu) {
+	DurationTierEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"DurationTier help", 0, menu_cb_DurationTierHelp);
 }
 

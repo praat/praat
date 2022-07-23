@@ -27,14 +27,14 @@
 Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
 	KlattGrid klattgrid() { return static_cast <KlattGrid> (our data()); }
 
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_play (double startTime, double endTime)
 		override;
 };
 
 Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	conststring32 v_quantityText ()
 		override { return U"Intensity (dB)"; }
@@ -55,7 +55,7 @@ Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
 		our structFunctionEditor :: v1_dataChanged ();
 		our realTierArea -> functionChanged (our klattgrid() -> phonation -> pitch.get());
 	}
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	conststring32 v_quantityText ()
 		override { return U"Frequency (Hz)"; }

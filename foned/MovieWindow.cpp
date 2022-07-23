@@ -33,7 +33,7 @@ void structMovieWindow :: v_createMenus () {
 	our MovieWindow_Parent :: v_createMenus ();
 	//EditorMenu menu = Editor_addMenu (this, L"Movie", 0);
 	//EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
-	our soundAnalysisArea -> v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the Movie menus
+	our soundAnalysisArea -> v_createMenus ();   // insert some of the ancestor's menus *after* the Movie menus
 }
 
 /********** DRAWING AREA **********/
@@ -97,7 +97,6 @@ void structMovieWindow :: v_draw () {
 			Graphics_resetViewport (our graphics.get(), viewport);
 		}
 	}
-	our v_updateMenuItems ();
 }
 
 bool structMovieWindow :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {

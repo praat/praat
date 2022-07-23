@@ -34,13 +34,13 @@ void structTimeSoundEditor :: v1_info () {
 		our soundArea -> v1_info ();
 }
 
-void structTimeSoundEditor:: v_createMenus () {
+void structTimeSoundEditor :: v_createMenus () {
 	TimeSoundEditor_Parent :: v_createMenus ();
 	if (our soundArea)
 		our soundArea -> v_createMenus ();
 }
 void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
-	our TimeSoundEditor_Parent :: v_createMenuItems_file (menu);
+	TimeSoundEditor_Parent :: v_createMenuItems_file (menu);
 	our v_createMenuItems_file_write (menu);
 	if (our soundArea)
 		our soundArea -> v_createMenuItems_file (menu);

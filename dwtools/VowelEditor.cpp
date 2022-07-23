@@ -1222,8 +1222,8 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"View", U"Trajectory time marks every...", 0, menu_cb_trajectoryTimeMarksEvery);
 }
 
-void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	VowelEditor_Parent :: v_createHelpMenuItems (menu);
+void structVowelEditor :: v_createMenuItems_help (EditorMenu menu) {
+	VowelEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"VowelEditor help", '?', menu_cb_help);
 }
 

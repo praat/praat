@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,36 +17,28 @@
  */
 
 #include "SoundEditor.h"
-#include "Sound_and_Spectrogram.h"
-#include "Pitch.h"
 #include "EditorM.h"
 
 Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
-
-/********** METHODS **********/
-
-/***** HELP MENU *****/
 
 static void menu_cb_SoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"SoundEditor"); }
 static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"LongSoundEditor"); }
 
 void structSoundEditor :: v_createMenus () {
-	SoundEditor_Parent :: v_createMenus ();
-	our soundAnalysisArea -> v_createMenus_analysis ();
+	structFunctionEditor :: v_createMenus ();
+	our soundArea -> v_createMenus ();
+	our soundAnalysisArea -> v_createMenus ();
 }
 
-void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	SoundEditor_Parent :: v_createHelpMenuItems (menu);
+void structSoundEditor :: v_createMenuItems_help (EditorMenu menu) {
+	structFunctionEditor :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"SoundEditor help", '?', menu_cb_SoundEditorHelp);
 	EditorMenu_addCommand (menu, U"LongSoundEditor help", 0, menu_cb_LongSoundEditorHelp);
+	// BUG: add help on Sound area and Sound analysis area
 }
 
-/********** UPDATE **********/
-
 void structSoundEditor :: v_distributeAreas () {
-	const bool showAnalysis = our soundAnalysisArea -> instancePref_spectrogram_show() || our soundAnalysisArea -> instancePref_pitch_show() ||
-			our soundAnalysisArea -> instancePref_intensity_show() || our soundAnalysisArea -> instancePref_formant_show();
-	if (showAnalysis) {
+	if (our soundAnalysisArea -> hasContentToShow ()) {
 		our soundArea -> setGlobalYRange_fraction (0.5, 1.0);
 		our soundAnalysisArea -> setGlobalYRange_fraction (0.0, 0.5);
 	} else {
@@ -56,49 +48,18 @@ void structSoundEditor :: v_distributeAreas () {
 }
 
 void structSoundEditor :: v_draw () {
-	const bool showAnalysis = our soundAnalysisArea -> instancePref_spectrogram_show() || our soundAnalysisArea -> instancePref_pitch_show() ||
-			our soundAnalysisArea -> instancePref_intensity_show() || our soundAnalysisArea -> instancePref_formant_show();
-	Melder_assert (our soundOrLongSound());
-
-	/*
-		We check beforehand whether the window fits the LongSound buffer. BUG: should be in LongSoundArea
-	*/
-	if (our longSound() && our endWindow - our startWindow > our longSound() -> bufferLength) {
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
-		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (our graphics.get(), Melder_BLACK);
-		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (our graphics.get(), 0.5, 0.5,   U"(window longer than ", Melder_float (Melder_single (our longSound() -> bufferLength)), U" seconds)");
-		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_TOP);
-		Graphics_text (our graphics.get(), 0.5, 0.5, U"(zoom in to see the samples)");
-		return;
-	}
-
-	/*
-		Draw data.
-	*/
 	FunctionArea_prepareCanvas (our soundArea.get());
 	if (our soundAnalysisArea -> instancePref_pulses_show())
 		our soundAnalysisArea -> v_draw_analysis_pulses ();
 	FunctionArea_drawInside (our soundArea.get());
-	if (showAnalysis) {
+	if (our soundAnalysisArea -> hasContentToShow ()) {
 		FunctionArea_prepareCanvas (our soundAnalysisArea.get());
 		our soundAnalysisArea -> v_draw_analysis ();
 	}
-
-	/*
-		Update buttons. BUG: move to right place
-	*/
-	integer first, last;
-	const integer selectedSamples = Sampled_getWindowSamples (our soundOrLongSound(),
-			our startSelection, our endSelection, & first, & last);
-	our v_updateMenuItems ();
 }
 
 void structSoundEditor :: v_play (double startTime, double endTime) {
-	if (our soundArea)
-		SoundArea_play (our soundArea.get(), startTime, endTime);
+	SoundArea_play (our soundArea.get(), startTime, endTime);
 }
 
 bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction_global) {

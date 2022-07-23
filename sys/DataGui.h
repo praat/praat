@@ -58,6 +58,7 @@ public:
 	virtual void v_createMenuItems_select  (EditorMenu /* menu */) { }
 	virtual void v_createMenuItems_draw    (EditorMenu /* menu */) { }
 	virtual void v_createMenuItems_extract (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_help    (EditorMenu /* menu */) { }
 	virtual void v_updateMenuItems () { }
 
 	virtual void v_form_pictureWindow (EditorCommand cmd);

@@ -56,7 +56,6 @@ void structNoulliGridEditor :: v_draw () {
 		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.8);   // BUG: should be our noulliGridArea -> viewport()
 	}
 	NoulliGrid_paintInside (our noulliGrid(), our graphics.get(), our startWindow, our endWindow);
-	our v_updateMenuItems ();
 }
 
 void structNoulliGridEditor :: v_play (double startTime, double endTime) {
