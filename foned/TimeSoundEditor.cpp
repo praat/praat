@@ -60,7 +60,7 @@ void structTimeSoundEditor :: v_updateMenuItems () {
 
 bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
 	if (event -> isClick ())
-		our clickedInWideSoundArea = our soundArea -> y_fraction_globalIsInside (globalY_fraction);
+		our clickedInWideSoundArea = our soundArea && our soundArea -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
 	if (our clickedInWideSoundArea) {
 		result = SoundArea_mouse (our soundArea.get(), event, x_world, globalY_fraction);

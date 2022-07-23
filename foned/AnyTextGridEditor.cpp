@@ -1196,8 +1196,8 @@ void structAnyTextGridEditor :: v1_dataChanged () {
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
 		Do a simple guess.
 	*/
+	Melder_clipRight (& our textGridArea -> selectedTier, our textGrid() -> tiers->size);   // crucial: before v_updateText (bug 2022-07-23)!
 	AnyTextGridEditor_Parent :: v1_dataChanged ();   // does all the updating
-	Melder_clipRight (& our textGridArea -> selectedTier, our textGrid() -> tiers->size);
 }
 
 /********** DRAWING AREA **********/
@@ -1392,7 +1392,7 @@ void structAnyTextGridEditor :: v_draw () {
 	const integer numberOfTiers = our textGrid() -> tiers->size;
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
 	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
-	const bool showAnalysis = (
+	const bool showAnalysis = our soundAnalysisArea && (
 		our soundAnalysisArea -> instancePref_spectrogram_show() ||
 		our soundAnalysisArea -> instancePref_pitch_show() ||
 		our soundAnalysisArea -> instancePref_intensity_show() ||
@@ -1403,9 +1403,9 @@ void structAnyTextGridEditor :: v_draw () {
 	/*
 		Draw optional sound.
 	*/
-	if (our soundOrLongSound() || our soundAnalysisArea -> instancePref_pulses_show()) {
+	if (our soundOrLongSound() || our soundAnalysisArea && our soundAnalysisArea -> instancePref_pulses_show()) {
 		FunctionArea_prepareCanvas (our soundArea.get());
-		if (our soundAnalysisArea -> instancePref_pulses_show())
+		if (our soundAnalysisArea && our soundAnalysisArea -> instancePref_pulses_show())
 			our soundAnalysisArea -> v_draw_analysis_pulses ();
 		FunctionArea_drawInside (our soundArea.get());
 		if (showAnalysis) {

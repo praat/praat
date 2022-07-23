@@ -38,7 +38,8 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	void v_windowChanged ()
 		override
 	{
-		our soundAnalysisArea -> v_reset_analysis ();
+		if (our soundAnalysisArea)
+			our soundAnalysisArea -> v_reset_analysis ();
 	}
 };
 
