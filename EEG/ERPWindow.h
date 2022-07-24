@@ -22,7 +22,7 @@
 #include "ERPArea.h"
 
 Thing_define (ERPWindow, SoundEditor) {
-	autoERPArea & erpArea() { return * reinterpret_cast <autoERPArea *> (& our soundArea); }
+	autoERPArea & erpArea() { return * reinterpret_cast <autoERPArea *> (& our soundArea()); }
 
 	bool v_hasSelectionViewer ()
 		override { return true; }

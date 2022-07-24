@@ -63,7 +63,7 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_play (double startTime, double endTime)
 		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC)
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction)
 		override;
 	void v_updateText ()
 		override {};

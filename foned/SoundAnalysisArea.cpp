@@ -255,30 +255,34 @@ void SoundAnalysisArea_haveVisiblePulses (SoundAnalysisArea me) {
 
 #pragma mark - SoundAnalysisArea tracking
 
-bool SoundAnalysisArea_mouse (SoundAnalysisArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
-	y_fraction = my y_fraction_globalToLocal (y_fraction);
+bool structSoundAnalysisArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction) {
 	if (event -> isClick()) {
-		if (my instancePref_pitch_show()) {
-			if (x_world >= my endWindow() && y_fraction > 0.96 && y_fraction <= 1.00) {
-				my setInstancePref_pitch_ceiling (my instancePref_pitch_ceiling() * 1.26);
-				my d_pitch. reset();
-				my d_intensity.reset();
-				my d_pulses. reset();
+		if (our instancePref_pitch_show()) {
+			if (x_world >= our endWindow() && localY_fraction > 0.96 && localY_fraction <= 1.00) {
+				our setInstancePref_pitch_ceiling (our instancePref_pitch_ceiling() * 1.26);
+				our d_pitch. reset();
+				our d_intensity.reset();
+				our d_pulses. reset();
 				return FunctionEditor_UPDATE_NEEDED;
 			}
-			if (x_world >= my endWindow() && y_fraction > 0.92 && y_fraction <= 0.96) {
-				my setInstancePref_pitch_ceiling (my instancePref_pitch_ceiling() / 1.26);
-				my d_pitch. reset();
-				my d_intensity. reset();
-				my d_pulses. reset();
+			if (x_world >= our endWindow() && localY_fraction > 0.92 && localY_fraction <= 0.96) {
+				our setInstancePref_pitch_ceiling (our instancePref_pitch_ceiling() / 1.26);
+				our d_pitch. reset();
+				our d_intensity. reset();
+				our d_pulses. reset();
 				return FunctionEditor_UPDATE_NEEDED;
 			}
 		}
 	}
-	if (x_world > my startWindow() && x_world < my endWindow())
-		my d_spectrogram_cursor = y_fraction * my instancePref_spectrogram_viewTo()
-				+ (1.0 - y_fraction) * my instancePref_spectrogram_viewFrom();
-	return my defaultMouseInWideDataView (event, x_world, y_fraction);
+	if (x_world > our startWindow() && x_world < our endWindow())
+		our d_spectrogram_cursor = localY_fraction * our instancePref_spectrogram_viewTo()
+				+ (1.0 - localY_fraction) * our instancePref_spectrogram_viewFrom();
+	return FunctionEditor_defaultMouseInWideDataView (our functionEditor(), event, x_world);
+}
+
+bool SoundAnalysisArea_mouse (SoundAnalysisArea me, GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
+	const double localY_fraction = my y_fraction_globalToLocal (globalY_fraction);
+	return my v_mouse (event, x_world, localY_fraction);
 }
 
 #pragma mark - SoundAnalysisArea info

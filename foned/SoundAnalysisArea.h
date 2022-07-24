@@ -69,6 +69,8 @@ public:
 public:
 	void v1_info ()
 		override;
+	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
+		override;
 	virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
 	virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
 	virtual void v_createMenuItems_intensity_picture (EditorMenu menu);

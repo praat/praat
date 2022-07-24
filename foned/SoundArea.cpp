@@ -264,37 +264,41 @@ void SoundArea_draw (SoundArea me) {
 
 #pragma mark - SoundArea tracking
 
-bool SoundArea_mouse (SoundArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+bool structSoundArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction) {
 	if (event -> isClick()) {
-		y_fraction = my y_fraction_globalToLocal (y_fraction);
-		const integer numberOfChannels = my soundOrLongSound() -> ny;
+		const integer numberOfChannels = our soundOrLongSound() -> ny;
 		if (event -> commandKeyPressed) {
 			if (numberOfChannels > 1) {
 				const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, 8_integer);
 				Melder_assert (numberOfVisibleChannels >= 1);   // for Melder_clipped
-				const integer clickedChannel = my channelOffset +
-						Melder_clipped (1_integer, Melder_ifloor ((1.0 - y_fraction) * numberOfVisibleChannels + 1), numberOfVisibleChannels);
-				const integer firstVisibleChannel = my channelOffset + 1;
-				const integer lastVisibleChannel = Melder_clippedRight (my channelOffset + numberOfVisibleChannels, numberOfChannels);
+				const integer clickedChannel = our channelOffset +
+						Melder_clipped (1_integer, Melder_ifloor ((1.0 - localY_fraction) * numberOfVisibleChannels + 1), numberOfVisibleChannels);
+				const integer firstVisibleChannel = our channelOffset + 1;
+				const integer lastVisibleChannel = Melder_clippedRight (our channelOffset + numberOfVisibleChannels, numberOfChannels);
 				if (clickedChannel >= firstVisibleChannel && clickedChannel <= lastVisibleChannel) {
-					my muteChannels [clickedChannel] = ! my muteChannels [clickedChannel];
+					our muteChannels [clickedChannel] = ! our muteChannels [clickedChannel];
 					return FunctionEditor_UPDATE_NEEDED;
 				}
 			}
 		} else {
 			if (numberOfChannels > 8) {
-				if (x_world >= my endWindow() && y_fraction > 0.875 && y_fraction <= 1.000 && my channelOffset > 0) {
-					my channelOffset -= 8;
+				if (x_world >= our endWindow() && localY_fraction > 0.875 && localY_fraction <= 1.000 && our channelOffset > 0) {
+					our channelOffset -= 8;
 					return FunctionEditor_UPDATE_NEEDED;
 				}
-				if (x_world >= my endWindow() && y_fraction > 0.000 && y_fraction <= 0.125 && my channelOffset < numberOfChannels - 8) {
-					my channelOffset += 8;
+				if (x_world >= our endWindow() && localY_fraction > 0.000 && localY_fraction <= 0.125 && our channelOffset < numberOfChannels - 8) {
+					our channelOffset += 8;
 					return FunctionEditor_UPDATE_NEEDED;
 				}
 			}
 		}
 	}
-	return my defaultMouseInWideDataView (event, x_world, y_fraction);
+	return FunctionEditor_defaultMouseInWideDataView (our functionEditor(), event, x_world);
+}
+
+bool SoundArea_mouse (SoundArea me, GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
+	const double localY_fraction = my y_fraction_globalToLocal (globalY_fraction);
+	return my v_mouse (event, x_world, localY_fraction);
 }
 
 

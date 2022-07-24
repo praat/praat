@@ -717,7 +717,7 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	} else if (our clickedInWideDurationArea) {
 		result = RealTierArea_mouse (our durationTierArea.get(), event, x_world, globalY_fraction);
 	} else {
-		result = our ManipulationEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
+		result = FunctionEditor_defaultMouseInWideDataView (this, event, x_world);
 	}
 	if (event -> isDrop()) {
 		our clickedInWidePitchArea = false;

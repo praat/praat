@@ -65,7 +65,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		if (our soundArea && our soundArea -> isClickAnchor) {
 			result = SoundArea_mouse (our soundArea.get(), event, x_world, globalY_fraction);
 		} else {
-			result = our TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
+			result = FunctionEditor_defaultMouseInWideDataView (this, event, x_world);
 		}
 		if (event -> isDrop()) {
 			if (our soundArea)

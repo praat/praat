@@ -280,7 +280,7 @@ void structPitchEditor :: v_play (double a_tmin, double a_tmax) {
 
 bool structPitchEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	if (! event -> isClick())
-		return PitchEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);   // move cursor or drag selection
+		return FunctionEditor_defaultMouseInWideDataView (this, event, x_world);   // move cursor or drag selection
 	const double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
 	const double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
 	const double clickedFrequency = (y_fraction - dyUnv) / (1.0 - dyIntens - dyUnv) * our pitch() -> ceiling;
@@ -318,7 +318,7 @@ bool structPitchEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 			return PitchEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);   // move cursor or drag selection
 		}
 	}
-	return PitchEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);   // move cursor or drag selection
+	return FunctionEditor_defaultMouseInWideDataView (this, event, x_world);   // move cursor or drag selection
 }
 
 autoPitchEditor PitchEditor_create (conststring32 title, Pitch pitch) {
