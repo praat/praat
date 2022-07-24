@@ -144,6 +144,8 @@ Thing_define (FunctionEditor, Editor) {
 	bool v_hasSelectMenu  () override { return true; }
 	bool v_hasDrawMenu    () override { return true; }
 	bool v_hasExtractMenu () override { return true; }
+	void v_createMenus ()
+		override;
 	void v_createMenuItems_file (EditorMenu)
 		override;
 	virtual void v_createMenuItems_file_write (EditorMenu) { }
