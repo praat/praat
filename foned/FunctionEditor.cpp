@@ -397,6 +397,11 @@ void structFunctionEditor :: v1_info () {
 	MelderInfo_writeLine (U"Selection end: ", our endSelection, U" ", v_format_units_long());
 	MelderInfo_writeLine (U"Arrow scroll step: ", our instancePref_arrowScrollStep(), U" ", v_format_units_long());
 	MelderInfo_writeLine (U"Group: ", group ? U"yes" : U"no");
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v1_info ();
+	}
 }
 
 void structFunctionEditor :: v_windowChanged () {
@@ -404,6 +409,15 @@ void structFunctionEditor :: v_windowChanged () {
 		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 		if (area)
 			area -> v_windowChanged ();
+	}
+}
+
+void structFunctionEditor :: v_createMenus () {
+	FunctionEditor_Parent :: v_createMenus ();
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenus ();
 	}
 }
 
