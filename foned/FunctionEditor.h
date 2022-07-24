@@ -161,6 +161,8 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 	void v_createMenuItems_help (EditorMenu)
 		override;
+	void v_updateMenuItems ()
+		override;
 
 	void v1_dataChanged ()
 		override;

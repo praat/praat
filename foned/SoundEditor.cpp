@@ -35,7 +35,21 @@ autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSo
 	Melder_assert (soundOrLongSound);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
-		SoundEditor_init (me.get(), title, soundOrLongSound);
+		if (Thing_isa (soundOrLongSound, classSound))
+			my soundArea() = SoundArea_create (true, nullptr, me.get());
+		else
+			my soundArea() = LongSoundArea_create (false, nullptr, me.get());
+		my soundAnalysisArea() = SoundAnalysisArea_create (false, nullptr, me.get());
+		FunctionEditor_init (me.get(), title, soundOrLongSound);
+
+		Melder_assert (my soundArea() -> soundOrLongSound());
+		if (my soundArea() -> longSound() && my endWindow - my startWindow > 30.0) {   // BUG: should be in dataChanged?
+			my endWindow = my startWindow + 30.0;
+			if (my startWindow == my tmin)
+				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
+			FunctionEditor_marksChanged (me.get(), false);
+		}
+
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound window not created.");

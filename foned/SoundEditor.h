@@ -26,23 +26,6 @@ Thing_define (SoundEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, SoundArea, soundArea)
 	DEFINE_FunctionArea (2, SoundAnalysisArea, soundAnalysisArea)
 
-	friend void SoundEditor_init (SoundEditor me, conststring32 title, SampledXY soundOrLongSound) {
-		if (Thing_isa (soundOrLongSound, classSound))
-			my soundArea() = SoundArea_create (true, nullptr, me);
-		else
-			my soundArea() = LongSoundArea_create (false, nullptr, me);
-		my soundAnalysisArea() = SoundAnalysisArea_create (false, nullptr, me);
-		FunctionEditor_init (me, title, soundOrLongSound);
-
-		Melder_assert (my soundArea() -> soundOrLongSound());
-		if (my soundArea() -> longSound() && my endWindow - my startWindow > 30.0) {   // BUG: should be in dataChanged?
-			my endWindow = my startWindow + 30.0;
-			if (my startWindow == my tmin)
-				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-			FunctionEditor_marksChanged (me, false);
-		}
-	}
-
 	void v1_dataChanged () override {
 		SoundEditor_Parent :: v1_dataChanged ();
 		Thing_cast (SampledXY, soundOrLongSound, our data());
@@ -61,10 +44,6 @@ Thing_define (SoundEditor, FunctionEditor) {
 	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_updateMenuItems () override {
-		our soundArea() -> v_updateMenuItems ();
-		our soundAnalysisArea() -> v_updateMenuItems ();
-	}
 	void v_distributeAreas () override {
 		if (our soundAnalysisArea() -> hasContentToShow ()) {
 			our soundArea() -> setGlobalYRange_fraction (0.5, 1.0);

@@ -421,6 +421,15 @@ void structFunctionEditor :: v_createMenus () {
 	}
 }
 
+void structFunctionEditor :: v_updateMenuItems () {
+	FunctionEditor_Parent :: v_updateMenuItems ();
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_updateMenuItems ();
+	}
+}
+
 /********** FILE MENU **********/
 
 static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeEvent event) {
