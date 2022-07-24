@@ -34,8 +34,8 @@ Thing_define (SoundEditor, FunctionEditor) {
 		my soundAnalysisArea() = SoundAnalysisArea_create (false, nullptr, me);
 		FunctionEditor_init (me, title, soundOrLongSound);
 
-		Melder_assert (my soundOrLongSound());
-		if (my longSound() && my endWindow - my startWindow > 30.0) {   // BUG: should be in dataChanged?
+		Melder_assert (my soundArea() -> soundOrLongSound());
+		if (my soundArea() -> longSound() && my endWindow - my startWindow > 30.0) {   // BUG: should be in dataChanged?
 			my endWindow = my startWindow + 30.0;
 			if (my startWindow == my tmin)
 				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
@@ -43,19 +43,11 @@ Thing_define (SoundEditor, FunctionEditor) {
 		}
 	}
 
-	SampledXY soundOrLongSound() { return our soundArea() -> soundOrLongSound(); }
-	Sound sound() { return our soundArea() -> sound(); }
-	LongSound longSound() { return our soundArea() -> longSound(); }
-
 	void v1_dataChanged () override {
 		SoundEditor_Parent :: v1_dataChanged ();
 		Thing_cast (SampledXY, soundOrLongSound, our data());
 		our soundArea() -> functionChanged (soundOrLongSound);
 		our soundAnalysisArea() -> functionChanged (soundOrLongSound);
-	}
-	void v_windowChanged () override {
-		our soundArea() -> v_windowChanged ();
-		our soundAnalysisArea() -> v_windowChanged ();
 	}
 	void v1_info () override {
 		structFunctionEditor :: v1_info ();

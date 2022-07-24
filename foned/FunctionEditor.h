@@ -165,7 +165,11 @@ Thing_define (FunctionEditor, Editor) {
 
 	virtual void v_distributeAreas () { }
 	virtual void v_draw () = 0;
-	virtual void v_windowChanged () { }
+	virtual void v_windowChanged ();
+		/*
+			Behaviour of structFunctionEditor::v_windowChanged ():
+				dispatches to a function area.
+		*/
 	virtual bool v_hasSelectionViewer () { return false; }
 	virtual void v_drawSelectionViewer () { }
 	virtual void v_drawRealTimeSelectionViewer (double /* time */) { }
@@ -187,9 +191,9 @@ Thing_define (FunctionEditor, Editor) {
 			Message: "they clicked in the data part of the window, or in the left or right margin."
 			'event' is the mouse event, with still relevant info on phase and modifier keys;
 			'x_world' is the time (or another world unit);
-			'y_fraction' is a value between 0.0 (bottom) and 1.0 (top);
+			'globalY_fraction' is a value between 0.0 (bottom) and 1.0 (top);
 			Behaviour of structFunctionEditor::v_mouseInWideDataView ():
-				moves the cursor to 'x_world', drags to create a selection, or extends the selection.
+				dispatches to a function area, or otherwise calls FunctionEditor_defaultMouseInWideDataView().
 		*/
 	virtual void v_clickSelectionViewer (double x_fraction, double y_fraction);
 	virtual int v_playCallback (int phase, double startTime, double endTime, double currentTime);
@@ -302,7 +306,11 @@ void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);
 
 void FunctionEditor_garnish (FunctionEditor me);   // optionally selection times and selection hairs
 
-bool FunctionEditor_defaultMouseInWideDataView (FunctionEditor me, GuiDrawingArea_MouseEvent event, double mouseTime);
+bool FunctionEditor_defaultMouseInWideDataView (FunctionEditor me, GuiDrawingArea_MouseEvent event, double x_world);
+/*
+	Behaviour:
+		moves the cursor to 'x_world', drags to create a selection, or extends the selection.
+*/
 
 /* End of file FunctionEditor.h */
 #endif

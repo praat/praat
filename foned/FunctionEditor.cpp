@@ -399,6 +399,14 @@ void structFunctionEditor :: v1_info () {
 	MelderInfo_writeLine (U"Group: ", group ? U"yes" : U"no");
 }
 
+void structFunctionEditor :: v_windowChanged () {
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_windowChanged ();
+	}
+}
+
 /********** FILE MENU **********/
 
 static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeEvent event) {
