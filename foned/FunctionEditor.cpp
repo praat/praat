@@ -20,6 +20,7 @@
 #include "machine.h"
 #include "EditorM.h"
 #include "GuiP.h"
+#include "FunctionArea.h"
 
 Thing_implement_pureVirtual (FunctionEditor, Editor, 0);
 
@@ -1228,57 +1229,89 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 	my v_updateMenuItems ();
 }
 
-bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double mouseTime, double /* mouseY_fraction */) {
+bool FunctionEditor_defaultMouseInWideDataView (FunctionEditor me, GuiDrawingArea_MouseEvent event, double mouseTime) {
+	my viewDataAsWorldByFraction ();
 	Melder_assert (isdefined (mouseTime));
-	Melder_assert (our startSelection <= our endSelection);
-	Melder_clip (our startWindow, & mouseTime, our endWindow);   // WYSIWYG
+	Melder_assert (my startSelection <= my endSelection);
+	Melder_clip (my startWindow, & mouseTime, my endWindow);   // WYSIWYG
 	if (event -> isClick()) {
 		/*
 			Ignore any click that occurs during a drag,
 			such as might occur when the user has both a mouse and a trackpad.
 		*/
-		if (isdefined (our anchorTime))
+		if (isdefined (my anchorTime))
 			return false;
-		const double selectedMiddleTime = 0.5 * (our startSelection + our endSelection);
+		const double selectedMiddleTime = 0.5 * (my startSelection + my endSelection);
 		const bool theyWantToExtendTheCurrentSelectionAtTheLeft =
 				(event -> shiftKeyPressed && mouseTime < selectedMiddleTime) || event -> isLeftBottomFunctionKeyPressed();
 		const bool theyWantToExtendTheCurrentSelectionAtTheRight =
 				(event -> shiftKeyPressed && mouseTime >= selectedMiddleTime) || event -> isRightBottomFunctionKeyPressed();
 		if (theyWantToExtendTheCurrentSelectionAtTheLeft) {
-			our startSelection = mouseTime;
-			our anchorTime = our endSelection;
+			my startSelection = mouseTime;
+			my anchorTime = my endSelection;
 		} else if (theyWantToExtendTheCurrentSelectionAtTheRight) {
-			our endSelection = mouseTime;
-			our anchorTime = our startSelection;
+			my endSelection = mouseTime;
+			my anchorTime = my startSelection;
 		} else {
-			our startSelection = mouseTime;
-			our endSelection = mouseTime;
-			our anchorTime = mouseTime;
+			my startSelection = mouseTime;
+			my endSelection = mouseTime;
+			my anchorTime = mouseTime;
 		}
-		Melder_sort (& our startSelection, & our endSelection);
-		Melder_assert (isdefined (our anchorTime));
+		Melder_sort (& my startSelection, & my endSelection);
+		Melder_assert (isdefined (my anchorTime));
 	} else if (event -> isDrag() || event -> isDrop()) {
 		/*
 			Ignore any drag or drop that happens after a descendant preempted the above click handling.
 		*/
-		if (isundef (our anchorTime))
+		if (isundef (my anchorTime))
 			return false;
-		if (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
-			const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), mouseTime - our anchorTime));
+		if (! my hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+			const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (my graphics.get(), mouseTime - my anchorTime));
 			constexpr double vicinityRadius_mm = 1.0;
 			if (distanceToAnchor_mm > vicinityRadius_mm)
-				our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
+				my hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
 		}
-		if (hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
-			our startSelection = std::min (our anchorTime, mouseTime);
-			our endSelection = std::max (our anchorTime, mouseTime);
+		if (my hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+			my startSelection = std::min (my anchorTime, mouseTime);
+			my endSelection = std::max (my anchorTime, mouseTime);
 		}
 		if (event -> isDrop()) {
-			our anchorTime = undefined;
-			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			my anchorTime = undefined;
+			my hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 		}
 	}
 	return true;
+}
+
+bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
+	bool result = false;
+	if (event -> isClick ())
+		for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+			FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+			if (area)
+				area -> isClickAnchor = area -> y_fraction_globalIsInside (globalY_fraction);
+		}
+	{// scope
+		integer iarea = 1;
+		for (; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+			FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+			if (area && area -> isClickAnchor) {
+				const double localY_fraction = area -> y_fraction_globalToLocal (globalY_fraction);
+				result = area -> v_mouse (event, x_world, localY_fraction);
+				break;
+			}
+		}
+		if (iarea > FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS)
+			result = FunctionEditor_defaultMouseInWideDataView (this, event, x_world);
+	}
+	if (event -> isDrop()) {
+		for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+			FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+			if (area)
+				area -> isClickAnchor = false;
+		}
+	}
+	return result;
 }
 
 void structFunctionEditor :: v_clickSelectionViewer (double /* x_fraction */, double /* y_fraction */) {

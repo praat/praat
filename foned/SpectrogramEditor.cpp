@@ -70,7 +70,7 @@ bool structSpectrogramEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 				our spectrogram() -> nx);
 		// TODO
 	}
-	return our SpectrogramEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
+	return FunctionEditor_defaultMouseInWideDataView (this, event, x_world);
 }
 
 autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram spectrogram) {

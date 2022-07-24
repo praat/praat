@@ -61,7 +61,7 @@ Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	bool v_hasText ()
 		override { return true; }
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC)
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction)
 		override;
 	void v_clickSelectionViewer (double xWC, double yWC)
 		override;

@@ -158,7 +158,7 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 		if (! clickedPoint) {
 			my anchorIsInFreePart = true;
 			my ycursor = y_world;
-			return my defaultMouseInWideDataView (event, x_world, y_fraction) || true;
+			return FunctionEditor_defaultMouseInWideDataView (my functionEditor(), event, x_world) || true;
 		}
 		my anchorIsNearPoint = true;
 		my draggingSelection = event -> shiftKeyPressed &&
@@ -175,7 +175,7 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 	} else if (event -> isDrag() || event -> isDrop()) {
 		if (my anchorIsInFreePart) {
 			my ycursor = y_world;
-			return my defaultMouseInWideDataView (event, x_world, y_fraction) || true;
+			return FunctionEditor_defaultMouseInWideDataView (my functionEditor(), event, x_world) || true;
 		}
 		Melder_assert (my anchorIsNearPoint);
 		my dt = x_world - my anchorTime;

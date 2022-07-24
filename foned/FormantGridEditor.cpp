@@ -240,7 +240,7 @@ bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 	if (clickedInWideRealTierArea) {
 		result = RealTierArea_mouse (our formantGridArea.get(), event, x_world, globalY_fraction);
 	} else {
-		result = our FormantGridEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
+		result = FunctionEditor_defaultMouseInWideDataView (this, event, x_world);
 	}
 	if (event -> isDrop())
 		clickedInWideRealTierArea = false;

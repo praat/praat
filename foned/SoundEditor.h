@@ -23,64 +23,89 @@
 #include "SoundAnalysisArea.h"
 
 Thing_define (SoundEditor, FunctionEditor) {
-	SampledXY soundOrLongSound() { return our soundArea ? our soundArea -> soundOrLongSound() : nullptr; }
-	Sound sound() { return our soundArea ? our soundArea -> sound() : nullptr; }
-	LongSound longSound() { return our soundArea ? our soundArea -> longSound() : nullptr; }
+	DEFINE_FunctionArea (1, SoundArea, soundArea)
+	DEFINE_FunctionArea (2, SoundAnalysisArea, soundAnalysisArea)
 
-	autoSoundArea soundArea;
-	autoSoundAnalysisArea soundAnalysisArea;
+	friend void SoundEditor_init (SoundEditor me, conststring32 title, SampledXY soundOrLongSound) {
+		if (Thing_isa (soundOrLongSound, classSound))
+			my soundArea() = SoundArea_create (true, nullptr, me);
+		else
+			my soundArea() = LongSoundArea_create (false, nullptr, me);
+		my soundAnalysisArea() = SoundAnalysisArea_create (false, nullptr, me);
+		FunctionEditor_init (me, title, soundOrLongSound);
+
+		Melder_assert (my soundOrLongSound());
+		if (my longSound() && my endWindow - my startWindow > 30.0) {   // BUG: should be in dataChanged?
+			my endWindow = my startWindow + 30.0;
+			if (my startWindow == my tmin)
+				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
+			FunctionEditor_marksChanged (me, false);
+		}
+	}
+
+	SampledXY soundOrLongSound() { return our soundArea() -> soundOrLongSound(); }
+	Sound sound() { return our soundArea() -> sound(); }
+	LongSound longSound() { return our soundArea() -> longSound(); }
 
 	void v1_dataChanged () override {
 		SoundEditor_Parent :: v1_dataChanged ();
 		Thing_cast (SampledXY, soundOrLongSound, our data());
-		our soundArea -> functionChanged (soundOrLongSound);
-		our soundAnalysisArea -> functionChanged (soundOrLongSound);
+		our soundArea() -> functionChanged (soundOrLongSound);
+		our soundAnalysisArea() -> functionChanged (soundOrLongSound);
 	}
 	void v_windowChanged () override {
-		our soundArea -> v_windowChanged ();
-		our soundAnalysisArea -> v_windowChanged ();
+		our soundArea() -> v_windowChanged ();
+		our soundAnalysisArea() -> v_windowChanged ();
 	}
 	void v1_info () override {
 		structFunctionEditor :: v1_info ();
-		our soundArea -> v1_info ();
-		our soundAnalysisArea -> v1_info ();
+		our soundArea() -> v1_info ();
+		our soundAnalysisArea() -> v1_info ();
 	}
 	void v_createMenus () override {
 		structFunctionEditor :: v_createMenus ();
-		our soundArea -> v_createMenus ();
-		our soundAnalysisArea -> v_createMenus ();
+		our soundArea() -> v_createMenus ();
+		our soundAnalysisArea() -> v_createMenus ();
 	}
 	void v_createMenuItems_file (EditorMenu menu) override {
 		structFunctionEditor :: v_createMenuItems_file (menu);
 		our v_createMenuItems_file_write (menu);
-		if (our soundArea)
-			our soundArea -> v_createMenuItems_file (menu);
+		our soundArea() -> v_createMenuItems_file (menu);
 		EditorMenu_addCommand (menu, U"-- after file write --", 0, nullptr);
 	}
 	void v_createMenuItems_edit (EditorMenu menu) override {
 		structFunctionEditor :: v_createMenuItems_edit (menu);
-		if (our soundArea)
-			our soundArea -> v_createMenuItems_edit (menu);
+		our soundArea() -> v_createMenuItems_edit (menu);
 	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_updateMenuItems () override {
-		our soundArea -> v_updateMenuItems ();
+		our soundArea() -> v_updateMenuItems ();
+		our soundAnalysisArea() -> v_updateMenuItems ();
 	}
-	void v_distributeAreas ()
-		override;
-	void v_draw ()
-		override;
-	void v_play (double tmin, double tmax)
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC)
-		override;
+	void v_distributeAreas () override {
+		if (our soundAnalysisArea() -> hasContentToShow ()) {
+			our soundArea() -> setGlobalYRange_fraction (0.5, 1.0);
+			our soundAnalysisArea() -> setGlobalYRange_fraction (0.0, 0.5);
+		} else {
+			our soundArea() -> setGlobalYRange_fraction (0.0, 1.0);
+			our soundAnalysisArea() -> setGlobalYRange_fraction (0.0, 0.0);
+		}
+	}
+	void v_draw () override {
+		FunctionArea_prepareCanvas (our soundArea().get());
+		if (our soundAnalysisArea() -> instancePref_pulses_show())
+			our soundAnalysisArea() -> v_draw_analysis_pulses ();
+		FunctionArea_drawInside (our soundArea().get());
+		if (our soundAnalysisArea() -> hasContentToShow ()) {
+			FunctionArea_prepareCanvas (our soundAnalysisArea().get());
+			our soundAnalysisArea() -> v_draw_analysis ();
+		}
+	}
+	void v_play (double startTime, double endTime) override {
+		SoundArea_play (our soundArea().get(), startTime, endTime);
+	}
 };
-
-void SoundEditor_init (SoundEditor me, autoSoundArea soundArea,
-	conststring32 title,
-	SampledXY data
-);
 
 autoSoundEditor SoundEditor_create (
 	conststring32 title,

@@ -27,12 +27,16 @@ struct FunctionEditor_picture {
 	bool garnish;
 };
 
+constexpr integer FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS = 5;
+
 Thing_define (FunctionEditor, Editor) {
 	/*
 		Inherited attributes:
 			data: must be a Function.
 	*/
 	Function function() { return static_cast <Function> (our data()); }
+
+	autoDataGui functionAreas [1 + FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS];
 
 	/*
 		Subclasses may change the following attributes,
@@ -178,7 +182,7 @@ Thing_define (FunctionEditor, Editor) {
 	virtual int v_fixedPrecision_long () { return 6; }
 	virtual bool v_hasText () { return false; }
 	virtual void v_play (double /* startTime */, double /* endTime */) { }
-	virtual bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
+	virtual bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction);
 		/*
 			Message: "they clicked in the data part of the window, or in the left or right margin."
 			'event' is the mouse event, with still relevant info on phase and modifier keys;
@@ -196,8 +200,7 @@ Thing_define (FunctionEditor, Editor) {
 
     #include "FunctionEditor_prefs.h"
 
-private:
-	/* only in v_mouseInWideDataView: */
+public:
 	double anchorTime = undefined;
 	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 };
@@ -298,6 +301,8 @@ void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, conststri
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);
 
 void FunctionEditor_garnish (FunctionEditor me);   // optionally selection times and selection hairs
+
+bool FunctionEditor_defaultMouseInWideDataView (FunctionEditor me, GuiDrawingArea_MouseEvent event, double mouseTime);
 
 /* End of file FunctionEditor.h */
 #endif

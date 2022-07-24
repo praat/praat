@@ -137,6 +137,8 @@ protected:
 public:
 	void v1_info ()
 		override;
+	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
+		override;
 	void v_createMenus ()
 		override;
 	void v_createMenuItems_file (EditorMenu menu)

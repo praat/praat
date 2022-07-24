@@ -136,10 +136,6 @@ public:
 		functionEditor() -> endSelection = endSelection;
 	}
 	bool isClickAnchor = false;
-	bool defaultMouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
-		functionEditor() -> viewDataAsWorldByFraction ();
-		return functionEditor() -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);
-	}
 	bool y_fraction_globalIsInside (double globalY_fraction) const {
 		const double y_pxlt = globalY_fraction_to_pxlt (globalY_fraction);
 		return y_pxlt >= our bottom_pxlt() && y_pxlt < our top_pxlt();
@@ -169,6 +165,11 @@ public:
 	virtual void v_ok_pictureSelection (EditorCommand);
 	virtual void v_do_pictureSelection (EditorCommand);
 
+	virtual bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction) {
+		(void) localY_fraction;
+		return FunctionEditor_defaultMouseInWideDataView (our functionEditor(), event, x_world);
+	}
+
 public:
 	/*
 		The data handling functions assume that editable functions
@@ -186,6 +187,11 @@ public:
 
 	#include "FunctionArea_prefs.h"
 };
+
+#define DEFINE_FunctionArea(which, FunctionAreaType, variableName) \
+	auto##FunctionAreaType & variableName() { \
+		return * reinterpret_cast <auto##FunctionAreaType *> (& our functionAreas [which]); \
+	}
 
 #define DEFINE_FunctionArea_create(FunctionAreaType, FunctionType) \
 inline auto##FunctionAreaType FunctionAreaType##_create (bool editable, FunctionType functionToCopy, FunctionEditor boss) { \
