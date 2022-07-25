@@ -34,6 +34,10 @@ private:
 	void v_specializedHighlightBackground () const
 		override;
 
+public:
+	void v_createMenuItems_file (EditorMenu menu)
+		override;
+
 	#include "TextGridArea_prefs.h"
 };
 

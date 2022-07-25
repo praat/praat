@@ -18,6 +18,7 @@
 
 #include "TextGridArea.h"
 #include "AnyTextGridEditor.h"   // BUG: should not be included
+#include "EditorM.h"
 
 Thing_implement (TextGridArea, FunctionArea, 0);
 
@@ -33,6 +34,8 @@ Thing_implement (TextGridArea, FunctionArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "TextGridArea_prefs.h"
 
+
+#pragma mark - TextGridArea drawing
 
 void structTextGridArea :: v_specializedHighlightBackground () const {
 	Melder_assert (our textGrid());
@@ -75,6 +78,24 @@ void structTextGridArea :: v_specializedHighlightBackground () const {
 		}
 	}
 	Graphics_setColour (our graphics(), Melder_BLACK);
+}
+
+
+#pragma mark - TextGridArea File menu
+
+static void menu_cb_SaveWholeTextGridAsTextFile (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM_SAVE (U"Save whole TextGrid as text file", nullptr)
+		Melder_sprint (defaultName,300, my textGrid() -> name.get(), U".TextGrid");
+	EDITOR_DO_SAVE
+		Data_writeToTextFile (my textGrid(), file);
+	EDITOR_END
+}
+
+void structTextGridArea :: v_createMenuItems_file (EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"Save TextGrid to disk:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Save whole TextGrid as text file...", 'S',
+			menu_cb_SaveWholeTextGridAsTextFile, this);
+	FunctionAreaMenu_addCommand (menu, U"-- after TextGrid save --", 0, nullptr, this);
 }
 
 /* End of file TextGridArea.cpp */

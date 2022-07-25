@@ -22,9 +22,11 @@
 #include "TextGridArea.h"
 
 Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
-	TextGrid textGrid() { return static_cast <TextGrid> (our data()); }
+	DEFINE_FunctionArea (1, TextGridArea, textGridArea)
+	//DEFINE_FunctionArea (2, SoundArea, soundArea)
+	//DEFINE_FunctionArea (3, SoundAnalysisArea, soundAnalysisArea)
 
-	autoTextGridArea textGridArea;
+	TextGrid textGrid() { return static_cast <TextGrid> (our data()); }
 
 	SpellingChecker spellingChecker;
 	bool suppressRedraw;
@@ -46,8 +48,6 @@ Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 	void v1_dataChanged ()
 		override;
 	void v_createMenuItems_extract (EditorMenu menu)
-		override;
-	void v_createMenuItems_file_write (EditorMenu menu)
 		override;
 	void v_createMenuItems_draw (EditorMenu menu)
 		override;

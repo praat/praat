@@ -40,7 +40,6 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	}
 	void v_createMenuItems_file (EditorMenu menu) override {
 		structFunctionEditor :: v_createMenuItems_file (menu);
-		our v_createMenuItems_file_write (menu);
 		if (our soundArea)
 			our soundArea -> v_createMenuItems_file (menu);
 		EditorMenu_addCommand (menu, U"-- after file write --", 0, nullptr);

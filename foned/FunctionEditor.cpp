@@ -1101,6 +1101,11 @@ void structFunctionEditor :: v_createMenuItems_file (EditorMenu menu) {
 	FunctionEditor_Parent :: v_createMenuItems_file (menu);
 	EditorMenu_addCommand (menu, U"Preferences...", 0, menu_cb_preferences);
 	EditorMenu_addCommand (menu, U"-- after preferences --", 0, nullptr);
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenuItems_file (menu);
+	}
 }
 
 void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {

@@ -735,7 +735,6 @@ static void menu_cb_WriteFlac (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 static void addSoundSaveMenu (SoundArea me, EditorMenu menu) {
-	FunctionAreaMenu_addCommand (menu, U"-- sound file --", 0, nullptr, me);
 	FunctionAreaMenu_addCommand (menu, U"Save sound to disk:", 0, nullptr, me);
 	my writeWavButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as WAV file...", 0, menu_cb_WriteWav, me);
 		FunctionAreaMenu_addCommand (menu, U"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav, me);
@@ -764,6 +763,7 @@ static void addSoundSaveMenu (SoundArea me, EditorMenu menu) {
 	my writeFlacButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as FLAC file...", 0, menu_cb_WriteFlac, me);
 		FunctionAreaMenu_addCommand (menu, U"Write selected sound to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, me);
 		FunctionAreaMenu_addCommand (menu, U"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, me);
+	FunctionAreaMenu_addCommand (menu, U"-- after sound file --", 0, nullptr, me);
 }
 
 

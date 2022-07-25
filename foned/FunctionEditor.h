@@ -148,7 +148,6 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 	void v_createMenuItems_file (EditorMenu)
 		override;
-	virtual void v_createMenuItems_file_write (EditorMenu) { }
 	void v_createMenuItems_query (EditorMenu)
 		override;
 	void v_createMenuItems_view (EditorMenu)
