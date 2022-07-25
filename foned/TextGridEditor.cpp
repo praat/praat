@@ -32,6 +32,8 @@ autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid
 			else
 				my soundArea() = LongSoundArea_create (false, static_cast <LongSound> (optionalSoundOrLongSound), me.get());
 			my soundAnalysisArea() = SoundAnalysisArea_create (false, nullptr, me.get());
+			my textGridArea() -> borrowedSoundArea = my soundArea().get();
+			my textGridArea() -> borrowedSoundAnalysisArea = my soundAnalysisArea().get();
 		}
 		AnyTextGridEditor_init (me.get(), title, textGrid, spellingChecker, callbackSocket);
 		return me;
