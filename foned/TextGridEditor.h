@@ -23,12 +23,11 @@
 Thing_define (TextGridEditor, AnyTextGridEditor) {
 	void v1_dataChanged () override {
 		our TextGridEditor_Parent :: v1_dataChanged ();
-		if (our textGridArea)
-			our textGridArea -> functionChanged ((Function) our data());
-		if (our soundArea)
-			our soundArea -> functionChanged (nullptr);   // BUG: this function has not actually changed
-		if (our soundAnalysisArea)
-			our soundAnalysisArea -> functionChanged (our soundArea -> function());
+		our textGridArea() -> functionChanged ((Function) our data());
+		if (our soundArea())
+			our soundArea() -> functionChanged (nullptr);   // BUG: this function has not actually changed
+		if (our soundAnalysisArea())
+			our soundAnalysisArea() -> functionChanged (our soundArea() -> function());
 	}
 };
 

@@ -40,7 +40,6 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	}
 	void v_createMenuItems_file (EditorMenu menu) override {
 		structFunctionEditor :: v_createMenuItems_file (menu);
-		our v_createMenuItems_file_write (menu);
 		if (our soundArea)
 			our soundArea -> v_createMenuItems_file (menu);
 		EditorMenu_addCommand (menu, U"-- after file write --", 0, nullptr);
@@ -49,12 +48,6 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		structFunctionEditor :: v_createMenuItems_edit (menu);
 		if (our soundArea)
 			our soundArea -> v_createMenuItems_edit (menu);
-	}
-	void v_updateMenuItems () override {
-		if (! our soundOrLongSound())
-			return;
-		if (our soundArea)
-			our soundArea -> v_updateMenuItems ();
 	}
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) override {
 		if (event -> isClick ()) {

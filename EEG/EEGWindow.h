@@ -36,7 +36,7 @@ Thing_define (EEGWindow, AnyTextGridEditor) {
 		trace(Thing_className(sound));
 		Melder_assert (Thing_isa (sound, classSound));
 		trace (sound -> nx, U" ", sound -> ny);
-		our soundArea -> functionChanged (our eeg() -> sound.get());
+		our soundArea() -> functionChanged (our eeg() -> sound.get());
 	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;

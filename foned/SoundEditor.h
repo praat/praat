@@ -32,16 +32,6 @@ Thing_define (SoundEditor, FunctionEditor) {
 		our soundArea() -> functionChanged (soundOrLongSound);
 		our soundAnalysisArea() -> functionChanged (soundOrLongSound);
 	}
-	void v_createMenuItems_file (EditorMenu menu) override {
-		structFunctionEditor :: v_createMenuItems_file (menu);
-		our v_createMenuItems_file_write (menu);
-		our soundArea() -> v_createMenuItems_file (menu);
-		EditorMenu_addCommand (menu, U"-- after file write --", 0, nullptr);
-	}
-	void v_createMenuItems_edit (EditorMenu menu) override {
-		structFunctionEditor :: v_createMenuItems_edit (menu);
-		our soundArea() -> v_createMenuItems_edit (menu);
-	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_distributeAreas () override {

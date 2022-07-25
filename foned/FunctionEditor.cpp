@@ -1101,6 +1101,20 @@ void structFunctionEditor :: v_createMenuItems_file (EditorMenu menu) {
 	FunctionEditor_Parent :: v_createMenuItems_file (menu);
 	EditorMenu_addCommand (menu, U"Preferences...", 0, menu_cb_preferences);
 	EditorMenu_addCommand (menu, U"-- after preferences --", 0, nullptr);
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenuItems_file (menu);
+	}
+}
+
+void structFunctionEditor :: v_createMenuItems_edit (EditorMenu menu) {
+	FunctionEditor_Parent :: v_createMenuItems_edit (menu);
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenuItems_edit (menu);
+	}
 }
 
 void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
@@ -1123,6 +1137,11 @@ void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 	EditorMenu_addCommand (menu, U"Zoom back", 'B', menu_cb_zoomBack);
 	EditorMenu_addCommand (menu, U"Scroll page back", GuiMenu_PAGE_UP, menu_cb_pageUp);
 	EditorMenu_addCommand (menu, U"Scroll page forward", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenuItems_view_timeDomain (menu);
+	}
 }
 
 void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
@@ -1132,6 +1151,11 @@ void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Play or stop", GuiMenu_TAB, PLAY_DATA__playOrStop);
 	EditorMenu_addCommand (menu, U"Play window", GuiMenu_SHIFT | GuiMenu_TAB, PLAY_DATA__playWindow);
 	EditorMenu_addCommand (menu, U"Interrupt playing", GuiMenu_ESCAPE, PLAY_DATA__interruptPlaying);
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenuItems_view_audio (menu);
+	}
 }
 
 void structFunctionEditor :: v_createMenuItems_view (EditorMenu menu) {

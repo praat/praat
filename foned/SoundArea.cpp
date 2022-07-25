@@ -735,7 +735,6 @@ static void menu_cb_WriteFlac (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 static void addSoundSaveMenu (SoundArea me, EditorMenu menu) {
-	FunctionAreaMenu_addCommand (menu, U"-- sound file --", 0, nullptr, me);
 	FunctionAreaMenu_addCommand (menu, U"Save sound to disk:", 0, nullptr, me);
 	my writeWavButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as WAV file...", 0, menu_cb_WriteWav, me);
 		FunctionAreaMenu_addCommand (menu, U"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav, me);
@@ -764,6 +763,7 @@ static void addSoundSaveMenu (SoundArea me, EditorMenu menu) {
 	my writeFlacButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as FLAC file...", 0, menu_cb_WriteFlac, me);
 		FunctionAreaMenu_addCommand (menu, U"Write selected sound to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, me);
 		FunctionAreaMenu_addCommand (menu, U"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, me);
+	FunctionAreaMenu_addCommand (menu, U"-- after sound file --", 0, nullptr, me);
 }
 
 
@@ -1028,11 +1028,11 @@ void structSoundArea :: v_updateMenuItems () {
 
 	if (our sound()) {
 		if (our editable())
-			GuiThing_setSensitive (cutButton, selectedSamples != 0 && selectedSamples < our sound() -> nx);
-		GuiThing_setSensitive (copyButton, selectedSamples != 0);
+			GuiThing_setSensitive (our cutButton, selectedSamples != 0 && selectedSamples < our sound() -> nx);
+		GuiThing_setSensitive (our copyButton, selectedSamples != 0);
 		if (our editable()) {
-			GuiThing_setSensitive (zeroButton, selectedSamples != 0);
-			GuiThing_setSensitive (reverseButton, selectedSamples != 0);
+			GuiThing_setSensitive (our zeroButton, selectedSamples != 0);
+			GuiThing_setSensitive (our reverseButton, selectedSamples != 0);
 		}
 	}
 }

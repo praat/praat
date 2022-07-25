@@ -185,6 +185,9 @@ public:
 		Editor_broadcastDataChanged (my functionEditor());
 	}
 
+	virtual void v_createMenuItems_view_timeDomain (EditorMenu) { }
+	virtual void v_createMenuItems_view_audio (EditorMenu) { }
+
 	#include "FunctionArea_prefs.h"
 };
 

@@ -550,10 +550,6 @@ void structFormantPathEditor :: v_play (double startingTime, double endTime) {
 		SoundArea_play (our soundArea.get(), startingTime, endTime);
 }
 
-void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
-	FormantPathEditor_Parent :: v_createMenuItems_view_timeDomain (menu);
-}
-
 //double structFormantPathEditor :: v_getBottomOfSoundArea () {
 //	/*
 //		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid

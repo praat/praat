@@ -25,13 +25,13 @@ autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid
 {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
-		my textGridArea = TextGridArea_create (true, nullptr, me.get());
+		my textGridArea() = TextGridArea_create (true, nullptr, me.get());
 		if (optionalSoundOrLongSound) {
 			if (Thing_isa (optionalSoundOrLongSound, classSound))
-				my soundArea = SoundArea_create (false, static_cast <Sound> (optionalSoundOrLongSound), me.get());
+				my soundArea() = SoundArea_create (false, static_cast <Sound> (optionalSoundOrLongSound), me.get());
 			else
-				my soundArea = LongSoundArea_create (false, static_cast <LongSound> (optionalSoundOrLongSound), me.get());
-			my soundAnalysisArea = SoundAnalysisArea_create (false, nullptr, me.get());
+				my soundArea() = LongSoundArea_create (false, static_cast <LongSound> (optionalSoundOrLongSound), me.get());
+			my soundAnalysisArea() = SoundAnalysisArea_create (false, nullptr, me.get());
 		}
 		AnyTextGridEditor_init (me.get(), title, textGrid, spellingChecker, callbackSocket);
 		return me;

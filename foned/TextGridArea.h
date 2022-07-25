@@ -34,6 +34,17 @@ private:
 	void v_specializedHighlightBackground () const
 		override;
 
+public:
+	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
+	void v_createMenuItems_file (EditorMenu menu)
+		override;
+	void v_createMenuItems_view_timeDomain (EditorMenu menu)
+		override;
+	void v_createMenus ()
+		override;
+	void v_updateMenuItems ()
+		override;
+
 	#include "TextGridArea_prefs.h"
 };
 
