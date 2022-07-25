@@ -19,6 +19,7 @@
 #include "TextGridArea.h"
 #include "AnyTextGridEditor.h"   // BUG: should not be included
 #include "TextGrid_Sound.h"
+#include "SpeechSynthesizer_and_TextGrid.h"
 #include "EditorM.h"
 
 Thing_implement (TextGridArea, FunctionArea, 0);
@@ -34,6 +35,153 @@ Thing_implement (TextGridArea, FunctionArea, 0);
 #include "TextGridArea_prefs.h"
 #include "Prefs_copyToInstance.h"
 #include "TextGridArea_prefs.h"
+
+
+static void timeToInterval (TextGridArea me, double t, integer tierNumber,
+	double *out_tmin, double *out_tmax)
+{
+	Melder_assert (isdefined (t));
+	const Function tier = my textGrid() -> tiers->at [tierNumber];
+	IntervalTier intervalTier;
+	TextTier textTier;
+	AnyTextGridTier_identifyClass (tier, & intervalTier, & textTier);
+	if (intervalTier) {
+		integer iinterval = IntervalTier_timeToIndex (intervalTier, t);
+		if (iinterval == 0) {
+			if (t < my tmin()) {
+				iinterval = 1;
+			} else {
+				iinterval = intervalTier -> intervals.size;
+			}
+		}
+		Melder_assert (iinterval >= 1);
+		Melder_assert (iinterval <= intervalTier -> intervals.size);
+		const TextInterval interval = intervalTier -> intervals.at [iinterval];
+		*out_tmin = interval -> xmin;
+		*out_tmax = interval -> xmax;
+	} else {
+		const integer n = textTier -> points.size;
+		if (n == 0) {
+			*out_tmin = my tmin();
+			*out_tmax = my tmax();
+		} else {
+			integer ipointleft = AnyTier_timeToLowIndex (textTier->asAnyTier(), t);
+			*out_tmin = ( ipointleft == 0 ? my tmin() : textTier -> points.at [ipointleft] -> number );
+			*out_tmax = ( ipointleft == n ? my tmax() : textTier -> points.at [ipointleft + 1] -> number );
+		}
+	}
+	Melder_clipLeft (my tmin(), out_tmin);
+	Melder_clipRight (out_tmax, my tmax());
+}
+
+static void insertBoundaryOrPoint (TextGridArea me, integer itier, double t1, double t2, bool insertSecond) {
+	const integer numberOfTiers = my textGrid() -> tiers->size;
+	if (itier < 1 || itier > numberOfTiers)
+		Melder_throw (U"No tier ", itier, U".");
+	IntervalTier intervalTier;
+	TextTier textTier;
+	AnyTextGridTier_identifyClass (my textGrid() -> tiers->at [itier], & intervalTier, & textTier);
+	Melder_assert (t1 <= t2);
+
+	if (intervalTier) {
+		autoTextInterval rightNewInterval, midNewInterval;
+		const bool t1IsABoundary = IntervalTier_hasTime (intervalTier, t1);
+		const bool t2IsABoundary = IntervalTier_hasTime (intervalTier, t2);
+		if (t1 == t2 && t1IsABoundary)
+			Melder_throw (U"Cannot add a boundary at ", Melder_fixed (t1, 6), U" seconds, because there is already a boundary there.");
+		if (t1IsABoundary && t2IsABoundary)
+			Melder_throw (U"Cannot add boundaries at ", Melder_fixed (t1, 6), U" and ", Melder_fixed (t2, 6), U" seconds, because there are already boundaries there.");
+		const integer iinterval = IntervalTier_timeToIndex (intervalTier, t1);
+		const integer iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
+		if (iinterval == 0 || iinterval2 == 0)
+			Melder_throw (U"The selection is outside the time domain of the intervals.");
+		const integer correctedIinterval2 = ( t2IsABoundary && iinterval2 == intervalTier -> intervals.size ? iinterval2 + 1 : iinterval2 );
+		if (correctedIinterval2 > iinterval + 1 || (correctedIinterval2 > iinterval && ! t2IsABoundary))
+			Melder_throw (U"The selection straddles a boundary.");
+		const TextInterval interval = intervalTier -> intervals.at [iinterval];
+
+		if (t1 == t2) {
+			FunctionArea_save (me, U"Add boundary");
+		} else {
+			FunctionArea_save (me, U"Add interval");
+		}
+
+		if (itier == my selectedTier) {
+			/*
+				Divide up the label text into left, mid and right, depending on where the text selection is.
+			*/
+			integer left, right;
+			autostring32 text = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & left, & right);
+			const bool wholeTextIsSelected = ( right - left == str32len (text.get()) );
+			rightNewInterval = TextInterval_create (t2, interval -> xmax, text.get() + right);
+			text [right] = U'\0';
+			midNewInterval = TextInterval_create (t1, t2, text.get() + left);
+			if (! wholeTextIsSelected || t1 != t2)
+				text [left] = U'\0';
+			TextInterval_setText (interval, text.get());
+		} else {
+			/*
+				Move the text to the left of the boundary.
+			*/
+			rightNewInterval = TextInterval_create (t2, interval -> xmax, U"");
+			midNewInterval = TextInterval_create (t1, t2, U"");
+		}
+		if (t1IsABoundary) {
+			/*
+				Merge mid with left interval.
+			*/
+			if (interval -> xmin != t1)
+				Melder_fatal (U"Boundary unequal: ", interval -> xmin, U" versus ", t1, U".");
+			interval -> xmax = t2;
+			TextInterval_setText (interval, Melder_cat (interval -> text.get(), midNewInterval -> text.get()));
+		} else if (t2IsABoundary) {
+			/*
+				Merge mid and right interval.
+			*/
+			if (interval -> xmax != t2)
+				Melder_fatal (U"Boundary unequal: ", interval -> xmax, U" versus ", t2, U".");
+			interval -> xmax = t1;
+			Melder_assert (rightNewInterval -> xmin == t2);
+			Melder_assert (rightNewInterval -> xmax == t2);
+			rightNewInterval -> xmin = t1;
+			TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text.get(), rightNewInterval -> text.get()));
+		} else {
+			interval -> xmax = t1;
+			if (t1 != t2)
+				intervalTier -> intervals.addItem_move (midNewInterval.move());
+		}
+		intervalTier -> intervals.addItem_move (rightNewInterval.move());
+		if (insertSecond && numberOfTiers >= 2 && t1 == t2) {
+			/*
+				Find the last time before t on another tier.
+			*/
+			double tlast = interval -> xmin;
+			for (integer jtier = 1; jtier <= numberOfTiers; jtier ++) {
+				if (jtier != itier) {
+					double startInterval, endInterval;
+					timeToInterval (me, t1, jtier, & startInterval, & endInterval);
+					if (startInterval > tlast)
+						tlast = startInterval;
+				}
+			}
+			if (tlast > interval -> xmin && tlast < t1) {
+				autoTextInterval newInterval = TextInterval_create (tlast, t1, U"");
+				interval -> xmax = tlast;
+				intervalTier -> intervals.addItem_move (newInterval.move());
+			}
+		}
+	} else {
+		Melder_assert (isdefined (t1));
+		if (AnyTier_hasPoint (textTier->asAnyTier(), t1))
+			Melder_throw (U"Cannot add a point at ", Melder_fixed (t1, 6), U" seconds, because there is already a point there.");
+
+		FunctionArea_save (me, U"Add point");
+
+		autoTextPoint newPoint = TextPoint_create (t1, U"");
+		textTier -> points. addItem_move (newPoint.move());
+	}
+	my setSelection (t1, t1);
+}
 
 
 #pragma mark - TextGridArea drawing
@@ -82,6 +230,327 @@ void structTextGridArea :: v_specializedHighlightBackground () const {
 }
 
 
+#pragma mark - TextGridArea tracking
+
+static integer localY_fraction_toTier (TextGridArea me, double localY_fraction) {
+	const integer numberOfTiers = my textGrid() -> tiers->size;
+	integer tierNumber = numberOfTiers - Melder_ifloor (localY_fraction * (double) numberOfTiers);
+	Melder_clip (1_integer, & tierNumber, numberOfTiers);
+	return tierNumber;
+}
+
+bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction) {
+	const integer numberOfTiers = our textGrid() -> tiers->size;
+	const integer oldSelectedTier = our selectedTier;
+
+	constexpr double clickingVicinityRadius_mm = 1.0;
+	constexpr double draggingVicinityRadius_mm = clickingVicinityRadius_mm + 0.2;   // must be greater than `clickingVicinityRadius_mm`
+	constexpr double droppingVicinityRadius_mm = 1.5;
+
+	const integer mouseTier = localY_fraction_toTier (this, localY_fraction);
+
+	our draggingTime = undefined;   // information to next expose event
+	if (event -> isClick()) {
+		if (isdefined (our anchorTime))   // sanity check for the fixed order click-drag-drop
+			return false;
+		Melder_assert (our clickedLeftBoundary == 0);
+		Melder_assert (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce);
+		our draggingTiers.reset();
+		/*
+			The user clicked in the grid part.
+			We select the tier in which they clicked.
+		*/
+		our selectedTier = mouseTier;
+		double startInterval, endInterval;
+		timeToInterval (this, x_world, our selectedTier, & startInterval, & endInterval);
+
+		if (event -> isLeftBottomFunctionKeyPressed()) {
+			our setSelection (x_world - startInterval < endInterval - x_world ? startInterval : endInterval, our endSelection());   // to nearest boundary
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+		if (event -> isRightBottomFunctionKeyPressed()) {
+			our setSelection (our startSelection(), x_world - startInterval < endInterval - x_world ? startInterval : endInterval);
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+
+		IntervalTier selectedIntervalTier;
+		TextTier selectedTextTier;
+		AnyTextGridTier_identifyClass (our textGrid() -> tiers->at [our selectedTier], & selectedIntervalTier, & selectedTextTier);
+
+		if (x_world <= our startWindow() || x_world >= our endWindow())
+			return FunctionEditor_UPDATE_NEEDED;
+
+		/*
+			Get the time of the nearest boundary or point.
+		*/
+		if (selectedIntervalTier) {
+			const integer clickedIntervalNumber = IntervalTier_timeToIndex (selectedIntervalTier, x_world);
+			const bool theyClickedOutsidetheTimeDomainOfTheIntervals = ( clickedIntervalNumber == 0 );
+			if (theyClickedOutsidetheTimeDomainOfTheIntervals)
+				return FunctionEditor_UPDATE_NEEDED;
+			const TextInterval interval = selectedIntervalTier -> intervals.at [clickedIntervalNumber];
+			if (x_world > 0.5 * (interval -> xmin + interval -> xmax)) {
+				our anchorTime = interval -> xmax;
+				our clickedLeftBoundary = clickedIntervalNumber + 1;
+			} else {
+				our anchorTime = interval -> xmin;
+				our clickedLeftBoundary = clickedIntervalNumber;
+			}
+		} else {
+			const integer clickedPointNumber = AnyTier_timeToNearestIndex (selectedTextTier->asAnyTier(), x_world);
+			if (clickedPointNumber != 0) {
+				const TextPoint point = selectedTextTier -> points.at [clickedPointNumber];
+				our anchorTime = point -> number;
+			}
+		}
+		Melder_assert (! (selectedIntervalTier && our clickedLeftBoundary == 0));
+
+		const bool nearBoundaryOrPoint = ( isdefined (our anchorTime) &&
+				fabs (Graphics_dxWCtoMM (our graphics(), x_world - our anchorTime)) < 1.5 );
+		//FunctionArea_setViewport (this); BUG:
+		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), 0.0, 1.0);
+		const double distanceToCursorCircle = ( our startSelection() != our endSelection() ? undefined :
+			Graphics_distanceWCtoMM (our graphics(), x_world, localY_fraction,
+				our startSelection(),
+				(numberOfTiers + 1 - our selectedTier) / double (numberOfTiers) -
+				Graphics_dyMMtoWC (our graphics(), 1.5))
+		);
+		trace (localY_fraction, U" ", distanceToCursorCircle);
+		const bool nearCursorCircle = ( distanceToCursorCircle < 1.5 );
+
+		if (nearBoundaryOrPoint) {
+			/*
+				Possibility 1: the user clicked near a boundary or point.
+				Perhaps drag it.
+			*/
+			bool boundaryOrPointIsMovable = true;
+			if (selectedIntervalTier) {
+				const bool isLeftEdgeOfFirstInterval = ( our clickedLeftBoundary <= 1 );
+				const bool isRightEdgeOfLastInterval = ( our clickedLeftBoundary > selectedIntervalTier -> intervals.size );
+				boundaryOrPointIsMovable = ! isLeftEdgeOfFirstInterval && ! isRightEdgeOfLastInterval;
+			}
+			/*
+				If the user clicked on an unselected boundary or point, we extend or shrink the selection to it.
+			*/
+			if (event -> shiftKeyPressed) {
+				if (our anchorTime > 0.5 * (our startSelection() + our endSelection()))
+					our setSelection (our startSelection(), our anchorTime);
+				else
+					our setSelection (our anchorTime, our endSelection());
+			}
+			if (! boundaryOrPointIsMovable) {
+				our draggingTime = undefined;
+				our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+				our anchorTime = undefined;
+				our clickedLeftBoundary = 0;
+				return FunctionEditor_UPDATE_NEEDED;
+			}
+			/*
+				Determine the set of selected boundaries and points, and the dragging range.
+			*/
+			our draggingTiers = zero_BOOLVEC (numberOfTiers);
+			our leftDraggingBoundary = our tmin();
+			our rightDraggingBoundary = our tmax();
+			for (int itier = 1; itier <= numberOfTiers; itier ++) {
+				/*
+					If the user has pressed the shift key, let her drag all the boundaries and points at this time.
+					Otherwise, let her only drag the boundary or point on the clicked tier.
+				*/
+				if (itier == mouseTier || our functionEditor() -> clickWasModifiedByShiftKey == our instancePref_shiftDragMultiple()) {
+					IntervalTier intervalTier;
+					TextTier textTier;
+					AnyTextGridTier_identifyClass (our textGrid() -> tiers->at [itier], & intervalTier, & textTier);
+					if (intervalTier) {
+						const integer ibound = IntervalTier_hasBoundary (intervalTier, our anchorTime);
+						if (ibound) {
+							TextInterval leftInterval = intervalTier -> intervals.at [ibound - 1];
+							TextInterval rightInterval = intervalTier -> intervals.at [ibound];
+							our draggingTiers [itier] = true;
+							/*
+								Prevent the user from dragging the boundary past its left or right neighbours on the same tier.
+							*/
+							Melder_clipLeft (leftInterval -> xmin, & our leftDraggingBoundary);
+							Melder_clipRight (& our rightDraggingBoundary, rightInterval -> xmax);
+						}
+					} else {
+						Melder_assert (isdefined (our anchorTime));
+						if (AnyTier_hasPoint (textTier->asAnyTier(), our anchorTime)) {
+							/*
+								Other than with boundaries on interval tiers,
+								points on text tiers can be dragged past their neighbours.
+							*/
+							our draggingTiers [itier] = true;
+						}
+					}
+				}
+			}
+		} else if (nearCursorCircle) {
+			/*
+				Possibility 2: the user clicked near the cursor circle.
+				Insert boundary or point. There is no danger that we insert on top of an existing boundary or point,
+				because we are not 'nearBoundaryOrPoint'.
+			*/
+			Melder_assert (isdefined (our startSelection()));   // precondition of v_updateText()
+			if (our selectedTier != oldSelectedTier)
+				our functionEditor() -> v_updateText();   // this puts the text of the newly clicked tier into the text area
+			insertBoundaryOrPoint (this, mouseTier, our startSelection(), our startSelection(), false);
+			//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
+			//FunctionEditor_marksChanged (this, true);
+			Editor_broadcastDataChanged (our functionEditor());
+		} else {
+			/*
+				Possibility 3: the user clicked in empty space.
+				Select the interval, if any.
+			*/
+			if (selectedIntervalTier)
+				our setSelection (startInterval, endInterval);
+		}
+	} else if (event -> isDrag ()) {
+		if (isdefined (our anchorTime) && our draggingTiers.size > 0) {
+			our draggingTime = x_world;
+			if (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+				const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics(), x_world - our anchorTime));
+				if (distanceToAnchor_mm > draggingVicinityRadius_mm)
+					our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
+			}
+		}
+	} else if (event -> isDrop ()) {
+		if (isundef (our anchorTime) || our draggingTiers.size == 0) {   // TODO: figure out a circumstance under which anchorTime could be undefined
+			our draggingTime = undefined;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our anchorTime = undefined;
+			our clickedLeftBoundary = 0;
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+		/*
+			If the user shift-clicked, we extend the selection (this already happened during click()).
+		*/
+		if (event -> shiftKeyPressed && ! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+			our draggingTime = undefined;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our anchorTime = undefined;
+			our clickedLeftBoundary = 0;
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+		/*
+			If the user dropped near an existing boundary in an unselected tier,
+			we snap to that mark.
+		*/
+		const integer itierDrop = localY_fraction_toTier (this, localY_fraction);
+		bool droppedOnABoundaryOrPointInsideAnUnselectedTier = false;
+		if (x_world > 0.0 && ! our draggingTiers [itierDrop]) {   // dropped inside an unselected tier?
+			const Function anyTierDrop = our textGrid() -> tiers->at [itierDrop];
+			if (anyTierDrop -> classInfo == classIntervalTier) {
+				const IntervalTier tierDrop = (IntervalTier) anyTierDrop;
+				for (integer ibound = 1; ibound < tierDrop -> intervals.size; ibound ++) {
+					const TextInterval left = tierDrop -> intervals.at [ibound];
+					const double mouseDistanceToBoundary = fabs (Graphics_dxWCtoMM (our graphics(), x_world - left -> xmax));
+					if (mouseDistanceToBoundary < droppingVicinityRadius_mm) {
+						x_world = left -> xmax;   // snap to boundary
+						droppedOnABoundaryOrPointInsideAnUnselectedTier = true;
+					}
+				}
+			} else {
+				const TextTier tierDrop = (TextTier) anyTierDrop;
+				for (integer ipoint = 1; ipoint <= tierDrop -> points.size; ipoint ++) {
+					const TextPoint point = tierDrop -> points.at [ipoint];
+					const double mouseDistanceToPoint_mm = fabs (Graphics_dxWCtoMM (our graphics(), x_world - point -> number));
+					if (mouseDistanceToPoint_mm < droppingVicinityRadius_mm) {
+						x_world = point -> number;   // snap to point
+						droppedOnABoundaryOrPointInsideAnUnselectedTier = true;
+					}
+				}
+			}
+		}
+		/*
+			If the user dropped near the cursor (outside the anchor),
+			we snap to the cursor.
+		*/
+		if (our startSelection() == our endSelection() && our startSelection() != our anchorTime) {
+			const double mouseDistanceToCursor = fabs (Graphics_dxWCtoMM (our graphics(), x_world - our startSelection()));
+			if (mouseDistanceToCursor < droppingVicinityRadius_mm)
+				x_world = our startSelection();
+		}
+		/*
+			If the user wiggled near the anchor, we snap to the anchor and bail out
+			(a boundary has been selected, but nothing has been dragged).
+		*/
+		if (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce && ! droppedOnABoundaryOrPointInsideAnUnselectedTier) {
+			our setSelection (our anchorTime, our anchorTime);
+			our draggingTime = undefined;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our anchorTime = undefined;
+			our clickedLeftBoundary = 0;
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+
+		/*
+			We cannot move a boundary out of the dragging range.
+		*/
+		if (x_world <= our leftDraggingBoundary || x_world >= our rightDraggingBoundary) {
+			Melder_beep ();
+			our draggingTime = undefined;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our anchorTime = undefined;
+			our clickedLeftBoundary = 0;
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+
+		FunctionArea_save (this, U"Drag");
+
+		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+			if (our draggingTiers [itier]) {
+				IntervalTier intervalTier;
+				TextTier textTier;
+				AnyTextGridTier_identifyClass (our textGrid() -> tiers->at [itier], & intervalTier, & textTier);
+				if (intervalTier) {
+					const integer numberOfIntervals = intervalTier -> intervals.size;
+					for (integer ibound = 2; ibound <= numberOfIntervals; ibound ++) {
+						TextInterval left = intervalTier -> intervals.at [ibound - 1], right = intervalTier -> intervals.at [ibound];
+						if (left -> xmax == our anchorTime) {   // boundary dragged?
+							left -> xmax = right -> xmin = x_world;   // move boundary to drop site
+							break;
+						}
+					}
+				} else {
+					Melder_assert (isdefined (our anchorTime));
+					const integer iDraggedPoint = AnyTier_hasPoint (textTier->asAnyTier(), our anchorTime);
+					if (iDraggedPoint) {
+						Melder_assert (isdefined (x_world));
+						const integer dropSiteHasPoint = AnyTier_hasPoint (textTier->asAnyTier(), x_world);
+						if (dropSiteHasPoint != 0) {
+							Melder_warning (U"Cannot drop point on an existing point.");
+						} else {
+							const TextPoint point = textTier -> points.at [iDraggedPoint];
+							/*
+								Move point to drop site. May have passed another point.
+							*/
+							autoTextPoint newPoint = Data_copy (point);
+							newPoint -> number = x_world;   // move point to drop site
+							textTier -> points. removeItem (iDraggedPoint);
+							textTier -> points. addItem_move (newPoint.move());
+						}
+					}
+				}
+			}
+		}
+
+		/*
+			Select the drop site.
+		*/
+		our setSelection (x_world, x_world);
+		our draggingTime = undefined;
+		our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+		our anchorTime = undefined;
+		our clickedLeftBoundary = 0;
+		//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
+		//FunctionEditor_marksChanged (this, true);
+		Editor_broadcastDataChanged (our functionEditor());
+	}
+	return FunctionEditor_UPDATE_NEEDED;
+}
+
+
 #pragma mark - TextGridArea File menu
 
 static void menu_cb_SaveWholeTextGridAsTextFile (TextGridArea me, EDITOR_ARGS_FORM) {
@@ -101,42 +570,6 @@ void structTextGridArea :: v_createMenuItems_file (EditorMenu menu) {
 
 #pragma mark - TextGridArea View menu
 
-static void _TextGridArea_timeToInterval (TextGridArea me, double t, integer tierNumber,
-	double *out_tmin, double *out_tmax)
-{
-	Melder_assert (isdefined (t));
-	const Function tier = my textGrid() -> tiers->at [tierNumber];
-	IntervalTier intervalTier;
-	TextTier textTier;
-	AnyTextGridTier_identifyClass (tier, & intervalTier, & textTier);
-	if (intervalTier) {
-		integer iinterval = IntervalTier_timeToIndex (intervalTier, t);
-		if (iinterval == 0) {
-			if (t < my tmin()) {
-				iinterval = 1;
-			} else {
-				iinterval = intervalTier -> intervals.size;
-			}
-		}
-		Melder_assert (iinterval >= 1);
-		Melder_assert (iinterval <= intervalTier -> intervals.size);
-		const TextInterval interval = intervalTier -> intervals.at [iinterval];
-		*out_tmin = interval -> xmin;
-		*out_tmax = interval -> xmax;
-	} else {
-		const integer n = textTier -> points.size;
-		if (n == 0) {
-			*out_tmin = my tmin();
-			*out_tmax = my tmax();
-		} else {
-			integer ipointleft = AnyTier_timeToLowIndex (textTier->asAnyTier(), t);
-			*out_tmin = ( ipointleft == 0 ? my tmin() : textTier -> points.at [ipointleft] -> number );
-			*out_tmax = ( ipointleft == n ? my tmax() : textTier -> points.at [ipointleft + 1] -> number );
-		}
-	}
-	Melder_clipLeft (my tmin(), out_tmin);
-	Melder_clipRight (out_tmax, my tmax());
-}
 static void do_selectAdjacentTier (TextGridArea me, bool previous) {
 	const integer n = my textGrid() -> tiers->size;
 	if (n >= 2) {
@@ -144,7 +577,7 @@ static void do_selectAdjacentTier (TextGridArea me, bool previous) {
 				my selectedTier > 1 ? my selectedTier - 1 : n :
 				my selectedTier < n ? my selectedTier + 1 : 1 );
 		double startInterval, endInterval;
-		_TextGridArea_timeToInterval (me, my startSelection(), my selectedTier, & startInterval, & endInterval);
+		timeToInterval (me, my startSelection(), my selectedTier, & startInterval, & endInterval);
 		my setSelection (startInterval, endInterval);
 		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (my functionEditor(), true);
@@ -307,6 +740,402 @@ static void addTextGridExtractMenu (TextGridArea me, EditorMenu menu) {
 }
 
 
+#pragma mark - TextGridArea Interval menu
+
+static void menu_cb_AlignInterval (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	checkTierSelection (me, U"align words");
+	const AnyTier tier = static_cast <AnyTier> (my textGrid() -> tiers->at [my selectedTier]);
+	if (tier -> classInfo != classIntervalTier)
+		Melder_throw (U"Alignment works only for interval tiers, whereas tier ", my selectedTier, U" is a point tier.\nSelect an interval tier instead.");
+	const integer intervalNumber = getSelectedInterval (me);
+	if (! intervalNumber)
+		Melder_throw (U"Select an interval first");
+	if (! my instancePref_align_includeWords() && ! my instancePref_align_includePhonemes())
+		Melder_throw (U"Nothing to be done.\nPlease switch on \"Include words\" and/or \"Include phonemes\" in the \"Alignment settings\".");
+	{// scope
+		const autoMelderProgressOff noprogress;
+		FunctionArea_save (me, U"Align interval");
+		TextGrid_anySound_alignInterval (my textGrid(), ((AnyTextGridEditor) my functionEditor()) -> soundOrLongSound(), my selectedTier, intervalNumber,
+				my instancePref_align_language(), my instancePref_align_includeWords(), my instancePref_align_includePhonemes());
+	}
+	Editor_broadcastDataChanged (my functionEditor());
+}
+static void menu_cb_AlignmentSettings (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Alignment settings", nullptr)
+		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+		for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
+			OPTION ((conststring32) espeakdata_languages_names -> strings [i].get());
+		}
+		BOOLEAN (includeWords,    U"Include words",    my default_align_includeWords ())
+		BOOLEAN (includePhonemes, U"Include phonemes", my default_align_includePhonemes ())
+		BOOLEAN (allowSilences,   U"Allow silences",   my default_align_allowSilences ())
+	EDITOR_OK
+		int prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), my instancePref_align_language());
+		if (prefVoice == 0)
+			prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+		SET_OPTION (language, prefVoice)
+		SET_BOOLEAN (includeWords, my instancePref_align_includeWords())
+		SET_BOOLEAN (includePhonemes, my instancePref_align_includePhonemes())
+		SET_BOOLEAN (allowSilences, my instancePref_align_allowSilences())
+	EDITOR_DO
+		my setInstancePref_align_language (espeakdata_languages_names -> strings [language].get());
+		my setInstancePref_align_includeWords (includeWords);
+		my setInstancePref_align_includePhonemes (includePhonemes);
+		my setInstancePref_align_allowSilences (allowSilences);
+	EDITOR_END
+}
+static void do_insertIntervalOnTier (TextGridArea me, int itier) {
+	try {
+		insertBoundaryOrPoint (me, itier,
+			my functionEditor() -> duringPlay ? my functionEditor() -> playCursor : my startSelection(),
+			my functionEditor() -> duringPlay ? my functionEditor() -> playCursor : my endSelection(),
+			true
+		);
+		my selectedTier = itier;
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+		FunctionEditor_marksChanged (my functionEditor(), true);
+		Editor_broadcastDataChanged (my functionEditor());
+	} catch (MelderError) {
+		Melder_throw (U"Interval not inserted.");
+	}
+}
+static void menu_cb_InsertIntervalOnTier1 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 1); }
+static void menu_cb_InsertIntervalOnTier2 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 2); }
+static void menu_cb_InsertIntervalOnTier3 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 3); }
+static void menu_cb_InsertIntervalOnTier4 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 4); }
+static void menu_cb_InsertIntervalOnTier5 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 5); }
+static void menu_cb_InsertIntervalOnTier6 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 6); }
+static void menu_cb_InsertIntervalOnTier7 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 7); }
+static void menu_cb_InsertIntervalOnTier8 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 8); }
+
+static void addIntervalMenu (TextGridArea me) {
+	EditorMenu menu = Editor_addMenu (my functionEditor(), U"Interval", 0);
+	if (((AnyTextGridEditor) my functionEditor()) -> soundArea()) {
+		FunctionAreaMenu_addCommand (menu, U"Align interval", 'D',
+				menu_cb_AlignInterval, me);
+		FunctionAreaMenu_addCommand (menu, U"Alignment settings...", 0,
+				menu_cb_AlignmentSettings, me);
+		FunctionAreaMenu_addCommand (menu, U"-- add interval --", 0, nullptr, me);
+	}
+	FunctionAreaMenu_addCommand (menu, U"Add interval on tier 1", GuiMenu_COMMAND | '1',
+			menu_cb_InsertIntervalOnTier1, me);
+	FunctionAreaMenu_addCommand (menu, U"Add interval on tier 2", GuiMenu_COMMAND | '2',
+			menu_cb_InsertIntervalOnTier2, me);
+	FunctionAreaMenu_addCommand (menu, U"Add interval on tier 3", GuiMenu_COMMAND | '3',
+			menu_cb_InsertIntervalOnTier3, me);
+	FunctionAreaMenu_addCommand (menu, U"Add interval on tier 4", GuiMenu_COMMAND | '4',
+			menu_cb_InsertIntervalOnTier4, me);
+	FunctionAreaMenu_addCommand (menu, U"Add interval on tier 5", GuiMenu_COMMAND | '5',
+			menu_cb_InsertIntervalOnTier5, me);
+	FunctionAreaMenu_addCommand (menu, U"Add interval on tier 6", GuiMenu_COMMAND | '6',
+			menu_cb_InsertIntervalOnTier6, me);
+	FunctionAreaMenu_addCommand (menu, U"Add interval on tier 7", GuiMenu_COMMAND | '7',
+			menu_cb_InsertIntervalOnTier7, me);
+	FunctionAreaMenu_addCommand (menu, U"Add interval on tier 8", GuiMenu_COMMAND | '8',
+			menu_cb_InsertIntervalOnTier8, me);
+}
+
+
+#pragma mark - TextGridArea Boundary menu
+
+static void menu_cb_RemovePointOrBoundary (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	checkTierSelection (me, U"remove a point or boundary");
+	const Function anyTier = my textGrid() -> tiers->at [my selectedTier];
+	if (anyTier -> classInfo == classIntervalTier) {
+		const IntervalTier tier = (IntervalTier) anyTier;
+		const integer selectedLeftBoundary = getSelectedLeftBoundary (me);
+		if (selectedLeftBoundary == 0)
+			Melder_throw (U"To remove a boundary, first click on it.");
+
+		FunctionArea_save (me, U"Remove boundary");
+		IntervalTier_removeLeftBoundary (tier, selectedLeftBoundary);
+	} else {
+		const TextTier tier = (TextTier) anyTier;
+		const integer selectedPoint = getSelectedPoint (me);
+		if (selectedPoint == 0)
+			Melder_throw (U"To remove a point, first click on it.");
+
+		FunctionArea_save (me, U"Remove point");
+		tier -> points. removeItem (selectedPoint);
+	}
+	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
+	Editor_broadcastDataChanged (my functionEditor());
+}
+static void do_movePointOrBoundary (TextGridArea me, int where) {
+	if (where == 0 && ! ((AnyTextGridEditor) my functionEditor()) -> sound())
+		return;
+	checkTierSelection (me, U"move a point or boundary");
+	const Function anyTier = my textGrid() -> tiers->at [my selectedTier];
+	if (anyTier -> classInfo == classIntervalTier) {
+		const IntervalTier tier = (IntervalTier) anyTier;
+		static const conststring32 boundarySaveText [3] { U"Move boundary to zero crossing", U"Move boundary to B", U"Move boundary to E" };
+		const integer selectedLeftBoundary = getSelectedLeftBoundary (me);
+		if (selectedLeftBoundary == 0)
+			Melder_throw (U"To move a boundary, first click on it.");
+		const TextInterval left = tier -> intervals.at [selectedLeftBoundary - 1];
+		const TextInterval right = tier -> intervals.at [selectedLeftBoundary];
+		const double position = ( where == 1 ? my startSelection() : where == 2 ? my endSelection() :
+				Sound_getNearestZeroCrossing (((AnyTextGridEditor) my functionEditor()) -> sound(), left -> xmax, 1) );   // STEREO BUG
+		if (isundef (position))
+			Melder_throw (U"There is no zero crossing to move to.");
+		if (position <= left -> xmin || position >= right -> xmax)
+			Melder_throw (U"Cannot move a boundary past its neighbour.");
+
+		FunctionArea_save (me, boundarySaveText [where]);
+
+		left -> xmax = right -> xmin = position;
+		my setSelection (position, position);
+	} else {
+		TextTier tier = (TextTier) anyTier;
+		static const conststring32 pointSaveText [3] { U"Move point to zero crossing", U"Move point to B", U"Move point to E" };
+		const integer selectedPoint = getSelectedPoint (me);
+		if (selectedPoint == 0)
+			Melder_throw (U"To move a point, first click on it.");
+		const TextPoint point = tier -> points.at [selectedPoint];
+		const double position = ( where == 1 ? my startSelection() : where == 2 ? my endSelection() :
+				Sound_getNearestZeroCrossing (((AnyTextGridEditor) my functionEditor()) -> sound(), point -> number, 1) );   // STEREO BUG
+		if (isundef (position))
+			Melder_throw (U"There is no zero crossing to move to.");
+
+		FunctionArea_save (me, pointSaveText [where]);
+
+		point -> number = position;
+		my setSelection (position, position);
+	}
+	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+	FunctionEditor_marksChanged (my functionEditor(), true);   // because cursor has moved
+	Editor_broadcastDataChanged (my functionEditor());
+}
+static void menu_cb_MoveToB (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	do_movePointOrBoundary (me, 1);
+}
+static void menu_cb_MoveToE (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	do_movePointOrBoundary (me, 2);
+}
+static void menu_cb_MoveToZero (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	do_movePointOrBoundary (me, 0);
+}
+static void do_insertOnTier (TextGridArea me, integer itier) {
+	try {
+		insertBoundaryOrPoint (me, itier,
+			my functionEditor() -> duringPlay ? my functionEditor() -> playCursor : my startSelection(),
+			my functionEditor() -> duringPlay ? my functionEditor() -> playCursor : my endSelection(),
+			false
+		);
+		my selectedTier = itier;
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
+		FunctionEditor_marksChanged (my functionEditor(), true);
+		Editor_broadcastDataChanged (my functionEditor());
+	} catch (MelderError) {
+		Melder_throw (U"Boundary or point not inserted.");
+	}
+}
+static void menu_cb_InsertOnSelectedTier (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	do_insertOnTier (me, my selectedTier);
+}
+static void menu_cb_InsertOnTier1 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 1); }
+static void menu_cb_InsertOnTier2 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 2); }
+static void menu_cb_InsertOnTier3 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 3); }
+static void menu_cb_InsertOnTier4 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 4); }
+static void menu_cb_InsertOnTier5 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 5); }
+static void menu_cb_InsertOnTier6 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 6); }
+static void menu_cb_InsertOnTier7 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 7); }
+static void menu_cb_InsertOnTier8 (TextGridArea me, EDITOR_ARGS_DIRECT) { do_insertOnTier (me, 8); }
+
+static void menu_cb_InsertOnAllTiers (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	const integer saveTier = my selectedTier;
+	for (integer itier = 1; itier <= my textGrid() -> tiers->size; itier ++)
+		do_insertOnTier (me, itier);
+	my selectedTier = saveTier;   // only if everything went right; otherwise, the tier where something went wrong will stand selected
+}
+static void addBoundaryMenu (TextGridArea me) {
+	EditorMenu menu = Editor_addMenu (my functionEditor(), U"Boundary", 0);
+	/*FunctionAreaMenu_addCommand (menu, U"Move to B", 0, menu_cb_MoveToB, me);
+	FunctionAreaMenu_addCommand (menu, U"Move to E", 0, menu_cb_MoveToE);*/
+	if (((AnyTextGridEditor) my functionEditor()) -> soundArea()) {   // BUG: not for LongSounds; will crash in EEGArea
+		FunctionAreaMenu_addCommand (menu, U"Move to nearest zero crossing", 0,
+				menu_cb_MoveToZero, me);
+		FunctionAreaMenu_addCommand (menu, U"-- insert boundary --", 0, nullptr, me);
+	}
+	FunctionAreaMenu_addCommand (menu, U"Add on selected tier", GuiMenu_ENTER,
+			menu_cb_InsertOnSelectedTier, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on tier 1", GuiMenu_COMMAND | GuiMenu_F1,
+			menu_cb_InsertOnTier1, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on tier 2", GuiMenu_COMMAND | GuiMenu_F2,
+			menu_cb_InsertOnTier2, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on tier 3", GuiMenu_COMMAND | GuiMenu_F3,
+			menu_cb_InsertOnTier3, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on tier 4", GuiMenu_COMMAND | GuiMenu_F4,
+			menu_cb_InsertOnTier4, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on tier 5", GuiMenu_COMMAND | GuiMenu_F5,
+			menu_cb_InsertOnTier5, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on tier 6", GuiMenu_COMMAND | GuiMenu_F6,
+			menu_cb_InsertOnTier6, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on tier 7", GuiMenu_COMMAND | GuiMenu_F7,
+			menu_cb_InsertOnTier7, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on tier 8", GuiMenu_COMMAND | GuiMenu_F8,
+			menu_cb_InsertOnTier8, me);
+	FunctionAreaMenu_addCommand (menu, U"Add on all tiers", GuiMenu_COMMAND | GuiMenu_F9,
+			menu_cb_InsertOnAllTiers, me);
+	FunctionAreaMenu_addCommand (menu, U"-- remove mark --", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE,
+			menu_cb_RemovePointOrBoundary, me);
+}
+
+
+#pragma mark - TextGridArea Boundary menu
+
+static void menu_cb_RenameTier (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Rename tier", nullptr)
+		SENTENCE (newName, U"New name", U"");
+	EDITOR_OK
+		checkTierSelection (me, U"rename a tier");
+		const Daata tier = my textGrid() -> tiers->at [my selectedTier];
+		SET_STRING (newName, tier -> name ? tier -> name.get() : U"")
+	EDITOR_DO
+		checkTierSelection (me, U"rename a tier");
+		const Function tier = my textGrid() -> tiers->at [my selectedTier];
+
+		FunctionArea_save (me, U"Rename tier");
+
+		Thing_setName (tier, newName);
+
+		Editor_broadcastDataChanged (my functionEditor());
+	EDITOR_END
+}
+static void CONVERT_DATA_TO_ONE__PublishTier (TextGridArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		checkTierSelection (me, U"publish a tier");
+		const Function tier = my textGrid() -> tiers->at [my selectedTier];
+		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
+		TextGrid_addTier_copy (result.get(), tier);
+	CONVERT_DATA_TO_ONE_END (tier -> name.get())
+}
+static void menu_cb_RemoveAllTextFromTier (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	checkTierSelection (me, U"remove all text from a tier");
+	IntervalTier intervalTier;
+	TextTier textTier;
+	AnyTextGridTier_identifyClass (my textGrid() -> tiers->at [my selectedTier], & intervalTier, & textTier);
+
+	FunctionArea_save (me, U"Remove text from tier");
+	if (intervalTier)
+		IntervalTier_removeText (intervalTier);
+	else
+		TextTier_removeText (textTier);
+
+	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
+	Editor_broadcastDataChanged (my functionEditor());
+}
+static void menu_cb_RemoveTier (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	if (my textGrid() -> tiers->size <= 1)
+		Melder_throw (U"Sorry, I refuse to remove the last tier.");
+	checkTierSelection (me, U"remove a tier");
+
+	FunctionArea_save (me, U"Remove tier");
+	my textGrid() -> tiers-> removeItem (my selectedTier);
+
+	//my textGridArea -> selectedTier = 1; TRY OUT 2022-07-23
+	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
+	Editor_broadcastDataChanged (my functionEditor());
+}
+static void menu_cb_AddIntervalTier (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Add interval tier", nullptr)
+		NATURAL (position, U"Position", U"1 (= at top)")
+		SENTENCE (name, U"Name", U"")
+	EDITOR_OK
+		SET_INTEGER_AS_STRING (position, Melder_cat (my textGrid() -> tiers->size + 1, U" (= at bottom)"))
+		SET_STRING (name, U"")
+	EDITOR_DO
+		{// scope
+			autoIntervalTier tier = IntervalTier_create (my textGrid() -> xmin, my textGrid() -> xmax);
+			Melder_clipRight (& position, my textGrid() -> tiers->size + 1);
+			Thing_setName (tier.get(), name);
+
+			FunctionArea_save (me, U"Add interval tier");
+			my textGrid() -> tiers -> addItemAtPosition_move (tier.move(), position);
+		}
+
+		my selectedTier = position;
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
+		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
+		Editor_broadcastDataChanged (my functionEditor());
+	EDITOR_END
+}
+static void menu_cb_AddPointTier (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Add point tier", nullptr)
+		NATURAL (position, U"Position", U"1 (= at top)")
+		SENTENCE (name, U"Name", U"");
+	EDITOR_OK
+		SET_INTEGER_AS_STRING (position, Melder_cat (my textGrid() -> tiers->size + 1, U" (= at bottom)"))
+		SET_STRING (name, U"")
+	EDITOR_DO
+		{// scope
+			autoTextTier tier = TextTier_create (my textGrid() -> xmin, my textGrid() -> xmax);
+			Melder_clipRight (& position, my textGrid() -> tiers->size + 1);
+			Thing_setName (tier.get(), name);
+
+			FunctionArea_save (me, U"Add point tier");
+			my textGrid() -> tiers -> addItemAtPosition_move (tier.move(), position);
+		}
+
+		my selectedTier = position;
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
+		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
+		Editor_broadcastDataChanged (my functionEditor());
+	EDITOR_END
+}
+static void menu_cb_DuplicateTier (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Duplicate tier", nullptr)
+		NATURAL (position, U"Position", U"1 (= at top)")
+		SENTENCE (name, U"Name", U"")
+	EDITOR_OK
+		if (my selectedTier != 0) {
+			SET_INTEGER (position, my selectedTier + 1)
+			SET_STRING (name, my textGrid() -> tiers->at [my selectedTier] -> name.get())
+		}
+	EDITOR_DO
+		checkTierSelection (me, U"duplicate a tier");
+		const Function tier = my textGrid() -> tiers->at [my selectedTier];
+		{// scope
+			autoFunction newTier = Data_copy (tier);
+			Melder_clipRight (& position, my textGrid() -> tiers->size + 1);
+			Thing_setName (newTier.get(), name);
+
+			FunctionArea_save (me, U"Duplicate tier");
+			my textGrid() -> tiers -> addItemAtPosition_move (newTier.move(), position);
+		}
+
+		my selectedTier = position;
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
+		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
+		Editor_broadcastDataChanged (my functionEditor());
+	EDITOR_END
+}
+static void addTierMenu (TextGridArea me) {
+	EditorMenu menu = Editor_addMenu (my functionEditor(), U"Tier", 0);
+	FunctionAreaMenu_addCommand (menu, U"Add interval tier...", 0,
+			menu_cb_AddIntervalTier, me);
+	FunctionAreaMenu_addCommand (menu, U"Add point tier...", 0,
+			menu_cb_AddPointTier, me);
+	FunctionAreaMenu_addCommand (menu, U"Duplicate tier...", 0,
+			menu_cb_DuplicateTier, me);
+	FunctionAreaMenu_addCommand (menu, U"Rename tier...", 0,
+			menu_cb_RenameTier, me);
+	FunctionAreaMenu_addCommand (menu, U"-- remove tier --", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Remove all text from tier", 0,
+			menu_cb_RemoveAllTextFromTier, me);
+	FunctionAreaMenu_addCommand (menu, U"Remove entire tier", 0,
+			menu_cb_RemoveTier, me);
+	FunctionAreaMenu_addCommand (menu, U"-- extract tier --", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Extract to list of objects:", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Extract entire selected tier", 0,
+			CONVERT_DATA_TO_ONE__PublishTier, me);
+}
+
+
 #pragma mark - TextGridArea all menus
 
 void structTextGridArea :: v_createMenus () {
@@ -315,6 +1144,9 @@ void structTextGridArea :: v_createMenus () {
 	addTextGridDrawMenu (this, textGridMenu);
 	addTextGridExtractMenu (this, our functionEditor() -> extractMenu);
 	addTextGridExtractMenu (this, textGridMenu);
+	addIntervalMenu (this);
+	addBoundaryMenu (this);
+	addTierMenu (this);
 }
 void structTextGridArea :: v_updateMenuItems () {
 	TextGridArea_Parent :: v_updateMenuItems ();

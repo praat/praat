@@ -37,10 +37,6 @@ Thing_define (AnyTextGridEditor, FunctionEditor) {
 	bool suppressRedraw;
 	autostring32 findString;
 
-	double draggingTime;
-	autoBOOLVEC draggingTiers;
-	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
-
 	void v1_info ()
 		override;
 	void v_createChildren ()
@@ -63,8 +59,6 @@ Thing_define (AnyTextGridEditor, FunctionEditor) {
 		override;
 	bool v_hasText ()
 		override { return true; }
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction)
-		override;
 	void v_clickSelectionViewer (double xWC, double yWC)
 		override;
 	void v_play (double tmin, double tmax)
@@ -81,14 +75,6 @@ Thing_define (AnyTextGridEditor, FunctionEditor) {
 		override { return U"IPA chart"; }
 
 	#include "AnyTextGridEditor_prefs.h"
-
-private:
-	/* only in v_mouseInWideDataView: */
-	bool anchorIsInWideSoundOrAnalysisPart = false;
-	bool anchorIsInWideTextGridPart = false;
-	double anchorTime = undefined;
-	integer clickedLeftBoundary = 0;
-	double leftDraggingBoundary = undefined, rightDraggingBoundary = undefined;   // initial dragging range
 };
 
 void AnyTextGridEditor_init (AnyTextGridEditor me, conststring32 title, TextGrid textGrid,
