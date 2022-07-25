@@ -30,11 +30,26 @@ Thing_define (TextGridArea, FunctionArea) {
 
 	integer selectedTier;
 
+
 private:
 	void v_specializedHighlightBackground () const
 		override;
 
+private:
+	/* only in v_mouse: */
+	bool anchorIsInWideSoundOrAnalysisPart = false;
+	bool anchorIsInWideTextGridPart = false;
+	double anchorTime = undefined;
+	integer clickedLeftBoundary = 0;
+	double leftDraggingBoundary = undefined, rightDraggingBoundary = undefined;   // initial dragging range
+
+public:  // BUG: should be private
+	double draggingTime;
+	autoBOOLVEC draggingTiers;
+	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 public:
+	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
+		override;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	void v_createMenuItems_file (EditorMenu menu)
 		override;
