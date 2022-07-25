@@ -47,12 +47,39 @@ Thing_define (AnyTextGridEditor, FunctionEditor) {
 		override;
 	void v1_dataChanged ()
 		override;
-	void v_createMenuItems_draw (EditorMenu menu)
-		override;
-	void v_distributeAreas ()
-		override;
-	void v_draw ()
-		override;
+	void v_distributeAreas () override {
+		if (our soundArea()) {
+			const bool showAnalysis = our soundAnalysisArea() -> hasContentToShow();
+			const integer numberOfTiers = our textGrid() -> tiers->size;
+			const integer numberOfVisibleChannels = Melder_clippedRight (our soundOrLongSound() -> ny, 8_integer);
+			const double soundY = numberOfTiers / (2.0 * numberOfVisibleChannels +
+					numberOfTiers * ( showAnalysis ? 1.8 : 1.3 ));
+			our textGridArea() -> setGlobalYRange_fraction (0.0, soundY);
+			if (showAnalysis) {
+				const double soundY2 = 0.5 * (1.0 + soundY);
+				our soundAnalysisArea() -> setGlobalYRange_fraction (soundY, soundY2);
+				our soundArea() -> setGlobalYRange_fraction (soundY2, 1.0);
+			} else {
+				our soundAnalysisArea() -> setGlobalYRange_fraction (soundY, soundY);
+				our soundArea() -> setGlobalYRange_fraction (soundY, 1.0);
+			}
+		} else {
+			our textGridArea() -> setGlobalYRange_fraction (0.0, 1.0);
+		}
+	}
+	void v_draw () override {
+		if (our soundArea()) {
+			FunctionArea_prepareCanvas (our soundArea().get());
+			if (our soundAnalysisArea() -> instancePref_pulses_show())
+				our soundAnalysisArea() -> v_draw_analysis_pulses ();
+			FunctionArea_drawInside (our soundArea().get());
+			if (our soundAnalysisArea() -> hasContentToShow()) {
+				FunctionArea_prepareCanvas (our soundAnalysisArea().get());
+				our soundAnalysisArea() -> v_draw_analysis ();
+			}
+		}
+		FunctionArea_drawOne (our textGridArea().get());
+	}
 	bool v_hasSelectionViewer ()
 		override { return true; }
 	void v_drawSelectionViewer ()

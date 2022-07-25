@@ -17,9 +17,10 @@
  */
 
 #include "TextGridArea.h"
-#include "AnyTextGridEditor.h"   // BUG: should not be included
 #include "TextGrid_Sound.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
+#include "LongSoundArea.h"   // for drawing TextGrid and Sound, or for aligning TextGrid to Sound
+#include "SoundAnalysisArea.h"   // for drawing TextGrid and Pitch
 #include "EditorM.h"
 
 Thing_implement (TextGridArea, FunctionArea, 0);
@@ -228,6 +229,257 @@ void structTextGridArea :: v_specializedHighlightBackground () const {
 	}
 	Graphics_setColour (our graphics(), Melder_BLACK);
 }
+static void do_drawIntervalTier (TextGridArea me, IntervalTier tier, integer itier) {
+	#if gtk || defined (macintosh)
+		constexpr bool platformUsesAntiAliasing = true;
+	#else
+		constexpr bool platformUsesAntiAliasing = false;
+	#endif
+	integer x1DC, x2DC, yDC;
+	Graphics_WCtoDC (my graphics(), my startWindow(), 0.0, & x1DC, & yDC);
+	Graphics_WCtoDC (my graphics(), my endWindow(), 0.0, & x2DC, & yDC);
+	Graphics_setPercentSignIsItalic (my graphics(), my instancePref_useTextStyles());
+	Graphics_setNumberSignIsBold (my graphics(), my instancePref_useTextStyles());
+	Graphics_setCircumflexIsSuperscript (my graphics(), my instancePref_useTextStyles());
+	Graphics_setUnderscoreIsSubscript (my graphics(), my instancePref_useTextStyles());
+
+	const integer selectedInterval = ( itier == my selectedTier ? getSelectedInterval (me) : 0 );
+	const integer numberOfIntervals = tier -> intervals.size;
+
+	/*
+		Draw a grey bar and a selection button at the cursor position.
+	*/
+	if (my startSelection() == my endSelection() && my startSelection() >= my startWindow() && my startSelection() <= my endWindow()) {
+		/* mutable search */ bool cursorAtBoundary = false;
+		for (integer iinterval = 2; iinterval <= numberOfIntervals; iinterval ++) {
+			const TextInterval interval = tier -> intervals.at [iinterval];
+			if (interval -> xmin == my startSelection())
+				cursorAtBoundary = true;
+		}
+		if (! cursorAtBoundary) {
+			const double dy = Graphics_dyMMtoWC (my graphics(), 1.5);
+			Graphics_setGrey (my graphics(), 0.8);
+			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
+			Graphics_line (my graphics(), my startSelection(), 0.0, my startSelection(), 1.0);
+			Graphics_setLineWidth (my graphics(), 1.0);
+			Graphics_setColour (my graphics(), Melder_BLUE);
+			Graphics_circle_mm (my graphics(), my startSelection(), 1.0 - dy, 3.0);
+		}
+	}
+
+	Graphics_setTextAlignment (my graphics(), my instancePref_alignment(), Graphics_HALF);
+	for (integer iinterval = 1; iinterval <= numberOfIntervals; iinterval ++) {
+		const TextInterval interval = tier -> intervals.at [iinterval];
+		/* mutable clip */ double startInterval = interval -> xmin, endInterval = interval -> xmax;
+		Melder_clipLeft (my tmin(), & startInterval);
+		Melder_clipRight (& endInterval, my tmax());
+		if (startInterval >= endInterval)
+			continue;
+		const bool intervalIsSelected = ( selectedInterval == iinterval );
+
+		/*
+			Draw left boundary.
+		*/
+		if (startInterval >= my startWindow() && startInterval <= my endWindow() && iinterval > 1) {
+			const bool boundaryIsSelected = ( my selectedTier == itier && startInterval == my startSelection() );
+			Graphics_setColour (my graphics(), boundaryIsSelected ? Melder_RED : Melder_BLUE);
+			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
+			Graphics_line (my graphics(), startInterval, 0.0, startInterval, 1.0);
+
+			/*
+				Show alignment with cursor.
+			*/
+			if (startInterval == my startSelection()) {
+				Graphics_setColour (my graphics(), Melder_YELLOW);
+				Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 2.0 : 1.0);
+				Graphics_line (my graphics(), startInterval, 0.0, startInterval, 1.0);
+			}
+		}
+		Graphics_setLineWidth (my graphics(), 1.0);
+
+		/*
+			Draw label text.
+		*/
+		if (interval -> text && endInterval >= my startWindow() && startInterval <= my endWindow()) {
+			const double t1 = std::max (my startWindow(), startInterval);
+			const double t2 = std::min (my endWindow(), endInterval);
+			Graphics_setColour (my graphics(), intervalIsSelected ? Melder_RED : Melder_BLACK);
+			Graphics_textRect (my graphics(), t1, t2, 0.0, 1.0, interval -> text.get());
+			Graphics_setColour (my graphics(), Melder_BLACK);
+		}
+
+	}
+	Graphics_setPercentSignIsItalic (my graphics(), true);
+	Graphics_setNumberSignIsBold (my graphics(), true);
+	Graphics_setCircumflexIsSuperscript (my graphics(), true);
+	Graphics_setUnderscoreIsSubscript (my graphics(), true);
+}
+
+static void do_drawTextTier (TextGridArea me, TextTier tier, integer itier) {
+	#if gtk || defined (macintosh)
+		constexpr bool platformUsesAntiAliasing = true;
+	#else
+		constexpr bool platformUsesAntiAliasing = false;
+	#endif
+	const integer numberOfPoints = tier -> points.size;
+	Graphics_setPercentSignIsItalic (my graphics(), my instancePref_useTextStyles());
+	Graphics_setNumberSignIsBold (my graphics(), my instancePref_useTextStyles());
+	Graphics_setCircumflexIsSuperscript (my graphics(), my instancePref_useTextStyles());
+	Graphics_setUnderscoreIsSubscript (my graphics(), my instancePref_useTextStyles());
+
+	/*
+		Draw a grey bar and a selection button at the cursor position.
+	*/
+	if (my startSelection() == my endSelection() && my startSelection() >= my startWindow() && my startSelection() <= my endWindow()) {
+		bool cursorAtPoint = false;
+		for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
+			const TextPoint point = tier -> points.at [ipoint];
+			if (point -> number == my startSelection())
+				cursorAtPoint = true;
+		}
+		if (! cursorAtPoint) {
+			const double dy = Graphics_dyMMtoWC (my graphics(), 1.5);
+			Graphics_setGrey (my graphics(), 0.8);
+			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
+			Graphics_line (my graphics(), my startSelection(), 0.0, my startSelection(), 1.0);
+			Graphics_setLineWidth (my graphics(), 1.0);
+			Graphics_setColour (my graphics(), Melder_BLUE);
+			Graphics_circle_mm (my graphics(), my startSelection(), 1.0 - dy, 3.0);
+		}
+	}
+
+	Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_HALF);
+	for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
+		const TextPoint point = tier -> points.at [ipoint];
+		const double t = point -> number;
+		if (t >= my startWindow() && t <= my endWindow()) {
+			const bool pointIsSelected = ( itier == my selectedTier && t == my startSelection() );
+			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
+			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
+			Graphics_line (my graphics(), t, 0.0, t, 0.2);
+			Graphics_line (my graphics(), t, 0.8, t, 1);
+			Graphics_setLineWidth (my graphics(), 1.0);
+
+			/*
+				Wipe out the cursor where the text is going to be.
+			*/
+			Graphics_setColour (my graphics(), Melder_WHITE);
+			Graphics_line (my graphics(), t, 0.2, t, 0.8);
+
+			/*
+				Show alignment with cursor.
+			*/
+			if (my startSelection() == my endSelection() && t == my startSelection()) {
+				Graphics_setColour (my graphics(), Melder_YELLOW);
+				Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 2.0 : 1.0);
+				Graphics_line (my graphics(), t, 0.0, t, 0.2);
+				Graphics_line (my graphics(), t, 0.8, t, 1.0);
+				Graphics_setLineWidth (my graphics(), 1.0);
+			}
+			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
+			if (point -> mark)
+				Graphics_text (my graphics(), t, 0.5, point -> mark.get());
+		}
+	}
+	Graphics_setPercentSignIsItalic (my graphics(), true);
+	Graphics_setNumberSignIsBold (my graphics(), true);
+	Graphics_setCircumflexIsSuperscript (my graphics(), true);
+	Graphics_setUnderscoreIsSubscript (my graphics(), true);
+}
+void structTextGridArea :: v_drawInside () {
+	Graphics_Viewport vp2;
+	const integer numberOfTiers = our textGrid() -> tiers->size;
+	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics());
+	const double oldFontSize = Graphics_inqFontSize (our graphics());
+	Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), 0.0, 1.0);
+	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+		const Function anyTier = our textGrid() -> tiers->at [itier];
+		const bool tierIsSelected = ( itier == our selectedTier );
+		const bool isIntervalTier = ( anyTier -> classInfo == classIntervalTier );
+		vp2 = Graphics_insetViewport (our graphics(), 0.0, 1.0,
+				1.0 - (double) itier / (double) numberOfTiers,
+				1.0 - (double) (itier - 1) / (double) numberOfTiers);
+		Graphics_setColour (our graphics(), Melder_BLACK);
+		if (itier != 1)
+			Graphics_line (our graphics(), our startWindow(), 1.0, our endWindow(), 1.0);
+
+		/*
+			Show the number and the name of the tier.
+		*/
+		Graphics_setColour (our graphics(), tierIsSelected ? Melder_RED : Melder_BLACK);
+		Graphics_setFont (our graphics(), oldFont);
+		Graphics_setFontSize (our graphics(), 14);
+		Graphics_setTextAlignment (our graphics(), Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (our graphics(), our startWindow(), 0.5,   tierIsSelected ? U"☞ " : U"", itier);
+		Graphics_setFontSize (our graphics(), oldFontSize);
+		if (anyTier -> name && anyTier -> name [0]) {
+			Graphics_setTextAlignment (our graphics(), Graphics_LEFT,
+					our instancePref_showNumberOf() == kTextGridArea_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
+			Graphics_text (our graphics(), our endWindow(), 0.5, anyTier -> name.get());
+		}
+		if (our instancePref_showNumberOf() != kTextGridArea_showNumberOf::NOTHING) {
+			Graphics_setTextAlignment (our graphics(), Graphics_LEFT, Graphics_TOP);
+			if (our instancePref_showNumberOf() == kTextGridArea_showNumberOf::INTERVALS_OR_POINTS) {
+				const integer count = ( isIntervalTier ? ((IntervalTier) anyTier) -> intervals.size : ((TextTier) anyTier) -> points.size );
+				const integer position = ( itier == our selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0 );
+				if (position)
+					Graphics_text (our graphics(), our endWindow(), 0.5,   U"(", position, U"/", count, U")");
+				else
+					Graphics_text (our graphics(), our endWindow(), 0.5,   U"(", count, U")");
+			} else {
+				Melder_assert (our instancePref_showNumberOf() == kTextGridArea_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
+				integer count = 0;
+				if (isIntervalTier) {
+					const IntervalTier tier = (IntervalTier) anyTier;
+					const integer numberOfIntervals = tier -> intervals.size;
+					for (integer iinterval = 1; iinterval <= numberOfIntervals; iinterval ++) {
+						const TextInterval interval = tier -> intervals.at [iinterval];
+						if (interval -> text && interval -> text [0] != U'\0')
+							count ++;
+					}
+				} else {
+					const TextTier tier = (TextTier) anyTier;
+					const integer numberOfPoints = tier -> points.size;
+					for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
+						const TextPoint point = tier -> points.at [ipoint];
+						if (point -> mark && point -> mark [0] != U'\0')
+							count ++;
+					}
+				}
+				Graphics_text (our graphics(), our endWindow(), 0.5,   U"(##", count, U"#)");
+			}
+		}
+
+		Graphics_setColour (our graphics(), Melder_BLACK);
+		Graphics_setFont (our graphics(), kGraphics_font::TIMES);
+		Graphics_setFontSize (our graphics(), our instancePref_fontSize());
+		if (isIntervalTier)
+			do_drawIntervalTier (this, (IntervalTier) anyTier, itier);
+		else
+			do_drawTextTier (this, (TextTier) anyTier, itier);
+		Graphics_resetViewport (our graphics(), vp2);
+	}
+	Graphics_setColour (our graphics(), Melder_BLACK);
+	Graphics_setFont (our graphics(), oldFont);
+	Graphics_setFontSize (our graphics(), oldFontSize);
+
+	if (isdefined (our draggingTime) && hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+		Graphics_xorOn (our graphics(), Melder_MAROON);
+		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
+			if (our draggingTiers [itier]) {
+				const double ymin = 1.0 - (double) itier / numberOfTiers;
+				const double ymax = 1.0 - (double) (itier - 1) / numberOfTiers;
+				Graphics_setLineWidth (our graphics(), 7.0);
+				Graphics_line (our graphics(), our draggingTime, ymin, our draggingTime, ymax);
+			}
+		}
+		our functionEditor() -> viewDataAsWorldByFraction ();
+		Graphics_setLineWidth (our graphics(), 1.0);
+		Graphics_line (our graphics(), our draggingTime, 0.0, our draggingTime, 1.0);
+		Graphics_text (our graphics(), our draggingTime, 1.0, Melder_fixed (our draggingTime, 6));
+		Graphics_xorOff (our graphics());
+	}
+}
 
 
 #pragma mark - TextGridArea tracking
@@ -307,7 +559,6 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 
 		const bool nearBoundaryOrPoint = ( isdefined (our anchorTime) &&
 				fabs (Graphics_dxWCtoMM (our graphics(), x_world - our anchorTime)) < 1.5 );
-		//FunctionArea_setViewport (this); BUG:
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), 0.0, 1.0);
 		const double distanceToCursorCircle = ( our startSelection() != our endSelection() ? undefined :
 			Graphics_distanceWCtoMM (our graphics(), x_world, localY_fraction,
@@ -568,6 +819,57 @@ void structTextGridArea :: v_createMenuItems_file (EditorMenu menu) {
 }
 
 
+#pragma mark - TextGridArea Query menu
+
+static void QUERY_DATA_FOR_REAL__GetStartingPointOfInterval (TextGridArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	QUERY_DATA_FOR_REAL
+		checkTierSelection (me, U"query the starting point of an interval");
+		const Function anyTier = my textGrid() -> tiers->at [my selectedTier];
+		Melder_require (anyTier -> classInfo == classIntervalTier,
+			U"The selected tier is not an interval tier.");
+		const IntervalTier tier = (IntervalTier) anyTier;
+		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection());
+		const double result = ( iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
+				tier -> intervals.at [iinterval] -> xmin );
+	QUERY_DATA_FOR_REAL_END (U" seconds")
+}
+
+static void QUERY_DATA_FOR_REAL__GetEndPointOfInterval (TextGridArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	QUERY_DATA_FOR_REAL
+		checkTierSelection (me, U"query the end point of an interval");
+		const Function anyTier = my textGrid() -> tiers->at [my selectedTier];
+		Melder_require (anyTier -> classInfo == classIntervalTier,
+			U"The selected tier is not an interval tier.");
+		const IntervalTier tier = (IntervalTier) anyTier;
+		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection());
+		const double result = ( iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
+				tier -> intervals.at [iinterval] -> xmax );
+	QUERY_DATA_FOR_REAL_END (U" seconds")
+}
+
+static void QUERY_DATA_FOR_STRING__GetLabelOfInterval (TextGridArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	QUERY_DATA_FOR_STRING
+		checkTierSelection (me, U"query the label of an interval");
+		const Function anyTier = my textGrid() -> tiers->at [my selectedTier];
+		Melder_require (anyTier -> classInfo == classIntervalTier,
+			U"The selected tier is not an interval tier.");
+		const IntervalTier tier = (IntervalTier) anyTier;
+		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection());
+		const conststring32 result = ( iinterval < 1 || iinterval > tier -> intervals.size ? U"" :
+				tier -> intervals.at [iinterval] -> text.get() );
+	QUERY_DATA_FOR_STRING_END
+}
+void structTextGridArea :: v_createMenuItems_query (EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- query interval --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Query interval:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Get starting point of interval", 0,
+			QUERY_DATA_FOR_REAL__GetStartingPointOfInterval, this);
+	FunctionAreaMenu_addCommand (menu, U"Get end point of interval", 0,
+			QUERY_DATA_FOR_REAL__GetEndPointOfInterval, this);
+	FunctionAreaMenu_addCommand (menu, U"Get label of interval", 0,
+			QUERY_DATA_FOR_STRING__GetLabelOfInterval, this);
+}
+
 #pragma mark - TextGridArea View menu
 
 static void do_selectAdjacentTier (TextGridArea me, bool previous) {
@@ -707,10 +1009,93 @@ static void menu_cb_DrawVisibleTextGrid (TextGridArea me, EDITOR_ARGS_FORM) {
 		Editor_closePraatPicture (my functionEditor());
 	EDITOR_END
 }
+static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw visible sound and TextGrid", nullptr)
+		my v_form_pictureWindow (cmd);
+		my v_form_pictureMargins (cmd);
+		my v_form_pictureSelection (cmd);
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish())
+	EDITOR_OK
+		my v_ok_pictureWindow (cmd);
+		my v_ok_pictureMargins (cmd);
+		my v_ok_pictureSelection (cmd);
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
+	EDITOR_DO
+		my v_do_pictureWindow (cmd);
+		my v_do_pictureMargins (cmd);
+		my v_do_pictureSelection (cmd);
+		my setClassPref_picture_garnish (garnish);
+		Editor_openPraatPicture (my functionEditor());
+		{// scope
+			autoSound sound = (
+				my borrowedSoundArea -> longSound() ?
+					LongSound_extractPart (my borrowedSoundArea -> longSound(),
+							my startWindow(), my endWindow(), true)
+				:	Sound_extractPart (my borrowedSoundArea -> sound(),
+							my startWindow(), my endWindow(), kSound_windowShape::RECTANGULAR, 1.0, true)
+			);
+			TextGrid_Sound_draw (my textGrid(), sound.get(), my functionEditor() -> pictureGraphics,
+					my startWindow(), my endWindow(), true, my instancePref_useTextStyles(), garnish);
+		}
+		FunctionEditor_garnish (my functionEditor());
+		Editor_closePraatPicture (my functionEditor());
+	EDITOR_END
+}
+static void menu_cb_DrawTextGridAndPitch (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Draw TextGrid and Pitch separately", nullptr)
+		my v_form_pictureWindow (cmd);
+		LABEL (U"TextGrid:")
+		BOOLEAN (showBoundariesAndPoints, U"Show boundaries and points", my default_picture_showBoundaries ());
+		LABEL (U"Pitch:")
+		BOOLEAN (speckle, U"Speckle", my default_picture_pitch_speckle ());
+		my v_form_pictureMargins (cmd);
+		my v_form_pictureSelection (cmd);
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
+	EDITOR_OK
+		my v_ok_pictureWindow (cmd);
+		SET_BOOLEAN (showBoundariesAndPoints, my classPref_picture_showBoundaries())
+		SET_BOOLEAN (speckle, my classPref_picture_pitch_speckle())
+		my v_ok_pictureMargins (cmd);
+		my v_ok_pictureSelection (cmd);
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
+	EDITOR_DO
+		my v_do_pictureWindow (cmd);
+		my setClassPref_picture_showBoundaries (showBoundariesAndPoints);   // set prefs even if analyses are missing (it would be annoying not to)
+		my setClassPref_picture_pitch_speckle (speckle);
+		my v_do_pictureMargins (cmd);
+		my v_do_pictureSelection (cmd);
+		my setClassPref_picture_garnish (garnish);
+		SoundAnalysisArea_haveVisiblePitch (my borrowedSoundAnalysisArea);
+		Editor_openPraatPicture (my functionEditor());
+		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my borrowedSoundAnalysisArea -> d_pitch.get(),
+				my borrowedSoundAnalysisArea -> instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
+		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my borrowedSoundAnalysisArea -> d_pitch.get(),
+				my borrowedSoundAnalysisArea -> instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
+		const double pitchFloor_overt = Function_convertToNonlogarithmic (my borrowedSoundAnalysisArea -> d_pitch.get(),
+				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
+		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my borrowedSoundAnalysisArea -> d_pitch.get(),
+				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
+		const double pitchViewFrom_overt = ( my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() < my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() ? my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() : pitchFloor_overt );
+		const double pitchViewTo_overt = ( my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() < my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() ? my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() : pitchCeiling_overt );
+		TextGrid_Pitch_drawSeparately (my textGrid(), my borrowedSoundAnalysisArea -> d_pitch.get(), my functionEditor() -> pictureGraphics, my startWindow(), my endWindow(),
+			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
+			speckle, my borrowedSoundAnalysisArea -> instancePref_pitch_unit()
+		);
+		FunctionEditor_garnish (my functionEditor());
+		Editor_closePraatPicture (my functionEditor());
+	EDITOR_END
+}
 static void addTextGridDrawMenu (TextGridArea me, EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- TextGrid draw --", 0, nullptr, me);
 	FunctionAreaMenu_addCommand (menu, U"Draw TextGrid to picture window:", 0, nullptr, me);
-	FunctionAreaMenu_addCommand (menu, U"Draw visible TextGrid...", 0, menu_cb_DrawVisibleTextGrid, me);
+	FunctionAreaMenu_addCommand (menu, U"Draw visible TextGrid...", 0,
+			menu_cb_DrawVisibleTextGrid, me);
+	if (my borrowedSoundArea)
+		FunctionAreaMenu_addCommand (menu, U"Draw visible sound and TextGrid...", 0,
+				menu_cb_DrawVisibleSoundAndTextGrid, me);
+	if (my borrowedSoundAnalysisArea)
+		FunctionAreaMenu_addCommand (menu, U"Draw visible pitch contour and TextGrid...", 0,
+				menu_cb_DrawTextGridAndPitch, me);
 }
 
 
@@ -755,7 +1140,7 @@ static void menu_cb_AlignInterval (TextGridArea me, EDITOR_ARGS_DIRECT) {
 	{// scope
 		const autoMelderProgressOff noprogress;
 		FunctionArea_save (me, U"Align interval");
-		TextGrid_anySound_alignInterval (my textGrid(), ((AnyTextGridEditor) my functionEditor()) -> soundOrLongSound(), my selectedTier, intervalNumber,
+		TextGrid_anySound_alignInterval (my textGrid(), my borrowedSoundArea -> soundOrLongSound(), my selectedTier, intervalNumber,
 				my instancePref_align_language(), my instancePref_align_includeWords(), my instancePref_align_includePhonemes());
 	}
 	Editor_broadcastDataChanged (my functionEditor());
@@ -810,7 +1195,7 @@ static void menu_cb_InsertIntervalOnTier8 (TextGridArea me, EDITOR_ARGS_DIRECT) 
 
 static void addIntervalMenu (TextGridArea me) {
 	EditorMenu menu = Editor_addMenu (my functionEditor(), U"Interval", 0);
-	if (((AnyTextGridEditor) my functionEditor()) -> soundArea()) {
+	if (my borrowedSoundArea) {
 		FunctionAreaMenu_addCommand (menu, U"Align interval", 'D',
 				menu_cb_AlignInterval, me);
 		FunctionAreaMenu_addCommand (menu, U"Alignment settings...", 0,
@@ -863,7 +1248,7 @@ static void menu_cb_RemovePointOrBoundary (TextGridArea me, EDITOR_ARGS_DIRECT) 
 	Editor_broadcastDataChanged (my functionEditor());
 }
 static void do_movePointOrBoundary (TextGridArea me, int where) {
-	if (where == 0 && ! ((AnyTextGridEditor) my functionEditor()) -> sound())
+	if (where == 0 && ! (my borrowedSoundArea && my borrowedSoundArea -> sound()))
 		return;
 	checkTierSelection (me, U"move a point or boundary");
 	const Function anyTier = my textGrid() -> tiers->at [my selectedTier];
@@ -876,7 +1261,7 @@ static void do_movePointOrBoundary (TextGridArea me, int where) {
 		const TextInterval left = tier -> intervals.at [selectedLeftBoundary - 1];
 		const TextInterval right = tier -> intervals.at [selectedLeftBoundary];
 		const double position = ( where == 1 ? my startSelection() : where == 2 ? my endSelection() :
-				Sound_getNearestZeroCrossing (((AnyTextGridEditor) my functionEditor()) -> sound(), left -> xmax, 1) );   // STEREO BUG
+				Sound_getNearestZeroCrossing (my borrowedSoundArea -> sound(), left -> xmax, 1) );   // STEREO BUG
 		if (isundef (position))
 			Melder_throw (U"There is no zero crossing to move to.");
 		if (position <= left -> xmin || position >= right -> xmax)
@@ -894,7 +1279,7 @@ static void do_movePointOrBoundary (TextGridArea me, int where) {
 			Melder_throw (U"To move a point, first click on it.");
 		const TextPoint point = tier -> points.at [selectedPoint];
 		const double position = ( where == 1 ? my startSelection() : where == 2 ? my endSelection() :
-				Sound_getNearestZeroCrossing (((AnyTextGridEditor) my functionEditor()) -> sound(), point -> number, 1) );   // STEREO BUG
+				Sound_getNearestZeroCrossing (my borrowedSoundArea -> sound(), point -> number, 1) );   // STEREO BUG
 		if (isundef (position))
 			Melder_throw (U"There is no zero crossing to move to.");
 
@@ -953,7 +1338,7 @@ static void addBoundaryMenu (TextGridArea me) {
 	EditorMenu menu = Editor_addMenu (my functionEditor(), U"Boundary", 0);
 	/*FunctionAreaMenu_addCommand (menu, U"Move to B", 0, menu_cb_MoveToB, me);
 	FunctionAreaMenu_addCommand (menu, U"Move to E", 0, menu_cb_MoveToE);*/
-	if (((AnyTextGridEditor) my functionEditor()) -> soundArea()) {   // BUG: not for LongSounds; will crash in EEGArea
+	if (my borrowedSoundArea && ! Thing_isa (my borrowedSoundArea, classLongSoundArea)) {
 		FunctionAreaMenu_addCommand (menu, U"Move to nearest zero crossing", 0,
 				menu_cb_MoveToZero, me);
 		FunctionAreaMenu_addCommand (menu, U"-- insert boundary --", 0, nullptr, me);
@@ -984,7 +1369,7 @@ static void addBoundaryMenu (TextGridArea me) {
 }
 
 
-#pragma mark - TextGridArea Boundary menu
+#pragma mark - TextGridArea Tier menu
 
 static void menu_cb_RenameTier (TextGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Rename tier", nullptr)

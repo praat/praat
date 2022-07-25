@@ -158,6 +158,8 @@ Thing_define (FunctionEditor, Editor) {
 	virtual void v_createMenuItems_view_audio (EditorMenu);
 	void v_createMenuItems_select (EditorMenu)
 		override;
+	void v_createMenuItems_draw (EditorMenu menu)
+		override;
 	void v_createChildren ()
 		override;
 	void v_createMenuItems_help (EditorMenu)

@@ -981,20 +981,20 @@ static void addSoundModifyMenu (SoundArea me, EditorMenu menu) {
 void structSoundArea :: v_createMenus () {
 	EditorMenu soundMenu = Editor_addMenu (our functionEditor(), U"Sound", 0);
 	addSoundSettingsMenu (this, soundMenu);
-	addSoundModifyMenu (this, soundMenu);
 	addSoundModifyMenu (this, our functionEditor() -> editMenu);
+	addSoundModifyMenu (this, soundMenu);
 	if (! Thing_isa (this, classLongSoundArea)) {
-		addSoundQueryMenu (this, soundMenu);
 		addSoundQueryMenu (this, our functionEditor() -> queryMenu);
+		addSoundQueryMenu (this, soundMenu);
 	}
 	if (! Thing_isa (this, classLongSoundArea)) {
-		addSoundSelectMenu (this, soundMenu);
 		addSoundSelectMenu (this, our functionEditor() -> selectMenu);
+		addSoundSelectMenu (this, soundMenu);
 	}
-	addSoundDrawMenu (this, soundMenu);
 	addSoundDrawMenu (this, our functionEditor() -> drawMenu);
-	addSoundExtractMenu (this, soundMenu);
+	addSoundDrawMenu (this, soundMenu);
 	addSoundExtractMenu (this, our functionEditor() -> extractMenu);
+	addSoundExtractMenu (this, soundMenu);
 }
 void structSoundArea :: v_createMenuItems_file (EditorMenu menu) {
 	addSoundSaveMenu (this, menu);

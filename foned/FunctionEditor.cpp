@@ -1125,6 +1125,11 @@ void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);
 	EditorMenu_addCommand (menu, U"Get end of selection", 0, QUERY_EDITOR_FOR_REAL__getE);
 	EditorMenu_addCommand (menu, U"Get selection length", 0, QUERY_EDITOR_FOR_REAL__getSelectionDuration);
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenuItems_query (menu);
+	}
 }
 
 void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
@@ -1182,6 +1187,14 @@ void structFunctionEditor :: v_createMenuItems_select (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Move begin of selection right", Editor_HIDDEN, menu_cb_moveStartOfSelectionRight);
 	EditorMenu_addCommand (menu, U"Move end of selection left", GuiMenu_COMMAND | GuiMenu_UP_ARROW, menu_cb_moveEndOfSelectionLeft);
 	EditorMenu_addCommand (menu, U"Move end of selection right", GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
+}
+
+void structFunctionEditor :: v_createMenuItems_draw (EditorMenu menu) {
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenuItems_draw (menu);
+	}
 }
 
 void structFunctionEditor :: v_createMenuItems_help (EditorMenu menu) {
@@ -1352,6 +1365,7 @@ bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 			if (area && area -> isClickAnchor) {
 				const double localY_fraction = area -> y_fraction_globalToLocal (globalY_fraction);
+				FunctionArea_setViewport (area);   // for Graphics_dxWCtoMM and the like
 				result = area -> v_mouse (event, x_world, localY_fraction);
 				break;
 			}

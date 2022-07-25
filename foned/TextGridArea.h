@@ -25,11 +25,15 @@
 
 #include "TextGridArea_enums.h"
 
+Thing_declare (SoundArea);
+Thing_declare (SoundAnalysisArea);
+
 Thing_define (TextGridArea, FunctionArea) {
 	TextGrid textGrid() const { return static_cast <TextGrid> (our function()); }
+	SoundArea borrowedSoundArea = nullptr;
+	SoundAnalysisArea borrowedSoundAnalysisArea = nullptr;
 
-	integer selectedTier;
-
+	integer selectedTier = 1;
 
 private:
 	void v_specializedHighlightBackground () const
@@ -37,23 +41,23 @@ private:
 
 private:
 	/* only in v_mouse: */
-	bool anchorIsInWideSoundOrAnalysisPart = false;
-	bool anchorIsInWideTextGridPart = false;
 	double anchorTime = undefined;
 	integer clickedLeftBoundary = 0;
 	double leftDraggingBoundary = undefined, rightDraggingBoundary = undefined;   // initial dragging range
-
-public:  // BUG: should be private
-	double draggingTime;
+	double draggingTime = undefined;
 	autoBOOLVEC draggingTiers;
 	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 public:
+	void v_drawInside ()
+		override;
 	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
 		override;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	void v_createMenuItems_file (EditorMenu menu)
 		override;
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
+		override;
+	void v_createMenuItems_query (EditorMenu menu)
 		override;
 	void v_createMenus ()
 		override;
