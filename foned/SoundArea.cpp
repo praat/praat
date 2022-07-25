@@ -1028,11 +1028,11 @@ void structSoundArea :: v_updateMenuItems () {
 
 	if (our sound()) {
 		if (our editable())
-			GuiThing_setSensitive (cutButton, selectedSamples != 0 && selectedSamples < our sound() -> nx);
-		GuiThing_setSensitive (copyButton, selectedSamples != 0);
+			GuiThing_setSensitive (our cutButton, selectedSamples != 0 && selectedSamples < our sound() -> nx);
+		GuiThing_setSensitive (our copyButton, selectedSamples != 0);
 		if (our editable()) {
-			GuiThing_setSensitive (zeroButton, selectedSamples != 0);
-			GuiThing_setSensitive (reverseButton, selectedSamples != 0);
+			GuiThing_setSensitive (our zeroButton, selectedSamples != 0);
+			GuiThing_setSensitive (our reverseButton, selectedSamples != 0);
 		}
 	}
 }

@@ -49,12 +49,6 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		if (our soundArea)
 			our soundArea -> v_createMenuItems_edit (menu);
 	}
-	void v_updateMenuItems () override {
-		if (! our soundOrLongSound())
-			return;
-		if (our soundArea)
-			our soundArea -> v_updateMenuItems ();
-	}
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) override {
 		if (event -> isClick ()) {
 			if (our soundArea)

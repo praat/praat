@@ -73,7 +73,7 @@ autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 		Melder_assert (sound);
 		Melder_assert (Thing_isa (sound, classSound));
 		TRACE trace(Melder_pointer(eeg -> sound.get()));
-		my soundArea = EEGArea_create (me.get(), nullptr, false);
+		my soundArea() = EEGArea_create (me.get(), nullptr, false);
 
 		AnyTextGridEditor_init (me.get(), title,
 			eeg -> textgrid.get(),   // BUG: data should be EEG, but TextGridEditor expects TextGrid

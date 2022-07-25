@@ -18,20 +18,24 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TimeSoundAnalysisEditor.h"
+#include "FunctionEditor.h"
 #include "TextGridArea.h"
+#include "LongSoundArea.h"
+#include "SoundAnalysisArea.h"
 
-Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
+Thing_define (AnyTextGridEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, TextGridArea, textGridArea)
-	//DEFINE_FunctionArea (2, SoundArea, soundArea)
-	//DEFINE_FunctionArea (3, SoundAnalysisArea, soundAnalysisArea)
+	DEFINE_FunctionArea (2, SoundArea, soundArea)
+	DEFINE_FunctionArea (3, SoundAnalysisArea, soundAnalysisArea)
 
 	TextGrid textGrid() { return static_cast <TextGrid> (our data()); }
+	SampledXY soundOrLongSound() { return our soundArea() ? our soundArea() -> soundOrLongSound() : nullptr; }
+	Sound sound() { return our soundArea() ? our soundArea() -> sound() : nullptr; }
+	LongSound longSound() { return our soundArea() ? our soundArea() -> longSound() : nullptr; }
 
 	SpellingChecker spellingChecker;
 	bool suppressRedraw;
 	autostring32 findString;
-	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 
 	double draggingTime;
 	autoBOOLVEC draggingTiers;
@@ -46,8 +50,6 @@ Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v1_dataChanged ()
-		override;
-	void v_createMenuItems_extract (EditorMenu menu)
 		override;
 	void v_createMenuItems_draw (EditorMenu menu)
 		override;
@@ -77,10 +79,6 @@ Thing_define (AnyTextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	conststring32 v_selectionViewerName ()
 		override { return U"IPA chart"; }
-	void v_createMenuItems_view_timeDomain (EditorMenu menu)
-		override;
-	void v_updateMenuItems ()
-		override;
 
 	#include "AnyTextGridEditor_prefs.h"
 

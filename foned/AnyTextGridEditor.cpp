@@ -25,7 +25,7 @@
 #include "TextGrid_Sound.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
 
-Thing_implement (AnyTextGridEditor, TimeSoundAnalysisEditor, 0);
+Thing_implement (AnyTextGridEditor, FunctionEditor, 0);
 
 #include "Prefs_define.h"
 #include "AnyTextGridEditor_prefs.h"
@@ -47,10 +47,10 @@ void structAnyTextGridEditor :: v1_info () {
 static double _TextGridEditor_computeSoundY (AnyTextGridEditor me) {
 	const integer numberOfTiers = my textGrid() -> tiers->size;
 	const bool showAnalysis = (
-		my soundAnalysisArea -> instancePref_spectrogram_show() ||
-		my soundAnalysisArea -> instancePref_pitch_show() ||
-		my soundAnalysisArea -> instancePref_intensity_show() ||
-		my soundAnalysisArea -> instancePref_formant_show())
+		my soundAnalysisArea() -> instancePref_spectrogram_show() ||
+		my soundAnalysisArea() -> instancePref_pitch_show() ||
+		my soundAnalysisArea() -> instancePref_intensity_show() ||
+		my soundAnalysisArea() -> instancePref_formant_show())
 		&& my soundOrLongSound()
 	;
 	const integer numberOfVisibleChannels =
@@ -110,55 +110,7 @@ static void _TextGridEditor_timeToInterval (AnyTextGridEditor me, double t, inte
  * if the selected tier is an interval tier.
  */
 
-/***** FILE MENU *****/
-
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (AnyTextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		if (my endSelection <= my startSelection)
-			Melder_throw (U"No selection.");
-		autoTextGrid result = TextGrid_extractPart (my textGrid(), my startSelection, my endSelection, true);
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (AnyTextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		if (my endSelection <= my startSelection)
-			Melder_throw (U"No selection.");
-		autoTextGrid result = TextGrid_extractPart (my textGrid(), my startSelection, my endSelection, false);
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-void structAnyTextGridEditor :: v_createMenuItems_extract (EditorMenu menu) {
-	AnyTextGridEditor_Parent :: v_createMenuItems_extract (menu);
-	extractSelectedTextGridPreserveTimesButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (preserve times)", 0,
-			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes);
-	extractSelectedTextGridTimeFromZeroButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (time from 0)", 0,
-			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero);
-}
-
-static void menu_cb_DrawVisibleTextGrid (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Draw visible TextGrid", nullptr)
-		my textGridArea() -> v_form_pictureWindow (cmd);
-		my textGridArea() -> v_form_pictureMargins (cmd);
-		my textGridArea() -> v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my textGridArea() -> default_picture_garnish())
-	EDITOR_OK
-		my textGridArea() -> v_ok_pictureWindow (cmd);
-		my textGridArea() -> v_ok_pictureMargins (cmd);
-		my textGridArea() -> v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my textGridArea() -> classPref_picture_garnish())
-	EDITOR_DO
-		my textGridArea() -> v_do_pictureWindow (cmd);
-		my textGridArea() -> v_do_pictureMargins (cmd);
-		my textGridArea() -> v_do_pictureSelection (cmd);
-		my textGridArea() -> setClassPref_picture_garnish (garnish);
-		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw (my textGrid(), nullptr, my pictureGraphics,
-				my startWindow, my endWindow, true, my textGridArea() -> instancePref_useTextStyles(), garnish);
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
-	EDITOR_END
-}
+/***** DRAW MENU *****/
 
 static void menu_cb_DrawVisibleSoundAndTextGrid (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible sound and TextGrid", nullptr)
@@ -192,7 +144,6 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (AnyTextGridEditor me, EDITOR_AR
 
 void structAnyTextGridEditor :: v_createMenuItems_draw (EditorMenu menu) {
 	AnyTextGridEditor_Parent :: v_createMenuItems_draw (menu);
-	EditorMenu_addCommand (menu, U"Draw visible TextGrid...", 0, menu_cb_DrawVisibleTextGrid);
 	if (our soundOrLongSound())
 		EditorMenu_addCommand (menu, U"Draw visible sound and TextGrid...", 0, menu_cb_DrawVisibleSoundAndTextGrid);
 }
@@ -273,108 +224,6 @@ static void QUERY_DATA_FOR_STRING__GetLabelOfInterval (AnyTextGridEditor me, EDI
 
 /***** VIEW MENU *****/
 
-static void do_selectAdjacentTier (AnyTextGridEditor me, bool previous) {
-	const integer n = my textGrid() -> tiers->size;
-	if (n >= 2) {
-		my textGridArea() -> selectedTier = ( previous ?
-				my textGridArea() -> selectedTier > 1 ? my textGridArea() -> selectedTier - 1 : n :
-				my textGridArea() -> selectedTier < n ? my textGridArea() -> selectedTier + 1 : 1 );
-		_TextGridEditor_timeToInterval (me, my startSelection, my textGridArea() -> selectedTier, & my startSelection, & my endSelection);
-		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
-static void menu_cb_SelectPreviousTier (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentTier (me, true);
-}
-
-static void menu_cb_SelectNextTier (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentTier (me, false);
-}
-
-static void do_selectAdjacentInterval (AnyTextGridEditor me, bool previous, bool shift) {
-	IntervalTier intervalTier;
-	TextTier textTier;
-	if (my textGridArea() -> selectedTier < 1 || my textGridArea() -> selectedTier > my textGrid() -> tiers->size)
-		return;
-	AnyTextGridTier_identifyClass (my textGrid() -> tiers->at [my textGridArea() -> selectedTier], & intervalTier, & textTier);
-	if (intervalTier) {
-		const integer n = intervalTier -> intervals.size;
-		if (n >= 2) {
-			integer iinterval = IntervalTier_timeToIndex (intervalTier, my startSelection);
-			if (shift) {
-				const integer binterval = IntervalTier_timeToIndex (intervalTier, my startSelection);
-				integer einterval = IntervalTier_timeToIndex (intervalTier, my endSelection);
-				if (my endSelection == intervalTier -> xmax)
-					einterval ++;
-				if (binterval < iinterval && einterval > iinterval + 1) {
-					const TextInterval interval = intervalTier -> intervals.at [iinterval];
-					my startSelection = interval -> xmin;
-					my endSelection = interval -> xmax;
-				} else if (previous) {
-					if (einterval > iinterval + 1) {
-						if (einterval <= n + 1) {
-							const TextInterval interval = intervalTier -> intervals.at [einterval - 1];
-							my endSelection = interval -> xmin;
-						}
-					} else if (binterval > 1) {
-						const TextInterval interval = intervalTier -> intervals.at [binterval - 1];
-						my startSelection = interval -> xmin;
-					}
-				} else {
-					if (binterval < iinterval) {
-						if (binterval > 0) {
-							const TextInterval interval = intervalTier -> intervals.at [binterval];
-							my startSelection = interval -> xmax;
-						}
-					} else if (einterval <= n) {
-						const TextInterval interval = intervalTier -> intervals.at [einterval];
-						my endSelection = interval -> xmax;
-					}
-				}
-			} else {
-				iinterval = ( previous ?
-						iinterval > 1 ? iinterval - 1 : n :
-						iinterval < n ? iinterval + 1 : 1 );
-				const TextInterval interval = intervalTier -> intervals.at [iinterval];
-				my startSelection = interval -> xmin;
-				my endSelection = interval -> xmax;
-			}
-			Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
-			FunctionEditor_scrollToView (me, iinterval == n ? my startSelection : iinterval == 1 ? my endSelection : (my startSelection + my endSelection) / 2);
-		}
-	} else {
-		const integer n = textTier -> points.size;
-		if (n >= 2) {
-			integer ipoint = AnyTier_timeToHighIndex (textTier->asAnyTier(), my startSelection);
-			ipoint = ( previous ?
-					ipoint > 1 ? ipoint - 1 : n :
-					ipoint < n ? ipoint + 1 : 1 );
-			const TextPoint point = textTier -> points.at [ipoint];
-			my startSelection = my endSelection = point -> number;
-			Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
-			FunctionEditor_scrollToView (me, my startSelection);
-		}
-	}
-}
-
-static void menu_cb_SelectPreviousInterval (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentInterval (me, true, false);
-}
-
-static void menu_cb_SelectNextInterval (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentInterval (me, false, false);
-}
-
-static void menu_cb_ExtendSelectPreviousInterval (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentInterval (me, true, true);
-}
-
-static void menu_cb_ExtendSelectNextInterval (AnyTextGridEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentInterval (me, false, true);
-}
-
 /***** PITCH MENU *****/
 
 static void menu_cb_DrawTextGridAndPitch (AnyTextGridEditor me, EDITOR_ARGS_FORM) {
@@ -401,21 +250,21 @@ static void menu_cb_DrawTextGridAndPitch (AnyTextGridEditor me, EDITOR_ARGS_FORM
 		my textGridArea() -> v_do_pictureMargins (cmd);
 		my textGridArea() -> v_do_pictureSelection (cmd);
 		my textGridArea() -> setClassPref_picture_garnish (garnish);
-		SoundAnalysisArea_haveVisiblePitch (my soundAnalysisArea.get());
+		SoundAnalysisArea_haveVisiblePitch (my soundAnalysisArea().get());
 		Editor_openPraatPicture (me);
-		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my soundAnalysisArea -> d_pitch.get(),
-				my soundAnalysisArea -> instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my soundAnalysisArea -> instancePref_pitch_unit());
-		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my soundAnalysisArea -> d_pitch.get(),
-				my soundAnalysisArea -> instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my soundAnalysisArea -> instancePref_pitch_unit());
-		const double pitchFloor_overt = Function_convertToNonlogarithmic (my soundAnalysisArea -> d_pitch.get(),
-				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my soundAnalysisArea -> instancePref_pitch_unit());
-		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my soundAnalysisArea -> d_pitch.get(),
-				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my soundAnalysisArea -> instancePref_pitch_unit());
-		const double pitchViewFrom_overt = ( my soundAnalysisArea -> instancePref_pitch_viewFrom() < my soundAnalysisArea -> instancePref_pitch_viewTo() ? my soundAnalysisArea -> instancePref_pitch_viewFrom() : pitchFloor_overt );
-		const double pitchViewTo_overt = ( my soundAnalysisArea -> instancePref_pitch_viewFrom() < my soundAnalysisArea -> instancePref_pitch_viewTo() ? my soundAnalysisArea -> instancePref_pitch_viewTo() : pitchCeiling_overt );
-		TextGrid_Pitch_drawSeparately (my textGrid(), my soundAnalysisArea -> d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
+		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my soundAnalysisArea() -> d_pitch.get(),
+				my soundAnalysisArea() -> instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my soundAnalysisArea() -> instancePref_pitch_unit());
+		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my soundAnalysisArea() -> d_pitch.get(),
+				my soundAnalysisArea() -> instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my soundAnalysisArea() -> instancePref_pitch_unit());
+		const double pitchFloor_overt = Function_convertToNonlogarithmic (my soundAnalysisArea() -> d_pitch.get(),
+				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my soundAnalysisArea() -> instancePref_pitch_unit());
+		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my soundAnalysisArea() -> d_pitch.get(),
+				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my soundAnalysisArea() -> instancePref_pitch_unit());
+		const double pitchViewFrom_overt = ( my soundAnalysisArea() -> instancePref_pitch_viewFrom() < my soundAnalysisArea() -> instancePref_pitch_viewTo() ? my soundAnalysisArea() -> instancePref_pitch_viewFrom() : pitchFloor_overt );
+		const double pitchViewTo_overt = ( my soundAnalysisArea() -> instancePref_pitch_viewFrom() < my soundAnalysisArea() -> instancePref_pitch_viewTo() ? my soundAnalysisArea() -> instancePref_pitch_viewTo() : pitchCeiling_overt );
+		TextGrid_Pitch_drawSeparately (my textGrid(), my soundAnalysisArea() -> d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my textGridArea() -> instancePref_useTextStyles(), garnish,
-			speckle, my soundAnalysisArea -> instancePref_pitch_unit()
+			speckle, my soundAnalysisArea() -> instancePref_pitch_unit()
 		);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -1058,7 +907,7 @@ void structAnyTextGridEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Draw", U"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 
 	menu = Editor_addMenu (this, U"Interval", 0);
-	if (our soundArea) {
+	if (our soundArea()) {
 		EditorMenu_addCommand (menu, U"Align interval", 'D', menu_cb_AlignInterval);
 		EditorMenu_addCommand (menu, U"Alignment settings...", 0, menu_cb_AlignmentSettings);
 		EditorMenu_addCommand (menu, U"-- add interval --", 0, nullptr);
@@ -1075,7 +924,7 @@ void structAnyTextGridEditor :: v_createMenus () {
 	menu = Editor_addMenu (this, U"Boundary", 0);
 	/*EditorMenu_addCommand (menu, U"Move to B", 0, menu_cb_MoveToB);
 	EditorMenu_addCommand (menu, U"Move to E", 0, menu_cb_MoveToE);*/
-	if (our soundArea) {   // BUG: not for LongSounds
+	if (our soundArea()) {   // BUG: not for LongSounds
 		EditorMenu_addCommand (menu, U"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
 		EditorMenu_addCommand (menu, U"-- insert boundary --", 0, nullptr);
 	}
@@ -1112,9 +961,6 @@ void structAnyTextGridEditor :: v_createMenus () {
 		EditorMenu_addCommand (menu, U"-- edit lexicon --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Add selected word to user dictionary", 0, menu_cb_AddToUserDictionary);
 	}
-
-	if (our soundArea)
-		our soundAnalysisArea -> v_createMenus ();   // insert some of the ancestor's menus *after* the TextGrid menus
 }
 
 void structAnyTextGridEditor :: v_createMenuItems_help (EditorMenu menu) {
@@ -1181,14 +1027,14 @@ void structAnyTextGridEditor :: v1_dataChanged () {
 /********** DRAWING AREA **********/
 
 void structAnyTextGridEditor :: v_distributeAreas () {
-	if (our soundArea) {
+	if (our soundArea()) {
 		Melder_assert (our soundOrLongSound());
-		Melder_assert (our soundAnalysisArea);
+		Melder_assert (our soundAnalysisArea());
 		const bool showAnalysis = (
-			our soundAnalysisArea -> instancePref_spectrogram_show() ||
-			our soundAnalysisArea -> instancePref_pitch_show() ||
-			our soundAnalysisArea -> instancePref_intensity_show() ||
-			our soundAnalysisArea -> instancePref_formant_show()
+			our soundAnalysisArea() -> instancePref_spectrogram_show() ||
+			our soundAnalysisArea() -> instancePref_pitch_show() ||
+			our soundAnalysisArea() -> instancePref_intensity_show() ||
+			our soundAnalysisArea() -> instancePref_formant_show()
 		);
 		const integer numberOfTiers = our textGrid() -> tiers->size;
 		const integer numberOfVisibleChannels = Melder_clippedRight (our soundOrLongSound() -> ny, 8_integer);
@@ -1197,11 +1043,11 @@ void structAnyTextGridEditor :: v_distributeAreas () {
 		our textGridArea() -> setGlobalYRange_fraction (0.0, soundY);
 		if (showAnalysis) {
 			const double soundY2 = 0.5 * (1.0 + soundY);
-			our soundAnalysisArea -> setGlobalYRange_fraction (soundY, soundY2);
-			our soundArea -> setGlobalYRange_fraction (soundY2, 1.0);
+			our soundAnalysisArea() -> setGlobalYRange_fraction (soundY, soundY2);
+			our soundArea() -> setGlobalYRange_fraction (soundY2, 1.0);
 		} else {
-			our soundAnalysisArea -> setGlobalYRange_fraction (soundY, soundY);
-			our soundArea -> setGlobalYRange_fraction (soundY, 1.0);
+			our soundAnalysisArea() -> setGlobalYRange_fraction (soundY, soundY);
+			our soundArea() -> setGlobalYRange_fraction (soundY, 1.0);
 		}
 	} else {
 		our textGridArea() -> setGlobalYRange_fraction (0.0, 1.0);
@@ -1370,25 +1216,25 @@ void structAnyTextGridEditor :: v_draw () {
 	const integer numberOfTiers = our textGrid() -> tiers->size;
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
 	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
-	const bool showAnalysis = our soundAnalysisArea && (
-		our soundAnalysisArea -> instancePref_spectrogram_show() ||
-		our soundAnalysisArea -> instancePref_pitch_show() ||
-		our soundAnalysisArea -> instancePref_intensity_show() ||
-		our soundAnalysisArea -> instancePref_formant_show())
+	const bool showAnalysis = our soundAnalysisArea() && (
+		our soundAnalysisArea() -> instancePref_spectrogram_show() ||
+		our soundAnalysisArea() -> instancePref_pitch_show() ||
+		our soundAnalysisArea() -> instancePref_intensity_show() ||
+		our soundAnalysisArea() -> instancePref_formant_show())
 		&& our soundOrLongSound()  // BUG: collapse
 	;
 
 	/*
 		Draw optional sound.
 	*/
-	if (our soundOrLongSound() || our soundAnalysisArea && our soundAnalysisArea -> instancePref_pulses_show()) {
-		FunctionArea_prepareCanvas (our soundArea.get());
-		if (our soundAnalysisArea && our soundAnalysisArea -> instancePref_pulses_show())
-			our soundAnalysisArea -> v_draw_analysis_pulses ();
-		FunctionArea_drawInside (our soundArea.get());
+	if (our soundOrLongSound() || our soundAnalysisArea() && our soundAnalysisArea() -> instancePref_pulses_show()) {
+		FunctionArea_prepareCanvas (our soundArea().get());
+		if (our soundAnalysisArea() && our soundAnalysisArea() -> instancePref_pulses_show())
+			our soundAnalysisArea() -> v_draw_analysis_pulses ();
+		FunctionArea_drawInside (our soundArea().get());
 		if (showAnalysis) {
-			FunctionArea_prepareCanvas (our soundAnalysisArea.get());
-			our soundAnalysisArea -> v_draw_analysis ();
+			FunctionArea_prepareCanvas (our soundAnalysisArea().get());
+			our soundAnalysisArea() -> v_draw_analysis ();
 		}
 	}
 
@@ -1526,9 +1372,9 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 {
 	const integer numberOfTiers = our textGrid() -> tiers->size;
 	const bool mouseIsInWideSoundPart =
-			our soundArea && our soundArea -> y_fraction_globalIsInside (y_fraction_global);
+			our soundArea() && our soundArea() -> y_fraction_globalIsInside (y_fraction_global);
 	const bool mouseIsInWideSoundAnalysisPart =
-			our soundAnalysisArea && our soundAnalysisArea -> y_fraction_globalIsInside (y_fraction_global);
+			our soundAnalysisArea() && our soundAnalysisArea() -> y_fraction_globalIsInside (y_fraction_global);
 	const bool mouseIsInWideSoundOrAnalysisPart = mouseIsInWideSoundPart || mouseIsInWideSoundAnalysisPart;
 	const bool mouseIsInWideTextGridPart = our textGridArea() -> y_fraction_globalIsInside (y_fraction_global);
 	const integer oldSelectedTier = our textGridArea() -> selectedTier;
@@ -1542,10 +1388,10 @@ bool structAnyTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		our anchorIsInWideTextGridPart = mouseIsInWideTextGridPart;
 	}
 	if (mouseIsInWideSoundAnalysisPart) {
-		if (our soundAnalysisArea -> instancePref_spectrogram_show() || our soundAnalysisArea -> instancePref_formant_show()) {
-			const double y_fraction_withinAnalysesArea = our soundAnalysisArea -> y_fraction_globalToLocal (y_fraction_global);
-			our soundAnalysisArea -> d_spectrogram_cursor = y_fraction_withinAnalysesArea * our soundAnalysisArea -> instancePref_spectrogram_viewTo()
-					+ (1.0 - y_fraction_withinAnalysesArea) * our soundAnalysisArea -> instancePref_spectrogram_viewFrom();
+		if (our soundAnalysisArea() -> instancePref_spectrogram_show() || our soundAnalysisArea() -> instancePref_formant_show()) {
+			const double y_fraction_withinAnalysesArea = our soundAnalysisArea() -> y_fraction_globalToLocal (y_fraction_global);
+			our soundAnalysisArea() -> d_spectrogram_cursor = y_fraction_withinAnalysesArea * our soundAnalysisArea() -> instancePref_spectrogram_viewTo()
+					+ (1.0 - y_fraction_withinAnalysesArea) * our soundAnalysisArea() -> instancePref_spectrogram_viewFrom();
 		}
 	}
 	if (! our anchorIsInWideTextGridPart)
@@ -1918,8 +1764,8 @@ void structAnyTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 }
 
 void structAnyTextGridEditor :: v_play (double startTime, double endTime) {
-	if (our soundArea)
-		SoundArea_play (our soundArea.get(), startTime, endTime);
+	if (our soundArea())
+		SoundArea_play (our soundArea().get(), startTime, endTime);
 }
 
 void structAnyTextGridEditor :: v_updateText () {
@@ -1997,22 +1843,6 @@ void structAnyTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our textGridArea() -> setInstancePref_showNumberOf (v_prefs_addFields__showNumberOf);
 	our textGridArea() -> setInstancePref_greenMethod (v_prefs_addFields__paintIntervalsGreenWhoseLabel);
 	our textGridArea() -> setInstancePref_greenString (v_prefs_addFields__theText);
-}
-
-void structAnyTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
-	AnyTextGridEditor_Parent :: v_createMenuItems_view_timeDomain (menu);
-	EditorMenu_addCommand (menu, U"Select previous tier", GuiMenu_OPTION | GuiMenu_UP_ARROW, menu_cb_SelectPreviousTier);
-	EditorMenu_addCommand (menu, U"Select next tier", GuiMenu_OPTION | GuiMenu_DOWN_ARROW, menu_cb_SelectNextTier);
-	EditorMenu_addCommand (menu, U"Select previous interval", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_SelectPreviousInterval);
-	EditorMenu_addCommand (menu, U"Select next interval", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_SelectNextInterval);
-	EditorMenu_addCommand (menu, U"Extend-select left", GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_ExtendSelectPreviousInterval);
-	EditorMenu_addCommand (menu, U"Extend-select right", GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
-}
-
-void structAnyTextGridEditor :: v_updateMenuItems () {
-	AnyTextGridEditor_Parent :: v_updateMenuItems ();
-	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our endSelection > our startSelection);
-	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection > our startSelection);
 }
 
 /********** EXPORTED **********/
