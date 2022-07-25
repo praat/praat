@@ -1352,6 +1352,7 @@ bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 			if (area && area -> isClickAnchor) {
 				const double localY_fraction = area -> y_fraction_globalToLocal (globalY_fraction);
+				FunctionArea_setViewport (area);   // for Graphics_dxWCtoMM and the like
 				result = area -> v_mouse (event, x_world, localY_fraction);
 				break;
 			}

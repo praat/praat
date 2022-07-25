@@ -307,7 +307,6 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 
 		const bool nearBoundaryOrPoint = ( isdefined (our anchorTime) &&
 				fabs (Graphics_dxWCtoMM (our graphics(), x_world - our anchorTime)) < 1.5 );
-		//FunctionArea_setViewport (this); BUG:
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), 0.0, 1.0);
 		const double distanceToCursorCircle = ( our startSelection() != our endSelection() ? undefined :
 			Graphics_distanceWCtoMM (our graphics(), x_world, localY_fraction,
@@ -984,7 +983,7 @@ static void addBoundaryMenu (TextGridArea me) {
 }
 
 
-#pragma mark - TextGridArea Boundary menu
+#pragma mark - TextGridArea Tier menu
 
 static void menu_cb_RenameTier (TextGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Rename tier", nullptr)
