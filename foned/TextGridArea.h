@@ -66,6 +66,9 @@ public:
 		override;
 	void v_updateMenuItems ()
 		override;
+	double maximumInitialLengthOfWindow() override {
+		return 30.0;
+	}
 
 	#include "TextGridArea_prefs.h"
 };

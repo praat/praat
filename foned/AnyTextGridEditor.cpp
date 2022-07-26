@@ -474,13 +474,6 @@ void AnyTextGridEditor_init (AnyTextGridEditor me, conststring32 title, TextGrid
 
 	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();   // to reflect changed tier selection
-	if (my endWindow - my startWindow > 30.0) {
-		my endWindow = my startWindow + 30.0;
-		if (my startWindow == my tmin)
-			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (me, false);
-	}
 	if (spellingChecker)
 		GuiText_setSelection (my textArea, 0, 0);
 	if (my soundOrLongSound() &&
