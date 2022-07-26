@@ -21,6 +21,9 @@
 #include "SoundArea.h"
 
 Thing_define (LongSoundArea, SoundArea) {
+	double maximumInitialLengthOfWindow() override {
+		return 30.0;
+	}
 };
 
 DEFINE_FunctionArea_create (LongSoundArea, LongSound)

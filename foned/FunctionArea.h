@@ -188,6 +188,8 @@ public:
 	virtual void v_createMenuItems_view_timeDomain (EditorMenu) { }
 	virtual void v_createMenuItems_view_audio (EditorMenu) { }
 
+	virtual double maximumInitialLengthOfWindow() { return undefined; }
+
 	#include "FunctionArea_prefs.h"
 };
 

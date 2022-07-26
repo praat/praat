@@ -34,6 +34,7 @@ Thing_define (TextGridArea, FunctionArea) {
 	SoundAnalysisArea borrowedSoundAnalysisArea = nullptr;
 
 	integer selectedTier = 1;
+	bool suppressRedraw;
 
 private:
 	void v_specializedHighlightBackground () const
@@ -48,6 +49,8 @@ private:
 	autoBOOLVEC draggingTiers;
 	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 public:
+	void v1_info ()
+		override;
 	void v_drawInside ()
 		override;
 	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
@@ -63,6 +66,9 @@ public:
 		override;
 	void v_updateMenuItems ()
 		override;
+	double maximumInitialLengthOfWindow() override {
+		return 30.0;
+	}
 
 	#include "TextGridArea_prefs.h"
 };

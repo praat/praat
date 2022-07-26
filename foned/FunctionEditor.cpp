@@ -1585,6 +1585,23 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data)
 	my startWindow = my tmin;
 	my endWindow = my tmax;
 	my startSelection = my endSelection = 0.5 * (my tmin + my tmax);
+	double maximumInitialLengthOfWindow = undefined;
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (my functionAreas [iarea].get());
+		if (area) {
+			const double areaMaximumInitialLengthOfWindow = area -> maximumInitialLengthOfWindow();
+			if (isdefined (areaMaximumInitialLengthOfWindow) && ! (areaMaximumInitialLengthOfWindow >= maximumInitialLengthOfWindow))   // NaN-safe
+				maximumInitialLengthOfWindow = areaMaximumInitialLengthOfWindow;
+		}
+	}
+	if (isdefined (maximumInitialLengthOfWindow)) {
+		if (my endWindow - my startWindow > maximumInitialLengthOfWindow) {
+			my endWindow = my startWindow + maximumInitialLengthOfWindow;
+			if (my startWindow == my tmin)
+				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
+		}
+	}
+
 	#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
