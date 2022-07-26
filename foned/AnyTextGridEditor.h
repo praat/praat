@@ -34,13 +34,8 @@ Thing_define (AnyTextGridEditor, FunctionEditor) {
 	LongSound longSound() { return our soundArea() ? our soundArea() -> longSound() : nullptr; }
 
 	SpellingChecker spellingChecker;
-	bool suppressRedraw;
 	autostring32 findString;
 
-	void v1_info ()
-		override;
-	void v_createChildren ()
-		override;
 	void v_createMenus ()
 		override;
 	void v_createMenuItems_help (EditorMenu menu)

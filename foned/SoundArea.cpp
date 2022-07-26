@@ -943,11 +943,15 @@ static void menu_cb_Paste (SoundArea me, EDITOR_ARGS_DIRECT) {
 }
 static void addSoundEditMenu (SoundArea me, EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- cut copy paste --", 0, nullptr, me);
+	const bool weMayUseShortcuts = ! my functionEditor() -> textArea;
 	if (my editable())
-		my cutButton = FunctionAreaMenu_addCommand (menu, U"Cut", 'X', menu_cb_Cut, me);
-	my copyButton = FunctionAreaMenu_addCommand (menu, U"Copy selection to Sound clipboard", 'C', menu_cb_Copy, me);
+		my cutButton = FunctionAreaMenu_addCommand (menu, U"Cut", 'X' * weMayUseShortcuts,
+				menu_cb_Cut, me);
+	my copyButton = FunctionAreaMenu_addCommand (menu, U"Copy selection to Sound clipboard", 'C' * weMayUseShortcuts,
+			menu_cb_Copy, me);
 	if (my editable())
-		my pasteButton = FunctionAreaMenu_addCommand (menu, U"Paste after selection", 'V', menu_cb_Paste, me);
+		my pasteButton = FunctionAreaMenu_addCommand (menu, U"Paste after selection", 'V' * weMayUseShortcuts,
+				menu_cb_Paste, me);
 }
 
 

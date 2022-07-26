@@ -185,6 +185,16 @@ static void insertBoundaryOrPoint (TextGridArea me, integer itier, double t1, do
 }
 
 
+#pragma mark - TextGridArea info
+
+void structTextGridArea :: v1_info () {
+	MelderInfo_writeLine (U"Selected tier: ", our selectedTier);
+	MelderInfo_writeLine (U"TextGrid uses text styles: ", our instancePref_useTextStyles());
+	MelderInfo_writeLine (U"TextGrid font size: ", our instancePref_fontSize());
+	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (our instancePref_alignment()));
+}
+
+
 #pragma mark - TextGridArea drawing
 
 void structTextGridArea :: v_specializedHighlightBackground () const {
@@ -870,6 +880,39 @@ void structTextGridArea :: v_createMenuItems_query (EditorMenu menu) {
 			QUERY_DATA_FOR_STRING__GetLabelOfInterval, this);
 }
 
+
+#pragma mark - TextGridArea changing
+
+static void gui_text_cb_changed (TextGridArea me, GuiTextEvent /* event */) {
+	trace (my suppressRedraw);
+	if (my suppressRedraw)
+		return;   // prevent infinite loop if 'draw' method or Editor_broadcastChange calls GuiText_setString
+	if (my selectedTier) {
+		autostring32 text = GuiText_getString (my functionEditor() -> textArea);
+		IntervalTier intervalTier;
+		TextTier textTier;
+		AnyTextGridTier_identifyClass (my textGrid() -> tiers->at [my selectedTier], & intervalTier, & textTier);
+		if (intervalTier) {
+			const integer selectedInterval = getSelectedInterval (me);
+			if (selectedInterval) {
+				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
+				TextInterval_setText (interval, text.get());
+				Editor_broadcastDataChanged (my functionEditor());
+			}
+		} else {
+			const integer selectedPoint = getSelectedPoint (me);
+			if (selectedPoint) {
+				TextPoint point = textTier -> points.at [selectedPoint];
+				point -> mark. reset();
+				if (Melder_findInk (text.get()))   // any visible characters?
+					point -> mark = Melder_dup_f (text.get());
+				Editor_broadcastDataChanged (my functionEditor());
+			}
+		}
+	}
+}
+
+
 #pragma mark - TextGridArea View menu
 
 static void do_selectAdjacentTier (TextGridArea me, bool previous) {
@@ -1532,6 +1575,9 @@ void structTextGridArea :: v_createMenus () {
 	addIntervalMenu (this);
 	addBoundaryMenu (this);
 	addTierMenu (this);
+
+	if (our functionEditor() -> textArea)
+		GuiText_setChangedCallback (our functionEditor() -> textArea, gui_text_cb_changed, this);
 }
 void structTextGridArea :: v_updateMenuItems () {
 	TextGridArea_Parent :: v_updateMenuItems ();

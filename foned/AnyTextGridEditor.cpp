@@ -19,11 +19,6 @@
 
 #include "AnyTextGridEditor.h"
 #include "EditorM.h"
-#include "SoundEditor.h"
-#include "Sound_and_MixingMatrix.h"
-#include "Sound_and_Spectrogram.h"
-#include "TextGrid_Sound.h"
-#include "SpeechSynthesizer_and_TextGrid.h"
 
 Thing_implement (AnyTextGridEditor, FunctionEditor, 0);
 
@@ -33,14 +28,6 @@ Thing_implement (AnyTextGridEditor, FunctionEditor, 0);
 #include "AnyTextGridEditor_prefs.h"
 #include "Prefs_copyToInstance.h"
 #include "AnyTextGridEditor_prefs.h"
-
-void structAnyTextGridEditor :: v1_info () {
-	AnyTextGridEditor_Parent :: v1_info ();
-	MelderInfo_writeLine (U"Selected tier: ", our textGridArea() -> selectedTier);
-	MelderInfo_writeLine (U"TextGrid uses text styles: ", our textGridArea() -> instancePref_useTextStyles());
-	MelderInfo_writeLine (U"TextGrid font size: ", our textGridArea() -> instancePref_fontSize());
-	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (our textGridArea() -> instancePref_alignment()));
-}
 
 /********** METHODS **********/
 
@@ -292,46 +279,6 @@ void structAnyTextGridEditor :: v_createMenuItems_help (EditorMenu menu) {
 
 /***** CHILDREN *****/
 
-static void gui_text_cb_changed (AnyTextGridEditor me, GuiTextEvent /* event */) {
-	//Melder_casual (U"gui_text_cb_change 1 in editor ", Melder_pointer (me));
-	if (my suppressRedraw) return;   /* Prevent infinite loop if 'draw' method or Editor_broadcastChange calls GuiText_setString. */
-	//Melder_casual (U"gui_text_cb_change 2 in editor ", me);
-	if (my textGridArea() -> selectedTier) {
-		autostring32 text = GuiText_getString (my textArea);
-		IntervalTier intervalTier;
-		TextTier textTier;
-		AnyTextGridTier_identifyClass (my textGrid() -> tiers->at [my textGridArea() -> selectedTier], & intervalTier, & textTier);
-		if (intervalTier) {
-			const integer selectedInterval = getSelectedInterval (my textGridArea().get());
-			if (selectedInterval) {
-				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
-				//Melder_casual (U"gui_text_cb_change 3 in editor ", Melder_pointer (me));
-				TextInterval_setText (interval, text.get());
-				//Melder_casual (U"gui_text_cb_change 4 in editor ", Melder_pointer (me));
-				//FunctionEditor_redraw (me); TRY OUT 2022-06-12
-				//Melder_casual (U"gui_text_cb_change 5 in editor ", Melder_pointer (me));
-				Editor_broadcastDataChanged (me);
-				//Melder_casual (U"gui_text_cb_change 6 in editor ", Melder_pointer (me));
-			}
-		} else {
-			const integer selectedPoint = getSelectedPoint (my textGridArea().get());
-			if (selectedPoint) {
-				TextPoint point = textTier -> points.at [selectedPoint];
-				point -> mark. reset();
-				if (Melder_findInk (text.get()))   // any visible characters?
-					point -> mark = Melder_dup_f (text.get());
-				Editor_broadcastDataChanged (me);
-			}
-		}
-	}
-}
-
-void structAnyTextGridEditor :: v_createChildren () {
-	AnyTextGridEditor_Parent :: v_createChildren ();
-	if (our textArea)
-		GuiText_setChangedCallback (our textArea, gui_text_cb_changed, this);
-}
-
 void structAnyTextGridEditor :: v1_dataChanged () {
 	/*
 		Perform a minimal selection change.
@@ -405,13 +352,12 @@ void structAnyTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 					TextInterval interval = intervalTier -> intervals.at [selectedInterval];
 					TextInterval_setText (interval, newText.string);
 
-					our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+					our textGridArea() -> suppressRedraw = true;   // prevent valueChangedCallback from redrawing
 					trace (U"setting new text ", newText.string);
 					GuiText_setString (our textArea, newText.string);
 					GuiText_setSelection (our textArea, first + 1, first + 1);
-					our suppressRedraw = false;
+					our textGridArea() -> suppressRedraw = false;
 
-					//FunctionEditor_redraw (this); TRY OUT 2022-06-12
 					Editor_broadcastDataChanged (this);
 				}
 			} else {
@@ -422,13 +368,12 @@ void structAnyTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 					if (Melder_findInk (newText.string))   // any visible characters?
 						point -> mark = Melder_dup_f (newText.string);
 
-					our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+					our textGridArea() -> suppressRedraw = true;   // prevent valueChangedCallback from redrawing
 					trace (U"setting new text ", newText.string);
 					GuiText_setString (our textArea, newText.string);
 					GuiText_setSelection (our textArea, first + 1, first + 1);
-					our suppressRedraw = false;
+					our textGridArea() -> suppressRedraw = false;
 
-					//FunctionEditor_redraw (this); TRY OUT 2022-06-12
 					Editor_broadcastDataChanged (this);
 				}
 			}
@@ -466,12 +411,12 @@ void structAnyTextGridEditor :: v_updateText () {
 		}
 	}
 	if (our textArea) {
-		our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+		our textGridArea() -> suppressRedraw = true;   // prevent valueChangedCallback from redrawing
 		trace (U"setting new text ", newText);
 		GuiText_setString (our textArea, newText);
 		const integer cursor = str32len (newText);   // at end
 		GuiText_setSelection (our textArea, cursor, cursor);
-		our suppressRedraw = false;
+		our textGridArea() -> suppressRedraw = false;
 	}
 }
 
