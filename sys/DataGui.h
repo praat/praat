@@ -61,6 +61,10 @@ public:
 	virtual void v_createMenuItems_help    (EditorMenu /* menu */) { }
 	virtual void v_updateMenuItems () { }
 
+	virtual void v_prefs_addFields (EditorCommand) { }
+	virtual void v_prefs_setValues (EditorCommand) { }
+	virtual void v_prefs_getValues (EditorCommand) { }
+
 	virtual void v_form_pictureWindow (EditorCommand cmd);
 	virtual void v_ok_pictureWindow (EditorCommand cmd);
 	virtual void v_do_pictureWindow (EditorCommand cmd);

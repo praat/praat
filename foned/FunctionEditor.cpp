@@ -444,6 +444,27 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	my setClassPref_shellHeight (GuiShell_getShellHeight (my windowForm));
 }
 
+void structFunctionEditor :: v_prefs_addFields (EditorCommand cmd) {
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_prefs_addFields (cmd);
+	}
+}
+void structFunctionEditor :: v_prefs_setValues (EditorCommand cmd) {
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_prefs_setValues (cmd);
+	}
+}
+void structFunctionEditor :: v_prefs_getValues (EditorCommand cmd) {
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_prefs_getValues (cmd);
+	}
+}
 static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr)
 		BOOLEAN (synchronizeZoomAndScroll, U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll())
@@ -1097,6 +1118,14 @@ static void HELP__intro (FunctionEditor /* me */, EDITOR_ARGS_DIRECT) {
 	HELP (U"Intro")
 }
 
+void structFunctionEditor :: v_updateText () {
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_updateText ();
+	}
+}
+
 void structFunctionEditor :: v_createMenuItems_file (EditorMenu menu) {
 	FunctionEditor_Parent :: v_createMenuItems_file (menu);
 	EditorMenu_addCommand (menu, U"Preferences...", 0, menu_cb_preferences);
@@ -1611,7 +1640,7 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data)
 	my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
 
 	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
-	my v_updateText ();   // BUG: superfluous because of Editor_dataChanged below? and too early if function pointers not yet set?
+	//my v_updateText ();   // BUG: superfluous because of Editor_dataChanged below? and too early if function pointers not yet set?
 	if (group_equalDomain (my tmin, my tmax))
 		gui_checkbutton_cb_group (me, nullptr);   // BUG: nullptr
 	my enableUpdates = true;   // BUG: explain why still needed

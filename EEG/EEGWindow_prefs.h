@@ -18,9 +18,11 @@
 
 Prefs_begin (EEGWindow)
 
-	InstancePrefs_overrideBool    (EEGWindow, showSelectionViewer,            1, false)
-	ClassPrefs_addDouble     (EEGWindow, picture_bottom,           1, U"0.0")   // BUG: should override in area
-	ClassPrefs_addDouble     (EEGWindow, picture_top,              1, U"0.0 (= auto)")   // BUG: should override in area
+	ClassPrefs_overrideInt     (EEGWindow, shellWidth,               1, U"800")
+	ClassPrefs_overrideInt     (EEGWindow, shellHeight,              1, U"600")
+	InstancePrefs_overrideBool (EEGWindow, showSelectionViewer,      1, false)
+	ClassPrefs_addDouble       (EEGWindow, picture_bottom,           1, U"0.0")   // BUG: should override in area
+	ClassPrefs_addDouble       (EEGWindow, picture_top,              1, U"0.0 (= auto)")   // BUG: should override in area
 
 Prefs_end (EEGWindow)
 

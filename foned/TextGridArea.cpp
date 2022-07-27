@@ -37,6 +37,36 @@ Thing_implement (TextGridArea, FunctionArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "TextGridArea_prefs.h"
 
+/*
+ * The main invariant of the TextGridArea is that the selected interval
+ * always has the cursor in it, and that the cursor always selects an interval
+ * if the selected tier is an interval tier.
+ */
+
+static void checkTierSelection (constTextGridArea me, conststring32 verbPhrase) {
+	if (my selectedTier < 1 || my selectedTier > my textGrid() -> tiers->size)
+		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
+}
+static integer getSelectedInterval (constTextGridArea me) {
+	Melder_assert (my selectedTier >= 1 || my selectedTier <= my textGrid() -> tiers->size);
+	const IntervalTier tier = (IntervalTier) my textGrid() -> tiers->at [my selectedTier];
+	Melder_assert (tier -> classInfo == classIntervalTier);
+	return IntervalTier_timeToIndex (tier, my startSelection());
+}
+
+static integer getSelectedLeftBoundary (constTextGridArea me) {
+	Melder_assert (my selectedTier >= 1 || my selectedTier <= my textGrid() -> tiers->size);
+	const IntervalTier tier = (IntervalTier) my textGrid() -> tiers->at [my selectedTier];
+	Melder_assert (tier -> classInfo == classIntervalTier);
+	return IntervalTier_hasBoundary (tier, my startSelection());
+}
+static integer getSelectedPoint (constTextGridArea me) {
+	Melder_assert (my selectedTier >= 1 || my selectedTier <= my textGrid() -> tiers->size);
+	const TextTier tier = (TextTier) my textGrid() -> tiers->at [my selectedTier];
+	Melder_assert (tier -> classInfo == classTextTier);
+	Melder_assert (isdefined (my startSelection()));
+	return AnyTier_hasPoint (tier->asAnyTier(), my startSelection());
+}
 
 static void timeToInterval (TextGridArea me, double t, integer tierNumber,
 	double *out_tmin, double *out_tmax)
@@ -653,7 +683,7 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 			*/
 			Melder_assert (isdefined (our startSelection()));   // precondition of v_updateText()
 			if (our selectedTier != oldSelectedTier)
-				our functionEditor() -> v_updateText();   // this puts the text of the newly clicked tier into the text area
+				our v_updateText();   // this puts the text of the newly clicked tier into the text area
 			insertBoundaryOrPoint (this, mouseTier, our startSelection(), our startSelection(), false);
 			//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
 			//FunctionEditor_marksChanged (this, true);
@@ -814,6 +844,49 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 
 #pragma mark - TextGridArea File menu
 
+POSITIVE_VARIABLE (v_prefs_addFields__fontSize)
+OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals)
+OPTIONMENU_VARIABLE (v_prefs_addFields__useTextStyles)
+OPTIONMENU_VARIABLE (v_prefs_addFields__shiftDragMultiple)
+OPTIONMENU_ENUM_VARIABLE (kTextGridArea_showNumberOf, v_prefs_addFields__showNumberOf)
+OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel)
+SENTENCE_VARIABLE (v_prefs_addFields__theText)
+void structTextGridArea :: v_prefs_addFields (EditorCommand cmd) {
+	UiField _radio_;
+	POSITIVE_FIELD (v_prefs_addFields__fontSize, U"Font size (points)", our default_fontSize())
+	OPTIONMENU_ENUM_FIELD (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals,
+			U"Text alignment in intervals", kGraphics_horizontalAlignment::DEFAULT)
+	OPTIONMENU_FIELD (v_prefs_addFields__useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles() + 1)
+		OPTION (U"are shown as typed")
+		OPTION (U"mean italic/bold/sub/super")
+	OPTIONMENU_FIELD (v_prefs_addFields__shiftDragMultiple, U"With the shift key, you drag", our default_shiftDragMultiple() + 1)
+		OPTION (U"a single boundary")
+		OPTION (U"multiple boundaries")
+	OPTIONMENU_ENUM_FIELD (kTextGridArea_showNumberOf, v_prefs_addFields__showNumberOf,
+			U"Show number of", kTextGridArea_showNumberOf::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel,
+			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
+	SENTENCE_FIELD (v_prefs_addFields__theText, U"...the text", our default_greenString())
+}
+void structTextGridArea :: v_prefs_setValues (EditorCommand cmd) {
+	SET_OPTION (v_prefs_addFields__useTextStyles, our instancePref_useTextStyles() + 1)
+	SET_REAL (v_prefs_addFields__fontSize, our instancePref_fontSize())
+	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our instancePref_alignment())
+	SET_OPTION (v_prefs_addFields__shiftDragMultiple, our instancePref_shiftDragMultiple() + 1)
+	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridArea_showNumberOf, our instancePref_showNumberOf())
+	SET_ENUM (v_prefs_addFields__paintIntervalsGreenWhoseLabel, kMelder_string, our instancePref_greenMethod())
+	SET_STRING (v_prefs_addFields__theText, our instancePref_greenString())
+}
+void structTextGridArea :: v_prefs_getValues (EditorCommand /* cmd */) {
+	our setInstancePref_useTextStyles (v_prefs_addFields__useTextStyles - 1);
+	our setInstancePref_fontSize (v_prefs_addFields__fontSize);
+	our setInstancePref_alignment (v_prefs_addFields__textAlignmentInIntervals);
+	our setInstancePref_shiftDragMultiple (v_prefs_addFields__shiftDragMultiple - 1);
+	our setInstancePref_showNumberOf (v_prefs_addFields__showNumberOf);
+	our setInstancePref_greenMethod (v_prefs_addFields__paintIntervalsGreenWhoseLabel);
+	our setInstancePref_greenString (v_prefs_addFields__theText);
+}
+
 static void menu_cb_SaveWholeTextGridAsTextFile (TextGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save whole TextGrid as text file", nullptr)
 		Melder_sprint (defaultName,300, my textGrid() -> name.get(), U".TextGrid");
@@ -826,6 +899,133 @@ void structTextGridArea :: v_createMenuItems_file (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"Save whole TextGrid as text file...", 'S',
 			menu_cb_SaveWholeTextGridAsTextFile, this);
 	FunctionAreaMenu_addCommand (menu, U"-- after TextGrid save --", 0, nullptr, this);
+}
+
+
+#pragma mark - TextGridArea Edit menu
+
+/***** EDIT MENU *****/
+
+#ifndef macintosh
+static void menu_cb_Cut (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	GuiText_cut (my functionEditor() -> textArea);
+}
+static void menu_cb_Copy (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	GuiText_copy (my functionEditor() -> textArea);
+}
+static void menu_cb_Paste (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	GuiText_paste (my functionEditor() -> textArea);
+}
+static void menu_cb_Erase (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	GuiText_remove (my functionEditor() -> textArea);
+}
+#endif
+
+static void menu_cb_ConvertToBackslashTrigraphs (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	FunctionArea_save (me, U"Convert to Backslash Trigraphs");
+	TextGrid_convertToBackslashTrigraphs (my textGrid());
+	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
+	Editor_broadcastDataChanged (my functionEditor());
+}
+static void menu_cb_ConvertToUnicode (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	FunctionArea_save (me, U"Convert to Unicode");
+	TextGrid_convertToUnicode (my textGrid());
+	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
+	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
+	Editor_broadcastDataChanged (my functionEditor());
+}
+static void findInTier (TextGridArea me) {
+	checkTierSelection (me, U"find a text");
+	Function anyTier = my textGrid() -> tiers->at [my selectedTier];
+	if (anyTier -> classInfo == classIntervalTier) {
+		const IntervalTier tier = (IntervalTier) anyTier;
+		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection()) + 1;
+		while (iinterval <= tier -> intervals.size) {
+			TextInterval interval = tier -> intervals.at [iinterval];
+			conststring32 text = interval -> text.get();
+			if (text) {
+				const char32 *position = str32str (text, my findString.get());
+				if (position) {
+					my setSelection (interval -> xmin, interval -> xmax);
+					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
+					FunctionEditor_scrollToView (my functionEditor(), my startSelection());
+					GuiText_setSelection (my functionEditor() -> textArea,
+							position - text, position - text + str32len (my findString.get()));
+					return;
+				}
+			}
+			iinterval ++;
+		}
+		if (iinterval > tier -> intervals.size)
+			Melder_beep ();
+	} else {
+		TextTier tier = (TextTier) anyTier;
+		integer ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection()) + 1;
+		while (ipoint <= tier -> points.size) {
+			const TextPoint point = tier->points.at [ipoint];
+			conststring32 text = point -> mark.get();
+			if (text) {
+				const char32 * const position = str32str (text, my findString.get());
+				if (position) {
+					my setSelection (point -> number, point -> number);
+					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
+					FunctionEditor_scrollToView (my functionEditor(), point -> number);
+					GuiText_setSelection (my functionEditor() -> textArea,
+							position - text, position - text + str32len (my findString.get()));
+					return;
+				}
+			}
+			ipoint ++;
+		}
+		if (ipoint > tier -> points.size)
+			Melder_beep ();
+	}
+}
+static void do_find (TextGridArea me) {
+	if (my findString) {
+		integer left, right;
+		autostring32 label = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & left, & right);
+		const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
+		if (position)
+			GuiText_setSelection (my functionEditor() -> textArea,
+					position - label.get(), position - label.get() + str32len (my findString.get()));
+		else
+			findInTier (me);
+	}
+}
+static void menu_cb_Find (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Find text", nullptr)
+		TEXTFIELD (findString, U"Text", U"", 3)
+	EDITOR_OK
+	EDITOR_DO
+		my findString = Melder_dup (findString);
+		do_find (me);
+	EDITOR_END
+}
+static void menu_cb_FindAgain (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	do_find (me);
+}
+void structTextGridArea :: v_createMenuItems_edit (EditorMenu menu) {
+	#ifndef macintosh
+		FunctionAreaMenu_addCommand (menu, U"-- cut copy paste --", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (menu, U"Cut text", 'X', menu_cb_Cut, this);
+		FunctionAreaMenu_addCommand (menu, U"Cut", Editor_HIDDEN, menu_cb_Cut, this);
+		FunctionAreaMenu_addCommand (menu, U"Copy text", 'C', menu_cb_Copy, this);
+		FunctionAreaMenu_addCommand (menu, U"Copy", Editor_HIDDEN, menu_cb_Copy, this);
+		FunctionAreaMenu_addCommand (menu, U"Paste text", 'V', menu_cb_Paste, this);
+		FunctionAreaMenu_addCommand (menu, U"Paste", Editor_HIDDEN, menu_cb_Paste, this);
+		FunctionAreaMenu_addCommand (menu, U"Erase text", 0, menu_cb_Erase, this);
+		FunctionAreaMenu_addCommand (menu, U"Erase", Editor_HIDDEN, menu_cb_Erase, this);
+	#endif
+	FunctionAreaMenu_addCommand (menu, U"-- encoding --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Convert entire TextGrid to backslash trigraphs", 0,
+			menu_cb_ConvertToBackslashTrigraphs, this);
+	FunctionAreaMenu_addCommand (menu, U"Convert entire TextGrid to Unicode", 0,
+			menu_cb_ConvertToUnicode, this);
+	FunctionAreaMenu_addCommand (menu, U"-- search --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Find...", 'F', menu_cb_Find, this);
+	FunctionAreaMenu_addCommand (menu, U"Find again", 'G', menu_cb_FindAgain, this);
 }
 
 
@@ -897,7 +1097,9 @@ static void gui_text_cb_changed (TextGridArea me, GuiTextEvent /* event */) {
 			if (selectedInterval) {
 				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
 				TextInterval_setText (interval, text.get());
+				my suppressTextCursorJump = true;
 				Editor_broadcastDataChanged (my functionEditor());
+				my suppressTextCursorJump = false;
 			}
 		} else {
 			const integer selectedPoint = getSelectedPoint (me);
@@ -906,7 +1108,9 @@ static void gui_text_cb_changed (TextGridArea me, GuiTextEvent /* event */) {
 				point -> mark. reset();
 				if (Melder_findInk (text.get()))   // any visible characters?
 					point -> mark = Melder_dup_f (text.get());
+				my suppressTextCursorJump = true;
 				Editor_broadcastDataChanged (my functionEditor());
+				my suppressTextCursorJump = false;
 			}
 		}
 	}
@@ -1564,6 +1768,89 @@ static void addTierMenu (TextGridArea me) {
 }
 
 
+#pragma mark - TextGridArea Spell menu
+
+static void checkSpellingInTier (TextGridArea me) {
+	checkTierSelection (me, U"check spelling");
+	const Function anyTier = my textGrid() -> tiers->at [my selectedTier];
+	if (anyTier -> classInfo == classIntervalTier) {
+		const IntervalTier tier = (IntervalTier) anyTier;
+		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection()) + 1;
+		while (iinterval <= tier -> intervals.size) {
+			TextInterval interval = tier -> intervals.at [iinterval];
+			conststring32 text = interval -> text.get();
+			if (text) {
+				integer position = 0;
+				conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
+				if (notAllowed) {
+					my setSelection (interval -> xmin, interval -> xmax);
+					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
+					FunctionEditor_scrollToView (my functionEditor(), my startSelection());
+					GuiText_setSelection (my functionEditor() -> textArea,
+							position, position + str32len (notAllowed));
+					return;
+				}
+			}
+			iinterval ++;
+		}
+		if (iinterval > tier -> intervals.size)
+			Melder_beep ();
+	} else {
+		const TextTier tier = (TextTier) anyTier;
+		integer ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection()) + 1;
+		while (ipoint <= tier -> points.size) {
+			TextPoint point = tier -> points.at [ipoint];
+			conststring32 text = point -> mark.get();
+			if (text) {
+				integer position = 0;
+				conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
+				if (notAllowed) {
+					my setSelection (point -> number, point -> number);
+					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
+					FunctionEditor_scrollToView (my functionEditor(), point -> number);
+					GuiText_setSelection (my functionEditor() -> textArea, position, position + str32len (notAllowed));
+					return;
+				}
+			}
+			ipoint ++;
+		}
+		if (ipoint > tier -> points.size)
+			Melder_beep ();
+	}
+}
+static void menu_cb_CheckSpelling (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	if (my spellingChecker) {
+		integer left, right;
+		autostring32 label = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & left, & right);
+		integer position = right;
+		conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.get(), & position);
+		if (notAllowed)
+			GuiText_setSelection (my functionEditor() -> textArea,
+					position, position + str32len (notAllowed));
+		else
+			checkSpellingInTier (me);
+	}
+}
+static void menu_cb_CheckSpellingInInterval (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	if (my spellingChecker) {
+		integer left, right;
+		autostring32 label = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & left, & right);
+		integer position = right;
+		conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.get(), & position);
+		if (notAllowed)
+			GuiText_setSelection (my functionEditor() -> textArea,
+					position, position + str32len (notAllowed));
+	}
+}
+static void menu_cb_AddToUserDictionary (TextGridArea me, EDITOR_ARGS_DIRECT) {
+	if (my spellingChecker) {
+		const autostring32 word = GuiText_getSelection (my functionEditor() -> textArea);
+		SpellingChecker_addNewWord (my spellingChecker, word.get());
+		Editor_broadcastDataChanged (my functionEditor());
+	}
+}
+
+
 #pragma mark - TextGridArea all menus
 
 void structTextGridArea :: v_createMenus () {
@@ -1578,11 +1865,158 @@ void structTextGridArea :: v_createMenus () {
 
 	if (our functionEditor() -> textArea)
 		GuiText_setChangedCallback (our functionEditor() -> textArea, gui_text_cb_changed, this);
+
+	if (our spellingChecker) {
+		EditorMenu spellMenu = Editor_addMenu (our functionEditor(), U"Spell", 0);
+		FunctionAreaMenu_addCommand (spellMenu, U"Check spelling in tier", GuiMenu_COMMAND | GuiMenu_OPTION | 'L',
+				menu_cb_CheckSpelling, this);
+		FunctionAreaMenu_addCommand (spellMenu, U"Check spelling in interval", 0,
+				menu_cb_CheckSpellingInInterval, this);
+		FunctionAreaMenu_addCommand (spellMenu, U"-- edit lexicon --", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (spellMenu, U"Add selected word to user dictionary", 0,
+				menu_cb_AddToUserDictionary, this);
+	}
 }
 void structTextGridArea :: v_updateMenuItems () {
 	TextGridArea_Parent :: v_updateMenuItems ();
 	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our endSelection() > our startSelection());
 	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection() > our startSelection());
+}
+
+void structTextGridArea :: v_updateText () {
+	if (! our textGrid())
+		return;   // BUG: should not be needed
+	if (our suppressTextCursorJump)
+		return;
+	conststring32 newText = U"";
+	TRACE
+	trace (U"selected tier ", our selectedTier);
+	if (our selectedTier != 0) {
+		IntervalTier intervalTier;
+		TextTier textTier;
+		trace (U"TextGrid ", Melder_pointer (our textGrid()));
+		AnyTextGridTier_identifyClass (our textGrid() -> tiers->at [our selectedTier], & intervalTier, & textTier);
+		if (intervalTier) {
+			const integer iinterval = IntervalTier_timeToIndex (intervalTier, our startSelection());
+			if (iinterval) {
+				TextInterval interval = intervalTier -> intervals.at [iinterval];
+				if (interval -> text)
+					newText = interval -> text.get();
+			}
+		} else {
+			Melder_assert (isdefined (our startSelection()));
+			const integer ipoint = AnyTier_hasPoint (textTier->asAnyTier(), our startSelection());
+			if (ipoint) {
+				TextPoint point = textTier -> points.at [ipoint];
+				if (point -> mark)
+					newText = point -> mark.get();
+			}
+		}
+	}
+	if (our functionEditor() -> textArea) {
+		our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+		trace (U"setting new text ", newText);
+		GuiText_setString (our functionEditor() -> textArea, newText);
+		const integer cursor = str32len (newText);   // at end
+		GuiText_setSelection (our functionEditor() -> textArea, cursor, cursor);
+		our suppressRedraw = false;
+	}
+}
+
+
+#pragma mark - TextGridArea IPA chart
+
+static const conststring32 characters [12] [10] = {
+	{ U"ɑ", U"ɐ", U"ɒ", U"æ", U"ʙ", U"ɓ", U"β", U"ç", U"ɕ", U"ð" },
+	{ U"ɗ", U"ɖ", U"ɛ", U"ɜ", U"ə", U"ɢ", U"ɠ", U"ʛ", U"ɣ", U"ɤ" },
+	{ U"ˠ", U"ʜ", U"ɦ", U"ħ", U"ʰ", U"ɧ", U"ɪ", U"ɨ", U"ı", U"ɟ" },
+	{ U"ʝ", U"ʄ", U"ᴊ", U"ʲ", U"ʟ", U"ɬ", U"ɭ", U"ɮ", U"ɫ", U"ˡ" },
+	{ U"ɰ", U"ɯ", U"ɱ", U"ɴ", U"ŋ", U"ɲ", U"ɳ", U"ⁿ", U"ɔ", U"ɵ" },
+
+	{ U"ø", U"œ", U"ɶ", U"ɸ", U"ɹ", U"ʀ", U"ʁ", U"ɾ", U"ɽ", U"ɺ" },
+	{ U"ɻ", U"ʃ", U"ʂ", U"θ", U"ʈ", U"ʉ", U"ʊ", U"ʌ", U"ʋ", U"ʍ" },
+	{ U"ʷ", U"χ", U"ʎ", U"ʏ", U"ɥ", U"ʒ", U"ʐ", U"ʑ", U"ˑ", U"ː" },
+	{ U"ʔ", U"ʡ", U"ʕ", U"ʢ", U"ˤ", U"ǃ", U"ʘ", U"ǀ", U"ǁ", U"ǂ" },
+	{ U"ʤ", U"ɘ", U"ɚ", U"ɝ", U"ʱ", U"ˢ", U"ʧ", U"ɞ", U"ʦ", U"ʣ" },
+
+	{ U"ʨ", U"ʥ", U"z̊", U"z̥", U"z̤", U"z̰", U"z̪", U"z̩", U"z̝", U"z̞" },
+	{ U"ý", U"ȳ", U"ỳ", U"ÿ", U"ỹ", U"o̟", U"o̱", U"o̹", U"o̜", U"t̚" },
+};
+
+void TextGridArea_drawSelectionViewer (TextGridArea me) {
+	Graphics_setWindow (my graphics(), 0.5, 10.5, 0.5, 12.5);
+	Graphics_setColour (my graphics(), Melder_WHITE);
+	Graphics_fillRectangle (my graphics(), 0.5, 10.5, 0.5, 12.5);
+	Graphics_setColour (my graphics(), Melder_BLACK);
+	Graphics_setFont (my graphics(), kGraphics_font::TIMES);
+	const double pointsPerMillimetre = 72.0 / 25.4;
+	const double cellWidth_points = Graphics_dxWCtoMM (my graphics(), 1.0) * pointsPerMillimetre;
+	const double cellHeight_points = Graphics_dyWCtoMM (my graphics(), 1.0) * pointsPerMillimetre;
+	const double fontSize = std::min (0.8 * cellHeight_points, 1.2 * cellWidth_points);
+	Graphics_setFontSize (my graphics(), fontSize);
+	Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_HALF);
+	for (integer irow = 1; irow <= 12; irow ++)
+		for (integer icol = 1; icol <= 10; icol ++)
+			Graphics_text (my graphics(), 0.0 + 1.0 * icol, 13.0 - 1.0 * irow, characters [irow-1] [icol-1]);
+}
+void TextGridArea_clickSelectionViewer (TextGridArea me, double x_fraction, double y_fraction) {
+	const integer rowNumber = Melder_iceiling ((1.0 - y_fraction) * 12.0);
+	const integer columnNumber = Melder_iceiling (x_fraction * 10.0);
+	if (rowNumber < 1 || rowNumber > 12)
+		return;
+	if (columnNumber < 1 || columnNumber > 10)
+		return;
+	conststring32 character = characters [rowNumber-1] [columnNumber-1];
+	character += str32len (character) - 1;
+	if (my functionEditor() -> textArea) {
+		integer first = 0, last = 0;
+		autostring32 oldText = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & first, & last);
+		static MelderString newText;
+		MelderString_empty (& newText);
+		MelderString_ncopy (& newText, oldText.get(), first);
+		MelderString_append (& newText, character);
+		MelderString_append (& newText, oldText.get() + last);
+		if (my selectedTier != 0) {
+			IntervalTier intervalTier;
+			TextTier textTier;
+			AnyTextGridTier_identifyClass (my textGrid() -> tiers->at [my selectedTier], & intervalTier, & textTier);
+			if (intervalTier) {
+				const integer selectedInterval = getSelectedInterval (me);
+				if (selectedInterval != 0) {
+					TextInterval interval = intervalTier -> intervals.at [selectedInterval];
+					TextInterval_setText (interval, newText.string);
+
+					my suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+					trace (U"setting new text ", newText.string);
+					GuiText_setString (my functionEditor() -> textArea, newText.string);
+					GuiText_setSelection (my functionEditor() -> textArea, first + 1, first + 1);
+					my suppressRedraw = false;
+
+					my suppressTextCursorJump = true;
+					Editor_broadcastDataChanged (my functionEditor());
+					my suppressTextCursorJump = false;
+				}
+			} else {
+				const integer selectedPoint = getSelectedPoint (me);
+				if (selectedPoint != 0) {
+					TextPoint point = textTier -> points.at [selectedPoint];
+					point -> mark. reset();
+					if (Melder_findInk (newText.string))   // any visible characters?
+						point -> mark = Melder_dup_f (newText.string);
+
+					my suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+					trace (U"setting new text ", newText.string);
+					GuiText_setString (my functionEditor() -> textArea, newText.string);
+					GuiText_setSelection (my functionEditor() -> textArea, first + 1, first + 1);
+					my suppressRedraw = false;
+
+					my suppressTextCursorJump = true;
+					Editor_broadcastDataChanged (my functionEditor());
+					my suppressTextCursorJump = false;
+				}
+			}
+		}
+	}
 }
 
 /* End of file TextGridArea.cpp */

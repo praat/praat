@@ -17,8 +17,29 @@
  */
 
 #include "TextGridEditor.h"
+#include "EditorM.h"
 
-Thing_implement (TextGridEditor, AnyTextGridEditor, 0);
+Thing_implement (TextGridEditor, FunctionEditor, 0);
+
+#include "Prefs_define.h"
+#include "TextGridEditor_prefs.h"
+#include "Prefs_install.h"
+#include "TextGridEditor_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "TextGridEditor_prefs.h"
+
+static void menu_cb_TextGridEditorHelp (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"TextGridEditor") }
+static void menu_cb_AboutSpecialSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Special symbols") }
+static void menu_cb_PhoneticSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Phonetic symbols") }
+static void menu_cb_AboutTextStyles (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Text styles") }
+
+void structTextGridEditor :: v_createMenuItems_help (EditorMenu menu) {
+	TextGridEditor_Parent :: v_createMenuItems_help (menu);
+	EditorMenu_addCommand (menu, U"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
+	EditorMenu_addCommand (menu, U"About special symbols", 0, menu_cb_AboutSpecialSymbols);
+	EditorMenu_addCommand (menu, U"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
+	EditorMenu_addCommand (menu, U"About text styles", 0, menu_cb_AboutTextStyles);
+}
 
 autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid,
 	SampledXY optionalSoundOrLongSound, SpellingChecker spellingChecker, conststring32 callbackSocket)
@@ -34,8 +55,25 @@ autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid
 			my soundAnalysisArea() = SoundAnalysisArea_create (false, nullptr, me.get());
 			my textGridArea() -> borrowedSoundArea = my soundArea().get();
 			my textGridArea() -> borrowedSoundAnalysisArea = my soundAnalysisArea().get();
+			my textGridArea() -> spellingChecker = spellingChecker;
 		}
-		AnyTextGridEditor_init (me.get(), title, textGrid, spellingChecker, callbackSocket);
+		my callbackSocket = Melder_dup (callbackSocket);
+		FunctionEditor_init (me.get(), title, textGrid);
+
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
+		my v_updateText ();   // to reflect changed tier selection AND to get first text; BUG: should not be needed
+		if (spellingChecker)
+			GuiText_setSelection (my textArea, 0, 0);
+		if (my soundOrLongSound() &&
+			my soundOrLongSound() -> xmin == 0.0 &&
+			my textGrid() -> xmin != 0.0 &&
+			my textGrid() -> xmax > my soundOrLongSound() -> xmax
+		)
+			Melder_warning (U"The time domain of the TextGrid (starting at ",
+				Melder_fixed (my textGrid() -> xmin, 6), U" seconds) does not overlap with that of the sound "
+				U"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
+				U"and choose “Shift times to...” from the Modify menu "
+				U"to shift the starting time of the TextGrid to zero.");
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid window not created.");

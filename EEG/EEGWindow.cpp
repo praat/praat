@@ -19,7 +19,7 @@
 #include "EEGWindow.h"
 #include "EditorM.h"
 
-Thing_implement (EEGWindow, AnyTextGridEditor, 0);
+Thing_implement (EEGWindow, FunctionEditor, 0);
 
 #include "Prefs_define.h"
 #include "EEGWindow_prefs.h"
@@ -31,7 +31,7 @@ Thing_implement (EEGWindow, AnyTextGridEditor, 0);
 static void menu_cb_EEGWindowHelp (EEGWindow, EDITOR_ARGS_DIRECT) { Melder_help (U"EEG window"); }
 
 void structEEGWindow :: v_createMenuItems_help (EditorMenu menu) {
-	AnyTextGridEditor_Parent :: v_createMenuItems_help (menu);   // BUG: skips TextGridEditor help (without any)
+	structFunctionEditor :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"EEGWindow help", '?', menu_cb_EEGWindowHelp);
 }
 
@@ -73,13 +73,11 @@ autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 		Melder_assert (sound);
 		Melder_assert (Thing_isa (sound, classSound));
 		TRACE trace(Melder_pointer(eeg -> sound.get()));
-		my soundArea() = EEGArea_create (me.get(), nullptr, false);
-
-		AnyTextGridEditor_init (me.get(), title,
-			eeg -> textgrid.get(),   // BUG: data should be EEG, but TextGridEditor expects TextGrid
-			nullptr,   // no spelling checker
-			nullptr   // no callback socket
-		);
+		my eegArea() = EEGArea_create (me.get(), nullptr, false);
+		my textGridArea() = TextGridArea_create (false, nullptr, me.get());
+		FunctionEditor_init(me.get(), title, eeg);
+		// no spelling checker
+		// no callback socket
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EEG window not created.");
