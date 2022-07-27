@@ -18,10 +18,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AnyTextGridEditor.h"
+#include "FunctionEditor.h"
 #include "EEGArea.h"
+#include "TextGridArea.h"
 
-Thing_define (EEGWindow, AnyTextGridEditor) {
+Thing_define (EEGWindow, FunctionEditor) {
+	DEFINE_FunctionArea (1, EEGArea, eegArea)
+	DEFINE_FunctionArea (2, TextGridArea, textGridArea)
+
 	EEG eeg() { return static_cast <EEG> (our data()); }
 
 	void v1_dataChanged () override {
@@ -36,8 +40,9 @@ Thing_define (EEGWindow, AnyTextGridEditor) {
 		trace(Thing_className(sound));
 		Melder_assert (Thing_isa (sound, classSound));
 		trace (sound -> nx, U" ", sound -> ny);
-		our soundArea() -> functionChanged (our eeg() -> sound.get());
+		our eegArea() -> functionChanged (our eeg() -> sound.get());
 	}
+	void v_draw () override { }
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_createMenuItems_extract (EditorMenu menu)

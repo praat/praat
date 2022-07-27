@@ -1,4 +1,4 @@
-/* AnyTextGridEditor_prefs.h
+/* TextGridEditor_prefs.h
  *
  * Copyright (C) 2013,2015,2016,2019,2022 Paul Boersma
  *
@@ -16,12 +16,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (AnyTextGridEditor)
+Prefs_begin (TextGridEditor)
 
-	ClassPrefs_overrideInt        (AnyTextGridEditor, shellWidth,               1, U"800")
-	ClassPrefs_overrideInt        (AnyTextGridEditor, shellHeight,              1, U"600")
-	InstancePrefs_overrideBool    (AnyTextGridEditor, showSelectionViewer,      1, true)
+	ClassPrefs_overrideInt        (TextGridEditor, shellWidth,               1, U"800")
+	ClassPrefs_overrideInt        (TextGridEditor, shellHeight,              1, U"600")
+	InstancePrefs_overrideBool    (TextGridEditor, showSelectionViewer,      1, true)
 
-Prefs_end (AnyTextGridEditor)
+Prefs_end (TextGridEditor)
 
-/* End of file AnyTextGridEditor_prefs.h */
+/* End of file TextGridEditor_prefs.h */

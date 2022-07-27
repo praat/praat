@@ -190,6 +190,8 @@ public:
 
 	virtual double maximumInitialLengthOfWindow() { return undefined; }
 
+	virtual void v_updateText () { }
+
 	#include "FunctionArea_prefs.h"
 };
 

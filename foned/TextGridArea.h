@@ -34,7 +34,9 @@ Thing_define (TextGridArea, FunctionArea) {
 	SoundAnalysisArea borrowedSoundAnalysisArea = nullptr;
 
 	integer selectedTier = 1;
-	bool suppressRedraw;
+	bool suppressRedraw, suppressTextCursorJump;
+	autostring32 findString;
+	SpellingChecker spellingChecker;
 
 private:
 	void v_specializedHighlightBackground () const
@@ -58,6 +60,14 @@ public:
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	void v_createMenuItems_file (EditorMenu menu)
 		override;
+	void v_prefs_addFields (EditorCommand cmd)
+		override;
+	void v_prefs_setValues (EditorCommand cmd)
+		override;
+	void v_prefs_getValues (EditorCommand cmd)
+		override;
+	void v_createMenuItems_edit (EditorMenu menu)
+		override;
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
 		override;
 	void v_createMenuItems_query (EditorMenu menu)
@@ -66,42 +76,18 @@ public:
 		override;
 	void v_updateMenuItems ()
 		override;
-	double maximumInitialLengthOfWindow() override {
+	double maximumInitialLengthOfWindow () override {
 		return 30.0;
 	}
+	void v_updateText () override;
 
 	#include "TextGridArea_prefs.h"
 };
 
 DEFINE_FunctionArea_create (TextGridArea, TextGrid)
 
-/*
-	BUG: The following should move to TextGridArea.cpp, once AnyTextGridEditor.cpp no longer needs it.
-*/
-static void checkTierSelection (constTextGridArea me, conststring32 verbPhrase) {
-	if (my selectedTier < 1 || my selectedTier > my textGrid() -> tiers->size)
-		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
-}
-static integer getSelectedInterval (constTextGridArea me) {
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= my textGrid() -> tiers->size);
-	const IntervalTier tier = (IntervalTier) my textGrid() -> tiers->at [my selectedTier];
-	Melder_assert (tier -> classInfo == classIntervalTier);
-	return IntervalTier_timeToIndex (tier, my startSelection());
-}
-
-static integer getSelectedLeftBoundary (constTextGridArea me) {
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= my textGrid() -> tiers->size);
-	const IntervalTier tier = (IntervalTier) my textGrid() -> tiers->at [my selectedTier];
-	Melder_assert (tier -> classInfo == classIntervalTier);
-	return IntervalTier_hasBoundary (tier, my startSelection());
-}
-static integer getSelectedPoint (constTextGridArea me) {
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= my textGrid() -> tiers->size);
-	const TextTier tier = (TextTier) my textGrid() -> tiers->at [my selectedTier];
-	Melder_assert (tier -> classInfo == classTextTier);
-	Melder_assert (isdefined (my startSelection()));
-	return AnyTier_hasPoint (tier->asAnyTier(), my startSelection());
-}
+void TextGridArea_drawSelectionViewer (TextGridArea me);
+void TextGridArea_clickSelectionViewer (TextGridArea me, double x_fraction, double y_fraction);
 
 /* End of file TextGridArea.h */
 #endif

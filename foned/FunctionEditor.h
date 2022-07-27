@@ -166,6 +166,12 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 	void v_updateMenuItems ()
 		override;
+	void v_prefs_addFields (EditorCommand)
+		override;
+	void v_prefs_setValues (EditorCommand)
+		override;
+	void v_prefs_getValues (EditorCommand)
+		override;
 
 	void v1_dataChanged ()
 		override;
@@ -204,10 +210,7 @@ Thing_define (FunctionEditor, Editor) {
 		*/
 	virtual void v_clickSelectionViewer (double x_fraction, double y_fraction);
 	virtual int v_playCallback (int phase, double startTime, double endTime, double currentTime);
-	virtual void v_updateText () { }
-	virtual void v_prefs_addFields (EditorCommand) { }
-	virtual void v_prefs_setValues (EditorCommand) { }
-	virtual void v_prefs_getValues (EditorCommand) { }
+	virtual void v_updateText ();
 
     #include "FunctionEditor_prefs.h"
 
