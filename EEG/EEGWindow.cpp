@@ -68,14 +68,11 @@ void structEEGWindow :: v_updateMenuItems () {
 autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 	try {
 		autoEEGWindow me = Thing_new (EEGWindow);
-
-		Sound sound = eeg -> sound.get();
-		Melder_assert (sound);
-		Melder_assert (Thing_isa (sound, classSound));
-		TRACE trace(Melder_pointer(eeg -> sound.get()));
-		my eegArea() = EEGArea_create (me.get(), nullptr, false);
-		my textGridArea() = TextGridArea_create (false, nullptr, me.get());
-		FunctionEditor_init(me.get(), title, eeg);
+		my eegArea() = EEGArea_create (false, nullptr, me.get());
+		my eegArea() -> borrowedEEG = eeg;
+		my eegAnalysisArea() = EEGAnalysisArea_create (false, nullptr, me.get());
+		my textGridArea() = TextGridArea_create (true, nullptr, me.get());
+		FunctionEditor_init (me.get(), title, eeg);
 		// no spelling checker
 		// no callback socket
 		return me;

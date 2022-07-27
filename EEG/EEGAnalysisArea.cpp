@@ -1,4 +1,4 @@
-/* EEGArea_prefs.h
+/* EEGAnalysisArea.cpp
  *
  * Copyright (C) 2022 Paul Boersma
  *
@@ -16,13 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Prefs_begin (EEGArea)
+#include "EEGAnalysisArea.h"
 
-	InstancePrefs_overrideEnum    (EEGArea, scalingStrategy, 1, kSoundArea_scalingStrategy, BY_WINDOW_AND_CHANNEL)
-	InstancePrefs_overrideDouble  (EEGArea, scaling_height,  1, U"20e-6")
-	InstancePrefs_overrideDouble  (EEGArea, scaling_minimum, 1, U"-10e-6")
-	InstancePrefs_overrideDouble  (EEGArea, scaling_maximum, 1, U"10e-6")
+Thing_implement (EEGAnalysisArea, SoundAnalysisArea, 0);
 
-Prefs_end (EEGArea)
+#include "Prefs_define.h"
+#include "EEGAnalysisArea_prefs.h"
+#include "Prefs_install.h"
+#include "EEGAnalysisArea_prefs.h"
+#include "Prefs_copyToInstance.h"
+#include "EEGAnalysisArea_prefs.h"
 
-/* End of file EEGArea_prefs.h */
+/* End of file EEGAnalysisArea.cpp */

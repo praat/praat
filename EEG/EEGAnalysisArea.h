@@ -32,11 +32,10 @@ Thing_define (EEGAnalysisArea, SoundAnalysisArea) {
 		override { return false; }
 	bool v_hasPulses ()
 		override { return false; }
-	void v_createMenus ()
-		override;
 
 	#include "EEGAnalysisArea_prefs.h"
 };
+DEFINE_FunctionArea_create (EEGAnalysisArea, Sound)
 
 /* End of file EEGAnalysisArea.h */
 #endif
