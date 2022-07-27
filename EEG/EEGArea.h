@@ -25,21 +25,16 @@ Thing_define (EEGArea, SoundArea) {
 	/*
 		Accessors.
 	*/
-	EEG eeg() { return static_cast <EEG> (our function()); }
+	EEG borrowedEEG;
 
 	conststring32 v_getChannelName (integer channelNumber) override {
-		Melder_assert (our eeg());
-		return our eeg() -> channelNames [channelNumber].get();
+		Melder_assert (our borrowedEEG);
+		return our borrowedEEG -> channelNames [channelNumber].get();
 	}
 
 	#include "EEGArea_prefs.h"
 };
-
-inline autoEEGArea EEGArea_create (FunctionEditor editor, Sound soundToCopy, bool editable) {
-	autoEEGArea me = Thing_new (EEGArea);
-	FunctionArea_init (me.get(), editable, soundToCopy, editor);   // BUG: doesn't work at all
-	return me;
-}
+DEFINE_FunctionArea_create (EEGArea, Sound)
 
 /* End of file EEGArea.h */
 #endif

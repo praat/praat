@@ -20,29 +20,42 @@
 
 #include "FunctionEditor.h"
 #include "EEGArea.h"
+#include "EEGAnalysisArea.h"
 #include "TextGridArea.h"
 
 Thing_define (EEGWindow, FunctionEditor) {
 	DEFINE_FunctionArea (1, EEGArea, eegArea)
-	DEFINE_FunctionArea (2, TextGridArea, textGridArea)
+	DEFINE_FunctionArea (2, EEGAnalysisArea, eegAnalysisArea)
+	DEFINE_FunctionArea (3, TextGridArea, textGridArea)
 
 	EEG eeg() { return static_cast <EEG> (our data()); }
 
-	void v1_dataChanged () override {
-		TRACE trace(1);
-		our EEGWindow_Parent :: v1_dataChanged ();
-		trace(2);
-		Melder_assert (our eeg());
-		trace(Thing_className(our eeg()));
-
-		Sound sound = our eeg() -> sound.get();
-		Melder_assert (sound);
-		trace(Thing_className(sound));
-		Melder_assert (Thing_isa (sound, classSound));
-		trace (sound -> nx, U" ", sound -> ny);
-		our eegArea() -> functionChanged (our eeg() -> sound.get());
+	bool v_hasText () override { return true; }
+	bool v_hasSelectionViewer () override { return true; }
+	void v_drawSelectionViewer () override {
+		TextGridArea_drawSelectionViewer (our textGridArea().get());
 	}
-	void v_draw () override { }
+	void v_clickSelectionViewer (double x_fraction, double y_fraction) override {
+		TextGridArea_clickSelectionViewer (our textGridArea().get(), x_fraction, y_fraction);
+	}
+	conststring32 v_selectionViewerName ()
+		override { return U"IPA chart"; }
+	void v1_dataChanged () override {
+		our EEGWindow_Parent :: v1_dataChanged ();
+		our eegArea() -> functionChanged (our eeg() -> sound.get());
+		our eegAnalysisArea() -> functionChanged (our eeg() -> sound.get());
+		our textGridArea() -> functionChanged (our eeg() -> textgrid.get());
+	}
+	void v_distributeAreas () override {
+		our eegArea() -> setGlobalYRange_fraction (0.6, 1.0);
+		our eegAnalysisArea() -> setGlobalYRange_fraction (0.4, 0.6);
+		our textGridArea() -> setGlobalYRange_fraction (0.0, 0.4);
+	}
+	void v_draw () override {
+		FunctionArea_drawOne (our eegArea().get());
+		FunctionArea_drawOne (our eegAnalysisArea().get());
+		FunctionArea_drawOne (our textGridArea().get());
+	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_createMenuItems_extract (EditorMenu menu)
