@@ -218,7 +218,6 @@ void SoundArea_draw (SoundArea me) {
 		Graphics_setColour (my graphics(), Melder_BLACK);
 		if (numberOfChannels > 1) {
 			Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
-			Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
 			conststring32 channelName = my v_getChannelName (ichan);
 			static MelderString channelLabel;
 			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Ch " ), ichan);
@@ -227,16 +226,17 @@ void SoundArea_draw (SoundArea me) {
 			MelderString_append (& channelLabel, U" ",
 					( my muteChannels [ichan] ? UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE : UNITEXT_SPEAKER ));
 			if (ichan > 8 && ichan - my channelOffset == 1)
-				MelderString_append (& channelLabel, U"      " UNITEXT_UPWARDS_ARROW);
+				MelderString_append (& channelLabel, U"  " UNITEXT_UPWARDS_ARROW);
 			else if (numberOfChannels >= 8 && ichan - my channelOffset == 8 && ichan < numberOfChannels)
-				MelderString_append (& channelLabel, U"      " UNITEXT_DOWNWARDS_ARROW);
+				MelderString_append (& channelLabel, U"  " UNITEXT_DOWNWARDS_ARROW);
+			Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
 			Graphics_text (my graphics(), 1.0, 0.5, channelLabel.string);
 		}
 		/*
 			Draw a very thin separator line underneath.
 		*/
-		if (ichan < numberOfChannels) {
-			/*Graphics_setColour (my graphics.get(), Melder_BLACK);*/
+		if (ichan - my channelOffset < 8) {
+			Graphics_setColour (my graphics(), Melder_BLACK);
 			Graphics_line (my graphics(), 0.0, 0.0, 1.0, 0.0);
 		}
 		/*
