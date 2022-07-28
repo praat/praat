@@ -1,5 +1,5 @@
 # Makefile of the library "foned"
-# Paul Boersma, 27 July 2022
+# Paul Boersma, 28 July 2022
 
 include ../makefile.defs
 
@@ -7,6 +7,7 @@ CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools
 
 OBJECTS = SoundRecorder.o \
    FunctionArea.o SoundArea.o SoundAnalysisArea.o TextGridArea.o \
+   SpectrumArea.o \
    RealTierArea.o PitchTierArea.o IntensityTierArea.o DurationTierArea.o AmplitudeTierArea.o \
    FormantGridArea.o \
    FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \
