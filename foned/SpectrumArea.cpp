@@ -158,7 +158,7 @@ static void menu_cb_setDynamicRange (SpectrumArea me, EDITOR_ARGS_FORM) {
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
-void structSpectrumArea :: v_createMenuItems_view_vertical (EditorMenu menu) {
+void structSpectrumArea :: v0_createMenuItems_view_vertical (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- spectrum view --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Power density range:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Set dynamic range...", 0,

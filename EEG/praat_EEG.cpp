@@ -730,7 +730,7 @@ void praat_EEG_init () {
 	Data_recognizeFileType (bdfFileRecognizer);
 
 	praat_addAction1 (classEEG, 0, U"EEG help", nullptr, 0, HELP_EEG_help);
-	praat_addAction1 (classEEG, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_EEG_viewAndEdit);
+	praat_addAction1 (classEEG, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_EEG_viewAndEdit);
 	praat_addAction1 (classEEG, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 1, U"Get channel name...", nullptr, 1, STRING_EEG_getChannelName);
 		praat_addAction1 (classEEG, 1, U"Get channel number...", nullptr, 1, INTEGER_EEG_getChannelNumber);
@@ -754,7 +754,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classEEG, 0, U"To ERPTier (marker)...", nullptr, 1, NEW_EEG_to_ERPTier_marker);
 		praat_addAction1 (classEEG, 0, U"To ERPTier (triggers)...", nullptr, 1, NEW_EEG_to_ERPTier_triggers);
 		praat_addAction1 (classEEG, 0, U"To ERPTier (triggers, preceded)...", nullptr, 1, NEW_EEG_to_ERPTier_triggers_preceded);
-		praat_addAction1 (classEEG, 0, U"To ERPTier...", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW_EEG_to_ERPTier_bit);
+		praat_addAction1 (classEEG, 0, U"To ERPTier...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, NEW_EEG_to_ERPTier_bit);
 		praat_addAction1 (classEEG, 0, U"To MixingMatrix...", nullptr, 0, NEW_EEG_to_MixingMatrix);
 	praat_addAction1 (classEEG, 0, U"Synthesize", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"Concatenate", nullptr, 0, NEW1_EEGs_concatenate);
@@ -762,7 +762,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classEEG, 0, U"Extract waveforms as Sound", nullptr, 1, NEW_EEG_extractSound);
 		praat_addAction1 (classEEG, 0, U"Extract marks as TextGrid", nullptr, 1, NEW_EEG_extractTextGrid);
 
-	praat_addAction1 (classERP, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_ERP_viewAndEdit);
+	praat_addAction1 (classERP, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_ERP_viewAndEdit);
 	praat_addAction1 (classERP, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classERP, 0, U"Draw...", nullptr, 1, GRAPHICS_ERP_draw);
 		praat_addAction1 (classERP, 0, U"Draw scalp...", nullptr, 1, GRAPHICS_ERP_drawScalp);

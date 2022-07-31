@@ -1,6 +1,6 @@
 /* praat_TableOfReal.cpp
  *
- * Copyright (C) 1992-2018,2021 Paul Boersma
+ * Copyright (C) 1992-2018,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -481,7 +481,7 @@ void praat_TableOfReal_init (ClassInfo klas) {
 		praat_addAction1 (classTableOfReal, 0, U"TableOfReal help", nullptr, 0, HELP_TableOfReal_help);
 	}
 	praat_addAction1 (klas, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (klas, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", GuiMenu_DEPRECATED_2011, SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (klas, 0, U"Draw as numbers...", nullptr, 1, GRAPHICS_TableOfReal_drawAsNumbers);
 		praat_addAction1 (klas, 0, U"Draw as numbers if...", nullptr, 1, GRAPHICS_TableOfReal_drawAsNumbers_if);
@@ -529,13 +529,13 @@ void praat_TableOfReal_init (ClassInfo klas) {
 		praat_addAction1 (klas, 0,     U"Extract row ranges...", U"*Extract rows by number...", 1, NEW_TableOfReal_extractRowsByNumber);
 		praat_addAction1 (klas, 0, U"Extract rows where column...", nullptr, 1, NEW_TableOfReal_extractRowsWhereColumn);
 		praat_addAction1 (klas, 0, U"Extract rows whose label...", nullptr, 1, NEW_TableOfReal_extractRowsWhoseLabel);
-		praat_addAction1 (klas, 0,     U"Extract rows where label...", U"*Extract rows whose label...", praat_DEPTH_1 | praat_DEPRECATED_2021, NEW_TableOfReal_extractRowsWhoseLabel);
+		praat_addAction1 (klas, 0,     U"Extract rows where label...", U"*Extract rows whose label...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2021, NEW_TableOfReal_extractRowsWhoseLabel);
 		praat_addAction1 (klas, 0, U"Extract rows where...", nullptr, 1, NEW_TableOfReal_extractRowsWhere);
 		praat_addAction1 (klas, 0, U"Extract columns by number...", nullptr, 1, NEW_TableOfReal_extractColumnsByNumber);
 		praat_addAction1 (klas, 0,     U"Extract column ranges...", nullptr, 1, NEW_TableOfReal_extractColumnsByNumber);
 		praat_addAction1 (klas, 0, U"Extract columns where row...", nullptr, 1, NEW_TableOfReal_extractColumnsWhereRow);
 		praat_addAction1 (klas, 0, U"Extract columns whose label...", nullptr, 1, NEW_TableOfReal_extractColumnsWhoseLabel);
-		praat_addAction1 (klas, 0,     U"Extract columns where label...", U"*Extract columns whose label...", praat_DEPTH_1 | praat_DEPRECATED_2021, NEW_TableOfReal_extractColumnsWhoseLabel);
+		praat_addAction1 (klas, 0,     U"Extract columns where label...", U"*Extract columns whose label...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2021, NEW_TableOfReal_extractColumnsWhoseLabel);
 		praat_addAction1 (klas, 0, U"Extract columns where...", nullptr, 1, NEW_TableOfReal_extractColumnsWhere);
 	praat_addAction1 (klas, 0, U"Extract -", nullptr, 0, nullptr);
 		praat_addAction1 (klas, 0, U"Extract row labels as Strings", nullptr, 1, NEW_TableOfReal_extractRowLabelsAsStrings);

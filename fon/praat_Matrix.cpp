@@ -841,17 +841,17 @@ void praat_Matrix_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create Photo...", nullptr, 2, NEW1_Photo_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create simple Photo...", nullptr, 2, NEW1_Photo_createSimple);
 
-	praat_addMenuCommand (U"Objects", U"Open", U"-- read movie --", nullptr, praat_HIDDEN, nullptr);
-	praat_addMenuCommand (U"Objects", U"Open", U"Open movie file...", nullptr, praat_HIDDEN, READ1_Movie_openFromSoundFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"-- read movie --", nullptr, GuiMenu_HIDDEN, nullptr);
+	praat_addMenuCommand (U"Objects", U"Open", U"Open movie file...", nullptr, GuiMenu_HIDDEN, READ1_Movie_openFromSoundFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read raw --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from raw text file...", nullptr, 0, READ1_Matrix_readFromRawTextFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from LVS AP file...", nullptr, praat_HIDDEN, READ1_Matrix_readAP);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from LVS AP file...", nullptr, GuiMenu_HIDDEN, READ1_Matrix_readAP);
 
 	praat_addAction1 (classMatrix, 0, U"Matrix help", nullptr, 0, HELP_Matrix_help);
 	praat_addAction1 (classMatrix, 1, U"Save as matrix text file...", nullptr, 0, SAVE_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", praat_DEPRECATED_2011, SAVE_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", GuiMenu_DEPRECATED_2011, SAVE_Matrix_writeToMatrixTextFile);
 	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, praat_DEPRECATED_2011, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, GuiMenu_DEPRECATED_2011, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classMatrix, 1, U"Play movie", nullptr, 0, MOVIE_Matrix_playMovie);
 	praat_addAction1 (classMatrix, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classMatrix, 0, U"Draw rows...", nullptr, 1, GRAPHICS_Matrix_drawRows);
@@ -938,7 +938,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 	#endif
 
 	praat_addAction1 (classMovie, 1, U"Paint one image...", nullptr, 1, GRAPHICS_Movie_paintOneImage);
-	praat_addAction1 (classMovie, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Movie_viewAndEdit);
+	praat_addAction1 (classMovie, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Movie_viewAndEdit);
 
 	praat_addAction2 (classMatrix, 1, classSound, 1, U"To ParamCurve", nullptr, 0, NEW1_Matrix_to_ParamCurve);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace red", nullptr, 0, MODIFY_Photo_Matrix_replaceRed);

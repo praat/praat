@@ -1103,7 +1103,7 @@ void praat_uvafon_stat_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Tables", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...", nullptr, 1, NEW1_Table_createWithColumnNames);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names...", nullptr, 1, NEW1_Table_createWithoutColumnNames);
-		praat_addMenuCommand (U"Objects", U"New",   U"Create Table...", U"*Create Table without column names...", praat_DEPTH_1 | praat_DEPRECATED_2006, NEW1_Table_createWithoutColumnNames);
+		praat_addMenuCommand (U"Objects", U"New",   U"Create Table...", U"*Create Table without column names...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2006, NEW1_Table_createWithoutColumnNames);
 		praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, NEW1_TableOfReal_create);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- open table --", nullptr, 0, nullptr);
@@ -1111,7 +1111,7 @@ void praat_uvafon_stat_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, READ1_Table_readFromCommaSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from semicolon-separated file...", nullptr, 0, READ1_Table_readFromSemicolonSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, READ1_Table_readFromTableFile);
-	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", praat_DEPRECATED_2011, READ1_Table_readFromTableFile);
+	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", GuiMenu_DEPRECATED_2011, READ1_Table_readFromTableFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classDistributions, 0, U"Distributions help", nullptr, 0,
@@ -1164,17 +1164,17 @@ void praat_uvafon_stat_init () {
 			HELP__Table_help);
 	praat_addAction1 (classTable, 1, U"Save as tab-separated file...", nullptr, 0,
 			SAVE_ONE__Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_DEPRECATED_2011,
+	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, GuiMenu_DEPRECATED_2011,
 			SAVE_ONE__Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011,
+	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, GuiMenu_DEPRECATED_2011,
 			SAVE_ONE__Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0,
 			SAVE_ONE__Table_writeToCommaSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as semicolon-separated file...", nullptr, 0,
 			SAVE_ONE__Table_writeToSemicolonSeparatedFile);
-	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API,
+	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE | GuiMenu_NO_API,
 			EDITOR_ONE__Table_viewAndEdit);
-	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API,
+	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011 | GuiMenu_NO_API,
 			EDITOR_ONE__Table_viewAndEdit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"Scatter plot...", nullptr, 1,
@@ -1290,9 +1290,9 @@ void praat_uvafon_stat_init () {
 	praat_addAction1 (classTable, 0, U"Extract -", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"Extract rows where column (number)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0,   U"Extract rows where column...", U"*Extract rows where column (number)...", praat_DEPTH_1 | praat_DEPRECATED_2006,
+		praat_addAction1 (classTable, 0,   U"Extract rows where column...", U"*Extract rows where column (number)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2006,
 				CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0,   U"Select rows where column...", U"*Extract rows where column (number)...", praat_DEPTH_1 | praat_DEPRECATED_2004,
+		praat_addAction1 (classTable, 0,   U"Select rows where column...", U"*Extract rows where column (number)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2004,
 				CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, U"Extract rows where column (text)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_text);

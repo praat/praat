@@ -983,7 +983,7 @@ static void menu_cb_soundScaling (SoundArea me, EDITOR_ARGS_FORM) {
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
-void structSoundArea :: v_createMenuItems_view_vertical (EditorMenu menu) {
+void structSoundArea :: v0_createMenuItems_view_vertical (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- sound view vertical --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"View sound amplitudes:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Sound scaling...", 0, menu_cb_soundScaling, this);

@@ -1658,7 +1658,7 @@ void praat_uvafon_gram_init () {
 	structNoulliGridEditor :: f_preferences ();
 
 	praat_addMenuCommand (U"Objects", U"New", U"Constraint grammars", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"OT learning tutorial", nullptr, praat_DEPTH_1 | praat_NO_API,
+		praat_addMenuCommand (U"Objects", U"New", U"OT learning tutorial", nullptr, GuiMenu_DEPTH_1 | GuiMenu_NO_API,
 				HELP__OT_learning_tutorial);
 		praat_addMenuCommand (U"Objects", U"New", U"-- tableau grammars --", nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create NoCoda grammar", nullptr, 1,
@@ -1675,14 +1675,14 @@ void praat_uvafon_gram_init () {
 				CREATE_ONE__Create_multi_level_metrics_grammar);
 	praat_addAction1 (classOTGrammar, 1, U"Save as headerless spreadsheet file...", nullptr, 0,
 			SAVE_ONE__OTGrammar_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classOTGrammar, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011,
+	praat_addAction1 (classOTGrammar, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", GuiMenu_DEPRECATED_2011,
 			SAVE_ONE__OTGrammar_writeToHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classOTGrammar, 0, U"OTGrammar help", nullptr, 0,
 			HELP__OTGrammar_help);
-	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, praat_ATTRACTIVE,
+	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
 			EDITOR_ONE__OTGrammar_viewAndEdit);
-	praat_addAction1 (classOTGrammar, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011,
+	praat_addAction1 (classOTGrammar, 0,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011,
 			EDITOR_ONE__OTGrammar_viewAndEdit);
 	praat_addAction1 (classOTGrammar, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau...", nullptr, 0,
@@ -1758,7 +1758,7 @@ void praat_uvafon_gram_init () {
 	praat_addAction1 (classOTGrammar, 0, U"Modify behaviour -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTGrammar, 1, U"Set decision strategy...", nullptr, 1,
 				MODIFY_EACH__OTGrammar_setDecisionStrategy);
-		praat_addAction1 (classOTGrammar, 1,   U"Set harmony computation method...", U"*Set decision strategy...", praat_DEPTH_1 | praat_DEPRECATED_2006,
+		praat_addAction1 (classOTGrammar, 1,   U"Set harmony computation method...", U"*Set decision strategy...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2006,
 				MODIFY_EACH__OTGrammar_setDecisionStrategy);
 		praat_addAction1 (classOTGrammar, 1, U"Set leak...", nullptr, 1,
 				MODIFY_EACH__OTGrammar_setLeak);
@@ -1772,9 +1772,9 @@ void praat_uvafon_gram_init () {
 
 	praat_TableOfReal_init (classOTHistory);
 
-	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, praat_ATTRACTIVE,
+	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
 			EDITOR_ONE__OTMulti_viewAndEdit);
-	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011,
+	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011,
 			EDITOR_ONE__OTMulti_viewAndEdit);
 	praat_addAction1 (classOTMulti, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTMulti, 0, U"Draw tableau...", nullptr, 1,
@@ -1849,7 +1849,7 @@ void praat_uvafon_gram_init () {
 			MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_WITH_HISTORY__OTGrammar_Distributions_learnFromPartialOutputs_wrip);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, U"Get fraction correct...", nullptr, 0,
 			QUERY_ONE_WEAK_AND_ONE_FOR_REAL__OTGrammar_Distributions_getFractionCorrect);
-	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, U"List obligatory rankings...", nullptr, praat_HIDDEN,
+	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, U"List obligatory rankings...", nullptr, GuiMenu_HIDDEN,
 			INFO_ONE_AND_ONE__OTGrammar_Distributions_listObligatoryRankings);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, U"Learn...", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_WEAK_AND_ONE__OTGrammar_PairDistribution_learn);
@@ -1975,7 +1975,7 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"To ActivationList", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Net_PatternList_to_ActivationList);
 
-	praat_addAction1 (classNoulliGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE,
+	praat_addAction1 (classNoulliGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
 			EDITOR_ONE_WITH_ONE__NoulliGrid_viewAndEdit);
 	praat_addAction1 (classNoulliGrid, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFunction_query_init (classNoulliGrid);
@@ -1983,7 +1983,7 @@ void praat_uvafon_gram_init () {
 			QUERY_ONE_FOR_REAL_VECTOR__NoulliGrid_getAverageProbabilities);
 	praat_addAction1 (classNoulliGrid, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classNoulliGrid, 0, U"Paint...", nullptr, 1, GRAPHICS_NoulliGrid_paint);
-	praat_addAction2 (classNoulliGrid, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE,
+	praat_addAction2 (classNoulliGrid, 1, classSound, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
 			EDITOR_ONE_WITH_ONE__NoulliGrid_viewAndEdit);
 }
 

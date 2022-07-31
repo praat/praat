@@ -1102,7 +1102,7 @@ void praat_DataModeler_init () {
 
 	structOptimalCeilingTierArea :: f_preferences ();
 
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1,
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CREATE_ONE__DataModeler_createSimple);
 
 	praat_addAction1 (classDataModeler, 0, U"Speckle...", 0, 0, 
@@ -1185,11 +1185,11 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classDataModeler, 0, U"To Table (z-scores)", 0, 0, 
 			CONVERT_EACH_TO_ONE__DataModeler_to_Table_zscores);
 
-	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", praat_HIDDEN, 
+	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Formant_to_FormantModeler);
-	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, praat_HIDDEN,
+	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, GuiMenu_HIDDEN,
 			COMBINE_ALL_TO_ONE__Formants_extractSmoothestPart);
-	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, praat_HIDDEN,
+	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, GuiMenu_HIDDEN,
 			COMBINE_ALL_TO_ONE__Formants_extractSmoothestPart_constrained);
 
 	praat_addAction1 (classFormantModeler, 0, U"Draw -", 0, 0, 0);
@@ -1229,7 +1229,7 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classFormantModeler, 1, U"-- get data points info --", 0, 1, 0);
 		praat_addAction1 (classFormantModeler, 0, U"Get number of data points", 0, 1, 
 				QUERY_ONE_FOR_INTEGER__FormantModeler_getNumberOfDataPoints);
-		praat_addAction1 (classFormantModeler, 0, U"Get number of invalid data points...", 0, praat_DEPTH_1 + praat_HIDDEN,
+		praat_addAction1 (classFormantModeler, 0, U"Get number of invalid data points...", 0, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 				QUERY_ONE_FOR_INTEGER__FormantModeler_getNumberOfInvalidDataPoints);
 		praat_addAction1 (classFormantModeler, 0, U"Get model value at time...", 0, 1, 
 				QUERY_ONE_FOR_REAL__FormantModeler_getModelValueAtTime);
@@ -1291,28 +1291,26 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classFormantModeler, 0, U"Extract DataModeler...", 0, 0, 
 			CONVERT_EACH_TO_ONE__FormantModeler_extractDataModeler);
 
-	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API,
+	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, GuiMenu_ATTRACTIVE | GuiMenu_NO_API,
 			EDITOR_ONE_WITH_ONE_OptimalCeilingTier_edit);
 	
-	//praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, CONVERT_EACH_TO_ONE__Pitch_to_PitchModeler);
+	//praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", GuiMenu_HIDDEN, CONVERT_EACH_TO_ONE__Pitch_to_PitchModeler);
 
 	//praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, GRAPHICS_EACH__PitchModeler_draw);
 
-	praat_addAction1 (classSound, 0, U"Get optimal formant ceiling...", U"Get intensity (dB)", praat_DEPTH_1 | praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"Get optimal formant ceiling...", U"Get intensity (dB)", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__Sound_getOptimalFormantCeiling);
-	praat_addAction1 (classSound, 0, U"To Formant (interval)...", U"To Formant (robust)...", praat_DEPTH_2 | praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"To Formant (interval)...", U"To Formant (robust)...", GuiMenu_DEPTH_2 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_Formant_interval);
-	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained)...", U"To Formant (interval)...",
-		praat_DEPTH_2 | praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained)...", U"To Formant (interval)...", GuiMenu_DEPTH_2 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_Formant_interval_constrained);
 
-	praat_addAction1 (classSound, 0, U"To OptimalCeilingTier...", U"To Formant (interval, constrained)...", praat_DEPTH_2 | praat_HIDDEN, 
+	praat_addAction1 (classSound, 0, U"To OptimalCeilingTier...", U"To Formant (interval, constrained)...", GuiMenu_DEPTH_2 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_OptimalCeilingTier);
 	
-	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", 
-		praat_DEPTH_2 | praat_HIDDEN, 
+	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", GuiMenu_DEPTH_2 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_Formant_interval_constrained_robust);
-	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Table_to_DataModeler);
 }
 

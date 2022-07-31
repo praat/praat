@@ -186,7 +186,7 @@ public:
 		Editor_broadcastDataChanged (my functionEditor());
 	}
 
-	virtual void v_createMenuItems_view_vertical (EditorMenu) { }
+	virtual void v0_createMenuItems_view_vertical (EditorMenu) { }
 	virtual void v_createMenuItems_view_domain (EditorMenu) { }
 	virtual void v_createMenuItems_view_audio (EditorMenu) { }
 

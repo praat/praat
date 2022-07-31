@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1563,7 +1563,7 @@ void praat_uvafon_TextGrid_init () {
 	structTextGridEditor :: f_preferences ();
 
 	praat_addAction1 (classIntervalTier, 1, U"Save as Xwaves label file...", nullptr, 0, SAVE_IntervalTier_writeToXwaves);
-	praat_addAction1 (classIntervalTier, 1,   U"Write to Xwaves label file...", nullptr, praat_DEPRECATED_2011, SAVE_IntervalTier_writeToXwaves);
+	praat_addAction1 (classIntervalTier, 1,   U"Write to Xwaves label file...", nullptr, GuiMenu_DEPRECATED_2011, SAVE_IntervalTier_writeToXwaves);
 	praat_addAction1 (classIntervalTier, 0, U"IntervalTier help", nullptr, 0, HELP_IntervalTier_help);
 	praat_addAction1 (classIntervalTier, 0, U"Collect", nullptr, 0, nullptr);
 	praat_addAction1 (classIntervalTier, 0, U"Into TextGrid", nullptr, 0, NEW1_AnyTier_into_TextGrid);
@@ -1577,8 +1577,8 @@ void praat_uvafon_TextGrid_init () {
 
 	praat_addAction1 (classLabel, 0, U"& Sound: To TextGrid?", nullptr, 0, HINT_Label_Sound_to_TextGrid);
 
-	praat_addAction1 (classSpellingChecker, 1, U"View & Edit...", nullptr, praat_ATTRACTIVE, WINDOW_SpellingChecker_viewAndEdit);
-	praat_addAction1 (classSpellingChecker, 1,   U"Edit...", U"*View & Edit...", praat_DEPRECATED_2011, WINDOW_SpellingChecker_viewAndEdit);
+	praat_addAction1 (classSpellingChecker, 1, U"View & Edit...", nullptr, GuiMenu_ATTRACTIVE, WINDOW_SpellingChecker_viewAndEdit);
+	praat_addAction1 (classSpellingChecker, 1,   U"Edit...", U"*View & Edit...", GuiMenu_DEPRECATED_2011, WINDOW_SpellingChecker_viewAndEdit);
 	praat_addAction1 (classSpellingChecker, 0, U"Query", nullptr, 0, nullptr);
 	praat_addAction1 (classSpellingChecker, 1, U"Is word allowed...", nullptr, 0, BOOLEAN_SpellingChecker_isWordAllowed);
 	praat_addAction1 (classSpellingChecker, 1, U"Next not allowed word...", nullptr, 0, STRING_SpellingChecker_nextNotAllowedWord);
@@ -1589,12 +1589,12 @@ void praat_uvafon_TextGrid_init () {
 	praat_addAction1 (classSpellingChecker, 0, U"Extract user dictionary", nullptr, 0, NEW_SpellingChecker_extractUserDictionary);
 
 	praat_addAction1 (classTextGrid, 1, U"Save as chronological text file...", nullptr, 0, SAVE_TextGrid_writeToChronologicalTextFile);
-	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, praat_HIDDEN, SAVE_TextGrid_writeToChronologicalTextFile);
+	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, GuiMenu_HIDDEN, SAVE_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 0, U"TextGrid help", nullptr, 0, HELP_TextGrid_help);
 	praat_addAction1 (classTextGrid, 1, U"View & Edit alone", nullptr, 0, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction1 (classTextGrid, 1, U"View & Edit with Sound?", nullptr, praat_ATTRACTIVE | praat_NO_API, HINT_TextGrid_Sound_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", GuiMenu_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", GuiMenu_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1, U"View & Edit with Sound?", nullptr, GuiMenu_ATTRACTIVE | GuiMenu_NO_API, HINT_TextGrid_Sound_viewAndEdit);
 	praat_addAction1 (classTextGrid, 0, U"Draw -", nullptr, 0, nullptr);
 	praat_addAction1 (classTextGrid, 0, U"Draw...", nullptr, 1, GRAPHICS_TextGrid_draw);
 	praat_addAction1 (classTextGrid, 1, U"Draw with Sound?", nullptr, 1, HINT_TextGrid_Sound_draw);
@@ -1611,14 +1611,14 @@ void praat_uvafon_TextGrid_init () {
 		praat_addAction1 (classTextGrid, 1, U"Is interval tier...", nullptr, 1, BOOLEAN_TextGrid_isIntervalTier);
 		praat_addAction1 (classTextGrid, 1, U"-- query tier --", nullptr, 1, nullptr);
 		praat_addAction1 (classTextGrid, 1, U"Query interval tier", nullptr, 1, nullptr);
-			praat_addAction1 (classTextGrid, 1, U"Get number of intervals...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getNumberOfIntervals);
-			praat_addAction1 (classTextGrid, 1, U"Get start time of interval...", nullptr, praat_DEPTH_2, REAL_TextGrid_getStartTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1,   U"Get starting point...", U"*Get start time of interval...", praat_DEPTH_2 | praat_DEPRECATED_2016, REAL_TextGrid_getStartTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1,   U"Get start point...", U"*Get start time of interval...", praat_DEPTH_2 | praat_DEPRECATED_2016, REAL_TextGrid_getStartTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1, U"Get end time of interval...", nullptr, praat_DEPTH_2, REAL_TextGrid_getEndTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1,   U"Get end point...", U"*Get end time of interval...", praat_DEPTH_2 | praat_DEPRECATED_2016, REAL_TextGrid_getEndTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1, U"Get label of interval...", nullptr, praat_DEPTH_2, STRING_TextGrid_getLabelOfInterval);
-			praat_addAction1 (classTextGrid, 1, U"-- query interval from time --", nullptr, praat_DEPTH_2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Get number of intervals...", nullptr, GuiMenu_DEPTH_2, INTEGER_TextGrid_getNumberOfIntervals);
+			praat_addAction1 (classTextGrid, 1, U"Get start time of interval...", nullptr, GuiMenu_DEPTH_2, REAL_TextGrid_getStartTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1,   U"Get starting point...", U"*Get start time of interval...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2016, REAL_TextGrid_getStartTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1,   U"Get start point...", U"*Get start time of interval...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2016, REAL_TextGrid_getStartTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1, U"Get end time of interval...", nullptr, GuiMenu_DEPTH_2, REAL_TextGrid_getEndTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1,   U"Get end point...", U"*Get end time of interval...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2016, REAL_TextGrid_getEndTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1, U"Get label of interval...", nullptr, GuiMenu_DEPTH_2, STRING_TextGrid_getLabelOfInterval);
+			praat_addAction1 (classTextGrid, 1, U"-- query interval from time --", nullptr, GuiMenu_DEPTH_2, nullptr);
 			praat_addAction1 (classTextGrid, 1, U"Get interval at time...", nullptr, 2, INTEGER_TextGrid_getIntervalAtTime);
 			praat_addAction1 (classTextGrid, 1, U"Get low interval at time...", nullptr, 2, INTEGER_TextGrid_getLowIntervalAtTime);
 			praat_addAction1 (classTextGrid, 1, U"Get high interval at time...", nullptr, 2, INTEGER_TextGrid_getHighIntervalAtTime);
@@ -1636,8 +1636,8 @@ void praat_uvafon_TextGrid_init () {
 			praat_addAction1 (classTextGrid, 1, U"Get nearest index from time...", nullptr, 2, INTEGER_TextGrid_getNearestIndexFromTime);
 			praat_addAction1 (classTextGrid, 1, U"-- query point labels --", nullptr, 2, nullptr);
 			praat_addAction1 (classTextGrid, 1, U"Count points where...", nullptr, 2, INTEGER_TextGrid_countPointsWhere);
-		praat_addAction1 (classTextGrid, 1, U"-- query labels --", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2015, nullptr);
-		praat_addAction1 (classTextGrid, 1, U"Count labels...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2015, INTEGER_TextGrid_countLabels);
+		praat_addAction1 (classTextGrid, 1, U"-- query labels --", nullptr, GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2015, nullptr);
+		praat_addAction1 (classTextGrid, 1, U"Count labels...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2015, INTEGER_TextGrid_countLabels);
 	praat_addAction1 (classTextGrid, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classTextGrid, 0, U"Convert to backslash trigraphs", nullptr, 1, MODIFY_TextGrid_convertToBackslashTrigraphs);
 		praat_addAction1 (classTextGrid, 0, U"Convert to Unicode", nullptr, 1, MODIFY_TextGrid_convertToUnicode);
@@ -1661,7 +1661,7 @@ void praat_uvafon_TextGrid_init () {
 			praat_addAction1 (classTextGrid, 0, U"Set point text...", nullptr, 2, MODIFY_TextGrid_setPointText);
 praat_addAction1 (classTextGrid, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classTextGrid, 0, U"Extract one tier...", nullptr, 0, NEW1_TextGrid_extractOneTier);
-	praat_addAction1 (classTextGrid, 0,   U"Extract tier...", U"*Extract one tier...", praat_DEPRECATED_2010, NEW1_TextGrid_extractTier);
+	praat_addAction1 (classTextGrid, 0,   U"Extract tier...", U"*Extract one tier...", GuiMenu_DEPRECATED_2010, NEW1_TextGrid_extractTier);
 	praat_addAction1 (classTextGrid, 0, U"Extract part...", nullptr, 0, NEW_TextGrid_extractPart);
 	praat_addAction1 (classTextGrid, 0, U"Analyse interval tier -", nullptr, 0, nullptr);
 		praat_addAction1 (classTextGrid, 0, U"Get starting points...", nullptr, 1, NEW_TextGrid_getStartingPoints);
@@ -1703,8 +1703,8 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classIntervalTier, 0, classTextTier, 0, U"Collect", nullptr, 0, nullptr);
 	praat_addAction2 (classIntervalTier, 0, classTextTier, 0, U"Into TextGrid", nullptr, 0, NEW1_AnyTier_into_TextGrid);
 	praat_addAction2 (classLabel, 1, classSound, 1, U"To TextGrid", nullptr, 0, NEW1_Label_Sound_to_TextGrid);
-	praat_addAction2 (classLongSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_LongSound_viewAndEdit);
-	praat_addAction2 (classLongSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_LongSound_viewAndEdit);
+	praat_addAction2 (classLongSound, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_TextGrid_LongSound_viewAndEdit);
+	praat_addAction2 (classLongSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_TextGrid_LongSound_viewAndEdit);
 	praat_addAction2 (classLongSound, 1, classTextGrid, 1, U"Scale times", nullptr, 0, MODIFY_TextGrid_LongSound_scaleTimes);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Draw -", nullptr, 0, nullptr);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Draw...", nullptr, 1, GRAPHICS_TextGrid_Pitch_draw);
@@ -1729,15 +1729,15 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Speckle separately (mel)...", nullptr, 1, GRAPHICS_TextGrid_Pitch_speckleSeparatelyMel);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Speckle separately (erb)...", nullptr, 1, GRAPHICS_TextGrid_Pitch_speckleSeparatelyErb);
 	praat_addAction2 (classPitch, 1, classTextTier, 1, U"To PitchTier...", nullptr, 0, NEW1_Pitch_TextTier_to_PitchTier);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit with callback...", nullptr, praat_HIDDEN, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit with callback...", nullptr, GuiMenu_HIDDEN, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Draw...", nullptr, 0, GRAPHICS_TextGrid_Sound_draw);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract -", nullptr, 0, nullptr);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract all intervals...", nullptr, praat_DEPTH_1, NEW1_TextGrid_Sound_extractAllIntervals);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract non-empty intervals...", nullptr, praat_DEPTH_1, NEW1_TextGrid_Sound_extractNonemptyIntervals);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract intervals where...", nullptr, praat_DEPTH_1, NEW1_TextGrid_Sound_extractIntervalsWhere);
-	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Extract intervals...", U"*Extract intervals where...", praat_DEPTH_1 | praat_DEPRECATED_2005, NEW1_TextGrid_Sound_extractIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract all intervals...", nullptr, GuiMenu_DEPTH_1, NEW1_TextGrid_Sound_extractAllIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract non-empty intervals...", nullptr, GuiMenu_DEPTH_1, NEW1_TextGrid_Sound_extractNonemptyIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract intervals where...", nullptr, GuiMenu_DEPTH_1, NEW1_TextGrid_Sound_extractIntervalsWhere);
+	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Extract intervals...", U"*Extract intervals where...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2005, NEW1_TextGrid_Sound_extractIntervals);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Modify TextGrid", nullptr, 0, nullptr);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Scale times", nullptr, 0, MODIFY_TextGrid_Sound_scaleTimes);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Modify Sound", nullptr, 0, nullptr);
@@ -1745,15 +1745,15 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classSpellingChecker, 1, classWordList, 1, U"Replace WordList", nullptr, 0, MODIFY_SpellingChecker_replaceWordList);
 	praat_addAction2 (classSpellingChecker, 1, classStringSet, 1, U"Replace user dictionary", nullptr, 0, MODIFY_SpellingChecker_replaceUserDictionary);
 	praat_addAction2 (classSpellingChecker, 1, classStrings, 1, U"Replace word list?", nullptr, 0, HINT_SpellingChecker_replaceWordList_help);
-	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
-	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
+	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
+	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
 	praat_addAction2 (classTextGrid, 1, classIntervalTier, 1, U"Append", nullptr, 0, NEW1_TextGrid_IntervalTier_append);
 	praat_addAction2 (classTextGrid, 1, classTextTier, 1, U"Append", nullptr, 0, NEW1_TextGrid_TextTier_append);
 
-	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit);
-	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit);
-	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
-	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
+	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit);
+	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit);
+	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
+	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
 }
 
 /* End of file praat_TextGrid_init.cpp */

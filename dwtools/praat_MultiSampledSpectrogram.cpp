@@ -187,16 +187,16 @@ void praat_MultiSampledSpectrogram_init () {
 	praat_addAction1 (classConstantQLog2FSpectrogram, 0, U"Translate spectrum...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ConstantQLog2FSpectrogram_translateSpectrum);
 	
-	praat_addAction1 (classSound, 0, U"To ConstantQLog2FSpectrogram...", U"To ComplexSpectrogram...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"To ConstantQLog2FSpectrogram...", U"To ComplexSpectrogram...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_ConstantQLog2FSpectrogram);
-	praat_addAction1 (classSound, 0, U"To AnalyticSound", U"Resample...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"To AnalyticSound", U"Resample...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_AnalyticSound);
 	
 	
 	praat_addAction1 (classGaborSpectrogram, 0, U"Paint...", nullptr, 0, 
 			GRAPHICS_EACH__GaborSpectrogram_paint);
 	praat_MultiSampledSpectrograms_generics (classGaborSpectrogram);
-	praat_addAction1 (classSound, 0, U"To GaborSpectrogram...", U"To ComplexSpectrogram...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"To GaborSpectrogram...", U"To ComplexSpectrogram...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_GaborSpectrogram);
 }
 

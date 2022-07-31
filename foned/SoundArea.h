@@ -145,7 +145,8 @@ public:
 		override;
 	void v_createMenuItems_edit (EditorMenu menu)
 		override;
-	void v_createMenuItems_view_vertical (EditorMenu menu);
+	void v0_createMenuItems_view_vertical (EditorMenu menu)
+		override;
 	void v_updateMenuItems ()
 		override;
 	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;

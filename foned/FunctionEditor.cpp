@@ -1158,11 +1158,11 @@ void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
 	}
 }
 
-void structFunctionEditor :: v_createMenuItems_view_vertical (EditorMenu menu) {
+void structFunctionEditor :: v1_createMenuItems_view_vertical (EditorMenu menu) {
 	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
 		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 		if (area)
-			area -> v_createMenuItems_view_vertical (menu);
+			area -> v0_createMenuItems_view_vertical (menu);
 	}
 }
 
@@ -1200,7 +1200,7 @@ void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
 }
 
 void structFunctionEditor :: v_createMenuItems_view (EditorMenu menu) {
-	v_createMenuItems_view_vertical (menu);
+	v1_createMenuItems_view_vertical (menu);
 	v_createMenuItems_view_domain (menu);
 	v_createMenuItems_view_audio (menu);
 }

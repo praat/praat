@@ -1,6 +1,6 @@
 /* praat_TimeFrameSampled.cpp
  *
- * Copyright (C) 2016,2017,2019 Paul Boersma
+ * Copyright (C) 2016,2017,2019,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,13 +63,13 @@ void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Query time sampling", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 1, U"Get number of frames", nullptr, 2, INTEGER_TimeFrameSampled_getNumberOfFrames);
 	praat_addAction1 (klas, 1, U"Get time step", nullptr, 2, REAL_TimeFrameSampled_getFrameLength);
-	praat_addAction1 (klas, 1,   U"Get frame length", U"*Get time step", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFrameSampled_getFrameLength);
-	praat_addAction1 (klas, 1,   U"Get frame duration", U"*Get time step", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFrameSampled_getFrameLength);
+	praat_addAction1 (klas, 1,   U"Get frame length", U"*Get time step", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_TimeFrameSampled_getFrameLength);
+	praat_addAction1 (klas, 1,   U"Get frame duration", U"*Get time step", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_TimeFrameSampled_getFrameLength);
 	praat_addAction1 (klas, 1, U"Get time from frame number...", nullptr, 2, REAL_TimeFrameSampled_getTimeFromFrame);
-	praat_addAction1 (klas, 1,   U"Get time from frame...", U"*Get time from frame number...", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFrameSampled_getTimeFromFrame);
+	praat_addAction1 (klas, 1,   U"Get time from frame...", U"*Get time from frame number...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_TimeFrameSampled_getTimeFromFrame);
 	praat_addAction1 (klas, 1, U"List all frame times", nullptr, 2, NUMVEC_TimeFrameSampled_listAllFrameTimes);
 	praat_addAction1 (klas, 1, U"Get frame number from time...", nullptr, 2, REAL_TimeFrameSampled_getFrameFromTime);
-	praat_addAction1 (klas, 1,   U"Get frame from time...", U"*Get frame number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFrameSampled_getFrameFromTime);
+	praat_addAction1 (klas, 1,   U"Get frame from time...", U"*Get frame number from time...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_TimeFrameSampled_getFrameFromTime);
 }
 
 /* End of file praat_TimeFrameSampled.cpp */
