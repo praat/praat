@@ -1213,7 +1213,7 @@ static void menu_cb_ExtendSelectPreviousInterval (TextGridArea me, EDITOR_ARGS_D
 static void menu_cb_ExtendSelectNextInterval (TextGridArea me, EDITOR_ARGS_DIRECT) {
 	do_selectAdjacentInterval (me, false, true);
 }
-void structTextGridArea :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
+void structTextGridArea :: v_createMenuItems_view_domain (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- TextGrid view domain --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"View TextGrid time domain:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Select previous tier", GuiMenu_OPTION | GuiMenu_UP_ARROW,

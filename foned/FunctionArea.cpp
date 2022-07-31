@@ -51,5 +51,16 @@ void structFunctionArea :: v_do_pictureSelection (EditorCommand cmd) {
 	my setClassPref_picture_drawSelectionHairs (v_form_pictureSelection__drawSelectionHairs);
 }
 
+void FunctionArea_drawRightMark (FunctionArea me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment) {
+	static MelderString text;
+	MelderString_copy (& text, yWC_string, units);
+	double textWidth = Graphics_textWidth (my graphics(), text.string) + Graphics_dxMMtoWC (my graphics(), 0.5);
+	if (verticalAlignment != Graphics_HALF)
+		Graphics_line (my graphics(), my endWindow(), yWC, my endWindow() + textWidth, yWC);
+	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, verticalAlignment);
+	if (verticalAlignment == Graphics_BOTTOM)
+		yWC -= Graphics_dyMMtoWC (my graphics(), 0.5);
+	Graphics_text (my graphics(), my endWindow(), yWC, text.string);
+}
 
 /* End of file FunctionArea.cpp */

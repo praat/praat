@@ -28,37 +28,62 @@ Thing_implement (SpectrumArea, FunctionArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "SpectrumArea_prefs.h"
 
+
+#pragma mark - SpectrumArea helpers
+
+inline static autoSpectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
+	autoSpectrum band = Data_copy (me);
+	double *re = & band -> z [1] [0], *im = & band -> z [2] [0];
+	const integer imin = Sampled_xToLowIndex (band.get(), fmin);
+	const integer imax = Sampled_xToHighIndex (band.get(), fmax);
+	for (integer i = 1; i <= imin; i ++)
+		re [i] = 0.0, im [i] = 0.0;
+	for (integer i = imax; i <= band -> nx; i ++)
+		re [i] = 0.0, im [i] = 0.0;
+	return band;
+}
+inline static autoSound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) {
+	autoSpectrum band = Spectrum_band (me, fmin, fmax);
+	autoSound sound = Spectrum_to_Sound (band.get());
+	return sound;
+}
+
+
 #pragma mark - SpectrumArea info
 
 void structSpectrumArea :: v1_info () {
 	MelderInfo_writeLine (U"Dynamic range: ", our instancePref_dynamicRange(), U" dB");
 	MelderInfo_writeLine (U"Cursor height: ", our cursorHeight, U" dB");
+	MelderInfo_writeLine (U"Minimum: ", our minimum(), U" dB");
+	MelderInfo_writeLine (U"Maximum: ", our maximum(), U" dB");
 }
+
+
+#pragma mark - SpectrumArea drawing
 
 void structSpectrumArea :: v_drawInside () {
-	Spectrum_drawInside (our spectrum(), our graphics(), our startWindow(), our endWindow(), our minimum, our maximum);
-	FunctionEditor_drawRangeMark (our functionEditor(), our maximum, Melder_fixed (maximum, 1), U" dB", Graphics_TOP);
-	FunctionEditor_drawRangeMark (our functionEditor(), our minimum, Melder_fixed (minimum, 1), U" dB", Graphics_BOTTOM);
-	if (our cursorHeight > our minimum && our cursorHeight < our maximum)
-		FunctionEditor_drawHorizontalHair (our functionEditor(), our cursorHeight, Melder_fixed (our cursorHeight, 1), U" dB");
+	Spectrum_drawInside (our spectrum(), our graphics(), our startWindow(), our endWindow(),
+			our minimum(), our maximum());
+	Graphics_setColour (our graphics(), Melder_BLUE);
+	FunctionArea_drawRightMark (this, our maximum(),
+			Melder_fixed (our maximum(), 1), U" dB", Graphics_HALF);
+	FunctionArea_drawRightMark (this, our minimum(),
+			Melder_fixed (our minimum(), 1), U" dB", Graphics_HALF);
+	if (our cursorHeight > our minimum() && our cursorHeight < our maximum())
+		FunctionEditor_drawHorizontalHair (our functionEditor(), our cursorHeight,
+				Melder_fixed (our cursorHeight, 1), U" dB");
 }
 
-bool structSpectrumArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
-	our cursorHeight = our minimum + y_fraction * (our maximum - our minimum);
+
+#pragma mark - SpectrumArea tracking
+
+bool structSpectrumArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction) {
+	our cursorHeight = our minimum() + localY_fraction * (our maximum() - our minimum());
 	return FunctionEditor_defaultMouseInWideDataView (our functionEditor(), event, x_world) || true;   // BUG:
 }
 
-static void CONVERT_DATA_TO_ONE__PublishBand (SpectrumArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		autoSpectrum result = Spectrum_band (my spectrum(), my startSelection(), my endSelection());
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
 
-static void CONVERT_DATA_TO_ONE__PublishSound (SpectrumArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		autoSound result = Spectrum_to_Sound_part (my spectrum(), my startSelection(), my endSelection());
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
+#pragma mark - SpectrumArea Modify menu
 
 static void menu_cb_passBand (SpectrumArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...");
@@ -77,7 +102,6 @@ static void menu_cb_passBand (SpectrumArea me, EDITOR_ARGS_FORM) {
 		Editor_broadcastDataChanged (my functionEditor());
 	EDITOR_END
 }
-
 static void menu_cb_stopBand (SpectrumArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Filter (stop Hann band)", nullptr)
 		REAL (bandSmoothing, U"Band smoothing (Hz)", my default_bandSmoothing())
@@ -96,12 +120,32 @@ static void menu_cb_stopBand (SpectrumArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
+
+#pragma mark - SpectrumArea Extract menu
+
+static void CONVERT_DATA_TO_ONE__PublishBand (SpectrumArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoSpectrum result = Spectrum_band (my spectrum(), my startSelection(), my endSelection());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+static void CONVERT_DATA_TO_ONE__PublishSound (SpectrumArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = Spectrum_to_Sound_part (my spectrum(), my startSelection(), my endSelection());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+
+
+#pragma mark - SpectrumArea Select menu
+
 static void menu_cb_moveCursorToPeak (SpectrumArea me, EDITOR_ARGS_DIRECT) {
 	MelderPoint peak = Spectrum_getNearestMaximum (my spectrum(), 0.5 * (my startSelection() + my endSelection()));
 	my setSelection (peak. x, peak. x);
 	my cursorHeight = peak. y;
 	FunctionEditor_marksChanged (my functionEditor(), true);
 }
+
+
+#pragma mark - SpectrumArea View menu
 
 static void menu_cb_setDynamicRange (SpectrumArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set dynamic range", nullptr)
@@ -114,6 +158,15 @@ static void menu_cb_setDynamicRange (SpectrumArea me, EDITOR_ARGS_FORM) {
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
+void structSpectrumArea :: v_createMenuItems_view_vertical (EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- spectrum view --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Power density range:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Set dynamic range...", 0,
+			menu_cb_setDynamicRange, this);
+}
+
+
+#pragma mark - SpectrumArea all menus?
 
 void structSpectrumArea :: v_createMenus () {
 	FunctionAreaMenu_addCommand (our functionEditor() -> extractMenu, U"-- spectrum extract --", 0, nullptr, this);
@@ -133,10 +186,12 @@ void structSpectrumArea :: v_createMenus () {
 			menu_cb_moveCursorToPeak, this);
 }
 
-void structSpectrumArea :: v_createMenuItems_view (EditorMenu menu) {
-	FunctionAreaMenu_addCommand (menu, U"-- spectrum view --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Set dynamic range...", 0,
-			menu_cb_setDynamicRange, this);
+
+#pragma mark - SpectrumArea functions
+
+void SpectrumArea_play (SpectrumArea me, double fromFrequency, double toFrequency) {
+	autoSound sound = Spectrum_to_Sound_part (my spectrum(), fromFrequency, toFrequency);
+	Sound_play (sound.get(), nullptr, nullptr);
 }
 
 /* End of file SpectrumArea.cpp */

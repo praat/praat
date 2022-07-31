@@ -17,7 +17,6 @@
  */
 
 #include "SpectrumEditor.h"
-#include "Sound_and_Spectrum.h"
 #include "EditorM.h"
 
 Thing_implement (SpectrumEditor, FunctionEditor, 0);
@@ -43,8 +42,6 @@ autoSpectrumEditor SpectrumEditor_create (conststring32 title, Spectrum spectrum
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
 		my spectrumArea() = SpectrumArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title, spectrum);
-		my spectrumArea() -> cursorHeight = -1000;   // BUG: move
-		my spectrumArea() -> updateRange ();   // BUG: move
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrum window not created.");

@@ -24,13 +24,10 @@
 Thing_define (SpectrumEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, SpectrumArea, spectrumArea)
 
-	Spectrum spectrum() { return static_cast <Spectrum> (our data()); }
-	
 	void v1_dataChanged () override {
 		SpectrumEditor_Parent :: v1_dataChanged ();
 		Thing_cast (Spectrum, spectrum, our data());
 		our spectrumArea() -> functionChanged (spectrum);
-		our spectrumArea() -> updateRange ();
 	}
 	void v_distributeAreas () override {
 		our spectrumArea() -> setGlobalYRange_fraction (0.0, 1.0);
@@ -38,11 +35,10 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_draw () override {
-		FunctionArea_drawOne (our spectrumArea().get());
+		FunctionArea_drawOne (our spectrumArea().get());   // BUG: should be automated
 	}
-	void v_play (double fmin, double fmax) override {
-		autoSound sound = Spectrum_to_Sound_part (our spectrum(), fmin, fmax);
-		Sound_play (sound.get(), nullptr, nullptr);
+	void v_play (double fromFrequency, double toFrequency) override {
+		SpectrumArea_play (our spectrumArea().get(), fromFrequency, toFrequency);
 	}
 	conststring32 v_domainName ()
 		override { return U"frequency"; }

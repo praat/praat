@@ -68,7 +68,7 @@ public:
 		override;
 	void v_createMenuItems_edit (EditorMenu menu)
 		override;
-	void v_createMenuItems_view_timeDomain (EditorMenu menu)
+	void v_createMenuItems_view_domain (EditorMenu menu)
 		override;
 	void v_createMenuItems_query (EditorMenu menu)
 		override;

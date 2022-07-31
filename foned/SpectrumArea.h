@@ -24,16 +24,25 @@
 Thing_define (SpectrumArea, FunctionArea) {
 	Spectrum spectrum() { return static_cast <Spectrum> (our function()); }
 	
-	double minimum, maximum, cursorHeight;
+	double cursorHeight = -1000;
 	GuiMenuItem publishBandButton, publishSoundButton;
+private:
+	double _minimum, _maximum;
+public:
+	double minimum() { return _minimum; }
+	double maximum() { return _maximum; }
 
 	void updateRange () {
-		if (Spectrum_getPowerDensityRange (our spectrum(), & our minimum, & our maximum)) {
-			our minimum = our maximum - our instancePref_dynamicRange();
+		int result = Spectrum_getPowerDensityRange (our spectrum(), & _minimum, & _maximum);
+		if (result) {
+			our _minimum = our _maximum - our instancePref_dynamicRange();
 		} else {
-			our minimum = -1000.0;
-			our maximum = 1000.0;
+			our _minimum = -1000.0;
+			our _maximum = 1000.0;
 		}
+	}
+	void v_computeAuxiliaryData () override {
+		our updateRange ();
 	}
 	void v1_info ()
 		override;
@@ -43,7 +52,7 @@ Thing_define (SpectrumArea, FunctionArea) {
 		override;
 	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
 		override;
-	void v_createMenuItems_view (EditorMenu menu)
+	void v_createMenuItems_view_vertical (EditorMenu menu)
 		override;
 	void v_updateMenuItems () override {
 		integer first, last;
@@ -56,23 +65,7 @@ Thing_define (SpectrumArea, FunctionArea) {
 };
 DEFINE_FunctionArea_create (SpectrumArea, Spectrum)
 
-inline static autoSpectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
-	autoSpectrum band = Data_copy (me);
-	double *re = & band -> z [1] [0], *im = & band -> z [2] [0];
-	const integer imin = Sampled_xToLowIndex (band.get(), fmin);
-	const integer imax = Sampled_xToHighIndex (band.get(), fmax);
-	for (integer i = 1; i <= imin; i ++)
-		re [i] = 0.0, im [i] = 0.0;
-	for (integer i = imax; i <= band -> nx; i ++)
-		re [i] = 0.0, im [i] = 0.0;
-	return band;
-}
-
-inline static autoSound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) {
-	autoSpectrum band = Spectrum_band (me, fmin, fmax);
-	autoSound sound = Spectrum_to_Sound (band.get());
-	return sound;
-}
+void SpectrumArea_play (SpectrumArea me, double fromFrequency, double toFrequency);
 
 /* End of file SpectrumArea.h */
 #endif

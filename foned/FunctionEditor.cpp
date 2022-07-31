@@ -467,31 +467,23 @@ void structFunctionEditor :: v_prefs_getValues (EditorCommand cmd) {
 }
 static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr)
-		BOOLEAN (synchronizeZoomAndScroll, U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll())
 		BOOLEAN (showSelectionViewer, Melder_cat (U"Show ", my v_selectionViewerName()), my default_showSelectionViewer())
-		POSITIVE (arrowScrollStep, Melder_cat (U"Arrow scroll step (", my v_format_units_short(), U")"), my default_arrowScrollStep())
 		my v_prefs_addFields (cmd);
 	EDITOR_OK
-		SET_BOOLEAN (synchronizeZoomAndScroll, my classPref_synchronizedZoomAndScroll())
 		SET_BOOLEAN (showSelectionViewer, my instancePref_showSelectionViewer())
-		SET_REAL (arrowScrollStep, my instancePref_arrowScrollStep())
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
-		const bool oldSynchronizedZoomAndScroll = my classPref_synchronizedZoomAndScroll();
 		const bool oldShowSelectionViewer = my instancePref_showSelectionViewer();
-		my setClassPref_synchronizedZoomAndScroll (synchronizeZoomAndScroll);
 		my setInstancePref_showSelectionViewer (showSelectionViewer);
-		my setInstancePref_arrowScrollStep (arrowScrollStep);
 		if (my instancePref_showSelectionViewer() != oldShowSelectionViewer)
 			my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
-		if (! oldSynchronizedZoomAndScroll && my classPref_synchronizedZoomAndScroll())
-			updateGroup (me);
 		my v_prefs_getValues (cmd);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
-/********** QUERY MENU **********/
+
+#pragma mark FunctionEditor Query menu
 
 static void QUERY_EDITOR_FOR_REAL__getB (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
@@ -514,8 +506,25 @@ static void QUERY_EDITOR_FOR_REAL__getSelectionDuration (FunctionEditor me, EDIT
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
 
-/********** VIEW MENU **********/
 
+#pragma mark FunctionEditor View menu
+
+static void menu_cb_zoomAndScrollSettings (FunctionEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Preferences", nullptr)
+		BOOLEAN (synchronizeZoomAndScroll, U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll())
+		POSITIVE (arrowScrollStep, Melder_cat (U"Arrow scroll step (", my v_format_units_short(), U")"), my default_arrowScrollStep())
+	EDITOR_OK
+		SET_BOOLEAN (synchronizeZoomAndScroll, my classPref_synchronizedZoomAndScroll())
+		SET_REAL (arrowScrollStep, my instancePref_arrowScrollStep())
+	EDITOR_DO
+		const bool oldSynchronizedZoomAndScroll = my classPref_synchronizedZoomAndScroll();
+		my setClassPref_synchronizedZoomAndScroll (synchronizeZoomAndScroll);
+		my setInstancePref_arrowScrollStep (arrowScrollStep);
+		if (! oldSynchronizedZoomAndScroll && my classPref_synchronizedZoomAndScroll())
+			updateGroup (me);
+		FunctionEditor_redraw (me);
+	EDITOR_END
+}
 static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Zoom", nullptr)
 		REAL (from, Melder_cat (U"From (", my v_format_units_short(), U")"), U"0.0")
@@ -542,7 +551,6 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 		updateGroup (me);
 	EDITOR_END
 }
-
 static void do_showAll (FunctionEditor me) {
 	my startWindow = my tmin;
 	my endWindow = my tmax;
@@ -554,11 +562,9 @@ static void do_showAll (FunctionEditor me) {
 	if (my classPref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
-
 static void gui_button_cb_showAll (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_showAll (me);
 }
-
 static void do_zoomIn (FunctionEditor me) {
 	const double shift = (my endWindow - my startWindow) / 4.0;
 	my startWindow += shift;
@@ -571,11 +577,9 @@ static void do_zoomIn (FunctionEditor me) {
 	if (my classPref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
-
 static void gui_button_cb_zoomIn (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomIn (me);
 }
-
 static void do_zoomOut (FunctionEditor me) {
 	const double shift = (my endWindow - my startWindow) / 2.0;
 	//MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // quickly, before window changes; ppgb 2022-06-25: why was this here?
@@ -597,7 +601,6 @@ static void do_zoomOut (FunctionEditor me) {
 static void gui_button_cb_zoomOut (FunctionEditor me, GuiButtonEvent /*event*/) {
 	do_zoomOut (me);
 }
-
 static void do_zoomToSelection (FunctionEditor me) {
 	if (my endSelection > my startSelection) {
 		my startZoomHistory = my startWindow;   // remember for Zoom Back
@@ -613,11 +616,9 @@ static void do_zoomToSelection (FunctionEditor me) {
 			updateGroup (me);
 	}
 }
-
 static void gui_button_cb_zoomToSelection (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomToSelection (me);
 }
-
 static void do_zoomBack (FunctionEditor me) {
 	if (my endZoomHistory > my startZoomHistory) {
 		my startWindow = my startZoomHistory;
@@ -631,35 +632,29 @@ static void do_zoomBack (FunctionEditor me) {
 			updateGroup (me);
 	}
 }
-
 static void gui_button_cb_zoomBack (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomBack (me);
 }
-
 static void menu_cb_showAll (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		do_showAll (me);
 	VOID_EDITOR_END
 }
-
 static void menu_cb_zoomIn (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		do_zoomIn (me);
 	VOID_EDITOR_END
 }
-
 static void menu_cb_zoomOut (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		do_zoomOut (me);
 	VOID_EDITOR_END
 }
-
 static void menu_cb_zoomToSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		do_zoomToSelection (me);
 	VOID_EDITOR_END
 }
-
 static void menu_cb_zoomBack (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		do_zoomBack (me);
@@ -707,7 +702,8 @@ static void PLAY_DATA__interruptPlaying (FunctionEditor me, EDITOR_ARGS_DIRECT) 
 	PLAY_DATA_END
 }
 
-/********** SELECT MENU **********/
+
+#pragma mark - FunctionEditor Select menu
 
 static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Select", nullptr)
@@ -986,7 +982,8 @@ static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRE
 	VOID_EDITOR_END
 }
 
-/********** GUI CALLBACKS **********/
+
+#pragma mark - FunctionEditor GUI callbacks
 
 static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 	if (! my graphics)
@@ -1161,8 +1158,18 @@ void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
 	}
 }
 
-void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
+void structFunctionEditor :: v_createMenuItems_view_vertical (EditorMenu menu) {
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			area -> v_createMenuItems_view_vertical (menu);
+	}
+}
+
+void structFunctionEditor :: v_createMenuItems_view_domain (EditorMenu menu) {
+	EditorMenu_addCommand (menu, U"-- view horizontal --", 0, nullptr);
 	EditorMenu_addCommand (menu, v_format_domain (), 0, nullptr);
+	EditorMenu_addCommand (menu, U"Zoom and scroll settings...", 0, menu_cb_zoomAndScrollSettings);
 	EditorMenu_addCommand (menu, U"Zoom...", 0, menu_cb_zoom);
 	EditorMenu_addCommand (menu, U"Show all", 'A', menu_cb_showAll);
 	EditorMenu_addCommand (menu, U"Zoom in", 'I', menu_cb_zoomIn);
@@ -1174,7 +1181,7 @@ void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
 		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 		if (area)
-			area -> v_createMenuItems_view_timeDomain (menu);
+			area -> v_createMenuItems_view_domain (menu);
 	}
 }
 
@@ -1193,7 +1200,8 @@ void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
 }
 
 void structFunctionEditor :: v_createMenuItems_view (EditorMenu menu) {
-	v_createMenuItems_view_timeDomain (menu);
+	v_createMenuItems_view_vertical (menu);
+	v_createMenuItems_view_domain (menu);
 	v_createMenuItems_view_audio (menu);
 }
 
