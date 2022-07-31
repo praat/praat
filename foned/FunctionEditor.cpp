@@ -1239,6 +1239,14 @@ void structFunctionEditor :: v_createMenuItems_help (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Praat Intro", 0, HELP__intro);
 }
 
+void structFunctionEditor :: v_draw () {
+	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
+		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
+		if (area)
+			FunctionArea_drawOne (area);
+	}
+}
+
 static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! my graphics)
 		return;   // could be the case in the very beginning
