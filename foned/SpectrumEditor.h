@@ -19,28 +19,27 @@
  */
 
 #include "FunctionEditor.h"
-#include "Spectrum.h"
+#include "SpectrumArea.h"
 
 Thing_define (SpectrumEditor, FunctionEditor) {
-	Spectrum spectrum() { return static_cast <Spectrum> (our data()); }
-	
-	double minimum, maximum, cursorHeight;
-	GuiMenuItem publishBandButton, publishSoundButton;
+	DEFINE_FunctionArea (1, SpectrumArea, spectrumArea)
 
-	void v_createMenus ()
-		override;
+	void v1_dataChanged () override {
+		SpectrumEditor_Parent :: v1_dataChanged ();
+		Thing_cast (Spectrum, spectrum, our data());
+		our spectrumArea() -> functionChanged (spectrum);
+	}
+	void v_distributeAreas () override {
+		our spectrumArea() -> setGlobalYRange_fraction (0.0, 1.0);
+	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v1_dataChanged ()
-		override;
-	void v_draw ()
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
-		override;
-	void v_play (double tmin, double tmax)
-		override;
-	void v_createMenuItems_view (EditorMenu menu)
-		override;
+	void v_draw () override {
+		FunctionArea_drawOne (our spectrumArea().get());   // BUG: should be automated
+	}
+	void v_play (double fromFrequency, double toFrequency) override {
+		SpectrumArea_play (our spectrumArea().get(), fromFrequency, toFrequency);
+	}
 	conststring32 v_domainName ()
 		override { return U"frequency"; }
 	conststring32 v_format_domain ()

@@ -125,6 +125,7 @@ public:
 		Graphics_setColour (my graphics(), structDataGui::Colour_DEFAULT_FOREGROUND());
 		Graphics_setLineWidth (my graphics(), 1.0);
 	}
+	friend void FunctionArea_drawRightMark (FunctionArea me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment);
 private:
 	virtual void v_specializedHighlightBackground () const { }
 protected:
@@ -185,7 +186,8 @@ public:
 		Editor_broadcastDataChanged (my functionEditor());
 	}
 
-	virtual void v_createMenuItems_view_timeDomain (EditorMenu) { }
+	virtual void v0_createMenuItems_view_vertical (EditorMenu) { }
+	virtual void v_createMenuItems_view_domain (EditorMenu) { }
 	virtual void v_createMenuItems_view_audio (EditorMenu) { }
 
 	virtual double maximumInitialLengthOfWindow() { return undefined; }

@@ -102,7 +102,7 @@ public:
 	integer channelOffset;
 private:
 	void _computeChannelOffset () {
-		Melder_assert (our soundOrLongSound() && our soundOrLongSound() -> ny);
+		Melder_assert (our soundOrLongSound() && our soundOrLongSound() -> ny > 0);
 		Melder_clip (0_integer, & our channelOffset, (our soundOrLongSound() -> ny - 1) / 8 * 8);   // works correctly even during initialization (offset will stay 0)
 	}
 	/*
@@ -114,7 +114,7 @@ public:
 	autoBOOLVEC muteChannels;
 private:
 	void _computeMuteChannels () {
-		Melder_assert (our soundOrLongSound() && our soundOrLongSound() -> ny != 0);
+		Melder_assert (our soundOrLongSound() && our soundOrLongSound() -> ny > 0);
 		if (our muteChannels.size != our soundOrLongSound() -> ny)   // condition works correctly even during initialization (when size is still 0, but ny is not)
 			our muteChannels = zero_BOOLVEC (our soundOrLongSound() -> ny);
 	}
@@ -144,6 +144,8 @@ public:
 	void v_createMenuItems_file (EditorMenu menu)
 		override;
 	void v_createMenuItems_edit (EditorMenu menu)
+		override;
+	void v0_createMenuItems_view_vertical (EditorMenu menu)
 		override;
 	void v_updateMenuItems ()
 		override;

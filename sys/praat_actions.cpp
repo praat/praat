@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,12 +103,12 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 		bool unhidable = false, hidden = false, attractive = false;
 		uint32 guiFlags = 0;
 		if (flags > 7) {
-			depth = ((flags & praat_DEPTH_7) >> 16);
-			unhidable = (flags & praat_UNHIDABLE) != 0;
-			hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
+			depth = ((flags & GuiMenu_DEPTH_7) >> 16);
+			unhidable = (flags & GuiMenu_UNHIDABLE) != 0;
+			hidden = (flags & GuiMenu_HIDDEN) != 0 && ! unhidable;
 			key = flags & 0x000000FF;
 			guiFlags = key ? flags & (0x000000FF | GuiMenu_SHIFT | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
-			attractive = (guiFlags & praat_ATTRACTIVE) != 0;
+			attractive = (guiFlags & GuiMenu_ATTRACTIVE) != 0;
 		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 

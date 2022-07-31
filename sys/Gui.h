@@ -699,27 +699,17 @@ Thing_define (GuiMenuItem, GuiThing) {
 	#endif
 };
 
-/* Button layout and state: */
-#define GuiMenu_INSENSITIVE  (1 << 8)
-#define GuiMenu_CHECKBUTTON  (1 << 9)
-#define GuiMenu_TOGGLE_ON  (1 << 10)
-#define GuiMenu_ATTRACTIVE  (1 << 11)
-#define GuiMenu_UNDERLINED  (1 << 12)
-#define GuiMenu_RADIO_FIRST  (1 << 13)
-#define GuiMenu_RADIO_NEXT  (1 << 14)
-#define GuiMenu_BUTTON_STATE_MASK  (GuiMenu_INSENSITIVE|GuiMenu_CHECKBUTTON|GuiMenu_TOGGLE_ON|GuiMenu_ATTRACTIVE|GuiMenu_RADIO_FIRST|GuiMenu_RADIO_NEXT)
-
-/* Accelerators: */
+/* Accelerators understood by GuiMenuItem: */
 #define GuiMenu_OPTION  (1 << 24)
 #define GuiMenu_SHIFT  (1 << 25)
 #define GuiMenu_COMMAND  (1 << 26)
-#define GuiMenu_LEFT_ARROW  1
-#define GuiMenu_RIGHT_ARROW  2
-#define GuiMenu_UP_ARROW  3
-#define GuiMenu_DOWN_ARROW  4
-#define GuiMenu_PAUSE  5
-#define GuiMenu_DELETE  6
-#define GuiMenu_INSERT  7
+#define GuiMenu_LEFT_ARROW  1   /* overlaps with the short form of GuiMenu_DEPTH_1 */
+#define GuiMenu_RIGHT_ARROW  2   /* overlaps with the short form of GuiMenu_DEPTH_2 */
+#define GuiMenu_UP_ARROW  3   /* overlaps with the short form of GuiMenu_DEPTH_3 */
+#define GuiMenu_DOWN_ARROW  4   /* overlaps with the short form of GuiMenu_DEPTH_4 */
+#define GuiMenu_PAUSE  5   /* overlaps with the short form of GuiMenu_DEPTH_5 */
+#define GuiMenu_DELETE  6   /* overlaps with the short form of GuiMenu_DEPTH_6 */
+#define GuiMenu_INSERT  7   /* overlaps with the short form of GuiMenu_DEPTH_7 */
 #define GuiMenu_BACKSPACE  8
 #define GuiMenu_TAB  9
 #define GuiMenu_LINEFEED  10
@@ -742,6 +732,93 @@ Thing_define (GuiMenuItem, GuiThing) {
 #define GuiMenu_F11  27
 #define GuiMenu_F12  28
 // or any ASCII character (preferably a letter or digit) between 32 and 126
+
+/* Button layout and state understood by GuiMenuItem: */
+#define GuiMenu_INSENSITIVE  (1 << 8)
+#define GuiMenu_CHECKBUTTON  (1 << 9)
+#define GuiMenu_TOGGLE_ON  (1 << 10)
+#define GuiMenu_ATTRACTIVE  (1 << 11)
+#define GuiMenu_UNDERLINED  (1 << 12)
+#define GuiMenu_RADIO_FIRST  (1 << 13)
+#define GuiMenu_RADIO_NEXT  (1 << 14)
+#define GuiMenu_BUTTON_STATE_MASK  (GuiMenu_INSENSITIVE|GuiMenu_CHECKBUTTON|GuiMenu_TOGGLE_ON|GuiMenu_ATTRACTIVE|GuiMenu_UNDERLINED|GuiMenu_RADIO_FIRST|GuiMenu_RADIO_NEXT)
+
+/* These are ingored by GuiMenu_addItem, but can be used by higher-level command logic: */
+#define GuiMenu_DEPTH_1  0x0001'0000   /* 1<<16 */
+#define GuiMenu_DEPTH_2  0x0002'0000   /* 1<<17 */
+#define GuiMenu_DEPTH_3  0x0003'0000
+#define GuiMenu_DEPTH_4  0x0004'0000   /* 1<<18 */
+#define GuiMenu_DEPTH_5  0x0005'0000
+#define GuiMenu_DEPTH_6  0x0006'0000
+#define GuiMenu_DEPTH_7  0x0007'0000
+#define GuiMenu_HIDDEN  0x0008'0000   /* 1<<19 */
+#define GuiMenu_UNHIDABLE  0x0010'0000   /* 1<<20 */
+#define GuiMenu_NO_API  0x0020'0000   /* 1<<21 */
+#define GuiMenu_FORCE_API  0x0040'0000   /* 1<<22 */
+#define GuiMenu_DEPRECATED  (0x0080'0000 /* 1<<23 */ | GuiMenu_HIDDEN)
+#define GuiMenu_DEPRECATED_2004  (0x0400'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2005  (0x0500'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2006  (0x0600'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2007  (0x0700'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2008  (0x0800'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2009  (0x0900'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2010  (0x0A00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2011  (0x0B00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2012  (0x0C00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2013  (0x0D00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2014  (0x0E00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2015  (0x0F00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2016  (0x1000'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2017  (0x1100'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2018  (0x1200'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2019  (0x1300'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2020  (0x1400'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2021  (0x1500'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2022  (0x1600'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2023  (0x1700'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2024  (0x1800'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2025  (0x1900'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2026  (0x1A00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2027  (0x1B00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2028  (0x1C00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2029  (0x1D00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2030  (0x1E00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2031  (0x1F00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2032  (0x2000'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2033  (0x2100'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2034  (0x2200'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2035  (0x2300'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2036  (0x2400'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2037  (0x2500'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2038  (0x2600'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2039  (0x2700'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2040  (0x2800'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2041  (0x2900'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2042  (0x2A00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2043  (0x2B00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2044  (0x2C00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2045  (0x2D00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2046  (0x2E00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2047  (0x2F00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2048  (0x3000'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2049  (0x3100'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2050  (0x3200'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2051  (0x3300'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2052  (0x3400'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2053  (0x3500'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2054  (0x3600'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2055  (0x3700'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2056  (0x3800'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2057  (0x3900'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2058  (0x3A00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2059  (0x3B00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2060  (0x3C00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2061  (0x3D00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2062  (0x3E00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2063  (0x3F00'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2064  (0x4000'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2065  (0x4100'0000 | GuiMenu_DEPRECATED)
+#define GuiMenu_DEPRECATED_2066  (0x4200'0000 | GuiMenu_DEPRECATED)
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 	GuiMenuItemCallback callback, Thing boss);

@@ -44,6 +44,7 @@ void structSoundArea :: v1_info () {
 	MelderInfo_writeLine (U"Sound scaling strategy: ", kSoundArea_scalingStrategy_getText (our instancePref_scalingStrategy()));
 }
 
+
 #pragma mark - SoundArea drawing
 
 static void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units) {
@@ -334,28 +335,6 @@ void SoundArea_play (SoundArea me, double startTime, double endTime) {
 
 #pragma mark - SoundArea Settings menu
 
-static void menu_cb_soundScaling (SoundArea me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Sound scaling", nullptr)
-		OPTIONMENU_ENUM (kSoundArea_scalingStrategy, scalingStrategy,
-				U"Scaling strategy", my default_scalingStrategy())
-		LABEL (U"For \"fixed height\":")
-		POSITIVE (height, U"Height", my default_scaling_height())
-		LABEL (U"For \"fixed range\":")
-		REAL (minimum, U"Minimum", my default_scaling_minimum())
-		REAL (maximum, U"Maximum", my default_scaling_maximum())
-	EDITOR_OK
-		SET_ENUM (scalingStrategy, kSoundArea_scalingStrategy, my instancePref_scalingStrategy())
-		SET_REAL (height,  my instancePref_scaling_height())
-		SET_REAL (minimum, my instancePref_scaling_minimum())
-		SET_REAL (maximum, my instancePref_scaling_maximum())
-	EDITOR_DO
-		my setInstancePref_scalingStrategy (scalingStrategy) ;
-		my setInstancePref_scaling_height (height);
-		my setInstancePref_scaling_minimum (minimum);
-		my setInstancePref_scaling_maximum (maximum);
-		FunctionEditor_redraw (my functionEditor());
-	EDITOR_END
-}
 static void menu_cb_soundMuteChannels (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Mute channels", nullptr)
 		NATURALVECTOR (channels, U"Channels to mute", WHITESPACE_SEPARATED_, U"2")
@@ -372,7 +351,6 @@ static void menu_cb_soundMuteChannels (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 static void addSoundSettingsMenu (SoundArea me, EditorMenu menu) {
-	FunctionAreaMenu_addCommand (menu, U"Sound scaling...", 0, menu_cb_soundScaling, me);
 	FunctionAreaMenu_addCommand (menu, U"Mute channels...", 0, menu_cb_soundMuteChannels, me);
 }
 
@@ -978,6 +956,37 @@ static void addSoundModifyMenu (SoundArea me, EditorMenu menu) {
 		my zeroButton = FunctionAreaMenu_addCommand (menu, U"Set selection to zero", 0, menu_cb_SetSelectionToZero, me);
 		my reverseButton = FunctionAreaMenu_addCommand (menu, U"Reverse selection", 'R', menu_cb_ReverseSelection, me);
 	}
+}
+
+
+#pragma mark - SoundArea View vertical
+
+static void menu_cb_soundScaling (SoundArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Sound scaling", nullptr)
+		OPTIONMENU_ENUM (kSoundArea_scalingStrategy, scalingStrategy,
+				U"Scaling strategy", my default_scalingStrategy())
+		LABEL (U"For \"fixed height\":")
+		POSITIVE (height, U"Height", my default_scaling_height())
+		LABEL (U"For \"fixed range\":")
+		REAL (minimum, U"Minimum", my default_scaling_minimum())
+		REAL (maximum, U"Maximum", my default_scaling_maximum())
+	EDITOR_OK
+		SET_ENUM (scalingStrategy, kSoundArea_scalingStrategy, my instancePref_scalingStrategy())
+		SET_REAL (height,  my instancePref_scaling_height())
+		SET_REAL (minimum, my instancePref_scaling_minimum())
+		SET_REAL (maximum, my instancePref_scaling_maximum())
+	EDITOR_DO
+		my setInstancePref_scalingStrategy (scalingStrategy) ;
+		my setInstancePref_scaling_height (height);
+		my setInstancePref_scaling_minimum (minimum);
+		my setInstancePref_scaling_maximum (maximum);
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+void structSoundArea :: v0_createMenuItems_view_vertical (EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- sound view vertical --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"View sound amplitudes:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Sound scaling...", 0, menu_cb_soundScaling, this);
 }
 
 #pragma mark - SoundArea all menus

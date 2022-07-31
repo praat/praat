@@ -400,7 +400,7 @@ void structManual :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"Print manual...", 0, menu_cb_printRange);
 	Editor_addCommand (this, U"File", U"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
 	Editor_addCommand (this, U"File", U"Save manual to HTML folder...", 0, menu_cb_writeAllToHtmlFolder);
-	Editor_addCommand (this, U"File", U"Save manual to HTML directory...", praat_DEPRECATED_2020, menu_cb_writeAllToHtmlFolder);
+	Editor_addCommand (this, U"File", U"Save manual to HTML directory...", GuiMenu_DEPRECATED_2020, menu_cb_writeAllToHtmlFolder);
 	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
 
 	Editor_addCommand (this, U"Go to", U"Search for page (list)...", 0, menu_cb_searchForPageList);

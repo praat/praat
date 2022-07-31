@@ -1,4 +1,4 @@
-/* SpectrumEditor_prefs.h
+/* SpectrumArea_prefs.h
  *
  * Copyright (C) 2013,2015,2022 Paul Boersma
  *
@@ -17,12 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-Prefs_begin (SpectrumEditor)
+Prefs_begin (SpectrumArea)
 
-	ClassPrefs_overrideInt        (SpectrumEditor, shellWidth,      1, U"700")
-	ClassPrefs_overrideInt        (SpectrumEditor, shellHeight,     1, U"440")
-	InstancePrefs_overrideDouble  (SpectrumEditor, arrowScrollStep, 1, U"100.0")
+	InstancePrefs_addDouble       (SpectrumArea, bandSmoothing,   1, U"100.0")
+	InstancePrefs_addDouble       (SpectrumArea, dynamicRange,    1, U"60.0")
 
-Prefs_end (SpectrumEditor)
+Prefs_end (SpectrumArea)
 
-/* End of file SpectrumEditor_prefs.h */
+/* End of file SpectrumArea_prefs.h */

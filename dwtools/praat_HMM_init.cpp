@@ -689,19 +689,19 @@ void praat_HMM_init ();
 void praat_HMM_init () {
 	Thing_recognizeClassesByName (classHMM, classHMMState, classHMMObservation, classHMMObservationSequence, classHMMStateSequence, classGaussianMixture, nullptr);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Markov models", nullptr, praat_HIDDEN, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Markov models", nullptr, GuiMenu_HIDDEN, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create HMM...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CREATE_ONE__HMM_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple HMM...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CREATE_ONE__HMM_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Create continuous HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create continuous HMM...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CREATE_ONE__HMM_createContinuousModel);
-	praat_addMenuCommand (U"Objects", U"New", U"--drawings--", nullptr, praat_HIDDEN + praat_DEPTH_1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw forward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1,
+	praat_addMenuCommand (U"Objects", U"New", U"--drawings--", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Draw forward probabilities illustration", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			GRAPHICS_NONE__HMM_drawForwardProbabilitiesIllustration);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1,
+	praat_addMenuCommand (U"Objects", U"New", U"Draw backward probabilities illustration", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			GRAPHICS_NONE__HMM_drawBackwardProbabilitiesIllustration);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw forward and backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Draw forward and backward probabilities illustration", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			GRAPHICS_NONE__HMM_drawForwardAndBackwardProbabilitiesIllustration);
 	
 	praat_addAction1 (classGaussianMixture, 0, U"GaussianMixture help", nullptr, 0, 
@@ -841,13 +841,13 @@ void praat_HMM_init () {
 	praat_addAction1 (classHMMObservationSequence, 0, U"To HMM...", nullptr, 1, 
 			CONVERT_EACH_TO_ONE__HMMObservationSequence_to_HMM);
 
-	praat_addAction1 (classStrings, 0, U"To HMMObservationSequence", nullptr, praat_HIDDEN, 
+	praat_addAction1 (classStrings, 0, U"To HMMObservationSequence", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Strings_to_HMMObservationSequence);
-	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (row labels)...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1,
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (row labels)...", U"To Covariance", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_GaussianMixture_rowlabels);
-	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1,
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture...", U"To Covariance", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_GaussianMixture);
-	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (CEMM)...", U"To GaussianMixture...", praat_HIDDEN + praat_DEPTH_1,
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (CEMM)...", U"To GaussianMixture...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_GaussianMixture_CEMM);
 	INCLUDE_MANPAGES (manual_HMM)
 }
