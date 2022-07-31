@@ -178,7 +178,7 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 
 	virtual void v_distributeAreas () { }
-	virtual void v_draw () = 0;
+	virtual void v_draw ();
 	virtual void v_windowChanged ();
 		/*
 			Behaviour of structFunctionEditor::v_windowChanged ():

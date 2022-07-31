@@ -34,9 +34,6 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_draw () override {
-		FunctionArea_drawOne (our spectrumArea().get());   // BUG: should be automated
-	}
 	void v_play (double fromFrequency, double toFrequency) override {
 		SpectrumArea_play (our spectrumArea().get(), fromFrequency, toFrequency);
 	}
