@@ -43,8 +43,6 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 
 	void v1_info ()
 		override;
-	void v_createChildren ()
-		override;
 	void v_createMenus ()
 		override;
 	void v_createMenuItems_help (EditorMenu menu)

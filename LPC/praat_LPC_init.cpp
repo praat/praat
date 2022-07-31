@@ -1451,8 +1451,9 @@ void praat_uvafon_LPC_init () {
 	
 	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classFormantPath, classFormantPathEditor, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
 	
+	structFormantPathArea  :: f_preferences ();
 	structFormantPathEditor  :: f_preferences ();
-		
+
 
 	praat_addAction1 (classCepstrumc, 0, U"Analyse", nullptr,0, nullptr);
 	praat_addAction1 (classCepstrumc, 0, U"To LPC", nullptr,0, 

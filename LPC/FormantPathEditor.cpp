@@ -313,26 +313,6 @@ static void menu_cb_AboutTextStyles (FormantPathEditor, EDITOR_ARGS_DIRECT) { Me
 void structFormantPathEditor :: v_createMenus () {
 	FormantPathEditor_Parent :: v_createMenus ();
 	EditorMenu menu;
-//	Editor_addCommand (this, U"Edit", U"-- search --", 0, nullptr);
-//	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
-//	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
-
-//	Editor_addCommand (this, U"Query", U"-- query interval --", 0, nullptr);
-//	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
-//	Editor_addCommand (this, U"Query", U"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
-//	Editor_addCommand (this, U"Query", U"Get label of interval", 0, menu_cb_GetLabelOfInterval);
-
-//	menu = Editor_addMenu (this, U"Interval", 0);
-//	EditorMenu_addCommand (menu, U"-- green stuff --", 0, nullptr);
-	
-//	our navigateSettingsButton = EditorMenu_addCommand (menu, U"Navigation settings...", 0, menu_cb_NavigationSettings);
-//	our navigateNextButton  = EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
-//	our navigatePreviousButton = EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
-
-//	menu = Editor_addMenu (this, U"Tier", 0);
-//	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
-//	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
-
 	if (our soundArea() -> soundOrLongSound())
 		our formantPathArea() -> v_createMenus ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	menu = Editor_addMenu (this, U"Candidates", 0);
@@ -351,14 +331,6 @@ void structFormantPathEditor :: v_createMenuItems_help (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"About special symbols", 0, menu_cb_AboutSpecialSymbols);
 	EditorMenu_addCommand (menu, U"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
 	EditorMenu_addCommand (menu, U"About text styles", 0, menu_cb_AboutTextStyles);
-}
-
-/***** CHILDREN *****/
-
-void structFormantPathEditor :: v_createChildren () {
-	FormantPathEditor_Parent :: v_createChildren ();
-	/*if (our text)
-		GuiText_setChangedCallback (our text, gui_text_cb_changed, this);*/
 }
 
 /********** DRAWING AREA **********/
