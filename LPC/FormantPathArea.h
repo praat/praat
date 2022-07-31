@@ -35,7 +35,8 @@
 */
 
 Thing_define (FormantPathArea, SoundAnalysisArea) {
-	FormantPath formantPath() const { return (FormantPath) our function(); }
+	FormantPath _formantPath;
+	FormantPath formantPath() const { return our _formantPath; }
 
 	void v_draw_analysis_formants ()
 		override;
@@ -51,7 +52,7 @@ Thing_define (FormantPathArea, SoundAnalysisArea) {
 
 	#include "FormantPathArea_prefs.h"
 };
-DEFINE_FunctionArea_create (FormantPathArea, FormantPath)
+DEFINE_FunctionArea_create (FormantPathArea, Sound)
 
 /* End of file FormantPathArea.h */
 #endif

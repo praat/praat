@@ -21,7 +21,10 @@ Prefs_begin (FormantPathArea)
 	ClassPrefs_overrideBool       (FormantPathArea, picture_garnish,          1, true)
 	InstancePrefs_overrideBool    (FormantPathArea, spectrogram_show,         1, true)
 	InstancePrefs_overrideBool    (FormantPathArea, formant_show,             1, true)
-	
+	InstancePrefs_overrideBool    (FormantPathArea, pitch_show,               1, false)
+	InstancePrefs_overrideBool    (FormantPathArea, intensity_show,           1, false)
+	InstancePrefs_overrideBool    (FormantPathArea, pulses_show,              1, false)
+
 	InstancePrefs_addString  (FormantPathArea, formant_path_evenColour,            1, U"pink")
 	InstancePrefs_addString  (FormantPathArea, formant_path_oddColour,             1, U"red")
 	InstancePrefs_addString  (FormantPathArea, formant_default_colour,             1, U"blue")
