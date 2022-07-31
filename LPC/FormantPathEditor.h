@@ -18,15 +18,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Collection.h"
-#include "FormantModelerList.h"
-#include "Formant.h"
 #include "FormantPathArea.h"
-#include "Preferences.h"
 #include "SoundArea.h"
-#include "LPC.h"
-#include "TextGridArea.h"
-
 #include "TextGridArea.h"
 
 Thing_define (FormantPathEditor, FunctionEditor) {
@@ -76,24 +69,18 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 		if (our textGridArea())
 			FunctionArea_drawOne (our textGridArea().get());
 	}
-	bool v_hasSelectionViewer ()
-		override { return true; }
+	bool v_hasSelectionViewer () override { return true; }
 	void v_drawSelectionViewer ()
 		override;
-	bool v_hasText ()
-		override { return false; }
 	void v_clickSelectionViewer (double xWC, double yWC)
 		override;
 	void v_play (double startTime, double endTime)
 		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction)
-		override;
+	bool v_hasText () override { return false; }
 	void v_updateText ()
 		override {};
 	conststring32 v_selectionViewerName ()
 		override { return U"Formant candidates"; }
-	void v_updateMenuItems ()
-		override;
 
 	#include "FormantPathEditor_prefs.h"
 };
