@@ -23,14 +23,12 @@
 #include "FormantPath_to_IntervalTier.h"
 #include "EditorM.h"
 #include "melder_kar.h"
-#include "Sampled.h"
-#include "SoundEditor.h"
 #include "Sound_and_MixingMatrix.h"
 #include "Sound_and_Spectrogram.h"
 #include "TextGrid_Sound.h"
 #include "TextGrid_extensions.h"
 
-Thing_implement (FormantPathEditor, TimeSoundAnalysisEditor, 0);
+Thing_implement (FormantPathEditor, FunctionEditor, 0);
 
 #include "Prefs_define.h"
 #include "FormantPathEditor_prefs.h"
@@ -104,8 +102,8 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_
 	if (out_xCursor)
 		*out_xCursor = xCursor;
 	if (out_yCursor)
-		*out_yCursor = ( my soundAnalysisArea -> d_spectrogram_cursor > my soundAnalysisArea -> instancePref_spectrogram_viewFrom() &&
-				my soundAnalysisArea -> d_spectrogram_cursor < my soundAnalysisArea -> instancePref_spectrogram_viewTo() ? my soundAnalysisArea -> d_spectrogram_cursor : -1000.0 );
+		*out_yCursor = ( my formantPathArea() -> d_spectrogram_cursor > my formantPathArea() -> instancePref_spectrogram_viewFrom() &&
+				my formantPathArea() -> d_spectrogram_cursor < my formantPathArea() -> instancePref_spectrogram_viewTo() ? my formantPathArea() -> d_spectrogram_cursor : -1000.0 );
 }
 
 /********** METHODS **********/
@@ -161,7 +159,7 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		FormantPath_pathFinder (my formantPath(), qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight,
 				intensityModulationStepSize, windowLength, parameters.get(), my instancePref_modeler_varianceExponent());
-		my soundAnalysisArea -> d_formant = FormantPath_extractFormant (my formantPath());
+		my formantPathArea() -> d_formant = FormantPath_extractFormant (my formantPath());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -172,15 +170,15 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		BOOLEAN (crossHairs, U"Draw cross hairs", 0)
-		BOOLEAN (garnish, U"Garnish", my formantPathArea -> default_picture_garnish());
+		BOOLEAN (garnish, U"Garnish", my formantPathArea() -> default_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
-		SET_BOOLEAN (garnish, my formantPathArea -> classPref_picture_garnish())
+		SET_BOOLEAN (garnish, my formantPathArea() -> classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
-		my formantPathArea -> setClassPref_picture_garnish (garnish);
+		my formantPathArea() -> setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		Graphics_setInner (my pictureGraphics);
 		double startTime, endTime, xCursor, yCursor;
@@ -335,8 +333,8 @@ void structFormantPathEditor :: v_createMenus () {
 //	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
 //	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 
-	if (our soundOrLongSound())
-		our soundAnalysisArea -> v_createMenus ();   // insert some of the ancestor's menus *after* the TextGrid menus
+	if (our soundArea() -> soundOrLongSound())
+		our formantPathArea() -> v_createMenus ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	menu = Editor_addMenu (this, U"Candidates", 0);
 	EditorMenu_addCommand (menu, U"Candidate modelling settings...", 0, menu_cb_candidate_modellingSettings);
 	EditorMenu_addCommand (menu, U"Advanced candidate drawing settings...", 0, menu_cb_AdvancedCandidateDrawingSettings);
@@ -363,70 +361,7 @@ void structFormantPathEditor :: v_createChildren () {
 		GuiText_setChangedCallback (our text, gui_text_cb_changed, this);*/
 }
 
-void structFormantPathEditor :: v1_dataChanged () {
-	FormantPathEditor_Parent :: v1_dataChanged ();
-	//if (our textgrid) {
-		/*
-			Perform a minimal selection change.
-			Most changes will involve intervals and boundaries; however, there may also be tier removals.
-			Do a simple guess.
-		*/
-	//	Melder_clipRight (& our selectedTier, our textgrid -> tiers->size);
-	//}
-	our soundAnalysisArea -> d_formant = FormantPath_extractFormant (our formantPath());
-}
-
 /********** DRAWING AREA **********/
-
-void structFormantPathEditor :: v_draw () {
-	Graphics_Viewport vp1;
-	const bool showAnalysis = (
-		our soundAnalysisArea -> instancePref_spectrogram_show() ||
-		our soundAnalysisArea -> instancePref_pitch_show() ||
-		our soundAnalysisArea -> instancePref_intensity_show() ||
-		our soundAnalysisArea -> instancePref_formant_show()) &&
-		our soundOrLongSound()
-	;
-	const double soundBottom = 0.3;   // BUG: our v_getBottomOfSoundArea ();
-
-	/*
-		Draw the sound.
-	*/
-	if (our soundOrLongSound()) {
-		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundBottom, 1.0);
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
-		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		SoundArea_draw (our soundArea.get());
-		Graphics_resetViewport (our graphics.get(), vp1);
-	}
-
-	/*
-		Draw tiers.
-	*/
-	//if (our textgrid) {}
-	if (showAnalysis) {
-		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, /* our textgrid ? 0.3 : */ 0.0, soundBottom);
-		our soundAnalysisArea -> v_draw_analysis ();
-		Graphics_resetViewport (our graphics.get(), vp1);
-		/* Draw pulses. */
-		if (our soundAnalysisArea -> instancePref_pulses_show()) {
-			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundBottom, 1.0);
-			our soundAnalysisArea -> v_draw_analysis_pulses ();
-			SoundArea_draw (our soundArea.get());   // second time, partially across the pulses
-			Graphics_resetViewport (our graphics.get(), vp1);
-		}
-	}
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-	/*if (our soundOrLongSound()) {
-		Graphics_line (our graphics.get(), our startWindow, soundBottom, our endWindow, soundBottom);
-		if (showAnalysis) {
-			Graphics_line (our graphics.get(), our startWindow, soundBottom2, our endWindow, soundBottom2);
-			Graphics_line (our graphics.get(), our startWindow, soundBottom, our startWindow, soundBottom2);
-			Graphics_line (our graphics.get(), our endWindow, soundBottom, our endWindow, soundBottom2);
-		}
-	}*/
-}
 
 void structFormantPathEditor :: v_drawSelectionViewer () {
 	static double previousStartTime, previousEndTime;
@@ -443,8 +378,8 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	if (startTime != previousStartTime || endTime != previousEndTime)
 		our selectedCandidate = 0;
 	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (our instancePref_modeler_numberOfParametersPerTrack());
-	MelderColour oddColour = MelderColour_fromColourName (our formantPathArea -> instancePref_formant_path_oddColour());
-	MelderColour evenColour = MelderColour_fromColourName (our formantPathArea -> instancePref_formant_path_evenColour());
+	MelderColour oddColour = MelderColour_fromColourName (our formantPathArea() -> instancePref_formant_path_oddColour());
+	MelderColour evenColour = MelderColour_fromColourName (our formantPathArea() -> instancePref_formant_path_evenColour());
 	FormantPath_drawAsGrid_inside (our formantPath(), our graphics.get(), startTime, endTime,
 		our instancePref_modeler_draw_maximumFrequency(), 1, 5, our instancePref_modeler_draw_showBandwidths(), oddColour, evenColour,
 		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_modeler_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
@@ -539,49 +474,40 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		for (integer iframe = itmin; iframe <= itmax; iframe ++)
 			our formantPath() -> path [iframe] = our selectedCandidate;
 		Formant source = our formantPath() -> formants.at [our selectedCandidate];
-		Formant_replaceFrames (our soundAnalysisArea -> d_formant.get(), itmin, itmax, source);
+		Formant_replaceFrames (our formantPathArea() -> d_formant.get(), itmin, itmax, source);
 	}
 	FunctionEditor_redraw (this);
 	Editor_broadcastDataChanged (this);
 }
 
 void structFormantPathEditor :: v_play (double startingTime, double endTime) {
-	if (our soundArea)
-		SoundArea_play (our soundArea.get(), startingTime, endTime);
+	if (our soundArea())
+		SoundArea_play (our soundArea().get(), startingTime, endTime);
 }
-
-//double structFormantPathEditor :: v_getBottomOfSoundArea () {
-//	/*
-//		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid
-//	*/
-//	return our soundOrLongSound() ? 0.7 : 1.0;   // BUG: NYI
-//}
 
 /********** EXPORTED **********/
 
-autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound soundToCopy, TextGrid textgrid) {
+autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound soundToCopy, TextGrid textGridToCopy) {
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
-		if (soundToCopy)
-			my soundArea = SoundArea_create (false, soundToCopy, me.get());
-		if (textgrid)
-			;   // BUG: implement TextGridArea
+		my soundArea() = SoundArea_create (false, soundToCopy, me.get());
+		my formantPathArea() = FormantPathArea_create (true, soundToCopy, me.get());
+		my formantPathArea() -> _formantPath = formantPath;
+		if (textGridToCopy)
+			my textGridArea() = TextGridArea_create (false, textGridToCopy, me.get());
 		FunctionEditor_init (me.get(), title, formantPath);
 
-		my soundAnalysisArea -> d_formant = FormantPath_extractFormant (formantPath);   // BUG: should be in other places
-		//if (textgrid)
-		//	my textgrid = Data_copy (textgrid);
+		my formantPathArea() -> d_formant = FormantPath_extractFormant (formantPath);   // BUG: should be in other places
 		if (my instancePref_modeler_numberOfParametersPerTrack() [0] == U'\0')
 			my setInstancePref_modeler_numberOfParametersPerTrack (my default_modeler_numberOfParametersPerTrack());
-		if (my formantPathArea -> instancePref_formant_default_colour() [0] == U'\0')
-			my formantPathArea -> setInstancePref_formant_default_colour (my formantPathArea -> default_formant_default_colour ());
-		if (my formantPathArea -> instancePref_formant_path_oddColour() [0] == U'\0')
-			my formantPathArea -> setInstancePref_formant_path_oddColour (my formantPathArea -> default_formant_path_oddColour ());
-		if (my formantPathArea -> instancePref_formant_path_evenColour() [0] == U'\0')
-			my formantPathArea -> setInstancePref_formant_path_evenColour (my formantPathArea -> default_formant_path_evenColour ());
-		if (my formantPathArea -> instancePref_formant_selected_colour() [0] == U'\0')
-			my formantPathArea -> setInstancePref_formant_selected_colour (my formantPathArea -> default_formant_selected_colour ());
-		my selectedTier = 1;
+		if (my formantPathArea() -> instancePref_formant_default_colour() [0] == U'\0')
+			my formantPathArea() -> setInstancePref_formant_default_colour (my formantPathArea() -> default_formant_default_colour ());
+		if (my formantPathArea() -> instancePref_formant_path_oddColour() [0] == U'\0')
+			my formantPathArea() -> setInstancePref_formant_path_oddColour (my formantPathArea() -> default_formant_path_oddColour ());
+		if (my formantPathArea() -> instancePref_formant_path_evenColour() [0] == U'\0')
+			my formantPathArea() -> setInstancePref_formant_path_evenColour (my formantPathArea() -> default_formant_path_evenColour ());
+		if (my formantPathArea() -> instancePref_formant_selected_colour() [0] == U'\0')
+			my formantPathArea() -> setInstancePref_formant_selected_colour (my formantPathArea() -> default_formant_selected_colour ());
 		if (my endWindow - my startWindow > 5.0) {
 			my endWindow = my startWindow + 5.0;
 			if (my startWindow == my tmin)

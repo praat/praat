@@ -22,23 +22,23 @@
 #include "FormantModelerList.h"
 #include "Formant.h"
 #include "FormantPathArea.h"
-#include "melder.h"
 #include "Preferences.h"
-#include "Sound.h"
+#include "SoundArea.h"
 #include "LPC.h"
-#include "TextGrid.h"
-#include "TimeSoundAnalysisEditor.h"
+#include "TextGridArea.h"
 
 #include "TextGridArea.h"
 
-Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
+Thing_define (FormantPathEditor, FunctionEditor) {
+	DEFINE_FunctionArea (1, FormantPathArea, formantPathArea)
+	DEFINE_FunctionArea (2, SoundArea, soundArea)
+	DEFINE_FunctionArea (3, TextGridArea, textGridArea)
+
 	FormantPath formantPath() { return static_cast <FormantPath> (our data()); }
 
-	autoFormantPathArea formantPathArea;
-	//autoTextGrid textgrid;
 	autoFormant previousFormant;
 	Graphics_Viewport selectionViewer_viewport;
-	integer selectedTier, selectedCandidate;
+	integer selectedCandidate;
 	GuiMenuItem navigateSettingsButton, navigateNextButton, navigatePreviousButton;
 
 	void v1_info ()
@@ -49,10 +49,35 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v1_dataChanged ()
-		override;
-	void v_draw ()
-		override;
+	void v1_dataChanged () override {
+		FormantPathEditor_Parent :: v1_dataChanged ();
+		our soundArea() -> functionChanged (nullptr);
+		our formantPathArea() -> functionChanged (nullptr);
+		our formantPathArea() -> d_formant = FormantPath_extractFormant (our formantPath());   // BUG: also on window changed
+		our textGridArea() -> functionChanged (nullptr);
+	}
+	void v_distributeAreas () override {
+		if (our textGridArea()) {
+			our soundArea() -> setGlobalYRange_fraction (0.7, 1.0);
+			our formantPathArea() -> setGlobalYRange_fraction (0.2, 0.7);
+			our textGridArea() -> setGlobalYRange_fraction (0.0, 0.2);
+		} else {
+			our soundArea() -> setGlobalYRange_fraction (0.6, 1.0);
+			our formantPathArea() -> setGlobalYRange_fraction (0.0, 0.6);
+		}
+	}
+	void v_draw () override {
+		FunctionArea_prepareCanvas (our soundArea().get());
+		if (our formantPathArea() -> instancePref_pulses_show())
+			our formantPathArea() -> v_draw_analysis_pulses ();
+		FunctionArea_drawInside (our soundArea().get());
+		if (our formantPathArea() -> hasContentToShow()) {
+			FunctionArea_prepareCanvas (our formantPathArea().get());
+			our formantPathArea() -> v_draw_analysis ();
+		}
+		if (our textGridArea())
+			FunctionArea_drawOne (our textGridArea().get());
+	}
 	bool v_hasSelectionViewer ()
 		override { return true; }
 	void v_drawSelectionViewer ()
