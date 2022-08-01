@@ -111,10 +111,12 @@ void Preferences_read (MelderFile file) {
 			integer ipref = thePreferences. lookUp (line);
 			if (ipref == 0) {
 				/*
-					Recognize some preference names that went obsolete in February 2013.
+					Recognize some preference names that went obsolete in February 2013 or August 2022.
 				*/
 				if (Melder_nequ (line, U"FunctionEditor.", 15))
-					ipref = thePreferences. lookUp (Melder_cat (U"TimeSoundAnalysisEditor.", line + 15));
+					ipref = thePreferences. lookUp (Melder_cat (U"SoundAnalysisArea.", line + 15));
+				if (Melder_nequ (line, U"TimeSoundAnalysisEditor.", 24))
+					ipref = thePreferences. lookUp (Melder_cat (U"SoundAnalysisArea.", line + 24));
 			}
 			if (ipref == 0)
 				continue;   // skip unrecognized keys

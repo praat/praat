@@ -19,7 +19,7 @@
 Prefs_begin (SoundAnalysisArea)
 
 	InstancePrefs_addDouble  (SoundAnalysisArea, longestAnalysis,                 1, U"10.0")   // seconds
-	InstancePrefs_addEnum    (SoundAnalysisArea, timeStepStrategy,                1, kTimeSoundAnalysisEditor_timeStepStrategy, DEFAULT)
+	InstancePrefs_addEnum    (SoundAnalysisArea, timeStepStrategy,                1, kSoundAnalysisArea_timeStepStrategy, DEFAULT)
 	InstancePrefs_addDouble  (SoundAnalysisArea, fixedTimeStep,                   1, U"0.01")   // seconds
 	InstancePrefs_addInteger (SoundAnalysisArea, numberOfTimeStepsPerView,        1, U"100")
 	InstancePrefs_addBool    (SoundAnalysisArea, spectrogram_show,                1, true)
@@ -40,10 +40,10 @@ Prefs_begin (SoundAnalysisArea)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_floor,                     1, U"75.0")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_ceiling,                   1, U"500.0")
 	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_unit,                      1, kPitch_unit, DEFAULT)
-	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_drawingMethod,             1, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT)
+	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_drawingMethod,             1, kSoundAnalysisArea_pitch_drawingMethod, DEFAULT)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_viewFrom,                  1, U"0.0 (= auto)")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_viewTo,                    1, U"0.0 (= auto)")
-	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_method,                    1, kTimeSoundAnalysisEditor_pitch_analysisMethod, DEFAULT)
+	InstancePrefs_addEnum    (SoundAnalysisArea, pitch_method,                    1, kSoundAnalysisArea_pitch_analysisMethod, DEFAULT)
 	InstancePrefs_addBool    (SoundAnalysisArea, pitch_veryAccurate,              1, false)
 	InstancePrefs_addInteger (SoundAnalysisArea, pitch_maximumNumberOfCandidates, 1, U"15")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_silenceThreshold,          1, U"0.03")
@@ -56,7 +56,7 @@ Prefs_begin (SoundAnalysisArea)
 	InstancePrefs_addBool    (SoundAnalysisArea, intensity_show,                  1, false)
 	InstancePrefs_addDouble  (SoundAnalysisArea, intensity_viewFrom,              1, U"50.0")   // dB
 	InstancePrefs_addDouble  (SoundAnalysisArea, intensity_viewTo,                1, U"100.0")   // dB
-	InstancePrefs_addEnum    (SoundAnalysisArea, intensity_averagingMethod,       1, kTimeSoundAnalysisEditor_intensity_averagingMethod, DEFAULT)
+	InstancePrefs_addEnum    (SoundAnalysisArea, intensity_averagingMethod,       1, kSoundAnalysisArea_intensity_averagingMethod, DEFAULT)
 	InstancePrefs_addBool    (SoundAnalysisArea, intensity_subtractMeanPressure,  1, true)
 	InstancePrefs_addBool    (SoundAnalysisArea, intensity_picture_garnish,       1, true)
 	InstancePrefs_addBool    (SoundAnalysisArea, formant_show,                    1, false)
@@ -65,7 +65,7 @@ Prefs_begin (SoundAnalysisArea)
 	InstancePrefs_addDouble  (SoundAnalysisArea, formant_windowLength,            1, U"0.025")   // seconds
 	InstancePrefs_addDouble  (SoundAnalysisArea, formant_dynamicRange,            1, U"30.0")   // dB
 	InstancePrefs_addDouble  (SoundAnalysisArea, formant_dotSize,                 1, U"1.0")   // mm
-	InstancePrefs_addEnum    (SoundAnalysisArea, formant_method,                  1, kTimeSoundAnalysisEditor_formant_analysisMethod, BURG)
+	InstancePrefs_addEnum    (SoundAnalysisArea, formant_method,                  1, kSoundAnalysisArea_formant_analysisMethod, BURG)
 	InstancePrefs_addDouble  (SoundAnalysisArea, formant_preemphasisFrom,         1, U"50.0")   // Hz
 	InstancePrefs_addBool    (SoundAnalysisArea, formant_picture_garnish,         1, true)
 	InstancePrefs_addBool    (SoundAnalysisArea, pulses_show,                     1, false)

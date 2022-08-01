@@ -18,29 +18,51 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TimeSoundAnalysisEditor.h"
-#include "Movie.h"
+#include "FunctionEditor.h"
+#include "MovieArea.h"
+#include "SoundArea.h"
+#include "SoundAnalysisArea.h"
 
-Thing_define (MovieWindow, TimeSoundAnalysisEditor) {
+Thing_define (MovieWindow, FunctionEditor) {
+	DEFINE_FunctionArea (1, MovieArea, videoArea)
+	DEFINE_FunctionArea (2, SoundArea, soundArea)
+	DEFINE_FunctionArea (3, SoundAnalysisArea, soundAnalysisArea)
+
 	Movie movie() { return static_cast <Movie> (our data()); }
 
 	void v1_dataChanged () override {
 		MovieWindow_Parent :: v1_dataChanged ();   // BUG: calls multiple functionChanged()
-		our soundArea -> functionChanged (our movie() -> d_sound.get());
+		our videoArea() -> functionChanged (our movie());
+		our soundArea() -> functionChanged (our movie() -> d_sound.get());
+		our soundAnalysisArea() -> functionChanged (our movie() -> d_sound.get());
 	}
-
-	void v_createMenus ()
-		override;
-	void v_distributeAreas ()
-		override;
-	void v_draw ()
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
-		override;
-	void v_play (double tmin, double tmax)
-		override;
-	void v_createMenuItems_view (EditorMenu menu)
-		override;
+	void v_distributeAreas () override {
+		if (our soundAnalysisArea() -> hasContentToShow ()) {
+			our videoArea() -> setGlobalYRange_fraction (0.0, 0.3);
+			our soundArea() -> setGlobalYRange_fraction (0.7, 1.0);
+			our soundAnalysisArea() -> setGlobalYRange_fraction (0.3, 0.7);
+		} else {
+			our videoArea() -> setGlobalYRange_fraction (0.0, 0.3);
+			our soundArea() -> setGlobalYRange_fraction (0.3, 1.0);
+			our soundAnalysisArea() -> setGlobalYRange_fraction (0.0, 0.0);
+		}
+	}
+	void v_draw () override {
+		if (our soundArea()) {
+			FunctionArea_prepareCanvas (our soundArea().get());
+			if (our soundAnalysisArea() -> instancePref_pulses_show())
+				our soundAnalysisArea() -> v_draw_analysis_pulses ();
+			FunctionArea_drawInside (our soundArea().get());
+			if (our soundAnalysisArea() -> hasContentToShow ()) {
+				FunctionArea_prepareCanvas (our soundAnalysisArea().get());
+				our soundAnalysisArea() -> v_draw_analysis ();
+			}
+		}
+		FunctionArea_drawOne (our videoArea().get());
+	}
+	void v_play (double startTime, double endTime) override {
+		Movie_play (our movie(), our graphics.get(), startTime, endTime, theFunctionEditor_playCallback, this);
+	}
 };
 
 autoMovieWindow MovieWindow_create (conststring32 title, Movie movie);
