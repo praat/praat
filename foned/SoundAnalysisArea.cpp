@@ -99,13 +99,13 @@ static void tryToComputePitch (SoundAnalysisArea me) {
 	try {
 		autoSound sound = extractSound (me, my startWindow() - margin, my endWindow() + margin);
 		const double pitchTimeStep = (
-			my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
-			my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow() - my startWindow()) / my instancePref_numberOfTimeStepsPerView() :
+			my instancePref_timeStepStrategy() == kSoundAnalysisArea_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
+			my instancePref_timeStepStrategy() == kSoundAnalysisArea_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow() - my startWindow()) / my instancePref_numberOfTimeStepsPerView() :
 			0.0   // the default: determined by pitch floor
 		);
 		my d_pitch = Sound_to_Pitch_any (sound.get(), pitchTimeStep,
 			my instancePref_pitch_floor(),
-			my instancePref_pitch_method() == kTimeSoundAnalysisEditor_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0,
+			my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0,
 			my instancePref_pitch_maximumNumberOfCandidates(),
 			((int) my instancePref_pitch_method() - 1) * 2 + my instancePref_pitch_veryAccurate(),
 			my instancePref_pitch_silenceThreshold(), my instancePref_pitch_voicingThreshold(),
@@ -147,8 +147,8 @@ static void tryToComputeFormants (SoundAnalysisArea me) {
 			extractSound (me, my startWindow() - margin, my endWindow() + margin)
 		);
 		const double formantTimeStep = (
-			my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
-			my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow() - my startWindow()) / my instancePref_numberOfTimeStepsPerView() :
+			my instancePref_timeStepStrategy() == kSoundAnalysisArea_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
+			my instancePref_timeStepStrategy() == kSoundAnalysisArea_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow() - my startWindow()) / my instancePref_numberOfTimeStepsPerView() :
 			0.0   // the default: determined by analysis window length
 		);
 		my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
@@ -317,13 +317,13 @@ void structSoundAnalysisArea :: v1_info () {
 		MelderInfo_writeLine (U"Pitch ceiling: ", our instancePref_pitch_ceiling(), U" Hz");
 		MelderInfo_writeLine (U"Pitch unit: ",
 				Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (instancePref_pitch_drawingMethod()));
+		MelderInfo_writeLine (U"Pitch drawing method: ", kSoundAnalysisArea_pitch_drawingMethod_getText (instancePref_pitch_drawingMethod()));
 		/* Advanced pitch settings: */
 		MelderInfo_writeLine (U"Pitch view from: ", our instancePref_pitch_viewFrom(), U" ",
 				Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
 		MelderInfo_writeLine (U"Pitch view to: ", our instancePref_pitch_viewTo(), U" ",
 				Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (our instancePref_pitch_method()));
+		MelderInfo_writeLine (U"Pitch method: ", kSoundAnalysisArea_pitch_analysisMethod_getText (our instancePref_pitch_method()));
 		MelderInfo_writeLine (U"Pitch very accurate: ", our instancePref_pitch_veryAccurate());
 		MelderInfo_writeLine (U"Pitch max. number of candidates: ", our instancePref_pitch_maximumNumberOfCandidates());
 		MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_silenceThreshold(), U" of global peak");
@@ -338,7 +338,7 @@ void structSoundAnalysisArea :: v1_info () {
 		/* Intensity settings: */
 		MelderInfo_writeLine (U"Intensity view from: ", our instancePref_intensity_viewFrom(), U" dB");
 		MelderInfo_writeLine (U"Intensity view to: ", our instancePref_intensity_viewTo(), U" dB");
-		MelderInfo_writeLine (U"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (our instancePref_intensity_averagingMethod()));
+		MelderInfo_writeLine (U"Intensity averaging method: ", kSoundAnalysisArea_intensity_averagingMethod_getText (our instancePref_intensity_averagingMethod()));
 		MelderInfo_writeLine (U"Intensity subtract mean pressure: ", our instancePref_intensity_subtractMeanPressure());
 	}
 	if (v_hasFormants ()) {
@@ -351,7 +351,7 @@ void structSoundAnalysisArea :: v1_info () {
 		MelderInfo_writeLine (U"Formant dynamic range: ", our instancePref_formant_dynamicRange(), U" dB");
 		MelderInfo_writeLine (U"Formant dot size: ", our instancePref_formant_dotSize(), U" mm");
 		/* Advanced formant settings: */
-		MelderInfo_writeLine (U"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (our instancePref_formant_method()));
+		MelderInfo_writeLine (U"Formant method: ", kSoundAnalysisArea_formant_analysisMethod_getText (our instancePref_formant_method()));
 		MelderInfo_writeLine (U"Formant pre-emphasis from: ", our instancePref_formant_preemphasisFrom(), U" Hz");
 	}
 	if (v_hasPulses ()) {
@@ -622,7 +622,7 @@ static void menu_cb_showAnalyses (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_timeStepSettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Time step settings", U"Time step settings...")
-		OPTIONMENU_ENUM (kTimeSoundAnalysisEditor_timeStepStrategy, timeStepStrategy,
+		OPTIONMENU_ENUM (kSoundAnalysisArea_timeStepStrategy, timeStepStrategy,
 				U"Time step strategy", my default_timeStepStrategy ())
 		LABEL (U"")
 		LABEL (U"If the time step strategy is \"fixed\":")
@@ -631,7 +631,7 @@ static void menu_cb_timeStepSettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 		LABEL (U"If the time step strategy is \"view-dependent\":")
 		NATURAL (numberOfTimeStepsPerView, U"Number of time steps per view", my default_numberOfTimeStepsPerView ())
 	EDITOR_OK
-		SET_ENUM (timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy, my instancePref_timeStepStrategy())
+		SET_ENUM (timeStepStrategy, kSoundAnalysisArea_timeStepStrategy, my instancePref_timeStepStrategy())
 		SET_REAL (fixedTimeStep, my instancePref_fixedTimeStep())
 		SET_INTEGER (numberOfTimeStepsPerView, my instancePref_numberOfTimeStepsPerView())
 	EDITOR_DO
@@ -847,9 +847,9 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 				U"Unit", my default_pitch_unit ())
 		LABEL (U"The autocorrelation method optimizes for intonation research;")
 		LABEL (U"and the cross-correlation method optimizes for voice research:")
-		RADIO_ENUM (kTimeSoundAnalysisEditor_pitch_analysisMethod, analysisMethod,
+		RADIO_ENUM (kSoundAnalysisArea_pitch_analysisMethod, analysisMethod,
 				U"Analysis method", my default_pitch_method())
-		OPTIONMENU_ENUM (kTimeSoundAnalysisEditor_pitch_drawingMethod, drawingMethod,
+		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method", my default_pitch_drawingMethod())
 		MUTABLE_LABEL (note1, U"")
 		MUTABLE_LABEL (note2, U"")
@@ -857,8 +857,8 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 		SET_REAL (pitchFloor,   my instancePref_pitch_floor())
 		SET_REAL (pitchCeiling, my instancePref_pitch_ceiling())
 		SET_ENUM (unit, kPitch_unit, my instancePref_pitch_unit())
-		SET_ENUM (analysisMethod, kTimeSoundAnalysisEditor_pitch_analysisMethod, my instancePref_pitch_method())
-		SET_ENUM (drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, my instancePref_pitch_drawingMethod())
+		SET_ENUM (analysisMethod, kSoundAnalysisArea_pitch_analysisMethod, my instancePref_pitch_method())
+		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod, my instancePref_pitch_drawingMethod())
 		if (my instancePref_pitch_viewFrom()                  != Melder_atof (my default_pitch_viewFrom()) ||
 			my instancePref_pitch_viewTo()                    != Melder_atof (my default_pitch_viewTo()) ||
 			my instancePref_pitch_veryAccurate()              != my default_pitch_veryAccurate() ||
@@ -1101,7 +1101,7 @@ static void menu_cb_intensitySettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Intensity settings", U"Intro 6.2. Configuring the intensity contour")
 		REAL (viewFrom, U"left View range (dB)",  my default_intensity_viewFrom ())
 		REAL (viewTo,   U"right View range (dB)", my default_intensity_viewTo   ())
-		RADIO_ENUM (kTimeSoundAnalysisEditor_intensity_averagingMethod, averagingMethod,
+		RADIO_ENUM (kSoundAnalysisArea_intensity_averagingMethod, averagingMethod,
 				U"Averaging method", my default_intensity_averagingMethod ())
 		BOOLEAN (subtractMeanPressure, U"Subtract mean pressure", my default_intensity_subtractMeanPressure ())
 		LABEL (U"Note: the pitch floor is taken from the pitch settings.")
@@ -1109,7 +1109,7 @@ static void menu_cb_intensitySettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 		SET_REAL (viewFrom,  my instancePref_intensity_viewFrom())
 		SET_REAL (viewTo,    my instancePref_intensity_viewTo())
-		SET_ENUM (averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod, my instancePref_intensity_averagingMethod())
+		SET_ENUM (averagingMethod, kSoundAnalysisArea_intensity_averagingMethod, my instancePref_intensity_averagingMethod())
 		SET_BOOLEAN (subtractMeanPressure, my instancePref_intensity_subtractMeanPressure())
 		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
 			SET_STRING (note2, U"Warning: you have a non-standard \"time step strategy\".")
@@ -1267,11 +1267,11 @@ static void menu_cb_formantSettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_advancedFormantSettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Advanced formant settings", U"Advanced formant settings...")
-		RADIO_ENUM (kTimeSoundAnalysisEditor_formant_analysisMethod, method,
+		RADIO_ENUM (kSoundAnalysisArea_formant_analysisMethod, method,
 				U"Method", my default_formant_method ())
 		POSITIVE (preemphasisFrom, U"Pre-emphasis from (Hz)", my default_formant_preemphasisFrom ())
 	EDITOR_OK
-		SET_ENUM (method, kTimeSoundAnalysisEditor_formant_analysisMethod, my instancePref_formant_method())
+		SET_ENUM (method, kSoundAnalysisArea_formant_analysisMethod, my instancePref_formant_method())
 		SET_REAL (preemphasisFrom, my instancePref_formant_preemphasisFrom())
 	EDITOR_DO
 		my setInstancePref_formant_method (method);
@@ -1481,7 +1481,7 @@ static void INFO_DATA__voiceReport (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WIT
 		autoSound sound = extractSound (me, tmin, tmax);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"-- Voice report for ", my name.get(), U" --\nDate: ", Melder_peek8to32 (ctime (& today)));
-		if (my instancePref_pitch_method() != kTimeSoundAnalysisEditor_pitch_analysisMethod::CROSS_CORRELATION)
+		if (my instancePref_pitch_method() != kSoundAnalysisArea_pitch_analysisMethod::CROSS_CORRELATION)
 			MelderInfo_writeLine (U"WARNING: some of the following measurements may be imprecise.\n"
 				"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");
 		MelderInfo_writeLine (U"Time range of ", SoundAnalysisArea_partString (part));
@@ -1808,37 +1808,37 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 	if (my instancePref_pitch_show())
 		tryToHavePitch (me);
 	if (my instancePref_pitch_show() && my d_pitch) {
-		const double periodsPerAnalysisWindow = ( my instancePref_pitch_method() == kTimeSoundAnalysisEditor_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0 );
+		const double periodsPerAnalysisWindow = ( my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0 );
 		const double greatestNonUndersamplingTimeStep = 0.5 * periodsPerAnalysisWindow / my instancePref_pitch_floor();
 		const double defaultTimeStep = 0.5 * greatestNonUndersamplingTimeStep;
 		const double timeStep = (
-			my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
-			my instancePref_timeStepStrategy() == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow() - my startWindow()) / my instancePref_numberOfTimeStepsPerView() :
+			my instancePref_timeStepStrategy() == kSoundAnalysisArea_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
+			my instancePref_timeStepStrategy() == kSoundAnalysisArea_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow() - my startWindow()) / my instancePref_numberOfTimeStepsPerView() :
 			defaultTimeStep
 		);
 		const bool undersampled = ( timeStep > greatestNonUndersamplingTimeStep );
 		const integer numberOfVisiblePitchPoints = (integer) ((my endWindow() - my startWindow()) / timeStep);   // BUG: why round down?
 		Graphics_setColour (my graphics(), Melder_CYAN);
 		Graphics_setLineWidth (my graphics(), 3.0);
-		if ((my instancePref_pitch_drawingMethod() == kTimeSoundAnalysisEditor_pitch_drawingMethod::AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
-		    my instancePref_pitch_drawingMethod() == kTimeSoundAnalysisEditor_pitch_drawingMethod::SPECKLE)
+		if ((my instancePref_pitch_drawingMethod() == kSoundAnalysisArea_pitch_drawingMethod::AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
+		    my instancePref_pitch_drawingMethod() == kSoundAnalysisArea_pitch_drawingMethod::SPECKLE)
 		{
 			Pitch_drawInside (my d_pitch.get(), my graphics(), my startWindow(), my endWindow(), pitchViewFrom_overt, pitchViewTo_overt, 2, my instancePref_pitch_unit());
 		}
-		if ((my instancePref_pitch_drawingMethod() == kTimeSoundAnalysisEditor_pitch_drawingMethod::AUTOMATIC && ! undersampled) ||
-		    my instancePref_pitch_drawingMethod() == kTimeSoundAnalysisEditor_pitch_drawingMethod::CURVE)
+		if ((my instancePref_pitch_drawingMethod() == kSoundAnalysisArea_pitch_drawingMethod::AUTOMATIC && ! undersampled) ||
+		    my instancePref_pitch_drawingMethod() == kSoundAnalysisArea_pitch_drawingMethod::CURVE)
 		{
 			Pitch_drawInside (my d_pitch.get(), my graphics(), my startWindow(), my endWindow(), pitchViewFrom_overt, pitchViewTo_overt, false, my instancePref_pitch_unit());
 		}
 		Graphics_setColour (my graphics(), Melder_BLUE);
 		Graphics_setLineWidth (my graphics(), 1.0);
-		if ((my instancePref_pitch_drawingMethod() == kTimeSoundAnalysisEditor_pitch_drawingMethod::AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
-		    my instancePref_pitch_drawingMethod() == kTimeSoundAnalysisEditor_pitch_drawingMethod::SPECKLE)
+		if ((my instancePref_pitch_drawingMethod() == kSoundAnalysisArea_pitch_drawingMethod::AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
+		    my instancePref_pitch_drawingMethod() == kSoundAnalysisArea_pitch_drawingMethod::SPECKLE)
 		{
 			Pitch_drawInside (my d_pitch.get(), my graphics(), my startWindow(), my endWindow(), pitchViewFrom_overt, pitchViewTo_overt, 1, my instancePref_pitch_unit());
 		}
-		if ((my instancePref_pitch_drawingMethod() == kTimeSoundAnalysisEditor_pitch_drawingMethod::AUTOMATIC && ! undersampled) ||
-		    my instancePref_pitch_drawingMethod() == kTimeSoundAnalysisEditor_pitch_drawingMethod::CURVE)
+		if ((my instancePref_pitch_drawingMethod() == kSoundAnalysisArea_pitch_drawingMethod::AUTOMATIC && ! undersampled) ||
+		    my instancePref_pitch_drawingMethod() == kSoundAnalysisArea_pitch_drawingMethod::CURVE)
 		{
 			Pitch_drawInside (my d_pitch.get(), my graphics(), my startWindow(), my endWindow(), pitchViewFrom_overt, pitchViewTo_overt, false, my instancePref_pitch_unit());
 		}
