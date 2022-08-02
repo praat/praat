@@ -206,7 +206,7 @@ static void tryToHavePulses (SoundAnalysisArea me) {
 }
 
 /*
-	Some TimeSoundAnalysisEditor_haveVisible<Analysis>() functions.
+	Some SoundAnalysisArea_haveVisible<Analysis>() functions.
 	These add error reporting that is specific to having editor windows,
 	thereby replacing the ignored errors that would have been generated
 	if the analysis had been performed by an explicit user action.

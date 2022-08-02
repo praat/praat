@@ -31,8 +31,8 @@ void structAmplitudeTierEditor :: v_createMenuItems_help (EditorMenu menu) {
 }
 
 void structAmplitudeTierEditor :: v_play (double startTime, double endTime) {
-	if (our sound()) {
-		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
+	if (our soundArea()) {
+		Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
 		//AmplitudeTier_playPart (data, startTime, endTime, false);
 	}
@@ -41,9 +41,9 @@ void structAmplitudeTierEditor :: v_play (double startTime, double endTime) {
 autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitudeTier, Sound soundToCopy) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
-		my realTierArea = AmplitudeTierArea_create (true, nullptr, me.get());
+		my realTierArea() = AmplitudeTierArea_create (true, nullptr, me.get());
 		if (soundToCopy)
-			my soundArea = SoundArea_create (false, soundToCopy, me.get());
+			my soundArea() = SoundArea_create (false, soundToCopy, me.get());
 		FunctionEditor_init (me.get(), title, amplitudeTier);
 		return me;
 	} catch (MelderError) {

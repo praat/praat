@@ -24,6 +24,14 @@
 Thing_define (AmplitudeTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" Pa"; }
+	conststring32 v_quantityText ()
+		override { return U"Sound pressure (Pa)"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set amplitude range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum amplitude (Pa)"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum amplitude (Pa)"; }
 
 	#include "AmplitudeTierArea_prefs.h"
 };

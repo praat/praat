@@ -24,7 +24,7 @@
 #include "enums_getValue.h"
 #include "NoulliGridEditor_enums.h"
 
-Thing_implement (NoulliGridEditor, TimeSoundEditor, 0);
+Thing_implement (NoulliGridEditor, FunctionEditor, 0);
 
 #include "Prefs_define.h"
 #include "NoulliGridEditor_prefs.h"
@@ -32,36 +32,6 @@ Thing_implement (NoulliGridEditor, TimeSoundEditor, 0);
 #include "NoulliGridEditor_prefs.h"
 #include "Prefs_copyToInstance.h"
 #include "NoulliGridEditor_prefs.h"
-
-/********** DRAWING AREA **********/
-
-void structNoulliGridEditor :: v_distributeAreas () {
-	if (our sound()) {
-		constexpr double yminSound_fraction = 0.8;
-		//our noulliGridArea -> setGlobalYRange_fraction (0.0, yminSound_fraction);
-		our soundArea -> setGlobalYRange_fraction (yminSound_fraction, 1.0);
-	} else {
-		//our noulliGridArea -> setGlobalYRange_fraction (0.0, 1.0);
-	}
-}
-
-void structNoulliGridEditor :: v_draw () {
-	if (our sound()) {
-		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.8, 1.0);
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
-		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		SoundArea_draw (our soundArea.get());
-		Graphics_resetViewport (our graphics.get(), viewport);
-		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.8);   // BUG: should be our noulliGridArea -> viewport()
-	}
-	NoulliGrid_paintInside (our noulliGrid(), our graphics.get(), our startWindow, our endWindow);
-}
-
-void structNoulliGridEditor :: v_play (double startTime, double endTime) {
-	if (our sound())
-		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
-}
 
 static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax, double tmin, double tmax, conststring32 header) {
 	for (integer itier = 1; itier <= my noulliGrid() -> tiers.size; itier ++) {
@@ -189,11 +159,12 @@ void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our setInstancePref_showCategoryInSelectionViewerAs (v_prefs_addFields__showCategoryInSelectionViewerAs);
 }
 
-autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid noulliGrid, Sound soundToCopy) {
+autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid noulliGrid, Sound optionalSoundToCopy) {
 	try {
 		autoNoulliGridEditor me = Thing_new (NoulliGridEditor);
-		if (soundToCopy)
-			my soundArea = SoundArea_create (false, soundToCopy, me.get());
+		my noulliGridArea() = NoulliGridArea_create (true, nullptr, me.get());
+		if (optionalSoundToCopy)
+			my soundArea() = SoundArea_create (false, optionalSoundToCopy, me.get());
 		FunctionEditor_init (me.get(), title, noulliGrid);
 		return me;
 	} catch (MelderError) {

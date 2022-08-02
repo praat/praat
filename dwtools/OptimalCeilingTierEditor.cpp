@@ -29,8 +29,8 @@ void structOptimalCeilingTierEditor :: v_createMenuItems_help (EditorMenu menu) 
 }
 
 void structOptimalCeilingTierEditor :: v_play (double startTime, double endTime) {
-	if (our sound())
-		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
+	if (our soundArea())
+		Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	//else
 	//	OptimalCeilingTier_playPart (data, startTime, endTime, false);
 }
@@ -40,9 +40,9 @@ autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 titl
 {
 	try {
 		autoOptimalCeilingTierEditor me = Thing_new (OptimalCeilingTierEditor);
-		my realTierArea = OptimalCeilingTierArea_create (true, nullptr, me.get());
+		my realTierArea() = OptimalCeilingTierArea_create (true, nullptr, me.get());
 		if (soundToCopy)
-			my soundArea = SoundArea_create (false, soundToCopy, me.get());
+			my soundArea() = SoundArea_create (false, soundToCopy, me.get());
 		FunctionEditor_init (me.get(), title, optimalCeilingTier);
 		return me;
 	} catch (MelderError) {

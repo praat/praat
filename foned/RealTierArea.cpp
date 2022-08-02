@@ -17,6 +17,7 @@
  */
 
 #include "RealTierArea.h"
+#include "EditorM.h"
 
 Thing_implement (RealTierArea, FunctionArea, 0);
 
@@ -47,8 +48,32 @@ void RealTierArea_addPointAtCursor (RealTierArea me) {
 	RealTierArea_addPointAt (me, cursorTime, my ycursor);
 }
 
-void structRealTierArea :: v_drawInside () {
-	RealTierArea_draw (this);
+static void RealTierArea_drawWhileDragging (RealTierArea me) {
+	Graphics_xorOn (my graphics(), Melder_MAROON);
+	/*
+		Draw all selected points as empty circles, if inside the window.
+	*/
+	for (integer ipoint = my firstSelected; ipoint <= my lastSelected; ipoint ++) {
+		const RealPoint point = my realTier() -> points.at [ipoint];
+		const double t = point -> number + my dt, y = point -> value + my dy;
+		if (t >= my startWindow() && t <= my endWindow())
+			Graphics_circle_mm (my graphics(), t, y, 3);
+	}
+
+	if (my lastSelected == my firstSelected) {
+		/*
+			Draw a crosshair with time and y.
+		*/
+		const RealPoint point = my realTier() -> points.at [my firstSelected];
+		const double t = point -> number + my dt, y = point -> value + my dy;
+		Graphics_line (my graphics(), t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics(), 4.0));
+		Graphics_setTextAlignment (my graphics(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
+		Graphics_text (my graphics(), t, my ymax, Melder_fixed (t, 6));
+		Graphics_line (my graphics(), my startWindow(), y, my endWindow(), y);
+		Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text (my graphics(), my startWindow(), y, Melder_fixed (y, 6));
+	}
+	Graphics_xorOff (my graphics());
 }
 
 void RealTierArea_draw (RealTierArea me) {
@@ -107,134 +132,173 @@ void RealTierArea_draw (RealTierArea me) {
 	}
 	Graphics_setLineWidth (my graphics(), 1.0);
 	Graphics_setColour (my graphics(), Melder_BLACK);
+	if (isdefined (my anchorTime))
+		RealTierArea_drawWhileDragging (me);
 }
 
-void RealTierArea_drawWhileDragging (RealTierArea me) {
-	Graphics_xorOn (my graphics(), Melder_MAROON);
-	/*
-		Draw all selected points as empty circles, if inside the window.
-	*/
-	for (integer ipoint = my firstSelected; ipoint <= my lastSelected; ipoint ++) {
-		const RealPoint point = my realTier() -> points.at [ipoint];
-		const double t = point -> number + my dt, y = point -> value + my dy;
-		if (t >= my startWindow() && t <= my endWindow())
-			Graphics_circle_mm (my graphics(), t, y, 3);
-	}
-
-	if (my lastSelected == my firstSelected) {
-		/*
-			Draw a crosshair with time and y.
-		*/
-		const RealPoint point = my realTier() -> points.at [my firstSelected];
-		const double t = point -> number + my dt, y = point -> value + my dy;
-		Graphics_line (my graphics(), t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics(), 4.0));
-		Graphics_setTextAlignment (my graphics(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
-		Graphics_text (my graphics(), t, my ymax, Melder_fixed (t, 6));
-		Graphics_line (my graphics(), my startWindow(), y, my endWindow(), y);
-		Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text (my graphics(), my startWindow(), y, Melder_fixed (y, 6));
-	}
-	Graphics_xorOff (my graphics());
+void structRealTierArea :: v_drawInside () {
+	RealTierArea_draw (this);
 }
 
-bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+bool structRealTierArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction) {
 	if (event -> isClick()) {
-		my anchorIsInFreePart = false;
-		my anchorIsNearPoint = false;
+		our anchorIsInFreePart = false;
+		our anchorIsNearPoint = false;
 	}
-	const double y_fraction_withinRealTierArea = my y_fraction_globalToLocal (y_fraction);
-	const double y_world = (1.0 - y_fraction_withinRealTierArea) * my ymin + y_fraction_withinRealTierArea * my ymax;
-	my viewRealTierAsWorldByWorld ();
+	const double y_world = (1.0 - localY_fraction) * our ymin + localY_fraction * our ymax;
+	our viewRealTierAsWorldByWorld ();
 	if (event -> isClick()) {
-		if (isdefined (my anchorTime))
+		if (isdefined (our anchorTime))
 			return false;
 		RealPoint clickedPoint = nullptr;
-		const integer inearestPoint = AnyTier_timeToNearestIndexInTimeWindow (my realTier()->asAnyTier(), x_world, my startWindow(), my endWindow());
+		const integer inearestPoint = AnyTier_timeToNearestIndexInTimeWindow (our realTier()->asAnyTier(), x_world, our startWindow(), our endWindow());
 		if (inearestPoint != 0) {
-			RealPoint nearestPoint = my realTier() -> points.at [inearestPoint];
-			if (Graphics_distanceWCtoMM (my graphics(), x_world, y_world, nearestPoint -> number, nearestPoint -> value) < 1.5)
+			RealPoint nearestPoint = our realTier() -> points.at [inearestPoint];
+			if (Graphics_distanceWCtoMM (our graphics(), x_world, y_world, nearestPoint -> number, nearestPoint -> value) < 1.5)
 				clickedPoint = nearestPoint;
 		}
 		if (! clickedPoint) {
-			my anchorIsInFreePart = true;
-			my ycursor = y_world;
-			return FunctionEditor_defaultMouseInWideDataView (my functionEditor(), event, x_world) || true;
+			our anchorIsInFreePart = true;
+			our ycursor = y_world;
+			return FunctionEditor_defaultMouseInWideDataView (our functionEditor(), event, x_world) || true;
 		}
-		my anchorIsNearPoint = true;
-		my draggingSelection = event -> shiftKeyPressed &&
-				clickedPoint -> number >= my startSelection() && clickedPoint -> number <= my endSelection();
-		if (my draggingSelection)
-			AnyTier_getWindowPoints (my realTier()->asAnyTier(), my startSelection(), my endSelection(), & my firstSelected, & my lastSelected);
+		our anchorIsNearPoint = true;
+		our draggingSelection = event -> shiftKeyPressed &&
+				clickedPoint -> number >= our startSelection() && clickedPoint -> number <= our endSelection();
+		if (our draggingSelection)
+			AnyTier_getWindowPoints (our realTier()->asAnyTier(), our startSelection(), our endSelection(), & our firstSelected, & our lastSelected);
 		else
-			my firstSelected = my lastSelected = inearestPoint;
-		my anchorTime = x_world;
-		my anchorY = y_world;
-		my dt = 0.0;
-		my dy = 0.0;
+			our firstSelected = our lastSelected = inearestPoint;
+		our anchorTime = x_world;
+		our anchorY = y_world;
+		our dt = 0.0;
+		our dy = 0.0;
 		return FunctionEditor_UPDATE_NEEDED;
 	} else if (event -> isDrag() || event -> isDrop()) {
-		if (my anchorIsInFreePart) {
-			my ycursor = y_world;
-			return FunctionEditor_defaultMouseInWideDataView (my functionEditor(), event, x_world) || true;
+		if (our anchorIsInFreePart) {
+			our ycursor = y_world;
+			return FunctionEditor_defaultMouseInWideDataView (our functionEditor(), event, x_world) || true;
 		}
-		Melder_assert (my anchorIsNearPoint);
-		my dt = x_world - my anchorTime;
-		my dy = y_world - my anchorY;
+		Melder_assert (our anchorIsNearPoint);
+		our dt = x_world - our anchorTime;
+		our dy = y_world - our anchorY;
 
 		if (event -> isDrop()) {
-			my anchorTime = undefined;
+			our anchorTime = undefined;
 
-			const bool somethingHasMoved = ( my dt != 0.0 || my dy != 0.0 );
+			const bool somethingHasMoved = ( our dt != 0.0 || our dy != 0.0 );
 			if (somethingHasMoved) {
-				if (my draggingSelection)
-					FunctionArea_save (me, U"Drag points");   // TODO: title can be more specific
+				if (our draggingSelection)
+					FunctionArea_save (this, U"Drag points");   // TODO: title can be more specific
 				else
-					FunctionArea_save (me, U"Drag point");   // TODO: title can be more specific
-				const double leftNewTime = my realTier() -> points.at [my firstSelected] -> number + my dt;
-				const double rightNewTime = my realTier() -> points.at [my lastSelected] -> number + my dt;
-				const bool offLeft = ( leftNewTime < my tmin() );
-				const bool offRight = ( rightNewTime > my tmax() );
-				const bool draggedPastLeftNeighbour = ( my firstSelected > 1 && leftNewTime <= my realTier() -> points.at [my firstSelected - 1] -> number );
-				const bool draggedPastRightNeighbour = ( my lastSelected < my realTier() -> points.size && rightNewTime >= my realTier() -> points.at [my lastSelected + 1] -> number );
+					FunctionArea_save (this, U"Drag point");   // TODO: title can be more specific
+				const double leftNewTime = our realTier() -> points.at [our firstSelected] -> number + our dt;
+				const double rightNewTime = our realTier() -> points.at [our lastSelected] -> number + our dt;
+				const bool offLeft = ( leftNewTime < our tmin() );
+				const bool offRight = ( rightNewTime > our tmax() );
+				const bool draggedPastLeftNeighbour = ( our firstSelected > 1 && leftNewTime <= our realTier() -> points.at [our firstSelected - 1] -> number );
+				const bool draggedPastRightNeighbour = ( our lastSelected < our realTier() -> points.size && rightNewTime >= our realTier() -> points.at [our lastSelected + 1] -> number );
 				if (offLeft || offRight || draggedPastLeftNeighbour || draggedPastRightNeighbour) {
 					Melder_beep ();
 					return FunctionEditor_UPDATE_NEEDED;
 				}
 
-				for (integer i = my firstSelected; i <= my lastSelected; i ++) {
-					RealPoint point = my realTier() -> points.at [i];
-					point -> number += my dt;
+				for (integer i = our firstSelected; i <= our lastSelected; i ++) {
+					RealPoint point = our realTier() -> points.at [i];
+					point -> number += our dt;
 					double pointY = point -> value;
-					pointY += my dy;
-					Melder_clip (my v_minimumLegalY(), & pointY, my v_maximumLegalY());
+					pointY += our dy;
+					Melder_clip (our v_minimumLegalY(), & pointY, our v_maximumLegalY());
 					point -> value = pointY;
 				}
 
 				/*
 					Make sure that the same points are still selected (a problem with Undo...).
 				*/
-				if (my draggingSelection)
-					my setSelection (my startSelection() + my dt, my endSelection() + my dt);
+				if (our draggingSelection)
+					our setSelection (our startSelection() + our dt, our endSelection() + our dt);
 			}
-			if (my firstSelected == my lastSelected) {
+			if (our firstSelected == our lastSelected) {
 				/*
 					Move crosshair to only selected point.
 				*/
-				RealPoint point = my realTier() -> points.at [my firstSelected];
-				my setSelection (point -> number, point -> number);
-				my ycursor = point -> value;
+				RealPoint point = our realTier() -> points.at [our firstSelected];
+				our setSelection (point -> number, point -> number);
+				our ycursor = point -> value;
 			} else {
 				/*
 					Move crosshair to mouse location.
 				*/
-				my ycursor += my dy;
-				Melder_clip (my v_minimumLegalY(), & my ycursor, my v_maximumLegalY());   // NaN-safe
+				our ycursor += our dy;
+				Melder_clip (our v_minimumLegalY(), & our ycursor, our v_maximumLegalY());   // NaN-safe
 			}
-
-			FunctionArea_broadcastDataChanged (me);
+			FunctionArea_broadcastDataChanged (this);
 		}
 	}
 	return FunctionEditor_UPDATE_NEEDED;
+}
+
+bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
+	const double localY_fraction = my y_fraction_globalToLocal (globalY_fraction);
+	return my v_mouse (event, x_world, localY_fraction);
+}
+
+static void menu_cb_removePoints (RealTierArea me, EDITOR_ARGS_DIRECT) {
+	FunctionArea_save (me, U"Remove point(s)");
+	RealTierArea_removePoints (me);
+	Editor_broadcastDataChanged (my functionEditor());
+}
+
+static void menu_cb_addPointAtCursor (RealTierArea me, EDITOR_ARGS_DIRECT) {
+	FunctionArea_save (me, U"Add point");
+	RealTierArea_addPointAtCursor (me);
+	Editor_broadcastDataChanged (my functionEditor());
+}
+
+static void menu_cb_addPointAt (RealTierArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Add point", nullptr)
+		REAL (time, U"Time (s)", U"0.0")
+		REAL (desiredY, my v_quantityText (), U"0.0")
+	EDITOR_OK
+		SET_REAL (time, 0.5 * (my startSelection() + my endSelection()))
+		SET_REAL (desiredY, my ycursor)
+	EDITOR_DO
+		FunctionArea_save (me, U"Add point");
+		RealTierArea_addPointAt (me, time, desiredY);
+		Editor_broadcastDataChanged (my functionEditor());
+	EDITOR_END
+}
+
+static void menu_cb_setRange (RealTierArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (my v_setRangeTitle (), nullptr)
+		REAL (ymin, my v_minimumLabelText (), my default_dataFreeMinimum())
+		REAL (ymax, my v_maximumLabelText (), my default_dataFreeMaximum())
+	EDITOR_OK
+		SET_REAL (ymin, my instancePref_dataFreeMinimum())
+		SET_REAL (ymax, my instancePref_dataFreeMaximum())
+	EDITOR_DO
+		my setInstancePref_dataFreeMinimum (ymin);
+		my setInstancePref_dataFreeMaximum (ymax);
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
+void structRealTierArea :: v0_createMenuItems_view_vertical (EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- view/realtier --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, our v_setRangeTitle (), 0,
+			menu_cb_setRange, this);
+}
+
+void structRealTierArea :: v_createMenus () {
+	RealTierArea_Parent :: v_createMenus ();
+	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Point", 0);
+	FunctionAreaMenu_addCommand (menu, U"Add point at cursor", 'T',
+			menu_cb_addPointAtCursor, this);
+	FunctionAreaMenu_addCommand (menu, U"Add point at...", 0,
+			menu_cb_addPointAt, this);
+	FunctionAreaMenu_addCommand (menu, U"-- remove point --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'T',
+			menu_cb_removePoints, this);
 }
 
 /* End of file RealTierArea.cpp */

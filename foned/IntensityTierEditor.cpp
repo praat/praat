@@ -31,8 +31,8 @@ void structIntensityTierEditor :: v_createMenuItems_help (EditorMenu menu) {
 }
 
 void structIntensityTierEditor :: v_play (double startTime, double endTime) {
-	if (our sound()) {
-		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
+	if (our soundArea()) {
+		Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
 		//IntensityTier_playPart (our data, startTime, endTime, false);
 	}
@@ -41,9 +41,9 @@ void structIntensityTierEditor :: v_play (double startTime, double endTime) {
 autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensityTier, Sound soundToCopy) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
-		my realTierArea = IntensityTierArea_create (true, nullptr, me.get());
+		my realTierArea() = IntensityTierArea_create (true, nullptr, me.get());
 		if (soundToCopy)
-			my soundArea = SoundArea_create (false, soundToCopy, me.get());
+			my soundArea() = SoundArea_create (false, soundToCopy, me.get());
 		FunctionEditor_init (me.get(), title, intensityTier);
 		return me;
 	} catch (MelderError) {

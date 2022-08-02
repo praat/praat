@@ -28,12 +28,28 @@
 Thing_define (KlattGrid_IntensityTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
+	conststring32 v_quantityText ()
+		override { return U"Intensity (dB)"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set intensity range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum intensity (dB)"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum intensity (dB)"; }
 	#include "KlattGrid_IntensityTierArea_prefs.h"
 };
 
 Thing_define (KlattGrid_DecibelTierArea, KlattGrid_IntensityTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
+	conststring32 v_quantityText ()
+		override { return U"Amplitude (dB)"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set amplitude range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum amplitude (dB)"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum amplitude (dB)"; }
 	#include "KlattGrid_DecibelTierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_DecibelTierArea, IntensityTier)
@@ -41,6 +57,14 @@ DEFINE_FunctionArea_create (KlattGrid_DecibelTierArea, IntensityTier)
 #pragma mark - KlattGrid_PitchTierArea
 
 Thing_define (KlattGrid_PitchTierArea, PitchTierArea) {
+	conststring32 v_quantityText ()
+		override { return U"Frequency (Hz)"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set frequency range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum frequency (Hz)"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum frequency (Hz)"; }
 	#include "KlattGrid_PitchTierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_PitchTierArea, PitchTier)
@@ -62,6 +86,14 @@ Thing_define (KlattGrid_FlutterTierArea, RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
+	conststring32 v_quantityText ()
+		override { return U"Flutter (0..1)"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set flutter range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum (0..1)"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum (0..1)"; }
 	#include "KlattGrid_FlutterTierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_FlutterTierArea, RealTier)
@@ -74,6 +106,14 @@ Thing_define (KlattGrid_Power1TierArea, RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
+	conststring32 v_quantityText ()
+		override { return U"Power1"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set power1 range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum"; }
 	#include "KlattGrid_Power1TierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_Power1TierArea, RealTier)
@@ -86,6 +126,14 @@ Thing_define (KlattGrid_Power2TierArea, RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
+	conststring32 v_quantityText ()
+		override { return U"Power2"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set power2 range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum"; }
 	#include "KlattGrid_Power2TierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_Power2TierArea, RealTier)
@@ -100,6 +148,14 @@ Thing_define (KlattGrid_OpenPhaseTierArea, RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
+	conststring32 v_quantityText ()
+		override { return U"Open phase (0..1)"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set open phase range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum (0..1)"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum (0..1)"; }
 	#include "KlattGrid_OpenPhaseTierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_OpenPhaseTierArea, RealTier)
@@ -114,6 +170,14 @@ Thing_define (KlattGrid_CollisionPhaseTierArea, RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
+	conststring32 v_quantityText ()
+		override { return U"Collision phase (0..1)"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set collision phase range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum (0..1)"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum (0..1)"; }
 	#include "KlattGrid_CollisionPhaseTierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_CollisionPhaseTierArea, RealTier)
@@ -128,6 +192,14 @@ Thing_define (KlattGrid_DoublePulsingTierArea, RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
+	conststring32 v_quantityText ()
+		override { return U"Double pulsing (0..1)"; }
+	conststring32 v_setRangeTitle ()
+		override { return U"Set double pulsing range..."; }
+	conststring32 v_minimumLabelText ()
+		override { return U"Minimum (0..1)"; }
+	conststring32 v_maximumLabelText ()
+		override { return U"Maximum (0..1)"; }
 	#include "KlattGrid_DoublePulsingTierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_DoublePulsingTierArea, RealTier)

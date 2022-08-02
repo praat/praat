@@ -29,8 +29,8 @@ void structDurationTierEditor :: v_createMenuItems_help (EditorMenu menu) {
 }
 
 void structDurationTierEditor :: v_play (double fromTime, double toTime) {
-	if (our sound()) {
-		Sound_playPart (our sound(), fromTime, toTime, nullptr, nullptr);
+	if (our soundArea()) {
+		Sound_playPart (our soundArea() -> sound(), fromTime, toTime, nullptr, nullptr);
 	} else {
 		//DurationTier_playPart (data, fromTime, toTime, false);
 	}
@@ -39,9 +39,9 @@ void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier durationTier, Sound soundToCopy) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
-		my realTierArea = DurationTierArea_create (true, nullptr, me.get());
+		my realTierArea() = DurationTierArea_create (true, nullptr, me.get());
 		if (soundToCopy)
-			my soundArea = SoundArea_create (false, soundToCopy, me.get());
+			my soundArea() = SoundArea_create (false, soundToCopy, me.get());
 		FunctionEditor_init (me.get(), title, durationTier);
 		return me;
 	} catch (MelderError) {

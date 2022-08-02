@@ -68,6 +68,18 @@ public:
 	}
 	void v_drawInside ()
 		override;
+	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
+		override;
+	void v0_createMenuItems_view_vertical (EditorMenu menu)
+		override;
+	void v_createMenus ()
+		override;
+
+	virtual conststring32 v_quantityText () { return U"Y"; }   // normally includes units
+	virtual conststring32 v_setRangeTitle () { return U"Set range..."; }
+	virtual conststring32 v_minimumLabelText () { return U"Minimum"; }   // normally includes units
+	virtual conststring32 v_maximumLabelText () { return U"Maximum"; }   // normally includes units
+
 	#include "RealTierArea_prefs.h"
 };
 
@@ -78,8 +90,6 @@ void RealTierArea_removePoints (RealTierArea me);
 void RealTierArea_addPointAtCursor (RealTierArea me);
 
 void RealTierArea_draw (RealTierArea me);
-
-void RealTierArea_drawWhileDragging (RealTierArea me);
 
 bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
