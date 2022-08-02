@@ -368,14 +368,14 @@ static void INFO_DATA__LongSoundInfo (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTP
 	INFO_DATA_END
 }
 enum {
-	TimeSoundEditor_PART_CURSOR = 1,
-	TimeSoundEditor_PART_SELECTION = 2
+	SoundArea_PART_CURSOR = 1,
+	SoundArea_PART_SELECTION = 2
 };
 static int makeQueriable (SoundArea me, bool allowCursor, double *tmin, double *tmax) {
 	if (my startSelection() == my endSelection()) {
 		if (allowCursor) {
 			*tmin = *tmax = my startSelection();
-			return TimeSoundEditor_PART_CURSOR;
+			return SoundArea_PART_CURSOR;
 		} else {
 			Melder_throw (U"Make a selection first.");
 		}
@@ -386,7 +386,7 @@ static int makeQueriable (SoundArea me, bool allowCursor, double *tmin, double *
 	}
 	*tmin = my startSelection();
 	*tmax = my endSelection();
-	return TimeSoundEditor_PART_SELECTION;
+	return SoundArea_PART_SELECTION;
 }
 static void INFO_DATA__getAmplitudes (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
@@ -395,7 +395,7 @@ static void INFO_DATA__getAmplitudes (SoundArea me, EDITOR_ARGS_DIRECT_WITH_OUTP
 		if (! my sound())
 			Melder_throw (U"No Sound object is visible (a LongSound cannot be queried).");
 		MelderInfo_open ();
-		if (part == TimeSoundEditor_PART_CURSOR)
+		if (part == SoundArea_PART_CURSOR)
 			for (integer ichan = 1; ichan <= my sound() -> ny; ichan ++)
 				MelderInfo_writeLine (Vector_getValueAtX (my sound(), 0.5 * (my startSelection() + my endSelection()), ichan, kVector_valueInterpolation :: SINC70),
 						U" (interpolated amplitude at CURSOR in channel ", ichan, U")");

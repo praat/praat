@@ -18,20 +18,35 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TimeSoundEditor.h"
-#include "NoulliGrid.h"
+#include "FunctionEditor.h"
+#include "NoulliGridArea.h"
+#include "SoundArea.h"
 
 #include "NoulliGridEditor_enums.h"
 
-Thing_define (NoulliGridEditor, TimeSoundEditor) {
+Thing_define (NoulliGridEditor, FunctionEditor) {
+	DEFINE_FunctionArea (1, NoulliGridArea, noulliGridArea)
+	DEFINE_FunctionArea (2, SoundArea, soundArea)
 	NoulliGrid noulliGrid () { return static_cast <NoulliGrid> (our data()); }
 
-	void v_distributeAreas ()
-		override;
-	void v_draw ()
-		override;
-	void v_play (double startTime, double endTime)
-		override;
+	void v1_dataChanged () override {
+		NoulliGridEditor_Parent :: v1_dataChanged ();
+		our noulliGridArea() -> functionChanged (static_cast <NoulliGrid> (our data()));
+		if (our soundArea())
+			our soundArea() -> functionChanged (nullptr);
+	}
+	void v_distributeAreas () override {
+		if (our soundArea()) {
+			our noulliGridArea() -> setGlobalYRange_fraction (0.0, 0.8);
+			our soundArea() -> setGlobalYRange_fraction (0.8, 1.0);
+		} else {
+			our noulliGridArea() -> setGlobalYRange_fraction (0.0, 1.0);
+		}
+	}
+	void v_play (double startTime, double endTime) override {
+		if (our soundArea())
+			Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
+	}
 	void v_prefs_addFields (EditorCommand cmd)
 		override;
 	void v_prefs_setValues (EditorCommand cmd)
@@ -48,10 +63,7 @@ Thing_define (NoulliGridEditor, TimeSoundEditor) {
 	#include "NoulliGridEditor_prefs.h"
 };
 
-autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid grid, Sound sound);
-/*
-	`sound` may be null
-*/
+autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid grid, Sound optionalSoundToCopy);
 
 /* End of file NoulliGridEditor.h */
 #endif

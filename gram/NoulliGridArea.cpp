@@ -1,6 +1,6 @@
-/* TimeSoundEditor.cpp
+/* NoulliGridArea.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 2018-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TimeSoundEditor.h"
+#include "NoulliGridArea.h"
+#include "EditorM.h"
 
-Thing_implement_pureVirtual (TimeSoundEditor, FunctionEditor, 0);
+Thing_implement (NoulliGridArea, FunctionArea, 0);
 
-/*
-	TimeSoundEditor is designed to be removed.
-	Most of its remaining functionality is to just delegate everything to SoundArea.
-	At some point, editors will just have to include a SoundArea instead of deriving from TimeSoundEditor.
-*/
+void structNoulliGridArea :: v_drawInside () {
+	NoulliGrid_paintInside (our noulliGrid(), our graphics(), our startWindow(), our endWindow());
+}
 
-/* End of file TimeSoundEditor.cpp */
+/* End of file NoulliGridArea.cpp */

@@ -10,7 +10,7 @@ OBJECTS = SoundRecorder.o \
    SpectrumArea.o PointArea.o \
    RealTierArea.o PitchTierArea.o IntensityTierArea.o DurationTierArea.o AmplitudeTierArea.o \
    FormantGridArea.o MovieArea.o \
-   FunctionEditor.o TimeSoundEditor.o \
+   FunctionEditor.o \
    PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
    RealTierEditor.o PitchTierEditor.o IntensityTierEditor.o \
    DurationTierEditor.o AmplitudeTierEditor.o \
