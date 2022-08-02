@@ -18,31 +18,40 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "RealTierEditor.h"
+#include "FunctionEditor.h"
 #include "PitchTierArea.h"
-#include "Sound.h"
+#include "SoundArea.h"
+#include "PitchTier_to_Sound.h"
 
-Thing_define (PitchTierEditor, RealTierEditor) {
-	PitchTierArea pitchTierArea() { return static_cast <PitchTierArea> (our realTierArea.get()); }
+Thing_define (PitchTierEditor, FunctionEditor) {
+	DEFINE_FunctionArea (1, PitchTierArea, pitchTierArea)
+	DEFINE_FunctionArea (2, SoundArea, soundArea)
 
+	void v1_dataChanged () override {
+		our PitchTierEditor_Parent :: v1_dataChanged ();
+		our pitchTierArea() -> functionChanged (static_cast <PitchTier> (our data()));
+		if (our soundArea())
+			our soundArea() -> functionChanged (nullptr);   // BUG: the copy probably doesn't change
+	}
+	void v_distributeAreas () override {
+		if (our soundArea()) {
+			our pitchTierArea() -> setGlobalYRange_fraction (0.0, 0.618);
+			our soundArea() -> setGlobalYRange_fraction (0.618, 1.0);
+		} else {
+			our pitchTierArea() -> setGlobalYRange_fraction (0.0, 1.0);
+		}
+	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_play (double tmin, double tmax)
-		override;
-	conststring32 v_quantityText ()
-		override { return U"Frequency (Hz)"; }
-	conststring32 v_setRangeTitle ()
-		override { return U"Set frequency range..."; }
-	conststring32 v_minimumLabelText ()
-		override { return U"Minimum frequency (Hz)"; }
-	conststring32 v_maximumLabelText ()
-		override { return U"Maximum frequency (Hz)"; }
+	void v_play (double startTime, double endTime) override {
+		if (our soundArea())
+			Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
+		else
+			PitchTier_playPart (our pitchTierArea() -> pitchTier(), startTime, endTime, false);
+	}
 };
 
-autoPitchTierEditor PitchTierEditor_create (conststring32 title,
-	PitchTier pitch,
-	Sound sound   // will be copied; may be null
-);
+autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch, Sound optionalSoundToCopy);
 
 /* End of file PitchTierEditor.h */
 #endif

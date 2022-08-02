@@ -27,14 +27,6 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 		override;
 	void v_play (double fromTime, double toTime)
 		override;
-	conststring32 v_quantityText ()
-		override { return U"Relative duration"; }
-	conststring32 v_setRangeTitle ()
-		override { return U"Set duration range..."; }
-	conststring32 v_minimumLabelText ()
-		override { return U"Minimum duration"; }
-	conststring32 v_maximumLabelText ()
-		override { return U"Maximum duration"; }
 };
 
 autoDurationTierEditor DurationTierEditor_create (conststring32 title,

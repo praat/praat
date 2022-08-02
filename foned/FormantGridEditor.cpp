@@ -228,8 +228,6 @@ void structFormantGridEditor :: v_draw () {
 		}
 	}
 	RealTierArea_draw (our formantGridArea.get());
-	if (isdefined (our formantGridArea -> anchorTime))
-		RealTierArea_drawWhileDragging (our formantGridArea.get());
 }
 
 bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {

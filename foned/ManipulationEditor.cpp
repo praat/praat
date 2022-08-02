@@ -664,8 +664,6 @@ void structManipulationPitchTierArea :: v_drawInside () {
 			our ymin, our ymax);
 	}
 	ManipulationPitchTierArea_Parent :: v_drawInside ();
-	if (isdefined (our anchorTime))
-		RealTierArea_drawWhileDragging (this);
 }
 
 void structManipulationDurationTierArea :: v_drawInside () {
@@ -690,8 +688,6 @@ void structManipulationDurationTierArea :: v_drawInside () {
 				Melder_fixed (y, 3), U"", our ymin, our ymax);
 	}
 	ManipulationDurationTierArea_Parent :: v_drawInside ();
-	if (isdefined (our anchorTime))
-		RealTierArea_drawWhileDragging (this);
 }
 
 void structManipulationEditor :: v_draw () {

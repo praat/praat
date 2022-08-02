@@ -17,10 +17,9 @@
  */
 
 #include "PitchTierEditor.h"
-#include "PitchTier_to_Sound.h"
 #include "EditorM.h"
 
-Thing_implement (PitchTierEditor, RealTierEditor, 0);
+Thing_implement (PitchTierEditor, FunctionEditor, 0);
 
 static void menu_cb_PitchTierEditorHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) {
 	HELP (U"PitchTierEditor")
@@ -36,19 +35,12 @@ void structPitchTierEditor :: v_createMenuItems_help (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
 
-void structPitchTierEditor :: v_play (double startTime, double endTime) {
-	if (our sound())
-		Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
-	else
-		PitchTier_playPart (our pitchTierArea() -> pitchTier(), startTime, endTime, false);
-}
-
-autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitchTier, Sound soundToCopy) {
+autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitchTier, Sound optionalSoundToCopy) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		my realTierArea = PitchTierArea_create (true, nullptr, me.get());
-		if (soundToCopy)
-			my soundArea = SoundArea_create (false, soundToCopy, me.get());
+		my pitchTierArea() = PitchTierArea_create (true, nullptr, me.get());
+		if (optionalSoundToCopy)
+			my soundArea() = SoundArea_create (false, optionalSoundToCopy, me.get());
 		FunctionEditor_init (me.get(), title, pitchTier);
 		return me;
 	} catch (MelderError) {

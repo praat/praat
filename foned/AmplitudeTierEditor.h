@@ -27,14 +27,6 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override;
 	void v_play (double fromTime, double toTime)
 		override;
-	conststring32 v_quantityText ()
-		override { return U"Sound pressure (Pa)"; }
-	conststring32 v_setRangeTitle ()
-		override { return U"Set amplitude range..."; }
-	conststring32 v_minimumLabelText ()
-		override { return U"Minimum amplitude (Pa)"; }
-	conststring32 v_maximumLabelText ()
-		override { return U"Maximum amplitude (Pa)"; }
 };
 
 autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title,

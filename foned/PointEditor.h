@@ -18,34 +18,43 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TimeSoundEditor.h"
-#include "PointProcess.h"
+#include "FunctionEditor.h"
+#include "PointArea.h"
+#include "SoundArea.h"
+#include "PointProcess_and_Sound.h"
 
-Thing_define (PointEditor, TimeSoundEditor) {
-	PointProcess pointProcess() { return static_cast <PointProcess> (our data()); }
-	
-	GuiObject addPointAtDialog;
+Thing_define (PointEditor, FunctionEditor) {
+	DEFINE_FunctionArea (1, PointArea, pointArea)
+	DEFINE_FunctionArea (2, SoundArea, soundArea)
 
 	void v1_dataChanged () override {
 		PointEditor_Parent :: v1_dataChanged ();
-		if (our soundArea)
-			our soundArea -> functionChanged (nullptr);
+		our pointArea() -> functionChanged (static_cast <PointProcess> (our data()));
+		if (our soundArea())
+			our soundArea() -> functionChanged (nullptr);
 	}
-
-	void v_createMenus ()
-		override;
+	void v_distributeAreas () override {
+		our pointArea() -> setGlobalYRange_fraction (0.0, 1.0);
+		if (our soundArea())
+			our soundArea() -> setGlobalYRange_fraction (0.0, 1.0);
+	}
+	void v_draw () override {
+		if (our soundArea())
+			FunctionArea_drawTwo (our soundArea().get(), our pointArea().get());
+		else
+			FunctionArea_drawOne (our pointArea().get());
+	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_draw ()
-		override;
-	void v_play (double tmin, double tmax)
-		override;
+	void v_play (double startTime, double endTime) override {
+		if (our soundArea())
+			Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
+		else
+			PointProcess_playPart (our pointArea() -> pointProcess(), startTime, endTime);
+	}
 };
 
-autoPointEditor PointEditor_create (conststring32 title,
-	PointProcess point,
-	Sound sound   // may be null
-);
+autoPointEditor PointEditor_create (conststring32 title, PointProcess point, Sound optionalCopyOfSound);
 
 /* End of file PointEditor.h */
 #endif
