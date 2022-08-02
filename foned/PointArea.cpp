@@ -24,9 +24,9 @@
 
 Thing_implement (PointArea, FunctionArea, 0);
 
-#undef DATA_BEGIN__
-#define DATA_BEGIN__ \
-	Melder_assert (my function());
+//#undef DATA_BEGIN__
+//#define DATA_BEGIN__ \
+//	Melder_assert (my function());
 #undef MODIFY_DATA
 #define MODIFY_DATA(undoTitle)  \
 	FunctionArea_save (me, undoTitle);
