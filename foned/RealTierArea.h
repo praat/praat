@@ -27,7 +27,7 @@ Thing_define (RealTierArea, FunctionArea) {
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
 
-	double ymin, ymax, ycursor;   // BUG: this should be in a cache
+	double ymin, ymax, ycursor = 1.0;   // BUG: this should be in a cache
 public:   // BUG: should be "protected" (now public because it is sometimes used as a message)
 	virtual void v_updateScaling () {
 		/*

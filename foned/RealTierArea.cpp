@@ -279,6 +279,7 @@ static void menu_cb_setRange (RealTierArea me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		my setInstancePref_dataFreeMinimum (ymin);
 		my setInstancePref_dataFreeMaximum (ymax);
+		my v_updateScaling ();   // BUG: should be viewChanged()
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
