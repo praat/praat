@@ -7,7 +7,7 @@ CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools
 
 OBJECTS = SoundRecorder.o \
    FunctionArea.o SoundArea.o SoundAnalysisArea.o TextGridArea.o \
-   SpectrumArea.o PointArea.o PitchArea.o \
+   SpectrumArea.o PointArea.o PitchArea.o SpectrogramArea.o \
    RealTierArea.o PitchTierArea.o IntensityTierArea.o DurationTierArea.o AmplitudeTierArea.o \
    FormantGridArea.o MovieArea.o \
    FunctionEditor.o \
