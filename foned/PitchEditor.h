@@ -19,21 +19,24 @@
  */
 
 #include "FunctionEditor.h"
-#include "Pitch.h"
+#include "PitchArea.h"
+#include "Pitch_to_Sound.h"
 
 Thing_define (PitchEditor, FunctionEditor) {
-	Pitch pitch() { return static_cast <Pitch> (our data()); }
+	DEFINE_FunctionArea (1, PitchArea, pitchArea)
 
-	void v_createMenus ()
-		override;
+	void v1_dataChanged () override {
+		PitchEditor_Parent :: v1_dataChanged ();
+		our pitchArea() -> functionChanged (static_cast <Pitch> (our data()));
+	}
+	void v_distributeAreas () override {
+		our pitchArea() -> setGlobalYRange_fraction (0.0, 1.0);
+	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_draw ()
-		override;
-	void v_play (double tmin, double tmax)
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
-		override;
+	void v_play (double startTime, double endTime) override {
+		Pitch_hum (our pitchArea() -> pitch(), startTime, endTime);   // BUG: why no callback?
+	}
 };
 
 autoPitchEditor PitchEditor_create (conststring32 title, Pitch pitch);
