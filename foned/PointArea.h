@@ -27,8 +27,6 @@ Thing_define (PointArea, FunctionArea) {
 	PointProcess pointProcess() { return static_cast <PointProcess> (our function()); }
 	SoundArea borrowedSoundArea = nullptr;
 
-	GuiObject addPointAtDialog;
-
 	void v_createMenus ()
 		override;
 	void v_drawInside ()

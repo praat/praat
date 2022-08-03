@@ -99,7 +99,7 @@ static void menu_cb_passBand (SpectrumArea me, EDITOR_ARGS_FORM) {
 
 		Spectrum_passHannBand (my spectrum(), my startSelection(), my endSelection(), my instancePref_bandSmoothing());
 
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 static void menu_cb_stopBand (SpectrumArea me, EDITOR_ARGS_FORM) {
@@ -116,7 +116,7 @@ static void menu_cb_stopBand (SpectrumArea me, EDITOR_ARGS_FORM) {
 
 		Spectrum_stopHannBand (my spectrum(), my startSelection(), my endSelection(), my instancePref_bandSmoothing());
 
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 

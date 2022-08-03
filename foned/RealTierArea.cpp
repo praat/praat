@@ -246,13 +246,13 @@ bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, doubl
 static void menu_cb_removePoints (RealTierArea me, EDITOR_ARGS_DIRECT) {
 	FunctionArea_save (me, U"Remove point(s)");
 	RealTierArea_removePoints (me);
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAtCursor (RealTierArea me, EDITOR_ARGS_DIRECT) {
 	FunctionArea_save (me, U"Add point");
 	RealTierArea_addPointAtCursor (me);
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 
 static void menu_cb_addPointAt (RealTierArea me, EDITOR_ARGS_FORM) {
@@ -265,7 +265,7 @@ static void menu_cb_addPointAt (RealTierArea me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		FunctionArea_save (me, U"Add point");
 		RealTierArea_addPointAt (me, time, desiredY);
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 

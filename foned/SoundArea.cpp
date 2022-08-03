@@ -448,7 +448,7 @@ static void menu_cb_MoveEndOfSelectionToNearestZeroCrossing (SoundArea me, EDITO
 }
 static void addSoundSelectMenu (SoundArea me, EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- sound select --", 0, nullptr, me);
-	FunctionAreaMenu_addCommand (menu, U"Select sound:", 0, nullptr, me);
+	FunctionAreaMenu_addCommand (menu, U"Select by sound:", 0, nullptr, me);
 	FunctionAreaMenu_addCommand (menu, U"Move start of selection to nearest zero crossing", ',',
 			menu_cb_MoveStartOfSelectionToNearestZeroCrossing, me);
 	FunctionAreaMenu_addCommand (menu, U"Move begin of selection to nearest zero crossing", Editor_HIDDEN,
@@ -850,7 +850,7 @@ static void menu_cb_Cut (SoundArea me, EDITOR_ARGS_DIRECT) {
 				Force FunctionEditor to show changes.
 			*/
 			FunctionEditor_ungroup (my sound());
-			FunctionEditor_marksChanged (my functionEditor(), false);
+			//FunctionEditor_marksChanged (my functionEditor(), false);
 			FunctionArea_broadcastDataChanged (me);
 		} else {
 			Melder_warning (U"No samples selected.");

@@ -72,8 +72,7 @@ bool LongSound_haveWindow (LongSound me, double tmin, double tmax);
 
 void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, integer channel, double *minimum, double *maximum);
 
-void LongSound_playPart (LongSound me, double tmin, double tmax,
-	Sound_PlayCallback callback, Thing boss);
+void LongSound_playPart (LongSound me, double startTime, double endTime, Sound_PlayCallback playCallback, Thing playBoss);
 
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
 void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, integer channel, MelderFile file);

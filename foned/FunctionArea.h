@@ -183,7 +183,7 @@ public:
 	}
 	friend void FunctionArea_broadcastDataChanged (FunctionArea me) {
 		Melder_assert (my editable());
-		Editor_broadcastDataChanged (my functionEditor());
+		Editor_broadcastDataChanged (my boss());
 	}
 
 	virtual void v0_createMenuItems_view_vertical (EditorMenu) { }

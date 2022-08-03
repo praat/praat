@@ -243,6 +243,8 @@ DEFINE_FunctionArea_create (KlattGrid_FricationAmplitudeTierArea, IntensityTier)
 
 #pragma mark - KlattGrid_FormantGridArea
 Thing_define (KlattGrid_FormantGridArea, FormantGridArea) {
+	bool v_hasSourceMenu ()
+		override { return false; }
 };
 DEFINE_FunctionArea_create (KlattGrid_FormantGridArea, FormantGrid)
 

@@ -44,7 +44,7 @@ autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, bool hum) {
 	}
 }
 
-void Pitch_play (Pitch me, double tmin, double tmax) {
+void Pitch_play (Pitch me, double tmin, double tmax) {   // BUG: why no callback?
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoSound sound = Pitch_to_Sound (me, tmin, tmax, false);

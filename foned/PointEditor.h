@@ -50,7 +50,7 @@ Thing_define (PointEditor, FunctionEditor) {
 		if (our soundArea())
 			Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 		else
-			PointProcess_playPart (our pointArea() -> pointProcess(), startTime, endTime);
+			PointProcess_playPart (our pointArea() -> pointProcess(), startTime, endTime);   // BUG: why no callback?
 	}
 };
 

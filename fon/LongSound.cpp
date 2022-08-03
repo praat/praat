@@ -538,46 +538,44 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, integer
 
 static struct LongSoundPlay {
 	integer numberOfSamples, i1, i2, silenceBefore, silenceAfter;
-	double tmin, tmax, dt, t1;
+	double startTime, endTime, dt, t1;
 	int16 *resampledBuffer;
-	Sound_PlayCallback callback;
-	Thing boss;
+	Sound_PlayCallback playCallback;
+	Thing playBoss;
 } thePlayingLongSound;
 
 static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 	struct LongSoundPlay *me = (struct LongSoundPlay *) closure;
 	int phase = 2;
-	double t = samplesPlayed <= my silenceBefore ? my tmin :
-		samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
+	double t = samplesPlayed <= my silenceBefore ? my startTime :
+		samplesPlayed >= my silenceBefore + my numberOfSamples ? my endTime :
 		my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt;
 	if (! MelderAudio_isPlaying) {
 		phase = 3;
 		Melder_free (my resampledBuffer);
 	}
-	if (my callback)
-		return my callback (my boss, phase, my tmin, my tmax, t);
+	if (my playCallback)
+		return my playCallback (my playBoss, phase, my startTime, my endTime, t);
 	return true;
 }
 
-void LongSound_playPart (LongSound me, double tmin, double tmax,
-	Sound_PlayCallback callback, Thing boss)
-{
+void LongSound_playPart (LongSound me, double startTime, double endTime, Sound_PlayCallback playCallback, Thing playBoss) {
 	struct LongSoundPlay *thee = (struct LongSoundPlay *) & thePlayingLongSound;
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	Melder_free (thy resampledBuffer);   // just in case, and after playing has stopped
 	try {
-		bool fits = LongSound_haveWindow (me, tmin, tmax);
+		bool fits = LongSound_haveWindow (me, startTime, endTime);
 		integer bestSampleRate = MelderAudio_getOutputBestSampleRate (my sampleRate), n, i1, i2;
 		if (! fits)
-			Melder_throw (U"Sound too long (", tmax - tmin, U" seconds).");
+			Melder_throw (U"Sound too long (", endTime - startTime, U" seconds).");
 		/*
 			Assign to *thee only after stopping the playing sound.
 		*/
-		thy tmin = tmin;
-		thy tmax = tmax;
-		thy callback = callback;
-		thy boss = boss;
-		if ((n = Sampled_getWindowSamples (me, tmin, tmax, & i1, & i2)) < 2) return;
+		thy startTime = startTime;
+		thy endTime = endTime;
+		thy playCallback = playCallback;
+		thy playBoss = playBoss;
+		if ((n = Sampled_getWindowSamples (me, startTime, endTime, & i1, & i2)) < 2) return;
 		if (bestSampleRate == my sampleRate) {
 			thy numberOfSamples = n;
 			thy dt = 1 / my sampleRate;
@@ -586,8 +584,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			thy i2 = i2;
 			thy silenceBefore = Melder_iroundTowardsZero (my sampleRate * MelderAudio_getOutputSilenceBefore ());
 			thy silenceAfter = Melder_iroundTowardsZero (my sampleRate * MelderAudio_getOutputSilenceAfter ());
-			if (thy callback)
-				thy callback (thy boss, 1, tmin, tmax, tmin);
+			if (thy playCallback)
+				thy playCallback (thy playBoss, 1, startTime, endTime, startTime);
 			if (thy silenceBefore > 0 || thy silenceAfter > 0 || 1) {
 				thy resampledBuffer = Melder_calloc (int16, (thy silenceBefore + thy numberOfSamples + thy silenceAfter) * my numberOfChannels);
 				memcpy (& thy resampledBuffer [thy silenceBefore * my numberOfChannels],
@@ -647,8 +645,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 					}
 				}
 			}
-			if (thy callback)
-				thy callback (thy boss, 1, tmin, tmax, tmin);
+			if (thy playCallback)
+				thy playCallback (thy playBoss, 1, startTime, endTime, startTime);
 			MelderAudio_play16 (resampledBuffer, newSampleRate, silenceBefore + newN + silenceAfter, my numberOfChannels, melderPlayCallback, thee);
 		}
 		//Melder_free (thy resampledBuffer);   // cannot do that, because MelderAudio_play16 isn't necessarily synchronous

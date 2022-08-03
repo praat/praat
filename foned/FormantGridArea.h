@@ -27,6 +27,7 @@ Thing_define (FormantGridArea, RealTierArea) {
 
 	bool editingBandwidths = false;
 	integer selectedFormant = 1;
+	GuiMenuItem d_bandwidthsToggle;
 
 	void v_updateScaling () override {
 		if (our editingBandwidths) {
@@ -50,16 +51,23 @@ Thing_define (FormantGridArea, RealTierArea) {
 		if (our ycursor <= our ymin || our ycursor >= our ymax)
 			our ycursor = 0.382 * our ymin + 0.618 * our ymax;
 	}
-
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
+	void v_drawInside ()
+		override;
+	void v_createMenus ()
+		override;
+
+	virtual bool v_hasSourceMenu () { return true; }
 
 	#include "FormantGridArea_prefs.h"
 };
 
 DEFINE_FunctionArea_create (FormantGridArea, FormantGrid)
+
+void FormantGridArea_playPart (FormantGridArea me, double startTime, double endTime, Sound_PlayCallback playCallback, Thing playBoss);
 
 /* End of file FormantGridArea.h */
 #endif

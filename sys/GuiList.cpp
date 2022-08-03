@@ -80,7 +80,6 @@ Thing_implement (GuiList, GuiControl, 0);
 	- (id) initWithFrame: (NSRect) frameRect {
 		self = [super initWithFrame: frameRect];
 		if (self) {
-			//TRACE
 			self -> tableView = [[NSTableView alloc] initWithFrame: frameRect];
 			trace (U"Retain count of table view after creation: ", [self -> tableView   retainCount]);   // probably 1
 			NSTableColumn *tableColumn = [[NSTableColumn alloc] initWithIdentifier: @"list"];

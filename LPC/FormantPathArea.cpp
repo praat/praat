@@ -79,8 +79,7 @@ static void menu_cb_FormantColourSettings (FormantPathArea me, EDITOR_ARGS_FORM)
 	EDITOR_DO
 		my setInstancePref_formant_path_oddColour (oddPathColour_string);
 		my setInstancePref_formant_path_evenColour (evenPathColour_string);
-		FunctionEditor_redraw (my functionEditor());
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 
