@@ -416,7 +416,7 @@ autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring3
 		
 		autoKlattGrid_FormantGridEditor me = Thing_new (KlattGrid_FormantGridEditor);
 		my formantType = formantType;
-		my formantGridArea = KlattGrid_FormantGridArea_create (true, nullptr, me.get());
+		my formantGridArea() = KlattGrid_FormantGridArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title, klattgrid);
 		return me;
 	} catch (MelderError) {

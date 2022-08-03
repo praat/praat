@@ -987,7 +987,6 @@ static bool interruptedByEscapeKey () {
 		MSG event;
 		BOOL messageAvailable = PeekMessage (& event, nullptr, 0, 0, PM_REMOVE);
 		if (messageAvailable) {
-			//TRACE
 			trace (U"Windows message: ", event.message);
 			if (event. message == WM_KEYDOWN) {
 				trace (U"Windows key: ", event. wParam);

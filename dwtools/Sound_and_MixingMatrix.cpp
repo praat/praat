@@ -20,10 +20,10 @@
 #include "NUM2.h"
 #include "Sound_and_MixingMatrix.h"
 
-void Sound_MixingMatrix_playPart (Sound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback callback, Thing boss) {
+void Sound_MixingMatrix_playPart (Sound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback playCallback, Thing playBoss) {
 	try {
 		autoSound mix = Sound_MixingMatrix_mixPart (me, thee, fromTime, toTime);
-		Sound_playPart (mix.get(), fromTime, toTime, callback, boss);
+		Sound_playPart (mix.get(), fromTime, toTime, playCallback, playBoss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}

@@ -208,16 +208,14 @@ Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
 
 	void v1_dataChanged () override {
 		our structFunctionEditor :: v1_dataChanged ();
-		our formantGridArea -> _formantGrid = KlattGrid_getAddressOfFormantGrid (our klattgrid(), our formantType)->get();
+		our formantGridArea() -> _formantGrid = KlattGrid_getAddressOfFormantGrid (our klattgrid(), our formantType)->get();
 		OrderedOf<structRealTier>* tiers =
-				( our formantGridArea -> editingBandwidths ? & our formantGridArea -> _formantGrid -> bandwidths : & our formantGridArea -> _formantGrid -> formants );
-		RealTier tier = tiers->at [our formantGridArea -> selectedFormant];
-		our formantGridArea -> functionChanged (tier);
+				( our formantGridArea() -> editingBandwidths ? & our formantGridArea() -> _formantGrid -> bandwidths : & our formantGridArea() -> _formantGrid -> formants );
+		RealTier tier = tiers->at [our formantGridArea() -> selectedFormant];
+		our formantGridArea() -> functionChanged (tier);
 	}
 	void v_play (double startTime, double endTime)
 		override;
-	bool v_hasSourceMenu ()
-		override { return false; }
 };
 autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, kKlattGridFormantType formantType);
 

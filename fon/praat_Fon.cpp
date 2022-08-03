@@ -2960,7 +2960,6 @@ void praat_uvafon_init () {
 
 	structManipulationEditor :: f_preferences ();
 	structSpectrumEditor     :: f_preferences ();
-	structFormantGridEditor  :: f_preferences ();
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Praat test...", nullptr, 0, INFO_Praat_test);
 

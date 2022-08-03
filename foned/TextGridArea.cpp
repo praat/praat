@@ -685,9 +685,7 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 			if (our selectedTier != oldSelectedTier)
 				our v_updateText();   // this puts the text of the newly clicked tier into the text area
 			insertBoundaryOrPoint (this, mouseTier, our startSelection(), our startSelection(), false);
-			//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
-			//FunctionEditor_marksChanged (this, true);
-			Editor_broadcastDataChanged (our functionEditor());
+			FunctionArea_broadcastDataChanged (this);
 		} else {
 			/*
 				Possibility 3: the user clicked in empty space.
@@ -834,9 +832,7 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 		our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 		our anchorTime = undefined;
 		our clickedLeftBoundary = 0;
-		//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
-		//FunctionEditor_marksChanged (this, true);
-		Editor_broadcastDataChanged (our functionEditor());
+		FunctionArea_broadcastDataChanged (this);
 	}
 	return FunctionEditor_UPDATE_NEEDED;
 }
@@ -925,15 +921,13 @@ static void menu_cb_ConvertToBackslashTrigraphs (TextGridArea me, EDITOR_ARGS_DI
 	FunctionArea_save (me, U"Convert to Backslash Trigraphs");
 	TextGrid_convertToBackslashTrigraphs (my textGrid());
 	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
-	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 static void menu_cb_ConvertToUnicode (TextGridArea me, EDITOR_ARGS_DIRECT) {
 	FunctionArea_save (me, U"Convert to Unicode");
 	TextGrid_convertToUnicode (my textGrid());
 	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
-	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 static void findInTier (TextGridArea me) {
 	checkTierSelection (me, U"find a text");
@@ -1098,7 +1092,7 @@ static void gui_text_cb_changed (TextGridArea me, GuiTextEvent /* event */) {
 				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
 				TextInterval_setText (interval, text.get());
 				my suppressTextCursorJump = true;
-				Editor_broadcastDataChanged (my functionEditor());
+				FunctionArea_broadcastDataChanged (me);
 				my suppressTextCursorJump = false;
 			}
 		} else {
@@ -1109,7 +1103,7 @@ static void gui_text_cb_changed (TextGridArea me, GuiTextEvent /* event */) {
 				if (Melder_findInk (text.get()))   // any visible characters?
 					point -> mark = Melder_dup_f (text.get());
 				my suppressTextCursorJump = true;
-				Editor_broadcastDataChanged (my functionEditor());
+				FunctionArea_broadcastDataChanged (me);
 				my suppressTextCursorJump = false;
 			}
 		}
@@ -1390,7 +1384,7 @@ static void menu_cb_AlignInterval (TextGridArea me, EDITOR_ARGS_DIRECT) {
 		TextGrid_anySound_alignInterval (my textGrid(), my borrowedSoundArea -> soundOrLongSound(), my selectedTier, intervalNumber,
 				my instancePref_align_language(), my instancePref_align_includeWords(), my instancePref_align_includePhonemes());
 	}
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 static void menu_cb_AlignmentSettings (TextGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Alignment settings", nullptr)
@@ -1424,9 +1418,7 @@ static void do_insertIntervalOnTier (TextGridArea me, int itier) {
 			true
 		);
 		my selectedTier = itier;
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (my functionEditor(), true);
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	} catch (MelderError) {
 		Melder_throw (U"Interval not inserted.");
 	}
@@ -1490,9 +1482,7 @@ static void menu_cb_RemovePointOrBoundary (TextGridArea me, EDITOR_ARGS_DIRECT) 
 		FunctionArea_save (me, U"Remove point");
 		tier -> points. removeItem (selectedPoint);
 	}
-	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
-	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 static void do_movePointOrBoundary (TextGridArea me, int where) {
 	if (where == 0 && ! (my borrowedSoundArea && my borrowedSoundArea -> sound()))
@@ -1535,9 +1525,7 @@ static void do_movePointOrBoundary (TextGridArea me, int where) {
 		point -> number = position;
 		my setSelection (position, position);
 	}
-	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
-	FunctionEditor_marksChanged (my functionEditor(), true);   // because cursor has moved
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 static void menu_cb_MoveToB (TextGridArea me, EDITOR_ARGS_DIRECT) {
 	do_movePointOrBoundary (me, 1);
@@ -1556,9 +1544,7 @@ static void do_insertOnTier (TextGridArea me, integer itier) {
 			false
 		);
 		my selectedTier = itier;
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (my functionEditor(), true);
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	} catch (MelderError) {
 		Melder_throw (U"Boundary or point not inserted.");
 	}
@@ -1633,7 +1619,7 @@ static void menu_cb_RenameTier (TextGridArea me, EDITOR_ARGS_FORM) {
 
 		Thing_setName (tier, newName);
 
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 static void CONVERT_DATA_TO_ONE__PublishTier (TextGridArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
@@ -1656,9 +1642,7 @@ static void menu_cb_RemoveAllTextFromTier (TextGridArea me, EDITOR_ARGS_DIRECT) 
 	else
 		TextTier_removeText (textTier);
 
-	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
-	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 static void menu_cb_RemoveTier (TextGridArea me, EDITOR_ARGS_DIRECT) {
 	if (my textGrid() -> tiers->size <= 1)
@@ -1669,9 +1653,7 @@ static void menu_cb_RemoveTier (TextGridArea me, EDITOR_ARGS_DIRECT) {
 	my textGrid() -> tiers-> removeItem (my selectedTier);
 
 	//my textGridArea -> selectedTier = 1; TRY OUT 2022-07-23
-	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
-	//FunctionEditor_updateText (me); TRY OUT 2022-07-23
-	Editor_broadcastDataChanged (my functionEditor());
+	FunctionArea_broadcastDataChanged (me);
 }
 static void menu_cb_AddIntervalTier (TextGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add interval tier", nullptr)
@@ -1691,9 +1673,7 @@ static void menu_cb_AddIntervalTier (TextGridArea me, EDITOR_ARGS_FORM) {
 		}
 
 		my selectedTier = position;
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
-		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 static void menu_cb_AddPointTier (TextGridArea me, EDITOR_ARGS_FORM) {
@@ -1714,9 +1694,7 @@ static void menu_cb_AddPointTier (TextGridArea me, EDITOR_ARGS_FORM) {
 		}
 
 		my selectedTier = position;
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
-		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 static void menu_cb_DuplicateTier (TextGridArea me, EDITOR_ARGS_FORM) {
@@ -1741,9 +1719,7 @@ static void menu_cb_DuplicateTier (TextGridArea me, EDITOR_ARGS_FORM) {
 		}
 
 		my selectedTier = position;
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_updateText()
-		//FunctionEditor_updateText (me); TRY OUT 2022-07-23
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 static void addTierMenu (TextGridArea me) {
@@ -1846,7 +1822,7 @@ static void menu_cb_AddToUserDictionary (TextGridArea me, EDITOR_ARGS_DIRECT) {
 	if (my spellingChecker) {
 		const autostring32 word = GuiText_getSelection (my functionEditor() -> textArea);
 		SpellingChecker_addNewWord (my spellingChecker, word.get());
-		Editor_broadcastDataChanged (my functionEditor());
+		FunctionArea_broadcastDataChanged (me);
 	}
 }
 
@@ -1889,8 +1865,6 @@ void structTextGridArea :: v_updateText () {
 	if (our suppressTextCursorJump)
 		return;
 	conststring32 newText = U"";
-	TRACE
-	trace (U"selected tier ", our selectedTier);
 	if (our selectedTier != 0) {
 		IntervalTier intervalTier;
 		TextTier textTier;
@@ -1993,7 +1967,7 @@ void TextGridArea_clickSelectionViewer (TextGridArea me, double x_fraction, doub
 					my suppressRedraw = false;
 
 					my suppressTextCursorJump = true;
-					Editor_broadcastDataChanged (my functionEditor());
+					FunctionArea_broadcastDataChanged (me);
 					my suppressTextCursorJump = false;
 				}
 			} else {
@@ -2011,7 +1985,7 @@ void TextGridArea_clickSelectionViewer (TextGridArea me, double x_fraction, doub
 					my suppressRedraw = false;
 
 					my suppressTextCursorJump = true;
-					Editor_broadcastDataChanged (my functionEditor());
+					FunctionArea_broadcastDataChanged (me);
 					my suppressTextCursorJump = false;
 				}
 			}

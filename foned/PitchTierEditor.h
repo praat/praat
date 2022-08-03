@@ -47,7 +47,7 @@ Thing_define (PitchTierEditor, FunctionEditor) {
 		if (our soundArea())
 			Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 		else
-			PitchTier_playPart (our pitchTierArea() -> pitchTier(), startTime, endTime, false);
+			PitchTier_playPart (our pitchTierArea() -> pitchTier(), startTime, endTime, false);   // BUG: why no callback?
 	}
 };
 

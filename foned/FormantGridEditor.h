@@ -22,39 +22,28 @@
 #include "FormantGridArea.h"
 
 Thing_define (FormantGridEditor, FunctionEditor) {
-	autoFormantGridArea formantGridArea;
+	DEFINE_FunctionArea (1, FormantGridArea, formantGridArea);
+
 	void v1_dataChanged () override {
 		our structFunctionEditor :: v1_dataChanged ();
-		our formantGridArea -> _formantGrid = static_cast <FormantGrid> (our data());
+		our formantGridArea() -> _formantGrid = static_cast <FormantGrid> (our data());
 		OrderedOf<structRealTier>* tiers =
-				( our formantGridArea -> editingBandwidths ? & our formantGridArea -> _formantGrid -> bandwidths : & our formantGridArea -> _formantGrid -> formants );
-		RealTier tier = tiers->at [our formantGridArea -> selectedFormant];
-		our formantGridArea -> functionChanged (tier);
+				( our formantGridArea() -> editingBandwidths ? & our formantGridArea() -> _formantGrid -> bandwidths : & our formantGridArea() -> _formantGrid -> formants );
+		RealTier tier = tiers->at [our formantGridArea() -> selectedFormant];
+		our formantGridArea() -> functionChanged (tier);
 	}
-
-	GuiMenuItem d_bandwidthsToggle;
-
-	void v_createMenus ()
-		override;
 	void v_distributeAreas () override {
-		our formantGridArea -> setGlobalYRange_fraction (0.0, 1.0);
+		our formantGridArea() -> setGlobalYRange_fraction (0.0, 1.0);
 	}
-	void v_draw ()
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction)
-		override;
-	void v_play (double startTime, double endTime)
-		override;
-
-	virtual bool v_hasSourceMenu () { return true; }
-
-	#include "FormantGridEditor_prefs.h"
+	void v_play (double startTime, double endTime) override {
+		FormantGridArea_playPart (our formantGridArea().get(), startTime, endTime, theFunctionEditor_playCallback, this);
+	}
 };
 
 inline autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid formantGrid) {
 	try {
 		autoFormantGridEditor me = Thing_new (FormantGridEditor);
-		my formantGridArea = FormantGridArea_create (true, nullptr, me.get());
+		my formantGridArea() = FormantGridArea_create (true, nullptr, me.get());
 		FunctionEditor_init (me.get(), title, formantGrid);
 		return me;
 	} catch (MelderError) {

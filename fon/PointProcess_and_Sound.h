@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015-2017,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ autoSound PointProcess_to_Sound_phonation
 #define PointProcess_to_Sound_phonation_DEFAULT_POWER_1  3.0
 #define PointProcess_to_Sound_phonation_DEFAULT_POWER_2  4.0
 
-void PointProcess_playPart (PointProcess me, double tmin, double tmax);
+void PointProcess_playPart (PointProcess me, double tmin, double tmax);   // BUG: why no callback?
 void PointProcess_play (PointProcess me);
 void PointProcess_hum (PointProcess me, double tmin, double tmax);
 autoSound PointProcess_to_Sound_hum (PointProcess me);

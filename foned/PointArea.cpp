@@ -24,16 +24,6 @@
 
 Thing_implement (PointArea, FunctionArea, 0);
 
-//#undef DATA_BEGIN__
-//#define DATA_BEGIN__ \
-//	Melder_assert (my function());
-#undef MODIFY_DATA
-#define MODIFY_DATA(undoTitle)  \
-	FunctionArea_save (me, undoTitle);
-#undef MODIFY_DATA_END
-#define MODIFY_DATA_END  \
-	Editor_broadcastDataChanged (my functionEditor());
-
 
 #pragma mark - PointArea drawing
 

@@ -500,9 +500,8 @@ _form_inited_: \
 	FOR_STRING__
 
 #define MODIFY_DATA(undoTitle)  \
-	Editor_save (me, undoTitle);
+	Editor_save (my boss(), undoTitle);
 #define MODIFY_DATA_END  \
-	FunctionEditor_redraw (me); \
 	Editor_broadcastDataChanged (my boss());
 
 #define CONVERT_DATA_TO_ONE  \

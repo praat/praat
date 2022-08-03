@@ -325,7 +325,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		NSTrackingArea *trackingArea;
 	}
 	- (id) initWithFrame: (NSRect) frame {
-		//TRACE
 		self = [super initWithFrame: frame];
 		if (self) {
 			self -> trackingArea = [[NSTrackingArea alloc]
@@ -343,7 +342,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		return self;
 	}
 	- (void) dealloc {   // override
-		//TRACE
 		GuiDrawingArea me = self -> userData;
 		if (Melder_debug == 55)
 			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (self), U" dealloc for ", Melder_pointer (me));
