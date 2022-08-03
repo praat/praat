@@ -19,20 +19,21 @@
  */
 
 #include "FunctionEditor.h"
-#include "Spectrogram.h"
+#include "SpectrogramArea.h"
 
 Thing_define (SpectrogramEditor, FunctionEditor) {
-	Spectrogram spectrogram() { return static_cast <Spectrogram> (our data()); }
+	DEFINE_FunctionArea (1, SpectrogramArea, spectrogramArea)
 	
-	double maximum;
-
-	void v_draw ()
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
-		override;
+	void v1_dataChanged () override {
+		our SpectrogramEditor_Parent :: v1_dataChanged ();
+		our spectrogramArea() -> functionChanged (static_cast <Spectrogram> (our data()));
+	}
+	void v_distributeAreas () override {
+		our spectrogramArea() -> setGlobalYRange_fraction (0.0, 1.0);
+	}
 };
 
-autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram data);
+autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram spectrogram);
 
 /* End of file SpectrogramEditor.h */
 #endif
