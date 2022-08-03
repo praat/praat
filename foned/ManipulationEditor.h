@@ -19,26 +19,57 @@
  */
 
 #include "FunctionEditor.h"
+#include "SoundArea.h"
+#include "PointArea.h"
 #include "PitchTierArea.h"
 #include "DurationTierArea.h"
 #include "Manipulation.h"
 
 #include "ManipulationEditor_enums.h"
 
-Thing_define (ManipulationPitchTierArea, PitchTierArea) {
+Thing_define (ManipulationSoundArea, SoundArea) {
+	double soundmin, soundmax;
 	void v_drawInside ()
 		override;
+};
+DEFINE_FunctionArea_create (ManipulationSoundArea, Sound)
+
+Thing_define (ManipulationPulsesArea, PointArea) {
+	PointProcess pulses() { return static_cast <PointProcess> (our function()); }
+	void v_drawInside ()
+		override;
+	void v_createMenus ()
+		override;
+};
+DEFINE_FunctionArea_create (ManipulationPulsesArea, PointProcess)
+
+Thing_define (ManipulationPitchTierArea, PitchTierArea) {
+	PitchTier pitch() { return static_cast <PitchTier> (our function()); }
+	ManipulationPulsesArea borrowedPulsesArea;
+	void v_drawInside ()
+		override;
+	void v_createMenus ()
+		override;
+	#include "ManipulationEditor_prefs.h"
 };
 DEFINE_FunctionArea_create (ManipulationPitchTierArea, PitchTier)
 
 Thing_define (ManipulationDurationTierArea, DurationTierArea) {
+	DurationTier duration() { return static_cast <DurationTier> (our function()); }
 	void v_drawInside ()
+		override;
+	void v_createMenus ()
 		override;
 };
 DEFINE_FunctionArea_create (ManipulationDurationTierArea, DurationTier)
 
 
 Thing_define (ManipulationEditor, FunctionEditor) {
+	DEFINE_FunctionArea (1, ManipulationSoundArea, soundArea)
+	DEFINE_FunctionArea (2, ManipulationPitchTierArea, pitchTierArea)
+	DEFINE_FunctionArea (3, ManipulationDurationTierArea, durationTierArea)
+	DEFINE_FunctionArea (4, ManipulationPulsesArea, pulsesArea)
+
 	Manipulation manipulation() { return static_cast <Manipulation> (our data()); }
 
 	/*
@@ -49,24 +80,17 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	PitchTier pitch() { return our manipulation() -> pitch.get(); }
 	DurationTier duration() { return our manipulation() -> duration.get(); }
 
-	/*
-		Areas.
-	*/
-	autoPitchTierArea pitchTierArea;
-	autoDurationTierArea durationTierArea;
-	bool clickedInWidePitchArea = false;
-	bool clickedInWideDurationArea = false;
-
 	void v1_dataChanged () override {
 		ManipulationEditor_Parent :: v1_dataChanged ();
-		our pitchTierArea -> functionChanged (our pitch());
-		our durationTierArea -> functionChanged (our duration());
+		our pulsesArea() -> functionChanged (our pulses());
+		our soundArea() -> functionChanged (our sound());
+		our pitchTierArea() -> functionChanged (our pitch());
+		our durationTierArea() -> functionChanged (our duration());
 	}
 
 	autoPointProcess previousPulses;
 	autoPitchTier previousPitch;
 	autoDurationTier previousDuration;
-	double soundmin, soundmax;
 	int synthesisMethod;
 	GuiMenuItem synthPulsesButton, synthPulsesHumButton;
 	GuiMenuItem synthPulsesLpcButton;
@@ -85,16 +109,25 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		override;
 	void v_restoreData ()
 		override;
-	void v_distributeAreas ()
-		override;
-	void v_draw ()
-		override;
-	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
-		override;
-	void v_play (double tmin, double tmax)
+	void v_distributeAreas () override {
+		our pulsesArea() -> setGlobalYRange_fraction (0.67, 1.00);
+		our soundArea() -> setGlobalYRange_fraction (0.67, 1.00);
+		our pitchTierArea() -> setGlobalYRange_fraction (( our duration() ? 0.17 : 0.0 ), 0.67);
+		if (our duration())
+			our durationTierArea() -> setGlobalYRange_fraction (0.0, 0.17);
+	}
+	void v_draw () override {
+		FunctionArea_drawTwo (our pulsesArea().get(), our soundArea().get());
+		if (our pitch())
+			FunctionArea_drawOne (our pitchTierArea().get());
+		if (our duration())
+			FunctionArea_drawOne (our durationTierArea().get());
+	}
+	void v_updateMenuItems ()
 		override;
 
-	#include "ManipulationEditor_prefs.h"
+	void v_play (double tmin, double tmax)
+		override;
 };
 
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation);
