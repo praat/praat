@@ -488,12 +488,12 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	GuiThing_show (my windowForm);
 }
 
-void Editor_save (Editor me, conststring32 text) {
+void Editor_save (Editor me, conststring32 cattableText) {
+	Melder_sprint (my undoText,100, U"Undo ", cattableText);
 	my v_saveData ();
 	if (! my undoButton)
 		return;
 	GuiThing_setSensitive (my undoButton, true);
-	Melder_sprint (my undoText,100, U"Undo ", text);
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
 	#elif motif

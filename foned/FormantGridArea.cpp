@@ -76,7 +76,7 @@ void structFormantGridArea :: v_drawInside () {
 			}
 		}
 	}
-	RealTierArea_draw (this);
+	FormantGridArea_Parent :: v_drawInside ();
 }
 
 

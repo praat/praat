@@ -18,7 +18,6 @@
 
 Prefs_begin (ManipulationPitchTierArea)
 
-	InstancePrefs_addEnum    (ManipulationPitchTierArea, pitch_draggingStrategy,                                   1, kManipulationEditor_draggingStrategy, DEFAULT)
 	InstancePrefs_addDouble  (ManipulationPitchTierArea, pitch_stylize_frequencyResolution,                        1, U"2.0")
 	InstancePrefs_addBool    (ManipulationPitchTierArea, pitch_stylize_useSemitones,                               1, true)
 	InstancePrefs_addInteger (ManipulationPitchTierArea, pitch_interpolateQuadratically_numberOfPointsPerParabola, 1, U"4")

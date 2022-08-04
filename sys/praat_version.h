@@ -1,5 +1,5 @@
-#define PRAAT_VERSION_STR 6.2.14
-#define PRAAT_VERSION_NUM 6214
+#define PRAAT_VERSION_STR 6.2.15beta
+#define PRAAT_VERSION_NUM 6215
 #define PRAAT_YEAR 2022
-#define PRAAT_MONTH May
-#define PRAAT_DAY 24
+#define PRAAT_MONTH August
+#define PRAAT_DAY 4

@@ -229,7 +229,7 @@ void Editor_init (Editor me, int x, int y , int width, int height,
 	and the Editor will not destroy 'data' when the Editor itself is destroyed.
 */
 
-void Editor_save (Editor me, conststring32 text);   // for Undo
+void Editor_save (Editor me, conststring32 cattableText);   // for Undo
 
 autoUiForm UiForm_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
 void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter);

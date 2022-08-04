@@ -98,44 +98,6 @@ void structManipulationPulsesArea :: v_createMenus () {
 Thing_implement (ManipulationSoundArea, SoundArea, 0);
 
 
-#pragma mark - ManipSoundArea drawing
-
-void structManipulationSoundArea :: v_drawInside () {
-	integer first, last;
-	if (Sampled_getWindowSamples (our sound(), our startWindow(), our endWindow(), & first, & last) > 1) {
-		double minimum, maximum, scaleMin, scaleMax;
-		Matrix_getWindowExtrema (our sound(), first, last, 1, 1, & minimum, & maximum);
-		if (minimum == maximum) {
-			minimum = -0.5;
-			maximum = +0.5;
-		}
-		/*
-			Scaling.
-		*/
-		scaleMin = 0.83 * minimum + 0.17 * our soundmin;
-		scaleMax = 0.83 * maximum + 0.17 * our soundmax;
-		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), scaleMin, scaleMax);
-		FunctionEditor_drawRangeMark (our functionEditor(), scaleMin, Melder_float (Melder_half (scaleMin)), U"", Graphics_BOTTOM);
-		FunctionEditor_drawRangeMark (our functionEditor(), scaleMax, Melder_float (Melder_half (scaleMax)), U"", Graphics_TOP);
-		/*
-			Draw dotted zero line.
-		*/
-		if (minimum < 0.0 && maximum > 0.0) {
-			Graphics_setColour (our graphics(), Melder_CYAN);
-			Graphics_setLineType (our graphics(), Graphics_DOTTED);
-			Graphics_line (our graphics(), our startWindow(), 0.0, our endWindow(), 0.0);
-			Graphics_setLineType (our graphics(), Graphics_DRAWN);
-		}
-		/*
-			Draw samples.
-		*/
-		Graphics_setColour (our graphics(), Melder_BLACK);
-		Graphics_function (our graphics(), & our sound() -> z [1] [0], first, last,
-				Sampled_indexToX (our sound(), first), Sampled_indexToX (our sound(), last));
-	}
-}
-
-
 #pragma mark - ManipulationPitchTierArea
 
 Thing_implement (ManipulationPitchTierArea, PitchTierArea, 0);
@@ -297,18 +259,15 @@ static void menu_cb_addPitchPointAtSlice (ManipulationPitchTierArea me, EDITOR_A
 			if (iright < nt)
 				tright = t [iright + 1] - t [iright];
 			if (tleft > 0.02)
-				tleft = 0;
+				tleft = 0.0;
 			if (tmid > 0.02)
-				tmid = 0;
+				tmid = 0.0;
 			if (tright > 0.02)
-				tright = 0;
+				tright = 0.0;
 			/* Bubble-sort. */
-			if (tmid < tleft)
-				std::swap (tmid, tleft);
-			if (tright < tleft)
-				std::swap (tright, tleft);
-			if (tright < tmid)
-				std::swap (tright, tmid);
+			Melder_sort (& tleft, & tmid);
+			Melder_sort (& tleft, & tright);
+			Melder_sort (& tmid, & tright);
 			if (tleft != 0.0)
 				desiredY = 1.0 / tmid;   // median of 3
 			else if (tmid != 0.0)
@@ -436,16 +395,6 @@ static void menu_cb_setPitchRange (ManipulationPitchTierArea me, EDITOR_ARGS_FOR
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
-static void menu_cb_setDraggingStrategy (ManipulationPitchTierArea me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Set dragging strategy", U"ManipulationEditor")
-		RADIO_ENUM (kManipulationEditor_draggingStrategy, draggingStrategy,
-				U"Dragging strategy", my default_pitch_draggingStrategy ())
-	EDITOR_OK
-		SET_ENUM (draggingStrategy, kManipulationEditor_draggingStrategy, my instancePref_pitch_draggingStrategy())
-	EDITOR_DO
-		my setInstancePref_pitch_draggingStrategy (draggingStrategy);
-	EDITOR_END
-}
 void structManipulationPitchTierArea :: v_createMenus () {
 	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Pitch", 0);
 	FunctionAreaMenu_addCommand (menu, U"Add pitch point at cursor", 'T',
@@ -460,8 +409,6 @@ void structManipulationPitchTierArea :: v_createMenus () {
 	FunctionAreaMenu_addCommand (menu, U"-- pitch prefs --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Set pitch range...", 0,
 			menu_cb_setPitchRange, this);
-	FunctionAreaMenu_addCommand (menu, U"Set pitch dragging strategy...", 0,
-			menu_cb_setDraggingStrategy, this);
 	FunctionAreaMenu_addCommand (menu, U"-- modify pitch --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Shift pitch frequencies...", 0,
 			menu_cb_shiftPitchFrequencies, this);
@@ -530,17 +477,9 @@ static void menu_cb_addDurationPointAt (ManipulationDurationTierArea me, EDITOR_
 		MODIFY_DATA_END
 	EDITOR_END
 }
-static void menu_cb_newDuration (ManipulationDurationTierArea me, EDITOR_ARGS_DIRECT) {
-	MODIFY_DATA (U"New duration")
-		//my manipulation() -> duration = DurationTier_create (my manipulation() -> xmin, my manipulation() -> xmax);  // BUG:
-	MODIFY_DATA_END
-}
-static void menu_cb_forgetDuration (ManipulationDurationTierArea me, EDITOR_ARGS_DIRECT) {
-	MODIFY_DATA (U"Forget duration")
-		//my manipulation() -> duration = autoDurationTier();  // BUG:
-	MODIFY_DATA_END
-}
 void structManipulationDurationTierArea :: v_createMenus () {
+	FunctionAreaMenu_addCommand (our functionEditor() -> viewMenu, U"Set duration range...", 0,
+			menu_cb_setDurationRange, this);
 	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Dur", 0);
 	FunctionAreaMenu_addCommand (menu, U"Add duration point at cursor", 'D',
 			menu_cb_addDurationPointAtCursor, this);
@@ -550,13 +489,6 @@ void structManipulationDurationTierArea :: v_createMenus () {
 	FunctionAreaMenu_addCommand (menu, U"Remove duration point(s)", GuiMenu_OPTION | 'D',
 			menu_cb_removeDurationPoints, this);
 	FunctionAreaMenu_addCommand (menu, U"-- duration prefs --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Set duration range...", 0,
-			menu_cb_setDurationRange, this);
-	FunctionAreaMenu_addCommand (menu, U"-- refresh duration --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"New duration", 0,
-			menu_cb_newDuration, this);
-	FunctionAreaMenu_addCommand (menu, U"Forget duration", 0,
-			menu_cb_forgetDuration, this);
 }
 	
 static void menu_cb_ManipulationEditorHelp (ManipulationEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"ManipulationEditor"); }
@@ -709,12 +641,6 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		FunctionEditor_init (me.get(), title, manipulation);
 
 		my synthesisMethod = prefs_synthesisMethod; // BUG: should be in v1_dataChanged()
-		if (manipulation -> sound)
-			Matrix_getWindowExtrema (manipulation -> sound.get(), 0, 0, 0, 0, & my soundArea() -> soundmin, & my soundArea() -> soundmax);
-		if (my soundArea() -> soundmin == my soundArea() -> soundmax) {
-			my soundArea() -> soundmin = -1.0;
-			my soundArea() -> soundmax = +1.0;
-		}
 		my v_updateMenuItems ();
 		return me;
 	} catch (MelderError) {
