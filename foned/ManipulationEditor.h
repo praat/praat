@@ -28,9 +28,6 @@
 #include "ManipulationEditor_enums.h"
 
 Thing_define (ManipulationSoundArea, SoundArea) {
-	double soundmin, soundmax;
-	void v_drawInside ()
-		override;
 };
 DEFINE_FunctionArea_create (ManipulationSoundArea, Sound)
 
@@ -85,6 +82,8 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		our pulsesArea() -> functionChanged (our pulses());
 		our soundArea() -> functionChanged (our sound());
 		our pitchTierArea() -> functionChanged (our pitch());
+		if (! our duration())   // repair an old-fashioned Manipulation that has a PitchTier only
+			our manipulation() -> duration = DurationTier_create (our manipulation() -> xmin, our manipulation() -> xmax);
 		our durationTierArea() -> functionChanged (our duration());
 	}
 

@@ -153,13 +153,12 @@ private:
 	}
 	double left_pxlt() const { return functionEditor() -> dataLeft_pxlt(); }
 	double right_pxlt() const { return functionEditor() -> dataRight_pxlt(); }
-	virtual double v_verticalSpacing_pxlt() const { return 11; }
 	double bottom_pxlt() const {
-		const double bottomSpacing_pxlt = ( _ymin_fraction == 0.0 ? 0.0 : our v_verticalSpacing_pxlt() );
-		return globalY_fraction_to_pxlt (_ymin_fraction) + bottomSpacing_pxlt;
+		return globalY_fraction_to_pxlt (_ymin_fraction);
 	}
 	double top_pxlt() const {
-		return globalY_fraction_to_pxlt (_ymax_fraction) - our v_verticalSpacing_pxlt();
+		constexpr double legendMargin = 23.0;
+		return globalY_fraction_to_pxlt (_ymax_fraction) - legendMargin;
 	}
 public:
 	virtual void v_form_pictureSelection (EditorCommand);

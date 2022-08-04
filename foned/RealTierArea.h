@@ -89,10 +89,6 @@ void RealTierArea_removePoints (RealTierArea me);
 
 void RealTierArea_addPointAtCursor (RealTierArea me);
 
-void RealTierArea_draw (RealTierArea me);
-
-bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
-
 DEFINE_FunctionArea_create (RealTierArea, RealTier)
 
 /* End of file RealTierArea.h */

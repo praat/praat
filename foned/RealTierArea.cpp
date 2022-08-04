@@ -28,6 +28,9 @@ Thing_implement (RealTierArea, FunctionArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "RealTierArea_prefs.h"
 
+
+#pragma mark - RealTierArea helpers
+
 void RealTierArea_addPointAt (RealTierArea me, double time, double desiredY) {
 	if (isdefined (my v_minimumLegalY()) && desiredY < my v_minimumLegalY())
 		Melder_throw (U"Cannot add a point below ", my v_minimumLegalY(), my v_rightTickUnits(), U".");
@@ -47,6 +50,9 @@ void RealTierArea_addPointAtCursor (RealTierArea me) {
 	const double cursorTime = 0.5 * (my startSelection() + my endSelection());
 	RealTierArea_addPointAt (me, cursorTime, my ycursor);
 }
+
+
+#pragma mark - RealTierArea drawing
 
 static void RealTierArea_drawWhileDragging (RealTierArea me) {
 	Graphics_xorOn (my graphics(), Melder_MAROON);
@@ -76,69 +82,68 @@ static void RealTierArea_drawWhileDragging (RealTierArea me) {
 	Graphics_xorOff (my graphics());
 }
 
-void RealTierArea_draw (RealTierArea me) {
-	Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), my ymin, my ymax);
-	Graphics_setColour (my graphics(), Melder_RED);
-	Graphics_line (my graphics(), my startWindow(), my ycursor, my endWindow(), my ycursor);
-	Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (my graphics(), my startWindow(), my ycursor,
-			Melder_float (Melder_half (my ycursor)), my v_rightTickUnits());
-	Graphics_setColour (my graphics(), Melder_BLUE);
-	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
-	Graphics_text (my graphics(), my endWindow(), my ymax,
-			Melder_float (Melder_half (my ymax)), my v_rightTickUnits());
-	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
-	Graphics_text (my graphics(), my endWindow(), my ymin,
-			Melder_float (Melder_half (my ymin)), my v_rightTickUnits());
+void structRealTierArea :: v_drawInside () {
+	Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
+	Graphics_setColour (our graphics(), Melder_RED);
+	Graphics_line (our graphics(), our startWindow(), our ycursor, our endWindow(), our ycursor);
+	Graphics_setTextAlignment (our graphics(), Graphics_RIGHT, Graphics_HALF);
+	Graphics_text (our graphics(), our startWindow(), our ycursor,
+			Melder_float (Melder_half (our ycursor)), our v_rightTickUnits());
+	Graphics_setColour (our graphics(), Melder_BLUE);
+	Graphics_setTextAlignment (our graphics(), Graphics_LEFT, Graphics_HALF);
+	Graphics_text (our graphics(), our endWindow(), our ymax,
+			Melder_float (Melder_half (our ymax)), our v_rightTickUnits());
+	Graphics_setTextAlignment (our graphics(), Graphics_LEFT, Graphics_HALF);
+	Graphics_text (our graphics(), our endWindow(), our ymin,
+			Melder_float (Melder_half (our ymin)), our v_rightTickUnits());
 
-	const integer ifirstSelected = AnyTier_timeToHighIndex (my realTier()->asAnyTier(), my startSelection());
-	const integer ilastSelected = AnyTier_timeToLowIndex (my realTier()->asAnyTier(), my endSelection());
-	const integer imin = AnyTier_timeToHighIndex (my realTier()->asAnyTier(), my startWindow());
-	const integer imax = AnyTier_timeToLowIndex (my realTier()->asAnyTier(), my endWindow());
-	Graphics_setLineWidth (my graphics(), 2.0);
-	if (my realTier() -> points.size == 0) {
-		Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics(), 0.5 * (my startWindow() + my endWindow()), 0.5 * (my ymin + my ymax),
+	const integer ifirstSelected = AnyTier_timeToHighIndex (our realTier()->asAnyTier(), our startSelection());
+	const integer ilastSelected = AnyTier_timeToLowIndex (our realTier()->asAnyTier(), our endSelection());
+	const integer imin = AnyTier_timeToHighIndex (our realTier()->asAnyTier(), our startWindow());
+	const integer imax = AnyTier_timeToLowIndex (our realTier()->asAnyTier(), our endWindow());
+	Graphics_setLineWidth (our graphics(), 2.0);
+	if (our realTier() -> points.size == 0) {
+		Graphics_setTextAlignment (our graphics(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (our graphics(), 0.5 * (our startWindow() + our endWindow()), 0.5 * (our ymin + our ymax),
 				U"(no points)");
 	} else if (imax < imin) {
-		const double yleft = RealTier_getValueAtTime (my realTier(), my startWindow());
-		const double yright = RealTier_getValueAtTime (my realTier(), my endWindow());
-		Graphics_line (my graphics(), my startWindow(), yleft, my endWindow(), yright);
+		const double yleft = RealTier_getValueAtTime (our realTier(), our startWindow());
+		const double yright = RealTier_getValueAtTime (our realTier(), our endWindow());
+		Graphics_line (our graphics(), our startWindow(), yleft, our endWindow(), yright);
 	} else {
-		Graphics_setColour (my graphics(), Melder_BLUE);
+		Graphics_setColour (our graphics(), Melder_BLUE);
 		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
-			RealPoint point = my realTier() -> points.at [ipoint];
+			RealPoint point = our realTier() -> points.at [ipoint];
 			const double t = point -> number, y = point -> value;
 			if (ipoint == 1)
-				Graphics_line (my graphics(), my startWindow(), y, t, y);
+				Graphics_line (our graphics(), our startWindow(), y, t, y);
 			else if (ipoint == imin)
-				Graphics_line (my graphics(), t, y, my startWindow(), RealTier_getValueAtTime (my realTier(), my startWindow()));
-			if (ipoint == my realTier() -> points.size)
-				Graphics_line (my graphics(), t, y, my endWindow(), y);
+				Graphics_line (our graphics(), t, y, our startWindow(), RealTier_getValueAtTime (our realTier(), our startWindow()));
+			if (ipoint == our realTier() -> points.size)
+				Graphics_line (our graphics(), t, y, our endWindow(), y);
 			else if (ipoint == imax)
-				Graphics_line (my graphics(), t, y, my endWindow(), RealTier_getValueAtTime (my realTier(), my endWindow()));
+				Graphics_line (our graphics(), t, y, our endWindow(), RealTier_getValueAtTime (our realTier(), our endWindow()));
 			else {
-				RealPoint pointRight = my realTier() -> points.at [ipoint + 1];
-				Graphics_line (my graphics(), t, y, pointRight -> number, pointRight -> value);
+				RealPoint pointRight = our realTier() -> points.at [ipoint + 1];
+				Graphics_line (our graphics(), t, y, pointRight -> number, pointRight -> value);
 			}
 		}
 		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
-			RealPoint point = my realTier() -> points.at [ipoint];
+			RealPoint point = our realTier() -> points.at [ipoint];
 			const double t = point -> number, y = point -> value;
 			const bool pointIsSelected = ( ipoint >= ifirstSelected && ipoint <= ilastSelected );
-			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
-			Graphics_fillCircle_mm (my graphics(), t, y, 3.0);
+			Graphics_setColour (our graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
+			Graphics_fillCircle_mm (our graphics(), t, y, 3.0);
 		}
 	}
-	Graphics_setLineWidth (my graphics(), 1.0);
-	Graphics_setColour (my graphics(), Melder_BLACK);
-	if (isdefined (my anchorTime))
-		RealTierArea_drawWhileDragging (me);
+	Graphics_setLineWidth (our graphics(), 1.0);
+	Graphics_setColour (our graphics(), Melder_BLACK);
+	if (isdefined (our anchorTime))
+		RealTierArea_drawWhileDragging (this);
 }
 
-void structRealTierArea :: v_drawInside () {
-	RealTierArea_draw (this);
-}
+
+#pragma mark - RealTierArea tracking
 
 bool structRealTierArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction) {
 	if (event -> isClick()) {
@@ -151,7 +156,8 @@ bool structRealTierArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 		if (isdefined (our anchorTime))
 			return false;
 		RealPoint clickedPoint = nullptr;
-		const integer inearestPoint = AnyTier_timeToNearestIndexInTimeWindow (our realTier()->asAnyTier(), x_world, our startWindow(), our endWindow());
+		const integer inearestPoint = AnyTier_timeToNearestIndexInTimeWindow (our realTier()->asAnyTier(), x_world,
+				our startWindow(), our endWindow());
 		if (inearestPoint != 0) {
 			RealPoint nearestPoint = our realTier() -> points.at [inearestPoint];
 			if (Graphics_distanceWCtoMM (our graphics(), x_world, y_world, nearestPoint -> number, nearestPoint -> value) < 1.5)
@@ -166,7 +172,8 @@ bool structRealTierArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 		our draggingSelection = event -> shiftKeyPressed &&
 				clickedPoint -> number >= our startSelection() && clickedPoint -> number <= our endSelection();
 		if (our draggingSelection)
-			AnyTier_getWindowPoints (our realTier()->asAnyTier(), our startSelection(), our endSelection(), & our firstSelected, & our lastSelected);
+			AnyTier_getWindowPoints (our realTier()->asAnyTier(), our startSelection(), our endSelection(),
+					& our firstSelected, & our lastSelected);
 		else
 			our firstSelected = our lastSelected = inearestPoint;
 		our anchorTime = x_world;
@@ -180,8 +187,8 @@ bool structRealTierArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 			return FunctionEditor_defaultMouseInWideDataView (our functionEditor(), event, x_world) || true;
 		}
 		Melder_assert (our anchorIsNearPoint);
-		our dt = x_world - our anchorTime;
-		our dy = y_world - our anchorY;
+		our dt = ( event -> optionKeyPressed  ? 0.0 : x_world - our anchorTime );
+		our dy = ( event -> commandKeyPressed ? 0.0 : y_world - our anchorY    );
 
 		if (event -> isDrop()) {
 			our anchorTime = undefined;
@@ -196,8 +203,10 @@ bool structRealTierArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 				const double rightNewTime = our realTier() -> points.at [our lastSelected] -> number + our dt;
 				const bool offLeft = ( leftNewTime < our tmin() );
 				const bool offRight = ( rightNewTime > our tmax() );
-				const bool draggedPastLeftNeighbour = ( our firstSelected > 1 && leftNewTime <= our realTier() -> points.at [our firstSelected - 1] -> number );
-				const bool draggedPastRightNeighbour = ( our lastSelected < our realTier() -> points.size && rightNewTime >= our realTier() -> points.at [our lastSelected + 1] -> number );
+				const bool draggedPastLeftNeighbour = ( our firstSelected > 1 &&
+						leftNewTime <= our realTier() -> points.at [our firstSelected - 1] -> number );
+				const bool draggedPastRightNeighbour = ( our lastSelected < our realTier() -> points.size &&
+						rightNewTime >= our realTier() -> points.at [our lastSelected + 1] -> number );
 				if (offLeft || offRight || draggedPastLeftNeighbour || draggedPastRightNeighbour) {
 					Melder_beep ();
 					return FunctionEditor_UPDATE_NEEDED;
@@ -238,23 +247,19 @@ bool structRealTierArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-bool RealTierArea_mouse (RealTierArea me, GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
-	const double localY_fraction = my y_fraction_globalToLocal (globalY_fraction);
-	return my v_mouse (event, x_world, localY_fraction);
-}
+
+#pragma mark - RealTierArea Modify
 
 static void menu_cb_removePoints (RealTierArea me, EDITOR_ARGS_DIRECT) {
 	FunctionArea_save (me, U"Remove point(s)");
 	RealTierArea_removePoints (me);
 	FunctionArea_broadcastDataChanged (me);
 }
-
 static void menu_cb_addPointAtCursor (RealTierArea me, EDITOR_ARGS_DIRECT) {
 	FunctionArea_save (me, U"Add point");
 	RealTierArea_addPointAtCursor (me);
 	FunctionArea_broadcastDataChanged (me);
 }
-
 static void menu_cb_addPointAt (RealTierArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add point", nullptr)
 		REAL (time, U"Time (s)", U"0.0")
@@ -268,6 +273,9 @@ static void menu_cb_addPointAt (RealTierArea me, EDITOR_ARGS_FORM) {
 		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
+
+
+#pragma mark - RealTierArea View vertical
 
 static void menu_cb_setRange (RealTierArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (my v_setRangeTitle (), nullptr)
@@ -283,12 +291,14 @@ static void menu_cb_setRange (RealTierArea me, EDITOR_ARGS_FORM) {
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
-
 void structRealTierArea :: v0_createMenuItems_view_vertical (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- view/realtier --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, our v_setRangeTitle (), 0,
 			menu_cb_setRange, this);
 }
+
+
+#pragma mark - RealTierArea all menus
 
 void structRealTierArea :: v_createMenus () {
 	RealTierArea_Parent :: v_createMenus ();

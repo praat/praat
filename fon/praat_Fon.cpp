@@ -2957,8 +2957,8 @@ void praat_uvafon_init () {
 	structDurationTierArea   :: f_preferences ();
 	structAmplitudeTierArea  :: f_preferences ();
 	structFormantGridArea    :: f_preferences ();
+	structManipulationPitchTierArea :: f_preferences ();
 
-	structManipulationEditor :: f_preferences ();
 	structSpectrumEditor     :: f_preferences ();
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Praat test...", nullptr, 0, INFO_Praat_test);
