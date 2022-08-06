@@ -25,7 +25,7 @@
 #include "EditorM.h"
 
 
-#pragma mark - ManipulationPulsesArea
+#pragma mark - ManipPulsesArea
 
 Thing_implement (ManipulationPulsesArea, PointArea, 0);
 
@@ -33,16 +33,8 @@ Thing_implement (ManipulationPulsesArea, PointArea, 0);
 #pragma mark - ManipPulsesArea drawing
 
 void structManipulationPulsesArea :: v_drawInside () {
-	Graphics_setWindow (our graphics(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setTextAlignment (our graphics(), Graphics_RIGHT, Graphics_TOP);
-	Graphics_setFont (our graphics(), kGraphics_font::TIMES);
-	Graphics_text (our graphics(), 1.0, 1.0, U"%%Sound");
-	Graphics_setColour (our graphics(), Melder_BLUE);
-	Graphics_text (our graphics(), 1.0, 1.0 - Graphics_dyMMtoWC (our graphics(), 3), U"%%Pulses");
-	Graphics_setFont (our graphics(), kGraphics_font::HELVETICA);
-
 	Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), 0.0, 1.0);
-	Graphics_setColour (our graphics(), Melder_BLUE);
+	Graphics_setColour (our graphics(), Melder_GREEN);
 	for (integer i = 1; i <= our pulses() -> nt; i ++) {
 		const double t = our pulses() -> t [i];
 		if (t >= our startWindow() && t <= our endWindow())
@@ -98,7 +90,7 @@ void structManipulationPulsesArea :: v_createMenus () {
 Thing_implement (ManipulationSoundArea, SoundArea, 0);
 
 
-#pragma mark - ManipulationPitchTierArea
+#pragma mark - ManipPitchTierArea
 
 Thing_implement (ManipulationPitchTierArea, PitchTierArea, 0);
 
@@ -113,104 +105,6 @@ Thing_implement (ManipulationPitchTierArea, PitchTierArea, 0);
 #include "ManipulationEditor_prefs.h"
 #include "Prefs_copyToInstance.h"
 #include "ManipulationEditor_prefs.h"
-
-
-#pragma mark - ManipulationDurationTierArea
-
-Thing_implement (ManipulationDurationTierArea, DurationTierArea, 0);
-
-Thing_implement (ManipulationEditor, FunctionEditor, 0);
-
-/*
- * How to add a synthesis method (in an interruptable order):
- * 1. add an Manipulation_ #define in Manipulation.h;
- * 2. add a synthesize_ routine in Manipulation.cpp, and a reference to it in Manipulation_to_Sound;
- * 3. add a button in ManipulationEditor.h;
- * 4. add a cb_Synth_ callback.
- * 5. create the button in createMenus and update updateMenus;
- */
-
-static const conststring32 units_strings [] = { 0, U"Hz", U"st" };
-
-static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
-
-void structManipulationEditor :: v_updateMenuItems () {
-	Melder_assert (our synthPulsesButton);
-	GuiMenuItem_check (our synthPulsesButton, our synthesisMethod == Manipulation_PULSES);
-	Melder_assert (our synthPulsesHumButton);
-	GuiMenuItem_check (our synthPulsesHumButton, our synthesisMethod == Manipulation_PULSES_HUM);
-	Melder_assert (our synthPulsesLpcButton);
-	GuiMenuItem_check (our synthPulsesLpcButton, our synthesisMethod == Manipulation_PULSES_LPC);
-	Melder_assert (our synthPitchButton);
-	GuiMenuItem_check (our synthPitchButton, our synthesisMethod == Manipulation_PITCH);
-	Melder_assert (our synthPitchHumButton);
-	GuiMenuItem_check (our synthPitchHumButton, our synthesisMethod == Manipulation_PITCH_HUM);
-	Melder_assert (our synthPulsesPitchButton);
-	GuiMenuItem_check (our synthPulsesPitchButton, our synthesisMethod == Manipulation_PULSES_PITCH);
-	Melder_assert (our synthPulsesPitchHumButton);
-	GuiMenuItem_check (our synthPulsesPitchHumButton, our synthesisMethod == Manipulation_PULSES_PITCH_HUM);
-	Melder_assert (our synthOverlapAddButton);
-	GuiMenuItem_check (our synthOverlapAddButton, our synthesisMethod == Manipulation_OVERLAPADD);
-	Melder_assert (our synthPitchLpcButton);
-	GuiMenuItem_check (our synthPitchLpcButton, our synthesisMethod == Manipulation_PITCH_LPC);
-}
-
-/***** FILE MENU *****/
-
-static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		if (! my sound())
-			return;
-		autoSound result = Data_copy (my sound());
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		if (! my pulses())
-			return;
-		autoPointProcess result = Data_copy (my pulses());
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		if (! my pitch())
-			return;
-		autoPitchTier result = Data_copy (my pitch());
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		if (! my duration())
-			return;
-		autoDurationTier result = Data_copy (my duration());
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	CONVERT_DATA_TO_ONE
-		autoSound result = Manipulation_to_Sound (my manipulation(), my synthesisMethod);
-	CONVERT_DATA_TO_ONE_END (U"untitled")
-}
-
-/***** EDIT MENU *****/
-
-void structManipulationEditor :: v_saveData () {
-	our previousPulses   = Data_copy (our pulses());     // could be null
-	our previousPitch    = Data_copy (our pitch());      // could be null
-	our previousDuration = Data_copy (our duration());   // could be null
-}
-
-void structManipulationEditor :: v_restoreData () {
-	std::swap (our manipulation() -> pulses,   our previousPulses);     // could be null
-	std::swap (our manipulation() -> pitch,    our previousPitch);      // could be null
-	std::swap (our manipulation() -> duration, our previousDuration);   // could be null
-}
-
-
-
 
 
 #pragma mark - ManipPitchTierArea Modify
@@ -426,6 +320,8 @@ void structManipulationPitchTierArea :: v_createMenus () {
 
 #pragma mark - ManipDurationTierArea
 
+Thing_implement (ManipulationDurationTierArea, DurationTierArea, 0);
+
 static void menu_cb_setDurationRange (ManipulationDurationTierArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set duration range", nullptr)
 		REAL (dataFreeMinimum, U"Data-free minimum", my default_dataFreeMinimum())
@@ -478,19 +374,106 @@ static void menu_cb_addDurationPointAt (ManipulationDurationTierArea me, EDITOR_
 	EDITOR_END
 }
 void structManipulationDurationTierArea :: v_createMenus () {
+	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Dur", 0);
+	FunctionAreaMenu_addCommand (menu, U"-- duration view vertical --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"View duration vertically:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (our functionEditor() -> viewMenu, U"Set duration range...", 0,
 			menu_cb_setDurationRange, this);
-	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Dur", 0);
+	FunctionAreaMenu_addCommand (menu, U"-- duration modify --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Modify duration:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Add duration point at cursor", 'D',
 			menu_cb_addDurationPointAtCursor, this);
 	FunctionAreaMenu_addCommand (menu, U"Add duration point at...", 0,
 			menu_cb_addDurationPointAt, this);
-	FunctionAreaMenu_addCommand (menu, U"-- remove duration --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Remove duration point(s)", GuiMenu_OPTION | 'D',
 			menu_cb_removeDurationPoints, this);
-	FunctionAreaMenu_addCommand (menu, U"-- duration prefs --", 0, nullptr, this);
 }
-	
+
+#pragma mark - ManipulationEditor
+
+Thing_implement (ManipulationEditor, FunctionEditor, 0);
+
+/*
+ * How to add a synthesis method (in an interruptable order):
+ * 1. add an Manipulation_ #define in Manipulation.h;
+ * 2. add a synthesize_ routine in Manipulation.cpp, and a reference to it in Manipulation_to_Sound;
+ * 3. add a button in ManipulationEditor.h;
+ * 4. add a cb_Synth_ callback.
+ * 5. create the button in createMenus and update updateMenus;
+ */
+
+static const conststring32 units_strings [] = { 0, U"Hz", U"st" };
+
+static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
+
+void structManipulationEditor :: v_updateMenuItems () {
+	Melder_assert (our synthPulsesButton);
+	GuiMenuItem_check (our synthPulsesButton, our synthesisMethod == Manipulation_PULSES);
+	Melder_assert (our synthPulsesHumButton);
+	GuiMenuItem_check (our synthPulsesHumButton, our synthesisMethod == Manipulation_PULSES_HUM);
+	Melder_assert (our synthPulsesLpcButton);
+	GuiMenuItem_check (our synthPulsesLpcButton, our synthesisMethod == Manipulation_PULSES_LPC);
+	Melder_assert (our synthPitchButton);
+	GuiMenuItem_check (our synthPitchButton, our synthesisMethod == Manipulation_PITCH);
+	Melder_assert (our synthPitchHumButton);
+	GuiMenuItem_check (our synthPitchHumButton, our synthesisMethod == Manipulation_PITCH_HUM);
+	Melder_assert (our synthPulsesPitchButton);
+	GuiMenuItem_check (our synthPulsesPitchButton, our synthesisMethod == Manipulation_PULSES_PITCH);
+	Melder_assert (our synthPulsesPitchHumButton);
+	GuiMenuItem_check (our synthPulsesPitchHumButton, our synthesisMethod == Manipulation_PULSES_PITCH_HUM);
+	Melder_assert (our synthOverlapAddButton);
+	GuiMenuItem_check (our synthOverlapAddButton, our synthesisMethod == Manipulation_OVERLAPADD);
+	Melder_assert (our synthPitchLpcButton);
+	GuiMenuItem_check (our synthPitchLpcButton, our synthesisMethod == Manipulation_PITCH_LPC);
+}
+
+/***** FILE MENU *****/
+
+static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = Data_copy (my soundArea() -> sound());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+
+static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoPointProcess result = Data_copy (my pulsesArea() -> pulses());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+
+static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoPitchTier result = Data_copy (my pitchTierArea() -> pitch());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+
+static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoDurationTier result = Data_copy (my durationTierArea() -> duration());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+
+static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = Manipulation_to_Sound (my manipulation(), my synthesisMethod);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
+}
+
+/***** EDIT MENU *****/
+
+void structManipulationEditor :: v_saveData () {
+	our previousPulses   = Data_copy (our manipulation() -> pulses.get());     // could be null
+	our previousPitch    = Data_copy (our manipulation() -> pitch.get());      // could be null
+	our previousDuration = Data_copy (our manipulation() -> duration.get());   // could be null
+}
+
+void structManipulationEditor :: v_restoreData () {
+	std::swap (our manipulation() -> pulses,   our previousPulses);     // could be null
+	std::swap (our manipulation() -> pitch,    our previousPitch);      // could be null
+	std::swap (our manipulation() -> duration, our previousDuration);   // could be null
+}
+
+
 static void menu_cb_ManipulationEditorHelp (ManipulationEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"ManipulationEditor"); }
 static void menu_cb_ManipulationHelp (ManipulationEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Manipulation"); }
 
@@ -554,16 +537,6 @@ void structManipulationPitchTierArea :: v_drawInside () {
 		our startSelection() >= our startWindow() &&
 		our startSelection() <= our endWindow()
 	);
-
-	Graphics_setWindow (graphics(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (graphics(), Melder_BLUE);
-	Graphics_setFont (graphics(), kGraphics_font::TIMES);
-	Graphics_setTextAlignment (graphics(), Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (graphics(), 1.0, 1.0, U"%%Pitch manip");
-	Graphics_setColour (graphics(), MelderColour (0.7));
-	Graphics_text (graphics(), 1.0, 1.0 - Graphics_dyMMtoWC (graphics(), 3.0), U"%%Pitch from pulses");
-	Graphics_setFont (graphics(), kGraphics_font::HELVETICA);
-
 	Graphics_setWindow (graphics(), startWindow(), endWindow(), our ymin, our ymax);
 
 	/*
@@ -571,7 +544,7 @@ void structManipulationPitchTierArea :: v_drawInside () {
 	*/
 	Graphics_setGrey (graphics(), 0.7);
 	/* BUG: should include grey dots */
-	constPointProcess pulses = ((ManipulationEditor) functionEditor()) -> pulses();
+	constPointProcess pulses = ((ManipulationEditor) functionEditor()) -> manipulation() -> pulses.get();
 	if (pulses) for (integer i = 1; i < pulses -> nt; i ++) {
 		const double tleft = pulses -> t [i], tright = pulses -> t [i + 1], t = 0.5 * (tleft + tright);
 		if (t >= startWindow() && t <= endWindow()) {
@@ -594,37 +567,28 @@ void structManipulationPitchTierArea :: v_drawInside () {
 			Melder_fixed (y, 1), U" Hz",
 			our ymin, our ymax);
 	}
-	ManipulationPitchTierArea_Parent :: v_drawInside ();
+	our ManipulationPitchTierArea_Parent :: v_drawInside ();
 }
 
 void structManipulationDurationTierArea :: v_drawInside () {
 	const bool cursorVisible = (
-		startSelection() == endSelection() &&
-		startSelection() >= startWindow() &&
-		startSelection() <= endWindow()
+		our startSelection() == our endSelection() &&
+		our startSelection() >= our startWindow() &&
+		our startSelection() <= our endWindow()
 	);
-
-	Graphics_setWindow (graphics(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (graphics(), Melder_BLUE);
-	Graphics_setFont (graphics(), kGraphics_font::TIMES);
-	Graphics_setTextAlignment (graphics(), Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (graphics(), 1.0, 1.0, U"%%Duration manip");
-	Graphics_setFont (graphics(), kGraphics_font::HELVETICA);
-
-	Graphics_setWindow (graphics(), startWindow(), endWindow(), our ymin, our ymax);
-	FunctionEditor_drawGridLine (functionEditor(), 1.0);   // BUG: should move to FunctionArea
-	if (cursorVisible && durationTier() -> points.size > 0) {
-		const double y = RealTier_getValueAtTime (durationTier(), startSelection());
-		FunctionEditor_insertCursorFunctionValue (functionEditor(), y,   // BUG: should move to FunctionArea
+	Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
+	FunctionEditor_drawGridLine (our functionEditor(), 1.0);   // BUG: should move to FunctionArea
+	if (cursorVisible && our durationTier() -> points.size > 0) {
+		const double y = RealTier_getValueAtTime (our durationTier(), our startSelection());
+		FunctionEditor_insertCursorFunctionValue (our functionEditor(), y,   // BUG: should move to FunctionArea
 				Melder_fixed (y, 3), U"", our ymin, our ymax);
 	}
-	ManipulationDurationTierArea_Parent :: v_drawInside ();
+	our ManipulationDurationTierArea_Parent :: v_drawInside ();
 }
 
 void structManipulationEditor :: v_play (double startTime, double endTime) {
 	if (our clickWasModifiedByShiftKey) {
-		if (our sound())
-			Sound_playPart (our sound(), startTime, endTime, theFunctionEditor_playCallback, this);
+		Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
 		Manipulation_playPart (our manipulation(), startTime, endTime, our synthesisMethod);
 	}
