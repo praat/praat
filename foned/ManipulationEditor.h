@@ -69,22 +69,14 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 
 	Manipulation manipulation() { return static_cast <Manipulation> (our data()); }
 
-	/*
-		Quick access to internal objects.
-	*/
-	Sound sound() { return our manipulation() -> sound.get(); }
-	PointProcess pulses() { return our manipulation() -> pulses.get(); }
-	PitchTier pitch() { return our manipulation() -> pitch.get(); }
-	DurationTier duration() { return our manipulation() -> duration.get(); }
-
 	void v1_dataChanged () override {
 		ManipulationEditor_Parent :: v1_dataChanged ();
-		our pulsesArea() -> functionChanged (our pulses());
-		our soundArea() -> functionChanged (our sound());
-		our pitchTierArea() -> functionChanged (our pitch());
-		if (! our duration())   // repair an old-fashioned Manipulation that has a PitchTier only
+		our pulsesArea() -> functionChanged (our manipulation() -> pulses.get());
+		our soundArea() -> functionChanged (our manipulation() -> sound.get());
+		our pitchTierArea() -> functionChanged (our manipulation() -> pitch.get());
+		if (! our manipulation() -> duration)   // repair an old-fashioned Manipulation that has a PitchTier only
 			our manipulation() -> duration = DurationTier_create (our manipulation() -> xmin, our manipulation() -> xmax);
-		our durationTierArea() -> functionChanged (our duration());
+		our durationTierArea() -> functionChanged (our manipulation() -> duration.get());
 	}
 
 	autoPointProcess previousPulses;
@@ -111,22 +103,31 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	void v_distributeAreas () override {
 		our pulsesArea() -> setGlobalYRange_fraction (0.67, 1.00);
 		our soundArea() -> setGlobalYRange_fraction (0.67, 1.00);
-		our pitchTierArea() -> setGlobalYRange_fraction (( our duration() ? 0.17 : 0.0 ), 0.67);
-		if (our duration())
-			our durationTierArea() -> setGlobalYRange_fraction (0.0, 0.17);
+		our pitchTierArea() -> setGlobalYRange_fraction (0.17, 0.67);
+		our durationTierArea() -> setGlobalYRange_fraction (0.0, 0.17);
 	}
 	void v_draw () override {
 		FunctionArea_drawTwo (our pulsesArea().get(), our soundArea().get());
-		if (our pitch())
-			FunctionArea_drawOne (our pitchTierArea().get());
-		if (our duration())
-			FunctionArea_drawOne (our durationTierArea().get());
+		FunctionArea_drawOne (our pitchTierArea().get());
+		FunctionArea_drawOne (our durationTierArea().get());
 	}
 	void v_updateMenuItems ()
 		override;
-
 	void v_play (double tmin, double tmax)
 		override;
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our soundArea().get(),
+			U"non-modifiable copy of sound", Melder_BLACK,
+			U"modifiable pulses", Melder_BLUE
+		);
+		FunctionArea_drawLegend (our pitchTierArea().get(),
+			U"pitch manipulation", Melder_GREEN,
+			U"pitch derived from pulses", Melder_GREY
+		);
+		FunctionArea_drawLegend (our durationTierArea().get(),
+			U"duration manipulation", Melder_GREEN
+		);
+	}
 };
 
 autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation manipulation);

@@ -63,4 +63,85 @@ void FunctionArea_drawRightMark (FunctionArea me, double yWC, conststring32 yWC_
 	Graphics_text (my graphics(), my endWindow(), yWC, text.string);
 }
 
+void FunctionArea_drawLegend_ (FunctionArea me,
+	conststring32 cattableText1, MelderColour colour1,
+	conststring32 cattableText2, MelderColour colour2,
+	conststring32 cattableText3, MelderColour colour3,
+	conststring32 cattableText4, MelderColour colour4
+) {
+	FunctionArea_setViewport (me);
+	Graphics_setWindow (my graphics(), 0.0, 1.0, my bottom_pxlt(), my top_pxlt());
+	Graphics_setColour (my graphics(), colour1);
+	Graphics_setTextAlignment (my graphics(), kGraphics_horizontalAlignment::RIGHT, Graphics_BASELINE);
+	double fontSize = Graphics_inqFontSize (my graphics()), oldFontSize = fontSize;
+	Graphics_setFont (my graphics(), kGraphics_font::TIMES);
+	Graphics_setFontStyle (my graphics(), Graphics_ITALIC);
+	if (! cattableText1) cattableText1 = U"";
+	if (! cattableText2) cattableText2 = U"";
+	if (! cattableText3) cattableText3 = U"";
+	if (! cattableText4) cattableText4 = U"";
+	double lengthText1 = Graphics_textWidth (my graphics(), cattableText1);
+	double lengthText2 = Graphics_textWidth (my graphics(), cattableText2);
+	double lengthText3 = Graphics_textWidth (my graphics(), cattableText3);
+	double lengthText4 = Graphics_textWidth (my graphics(), cattableText4);
+	conststring32 separator1 = ( cattableText1 [0] != U'\0' &&
+			(cattableText2 [0] != U'\0' || cattableText3 [0] != U'\0' || cattableText4 [0] != U'\0') ? U" – " : U"" );
+	conststring32 separator2 = ( cattableText2 [0] != U'\0' &&
+			(cattableText3 [0] != U'\0' || cattableText4 [0] != U'\0') ? U" – " : U"" );
+	conststring32 separator3 = ( cattableText3 [0] != U'\0' &&
+			cattableText4 [0] != U'\0' ? U" – " : U"" );
+	double lengthSep1 = Graphics_textWidth (my graphics(), separator1);
+	double lengthSep2 = Graphics_textWidth (my graphics(), separator2);
+	double lengthSep3 = Graphics_textWidth (my graphics(), separator3);
+	double totalLength = lengthText1 + lengthSep1 + lengthText2 + lengthSep2 +
+			lengthText3 + lengthSep3 + lengthText4;
+	if (totalLength > 1.0) {
+		fontSize = floor (fontSize / totalLength);
+		Graphics_setFontSize (my graphics(), fontSize);
+		lengthText1 = Graphics_textWidth (my graphics(), cattableText1);
+		lengthText2 = Graphics_textWidth (my graphics(), cattableText2);
+		lengthText3 = Graphics_textWidth (my graphics(), cattableText3);
+		lengthText4 = Graphics_textWidth (my graphics(), cattableText4);
+		lengthSep1 = Graphics_textWidth (my graphics(), separator1);
+		lengthSep2 = Graphics_textWidth (my graphics(), separator2);
+		lengthSep3 = Graphics_textWidth (my graphics(), separator3);
+	}
+	totalLength = lengthText1 + lengthSep1 + lengthText2 + lengthSep2 +
+			lengthText3 + lengthSep3 + lengthText4;
+	if (totalLength > 1.0) {
+		fontSize -= 1.0;
+		Graphics_setFontSize (my graphics(), fontSize);
+		lengthText1 = Graphics_textWidth (my graphics(), cattableText1);
+		lengthText2 = Graphics_textWidth (my graphics(), cattableText2);
+		lengthText3 = Graphics_textWidth (my graphics(), cattableText3);
+		lengthText4 = Graphics_textWidth (my graphics(), cattableText4);
+		lengthSep1 = Graphics_textWidth (my graphics(), separator1);
+		lengthSep2 = Graphics_textWidth (my graphics(), separator2);
+		lengthSep3 = Graphics_textWidth (my graphics(), separator3);
+	}
+	Graphics_setColour (my graphics(), colour1);
+	const double y = my top_pxlt() + 2;
+	Graphics_text (my graphics(), 1.0 - lengthText4 - lengthSep3 - lengthText3 - lengthSep2 - lengthText2 - lengthSep1,
+			y, cattableText1);
+	Graphics_setColour (my graphics(), colour2);
+	Graphics_text (my graphics(), 1.0 - lengthText4 - lengthSep3 - lengthText3 - lengthSep2,
+			y, cattableText2);
+	Graphics_setColour (my graphics(), colour3);
+	Graphics_text (my graphics(), 1.0 - lengthText4 - lengthSep3,
+			y, cattableText3);
+	Graphics_setColour (my graphics(), colour4);
+	Graphics_text (my graphics(), 1.0,
+			y, cattableText4);
+	Graphics_setColour (my graphics(), Melder_BLACK);
+	Graphics_text (my graphics(), 1.0 - lengthText4 - lengthSep3 - lengthText3 - lengthSep2 - lengthText2,
+			y, separator1);
+	Graphics_text (my graphics(), 1.0 - lengthText4 - lengthSep3 - lengthText3,
+			y, separator2);
+	Graphics_text (my graphics(), 1.0 - lengthText4,
+			y, separator3);
+	Graphics_setFont (my graphics(), kGraphics_font::HELVETICA);
+	Graphics_setFontStyle (my graphics(), Graphics_NORMAL);
+	Graphics_setFontSize (my graphics(), oldFontSize);
+}
+
 /* End of file FunctionArea.cpp */

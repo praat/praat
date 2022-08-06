@@ -64,10 +64,10 @@ autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid
 		my v_updateText ();   // to reflect changed tier selection AND to get first text; BUG: should not be needed
 		if (spellingChecker)
 			GuiText_setSelection (my textArea, 0, 0);
-		if (my soundOrLongSound() &&
-			my soundOrLongSound() -> xmin == 0.0 &&
+		if (optionalSoundOrLongSound &&
+			optionalSoundOrLongSound -> xmin == 0.0 &&
 			my textGrid() -> xmin != 0.0 &&
-			my textGrid() -> xmax > my soundOrLongSound() -> xmax
+			my textGrid() -> xmax > optionalSoundOrLongSound -> xmax
 		)
 			Melder_warning (U"The time domain of the TextGrid (starting at ",
 				Melder_fixed (my textGrid() -> xmin, 6), U" seconds) does not overlap with that of the sound "

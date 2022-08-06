@@ -29,9 +29,6 @@ Thing_define (TextGridEditor, FunctionEditor) {
 	DEFINE_FunctionArea (3, SoundAnalysisArea, soundAnalysisArea)
 
 	TextGrid textGrid() { return static_cast <TextGrid> (our data()); }
-	SampledXY soundOrLongSound() { return our soundArea() ? our soundArea() -> soundOrLongSound() : nullptr; }
-	Sound sound() { return our soundArea() ? our soundArea() -> sound() : nullptr; }
-	LongSound longSound() { return our soundArea() ? our soundArea() -> longSound() : nullptr; }
 
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
@@ -48,7 +45,8 @@ Thing_define (TextGridEditor, FunctionEditor) {
 		if (our soundArea()) {
 			const bool showAnalysis = our soundAnalysisArea() -> hasContentToShow();
 			const integer numberOfTiers = our textGrid() -> tiers->size;
-			const integer numberOfVisibleChannels = Melder_clippedRight (our soundOrLongSound() -> ny, 8_integer);
+			const integer numberOfVisibleChannels =
+					Melder_clippedRight (our soundArea() -> soundOrLongSound() -> ny, 8_integer);
 			const double soundY = numberOfTiers / (2.0 * numberOfVisibleChannels +
 					numberOfTiers * ( showAnalysis ? 1.8 : 1.3 ));
 			our textGridArea() -> setGlobalYRange_fraction (0.0, soundY);
@@ -90,6 +88,17 @@ Thing_define (TextGridEditor, FunctionEditor) {
 	void v_play (double startTime, double endTime) override {
 		if (our soundArea())
 			SoundArea_play (our soundArea().get(), startTime, endTime);
+	}
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our textGridArea().get(),
+			U"modifiable TextGrid", Melder_GREEN
+		);
+		const bool pulsesAreVisible = our soundAnalysisArea() -> hasPulsesToShow ();
+		FunctionArea_drawLegend (our soundArea().get(),
+			U"non-modifiable copy of sound", Melder_BLACK,
+			pulsesAreVisible ? U"derived pulses" : nullptr, Melder_BLUE
+		);
+		SoundAnalysisArea_drawDefaultLegends (our soundAnalysisArea().get());
 	}
 
 	#include "TextGridEditor_prefs.h"

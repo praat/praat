@@ -56,6 +56,14 @@ Thing_define (SoundEditor, FunctionEditor) {
 	void v_play (double startTime, double endTime) override {
 		SoundArea_play (our soundArea().get(), startTime, endTime);
 	}
+	void v_drawLegends () override {
+		const bool pulsesAreVisible = our soundAnalysisArea() -> hasPulsesToShow ();
+		FunctionArea_drawLegend (our soundArea().get(),
+			U"modifiable sound", Melder_BLACK,
+			pulsesAreVisible ? U"derived pulses" : nullptr, Melder_BLUE
+		);
+		SoundAnalysisArea_drawDefaultLegends (our soundAnalysisArea().get());
+	}
 };
 
 autoSoundEditor SoundEditor_create (
