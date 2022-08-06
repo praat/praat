@@ -126,6 +126,13 @@ public:
 		Graphics_setLineWidth (my graphics(), 1.0);
 	}
 	friend void FunctionArea_drawRightMark (FunctionArea me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment);
+	friend void FunctionArea_drawLegend_ (FunctionArea me,
+		conststring32 cattableText1, MelderColour colour1,
+		conststring32 cattableText2, MelderColour colour2,
+		conststring32 cattableText3, MelderColour colour3,
+		conststring32 cattableText4, MelderColour colour4
+	);
+
 private:
 	virtual void v_specializedHighlightBackground () const { }
 protected:
@@ -213,6 +220,20 @@ typedef MelderCallback <void, structFunctionArea, EditorCommand, UiForm, integer
 
 GuiMenuItem FunctionAreaMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
 		FunctionAreaCommandCallback commandCallback, FunctionArea commandBoss);
+
+inline void FunctionArea_drawLegend (FunctionArea me,
+	conststring32 cattableText1, MelderColour colour1,
+	conststring32 cattableText2 = U"", MelderColour colour2 = Melder_BLACK,
+	conststring32 cattableText3 = U"", MelderColour colour3 = Melder_BLACK,
+	conststring32 cattableText4 = U"", MelderColour colour4 = Melder_BLACK
+) {
+	FunctionArea_drawLegend_ (me,
+		cattableText1, colour1,
+		cattableText2, colour2,
+		cattableText3, colour3,
+		cattableText4, colour4
+	);   // this looks strange, but friend function cannot have default parameters unless defined when declared
+}
 
 /* End of file FunctionArea.h */
 #endif

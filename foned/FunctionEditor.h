@@ -212,6 +212,7 @@ Thing_define (FunctionEditor, Editor) {
 	virtual void v_clickSelectionViewer (double x_fraction, double y_fraction);
 	virtual int v_playCallback (int phase, double startTime, double endTime, double currentTime);
 	virtual void v_updateText ();
+	virtual void v_drawLegends () { }
 
     #include "FunctionEditor_prefs.h"
 

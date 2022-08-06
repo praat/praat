@@ -350,8 +350,9 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		Start of inner drawing.
 	*/
 	my v_distributeAreas ();
-	my viewDataAsWorldByFraction ();
+	//my viewDataAsWorldByFraction ();
 	my v_draw ();
+	my v_drawLegends ();
 
 	/*
 		Red dotted marker lines.

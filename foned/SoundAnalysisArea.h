@@ -65,6 +65,9 @@ public:
 		return our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
 				our instancePref_intensity_show() || our instancePref_formant_show();
 	}
+	bool hasPulsesToShow () {
+		return our instancePref_pulses_show() && our endWindow() - our startWindow() <= our instancePref_longestAnalysis() && our d_pulses;
+	}
 
 public:
 	void v1_info ()
@@ -97,6 +100,16 @@ void SoundAnalysisArea_haveVisibleFormants (SoundAnalysisArea me);
 void SoundAnalysisArea_haveVisiblePulses (SoundAnalysisArea me);
 
 bool SoundAnalysisArea_mouse (SoundAnalysisArea me, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
+
+inline void SoundAnalysisArea_drawDefaultLegends (SoundAnalysisArea me) {
+	if (my hasContentToShow () && my endWindow() - my startWindow() <= my instancePref_longestAnalysis())
+		FunctionArea_drawLegend (me,
+			my instancePref_spectrogram_show() ? U"derived spectrogram" : U"", Melder_BLACK,
+			my instancePref_formant_show()     ? U"derived formants"    : U"", Melder_RED,
+			my instancePref_intensity_show()   ? U"derived intensity"   : U"", Melder_GREEN,
+			my instancePref_pitch_show()       ? U"derived pitch"       : U"", Melder_BLUE
+		);
+}
 
 /* End of file SoundAnalysisArea.h */
 #endif
