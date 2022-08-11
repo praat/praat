@@ -1834,9 +1834,11 @@ void structTextGridArea :: v_createMenus () {
 	EditorMenu textGridMenu = Editor_addMenu (our functionEditor(), U"TextGrid", 0);
 	addTextGridDrawMenu (this, textGridMenu);
 	addTextGridExtractMenu (this, textGridMenu);
-	addIntervalMenu (this);
-	addBoundaryMenu (this);
-	addTierMenu (this);
+	if (our editable()) {
+		addIntervalMenu (this);
+		addBoundaryMenu (this);
+		addTierMenu (this);
+	}
 
 	if (our functionEditor() -> textArea)
 		GuiText_setChangedCallback (our functionEditor() -> textArea, gui_text_cb_changed, this);
