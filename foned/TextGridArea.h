@@ -58,13 +58,9 @@ public:
 	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
 		override;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
-	void v_createMenuItems_file (EditorMenu menu)
+	void v_createMenuItems_prefs (EditorMenu menu)
 		override;
-	void v_prefs_addFields (EditorCommand cmd)
-		override;
-	void v_prefs_setValues (EditorCommand cmd)
-		override;
-	void v_prefs_getValues (EditorCommand cmd)
+	void v_createMenuItems_save (EditorMenu menu)
 		override;
 	void v_createMenuItems_edit (EditorMenu menu)
 		override;

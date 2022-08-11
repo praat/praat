@@ -132,7 +132,7 @@ void structRealTierArea :: v_drawInside () {
 			RealPoint point = our realTier() -> points.at [ipoint];
 			const double t = point -> number, y = point -> value;
 			const bool pointIsSelected = ( ipoint >= ifirstSelected && ipoint <= ilastSelected );
-			Graphics_setColour (our graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
+			Graphics_setColour (our graphics(), pointIsSelected ? Melder_RED : DataGui_defaultForegroundColour (this));
 			Graphics_fillCircle_mm (our graphics(), t, y, 3.0);
 		}
 	}

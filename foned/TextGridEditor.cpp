@@ -55,8 +55,8 @@ autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid
 			my soundAnalysisArea() = SoundAnalysisArea_create (false, nullptr, me.get());
 			my textGridArea() -> borrowedSoundArea = my soundArea().get();
 			my textGridArea() -> borrowedSoundAnalysisArea = my soundAnalysisArea().get();
-			my textGridArea() -> spellingChecker = spellingChecker;
 		}
+		my textGridArea() -> spellingChecker = spellingChecker;
 		my callbackSocket = Melder_dup (callbackSocket);
 		FunctionEditor_init (me.get(), title, textGrid);
 

@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,10 +156,10 @@ conststring32 Melder_kleenean (kleenean valueK) {
 	assert string$ (undefined) = "--undefined--"
 @*/
 const char * Melder8_double (double value) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.15g", value);
 	if (strtod (buffers8 [ibuffer], nullptr) != value) {
 		sprintf (buffers8 [ibuffer], "%.16g", value);
@@ -174,10 +174,10 @@ conststring32 Melder_double (double value) {
 }
 
 const char * Melder8_double_overtlyReal (double value) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.15g", value);
 	if (strtod (buffers8 [ibuffer], nullptr) != value) {
 		sprintf (buffers8 [ibuffer], "%.16g", value);
@@ -194,10 +194,10 @@ conststring32 Melder_double_overtlyReal (double value) {
 }
 
 const char * Melder8_single (double value) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.9g", value);
 	return buffers8 [ibuffer];
 }
@@ -207,10 +207,10 @@ conststring32 Melder_single (double value) {
 }
 
 const char * Melder8_half (double value) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.4g", value);
 	return buffers8 [ibuffer];
 }
@@ -220,12 +220,12 @@ conststring32 Melder_half (double value) {
 }
 
 const char * Melder8_fixed (double value, integer precision) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
 	if (value == 0.0)
 		return "0";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	if (precision > 60)
 		precision = 60;
 	const int minimumPrecision = - (int) floor (log10 (fabs (value)));
@@ -241,13 +241,13 @@ conststring32 Melder_fixed (double value, integer precision) {
 }
 
 const char * Melder8_fixedExponent (double value, integer exponent, integer precision) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	const double factor = pow (10.0, exponent);
 	if (isundef (value))
 		return "--undefined--";
 	if (value == 0.0)
 		return "0";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	if (precision > 60)
 		precision = 60;
 	value /= factor;
@@ -264,12 +264,12 @@ conststring32 Melder_fixedExponent (double value, integer exponent, integer prec
 }
 
 const char * Melder8_percent (double value, integer precision) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
 	if (value == 0.0)
 		return "0";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	if (precision > 60)
 		precision = 60;
 	value *= 100.0;
@@ -286,10 +286,10 @@ conststring32 Melder_percent (double value, integer precision) {
 }
 
 const char * Melder8_hexadecimal (integer value, integer precision) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (value < 0)
 		return "--undefined--";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	if (precision > 60)
 		precision = 60;
 	const integer integerValue = Melder_iround (value);
@@ -305,10 +305,10 @@ conststring32 Melder_hexadecimal (integer value, integer precision) {
 }
 
 const char * Melder8_dcomplex (dcomplex value) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (value.real()) || isundef (value.imag()))
 		return "--undefined--";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.15g", value.real());
 	if (strtod (buffers8 [ibuffer], nullptr) != value.real()) {
 		sprintf (buffers8 [ibuffer], "%.16g", value.real());
@@ -334,10 +334,10 @@ conststring32 Melder_dcomplex (dcomplex value) {
 }
 
 const char * Melder8_scomplex (dcomplex value) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (value.real()) || isundef (value.imag()))
 		return "--undefined--";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.9g", value.real());
 	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
 	*p = ( value.imag() < 0.0 ? '-' : '+' );
@@ -351,7 +351,7 @@ conststring32 Melder_scomplex (dcomplex value) {
 }
 
 conststring32 Melder_float (conststring32 number) {
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
 		ibuffer = 0;
 	if (! str32chr (number, 'e')) {
 		str32cpy (buffers32 [ibuffer], number);
@@ -386,13 +386,13 @@ conststring32 Melder_float (conststring32 number) {
 }
 
 const char * Melder8_naturalLogarithm (double lnNumber) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	//if (lnNumber == -INFINITY) return "0";   // this would have been nice, but cannot be relied upon
 	if (isundef (lnNumber))
 		return "--undefined--";
 	const double log10Number = lnNumber * NUMlog10e;
 	if (log10Number < -41.0) {
-		if (++ ibuffer == NUMBER_OF_BUFFERS)
-			ibuffer = 0;
 		integer ceiling = (integer) ceil (log10Number);
 		const double remainder = log10Number - ceiling;
 		double remainder10 = pow (10.0, remainder);
@@ -437,10 +437,10 @@ conststring32 Melder_character (char32 kar) {
 }
 
 const char * Melder8_colour (MelderColour colour) {
+	if (++ ibuffer == NUMBER_OF_BUFFERS)   // should come before any return!
+		ibuffer = 0;
 	if (isundef (colour.red) || isundef (colour.green) || isundef (colour.blue))
 		return "{--undefined--,--undefined--,--undefined--}";
-	if (++ ibuffer == NUMBER_OF_BUFFERS)
-		ibuffer = 0;
 	char *p = & buffers8 [ibuffer] [0];
 	strcpy (p, "{");
 	p ++;

@@ -838,50 +838,51 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 }
 
 
-#pragma mark - TextGridArea File menu
+#pragma mark - TextGridArea File/Prefs
 
-POSITIVE_VARIABLE (v_prefs_addFields__fontSize)
-OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals)
-OPTIONMENU_VARIABLE (v_prefs_addFields__useTextStyles)
-OPTIONMENU_VARIABLE (v_prefs_addFields__shiftDragMultiple)
-OPTIONMENU_ENUM_VARIABLE (kTextGridArea_showNumberOf, v_prefs_addFields__showNumberOf)
-OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel)
-SENTENCE_VARIABLE (v_prefs_addFields__theText)
-void structTextGridArea :: v_prefs_addFields (EditorCommand cmd) {
-	UiField _radio_;
-	POSITIVE_FIELD (v_prefs_addFields__fontSize, U"Font size (points)", our default_fontSize())
-	OPTIONMENU_ENUM_FIELD (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals,
-			U"Text alignment in intervals", kGraphics_horizontalAlignment::DEFAULT)
-	OPTIONMENU_FIELD (v_prefs_addFields__useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles() + 1)
-		OPTION (U"are shown as typed")
-		OPTION (U"mean italic/bold/sub/super")
-	OPTIONMENU_FIELD (v_prefs_addFields__shiftDragMultiple, U"With the shift key, you drag", our default_shiftDragMultiple() + 1)
-		OPTION (U"a single boundary")
-		OPTION (U"multiple boundaries")
-	OPTIONMENU_ENUM_FIELD (kTextGridArea_showNumberOf, v_prefs_addFields__showNumberOf,
-			U"Show number of", kTextGridArea_showNumberOf::DEFAULT)
-	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel,
-			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
-	SENTENCE_FIELD (v_prefs_addFields__theText, U"...the text", our default_greenString())
+static void menu_cb_TextGridPreferences (TextGridArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"TextGrid preferences", nullptr)
+		POSITIVE (fontSize, U"Font size (points)", my default_fontSize())
+		OPTIONMENU_ENUM (kGraphics_horizontalAlignment, textAlignmentInIntervals,
+				U"Text alignment in intervals", kGraphics_horizontalAlignment::DEFAULT)
+		OPTIONMENU (useTextStyles, U"The symbols %#_^ in labels", my default_useTextStyles() + 1)
+			OPTION (U"are shown as typed")
+			OPTION (U"mean italic/bold/sub/super")
+		OPTIONMENU (shiftDragMultiple, U"With the shift key, you drag", my default_shiftDragMultiple() + 1)
+			OPTION (U"a single boundary")
+			OPTION (U"multiple boundaries")
+		OPTIONMENU_ENUM (kTextGridArea_showNumberOf, showNumberOf,
+				U"Show number of", kTextGridArea_showNumberOf::DEFAULT)
+		OPTIONMENU_ENUM (kMelder_string, paintIntervalsGreenWhoseLabel,
+				U"Paint intervals green whose label...", kMelder_string::DEFAULT)
+		SENTENCE (theText, U"...the text", my default_greenString())
+	EDITOR_OK
+		SET_OPTION (useTextStyles, my instancePref_useTextStyles() + 1)
+		SET_REAL (fontSize, my instancePref_fontSize())
+		SET_ENUM (textAlignmentInIntervals, kGraphics_horizontalAlignment, my instancePref_alignment())
+		SET_OPTION (shiftDragMultiple, my instancePref_shiftDragMultiple() + 1)
+		SET_ENUM (showNumberOf, kTextGridArea_showNumberOf, my instancePref_showNumberOf())
+		SET_ENUM (paintIntervalsGreenWhoseLabel, kMelder_string, my instancePref_greenMethod())
+		SET_STRING (theText, my instancePref_greenString())
+	EDITOR_DO
+		my setInstancePref_useTextStyles (useTextStyles - 1);
+		my setInstancePref_fontSize (fontSize);
+		my setInstancePref_alignment (textAlignmentInIntervals);
+		my setInstancePref_shiftDragMultiple (shiftDragMultiple - 1);
+		my setInstancePref_showNumberOf (showNumberOf);
+		my setInstancePref_greenMethod (paintIntervalsGreenWhoseLabel);
+		my setInstancePref_greenString (theText);
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
 }
-void structTextGridArea :: v_prefs_setValues (EditorCommand cmd) {
-	SET_OPTION (v_prefs_addFields__useTextStyles, our instancePref_useTextStyles() + 1)
-	SET_REAL (v_prefs_addFields__fontSize, our instancePref_fontSize())
-	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our instancePref_alignment())
-	SET_OPTION (v_prefs_addFields__shiftDragMultiple, our instancePref_shiftDragMultiple() + 1)
-	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridArea_showNumberOf, our instancePref_showNumberOf())
-	SET_ENUM (v_prefs_addFields__paintIntervalsGreenWhoseLabel, kMelder_string, our instancePref_greenMethod())
-	SET_STRING (v_prefs_addFields__theText, our instancePref_greenString())
+void structTextGridArea :: v_createMenuItems_prefs (EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"TextGrid preferences...", 0,
+			menu_cb_TextGridPreferences, this);
+	FunctionAreaMenu_addCommand (menu, U"-- after TextGrid prefs --", 0, nullptr, this);
 }
-void structTextGridArea :: v_prefs_getValues (EditorCommand /* cmd */) {
-	our setInstancePref_useTextStyles (v_prefs_addFields__useTextStyles - 1);
-	our setInstancePref_fontSize (v_prefs_addFields__fontSize);
-	our setInstancePref_alignment (v_prefs_addFields__textAlignmentInIntervals);
-	our setInstancePref_shiftDragMultiple (v_prefs_addFields__shiftDragMultiple - 1);
-	our setInstancePref_showNumberOf (v_prefs_addFields__showNumberOf);
-	our setInstancePref_greenMethod (v_prefs_addFields__paintIntervalsGreenWhoseLabel);
-	our setInstancePref_greenString (v_prefs_addFields__theText);
-}
+
+
+#pragma mark - TextGridArea File/Save
 
 static void menu_cb_SaveWholeTextGridAsTextFile (TextGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save whole TextGrid as text file", nullptr)
@@ -890,7 +891,7 @@ static void menu_cb_SaveWholeTextGridAsTextFile (TextGridArea me, EDITOR_ARGS_FO
 		Data_writeToTextFile (my textGrid(), file);
 	EDITOR_END
 }
-void structTextGridArea :: v_createMenuItems_file (EditorMenu menu) {
+void structTextGridArea :: v_createMenuItems_save (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"Save TextGrid to disk:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Save whole TextGrid as text file...", 'S',
 			menu_cb_SaveWholeTextGridAsTextFile, this);
@@ -1831,9 +1832,7 @@ static void menu_cb_AddToUserDictionary (TextGridArea me, EDITOR_ARGS_DIRECT) {
 
 void structTextGridArea :: v_createMenus () {
 	EditorMenu textGridMenu = Editor_addMenu (our functionEditor(), U"TextGrid", 0);
-	addTextGridDrawMenu (this, our functionEditor() -> drawMenu);
 	addTextGridDrawMenu (this, textGridMenu);
-	addTextGridExtractMenu (this, our functionEditor() -> extractMenu);
 	addTextGridExtractMenu (this, textGridMenu);
 	if (our editable()) {
 		addIntervalMenu (this);
