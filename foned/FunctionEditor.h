@@ -146,7 +146,9 @@ Thing_define (FunctionEditor, Editor) {
 	bool v_hasExtractMenu () override { return true; }
 	void v_createMenus ()
 		override;
-	void v_createMenuItems_file (EditorMenu)
+	void v_createMenuItems_prefs (EditorMenu)
+		override;
+	void v_createMenuItems_save (EditorMenu)
 		override;
 	void v_createMenuItems_edit (EditorMenu)
 		override;

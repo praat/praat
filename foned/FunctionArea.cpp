@@ -75,7 +75,7 @@ void FunctionArea_drawLegend_ (FunctionArea me,
 	Graphics_setTextAlignment (my graphics(), kGraphics_horizontalAlignment::RIGHT, Graphics_BASELINE);
 	double fontSize = Graphics_inqFontSize (my graphics()), oldFontSize = fontSize;
 	Graphics_setFont (my graphics(), kGraphics_font::TIMES);
-	Graphics_setFontStyle (my graphics(), Graphics_ITALIC);
+	//Graphics_setFontStyle (my graphics(), Graphics_ITALIC);
 	if (! cattableText1) cattableText1 = U"";
 	if (! cattableText2) cattableText2 = U"";
 	if (! cattableText3) cattableText3 = U"";
@@ -85,11 +85,11 @@ void FunctionArea_drawLegend_ (FunctionArea me,
 	double lengthText3 = Graphics_textWidth (my graphics(), cattableText3);
 	double lengthText4 = Graphics_textWidth (my graphics(), cattableText4);
 	conststring32 separator1 = ( cattableText1 [0] != U'\0' &&
-			(cattableText2 [0] != U'\0' || cattableText3 [0] != U'\0' || cattableText4 [0] != U'\0') ? U" – " : U"" );
+			(cattableText2 [0] != U'\0' || cattableText3 [0] != U'\0' || cattableText4 [0] != U'\0') ? U"    " : U"" );
 	conststring32 separator2 = ( cattableText2 [0] != U'\0' &&
-			(cattableText3 [0] != U'\0' || cattableText4 [0] != U'\0') ? U" – " : U"" );
+			(cattableText3 [0] != U'\0' || cattableText4 [0] != U'\0') ? U"    " : U"" );
 	conststring32 separator3 = ( cattableText3 [0] != U'\0' &&
-			cattableText4 [0] != U'\0' ? U" – " : U"" );
+			cattableText4 [0] != U'\0' ? U"    " : U"" );
 	double lengthSep1 = Graphics_textWidth (my graphics(), separator1);
 	double lengthSep2 = Graphics_textWidth (my graphics(), separator2);
 	double lengthSep3 = Graphics_textWidth (my graphics(), separator3);

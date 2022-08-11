@@ -84,7 +84,7 @@ Thing_define (Editor, DataGui) {
 	virtual bool v_hasDrawMenu () { return false; }
 	virtual bool v_hasExtractMenu () { return false; }
 	virtual bool v_hasHelpMenu () { return true; }
-	EditorMenu fileMenu, editMenu, queryMenu, viewMenu, selectMenu, drawMenu, extractMenu, helpMenu;
+	EditorMenu fileMenu, editMenu, queryMenu, viewMenu, selectMenu, helpMenu;
 	void v_createMenus ()
 		override;
 	void v_createMenuItems_edit (EditorMenu menu)

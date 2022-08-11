@@ -59,8 +59,8 @@ Thing_define (SoundEditor, FunctionEditor) {
 	void v_drawLegends () override {
 		const bool pulsesAreVisible = our soundAnalysisArea() -> hasPulsesToShow ();
 		FunctionArea_drawLegend (our soundArea().get(),
-			U"modifiable sound", Melder_BLACK,
-			pulsesAreVisible ? U"derived pulses" : nullptr, Melder_BLUE
+			pulsesAreVisible ? FunctionArea_legend_POLES U" %%derived pulses" : nullptr, DataGui_defaultForegroundColour (our soundAnalysisArea().get()),
+			FunctionArea_legend_WAVEFORM U" ##modifiable sound", DataGui_defaultForegroundColour (our soundArea().get())
 		);
 		SoundAnalysisArea_drawDefaultLegends (our soundAnalysisArea().get());
 	}
