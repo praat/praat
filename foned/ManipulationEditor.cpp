@@ -30,19 +30,6 @@
 Thing_implement (ManipulationPulsesArea, PointArea, 0);
 
 
-#pragma mark - ManipPulsesArea drawing
-
-void structManipulationPulsesArea :: v_drawInside () {
-	Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), 0.0, 1.0);
-	Graphics_setColour (our graphics(), Melder_GREEN);
-	for (integer i = 1; i <= our pulses() -> nt; i ++) {
-		const double t = our pulses() -> t [i];
-		if (t >= our startWindow() && t <= our endWindow())
-			Graphics_line (our graphics(), t, 0.05, t, 0.95);
-	}
-}
-
-
 #pragma mark - ManipPulsesArea Modify
 
 static void menu_cb_removePulses (ManipulationPulsesArea me, EDITOR_ARGS_DIRECT) {
@@ -537,7 +524,7 @@ void structManipulationPitchTierArea :: v_drawInside () {
 		our startSelection() >= our startWindow() &&
 		our startSelection() <= our endWindow()
 	);
-	Graphics_setWindow (graphics(), startWindow(), endWindow(), our ymin, our ymax);
+	Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 
 	/*
 		Draw pitch contour based on pulses.
@@ -551,19 +538,19 @@ void structManipulationPitchTierArea :: v_drawInside () {
 			if (tleft != tright) {
 				const double y = 1.0 / (tright - tleft);
 				if (y >= our ymin && y <= our ymax)
-					Graphics_fillCircle_mm (graphics(), t, y, 1.0);
+					Graphics_fillCircle_mm (our graphics(), t, y, 1.0);
 			}
 		}
 	}
 	Graphics_setGrey (graphics(), 0.0);
 
 	constexpr double minimumFrequency = 50.0;
-	FunctionEditor_drawGridLine (functionEditor(), minimumFrequency);
+	FunctionEditor_drawGridLine (our functionEditor(), minimumFrequency);
 
 	const integer n = ( our pitchTier() ? our pitchTier() -> points.size : 0 );
 	if (cursorVisible && n > 0) {
-		const double y = RealTier_getValueAtTime (pitchTier(), startSelection());
-		FunctionEditor_insertCursorFunctionValue (functionEditor(), y,
+		const double y = RealTier_getValueAtTime (our pitchTier(), our startSelection());
+		FunctionEditor_insertCursorFunctionValue (our functionEditor(), y,
 			Melder_fixed (y, 1), U" Hz",
 			our ymin, our ymax);
 	}

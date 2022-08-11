@@ -51,7 +51,8 @@ private:
 	}
 public:
 	virtual void v_createMenus () { }
-	virtual void v_createMenuItems_file    (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_prefs   (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_save    (EditorMenu /* menu */) { }
 	virtual void v_createMenuItems_edit    (EditorMenu /* menu */) { }
 	virtual void v_createMenuItems_query   (EditorMenu /* menu */) { }
 	virtual void v_createMenuItems_view    (EditorMenu /* menu */) { }
@@ -79,9 +80,13 @@ public:
 		because static data might be initialized before the standard extern MelderColours are (bug on Linux 2022-09-19).
 		So they are static *functions* instead.
 	*/
-	static MelderColour Colour_BACKGROUND() { return Melder_WHITE; }
-	static MelderColour Colour_EDITABLE() { return Melder_CYAN; }
-	static MelderColour Colour_DEFAULT_FOREGROUND() { return Melder_BLACK; }
+	static MelderColour Colour_BACKGROUND();
+	static MelderColour Colour_EDITABLE_LINES();
+	static MelderColour Colour_EDITABLE_FRAME();
+	static MelderColour Colour_NONEDITABLE_FOREGROUND();
+	friend MelderColour DataGui_defaultForegroundColour (DataGui me) {
+		return my editable() ? Colour_EDITABLE_LINES() : Colour_NONEDITABLE_FOREGROUND();
+	}
 };
 
 /* End of file DataGui.h */

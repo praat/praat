@@ -83,7 +83,22 @@ bool structSpectrumArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 }
 
 
-#pragma mark - SpectrumArea Modify menu
+#pragma mark - SpectrumArea View
+
+static void menu_cb_setDynamicRange (SpectrumArea me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Set dynamic range", nullptr)
+		POSITIVE (dynamicRange, U"Dynamic range (dB)", my default_dynamicRange())
+	EDITOR_OK
+		SET_REAL (dynamicRange, my instancePref_dynamicRange())
+	EDITOR_DO
+		my setInstancePref_dynamicRange (dynamicRange);
+		my updateRange ();
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
+
+#pragma mark - SpectrumArea Modify
 
 static void menu_cb_passBand (SpectrumArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...");
@@ -121,7 +136,17 @@ static void menu_cb_stopBand (SpectrumArea me, EDITOR_ARGS_FORM) {
 }
 
 
-#pragma mark - SpectrumArea Extract menu
+#pragma mark - SpectrumArea Select
+
+static void menu_cb_moveCursorToPeak (SpectrumArea me, EDITOR_ARGS_DIRECT) {
+	MelderPoint peak = Spectrum_getNearestMaximum (my spectrum(), 0.5 * (my startSelection() + my endSelection()));
+	my setSelection (peak. x, peak. x);
+	my cursorHeight = peak. y;
+	FunctionEditor_marksChanged (my functionEditor(), true);
+}
+
+
+#pragma mark - SpectrumArea Extract
 
 static void CONVERT_DATA_TO_ONE__PublishBand (SpectrumArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
@@ -135,55 +160,30 @@ static void CONVERT_DATA_TO_ONE__PublishSound (SpectrumArea me, EDITOR_ARGS_DIRE
 }
 
 
-#pragma mark - SpectrumArea Select menu
+#pragma mark - SpectrumArea all menus?
 
-static void menu_cb_moveCursorToPeak (SpectrumArea me, EDITOR_ARGS_DIRECT) {
-	MelderPoint peak = Spectrum_getNearestMaximum (my spectrum(), 0.5 * (my startSelection() + my endSelection()));
-	my setSelection (peak. x, peak. x);
-	my cursorHeight = peak. y;
-	FunctionEditor_marksChanged (my functionEditor(), true);
-}
-
-
-#pragma mark - SpectrumArea View menu
-
-static void menu_cb_setDynamicRange (SpectrumArea me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Set dynamic range", nullptr)
-		POSITIVE (dynamicRange, U"Dynamic range (dB)", my default_dynamicRange())
-	EDITOR_OK
-		SET_REAL (dynamicRange, my instancePref_dynamicRange())
-	EDITOR_DO
-		my setInstancePref_dynamicRange (dynamicRange);
-		my updateRange ();
-		FunctionEditor_redraw (my functionEditor());
-	EDITOR_END
-}
-void structSpectrumArea :: v0_createMenuItems_view_vertical (EditorMenu menu) {
+void structSpectrumArea :: v_createMenus () {
+	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Spectrum", 0);
 	FunctionAreaMenu_addCommand (menu, U"-- spectrum view --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Power density range:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Set dynamic range...", 0,
 			menu_cb_setDynamicRange, this);
-}
-
-
-#pragma mark - SpectrumArea all menus?
-
-void structSpectrumArea :: v_createMenus () {
-	FunctionAreaMenu_addCommand (our functionEditor() -> extractMenu, U"-- spectrum extract --", 0, nullptr, this);
-	our publishBandButton = FunctionAreaMenu_addCommand (our functionEditor() -> extractMenu, U"Publish band", 0,
-			CONVERT_DATA_TO_ONE__PublishBand, this);
-	our publishSoundButton = FunctionAreaMenu_addCommand (our functionEditor() -> extractMenu, U"Publish band-filtered sound", 0,
-			CONVERT_DATA_TO_ONE__PublishSound, this);
-	FunctionAreaMenu_addCommand (our functionEditor() -> editMenu, U"-- spectrum modify --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (our functionEditor() -> editMenu, U"Modify spectrum:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (our functionEditor() -> editMenu, U"Pass band...", 0,
+	FunctionAreaMenu_addCommand (menu, U"-- spectrum modify --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Modify spectrum:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Pass band...", 0,
 			menu_cb_passBand, this);
-	FunctionAreaMenu_addCommand (our functionEditor() -> editMenu, U"Stop band...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Stop band...", 0,
 			menu_cb_stopBand, this);
-	FunctionAreaMenu_addCommand (our functionEditor() -> selectMenu, U"-- move to peak --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (our functionEditor() -> selectMenu, U"Select by spectrum:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (our functionEditor() -> selectMenu, U"Move cursor to nearest peak", 'K',
+	FunctionAreaMenu_addCommand (menu, U"-- spectrum select --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Select by spectrum:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Move cursor to nearest peak", 'K',
 			menu_cb_moveCursorToPeak, this);
+	FunctionAreaMenu_addCommand (menu, U"-- spectrum extract --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Extract spectrum:", 0, nullptr, this);
+	our publishBandButton = FunctionAreaMenu_addCommand (menu, U"Publish band", 0,
+			CONVERT_DATA_TO_ONE__PublishBand, this);
+	our publishSoundButton = FunctionAreaMenu_addCommand (menu, U"Publish band-filtered sound", 0,
+			CONVERT_DATA_TO_ONE__PublishSound, this);
 }
 
 

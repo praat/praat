@@ -33,8 +33,6 @@ DEFINE_FunctionArea_create (ManipulationSoundArea, Sound)
 
 Thing_define (ManipulationPulsesArea, PointArea) {
 	PointProcess pulses() { return static_cast <PointProcess> (our function()); }
-	void v_drawInside ()
-		override;
 	void v_createMenus ()
 		override;
 };
@@ -71,12 +69,12 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 
 	void v1_dataChanged () override {
 		ManipulationEditor_Parent :: v1_dataChanged ();
-		our pulsesArea() -> functionChanged (our manipulation() -> pulses.get());
 		our soundArea() -> functionChanged (our manipulation() -> sound.get());
 		our pitchTierArea() -> functionChanged (our manipulation() -> pitch.get());
 		if (! our manipulation() -> duration)   // repair an old-fashioned Manipulation that has a PitchTier only
 			our manipulation() -> duration = DurationTier_create (our manipulation() -> xmin, our manipulation() -> xmax);
 		our durationTierArea() -> functionChanged (our manipulation() -> duration.get());
+		our pulsesArea() -> functionChanged (our manipulation() -> pulses.get());
 	}
 
 	autoPointProcess previousPulses;
@@ -117,15 +115,15 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		override;
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our soundArea().get(),
-			U"non-modifiable copy of sound", Melder_BLACK,
-			U"modifiable pulses", Melder_BLUE
+			FunctionArea_legend_WAVEFORM U" %%non-modifiable mono copy of sound", DataGui_defaultForegroundColour (our soundArea().get()),
+			FunctionArea_legend_POLES U" ##modifiable pulses", DataGui_defaultForegroundColour (our pulsesArea().get())
 		);
 		FunctionArea_drawLegend (our pitchTierArea().get(),
-			U"pitch manipulation", Melder_GREEN,
-			U"pitch derived from pulses", Melder_GREY
+			FunctionArea_legend_SPECKLES U" %%pitch derived from pulses", Melder_GREY,
+			FunctionArea_legend_LINES_SPECKLES U" ##manipulatable pitch", DataGui_defaultForegroundColour (our pitchTierArea().get())
 		);
 		FunctionArea_drawLegend (our durationTierArea().get(),
-			U"duration manipulation", Melder_GREEN
+			FunctionArea_legend_LINES_SPECKLES U" ##manipulatable duration", DataGui_defaultForegroundColour (our durationTierArea().get())
 		);
 	}
 };

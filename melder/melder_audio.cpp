@@ -1210,7 +1210,7 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 			#elif cocoa
 				CFRunLoopTimerContext context = { 0, nullptr, nullptr, nullptr, nullptr };
 				my cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
-					0.02, 0, 0, workProc_cocoa, & context);
+						0.02, 0, 0, workProc_cocoa, & context);
 				CFRunLoopAddTimer (CFRunLoopGetCurrent (), my cocoaTimer, kCFRunLoopCommonModes);
 			#endif
 			return;

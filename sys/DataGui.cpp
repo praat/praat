@@ -59,4 +59,9 @@ void structDataGui :: v_do_pictureMargins (EditorCommand /* cmd */) {
 	our setClassPref_picture_writeNameAtTop (v_form_pictureMargins__writeNameAtTop);
 }
 
+MelderColour structDataGui :: Colour_BACKGROUND() { return Melder_WHITE; }
+MelderColour structDataGui :: Colour_EDITABLE_LINES() { return Melder_BLUE; }
+MelderColour structDataGui :: Colour_EDITABLE_FRAME() { return Melder_CYAN; }
+MelderColour structDataGui :: Colour_NONEDITABLE_FOREGROUND() { return MelderColour (0.25); }
+
 /* End of file DataGui.cpp */

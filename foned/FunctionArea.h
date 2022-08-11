@@ -105,7 +105,7 @@ public:
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (my graphics(), structDataGui::Colour_BACKGROUND());
 		Graphics_fillRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics(), structDataGui::Colour_DEFAULT_FOREGROUND());
+		Graphics_setColour (my graphics(), structDataGui::Colour_NONEDITABLE_FOREGROUND());
 	}
 	friend void FunctionArea_highlightSelectionBackground (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), 0.0, 1.0);
@@ -120,9 +120,9 @@ public:
 	friend void FunctionArea_drawEditableFrame (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setLineWidth (my graphics(), 2.0);
-		Graphics_setColour (my graphics(), structDataGui::Colour_EDITABLE());
+		Graphics_setColour (my graphics(), structDataGui::Colour_EDITABLE_FRAME());
 		Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics(), structDataGui::Colour_DEFAULT_FOREGROUND());
+		Graphics_setColour (my graphics(), structDataGui::Colour_NONEDITABLE_FOREGROUND());
 		Graphics_setLineWidth (my graphics(), 1.0);
 	}
 	friend void FunctionArea_drawRightMark (FunctionArea me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment);
@@ -220,6 +220,29 @@ typedef MelderCallback <void, structFunctionArea, EditorCommand, UiForm, integer
 
 GuiMenuItem FunctionAreaMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
 		FunctionAreaCommandCallback commandCallback, FunctionArea commandBoss);
+
+#if defined (macintosh)
+	#define FunctionArea_legend_LINES  U"—"
+	#define FunctionArea_legend_SPECKLES  U"• •"
+	#define FunctionArea_legend_LINES_SPECKLES  U"–\\s{●}–"
+	#define FunctionArea_legend_POLES  U" ⃒ ⃒ ⃒"
+	#define FunctionArea_legend_WAVEFORM  U"\u301C"
+	#define FunctionArea_legend_GREYS  U"\\s{▩}"
+#elif defined (_WIN32)
+	#define FunctionArea_legend_LINES  U"—"
+	#define FunctionArea_legend_SPECKLES  U"\\s{• •}"
+	#define FunctionArea_legend_LINES_SPECKLES  U"–●–"
+	#define FunctionArea_legend_POLES  U"|||"
+	#define FunctionArea_legend_WAVEFORM  U"~"
+	#define FunctionArea_legend_GREYS  U"\\s{▒}"
+#else
+	#define FunctionArea_legend_LINES  U"—"
+	#define FunctionArea_legend_SPECKLES  U"• •"
+	#define FunctionArea_legend_LINES_SPECKLES  U"–●–"
+	#define FunctionArea_legend_POLES  U"|||"
+	#define FunctionArea_legend_WAVEFORM  U"\u301C"
+	#define FunctionArea_legend_GREYS  U"\\s{▒}
+#endif
 
 inline void FunctionArea_drawLegend (FunctionArea me,
 	conststring32 cattableText1, MelderColour colour1,

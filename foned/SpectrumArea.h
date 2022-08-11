@@ -52,8 +52,6 @@ public:
 		override;
 	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
 		override;
-	void v0_createMenuItems_view_vertical (EditorMenu menu)
-		override;
 	void v_updateMenuItems () override {
 		integer first, last;
 		const integer selectedSamples = Sampled_getWindowSamples (our spectrum(), our startSelection(), our endSelection(), & first, & last);

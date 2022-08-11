@@ -35,11 +35,11 @@ Thing_define (TextGridEditor, FunctionEditor) {
 	void v1_dataChanged () override {
 		Melder_clipRight (& our textGridArea() -> selectedTier, our textGrid() -> tiers->size);   // crucial: before v_updateText (bug 2022-07-23)!
 		our structFunctionEditor :: v1_dataChanged ();
-		our textGridArea() -> functionChanged ((Function) our data());
-		if (our soundArea())
+		our textGridArea() -> functionChanged (our textGrid());
+		if (our soundArea()) {
 			our soundArea() -> functionChanged (nullptr);   // BUG: this function has not actually changed
-		if (our soundAnalysisArea())
 			our soundAnalysisArea() -> functionChanged (our soundArea() -> function());
+		}
 	}
 	void v_distributeAreas () override {
 		if (our soundArea()) {
@@ -93,12 +93,14 @@ Thing_define (TextGridEditor, FunctionEditor) {
 		FunctionArea_drawLegend (our textGridArea().get(),
 			U"modifiable TextGrid", Melder_GREEN
 		);
-		const bool pulsesAreVisible = our soundAnalysisArea() -> hasPulsesToShow ();
-		FunctionArea_drawLegend (our soundArea().get(),
-			U"non-modifiable copy of sound", Melder_BLACK,
-			pulsesAreVisible ? U"derived pulses" : nullptr, Melder_BLUE
-		);
-		SoundAnalysisArea_drawDefaultLegends (our soundAnalysisArea().get());
+		if (our soundArea()) {
+			const bool pulsesAreVisible = our soundAnalysisArea() -> hasPulsesToShow ();
+			FunctionArea_drawLegend (our soundArea().get(),
+				U"non-modifiable copy of sound", Melder_BLACK,
+				pulsesAreVisible ? U"derived pulses" : nullptr, Melder_BLUE
+			);
+			SoundAnalysisArea_drawDefaultLegends (our soundAnalysisArea().get());
+		}
 	}
 
 	#include "TextGridEditor_prefs.h"

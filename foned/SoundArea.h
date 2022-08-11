@@ -139,13 +139,11 @@ public:
 		override;
 	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
 		override;
-	void v_createMenus ()
-		override;
-	void v_createMenuItems_file (EditorMenu menu)
+	void v_createMenuItems_save (EditorMenu menu)
 		override;
 	void v_createMenuItems_edit (EditorMenu menu)
 		override;
-	void v0_createMenuItems_view_vertical (EditorMenu menu)
+	void v_createMenus ()
 		override;
 	void v_updateMenuItems ()
 		override;

@@ -2015,7 +2015,7 @@ void structSoundAnalysisArea :: v_draw_analysis_pulses () {
 	if (our instancePref_pulses_show() && our endWindow() - our startWindow() <= our instancePref_longestAnalysis() && our d_pulses) {
 		PointProcess point = our d_pulses.get();
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), -1.0, 1.0);
-		Graphics_setColour (our graphics(), Melder_BLUE);
+		Graphics_setColour (our graphics(), DataGui_defaultForegroundColour (this));
 		if (point -> nt < 2000) for (integer i = 1; i <= point -> nt; i ++) {
 			const double t = point -> t [i];
 			if (t >= our startWindow() && t <= our endWindow())

@@ -341,7 +341,8 @@ void structEditor :: v_createMenus () {
 	Editor_Parent :: v_createMenus ();   // does nothing (last checked 2022-07-19)
 	if (our v_hasFileMenu()) {
 		our fileMenu = Editor_addMenu (this, U"File", 0);
-		v_createMenuItems_file (our fileMenu);
+		v_createMenuItems_prefs (our fileMenu);
+		v_createMenuItems_save (our fileMenu);
 	}
 	if (our v_hasEditMenu ()) {
 		our editMenu = Editor_addMenu (this, U"Edit", 0);
@@ -358,14 +359,6 @@ void structEditor :: v_createMenus () {
 	if (our v_hasSelectMenu ()) {
 		our selectMenu = Editor_addMenu (this, U"Select", 0);
 		v_createMenuItems_select (our selectMenu);
-	}
-	if (our v_hasDrawMenu ()) {
-		our drawMenu = Editor_addMenu (this, U"Draw", 0);
-		v_createMenuItems_draw (our drawMenu);
-	}
-	if (our v_hasExtractMenu ()) {
-		our extractMenu = Editor_addMenu (this, U"Extract", 0);
-		v_createMenuItems_extract (our extractMenu);
 	}
 }
 
