@@ -967,11 +967,6 @@ void structTextGridArea :: v_createMenuItems_edit (EditorMenu menu) {
 		FunctionAreaMenu_addCommand (menu, U"Erase text", 0, menu_cb_Erase, this);
 		FunctionAreaMenu_addCommand (menu, U"Erase", Editor_HIDDEN, menu_cb_Erase, this);
 	#endif
-	FunctionAreaMenu_addCommand (menu, U"-- encoding --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Convert entire TextGrid to backslash trigraphs", 0,
-			menu_cb_ConvertToBackslashTrigraphs, this);
-	FunctionAreaMenu_addCommand (menu, U"Convert entire TextGrid to Unicode", 0,
-			menu_cb_ConvertToUnicode, this);
 	FunctionAreaMenu_addCommand (menu, U"-- search --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Find...", 'F', menu_cb_Find, this);
 	FunctionAreaMenu_addCommand (menu, U"Find again", 'G', menu_cb_FindAgain, this);
@@ -1700,6 +1695,13 @@ void structTextGridArea :: v_createMenus () {
 	EditorMenu textGridMenu = Editor_addMenu (our functionEditor(), U"TextGrid", 0);
 	FunctionAreaMenu_addCommand (textGridMenu, U"TextGrid preferences...", 0,
 			menu_cb_TextGridPreferences, this);
+	if (editable()) {
+		FunctionAreaMenu_addCommand (textGridMenu, U"-- encoding --", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (textGridMenu, U"Convert entire TextGrid to backslash trigraphs", 0,
+				menu_cb_ConvertToBackslashTrigraphs, this);
+		FunctionAreaMenu_addCommand (textGridMenu, U"Convert entire TextGrid to Unicode", 0,
+				menu_cb_ConvertToUnicode, this);
+	}
 
 	FunctionAreaMenu_addCommand (textGridMenu, U"-- TextGrid select set --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (textGridMenu, U"Select by TextGrid:", 0, nullptr, this);
@@ -1735,30 +1737,32 @@ void structTextGridArea :: v_createMenus () {
 			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero, this);
 
 	EditorMenu intervalMenu = Editor_addMenu (our functionEditor(), U"Interval", 0);
-	if (our borrowedSoundArea) {
-		FunctionAreaMenu_addCommand (intervalMenu, U"Align interval", 'D',
-				menu_cb_AlignInterval, this);
-		FunctionAreaMenu_addCommand (intervalMenu, U"Alignment settings...", 0,
-				menu_cb_AlignmentSettings, this);
-		FunctionAreaMenu_addCommand (intervalMenu, U"-- after align --", 0, nullptr, this);
+	if (our editable()) {
+		if (our borrowedSoundArea) {
+			FunctionAreaMenu_addCommand (intervalMenu, U"Align interval", 'D',
+					menu_cb_AlignInterval, this);
+			FunctionAreaMenu_addCommand (intervalMenu, U"Alignment settings...", 0,
+					menu_cb_AlignmentSettings, this);
+			FunctionAreaMenu_addCommand (intervalMenu, U"-- after align --", 0, nullptr, this);
+		}
+		FunctionAreaMenu_addCommand (intervalMenu, U"New interval:", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 1", GuiMenu_COMMAND | '1',
+				menu_cb_InsertIntervalOnTier1, this);
+		FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 2", GuiMenu_COMMAND | '2',
+				menu_cb_InsertIntervalOnTier2, this);
+		FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 3", GuiMenu_COMMAND | '3',
+				menu_cb_InsertIntervalOnTier3, this);
+		FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 4", GuiMenu_COMMAND | '4',
+				menu_cb_InsertIntervalOnTier4, this);
+		FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 5", GuiMenu_COMMAND | '5',
+				menu_cb_InsertIntervalOnTier5, this);
+		FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 6", GuiMenu_COMMAND | '6',
+				menu_cb_InsertIntervalOnTier6, this);
+		FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 7", GuiMenu_COMMAND | '7',
+				menu_cb_InsertIntervalOnTier7, this);
+		FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 8", GuiMenu_COMMAND | '8',
+				menu_cb_InsertIntervalOnTier8, this);
 	}
-	FunctionAreaMenu_addCommand (intervalMenu, U"New interval:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 1", GuiMenu_COMMAND | '1',
-			menu_cb_InsertIntervalOnTier1, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 2", GuiMenu_COMMAND | '2',
-			menu_cb_InsertIntervalOnTier2, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 3", GuiMenu_COMMAND | '3',
-			menu_cb_InsertIntervalOnTier3, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 4", GuiMenu_COMMAND | '4',
-			menu_cb_InsertIntervalOnTier4, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 5", GuiMenu_COMMAND | '5',
-			menu_cb_InsertIntervalOnTier5, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 6", GuiMenu_COMMAND | '6',
-			menu_cb_InsertIntervalOnTier6, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 7", GuiMenu_COMMAND | '7',
-			menu_cb_InsertIntervalOnTier7, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Add interval on tier 8", GuiMenu_COMMAND | '8',
-			menu_cb_InsertIntervalOnTier8, this);
 
 	FunctionAreaMenu_addCommand (intervalMenu, U"-- query interval --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (intervalMenu, U"Query interval:", 0, nullptr, this);
@@ -1772,52 +1776,56 @@ void structTextGridArea :: v_createMenus () {
 	EditorMenu boundaryMenu = Editor_addMenu (our functionEditor(), U"Boundary", 0);
 	/*FunctionAreaMenu_addCommand (boundaryMenu, U"Move to B", 0, menu_cb_MoveToB, this);
 	FunctionAreaMenu_addCommand (boundaryMenu, U"Move to E", 0, menu_cb_MoveToE, this);*/
-	FunctionAreaMenu_addCommand (boundaryMenu, U"New boundary or point:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on selected tier", GuiMenu_ENTER,
-			menu_cb_InsertOnSelectedTier, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 1", GuiMenu_COMMAND | GuiMenu_F1,
-			menu_cb_InsertOnTier1, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 2", GuiMenu_COMMAND | GuiMenu_F2,
-			menu_cb_InsertOnTier2, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 3", GuiMenu_COMMAND | GuiMenu_F3,
-			menu_cb_InsertOnTier3, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 4", GuiMenu_COMMAND | GuiMenu_F4,
-			menu_cb_InsertOnTier4, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 5", GuiMenu_COMMAND | GuiMenu_F5,
-			menu_cb_InsertOnTier5, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 6", GuiMenu_COMMAND | GuiMenu_F6,
-			menu_cb_InsertOnTier6, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 7", GuiMenu_COMMAND | GuiMenu_F7,
-			menu_cb_InsertOnTier7, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 8", GuiMenu_COMMAND | GuiMenu_F8,
-			menu_cb_InsertOnTier8, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Add on all tiers", GuiMenu_COMMAND | GuiMenu_F9,
-			menu_cb_InsertOnAllTiers, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"-- modify boundary --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Modify boundary or point:", 0, nullptr, this);
-	if (our borrowedSoundArea && ! Thing_isa (our borrowedSoundArea, classLongSoundArea)) {
-		FunctionAreaMenu_addCommand (boundaryMenu, U"Move to nearest zero crossing", 0,
-				menu_cb_MoveToZero, this);
+	if (our editable()) {
+		FunctionAreaMenu_addCommand (boundaryMenu, U"New boundary or point:", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on selected tier", GuiMenu_ENTER,
+				menu_cb_InsertOnSelectedTier, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 1", GuiMenu_COMMAND | GuiMenu_F1,
+				menu_cb_InsertOnTier1, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 2", GuiMenu_COMMAND | GuiMenu_F2,
+				menu_cb_InsertOnTier2, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 3", GuiMenu_COMMAND | GuiMenu_F3,
+				menu_cb_InsertOnTier3, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 4", GuiMenu_COMMAND | GuiMenu_F4,
+				menu_cb_InsertOnTier4, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 5", GuiMenu_COMMAND | GuiMenu_F5,
+				menu_cb_InsertOnTier5, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 6", GuiMenu_COMMAND | GuiMenu_F6,
+				menu_cb_InsertOnTier6, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 7", GuiMenu_COMMAND | GuiMenu_F7,
+				menu_cb_InsertOnTier7, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on tier 8", GuiMenu_COMMAND | GuiMenu_F8,
+				menu_cb_InsertOnTier8, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on all tiers", GuiMenu_COMMAND | GuiMenu_F9,
+				menu_cb_InsertOnAllTiers, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"-- modify boundary --", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Modify boundary or point:", 0, nullptr, this);
+		if (our borrowedSoundArea && ! Thing_isa (our borrowedSoundArea, classLongSoundArea)) {
+			FunctionAreaMenu_addCommand (boundaryMenu, U"Move to nearest zero crossing", 0,
+					menu_cb_MoveToZero, this);
+		}
+		FunctionAreaMenu_addCommand (boundaryMenu, U"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE,
+				menu_cb_RemovePointOrBoundary, this);
 	}
-	FunctionAreaMenu_addCommand (boundaryMenu, U"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE,
-			menu_cb_RemovePointOrBoundary, this);
 
 	EditorMenu tierMenu = Editor_addMenu (our functionEditor(), U"Tier", 0);
-	FunctionAreaMenu_addCommand (tierMenu, U"New tier:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"Add interval tier...", 0,
-			menu_cb_AddIntervalTier, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"Add point tier...", 0,
-			menu_cb_AddPointTier, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"Duplicate tier...", 0,
-			menu_cb_DuplicateTier, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"-- modify tier --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"Modify tier:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"Rename tier...", 0,
-			menu_cb_RenameTier, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"Remove all text from tier", 0,
-			menu_cb_RemoveAllTextFromTier, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"Remove entire tier", 0,
-			menu_cb_RemoveTier, this);
+	if (our editable()) {
+		FunctionAreaMenu_addCommand (tierMenu, U"New tier:", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"Add interval tier...", 0,
+				menu_cb_AddIntervalTier, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"Add point tier...", 0,
+				menu_cb_AddPointTier, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"Duplicate tier...", 0,
+				menu_cb_DuplicateTier, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"-- modify tier --", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"Modify tier:", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"Rename tier...", 0,
+				menu_cb_RenameTier, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"Remove all text from tier", 0,
+				menu_cb_RemoveAllTextFromTier, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"Remove entire tier", 0,
+				menu_cb_RemoveTier, this);
+	}
 	FunctionAreaMenu_addCommand (tierMenu, U"-- extract tier --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (tierMenu, U"Extract to list of objects:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (tierMenu, U"Extract entire selected tier", 0,
