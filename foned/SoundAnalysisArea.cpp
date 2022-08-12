@@ -1589,7 +1589,7 @@ void structSoundAnalysisArea :: v_createMenuItems_formant (EditorMenu menu) {
 }
 
 void structSoundAnalysisArea :: v_createMenus () {
-	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Analysis", 0);
+	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Analyses", 0);
 	FunctionAreaMenu_addCommand (menu, U"Show analyses...", 0, menu_cb_showAnalyses, this);
 	FunctionAreaMenu_addCommand (menu, U"Time step settings...", 0, menu_cb_timeStepSettings, this);
 	FunctionAreaMenu_addCommand (menu, U"-- query log --", 0, nullptr, this);
@@ -1602,7 +1602,7 @@ void structSoundAnalysisArea :: v_createMenus () {
 	FunctionAreaMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 | GuiMenu_COMMAND, menu_cb_logScript4, this);
 
 	if (our v_hasSpectrogram ()) {
-		menu = Editor_addMenu (our functionEditor(), U"Spectrum", 0);
+		menu = Editor_addMenu (our functionEditor(), U"Spectrogram", 0);
 		our spectrogramToggle = FunctionAreaMenu_addCommand (menu, U"Show spectrogram",
 			GuiMenu_CHECKBUTTON | (instancePref_spectrogram_show() ? GuiMenu_TOGGLE_ON : 0),
 			menu_cb_showSpectrogram, this
@@ -1688,7 +1688,7 @@ void structSoundAnalysisArea :: v_createMenus () {
 				CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour, this);
 	}
 	if (our v_hasFormants ()) {
-		menu = Editor_addMenu (our functionEditor(), U"Formant", 0);
+		menu = Editor_addMenu (our functionEditor(), U"Formants", 0);
 		our v_createMenuItems_formant (menu);
 	}
 

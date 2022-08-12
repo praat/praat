@@ -58,7 +58,7 @@ Thing_define (EEGWindow, FunctionEditor) {
 	}
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_createMenuItems_extract (EditorMenu menu)
+	void v_createMenus ()
 		override;
 	void v_updateMenuItems ()
 		override;

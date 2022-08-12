@@ -70,8 +70,6 @@ public:
 		override;
 	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
 		override;
-	void v0_createMenuItems_view_vertical (EditorMenu menu)
-		override;
 	void v_createMenus ()
 		override;
 

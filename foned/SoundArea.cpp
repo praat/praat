@@ -417,6 +417,7 @@ static void menu_cb_WriteFlac (SoundArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 void structSoundArea :: v_createMenuItems_save (EditorMenu menu) {
+	FunctionAreaMenu_addCommand (menu, U"-- sound save --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Save sound to disk:", 0, nullptr, this);
 	our writeWavButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as WAV file...", 0, menu_cb_WriteWav, this);
 		FunctionAreaMenu_addCommand (menu, U"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav, this);
@@ -445,7 +446,6 @@ void structSoundArea :: v_createMenuItems_save (EditorMenu menu) {
 	our writeFlacButton = FunctionAreaMenu_addCommand (menu, U"Save selected sound as FLAC file...", 0, menu_cb_WriteFlac, this);
 		FunctionAreaMenu_addCommand (menu, U"Write selected sound to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, this);
 		FunctionAreaMenu_addCommand (menu, U"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac, this);
-	FunctionAreaMenu_addCommand (menu, U"-- after sound file --", 0, nullptr, this);
 }
 
 

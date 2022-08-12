@@ -50,16 +50,12 @@ private:
 		my v9_repairPreferences ();
 	}
 public:
-	virtual void v_createMenus () { }
-	virtual void v_createMenuItems_prefs   (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_save    (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_edit    (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_query   (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_view    (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_select  (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_draw    (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_extract (EditorMenu /* menu */) { }
-	virtual void v_createMenuItems_help    (EditorMenu /* menu */) { }
+	virtual void v_createMenuItems_prefs   (EditorMenu /* fileMenu */) { }
+	virtual void v_createMenuItems_save    (EditorMenu /* fileMenu */) { }
+	virtual void v_createMenuItems_edit    (EditorMenu /* editMenu */) { }
+	virtual void v_createMenuItems_play    (EditorMenu /* playMenu */) { }
+	virtual void v_createMenuItems_help    (EditorMenu /* helpMenu */) { }
+	virtual void v_createMenus () { }   // all the menus, except File, Edit, Play and Help
 	virtual void v_updateMenuItems () { }
 
 	virtual void v_prefs_addFields (EditorCommand) { }

@@ -326,39 +326,12 @@ static void INFO_DATA__info (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA_END
 }
 
-void structEditor :: v_createMenuItems_query (EditorMenu menu) {
-	v_createMenuItems_query_info (menu);
-}
-
-void structEditor :: v_createMenuItems_query_info (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"Editor info", 0, INFO_EDITOR__settingsReport);
-	EditorMenu_addCommand (menu, U"Settings report", Editor_HIDDEN, INFO_EDITOR__settingsReport);
-	if (our data())
-		EditorMenu_addCommand (menu, Melder_cat (Thing_className (our data()), U" info"), 0, INFO_DATA__info);
-}
-
 void structEditor :: v_createMenus () {
-	Editor_Parent :: v_createMenus ();   // does nothing (last checked 2022-07-19)
-	if (our v_hasFileMenu()) {
-		our fileMenu = Editor_addMenu (this, U"File", 0);
-		v_createMenuItems_prefs (our fileMenu);
-		v_createMenuItems_save (our fileMenu);
-	}
+	v_createMenuItems_prefs (our fileMenu);
+	v_createMenuItems_save (our fileMenu);
 	if (our v_hasEditMenu ()) {
 		our editMenu = Editor_addMenu (this, U"Edit", 0);
 		v_createMenuItems_edit (our editMenu);
-	}
-	if (our v_hasQueryMenu ()) {
-		our queryMenu = Editor_addMenu (this, U"Query", 0);
-		v_createMenuItems_query (our queryMenu);
-	}
-	if (our v_hasViewMenu ()) {
-		our viewMenu = Editor_addMenu (this, U"View", 0);
-		v_createMenuItems_view (our viewMenu);
-	}
-	if (our v_hasSelectMenu ()) {
-		our selectMenu = Editor_addMenu (this, U"Select", 0);
-		v_createMenuItems_select (our selectMenu);
 	}
 }
 
@@ -460,20 +433,28 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	my v_createChildren ();
 
 	if (my v_hasMenuBar ()) {
+		my fileMenu = Editor_addMenu (me, U"File", 0);
+		if (my v_canReportSettings ()) {
+			EditorMenu_addCommand (my fileMenu, U"Editor info", 0, INFO_EDITOR__settingsReport);
+			EditorMenu_addCommand (my fileMenu, U"Settings report", Editor_HIDDEN, INFO_EDITOR__settingsReport);
+			if (my data())
+				EditorMenu_addCommand (my fileMenu, Melder_cat (Thing_className (my data()), U" info"), 0, INFO_DATA__info);
+		}
 		my v_createMenus ();
 		EditorMenu helpMenu = Editor_addMenu (me, U"Help", 0);
 		my v_createMenuItems_help (helpMenu);
 		EditorMenu_addCommand (helpMenu, U"-- search --", 0, nullptr);
 		my searchButton = EditorMenu_addCommand (helpMenu, U"Search manual...", 'M', menu_cb_searchManual);
 		if (my v_scriptable ()) {
+			EditorMenu_addCommand (my fileMenu, U"-- scripting --", 0, 0);
 			EditorMenu_addCommand (my fileMenu, U"New editor script", 0, menu_cb_newScript);
 			EditorMenu_addCommand (my fileMenu, U"Open editor script...", 0, menu_cb_openScript);
-			EditorMenu_addCommand (my fileMenu, U"-- after script --", 0, 0);
 		}
 		/*
 			Add the scripted commands.
 		*/
 		praat_addCommandsToEditor (me);
+		EditorMenu_addCommand (my fileMenu, U"-- closing --", 0, 0);
 		if (my callbackSocket)
 			EditorMenu_addCommand (my fileMenu, U"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
 		EditorMenu_addCommand (my fileMenu, U"Close", 'W', menu_cb_close);

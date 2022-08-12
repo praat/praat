@@ -291,18 +291,16 @@ static void menu_cb_setRange (RealTierArea me, EDITOR_ARGS_FORM) {
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
-void structRealTierArea :: v0_createMenuItems_view_vertical (EditorMenu menu) {
-	FunctionAreaMenu_addCommand (menu, U"-- view/realtier --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, our v_setRangeTitle (), 0,
-			menu_cb_setRange, this);
-}
 
 
 #pragma mark - RealTierArea all menus
 
 void structRealTierArea :: v_createMenus () {
 	RealTierArea_Parent :: v_createMenus ();
-	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Point", 0);
+	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Points", 0);
+	FunctionAreaMenu_addCommand (menu, U"-- view/realtier --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, our v_setRangeTitle (), 0,
+			menu_cb_setRange, this);
 	FunctionAreaMenu_addCommand (menu, U"Add point at cursor", 'T',
 			menu_cb_addPointAtCursor, this);
 	FunctionAreaMenu_addCommand (menu, U"Add point at...", 0,

@@ -76,22 +76,15 @@ Thing_define (Editor, DataGui) {
 	virtual bool v_scriptable () { return true; }
 
 	virtual bool v_hasMenuBar () { return true; }
-	virtual bool v_hasFileMenu () { return true; }
+	virtual bool v_canReportSettings () { return true; }
 	virtual bool v_hasEditMenu () { return true; }
-	virtual bool v_hasQueryMenu () { return true; }
-	virtual bool v_hasViewMenu () { return false; }
-	virtual bool v_hasSelectMenu () { return false; }
-	virtual bool v_hasDrawMenu () { return false; }
-	virtual bool v_hasExtractMenu () { return false; }
+	virtual bool v_hasPlayMenu () { return false; }
 	virtual bool v_hasHelpMenu () { return true; }
-	EditorMenu fileMenu, editMenu, queryMenu, viewMenu, selectMenu, helpMenu;
+	EditorMenu fileMenu, editMenu, queryMenu, playMenu, helpMenu;
 	void v_createMenus ()
 		override;
 	void v_createMenuItems_edit (EditorMenu menu)
 		override;
-	void v_createMenuItems_query (EditorMenu menu)
-		override;
-	virtual void v_createMenuItems_query_info (EditorMenu menu);
 
 	virtual void v_createChildren () { }
 

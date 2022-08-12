@@ -2,7 +2,7 @@
 #define _TextEditor_h_
 /* TextEditor.h
  *
- * Copyright (C) 1997-2011,2012,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2013,2015,2016,2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ Thing_define (TextEditor, Editor) {
 		override;
 	void v_createMenus ()
 		override;
-	bool v_hasQueryMenu ()
+	bool v_canReportSettings ()
 		override { return false; }
 
 	virtual bool v_fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
