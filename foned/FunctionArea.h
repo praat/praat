@@ -237,7 +237,7 @@ GuiMenuItem FunctionAreaMenu_addCommand (EditorMenu me, conststring32 itemTitle 
 	#define FunctionArea_legend_LINES_SPECKLES  U"–●–"
 	#define FunctionArea_legend_POLES  U"|||"
 	#define FunctionArea_legend_WAVEFORM  U"\u301C"
-	#define FunctionArea_legend_GREYS  U"\\s{▒}
+	#define FunctionArea_legend_GREYS  U"\\s{▒}"
 #endif
 
 inline void FunctionArea_drawLegend (FunctionArea me,

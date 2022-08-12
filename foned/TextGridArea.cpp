@@ -1698,7 +1698,6 @@ static void menu_cb_AddToUserDictionary (TextGridArea me, EDITOR_ARGS_DIRECT) {
 
 void structTextGridArea :: v_createMenus () {
 	EditorMenu textGridMenu = Editor_addMenu (our functionEditor(), U"TextGrid", 0);
-
 	FunctionAreaMenu_addCommand (textGridMenu, U"TextGrid preferences...", 0,
 			menu_cb_TextGridPreferences, this);
 

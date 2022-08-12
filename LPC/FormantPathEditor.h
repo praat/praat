@@ -45,7 +45,8 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 		our soundArea() -> functionChanged (nullptr);
 		our formantPathArea() -> functionChanged (nullptr);
 		our formantPathArea() -> d_formant = FormantPath_extractFormant (our formantPath());   // BUG: also on window changed
-		our textGridArea() -> functionChanged (nullptr);
+		if (our textGridArea())
+			our textGridArea() -> functionChanged (nullptr);
 	}
 	void v_distributeAreas () override {
 		if (our textGridArea()) {
