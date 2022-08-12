@@ -140,10 +140,7 @@ Thing_define (FunctionEditor, Editor) {
 	void v1_info ()
 		override;
 
-	bool v_hasViewMenu    () override { return true; }
-	bool v_hasSelectMenu  () override { return true; }
-	bool v_hasDrawMenu    () override { return true; }
-	bool v_hasExtractMenu () override { return true; }
+	bool v_hasPlayMenu () override { return true; }
 	void v_createMenus ()
 		override;
 	void v_createMenuItems_prefs (EditorMenu)
@@ -152,16 +149,7 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 	void v_createMenuItems_edit (EditorMenu)
 		override;
-	void v_createMenuItems_query (EditorMenu)
-		override;
-	void v_createMenuItems_view (EditorMenu)
-		override;
-	virtual void v1_createMenuItems_view_vertical (EditorMenu);
-	virtual void v_createMenuItems_view_domain (EditorMenu);
-	virtual void v_createMenuItems_view_audio (EditorMenu);
-	void v_createMenuItems_select (EditorMenu)
-		override;
-	void v_createMenuItems_draw (EditorMenu menu)
+	void v_createMenuItems_play (EditorMenu)
 		override;
 	void v_createChildren ()
 		override;
@@ -191,7 +179,7 @@ Thing_define (FunctionEditor, Editor) {
 	virtual void v_drawRealTimeSelectionViewer (double /* time */) { }
 	virtual conststring32 v_domainName () { return U"time"; }
 	virtual conststring32 v_selectionViewerName () { return U"selection viewer"; }
-	virtual conststring32 v_format_domain () { return U"Time domain:"; }
+	virtual conststring32 v_format_domain () { return U"Time"; }
 	virtual const char *v_format_short () { return u8"%.3f"; }
 	virtual const char *v_format_long () { return u8"%f"; }
 	virtual conststring32 v_format_units_long () { return U"seconds"; }

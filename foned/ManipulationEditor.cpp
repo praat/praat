@@ -364,7 +364,7 @@ void structManipulationDurationTierArea :: v_createMenus () {
 	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Dur", 0);
 	FunctionAreaMenu_addCommand (menu, U"-- duration view vertical --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"View duration vertically:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (our functionEditor() -> viewMenu, U"Set duration range...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Set duration range...", 0,
 			menu_cb_setDurationRange, this);
 	FunctionAreaMenu_addCommand (menu, U"-- duration modify --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Modify duration:", 0, nullptr, this);

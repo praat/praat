@@ -40,7 +40,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 	conststring32 v_domainName ()
 		override { return U"frequency"; }
 	conststring32 v_format_domain ()
-		override { return U"Frequency domain:"; }
+		override { return U"Frequency"; }
 	const char * v_format_short ()
 		override { return "%.0f"; }
 	const char * v_format_long ()

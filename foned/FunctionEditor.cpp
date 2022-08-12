@@ -413,23 +413,6 @@ void structFunctionEditor :: v_windowChanged () {
 	}
 }
 
-void structFunctionEditor :: v_createMenus () {
-	FunctionEditor_Parent :: v_createMenus ();
-	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
-		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
-		if (area)
-			area -> v_createMenus ();
-	}
-}
-
-void structFunctionEditor :: v_updateMenuItems () {
-	FunctionEditor_Parent :: v_updateMenuItems ();
-	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
-		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
-		if (area)
-			area -> v_updateMenuItems ();
-	}
-}
 
 /********** FILE MENU **********/
 
@@ -484,42 +467,7 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 }
 
 
-#pragma mark FunctionEditor Query menu
-
-static void QUERY_EDITOR_FOR_REAL__getB (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	QUERY_EDITOR_FOR_REAL
-		const double result = my startSelection;
-	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
-}
-static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	QUERY_EDITOR_FOR_REAL
-		const double result = 0.5 * (my startSelection + my endSelection);
-	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
-}
-static void QUERY_EDITOR_FOR_REAL__getE (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	QUERY_EDITOR_FOR_REAL
-		const double result = my endSelection;
-	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
-}
-static void QUERY_EDITOR_FOR_REAL__getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	QUERY_EDITOR_FOR_REAL
-		const double result = my endSelection - my startSelection;
-	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
-}
-
-
-#pragma mark - FunctionEditor View/Vertical
-
-void structFunctionEditor :: v1_createMenuItems_view_vertical (EditorMenu menu) {
-	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
-		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
-		if (area)
-			area -> v0_createMenuItems_view_vertical (menu);
-	}
-}
-
-
-#pragma mark - FunctionEditor View/Domain
+#pragma mark - FuncEd Time set visible part
 
 static void menu_cb_zoomAndScrollSettings (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Zoom and scroll settings", nullptr)
@@ -681,24 +629,6 @@ static void menu_cb_pageDown (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 		FunctionEditor_shift (me, +RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
 	VOID_EDITOR_END
 }
-void structFunctionEditor :: v_createMenuItems_view_domain (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- view horizontal --", 0, nullptr);
-	EditorMenu_addCommand (menu, v_format_domain (), 0, nullptr);
-	EditorMenu_addCommand (menu, U"Zoom and scroll settings...", 0, menu_cb_zoomAndScrollSettings);
-	EditorMenu_addCommand (menu, U"Zoom...", 0, menu_cb_zoom);
-	EditorMenu_addCommand (menu, U"Show all", 'A', menu_cb_showAll);
-	EditorMenu_addCommand (menu, U"Zoom in", 'I', menu_cb_zoomIn);
-	EditorMenu_addCommand (menu, U"Zoom out", 'O', menu_cb_zoomOut);
-	EditorMenu_addCommand (menu, U"Zoom to selection", 'N', menu_cb_zoomToSelection);
-	EditorMenu_addCommand (menu, U"Zoom back", 'B', menu_cb_zoomBack);
-	EditorMenu_addCommand (menu, U"Scroll page back", GuiMenu_PAGE_UP, menu_cb_pageUp);
-	EditorMenu_addCommand (menu, U"Scroll page forward", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
-	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
-		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
-		if (area)
-			area -> v_createMenuItems_view_domain (menu);
-	}
-}
 
 
 #pragma mark - FunctionEditor View/Audio
@@ -740,7 +670,11 @@ static void PLAY_DATA__interruptPlaying (FunctionEditor me, EDITOR_ARGS_DIRECT) 
 		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	PLAY_DATA_END
 }
-void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
+
+
+#pragma mark - FunctionEditor View all
+
+void structFunctionEditor :: v_createMenuItems_play (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"-- play --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Audio:", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Play...", 0, PLAY_DATA__play);
@@ -750,21 +684,12 @@ void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
 	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
 		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 		if (area)
-			area -> v_createMenuItems_view_audio (menu);
+			area -> v_createMenuItems_play (menu);
 	}
 }
 
 
-#pragma mark - FunctionEditor View all
-
-void structFunctionEditor :: v_createMenuItems_view (EditorMenu menu) {
-	v1_createMenuItems_view_vertical (menu);
-	v_createMenuItems_view_domain (menu);
-	v_createMenuItems_view_audio (menu);
-}
-
-
-#pragma mark - FunctionEditor Select menu
+#pragma mark - FuncEd Time set selection
 
 static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Select", nullptr)
@@ -1024,6 +949,30 @@ static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRE
 }
 
 
+#pragma mark - FuncEd Time query selection
+
+static void QUERY_EDITOR_FOR_REAL__getB (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	QUERY_EDITOR_FOR_REAL
+		const double result = my startSelection;
+	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
+}
+static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	QUERY_EDITOR_FOR_REAL
+		const double result = 0.5 * (my startSelection + my endSelection);
+	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
+}
+static void QUERY_EDITOR_FOR_REAL__getE (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	QUERY_EDITOR_FOR_REAL
+		const double result = my endSelection;
+	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
+}
+static void QUERY_EDITOR_FOR_REAL__getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	QUERY_EDITOR_FOR_REAL
+		const double result = my endSelection - my startSelection;
+	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
+}
+
+
 #pragma mark - FunctionEditor GUI callbacks
 
 static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
@@ -1171,7 +1120,6 @@ void structFunctionEditor :: v_createMenuItems_prefs (EditorMenu menu) {
 		if (area)
 			area -> v_createMenuItems_prefs (menu);
 	}
-	EditorMenu_addCommand (menu, U"-- after preferences --", 0, nullptr);
 }
 
 void structFunctionEditor :: v_createMenuItems_save (EditorMenu menu) {
@@ -1192,49 +1140,71 @@ void structFunctionEditor :: v_createMenuItems_edit (EditorMenu menu) {
 	}
 }
 
-void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
-	FunctionEditor_Parent :: v_createMenuItems_query (menu);
-	EditorMenu_addCommand (menu, U"-- query selection --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Get start of selection", 0, QUERY_EDITOR_FOR_REAL__getB);
-	EditorMenu_addCommand (menu, U"Get begin of selection", Editor_HIDDEN, QUERY_EDITOR_FOR_REAL__getB);
-	EditorMenu_addCommand (menu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);
-	EditorMenu_addCommand (menu, U"Get end of selection", 0, QUERY_EDITOR_FOR_REAL__getE);
-	EditorMenu_addCommand (menu, U"Get selection length", 0, QUERY_EDITOR_FOR_REAL__getSelectionDuration);
+void structFunctionEditor :: v_createMenus () {
+	FunctionEditor_Parent :: v_createMenus ();
+
+	EditorMenu domainMenu = Editor_addMenu (this, v_format_domain (), 0);   // Time or Frequency
+
+	EditorMenu_addCommand (domainMenu, U"-- view horizontal --", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"Set visible part:", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"Zoom and scroll settings...", 0, menu_cb_zoomAndScrollSettings);
+	EditorMenu_addCommand (domainMenu, U"Zoom...", 0, menu_cb_zoom);
+	EditorMenu_addCommand (domainMenu, U"Show all", 'A', menu_cb_showAll);
+	EditorMenu_addCommand (domainMenu, U"Zoom in", 'I', menu_cb_zoomIn);
+	EditorMenu_addCommand (domainMenu, U"Zoom out", 'O', menu_cb_zoomOut);
+	EditorMenu_addCommand (domainMenu, U"Zoom to selection", 'N', menu_cb_zoomToSelection);
+	EditorMenu_addCommand (domainMenu, U"Zoom back", 'B', menu_cb_zoomBack);
+	EditorMenu_addCommand (domainMenu, U"Scroll page back", GuiMenu_PAGE_UP, menu_cb_pageUp);
+	EditorMenu_addCommand (domainMenu, U"Scroll page forward", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
+
+	EditorMenu_addCommand (domainMenu, U"-- selection set --", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"Set selection:", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"Select...", 0, menu_cb_select);
+	EditorMenu_addCommand (domainMenu, U"Widen or shrink selection...", 0, menu_cb_widenOrShrinkSelection);
+	EditorMenu_addCommand (domainMenu, U"Move cursor to start of selection", 0, menu_cb_moveCursorToStartOfSelection);
+	EditorMenu_addCommand (domainMenu, U"Move cursor to begin of selection", Editor_HIDDEN, menu_cb_moveCursorToStartOfSelection);
+	EditorMenu_addCommand (domainMenu, U"Move cursor to end of selection", 0, menu_cb_moveCursorToEndOfSelection);
+	EditorMenu_addCommand (domainMenu, U"Move cursor to...", 0, menu_cb_moveCursorTo);
+	EditorMenu_addCommand (domainMenu, U"Move cursor by...", 0, menu_cb_moveCursorBy);
+	EditorMenu_addCommand (domainMenu, U"Move start of selection by...", 0, menu_cb_moveStartOfSelectionBy);
+	EditorMenu_addCommand (domainMenu, U"Move begin of selection by...", Editor_HIDDEN, menu_cb_moveStartOfSelectionBy);
+	EditorMenu_addCommand (domainMenu, U"Move end of selection by...", 0, menu_cb_moveEndOfSelectionBy);
+	EditorMenu_addCommand (domainMenu, U"Selection step settings...", 0, menu_cb_selectionStepSettings);
+	EditorMenu_addCommand (domainMenu, U"Select earlier", GuiMenu_UP_ARROW, menu_cb_selectEarlier);
+	EditorMenu_addCommand (domainMenu, U"Select later", GuiMenu_DOWN_ARROW, menu_cb_selectLater);
+	EditorMenu_addCommand (domainMenu, U"Move start of selection left", GuiMenu_SHIFT | GuiMenu_UP_ARROW, menu_cb_moveStartOfSelectionLeft);
+	EditorMenu_addCommand (domainMenu, U"Move begin of selection left", Editor_HIDDEN, menu_cb_moveStartOfSelectionLeft);
+	EditorMenu_addCommand (domainMenu, U"Move start of selection right", GuiMenu_SHIFT | GuiMenu_DOWN_ARROW, menu_cb_moveStartOfSelectionRight);
+	EditorMenu_addCommand (domainMenu, U"Move begin of selection right", Editor_HIDDEN, menu_cb_moveStartOfSelectionRight);
+	EditorMenu_addCommand (domainMenu, U"Move end of selection left", GuiMenu_COMMAND | GuiMenu_UP_ARROW, menu_cb_moveEndOfSelectionLeft);
+	EditorMenu_addCommand (domainMenu, U"Move end of selection right", GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
+
+	EditorMenu_addCommand (domainMenu, U"-- selection query --", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"Query selection:", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"Get start of selection", 0, QUERY_EDITOR_FOR_REAL__getB);
+	EditorMenu_addCommand (domainMenu, U"Get begin of selection", Editor_HIDDEN, QUERY_EDITOR_FOR_REAL__getB);
+	EditorMenu_addCommand (domainMenu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);
+	EditorMenu_addCommand (domainMenu, U"Get end of selection", 0, QUERY_EDITOR_FOR_REAL__getE);
+	EditorMenu_addCommand (domainMenu, U"Get selection length", 0, QUERY_EDITOR_FOR_REAL__getSelectionDuration);
+
+	if (our v_hasPlayMenu ()) {
+		our playMenu = Editor_addMenu (this, U"Play", 0);
+		v_createMenuItems_play (our playMenu);
+	}
+
 	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
 		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 		if (area)
-			area -> v_createMenuItems_query (menu);
+			area -> v_createMenus ();
 	}
 }
 
-
-void structFunctionEditor :: v_createMenuItems_select (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"Select...", 0, menu_cb_select);
-	EditorMenu_addCommand (menu, U"Widen or shrink selection...", 0, menu_cb_widenOrShrinkSelection);
-	EditorMenu_addCommand (menu, U"Move cursor to start of selection", 0, menu_cb_moveCursorToStartOfSelection);
-	EditorMenu_addCommand (menu, U"Move cursor to begin of selection", Editor_HIDDEN, menu_cb_moveCursorToStartOfSelection);
-	EditorMenu_addCommand (menu, U"Move cursor to end of selection", 0, menu_cb_moveCursorToEndOfSelection);
-	EditorMenu_addCommand (menu, U"Move cursor to...", 0, menu_cb_moveCursorTo);
-	EditorMenu_addCommand (menu, U"Move cursor by...", 0, menu_cb_moveCursorBy);
-	EditorMenu_addCommand (menu, U"Move start of selection by...", 0, menu_cb_moveStartOfSelectionBy);
-	EditorMenu_addCommand (menu, U"Move begin of selection by...", Editor_HIDDEN, menu_cb_moveStartOfSelectionBy);
-	EditorMenu_addCommand (menu, U"Move end of selection by...", 0, menu_cb_moveEndOfSelectionBy);
-	EditorMenu_addCommand (menu, U"Selection step settings...", 0, menu_cb_selectionStepSettings);
-	EditorMenu_addCommand (menu, U"Select earlier", GuiMenu_UP_ARROW, menu_cb_selectEarlier);
-	EditorMenu_addCommand (menu, U"Select later", GuiMenu_DOWN_ARROW, menu_cb_selectLater);
-	EditorMenu_addCommand (menu, U"Move start of selection left", GuiMenu_SHIFT | GuiMenu_UP_ARROW, menu_cb_moveStartOfSelectionLeft);
-	EditorMenu_addCommand (menu, U"Move begin of selection left", Editor_HIDDEN, menu_cb_moveStartOfSelectionLeft);
-	EditorMenu_addCommand (menu, U"Move start of selection right", GuiMenu_SHIFT | GuiMenu_DOWN_ARROW, menu_cb_moveStartOfSelectionRight);
-	EditorMenu_addCommand (menu, U"Move begin of selection right", Editor_HIDDEN, menu_cb_moveStartOfSelectionRight);
-	EditorMenu_addCommand (menu, U"Move end of selection left", GuiMenu_COMMAND | GuiMenu_UP_ARROW, menu_cb_moveEndOfSelectionLeft);
-	EditorMenu_addCommand (menu, U"Move end of selection right", GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
-}
-
-void structFunctionEditor :: v_createMenuItems_draw (EditorMenu menu) {
+void structFunctionEditor :: v_updateMenuItems () {
+	FunctionEditor_Parent :: v_updateMenuItems ();
 	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
 		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 		if (area)
-			area -> v_createMenuItems_draw (menu);
+			area -> v_updateMenuItems ();
 	}
 }
 

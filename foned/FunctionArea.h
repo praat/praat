@@ -192,10 +192,6 @@ public:
 		Editor_broadcastDataChanged (my boss());
 	}
 
-	virtual void v0_createMenuItems_view_vertical (EditorMenu) { }
-	virtual void v_createMenuItems_view_domain (EditorMenu) { }
-	virtual void v_createMenuItems_view_audio (EditorMenu) { }
-
 	virtual double maximumInitialLengthOfWindow() { return undefined; }
 
 	virtual void v_updateText () { }
