@@ -848,8 +848,7 @@ static void menu_cb_SaveWholeTextGridAsTextFile (TextGridArea me, EDITOR_ARGS_FO
 	EDITOR_END
 }
 void structTextGridArea :: v_createMenuItems_save (EditorMenu menu) {
-	FunctionAreaMenu_addCommand (menu, U"-- TextGrid save --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Save TextGrid to disk:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"- Save TextGrid to disk:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Save whole TextGrid as text file...", 'S',
 			menu_cb_SaveWholeTextGridAsTextFile, this);
 }
@@ -1090,7 +1089,7 @@ static void menu_cb_TextGridPreferences (TextGridArea me, EDITOR_ARGS_FORM) {
 }
 
 
-#pragma mark - TextGridArea Domain/Select
+#pragma mark - TextGridArea TextGrid/Select
 
 static void do_selectAdjacentTier (TextGridArea me, bool previous) {
 	const integer n = my textGrid() -> tiers->size;
@@ -1703,8 +1702,7 @@ void structTextGridArea :: v_createMenus () {
 				menu_cb_ConvertToUnicode, this);
 	}
 
-	FunctionAreaMenu_addCommand (textGridMenu, U"-- TextGrid select set --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (textGridMenu, U"Select by TextGrid:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (textGridMenu, U"- Select by TextGrid:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (textGridMenu, U"Select previous tier", GuiMenu_OPTION | GuiMenu_UP_ARROW,
 			menu_cb_SelectPreviousTier, this);
 	FunctionAreaMenu_addCommand (textGridMenu, U"Select next tier", GuiMenu_OPTION | GuiMenu_DOWN_ARROW,
@@ -1718,8 +1716,7 @@ void structTextGridArea :: v_createMenus () {
 	FunctionAreaMenu_addCommand (textGridMenu, U"Extend-select right", GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_RIGHT_ARROW,
 			menu_cb_ExtendSelectNextInterval, this);
 
-	FunctionAreaMenu_addCommand (textGridMenu, U"-- TextGrid draw --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (textGridMenu, U"Draw TextGrid to picture window:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (textGridMenu, U"- Draw TextGrid to picture window:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (textGridMenu, U"Draw visible TextGrid...", 0,
 			menu_cb_DrawVisibleTextGrid, this);
 	if (our borrowedSoundArea)
@@ -1729,8 +1726,7 @@ void structTextGridArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (textGridMenu, U"Draw visible pitch contour and TextGrid...", 0,
 				menu_cb_DrawTextGridAndPitch, this);
 
-	FunctionAreaMenu_addCommand (textGridMenu, U"-- TextGrid extract --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (textGridMenu, U"Extract TextGrid to objects window:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (textGridMenu, U"- Extract TextGrid to objects window:", 0, nullptr, this);
 	our extractSelectedTextGridPreserveTimesButton = FunctionAreaMenu_addCommand (textGridMenu, U"Extract selected TextGrid (preserve times)", 0,
 			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes, this);
 	our extractSelectedTextGridTimeFromZeroButton = FunctionAreaMenu_addCommand (textGridMenu, U"Extract selected TextGrid (time from 0)", 0,
@@ -1764,8 +1760,7 @@ void structTextGridArea :: v_createMenus () {
 				menu_cb_InsertIntervalOnTier8, this);
 	}
 
-	FunctionAreaMenu_addCommand (intervalMenu, U"-- query interval --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (intervalMenu, U"Query interval:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (intervalMenu, U"- Query interval:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (intervalMenu, U"Get starting point of interval", 0,
 			QUERY_DATA_FOR_REAL__GetStartingPointOfInterval, this);
 	FunctionAreaMenu_addCommand (intervalMenu, U"Get end point of interval", 0,
@@ -1798,8 +1793,7 @@ void structTextGridArea :: v_createMenus () {
 				menu_cb_InsertOnTier8, this);
 		FunctionAreaMenu_addCommand (boundaryMenu, U"Add on all tiers", GuiMenu_COMMAND | GuiMenu_F9,
 				menu_cb_InsertOnAllTiers, this);
-		FunctionAreaMenu_addCommand (boundaryMenu, U"-- modify boundary --", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (boundaryMenu, U"Modify boundary or point:", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (boundaryMenu, U"- Modify boundary or point:", 0, nullptr, this);
 		if (our borrowedSoundArea && ! Thing_isa (our borrowedSoundArea, classLongSoundArea)) {
 			FunctionAreaMenu_addCommand (boundaryMenu, U"Move to nearest zero crossing", 0,
 					menu_cb_MoveToZero, this);
@@ -1817,8 +1811,7 @@ void structTextGridArea :: v_createMenus () {
 				menu_cb_AddPointTier, this);
 		FunctionAreaMenu_addCommand (tierMenu, U"Duplicate tier...", 0,
 				menu_cb_DuplicateTier, this);
-		FunctionAreaMenu_addCommand (tierMenu, U"-- modify tier --", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (tierMenu, U"Modify tier:", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (tierMenu, U"- Modify tier:", 0, nullptr, this);
 		FunctionAreaMenu_addCommand (tierMenu, U"Rename tier...", 0,
 				menu_cb_RenameTier, this);
 		FunctionAreaMenu_addCommand (tierMenu, U"Remove all text from tier", 0,
@@ -1826,8 +1819,7 @@ void structTextGridArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (tierMenu, U"Remove entire tier", 0,
 				menu_cb_RemoveTier, this);
 	}
-	FunctionAreaMenu_addCommand (tierMenu, U"-- extract tier --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (tierMenu, U"Extract to list of objects:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (tierMenu, U"- Extract to list of objects:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (tierMenu, U"Extract entire selected tier", 0,
 			CONVERT_DATA_TO_ONE__PublishTier, this);
 

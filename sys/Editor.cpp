@@ -63,12 +63,17 @@ GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* ca
 	thy d_editor = my d_editor;
 	thy sender___ = ( optionalSender ? optionalSender : thy d_editor );
 	thy menu = me;
-	thy itemTitle = Melder_dup (itemTitle);
+	const bool titleIsHeader = Melder_stringMatchesCriterion (itemTitle, kMelder_string::ENDS_WITH, U":", true);
+	if (titleIsHeader) {
+		flags |= GuiMenu_UNDERLINED;
+		if (itemTitle [0] == U'-' && itemTitle [1] == U' ') {
+			GuiMenu_addSeparator (my menuWidget);
+			itemTitle += 2;
+		}
+	}
+	thy itemTitle = Melder_dup (itemTitle);   // after the potential shift by 2
 	if (! commandCallback)
 		flags |= GuiMenu_INSENSITIVE;
-	const bool titleIsHeader = Melder_stringMatchesCriterion (itemTitle, kMelder_string::ENDS_WITH, U":", true);
-	if (titleIsHeader)
-		flags |= GuiMenu_UNDERLINED;
 	thy itemWidget =
 		titleIsHeader ? GuiMenu_addItem (my menuWidget, itemTitle, flags, nullptr, nullptr) :
 		! commandCallback ? GuiMenu_addSeparator (my menuWidget) :
@@ -189,7 +194,7 @@ void Editor_doMenuCommand (Editor me, conststring32 commandTitle, integer narg, 
 		for (integer icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = menu -> commands.at [icommand];
 			if (str32equ (commandTitle, command -> itemTitle.get())) {
-				command -> commandCallback (me, command, nullptr, narg, args, arguments, interpreter);
+				command -> commandCallback (command -> sender___, command, nullptr, narg, args, arguments, interpreter);
 				return;
 			}
 		}

@@ -91,13 +91,13 @@ Thing_define (TextGridEditor, FunctionEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our textGridArea().get(),
-			U"modifiable TextGrid", Melder_GREEN
+			FunctionArea_legend_TEXTGRID U" ##modifiable TextGrid", DataGui_defaultForegroundColour (our textGridArea().get())
 		);
 		if (our soundArea()) {
 			const bool pulsesAreVisible = our soundAnalysisArea() -> hasPulsesToShow ();
 			FunctionArea_drawLegend (our soundArea().get(),
-				U"non-modifiable copy of sound", Melder_BLACK,
-				pulsesAreVisible ? U"derived pulses" : nullptr, Melder_BLUE
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get()),
+				pulsesAreVisible ? FunctionArea_legend_POLES U" %%derived pulses" : nullptr, Melder_GREY
 			);
 			SoundAnalysisArea_drawDefaultLegends (our soundAnalysisArea().get());
 		}
