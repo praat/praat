@@ -24,6 +24,8 @@
 Thing_define (DurationTierArea, RealTierArea) {
 	DurationTier durationTier() { return static_cast <DurationTier> (our function()); }
 
+	conststring32 v_menuTitle ()
+		override { return U"DurationTier"; }
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()

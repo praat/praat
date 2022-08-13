@@ -73,6 +73,8 @@ DEFINE_FunctionArea_create (KlattGrid_PitchTierArea, PitchTier)
 #pragma mark - KlattGrid_VoicingAmplitudeTierArea
 
 Thing_define (KlattGrid_VoicingAmplitudeTierArea, KlattGrid_IntensityTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"VoicingAmplitudeTier"; }
 };
 DEFINE_FunctionArea_create (KlattGrid_VoicingAmplitudeTierArea, IntensityTier)
 
@@ -80,6 +82,8 @@ DEFINE_FunctionArea_create (KlattGrid_VoicingAmplitudeTierArea, IntensityTier)
 #pragma mark - KlattGrid_FlutterTierArea
 
 Thing_define (KlattGrid_FlutterTierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"FlutterTier"; }
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	double v_maximumLegalY ()
@@ -102,6 +106,8 @@ DEFINE_FunctionArea_create (KlattGrid_FlutterTierArea, RealTier)
 #pragma mark - KlattGrid_Power1TierArea
 
 Thing_define (KlattGrid_Power1TierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"Power1Tier"; }
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
@@ -122,6 +128,8 @@ DEFINE_FunctionArea_create (KlattGrid_Power1TierArea, RealTier)
 #pragma mark - KlattGrid_Power2TierArea
 
 Thing_define (KlattGrid_Power2TierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"Power2Tier"; }
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
@@ -142,6 +150,8 @@ DEFINE_FunctionArea_create (KlattGrid_Power2TierArea, RealTier)
 #pragma mark - KlattGrid_OpenPhaseTierArea
 
 Thing_define (KlattGrid_OpenPhaseTierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"OpenPhaseTier"; }
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	double v_maximumLegalY ()
@@ -164,6 +174,8 @@ DEFINE_FunctionArea_create (KlattGrid_OpenPhaseTierArea, RealTier)
 #pragma mark - KlattGrid_CollisionPhaseTierArea
 
 Thing_define (KlattGrid_CollisionPhaseTierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"CollisionPhaseTier"; }
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	double v_maximumLegalY ()
@@ -186,6 +198,8 @@ DEFINE_FunctionArea_create (KlattGrid_CollisionPhaseTierArea, RealTier)
 #pragma mark - KlattGrid_DoublePulsingTierArea
 
 Thing_define (KlattGrid_DoublePulsingTierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"DoublePulsingTier"; }
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	double v_maximumLegalY ()
@@ -208,6 +222,8 @@ DEFINE_FunctionArea_create (KlattGrid_DoublePulsingTierArea, RealTier)
 #pragma mark - KlattGrid_SpectralTiltTierArea
 
 Thing_define (KlattGrid_SpectralTiltTierArea, KlattGrid_IntensityTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"SpectralTiltTier"; }
 	#include "KlattGrid_SpectralTiltTierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_SpectralTiltTierArea, IntensityTier)
@@ -216,12 +232,17 @@ DEFINE_FunctionArea_create (KlattGrid_SpectralTiltTierArea, IntensityTier)
 #pragma mark - KlattGrid_AspirationAmplitudeTierArea
 
 Thing_define (KlattGrid_AspirationAmplitudeTierArea, KlattGrid_IntensityTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"AspirationAmplitudeTier"; }
 };
 DEFINE_FunctionArea_create (KlattGrid_AspirationAmplitudeTierArea, IntensityTier)
 
 
 #pragma mark - KlattGrid_BreathinessAmplitudeTierArea
+
 Thing_define (KlattGrid_BreathinessAmplitudeTierArea, KlattGrid_IntensityTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"BreathinessAmplitudeTier"; }
 };
 DEFINE_FunctionArea_create (KlattGrid_BreathinessAmplitudeTierArea, IntensityTier)
 
@@ -229,6 +250,8 @@ DEFINE_FunctionArea_create (KlattGrid_BreathinessAmplitudeTierArea, IntensityTie
 #pragma mark - KlattGrid_FricationBypassTierArea
 
 Thing_define (KlattGrid_FricationBypassTierArea, KlattGrid_IntensityTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"FricationBypassTier"; }
 	#include "KlattGrid_FricationBypassTierArea_prefs.h"
 };
 DEFINE_FunctionArea_create (KlattGrid_FricationBypassTierArea, IntensityTier)
@@ -237,6 +260,8 @@ DEFINE_FunctionArea_create (KlattGrid_FricationBypassTierArea, IntensityTier)
 #pragma mark - KlattGrid_FricationAmplitudeTierArea
 
 Thing_define (KlattGrid_FricationAmplitudeTierArea, KlattGrid_IntensityTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"FricationAmplitudeTier"; }
 };
 DEFINE_FunctionArea_create (KlattGrid_FricationAmplitudeTierArea, IntensityTier)
 

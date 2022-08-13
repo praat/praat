@@ -22,6 +22,8 @@
 #include "IntensityTier.h"
 
 Thing_define (IntensityTierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"IntensityTier"; }
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
 	conststring32 v_quantityText ()

@@ -115,6 +115,7 @@ static void menu_cb_setFormantRange (FormantGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		my setInstancePref_formantFloor (minimumFormant);
 		my setInstancePref_formantCeiling (maximumFormant);
+		my v_updateScaling ();   // BUG: should be viewChanged()
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
@@ -128,6 +129,7 @@ static void menu_cb_setBandwidthRange (FormantGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		my setInstancePref_bandwidthFloor (minimumBandwidth);
 		my setInstancePref_bandwidthCeiling (maximumBandwidth);
+		my v_updateScaling ();   // BUG: should be viewChanged()
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
@@ -192,7 +194,7 @@ static void menu_cb_pitchSettings (FormantGridArea me, EDITOR_ARGS_FORM) {
 }
 
 void structFormantGridArea :: v_createMenus () {
-	FormantGridArea_Parent :: v_createMenus ();
+	//FormantGridArea_Parent :: v_createMenus ();
 	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Formant", 0);
 	our d_bandwidthsToggle = FunctionAreaMenu_addCommand (menu, U"Show bandwidths", GuiMenu_CHECKBUTTON,
 			menu_cb_showBandwidths, this);
