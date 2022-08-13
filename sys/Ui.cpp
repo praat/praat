@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -914,7 +914,7 @@ static void commonOkCallback (UiForm /* dia */, integer /* narg */, Stackel /* a
 	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure)
 {
 	EditorCommand cmd = (EditorCommand) closure;
-	cmd -> commandCallback (cmd -> sender___, cmd, cmd -> d_uiform.get(), 0, nullptr, nullptr, interpreter);
+	cmd -> commandCallback (cmd -> sender, cmd, cmd -> d_uiform.get(), 0, nullptr, nullptr, interpreter);
 }
 
 autoUiForm UiForm_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle) {
