@@ -48,7 +48,7 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 		UiHistory_write_colonize (my itemTitle.get());
 	}
 	try {
-		my commandCallback (my sender___, me, nullptr, 0, nullptr, nullptr, nullptr);
+		my commandCallback (my sender, me, nullptr, 0, nullptr, nullptr, nullptr);
 	} catch (MelderError) {
 		if (! Melder_hasError (U"Script exited."))
 			Melder_appendError (U"Menu command \"", my itemTitle.get(), U"\" not completed.");
@@ -61,7 +61,7 @@ GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* ca
 {
 	autoEditorCommand thee = Thing_new (EditorCommand);
 	thy d_editor = my d_editor;
-	thy sender___ = ( optionalSender ? optionalSender : thy d_editor );
+	thy sender = ( optionalSender ? optionalSender : thy d_editor );
 	thy menu = me;
 	const bool titleIsHeader = Melder_stringMatchesCriterion (itemTitle, kMelder_string::ENDS_WITH, U":", true);
 	if (titleIsHeader) {
@@ -194,7 +194,7 @@ void Editor_doMenuCommand (Editor me, conststring32 commandTitle, integer narg, 
 		for (integer icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = menu -> commands.at [icommand];
 			if (str32equ (commandTitle, command -> itemTitle.get())) {
-				command -> commandCallback (command -> sender___, command, nullptr, narg, args, arguments, interpreter);
+				command -> commandCallback (command -> sender, command, nullptr, narg, args, arguments, interpreter);
 				return;
 			}
 		}

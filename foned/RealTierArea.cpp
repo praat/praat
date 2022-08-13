@@ -297,7 +297,7 @@ static void menu_cb_setRange (RealTierArea me, EDITOR_ARGS_FORM) {
 
 void structRealTierArea :: v_createMenus () {
 	RealTierArea_Parent :: v_createMenus ();
-	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Points", 0);
+	EditorMenu menu = Editor_addMenu (our functionEditor(), our v_menuTitle (), 0);
 	FunctionAreaMenu_addCommand (menu, U"-- view/realtier --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, our v_setRangeTitle (), 0,
 			menu_cb_setRange, this);

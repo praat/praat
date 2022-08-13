@@ -51,6 +51,8 @@ Thing_define (FormantGridArea, RealTierArea) {
 		if (our ycursor <= our ymin || our ycursor >= our ymax)
 			our ycursor = 0.382 * our ymin + 0.618 * our ymax;
 	}
+	conststring32 v_menuTitle ()
+		override { return U"FormantGrid"; }
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()

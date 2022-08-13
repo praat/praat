@@ -22,6 +22,8 @@
 #include "AmplitudeTier.h"
 
 Thing_define (AmplitudeTierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"AmplitudeTier"; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Pa"; }
 	conststring32 v_quantityText ()

@@ -38,7 +38,7 @@ typedef MelderCallback <void, structEditor, EditorCommand, UiForm, integer /*nar
 
 Thing_define (EditorCommand, Thing) {
 	Editor d_editor;
-	DataGui sender___;
+	DataGui sender;
 	EditorMenu menu;
 	autostring32 itemTitle;
 	GuiMenuItem itemWidget;

@@ -73,6 +73,7 @@ public:
 	void v_createMenus ()
 		override;
 
+	virtual conststring32 v_menuTitle () { return U"RealTier"; }
 	virtual conststring32 v_quantityText () { return U"Y"; }   // normally includes units
 	virtual conststring32 v_setRangeTitle () { return U"Set range..."; }
 	virtual conststring32 v_minimumLabelText () { return U"Minimum"; }   // normally includes units
