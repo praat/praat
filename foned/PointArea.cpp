@@ -28,7 +28,7 @@ Thing_implement (PointArea, FunctionArea, 0);
 #pragma mark - PointArea drawing
 
 void structPointArea :: v_drawInside () {
-	Graphics_setColour (our graphics(), DataGui_defaultForegroundColour (this));
+	Graphics_setColour (our graphics(), our editable() ? Colour_EDITABLE_LINES() : Melder_SILVER);
 	Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), -1.0, +1.0);
 	for (integer i = 1; i <= our pointProcess() -> nt; i ++) {
 		const double t = our pointProcess() -> t [i];
@@ -165,8 +165,18 @@ static void MODIFY_DATA__addPointAt (PointArea me, EDITOR_ARGS_FORM) {
 void structPointArea :: v_createMenus () {
 	PointArea_Parent :: v_createMenus ();
 
-	EditorMenu menu = our functionEditor() -> queryMenu;
-	FunctionAreaMenu_addCommand (menu, U"-- query jitter --", 0, nullptr, this);
+	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Pulses", 0);
+
+	FunctionAreaMenu_addCommand (menu, U"- Modify pulses:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Add point at cursor", 'P',
+			MODIFY_DATA__addPointAtCursor, this);
+	FunctionAreaMenu_addCommand (menu, U"Add point at...", 0,
+			MODIFY_DATA__addPointAt, this);
+	FunctionAreaMenu_addCommand (menu, U"-- remove point --", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'P',
+			MODIFY_DATA__removePoints, this);
+
+	FunctionAreaMenu_addCommand (menu, U"- Query selected pulses:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Get jitter (local)", 0,
 			QUERY_DATA_FOR_REAL__getJitter_local, this);
 	FunctionAreaMenu_addCommand (menu, U"Get jitter (local, absolute)", 0,
@@ -178,7 +188,7 @@ void structPointArea :: v_createMenus () {
 	FunctionAreaMenu_addCommand (menu, U"Get jitter (ddp)", 0,
 			QUERY_DATA_FOR_REAL__getJitter_ddp, this);
 	if (our borrowedSoundArea) {   // BUG: not LongSound
-		FunctionAreaMenu_addCommand (menu, U"-- query shimmer --", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (menu, U"- Query selected pulses and sound:", 0, nullptr, this);
 		FunctionAreaMenu_addCommand (menu, U"Get shimmer (local)", 0,
 				QUERY_DATA_FOR_REAL__getShimmer_local, this);
 		FunctionAreaMenu_addCommand (menu, U"Get shimmer (local, dB)", 0,
@@ -192,15 +202,6 @@ void structPointArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"Get shimmer (dda)", 0,
 				QUERY_DATA_FOR_REAL__getShimmer_dda, this);
 	}
-
-	menu = Editor_addMenu (our functionEditor(), U"Point", 0);
-	FunctionAreaMenu_addCommand (menu, U"Add point at cursor", 'P',
-			MODIFY_DATA__addPointAtCursor, this);
-	FunctionAreaMenu_addCommand (menu, U"Add point at...", 0,
-			MODIFY_DATA__addPointAt, this);
-	FunctionAreaMenu_addCommand (menu, U"-- remove point --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'P',
-			MODIFY_DATA__removePoints, this);
 }
 
 /* End of file PointArea.cpp */

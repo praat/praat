@@ -224,6 +224,7 @@ GuiMenuItem FunctionAreaMenu_addCommand (EditorMenu me, conststring32 itemTitle 
 	#define FunctionArea_legend_POLES  U" ⃒ ⃒ ⃒"
 	#define FunctionArea_legend_WAVEFORM  U"\u301C"
 	#define FunctionArea_legend_GREYS  U"\\s{▩}"
+	#define FunctionArea_legend_TEXTGRID  U"☵"
 #elif defined (_WIN32)
 	#define FunctionArea_legend_LINES  U"—"
 	#define FunctionArea_legend_SPECKLES  U"\\s{• •}"
@@ -231,6 +232,7 @@ GuiMenuItem FunctionAreaMenu_addCommand (EditorMenu me, conststring32 itemTitle 
 	#define FunctionArea_legend_POLES  U"|||"
 	#define FunctionArea_legend_WAVEFORM  U"~"
 	#define FunctionArea_legend_GREYS  U"\\s{▒}"
+	#define FunctionArea_legend_TEXTGRID  U"☵"
 #else
 	#define FunctionArea_legend_LINES  U"—"
 	#define FunctionArea_legend_SPECKLES  U"• •"
@@ -238,6 +240,7 @@ GuiMenuItem FunctionAreaMenu_addCommand (EditorMenu me, conststring32 itemTitle 
 	#define FunctionArea_legend_POLES  U"|||"
 	#define FunctionArea_legend_WAVEFORM  U"\u301C"
 	#define FunctionArea_legend_GREYS  U"\\s{▒}"
+	#define FunctionArea_legend_TEXTGRID  U"☵"
 #endif
 
 inline void FunctionArea_drawLegend (FunctionArea me,

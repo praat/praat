@@ -188,7 +188,7 @@ bool Thing_isa (Thing me, ClassInfo klas) {
 }
 
 void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file) {
-	//Melder_assert (me);
+	Melder_assert (me);
 	Melder_clearInfo ();
 	MelderInfo_open ();
 	if (id != 0)

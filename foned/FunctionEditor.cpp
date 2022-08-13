@@ -1145,8 +1145,7 @@ void structFunctionEditor :: v_createMenus () {
 
 	EditorMenu domainMenu = Editor_addMenu (this, v_format_domain (), 0);   // Time or Frequency
 
-	EditorMenu_addCommand (domainMenu, U"-- view horizontal --", 0, nullptr);
-	EditorMenu_addCommand (domainMenu, U"Set visible part:", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"- Set visible part:", 0, nullptr);
 	EditorMenu_addCommand (domainMenu, U"Zoom and scroll settings...", 0, menu_cb_zoomAndScrollSettings);
 	EditorMenu_addCommand (domainMenu, U"Zoom...", 0, menu_cb_zoom);
 	EditorMenu_addCommand (domainMenu, U"Show all", 'A', menu_cb_showAll);
@@ -1157,8 +1156,7 @@ void structFunctionEditor :: v_createMenus () {
 	EditorMenu_addCommand (domainMenu, U"Scroll page back", GuiMenu_PAGE_UP, menu_cb_pageUp);
 	EditorMenu_addCommand (domainMenu, U"Scroll page forward", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
 
-	EditorMenu_addCommand (domainMenu, U"-- selection set --", 0, nullptr);
-	EditorMenu_addCommand (domainMenu, U"Set selection:", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"- Set selection:", 0, nullptr);
 	EditorMenu_addCommand (domainMenu, U"Select...", 0, menu_cb_select);
 	EditorMenu_addCommand (domainMenu, U"Widen or shrink selection...", 0, menu_cb_widenOrShrinkSelection);
 	EditorMenu_addCommand (domainMenu, U"Move cursor to start of selection", 0, menu_cb_moveCursorToStartOfSelection);
@@ -1179,8 +1177,7 @@ void structFunctionEditor :: v_createMenus () {
 	EditorMenu_addCommand (domainMenu, U"Move end of selection left", GuiMenu_COMMAND | GuiMenu_UP_ARROW, menu_cb_moveEndOfSelectionLeft);
 	EditorMenu_addCommand (domainMenu, U"Move end of selection right", GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
 
-	EditorMenu_addCommand (domainMenu, U"-- selection query --", 0, nullptr);
-	EditorMenu_addCommand (domainMenu, U"Query selection:", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"- Query selection:", 0, nullptr);
 	EditorMenu_addCommand (domainMenu, U"Get start of selection", 0, QUERY_EDITOR_FOR_REAL__getB);
 	EditorMenu_addCommand (domainMenu, U"Get begin of selection", Editor_HIDDEN, QUERY_EDITOR_FOR_REAL__getB);
 	EditorMenu_addCommand (domainMenu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);

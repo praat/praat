@@ -74,11 +74,6 @@ public:
 		override;
 	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
 		override;
-	virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
-	virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
-	virtual void v_createMenuItems_intensity_picture (EditorMenu menu);
-	virtual void v_createMenuItems_formant_picture (EditorMenu menu);
-	virtual void v_createMenuItems_pulses_picture (EditorMenu menu);
 	virtual void v_draw_analysis ();
 	virtual void v_draw_analysis_pulses ();
 	virtual void v_draw_analysis_formants ();

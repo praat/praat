@@ -27,7 +27,19 @@ Thing_implement (PitchArea, FunctionArea, 0);
 #define RADIUS  2.5
 
 
-#pragma mark - PitchArea Modify
+#pragma mark - PitchArea Query selection
+
+static void QUERY_DATA_FOR_REAL__getPitch (PitchArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	QUERY_DATA_FOR_REAL
+		const double result = ( my startSelection() == my endSelection()
+			? Pitch_getValueAtTime (my pitch(), my startSelection(), kPitch_unit::HERTZ, 1)
+			: Pitch_getMean (my pitch(), my startSelection(), my endSelection(), kPitch_unit::HERTZ)
+		);
+	QUERY_DATA_FOR_REAL_END (U" Hz")
+}
+
+
+#pragma mark - PitchArea Modify whole
 
 static void menu_cb_setCeiling (PitchArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Change ceiling", nullptr)
@@ -59,6 +71,9 @@ static void menu_cb_pathFinder (PitchArea me, EDITOR_ARGS_FORM) {
 		MODIFY_DATA_END
 	EDITOR_END
 }
+
+
+#pragma mark - PitchArea Modify selection
 
 static void menu_cb_octaveUp (PitchArea me, EDITOR_ARGS_DIRECT) {
 	MODIFY_DATA (U"Octave up")
@@ -98,35 +113,23 @@ static void menu_cb_voiceless (PitchArea me, EDITOR_ARGS_DIRECT) {
 }
 
 
-#pragma mark - PitchArea Query
-
-static void QUERY_DATA_FOR_REAL__getPitch (PitchArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	QUERY_DATA_FOR_REAL
-		const double result = ( my startSelection() == my endSelection()
-			? Pitch_getValueAtTime (my pitch(), my startSelection(), kPitch_unit::HERTZ, 1)
-			: Pitch_getMean (my pitch(), my startSelection(), my endSelection(), kPitch_unit::HERTZ)
-		);
-	QUERY_DATA_FOR_REAL_END (U" Hz")
-}
-
-
 #pragma mark - PitchArea all menus
 
 void structPitchArea :: v_createMenus () {
 	PitchArea_Parent :: v_createMenus ();
 
-	EditorMenu menu = our functionEditor() -> editMenu;
+	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Pitch", 0);
+
+	FunctionAreaMenu_addCommand (menu, U"- Query selected part of pitch:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Get pitch", GuiMenu_F5,
+			QUERY_DATA_FOR_REAL__getPitch, this);
+
+	FunctionAreaMenu_addCommand (menu, U"- Modify whole pitch:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Change ceiling...", 0,
 			menu_cb_setCeiling, this);
 	FunctionAreaMenu_addCommand (menu, U"Path finder...", 0,
 			menu_cb_pathFinder, this);
-
-	menu = our functionEditor() -> queryMenu;
-	FunctionAreaMenu_addCommand (menu, U"-- pitch --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Get pitch", GuiMenu_F5,
-			QUERY_DATA_FOR_REAL__getPitch, this);
-
-	menu = Editor_addMenu (our functionEditor(), U"Selection", 0);
+	FunctionAreaMenu_addCommand (menu, U"- Modify selected part of pitch:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Unvoice", 0,
 			menu_cb_voiceless, this);
 	FunctionAreaMenu_addCommand (menu, U"-- up and down --", 0, nullptr, this);
