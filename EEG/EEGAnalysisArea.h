@@ -22,8 +22,6 @@
 #include "EEG.h"
 
 Thing_define (EEGAnalysisArea, SoundAnalysisArea) {
-	EEG eeg() const { return static_cast <EEG> (our function()); }
-
 	bool v_hasPitch ()
 		override { return false; }
 	bool v_hasIntensity ()
