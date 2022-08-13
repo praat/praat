@@ -47,13 +47,16 @@ Thing_define (EEGWindow, FunctionEditor) {
 		our textGridArea() -> functionChanged (our eeg() -> textgrid.get());
 	}
 	void v_distributeAreas () override {
-		our eegArea() -> setGlobalYRange_fraction (0.6, 1.0);
-		our eegAnalysisArea() -> setGlobalYRange_fraction (0.4, 0.6);
-		our textGridArea() -> setGlobalYRange_fraction (0.0, 0.4);
+		our eegArea() -> setGlobalYRange_fraction (0.65, 1.0);
+		our eegAnalysisArea() -> setGlobalYRange_fraction (0.35, 0.65);
+		our textGridArea() -> setGlobalYRange_fraction (0.0, 0.35);
 	}
 	void v_draw () override {
 		FunctionArea_drawOne (our eegArea().get());
-		FunctionArea_drawOne (our eegAnalysisArea().get());
+		if (our eegAnalysisArea() -> hasContentToShow()) {
+			FunctionArea_prepareCanvas (our eegAnalysisArea().get());
+			our eegAnalysisArea() -> v_draw_analysis ();
+		}
 		FunctionArea_drawOne (our textGridArea().get());
 	}
 	void v_createMenuItems_help (EditorMenu menu)
@@ -62,6 +65,14 @@ Thing_define (EEGWindow, FunctionEditor) {
 		override;
 	void v_updateMenuItems ()
 		override;
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our textGridArea().get(),
+			FunctionArea_legend_TEXTGRID U" ##modifiable TextGrid", DataGui_defaultForegroundColour (our textGridArea().get())
+		);
+		FunctionArea_drawLegend (our eegArea().get(),
+			FunctionArea_legend_WAVEFORM U" %%non-modifiable EEG-internal sound", DataGui_defaultForegroundColour (our eegArea().get()));
+		SoundAnalysisArea_drawDefaultLegends (our eegAnalysisArea().get());
+	}
 
 	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
 
