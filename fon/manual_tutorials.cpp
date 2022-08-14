@@ -22,8 +22,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220518)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220814)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.15# (14 August 2022)")
+LIST_ITEM (U"• Legends in editor windows.")
+LIST_ITEM (U"• The menus #Time and #Play are new in editor windows, and the menus Spectrum and Formant were renamed to #Spectrogram and #Formants.")
+LIST_ITEM (U"• More menu commands in editor windows.")
+LIST_ITEM (U"• Rid frames around areas in editor window, except if editable.")
+LIST_ITEM (U"• The FormantPath window can include a copy of a TextGrid.")
+LIST_ITEM (U"• Restored horizontal and vertical dragging in tier areas (had been absent for two years).")
+LIST_ITEM (U"• Removed several small bugs (and probably introduced a couple of new ones) in editor windows.")
+LIST_ITEM (U"• Restored the original Praat icon.")
 NORMAL (U"##6.2.14# (24 May 2022)")
 LIST_ITEM (U"• TextGrid window: repaired a bug introduced in 6.2.10 by which a click on the boundary insertion circle "
 	"would copy the contents of a new interval from another tier (if that other tier stood selected).")
