@@ -317,8 +317,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 #elif cocoa
 #pragma mark - COCOA CALLBACKS (WITH QUARTZ)
-	@interface GuiCocoaDrawingArea ()
-	@end
 	@implementation GuiCocoaDrawingArea {
 		GuiDrawingArea userData;
 		bool inited;
