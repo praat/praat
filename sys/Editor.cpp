@@ -169,7 +169,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 		nullptr;
 	if (alternativeMenuTitle) {
 		EditorMenu alternativeMenu = findMenu (me, alternativeMenuTitle);
-		if (alternativeMenuTitle) {
+		if (alternativeMenu) {
 			GuiMenuItem menuItem = EditorMenu_addCommandScript (alternativeMenu, itemTitle, flags, script);
 			static bool warningGiven = false;
 			if (! warningGiven) {
@@ -182,7 +182,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 	}
 	Melder_warning (
 		U"Menu \"", menuTitle, U"\" does not exist.\n"
-		U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U".\n"
+		U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U"\".\n"
 		U"To fix this, go to Praat->Preferences->Buttons->Editors, and remove the script from this menu.\n"
 		U"You may want to install the script in a different menu."
 	);

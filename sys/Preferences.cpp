@@ -115,8 +115,26 @@ void Preferences_read (MelderFile file) {
 				*/
 				if (Melder_nequ (line, U"FunctionEditor.", 15))
 					ipref = thePreferences. lookUp (Melder_cat (U"SoundAnalysisArea.", line + 15));
-				if (Melder_nequ (line, U"TimeSoundAnalysisEditor.", 24))
+				else if (Melder_nequ (line, U"TimeSoundAnalysisEditor.", 24))
 					ipref = thePreferences. lookUp (Melder_cat (U"SoundAnalysisArea.", line + 24));
+				else if (Melder_nequ (line, U"TextGridEditor.", 15))
+					ipref = thePreferences. lookUp (Melder_cat (U"TextGridArea.", line + 15));
+				else if (Melder_nequ (line, U"EEGWindow.sound.", 16))
+					ipref = thePreferences. lookUp (Melder_cat (U"EEGArea.", line + 16));
+				else if (Melder_nequ (line, U"EEGWindow.", 10))
+					ipref = thePreferences. lookUp (Melder_cat (U"EEGAnalysisArea.", line + 10));
+				else if (Melder_nequ (line, U"ERPWindow.sound.", 16))
+					ipref = thePreferences. lookUp (Melder_cat (U"ERPArea.", line + 16));
+				else if (Melder_nequ (line, U"FormantGridEditor.", 18))
+					ipref = thePreferences. lookUp (Melder_cat (U"FormantGridArea.", line + 18));
+				else if (Melder_nequ (line, U"ManipulationEditor.", 19))
+					ipref = thePreferences. lookUp (Melder_cat (U"ManipulationPitchTierArea.", line + 19));
+				else if (Melder_nequ (line, U"SpectrumEditor.", 15))
+					ipref = thePreferences. lookUp (Melder_cat (U"SpectrumArea.", line + 15));
+				else if (Melder_nequ (line, U"TimeSoundEditor.sound.", 22))
+					ipref = thePreferences. lookUp (Melder_cat (U"SoundArea.", line + 22));
+				else if (Melder_nequ (line, U"TimeSoundEditor.", 16))
+					ipref = thePreferences. lookUp (Melder_cat (U"SoundArea.", line + 16));
 			}
 			if (ipref == 0)
 				continue;   // skip unrecognized keys
