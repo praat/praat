@@ -82,6 +82,18 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 		override {};
 	conststring32 v_selectionViewerName ()
 		override { return U"Formant candidates"; }
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our formantPathArea().get(),
+			FunctionArea_legend_SPECKLES U" ##modifiable FormantPath", Melder_RED
+		);
+		FunctionArea_drawLegend (our soundArea().get(),
+			FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+		);
+		if (our textGridArea())
+			FunctionArea_drawLegend (our textGridArea().get(),
+				FunctionArea_legend_TEXTGRID U" %%non-modifiable copy of TextGrid", DataGui_defaultForegroundColour (our textGridArea().get())
+			);
+	}
 
 	#include "FormantPathEditor_prefs.h"
 };

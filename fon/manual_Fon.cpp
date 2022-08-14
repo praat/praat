@@ -996,7 +996,7 @@ ENTRY (U"Objects")
 ENTRY (U"Playing")
 	NORMAL (U"To play (a part of) the %resynthesized sound (by any of the methods shown in the #Synth menu, "
 		"like @@overlap-add@ and #LPC), @click on any of the 1 to 8 buttons below and above the drawing area "
-		"or use the Play commands from the View menu.")
+		"or use the commands from the Play menu.")
 	NORMAL (U"To play the %original sound instead, use ##Shift-click#.")
 ENTRY (U"Pulses")
 	TAG (U"To add:")
@@ -1343,7 +1343,7 @@ NORMAL (U"An object of class #ParamCurve represents a sequence of time-stamped p
 	"in a two-dimensional space.")
 MAN_END
 
-MAN_BEGIN (U"PointEditor", U"ppgb", 20110128)
+MAN_BEGIN (U"PointEditor", U"ppgb", /*20110128*/ 20220814)
 INTRO (U"One of the @Editors in Praat, for viewing and manipulating a @PointProcess object, "
 	"which is optionally shown together with a @Sound object.")
 ENTRY (U"Objects")
@@ -1353,7 +1353,7 @@ LIST_ITEM (U"• The @Sound, if you selected a Sound object together with the Po
 LIST_ITEM (U"• The @PointProcess; vertical blue lines represent the points.")
 ENTRY (U"Playing")
 NORMAL (U"To play (a part of) the %resynthesized sound (pulse train): "
-	"@click on any of the 8 buttons below and above the drawing area, or choose a Play command from the View menu.")
+	"@click on any of the 8 buttons below and above the drawing area, or choose a command from the Play menu.")
 NORMAL (U"To play the %original sound instead, use @@Shift-click@.")
 ENTRY (U"Adding a point")
 NORMAL (U"@Click at the desired time location, and choose \"Add point at cursor\" or type @@Keyboard shortcuts|Command-P@.")

@@ -22,6 +22,8 @@
 #include "OptimalCeilingTier.h"
 
 Thing_define (OptimalCeilingTierArea, RealTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"OptimalCeilingTier"; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
 	conststring32 v_quantityText ()

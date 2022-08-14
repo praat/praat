@@ -49,6 +49,15 @@ Thing_define (PitchTierEditor, FunctionEditor) {
 		else
 			PitchTier_playPart (our pitchTierArea() -> pitchTier(), startTime, endTime, false);   // BUG: why no callback?
 	}
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our pitchTierArea().get(),
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable PitchTier", DataGui_defaultForegroundColour (our pitchTierArea().get())
+		);
+		if (our soundArea())
+			FunctionArea_drawLegend (our soundArea().get(),
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+			);
+	}
 };
 
 autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch, Sound optionalSoundToCopy);

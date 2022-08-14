@@ -28,14 +28,16 @@ Thing_implement (PointArea, FunctionArea, 0);
 #pragma mark - PointArea drawing
 
 void structPointArea :: v_drawInside () {
-	Graphics_setColour (our graphics(), our editable() ? Colour_EDITABLE_LINES() : Melder_SILVER);
+	Graphics_setColour (our graphics(), our editable() ? our Colour_EDITABLE_LINES() : Melder_SILVER);
 	Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), -1.0, +1.0);
+	Graphics_setLineWidth (our graphics(), 2.0);
 	for (integer i = 1; i <= our pointProcess() -> nt; i ++) {
 		const double t = our pointProcess() -> t [i];
 		if (t >= our startWindow() && t <= our endWindow())
 			Graphics_line (our graphics(), t, -0.9, t, +0.9);
 	}
 	Graphics_setColour (our graphics(), Melder_BLACK);
+	Graphics_setLineWidth (our graphics(), 1.0);
 }
 
 

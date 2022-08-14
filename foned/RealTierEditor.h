@@ -44,6 +44,15 @@ Thing_define (RealTierEditor, FunctionEditor) {
 		if (our soundArea())
 			Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
 	}
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our realTierArea().get(),
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable RealTier", DataGui_defaultForegroundColour (our realTierArea().get())
+		);
+		if (our soundArea())
+			FunctionArea_drawLegend (our soundArea().get(),
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+			);
+	}
 };
 
 autoRealTierEditor RealTierEditor_create (conststring32 title, RealTier tier, Sound optionalSoundToCopy);

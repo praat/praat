@@ -1185,7 +1185,6 @@ static void updateWidgets (void *void_me) {
 void structVowelEditor :: v_createMenus () {
 	VowelEditor_Parent :: v_createMenus ();
 
-	Editor_addMenu (this, U"View", 0);
 	Editor_addCommand (this, U"File", U"Preferences...", 0, menu_cb_prefs);
 	Editor_addCommand (this, U"File", U"-- publish data --", 0, nullptr);
 	Editor_addCommand (this, U"File", U"Publish Sound", 0,
@@ -1201,6 +1200,7 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"-- drawing --", 0, nullptr);
 	Editor_addCommand (this, U"File", U"Draw trajectory...", 0, menu_cb_drawTrajectory);
 	Editor_addCommand (this, U"File", U"-- scripting --", 0, nullptr);
+
 	Editor_addCommand (this, U"Edit", U"-- f0 --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Set f0...", 0, menu_cb_setF0);
 	Editor_addCommand (this, U"Edit", U"Set F3 & F4...", Editor_HIDDEN, menu_cb_setF3F4);
@@ -1210,7 +1210,11 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"New trajectory...", 0, menu_cb_newTrajectory);
 	Editor_addCommand (this, U"Edit", U"Extend trajectory...", 0, menu_cb_extendTrajectory);
 	Editor_addCommand (this, U"Edit", U"Shift trajectory...", 0, menu_cb_shiftTrajectory);
+
+	Editor_addMenu (this, U"Query", 0);
 	Editor_addCommand (this, U"Query", U"Trajectory info", 0, menu_cb_trajectoryInfo);
+
+	Editor_addMenu (this, U"View", 0);
 	Editor_addCommand (this, U"View", U"F1 & F2 range...", 0, menu_cb_ranges_f1f2);
 	Editor_addCommand (this, U"View", U"--show vowel marks--", 0, nullptr);
 	Editor_addCommand (this, U"View", U"Show one vowel mark...", Editor_HIDDEN, menu_cb_showOneVowelMark);

@@ -70,7 +70,8 @@ Thing_define (EEGWindow, FunctionEditor) {
 			FunctionArea_legend_TEXTGRID U" ##modifiable TextGrid", DataGui_defaultForegroundColour (our textGridArea().get())
 		);
 		FunctionArea_drawLegend (our eegArea().get(),
-			FunctionArea_legend_WAVEFORM U" %%non-modifiable EEG-internal sound", DataGui_defaultForegroundColour (our eegArea().get()));
+			FunctionArea_legend_WAVEFORM U" %%non-modifiable EEG-internal sound", DataGui_defaultForegroundColour (our eegArea().get())
+		);
 		SoundAnalysisArea_drawDefaultLegends (our eegAnalysisArea().get());
 	}
 

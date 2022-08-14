@@ -27,6 +27,15 @@ Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 		override;
 	void v_play (double startTime, double endTime)
 		override;
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our realTierArea().get(),
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable OptimalCeilingTier", DataGui_defaultForegroundColour (our realTierArea().get())
+		);
+		if (our soundArea())
+			FunctionArea_drawLegend (our soundArea().get(),
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+			);
+	}
 };
 
 autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 title,

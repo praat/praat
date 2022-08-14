@@ -194,11 +194,11 @@ void SoundArea_draw (SoundArea me) {
 			Graphics_text (my graphics(), my startWindow(), mid, Melder_float (Melder_half (mid)));
 		} else {
 			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics(), cursorFunctionValue - minimum) > 5.0) {
-				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
+				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, ichan == lastVisibleChannel? Graphics_HALF : Graphics_BOTTOM);
 				Graphics_text (my graphics(), my startWindow(), minimum, Melder_float (Melder_half (minimum)));
 			}
 			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics(), maximum - cursorFunctionValue) > 5.0) {
-				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
+				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, ichan == firstVisibleChannel ? Graphics_HALF : Graphics_TOP);
 				Graphics_text (my graphics(), my startWindow(), maximum, Melder_float (Melder_half (maximum)));
 			}
 		}
@@ -243,7 +243,6 @@ void SoundArea_draw (SoundArea me) {
 		/*
 			Draw the samples.
 		*/
-		/*if (ichan == 1) FunctionEditor_SoundAnalysis_drawPulses (this);*/
 		if (my sound()) {
 			Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), minimum, maximum);
 			if (cursorVisible && isdefined (cursorFunctionValue))

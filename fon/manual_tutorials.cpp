@@ -4036,8 +4036,8 @@ ENTRY (U"Advanced settings")
 NORMAL (U"The Pitch menu also contains @@Advanced pitch settings...@.")
 MAN_END
 
-MAN_BEGIN (U"Time step settings...", U"ppgb", 20031003)
-INTRO (U"A command in the #View menu of the @SoundEditor and @TextGridEditor "
+MAN_BEGIN (U"Time step settings...", U"ppgb", 20220814 /*20031003*/)
+INTRO (U"A command in the #Analysis menu of the @SoundEditor and @TextGridEditor "
 	"to determine the time interval between consecutive measurements "
 	"of pitch, formants, and intensity.")
 ENTRY (U"Automatic time steps")
@@ -4289,7 +4289,7 @@ LIST_ITEM (U"@@Intro 8.2. Manipulation of duration")
 LIST_ITEM (U"@@Intro 8.3. Manipulation of intensity")
 MAN_END
 
-MAN_BEGIN (U"Intro 8.1. Manipulation of pitch", U"ppgb", 20220804)
+MAN_BEGIN (U"Intro 8.1. Manipulation of pitch", U"ppgb", 20220814)
 INTRO (U"To modify the pitch contour of an existing @Sound object, "
 	"you select this @Sound and click ##To Manipulation#. "
 	"A @Manipulation object will then appear in the list. "
@@ -4300,7 +4300,7 @@ INTRO (U"To modify the pitch contour of an existing @Sound object, "
 	"around the time–pitch area (press the Option key to restrict dragging to vertical, "
 	"and the Command key to restrict dragging to horizontal; mnemonics: Uption, Come Later).")
 NORMAL (U"If you click any of the rectangles "
-	"(or choose any of the #Play commands from the #View menu), "
+	"(or choose any of the commands from the #Play menu), "
 	"you will hear the modified sound. By shift-clicking, you will hear "
 	"the original sound.")
 NORMAL (U"To get the modified sound as a separate object, "
@@ -4333,7 +4333,7 @@ NORMAL (U"First, you select a @Sound object and click \"To Manipulation\". "
 	"from the \"Dur\" menu. The targets will show up as blue dots, which you can easily drag "
 	"around the duration area.")
 NORMAL (U"If you click any of the rectangles "
-	"(or choose any of the @Play commands from the @View menu), "
+	"(or choose any of the commands from the @Play menu), "
 	"you will hear the modified sound. By shift-clicking, you will hear "
 	"the original sound.")
 NORMAL (U"To get the modified sound as a separate object, "
@@ -4485,12 +4485,12 @@ INTRO (U"A command in the Pitch menu of the @SoundEditor and @TextGridEditor win
 	"See @@Intro 4.2. Configuring the pitch contour@.")
 MAN_END
 
-MAN_BEGIN (U"Play", U"ppgb", 20021212)
+MAN_BEGIN (U"Play", U"ppgb", /*20021212*/ 20220814)
 INTRO (U"A command that is available if you select a @Sound, @Pitch, or @PointProcess object. "
 	"It gives you an acoustic representation of the selected object, if your loudspeakers are on "
 	"and you did not \"mute\" your computer sound system.")
 NORMAL (U"A Play button is also available in the @SoundRecorder window "
-	"and in the @View menu of the @SoundEditor or @TextGridEditor. In the editors, "
+	"and in the @Play menu of the @SoundEditor or @TextGridEditor. In the editors, "
 	"you will usually play a sound by clicking on any of the rectangles around the data.")
 MAN_END
 
@@ -5137,7 +5137,7 @@ NORMAL (U"Finally, it is still possible to make sure that all texts are ASCII, e
 	"as \\bsss and \\bso: respectively. See @@special symbols@.")
 MAN_END
 
-MAN_BEGIN (U"View", U"ppgb", 20010512)
+MAN_BEGIN (U"Play", U"ppgb", 20220814)
 INTRO (U"One of the menus in several @editors and in the @manual.")
 MAN_END
 

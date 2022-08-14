@@ -40,6 +40,8 @@ Thing_define (KlattGrid_IntensityTierArea, RealTierArea) {
 };
 
 Thing_define (KlattGrid_DecibelTierArea, KlattGrid_IntensityTierArea) {
+	conststring32 v_menuTitle ()
+		override { return U"FormantAmplitudeTier"; }
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
 	conststring32 v_quantityText ()
