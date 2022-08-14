@@ -124,31 +124,61 @@ static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm /* sendi
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script.get());
 }
 
+static EditorMenu findMenu (Editor me, conststring32 menuTitle) {
+	const integer numberOfMenus = my menus.size;
+	for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
+		EditorMenu menu = my menus.at [imenu];
+		if (str32equ (menu -> menuTitle.get(), menuTitle))
+			return menu;
+	}
+	return nullptr;
+}
+static GuiMenuItem EditorMenu_addCommandScript (EditorMenu me, conststring32 itemTitle, uint32 flags, conststring32 script) {
+	autoEditorCommand cmd = Thing_new (EditorCommand);
+	cmd -> d_editor = my d_editor;
+	cmd -> menu = me;
+	cmd -> itemTitle = Melder_dup (itemTitle);
+	cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (my menuWidget) :
+		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, cmd.get());   // DANGLE BUG
+	cmd -> commandCallback = Editor_scriptCallback;
+	if (script [0] == U'\0') {
+		cmd -> script = Melder_dup (U"");
+	} else {
+		structMelderFile file { };
+		Melder_relativePathToFile (script, & file);
+		cmd -> script = Melder_dup (Melder_fileToPath (& file));
+	}
+	GuiMenuItem result = cmd -> itemWidget;
+	my commands. addItem_move (cmd.move());
+	return result;
+}
 GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags,
 	conststring32 script)
 {
-	integer numberOfMenus = my menus.size;
-	for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = my menus.at [imenu];
-		if (str32equ (menuTitle, menu -> menuTitle.get())) {
-			autoEditorCommand cmd = Thing_new (EditorCommand);
-			cmd -> d_editor = me;
-			cmd -> menu = menu;
-			cmd -> itemTitle = Melder_dup (itemTitle);
-			cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (menu -> menuWidget) :
-				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.get());   // DANGLE BUG
-			cmd -> commandCallback = Editor_scriptCallback;
-			if (script [0] == U'\0') {
-				cmd -> script = Melder_dup (U"");
-			} else {
-				structMelderFile file { };
-				Melder_relativePathToFile (script, & file);
-				cmd -> script = Melder_dup (Melder_fileToPath (& file));
+	EditorMenu menu = findMenu (me, menuTitle);
+	if (menu)
+		return EditorMenu_addCommandScript (menu, itemTitle, flags, script);
+	/*
+		Try again, in case the menu title is obsolete.
+	*/
+	conststring32 alternativeMenuTitle =
+		str32equ (menuTitle, U"Spectrum") ? U"Spectrogram" :
+		str32equ (menuTitle, U"View") || str32equ (menuTitle, U"Select") ?	U"Time" :   // or "Play", but we cannot know
+		str32equ (menuTitle, U"Formant") ? U"Formants" :
+		str32equ (menuTitle, U"Query") ? U"Edit" :   // not appropriate, but better than nothing
+		nullptr;
+	if (alternativeMenuTitle) {
+		EditorMenu alternativeMenu = findMenu (me, alternativeMenuTitle);
+		if (alternativeMenuTitle) {
+			GuiMenuItem menuItem = EditorMenu_addCommandScript (alternativeMenu, itemTitle, flags, script);
+			static bool warningGiven = false;
+			if (! warningGiven) {
+				warningGiven = true;
+				Melder_warning (U"The menu \"", menuTitle, U"\" no longer exists. The command \"", itemTitle,
+						U"\" has been installed in the menu \"", alternativeMenuTitle, U"\" instead. You could consider updating the script \"", script, U"\".");
 			}
-			GuiMenuItem result = cmd -> itemWidget;
-			menu -> commands. addItem_move (cmd.move());
-			return result;
-		}
+			return menuItem;
+		} // else issue the original warning
 	}
 	Melder_warning (
 		U"Menu \"", menuTitle, U"\" does not exist.\n"
