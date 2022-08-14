@@ -1753,7 +1753,7 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 		Graphics_setFontSize (my graphics(), 10);
 		Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (my graphics(), 0.5, 0.67,   U"(To see the analyses, zoom in to at most ", Melder_half (my instancePref_longestAnalysis()), U" seconds,");
-		Graphics_text (my graphics(), 0.5, 0.33,   U"or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.)");
+		Graphics_text (my graphics(), 0.5, 0.33,   U"or raise the \"longest analysis\" setting with \"Show analyses\" in the Analyses menu.)");
 		Graphics_setFontSize (my graphics(), 12);
 		return;
 	}
@@ -1978,12 +1978,14 @@ void structSoundAnalysisArea :: v_draw_analysis_pulses () {
 		PointProcess point = our d_pulses.get();
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), -1.0, 1.0);
 		Graphics_setColour (our graphics(), our editable() ? Colour_EDITABLE_LINES() : Melder_SILVER);
+		Graphics_setLineWidth (our graphics(), 2.0);
 		if (point -> nt < 2000) for (integer i = 1; i <= point -> nt; i ++) {
 			const double t = point -> t [i];
 			if (t >= our startWindow() && t <= our endWindow())
 				Graphics_line (our graphics(), t, -0.9, t, 0.9);
 		}
 		Graphics_setColour (our graphics(), Melder_BLACK);
+		Graphics_setLineWidth (our graphics(), 1.0);
 	}
 }
 

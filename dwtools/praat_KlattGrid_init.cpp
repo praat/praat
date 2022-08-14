@@ -174,34 +174,35 @@ DO
 	CREATE_ONE_END (name)
 }
 
-#define KlattGrid_INSTALL_TIER_EDITOR(Name)  \
+#define KlattGrid_INSTALL_TIER_EDITOR(Name, name)  \
 DIRECT (EDITOR_ONE_KlattGrid_edit##Name##Tier) { \
 	EDITOR_ONE (a,KlattGrid) \
-		autoKlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
+		conststring32 id_and_name = Melder_cat (ID_AND_FULL_NAME, U": " #name); \
+		autoKlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (id_and_name, me); \
 	EDITOR_ONE_END \
 }
 
-KlattGrid_INSTALL_TIER_EDITOR (Pitch)
-KlattGrid_INSTALL_TIER_EDITOR (VoicingAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (Flutter)
-KlattGrid_INSTALL_TIER_EDITOR (Power1)
-KlattGrid_INSTALL_TIER_EDITOR (Power2)
-KlattGrid_INSTALL_TIER_EDITOR (OpenPhase)
-KlattGrid_INSTALL_TIER_EDITOR (CollisionPhase)
-KlattGrid_INSTALL_TIER_EDITOR (DoublePulsing)
-KlattGrid_INSTALL_TIER_EDITOR (AspirationAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (BreathinessAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (SpectralTilt)
+KlattGrid_INSTALL_TIER_EDITOR (Pitch, pitch)
+KlattGrid_INSTALL_TIER_EDITOR (VoicingAmplitude, voicing amplitude)
+KlattGrid_INSTALL_TIER_EDITOR (Flutter, flutter)
+KlattGrid_INSTALL_TIER_EDITOR (Power1, power1)
+KlattGrid_INSTALL_TIER_EDITOR (Power2, power2)
+KlattGrid_INSTALL_TIER_EDITOR (OpenPhase, open phase)
+KlattGrid_INSTALL_TIER_EDITOR (CollisionPhase, collision phase)
+KlattGrid_INSTALL_TIER_EDITOR (DoublePulsing, double pulsing)
+KlattGrid_INSTALL_TIER_EDITOR (AspirationAmplitude, aspiration amplitude)
+KlattGrid_INSTALL_TIER_EDITOR (BreathinessAmplitude, breathiness amplitude)
+KlattGrid_INSTALL_TIER_EDITOR (SpectralTilt, spectral tilt)
 
-KlattGrid_INSTALL_TIER_EDITOR (FricationBypass)
-KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude)
+KlattGrid_INSTALL_TIER_EDITOR (FricationBypass, frication bypass)
+KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude, frication amplitude)
 
 #undef KlattGrid_INSTALL_TIER_EDITOR
 
 #define KlattGRID_EDIT_FORMANTGRID(Name,formantType)  \
 DIRECT (EDITOR_ONE_KlattGrid_edit##Name##FormantGrid) { \
 	EDITOR_ONE (a,KlattGrid) \
-		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" grid"); \
+		conststring32 id_and_name = Melder_cat (ID_AND_FULL_NAME, U": ", KlattGrid_getFormantName (formantType), U" grid"); \
 		autoKlattGrid_FormantGridEditor editor = KlattGrid_FormantGridEditor_create (id_and_name, me, formantType); \
 	EDITOR_ONE_END \
 }
@@ -227,7 +228,7 @@ DO \
 			Melder_throw (U"Unknown formant type"); \
 		if (formantNumber > amp->size) \
 			Melder_throw (U"Formant number does not exist."); \
-		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" amplitude tier"); \
+		conststring32 id_and_name = Melder_cat (ID_AND_FULL_NAME, U": ", KlattGrid_getFormantName (formantType), U" amplitude tier"); \
 		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, \
 				formantType, formantNumber); \
 	EDITOR_ONE_END \

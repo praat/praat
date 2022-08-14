@@ -27,6 +27,15 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override;
 	void v_play (double fromTime, double toTime)
 		override;
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our realTierArea().get(),
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable AmplitudeTier", DataGui_defaultForegroundColour (our realTierArea().get())
+		);
+		if (our soundArea())
+			FunctionArea_drawLegend (our soundArea().get(),
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+			);
+	}
 };
 
 autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title,
