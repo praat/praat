@@ -302,8 +302,10 @@ static void do_drawIntervalTier (TextGridArea me, IntervalTier tier, integer iti
 			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics(), my startSelection(), 0.0, my startSelection(), 1.0);
 			Graphics_setLineWidth (my graphics(), 1.0);
-			Graphics_setColour (my graphics(), Melder_BLUE);
-			Graphics_circle_mm (my graphics(), my startSelection(), 1.0 - dy, 3.0);
+			if (my editable()) {
+				Graphics_setColour (my graphics(), Melder_BLUE);
+				Graphics_circle_mm (my graphics(), my startSelection(), 1.0 - dy, 3.0);
+			}
 		}
 	}
 
@@ -322,7 +324,7 @@ static void do_drawIntervalTier (TextGridArea me, IntervalTier tier, integer iti
 		*/
 		if (startInterval >= my startWindow() && startInterval <= my endWindow() && iinterval > 1) {
 			const bool boundaryIsSelected = ( my selectedTier == itier && startInterval == my startSelection() );
-			Graphics_setColour (my graphics(), boundaryIsSelected ? Melder_RED : Melder_BLUE);
+			Graphics_setColour (my graphics(), boundaryIsSelected ? Melder_RED : DataGui_defaultForegroundColour (me));
 			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics(), startInterval, 0.0, startInterval, 1.0);
 
@@ -383,8 +385,10 @@ static void do_drawTextTier (TextGridArea me, TextTier tier, integer itier) {
 			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics(), my startSelection(), 0.0, my startSelection(), 1.0);
 			Graphics_setLineWidth (my graphics(), 1.0);
-			Graphics_setColour (my graphics(), Melder_BLUE);
-			Graphics_circle_mm (my graphics(), my startSelection(), 1.0 - dy, 3.0);
+			if (my editable()) {
+				Graphics_setColour (my graphics(), Melder_BLUE);
+				Graphics_circle_mm (my graphics(), my startSelection(), 1.0 - dy, 3.0);
+			}
 		}
 	}
 
@@ -394,7 +398,7 @@ static void do_drawTextTier (TextGridArea me, TextTier tier, integer itier) {
 		const double t = point -> number;
 		if (t >= my startWindow() && t <= my endWindow()) {
 			const bool pointIsSelected = ( itier == my selectedTier && t == my startSelection() );
-			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
+			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : DataGui_defaultForegroundColour (me));
 			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics(), t, 0.0, t, 0.2);
 			Graphics_line (my graphics(), t, 0.8, t, 1);
@@ -437,8 +441,9 @@ void structTextGridArea :: v_drawInside () {
 		const bool tierIsSelected = ( itier == our selectedTier );
 		const bool isIntervalTier = ( anyTier -> classInfo == classIntervalTier );
 		vp2 = Graphics_insetViewport (our graphics(), 0.0, 1.0,
-				1.0 - (double) itier / (double) numberOfTiers,
-				1.0 - (double) (itier - 1) / (double) numberOfTiers);
+			1.0 - (double) itier / (double) numberOfTiers,
+			1.0 - (double) (itier - 1) / (double) numberOfTiers
+		);
 		Graphics_setColour (our graphics(), Melder_BLACK);
 		if (itier != 1)
 			Graphics_line (our graphics(), our startWindow(), 1.0, our endWindow(), 1.0);
@@ -675,7 +680,7 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 					}
 				}
 			}
-		} else if (nearCursorCircle) {
+		} else if (nearCursorCircle && our editable()) {
 			/*
 				Possibility 2: the user clicked near the cursor circle.
 				Insert boundary or point. There is no danger that we insert on top of an existing boundary or point,
@@ -695,7 +700,7 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 				our setSelection (startInterval, endInterval);
 		}
 	} else if (event -> isDrag ()) {
-		if (isdefined (our anchorTime) && our draggingTiers.size > 0) {
+		if (our editable() && isdefined (our anchorTime) && our draggingTiers.size > 0) {
 			our draggingTime = x_world;
 			if (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
 				const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics(), x_world - our anchorTime));
@@ -773,6 +778,13 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 			return FunctionEditor_UPDATE_NEEDED;
 		}
 
+		if (! our editable()) {
+			our draggingTime = undefined;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our anchorTime = undefined;
+			our clickedLeftBoundary = 0;
+			return FunctionEditor_UPDATE_NEEDED;
+		}
 		/*
 			We cannot move a boundary out of the dragging range.
 		*/
@@ -1060,9 +1072,12 @@ static void menu_cb_TextGridPreferences (TextGridArea me, EDITOR_ARGS_FORM) {
 		OPTIONMENU (useTextStyles, U"The symbols %#_^ in labels", my default_useTextStyles() + 1)
 			OPTION (U"are shown as typed")
 			OPTION (U"mean italic/bold/sub/super")
-		OPTIONMENU (shiftDragMultiple, U"With the shift key, you drag", my default_shiftDragMultiple() + 1)
-			OPTION (U"a single boundary")
-			OPTION (U"multiple boundaries")
+		OPTIONMENU_VARIABLE (shiftDragMultiple)
+		if (my editable()) {
+			OPTIONMENU_FIELD (shiftDragMultiple, U"With the shift key, you drag", my default_shiftDragMultiple() + 1)
+				OPTION (U"a single boundary")
+				OPTION (U"multiple boundaries")
+		}
 		OPTIONMENU_ENUM (kTextGridArea_showNumberOf, showNumberOf,
 				U"Show number of", kTextGridArea_showNumberOf::DEFAULT)
 		OPTIONMENU_ENUM (kMelder_string, paintIntervalsGreenWhoseLabel,
@@ -1072,7 +1087,8 @@ static void menu_cb_TextGridPreferences (TextGridArea me, EDITOR_ARGS_FORM) {
 		SET_OPTION (useTextStyles, my instancePref_useTextStyles() + 1)
 		SET_REAL (fontSize, my instancePref_fontSize())
 		SET_ENUM (textAlignmentInIntervals, kGraphics_horizontalAlignment, my instancePref_alignment())
-		SET_OPTION (shiftDragMultiple, my instancePref_shiftDragMultiple() + 1)
+		if (my editable())
+			SET_OPTION (shiftDragMultiple, my instancePref_shiftDragMultiple() + 1)
 		SET_ENUM (showNumberOf, kTextGridArea_showNumberOf, my instancePref_showNumberOf())
 		SET_ENUM (paintIntervalsGreenWhoseLabel, kMelder_string, my instancePref_greenMethod())
 		SET_STRING (theText, my instancePref_greenString())
@@ -1080,7 +1096,8 @@ static void menu_cb_TextGridPreferences (TextGridArea me, EDITOR_ARGS_FORM) {
 		my setInstancePref_useTextStyles (useTextStyles - 1);
 		my setInstancePref_fontSize (fontSize);
 		my setInstancePref_alignment (textAlignmentInIntervals);
-		my setInstancePref_shiftDragMultiple (shiftDragMultiple - 1);
+		if (my editable())
+			my setInstancePref_shiftDragMultiple (shiftDragMultiple - 1);
 		my setInstancePref_showNumberOf (showNumberOf);
 		my setInstancePref_greenMethod (paintIntervalsGreenWhoseLabel);
 		my setInstancePref_greenString (theText);
