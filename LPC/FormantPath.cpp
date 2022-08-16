@@ -604,7 +604,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 			MelderString_append (& info, U"Ceiling = ", Melder_fixed (my ceilings [iformant], 0), U" Hz");
 			if (showStress && numberOfSamples > 0) {
 				const double stress = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
-				MelderString_append (& info, U"\nFit = ", Melder_fixed (stress, 2));
+				MelderString_append (& info, U"\nStress = ", Melder_fixed (stress, 2));
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_TOP);
 			}
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_BOTTOM);
