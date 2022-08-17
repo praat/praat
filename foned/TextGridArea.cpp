@@ -910,7 +910,8 @@ static void findInTier (TextGridArea me) {
 					my setSelection (interval -> xmin, interval -> xmax);
 					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
 					FunctionEditor_scrollToView (my functionEditor(), my startSelection());
-					GuiText_setSelection (my functionEditor() -> textArea,
+					if (my editable ())
+						GuiText_setSelection (my functionEditor() -> textArea,
 							position - text, position - text + str32len (my findString.get()));
 					return;
 				}
@@ -931,7 +932,8 @@ static void findInTier (TextGridArea me) {
 					my setSelection (point -> number, point -> number);
 					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
 					FunctionEditor_scrollToView (my functionEditor(), point -> number);
-					GuiText_setSelection (my functionEditor() -> textArea,
+					if (my editable ())
+						GuiText_setSelection (my functionEditor() -> textArea,
 							position - text, position - text + str32len (my findString.get()));
 					return;
 				}
@@ -944,16 +946,20 @@ static void findInTier (TextGridArea me) {
 }
 static void do_find (TextGridArea me) {
 	if (my findString) {
-		integer left, right;
-		autostring32 label = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & left, & right);
-		const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
-		if (position)
-			GuiText_setSelection (my functionEditor() -> textArea,
+		if (my editable ()) {
+			integer left, right;
+			autostring32 label = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & left, & right);
+			const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
+			if (position)
+				GuiText_setSelection (my functionEditor() -> textArea,
 					position - label.get(), position - label.get() + str32len (my findString.get()));
-		else
+			else
+				findInTier (me);
+		} else
 			findInTier (me);
 	}
 }
+
 static void menu_cb_Find (TextGridArea me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find text", nullptr)
 		TEXTFIELD (findString, U"Text", U"", 3)
@@ -968,15 +974,17 @@ static void menu_cb_FindAgain (TextGridArea me, EDITOR_ARGS_DIRECT) {
 }
 void structTextGridArea :: v_createMenuItems_edit (EditorMenu menu) {
 	#ifndef macintosh
-		FunctionAreaMenu_addCommand (menu, U"-- cut copy paste --", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Cut text", 'X', menu_cb_Cut, this);
-		FunctionAreaMenu_addCommand (menu, U"Cut", Editor_HIDDEN, menu_cb_Cut, this);
-		FunctionAreaMenu_addCommand (menu, U"Copy text", 'C', menu_cb_Copy, this);
-		FunctionAreaMenu_addCommand (menu, U"Copy", Editor_HIDDEN, menu_cb_Copy, this);
-		FunctionAreaMenu_addCommand (menu, U"Paste text", 'V', menu_cb_Paste, this);
-		FunctionAreaMenu_addCommand (menu, U"Paste", Editor_HIDDEN, menu_cb_Paste, this);
-		FunctionAreaMenu_addCommand (menu, U"Erase text", 0, menu_cb_Erase, this);
-		FunctionAreaMenu_addCommand (menu, U"Erase", Editor_HIDDEN, menu_cb_Erase, this);
+		if (our editable()) {
+			FunctionAreaMenu_addCommand (menu, U"-- cut copy paste --", 0, nullptr, this);
+			FunctionAreaMenu_addCommand (menu, U"Cut text", 'X', menu_cb_Cut, this);
+			FunctionAreaMenu_addCommand (menu, U"Cut", Editor_HIDDEN, menu_cb_Cut, this);
+			FunctionAreaMenu_addCommand (menu, U"Copy text", 'C', menu_cb_Copy, this);
+			FunctionAreaMenu_addCommand (menu, U"Copy", Editor_HIDDEN, menu_cb_Copy, this);
+			FunctionAreaMenu_addCommand (menu, U"Paste text", 'V', menu_cb_Paste, this);
+			FunctionAreaMenu_addCommand (menu, U"Paste", Editor_HIDDEN, menu_cb_Paste, this);
+			FunctionAreaMenu_addCommand (menu, U"Erase text", 0, menu_cb_Erase, this);
+			FunctionAreaMenu_addCommand (menu, U"Erase", Editor_HIDDEN, menu_cb_Erase, this);
+		}
 	#endif
 	FunctionAreaMenu_addCommand (menu, U"-- search --", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Find...", 'F', menu_cb_Find, this);
