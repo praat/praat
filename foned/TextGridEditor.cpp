@@ -48,6 +48,7 @@ autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid textGrid
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		my textGridArea() = TextGridArea_create (true, nullptr, me.get());
 		if (optionalSoundOrLongSound) {
+			Melder_assert (optionalSoundOrLongSound -> ny > 0);
 			if (Thing_isa (optionalSoundOrLongSound, classSound))
 				my soundArea() = SoundArea_create (false, static_cast <Sound> (optionalSoundOrLongSound), me.get());
 			else

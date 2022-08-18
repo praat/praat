@@ -1,3 +1,5 @@
+sleepyTime = 0.02
+
 	# Initialize
     demo Erase all
 
@@ -8,10 +10,12 @@
 	demo Font size: 24
 	demo Colour: "Black"
 	demo Text: 50, "Centre", 50, "Bottom", "Recording started: You should see a red disk during recording"
+	sleep (sleepyTime)
     demoShow()
     
 	# Recording light
     demo Paint circle: "Red", 5, 95, 2
+	sleep (sleepyTime)
     demoShow()
     
 	.sound = Record Sound (fixed time): "Microphone", 0.99, 0.5, "44100", 5
@@ -32,5 +36,5 @@
 	# Wait and exit
 	demoWaitForInput()
 	demo Erase all
-	demoShow()
+	;demoShow()
 	exit

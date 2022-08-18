@@ -136,6 +136,7 @@ static EditorMenu findMenu (Editor me, conststring32 menuTitle) {
 static GuiMenuItem EditorMenu_addCommandScript (EditorMenu me, conststring32 itemTitle, uint32 flags, conststring32 script) {
 	autoEditorCommand cmd = Thing_new (EditorCommand);
 	cmd -> d_editor = my d_editor;
+	cmd -> sender = my d_editor;
 	cmd -> menu = me;
 	cmd -> itemTitle = Melder_dup (itemTitle);
 	cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (my menuWidget) :
