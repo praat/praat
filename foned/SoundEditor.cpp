@@ -33,6 +33,7 @@ void structSoundEditor :: v_createMenuItems_help (EditorMenu menu) {
 
 autoSoundEditor SoundEditor_create (conststring32 title, SampledXY soundOrLongSound) {
 	Melder_assert (soundOrLongSound);
+	Melder_assert (soundOrLongSound -> ny > 0);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
 		if (Thing_isa (soundOrLongSound, classSound))

@@ -261,7 +261,7 @@ void structLongSound :: v1_copy (Daata thee_Daata) const {
 	LongSound thee = static_cast <LongSound> (thee_Daata);
 	thy f = nullptr;
 	thy buffer.releaseToAmbiguousOwner();   // this may have been shallow-copied, so undangle and nullify
-	//LongSound_init (thee, & our file);   // this recreates a new buffer
+	LongSound_init (thee, & our file);   // this recreates a new buffer
 }
 
 autoLongSound LongSound_open (MelderFile file) {

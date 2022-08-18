@@ -102,7 +102,8 @@ public:
 	integer channelOffset;
 private:
 	void _computeChannelOffset () {
-		Melder_assert (our soundOrLongSound() && our soundOrLongSound() -> ny > 0);
+		Melder_assert (our soundOrLongSound());
+		Melder_assert (our soundOrLongSound() -> ny > 0);
 		Melder_clip (0_integer, & our channelOffset, (our soundOrLongSound() -> ny - 1) / 8 * 8);   // works correctly even during initialization (offset will stay 0)
 	}
 	/*
