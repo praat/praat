@@ -22,8 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220814)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220818)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.16# (18 August 2022)")
+LIST_ITEM (U"• FormantPath window: non-editable TextGrid.")
+LIST_ITEM (U"• Scripting the Demo window on the Mac: better guarantees that demoShow() actually drains on current systems.")
+LIST_ITEM (U"• TextGrid works again with LongSound (bug introduced in 6.2.15).")
+LIST_ITEM (U"• Editor scripts work again from menus (bug introduced in 6.2.15).")
 NORMAL (U"##6.2.15# (14 August 2022)")
 LIST_ITEM (U"• Legends in editor windows.")
 LIST_ITEM (U"• The menus #Time and #Play are new in editor windows, and the menus Spectrum and Formant were renamed to #Spectrogram and #Formants.")
