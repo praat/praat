@@ -344,8 +344,8 @@ void Graphics_endMovieFrame (Graphics any, double frameDuration) {
 		GraphicsScreen me = (GraphicsScreen) any;
 		Graphics_stopRecording (me);
 		my v_updateWs ();
-		GuiShell_drain (my d_drawingArea -> d_shell);
 		Melder_sleep (frameDuration);
+		GuiShell_drain (my d_drawingArea -> d_shell);
 	}
 }
 

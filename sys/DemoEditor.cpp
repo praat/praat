@@ -185,6 +185,9 @@ int Demo_show () {
 	autoDemoOpen demo;
 	GuiThing_show (theReferenceToTheOnlyDemoEditor -> windowForm);
 	Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());
+	#if defined (macintosh)
+		Melder_sleep (0.02);   // because GuiShell_drain is not guaranteed to drain if called within 16 ms from previous
+	#endif
 	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> windowForm);
 	return 1;
 }
