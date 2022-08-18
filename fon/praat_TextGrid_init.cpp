@@ -727,7 +727,8 @@ DIRECT (WINDOW_TextGrid_LongSound_viewAndEdit) {
 		iam_LOOP (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
-		praat_installEditor2 (editor.get(), IOBJECT, ilongSound);
+		//praat_installEditor2 (editor.get(), IOBJECT, ilongSound);   // from August 2022 on, the LongSound is supposed to be copied
+		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
 	END_NO_NEW_DATA
@@ -771,7 +772,8 @@ DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
 	LOOP if (CLASS == classTextGrid) {
 		iam_LOOP (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, spellingChecker, nullptr);
-		praat_installEditor3 (editor.get(), IOBJECT, ilongSound, ispellingChecker);
+		//praat_installEditor3 (editor.get(), IOBJECT, ilongSound, ispellingChecker);
+		praat_installEditor2 (editor.get(), IOBJECT, ispellingChecker);
 		editor.releaseToUser();
 	}
 	END_NO_NEW_DATA
