@@ -863,6 +863,8 @@ void structTextGridArea :: v_createMenuItems_save (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"- Save TextGrid to disk:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu, U"Save whole TextGrid as text file...", 'S',
 			menu_cb_SaveWholeTextGridAsTextFile, this);
+	FunctionAreaMenu_addCommand (menu, U"Save TextGrid as text file...", GuiMenu_HIDDEN,
+			menu_cb_SaveWholeTextGridAsTextFile, this);
 }
 
 
