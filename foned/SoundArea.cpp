@@ -939,19 +939,19 @@ void structSoundArea :: v_createMenus () {
 		our reverseButton = FunctionAreaMenu_addCommand (menu, U"Reverse selection", 'R', menu_cb_ReverseSelection, this);
 	}
 
+	FunctionAreaMenu_addCommand (menu, U"- Query sound:", 0, nullptr, this);
+	if (Thing_isa (this, classLongSoundArea)) {
+		FunctionAreaMenu_addCommand (menu, U"Info on whole LongSound", 0,
+				INFO_DATA__LongSoundInfo, this);
+		FunctionAreaMenu_addCommand (menu, U"LongSound info", GuiMenu_HIDDEN,
+				INFO_DATA__LongSoundInfo, this);
+	} else {
+		FunctionAreaMenu_addCommand (menu, U"Info on whole Sound", 0,
+				INFO_DATA__SoundInfo, this);
+		FunctionAreaMenu_addCommand (menu, U"Sound info", GuiMenu_HIDDEN,
+				INFO_DATA__SoundInfo, this);
+	}
 	if (! Thing_isa (this, classLongSoundArea)) {
-		FunctionAreaMenu_addCommand (menu, U"- Query sound:", 0, nullptr, this);
-		if (Thing_isa (this, classLongSoundArea)) {
-			FunctionAreaMenu_addCommand (menu, U"Info on whole LongSound", 0,
-					INFO_DATA__LongSoundInfo, this);
-			FunctionAreaMenu_addCommand (menu, U"LongSound info", GuiMenu_HIDDEN,
-					INFO_DATA__LongSoundInfo, this);
-		} else {
-			FunctionAreaMenu_addCommand (menu, U"Info on whole Sound", 0,
-					INFO_DATA__SoundInfo, this);
-			FunctionAreaMenu_addCommand (menu, U"Sound info", GuiMenu_HIDDEN,
-					INFO_DATA__SoundInfo, this);
-		}
 		FunctionAreaMenu_addCommand (menu, U"Get amplitude(s)", 0,
 				INFO_DATA__getAmplitudes, this);
 	}
