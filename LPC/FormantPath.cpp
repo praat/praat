@@ -305,10 +305,15 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 	}
 }
 
+integer FormantPath_getNumberOfFormantTracks (FormantPath me) {
+	Melder_assert (my formants. size > 0);
+	return my formants.at [1] -> maxnFormants;
+}
+
 autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
-		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		if (numberOfTracks == 0)
 			numberOfTracks = maxnFormants;
 		for (integer itime = 1; itime <= my nx; itime ++) {
@@ -330,7 +335,7 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) 
 autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTracks, bool maximumCosts) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
-		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		if (numberOfTracks == 0)
 			numberOfTracks = maxnFormants;
 		for (integer itime = 2; itime <= my nx; itime ++) {
@@ -367,7 +372,7 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTra
 autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
 	try {
 		const integer numberOfFormants = my formants.size;
-		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		Melder_require (parameters.size > 0 && parameters.size <= maxnFormants,
 			U"The number of parameters should be between 1 and ", maxnFormants, U".");
 		integer fromFormant = 1;
