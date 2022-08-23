@@ -95,7 +95,7 @@ void praat_addAction3_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 { praat_addAction4_ (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
-void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3, ClassInfo class4, integer n4,
+static void praat_addAction4__ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3, ClassInfo class4, integer n4,
 	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 {
 	try {
@@ -165,6 +165,32 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 	} catch (MelderError) {
 		Melder_flushError ();
 	}
+}
+void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3, ClassInfo class4, integer n4,
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
+{
+	const char32 *pSeparator = str32str (title, U" || ");
+	if (! pSeparator)
+		return praat_addAction4__ (class1, n1, class2, n2, class3, n3, class4, n4,
+				title, after, flags, callback, nameOfCallback);
+	if (flags < 8)
+		flags *= GuiMenu_DEPTH_1;   // turn 1..7 into GuiMenu_DEPTH_1..GuiMenu_DEPTH_7, because the flags are ORed below
+	integer positionOfSeparator = pSeparator - title;
+	static MelderString string;
+	MelderString_copy (& string, title);
+	char32 *pTitle = & string. string [0];
+	do {
+		pTitle [positionOfSeparator] = U'\0';
+		praat_addAction4__ (class1, n1, class2, n2, class3, n3, class4, n4,
+				pTitle, after, flags, callback, nameOfCallback);
+		pTitle += positionOfSeparator + 4;   // step past " || "
+		pSeparator = str32str (pTitle, U" || ");
+		if (pSeparator)
+			positionOfSeparator = pSeparator - pTitle;
+		flags |= GuiMenu_HIDDEN;
+	} while (pSeparator);
+	praat_addAction4__ (class1, n1, class2, n2, class3, n3, class4, n4,
+		pTitle, after, flags | GuiMenu_HIDDEN, callback, nameOfCallback);
 }
 
 static void deleteDynamicMenu () {

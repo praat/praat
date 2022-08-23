@@ -1101,219 +1101,226 @@ void praat_uvafon_stat_init () {
 	structTableEditor :: f_preferences ();
 
 	praat_addMenuCommand (U"Objects", U"New", U"Tables", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...", nullptr, 1, NEW1_Table_createWithColumnNames);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names...", nullptr, 1, NEW1_Table_createWithoutColumnNames);
-		praat_addMenuCommand (U"Objects", U"New",   U"Create Table...", U"*Create Table without column names...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2006, NEW1_Table_createWithoutColumnNames);
-		praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, NEW1_TableOfReal_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...",
+				nullptr, 1, NEW1_Table_createWithColumnNames);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names... || Create Table...",
+				nullptr, 1, NEW1_Table_createWithoutColumnNames);   // alternative GuiMenu_DEPRECATED_2006
+		praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...",
+				nullptr, 1, NEW1_TableOfReal_create);
 
-	praat_addMenuCommand (U"Objects", U"Open", U"-- open table --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, READ1_Table_readFromTabSeparatedFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, READ1_Table_readFromCommaSeparatedFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from semicolon-separated file...", nullptr, 0, READ1_Table_readFromSemicolonSeparatedFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, READ1_Table_readFromTableFile);
-	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", GuiMenu_DEPRECATED_2011, READ1_Table_readFromTableFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"-- open table --",
+			nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...",
+			nullptr, 0, READ1_Table_readFromTabSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...",
+			nullptr, 0, READ1_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from semicolon-separated file...",
+			nullptr, 0, READ1_Table_readFromSemicolonSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file... || Read Table from table file...",
+			nullptr, 0, READ1_Table_readFromTableFile);   // alternative GuiMenu_DEPRECATED_2011
+	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...",
+			nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classDistributions, 0, U"Distributions help", nullptr, 0,
 			HELP__Distributions_help);
 	praat_TableOfReal_init (classDistributions);
-	praat_addAction1 (classDistributions, 1, U"Get probability (label)...", U"Get value...", 1,
-			QUERY_ONE_FOR_REAL__Distributions_getProbability);
-	praat_addAction1 (classDistributions, 0, U"-- get from two --", U"Get probability (label)...", 1, nullptr);
-	praat_addAction1 (classDistributions, 2, U"Get mean absolute difference...", U"-- get from two --", 1,
-			QUERY_ONE_FOR_REAL__Distributionses_getMeanAbsoluteDifference);
-	praat_addAction1 (classDistributions, 0, U"-- add --", U"Append", 1, nullptr);
-	praat_addAction1 (classDistributions, 0, U"Add", U"-- add --", 1,
-			COMBINE_ALL_TO_ONE__Distributionses_add);
-	praat_addAction1 (classDistributions, 0, U"Generate", nullptr, 0, nullptr);   // FIXME no hyphen?
-		praat_addAction1 (classDistributions, 0, U"To Strings...", nullptr, 0,
-				CONVERT_EACH_TO_ONE__Distributions_to_Strings);
-		praat_addAction1 (classDistributions, 0, U"To Strings (exact)...", nullptr, 0,
-				CONVERT_EACH_TO_ONE__Distributions_to_Strings_exact);
+		praat_addAction1 (classDistributions, 1, U"Get probability (label)...",
+				U"Get value...", 1, QUERY_ONE_FOR_REAL__Distributions_getProbability);
+		praat_addAction1 (classDistributions, 0, U"-- get from two --",
+				U"Get probability (label)...", 1, nullptr);
+		praat_addAction1 (classDistributions, 2, U"Get mean absolute difference...",
+				U"-- get from two --", 1, QUERY_ONE_FOR_REAL__Distributionses_getMeanAbsoluteDifference);
+		praat_addAction1 (classDistributions, 0, U"-- add --",
+				U"Append", 1, nullptr);
+		praat_addAction1 (classDistributions, 0, U"Add",
+				U"-- add --", 1, COMBINE_ALL_TO_ONE__Distributionses_add);
+praat_addAction1 (classDistributions, 0, U"Generate", nullptr, 0, nullptr);
+	praat_addAction1 (classDistributions, 0, U"To Strings...",
+			nullptr, 0, CONVERT_EACH_TO_ONE__Distributions_to_Strings);
+	praat_addAction1 (classDistributions, 0, U"To Strings (exact)...",
+			nullptr, 0, CONVERT_EACH_TO_ONE__Distributions_to_Strings_exact);
 
-	praat_addAction1 (classLogisticRegression, 0, U"Draw boundary...", nullptr, 0,
-			GRAPHICS_EACH__LogisticRegression_drawBoundary);
+	praat_addAction1 (classLogisticRegression, 0, U"Draw boundary...",
+			nullptr, 0, GRAPHICS_EACH__LogisticRegression_drawBoundary);
 
-	praat_addAction1 (classPairDistribution, 0, U"PairDistribution help", nullptr, 0,
-			HELP__PairDistribution_help);
-	praat_addAction1 (classPairDistribution, 0, U"To Table", nullptr, 0,
-			CONVERT_EACH_TO_ONE__PairDistribution_to_Table);
-	praat_addAction1 (classPairDistribution, 1, U"To Stringses...", nullptr, 0,
-			CONVERT_ONE_TO_MULTIPLE__PairDistribution_to_Stringses);
+	praat_addAction1 (classPairDistribution, 0, U"PairDistribution help",
+			nullptr, 0, HELP__PairDistribution_help);
+	praat_addAction1 (classPairDistribution, 0, U"To Table",
+			nullptr, 0, CONVERT_EACH_TO_ONE__PairDistribution_to_Table);
+	praat_addAction1 (classPairDistribution, 1, U"To Stringses...",
+			nullptr, 0, CONVERT_ONE_TO_MULTIPLE__PairDistribution_to_Stringses);
 	praat_addAction1 (classPairDistribution, 0, U"Query -", nullptr, 0, nullptr);
-		praat_addAction1 (classPairDistribution, 1, U"Get number of pairs", nullptr, 1,
-				QUERY_ONE_FOR_INTEGER__PairDistribution_getNumberOfPairs);
-		praat_addAction1 (classPairDistribution, 1, U"Get string1...", nullptr, 1,
-				QUERY_ONE_FOR_STRING__PairDistribution_getString1);
-		praat_addAction1 (classPairDistribution, 1, U"Get string2...", nullptr, 1,
-				QUERY_ONE_FOR_STRING__PairDistribution_getString2);
-		praat_addAction1 (classPairDistribution, 1, U"Get weight...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__PairDistribution_getWeight);
-		praat_addAction1 (classPairDistribution, 1, U"-- get fraction correct --", nullptr, 1, nullptr);
-		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (maximum likelihood)", nullptr, 1,
-				QUERY_ONE_FOR_REAL__PairDistribution_getFractionCorrect_maximumLikelihood);
-		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (probability matching)", nullptr, 1,
-				QUERY_ONE_FOR_REAL__PairDistribution_getFractionCorrect_probabilityMatching);
+		praat_addAction1 (classPairDistribution, 1, U"Get number of pairs",
+				nullptr, 1, QUERY_ONE_FOR_INTEGER__PairDistribution_getNumberOfPairs);
+		praat_addAction1 (classPairDistribution, 1, U"Get string1...",
+				nullptr, 1, QUERY_ONE_FOR_STRING__PairDistribution_getString1);
+		praat_addAction1 (classPairDistribution, 1, U"Get string2...",
+				nullptr, 1, QUERY_ONE_FOR_STRING__PairDistribution_getString2);
+		praat_addAction1 (classPairDistribution, 1, U"Get weight...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__PairDistribution_getWeight);
+		praat_addAction1 (classPairDistribution, 1, U"-- get fraction correct --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (maximum likelihood)",
+				nullptr, 1, QUERY_ONE_FOR_REAL__PairDistribution_getFractionCorrect_maximumLikelihood);
+		praat_addAction1 (classPairDistribution, 1, U"Get fraction correct (probability matching)",
+				nullptr, 1, QUERY_ONE_FOR_REAL__PairDistribution_getFractionCorrect_probabilityMatching);
 	praat_addAction1 (classPairDistribution, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classPairDistribution, 0, U"Remove zero weights", nullptr, 1,
-			MODIFY_EACH__PairDistribution_removeZeroWeights);
-	praat_addAction1 (classPairDistribution, 0, U"Swap inputs and outputs", nullptr, 1,
-			MODIFY_EACH__PairDistribution_swapInputsAndOutputs);
+		praat_addAction1 (classPairDistribution, 0, U"Remove zero weights",
+				nullptr, 1, MODIFY_EACH__PairDistribution_removeZeroWeights);
+		praat_addAction1 (classPairDistribution, 0, U"Swap inputs and outputs",
+				nullptr, 1, MODIFY_EACH__PairDistribution_swapInputsAndOutputs);
 
-	praat_addAction1 (classTable, 0, U"Table help", nullptr, 0,
-			HELP__Table_help);
-	praat_addAction1 (classTable, 1, U"Save as tab-separated file...", nullptr, 0,
-			SAVE_ONE__Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, GuiMenu_DEPRECATED_2011,
-			SAVE_ONE__Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, GuiMenu_DEPRECATED_2011,
-			SAVE_ONE__Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0,
-			SAVE_ONE__Table_writeToCommaSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as semicolon-separated file...", nullptr, 0,
-			SAVE_ONE__Table_writeToSemicolonSeparatedFile);
-	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE | GuiMenu_NO_API,
-			EDITOR_ONE__Table_viewAndEdit);
-	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011 | GuiMenu_NO_API,
-			EDITOR_ONE__Table_viewAndEdit);
+	praat_addAction1 (classTable, 0, U"Table help",
+			nullptr, 0, HELP__Table_help);
+	praat_addAction1 (classTable, 1, U"Save as tab-separated file... || Save as table file... || Write to table file...",
+			nullptr, 0, SAVE_ONE__Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as comma-separated file...",
+			nullptr, 0, SAVE_ONE__Table_writeToCommaSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as semicolon-separated file...",
+			nullptr, 0, SAVE_ONE__Table_writeToSemicolonSeparatedFile);
+	praat_addAction1 (classTable, 1, U"View & Edit || Edit",
+			nullptr, GuiMenu_ATTRACTIVE | GuiMenu_NO_API, EDITOR_ONE__Table_viewAndEdit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);
-		praat_addAction1 (classTable, 0, U"Scatter plot...", nullptr, 1,
-				GRAPHICS_EACH__Table_scatterPlot);
-		praat_addAction1 (classTable, 0, U"Scatter plot (mark)...", nullptr, 1,
-				GRAPHICS_EACH__Table_scatterPlot_mark);
-		praat_addAction1 (classTable, 0, U"Draw ellipse (standard deviation)...", nullptr, 1,
-				GRAPHICS_EACH__Table_drawEllipse);
+		praat_addAction1 (classTable, 0, U"Scatter plot...",
+				nullptr, 1, GRAPHICS_EACH__Table_scatterPlot);
+		praat_addAction1 (classTable, 0, U"Scatter plot (mark)...",
+				nullptr, 1, GRAPHICS_EACH__Table_scatterPlot_mark);
+		praat_addAction1 (classTable, 0, U"Draw ellipse (standard deviation)...",
+				nullptr, 1, GRAPHICS_EACH__Table_drawEllipse);
 	praat_addAction1 (classTable, 0, U"Query -", nullptr, 0, nullptr);
-		praat_addAction1 (classTable, 1, U"List...", nullptr, 1,
-				INFO_ONE__Table_list);
-		praat_addAction1 (classTable, 1, U"-- get structure --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 1, U"Get number of rows", nullptr, 1,
-				QUERY_ONE_FOR_INTEGER__Table_getNumberOfRows);
-		praat_addAction1 (classTable, 1, U"Get number of columns", nullptr, 1,
-				QUERY_ONE_FOR_INTEGER__Table_getNumberOfColumns);
-		praat_addAction1 (classTable, 1, U"Get column label...", nullptr, 1,
-				QUERY_ONE_FOR_STRING__Table_getColumnLabel);
-		praat_addAction1 (classTable, 1, U"Get column index...", nullptr, 1,
-				QUERY_ONE_FOR_INTEGER__Table_getColumnIndex);
-		praat_addAction1 (classTable, 1, U"-- get value --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 1, U"Get value...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__Table_getValue);
-		praat_addAction1 (classTable, 1, U"Search column...", nullptr, 1,
-				QUERY_ONE_FOR_INTEGER__Table_searchColumn);
-		praat_addAction1 (classTable, 1, U"-- statistics --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 1, U"Statistics tutorial", nullptr, 1,
-				HELP__StatisticsTutorial);
-		praat_addAction1 (classTable, 1, U"-- get stats --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 1, U"Get quantile...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__Table_getQuantile);
-		praat_addAction1 (classTable, 1, U"Get minimum...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__Table_getMinimum);
-		praat_addAction1 (classTable, 1, U"Get maximum...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__Table_getMaximum);
-		praat_addAction1 (classTable, 1, U"Get sum...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__Table_getSum);
-		praat_addAction1 (classTable, 1, U"Get mean...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__Table_getMean);
-		praat_addAction1 (classTable, 1, U"Get group mean...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__Table_getGroupMean);
-		praat_addAction1 (classTable, 1, U"Get standard deviation...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__Table_getStandardDeviation);
-		praat_addAction1 (classTable, 1, U"-- report stats --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 1, U"Report mean (Student t)...", nullptr, 1,
-				INFO_ONE__Table_reportMean_studentT);
-		/*praat_addAction1 (classTable, 1, U"Report standard deviation...", nullptr, 1,
-				INFO_ONE__Table_reportStandardDeviation);*/
-		praat_addAction1 (classTable, 1, U"Report difference (Student t)...", nullptr, 1,
-				INFO_ONE__Table_reportDifference_studentT);
-		praat_addAction1 (classTable, 1, U"Report group mean (Student t)...", nullptr, 1,
-				INFO_ONE__Table_reportGroupMean_studentT);
-		praat_addAction1 (classTable, 1, U"Report group difference (Student t)...", nullptr, 1,
-				INFO_ONE__Table_reportGroupDifference_studentT);
-		praat_addAction1 (classTable, 1, U"Report group difference (Wilcoxon rank sum)...", nullptr, 1,
-				INFO_ONE__Table_reportGroupDifference_wilcoxonRankSum);
-		praat_addAction1 (classTable, 1, U"Report correlation (Pearson r)...", nullptr, 1,
-				INFO_ONE__Table_reportCorrelation_pearsonR);
-		praat_addAction1 (classTable, 1, U"Report correlation (Kendall tau)...", nullptr, 1,
-				INFO_ONE__Table_reportCorrelation_kendallTau);
+		praat_addAction1 (classTable, 1, U"List...",
+				nullptr, 1, INFO_ONE__Table_list);
+		praat_addAction1 (classTable, 1, U"-- get structure --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Get number of rows",
+				nullptr, 1, QUERY_ONE_FOR_INTEGER__Table_getNumberOfRows);
+		praat_addAction1 (classTable, 1, U"Get number of columns",
+				nullptr, 1, QUERY_ONE_FOR_INTEGER__Table_getNumberOfColumns);
+		praat_addAction1 (classTable, 1, U"Get column label...",
+				nullptr, 1, QUERY_ONE_FOR_STRING__Table_getColumnLabel);
+		praat_addAction1 (classTable, 1, U"Get column index...",
+				nullptr, 1, QUERY_ONE_FOR_INTEGER__Table_getColumnIndex);
+		praat_addAction1 (classTable, 1, U"-- get value --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Get value...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getValue);
+		praat_addAction1 (classTable, 1, U"Search column...",
+				nullptr, 1, QUERY_ONE_FOR_INTEGER__Table_searchColumn);
+		praat_addAction1 (classTable, 1, U"-- statistics --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Statistics tutorial",
+				nullptr, 1, HELP__StatisticsTutorial);
+		praat_addAction1 (classTable, 1, U"-- get stats --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Get quantile...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getQuantile);
+		praat_addAction1 (classTable, 1, U"Get minimum...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getMinimum);
+		praat_addAction1 (classTable, 1, U"Get maximum...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getMaximum);
+		praat_addAction1 (classTable, 1, U"Get sum...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getSum);
+		praat_addAction1 (classTable, 1, U"Get mean...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getMean);
+		praat_addAction1 (classTable, 1, U"Get group mean...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getGroupMean);
+		praat_addAction1 (classTable, 1, U"Get standard deviation...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__Table_getStandardDeviation);
+		praat_addAction1 (classTable, 1, U"-- report stats --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 1, U"Report mean (Student t)...",
+				nullptr, 1, INFO_ONE__Table_reportMean_studentT);
+		/*praat_addAction1 (classTable, 1, U"Report standard deviation...",
+				nullptr, 1, INFO_ONE__Table_reportStandardDeviation);*/
+		praat_addAction1 (classTable, 1, U"Report difference (Student t)...",
+				nullptr, 1, INFO_ONE__Table_reportDifference_studentT);
+		praat_addAction1 (classTable, 1, U"Report group mean (Student t)...",
+				nullptr, 1, INFO_ONE__Table_reportGroupMean_studentT);
+		praat_addAction1 (classTable, 1, U"Report group difference (Student t)...",
+				nullptr, 1, INFO_ONE__Table_reportGroupDifference_studentT);
+		praat_addAction1 (classTable, 1, U"Report group difference (Wilcoxon rank sum)...",
+				nullptr, 1, INFO_ONE__Table_reportGroupDifference_wilcoxonRankSum);
+		praat_addAction1 (classTable, 1, U"Report correlation (Pearson r)...",
+				nullptr, 1, INFO_ONE__Table_reportCorrelation_pearsonR);
+		praat_addAction1 (classTable, 1, U"Report correlation (Kendall tau)...",
+				nullptr, 1, INFO_ONE__Table_reportCorrelation_kendallTau);
 	praat_addAction1 (classTable, 0, U"Modify -", nullptr, 0, nullptr);
-		praat_addAction1 (classTable, 0, U"Set string value...", nullptr, 1,
-				MODIFY_EACH__Table_setStringValue);
-		praat_addAction1 (classTable, 0, U"Set numeric value...", nullptr, 1,
-				MODIFY_EACH__Table_setNumericValue);
-		praat_addAction1 (classTable, 0, U"Formula...", nullptr, 1,
-				MODIFY_EACH_WEAK__Table_formula);
-		praat_addAction1 (classTable, 0, U"Formula (column range)...", nullptr, 1,
-				MODIFY_EACH_WEAK__Table_formula_columnRange);
-		praat_addAction1 (classTable, 0, U"Sort rows...", nullptr, 1,
-				MODIFY_EACH__Table_sortRows);
-		praat_addAction1 (classTable, 0, U"Randomize rows", nullptr, 1,
-				MODIFY_EACH__Table_randomizeRows);
-		praat_addAction1 (classTable, 0, U"Reflect rows", nullptr, 1,
-				MODIFY_EACH__Table_reflectRows);
-		praat_addAction1 (classTable, 0, U"-- structure --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 0, U"Append row", nullptr, 1,
-				MODIFY_EACH__Table_appendRow);
-		praat_addAction1 (classTable, 0, U"Append column...", nullptr, 1,
-				MODIFY_EACH__Table_appendColumn);
-		praat_addAction1 (classTable, 0, U"Append sum column...", nullptr, 1,
-				MODIFY_EACH__Table_appendSumColumn);
-		praat_addAction1 (classTable, 0, U"Append difference column...", nullptr, 1,
-				MODIFY_EACH__Table_appendDifferenceColumn);
-		praat_addAction1 (classTable, 0, U"Append product column...", nullptr, 1,
-				MODIFY_EACH__Table_appendProductColumn);
-		praat_addAction1 (classTable, 0, U"Append quotient column...", nullptr, 1,
-				MODIFY_EACH__Table_appendQuotientColumn);
-		praat_addAction1 (classTable, 0, U"Remove row...", nullptr, 1,
-				MODIFY_EACH__Table_removeRow);
-		praat_addAction1 (classTable, 0, U"Remove column...", nullptr, 1,
-				MODIFY_EACH__Table_removeColumn);
-		praat_addAction1 (classTable, 0, U"Insert row...", nullptr, 1,
-				MODIFY_EACH__Table_insertRow);
-		praat_addAction1 (classTable, 0, U"Insert column...", nullptr, 1,
-				MODIFY_EACH__Table_insertColumn);
-		praat_addAction1 (classTable, 0, U"-- set --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 0, U"Set column label (index)...", nullptr, 1,
-				MODIFY_EACH__Table_setColumnLabel_index);
-		praat_addAction1 (classTable, 0, U"Set column label (label)...", nullptr, 1,
-				MODIFY_EACH__Table_setColumnLabel_label);
+		praat_addAction1 (classTable, 0, U"Set string value...",
+				nullptr, 1, MODIFY_EACH__Table_setStringValue);
+		praat_addAction1 (classTable, 0, U"Set numeric value...",
+				nullptr, 1, MODIFY_EACH__Table_setNumericValue);
+		praat_addAction1 (classTable, 0, U"Formula...",
+				nullptr, 1, MODIFY_EACH_WEAK__Table_formula);
+		praat_addAction1 (classTable, 0, U"Formula (column range)...",
+				nullptr, 1, MODIFY_EACH_WEAK__Table_formula_columnRange);
+		praat_addAction1 (classTable, 0, U"Sort rows...",
+				nullptr, 1, MODIFY_EACH__Table_sortRows);
+		praat_addAction1 (classTable, 0, U"Randomize rows",
+				nullptr, 1, MODIFY_EACH__Table_randomizeRows);
+		praat_addAction1 (classTable, 0, U"Reflect rows",
+				nullptr, 1, MODIFY_EACH__Table_reflectRows);
+		praat_addAction1 (classTable, 0, U"-- structure --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 0, U"Append row",
+				nullptr, 1, MODIFY_EACH__Table_appendRow);
+		praat_addAction1 (classTable, 0, U"Append column...",
+				nullptr, 1, MODIFY_EACH__Table_appendColumn);
+		praat_addAction1 (classTable, 0, U"Append sum column...",
+				nullptr, 1, MODIFY_EACH__Table_appendSumColumn);
+		praat_addAction1 (classTable, 0, U"Append difference column...",
+				nullptr, 1, MODIFY_EACH__Table_appendDifferenceColumn);
+		praat_addAction1 (classTable, 0, U"Append product column...",
+				nullptr, 1, MODIFY_EACH__Table_appendProductColumn);
+		praat_addAction1 (classTable, 0, U"Append quotient column...",
+				nullptr, 1, MODIFY_EACH__Table_appendQuotientColumn);
+		praat_addAction1 (classTable, 0, U"Remove row...",
+				nullptr, 1, MODIFY_EACH__Table_removeRow);
+		praat_addAction1 (classTable, 0, U"Remove column...",
+				nullptr, 1, MODIFY_EACH__Table_removeColumn);
+		praat_addAction1 (classTable, 0, U"Insert row...",
+				nullptr, 1, MODIFY_EACH__Table_insertRow);
+		praat_addAction1 (classTable, 0, U"Insert column...",
+				nullptr, 1, MODIFY_EACH__Table_insertColumn);
+		praat_addAction1 (classTable, 0, U"-- set --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classTable, 0, U"Set column label (index)...",
+				nullptr, 1, MODIFY_EACH__Table_setColumnLabel_index);
+		praat_addAction1 (classTable, 0, U"Set column label (label)...",
+				nullptr, 1, MODIFY_EACH__Table_setColumnLabel_label);
 	praat_addAction1 (classTable, 0, U"Analyse -", nullptr, 0, nullptr);
-		praat_addAction1 (classTable, 0, U"To linear regression", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_to_LinearRegression);
-		praat_addAction1 (classTable, 0, U"To logistic regression...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_to_LogisticRegression);
+		praat_addAction1 (classTable, 0, U"To linear regression",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_to_LinearRegression);
+		praat_addAction1 (classTable, 0, U"To logistic regression...",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_to_LogisticRegression);
 	praat_addAction1 (classTable, 0, U"Synthesize -", nullptr, 0, nullptr);
-		praat_addAction1 (classTable, 0, U"Append", nullptr, 1,
-				COMBINE_ALL_TO_ONE__Tables_append);
+		praat_addAction1 (classTable, 0, U"Append",
+				nullptr, 1, COMBINE_ALL_TO_ONE__Tables_append);
 	praat_addAction1 (classTable, 0, U"Generate -", nullptr, 0, nullptr);
-		praat_addAction1 (classTable, 1, U"Draw row from distribution...", nullptr, 1,
-				QUERY_ONE_FOR_INTEGER__Table_drawRowFromDistribution);
+		praat_addAction1 (classTable, 1, U"Draw row from distribution...",
+				nullptr, 1, QUERY_ONE_FOR_INTEGER__Table_drawRowFromDistribution);
 	praat_addAction1 (classTable, 0, U"Extract -", nullptr, 0, nullptr);
-		praat_addAction1 (classTable, 0, U"Extract rows where column (number)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0,   U"Extract rows where column...", U"*Extract rows where column (number)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2006,
-				CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0,   U"Select rows where column...", U"*Extract rows where column (number)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2004,
-				CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0, U"Extract rows where column (text)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_text);
-		praat_addAction1 (classTable, 0, U"Transpose", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_transpose);
-		praat_addAction1 (classTable, 0, U"Collapse rows...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_collapseRows);
-		praat_addAction1 (classTable, 0, U"Rows to columns...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_rowsToColumns);
+		praat_addAction1 (classTable, 0, U"Extract rows where column (number)... || Extract rows where column... || Select rows where column...",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number);   // alternative GuiMenu_DEPRECATED_2006/2004
+		praat_addAction1 (classTable, 0, U"Extract rows where column (text)...",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_text);
+		praat_addAction1 (classTable, 0, U"Transpose",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_transpose);
+		praat_addAction1 (classTable, 0, U"Collapse rows...",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_collapseRows);
+		praat_addAction1 (classTable, 0, U"Rows to columns...",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_rowsToColumns);
 	praat_addAction1 (classTable, 0, U"Convert -", nullptr, 0, nullptr);
-		praat_addAction1 (classTable, 0, U"To RealTier...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_to_RealTier);
-		praat_addAction1 (classTable, 0, U"Down to TableOfReal...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Table_downto_TableOfReal);
-		praat_addAction1 (classTable, 0, U"Down to Matrix", nullptr, 0,
-				CONVERT_EACH_TO_ONE__Table_downto_Matrix);
+		praat_addAction1 (classTable, 0, U"To RealTier...",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_to_RealTier);
+		praat_addAction1 (classTable, 0, U"Down to TableOfReal...",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_downto_TableOfReal);
+		praat_addAction1 (classTable, 0, U"Down to Matrix",
+				nullptr, 1, CONVERT_EACH_TO_ONE__Table_downto_Matrix);
 
 	praat_TableOfReal_init (classTableOfReal);
 
-	praat_addAction2 (classPairDistribution, 1, classDistributions, 1, U"Get fraction correct...", nullptr, 0,
-			QUERY_ONE_AND_ONE_FOR_REAL__PairDistribution_Distributions_getFractionCorrect);
+	praat_addAction2 (classPairDistribution, 1, classDistributions, 1, U"Get fraction correct...",
+			nullptr, 0, QUERY_ONE_AND_ONE_FOR_REAL__PairDistribution_Distributions_getFractionCorrect);
 }
 
 /* End of file praat_Stat.cpp */

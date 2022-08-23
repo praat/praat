@@ -2969,483 +2969,785 @@ void praat_uvafon_init () {
 	*/
 	praat_Sound_init ();
 
-	praat_addMenuCommand (U"Objects", U"New", U"-- new textgrid --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TextGrid...", nullptr, 0, NEW1_TextGrid_create);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new textgrid --",
+			nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TextGrid...",
+			nullptr, 0, NEW1_TextGrid_create);
 	praat_uvafon_TextGrid_init ();
 	praat_Tiers_init ();
-	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", nullptr, 0, NEW1_Corpus_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...",
+			nullptr, 0, NEW1_Corpus_create);
 
-	praat_addMenuCommand (U"Objects", U"New", U"-- new stats --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new stats --",
+			nullptr, 0, nullptr);
 	INCLUDE_LIBRARY (praat_uvafon_stat_init)   // from stat
 	praat_addMenuCommand (U"Objects", U"New", U"Stats", nullptr, 0, nullptr);
 	INCLUDE_LIBRARY (praat_MDS_new_init)   // from dwtools
 
 	praat_addMenuCommand (U"Objects", U"New", U"Generics", nullptr, 0, nullptr);
-	praat_Matrix_init ();
-	praat_addMenuCommand (U"Objects", U"New", U"-- new strings --", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", nullptr, 2, NEW1_Strings_createAsFileList);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as folder list...", nullptr, 2, NEW1_Strings_createAsFolderList);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, GuiMenu_DEPTH_2 | GuiMenu_HIDDEN, NEW1_Strings_createAsFolderList);
-	praat_addMenuCommand (U"Objects", U"New", U"-- new David generics --", nullptr, 1, nullptr);
-	INCLUDE_LIBRARY (praat_David_generics_new_init)
+		praat_Matrix_init ();
+		praat_addMenuCommand (U"Objects", U"New", U"-- new strings --",
+				nullptr, 1, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 1, nullptr);
+			praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...",
+					nullptr, 2, NEW1_Strings_createAsFileList);
+			praat_addMenuCommand (U"Objects", U"New", U"Create Strings as folder list... || Create Strings as directory list...",
+					nullptr, 2, NEW1_Strings_createAsFolderList);
+		praat_addMenuCommand (U"Objects", U"New", U"-- new David generics --",
+				nullptr, 1, nullptr);
+		INCLUDE_LIBRARY (praat_David_generics_new_init)
 
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...", nullptr, 0, READ1_Strings_readFromRawTextFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...",
+			nullptr, 0, READ1_Strings_readFromRawTextFile);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", nullptr, 1, READ1_TextTier_readFromXwaves);
-		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...", nullptr, 1, READ1_IntervalTier_readFromXwaves);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...",
+				nullptr, 1, READ1_TextTier_readFromXwaves);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...",
+				nullptr, 1, READ1_IntervalTier_readFromXwaves);
 
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?', HELP_PraatIntro);
 	#ifndef macintosh
 		praat_addMenuCommand (U"Objects", U"Help", U"Object window", nullptr, 0, HELP_ObjectWindow);
 	#endif
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Frequently asked questions", nullptr, 0, HELP_FrequentlyAskedQuestions);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- reference help --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Types of objects", nullptr, 0, HELP_TypesOfObjects);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Editors", nullptr, 0, HELP_Editors);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- version help --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?", nullptr, 0, HELP_WhatsNew);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Acknowledgments", nullptr, 0, HELP_Acknowledgments);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"License", nullptr, 0, HELP_License);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- privacy help --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Privacy and security", nullptr, 0, HELP_PrivacyAndSecurity);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Checking for updates?", nullptr, 0, HELP_CheckingForUpdates);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Reporting a problem?", nullptr, 0, HELP_ReportingAProblem);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- shell help --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Formulas tutorial", nullptr, 0, HELP_FormulasTutorial);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Scripting tutorial", nullptr, 0, HELP_ScriptingTutorial);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Functions", nullptr, 0, HELP_Functions);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- control help --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Demo window", nullptr, 0, HELP_DemoWindow);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Interoperability", nullptr, 0, HELP_Interoperability);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Programming", nullptr, 0, HELP_Programming);
-	#ifdef macintosh
-		praat_addMenuCommand (U"Objects", U"Help", U"Praat Intro", nullptr, '?', HELP_PraatIntro);
-		praat_addMenuCommand (U"Objects", U"Help", U"Object window help", nullptr, 0, HELP_ObjectWindow);
-		praat_addMenuCommand (U"Objects", U"Help", U"-- manual --", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Help", U"Search Praat manual...", nullptr, 'M', HELP_SearchManual_Fon);
-	#endif
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Frequently asked questions",
+			nullptr, 0, HELP_FrequentlyAskedQuestions);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- reference help --",
+			nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Types of objects",
+			nullptr, 0, HELP_TypesOfObjects);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Editors",
+			nullptr, 0, HELP_Editors);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- version help --",
+			nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?",
+			nullptr, 0, HELP_WhatsNew);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Acknowledgments",
+			nullptr, 0, HELP_Acknowledgments);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"License",
+			nullptr, 0, HELP_License);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- privacy help --",
+			nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Privacy and security",
+			nullptr, 0, HELP_PrivacyAndSecurity);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Checking for updates?",
+			nullptr, 0, HELP_CheckingForUpdates);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Reporting a problem?",
+			nullptr, 0, HELP_ReportingAProblem);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- shell help --",
+			nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Formulas tutorial",
+			nullptr, 0, HELP_FormulasTutorial);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Scripting tutorial",
+			nullptr, 0, HELP_ScriptingTutorial);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Functions",
+			nullptr, 0, HELP_Functions);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- control help --",
+			nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Demo window",
+			nullptr, 0, HELP_DemoWindow);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Interoperability",
+			nullptr, 0, HELP_Interoperability);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Programming",
+			nullptr, 0, HELP_Programming);
+#ifdef macintosh
+	praat_addMenuCommand (U"Objects", U"Help", U"Praat Intro",
+			nullptr, '?', HELP_PraatIntro);
+	praat_addMenuCommand (U"Objects", U"Help", U"Object window help",
+			nullptr, 0, HELP_ObjectWindow);
+	praat_addMenuCommand (U"Objects", U"Help", U"-- manual --",
+			nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"Help", U"Search Praat manual...",
+			nullptr, 'M', HELP_SearchManual_Fon);
+#endif
 
-	praat_addAction1 (classCochleagram, 0, U"Cochleagram help", nullptr, 0, HELP_Cochleagram_help);
-	praat_addAction1 (classCochleagram, 1, U"Play movie", nullptr, 0, MOVIE_Cochleagram_playMovie);
-	praat_addAction1 (classCochleagram, 1, U"Movie", nullptr, GuiMenu_HIDDEN, MOVIE_Cochleagram_playMovie);
+	praat_addAction1 (classCochleagram, 0, U"Cochleagram help",
+			nullptr, 0, HELP_Cochleagram_help);
+	praat_addAction1 (classCochleagram, 1, U"Play movie || Movie",
+			nullptr, 0, MOVIE_Cochleagram_playMovie);
 praat_addAction1 (classCochleagram, 0, U"Info", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 2, U"Difference...", nullptr, 0, REAL_Cochleagram_difference);
+	praat_addAction1 (classCochleagram, 2, U"Difference...",
+			nullptr, 0, REAL_Cochleagram_difference);
 praat_addAction1 (classCochleagram, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 0, U"Paint...", nullptr, 0, GRAPHICS_Cochleagram_paint);
+	praat_addAction1 (classCochleagram, 0, U"Paint...",
+			nullptr, 0, GRAPHICS_Cochleagram_paint);
 praat_addAction1 (classCochleagram, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 0, U"Formula...", nullptr, 0, MODIFY_Cochleagram_formula);
+	praat_addAction1 (classCochleagram, 0, U"Formula...",
+			nullptr, 0, MODIFY_Cochleagram_formula);
 praat_addAction1 (classCochleagram, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 0, U"To Excitation (slice)...", nullptr, 0, NEW_Cochleagram_to_Excitation);
+	praat_addAction1 (classCochleagram, 0, U"To Excitation (slice)...",
+			nullptr, 0, NEW_Cochleagram_to_Excitation);
 praat_addAction1 (classCochleagram, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 0, U"To Matrix", nullptr, 0, NEW_Cochleagram_to_Matrix);
+	praat_addAction1 (classCochleagram, 0, U"To Matrix",
+			nullptr, 0, NEW_Cochleagram_to_Matrix);
 
 	praat_addAction1 (classCorpus, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Corpus_edit);
 
 praat_addAction1 (classDistributions, 0, U"Learn", nullptr, 0, nullptr);
-	praat_addAction1 (classDistributions, 1, U"To Transition...", nullptr, 0, NEW_Distributions_to_Transition);
-	praat_addAction1 (classDistributions, 2, U"To Transition (noise)...", nullptr, 0, NEW1_Distributions_to_Transition_noise);
+	praat_addAction1 (classDistributions, 1, U"To Transition...",
+			nullptr, 0, NEW_Distributions_to_Transition);
+	praat_addAction1 (classDistributions, 2, U"To Transition (noise)...",
+			nullptr, 0, NEW1_Distributions_to_Transition_noise);
 
-	praat_addAction1 (classExcitation, 0, U"Excitation help", nullptr, 0, HELP_Excitation_help);
+	praat_addAction1 (classExcitation, 0, U"Excitation help",
+			nullptr, 0, HELP_Excitation_help);
 praat_addAction1 (classExcitation, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 0, U"Draw...", nullptr, 0, GRAPHICS_Excitation_draw);
+	praat_addAction1 (classExcitation, 0, U"Draw...",
+			nullptr, 0, GRAPHICS_Excitation_draw);
 praat_addAction1 (classExcitation, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 0, U"To Formant...", nullptr, 0, NEW_Excitation_to_Formant);
+	praat_addAction1 (classExcitation, 0, U"To Formant...",
+			nullptr, 0, NEW_Excitation_to_Formant);
 praat_addAction1 (classExcitation, 1, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 1, U"Get loudness", nullptr, 0, REAL_Excitation_getLoudness);
+	praat_addAction1 (classExcitation, 1, U"Get loudness",
+			nullptr, 0, REAL_Excitation_getLoudness);
 praat_addAction1 (classExcitation, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 0, U"Formula...", nullptr, 0, MODIFY_Excitation_formula);
+	praat_addAction1 (classExcitation, 0, U"Formula...",
+			nullptr, 0, MODIFY_Excitation_formula);
 praat_addAction1 (classExcitation, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 0, U"To Matrix", nullptr, 0, NEW_Excitation_to_Matrix);
+	praat_addAction1 (classExcitation, 0, U"To Matrix",
+			nullptr, 0, NEW_Excitation_to_Matrix);
 
-	praat_addAction1 (classFormant, 0, U"Formant help", nullptr, 0, HELP_Formant_help);
+	praat_addAction1 (classFormant, 0, U"Formant help",
+			nullptr, 0, HELP_Formant_help);
 	praat_addAction1 (classFormant, 0, U"Draw -", nullptr, 0, nullptr);
-		praat_addAction1 (classFormant, 0, U"Speckle...", nullptr, 1, GRAPHICS_Formant_drawSpeckles);
-		praat_addAction1 (classFormant, 0, U"Draw tracks...", nullptr, 1, GRAPHICS_Formant_drawTracks);
-		praat_addAction1 (classFormant, 0, U"Scatter plot...", nullptr, 1, GRAPHICS_Formant_scatterPlot);
+		praat_addAction1 (classFormant, 0, U"Speckle...",
+				nullptr, 1, GRAPHICS_Formant_drawSpeckles);
+		praat_addAction1 (classFormant, 0, U"Draw tracks...",
+				nullptr, 1, GRAPHICS_Formant_drawTracks);
+		praat_addAction1 (classFormant, 0, U"Scatter plot...",
+				nullptr, 1, GRAPHICS_Formant_scatterPlot);
 	praat_addAction1 (classFormant, 0, U"Tabulate -", nullptr, 0, nullptr);
-		praat_addAction1 (classFormant, 1, U"List...", nullptr, 1, LIST_Formant_list);
-		praat_addAction1 (classFormant, 0, U"Down to Table...", nullptr, 1, NEW_Formant_downto_Table);
+		praat_addAction1 (classFormant, 1, U"List...",
+				nullptr, 1, LIST_Formant_list);
+		praat_addAction1 (classFormant, 0, U"Down to Table...",
+				nullptr, 1, NEW_Formant_downto_Table);
 	praat_addAction1 (classFormant, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classFormant);
-		praat_addAction1 (classFormant, 1, U"Get number of formants...", nullptr, 1, INTEGER_Formant_getNumberOfFormants);
-		praat_addAction1 (classFormant, 1, U"Get minimum number of formants", nullptr, 1, INTEGER_Formant_getMinimumNumberOfFormants);
-		praat_addAction1 (classFormant, 1, U"Get maximum number of formants", nullptr, 1, INTEGER_Formant_getMaximumNumberOfFormants);
-		praat_addAction1 (classFormant, 1, U"-- get value --", nullptr, 1, nullptr);
-		praat_addAction1 (classFormant, 1, U"Get value at time...", nullptr, 1, REAL_Formant_getValueAtTime);
-		praat_addAction1 (classFormant, 1, U"Get bandwidth at time...", nullptr, 1, REAL_Formant_getBandwidthAtTime);
-		praat_addAction1 (classFormant, 1, U"-- get extreme --", nullptr, 1, nullptr);
-		praat_addAction1 (classFormant, 1, U"Get minimum...", nullptr, 1, REAL_Formant_getMinimum);
-		praat_addAction1 (classFormant, 1, U"Get time of minimum...", nullptr, 1, REAL_Formant_getTimeOfMinimum);
-		praat_addAction1 (classFormant, 1, U"Get maximum...", nullptr, 1, REAL_Formant_getMaximum);
-		praat_addAction1 (classFormant, 1, U"Get time of maximum...", nullptr, 1, REAL_Formant_getTimeOfMaximum);
-		praat_addAction1 (classFormant, 1, U"-- get distribution --", nullptr, 1, nullptr);
-		praat_addAction1 (classFormant, 1, U"Get quantile...", nullptr, 1, REAL_Formant_getQuantile);
-		praat_addAction1 (classFormant, 1, U"Get quantile of bandwidth...", nullptr, 1, REAL_Formant_getQuantileOfBandwidth);
-		praat_addAction1 (classFormant, 1, U"Get mean...", nullptr, 1, REAL_Formant_getMean);
-		praat_addAction1 (classFormant, 1, U"Get standard deviation...", nullptr, 1, REAL_Formant_getStandardDeviation);
+		praat_addAction1 (classFormant, 1, U"Get number of formants...",
+				nullptr, 1, INTEGER_Formant_getNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"Get minimum number of formants",
+				nullptr, 1, INTEGER_Formant_getMinimumNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"Get maximum number of formants",
+				nullptr, 1, INTEGER_Formant_getMaximumNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"-- get value --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classFormant, 1, U"Get value at time...",
+				nullptr, 1, REAL_Formant_getValueAtTime);
+		praat_addAction1 (classFormant, 1, U"Get bandwidth at time...",
+				nullptr, 1, REAL_Formant_getBandwidthAtTime);
+		praat_addAction1 (classFormant, 1, U"-- get extreme --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classFormant, 1, U"Get minimum...",
+				nullptr, 1, REAL_Formant_getMinimum);
+		praat_addAction1 (classFormant, 1, U"Get time of minimum...",
+				nullptr, 1, REAL_Formant_getTimeOfMinimum);
+		praat_addAction1 (classFormant, 1, U"Get maximum...",
+				nullptr, 1, REAL_Formant_getMaximum);
+		praat_addAction1 (classFormant, 1, U"Get time of maximum...",
+				nullptr, 1, REAL_Formant_getTimeOfMaximum);
+		praat_addAction1 (classFormant, 1, U"-- get distribution --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classFormant, 1, U"Get quantile...",
+				nullptr, 1, REAL_Formant_getQuantile);
+		praat_addAction1 (classFormant, 1, U"Get quantile of bandwidth...",
+				nullptr, 1, REAL_Formant_getQuantileOfBandwidth);
+		praat_addAction1 (classFormant, 1, U"Get mean...",
+				nullptr, 1, REAL_Formant_getMean);
+		praat_addAction1 (classFormant, 1, U"Get standard deviation...",
+				nullptr, 1, REAL_Formant_getStandardDeviation);
 	praat_addAction1 (classFormant, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classFormant);
-		praat_addAction1 (classFormant, 0, U"Sort", nullptr, 1, MODIFY_Formant_sort);
-		praat_addAction1 (classFormant, 0, U"Formula (frequencies)...", nullptr, 1, MODIFY_Formant_formula_frequencies);
-		praat_addAction1 (classFormant, 0, U"Formula (bandwidths)...", nullptr, 1, MODIFY_Formant_formula_bandwidths);
+		praat_addAction1 (classFormant, 0, U"Sort",
+				nullptr, 1, MODIFY_Formant_sort);
+		praat_addAction1 (classFormant, 0, U"Formula (frequencies)...",
+				nullptr, 1, MODIFY_Formant_formula_frequencies);
+		praat_addAction1 (classFormant, 0, U"Formula (bandwidths)...",
+				nullptr, 1, MODIFY_Formant_formula_bandwidths);
 praat_addAction1 (classFormant, 0, U"Convert", nullptr, 0, nullptr);
-	praat_addAction1 (classFormant, 0, U"Track...", nullptr, 0, NEW_Formant_tracker);
-	praat_addAction1 (classFormant, 0, U"Down to FormantTier", nullptr, GuiMenu_HIDDEN, NEW_Formant_downto_FormantTier);
-	praat_addAction1 (classFormant, 0, U"Down to FormantGrid", nullptr, 0, NEW_Formant_downto_FormantGrid);
+	praat_addAction1 (classFormant, 0, U"Track...",
+			nullptr, 0, NEW_Formant_tracker);
+	praat_addAction1 (classFormant, 0, U"Down to FormantTier",
+			nullptr, GuiMenu_HIDDEN, NEW_Formant_downto_FormantTier);
+	praat_addAction1 (classFormant, 0, U"Down to FormantGrid",
+			nullptr, 0, NEW_Formant_downto_FormantGrid);
 praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classFormant, 0, U"To Matrix...", nullptr, 0, NEW_Formant_to_Matrix);
+	praat_addAction1 (classFormant, 0, U"To Matrix...",
+			nullptr, 0, NEW_Formant_to_Matrix);
 
-	praat_addAction1 (classHarmonicity, 0, U"Harmonicity help", nullptr, 0, HELP_Harmonicity_help);
-	praat_addAction1 (classHarmonicity, 0, U"Draw", nullptr, 0, nullptr);
-		praat_addAction1 (classHarmonicity, 0, U"Draw...", nullptr, 0, GRAPHICS_Harmonicity_draw);
+	praat_addAction1 (classHarmonicity, 0, U"Harmonicity help",
+			nullptr, 0, HELP_Harmonicity_help);
+praat_addAction1 (classHarmonicity, 0, U"Draw", nullptr, 0, nullptr);
+	praat_addAction1 (classHarmonicity, 0, U"Draw...",
+			nullptr, 0, GRAPHICS_Harmonicity_draw);
 	praat_addAction1 (classHarmonicity, 1, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classHarmonicity);
-		praat_addAction1 (classHarmonicity, 1, U"-- get content --", nullptr, 1, nullptr);
-		praat_addAction1 (classHarmonicity, 1, U"Get value at time...", nullptr, 1, REAL_Harmonicity_getValueAtTime);
-		praat_addAction1 (classHarmonicity, 1, U"Get value in frame...", nullptr, 1, REAL_Harmonicity_getValueInFrame);
-		praat_addAction1 (classHarmonicity, 1, U"-- get extreme --", nullptr, 1, nullptr);
-		praat_addAction1 (classHarmonicity, 1, U"Get minimum...", nullptr, 1, REAL_Harmonicity_getMinimum);
-		praat_addAction1 (classHarmonicity, 1, U"Get time of minimum...", nullptr, 1, REAL_Harmonicity_getTimeOfMinimum);
-		praat_addAction1 (classHarmonicity, 1, U"Get maximum...", nullptr, 1, REAL_Harmonicity_getMaximum);
-		praat_addAction1 (classHarmonicity, 1, U"Get time of maximum...", nullptr, 1, REAL_Harmonicity_getTimeOfMaximum);
-		praat_addAction1 (classHarmonicity, 1, U"-- get statistics --", nullptr, 1, nullptr);
-		praat_addAction1 (classHarmonicity, 1, U"Get mean...", nullptr, 1, REAL_Harmonicity_getMean);
-		praat_addAction1 (classHarmonicity, 1, U"Get standard deviation...", nullptr, 1, REAL_Harmonicity_getStandardDeviation);
-	praat_addAction1 (classHarmonicity, 0, U"Modify", nullptr, 0, nullptr);
-		praat_TimeFunction_modify_init (classHarmonicity);
-		praat_addAction1 (classHarmonicity, 0, U"Formula...", nullptr, 0, MODIFY_Harmonicity_formula);
-	praat_addAction1 (classHarmonicity, 0, U"Hack", nullptr, 0, nullptr);
-		praat_addAction1 (classHarmonicity, 0, U"To Matrix", nullptr, 0, NEW_Harmonicity_to_Matrix);
+		praat_addAction1 (classHarmonicity, 1, U"-- get content --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classHarmonicity, 1, U"Get value at time...",
+				nullptr, 1, REAL_Harmonicity_getValueAtTime);
+		praat_addAction1 (classHarmonicity, 1, U"Get value in frame...",
+				nullptr, 1, REAL_Harmonicity_getValueInFrame);
+		praat_addAction1 (classHarmonicity, 1, U"-- get extreme --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classHarmonicity, 1, U"Get minimum...",
+				nullptr, 1, REAL_Harmonicity_getMinimum);
+		praat_addAction1 (classHarmonicity, 1, U"Get time of minimum...",
+				nullptr, 1, REAL_Harmonicity_getTimeOfMinimum);
+		praat_addAction1 (classHarmonicity, 1, U"Get maximum...",
+				nullptr, 1, REAL_Harmonicity_getMaximum);
+		praat_addAction1 (classHarmonicity, 1, U"Get time of maximum...",
+				nullptr, 1, REAL_Harmonicity_getTimeOfMaximum);
+		praat_addAction1 (classHarmonicity, 1, U"-- get statistics --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classHarmonicity, 1, U"Get mean...",
+				nullptr, 1, REAL_Harmonicity_getMean);
+		praat_addAction1 (classHarmonicity, 1, U"Get standard deviation...",
+				nullptr, 1, REAL_Harmonicity_getStandardDeviation);
+praat_addAction1 (classHarmonicity, 0, U"Modify", nullptr, 0, nullptr);
+	praat_TimeFunction_modify_init (classHarmonicity);
+	praat_addAction1 (classHarmonicity, 0, U"Formula...",
+			nullptr, 0, MODIFY_Harmonicity_formula);
+praat_addAction1 (classHarmonicity, 0, U"Hack", nullptr, 0, nullptr);
+	praat_addAction1 (classHarmonicity, 0, U"To Matrix",
+			nullptr, 0, NEW_Harmonicity_to_Matrix);
 
-	praat_addAction1 (classIntensity, 0, U"Intensity help", nullptr, 0, HELP_Intensity_help);
-	praat_addAction1 (classIntensity, 0, U"Draw...", nullptr, 0, GRAPHICS_Intensity_draw);
+	praat_addAction1 (classIntensity, 0, U"Intensity help",
+			nullptr, 0, HELP_Intensity_help);
+	praat_addAction1 (classIntensity, 0, U"Draw...",
+			nullptr, 0, GRAPHICS_Intensity_draw);
 	praat_addAction1 (classIntensity, 1, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classIntensity);
-		praat_addAction1 (classIntensity, 1, U"-- get content --", nullptr, 1, nullptr);
-		praat_addAction1 (classIntensity, 1, U"Get value at time...", nullptr, 1, REAL_Intensity_getValueAtTime);
-		praat_addAction1 (classIntensity, 1, U"Get value in frame...", nullptr, 1, REAL_Intensity_getValueInFrame);
-		praat_addAction1 (classIntensity, 1, U"-- get extreme --", nullptr, 1, nullptr);
-		praat_addAction1 (classIntensity, 1, U"Get minimum...", nullptr, 1, REAL_Intensity_getMinimum);
-		praat_addAction1 (classIntensity, 1, U"Get time of minimum...", nullptr, 1, REAL_Intensity_getTimeOfMinimum);
-		praat_addAction1 (classIntensity, 1, U"Get maximum...", nullptr, 1, REAL_Intensity_getMaximum);
-		praat_addAction1 (classIntensity, 1, U"Get time of maximum...", nullptr, 1, REAL_Intensity_getTimeOfMaximum);
-		praat_addAction1 (classIntensity, 1, U"-- get statistics --", nullptr, 1, nullptr);
-		praat_addAction1 (classIntensity, 1, U"Get quantile...", nullptr, 1, REAL_Intensity_getQuantile);
-		praat_addAction1 (classIntensity, 1, U"Get mean...", nullptr, 1, REAL_Intensity_getMean);
-		praat_addAction1 (classIntensity, 1, U"Get standard deviation...", nullptr, 1, REAL_Intensity_getStandardDeviation);
+		praat_addAction1 (classIntensity, 1, U"-- get content --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classIntensity, 1, U"Get value at time...",
+				nullptr, 1, REAL_Intensity_getValueAtTime);
+		praat_addAction1 (classIntensity, 1, U"Get value in frame...",
+				nullptr, 1, REAL_Intensity_getValueInFrame);
+		praat_addAction1 (classIntensity, 1, U"-- get extreme --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classIntensity, 1, U"Get minimum...",
+				nullptr, 1, REAL_Intensity_getMinimum);
+		praat_addAction1 (classIntensity, 1, U"Get time of minimum...",
+				nullptr, 1, REAL_Intensity_getTimeOfMinimum);
+		praat_addAction1 (classIntensity, 1, U"Get maximum...",
+				nullptr, 1, REAL_Intensity_getMaximum);
+		praat_addAction1 (classIntensity, 1, U"Get time of maximum...",
+				nullptr, 1, REAL_Intensity_getTimeOfMaximum);
+		praat_addAction1 (classIntensity, 1, U"-- get statistics --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classIntensity, 1, U"Get quantile...",
+				nullptr, 1, REAL_Intensity_getQuantile);
+		praat_addAction1 (classIntensity, 1, U"Get mean...",
+				nullptr, 1, REAL_Intensity_getMean);
+		praat_addAction1 (classIntensity, 1, U"Get standard deviation...",
+				nullptr, 1, REAL_Intensity_getStandardDeviation);
 	praat_addAction1 (classIntensity, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classIntensity);
-		praat_addAction1 (classIntensity, 0, U"Formula...", nullptr, 1, MODIFY_Intensity_formula);
-	praat_addAction1 (classIntensity, 0, U"Analyse", nullptr, 0, nullptr);
-		praat_addAction1 (classIntensity, 0, U"To IntensityTier (peaks)", nullptr, 0, NEW_Intensity_to_IntensityTier_peaks);
-		praat_addAction1 (classIntensity, 0, U"To IntensityTier (valleys)", nullptr, 0, NEW_Intensity_to_IntensityTier_valleys);
-	praat_addAction1 (classIntensity, 0, U"Convert", nullptr, 0, nullptr);
-		praat_addAction1 (classIntensity, 0, U"Down to IntensityTier", nullptr, 0, NEW_Intensity_downto_IntensityTier);
-		praat_addAction1 (classIntensity, 0, U"Down to Matrix", nullptr, 0, NEW_Intensity_downto_Matrix);
+		praat_addAction1 (classIntensity, 0, U"Formula...",
+				nullptr, 1, MODIFY_Intensity_formula);
+praat_addAction1 (classIntensity, 0, U"Analyse", nullptr, 0, nullptr);
+	praat_addAction1 (classIntensity, 0, U"To IntensityTier (peaks)",
+			nullptr, 0, NEW_Intensity_to_IntensityTier_peaks);
+	praat_addAction1 (classIntensity, 0, U"To IntensityTier (valleys)",
+			nullptr, 0, NEW_Intensity_to_IntensityTier_valleys);
+praat_addAction1 (classIntensity, 0, U"Convert", nullptr, 0, nullptr);
+	praat_addAction1 (classIntensity, 0, U"Down to IntensityTier",
+			nullptr, 0, NEW_Intensity_downto_IntensityTier);
+	praat_addAction1 (classIntensity, 0, U"Down to Matrix",
+			nullptr, 0, NEW_Intensity_downto_Matrix);
 
-	praat_addAction1 (classLtas, 0, U"Ltas help", nullptr, 0, HELP_Ltas_help);
-	praat_addAction1 (classLtas, 0, U"Draw...", nullptr, 0, GRAPHICS_Ltas_draw);
+	praat_addAction1 (classLtas, 0, U"Ltas help",
+			nullptr, 0, HELP_Ltas_help);
+	praat_addAction1 (classLtas, 0, U"Draw...",
+			nullptr, 0, GRAPHICS_Ltas_draw);
 	praat_addAction1 (classLtas, 1, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classLtas, 1, U"Frequency domain", nullptr, 1, nullptr);
-		praat_addAction1 (classLtas, 1, U"Get lowest frequency", nullptr, 2, REAL_Ltas_getLowestFrequency);
-		praat_addAction1 (classLtas, 1, U"Get highest frequency", nullptr, 2, REAL_Ltas_getHighestFrequency);
+			praat_addAction1 (classLtas, 1, U"Get lowest frequency",
+					nullptr, 2, REAL_Ltas_getLowestFrequency);
+			praat_addAction1 (classLtas, 1, U"Get highest frequency",
+					nullptr, 2, REAL_Ltas_getHighestFrequency);
 		praat_addAction1 (classLtas, 1, U"Frequency sampling", nullptr, 1, nullptr);
-		praat_addAction1 (classLtas, 1, U"Get number of bins", nullptr, 2, INTEGER_Ltas_getNumberOfBins);
-			praat_addAction1 (classLtas, 1, U"Get number of bands", U"*Get number of bins", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, INTEGER_Ltas_getNumberOfBins);
-		praat_addAction1 (classLtas, 1, U"Get bin width", nullptr, 2, REAL_Ltas_getBinWidth);
-			praat_addAction1 (classLtas, 1, U"Get band width", U"*Get bin width", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_Ltas_getBinWidth);
-		praat_addAction1 (classLtas, 1, U"Get frequency from bin number...", nullptr, 2, REAL_Ltas_getFrequencyFromBinNumber);
-			praat_addAction1 (classLtas, 1, U"Get frequency from band...", U"*Get frequency from bin number...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_Ltas_getFrequencyFromBinNumber);
-		praat_addAction1 (classLtas, 1, U"Get bin number from frequency...", nullptr, 2, REAL_Ltas_getBinNumberFromFrequency);
-			praat_addAction1 (classLtas, 1, U"Get band from frequency...", U"*Get bin number from frequency...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_Ltas_getBinNumberFromFrequency);
-		praat_addAction1 (classLtas, 1, U"-- get content --", nullptr, 1, nullptr);
-		praat_addAction1 (classLtas, 1, U"Get value at frequency...", nullptr, 1, REAL_Ltas_getValueAtFrequency);
-		praat_addAction1 (classLtas, 1, U"Get value in bin...", nullptr, 1, REAL_Ltas_getValueInBin);
-			praat_addAction1 (classLtas, 1, U"Get value in band...", U"*Get value in bin...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2004, REAL_Ltas_getValueInBin);
-		praat_addAction1 (classLtas, 1, U"-- get extreme --", nullptr, 1, nullptr);
-		praat_addAction1 (classLtas, 1, U"Get minimum...", nullptr, 1, REAL_Ltas_getMinimum);
-		praat_addAction1 (classLtas, 1, U"Get frequency of minimum...", nullptr, 1, REAL_Ltas_getFrequencyOfMinimum);
-		praat_addAction1 (classLtas, 1, U"Get maximum...", nullptr, 1, REAL_Ltas_getMaximum);
-		praat_addAction1 (classLtas, 1, U"Get frequency of maximum...", nullptr, 1, REAL_Ltas_getFrequencyOfMaximum);
-		praat_addAction1 (classLtas, 1, U"-- get statistics --", nullptr, 1, nullptr);
-		praat_addAction1 (classLtas, 1, U"Get mean...", nullptr, 1, REAL_Ltas_getMean);
-		praat_addAction1 (classLtas, 1, U"Get slope...", nullptr, 1, REAL_Ltas_getSlope);
-		praat_addAction1 (classLtas, 1, U"Get local peak height...", nullptr, 1, REAL_Ltas_getLocalPeakHeight);
-		praat_addAction1 (classLtas, 1, U"Get standard deviation...", nullptr, 1, REAL_Ltas_getStandardDeviation);
-	praat_addAction1 (classLtas, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classLtas, 0, U"Formula...", nullptr, 0, MODIFY_Ltas_formula);
-	praat_addAction1 (classLtas, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classLtas, 0, U"To SpectrumTier (peaks)", nullptr, 0, NEW_Ltas_to_SpectrumTier_peaks);
-	praat_addAction1 (classLtas, 0, U"Convert", nullptr, 0, nullptr);
-	praat_addAction1 (classLtas, 0, U"Compute trend line...", nullptr, 0, NEW_Ltas_computeTrendLine);
-	praat_addAction1 (classLtas, 0, U"Subtract trend line...", nullptr, 0, NEW_Ltas_subtractTrendLine);
-	praat_addAction1 (classLtas, 0, U"Combine", nullptr, 0, nullptr);
-	praat_addAction1 (classLtas, 0, U"Merge", nullptr, GuiMenu_DEPRECATED_2005, NEW1_Ltases_merge);
-	praat_addAction1 (classLtas, 0, U"Average", nullptr, 0, NEW1_Ltases_average);
-	praat_addAction1 (classLtas, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classLtas, 0, U"To Matrix", nullptr, 0, NEW_Ltas_to_Matrix);
+			praat_addAction1 (classLtas, 1, U"Get number of bins || Get number of bands",
+					nullptr, 2, INTEGER_Ltas_getNumberOfBins);   // alternative GuiMenu_DEPRECATED_2004
+			praat_addAction1 (classLtas, 1, U"Get bin width || Get band width",
+					nullptr, 2, REAL_Ltas_getBinWidth);
+			praat_addAction1 (classLtas, 1, U"Get frequency from bin number... || Get frequency from band...",
+					nullptr, 2, REAL_Ltas_getFrequencyFromBinNumber);
+			praat_addAction1 (classLtas, 1, U"Get bin number from frequency... || Get band from frequency...",
+					nullptr, 2, REAL_Ltas_getBinNumberFromFrequency);
+		praat_addAction1 (classLtas, 1, U"-- get content --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classLtas, 1, U"Get value at frequency...",
+				nullptr, 1, REAL_Ltas_getValueAtFrequency);
+		praat_addAction1 (classLtas, 1, U"Get value in bin... || Get value in band...",
+				nullptr, 1, REAL_Ltas_getValueInBin);
+		praat_addAction1 (classLtas, 1, U"-- get extreme --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classLtas, 1, U"Get minimum...",
+				nullptr, 1, REAL_Ltas_getMinimum);
+		praat_addAction1 (classLtas, 1, U"Get frequency of minimum...",
+				nullptr, 1, REAL_Ltas_getFrequencyOfMinimum);
+		praat_addAction1 (classLtas, 1, U"Get maximum...",
+				nullptr, 1, REAL_Ltas_getMaximum);
+		praat_addAction1 (classLtas, 1, U"Get frequency of maximum...",
+				nullptr, 1, REAL_Ltas_getFrequencyOfMaximum);
+		praat_addAction1 (classLtas, 1, U"-- get statistics --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classLtas, 1, U"Get mean...",
+				nullptr, 1, REAL_Ltas_getMean);
+		praat_addAction1 (classLtas, 1, U"Get slope...",
+				nullptr, 1, REAL_Ltas_getSlope);
+		praat_addAction1 (classLtas, 1, U"Get local peak height...",
+				nullptr, 1, REAL_Ltas_getLocalPeakHeight);
+		praat_addAction1 (classLtas, 1, U"Get standard deviation...",
+				nullptr, 1, REAL_Ltas_getStandardDeviation);
+praat_addAction1 (classLtas, 0, U"Modify", nullptr, 0, nullptr);
+	praat_addAction1 (classLtas, 0, U"Formula...",
+			nullptr, 0, MODIFY_Ltas_formula);
+praat_addAction1 (classLtas, 0, U"Analyse", nullptr, 0, nullptr);
+	praat_addAction1 (classLtas, 0, U"To SpectrumTier (peaks)",
+			nullptr, 0, NEW_Ltas_to_SpectrumTier_peaks);
+praat_addAction1 (classLtas, 0, U"Convert", nullptr, 0, nullptr);
+	praat_addAction1 (classLtas, 0, U"Compute trend line...",
+			nullptr, 0, NEW_Ltas_computeTrendLine);
+	praat_addAction1 (classLtas, 0, U"Subtract trend line...",
+			nullptr, 0, NEW_Ltas_subtractTrendLine);
+praat_addAction1 (classLtas, 0, U"Combine", nullptr, 0, nullptr);
+	praat_addAction1 (classLtas, 0, U"Merge",
+			nullptr, GuiMenu_DEPRECATED_2005, NEW1_Ltases_merge);
+	praat_addAction1 (classLtas, 0, U"Average",
+			nullptr, 0, NEW1_Ltases_average);
+praat_addAction1 (classLtas, 0, U"Hack", nullptr, 0, nullptr);
+	praat_addAction1 (classLtas, 0, U"To Matrix",
+			nullptr, 0, NEW_Ltas_to_Matrix);
 
-	praat_addAction1 (classManipulation, 0, U"Manipulation help", nullptr, 0, HELP_Manipulation_help);
-	praat_addAction1 (classManipulation, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Manipulation_viewAndEdit);
-	praat_addAction1 (classManipulation, 1,   U"Edit", nullptr, GuiMenu_DEPRECATED_2011, EDITOR_ONE_Manipulation_viewAndEdit);
-	praat_addAction1 (classManipulation, 0, U"Play (overlap-add)", nullptr, 0, PLAY_Manipulation_play_overlapAdd);
-	praat_addAction1 (classManipulation, 0,   U"Play (PSOLA)", nullptr, GuiMenu_DEPRECATED_2007, PLAY_Manipulation_play_overlapAdd);
-	praat_addAction1 (classManipulation, 0, U"Play (LPC)", nullptr, 0, PLAY_Manipulation_play_lpc);
-	praat_addAction1 (classManipulation, 0, U"Get resynthesis (overlap-add)", nullptr, 0, NEW_Manipulation_getResynthesis_overlapAdd);
-	praat_addAction1 (classManipulation, 0,   U"Get resynthesis (PSOLA)", U"*Get resynthesis (overlap-add)", GuiMenu_DEPRECATED_2007, NEW_Manipulation_getResynthesis_overlapAdd);
-	praat_addAction1 (classManipulation, 0, U"Get resynthesis (LPC)", nullptr, 0, NEW_Manipulation_getResynthesis_lpc);
-	praat_addAction1 (classManipulation, 0, U"Extract original sound", nullptr, 0, NEW_Manipulation_extractOriginalSound);
-	praat_addAction1 (classManipulation, 0, U"Extract pulses", nullptr, 0, NEW_Manipulation_extractPulses);
-	praat_addAction1 (classManipulation, 0, U"Extract pitch tier", nullptr, 0, NEW_Manipulation_extractPitchTier);
-	praat_addAction1 (classManipulation, 0, U"Extract duration tier", nullptr, 0, NEW_Manipulation_extractDurationTier);
+	praat_addAction1 (classManipulation, 0, U"Manipulation help",
+			nullptr, 0, HELP_Manipulation_help);
+	praat_addAction1 (classManipulation, 1, U"View & Edit || Edit",
+			nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Manipulation_viewAndEdit);
+	praat_addAction1 (classManipulation, 0, U"Play (overlap-add) || Play (PSOLA)",
+			nullptr, 0, PLAY_Manipulation_play_overlapAdd);   // alternative GuiMenu_DEPRECATED_2007
+	praat_addAction1 (classManipulation, 0, U"Play (LPC)",
+			nullptr, 0, PLAY_Manipulation_play_lpc);
+	praat_addAction1 (classManipulation, 0, U"Get resynthesis (overlap-add) || Get resynthesis (PSOLA)",
+			nullptr, 0, NEW_Manipulation_getResynthesis_overlapAdd);
+	praat_addAction1 (classManipulation, 0, U"Get resynthesis (LPC)",
+			nullptr, 0, NEW_Manipulation_getResynthesis_lpc);
+	praat_addAction1 (classManipulation, 0, U"Extract original sound",
+			nullptr, 0, NEW_Manipulation_extractOriginalSound);
+	praat_addAction1 (classManipulation, 0, U"Extract pulses",
+			nullptr, 0, NEW_Manipulation_extractPulses);
+	praat_addAction1 (classManipulation, 0, U"Extract pitch tier",
+			nullptr, 0, NEW_Manipulation_extractPitchTier);
+	praat_addAction1 (classManipulation, 0, U"Extract duration tier",
+			nullptr, 0, NEW_Manipulation_extractDurationTier);
 	praat_addAction1 (classManipulation, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classManipulation);
-		praat_addAction1 (classManipulation, 0, U"Replace pitch tier?", nullptr, 1, HELP_Manipulation_replacePitchTier_help);
-		praat_addAction1 (classManipulation, 0, U"Replace duration tier?", nullptr, 1, HELP_Manipulation_replaceDurationTier_help);
-	praat_addAction1 (classManipulation, 1, U"Save as text file without Sound...", nullptr, 0, SAVE_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1,   U"Write to text file without Sound...", U"*Save as text file without Sound...", GuiMenu_DEPRECATED_2011, SAVE_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, U"Save as binary file without Sound...", nullptr, 0, SAVE_Manipulation_writeToBinaryFileWithoutSound);
-	praat_addAction1 (classManipulation, 1,   U"Write to binary file without Sound...", U"*Save as binary file without Sound...", GuiMenu_DEPRECATED_2011, SAVE_Manipulation_writeToBinaryFileWithoutSound);
+		praat_addAction1 (classManipulation, 0, U"Replace pitch tier?",
+				nullptr, 1, HELP_Manipulation_replacePitchTier_help);
+		praat_addAction1 (classManipulation, 0, U"Replace duration tier?",
+				nullptr, 1, HELP_Manipulation_replaceDurationTier_help);
+	praat_addAction1 (classManipulation, 1, U"Save as text file without Sound... || Write to text file without Sound...",
+			nullptr, 0, SAVE_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, U"Save as binary file without Sound... || Write to binary file without Sound...",
+			nullptr, 0, SAVE_Manipulation_writeToBinaryFileWithoutSound);
 
-	praat_addAction1 (classParamCurve, 0, U"ParamCurve help", nullptr, 0, HELP_ParamCurve_help);
-	praat_addAction1 (classParamCurve, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classParamCurve, 0, U"Draw...", nullptr, 0, GRAPHICS_ParamCurve_draw);
+	praat_addAction1 (classParamCurve, 0, U"ParamCurve help",
+			nullptr, 0, HELP_ParamCurve_help);
+praat_addAction1 (classParamCurve, 0, U"Draw", nullptr, 0, nullptr);
+	praat_addAction1 (classParamCurve, 0, U"Draw...",
+			nullptr, 0, GRAPHICS_ParamCurve_draw);
 
-	praat_addAction1 (classPitch, 0, U"Pitch help", nullptr, 0, HELP_Pitch_help);
-	praat_addAction1 (classPitch, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Pitch_viewAndEdit);
-	praat_addAction1 (classPitch, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, EDITOR_ONE_Pitch_viewAndEdit);
+	praat_addAction1 (classPitch, 0, U"Pitch help",
+			nullptr, 0, HELP_Pitch_help);
+	praat_addAction1 (classPitch, 1, U"View & Edit || Edit",
+			nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Pitch_viewAndEdit);
 	praat_addAction1 (classPitch, 0, U"Sound -", nullptr, 0, nullptr);
-		praat_addAction1 (classPitch, 0, U"Play pulses", nullptr, 1, PLAY_Pitch_play);
-		praat_addAction1 (classPitch, 0, U"Hum", nullptr, 1, PLAY_Pitch_hum);
-		praat_addAction1 (classPitch, 0, U"-- to sound --", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 0, U"To Sound (pulses)", nullptr, 1, NEW_Pitch_to_Sound_pulses);
-		praat_addAction1 (classPitch, 0, U"To Sound (hum)", nullptr, 1, NEW_Pitch_to_Sound_hum);
-		praat_addAction1 (classPitch, 0, U"To Sound (sine)...", nullptr, 1, NEW_Pitch_to_Sound_sine);
+		praat_addAction1 (classPitch, 0, U"Play pulses",
+				nullptr, 1, PLAY_Pitch_play);
+		praat_addAction1 (classPitch, 0, U"Hum",
+				nullptr, 1, PLAY_Pitch_hum);
+		praat_addAction1 (classPitch, 0, U"-- to sound --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 0, U"To Sound (pulses)",
+				nullptr, 1, NEW_Pitch_to_Sound_pulses);
+		praat_addAction1 (classPitch, 0, U"To Sound (hum)",
+				nullptr, 1, NEW_Pitch_to_Sound_hum);
+		praat_addAction1 (classPitch, 0, U"To Sound (sine)...",
+				nullptr, 1, NEW_Pitch_to_Sound_sine);
 	praat_addAction1 (classPitch, 0, U"Draw -", nullptr, 0, nullptr);
-		praat_addAction1 (classPitch, 0, U"Draw...", nullptr, 1, GRAPHICS_Pitch_draw);
-		praat_addAction1 (classPitch, 0, U"Draw logarithmic...", nullptr, 1, GRAPHICS_Pitch_drawLogarithmic);
-		praat_addAction1 (classPitch, 0, U"Draw semitones (re 100 Hz)...", nullptr, 1, GRAPHICS_Pitch_drawSemitones100);
-		praat_addAction1 (classPitch, 0,   U"Draw semitones...", U"*Draw semitones (re 100 Hz)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2012, GRAPHICS_Pitch_drawSemitones100);
-		praat_addAction1 (classPitch, 0, U"Draw semitones (re 200 Hz)...", nullptr, 1, GRAPHICS_Pitch_drawSemitones200);
-		praat_addAction1 (classPitch, 0, U"Draw semitones (re 440 Hz)...", nullptr, 1, GRAPHICS_Pitch_drawSemitones440);
-		praat_addAction1 (classPitch, 0, U"Draw mel...", nullptr, 1, GRAPHICS_Pitch_drawMel);
-		praat_addAction1 (classPitch, 0, U"Draw erb...", nullptr, 1, GRAPHICS_Pitch_drawErb);
-		praat_addAction1 (classPitch, 0, U"Speckle...", nullptr, 1, GRAPHICS_Pitch_speckle);
-		praat_addAction1 (classPitch, 0, U"Speckle logarithmic...", nullptr, 1, GRAPHICS_Pitch_speckleLogarithmic);
-		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 100 Hz)...", nullptr, 1, GRAPHICS_Pitch_speckleSemitones100);
-		praat_addAction1 (classPitch, 0,   U"Speckle semitones...", U"*Speckle semitones (re 100 Hz)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2012, GRAPHICS_Pitch_speckleSemitones100);
-		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 200 Hz)...", nullptr, 1, GRAPHICS_Pitch_speckleSemitones200);
-		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 440 Hz)...", nullptr, 1, GRAPHICS_Pitch_speckleSemitones440);
-		praat_addAction1 (classPitch, 0, U"Speckle mel...", nullptr, 1, GRAPHICS_Pitch_speckleMel);
-		praat_addAction1 (classPitch, 0, U"Speckle erb...", nullptr, 1, GRAPHICS_Pitch_speckleErb);
+		praat_addAction1 (classPitch, 0, U"Draw...",
+				nullptr, 1, GRAPHICS_Pitch_draw);
+		praat_addAction1 (classPitch, 0, U"Draw logarithmic...",
+				nullptr, 1, GRAPHICS_Pitch_drawLogarithmic);
+		praat_addAction1 (classPitch, 0, U"Draw semitones (re 100 Hz)... || Draw semitones...",
+				nullptr, 1, GRAPHICS_Pitch_drawSemitones100);   // alternativeGuiMenu_DEPRECATED_2012
+		praat_addAction1 (classPitch, 0, U"Draw semitones (re 200 Hz)...",
+				nullptr, 1, GRAPHICS_Pitch_drawSemitones200);
+		praat_addAction1 (classPitch, 0, U"Draw semitones (re 440 Hz)...",
+				nullptr, 1, GRAPHICS_Pitch_drawSemitones440);
+		praat_addAction1 (classPitch, 0, U"Draw mel...",
+				nullptr, 1, GRAPHICS_Pitch_drawMel);
+		praat_addAction1 (classPitch, 0, U"Draw erb...",
+				nullptr, 1, GRAPHICS_Pitch_drawErb);
+		praat_addAction1 (classPitch, 0, U"Speckle...",
+				nullptr, 1, GRAPHICS_Pitch_speckle);
+		praat_addAction1 (classPitch, 0, U"Speckle logarithmic...",
+				nullptr, 1, GRAPHICS_Pitch_speckleLogarithmic);
+		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 100 Hz)... || Speckle semitones...",
+				nullptr, 1, GRAPHICS_Pitch_speckleSemitones100);
+		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 200 Hz)...",
+				nullptr, 1, GRAPHICS_Pitch_speckleSemitones200);
+		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 440 Hz)...",
+				nullptr, 1, GRAPHICS_Pitch_speckleSemitones440);
+		praat_addAction1 (classPitch, 0, U"Speckle mel...",
+				nullptr, 1, GRAPHICS_Pitch_speckleMel);
+		praat_addAction1 (classPitch, 0, U"Speckle erb...",
+				nullptr, 1, GRAPHICS_Pitch_speckleErb);
 	praat_addAction1 (classPitch, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classPitch);
-		praat_addAction1 (classPitch, 1, U"-- get content --", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 1, U"Count voiced frames", nullptr, 1, INTEGER_Pitch_getNumberOfVoicedFrames);
-		praat_addAction1 (classPitch, 1, U"Get value at time...", nullptr, 1, REAL_Pitch_getValueAtTime);
-		praat_addAction1 (classPitch, 1, U"List values at times...", nullptr, 1, NUMVEC_Pitch_listValuesAtTimes);
-		praat_addAction1 (classPitch, 1, U"Get value in frame...", nullptr, 1, REAL_Pitch_getValueInFrame);
-		praat_addAction1 (classPitch, 1, U"List values in all frames...", nullptr, 1, NUMVEC_Pitch_listValuesInAllFrames);
-		praat_addAction1 (classPitch, 1, U"-- get extreme --", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 1, U"Get minimum...", nullptr, 1, REAL_Pitch_getMinimum);
-		praat_addAction1 (classPitch, 1, U"Get time of minimum...", nullptr, 1, REAL_Pitch_getTimeOfMinimum);
-		praat_addAction1 (classPitch, 1, U"Get maximum...", nullptr, 1, REAL_Pitch_getMaximum);
-		praat_addAction1 (classPitch, 1, U"Get time of maximum...", nullptr, 1, REAL_Pitch_getTimeOfMaximum);
-		praat_addAction1 (classPitch, 1, U"-- get statistics --", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 1, U"Get quantile...", nullptr, 1, REAL_Pitch_getQuantile);
-		/*praat_addAction1 (classPitch, 1, U"Get spreading...", nullptr, 1, REAL_Pitch_getSpreading);*/
-		praat_addAction1 (classPitch, 1, U"Get mean...", nullptr, 1, REAL_Pitch_getMean);
-		praat_addAction1 (classPitch, 1, U"Get standard deviation...", nullptr, 1, REAL_Pitch_getStandardDeviation);
-		praat_addAction1 (classPitch, 1, U"-- get slope --", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 1, U"Get mean absolute slope...", nullptr, 1, REAL_Pitch_getMeanAbsoluteSlope);
-		praat_addAction1 (classPitch, 1, U"Get slope without octave jumps", nullptr, 1, REAL_Pitch_getMeanAbsSlope_noOctave);
-		praat_addAction1 (classPitch, 2, U"-- query two --", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 2, U"Count differences", nullptr, 1, INFO_Pitch_difference);
-		praat_addAction1 (classPitch, 2, U"-- hack --", nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 1, U"-- get content --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 1, U"Count voiced frames",
+				nullptr, 1, INTEGER_Pitch_getNumberOfVoicedFrames);
+		praat_addAction1 (classPitch, 1, U"Get value at time...",
+				nullptr, 1, REAL_Pitch_getValueAtTime);
+		praat_addAction1 (classPitch, 1, U"List values at times...",
+				nullptr, 1, NUMVEC_Pitch_listValuesAtTimes);
+		praat_addAction1 (classPitch, 1, U"Get value in frame...",
+				nullptr, 1, REAL_Pitch_getValueInFrame);
+		praat_addAction1 (classPitch, 1, U"List values in all frames...",
+				nullptr, 1, NUMVEC_Pitch_listValuesInAllFrames);
+		praat_addAction1 (classPitch, 1, U"-- get extreme --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 1, U"Get minimum...",
+				nullptr, 1, REAL_Pitch_getMinimum);
+		praat_addAction1 (classPitch, 1, U"Get time of minimum...",
+				nullptr, 1, REAL_Pitch_getTimeOfMinimum);
+		praat_addAction1 (classPitch, 1, U"Get maximum...",
+				nullptr, 1, REAL_Pitch_getMaximum);
+		praat_addAction1 (classPitch, 1, U"Get time of maximum...",
+				nullptr, 1, REAL_Pitch_getTimeOfMaximum);
+		praat_addAction1 (classPitch, 1, U"-- get statistics --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 1, U"Get quantile...",
+				nullptr, 1, REAL_Pitch_getQuantile);
+		/*praat_addAction1 (classPitch, 1, U"Get spreading...",
+				nullptr, 1, REAL_Pitch_getSpreading);*/
+		praat_addAction1 (classPitch, 1, U"Get mean...",
+				nullptr, 1, REAL_Pitch_getMean);
+		praat_addAction1 (classPitch, 1, U"Get standard deviation...",
+				nullptr, 1, REAL_Pitch_getStandardDeviation);
+		praat_addAction1 (classPitch, 1, U"-- get slope --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 1, U"Get mean absolute slope...",
+				nullptr, 1, REAL_Pitch_getMeanAbsoluteSlope);
+		praat_addAction1 (classPitch, 1, U"Get slope without octave jumps",
+				nullptr, 1, REAL_Pitch_getMeanAbsSlope_noOctave);
+		praat_addAction1 (classPitch, 2, U"-- query two --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 2, U"Count differences",
+				nullptr, 1, INFO_Pitch_difference);
+		praat_addAction1 (classPitch, 2, U"-- hack --",
+				nullptr, 1, nullptr);
 		praat_addAction1 (classPitch, 1, U"Internal", nullptr, 1, nullptr);
-			praat_addAction1 (classPitch, 0, U"Tabulate candidates", nullptr, 2, NEW_Pitch_tabulateCandidates);
-			praat_addAction1 (classPitch, 0, U"Tabulate candidates in frame...", nullptr, 2, NEW_Pitch_tabulateCandidatesInFrame);
-			praat_addAction1 (classPitch, 1, U"Get all candidates in frame...", nullptr, 2, NUMMAT_Pitch_getAllCandidatesInFrame);
+			praat_addAction1 (classPitch, 0, U"Tabulate candidates",
+					nullptr, 2, NEW_Pitch_tabulateCandidates);
+			praat_addAction1 (classPitch, 0, U"Tabulate candidates in frame...",
+					nullptr, 2, NEW_Pitch_tabulateCandidatesInFrame);
+			praat_addAction1 (classPitch, 1, U"Get all candidates in frame...",
+					nullptr, 2, NUMMAT_Pitch_getAllCandidatesInFrame);
 	praat_addAction1 (classPitch, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPitch);
-		praat_addAction1 (classPitch, 0, U"Formula...", nullptr, 1, MODIFY_Pitch_formula);
+		praat_addAction1 (classPitch, 0, U"Formula...",
+				nullptr, 1, MODIFY_Pitch_formula);
 	praat_addAction1 (classPitch, 0, U"Annotate -", nullptr, 0, nullptr);
-		praat_addAction1 (classPitch, 0, U"To TextGrid...", nullptr, 1, NEW_Pitch_to_TextGrid);
-		praat_addAction1 (classPitch, 0, U"-- to single tier --", nullptr, GuiMenu_HIDDEN + GuiMenu_DEPTH_1, nullptr);
-		praat_addAction1 (classPitch, 0, U"To TextTier", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1, NEW_Pitch_to_TextTier);
-		praat_addAction1 (classPitch, 0, U"To IntervalTier", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1, NEW_Pitch_to_IntervalTier);
+		praat_addAction1 (classPitch, 0, U"To TextGrid...",
+				nullptr, 1, NEW_Pitch_to_TextGrid);
+		praat_addAction1 (classPitch, 0, U"-- to single tier --",
+				nullptr, GuiMenu_HIDDEN + GuiMenu_DEPTH_1, nullptr);
+		praat_addAction1 (classPitch, 0, U"To TextTier",
+				nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1, NEW_Pitch_to_TextTier);
+		praat_addAction1 (classPitch, 0, U"To IntervalTier",
+				nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1, NEW_Pitch_to_IntervalTier);
 	praat_addAction1 (classPitch, 0, U"Analyse -", nullptr, 0, nullptr);
-		praat_addAction1 (classPitch, 0, U"To PointProcess", nullptr, 1, NEW_Pitch_to_PointProcess);
+		praat_addAction1 (classPitch, 0, U"To PointProcess",
+				nullptr, 1, NEW_Pitch_to_PointProcess);
 	praat_addAction1 (classPitch, 0, U"Convert -", nullptr, 0, nullptr);
-		praat_addAction1 (classPitch, 0, U"Interpolate", nullptr, 1, NEW_Pitch_interpolate);
-		praat_addAction1 (classPitch, 0, U"Smooth...", nullptr, 1, NEW_Pitch_smooth);
-		praat_addAction1 (classPitch, 0, U"Subtract linear fit...", nullptr, 1, NEW_Pitch_subtractLinearFit);
+		praat_addAction1 (classPitch, 0, U"Interpolate",
+				nullptr, 1, NEW_Pitch_interpolate);
+		praat_addAction1 (classPitch, 0, U"Smooth...",
+				nullptr, 1, NEW_Pitch_smooth);
+		praat_addAction1 (classPitch, 0, U"Subtract linear fit...",
+				nullptr, 1, NEW_Pitch_subtractLinearFit);
 		praat_addAction1 (classPitch, 0, U"Hack", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 0, U"Kill octave jumps", nullptr, 2, NEW_Pitch_killOctaveJumps);
-		praat_addAction1 (classPitch, 0, U"-- to other types --", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 0, U"Down to PitchTier", nullptr, 1, NEW_Pitch_downto_PitchTier);
-		praat_addAction1 (classPitch, 0, U"To Matrix", nullptr, 1, NEW_Pitch_to_Matrix);
+			praat_addAction1 (classPitch, 0, U"Kill octave jumps",
+					nullptr, 2, NEW_Pitch_killOctaveJumps);
+		praat_addAction1 (classPitch, 0, U"-- to other types --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classPitch, 0, U"Down to PitchTier",
+				nullptr, 1, NEW_Pitch_downto_PitchTier);
+		praat_addAction1 (classPitch, 0, U"To Matrix",
+				nullptr, 1, NEW_Pitch_to_Matrix);
 
-	praat_addAction1 (classPolygon, 0, U"Polygon help", nullptr, 0, HELP_Polygon_help);
-praat_addAction1 (classPolygon, 0, U"Draw -", nullptr, 0, nullptr);
-	praat_addAction1 (classPolygon, 0, U"Draw...", nullptr, 1, GRAPHICS_Polygon_draw);
-	praat_addAction1 (classPolygon, 0, U"Draw closed...", nullptr, 1, GRAPHICS_Polygon_drawClosed);
-	praat_addAction1 (classPolygon, 0, U"Paint...", nullptr, 1, GRAPHICS_Polygon_paint);
-	praat_addAction1 (classPolygon, 0, U"Draw circles...", nullptr, 1, GRAPHICS_Polygon_drawCircles);
-	praat_addAction1 (classPolygon, 0, U"Paint circles...", nullptr, 1, GRAPHICS_Polygon_paintCircles);
-	praat_addAction1 (classPolygon, 2, U"Draw connection...", nullptr, 1, GRAPHICS_Polygons_drawConnection);
-praat_addAction1 (classPolygon, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classPolygon, 0, U"Randomize", nullptr, 1, MODIFY_Polygon_randomize);
-	praat_addAction1 (classPolygon, 0, U"Salesperson...", nullptr, 1, MODIFY_Polygon_salesperson);
-praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
-	praat_addAction1 (classPolygon, 0, U"To Matrix", nullptr, 1, NEW_Polygon_to_Matrix);
+	praat_addAction1 (classPolygon, 0, U"Polygon help",
+			nullptr, 0, HELP_Polygon_help);
+	praat_addAction1 (classPolygon, 0, U"Draw -", nullptr, 0, nullptr);
+		praat_addAction1 (classPolygon, 0, U"Draw...",
+				nullptr, 1, GRAPHICS_Polygon_draw);
+		praat_addAction1 (classPolygon, 0, U"Draw closed...",
+				nullptr, 1, GRAPHICS_Polygon_drawClosed);
+		praat_addAction1 (classPolygon, 0, U"Paint...",
+				nullptr, 1, GRAPHICS_Polygon_paint);
+		praat_addAction1 (classPolygon, 0, U"Draw circles...",
+				nullptr, 1, GRAPHICS_Polygon_drawCircles);
+		praat_addAction1 (classPolygon, 0, U"Paint circles...",
+				nullptr, 1, GRAPHICS_Polygon_paintCircles);
+		praat_addAction1 (classPolygon, 2, U"Draw connection...",
+				nullptr, 1, GRAPHICS_Polygons_drawConnection);
+	praat_addAction1 (classPolygon, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_addAction1 (classPolygon, 0, U"Randomize",
+				nullptr, 1, MODIFY_Polygon_randomize);
+		praat_addAction1 (classPolygon, 0, U"Salesperson...",
+				nullptr, 1, MODIFY_Polygon_salesperson);
+	praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
+		praat_addAction1 (classPolygon, 0, U"To Matrix", nullptr, 1, NEW_Polygon_to_Matrix);
 
-	praat_addAction1 (classSpectrogram, 0, U"Spectrogram help", nullptr, 0, HELP_Spectrogram_help);
-	praat_addAction1 (classSpectrogram, 1, U"View", nullptr, 0, EDITOR_ONE_Spectrogram_view);
-	praat_addAction1 (classSpectrogram, 1, U"Play movie", nullptr, 0, MOVIE_Spectrogram_playMovie);
-	praat_addAction1 (classSpectrogram, 1, U"Movie", nullptr, GuiMenu_HIDDEN, MOVIE_Spectrogram_playMovie);
+	praat_addAction1 (classSpectrogram, 0, U"Spectrogram help",
+			nullptr, 0, HELP_Spectrogram_help);
+	praat_addAction1 (classSpectrogram, 1, U"View",
+			nullptr, 0, EDITOR_ONE_Spectrogram_view);
+	praat_addAction1 (classSpectrogram, 1, U"Play movie || Movie",
+			nullptr, 0, MOVIE_Spectrogram_playMovie);
 	praat_addAction1 (classSpectrogram, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classSpectrogram);
-		praat_addAction1 (classSpectrogram, 1, U"Get power at...", nullptr, 1, REAL_Spectrogram_getPowerAt);
+		praat_addAction1 (classSpectrogram, 1, U"Get power at...",
+				nullptr, 1, REAL_Spectrogram_getPowerAt);
 	praat_addAction1 (classSpectrogram, 0, U"Draw -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrogram, 0, U"Paint...", nullptr, 1, GRAPHICS_Spectrogram_paint);
+		praat_addAction1 (classSpectrogram, 0, U"Paint...",
+				nullptr, 1, GRAPHICS_Spectrogram_paint);
 	praat_addAction1 (classSpectrogram, 0, U"Analyse -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrogram, 0, U"To Spectrum (slice)...", nullptr, 1, NEW_Spectrogram_to_Spectrum);
+		praat_addAction1 (classSpectrogram, 0, U"To Spectrum (slice)...",
+				nullptr, 1, NEW_Spectrogram_to_Spectrum);
 	praat_addAction1 (classSpectrogram, 0, U"Synthesize -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrogram, 0, U"To Sound...", nullptr, 1, NEW_Spectrogram_to_Sound);
+		praat_addAction1 (classSpectrogram, 0, U"To Sound...",
+				nullptr, 1, NEW_Spectrogram_to_Sound);
 	praat_addAction1 (classSpectrogram, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classSpectrogram);
-		praat_addAction1 (classSpectrogram, 0, U"Formula...", nullptr, 1, MODIFY_Spectrogram_formula);
+		praat_addAction1 (classSpectrogram, 0, U"Formula...",
+				nullptr, 1, MODIFY_Spectrogram_formula);
 	praat_addAction1 (classSpectrogram, 0, U"Hack -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrogram, 0, U"To Matrix", nullptr, 1, NEW_Spectrogram_to_Matrix);
+		praat_addAction1 (classSpectrogram, 0, U"To Matrix",
+				nullptr, 1, NEW_Spectrogram_to_Matrix);
 
-	praat_addAction1 (classSpectrum, 0, U"Spectrum help", nullptr, 0, HELP_Spectrum_help);
-	praat_addAction1 (classSpectrum, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Spectrum_viewAndEdit);
-	praat_addAction1 (classSpectrum, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, EDITOR_ONE_Spectrum_viewAndEdit);
+	praat_addAction1 (classSpectrum, 0, U"Spectrum help",
+			nullptr, 0, HELP_Spectrum_help);
+	praat_addAction1 (classSpectrum, 1, U"View & Edit || Edit",
+			nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Spectrum_viewAndEdit);
 	praat_addAction1 (classSpectrum, 0, U"Sound -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrum, 0, U"To Sound", nullptr, 1, NEW_Spectrum_to_Sound);
-		praat_addAction1 (classSpectrum, 0,   U"To Sound (fft)", U"*To Sound", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2004, NEW_Spectrum_to_Sound);
+		praat_addAction1 (classSpectrum, 0, U"To Sound || To Sound (fft)",
+				nullptr, 1, NEW_Spectrum_to_Sound);   // alternative GuiMenu_DEPRECATED_2004
 	praat_addAction1 (classSpectrum, 0, U"Draw -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrum, 0, U"Draw...", nullptr, 1, GRAPHICS_Spectrum_draw);
-		praat_addAction1 (classSpectrum, 0, U"Draw (log freq)...", nullptr, 1, GRAPHICS_Spectrum_drawLogFreq);
+		praat_addAction1 (classSpectrum, 0, U"Draw...",
+				nullptr, 1, GRAPHICS_Spectrum_draw);
+		praat_addAction1 (classSpectrum, 0, U"Draw (log freq)...",
+				nullptr, 1, GRAPHICS_Spectrum_drawLogFreq);
 	praat_addAction1 (classSpectrum, 0, U"Tabulate -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrum, 1, U"Tabulate...", nullptr, 1, NEW_Spectrum_tabulate);
-		praat_addAction1 (classSpectrum, 1, U"Tabulate (verbose)", nullptr, 1, NEW_Spectrum_tabulate_verbose);
+		praat_addAction1 (classSpectrum, 1, U"Tabulate...",
+				nullptr, 1, NEW_Spectrum_tabulate);
+		praat_addAction1 (classSpectrum, 1, U"Tabulate (verbose)",
+				nullptr, 1, NEW_Spectrum_tabulate_verbose);
 	praat_addAction1 (classSpectrum, 1, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 1, U"Frequency domain", nullptr, 1, nullptr);
-			praat_addAction1 (classSpectrum, 1, U"Get lowest frequency", nullptr, 2, REAL_Spectrum_getLowestFrequency);
-			praat_addAction1 (classSpectrum, 1, U"Get highest frequency", nullptr, 2, REAL_Spectrum_getHighestFrequency);
+			praat_addAction1 (classSpectrum, 1, U"Get lowest frequency",
+					nullptr, 2, REAL_Spectrum_getLowestFrequency);
+			praat_addAction1 (classSpectrum, 1, U"Get highest frequency",
+					nullptr, 2, REAL_Spectrum_getHighestFrequency);
 		praat_addAction1 (classSpectrum, 1, U"Frequency sampling", nullptr, 1, nullptr);
-			praat_addAction1 (classSpectrum, 1, U"Get number of bins", nullptr, 2, INTEGER_Spectrum_getNumberOfBins);
-			praat_addAction1 (classSpectrum, 1, U"Get bin width", nullptr, 2, REAL_Spectrum_getBinWidth);
-			praat_addAction1 (classSpectrum, 1, U"Get frequency from bin number...", nullptr, 2, REAL_Spectrum_getFrequencyFromBin);
-			praat_addAction1 (classSpectrum, 1,   U"Get frequency from bin...", U"*Get frequency from bin number...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_Spectrum_getFrequencyFromBin);
-			praat_addAction1 (classSpectrum, 1, U"Get bin number from frequency...", nullptr, 2, REAL_Spectrum_getBinNumberFromFrequency);
-			praat_addAction1 (classSpectrum, 1,   U"Get bin from frequency...", nullptr, GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_Spectrum_getBinNumberFromFrequency);
-		praat_addAction1 (classSpectrum, 1, U"-- get content --", nullptr, 1, nullptr);
-		praat_addAction1 (classSpectrum, 1, U"Get real value in bin...", nullptr, 1, REAL_Spectrum_getRealValueInBin);
-		praat_addAction1 (classSpectrum, 1, U"Get imaginary value in bin...", nullptr, 1, REAL_Spectrum_getImaginaryValueInBin);
-		praat_addAction1 (classSpectrum, 1, U"-- get energy --", nullptr, 1, nullptr);
-		praat_addAction1 (classSpectrum, 1, U"Get band energy...", nullptr, 1, REAL_Spectrum_getBandEnergy);
-		praat_addAction1 (classSpectrum, 1, U"Get band density...", nullptr, 1, REAL_Spectrum_getBandDensity);
-		praat_addAction1 (classSpectrum, 1, U"Get band energy difference...", nullptr, 1, REAL_Spectrum_getBandEnergyDifference);
-		praat_addAction1 (classSpectrum, 1, U"Get band density difference...", nullptr, 1, REAL_Spectrum_getBandDensityDifference);
-		praat_addAction1 (classSpectrum, 1, U"-- get moments --", nullptr, 1, nullptr);
-		praat_addAction1 (classSpectrum, 1, U"Get centre of gravity...", nullptr, 1, REAL_Spectrum_getCentreOfGravity);
-		praat_addAction1 (classSpectrum, 1, U"Get standard deviation...", nullptr, 1, REAL_Spectrum_getStandardDeviation);
-		praat_addAction1 (classSpectrum, 1, U"Get skewness...", nullptr, 1, REAL_Spectrum_getSkewness);
-		praat_addAction1 (classSpectrum, 1, U"Get kurtosis...", nullptr, 1, REAL_Spectrum_getKurtosis);
-		praat_addAction1 (classSpectrum, 1, U"Get central moment...", nullptr, 1, REAL_Spectrum_getCentralMoment);
-		praat_addAction1 (classSpectrum, 1, U"-- search --", nullptr, 1, nullptr);
-		praat_addAction1 (classSpectrum, 1, U"Get frequency of nearest maximum...", nullptr, 1, REAL_Spectrum_getFrequencyOfNearestMaximum);
-		praat_addAction1 (classSpectrum, 1, U"Get sound pressure level of nearest maximum...", nullptr, 1, REAL_Spectrum_getSoundPressureLevelOfNearestMaximum);
+			praat_addAction1 (classSpectrum, 1, U"Get number of bins",
+					nullptr, 2, INTEGER_Spectrum_getNumberOfBins);
+			praat_addAction1 (classSpectrum, 1, U"Get bin width",
+					nullptr, 2, REAL_Spectrum_getBinWidth);
+			praat_addAction1 (classSpectrum, 1, U"Get frequency from bin number... || Get frequency from bin...",
+					nullptr, 2, REAL_Spectrum_getFrequencyFromBin);   // alternative GuiMenu_DEPRECATED_2004
+			praat_addAction1 (classSpectrum, 1, U"Get bin number from frequency... || Get bin from frequency...",
+					nullptr, 2, REAL_Spectrum_getBinNumberFromFrequency);
+		praat_addAction1 (classSpectrum, 1, U"-- get content --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classSpectrum, 1, U"Get real value in bin...",
+				nullptr, 1, REAL_Spectrum_getRealValueInBin);
+		praat_addAction1 (classSpectrum, 1, U"Get imaginary value in bin...",
+				nullptr, 1, REAL_Spectrum_getImaginaryValueInBin);
+		praat_addAction1 (classSpectrum, 1, U"-- get energy --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classSpectrum, 1, U"Get band energy...",
+				nullptr, 1, REAL_Spectrum_getBandEnergy);
+		praat_addAction1 (classSpectrum, 1, U"Get band density...",
+				nullptr, 1, REAL_Spectrum_getBandDensity);
+		praat_addAction1 (classSpectrum, 1, U"Get band energy difference...",
+				nullptr, 1, REAL_Spectrum_getBandEnergyDifference);
+		praat_addAction1 (classSpectrum, 1, U"Get band density difference...",
+				nullptr, 1, REAL_Spectrum_getBandDensityDifference);
+		praat_addAction1 (classSpectrum, 1, U"-- get moments --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classSpectrum, 1, U"Get centre of gravity...",
+				nullptr, 1, REAL_Spectrum_getCentreOfGravity);
+		praat_addAction1 (classSpectrum, 1, U"Get standard deviation...",
+				nullptr, 1, REAL_Spectrum_getStandardDeviation);
+		praat_addAction1 (classSpectrum, 1, U"Get skewness...",
+				nullptr, 1, REAL_Spectrum_getSkewness);
+		praat_addAction1 (classSpectrum, 1, U"Get kurtosis...",
+				nullptr, 1, REAL_Spectrum_getKurtosis);
+		praat_addAction1 (classSpectrum, 1, U"Get central moment...",
+				nullptr, 1, REAL_Spectrum_getCentralMoment);
+		praat_addAction1 (classSpectrum, 1, U"-- search --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classSpectrum, 1, U"Get frequency of nearest maximum...",
+				nullptr, 1, REAL_Spectrum_getFrequencyOfNearestMaximum);
+		praat_addAction1 (classSpectrum, 1, U"Get sound pressure level of nearest maximum...",
+				nullptr, 1, REAL_Spectrum_getSoundPressureLevelOfNearestMaximum);
 	praat_addAction1 (classSpectrum, 0, U"Modify -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrum, 0, U"Formula...", nullptr, 1, MODIFY_Spectrum_formula);
-		praat_addAction1 (classSpectrum, 0, U"Filter (pass Hann band)...", nullptr, 1, MODIFY_Spectrum_passHannBand);
-		praat_addAction1 (classSpectrum, 0, U"Filter (stop Hann band)...", nullptr, 1, MODIFY_Spectrum_stopHannBand);
+		praat_addAction1 (classSpectrum, 0, U"Formula...",
+				nullptr, 1, MODIFY_Spectrum_formula);
+		praat_addAction1 (classSpectrum, 0, U"Filter (pass Hann band)...",
+				nullptr, 1, MODIFY_Spectrum_passHannBand);
+		praat_addAction1 (classSpectrum, 0, U"Filter (stop Hann band)...",
+				nullptr, 1, MODIFY_Spectrum_stopHannBand);
 	praat_addAction1 (classSpectrum, 0, U"Analyse -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrum, 0, U"To Excitation...", nullptr, 1, NEW_Spectrum_to_Excitation);
-		praat_addAction1 (classSpectrum, 0, U"To SpectrumTier (peaks)", nullptr, 1, NEW_Spectrum_to_SpectrumTier_peaks);
-		praat_addAction1 (classSpectrum, 0, U"To Formant (peaks)...", nullptr, 1, NEW_Spectrum_to_Formant_peaks);
-		praat_addAction1 (classSpectrum, 0, U"To Ltas...", nullptr, 1, NEW_Spectrum_to_Ltas);
-		praat_addAction1 (classSpectrum, 0, U"To Ltas (1-to-1)", nullptr, 1, NEW_Spectrum_to_Ltas_1to1);
-		praat_addAction1 (classSpectrum, 0, U"To Spectrogram", nullptr, 1, NEW_Spectrum_to_Spectrogram);
+		praat_addAction1 (classSpectrum, 0, U"To Excitation...",
+				nullptr, 1, NEW_Spectrum_to_Excitation);
+		praat_addAction1 (classSpectrum, 0, U"To SpectrumTier (peaks)",
+				nullptr, 1, NEW_Spectrum_to_SpectrumTier_peaks);
+		praat_addAction1 (classSpectrum, 0, U"To Formant (peaks)...",
+				nullptr, 1, NEW_Spectrum_to_Formant_peaks);
+		praat_addAction1 (classSpectrum, 0, U"To Ltas...",
+				nullptr, 1, NEW_Spectrum_to_Ltas);
+		praat_addAction1 (classSpectrum, 0, U"To Ltas (1-to-1)",
+				nullptr, 1, NEW_Spectrum_to_Ltas_1to1);
+		praat_addAction1 (classSpectrum, 0, U"To Spectrogram",
+				nullptr, 1, NEW_Spectrum_to_Spectrogram);
 	praat_addAction1 (classSpectrum, 0, U"Convert -", nullptr, 0, nullptr);
-		praat_addAction1 (classSpectrum, 0, U"Cepstral smoothing...", nullptr, 1, NEW_Spectrum_cepstralSmoothing);
-		praat_addAction1 (classSpectrum, 0, U"LPC smoothing...", nullptr, 1, NEW_Spectrum_lpcSmoothing);
+		praat_addAction1 (classSpectrum, 0, U"Cepstral smoothing...",
+				nullptr, 1, NEW_Spectrum_cepstralSmoothing);
+		praat_addAction1 (classSpectrum, 0, U"LPC smoothing...",
+				nullptr, 1, NEW_Spectrum_lpcSmoothing);
 		praat_addAction1 (classSpectrum, 0, U"Hack", nullptr, 1, nullptr);
-			praat_addAction1 (classSpectrum, 0, U"To Matrix", nullptr, 2, NEW_Spectrum_to_Matrix);
+			praat_addAction1 (classSpectrum, 0, U"To Matrix",
+					nullptr, 2, NEW_Spectrum_to_Matrix);
 
 	praat_addAction1 (classStrings, 0, U"Strings help", nullptr, 0, HELP_Strings_help);
-	praat_addAction1 (classStrings, 1, U"Save as raw text file...", nullptr, 0, SAVE_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1,   U"Write to raw text file...", U"*Save as raw text file...", GuiMenu_DEPRECATED_2011, SAVE_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Strings_viewAndEdit);
-	praat_addAction1 (classStrings, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, EDITOR_ONE_Strings_viewAndEdit);
+	praat_addAction1 (classStrings, 1, U"Save as raw text file... || Write to raw text file...",
+			nullptr, 0, SAVE_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1, U"View & Edit || Edit",
+			nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Strings_viewAndEdit);
 	praat_addAction1 (classStrings, 0, U"Query -", nullptr, 0, nullptr);
-		praat_addAction1 (classStrings, 2, U"Equal?", nullptr, 1, BOOLEAN_Strings_equal);
-		praat_addAction1 (classStrings, 1, U"Get number of strings", nullptr, 1, INTEGER_Strings_getNumberOfStrings);
-		praat_addAction1 (classStrings, 1, U"Get string...", nullptr, 1, STRING_Strings_getString);
-		praat_addAction1 (classStrings, 1, U"List all strings", nullptr, 1, STRVEC_Strings_listAllStrings);
+		praat_addAction1 (classStrings, 2, U"Equal?",
+				nullptr, 1, BOOLEAN_Strings_equal);
+		praat_addAction1 (classStrings, 1, U"Get number of strings",
+				nullptr, 1, INTEGER_Strings_getNumberOfStrings);
+		praat_addAction1 (classStrings, 1, U"Get string...",
+				nullptr, 1, STRING_Strings_getString);
+		praat_addAction1 (classStrings, 1, U"List all strings",
+				nullptr, 1, STRVEC_Strings_listAllStrings);
 	praat_addAction1 (classStrings, 0, U"Modify -", nullptr, 0, nullptr);
-		praat_addAction1 (classStrings, 0, U"Set string...", nullptr, 1, MODIFY_Strings_setString);
-		praat_addAction1 (classStrings, 0, U"Insert string...", nullptr, 1, MODIFY_Strings_insertString);
-		praat_addAction1 (classStrings, 0, U"Remove string...", nullptr, 1, MODIFY_Strings_removeString);
-		praat_addAction1 (classStrings, 0, U"-- modify order --", nullptr, 1, nullptr);
-		praat_addAction1 (classStrings, 0, U"Randomize", nullptr, 1, MODIFY_Strings_randomize);
-		praat_addAction1 (classStrings, 0, U"Sort", nullptr, 1, MODIFY_Strings_sort);
-		praat_addAction1 (classStrings, 0, U"-- convert --", nullptr, 1, nullptr);
-		praat_addAction1 (classStrings, 0, U"Convert to backslash trigraphs", nullptr, 1, MODIFY_Strings_genericize);
-		praat_addAction1 (classStrings, 0, U"Genericize", U"*Convert to backslash trigraphs", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, MODIFY_Strings_genericize);
-		praat_addAction1 (classStrings, 0, U"Convert to Unicode", nullptr, 1, MODIFY_Strings_nativize);
-		praat_addAction1 (classStrings, 0, U"Nativize", U"*Convert to Unicode", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, MODIFY_Strings_nativize);
+		praat_addAction1 (classStrings, 0, U"Set string...",
+				nullptr, 1, MODIFY_Strings_setString);
+		praat_addAction1 (classStrings, 0, U"Insert string...",
+				nullptr, 1, MODIFY_Strings_insertString);
+		praat_addAction1 (classStrings, 0, U"Remove string...",
+				nullptr, 1, MODIFY_Strings_removeString);
+		praat_addAction1 (classStrings, 0, U"-- modify order --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classStrings, 0, U"Randomize",
+				nullptr, 1, MODIFY_Strings_randomize);
+		praat_addAction1 (classStrings, 0, U"Sort",
+				nullptr, 1, MODIFY_Strings_sort);
+		praat_addAction1 (classStrings, 0, U"-- convert --",
+				nullptr, 1, nullptr);
+		praat_addAction1 (classStrings, 0, U"Convert to backslash trigraphs || Genericize",
+				nullptr, 1, MODIFY_Strings_genericize);   // alternative GuiMenu_DEPRECATED_2016
+		praat_addAction1 (classStrings, 0, U"Convert to Unicode || Nativize",
+				nullptr, 1, MODIFY_Strings_nativize);
 	praat_addAction1 (classStrings, 0, U"Convert -", nullptr, 0, nullptr);
-		praat_addAction1 (classStrings, 0, U"Replace all...", nullptr, 1, NEW_Strings_replaceAll);
-	praat_addAction1 (classStrings, 0, U"Analyze", nullptr, 0, nullptr);
-		praat_addAction1 (classStrings, 0, U"To Distributions", nullptr, 0, NEW_Strings_to_Distributions);
-	praat_addAction1 (classStrings, 0, U"Synthesize", nullptr, 0, nullptr);
-		praat_addAction1 (classStrings, 0, U"To WordList", nullptr, 0, NEW_Strings_to_WordList);
+		praat_addAction1 (classStrings, 0, U"Replace all...",
+				nullptr, 1, NEW_Strings_replaceAll);
+praat_addAction1 (classStrings, 0, U"Analyze", nullptr, 0, nullptr);
+	praat_addAction1 (classStrings, 0, U"To Distributions",
+			nullptr, 0, NEW_Strings_to_Distributions);
+praat_addAction1 (classStrings, 0, U"Synthesize", nullptr, 0, nullptr);
+	praat_addAction1 (classStrings, 0, U"To WordList",
+			nullptr, 0, NEW_Strings_to_WordList);
 
 	praat_addAction1 (classTransition, 0, U"Transition help", nullptr, 0, HELP_Transition_help);
 praat_addAction1 (classTransition, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classTransition, 0, U"Draw as numbers...", nullptr, 0, GRAPHICS_Transition_drawAsNumbers);
+	praat_addAction1 (classTransition, 0, U"Draw as numbers...",
+			nullptr, 0, GRAPHICS_Transition_drawAsNumbers);
 praat_addAction1 (classTransition, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classTransition, 0, U"Eigen", nullptr, 0, NEWTIMES2_Transition_eigen);
-	praat_addAction1 (classTransition, 0, U"Conflate", nullptr, 0, NEW_Transition_conflate);
+	praat_addAction1 (classTransition, 0, U"Eigen",
+			nullptr, 0, NEWTIMES2_Transition_eigen);
+	praat_addAction1 (classTransition, 0, U"Conflate",
+			nullptr, 0, NEW_Transition_conflate);
 praat_addAction1 (classTransition, 0, U"Synthesize", nullptr, 0, nullptr);
-	praat_addAction1 (classTransition, 0, U"Power...", nullptr, 0, NEW_Transition_power);
+	praat_addAction1 (classTransition, 0, U"Power...",
+			nullptr, 0, NEW_Transition_power);
 praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
-	praat_addAction1 (classTransition, 0, U"To Matrix", nullptr, 0, NEW_Transition_to_Matrix);
+	praat_addAction1 (classTransition, 0, U"To Matrix",
+			nullptr, 0, NEW_Transition_to_Matrix);
 
-	praat_addAction2 (classDistributions, 1, classTransition, 1, U"Map", nullptr, 0, NEW1_Distributions_Transition_map);
-	praat_addAction2 (classDistributions, 1, classTransition, 1, U"To Transition...", nullptr, 0, NEW1_Distributions_to_Transition_adj);
-	praat_addAction2 (classDistributions, 2, classTransition, 1, U"To Transition (noise)...", nullptr, 0, NEW1_Distributions_to_Transition_noise_adj);
+	praat_addAction2 (classDistributions, 1, classTransition, 1, U"Map",
+			nullptr, 0, NEW1_Distributions_Transition_map);
+	praat_addAction2 (classDistributions, 1, classTransition, 1, U"To Transition...",
+			nullptr, 0, NEW1_Distributions_to_Transition_adj);
+	praat_addAction2 (classDistributions, 2, classTransition, 1, U"To Transition (noise)...",
+			nullptr, 0, NEW1_Distributions_to_Transition_noise_adj);
 
-	praat_addAction2 (classFormant, 1, classPointProcess, 1, U"To FormantTier", nullptr, 0, NEW1_Formant_PointProcess_to_FormantTier);
-	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter", nullptr, 0, NEW1_Sound_Formant_filter);
-	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, NEW1_Sound_Formant_filter_noscale);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw (phonetogram)...", nullptr, 0, GRAPHICS_Pitch_Intensity_draw);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Get mean", nullptr, 1, REAL_Pitch_Intensity_getMean);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Get mean absolute slope", nullptr, 1, REAL_Pitch_Intensity_getMeanAbsoluteSlope);
-	praat_addAction2 (classIntensity, 1, classPointProcess, 1, U"To IntensityTier", nullptr, 0, NEW1_Intensity_PointProcess_to_IntensityTier);
+	praat_addAction2 (classFormant, 1, classPointProcess, 1, U"To FormantTier",
+			nullptr, 0, NEW1_Formant_PointProcess_to_FormantTier);
+	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter",
+			nullptr, 0, NEW1_Sound_Formant_filter);
+	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter (no scale)",
+			nullptr, 0, NEW1_Sound_Formant_filter_noscale);
 
-	praat_addAction2 (classManipulation, 1, classSound, 1, U"Replace original sound", nullptr, 0, MODIFY_Manipulation_replaceOriginalSound);
-	praat_addAction2 (classManipulation, 1, classPointProcess, 1, U"Replace pulses", nullptr, 0, MODIFY_Manipulation_replacePulses);
-	praat_addAction2 (classManipulation, 1, classPitchTier, 1, U"Replace pitch tier", nullptr, 0, MODIFY_Manipulation_replacePitchTier);
-	praat_addAction2 (classManipulation, 1, classDurationTier, 1, U"Replace duration tier", nullptr, 0, MODIFY_Manipulation_replaceDurationTier);
-	praat_addAction2 (classManipulation, 1, classTextTier, 1, U"To Manipulation", nullptr, 0, NEW1_Manipulation_TextTier_to_Manipulation);
-	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"Draw...", nullptr, 0, GRAPHICS_PitchTier_Pitch_draw);
-	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"To Pitch", nullptr, 0, NEW1_Pitch_PitchTier_to_Pitch);
-	praat_addAction2 (classPitch, 1, classPointProcess, 1, U"To PitchTier", nullptr, 0, NEW1_Pitch_PointProcess_to_PitchTier);
-	praat_addAction3 (classPitch, 1, classPointProcess, 1, classSound, 1, U"Voice report...", nullptr, 0, INFO_Sound_Pitch_PointProcess_voiceReport);
-	praat_addAction2 (classPitch, 1, classSound, 1, U"To PointProcess (cc)", nullptr, 0, NEW1_Sound_Pitch_to_PointProcess_cc);
-	praat_addAction2 (classPitch, 1, classSound, 1, U"To PointProcess (peaks)...", nullptr, 0, NEW1_Sound_Pitch_to_PointProcess_peaks);
-	praat_addAction2 (classPitch, 1, classSound, 1, U"To Manipulation", nullptr, 0, NEW1_Sound_Pitch_to_Manipulation);
+praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw", nullptr, 0, nullptr);
+	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw (phonetogram)...",
+			nullptr, 0, GRAPHICS_Pitch_Intensity_draw);
+praat_addAction2 (classIntensity, 1, classPitch, 1, U"Query", nullptr, 0, nullptr);
+	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Get mean",
+			nullptr, 0, REAL_Pitch_Intensity_getMean);
+	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Get mean absolute slope",
+			nullptr, 0, REAL_Pitch_Intensity_getMeanAbsoluteSlope);
 
-	praat_addAction4 (classDurationTier, 1, classPitchTier, 1, classPointProcess, 1, classSound, 1, U"To Sound...", nullptr, 0, NEW1_Sound_Point_Pitch_Duration_to_Sound);
+	praat_addAction2 (classIntensity, 1, classPointProcess, 1, U"To IntensityTier",
+			nullptr, 0, NEW1_Intensity_PointProcess_to_IntensityTier);
+
+	praat_addAction2 (classManipulation, 1, classSound, 1, U"Replace original sound",
+			nullptr, 0, MODIFY_Manipulation_replaceOriginalSound);
+	praat_addAction2 (classManipulation, 1, classPointProcess, 1, U"Replace pulses",
+			nullptr, 0, MODIFY_Manipulation_replacePulses);
+	praat_addAction2 (classManipulation, 1, classPitchTier, 1, U"Replace pitch tier",
+			nullptr, 0, MODIFY_Manipulation_replacePitchTier);
+	praat_addAction2 (classManipulation, 1, classDurationTier, 1, U"Replace duration tier",
+			nullptr, 0, MODIFY_Manipulation_replaceDurationTier);
+	praat_addAction2 (classManipulation, 1, classTextTier, 1, U"To Manipulation",
+			nullptr, 0, NEW1_Manipulation_TextTier_to_Manipulation);
+	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"Draw...",
+			nullptr, 0, GRAPHICS_PitchTier_Pitch_draw);
+	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"To Pitch",
+			nullptr, 0, NEW1_Pitch_PitchTier_to_Pitch);
+	praat_addAction2 (classPitch, 1, classPointProcess, 1, U"To PitchTier",
+			nullptr, 0, NEW1_Pitch_PointProcess_to_PitchTier);
+	praat_addAction3 (classPitch, 1, classPointProcess, 1, classSound, 1, U"Voice report...",
+			nullptr, 0, INFO_Sound_Pitch_PointProcess_voiceReport);
+	praat_addAction2 (classPitch, 1, classSound, 1, U"To PointProcess (cc)",
+			nullptr, 0, NEW1_Sound_Pitch_to_PointProcess_cc);
+	praat_addAction2 (classPitch, 1, classSound, 1, U"To PointProcess (peaks)...",
+			nullptr, 0, NEW1_Sound_Pitch_to_PointProcess_peaks);
+	praat_addAction2 (classPitch, 1, classSound, 1, U"To Manipulation",
+			nullptr, 0, NEW1_Sound_Pitch_to_Manipulation);
+
+	praat_addAction4 (classDurationTier, 1, classPitchTier, 1, classPointProcess, 1, classSound, 1, U"To Sound...",
+			nullptr, 0, NEW1_Sound_Point_Pitch_Duration_to_Sound);
 
 	INCLUDE_MANPAGES (manual_Manual_init)
 	INCLUDE_MANPAGES (manual_Script_init)
