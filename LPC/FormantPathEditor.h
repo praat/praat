@@ -42,30 +42,41 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 		override;
 	void v1_dataChanged () override {
 		FormantPathEditor_Parent :: v1_dataChanged ();
-		our soundArea() -> functionChanged (nullptr);
+		if (our soundArea())
+			our soundArea() -> functionChanged (nullptr);
 		our formantPathArea() -> functionChanged (nullptr);
 		our formantPathArea() -> d_formant = FormantPath_extractFormant (our formantPath());   // BUG: also on window changed
 		if (our textGridArea())
 			our textGridArea() -> functionChanged (nullptr);
 	}
 	void v_distributeAreas () override {
-		if (our textGridArea()) {
+		if (our soundArea() && our textGridArea()) {
 			our soundArea() -> setGlobalYRange_fraction (0.7, 1.0);
 			our formantPathArea() -> setGlobalYRange_fraction (0.2, 0.7);
 			our textGridArea() -> setGlobalYRange_fraction (0.0, 0.2);
-		} else {
+		} else if (our soundArea()) {
 			our soundArea() -> setGlobalYRange_fraction (0.6, 1.0);
 			our formantPathArea() -> setGlobalYRange_fraction (0.0, 0.6);
+		} else if (our textGridArea()) {
+			our formantPathArea() -> setGlobalYRange_fraction (0.3, 0.7);
+			our textGridArea() -> setGlobalYRange_fraction (0.0, 0.3);
+		} else {
+			our formantPathArea() -> setGlobalYRange_fraction (0.1, 0.9);
 		}
 	}
 	void v_draw () override {
-		FunctionArea_prepareCanvas (our soundArea().get());
-		if (our formantPathArea() -> instancePref_pulses_show())
-			our formantPathArea() -> v_draw_analysis_pulses ();
-		FunctionArea_drawInside (our soundArea().get());
-		if (our formantPathArea() -> hasContentToShow()) {
+		if (our soundArea()) {
+			FunctionArea_prepareCanvas (our soundArea().get());
+			if (our formantPathArea() -> instancePref_pulses_show())
+				our formantPathArea() -> v_draw_analysis_pulses ();
+			FunctionArea_drawInside (our soundArea().get());
+			if (our formantPathArea() -> hasContentToShow()) {
+				FunctionArea_prepareCanvas (our formantPathArea().get());
+				our formantPathArea() -> v_draw_analysis ();
+			}
+		} else {
 			FunctionArea_prepareCanvas (our formantPathArea().get());
-			our formantPathArea() -> v_draw_analysis ();
+			our formantPathArea() -> v_draw_analysis_formants ();
 		}
 		if (our textGridArea())
 			FunctionArea_drawOne (our textGridArea().get());
@@ -86,8 +97,9 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 		FunctionArea_drawLegend (our formantPathArea().get(),
 			FunctionArea_legend_SPECKLES U" ##modifiable FormantPath", Melder_RED
 		);
-		FunctionArea_drawLegend (our soundArea().get(),
-			FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+		if (our soundArea())
+			FunctionArea_drawLegend (our soundArea().get(), FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound",
+				DataGui_defaultForegroundColour (our soundArea().get())
 		);
 		if (our textGridArea())
 			FunctionArea_drawLegend (our textGridArea().get(),

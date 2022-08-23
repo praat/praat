@@ -309,7 +309,8 @@ void structFormantPathEditor :: v_play (double startingTime, double endTime) {
 autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound soundToCopy, TextGrid textGridToCopy) {
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
-		my soundArea() = SoundArea_create (false, soundToCopy, me.get());
+		if (soundToCopy)
+			my soundArea() = SoundArea_create (false, soundToCopy, me.get());
 		my formantPathArea() = FormantPathArea_create (true, soundToCopy, me.get());
 		my formantPathArea() -> _formantPath = formantPath;
 		if (textGridToCopy)
