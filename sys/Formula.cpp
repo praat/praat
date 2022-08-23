@@ -40,11 +40,11 @@ static int theExpressionType [1 + MAXIMUM_NUMBER_OF_LEVELS];
 static bool theOptimize;
 
 typedef struct structFormulaInstruction {
-	int symbol;
-	int position;
+	integer symbol;
+	integer position;
 	union {
 		double number;
-		int label;
+		integer label;
 		char32 *string;
 		Daata object;
 		InterpreterVariable variable;
@@ -52,7 +52,7 @@ typedef struct structFormulaInstruction {
 } *FormulaInstruction;
 
 static FormulaInstruction lexan, parse;
-static int ilabel, ilexan, iparse, numberOfInstructions, numberOfStringConstants;
+static integer ilabel, ilexan, iparse, numberOfInstructions, numberOfStringConstants;
 
 enum { NO_SYMBOL_,
 
@@ -100,8 +100,9 @@ enum { NO_SYMBOL_,
 		DECLARE_WITH_TENSORS (EXP_)
 		DECLARE_WITH_TENSORS (SINH_)     DECLARE_WITH_TENSORS (COSH_)     DECLARE_WITH_TENSORS (TANH_)
 		DECLARE_WITH_TENSORS (ARCSINH_)  DECLARE_WITH_TENSORS (ARCCOSH_)  DECLARE_WITH_TENSORS (ARCTANH_)
-		SIGMOID_, SIGMOID_VEC_, SOFTMAX_VEC_, SOFTMAX_PER_ROW_MAT_,
-		INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
+		DECLARE_WITH_TENSORS (SIGMOID_)  DECLARE_WITH_TENSORS (INV_SIGMOID_)
+		SOFTMAX_VEC_, SOFTMAX_PER_ROW_MAT_,
+		ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_BERNOULLI_, RANDOM_BERNOULLI_VEC_,
 		RANDOM_POISSON_, TRANSPOSE_MAT_,
 		ROW_SUMS_VEC_, COLUMN_SUMS_VEC_,
@@ -112,7 +113,7 @@ enum { NO_SYMBOL_,
 		ERB_, HERTZ_TO_ERB_, ERB_TO_HERTZ_,
 		SUM_, MEAN_, STDEV_, CENTER_,
 		EVALUATE_, EVALUATE_NOCHECK_, EVALUATE_STR_, EVALUATE_NOCHECK_STR_,
-		STRING_STR_, SLEEP_, UNICODE_, UNICODE_STR_,
+		STRING_STR_, NUMBERS_VEC_, SLEEP_, UNICODE_, UNICODE_STR_,
 	#define HIGH_FUNCTION_1  UNICODE_STR_
 
 	/* Functions of 2 variables; if you add, update the #defines. */
@@ -176,7 +177,8 @@ enum { NO_SYMBOL_,
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
 	#define LOW_FUNCTION_STR1  LENGTH_
-		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_, CREATE_FOLDER_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
+		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_,
+		CREATE_FOLDER_, CREATE_DIRECTORY_, SET_WORKING_DIRECTORY_, VARIABLE_EXISTS_,
 		READ_FILE_, READ_FILE_STR_, UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
 	#define HIGH_FUNCTION_STR1  ENVIRONMENT_STR_
 		DATE_STR_, DATE_UTC_STR_, DATE_ISO_STR_, DATE_UTC_ISO_STR_, DATE_VEC_, DATE_UTC_VEC_, INFO_STR_,   // TODO: two of those aren't really string functions
@@ -253,8 +255,9 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	NAME_WITH_TENSORS (exp)
 	NAME_WITH_TENSORS (sinh)     NAME_WITH_TENSORS (cosh)     NAME_WITH_TENSORS (tanh)
 	NAME_WITH_TENSORS (arcsinh)  NAME_WITH_TENSORS (arccosh)  NAME_WITH_TENSORS (arctanh)
-	U"sigmoid", U"sigmoid#", U"softmax#", U"softmaxPerRow##",
-	U"invSigmoid", U"erf", U"erfc", U"gaussP", U"gaussQ", U"invGaussQ",
+	NAME_WITH_TENSORS (sigmoid)  NAME_WITH_TENSORS (invSigmoid)
+	U"softmax#", U"softmaxPerRow##",
+	U"erf", U"erfc", U"gaussP", U"gaussQ", U"invGaussQ",
 	U"randomBernoulli", U"randomBernoulli#",
 	U"randomPoisson", U"transpose##",
 	U"rowSums#", U"columnSums#",
@@ -265,7 +268,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"erb", U"hertzToErb", U"erbToHertz",
 	U"sum", U"mean", U"stdev", U"center",
 	U"evaluate", U"evaluate_nocheck", U"evaluate$", U"evaluate_nocheck$",
-	U"string$", U"sleep", U"unicode", U"unicode$",
+	U"string$", U"numbers#", U"sleep", U"unicode", U"unicode$",
 	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial", U"randomGamma",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
@@ -306,7 +309,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"hash", U"hex$", U"unhex$",
 	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#",
 
-	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createFolder", U"createDirectory", U"variableExists",
+	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
+	U"createFolder", U"createDirectory", U"setWorkingDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
 	U"date$", U"date_utc$", U"date_iso$", U"date_utc_iso$", U"date#", U"date_utc#", U"info$",
 	U"index", U"rindex",
@@ -342,7 +346,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 #define newread (lexan [++ ilexan]. symbol)
 #define oldread  (-- ilexan)
 
-static void formulaError (conststring32 message, int position) {
+static void formulaError (conststring32 message, integer position) {
 	static MelderString truncatedExpression;
 	MelderString_ncopy (& truncatedExpression, theExpression, position + 1);
 	Melder_throw (message, U":\n« ", truncatedExpression.string);
@@ -390,11 +394,11 @@ static void Formula_lexan () {
 			lexan [4]. symbol = END_;
 */
 	char32 kar;   /* The character most recently read from theExpression. */
-	int ikar = -1;   /* The position of that character in theExpression. */
+	integer ikar = -1;   /* The position of that character in theExpression. */
 #define newchar kar = theExpression [++ ikar]
 #define oldchar -- ikar
 
-	int itok = 0;   /* Position of most recent symbol in "lexan". */
+	integer itok = 0;   /* Position of most recent symbol in "lexan". */
 #define newtok(s)  { lexan [++ itok]. symbol = s; lexan [itok]. position = ikar; }
 #define toknumber(g)  lexan [itok]. content.number = (g)
 #define tokmatrix(m)  lexan [itok]. content.object = (m)
@@ -458,7 +462,7 @@ static void Formula_lexan () {
 				(kar == U'.' && Melder_isLetter (theExpression [ikar + 1]) && ! Melder_isUpperCaseLetter (theExpression [ikar + 1])
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIX_ && lexan [itok]. symbol != MATRIX_STR_
 					&& lexan [itok]. symbol != CLOSING_BRACKET_)))) {
-			int tok;
+			integer tok;
 			bool isString = false;
 			int rank = 0;
 			stringtokon;
@@ -524,7 +528,7 @@ static void Formula_lexan () {
 					/*
 						Look ahead to find out whether the next token is a left parenthesis (or a colon).
 					*/
-					int jkar;
+					integer jkar;
 					jkar = ikar + 1;
 					while (Melder_isHorizontalSpace (theExpression [jkar]))
 						jkar ++;
@@ -609,7 +613,7 @@ static void Formula_lexan () {
 						/*
 							This must be a variable, since there is no "current object" here.
 						*/
-						int jkar = ikar + 1;
+						integer jkar = ikar + 1;
 						while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 						if (theExpression [jkar] == U'[' && rank == 0) {
 							if (isString) {
@@ -660,7 +664,7 @@ static void Formula_lexan () {
 				/*
 					token.string is not a language name
 				*/
-				int jkar = ikar + 1;
+				integer jkar = ikar + 1;
 				while (Melder_isHorizontalSpace (theExpression [jkar]))
 					jkar ++;
 				if (theExpression [jkar] == U'(' || theExpression [jkar] == U':') {
@@ -738,7 +742,7 @@ static void Formula_lexan () {
 					U"(variables start with nonupper case; object names contain an underscore).");
 			} else if (str32nequ (token.string, U"Object_", 7)) {
 				const integer uniqueID = Melder_atoi (token.string + 7);
-				int i = theCurrentPraatObjects -> n;
+				integer i = theCurrentPraatObjects -> n;
 				while (i > 0 && uniqueID != theCurrentPraatObjects -> list [i]. id)
 					i --;
 				if (i == 0)
@@ -746,7 +750,7 @@ static void Formula_lexan () {
 				newtok (endsInDollarSign ? MATRIX_STR_ : MATRIX_)
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			} else {
-				int i = theCurrentPraatObjects -> n;
+				integer i = theCurrentPraatObjects -> n;
 				*underscore = U' ';
 				if (endsInDollarSign)
 					token.string [-- token.length] = U'\0';
@@ -905,7 +909,7 @@ static void Formula_lexan () {
 	} while (lexan [itok]. symbol != END_);
 }
 
-static void fit (int symbol) {
+static void fit (integer symbol) {
 	if (symbol == newread) {
 		return;   // success
 	} else {
@@ -922,7 +926,7 @@ static void fit (int symbol) {
 }
 
 static bool fitArguments () {
-    const int symbol = newread;
+    const integer symbol = newread;
     if (symbol == OPENING_PARENTHESIS_)
     	return true;   // success: a function call like: myFunction (...)
     if (symbol == COLON_)
@@ -943,7 +947,7 @@ static bool fitArguments () {
 static void parseExpression ();
 
 static void parsePowerFactor () {
-	int symbol = newread;
+	integer symbol = newread;
 
 	if (symbol >= LOW_VALUE && symbol <= HIGH_VALUE) {
 		newparse (symbol);
@@ -1268,8 +1272,8 @@ static void parsePowerFactor () {
 	}
 
 	if (symbol == IF_) {
-		const int elseLabel = newlabel;   // has to be local,
-		const int endifLabel = newlabel;   // because of recursion
+		const integer elseLabel = newlabel;   // has to be local,
+		const integer endifLabel = newlabel;   // because of recursion
 		parseExpression ();
 		newparse (IFFALSE_);
 		parselabel (elseLabel);
@@ -1632,7 +1636,7 @@ static void parsePowerFactor () {
 			newparse (NUMBER_);
 			parsenumber (0.0);   // initialize the sum
             const bool isParenthesis = fitArguments ();
-			const int symbol2 = newread;
+			const integer symbol2 = newread;
 			if (symbol2 == NUMERIC_VARIABLE_) {   // an existing variable
 				newparse (VARIABLE_REFERENCE_);
 				InterpreterVariable loopVariable = lexan [ilexan]. content.variable;
@@ -1657,8 +1661,8 @@ static void parsePowerFactor () {
 			fit (TO_);
 			parseExpression ();
 			// now on stack: sum, loop variable, end value
-			const int startLabel = newlabel;
-			const int endLabel = newlabel;
+			const integer startLabel = newlabel;
+			const integer endLabel = newlabel;
 			newparse (LABEL_);
 			parselabel (startLabel);
 			newparse (INCREMENT_GREATER_GOTO_);
@@ -1720,7 +1724,7 @@ static void parseFactor () {
 }
 
 static void parseFactors () {
-	const int symbol = newread;   // has to be local, because of recursion
+	const integer symbol = newread;   // has to be local, because of recursion
 	if (symbol == MUL_ || symbol == RDIV_ || symbol == IDIV_ || symbol == MOD_) {
 		parseFactor ();
 		newparse (symbol);
@@ -1735,7 +1739,7 @@ static void parseTerm () {
 }
 
 static void parseTerms () {
-	const int symbol = newread;
+	const integer symbol = newread;
 	if (symbol == ADD_ || symbol == SUB_) {
 		parseTerm ();
 		newparse (symbol);
@@ -1747,7 +1751,7 @@ static void parseTerms () {
 static void parseNot () {
 	parseTerm ();
 	parseTerms ();
-	int symbol = newread;
+	integer symbol = newread;
 	if (symbol >= EQ_ && symbol <= GT_) {
 		parseTerm ();
 		parseTerms ();
@@ -1769,8 +1773,8 @@ static void parseAnd () {
 static void parseOr () {
 	parseAnd ();
 	if (newread == AND_) {
-		int falseLabel = newlabel;
-		int andLabel = newlabel;
+		integer falseLabel = newlabel;
+		integer andLabel = newlabel;
 		do {
 			newparse (IFFALSE_); parselabel (falseLabel);
 			parseAnd ();
@@ -1788,8 +1792,8 @@ static void parseOr () {
 static void parseExpression () {
 	parseOr ();
 	if (newread == OR_) {
-		int trueLabel = newlabel;
-		int orLabel = newlabel;
+		integer trueLabel = newlabel;
+		integer orLabel = newlabel;
 		do {
 			newparse (IFTRUE_); parselabel (trueLabel);
 			parseOr ();
@@ -1829,14 +1833,14 @@ static void Formula_parseExpression () {
 	numberOfInstructions = iparse;
 }
 
-static void shift (int begin, int distance) {
+static void shift (integer begin, integer distance) {
 	numberOfInstructions -= distance;
-	for (int j = begin; j <= numberOfInstructions; j ++)
+	for (integer j = begin; j <= numberOfInstructions; j ++)
 		parse [j] = parse [j + distance];
 }
 
-static int findLabel (int label) {
-	int result = numberOfInstructions;
+static integer findLabel (integer label) {
+	integer result = numberOfInstructions;
 	while (parse [result]. symbol != LABEL_ ||
 			 parse [result]. content.label != label)
 		result --;
@@ -1853,7 +1857,7 @@ static void Formula_optimizeFlow ()
 /*    uitdrukkingen, zijn alle NOT_s weg;				*/
 /*    onbereikbare kode is weg;						*/
 {
-	int i, j, volg;
+	integer i, j, volg;
 	for (;;) {
 		bool improved = false;
 		for (i = 1; i <= numberOfInstructions; i ++)
@@ -2039,15 +2043,15 @@ static void Formula_optimizeFlow ()
 	}
 }
 
-static int praat_findObjectById (integer id) {
-	int IOBJECT;
+static integer praat_findObjectById (integer id) {
+	integer IOBJECT;
 	WHERE_DOWN (ID == id)
 		return IOBJECT;
 	Melder_throw (U"No object with number ", id, U".");
 }
 
-static int praat_findObjectByName (conststring32 name) {
-	int IOBJECT;
+static integer praat_findObjectByName (conststring32 name) {
+	integer IOBJECT;
 	if (*name >= U'A' && *name <= U'Z') {
 		static MelderString buffer;
 		MelderString_copy (& buffer, name);
@@ -2074,8 +2078,8 @@ static int praat_findObjectByName (conststring32 name) {
 static void Formula_evaluateConstants () {
 	for (;;) {
 		bool improved = false;
-		for (int i = 1; i <= numberOfInstructions; i ++) {
-			int gain = 0;
+		for (integer i = 1; i <= numberOfInstructions; i ++) {
+			integer gain = 0;
 			if (parse [i]. symbol == NUMBER_) {
 				if (parse [i]. content.number == 2.0 && parse [i + 1]. symbol == POWER_)
 					{ gain = 1; parse [i]. symbol = SQR_; }
@@ -2094,14 +2098,14 @@ static void Formula_evaluateConstants () {
 						{ gain = 2; parse [i]. content.number /= parse [i + 1]. content.number; }
 				} else if (parse [i + 1]. symbol == TO_OBJECT_) {
 					parse [i]. symbol = OBJECT_;
-					int IOBJECT = praat_findObjectById (Melder_iround (parse [i]. content.number));
+					integer IOBJECT = praat_findObjectById (Melder_iround (parse [i]. content.number));
 					parse [i]. content.object = OBJECT;
 					gain = 1;
 				}
 			} else if (parse [i]. symbol == STRING_) {
 				if (parse [i + 1]. symbol == TO_OBJECT_) {
 					parse [i]. symbol = OBJECT_;
-					const int IOBJECT = praat_findObjectByName (parse [i]. content.string);
+					const integer IOBJECT = praat_findObjectByName (parse [i]. content.string);
 					parse [i]. content.object = OBJECT;
 					gain = 1;
 				}
@@ -2129,7 +2133,8 @@ static void Formula_evaluateConstants () {
 				shift (i + 1, gain);
 			}
 		}
-		if (! improved) break;
+		if (! improved)
+			break;
 	}
 }
 
@@ -2137,10 +2142,10 @@ static void Formula_removeLabels () {
 	/*
 		First translate symbolic labels (< 0) into instructions locations (> 0).
 	*/
-	for (int i = 1; i <= numberOfInstructions; i ++) {
-		const int symboli = parse [i]. symbol;
+	for (integer i = 1; i <= numberOfInstructions; i ++) {
+		const integer symboli = parse [i]. symbol;
 		if (symboli == GOTO_ || symboli == IFTRUE_ || symboli == IFFALSE_ || symboli == INCREMENT_GREATER_GOTO_) {
-			int label = parse [i]. content.label;
+			integer label = parse [i]. content.label;
 			for (int j = 1; j <= numberOfInstructions; j ++) {
 				if (parse [j]. symbol == LABEL_ && parse [j]. content.label == label) {
 					parse [i]. content.label = j;
@@ -2153,13 +2158,13 @@ static void Formula_removeLabels () {
 		which have become superfluous.
 	*/
 	if (theOptimize) {
-		int i = 1;
+		integer i = 1;
 		while (i <= numberOfInstructions) {
-			const int symboli = parse [i]. symbol;
+			const integer symboli = parse [i]. symbol;
 			if (symboli == LABEL_) {
 				shift (i, 1);   // remove one label
 				for (int j = 1; j <= numberOfInstructions; j ++) {
-					const int symbolj = parse [j]. symbol;
+					const integer symbolj = parse [j]. symbol;
 					if ((symbolj == GOTO_ || symbolj == IFTRUE_ || symbolj == IFFALSE_ || symbolj == INCREMENT_GREATER_GOTO_) && parse [j]. content.label > i)
 						parse [j]. content.label --;  /* Pas een label aan. */
 				}
@@ -2177,7 +2182,7 @@ static void Formula_removeLabels () {
 	For debugging.
 */
 static void Formula_print (FormulaInstruction f) {
-	int i = 0, symbol;
+	integer i = 0, symbol;
 	do {
 		conststring32 instructionName;
 		symbol = f [++ i]. symbol;
@@ -2235,7 +2240,7 @@ void Formula_compile (Interpreter interpreter, Daata data, conststring32 express
 	if (numberOfStringConstants) {
 		ilexan = 1;
 		for (;;) {
-			int symbol = lexan [ilexan]. symbol;
+			integer symbol = lexan [ilexan]. symbol;
 			if (symbol == STRING_ ||
 				symbol == VARIABLE_NAME_ ||
 				symbol == INDEXED_NUMERIC_VARIABLE_ ||
@@ -2279,7 +2284,7 @@ conststring32 structStackel :: whichText () {
 		U"???";
 }
 
-static int programPointer;
+static integer programPointer;
 
 static Stackel theStack;
 static integer w, wmax;   /* w = stack pointer; */
@@ -3396,7 +3401,7 @@ static void do_##function () { \
 				"not a matrix. Did you mean to use " #function "## instead?"); \
 	} else { \
 		Melder_throw (message, x->whichText(), \
-				U". The function " #function " requires a numeric argument"); \
+				U". The function " #function " requires a numeric argument."); \
 	} \
 } \
 static void do_##function##_VEC () { \
@@ -3419,8 +3424,8 @@ static void do_##function##_VEC () { \
 			pushNumericVector (result.move()); \
 		} \
 	} else { \
-		Melder_throw (message, x->whichText(), \
-				U". The function " #function " requires a vector argument"); \
+		Melder_throw (U"The function " #function "# requires a vector argument, not ", \
+				x->whichText(), U"."); \
 	} \
 } \
 static void do_##function##_MAT () { \
@@ -3447,8 +3452,8 @@ static void do_##function##_MAT () { \
 			pushNumericMatrix (result.move()); \
 		} \
 	} else { \
-		Melder_throw (message, x->whichText(), \
-				U". The function " #function " requires a matrix argument"); \
+		Melder_throw (U"The function " #function "## requires a matrix argument, not ", \
+				x->whichText(), U"."); \
 	} \
 }
 DO_NUM_WITH_TENSORS (abs, fabs (xvalue), U"Cannot take the absolute value (abs) of ")
@@ -3547,6 +3552,20 @@ DO_NUM_WITH_TENSORS (log10, log10 (xvalue), U"Cannot take the base-10 logarithm 
 	assert log10 (10.0) = 1.0
 	assert log10 (11.0) > 1.0
 	assert log10 (undefined) = undefined
+@*/
+DO_NUM_WITH_TENSORS (sigmoid, NUMsigmoid (xvalue), U"Cannot take the sigmoid of ")
+/*@praat
+	assert sigmoid (0.0) = 0.5
+	assert sigmoid (-1000) = 0
+	assert arctanh (1000) = undefined
+@*/
+DO_NUM_WITH_TENSORS (invSigmoid, NUMinvSigmoid (xvalue), U"Cannot take the inverse sigmoid of ")
+/*@praat
+	assert invSigmoid (0.5) = 0.0
+	assert invSigmoid (-1.0) = undefined   ; not a number
+	assert invSigmoid (0.0) = undefined   ; minus infinity
+	assert invSigmoid (1.0) = undefined   ; plus infinity
+	assert invSigmoid (2.0) = undefined   ; not a number
 @*/
 
 static void do_sum () {
@@ -3796,7 +3815,7 @@ static void do_do () {
 		//praat_updateSelection ();
 		double value = undefined;
 		if (valueString.string [0] == 1) {   // nothing written with MelderInfo by praat_doAction or praat_doMenuCommand? then the return value is the ID of the selected object
-			int IOBJECT, result = 0, found = 0;
+			integer IOBJECT, result = 0, found = 0;
 			WHERE (SELECTED) {
 				result = IOBJECT;
 				found += 1;
@@ -4144,7 +4163,7 @@ static void do_runScript () {
 		Melder_throw (U"Cannot call runScript() more than ", MAXIMUM_NUMBER_OF_LEVELS, U" levels deep.");
 	}
 	try {
-		praat_executeScriptFromFileName (fileName->getString(), numberOfArguments - 1, & theStack [w + 1]);
+		praat_runScript (fileName->getString(), numberOfArguments - 1, & theStack [w + 1]);
 		theLevel -= 1;
 	} catch (MelderError) {
 		theLevel -= 1;
@@ -5355,15 +5374,15 @@ static void do_selectObject () {
 	for (int iobject = 1; iobject <= n -> number; iobject ++) {
 		const Stackel object = pop;
 		if (object -> which == Stackel_NUMBER) {
-			const int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
+			const integer IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			const int IOBJECT = praat_findObjectByName (object -> getString());
+			const integer IOBJECT = praat_findObjectByName (object -> getString());
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			const VEC vec = object -> numericVector;
-			for (int ielm = 1; ielm <= vec.size; ielm ++) {
-				const int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
+			for (integer ielm = 1; ielm <= vec.size; ielm ++) {
+				const integer IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_select (IOBJECT);
 			}
 		} else {
@@ -5378,15 +5397,15 @@ static void do_plusObject () {
 	for (int iobject = 1; iobject <= n -> number; iobject ++) {
 		const Stackel object = pop;
 		if (object -> which == Stackel_NUMBER) {
-			const int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
+			const integer IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			const int IOBJECT = praat_findObjectByName (object -> getString());
+			const integer IOBJECT = praat_findObjectByName (object -> getString());
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			const VEC vec = object -> numericVector;
-			for (int ielm = 1; ielm <= vec.size; ielm ++) {
-				const int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
+			for (integer ielm = 1; ielm <= vec.size; ielm ++) {
+				const integer IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_select (IOBJECT);
 			}
 		} else {
@@ -5401,15 +5420,15 @@ static void do_minusObject () {
 	for (int iobject = 1; iobject <= n -> number; iobject ++) {
 		const Stackel object = pop;
 		if (object -> which == Stackel_NUMBER) {
-			const int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
+			const integer IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_deselect (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			const int IOBJECT = praat_findObjectByName (object -> getString());
+			const integer IOBJECT = praat_findObjectByName (object -> getString());
 			praat_deselect (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			const VEC vec = object -> numericVector;
-			for (int ielm = 1; ielm <= vec.size; ielm ++) {
-				const int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
+			for (integer ielm = 1; ielm <= vec.size; ielm ++) {
+				const integer IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_deselect (IOBJECT);
 			}
 		} else {
@@ -5424,15 +5443,15 @@ static void do_removeObject () {
 	for (int iobject = 1; iobject <= n -> number; iobject ++) {
 		const Stackel object = pop;
 		if (object -> which == Stackel_NUMBER) {
-			const int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
+			const integer IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_removeObject (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			const int IOBJECT = praat_findObjectByName (object -> getString());
+			const integer IOBJECT = praat_findObjectByName (object -> getString());
 			praat_removeObject (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			const VEC vec = object -> numericVector;
-			for (int ielm = 1; ielm <= vec.size; ielm ++) {
-				const int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
+			for (integer ielm = 1; ielm <= vec.size; ielm ++) {
+				const integer IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_removeObject (IOBJECT);
 			}
 		} else {
@@ -5445,10 +5464,10 @@ static void do_removeObject () {
 static Daata _do_object (Stackel object, conststring32 expressionMessage) {
 	Daata data;
 	if (object -> which == Stackel_NUMBER) {
-		const int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
+		const integer IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 		data = OBJECT;
 	} else if (object -> which == Stackel_STRING) {
-		const int IOBJECT = praat_findObjectByName (object -> getString());
+		const integer IOBJECT = praat_findObjectByName (object -> getString());
 		data = OBJECT;
 	} else if (object -> which == Stackel_OBJECT) {
 		data = object -> object;
@@ -5562,6 +5581,21 @@ static void do_string_STR () {
 		Melder_throw (U"The function \"string$\" requires a number, not ", value->whichText(), U".");
 	}
 }
+static void do_numbers_VEC () {
+	/*
+		result# = numbers# (strings$#)
+	*/
+	const Stackel stringsel = pop;
+	if (stringsel->which == Stackel_STRING_ARRAY) {
+		const constSTRVEC strings = stringsel->stringArray;
+		autoVEC result = zero_VEC (strings.size);
+		for (integer i = 1; i <= strings.size; i ++)
+			result [i] = Melder_atof (strings [i]);
+		pushNumericVector (result.move());
+	} else {
+		Melder_throw (U"The function \"numbers#\" requires a string array, not ", stringsel->whichText(), U".");
+	}
+}
 static void do_sleep () {
 	const Stackel value = pop;
 	if (value->which == Stackel_NUMBER) {
@@ -5667,6 +5701,17 @@ static void do_createDirectory () {
 		Melder_throw (U"The function \"createDirectory\" requires a string, not ", f->whichText(), U".");
 	}
 }
+static void do_setWorkingDirectory () {
+	const Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderDir folder { };
+		Melder_pathToDir (f->getString(), & folder);
+		Melder_setDefaultDir (& folder);
+		pushNumber (1);
+	} else {
+		Melder_throw (U"The function \"setWorkingDirectory\" requires a string, not ", f->whichText(), U".");
+	}
+}
 static void do_variableExists () {
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
@@ -5719,6 +5764,12 @@ static void do_tensorLiteral () {
 		}
 		pushNumericVector (result.move());
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		/*@praat
+			a# = zero# (0)   ; edge case
+			a## = { a#, a# }
+			assert numberOfRows (a##) = 2
+			assert numberOfColumns (a##) = 0
+		@*/
 		const integer sharedNumberOfColumns = last->numericVector.size;
 		autoMAT result = raw_MAT (numberOfElements, sharedNumberOfColumns);
 		result.row (numberOfElements)  <<=  last->numericVector;
@@ -6472,7 +6523,7 @@ static void do_endPauseForm () {
 			Melder_throw (U"Each of the first ", numberOfContinueButtons,
 				U" argument(s) of \"endPause\" should be a string (a button text), not ", co[i]->whichText(), U".");
 	}
-	const int buttonClicked = UiPause_end (numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
+	const integer buttonClicked = UiPause_end (numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
 		! co [1] ? nullptr : co[1]->getString(), ! co [2] ? nullptr : co[2]->getString(),
 		! co [3] ? nullptr : co[3]->getString(), ! co [4] ? nullptr : co[4]->getString(),
 		! co [5] ? nullptr : co[5]->getString(), ! co [6] ? nullptr : co[6]->getString(),
@@ -6777,14 +6828,14 @@ static void do_toObject () {
 	const Stackel object = pop;
 	Daata thee = nullptr;
 	if (object->which == Stackel_NUMBER) {
-		int i = theCurrentPraatObjects -> n;
+		integer i = theCurrentPraatObjects -> n;
 		while (i > 0 && object->number != theCurrentPraatObjects -> list [i]. id)
 			i --;
 		if (i == 0)
 			Melder_throw (U"No such object: ", object->number);
 		thee = (Daata) theCurrentPraatObjects -> list [i]. object;
 	} else if (object->which == Stackel_STRING) {
-		int i = theCurrentPraatObjects -> n;
+		integer i = theCurrentPraatObjects -> n;
 		while (i > 0 && ! Melder_equ (object->getString(), theCurrentPraatObjects -> list [i]. name.get()))
 			i --;
 		if (i == 0)
@@ -7244,7 +7295,7 @@ void Formula_run (integer row, integer col, Formula_Result *result) {
 	wmax = 0;   // start new stack
 	try {
 		while (programPointer <= numberOfInstructions) {
-			int symbol;
+			integer symbol;
 				switch (symbol = f [programPointer]. symbol) {
 
 case NUMBER_: { pushNumber (f [programPointer]. content.number);
@@ -7303,11 +7354,10 @@ CASE_NUM_WITH_TENSORS (TANH_, do_tanh)
 CASE_NUM_WITH_TENSORS (ARCSINH_, do_arcsinh)
 CASE_NUM_WITH_TENSORS (ARCCOSH_, do_arccosh)
 CASE_NUM_WITH_TENSORS (ARCTANH_, do_arctanh)
-} break; case SIGMOID_: { do_function_n_n (NUMsigmoid);
-} break; case SIGMOID_VEC_: { do_functionvec_n_n (NUMsigmoid);
+CASE_NUM_WITH_TENSORS (SIGMOID_, do_sigmoid)
+CASE_NUM_WITH_TENSORS (INV_SIGMOID_, do_invSigmoid)
 } break; case SOFTMAX_VEC_: { do_softmax_VEC ();
 } break; case SOFTMAX_PER_ROW_MAT_: { do_softmaxPerRow_MAT ();
-} break; case INV_SIGMOID_: { do_function_n_n (NUMinvSigmoid);
 } break; case ERF_: { do_function_n_n (NUMerf);
 } break; case ERFC_: { do_function_n_n (NUMerfcc);
 } break; case GAUSS_P_: { do_function_n_n (NUMgaussP);
@@ -7482,6 +7532,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case OBJECT_ROW_STR_: { do_object_row_STR ();
 } break; case OBJECT_COL_STR_: { do_object_col_STR ();
 } break; case STRING_STR_: { do_string_STR ();
+} break; case NUMBERS_VEC_: { do_numbers_VEC ();
 } break; case SLEEP_: { do_sleep ();
 } break; case UNICODE_: { do_unicode ();
 } break; case UNICODE_STR_: { do_unicode_STR ();
@@ -7491,6 +7542,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case DELETE_FILE_: { do_deleteFile ();
 } break; case CREATE_FOLDER_: { do_createFolder ();
 } break; case CREATE_DIRECTORY_: { do_createDirectory ();   // deprecated 2020
+} break; case SET_WORKING_DIRECTORY_: { do_setWorkingDirectory ();   // deprecated 2020
 } break; case VARIABLE_EXISTS_: { do_variableExists ();
 } break; case READ_FILE_: { do_readFile ();
 } break; case READ_FILE_STR_: { do_readFile_STR ();

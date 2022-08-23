@@ -50,7 +50,7 @@ oo_DEFINE_CLASS (SVD, Daata)
 	oo_VEC (d, numberOfColumns)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 
@@ -69,7 +69,7 @@ oo_DEFINE_CLASS (GSVD, Daata)
 	oo_VEC (d2, numberOfColumns)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

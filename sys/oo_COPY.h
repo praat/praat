@@ -107,15 +107,15 @@
 	MelderDir_copy (& our x, & thy x);
 
 #define oo_DEFINE_STRUCT(Type)  \
-	void struct##Type :: copy (Type thee) {
+	void struct##Type :: copy (Type thee) const {
 
 #define oo_END_STRUCT(Type)  \
 	}
 
 #define oo_DEFINE_CLASS(Class, Parent)  \
-	void struct##Class :: v_copy (Daata _thee_Daata) { \
+	void struct##Class :: v1_copy (Daata _thee_Daata) const { \
 		Class thee = static_cast <Class> (_thee_Daata); \
-		Class##_Parent :: v_copy (thee);
+		Class##_Parent :: v1_copy (thee);
 
 #define oo_END_CLASS(Class)  \
 	}

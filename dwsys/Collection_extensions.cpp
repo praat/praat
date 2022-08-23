@@ -146,7 +146,7 @@ void OrderedOfString_initWithSequentialNumbers (StringList me, integer n) {
 		my addItem_move (SimpleString_create (Melder_integer (i)));
 }
 
-void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *replace, int maximumNumberOfReplaces, integer *out_numberOfMatches, integer *out_numberOfStringMatches, bool use_regexp) {
+void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *replace, integer maximumNumberOfReplaces, integer *out_numberOfMatches, integer *out_numberOfStringMatches, bool use_regexp) {
 	regexp *compiled_search = nullptr;
 	try {
 		Melder_require (search,

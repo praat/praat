@@ -30,7 +30,7 @@ Multi-language text-to-speech facilities allow you to segment the sound into wor
 #### Grammar models
 
 With Praat, you can try out Optimality-Theoretic and Harmonic-Grammar learning,
-as well as seevral kinds of neural-network models.
+as well as several kinds of neural-network models.
 
 #### Statistical analysis
 
@@ -44,11 +44,11 @@ For more information, consult the website [praat.org](https://praat.org), which 
 While the [Praat website](https://praat.org) contains the latest executable for all platforms that we support
 (or used to support), the [releases on GitHub](https://github.com/praat/praat/releases) contain many older executables as well.
 
-The meaning of the names of binary files available on GitHub is as follows:
+The meaning of the names of binary files available on GitHub is as follows (editions that currently receive updates are in bold):
 
 ### 1.1. Windows binaries
-- `praatXXXX_win64.zip`: zipped executable for 64-bit Windows (XP and higher)
-- `praatXXXX_win32.zip`: zipped executable for 32-bit Windows (XP and higher)
+- **`praatXXXX_win64.zip`: zipped executable for 64-bit Windows (** XP and higher, or **7 and higher)**
+- **`praatXXXX_win32.zip`: zipped executable for 32-bit Windows (** XP and higher, or **7 and higher)**
 - `praatconXXXX_win64.zip`: zipped executable for 64-bit Windows, console edition
 - `praatconXXXX_win32.zip`: zipped executable for 32-bit Windows, console edition
 - `praatconXXXX_win32sit.exe`: self-extracting StuffIt archive with executable for 32-bit Windows, console edition
@@ -56,8 +56,8 @@ The meaning of the names of binary files available on GitHub is as follows:
 - `praatXXXX_win98sit.exe`: self-extracting StuffIt archive with executable for Windows 98
 
 ### 1.2. Mac binaries
-- `praatXXXX_mac.dmg`: disk image with universal executable for (64-bit) Intel and Apple Silicon Macs (Cocoa)
-- `praatXXXX_xcodeproj.zip`: zipped Xcode project file for the universal (64-bit) edition (Cocoa)
+- **`praatXXXX_mac.dmg`: disk image with universal executable for (64-bit) Intel and Apple Silicon Macs (Cocoa)**
+- **`praatXXXX_xcodeproj.zip`: zipped Xcode project file for the universal (64-bit) edition (Cocoa)**
 - `praatXXXX_mac64.dmg`: disk image with executable for 64-bit Intel Macs (Cocoa)
 - `praatXXXX_xcodeproj64.zip`: zipped Xcode project file for the 64-bit edition (Cocoa)
 - `praatXXXX_mac32.dmg`: disk image with executable for 32-bit Intel Macs (Carbon)
@@ -71,11 +71,11 @@ The meaning of the names of binary files available on GitHub is as follows:
 - `praatXXXX_mac7.sit`: StuffIt archive with executable for MacOS 7
 
 ### 1.3. Unix binaries
-- `praatXXXX_rpi_armv7.tar.gz`: gzipped tarred executable for 32-bit Linux on the Raspberry Pi 4B (GTK 2 or 3)
-- `praatXXXX_chrome64.tar.gz`: gzipped tarred executable for 64-bit Linux on Chromebooks (GTK 2 or 3)
-- `praatXXXX_linux64barren.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI or graphics
-- `praatXXXX_linux64nogui.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI but with graphics (Cairo and Pango)
-- `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK 2 or 3)
+- **`praatXXXX_rpi_armv7.tar.gz`: gzipped tarred executable for 32-bit Linux on the Raspberry Pi 4B (GTK** 2 or **3)**
+- **`praatXXXX_chrome64.tar.gz`: gzipped tarred executable for 64-bit Linux on Chromebooks (GTK** 2 or **3)**
+- **`praatXXXX_linux64barren.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI or graphics**
+- **`praatXXXX_linux64nogui.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI but with graphics (Cairo and Pango)**
+- **`praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK** 2 or **3)**
 - `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux (GTK 2)
 - `praatXXXX_linux_motif64.tar.gz`: gzipped tarred executable for 64-bit Linux (Motif)
 - `praatXXXX_linux_motif32.tar.gz`: gzipped tarred executable for 32-bit Linux (Motif)
@@ -144,7 +144,7 @@ Then type `make` to build `Praat.exe`
 
 Extract the *praatXXXX_xcodeproj.zip* file from the [latest release](https://github.com/praat/praat/releases)
 into the directory that contains `sys`, `fon`, `dwtools` and so on.
-Then open the project `praat.xcodeproj` in Xcode 13.1 and choose Build or Run for the target `praat_mac`.
+Then open the project `praat.xcodeproj` in Xcode 13.4 and choose Build or Run for the target `praat_mac`.
 You can compile with the 12.0 (i.e. the newest and standard) SDK, which will work as far back as macOS 10.9,
 which is our deployment target.
 
@@ -162,7 +162,7 @@ try the target `praat_mac_a` (static) or `praat_mac_so` (dynamic).
 
 **Notarization.** If you want others to be able to use your Mac app,
 you will probably have to not only *sign* the executable, but also *notarize* it. To this end,
-do Xcode (version 12) -> Product -> Archive -> Distribute App -> Developer ID -> Upload ->
+do Xcode (version 13) -> Product -> Archive -> Distribute App -> Developer ID -> Upload ->
 Automatically manage signing -> Upload -> ...wait... (“Package Approved”) ...wait...
 (“Ready to distribute”) -> Export Notarized App). If your Praat.app was built into
 `~/builds/mac_products/Configuration64`, then you can save the notarized
@@ -188,9 +188,6 @@ and type one of the four following commands:
 
     # on Ubuntu command line
     cp makefiles/makefile.defs.linux.pulse ./makefile.defs
-
-    # on Ubuntu command line
-    cp makefiles/makefile.defs.linux.pulse_static ./makefile.defs
 
     # on Chromebook command line
     cp makefiles/makefile.defs.chrome64 ./makefile.defs
@@ -244,9 +241,9 @@ or `praat-build` into a Windows or Linux terminal (or `praat-run` to build and r
 
 Your source code folders, such as `fon` and `sys`, will reside in a folder like `/Users/yourname/Praats/src`,
 where you also put `praat.xcodeproj`, as described above in 3.2.
-On Paul’s 2018 MacBook Pro with Xcode 13.1, building Praat with Command-B or Command-R,
+On Paul’s 2018 MacBook Pro with Xcode 13.4, building Praat with Command-B or Command-R,
 after cleaning the build folder with Shift-Command-K,
-takes 160 seconds for the x86_64 part and 150 seconds for the ARM64 part (optimization level O3).
+takes 380 seconds for the x86_64 part and ARM64 part together (optimization level O3).
 
 ### 4.2. Windows development set-up
 
@@ -328,12 +325,6 @@ assuming that it uses the `bash` shell):
         make -j12 )"
     alias praat="~/praats/praat"
     alias praat-run="praat-build && praat"
-    alias praatt-build="( cd ~/praatst &&\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
-        cp makefiles/makefile.defs.linux.pulse_static makefile.defs &&\
-        make -j12 )"
-    alias praatt="~/praatst/praatt"
-    alias praatt-run="praatt-build && praatt"
 
 Building Praat this way takes 2 minutes and 10 seconds (optimization level O3).
 
@@ -544,7 +535,6 @@ On Ubuntu you can define
 
     # in Ubuntu:~/.bash_aliases
     alias praat-dist="praat-build && rsync -t ~/praats/praat /media/psf/Home/builds/linux64"
-    alias praatt-dist="praatt-build && rsync -t ~/praatst/praat_static /media/psf/Home/builds/linux64"
     alias praatb-dist="praatb-build && rsync -t ~/praatsb/praat_barren /media/psf/Home/builds/linux64"
     alias praatn-dist="praatn-build && rsync -t ~/praatsn/praat_nogui /media/psf/Home/builds/linux64"
     alias praatc-dist="praatc-build && rsync -t ~/praatsc/praat /media/psf/Home/builds/chrome64"
@@ -553,7 +543,6 @@ so that you can “upload” the five executables to the Mac with
 
     # on Ubuntu command line
     praat-dist
-    praatt-dist
     praatb-dist
     praatn-dist
     praatc-dist
@@ -574,10 +563,6 @@ you can issue the following commands to create the packages and install them in 
       tar cvf praat$(PRAAT_VERSION)_linux64.tar praat &&\
       gzip praat$(PRAAT_VERSION)_linux64.tar &&\
       mv praat$(PRAAT_VERSION)_linux64.tar.gz $PRAAT_WWW )
-    ( cd ~/builds/linux64 &&\
-      tar cvf praat$(PRAAT_VERSION)_linux64static.tar praat_static &&\
-      gzip praat$(PRAAT_VERSION)_linux64static.tar &&\
-      mv praat$(PRAAT_VERSION)_linux64static.tar.gz $PRAAT_WWW )
     ( cd ~/builds/linux64 &&\
       tar cvf praat$(PRAAT_VERSION)_linux64barren.tar praat_barren &&\
       gzip praat$(PRAAT_VERSION)_linux64barren.tar &&\

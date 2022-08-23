@@ -282,7 +282,7 @@ autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 }
 
 void Spectrum_shiftPhaseBy90Degrees (Spectrum me) {
-	// shifting pi/2 a multiplication by -i
+	// shifting +pi/2 by a multiplication with i
 	for (integer i = 2; i <= my nx - 1; i ++) {
 		std::swap (my z [1] [i], my z [2] [i]);
 		my z [1] [i] = - my z [1] [i];
@@ -290,7 +290,7 @@ void Spectrum_shiftPhaseBy90Degrees (Spectrum me) {
 }
 
 void Spectrum_unshiftPhaseBy90Degrees (Spectrum me) {
-	// shifting -pi/2 a multiplication by i
+	// shifting -pi/2 by a multiplication with -i
 	for (integer i = 2; i <= my nx - 1; i ++) {
 		my z [1] [i] = - my z [1] [i];
 		std::swap (my z [1] [i], my z [2] [i]);
@@ -321,7 +321,7 @@ autoSpectrum Spectrum_resample2 (Spectrum me, integer numberOfFrequencies) {
 		const double newSamplingFrequency = (1.0 / my dx) * numberOfFrequencies / my nx;
 		const double resampleFactor = (my nx - 1.0) / numberOfFrequencies;
 		autoSound resampled = Sound_resample (sound.get(), resampleFactor / sound -> dx, 50);
-		autoSpectrum extendedSpectrum = Sound_to_Spectrum_dft (resampled.get(), 50);
+		autoSpectrum extendedSpectrum = Sound_to_Spectrum_resampled (resampled.get(), 50);
 		autoSpectrum him = Spectrum_create (my xmax, numberOfFrequencies);
 		his z.all()  <<=  extendedSpectrum -> z.all();
 		return him;

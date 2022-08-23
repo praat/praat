@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2021 David Weenink
+ * Copyright (C) 1993-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,8 +113,6 @@ double Sound_correlateParts (Sound me, double t1, double t2, double duration);
 
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference);
 
-double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection);
-
 autoSound Sound_localAverage (Sound me, double averaginginterval, int windowType);
 /* y [n] = sum(i=-n, i=n, x [n+i]) / (2*n+1) */
 
@@ -179,13 +177,6 @@ autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him,
 /* Outphased */
 autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
 	double new_pitch, double pitchRangeFactor, double durationFactor);
-
-autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
-	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
-	conststring32 silentLabel, conststring32 soundingLabel);
-
-autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeStep, double longTermWindow_r, double shorttimeAveragingWindow, double lowFrequencyThreshold, double highFrequencyThreshold, double lsfmThreshold, double silenceThreshold_dB, double minSilenceDuration, 
-	double minSoundingDuration,	conststring32 novoiceAcivityLabel, conststring32 voiceAcivityLabel);
 
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *out_t1, double *out_t2);

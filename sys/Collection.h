@@ -2,7 +2,7 @@
 #define _Collection_h_
 /* Collection.h
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@
 template <typename T> struct CollectionOf;
 
 typedef CollectionOf<structDaata> _CollectionOfDaata;
-extern void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
-extern bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
-extern bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
-extern void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile);
-extern void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
-extern void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
-extern void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
+extern void _CollectionOfDaata_v1_copy (const _CollectionOfDaata* me, _CollectionOfDaata* thee);
+extern bool _CollectionOfDaata_v1_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
+extern bool _CollectionOfDaata_v1_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
+extern void _CollectionOfDaata_v1_writeText (_CollectionOfDaata* me, MelderFile openFile);
+extern void _CollectionOfDaata_v1_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
+extern void _CollectionOfDaata_v1_writeBinary (_CollectionOfDaata* me, FILE *f);
+extern void _CollectionOfDaata_v1_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
 
 template <typename T   /*Melder_ENABLE_IF_ISA (T, structThing)*/>
 struct ArrayOf {
@@ -80,10 +80,10 @@ struct CollectionOf : structDaata {
 	virtual ~ CollectionOf () {
 		/*
 			We cannot simply do
-				//our v_destroy ();
+				//our v9_destroy ();
 			because C++ will implicitly call the destructor for structDaata,
-			whereas structCollection::v_destroy explicitly calls structDaata::v_destroy;
-			calling v_destroy here would therefore free structThing::name twice,
+			whereas structCollection::v9_destroy explicitly calls structDaata::v9_destroy;
+			calling v9_destroy here would therefore free structThing::name twice,
 			which may not crash Praat (assuming that `name` is nulled the first time)
 			but which is not how destruction should be organized.
 		*/
@@ -190,14 +190,15 @@ struct CollectionOf : structDaata {
 	}
 	void _makeRoomForOneMoreItem (integer pos) {
 		if (our size >= our _capacity) {
-			integer newCapacity = 2 * our _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
+			const integer newCapacity = 2 * our _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
 			T** oldItem_base0 = ( our at._elements ? our at._elements + 1 : nullptr );   // convert from base-1 to base-0
 			T** newItem_base0 = (T**) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (T*));
 			our at._elements = newItem_base0 - 1;   // convert from base-0 to base-1
 			our _capacity = newCapacity;
 		}
 		our size ++;
-		for (integer i = our size; i > pos; i --) our at [i] = our at [i - 1];
+		for (integer i = our size; i > pos; i --)
+			our at [i] = our at [i - 1];
 	}
 	T* _insertItem_move (autoSomeThing <T> data, integer pos) {
 		our _initializeOwnership (true);
@@ -223,12 +224,11 @@ struct CollectionOf : structDaata {
 	*/
 	void addItem_ref (T* thing) {
 		Melder_assert (thing);
-		integer index = our _v_position (thing);
-		if (index != 0) {
+		const integer index = our _v_position (thing);
+		if (index != 0)
 			our _insertItem_ref (thing, index);
-		} else {
+		else
 			our _initializeOwnership (false);
-		}
 	}
 
 	/**
@@ -246,7 +246,7 @@ struct CollectionOf : structDaata {
 	*/
 	T* addItem_move (autoSomeThing<T> thing) {
 		T* thingRef = thing.get();
-		integer index = our _v_position (thingRef);
+		const integer index = our _v_position (thingRef);
 		if (index != 0) {
 			return our _insertItem_move (thing.move(), index);
 		} else {
@@ -268,9 +268,8 @@ struct CollectionOf : structDaata {
 	void undangleItem (Thing thing) {
 		for (integer i = our size; i > 0; i --) {
 			if (our at [i] == thing) {
-				for (integer j = i; j < our size; j ++) {
+				for (integer j = i; j < our size; j ++)
 					our at [j] = our at [j + 1];
-				}
 				our size --;
 			}
 		}
@@ -328,7 +327,8 @@ struct CollectionOf : structDaata {
 	*/
 	void removeItem (integer pos) {
 		Melder_assert (pos >= 1 && pos <= our size);
-		if (our _ownItems) _Thing_forget (our at [pos]);
+		if (our _ownItems)
+			_Thing_forget (our at [pos]);
 		for (integer i = pos; i < our size; i ++)
 			our at [i] = our at [i + 1];
 		our size --;
@@ -341,10 +341,9 @@ struct CollectionOf : structDaata {
 			my _capacity not changed;
 	*/
 	void removeAllItems () {
-		if (our _ownItems) {
+		if (our _ownItems)
 			for (integer i = 1; i <= our size; i ++)
 				_Thing_forget (our at [i]);
-		}
 		our size = 0;
 	}
 
@@ -360,13 +359,11 @@ struct CollectionOf : structDaata {
 		our at --;
 	}
 	void sort (int (*compare) (T*, T*)) {
-		integer l, r, j, i;
-		T* k;
+		if (our size < 2)
+			return;
 		T** a = our at._elements;
-		integer n = our size;
-		if (n < 2) return;
-		l = (n >> 1) + 1;
-		r = n;
+		integer l = (our size >> 1) + 1, r = our size, i, j;
+		T* k;
 		for (;;) {
 			if (l > 1) {
 				l --;
@@ -375,15 +372,21 @@ struct CollectionOf : structDaata {
 				k = a [r];
 				a [r] = a [1];
 				r --;
-				if (r == 1) { a [1] = k; return; }
+				if (r == 1) {
+					a [1] = k;
+					return;
+				}
 			}
 			j = l;
 			for (;;) {
 				i = j;
 				j = j << 1;
-				if (j > r) break;
-				if (j < r && compare (a [j], a [j + 1]) < 0) j ++;
-				if (compare (k, a [j]) >= 0) break;
+				if (j > r)
+					break;
+				if (j < r && compare (a [j], a [j + 1]) < 0)
+					j ++;
+				if (compare (k, a [j]) >= 0)
+					break;
 				a [i] = a [j];
 			}
 			a [i] = k;
@@ -429,41 +432,41 @@ struct CollectionOf : structDaata {
 		as an independent pointer-to-object created with XXX_create ().
 	*/
 
-	void v_info () override {
+	void v1_info () override {
 		MelderInfo_writeLine (our size, U" items");
 	}
 
-	void v_destroy () noexcept override {
+	void v9_destroy () noexcept override {
 		/*
 			The items are destroyed automatically by the destructor,
 			which is called by delete, which is called by forget().
 			So we only have to destroy the members of Daata,
 			many of which are not destroyed automatically.
 		*/
-		structDaata::v_destroy ();
+		structDaata::v9_destroy ();
 	}
 
 
-	void v_copy (Daata data_to) override {   // copies all the items
-		_CollectionOfDaata_v_copy (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data_to));
+	void v1_copy (Daata data_to) const override {   // copies all the items
+		_CollectionOfDaata_v1_copy (reinterpret_cast<const _CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data_to));
 	}
-	bool v_equal (Daata data2) override {   // compares 'my item [i]' with 'thy item [i]', i = 1..size
-		return _CollectionOfDaata_v_equal (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data2));
+	bool v1_equal (Daata data2) override {   // compares 'my item [i]' with 'thy item [i]', i = 1..size
+		return _CollectionOfDaata_v1_equal (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data2));
 	}
-	bool v_canWriteAsEncoding (int outputEncoding) override {
-		return _CollectionOfDaata_v_canWriteAsEncoding (reinterpret_cast<_CollectionOfDaata*> (this), outputEncoding);
+	bool v1_canWriteAsEncoding (int outputEncoding) override {
+		return _CollectionOfDaata_v1_canWriteAsEncoding (reinterpret_cast<_CollectionOfDaata*> (this), outputEncoding);
 	}
-	void v_writeText (MelderFile openFile) override {
-		_CollectionOfDaata_v_writeText (reinterpret_cast<_CollectionOfDaata*> (this), openFile);
+	void v1_writeText (MelderFile openFile) override {
+		_CollectionOfDaata_v1_writeText (reinterpret_cast<_CollectionOfDaata*> (this), openFile);
 	}
-	void v_readText (MelderReadText text, int formatVersion) override {
-		_CollectionOfDaata_v_readText (reinterpret_cast<_CollectionOfDaata*> (this), text, formatVersion);
+	void v1_readText (MelderReadText text, int formatVersion) override {
+		_CollectionOfDaata_v1_readText (reinterpret_cast<_CollectionOfDaata*> (this), text, formatVersion);
 	}
-	void v_writeBinary (FILE *f) override {
-		_CollectionOfDaata_v_writeBinary (reinterpret_cast<_CollectionOfDaata*> (this), f);
+	void v1_writeBinary (FILE *f) override {
+		_CollectionOfDaata_v1_writeBinary (reinterpret_cast<_CollectionOfDaata*> (this), f);
 	}
-	void v_readBinary (FILE *f, int formatVersion) override {
-		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
+	void v1_readBinary (FILE *f, int formatVersion) override {
+		_CollectionOfDaata_v1_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
 	}
 	Data_Description v_description () override {
 		return & theCollectionOfDaata_v_description [0];
@@ -569,13 +572,20 @@ struct SortedOf : CollectionOf <T> {
 
 	integer _v_position (T* data) override {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
-		if (our size == 0 || compare (data, our at [our size]) >= 0) return our size + 1;
-		if (compare (data, our at [1]) < 0) return 1;
-		/* Binary search. */
+		if (our size == 0 || compare (data, our at [our size]) >= 0)
+			return our size + 1;
+		if (compare (data, our at [1]) < 0)
+			return 1;
+		/*
+			Binary search.
+		*/
 		integer left = 1, right = our size;
 		while (left < right - 1) {
-			integer mid = (left + right) / 2;
-			if (compare (data, our at [mid]) >= 0) left = mid; else right = mid;
+			const integer mid = (left + right) / 2;
+			if (compare (data, our at [mid]) >= 0)
+				left = mid;
+			else
+				right = mid;
 		}
 		Melder_assert (right == left + 1);
 		return right;
@@ -611,14 +621,18 @@ struct SortedSetOf : SortedOf <T> {
 	*/
 	integer _v_position (T* data) override {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
-		if (our size == 0) return 1;   // empty set? then 'data' is going to be the first item
-		int where = compare (data, our at [our size]);   // compare with last item
-		if (where > 0) return our size + 1;   // insert at end
-		if (where == 0) return 0;
-		if (compare (data, our at [1]) < 0) return 1;   // compare with first item
+		if (our size == 0)
+			return 1;   // empty set? then 'data' is going to be the first item
+		const int where = compare (data, our at [our size]);   // compare with last item
+		if (where > 0)
+			return our size + 1;   // insert at end
+		if (where == 0)
+			return 0;
+		if (compare (data, our at [1]) < 0)
+			return 1;   // compare with first item
 		integer left = 1, right = our size;
 		while (left < right - 1) {
-			integer mid = (left + right) / 2;
+			const integer mid = (left + right) / 2;
 			if (compare (data, our at [mid]) >= 0)
 				left = mid;
 			else
@@ -643,29 +657,26 @@ struct SortedSetOf : SortedOf <T> {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
 		integer n = 0, ifrom = 1;
 		for (integer i = 1; i <= our size; i ++) {
-			if (i == our size || compare (our at [i], our at [i + 1]))
-			{
+			if (i == our size || compare (our at [i], our at [i + 1])) {
 				/*
-				 * Detected a change.
-				 */
+					Detected a change.
+				*/
 				n ++;
 				integer ito = i;
 				/*
-				 * Move item 'ifrom' to 'n'.
-				 */
+					Move item 'ifrom' to 'n'.
+				*/
 				Melder_assert (ifrom >= n);
 				if (ifrom != n) {
 					our at [n] = our at [ifrom];   // surface copy
 					our at [ifrom] = nullptr;   // undangle
 				}
 				/*
-				 * Purge items from 'ifrom'+1 to 'ito'.
-				 */
-				if (our _ownItems) {
-					for (integer j = ifrom + 1; j <= ito; j ++) {
+					Purge items from 'ifrom'+1 to 'ito'.
+				*/
+				if (our _ownItems)
+					for (integer j = ifrom + 1; j <= ito; j ++)
 						_Thing_forget (our at [j]);
-					}
-				}
 				ifrom = ito + 1;
 			}
 		}
@@ -691,8 +702,10 @@ struct SortedSetOfIntegerOf : SortedSetOf <T> {
 	}
 	SortedSetOfIntegerOf<T>&& move () noexcept { return static_cast <SortedSetOfIntegerOf<T>&&> (*this); }
 	static int s_compareHook (SimpleInteger me, SimpleInteger thee) noexcept {
-		if (my number < thy number) return -1;
-		if (my number > thy number) return +1;
+		if (my number < thy number)
+			return -1;
+		if (my number > thy number)
+			return +1;
 		return 0;
 	}
 	typename SortedOf<T>::CompareHook v_getCompareHook ()
@@ -708,8 +721,10 @@ struct SortedSetOfDoubleOf : SortedSetOf <T> {
 	}
 	SortedSetOfDoubleOf<T>&& move () noexcept { return static_cast <SortedSetOfDoubleOf<T>&&> (*this); }
 	static int s_compareHook (SimpleDouble me, SimpleDouble thee) noexcept {
-		if (my number < thy number) return -1;
-		if (my number > thy number) return +1;
+		if (my number < thy number)
+			return -1;
+		if (my number > thy number)
+			return +1;
 		return 0;
 	}
 	typename SortedOf<T>::CompareHook v_getCompareHook ()
@@ -731,24 +746,31 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
 
 	integer lookUp (conststring32 string) {
-		integer numberOfItems = our size;
-		integer left = 1, right = numberOfItems;
-		int atStart, atEnd;
-		if (numberOfItems == 0) return 0;
+		if (our size == 0)
+			return 0;
 
-		atEnd = str32cmp (string, our at [numberOfItems] -> string.get());
-		if (atEnd > 0) return 0;
-		if (atEnd == 0) return numberOfItems;
+		const int atEnd = str32cmp (string, our at [our size] -> string.get());
+		if (atEnd > 0)
+			return 0;
+		if (atEnd == 0)
+			return our size;
 
-		atStart = str32cmp (string, our at [1] -> string.get());
-		if (atStart < 0) return 0;
-		if (atStart == 0) return 1;
+		const int atStart = str32cmp (string, our at [1] -> string.get());
+		if (atStart < 0)
+			return 0;
+		if (atStart == 0)
+			return 1;
 
+		integer left = 1, right = our size;
 		while (left < right - 1) {
-			integer mid = (left + right) / 2;
-			int here = str32cmp (string, our at [mid] -> string.get());
-			if (here == 0) return mid;
-			if (here > 0) left = mid; else right = mid;
+			const integer mid = (left + right) / 2;
+			const int here = str32cmp (string, our at [mid] -> string.get());
+			if (here == 0)
+				return mid;
+			if (here > 0)
+				left = mid;
+			else
+				right = mid;
 		}
 		Melder_assert (right == left + 1);
 		return 0;

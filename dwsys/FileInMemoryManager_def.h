@@ -24,7 +24,7 @@ oo_DEFINE_CLASS (FileInMemoryManager, Daata)
 	oo_INTEGER (errorNumber)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 	

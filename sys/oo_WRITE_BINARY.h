@@ -98,7 +98,7 @@
 	binputinteger32BE (our x.size, _filePointer_); \
 	for (integer _i = 1; _i <= our x.size; _i ++) { \
 		ItemClass data = our x.at [_i]; \
-		data -> struct##ItemClass :: v_writeBinary (_filePointer_); \
+		data -> struct##ItemClass :: v1_writeBinary (_filePointer_); \
 	}
 
 #define oo_COLLECTION(Class, x, ItemClass, version)  \
@@ -106,7 +106,7 @@
 	if (our x) { \
 		for (integer _i = 1; _i <= our x->size; _i ++) { \
 			ItemClass data = our x->at [_i]; \
-			data -> struct##ItemClass :: v_writeBinary (_filePointer_); \
+			data -> struct##ItemClass :: v1_writeBinary (_filePointer_); \
 		} \
 	}
 
@@ -121,8 +121,8 @@
 	}
 
 #define oo_DEFINE_CLASS(Class, Parent)  \
-	void struct##Class :: v_writeBinary (FILE *_filePointer_) { \
-		Class##_Parent :: v_writeBinary (_filePointer_);
+	void struct##Class :: v1_writeBinary (FILE *_filePointer_) { \
+		Class##_Parent :: v1_writeBinary (_filePointer_);
 
 #define oo_END_CLASS(Class)  \
 	}

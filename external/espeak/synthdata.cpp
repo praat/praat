@@ -28,21 +28,25 @@
 #include <string.h>
 
 #include "espeak_ng.h"
+#include "speak_lib.h"
 #include "encoding.h"
 
-#include "error.h"
-#include "speech.h"
-#include "synthesize.h"
-#include "translate.h"
+#include "synthdata.h"
+#include "error.h"                    // for create_file_error_context, crea...
+#include "phoneme.h"                  // for PHONEME_TAB, PHONEME_TAB_LIST
+#include "speech.h"                   // for path_home, GetFileLength, PATHSEP
+#include "mbrola.h"                   // for mbrola_name
+#include "soundicon.h"               // for soundicon_tab
+#include "synthesize.h"               // for PHONEME_LIST, frameref_t, PHONE...
+#include "translate.h"                // for Translator, LANGUAGE_OPTIONS
+#include "voice.h"                    // for ReadTonePoints, tone_points, voice
 
-const char *version_string = PACKAGE_VERSION;
 const int version_phdata  = 0x014801;
 
 // copy the current phoneme table into here
 int n_phoneme_tab;
 int current_phoneme_table;
 PHONEME_TAB *phoneme_tab[N_PHONEME_TAB];
-unsigned char phoneme_tab_flags[N_PHONEME_TAB];   // bit 0: not inherited
 
 USHORT *phoneme_index = NULL;
 char *phondata_ptr = NULL;
@@ -53,17 +57,7 @@ int n_phoneme_tables;
 PHONEME_TAB_LIST phoneme_tab_list[N_PHONEME_TABS];
 int phoneme_tab_number = 0;
 
-int wavefile_ix; // a wavefile to play along with the synthesis
-int wavefile_amp;
-int wavefile_ix2;
-int wavefile_amp2;
-
 int seq_len_adjust;
-int vowel_transition[4];
-int vowel_transition0;
-int vowel_transition1;
-
-int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
 
 static espeak_ng_STATUS ReadPhFile(void **ptr, const char *fname, int *size, espeak_ng_ERROR_CONTEXT *context)
 {
@@ -105,9 +99,7 @@ espeak_ng_STATUS LoadPhData(int *srate, espeak_ng_ERROR_CONTEXT *context)
 {
 	int ix;
 	int n_phonemes;
-	int version;
 	int length = 0;
-	int rate;
 	unsigned char *p;
 
 	espeak_ng_STATUS status;
@@ -122,10 +114,13 @@ espeak_ng_STATUS LoadPhData(int *srate, espeak_ng_ERROR_CONTEXT *context)
 	wavefile_data = (unsigned char *)phondata_ptr;
 	n_tunes = length / sizeof(TUNE);
 
-	// read the version number and sample rate from the first 8 bytes of phondata
+	/*
+		read the version number and sample rate from the first 8 bytes of phondata
+		On djmw's system they are as little endian written to a file in memory.
+	*/
 	
-	version = get_int32_le ((char *) wavefile_data); // bytes 0-3, version number
-	rate = get_int32_le ((char *) (wavefile_data + 4)); // bytes 4-7, sample rate
+	int version = get_int32_le ((char *) wavefile_data); // bytes 0-3, version number
+	int rate = get_int32_le ((char *) (wavefile_data + 4)); // bytes 4-7, sample rate
 
 	if (version != version_phdata)
 		return create_version_mismatch_error_context(context, path_home, version, version_phdata);
@@ -273,7 +268,6 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 			}
 			nf++;
 		}
-		wavefile_ix = 0;
 	}
 
 	if (length1 > 0) {
@@ -329,19 +323,16 @@ unsigned char *GetEnvelope(int index)
 	return (unsigned char *)&phondata_ptr[index];
 }
 
-static void SetUpPhonemeTable(int number, bool recursing)
+static void SetUpPhonemeTable(int number)
 {
 	int ix;
 	int includes;
 	int ph_code;
 	PHONEME_TAB *phtab;
 
-	if (recursing == false)
-		memset(phoneme_tab_flags, 0, sizeof(phoneme_tab_flags));
-
 	if ((includes = phoneme_tab_list[number].includes) > 0) {
 		// recursively include base phoneme tables
-		SetUpPhonemeTable(includes-1, true);
+		SetUpPhonemeTable(includes - 1);
 	}
 
 	// now add the phonemes from this table
@@ -351,16 +342,13 @@ static void SetUpPhonemeTable(int number, bool recursing)
 		phoneme_tab[ph_code] = &phtab[ix];
 		if (ph_code > n_phoneme_tab)
 			n_phoneme_tab = ph_code;
-
-		if (recursing == 0)
-			phoneme_tab_flags[ph_code] |= 1; // not inherited
 	}
 }
 
 void SelectPhonemeTable(int number)
 {
 	n_phoneme_tab = 0;
-	SetUpPhonemeTable(number, false); // recursively for included phoneme tables
+	SetUpPhonemeTable(number); // recursively for included phoneme tables
 	n_phoneme_tab++;
 	current_phoneme_table = number;
 }
@@ -403,11 +391,6 @@ void LoadConfig(void)
 	char c1;
 	char string[200];
 
-	for (ix = 0; ix < N_SOUNDICON_SLOTS; ix++) {
-		soundicon_tab[ix].filename = NULL;
-		soundicon_tab[ix].data = NULL;
-	}
-
 	sprintf(buf, "%s%c%s", path_home, PATHSEP, "config");
 	if ((f = fopen(buf, "r")) == NULL)
 		return;
@@ -420,6 +403,8 @@ void LoadConfig(void)
 		else if (memcmp(buf, "soundicon", 9) == 0) {
 			ix = sscanf(&buf[10], "_%c %s", &c1, string);
 			if (ix == 2) {
+				// add sound file information to soundicon array
+				// the file will be loaded to memory by LoadSoundFile2()
 				soundicon_tab[n_soundicon_tab].name = c1;
 				soundicon_tab[n_soundicon_tab].filename = strdup(string);
 				soundicon_tab[n_soundicon_tab++].length = 0;
@@ -428,8 +413,6 @@ void LoadConfig(void)
 	}
 	fclose(f);
 }
-
-PHONEME_DATA this_ph_data;
 
 static void InvalidInstn(PHONEME_TAB *ph, int instn)
 {
@@ -494,6 +477,7 @@ static int CountVowelPosition(PHONEME_LIST *plist)
 	return count;
 }
 
+static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist, USHORT *p_prog, WORD_PH_DATA *worddata);
 static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist, USHORT *p_prog, WORD_PH_DATA *worddata)
 {
 	int which;
@@ -501,7 +485,7 @@ static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist,
 	unsigned int data;
 	int instn;
 	int instn2;
-	int check_endtype = 0;
+	bool check_endtype = false;
 	PHONEME_TAB *ph;
 	PHONEME_LIST *plist_this;
 
@@ -548,7 +532,7 @@ static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist,
 		case 0: // prevPh
 		case 5: // prevPhW
 			plist--;
-			check_endtype = 1;
+			check_endtype = true;
 			break;
 		case 1: // thisPh
 			break;
@@ -575,7 +559,7 @@ static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist,
 			if ((worddata == NULL) || (worddata->prev_vowel.ph == NULL))
 				return false; // no previous vowel
 			plist = &(worddata->prev_vowel);
-			check_endtype = 1;
+			check_endtype = true;
 			break;
 		case 9: // next3PhW
 			for (ix = 1; ix <= 3; ix++) {
@@ -588,7 +572,7 @@ static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist,
 			if ((plist[0].sourceix) || (plist[-1].sourceix))
 				return false;
 			plist -= 2;
-			check_endtype = 1;
+			check_endtype = true;
 			break;
 		}
 
@@ -712,7 +696,7 @@ static void SwitchOnVowelType(PHONEME_LIST *plist, PHONEME_DATA *phdata, USHORT 
 	*p_prog += 12;
 }
 
-int NumInstnWords(USHORT *prog)
+static int NumInstnWords(USHORT *prog)
 {
 	int instn;
 	int instn2;

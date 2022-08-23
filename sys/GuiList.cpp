@@ -1,6 +1,6 @@
 /* GuiList.cpp
  *
- * Copyright (C) 1993-2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2020,2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,17 +58,19 @@ Thing_implement (GuiList, GuiControl, 0);
 	}
 #elif cocoa
 	@implementation GuiCocoaList {
-		GuiList d_userData;
+		GuiList userData;
+		@public NSMutableArray *contents;
+		@public NSTableView *tableView;
 	}
 
 	/*
 	 * Override NSObject methods.
 	 */
 	- (void) dealloc {
-		[_contents release];
-		GuiThing me = d_userData;
+		[self -> contents   release];
+		GuiThing me = self -> userData;
 		forget (me);
-		//Melder_casual (U"deleting a list");
+		trace (U"deleting a list");
 		[super dealloc];
 	}
 
@@ -78,57 +80,66 @@ Thing_implement (GuiList, GuiControl, 0);
 	- (id) initWithFrame: (NSRect) frameRect {
 		self = [super initWithFrame: frameRect];
 		if (self) {
-			_tableView = [[NSTableView alloc] initWithFrame: frameRect];
+			self -> tableView = [[NSTableView alloc] initWithFrame: frameRect];
+			trace (U"Retain count of table view after creation: ", [self -> tableView   retainCount]);   // probably 1
 			NSTableColumn *tableColumn = [[NSTableColumn alloc] initWithIdentifier: @"list"];
-			tableColumn.width = frameRect. size. width;
+			tableColumn. width = frameRect. size. width;
 			[tableColumn setEditable: NO];
-			[_tableView addTableColumn: tableColumn];
+			[self -> tableView   addTableColumn: tableColumn];
+			trace (U"Retain count of table view after adding one column: ", [self -> tableView   retainCount]);   // probably 1
 
-			_tableView. delegate = self;
-			_tableView. dataSource = self;
-			_tableView. allowsEmptySelection = YES;
-			_tableView. headerView = nil;
-			_tableView. target = self;
-			_tableView. action = @selector (_GuiCocoaList_clicked:);
+			self -> tableView. delegate = self;
+			self -> tableView. dataSource = self;
+			self -> tableView. allowsEmptySelection = YES;
+			self -> tableView. headerView = nil;
+			self -> tableView. target = self;
+			self -> tableView. action = @selector (_GuiCocoaList_clicked:);
 
 			NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame: frameRect];
 			[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			[scrollView setBorderType: NSBezelBorder];
-			[scrollView setDocumentView: _tableView];   // this retains the table view
+			trace (U"Retain count of table view before setting as document view: ", [self -> tableView   retainCount]);   // probably 1
+			[scrollView setDocumentView: self -> tableView];   // this retains the table view
+			trace (U"Retain count of table view after setting as document view: ", [self -> tableView   retainCount]);   // probably 3
 			[scrollView setHasVerticalScroller: YES];
 			//[scrollView setHasHorizontalScroller: YES];
 
+			trace (U"Retain count of scroll view before adding as subview: ", [scrollView retainCount]);   // probably 1
 			[self addSubview: scrollView];   // this retains the scroll view
-			[scrollView release];
-			[_tableView release];
+			trace (U"Retain count of scroll view after adding as subview: ", [scrollView retainCount]);   // probably 3
 
-			_contents = [[NSMutableArray alloc] init];
+			trace (U"Retain count of scroll view before release: ", [scrollView retainCount]);   // probably 3
+			[scrollView release];   // compensates for alloc
+			trace (U"Retain count of table view before release: ", [self -> tableView   retainCount]);   // probably 3
+			[self -> tableView   release];   // compensates for alloc
+
+			self -> contents = [[NSMutableArray alloc] init];
 		}
 		return self;
 	}
 
 	/*
-	 * Implement GuiCocoaAny protocol.
-	 */
+		Implement GuiCocoaAny protocol.
+	*/
 	- (GuiThing) getUserData {
-		return d_userData;
+		return self -> userData;
 	}
-	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiList));
-		d_userData = static_cast <GuiList> (userData);
+	- (void) setUserData: (GuiThing) newUserData {
+		Melder_assert (newUserData == nullptr || Thing_isa (newUserData, classGuiList));
+		self -> userData = static_cast <GuiList> (newUserData);
 	}
 
 	/*
-	 * Implement GuiCocoaList methods.
-	 */
+		Implement GuiCocoaList methods.
+	*/
 	- (IBAction) _GuiCocoaList_clicked: (id) sender {
 		/*
-		 * This method probably shouldn't do anything,
-		 * because tableViewSelectionDidChange will already have been called at this point.
-		 */
+			This method probably shouldn't do anything,
+			because tableViewSelectionDidChange will already have been called at this point.
+		*/
 		(void) sender;
 		trace (U"enter");
-		GuiList me = d_userData;
+		GuiList me = self -> userData;
 		if (me && my d_selectionChangedCallback) {
 			//struct structGuiList_SelectionChangedEvent event { me };
 			//my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
@@ -136,28 +147,28 @@ Thing_implement (GuiList, GuiControl, 0);
 	}
 
 	/*
-	 * Override TableViewDataSource methods.
-	 */
-	- (NSInteger) numberOfRowsInTableView: (NSTableView *) tableView {
-		(void) tableView;
-		return [_contents count];
+		Override TableViewDataSource methods.
+	*/
+	- (NSInteger) numberOfRowsInTableView: (NSTableView *) aTableView {
+		(void) aTableView;
+		return uinteger_to_integer ([self -> contents   count]);
 	}
-	- (id) tableView:  (NSTableView *) tableView   objectValueForTableColumn: (NSTableColumn *) tableColumn   row: (NSInteger) row {
-		(void) tableColumn;
-		(void) tableView;
-		return [_contents   objectAtIndex: row];
+	- (id) tableView: (NSTableView *) aTableView   objectValueForTableColumn: (NSTableColumn *) aTableColumn   row: (NSInteger) row {
+		(void) aTableColumn;
+		(void) aTableView;
+		return [self -> contents   objectAtIndex: integer_to_uinteger (row)];
 	}
 
 	/*
-	 * Override TableViewDelegate methods.
-	 */
+		Override TableViewDelegate methods.
+	*/
 	- (void) tableViewSelectionDidChange: (NSNotification *) notification {
 		/*
 		 * This is invoked when the user clicks in the table or uses the arrow keys.
 		 */
 		(void) notification;
 		trace (U"enter");
-		GuiList me = d_userData;
+		GuiList me = self -> userData;
 		if (me && my d_selectionChangedCallback && ! my d_blockValueChangedCallbacks) {
 			struct structGuiList_SelectionChangedEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
@@ -208,33 +219,6 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 
 		g_object_set_data_full (G_OBJECT (my d_widget), "guiList", me.get(), (GDestroyNotify) _GuiGtkList_destroyCallback);
 
-/*		GtkCellRenderer *renderer;
-		GtkTreeViewColumn *col;
-		
-		my widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (liststore));
-
-		renderer = gtk_cell_renderer_text_new ();
-		col = gtk_tree_view_column_new ();
-		gtk_tree_view_column_pack_start (col, renderer, true);
-		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_ID);
-		gtk_tree_view_column_set_title (col, " ID ");
-		gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
-		
-		renderer = gtk_cell_renderer_text_new ();
-		col = gtk_tree_view_column_new ();
-		gtk_tree_view_column_pack_start (col, renderer, true);
-		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_TYPE);
-		gtk_tree_view_column_set_title (col, " Type ");
-		gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
-
-		renderer = gtk_cell_renderer_text_new ();
-		col = gtk_tree_view_column_new ();
-		gtk_tree_view_column_pack_start (col, renderer, true);
-		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_NAME);
-		gtk_tree_view_column_set_title (col, " Name ");
-		gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
-*/
-
 		sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
 		if (allowMultipleSelection) {
 			gtk_tree_selection_set_mode (sel, GTK_SELECTION_MULTIPLE);
@@ -265,7 +249,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		GuiCocoaList *list = [[GuiCocoaList alloc] init];
 		my d_widget = (GuiObject) list;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		[[list tableView] setAllowsMultipleSelection: allowMultipleSelection];
+		[list -> tableView   setAllowsMultipleSelection: allowMultipleSelection];
 		[list setUserData: me.get()];
 	#endif
 	return me.releaseToAmbiguousOwner();
@@ -286,8 +270,8 @@ void GuiList_deleteAllItems (GuiList me) {
 		ListBox_ResetContent (my d_widget -> window);
 	#elif cocoa
         GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-        [list. contents   removeAllObjects];
-        [list. tableView   reloadData];
+        [list -> contents   removeAllObjects];
+        [list -> tableView   reloadData];
 	#endif
 }
 
@@ -297,15 +281,14 @@ void GuiList_deleteItem (GuiList me, integer position) {
 	#if gtk
 		GtkTreeIter iter;
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
-		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1))) {
+		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1)))
 			gtk_list_store_remove (GTK_LIST_STORE (tree_model), & iter);
-		}
 	#elif motif
 		ListBox_DeleteString (my d_widget -> window, position - 1);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		[list. contents   removeObjectAtIndex: (NSUInteger) (position - 1)];
-		[list. tableView   reloadData];
+		[list -> contents   removeObjectAtIndex: (NSUInteger) (position - 1)];
+		[list -> tableView   reloadData];
 	#endif
 }
 
@@ -318,7 +301,7 @@ void GuiList_deselectAllItems (GuiList me) {
 		ListBox_SetSel (my d_widget -> window, False, -1);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		[list. tableView   deselectAll: nil];
+		[list -> tableView   deselectAll: nil];
 	#endif
 }
 
@@ -327,20 +310,15 @@ void GuiList_deselectItem (GuiList me, integer position) {
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
-//		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-//		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position, -1 /* terminator */);
 		GtkTreeIter iter;
-//		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
-//		gtk_tree_path_free (path);
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
-		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1))) {
+		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1)))
 			gtk_tree_selection_unselect_iter (selection, & iter);
-		}
 	#elif motif
 		ListBox_SetSel (my d_widget -> window, False, position - 1);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		[list. tableView   deselectRow: position - 1];
+		[list -> tableView   deselectRow: position - 1];
 	#endif
 }
 
@@ -384,7 +362,7 @@ autoINTVEC GuiList_getSelectedPositions (GuiList me) {
 		Melder_free (indices);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		NSIndexSet *indexSet = [list. tableView   selectedRowIndexes];
+		NSIndexSet *indexSet = [list -> tableView   selectedRowIndexes];
 		selectedPositions = zero_INTVEC (uinteger_to_integer ([indexSet count]));
 		NSUInteger currentIndex = [indexSet firstIndex];
 		integer ipos = 0;
@@ -415,6 +393,7 @@ integer GuiList_getBottomPosition (GuiList me) {
 		if (bottom > n) bottom = n;
 		return bottom;
 	#elif cocoa
+		(void) me;
 		return 1;   // TODO
 	#else
 		return 0;
@@ -430,7 +409,7 @@ integer GuiList_getNumberOfItems (GuiList me) {
 		numberOfItems = ListBox_GetCount (my d_widget -> window);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		numberOfItems = [[list contents] count];
+		numberOfItems = uinteger_to_integer ([list -> contents   count]);
 	#endif
 	return numberOfItems;
 }
@@ -453,6 +432,7 @@ integer GuiList_getTopPosition (GuiList me) {
 		if (top > n) top = 0;
 		return top;
 	#elif cocoa
+		(void) me;
 		return 1;   // TODO
 	#else
 		return 0;
@@ -465,9 +445,6 @@ void GuiList_insertItem (GuiList me, conststring32 itemText /* cattable */, inte
 	#if gtk
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
 		gtk_list_store_insert_with_values (list_store, nullptr, explicitlyInsertAtEnd ? 1000000000 : (gint) position_base1 - 1, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
-		// TODO: Tekst opsplitsen
-		// does GTK know the '0' trick?
-		// it does know about nullptr, to append in another function
 	#elif motif
 		HWND nativeList = my d_widget -> window;
 		conststringW nativeItemText = Melder_peek32toW (itemText);
@@ -481,13 +458,13 @@ void GuiList_insertItem (GuiList me, conststring32 itemText /* cattable */, inte
 		GuiCocoaList *nativeList = (GuiCocoaList *) my d_widget;
 		NSString *nativeItemText = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
 		if (explicitlyInsertAtEnd) {
-			[[nativeList contents]   addObject: nativeItemText];
+			[nativeList -> contents   addObject: nativeItemText];
 		} else {
 			NSUInteger nativePosition_base0 = (uinteger) position_base1 - 1;
-			[[nativeList contents]   insertObject: nativeItemText   atIndex: nativePosition_base0];
+			[nativeList -> contents   insertObject: nativeItemText   atIndex: nativePosition_base0];
 		}
 		[nativeItemText release];
-		[[nativeList tableView] reloadData];
+		[nativeList -> tableView   reloadData];
 	#endif
 }
 
@@ -496,17 +473,8 @@ void GuiList_replaceItem (GuiList me, conststring32 itemText, integer position) 
 	#if gtk
 		GtkTreeIter iter;
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
-		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1))) {
+		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1)))
 			gtk_list_store_set (GTK_LIST_STORE (tree_model), & iter, COLUMN_STRING, Melder_peek32to8 (itemText), -1);
-		}
-/*
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position, -1);   // -1 = terminator
-		GtkTreeIter iter;
-		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
-		gtk_tree_path_free (path);*/
-		// gtk_list_store_set (list_store, & iter, 0, Melder_peek32to8 (itemText), -1);
-		// TODO: Tekst opsplitsen
 	#elif motif
 		integer nativePosition = position - 1;   // convert from 1-based to zero-based
 		ListBox_DeleteString (my d_widget -> window, nativePosition);
@@ -514,9 +482,9 @@ void GuiList_replaceItem (GuiList me, conststring32 itemText, integer position) 
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
-		[[list contents]   replaceObjectAtIndex: position - 1   withObject: nsString];
+		[list -> contents   replaceObjectAtIndex: integer_to_uinteger (position - 1)   withObject: nsString];
 		[nsString release];
-		[[list tableView] reloadData];
+		[list -> tableView   reloadData];
 	#endif
 }
 
@@ -528,13 +496,6 @@ void GuiList_selectItem (GuiList me, integer position) {
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position - 1, -1 /* terminator */);
 		gtk_tree_selection_select_path (selection, path);
 		gtk_tree_path_free (path);
-
-// TODO: check of het bovenstaande werkt, dan kan dit weg
-//		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
-//		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position, -1 /* terminator */);
-//		GtkTreeIter iter;
-//		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
-//		gtk_tree_selection_select_iter (selection, & iter);
 	#elif motif
 		if (! my d_allowMultipleSelection) {
 			ListBox_SetCurSel (my d_widget -> window, position - 1);
@@ -544,7 +505,7 @@ void GuiList_selectItem (GuiList me, integer position) {
 	#elif cocoa
 		NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndex: NSUInteger (position - 1)];
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		[[list tableView]   selectRowIndexes: indexSet   byExtendingSelection: my d_allowMultipleSelection];
+		[list -> tableView   selectRowIndexes: indexSet   byExtendingSelection: my d_allowMultipleSelection];
 		[indexSet release];
 	#endif
 }
@@ -574,7 +535,8 @@ void GuiList_setTopPosition (GuiList me, integer topPosition) {
 	#elif motif
 		ListBox_SetTopIndex (my d_widget -> window, topPosition - 1);
 	#elif cocoa
-	 // TODO: implement
+		(void) me;
+		// TODO: implement
 	#endif
 }
 

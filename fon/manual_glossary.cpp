@@ -1,6 +1,6 @@
 /* manual_glossary.cpp
  *
- * Copyright (C) 1992-2008,2010,2011,2014-2017,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -306,12 +306,12 @@ NORMAL (U"Note that the estimated values for the very low or high quantiles can 
 	"the 0\\%  and 100\\%  quantiles are meaningless.")
 MAN_END
 
-MAN_BEGIN (U"sampling frequency", U"ppgb", 20040415)
+MAN_BEGIN (U"sampling frequency", U"ppgb", 20220102)
 INTRO (U"The sampling frequency (or %%sample rate%) is the number of samples per second in a @Sound. "
 	"For example: if the sampling frequency is 44100 hertz, a recording with a duration of 60 seconds "
 	"will contain 2,646,000 samples.")
-NORMAL (U"Usual values for the sampling frequency are 44100 Hz (CD quality) and 22050 Hz "
-	"(just enough for speech, since speech does not contain relevant frequencies above 11025 Hz; see @aliasing).")
+NORMAL (U"Usual values for the sampling frequency are 44100 Hz (Compact Disc) and 48000 Hz (much modern audio equipment) "
+	"(both enough for the human auditory system, since humans cannot hear frequencies above 20000 Hz; see @aliasing).")
 NORMAL (U"To get the sampling frequency of a selected #Sound, click #Info or choose @@Get sampling frequency@.")
 MAN_END
 

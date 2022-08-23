@@ -2579,7 +2579,7 @@ autoKlattTable Table_to_KlattTable (Table me) {
 			U"A KlattTable needs ", KlattTable_NPAR, U" columns.");
 		
 		autoKlattTable thee = Thing_new (KlattTable);
-		my structTable :: v_copy (thee.get());
+		my structTable :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"KlattTable not created from Table.");
@@ -2589,7 +2589,7 @@ autoKlattTable Table_to_KlattTable (Table me) {
 autoTable KlattTable_to_Table (KlattTable me) {
 	try {
 		autoTable thee = Thing_new (Table);
-		my structTable :: v_copy (thee.get());
+		my structTable :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created from KlattTable.");

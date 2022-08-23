@@ -68,9 +68,9 @@ void Minimizer_minimize (Minimizer me, integer maximumNumberOfIterations, double
 			Melder_casual (U"Minimizer_minimize:", U" minimum ", my minimum, U" reached \nafter ", my iteration,
 			U" iterations and ", my numberOfFunctionCalls, U" function calls.");
 	} catch (MelderError) {
+		Melder_clearError();   // memory error in history mechanism is not fatal
 		if (monitor)
 			monitor_off (me);   // temporarily until better monitor facilities
-		Melder_clearError();   // memory error in history mechanism is not fatal
 	}
 }
 

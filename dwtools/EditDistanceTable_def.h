@@ -45,7 +45,7 @@ oo_END_CLASS (WarpingPath)
 oo_DEFINE_CLASS (EditCostsTable, TableOfReal)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 
 		virtual bool v_matchTargetSymbol (conststring32 targetSymbol, conststring32 symbol);
@@ -65,7 +65,7 @@ oo_DEFINE_CLASS (EditDistanceTable, TableOfReal)
 	#if oo_DECLARING
 		oo_OBJECT (EditCostsTable, 0, editCostsTable)
 
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

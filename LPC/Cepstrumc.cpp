@@ -48,8 +48,8 @@
 
 Thing_implement (Cepstrumc, Sampled, 1);
 
-void structCepstrumc :: v_info () {
-	structDaata :: v_info ();
+void structCepstrumc :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"  Start time: ", xmin);
 	MelderInfo_writeLine (U"  End time: ", xmax);
 	MelderInfo_writeLine (U"  Number of frames: ", nx);

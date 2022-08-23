@@ -1,6 +1,6 @@
 /* GraphicsScreen.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@
 
 Thing_implement (GraphicsScreen, Graphics, 0);
 
-void structGraphicsScreen :: v_destroy () noexcept {
+void structGraphicsScreen :: v9_destroy () noexcept {
 	#if cairo
 		if (d_cairoGraphicsContext) {
 			cairo_destroy (d_cairoGraphicsContext);
@@ -55,7 +55,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 			cairo_surface_flush (d_cairoSurface);
 			if (d_isPng) {
 				#if 1
-					cairo_surface_write_to_png (d_cairoSurface, Melder_peek32to8 (d_file. path));
+					cairo_surface_write_to_png (d_cairoSurface, Melder_peek32to8_fileSystem (d_file. path));
 				#else
 					unsigned char *bitmap = cairo_image_surface_get_data (my d_cairoSurface);   // peeking into the internal bits
 					// copy bitmap to PNG structure created with the PNG library
@@ -199,7 +199,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 		Melder_free (d_bits);
 	#endif
 	trace (U"destroying parent");
-	GraphicsScreen_Parent :: v_destroy ();
+	GraphicsScreen_Parent :: v9_destroy ();
 	trace (U"exit");
 }
 
@@ -220,21 +220,28 @@ void structGraphicsScreen :: v_clearWs () {
 			rect.y = our d_y2DC;
 			rect.height = our d_y1DC - our d_y2DC;
 		}
-		if (d_cairoGraphicsContext) {
-			cairo_set_source_rgb (d_cairoGraphicsContext, 1.0, 1.0, 1.0);
-			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
-			cairo_fill (d_cairoGraphicsContext);
-			cairo_set_source_rgb (d_cairoGraphicsContext, 0.0, 0.0, 0.0);
+		if (our d_cairoGraphicsContext) {
+			cairo_set_source_rgb (our d_cairoGraphicsContext, 1.0, 1.0, 1.0);
+			cairo_rectangle (our d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
+			cairo_fill (our d_cairoGraphicsContext);
+			cairo_set_source_rgb (our d_cairoGraphicsContext, 0.0, 0.0, 0.0);
 		}
 	#elif gdi
 		RECT rect;
 		rect. left = rect. top = 0;
 		rect. right = d_x2DC - d_x1DC;
 		rect. bottom = d_y2DC - d_y1DC;
-		FillRect (d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
-		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
+		FillRect (our d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
+		/*if (our d_winWindow) SendMessage (our d_winWindow, WM_ERASEBKGND, (WPARAM) our d_gdiGraphicsContext, 0);*/
 	#elif quartz
-		GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
+		if (! our d_drawingArea) {
+			Melder_assert (!! our d_macGraphicsContext);
+			CGContextSetAlpha (our d_macGraphicsContext, 1.0);
+			CGContextSetRGBFillColor (our d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+			CGContextFillRect (d_macGraphicsContext, CGRectMake (our d_x1DC, our d_y2DC, our d_x2DC - our d_x1DC, our d_y1DC - our d_y2DC));
+			return;
+		}
+		GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) our d_drawingArea -> d_widget;
 		if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
 			Melder_assert (!! our d_macGraphicsContext);
 			CGContextSetAlpha (our d_macGraphicsContext, 1.0);
@@ -337,8 +344,8 @@ void Graphics_endMovieFrame (Graphics any, double frameDuration) {
 		GraphicsScreen me = (GraphicsScreen) any;
 		Graphics_stopRecording (me);
 		my v_updateWs ();
-		GuiShell_drain (my d_drawingArea -> d_shell);
 		Melder_sleep (frameDuration);
+		GuiShell_drain (my d_drawingArea -> d_shell);
 	}
 }
 
@@ -591,7 +598,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	#endif
 	Graphics_init (me.get(), resolution);
 	#if cairo
-		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8 (file -> path),
+		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8_fileSystem (file -> path),
 			( isdefined (x1inches) ? x2inches - x1inches : x2inches ) * 72.0,
 			( isdefined (y1inches) ? y2inches - y1inches : y2inches ) * 72.0);
 		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);

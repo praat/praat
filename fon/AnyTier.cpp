@@ -225,16 +225,16 @@ void AnyTier_removePoint (AnyTier me, integer i) {
 }
 
 void AnyTier_removePointNear (AnyTier me, double time) {
-	integer ipoint = AnyTier_timeToNearestIndex (me, time);
+	const integer ipoint = AnyTier_timeToNearestIndex (me, time);
 	if (ipoint > 0)
-		my points.removeItem (ipoint);
+		my points. removeItem (ipoint);
 }
 
 void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
 	if (my points.size == 0)
 		return;
-	integer ileft = AnyTier_timeToHighIndex (me, tmin);
-	integer iright = AnyTier_timeToLowIndex (me, tmax);
+	const integer ileft = AnyTier_timeToHighIndex (me, tmin);
+	const integer iright = AnyTier_timeToLowIndex (me, tmax);
 	for (integer i = iright; i >= ileft; i --)
 		my points. removeItem (i);
 }

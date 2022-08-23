@@ -1,6 +1,6 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +47,8 @@
 
 Thing_implement (Spectrum, Matrix, 2);
 
-void structSpectrum :: v_info () {
-	structDaata :: v_info ();
+void structSpectrum :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", xmin, U" Hz");
 	MelderInfo_writeLine (U"   Highest frequency: ", xmax, U" Hz");
@@ -313,7 +313,7 @@ autoSpectrum Matrix_to_Spectrum (Matrix me) {
 		if (my ny != 2)
 			Melder_throw (U"The Matrix should have exactly 2 rows.");
 		autoSpectrum thee = Thing_new (Spectrum);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrum.");
@@ -323,7 +323,7 @@ autoSpectrum Matrix_to_Spectrum (Matrix me) {
 autoMatrix Spectrum_to_Matrix (Spectrum me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

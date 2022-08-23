@@ -1,14 +1,24 @@
 # espeak_ng_data_to_code.praat
-# djmw 20120117, 20120124, 20151130, 20171004
+# djmw 20120117, 20120124, 20151130, 20171004, 20211207
 #
 # This script is specific for my situation (althought it can be adapted easily to any directory structure
 #	and non-Linux system).
 #	My espeak-work/ has subdirectories espeak-ng-work and espeak-ng-current.
 # 	Into espeak-ng-work are copied from the original espeak-ng project only those *.c and *.h files that are 
-# 	needed for the praat version of the synthesizer .
+# 	needed for the praat version of the synthesizer.
 #
 # If the upstream espeak-ng has been modified then I follow the following procedure:
 #
+# First something like: 
+#		cp espeak-work/espeak-previous/* espeak-work/espeak-old
+#		cp external/espeak/* espeak-work/espeak-previous (save the current sources that are used in Praat)
+#		cp espeak-work/espeak-ng-current/* espeak-work/espeak-ng-previous/*
+#		(with kdiff3 we can later see where the differences between the current espeak-ng version and the new version are
+#		after copying the new espeak sources to espeak-ng-current and renaming thenm as *.cpp. The current script does the
+#		copy)
+# Then;
+#	cd /external/espeak; rm *;
+	
 # Given the following directories:
 #	A: ~/projects/praat/espeak-work/espeak-ng-work 
 #	B: ~/projects/praat/espeak-work/espeak-ng-current
@@ -48,13 +58,13 @@ notify$ = "This file was created automatically on " + date$ + "."
 clearinfo
 
 form Espeakdata to code
-	word Espeak_version 1.49.3-dev
+	word Espeak_version 1.51-dev
 	boolean Copy_c_and_h_files 0
 	boolean Show_cp_command 1
 	boolean Create_FileInMemorySet 0
 endform
 
-gpltext$ =  " * Copyright (C) David Weenink 2012-2017" + newline$ +
+gpltext$ =  " * Copyright (C) David Weenink 2012-2021" + newline$ +
 	... " *" + newline$ +
 	... " * This program is free software; you can redistribute it and/or modify " + newline$ +
  	... " * it under the terms of the GNU General Public License as published by" + newline$ +
@@ -144,10 +154,11 @@ procedure espeak_ng_copyfiles
 	... " event.c fifo.c ieee80.c intonation.c klatt.c" +
 	... " mnemonics.c numbers.c phoneme.c phonemelist.c readclause.c setlengths.c" +
 	... " spect.c speech.c synthdata.c synthesize.c " +
-	... " synth_mbrola.c translate.c tr_languages.c voices.c wavegen.c"
+	... " ssml.c synth_mbrola.c translate.c tr_languages.c voices.c wavegen.c"
 
-	.espeakfiles_h$ = "error.h espeak_command.h event.h fifo.h klatt.h phoneme.h sintab.h" +
-	... " spect.h speech.h synthesize.h translate.h voice.h synthesize.h translate.h voice.h"
+	.espeakfiles_h$ = "dictionary.h error.h espeak_command.h event.h fifo.h klatt.h phoneme.h phonemelist.h"
+	... " readclause.h setlengths.h sintab.h" +
+	... " spect.h speech.h ssml.h synthdata.h synthesize.h translate.h voice.h synthesize.h translate.h voice.h wavegen.h"
 	.espeakfiles_include_h$ = "speak_lib.h espeak_ng.h encoding.h"
 	.espeakfiles_ucd_h$ = "ucd.h"
 	.espeakfiles_ucd_c$ = "case.c categories.c proplist.c"

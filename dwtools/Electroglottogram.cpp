@@ -1,6 +1,6 @@
 /* Electroglottogram.cpp
  *
- * Copyright (C) 2019 David Weenink
+ * Copyright (C) 2019-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "Sound_and_Spectrum.h"
 #include "Sound_extensions.h"
 #include "Sound_to_PointProcess.h"
+#include "Vector_extensions.h"
 
 #include "enums_getText.h"
 #include "Electroglottogram_enums.h"
@@ -126,8 +127,8 @@ void IntervalTier_setIntervalText (IntervalTier me, integer intervalNumber, cons
 	}
 }
 
-void structElectroglottogram :: v_info () {
-	structDaata :: v_info ();
+void structElectroglottogram :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
@@ -197,14 +198,14 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 			double peakAmplitudeLeft = RealTier_getValueAtIndex (peaks, 1);
 			double peakTimeLeft = peaks -> points.at [1] -> number;
 			for (integer ipoint = 2; ipoint <= peaks -> points. size - 1; ipoint ++) {
-				double peakAmplitudeRight = RealTier_getValueAtIndex (peaks, ipoint);
-				double peakTimeRight = peaks -> points.at [ipoint] -> number;
-				integer indexValley = AnyTier_timeToNearestIndex (valleys->asAnyTier(), peakTimeRight);
-				double timeValley = valleys -> points.at [indexValley] -> number;
+				const double peakAmplitudeRight = RealTier_getValueAtIndex (peaks, ipoint);
+				const double peakTimeRight = peaks -> points.at [ipoint] -> number;
+				const integer indexValley = AnyTier_timeToNearestIndex (valleys->asAnyTier(), peakTimeRight);
+				const double timeValley = valleys -> points.at [indexValley] -> number;
 				if (timeValley > peakTimeLeft && timeValley < peakTimeRight) {
-					double valleyAmplitude = RealTier_getValueAtIndex (valleys, indexValley);
-					double amplitudeRange = peakAmplitudeLeft - valleyAmplitude;
-					double level = valleyAmplitude + amplitudeRange * closingThreshold;
+					const double valleyAmplitude = RealTier_getValueAtIndex (valleys, indexValley);
+					const double amplitudeRange = peakAmplitudeLeft - valleyAmplitude;
+					const double level = valleyAmplitude + amplitudeRange * closingThreshold;
 					RealTier_addPoint (thee.get(), peakTimeLeft, level);
 				}
 				peakAmplitudeLeft = peakAmplitudeRight;
@@ -233,13 +234,13 @@ autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram 
 			double closingTime = undefined, openingTime = undefined;
 			if (peakAmplitude > minimumPeakAmplitude) {
 				const double level = RealTier_getValueAtTime (levels.get(), peakPosition);
-				closingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::LEFT);
-				openingTime = Sound_getNearestLevelCrossing (me, 1, peakPosition, level, kSoundSearchDirection::RIGHT);
+				closingTime = Vector_getNearestLevelCrossing (me, 1, peakPosition, level, kVectorSearchDirection::LEFT);
+				openingTime = Vector_getNearestLevelCrossing (me, 1, peakPosition, level, kVectorSearchDirection::RIGHT);
 				if (isdefined (closingTime) && isdefined (openingTime) && closingTime != previousOpeningTime) {
 					IntervalTier_insertBoundary (intervalTier.get(), closingTime);
 					IntervalTier_insertBoundary (intervalTier.get(), openingTime);
 					const double midPoint = 0.5 * (closingTime + openingTime);
-					integer intervalNumber = IntervalTier_timeToIndex (intervalTier.get(), midPoint);
+					const integer intervalNumber = IntervalTier_timeToIndex (intervalTier.get(), midPoint);
 					IntervalTier_setIntervalText (intervalTier.get(), intervalNumber, U"c");
 					previousOpeningTime = openingTime;
 				}

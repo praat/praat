@@ -26,10 +26,15 @@
 #include <string.h>
 
 #include "espeak_ng.h"
+#include "speak_lib.h"
 
-#include "error.h"
-#include "speech.h"
-#include "synthesize.h"
+#include "mbrola.h"
+
+#include "error.h"                // for create_file_error_context
+#include "mbrola.h"               // for MBROLA_TAB
+#include "phoneme.h"              // for N_PHONEME_TAB
+#include "speech.h"               // for path_home
+#include "synthesize.h"           // for Write4Bytes
 
 static const char *basename(const char *filename)
 {
@@ -81,9 +86,8 @@ espeak_ng_STATUS espeak_ng_CompileMbrolaVoice(const char *filepath, FILE *log, e
 	int mbrola_ctrl = 20; // volume in 1/16 ths
 	MBROLA_TAB data[N_PHONEME_TAB];
 
-	strcpy(buf, filepath);
-	if ((f_in = fopen(buf, "r")) == NULL)
-		return create_file_error_context(context, (espeak_ng_STATUS) errno, buf);
+	if ((f_in = fopen(filepath, "r")) == NULL)
+		return create_file_error_context(context, (espeak_ng_STATUS) errno, filepath);
 
 	while (fgets(buf, sizeof(phoneme), f_in) != NULL) {
 		buf[sizeof(phoneme)-1] = 0;

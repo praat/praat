@@ -219,7 +219,8 @@ DO
 DIRECT (COMBINE_ALL_TO_ONE__CrossCorrelationTables_to_CrossCorrelationTableList) {
 	COMBINE_ALL_TO_ONE (CrossCorrelationTable)
 		autoCrossCorrelationTableList result = CrossCorrelationTables_to_CrossCorrelationTableList (& list);
-	COMBINE_ALL_TO_ONE_END (U"ct_", result -> size)
+		integer size = result -> size;
+	COMBINE_ALL_TO_ONE_END (U"ct_", size)
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Covariance_channels, U"Sound: To Covariance (channels)", U"Sound: To Covariance (channels)...") {
@@ -498,11 +499,11 @@ void praat_BSS_init () {
 	Thing_recognizeClassesByName (classDiagonalizer, classMixingMatrix, classCrossCorrelationTable, classCrossCorrelationTableList, nullptr);
 	Thing_recognizeClassByOtherName (classCrossCorrelationTableList, U"CrossCorrelationTables");
 
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple CrossCorrelationTable...", U"Create simple Covariance...", praat_HIDDEN + praat_DEPTH_1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple CrossCorrelationTable...", U"Create simple Covariance...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CREATE_ONE__CrossCorrelationTable_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Create test CrossCorrelationTableList...", U"Create simple CrossCorrelationTable...", praat_HIDDEN + praat_DEPTH_1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create test CrossCorrelationTableList...", U"Create simple CrossCorrelationTable...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CREATE_ONE__CrossCorrelationTableList_createTestSet);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple MixingMatrix...", U"Create test CrossCorrelationTableList...", praat_HIDDEN + praat_DEPTH_1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple MixingMatrix...", U"Create test CrossCorrelationTableList...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CREATE_ONE__MixingMatrix_createSimple);
 
 	praat_addAction1 (classCrossCorrelationTable, 0, U"CrossCorrelationTable help", 0, 0, 
@@ -511,7 +512,7 @@ void praat_BSS_init () {
 
 	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTableList", nullptr, 0,
 			COMBINE_ALL_TO_ONE__CrossCorrelationTables_to_CrossCorrelationTableList);
-	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTables", U"*To CrossCorrelationTableList", praat_DEPRECATED_2015, 
+	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTables", U"*To CrossCorrelationTableList", GuiMenu_DEPRECATED_2015,
 			COMBINE_ALL_TO_ONE__CrossCorrelationTables_to_CrossCorrelationTableList);
 
 	praat_addAction1 (classCrossCorrelationTableList, 0, U"CrossCorrelationTableList help", 0, 0,
@@ -529,22 +530,22 @@ void praat_BSS_init () {
 	praat_addAction1 (classDiagonalizer, 0, U"To MixingMatrix", 0, 0, 
 			CONVERT_EACH_TO_ONE__Diagonalizer_to_MixingMatrix);
 
-	praat_addAction1 (classEEG, 0, U"To Sound (mc modulated)...", U"To ERPTier...", praat_HIDDEN, 
+	praat_addAction1 (classEEG, 0, U"To Sound (mc modulated)...", U"To ERPTier...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__EEG_to_Sound_modulated);
 	praat_addAction1 (classEEG, 0, U"To Sound (frequency shifted)...", U"To ERPTier...", 0, 
 			CONVERT_EACH_TO_ONE__EEG_to_Sound_frequencyShifted);
 	praat_addAction1 (classEEG, 0, U"To PCA...", U"To ERPTier...", 0, 
 			CONVERT_EACH_TO_ONE__EEG_to_PCA);
-	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTable...", U"To PCA...", praat_HIDDEN, 
+	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTable...", U"To PCA...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__EEG_to_CrossCorrelationTable);
-	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTables...", U"To PCA...", praat_HIDDEN, 
+	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTables...", U"To PCA...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__EEG_to_CrossCorrelationTableList);
-	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTableList...", U"To PCA...", praat_HIDDEN,
+	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTableList...", U"To PCA...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__EEG_to_CrossCorrelationTableList);
 
-	praat_addAction1 (classEEG, 0, U"To Covariance...", U"To CrossCorrelationTable...", praat_HIDDEN,
+	praat_addAction1 (classEEG, 0, U"To Covariance...", U"To CrossCorrelationTable...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__EEG_to_Covariance);
-	praat_addAction1 (classEEG, 0, U"To EEG (bss)...", U"To CrossCorrelationTable...", praat_HIDDEN,
+	praat_addAction1 (classEEG, 0, U"To EEG (bss)...", U"To CrossCorrelationTable...", GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_MULTIPLE__EEG_to_EEG_bss);
 
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (principal components)...", 0, 0,
@@ -555,24 +556,24 @@ void praat_BSS_init () {
 	praat_addAction1 (classMixingMatrix, 0, U"MixingMatrix help", 0, 0, 
 			HELP__MixingMatrix_help);
 	praat_TableOfReal_init3 (classMixingMatrix);
-		praat_addAction1 (classMixingMatrix, 0, U"Multiply input channel...", U"Set value...", praat_DEPTH_1,
+		praat_addAction1 (classMixingMatrix, 0, U"Multiply input channel...", U"Set value...", GuiMenu_DEPTH_1,
 				MODIFY_EACH__MixingMatrix_multiplyInputChannel);
 		praat_removeAction (classMixingMatrix, nullptr, nullptr, U"Sort by label...");	
 		praat_removeAction (classMixingMatrix, nullptr, nullptr, U"Sort by column...");	
-	praat_addAction1 (classMixingMatrix, 0, U"Set standard channel interpretation", U"Set column label (label)...", praat_DEPTH_1,
+	praat_addAction1 (classMixingMatrix, 0, U"Set standard channel interpretation", U"Set column label (label)...", GuiMenu_DEPTH_1,
 			MODIFY_EACH__MixingMatrix_setStandardChannelInterpretation);
-	praat_addAction1 (classMixingMatrix, 0, U"To Diagonalizer", U"To Matrix", praat_DEPTH_1, 
+	praat_addAction1 (classMixingMatrix, 0, U"To Diagonalizer", U"To Matrix", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__MixingMatrix_to_Diagonalizer);
 
-	praat_addAction1 (classSound, 0, U"To MixingMatrix...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1, 
+	praat_addAction1 (classSound, 0, U"To MixingMatrix...",  U"Resample...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_MixingMatrix);
     praat_addAction1 (classSound, 0, U"To CrossCorrelationTable...",  U"Resample...", 1, 
 			CONVERT_EACH_TO_ONE__Sound_to_CrossCorrelationTable);
-    praat_addAction1 (classSound, 0, U"To Covariance (channels)...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1,
+    praat_addAction1 (classSound, 0, U"To Covariance (channels)...",  U"Resample...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_Covariance_channels);
-	praat_addAction1 (classSound, 0, U"To CrossCorrelationTables...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1,
+	praat_addAction1 (classSound, 0, U"To CrossCorrelationTables...",  U"Resample...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_CrossCorrelationTableList);
-	praat_addAction1 (classSound, 0, U"To CrossCorrelationTableList...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1,
+	praat_addAction1 (classSound, 0, U"To CrossCorrelationTableList...",  U"Resample...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_CrossCorrelationTableList);
 
 	praat_addAction1 (classSound, 0, U"To Sound (bss)...", U"Resample...", 1, 
@@ -582,7 +583,7 @@ void praat_BSS_init () {
     praat_addAction1 (classSound, 2, U"To CrossCorrelationTable (combined)...",  U"Cross-correlate...", 1,
 			CONVERT_TWO_TO_ONE__Sounds_to_CrossCorrelationTable_combined);
 
-	praat_addAction1 (classTableOfReal, 0, U"To MixingMatrix", U"To Configuration", praat_HIDDEN, 
+	praat_addAction1 (classTableOfReal, 0, U"To MixingMatrix", U"To Configuration", GuiMenu_HIDDEN, 
 			CONVERT_EACH_TO_ONE__TableOfReal_to_MixingMatrix);
 
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Play", 0, 0, 

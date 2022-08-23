@@ -144,7 +144,7 @@ autoVEC between_count_VEC (double from, double to, integer count) {
 	return result;
 }
 
-void mul_VEC_out (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept {
+void mul_VEC_out (VECVU const& target, constVECVU const& vec, constMATVU const& mat) {
 	Melder_assert (mat.nrow == vec.size);
 	Melder_assert (target.size == mat.ncol);
 	if ((true)) {
@@ -172,7 +172,7 @@ autoVEC mul_VEC (constVECVU const& vec, constMATVU const& mat) {
 	return result;
 }
 
-void mul_VEC_out (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept {
+void mul_VEC_out (VECVU const& target, constMATVU const& mat, constVECVU const& vec) {
 	Melder_assert (vec.size == mat.ncol);
 	Melder_assert (target.size == mat.nrow);
 	for (integer i = 1; i <= mat.nrow; i ++) {

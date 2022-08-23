@@ -1,6 +1,6 @@
 /* Configuration_AffineTransform.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,21 +26,23 @@
 #include "SVD.h"
 
 static void do_steps45 (constMATVU const& w, MATVU const& t, constMATVU const& c, double *out_f) {
-	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
-	for (integer i = 1; i <= w.ncol; i ++) {
-		const double d = NUMinner (w.column (i), t.column (i));
+	/*
+		Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
+	*/
+	for (integer icol = 1; icol <= w.ncol; icol ++) {
+		const double d = NUMinner (w.column (icol), t.column (icol));
 		if (d < 0.0)
-			t.column (i)  *=  -1.0;
+			t.column (icol)  *=  -1.0;
 	}
-
-	// Step 5 & 11: f = tr W'T (Diag (T'CT))^-1/2
-
+	/*
+		Step 5 & 11: f = tr W'T (Diag (T'CT))^-1/2
+	*/
 	*out_f = 0.0;
-	for (integer i = 1; i <= w.ncol; i ++) {
-		const longdouble d = NUMinner (w.column (i), t.column (i));
+	for (integer icol = 1; icol <= w.ncol; icol ++) {
+		const longdouble d = NUMinner (w.column (icol), t.column (icol));
 		double tct = 0.0;
-		for (integer k = 1; k <= w.ncol; k ++)
-			tct += t [k] [i] * NUMinner (c.row (k), t.column (i));
+		for (integer jcol = 1; jcol <= w.ncol; jcol ++)
+			tct += t [jcol] [icol] * NUMinner (c.row (jcol), t.column (icol));
 		if (tct > 0.0)
 			*out_f += d / sqrt (tct);
 	}
@@ -59,10 +61,10 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 		t [1] [1] = 1.0;
 		return;
 	}
-	const integer nc = b.ncol;
-	autoMAT u = zero_MAT (nc, nc);
-	autoVEC evec = zero_VEC (nc);
-	autoSVD svd = SVD_create (nc, nc);
+	const integer ncol = b.ncol;
+	autoMAT u = zero_MAT (ncol, ncol);
+	autoVEC evec = zero_VEC (ncol);
+	autoSVD svd = SVD_create (ncol, ncol);
 
 	// Steps 1 & 2: C = A'A and W = A'B
 
@@ -76,11 +78,11 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 
 	// Scale W by (diag(B'B))^-1/2
 
-	for (integer j = 1; j <= nc; j ++) {
-		double scale = NUMinner (b.column (j), b.row (j));
+	for (integer icol = 1; icol <= ncol; icol ++) {
+		double scale = NUMinner (b.column (icol), b.row (icol));
 		if (scale > 0.0)
 			scale = 1.0 / sqrt (scale);
-		w.column (j)  *=  scale;
+		w.column (icol)  *=  scale;
 	}
 
 	// Step 3: largest eigenvalue of C
@@ -91,27 +93,27 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 
 	do_steps45 (w.get(), t, c.get(), & f);
 	do {
-		for (integer j = 1; j <= nc; j ++) {
+		for (integer jcol = 1; jcol <= ncol; jcol ++) {
 			// Step 7.a
 
 			longdouble p = 0.0; 
-			for (integer k = 1; k <= nc; k ++)
-				for (integer i = 1; i <= nc; i ++)
-					p += t [k] [j] * c [k] [i] * t [i] [j];
+			for (integer k = 1; k <= ncol; k ++)
+				for (integer icol = 1; icol <= ncol; icol ++)
+					p += t [k] [jcol] * c [k] [icol] * t [icol] [jcol];
 
 			// Step 7.b
 
-			const double q = NUMinner (w.column (j), t.column (j));
+			const double q = NUMinner (w.column (jcol), t.column (jcol));
 
 			// Step 7.c
 
 			if (q == 0.0) {
-				u.column (j)  <<=  0.0;
+				u.column (jcol)  <<=  0.0;
 			} else {
-				const double ww = NUMsum2 (w.column (j));
-				for (integer i = 1; i <= nc; i ++) {
-					const double ct = NUMinner (c.row (i), t.column (j));
-					u [i] [j] = (q * (ct - rho * t [i] [j]) / double (p) - 2.0 * ww * t [i] [j] / q - w [i] [j]) / sqrt (double (p));
+				const double ww = NUMsum2 (w.column (jcol));
+				for (integer irow = 1; irow <= ncol; irow ++) {
+					const double ct = NUMinner (c.row (irow), t.column (jcol));
+					u [irow] [jcol] = (q * (ct - rho * t [irow] [jcol]) / double (p) - 2.0 * ww * t [irow] [jcol] / q - w [irow] [jcol]) / sqrt (double (p));
 				}
 			}
 		}
@@ -136,8 +138,10 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 
 autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration me, Configuration thee, integer maximumNumberOfIterations, double tolerance) {
 	try {
-		// Use Procrustes transform to obtain starting configuration.
-		// (We only need the transformation matrix T.)
+		/*
+			Use Procrustes transform to obtain starting configuration.
+			(We only need the transformation matrix T.)
+		*/
 		autoProcrustes p = Configurations_to_Procrustes (me, thee, false);
 		Melder_assert (p -> dimension == my data.ncol);
 		Melder_assert (p -> dimension == thy data.ncol);

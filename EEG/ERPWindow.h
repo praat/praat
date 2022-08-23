@@ -2,7 +2,7 @@
 #define _ERPWindow_h_
 /* ERPWindow.h
  *
- * Copyright (C) 2012-2018 Paul Boersma
+ * Copyright (C) 2012-2018,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,24 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SoundEditor.h"
-#include "ERP.h"
+#include "FunctionEditor.h"
+#include "ERPArea.h"
 
-Thing_define (ERPWindow, SoundEditor) {
-	conststring32 v_getChannelName (integer channelNumber)
-		override {
-			ERP erp = (ERP) our data;
-			return erp -> channelNames [channelNumber].get();
-		}
+Thing_define (ERPWindow, FunctionEditor) {
+	DEFINE_FunctionArea (1, ERPArea, erpArea)
+
+	void v1_dataChanged () override {
+		ERPWindow_Parent :: v1_dataChanged ();
+		Thing_cast (ERP, erp, our data());
+		our erpArea() -> functionChanged (erp);
+	}
+	void v_distributeAreas () override {
+		our erpArea() -> setGlobalYRange_fraction (0.0, 1.0);
+	}
+	bool v_hasSelectionViewer ()
+		override { return true; }
 	void v_drawSelectionViewer ()
 		override;
-	bool v_hasPitch ()
-		override { return false; }
-	bool v_hasIntensity ()
-		override { return false; }
-	bool v_hasFormants ()
-		override { return false; }
-	bool v_hasPulses ()
-		override { return false; }
 	void v_prefs_addFields (EditorCommand cmd)
 		override;
 	void v_prefs_setValues (EditorCommand cmd)

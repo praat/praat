@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2021 David Weenink
+ * Copyright (C) 2014-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

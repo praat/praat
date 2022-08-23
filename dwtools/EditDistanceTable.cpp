@@ -157,8 +157,8 @@ integer WarpingPath_getRowsFromColumnIndex (WarpingPath me, integer ix, integer 
 
 Thing_implement (EditCostsTable, TableOfReal, 0);
 
-void structEditCostsTable :: v_info () {
-	EditDistanceTable_Parent :: v_info ();
+void structEditCostsTable :: v1_info () {
+	EditCostsTable_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Target:", numberOfRows - 2, U" symbols.");
 	MelderInfo_writeLine (U"Source:", numberOfColumns - 2, U" symbols.");
 }
@@ -326,8 +326,8 @@ autoTableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
 
 Thing_implement (EditDistanceTable, TableOfReal, 0);
 
-void structEditDistanceTable :: v_info () {
-	EditDistanceTable_Parent :: v_info ();
+void structEditDistanceTable :: v1_info () {
+	EditDistanceTable_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Target:", numberOfRows, U" symbols.");
 	MelderInfo_writeLine (U"Source:", numberOfColumns, U" symbols.");
 }
@@ -375,7 +375,7 @@ static void NUMrationalize (double x, integer *numerator, integer *denominator) 
 	constexpr double epsilon = 1e-6;
 	*numerator = 1;
 	for (*denominator = 1; *denominator <= 100000; (*denominator) ++) {
-		double numerator_d = x * *denominator, rounded = round (numerator_d);
+		const double numerator_d = x * *denominator, rounded = round (numerator_d);
 		if (fabs (rounded - numerator_d) < epsilon) {
 			*numerator = (integer) rounded;
 			return;

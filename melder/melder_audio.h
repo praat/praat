@@ -46,8 +46,6 @@ double MelderAudio_getOutputSilenceBefore ();
 void MelderAudio_setOutputSilenceAfter (double silenceAfter);
 double MelderAudio_getOutputSilenceAfter ();
 
-void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker);   // for HP-UX and Sun
-bool MelderAudio_getUseInternalSpeaker ();
 integer MelderAudio_getOutputBestSampleRate (integer fsamp);
 
 inline bool MelderAudio_isPlaying;

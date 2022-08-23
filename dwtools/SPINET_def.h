@@ -27,7 +27,7 @@ oo_DEFINE_CLASS (SPINET, SampledXY)
 	oo_MAT (s, ny, nx)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

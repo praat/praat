@@ -36,7 +36,8 @@
 
 Thing_implement (Confusion, TableOfReal, 0);
 
-void structConfusion :: v_info () {
+void structConfusion :: v1_info () {
+	// BUG: skipping parent classes
 	double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, frac;
 	integer nCorrect;
 
@@ -384,7 +385,7 @@ autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 		Melder_require (TableOfReal_isNonNegative (me),
 			U"No cell in the table should be negative.");
 		autoConfusion thee = Thing_new (Confusion);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Confusion.");

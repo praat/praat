@@ -2,7 +2,7 @@
 #define _melder_int_h_
 /* melder_int.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ inline integer integer_abs (integer n) {
 
 struct MelderIntegerRange {
 	integer first, last;
-	bool isEmpty () { return ( last < first ); }
+	bool isEmpty () const { return ( last < first ); }
 	integer size () const {
 		integer result = last - first + 1;
 		return std::max (result, 0_integer);

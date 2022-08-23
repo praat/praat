@@ -2,7 +2,7 @@
 #define _OTGrammarEditor_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2005,2007,2009-2012,2015-2018 Paul Boersma
+ * Copyright (C) 1997-2005,2007,2009-2012,2015-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,16 @@
 #include "OTGrammar.h"
 
 Thing_define (OTGrammarEditor, HyperPage) {
+	OTGrammar otGrammar() { return static_cast <OTGrammar> (our data()); }
+
 	integer selected;
 	bool d_constraintsAreDrawnVertically;
 
-	bool v_editable ()
+	bool v_hasEditMenu ()
 		override { return true; }
 	void v_createMenus ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_draw ()
 		override;
@@ -37,7 +39,7 @@ Thing_define (OTGrammarEditor, HyperPage) {
 		override;
 };
 
-autoOTGrammarEditor OTGrammarEditor_create (conststring32 title, OTGrammar ot);
+autoOTGrammarEditor OTGrammarEditor_create (conststring32 title, OTGrammar otGrammar);
 
 /* End of file OTGrammarEditor.h */
 #endif

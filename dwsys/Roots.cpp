@@ -43,8 +43,8 @@
 
 Thing_implement (Roots, Daata, 1);
 
-void structRoots :: v_info () {
-	structDaata :: v_info ();
+void structRoots :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of roots: ", numberOfRoots);
 }
 

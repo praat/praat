@@ -1,6 +1,6 @@
 /* manual_programming.cpp
  *
- * Copyright (C) 1992-2010,2011,2013,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2010,2011,2013,2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,11 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN (U"Interoperability", U"ppgb", 20151107)
+MAN_BEGIN (U"Interoperability", U"ppgb", 20220115)
 INTRO (U"You can use Praat in workflows that involve other programs.")
 ENTRY (U"1. General ways to access Praat from other programs")
-NORMAL (U"• To send messages from another program to a running Praat, use @@sendpraat@. "
+NORMAL (U"• To send messages from another program to a running Praat, "
+	"use @@sendpraat@ or @@Scripting 6.9. Calling from the command line|praat --send@. "
 	"This method is used by the programs CHAT (Childes) and Phon to view a sound in a Sound window.")
 NORMAL (U"• To execute a Praat script as a subprocess of another program, see @@Scripting 6.9. Calling from the command line@.")
 ENTRY (U"2. General ways to access other programs from Praat")

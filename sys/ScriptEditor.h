@@ -2,7 +2,7 @@
 #define _ScriptEditor_h_
 /* ScriptEditor.h
  *
- * Copyright (C) 1997-2011,2012,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2015,2016,2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ Thing_define (ScriptEditor, TextEditor) {
 	autoInterpreter interpreter;
 	autoUiForm argsDialog;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 	void v_nameChanged ()
 		override;
@@ -38,7 +38,7 @@ Thing_define (ScriptEditor, TextEditor) {
 		override { return false; }
 	void v_createMenus ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 };
 

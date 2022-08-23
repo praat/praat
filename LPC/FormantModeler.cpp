@@ -52,7 +52,8 @@
 
 Thing_implement (FormantModeler, Function, 0);
 
-void structFormantModeler :: v_info () {
+void structFormantModeler :: v1_info () {
+	// skipping parent classes
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
@@ -60,7 +61,7 @@ void structFormantModeler :: v_info () {
 	for (integer iformant = 1; iformant <= trackmodelers.size; iformant ++) {
 		DataModeler ffi = trackmodelers.at [iformant];
 		MelderInfo_writeLine (U"Formant ", iformant);
-		ffi -> v_info();
+		ffi -> v1_info();
 	}
 }
 
@@ -371,7 +372,7 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
-	double currectFontSize = Graphics_inqFontSize (g);
+	const double currectFontSize = Graphics_inqFontSize (g);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
 		Graphics_setColour (g, itrack %2  == 1 ? oddTracks : evenTracks );
@@ -770,7 +771,6 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromTrack, inte
 }
 
 double FormantModeler_getCoefficientOfDetermination (FormantModeler me, integer fromTrack, integer toTrack) {
-	double rSquared = undefined;
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	double ssreg = 0.0, sstot = 0.0;
 	for (integer itrack= fromTrack; itrack <= toTrack; itrack ++) {
@@ -780,7 +780,7 @@ double FormantModeler_getCoefficientOfDetermination (FormantModeler me, integer 
 		sstot += sstoti;
 		ssreg += ssregi;
 	}
-	rSquared = ( sstot > 0.0 ? ssreg / sstot : 1.0 );
+	const double rSquared = ( sstot > 0.0 ? ssreg / sstot : 1.0 );
 	return rSquared;
 }
 
@@ -900,7 +900,7 @@ double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double mi
 
 void FormantModeler_reportChiSquared (FormantModeler me) {
 	const integer numberOfTracks = my trackmodelers.size;
-	double ndf = 0, probability;
+	double ndf = 0.0, probability;
 	MelderInfo_writeLine (U"Chi squared tests for individual models of each of ", numberOfTracks, U" formant track:");
 	MelderInfo_writeLine (( my weighFormants == kFormantModelerWeights::EQUAL_WEIGHTS ? U"Standard deviation is estimated from the data." :
 		( my weighFormants == kFormantModelerWeights::ONE_OVER_BANDWIDTH ? U"\tBandwidths are used as estimate for local standard deviations." :
@@ -1045,7 +1045,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		Melder_require (maxFreq <= nyquistFrequency,
 			U"The upper value of the maximum frequency range should not exceed the Nyquist frequency of the sound.");
 		autoINTVEC noPararametersPerTrack = newINTVECasNumbers (numberOfFormantTracks, numberOfParametersPerTrack);
-		double df = 0, mincriterium = 1e28;
+		double df = 0.0, mincriterium = 1e28;
 		if (minFreq >= maxFreq)
 			numberOfFrequencySteps = 1;
 		else
@@ -1105,7 +1105,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		const double nyquistFrequency = 0.5 / my dx;
 		Melder_require (maxFreq <= nyquistFrequency,
 			U"The upper value of the maximum frequency range should not exceed the Nyquist frequency of the sound.");
-		double df = 0, mincriterium = 1e28;
+		double df = 0.0, mincriterium = 1e28;
 		if (minFreq >= maxFreq)
 			numberOfFrequencySteps = 1;
 		else

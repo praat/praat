@@ -25,8 +25,8 @@
 #include "Electroglottogram_enums.h"
 
 Thing_define (Electroglottogram, Sound) {
-	void v_info ()
-			override;
+	void v1_info ()
+		override;
 };
 
 /*

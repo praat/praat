@@ -1,6 +1,6 @@
 /* praat_MultiSampledSpectrogram.cpp
  *
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,12 @@
 DIRECT (CONVERT_EACH_TO_ONE__AnalyticSound_toIntensity) {
 	CONVERT_EACH_TO_ONE (AnalyticSound)
 		autoIntensity result = AnalyticSound_to_Intensity (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (CONVERT_EACH_TO_ONE__AnalyticSound_toSound) {
+	CONVERT_EACH_TO_ONE (AnalyticSound)
+		autoSound result = AnalyticSound_to_Sound (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -81,6 +87,12 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_",frequencyBinNumber)
 }
 
+DIRECT (CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Spectrum) {
+	CONVERT_EACH_TO_ONE (MultiSampledSpectrogram)
+		autoSpectrum result = MultiSampledSpectrogram_to_Spectrum (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (CONVERT_EACH_TO_ONE__ConstantQLog2FSpectrogram_translateSpectrum, U"", nullptr) {
 	REAL (fromTime, U"From time", U"0.0")
 	REAL (toTime, U"To time", U"0.0 (= all)")
@@ -97,7 +109,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_ConstantQLog2FSpectrogram, U"Sound: To Const
 	POSITIVE (f1, U"Lowest frequency (Hz)", U"110.0 (=440*2^(-2))")
 	REAL (fmax, U"Maximum frequency (Hz)", U"0.0 (=nyquist)")
 	NATURAL (numberOfFrequencyBinsPerOctave, U"Number of frequency bins / octave", U"24")
-	POSITIVE (frequencyResolutionInBins, U"Freqency resolution (bins)", U"1.0")
+	POSITIVE (frequencyResolutionInBins, U"Frequency resolution (bins)", U"1.0")
 	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"1.0")
 	RADIO_ENUM (kSound_windowShape, filterShape,
 			U"Filter shape", kSound_windowShape::DEFAULT)
@@ -125,7 +137,7 @@ FORM (GRAPHICS_EACH__GaborSpectrogram_paint, U"GaborSpectrogram: Paint", nullptr
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
-	GRAPHICS_EACH (ConstantQLog2FSpectrogram)
+	GRAPHICS_EACH (GaborSpectrogram)
 		GaborSpectrogram_paint (me, GRAPHICS, xmin, xmax, ymin, ymax, dBRange, garnish);
 	GRAPHICS_EACH_END
 }
@@ -155,6 +167,8 @@ void praat_MultiSampledSpectrograms_generics (ClassInfo klas) {
 			CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Sound);
 	praat_addAction1 (klas, 0, U"To Sound (frequencyBin)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Sound_frequencyBin);
+	praat_addAction1 (klas, 0, U"To Spectrum", nullptr, 0,
+			CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Spectrum);
 }
 
 void praat_MultiSampledSpectrogram_init ();
@@ -164,6 +178,8 @@ void praat_MultiSampledSpectrogram_init () {
 
 	praat_addAction1 (classAnalyticSound, 0, U"To Intensity", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__AnalyticSound_toIntensity);
+	praat_addAction1 (classAnalyticSound, 0, U"To Sound", nullptr, 0, 
+			CONVERT_EACH_TO_ONE__AnalyticSound_toSound);
 	
 	praat_addAction1 (classConstantQLog2FSpectrogram, 0, U"Paint...", nullptr, 0, 
 			GRAPHICS_EACH__ConstantQLog2FSpectrogram_paint);
@@ -171,16 +187,16 @@ void praat_MultiSampledSpectrogram_init () {
 	praat_addAction1 (classConstantQLog2FSpectrogram, 0, U"Translate spectrum...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ConstantQLog2FSpectrogram_translateSpectrum);
 	
-	praat_addAction1 (classSound, 0, U"To ConstantQLog2FSpectrogram...", U"To ComplexSpectrogram...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"To ConstantQLog2FSpectrogram...", U"To ComplexSpectrogram...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_ConstantQLog2FSpectrogram);
-	praat_addAction1 (classSound, 0, U"To AnalyticSound", U"Resample...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"To AnalyticSound", U"Resample...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_AnalyticSound);
 	
 	
 	praat_addAction1 (classGaborSpectrogram, 0, U"Paint...", nullptr, 0, 
 			GRAPHICS_EACH__GaborSpectrogram_paint);
 	praat_MultiSampledSpectrograms_generics (classGaborSpectrogram);
-	praat_addAction1 (classSound, 0, U"To GaborSpectrogram...", U"To ComplexSpectrogram...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classSound, 0, U"To GaborSpectrogram...", U"To ComplexSpectrogram...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_GaborSpectrogram);
 }
 

@@ -37,9 +37,9 @@ void Graphics_prefs () {
 	Preferences_addEnum (U"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, (int) kGraphics_cjkFontStyle::DEFAULT);
 }
 
-void structGraphics :: v_destroy () noexcept {
+void structGraphics :: v9_destroy () noexcept {
 	Melder_free (record);
-	Graphics_Parent :: v_destroy ();
+	Graphics_Parent :: v9_destroy ();
 }
 
 static void computeTrafo (Graphics me) {
@@ -83,6 +83,8 @@ void Graphics_init (Graphics me, int resolution) {
 		my resolutionNumber = kGraphics_resolution::DPI_180;
 	} else if (resolution == 200) {
 		my resolutionNumber = kGraphics_resolution::DPI_200;
+	} else if (resolution == 204) {
+		my resolutionNumber = kGraphics_resolution::DPI_204;
 	} else if (resolution == 300) {
 		my resolutionNumber = kGraphics_resolution::DPI_300;
 	} else if (resolution == 360) {

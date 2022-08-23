@@ -1,6 +1,6 @@
 /* Polygon.cpp
  *
- * Copyright (C) 1992-2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,13 @@
 
 Thing_implement (Polygon, Daata, 1);
 
-void structPolygon :: v_info () {
-	our structDaata :: v_info ();
+void structPolygon :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of points: ", our numberOfPoints);
 	MelderInfo_writeLine (U"Perimeter: ", Melder_single (Polygon_perimeter (this)));
 }
   
-void structPolygon :: v_writeText (MelderFile file) {
+void structPolygon :: v1_writeText (MelderFile file) {
 	texputi32 (file, our numberOfPoints, U"numberOfPoints");
 	for (integer i = 1; i <= our numberOfPoints; i ++) {
 		texputr64 (file, our x [i], U"x [", Melder_integer (i), U"]");
@@ -49,7 +49,7 @@ void structPolygon :: v_writeText (MelderFile file) {
 	}
 }
 
-void structPolygon :: v_readText (MelderReadText text, int /*formatVersion*/) {
+void structPolygon :: v1_readText (MelderReadText text, int /*formatVersion*/) {
 	our numberOfPoints = texgeti32 (text);
 	if (our numberOfPoints < 1)
 		Melder_throw (U"Cannot read a Polygon with only ", our numberOfPoints, U" points.");

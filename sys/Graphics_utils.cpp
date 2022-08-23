@@ -1,6 +1,6 @@
 /* Graphics_utils.cpp
  *
- * Copyright (C) 1992-2007,2009-2012,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2012,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "GraphicsP.h"
 
 /***** UTILITIES: *****/
-/***** THESE ROUINTES OUTPUT TO CURRENT GRAPHICS BY CALLING PRIMITIVES. *****/
+/***** THESE FUNCTIONS OUTPUT TO CURRENT GRAPHICS BY CALLING PRIMITIVES. *****/
 /***** THE TWO UTILITIES "Graphics_grey" AND "Graphics_altitude" *****/
 /***** ARE IN DIFFERENT FILES BECAUSE THEY NEED LOCAL SUBROUTINES. *****/
 
@@ -127,7 +127,7 @@ void Graphics_textTop (Graphics me, bool farr, conststring32 text) {
 	Graphics_setColour (me, original_colour);
 }
 
-void Graphics_marksLeft (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
+void Graphics_marksLeft (Graphics me, integer numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	const double original_x1WC = my d_x1WC, original_x2WC = my d_x2WC, original_y1WC = my d_y1WC, original_y2WC = my d_y2WC;
 	const int original_lineType = my lineType;
 	const double original_lineWidth = my lineWidth;
@@ -170,7 +170,7 @@ void Graphics_marksLeft (Graphics me, int numberOfMarks, bool haveNumbers, bool 
 	Graphics_setColour (me, original_colour);
 }
 
-void Graphics_marksRight (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
+void Graphics_marksRight (Graphics me, integer numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	const double original_x1WC = my d_x1WC, original_x2WC = my d_x2WC, original_y1WC = my d_y1WC, original_y2WC = my d_y2WC;
 	const int original_lineType = my lineType;
 	const double original_lineWidth = my lineWidth;
@@ -213,7 +213,7 @@ void Graphics_marksRight (Graphics me, int numberOfMarks, bool haveNumbers, bool
 	Graphics_setColour (me, original_colour);
 }
 
-void Graphics_marksBottom (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
+void Graphics_marksBottom (Graphics me, integer numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	const double original_x1WC = my d_x1WC, original_x2WC = my d_x2WC, original_y1WC = my d_y1WC, original_y2WC = my d_y2WC;
 	int original_lineType = my lineType;
 	const double original_lineWidth = my lineWidth;
@@ -256,7 +256,7 @@ void Graphics_marksBottom (Graphics me, int numberOfMarks, bool haveNumbers, boo
 	Graphics_setColour (me, original_colour);
 }
 
-void Graphics_marksTop (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
+void Graphics_marksTop (Graphics me, integer numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	const double original_x1WC = my d_x1WC, original_x2WC = my d_x2WC, original_y1WC = my d_y1WC, original_y2WC = my d_y2WC;
 	const int original_lineType = my lineType;
 	const double original_lineWidth = my lineWidth;
@@ -311,12 +311,12 @@ static double decade_y [1 + MAXNUM_MARKS_PER_DECADE] [1 + MAXNUM_MARKS_PER_DECAD
 	{ 0, 10, 15, 20, 30, 40, 50, 70 }
 };
 
-void Graphics_marksLeftLogarithmic (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
+void Graphics_marksLeftLogarithmic (Graphics me, integer numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	const double x1 = my d_x1WC, x2 = my d_x2WC, y1 = my d_y1WC, y2 = my d_y2WC;
 	const int lineType = my lineType;
 	const double lineWidth = my lineWidth;
 	const MelderColour colour = my colour;
-	Melder_clip (1, & numberOfMarksPerDecade, MAXNUM_MARKS_PER_DECADE);
+	Melder_clip (1_integer, & numberOfMarksPerDecade, integer (MAXNUM_MARKS_PER_DECADE));
 	if (y1 > 300.0 || y2 > 300.0)
 		return;
 
@@ -356,12 +356,12 @@ void Graphics_marksLeftLogarithmic (Graphics me, int numberOfMarksPerDecade, boo
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksRightLogarithmic (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
+void Graphics_marksRightLogarithmic (Graphics me, integer numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	const double x1 = my d_x1WC, x2 = my d_x2WC, y1 = my d_y1WC, y2 = my d_y2WC;
 	const int lineType = my lineType;
 	const double lineWidth = my lineWidth;
 	const MelderColour colour = my colour;
-	Melder_clip (1, & numberOfMarksPerDecade, MAXNUM_MARKS_PER_DECADE);
+	Melder_clip (1_integer, & numberOfMarksPerDecade, integer (MAXNUM_MARKS_PER_DECADE));
 	if (y1 > 300.0 || y2 > 300.0)
 		return;
 
@@ -401,12 +401,12 @@ void Graphics_marksRightLogarithmic (Graphics me, int numberOfMarksPerDecade, bo
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksTopLogarithmic (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
+void Graphics_marksTopLogarithmic (Graphics me, integer numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	const double x1 = my d_x1WC, x2 = my d_x2WC, y1 = my d_y1WC, y2 = my d_y2WC;
 	const int lineType = my lineType;
 	const double lineWidth = my lineWidth;
 	const MelderColour colour = my colour;
-	Melder_clip (1, & numberOfMarksPerDecade, MAXNUM_MARKS_PER_DECADE);
+	Melder_clip (1_integer, & numberOfMarksPerDecade, integer (MAXNUM_MARKS_PER_DECADE));
 	if (x1 > 300.0 || x2 > 300.0)
 		return;
 
@@ -446,12 +446,12 @@ void Graphics_marksTopLogarithmic (Graphics me, int numberOfMarksPerDecade, bool
 	Graphics_setColour (me, colour);
 }
 
-void Graphics_marksBottomLogarithmic (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
+void Graphics_marksBottomLogarithmic (Graphics me, integer numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	const double x1 = my d_x1WC, x2 = my d_x2WC, y1 = my d_y1WC, y2 = my d_y2WC;
 	const int lineType = my lineType;
 	const double lineWidth = my lineWidth;
 	const MelderColour colour = my colour;
-	Melder_clip (1, & numberOfMarksPerDecade, MAXNUM_MARKS_PER_DECADE);
+	Melder_clip (1_integer, & numberOfMarksPerDecade, integer (MAXNUM_MARKS_PER_DECADE));
 	if (x1 > 300.0 || x2 > 300.0)
 		return;
 

@@ -2,7 +2,7 @@
 #define _Sound_and_MultiSampledSpectrogram_h_
 /* Sound_and_MultiSampledSpectrogram.h
  * 
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 #include "AnalyticSound.h"
 #include "ConstantQSpectrograms.h"
 #include "Sound.h"
+
+autoSound MultiSampledSpectrogram_to_Sound (MultiSampledSpectrogram me);
 
 autoConstantQLog2FSpectrogram Sound_to_ConstantQLog2FSpectrogram (Sound me, double f1, double fmax, 
 	integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor, 

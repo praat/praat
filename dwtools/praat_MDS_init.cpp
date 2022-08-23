@@ -1396,7 +1396,7 @@ void praat_MDS_new_init () {
 	Thing_recognizeClassByOtherName (classProcrustes, U"Procrustus");
 
 	praat_addMenuCommand (U"Objects", U"New", U"Multidimensional scaling", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, praat_DEPTH_2 | praat_NO_API,
+	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, GuiMenu_DEPTH_2 | GuiMenu_NO_API,
 			HELP__MDS_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- MDS --", nullptr, 2, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create letter R example...", nullptr, 2,
@@ -1519,7 +1519,7 @@ void praat_MDS_actions_init () {
 			CONVERT_EACH_TO_ONE__Dissimilarity_to_Distance);
 	praat_addAction1 (classDissimilarity, 0, U"To Weight", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Dissimilarity_to_Weight);
-	praat_addAction1 (classDissimilarity, 0, U"To MDSVec", nullptr, praat_HIDDEN,
+	praat_addAction1 (classDissimilarity, 0, U"To MDSVec", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Dissimilarity_to_MDSVec);
 
 	praat_addAction1 (classCovariance, 0, U"To Configuration...", nullptr, 0, 

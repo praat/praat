@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,15 +50,15 @@ Thing_define (HyperPage, Editor) {
 	bool scriptErrorHasBeenNotified;
 	structMelderDir rootDirectory;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
-	bool v_editable ()
+	bool v_hasEditMenu ()
 		override { return false; }
 	void v_createMenus ()
 		override;
 	void v_createChildren ()
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 
 	virtual void v_draw () { }

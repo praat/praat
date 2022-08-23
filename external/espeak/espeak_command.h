@@ -16,8 +16,10 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESPEAK_COMMAND_H
-#define ESPEAK_COMMAND_H
+#ifndef ESPEAK_NG_COMMAND_H
+#define ESPEAK_NG_COMMAND_H
+
+#include "espeak_ng.h"
 
 #ifdef __cplusplus
 extern "C"

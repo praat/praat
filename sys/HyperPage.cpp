@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2021 Paul Boersma
+ * Copyright (C) 1996-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@
 
 Thing_implement (HyperPage, Editor, 0);
 
-#include "prefs_define.h"
+#include "Prefs_define.h"
 #include "HyperPage_prefs.h"
-#include "prefs_install.h"
+#include "Prefs_install.h"
 #include "HyperPage_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "HyperPage_prefs.h"
 
 #define PAGE_HEIGHT  320.0
@@ -213,79 +213,79 @@ void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, doubl
 }
 
 void HyperPage_pageTitle (HyperPage me, conststring32 title) {
-	HyperPage_any (me, title, my p_font, my p_fontSize * 2.0, 0,
+	HyperPage_any (me, title, my instancePref_font(), my instancePref_fontSize() * 2.0, 0,
 		2.0, 0.0, 0.0, my printing ? 0.4/2 : 0.2/2, 0.3/2, HyperPage_ADD_BORDER);
 }
 void HyperPage_intro (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
 }
 void HyperPage_entry (HyperPage me, conststring32 title) {
-	HyperPage_any (me, title, my p_font, my p_fontSize * 1.4, Graphics_BOLD, 0.5, 0.0, 0.0, 0.25/1.4, 0.1/1.4, HyperPage_USE_ENTRY_HINT);
+	HyperPage_any (me, title, my instancePref_font(), my instancePref_fontSize() * 1.4, Graphics_BOLD, 0.5, 0.0, 0.0, 0.25/1.4, 0.1/1.4, HyperPage_USE_ENTRY_HINT);
 }
 void HyperPage_paragraph (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
 }
 void HyperPage_listItem (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.30, 0.2, 0.0, 0.0, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.30, 0.2, 0.0, 0.0, 0);
 }
 void HyperPage_listItem1 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.57, 0.2, 0.0, 0.0, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.57, 0.2, 0.0, 0.0, 0);
 }
 void HyperPage_listItem2 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.84, 0.2, 0.0, 0.0, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.84, 0.2, 0.0, 0.0, 0);
 }
 void HyperPage_listItem3 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 1.11, 0.2, 0.0, 0.0, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 1.11, 0.2, 0.0, 0.0, 0);
 }
 void HyperPage_listTag (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.2, 0.03, 0.0, 0.1, 0.03, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.2, 0.03, 0.0, 0.1, 0.03, 0);
 }
 void HyperPage_listTag1 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.2, 0.50, 0.0, 0.05, 0.03, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.2, 0.50, 0.0, 0.05, 0.03, 0);
 }
 void HyperPage_listTag2 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.2, 0.97, 0.0, 0.03, 0.03, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.2, 0.97, 0.0, 0.03, 0.03, 0);
 }
 void HyperPage_listTag3 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.2, 1.44, 0.0, 0.03, 0.03, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.2, 1.44, 0.0, 0.03, 0.03, 0);
 }
 void HyperPage_definition (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.5, 0.0, 0.03, 0.1, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.5, 0.0, 0.03, 0.1, 0);
 }
 void HyperPage_definition1 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.97, 0.0, 0.03, 0.05, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.97, 0.0, 0.03, 0.05, 0);
 }
 void HyperPage_definition2 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 1.44, 0.0, 0.03, 0.03, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 1.44, 0.0, 0.03, 0.03, 0);
 }
 void HyperPage_definition3 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 1.93, 0.0, 0.03, 0.03, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 1.93, 0.0, 0.03, 0.03, 0);
 }
 void HyperPage_code (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
+	HyperPage_any (me, text, kGraphics_font::COURIER, my instancePref_fontSize() * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
 }
 void HyperPage_code1 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 0.6, 0.5, 0.0, 0.0, 0);
+	HyperPage_any (me, text, kGraphics_font::COURIER, my instancePref_fontSize() * 0.86, 0, 0.0, 0.6, 0.5, 0.0, 0.0, 0);
 }
 void HyperPage_code2 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 0.9, 0.5, 0.0, 0.0, 0);
+	HyperPage_any (me, text, kGraphics_font::COURIER, my instancePref_fontSize() * 0.86, 0, 0.0, 0.9, 0.5, 0.0, 0.0, 0);
 }
 void HyperPage_code3 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 1.2, 0.5, 0.0, 0.0, 0);
+	HyperPage_any (me, text, kGraphics_font::COURIER, my instancePref_fontSize() * 0.86, 0, 0.0, 1.2, 0.5, 0.0, 0.0, 0);
 }
 void HyperPage_code4 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 1.5, 0.5, 0.0, 0.0, 0);
+	HyperPage_any (me, text, kGraphics_font::COURIER, my instancePref_fontSize() * 0.86, 0, 0.0, 1.5, 0.5, 0.0, 0.0, 0);
 }
 void HyperPage_code5 (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 1.8, 0.5, 0.0, 0.0, 0);
+	HyperPage_any (me, text, kGraphics_font::COURIER, my instancePref_fontSize() * 0.86, 0, 0.0, 1.8, 0.5, 0.0, 0.0, 0);
 }
 void HyperPage_prototype (HyperPage me, conststring32 text) {
-	HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.03, 0.5, 0.0, 0.0, 0);
+	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 0.03, 0.5, 0.0, 0.0, 0);
 }
 void HyperPage_formula (HyperPage me, conststring32 formula) {
-	double topSpacing = 0.2, bottomSpacing = 0.2, minFooterDistance = 0.0;
-	kGraphics_font font = my p_font;
-	double size = my p_fontSize;
+	constexpr double topSpacing = 0.2, bottomSpacing = 0.2, minFooterDistance = 0.0;
+	const kGraphics_font font = my instancePref_font();
+	const double size = my instancePref_fontSize();
 	if (! my printing) {
 		my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 		my d_y -= size * (1.2/72);
@@ -323,10 +323,10 @@ void HyperPage_formula (HyperPage me, conststring32 formula) {
 
 void HyperPage_picture (HyperPage me, double width_inches, double height_inches, void (*draw) (Graphics g)) {
 	constexpr double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
-	const kGraphics_font font = my p_font;
-	const int size = my p_fontSize;
-	width_inches *= width_inches < 0.0 ? -1.0 : size / 12.0;
-	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
+	const kGraphics_font font = my instancePref_font();
+	const int size = my instancePref_fontSize();
+	width_inches *= ( width_inches < 0.0 ? -1.0 : size / 12.0 );
+	height_inches *= ( height_inches < 0.0 ? -1.0 : size / 12.0 );
 	if (! my printing) {
 		my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 		if (my d_y > PAGE_HEIGHT + height_inches || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
@@ -373,8 +373,8 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 	autostring32 text = Melder_dup (script);
 	autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 	constexpr double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
-	const kGraphics_font font = my p_font;
-	const double size = my p_fontSize;
+	const kGraphics_font font = my instancePref_font();
+	const double size = my instancePref_fontSize();
 	double true_width_inches = width_inches * ( width_inches < 0.0 ? -1.0 : size / 12.0 );
 	double true_height_inches = height_inches * ( height_inches < 0.0 ? -1.0 : size / 12.0 );
 	if (! my printing) {
@@ -575,7 +575,7 @@ static void print (void *void_me, Graphics graphics) {
 
 /********** class HyperPage **********/
 
-void structHyperPage :: v_destroy () noexcept {
+void structHyperPage :: v9_destroy () noexcept {
 	if (our praatApplication) {
 		for (int iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
 			((PraatObjects) our praatObjects) -> list [iobject]. name. reset();
@@ -585,7 +585,7 @@ void structHyperPage :: v_destroy () noexcept {
 		Melder_free (our praatObjects);
 		Melder_free (our praatPicture);
 	}
-	our HyperPage_Parent :: v_destroy ();
+	our HyperPage_Parent :: v9_destroy ();
 }
 
 static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent /* event */) {
@@ -667,24 +667,24 @@ static void menu_cb_font (HyperPage me, EDITOR_ARGS_FORM) {
 			RADIOBUTTON (U"Times")
 			RADIOBUTTON (U"Helvetica")
 	EDITOR_OK
-		SET_OPTION (font, my p_font == kGraphics_font::TIMES ? 1 :
-				my p_font == kGraphics_font::HELVETICA ? 2 : my p_font == kGraphics_font::PALATINO ? 3 : 1);
+		SET_OPTION (font, my instancePref_font() == kGraphics_font::TIMES ? 1 :
+				my instancePref_font() == kGraphics_font::HELVETICA ? 2 : my instancePref_font() == kGraphics_font::PALATINO ? 3 : 1);
 	EDITOR_DO
-		my pref_font () = my p_font = ( font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA );
+		my setInstancePref_font ( font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA );
 		if (my graphics)
 			Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
 static void updateSizeMenu (HyperPage me) {
-	GuiMenuItem_check (my fontSizeButton_10, my p_fontSize == 10);
-	GuiMenuItem_check (my fontSizeButton_12, my p_fontSize == 12);
-	GuiMenuItem_check (my fontSizeButton_14, my p_fontSize == 14);
-	GuiMenuItem_check (my fontSizeButton_18, my p_fontSize == 18);
-	GuiMenuItem_check (my fontSizeButton_24, my p_fontSize == 24);
+	GuiMenuItem_check (my fontSizeButton_10, my instancePref_fontSize() == 10);
+	GuiMenuItem_check (my fontSizeButton_12, my instancePref_fontSize() == 12);
+	GuiMenuItem_check (my fontSizeButton_14, my instancePref_fontSize() == 14);
+	GuiMenuItem_check (my fontSizeButton_18, my instancePref_fontSize() == 18);
+	GuiMenuItem_check (my fontSizeButton_24, my instancePref_fontSize() == 24);
 }
 static void setFontSize (HyperPage me, double fontSize) {
-	my pref_fontSize () = my p_fontSize = fontSize;
+	my setInstancePref_fontSize (fontSize);
 	updateSizeMenu (me);
 	if (my graphics)
 		Graphics_updateWs (my graphics.get());
@@ -700,7 +700,7 @@ static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Font size", nullptr)
 		POSITIVE (fontSize, U"Font size (points)", my default_fontSize ())
 	EDITOR_OK
-		SET_REAL (fontSize, my p_fontSize)
+		SET_REAL (fontSize, my instancePref_fontSize())
 	EDITOR_DO
 		setFontSize (me, fontSize);
 	EDITOR_END
@@ -744,7 +744,7 @@ static void createVerticalScrollBar (HyperPage me, GuiForm parent) {
 	const int height = Machine_getTextHeight ();
 	my verticalScrollBar = GuiScrollBar_createShown (parent,
 		- Machine_getScrollBarWidth (), 0,
-		Machine_getMenuBarHeight () + (my d_hasExtraRowOfTools ? 2 * height + 19 : height + 12), - Machine_getScrollBarWidth (),
+		Machine_getMenuBarBottom () + (my d_hasExtraRowOfTools ? 2 * height + 19 : height + 12), - Machine_getScrollBarWidth (),
 		0, PAGE_HEIGHT * 5, 0, 25, 1, 24,
 		gui_cb_verticalScroll, me, 0
 	);
@@ -880,7 +880,7 @@ static void gui_button_cb_nextPage (HyperPage me, GuiButtonEvent /* event */) {
 
 void structHyperPage :: v_createChildren () {
 	const int height = Machine_getTextHeight ();
-	const int y = Machine_getMenuBarHeight () + 4;
+	const int y = Machine_getMenuBarBottom () + 4;
 
 	/***** Create navigation buttons. *****/
 
@@ -922,9 +922,9 @@ void HyperPage_init (HyperPage me, conststring32 title, Daata data) {
 	Graphics_setAtSignIsLink (my graphics.get(), true);
 	Graphics_setDollarSignIsCode (my graphics.get(), true);
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
-	if (my p_font != kGraphics_font::TIMES && my p_font != kGraphics_font::HELVETICA)
-		my pref_font () = my p_font = kGraphics_font::TIMES;   // ensure Unicode compatibility
-	setFontSize (me, my p_fontSize);
+	if (my instancePref_font() != kGraphics_font::TIMES && my instancePref_font() != kGraphics_font::HELVETICA)
+		my setInstancePref_font (kGraphics_font::TIMES);   // ensure Unicode compatibility
+	setFontSize (me, my instancePref_fontSize());
 
 struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0, 0 };
 event. width  = GuiControl_getWidth  (my drawingArea);
@@ -939,7 +939,7 @@ void HyperPage_clear (HyperPage me) {
 	Graphics_updateWs (my graphics.get());
 }
 
-void structHyperPage :: v_dataChanged () {
+void structHyperPage :: v1_dataChanged () {
 	const bool oldError = Melder_hasError ();   // this method can be called during error time
 	(void) our v_goToPage (our currentPageTitle.get());
 	if (Melder_hasError () && ! oldError)

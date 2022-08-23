@@ -100,7 +100,7 @@ autoCorrelation Correlation_create (integer dimension) {
 autoCorrelation SSCP_to_Correlation (SSCP me) {
 	try {
 		autoCorrelation thee = Thing_new (Correlation);
-		my structSSCP :: v_copy (thee.get());
+		my structSSCP :: v1_copy (thee.get());
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
 			for (integer icol = irow; icol <= my numberOfColumns; icol ++)
 				thy data [icol] [irow] = thy data [irow] [icol] /= sqrt (my data [irow] [irow] * my data [icol] [icol]);
@@ -165,7 +165,7 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 					double d = sqrt (b * b - a * c);
 					if (b > 0)
 						d = - d;
-					double q = b - d;
+					const double q = b - d;
 					rmin = q / a;
 					rmin /= sqrt (1.0 + rmin * rmin);
 					rmax = c / q; 

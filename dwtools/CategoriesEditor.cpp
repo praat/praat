@@ -34,8 +34,6 @@
  djmw 20111110 Use autostringvector
 */
 
-#define CategoriesEditor_TEXTMAXLENGTH 100
-
 #include "CategoriesEditor.h"
 #include "EditorM.h"
 #include "NUM2.h"
@@ -130,8 +128,7 @@ static void notifyNumberOfSelected (CategoriesEditor me) {
 }
 
 static void updateWidgets (CategoriesEditor me) {   // all buttons except undo & redo
-	Categories data = (Categories) my data;
-	const integer size = data -> size;
+	const integer size = my categories() -> size;
 
 	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	
@@ -140,7 +137,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	GuiThing_setSensitive (my replace, ( posList.size > 0 ));
 	
 	const bool removeSensitive = ! (posList.size == 1 && size == 1 && 
-		str32equ (CategoriesEditor_EMPTYLABEL, data->at [1] -> string.get()));
+		str32equ (CategoriesEditor_EMPTYLABEL, my categories()->at [1] -> string.get()));
 	GuiThing_setSensitive (my remove, removeSensitive);
 	
 	bool moveUpIsSensitive = false, moveDownIsSensitive = false;
@@ -177,12 +174,11 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 }
 
 static void update (CategoriesEditor me, integer from, integer to, constINTVEC select, integer nSelect) {
-	Categories data = (Categories) my data;
-	integer size = data -> size;
+	const integer size = my categories() -> size;
 
 	if (size == 0) {
 		autoSimpleString str = SimpleString_create (CategoriesEditor_EMPTYLABEL);
-		data -> addItem_move (str.move());
+		my categories() -> addItem_move (str.move());
 		update (me, 0, 0, select, 0); // was nullptr
 		return;
 	}
@@ -208,7 +204,7 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 		autoSTRVEC table (numberOfElements);
 		integer itemCount = GuiList_getNumberOfItems (my list);
 		for (integer i = from; i <= to; i ++) {
-			SimpleString category = data -> at [i];
+			SimpleString category = my categories()->at [i];
 			table [i - offset] = Melder_dup_f (Melder_cat (i, U" ", category -> string.get()));
 		}
 		if (itemCount > size) {   // have any items been removed from the Categories?
@@ -236,7 +232,7 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 
 	GuiList_deselectAllItems (my list);
 	if (size == 1) { // the only item is always selected
-		SimpleString category = data->at [1];
+		SimpleString category = my categories()->at [1];
 		GuiList_selectItem (my list, 1);
 		updateWidgets (me);   // instead of "notify". BUG?
 		GuiText_setString (my text, category -> string.get());
@@ -273,10 +269,7 @@ static void update (CategoriesEditor me, integer from, integer to, constINTVEC s
 			}
 			top += deltaTopPos;
 		}
-		if (top + visible > size)
-			top = size - visible + 1;
-		if (top < 1)
-			top = 1;
+		Melder_clip (1_integer, & top, size - visible + 1);
 		GuiList_setTopPosition (my list, top);
 	}
 }
@@ -292,16 +285,10 @@ Thing_define (CategoriesEditorCommand, Command) {
 		override {};
 	void v_undo ()
 		override {};
-	void v_destroy () noexcept
-		override;
 };
 
 
 Thing_implement (CategoriesEditorCommand, Command, 0);
-
-void structCategoriesEditorCommand :: v_destroy () noexcept {
-	CategoriesEditorCommand_Parent :: v_destroy ();
-}
 
 static void CategoriesEditorCommand_init (CategoriesEditorCommand me, conststring32 name, Thing boss,
 	integer /*nCategories*/, integer nSelected) 
@@ -317,16 +304,14 @@ static void CategoriesEditorCommand_init (CategoriesEditorCommand me, conststrin
 Thing_define (CategoriesEditorInsert, CategoriesEditorCommand) {
 	void v_do () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
 		autoSimpleString str = Data_copy (categories->at [1]);
-		editorCategories -> addItemAtPosition_move (str.move(), selection [1]);
+		editor -> categories() -> addItemAtPosition_move (str.move(), selection [1]);
 		update (editor, selection [1], 0, selection.get(), 1);
 	};
 
 	void v_undo () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
-		editorCategories -> removeItem (selection [1]);
+		editor -> categories() -> removeItem (selection [1]);
 		update (editor, selection [1], 0, selection.get(), 1);
 	};
 };
@@ -350,23 +335,19 @@ static autoCategoriesEditorInsert CategoriesEditorInsert_create (Thing boss, aut
 Thing_define (CategoriesEditorRemove, CategoriesEditorCommand) {
 	void v_do () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
 		for (integer i = nSelected; i >= 1; i--) {
-			autoSimpleString item = Data_copy (editorCategories->at [selection [i]]);   // FIXME this copy can probably be replaced with a move
+			autoSimpleString item = Data_copy (editor -> categories()->at [selection [i]]);   // FIXME this copy can probably be replaced with a move
 			categories -> addItemAtPosition_move (item.move(), 1);
-			
-			editorCategories -> removeItem (selection [i]);
+			editor -> categories() -> removeItem (selection [i]);
 		}
 		update (editor, selection [1], 0, selection.get(), 0); // was nullptr
 	}
 
 	void v_undo () {
 		CategoriesEditor editor = (CategoriesEditor) boss;
-		Categories editorCategories = (Categories) editor -> data;
-
 		for (integer i = 1; i <= nSelected; i ++) {
 			autoSimpleString item = Data_copy (categories->at [i]);
-			editorCategories -> addItemAtPosition_move (item.move(), selection [i]);
+			editor -> categories() -> addItemAtPosition_move (item.move(), selection [i]);
 		}
 		update (editor, selection [1], 0, selection.get(), nSelected);
 	}
@@ -390,28 +371,24 @@ static autoCategoriesEditorRemove CategoriesEditorRemove_create (Thing boss, con
 Thing_define (CategoriesEditorReplace, CategoriesEditorCommand) {
 	void v_do () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
-
 		for (integer i = nSelected; i >= 1; i --) {
 			/*
 				Swap categories->at [1] with categories->at [my selection [i]] under ambiguous ownership.
 			*/
 			autoSimpleString tmp = Data_copy (categories->at [1]);
 			autoSimpleString other;
-			other. adoptFromAmbiguousOwner (editorCategories->at [selection [i]]);
+			other. adoptFromAmbiguousOwner (editor -> categories()->at [selection [i]]);
 			categories -> addItemAtPosition_move (other.move(), 2);   // YUCK
-			editorCategories->at [selection [i]] = tmp.releaseToAmbiguousOwner();
+			editor -> categories()->at [selection [i]] = tmp.releaseToAmbiguousOwner();
 		}
 		update (editor, selection [1], selection [nSelected], selection.get(), nSelected);
 	}
 
 	void v_undo () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
-
 		for (integer i = 1; i <= nSelected; i ++) {
 			autoSimpleString str = Data_copy (categories->at [i + 1]);
-			editorCategories -> replaceItem_move (str.move(), selection [i]);
+			editor -> categories() -> replaceItem_move (str.move(), selection [i]);
 		}
 		update (editor, selection [1], selection [nSelected], selection.get(), nSelected);
 	}
@@ -436,9 +413,7 @@ static autoCategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, a
 Thing_define (CategoriesEditorMoveUp, CategoriesEditorCommand) {
 	void v_do () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
-
-		Ordered_moveItems ((Ordered) editorCategories, selection.get(), newPos);   // FIXME cast
+		Ordered_moveItems ((Ordered) editor -> categories(), selection.get(), newPos);   // FIXME cast
 		autoINTVEC selectionUpdate = raw_INTVEC (nSelected);
 		for (integer i = 1; i <= nSelected; i ++)
 			selectionUpdate [i] = newPos + i - 1;
@@ -447,10 +422,8 @@ Thing_define (CategoriesEditorMoveUp, CategoriesEditorCommand) {
 
 	void v_undo () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
-
 		for (integer i = 1; i <= nSelected; i ++)
-			Ordered_moveItem ((Ordered) editorCategories, newPos, selection [nSelected]);   // FIXME cast
+			Ordered_moveItem ((Ordered) editor -> categories(), newPos, selection [nSelected]);   // FIXME cast
 		update (editor, newPos, selection [nSelected], selection.get(), nSelected);
 	}
 };
@@ -475,9 +448,7 @@ Thing_define (CategoriesEditorMoveDown, CategoriesEditorCommand) {
 
 	void v_do () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
-
-		Ordered_moveItems ((Ordered) editorCategories, selection.get(), newPos);   // FIXME cast
+		Ordered_moveItems ((Ordered) editor -> categories(), selection.get(), newPos);   // FIXME cast
 		autoINTVEC selectionUpdate = raw_INTVEC (nSelected);
 		for (integer i = 1; i <= nSelected; i ++)
 			selectionUpdate [i] = newPos - nSelected + i;
@@ -486,10 +457,8 @@ Thing_define (CategoriesEditorMoveDown, CategoriesEditorCommand) {
 
 	void v_undo () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
-		Categories editorCategories = static_cast<Categories> (editor -> data);
-
 		for (integer i = 1; i <= nSelected; i ++)
-			Ordered_moveItem ((Ordered) editorCategories, newPos, selection [1]); // TODO 1 or i ??     // FIXME cast
+			Ordered_moveItem ((Ordered) editor -> categories(), newPos, selection [1]); // TODO 1 or i ??     // FIXME cast
 		integer from = selection [1];
 		update (editor, ( from > 1 ? from -- : from ), newPos, selection.get(), nSelected);
 	}
@@ -539,9 +508,8 @@ static void gui_button_cb_insert (CategoriesEditor me, GuiButtonEvent /* event *
 }
 
 static void gui_button_cb_insertAtEnd (CategoriesEditor me, GuiButtonEvent /* event */) {
-	Categories categories = (Categories) my data;
-	insert (me, categories->size + 1);
-	my position = categories->size;
+	insert (me, my categories()->size + 1);
+	my position = my categories()->size;
 }
 
 static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event */) {
@@ -589,15 +557,13 @@ static void gui_list_cb_selectionChanged (CategoriesEditor me, GuiList_Selection
 
 static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEvent event) {
 	Melder_assert (event -> list == my list);
-	Categories data = (Categories) my data;
-
 	//  `my position` should just have been updated by the selectionChanged callback.
 
 	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size == 1   // often or even usually true when double-clicking?
 	    && posList [1] == my position)   // should be true, but we don't crash if it's false
 	{
-		SimpleString category = data->at [my position];
+		SimpleString category = my categories()->at [my position];
 		GuiText_setString (my text, ( category -> string ? category -> string.get() : U"" ));
 	}
 }
@@ -626,12 +592,8 @@ static void gui_button_cb_redo (CategoriesEditor me, GuiButtonEvent /* event */)
 
 #pragma mark - Editor methods
 
-void structCategoriesEditor :: v_destroy () noexcept {
-	CategoriesEditor_Parent :: v_destroy ();
-}
-
-void structCategoriesEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	CategoriesEditor_Parent :: v_createHelpMenuItems (menu);
+void structCategoriesEditor :: v_createMenuItems_help (EditorMenu menu) {
+	CategoriesEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"CategoriesEditor help", '?', menu_cb_help);
 }
 
@@ -702,7 +664,7 @@ void structCategoriesEditor :: v_createChildren () {
 	outOfView = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 }
 
-void structCategoriesEditor :: v_dataChanged () {
+void structCategoriesEditor :: v1_dataChanged () {
 	autoINTVEC select;
 	update (this, 0, 0, select.get(), 0);
 	updateWidgets (this);
@@ -710,10 +672,10 @@ void structCategoriesEditor :: v_dataChanged () {
 
 #pragma mark -
 
-autoCategoriesEditor CategoriesEditor_create (conststring32 title, Categories data) {
+autoCategoriesEditor CategoriesEditor_create (conststring32 title, Categories categories) {
 	try {
 		autoCategoriesEditor me = Thing_new (CategoriesEditor);
-		Editor_init (me.get(), 20, 40, 600, 600, title, data);
+		Editor_init (me.get(), 20, 40, 600, 600, title, categories);
 		my history = CommandHistory_create ();
 		autoINTVEC select;
 		update (me.get(), 0, 0, select.get(), 0);

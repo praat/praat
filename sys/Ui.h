@@ -151,9 +151,6 @@ Thing_define (UiField, Thing) {
 
 	int subtract;
 	integer numberOfLines;
-
-	void v_destroy () noexcept
-		override;
 };
 
 #define UiCallback_ARGS \
@@ -196,7 +193,7 @@ Thing_define (UiForm, Thing) {
 	int shiftKeyPressed;
 	bool allowMultipleFiles;   // for input
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 };
 

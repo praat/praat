@@ -2,7 +2,7 @@
 #define _EEGWindow_h_
 /* EEGWindow.h
  *
- * Copyright (C) 2011-2018 Paul Boersma
+ * Copyright (C) 2011-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,67 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TextGridEditor.h"
-#include "EEG.h"
+#include "FunctionEditor.h"
+#include "EEGArea.h"
+#include "EEGAnalysisArea.h"
+#include "TextGridArea.h"
 
-Thing_define (EEGWindow, TextGridEditor) {
-	EEG eeg;
-	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
+Thing_define (EEGWindow, FunctionEditor) {
+	DEFINE_FunctionArea (1, EEGArea, eegArea)
+	DEFINE_FunctionArea (2, EEGAnalysisArea, eegAnalysisArea)
+	DEFINE_FunctionArea (3, TextGridArea, textGridArea)
 
-	bool v_hasPitch ()
-		override { return false; }
-	bool v_hasIntensity ()
-		override { return false; }
-	bool v_hasFormants ()
-		override { return false; }
-	bool v_hasPulses ()
-		override { return false; }
+	EEG eeg() { return static_cast <EEG> (our data()); }
+
+	bool v_hasText () override { return true; }
+	bool v_hasSelectionViewer () override { return true; }
+	void v_drawSelectionViewer () override {
+		TextGridArea_drawSelectionViewer (our textGridArea().get());
+	}
+	void v_clickSelectionViewer (double x_fraction, double y_fraction) override {
+		TextGridArea_clickSelectionViewer (our textGridArea().get(), x_fraction, y_fraction);
+	}
+	conststring32 v_selectionViewerName ()
+		override { return U"IPA chart"; }
+	void v1_dataChanged () override {
+		our EEGWindow_Parent :: v1_dataChanged ();
+		our eegArea() -> functionChanged (our eeg() -> sound.get());
+		our eegAnalysisArea() -> functionChanged (our eeg() -> sound.get());
+		our textGridArea() -> functionChanged (our eeg() -> textgrid.get());
+	}
+	void v_distributeAreas () override {
+		our eegArea() -> setGlobalYRange_fraction (0.65, 1.0);
+		our eegAnalysisArea() -> setGlobalYRange_fraction (0.35, 0.65);
+		our textGridArea() -> setGlobalYRange_fraction (0.0, 0.35);
+	}
+	void v_draw () override {
+		FunctionArea_drawOne (our eegArea().get());
+		if (our eegAnalysisArea() -> hasContentToShow()) {
+			FunctionArea_prepareCanvas (our eegAnalysisArea().get());
+			our eegAnalysisArea() -> v_draw_analysis ();
+		}
+		FunctionArea_drawOne (our textGridArea().get());
+	}
+	void v_createMenuItems_help (EditorMenu menu)
+		override;
 	void v_createMenus ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_updateMenuItems ()
 		override;
-	conststring32 v_getChannelName (integer channelNumber)
-		override;
-	void v_createMenuItems_file_extract (EditorMenu menu)
-		override;
-	void v_updateMenuItems_file ()
-		override;
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our textGridArea().get(),
+			FunctionArea_legend_TEXTGRID U" ##modifiable TextGrid", DataGui_defaultForegroundColour (our textGridArea().get())
+		);
+		FunctionArea_drawLegend (our eegArea().get(),
+			FunctionArea_legend_WAVEFORM U" %%non-modifiable EEG-internal sound", DataGui_defaultForegroundColour (our eegArea().get())
+		);
+		SoundAnalysisArea_drawDefaultLegends (our eegAnalysisArea().get());
+	}
+
+	GuiMenuItem extractSelectedEEGPreserveTimesButton, extractSelectedEEGTimeFromZeroButton;
 
 	#include "EEGWindow_prefs.h"
 };
-
-void EEGWindow_init (EEGWindow me, conststring32 title, EEG eeg);
 
 autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg);
 

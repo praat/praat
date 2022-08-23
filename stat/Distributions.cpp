@@ -1,6 +1,6 @@
 /* Distributions.cpp
  *
- * Copyright (C) 1997-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1997-2012,2014-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 Thing_implement (Distributions, TableOfReal, 0);
 
-void structDistributions :: v_info () {
-	structDaata :: v_info ();
+void structDistributions :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of distributions: ", numberOfColumns);
 	MelderInfo_writeLine (U"Number of values: ", numberOfRows);
 }

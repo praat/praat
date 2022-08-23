@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2021 Paul Boersma
+ * Copyright (C) 2011-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
 
 Thing_implement (EEG, Function, 0);
 
-void structEEG :: v_info () {
-	structDaata :: v_info ();
+void structEEG :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");

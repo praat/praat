@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2020 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2012-2021 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
 
 Thing_implement (FileInMemory, Daata, 0);
 
-void structFileInMemory :: v_info () {
-	our structDaata :: v_info ();
+void structFileInMemory :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"File name: ", our d_path.get());
 	MelderInfo_writeLine (U"Id: ", our d_id.get());
 	MelderInfo_writeLine (U"Number of bytes: ", our d_numberOfBytes);
@@ -112,7 +112,8 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 		numberOfBytesPerLine = 20;
 
 	MelderInfo_writeLine (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
-	for (integer i = 0; i < my d_numberOfBytes; i++) {
+	MelderInfo_write (U"\t\t\t");
+	for (integer i = 1; i < my d_numberOfBytes; i++) {
 		const unsigned char number = my d_data [i];
 		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? U"\t\t\t" : U""), number, U",",
 				i % numberOfBytesPerLine == numberOfBytesPerLine - 1 ? U"\n" : U" ");

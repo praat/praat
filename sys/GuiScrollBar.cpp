@@ -1,6 +1,6 @@
 /* GuiScrollBar.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014,2015,2016,2017,2020,2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,42 +56,40 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 		forget (me);   // NOTE: my widget is not destroyed here
 	}
 #elif cocoa
-	@interface GuiCocoaScrollBar ()
-	@property (nonatomic, assign) double m_minimum;
-	@property (nonatomic, assign) double m_maximum;
-	@property (nonatomic, assign) double m_value;
-	@property (nonatomic, assign) double m_sliderSize;
-	@property (nonatomic, assign) double m_increment;
-	@property (nonatomic, assign) double m_pageIncrement;
-	@end
-
 	// http://www.lucernesys.com/blog/2010/02/11/nsscroller/
 
 	@implementation GuiCocoaScrollBar {
 		GuiScrollBar d_userData;
+		@public
+		double m_minimum;
+		double m_maximum;
+		double m_value;
+		double m_sliderSize;
+		double m_increment;
+		double m_pageIncrement;
 	}
 	- (void) dealloc {   // override
-		GuiScrollBar me = d_userData;
+		GuiScrollBar me = self -> d_userData;
 		forget (me);
 		trace (U"deleting a scroll bar");
 		[super dealloc];
 	}
 	- (GuiThing) getUserData {
-		return d_userData;
+		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiScrollBar));
-		d_userData = static_cast <GuiScrollBar> (userData);
+		self -> d_userData = static_cast <GuiScrollBar> (userData);
 	}
 	- (void) setMinimum: (double)minimum maximum:(double)maximum value:(double)value sliderSize:(double)sliderSize increment:(double)increment pageIncrement:(double)pageIncrement {
 		Melder_assert (isdefined (minimum));
-		_m_minimum = minimum;
-		_m_maximum = maximum;
-		_m_value = value;
-		_m_sliderSize = sliderSize;
-		_m_increment = increment;
-		_m_pageIncrement = pageIncrement;
-		double spaceLeft = (maximum - minimum) - sliderSize;
+		self -> m_minimum = minimum;
+		self -> m_maximum = maximum;
+		self -> m_value = value;
+		self -> m_sliderSize = sliderSize;
+		self -> m_increment = increment;
+		self -> m_pageIncrement = pageIncrement;
+		const double spaceLeft = (maximum - minimum) - sliderSize;
 		if (spaceLeft <= 0.0) {
 			[self setKnobProportion: 1.0];
 			[self setDoubleValue: 0.5];
@@ -102,7 +100,8 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	}
 	- (void) _update {
 		GuiScrollBar me = (GuiScrollBar) self -> d_userData;
-		[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+		[self   setMinimum: self -> m_minimum   maximum: self -> m_maximum   value: self -> m_value
+				sliderSize: self -> m_sliderSize   increment: self -> m_increment   pageIncrement: self -> m_pageIncrement];
 		if (my d_valueChangedCallback) {
 			struct structGuiScrollBarEvent event { me };
 			try {
@@ -114,25 +113,22 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	}
 	- (void) scrollBy: (double) step {
 		trace (U"step ", step);
-		if (step == 0) return;
-		_m_value -= 0.3 * step * _m_increment;
-		if (_m_value < _m_minimum)
-			_m_value = _m_minimum;
-		if (_m_value > _m_maximum - _m_sliderSize)
-			_m_value = _m_maximum - _m_sliderSize;
+		if (step == 0)
+			return;
+		self -> m_value -= 0.3 * step * self -> m_increment;
+		if (self -> m_value < self -> m_minimum)
+			self -> m_value = self -> m_minimum;
+		if (self -> m_value > self -> m_maximum - self -> m_sliderSize)
+			self -> m_value = self -> m_maximum - self -> m_sliderSize;
 		[self _update];
 	}
 	- (void) magnifyBy: (double) step {
 		trace (U"step ", step);
-		double increase = _m_sliderSize * (exp (- step) - 1.0);
-		_m_sliderSize += increase;
-		if (_m_sliderSize > _m_maximum - _m_minimum)
-			_m_sliderSize = _m_maximum - _m_minimum;
-		_m_value -= 0.5 * increase;
-		if (_m_value < _m_minimum)
-			_m_value = _m_minimum;
-		if (_m_value > _m_maximum - _m_sliderSize)
-			_m_value = _m_maximum - _m_sliderSize;
+		const double increase = self -> m_sliderSize * (exp (- step) - 1.0);
+		self -> m_sliderSize += increase;
+		Melder_clipRight (& self -> m_sliderSize, self -> m_maximum - self -> m_minimum);
+		self -> m_value -= 0.5 * increase;
+		Melder_clip (self -> m_minimum, & self -> m_value, self -> m_maximum - self -> m_sliderSize);
 		[self _update];
 	}
 	- (void) valueChanged {
@@ -140,36 +136,36 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 		switch ([self hitPart]) {
 			case NSScrollerIncrementLine: {
 				// Include code here for the case where the down arrow is pressed
-				_m_value += _m_increment;
-				if (_m_value > _m_maximum - _m_sliderSize)
-					_m_value = _m_maximum - _m_sliderSize;
-				[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+				self -> m_value += self -> m_increment;
+				Melder_clipRight (& self -> m_value, self -> m_maximum - self -> m_sliderSize);
+				[self   setMinimum: self -> m_minimum   maximum: self -> m_maximum   value: self -> m_value
+						sliderSize: self -> m_sliderSize   increment: self -> m_increment   pageIncrement: self -> m_pageIncrement];
 			} break;
 			case NSScrollerIncrementPage: {
 				// Include code here for the case where CTRL + down arrow is pressed, or the space the scroll knob moves in is pressed
-				_m_value += _m_pageIncrement;
-				if (_m_value > _m_maximum - _m_sliderSize)
-					_m_value = _m_maximum - _m_sliderSize;
-				[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+				self -> m_value += self -> m_pageIncrement;
+				Melder_clipRight (& self -> m_value, self -> m_maximum - self -> m_sliderSize);
+				[self   setMinimum: self -> m_minimum   maximum: self -> m_maximum   value: self -> m_value
+						sliderSize: self -> m_sliderSize   increment: self -> m_increment   pageIncrement: self -> m_pageIncrement];
 			} break;
 			case NSScrollerDecrementLine: {
 				// Include code here for the case where the up arrow is pressed
-				_m_value -= _m_increment;
-				if (_m_value < _m_minimum)
-					_m_value = _m_minimum;
-				[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+				self -> m_value -= self -> m_increment;
+				Melder_clipLeft (self -> m_minimum, & self -> m_value);
+				[self   setMinimum: self -> m_minimum   maximum: self -> m_maximum   value: self -> m_value
+						sliderSize: self -> m_sliderSize   increment: self -> m_increment   pageIncrement: self -> m_pageIncrement];
 			} break;
 			case NSScrollerDecrementPage: {
 				// Include code here for the case where CTRL + up arrow is pressed, or the space the scroll knob moves in is pressed
-				_m_value -= _m_pageIncrement;
-				if (_m_value < _m_minimum)
-					_m_value = _m_minimum;
-				[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+				self -> m_value -= self -> m_pageIncrement;
+				Melder_clipLeft (self -> m_minimum, & self -> m_value);
+				[self   setMinimum: self -> m_minimum   maximum: self -> m_maximum   value: self -> m_value
+						sliderSize: self -> m_sliderSize   increment: self -> m_increment   pageIncrement: self -> m_pageIncrement];
 			} break;
 			case NSScrollerKnob: {
 				// This case is when the knob itself is pressed
-				double spaceLeft = (_m_maximum - _m_minimum) - _m_sliderSize;
-				_m_value = _m_minimum + [self doubleValue] * (spaceLeft <= 0.0 ? 0.0 : spaceLeft);
+				const double spaceLeft = (self -> m_maximum - self -> m_minimum) - self -> m_sliderSize;
+				self -> m_value = self -> m_minimum + [self doubleValue] * (spaceLeft <= 0.0 ? 0.0 : spaceLeft);
 			} break;
 			default: {
 			} break;
@@ -307,12 +303,12 @@ void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double v
 		GuiControlBlockValueChangedCallbacks block (me);
 		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
 		[scroller
-			setMinimum:    isdefined (minimum)       ? minimum       : [scroller m_minimum]
-			maximum:       isdefined (maximum)       ? maximum       : [scroller m_maximum]
-			value:         isdefined (value)         ? value         : [scroller m_value]
-			sliderSize:    isdefined (sliderSize)    ? sliderSize    : [scroller m_sliderSize]
-			increment:     isdefined (increment)     ? increment     : [scroller m_increment]
-			pageIncrement: isdefined (pageIncrement) ? pageIncrement : [scroller m_pageIncrement]];
+			setMinimum:    isdefined (minimum)       ? minimum       : scroller -> m_minimum
+			maximum:       isdefined (maximum)       ? maximum       : scroller -> m_maximum
+			value:         isdefined (value)         ? value         : scroller -> m_value
+			sliderSize:    isdefined (sliderSize)    ? sliderSize    : scroller -> m_sliderSize
+			increment:     isdefined (increment)     ? increment     : scroller -> m_increment
+			pageIncrement: isdefined (pageIncrement) ? pageIncrement : scroller -> m_pageIncrement];
 	#endif
 	trace (U"exit");
 }
@@ -326,7 +322,7 @@ double GuiScrollBar_getValue (GuiScrollBar me) {
 		return value;
 	#elif cocoa
 		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
-		return [scroller m_value];
+		return scroller -> m_value;
 	#else
 		return 0;
 	#endif
@@ -341,7 +337,7 @@ double GuiScrollBar_getSliderSize (GuiScrollBar me) {
 		return slider;
 	#elif cocoa
 		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
-		return [scroller   m_sliderSize];
+		return scroller -> m_sliderSize;
 	#else
 		return 0;
 	#endif

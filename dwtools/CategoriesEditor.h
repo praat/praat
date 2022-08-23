@@ -2,7 +2,7 @@
 #define _CategoriesEditor_h_
 /* CategoriesEditor.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2018 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include "Categories.h"
 
 Thing_define (CategoriesEditor, Editor) {
+	Categories categories() { return static_cast <Categories> (our data()); }
+	
 	autoCommandHistory history;
 	integer position;
 	GuiList list;
@@ -31,13 +33,11 @@ Thing_define (CategoriesEditor, Editor) {
 	GuiLabel outOfView;
 	GuiButton remove, insert, insertAtEnd, replace, moveUp, moveDown;
 
-	void v_destroy () noexcept
-		override;
 	void v_createChildren ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 };
 

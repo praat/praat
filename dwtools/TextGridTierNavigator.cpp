@@ -139,7 +139,8 @@ conststring32 structTextGridTierNavigator :: v_getLabel (integer index) {
 }
 
 
-void structTextGridTierNavigator :: v_info () {
+void structTextGridTierNavigator :: v1_info () {
+	// skipping parent classes
 	const integer tierSize = our v_getSize ();
 	MelderInfo_writeLine (U"\tNumber of matches: ", TextGridTierNavigator_getNumberOfMatches (this),  U" (from ", tierSize, U")");
 	MelderInfo_writeLine (U"\t\tTopic labels only: ", TextGridTierNavigator_getNumberOfTopicMatches (this), U" (from ", tierSize, U")");

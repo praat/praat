@@ -1,6 +1,6 @@
 /* FormantPathEditor_prefs.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,46 +16,21 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (FormantPathEditor)
+Prefs_begin (FormantPathEditor)
 
-	prefs_override_int         (FormantPathEditor, shellWidth,                        1, U"800")
-	prefs_override_int         (FormantPathEditor, shellHeight,                       1, U"600")	
-	prefs_override_bool        (FormantPathEditor, picture_garnish,                   1, true)
-	prefs_override_bool        (FormantPathEditor, showSelectionViewer,               1, true)
-	prefs_override_bool        (FormantPathEditor, spectrogram_show,                  1, true)
-	prefs_override_bool        (FormantPathEditor, formant_show,                      1, true)
+	ClassPrefs_overrideInt        (FormantPathEditor, shellWidth,                        1, U"800")
+	ClassPrefs_overrideInt        (FormantPathEditor, shellHeight,                       1, U"600")
+	InstancePrefs_overrideBool    (FormantPathEditor, showSelectionViewer,               1, true)
+
+	InstancePrefs_addInteger (FormantPathEditor, modeler_numberOfTracks,             1, U"3")
+	InstancePrefs_addString  (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"3 3 3")
+	InstancePrefs_addDouble  (FormantPathEditor, modeler_varianceExponent,           1, U"1.25")
+	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_showAllModels,         1, true)
+	InstancePrefs_addDouble  (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"6200.0")
+	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_estimatedModels,       1, false)
+	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_showBandwidths,        1, true)
+	InstancePrefs_addDouble  (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
 	
-// from TextGridEditor
-	prefs_add_bool_with_data   (FormantPathEditor, useTextStyles,          1, false)
-	prefs_add_double_with_data (FormantPathEditor, fontSize,               1, U"18")
-	prefs_add_enum_with_data   (FormantPathEditor, alignment,              1, kGraphics_horizontalAlignment, DEFAULT)
-	prefs_add_bool_with_data   (FormantPathEditor, shiftDragMultiple,      1, false)
-	prefs_add_enum_with_data   (FormantPathEditor, showNumberOf,           1, kTextGridEditor_showNumberOf, DEFAULT)
-	prefs_add_enum_with_data   (FormantPathEditor, greenMethod,            1, kMelder_string, DEFAULT)
-	prefs_add_string_with_data (FormantPathEditor, greenString,            1, U"some text here for green paint")
-	prefs_add_bool_with_data   (FormantPathEditor, picture_showBoundaries, 1, true)
-	prefs_add_bool_with_data   (FormantPathEditor, picture_pitch_speckle,  1, false)
-	prefs_add_string_with_data (FormantPathEditor, align_language,         1, U"English")
-	prefs_add_bool_with_data   (FormantPathEditor, align_includeWords,     1, true)
-	prefs_add_bool_with_data   (FormantPathEditor, align_includePhonemes,  1, false)
-	prefs_add_bool_with_data   (FormantPathEditor, align_allowSilences,    1, false)	
-//end from TextGridEditor	
-	
-	prefs_add_string_with_data (FormantPathEditor, formant_path_evenColour,            1, U"pink")
-	prefs_add_string_with_data (FormantPathEditor, formant_path_oddColour,             1, U"red")
-	prefs_add_string_with_data (FormantPathEditor, formant_default_colour,             1, U"blue")
-	prefs_add_string_with_data (FormantPathEditor, formant_selected_colour,            1, U"pink")	
-	prefs_add_bool_with_data   (FormantPathEditor, formant_draw_showBandWidths,        1, false)
-	
-	prefs_add_integer_with_data(FormantPathEditor, modeler_numberOfTracks,             1, U"3")
-	prefs_add_string_with_data (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"3 3 3")
-	prefs_add_double_with_data (FormantPathEditor, modeler_varianceExponent,           1, U"1.25")
-	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showAllModels,         1, true)
-	prefs_add_double_with_data (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"6200.0")
-	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_estimatedModels,       1, false)
-	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showBandwidths,        1, true)
-	prefs_add_double_with_data (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
-	
-prefs_end (FormantPathEditor)
+Prefs_end (FormantPathEditor)
 	
 /* End of file FormantPathEditor_prefs.h */

@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,8 @@ static const conststring32 STRING_POINT_NUMBER = U"Point number";
 DIRECT (NEW1_AnyTier_into_TextGrid) {
 	COMBINE_ALL_TO_ONE (Function)
 		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
-		for (integer i = 1; i <= list.size; i ++) {
+		for (integer i = 1; i <= list.size; i ++)
 			TextGrid_addTier_copy (result.get(), list.at [i]);
-		}
 	COMBINE_ALL_TO_ONE_END (U"grid")
 }
 
@@ -129,7 +128,7 @@ DIRECT (NEW1_Label_Sound_to_TextGrid) {
 DIRECT (HINT_Label_Sound_to_TextGrid) {
 	INFO_NONE
 		Melder_information (U"This is an old-style Label object. To turn it into a TextGrid, U"
-			"select it together with a Sound of the appropriate duration, and click \"To TextGrid\".");
+				"select it together with a Sound of the appropriate duration, and click \"To TextGrid\".");
 	INFO_NONE_END
 }
 
@@ -148,7 +147,7 @@ FORM (GRAPHICS_TextGrid_Pitch_draw, U"TextGrid & Pitch: Draw", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -165,7 +164,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawErb, U"TextGrid & Pitch: Draw erb", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -182,7 +181,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawLogarithmic, U"TextGrid & Pitch: Draw logarith
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -199,7 +198,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawMel, U"TextGrid & Pitch: Draw mel", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -217,7 +216,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones"
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -232,7 +231,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparately, U"TextGrid & Pitch: Draw separatel
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -247,7 +246,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyErb, U"TextGrid & Pitch: Draw separa
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -262,7 +261,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyLogarithmic, U"TextGrid & Pitch: Dra
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -277,7 +276,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyMel, U"TextGrid & Pitch: Draw separa
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -293,7 +292,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelySemitones, U"TextGrid & Pitch: Draw 
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -309,7 +308,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckle, U"TextGrid & Pitch: Speckle", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -325,7 +324,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleErb, U"TextGrid & Pitch: Speckle erb", null
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -341,7 +340,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleLogarithmic, U"TextGrid & Pitch: Speckle lo
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -357,7 +356,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleMel, U"TextGrid & Pitch: Speckle mel", null
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -374,7 +373,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSemitones, U"TextGrid & Pitch: Speckle semi
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_100);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_100);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -389,7 +388,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparately, U"TextGrid & Pitch: Speckle sep
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -404,7 +403,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyErb, U"TextGrid & Pitch: Speckle 
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -419,7 +418,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyLogarithmic, U"TextGrid & Pitch: 
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -434,7 +433,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyMel, U"TextGrid & Pitch: Speckle 
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -680,14 +679,14 @@ DIRECT (HELP_TextGrid_help) {
 
 static void cb_TextGridEditor_publication (Editor /* editor */, autoDaata publication) {
 	/*
-	 * Keep the gate for error handling.
-	 */
+		Keep the gate for error handling.
+	*/
 	try {
 		bool isaSpectralSlice = Thing_isa (publication.get(), classSpectrum) && str32equ (Thing_getName (publication.get()), U"slice");
 		praat_new (publication.move());
 		praat_updateSelection ();
 		if (isaSpectralSlice) {
-			int IOBJECT;
+			integer IOBJECT;
 			FIND_ONE_WITH_IOBJECT (Spectrum)
 			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 			praat_installEditor (editor2.get(), IOBJECT);
@@ -699,7 +698,7 @@ static void cb_TextGridEditor_publication (Editor /* editor */, autoDaata public
 }
 DIRECT (EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit) {
 	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be null
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, nullptr);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 	EDITOR_ONE_WITH_ONE_END
 }
@@ -709,42 +708,48 @@ FORM (EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback, U"TextGrid: View & E
 	OK
 DO
 	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be null
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, callbackText);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, nullptr, callbackText);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 	EDITOR_ONE_WITH_ONE_END
 }
 
 DIRECT (WINDOW_TextGrid_LongSound_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a TextGrid from batch.");
 	LongSound longSound = nullptr;
-	int ilongSound = 0;
+	integer ilongSound = 0;
 	LOOP {
-		if (CLASS == classLongSound) longSound = (LongSound) OBJECT, ilongSound = IOBJECT;
+		if (CLASS == classLongSound)
+			longSound = (LongSound) OBJECT, ilongSound = IOBJECT;
 	}
 	Melder_assert (ilongSound != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam_LOOP (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, nullptr, nullptr);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
-		praat_installEditor2 (editor.get(), IOBJECT, ilongSound);
+		//praat_installEditor2 (editor.get(), IOBJECT, ilongSound);   // from August 2022 on, the LongSound is supposed to be copied
+		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
 	END_NO_NEW_DATA
 }
 
 DIRECT (WINDOW_TextGrid_SpellingChecker_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a TextGrid from batch.");
 	SpellingChecker spellingChecker = nullptr;
-	int ispellingChecker = 0;
+	integer ispellingChecker = 0;
 	Sound sound = nullptr;
 	LOOP {
-		if (CLASS == classSpellingChecker) spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
-		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
+		if (CLASS == classSpellingChecker)
+			spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
+		if (CLASS == classSound)
+			sound = (Sound) OBJECT;   // may stay null
 	}
 	Melder_assert (ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam_LOOP (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, spellingChecker, nullptr);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, spellingChecker, nullptr);
 		praat_installEditor2 (editor.get(), IOBJECT, ispellingChecker);
 		editor.releaseToUser();
 	}
@@ -752,19 +757,23 @@ DIRECT (WINDOW_TextGrid_SpellingChecker_viewAndEdit) {
 }
 
 DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a TextGrid from batch.");
 	LongSound longSound = nullptr;
 	SpellingChecker spellingChecker = nullptr;
-	int ilongSound = 0, ispellingChecker = 0;
+	integer ilongSound = 0, ispellingChecker = 0;
 	LOOP {
-		if (CLASS == classLongSound) longSound = (LongSound) OBJECT, ilongSound = IOBJECT;
-		if (CLASS == classSpellingChecker) spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
+		if (CLASS == classLongSound)
+			longSound = (LongSound) OBJECT, ilongSound = IOBJECT;
+		if (CLASS == classSpellingChecker)
+			spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
 	}
 	Melder_assert (ilongSound != 0 && ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam_LOOP (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, spellingChecker, nullptr);
-		praat_installEditor3 (editor.get(), IOBJECT, ilongSound, ispellingChecker);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, spellingChecker, nullptr);
+		//praat_installEditor3 (editor.get(), IOBJECT, ilongSound, ispellingChecker);
+		praat_installEditor2 (editor.get(), IOBJECT, ispellingChecker);
 		editor.releaseToUser();
 	}
 	END_NO_NEW_DATA
@@ -773,7 +782,7 @@ DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
 DIRECT (HINT_TextGrid_Sound_viewAndEdit) {
 	INFO_NONE
 		Melder_information (U"To include a copy of a Sound in your TextGrid window:\n"
-			U"   select a TextGrid and a Sound, and click \"View & Edit\".");
+				U"   select a TextGrid and a Sound, and click \"View & Edit\".");
 	INFO_NONE_END
 }
 
@@ -1129,7 +1138,7 @@ DO
 	MODIFY_EACH (TextGrid)
 		{// scope
 			autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
-			if (position > my tiers->size) position = my tiers->size + 1;
+			Melder_clipRight (& position, my tiers->size + 1);
 			Thing_setName (tier.get(), name);
 			my tiers -> addItemAtPosition_move (tier.move(), position);
 		}
@@ -1144,7 +1153,7 @@ DO
 	MODIFY_EACH (TextGrid)
 		{// scope
 			autoTextTier tier = TextTier_create (my xmin, my xmax);
-			if (position > my tiers->size) position = my tiers->size + 1;
+			Melder_clipRight (& position, my tiers->size + 1);
 			Thing_setName (tier.get(), name);
 			my tiers -> addItemAtPosition_move (tier.move(), position);
 		}
@@ -1158,7 +1167,7 @@ FORM (MODIFY_TextGrid_duplicateTier, U"TextGrid: Duplicate tier", nullptr) {
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		if (tierNumber > my tiers->size) tierNumber = my tiers->size;
+		Melder_clipRight (& tierNumber, my tiers->size);
 		{// scope
 			autoFunction newTier = Data_copy (my tiers->at [tierNumber]);
 			Thing_setName (newTier.get(), name);
@@ -1174,7 +1183,7 @@ DO
 	MODIFY_EACH (TextGrid)
 		if (my tiers->size <= 1)
 			Melder_throw (U"Sorry, I refuse to remove the last tier.");
-		if (tierNumber > my tiers->size) tierNumber = my tiers->size;
+		Melder_clipRight (& tierNumber, my tiers->size);
 		my tiers -> removeItem (tierNumber);
 	MODIFY_EACH_END
 }
@@ -1198,17 +1207,17 @@ DO
 		IntervalTier intervalTier;
 		if (tierNumber > my tiers->size)
 			Melder_throw (U"You cannot remove a boundary from tier ", tierNumber, U" of ", me,
-				U", because that TextGrid has only ", my tiers->size, U" tiers.");
+					U", because that TextGrid has only ", my tiers->size, U" tiers.");
 		intervalTier = (IntervalTier) my tiers->at [tierNumber];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", tierNumber, U" of ", me,
-				U", because that tier is a point tier instead of an interval tier.");
+					U", because that tier is a point tier instead of an interval tier.");
 		if (intervalNumber > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
+					U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
 		if (intervalNumber == 1)
 			Melder_throw (U"You cannot remove the left boundary from interval 1 of tier ", tierNumber, U" of ", me,
-				U", because this is at the left edge of the tier.");
+					U", because this is at the left edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, intervalNumber);
 	MODIFY_EACH_END
 }
@@ -1226,13 +1235,13 @@ DO
 		intervalTier = (IntervalTier) my tiers->at [tierNumber];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", tierNumber, U" of ", me,
-				U", because that tier is a point tier instead of an interval tier.");
+					U", because that tier is a point tier instead of an interval tier.");
 		if (intervalNumber > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
+					U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
 		if (intervalNumber == intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove the right boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
-				U", because this is at the right edge of the tier.");
+					U", because this is at the right edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, intervalNumber + 1);
 	MODIFY_EACH_END
 }
@@ -1278,14 +1287,14 @@ DO
 		TextTier pointTier;
 		if (tierNumber > my tiers->size)
 			Melder_throw (U"You cannot remove a point from tier ", tierNumber, U" of ", me,
-				U", because that TextGrid has only ", my tiers->size, U" tiers.");
+					U", because that TextGrid has only ", my tiers->size, U" tiers.");
 		pointTier = (TextTier) my tiers->at [tierNumber];
 		if (pointTier -> classInfo != classTextTier)
 			Melder_throw (U"You cannot remove a point from tier ", tierNumber, U" of ", me,
-				U", because that tier is an interval tier instead of a point tier.");
+					U", because that tier is an interval tier instead of a point tier.");
 		if (pointNumber > pointTier -> points.size)
 			Melder_throw (U"You cannot remove point ", pointNumber, U" from tier ", tierNumber, U" of ", me,
-				U", because that tier has only ", pointTier -> points.size, U" points.");
+					U", because that tier has only ", pointTier -> points.size, U" points.");
 		TextTier_removePoint (pointTier, pointNumber);
 	MODIFY_EACH_END
 }
@@ -1407,7 +1416,7 @@ FORM (NEW_TextGrid_getPoints_preceded, U"Get points (preceded)", nullptr) {
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
 		autoPointProcess result = TextGrid_getPoints_preceded (me, tierNumber,
-			(kMelder_string) getPointsWhoseLabel___, ___theText, ___precededByALabelThat___, ____theText);
+				(kMelder_string) getPointsWhoseLabel___, ___theText, ___precededByALabelThat___, ____theText);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
@@ -1423,7 +1432,7 @@ FORM (NEW_TextGrid_getPoints_followed, U"Get points (followed)", nullptr) {
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
 		autoPointProcess result = TextGrid_getPoints_followed (me, tierNumber,
-			(kMelder_string) getPointsWhoseLabel___, ___theText, ___followedByALabelThat___, ____theText);
+				(kMelder_string) getPointsWhoseLabel___, ___theText, ___followedByALabelThat___, ____theText);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
@@ -1503,7 +1512,8 @@ FORM (STRING_TextTier_getLabelOfPoint, U"Get label of point", nullptr) {
 	OK
 DO
 	QUERY_ONE_FOR_STRING (TextTier)
-		if (pointNumber > my points.size) Melder_throw (U"No such point.");
+		if (pointNumber > my points.size)
+			Melder_throw (U"No such point.");
 		TextPoint point = my points.at [pointNumber];
 		conststring32 result = point -> mark.get();
 	QUERY_ONE_FOR_STRING_END
@@ -1550,10 +1560,12 @@ DIRECT (NEW_WordList_upto_SpellingChecker) {
 void praat_uvafon_TextGrid_init () {
 	Thing_recognizeClassByOtherName (classTextTier, U"MarkTier");
 
+	structTextGridArea :: f_preferences ();
+
 	structTextGridEditor :: f_preferences ();
 
 	praat_addAction1 (classIntervalTier, 1, U"Save as Xwaves label file...", nullptr, 0, SAVE_IntervalTier_writeToXwaves);
-	praat_addAction1 (classIntervalTier, 1,   U"Write to Xwaves label file...", nullptr, praat_DEPRECATED_2011, SAVE_IntervalTier_writeToXwaves);
+	praat_addAction1 (classIntervalTier, 1,   U"Write to Xwaves label file...", nullptr, GuiMenu_DEPRECATED_2011, SAVE_IntervalTier_writeToXwaves);
 	praat_addAction1 (classIntervalTier, 0, U"IntervalTier help", nullptr, 0, HELP_IntervalTier_help);
 	praat_addAction1 (classIntervalTier, 0, U"Collect", nullptr, 0, nullptr);
 	praat_addAction1 (classIntervalTier, 0, U"Into TextGrid", nullptr, 0, NEW1_AnyTier_into_TextGrid);
@@ -1567,8 +1579,8 @@ void praat_uvafon_TextGrid_init () {
 
 	praat_addAction1 (classLabel, 0, U"& Sound: To TextGrid?", nullptr, 0, HINT_Label_Sound_to_TextGrid);
 
-	praat_addAction1 (classSpellingChecker, 1, U"View & Edit...", nullptr, praat_ATTRACTIVE, WINDOW_SpellingChecker_viewAndEdit);
-	praat_addAction1 (classSpellingChecker, 1,   U"Edit...", U"*View & Edit...", praat_DEPRECATED_2011, WINDOW_SpellingChecker_viewAndEdit);
+	praat_addAction1 (classSpellingChecker, 1, U"View & Edit...", nullptr, GuiMenu_ATTRACTIVE, WINDOW_SpellingChecker_viewAndEdit);
+	praat_addAction1 (classSpellingChecker, 1,   U"Edit...", U"*View & Edit...", GuiMenu_DEPRECATED_2011, WINDOW_SpellingChecker_viewAndEdit);
 	praat_addAction1 (classSpellingChecker, 0, U"Query", nullptr, 0, nullptr);
 	praat_addAction1 (classSpellingChecker, 1, U"Is word allowed...", nullptr, 0, BOOLEAN_SpellingChecker_isWordAllowed);
 	praat_addAction1 (classSpellingChecker, 1, U"Next not allowed word...", nullptr, 0, STRING_SpellingChecker_nextNotAllowedWord);
@@ -1579,12 +1591,12 @@ void praat_uvafon_TextGrid_init () {
 	praat_addAction1 (classSpellingChecker, 0, U"Extract user dictionary", nullptr, 0, NEW_SpellingChecker_extractUserDictionary);
 
 	praat_addAction1 (classTextGrid, 1, U"Save as chronological text file...", nullptr, 0, SAVE_TextGrid_writeToChronologicalTextFile);
-	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, praat_HIDDEN, SAVE_TextGrid_writeToChronologicalTextFile);
+	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, GuiMenu_HIDDEN, SAVE_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 0, U"TextGrid help", nullptr, 0, HELP_TextGrid_help);
 	praat_addAction1 (classTextGrid, 1, U"View & Edit alone", nullptr, 0, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction1 (classTextGrid, 1, U"View & Edit with Sound?", nullptr, praat_ATTRACTIVE | praat_NO_API, HINT_TextGrid_Sound_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", GuiMenu_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", GuiMenu_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1, U"View & Edit with Sound?", nullptr, GuiMenu_ATTRACTIVE | GuiMenu_NO_API, HINT_TextGrid_Sound_viewAndEdit);
 	praat_addAction1 (classTextGrid, 0, U"Draw -", nullptr, 0, nullptr);
 	praat_addAction1 (classTextGrid, 0, U"Draw...", nullptr, 1, GRAPHICS_TextGrid_draw);
 	praat_addAction1 (classTextGrid, 1, U"Draw with Sound?", nullptr, 1, HINT_TextGrid_Sound_draw);
@@ -1601,14 +1613,14 @@ void praat_uvafon_TextGrid_init () {
 		praat_addAction1 (classTextGrid, 1, U"Is interval tier...", nullptr, 1, BOOLEAN_TextGrid_isIntervalTier);
 		praat_addAction1 (classTextGrid, 1, U"-- query tier --", nullptr, 1, nullptr);
 		praat_addAction1 (classTextGrid, 1, U"Query interval tier", nullptr, 1, nullptr);
-			praat_addAction1 (classTextGrid, 1, U"Get number of intervals...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getNumberOfIntervals);
-			praat_addAction1 (classTextGrid, 1, U"Get start time of interval...", nullptr, praat_DEPTH_2, REAL_TextGrid_getStartTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1,   U"Get starting point...", U"*Get start time of interval...", praat_DEPTH_2 | praat_DEPRECATED_2016, REAL_TextGrid_getStartTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1,   U"Get start point...", U"*Get start time of interval...", praat_DEPTH_2 | praat_DEPRECATED_2016, REAL_TextGrid_getStartTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1, U"Get end time of interval...", nullptr, praat_DEPTH_2, REAL_TextGrid_getEndTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1,   U"Get end point...", U"*Get end time of interval...", praat_DEPTH_2 | praat_DEPRECATED_2016, REAL_TextGrid_getEndTimeOfInterval);
-			praat_addAction1 (classTextGrid, 1, U"Get label of interval...", nullptr, praat_DEPTH_2, STRING_TextGrid_getLabelOfInterval);
-			praat_addAction1 (classTextGrid, 1, U"-- query interval from time --", nullptr, praat_DEPTH_2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Get number of intervals...", nullptr, GuiMenu_DEPTH_2, INTEGER_TextGrid_getNumberOfIntervals);
+			praat_addAction1 (classTextGrid, 1, U"Get start time of interval...", nullptr, GuiMenu_DEPTH_2, REAL_TextGrid_getStartTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1,   U"Get starting point...", U"*Get start time of interval...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2016, REAL_TextGrid_getStartTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1,   U"Get start point...", U"*Get start time of interval...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2016, REAL_TextGrid_getStartTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1, U"Get end time of interval...", nullptr, GuiMenu_DEPTH_2, REAL_TextGrid_getEndTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1,   U"Get end point...", U"*Get end time of interval...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2016, REAL_TextGrid_getEndTimeOfInterval);
+			praat_addAction1 (classTextGrid, 1, U"Get label of interval...", nullptr, GuiMenu_DEPTH_2, STRING_TextGrid_getLabelOfInterval);
+			praat_addAction1 (classTextGrid, 1, U"-- query interval from time --", nullptr, GuiMenu_DEPTH_2, nullptr);
 			praat_addAction1 (classTextGrid, 1, U"Get interval at time...", nullptr, 2, INTEGER_TextGrid_getIntervalAtTime);
 			praat_addAction1 (classTextGrid, 1, U"Get low interval at time...", nullptr, 2, INTEGER_TextGrid_getLowIntervalAtTime);
 			praat_addAction1 (classTextGrid, 1, U"Get high interval at time...", nullptr, 2, INTEGER_TextGrid_getHighIntervalAtTime);
@@ -1626,8 +1638,8 @@ void praat_uvafon_TextGrid_init () {
 			praat_addAction1 (classTextGrid, 1, U"Get nearest index from time...", nullptr, 2, INTEGER_TextGrid_getNearestIndexFromTime);
 			praat_addAction1 (classTextGrid, 1, U"-- query point labels --", nullptr, 2, nullptr);
 			praat_addAction1 (classTextGrid, 1, U"Count points where...", nullptr, 2, INTEGER_TextGrid_countPointsWhere);
-		praat_addAction1 (classTextGrid, 1, U"-- query labels --", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2015, nullptr);
-		praat_addAction1 (classTextGrid, 1, U"Count labels...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2015, INTEGER_TextGrid_countLabels);
+		praat_addAction1 (classTextGrid, 1, U"-- query labels --", nullptr, GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2015, nullptr);
+		praat_addAction1 (classTextGrid, 1, U"Count labels...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2015, INTEGER_TextGrid_countLabels);
 	praat_addAction1 (classTextGrid, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classTextGrid, 0, U"Convert to backslash trigraphs", nullptr, 1, MODIFY_TextGrid_convertToBackslashTrigraphs);
 		praat_addAction1 (classTextGrid, 0, U"Convert to Unicode", nullptr, 1, MODIFY_TextGrid_convertToUnicode);
@@ -1651,7 +1663,7 @@ void praat_uvafon_TextGrid_init () {
 			praat_addAction1 (classTextGrid, 0, U"Set point text...", nullptr, 2, MODIFY_TextGrid_setPointText);
 praat_addAction1 (classTextGrid, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classTextGrid, 0, U"Extract one tier...", nullptr, 0, NEW1_TextGrid_extractOneTier);
-	praat_addAction1 (classTextGrid, 0,   U"Extract tier...", U"*Extract one tier...", praat_DEPRECATED_2010, NEW1_TextGrid_extractTier);
+	praat_addAction1 (classTextGrid, 0,   U"Extract tier...", U"*Extract one tier...", GuiMenu_DEPRECATED_2010, NEW1_TextGrid_extractTier);
 	praat_addAction1 (classTextGrid, 0, U"Extract part...", nullptr, 0, NEW_TextGrid_extractPart);
 	praat_addAction1 (classTextGrid, 0, U"Analyse interval tier -", nullptr, 0, nullptr);
 		praat_addAction1 (classTextGrid, 0, U"Get starting points...", nullptr, 1, NEW_TextGrid_getStartingPoints);
@@ -1693,8 +1705,8 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classIntervalTier, 0, classTextTier, 0, U"Collect", nullptr, 0, nullptr);
 	praat_addAction2 (classIntervalTier, 0, classTextTier, 0, U"Into TextGrid", nullptr, 0, NEW1_AnyTier_into_TextGrid);
 	praat_addAction2 (classLabel, 1, classSound, 1, U"To TextGrid", nullptr, 0, NEW1_Label_Sound_to_TextGrid);
-	praat_addAction2 (classLongSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_LongSound_viewAndEdit);
-	praat_addAction2 (classLongSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_LongSound_viewAndEdit);
+	praat_addAction2 (classLongSound, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_TextGrid_LongSound_viewAndEdit);
+	praat_addAction2 (classLongSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_TextGrid_LongSound_viewAndEdit);
 	praat_addAction2 (classLongSound, 1, classTextGrid, 1, U"Scale times", nullptr, 0, MODIFY_TextGrid_LongSound_scaleTimes);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Draw -", nullptr, 0, nullptr);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Draw...", nullptr, 1, GRAPHICS_TextGrid_Pitch_draw);
@@ -1719,15 +1731,15 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Speckle separately (mel)...", nullptr, 1, GRAPHICS_TextGrid_Pitch_speckleSeparatelyMel);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Speckle separately (erb)...", nullptr, 1, GRAPHICS_TextGrid_Pitch_speckleSeparatelyErb);
 	praat_addAction2 (classPitch, 1, classTextTier, 1, U"To PitchTier...", nullptr, 0, NEW1_Pitch_TextTier_to_PitchTier);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit with callback...", nullptr, praat_HIDDEN, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit with callback...", nullptr, GuiMenu_HIDDEN, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Draw...", nullptr, 0, GRAPHICS_TextGrid_Sound_draw);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract -", nullptr, 0, nullptr);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract all intervals...", nullptr, praat_DEPTH_1, NEW1_TextGrid_Sound_extractAllIntervals);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract non-empty intervals...", nullptr, praat_DEPTH_1, NEW1_TextGrid_Sound_extractNonemptyIntervals);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract intervals where...", nullptr, praat_DEPTH_1, NEW1_TextGrid_Sound_extractIntervalsWhere);
-	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Extract intervals...", U"*Extract intervals where...", praat_DEPTH_1 | praat_DEPRECATED_2005, NEW1_TextGrid_Sound_extractIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract all intervals...", nullptr, GuiMenu_DEPTH_1, NEW1_TextGrid_Sound_extractAllIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract non-empty intervals...", nullptr, GuiMenu_DEPTH_1, NEW1_TextGrid_Sound_extractNonemptyIntervals);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract intervals where...", nullptr, GuiMenu_DEPTH_1, NEW1_TextGrid_Sound_extractIntervalsWhere);
+	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Extract intervals...", U"*Extract intervals where...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2005, NEW1_TextGrid_Sound_extractIntervals);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Modify TextGrid", nullptr, 0, nullptr);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Scale times", nullptr, 0, MODIFY_TextGrid_Sound_scaleTimes);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Modify Sound", nullptr, 0, nullptr);
@@ -1735,15 +1747,15 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classSpellingChecker, 1, classWordList, 1, U"Replace WordList", nullptr, 0, MODIFY_SpellingChecker_replaceWordList);
 	praat_addAction2 (classSpellingChecker, 1, classStringSet, 1, U"Replace user dictionary", nullptr, 0, MODIFY_SpellingChecker_replaceUserDictionary);
 	praat_addAction2 (classSpellingChecker, 1, classStrings, 1, U"Replace word list?", nullptr, 0, HINT_SpellingChecker_replaceWordList_help);
-	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
-	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
+	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
+	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
 	praat_addAction2 (classTextGrid, 1, classIntervalTier, 1, U"Append", nullptr, 0, NEW1_TextGrid_IntervalTier_append);
 	praat_addAction2 (classTextGrid, 1, classTextTier, 1, U"Append", nullptr, 0, NEW1_TextGrid_TextTier_append);
 
-	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit);
-	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit);
-	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
-	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
+	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit);
+	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit);
+	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
+	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_TextGrid_SpellingChecker_viewAndEdit);
 }
 
 /* End of file praat_TextGrid_init.cpp */

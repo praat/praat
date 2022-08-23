@@ -90,7 +90,7 @@
 		int _formatVersion = (formatVersion); \
 		if (bingetex (_filePointer_)) { \
 			our x = Thing_new (Class); \
-			our x -> v_readBinary (_filePointer_, _formatVersion); \
+			our x -> v1_readBinary (_filePointer_, _formatVersion); \
 		} \
 	}
 
@@ -100,7 +100,7 @@
 		integer _n = bingetinteger32BE (_filePointer_); \
 		for (integer _i = 1; _i <= _n; _i ++) { \
 			auto##ItemClass _item = Thing_new (ItemClass); \
-			_item -> v_readBinary (_filePointer_, _formatVersion); \
+			_item -> v1_readBinary (_filePointer_, _formatVersion); \
 			our x.addItem_move (_item.move()); \
 		} \
 	}
@@ -112,7 +112,7 @@
 		our x = Class##_create (); \
 		for (integer _i = 1; _i <= _n; _i ++) { \
 			auto##ItemClass _item = Thing_new (ItemClass); \
-			_item -> v_readBinary (_filePointer_, _formatVersion); \
+			_item -> v1_readBinary (_filePointer_, _formatVersion); \
 			our x -> addItem_move (_item.move()); \
 		} \
 	}
@@ -129,10 +129,10 @@
 	}
 
 #define oo_DEFINE_CLASS(Class, Parent)  \
-	void struct##Class :: v_readBinary (FILE *_filePointer_, int _formatVersion_) { \
+	void struct##Class :: v1_readBinary (FILE *_filePointer_, int _formatVersion_) { \
 		Melder_require (_formatVersion_ <= our classInfo -> version, \
 			U"The format of this file is too new. Download a newer version of Praat."); \
-		Class##_Parent :: v_readBinary (_filePointer_, _formatVersion_);
+		Class##_Parent :: v1_readBinary (_filePointer_, _formatVersion_);
 
 #define oo_END_CLASS(Class)  \
 	}

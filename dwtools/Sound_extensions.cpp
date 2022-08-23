@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2021 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2022 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "Sound_and_Spectrum.h"
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrogram.h"
+#include "Sound_and_TextGrid_extensions.h"
 #include "Spectrogram_extensions.h"
 #include "Sound_to_Intensity.h"
 #include "Sound_to_Pitch.h"
@@ -675,7 +676,7 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 	try {
 		conststring32 path = Melder_fileToPath (file);
 		int error;
-		OggOpusFile *opusFile = op_open_file (Melder_peek32to8 (path), & error);
+		OggOpusFile *opusFile = op_open_file (Melder_peek32to8_fileSystem (path), & error);
 		if (error != 0) {
 			if (error == OP_EREAD)
 				Melder_throw (U"Reading error.");
@@ -1317,66 +1318,6 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	return rxy;
 }
 
-
-static double interpolate (Sound me, integer i1, integer channel, double level)
-/* Precondition: my z [1] [i1] != my z [1] [i1 + 1]; */
-{
-	const integer i2 = i1 + 1;
-	const double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
-	const double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
-	return x1 + (x2 - x1) * (y1 - level) / (y1 - y2);   // linear
-}
-
-double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection) {
-	const double *amplitude = & my z [channel] [0];
-	const integer leftSample = Sampled_xToLowIndex (me, position);
-	if (leftSample > my nx)
-		return undefined;
-	const integer rightSample = leftSample + 1;
-	/*
-		Are we already at a level crossing?
-	*/
-	if (leftSample >= 1 && rightSample <= my nx &&
-			(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level)) 
-	{
-		const double crossing = interpolate (me, leftSample, channel, level);
-		return searchDirection == kSoundSearchDirection::LEFT ?
-			( crossing <= position ? crossing : undefined ) :
-			( crossing >= position ? crossing : undefined );
-	}
-	
-	double leftCrossing = undefined;
-	if (searchDirection == kSoundSearchDirection::LEFT || searchDirection == kSoundSearchDirection::NEAREST) {
-		for (integer ileft = leftSample - 1; ileft >= 1; ileft --)
-			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level)) {
-				leftCrossing = interpolate (me, ileft, channel, level);
-				break;
-			}
-		if (searchDirection == kSoundSearchDirection::LEFT)
-			return leftCrossing;
-	}
-	
-	if (rightSample < 1)
-		return undefined;
-	double rightCrossing = undefined;
-	if (searchDirection == kSoundSearchDirection::RIGHT || searchDirection == kSoundSearchDirection::NEAREST) {
-		for (integer iright = rightSample + 1; iright <= my nx; iright ++)
-			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level)) {
-				rightCrossing = interpolate (me, iright - 1, channel, level);
-				break;
-			}
-		if (searchDirection == kSoundSearchDirection::RIGHT)
-			return rightCrossing;
-	}
-
-	return
-		isdefined (leftCrossing) && isdefined (rightCrossing) ?
-				( position - leftCrossing < rightCrossing - position ? leftCrossing : rightCrossing )
-		: isdefined (leftCrossing) ? leftCrossing
-		: isdefined (rightCrossing) ? rightCrossing
-		: undefined;
-}
-
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference) {
 	integer n1 = Sampled_xToNearestIndex (me, fromTime);
 	integer n2 = Sampled_xToNearestIndex (me, toTime);
@@ -1690,7 +1631,6 @@ autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeSt
 					bool unionContinues = true;
 					while (unionContinues && vadIndex <= vadNumberOfIntervals) {
 						const TextInterval vadTextInterval = vadTier -> intervals.at [vadIndex];
-						const double vadStartTime = vadTextInterval -> xmin;
 						const conststring32 vadLabel = vadTextInterval -> text.get();
 						const double vadEndTime = vadTextInterval -> xmax;
 						if (vadEndTime > silenceEndTime - timeMargin) {
@@ -1718,20 +1658,6 @@ autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeSt
 	}
 }
 
-autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
-	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
-	conststring32 silentLabel, conststring32 soundingLabel) {
-	try {
-		const bool subtractMeanPressure = true;
-		autoSound filtered = Sound_filter_passHannBand (me, 80.0, 8000.0, 80.0);
-		autoIntensity thee = Sound_to_Intensity (filtered.get(), minPitch, timeStep, subtractMeanPressure);
-		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.get(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
-		return him;
-	} catch (MelderError) {
-		Melder_throw (me, U": no TextGrid with silences created.");
-	}
-}
-
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *out_t1, double *out_t2) {
 	try {
 		const conststring32 silentLabel = U"-", soundingLabel = U"+";
@@ -1753,54 +1679,6 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 	} catch (MelderError) {
 		Melder_throw (U"Sounding times not found.");
 	}
-}
-
-autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, conststring32 match) {
-    try {
-		/*
-			Count samples of the trimmed sound
-		*/
-        integer ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
-		double xmin = my xmin; // start time of output sound is start time of input sound
-        for (integer iint = 1; iint <= thy intervals.size; iint ++) {
-            TextInterval interval = thy intervals.at [iint];
-            if (! Melder_equ (interval -> text.get(), match)) {
-                numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
-				/*
-					If two contiguous intervals have to be copied then the last sample of previous interval
-					and first sample of current interval might sometimes be equal
-				*/
-				if (ixmin == previous_ixmax)
-					-- numberOfSamples;
-				previous_ixmax = ixmax;
-			} else { // matches label
-				if (iint == 1) // Start time of output sound is end time of first interval
-					xmin = interval -> xmax;
-            }
-        }
-        /*
-			Now copy the parts. The output sound starts at xmin
-		*/
-        autoSound him = Sound_create (my ny, xmin, xmin + numberOfSamples * my dx, numberOfSamples, my dx, xmin + 0.5 * my dx);
-        numberOfSamples = 0;
-		previous_ixmax = 0;
-        for (integer iint = 1; iint <= thy intervals.size; iint ++) {
-            const TextInterval interval = thy intervals.at [iint];
-            if (! Melder_equ (interval -> text.get(), match)) {
-                Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
-				if (ixmin == previous_ixmax)
-					ixmin ++;
-				previous_ixmax = ixmax;
-				integer numberOfSamplesToCopy = ixmax - ixmin + 1;
-				his z.part (1, my ny, numberOfSamples + 1, numberOfSamples + numberOfSamplesToCopy)  <<=  my z.part (1, my ny, ixmin, ixmax);
-                numberOfSamples += numberOfSamplesToCopy;
-            }
-        }
-        Melder_assert (numberOfSamples == his nx);
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": intervals not trimmed.");
-    }
 }
 
 autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, conststring32 trimLabel) {
@@ -1883,11 +1761,17 @@ static void PitchTier_modifyRange_old (PitchTier me, double tmin, double tmax, d
 	for (integer i = 1; i <= my points.size; i ++) {
 		const RealPoint point = my points.at [i];
 		const double f = point -> value;
-		if (point -> number < tmin || point -> number > tmax) {
+		if (point -> number < tmin || point -> number > tmax)
 			continue;
-		}
-		const double newf = fmid + (f - fmid) * factor;
-		point -> value = newf < 0.0 ? 0.0 : newf;
+		point -> value = fmid + (f - fmid) * factor;
+		/*
+			This scaling could lead to a negative value.
+			Negative pitch values have no meaning,
+			and even a zero pitch value cannot be handled by Sound_Point_Pitch_Duration_to_Sound.
+			So in such a case we bail out.
+		*/
+		if (point -> value < 0.0)
+			Melder_throw (U"Change gender: your pitch manipulation would lead to negative pitch values.");
 	}
 }
 
@@ -2045,71 +1929,6 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 				Graphics_markLeft (g, 0.0, false, true, true, nullptr);
 		}
 		Graphics_rectangle (g, xmin, xmax, ymin, ymax);
-	}
-}
-
-static void Sound_fadeIn_general (Sound me, int channel, double time, double fadeTime, bool fromStart) {	
-	Melder_require (channel >= 0 && channel <= my ny,
-		U"Invalid channel number: ", channel, U".");
-	const integer channelFrom = channel == 0 ? 1 : channel;
-	const integer channelTo = channel == 0 ? my ny : channel;
-	
-	double startTime = time > my xmax ? my xmax : ( time < my xmin ? my xmin : time );
-	double endTime = startTime + fadeTime;
-	if (startTime > endTime)
-		std::swap (startTime, endTime);
-	
-	Melder_require (startTime < my xmax,
-		U"The start time for fade-in should earlier than the end time of the sound.");
-	
-	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
-	autoVEC fadeWindow = raw_VEC (numberOfSamplesFade);
-	
-	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
-		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*(1.0 + (isamp - 1.0)/ (numberOfSamplesFade - 1))));
-	
-	const integer startSample = Sampled_xToNearestIndex (me, startTime);
-	integer endSample = startSample + numberOfSamplesFade - 1;
-	endSample = std::min (endSample, my nx);
-	
-	for (integer ichannel = channelFrom; ichannel <= channelTo; ichannel ++) {
-		my z [channel].part (startSample, endSample)  *=  fadeWindow.part (1, endSample - startSample + 1);
-		if (fromStart && startSample > 1)
-			my z [channel].part (1, startSample - 1)  <<=  0.0;
-	}
-}
-
-static void Sound_fadeOut_general (Sound me, int channel, double time, double fadeTime, bool toEnd) {
-	Melder_require (channel >= 0 && channel <= my ny,
-		U"Invalid channel number: ", channel, U".");
-	const integer channelFrom = channel == 0 ? 1 : channel;
-	const integer channelTo = channel == 0 ? my ny : channel;
-	
-	Melder_assert (my xmax >= my xmin);   // for Melder_clipped
-	double startTime = Melder_clipped (my xmin, time, my xmax);
-	double endTime = startTime + fadeTime;
-	if (startTime > endTime)
-		std::swap (startTime, endTime);
-	
-	Melder_require (endTime > my xmin,
-		U"The end time for fade-out should not be earlier than the start time of the sound."); 
-	
-	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
-	autoVEC fadeWindow = raw_VEC (numberOfSamplesFade);
-	
-	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
-		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*((isamp - 1.0)/ (numberOfSamplesFade - 1))));
-	
-	const integer startSample = Sampled_xToNearestIndex (me, startTime);
-	integer endSample = startSample + numberOfSamplesFade - 1;
-	endSample = std::min (endSample, my nx);
-	Melder_require (endSample > 0, 
-		U"The fade-out interval should not be located before the start time of the sound.");
-	
-	for (integer ichannel = channelFrom; ichannel <= channelTo; ichannel ++) {
-		my z [channel].part (startSample, endSample)  *=  fadeWindow.part (1, endSample - startSample + 1);
-		if (toEnd && endSample < my nx)
-			my z [channel].part (endSample + 1, my nx)  <<=  0.0;
 	}
 }
 

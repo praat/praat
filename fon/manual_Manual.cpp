@@ -52,7 +52,7 @@ ENTRY (U"Your own manual pages")
 NORMAL (U"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (U"ManPages", U"ppgb", 20201229)
+MAN_BEGIN (U"ManPages", U"ppgb", 20220514)
 INTRO (U"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -193,12 +193,12 @@ NORMAL (U"Note that unlike the previous script, this script does not set the fon
 	"This means that the drawing will use the font and font size of the manual page, "
 	"which is usually what you want.")
 NORMAL (U"For obvious safety reasons, embedded scripts cannot contain commands that change the contents of any disk "
-	"or send messages. Thus, commands like ##Save as WAV file...#, ##filedelete out.txt#, ##string\\$  >> out.txt#, "
-	"#system, or #sendpraat are forbidden. Several other commands, such as #pause and #editor, "
+	"or send messages. Thus, commands like ##Save as WAV file...#, ##deleteFile: \"out.txt\"#, ##writeFile: \"out.txt\", string\\$ #, "
+	"or #runSystem are forbidden. Several other commands, such as #pauseScript and #editor, "
 	"are irrelevant inside pictures and are therefore forbidden as well. "
-	"Note that commands like #echo, ##Read from file...#, and #execute are still available "
+	"Note that commands like #writeInfoLine, ##Read from file...#, and #runScript are still available "
 	"(with the last two, you can use relative paths; "
-	"with #execute, you can only run scripts that do not contain any of the forbidden commands).")
+	"with #runScript, you can only run scripts that do not contain any of the forbidden commands).")
 NORMAL (U"The commands ##Set outer viewport...# and ##Set inner viewport...# are available; "
 	"they count in inches (if the font size of the manual is 12). The (0, 0) point is in the upper left corner, "
 	"as in the Picture window, so that you can test your picture with a normal Praat script; "

@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2021 David Weenink, Paul Boersma 2017,2020
+ * Copyright (C) 1993-2022 David Weenink, Paul Boersma 2017,2020
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1170,15 +1170,7 @@ double NUMfisherQ (double f, double df1, double df2) {
 }
 
 double NUMinvGaussQ (double p) {
-	double pc = p;
-	if (p <= 0.0 || p >= 1.0)
-		return undefined;
-	if (p > 0.5)
-		pc = 1.0 - p;
-	double t = sqrt (- 2.0 * log (pc));
-	t -= (2.515517 + (0.802853 + 0.010328 * t) * t) /
-		 (1.0 + (1.432788 + (0.189269 + 0.001308 * t) * t) * t);
-	return p > 0.5 ? -t : t;
+	return gsl_cdf_ugaussian_Qinv (p);
 }
 
 static double studentQ_func (double x, void *voidParams) {
@@ -1294,30 +1286,6 @@ double NUMlnBeta (double a, double b) {
 	gsl_sf_result result;
 	const integer status = gsl_sf_lnbeta_e (a, b, & result);
 	return status == GSL_SUCCESS ? result.val : undefined;
-}
-
-static void MATscaledResiduals (MAT const& residuals, constMAT const& data, constMAT const& covariance, constVEC const& means) {
-	try {
-		Melder_require (residuals.nrow == data.nrow && residuals.ncol == data.ncol,
-			U"The data and the residuals should have the same dimensions.");
-		Melder_require (covariance.ncol == means.size && data.ncol == means.size,
-			U"The dimensions of the means and the covariance have to conform with the data.");
-		autoVEC dif = raw_VEC (data.ncol);
-		autoMAT lowerInverse = copy_MAT (covariance);
-		MATlowerCholeskyInverse_inplace (lowerInverse.get(), nullptr);
-		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			dif.all()  <<=  data.row (irow)  -  means;
-			residuals.row (irow)  <<=  0.0;
-			if (lowerInverse.nrow == 1) { // diagonal matrix is one row matrix
-				residuals.row (irow)  <<=  lowerInverse.row (1)  *  dif.get();
-			} else {// square matrix
-				for (integer icol = 1; icol <= data.ncol; icol ++)
-					residuals [irow] [icol] = NUMinner (lowerInverse.row (icol).part (1, icol), dif.part (1, icol));
-			}
-		}
-	} catch (MelderError) {
-		Melder_throw (U"MATscaleResiduals: not performed.");
-	}
 }
 
 /*************** Hz <--> other freq reps *********************/
@@ -2140,7 +2108,7 @@ void VECrc_from_lpc (VEC rc, constVEC lpc) {
 	}
 }
 
-void VEClpc_from_rc (VEC lpc, constVEC rc) {
+static void VEClpc_from_rc (VEC lpc, constVEC rc) {
 	Melder_assert (lpc.size == rc.size);
 	lpc  <<=  rc;
 	for (integer j = 2; j <= lpc.size; j ++) {

@@ -44,7 +44,7 @@ oo_DEFINE_CLASS (TextGridTierNavigator, Function)
 	oo_ENUM (kMatchDomainAlignment, matchDomainAlignment) // relation to match in possible other navigators
 	
 	#if oo_DECLARING
-		void v_info () override;
+		void v1_info () override;
 		virtual integer v_getSize ();
 		virtual integer v_timeToLowIndex (double time);
 		virtual integer v_timeToIndex (double time);

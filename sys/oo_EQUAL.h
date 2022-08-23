@@ -121,9 +121,9 @@
 	}
 
 #define oo_DEFINE_CLASS(Class, Parent)  \
-	bool struct##Class :: v_equal (Daata _thee_Daata) { \
+	bool struct##Class :: v1_equal (Daata _thee_Daata) { \
 		Class thee = static_cast <Class> (_thee_Daata); \
-		if (! Class##_Parent :: v_equal (thee)) return false;
+		if (! Class##_Parent :: v1_equal (thee)) return false;
 
 #define oo_END_CLASS(Class)  \
 		return true; \

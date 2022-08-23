@@ -54,8 +54,8 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 	return NUMquantile (soundingValues.get(), quantile);
 }
 
-void structHarmonicity :: v_info () {
-	structDaata :: v_info ();
+void structHarmonicity :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");

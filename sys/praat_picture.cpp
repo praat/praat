@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ DIRECT (GRAPHICS_NONE__Courier) {
 /***** "Font" MENU: size part *****/
 
 static GuiMenuItem praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
+
 static void updateSizeMenu () {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10.0);
@@ -165,6 +166,7 @@ DO
 /***** "Select" MENU *****/
 
 static GuiMenuItem praatButton_innerViewport, praatButton_outerViewport;
+
 static void updateViewportMenu () {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenuItem_check (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0);
@@ -334,7 +336,7 @@ DO
 	Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 	Graphics_setTextRotation (GRAPHICS, rotation);
 	Graphics_text (GRAPHICS, horizontalAlignment == 0 ? 0.0 : horizontalAlignment == 1 ? 0.5 : 1.0,
-		verticalAlignment == 0 ? 0.0 : verticalAlignment == 1 ? 0.5 : 1.0, text);
+			verticalAlignment == 0 ? 0.0 : verticalAlignment == 1 ? 0.5 : 1.0, text);
 	Graphics_setTextRotation (GRAPHICS, 0.0);
 	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
 	END_NO_NEW_DATA
@@ -346,7 +348,6 @@ static GuiMenuItem praatButton_lines [4];
 static GuiMenuItem praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
 	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime, praatButton_navy,
 	praatButton_teal, praatButton_purple, praatButton_olive, praatButton_pink, praatButton_silver, praatButton_grey;
-
 
 static void updatePenMenu () {
 	if (! theCurrentPraatApplication -> batch) {
@@ -1193,13 +1194,13 @@ FORM (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/rig
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dy;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.2 * (y2WC - y1WC);
+	const double dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy)
 		Melder_throw (U"\"Position\" must be between ", y1WC, U" and ", y2WC, U".");
 	GRAPHICS_NONE
@@ -1215,13 +1216,13 @@ FORM (GRAPHICS_OneMarkRight, U"Praat picture: One mark right", U"One mark left/r
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dy;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.2 * (y2WC - y1WC);
+	const double dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy)
 		Melder_throw (U"\"Position\" must be between ", y1WC, U" and ", y2WC, U".");
 	GRAPHICS_NONE
@@ -1237,13 +1238,13 @@ FORM (GRAPHICS_OneMarkTop, U"Praat picture: One mark top", U"One mark left/right
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dx;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;   // WHY?
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.2 * (x2WC - x1WC);
+	const double dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx)
 		Melder_throw (U"\"Position\" must be between ", x1WC, U" and ", x2WC, U".");
 	GRAPHICS_NONE
@@ -1259,13 +1260,13 @@ FORM (GRAPHICS_OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dx;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.2 * (x2WC - x1WC);
+	const double dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx)
 		Melder_throw (U"\"Position\" must be between ", x1WC, U" and ", x2WC, U".");
 	GRAPHICS_NONE
@@ -1281,13 +1282,13 @@ FORM (GRAPHICS_OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark lef
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dy;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.2 * (y2WC - y1WC);
+	const double dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
 		Melder_throw (U"\"Position\" must be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
 	GRAPHICS_NONE
@@ -1303,13 +1304,13 @@ FORM (GRAPHICS_OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark ri
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dy;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.2 * (y2WC - y1WC);
+	const double dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
 		Melder_throw (U"\"Position\" must be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
 	GRAPHICS_NONE
@@ -1325,13 +1326,13 @@ FORM (GRAPHICS_OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top"
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dx;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.2 * (x2WC - x1WC);
+	const double dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
 		Melder_throw (U"\"Position\" must be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
 	GRAPHICS_NONE
@@ -1347,13 +1348,13 @@ FORM (GRAPHICS_OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark b
 	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
-	double x1WC, x2WC, y1WC, y2WC, dx;
+	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
 		autoPraatPicture picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.2 * (x2WC - x1WC);
+	const double dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
 		Melder_throw (U"\"Position\" must be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
 	GRAPHICS_NONE
@@ -1555,9 +1556,8 @@ static void cb_selectionChanged (Picture p, void * /* closure */,
 	theCurrentPraatPicture -> y2NDC = sely2;
 	if (praat_mouseSelectsInnerViewport) {
 		const double fontSize = Graphics_inqFontSize (GRAPHICS);
-		double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
-		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
-		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+		const double xmargin = Melder_clippedRight (fontSize * 4.2 / 72.0, 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC));
+		const double ymargin = Melder_clippedRight (fontSize * 2.8 / 72.0, 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC));
 		UiHistory_write (U"\nSelect inner viewport: ");
 		UiHistory_write (Melder_single (theCurrentPraatPicture -> x1NDC + xmargin));
 		UiHistory_write (U", ");
@@ -1580,7 +1580,7 @@ static void cb_selectionChanged (Picture p, void * /* closure */,
 
 /***** Public functions. *****/
 
-static GuiWindow dialog;
+static GuiWindow thePictureWindow;
 
 static GuiMenu fileMenu, editMenu, marginsMenu, worldMenu, selectMenu, fontMenu, penMenu, helpMenu;
 
@@ -1605,12 +1605,12 @@ void praat_picture_open () {
 	Graphics_markGroup (GRAPHICS);   // we start a group of graphics output here
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if gtk
-			gtk_window_present (GTK_WINDOW (dialog -> d_gtkWindow));
+			gtk_window_present (GTK_WINDOW (thePictureWindow -> d_gtkWindow));
 		#elif motif
-			XtMapWidget (dialog -> d_xmShell);
-			XMapRaised (XtDisplay (dialog -> d_xmShell), XtWindow (dialog -> d_xmShell));
+			XtMapWidget (thePictureWindow -> d_xmShell);
+			XMapRaised (XtDisplay (thePictureWindow -> d_xmShell), XtWindow (thePictureWindow -> d_xmShell));
 		#elif cocoa
-			GuiThing_show (dialog);
+			GuiThing_show (thePictureWindow);
 		#endif
 	}
 	/* Foregoing drawing routines may have changed some of the output attributes */
@@ -1662,7 +1662,7 @@ static autoDaata pictureRecognizer (integer nread, const char *header, MelderFil
 	return autoDaata ();
 }
 
-void praat_picture_init () {
+void praat_picture_init (bool showPictureWindowAtStartUp) {
 	GuiScrolledWindow scrollWindow;
 	GuiDrawingArea drawingArea = nullptr;
 	int margin, width, height, resolution, x, y;
@@ -1683,43 +1683,46 @@ void praat_picture_init () {
 		Gui_getWindowPositioningBounds (& screenX, & screenY, & screenWidth, & screenHeight);
 		resolution = Gui_getResolution (nullptr);
 		#if defined (macintosh)
-			margin = 2, width = 6 * resolution + 20;
-			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
+			margin = 2;
+			width = 6 * resolution + 20;
+			height = Machine_getMenuBarBottom () + 9 * resolution + 24;
 			x = screenX + screenWidth - width - 14;
 			y = screenY + 0;
 			width += margin * 2;
 		#elif defined (_WIN32)
-			margin = 2, width = 6 * resolution + 22;
+			margin = 2;
+			width = 6 * resolution + 22;
 			height = 9 * resolution + 24;
 			x = screenX + screenWidth - width - 17;
 			y = screenY + 0;
 		#else
-			margin = 0, width = 6 * resolution + 30;
+			margin = 0;
+			width = 6 * resolution + 30;
 			height = width * 3 / 2 + Machine_getTitleBarHeight ();
 			x = screenX + screenWidth - width - 10;
 			y = screenY + 0;
 			width += margin * 2;
 		#endif
-		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title.get(), U" Picture"), nullptr, nullptr, 0);
-		GuiWindow_addMenuBar (dialog);
+		thePictureWindow = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title.get(), U" Picture"), nullptr, nullptr, 0);
+		GuiWindow_addMenuBar (thePictureWindow);
 	}
 	if (! theCurrentPraatApplication -> batch) {
-		fileMenu =    GuiMenu_createInWindow (dialog, U"File", 0);
-		editMenu =    GuiMenu_createInWindow (dialog, U"Edit", 0);
-		marginsMenu = GuiMenu_createInWindow (dialog, U"Margins", 0);
-		worldMenu =   GuiMenu_createInWindow (dialog, U"World", 0);
-		selectMenu =  GuiMenu_createInWindow (dialog, U"Select", 0);
-		penMenu =     GuiMenu_createInWindow (dialog, U"Pen", 0);
-		fontMenu =    GuiMenu_createInWindow (dialog, U"Font", 0);
-		helpMenu =    GuiMenu_createInWindow (dialog, U"Help", 0);
+		fileMenu =    GuiMenu_createInWindow (thePictureWindow, U"File", 0);
+		editMenu =    GuiMenu_createInWindow (thePictureWindow, U"Edit", 0);
+		marginsMenu = GuiMenu_createInWindow (thePictureWindow, U"Margins", 0);
+		worldMenu =   GuiMenu_createInWindow (thePictureWindow, U"World", 0);
+		selectMenu =  GuiMenu_createInWindow (thePictureWindow, U"Select", 0);
+		penMenu =     GuiMenu_createInWindow (thePictureWindow, U"Pen", 0);
+		fontMenu =    GuiMenu_createInWindow (thePictureWindow, U"Font", 0);
+		helpMenu =    GuiMenu_createInWindow (thePictureWindow, U"Help", 0);
 	}
 
 	praat_addMenuCommand (U"Picture", U"File", U"Picture info", nullptr, 0, GRAPHICS_Picture_settings_report);
-	praat_addMenuCommand (U"Picture", U"File",   U"Picture settings report", U"*Picture info", praat_DEPRECATED_2007, GRAPHICS_Picture_settings_report);
+	praat_addMenuCommand (U"Picture", U"File",   U"Picture settings report", U"*Picture info", GuiMenu_DEPRECATED_2007, GRAPHICS_Picture_settings_report);
 	praat_addMenuCommand (U"Picture", U"File", U"-- save --", nullptr, 0, nullptr);
 	#if defined (macintosh) || defined (UNIX)
 		praat_addMenuCommand (U"Picture", U"File", U"Save as PDF file...", nullptr, 'S', GRAPHICS_Picture_writeToPdfFile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to PDF file...", U"*Save as PDF file...", praat_DEPRECATED_2011, GRAPHICS_Picture_writeToPdfFile);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to PDF file...", U"*Save as PDF file...", GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToPdfFile);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"Save as 300-dpi PNG file...", nullptr, 0, GRAPHICS_Picture_writeToPngFile_300);
 	#if defined (_WIN32)
@@ -1729,31 +1732,31 @@ void praat_picture_init () {
 		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...", nullptr, 0, GRAPHICS_Picture_writeToPngFile_600);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Picture", U"File", U"PostScript settings...", nullptr, praat_DEPTH_1 | praat_NO_API, GRAPHICS_PostScript_settings);
+		praat_addMenuCommand (U"Picture", U"File", U"PostScript settings...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_NO_API, GRAPHICS_PostScript_settings);
 		praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file...", nullptr, 1, GRAPHICS_Picture_writeToEpsFile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to EPS file...", U"*Save as EPS file...", praat_DEPTH_1 | praat_DEPRECATED_2011, GRAPHICS_Picture_writeToEpsFile);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to EPS file...", U"*Save as EPS file...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToEpsFile);
 		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (XIPA)...", nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_xipa);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (XIPA)...", U"*Save as fontless EPS file (XIPA)...", praat_DEPTH_1 | praat_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_xipa);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (XIPA)...", U"*Save as fontless EPS file (XIPA)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_xipa);
 		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (SILIPA)...", nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (SILIPA)...", U"*Save as fontless EPS file (SILIPA)...", praat_DEPTH_1 | praat_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (SILIPA)...", U"*Save as fontless EPS file (SILIPA)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
 	#ifdef _WIN32
 		praat_addMenuCommand (U"Picture", U"File", U"Save as Windows metafile...", nullptr, 0, GRAPHICS_Picture_writeToWindowsMetafile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to Windows metafile...", U"*Save as Windows metafile...", praat_DEPRECATED_2011, GRAPHICS_Picture_writeToWindowsMetafile);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to Windows metafile...", U"*Save as Windows metafile...", GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToWindowsMetafile);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"-- praat picture file --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"File", U"Read from praat picture file...", nullptr, 0, GRAPHICS_Picture_readFromPraatPictureFile);
 	praat_addMenuCommand (U"Picture", U"File", U"Save as praat picture file...", nullptr, 0, GRAPHICS_Picture_writeToPraatPictureFile);
-	praat_addMenuCommand (U"Picture", U"File",   U"Write to praat picture file...", U"*Save as praat picture file...", praat_DEPRECATED_2011, GRAPHICS_Picture_writeToPraatPictureFile);
+	praat_addMenuCommand (U"Picture", U"File",   U"Write to praat picture file...", U"*Save as praat picture file...", GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToPraatPictureFile);
 	praat_addMenuCommand (U"Picture", U"File", U"-- print --", nullptr, 0, nullptr);
 	#if defined (macintosh)
-		praat_addMenuCommand (U"Picture", U"File", U"Page setup...", nullptr, praat_NO_API, GRAPHICS_Page_setup);
+		praat_addMenuCommand (U"Picture", U"File", U"Page setup...", nullptr, GuiMenu_NO_API, GRAPHICS_Page_setup);
 	#endif
-	praat_addMenuCommand (U"Picture", U"File", U"Print...", nullptr, 'P' | praat_NO_API, GRAPHICS_Print);
+	praat_addMenuCommand (U"Picture", U"File", U"Print...", nullptr, 'P' | GuiMenu_NO_API, GRAPHICS_Print);
 
-	praat_addMenuCommand (U"Picture", U"Edit", U"Undo", nullptr, 'Z' | praat_NO_API, GRAPHICS_Undo);
+	praat_addMenuCommand (U"Picture", U"Edit", U"Undo", nullptr, 'Z' | GuiMenu_NO_API, GRAPHICS_Undo);
 	#if defined (macintosh) || defined (_WIN32)
 		praat_addMenuCommand (U"Picture", U"Edit", U"-- clipboard --", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Picture", U"Edit", U"Copy to clipboard", nullptr, 'C' | praat_NO_API, GRAPHICS_Copy_picture_to_clipboard);
+		praat_addMenuCommand (U"Picture", U"Edit", U"Copy to clipboard", nullptr, 'C' | GuiMenu_NO_API, GRAPHICS_Copy_picture_to_clipboard);
 	#endif
 	praat_addMenuCommand (U"Picture", U"Edit", U"-- erase --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Edit", U"Erase all", nullptr, 'E', GRAPHICS_Erase_all);
@@ -1820,73 +1823,73 @@ void praat_picture_init () {
 	praat_addMenuCommand (U"Picture", U"World", U"Axes...", nullptr, 0, GRAPHICS_Axes);
 	praat_addMenuCommand (U"Picture", U"World", U"Measure", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"World", U"Horizontal mm to world coordinates...", nullptr, 1, GRAPHICS_HorizontalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal mm to wc...", U"*Horizontal mm to world coordinates...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_HorizontalMmToWorldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal mm to wc...", U"*Horizontal mm to world coordinates...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_HorizontalMmToWorldCoordinates);
 	praat_addMenuCommand (U"Picture", U"World", U"Horizontal world coordinates to mm...", nullptr, 1, GRAPHICS_HorizontalWorldCoordinatesToMm);
-	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal wc to mm...", U"*Horizontal world coordinates to mm...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_HorizontalWorldCoordinatesToMm);
+	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal wc to mm...", U"*Horizontal world coordinates to mm...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_HorizontalWorldCoordinatesToMm);
 	praat_addMenuCommand (U"Picture", U"World", U"Vertical mm to world coordinates...", nullptr, 1, GRAPHICS_VerticalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Vertical mm to wc...", U"*Vertical mm to world coordinates...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_VerticalMmToWorldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World",   U"Vertical mm to wc...", U"*Vertical mm to world coordinates...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_VerticalMmToWorldCoordinates);
 	praat_addMenuCommand (U"Picture", U"World", U"Vertical world coordinates to mm...", nullptr, 1, GRAPHICS_VerticalWorldCoordinatesToMm);
-	praat_addMenuCommand (U"Picture", U"World",   U"Vertical wc to mm...", U"*Vertical world coordinates to mm...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_VerticalWorldCoordinatesToMm);
+	praat_addMenuCommand (U"Picture", U"World",   U"Vertical wc to mm...", U"*Vertical world coordinates to mm...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_VerticalWorldCoordinatesToMm);
 	praat_addMenuCommand (U"Picture", U"World", U"-- text measure --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Picture", U"World", U"Text width (world coordinates)...", nullptr, 1, GRAPHICS_TextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Text width (wc)...", U"*Text width (world coordinates)...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_TextWidth_worldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World",   U"Text width (wc)...", U"*Text width (world coordinates)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_TextWidth_worldCoordinates);
 	praat_addMenuCommand (U"Picture", U"World", U"Text width (mm)...", nullptr, 1, GRAPHICS_TextWidth_mm);
 	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (world coordinates)...", nullptr, 1, GRAPHICS_PostScriptTextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"PostScript text width (wc)...", U"*PostScript text width (world coordinates)...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_PostScriptTextWidth_worldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World",   U"PostScript text width (wc)...", U"*PostScript text width (world coordinates)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_PostScriptTextWidth_worldCoordinates);
 	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (mm)...", nullptr, 1, GRAPHICS_PostScriptTextWidth_mm);
 
-	praatButton_innerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects inner viewport", nullptr, praat_RADIO_FIRST | praat_NO_API, GRAPHICS_MouseSelectsInnerViewport);
-	praatButton_outerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects outer viewport", nullptr, praat_RADIO_NEXT | praat_NO_API, GRAPHICS_MouseSelectsOuterViewport);
+	praatButton_innerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects inner viewport", nullptr, GuiMenu_RADIO_FIRST | GuiMenu_NO_API, GRAPHICS_MouseSelectsInnerViewport);
+	praatButton_outerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects outer viewport", nullptr, GuiMenu_RADIO_NEXT | GuiMenu_NO_API, GRAPHICS_MouseSelectsOuterViewport);
 	praat_addMenuCommand (U"Picture", U"Select", U"-- select --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Select", U"Select inner viewport...", nullptr, 0, GRAPHICS_SelectInnerViewport);
 	praat_addMenuCommand (U"Picture", U"Select", U"Select outer viewport...", nullptr, 0, GRAPHICS_SelectOuterViewport);
-	praat_addMenuCommand (U"Picture", U"Select", U"Viewport...", U"*Select outer viewport...", praat_DEPRECATED_2004, GRAPHICS_SelectOuterViewport);
+	praat_addMenuCommand (U"Picture", U"Select", U"Viewport...", U"*Select outer viewport...", GuiMenu_DEPRECATED_2004, GRAPHICS_SelectOuterViewport);
 	praat_addMenuCommand (U"Picture", U"Select", U"-- viewport drawing --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Select", U"Viewport text...", nullptr, 0, GRAPHICS_ViewportText);
 
-	praatButton_lines [Graphics_DRAWN] = praat_addMenuCommand (U"Picture", U"Pen", U"Solid line", nullptr, praat_RADIO_FIRST, GRAPHICS_Solid_line);
-	praat_addMenuCommand (U"Picture", U"Pen", U"Plain line", nullptr, praat_RADIO_NEXT | praat_DEPRECATED_2006, GRAPHICS_Solid_line);
-	praatButton_lines [Graphics_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dotted line", nullptr, praat_RADIO_NEXT, GRAPHICS_Dotted_line);
-	praatButton_lines [Graphics_DASHED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed line", nullptr, praat_RADIO_NEXT, GRAPHICS_Dashed_line);
-	praatButton_lines [Graphics_DASHED_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed-dotted line", nullptr, praat_RADIO_NEXT, GRAPHICS_Dashed_dotted_line);
+	praatButton_lines [Graphics_DRAWN] = praat_addMenuCommand (U"Picture", U"Pen", U"Solid line", nullptr, GuiMenu_RADIO_FIRST, GRAPHICS_Solid_line);
+	praat_addMenuCommand (U"Picture", U"Pen", U"Plain line", nullptr, GuiMenu_RADIO_NEXT | GuiMenu_DEPRECATED_2006, GRAPHICS_Solid_line);
+	praatButton_lines [Graphics_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dotted line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dotted_line);
+	praatButton_lines [Graphics_DASHED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dashed_line);
+	praatButton_lines [Graphics_DASHED_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed-dotted line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dashed_dotted_line);
 	praat_addMenuCommand (U"Picture", U"Pen", U"-- line width --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Pen", U"Line width...", nullptr, 0, GRAPHICS_Line_width);
 	praat_addMenuCommand (U"Picture", U"Pen", U"Arrow size...", nullptr, 0, GRAPHICS_Arrow_size);
 	praat_addMenuCommand (U"Picture", U"Pen", U"Speckle size...", nullptr, 0, GRAPHICS_Speckle_size);
 	praat_addMenuCommand (U"Picture", U"Pen", U"-- colour --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Pen", U"Colour...", nullptr, 0, GRAPHICS_Colour);
-	praatButton_black = praat_addMenuCommand (U"Picture", U"Pen", U"Black", nullptr, praat_CHECKBUTTON, GRAPHICS_Black);
-	praatButton_white = praat_addMenuCommand (U"Picture", U"Pen", U"White", nullptr, praat_CHECKBUTTON, GRAPHICS_White);
-	praatButton_red = praat_addMenuCommand (U"Picture", U"Pen", U"Red", nullptr, praat_CHECKBUTTON, GRAPHICS_Red);
-	praatButton_green = praat_addMenuCommand (U"Picture", U"Pen", U"Green", nullptr, praat_CHECKBUTTON, GRAPHICS_Green);
-	praatButton_blue = praat_addMenuCommand (U"Picture", U"Pen", U"Blue", nullptr, praat_CHECKBUTTON, GRAPHICS_Blue);
-	praatButton_yellow = praat_addMenuCommand (U"Picture", U"Pen", U"Yellow", nullptr, praat_CHECKBUTTON, GRAPHICS_Yellow);
-	praatButton_cyan = praat_addMenuCommand (U"Picture", U"Pen", U"Cyan", nullptr, praat_CHECKBUTTON, GRAPHICS_Cyan);
-	praatButton_magenta = praat_addMenuCommand (U"Picture", U"Pen", U"Magenta", nullptr, praat_CHECKBUTTON, GRAPHICS_Magenta);
-	praatButton_maroon = praat_addMenuCommand (U"Picture", U"Pen", U"Maroon", nullptr, praat_CHECKBUTTON, GRAPHICS_Maroon);
-	praatButton_lime = praat_addMenuCommand (U"Picture", U"Pen", U"Lime", nullptr, praat_CHECKBUTTON, GRAPHICS_Lime);
-	praatButton_navy = praat_addMenuCommand (U"Picture", U"Pen", U"Navy", nullptr, praat_CHECKBUTTON, GRAPHICS_Navy);
-	praatButton_teal = praat_addMenuCommand (U"Picture", U"Pen", U"Teal", nullptr, praat_CHECKBUTTON, GRAPHICS_Teal);
-	praatButton_purple = praat_addMenuCommand (U"Picture", U"Pen", U"Purple", nullptr, praat_CHECKBUTTON, GRAPHICS_Purple);
-	praatButton_olive = praat_addMenuCommand (U"Picture", U"Pen", U"Olive", nullptr, praat_CHECKBUTTON, GRAPHICS_Olive);
-	praatButton_pink = praat_addMenuCommand (U"Picture", U"Pen", U"Pink", nullptr, praat_CHECKBUTTON, GRAPHICS_Pink);
-	praatButton_silver = praat_addMenuCommand (U"Picture", U"Pen", U"Silver", nullptr, praat_CHECKBUTTON, GRAPHICS_Silver);
-	praatButton_grey = praat_addMenuCommand (U"Picture", U"Pen", U"Grey", nullptr, praat_CHECKBUTTON, GRAPHICS_Grey);
+	praatButton_black   = praat_addMenuCommand (U"Picture", U"Pen", U"Black",   nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Black);
+	praatButton_white   = praat_addMenuCommand (U"Picture", U"Pen", U"White",   nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_White);
+	praatButton_red     = praat_addMenuCommand (U"Picture", U"Pen", U"Red",     nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Red);
+	praatButton_green   = praat_addMenuCommand (U"Picture", U"Pen", U"Green",   nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Green);
+	praatButton_blue    = praat_addMenuCommand (U"Picture", U"Pen", U"Blue",    nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Blue);
+	praatButton_yellow  = praat_addMenuCommand (U"Picture", U"Pen", U"Yellow",  nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Yellow);
+	praatButton_cyan    = praat_addMenuCommand (U"Picture", U"Pen", U"Cyan",    nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Cyan);
+	praatButton_magenta = praat_addMenuCommand (U"Picture", U"Pen", U"Magenta", nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Magenta);
+	praatButton_maroon  = praat_addMenuCommand (U"Picture", U"Pen", U"Maroon",  nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Maroon);
+	praatButton_lime    = praat_addMenuCommand (U"Picture", U"Pen", U"Lime",    nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Lime);
+	praatButton_navy    = praat_addMenuCommand (U"Picture", U"Pen", U"Navy",    nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Navy);
+	praatButton_teal    = praat_addMenuCommand (U"Picture", U"Pen", U"Teal",    nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Teal);
+	praatButton_purple  = praat_addMenuCommand (U"Picture", U"Pen", U"Purple",  nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Purple);
+	praatButton_olive   = praat_addMenuCommand (U"Picture", U"Pen", U"Olive",   nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Olive);
+	praatButton_pink    = praat_addMenuCommand (U"Picture", U"Pen", U"Pink",    nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Pink);
+	praatButton_silver  = praat_addMenuCommand (U"Picture", U"Pen", U"Silver",  nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Silver);
+	praatButton_grey    = praat_addMenuCommand (U"Picture", U"Pen", U"Grey",    nullptr, GuiMenu_CHECKBUTTON, GRAPHICS_Grey);
 
 	praat_addMenuCommand (U"Picture", U"Font", U"Font size...", nullptr, 0, GRAPHICS_Font_size);
-	praatButton_10 = praat_addMenuCommand (U"Picture", U"Font", U"10", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_10);
-	praatButton_12 = praat_addMenuCommand (U"Picture", U"Font", U"12", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_12);
-	praatButton_14 = praat_addMenuCommand (U"Picture", U"Font", U"14", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_14);
-	praatButton_18 = praat_addMenuCommand (U"Picture", U"Font", U"18", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_18);
-	praatButton_24 = praat_addMenuCommand (U"Picture", U"Font", U"24", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_24);
+	praatButton_10 = praat_addMenuCommand (U"Picture", U"Font", U"10", nullptr, GuiMenu_CHECKBUTTON | GuiMenu_NO_API, GRAPHICS_10);
+	praatButton_12 = praat_addMenuCommand (U"Picture", U"Font", U"12", nullptr, GuiMenu_CHECKBUTTON | GuiMenu_NO_API, GRAPHICS_12);
+	praatButton_14 = praat_addMenuCommand (U"Picture", U"Font", U"14", nullptr, GuiMenu_CHECKBUTTON | GuiMenu_NO_API, GRAPHICS_14);
+	praatButton_18 = praat_addMenuCommand (U"Picture", U"Font", U"18", nullptr, GuiMenu_CHECKBUTTON | GuiMenu_NO_API, GRAPHICS_18);
+	praatButton_24 = praat_addMenuCommand (U"Picture", U"Font", U"24", nullptr, GuiMenu_CHECKBUTTON | GuiMenu_NO_API, GRAPHICS_24);
 	praat_addMenuCommand (U"Picture", U"Font", U"-- font ---", nullptr, 0, nullptr);
-	praatButton_fonts [(int) kGraphics_font::TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST,
+	praatButton_fonts [(int) kGraphics_font::TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, GuiMenu_RADIO_FIRST,
 			GRAPHICS_NONE__Times);
-	praatButton_fonts [(int) kGraphics_font::HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT,
+	praatButton_fonts [(int) kGraphics_font::HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, GuiMenu_RADIO_NEXT,
 			GRAPHICS_NONE__Helvetica);
-	praatButton_fonts [(int) kGraphics_font::PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT,
+	praatButton_fonts [(int) kGraphics_font::PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, GuiMenu_RADIO_NEXT,
 			GRAPHICS_NONE__Palatino);
-	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT,
+	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, GuiMenu_RADIO_NEXT,
 			GRAPHICS_NONE__Courier);
 
 	praat_addMenuCommand (U"Picture", U"Help", U"Praat Intro", nullptr, 0, HELP_PraatIntro_picture);
@@ -1902,10 +1905,10 @@ void praat_picture_init () {
 
 	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;
-		scrollWindow = GuiScrolledWindow_createShown (dialog, margin, 0, Machine_getMenuBarHeight () + margin, 0, 1, 1, 0);
+		scrollWindow = GuiScrolledWindow_createShown (thePictureWindow, margin, 0, Machine_getMenuBarBottom () + margin, 0, 1, 1, 0);
 		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height,
 				nullptr, nullptr, nullptr, nullptr, nullptr, 0);
-		GuiThing_show (dialog);
+		GuiThing_show (thePictureWindow);
 	}
 
 	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
@@ -1918,6 +1921,16 @@ void praat_picture_init () {
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
+
+	if (! theCurrentPraatApplication -> batch && ! showPictureWindowAtStartUp) {
+		#if gtk
+			gtk_widget_hide (GTK_WIDGET (thePictureWindow -> d_gtkWindow));
+		#elif motif
+			ShowWindow (thePictureWindow -> d_xmShell -> window, SW_HIDE);
+		#elif cocoa
+			GuiThing_hide (thePictureWindow);
+		#endif
+	}
 }
 
 void praat_picture_prefsChanged () {

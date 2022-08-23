@@ -1,9 +1,9 @@
 # Makefile of the library "fon"
-# Paul Boersma, 9 June 2021
+# Paul Boersma, 6 June 2022
 
 include ../makefile.defs
 
-CPPFLAGS += -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../external/portaudio -I ../external/flac -I ../external/mp3 -I ../external/espeak
+CPPFLAGS += -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../foned -I ../fon -I ../external/portaudio -I ../external/flac -I ../external/mp3 -I ../external/espeak
 
 OBJECTS = Transition.o Distributions_and_Transition.o \
    Function.o Sampled.o SampledXY.o Matrix.o Vector.o Polygon.o PointProcess.o \
@@ -21,18 +21,11 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    Excitation.o Cochleagram.o Cochleagram_and_Excitation.o Excitation_to_Formant.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \
-   SoundRecorder.o Sound_enhance.o VoiceAnalysis.o \
-   FunctionArea.o \
-   RealTierArea.o PitchTierArea.o IntensityTierArea.o DurationTierArea.o AmplitudeTierArea.o \
-   FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \
-   PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
-   RealTierEditor.o PitchTierEditor.o IntensityTierEditor.o \
-   DurationTierEditor.o AmplitudeTierEditor.o \
-   ManipulationEditor.o TextGridEditor.o FormantGridEditor.o \
+   Sound_enhance.o VoiceAnalysis.o \
    WordList.o SpellingChecker.o \
    FujisakiPitch.o \
-   ExperimentMFC.o RunnerMFC.o manual_ExperimentMFC.o praat_ExperimentMFC.o \
-   Photo.o Movie.o MovieWindow.o \
+   ExperimentMFC.o manual_ExperimentMFC.o praat_ExperimentMFC.o \
+   Photo.o Movie.o \
    Corpus.o \
    manual_Picture.o manual_Manual.o manual_Script.o \
    manual_soundFiles.o manual_tutorials.o manual_references.o \
@@ -56,4 +49,4 @@ libfon.a: $(OBJECTS)
 	$(AR) cq libfon.a $(OBJECTS)
 	$(RANLIB) libfon.a
 
-$(OBJECTS): *.h ../external/portaudio/*.h ../kar/*.h ../melder/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../external/flac/*.h ../external/mp3/mp3.h
+$(OBJECTS): *.h ../external/portaudio/*.h ../kar/*.h ../melder/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../foned/*.h ../external/flac/*.h ../external/mp3/mp3.h

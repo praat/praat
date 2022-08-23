@@ -2,7 +2,7 @@
 #define _TableEditor_h_
 /* TableEditor.h
  *
- * Copyright (C) 2006,2007,2010-2012,2015-2019 Paul Boersma
+ * Copyright (C) 2006,2007,2010-2012,2015-2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 #define kTableEditor_MAXNUM_VISIBLE_COLUMNS  100
 
 Thing_define (TableEditor, Editor) {
+	Table table() { return static_cast <Table> (our data()); }
+
 	integer topRow, leftColumn, selectedRow, selectedColumn;
 	GuiText text;
 	GuiDrawingArea drawingArea;
@@ -31,17 +33,15 @@ Thing_define (TableEditor, Editor) {
 	double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];
 	autoGraphics graphics;
 
-	void v_destroy () noexcept
-		override;
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_createChildren ()
 		override;
 	void v_createMenus ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 
 	virtual void v_draw ();

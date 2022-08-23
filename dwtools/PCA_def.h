@@ -28,7 +28,7 @@ oo_DEFINE_CLASS (PCA, Eigen)
 	oo_VEC (centroid, dimension)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

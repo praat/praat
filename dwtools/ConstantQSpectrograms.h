@@ -2,7 +2,7 @@
 #define _ConstantQSpectrograms_h_
 /* ConstantQSpectrograms.h
  * 
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "melder.h"
 
 Thing_define (ConstantQLog2FSpectrogram, MultiSampledSpectrogram) {
-	void v_info ()
+	void v1_info ()
 		override;
 	double v_getValueAtSample (integer ifreq, integer iframe, int unit)
 		override;
@@ -47,7 +47,7 @@ void ConstantQLog2FSpectrogram_formula_part (ConstantQLog2FSpectrogram me, doubl
 autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (ConstantQLog2FSpectrogram me, double fromTime, double toTime, double fromFrequency, double shiftNumberOfBins);
 
 Thing_define (GaborSpectrogram, MultiSampledSpectrogram) {
-	void v_info ()
+	void v1_info ()
 		override;
 	double v_myFrequencyUnitToHertz (double f)
 		override { return f; }
@@ -55,7 +55,7 @@ Thing_define (GaborSpectrogram, MultiSampledSpectrogram) {
 		override { return f; }
 };
 
-void GaborSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish);
+void GaborSpectrogram_paint (GaborSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish);
 
 autoGaborSpectrogram GaborSpectrogram_create (double tmin, double tmax, double fmax, double frequencyResolution, double df);
 

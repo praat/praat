@@ -1,6 +1,6 @@
 /* WordList.cpp
  *
- * Copyright (C) 1999-2007,2011,2012,2015-2019 Paul Boersma
+ * Copyright (C) 1999-2007,2011,2012,2015-2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,16 +48,16 @@ static integer WordList_count (WordList me) {
 	return numberOfWords;
 }
 
-void structWordList :: v_info () {
-	structDaata :: v_info ();
-	integer n = WordList_count (this);
+void structWordList :: v1_info () {
+	structDaata :: v1_info ();
+	const integer n = WordList_count (this);
 	if (our length == 0)
 		our length = str32len (our string.get());
 	MelderInfo_writeLine (U"Number of words: ", n);
 	MelderInfo_writeLine (U"Number of characters: ", length - n);
 }
 
-void structWordList :: v_readBinary (FILE *f, int formatVersion) {
+void structWordList :: v1_readBinary (FILE *f, int formatVersion) {
 	if (formatVersion <= 0) {
 		our length = bingeti32 (f);
 		if (our length < 0)

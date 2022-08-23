@@ -36,7 +36,7 @@ MelderColour
 	Melder_PINK = MelderColour (1.0, 0.75, 0.75),
 	Melder_SILVER = MelderColour (0.75),
 	Melder_GREY = MelderColour (0.5),
-	Melder_WINDOW_BACKGROUND_COLOUR = MelderColour (0.90, 0.90, 0.85);
+	Melder_WINDOW_BACKGROUND_COLOUR = MelderColour (0.80, 0.80, 0.75);
 
 conststring32 MelderColour_nameRGB (MelderColour colour) {
 	static MelderString buffer;

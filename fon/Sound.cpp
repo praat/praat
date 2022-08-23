@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
 
 Thing_implement (Sound, Vector, 2);
 
-void structSound :: v_info () {
-	structDaata :: v_info ();
+void structSound :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of channels: ", our ny, our ny == 1 ? U" (mono)" : our ny == 2 ? U" (stereo)" : U"");
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
@@ -342,7 +342,7 @@ autoSound Matrix_to_Sound_mono (Matrix me, integer rowNumber) {
 autoSound Matrix_to_Sound (Matrix me) {
 	try {
 		autoSound thee = Thing_new (Sound);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
@@ -352,7 +352,7 @@ autoSound Matrix_to_Sound (Matrix me) {
 autoMatrix Sound_to_Matrix (Sound me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.get());
+		my structMatrix :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

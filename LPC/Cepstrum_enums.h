@@ -16,15 +16,21 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kCepstrumTrendType, 1)
-	enums_add (kCepstrumTrendType, 1, LINEAR, U"Straight")
-	enums_add (kCepstrumTrendType, 2, EXPONENTIAL_DECAY, U"Exponential decay")
-enums_end (kCepstrumTrendType, 2, EXPONENTIAL_DECAY)
+enums_begin (kCepstrum_peakInterpolation, 0)
+	enums_add (kCepstrum_peakInterpolation, 0, NONE, U"none")
+	enums_add (kCepstrum_peakInterpolation, 1, PARABOLIC, U"parabolic")
+	enums_add (kCepstrum_peakInterpolation, 2, CUBIC, U"cubic")
+enums_end (kCepstrum_peakInterpolation, 2, PARABOLIC)
 
-enums_begin (kCepstrumTrendFit, 1)
-	enums_add (kCepstrumTrendFit, 1, ROBUST_FAST, U"Robust")
-	enums_add (kCepstrumTrendFit, 2, LEAST_SQUARES, U"Least squares")
-	enums_add (kCepstrumTrendFit, 3, ROBUST_SLOW, U"Robust slow")
-enums_end (kCepstrumTrendFit, 3, ROBUST_SLOW)
+enums_begin (kCepstrum_trendType, 1)
+	enums_add (kCepstrum_trendType, 1, LINEAR, U"Straight")
+	enums_add (kCepstrum_trendType, 2, EXPONENTIAL_DECAY, U"Exponential decay")
+enums_end (kCepstrum_trendType, 2, EXPONENTIAL_DECAY)
+
+enums_begin (kCepstrum_trendFit, 1)
+	enums_add (kCepstrum_trendFit, 1, ROBUST_FAST, U"Robust")
+	enums_add (kCepstrum_trendFit, 2, LEAST_SQUARES, U"Least squares")
+	enums_add (kCepstrum_trendFit, 3, ROBUST_SLOW, U"Robust slow")
+enums_end (kCepstrum_trendFit, 3, ROBUST_SLOW)
 
 /* End of file Cepstrum_enums.h */

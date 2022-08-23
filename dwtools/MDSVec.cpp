@@ -40,8 +40,8 @@
 
 Thing_implement (MDSVec, Daata, 0);
 
-void structMDSVec :: v_info () noexcept {
-	structDaata :: v_info ();
+void structMDSVec :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of points: ", numberOfPoints);
 	MelderInfo_writeLine (U"Number of proximities: ", numberOfProximities);
 }

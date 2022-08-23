@@ -987,11 +987,14 @@ NORMAL (U"where \\De%t is the sampling period of the sound. The new sound %y is 
 EQUATION (U"%y__%i_ = %x__%i_ - %\\al %x__%i-1_")
 MAN_END
 
-MAN_BEGIN (U"Sound: Pre-emphasize (in-place)...", U"ppgb", 20171114)
+MAN_BEGIN (U"Sound: Pre-emphasize (in-place)...", U"ppgb", 20220407)
 INTRO (U"A command to change the spectral slope of every selected @Sound object.")
 NORMAL (U"The reverse of @@Sound: De-emphasize (in-place)...@.")
 NORMAL (U"This is the in-place version of @@Sound: Filter (pre-emphasis)...@, "
 	"i.e., it does not create a new Sound object but modifies an existing object.")
+ENTRY (U"Setting")
+TAG (U"##From frequency (Hz)")
+DEFINITION (U"the frequency %F above which the spectral slope will increase by 6 dB/octave.")
 ENTRY (U"Algorithm")
 NORMAL (U"The pre-emphasis factor %\\al is computed as")
 EQUATION (U"%\\al = exp (-2 %\\pi %F \\De%t)")
@@ -1039,7 +1042,7 @@ CODE (U"Set value at sample number: 100, 1/2")
 NORMAL (U"This sets the value of the 100th sample to 0.5.")
 MAN_END
 
-MAN_BEGIN (U"SoundEditor", U"ppgb", 20210228)
+MAN_BEGIN (U"SoundEditor", U"ppgb", 20220814)
 INTRO (U"An @@Editors|Editor@ for viewing and editing a @Sound object. "
 	"Most of the functions of this editor are described in the @Intro.")
 ENTRY (U"The markers")
@@ -1051,7 +1054,7 @@ NORMAL (U"To select a part of the time domain, use the @@time selection@ mechani
 ENTRY (U"Playing")
 NORMAL (U"To play any part of the sound, click on one of the rectangles "
 	"below or above the sound window (there can be 1 to 8 of these rectangles), "
-	"or choose a Play command from the View menu.")
+	"or choose a command from the Play menu.")
 NORMAL (U"To mute one or more channels (of a multi-channel sound), @@Command-click@ "
 	"on the " UNITEXT_SPEAKER " icon at the right side of the corresponding channel number. "
 	"The icon will turn to " UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE ". In subsequent playing actions, "

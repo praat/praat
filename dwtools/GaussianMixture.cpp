@@ -51,14 +51,13 @@
 
 Thing_implement (GaussianMixture, Daata, 0);
 
-void structGaussianMixture :: v_info () {
-	our structDaata :: v_info ();
+void structGaussianMixture :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of components: ", our numberOfComponents);
 	MelderInfo_writeLine (U"Dimension of component: ", our dimension);
 	MelderInfo_writeLine (U"Mixing probabilities:");
-	for (integer im = 1; im <= numberOfComponents; im ++) {
+	for (integer im = 1; im <= numberOfComponents; im ++)
 		MelderInfo_writeLine (U"  ", im, U": p = ", our mixingProbabilities [im], U"  Name =  \"", Thing_getName (our covariances->at [im]), U"\"");
-	}
 }
 
 static integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me) {
@@ -98,7 +97,7 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 	*/
 	longdouble lnp = 0.0;
 	for (integer irow = 1; irow <= numberOfData; irow ++) {
-		double psum = NUMinner (my mixingProbabilities.get(), probabilities.row (irow));
+		const double psum = NUMinner (my mixingProbabilities.get(), probabilities.row (irow));
 		if (psum > 0.0)
 			lnp += (longdouble) log (psum);
 	}

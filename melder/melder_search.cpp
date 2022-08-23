@@ -1,6 +1,6 @@
 /* melder_search.cpp
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ inline static char32 * str32str_word_optionallyCaseSensitive (conststring32 stri
 			char32 kar;
 			do {
 				kar = ( caseSensitive ? * movingString ++ : Melder_toLowerCase (* movingString ++) );
-				if (kar == U'\0') return nullptr;
+				if (kar == U'\0')
+					return nullptr;
 			} while (kar != firstCharacter);
 		} while (caseSensitive ? str32ncmp (movingString, movingFind, length - 1) : str32ncmp_caseInsensitive (movingString, movingFind, length - 1));
 		/*
@@ -76,63 +77,63 @@ bool Melder_stringMatchesCriterion (conststring32 value, kMelder_string which, c
 		case kMelder_string::EQUAL_TO:
 		case kMelder_string::NOT_EQUAL_TO:
 		{
-			bool doesMatch = str32equ_optionallyCaseSensitive (value, criterion, caseSensitive);
+			const bool doesMatch = str32equ_optionallyCaseSensitive (value, criterion, caseSensitive);
 			return which == kMelder_string::EQUAL_TO ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::CONTAINS:
 		case kMelder_string::DOES_NOT_CONTAIN:
 		{
-			bool doesMatch = !! str32str_optionallyCaseSensitive (value, criterion, caseSensitive);
+			const bool doesMatch = !! str32str_optionallyCaseSensitive (value, criterion, caseSensitive);
 			return which == kMelder_string::CONTAINS ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::STARTS_WITH:
 		case kMelder_string::DOES_NOT_START_WITH:
 		{
-			bool doesMatch = str32nequ_optionallyCaseSensitive (value, criterion, str32len (criterion), caseSensitive);
+			const bool doesMatch = str32nequ_optionallyCaseSensitive (value, criterion, str32len (criterion), caseSensitive);
 			return which == kMelder_string::STARTS_WITH ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::ENDS_WITH:
 		case kMelder_string::DOES_NOT_END_WITH:
 		{
-			integer criterionLength = str32len (criterion), valueLength = str32len (value);
-			bool doesMatch = criterionLength <= valueLength &&
-				str32equ_optionallyCaseSensitive (value + valueLength - criterionLength, criterion, caseSensitive);
+			const integer criterionLength = str32len (criterion), valueLength = str32len (value);
+			const bool doesMatch = ( criterionLength <= valueLength &&
+				str32equ_optionallyCaseSensitive (value + valueLength - criterionLength, criterion, caseSensitive) );
 			return which == kMelder_string::ENDS_WITH ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::CONTAINS_WORD:
 		case kMelder_string::DOES_NOT_CONTAIN_WORD:
 		{
-			bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, false, caseSensitive, false, false);
+			const bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, false, caseSensitive, false, false);
 			return which == kMelder_string::CONTAINS_WORD ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::CONTAINS_WORD_STARTING_WITH:
 		case kMelder_string::DOES_NOT_CONTAIN_WORD_STARTING_WITH:
 		{
-			bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, false, caseSensitive, false, true);
+			const bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, false, caseSensitive, false, true);
 			return which == kMelder_string::CONTAINS_WORD_STARTING_WITH ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::CONTAINS_WORD_ENDING_WITH:
 		case kMelder_string::DOES_NOT_CONTAIN_WORD_ENDING_WITH:
 		{
-			bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, false, caseSensitive, true, false);
+			const bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, false, caseSensitive, true, false);
 			return which == kMelder_string::CONTAINS_WORD_ENDING_WITH ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::CONTAINS_INK:
 		case kMelder_string::DOES_NOT_CONTAIN_INK:
 		{
-			bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, true, caseSensitive, false, false);
+			const bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, true, caseSensitive, false, false);
 			return which == kMelder_string::CONTAINS_INK ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::CONTAINS_INK_STARTING_WITH:
 		case kMelder_string::DOES_NOT_CONTAIN_INK_STARTING_WITH:
 		{
-			bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, true, caseSensitive, false, true);
+			const bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, true, caseSensitive, false, true);
 			return which == kMelder_string::CONTAINS_INK_STARTING_WITH ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::CONTAINS_INK_ENDING_WITH:
 		case kMelder_string::DOES_NOT_CONTAIN_INK_ENDING_WITH:
 		{
-			bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, true, caseSensitive, true, false);
+			const bool doesMatch = !! str32str_word_optionallyCaseSensitive (value, criterion, true, caseSensitive, true, false);
 			return which == kMelder_string::CONTAINS_INK_ENDING_WITH ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::MATCH_REGEXP:

@@ -2,7 +2,7 @@
 #define _DataEditor_h_
 /* DataEditor.h
  *
- * Copyright (C) 1995-2011,2012,2015 Paul Boersma
+ * Copyright (C) 1995-2012,2014-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,13 +49,13 @@ Thing_define (DataSubEditor, Editor) {
 	int d_irow, d_topField, d_numberOfFields;
 	struct structDataSubEditor_FieldData d_fieldData [1 + kDataSubEditor_MAXNUM_ROWS];
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
 	bool v_scriptable ()
 		override { return false; }
 	void v_createChildren ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 
 	virtual integer v_countFields () { return 0; }
@@ -95,9 +95,9 @@ Thing_define (ClassEditor, StructEditor) {
 Thing_define (DataEditor, ClassEditor) {
 	CollectionOf <structDataSubEditor> children;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 };
 

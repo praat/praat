@@ -1,6 +1,6 @@
 /* Formant.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@
 
 Thing_implement (Formant, Sampled, 2);   // version 1 = with intensity, 2 = double
 
-void structFormant :: v_info () {
-	structDaata :: v_info ();
+void structFormant :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
@@ -401,8 +401,8 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 		const Formant_Frame frame = & my frames [iframe];
 		if (iformant1 > frame -> numberOfFormants || iformant2 > frame -> numberOfFormants)
 			continue;
-		double x = frame -> formant [iformant1]. frequency;
-		double y = frame -> formant [iformant2]. frequency;
+		const double x = frame -> formant [iformant1]. frequency;
+		const double y = frame -> formant [iformant2]. frequency;
 		if (x == 0.0 || y == 0.0)
 			continue;
 		Graphics_mark (g, x, y, size_mm, mark);
@@ -488,7 +488,8 @@ autoFormant Formant_tracker (Formant me, integer ntrack,
 	try {
 		integer nformmin = Formant_getMinNumFormants (me);
 		struct fparm parm;
-		if (ntrack > nformmin) Melder_throw (U"Number of tracks (", ntrack, U") should not exceed minimum number of formants (", nformmin, U").");
+		Melder_require (ntrack <= nformmin,
+			U"Number of tracks (", ntrack, U") should not exceed minimum number of formants (", nformmin, U").");
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, ntrack);
 		for (integer iframe = 1; iframe <= thy nx; iframe ++) {
 			thy frames [iframe]. formant = newvectorzero <structFormant_Formant> (ntrack);
@@ -524,13 +525,18 @@ autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeFrameNumbers + includeTimes + includeIntensity +
 			includeNumberOfFormants + my maxnFormants * (1 + includeBandwidths));
 		integer icol = 0;
-		if (includeFrameNumbers)     Table_setColumnLabel (thee.get(), ++ icol, U"frame");
-		if (includeTimes)            Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
-		if (includeIntensity)        Table_setColumnLabel (thee.get(), ++ icol, U"intensity");
-		if (includeNumberOfFormants) Table_setColumnLabel (thee.get(), ++ icol, U"nformants");
+		if (includeFrameNumbers)
+			Table_setColumnLabel (thee.get(), ++ icol, U"frame");
+		if (includeTimes)
+			Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
+		if (includeIntensity)
+			Table_setColumnLabel (thee.get(), ++ icol, U"intensity");
+		if (includeNumberOfFormants)
+			Table_setColumnLabel (thee.get(), ++ icol, U"nformants");
 		for (integer iformant = 1; iformant <= my maxnFormants; iformant ++) {
 			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"F", iformant, U"(Hz)"));
-			if (includeBandwidths) { Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"B", iformant, U"(Hz)")); }
+			if (includeBandwidths)
+				Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"B", iformant, U"(Hz)"));
 		}
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			icol = 0;
@@ -569,8 +575,9 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 {
 	try {
 		autoTable table = Formant_downto_Table (me, includeFrameNumbers, includeTimes, timeDecimals,
-				includeIntensity, intensityDecimals,
-				includeNumberOfFormants, frequencyDecimals, includeBandwidths);
+			includeIntensity, intensityDecimals,
+			includeNumberOfFormants, frequencyDecimals, includeBandwidths
+		);
 		Table_list (table.get(), false);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");

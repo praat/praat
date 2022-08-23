@@ -236,7 +236,7 @@ FORM (QUERY_ONE_FOR_REAL__FFNet_getBias, U"FFNet: Get bias", nullptr) {
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FFNet)
-		double result = FFNet_getBias (me, layer, unit);
+		const double result = FFNet_getBias (me, layer, unit);
 	QUERY_ONE_FOR_REAL_END (U" (bias)")
 }
 
@@ -248,13 +248,13 @@ FORM (QUERY_ONE_FOR_REAL__FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FFNet)
-		double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
+		const double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
 	QUERY_ONE_FOR_REAL_END (U" (weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__FFNet_getMinimum) {
 	QUERY_ONE_FOR_REAL (FFNet)
-		double result = FFNet_getMinimum (me);
+		const double result = FFNet_getMinimum (me);
 	QUERY_ONE_FOR_REAL_END (U" (minimum)");
 }
 
@@ -430,7 +430,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getTo
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
-		double result = FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType);
+		const double result = FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
@@ -441,7 +441,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getAv
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
-		double result = FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType);
+		const double result = FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
@@ -486,7 +486,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getTotalC
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
-		double result = FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType);
+		const double result = FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (total costs)")
 }
 
@@ -497,7 +497,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getAverag
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
-		double result = FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType);
+		const double result = FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (average costs)")
 }
 
@@ -574,7 +574,7 @@ void praat_uvafon_FFNet_init () {
 			CREATE_ONE__FFNet_create_linearOutputs);
 	praat_addMenuCommand (U"Objects", U"New", U"Create PatternList...", nullptr, 2, 
 			CREATE_ONE__PatternList_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2015,
+	praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", nullptr, GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2015,
 			CREATE_ONE__PatternList_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", nullptr, 2, 
 			CREATE_ONE__Categories_create);
@@ -586,7 +586,7 @@ void praat_uvafon_FFNet_init () {
 			GRAPHICS_EACH__FFNet_drawTopology);
 	praat_addAction1 (classFFNet, 0, U"Draw weights...", nullptr, 1, 
 			GRAPHICS_EACH__FFNet_drawWeights);
-	praat_addAction1 (classFFNet, 0, U"Draw weights to layer...", nullptr, praat_DEPTH_1 | praat_HIDDEN,
+	praat_addAction1 (classFFNet, 0, U"Draw weights to layer...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			GRAPHICS_EACH__FFNet_drawWeightsToLayer);
 	praat_addAction1 (classFFNet, 0, U"Draw cost history...", nullptr, 1, 
 			GRAPHICS_EACH__FFNet_drawCostHistory);
@@ -629,7 +629,7 @@ void praat_uvafon_FFNet_init () {
 	praat_addAction1 (classFFNet, 0, EXTRACT_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Extract weights...", nullptr, 1, 
 			NEW_FFNet_extractWeights);
-	praat_addAction1 (classFFNet, 0, U"Weights to Matrix...", nullptr, praat_DEPTH_1 | praat_HIDDEN, 
+	praat_addAction1 (classFFNet, 0, U"Weights to Matrix...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, 
 			NEW_FFNet_weightsToMatrix);
 	praat_addAction1 (classFFNet, 0, U"& PatternList: Classify?", nullptr, 0, 
 			HINT__hint_FFNet_PatternList_classify);

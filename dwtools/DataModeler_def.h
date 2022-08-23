@@ -49,12 +49,11 @@ oo_DEFINE_CLASS (DataModeler, Function)
 	oo_ENUM (kDataModelerWeights, weighData)
 	oo_OBJECT (Strings, 0, parameterNames)
 	oo_OBJECT (Covariance, 0, parameterCovariances)
-
 	#if oo_DECLARING
 		double (*f_evaluate) (DataModeler me, double x, vector<structDataModelerParameter> p);
 		void (*f_evaluateBasisFunctions) (DataModeler me, double x, VEC term) { };
 		void (*fit) (DataModeler me);
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

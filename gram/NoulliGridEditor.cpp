@@ -1,6 +1,6 @@
 /* NoulliGridEditor.cpp
  *
- * Copyright (C) 2018-2020 Paul Boersma
+ * Copyright (C) 2018-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,102 +24,29 @@
 #include "enums_getValue.h"
 #include "NoulliGridEditor_enums.h"
 
-Thing_implement (NoulliGridEditor, TimeSoundEditor, 0);
+Thing_implement (NoulliGridEditor, FunctionEditor, 0);
 
-#include "prefs_define.h"
+#include "Prefs_define.h"
 #include "NoulliGridEditor_prefs.h"
-#include "prefs_install.h"
+#include "Prefs_install.h"
 #include "NoulliGridEditor_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "NoulliGridEditor_prefs.h"
-
-#define SOUND_HEIGHT  0.2
-
-/********** DRAWING AREA **********/
-
-void structNoulliGridEditor :: v_draw () {
-	NoulliGrid data = (NoulliGrid) our data;
-	if (our d_sound.data) {
-		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
-		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		TimeSoundEditor_drawSound (this, -1.0, 1.0);
-		Graphics_resetViewport (our graphics.get(), viewport);
-		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
-	}
-	Graphics_setColour (our graphics.get(), Melder_WHITE);
-	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	if (data -> numberOfCategories == 2) {
-		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-		Graphics_setLineWidth (our graphics.get(), 3.0);
-		for (integer itier = 1; itier <= data -> tiers.size; itier ++) {
-			NoulliTier tier = data -> tiers.at [itier];
-			for (integer ipoint = 1; ipoint < tier -> points.size; ipoint ++) {
-				NoulliPoint point = tier -> points.at [ipoint], nextPoint = tier -> points.at [ipoint + 1];
-				const double time = 0.5 * (point -> xmin + point -> xmax);
-				const double nextTime = 0.5 * (nextPoint -> xmin + nextPoint -> xmax);
-				if (time > our startWindow && nextTime < our endWindow) {
-					const double prob = point -> probabilities [1], nextProb = nextPoint -> probabilities [1];
-					Graphics_setColour (our graphics.get(), Melder_cyclingBackgroundColour (itier));
-					Graphics_line (our graphics.get(), time, prob, nextTime, nextProb);
-				}
-			}
-			Graphics_setColour (our graphics.get(), Melder_BLACK);
-		}
-	} else {
-		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, data -> tiers.size);
-		for (integer itier = 1; itier <= data -> tiers.size; itier ++) {
-			NoulliTier tier = data -> tiers.at [itier];
-			const double ymin = data -> tiers.size - itier, ymax = ymin + 1;
-			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
-				NoulliPoint point = tier -> points.at [ipoint];
-				if (point -> xmax > our startWindow && point -> xmin < our endWindow) {
-					const double xmin = Melder_clippedLeft (our startWindow, point -> xmin);
-					const double xmax = Melder_clippedRight (point -> xmax, our endWindow);
-					double prob1 = 1.0;
-					for (integer icategory = 1; icategory <= point -> numberOfCategories; icategory ++) {
-						const double prob2 = prob1;
-						prob1 -= point -> probabilities [icategory];
-						Graphics_setColour (our graphics.get(), Melder_cyclingBackgroundColour (icategory));
-						Graphics_fillRectangle (our graphics.get(), xmin, xmax,
-								ymin + prob1 * (ymax - ymin), ymin + prob2 * (ymax - ymin));
-					}
-				}
-			}
-			Graphics_setColour (our graphics.get(), Melder_BLACK);
-			if (itier > 1) {
-				Graphics_setLineWidth (our graphics.get(), 1.0);
-				Graphics_line (our graphics.get(), our startWindow, ymax, our endWindow, ymax);
-			}
-		}
-	}
-	Graphics_setLineWidth (our graphics.get(), 1.0);
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	our v_updateMenuItems_file ();
-}
-
-void structNoulliGridEditor :: v_play (double startTime, double endTime) {
-	if (our d_sound.data)
-		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
-}
 
 static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax, double tmin, double tmax, conststring32 header) {
-	NoulliGrid grid = (NoulliGrid) my data;
-	for (integer itier = 1; itier <= grid -> tiers.size; itier ++) {
+	for (integer itier = 1; itier <= my noulliGrid() -> tiers.size; itier ++) {
 		if (itier == 1) {
 			Graphics_setColour (my graphics.get(), Melder_BLACK);
 			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 			Graphics_text (my graphics.get(), 0.0, 1.0, header);
 		}
-		autoNoulliPoint average = NoulliGrid_average (grid, itier, tmin, tmax);
+		autoNoulliPoint average = NoulliGrid_average (my noulliGrid(), itier, tmin, tmax);
 		integer winningCategory = NoulliPoint_getWinningCategory (average.get());
-		conststring32 winningCategoryName = grid -> categoryNames [winningCategory].get();
+		conststring32 winningCategoryName = my noulliGrid() -> categoryNames [winningCategory].get();
 		if (winningCategory != 0 && average -> probabilities [winningCategory] > 1.0/3.0) {
 			const bool shouldDrawPicture =
-				(my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE ||
-				 my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT)
+				(my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE ||
+				 my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT)
 				&&
 				(Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"happy") ||
 				 Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"neutral") ||
@@ -186,9 +113,9 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 				Graphics_setColour (my graphics.get(), Melder_cyclingBackgroundColour (winningCategory));
 				Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
 			}
-			if (my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::COLOUR_AND_TEXT ||
-				my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT ||
-				my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE && ! shouldDrawPicture)
+			if (my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::COLOUR_AND_TEXT ||
+				my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT ||
+				my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE && ! shouldDrawPicture)
 			{
 				Graphics_setColour (my graphics.get(), Melder_cyclingTextColour (winningCategory));
 				Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
@@ -220,29 +147,25 @@ void structNoulliGridEditor :: v_drawRealTimeSelectionViewer (double time) {
 	drawSelectionOrWindow (this, 0.0, 1.0, time - 1.0, time + 1.0, U"");
 }
 
-OPTIONMENU_ENUM_VARIABLE (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields_showCategoryInSelectionViewerAs)
+OPTIONMENU_ENUM_VARIABLE (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields__showCategoryInSelectionViewerAs)
 void structNoulliGridEditor :: v_prefs_addFields (EditorCommand cmd) {
-	OPTIONMENU_ENUM_FIELD (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields_showCategoryInSelectionViewerAs,
+	OPTIONMENU_ENUM_FIELD (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields__showCategoryInSelectionViewerAs,
 			U"Show category in selection viewer as", kNoulliGridEditor_showCategoryInSelectionViewerAs::DEFAULT)
 }
 void structNoulliGridEditor :: v_prefs_setValues (EditorCommand cmd) {
-	SET_ENUM (v_prefs_addFields_showCategoryInSelectionViewerAs, kNoulliGridEditor_showCategoryInSelectionViewerAs, our p_showCategoryInSelectionViewerAs)
+	SET_ENUM (v_prefs_addFields__showCategoryInSelectionViewerAs, kNoulliGridEditor_showCategoryInSelectionViewerAs, our instancePref_showCategoryInSelectionViewerAs())
 }
 void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
-	our pref_showCategoryInSelectionViewerAs () = our p_showCategoryInSelectionViewerAs = v_prefs_addFields_showCategoryInSelectionViewerAs;
-	FunctionEditor_redraw (this);
+	our setInstancePref_showCategoryInSelectionViewerAs (v_prefs_addFields__showCategoryInSelectionViewerAs);
 }
 
-void NoulliGridEditor_init (NoulliGridEditor me, conststring32 title, NoulliGrid data, Sound sound, bool ownSound) {
-	Melder_assert (data);
-	Melder_assert (Thing_isa (data, classNoulliGrid));
-	TimeSoundEditor_init (me, title, data, sound, ownSound);
-}
-
-autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid grid, Sound sound, bool ownSound) {
+autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid noulliGrid, Sound optionalSoundToCopy) {
 	try {
 		autoNoulliGridEditor me = Thing_new (NoulliGridEditor);
-		NoulliGridEditor_init (me.get(), title, grid, sound, ownSound);
+		my noulliGridArea() = NoulliGridArea_create (true, nullptr, me.get());
+		if (optionalSoundToCopy)
+			my soundArea() = SoundArea_create (false, optionalSoundToCopy, me.get());
+		FunctionEditor_init (me.get(), title, noulliGrid);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NoulliGrid window not created.");

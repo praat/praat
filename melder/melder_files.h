@@ -39,11 +39,13 @@ struct structMelderFile {
 	struct FLAC__StreamEncoder *flacEncoder;
 };
 typedef struct structMelderFile *MelderFile;
+typedef const struct structMelderFile *constMelderFile;
 
 struct structMelderDir {
 	char32 path [kMelder_MAXPATH+1];
 };
 typedef struct structMelderDir *MelderDir;
+typedef const struct structMelderDir *constMelderDir;
 
 conststring32 MelderFile_name (MelderFile file);
 conststring32 MelderDir_name (MelderDir dir);
@@ -53,8 +55,8 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file);
 conststring32 Melder_dirToPath (MelderDir dir);
 	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
 conststring32 Melder_fileToPath (MelderFile file);
-void MelderFile_copy (MelderFile file, MelderFile copy);
-void MelderDir_copy (MelderDir dir, MelderDir copy);
+void MelderFile_copy (constMelderFile file, MelderFile copy);
+void MelderDir_copy (constMelderDir dir, MelderDir copy);
 bool MelderFile_equal (MelderFile file1, MelderFile file2);
 bool MelderDir_equal (MelderDir dir1, MelderDir dir2);
 void MelderFile_setToNull (MelderFile file);
@@ -113,7 +115,7 @@ public:
 	operator FILE * () {
 		return ptr;
 	}
-	void reset (FILE *f) {
+	void operator= (FILE *f) {
 		if (ptr)
 			fclose (ptr);   // BUG: not a normal closure
 		ptr = f;

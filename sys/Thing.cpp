@@ -1,6 +1,6 @@
 /* Thing.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 
 integer theTotalNumberOfThings;
 
-void structThing :: v_info ()
-{
+void structThing :: v1_info () {
 	MelderInfo_writeLine (U"Object type: ", Thing_className (this));
 	MelderInfo_writeLine (U"Object name: ", this -> name ? this -> name.get() : U"<no name>");
 	time_t today = time (nullptr);
@@ -158,7 +157,7 @@ void _Thing_forget_nozero (Thing me) {
 	if (Melder_debug == 40)
 		Melder_casual (U"destroying ", my classInfo -> className);
 	//Melder_casual (U"_Thing_forget_nozero before");
-	my v_destroy ();
+	my v9_destroy ();
 	//Melder_casual (U"_Thing_forget_nozero after");
 	theTotalNumberOfThings -= 1;
 }
@@ -168,7 +167,7 @@ void _Thing_forget (Thing me) {
 		return;
 	if (Melder_debug == 40)
 		Melder_casual (U"destroying ", my classInfo -> className);
-	my v_destroy ();
+	my v9_destroy ();
 	trace (U"destroyed ", my classInfo -> className, U" ", Melder_pointer (me));
 	//Melder_free (me);
 	delete me;
@@ -189,14 +188,14 @@ bool Thing_isa (Thing me, ClassInfo klas) {
 }
 
 void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file) {
-	//Melder_assert (me);
+	Melder_assert (me);
 	Melder_clearInfo ();
 	MelderInfo_open ();
 	if (id != 0)
 		MelderInfo_writeLine (U"Object id: ", id);
 	if (! MelderFile_isNull (file))
 		MelderInfo_writeLine (U"Associated file: ", Melder_fileToPath (file));
-	my v_info ();
+	my v1_info ();
 	MelderInfo_close ();
 }
 
@@ -208,7 +207,7 @@ conststring32 Thing_getName (Thing me) {
 	return my name.get();
 }
 
-conststring32 Thing_messageName (Thing me) {
+conststring32 Thing_messageName (constThing me) {
 	static MelderString buffers [19];
 	static int ibuffer = 0;
 	if (++ ibuffer == 19)
@@ -241,7 +240,7 @@ void Thing_setName (Thing me, conststring32 name /* cattable */) {
 
 void Thing_swap (Thing me, Thing thee) {
 	Melder_assert (my classInfo == thy classInfo);
-	integer n = my classInfo -> size;
+	const integer n = my classInfo -> size;
 	char *p, *q;
 	integer i;
 	for (p = (char *) me, q = (char *) thee, i = n; i > 0; i --, p ++, q ++) {

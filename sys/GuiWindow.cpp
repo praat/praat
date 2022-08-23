@@ -1,6 +1,6 @@
 /* GuiWindow.cpp
  *
- * Copyright (C) 1993-2018,2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2018,2020,2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 				if (top    <  0) top    += parentAllocation -> height;
 				if (bottom <= 0) bottom += parentAllocation -> height;
 				trace (U"moving child to (", left, U",", top, U") with size ", right - left, U" x ", bottom - top, U".");
-				GtkAllocation childAllocation { left, top, right - left, bottom - top };
+				GtkAllocation childAllocation { parentAllocation -> x + left, parentAllocation -> y + top, right - left, bottom - top };
 				gtk_widget_size_allocate (GTK_WIDGET (childWidget), & childAllocation);
 				trace (U"moved child of class ", Thing_className (control));
 			}
@@ -85,10 +85,18 @@ Thing_implement (GuiWindow, GuiShell, 0);
 			we could capture the message either from the shell or from the fixed; we choose to do it from the fixed.
 		*/
 		Melder_assert (GTK_IS_FIXED (widget));
+		Melder_assert (GTK_IS_FIXED (my d_widget));
 		/*
 			We move and resize all the children of the fixed.
 		*/
+		#if defined (chrome)
+		{
+			GtkAllocation surrogateShellTitleLabelWidgetAllocation { allocation -> x, allocation -> y, allocation -> width, 31 };
+			gtk_widget_size_allocate (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), & surrogateShellTitleLabelWidgetAllocation);
+		}
+		#endif
 		gtk_container_foreach (GTK_CONTAINER (widget), _GuiWindow_child_resizeCallback, allocation);
+		//gtk_container_foreach (GTK_CONTAINER (my d_widget), _GuiWindow_child_resizeCallback, allocation);
 		my d_width = allocation -> width;
 		my d_height = allocation -> height;
 		trace (U"end");
@@ -131,7 +139,6 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
 		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), true);
-		GuiShell_setTitle (me.get(), title);
 
 		my d_widget = gtk_fixed_new ();
 		_GuiObject_setUserData (my d_widget, me.get());
@@ -140,6 +147,19 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
 		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_widget), & geometry, GDK_HINT_MIN_SIZE);
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
+		//g_signal_connect (G_OBJECT (my d_gtkWindow), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
+		#if defined (chrome)
+			my chrome_surrogateShellTitleLabelWidget = gtk_label_new (Melder_peek32to8 (title));
+			gtk_label_set_use_markup (GTK_LABEL (my chrome_surrogateShellTitleLabelWidget), true);
+			gtk_widget_set_size_request (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), minimumWidth, 31 /*Machine_getTextHeight()*/);
+			gtk_misc_set_alignment (GTK_MISC (my chrome_surrogateShellTitleLabelWidget), 0.5, 0.0);
+			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), 8, 0);
+			gtk_widget_show (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget));
+		#endif
+		GuiShell_setTitle (me.get(), title);
+		gint rootX, rootY;
+		gtk_window_get_position (my d_gtkWindow, & rootX, & rootY);
+		trace (rootX, U" root ", rootY);
 	#elif motif
 		my d_xmShell = XmCreateShell (nullptr, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
@@ -184,8 +204,8 @@ void GuiWindow_addMenuBar (GuiWindow me) {
 	#if gtk
 		my d_gtkMenuBar = (GtkMenuBar *) gtk_menu_bar_new ();
 		_GuiObject_setUserData (my d_gtkMenuBar, me);
-		my v_positionInForm (my d_gtkMenuBar, 0, 0, 0, Machine_getMenuBarHeight (), me);   // BUG?
-		
+		my v_positionInForm (my d_gtkMenuBar, 0, 0, Machine_getMenuBarTop (), Machine_getMenuBarBottom (), me);   // BUG?
+
 		// we need an accelerator group for each window we're creating accelerated menus on
 		GuiObject topwin = gtk_widget_get_toplevel (GTK_WIDGET (my d_widget));
 		Melder_assert (topwin == my d_gtkWindow);

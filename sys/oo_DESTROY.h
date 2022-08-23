@@ -98,12 +98,12 @@
 	}
 
 #define oo_DEFINE_CLASS(Class, Parent)  \
-	void struct##Class :: v_destroy () noexcept { \
+	void struct##Class :: v9_destroy () noexcept { \
 		constexpr bool _thisStructCanAutodestroyItsMembers_ = true; \
 		(void) _thisStructCanAutodestroyItsMembers_;
 
 #define oo_END_CLASS(Class)  \
-		Class##_Parent :: v_destroy (); \
+		Class##_Parent :: v9_destroy (); \
 	}
 
 #define oo_FROM(from)

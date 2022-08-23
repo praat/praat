@@ -1,6 +1,6 @@
 /* DataEditor.cpp
  *
- * Copyright (C) 1995-2020 Paul Boersma
+ * Copyright (C) 1995-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #define BUTTON_X  250
 #define LIST_Y  (2 * Gui_TOP_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT)
 #define EDITOR_WIDTH  820
-#define EDITOR_HEIGHT  (LIST_Y + kDataSubEditor_MAXNUM_ROWS * ROW_HEIGHT + 29 + Machine_getMenuBarHeight ())
+#define EDITOR_HEIGHT  (Machine_getMenuBarBottom () + LIST_Y + kDataSubEditor_MAXNUM_ROWS * ROW_HEIGHT + 29)
 #define ROW_HEIGHT  31
 
 #define SCROLL_BAR_WIDTH  Machine_getScrollBarWidth ()
@@ -53,14 +53,14 @@ static inline conststring32 strip_d (conststring32 s) {
 
 Thing_implement (DataSubEditor, Editor, 0);
 
-void structDataSubEditor :: v_destroy () noexcept {
+void structDataSubEditor :: v9_destroy () noexcept {
 	//for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
 	//	Melder_free (d_fieldData [i]. history);
 	if (our root)
 		for (integer i = our root -> children.size; i > 0; i --)
 			if (our root -> children.at [i] == this)
 				our root -> children.subtractItem_ref (i);
-	DataSubEditor_Parent :: v_destroy ();
+	DataSubEditor_Parent :: v9_destroy ();
 }
 
 static void update (DataSubEditor me) {
@@ -306,7 +306,7 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 }
 
 void structDataSubEditor :: v_createChildren () {
-	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
+	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarBottom (), buttonWidth = 120;
 
 	GuiButton_createShown (our windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
 			U"Change", gui_button_cb_change, this, 0);
@@ -314,7 +314,7 @@ void structDataSubEditor :: v_createChildren () {
 	GuiButton_createShown (our windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
 			U"Cancel", gui_button_cb_cancel, this, 0);
 
-	y = LIST_Y + Machine_getMenuBarHeight ();
+	y = Machine_getMenuBarBottom () + LIST_Y;
 	d_scrollBar = GuiScrollBar_createShown (our windowForm,
 		- SCROLL_BAR_WIDTH, 0, y, 0,
 		0, d_numberOfFields, 0, d_numberOfFields < kDataSubEditor_MAXNUM_ROWS ? d_numberOfFields : kDataSubEditor_MAXNUM_ROWS, 1, kDataSubEditor_MAXNUM_ROWS - 1,
@@ -334,8 +334,8 @@ void structDataSubEditor :: v_createChildren () {
 
 static void menu_cb_help (DataSubEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Inspect"); }
 
-void structDataSubEditor :: v_createHelpMenuItems (EditorMenu menu) {
-	DataSubEditor_Parent :: v_createHelpMenuItems (menu);
+void structDataSubEditor :: v_createMenuItems_help (EditorMenu menu) {
+	DataSubEditor_Parent :: v_createMenuItems_help (menu);
 	EditorMenu_addCommand (menu, U"DataEditor help", '?', menu_cb_help);
 }
 
@@ -822,9 +822,9 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 			that is linear in the number of children. So we would end up with quadratic complexity,
 			whereas the procedure that we use above has linear complexity.
 			
-			This linear complexity makes this procedure good enough for `v_destroy()`
+			This linear complexity makes this procedure good enough for `v9_destroy()`
 			(where obtaining linear complexity would have been easy anyway),
-			and nice enough for `v_dataChanged()`.
+			and nice enough for `v1_dataChanged()`.
 			
 			Something to note is that this procedure doesn't care whether the autoCollection
 			`children` owns its items or not.
@@ -832,12 +832,12 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 	}
 }
 
-void structDataEditor :: v_destroy () noexcept {
+void structDataEditor :: v9_destroy () noexcept {
 	DataEditor_destroyAllChildren (this);
-	DataEditor_Parent :: v_destroy ();
+	DataEditor_Parent :: v9_destroy ();
 }
 
-void structDataEditor :: v_dataChanged () {
+void structDataEditor :: v1_dataChanged () {
 	/*
 		Someone else changed our data.
 		We know that the top-level data is still accessible,

@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2008,2011-2020 Paul Boersma
+ * Copyright (C) 1992-2008,2011-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@ static double Strings_totalLength (Strings me) {
 	return NUMtotalLength (my strings.get());
 }
 
-void structStrings :: v_info () {
-	structDaata :: v_info ();
+void structStrings :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of strings: ", our numberOfStrings);
 	MelderInfo_writeLine (U"Total length: ", Strings_totalLength (this), U" characters");
 	MelderInfo_writeLine (U"Shortest string: ", Strings_minimumLength (this), U" characters");
@@ -100,7 +100,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 
 void Strings_writeToRawTextFile (Strings me, MelderFile file) {
 	try {
-		my assertInvariants ();
+		Thing_assertInvariants (me);
 		autoMelderString buffer;
 		for (integer i = 1; i <= my numberOfStrings; i ++)
 			MelderString_append (& buffer, my strings [i].get(), U"\n");

@@ -21,7 +21,7 @@
 #include "Vector.h"
 
 Thing_define (Harmonicity, Vector) {
-	void v_info ()
+	void v1_info ()
 		override;
 	int v_domainQuantity ()
 		override { return MelderQuantity_TIME_SECONDS; }

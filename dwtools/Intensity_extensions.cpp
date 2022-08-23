@@ -65,7 +65,7 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me,
 		double intensity_max_db, intensity_min_db, xOfMaximum, xOfMinimum;
 		Vector_getMaximumAndX (me, 0.0, 0.0, 1, kVector_peakInterpolation :: PARABOLIC, & intensity_max_db, & xOfMaximum);
 		Vector_getMinimumAndX (me, 0.0, 0.0, 1, kVector_peakInterpolation :: PARABOLIC, & intensity_min_db, & xOfMinimum);
-		double intensity_dbRange = intensity_max_db - intensity_min_db;
+		const double intensity_dbRange = intensity_max_db - intensity_min_db;
 
 		if (intensity_dbRange < 10.0)
 			Melder_warning (U"The loudest and softest part in your sound differ by only ", intensity_dbRange, U" dB.");

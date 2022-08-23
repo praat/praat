@@ -350,7 +350,7 @@ autoHMMStateSequence HMMStateSequence_create (integer numberOfItems) {
 autoStrings HMMStateSequence_to_Strings (HMMStateSequence me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		my structStrings :: v_copy (thee.get());
+		my structStrings :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Strings created.");
@@ -360,8 +360,8 @@ autoStrings HMMStateSequence_to_Strings (HMMStateSequence me) {
 
 /**************** HMM ******************************/
 
-void structHMM :: v_info () {
-	structDaata :: v_info ();
+void structHMM :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of states: ", numberOfStates);
 	for (integer i = 1; i <= numberOfStates; i ++) {
 		const HMMState hmms = our states->at [i];
@@ -1002,7 +1002,7 @@ void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g
 
 	for (integer it = 1; it <= numberOfTimes; it ++) {
 		for (integer js = 1; js <= my numberOfStates; js ++) {
-			double xc = it, yc = js, x2 = it, y2 = js;
+			const double xc = it, yc = js, x2 = it, y2 = js;
 			Graphics_circle (g, xc, yc, r);
 			if (it > 1) {
 				for (integer is = 1; is <= my numberOfStates; is ++) {

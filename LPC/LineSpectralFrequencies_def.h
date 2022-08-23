@@ -36,7 +36,7 @@ oo_DEFINE_CLASS (LineSpectralFrequencies, Sampled)
 	oo_STRUCTVEC (LineSpectralFrequencies_Frame, d_frames, nx)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		conststring32 v_getIndexText () const
 			override { return U"frame number"; }

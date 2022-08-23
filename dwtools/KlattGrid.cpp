@@ -32,6 +32,7 @@
 
 #include "FormantGrid_extensions.h"
 #include "Formula.h"
+#include "Graphics_extensions.h"
 #include "KlattGrid.h"
 #include "KlattTable.h"
 #include "Resonator.h"
@@ -110,8 +111,6 @@ conststring32 KlattGrid_getFormantName (kKlattGridFormantType formantType) {
 	return result;
 }
 
-static const conststring32 formant_names [] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
-
 #define KlattGrid_OPENPHASE_DEFAULT 0.7
 #define KlattGrid_POWER1_DEFAULT 3
 #define KlattGrid_POWER2_DEFAULT (KlattGrid_POWER1_DEFAULT+1)
@@ -125,19 +124,25 @@ static const conststring32 formant_names [] = { U"", U"oral ", U"nasal ", U"fric
 	return (y2 - y1) * (x - x1) / (x2 - x1) + y1;
 }*/
 
-static void rel_to_abs (double *w, double *ws, integer n, double d) {
-	double sum = 0.0;
-	for (integer i = 1; i <= n; i ++) { // relative
-		sum += w [i];
-	}
-	if (sum != 0.0) {
-		double dw = d / sum;
-		sum = 0.0;
-		for (integer i = 1; i <= n; i ++) { // to absolute
-			w [i] *= dw;
-			sum += w [i];
-			ws [i] = sum;
-		}
+/*
+	Scales relative widths
+	E.g. 
+	Before: relativeWidths = {1, 2, 3}, totalWidth = 10
+	After:  relativeWidths = {2, 4, 6}, accumulatedWidths = {2, 6, 10}
+*/
+static void scaleRelativeAndAccumulatedWidths (VEC relativeWidths, VEC const& accumulatedWidths, double totalWidth) {
+	Melder_assert (relativeWidths.size == accumulatedWidths.size);
+	double rsum = NUMsum (relativeWidths);
+	
+	if (rsum == 0.0)
+		return;
+	
+	const double widthUnit = totalWidth / rsum;
+	double accumulatedWidth = 0.0;
+	for (integer i = 1; i <= relativeWidths.size; i ++) { // to absolute
+		relativeWidths [i] *= widthUnit;
+		accumulatedWidth += relativeWidths [i];
+		accumulatedWidths [i] = accumulatedWidth;
 	}
 }
 
@@ -441,36 +446,15 @@ static void alternatingSummer_drawConnections (Graphics g, double x, double y, d
 	_summer_drawConnections (g, x, y, r, thee, arrow, true, horizontalFraction);
 }
 
-static void draw_oneSection (Graphics g, double xmin, double xmax, double ymin, double ymax,
-	conststring32 line1, conststring32 line2, conststring32 line3)
-{
-	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
-	integer numberOfTextLines = 0;
-	if (line1)
-		numberOfTextLines ++;
-	if (line2)
-		numberOfTextLines ++;
-	if (line3)
-		numberOfTextLines ++;
-	const double dy = (ymax - ymin) / (numberOfTextLines + 1), ddy = dy / 10.0;
+static void drawLinesInBox (Graphics g, double xmin, double xmax, double ymin, double ymax, constSTRVEC const& lines) {
+	Melder_assert (lines.size > 0);
+	Graphics_rectangle (g, xmin, xmax, ymin, ymax);	
+	const double dy = (ymax - ymin) / lines.size;
 	const double x = (xmax + xmin) / 2.0;
-	double y = ymax;
-	integer iline = 0;
-	if (line1) {
-		iline ++;
-		y -= dy - ( numberOfTextLines == 2 ? ddy : 0.0 ); // extra spacing for two lines
-		Graphics_text (g, x, y, line1);
-	}
-	if (line2) {
-		iline ++;
-		y -= dy - ( numberOfTextLines == 2 ? ( iline == 1 ? ddy : -iline * ddy ) : 0.0 );
-		Graphics_text (g, x, y, line2);
-	}
-	if (line3) {
-		iline ++;
-		y -= dy - ( numberOfTextLines == 2 ? -iline * ddy : 0.0 );
-		Graphics_text (g, x, y, line3);
-	}
+	double y = ymax - 0.5 * dy;
+	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	for (integer iline = 1; iline <= lines.size; iline ++, y -= dy)
+		Graphics_text (g, x, y, lines [iline]);
 }
 
 // Maximum amplitue (-1,1) at 93.97940008672037 dB
@@ -649,8 +633,8 @@ autoPhonationGridPlayOptions PhonationGridPlayOptions_create () {
 
 Thing_implement (PhonationGrid, Function, 0);
 
-void structPhonationGrid :: v_info () {
-	structDaata :: v_info ();
+void structPhonationGrid :: v1_info () {
+	structDaata :: v1_info ();
 	conststring32 in1 = U"  ", in2 = U"    ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
@@ -749,26 +733,31 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *out_y) {
 	// dum voicing conn tilt conn summer
 	(void) me;
-	double xw [6] = { 0.0, 1.0, 0.5, 1.0, 0.5, 0.5 }, xws [6];
-
+	// { voicingBox, line, tiltBox, connection, summer }
+	autoVEC relativeWidths { 1.0, 0.5, 1.0, 0.5, 0.5 }, accumulatedWidths = zero_VEC (5);
+	double oldFontSize = Graphics_inqFontSize (g);
 	connections thee = connections_create (2);
 
-	rel_to_abs (xw, xws, 5, xmax - xmin);
+	scaleRelativeAndAccumulatedWidths (relativeWidths.get(), accumulatedWidths.get(), xmax - xmin);
 
 	dy = (ymax - ymin) / (1.0 + ( dy < 0.0 ? 0.0 : dy ) + 1.0);
-
-	double x1 = xmin, x2 = x1 + xw [1];
+	double x1 = xmin, x2 = x1 + relativeWidths [1];
 	double y2 = ymax, y1 = y2 - dy;
-	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Voicing", nullptr);
+	autoSTRVEC voicingText { U"Voicing" };
+	double newFontSize = Graphics_getFontSizeInsideBox (g, relativeWidths [1], dy, 7.0, 1.5);
+	if (newFontSize < oldFontSize)
+		Graphics_setFontSize (g, newFontSize);
+	drawLinesInBox (g, x1, x2, y1, y2, voicingText.get());
 
 	x1 = x2;
-	x2 = x1 + xw [2];
+	x2 = x1 + relativeWidths [2];
 	double ymid = (y1 + y2) / 2.0;
 	Graphics_line (g, x1, ymid, x2, ymid);
 
 	x1 = x2;
-	x2 = x1 + xw [3];
-	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Tilt", nullptr);
+	x2 = x1 + relativeWidths [3];
+	autoSTRVEC tiltText { U"Tilt" };
+	drawLinesInBox (g, x1, x2, y1, y2, tiltText.get());
 
 	thy x [1] = x2;
 	thy y [1] = ymid;
@@ -776,20 +765,23 @@ static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin
 	y2 = y1 - 0.5 * dy;
 	y1 = y2 - dy;
 	ymid = (y1 + y2) / 2.0;
-	x2 = xmin + xws [3];
-	x1 = x2 - 1.5 * xw [3]; // some extra space
-	draw_oneSection (g, x1, x2, y1, y2, nullptr, U"Aspiration", nullptr);
+	x2 = xmin + accumulatedWidths [3];
+	x1 = x2 - 1.5 * relativeWidths [3]; // some extra space
+	autoSTRVEC aspirationText { U"Aspiration" };
+	drawLinesInBox (g, x1, x2, y1, y2, aspirationText.get());
 
 	thy x [2] = x2;
 	thy y [2] = ymid;
 
-	const double r = xw [5] / 2.0;
+	const double r = relativeWidths [5] / 2.0;
 	const double xs = xmax - r, ys = (ymax + ymin) / 2.0;
 	const bool arrow = true;
 
 	summer_drawConnections (g, xs, ys, r, thee, arrow, 0.4);
 	connections_free (thee);
-
+	
+	Graphics_setFontSize (g, oldFontSize); // restore
+	
 	if (out_y)
 		*out_y = ys;
 }
@@ -1270,8 +1262,8 @@ static void FormantGrid_info (FormantGrid me, OrderedOf<structIntensityTier>* am
 	}
 }
 
-void structVocalTractGrid :: v_info () {
-	our structDaata :: v_info ();
+void structVocalTractGrid :: v1_info () {
+	our structDaata :: v1_info ();
 	const conststring32 in1 = U"  ", in2 = U"    ", in3 = U"      ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", our xmin, U" seconds");
@@ -1318,65 +1310,60 @@ static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, 
 	const integer numberOfNasalAntiFormants = my nasal_antiformants -> formants.size;
 	const integer numberOfTrachealFormants = ( thee ? thy tracheal_formants -> formants.size : 0 );
 	const integer numberOfTrachealAntiFormants = ( thee ? thy tracheal_antiformants -> formants.size : 0 );
-	const double y1 = ymin, y2 = ymax, ddx = 0.2, ymid = (y1 + y2) / 2.0;
-	const conststring32 text [6] = { 0, U"TF", U"TAF", U"NF", U"NAF", U""};
-	const integer nf [6] = { 0, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfOralFormants };
-	constexpr integer numberOfXSections = 5;
-	integer nsx = 0;
+	const double ddx = 0.2, ymid = (ymin + ymax) / 2.0;
+	autoSTRVEC text { U"TF", U"TAF", U"NF", U"NAF", U""};
+	autoINTVEC nf { numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfOralFormants };
+	autoSTRVEC sectionText (3);
 	autoMelderString ff, fb;
+	integer nsx = 0;
 
-	const integer numberOfFilters = numberOfNasalFormants + numberOfNasalAntiFormants + numberOfTrachealFormants + numberOfTrachealAntiFormants + numberOfOralFormants;
-	const double dx = (xmax - xmin) / (numberOfFilters + (nsx - 1) * ddx);
-
-	double x1, x2;
-	if (numberOfFilters == 0) {
-		x2 = xmax;
-		Graphics_line (g, xmin, ymid, x2, ymid);
-		goto end;
-	}
-
-	for (integer isection = 1; isection <= numberOfXSections; isection ++)
-		if (nf [isection] > 0)
-			nsx ++;
-
-	x1 = xmin;
-	for (integer isection = 1; isection <= numberOfXSections; isection ++) {
-		const integer numberOfFormants = nf [isection];
-
-		if (numberOfFormants == 0)
-			continue;
-
-		x2 = x1 + dx;
-		for (integer i = 1; i <= numberOfFormants; i ++) {
-			MelderString_copy (& ff, U"F", i);
-			MelderString_copy (& fb, U"B", i);
-			draw_oneSection (g, x1, x2, y1, y2, text [isection], ff.string, fb.string);
-
-			if (i < numberOfFormants) {
-				x1 = x2;
-				x2 = x1 + dx;
-			}
-		}
-
-		if (isection < numberOfXSections) {
-			x1 = x2;
-			x2 = x1 + ddx * dx;
-			Graphics_line (g, x1, ymid, x2, ymid);
-			x1 = x2;
-		}
-	}
-end:
 	if (out_yin)
 		*out_yin = ymid;
 	if (out_yout)
 		*out_yout = ymid;
+	const integer numberOfFilters = numberOfNasalFormants + numberOfNasalAntiFormants + numberOfTrachealFormants + numberOfTrachealAntiFormants + numberOfOralFormants;
+	double x1, x2;
+	if (numberOfFilters == 0) {
+		Graphics_line (g, xmin, ymid, xmax, ymid);
+		return;
+	}
+
+	for (integer isection = 1; isection <= nf.size; isection ++)
+		if (nf [isection] > 0)
+			nsx ++;
+	
+	const double dx = (xmax - xmin) / (numberOfFilters + 1);
+	const double boxWidth = (xmax - xmin) / (numberOfFilters + 1 + (nsx - 1) * ddx);
+	const double oldFontSize = Graphics_inqFontSize (g);
+	double newFontSize = Graphics_getFontSizeInsideBox (g, boxWidth, ymax - ymin, 4.0, 4.0);
+	if (newFontSize < oldFontSize)
+		Graphics_setFontSize (g, newFontSize);
+
+	x1 = xmin;
+	for (integer isection = 1; isection <= nf.size; isection ++) {
+		const integer numberOfFormants = nf [isection];
+
+		if (numberOfFormants == 0)
+			continue;
+		sectionText [1] = Melder_dup (text [isection].get());
+		for (integer i = 1; i <= numberOfFormants; i ++) {
+			MelderString_copy (& ff, U"F", i);
+			MelderString_copy (& fb, U"B", i);
+			sectionText [2] = Melder_dup (ff.string);
+			sectionText [3] = Melder_dup (fb.string);
+			x2 = x1 + boxWidth;
+			drawLinesInBox (g, x1, x2, ymin, ymax, sectionText.get());
+			x1 += dx;
+		}
+		x1 += ddx * dx;
+		Graphics_line (g, x2, ymid, x1, ymid);
+	}
+	if (x1 < xmax)
+		Graphics_line (g, x1, ymid, xmax, ymid);
+	Graphics_setFontSize (g, oldFontSize);
 }
 
 static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *out_yin, double *out_yout) {
-	// (0: filler) (1: hor. line to split) (2: split to diff) (3: diff) (4: diff to split)
-	// (5: split to filter) (6: filters) (7: conn to summer) (8: summer)
-	double xw [9] = { 0.0, 0.3, 0.2, 1.5, 0.5, 0.5, 1.0, 0.5, 0.5 };
-	const integer numberOfXSections = 8, numberOfYSections = 4;
 	const integer numberOfNasalFormants = my nasal_formants -> formants.size;
 	const integer numberOfOralFormants = my oral_formants -> formants.size;
 	const integer numberOfTrachealFormants = ( thee ? thy tracheal_formants -> formants.size : 0 );
@@ -1384,11 +1371,14 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 	const integer numberOfUpperPartFormants = numberOfNasalFormants + ( numberOfOralFormants > 0 ? 1 : 0 );
 	const integer numberOfLowerPartFormants = numberOfFormants - numberOfUpperPartFormants;
 	const conststring32 text [5] = { nullptr, U"Nasal", U"", U"", U"Tracheal" };
-	const integer nffrom [5] = { 0, 1, 1, 2, 1 };
-	const integer nfto [5] = { 0, numberOfNasalFormants, ( numberOfOralFormants > 0 ? 1 : 0 ), numberOfOralFormants, numberOfTrachealFormants };
+	autoINTVEC nffrom = { 1, 1, 2, 1 };
+	autoINTVEC nfto = { numberOfNasalFormants, ( numberOfOralFormants > 0 ? 1 : 0 ), numberOfOralFormants, numberOfTrachealFormants };
+	// (1: hor. line to split) (2: split to diff) (3: diff) (4: diff to split)
+	// (5: split to filter) (6: filters) (7: conn to summer) (8: summer)
+	autoVEC relativeWidths { 0.3, 0.2, 1.5, 0.5, 0.5, 1.0, 0.5, 0.5 }, accumulatedWidths = zero_VEC (relativeWidths.size);
 	autoMelderString fba;
-	double xws [9];
-	rel_to_abs (xw, xws, numberOfXSections, xmax - xmin);
+
+	scaleRelativeAndAccumulatedWidths (relativeWidths.get(), accumulatedWidths.get(), xmax - xmin);
 
 	double y1, y2;
 	if (numberOfFormants == 0) {
@@ -1408,21 +1398,32 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 	const connections local_out = connections_create (numberOfFormants);
 
 	// parallel section
-	double x1 = xmin + xws [5];
-	double x2 = x1 + xw [6];
+	double x1 = xmin + accumulatedWidths [5];
+	double x2 = x1 + relativeWidths [6];
 	y2 = ymax;
-	double x3 = xmin + xws [4];
+	double x3 = xmin + accumulatedWidths [4];
 	integer ic = 0;
-	for (integer isection = 1; isection <= numberOfYSections; isection ++) {
+	autoSTRVEC fbLines (2);
+	double numberOfCharacters = 9.0 + (numberOfOralFormants < 10 ? 0 : 3 );
+	double oldFontSize = Graphics_inqFontSize (g);
+	double fontSizeFormants = Graphics_getFontSizeInsideBox (g, relativeWidths [6], dy, numberOfCharacters, 2.5);
+	const double fontSizePreEmphasis = Graphics_getFontSizeInsideBox (g, relativeWidths [3], dy, 13.0, 1.5);
+	double newFontSize = std::min (fontSizePreEmphasis, fontSizeFormants);
+	if (newFontSize < oldFontSize)
+		Graphics_setFontSize (g, newFontSize);
+	
+	for (integer isection = 1; isection <= nffrom.size; isection ++) {
 		const integer ifrom = nffrom [isection], ito = nfto [isection];
 		if (ito < ifrom)
 			continue;
+		fbLines [1] = Melder_dup (text [isection]);
 		for (integer i = ifrom; i <= ito; i ++) {
 			y1 = y2 - dy;
 			const double ymid = (y1 + y2) / 2.0;
 			const conststring32 fi = Melder_integer (i);
 			MelderString_copy (& fba, U"A", fi, U" F", fi, U" B", fi);
-			draw_oneSection (g, x1, x2, y1, y2, text [isection], fba.string, nullptr);
+			fbLines [2] = Melder_dup (fba.string);
+			drawLinesInBox (g, x1, x2, y1, y2, fbLines.get());
 			Graphics_line (g, x3, ymid, x1, ymid); // to the left
 			ic ++;
 			local_in -> x [ic] = x3;
@@ -1441,7 +1442,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 			Graphics_line (g, x1, y1, local_in -> x [1], local_in -> y [1]);    // vertical
 		x2 = xmin;
 		if (numberOfLowerPartFormants > 0)
-			x2 += xw [1];
+			x2 += relativeWidths [1];
 		Graphics_line (g, x1, y1, x2, y1); // done
 	}
 	if (numberOfLowerPartFormants > 0) {
@@ -1450,13 +1451,14 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 		y1 = local_in -> y [ifrom];   // at the split
 		if (numberOfLowerPartFormants > 1)
 			Graphics_line (g, x1, y1, local_in -> x [numberOfFormants], local_in -> y [numberOfFormants]);    // vertical
-		x2 = xmin + xws [3]; // right of diff
+		x2 = xmin + accumulatedWidths [3]; // right of diff
 		Graphics_line (g, x1, y1, x2, y1); // from vertical to diff
-		x1 = xmin + xws [2]; // left of diff
-		draw_oneSection (g, x1, x2, y1 + 0.5 * dy, y1 - 0.5 * dy, U"Pre-emphasis", nullptr, nullptr);
+		x1 = xmin + accumulatedWidths [2]; // left of diff
+		autoSTRVEC preEmphasisLine { U"Pre-emphasis" };
+		drawLinesInBox (g, x1, x2, y1 + 0.5 * dy, y1 - 0.5 * dy, preEmphasisLine.get());
 		x2 = x1;
 		if (numberOfUpperPartFormants > 0) {
-			x2 = xmin + xw [1];
+			x2 = xmin + relativeWidths [1];
 			y2 = y1;   // at split
 			Graphics_line (g, x1, y1, x2, y1); // to split
 			y1 += (1 + ddy) * dy;
@@ -1466,7 +1468,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 		Graphics_line (g, xmin, y1, x2, y1);
 	}
 
-	const double r = xw [8] / 2.0;
+	const double r = relativeWidths [8] / 2.0;
 	x2 = xmax - r;
 	y2 = (ymin + ymax) / 2.0;
 
@@ -1474,7 +1476,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 
 	connections_free (local_out);
 	connections_free (local_in);
-
+	Graphics_setFontSize (g, oldFontSize);
 	if (out_yin)
 		*out_yin = y1;
 	if (out_yout)
@@ -1742,8 +1744,8 @@ autoCouplingGridPlayOptions CouplingGridPlayOptions_create () {
 
 Thing_implement (CouplingGrid, Function, 0);
 
-void structCouplingGrid :: v_info () {
-	structDaata :: v_info ();
+void structCouplingGrid :: v1_info () {
+	structDaata :: v1_info ();
 	conststring32 in1 = U"  ", in2 = U"    ", in3 = U"      ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
@@ -1834,8 +1836,8 @@ autoFricationGridPlayOptions FricationGridPlayOptions_create () {
 
 /************************ FricationGrid (& Sound) *********************************************/
 
-void structFricationGrid :: v_info () {
-	structDaata :: v_info ();
+void structFricationGrid :: v1_info () {
+	structDaata :: v1_info ();
 	const static char32 *in1 = U"  ", *in2 = U"    ", *in3 = U"      ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
@@ -1874,14 +1876,14 @@ autoFricationGrid FricationGrid_create (double tmin, double tmax, integer number
 }
 
 static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yout) {
-	constexpr integer numberOfXSections = 5;
 	const integer numberOfFormants = my frication_formants -> formants.size;
 	const integer numberOfParts = numberOfFormants + ( numberOfFormants > 1 ? 0 : 1 ) ;   // 2..number + bypass
 	// dum noise, connections, filter, connections, adder
-	double xw [6] = { 0.0, 2, 0.6, 1.5, 0.6, 0.5 }, xws [6];
-	double r, x1, y1, x2, y2, x3, xs, ys, ymid = (ymin + ymax) / 2.0;
-
-	rel_to_abs (xw, xws, numberOfXSections, xmax - xmin);
+	autoVEC relativeWidths { 2, 0.6, 1.5, 0.6, 0.5 }, accumulatedWidths = zero_VEC (relativeWidths.size);
+	double x1, y1, x2, y2, x3, ymid = (ymin + ymax) / 2.0;
+	double oldFontSize = Graphics_inqFontSize (g);
+	
+	scaleRelativeAndAccumulatedWidths (relativeWidths.get(), accumulatedWidths.get(), xmax - xmin);
 
 	dy = std::max (dy, 0.0);
 	dy = (ymax - ymin) / (numberOfParts * (1.0 + dy) - dy);
@@ -1892,22 +1894,31 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 
 	// section 1
 	x1 = xmin;
-	x2 = x1 + xw [1];
+	x2 = x1 + relativeWidths [1];
 	y1 = ymid - 0.5 * dy;
 	y2 = y1 + dy;
-	draw_oneSection (g, x1, x2, y1, y2, U"Frication", U"noise", nullptr);
+	
+	double fontSizeFrication = Graphics_getFontSizeInsideBox (g, relativeWidths [1], dy, 10.0, 2.0);
+	double fontSizeFormants = Graphics_getFontSizeInsideBox (g, relativeWidths [3], dy, 9.0, 1.5);
+	double newFontSize = std::min (fontSizeFrication, fontSizeFormants);
+	if (newFontSize < oldFontSize)
+		Graphics_setFontSize (g, newFontSize);
+	autoSTRVEC fricationNoise { U"Frication", U"noise" };
+	drawLinesInBox (g, x1, x2, y1, y2, fricationNoise.get());
 
 	// section 2, horizontal line halfway, vertical line
 	x1 = x2;
-	x2 = x1 + xw [2] / 2.0;
+	x2 = x1 + relativeWidths [2] / 2.0;
 	Graphics_line (g, x1, ymid, x2, ymid);
 	Graphics_line (g, x2, ymax - dy / 2, x2, ymin + dy / 2.0);
 	x3 = x2;
 	// final connection to section 2 , filters , connections to adder
-	x1 = xmin + xws [2];
-	x2 = x1 + xw [3];
+	x1 = xmin + accumulatedWidths [2];
+	x2 = x1 + relativeWidths [3];
 	y2 = ymax;
 	autoMelderString fba;
+	autoSTRVEC fbai { U"" };
+	
 	for (integer i = 1; i <= numberOfParts; i ++) {
 		conststring32 fi = Melder_integer (i + 1);
 		y1 = y2 - dy;
@@ -1915,7 +1926,8 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 			MelderString_copy (& fba, U"A", fi, U" F", fi, U" B", fi);
 		else
 			MelderString_copy (& fba,  U"Bypass");
-		draw_oneSection (g, x1, x2, y1, y2, nullptr, fba.string, nullptr);
+		fbai [1] = Melder_dup (fba.string);
+		drawLinesInBox (g, x1, x2, y1, y2, fbai.get());
 		double ymidi = (y1 + y2) / 2.0;
 		Graphics_line (g, x3, ymidi, x1, ymidi); // from noise to filter
 		cp -> x [i] = x2;
@@ -1923,9 +1935,9 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 		y2 = y1 - 0.5 * dy;
 	}
 
-	r = xw [5] / 2.0;
-	xs = xmax - r;
-	ys = ymid;
+	const double r = relativeWidths [5] / 2.0;
+	const double xs = xmax - r;
+	const double ys = ymid;
 
 	if (numberOfParts > 1)
 		alternatingSummer_drawConnections (g, xs, ys, r, cp, 1, 0.4);
@@ -1933,7 +1945,7 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 		Graphics_line (g, cp -> x [1], cp -> y [1], xs + r, ys);
 
 	connections_free (cp);
-
+	Graphics_setFontSize (g, oldFontSize);
 	if (yout)
 		*yout = ys;
 }
@@ -2045,20 +2057,20 @@ void KlattGrid_setDefaultPlayOptions (KlattGrid me) {
 
 Thing_implement (KlattGrid, Function, 0);
 
-void structKlattGrid :: v_info () {
-	structDaata :: v_info ();
+void structKlattGrid :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time:     ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time:       ", xmax, U" seconds");
 	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
 	MelderInfo_writeLine (U"\n--- PhonationGrid ---\n");
-	phonation -> v_info ();
+	our phonation -> v1_info ();
 	MelderInfo_writeLine (U"\n--- VocalTractGrid ---\n");
-	vocalTract -> v_info ();
+	our vocalTract -> v1_info ();
 	MelderInfo_writeLine (U"\n--- CouplingGrid ---\n");
-	coupling -> v_info ();
+	our coupling -> v1_info ();
 	MelderInfo_writeLine (U"\n--- FricationGrid ---\n");
-	frication -> v_info ();
+	our frication -> v1_info ();
 }
 
 void KlattGrid_setNames (KlattGrid me) {
@@ -2192,7 +2204,8 @@ void KlattGrid_drawVocalTract (KlattGrid me, Graphics g, kKlattGridFilterModel f
 }
 
 void KlattGrid_draw (KlattGrid me, Graphics g, kKlattGridFilterModel filterModel) {
-	const double xmin = 0.0, xmax2 = 0.90, xmax3 = 0.95, xmax = 1.0, ymin = 0.0, ymax = 1.0;
+	const double xmin = 0.0, xmax = 1.0, ymin = 0.0, ymax = 1.0;
+	const double xmax2 = 0.90, xmax3 = 0.95;
 	const double dy_phonation = 0.5, dy_vocalTract_p = 0.5, dy_frication = 0.5;
 
 	connections tf;
@@ -2212,15 +2225,15 @@ void KlattGrid_draw (KlattGrid me, Graphics g, kKlattGridFilterModel filterModel
 	const integer nff = my frication -> frication_formants -> formants.size - 1 + 1;
 	const double yh_frication = ( nff > 0 ? nff + (nff - 1) * dy_frication : 1.0 );
 	const double yh_phonation = 1.0 + dy_phonation + 1.0;
-	double yout_phonation, yout_frication;
+	double yout_phonation, yout_frication, yout_vocalTract;
 	double height_phonation = 0.3;
 	double dy = height_phonation / yh_phonation; // 1 vertical unit in source section height units
 
 	double xs1, xs2, ys1, ys2, xf1, xf2, yf1, yf2;
 	double xp1, xp2, yp1, yp2, xc1, xc2, yc1, yc2;
-	double xws [6];
-	double xw [6] = {0, 1.75, 0.125, 3.0, 0.25, 0.125 };
-	rel_to_abs (xw, xws, 5, xmax2 - xmin);
+	// {phonationPart, line, vocalTractPart, 
+	autoVEC relativeWidths { 1.75, 0.125, 3.0, 0.25, 0.125 }, accumulatedWidths = zero_VEC (relativeWidths.size);
+	scaleRelativeAndAccumulatedWidths (relativeWidths.get(), accumulatedWidths.get(), xmax2 - xmin);
 	
 	if (filterModel == kKlattGridFilterModel::CASCADE) { // Cascade section
 		/*
@@ -2232,27 +2245,27 @@ void KlattGrid_draw (KlattGrid me, Graphics g, kKlattGridFilterModel filterModel
 		dy = height_phonation / yh_phonation;
 
 		xs1 = xmin;
-		xs2 = xs1 + xw [1];
+		xs2 = xs1 + relativeWidths [1];
 		ys2 = ymax;
 		ys1 = ys2 - height_phonation;
 		PhonationGrid_draw_inside (my phonation.get(), g, xs1, xs2, ys1, ys2, dy_phonation, & yout_phonation);
 
 		// units in cascade have same heigth as units in source part.
 
-		xc1 = xmin + xws [2];
-		xc2 = xc1 + xw [3];
+		xc1 = xmin + accumulatedWidths [2]; // end of phonation
+		xc2 = xc1 + relativeWidths [3]; // same width as vocaltract
 		yc2 = yout_phonation + dy / 2.0;
 		yc1 = yc2 - dy;
-		double yin_vocalTract_c, yout_vocalTract_c;
-		VocalTractGrid_CouplingGrid_drawCascade_inplace (my vocalTract.get(), my coupling.get(), g, xc1, xc2, yc1, yc2, & yin_vocalTract_c, & yout_vocalTract_c);
+		double yin_vocalTract_c;
+		VocalTractGrid_CouplingGrid_drawCascade_inplace (my vocalTract.get(), my coupling.get(), g, xc1, xc2, yc1, yc2, & yin_vocalTract_c, & yout_vocalTract);
 
 		tf -> x [1] = xc2;
-		tf -> y [1] = yout_vocalTract_c;
+		tf -> y [1] = yout_vocalTract;
 
 		Graphics_line (g, xs2, yout_phonation, xc1, yin_vocalTract_c);
 
-		xf1 = xmin + xws [2];
-		xf2 = xf1 + xw [3];
+		xf1 = xmin + accumulatedWidths [2];
+		xf2 = xf1 + relativeWidths [3];
 		yf2 = ymax - height_phonation;
 		yf1 = 0.0;
 
@@ -2264,7 +2277,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, kKlattGridFilterModel filterModel
 			connector line from source to parallel has to be horizontal
 			determine y's of source and parallel section
 		*/
-		double yf_parallel, yh_parallel, yh_overlap = 0.3, yin_vocalTract_p, yout_vocalTract_p;
+		double yf_parallel, yh_parallel, yh_overlap = 0.3, yin_vocalTract_p;
 		_KlattGrid_queryParallelSplit (me, dy_vocalTract_p, &yh_parallel, & yf_parallel);
 		if (yh_parallel == 0.0) {
 			yh_parallel = yh_phonation;
@@ -2285,33 +2298,33 @@ void KlattGrid_draw (KlattGrid me, Graphics g, kKlattGridFilterModel filterModel
 
 		// source, tract, frication
 		xs1 = xmin;
-		xs2 = xs1 + xw [1];
+		xs2 = xs1 + relativeWidths [1];
 
 		const double h1 = yh_phonation / 2.0, h2 = h1, h3 = yf_parallel, h4 = yh_parallel - h3, h5 = yh_frication;
 		getYpositions (h1, h2, h3, h4, h5, yh_overlap, & dy, & ys1, & ys2, & yp1, & yp2, & yf1, & yf2);
 
 		PhonationGrid_draw_inside (my phonation.get(), g, xs1, xs2, ys1, ys2, dy_phonation, & yout_phonation);
 
-		xp1 = xmin + xws [2];
-		xp2 = xp1 + xw [3];
-		VocalTractGrid_CouplingGrid_drawParallel_inplace (my vocalTract.get(), my coupling.get(), g, xp1, xp2, yp1, yp2, dy_vocalTract_p, &yin_vocalTract_p, &yout_vocalTract_p);
+		xp1 = xmin + accumulatedWidths [2];
+		xp2 = xp1 + relativeWidths [3];
+		VocalTractGrid_CouplingGrid_drawParallel_inplace (my vocalTract.get(), my coupling.get(), g, xp1, xp2, yp1, yp2, dy_vocalTract_p, & yin_vocalTract_p, & yout_vocalTract);
 
 		tf -> x [1] = xp2;
-		tf -> y [1] = yout_vocalTract_p;
+		tf -> y [1] = yout_vocalTract;
 
 		Graphics_line (g, xs2, yout_phonation, xp1, yin_vocalTract_p);
 
-		xf1 = xmin /* + 0.5 * xws [1] */;
-		xf2 = xf1 + 0.55 * (xw [2] + xws [3]);
+		xf1 = xmin /* + 0.5 * accumulatedWidths [1] */;
+		xf2 = xf1 + 0.55 * (relativeWidths [2] + accumulatedWidths [3]);
 
-		FricationGrid_draw_inside (my frication.get(), g, xf1, xf2, yf1, yf2, dy_frication, &yout_frication);
+		FricationGrid_draw_inside (my frication.get(), g, xf1, xf2, yf1, yf2, dy_frication, & yout_frication);
 	}
 
 	tf -> x [2] = xf2;
 	tf -> y [2] = yout_frication;
 	const double r = (xmax3 - xmax2) / 2.0;
 	const double xs = xmax2 + r / 2.0;
-	const double ys = (ymax - ymin) / 2.0;
+	const double ys = (yout_vocalTract + yout_frication) / 2.0;//(ymax - ymin) / 2.0;
 
 	summer_drawConnections (g, xs, ys, r, tf, true, 0.6);
 
@@ -2998,18 +3011,18 @@ autoKlattGrid KlattGrid_createFromVowel (double duration, double f0start, double
 		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, 2, tstart, f2);
 		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, 2, tstart, b2);
 	}
-	if (f3 > 0) {
+	if (f3 > 0.0) {
 		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, 3, tstart, f3);
 		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, 3, tstart, b3);
 	}
-	if (f4 > 0) {
+	if (f4 > 0.0) {
 		KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, 4, tstart, f4);
 		KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, 4, tstart, f4 * bandWidthFraction);
 	}
-	if (formantFrequencyInterval > 0) {
-		double startFrequency = std::max (std::max (f1, f2), std::max (f3, f4));
+	if (formantFrequencyInterval > 0.0) {
+		const double startFrequency = std::max (std::max (f1, f2), std::max (f3, f4));
 		for (integer iformant = 5; iformant <= numberOfOralFormants; iformant ++) {
-			double frequency =  startFrequency + (iformant - 4) * formantFrequencyInterval;
+			const double frequency =  startFrequency + (iformant - 4) * formantFrequencyInterval;
 			KlattGrid_addFormantPoint (me.get(), kKlattGridFormantType::ORAL, iformant, tstart, frequency);
 			KlattGrid_addBandwidthPoint (me.get(), kKlattGridFormantType::ORAL, iformant, tstart, frequency * bandWidthFraction);
 		}

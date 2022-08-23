@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2019 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2017,2019,2022 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
 struct _MP3_FILE;
 
-Thing_define (LongSound, Sampled) {
+Thing_define (LongSound, SampledXY) {
 	structMelderFile file;
 	FILE *f;
 	int audioFileType, encoding, numberOfBytesPerSamplePoint;
@@ -49,11 +49,11 @@ Thing_define (LongSound, Sampled) {
 	double *compressedFloats [2];
 	int16 *compressedShorts;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
-	void v_info ()
+	void v1_info ()
 		override;
-	void v_copy (Daata data_to)
+	void v1_copy (Daata data_to) const
 		override;
 	bool v_writable ()
 		override { return false; }
@@ -72,8 +72,7 @@ bool LongSound_haveWindow (LongSound me, double tmin, double tmax);
 
 void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, integer channel, double *minimum, double *maximum);
 
-void LongSound_playPart (LongSound me, double tmin, double tmax,
-	Sound_PlayCallback callback, Thing boss);
+void LongSound_playPart (LongSound me, double startTime, double endTime, Sound_PlayCallback playCallback, Thing playBoss);
 
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
 void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, integer channel, MelderFile file);
@@ -81,7 +80,7 @@ void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, integer 
 void LongSound_readAudioToFloat (LongSound me, MAT buffer, integer firstSample);
 void LongSound_readAudioToShort (LongSound me, int16 *buffer, integer firstSample, integer numberOfSamples);
 
-Collection_define (SoundAndLongSoundList, OrderedOf, Sampled) {
+Collection_define (SoundAndLongSoundList, OrderedOf, SampledXY) {
 };
 
 void LongSound_concatenate (SoundAndLongSoundList collection, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);

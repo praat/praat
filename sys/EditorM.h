@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2013,2015-2021 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@
 #define EDITOR_ARGS_FORM_FORWARD  cmd, _sendingForm_, _narg_, _args_, _sendingString_, interpreter
 #define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, conststring32, Interpreter
 #define EDITOR_ARGS_CMD_FORWARD  cmd, nullptr, 0, nullptr, nullptr, nullptr
-#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter interpreter
+#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter
+#define EDITOR_ARGS_DIRECT_WITH_OUTPUT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter interpreter
 #define EDITOR_ARGS_DIRECT_FORWARD  nullptr, nullptr, 0, nullptr, nullptr, nullptr
 
 #define EDITOR_FORM(title, helpTitle)  \
@@ -417,16 +418,14 @@ _form_inited_: \
 	}
 
 #define VOID_EDITOR
-#define VOID_EDITOR_END  \
-	(void) interpreter;
+#define VOID_EDITOR_END
 
 #define DATA_BEGIN__  \
-	Melder_assert (my data);
+	Melder_assert (my data());
 
 #define PLAY_DATA  \
 	DATA_BEGIN__
-#define PLAY_DATA_END  \
-	(void) interpreter;
+#define PLAY_DATA_END
 
 #define INFO_EDITOR
 #define INFO_EDITOR_END  \
@@ -501,11 +500,9 @@ _form_inited_: \
 	FOR_STRING__
 
 #define MODIFY_DATA(undoTitle)  \
-	Editor_save (me, undoTitle);
+	Editor_save (my boss(), undoTitle);
 #define MODIFY_DATA_END  \
-	FunctionEditor_redraw (me); \
-	Editor_broadcastDataChanged (me); \
-	(void) interpreter;
+	Editor_broadcastDataChanged (my boss());
 
 #define CONVERT_DATA_TO_ONE  \
 	DATA_BEGIN__
@@ -513,18 +510,17 @@ _form_inited_: \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	Thing_setName (result.get(), __VA_ARGS__); \
-	Editor_broadcastPublication (me, result.move());
+	Editor_broadcastPublication (my boss(), result.move());
 
 #define CREATE_ONE
 #define CREATE_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	Thing_setName (result.get(), __VA_ARGS__); \
-	Editor_broadcastPublication (me, result.move());
+	Editor_broadcastPublication (my boss(), result.move());
 
 #define HELP(title)  \
-	Melder_help (title); \
-	(void) interpreter;
+	Melder_help (title);
 
 /* End of file EditorM.h */
 #endif

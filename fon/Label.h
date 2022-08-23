@@ -2,7 +2,7 @@
 #define _Label_h_
 /* Label.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 #pragma mark - class Autosegment
 
 Thing_define (Autosegment, Function) {
-	void v_copy (Daata data_to)
+	void v1_copy (Daata data_to) const
 		override;
-	bool v_equal (Daata otherData)
+	bool v1_equal (Daata otherData)
 		override;
 	static Data_Description s_description;
 	Data_Description v_description ()

@@ -1,6 +1,6 @@
 /* Pitch_to_Sound.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,16 +36,15 @@ autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, bool hum) {
 	try {
 		autoPointProcess point = Pitch_to_PointProcess (me);
 		autoSound sound = PointProcess_to_Sound_pulseTrain (point.get(), 44100.0, 0.7, 0.05, 30);
-		if (hum) {
+		if (hum)
 			Sound_filterWithFormants (sound.get(), tmin, tmax, 6, formant, bandwidth);
-		}
 		return sound;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
 }
 
-void Pitch_play (Pitch me, double tmin, double tmax) {
+void Pitch_play (Pitch me, double tmin, double tmax) {   // BUG: why no callback?
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoSound sound = Pitch_to_Sound (me, tmin, tmax, false);

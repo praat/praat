@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2008,2010-2019,2021 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2008,2010-2019,2021,2022 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,20 +47,20 @@
 #include "../external/flac/flac_FLAC_stream_decoder.h"
 #include "../external/mp3/mp3.h"
 
-Thing_implement (LongSound, Sampled, 0);
+Thing_implement (LongSound, SampledXY, 0);
 Thing_implement (SoundAndLongSoundList, Ordered, 0);
 
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
 
 constexpr integer minimumBufferDuration = 10;   // seconds
-constexpr integer defaultBufferDuration = 60;   // seconds
+constexpr integer defaultBufferDuration = 600;   // seconds
 constexpr integer maximumBufferDuration = 10000;   // seconds
 
 static integer prefs_bufferLength;
 
 void LongSound_preferences () {
-	Preferences_addInteger (U"LongSound.bufferLength", & prefs_bufferLength, defaultBufferDuration);
+	Preferences_addInteger (U"LongSound.bufferLength2", & prefs_bufferLength, defaultBufferDuration);
 }
 
 integer LongSound_getBufferSizePref_seconds () {
@@ -71,7 +71,7 @@ void LongSound_setBufferSizePref_seconds (integer size) {
 	prefs_bufferLength = Melder_clipped (minimumBufferDuration, size, maximumBufferDuration);
 }
 
-void structLongSound :: v_destroy () noexcept {
+void structLongSound :: v9_destroy () noexcept {
 	/*
 		The play callback may contain a pointer to my buffer.
 		That pointer is about to dangle, so kill the playback.
@@ -85,10 +85,11 @@ void structLongSound :: v_destroy () noexcept {
 	} else if (f) {
 		fclose (f);
 	}
-	LongSound_Parent :: v_destroy ();
+	LongSound_Parent :: v9_destroy ();
 }
 
-void structLongSound :: v_info () {
+void structLongSound :: v1_info () {
+	structDaata :: v1_info ();
 	static const conststring32 encodingStrings [1+22] = { U"none",
 		U"linear 8 bit signed", U"linear 8 bit unsigned",
 		U"linear 16 bit big-endian", U"linear 16 bit little-endian",
@@ -98,7 +99,6 @@ void structLongSound :: v_info () {
 		U"IEEE float 32 bit big-endian", U"IEEE float 32 bit little-endian",
 		U"IEEE float 64 bit big-endian", U"IEEE float 64 bit little-endian",
 		U"FLAC", U"FLAC", U"FLAC", U"MP3", U"MP3", U"MP3" };
-	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Duration: ", xmax - xmin, U" seconds");
 	MelderInfo_writeLine (U"File name: ", Melder_fileToPath (& file));
 	MelderInfo_writeLine (U"File type: ", audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? U"unknown" : Melder_audioFileTypeString (audioFileType));
@@ -204,11 +204,11 @@ static void _LongSound_MP3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNE
 	my compressedSamplesLeft -= numberOfSamples;
 }
 
-static void LongSound_init (LongSound me, MelderFile file) {
+static void LongSound_init (LongSound me, constMelderFile file) {
 	MelderFile_copy (file, & my file);
-	MelderFile_open (file);   // BUG: should be auto, but that requires an implemented .transfer()
-	my f = file -> filePointer;
-	my audioFileType = MelderFile_checkSoundFile (file, & my numberOfChannels, & my encoding, & my sampleRate, & my startOfData, & my nx);
+	MelderFile_open (& my file);
+	my f = my file. filePointer;
+	my audioFileType = MelderFile_checkSoundFile (& my file, & my numberOfChannels, & my encoding, & my sampleRate, & my startOfData, & my nx);
 	if (my audioFileType == 0)
 		Melder_throw (U"File not recognized (LongSound only supports AIFF, AIFC, WAV, NeXT/Sun, NIST and FLAC).");
 	if (my encoding == Melder_SHORTEN || my encoding == Melder_POLYPHONE)
@@ -216,9 +216,14 @@ static void LongSound_init (LongSound me, MelderFile file) {
 	if (my nx < 1)
 		Melder_throw (U"Audio file contains 0 samples.");
 	my xmin = 0.0;
-	my dx = 1 / my sampleRate;
+	my dx = 1.0 / my sampleRate;
 	my xmax = my nx * my dx;
 	my x1 = 0.5 * my dx;
+	my ymin = 1.0;
+	my ymax = my numberOfChannels;  // TODO: rid numberOfChannels
+	my ny = my numberOfChannels;
+	my dy = 1.0;
+	my y1 = 1.0;
 	my numberOfBytesPerSamplePoint = Melder_bytesPerSamplePoint (my encoding);
 	my bufferLength = prefs_bufferLength;
 	for (;;) {
@@ -252,7 +257,7 @@ static void LongSound_init (LongSound me, MelderFile file) {
 	}
 }
 
-void structLongSound :: v_copy (Daata thee_Daata) {
+void structLongSound :: v1_copy (Daata thee_Daata) const {
 	LongSound thee = static_cast <LongSound> (thee_Daata);
 	thy f = nullptr;
 	thy buffer.releaseToAmbiguousOwner();   // this may have been shallow-copied, so undangle and nullify
@@ -383,12 +388,10 @@ static void writePartToOpenFile (LongSound me, int audioFileType, integer imin, 
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
-		if (tmin < my xmin)
-			tmin = my xmin;
-		if (tmax > my xmax)
-			tmax = my xmax;
+		Melder_clipLeft (my xmin, & tmin);
+		Melder_clipRight (& tmax, my xmax);
 		integer imin, imax;
-		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+		const integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1)
 			Melder_throw (U"Less than 1 sample selected.");
 		autoMelderFile mfile = MelderFile_create (file);
@@ -535,46 +538,44 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, integer
 
 static struct LongSoundPlay {
 	integer numberOfSamples, i1, i2, silenceBefore, silenceAfter;
-	double tmin, tmax, dt, t1;
+	double startTime, endTime, dt, t1;
 	int16 *resampledBuffer;
-	Sound_PlayCallback callback;
-	Thing boss;
+	Sound_PlayCallback playCallback;
+	Thing playBoss;
 } thePlayingLongSound;
 
 static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 	struct LongSoundPlay *me = (struct LongSoundPlay *) closure;
 	int phase = 2;
-	double t = samplesPlayed <= my silenceBefore ? my tmin :
-		samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
+	double t = samplesPlayed <= my silenceBefore ? my startTime :
+		samplesPlayed >= my silenceBefore + my numberOfSamples ? my endTime :
 		my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt;
 	if (! MelderAudio_isPlaying) {
 		phase = 3;
 		Melder_free (my resampledBuffer);
 	}
-	if (my callback)
-		return my callback (my boss, phase, my tmin, my tmax, t);
+	if (my playCallback)
+		return my playCallback (my playBoss, phase, my startTime, my endTime, t);
 	return true;
 }
 
-void LongSound_playPart (LongSound me, double tmin, double tmax,
-	Sound_PlayCallback callback, Thing boss)
-{
+void LongSound_playPart (LongSound me, double startTime, double endTime, Sound_PlayCallback playCallback, Thing playBoss) {
 	struct LongSoundPlay *thee = (struct LongSoundPlay *) & thePlayingLongSound;
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	Melder_free (thy resampledBuffer);   // just in case, and after playing has stopped
 	try {
-		bool fits = LongSound_haveWindow (me, tmin, tmax);
+		bool fits = LongSound_haveWindow (me, startTime, endTime);
 		integer bestSampleRate = MelderAudio_getOutputBestSampleRate (my sampleRate), n, i1, i2;
 		if (! fits)
-			Melder_throw (U"Sound too long (", tmax - tmin, U" seconds).");
+			Melder_throw (U"Sound too long (", endTime - startTime, U" seconds).");
 		/*
 			Assign to *thee only after stopping the playing sound.
 		*/
-		thy tmin = tmin;
-		thy tmax = tmax;
-		thy callback = callback;
-		thy boss = boss;
-		if ((n = Sampled_getWindowSamples (me, tmin, tmax, & i1, & i2)) < 2) return;
+		thy startTime = startTime;
+		thy endTime = endTime;
+		thy playCallback = playCallback;
+		thy playBoss = playBoss;
+		if ((n = Sampled_getWindowSamples (me, startTime, endTime, & i1, & i2)) < 2) return;
 		if (bestSampleRate == my sampleRate) {
 			thy numberOfSamples = n;
 			thy dt = 1 / my sampleRate;
@@ -583,8 +584,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			thy i2 = i2;
 			thy silenceBefore = Melder_iroundTowardsZero (my sampleRate * MelderAudio_getOutputSilenceBefore ());
 			thy silenceAfter = Melder_iroundTowardsZero (my sampleRate * MelderAudio_getOutputSilenceAfter ());
-			if (thy callback)
-				thy callback (thy boss, 1, tmin, tmax, tmin);
+			if (thy playCallback)
+				thy playCallback (thy playBoss, 1, startTime, endTime, startTime);
 			if (thy silenceBefore > 0 || thy silenceAfter > 0 || 1) {
 				thy resampledBuffer = Melder_calloc (int16, (thy silenceBefore + thy numberOfSamples + thy silenceAfter) * my numberOfChannels);
 				memcpy (& thy resampledBuffer [thy silenceBefore * my numberOfChannels],
@@ -644,8 +645,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 					}
 				}
 			}
-			if (thy callback)
-				thy callback (thy boss, 1, tmin, tmax, tmin);
+			if (thy playCallback)
+				thy playCallback (thy playBoss, 1, startTime, endTime, startTime);
 			MelderAudio_play16 (resampledBuffer, newSampleRate, silenceBefore + newN + silenceAfter, my numberOfChannels, melderPlayCallback, thee);
 		}
 		//Melder_free (thy resampledBuffer);   // cannot do that, because MelderAudio_play16 isn't necessarily synchronous
@@ -664,7 +665,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		/*
 			The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 		*/
-		Sampled data = my at [1];
+		SampledXY data = my at [1];
 		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
 			sampleRate = Melder_iround (1.0 / sound -> dx);

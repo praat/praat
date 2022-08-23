@@ -34,7 +34,7 @@ static bool isSingleWordCharacter (char32 c) {
 
 static integer lookUp_unsorted (ManPages me, conststring32 title);
 
-void structManPages :: v_destroy () noexcept {
+void structManPages :: v9_destroy () noexcept {
 	for (integer ipage = 1; ipage <= our pages.size; ipage ++) {
 		ManPage page = our pages.at [ipage];
 		for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
@@ -44,7 +44,7 @@ void structManPages :: v_destroy () noexcept {
 		page -> linksHither. reset();   // TODO automate
 		page -> linksThither. reset();
 	}
-	ManPages_Parent :: v_destroy ();
+	ManPages_Parent :: v9_destroy ();
 }
 
 static conststring32 extractLink (conststring32 text, const char32 *p, char32 *link) {
@@ -220,7 +220,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		}
 	}
 }
-void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
+void structManPages :: v1_readText (MelderReadText text, int /*formatVersion*/) {
 	our dynamic = true;
 	MelderDir_copy (& Data_directoryBeingRead, & our rootDirectory);
 	readOnePage (this, text);
@@ -655,6 +655,13 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 					while (isSingleWordCharacter (*p) && *p != U'\0') MelderString_append (& link, *p++);
 					MelderString_copy (& linkText, link.string);
 				}
+				/*
+					The first character of the link text can have the wrong case.
+				*/
+				integer linkPageNumber = ManPages_lookUp (me, link.string);
+				if (linkPageNumber == 0)
+					Melder_throw (U"No such manual page: ", link.string);
+				link.string [0] = my pages.at [linkPageNumber] -> title [0];
 				/*
 				 * We write the link in the following format:
 				 *     <a href="link.html">linkText</a>

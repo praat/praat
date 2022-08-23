@@ -163,7 +163,7 @@ FORM (CREATE_ONE__KlattGrid_create, U"Create KlattGrid", U"Create KlattGrid...")
 	INTEGER (numberOfDeltaFormants, U"Number of delta formants", U"1")
 	OK
 DO
-	Melder_require (fromTime < toTime, 
+	Melder_require (fromTime < toTime,
 		U"The start time must lie before the end time.");
 	Melder_require (numberOfOralFormants >= 0 && numberOfNasalFormants >= 0 && numberOfNasalAntiFormants >= 0
 		&& numberOfTrachealFormants >= 0 && numberOfTrachealAntiFormants >= 0
@@ -174,34 +174,35 @@ DO
 	CREATE_ONE_END (name)
 }
 
-#define KlattGrid_INSTALL_TIER_EDITOR(Name)  \
+#define KlattGrid_INSTALL_TIER_EDITOR(Name, name)  \
 DIRECT (EDITOR_ONE_KlattGrid_edit##Name##Tier) { \
 	EDITOR_ONE (a,KlattGrid) \
-		autoKlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
+		conststring32 id_and_name = Melder_cat (ID_AND_FULL_NAME, U": " #name); \
+		autoKlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (id_and_name, me); \
 	EDITOR_ONE_END \
 }
 
-KlattGrid_INSTALL_TIER_EDITOR (Pitch)
-KlattGrid_INSTALL_TIER_EDITOR (VoicingAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (Flutter)
-KlattGrid_INSTALL_TIER_EDITOR (Power1)
-KlattGrid_INSTALL_TIER_EDITOR (Power2)
-KlattGrid_INSTALL_TIER_EDITOR (OpenPhase)
-KlattGrid_INSTALL_TIER_EDITOR (CollisionPhase)
-KlattGrid_INSTALL_TIER_EDITOR (DoublePulsing)
-KlattGrid_INSTALL_TIER_EDITOR (AspirationAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (BreathinessAmplitude)
-KlattGrid_INSTALL_TIER_EDITOR (SpectralTilt)
+KlattGrid_INSTALL_TIER_EDITOR (Pitch, pitch)
+KlattGrid_INSTALL_TIER_EDITOR (VoicingAmplitude, voicing amplitude)
+KlattGrid_INSTALL_TIER_EDITOR (Flutter, flutter)
+KlattGrid_INSTALL_TIER_EDITOR (Power1, power1)
+KlattGrid_INSTALL_TIER_EDITOR (Power2, power2)
+KlattGrid_INSTALL_TIER_EDITOR (OpenPhase, open phase)
+KlattGrid_INSTALL_TIER_EDITOR (CollisionPhase, collision phase)
+KlattGrid_INSTALL_TIER_EDITOR (DoublePulsing, double pulsing)
+KlattGrid_INSTALL_TIER_EDITOR (AspirationAmplitude, aspiration amplitude)
+KlattGrid_INSTALL_TIER_EDITOR (BreathinessAmplitude, breathiness amplitude)
+KlattGrid_INSTALL_TIER_EDITOR (SpectralTilt, spectral tilt)
 
-KlattGrid_INSTALL_TIER_EDITOR (FricationBypass)
-KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude)
+KlattGrid_INSTALL_TIER_EDITOR (FricationBypass, frication bypass)
+KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude, frication amplitude)
 
 #undef KlattGrid_INSTALL_TIER_EDITOR
 
 #define KlattGRID_EDIT_FORMANTGRID(Name,formantType)  \
 DIRECT (EDITOR_ONE_KlattGrid_edit##Name##FormantGrid) { \
 	EDITOR_ONE (a,KlattGrid) \
-		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" grid"); \
+		conststring32 id_and_name = Melder_cat (ID_AND_FULL_NAME, U": ", KlattGrid_getFormantName (formantType), U" grid"); \
 		autoKlattGrid_FormantGridEditor editor = KlattGrid_FormantGridEditor_create (id_and_name, me, formantType); \
 	EDITOR_ONE_END \
 }
@@ -223,10 +224,13 @@ FORM (EDITOR_ONE_KlattGrid_edit##Name##FormantAmplitudeTier, U"KlattGrid: View &
 DO \
 	EDITOR_ONE (a,KlattGrid) \
 		OrderedOf<structIntensityTier>* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
-		if (! amp) Melder_throw (U"Unknown formant type"); \
-		if (formantNumber > amp->size) Melder_throw (U"Formant number does not exist."); \
-		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" amplitude tier"); \
-		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, amp->at [formantNumber]); \
+		if (! amp) \
+			Melder_throw (U"Unknown formant type"); \
+		if (formantNumber > amp->size) \
+			Melder_throw (U"Formant number does not exist."); \
+		conststring32 id_and_name = Melder_cat (ID_AND_FULL_NAME, U": ", KlattGrid_getFormantName (formantType), U" amplitude tier"); \
+		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, \
+				formantType, formantNumber); \
 	EDITOR_ONE_END \
 }
 
@@ -403,13 +407,12 @@ DO \
 	MODIFY_EACH_END \
 }
 
-
 #define KlattGrid_FORMULA_ADD_REMOVE_FBA(Name,namef,formantType)  \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Frequencies, frequencies, U"if row = 2 then self + 200 else self fi", formantType, U" ") \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Bandwidths, bandwidths, U"self / 10 ; 10% of frequency", formantType, U"Warning: self is formant frequency.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType, U"500.0", (Hz), (value>0), U"Frequency should be greater than zero.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType, U"50.0", (Hz), (value>0), U"Bandwidth should be greater than zero.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Amplitude, Amplitude, amplitude, formantType, U"0.0", (dB), (isdefined(value)), U"Amplitude should be defined.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType, U"500.0", (Hz), (value > 0.0), U"Frequency should be greater than zero.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType, U"50.0", (Hz), (value > 0.0), U"Bandwidth should be greater than zero.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Amplitude, Amplitude, amplitude, formantType, U"0.0", (dB), (isdefined (value)), U"Amplitude should be defined.") \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType) \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType) \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Amplitude, Amplitude, amplitude, formantType) \
@@ -424,8 +427,8 @@ KlattGrid_ADD_FORMANT_AMPLITUDETIER (Name, namef, formantType)
 #define KlattGrid_FORMULA_ADD_REMOVE_FB(Name,namef,formantType)  \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Frequencies, frequencies, U"if row = 2 then self + 200 else self fi",formantType, U" ") \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Bandwidths, bandwidths, U"self / 10 ; 10% of frequency",formantType, U"Warning: self is formant frequency.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, U"500.0", (Hz), (value>0), U"Frequency should be greater than zero.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  U"50.0", (Hz), (value>0), U"Bandwidth should be greater than zero.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, U"500.0", (Hz), (value > 0.0), U"Frequency should be greater than zero.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  U"50.0", (Hz), (value > 0.0), U"Bandwidth should be greater than zero.") \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType) \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType) \
 KlattGrid_ADD_FORMANT(Name,namef,formantType) \
@@ -436,8 +439,8 @@ KlattGrid_REMOVE_FORMANT (Name, namef, formantType)
 #define KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA(Name,namef,formantType)  \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Frequencies, frequencies, U"if row = 2 then self + 200 else self fi",formantType, U" ") \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Bandwidths, bandwidths, U"self / 10 ; 10% of frequency",formantType, U"Warning: self is formant frequency.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, U"-100.0", (Hz), (isdefined(value)), U"Frequency should be defined.") \
-KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  U"-50.0", (Hz), (isdefined(value)), U"Bandwidth should be defined.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, U"-100.0", (Hz), (isdefined (value)), U"Frequency should be defined.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  U"-50.0", (Hz), (isdefined (value)), U"Bandwidth should be defined.") \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType) \
 KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType) \
 KlattGrid_ADD_FORMANT_FREQUENCYANDBANDWIDTHTIERS (Name, namef, formantType) \
@@ -657,8 +660,8 @@ DO \
 	MODIFY_EACH_END \
 }
 
-KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, U" (Hz)", U"500.0", (value > 0), U"Frequency should be greater than zero.")
-KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (value > 0), U"Bandwidth should be greater than zero.")
+KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, U" (Hz)", U"500.0", (value > 0.0), U"Frequency should be greater than zero.")
+KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (value > 0.0), U"Bandwidth should be greater than zero.")
 
 #undef KlattGrid_FORMANT_GET_ADD_REMOVE
 
@@ -697,7 +700,7 @@ FORM (QUERY_ONE_FOR_REAL__KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitu
 	OK
 DO
 	QUERY_ONE_FOR_REAL (KlattGrid)
-		double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time);
+		const double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time);
 	QUERY_ONE_FOR_REAL_END ( U"dB")
 }
 
@@ -746,8 +749,8 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__KlattGrid_to_Sound_special, U"KlattGrid: To Sound (special)", U"KlattGrid: To Sound (special)...") {
-	REAL (fromTime, U"left Time range (s)", U"0")
-	REAL (toTime, U"right Time range (s)", U"0")
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	BOOLEAN (scalePeak, U"Scale peak", true)
 	KlattGrid_PhonationGridPlayOptions_addCommonFields (useVoicing, useFlutter, useDoublePulsing, useCollisionPhase, useSpectralTilt, flowFunctionType, useFlowDerivative, useAspiration, useBreathiness)
@@ -780,8 +783,8 @@ DIRECT (CONVERT_EACH_TO_ONE__KlattGrid_to_Sound) {
 }
 
 FORM (PLAY_KlattGrid_playSpecial, U"KlattGrid: Play special", U"KlattGrid: Play special...") {
-	REAL (fromTime, U"left Time range (s)", U"0")
-	REAL (toTime, U"right Time range (s)", U"0")
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
 	BOOLEAN (scalePeak, U"Scale peak", true)
 	KlattGrid_PhonationGridPlayOptions_addCommonFields (useVoicing, useFlutter, useDoublePulsing, useCollisionPhase, useSpectralTilt, flowFunctionType, useFlowDerivative, useAspiration, useBreathiness)
 	KlattGrid_formantSelection_vocalTract_commonFields (filtersStructure, fromOralFormant, toOralFormant, fromNasalFormant, toNasalFormant, fromNasalAntiFormant, toNasalAntiFormant);
@@ -894,14 +897,14 @@ void praat_KlattGrid_init () {
 	structKlattGrid_FricationBypassTierArea :: f_preferences();
 
 	praat_addMenuCommand (U"Objects", U"New", U"Acoustic synthesis (Klatt)", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"KlattGrid help", nullptr, praat_DEPTH_1 | praat_NO_API, 
+	praat_addMenuCommand (U"Objects", U"New", U"KlattGrid help", nullptr, GuiMenu_DEPTH_1 | GuiMenu_NO_API,
 			HELP__KlattGrid_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- the synthesizer grid --", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid...", nullptr, 1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid...", nullptr, 1,
 			CREATE_ONE__KlattGrid_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid from vowel...", nullptr, 1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid from vowel...", nullptr, 1,
 			CREATE_ONE__KlattGrid_createFromVowel);
-	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid example", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid example", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CREATE_ONE__KlattGrid_createExample);
 
 	/*
@@ -933,26 +936,26 @@ void praat_KlattGrid_init () {
 	Add oral/nasal/tracheal/frication/delta formant and bandwidth tier
 	Add nasal/tracheal antiformant and bandwidth tier
 	*/
-	praat_addAction1 (classKlattGrid, 0, U"KlattGrid help", nullptr, 0, 
+	praat_addAction1 (classKlattGrid, 0, U"KlattGrid help", nullptr, 0,
 			HELP__KlattGrid_help);
 	praat_addAction1 (classKlattGrid, 0, U"Edit phonation -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Edit pitch tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit pitch tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editPitchTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit voicing amplitude tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit voicing amplitude tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editVoicingAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit flutter tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit flutter tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editFlutterTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit power1 tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit power1 tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editPower1Tier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit power2 tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit power2 tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editPower2Tier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit open phase tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit open phase tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editOpenPhaseTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit collision phase tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit collision phase tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editCollisionPhaseTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit double pulsing tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit double pulsing tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editDoublePulsingTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit spectral tilt tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit spectral tilt tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editSpectralTiltTier);
 	praat_addAction1 (classKlattGrid, 0, U"Edit aspiration amplitude tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editAspirationAmplitudeTier);
@@ -960,9 +963,9 @@ void praat_KlattGrid_init () {
 			EDITOR_ONE_KlattGrid_editBreathinessAmplitudeTier);
 
 	praat_addAction1 (classKlattGrid, 0, U"Edit filters -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Edit oral formant grid", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit oral formant grid", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editOralFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit nasal formant grid", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit nasal formant grid", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editNasalFormantGrid);
 	praat_addAction1 (classKlattGrid, 0, U"Edit nasal antiformant grid", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editNasalAntiFormantGrid);
@@ -973,7 +976,7 @@ void praat_KlattGrid_init () {
 	praat_addAction1 (classKlattGrid, 0, U"-- edit delta formant grid --", nullptr, 1, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Edit delta formant grid", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editDeltaFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal formant grid", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal formant grid", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editTrachealFormantGrid);
 	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal antiformant grid", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editTrachealAntiFormantGrid);
@@ -982,54 +985,54 @@ void praat_KlattGrid_init () {
 	praat_addAction1 (classKlattGrid, 0, U"-- edit frication tiers --", nullptr, 1, nullptr);
 	praat_addAction1 (classKlattGrid, 1, U"Edit frication amplitude tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editFricationAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant grid", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant grid", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editFricationFormantGrid);
 	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant amplitude tier...", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editFricationFormantAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit frication bypass tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Edit frication bypass tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editFricationBypassTier);
 	praat_addAction1 (classKlattGrid, 1, U"Edit frication amplitude tier", nullptr, 1,
 			EDITOR_ONE_KlattGrid_editFricationAmplitudeTier);
 
-	praat_addAction1 (classKlattGrid, 0, U"Play", nullptr, 0, 
+	praat_addAction1 (classKlattGrid, 0, U"Play", nullptr, 0,
 			PLAY_KlattGrid_play);
-	praat_addAction1 (classKlattGrid, 0, U"Play special...", nullptr, 0, 
+	praat_addAction1 (classKlattGrid, 0, U"Play special...", nullptr, 0,
 			PLAY_KlattGrid_playSpecial);
-	praat_addAction1 (classKlattGrid, 0, U"To Sound", nullptr, 0, 
+	praat_addAction1 (classKlattGrid, 0, U"To Sound", nullptr, 0,
 			CONVERT_EACH_TO_ONE__KlattGrid_to_Sound);
-	praat_addAction1 (classKlattGrid, 0, U"To Sound (special)...", nullptr, 0, 
+	praat_addAction1 (classKlattGrid, 0, U"To Sound (special)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__KlattGrid_to_Sound_special);
-	praat_addAction1 (classKlattGrid, 0, U"To Sound (phonation)...", nullptr, 0, 
+	praat_addAction1 (classKlattGrid, 0, U"To Sound (phonation)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__KlattGrid_to_Sound_phonation);
 
 	praat_addAction1 (classKlattGrid, 0, U"Draw -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Draw synthesizer...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Draw synthesizer...", nullptr, 1,
 			GRAPHICS_EACH__KlattGrid_draw);
-	praat_addAction1 (classKlattGrid, 0, U"Draw vocal tract...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Draw vocal tract...", nullptr, 1,
 			GRAPHICS_EACH__KlattGrid_drawVocalTract);
-	praat_addAction1 (classKlattGrid, 0, U"Draw phonation", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Draw phonation", nullptr, 1,
 			GRAPHICS_EACH__KlattGrid_drawPhonation);
 	praat_addAction1 (classKlattGrid, 0, U"Draw frication", nullptr, 1,
 			GRAPHICS_EACH__KlattGrid_drawFrication);
 
 	praat_addAction1 (classKlattGrid, 0, U"Query phonation -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 1, U"Get pitch at time...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 1, U"Get pitch at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getPitchAtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get voicing amplitude at time...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 1, U"Get voicing amplitude at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getVoicingAmplitudeAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get flutter at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getFlutterAtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get power1 at time...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 1, U"Get power1 at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getPower1AtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get power2 at time...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 1, U"Get power2 at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getPower2AtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get open phase at time...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 1, U"Get open phase at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getOpenPhaseAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get collision phase at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getCollisionPhaseAtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get double pulsing at time...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 1, U"Get double pulsing at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getDoublePulsingAtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get spectral tilt at time...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 1, U"Get spectral tilt at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getSpectralTiltAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get aspiration amplitude at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getAspirationAmplitudeAtTime);
@@ -1037,15 +1040,15 @@ void praat_KlattGrid_init () {
 			QUERY_ONE_FOR_REAL__KlattGrid_getBreathinessAmplitudeAtTime);
 
 	praat_addAction1 (classKlattGrid, 0, U"Query filters -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 1, U"Get formant at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 1, U"Get formant at time...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__KlattGrid_getFormantAtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get bandwidth at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 1, U"Get bandwidth at time...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__KlattGrid_getBandwidthAtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get amplitude at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 1, U"Get amplitude at time...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__KlattGrid_getAmplitudeAtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get delta formant at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 1, U"Get delta formant at time...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__KlattGrid_getDeltaFormantAtTime);
-	praat_addAction1 (classKlattGrid, 1, U"Get delta bandwidth at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 1, U"Get delta bandwidth at time...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			QUERY_ONE_FOR_REAL__KlattGrid_getDeltaBandwidthAtTime);
 
 #define KlattGRID_GET_FORMANT_FB_VALUES_ACTION(Name, formantname) \
@@ -1076,29 +1079,29 @@ void praat_KlattGrid_init () {
 #undef KlattGRID_GET_FORMANT_A_VALUES_ACTION
 #undef KlattGRID_GET_FORMANT_A_VALUES_ACTION
 
-	praat_addAction1 (classKlattGrid, 1, U"Get frication bypass at time...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 1, U"Get frication bypass at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getFricationBypassAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get frication amplitude at time...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__KlattGrid_getFricationAmplitudeAtTime);
 
 	praat_addAction1 (classKlattGrid, 0, U"Modify phonation -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Add pitch point...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Add pitch point...", nullptr, 1,
 			MODIFY_KlattGrid_addPitchPoint);
 	praat_addAction1 (classKlattGrid, 0, U"Add voicing amplitude point...", nullptr, 1,
 			MODIFY_KlattGrid_addVoicingAmplitudePoint);
-	praat_addAction1 (classKlattGrid, 0, U"Add flutter point...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Add flutter point...", nullptr, 1,
 			MODIFY_KlattGrid_addFlutterPoint);
-	praat_addAction1 (classKlattGrid, 0, U"Add power1 point...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Add power1 point...", nullptr, 1,
 			MODIFY_KlattGrid_addPower1Point);
 	praat_addAction1 (classKlattGrid, 0, U"Add power2 point...", nullptr, 1,
 			MODIFY_KlattGrid_addPower2Point);
-	praat_addAction1 (classKlattGrid, 0, U"Add open phase point...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Add open phase point...", nullptr, 1,
 			MODIFY_KlattGrid_addOpenPhasePoint);
 	praat_addAction1 (classKlattGrid, 0, U"Add collision phase point...", nullptr, 1,
 			MODIFY_KlattGrid_addCollisionPhasePoint);
-	praat_addAction1 (classKlattGrid, 0, U"Add double pulsing point...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Add double pulsing point...", nullptr, 1,
 			MODIFY_KlattGrid_addDoublePulsingPoint);
-	praat_addAction1 (classKlattGrid, 0, U"Add spectral tilt point...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Add spectral tilt point...", nullptr, 1,
 			MODIFY_KlattGrid_addSpectralTiltPoint);
 	praat_addAction1 (classKlattGrid, 0, U"Add aspiration amplitude point...", nullptr, 1,
 			MODIFY_KlattGrid_addAspirationAmplitudePoint);
@@ -1106,7 +1109,7 @@ void praat_KlattGrid_init () {
 			MODIFY_KlattGrid_addBreathinessAmplitudePoint);
 
 #define KlattGrid_REMOVE_POINTS_ACTION(Name,name)  \
-	praat_addAction1 (classKlattGrid, 0, U"Remove " #name " points between...", nullptr, praat_DEPTH_1+praat_HIDDEN, \
+	praat_addAction1 (classKlattGrid, 0, U"Remove " #name " points between...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, \
 			MODIFY_KlattGrid_remove##Name##Points); \
 	praat_addAction1 (classKlattGrid, 0, U"Remove " #name " points...", nullptr, 1, \
 			MODIFY_KlattGrid_remove##Name##Points);
@@ -1150,9 +1153,9 @@ void praat_KlattGrid_init () {
 			MODIFY_KlattGrid_add##Name##FormantAmplitudeTier); \
 	praat_addAction1 (classKlattGrid, 0, U"Remove " #formantname " amplitude tier...", nullptr, 1, \
 			MODIFY_KlattGrid_remove##Name##FormantAmplitudeTier); \
-	praat_addAction1 (classKlattGrid, 0, U"Add " #formantname "...", nullptr, praat_DEPTH_1 + praat_HIDDEN, \
+	praat_addAction1 (classKlattGrid, 0, U"Add " #formantname "...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, \
 			MODIFY_KlattGrid_add##Name##Formant); \
-	praat_addAction1 (classKlattGrid, 0, U"Remove " #formantname "...", nullptr, praat_DEPTH_1 + praat_HIDDEN, \
+	praat_addAction1 (classKlattGrid, 0, U"Remove " #formantname "...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, \
 			MODIFY_KlattGrid_remove##Name##Formant);
 
 #define KlattGrid_MODIFY_ACTIONS_FB(Name,formantname)  \
@@ -1172,9 +1175,9 @@ void praat_KlattGrid_init () {
 			MODIFY_KlattGrid_add##Name##FormantFrequencyAndBandwidthTiers); \
 	praat_addAction1 (classKlattGrid, 0, U"Remove " #formantname " frequency and bandwidth tiers...", nullptr, 1, \
 			MODIFY_KlattGrid_remove##Name##FormantFrequencyAndBandwidthTiers); \
-	praat_addAction1 (classKlattGrid, 0, U"Add " #formantname "...", nullptr, praat_DEPTH_1 + praat_HIDDEN, \
+	praat_addAction1 (classKlattGrid, 0, U"Add " #formantname "...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, \
 			MODIFY_KlattGrid_add##Name##Formant); \
-	praat_addAction1 (classKlattGrid, 0, U"Remove " #formantname "...", nullptr, praat_DEPTH_1 + praat_HIDDEN, \
+	praat_addAction1 (classKlattGrid, 0, U"Remove " #formantname "...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, \
 			MODIFY_KlattGrid_remove##Name##Formant);
 
 	KlattGrid_MODIFY_ACTIONS_FBA (Oral, oral formant)
@@ -1183,21 +1186,21 @@ void praat_KlattGrid_init () {
 	praat_addAction1 (classKlattGrid, 0, U"-- nasal modify separator --", nullptr, 1, nullptr);
 	KlattGrid_MODIFY_ACTIONS_FB (NasalAnti, nasal antiformant)
 
-	praat_addAction1 (classKlattGrid, 0, U"Formula (frequencies)...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Formula (frequencies)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_formula_frequencies);
-	praat_addAction1 (classKlattGrid, 0, U"Formula (bandwidths)...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Formula (bandwidths)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_formula_bandwidths);
-	praat_addAction1 (classKlattGrid, 0, U"Add formant point...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Add formant point...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_addFormantPoint);
-	praat_addAction1 (classKlattGrid, 0, U"Add bandwidth point...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Add bandwidth point...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_addBandwidthPoint);
-	praat_addAction1 (classKlattGrid, 0, U"Add amplitude point...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Add amplitude point...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_addAmplitudePoint);
-	praat_addAction1 (classKlattGrid, 0, U"Remove formant points between...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Remove formant points between...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_removeFormantPoints);
-	praat_addAction1 (classKlattGrid, 0, U"Remove bandwidth points between...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Remove bandwidth points between...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_removeBandwidthPoints);
-	praat_addAction1 (classKlattGrid, 0, U"Remove amplitude points between...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Remove amplitude points between...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_removeAmplitudePoints);
 	praat_addAction1 (classKlattGrid, 0, U"Modify coupling - ", nullptr, 0, nullptr);
 	KlattGrid_MODIFY_ACTIONS_FB (Delta, delta formant)
@@ -1206,26 +1209,26 @@ void praat_KlattGrid_init () {
 	praat_addAction1 (classKlattGrid, 0, U"-- nasal modify separator --", nullptr, 1, nullptr);
 	KlattGrid_MODIFY_ACTIONS_FB (TrachealAnti, tracheal antiformant)
 
-	praat_addAction1 (classKlattGrid, 0, U"Add delta formant point...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Add delta formant point...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_addDeltaFormantPoint);
-	praat_addAction1 (classKlattGrid, 0, U"Add delta bandwidth point...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Add delta bandwidth point...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_addDeltaBandwidthPoint);
-	praat_addAction1 (classKlattGrid, 0, U"Remove delta formant points between...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Remove delta formant points between...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_removeDeltaFormantPoints);
-	praat_addAction1 (classKlattGrid, 0, U"Remove delta bandwidth points between...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Remove delta bandwidth points between...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_removeDeltaBandwidthPoints);
 
 	praat_addAction1 (classKlattGrid, 0, U"Modify frication -", nullptr, 0, nullptr);
 	KlattGrid_MODIFY_ACTIONS_FBA (Frication, frication formant)
 	praat_addAction1 (classKlattGrid, 0, U"-- frication modify separator --", nullptr, 1, nullptr);
 
-	praat_addAction1 (classKlattGrid, 0, U"Add frication bypass point...", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Add frication bypass point...", nullptr, 1,
 			MODIFY_KlattGrid_addFricationBypassPoint);
 	praat_addAction1 (classKlattGrid, 0, U"Add frication amplitude point...", nullptr, 1,
 			MODIFY_KlattGrid_addFricationAmplitudePoint);
 	KlattGrid_REMOVE_POINTS_ACTION (FricationBypass, frication bypass)
 	KlattGrid_REMOVE_POINTS_ACTION (FricationAmplitude, frication amplitude)
-	praat_addAction1 (classKlattGrid, 0, U"Add formant and bandwidth tier...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+	praat_addAction1 (classKlattGrid, 0, U"Add formant and bandwidth tier...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_addFormantAndBandwidthTier);
 
 #undef KlattGrid_REMOVE_POINTS_ACTION
@@ -1233,23 +1236,23 @@ void praat_KlattGrid_init () {
 #undef KlattGrid_MODIFY_ACTION_FBA
 
 	praat_addAction1 (classKlattGrid, 0, U"Extract phonation -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Extract pitch tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract pitch tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractPitchTier);
-	praat_addAction1 (classKlattGrid, 0, U"Extract voicing amplitude tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract voicing amplitude tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractVoicingAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Extract flutter tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract flutter tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractFlutterTier);
-	praat_addAction1 (classKlattGrid, 0, U"Extract power1 tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract power1 tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractPower1Tier);
-	praat_addAction1 (classKlattGrid, 0, U"Extract power2 tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract power2 tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractPower2Tier);
-	praat_addAction1 (classKlattGrid, 0, U"Extract open phase tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract open phase tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractOpenPhaseTier);
-	praat_addAction1 (classKlattGrid, 0, U"Extract collision phase tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract collision phase tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractCollisionPhaseTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract double pulsing tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractDoublePulsingTier);
-	praat_addAction1 (classKlattGrid, 0, U"Extract spectral tilt tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract spectral tilt tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractSpectralTiltTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract aspiration amplitude tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractAspirationAmplitudeTier);
@@ -1267,12 +1270,12 @@ void praat_KlattGrid_init () {
 			CONVERT_EACH_TO_ONE__KlattGrid_extract##Name##FormantAmplitudeTier);
 
 	praat_addAction1 (classKlattGrid, 0, U"Extract filters -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Extract formant grid...", nullptr, praat_DEPTH_1 + praat_HIDDEN + praat_NO_API,
+	praat_addAction1 (classKlattGrid, 0, U"Extract formant grid...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN | GuiMenu_NO_API,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractFormantGrid); // deprecated
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Oral, oral f)
-	praat_addAction1 (classKlattGrid, 0, U"Extract amplitude tier...", nullptr, praat_DEPTH_1 + praat_HIDDEN + praat_NO_API,
+	praat_addAction1 (classKlattGrid, 0, U"Extract amplitude tier...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN | GuiMenu_NO_API,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractAmplitudeTier); // deprecated
-	praat_addAction1 (classKlattGrid, 0, U"Extract formant grid (open phases)...", nullptr, praat_HIDDEN + praat_DEPTH_1,
+	praat_addAction1 (classKlattGrid, 0, U"Extract formant grid (open phases)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__KlattGrid_to_oralFormantGrid_openPhases);
 	praat_addAction1 (classKlattGrid, 0, U"Extract oral formant grid (open phases)...", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_to_oralFormantGrid_openPhases);
@@ -1282,7 +1285,7 @@ void praat_KlattGrid_init () {
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (NasalAnti, nasal antif)
 
 	praat_addAction1 (classKlattGrid, 0, U"-- extract delta characteristics", nullptr, 1, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Extract delta formant grid", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract delta formant grid", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractDeltaFormantGrid);
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Tracheal, tracheal f)
 	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Tracheal, tracheal)
@@ -1290,7 +1293,7 @@ void praat_KlattGrid_init () {
 	praat_addAction1 (classKlattGrid, 0, U"-- extract frication characteristics", nullptr, 1, nullptr);
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Frication, frication f)
 	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Frication, frication)
-	praat_addAction1 (classKlattGrid, 0, U"Extract frication bypass tier", nullptr, 1, 
+	praat_addAction1 (classKlattGrid, 0, U"Extract frication bypass tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractFricationBypassTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract frication amplitude tier", nullptr, 1,
 			CONVERT_EACH_TO_ONE__KlattGrid_extractFricationAmplitudeTier);
@@ -1298,13 +1301,13 @@ void praat_KlattGrid_init () {
 #undef KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION
 #undef KlattGRID_EXTRACT_FORMANT_GRID_ACTION
 
-	praat_addAction2 (classKlattGrid, 1, classPitchTier, 1, U"Replace pitch tier", nullptr, 1, 
+	praat_addAction2 (classKlattGrid, 1, classPitchTier, 1, U"Replace pitch tier", nullptr, 1,
 			MODIFY_KlattGrid_replacePitchTier);
-	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, U"Replace flutter tier", nullptr, 1, 
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, U"Replace flutter tier", nullptr, 1,
 			MODIFY_KlattGrid_replaceFlutterTier);
-	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, U"Replace power1 tier", nullptr, 1, 
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, U"Replace power1 tier", nullptr, 1,
 			MODIFY_KlattGrid_replacePower1Tier);
-	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, U"Replace power2 tier", nullptr, 1, 
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, U"Replace power2 tier", nullptr, 1,
 			MODIFY_KlattGrid_replacePower2Tier);
 	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, U"Replace open phase tier", nullptr, 1,
 			MODIFY_KlattGrid_replaceOpenPhaseTier);
@@ -1331,7 +1334,7 @@ void praat_KlattGrid_init () {
 	KlattGrid_REPLACE_FORMANTGRID_ACTION (Delta, delta f)
 	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, U"-- replace frication --", nullptr, 1, nullptr);
 	KlattGrid_REPLACE_FORMANTGRID_ACTION (Frication, frication f)
-	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, U"Replace formant grid...", nullptr, praat_HIDDEN + praat_DEPTH_1,
+	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, U"Replace formant grid...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_replaceFormantGrid);
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, U"Replace voicing amplitude tier", nullptr, 1,
 			MODIFY_KlattGrid_replaceVoicingAmplitudeTier);
@@ -1341,7 +1344,7 @@ void praat_KlattGrid_init () {
 			MODIFY_KlattGrid_replaceAspirationAmplitudeTier);
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, U"Replace breathiness amplitude tier", nullptr, 1,
 			MODIFY_KlattGrid_replaceBreathinessAmplitudeTier);
-	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, U"Replace amplitude tier...", nullptr, praat_HIDDEN + praat_DEPTH_1,
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, U"Replace amplitude tier...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_replaceAmplitudeTier);
 	KlattGrid_REPLACE_FORMANT_AMPLITUDE_ACTION (Oral, oral f)
 	KlattGrid_REPLACE_FORMANT_AMPLITUDE_ACTION (Nasal, nasal f)

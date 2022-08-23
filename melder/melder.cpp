@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,22 @@ void Melder_init () {
 		Gestalt ('sys2', & sys2);
 		Gestalt ('sys3', & sys3);
 		Melder_systemVersion = sys1 * 10000 + sys2 * 100 + sys3;
+	#endif
+	#ifdef linux
+		const char *gdkBackend = getenv ("GDK_BACKEND");   // this setting rules all the others; GDK typically supports wayland, x11, and broadway
+		if (gdkBackend) {
+			if (strequ (gdkBackend, "wayland"))
+				Melder_systemVersion = 'w';
+			else
+				Melder_systemVersion = 0;
+		} else {
+			const char *waylandDisplay = getenv ("WAYLAND_DISPLAY");
+			const char *gdkSessionType = getenv ("XDG_SESSION_TYPE");   // not set on Chrome (2021-11-12); typical values are wayland, x11 and tty
+			if (waylandDisplay || gdkSessionType && strstr (gdkSessionType, "wayland"))
+				Melder_systemVersion = 'w';
+			else
+				Melder_systemVersion = 0;
+		}
 	#endif
 }
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2005 to 2015 by Jonathan Duddington
  * email: jonsd@users.sourceforge.net
- * Copyright (C) 2015-2016 Reece H. Dunn
+ * Copyright (C) 2015-2016, 2020 Reece H. Dunn
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,14 @@
 #include "speak_lib.h"
 #include "encoding.h"
 
-#include "speech.h"
-#include "synthesize.h"
-#include "translate.h"
+#include "numbers.h"
+#include "dictionary.h"  // for Lookup, TranslateRules, EncodePhonemes, Look...
+#include "phoneme.h"     // for phonSWITCH, PHONEME_TAB, phonEND_WORD, phonP...
+#include "readclause.h"  // for WordToString2, towlower2
+#include "synthdata.h"   // for SelectPhonemeTable
+#include "synthesize.h"  // for phoneme_tab
+#include "translate.h"   // for Translator, LANGUAGE_OPTIONS, IsDigit09, WOR...
+#include "voice.h"       // for voice, voice_t
 
 #define M_LIGATURE  0x8000
 #define M_NAME      0
@@ -495,7 +500,7 @@ void LookupLetter(Translator *tr, unsigned int letter, int next_byte, char *ph_b
 		if (tr->translator_name == L('e', 'n'))
 			return; // we are already using English
 
-		SetTranslator2("en");
+		SetTranslator2(ESPEAKNG_DEFAULT_VOICE);
 		if (Lookup(translator2, &single_letter[2], ph_buf3) != 0) {
 			// yes, switch to English and re-translate the word
 			sprintf(ph_buf1, "%c", phonSWITCH);
@@ -658,7 +663,7 @@ int IsSuperscript(int letter)
 	return 0;
 }
 
-int TranslateLetter(Translator *tr, char *word, char *phonemes, int control)
+int TranslateLetter(Translator *tr, char *word, char *phonemes, int control, ALPHABET *current_alphabet)
 {
 	// get pronunciation for an isolated letter
 	// return number of bytes used by the letter
@@ -703,7 +708,7 @@ int TranslateLetter(Translator *tr, char *word, char *phonemes, int control)
 		if (iswupper(letter))
 			Lookup(tr, "_cap", capital);
 	}
-	letter = towlower2(letter);
+	letter = towlower2(letter, tr);
 	LookupLetter(tr, letter, word[n_bytes], ph_buf, control & 1);
 
 	if (ph_buf[0] == 0) {
@@ -714,7 +719,7 @@ int TranslateLetter(Translator *tr, char *word, char *phonemes, int control)
 				// don't say "superscript" during normal text reading
 				Lookup(tr, modifier, capital);
 				if (capital[0] == 0) {
-					capital[2] = SetTranslator2("en"); // overwrites previous contents of translator2
+					capital[2] = SetTranslator2(ESPEAKNG_DEFAULT_VOICE); // overwrites previous contents of translator2
 					Lookup(translator2, modifier, &capital[3]);
 					if (capital[3] != 0) {
 						capital[0] = phonPAUSE;
@@ -758,7 +763,7 @@ int TranslateLetter(Translator *tr, char *word, char *phonemes, int control)
 				ph_buf2[0] = 0;
 				if (Lookup(translator, alphabet->name, ph_alphabet) == 0) { // the original language for the current voice
 					// Can't find the local name for this alphabet, use the English name
-					ph_alphabet[2] = SetTranslator2("en"); // overwrites previous contents of translator2
+					ph_alphabet[2] = SetTranslator2(ESPEAKNG_DEFAULT_VOICE); // overwrites previous contents of translator2
 					Lookup(translator2, alphabet->name, ph_buf2);
 				} else if (translator != tr) {
 					phontab_1 = tr->phoneme_tab_ix;
@@ -1138,33 +1143,33 @@ static const char *M_Variant(int value)
 {
 	// returns M, or perhaps MA or MB for some cases
 
-	int teens = 0;
+	bool teens = false;
 
 	if (((value % 100) > 10) && ((value % 100) < 20))
-		teens = 1;
+		teens = true;
 
-	switch ((translator->langopts.numbers2 >> 6) & 0x7)
+	switch (translator->langopts.numbers2 & NUM2_THOUSANDS_VAR_BITS)
 	{
-	case 1: // lang=ru  use singular for xx1 except for x11
-		if ((teens == 0) && ((value % 10) == 1))
+	case NUM2_THOUSANDS_VAR1: // lang=ru  use singular for xx1 except for x11
+		if ((teens == false) && ((value % 10) == 1))
 			return "1M";
 		break;
-	case 2: // lang=cs,sk
+	case NUM2_THOUSANDS_VAR2: // lang=cs,sk
 		if ((value >= 2) && (value <= 4))
 			return "0MA";
 		break;
-	case 3: // lang=pl
-		if ((teens == 0) && (((value % 10) >= 2) && ((value % 10) <= 4)))
+	case NUM2_THOUSANDS_VAR3: // lang=pl
+		if ((teens == false) && (((value % 10) >= 2) && ((value % 10) <= 4)))
 			return "0MA";
 		break;
-	case 4: // lang=lt
-		if ((teens == 1) || ((value % 10) == 0))
+	case NUM2_THOUSANDS_VAR4: // lang=lt
+		if ((teens == true) || ((value % 10) == 0))
 			return "0MB";
 		if ((value % 10) == 1)
 			return "0MA";
 		break;
-	case 5: // lang=bs,hr,sr
-		if (teens == 0) {
+	case NUM2_THOUSANDS_VAR5: // lang=bs,hr,sr
+		if (teens == false) {
 			if ((value % 10) == 1)
 				return "1M";
 			if (((value % 10) >= 2) && ((value % 10) <= 4))
@@ -1508,7 +1513,7 @@ static int LookupNum2(Translator *tr, int value, int thousandplex, const int con
 	return used_and;
 }
 
-static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null, int thousandplex, int control)
+static int LookupNum3(Translator *tr, int value, char *ph_out, bool suppress_null, int thousandplex, int control)
 {
 	// Translate a 3 digit number
 	//  control  bit 0,  previous thousands
@@ -1524,8 +1529,8 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 	int exact;
 	int ordinal;
 	int tplex;
-	int say_zero_hundred = 0;
-	int say_one_hundred;
+	bool say_zero_hundred = false;
+	bool say_one_hundred;
 	char string[12]; // for looking up entries in **_list
 	char buf1[100];
 	char buf2[100];
@@ -1545,7 +1550,7 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 	ph_thousand_and[0] = 0;
 
 	if ((tr->langopts.numbers & NUM_ZERO_HUNDRED) && ((control & 1) || (hundreds >= 10)))
-		say_zero_hundred = 1; // lang=vi
+		say_zero_hundred = true; // lang=vi
 
 	if ((hundreds > 0) || say_zero_hundred) {
 		found = 0;
@@ -1584,15 +1589,15 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 				LookupNum2(tr, hundreds/10, thousandplex, x, ph_digits);
 			}
 
-			if (tr->langopts.numbers2 & 0x200)
-				sprintf(ph_thousands, "%s%c%s%c", ph_10T, phonEND_WORD, ph_digits, phonEND_WORD); // say "thousands" before its number, not after
+			if (tr->langopts.numbers2 & NUM2_SWAP_THOUSANDS)
+				sprintf(ph_thousands, "%s%c%s%c", ph_10T, phonEND_WORD, ph_digits, phonEND_WORD);
 			else
 				sprintf(ph_thousands, "%s%c%s%c", ph_digits, phonEND_WORD, ph_10T, phonEND_WORD);
 
 			hundreds %= 10;
-			if ((hundreds == 0) && (say_zero_hundred == 0))
+			if ((hundreds == 0) && (say_zero_hundred == false))
 				ph_100[0] = 0;
-			suppress_null = 1;
+			suppress_null = true;
 			control |= 1;
 		}
 
@@ -1602,7 +1607,7 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 			if ((tr->langopts.numbers & NUM_AND_HUNDRED) && ((control & 1) || (ph_thousands[0] != 0)))
 				Lookup(tr, "_0and", ph_thousand_and);
 
-			suppress_null = 1;
+			suppress_null = true;
 
 			found = 0;
 			if ((ordinal)
@@ -1639,13 +1644,13 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 				if (found)
 					ph_100[0] = 0;
 				else {
-					say_one_hundred = 1;
+					say_one_hundred = true;
 					if (hundreds == 1) {
 						if ((tr->langopts.numbers & NUM_OMIT_1_HUNDRED) != 0)
-							say_one_hundred = 0;
+							say_one_hundred = false;
 					}
 
-					if (say_one_hundred != 0)
+					if (say_one_hundred == true)
 						LookupNum2(tr, hundreds, thousandplex, 0, ph_digits);
 				}
 			}
@@ -1670,7 +1675,7 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 
 	buf2[0] = 0;
 
-	if ((tensunits != 0) || (suppress_null == 0)) {
+	if ((tensunits != 0) || (suppress_null == false)) {
 		x = 0;
 		if (thousandplex == 0) {
 			x = 2; // allow "eins" for 1 rather than "ein"
@@ -1699,7 +1704,7 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 		if (ph_ordinal2[0] != 0) {
 			ix = strlen(buf1);
 			if ((ix > 0) && (buf1[ix-1] == phonPAUSE_SHORT))
-				buf1[ix-1] = 0; // remove pause before addding ordinal suffix
+				buf1[ix-1] = 0; // remove pause before adding ordinal suffix
 			strcpy(buf2, ph_ordinal2);
 		}
 	}
@@ -1735,7 +1740,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	int ix;
 	int digix;
 	unsigned char c;
-	int suppress_null = 0;
+	bool suppress_null = false;
 	int decimal_point = 0;
 	int thousandplex = 0;
 	int thousands_exact = 1;
@@ -1881,7 +1886,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	}
 
 	if ((value == 0) && prev_thousands)
-		suppress_null = 1;
+		suppress_null = true;
 
 	if (tr->translator_name == L('h', 'u')) {
 		// variant form of numbers when followed by hyphen and a suffix starting with 'a' or 'e' (but not a, e, az, ez, azt, ezt
@@ -1893,13 +1898,13 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 		// this "word" ends with a decimal point
 		Lookup(tr, "_dpt", ph_append);
 		decimal_point = 0x100;
-	} else if (suppress_null == 0) {
+	} else if (suppress_null == false) {
 		if (thousands_inc > 0) {
 			if (thousandplex > 0) {
-				if ((suppress_null == 0) && (LookupThousands(tr, value, thousandplex, thousands_exact, ph_append))) {
+				if ((suppress_null == false) && (LookupThousands(tr, value, thousandplex, thousands_exact, ph_append))) {
 					// found an exact match for N thousand
 					value = 0;
-					suppress_null = 1;
+					suppress_null = true;
 				}
 			}
 		}
@@ -1957,8 +1962,8 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	}
 
 	LookupNum3(tr, value, ph_buf, suppress_null, thousandplex, prev_thousands | ordinal | decimal_point);
-	if ((thousandplex > 0) && (tr->langopts.numbers2 & 0x200))
-		sprintf(ph_out, "%s%s%c%s%s", ph_zeros, ph_append, phonEND_WORD, ph_buf2, ph_buf); // say "thousands" before its number
+	if ((thousandplex > 0) && (tr->langopts.numbers2 & NUM2_SWAP_THOUSANDS))
+		sprintf(ph_out, "%s%s%c%s%s", ph_zeros, ph_append, phonEND_WORD, ph_buf2, ph_buf);
 	else
 		sprintf(ph_out, "%s%s%s%c%s", ph_zeros, ph_buf2, ph_buf, phonEND_WORD, ph_append);
 
@@ -1971,7 +1976,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 			decimal_count++;
 
 		max_decimal_count = 2;
-		switch (decimal_mode = (tr->langopts.numbers & 0xe000))
+		switch (decimal_mode = (tr->langopts.numbers & NUM_DFRACTION_BITS))
 		{
 		case NUM_DFRACTION_4:
 			max_decimal_count = 5;
@@ -1985,7 +1990,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 				n_digits++;
 			}
 			if ((decimal_count <= max_decimal_count) && IsDigit09(word[n_digits])) {
-				LookupNum3(tr, atoi(&word[n_digits]), buf1, 0, 0, 0);
+				LookupNum3(tr, atoi(&word[n_digits]), buf1, false, 0, 0);
 				strcat(ph_out, buf1);
 				n_digits += decimal_count;
 			}
@@ -1993,7 +1998,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 		case NUM_DFRACTION_1: // italian, say "hundredths" if leading zero
 		case NUM_DFRACTION_5: // hungarian, always say "tenths" etc.
 		case NUM_DFRACTION_6: // kazakh, always say "tenths" etc, before the decimal fraction
-			LookupNum3(tr, atoi(&word[n_digits]), ph_buf, 0, 0, 0);
+			LookupNum3(tr, atoi(&word[n_digits]), ph_buf, false, 0, 0);
 			if ((word[n_digits] == '0') || (decimal_mode != NUM_DFRACTION_1)) {
 				// decimal part has leading zeros, so add a "hundredths" or "thousandths" suffix
 				sprintf(string, "_0Z%d", decimal_count);
@@ -2011,7 +2016,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 		case NUM_DFRACTION_3:
 			// Romanian decimal fractions
 			if ((decimal_count <= 4) && (word[n_digits] != '0')) {
-				LookupNum3(tr, atoi(&word[n_digits]), buf1, 0, 0, 0);
+				LookupNum3(tr, atoi(&word[n_digits]), buf1, false, 0, 0);
 				strcat(ph_out, buf1);
 				n_digits += decimal_count;
 			}
@@ -2047,11 +2052,12 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	}
 	if ((ph_out[0] != 0) && (ph_out[0] != phonSWITCH)) {
 		int next_char;
-		char *p_local = &word[n_digits+1];
+		char *plocal;
+		plocal = &word[n_digits+1];
 
-		p_local += utf8_in(&next_char, p_local);
+		plocal += utf8_in(&next_char, plocal);
 		if ((tr->langopts.numbers & NUM_NOPAUSE) && (next_char == ' '))
-			utf8_in(&next_char, p_local);
+			utf8_in(&next_char, plocal);
 
 		if (!iswalpha(next_char) && (thousands_exact == 0))
 			strcat(ph_out, str_pause); // don't add pause for 100s,  6th, etc.

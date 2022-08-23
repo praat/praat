@@ -94,9 +94,8 @@
 #include "enums_getValue.h"
 #include "OTGrammar_enums.h"
 
-void structOTGrammar :: v_info ()
-{
-	structDaata :: v_info ();
+void structOTGrammar :: v1_info () {
+	structDaata :: v1_info ();
 	integer numberOfCandidates = 0, numberOfViolations = 0;
 	for (integer itab = 1; itab <= numberOfTableaus; itab ++) {
 		numberOfCandidates += our tableaus [itab]. numberOfCandidates;
@@ -111,7 +110,7 @@ void structOTGrammar :: v_info ()
 	MelderInfo_writeLine (U"Number of violation marks: ", numberOfViolations);
 }
 
-void structOTGrammar :: v_writeText (MelderFile file) {
+void structOTGrammar :: v1_writeText (MelderFile file) {
 	MelderFile_write (file, U"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
 		U">\n", leak, U" ! leak\n", our numberOfConstraints, U" constraints");
 	for (integer icons = 1; icons <= our numberOfConstraints; icons ++) {
@@ -172,8 +171,8 @@ void OTGrammar_checkIndex (OTGrammar me) {
 	OTGrammar_sort (me);
 }
 
-void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
-	OTGrammar_Parent :: v_readText (text, formatVersion);
+void structOTGrammar :: v1_readText (MelderReadText text, int formatVersion) {
+	OTGrammar_Parent :: v1_readText (text, formatVersion);
 	if (formatVersion >= 1) {
 		try {
 			our decisionStrategy = (kOTGrammar_decisionStrategy) texgete8 (text, (enum_generic_getValue) kOTGrammar_decisionStrategy_getValue);
@@ -348,7 +347,7 @@ integer OTGrammar_getTableau (OTGrammar me, conststring32 input) {
 	Melder_throw (U"Input \"", input, U"\" not in list of tableaus.");
 }
 
-static void _OTGrammar_fillInHarmonies (OTGrammar me, integer itab) noexcept {
+static void _OTGrammar_fillInHarmonies (OTGrammar me, integer itab) {
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY)
 		return;
 	OTGrammarTableau tableau = & my tableaus [itab];
@@ -382,7 +381,7 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, integer itab) noexcept {
 	}
 }
 
-int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, integer itab2, integer icand2) noexcept {
+int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, integer itab2, integer icand2) {
 	INTVEC marks1 = my tableaus [itab1]. candidates [icand1]. marks.get();
 	INTVEC marks2 = my tableaus [itab2]. candidates [icand2]. marks.get();
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
@@ -459,7 +458,7 @@ int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, in
 	return 0;   // the two total disharmonies are equal
 }
 
-static void _OTGrammar_fillInProbabilities (OTGrammar me, integer itab) noexcept {
+static void _OTGrammar_fillInProbabilities (OTGrammar me, integer itab) {
 	OTGrammarTableau tableau = & my tableaus [itab];
 	double maximumHarmony = tableau -> candidates [1]. harmony;
 	for (integer icand = 2; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -484,7 +483,7 @@ static void _OTGrammar_fillInProbabilities (OTGrammar me, integer itab) noexcept
 	}
 }
 
-integer OTGrammar_getWinner (OTGrammar me, integer itab) noexcept {
+integer OTGrammar_getWinner (OTGrammar me, integer itab) {
 	integer icand_best = 1;
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY ||
 		my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)

@@ -2,7 +2,7 @@
 #define _melder_templates_h_
 /* melder_templates.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ class MelderCallback {
 		};
 		Ret* operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const noexcept { return !! _f; }
+		FunctionType get() { return _f; }
 	private:
 		FunctionType _f;
 };
@@ -51,6 +52,7 @@ class MelderCallback <void, T, Args...> {   // specialization
 		};
 		void operator () (T* data, Args ... args) { _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const noexcept { return !! _f; }
+		FunctionType get() { return _f; }
 	private:
 		FunctionType _f;
 };
@@ -66,6 +68,7 @@ class MelderCallback <int, T, Args...> {   // specialization
 		};
 		int operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const noexcept { return !! _f; }
+		FunctionType get() { return _f; }
 	private:
 		FunctionType _f;
 };
@@ -79,10 +82,15 @@ class MelderCompareHook {
 			MelderCompareHook (int (*f) (T2*, T2*)) : _f (reinterpret_cast<FunctionType> (f)) { };
 		int operator () (T* data1, T* data2) noexcept { return _f (data1, data2); }
 		explicit operator bool () const noexcept { return !! _f; }
-		FunctionType get () { return _f; }
+		FunctionType get() { return _f; }
 	private:
 		FunctionType _f;
 };
+
+template <typename T, typename Y  Melder_ENABLE_IF_ISA(Y,T)>
+T** MelderPointerToPointerCast (Y **thing) {
+	return (T**) thing;
+}
 
 /* End of file melder_templates.h */
 #endif

@@ -1,6 +1,6 @@
 /* Praat_tests.cpp
  *
- * Copyright (C) 2001-2007,2009,2011-2020 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -549,8 +549,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				fprintf (stderr, "21\n");
 			}
 			integer numberOfThingsAfter = theTotalNumberOfThings;
-			fprintf (stderr, "Number of things: before %ld, after %ld\n",
-					(long_not_integer) numberOfThingsBefore, (long_not_integer) numberOfThingsAfter);
+			fprintf (stderr, "Number of things: before %td, after %td\n", numberOfThingsBefore, numberOfThingsAfter);
 			#if 0
 				MelderCallback<void,structDaata>::FunctionType f;
 				typedef void (*DataFunc) (Daata);
@@ -609,6 +608,22 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 					double c = c_vy [1];
 					const double d = c_vy [2];
 					//VEC c_vy2 = VEC (py, 2);   // ruled out: "No matching constructor for initialization of VEC" (2021-04-03)
+				}
+				{
+					structSampled sampled {};
+					structFunction function {};
+					structFunction *pFunction = & sampled;
+					structSampled *pSampled = & sampled;
+					//structFunction **ppFunction = MelderPointerToPointerCast<structSampled> (& pFunction);   // not allowed
+					structFunction **ppSampled = MelderPointerToPointerCast<structFunction> (& pSampled);   // allowed
+				}
+				{
+					const structSampled sampled {};
+					const structFunction function {};
+					const structFunction *const pFunction = & sampled;
+					const structSampled *const pSampled = & sampled;
+					const structFunction *const *const ppFunction = & pFunction;
+					//const structFunction *const *const ppSampled = & pSampled;   // forbidden
 				}
 
 				VEC h;
@@ -740,10 +755,6 @@ public:
 	//Vec (const Vec& other) const = default;   // attempt to copy a const Vec to a const Vec, but constructors cannot be const
 	//const Vec (const Vec& other) = default;   // attempt to copy a const Vec to a const Vec, but constructors cannot have a return type
 };
-
-static Vec copy (Vec x) {
-	return x;
-}
 
 /*static void tryVec () {
 	Vec x = Vec (nullptr, 0);

@@ -47,8 +47,8 @@
 
 Thing_implement (FileInMemoryManager, Daata, 0);
 
-void structFileInMemoryManager :: v_info () {
-	FileInMemoryManager_Parent :: v_info ();
+void structFileInMemoryManager :: v1_info () {
+	FileInMemoryManager_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Number of files: ", files -> size);
 	MelderInfo_writeLine (U"Total number of bytes: ", FileInMemorySet_getTotalNumberOfBytes (files.get()));
 }
@@ -705,13 +705,13 @@ void test_FileInMemoryManager_io (void) {
 	Melder_relativePathToFile (path2, file2);
 	autoFileInMemorySet fims = FileInMemorySet_create ();
 
-	FILE *f = fopen (Melder_peek32to8 (file1 -> path), "w");
+	FILE *f = fopen (Melder_peek32to8_fileSystem (file1 -> path), "w");
 	for (integer j = 0; j <= 2; j ++)
 		fputs (Melder_peek32to8 (lines1 [j]), f);
 	
 	fclose (f);
 
-	f = fopen (Melder_peek32to8 (file2 -> path), "w");
+	f = fopen (Melder_peek32to8_fileSystem (file2 -> path), "w");
 	for (integer j = 0; j <= 2; j ++)
 		fputs (Melder_peek32to8 (lines2 [j]), f);
 	
@@ -732,13 +732,13 @@ void test_FileInMemoryManager_io (void) {
 	
 	// fopen test
 	MelderInfo_writeLine (U"\tOpen file ", file1 -> path);
-	FILE * f1 = FileInMemoryManager_fopen (me.get(), Melder_peek32to8 (file1 -> path), "r");
+	FILE * f1 = FileInMemoryManager_fopen (me.get(), Melder_peek32to8_fileSystem (file1 -> path), "r");
 	const integer openFilesIndex1 = _FileInMemoryManager_getIndexInOpenFiles (me.get(), f1);
 	Melder_assert (openFilesIndex1 == 1);
 	MelderInfo_writeLine (U"\t\t ...opened");
 	
 	MelderInfo_writeLine (U"\tOpen file ", file2 -> path);
-	FILE * f2 = FileInMemoryManager_fopen (me.get(), Melder_peek32to8 (file2 -> path), "r");
+	FILE * f2 = FileInMemoryManager_fopen (me.get(), Melder_peek32to8_fileSystem (file2 -> path), "r");
 	const integer openFilesIndex2 = _FileInMemoryManager_getIndexInOpenFiles (me.get(), f2);
 	Melder_assert (openFilesIndex2 == 2);
 	MelderInfo_writeLine (U"\t\t ...opened");
@@ -754,7 +754,7 @@ void test_FileInMemoryManager_io (void) {
 	const long nbuf = 200;
 	
 	FileInMemory fim = (FileInMemory) my files -> at [openFilesIndex1];
-	FILE *file0 = fopen (Melder_peek32to8 (file1 -> path), "r");
+	FILE *file0 = fopen (Melder_peek32to8_fileSystem (file1 -> path), "r");
 	for (integer i = 0; i <= 2; i ++) {
 		char *p0 = fgets (buf0, nbuf, file0);
 		const integer pos0 = ftell (file0);

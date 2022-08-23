@@ -84,10 +84,10 @@ Thing_implement (GuiShell, GuiForm, 0);
 	@end
 #endif
 
-void structGuiShell :: v_destroy () noexcept {
+void structGuiShell :: v9_destroy () noexcept {
 	#if cocoa
 		if (Melder_debug == 55)
-			Melder_casual (U"\t", Thing_messageNameAndAddress (this), U" v_destroy: cocoaShell ", Melder_pointer (our d_cocoaShell));
+			Melder_casual (U"\t", Thing_messageNameAndAddress (this), U" v9_destroy: cocoaShell ", Melder_pointer (our d_cocoaShell));
 		if (our d_cocoaShell) {
 			[our d_cocoaShell setUserData: nullptr];   // undangle reference to this
 			Melder_fatal (U"ordering out?");   // TODO: how can this never be reached?
@@ -97,7 +97,7 @@ void structGuiShell :: v_destroy () noexcept {
 			our d_cocoaShell = nullptr;   // undangle
 		}
 	#endif
-	GuiShell_Parent :: v_destroy ();
+	GuiShell_Parent :: v9_destroy ();
 }
 
 int GuiShell_getShellWidth (GuiShell me) {
@@ -131,6 +131,13 @@ int GuiShell_getShellHeight (GuiShell me) {
 void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */) {
 	#if gtk
 		gtk_window_set_title (my d_gtkWindow, Melder_peek32to8 (title));
+		#if defined (chrome)
+			if (my chrome_surrogateShellTitleLabelWidget) {
+				char *markup = g_markup_printf_escaped ("<span weight=\"ultrabold\" underline=\"low\">%s</span>", Melder_peek32to8 (title));
+				gtk_label_set_markup (GTK_LABEL (my chrome_surrogateShellTitleLabelWidget), markup);
+				g_free (markup);
+			}
+		#endif
 	#elif motif
 		SetWindowTextW (my d_xmShell -> window, Melder_peek32toW (title));
 	#elif cocoa

@@ -1,6 +1,6 @@
 /* RealTier.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ autoRealPoint RealPoint_create (double time, double value) {
 
 /********** class RealTier **********/
 
-void structRealTier :: v_info () {
-	structFunction :: v_info ();
+void structRealTier :: v1_info () {
+	structFunction :: v1_info ();
 	MelderInfo_writeLine (U"Number of points: ", our points.size);
 	MelderInfo_writeLine (U"Minimum value: ", RealTier_getMinimumValue (this));
 	MelderInfo_writeLine (U"Maximum value: ", RealTier_getMaximumValue (this));
@@ -130,19 +130,22 @@ double RealTier_getValueAtIndex (RealTier me, integer i) {
 }
 
 double RealTier_getValueAtTime (RealTier me, double t) {
-	integer n = my points.size;
-	if (n == 0) return undefined;
-	RealPoint pointRight = my points.at [1];
-	if (t <= pointRight -> number) return pointRight -> value;   // constant extrapolation
-	RealPoint pointLeft = my points.at [n];
-	if (t >= pointLeft -> number) return pointLeft -> value;   // constant extrapolation
+	const integer n = my points.size;
+	if (n == 0)
+		return undefined;
+	const RealPoint firstPoint = my points.at [1];
+	if (t <= firstPoint -> number)
+		return firstPoint -> value;   // constant extrapolation
+	const RealPoint lastPoint = my points.at [n];
+	if (t >= lastPoint -> number)
+		return lastPoint -> value;   // constant extrapolation
 	Melder_assert (n >= 2);
-	integer ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
+	const integer ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
-	pointLeft = my points.at [ileft];
-	pointRight = my points.at [iright];
-	double tleft = pointLeft -> number, fleft = pointLeft -> value;
-	double tright = pointRight -> number, fright = pointRight -> value;
+	const RealPoint pointLeft = my points.at [ileft];
+	const RealPoint pointRight = my points.at [iright];
+	const double tleft = pointLeft -> number, fleft = pointLeft -> value;
+	const double tright = pointRight -> number, fright = pointRight -> value;
 	return t == tright ? fright   // be very accurate
 		: tleft == tright ? 0.5 * (fleft + fright)   // unusual, but possible; no preference
 		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   // linear interpolation
@@ -160,10 +163,13 @@ double RealTier_getMaximumValue (RealTier me) {
 }
 
 double RealTier_getMinimumValue (RealTier me) {
+	Melder_assert (me);
 	double result = undefined;
 	integer n = my points.size;
 	for (integer i = 1; i <= n; i ++) {
+		Melder_assert (my points.at._elements);
 		RealPoint point = my points.at [i];
+		Melder_assert (point);
 		if (isundef (result) || point -> value < result)
 			result = point -> value;
 	}
@@ -172,12 +178,16 @@ double RealTier_getMinimumValue (RealTier me) {
 
 double RealTier_getArea (RealTier me, double tmin, double tmax) {
 	integer n = my points.size, imin, imax;
-	if (n == 0) return undefined;
-	if (n == 1) return (tmax - tmin) * my points.at [1] -> value;
+	if (n == 0)
+		return undefined;
+	if (n == 1)
+		return (tmax - tmin) * my points.at [1] -> value;
 	imin = AnyTier_timeToLowIndex (me->asAnyTier(), tmin);
-	if (imin == n) return (tmax - tmin) * my points.at [n] -> value;
+	if (imin == n)
+		return (tmax - tmin) * my points.at [n] -> value;
 	imax = AnyTier_timeToHighIndex (me->asAnyTier(), tmax);
-	if (imax == 1) return (tmax - tmin) * my points.at [1] -> value;
+	if (imax == 1)
+		return (tmax - tmin) * my points.at [1] -> value;
 	Melder_assert (imin < n);
 	Melder_assert (imax > 1);
 	/*
@@ -209,7 +219,8 @@ double RealTier_getArea (RealTier me, double tmin, double tmax) {
 double RealTier_getMean_curve (RealTier me, double tmin, double tmax) {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const double area = RealTier_getArea (me, tmin, tmax);
-	if (isundef (area)) return undefined;
+	if (isundef (area))
+		return undefined;
 	return area / (tmax - tmin);
 }
 
@@ -535,7 +546,7 @@ autoRealTier RealTier_PointProcess_to_RealTier (RealTier me, PointProcess pp) {
 autoRealTier AnyRealTier_downto_RealTier (RealTier me) {
 	try {
 		autoRealTier thee = Thing_new (RealTier);
-		my structRealTier :: v_copy (thee.get());
+		my structRealTier :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to RealTier.");

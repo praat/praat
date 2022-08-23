@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2009,2011-2020 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,25 +30,27 @@
 typedef struct structClassInfo *ClassInfo;
 struct structClassInfo {
 	/*
-	 * The following five fields are statically initialized by the Thing_implement() macro.
-	 */
+		The following five fields are statically initialized by the Thing_implement() macro.
+	*/
 	conststring32 className;
 	ClassInfo semanticParent;
 	integer size;
 	Thing (* _new) ();   // objects have to be constructed via this function, because it calls C++ "new", which initializes the C++ class pointer
 	integer version;
 	/*
-	 * The following field is initialized by Thing_recognizeClassesByName, only for classes that have to be read (usually from disk).
-	 */
+		The following field is initialized by Thing_recognizeClassesByName,
+	 	only for classes that have to be read (usually from disk).
+	*/
 	integer sequentialUniqueIdOfReadableClass;
 	/*
-	 * The following field is initialized by Thing_dummyObject(), which is used only rarely.
-	 */
+		The following field is initialized by Thing_dummyObject(), which is used only rarely.
+	*/
 	Thing dummyObject;
 };
 
 #define Thing_declare(klas) \
 	typedef struct struct##klas *klas; \
+	typedef const struct struct##klas *const##klas; \
 	typedef autoSomeThing <struct##klas> auto##klas; \
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
@@ -63,11 +65,16 @@ struct structClassInfo {
 	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##semanticParentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, nullptr}; \
 	ClassInfo class##klas = & theClassInfo_##klas
 
+#define Thing_implement_pureVirtual(klas,semanticParentKlas,version) \
+	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##semanticParentKlas, sizeof (class struct##klas), nullptr, version, 0, nullptr}; \
+	ClassInfo class##klas = & theClassInfo_##klas
+
 /*
- * Thing has no parent class, so instead of using the Thing_define macro
- * we write out the stuff that does exist.
- */
-typedef struct structThing *Thing;
+	Thing has no parent class, so instead of using the Thing_define macro
+	we write out the stuff that does exist.
+*/
+typedef struct structThing *Thing;   // we need an explicit "struct" here, because this is a forward declaration
+typedef const struct structThing *constThing;
 extern ClassInfo classThing;
 extern struct structClassInfo theClassInfo_Thing;
 struct structThing {
@@ -77,43 +84,70 @@ struct structThing {
 	void operator delete (void *ptr, size_t /* size */) { Melder_free (ptr); }
 
 	/*
-	 * If a Thing has members of type autoThing,
-	 * then we want the destructors of autoThing to be called automatically whenever a Thing is `delete`d.
-	 * For this to happen, it is necessary that every Thing itself has a destructor.
-	 * We therefore define a destructor here,
-	 * and we make it virtual to ensure that every subclass has its own automatic version.
-	 */
+		If a Thing has members of type autoThing,
+		then we want the destructors of autoThing to be called automatically whenever a Thing is `delete`d.
+		For this to happen, it is necessary that every Thing itself has a destructor.
+		We therefore define a destructor here,
+		and we make it virtual to ensure that every subclass has its own automatic version.
+	*/
 	virtual ~structThing () noexcept { }
 
-	virtual void v_destroy () noexcept { };
+	virtual void v9_destroy () noexcept { }
 		/*
-		 * derived::v_destroy calls base::v_destroy at end
-		 */
-	virtual void v_info ();
+			This method should destroy all members that are not destroyed automatically
+			(any autoThing is destroyed automatically), and to remove dangling links to self.
+			Destroying *all* members means that we have to destroy all members that the
+			derived class has added, as well as all members of the base class,
+			and so on recursively; v9_destroy therefore has to call the inherited v9_destroy.
+			The convention is to call the parent's v9_destroy at our end, i.e. to chain up;
+			this makes sense because the destruction of an added member might depend
+			on the presence of a member from the base class.
+			Thus, v9_destroy is called recursively up the inheritance hierarchy,
+			and this is implemented by calling the parent's v9_destroy at the end,
+			i.e. at position "9" (hence the name).
+		*/
+	virtual void v1_info ();
 		/*
-		 * Implement as follows: call a set of MelderInfo_writeXXX describing your data.
-		 *
-		 * Thing::v_info writes object id, object name, and date;
-		 * derived::v_info often calls base::v_info at start and then writes information on the new data,
-		 * but a few ancestors can be skipped if their data have new meanings.
-		 */
-	virtual void v_assertInvariants () { };
+			Implement as follows: call a set of MelderInfo_writeXXX describing your data.
+
+			Thing::v1_info writes object id, object name, and date;
+			derived::v1_info often calls base::v1_info at start
+			and then writes information on the new data (i.e., it chains down),
+			but a few ancestors can be skipped if their data have new meanings.
+		*/
+	virtual void v1_assertInvariants () { }
 		/*
-		 * derived::v_assertInvariants typically calls base::v_assertInvariants at start
-		 */
-	void assertInvariants () { our v_assertInvariants (); }
-	virtual void v_checkConstraints () { };
+			derived::v1_assertInvariants typically calls base::v1_assertInvariants at start
+		*/
+	friend void Thing_assertInvariants (Thing me) {
+		my v1_assertInvariants ();
+	}
+	virtual void v_checkConstraints () { }
 		/*
-		 * derived::v_checkConstraints typically calls base::v_checkConstraints at start
-		 */
-	virtual void v_nameChanged () { };
+			derived::v_checkConstraints typically calls base::v_checkConstraints at start
+		*/
+	virtual void v_nameChanged () { }
 		/*
-		 * derived::v_nameChanged may call base::_nameChanged at start, middle or end
-		 */
-	virtual void v_copyPreferencesToInstance () { };
+			derived::v_nameChanged may call base::v_nameChanged at start, middle or end
+		*/
+protected:
+	/*
+		The following two functions look like they belong in DataGui instead of in Thing,
+		but their content is automated via a macro that includes "override",
+		and some of that overridden content already appears in DataGui,
+		so we introduce these two functions here.
+	*/
+	virtual void v1_copyPreferencesToInstance () { }
 		/*
-		 * derived::v_copyPreferencesToInstance calls base::v_copyPreferencesToInstance at start
-		 */
+			derived::v1_copyPreferencesToInstance calls base::v1_copyPreferencesToInstance at *start*,
+			because specifications at derived level have to override those of the base level
+		*/
+	virtual void v9_repairPreferences () { }
+		/*
+			derived::v9_repairPreferences may call base::v9_repairPreferences at *end*,
+			because restrictions at base level may be laxer than restrictions at derived level
+			(preferences will be overridden only if their current value violates a restriction)
+		*/
 };
 
 #define forget(thing)  do { _Thing_forget (thing); thing = nullptr; } while (false)
@@ -189,7 +223,7 @@ Thing _Thing_dummyObject (ClassInfo classInfo);
 
 conststring32 Thing_getName (Thing me);
 /* Return a pointer to your internal name (which can be null). */
-conststring32 Thing_messageName (Thing me);
+conststring32 Thing_messageName (constThing me);
 conststring32 Thing_messageNameAndAddress (Thing me);   // for debugging
 
 void Thing_setName (Thing me, conststring32 name /* cattable */);
@@ -264,13 +298,21 @@ public:
 		return our ptr;
 	}
 	#if 0
+	/*
+		The following would allow implicit conversions of autoPitch to Pitch,
+		as in
+			Pitch_draw (my pitch);
+		instead of the explicit
+			Pitch_draw (my pitch.get());
+		This is unwanted, because we are not copying, so we #if this out.
+	*/
 	operator T* () const noexcept {
 		return our ptr;
 	}
 	#endif
 	/*
 		The expression
-			pitch.d_ptr -> xmin
+			pitch. ptr -> xmin
 		should be abbreviatable by
 			pitch -> xmin
 	*/
@@ -282,21 +324,21 @@ public:
 		return *our ptr;
 	}*/
 	/*
-	 * After construction, there are two ways to access the pointer: with and without transfer of ownership.
-	 *
-	 * Without transfer:
-	 *    Pitch_draw (pitch.get());
-	 *
-	 * With transfer:
-	 *    return thee;
-	 * and
-	 *    *out_pitch = pitch.move();
-	 *    *out_pulses = pulses.move();
-	 * and
-	 *    my addItem_move (pitch.move());
-	 * and
-	 *    praat_new (pitch.move(), my name);
-	 */
+		After construction, there are two ways to access the pointer: with and without transfer of ownership.
+
+		Without transfer:
+			Pitch_draw (pitch.get());
+
+	 	With transfer:
+			return thee;
+		and
+			*out_pitch = pitch.move();
+			*out_pulses = pulses.move();
+		and
+			my addItem_move (pitch.move());
+		and
+			praat_new (pitch.move(), my name);
+	*/
 	void releaseToUser () noexcept {
 		our ptr = nullptr;   // make the pointer non-automatic again
 	}
@@ -333,35 +375,27 @@ public:
 		return other. ptr != our ptr;
 	}
 	/*
-	 * The compiler should prevent initializations from autoSomeThing l-values, as in
-	 *    autoPitch pitch2 = pitch;
-	 * This is because the syntax of this statement is *copy* syntax,
-	 * but the semantics of this statement has to be, confusingly, *move* semantics
-	 * (i.e., pitch.ptr should be set to null),
-	 * because if the semantics were copy semantics instead,
-	 * a destructor would be called at some point for both pitch and pitch2,
-	 * twice deleting the same object, which is a run-time error.
-	 */
+		The compiler should prevent initializations from autoSomeThing l-values, as in
+			autoPitch pitch2 = pitch;
+		as well as assignments from autoSomeThing l-values, as in
+			pitch2 = pitch;
+		This is because the syntax of these statements is *copy* syntax,
+		but the semantics of these statements has to be, confusingly, *move* semantics
+		(i.e., pitch.ptr should be set to null),
+		because if the semantics were copy semantics instead,
+		a destructor would be called at some point for both pitch and pitch2,
+		twice deleting the same object, which is a run-time error.
+	*/
 	autoSomeThing<T> (const autoSomeThing<T>&) = delete;   // disable copy constructor from an l-value of class T*
 	template <class Y> autoSomeThing<T> (const autoSomeThing<Y>&) = delete;   // disable copy constructor from an l-value of a descendant class of T*
-	/*
-	 * The compiler should prevent assignments from autoSomeThing l-values, as in
-	 *    pitch2 = pitch;
-	 * This is because the syntax of this statement is *copy* syntax,
-	 * but the semantics of this statement has to be, confusingly, *move* semantics
-	 * (i.e., pitch.ptr should be set to null),
-	 * because if the semantics were copy semantics instead,
-	 * a destructor would be called at some point for both pitch and pitch2,
-	 * twice deleting the same object, which is a run-time error.
-	 */
 	autoSomeThing<T>& operator= (const autoSomeThing<T>&) = delete;   // disable copy assignment from an l-value of class T*
 	template <class Y> autoSomeThing<T>& operator= (const autoSomeThing<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
 	/*
-	 * The compiler should treat initializations from autoSomeThing r-values, as in
-	 *    extern autoPitch Pitch_create (...);
-	 *    autoPitch pitch = Pitch_create (...);
-	 * as move constructors.
-	 */
+		The compiler should treat initializations from autoSomeThing r-values, as in
+			extern autoPitch Pitch_create (...);
+			autoPitch pitch = Pitch_create (...);
+		as move constructors.
+	*/
 	autoSomeThing<T> (autoSomeThing<T>&& other) noexcept : ptr (other. ptr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
@@ -379,12 +413,12 @@ public:
 		other. _zero();
 	}
 	/*
-	 * The compiler should treat assignments from autoSomeThing r-values, as in
-	 *    extern autoPitch Pitch_create (...);
-	 *    autoPitch pitch;
-	 *    pitch = Pitch_create (...);
-	 * as move assignments.
-	 */
+		The compiler should treat assignments from autoSomeThing r-values, as in
+			extern autoPitch Pitch_create (...);
+			autoPitch pitch;
+			pitch = Pitch_create (...);
+		as move assignments.
+	*/
 	autoSomeThing<T>& operator= (autoSomeThing<T>&& other) noexcept {
 		if (other. ptr != our ptr) {
 			#if _Thing_auto_DEBUG
@@ -418,26 +452,26 @@ public:
 		return *this;
 	}
 	/*
-	 * Move semantics from l-values can be achieved with move syntax:
-	 *    autoPitch pitch2 = pitch1.move();   // calls the move constructor and therefore nullifies pitch1
-	 *
-	 *    pitch2 = pitch1.move();   // performs move assignment and therefore nullifies pitch1
-	 */
+		Move semantics from l-values can be achieved with move syntax:
+			autoPitch pitch2 = pitch1.move();   // calls the move constructor and therefore nullifies pitch1
+
+			pitch2 = pitch1.move();   // performs move assignment and therefore nullifies pitch1
+	*/
 	autoSomeThing<T>&& move () noexcept { return static_cast <autoSomeThing<T>&&> (*this); }
 	/*
-	 * Returning autoSomeThing from a function works as hoped for:
-	 *    autoPitch Sound_to_Pitch (Sound me) {
-	 *       autoPitch thee = Pitch_create (...);
-	 *       ...
-	 *       return thee;
-	 *    }
-	 *    autoPitch pitch = Sound_to_Pitch (sound);
-	 * returns a moved `thee` in `pitch`. This works because return values from automatic (i.e. non-static) variables are r-values.
-	 *
-	 * In function arguments, transfer of ownership works only explicitly:
-	 *    autoPitch pitch = Pitch_create (...);
-	 *    collection -> addItem_move (pitch.move());   // compiler error if you don't call move()
-	 */
+		Returning autoSomeThing from a function works as hoped for:
+			autoPitch Sound_to_Pitch (Sound me) {
+				autoPitch thee = Pitch_create (...);
+				...
+				return thee;
+			}
+			autoPitch pitch = Sound_to_Pitch (sound);
+		returns a moved `thee` in `pitch`. This works because return values from automatic (i.e. non-static) variables are r-values.
+
+		In function arguments, transfer of ownership works only explicitly:
+			autoPitch pitch = Pitch_create (...);
+			collection -> addItem_move (pitch.move());   // compiler error if you don't call move()
+	*/
 
 	/*
 		The C++ language does allow us to do

@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2021 Paul Boersma
+ * Copyright (C) 2002-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ Thing_implement (TableRow, Daata, 0);
 
 Thing_implement (Table, Daata, 0);
 
-void structTable :: v_info () {
-	our structDaata :: v_info ();
+void structTable :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of rows: ", our rows.size);
 	MelderInfo_writeLine (U"Number of columns: ", our numberOfColumns);
 }
@@ -465,18 +465,32 @@ double Table_getNumericValue_Assert (Table me, integer rowNumber, integer column
 	return row -> cells [columnNumber]. number;
 }
 
+static double getSum (Table me, integer columnNumber) {
+	longdouble sum = 0.0;
+	for (integer irow = 1; irow <= my rows.size; irow ++) {
+		const TableRow row = my rows.at [irow];
+		sum += row -> cells [columnNumber]. number;
+	}
+	return double (sum);
+}
+
+double Table_getSum (Table me, integer columnNumber) {
+	try {
+		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
+		Table_numericize_checkDefined (me, columnNumber);
+		return getSum (me, columnNumber);
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot compute sum of column ", columnNumber, U".");
+	}
+}
+
 double Table_getMean (Table me, integer columnNumber) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			return undefined;
-		longdouble sum = 0.0;
-		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			const TableRow row = my rows.at [irow];
-			sum += row -> cells [columnNumber]. number;
-		}
-		return double (sum) / my rows.size;
+		return getSum (me, columnNumber) / my rows.size;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute mean of column ", columnNumber, U".");
 	}

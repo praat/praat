@@ -1,6 +1,6 @@
 /* Pitch_def.h
  *
- * Copyright (C) 1992-2006,2008,2011,2012,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2006,2008,2011,2012,2015-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ oo_DEFINE_CLASS (Pitch, Sampled)
 	oo_STRUCTVEC (Pitch_Frame, frames, nx)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }

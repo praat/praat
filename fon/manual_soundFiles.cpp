@@ -1,6 +1,6 @@
 /* manual_soundFiles.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017,2019-2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017,2019-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,11 @@ LIST_ITEM (U"1.5. @@Sound files 1.5. Size|Size@")
 LIST_ITEM (U"1.6. @@Sound files 1.6. Compression|Compression@")
 MAN_END
 
-MAN_BEGIN (U"Sound files 1.1. Sampling", U"ppgb", 20040330)
+MAN_BEGIN (U"Sound files 1.1. Sampling", U"ppgb", 20220102)
 NORMAL (U"When a sound signal from a microphone or on a tape needs to be read into a computer, "
 	"it is %digitized, which means that it is %sampled and %quantized.")
 NORMAL (U"Sampling is the discretization of the time domain of the signal: "
-	"each second of the signal is divided up into 11025, 22050, or 44100 "
+	"each second of the signal is divided up into 44100, 48000 or 96000 "
 	"slices (or any other suitable number), and a %%sample value% is associated with "
 	"each slice. For instance, a continuous 377-Hz sine wave is expressed by")
 EQUATION (U"%x(%t) = sin (2%π 377 %t)")
@@ -412,28 +412,6 @@ NORMAL (U"To label and segment the LongSound object, use the @TextGridEditor ins
 NORMAL (U"The display and playback of the samples is restricted to 60 seconds at a time, for reasons of speed "
 	"(although you can change this number with ##LongSound prefs# from the main #Preferences menu; "
 	"the sound file itself can contain several hours of sound.")
-MAN_END
-
-MAN_BEGIN (U"Macintosh sound files", U"ppgb", 20110131)
-INTRO (U"A way for storing a @Sound object on disk.")
-ENTRY (U"File format")
-NORMAL (U"The double-clickable sound file of the Macintosh (8 bits per sample). "
-	"Cannot be ported to other machines, because the sound is in the @@resource fork@.")
-ENTRY (U"Reading")
-NORMAL (U"With @@Read from file...@.")
-NORMAL (U"To read a Sound from a Macintosh sound file on disk, use @@Read from file...@ (Macintosh only).")
-NORMAL (U"The 8-bit sample values are divided by 128 so that the amplitude "
-	"of the resulting Sound is between –1.0 and +1.0.")
-NORMAL (U"The resulting Sound will appear in the list of objects; "
-	"its name will be equal to the file name, without extension.")
-ENTRY (U"Saving")
-NORMAL (U"With ##Save as Mac sound file...#. Praat asks you for a file name. "
-	"After you click OK, 0.5 is added to the samples of the Sound, "
-	"they are multiplied by 128 and quantized between 0 and 255; "
-	"the result is written to the file in 8-bit linear Macintosh sound-file format.")
-NORMAL (U"To avoid clipping, keep the absolute amplitude below 1.000. "
-	"If the maximum sound pressure level is 91 dB (top = 127), "
-	"the quantization threshold for a sine wave is (top = 1/2) 43 dB.")
 MAN_END
 
 MAN_BEGIN (U"Open long sound file...", U"ppgb", 19980730)

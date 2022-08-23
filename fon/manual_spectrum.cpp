@@ -433,7 +433,7 @@ NORMAL (U"For the Fourier transform, the Praat-defined @@time domain@ of the @So
 	"Instead, its time domain is considered to run from %t=0 to %t=%T, "
 	"where %t=0 is supposed to be aligned with the first sample, "
 	"and %T is the total duration of the samples, i.e. %%N%Δ%t, "
-	"where %N is the number of samples and Δe%t is the @@sampling period@. "
+	"where %N is the number of samples and Δ%t is the @@sampling period@. "
 	"Thus, the last sample lies at %t=%T–Δ%t.")
 NORMAL (U"For a sound %x(%t), defined for all times %t in the domain (0, %T), "
 	"the complex spectrum %X(%f) for any frequency %f is the forward Fourier transform of %x(%t), with a negative exponent:")

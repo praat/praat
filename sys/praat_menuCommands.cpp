@@ -1,6 +1,6 @@
 /* praat_menuCommands.cpp
  *
- * Copyright (C) 1992-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,6 @@
 
 static OrderedOf <structPraat_Command> theCommands;
 void praat_menuCommands_exit_optimizeByLeaking () { theCommands. _ownItems = false; }
-
-void praat_menuCommands_init () {
-}
 
 void praat_sortMenuCommands () {
 	for (integer i = 1; i <= theCommands.size; i ++) {
@@ -119,13 +116,13 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 	int deprecationYear = 0;
 	uint32 guiFlags = 0;
 	if (flags > 7) {
-		depth = (flags & praat_DEPTH_7) >> 16;
-		unhidable = (flags & praat_UNHIDABLE) != 0;
-		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
+		depth = (flags & GuiMenu_DEPTH_7) >> 16;
+		unhidable = (flags & GuiMenu_UNHIDABLE) != 0;
+		hidden = (flags & GuiMenu_HIDDEN) != 0 && ! unhidable;
 		key = flags & 0x000000FF;
-		noApi = (flags & praat_NO_API) != 0;
-		forceApi = (flags & praat_FORCE_API) != 0;
-		deprecationYear = (flags & praat_DEPRECATED) == praat_DEPRECATED ? 2000 + (flags >> 24) : 0;
+		noApi = (flags & GuiMenu_NO_API) != 0;
+		forceApi = (flags & GuiMenu_FORCE_API) != 0;
+		deprecationYear = (flags & GuiMenu_DEPRECATED) == GuiMenu_DEPRECATED ? 2000 + (flags >> 24) : 0;
 		guiFlags = key ? flags & (0x000000FF | GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
 	}
 	if (callback && ! title) {

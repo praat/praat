@@ -29,7 +29,7 @@ oo_DEFINE_CLASS (Index, Daata)
 	oo_INTVEC (classIndex, numberOfItems)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

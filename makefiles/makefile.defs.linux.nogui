@@ -1,11 +1,11 @@
 # File: makefile.defs.linux.nogui
 
 # System: Linux without GUI, network, and sound
-# Paul Boersma 2020-04-16
+# Paul Boersma 2021-12-27
 
-CC = gcc
-
-CXX = g++
+CC ?= gcc
+CXX ?= g++
+LINK ?= $(CXX)
 
 PKG_CONFIG ?= "pkg-config"
 
@@ -16,11 +16,9 @@ CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
-LINK = g++
-
 EXECUTABLE = praat_nogui
 
-LIBS = `$(PKG_CONFIG) --libs pangocairo` -lm -static-libgcc -static-libstdc++ -lpthread
+LIBS = `$(PKG_CONFIG) --libs pangocairo` -no-pie -lm -static-libgcc -static-libstdc++ -lpthread
 
 AR = ar
 RANLIB = ls

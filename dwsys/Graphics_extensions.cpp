@@ -1,6 +1,6 @@
 /* Graphics_extensions.cpp
  *
- * Copyright (C) 2012-2020 David Weenink
+ * Copyright (C) 2012-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,13 @@
 #include "Graphics_extensions_enums.h"
 #include "enums_getValue.h"
 #include "Graphics_extensions_enums.h"
+
+double Graphics_getFontSizeInsideBox (Graphics g, double  widthWC, double heightWCx, double maxNumberOfCharacters_line, double maxNumberOfLines) {
+	const double pointsPerMillimetre = 72.0 / (10.0 * 2.54);
+	const double boxWidth_points = Graphics_dxWCtoMM (g, widthWC) * pointsPerMillimetre;
+	const double boxHeight_points = Graphics_dyWCtoMM (g, heightWCx) * pointsPerMillimetre;
+	return std::min (boxHeight_points / maxNumberOfLines , 2.0 * boxWidth_points / maxNumberOfCharacters_line);
+}
 
 /*
 	Draw a box plot of x [1..x.size]. The vertical center line of the plot

@@ -40,8 +40,8 @@
 
 Thing_implement (Matrix, SampledXY, 2);
 
-void structMatrix :: v_info () {
-	structDaata :: v_info ();
+void structMatrix :: v1_info () {
+	structDaata :: v1_info ();
 	double minimum = 0.0, maximum = 0.0;
 	Matrix_getWindowExtrema (this, 1, our nx, 1, our ny, & minimum, & maximum);
 	MelderInfo_writeLine (U"xmin: ", our xmin);
@@ -58,7 +58,7 @@ void structMatrix :: v_info () {
 	MelderInfo_writeLine (U"Maximum value: ", maximum);
 }
 
-void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
+void structMatrix :: v1_readText (MelderReadText text, int formatVersion) {
 	if (formatVersion < 0) {
 		our xmin = texgetr64 (text);
 		our xmax = texgetr64 (text);
@@ -71,7 +71,7 @@ void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 		our x1 = texgetr64 (text);
 		our y1 = texgetr64 (text);
 	} else {
-		Matrix_Parent :: v_readText (text, formatVersion);
+		Matrix_Parent :: v1_readText (text, formatVersion);
 	}
 	Melder_require (our xmin <= our xmax, U"xmin should be less than or equal to xmax.");
 	Melder_require (our ymin <= our ymax, U"ymin should be less than or equal to ymax.");

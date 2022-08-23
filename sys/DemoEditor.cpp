@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2021 Paul Boersma
+ * Copyright (C) 2009-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@ static DemoEditor theReferenceToTheOnlyDemoEditor;
 
 /***** DemoEditor methods *****/
 
-void structDemoEditor :: v_destroy () noexcept {
+void structDemoEditor :: v9_destroy () noexcept {
 	Melder_free (praatPicture);
 	theReferenceToTheOnlyDemoEditor = nullptr;
-	DemoEditor_Parent :: v_destroy ();
+	DemoEditor_Parent :: v9_destroy ();
 }
 
-void structDemoEditor :: v_info () {
-	DemoEditor_Parent :: v_info ();
+void structDemoEditor :: v1_info () {
+	DemoEditor_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Colour: ", MelderColour_name (((PraatPicture) praatPicture) -> colour));
 	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
 	MelderInfo_writeLine (U"Font size: ", ((PraatPicture) praatPicture) -> fontSize);
@@ -83,7 +83,7 @@ static void gui_drawingarea_cb_key (DemoEditor me, GuiDrawingArea_KeyEvent event
 	my x = 0;
 	my y = 0;
 	my key = event -> key;
-	trace (my key);
+	trace (U"\"", my key, U"\"");
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	my commandKeyPressed = event -> commandKeyPressed;
 	my optionKeyPressed = event -> optionKeyPressed;
@@ -185,6 +185,9 @@ int Demo_show () {
 	autoDemoOpen demo;
 	GuiThing_show (theReferenceToTheOnlyDemoEditor -> windowForm);
 	Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());
+	#if defined (macintosh)
+		Melder_sleep (0.02);   // because GuiShell_drain is not guaranteed to drain if called within 16 ms from previous
+	#endif
 	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> windowForm);
 	return 1;
 }
@@ -279,7 +282,8 @@ void Demo_waitForInput (Interpreter interpreter) {
 }
 
 void Demo_peekInput (Interpreter interpreter) {
-	if (! theReferenceToTheOnlyDemoEditor) return;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -447,8 +451,28 @@ bool Demo_clickedIn (double left, double right, double bottom, double top) {
 	}
 	if (! theReferenceToTheOnlyDemoEditor -> clicked)
 		return false;
-	double xWC = Demo_x (), yWC = Demo_y ();
+	const double xWC = Demo_x (), yWC = Demo_y ();
 	return xWC >= left && xWC < right && yWC >= bottom && yWC < top;
+}
+
+void Demo_saveToPdfFile (MelderFile file) {
+	if (! theReferenceToTheOnlyDemoEditor)
+		return;
+	if (! theReferenceToTheOnlyDemoEditor -> graphics)
+		return;   // could be the case in the very beginning
+	const double resolution = theReferenceToTheOnlyDemoEditor -> graphics -> resolution;
+	autoGraphics pdfGraphics = Graphics_create_pdffile (file, resolution,
+		undefined, GuiControl_getWidth (theReferenceToTheOnlyDemoEditor -> drawingArea) / resolution,
+		undefined, GuiControl_getHeight (theReferenceToTheOnlyDemoEditor -> drawingArea) / resolution
+	);
+	pdfGraphics -> d_x2DCmax = 1e9;
+	pdfGraphics -> d_y2DCmax = 1e9;
+	Graphics_setWsWindow (pdfGraphics.get(), 0.0, 100.0, 0.0, 100.0);
+	Graphics_setWsViewport (pdfGraphics.get(),
+		0.0, GuiControl_getWidth (theReferenceToTheOnlyDemoEditor -> drawingArea),
+		0.0, GuiControl_getHeight (theReferenceToTheOnlyDemoEditor -> drawingArea)
+	);
+	Graphics_play (theReferenceToTheOnlyDemoEditor -> graphics.get(), pdfGraphics.get());
 }
 
 /* End of file DemoEditor.cpp */

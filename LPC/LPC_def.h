@@ -46,7 +46,7 @@ oo_DEFINE_CLASS (LPC, Sampled)
 	oo_STRUCTVEC (LPC_Frame, d_frames, nx)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		conststring32 v_getIndexText () const
 			override { return U"frame number"; }

@@ -24,8 +24,8 @@ Thing_implement (ContingencyTable, TableOfReal, 0);
 
 #define TINY 1e-30
 
-void structContingencyTable :: v_info () {
-	structDaata :: v_info ();
+void structContingencyTable :: v1_info () {
+	structDaata :: v1_info ();
 
 	double ndf;
 	double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, chisq;
@@ -144,7 +144,7 @@ void ContingencyTable_getEntropies (ContingencyTable me, double *out_h, double *
 autoContingencyTable Confusion_to_ContingencyTable (Confusion me) {
 	try {
 		autoContingencyTable thee = Thing_new (ContingencyTable);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ContingencyTable.");
@@ -156,7 +156,7 @@ autoContingencyTable TableOfReal_to_ContingencyTable (TableOfReal me) {
 		Melder_require (TableOfReal_isNonNegative (me),
 			U"No cell in the table should be negative.");
 		autoContingencyTable thee = Thing_new (ContingencyTable);
-		my structTableOfReal :: v_copy (thee.get());
+		my structTableOfReal :: v1_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ContingencyTable.");

@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,8 +59,8 @@ static void infoPeriods (PointProcess me, double shortestPeriod, double longestP
 	MelderInfo_writeLine (U"   Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
 }
 
-void structPointProcess :: v_info () {
-	structDaata :: v_info ();
+void structPointProcess :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");

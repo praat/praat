@@ -1,6 +1,6 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013-2020 Paul Boersma
+ * Copyright (C) 2013-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@
 
 Thing_implement (Photo, SampledXY, 0);
 
-void structPhoto :: v_info () {
-	our structDaata :: v_info ();
+void structPhoto :: v1_info () {
+	our structDaata :: v1_info ();
 	MelderInfo_writeLine (U"xmin: ", our xmin);
 	MelderInfo_writeLine (U"xmax: ", our xmax);
 	MelderInfo_writeLine (U"Number of columns: ", our nx);
@@ -102,7 +102,7 @@ autoPhoto Photo_createSimple (integer numberOfRows, integer numberOfColumns) {
 autoPhoto Photo_readFromImageFile (MelderFile file) {
 	try {
 		#if defined (linux) && ! defined (NO_GRAPHICS)
-			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8 (file -> path));
+			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8_fileSystem (file -> path));
 			//if (cairo_surface_status)
 			//	Melder_throw (U"Error opening PNG file.");
 			integer width = cairo_image_surface_get_width (surface);
@@ -236,7 +236,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		}
 		cairo_surface_t *surface = cairo_image_surface_create_for_data (imageData,
 			format, my nx, my ny, bytesPerRow);
-		cairo_surface_write_to_png (surface, Melder_peek32to8 (file -> path));
+		cairo_surface_write_to_png (surface, Melder_peek32to8_fileSystem (file -> path));
 		cairo_surface_destroy (surface);
 	}
 #endif

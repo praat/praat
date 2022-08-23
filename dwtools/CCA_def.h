@@ -36,7 +36,7 @@ oo_DEFINE_CLASS (CCA, Daata)
 	oo_OBJECT (Eigen, 0, x)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

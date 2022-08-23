@@ -171,6 +171,9 @@ public:
 		return *this;
 	}
 	explicit operator bool () const noexcept { return !! our elements; }
+	_autostring <T> const & operator[] (integer i) const {
+		return our elements [i - 1];
+	}
 	_autostring <T> & operator[] (integer i) {
 		return our elements [i - 1];
 	}

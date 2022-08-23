@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,12 +103,12 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 		bool unhidable = false, hidden = false, attractive = false;
 		uint32 guiFlags = 0;
 		if (flags > 7) {
-			depth = ((flags & praat_DEPTH_7) >> 16);
-			unhidable = (flags & praat_UNHIDABLE) != 0;
-			hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
+			depth = ((flags & GuiMenu_DEPTH_7) >> 16);
+			unhidable = (flags & GuiMenu_UNHIDABLE) != 0;
+			hidden = (flags & GuiMenu_HIDDEN) != 0 && ! unhidable;
 			key = flags & 0x000000FF;
 			guiFlags = key ? flags & (0x000000FF | GuiMenu_SHIFT | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
-			attractive = (guiFlags & praat_ATTRACTIVE) != 0;
+			attractive = (guiFlags & GuiMenu_ATTRACTIVE) != 0;
 		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
@@ -587,7 +587,7 @@ void praat_actions_show () {
 		actionsInvisible = false;
 		GuiMenu currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;
 		bool writeMenuGoingToSeparate = false;
-		int y = Machine_getMenuBarHeight () + 10;
+		int y = Machine_getMenuBarBottom () + 10;
 		for (integer i = 1; i <= theActions.size; i ++) {   // add buttons or make existing buttons sensitive (executable)
 			Praat_Command me = theActions.at [i];
 			if (my depth == 0) currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
@@ -661,9 +661,6 @@ void praat_actions_createWriteMenu (GuiWindow window) {
 	#if gtk
 		GuiMenu_addSeparator (praat_writeMenu);
 	#endif
-}
-
-void praat_actions_init () {
 }
 
 void praat_actions_createDynamicMenu (GuiWindow window) {
@@ -842,7 +839,7 @@ void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 	try {
 		integer numberOfApiActions = 0;
 		for (; i <= theActions.size; i ++) {
-			Melder_casual (i, U": ", theActions.at [i] -> class1 -> className, U": ", theActions.at [i] -> title.get());
+			//Melder_casual (i, U": ", theActions.at [i] -> class1 -> className, U": ", theActions.at [i] -> title.get());
 			Praat_Command command = theActions.at [i];
 			const bool deprecated = ( command -> deprecationYear > 0 );
 			if (! actionIsToBeIncluded (command, deprecated, includeSaveAPI, includeQueryAPI, includeModifyAPI,

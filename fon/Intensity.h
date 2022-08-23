@@ -2,7 +2,7 @@
 #define _Intensity_h_
 /* Intensity.h
  *
- * Copyright (C) 1992-2005,2007,2011,2015-2017,2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015-2017,2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "Vector.h"
 
 Thing_define (Intensity, Vector) {
-	void v_info ()
+	void v1_info ()
 		override;
 	int v_domainQuantity ()
 		override { return MelderQuantity_TIME_SECONDS; }

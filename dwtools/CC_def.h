@@ -48,7 +48,7 @@ oo_DEFINE_CLASS (CC, Sampled)
 	oo_STRUCTVEC (CC_Frame, frame, nx)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

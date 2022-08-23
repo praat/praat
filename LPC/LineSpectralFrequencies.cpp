@@ -45,8 +45,8 @@
 
 Thing_implement (LineSpectralFrequencies, Sampled, 1);
 
-void structLineSpectralFrequencies :: v_info () {
-	structDaata :: v_info ();
+void structLineSpectralFrequencies :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain: ", xmin, U" to ", xmax, U" (s).");
 	MelderInfo_writeLine (U"Number of frequencies: ", maximumNumberOfFrequencies);
 	MelderInfo_writeLine (U"Number of frames: ", nx);

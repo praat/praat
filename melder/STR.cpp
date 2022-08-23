@@ -1,6 +1,6 @@
 /* STR.cpp
  *
- * Copyright (C) 2012-2017 David Weenink, 2008,2018,2020 Paul Boersma
+ * Copyright (C) 2012-2017 David Weenink, 2008,2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ static uint64 hexSecret = UINT64_C (5'847'171'831'059'823'557);
 autostring8 hex_STR8 (conststring8 str, uint64 key) {
 	if (key != 0)
 		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
-	autostring8 result (uinteger_to_integer (strlen (str)) * 2);
+	autostring8 result (str8len (str) * 2);
 	char *to = & result [0];
 	for (const char8 *from = (char8 *) & str [0]; *from != '\0'; from ++) {
 		integer value = *from;
@@ -69,6 +69,27 @@ autostring32 mid_STR (conststring32 str, integer startingPosition_1, integer num
 		return Melder_dup (U"");
 	autostring32 result (newLength);
 	str32ncpy (result.get(), & str [startingPosition_1-1], newLength);
+	return result;
+}
+
+autostring32 quote_doubleSTR (conststring32 str) {
+	/*
+		Put the string `str` between quotes, doubling each quote inside `str`.
+	*/
+	constexpr integer maximumNumberOfOutputCharactersPerInputCharacter = 2;   // namely, the character " has to be converted to ""
+	constexpr integer numberOfOutputCharactersNeededForTheQuotes = 2;   // namely, the opening quote and the closing quote
+	autostring32 result (maximumNumberOfOutputCharactersPerInputCharacter * str32len (str) + numberOfOutputCharactersNeededForTheQuotes);
+		// for instance, the string `"""` has to be converted to the string `""""""""`
+	const char32 *p = & str [0];
+	char32 *q = & result [0];
+	* q ++ = U'"';
+	while (*p != U'\0') {
+		if (*p == U'"')
+			* q ++ = U'\"';
+		* q ++ = * p ++;
+	}
+	* q ++ = U'"';
+	*q = U'\0';
 	return result;
 }
 
@@ -288,7 +309,7 @@ autostring32 right_STR (conststring32 str, integer newLength) {
 autostring8 unhex_STR8 (conststring8 str, uint64 key) {
 	if (key != 0)
 		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
-	autostring8 result (uinteger_to_integer (strlen (str)) / 2);
+	autostring8 result (str8len (str) / 2);
 	char *to = & result [0];
 	for (const char8 *from = (char8 *) & str [0];;) {
 		char8 code1 = *from ++;

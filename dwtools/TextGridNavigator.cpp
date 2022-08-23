@@ -42,7 +42,8 @@
 
 Thing_implement (TextGridNavigator, Function, 0);
 
-void structTextGridNavigator :: v_info () {
+void structTextGridNavigator :: v1_info () {
+	// skipping parent classes
 	const integer topicTierNumber = tierNavigators.at [1] -> tierNumber;
 	integer topicTierSize = tierNavigators. at [1] -> v_getSize ();
 	MelderInfo_writeLine (U"Number of complete matches: ", TextGridNavigator_getNumberOfMatches (this),  U" (from ", topicTierSize, U")");
@@ -50,7 +51,7 @@ void structTextGridNavigator :: v_info () {
 		const TextGridTierNavigator tn = tierNavigators.at [item];
 		const integer tierNumber = tn -> tierNumber;
 		MelderInfo_writeLine (U"Tier number: ", tierNumber, U" (item number: ", item, U")");
-		tn -> v_info ();
+		tn -> v1_info ();
 		MelderInfo_writeLine (U"\tMatch location to tier number ", topicTierNumber, U": ", 
 			kMatchDomainAlignment_getText (tn -> matchDomainAlignment));
 	}	

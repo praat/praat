@@ -1,6 +1,6 @@
 /* FormantPath.cpp
  *
- * Copyright (C) 2020-2021 David Weenink
+ * Copyright (C) 2020-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +47,8 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantPath_def.h"
 
-void structFormantPath :: v_info () {
-	structDaata :: v_info ();
+void structFormantPath :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of Formant objects: ", formants . size);
 	for (integer ic = 1; ic <= ceilings.size; ic ++)
 		MelderInfo_writeLine (U"Ceiling ", ic, U": ", ceilings [ic], U" Hz");
@@ -61,7 +61,6 @@ double structFormantPath :: v_getValueAtSample (integer iframe, integer which, i
 
 conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*/, uint32 /*flags*/) {
 	return U"Frequency (Hz)";
-	
 };
 
 Thing_implement (FormantPath, Sampled, 0);
@@ -98,12 +97,8 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 	constexpr double qCutoff = 20.0;
 	constexpr double stressCutoff = 100.0;
 	try {
-		integer transtionCostType = 1;
-		double transitionCostCuttoff = 100.0;
-		if (Melder_debug == -3) {
-			transtionCostType = 2;
-			transitionCostCuttoff = 0.3;
-		}
+		const integer transtionCostType = ( Melder_debug == -3 ? 2 : 1 );
+		const double transitionCostCuttoff = ( Melder_debug == -3 ? 0.3 : 100.0 );
 		autoMatrix stresses, qsums;
 		MelderExtremaWithInit intensities;
 		const integer midformant = (my formants.size + 1) / 2;
@@ -212,9 +207,8 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		/*
 			Backtrack
 		*/
-		for (integer itime = my nx; itime > 1; itime --) {
+		for (integer itime = my nx; itime > 1; itime --)
 			path [itime - 1] = psi [path [itime]] [itime];
-		}
 		if (out_delta)
 			*out_delta = thee.move();
 		return path;
@@ -311,10 +305,15 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 	}
 }
 
+integer FormantPath_getNumberOfFormantTracks (FormantPath me) {
+	Melder_assert (my formants. size > 0);
+	return my formants.at [1] -> maxnFormants;
+}
+
 autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
-		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		if (numberOfTracks == 0)
 			numberOfTracks = maxnFormants;
 		for (integer itime = 1; itime <= my nx; itime ++) {
@@ -323,7 +322,7 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) 
 				const integer currentNumberOfFormants = std::min (numberOfTracks, frame -> numberOfFormants);
 				longdouble qsum = 0.0;
 				for (integer itrack = 1; itrack <= currentNumberOfFormants; itrack ++)
-					qsum += frame -> formant [itrack] . frequency / frame-> formant [itrack]. bandwidth;
+					qsum += frame -> formant [itrack]. frequency / frame -> formant [itrack]. bandwidth;
 				thy z [iformant] [itime] = ( currentNumberOfFormants > 0 ? (double) (qsum / currentNumberOfFormants) : 0.0 );
 			}
 		}
@@ -336,7 +335,7 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) 
 autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTracks, bool maximumCosts) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
-		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		if (numberOfTracks == 0)
 			numberOfTracks = maxnFormants;
 		for (integer itime = 2; itime <= my nx; itime ++) {
@@ -347,12 +346,12 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTra
 				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
 					const Formant_Frame ffj = & my formants.at [jformant] -> frames [itime - 1];
 					const integer ntracks = std::min (ffj -> numberOfFormants, numberOfTracks_i);
-					long double transitionCosts = 0.0;
+					longdouble transitionCosts = 0.0;
 					for (integer itrack = 1; itrack <= ntracks; itrack ++) {
-						const double fi = ffi -> formant [itrack].frequency, fj = ffj -> formant [itrack] . frequency;
+						const double fi = ffi -> formant [itrack]. frequency, fj = ffj -> formant [itrack]. frequency;
 						const double dif = fabs (fi  - fj);
 						const double sum = fi  + fj;
-						const double bw = sqrt (ffi -> formant [itrack] . bandwidth * ffj -> formant [itrack] . bandwidth);
+						const double bw = sqrt (ffi -> formant [itrack]. bandwidth * ffj -> formant [itrack]. bandwidth);
 						double cost = bw * dif / sum;
 						if (Melder_debug == -3)
 							cost = fabs (NUMlog2 (fi / fj));
@@ -373,7 +372,7 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTra
 autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
 	try {
 		const integer numberOfFormants = my formants.size;
-		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		Melder_require (parameters.size > 0 && parameters.size <= maxnFormants,
 			U"The number of parameters should be between 1 and ", maxnFormants, U".");
 		integer fromFormant = 1;
@@ -381,7 +380,8 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 		const integer numberOfDataPoints = (windowLength + 0.5 * my dx) / my dx;
 		Melder_require (numberOfDataPoints >= maximumNumberOfCoefficients,
 			U"The window length is too short for the number of coefficients you use in the stress determination (",
-			maximumNumberOfCoefficients, U"). Either increase your window length or decrease the number of coefficents per track.");
+			maximumNumberOfCoefficients, U"). Either increase your window length or decrease the number of coefficents per track."
+		);
 		while (fromFormant <= parameters.size && parameters [fromFormant] <= 0)
 			fromFormant ++;
 		integer toFormant = parameters.size;
@@ -552,7 +552,9 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		FormantPath_getGridDimensions (me, & nrow, & ncol);
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
-	const double fontSize_old = Graphics_inqFontSize (g), newFontSize = 8.0;
+	const double fontSize_old = Graphics_inqFontSize (g);
+	double newFontSize = fontSize_old;
+	
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
@@ -573,6 +575,10 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 			fm = Formant_to_FormantModeler (formant, tmin, tmax, parameters);
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+		if (iformant == 1) {
+			newFontSize = Graphics_getFontSizeInsideBox (g, tmax - tmin, spaceBetweenFraction_y * (fmax - fmin), 18.0, 3.0);
+			Graphics_setFontSize (g, newFontSize);
+		}
 		if (garnish && markCandidatesWithinPath) {
 			for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
 				TextInterval textInterval = intervalTier -> intervals.at [interval];
@@ -598,17 +604,15 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 			Mark ceiling & stress
 		*/
 		autoMelderString info;
-		const double tLeftPos = tmin - 0.01 * (tmax - tmin), tRightPos = tmax + 0.01 * (tmax - tmin);
 		if (garnish) {
+			const double tLeftPos = tmin - 0.01 * (tmax - tmin);
+			MelderString_append (& info, U"Ceiling = ", Melder_fixed (my ceilings [iformant], 0), U" Hz");
 			if (showStress && numberOfSamples > 0) {
 				const double stress = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
-				MelderString_append (& info, U"Fit=", Melder_fixed (stress, 2));
-				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_BOTTOM);
-				Graphics_text (g, tRightPos, fmax, info.string);
+				MelderString_append (& info, U"\nStress = ", Melder_fixed (stress, 2));
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_TOP);
 			}
-			MelderString_empty (& info);
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_BOTTOM);
-			MelderString_append (& info, U"Ceiling=", Melder_fixed (my ceilings [iformant], 0), U" Hz");
 			Graphics_text (g, tLeftPos, fmax, info.string);
 		}
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
@@ -617,18 +621,17 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 				const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
 				const double wDC = (gg -> d_x2DC - gg -> d_x1DC) / (gg -> d_x2wNDC - gg -> d_x1wNDC) * (gg -> d_x2NDC - gg -> d_x1NDC);
 				double dx = 1.5 * margin / wDC;
-				double xTick = 0.06 * dx;
-				if (dx > 0.4) dx = 0.4;
-				return xTick /= 1.0 - 2.0 * dx;
+				const double xTick = 0.06 * dx;
+				Melder_clipRight (& dx, 0.4);
+				return xTick / (1.0 - 2.0 * dx);
 			};
 			auto getYtick = [] (Graphics gg, double fontSize) {
 				const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
 				const double hDC = integer_abs (gg->d_y2DC - gg->d_y1DC) / (gg->d_y2wNDC - gg->d_y1wNDC) * (gg->d_y2NDC - gg-> d_y1NDC);
 				double dy = margin / hDC;
-				double yTick = 0.09 * dy;
-				if (dy > 0.4) dy = 0.4;
-				yTick /= 1.0 - 2.0 * dy;
-				return yTick;
+				const double yTick = 0.09 * dy;
+				Melder_clipRight (& dy, 0.4);
+				return yTick / (1.0 - 2.0 * dy);
 			};
 			const double xTick = (double) getXtick (g, newFontSize) * (tmax - tmin);
 			const double yTick = (double) getYtick (g, newFontSize) * (fmax - fmin);

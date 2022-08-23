@@ -101,51 +101,7 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 	You may want to restrict the availability to one object for commands that write objects to file,
 	commands that present information in a dialog, or the View & Edit command.
 */
-#define praat_INSENSITIVE  GuiMenu_INSENSITIVE
-#define praat_CHECKBUTTON  GuiMenu_CHECKBUTTON
-#define praat_TOGGLE_ON  GuiMenu_TOGGLE_ON
-#define praat_ATTRACTIVE  GuiMenu_ATTRACTIVE
-#define praat_RADIO_FIRST  GuiMenu_RADIO_FIRST
-#define praat_RADIO_NEXT  GuiMenu_RADIO_NEXT
-#define praat_HIDDEN  0x0000'4000
-#define praat_UNHIDABLE  0x0000'8000
-#define praat_DEPTH_1  0x0001'0000
-#define praat_DEPTH_2  0x0002'0000
-#define praat_DEPTH_3  0x0003'0000
-#define praat_DEPTH_4  0x0004'0000
-#define praat_DEPTH_5  0x0005'0000
-#define praat_DEPTH_6  0x0006'0000
-#define praat_DEPTH_7  0x0007'0000
-#define praat_NO_API  0x0008'0000
-#define praat_FORCE_API  0x0010'0000
-#define praat_DEPRECATED  (0x0020'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2004  (0x0420'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2005  (0x0520'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2006  (0x0620'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2007  (0x0720'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2008  (0x0820'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2009  (0x0920'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2010  (0x0A20'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2011  (0x0B20'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2012  (0x0C20'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2013  (0x0D20'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2014  (0x0E20'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2015  (0x0F20'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2016  (0x1020'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2017  (0x1120'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2018  (0x1220'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2019  (0x1320'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2020  (0x1420'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2021  (0x1520'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2022  (0x1620'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2023  (0x1720'0000 | praat_HIDDEN)
-#define praat_DEPRECATED_2024  (0x1820'0000 | praat_HIDDEN)
-/*
-	The following three can also be used, but not for deprecated commands.
-*/
-//#define GuiMenu_OPTION  (1 << 24)
-//#define GuiMenu_SHIFT  (1 << 25)
-//#define GuiMenu_COMMAND  (1 << 26)
+
 void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title);
 	/* 'class2' and 'class3' may be null. */
 	/* 'title' may be null; reference-copied. */

@@ -93,8 +93,8 @@
 	}
 
 #define oo_DEFINE_CLASS(Class, Parent)  \
-	bool struct##Class :: v_canWriteAsEncoding (int encoding) { \
-		if (! Class##_Parent :: v_canWriteAsEncoding (encoding)) return false;
+	bool struct##Class :: v1_canWriteAsEncoding (int encoding) { \
+		if (! Class##_Parent :: v1_canWriteAsEncoding (encoding)) return false;
 
 #define oo_END_CLASS(Class)  \
 		return true; \

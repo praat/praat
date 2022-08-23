@@ -2,7 +2,7 @@
 #define _Data_h_
 /* Data.h
  *
- * Copyright (C) 1992-2012,2013-2019,2021 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2019,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,15 +40,17 @@ typedef struct structData_Description {
  */
 
 Thing_define (Daata, Thing) {
-	virtual void v_copy (Daata data_to);
-	virtual bool v_equal (Daata otherData);
+	virtual void v1_copy (Daata /* data_to */) const { }
+	virtual bool v1_equal (Daata /* otherData */) {
+		return true;   // names of "identical" objects are allowed to be different
+	}
 	virtual Data_Description v_description () { return nullptr; }
 	virtual bool v_writable () { return true; }
-	virtual bool v_canWriteAsEncoding (int outputEncoding);
-	virtual void v_writeText (MelderFile openFile);
-	virtual void v_readText (MelderReadText text, int formatVersion);
-	virtual void v_writeBinary (FILE *f);
-	virtual void v_readBinary (FILE *f, int formatVersion);
+	virtual bool v1_canWriteAsEncoding (int /* outputEncoding */) { return true; }
+	virtual void v1_writeText (MelderFile /* openFile */) { }
+	virtual void v1_readText (MelderReadText /* text */, int /* formatVersion */) { }
+	virtual void v1_writeBinary (FILE * /* f */) { }
+	virtual void v1_readBinary (FILE * /* f */, int /* formatVersion */) { }
 	virtual void v_repair () { }   // after reading Praat data files created by others
 	// methods for scripting:
 	virtual bool v_hasGetNrow      () { return false; }   virtual double        v_getNrow      ()                                       { return undefined; }
@@ -78,10 +80,10 @@ Thing_define (Daata, Thing) {
 	virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (conststring32 /* colLabel */)           { return undefined; }
 };
 
-template <class T> autoSomeThing<T> Data_copy (T* data) {
+template <class T> autoSomeThing<T> Data_copy (const T* data) {
 	return _Data_copy (data).template static_cast_move <T> ();
 }
-autoDaata _Data_copy (Daata me);
+autoDaata _Data_copy (constDaata me);
 /*
 	Message:
 		"return a deep copy of yourself."

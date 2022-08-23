@@ -1,6 +1,6 @@
 /* praat_TimeFunction.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2017,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,21 +95,21 @@ DO
 void praat_TimeFunction_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Query time domain", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 1, U"Get start time", nullptr, 2, REAL_TimeFunction_getStartTime);
-	praat_addAction1 (klas, 1,   U"Get starting time", U"*Get start time", praat_DEPTH_2 | praat_DEPRECATED_2006, REAL_TimeFunction_getStartTime);
+	praat_addAction1 (klas, 1,   U"Get starting time", U"*Get start time", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2006, REAL_TimeFunction_getStartTime);
 	praat_addAction1 (klas, 1, U"Get end time", nullptr, 2, REAL_TimeFunction_getEndTime);
-	praat_addAction1 (klas, 1,   U"Get finishing time", U"*Get end time", praat_DEPTH_2 | praat_DEPRECATED_2006, REAL_TimeFunction_getEndTime);
+	praat_addAction1 (klas, 1,   U"Get finishing time", U"*Get end time", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2006, REAL_TimeFunction_getEndTime);
 	praat_addAction1 (klas, 1, U"Get total duration", nullptr, 2, REAL_TimeFunction_getTotalDuration);
-	praat_addAction1 (klas, 1,   U"Get duration", U"*Get total duration", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFunction_getTotalDuration);
+	praat_addAction1 (klas, 1,   U"Get duration", U"*Get total duration", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_TimeFunction_getTotalDuration);
 }
 
 void praat_TimeFunction_modify_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Modify times", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 0, U"Shift times by...", nullptr, 2, MODIFY_TimeFunction_shiftTimesBy);
 	praat_addAction1 (klas, 0, U"Shift times to...", nullptr, 2, MODIFY_TimeFunction_shiftTimesTo);
-	praat_addAction1 (klas, 0,   U"Shift to zero", U"*Shift times to...", praat_DEPTH_2 | praat_DEPRECATED_2008, MODIFY_TimeFunction_shiftToZero);
+	praat_addAction1 (klas, 0,   U"Shift to zero", U"*Shift times to...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2008, MODIFY_TimeFunction_shiftToZero);
 	praat_addAction1 (klas, 0, U"Scale times by...", nullptr, 2, MODIFY_TimeFunction_scaleTimesBy);
 	praat_addAction1 (klas, 0, U"Scale times to...", nullptr, 2, MODIFY_TimeFunction_scaleTimesTo);
-	praat_addAction1 (klas, 0,   U"Scale times...", U"*Scale times to...", praat_DEPTH_2 | praat_DEPRECATED_2008, MODIFY_TimeFunction_scaleTimesTo);
+	praat_addAction1 (klas, 0,   U"Scale times...", U"*Scale times to...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2008, MODIFY_TimeFunction_scaleTimesTo);
 }
 
 /* End of file praat_TimeFunction.cpp */

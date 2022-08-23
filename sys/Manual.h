@@ -2,7 +2,7 @@
 #define _Manual_h_
 /* Manual.h
  *
- * Copyright (C) 1996-2005,2007,2009-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2009-2012,2015-2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@
 #include "ManPages.h"
 
 Thing_define (Manual, HyperPage) {
+	ManPages manPages() { return static_cast <ManPages> (our data()); }
+
+	bool ownManPages;
 	integer visiblePageNumber;
 	GuiText searchText;
 	GuiButton homeButton, recordButton, playButton, publishButton;
@@ -30,15 +33,17 @@ Thing_define (Manual, HyperPage) {
 	bool suppressLinksHither;
 	conststring32 printPagesStartingWith;
 
+	void v9_destroy () noexcept
+		override;
 	bool v_scriptable ()
 		override { return false; }
 	void v_createChildren ()
 		override;
 	void v_createMenus ()
 		override;
-	bool v_hasQueryMenu ()
+	bool v_canReportSettings ()
 		override { return false; }
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_draw ()
 		override;
@@ -58,8 +63,7 @@ Thing_define (Manual, HyperPage) {
 		override { return true; }
 };
 
-void Manual_init (Manual me, conststring32 title, Daata data, bool ownData);
-autoManual Manual_create (conststring32 title, Daata data, bool ownData);
+autoManual Manual_create (conststring32 title, ManPages manPages, bool ownManPages);
 
 void Manual_search (Manual me, conststring32 query);
 

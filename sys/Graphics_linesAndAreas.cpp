@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.cpp
  *
- * Copyright (C) 1992-2005,2007-2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2005,2007-2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,13 @@
 static void psPrepareLine (GraphicsPostscript me) {
 	double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 	if (my lineType == Graphics_DOTTED)
-		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long_not_integer) (my resolution / 100), (long_not_integer) (my resolution / 75 + lineWidth_pixels));
+		my d_printf (my d_file, "[%td %td] 0 setdash\n", (integer) (my resolution / 100), (integer) (my resolution / 75 + lineWidth_pixels));
 	else if (my lineType == Graphics_DASHED)
-		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long_not_integer) (my resolution / 25), (long_not_integer) (my resolution / 50 + lineWidth_pixels));
+		my d_printf (my d_file, "[%td %td] 0 setdash\n", (integer) (my resolution / 25), (integer) (my resolution / 50 + lineWidth_pixels));
 	else if (my lineType == Graphics_DASHED_DOTTED)
-		my d_printf (my d_file, "[%ld %ld %ld %ld] 0 setdash\n",
-			(long_not_integer) (my resolution / 100), (long_not_integer) (my resolution / 60 + lineWidth_pixels),
-			(long_not_integer) (my resolution / 25), (long_not_integer) (my resolution / 60 + lineWidth_pixels));
+		my d_printf (my d_file, "[%td %td %td %td] 0 setdash\n",
+			(integer) (my resolution / 100), (integer) (my resolution / 60 + lineWidth_pixels),
+			(integer) (my resolution / 25), (integer) (my resolution / 60 + lineWidth_pixels));
 	if (my lineWidth != 1.0)
 		my d_printf (my d_file, "%g setlinewidth\n", lineWidth_pixels);
 }
@@ -375,7 +375,7 @@ void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 
 void structGraphicsPostscript :: v_circle (double xDC, double yDC, double rDC) {
 	psPrepareLine (this);
-	our d_printf (our d_file, "N %ld %ld %ld C\n", (long_not_integer) xDC, (long_not_integer) yDC, (long_not_integer) rDC);
+	our d_printf (our d_file, "N %td %td %td C\n", (integer) xDC, (integer) yDC, (integer) rDC);
 	psRevertLine (this);
 }
 
@@ -588,18 +588,12 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		/*
 			This is pixel-precise drawing, and may therefore be different on retina displays than on 100 dpi displays.
 		*/
-		#if 1
-			const bool isRetinaDisplay = [[our d_macView window] backingScaleFactor] == 2.0;
-		#else
-			const bool isRetinaDisplay = false;
-		#endif
+		//const bool isRetinaDisplay = [[our d_macView window] backingScaleFactor] == 2.0;
 
 		CGContextSetLineWidth (our d_macGraphicsContext, 1.0);
 		CGContextSetAllowsAntialiasing (our d_macGraphicsContext, false);   // because we want to draw by pixel
         CGFloat red = 0.3, green = 0.3, blue = 0.2;
         CGContextSetRGBStrokeColor (our d_macGraphicsContext, red, green, blue, 1.0);
-		if (! isRetinaDisplay)
-			x1DC -= 1.0;
 		x1DC += 0.5;
 		x2DC -= 0.5;
 		y1DC -= 0.5;
@@ -631,11 +625,6 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
             CGContextAddLineToPoint (our d_macGraphicsContext, x2DC, y2DC);
             CGContextStrokePath (our d_macGraphicsContext);
 			if (width > 2.0 && height > 2.0) {
-				if (! isRetinaDisplay) {
-					x1DC += 1.0;
-					width = x2DC - x1DC;
-					height = y1DC - y2DC;
-				}
 				red = 0.75, green = 0.75, blue = 0.65;
 				CGContextSetRGBFillColor (our d_macGraphicsContext, red, green, blue, 1.0);
 				rect = CGRectMake (x1DC, y2DC, width, height);

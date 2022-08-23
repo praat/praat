@@ -1,6 +1,6 @@
 /* TextGrid_def.h
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2016,2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ oo_DEFINE_CLASS (TextGrid, Function)
 	oo_OBJECT (FunctionList, 0, tiers)   // TextTier and IntervalTier objects
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 		void v_repair ()
 			override;

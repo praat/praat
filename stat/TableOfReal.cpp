@@ -1,6 +1,6 @@
 /* TableOfReal.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ static void fprintquotedstring (MelderFile file, conststring32 s) {
 	MelderFile_writeCharacter (file, U'\"');
 }
 
-void structTableOfReal :: v_writeText (MelderFile file) {
+void structTableOfReal :: v1_writeText (MelderFile file) {
 	texputi32 (file, our numberOfColumns, U"numberOfColumns");
 	MelderFile_write (file, U"\ncolumnLabels []: ");
 	if (our numberOfColumns < 1) MelderFile_write (file, U"(empty)");
@@ -65,7 +65,7 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 	}
 }
 
-void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
+void structTableOfReal :: v1_readText (MelderReadText a_text, int /*formatVersion*/) {
 	our numberOfColumns = texgeti32 (a_text);
 	if (our numberOfColumns >= 1) {
 		our columnLabels = autoSTRVEC (our numberOfColumns);
@@ -86,8 +86,8 @@ void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion
 	}
 }
 
-void structTableOfReal :: v_info () {
-	structDaata :: v_info ();
+void structTableOfReal :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of rows: ", our numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", our numberOfColumns);
 }

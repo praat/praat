@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 
 /********** class Collection **********/
 
-void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
-	thy at._elements = nullptr;   // set to null in case the inherited v_copy crashes
-	my structDaata :: v_copy (thee);
+void _CollectionOfDaata_v1_copy (const _CollectionOfDaata* me, _CollectionOfDaata* thee) {
+	thy at._elements = nullptr;   // set to null in case the inherited v1_copy crashes
+	my structDaata :: v1_copy (thee);
 	thy _ownershipInitialized = my _ownershipInitialized;
 	thy _ownItems = my _ownItems;
 	thy _capacity = my _capacity;
@@ -44,8 +44,8 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 	}
 }
 
-bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
-	if (! my structDaata :: v_equal (thee))
+bool _CollectionOfDaata_v1_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
+	if (! my structDaata :: v1_equal (thee))
 		return false;
 	if (my size != thy size)
 		return false;
@@ -64,7 +64,7 @@ bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* the
 	return true;
 }
 
-bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
+bool _CollectionOfDaata_v1_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
 	for (integer i = 1; i <= my size; i ++) {
 		Daata data = my at [i];
 		if (data -> name && ! Melder_isEncodable (data -> name.get(), encoding))
@@ -75,7 +75,7 @@ bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encodi
 	return true;
 }
 
-void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
+void _CollectionOfDaata_v1_writeText (_CollectionOfDaata* me, MelderFile file) {
 	texputi32 (file, my size, U"size");
 	texputintro (file, U"item []: ", my size ? nullptr : U"(empty)");
 	for (integer i = 1; i <= my size; i ++) {
@@ -96,11 +96,11 @@ void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
 	texexdent (file);
 }
 
-void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion) {
+void _CollectionOfDaata_v1_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion) {
 	if (formatVersion < 0) {
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
-		long_not_integer l_size;
-		Melder_require (line && sscanf (line.get(), "%ld", & l_size) == 1 && l_size >= 0,
+		integer l_size;
+		Melder_require (line && sscanf (line.get(), "%td", & l_size) == 1 && l_size >= 0,
 			U"Collection::readText: cannot read size.");
 		my _grow (l_size);
 		for (integer i = 1; i <= l_size; i ++) {
@@ -110,10 +110,10 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 					Melder_throw (U"Missing object line.");
 			} while (! strnequ (line.get(), "Object ", 7));
 
-			long_not_integer itemNumberRead;   // %ld
+			integer itemNumberRead;
 			char klas [200], nameTag [2000];
 			int_not_integer n = 0;   // %n
-			integer stringsRead = sscanf (line.get(), "Object %ld: class %199s %1999s%n", & itemNumberRead, klas, nameTag, & n);
+			integer stringsRead = sscanf (line.get(), "Object %td: class %199s %1999s%n", & itemNumberRead, klas, nameTag, & n);
 			Melder_require (stringsRead >= 2,
 				U"Collection::readText: cannot read header of object ", i, U".");
 			Melder_require (itemNumberRead == i,
@@ -130,7 +130,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 				char *location = & line [n];
 				if (*location == ' ')
 					n ++;   // skip space character
-				integer length = strlen (location);
+				integer length = str8len (location);
 				if (length > 0 && location [length - 1] == '\n')
 					location [length - 1] = '\0';
 				Thing_setName (my at [i], Melder_peek8to32 (line.get()+n));
@@ -153,7 +153,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 	}
 }
 
-void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
+void _CollectionOfDaata_v1_writeBinary (_CollectionOfDaata* me, FILE *f) {
 	binputi32 (my size, f);
 	for (integer i = 1; i <= my size; i ++) {
 		Daata thing = my at [i];
@@ -167,7 +167,7 @@ void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
 	}
 }
 
-void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion) {
+void _CollectionOfDaata_v1_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion) {
 	if (formatVersion < 0) {
 		int32 l_size = bingeti32 (f);
 		if (l_size < 0)
@@ -190,12 +190,12 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 	} else {
 		int32 l_size = bingeti32 (f);
 		if (Melder_debug == 44)
-			Melder_casual (U"structCollection :: v_readBinary: Reading ", l_size, U" objects");
+			Melder_casual (U"structCollection :: v1_readBinary: Reading ", l_size, U" objects");
 		my _grow (l_size);
 		for (int32 i = 1; i <= l_size; i ++) {
 			autostring8 klas = bingets8 (f);
 			if (Melder_debug == 44)
-				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.get()));
+				Melder_casual (U"structCollection :: v1_readBinary: Reading object of type ", Melder_peek8to32 (klas.get()));
 			int elementFormatVersion;
 			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas.get()), & elementFormatVersion).releaseToAmbiguousOwner();
 			my size ++;
@@ -203,7 +203,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 				U"Objects of class ", Thing_className (my at [i]), U" cannot be read.");
 			autostring32 name = bingetw16 (f);
 			if (Melder_debug == 44)
-				Melder_casual (U"structCollection :: v_readBinary: Reading object with name ", name.get());
+				Melder_casual (U"structCollection :: v1_readBinary: Reading object with name ", name.get());
 			Thing_setName (my at [i], name.get());
 			Data_readBinary (my at [i], f, elementFormatVersion);
 		}

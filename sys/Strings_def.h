@@ -1,6 +1,6 @@
 /* Strings_def.h
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ oo_DEFINE_CLASS (Strings, Daata)
 	oo_STRING_VECTOR (strings, numberOfStrings)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
-		void v_assertInvariants () override {
-			our structDaata :: v_assertInvariants ();
+		void v1_assertInvariants () override {
+			our Strings_Parent :: v1_assertInvariants ();
 			Melder_assert (our strings.size == our numberOfStrings);
 		}
 		void maintainInvariants () {

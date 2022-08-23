@@ -2,7 +2,7 @@
 #define _StringsEditor_h_
 /* StringsEditor.h
  *
- * Copyright (C) 1993-2011,2015 David Weenink & Paul Boersma
+ * Copyright (C) 1993-2011,2015,2016,2018,2022 David Weenink & Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,16 @@
 #include "Strings_.h"
 
 Thing_define (StringsEditor, Editor) {
+	Strings strings() { return static_cast <Strings> (our data()); }
+
 	GuiList list;
 	GuiText text;
 
-	void v_destroy () noexcept
-		override;
 	void v_createChildren ()
 		override;
-	void v_createHelpMenuItems (EditorMenu menu)
+	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v_dataChanged ()
+	void v1_dataChanged ()
 		override;
 };
 

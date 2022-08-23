@@ -2,7 +2,7 @@
 #define _Editor_h_
 /* Editor.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DataGui.h"
 #include "Collection.h"
 #include "Gui.h"
 #include "Ui.h"
 #include "Graphics.h"
-#include "prefs.h"
-
-#include "Editor_enums.h"
 
 Thing_declare (Editor);
 
@@ -35,14 +33,16 @@ Thing_define (EditorMenu, Thing) {
 	OrderedOf<structEditorCommand> commands;
 };
 
+typedef MelderCallback <void, structDataGui, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, conststring32, Interpreter> DataGuiCommandCallback;
 typedef MelderCallback <void, structEditor, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, conststring32, Interpreter> EditorCommandCallback;
 
 Thing_define (EditorCommand, Thing) {
 	Editor d_editor;
+	DataGui sender;
 	EditorMenu menu;
 	autostring32 itemTitle;
 	GuiMenuItem itemWidget;
-	EditorCommandCallback commandCallback;
+	DataGuiCommandCallback commandCallback;
 	autostring32 script;
 	autoUiForm d_uiform;
 };
@@ -52,13 +52,11 @@ typedef MelderCallback <void, structEditor> Editor_DestructionCallback;
 
 typedef MelderCallback <void, structEditor, autoDaata /* publication */> Editor_PublicationCallback;
 
-Thing_define (Editor, Thing) {
+Thing_define (Editor, DataGui) {
 	GuiWindow windowForm;
 	GuiMenuItem undoButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
-	Daata data;   // the data that can be displayed and edited
 	autoDaata previousData;   // the data that can be displayed and edited
-	bool ownData;
 	char32 undoText [100];
 	Graphics pictureGraphics;
 	Editor_DataChangedCallback d_dataChangedCallback;
@@ -66,46 +64,47 @@ Thing_define (Editor, Thing) {
 	Editor_PublicationCallback d_publicationCallback;
 	autostring32 callbackSocket;
 
-	void v_destroy () noexcept
+	void v9_destroy () noexcept
 		override;
-	void v_info ()
+	void v1_info ()
 		override;
 	void v_nameChanged ()
 		override;   // sets the window and icon titles to reflect the new name
 
 	virtual void v_goAway () { forget_nozero (this); }
-	virtual bool v_hasMenuBar () { return true; }
 	virtual bool v_canFullScreen () { return false; }
-	virtual bool v_editable () { return true ; }
 	virtual bool v_scriptable () { return true; }
-	virtual void v_createMenuItems_file (EditorMenu menu);
-	virtual void v_createMenuItems_edit (EditorMenu menu);
-	virtual bool v_hasQueryMenu () { return true; }
-	virtual void v_createMenuItems_query (EditorMenu menu);
-	virtual void v_createMenuItems_query_info (EditorMenu menu);
-	virtual void v_createMenus ();
-	virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
+
+	virtual bool v_hasMenuBar () { return true; }
+	virtual bool v_canReportSettings () { return true; }
+	virtual bool v_hasEditMenu () { return true; }
+	virtual bool v_hasPlayMenu () { return false; }
+	virtual bool v_hasHelpMenu () { return true; }
+	EditorMenu fileMenu, editMenu, queryMenu, playMenu, helpMenu;
+	void v_createMenus ()
+		override;
+	void v_createMenuItems_edit (EditorMenu menu)
+		override;
+
 	virtual void v_createChildren () { }
-	virtual void v_dataChanged () { }
+
+	virtual void v1_dataChanged () { }
 	virtual void v_saveData ();
 	virtual void v_restoreData ();
-	virtual void v_form_pictureWindow (EditorCommand cmd);
-	virtual void v_ok_pictureWindow (EditorCommand cmd);
-	virtual void v_do_pictureWindow (EditorCommand cmd);
-	virtual void v_form_pictureMargins (EditorCommand cmd);
-	virtual void v_ok_pictureMargins (EditorCommand cmd);
-	virtual void v_do_pictureMargins (EditorCommand cmd);
 
 	#include "Editor_prefs.h"
 };
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags, EditorCommandCallback commandCallback);
+GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+		DataGuiCommandCallback commandCallback, DataGui sender);
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+		EditorCommandCallback commandCallback);
 GuiMenuItem EditorCommand_getItemWidget (EditorCommand me);
 
 EditorMenu Editor_addMenu (Editor me, conststring32 menuTitle, uint32 flags);
 GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
-#define Editor_HIDDEN  (1 << 14)
+#define Editor_HIDDEN  GuiMenu_HIDDEN
 GuiMenuItem Editor_addCommand (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags, EditorCommandCallback commandCallback);
 GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags,
 	conststring32 script);
@@ -127,7 +126,7 @@ inline void Editor_dataChanged (Editor me)
 	 *    so you may e.g. like to redraw yourself."
 	 */
 	{
-		my v_dataChanged ();
+		my v1_dataChanged ();
 	}
 inline void Editor_setDataChangedCallback (Editor me, Editor_DataChangedCallback dataChangedCallback)
 	/*
@@ -166,7 +165,7 @@ inline void Editor_broadcastDestruction (Editor me)
 	/*
 	 * Message to boss: "I am destroying all my members and will free myself shortly."
 	 *
-	 * The editor calls this once, namely in Editor::v_destroy().
+	 * The editor calls this once, namely in Editor::v9_destroy().
 	 */
 	{
 		if (my d_destructionCallback)
@@ -219,11 +218,11 @@ void Editor_init (Editor me, int x, int y , int width, int height,
 	if 'y' > 0, 'y' is the distance to the top of the screen;
 	if 'y' < 0, |'y'| is the distance to the bottom of the screen;
 	if 'y' is 0, the editor is vertically centred on the screen;
-	This routine does not transfer ownership of 'data' to the Editor,
+	This routine does not transfer ownership of '*pData' to the Editor,
 	and the Editor will not destroy 'data' when the Editor itself is destroyed.
 */
 
-void Editor_save (Editor me, conststring32 text);   // for Undo
+void Editor_save (Editor me, conststring32 cattableText);   // for Undo
 
 autoUiForm UiForm_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
 void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter);

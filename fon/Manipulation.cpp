@@ -1,6 +1,6 @@
 /* Manipulation.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -396,7 +396,14 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 					break;
 			ipointright --;
 			endOfSourceVoice = pulses -> t [ipointright];   // the last pulse of the voice
-			finishingPeriod = 1.0 / RealTier_getValueAtTime (pitch, endOfSourceVoice);
+			const double finishingPitch = RealTier_getValueAtTime (pitch, endOfSourceVoice);
+			if (finishingPitch == 0.0) {
+				for (integer ipoint = 1; ipoint <= pitch -> points.size; ipoint ++)
+					Melder_casual (U"Pitch point ", ipoint, U" is ", pitch -> points.at [ipoint], U" Hz");
+				Melder_casual (U"ipointleft = ", ipointleft);
+				Melder_throw (U"Unexpected zero pitch value.");
+			}
+			finishingPeriod = 1.0 / finishingPitch;
 			endOfSourceVoice += 0.5 * finishingPeriod;   // the last pulse is in the middle of a period
 			/*
 			 * Measure one voice.
@@ -568,7 +575,8 @@ static autoSound synthesize_pulses_pitch_hum (Manipulation me) {
 /*
 void Sound_Formant_Intensity_filter (Sound me, FormantTier formantTier, IntensityTier intensity) {
 	Sound_FormantTier_filter_inplace (me, formantTier);
-	if (intensity) Sound_IntensityTier_multiply_inplace (me, intensity);
+	if (intensity)
+		Sound_IntensityTier_multiply_inplace (me, intensity);
 	VECdeemphasize_f_inplace (my z.row (1), my dx, 50.0);
 	Vector_scale (me, 0.99);
 }

@@ -219,7 +219,7 @@ CODE (U"endfor")
 NORMAL (U"This description is approximate because in the \"To Formant\" step we have to guarantee that all the Formant objects get the same time sampling.")
 MAN_END
 
-MAN_BEGIN (U"FormantPathEditor", U"djmw", 20210730)
+MAN_BEGIN (U"FormantPathEditor", U"djmw", 20220816)
 INTRO (U"One of the @@Editors@ in Praat, for editing a @@FormantPath@ object.")
 NORMAL (U"You can optionally include a @Sound and a @TextGrid in this editor, by selecting both the Sound and the FormantPath together, or the Sound and the TextGrid and the FormantPath together before clicking ##View & Edit#.")
 NORMAL (U"With the FormantPathEditor you can, for each interval that you select, "
@@ -241,13 +241,13 @@ NORMAL (U"When you start to edit a new FormantPath object, the formants in the p
 	"in the selected part on the left are replaced by the values present in the rectangle and the fat red line will indicate "
 	"the new ceiling. The colour of the clicked rectangle on the right will also change.")
 ENTRY (U"Details")
-NORMAL (U"The meaning of the numbers in the upper right corner of the rectangles in the selection viewer "
-	"are explained in @@Weenink (2015)@. Basically this number is a combined stress score of the individual formant tracks "
-	"within the rectangle. Each track's stress score quantifies how well a track has been modelled. "
-	"The lower this number is, the better the track is modelled by a smooth curve, a polynomial of a certain order. "
+NORMAL (U"The stress numbers that are displayed above the rectangles in the selection viewer "
+	"are explained in @@Weenink (2015)@. Basically each number is a combined stress score of the individual formant tracks "
+	"within the rectangle. Each track's stress score quantifies how well the track has been modelled. "
+	"The lower this number is, the better the track is modelled by a polynomial of a certain order. "
 	"The higher the order, the more flexible the curve is and the better it can adapt to the data. "
 	"The higher the order of the polynomial, the more parameters are needed in the model. "
-	"You can change the number of paramaters that model the tracks.")
+	"You may change the number of parameters that model each track with the ##Candidate modelling settings...# option in the Candidates menu.")
 MAN_END
 
 MAN_BEGIN (U"Formants: Extract smoothest part...", U"djmw", 20140313)
@@ -308,25 +308,25 @@ MAN_END
 
 #define PowerCepstrum_manual_quefrencyAveragingWindow \
 	U"determines the width of the averaging window in the quefrency domain. " \
-	"By chosing a value smaller than the quefrency distance, you can prevent any smoothing in the quefrency dimension."
+	"By chosing a value of zero, you can prevent any smoothing in the quefrency dimension."
 
 #define PowerCepstrogram_manual_timeAveraging \
 	U"determines the width of the averaging window in the time domain. The result " \
 	"of the smoothing will be that in the new smoothed PowerCepstrogram each cepstral value is the average of the cepstral values " \
 	"within the averaging window that was positioned symmetrically around the center of this frame in the selected PowerCepstrogram. " \
-	"By chosing a value smaller than the time between two frames, you can prevent any smoothing in the time dimension. "
+	"By chosing a value of zero, you can prevent any smoothing in the time dimension. "
 		
 MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. "
 	"Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20201216)
+MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20220721)
 INTRO (U"A command to get the cepstral peak prominence (CPP) of the selected @@PowerCepstrogram@. ")
 NORMAL (U"The returned value is the average of the cepstral peak prominences of the individual frames.")
 ENTRY (U"Settings")
 TAG (U"##Subtract trend before smoothing#")
-DEFINITION (U"determines whether the smoothing should be performed on the Cepstrogram after the trend of each PowerCepstrum frame has been removed. ")
+DEFINITION (U"determines whether the smoothing should be performed on the Cepstrogram after the trend of each PowerCepstrum frame has been removed. Because, in general, the trends in the analysis frames will not be equal, the value of CPPS will be different whether or not smoothing is performed. If no smoothing is going on the result should be independent of this setting. ")
 TAG (U"##Time averaging window (s)#")
 DEFINITION (PowerCepstrogram_manual_timeAveraging)
 TAG (U"##Quefrency averaging window (s)#")

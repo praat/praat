@@ -139,7 +139,7 @@ INTRO (U"When drawing text into the @@Picture window@ or into the @@TextGridEdit
 	"You can usually also type the characters themselves, if your computer has an input method for them.")
 
 ENTRY (U"European symbols")
-NORMAL (U"To get the symbol \"\\a^\" (a-circumflex), you type \"\\bsa\\^ \", i.e., "
+NORMAL (U"To get the symbol “\\a^” (a-circumflex), you type “\\bsa\\^ ”, i.e., "
 	"a sequence of backslash + a + circumflex. In this way, you can get a hundred "
 	"non-ASCII symbols that are used in the alphabets of many European languages.")
 LIST_ITEM (U"\\a\" \\bsa\\\"   \\e\" \\bse\\\"   \\i\" \\bsi\\\"   \\o\" \\bso\\\"   "
@@ -718,7 +718,7 @@ DEFINITION (U"this determines whether Praat prints explicit PostScript commands 
 	"(e.g. scaling, printing two-up...), you may switch this off; Praat will then send native "
 	"Windows drawing commands, which the printer driver will try to translate "
 	"to PostScript. If your printer does not support PostScript, this switch is ignored. "
-	"On Macintosh, this switch is ignored, because all printingis done in PDF. "
+	"On Macintosh, this switch is ignored, because all printing is done in PDF. "
 	"On Unix, this switch is superfluous, because all printing is done directly in PostScript.")
 TAG (U"##Grey resolution")
 DEFINITION (U"you can choose from two image qualities:")
@@ -742,8 +742,8 @@ DEFINITION (U"the relative size with which your picture will be printed; normall
 	"This choice applies to Unix only; on Windows, you choose the scaling in the ##Print...# window; "
 	"on Macintosh, you choose the scaling in the ##Page setup...# window.")
 TAG (U"##Print command# (Unix only)")
-DEFINITION (U"When printing on Unix, a temporary PostScript^\\re file is created in the \"/tmp\" folder; "
-	"it will have a name like \"picXXXXXX\", and is automatically removed after printing. "
+DEFINITION (U"When printing on Unix, a temporary PostScript^\\re file is created in the “/tmp” folder; "
+	"it will have a name like “picXXXXXX”, and is automatically removed after printing. "
 	"This file is sent to the printer with the print command, which will often look like $$lp -c \\% s$, "
 	"where $$\\% s$ stands for the file name.")
 MAN_END
@@ -971,7 +971,7 @@ MAN_END
 
 MAN_BEGIN (U"Save as PNG file...", U"ppgb", 20140325)
 INTRO (U"A command in the File menu of the @@Picture window@, on all platforms.")
-NORMAL (U"It saves the picture to a PNG (\"ping\") image file, "
+NORMAL (U"It saves the picture to a PNG (“ping”) image file, "
 	"which can be imported by several other programs, such as Microsoft^\\re Word\\tm. "
 	"For the resolution you can choose between 600 dots per inch (very good quality even when printed) "
 	"and 300 dpi (enough for all web sites, even on retina displays).")
@@ -1001,7 +1001,7 @@ MAN_END
 
 MAN_BEGIN (U"Save as Windows metafile...", U"ppgb", 20140325)
 INTRO (U"A command in the File menu of the @@Picture window@, if you are on Windows.")
-NORMAL (U"It saves the selected part of the picture in an \"enhanced metafile\" (.EMF) format, "
+NORMAL (U"It saves the selected part of the picture in an “enhanced metafile” (.EMF) format, "
 	"which can be imported by many Windows programs, like Adobe^\\re Illustrator^\\tm or Microsoft^\\re Word^\\tm.")
 ENTRY (U"Behaviour")
 NORMAL (U"Though all the picture data will be written to the file, "
@@ -1009,7 +1009,7 @@ NORMAL (U"Though all the picture data will be written to the file, "
 ENTRY (U"Usage")
 NORMAL (U"You will not use this command very often, "
 	"because it is usually easier to copy the selection to the clipboard with the @@Copy to clipboard@ command, "
-	"and `Paste' it into the other program. You may use a metafile instead of the clipboard if the clipboard is too large "
+	"and ‘Paste’ it into the other program. You may use a metafile instead of the clipboard if the clipboard is too large "
 	"for the other program to read, or if you want to transfer the picture to another computer.")
 MAN_END
 

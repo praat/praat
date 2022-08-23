@@ -24,7 +24,7 @@ oo_DEFINE_CLASS (Permutation, Daata)
 	oo_INTVEC (p, numberOfElements)
 			
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

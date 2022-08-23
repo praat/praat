@@ -1,6 +1,6 @@
 /* espeak_io.cpp
  *
-//  * Copyright (C) 2017 David Weenink
+//  * Copyright (C) 2017-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "espeak_ng.h"
 #include "speech.h"
 #include "synthesize.h"
+#include "voice.h"
 #include <errno.h>
 
 extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
@@ -126,8 +127,8 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 	autoFileInMemorySet fileList = FileInMemorySet_listFiles (my files.get(), kMelder_string :: CONTAINS, criterion);
 	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
 		FileInMemory fim = static_cast<FileInMemory> (fileList -> at [ifile]);
-		FILE *f_voice = FileInMemoryManager_fopen (me, Melder_peek32to8 (fim -> d_path.get()), "r");
-		conststring8 fname = Melder_peek32to8 (fim -> d_path.get());
+		FILE *f_voice = FileInMemoryManager_fopen (me, Melder_peek32to8_fileSystem (fim -> d_path.get()), "r");
+		conststring8 fname = Melder_peek32to8_fileSystem (fim -> d_path.get());
 		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
 		FileInMemoryManager_fclose (me, f_voice);
 		if (voice_data) {
@@ -138,17 +139,21 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 	}
 }
 
-int get_int32_le (char *ch) {
+int32_t get_int32_le (char *ch) {
 	return (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8) | ((uint8)ch[2]<<16) | ((uint8)ch[3]<<24));
+}
+
+int32_t get_int32_be (char *ch) {
+	return (((uint8)ch[3]<<0) | ((uint8)ch[2]<<8) | ((uint8)ch[1]<<16) | ((uint8)ch[0]<<24));
 }
 
 short get_int16_le (char *ch) {
        return (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8));
 }
 
-int get_set_int32_le (char *ch) {
-       int i32 = (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8) | ((uint8)ch[2]<<16) | ((uint8)ch[3]<<24));
-       int *p32 = (int *) ch;
+int32_t get_set_int32_le (char *ch) {
+       int32_t i32 = (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8) | ((uint8)ch[2]<<16) | ((uint8)ch[3]<<24));
+       int32_t *p32 = (int32_t *) ch;
        *p32 = i32;
        return i32;
 }
@@ -184,8 +189,8 @@ int get_set_int32_le (char *ch) {
 static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory manifest) {
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		FILE *phondataf = fopen (Melder_peek32to8 (my d_path.get()), "r");
-		FILE *manifestf = fopen (Melder_peek32to8 (manifest -> d_path.get()), "r");
+		FILE *phondataf = fopen (Melder_peek32to8_fileSystem (my d_path.get()), "r");
+		FILE *manifestf = fopen (Melder_peek32to8_fileSystem (manifest -> d_path.get()), "r");
 		char line [1024];
 		// copy 4 bytes: version number
 		// copy 4 bytes: sample rate

@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2019 David Weenink
+//  * Copyright (C) 2011-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "SpeechSynthesizer.h"
 #include "Strings_extensions.h"
 #include "speak_lib.h"
+#include "synthdata.h"
 #include "encoding.h"
 #include "string.h"
 #include "translate.h"
@@ -50,7 +51,7 @@
 
 extern int option_phoneme_events;   // BUG: external declaration outside header file (ppgb 20210307)
 
-Thing_implement (EspeakVoice, Daata, 0);
+Thing_implement (EspeakVoice, Daata, 1);
 
 autoEspeakVoice EspeakVoice_create () {
 	try {
@@ -66,7 +67,6 @@ autoEspeakVoice EspeakVoice_create () {
 		// copies without temporary adjustments from embedded commands
 		my freq2 = zero_INTVEC (my numberOfFormants);   // 100% = 256
 		my height2 = zero_INTVEC (my numberOfFormants);   // 100% = 256
-		my width2 = zero_INTVEC (my numberOfFormants);   // 100% = 256
 
 		my breath = zero_INTVEC (my numberOfFormants);   // amount of breath for each formant. breath [0] indicates whether any are set.
 		my breathw = zero_INTVEC (my numberOfFormants);   // width of each breath formant
@@ -116,7 +116,6 @@ void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voicet) {
 		my freqadd [i] = voicet -> freqadd [i - 1];
 		my freq2 [i] = voicet -> freq2 [i - 1];
 		my height2 [i] = voicet -> height2 [i - 1];
-		my width2 [i] = voicet -> width2 [i - 1];
 		my breath [i] = voicet -> breath [i - 1];
 		my breathw [i] = voicet -> breathw [i - 1];
 	}
@@ -160,7 +159,6 @@ void EspeakVoice_into_voice (EspeakVoice me, voice_t *voicet) {   // BUG unused 
 		voicet -> freqadd [i - 1] = my freqadd [i];
 		voicet -> freq2 [i - 1] = my freq2 [i];
 		voicet -> height2 [i - 1] = my height2 [i];
-		voicet -> width2 [i - 1] = my width2 [i];
 		voicet -> breath [i - 1] = my breath [i];
 		voicet -> breathw [i - 1] = my breathw [i];
 	}
@@ -170,8 +168,8 @@ void EspeakVoice_into_voice (EspeakVoice me, voice_t *voicet) {   // BUG unused 
 
 Thing_implement (SpeechSynthesizer, Daata, 1);
 
-void structSpeechSynthesizer :: v_info () {
-	our SpeechSynthesizer_Parent :: v_info ();
+void structSpeechSynthesizer :: v1_info () {
+	SpeechSynthesizer_Parent :: v1_info ();
 	MelderInfo_writeLine (U"Synthesizer version: espeak-ng ", our d_synthesizerVersion.get());
 	MelderInfo_writeLine (U"Language: ", our d_languageName.get());
 	MelderInfo_writeLine (U"Voice: ", our d_voiceName.get());
@@ -608,7 +606,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		espeak_ng_ERROR_CONTEXT context = { 0 };
 		espeak_ng_STATUS status = espeak_ng_Initialize (& context);
 		Melder_require (status == ENS_OK,
-			U"Internal espeak error.", status);
+			U"Internal espeak error. ", status);
 		int synth_flags = espeakCHARS_WCHAR;
 		if (my d_inputTextFormat == SpeechSynthesizer_INPUT_TAGGEDTEXT)
 			synth_flags |= espeakSSML;

@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2021 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,11 +213,6 @@ void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerView
 	my mouseSelectsInnerViewport = mouseSelectsInnerViewport;
 }
 
-void structPicture :: v_destroy () noexcept {
-	//Picture_erase (this);   // dangerous if called from automatic destructor
-	Picture_Parent :: v_destroy ();
-}
-
 Graphics Picture_peekGraphics (Picture me) { return my graphics.get(); }
 
 void Picture_erase (Picture me) {
@@ -249,7 +244,7 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
 			Melder_throw (U"This is not a Praat picture file.");
 		*end = '\0';
 		rewind (f);
-		fread (line, 1, integer_to_uinteger (end - line + uinteger_to_integer (strlen (tag))), f);
+		fread (line, 1, integer_to_uinteger (end - line + str8len (tag)), f);
 		Graphics_readRecordings (my graphics.get(), f);
 		Graphics_updateWs (my graphics.get());
 		f.close (file);

@@ -1,6 +1,6 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2008,2010-2020 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +34,13 @@ static void logo (Graphics graphics) {
 	Graphics_text (graphics, 0.628, 0.66, U"\\s{T}");
 	Graphics_setFontSize (graphics, 18.0);
 	Graphics_text (graphics, 0.5, 0.53, U"%%doing phonetics by computer");
-	#define xstr(s) str(s)
-	#define str(s) #s
 	Graphics_setFontSize (graphics, 14.0);
-	Graphics_text (graphics, 0.5, 0.41, U"version " xstr(PRAAT_VERSION_STR)
-			" (" xstr(PRAAT_MONTH) " " xstr(PRAAT_DAY) ", " xstr(PRAAT_YEAR) ")");
+	Graphics_text (graphics, 0.5, 0.41, U"version " stringize(PRAAT_VERSION_STR)
+			" (" stringize(PRAAT_MONTH) " " stringize(PRAAT_DAY) ", " stringize(PRAAT_YEAR) ")");
 	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.20, U"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+	Graphics_text (graphics, 0.5, 0.20, U"Copyright © 1992–" stringize(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 	Graphics_setFontSize (graphics, 10.0);
 	Graphics_text (graphics, 0.5, 0.10, U"Website: praat.org");
 }

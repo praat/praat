@@ -27,8 +27,8 @@
 
 Thing_implement (BandFilterSpectrogram, Matrix, 2);
 
-void structBandFilterSpectrogram :: v_info () {
-	structDaata :: v_info ();
+void structBandFilterSpectrogram :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
@@ -39,8 +39,8 @@ void structBandFilterSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"   First time slice (frame centre) at: ", x1, U" seconds");
 }
 
-void structBarkSpectrogram :: v_info () {
-	structBandFilterSpectrogram :: v_info ();
+void structBarkSpectrogram :: v1_info () {
+	structBandFilterSpectrogram :: v1_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", ymin, U" ", v_getFrequencyUnit ());
 	MelderInfo_writeLine (U"   Highest frequency: ", ymax, U" ", v_getFrequencyUnit ());
@@ -51,8 +51,8 @@ void structBarkSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"   First frequency band around (bin centre at): ", y1, U" ", v_getFrequencyUnit ());
 }
 
-void structMelSpectrogram :: v_info () {
-	structBandFilterSpectrogram :: v_info ();
+void structMelSpectrogram :: v1_info () {
+	structBandFilterSpectrogram :: v1_info ();
 	MelderInfo_writeLine (U"Frequency domain:");
 	MelderInfo_writeLine (U"   Lowest frequency: ", ymin, U" ", v_getFrequencyUnit ());
 	MelderInfo_writeLine (U"   Highest frequency: ", ymax, U" ", v_getFrequencyUnit ());
@@ -631,7 +631,7 @@ autoMatrix Spectrogram_getLongtermSpectralFlatnessMeasure (Spectrogram me, doubl
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				const integer frameFrom = iframe - numberOfLongtermFrames + 1;
 				const integer iframeFrom = std::max (1_integer, frameFrom);
-				long double log10_geometricMean = 0.0, arithmeticMean = 0.0;
+				longdouble log10_geometricMean = 0.0, arithmeticMean = 0.0;
 				integer count = 0;
 				for (integer i = iframeFrom; i <= iframe; i ++) {
 					if (frequencyBins [i] > 0.0) {
@@ -642,7 +642,7 @@ autoMatrix Spectrogram_getLongtermSpectralFlatnessMeasure (Spectrogram me, doubl
 				}
 				log10_geometricMean /= count;
 				arithmeticMean /= count;
-				const double log_gm_div_am = ( arithmeticMean <= 0.0 ? 0.0 : log10_geometricMean - log10 (arithmeticMean) );
+				const double log_gm_div_am = ( arithmeticMean <= 0.0 ? 0.0 : double (log10_geometricMean - log10 (double (arithmeticMean))) );
 				longtermSpectralFlatness [iframe] += log_gm_div_am; // Eq. (1)
 			}
 		}

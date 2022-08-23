@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2018,2020,2021 Paul Boersma
+ * Copyright (C) 2011-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication
 		praat_new (publication.move());
 		praat_updateSelection ();
 		if (isaSpectralSlice) {
-			int IOBJECT;
+			integer IOBJECT;
 			FIND_ONE_WITH_IOBJECT (Spectrum)
 			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 			praat_installEditor (editor2.get(), IOBJECT);
@@ -350,7 +350,7 @@ static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication
 		praat_new (publication.move());
 		praat_updateSelection ();
 		if (isaSpectralSlice) {
-			int IOBJECT;
+			integer IOBJECT;
 			FIND_ONE_WITH_IOBJECT (Spectrum)
 			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 			praat_installEditor (editor2.get(), IOBJECT);
@@ -730,7 +730,7 @@ void praat_EEG_init () {
 	Data_recognizeFileType (bdfFileRecognizer);
 
 	praat_addAction1 (classEEG, 0, U"EEG help", nullptr, 0, HELP_EEG_help);
-	praat_addAction1 (classEEG, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_EEG_viewAndEdit);
+	praat_addAction1 (classEEG, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_EEG_viewAndEdit);
 	praat_addAction1 (classEEG, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 1, U"Get channel name...", nullptr, 1, STRING_EEG_getChannelName);
 		praat_addAction1 (classEEG, 1, U"Get channel number...", nullptr, 1, INTEGER_EEG_getChannelNumber);
@@ -754,7 +754,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classEEG, 0, U"To ERPTier (marker)...", nullptr, 1, NEW_EEG_to_ERPTier_marker);
 		praat_addAction1 (classEEG, 0, U"To ERPTier (triggers)...", nullptr, 1, NEW_EEG_to_ERPTier_triggers);
 		praat_addAction1 (classEEG, 0, U"To ERPTier (triggers, preceded)...", nullptr, 1, NEW_EEG_to_ERPTier_triggers_preceded);
-		praat_addAction1 (classEEG, 0, U"To ERPTier...", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW_EEG_to_ERPTier_bit);
+		praat_addAction1 (classEEG, 0, U"To ERPTier...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, NEW_EEG_to_ERPTier_bit);
 		praat_addAction1 (classEEG, 0, U"To MixingMatrix...", nullptr, 0, NEW_EEG_to_MixingMatrix);
 	praat_addAction1 (classEEG, 0, U"Synthesize", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"Concatenate", nullptr, 0, NEW1_EEGs_concatenate);
@@ -762,7 +762,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classEEG, 0, U"Extract waveforms as Sound", nullptr, 1, NEW_EEG_extractSound);
 		praat_addAction1 (classEEG, 0, U"Extract marks as TextGrid", nullptr, 1, NEW_EEG_extractTextGrid);
 
-	praat_addAction1 (classERP, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_ERP_viewAndEdit);
+	praat_addAction1 (classERP, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_ERP_viewAndEdit);
 	praat_addAction1 (classERP, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classERP, 0, U"Draw...", nullptr, 1, GRAPHICS_ERP_draw);
 		praat_addAction1 (classERP, 0, U"Draw scalp...", nullptr, 1, GRAPHICS_ERP_drawScalp);
@@ -815,8 +815,11 @@ void praat_EEG_init () {
 	praat_addAction2 (classERPTier, 1, classTable, 1, U"Extract events where column (number)...", nullptr, 1, NEW1_ERPTier_Table_extractEventsWhereColumn_number);
 	praat_addAction2 (classERPTier, 1, classTable, 1, U"Extract events where column (text)...", nullptr, 1, NEW1_ERPTier_Table_extractEventsWhereColumn_text);
 
-	structEEGWindow :: f_preferences ();
-	structERPWindow :: f_preferences ();
+	structEEGArea           :: f_preferences ();
+	structEEGAnalysisArea   :: f_preferences ();
+	structERPArea           :: f_preferences ();
+	structEEGWindow         :: f_preferences ();
+	structERPWindow         :: f_preferences ();
 }
 
 /* End of file praat_EEG.cpp */

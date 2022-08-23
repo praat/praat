@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,7 +329,7 @@ void praat_uvafon_Artsynth_init () {
 	Thing_recognizeClassesByName (classArt, classArtword, classSpeaker, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial", nullptr, praat_DEPTH_1, HELP_ArticulatorySynthesisTutorial);
+	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial", nullptr, GuiMenu_DEPTH_1, HELP_ArticulatorySynthesisTutorial);
 	praat_addMenuCommand (U"Objects", U"New", U"-- new articulatory synthesis -- ", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Articulation...", nullptr, 1, NEW1_Art_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Speaker...", nullptr, 1, NEW1_Speaker_create);
@@ -337,12 +337,12 @@ void praat_uvafon_Artsynth_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"-- new vocal tract --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Vocal Tract from phone...", nullptr, 1, NEW1_VocalTract_createFromPhone);
 
-	praat_addAction1 (classArt, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Art_viewAndEdit);
-	praat_addAction1 (classArt, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Art_viewAndEdit);
+	praat_addAction1 (classArt, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_Art_viewAndEdit);
+	praat_addAction1 (classArt, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_Art_viewAndEdit);
 
 	praat_addAction1 (classArtword, 0, U"Artword help", nullptr, 0, HELP_Artword_help);
-	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Artword_viewAndEdit);
-	praat_addAction1 (classArtword, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_Artword_viewAndEdit);
+	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Artword_viewAndEdit);
+	praat_addAction1 (classArtword, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, EDITOR_ONE_Artword_viewAndEdit);
 	praat_addAction1 (classArtword, 0, U"Info", nullptr, 0, nullptr);
 	praat_addAction1 (classArtword, 1, U"Get target...", nullptr, 0, REAL_Artword_getTarget);
 	praat_addAction1 (classArtword, 0, U"Draw", nullptr, 0, nullptr);
@@ -360,14 +360,14 @@ void praat_uvafon_Artsynth_init () {
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"To VocalTract", nullptr, 0, CONVERT_TWO_Art_Speaker_to_VocalTract);
 
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Play movie", nullptr, 0, MOVIE_Artword_Speaker_playMovie);
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Artword_Speaker_playMovie);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Movie", nullptr, GuiMenu_HIDDEN, MOVIE_Artword_Speaker_playMovie);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw...", nullptr, 0, GRAPHICS_Artword_Speaker_draw);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"To Sound...", nullptr, 0, NEW1_Artword_Speaker_to_Sound);
 
 	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Play movie", nullptr, 0, MOVIE_Artword_Speaker_Sound_playMovie);
-	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Artword_Speaker_Sound_playMovie);
+	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, GuiMenu_HIDDEN, MOVIE_Artword_Speaker_Sound_playMovie);
 
 	praat_addAction1 (classSpeaker, 0, U"Speaker help", nullptr, 0, HELP_Speaker_help);
 

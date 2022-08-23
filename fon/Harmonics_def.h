@@ -25,7 +25,7 @@ oo_DEFINE_CLASS (Harmonics, Daata)
 	oo_VEC (harmonics, numberOfHarmonics)
 
 	#if oo_DECLARING
-		void v_info ()
+		void v1_info ()
 			override;
 	#endif
 

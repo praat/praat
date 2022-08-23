@@ -69,7 +69,7 @@ autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProces
 /*void Sound_Formant_Intensity_filter (Sound me, FormantTier formant, IntensityTier intensity);*/
 
 autoSound Manipulation_to_Sound (Manipulation me, int method);
-void Manipulation_playPart (Manipulation me, double tmin, double tmax, int method);
+void Manipulation_playPart (Manipulation me, double tmin, double tmax, int method);   // BUG: why no callback?
 void Manipulation_play (Manipulation me, int method);
 void Manipulation_writeToTextFileWithoutSound (Manipulation me, MelderFile file);
 void Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile file);

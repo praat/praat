@@ -31,10 +31,8 @@
 
 Thing_implement (ParamCurve, Function, 2);
 
-void structParamCurve :: v_info () {
-	const MelderRealRange xextrema = NUMextrema (our x -> z.row (1));
-	const MelderRealRange yextrema = NUMextrema (our y -> z.row (1));
-	structDaata :: v_info ();
+void structParamCurve :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Domain:");
 	MelderInfo_writeLine (U"   tmin: ", our xmin);
 	MelderInfo_writeLine (U"   tmax: ", our xmax);
@@ -43,6 +41,7 @@ void structParamCurve :: v_info () {
 	MelderInfo_writeLine (U"   t step in x: ", our x -> dx, U" (sampling rate ", 1.0 / our x -> dx, U")");
 	MelderInfo_writeLine (U"   First t in x: ", our x -> x1);
 	MelderInfo_writeLine (U"x values:");
+	const MelderRealRange xextrema = NUMextrema (our x -> z.row (1));
 	MelderInfo_writeLine (U"   Minimum x: ", xextrema.min);
 	MelderInfo_writeLine (U"   Maximum x: ", xextrema.max);
 	MelderInfo_writeLine (U"y sampling:");
@@ -50,16 +49,17 @@ void structParamCurve :: v_info () {
 	MelderInfo_writeLine (U"   t step in y: ", our y -> dx, U" (sampling rate ", 1.0 / our y -> dx, U")");
 	MelderInfo_writeLine (U"   First t in y: ", our y -> x1);
 	MelderInfo_writeLine (U"y values:");
+	const MelderRealRange yextrema = NUMextrema (our y -> z.row (1));
 	MelderInfo_writeLine (U"   Minimum y: ", yextrema.min);
 	MelderInfo_writeLine (U"   Maximum y: ", yextrema.max);
 }
 
-void structParamCurve :: v_writeText (MelderFile file) {
+void structParamCurve :: v1_writeText (MelderFile file) {
 	Data_writeText (our x.get(), file);
 	Data_writeText (our y.get(), file);
 }
 
-void structParamCurve :: v_readText (MelderReadText text, int formatVersion) {
+void structParamCurve :: v1_readText (MelderReadText text, int formatVersion) {
 	our x = Thing_new (Sound);
 	our y = Thing_new (Sound);
 	Data_readText (our x.get(), text, formatVersion);
@@ -68,12 +68,12 @@ void structParamCurve :: v_readText (MelderReadText text, int formatVersion) {
 	our xmax = our x -> xmax < our y -> xmax ? our x -> xmax : our y -> xmax;
 }
 
-void structParamCurve :: v_writeBinary (FILE *f) {
+void structParamCurve :: v1_writeBinary (FILE *f) {
 	Data_writeBinary (x.get(), f);
 	Data_writeBinary (y.get(), f);
 }
 
-void structParamCurve :: v_readBinary (FILE *f, int /*formatVersion*/) {
+void structParamCurve :: v1_readBinary (FILE *f, int /*formatVersion*/) {
 	our x = Thing_new (Sound);
 	our y = Thing_new (Sound);
 	Data_readBinary (our x.get(), f, 2);

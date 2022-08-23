@@ -2,7 +2,7 @@
 #define _AnalyticSound_h_
 /* AnalyticSound.h
  *
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,17 @@
 #include "Intensity.h"
 
 Thing_define (AnalyticSound, Sound) {
+	double v_getValueAtSample (integer isample, integer which, int unit)
+		override;
 };
 
 autoAnalyticSound AnalyticSound_create (double xmin, double xmax, integer nx, double dx, double x1);
 
+void Sound_into_AnalyticSound (Sound me, AnalyticSound thee);
+
 autoAnalyticSound Sound_to_AnalyticSound (Sound me);
+
+autoSound AnalyticSound_to_Sound (AnalyticSound me);
 
 autoIntensity AnalyticSound_to_Intensity (AnalyticSound me);
 

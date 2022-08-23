@@ -2,7 +2,7 @@
 #define _FormantPath_h_
 /* FormantPath.h
  *
- * Copyright (C) 2020-2021 David Weenink
+ * Copyright (C) 2020-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +28,15 @@
 #include "FormantPath_def.h"
 
 /*
-	A FormantPath has an ordered collection of Formants and an IntervalTier.
-	All Formants and the IntervalTier have the same domain.
-	All Formant have the same sampling.
+	A FormantPath inherits from Sampled and contains an ordered collection of Formant objects.
+	All Formant objects have the same domain and sampling as the Formant path.
+	The ceilings [1:size of Formant collection] vector contains the formant ceiling used for the corresponding Formant in the collection.
+	The path vector [1:numberOfFrames], selects a frame from one of the Formant objects.
 */
 
 autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCeilings);
 
-void FormantPath_replaceFrames (FormantPath me, integer beginFrame, integer endFrame, integer formantIndex);
+integer FormantPath_getNumberOfFormantTracks (FormantPath me);
 
 autoTable FormantPath_downTo_Table_optimalInterval (FormantPath me, double tmin, double tmax, 
 	constINTVEC const& parameters, double powerf, bool includeFrameNumber, bool includeTime, integer numberOfTimeDecimals,

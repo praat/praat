@@ -1,0 +1,18 @@
+praat ../play.praat ../../fon/examples/example.wav
+praat --run ../play.praat ../../fon/examples/example.wav
+# twice:
+praat --open ../../fon/examples/example.wav ../../fon/examples/*.TextGrid &
+praat --new-open ../../fon/examples/example.wav ../../fon/examples/*.TextGrid &
+# twice:
+praat --send ../play.praat ../../fon/examples/example.wav &
+praat --new-send ../play.praat ../../fon/examples/example.wav &
+
+praat "p l a y.praat" "e x a m p l e.wav" 2 &
+praat --run "p l a y.praat" "e x a m p l e.wav" 2 &
+# twice:
+praat --open "e x a m p l e.wav" &
+praat --new-open "e x a m p l e.wav" &
+# twice:
+praat --send "p l a y.praat" "e x a m p l e.wav" 2 &
+praat --new-send "p l a y.praat" "e x a m p l e.wav" 2 &
+

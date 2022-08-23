@@ -43,7 +43,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 		When deEmphasisFrequency is effective we need 1 extra position in the fftbuffer.
 	*/
 	const integer nfft = 2 * (thy nx - 1);
-	double ndata = my nCoefficients + 1;
+	integer ndata = my nCoefficients + 1;
 	double scale = 1.0 / sqrt (2.0 * thy xmax * thy dx);
 	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft))
 		Melder_throw (U"Spectrum size not large enough.");

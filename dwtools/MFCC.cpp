@@ -30,8 +30,8 @@
 
 Thing_implement (MFCC, CC, 1);
 
-void structMFCC :: v_info () {
-	structCC :: v_info ();
+void structMFCC :: v1_info () {
+	structCC :: v1_info ();
 	MelderInfo_writeLine (U"Minimum frequency: ", fmin, U" mel");
 	MelderInfo_writeLine (U"Maximum frequency: ", fmax, U" mel");
 }

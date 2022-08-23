@@ -1,6 +1,6 @@
 /* OptimalCeilingTierArea_prefs.h
  *
- * Copyright (C) 2015 David Weenink, 2017,2020,2021 Paul Boersma
+ * Copyright (C) 2015 David Weenink, 2017,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (OptimalCeilingTierArea)
+Prefs_begin (OptimalCeilingTierArea)
 
-	prefs_override_double (OptimalCeilingTierArea, dataFreeMinimum, 1, U"4000.0")
-	prefs_override_double (OptimalCeilingTierArea, dataFreeMaximum, 1, U"6000.0")
+	InstancePrefs_overrideDouble (OptimalCeilingTierArea, dataFreeMinimum, 1, U"4000.0")
+	InstancePrefs_overrideDouble (OptimalCeilingTierArea, dataFreeMaximum, 1, U"6000.0")
 
-prefs_end (OptimalCeilingTierArea)
+Prefs_end (OptimalCeilingTierArea)
 
 /* End of file OptimalCeilingTierArea_prefs.h */

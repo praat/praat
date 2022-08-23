@@ -106,7 +106,7 @@ autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, cons
 		const double lagStep = 0.0;
 		autoCrossCorrelationTable thee = EEG_to_CrossCorrelationTable (me, startTime, endTime, lagStep, channels);
         autoCovariance him = Thing_new (Covariance);
-        thy structCrossCorrelationTable :: v_copy (him.get());
+        thy structCrossCorrelationTable :: v1_copy (him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance calculated.");

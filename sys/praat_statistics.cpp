@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 static struct {
 	integer batchSessions, interactiveSessions;
 	double memory;
-	char32 dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
+	PrefsString dateOfFirstSession;
 } statistics;
 
 void praat_statistics_prefs () {
@@ -135,37 +135,38 @@ static NSString *getRealHomeDirectory () {
 #endif
 
 void praat_reportSystemProperties () {
-	#define xstr(s) str(s)
-	#define str(s) #s
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"System properties of this edition of Praat on this computer:\n");
 	#ifdef _WIN32
-		MelderInfo_writeLine (U"_WIN32 is \"" xstr (_WIN32) "\".");
+		MelderInfo_writeLine (U"_WIN32 is \"" stringize(_WIN32) "\".");
 	#endif
 	#ifdef WINVER
-		MelderInfo_writeLine (U"WINVER is \"" xstr (WINVER) "\".");
+		MelderInfo_writeLine (U"WINVER is \"" stringize(WINVER) "\".");
 	#endif
 	#ifdef _WIN32_WINNT
-		MelderInfo_writeLine (U"_WIN32_WINNT is \"" xstr (_WIN32_WINNT) "\".");
+		MelderInfo_writeLine (U"_WIN32_WINNT is \"" stringize(_WIN32_WINNT) "\".");
 	#endif
 	#ifdef _WIN32_IE
-		MelderInfo_writeLine (U"_WIN32_IE is \"" xstr (_WIN32_IE) "\".");
+		MelderInfo_writeLine (U"_WIN32_IE is \"" stringize(_WIN32_IE) "\".");
 	#endif
 	#ifdef UNICODE
-		MelderInfo_writeLine (U"UNICODE is \"" xstr (UNICODE) "\".");
+		MelderInfo_writeLine (U"UNICODE is \"" stringize(UNICODE) "\".");
 	#endif
 	#ifdef _FILE_OFFSET_BITS
-		MelderInfo_writeLine (U"_FILE_OFFSET_BITS is \"" xstr (_FILE_OFFSET_BITS) "\".");
+		MelderInfo_writeLine (U"_FILE_OFFSET_BITS is \"" stringize(_FILE_OFFSET_BITS) "\".");
 	#endif
 	#ifdef macintosh
-		MelderInfo_writeLine (U"macintosh is \"" xstr (macintosh) "\".");
+		MelderInfo_writeLine (U"macintosh is \"" stringize(macintosh) "\".");
 	#endif
 	#ifdef linux
-		MelderInfo_writeLine (U"linux is \"" xstr (linux) "\".");
+		MelderInfo_writeLine (U"linux is \"" stringize(linux) "\".");
 	#endif
 	MelderInfo_writeLine (U"The number of processors is ", std::thread::hardware_concurrency(), U".");
 	#ifdef macintosh
 		MelderInfo_writeLine (U"system version is ", Melder_systemVersion, U".");
+	#endif
+	#ifdef linux
+		MelderInfo_writeLine (U"Display protocol: probably ", Melder_systemVersion == 'w' ? U"Wayland" : U"X11", U" (but use xeyes to make sure).");
 	#endif
 	structMelderDir dir {};
 	Melder_getHomeDir (& dir);
@@ -174,8 +175,14 @@ void praat_reportSystemProperties () {
 		MelderInfo_writeLine (U"Full Disk Access: ", Melder_kleenean (hasFullDiskAccess ()));
 		MelderInfo_writeLine (U"Sandboxed: ", Melder_boolean (isSandboxed ()));
 		if (isSandboxed ())
-			MelderInfo_writeLine (U"Sandbox (application home) folder: ", Melder_peek8to32 ([NSHomeDirectory () UTF8String]));
-		MelderInfo_writeLine (U"User home folder: ", Melder_peek8to32 ([ getRealHomeDirectory () UTF8String]));
+			MelderInfo_writeLine (U"Sandbox (application home) folder: ", Melder_peek8to32 ([NSHomeDirectory ()   UTF8String]));
+		MelderInfo_writeLine (U"User home folder: ", Melder_peek8to32 ([getRealHomeDirectory ()   UTF8String]));
+		NSRunningApplication *currentApplication = [NSRunningApplication currentApplication];
+		pid_t processID = [currentApplication processIdentifier];
+		Melder_assert (processID == getpid());
+		MelderInfo_writeLine (U"Process ID: ", processID);
+		MelderInfo_writeLine (U"Localized app name: ", Melder_peek8to32 ([[currentApplication localizedName] UTF8String]));
+		MelderInfo_writeLine (U"App bundle identifier: ", Melder_peek8to32 ([[currentApplication bundleIdentifier] UTF8String]));
 	#endif
 	MelderInfo_close ();
 }

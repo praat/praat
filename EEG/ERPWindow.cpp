@@ -1,6 +1,6 @@
 /* ERPWindow.cpp
  *
- * Copyright (C) 2012-2020 Paul Boersma
+ * Copyright (C) 2012-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 #include "EditorM.h"
 #include "Preferences.h"
 
-Thing_implement (ERPWindow, SoundEditor, 0);
+Thing_implement (ERPWindow, FunctionEditor, 0);
 
-#include "prefs_define.h"
+#include "Prefs_define.h"
 #include "ERPWindow_prefs.h"
-#include "prefs_install.h"
+#include "Prefs_install.h"
 #include "ERPWindow_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "ERPWindow_prefs.h"
 
 typedef struct { int inclination, azimuth; double topX, topY; } BiosemiLocationData;
@@ -264,14 +264,13 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 }
 
 void structERPWindow :: v_drawSelectionViewer () {
-	ERP erp = (ERP) our data;
 	Graphics_setWindow (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	const integer numberOfDrawableChannels =
-			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64].get(), U"O2") ? 64 :
-			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32].get(), U"Cz") ? 32 :
+			our erpArea() -> erp() -> ny >= 64 && Melder_equ (our erpArea() -> erp() -> channelNames [64].get(), U"O2") ? 64 :
+			our erpArea() -> erp() -> ny >= 32 && Melder_equ (our erpArea() -> erp() -> channelNames [32].get(), U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
@@ -289,9 +288,9 @@ void structERPWindow :: v_drawSelectionViewer () {
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++)
 		means [ichan] =
 			our startSelection == our endSelection ?
-				Sampled_getValueAtX (erp, our startSelection, ichan, 0, true) :
-				Vector_getMean (erp, our startSelection, our endSelection, ichan);
-	autoMAT image = raw_MAT (n, n);
+				Sampled_getValueAtX (our erpArea() -> erp(), our startSelection, ichan, 0, true) :
+				Vector_getMean (our erpArea() -> erp(), our startSelection, our endSelection, ichan);
+	autoMAT image = zero_MAT (n, n);
 	for (integer irow = 1; irow <= n; irow ++) {
 		const double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
@@ -320,19 +319,19 @@ void structERPWindow :: v_drawSelectionViewer () {
 	double minimum = 0.0, maximum = 0.0;
 	for (integer irow = 1; irow <= n; irow ++) {
 		for (integer icol = 1; icol <= n; icol ++) {
-			double value = image [irow] [icol];
+			const double value = image [irow] [icol];
 			if (value < minimum) minimum = value;
 			else if (value > maximum) maximum = value;
 		}
 	}
-	double absoluteExtremum = - minimum > maximum ? - minimum : maximum;
-	if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
-		minimum = p_sound_scaling_minimum;
-		maximum = p_sound_scaling_maximum;
-	} else if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
-		double mean = 0.5 * (minimum + maximum);
-		minimum = mean - 0.5 * p_sound_scaling_height;
-		maximum = mean + 0.5 * p_sound_scaling_height;
+	const double absoluteExtremum = std::max (- minimum, maximum);
+	if (our erpArea() -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_RANGE) {
+		minimum = our erpArea() -> instancePref_scaling_minimum();
+		maximum = our erpArea() -> instancePref_scaling_maximum();
+	} else if (our erpArea() -> instancePref_scalingStrategy() == kSoundArea_scalingStrategy::FIXED_HEIGHT) {
+		const double mean = 0.5 * (minimum + maximum);
+		minimum = mean - 0.5 * our erpArea() -> instancePref_scaling_height();
+		maximum = mean + 0.5 * our erpArea() -> instancePref_scaling_height();
 	} else {
 		minimum = - absoluteExtremum;
 		maximum = absoluteExtremum;
@@ -343,19 +342,19 @@ void structERPWindow :: v_drawSelectionViewer () {
 			const double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y > 1.0) {
 				image [irow] [icol] = minimum +
-					( our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 0.46 : 0.1875 ) * (maximum - minimum);
+					( our instancePref_scalp_colourScale() == kGraphics_colourScale::BLUE_TO_RED ? 0.46 : 0.1875 ) * (maximum - minimum);
 					   // -0.625 * absoluteExtremum;
 			}
 		}
 	}
-	Graphics_setColourScale (our graphics.get(), our p_scalp_colourScale);
+	Graphics_setColourScale (our graphics.get(), our instancePref_scalp_colourScale());
 	Graphics_image (our graphics.get(), image.all(), -1.0-0.5/n, 1.0+0.5/n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
 	Graphics_setColourScale (our graphics.get(), kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	/*
 		Nose.
 	*/
-	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_setGrey (our graphics.get(), our instancePref_scalp_colourScale() == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
 		const double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (our graphics.get(), 3, x, y);
@@ -366,7 +365,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 	/*
 		Ears.
 	*/
-	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_setGrey (our graphics.get(), our instancePref_scalp_colourScale() == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (our graphics.get(), -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (our graphics.get(), 1.09, 1.00, -0.08, 0.08);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
@@ -383,24 +382,24 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_setLineWidth (our graphics.get(), 1.0);
 }
 
-OPTIONMENU_ENUM_VARIABLE (kGraphics_colourScale, v_prefs_scalpColourSpace)
+OPTIONMENU_ENUM_VARIABLE (kGraphics_colourScale, v_prefs__scalpColourSpace)
 void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {
-	OPTIONMENU_ENUM_FIELD (kGraphics_colourScale, v_prefs_scalpColourSpace,
+	OPTIONMENU_ENUM_FIELD (kGraphics_colourScale, v_prefs__scalpColourSpace,
 			U"Scalp colour space", kGraphics_colourScale::BLUE_TO_RED)
 }
 void structERPWindow :: v_prefs_setValues (EditorCommand cmd) {
-	SET_ENUM (v_prefs_scalpColourSpace, kGraphics_colourScale, p_scalp_colourScale)
+	SET_ENUM (v_prefs__scalpColourSpace, kGraphics_colourScale, instancePref_scalp_colourScale())
 }
 void structERPWindow :: v_prefs_getValues (EditorCommand /* cmd */) {
-	pref_scalp_colourScale () = p_scalp_colourScale = v_prefs_scalpColourSpace;
-	FunctionEditor_redraw (this);
+	setInstancePref_scalp_colourScale (v_prefs__scalpColourSpace);
 }
 
-autoERPWindow ERPWindow_create (conststring32 title, ERP data) {
-	Melder_assert (data);
+autoERPWindow ERPWindow_create (conststring32 title, ERP erp) {
+	Melder_assert (erp);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		SoundEditor_init (me.get(), title, data);
+		my erpArea() = ERPArea_create (true, nullptr, me.get());
+		FunctionEditor_init (me.get(), title, erp);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");

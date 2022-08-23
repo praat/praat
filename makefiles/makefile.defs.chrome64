@@ -1,11 +1,11 @@
 # File: makefile.defs.chrome64
 
 # System: Linux on Chromebook
-# Paul Boersma, 10 November 2020
+# Paul Boersma 2021-12-27
 
-CC = gcc
-
-CXX = g++
+CC ?= gcc
+CXX ?= g++
+LINK ?= $(CXX)
 
 COMMONFLAGS = -DUNIX -Dlinux -Dchrome -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-3.0` \
 	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
@@ -14,11 +14,9 @@ CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
-LINK = g++
-
 EXECUTABLE = praat
 
-LIBS = `pkg-config --libs gtk+-3.0` -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu -lX11
+LIBS = `pkg-config --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu
 
 AR = ar
 RANLIB = ls

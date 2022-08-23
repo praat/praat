@@ -66,12 +66,12 @@ void Permutation_checkInvariant (Permutation me) {
 			me, U": is not a valid permutation.");
 }
 
-void structPermutation :: v_info () {
-	structDaata :: v_info ();
+void structPermutation :: v1_info () {
+	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of elements: ", numberOfElements);
 }
 
-void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/) {
+void structPermutation :: v1_readText (MelderReadText text, int /*formatVersion*/) {
 	numberOfElements = texgeti32 (text);
 	Melder_require (numberOfElements > 0,
 		U"Number of elements should be greater than zero.");

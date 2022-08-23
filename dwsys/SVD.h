@@ -2,7 +2,7 @@
 #define _SVD_h_
 /* SVD.h
  *
- * Copyright (C) 1994-2020 David Weenink
+ * Copyright (C) 1994-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,17 @@
 
 #include "SVD_def.h"
 
+/*
+	The SVD represents the singular value decomposition of a real matrix A of size nrow x ncol.
+	If nrow >= ncol then
+		A = U D V', 
+	where U is an orthogonal nrow x ncol matrix, V is an orthogonal ncol x ncol matrix,
+	and D is a diagonal matrix with diagonal elements d[1]...d[ncol] and V' means the transpose of V.
+	Invariants:
+		U'U = V'V = I (identity matrix of size ncol x ncol
+		d[1] >= d[2] >=... >= d[ncol] >= 0.
+	For ncol > nrow we use the transposed system.
+*/
 void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns);
 
 autoSVD SVD_create (integer numberOfRows, integer numberOfColumns);
@@ -92,6 +103,18 @@ void SVD_getSquared_preallocated (SVD me, bool inverse, MAT const& m);
 // compute V D^2 V' or V D^-2 V'
 
 integer SVD_getRank (SVD me);
+
+double SVD_getEffectiveDegreesOfFreedom (SVD me, double shrinkageParameter);
+double SVD_getShrinkageParameter (SVD me, double effectiveDegreesOfFreedom);
+/*
+	For ridge regression:
+	The effective degrees of freedom df(lambda) is defined as:
+		df(lambda) = sum (i=1, p, d[i]^2 / (d[i]^2 + lambda)),
+	where d[i] are the singular values and p is the number of singular values.
+	df(0) == p and df(infinity) == 0. 
+	The equation to solve for lambda is
+		f(lambda) = sum(i=1, p, d[i]^2 / (d[i]^2 + lambda)) - df = 0,
+*/
 
 autoGSVD GSVD_create (integer numberOfColumns);
 
