@@ -1,6 +1,6 @@
 /* FormantPathEditor.cpp
  *
- * Copyright (C) 2020-2021 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2020-2022 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +82,9 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 	Melder_require (parameters.size > 0,
 		U"At least one coefficient should be given.");
+	const integer numberOfTracks = FormantPath_getNumberOfFormantTracks (my formantPath());
+	Melder_require (parameters.size <= numberOfTracks,
+		U"The number of coefficients (", parameters.size, U") should not exceed the number of tracks (", numberOfTracks, U").");
 	Melder_require (NUMmin (parameters.get()) > 0,
 		U"All coefficients should be larger than zero.");
 	my setInstancePref_modeler_varianceExponent (varianceExponent);
@@ -217,13 +220,24 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	double startTime, endTime = endWindow, xCursor, yCursor;
 	FormantPathEditor_getDrawingData (this, & startTime, & endTime, & xCursor, & yCursor);
-	Graphics_setInner (our graphics.get());
 	const integer nrow = 0, ncol = 0;
 	if (startTime != previousStartTime || endTime != previousEndTime)
 		our selectedCandidate = 0;
 	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (our instancePref_modeler_numberOfParametersPerTrack());
 	MelderColour oddColour = MelderColour_fromColourName (our formantPathArea() -> instancePref_formant_path_oddColour());
 	MelderColour evenColour = MelderColour_fromColourName (our formantPathArea() -> instancePref_formant_path_evenColour());
+	/*
+		Put the number of model coefficients per track at the top
+	*/
+	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	autoMelderString infoAtTop;
+	MelderString_append (& infoAtTop, U"Coefficients by track: ", our instancePref_modeler_numberOfParametersPerTrack());
+	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
+	Graphics_text (our graphics.get(), 0.5, 1.0, infoAtTop.string);
+	/*
+		Now do the inset
+	*/
+	Graphics_setInner (our graphics.get());
 	FormantPath_drawAsGrid_inside (our formantPath(), our graphics.get(), startTime, endTime,
 		our instancePref_modeler_draw_maximumFrequency(), 1, 5, our instancePref_modeler_draw_showBandwidths(), oddColour, evenColour,
 		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_modeler_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
