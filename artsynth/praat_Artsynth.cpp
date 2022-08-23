@@ -328,58 +328,86 @@ void praat_uvafon_Artsynth_init ();
 void praat_uvafon_Artsynth_init () {
 	Thing_recognizeClassesByName (classArt, classArtword, classSpeaker, nullptr);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial", nullptr, GuiMenu_DEPTH_1, HELP_ArticulatorySynthesisTutorial);
-	praat_addMenuCommand (U"Objects", U"New", U"-- new articulatory synthesis -- ", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Articulation...", nullptr, 1, NEW1_Art_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Speaker...", nullptr, 1, NEW1_Speaker_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Artword...", nullptr, 1, NEW1_Artword_create);
-	praat_addMenuCommand (U"Objects", U"New", U"-- new vocal tract --", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Vocal Tract from phone...", nullptr, 1, NEW1_VocalTract_createFromPhone);
+	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis",
+			nullptr, 0, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial",
+				nullptr, 1, HELP_ArticulatorySynthesisTutorial);
+		praat_addMenuCommand (U"Objects", U"New", U"-- new articulatory synthesis -- ",
+				nullptr, 1, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Articulation...",
+				nullptr, 1, NEW1_Art_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Speaker...",
+				nullptr, 1, NEW1_Speaker_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Artword...",
+				nullptr, 1, NEW1_Artword_create);
+		praat_addMenuCommand (U"Objects", U"New", U"-- new vocal tract --",
+				nullptr, 1, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Vocal Tract from phone...",
+				nullptr, 1, NEW1_VocalTract_createFromPhone);
 
-	praat_addAction1 (classArt, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, WINDOW_Art_viewAndEdit);
-	praat_addAction1 (classArt, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, WINDOW_Art_viewAndEdit);
+	praat_addAction1 (classArt, 1, U"View & Edit || Edit",
+			nullptr, GuiMenu_ATTRACTIVE, WINDOW_Art_viewAndEdit);   // alternative GuiMenu_DEPRECATED_2011
 
-	praat_addAction1 (classArtword, 0, U"Artword help", nullptr, 0, HELP_Artword_help);
-	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Artword_viewAndEdit);
-	praat_addAction1 (classArtword, 1,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011, EDITOR_ONE_Artword_viewAndEdit);
-	praat_addAction1 (classArtword, 0, U"Info", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 1, U"Get target...", nullptr, 0, REAL_Artword_getTarget);
-	praat_addAction1 (classArtword, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 0, U"Draw...", nullptr, 0, GRAPHICS_Artword_draw);
-	praat_addAction1 (classArtword, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 1, U"Set target...", nullptr, 0, MODIFY_EACH_Artword_setTarget);
-	praat_addAction1 (classArtword, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 0, U"To Art (slice)...", nullptr, 0, CONVERT_EACH_Artword_to_Art);
+	praat_addAction1 (classArtword, 0, U"Artword help",
+			nullptr, 0, HELP_Artword_help);
+	praat_addAction1 (classArtword, 1, U"View & Edit || Edit",
+			nullptr, GuiMenu_ATTRACTIVE, EDITOR_ONE_Artword_viewAndEdit);
+	praat_addAction1 (classArtword, 0, U"Info",
+			nullptr, 0, nullptr);
+	praat_addAction1 (classArtword, 1, U"Get target...",
+			nullptr, 0, REAL_Artword_getTarget);
+praat_addAction1 (classArtword, 0, U"Draw", nullptr, 0, nullptr);
+	praat_addAction1 (classArtword, 0, U"Draw...",
+			nullptr, 0, GRAPHICS_Artword_draw);
+praat_addAction1 (classArtword, 0, U"Modify", nullptr, 0, nullptr);
+	praat_addAction1 (classArtword, 1, U"Set target...",
+			nullptr, 0, MODIFY_EACH_Artword_setTarget);
+	praat_addAction1 (classArtword, 0, U"Analyse",
+			nullptr, 0, nullptr);
+	praat_addAction1 (classArtword, 0, U"To Art (slice)...",
+			nullptr, 0, CONVERT_EACH_Artword_to_Art);
 
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw", nullptr, 0, GRAPHICS_Art_Speaker_draw);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Fill inner contour", nullptr, 0, GRAPHICS_Art_Speaker_fillInnerContour);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw mesh", nullptr, 0, GRAPHICS_Art_Speaker_drawMesh);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"To VocalTract", nullptr, 0, CONVERT_TWO_Art_Speaker_to_VocalTract);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw",
+			nullptr, 0, nullptr);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw",
+			nullptr, 0, GRAPHICS_Art_Speaker_draw);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Fill inner contour",
+			nullptr, 0, GRAPHICS_Art_Speaker_fillInnerContour);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw mesh",
+			nullptr, 0, GRAPHICS_Art_Speaker_drawMesh);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Synthesize",
+			nullptr, 0, nullptr);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"To VocalTract",
+			nullptr, 0, CONVERT_TWO_Art_Speaker_to_VocalTract);
 
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Play movie", nullptr, 0, MOVIE_Artword_Speaker_playMovie);
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Movie", nullptr, GuiMenu_HIDDEN, MOVIE_Artword_Speaker_playMovie);
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw...", nullptr, 0, GRAPHICS_Artword_Speaker_draw);
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"To Sound...", nullptr, 0, NEW1_Artword_Speaker_to_Sound);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Play movie || Movie",
+			nullptr, 0, MOVIE_Artword_Speaker_playMovie);
+praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw", nullptr, 0, nullptr);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw...",
+			nullptr, 0, GRAPHICS_Artword_Speaker_draw);
+praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"To Sound...",
+			nullptr, 0, NEW1_Artword_Speaker_to_Sound);
 
-	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Play movie", nullptr, 0, MOVIE_Artword_Speaker_Sound_playMovie);
-	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, GuiMenu_HIDDEN, MOVIE_Artword_Speaker_Sound_playMovie);
+	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Play movie || Movie",
+			nullptr, 0, MOVIE_Artword_Speaker_Sound_playMovie);
 
 	praat_addAction1 (classSpeaker, 0, U"Speaker help", nullptr, 0, HELP_Speaker_help);
 
-	praat_addAction1 (classVocalTract, 0, U"VocalTract help", nullptr, 0, HELP_VocalTract_help);
-	praat_addAction1 (classVocalTract, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classVocalTract, 0, U"Draw", nullptr, 0, GRAPHICS_VocalTract_draw);
-	praat_addAction1 (classVocalTract, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classVocalTract, 0, U"To Spectrum...", nullptr, 0, NEW_VocalTract_to_Spectrum);
-	praat_addAction1 (classVocalTract, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classVocalTract, 0, U"Formula...", nullptr, 0, MODIFY_VocalTract_formula);
-	praat_addAction1 (classVocalTract, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classVocalTract, 0, U"To Matrix", nullptr, 0, NEW_VocalTract_to_Matrix);
+	praat_addAction1 (classVocalTract, 0, U"VocalTract help",
+			nullptr, 0, HELP_VocalTract_help);
+praat_addAction1 (classVocalTract, 0, U"Draw", nullptr, 0, nullptr);
+	praat_addAction1 (classVocalTract, 0, U"Draw",
+			nullptr, 0, GRAPHICS_VocalTract_draw);
+praat_addAction1 (classVocalTract, 0, U"Analyse", nullptr, 0, nullptr);
+	praat_addAction1 (classVocalTract, 0, U"To Spectrum...",
+			nullptr, 0, NEW_VocalTract_to_Spectrum);
+praat_addAction1 (classVocalTract, 0, U"Modify", nullptr, 0, nullptr);
+	praat_addAction1 (classVocalTract, 0, U"Formula...",
+			nullptr, 0, MODIFY_VocalTract_formula);
+praat_addAction1 (classVocalTract, 0, U"Hack", nullptr, 0, nullptr);
+	praat_addAction1 (classVocalTract, 0, U"To Matrix",
+			nullptr, 0, NEW_VocalTract_to_Matrix);
 
 	manual_Artsynth_init (theCurrentPraatApplication -> manPages);
 }

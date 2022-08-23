@@ -1598,11 +1598,9 @@ void praat_uvafon_LPC_init () {
 			HELP__PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", nullptr, 0, 
 			GRAPHICS_EACH__PowerCepstrum_draw);
-	praat_addAction1 (classPowerCepstrum, 0, U"Draw trend line...", nullptr, 0, 
-			GRAPHICS_EACH__PowerCepstrum_drawTrendLine);
-	praat_addAction1 (classPowerCepstrum, 0, U"Draw tilt line...", nullptr, GuiMenu_DEPRECATED_2019,
-			GRAPHICS_EACH__PowerCepstrum_drawTrendLine);
-	praat_addAction1 (classCepstrum, 0, U"Draw (linear)...", nullptr, GuiMenu_HIDDEN, 
+	praat_addAction1 (classPowerCepstrum, 0, U"Draw trend line... || Draw tilt line...",
+			nullptr, 0, GRAPHICS_EACH__PowerCepstrum_drawTrendLine);   // alternative GuiMenu_DEPRECATED_2019
+	praat_addAction1 (classCepstrum, 0, U"Draw (linear)...", nullptr, GuiMenu_HIDDEN,
 			GRAPHICS_EACH__Cepstrum_drawLinear);
 	praat_addAction1 (classCepstrum, 0, U"Down to PowerCepstrum", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Cepstrum_downto_PowerCepstrum);
@@ -1627,39 +1625,29 @@ void praat_uvafon_LPC_init () {
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakInQuefrencyInterval);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get quefrency of peak...", nullptr, 1, 
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getQuefrencyOfPeak);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence (hillenbrand)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
-				QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence_hillenbrand);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence (hillenbrand)...",
+				nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence_hillenbrand);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence...", nullptr, 1, 
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line slope...", nullptr, 1,
-				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineSlope);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line intercept...", nullptr, 1,
+		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line slope... || Get tilt line slope...",
+				nullptr, 1, QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineSlope);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line intercept... || Get tilt line intercept...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineIntercept);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get value in bin...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getValueInBin);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get rhamonics to noise ratio...", nullptr, 1, 
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getRNR);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line slope...", nullptr, GuiMenu_DEPRECATED_2019,
-				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineSlope);
-		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line intercept...", nullptr, GuiMenu_DEPRECATED_2019,
-				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineIntercept);
 	praat_addAction1 (classPowerCepstrum, 1, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classPowerCepstrum, 0, U"Formula...", nullptr, 1, 
 				MODIFY_EACH__PowerCepstrum_formula);
-		praat_addAction1 (classPowerCepstrum, 0, U"Subtract trend (in-place)...", nullptr, 1, 
-				MODIFY_EACH__PowerCepstrum_subtractTrend_inplace);
-		praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt (in-line)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2017,
-				MODIFY_EACH__PowerCepstrum_subtractTrend_inplace);
-		praat_addAction1 (classPowerCepstrum, 0, U"Smooth (in-place)...", nullptr, 1, 
-				MODIFY_EACH__PowerCepstrum_smooth_inplace);
-		praat_addAction1 (classPowerCepstrum, 0, U"Smooth (in-line)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2017,
-				MODIFY_EACH__PowerCepstrum_smooth_inplace);
+		praat_addAction1 (classPowerCepstrum, 0, U"Subtract trend (in-place)... || Subtract tilt (in-line)...",
+				nullptr, 1, MODIFY_EACH__PowerCepstrum_subtractTrend_inplace);   // alternative GuiMenu_DEPRECATED_2017
+		praat_addAction1 (classPowerCepstrum, 0, U"Smooth (in-place)... || Smooth (in-line)...",
+				nullptr, 1, MODIFY_EACH__PowerCepstrum_smooth_inplace);   // alternative GuiMenu_DEPRECATED_2017
 
-	praat_addAction1 (classPowerCepstrum, 0, U"Subtract trend...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__PowerCepstrum_subtractTrend);
-	praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt...", nullptr, GuiMenu_DEPRECATED_2019,
-			CONVERT_EACH_TO_ONE__PowerCepstrum_subtractTrend);
-	praat_addAction1 (classPowerCepstrum, 0, U"Smooth...", nullptr, 0, 
+	praat_addAction1 (classPowerCepstrum, 0, U"Subtract trend... || Subtract tilt...",
+			nullptr, 0, CONVERT_EACH_TO_ONE__PowerCepstrum_subtractTrend);   // alternative GuiMenu_DEPRECATED_2019
+	praat_addAction1 (classPowerCepstrum, 0, U"Smooth...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__PowerCepstrum_smooth);
 	praat_addAction1 (classCepstrum, 0, U"To Spectrum", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Cepstrum_to_Spectrum);
@@ -1671,8 +1659,10 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classPowerCepstrogram, 0, U"Paint...", nullptr, 0, 
 			GRAPHICS_EACH__PowerCepstrogram_paint);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Tabulate -", nullptr, 0, nullptr);
-		praat_addAction1 (classPowerCepstrogram, 1, U"List cepstral peak prominences...", nullptr, 1, LIST__PowerCepstrogram_listCPP);
-		praat_addAction1 (classPowerCepstrogram, 0, U"To Table (cepstral peak prominences)...", nullptr, 1, NEW__PowerCepstrogram_to_Table_CPP);
+		praat_addAction1 (classPowerCepstrogram, 1, U"List cepstral peak prominences...",
+				nullptr, 1, LIST__PowerCepstrogram_listCPP);
+		praat_addAction1 (classPowerCepstrogram, 0, U"To Table (cepstral peak prominences)...",
+				nullptr, 1, NEW__PowerCepstrogram_to_Table_CPP);
 	praat_addAction1 (classPowerCepstrogram, 0, U"To Table (hillenbrand)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_hillenbrand);
 	praat_addAction1 (classPowerCepstrogram, 1, U"Query -", nullptr, 0, nullptr);
@@ -1687,29 +1677,25 @@ void praat_uvafon_LPC_init () {
 					QUERY_ONE_FOR_INTEGER__PowerCepstrogram_getNumberOfQuefrencyBins);
 			praat_addAction1 (classPowerCepstrogram, 1, U"Get quefrency step", nullptr, 2,
 					QUERY_ONE_FOR_REAL__PowerCepstrogram_getQuefrencyStep);
-		praat_addAction1 (classPowerCepstrogram, 0, U"Get CPPS (hillenbrand)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
-				QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS_hillenbrand);
+		praat_addAction1 (classPowerCepstrogram, 0, U"Get CPPS (hillenbrand)...",
+				nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS_hillenbrand);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Get CPPS...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPowerCepstrogram);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Formula...", nullptr, 1, 
 				MODIFY__EACH_WEAK__PowerCepstrogram_formula);
-		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract trend (in-place)...", nullptr, 1,
-				MODIFY_EACH__PowerCepstrogram_subtractTrend_inplace);
-		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-place)...", nullptr, GuiMenu_DEPRECATED_2019,
-				MODIFY_EACH__PowerCepstrogram_subtractTrend_inplace);
-		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-line)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2017,
-				MODIFY_EACH__PowerCepstrogram_subtractTrend_inplace);
-	praat_addAction1 (classPowerCepstrogram, 0, U"To PowerCepstrum (slice)...", nullptr, 0, 
+		praat_addAction1 (classPowerCepstrogram, 0,
+			U"Subtract trend (in-place)... || Subtract tilt (in-place)... || Subtract tilt (in-line)...",
+			nullptr, 1, MODIFY_EACH__PowerCepstrogram_subtractTrend_inplace
+		);   // GuiMenu_DEPRECATED_2017/2019
+	praat_addAction1 (classPowerCepstrogram, 0, U"To PowerCepstrum (slice)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__PowerCepstrogram_to_PowerCepstrum_slice);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Smooth...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__PowerCepstrogram_smooth);
-	praat_addAction1 (classPowerCepstrogram, 0, U"Subtract trend...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__PowerCepstrogram_subtractTrend);
-	praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt...", nullptr, GuiMenu_DEPRECATED_2019,
-			CONVERT_EACH_TO_ONE__PowerCepstrogram_subtractTrend);
-	praat_addAction1 (classPowerCepstrogram, 0, U"To Matrix", nullptr, 0, 
+	praat_addAction1 (classPowerCepstrogram, 0, U"Subtract trend... || Subtract tilt...",
+			nullptr, 0, CONVERT_EACH_TO_ONE__PowerCepstrogram_subtractTrend);   // alternative GuiMenu_DEPRECATED_2019
+	praat_addAction1 (classPowerCepstrogram, 0, U"To Matrix", nullptr, 0,
 			CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Matrix);
 
 	praat_addAction1 (classSound, 0, U"To PowerCepstrogram...", U"To Harmonicity (gne)...", 1, 

@@ -1744,9 +1744,10 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 		praat_addMenuCommand (U"Picture", U"File",   U"Write to Windows metafile...", U"*Save as Windows metafile...", GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToWindowsMetafile);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"-- praat picture file --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"File", U"Read from praat picture file...", nullptr, 0, GRAPHICS_Picture_readFromPraatPictureFile);
-	praat_addMenuCommand (U"Picture", U"File", U"Save as praat picture file...", nullptr, 0, GRAPHICS_Picture_writeToPraatPictureFile);
-	praat_addMenuCommand (U"Picture", U"File",   U"Write to praat picture file...", U"*Save as praat picture file...", GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToPraatPictureFile);
+	praat_addMenuCommand (U"Picture", U"File", U"Read from praat picture file...",
+			nullptr, 0, GRAPHICS_Picture_readFromPraatPictureFile);
+	praat_addMenuCommand (U"Picture", U"File", U"Save as praat picture file... || Write to praat picture file...",
+			nullptr, 0, GRAPHICS_Picture_writeToPraatPictureFile);   // alternative GuiMenu_DEPRECATED_2011
 	praat_addMenuCommand (U"Picture", U"File", U"-- print --", nullptr, 0, nullptr);
 	#if defined (macintosh)
 		praat_addMenuCommand (U"Picture", U"File", U"Page setup...", nullptr, GuiMenu_NO_API, GRAPHICS_Page_setup);
@@ -1822,36 +1823,47 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 	praat_addMenuCommand (U"Picture", U"World", U"-- axes --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"World", U"Axes...", nullptr, 0, GRAPHICS_Axes);
 	praat_addMenuCommand (U"Picture", U"World", U"Measure", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Horizontal mm to world coordinates...", nullptr, 1, GRAPHICS_HorizontalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal mm to wc...", U"*Horizontal mm to world coordinates...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_HorizontalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World", U"Horizontal world coordinates to mm...", nullptr, 1, GRAPHICS_HorizontalWorldCoordinatesToMm);
-	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal wc to mm...", U"*Horizontal world coordinates to mm...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_HorizontalWorldCoordinatesToMm);
-	praat_addMenuCommand (U"Picture", U"World", U"Vertical mm to world coordinates...", nullptr, 1, GRAPHICS_VerticalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Vertical mm to wc...", U"*Vertical mm to world coordinates...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_VerticalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World", U"Vertical world coordinates to mm...", nullptr, 1, GRAPHICS_VerticalWorldCoordinatesToMm);
-	praat_addMenuCommand (U"Picture", U"World",   U"Vertical wc to mm...", U"*Vertical world coordinates to mm...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_VerticalWorldCoordinatesToMm);
+	praat_addMenuCommand (U"Picture", U"World", U"Horizontal mm to world coordinates... || Horizontal mm to wc...",
+			nullptr, 1, GRAPHICS_HorizontalMmToWorldCoordinates);   // alternative GuiMenu_DEPRECATED_2016
+	praat_addMenuCommand (U"Picture", U"World", U"Horizontal world coordinates to mm... || Horizontal wc to mm...",
+			nullptr, 1, GRAPHICS_HorizontalWorldCoordinatesToMm);
+	praat_addMenuCommand (U"Picture", U"World", U"Vertical mm to world coordinates... || Vertical mm to wc...",
+			nullptr, 1, GRAPHICS_VerticalMmToWorldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World", U"Vertical world coordinates to mm... || Vertical wc to mm...",
+			nullptr, 1, GRAPHICS_VerticalWorldCoordinatesToMm);
 	praat_addMenuCommand (U"Picture", U"World", U"-- text measure --", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Text width (world coordinates)...", nullptr, 1, GRAPHICS_TextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Text width (wc)...", U"*Text width (world coordinates)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_TextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World", U"Text width (mm)...", nullptr, 1, GRAPHICS_TextWidth_mm);
-	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (world coordinates)...", nullptr, 1, GRAPHICS_PostScriptTextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"PostScript text width (wc)...", U"*PostScript text width (world coordinates)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016, GRAPHICS_PostScriptTextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (mm)...", nullptr, 1, GRAPHICS_PostScriptTextWidth_mm);
+	praat_addMenuCommand (U"Picture", U"World", U"Text width (world coordinates)... || Text width (wc)...",
+			nullptr, 1, GRAPHICS_TextWidth_worldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World", U"Text width (mm)...",
+			nullptr, 1, GRAPHICS_TextWidth_mm);
+	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (world coordinates)... || PostScript text width (wc)...",
+			nullptr, 1, GRAPHICS_PostScriptTextWidth_worldCoordinates);   // alternative GuiMenu_DEPRECATED_2016
+	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (mm)...",
+			nullptr, 1, GRAPHICS_PostScriptTextWidth_mm);
 
-	praatButton_innerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects inner viewport", nullptr, GuiMenu_RADIO_FIRST | GuiMenu_NO_API, GRAPHICS_MouseSelectsInnerViewport);
-	praatButton_outerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects outer viewport", nullptr, GuiMenu_RADIO_NEXT | GuiMenu_NO_API, GRAPHICS_MouseSelectsOuterViewport);
+	praatButton_innerViewport = praat_addMenuCommand (U"Picture", U"Select",
+			U"Mouse selects inner viewport", nullptr, GuiMenu_RADIO_FIRST | GuiMenu_NO_API, GRAPHICS_MouseSelectsInnerViewport);
+	praatButton_outerViewport = praat_addMenuCommand (U"Picture", U"Select",
+			U"Mouse selects outer viewport", nullptr, GuiMenu_RADIO_NEXT | GuiMenu_NO_API, GRAPHICS_MouseSelectsOuterViewport);
 	praat_addMenuCommand (U"Picture", U"Select", U"-- select --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Select", U"Select inner viewport...", nullptr, 0, GRAPHICS_SelectInnerViewport);
-	praat_addMenuCommand (U"Picture", U"Select", U"Select outer viewport...", nullptr, 0, GRAPHICS_SelectOuterViewport);
-	praat_addMenuCommand (U"Picture", U"Select", U"Viewport...", U"*Select outer viewport...", GuiMenu_DEPRECATED_2004, GRAPHICS_SelectOuterViewport);
+	praat_addMenuCommand (U"Picture", U"Select", U"Select inner viewport...",
+			nullptr, 0, GRAPHICS_SelectInnerViewport);
+	praat_addMenuCommand (U"Picture", U"Select", U"Select outer viewport... || Viewport...",
+			nullptr, 0, GRAPHICS_SelectOuterViewport);
 	praat_addMenuCommand (U"Picture", U"Select", U"-- viewport drawing --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Select", U"Viewport text...", nullptr, 0, GRAPHICS_ViewportText);
+	praat_addMenuCommand (U"Picture", U"Select", U"Viewport text...",
+			nullptr, 0, GRAPHICS_ViewportText);
 
-	praatButton_lines [Graphics_DRAWN] = praat_addMenuCommand (U"Picture", U"Pen", U"Solid line", nullptr, GuiMenu_RADIO_FIRST, GRAPHICS_Solid_line);
-	praat_addMenuCommand (U"Picture", U"Pen", U"Plain line", nullptr, GuiMenu_RADIO_NEXT | GuiMenu_DEPRECATED_2006, GRAPHICS_Solid_line);
-	praatButton_lines [Graphics_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dotted line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dotted_line);
-	praatButton_lines [Graphics_DASHED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dashed_line);
-	praatButton_lines [Graphics_DASHED_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed-dotted line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dashed_dotted_line);
+	praatButton_lines [Graphics_DRAWN] = praat_addMenuCommand (U"Picture", U"Pen",
+			U"Solid line", nullptr, GuiMenu_RADIO_FIRST, GRAPHICS_Solid_line);
+	praat_addMenuCommand (U"Picture", U"Pen",
+			U"Plain line", nullptr, GuiMenu_RADIO_NEXT | GuiMenu_DEPRECATED_2006, GRAPHICS_Solid_line);
+	praatButton_lines [Graphics_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen",
+			U"Dotted line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dotted_line);
+	praatButton_lines [Graphics_DASHED] = praat_addMenuCommand (U"Picture", U"Pen",
+			U"Dashed line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dashed_line);
+	praatButton_lines [Graphics_DASHED_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen",
+			U"Dashed-dotted line", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_Dashed_dotted_line);
 	praat_addMenuCommand (U"Picture", U"Pen", U"-- line width --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Pen", U"Line width...", nullptr, 0, GRAPHICS_Line_width);
 	praat_addMenuCommand (U"Picture", U"Pen", U"Arrow size...", nullptr, 0, GRAPHICS_Arrow_size);
@@ -1883,14 +1895,14 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 	praatButton_18 = praat_addMenuCommand (U"Picture", U"Font", U"18", nullptr, GuiMenu_CHECKBUTTON | GuiMenu_NO_API, GRAPHICS_18);
 	praatButton_24 = praat_addMenuCommand (U"Picture", U"Font", U"24", nullptr, GuiMenu_CHECKBUTTON | GuiMenu_NO_API, GRAPHICS_24);
 	praat_addMenuCommand (U"Picture", U"Font", U"-- font ---", nullptr, 0, nullptr);
-	praatButton_fonts [(int) kGraphics_font::TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, GuiMenu_RADIO_FIRST,
-			GRAPHICS_NONE__Times);
-	praatButton_fonts [(int) kGraphics_font::HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, GuiMenu_RADIO_NEXT,
-			GRAPHICS_NONE__Helvetica);
-	praatButton_fonts [(int) kGraphics_font::PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, GuiMenu_RADIO_NEXT,
-			GRAPHICS_NONE__Palatino);
-	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, GuiMenu_RADIO_NEXT,
-			GRAPHICS_NONE__Courier);
+	praatButton_fonts [(int) kGraphics_font::TIMES] = praat_addMenuCommand (U"Picture", U"Font",
+			U"Times", nullptr, GuiMenu_RADIO_FIRST, GRAPHICS_NONE__Times);
+	praatButton_fonts [(int) kGraphics_font::HELVETICA] = praat_addMenuCommand (U"Picture", U"Font",
+			U"Helvetica", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_NONE__Helvetica);
+	praatButton_fonts [(int) kGraphics_font::PALATINO] = praat_addMenuCommand (U"Picture", U"Font",
+			U"Palatino", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_NONE__Palatino);
+	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font",
+			U"Courier", nullptr, GuiMenu_RADIO_NEXT, GRAPHICS_NONE__Courier);
 
 	praat_addMenuCommand (U"Picture", U"Help", U"Praat Intro", nullptr, 0, HELP_PraatIntro_picture);
 	praat_addMenuCommand (U"Picture", U"Help", U"Picture window help", nullptr, '?', HELP_PictureWindowHelp);
