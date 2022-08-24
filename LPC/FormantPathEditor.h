@@ -58,10 +58,10 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 			our soundArea() -> setGlobalYRange_fraction (0.6, 1.0);
 			our formantPathArea() -> setGlobalYRange_fraction (0.0, 0.6);
 		} else if (our textGridArea()) {
-			our formantPathArea() -> setGlobalYRange_fraction (0.3, 0.7);
+			our formantPathArea() -> setGlobalYRange_fraction (0.3, 1.0);
 			our textGridArea() -> setGlobalYRange_fraction (0.0, 0.3);
 		} else {
-			our formantPathArea() -> setGlobalYRange_fraction (0.1, 0.9);
+			our formantPathArea() -> setGlobalYRange_fraction (0.1, 1.0);
 		}
 	}
 	void v_draw () override {
