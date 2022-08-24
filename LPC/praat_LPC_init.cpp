@@ -276,15 +276,22 @@ DIRECT (CONVERT_EACH_TO_ONE__FormantPath_extractFormant) {
 }
 
 DIRECT (EDITOR_ONE_WITH_ONE_AND_ONE__Sound_TextGrid_FormantPath_createFormantPathEditor) {
-	EDITOR_ONE_WITH_ONE_AND_ONE (a,FormantPath, Sound, TextGrid)
+	EDITOR_ONE_WITH_ONE_AND_ONE (a, FormantPath, Sound, TextGrid)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, him);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 	EDITOR_ONE_WITH_ONE_AND_ONE_END
 }
 
 DIRECT (EDITOR_ONE_WITH_ONE_Sound_FormantPath_createFormantPathEditor) {
-	EDITOR_ONE_WITH_ONE (a,FormantPath, Sound)
+	EDITOR_ONE_WITH_ONE (a, FormantPath, Sound)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, nullptr);
+		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
+	EDITOR_ONE_WITH_ONE_END
+}
+
+DIRECT (EDITOR_ONE_WITH_ONE_TextGrid_FormantPath_createFormantPathEditor) {
+	EDITOR_ONE_WITH_ONE (a, FormantPath, TextGrid)
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, nullptr, you);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 	EDITOR_ONE_WITH_ONE_END
 }
@@ -1721,6 +1728,8 @@ void praat_uvafon_LPC_init () {
 			CONVERT_EACH_TO_ONE__Sound_to_MFCC);
 	praat_addAction2 (classSound, 1, classFormantPath, 1, U"View & Edit", nullptr,0,
 			EDITOR_ONE_WITH_ONE_Sound_FormantPath_createFormantPathEditor);
+	praat_addAction2 (classTextGrid, 1, classFormantPath, 1, U"View & Edit", nullptr,0,
+			EDITOR_ONE_WITH_ONE_TextGrid_FormantPath_createFormantPathEditor);
 	praat_addAction3 (classSound, 1, classTextGrid, 1, classFormantPath, 1, U"View & Edit", nullptr, 0,
 			EDITOR_ONE_WITH_ONE_AND_ONE__Sound_TextGrid_FormantPath_createFormantPathEditor);
 	
