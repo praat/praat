@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2021 Paul Boersma
+ * Copyright (C) 1997-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1680,9 +1680,7 @@ void praat_uvafon_gram_init () {
 
 	praat_addAction1 (classOTGrammar, 0, U"OTGrammar help", nullptr, 0,
 			HELP__OTGrammar_help);
-	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
-			EDITOR_ONE__OTGrammar_viewAndEdit);
-	praat_addAction1 (classOTGrammar, 0,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011,
+	praat_addAction1 (classOTGrammar, 0, U"View & Edit || Edit", nullptr, GuiMenu_ATTRACTIVE,
 			EDITOR_ONE__OTGrammar_viewAndEdit);
 	praat_addAction1 (classOTGrammar, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau...", nullptr, 0,
@@ -1756,10 +1754,8 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classOTGrammar, 0, U"Learn one from partial output...", nullptr, 1,
 				MODIFY_EACH_WEAK__OTGrammar_learnOneFromPartialOutput);
 	praat_addAction1 (classOTGrammar, 0, U"Modify behaviour -", nullptr, 0, nullptr);
-		praat_addAction1 (classOTGrammar, 1, U"Set decision strategy...", nullptr, 1,
-				MODIFY_EACH__OTGrammar_setDecisionStrategy);
-		praat_addAction1 (classOTGrammar, 1,   U"Set harmony computation method...", U"*Set decision strategy...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2006,
-				MODIFY_EACH__OTGrammar_setDecisionStrategy);
+		praat_addAction1 (classOTGrammar, 1, U"Set decision strategy... || Set harmony computation method...",
+				nullptr, 1, MODIFY_EACH__OTGrammar_setDecisionStrategy);
 		praat_addAction1 (classOTGrammar, 1, U"Set leak...", nullptr, 1,
 				MODIFY_EACH__OTGrammar_setLeak);
 		praat_addAction1 (classOTGrammar, 1, U"Set constraint plasticity...", nullptr, 1,
@@ -1772,9 +1768,7 @@ void praat_uvafon_gram_init () {
 
 	praat_TableOfReal_init (classOTHistory);
 
-	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
-			EDITOR_ONE__OTMulti_viewAndEdit);
-	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", GuiMenu_DEPRECATED_2011,
+	praat_addAction1 (classOTMulti, 0, U"View & Edit || Edit", nullptr, GuiMenu_ATTRACTIVE,
 			EDITOR_ONE__OTMulti_viewAndEdit);
 	praat_addAction1 (classOTMulti, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTMulti, 0, U"Draw tableau...", nullptr, 1,

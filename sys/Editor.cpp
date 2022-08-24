@@ -56,7 +56,7 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 	}
 }
 
-GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+static GuiMenuItem DataGuiMenu_addCommand_ (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
 	DataGuiCommandCallback commandCallback, DataGui optionalSender)
 {
 	autoEditorCommand thee = Thing_new (EditorCommand);
@@ -83,6 +83,33 @@ GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* ca
 	thy commandCallback = commandCallback;
 	GuiMenuItem result = thy itemWidget;
 	my commands. addItem_move (thee.move());
+	return result;
+}
+GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
+	DataGuiCommandCallback commandCallback, DataGui optionalSender)
+{
+	const char32 *pSeparator = str32str (itemTitle, U" || ");
+	if (! pSeparator)
+		return DataGuiMenu_addCommand_ (me, itemTitle, flags, commandCallback, optionalSender);
+	if (flags < 8)
+		flags *= GuiMenu_DEPTH_1;   // turn 1..7 into GuiMenu_DEPTH_1..GuiMenu_DEPTH_7, because the flags are ORed below
+	integer positionOfSeparator = pSeparator - itemTitle;
+	static MelderString string;
+	MelderString_copy (& string, itemTitle);
+	char32 *pTitle = & string. string [0];
+	GuiMenuItem result = nullptr;
+	do {
+		pTitle [positionOfSeparator] = U'\0';
+		GuiMenuItem menuItem = DataGuiMenu_addCommand_ (me, pTitle, flags, commandCallback, optionalSender);
+		if (menuItem)
+			result = menuItem;   // only the first
+		pTitle += positionOfSeparator + 4;   // step past " || "
+		pSeparator = str32str (pTitle, U" || ");
+		if (pSeparator)
+			positionOfSeparator = pSeparator - pTitle;
+		flags |= GuiMenu_HIDDEN;
+	} while (pSeparator);
+	(void) DataGuiMenu_addCommand_ (me, pTitle, flags, commandCallback, optionalSender);
 	return result;
 }
 GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,

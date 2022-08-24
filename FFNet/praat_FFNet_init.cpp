@@ -572,10 +572,8 @@ void praat_uvafon_FFNet_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Advanced", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet (linear outputs)...", nullptr, 2, 
 			CREATE_ONE__FFNet_create_linearOutputs);
-	praat_addMenuCommand (U"Objects", U"New", U"Create PatternList...", nullptr, 2, 
-			CREATE_ONE__PatternList_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", nullptr, GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2015,
-			CREATE_ONE__PatternList_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create PatternList... || Create Pattern...",
+			nullptr, 2, CREATE_ONE__PatternList_create);   // alternative GuiMenu_DEPRECATED_2015
 	praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", nullptr, 2, 
 			CREATE_ONE__Categories_create);
 
