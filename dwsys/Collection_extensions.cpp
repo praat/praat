@@ -1,6 +1,6 @@
 /* Collection_extensions.cpp
  *
- * Copyright (C) 1994-2019 David Weenink, 2018 Paul Boersma
+ * Copyright (C) 1994-2019, 2022 David Weenink, 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,27 +28,46 @@
 #include "Collection_extensions.h"
 #include "NUM2.h"
 
+void Collection_Permutation_permuteItems_inplace (Collection me, Permutation him) {
+	Melder_require (my size == his numberOfElements,
+		U"The number of elements must be equal.");
+	try {
+		autoCollection thee = Collection_create ();
+		thy classInfo = my classInfo;
+		thy _initializeOwnership (false);
+		thy _grow (my size);
+		for (integer pos = 1; pos <= my size; pos ++) {
+			const integer oldPos = Permutation_getValueAtIndex (him, pos);
+			thy at [pos] = my at [oldPos];
+		}
+		for (integer pos = 1; pos <= my size; pos ++) {
+			my at [pos] = thy at [pos];
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": not permuted in-place.");
+	}
+}
 
 autoCollection Collection_Permutation_permuteItems (Collection me, Permutation him) {
 	try {
 		Melder_require (my size == his numberOfElements,
 			U"The number of elements must be equal.");
 
-		autoCollection thee = Collection_create ();
-		thy classInfo = my classInfo;
-		thy _initializeOwnership (my _ownItems);
-		thy _grow (my size);
-		for (integer pos = 1; pos <= my size; pos ++) {
-			const integer oldPos = Permutation_getValueAtIndex (him, pos);
-			if (thy _ownItems) {
-				autoDaata data = Data_copy ((Daata) my at [oldPos]);
-				thy _insertItem_move (data.move(), pos);
-			} else
-				thy _insertItem_ref (my at [oldPos], pos);
-		}
+		autoCollection thee = Data_copy (me);
+		Collection_Permutation_permuteItems_inplace (thee.get(), him);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not permuted.");
+	}
+}
+
+void Collection_permuteItems_inplace (Collection me) {
+	try {
+		autoPermutation p = Permutation_create (my size);
+		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
+		Collection_Permutation_permuteItems_inplace (me, p.get());
+	} catch (MelderError) {
+		Melder_throw (me, U": items not permuted inplace.");
 	}
 }
 
