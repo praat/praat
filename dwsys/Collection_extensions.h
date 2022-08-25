@@ -2,7 +2,7 @@
 #define _Collection_extensions_h_
 /* Collection_extensions.h
  *
- * Copyright (C) 1994-2019 David Weenink, 2015,2018 Paul Boersma
+ * Copyright (C) 1994-2019, 2022 David Weenink, 2015,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,11 @@
 #include "Permutation.h"
 
 autoCollection Collection_Permutation_permuteItems (Collection me, Permutation him);
+void Collection_Permutation_permuteItems_inplace (Collection me, Permutation him);
 
 autoCollection Collection_permuteItems (Collection me);
+void Collection_permuteItems_inplace (Collection me);
+
 /* permute the order of my items */
 
 int OrderedOfString_append (StringList me, conststring32 append);
