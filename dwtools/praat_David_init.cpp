@@ -390,9 +390,15 @@ DIRECT (CONVERT_TWO_TO_ONE__Categories_join) {
 }
 
 DIRECT (CONVERT_EACH_TO_ONE__Categories_permuteItems) {
-	CONVERT_EACH_TO_ONE (Collection)
-		autoCollection result = Collection_permuteItems (me);
+	CONVERT_EACH_TO_ONE (Categories)
+		autoCollection result = Collection_permuteItems (reinterpret_cast<Collection> (me));
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_perm")
+}
+
+DIRECT (MODIFY_EACH__Categories_permuteItems_inplace) {
+	MODIFY_EACH (Categories)
+		Collection_permuteItems_inplace (reinterpret_cast<Collection> (me));
+	MODIFY_EACH_END
 }
 
 /***************** CC ****************************************/
@@ -9064,15 +9070,17 @@ void praat_David_init () {
 	praat_addAction1 (classCategories, 0, U"View & Edit || Edit", nullptr, GuiMenu_NO_API,
 			EDITOR_ONE_Categories_edit);
 	praat_addAction1 (classCategories, 0, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classCategories, 1, U"Get number of categories", nullptr, 1,
-		QUERY_ONE_FOR_INTEGER__Categories_getNumberOfCategories);
-	praat_addAction1 (classCategories, 2, U"Get number of differences", nullptr, 1,
+		praat_addAction1 (classCategories, 1, U"Get number of categories", nullptr, 1,
+			QUERY_ONE_FOR_INTEGER__Categories_getNumberOfCategories);
+		praat_addAction1 (classCategories, 2, U"Get number of differences", nullptr, 1,
 			QUERY_TWO_FOR_REAL__Categories_getNumberOfDifferences);
-	praat_addAction1 (classCategories, 2, U"Get fraction different", nullptr, 1,
+		praat_addAction1 (classCategories, 2, U"Get fraction different", nullptr, 1,
 			QUERY_TWO_FOR_REAL__Categories_getFractionDifferent);
 	praat_addAction1 (classCategories, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classCategories, 1, U"Append category... || Append 1 category...",
+		praat_addAction1 (classCategories, 1, U"Append category... || Append 1 category...",
 			nullptr, 1, MODIFY_Categories_appendCategory);
+		praat_addAction1 (classCategories, 0, U"Permute items (in-place)", nullptr, 1, 
+			MODIFY_EACH__Categories_permuteItems_inplace);	
 	praat_addAction1 (classCategories, 0, U"Extract", nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 0, U"To unique Categories", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Categories_selectUniqueItems);
@@ -9944,8 +9952,8 @@ void praat_David_init () {
 		praat_addAction1 (classPermutation, 1, U"Get index...",
 				nullptr, 1, QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue);
 	praat_addAction1 (classPermutation, 0, U"Modify -", nullptr, 0, nullptr);
-		praat_addAction1 (classPermutation, 1, U"Jump...",
-				nullptr, 1, MODIFY_Permutation_tableJump);
+		praat_addAction1 (classPermutation, 0, U"Permute randomly (in-place)...",
+				nullptr, 1, MODIFY__Permutation_permuteRandomlyInplace);
 		praat_addAction1 (classPermutation, 1, U"Sort",
 				nullptr, 1, MODIFY_Permutation_sort);
 		praat_addAction1 (classPermutation, 1, U"Swap blocks...",
@@ -9956,14 +9964,14 @@ void praat_David_init () {
 				nullptr, 1, MODIFY_Permutation_swapPositions);
 		praat_addAction1 (classPermutation, 1, U"Swap one from range...",
 				nullptr, 1, MODIFY_Permutation_swapOneFromRange);
+		praat_addAction1 (classPermutation, 1, U"Jump...",
+				nullptr, 1, MODIFY_Permutation_tableJump);
 		praat_addAction1 (classPermutation, 0, U"-- sequential permutations --",
 				nullptr, 1, nullptr);
 		praat_addAction1 (classPermutation, 0, U"Next",
 				nullptr, 1, MODIFY_Permutations_next);
 		praat_addAction1 (classPermutation, 0, U"Previous",
 				nullptr, 1, MODIFY_Permutations_previous);
-		praat_addAction1 (classPermutation, 0, U"Permute randomly (in-place)...",
-				nullptr, 1, MODIFY__Permutation_permuteRandomlyInplace);
 	
 	praat_addAction1 (classPermutation, 1, U"Permute randomly...",
 			nullptr, 0, CONVERT_EACH_TO_ONE__Permutation_permuteRandomly);

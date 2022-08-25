@@ -132,8 +132,8 @@ DIRECT (NEW1_ResultsMFCs_to_Table) {
 void praat_ExperimentMFC_init () {
 	Thing_recognizeClassesByName (classExperimentMFC, classResultsMFC, nullptr);
 
-	praat_addAction1 (classCategories, 0, U"Sort", nullptr, 0, MODIFY_Categories_sort);
-	praat_addAction1 (classCategories, 1, U"Get entropy", nullptr, 0, REAL_Categories_getEntropy);
+	praat_addAction1 (classCategories, 0, U"Sort", U"Append category...", 1, MODIFY_Categories_sort);
+	praat_addAction1 (classCategories, 1, U"Get entropy", U"Get fraction different", 1, REAL_Categories_getEntropy);
 
 	praat_addAction1 (classExperimentMFC, 0, U"Run", nullptr, 0, WINDOW_ExperimentMFC_run);
 	praat_addAction1 (classExperimentMFC, 0, U"Extract results", nullptr, 0, NEW_ExperimentMFC_extractResults);
