@@ -1,6 +1,6 @@
 /* FormantPath_def.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020, 2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 #define ooSTRUCT FormantPath
 oo_DEFINE_CLASS (FormantPath, Sampled)
 
-	oo_COLLECTION_OF (OrderedOf, formants, Formant, 2)
-	oo_VEC (ceilings, formants. size)
+	oo_COLLECTION_OF (OrderedOf, formantCandidates, Formant, 2)
+	oo_VEC (ceilings, formantCandidates. size)
 	oo_INTVEC (path, nx)
 	
 	#if oo_DECLARING

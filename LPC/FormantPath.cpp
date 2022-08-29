@@ -49,13 +49,13 @@
 
 void structFormantPath :: v1_info () {
 	structDaata :: v1_info ();
-	MelderInfo_writeLine (U"Number of Formant candidates: ", formants . size);
+	MelderInfo_writeLine (U"Number of Formant candidates: ", formantCandidates . size);
 	for (integer ic = 1; ic <= ceilings.size; ic ++)
 		MelderInfo_writeLine (U"Ceiling ", ic, U": ", ceilings [ic], U" Hz");
 }
 
 double structFormantPath :: v_getValueAtSample (integer iframe, integer which, int units) {
-	const Formant formant = reinterpret_cast<Formant> (our formants.at [our path [iframe]]);
+	const Formant formant = reinterpret_cast<Formant> (our formantCandidates.at [our path [iframe]]);
 	return formant -> v_getValueAtSample (iframe, which, units);
 }
 
@@ -101,24 +101,24 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		const double transitionCostCuttoff = ( Melder_debug == -3 ? 0.3 : 100.0 );
 		autoMatrix stresses, qsums;
 		MelderExtremaWithInit intensities;
-		const integer midformant = (my formants.size + 1) / 2;
+		const integer midformant = (my formantCandidates.size + 1) / 2;
 		if (intensityModulationStepSize > 0.0) {
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
-				const Formant_Frame frame = & my formants.at [midformant] -> frames [iframe];
+				const Formant_Frame frame = & my formantCandidates.at [midformant] -> frames [iframe];
 				intensities.update (frame -> intensity);
 			}
 		}
 		const bool hasIntensityDifference = ( intensities.max - intensities.min > 0.0 );
 		const double dbMid = 0.5 * 10.0 * log10 (intensities.max * intensities.min);
-		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		const integer maxnFormants = my formantCandidates.at [1] -> maxnFormants;
 		const integer numberOfTracks = std::min (maxnFormants, parameters.size);
 		if (qWeight > 0.0)
 			qsums = FormantPath_to_Matrix_qSums (me, numberOfTracks);
 		if (stressWeight > 0.0)
 			stresses = FormantPath_to_Matrix_stress (me, windowLength, parameters, powerf);
 		
-		autoINTMAT psi = zero_INTMAT (my formants.size, my nx);
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
+		autoINTMAT psi = zero_INTMAT (my formantCandidates.size, my nx);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formantCandidates.size + 0.5, my formantCandidates.size, 1.0, 1.0);
 		/*
 			delta [i] [j] = minimum cost to reach state i at time j
 		*/
@@ -127,7 +127,7 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		autoVEC intensity = raw_VEC (my nx);
 		/*
 			We have a trellis of size S x T, where S is the number of states, i.e. the number of formant objects,
-			and T the number of frames (S= formants.size and T=nx).
+			and T the number of frames (S= formantCandidates.size and T=nx).
 			Evaluate the static costs for state s [i] at times t=1..T
 			There are two components at each t: 
 				1. (+) the local stress at s [i] [t], which is evaluated from an interval around time t
@@ -135,8 +135,8 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 			The sum of these components might be modulated by the local intensity
 		*/
 		for (integer itime = 1; itime <= my nx; itime ++) {
-			for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
-				const Formant_Frame frame = & my formants.at [iformant] -> frames [itime];
+			for (integer iformant = 1; iformant <= my formantCandidates.size; iformant ++) {
+				const Formant_Frame frame = & my formantCandidates.at [iformant] -> frames [itime];
 				double wIntensity = 1.0, costs = 0.0;
 				if (hasIntensityDifference && intensityModulationStepSize > 0.0) {
 					if (frame -> intensity > 0.0) {
@@ -160,15 +160,15 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 				4. (+) costs involving the difference in ceiling [i] [t-1] and ceiling [j] [t]
 				       (or should we measure the costs w.r.t the middle frequency?)
 		*/
-		const double ceilingsRange = my ceilings [my formants.size] - my ceilings [1];
+		const double ceilingsRange = my ceilings [my formantCandidates.size] - my ceilings [1];
 		for (integer itime = 2; itime <= my nx; itime ++) {
-			for (integer iformant = 1; iformant <= my formants.size; iformant++) {
-				const Formant_Frame ffi = & my formants.at [iformant] -> frames [itime];
+			for (integer iformant = 1; iformant <= my formantCandidates.size; iformant++) {
+				const Formant_Frame ffi = & my formantCandidates.at [iformant] -> frames [itime];
 				const integer numberOfTracks_i = std::min (numberOfTracks, ffi -> numberOfFormants);
 				double deltamin = 1e100;
 				integer minPos = 0;
-				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
-					const Formant_Frame ffj = & my formants.at [jformant] -> frames [itime - 1];
+				for (integer jformant = 1; jformant <= my formantCandidates.size; jformant++) {
+					const Formant_Frame ffj = & my formantCandidates.at [jformant] -> frames [itime - 1];
 					const integer ntracks = std::min (ffj -> numberOfFormants, numberOfTracks_i);
 					double transitionCosts = delta [jformant] [itime - 1];
 					if (frequencyChangeWeight > 0.0) {
@@ -218,10 +218,10 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 }
 
 autoFormant FormantPath_extractFormant (FormantPath me) {
-	Formant formant = my formants. at [1];
+	Formant formant = my formantCandidates. at [1];
 	autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, formant -> maxnFormants);
 	for (integer iframe = 1; iframe <= my path.size; iframe ++) {
-		Formant source = reinterpret_cast <Formant> (my formants. at [my path [iframe]]);
+		Formant source = reinterpret_cast <Formant> (my formantCandidates. at [my path [iframe]]);
 		Formant_Frame targetFrame = & thy frames [iframe];
 		Formant_Frame sourceFrame = & source -> frames [iframe];
 		sourceFrame -> copy (targetFrame);
@@ -282,7 +282,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 				lpc = LPC_Sound_to_LPC_robust (lpc.get(), resampled.get(), analysisWidth, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
-			thy formants . addItem_move (formant.move());
+			thy formantCandidates . addItem_move (formant.move());
 			if (out_sourcesMultiChannel) {
 				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
 				autoSound source_resampled = Sound_resample (source.get(), 2.0 * middleCeiling, 50);
@@ -293,7 +293,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		/*
 			Maintain invariants
 		*/
-		Melder_assert (thy formants.size == numberOfCandidates);
+		Melder_assert (thy formantCandidates.size == numberOfCandidates);
 		thy path = raw_INTVEC (thy nx);
 		for (integer i = 1; i <= thy path.size; i++)
 			thy path [i] = numberOfStepsToACeiling + 1;
@@ -306,20 +306,20 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 }
 
 integer FormantPath_getNumberOfFormantTracks (FormantPath me) {
-	Melder_assert (my formants. size > 0);
-	return my formants.at [1] -> maxnFormants;
+	Melder_assert (my formantCandidates. size > 0);
+	return my formantCandidates.at [1] -> maxnFormants;
 }
 
 autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) {
 	try {
-		const integer numberOfCandidates = my formants.size;
+		const integer numberOfCandidates = my formantCandidates.size;
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, numberOfCandidates + 0.5, numberOfCandidates, 1.0, 1.0);
 		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		if (numberOfTracks == 0)
 			numberOfTracks = maxnFormants;
 		for (integer itime = 1; itime <= my nx; itime ++) {
 			for (integer candidate = 1; candidate <= numberOfCandidates; candidate ++) {
-				const Formant_Frame frame = & my formants.at [candidate] -> frames [itime];
+				const Formant_Frame frame = & my formantCandidates.at [candidate] -> frames [itime];
 				const integer currentNumberOfFormants = std::min (numberOfTracks, frame -> numberOfFormants);
 				longdouble qsum = 0.0;
 				for (integer itrack = 1; itrack <= currentNumberOfFormants; itrack ++)
@@ -335,18 +335,18 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) 
 
 autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTracks, bool maximumCosts) {
 	try {
-		const integer numberOfCandidates = my formants.size;
+		const integer numberOfCandidates = my formantCandidates.size;
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, numberOfCandidates + 0.5, numberOfCandidates, 1.0, 1.0);
 		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		if (numberOfTracks == 0)
 			numberOfTracks = maxnFormants;
 		for (integer itime = 2; itime <= my nx; itime ++) {
 			for (integer candidate = 1; candidate <= numberOfCandidates; candidate ++) {
-				const Formant_Frame ffi = & my formants.at [candidate] -> frames [itime];
+				const Formant_Frame ffi = & my formantCandidates.at [candidate] -> frames [itime];
 				const integer numberOfTracks_i = std::min (numberOfTracks, ffi -> numberOfFormants);
 				MelderExtremaWithInit costs;
-				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
-					const Formant_Frame ffj = & my formants.at [jformant] -> frames [itime - 1];
+				for (integer jformant = 1; jformant <= my formantCandidates.size; jformant++) {
+					const Formant_Frame ffj = & my formantCandidates.at [jformant] -> frames [itime - 1];
 					const integer ntracks = std::min (ffj -> numberOfFormants, numberOfTracks_i);
 					longdouble transitionCosts = 0.0;
 					for (integer itrack = 1; itrack <= ntracks; itrack ++) {
@@ -373,7 +373,7 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTra
 
 autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
 	try {
-		const integer numberOfCandidates = my formants.size;
+		const integer numberOfCandidates = my formantCandidates.size;
 		const integer maxnFormants = FormantPath_getNumberOfFormantTracks (me);
 		Melder_require (parameters.size > 0 && parameters.size <= maxnFormants,
 			U"The number of parameters should be between 1 and ", maxnFormants, U".");
@@ -393,7 +393,7 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 			U"Not all parameter values should equal zero.");
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, numberOfCandidates + 0.5, numberOfCandidates, 1.0, 1.0);
 		for (integer candidate = 1; candidate <= numberOfCandidates; candidate ++) {
-			const Formant formanti = (Formant) my formants . at [candidate];
+			const Formant formanti = (Formant) my formantCandidates . at [candidate];
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				const double time = my x1 + (iframe - 1) * my dx;
 				const double startTime = time - 0.5 * windowLength;
@@ -423,9 +423,9 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 */
 
 autoVEC FormantPath_getStressOfCandidates (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
-	autoVEC stresses = raw_VEC (my formants.size);
-	for (integer candidate = 1; candidate <= my formants.size; candidate ++) {
-		const Formant formanti = (Formant) my formants.at [candidate];
+	autoVEC stresses = raw_VEC (my formantCandidates.size);
+	for (integer candidate = 1; candidate <= my formantCandidates.size; candidate ++) {
+		const Formant formanti = (Formant) my formantCandidates.at [candidate];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
 		stresses [candidate] = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 	}
@@ -436,7 +436,7 @@ autoTable FormantPath_downTo_Table_stresses (FormantPath me, double tmin, double
 	double powerf, integer numberOfStressDecimals, bool includeIntervalTimes, integer numberOfTimeDecimals) {
 	try {
 		autoVEC stresses = FormantPath_getStressOfCandidates (me, tmin, tmax, 0, 0, parameters, powerf);
-		const integer numberOfCandidates = my formants.size;
+		const integer numberOfCandidates = my formantCandidates.size;
 		const integer numberOfFormantsInFit = parameters.size;
 		autoTable thee = Table_createWithoutColumnNames (numberOfCandidates, includeIntervalTimes + 1 + includeIntervalTimes + numberOfFormantsInFit + numberOfFormantsInFit - 1);
 		integer icol = 0;
@@ -480,7 +480,7 @@ autoTable FormantPath_downTo_Table_optimalInterval (FormantPath me, double tmin,
 		autoVEC stresses = FormantPath_getStressOfCandidates (me, tmin, tmax, 0, 0, parameters, powerf);
 		const integer minPos = NUMminPos (stresses.get());
 		const integer minPosFallBack = ( minPos != 0 ? minPos : stresses.size / 2 );
-		const Formant formant = (Formant) my formants.at [minPosFallBack];
+		const Formant formant = (Formant) my formantCandidates.at [minPosFallBack];
 		integer ifmin, ifmax;
 		Sampled_getWindowSamples (formant, tmin, tmax, & ifmin, & ifmax);
 		autoFormant thee = Formant_extractPart (formant, tmin, tmax);
@@ -578,14 +578,14 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	integer ifmin, ifmax;
 	const integer numberOfSamples = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 	
-	for (integer candidate = 1; candidate <= my formants.size; candidate ++) {
+	for (integer candidate = 1; candidate <= my formantCandidates.size; candidate ++) {
 		const integer irow = 1 + (candidate - 1) / ncol; // left-to-right + top-to-bottom
 		const integer icol = 1 + (candidate - 1) % ncol;
 		const double vpi_x1 = x1NDC + (icol - 1) * vpi_width * (1.0 + spaceBetweenFraction_x);
 		const double vpi_x2 = vpi_x1 + vpi_width;
 		const double vpi_y2 = y2NDC - (irow - 1) * vpi_height * (1.0 + spaceBetweenFraction_y);
 		const double vpi_y1 = vpi_y2 - vpi_height;
-		const Formant formant = my formants.at [candidate];
+		const Formant formant = my formantCandidates.at [candidate];
 		autoFormantModeler fm;
 		if (numberOfSamples > 0)
 			fm = Formant_to_FormantModeler (formant, tmin, tmax, parameters);
