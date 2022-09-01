@@ -280,7 +280,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	if (irow < 1 || irow > numberOfRows)
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
-	if (index > 0 && index <= our formantPath() -> formants.size) {
+	if (index > 0 && index <= our formantPath() -> formantCandidates.size) {
 		double tmin_ = our startWindow, tmax_ = our endWindow;
 		if (our startSelection < our endSelection) {
 			tmin_ = our startSelection;
@@ -292,7 +292,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		Sampled_getWindowSamples (our formantPath(), tmin_, tmax_, & itmin, & itmax);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++)
 			our formantPath() -> path [iframe] = our selectedCandidate;
-		Formant source = our formantPath() -> formants.at [our selectedCandidate];
+		Formant source = our formantPath() -> formantCandidates.at [our selectedCandidate];
 		Formant_replaceFrames (our formantPathArea() -> d_formant.get(), itmin, itmax, source);
 	}
 	FunctionEditor_redraw (this);
@@ -309,7 +309,8 @@ void structFormantPathEditor :: v_play (double startingTime, double endTime) {
 autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound soundToCopy, TextGrid textGridToCopy) {
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
-		my soundArea() = SoundArea_create (false, soundToCopy, me.get());
+		if (soundToCopy)
+			my soundArea() = SoundArea_create (false, soundToCopy, me.get());
 		my formantPathArea() = FormantPathArea_create (true, soundToCopy, me.get());
 		my formantPathArea() -> _formantPath = formantPath;
 		if (textGridToCopy)
