@@ -554,6 +554,7 @@ static int thePaStreamCallback (const void *input, void *output,
 		my samplesPlayed = my samplesSent;
 	} else /*if (my samplesPlayed >= my numberOfSamples)*/ {
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
+		//OSMemoryBarrier();
 		my samplesPlayed = my numberOfSamples;
 		trace (U"paComplete");
 		return my supports_paComplete ? paComplete : paContinue;
@@ -1036,7 +1037,7 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 		}
 	#endif
 	my playBuffer = buffer;   // 0-based, as all buffers are
-	int16 *playBuffer2 = nullptr;   // in case we have to redistribute up (not ideal)
+	static int16 *playBuffer2 = nullptr;   // in case we have to redistribute up (not ideal)
 	my sampleRate = sampleRate;
 	my numberOfSamples = numberOfSamples;
 	my numberOfChannels = numberOfChannels;
@@ -1081,7 +1082,7 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 				Melder_fatal (U"PortAudio does not initialize: ", Melder_peek8to32 (Pa_GetErrorText (err)));
 			MelderAudio_hasBeenInitialized = true;
 		}
-		my supports_paComplete = Pa_GetHostApiInfo (Pa_GetDefaultHostApi ()) -> type != paDirectSound &&false;
+		my supports_paComplete = Pa_GetHostApiInfo (Pa_GetDefaultHostApi ()) -> type != paDirectSound &&0;
 		PaStreamParameters outputParameters = { 0 };
 		outputParameters. device = Pa_GetDefaultOutputDevice ();
 		if (outputParameters. device == paNoDevice)
@@ -1376,6 +1377,8 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 						}
 					}
 				} else if (numberOfChannels == 1 && my numberOfChannels == 2) {
+					if (playBuffer2)
+						Melder_free (playBuffer2);
 					playBuffer2 = Melder_malloc (int16, numberOfSamples * my numberOfChannels);
 					Melder_assert (playBuffer2);
 					int16 *in = & my playBuffer [0], *out = & playBuffer2 [0];
@@ -1384,11 +1387,11 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 						*out ++ = inValue;
 						*out ++ = inValue;
 					}
-					std::swap (my playBuffer, playBuffer2);
 				}
 
 				my waveHeader. dwFlags = 0;
-				my waveHeader. lpData = playBuffer2 ? (char *) playBuffer2 : (char *) my playBuffer;
+				my waveHeader. lpData =
+						( numberOfChannels == 1 && my numberOfChannels == 2 ? (char *) playBuffer2 : (char *) my playBuffer );
 				my waveHeader. dwBufferLength = my numberOfSamples * 2 * my numberOfChannels;
 				my waveHeader. dwLoops = 1;
 				my waveHeader. lpNext = nullptr;
