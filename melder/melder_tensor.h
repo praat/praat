@@ -698,7 +698,7 @@ struct automatrix {
 		our ncol = uinteger_to_integer (list.begin()->size());
 		Melder_assert (our ncol > 0);   // empty matrices should be created with automatrix<T>() or automatrix<T> (10, 0) or so
 		our cells = MelderArray:: _alloc <T> (our nrow * our ncol, MelderArray::kInitializationType::RAW);
-		double *p = our cells;
+		T *p = our cells;
 		for (auto row : list) {
 			const integer numberOfColumnsInThisRow = uinteger_to_integer (row.size());
 			Melder_assert (numberOfColumnsInThisRow == our ncol);   // unfortunately, no support for static_assert here in C++17
