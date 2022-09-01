@@ -73,7 +73,7 @@ static void ensureThatStdoutAndStderrAreInitialized () {
 			we manually attach stdout and stderr to the calling console.
 		*/
 		auto ensureThatStreamIsInitialized = [] (FILE *stream, int handle) {
-			bool streamHasBeenInitialized = ( _fileno (stream) >= 0 );
+			const bool streamHasBeenInitialized = ( _fileno (stream) >= 0 );
 			if (! streamHasBeenInitialized) {
 				/*
 					Don't change the following four lines into
@@ -82,7 +82,7 @@ static void ensureThatStdoutAndStderrAreInitialized () {
 				*/
 				HANDLE osfHandle = GetStdHandle (handle);
 				if (osfHandle) {
-					int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
+					const int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
 					Melder_assert (fileDescriptor != 0);
 					FILE *f = _fdopen (fileDescriptor, "w");
 					if (! f)

@@ -500,6 +500,12 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 				Melder_clipLeft (0_integer, & my firstSample);
 				GuiScale_setValue (my progressScale, 1000.0 * ((double) my lastSample / (double) my nmax));
 				Graphics_updateWs (my graphics.get());
+			} else {
+				#if defined (_WIN32)
+					if (my inputUsesPortAudio) {
+						Pa_Sleep (10);
+					}
+				#endif
 			}
 		}
 	} catch (MelderError) {

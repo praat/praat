@@ -554,6 +554,7 @@ static int thePaStreamCallback (const void *input, void *output,
 		my samplesPlayed = my samplesSent;
 	} else /*if (my samplesPlayed >= my numberOfSamples)*/ {
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
+		//OSMemoryBarrier();
 		my samplesPlayed = my numberOfSamples;
 		trace (U"paComplete");
 		return my supports_paComplete ? paComplete : paContinue;
@@ -1081,7 +1082,7 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 				Melder_fatal (U"PortAudio does not initialize: ", Melder_peek8to32 (Pa_GetErrorText (err)));
 			MelderAudio_hasBeenInitialized = true;
 		}
-		my supports_paComplete = Pa_GetHostApiInfo (Pa_GetDefaultHostApi ()) -> type != paDirectSound &&false;
+		my supports_paComplete = Pa_GetHostApiInfo (Pa_GetDefaultHostApi ()) -> type != paDirectSound &&0;
 		PaStreamParameters outputParameters = { 0 };
 		outputParameters. device = Pa_GetDefaultOutputDevice ();
 		if (outputParameters. device == paNoDevice)
