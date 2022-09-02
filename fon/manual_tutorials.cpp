@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220823)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220802)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.18# (2 September 2022)")
+LIST_ITEM (U"• SoundRecorder: support for up to 20 (instead of 8) input devices.")
+LIST_ITEM (U"• FormantPath window: can now be viewed even without a Sound.")
+LIST_ITEM (U"• Windows audio: SoundRecorder prevents high CPU usage when not recording.")
 NORMAL (U"##6.2.17# (23 August 2022)")
 LIST_ITEM (U"• FormantPath window: more information shown.")
 LIST_ITEM (U"• Windows audio: compatible with speakers that do not support mono.")
