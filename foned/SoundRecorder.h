@@ -55,7 +55,7 @@ struct SoundRecorder_Fsamp {
 	GuiRadioButton button;
 };
 
-#define SoundRecorder_IDEVICE_MAX  8
+#define SoundRecorder_IDEVICE_MAX  20
 
 #define SoundRecorder_IFSAMP_8000  1
 #define SoundRecorder_IFSAMP_9800  2
