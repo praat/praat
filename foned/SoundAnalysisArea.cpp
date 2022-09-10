@@ -218,7 +218,7 @@ static void tryToHavePulses (SoundAnalysisArea me) {
 */
 void SoundAnalysisArea_haveVisibleSpectrogram (SoundAnalysisArea me) {
 	if (! my instancePref_spectrogram_show())
-		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrogram menu.");
 	tryToHaveSpectrogram (me);
 	if (! my d_spectrogram)
 		Melder_throw (U"The spectrogram is not defined at the edge of the sound.");
@@ -239,7 +239,7 @@ void SoundAnalysisArea_haveVisibleIntensity (SoundAnalysisArea me) {
 }
 void SoundAnalysisArea_haveVisibleFormants (SoundAnalysisArea me) {
 	if (! my instancePref_formant_show())
-		Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+		Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formants menu.");
 	tryToHaveFormants (me);
 	if (! my d_formant)
 		Melder_throw (U"The formants are not defined at the edge of the sound.");
@@ -647,7 +647,7 @@ static void menu_cb_timeStepSettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 }
 
 
-#pragma mark - SoundAnalysisArea Spectrum menu
+#pragma mark - SoundAnalysisArea Spectrogram menu
 
 static void menu_cb_showSpectrogram (SoundAnalysisArea me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
@@ -757,7 +757,7 @@ static void QUERY_DATA_FOR_REAL__getSpectralPowerAtCursorCross (SoundAnalysisAre
 
 static void menu_cb_moveFrequencyCursorTo (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 	if (! my instancePref_spectrogram_show())
-		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrogram menu.");
 	EDITOR_FORM (U"Move frequency cursor to", nullptr)
 		REAL (frequency, U"Frequency (Hz)", U"0.0")
 	EDITOR_OK
@@ -1219,7 +1219,7 @@ static void QUERY_DATA_FOR_REAL__getMaximumIntensity (SoundAnalysisArea me, EDIT
 }
 
 
-#pragma mark - SoundAnalysisArea Formant menu
+#pragma mark - SoundAnalysisArea Formants menu
 
 static void menu_cb_showFormants (SoundAnalysisArea me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
