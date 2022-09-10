@@ -4122,7 +4122,7 @@ LIST_ITEM (U"6. Since you will want this script to be available in all future So
 	"instead of the preset value (\"File\"). For the name of the %Command, you type something like \"Show spectrum at cursor\" "
 	"(instead of \"Do it...\"). Then you click #OK.")
 NORMAL (U"The command will be visible in every SoundEditor that you create from now on. "
-	"To see this, close the one visible SoundEditor, select the original Sound, choose ##View & Edit# again, and inspect the #Spectrum menu. "
+	"To see this, close the one visible SoundEditor, select the original Sound, choose ##View & Edit# again, and inspect the #Spectrogram menu. "
 	"You can now view the spectrum around the cursor just by choosing this menu command.")
 NORMAL (U"After you leave Praat and start it again, the command will continue to appear in the SoundEditor. "
 	"If you don't like the command any longer, you can remove it with the @ButtonEditor, which you can start "
