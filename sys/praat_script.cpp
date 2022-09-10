@@ -706,9 +706,14 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, int
 }
 
 void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, conststring32 script) {
-	praatP.editor = editor;
-	DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr);
-	/*praatP.editor = nullptr;*/
+	try {
+		praatP.editor = editor;
+		DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr);
+		praatP.editor = nullptr;
+	} catch (MelderError) {
+		praatP.editor = nullptr;
+		throw;
+	}
 }
 
 /* End of file praat_script.cpp */
