@@ -300,10 +300,10 @@ If you also want to develop the 32-bit edition, you add to `.profile`:
 
 ### 4.3. Linux development set-up
 
-Under Parallels Desktop 17 or later, install Ubuntu 18.04 or 20.04, and create
+Under Parallels Desktop 17 or later, install Ubuntu 18.04 or 20.04 or 22.04, and create
 a folder `praats` in your home folder, as described above in 3.3.
 
-In Parallels Desktop, choose `Ubuntu 18.04 or 20.04` -> `Configure`,
+In Parallels Desktop, choose `Ubuntu 18.04 or 20.04 or 22.04` -> `Configure`,
 then `Options`, then `Sharing`, then `Share Mac`, and set `Share folders` to `Home folder only`
 (or use `Custom Folders` instead).
 Your MacOS home folder (i.e. `/Users/yourname`) is now visible on the Ubuntu desktop
@@ -375,7 +375,7 @@ or you transfer it to a Chromebook for the real test.
 ### 4.4. Chromebook development set-up
 
 Parallels Desktop 17 has no emulator for Chrome, so the choice is between
-building Praat on a Chromebook directly or building Praat on Ubuntu 18.04 or 20.04.
+building Praat on a Chromebook directly or building Praat on Ubuntu 18.04 or 20.04 or 22.04.
 On a 2019 HP Chromebook with Intel processor, building Praat takes
 a forbidding 27 minutes.
 
@@ -437,7 +437,7 @@ For edits in a `cpp` file (no changes in header files), this whole cycle can be 
 
 ### 4.5. Raspberry Pi development set-up
 
-One could perhaps create the Raspberry Pi edition by cross-compiling on Ubuntu 18.04 or 20.04.
+One could perhaps create the Raspberry Pi edition by cross-compiling on Ubuntu 18.04 or 20.04 or 22.04.
 If any reader of these lines has precise instructions, we would like to know about it
 (the main problem is how to install the GTK etc libraries in the Raspberry Pi toolchain,
 or how to get `dpkg` under Ubuntu-buster to actually find `armhf` libraries).

@@ -948,11 +948,11 @@ ENTRY (U"Algorithm")
 NORMAL (U"@@overlap-add@.")
 MAN_END
 
-MAN_BEGIN (U"audio control panel", U"ppgb", 20201230)
+MAN_BEGIN (U"audio control panel", U"ppgb", 20220911)
 INTRO (U"Your platform's way of controlling where sounds will be played, and how loud.")
 NORMAL (U"On macOS X or 11, go to the Apple menu, then to ##System Preferences#, then to #Sound, then to #Output "
 	"(you can put a loudspeaker icon in the menu bar here). "
-	"On Ubuntu Linux 18.04 or 20.04, go to the left side bar, then to #Settings, then to #Sound, then to #Output "
+	"On Ubuntu Linux 18.04 or 20.04 or 22.04, go to the left side bar, then to #Settings, then to #Sound, then to #Output "
 	"(a loudspeaker icon can be in the menu bar). "
 	"On Windows 10, it lies somewhat deeper: "
 	"go to the Start icon, then to #Settings, then to #System, then to #Sound, then to #Output.")
