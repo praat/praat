@@ -40,10 +40,10 @@ void structDataGui :: v_form_pictureWindow (EditorCommand cmd) {
 	BOOLEAN_FIELD (v_form_pictureWindow__eraseFirst, U"Erase first", true)
 }
 void structDataGui :: v_ok_pictureWindow (EditorCommand cmd) {
-	SET_BOOLEAN (v_form_pictureWindow__eraseFirst, our instancePref_picture_eraseFirst())
+	SET_BOOLEAN (v_form_pictureWindow__eraseFirst, our boss() -> instancePref_picture_eraseFirst())
 }
 void structDataGui :: v_do_pictureWindow (EditorCommand /* cmd */) {
-	our setInstancePref_picture_eraseFirst (v_form_pictureWindow__eraseFirst);
+	our boss() -> setInstancePref_picture_eraseFirst (v_form_pictureWindow__eraseFirst);
 }
 
 OPTIONMENU_ENUM_VARIABLE (kDataGui_writeNameAtTop, v_form_pictureMargins__writeNameAtTop)
