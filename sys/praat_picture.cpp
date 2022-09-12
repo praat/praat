@@ -1641,14 +1641,14 @@ void praat_picture_close () {
 		Graphics_updateWs (GRAPHICS);
 }
 
-Graphics praat_picture_editor_open (bool eraseFirst) {
+Graphics praat_picture_datagui_open (bool eraseFirst) {
 	if (eraseFirst)
 		Picture_erase (praat_picture.get());
 	praat_picture_open ();
 	return GRAPHICS;
 }
 
-void praat_picture_editor_close () {
+void praat_picture_datagui_close () {
 	praat_picture_close ();
 }
 

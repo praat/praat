@@ -822,10 +822,10 @@ static void menu_cb_DrawVisibleSound (SoundArea me, EDITOR_ARGS_FORM) {
 			LongSound_extractPart (my longSound(), my startWindow(), my endWindow(), preserveTimes) :
 			Sound_extractPart (my sound(), my startWindow(), my endWindow(), kSound_windowShape::RECTANGULAR, 1.0, preserveTimes
 		);
-		Editor_openPraatPicture (my functionEditor());
-		Sound_draw (publish.get(), my functionEditor() -> pictureGraphics, 0.0, 0.0, bottom, top, garnish, U"Curve");
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		DataGui_openPraatPicture (me);
+		Sound_draw (publish.get(), my pictureGraphics(), 0.0, 0.0, bottom, top, garnish, U"Curve");
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 static void menu_cb_DrawSelectedSound (SoundArea me, EDITOR_ARGS_FORM) {
@@ -858,9 +858,9 @@ static void menu_cb_DrawSelectedSound (SoundArea me, EDITOR_ARGS_FORM) {
 			Sound_extractPart (my sound(), my startSelection(), my endSelection(),
 					kSound_windowShape::RECTANGULAR, 1.0, preserveTimes
 		);
-		Editor_openPraatPicture (my functionEditor());
-		Sound_draw (publish.get(), my functionEditor() -> pictureGraphics, 0.0, 0.0, bottom, top, garnish, U"Curve");
-		Editor_closePraatPicture (my functionEditor());
+		DataGui_openPraatPicture (me);
+		Sound_draw (publish.get(), my pictureGraphics(), 0.0, 0.0, bottom, top, garnish, U"Curve");
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 

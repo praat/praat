@@ -101,16 +101,16 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathArea me, EDITOR_ARGS_F
 		my setInstancePref_formant_picture_garnish (garnish);
 		if (! my instancePref_formant_show())
 			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
-		Editor_openPraatPicture (my functionEditor());
+		DataGui_openPraatPicture (me);
 		//FormantPath formantPath = (FormantPath) my data;
 		//const Formant formant = formantPath -> formant.get();
 		//const Formant defaultFormant = formantPath -> formants.at [formantPath -> defaultFormant];
-		Formant_drawSpeckles (my d_formant.get(), my functionEditor() -> pictureGraphics, my startWindow(), my endWindow(),
+		Formant_drawSpeckles (my d_formant.get(), my pictureGraphics(), my startWindow(), my endWindow(),
 			my instancePref_spectrogram_viewTo(), my instancePref_formant_dynamicRange(),
 			garnish
 		);
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 

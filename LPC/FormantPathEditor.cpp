@@ -148,21 +148,21 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my formantPathArea() -> setClassPref_picture_garnish (garnish);
-		Editor_openPraatPicture (me);
-		Graphics_setInner (my pictureGraphics);
+		DataGui_openPraatPicture (me);
+		Graphics_setInner (my pictureGraphics());
 		double startTime, endTime, xCursor, yCursor;
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, & xCursor, & yCursor);
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.2;
-		FormantPath_drawAsGrid_inside (my formantPath(), my pictureGraphics, startTime, endTime,
+		FormantPath_drawAsGrid_inside (my formantPath(), my pictureGraphics(), startTime, endTime,
 			my instancePref_modeler_draw_maximumFrequency(), 1, 5,
 			my instancePref_modeler_draw_showBandwidths(), Melder_RED, Melder_PURPLE, 0, 0,
 			xSpace_fraction, ySpace_fraction, my instancePref_modeler_draw_yGridLineEvery_Hz(),
 			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true,
 			my instancePref_modeler_varianceExponent(), my instancePref_modeler_draw_estimatedModels(), true
 		);
-		Graphics_unsetInner (my pictureGraphics);
-		Editor_closePraatPicture (me);
+		Graphics_unsetInner (my pictureGraphics());
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 
