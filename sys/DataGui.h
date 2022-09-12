@@ -35,12 +35,14 @@ public:
 	Daata data() const { return _data; }
 	bool editable() const { return _editable; }
 	Editor boss() const { return _boss; }
+	Graphics pictureGraphics() const { return _pictureGraphics; }
 protected:
 	void setData (Daata data) { _data = data; }
 private:
 	Daata _data;   // the data that can be displayed and edited
 	bool _editable;
 	Editor _boss;
+	Graphics _pictureGraphics;
 
 	friend void DataGui_init (DataGui me, Daata data, bool editable, Editor boss) {
 		my _data = data;
@@ -49,6 +51,8 @@ private:
 		my v1_copyPreferencesToInstance ();
 		my v9_repairPreferences ();
 	}
+	friend void DataGui_openPraatPicture (DataGui me);
+	friend void DataGui_closePraatPicture (DataGui me);
 public:
 	virtual void v_createMenuItems_prefs   (EditorMenu /* fileMenu */) { }
 	virtual void v_createMenuItems_save    (EditorMenu /* fileMenu */) { }
@@ -84,6 +88,13 @@ public:
 		return my editable() ? Colour_EDITABLE_LINES() : Colour_NONEDITABLE_FOREGROUND();
 	}
 };
+
+/*
+ * The following two procedures are in praat_picture.cpp.
+ * They allow DataGuis to draw into the Picture window.
+ */
+Graphics praat_picture_datagui_open (bool eraseFirst);
+void praat_picture_datagui_close ();
 
 /* End of file DataGui.h */
 #endif

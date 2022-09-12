@@ -1232,11 +1232,11 @@ static void menu_cb_DrawVisibleTextGrid (TextGridArea me, EDITOR_ARGS_FORM) {
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my setClassPref_picture_garnish (garnish);
-		Editor_openPraatPicture (my functionEditor());
-		TextGrid_Sound_draw (my textGrid(), nullptr, my functionEditor() -> pictureGraphics,
+		DataGui_openPraatPicture (me);
+		TextGrid_Sound_draw (my textGrid(), nullptr, my pictureGraphics(),
 				my startWindow(), my endWindow(), true, my instancePref_useTextStyles(), garnish);
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridArea me, EDITOR_ARGS_FORM) {
@@ -1255,7 +1255,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridArea me, EDITOR_ARGS_FO
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
 		my setClassPref_picture_garnish (garnish);
-		Editor_openPraatPicture (my functionEditor());
+		DataGui_openPraatPicture (me);
 		{// scope
 			autoSound sound = (
 				my borrowedSoundArea -> longSound() ?
@@ -1264,11 +1264,11 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridArea me, EDITOR_ARGS_FO
 				:	Sound_extractPart (my borrowedSoundArea -> sound(),
 							my startWindow(), my endWindow(), kSound_windowShape::RECTANGULAR, 1.0, true)
 			);
-			TextGrid_Sound_draw (my textGrid(), sound.get(), my functionEditor() -> pictureGraphics,
+			TextGrid_Sound_draw (my textGrid(), sound.get(), my pictureGraphics(),
 					my startWindow(), my endWindow(), true, my instancePref_useTextStyles(), garnish);
 		}
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 static void menu_cb_DrawTextGridAndPitch (TextGridArea me, EDITOR_ARGS_FORM) {
@@ -1296,7 +1296,7 @@ static void menu_cb_DrawTextGridAndPitch (TextGridArea me, EDITOR_ARGS_FORM) {
 		my v_do_pictureSelection (cmd);
 		my setClassPref_picture_garnish (garnish);
 		SoundAnalysisArea_haveVisiblePitch (my borrowedSoundAnalysisArea);
-		Editor_openPraatPicture (my functionEditor());
+		DataGui_openPraatPicture (me);
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my borrowedSoundAnalysisArea -> d_pitch.get(),
 				my borrowedSoundAnalysisArea -> instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
 		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my borrowedSoundAnalysisArea -> d_pitch.get(),
@@ -1307,12 +1307,12 @@ static void menu_cb_DrawTextGridAndPitch (TextGridArea me, EDITOR_ARGS_FORM) {
 				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my borrowedSoundAnalysisArea -> instancePref_pitch_unit());
 		const double pitchViewFrom_overt = ( my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() < my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() ? my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() : pitchFloor_overt );
 		const double pitchViewTo_overt = ( my borrowedSoundAnalysisArea -> instancePref_pitch_viewFrom() < my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() ? my borrowedSoundAnalysisArea -> instancePref_pitch_viewTo() : pitchCeiling_overt );
-		TextGrid_Pitch_drawSeparately (my textGrid(), my borrowedSoundAnalysisArea -> d_pitch.get(), my functionEditor() -> pictureGraphics, my startWindow(), my endWindow(),
+		TextGrid_Pitch_drawSeparately (my textGrid(), my borrowedSoundAnalysisArea -> d_pitch.get(), my pictureGraphics(), my startWindow(), my endWindow(),
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
 			speckle, my borrowedSoundAnalysisArea -> instancePref_pitch_unit()
 		);
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 

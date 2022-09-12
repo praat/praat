@@ -816,15 +816,15 @@ static void menu_cb_paintVisibleSpectrogram (SoundAnalysisArea me, EDITOR_ARGS_F
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_spectrogram_picture_garnish (garnish);
 		SoundAnalysisArea_haveVisibleSpectrogram (me);
-		Editor_openPraatPicture (my functionEditor());
-		Spectrogram_paint (my d_spectrogram.get(), my functionEditor() -> pictureGraphics, my startWindow(), my endWindow(),
+		DataGui_openPraatPicture (me);
+		Spectrogram_paint (my d_spectrogram.get(), my pictureGraphics(), my startWindow(), my endWindow(),
 			my instancePref_spectrogram_viewFrom(), my instancePref_spectrogram_viewTo(),
 			my instancePref_spectrogram_maximum(), my instancePref_spectrogram_autoscaling(),
 			my instancePref_spectrogram_dynamicRange(), my instancePref_spectrogram_preemphasis(),
 			my instancePref_spectrogram_dynamicCompression(), garnish
 		);
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 
@@ -1068,7 +1068,7 @@ static void menu_cb_drawVisiblePitchContour (SoundAnalysisArea me, EDITOR_ARGS_F
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_pitch_picture_garnish (garnish);
 		SoundAnalysisArea_haveVisiblePitch (me);
-		Editor_openPraatPicture (my functionEditor());
+		DataGui_openPraatPicture (me);
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
 				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
@@ -1079,10 +1079,10 @@ static void menu_cb_drawVisiblePitchContour (SoundAnalysisArea me, EDITOR_ARGS_F
 				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
 		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
-		Pitch_draw (my d_pitch.get(), my functionEditor() -> pictureGraphics, my startWindow(), my endWindow(), pitchViewFrom_overt, pitchViewTo_overt,
+		Pitch_draw (my d_pitch.get(), my pictureGraphics(), my startWindow(), my endWindow(), pitchViewFrom_overt, pitchViewTo_overt,
 				garnish, speckle, my instancePref_pitch_unit());
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 
@@ -1152,11 +1152,11 @@ static void menu_cb_drawVisibleIntensityContour (SoundAnalysisArea me, EDITOR_AR
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_intensity_picture_garnish (garnish);
 		SoundAnalysisArea_haveVisibleIntensity (me);
-		Editor_openPraatPicture (my functionEditor());
-		Intensity_draw (my d_intensity.get(), my functionEditor() -> pictureGraphics, my startWindow(), my endWindow(),
+		DataGui_openPraatPicture (me);
+		Intensity_draw (my d_intensity.get(), my pictureGraphics(), my startWindow(), my endWindow(),
 				my instancePref_intensity_viewFrom(), my instancePref_intensity_viewTo(), garnish);
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 
@@ -1305,13 +1305,13 @@ static void menu_cb_drawVisibleFormantContour (SoundAnalysisArea me, EDITOR_ARGS
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_formant_picture_garnish (garnish);
 		SoundAnalysisArea_haveVisibleFormants (me);
-		Editor_openPraatPicture (my functionEditor());
-		Formant_drawSpeckles (my d_formant.get(), my functionEditor() -> pictureGraphics, my startWindow(), my endWindow(),
+		DataGui_openPraatPicture (me);
+		Formant_drawSpeckles (my d_formant.get(), my pictureGraphics(), my startWindow(), my endWindow(),
 			my instancePref_spectrogram_viewTo(), my instancePref_formant_dynamicRange(),
 			garnish
 		);
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 
@@ -1465,10 +1465,10 @@ static void menu_cb_drawVisiblePulses (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 		my v_do_pictureSelection (cmd);
 		my setInstancePref_pulses_picture_garnish (garnish);
 		SoundAnalysisArea_haveVisiblePulses (me);
-		Editor_openPraatPicture (my functionEditor());
-		PointProcess_draw (my d_pulses.get(), my functionEditor() -> pictureGraphics, my startWindow(), my endWindow(), garnish);
-		FunctionEditor_garnish (my functionEditor());
-		Editor_closePraatPicture (my functionEditor());
+		DataGui_openPraatPicture (me);
+		PointProcess_draw (my d_pulses.get(), my pictureGraphics(), my startWindow(), my endWindow(), garnish);
+		FunctionArea_garnishPicture (me);
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 

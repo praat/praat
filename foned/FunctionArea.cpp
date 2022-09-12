@@ -144,4 +144,19 @@ void FunctionArea_drawLegend_ (FunctionArea me,
 	Graphics_setFontSize (my graphics(), oldFontSize);
 }
 
+void FunctionArea_garnishPicture (FunctionArea me) {
+	if (my classPref_picture_drawSelectionTimes()) {
+		if (my startSelection() >= my startWindow() && my startSelection() <= my endWindow())
+			Graphics_markTop (my pictureGraphics(), my startSelection(), true, true, false, nullptr);
+		if (my endSelection() != my startSelection() && my endSelection() >= my startWindow() && my endSelection() <= my endWindow())
+			Graphics_markTop (my pictureGraphics(), my endSelection(), true, true, false, nullptr);
+	}
+	if (my classPref_picture_drawSelectionHairs()) {
+		if (my startSelection() >= my startWindow() && my startSelection() <= my endWindow())
+			Graphics_markTop (my pictureGraphics(), my startSelection(), false, false, true, nullptr);
+		if (my endSelection() != my startSelection() && my endSelection() >= my startWindow() && my endSelection() <= my endWindow())
+			Graphics_markTop (my pictureGraphics(), my endSelection(), false, false, true, nullptr);
+	}
+}
+
 /* End of file FunctionArea.cpp */

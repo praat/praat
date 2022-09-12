@@ -541,25 +541,4 @@ void Editor_save (Editor me, conststring32 cattableText) {
 	#endif
 }
 
-void Editor_openPraatPicture (Editor me) {
-	my pictureGraphics = praat_picture_editor_open (my instancePref_picture_eraseFirst());
-}
-void Editor_closePraatPicture (Editor me) {
-	if (my data() && my classPref_picture_writeNameAtTop() != kDataGui_writeNameAtTop::NO_) {
-		Graphics_setNumberSignIsBold (my pictureGraphics, false);
-		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
-		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
-		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
-		Graphics_textTop (my pictureGraphics,
-			my classPref_picture_writeNameAtTop() == kDataGui_writeNameAtTop::FAR_,
-			my data() -> name.get()
-		);
-		Graphics_setNumberSignIsBold (my pictureGraphics, true);
-		Graphics_setPercentSignIsItalic (my pictureGraphics, true);
-		Graphics_setCircumflexIsSuperscript (my pictureGraphics, true);
-		Graphics_setUnderscoreIsSubscript (my pictureGraphics, true);
-	}
-	praat_picture_editor_close ();
-}
-
 /* End of file Editor.cpp */

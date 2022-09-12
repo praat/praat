@@ -306,8 +306,6 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units);
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);
 
-void FunctionEditor_garnish (FunctionEditor me);   // optionally selection times and selection hairs
-
 bool FunctionEditor_defaultMouseInWideDataView (FunctionEditor me, GuiDrawingArea_MouseEvent event, double x_world);
 /*
 	Behaviour:
