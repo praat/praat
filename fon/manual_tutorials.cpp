@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220902)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220912)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.19# (12 September 2022)")
+LIST_ITEM (U"• Visible window queries in Time menu.")
+LIST_ITEM (U"• Correct execution of added Objects window script after running a failing editor script (decades-old bug).")
+LIST_ITEM (U"• Made ##Erase first# work again (bug introduced in 6.2.15).")
 NORMAL (U"##6.2.18# (2 September 2022)")
 LIST_ITEM (U"• SoundRecorder: support for up to 20 (instead of 8) input devices.")
 LIST_ITEM (U"• FormantPath window: can now be viewed even without a Sound.")
