@@ -64,4 +64,27 @@ MelderColour structDataGui :: Colour_EDITABLE_LINES() { return Melder_BLUE; }
 MelderColour structDataGui :: Colour_EDITABLE_FRAME() { return Melder_CYAN; }
 MelderColour structDataGui :: Colour_NONEDITABLE_FOREGROUND() { return MelderColour (0.25); }
 
+void DataGui_openPraatPicture (DataGui me) {
+	my _pictureGraphics = praat_picture_datagui_open (my instancePref_picture_eraseFirst());
+}
+void DataGui_closePraatPicture (DataGui me) {
+	const Daata theDataWhoseNameWeMayWantToWriteAtTheTop = my boss() -> data();
+			// same as the title of the window (may not be precise, if we are editing two objects at a time)
+	if (theDataWhoseNameWeMayWantToWriteAtTheTop && my classPref_picture_writeNameAtTop() != kDataGui_writeNameAtTop::NO_) {
+		Graphics_setNumberSignIsBold (my pictureGraphics(), false);
+		Graphics_setPercentSignIsItalic (my pictureGraphics(), false);
+		Graphics_setCircumflexIsSuperscript (my pictureGraphics(), false);
+		Graphics_setUnderscoreIsSubscript (my pictureGraphics(), false);
+		Graphics_textTop (my pictureGraphics(),
+			my classPref_picture_writeNameAtTop() == kDataGui_writeNameAtTop::FAR_,
+			theDataWhoseNameWeMayWantToWriteAtTheTop -> name.get()
+		);
+		Graphics_setNumberSignIsBold (my pictureGraphics(), true);
+		Graphics_setPercentSignIsItalic (my pictureGraphics(), true);
+		Graphics_setCircumflexIsSuperscript (my pictureGraphics(), true);
+		Graphics_setUnderscoreIsSubscript (my pictureGraphics(), true);
+	}
+	praat_picture_datagui_close ();
+}
+
 /* End of file DataGui.cpp */

@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220802)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220912)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.19# (12 September 2022)")
+LIST_ITEM (U"• Visible window queries in Time menu.")
+LIST_ITEM (U"• Correct execution of added Objects window script after running a failing editor script (decades-old bug).")
+LIST_ITEM (U"• Made ##Erase first# work again (bug introduced in 6.2.15).")
 NORMAL (U"##6.2.18# (2 September 2022)")
 LIST_ITEM (U"• SoundRecorder: support for up to 20 (instead of 8) input devices.")
 LIST_ITEM (U"• FormantPath window: can now be viewed even without a Sound.")
@@ -3792,7 +3796,7 @@ NORMAL (U"The darkness of the spectrogram will also change when you scroll, beca
 	"will turn darker. The next section will describe a way to switch this off.")
 MAN_END
 
-MAN_BEGIN (U"Intro 3.2. Configuring the spectrogram", U"ppgb", 20110128)
+MAN_BEGIN (U"Intro 3.2. Configuring the spectrogram", U"ppgb", 20220907)
 NORMAL (U"With @@Spectrogram settings...@ from the #Spectrogram menu, "
 	"you can determine how the spectrogram is computed and how it is displayed. "
 	"These settings will be remembered across Praat sessions. "
@@ -3844,7 +3848,7 @@ NORMAL (U"So why don't we always use long analysis windows? The answer is that t
 	"analysis window is short. Apparently, there is a trade-off between time resolution and "
 	"frequency resolution. One cannot know both the time and the frequency with great precision.")
 ENTRY (U"Advanced settings")
-NORMAL (U"The Spectrum menu also contains @@Advanced spectrogram settings...@.")
+NORMAL (U"The Spectrogram menu also contains @@Advanced spectrogram settings...@.")
 MAN_END
 
 MAN_BEGIN (U"Advanced spectrogram settings...", U"ppgb", 20120531)
@@ -3920,31 +3924,31 @@ DEFINITION (U"determines how much stronger weak spectra should be made before dr
 	"so that its maximum will be seen at 44 dB (thus making this frame visible).")
 MAN_END
 
-MAN_BEGIN (U"Intro 3.3. Querying the spectrogram", U"ppgb", 20030403)
+MAN_BEGIN (U"Intro 3.3. Querying the spectrogram", U"ppgb", 20220907)
 NORMAL (U"If you click anywhere inside the spectrogram, a cursor cross will appear, "
 	"and you will see the time and frequency in red at the top and to the left of the window. "
 	"To see the time in the Info window, "
 	"choose ##Get cursor# from the #Query menu or press the F6 key. "
 	"To see the frequency in the Info window, "
-	"choose ##Get frequency# from the #Spectrum menu.")
+	"choose ##Get frequency# from the #Spectrogram menu.")
 NORMAL (U"To query the power of the spectrogram at the cursor cross, "
 	"choose ##Get spectral power at cursor cross# from the #Spectrum menu or press the F9 key. "
 	"The Info window will show you the power density, expressed in Pascal^2/Hz.")
 MAN_END
 
-MAN_BEGIN (U"Intro 3.4. Printing the spectrogram", U"ppgb", 20070905)
+MAN_BEGIN (U"Intro 3.4. Printing the spectrogram", U"ppgb", 20220907)
 NORMAL (U"To print a spectrogram, or to put it in an EPS file or on the clipboard for inclusion in your word processor, "
 	"you first have to paint it into the @@Picture window@. "
 	"You do this by choosing ##Paint visible spectrogram...# "
-	"from the Spectrum menu in the Sound or TextGrid window. "
+	"from the Spectrogram menu in the Sound or TextGrid window. "
 	"From the File menu in the Picture window, you can then print it, save it to an EPS file, "
 	"or copy it to the clipboard (to do Paste in your word processor, for instance).")
 MAN_END
 
-MAN_BEGIN (U"Intro 3.5. The Spectrogram object", U"ppgb", 20070905)
+MAN_BEGIN (U"Intro 3.5. The Spectrogram object", U"ppgb", 20220907)
 NORMAL (U"To do more with spectrograms, you can create a @Spectrogram object in the @@List of Objects@. "
 	"You do this either by choosing ##Extract visible spectrogram# "
-	"from the Spectrum menu in the Sound or TextGrid window, "
+	"from the Spectrogram menu in the Sound or TextGrid window, "
 	"or by selecting a Sound object in the list and choosing @@Sound: To Spectrogram...@ from the #Spectrum menu. "
 	"In either case, a new Spectrogram object will appear in the list. "
 	"To draw this Spectrogram object to the @@Picture window@, "
@@ -3953,8 +3957,8 @@ NORMAL (U"To do more with spectrograms, you can create a @Spectrogram object in 
 	"Many other commands are available in the @@dynamic menu@.")
 MAN_END
 
-MAN_BEGIN (U"Intro 3.6. Viewing a spectral slice", U"ppgb", 20030316)
-INTRO (U"With ##View spectral slice# from the #Spectrum menu in the @SoundEditor and the @TextGridEditor, "
+MAN_BEGIN (U"Intro 3.6. Viewing a spectral slice", U"ppgb", 20220907)
+INTRO (U"With ##View spectral slice# from the #Spectrogram menu in the @SoundEditor and the @TextGridEditor, "
 	"you can see the frequency spectrum at the time cursor "
 	"or the average frequency spectrum in the time selection.")
 ENTRY (U"Spectral slice at the cursor")

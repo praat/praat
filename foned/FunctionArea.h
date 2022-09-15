@@ -257,5 +257,7 @@ inline void FunctionArea_drawLegend (FunctionArea me,
 	);   // this looks strange, but friend function cannot have default parameters unless defined when declared
 }
 
+void FunctionArea_garnishPicture (FunctionArea me);   // optionally selection times and selection hairs
+
 /* End of file FunctionArea.h */
 #endif

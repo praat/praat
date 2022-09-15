@@ -497,7 +497,7 @@ NORMAL (U"If you select an object that is a function of time and you click @Insp
 	"because it can easily be computed as #xmax minus #xmin.")
 MAN_END
 
-MAN_BEGIN (U"time selection", U"ppgb", 20050924)
+MAN_BEGIN (U"time selection", U"ppgb", 20220907)
 INTRO (U"The ways to select a part of the time domain in some @editors in Praat, "
 	"namely those that contain a function of time.")
 NORMAL (U"The ##time selection# is used for selecting the time interval that will be played, "
@@ -514,7 +514,7 @@ NORMAL (U"For instance, if the currently selected time interval runs from 2 to 5
 	"from 5 to 4 seconds, thus shrinking the selection.")
 NORMAL (U"You can also shift-drag, i.e. hold the Shift key and the mouse button down while moving the mouse.")
 ENTRY (U"3. Other tricks")
-NORMAL (U"To select a specific time stretch or collapse the selection to its start or end, use the Select menu.")
+NORMAL (U"To select a specific time stretch or collapse the selection to its start or end, use the Time menu.")
 MAN_END
 
 MAN_BEGIN (U"total duration", U"ppgb", 20040505)

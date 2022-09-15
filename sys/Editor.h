@@ -58,7 +58,6 @@ Thing_define (Editor, DataGui) {
 	OrderedOf<structEditorMenu> menus;
 	autoDaata previousData;   // the data that can be displayed and edited
 	char32 undoText [100];
-	Graphics pictureGraphics;
 	Editor_DataChangedCallback d_dataChangedCallback;
 	Editor_DestructionCallback d_destructionCallback;
 	Editor_PublicationCallback d_publicationCallback;
@@ -231,15 +230,6 @@ autoUiForm UiInfile_createE (EditorCommand cmd, conststring32 title, conststring
 
 EditorCommand Editor_getMenuCommand (Editor me, conststring32 menuTitle, conststring32 itemTitle);
 void Editor_doMenuCommand (Editor me, conststring32 command, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter);
-
-/*
- * The following two procedures are in praat_picture.cpp.
- * They allow editors to draw into the Picture window.
- */
-Graphics praat_picture_editor_open (bool eraseFirst);
-void praat_picture_editor_close ();
-void Editor_openPraatPicture (Editor me);
-void Editor_closePraatPicture (Editor me);
 
 #endif
 /* End of file Editor.h */

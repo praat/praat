@@ -848,11 +848,11 @@ static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		my v_ok_pictureWindow (cmd);
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		Editor_openPraatPicture (me);
+		DataGui_openPraatPicture (me);
 		if (garnish)
-			VowelEditor_drawBackground (me, my pictureGraphics);
-		VowelEditor_drawF1F2Trajectory (me, my pictureGraphics);
-		Editor_closePraatPicture (me);
+			VowelEditor_drawBackground (me, my pictureGraphics());
+		VowelEditor_drawF1F2Trajectory (me, my pictureGraphics());
+		DataGui_closePraatPicture (me);
 	EDITOR_END
 }
 
