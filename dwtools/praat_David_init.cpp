@@ -4721,14 +4721,11 @@ DIRECT (HELP__Permutation_help) {
 FORM (CREATE_ONE__Permutation_create, U"Create Permutation", U"Create Permutation...") {
 	WORD (name, U"Name", U"p")
 	NATURAL (numberOfElements, U"Number of elements", U"10")
-	BOOLEAN (identity, U"Identity Permutation", true)
+	BOOLEAN (identity, U"Identity Permutation", false)
 	OK
 DO
 	CREATE_ONE
-		autoPermutation result = Permutation_create (numberOfElements);
-		if (! identity) {
-			Permutation_permuteRandomly_inplace (result.get(), 0, 0);
-		}
+		autoPermutation result = Permutation_create (numberOfElements, identity);
 	CREATE_ONE_END (name)
 }
 

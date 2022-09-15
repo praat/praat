@@ -1,6 +1,6 @@
 /* Strings_extensions.cpp
  *
- * Copyright (C) 1993-2012,2015-2020 David Weenink, 2015-2021 Paul Boersma
+ * Copyright (C) 1993-2012,2015-2022 David Weenink, 2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 
 autoPermutation Strings_to_Permutation (Strings me, bool sort) {
 	try {
-		autoPermutation thee = Permutation_create (my numberOfStrings);
+		autoPermutation thee = Permutation_create (my numberOfStrings, true);
 		if (sort)
 			INTVECindex (thy p.get(), my strings.get());
 		return thee;

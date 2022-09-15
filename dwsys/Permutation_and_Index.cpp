@@ -1,6 +1,6 @@
 /* Permutation_and_Index.cpp
  *
- * Copyright (C) 2005-2019 David Weenink
+ * Copyright (C) 2005-2012 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,8 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, bool permuteWith
 	try {
 		const integer numberOfClasses = my classes -> size;
 
-		autoPermutation thee = Permutation_create (my numberOfItems);
-		autoPermutation classes = Permutation_create (numberOfClasses);
-		Permutation_permuteRandomly_inplace (classes.get(), 0, 0);
+		autoPermutation thee = Permutation_create (my numberOfItems, true);
+		autoPermutation classes = Permutation_create (numberOfClasses, false);
 		autoPermutation classesinv = Permutation_invert (classes.get());
 		autoINTMAT indices = zero_INTMAT (numberOfClasses, 4);
 

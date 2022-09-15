@@ -1,6 +1,6 @@
 /* TableOfReal_and_Permutation.cpp
  *
- * Copyright (C) 2005-2021 David Weenink
+ * Copyright (C) 2005-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ autoTableOfReal TableOfReal_Permutation_permuteColumns (TableOfReal me, Permutat
 }
 autoPermutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me) {
 	try {
-		autoPermutation thee = Permutation_create (my numberOfRows);
+		autoPermutation thee = Permutation_create (my numberOfRows, true);
 		INTVECindex (thy p.get(), my rowLabels.get());
 		return thee;
 	} catch (MelderError) {

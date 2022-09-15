@@ -1,6 +1,6 @@
 /* Permutation.cpp
  *
- * Copyright (C) 2005-2020 David Weenink
+ * Copyright (C) 2005-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,10 +103,12 @@ void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer fir
 	}
 }
 
-autoPermutation Permutation_create (integer numberOfElements) {
+autoPermutation Permutation_create (integer numberOfElements, bool identity) {
 	try {
 		autoPermutation me = Thing_new (Permutation);
 		Permutation_init (me.get(), numberOfElements);
+		if (! identity)
+			Permutation_permuteRandomly_inplace (me.get(), 1, numberOfElements);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Permutation not created.");
@@ -245,9 +247,8 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, integer from,
 		Melder_require (nrest == 0,
 			U"There should fit an integer number of blocks in the range.\n(The last block is only of size ", nrest, U").");
 		
-		autoPermutation pblocks = Permutation_create (nblocks);
+		autoPermutation pblocks = Permutation_create (nblocks, true);
 
-		Permutation_permuteRandomly_inplace (pblocks.get(), 1, nblocks);
 		integer first = from;
 		for (integer iblock = 1; iblock <= nblocks; iblock ++, first += blockSize) {
 			/* (n1,n2,n3,...) means: move block n1 to position 1 etc... */

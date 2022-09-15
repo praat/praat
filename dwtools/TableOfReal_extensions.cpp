@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2021 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2022 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -915,8 +915,7 @@ autoTableOfReal TableOfReal_create_weenink1983 (int option) {
 
 autoTableOfReal TableOfReal_randomizeRows (TableOfReal me) {
 	try {
-		autoPermutation p = Permutation_create (my numberOfRows);
-		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
+		autoPermutation p = Permutation_create (my numberOfRows, false);
 		autoTableOfReal thee = TableOfReal_Permutation_permuteRows (me, p.get());
 		return thee;
 	} catch (MelderError) {
@@ -1424,7 +1423,7 @@ static void TableOfReal_permuteRowElements_inplace (TableOfReal me, integer from
 	}
 	Melder_require (fromRow <= toRow && fromRow >= 1 && toRow <= my numberOfRows,
 		U"The row range should be larger than 0 and smaller than ", my numberOfRows + 1);
-	autoPermutation permutation = Permutation_create (my numberOfColumns);
+	autoPermutation permutation = Permutation_create (my numberOfColumns, true);
 	autoVEC rowData = raw_VEC (my numberOfColumns);
 	for (integer irow = fromRow; irow <= toRow; irow ++) {
 		Permutation_permuteRandomly_inplace (permutation.get(), 0, 0);
@@ -1441,7 +1440,7 @@ static void TableOfReal_permuteColumnElements_inplace (TableOfReal me, integer f
 	}
 	Melder_require (fromColumn <= toColumn && fromColumn >= 1 && toColumn <= my numberOfColumns,
 		U"The column range should be larger than 0 and smaller than ", my numberOfColumns + 1);
-	autoPermutation permutation = Permutation_create (my numberOfRows);
+	autoPermutation permutation = Permutation_create (my numberOfRows, true);
 	autoVEC columnData = raw_VEC (my numberOfRows);
 	for (integer icol = fromColumn; icol <= toColumn; icol ++) {
 		Permutation_permuteRandomly_inplace (permutation.get(), 0, 0);
@@ -1460,8 +1459,7 @@ static void TableOfReal_shuffleCombinedRows (TableOfReal xShuffled, TableOfReal 
 		U"The number of rows of the first and the third TableOfReal should be equal and the number of rows of the "
 		"second and forth TableOfReal should also be equal.");
 	const integer numberOfRowsCombined = x -> numberOfRows + y -> numberOfRows;
-	autoPermutation permutation = Permutation_create (numberOfRowsCombined);
-	Permutation_permuteRandomly_inplace (permutation.get(), 0, 0);
+	autoPermutation permutation = Permutation_create (numberOfRowsCombined, false);
 	for (integer irow = 1; irow <= numberOfRowsCombined; irow ++) {
 		const integer rowIndex = Permutation_getValueAtIndex (permutation.get(), irow);
 		constVEC fromRow = ( rowIndex > x -> numberOfRows ? y -> data.row (rowIndex - x -> numberOfRows) : 

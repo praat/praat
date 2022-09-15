@@ -63,8 +63,7 @@ autoCollection Collection_Permutation_permuteItems (Collection me, Permutation h
 
 void Collection_permuteItems_inplace (Collection me) {
 	try {
-		autoPermutation p = Permutation_create (my size);
-		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
+		autoPermutation p = Permutation_create (my size, false);
 		Collection_Permutation_permuteItems_inplace (me, p.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": items not permuted inplace.");
@@ -73,8 +72,7 @@ void Collection_permuteItems_inplace (Collection me) {
 
 autoCollection Collection_permuteItems (Collection me) {
 	try {
-		autoPermutation p = Permutation_create (my size);
-		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
+		autoPermutation p = Permutation_create (my size, false);
 		autoCollection thee = Collection_Permutation_permuteItems (me, p.get());
 		return thee;
 	} catch (MelderError) {
