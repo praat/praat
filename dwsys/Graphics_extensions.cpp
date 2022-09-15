@@ -29,7 +29,7 @@
 #include "enums_getValue.h"
 #include "Graphics_extensions_enums.h"
 
-double Graphics_getFontSizeInsideBox (Graphics g, double  widthWC, double heightWCx, double maxNumberOfCharacters_line, double maxNumberOfLines) {
+double Graphics_getFontSizeInsideBox (Graphics g, double widthWC, double heightWCx, double maxNumberOfCharacters_line, double maxNumberOfLines) {
 	const double pointsPerMillimetre = 72.0 / (10.0 * 2.54);
 	const double boxWidth_points = Graphics_dxWCtoMM (g, widthWC) * pointsPerMillimetre;
 	const double boxHeight_points = Graphics_dyWCtoMM (g, heightWCx) * pointsPerMillimetre;
@@ -221,6 +221,32 @@ void Graphics_lagPlot (Graphics g, constVEC data, double xmin, double xmax, inte
 	}
 	Graphics_setLineType (g, Graphics_DRAWN);
 	Graphics_setFontSize (g, fontSize);
+}
+
+void getGridLayout (integer numberOfItems, integer *out_numberOfRows, integer *out_numberOfColumns) {
+	integer numberOfColumns =  sqrt (numberOfItems);
+	integer numberOfRows = 1 + Melder_roundDown  ((numberOfItems - 1) / numberOfColumns);
+	if (numberOfColumns > numberOfRows)
+		std::swap (numberOfRows, numberOfColumns);
+	if (out_numberOfRows)
+		*out_numberOfRows = numberOfRows;
+	if (out_numberOfColumns)
+		*out_numberOfColumns = numberOfColumns;
+}
+
+/*
+	Implicit:
+		Rectangular grid.
+		Origin (0,0) is at left-bottom, top-right is at (1, 1)
+*/
+integer getGridCellIndex (double x, double y, integer numberOfRows, integer numberOfColumns) {
+	const integer icol = 1 + (int) (x * numberOfColumns);
+	if (icol < 1 || icol > numberOfColumns)
+		return 0;
+	const integer irow = 1 + (int) ((1.0 - y) * numberOfRows);
+	if (irow < 1 || irow > numberOfRows)
+		return 0;
+	return (irow - 1) * numberOfColumns + icol; // left-to-right, top-to-bottom
 }
 
 /* End of file Graphics_extensions.cpp */

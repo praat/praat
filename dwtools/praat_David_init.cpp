@@ -5683,7 +5683,7 @@ DO
 			me, U": there is no channel ", channel, U". Sound has only ", my ny, U" channel",
 				(my ny > 1 ? U"s." : U"."));
         autoSound thee = Sound_extractChannel (me, channel);
-        Sound_play (thee.get(), 0, 0);
+        Sound_play (thee.get(), nullptr, nullptr);
     PLAY_EACH_END
 }
 

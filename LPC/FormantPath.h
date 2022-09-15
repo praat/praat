@@ -75,11 +75,6 @@ static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeSt
 			formantCeiling, analysisWidth, preemphasisFrequency, ceilingExtensionFraction, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
 }
 
-void FormantPath_getGridDimensions (FormantPath me, integer *out_nrow, integer *out_ncol);
-/*
-	Get dimensions of a grid to layout n elements (nrow*ncol >= n).
-*/
-
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, 
 	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants,
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,

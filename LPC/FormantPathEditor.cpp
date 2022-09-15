@@ -20,6 +20,7 @@
 	TODO: make width of selection viewer variable?
 */
 #include "FormantPathEditor.h"
+#include "Graphics_extensions.h"
 #include "EditorM.h"
 
 Thing_implement (FormantPathEditor, FunctionEditor, 0);
@@ -271,29 +272,24 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	/*
 		On which of the modelers was the click?
 	*/
-	integer numberOfRows, numberOfColums;
-	FormantPath_getGridDimensions (our formantPath(), & numberOfRows, & numberOfColums);
-	const integer icol = 1 + (int) (xWC * numberOfColums);
-	if (icol < 1 || icol > numberOfColums)
-		return;
-	const integer irow = 1 + (int) ((1.0 - yWC) * numberOfRows);
-	if (irow < 1 || irow > numberOfRows)
-		return;
-	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
-	if (index > 0 && index <= our formantPath() -> formantCandidates.size) {
+	integer numberOfRows, numberOfColumns;
+	const integer numberOfCandidates = our formantPath() -> formantCandidates.size;
+	getGridLayout (numberOfCandidates, & numberOfRows, & numberOfColumns);
+	integer candidate = getGridCellIndex (xWC, yWC, numberOfRows, numberOfColumns);
+	if (candidate > 0 && candidate <= our formantPath() -> formantCandidates.size) {
 		double tmin_ = our startWindow, tmax_ = our endWindow;
 		if (our startSelection < our endSelection) {
 			tmin_ = our startSelection;
 			tmax_ = our endSelection;
 		}
-		our selectedCandidate = index;
+		our selectedCandidate = candidate;
 		Editor_save (this, U"Change ceiling");
-		integer itmin, itmax;
-		Sampled_getWindowSamples (our formantPath(), tmin_, tmax_, & itmin, & itmax);
-		for (integer iframe = itmin; iframe <= itmax; iframe ++)
+		integer ifmin, ifmax;
+		Sampled_getWindowSamples (our formantPath(), tmin_, tmax_, & ifmin, & ifmax);
+		for (integer iframe = ifmin; iframe <= ifmax; iframe ++)
 			our formantPath() -> path [iframe] = our selectedCandidate;
 		Formant source = our formantPath() -> formantCandidates.at [our selectedCandidate];
-		Formant_replaceFrames (our formantPathArea() -> d_formant.get(), itmin, itmax, source);
+		Formant_replaceFrames (our formantPathArea() -> d_formant.get(), ifmin, ifmax, source);
 	}
 	FunctionEditor_redraw (this);
 	Editor_broadcastDataChanged (this);
