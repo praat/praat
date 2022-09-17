@@ -48,10 +48,9 @@ void structSoundArea :: v1_info () {
 #pragma mark - SoundArea drawing
 
 static void SoundArea_drawCursorFunctionValue (SoundArea me, double yWC, conststring32 yWC_string, conststring32 units) {
-	Graphics_setColour (my graphics(), Melder_CYAN);
+	Graphics_setColour (my graphics(), Melder_RED);
 	Graphics_line (my graphics(), my startWindow(), yWC, 0.99 * my startWindow() + 0.01 * my endWindow(), yWC);
 	Graphics_fillCircle_mm (my graphics(), 0.5 * (my startSelection() + my endSelection()), yWC, 1.5);
-	Graphics_setColour (my graphics(), Melder_BLUE);
 	Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (my graphics(), my startWindow(), yWC,   yWC_string, units);
 }
@@ -188,27 +187,27 @@ void SoundArea_draw (SoundArea me) {
 			maximum += 1.0;
 		}
 		Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), minimum, maximum);
+		Graphics_setColour (my graphics(), DataGui_defaultForegroundColour (me));
 		if (horizontal) {
 			Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
 			const double mid = 0.5 * (minimum + maximum);
 			Graphics_text (my graphics(), my startWindow(), mid, Melder_float (Melder_half (mid)));
 		} else {
-			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics(), cursorFunctionValue - minimum) > 5.0) {
+			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics(), cursorFunctionValue - minimum) > 4.0) {
 				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, ichan == lastVisibleChannel? Graphics_HALF : Graphics_BOTTOM);
 				Graphics_text (my graphics(), my startWindow(), minimum, Melder_float (Melder_half (minimum)));
 			}
-			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics(), maximum - cursorFunctionValue) > 5.0) {
+			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics(), maximum - cursorFunctionValue) > 4.0) {
 				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, ichan == firstVisibleChannel ? Graphics_HALF : Graphics_TOP);
 				Graphics_text (my graphics(), my startWindow(), maximum, Melder_float (Melder_half (maximum)));
 			}
 		}
 		if (minimum < 0.0 && maximum > 0.0 && ! horizontal) {
 			Graphics_setWindow (my graphics(), 0.0, 1.0, minimum, maximum);
-			if (! cursorVisible || isundef (cursorFunctionValue) || fabs (Graphics_dyWCtoMM (my graphics(), cursorFunctionValue - 0.0)) > 3.0) {
+			if (! cursorVisible || isundef (cursorFunctionValue) || fabs (Graphics_dyWCtoMM (my graphics(), cursorFunctionValue - 0.0)) > 3.5) {
 				Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
 				Graphics_text (my graphics(), 0.0, 0.0, U"0");
 			}
-			Graphics_setColour (my graphics(), Melder_CYAN);
 			Graphics_setLineType (my graphics(), Graphics_DOTTED);
 			Graphics_line (my graphics(), 0.0, 0.0, 1.0, 0.0);
 			Graphics_setLineType (my graphics(), Graphics_DRAWN);
@@ -236,8 +235,9 @@ void SoundArea_draw (SoundArea me) {
 		/*
 			Draw a very thin separator line underneath.
 		*/
-		if (ichan - my channelOffset < 8) {
-			Graphics_setColour (my graphics(), Melder_BLACK);
+		if (ichan - my channelOffset < 8 && ichan - my channelOffset < numberOfVisibleChannels) {
+			Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setColour (my graphics(), my editable() ? structDataGui :: Colour_EDITABLE_FRAME() : Melder_BLACK);
 			Graphics_line (my graphics(), 0.0, 0.0, 1.0, 0.0);
 		}
 		/*

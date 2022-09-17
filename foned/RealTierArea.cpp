@@ -111,7 +111,7 @@ void structRealTierArea :: v_drawInside () {
 		const double yright = RealTier_getValueAtTime (our realTier(), our endWindow());
 		Graphics_line (our graphics(), our startWindow(), yleft, our endWindow(), yright);
 	} else {
-		Graphics_setColour (our graphics(), Melder_BLUE);
+		Graphics_setColour (our graphics(), structDataGui::Colour_EDITABLE_LINES());
 		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
 			RealPoint point = our realTier() -> points.at [ipoint];
 			const double t = point -> number, y = point -> value;
