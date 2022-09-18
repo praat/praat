@@ -60,7 +60,7 @@ void structDataGui :: v_do_pictureMargins (EditorCommand /* cmd */) {
 }
 
 MelderColour structDataGui :: Colour_BACKGROUND() { return Melder_WHITE; }
-MelderColour structDataGui :: Colour_EDITABLE_LINES() { return Melder_BLUE; }
+MelderColour structDataGui :: Colour_EDITABLE_LINES() { return MelderColour (0.0, 0.4, 0.5); }
 MelderColour structDataGui :: Colour_EDITABLE_FRAME() { return Melder_CYAN; }
 MelderColour structDataGui :: Colour_NONEDITABLE_FOREGROUND() { return MelderColour (0.25); }
 
