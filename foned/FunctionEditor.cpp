@@ -978,7 +978,6 @@ static void PLAY_DATA__interruptPlaying (FunctionEditor me, EDITOR_ARGS_DIRECT) 
 #pragma mark - FunctionEditor View all
 
 void structFunctionEditor :: v_createMenuItems_play (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"-- play --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Audio:", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Play...", 0, PLAY_DATA__play);
 	EditorMenu_addCommand (menu, U"Play or stop", GuiMenu_TAB, PLAY_DATA__playOrStop);
@@ -1164,7 +1163,7 @@ void structFunctionEditor :: v_createMenus () {
 
 	EditorMenu domainMenu = Editor_addMenu (this, v_format_domain (), 0);   // Time or Frequency
 
-	EditorMenu_addCommand (domainMenu, U"- Query visible part:", 0, nullptr);
+	EditorMenu_addCommand (domainMenu, U"Query visible part:", 0, nullptr);
 	EditorMenu_addCommand (domainMenu, U"Get start of visible part", 0, QUERY_EDITOR_FOR_REAL__getStartOfVisiblePart);
 	EditorMenu_addCommand (domainMenu, U"Get end of visible part", 0, QUERY_EDITOR_FOR_REAL__getEndOfVisiblePart);
 	EditorMenu_addCommand (domainMenu, U"Get length of visible part", 0, QUERY_EDITOR_FOR_REAL__getLengthOfVisiblePart);
