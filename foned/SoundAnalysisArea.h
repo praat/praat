@@ -99,10 +99,10 @@ bool SoundAnalysisArea_mouse (SoundAnalysisArea me, GuiDrawingArea_MouseEvent ev
 inline void SoundAnalysisArea_drawDefaultLegends (SoundAnalysisArea me) {
 	if (my hasContentToShow () && my endWindow() - my startWindow() <= my instancePref_longestAnalysis())
 		FunctionArea_drawLegend (me,
-			my instancePref_spectrogram_show() ? FunctionArea_legend_GREYS U" %%derived spectrogram" : U"", Melder_BLACK,
-			my instancePref_formant_show()     ? FunctionArea_legend_SPECKLES U" %%derived formants"    : U"", Melder_RED,
-			my instancePref_intensity_show()   ? FunctionArea_legend_LINES U" %%derived intensity"   : U"", Melder_GREEN,
-			my instancePref_pitch_show()       ? FunctionArea_legend_LINES_SPECKLES U" %%derived pitch"       : U"", Melder_BLUE
+			my instancePref_spectrogram_show() ? FunctionArea_legend_GREYS U" %%derived spectrogram" : U"", 1.2 * Melder_BLACK,
+			my instancePref_formant_show()     ? FunctionArea_legend_SPECKLES U" %%derived formants"    : U"", 1.2 * Melder_RED,
+			my instancePref_intensity_show()   ? FunctionArea_legend_LINES U" %%derived intensity"   : U"", 1.2 * Melder_GREEN,
+			my instancePref_pitch_show()       ? FunctionArea_legend_LINES_SPECKLES U" %%derived pitch"       : U"", 1.2 * Melder_BLUE
 		);
 }
 

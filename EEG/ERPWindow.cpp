@@ -265,7 +265,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 
 void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_setWindow (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
-	Graphics_setColour (our graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
+	Graphics_setColour (our graphics.get(), DataGuiColour_WINDOW_BACKGROUND);
 	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	const integer numberOfDrawableChannels =

@@ -31,11 +31,13 @@ Thing_define (IntensityTierEditor, RealTierEditor) {
 		override;
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable IntensityTier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable IntensityTier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 		if (our soundArea())
 			FunctionArea_drawLegend (our soundArea().get(),
-				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound",
+				DataGui_defaultForegroundColour (our soundArea().get(), false)
 			);
 	}
 };

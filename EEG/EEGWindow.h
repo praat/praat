@@ -67,10 +67,12 @@ Thing_define (EEGWindow, FunctionEditor) {
 		override;
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our textGridArea().get(),
-			FunctionArea_legend_TEXTGRID U" ##modifiable TextGrid", DataGui_defaultForegroundColour (our textGridArea().get())
+			FunctionArea_legend_TEXTGRID U" ##modifiable TextGrid",
+			DataGui_defaultForegroundColour (our textGridArea().get(), false)
 		);
 		FunctionArea_drawLegend (our eegArea().get(),
-			FunctionArea_legend_WAVEFORM U" %%non-modifiable EEG-internal sound", DataGui_defaultForegroundColour (our eegArea().get())
+			FunctionArea_legend_WAVEFORM U" %%non-modifiable EEG-internal sound",
+			DataGui_defaultForegroundColour (our eegArea().get(), false)
 		);
 		SoundAnalysisArea_drawDefaultLegends (our eegAnalysisArea().get());
 	}

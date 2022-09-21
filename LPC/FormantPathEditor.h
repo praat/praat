@@ -98,12 +98,14 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 			FunctionArea_legend_SPECKLES U" ##modifiable FormantPath", Melder_RED
 		);
 		if (our soundArea())
-			FunctionArea_drawLegend (our soundArea().get(), FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound",
-				DataGui_defaultForegroundColour (our soundArea().get())
-		);
+			FunctionArea_drawLegend (our soundArea().get(),
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound",
+				DataGui_defaultForegroundColour (our soundArea().get(), false)
+			);
 		if (our textGridArea())
 			FunctionArea_drawLegend (our textGridArea().get(),
-				FunctionArea_legend_TEXTGRID U" %%non-modifiable copy of TextGrid", DataGui_defaultForegroundColour (our textGridArea().get())
+				FunctionArea_legend_TEXTGRID U" %%non-modifiable copy of TextGrid",
+				DataGui_defaultForegroundColour (our textGridArea().get(), false)
 			);
 	}
 

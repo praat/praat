@@ -115,15 +115,20 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		override;
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our soundArea().get(),
-			FunctionArea_legend_WAVEFORM U" %%non-modifiable mono copy of sound", DataGui_defaultForegroundColour (our soundArea().get()),
-			FunctionArea_legend_POLES U" ##modifiable pulses", DataGui_defaultForegroundColour (our pulsesArea().get())
+			FunctionArea_legend_WAVEFORM U" %%non-modifiable mono copy of sound",
+			DataGui_defaultForegroundColour (our soundArea().get(), false),
+			FunctionArea_legend_POLES U" ##modifiable pulses",
+			DataGui_defaultForegroundColour (our pulsesArea().get(), false)
 		);
 		FunctionArea_drawLegend (our pitchTierArea().get(),
-			FunctionArea_legend_SPECKLES U" %%pitch derived from pulses", Melder_GREY,
-			FunctionArea_legend_LINES_SPECKLES U" ##manipulatable pitch", DataGui_defaultForegroundColour (our pitchTierArea().get())
+			FunctionArea_legend_SPECKLES U" %%pitch derived from pulses",
+			Melder_GREY,
+			FunctionArea_legend_LINES_SPECKLES U" ##manipulatable pitch",
+			DataGui_defaultForegroundColour (our pitchTierArea().get(), false)
 		);
 		FunctionArea_drawLegend (our durationTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##manipulatable duration", DataGui_defaultForegroundColour (our durationTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##manipulatable duration",
+			DataGui_defaultForegroundColour (our durationTierArea().get(), false)
 		);
 	}
 };

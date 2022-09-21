@@ -59,10 +59,20 @@ void structDataGui :: v_do_pictureMargins (EditorCommand /* cmd */) {
 	our setClassPref_picture_writeNameAtTop (v_form_pictureMargins__writeNameAtTop);
 }
 
-MelderColour structDataGui :: Colour_BACKGROUND() { return Melder_WHITE; }
-MelderColour structDataGui :: Colour_EDITABLE_LINES() { return MelderColour (0.0, 0.4, 0.5); }
-MelderColour structDataGui :: Colour_EDITABLE_FRAME() { return Melder_CYAN; }
-MelderColour structDataGui :: Colour_NONEDITABLE_FOREGROUND() { return MelderColour (0.25); }
+/*
+	The following definitions cannot directly refer to existing Melder colours such as Melder_WHITE,
+	because that might lead to an initialization race.
+	Therefore, all of these definitions have to invoke their own MelderColour initialization.
+*/
+MelderColour
+	DataGuiColour_WINDOW_BACKGROUND = MelderColour (0.95, 0.95, 0.90),   // cream
+	DataGuiColour_AREA_BACKGROUND = MelderColour (1.0, 1.0, 1.0),   // whitish; DON'T REPLACE with Melder_WHITE
+	DataGuiColour_EDITABLE = MelderColour (0.0, 0.4, 0.5),   // greenish blue (almost teal)
+	DataGuiColour_EDITABLE_FRAME = MelderColour (0.0, 0.8, 1.0),   // same hue as the lines
+	DataGuiColour_EDITABLE_SELECTED = MelderColour (0.75, 0.35, 0.0),   // orangy
+	DataGuiColour_NONEDITABLE = MelderColour (0.25),   // dark grey
+	DataGuiColour_NONEDITABLE_FRAME = MelderColour (0.85),   // same hue as the lines; DON'T REPLACE with Melder_SILVER
+	DataGuiColour_NONEDITABLE_SELECTED = MelderColour (0.8, 0.0, 0.0);   // reddish
 
 void DataGui_openPraatPicture (DataGui me) {
 	my _pictureGraphics = praat_picture_datagui_open (my instancePref_picture_eraseFirst());

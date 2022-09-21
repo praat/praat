@@ -1825,7 +1825,7 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 	if (my instancePref_pitch_show()) {
 		double pitchCursor_overt = undefined, pitchCursor_hidden = undefined;
 		Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), pitchViewFrom_hidden, pitchViewTo_hidden);
-		Graphics_setColour (my graphics(), Melder_BLUE);
+		Graphics_setColour (my graphics(), 1.2 * Melder_BLUE);
 		if (my d_pitch) {
 			if (my startSelection() == my endSelection())
 				pitchCursor_hidden = Pitch_getValueAtTime (my d_pitch.get(), my startSelection(), my instancePref_pitch_unit(), 1);
@@ -1833,20 +1833,22 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 				pitchCursor_hidden = Pitch_getMean (my d_pitch.get(), my startSelection(), my endSelection(), my instancePref_pitch_unit());
 			pitchCursor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCursor_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 			if (isdefined (pitchCursor_hidden)) {
+				Graphics_setColour (my graphics(), MelderColour (0.6, 0.0, 0.4));
 				Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
 				Graphics_text (my graphics(), my endWindow(), pitchCursor_hidden,
 					Melder_float (Melder_half (pitchCursor_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit(), Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL)
 				);
+				Graphics_setColour (my graphics(), 1.2 * Melder_BLUE);
 			}
-			if (isundef (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics(), pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
+			if (isundef (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics(), pitchCursor_hidden - pitchViewFrom_hidden) > 4.0) {
 				Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
 				Graphics_text (my graphics(), my endWindow(), pitchViewFrom_hidden - Graphics_dyMMtoWC (my graphics(), 0.5),
 					Melder_float (Melder_half (pitchViewFrom_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit(), Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL)
 				);
 			}
-			if (isundef (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics(), pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
+			if (isundef (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics(), pitchViewTo_hidden - pitchCursor_hidden) > 4.0) {
 				Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
 				Graphics_text (my graphics(), my endWindow(), pitchViewTo_hidden,
 					Melder_float (Melder_half (pitchViewTo_overt)), U" ",
@@ -1869,17 +1871,17 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 		int vert;
 		double y;
 		if (! my instancePref_pitch_show()) {
-			textColour = Melder_GREEN;
+			textColour = 1.2 * Melder_GREEN;
 			hor = Graphics_LEFT;
 			vert = Graphics_HALF;
 			y = my endWindow();
 		} else if (! my instancePref_spectrogram_show() && ! my instancePref_formant_show()) {
-			textColour = Melder_GREEN;
+			textColour = 1.2 * Melder_GREEN;
 			hor = Graphics_RIGHT;
 			vert = Graphics_HALF;
 			y = my startWindow();
 		} else {
-			textColour = ( my instancePref_spectrogram_show() ? Melder_LIME : Melder_GREEN );
+			textColour = ( my instancePref_spectrogram_show() ? Melder_LIME : 1.2 * Melder_GREEN );
 			hor = Graphics_RIGHT;
 			vert = -1;
 			y = my endWindow();
@@ -1924,7 +1926,7 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 			Range marks.
 		*/
 		Graphics_setLineType (my graphics(), Graphics_DRAWN);
-		Graphics_setColour (my graphics(), Melder_BLACK);
+		Graphics_setColour (my graphics(), DataGuiColour_NONEDITABLE);
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics(), my d_spectrogram_cursor - my instancePref_spectrogram_viewFrom()) > 5.0) {
 			Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
 			Graphics_text (my graphics(), my startWindow(), my instancePref_spectrogram_viewFrom() - Graphics_dyMMtoWC (my graphics(), 0.5),
@@ -1939,7 +1941,7 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 			Cursor lines.
 		*/
 		Graphics_setLineType (my graphics(), Graphics_DOTTED);
-		Graphics_setColour (my graphics(), Melder_RED);
+		Graphics_setColour (my graphics(), DataGuiColour_NONEDITABLE_SELECTED);
 		if (frequencyCursorVisible) {
 			const double x = my startWindow(), y = my d_spectrogram_cursor;
 			Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
@@ -1977,7 +1979,7 @@ void structSoundAnalysisArea :: v_draw_analysis_pulses () {
 	if (our instancePref_pulses_show() && our endWindow() - our startWindow() <= our instancePref_longestAnalysis() && our d_pulses) {
 		PointProcess point = our d_pulses.get();
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), -1.0, 1.0);
-		Graphics_setColour (our graphics(), our editable() ? Colour_EDITABLE_LINES() : Melder_SILVER);
+		Graphics_setColour (our graphics(), our editable() ? DataGuiColour_EDITABLE : Melder_SILVER);
 		Graphics_setLineWidth (our graphics(), 2.0);
 		if (point -> nt < 2000) for (integer i = 1; i <= point -> nt; i ++) {
 			const double t = point -> t [i];
