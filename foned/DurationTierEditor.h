@@ -29,11 +29,13 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 		override;
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable DurationTier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable DurationTier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 		if (our soundArea())
 			FunctionArea_drawLegend (our soundArea().get(),
-				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound",
+				DataGui_defaultForegroundColour (our soundArea().get(), false)
 			);
 	}
 };

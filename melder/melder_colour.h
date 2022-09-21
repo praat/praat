@@ -39,7 +39,7 @@ struct MelderColour {
 
 extern MelderColour Melder_BLACK, Melder_WHITE, Melder_RED, Melder_GREEN, Melder_BLUE,
 	Melder_CYAN, Melder_MAGENTA, Melder_YELLOW, Melder_MAROON, Melder_LIME, Melder_NAVY, Melder_TEAL,
-	Melder_PURPLE, Melder_OLIVE, Melder_PINK, Melder_SILVER, Melder_GREY, Melder_WINDOW_BACKGROUND_COLOUR;
+	Melder_PURPLE, Melder_OLIVE, Melder_PINK, Melder_SILVER, Melder_GREY;
 
 MelderColour MelderColour_fromColourName (conststring32 colourName);
 /*

@@ -214,7 +214,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		Window background.
 	*/
 	my viewAllAsPixelettes ();
-	Graphics_setColour (my graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
+	Graphics_setColour (my graphics.get(), DataGuiColour_WINDOW_BACKGROUND);
 	Graphics_fillRectangle (my graphics.get(), my _functionViewerLeft, my _selectionViewerRight, my BOTTOM_MARGIN, my height_pxlt);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 

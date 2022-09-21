@@ -98,14 +98,13 @@ public:
 	friend void FunctionArea_drawBackground (constFunctionArea me) {
 		FunctionArea_eraseBackground (me);
 		FunctionArea_highlightSelectionBackground (me);
-		if (my editable())
-			FunctionArea_drawEditableFrame (me);
+		FunctionArea_drawFrame (me);
 	}
 	friend void FunctionArea_eraseBackground (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics(), structDataGui::Colour_BACKGROUND());
+		Graphics_setColour (my graphics(), DataGuiColour_AREA_BACKGROUND);
 		Graphics_fillRectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics(), structDataGui::Colour_NONEDITABLE_FOREGROUND());
+		Graphics_setColour (my graphics(), DataGuiColour_NONEDITABLE);
 	}
 	friend void FunctionArea_highlightSelectionBackground (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), my startWindow(), my endWindow(), 0.0, 1.0);
@@ -117,12 +116,17 @@ public:
 			Graphics_highlight (my graphics(), left, right, 0.0, 1.0);
 		}
 	}
-	friend void FunctionArea_drawEditableFrame (constFunctionArea me) {
+	friend void FunctionArea_drawFrame (constFunctionArea me) {
 		Graphics_setWindow (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setLineWidth (my graphics(), 2.0);
-		Graphics_setColour (my graphics(), structDataGui::Colour_EDITABLE_FRAME());
+		if (my editable()) {
+			Graphics_setLineWidth (my graphics(), 2.0);
+			Graphics_setColour (my graphics(), DataGuiColour_EDITABLE_FRAME);
+		} else {
+			Graphics_setLineWidth (my graphics(), 1.0);
+			Graphics_setColour (my graphics(), DataGuiColour_NONEDITABLE_FRAME);
+		}
 		Graphics_rectangle (my graphics(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics(), structDataGui::Colour_NONEDITABLE_FOREGROUND());
+		Graphics_setColour (my graphics(), DataGuiColour_NONEDITABLE);
 		Graphics_setLineWidth (my graphics(), 1.0);
 	}
 	friend void FunctionArea_drawRightMark (FunctionArea me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment);

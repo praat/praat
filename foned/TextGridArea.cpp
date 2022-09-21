@@ -324,7 +324,7 @@ static void do_drawIntervalTier (TextGridArea me, IntervalTier tier, integer iti
 		*/
 		if (startInterval >= my startWindow() && startInterval <= my endWindow() && iinterval > 1) {
 			const bool boundaryIsSelected = ( my selectedTier == itier && startInterval == my startSelection() );
-			Graphics_setColour (my graphics(), boundaryIsSelected ? Melder_RED : DataGui_defaultForegroundColour (me));
+			Graphics_setColour (my graphics(), DataGui_defaultForegroundColour (me, boundaryIsSelected));
 			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics(), startInterval, 0.0, startInterval, 1.0);
 
@@ -345,7 +345,7 @@ static void do_drawIntervalTier (TextGridArea me, IntervalTier tier, integer iti
 		if (interval -> text && endInterval >= my startWindow() && startInterval <= my endWindow()) {
 			const double t1 = std::max (my startWindow(), startInterval);
 			const double t2 = std::min (my endWindow(), endInterval);
-			Graphics_setColour (my graphics(), intervalIsSelected ? Melder_RED : Melder_BLACK);
+			Graphics_setColour (my graphics(), DataGui_defaultForegroundColour (me, intervalIsSelected));
 			Graphics_textRect (my graphics(), t1, t2, 0.0, 1.0, interval -> text.get());
 			Graphics_setColour (my graphics(), Melder_BLACK);
 		}
@@ -386,7 +386,7 @@ static void do_drawTextTier (TextGridArea me, TextTier tier, integer itier) {
 			Graphics_line (my graphics(), my startSelection(), 0.0, my startSelection(), 1.0);
 			Graphics_setLineWidth (my graphics(), 1.0);
 			if (my editable()) {
-				Graphics_setColour (my graphics(), Melder_BLUE);
+				Graphics_setColour (my graphics(), DataGuiColour_EDITABLE);
 				Graphics_circle_mm (my graphics(), my startSelection(), 1.0 - dy, 3.0);
 			}
 		}
@@ -398,7 +398,7 @@ static void do_drawTextTier (TextGridArea me, TextTier tier, integer itier) {
 		const double t = point -> number;
 		if (t >= my startWindow() && t <= my endWindow()) {
 			const bool pointIsSelected = ( itier == my selectedTier && t == my startSelection() );
-			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : DataGui_defaultForegroundColour (me));
+			Graphics_setColour (my graphics(), DataGui_defaultForegroundColour (me, pointIsSelected));
 			Graphics_setLineWidth (my graphics(), platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics(), t, 0.0, t, 0.2);
 			Graphics_line (my graphics(), t, 0.8, t, 1);
@@ -407,8 +407,12 @@ static void do_drawTextTier (TextGridArea me, TextTier tier, integer itier) {
 			/*
 				Wipe out the cursor where the text is going to be.
 			*/
-			Graphics_setColour (my graphics(), Melder_WHITE);
-			Graphics_line (my graphics(), t, 0.2, t, 0.8);
+			if (my startSelection() == t || my endSelection() == t) {
+				Graphics_setLineWidth (my graphics(), 1.0);
+				Graphics_setColour (my graphics(), DataGuiColour_AREA_BACKGROUND);
+				Graphics_line (my graphics(), t, 0.2, t, 0.8);
+				Graphics_setLineWidth (my graphics(), 1.0);
+			}
 
 			/*
 				Show alignment with cursor.
@@ -420,7 +424,7 @@ static void do_drawTextTier (TextGridArea me, TextTier tier, integer itier) {
 				Graphics_line (my graphics(), t, 0.8, t, 1.0);
 				Graphics_setLineWidth (my graphics(), 1.0);
 			}
-			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
+			Graphics_setColour (my graphics(), DataGui_defaultForegroundColour (me, pointIsSelected));
 			if (point -> mark)
 				Graphics_text (my graphics(), t, 0.5, point -> mark.get());
 		}
@@ -451,7 +455,7 @@ void structTextGridArea :: v_drawInside () {
 		/*
 			Show the number and the name of the tier.
 		*/
-		Graphics_setColour (our graphics(), tierIsSelected ? Melder_RED : Melder_BLACK);
+		Graphics_setColour (our graphics(), DataGui_defaultForegroundColour (this, tierIsSelected));
 		Graphics_setFont (our graphics(), oldFont);
 		Graphics_setFontSize (our graphics(), 14);
 		Graphics_setTextAlignment (our graphics(), Graphics_RIGHT, Graphics_HALF);

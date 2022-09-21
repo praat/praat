@@ -51,7 +51,8 @@ Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
 		override;
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable pitch tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable pitch tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -67,7 +68,8 @@ Thing_define (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEdito
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable voicing amplitude tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable voicing amplitude tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -83,7 +85,8 @@ Thing_define (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable flutter tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable flutter tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -99,7 +102,8 @@ Thing_define (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable power1 tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable power1 tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -115,7 +119,8 @@ Thing_define (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable power2 tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable power2 tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -131,7 +136,8 @@ Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable open phase tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable open phase tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -147,7 +153,8 @@ Thing_define (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable collision phase tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable collision phase tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -163,7 +170,8 @@ Thing_define (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable double pulsing tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable double pulsing tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -179,7 +187,8 @@ Thing_define (KlattGrid_SpectralTiltTierEditor, KlattGrid_IntensityTierEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable spectral tilt tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable spectral tilt tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -195,7 +204,8 @@ Thing_define (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEd
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable aspiration amplitude tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable aspiration amplitude tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -211,7 +221,8 @@ Thing_define (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierE
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable breathiness amplitude tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable breathiness amplitude tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -230,7 +241,8 @@ Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable formant amplitude tier", DataGui_defaultForegroundColour (our realTierArea().get())   // BUG: make more specific
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable formant amplitude tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)   // BUG: make more specific
 		);
 	}
 };
@@ -247,7 +259,8 @@ Thing_define (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable frication bypass tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable frication bypass tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -263,7 +276,8 @@ Thing_define (KlattGrid_FricationAmplitudeTierEditor, KlattGrid_IntensityTierEdi
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our realTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable frication amplitude tier", DataGui_defaultForegroundColour (our realTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable frication amplitude tier",
+			DataGui_defaultForegroundColour (our realTierArea().get(), false)
 		);
 	}
 };
@@ -288,7 +302,8 @@ Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
 		override;
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our formantGridArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable formant grid", DataGui_defaultForegroundColour (our formantGridArea().get())   // BUG: should split up
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable formant grid",
+			DataGui_defaultForegroundColour (our formantGridArea().get(), false)   // BUG: should split up
 		);
 	}
 };
