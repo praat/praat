@@ -41,15 +41,15 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 #endif
 
 #if motif
-	static void NativeMenuItem_setText (GuiObject me) {
+	void _GuiWinMenuItem_setText (GuiObject me) {
 		int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
 		static MelderString title;
 		if (acc == 0) {
 			MelderString_copy (& title, _GuiWin_expandAmpersands (my name.get()));
 		} else {
-			static const conststring32 keyStrings [256] = {
-				0, U"<-", U"->", U"Up", U"Down", U"PAUSE", U"Del", U"Ins", U"Backspace", U"Tab", U"LineFeed", U"Home", U"End", U"Enter", U"PageUp", U"PageDown",
-				U"Esc", U"F1", U"F2", U"F3", U"F4", U"F5", U"F6", U"F7", U"F8", U"F9", U"F10", U"F11", U"F12", 0, 0, 0,
+			static const conststring32 keyStrings [256] = { 0, 0, 0, 0,
+				U"<-", U"->", U"Up", U"Down", U"PAUSE", U"Del", U"Ins", U"Backspace", U"Tab", U"LineFeed", U"Home", U"End", U"Enter", U"PageUp", U"PageDown",
+				U"Esc", U"F1", U"F2", U"F3", U"F4", U"F5", U"F6", U"F7", U"F8", U"F9", U"F10", U"F11", U"F12",
 				U"Space", U"!", U"\"", U"#", U"$", U"%", U"&", U"\'", U"(", U")", U"*", U"+", U",", U"-", U".", U"/",
 				U"0", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8", U"9", U":", U";", U"<", U"=", U">", U"?",
 				U"@", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I", U"J", U"K", U"L", U"M", U"N", U"O",
@@ -63,12 +63,14 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 				U";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"-", U"`", U"=", U"\'", 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+			};
 			const conststring32 keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
 			MelderString_copy (& title, _GuiWin_expandAmpersands (my name.get()), U"\t",
 				modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : nullptr,
 				modifiers & _motif_OPTION_MASK ? U"Alt-" : nullptr,
-				modifiers & _motif_SHIFT_MASK ? U"Shift-" : nullptr, keyString);
+				modifiers & _motif_SHIFT_MASK ? U"Shift-" : nullptr, keyString
+			);
 		}
 		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, Melder_peek32toW (title.string));
 	}
@@ -155,6 +157,14 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 	bool toggle = flags & (GuiMenu_CHECKBUTTON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON) ? true : false;
 	uint32 accelerator = flags & 127;
 	Melder_assert (title);
+	static MelderString neatTitle;
+	MelderString_copy (& neatTitle, title);
+	if (neatTitle. string [neatTitle.length - 1] == U':') {
+		neatTitle. string [neatTitle.length - 1] = U' ';
+		MelderString_appendCharacter (& neatTitle, 0x25BC);
+	} else if (neatTitle. string [neatTitle.length - 1] == U'-') {
+		neatTitle. string [neatTitle.length - 1] = 0x25B6;
+	}
 	#if gtk
 		static GSList *group = nullptr;
 		if (toggle) {
@@ -167,23 +177,23 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 				my d_widget = gtk_check_menu_item_new_with_label (Melder_peek32to8 (title));
 			}
 		} else {
-			my d_widget = gtk_menu_item_new_with_label (Melder_peek32to8 (title));
+			my d_widget = gtk_menu_item_new_with_label (Melder_peek32to8 (neatTitle. string));
 		}
 		Melder_assert (menu -> d_widget);
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu -> d_widget), GTK_WIDGET (my d_widget));
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif motif
-		my d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (title),
-			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, nullptr);
+		my d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (neatTitle. string),
+				toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, nullptr);
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		(void) toggle;   // no difference between toggling and normal menu items on Cocoa
-		NSString *string = (NSString *) Melder_peek32toCfstring (title);
+		NSString *string = (NSString *) Melder_peek32toCfstring (neatTitle. string);
 		GuiCocoaMenuItem *menuItem = [[GuiCocoaMenuItem alloc]
 			initWithTitle: string
 			action: nullptr
 			keyEquivalent: @""];
-		if (flags & GuiMenu_UNDERLINED) {
+		/*if (flags & GuiMenu_UNDERLINED) {
 			static NSMutableDictionary *underliningAttributes;
 			if (! underliningAttributes) {
 				underliningAttributes = [[NSMutableDictionary alloc] init];
@@ -199,7 +209,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 			];
 			[menuItem setAttributedTitle: underlinedString];
 			[underlinedString release];
-		}
+		}*/
 		//Melder_assert ([string retainCount] == 2 || [string retainCount] == -1);   // the menu item retains the string (assertion can fail on 10.6)
 		trace (U"string retain count = ", [string retainCount]);
 		my d_widget = menuItem;
@@ -244,11 +254,11 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 			flags |= GuiMenu_COMMAND;
 		
 		#if gtk
-			static const guint acceleratorKeys [] = { 0,
+			static const guint acceleratorKeys [32] = { 0, 0, 0, 0,
 				GDK_KEY_Left, GDK_KEY_Right, GDK_KEY_Up, GDK_KEY_Down, GDK_KEY_Pause, GDK_KEY_Delete, GDK_KEY_Insert, GDK_KEY_BackSpace,
 				GDK_KEY_Tab, GDK_KEY_Return, GDK_KEY_Home, GDK_KEY_End, GDK_KEY_Return, GDK_KEY_Page_Up, GDK_KEY_Page_Down, GDK_KEY_Escape,
 				GDK_KEY_F1, GDK_KEY_F2, GDK_KEY_F3, GDK_KEY_F4, GDK_KEY_F5, GDK_KEY_F6, GDK_KEY_F7, GDK_KEY_F8, GDK_KEY_F9, GDK_KEY_F10, GDK_KEY_F11, GDK_KEY_F12,
-				0, 0, 0 };
+			};
 			GdkModifierType modifiers = (GdkModifierType) 0;
 			if (flags & GuiMenu_COMMAND) modifiers = (GdkModifierType) (modifiers | GDK_CONTROL_MASK);
 			if (flags & GuiMenu_SHIFT)   modifiers = (GdkModifierType) (modifiers | GDK_SHIFT_MASK);
@@ -276,7 +286,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 			}
 			my d_widget -> motiff.pushButton.acceleratorChar = accelerator;
 			my d_widget -> motiff.pushButton.acceleratorModifiers = modifiers;
-			NativeMenuItem_setText (my d_widget);
+			_GuiWinMenuItem_setText (my d_widget);
 		#elif cocoa
 			accelerator = Melder_toLowerCase (accelerator);   // otherwise, a Shift key is introduced in the mask
 			NSUInteger mask = 0;
@@ -285,12 +295,12 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 			if (flags & GuiMenu_OPTION)  mask |= NSAlternateKeyMask;
 			[menuItem setKeyEquivalentModifierMask: mask];
 			if (accelerator > 0 && accelerator < 32) {
-				static unichar acceleratorKeys [] = { 0,
+				static unichar acceleratorKeys [32] = { 0, 0, 0, 0,
 					NSLeftArrowFunctionKey, NSRightArrowFunctionKey, NSUpArrowFunctionKey, NSDownArrowFunctionKey, NSPauseFunctionKey, NSDeleteFunctionKey, NSInsertFunctionKey, NSBackspaceCharacter,
 					NSTabCharacter, NSNewlineCharacter, NSHomeFunctionKey, NSEndFunctionKey, NSCarriageReturnCharacter, NSPageUpFunctionKey, NSPageDownFunctionKey, 27,
 					NSF1FunctionKey, NSF2FunctionKey, NSF3FunctionKey, NSF4FunctionKey, NSF5FunctionKey, NSF6FunctionKey,
 					NSF7FunctionKey, NSF8FunctionKey, NSF9FunctionKey, NSF10FunctionKey, NSF11FunctionKey, NSF12FunctionKey,
-					0, 0, 0 };
+				};
 				[menuItem   setKeyEquivalent: [NSString   stringWithCharacters: & acceleratorKeys [accelerator]   length: 1]];
 				if (accelerator == GuiMenu_TAB) {
 					GuiWindow window = (GuiWindow) my d_shell;

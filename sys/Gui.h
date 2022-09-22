@@ -703,34 +703,37 @@ Thing_define (GuiMenuItem, GuiThing) {
 #define GuiMenu_OPTION  (1 << 24)
 #define GuiMenu_SHIFT  (1 << 25)
 #define GuiMenu_COMMAND  (1 << 26)
-#define GuiMenu_LEFT_ARROW  1   /* overlaps with the short form of GuiMenu_DEPTH_1 */
-#define GuiMenu_RIGHT_ARROW  2   /* overlaps with the short form of GuiMenu_DEPTH_2 */
-#define GuiMenu_UP_ARROW  3   /* overlaps with the short form of GuiMenu_DEPTH_3 */
-#define GuiMenu_DOWN_ARROW  4   /* overlaps with the short form of GuiMenu_DEPTH_4 */
-#define GuiMenu_PAUSE  5   /* overlaps with the short form of GuiMenu_DEPTH_5 */
-#define GuiMenu_DELETE  6   /* overlaps with the short form of GuiMenu_DEPTH_6 */
-#define GuiMenu_INSERT  7   /* overlaps with the short form of GuiMenu_DEPTH_7 */
-#define GuiMenu_BACKSPACE  8
-#define GuiMenu_TAB  9
-#define GuiMenu_LINEFEED  10
-#define GuiMenu_HOME  11
-#define GuiMenu_END  12
-#define GuiMenu_ENTER  13
-#define GuiMenu_PAGE_UP  14
-#define GuiMenu_PAGE_DOWN  15
-#define GuiMenu_ESCAPE  16
-#define GuiMenu_F1  17
-#define GuiMenu_F2  18
-#define GuiMenu_F3  19
-#define GuiMenu_F4  20
-#define GuiMenu_F5  21
-#define GuiMenu_F6  22
-#define GuiMenu_F7  23
-#define GuiMenu_F8  24
-#define GuiMenu_F9  25
-#define GuiMenu_F10  26
-#define GuiMenu_F11  27
-#define GuiMenu_F12  28
+// 1 is the short form of GuiMenu_DEPTH_1
+// 2 is the short form of GuiMenu_DEPTH_2
+// 3 is the short form of GuiMenu_DEPTH_3
+#define GuiMenu_LEFT_ARROW  4
+#define GuiMenu_RIGHT_ARROW  5
+#define GuiMenu_UP_ARROW  6
+#define GuiMenu_DOWN_ARROW  7
+#define GuiMenu_PAUSE  8
+#define GuiMenu_DELETE  9
+#define GuiMenu_INSERT  10
+#define GuiMenu_BACKSPACE  11
+#define GuiMenu_TAB  12
+#define GuiMenu_LINEFEED  13
+#define GuiMenu_HOME  14
+#define GuiMenu_END  15
+#define GuiMenu_ENTER  16
+#define GuiMenu_PAGE_UP  17
+#define GuiMenu_PAGE_DOWN  18
+#define GuiMenu_ESCAPE  19
+#define GuiMenu_F1  20
+#define GuiMenu_F2  21
+#define GuiMenu_F3  22
+#define GuiMenu_F4  23
+#define GuiMenu_F5  24
+#define GuiMenu_F6  25
+#define GuiMenu_F7  26
+#define GuiMenu_F8  27
+#define GuiMenu_F9  28
+#define GuiMenu_F10  29
+#define GuiMenu_F11  30
+#define GuiMenu_F12  31
 // or any ASCII character (preferably a letter or digit) between 32 and 126
 
 /* Button layout and state understood by GuiMenuItem: */

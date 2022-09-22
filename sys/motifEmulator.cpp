@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2021 Paul Boersma
+ * Copyright (C) 1993-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,9 +256,6 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, conststring3
 			my height = Gui_LABEL_HEIGHT;
 		} break; case xmCascadeButtonWidgetClass: {
 			if (my parent -> rowColumnType == XmMENU_BAR) {
-				char32 *hyphen = str32str (my name.get(), U" -");
-				if (hyphen)
-					hyphen [2] = U'\0';   // chop any trailing spaces
 				my x = 2;
 				my y = 2;
 				my width = NativeButton_preferredWidth (me);
@@ -469,40 +466,6 @@ static void NativeMenuItem_setSensitive (GuiObject me) {
 		return;
 	EnableMenuItem (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | ( my insensitive ? MF_GRAYED : MF_ENABLED ));
 	//DrawMenuBar (my shell -> window);
-}
-
-static void NativeMenuItem_setText (GuiObject me) {
-	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-	static MelderString title;
-	if (acc == 0) {
-		MelderString_copy (& title, _GuiWin_expandAmpersands (my name.get()));
-	} else {
-		static const conststring32 keyStrings [256] = {
-			0, U"<-", U"->", U"Up", U"Down", U"PAUSE", U"Del", U"Ins", U"Backspace", U"Tab", U"LineFeed", U"Home", U"End", U"Enter", U"PageUp", U"PageDown",
-			U"Esc", U"F1", U"F2", U"F3", U"F4", U"F5", U"F6", U"F7", U"F8", U"F9", U"F10", U"F11", U"F12", 0, 0, 0,
-			U"Space", U"!", U"\"", U"#", U"$", U"%", U"&", U"\'", U"(", U")", U"*", U"+", U",", U"-", U".", U"/",
-			U"0", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8", U"9", U":", U";", U"<", U"=", U">", U"?",
-			U"@", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I", U"J", U"K", U"L", U"M", U"N", U"O",
-			U"P", U"Q", U"R", U"S", U"T", U"U", U"V", U"W", U"X", U"Y", U"Z", U"[", U"\\", U"]", U"^", U"_",
-			U"`", U"a", U"b", U"c", U"d", U"e", U"f", U"g", U"h", U"i", U"j", U"k", U"l", U"m", U"n", U"o",
-			U"p", U"q", U"r", U"s", U"t", U"u", U"v", U"w", U"x", U"y", U"z", U"{", U"|", U"}", U"~", U"Del",
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"[", U"]", U",", U"?", U".", U"\\",
-			U";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"-", U"`", U"=", U"\'", 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-		};
-		const conststring32 keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
-		MelderString_copy (& title, _GuiWin_expandAmpersands (my name.get()), U"\t",
-			modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : NULL,
-			modifiers & _motif_OPTION_MASK ? U"Alt-" : NULL,
-			modifiers & _motif_SHIFT_MASK ? U"Shift-" : NULL, keyString
-		);
-	}
-	ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, Melder_peek32toW (title.string));
 }
 
 /********** **********/
@@ -951,7 +914,7 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 			text = va_arg (arg, char *);
 			my name = Melder_8to32 (text);   // BUG throwable
 			if (my inMenu) {
-				NativeMenuItem_setText (me);
+				_GuiWinMenuItem_setText (me);
 			} else if (MEMBER (me, CascadeButton) && my motiff.cascadeButton.inBar) {
 				/* BUG: menu title change not implemented */
 			} else {

@@ -161,6 +161,9 @@ class GuiControlBlockValueChangedCallbacks {
 	void _GuiWinList_destroy (GuiObject widget);
 	void _GuiWinList_handleClick (GuiObject widget);
 
+	/********** GuiMenuItem.cpp **********/
+	void _GuiWinMenuItem_setText (GuiObject widget);
+
 	/********** GuiRadioButton.cpp **********/
 	void _GuiWinRadioButton_destroy (GuiObject widget);
 	void _GuiWinRadioButton_handleClick (GuiObject widget);

@@ -332,7 +332,7 @@ void praat_uvafon_Artsynth_init () {
 			nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial",
 				nullptr, 1, HELP_ArticulatorySynthesisTutorial);
-		praat_addMenuCommand (U"Objects", U"New", U"-- new articulatory synthesis -- ",
+		praat_addMenuCommand (U"Objects", U"New", U"-- new articulatory synthesis --",
 				nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Articulation...",
 				nullptr, 1, NEW1_Art_create);
