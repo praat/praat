@@ -1202,7 +1202,7 @@ void praat_KlattGrid_init () {
 			MODIFY_KlattGrid_removeBandwidthPoints);
 	praat_addAction1 (classKlattGrid, 0, U"Remove amplitude points between...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			MODIFY_KlattGrid_removeAmplitudePoints);
-	praat_addAction1 (classKlattGrid, 0, U"Modify coupling - ", nullptr, 0, nullptr);
+	praat_addAction1 (classKlattGrid, 0, U"Modify coupling -", nullptr, 0, nullptr);
 	KlattGrid_MODIFY_ACTIONS_FB (Delta, delta formant)
 	praat_addAction1 (classKlattGrid, 0, U"-- delta modify separator --", nullptr, 1, nullptr);
 	KlattGrid_MODIFY_ACTIONS_FBA (Tracheal, tracheal formant)

@@ -1553,38 +1553,41 @@ void structSoundAnalysisArea :: v_createMenuItems_formant (EditorMenu menu) {
 		GuiMenu_CHECKBUTTON | (instancePref_formant_show() ? GuiMenu_TOGGLE_ON : 0),
 		menu_cb_showFormants, this
 	);
-	FunctionAreaMenu_addCommand (menu, U"Formant settings...", 0,
-			menu_cb_formantSettings, this);
-	FunctionAreaMenu_addCommand (menu, U"Advanced formant settings...", 0,
-			menu_cb_advancedFormantSettings, this);
+	FunctionAreaMenu_addCommand (menu, U"Formant settings...",
+			0, menu_cb_formantSettings, this);
+	FunctionAreaMenu_addCommand (menu, U"Advanced formant settings...",
+			0, menu_cb_advancedFormantSettings, this);
+
 	FunctionAreaMenu_addCommand (menu, U"- Query formants:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Formant listing", 0,
+	FunctionAreaMenu_addCommand (menu, U"Formant listing", 1,
 			INFO_DATA__formantListing, this);
-	FunctionAreaMenu_addCommand (menu, U"Get first formant", GuiMenu_F1,
+	FunctionAreaMenu_addCommand (menu, U"Get first formant", GuiMenu_F1 | GuiMenu_DEPTH_1,
 			QUERY_DATA_FOR_REAL__getFirstFormant, this);
-	FunctionAreaMenu_addCommand (menu, U"Get first bandwidth", 0,
+	FunctionAreaMenu_addCommand (menu, U"Get first bandwidth", 1,
 			QUERY_DATA_FOR_REAL__getFirstBandwidth, this);
-	FunctionAreaMenu_addCommand (menu, U"Get second formant", GuiMenu_F2,
+	FunctionAreaMenu_addCommand (menu, U"Get second formant", GuiMenu_F2 | GuiMenu_DEPTH_1,
 			QUERY_DATA_FOR_REAL__getSecondFormant, this);
-	FunctionAreaMenu_addCommand (menu, U"Get second bandwidth", 0,
+	FunctionAreaMenu_addCommand (menu, U"Get second bandwidth", 1,
 			QUERY_DATA_FOR_REAL__getSecondBandwidth, this);
-	FunctionAreaMenu_addCommand (menu, U"Get third formant", GuiMenu_F3,
+	FunctionAreaMenu_addCommand (menu, U"Get third formant", GuiMenu_F3 | GuiMenu_DEPTH_1,
 			QUERY_DATA_FOR_REAL__getThirdFormant, this);
-	FunctionAreaMenu_addCommand (menu, U"Get third bandwidth", 0,
+	FunctionAreaMenu_addCommand (menu, U"Get third bandwidth", 1,
 			QUERY_DATA_FOR_REAL__getThirdBandwidth, this);
-	FunctionAreaMenu_addCommand (menu, U"Get fourth formant", GuiMenu_F4,
+	FunctionAreaMenu_addCommand (menu, U"Get fourth formant", GuiMenu_F4 | GuiMenu_DEPTH_1,
 			QUERY_DATA_FOR_REAL__getFourthFormant, this);
-	FunctionAreaMenu_addCommand (menu, U"Get fourth bandwidth", 0,
+	FunctionAreaMenu_addCommand (menu, U"Get fourth bandwidth", 1,
 			QUERY_DATA_FOR_REAL__getFourthBandwidth, this);
-	FunctionAreaMenu_addCommand (menu, U"Get formant...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Get formant...", 1,
 			QUERY_DATA_FOR_REAL__getFormant, this);
-	FunctionAreaMenu_addCommand (menu, U"Get bandwidth...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Get bandwidth...", 1,
 			QUERY_DATA_FOR_REAL__getBandwidth, this);
+
 	FunctionAreaMenu_addCommand (menu, U"- Draw formants to picture window:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Draw visible formant contour...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Draw visible formant contour...", 1,
 			menu_cb_drawVisibleFormantContour, this);
+
 	FunctionAreaMenu_addCommand (menu, U"- Extract formants to objects window:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Extract visible formant contour", 0,
+	FunctionAreaMenu_addCommand (menu, U"Extract visible formant contour", 1,
 			CONVERT_DATA_TO_ONE__ExtractVisibleFormantContour, this);
 }
 
@@ -1612,20 +1615,20 @@ void structSoundAnalysisArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"Advanced spectrogram settings...", 0,
 				menu_cb_advancedSpectrogramSettings, this);
 		FunctionAreaMenu_addCommand (menu, U"- Query spectrogram:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Get frequency at frequency cursor", 0,
+		FunctionAreaMenu_addCommand (menu, U"Get frequency at frequency cursor", 1,
 				QUERY_EDITOR_FOR_REAL__getFrequency, this);
-		FunctionAreaMenu_addCommand (menu, U"Get spectral power at cursor cross", GuiMenu_F7,
+		FunctionAreaMenu_addCommand (menu, U"Get spectral power at cursor cross", GuiMenu_F7 | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getSpectralPowerAtCursorCross, this);
 		FunctionAreaMenu_addCommand (menu, U"- Select frequency:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Move frequency cursor to...", 0,
+		FunctionAreaMenu_addCommand (menu, U"Move frequency cursor to...", 1,
 				menu_cb_moveFrequencyCursorTo, this);
 		FunctionAreaMenu_addCommand (menu, U"- Draw spectogram to picture window:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Paint visible spectrogram...", 0,
+		FunctionAreaMenu_addCommand (menu, U"Paint visible spectrogram...", 1,
 				menu_cb_paintVisibleSpectrogram, this);
 		FunctionAreaMenu_addCommand (menu, U"- Extract to objects window:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Extract visible spectrogram", 0,
+		FunctionAreaMenu_addCommand (menu, U"Extract visible spectrogram", 1,
 				CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram, this);
-		FunctionAreaMenu_addCommand (menu, U"View spectral slice", 'L',
+		FunctionAreaMenu_addCommand (menu, U"View spectral slice", 'L' | GuiMenu_DEPTH_1,
 				CONVERT_DATA_TO_ONE__ViewSpectralSlice, this);
 	}
 
@@ -1640,24 +1643,24 @@ void structSoundAnalysisArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings...", 0,
 				menu_cb_advancedPitchSettings, this);
 		FunctionAreaMenu_addCommand (menu, U"- Query pitch:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Pitch listing", 0,
+		FunctionAreaMenu_addCommand (menu, U"Pitch listing", 1,
 				INFO_DATA__pitchListing, this);
-		FunctionAreaMenu_addCommand (menu, U"Get pitch", GuiMenu_F5,
+		FunctionAreaMenu_addCommand (menu, U"Get pitch", GuiMenu_F5 | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getPitch, this);
-		FunctionAreaMenu_addCommand (menu, U"Get minimum pitch", GuiMenu_F5 | GuiMenu_COMMAND,
+		FunctionAreaMenu_addCommand (menu, U"Get minimum pitch", GuiMenu_F5 | GuiMenu_COMMAND | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getMinimumPitch, this);
-		FunctionAreaMenu_addCommand (menu, U"Get maximum pitch", GuiMenu_F5 | GuiMenu_SHIFT,
+		FunctionAreaMenu_addCommand (menu, U"Get maximum pitch", GuiMenu_F5 | GuiMenu_SHIFT | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getMaximumPitch, this);
 		FunctionAreaMenu_addCommand (menu, U"- Select by pitch:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Move cursor to minimum pitch", GuiMenu_SHIFT | 'L',
+		FunctionAreaMenu_addCommand (menu, U"Move cursor to minimum pitch", GuiMenu_SHIFT | 'L' | GuiMenu_DEPTH_1,
 				menu_cb_moveCursorToMinimumPitch, this);
-		FunctionAreaMenu_addCommand (menu, U"Move cursor to maximum pitch", GuiMenu_SHIFT | 'H',
+		FunctionAreaMenu_addCommand (menu, U"Move cursor to maximum pitch", GuiMenu_SHIFT | 'H' | GuiMenu_DEPTH_1,
 				menu_cb_moveCursorToMaximumPitch, this);
 		FunctionAreaMenu_addCommand (menu, U"- Draw pitch to picture window:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Draw visible pitch contour...", 0,
+		FunctionAreaMenu_addCommand (menu, U"Draw visible pitch contour...", 1,
 				menu_cb_drawVisiblePitchContour, this);
 		FunctionAreaMenu_addCommand (menu, U"- Extract pitch to objects window:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Extract visible pitch contour", 0,
+		FunctionAreaMenu_addCommand (menu, U"Extract visible pitch contour", 1,
 				CONVERT_DATA_TO_ONE__ExtractVisiblePitchContour, this);
 	}
 
@@ -1670,19 +1673,19 @@ void structSoundAnalysisArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"Intensity settings...", 0,
 				menu_cb_intensitySettings, this);
 		FunctionAreaMenu_addCommand (menu, U"- Query intensity:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Intensity listing", 0,
+		FunctionAreaMenu_addCommand (menu, U"Intensity listing", 1,
 				INFO_DATA__intensityListing, this);
-		FunctionAreaMenu_addCommand (menu, U"Get intensity", GuiMenu_F8,
+		FunctionAreaMenu_addCommand (menu, U"Get intensity", GuiMenu_F8 | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getIntensity, this);
-		FunctionAreaMenu_addCommand (menu, U"Get minimum intensity", GuiMenu_F8 | GuiMenu_COMMAND,
+		FunctionAreaMenu_addCommand (menu, U"Get minimum intensity", GuiMenu_F8 | GuiMenu_COMMAND | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getMinimumIntensity, this);
-		FunctionAreaMenu_addCommand (menu, U"Get maximum intensity", GuiMenu_F8 | GuiMenu_SHIFT,
+		FunctionAreaMenu_addCommand (menu, U"Get maximum intensity", GuiMenu_F8 | GuiMenu_SHIFT | GuiMenu_DEPTH_1,
 				QUERY_DATA_FOR_REAL__getMaximumIntensity, this);
 		FunctionAreaMenu_addCommand (menu, U"- Draw intensity to picture window:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Draw visible intensity contour...", 0,
+		FunctionAreaMenu_addCommand (menu, U"Draw visible intensity contour...", 1,
 				menu_cb_drawVisibleIntensityContour, this);
 		FunctionAreaMenu_addCommand (menu, U"- Extract intensity to objects window:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Extract visible intensity contour", 0,
+		FunctionAreaMenu_addCommand (menu, U"Extract visible intensity contour", 1,
 				CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour, this);
 	}
 	if (our v_hasFormants ()) {
@@ -1699,9 +1702,9 @@ void structSoundAnalysisArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"Advanced pulses settings...", 0,
 				menu_cb_advancedPulsesSettings, this);
 		FunctionAreaMenu_addCommand (menu, U"- Query pulses:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Voice report", 0,
+		FunctionAreaMenu_addCommand (menu, U"Voice report", 1,
 				INFO_DATA__voiceReport, this);
-		FunctionAreaMenu_addCommand (menu, U"Pulse listing", 0,
+		FunctionAreaMenu_addCommand (menu, U"Pulse listing", 1,
 				INFO_DATA__pulseListing, this);
 		/*
 		FunctionAreaMenu_addCommand (menu, U"Get jitter (local)", 0, cb_getJitter_local, this);
@@ -1717,10 +1720,10 @@ void structSoundAnalysisArea :: v_createMenus () {
 		FunctionAreaMenu_addCommand (menu, U"Get shimmer (dda)", 0, cb_getShimmer_dda, this);
 		*/
 		FunctionAreaMenu_addCommand (menu, U"- Draw pulses to picture window:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Draw visible pulses...", 0,
+		FunctionAreaMenu_addCommand (menu, U"Draw visible pulses...", 1,
 				menu_cb_drawVisiblePulses, this);
 		FunctionAreaMenu_addCommand (menu, U"- Extract pulses to objects window:", 0, nullptr, this);
-		FunctionAreaMenu_addCommand (menu, U"Extract visible pulses", 0,
+		FunctionAreaMenu_addCommand (menu, U"Extract visible pulses", 1,
 				CONVERT_DATA_TO_ONE__ExtractVisiblePulses, this);
 	}
 }
