@@ -983,13 +983,13 @@ void structTextGridArea :: v_createMenuItems_edit (EditorMenu menu) {
 		if (our editable()) {
 			FunctionAreaMenu_addCommand (menu, U"-- cut copy paste --", 0, nullptr, this);
 			FunctionAreaMenu_addCommand (menu, U"Cut text", 'X', menu_cb_Cut, this);
-			FunctionAreaMenu_addCommand (menu, U"Cut", Editor_HIDDEN, menu_cb_Cut, this);
+			FunctionAreaMenu_addCommand (menu, U"Cut", GuiMenu_HIDDEN, menu_cb_Cut, this);
 			FunctionAreaMenu_addCommand (menu, U"Copy text", 'C', menu_cb_Copy, this);
-			FunctionAreaMenu_addCommand (menu, U"Copy", Editor_HIDDEN, menu_cb_Copy, this);
+			FunctionAreaMenu_addCommand (menu, U"Copy", GuiMenu_HIDDEN, menu_cb_Copy, this);
 			FunctionAreaMenu_addCommand (menu, U"Paste text", 'V', menu_cb_Paste, this);
-			FunctionAreaMenu_addCommand (menu, U"Paste", Editor_HIDDEN, menu_cb_Paste, this);
+			FunctionAreaMenu_addCommand (menu, U"Paste", GuiMenu_HIDDEN, menu_cb_Paste, this);
 			FunctionAreaMenu_addCommand (menu, U"Erase text", 0, menu_cb_Erase, this);
-			FunctionAreaMenu_addCommand (menu, U"Erase", Editor_HIDDEN, menu_cb_Erase, this);
+			FunctionAreaMenu_addCommand (menu, U"Erase", GuiMenu_HIDDEN, menu_cb_Erase, this);
 		}
 	#endif
 	FunctionAreaMenu_addCommand (menu, U"-- search --", 0, nullptr, this);

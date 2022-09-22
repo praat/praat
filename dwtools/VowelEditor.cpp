@@ -1203,7 +1203,7 @@ void structVowelEditor :: v_createMenus () {
 
 	Editor_addCommand (this, U"Edit", U"-- f0 --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Set f0...", 0, menu_cb_setF0);
-	Editor_addCommand (this, U"Edit", U"Set F3 & F4...", Editor_HIDDEN, menu_cb_setF3F4);
+	Editor_addCommand (this, U"Edit", U"Set F3 & F4...", GuiMenu_HIDDEN, menu_cb_setF3F4);
 	Editor_addCommand (this, U"Edit", U"-- trajectory commands --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Reverse trajectory", 0, menu_cb_reverseTrajectory);
 	Editor_addCommand (this, U"Edit", U"Modify trajectory duration...", 0, menu_cb_modifyTrajectoryDuration);
@@ -1217,8 +1217,8 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addMenu (this, U"View", 0);
 	Editor_addCommand (this, U"View", U"F1 & F2 range...", 0, menu_cb_ranges_f1f2);
 	Editor_addCommand (this, U"View", U"--show vowel marks--", 0, nullptr);
-	Editor_addCommand (this, U"View", U"Show one vowel mark...", Editor_HIDDEN, menu_cb_showOneVowelMark);
-	Editor_addCommand (this, U"View", U"Vowel marks...", Editor_HIDDEN, menu_cb_vowelMarks);
+	Editor_addCommand (this, U"View", U"Show one vowel mark...", GuiMenu_HIDDEN, menu_cb_showOneVowelMark);
+	Editor_addCommand (this, U"View", U"Vowel marks...", GuiMenu_HIDDEN, menu_cb_vowelMarks);
 	Editor_addCommand (this, U"View", U"Vowel marks from fixed set...", 0, menu_cb_vowelMarks);
 	Editor_addCommand (this, U"View", U"Show vowel marks from Table file...", 0, menu_cb_vowelMarksFromTableFile);
 	Editor_addCommand (this, U"View", U"--show trajectory settings--", 0, nullptr);
