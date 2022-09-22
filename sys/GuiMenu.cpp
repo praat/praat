@@ -570,7 +570,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		form -> v_positionInForm (my d_xmMenuBar, left, right, top, bottom, form);
 		my d_cascadeButton -> d_widget = XmCreateCascadeButton (my d_xmMenuBar, Melder_peek32to8 (neatTitle. string), nullptr, 0);
 		form -> v_positionInForm (my d_cascadeButton -> d_widget, 0, right - left - 4, 0, bottom - top, form);
-		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
+		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, Melder_peek32to8 (neatTitle. string), nullptr, 0);
 		if (flags & GuiMenu_INSENSITIVE)
 			XtSetSensitive (my d_cascadeButton -> d_widget, False);
 		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, nullptr);

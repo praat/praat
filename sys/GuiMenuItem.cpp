@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2018,2020,2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2018,2020,2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,8 +162,6 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 	if (neatTitle. string [neatTitle.length - 1] == U':') {
 		neatTitle. string [neatTitle.length - 1] = U' ';
 		MelderString_appendCharacter (& neatTitle, 0x25BC);
-	} else if (neatTitle. string [neatTitle.length - 1] == U'-') {
-		neatTitle. string [neatTitle.length - 1] = 0x25B6;
 	}
 	#if gtk
 		static GSList *group = nullptr;
