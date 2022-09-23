@@ -194,10 +194,10 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu menu = Editor_addMenu (this, U"Candidates", 0);
 	EditorMenu_addCommand (menu, U"Candidate modelling settings...", 0, menu_cb_candidate_modellingSettings);
 	EditorMenu_addCommand (menu, U"Advanced candidate drawing settings...", 0, menu_cb_AdvancedCandidateDrawingSettings);
-	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
+	EditorMenu_addCommand (menu, U"-- drawing --", 0, 0);
 	EditorMenu_addCommand (menu, U"Find path...", 0, menu_cb_candidates_FindPath);
 	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
-	EditorMenu_addCommand (menu, U" -- candidate queries -- ", 0, 0);
+	EditorMenu_addCommand (menu, U"-- candidate queries --", 0, 0);
 	EditorMenu_addCommand (menu, U"Stress of fits listing", 0, INFO_DATA__stressOfFitsListing);
 }
 

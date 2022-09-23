@@ -51,11 +51,13 @@ Thing_define (PitchTierEditor, FunctionEditor) {
 	}
 	void v_drawLegends () override {
 		FunctionArea_drawLegend (our pitchTierArea().get(),
-			FunctionArea_legend_LINES_SPECKLES U" ##modifiable PitchTier", DataGui_defaultForegroundColour (our pitchTierArea().get())
+			FunctionArea_legend_LINES_SPECKLES U" ##modifiable PitchTier",
+			DataGui_defaultForegroundColour (our pitchTierArea().get(), false)
 		);
 		if (our soundArea())
 			FunctionArea_drawLegend (our soundArea().get(),
-				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound", DataGui_defaultForegroundColour (our soundArea().get())
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound",
+				DataGui_defaultForegroundColour (our soundArea().get(), false)
 			);
 	}
 };

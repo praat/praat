@@ -89,7 +89,7 @@ void structRealTierArea :: v_drawInside () {
 	Graphics_setTextAlignment (our graphics(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (our graphics(), our startWindow(), our ycursor,
 			Melder_float (Melder_half (our ycursor)), our v_rightTickUnits());
-	Graphics_setColour (our graphics(), Melder_BLUE);
+	Graphics_setColour (our graphics(), DataGuiColour_EDITABLE);
 	Graphics_setTextAlignment (our graphics(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (our graphics(), our endWindow(), our ymax,
 			Melder_float (Melder_half (our ymax)), our v_rightTickUnits());
@@ -111,7 +111,6 @@ void structRealTierArea :: v_drawInside () {
 		const double yright = RealTier_getValueAtTime (our realTier(), our endWindow());
 		Graphics_line (our graphics(), our startWindow(), yleft, our endWindow(), yright);
 	} else {
-		Graphics_setColour (our graphics(), structDataGui::Colour_EDITABLE_LINES());
 		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
 			RealPoint point = our realTier() -> points.at [ipoint];
 			const double t = point -> number, y = point -> value;
@@ -132,7 +131,7 @@ void structRealTierArea :: v_drawInside () {
 			RealPoint point = our realTier() -> points.at [ipoint];
 			const double t = point -> number, y = point -> value;
 			const bool pointIsSelected = ( ipoint >= ifirstSelected && ipoint <= ilastSelected );
-			Graphics_setColour (our graphics(), pointIsSelected ? Melder_RED : DataGui_defaultForegroundColour (this));
+			Graphics_setColour (our graphics(), DataGui_defaultForegroundColour (this, pointIsSelected));
 			Graphics_fillCircle_mm (our graphics(), t, y, 3.0);
 		}
 	}

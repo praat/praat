@@ -99,7 +99,7 @@ static void praat_addAction4__ (ClassInfo class1, integer n1, ClassInfo class2, 
 	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 {
 	try {
-		int depth = flags, key = 0;
+		uint32 depth = flags, key = 0;
 		bool unhidable = false, hidden = false, attractive = false;
 		uint32 guiFlags = 0;
 		if (flags > 7) {
@@ -373,12 +373,14 @@ void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 			Melder_throw (U"Praat: action command \"", class1 ? class1 -> className : nullptr,
 				class2 ? U" & ": nullptr, class2 ? class2 -> className : nullptr,
 				class3 ? U" & ": nullptr, class3 ? class3 -> className : nullptr,
-				U": ", title, U"\" not found.");
+				U": ", title, U"\" not found."
+			);
 		}
 		Praat_Command action = theActions.at [found];
 		if (! action -> hidden) {
 			action -> hidden = true;
-			if (praatP.phase >= praat_READING_BUTTONS) action -> toggled = ! action -> toggled;
+			if (praatP.phase >= praat_READING_BUTTONS)
+				action -> toggled = ! action -> toggled;
 			updateDynamicMenu ();
 		}
 	} catch (MelderError) {
@@ -413,12 +415,14 @@ void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 			Melder_throw (U"Action command \"", class1 ? class1 -> className : nullptr,
 				class2 ? U" & ": nullptr, class2 ? class2 -> className : nullptr,
 				class3 ? U" & ": nullptr, class3 ? class3 -> className : nullptr,
-				U": ", title, U"\" not found.");
+				U": ", title, U"\" not found."
+			);
 		}
 		Praat_Command action = theActions.at [found];
 		if (action -> hidden) {
 			action -> hidden = false;
-			if (praatP.phase >= praat_READING_BUTTONS) action -> toggled = ! action -> toggled;
+			if (praatP.phase >= praat_READING_BUTTONS)
+				action -> toggled = ! action -> toggled;
 			updateDynamicMenu ();
 		}
 	} catch (MelderError) {

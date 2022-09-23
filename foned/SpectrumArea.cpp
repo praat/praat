@@ -164,21 +164,25 @@ static void CONVERT_DATA_TO_ONE__PublishSound (SpectrumArea me, EDITOR_ARGS_DIRE
 
 void structSpectrumArea :: v_createMenus () {
 	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Spectrum", 0);
+
 	FunctionAreaMenu_addCommand (menu, U"Power density range:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Set dynamic range...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Set dynamic range...", 1,
 			menu_cb_setDynamicRange, this);
+
 	FunctionAreaMenu_addCommand (menu, U"- Modify spectrum:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Pass band...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Pass band...", 1,
 			menu_cb_passBand, this);
-	FunctionAreaMenu_addCommand (menu, U"Stop band...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Stop band...", 1,
 			menu_cb_stopBand, this);
+
 	FunctionAreaMenu_addCommand (menu, U"- Select by spectrum:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Move cursor to nearest peak", 'K',
+	FunctionAreaMenu_addCommand (menu, U"Move cursor to nearest peak", 'K' | GuiMenu_DEPTH_1,
 			menu_cb_moveCursorToPeak, this);
+
 	FunctionAreaMenu_addCommand (menu, U"- Extract spectrum:", 0, nullptr, this);
-	our publishBandButton = FunctionAreaMenu_addCommand (menu, U"Publish band", 0,
+	our publishBandButton = FunctionAreaMenu_addCommand (menu, U"Publish band", 1,
 			CONVERT_DATA_TO_ONE__PublishBand, this);
-	our publishSoundButton = FunctionAreaMenu_addCommand (menu, U"Publish band-filtered sound", 0,
+	our publishSoundButton = FunctionAreaMenu_addCommand (menu, U"Publish band-filtered sound", 1,
 			CONVERT_DATA_TO_ONE__PublishSound, this);
 }
 

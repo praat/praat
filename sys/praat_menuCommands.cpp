@@ -111,7 +111,7 @@ static GuiMenuItem praat_addMenuCommand__ (conststring32 window, conststring32 m
 	conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 {
 	integer position;
-	int depth = flags, key = 0;
+	uint32 depth = flags, key = 0;
 	bool unhidable = false, hidden = false, noApi = false, forceApi = false;
 	int deprecationYear = 0;
 	uint32 guiFlags = 0;

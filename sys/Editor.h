@@ -103,7 +103,6 @@ GuiMenuItem EditorCommand_getItemWidget (EditorCommand me);
 EditorMenu Editor_addMenu (Editor me, conststring32 menuTitle, uint32 flags);
 GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
-#define Editor_HIDDEN  GuiMenu_HIDDEN
 GuiMenuItem Editor_addCommand (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags, EditorCommandCallback commandCallback);
 GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags,
 	conststring32 script);

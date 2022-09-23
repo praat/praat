@@ -1717,31 +1717,35 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 		helpMenu =    GuiMenu_createInWindow (thePictureWindow, U"Help", 0);
 	}
 
-	praat_addMenuCommand (U"Picture", U"File", U"Picture info", nullptr, 0, GRAPHICS_Picture_settings_report);
-	praat_addMenuCommand (U"Picture", U"File",   U"Picture settings report", U"*Picture info", GuiMenu_DEPRECATED_2007, GRAPHICS_Picture_settings_report);
+	praat_addMenuCommand (U"Picture", U"File", U"Picture info || Picture settings report",
+			nullptr, 0, GRAPHICS_Picture_settings_report);   // alternative GuiMenu_DEPRECATED_2007
 	praat_addMenuCommand (U"Picture", U"File", U"-- save --", nullptr, 0, nullptr);
 	#if defined (macintosh) || defined (UNIX)
-		praat_addMenuCommand (U"Picture", U"File", U"Save as PDF file...", nullptr, 'S', GRAPHICS_Picture_writeToPdfFile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to PDF file...", U"*Save as PDF file...", GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToPdfFile);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as PDF file... || Write to PDF file...",
+				nullptr, 'S', GRAPHICS_Picture_writeToPdfFile);   // alternative GuiMenu_DEPRECATED_2011
 	#endif
-	praat_addMenuCommand (U"Picture", U"File", U"Save as 300-dpi PNG file...", nullptr, 0, GRAPHICS_Picture_writeToPngFile_300);
+	praat_addMenuCommand (U"Picture", U"File", U"Save as 300-dpi PNG file...",
+			nullptr, 0, GRAPHICS_Picture_writeToPngFile_300);
 	#if defined (_WIN32)
-		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...", nullptr, 'S', GRAPHICS_Picture_writeToPngFile_600);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...",
+				nullptr, 'S', GRAPHICS_Picture_writeToPngFile_600);
 	#endif
 	#if defined (macintosh) || defined (UNIX)
-		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...", nullptr, 0, GRAPHICS_Picture_writeToPngFile_600);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...",
+				nullptr, 0, GRAPHICS_Picture_writeToPngFile_600);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Picture", U"File", U"PostScript settings...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_NO_API, GRAPHICS_PostScript_settings);
-		praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file...", nullptr, 1, GRAPHICS_Picture_writeToEpsFile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to EPS file...", U"*Save as EPS file...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToEpsFile);
-		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (XIPA)...", nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_xipa);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (XIPA)...", U"*Save as fontless EPS file (XIPA)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_xipa);
-		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (SILIPA)...", nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (SILIPA)...", U"*Save as fontless EPS file (SILIPA)...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
+		praat_addMenuCommand (U"Picture", U"File", U"PostScript settings...",
+				nullptr, GuiMenu_DEPTH_1 | GuiMenu_NO_API, GRAPHICS_PostScript_settings);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file... || Write to EPS file...",
+				nullptr, 1, GRAPHICS_Picture_writeToEpsFile);   // alternative GuiMenu_DEPRECATED_2011
+		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (XIPA)... || Write to fontless EPS file (XIPA)...",
+				nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_xipa);   // alternative GuiMenu_DEPRECATED_2011
+		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (SILIPA)... || Write to fontless EPS file (SILIPA)...",
+				nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);   // alternative GuiMenu_DEPRECATED_2011
 	#ifdef _WIN32
-		praat_addMenuCommand (U"Picture", U"File", U"Save as Windows metafile...", nullptr, 0, GRAPHICS_Picture_writeToWindowsMetafile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to Windows metafile...", U"*Save as Windows metafile...", GuiMenu_DEPRECATED_2011, GRAPHICS_Picture_writeToWindowsMetafile);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as Windows metafile... || Write to Windows metafile...",
+				nullptr, 0, GRAPHICS_Picture_writeToWindowsMetafile);   // alternative GuiMenu_DEPRECATED_2011
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"-- praat picture file --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"File", U"Read from praat picture file...",
@@ -1750,7 +1754,8 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 			nullptr, 0, GRAPHICS_Picture_writeToPraatPictureFile);   // alternative GuiMenu_DEPRECATED_2011
 	praat_addMenuCommand (U"Picture", U"File", U"-- print --", nullptr, 0, nullptr);
 	#if defined (macintosh)
-		praat_addMenuCommand (U"Picture", U"File", U"Page setup...", nullptr, GuiMenu_NO_API, GRAPHICS_Page_setup);
+		praat_addMenuCommand (U"Picture", U"File", U"Page setup...",
+				nullptr, GuiMenu_NO_API, GRAPHICS_Page_setup);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"Print...", nullptr, 'P' | GuiMenu_NO_API, GRAPHICS_Print);
 

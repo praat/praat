@@ -71,13 +71,16 @@ static GuiMenuItem DataGuiMenu_addCommand_ (EditorMenu me, conststring32 itemTit
 			itemTitle += 2;
 		}
 	}
+	const int depth = (flags & GuiMenu_DEPTH_3) >> 16;   // the maximum depth in editor windows is 3
+	if (depth > 0)
+		itemTitle = Melder_cat (U"    ", itemTitle);
 	thy itemTitle = Melder_dup (itemTitle);   // after the potential shift by 2
 	if (! commandCallback)
 		flags |= GuiMenu_INSENSITIVE;
 	thy itemWidget =
 		titleIsHeader ? GuiMenu_addItem (my menuWidget, itemTitle, flags, nullptr, nullptr) :
 		! commandCallback ? GuiMenu_addSeparator (my menuWidget) :
-		flags & Editor_HIDDEN ? nullptr :
+		flags & GuiMenu_HIDDEN ? nullptr :
 		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.get())
 	;   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
@@ -88,11 +91,11 @@ static GuiMenuItem DataGuiMenu_addCommand_ (EditorMenu me, conststring32 itemTit
 GuiMenuItem DataGuiMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags,
 	DataGuiCommandCallback commandCallback, DataGui optionalSender)
 {
+	if (flags < 3)   // the maximum depth in editor windows is 3
+		flags *= GuiMenu_DEPTH_1;   // turn 1..3 into GuiMenu_DEPTH_1..GuiMenu_DEPTH_3, because the flags are ORed below
 	const char32 *pSeparator = str32str (itemTitle, U" || ");
 	if (! pSeparator)
 		return DataGuiMenu_addCommand_ (me, itemTitle, flags, commandCallback, optionalSender);
-	if (flags < 8)
-		flags *= GuiMenu_DEPTH_1;   // turn 1..7 into GuiMenu_DEPTH_1..GuiMenu_DEPTH_7, because the flags are ORed below
 	integer positionOfSeparator = pSeparator - itemTitle;
 	static MelderString string;
 	MelderString_copy (& string, itemTitle);
@@ -483,7 +486,8 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 		top += Machine_getTitleBarHeight ();
 		bottom += Machine_getTitleBarHeight ();
 	#endif
-	my windowForm = GuiWindow_create (left, top, width, height, 450, 350, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
+	my windowForm = GuiWindow_create (left, top, width, height, 450, 350, title,
+			gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
 	Thing_setName (me, title);
 
 	/*
@@ -498,8 +502,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	if (my v_hasMenuBar ()) {
 		my fileMenu = Editor_addMenu (me, U"File", 0);
 		if (my v_canReportSettings ()) {
-			EditorMenu_addCommand (my fileMenu, U"Editor info", 0, INFO_EDITOR__settingsReport);
-			EditorMenu_addCommand (my fileMenu, U"Settings report", Editor_HIDDEN, INFO_EDITOR__settingsReport);
+			EditorMenu_addCommand (my fileMenu, U"Editor info || Settings report", 0, INFO_EDITOR__settingsReport);
 			if (my data())
 				EditorMenu_addCommand (my fileMenu, Melder_cat (Thing_className (my data()), U" info"), 0, INFO_DATA__info);
 		}

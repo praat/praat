@@ -278,29 +278,32 @@ static void menu_cb_setPitchRange (ManipulationPitchTierArea me, EDITOR_ARGS_FOR
 }
 void structManipulationPitchTierArea :: v_createMenus () {
 	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Pitch", 0);
-	FunctionAreaMenu_addCommand (menu, U"Add pitch point at cursor", 'T',
-			menu_cb_addPitchPointAtCursor, this);
-	FunctionAreaMenu_addCommand (menu, U"Add pitch point at time slice", 0,
-			menu_cb_addPitchPointAtSlice, this);
-	FunctionAreaMenu_addCommand (menu, U"Add pitch point at...", 0,
-			menu_cb_addPitchPointAt, this);
-	FunctionAreaMenu_addCommand (menu, U"-- remove pitch --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Remove pitch point(s)", GuiMenu_OPTION | 'T',
-			menu_cb_removePitchPoints, this);
-	FunctionAreaMenu_addCommand (menu, U"-- pitch prefs --", 0, nullptr, this);
+
 	FunctionAreaMenu_addCommand (menu, U"Set pitch range...", 0,
 			menu_cb_setPitchRange, this);
-	FunctionAreaMenu_addCommand (menu, U"-- modify pitch --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Shift pitch frequencies...", 0,
+
+	FunctionAreaMenu_addCommand (menu, U"- Edit pitch:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Add pitch point at cursor", 'T' | GuiMenu_DEPTH_1,
+			menu_cb_addPitchPointAtCursor, this);
+	FunctionAreaMenu_addCommand (menu, U"Add pitch point at time slice", 1,
+			menu_cb_addPitchPointAtSlice, this);
+	FunctionAreaMenu_addCommand (menu, U"Add pitch point at...", 1,
+			menu_cb_addPitchPointAt, this);
+	FunctionAreaMenu_addCommand (menu, U"Remove pitch point(s)", GuiMenu_OPTION | 'T' | GuiMenu_DEPTH_1,
+			menu_cb_removePitchPoints, this);
+
+	FunctionAreaMenu_addCommand (menu, U"- Modify selected pitch:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Shift pitch frequencies...", 1,
 			menu_cb_shiftPitchFrequencies, this);
-	FunctionAreaMenu_addCommand (menu, U"Multiply pitch frequencies...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Multiply pitch frequencies...", 1,
 			menu_cb_multiplyPitchFrequencies, this);
-	FunctionAreaMenu_addCommand (menu, U"All:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Stylize pitch...", 0,
+
+	FunctionAreaMenu_addCommand (menu, U"- Modify whole pitch:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Stylize pitch...", 1,
 			menu_cb_stylizePitch, this);
-	FunctionAreaMenu_addCommand (menu, U"Stylize pitch (2 st)", '2',
+	FunctionAreaMenu_addCommand (menu, U"Stylize pitch (2 st)", '2' | GuiMenu_DEPTH_1,
 			menu_cb_stylizePitch_2st, this);
-	FunctionAreaMenu_addCommand (menu, U"Interpolate quadratically...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Interpolate quadratically...", 1,
 			menu_cb_interpolateQuadratically, this);
 }
 
@@ -362,17 +365,16 @@ static void menu_cb_addDurationPointAt (ManipulationDurationTierArea me, EDITOR_
 }
 void structManipulationDurationTierArea :: v_createMenus () {
 	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Dur", 0);
-	FunctionAreaMenu_addCommand (menu, U"-- duration view vertical --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"View duration vertically:", 0, nullptr, this);
+
 	FunctionAreaMenu_addCommand (menu, U"Set duration range...", 0,
 			menu_cb_setDurationRange, this);
-	FunctionAreaMenu_addCommand (menu, U"-- duration modify --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Modify duration:", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Add duration point at cursor", 'D',
+
+	FunctionAreaMenu_addCommand (menu, U"- Edit duration:", 0, nullptr, this);
+	FunctionAreaMenu_addCommand (menu, U"Add duration point at cursor", 'D' | GuiMenu_DEPTH_1,
 			menu_cb_addDurationPointAtCursor, this);
-	FunctionAreaMenu_addCommand (menu, U"Add duration point at...", 0,
+	FunctionAreaMenu_addCommand (menu, U"Add duration point at...", 1,
 			menu_cb_addDurationPointAt, this);
-	FunctionAreaMenu_addCommand (menu, U"Remove duration point(s)", GuiMenu_OPTION | 'D',
+	FunctionAreaMenu_addCommand (menu, U"Remove duration point(s)", GuiMenu_OPTION | 'D' | GuiMenu_DEPTH_1,
 			menu_cb_removeDurationPoints, this);
 }
 

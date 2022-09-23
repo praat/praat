@@ -23,6 +23,16 @@
 
 #include "DataGui_enums.h"
 
+extern MelderColour
+	DataGuiColour_WINDOW_BACKGROUND,
+	DataGuiColour_AREA_BACKGROUND,
+	DataGuiColour_EDITABLE,
+	DataGuiColour_EDITABLE_FRAME,
+	DataGuiColour_EDITABLE_SELECTED,
+	DataGuiColour_NONEDITABLE,
+	DataGuiColour_NONEDITABLE_FRAME,
+	DataGuiColour_NONEDITABLE_SELECTED;
+
 Thing_declare (Editor);
 Thing_declare (EditorMenu);
 Thing_declare (EditorCommand);
@@ -74,18 +84,12 @@ public:
 	virtual void v_do_pictureMargins (EditorCommand cmd);
 
 	#include "DataGui_prefs.h"
-
-	/*
-		The following colours cannot be static data,
-		because static data might be initialized before the standard extern MelderColours are (bug on Linux 2022-09-19).
-		So they are static *functions* instead.
-	*/
-	static MelderColour Colour_BACKGROUND();
-	static MelderColour Colour_EDITABLE_LINES();
-	static MelderColour Colour_EDITABLE_FRAME();
-	static MelderColour Colour_NONEDITABLE_FOREGROUND();
-	friend MelderColour DataGui_defaultForegroundColour (DataGui me) {
-		return my editable() ? Colour_EDITABLE_LINES() : Colour_NONEDITABLE_FOREGROUND();
+	friend MelderColour DataGui_defaultForegroundColour (DataGui me, bool selected) {
+		return
+			my editable() ?
+				selected ? DataGuiColour_EDITABLE_SELECTED : DataGuiColour_EDITABLE
+			:
+				selected ? DataGuiColour_NONEDITABLE_SELECTED : DataGuiColour_NONEDITABLE;
 	}
 };
 

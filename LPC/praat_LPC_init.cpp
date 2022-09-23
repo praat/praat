@@ -1489,7 +1489,7 @@ void praat_uvafon_LPC_init () {
 			HINT__FormantPath_Sound_viewAndEdit);
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", nullptr,0, 
 			GRAPHICS_EACH__FormantPath_drawAsGrid);	
-	praat_addAction1 (classFormantPath, 0, U"Tabulate - " , nullptr, 0, nullptr);
+	praat_addAction1 (classFormantPath, 0, U"Tabulate -" , nullptr, 0, nullptr);
 		praat_addAction1 (classFormantPath, 0, U"Down to Table (optimal interval)...", nullptr, 1,
 			NEW__FormantPath_downTo_Table_optimalInterval);
 		praat_addAction1 (classFormantPath, 0, U"Down to Table (stresses)...", nullptr, 1,

@@ -214,7 +214,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		Window background.
 	*/
 	my viewAllAsPixelettes ();
-	Graphics_setColour (my graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
+	Graphics_setColour (my graphics.get(), DataGuiColour_WINDOW_BACKGROUND);
 	Graphics_fillRectangle (my graphics.get(), my _functionViewerLeft, my _selectionViewerRight, my BOTTOM_MARGIN, my height_pxlt);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 
@@ -979,10 +979,14 @@ static void PLAY_DATA__interruptPlaying (FunctionEditor me, EDITOR_ARGS_DIRECT) 
 
 void structFunctionEditor :: v_createMenuItems_play (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Audio:", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Play...", 0, PLAY_DATA__play);
-	EditorMenu_addCommand (menu, U"Play or stop", GuiMenu_TAB, PLAY_DATA__playOrStop);
-	EditorMenu_addCommand (menu, U"Play window", GuiMenu_SHIFT | GuiMenu_TAB, PLAY_DATA__playWindow);
-	EditorMenu_addCommand (menu, U"Interrupt playing", GuiMenu_ESCAPE, PLAY_DATA__interruptPlaying);
+	EditorMenu_addCommand (menu, U"Play...",
+			1, PLAY_DATA__play);
+	EditorMenu_addCommand (menu, U"Play or stop",
+			GuiMenu_DEPTH_1 | GuiMenu_TAB, PLAY_DATA__playOrStop);
+	EditorMenu_addCommand (menu, U"Play window",
+			GuiMenu_DEPTH_1 | GuiMenu_SHIFT | GuiMenu_TAB, PLAY_DATA__playWindow);
+	EditorMenu_addCommand (menu, U"Interrupt playing",
+			GuiMenu_DEPTH_1 | GuiMenu_ESCAPE, PLAY_DATA__interruptPlaying);
 	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
 		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
 		if (area)
@@ -1164,47 +1168,62 @@ void structFunctionEditor :: v_createMenus () {
 	EditorMenu domainMenu = Editor_addMenu (this, v_format_domain (), 0);   // Time or Frequency
 
 	EditorMenu_addCommand (domainMenu, U"Query visible part:", 0, nullptr);
-	EditorMenu_addCommand (domainMenu, U"Get start of visible part", 0, QUERY_EDITOR_FOR_REAL__getStartOfVisiblePart);
-	EditorMenu_addCommand (domainMenu, U"Get end of visible part", 0, QUERY_EDITOR_FOR_REAL__getEndOfVisiblePart);
-	EditorMenu_addCommand (domainMenu, U"Get length of visible part", 0, QUERY_EDITOR_FOR_REAL__getLengthOfVisiblePart);
+	EditorMenu_addCommand (domainMenu, U"Get start of visible part", 1, QUERY_EDITOR_FOR_REAL__getStartOfVisiblePart);
+	EditorMenu_addCommand (domainMenu, U"Get end of visible part", 1, QUERY_EDITOR_FOR_REAL__getEndOfVisiblePart);
+	EditorMenu_addCommand (domainMenu, U"Get length of visible part", 1, QUERY_EDITOR_FOR_REAL__getLengthOfVisiblePart);
 
 	EditorMenu_addCommand (domainMenu, U"- Set visible part:", 0, nullptr);
-	EditorMenu_addCommand (domainMenu, U"Zoom and scroll settings...", 0, menu_cb_zoomAndScrollSettings);
-	EditorMenu_addCommand (domainMenu, U"Zoom...", 0, menu_cb_zoom);
-	EditorMenu_addCommand (domainMenu, U"Show all", 'A', menu_cb_showAll);
-	EditorMenu_addCommand (domainMenu, U"Zoom in", 'I', menu_cb_zoomIn);
-	EditorMenu_addCommand (domainMenu, U"Zoom out", 'O', menu_cb_zoomOut);
-	EditorMenu_addCommand (domainMenu, U"Zoom to selection", 'N', menu_cb_zoomToSelection);
-	EditorMenu_addCommand (domainMenu, U"Zoom back", 'B', menu_cb_zoomBack);
-	EditorMenu_addCommand (domainMenu, U"Scroll page back", GuiMenu_PAGE_UP, menu_cb_pageUp);
-	EditorMenu_addCommand (domainMenu, U"Scroll page forward", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
+	EditorMenu_addCommand (domainMenu, U"Zoom and scroll settings...", 1, menu_cb_zoomAndScrollSettings);
+	EditorMenu_addCommand (domainMenu, U"Zoom...", 1, menu_cb_zoom);
+	EditorMenu_addCommand (domainMenu, U"Show all", 'A' | GuiMenu_DEPTH_1, menu_cb_showAll);
+	EditorMenu_addCommand (domainMenu, U"Zoom in", 'I' | GuiMenu_DEPTH_1, menu_cb_zoomIn);
+	EditorMenu_addCommand (domainMenu, U"Zoom out", 'O' | GuiMenu_DEPTH_1, menu_cb_zoomOut);
+	EditorMenu_addCommand (domainMenu, U"Zoom to selection", 'N' | GuiMenu_DEPTH_1, menu_cb_zoomToSelection);
+	EditorMenu_addCommand (domainMenu, U"Zoom back", 'B' | GuiMenu_DEPTH_1, menu_cb_zoomBack);
+	EditorMenu_addCommand (domainMenu, U"Scroll page back", GuiMenu_PAGE_UP | GuiMenu_DEPTH_1, menu_cb_pageUp);
+	EditorMenu_addCommand (domainMenu, U"Scroll page forward", GuiMenu_PAGE_DOWN | GuiMenu_DEPTH_1, menu_cb_pageDown);
 
 	EditorMenu_addCommand (domainMenu, U"- Query selection:", 0, nullptr);
-	EditorMenu_addCommand (domainMenu, U"Get start of selection || Get begin of selection", 0, QUERY_EDITOR_FOR_REAL__getStartOfSelection);
-	EditorMenu_addCommand (domainMenu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);
-	EditorMenu_addCommand (domainMenu, U"Get end of selection", 0, QUERY_EDITOR_FOR_REAL__getEndOfSelection);
-	EditorMenu_addCommand (domainMenu, U"Get length of selection || Get selection length", 0, QUERY_EDITOR_FOR_REAL__getLengthOfSelection);
+	EditorMenu_addCommand (domainMenu, U"Get start of selection || Get begin of selection",
+			1, QUERY_EDITOR_FOR_REAL__getStartOfSelection);
+	EditorMenu_addCommand (domainMenu, U"Get cursor",
+			GuiMenu_F6 | GuiMenu_DEPTH_1, QUERY_EDITOR_FOR_REAL__getCursor);
+	EditorMenu_addCommand (domainMenu, U"Get end of selection",
+			1, QUERY_EDITOR_FOR_REAL__getEndOfSelection);
+	EditorMenu_addCommand (domainMenu, U"Get length of selection || Get selection length",
+			1, QUERY_EDITOR_FOR_REAL__getLengthOfSelection);
 
 	EditorMenu_addCommand (domainMenu, U"- Set selection:", 0, nullptr);
-	EditorMenu_addCommand (domainMenu, U"Select...", 0, menu_cb_select);
-	EditorMenu_addCommand (domainMenu, U"Widen or shrink selection...", 0, menu_cb_widenOrShrinkSelection);
-	EditorMenu_addCommand (domainMenu, U"Move cursor to start of selection", 0, menu_cb_moveCursorToStartOfSelection);
-	EditorMenu_addCommand (domainMenu, U"Move cursor to begin of selection", Editor_HIDDEN, menu_cb_moveCursorToStartOfSelection);
-	EditorMenu_addCommand (domainMenu, U"Move cursor to end of selection", 0, menu_cb_moveCursorToEndOfSelection);
-	EditorMenu_addCommand (domainMenu, U"Move cursor to...", 0, menu_cb_moveCursorTo);
-	EditorMenu_addCommand (domainMenu, U"Move cursor by...", 0, menu_cb_moveCursorBy);
-	EditorMenu_addCommand (domainMenu, U"Move start of selection by...", 0, menu_cb_moveStartOfSelectionBy);
-	EditorMenu_addCommand (domainMenu, U"Move begin of selection by...", Editor_HIDDEN, menu_cb_moveStartOfSelectionBy);
-	EditorMenu_addCommand (domainMenu, U"Move end of selection by...", 0, menu_cb_moveEndOfSelectionBy);
-	EditorMenu_addCommand (domainMenu, U"Selection step settings...", 0, menu_cb_selectionStepSettings);
-	EditorMenu_addCommand (domainMenu, U"Select earlier", GuiMenu_UP_ARROW, menu_cb_selectEarlier);
-	EditorMenu_addCommand (domainMenu, U"Select later", GuiMenu_DOWN_ARROW, menu_cb_selectLater);
-	EditorMenu_addCommand (domainMenu, U"Move start of selection left", GuiMenu_SHIFT | GuiMenu_UP_ARROW, menu_cb_moveStartOfSelectionLeft);
-	EditorMenu_addCommand (domainMenu, U"Move begin of selection left", Editor_HIDDEN, menu_cb_moveStartOfSelectionLeft);
-	EditorMenu_addCommand (domainMenu, U"Move start of selection right", GuiMenu_SHIFT | GuiMenu_DOWN_ARROW, menu_cb_moveStartOfSelectionRight);
-	EditorMenu_addCommand (domainMenu, U"Move begin of selection right", Editor_HIDDEN, menu_cb_moveStartOfSelectionRight);
-	EditorMenu_addCommand (domainMenu, U"Move end of selection left", GuiMenu_COMMAND | GuiMenu_UP_ARROW, menu_cb_moveEndOfSelectionLeft);
-	EditorMenu_addCommand (domainMenu, U"Move end of selection right", GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
+	EditorMenu_addCommand (domainMenu, U"Select...",
+			1, menu_cb_select);
+	EditorMenu_addCommand (domainMenu, U"Widen or shrink selection...",
+			1, menu_cb_widenOrShrinkSelection);
+	EditorMenu_addCommand (domainMenu, U"Move cursor to start of selection || Move cursor to begin of selection",
+			1, menu_cb_moveCursorToStartOfSelection);
+	EditorMenu_addCommand (domainMenu, U"Move cursor to end of selection",
+			1, menu_cb_moveCursorToEndOfSelection);
+	EditorMenu_addCommand (domainMenu, U"Move cursor to...",
+			1, menu_cb_moveCursorTo);
+	EditorMenu_addCommand (domainMenu, U"Move cursor by...",
+			1, menu_cb_moveCursorBy);
+	EditorMenu_addCommand (domainMenu, U"Move start of selection by... || Move begin of selection by...",
+			1, menu_cb_moveStartOfSelectionBy);
+	EditorMenu_addCommand (domainMenu, U"Move end of selection by...",
+			1, menu_cb_moveEndOfSelectionBy);
+	EditorMenu_addCommand (domainMenu, U"Selection step settings...",
+			1, menu_cb_selectionStepSettings);
+	EditorMenu_addCommand (domainMenu, U"Select earlier",
+			GuiMenu_DEPTH_1 | GuiMenu_UP_ARROW, menu_cb_selectEarlier);
+	EditorMenu_addCommand (domainMenu, U"Select later",
+			GuiMenu_DEPTH_1 | GuiMenu_DOWN_ARROW, menu_cb_selectLater);
+	EditorMenu_addCommand (domainMenu, U"Move start of selection left || Move begin of selection left",
+			GuiMenu_DEPTH_1 | GuiMenu_SHIFT | GuiMenu_UP_ARROW, menu_cb_moveStartOfSelectionLeft);
+	EditorMenu_addCommand (domainMenu, U"Move start of selection right || Move begin of selection right",
+			GuiMenu_DEPTH_1 | GuiMenu_SHIFT | GuiMenu_DOWN_ARROW, menu_cb_moveStartOfSelectionRight);
+	EditorMenu_addCommand (domainMenu, U"Move end of selection left",
+			GuiMenu_DEPTH_1 | GuiMenu_COMMAND | GuiMenu_UP_ARROW, menu_cb_moveEndOfSelectionLeft);
+	EditorMenu_addCommand (domainMenu, U"Move end of selection right",
+			GuiMenu_DEPTH_1 | GuiMenu_COMMAND | GuiMenu_DOWN_ARROW, menu_cb_moveEndOfSelectionRight);
 
 	if (our v_hasPlayMenu ()) {
 		our playMenu = Editor_addMenu (this, U"Play", 0);
