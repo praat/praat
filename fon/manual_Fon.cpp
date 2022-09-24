@@ -815,10 +815,8 @@ NORMAL (U"With the ##log settings# command window, you determine the following:"
 TAG (U"##Write log 1 to")
 DEFINITION (U"this determines whether your log line will be written to log file 1 only, to the Info window only, or to both.")
 TAG (U"##Log file 1")
-DEFINITION (U"the name of the log file. On Windows, this has to be a complete path name, such as "
-	"$$C:\\bsWINDOWS\\bsDESKTOP\\bsPitch Log.txt$. "
-	"On Unix and macOS, it can either be a complete path name, e.g. $$/home/mary/pitch_log$, "
-	"or a home-relative name such as $$~/Desktop/Pitch log$.")
+DEFINITION (U"the name of the log file. Click Browse to select a file to write to. "
+	"On most platforms you can also use a home-relative name such as $$~/Desktop/pitchLog.txt$.")
 TAG (U"##Log 1 format")
 DEFINITION (U"the format of the line that Praat will write. See below.")
 NORMAL (U"The same goes for log file 2.")

@@ -661,7 +661,7 @@ NORMAL (U"This is the algorithm described at @@Sound: To Pitch (ac)...@, "
 	"with all the parameters not mentioned above set to their standard values.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Pitch (ac)...", U"ppgb", 20030916)
+MAN_BEGIN (U"Sound: To Pitch (ac)...", U"ppgb", 20220924)
 INTRO (U"A command that creates a @Pitch object from every selected @Sound object.")
 ENTRY (U"Purpose")
 NORMAL (U"to perform a pitch analysis based on an autocorrelation method.")
@@ -705,7 +705,9 @@ DEFINITION (U"frames that do not contain amplitudes above this threshold (relati
 	"are probably silent.")
 TAG (U"##Voicing threshold# (standard value: 0.45)")
 DEFINITION (U"the strength of the unvoiced candidate, relative to the maximum possible autocorrelation. "
-	"To increase the number of unvoiced decisions, increase this value.")
+	"If the amount of periodic energy in a frame is more than this fraction of the total energy (the remainder being noise), "
+	"then Praat will prefer to regard this frame as voiced; otherwise as unvoiced. "
+	"To increase the number of unvoiced decisions, increase the voicing threshold.")
 TAG (U"##Octave cost# (standard value: 0.01 per octave)")
 DEFINITION (U"degree of favouring of high-frequency candidates, relative to the maximum possible autocorrelation. "
 	"This is necessary because even (or: especially) in the case of a perfectly periodic signal, "
