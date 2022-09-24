@@ -1494,7 +1494,8 @@ static void INFO_DATA__voiceReport (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WIT
 		MelderInfo_writeLine (U"-- Voice report for ", my name.get(), U" --\nDate: ", Melder_peek8to32 (ctime (& today)));
 		if (my instancePref_pitch_method() != kSoundAnalysisArea_pitch_analysisMethod::CROSS_CORRELATION)
 			MelderInfo_writeLine (U"WARNING: some of the following measurements may be imprecise.\n"
-				"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");
+				"For more precision, go to \"Pitch settings\" and choose\n"
+				"the cross-correlation analysis method to optimize for voice research.\n");
 		MelderInfo_writeLine (U"Time range of ", SoundAnalysisArea_partString (part));
 		Sound_Pitch_PointProcess_voiceReport (sound.get(), my d_pitch.get(), my d_pulses.get(), tmin, tmax,
 			my instancePref_pitch_floor(), my instancePref_pitch_ceiling(),

@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220912)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220924)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.20# (24 September 2022)")
+LIST_ITEM (U"• More balanced colours.")
+LIST_ITEM (U"• Hierarchical menus in editor windows.")
+LIST_ITEM (U"• Sound window scripting: understand \"editor\\$ \" again in log format (bug since 6.2.15).")
 NORMAL (U"##6.2.19# (12 September 2022)")
 LIST_ITEM (U"• Visible window queries in Time menu.")
 LIST_ITEM (U"• Correct execution of added Objects window script after running a failing editor script (decades-old bug).")
