@@ -93,21 +93,21 @@
 conststring32 KlattGrid_getFormantName (kKlattGridFormantType formantType) {
 	conststring32 result;
 	if (formantType == kKlattGridFormantType::ORAL)
-		result = U"Oral formant";
+		result = U"oral formant";
 	else if (formantType == kKlattGridFormantType::NASAL)
-		result = U"Nasal formant";
+		result = U"nasal formant";
 	else if (formantType == kKlattGridFormantType::FRICATION)
-		result = U"Frication Formant";
+		result = U"frication Formant";
 	else if (formantType == kKlattGridFormantType::TRACHEAL)
-		result = U"Tracheal formant";
+		result = U"tracheal formant";
 	else if (formantType == kKlattGridFormantType::NASAL_ANTI)
-		result = U"Nasal Antiformant";
-	else if (formantType == kKlattGridFormantType::TRACHEALANTI)
-		result = U"Tracheal antiformant";
+		result = U"nasal Antiformant";
+	else if (formantType == kKlattGridFormantType::TRACHEAL_ANTI)
+		result = U"tracheal antiformant";
 	else if (formantType == kKlattGridFormantType::DELTA)
-		result = U"Delta formant";
+		result = U"delta formant";
 	else
-		result = U"Unknown formant";
+		result = U"unknown formant";
 	return result;
 }
 
@@ -2372,7 +2372,7 @@ autoFormantGrid* KlattGrid_getAddressOfFormantGrid (KlattGrid me, kKlattGridForm
 	       formantType == kKlattGridFormantType::FRICATION ? & my frication -> frication_formants :
 	       formantType == kKlattGridFormantType::TRACHEAL ? & my coupling -> tracheal_formants :
 	       formantType == kKlattGridFormantType::NASAL_ANTI ? & my vocalTract -> nasal_antiformants :
-	       formantType == kKlattGridFormantType::TRACHEALANTI ? & my coupling -> tracheal_antiformants :
+	       formantType == kKlattGridFormantType::TRACHEAL_ANTI ? & my coupling -> tracheal_antiformants :
 		   & my coupling -> delta_formants; // kKlattGridFormantType::Delta
 }
 
@@ -2510,7 +2510,7 @@ void KlattGrid_replaceFormantGrid (KlattGrid me, kKlattGridFormantType formantTy
 
 void KlattGrid_addFormantAmplitudeTier (KlattGrid me, kKlattGridFormantType formantType, integer position) {
 	try {
-		Melder_require (formantType != kKlattGridFormantType::NASAL_ANTI && formantType != kKlattGridFormantType::TRACHEALANTI && formantType != kKlattGridFormantType::DELTA,
+		Melder_require (formantType != kKlattGridFormantType::NASAL_ANTI && formantType != kKlattGridFormantType::TRACHEAL_ANTI && formantType != kKlattGridFormantType::DELTA,
 			U"Cannot add amplitude tier to this formant type.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		const integer noa = ordered->size;
@@ -2525,12 +2525,11 @@ void KlattGrid_addFormantAmplitudeTier (KlattGrid me, kKlattGridFormantType form
 
 void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, kKlattGridFormantType formantType, integer position) {
 	try {
-		Melder_require (formantType != kKlattGridFormantType::NASAL_ANTI && formantType != kKlattGridFormantType::TRACHEALANTI && formantType != kKlattGridFormantType::DELTA, 
+		Melder_require (formantType != kKlattGridFormantType::NASAL_ANTI && formantType != kKlattGridFormantType::TRACHEAL_ANTI && formantType != kKlattGridFormantType::DELTA,
 			U"Cannot remove amplitude tier from this formant type.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		if (position > 0 && position <= ordered->size) {
+		if (position > 0 && position <= ordered->size)
 			ordered -> removeItem (position);
-		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no formant amplitude tier removed.");
 	}
@@ -2543,12 +2542,12 @@ void KlattGrid_addFormant (KlattGrid me, kKlattGridFormantType formantType, inte
 		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
 		
 		const integer nof = (*fg) -> formants.size;
-		if (position > nof || position < 1) {
+		if (position > nof || position < 1)
 			position = nof + 1;
-		}
 
-		if (formantType == kKlattGridFormantType::NASAL_ANTI || formantType == kKlattGridFormantType::TRACHEALANTI ||
-			formantType == kKlattGridFormantType::DELTA) {
+		if (formantType == kKlattGridFormantType::NASAL_ANTI || formantType == kKlattGridFormantType::TRACHEAL_ANTI ||
+			formantType == kKlattGridFormantType::DELTA)
+		{
 			FormantGrid_addFormantAndBandwidthTiers (fg->get(), position);
 			return;
 		}
@@ -2573,11 +2572,10 @@ void KlattGrid_addFormant (KlattGrid me, kKlattGridFormantType formantType, inte
 void KlattGrid_removeFormant (KlattGrid me, kKlattGridFormantType formantType, integer position) {
 	autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
 	const integer nof = (*fg) -> formants.size;
-	if (formantType == kKlattGridFormantType::NASAL_ANTI || formantType == kKlattGridFormantType::TRACHEALANTI ||
+	if (formantType == kKlattGridFormantType::NASAL_ANTI || formantType == kKlattGridFormantType::TRACHEAL_ANTI ||
         formantType == kKlattGridFormantType::DELTA) {
-		if (position < 1 || position > nof) {
+		if (position < 1 || position > nof)
 			return;
-		}
 		FormantGrid_removeFormantAndBandwidthTiers (fg->get(), position);
 	} else { 
 		// oral & nasal & tracheal formants can have amplitudes
@@ -2652,8 +2650,7 @@ autoFormantGrid KlattGrid_to_oralFormantGrid_openPhases (KlattGrid me, double fa
 		Melder_require (my vocalTract -> oral_formants -> formants.size > 0 || my vocalTract -> oral_formants -> bandwidths.size > 0,
 			U"Formant grid should not be empty.");
 		
-		if (fadeFraction < 0.0)
-			fadeFraction = 0.0;
+		Melder_clipLeft (0.0, & fadeFraction);
 		Melder_require (fadeFraction < 0.5,
 			U"Fade fraction should be smaller than 0.5");
 		
