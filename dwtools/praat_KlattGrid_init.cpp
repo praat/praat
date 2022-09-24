@@ -423,7 +423,6 @@ KlattGrid_REMOVE_FORMANT_AMPLITUDETIER (Name, namef, formantType) \
 KlattGrid_REMOVE_FORMANT (Name, namef, formantType) \
 KlattGrid_ADD_FORMANT_AMPLITUDETIER (Name, namef, formantType)
 
-
 #define KlattGrid_FORMULA_ADD_REMOVE_FB(Name,namef,formantType)  \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Frequencies, frequencies, U"if row = 2 then self + 200 else self fi",formantType, U" ") \
 KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Bandwidths, bandwidths, U"self / 10 ; 10% of frequency",formantType, U"Warning: self is formant frequency.") \
@@ -491,19 +490,32 @@ DO
 	MODIFY_EACH_END
 }
 
-#define KlattGrid_FORMANT_GET_FB_VALUE(Name,name,ForB,forb,FormB,formantType)  \
-FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##Formant##ForB##AtTime, U"KlattGrid: Get " #name " " #forb " at time", nullptr) { \
+/*
+	Generate 18 commands on the pattern
+	"Get oral/nasal/tracheal/delta/frication (anti)formant frequency/bandwidth/amplitude at time..."
+*/
+#define KlattGrid_FORMANT_GET_F_VALUE(Name,name,formantType)  \
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##FormantFrequencyAtTime, U"KlattGrid: Get " #name " frequency at time", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
 	QUERY_ONE_FOR_REAL (KlattGrid); \
-		const double result = KlattGrid_get##FormB##AtTime (me, formantType, formantNumber, time); \
+		const double result = KlattGrid_getFormantAtTime (me, formantType, formantNumber, time); \
 	QUERY_ONE_FOR_REAL_END (U" Hz"); \
 }
-
+#define KlattGrid_FORMANT_GET_B_VALUE(Name,name,formantType)  \
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##FormantBandwidthAtTime, U"KlattGrid: Get " #name " bandwidth at time", nullptr) { \
+	NATURAL (formantNumber, U"Formant number", U"1") \
+	REAL (time, U"Time (s)", U"0.5") \
+	OK \
+DO \
+	QUERY_ONE_FOR_REAL (KlattGrid); \
+		const double result = KlattGrid_getBandwidthAtTime (me, formantType, formantNumber, time); \
+	QUERY_ONE_FOR_REAL_END (U" Hz"); \
+}
 #define KlattGrid_FORMANT_GET_A_VALUE(Name,name,formantType)  \
-FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name " formant amplitude at time", nullptr) { \
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name " amplitude at time", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
@@ -512,25 +524,20 @@ DO \
 		const double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time); \
 	QUERY_ONE_FOR_REAL_END (U" dB"); \
 }
+#define KlattGrid_FORMANT_GET_FB_VALUES(Name,name,formantType)  \
+	KlattGrid_FORMANT_GET_F_VALUE (Name, name, formantType) \
+	KlattGrid_FORMANT_GET_B_VALUE (Name, name, formantType)
+#define KlattGrid_FORMANT_GET_FBA_VALUES(Name,name,formantType)  \
+	KlattGrid_FORMANT_GET_FB_VALUES (Name, name, formantType) \
+	KlattGrid_FORMANT_GET_A_VALUE (Name, name, formantType)
+KlattGrid_FORMANT_GET_FBA_VALUES (Oral, oral formant, kKlattGridFormantType::ORAL)
+KlattGrid_FORMANT_GET_FBA_VALUES (Nasal, nasal formant, kKlattGridFormantType::NASAL)
+KlattGrid_FORMANT_GET_FB_VALUES (NasalAnti, nasal antiformant, kKlattGridFormantType::NASAL_ANTI)
+KlattGrid_FORMANT_GET_FBA_VALUES (Tracheal, tracheal formant, kKlattGridFormantType::TRACHEAL)
+KlattGrid_FORMANT_GET_FB_VALUES (Delta, delta formant, kKlattGridFormantType::DELTA)
+KlattGrid_FORMANT_GET_FB_VALUES (TrachealAnti, tracheal antiformant, kKlattGridFormantType::TRACHEAL_ANTI)
+KlattGrid_FORMANT_GET_FBA_VALUES (Frication, frication formant, kKlattGridFormantType::FRICATION)
 
-#define KlattGrid_FORMANT_GET_FB_VALUES(Name,name,formantType) \
-KlattGrid_FORMANT_GET_FB_VALUE (Name, name, Frequency, frequency, Formant, formantType) \
-KlattGrid_FORMANT_GET_FB_VALUE (Name, name, Bandwidth, bandwidth, Bandwidth, formantType)
-
-KlattGrid_FORMANT_GET_FB_VALUES (Oral, oral, kKlattGridFormantType::ORAL)
-KlattGrid_FORMANT_GET_A_VALUE (Oral, oral, kKlattGridFormantType::ORAL)
-KlattGrid_FORMANT_GET_FB_VALUES (Nasal, nasal, kKlattGridFormantType::NASAL)
-KlattGrid_FORMANT_GET_A_VALUE (Nasal, nasal, kKlattGridFormantType::NASAL)
-KlattGrid_FORMANT_GET_FB_VALUES (NasalAnti, nasal anti, kKlattGridFormantType::NASAL_ANTI)
-KlattGrid_FORMANT_GET_FB_VALUES (Tracheal, tracheal f, kKlattGridFormantType::TRACHEAL)
-KlattGrid_FORMANT_GET_A_VALUE (Tracheal, tracheal f, kKlattGridFormantType::TRACHEAL)
-KlattGrid_FORMANT_GET_FB_VALUES (Delta, delta f, kKlattGridFormantType::DELTA)
-KlattGrid_FORMANT_GET_FB_VALUES (TrachealAnti, tracheal antif, kKlattGridFormantType::TRACHEAL_ANTI)
-KlattGrid_FORMANT_GET_FB_VALUES (Frication, frication, kKlattGridFormantType::FRICATION)
-KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, kKlattGridFormantType::FRICATION)
-
-#undef KlattGrid_FORMANT_GET_FB_VALUES
-#undef KlattGrid_FORMANT_GET_A_VALUE
 
 #define KlattGrid_EXTRACT_FORMANT_GRID(Name,gridType)  \
 DIRECT (CONVERT_EACH_TO_ONE__KlattGrid_extract##Name##FormantGrid) { \
