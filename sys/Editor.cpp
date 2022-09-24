@@ -72,9 +72,9 @@ static GuiMenuItem DataGuiMenu_addCommand_ (EditorMenu me, conststring32 itemTit
 		}
 	}
 	const int depth = (flags & GuiMenu_DEPTH_3) >> 16;   // the maximum depth in editor windows is 3
+	thy itemTitle = Melder_dup (itemTitle);
 	if (depth > 0)
 		itemTitle = Melder_cat (U"    ", itemTitle);
-	thy itemTitle = Melder_dup (itemTitle);   // after the potential shift by 2
 	if (! commandCallback)
 		flags |= GuiMenu_INSENSITIVE;
 	thy itemWidget =
