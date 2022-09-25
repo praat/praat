@@ -360,6 +360,17 @@ void structSoundAnalysisArea :: v1_info () {
 		MelderInfo_writeLine (U"Pulses maximum period factor: ", our instancePref_pulses_maximumPeriodFactor());
 		MelderInfo_writeLine (U"Pulses maximum amplitude factor: ", our instancePref_pulses_maximumAmplitudeFactor());
 	}
+	const conststring32 logTargetTexts [3] = { U"log file only", U"Info window only", U"log file and Info window" };
+	const conststring32 log1TargetText = logTargetTexts [our instancePref_log1_toLogFile() + 2 * our instancePref_log1_toInfoWindow() - 1];
+	MelderInfo_writeLine (U"Log 1 target: ", log1TargetText);
+	MelderInfo_writeLine (U"Log 1 file: ", our instancePref_log1_fileName());
+	MelderInfo_writeLine (U"Log 1 format: ", our instancePref_log1_format());
+	const conststring32 log2TargetText = logTargetTexts [our instancePref_log2_toLogFile() + 2 * our instancePref_log2_toInfoWindow() - 1];
+	MelderInfo_writeLine (U"Log 2 target: ", log2TargetText);
+	MelderInfo_writeLine (U"Log 2 file: ", our instancePref_log2_fileName());
+	MelderInfo_writeLine (U"Log 2 format: ", our instancePref_log2_format());
+	MelderInfo_writeLine (U"Log 3 script: ", our instancePref_logScript3());
+	MelderInfo_writeLine (U"Log 4 script: ", our instancePref_logScript4());
 }
 
 
@@ -411,13 +422,13 @@ static void menu_cb_logSettings (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 			OPTION (U"Info window only")
 			OPTION (U"log file and Info window")
 		OUTFILE (logFile1,   U"Log file 1:",   my default_log1_fileName ())
-		OUTFILE (log1format, U"Log 1 format:", my default_log1_format   ())
+		TEXTFIELD (log1format, U"Log 1 format:", my default_log1_format (), 3)
 		OPTIONMENU (writeLog2To, U"Write log 2 to", 3)
 			OPTION (U"log file only")
 			OPTION (U"Info window only")
 			OPTION (U"log file and Info window")
 		OUTFILE (logFile2,   U"Log file 2:",   my default_log2_fileName ())
-		OUTFILE (log2format, U"Log 2 format:", my default_log2_format   ())
+		TEXTFIELD (log2format, U"Log 2 format:", my default_log2_format (), 3)
 		OUTFILE (logScript3, U"Log script 3:", my default_logScript3    ())
 		OUTFILE (logScript4, U"Log script 4:", my default_logScript4    ())
 	EDITOR_OK
@@ -501,7 +512,7 @@ static void do_log (SoundAnalysisArea me, int which) {
 		} else if (str32equ (varName, U"tab$")) {
 			stringValue = U"\t";
 		} else if (str32equ (varName, U"editor$")) {
-			stringValue = my name.get();
+			stringValue = my boss() -> name.get();
 		} else if (str32equ (varName, U"f0")) {
 			SoundAnalysisArea_haveVisiblePitch (me);
 			if (part == SoundAnalysisArea_PART_CURSOR)
@@ -1483,7 +1494,8 @@ static void INFO_DATA__voiceReport (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WIT
 		MelderInfo_writeLine (U"-- Voice report for ", my name.get(), U" --\nDate: ", Melder_peek8to32 (ctime (& today)));
 		if (my instancePref_pitch_method() != kSoundAnalysisArea_pitch_analysisMethod::CROSS_CORRELATION)
 			MelderInfo_writeLine (U"WARNING: some of the following measurements may be imprecise.\n"
-				"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");
+				"For more precision, go to \"Pitch settings\" and choose\n"
+				"the cross-correlation analysis method to optimize for voice research.\n");
 		MelderInfo_writeLine (U"Time range of ", SoundAnalysisArea_partString (part));
 		Sound_Pitch_PointProcess_voiceReport (sound.get(), my d_pitch.get(), my d_pulses.get(), tmin, tmax,
 			my instancePref_pitch_floor(), my instancePref_pitch_ceiling(),

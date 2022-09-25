@@ -801,24 +801,22 @@ LIST_ITEM (U"Page-down (in sound windows): Scroll page forward")
 LIST_ITEM (U"Escape: Interrupt playing")
 MAN_END
 
-MAN_BEGIN (U"Log files", U"ppgb", 20201230)
+MAN_BEGIN (U"Log files", U"ppgb", 20220924)
 INTRO (U"With some commands in the @Query menu of the @SoundEditor and @TextGridEditor, "
 	"you can write combined information about times, pitch values, formants, and intensities "
-	"to the @@Info window@ and to a log file.")
+	"to the @@Info window@ and/or to a log file.")
 NORMAL (U"A log file is a text file on disk. It consists of a number of similar lines, "
-	"whose format you determine with the log settings in the Query menu.")
-NORMAL (U"Every time you press @@Keyboard shortcuts|F12@ (or choose ##Log 1# from the Query menu, "
-	"Praat writes a line to log file 1. If you press @@Keyboard shortcuts|Shift-F12@, Praat writes a line to log file 2.")
+	"whose format you determine with the log settings in the Analyses menu.")
+NORMAL (U"Every time you press @@Keyboard shortcuts|F12@ (or choose ##Log 1# from the Analysis menu), "
+	"Praat will write a line to the Info window and/or to log file 1. "
+	"If you press @@Keyboard shortcuts|Shift-F12@ (or choose ##Log 2# from the Analysis menu), "
+	"Praat will write a line to the Info window and/or to log file 2.")
 NORMAL (U"With the ##log settings# command window, you determine the following:")
-TAG (U"##Log 1 to Info window")
-DEFINITION (U"this determines whether your log line will be written to the Info window or not.")
-TAG (U"##Log 1 to log file")
-DEFINITION (U"this determines whether your log line will be written to the log file or not.")
+TAG (U"##Write log 1 to")
+DEFINITION (U"this determines whether your log line will be written to log file 1 only, to the Info window only, or to both.")
 TAG (U"##Log file 1")
-DEFINITION (U"the name of the log file. On Windows, this has to be a complete path name, such as "
-	"$$C:\\bsWINDOWS\\bsDESKTOP\\bsPitch Log.txt$. "
-	"On Unix and macOS, it can either be a complete path name, e.g. $$/home/mary/pitch_log$, "
-	"or a home-relative name such as $$~/Desktop/Pitch log$.")
+DEFINITION (U"the name of the log file. Click Browse to select a file to write to. "
+	"On most platforms you can also use a home-relative name such as $$~/Desktop/pitchLog.txt$.")
 TAG (U"##Log 1 format")
 DEFINITION (U"the format of the line that Praat will write. See below.")
 NORMAL (U"The same goes for log file 2.")
@@ -896,7 +894,7 @@ CODE (U"f21 = f2 - f1")
 CODE (U"appendInfoLine: vowel\\$ , \" \", fixed\\$  (f1, 0), \" \", fixed\\$  (f21, 0)")
 CODE (U"appendFileLine: \"~/Praat logs/Vowels and formants log\", vowel\\$ , tab\\$ , fixed\\$  (f1, 0), tab\\$ , fixed\\$  (f21, 0)")
 NORMAL (U"Beware of the following pitfall: because of the nature of scripts, you should not try to do this "
-	"when you have two editor windows with the same name. I cannot predict which of the two windows "
+	"when you have two editor windows with the same name. We cannot predict which of the two windows "
 	"will answer the #Get queries...")
 MAN_END
 
