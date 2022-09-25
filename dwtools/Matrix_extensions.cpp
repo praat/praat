@@ -1,6 +1,6 @@
 /* Matrix_extensions.cpp
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 	const integer numberOfRows = Matrix_getWindowSamplesY (me, ymin, ymax, & rowmin, & rowmax);
 
 	const integer numberOfCells = numberOfRows * numberOfColumns;
-	autoPermutation p = Permutation_create (numberOfCells);
+	autoPermutation p = Permutation_create (numberOfCells, true);
 	
 	if (drawingOrder == kGraphicsMatrixCellDrawingOrder::ROWS) {
 		// identity permutation

@@ -65,19 +65,6 @@ conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*
 
 Thing_implement (FormantPath, Sampled, 0);
 
-void FormantPath_getGridDimensions (FormantPath me, integer *out_nrow, integer *out_ncol) {
-	integer ncol = 1;
-	integer nrow = my ceilings.size;
-	if (nrow > 3) {
-		nrow = 1 + Melder_ifloor (sqrt (nrow - 0.5));
-		ncol = 1 + Melder_ifloor ((my ceilings.size - 1.0) / nrow);
-	}
-	if (out_nrow)
-		*out_nrow = nrow;
-	if (out_ncol)
-		*out_ncol = ncol;
-}
-
 autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCandidates) {
 	autoFormantPath me = Thing_new (FormantPath);
 	Sampled_init (me.get (), xmin, xmax, nx, dx, x1);
@@ -98,10 +85,11 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 	constexpr double stressCutoff = 100.0;
 	try {
 		const integer transtionCostType = ( Melder_debug == -3 ? 2 : 1 );
+		const integer numberOfCandidates = my formantCandidates.size;
 		const double transitionCostCuttoff = ( Melder_debug == -3 ? 0.3 : 100.0 );
 		autoMatrix stresses, qsums;
 		MelderExtremaWithInit intensities;
-		const integer midformant = (my formantCandidates.size + 1) / 2;
+		const integer midformant = (numberOfCandidates + 1) / 2;
 		if (intensityModulationStepSize > 0.0) {
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				const Formant_Frame frame = & my formantCandidates.at [midformant] -> frames [iframe];
@@ -117,8 +105,8 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		if (stressWeight > 0.0)
 			stresses = FormantPath_to_Matrix_stress (me, windowLength, parameters, powerf);
 		
-		autoINTMAT psi = zero_INTMAT (my formantCandidates.size, my nx);
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formantCandidates.size + 0.5, my formantCandidates.size, 1.0, 1.0);
+		autoINTMAT psi = zero_INTMAT (numberOfCandidates, my nx);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, numberOfCandidates + 0.5, numberOfCandidates, 1.0, 1.0);
 		/*
 			delta [i] [j] = minimum cost to reach state i at time j
 		*/
@@ -135,7 +123,7 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 			The sum of these components might be modulated by the local intensity
 		*/
 		for (integer itime = 1; itime <= my nx; itime ++) {
-			for (integer iformant = 1; iformant <= my formantCandidates.size; iformant ++) {
+			for (integer iformant = 1; iformant <= numberOfCandidates; iformant ++) {
 				const Formant_Frame frame = & my formantCandidates.at [iformant] -> frames [itime];
 				double wIntensity = 1.0, costs = 0.0;
 				if (hasIntensityDifference && intensityModulationStepSize > 0.0) {
@@ -160,14 +148,14 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 				4. (+) costs involving the difference in ceiling [i] [t-1] and ceiling [j] [t]
 				       (or should we measure the costs w.r.t the middle frequency?)
 		*/
-		const double ceilingsRange = my ceilings [my formantCandidates.size] - my ceilings [1];
+		const double ceilingsRange = my ceilings [numberOfCandidates] - my ceilings [1];
 		for (integer itime = 2; itime <= my nx; itime ++) {
-			for (integer iformant = 1; iformant <= my formantCandidates.size; iformant++) {
+			for (integer iformant = 1; iformant <= numberOfCandidates; iformant++) {
 				const Formant_Frame ffi = & my formantCandidates.at [iformant] -> frames [itime];
 				const integer numberOfTracks_i = std::min (numberOfTracks, ffi -> numberOfFormants);
 				double deltamin = 1e100;
 				integer minPos = 0;
-				for (integer jformant = 1; jformant <= my formantCandidates.size; jformant++) {
+				for (integer jformant = 1; jformant <= numberOfCandidates; jformant++) {
 					const Formant_Frame ffj = & my formantCandidates.at [jformant] -> frames [itime - 1];
 					const integer ntracks = std::min (ffj -> numberOfFormants, numberOfTracks_i);
 					double transitionCosts = delta [jformant] [itime - 1];
@@ -408,10 +396,17 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 	}
 }
 
-/*
-	double FormantPath_getStressOfCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
-		constINTVEC const& parameters, double powerf, integer candidate);
 
+static double FormantPath_getStressOfCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
+	constINTVEC const& parameters, double powerf, integer candidate) {
+	Melder_require (candidate > 0 && candidate <= my formantCandidates. size,
+		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
+	const Formant formant = (Formant) my formantCandidates.at [candidate];
+	autoFormantModeler fm = Formant_to_FormantModeler (formant, tmin, tmax,  parameters);
+	return FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
+}
+
+/*
 	integer FormantPath_getOptimalCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
 		constINTVEC const& parameters, double powerf);
 	integer FormantPath_getOptimalCeiling (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
@@ -424,11 +419,8 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 
 autoVEC FormantPath_getStressOfCandidates (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
 	autoVEC stresses = raw_VEC (my formantCandidates.size);
-	for (integer candidate = 1; candidate <= my formantCandidates.size; candidate ++) {
-		const Formant formanti = (Formant) my formantCandidates.at [candidate];
-		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
-		stresses [candidate] = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
-	}
+	for (integer candidate = 1; candidate <= my formantCandidates.size; candidate ++)
+		stresses [candidate] = FormantPath_getStressOfCandidate (me, tmin, tmax, fromFormant, toFormant, parameters, powerf, candidate);
 	return stresses;
 }
 
@@ -564,8 +556,9 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
 	constexpr double fmin = 0.0;
+	const integer numberOfCandidates = my formantCandidates.size;
 	if (nrow <= 0 || ncol <= 0)
-		FormantPath_getGridDimensions (me, & nrow, & ncol);
+		getGridLayout (numberOfCandidates, & nrow, & ncol);
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	const double fontSize_old = Graphics_inqFontSize (g);
@@ -578,7 +571,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	integer ifmin, ifmax;
 	const integer numberOfSamples = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 	
-	for (integer candidate = 1; candidate <= my formantCandidates.size; candidate ++) {
+	for (integer candidate = 1; candidate <= numberOfCandidates; candidate ++) {
 		const integer irow = 1 + (candidate - 1) / ncol; // left-to-right + top-to-bottom
 		const integer icol = 1 + (candidate - 1) % ncol;
 		const double vpi_x1 = x1NDC + (icol - 1) * vpi_width * (1.0 + spaceBetweenFraction_x);

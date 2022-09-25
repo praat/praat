@@ -40,4 +40,17 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, const
 
 void Graphics_lagPlot (Graphics g, constVEC x, double xmin, double xmax, integer lag, double labelSize, conststring32 plotLabel);
 
+void getGridLayout (integer numberOfItems, integer *out_numberOfRows, integer *out_numberOfColumns);
+/*
+	Get dimensions of a two-dimensional grid to layout n elements as nrow x ncol,
+	where nrow x ncol >= n and nrow >= ncol and nrow - ncol <= 1. 
+*/
+
+integer getGridCellIndex (double x, double y, integer numberOfRows, integer numberOfColumns);
+/*
+	Implicit:
+		Rectangular grid numberOfRows x numberOfColumns
+		Origin (0,0) is at left-bottom, top-right is at (1, 1)
+*/
+
 #endif /* _Graphics_extensions_h_ */
