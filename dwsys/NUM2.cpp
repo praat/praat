@@ -2266,6 +2266,12 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
 
 #undef SIGN
 
+/* Start of GSL based routines:
+	The following random number generating routines are based on the GSL library
+	Copyright (C) 1996, 1997, 1998, 1999, 2000, 2007 James Theiler, Brian Gough
+	
+*/
+
 #define SMALL_MEAN 14
 /* If n*p < SMALL_MEAN then use BINV algorithm. The ranlib implementation used cutoff=30;
  * but on my (Brian Gough) computer 14 works better
@@ -2568,6 +2574,9 @@ double NUMrandomBinomial_real (double p, integer n) {
 		return (double) NUMrandomBinomial (p, n);
 }
 
+/*
+	From gsl_ran_weibull.c
+*/
 double NUMrandomWeibull (double scale_lambda, double shape_k) {
 	Melder_require (scale_lambda > 0.0 && shape_k > 0.0,
 		U"NUMrandomWeibull: both arguments should be positive.");
@@ -2575,6 +2584,13 @@ double NUMrandomWeibull (double scale_lambda, double shape_k) {
 	return scale_lambda * pow (- log (u), 1.0 / shape_k);	
 }
 
+/*
+	Notice in GSL gsl_randist_gamma:
+	Version based on Marsaglia and Tsang, "A Simple Method for generating gamma variables", 
+	ACM Transactions on Mathematical Software, Vol 26, No 3 (2000), p363-372.
+
+	Implemented by J.D.Lamb@btinternet.com, minor modifications for GSL by Brian Gough
+ */
 double NUMrandomGamma (const double alpha, const double beta) {
 	Melder_require (alpha > 0 && beta > 0,
 		U"NUMrandomGamma: both arguments should be positive.");
@@ -2614,6 +2630,8 @@ void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg)
 	if (out_arg)
 		*out_arg = ln_arg;
 }
+
+/* End of GSL based routines */
 
 autoVEC newVECbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& z) {
 	Melder_assert (x.size == y.size && x.size == z.size);
