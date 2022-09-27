@@ -2288,8 +2288,10 @@ inline static double Stirling (double y1)
 	return s;
 }
 
-// djmw 20121211 replaced calls to gsl_rng_uniform with NUMrandomUniform (0,1)
-
+/*
+	This implementation of NUMrandomBinomial is by James Theiler, April 2003,
+	djmw 20121211 replaced calls to gsl_rng_uniform with NUMrandomUniform (0,1)
+*/
 integer NUMrandomBinomial (double p, integer n) {
 	if (p < 0.0 || p > 1.0 || n < 0) {
 		return -100000000;
