@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2021 David Weenink
+ * Copyright (C) 1997-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -395,10 +395,17 @@ void NUMsortTogether (vector<T1> a, vector<T2> b) {
 void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool descending); // TODO template
 /* Sort a together with iv1  and iv2 */
 
+void INTVECindex (INTVEC const& target, constINTVEC const& a);
 void INTVECindex (INTVEC const& target, constVEC const& a);
 void INTVECindex (INTVEC const& target, constSTRVEC const& s);
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
+	autoINTVEC result = raw_INTVEC (a.size);
+	INTVECindex (result.get(), a);
+	return result;
+}
+
+inline autoINTVEC newINTVECindex (constINTVEC const& a) {
 	autoINTVEC result = raw_INTVEC (a.size);
 	INTVECindex (result.get(), a);
 	return result;

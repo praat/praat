@@ -1,6 +1,6 @@
 /* NUMsort.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,13 +205,12 @@ void NUMindexx (const T a [], integer n, integer index [], int (*compare) (void 
 void INTVECindex (INTVEC const& index, constVEC const& v)
 MACRO_NUMindex (double)
 
-//void NUMindexx (const double a [], integer n, integer index [])
-//MACRO_NUMindex (double, n)
-
+void INTVECindex (INTVEC const& index, constINTVEC const& v)
+MACRO_NUMindex (integer)
 
 #undef COMPARELT
 #define COMPARELT(x,y) (Melder_cmp (x,y) <  0)
-//void NUMindexx_s (char32 **a, integer n, integer index [])
+
 void INTVECindex (INTVEC const& index, constSTRVEC const& v)
 MACRO_NUMindex (const char32_t *)
 
@@ -240,4 +239,19 @@ void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool 
 		iv2 [j] = itmp [index [j]];
 }
 
+autoINTMAT sortRows_INTMAT (constINTMAT mat, integer icol) { // TODO test me
+	try {
+		Melder_require (icol > 0 && icol <= mat.ncol,
+			U"The column index is not valid.");
+		autoINTVEC colvals = raw_INTVEC (mat.nrow);
+		for (integer irow = 1; irow <= mat.nrow; irow ++)
+			colvals [irow] = mat [irow] [icol];
+		autoINTVEC index = newINTVECindex (colvals.get());
+		autoINTMAT result = raw_INTMAT (mat.nrow, mat.ncol);
+		for (integer irow = 1; irow <= mat.nrow; irow ++)
+			result [index [irow]]  <<= mat [irow];
+	} catch (MelderError) {
+		Melder_throw (U"Matrix not sorted.");
+	}
+}
 /* End of file NUMsort.cpp */
