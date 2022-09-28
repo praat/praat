@@ -6834,11 +6834,14 @@ DIRECT (CONVERT_TWO_TO_ONE__Strings_to_EditDistanceTable) {
 }
 
 FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
-	BOOLEAN (sort, U"Sort", true)
+	OPTIONMENU (sort, U"Sorting", 1)
+	OPTION (U"No")
+	OPTION (U"Alphabetical")
+	OPTION (U"Numerical")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Strings)
-		autoPermutation result = Strings_to_Permutation (me, sort);
+		autoPermutation result = Strings_to_Permutation (me, sort-1);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 

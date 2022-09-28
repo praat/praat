@@ -26,6 +26,7 @@
 #include <limits.h>
 #include "melder.h"
 #include "MAT_numerics.h"
+#include "strings_sorting_enums.h"
 
 /*
 	A tipical iteration goes like
@@ -397,7 +398,7 @@ void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool 
 
 void INTVECindex (INTVEC const& target, constINTVEC const& a);
 void INTVECindex (INTVEC const& target, constVEC const& a);
-void INTVECindex (INTVEC const& target, constSTRVEC const& s);
+void INTVECindex (INTVEC const& index, constSTRVEC const& v, integer sortNumerically);
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
 	autoINTVEC result = raw_INTVEC (a.size);
@@ -413,7 +414,7 @@ inline autoINTVEC newINTVECindex (constINTVEC const& a) {
 
 inline autoINTVEC newINTVECindex (constSTRVEC const& s) {
 	autoINTVEC result = raw_INTVEC (s.size);
-	INTVECindex (result.get(), s);
+	INTVECindex (result.get(), s, false);
 	return result;
 }
 

@@ -63,7 +63,7 @@ autoTableOfReal TableOfReal_Permutation_permuteColumns (TableOfReal me, Permutat
 autoPermutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfRows, true);
-		INTVECindex (thy p.get(), my rowLabels.get());
+		INTVECindex (thy p.get(), my rowLabels.get(), false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");

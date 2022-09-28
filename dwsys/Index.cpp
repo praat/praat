@@ -1,6 +1,6 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2019 David Weenink
+ * Copyright (C) 2005-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include <time.h>
 #include "Index.h"
 #include "NUM2.h"
+#include "Permutation.h"
 
 #include "oo_DESTROY.h"
 #include "Index_def.h"
@@ -137,6 +138,29 @@ integer StringsIndex_countItems (StringsIndex me, integer iclass) {
 			sum ++;
 	}
 	return sum;
+}
+
+void StringsIndex_sortNumerically (StringsIndex me) {
+	try {
+		const integer numberOfClasses = my classes -> size;
+		autoSTRVEC numberstrings (numberOfClasses);
+		autoVEC numbers = raw_VEC (numberOfClasses);
+		for (integer i = 1; i <= numberOfClasses; i ++) {
+			const SimpleString ss = (SimpleString) my classes->at [i];
+			numberstrings [i] = Melder_dup (ss -> string.get());
+			numbers [i] = Melder_atof (ss -> string.get());
+		}
+		autoPermutation p = Permutation_create (numberOfClasses, true);
+		NUMsortTogether (numbers.get(), p -> p.get());
+		for (integer i = 1; i <= numberOfClasses; i ++) {
+			autoSimpleString ss = SimpleString_create (numberstrings [i].get());
+			my classes-> replaceItem_move (ss.move(), p -> p [i]);
+		}
+		for (integer item = 1; item <= classIndex->size; item ++)
+			my classIndex [item] = p -> p [my classIndex [item]];
+	} catch (MelderError) {
+		Melder_throw (me, U": could not be sorted numerically.");
+	}
 }
 
 /* End of Index.cpp */

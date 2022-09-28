@@ -2,7 +2,7 @@
 #define _Strings_extensions_h_
 /* Strings_extensions.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column);
 
 autoStrings StringsIndex_to_Strings (StringsIndex me);
 
-autoPermutation Strings_to_Permutation (Strings me, bool sort);
+autoPermutation Strings_to_Permutation (Strings me, integer sort);
 
 autoStrings Strings_Permutation_permuteStrings (Strings me, Permutation thee);
 

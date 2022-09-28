@@ -160,11 +160,13 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	}
 }
 
-autoPermutation Strings_to_Permutation (Strings me, bool sort) {
+autoPermutation Strings_to_Permutation (Strings me, integer sort) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfStrings, true);
-		if (sort)
-			INTVECindex (thy p.get(), my strings.get());
+		if (sort == 1)
+			INTVECindex (thy p.get(), my strings.get(), false);
+		else if (sort == 2)
+			INTVECindex (thy p.get(), my strings.get(), true);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");
@@ -262,6 +264,8 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column) {
 
 		autoStrings thee = Strings_createFromSTRVEC (groupLabels.get());
 		autoStringsIndex him = Strings_to_StringsIndex (thee.get());
+		if (Table_isColumnNumeric_ErrorFalse (me, column))
+			StringsIndex_sortNumerically (him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"No StringsIndex created from column ", column, U".");
