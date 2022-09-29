@@ -2420,7 +2420,7 @@ CODE (U"Except as contained in this notice, the name of a copyright holder "
 	"written authorization of the copyright holder.")
 MAN_END
 
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20220515)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20220926)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -2453,8 +2453,8 @@ LIST_ITEM (U"Ogg Vorbis: audio compression by Christopher Montgomery (@@Ogg Vorb
 LIST_ITEM (U"Opus: audio compression by Jean-Marc Valin, Gregory Maxwell, Christopher Montgomery, Timothy Terriberry, "
 	"Koen Vos, Andrew Allen and others (@@Opus BSD 3-clause license@).")
 LIST_ITEM (U"SILK: audio compression by Skype Limited (@@Skype Limited BSD 3-clause license@).")
-LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber, translated to C by Christopher Montgomery.")
-LIST_ITEM (U"@LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
+LIST_ITEM (U"fftpack: public-domain Fourier transforms by Paul Swarztrauber, translated to C by Christopher Montgomery.")
+LIST_ITEM (U"@LAPACK: public-domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University, "
 	"C edition by Peng Du, Keith Seymour and Julie Langdou, version 3.2.1 of June 2009.")
 LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).")

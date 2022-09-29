@@ -19,6 +19,7 @@
 
 #include "GuiP.h"
 #include "praatP.h"   // BUG
+#include "UnicodeData.h"
 
 Thing_implement (GuiMenu, GuiThing, 0);
 
@@ -545,9 +546,18 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 	static MelderString neatTitle;
 	MelderString_copy (& neatTitle, title);
 	if (neatTitle. length >= 1 && neatTitle. string [neatTitle. length - 1] == U'-') {
-		MelderString_copy (& neatTitle, U"    ", title);
+		constexpr conststring32 narrowSpacesForPreciseAlignment =
+				UNITEXT_NARROW_NO_BREAK_SPACE  UNITEXT_NARROW_NO_BREAK_SPACE  U"   ";
+		MelderString_copy (& neatTitle, narrowSpacesForPreciseAlignment, title);
 		neatTitle. string [neatTitle. length - 1] = U' ';
-		MelderString_append (& neatTitle, U">");   // or 0x25B6;
+		/*
+			bikeshed choices for the disclosure sign:
+				UNITEXT_GREATER_THAN_SIGN: the middle way
+				UNITEXT_SMALL_GREATER_THAN_SIGN: a bit thinner
+				UNICODE_HEAVY_RIGHT_POINTING_ANGLE_QUOTATION_MARK_ORNAMENT: a dingbat; really thick and therefore somewhat globally prominent
+				UNITEXT_BLACK_RIGHT_POINTING_TRIANGLE: very globally prominent
+		*/
+		MelderString_append (& neatTitle, UNITEXT_GREATER_THAN_SIGN);
 	}
 	#if gtk
 		my d_cascadeButton -> d_widget = gtk_button_new_with_label (Melder_peek32to8 (neatTitle. string));
