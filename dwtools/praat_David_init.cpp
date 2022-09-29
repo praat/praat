@@ -4892,6 +4892,14 @@ DIRECT (COMBINE_ALL_TO_ONE__Permutations_multiply) {
 	COMBINE_ALL_TO_ONE_END (U"mul_", list.size);
 }
 
+FORM (CONVERT_TWO_TO_ONE__Permutation_permutePart, U"Permutation: Permute part", nullptr) {
+	NATURAL (startPos, U"Start index", U"1")
+	OK
+DO
+	CONVERT_TWO_TO_ONE (Permutation)
+		autoPermutation result = Permutation_permutePart (me, startPos, you);
+	CONVERT_TWO_TO_ONE_END (U"")
+}
 DIRECT (MODIFY_Permutations_next) {
 	MODIFY_EACH (Permutation)
 		Permutation_next_inplace (me);
@@ -9987,6 +9995,8 @@ void praat_David_init () {
 			nullptr, 0, CONVERT_EACH_TO_ONE__Permutation_invert);
 	praat_addAction1 (classPermutation, 0, U"Multiply",
 			nullptr, 0, COMBINE_ALL_TO_ONE__Permutations_multiply);
+	praat_addAction1 (classPermutation, 2, U"Permute part...",
+			nullptr, 0, CONVERT_TWO_TO_ONE__Permutation_permutePart);
 
 	praat_addAction1 (classPitch, 2, U"To DTW...", U"To PointProcess",
 			GuiMenu_HIDDEN, CONVERT_TWO_TO_ONE__Pitches_to_DTW);

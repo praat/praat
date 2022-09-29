@@ -3,6 +3,7 @@
 
 appendInfoLine: "test_Permutation.praat"
 
+@testPermutePart
 @test_600_12
 @rotate
 @sequence
@@ -205,10 +206,33 @@ procedure distributionTest: .size, .numberOfRepetitions
 	appendInfoLine: tab$, "p = ", .p, " for chiSquare = ",
 	...  .chiSq, " with ", .df, " degrees of freedom."
 	removeObject: .permutation, .tor
-	appendInfoLine: "Realized## - expected (=", fixed$ (.expected, 0), "):", 
-	... newline$, .diff##
+	appendInfo: tab$, "Realized## - expected (=", fixed$ (.expected, 0), "):", 
+	... newline$,  tab$, .diff##, newline$
 endproc
-
+ 
+procedure testPermutePart
+	appendInfoLine: tab$, "Permute part"
+	.p10 = Create Permutation: "p", 10, "yes"
+	.v10# = List values
+	.p5 = Create Permutation: "p", 5, "no"
+	.v5# = List values
+	selectObject: .p10, .p5
+	.p1 = Permute part: 1
+	.v1# = List values
+	for i to 5
+		assert .v1# [i] == .v5# [i]
+		assert .v1# [5 + i] = 5 + i
+	endfor
+	selectObject: .p10, .p5
+	.p2 = Permute part: 6
+	.v2# = List values
+	for i to 5
+		assert .v2# [i] == i
+		assert .v2# [5 + i] = 5 + .v5# [i]
+	endfor
+	removeObject: .p2, .p1, .p5, .p10
+	appendInfoLine: tab$, "Permute part OK"
+endproc
 
 
 

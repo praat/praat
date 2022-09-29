@@ -88,4 +88,6 @@ autoPermutation Permutations_multiply2 (Permutation me, Permutation thee);
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me);
 
+autoPermutation Permutation_permutePart (Permutation me, integer startPosition, Permutation other);
+
 #endif /* _Permutation_h_ */

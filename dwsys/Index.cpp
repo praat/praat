@@ -96,6 +96,177 @@ autoStringsIndex StringsIndex_create (integer numberOfItems) {
 	}
 }
 
+static autoSTRVEC STRVEC_unicize (constSTRVEC const& strvec, constINTVEC const& permutation) {
+	Melder_assert (strvec.size == permutation.size);
+	integer count = 1;
+	autoSTRVEC unique;
+	unique.insert (count, strvec [permutation [1]]);
+	for (integer i = 2; i <= strvec.size; i ++) {
+		conststring32 str = strvec [permutation [i]];
+		if (Melder_cmp (unique [count].get(), str) == 0)
+			continue;
+		count ++;
+		unique.insert (count, str);
+	}
+	return unique;
+}
+
+/*
+	Find the first and last index of the first numeric part in a string.
+	The allowed numeric part is either <d> or <d>.<d>, where <d> a sequence of one or more digits
+	Examples with breakAtDecimalPoint
+				false 		true
+	s1d 		-> 2,2		2,2
+	2.222		-> 1,5		1,1
+	abc123		-> 4,6		4,6
+	a.3			-> 3,3		3,3
+	a..3		-> 4,4		4,4
+	a..3.		-> 4,4		4,4
+	b33.33.4	-> 2,6		2,3
+*/
+static integer getIndexOfStartOfNumericPart (conststring32 string) {
+	const char32 *p = string;
+	while (*p != U'\0' && (*p < U'0' || *p > U'9'))
+		p ++;
+	const integer relPos = p - string;
+	return relPos;
+}
+
+static integer getIndexOfEndOfNumericPart (conststring32 string, integer startIndex, bool breakAtDecimalPoint) {
+	if (startIndex < 0)
+		return 0;
+	const char32 *pstart = string + startIndex - 1;
+	const char32 *decimalPoint = 0, *p = pstart;
+	while (*p != U'\0') {
+		if (*p == U'.') {
+			if (decimalPoint || breakAtDecimalPoint)
+				break;
+			else
+				decimalPoint = p;
+		} else if (*p < U'0' || *p > U'9')
+			if (p - decimalPoint == 1) {
+				p --; // digit string should not end with a point!
+				break;
+			}
+		p ++;
+	}
+	const integer relPos = p - pstart;
+	return startIndex + relPos;
+}
+
+void MelderString_copyPart (MelderString *me, conststring32 source, integer first, integer last) {
+	MelderString_empty (me);
+	const integer length = str32len (source);
+	Melder_assert (first <= length);
+	if (last == 0)
+		last = length;
+	last = std::min (last, length);
+	for (integer ichar = first; ichar <= last; ichar ++)
+			MelderString_appendCharacter(me, source [ichar - 1]); // 0-based
+	MelderString_appendCharacter (me, U'\0');
+}
+
+static autoINTMAT indexRangeOfNumericParts_INTMAT (constSTRVEC const & strvec, bool breakAtDecimalPoint) {
+	autoINTMAT result = zero_INTMAT (strvec.size, 2);
+	for (integer istring = 1; istring <= strvec.size; istring ++) {
+		const integer first = getIndexOfStartOfNumericPart (strvec [istring]);
+		if (first == 0)
+			continue;
+		const integer last = getIndexOfEndOfNumericPart (strvec [istring], first, breakAtDecimalPoint);
+		Melder_assert (last >= first);
+		result [istring] [1] = first;
+		result [istring] [2] = last;
+	}
+	return result;
+}
+
+autoSTRVEC STRVEC_copyParts (constSTRVEC const & strvec, constINTMAT const& indicesOfParts) {
+	Melder_assert (strvec.size == indicesOfParts.nrow);
+	Melder_assert (indicesOfParts.ncol >= 2);
+	autoSTRVEC result (strvec.size);
+	autoMelderString part;
+	for (integer istring = 1; istring <= strvec.size; istring ++) {
+		const integer first = indicesOfParts [istring] [1];
+		if (first > 0)
+			MelderString_copyPart (& part, strvec [istring], first, indicesOfParts [istring] [2]);
+		result [istring] = Melder_dup (part.string);
+	}
+	return result;
+}
+
+autoVEC VEC_from_STRVEC (constSTRVEC const & strvec) {
+	autoVEC result = raw_VEC (strvec.size);
+	for (integer i = 1; i <= strvec.size; i ++) {
+		result [i] = Melder_atof (strvec [i]);
+	}
+	return result;
+}
+
+static autoVEC partsAsNumber_VEC (constSTRVEC const & strvec, constINTMAT const& partIndices) {
+	Melder_assert (strvec.size == partIndices.nrow);
+	autoVEC numbers = raw_VEC (strvec.size);
+	autoMelderString numericPart;
+	for (integer istring = 1; istring <= strvec.size; istring ++) {
+		double number = std::numeric_limits<double>::max();
+		const integer first = partIndices [istring] [1];
+		if (first > 0) {
+			const integer last = partIndices [istring] [2];
+			MelderString_copyPart (& numericPart, strvec [istring], first, last);
+			number = Melder_atof (numericPart.string);
+		};
+		numbers [istring] = number;
+	}
+	return numbers;
+}
+
+autoStringsIndex StringsIndex_createFrom_STRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
+	try {
+		autoStringsIndex me = StringsIndex_create (strvec.size);
+		autoPermutation p = Permutation_create (strvec.size, true);
+		autoSTRVEC classes;
+		if (sorting == kStrings_sorting::ALPHABETICAL) {
+			INTVECindex (p -> p.get(), strvec, false); // determine sorting
+			classes = STRVEC_unicize (strvec, p -> p.get());
+//		else if (sorting == kStrings_sorting::NUMERICAL)
+//			INTVECindex (p -> p.get(), strvec, true);
+		} else if (sorting == kStrings_sorting::NUMERICAL_PART) {
+			autoINTMAT partIndices = indexRangeOfNumericParts_INTMAT (strvec, breakAtDecimalPoint);
+			autoVEC numbers = partsAsNumber_VEC (strvec, partIndices.get());
+			INTVECindex (p -> p.get(), numbers.get()); // determine sorting
+			classes = STRVEC_unicize (strvec, p -> p.get());
+			autoPermutation pc = Permutation_create (classes.size, true);
+			integer start = 1, end = start;
+			while (end <= classes.size && (getIndexOfStartOfNumericPart (classes [end].get()) == 1))
+				end ++;
+			autoINTMAT partIndicesClass = indexRangeOfNumericParts_INTMAT (strvec, breakAtDecimalPoint);
+			if (-- end > 1) {
+				// We are sure that the first part is numeric, sort the trailing alpha part
+				const integer numberOfItems = end - start + 1;
+				MelderString part;
+				autoSTRVEC trailing (numberOfItems);
+				autoPermutation pt = Permutation_create (numberOfItems, true);
+				for (integer i = 1; i <= numberOfItems; i ++) {
+					const integer last = partIndicesClass [i] [2];
+					MelderString_copyPart (& part, classes [i].get(), last, 0_integer);
+				}
+				INTVECindex (pt -> p.get(), classes.get(), false);
+				
+			}
+			if (end < classes.size) {
+				integer start = end;
+			}
+		}
+		
+		for (integer i = 1; i <= classes.size; i ++) {
+			autoSimpleString ss = SimpleString_create (classes [i].get());
+			my classes -> addItem_move (ss.move());
+		}
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Could not create StringsIndex from STRVEC.");
+	}
+}
+
 integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex) {
 	integer result = 0;
 	if (itemIndex >= 0 && itemIndex <= my numberOfItems)

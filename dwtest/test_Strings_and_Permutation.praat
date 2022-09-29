@@ -4,6 +4,7 @@
 appendInfoLine: "test_Strings_and_Permutation"
 veca# = {1, 10, 11, 22, 3, 5}
 vecn# = {1, 3, 5, 10, 11, 22 }
+
 strings = Create Strings from tokens: "s", "11 10 1 22 3 5", " " 
 pa = To Permutation: "Alphabetical"
 plusObject: strings
@@ -24,6 +25,10 @@ for i to size (veca#)
 endfor
 removeObject: stringsn, pn, strings
 
+Create Table with column names: "table", 100, { "factor", "data" }
+Formula: "data", "randomGauss (0, 1)"
+Formula: "factor", "randomUniform (1,6)"
+Formula: "factor",  "veca# [self]"
 
 appendInfoLine: "test_Strings_and_Permutation OK"
 

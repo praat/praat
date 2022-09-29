@@ -170,6 +170,21 @@ void Permutation_swapBlocks (Permutation me, integer from, integer to, integer b
 	}
 }
 
+autoPermutation Permutation_permutePart (Permutation me, integer startPosition, Permutation other) {
+	Melder_require (startPosition > 0 && startPosition <= my numberOfElements,
+		U"The start position should be in the range from 1 to ", my numberOfElements, U".");
+	const integer endPosition = startPosition + other -> numberOfElements - 1;
+	Melder_require (endPosition <= my numberOfElements,
+		U"Start at position ", startPosition, U" requires the permuter to have maximally ",
+		my numberOfElements - startPosition + 1, U" elements, however it has ", other -> numberOfElements,
+		U" elements. "
+	);
+	autoPermutation thee = Data_copy (me);
+	for (integer ipos = 1; ipos <= other -> numberOfElements; ipos ++)
+		thy p [startPosition + ipos - 1] = my p [startPosition + other -> p [ipos] - 1];
+	return thee;
+}
+
 void Permutation_permuteRandomly_inplace (Permutation me, integer from, integer to) {
 	try {
 		const integer n = Permutation_checkRange (me, & from, & to);
