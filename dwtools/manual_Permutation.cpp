@@ -1,6 +1,6 @@
 /* manual_Permutation.cpp
  *
- * Copyright (C) 2005-2019 David Weenink
+ * Copyright (C) 2005-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,6 +180,21 @@ NORMAL (U"2. With ##Index range# = [0,0], ##Block size# = 3, ##Permute within bl
 NORMAL (U"3. With the same options as 2 but ##No doublets# is %on, the previously given outcome is forbidden because "
 	"the last element of the first block (6) and the first element of the next block (9) are equal modulo 3 (the "
 	"blocksize). A valid outcome might then be ((5,4,6),(8,9,7),(3,1,2)).")
+MAN_END
+
+MAN_BEGIN (U"Permutation: Permute part...", U"djmw", 20220929)
+INTRO (U"A command to create a new @Permutation which is a copy of the first selected Permutation but with a part "
+	"that has been permuted according to a specification given by the second one.")
+ENTRY (U"Settings")
+TAG (U"##Start index#")
+DEFINITION (U"the position in the first selected Permutation where the modification by the second one should start.")
+ENTRY (U"Examples")
+NORMAL (U"Suppose the first permutation p1 is (1,2,3,4,5,6,7,8,9,10,11) and the second one p2 is (2,3,5,1,4).")
+NORMAL (U"1. With ##Start index# set to 1, the newly generated permutation p3 will be ((2,3,5,1,4), 6,7,8,9,10,11). "
+	"The new p3 will have the same number of elements as p1. The permutation p2 which has 5 elements starts to operate at "
+	"the first element and will stop after the fifth element. The first five elements in p3 will therefore equal "
+	"the permuted first five elements of p1, while the last 6 elements of p3 will be a copy of those in p1.") 
+NORMAL (U"2. With ##Start index# set to 6, the newly generated permutation will be (1,2,3,4,5, (7,8,10,6,9), 11).") 
 MAN_END
 
 MAN_BEGIN (U"Permutation: Swap blocks...", U"djmw", 20110105)

@@ -4892,7 +4892,7 @@ DIRECT (COMBINE_ALL_TO_ONE__Permutations_multiply) {
 	COMBINE_ALL_TO_ONE_END (U"mul_", list.size);
 }
 
-FORM (CONVERT_TWO_TO_ONE__Permutation_permutePart, U"Permutation: Permute part", nullptr) {
+FORM (CONVERT_TWO_TO_ONE__Permutation_permutePart, U"Permutation: Permute part", U"Permutation: Permute part...") {
 	NATURAL (startPos, U"Start index", U"1")
 	OK
 DO

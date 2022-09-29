@@ -33,7 +33,8 @@ void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer fir
 autoPermutation Permutation_create (integer numberOfElements, bool identity);
 /*
 	Create the Permutation data structure and fill
-		with the identical permutation (1,2,..n)
+		with the identical permutation (1,2,..n) if identity is true
+		else create a random permutation
 */
 
 void Permutation_checkInvariant (Permutation me);
