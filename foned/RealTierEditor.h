@@ -26,8 +26,8 @@ Thing_define (RealTierEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, RealTierArea, realTierArea)
 	DEFINE_FunctionArea (2, SoundArea, soundArea)
 
-	void v1_dataChanged () override {
-		our RealTierEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		our RealTierEditor_Parent :: v1_dataChanged (sender);
 		our realTierArea() -> functionChanged (static_cast <RealTier> (our data()));
 		if (our soundArea())
 			our soundArea() -> functionChanged (nullptr);   // BUG: the copy probably doesn't change

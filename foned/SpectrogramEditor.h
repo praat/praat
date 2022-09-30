@@ -24,8 +24,8 @@
 Thing_define (SpectrogramEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, SpectrogramArea, spectrogramArea)
 	
-	void v1_dataChanged () override {
-		our SpectrogramEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		our SpectrogramEditor_Parent :: v1_dataChanged (sender);
 		our spectrogramArea() -> functionChanged (static_cast <Spectrogram> (our data()));
 	}
 	void v_distributeAreas () override {

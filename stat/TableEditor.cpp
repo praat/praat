@@ -47,7 +47,7 @@ static void updateHorizontalScrollBar (TableEditor me) {
 	GuiScrollBar_set (my horizontalScrollBar, undefined, my table() -> numberOfColumns + 1, my leftColumn, undefined, undefined, undefined);
 }
 
-void structTableEditor :: v1_dataChanged () {
+void structTableEditor :: v1_dataChanged (Editor /* sender */) {
 	Melder_clipRight (& our topRow, our table() -> rows.size);
 	Melder_clipRight (& our leftColumn, our table() -> numberOfColumns);
 	updateVerticalScrollBar (this);

@@ -113,7 +113,7 @@ void structStringsEditor :: v_createChildren () {
 	GuiButton_createShown (our windowForm, 310, 400, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Remove", gui_button_cb_remove, this, 0);
 }
 
-void structStringsEditor :: v1_dataChanged () {
+void structStringsEditor :: v1_dataChanged (Editor /* sender */) {
 	updateList (this);
 }
 

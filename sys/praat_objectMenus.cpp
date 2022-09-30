@@ -629,7 +629,7 @@ void praat_show () {
 	praat_sensitivizeFixedButtonCommand (U"Inspect", theCurrentPraatObjects -> totalSelection != 0);
 	praat_actions_show ();
 	if (theCurrentPraatApplication == & theForegroundPraatApplication && theReferenceToTheOnlyButtonEditor)
-		Editor_dataChanged (theReferenceToTheOnlyButtonEditor);
+		Editor_dataChanged (theReferenceToTheOnlyButtonEditor, nullptr);
 }
 
 /********** Menu descriptions. **********/

@@ -73,8 +73,20 @@ static GuiMenuItem DataGuiMenu_addCommand_ (EditorMenu me, conststring32 itemTit
 	}
 	const int depth = (flags & GuiMenu_DEPTH_3) >> 16;   // the maximum depth in editor windows is 3
 	thy itemTitle = Melder_dup (itemTitle);
-	if (depth > 0)
-		itemTitle = Melder_cat (U"    ", itemTitle);
+	if (depth > 0) {
+		/*
+			bikeshed choices for indented menu items
+		*/
+		[[maybe_unused]] constexpr conststring32 space = U"    ";   // minimalist
+		[[maybe_unused]] constexpr conststring32 fourDots = U"\u205E   ";   // not evenly dispersed
+		[[maybe_unused]] constexpr conststring32 twoDots = U"\u205A   ";   // dispersion OKish
+		[[maybe_unused]] constexpr conststring32 oneDot = U"·   ";   // dispersion good, not too prominent, not really thin
+		[[maybe_unused]] constexpr conststring32 hyphenationPoint = U"\u2027   ";   // xx
+		[[maybe_unused]] constexpr conststring32 pipe = U"|   ";   // not long enough, prominent
+		[[maybe_unused]] constexpr conststring32 boxDrawingLightVertical = U"\u2502   ";   // not long enough, prominent
+		[[maybe_unused]] constexpr conststring32 boxDrawingLightQuadrupleDashVertical = U"\u250A   ";   // not long enough, but nicely thin
+		itemTitle = Melder_cat (hyphenationPoint, itemTitle);
+	}
 	if (! commandCallback)
 		flags |= GuiMenu_INSENSITIVE;
 	thy itemWidget =

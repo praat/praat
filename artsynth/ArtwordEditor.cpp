@@ -95,7 +95,7 @@ static void gui_drawingarea_cb_mouse (ArtwordEditor me, GuiDrawingArea_MouseEven
 	GuiText_setString (my value, Melder_fixed (yWC, 6));
 }
 
-void structArtwordEditor :: v1_dataChanged () {
+void structArtwordEditor :: v1_dataChanged (Editor /* sender */) {
 	updateList (this);
 	Graphics_updateWs (graphics.get());
 }

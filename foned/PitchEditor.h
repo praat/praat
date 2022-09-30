@@ -25,8 +25,8 @@
 Thing_define (PitchEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, PitchArea, pitchArea)
 
-	void v1_dataChanged () override {
-		PitchEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		PitchEditor_Parent :: v1_dataChanged (sender);
 		our pitchArea() -> functionChanged (static_cast <Pitch> (our data()));
 	}
 	void v_distributeAreas () override {

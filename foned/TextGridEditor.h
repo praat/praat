@@ -32,9 +32,9 @@ Thing_define (TextGridEditor, FunctionEditor) {
 
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v1_dataChanged () override {
+	void v1_dataChanged (Editor sender) override {
 		Melder_clipRight (& our textGridArea() -> selectedTier, our textGrid() -> tiers->size);   // crucial: before v_updateText (bug 2022-07-23)!
-		our structFunctionEditor :: v1_dataChanged ();
+		our structFunctionEditor :: v1_dataChanged (sender);
 		our textGridArea() -> functionChanged (our textGrid());
 		if (our soundArea()) {
 			our soundArea() -> functionChanged (nullptr);   // BUG: this function has not actually changed

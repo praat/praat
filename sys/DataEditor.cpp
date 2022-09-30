@@ -82,17 +82,21 @@ static void update (DataSubEditor me) {
 static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, conststring32 number) {
 	Data_Description structDescription, result;
 	char32 string [100];
-	if (my classInfo == classMatrixEditor) return nullptr;   // no structs inside
+	if (my classInfo == classMatrixEditor)
+		return nullptr;   // no structs inside
 	if (my classInfo == classVectorEditor) {
-		if (my d_description -> type != structwa) return nullptr;   // no structs inside
+		if (my d_description -> type != structwa)
+			return nullptr;   // no structs inside
 		structDescription = * (Data_Description *) my d_description -> tagType;
 	} else { /* StructEditor or ClassEditor or DataEditor. */
 		structDescription = my d_description;
 	}
 	Melder_sprint (string,100, number);
-	if ((result = Data_Description_findNumberUse (structDescription, string)) != nullptr) return result;
+	if ((result = Data_Description_findNumberUse (structDescription, string)) != nullptr)
+		return result;
 	Melder_sprint (string,100, number, U" - 1");
-	if ((result = Data_Description_findNumberUse (structDescription, string)) != nullptr) return result;
+	if ((result = Data_Description_findNumberUse (structDescription, string)) != nullptr)
+		return result;
 	return nullptr;
 }
 
@@ -229,11 +233,15 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 		1. The owner (creator) of our root DataEditor: so that she can notify other editors, if any.
 		2. All our sibling DataSubEditors.
 	*/
+	Melder_assert (my root);
 	Editor_broadcastDataChanged (my root);
+	Melder_assert (my root);
 	update (me);
+	Melder_assert (my root);
 	for (int isub = 1; isub <= my root -> children.size; isub ++) {
 		DataSubEditor subeditor = my root -> children.at [isub];
-		if (subeditor != me) update (subeditor);
+		if (subeditor != me)
+			update (subeditor);
 	}
 	return;
 error:
@@ -837,9 +845,11 @@ void structDataEditor :: v9_destroy () noexcept {
 	DataEditor_Parent :: v9_destroy ();
 }
 
-void structDataEditor :: v1_dataChanged () {
+void structDataEditor :: v1_dataChanged (Editor sender) {
+	if (this == sender)
+		return;
 	/*
-		Someone else changed our data.
+		Someone *else* changed our data.
 		We know that the top-level data is still accessible,
 		so we update the top-level window to show the change:
 	*/

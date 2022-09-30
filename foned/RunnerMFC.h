@@ -37,7 +37,7 @@ Thing_define (RunnerMFC, Editor) {
 		override { return false; }
 	void v_createChildren ()
 		override;
-	void v1_dataChanged ()
+	void v1_dataChanged (Editor sender)
 		override;
 };
 

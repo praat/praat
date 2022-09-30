@@ -1575,7 +1575,7 @@ void structFunctionEditor :: v_createChildren () {
 	GuiDrawingArea_setSwipable (our drawingArea, our scrollBar, nullptr);
 }
 
-void structFunctionEditor :: v1_dataChanged () {
+void structFunctionEditor :: v1_dataChanged (Editor sender) {
 	Melder_assert (our function());
 	Melder_assert (Thing_isa (our function(), classFunction));
 	our tmin = our function() -> xmin;
@@ -1673,7 +1673,7 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data)
 		gui_checkbutton_cb_group (me, nullptr);   // BUG: nullptr
 	my enableUpdates = true;   // BUG: explain why still needed
 
-	Editor_dataChanged (me);   // only to self, not to the other editors; BUG: should be in Editor_init?
+	Editor_dataChanged (me, me);   // only to self, not to the other editors; BUG: should be in Editor_init?
 }
 
 void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup) {

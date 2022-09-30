@@ -67,8 +67,8 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 
 	Manipulation manipulation() { return static_cast <Manipulation> (our data()); }
 
-	void v1_dataChanged () override {
-		ManipulationEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		ManipulationEditor_Parent :: v1_dataChanged (sender);
 		our soundArea() -> functionChanged (our manipulation() -> sound.get());
 		our pitchTierArea() -> functionChanged (our manipulation() -> pitch.get());
 		if (! our manipulation() -> duration)   // repair an old-fashioned Manipulation that has a PitchTier only
