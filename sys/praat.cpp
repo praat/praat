@@ -646,14 +646,15 @@ static void cb_Editor_dataChanged (Editor me) {
 			editingThisObject |= ( theCurrentPraatObjects -> list [iobject]. editors [ieditor] == me );
 		if (editingThisObject) {
 			/*
-				Notify all editors associated with this object,
-				*including myself*.
-				(last checked 2022-06-12)
+				Notify all editors associated with this object, *including myself*.
+				But the receiver will be able to check whether the notification comes from self or not;
+				e.g. the DataEditor will react differently on a message from outside than on a message from inside.
+				(last checked 2022-09-30)
 			*/
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor otherEditor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];
-				if (otherEditor /*&& otherEditor != me*/)
-					Editor_dataChanged (otherEditor);
+				if (otherEditor)
+					Editor_dataChanged (otherEditor, me);
 			}
 		}
 	}
@@ -804,7 +805,7 @@ void praat_dataChanged (Daata object) {
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 			Editor editor = EDITOR [ieditor];
 			if (editor) {
-				Editor_dataChanged (editor);
+				Editor_dataChanged (editor, nullptr);
 				if (duringError)
 					Melder_clearError ();   // accept only the original error, and not the extra ones generated in the editors
 			}

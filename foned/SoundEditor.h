@@ -26,8 +26,8 @@ Thing_define (SoundEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, SoundArea, soundArea)
 	DEFINE_FunctionArea (2, SoundAnalysisArea, soundAnalysisArea)
 
-	void v1_dataChanged () override {
-		SoundEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		SoundEditor_Parent :: v1_dataChanged (sender);
 		Thing_cast (SampledXY, soundOrLongSound, our data());
 		our soundArea() -> functionChanged (soundOrLongSound);
 		our soundAnalysisArea() -> functionChanged (soundOrLongSound);

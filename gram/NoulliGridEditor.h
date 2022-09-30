@@ -29,8 +29,8 @@ Thing_define (NoulliGridEditor, FunctionEditor) {
 	DEFINE_FunctionArea (2, SoundArea, soundArea)
 	NoulliGrid noulliGrid () { return static_cast <NoulliGrid> (our data()); }
 
-	void v1_dataChanged () override {
-		NoulliGridEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		NoulliGridEditor_Parent :: v1_dataChanged (sender);
 		our noulliGridArea() -> functionChanged (static_cast <NoulliGrid> (our data()));
 		if (our soundArea())
 			our soundArea() -> functionChanged (nullptr);

@@ -143,7 +143,7 @@ static void selectFormantOrBandwidth (FormantGridArea me, integer iformant) {
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
 	my selectedFormant = iformant;
-	Editor_dataChanged (my boss());   // BUG: the data themselves have not changed, but the view on them has
+	Editor_dataChanged (my boss(), my boss());   // BUG: the data themselves have not changed, but the view on them has
 }
 
 static void menu_cb_selectFirst   (FormantGridArea me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 1); }

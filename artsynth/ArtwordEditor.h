@@ -33,7 +33,7 @@ Thing_define (ArtwordEditor, Editor) {
 
 	void v_createChildren ()
 		override;
-	void v1_dataChanged ()
+	void v1_dataChanged (Editor sender)
 		override;
 };
 

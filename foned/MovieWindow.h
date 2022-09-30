@@ -30,8 +30,8 @@ Thing_define (MovieWindow, FunctionEditor) {
 
 	Movie movie() { return static_cast <Movie> (our data()); }
 
-	void v1_dataChanged () override {
-		MovieWindow_Parent :: v1_dataChanged ();   // BUG: calls multiple functionChanged()
+	void v1_dataChanged (Editor sender) override {
+		MovieWindow_Parent :: v1_dataChanged (sender);   // BUG: calls multiple functionChanged()
 		our videoArea() -> functionChanged (our movie());
 		our soundArea() -> functionChanged (our movie() -> d_sound.get());
 		our soundAnalysisArea() -> functionChanged (our movie() -> d_sound.get());

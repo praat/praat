@@ -24,8 +24,8 @@
 Thing_define (ERPWindow, FunctionEditor) {
 	DEFINE_FunctionArea (1, ERPArea, erpArea)
 
-	void v1_dataChanged () override {
-		ERPWindow_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		ERPWindow_Parent :: v1_dataChanged (sender);
 		Thing_cast (ERP, erp, our data());
 		our erpArea() -> functionChanged (erp);
 	}

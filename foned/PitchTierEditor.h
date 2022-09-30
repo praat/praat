@@ -27,8 +27,8 @@ Thing_define (PitchTierEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, PitchTierArea, pitchTierArea)
 	DEFINE_FunctionArea (2, SoundArea, soundArea)
 
-	void v1_dataChanged () override {
-		our PitchTierEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		our PitchTierEditor_Parent :: v1_dataChanged (sender);
 		our pitchTierArea() -> functionChanged (static_cast <PitchTier> (our data()));
 		if (our soundArea())
 			our soundArea() -> functionChanged (nullptr);   // BUG: the copy probably doesn't change

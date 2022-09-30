@@ -24,8 +24,8 @@
 Thing_define (SpectrumEditor, FunctionEditor) {
 	DEFINE_FunctionArea (1, SpectrumArea, spectrumArea)
 
-	void v1_dataChanged () override {
-		SpectrumEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		SpectrumEditor_Parent :: v1_dataChanged (sender);
 		Thing_cast (Spectrum, spectrum, our data());
 		our spectrumArea() -> functionChanged (spectrum);
 	}
