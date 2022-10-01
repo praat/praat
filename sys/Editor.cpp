@@ -77,7 +77,7 @@ static GuiMenuItem DataGuiMenu_addCommand_ (EditorMenu me, conststring32 itemTit
 		/*
 			bikeshed choices for indented menu items
 		*/
-		[[maybe_unused]] constexpr conststring32 space = U"    ";   // minimalist
+		[[maybe_unused]] constexpr conststring32 space = U"      ";   // minimalist
 		[[maybe_unused]] constexpr conststring32 fourDots = U"\u205E   ";   // not evenly dispersed
 		[[maybe_unused]] constexpr conststring32 twoDots = U"\u205A   ";   // dispersion OKish
 		[[maybe_unused]] constexpr conststring32 oneDot = U"·   ";   // dispersion good, not too prominent, not really thin
@@ -85,7 +85,7 @@ static GuiMenuItem DataGuiMenu_addCommand_ (EditorMenu me, conststring32 itemTit
 		[[maybe_unused]] constexpr conststring32 pipe = U"|   ";   // not long enough, prominent
 		[[maybe_unused]] constexpr conststring32 boxDrawingLightVertical = U"\u2502   ";   // not long enough, prominent
 		[[maybe_unused]] constexpr conststring32 boxDrawingLightQuadrupleDashVertical = U"\u250A   ";   // not long enough, but nicely thin
-		itemTitle = Melder_cat (hyphenationPoint, itemTitle);
+		itemTitle = Melder_cat (space, itemTitle);
 	}
 	if (! commandCallback)
 		flags |= GuiMenu_INSENSITIVE;
