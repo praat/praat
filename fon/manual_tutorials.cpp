@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220924)
+MAN_BEGIN (U"What's new?", U"ppgb", 20221001)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.21# (1 October 2022)")
+LIST_ITEM (U"• Corrected a bug introduced in 6.2.15 whereby a sub-window in Inspect would crash upon clicking Change.")
 NORMAL (U"##6.2.20# (24 September 2022)")
 LIST_ITEM (U"• More balanced colours.")
 LIST_ITEM (U"• Hierarchical menus in editor windows.")

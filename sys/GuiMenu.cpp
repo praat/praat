@@ -19,7 +19,7 @@
 
 #include "GuiP.h"
 #include "praatP.h"   // BUG
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 Thing_implement (GuiMenu, GuiThing, 0);
 
