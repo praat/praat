@@ -87,7 +87,7 @@ Thing_define (Editor, DataGui) {
 
 	virtual void v_createChildren () { }
 
-	virtual void v1_dataChanged () { }
+	virtual void v1_dataChanged (Editor /* sender */) { }
 	virtual void v_saveData ();
 	virtual void v_restoreData ();
 
@@ -118,13 +118,13 @@ inline void Editor_raise (Editor me)
 	{
 		GuiThing_show (my windowForm);
 	}
-inline void Editor_dataChanged (Editor me)
+inline void Editor_dataChanged (Editor me, Editor sender)
 	/*
-	 * Message: "your data has changed by an action from *outside* yourself,
-	 *    so you may e.g. like to redraw yourself."
-	 */
+		Message: "your data has changed by an action from inside *or* outside yourself,
+			so you may e.g. like to redraw yourself."
+	*/
 	{
-		my v1_dataChanged ();
+		my v1_dataChanged (sender);
 	}
 inline void Editor_setDataChangedCallback (Editor me, Editor_DataChangedCallback dataChangedCallback)
 	/*

@@ -58,7 +58,7 @@ Thing_define (HyperPage, Editor) {
 		override;
 	void v_createChildren ()
 		override;
-	void v1_dataChanged ()
+	void v1_dataChanged (Editor sender)
 		override;
 
 	virtual void v_draw () { }

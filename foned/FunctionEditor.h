@@ -164,7 +164,7 @@ Thing_define (FunctionEditor, Editor) {
 	void v_prefs_getValues (EditorCommand)
 		override;
 
-	void v1_dataChanged ()
+	void v1_dataChanged (Editor sender)
 		override;
 
 	virtual void v_distributeAreas () { }

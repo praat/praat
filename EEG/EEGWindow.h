@@ -40,8 +40,8 @@ Thing_define (EEGWindow, FunctionEditor) {
 	}
 	conststring32 v_selectionViewerName ()
 		override { return U"IPA chart"; }
-	void v1_dataChanged () override {
-		our EEGWindow_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		our EEGWindow_Parent :: v1_dataChanged (sender);
 		our eegArea() -> functionChanged (our eeg() -> sound.get());
 		our eegAnalysisArea() -> functionChanged (our eeg() -> sound.get());
 		our textGridArea() -> functionChanged (our eeg() -> textgrid.get());

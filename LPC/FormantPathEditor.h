@@ -40,8 +40,8 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 		override;
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
-	void v1_dataChanged () override {
-		FormantPathEditor_Parent :: v1_dataChanged ();
+	void v1_dataChanged (Editor sender) override {
+		FormantPathEditor_Parent :: v1_dataChanged (sender);
 		if (our soundArea())
 			our soundArea() -> functionChanged (nullptr);
 		our formantPathArea() -> functionChanged (nullptr);

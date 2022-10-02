@@ -158,10 +158,23 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 	uint32 accelerator = flags & 127;
 	Melder_assert (title);
 	static MelderString neatTitle;
-	MelderString_copy (& neatTitle, title);
-	if (neatTitle. string [neatTitle.length - 1] == U':') {
-		neatTitle. string [neatTitle.length - 1] = U' ';
-		MelderString_appendCharacter (& neatTitle, 0x25BC);
+	const integer titleLength = str32len (title);
+	if (titleLength > 0 && title [titleLength - 1] == U':') {
+		/*
+			bikeshed choices
+		*/
+		[[maybe_unused]] constexpr conststring32 down_triangle  = U"\u25BC";   // a bit fat and therefore prominent
+		[[maybe_unused]] constexpr conststring32 empty_triangle  = U"\u25BD";
+		[[maybe_unused]] constexpr conststring32 small_down_triangle  = U"\u25BE";   // too small
+		[[maybe_unused]] constexpr conststring32 lower_right_triangle  = U"\u25E2";   // Windows style
+		[[maybe_unused]] constexpr conststring32 down_arrowhead = U"\u2304";   // a bit low
+		[[maybe_unused]] constexpr conststring32 countersink = U"\u2335";
+		[[maybe_unused]] constexpr conststring32 canadian_syllabics_pe = U"\u142F";
+		[[maybe_unused]] constexpr conststring32 logical_or = U"\u2228";
+		MelderString_copy (& neatTitle, down_triangle, U" ", title);
+		//neatTitle. string [neatTitle.length - 1] = U' ';
+	} else {
+		MelderString_copy (& neatTitle, title);
 	}
 	#if gtk
 		static GSList *group = nullptr;
