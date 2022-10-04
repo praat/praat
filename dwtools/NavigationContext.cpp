@@ -19,13 +19,13 @@
 #include "Distributions_and_Strings.h"
 #include "NavigationContext.h"
 #include "NUM2.h"
+#include "Strings_extensions.h"
 
 
 #include "enums_getText.h"
 #include "NavigationContext_enums.h"
 #include "enums_getValue.h"
 #include "NavigationContext_enums.h"
-#include "Strings_extensions.h"
 
 #include "oo_DESTROY.h"
 #include "NavigationContext_def.h"
