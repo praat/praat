@@ -28,6 +28,7 @@
 */
 
 #include "Collection.h"
+#include "Index.h"
 #include "Strings_.h"
 #include "Permutation.h"
 #include "Index.h"
@@ -59,7 +60,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column);
 
 autoStrings StringsIndex_to_Strings (StringsIndex me);
 
-autoPermutation Strings_to_Permutation (Strings me, integer sort);
+autoPermutation Strings_to_Permutation (Strings me, kStrings_sorting sort);
 
 autoStrings Strings_Permutation_permuteStrings (Strings me, Permutation thee);
 

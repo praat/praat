@@ -23,6 +23,10 @@
 #include "Strings_extensions.h"
 #include "NUM2.h"
 
+
+
+
+
 autoStrings Strings_createFixedLength (integer numberOfStrings) {
 	try {
 		Melder_require (numberOfStrings >= 0,
@@ -160,13 +164,15 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	}
 }
 
-autoPermutation Strings_to_Permutation (Strings me, integer sort) {
+autoPermutation Strings_to_Permutation (Strings me, kStrings_sorting sorting) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfStrings, true);
-		if (sort == 1)
-			INTVECindex (thy p.get(), my strings.get(), false);
-		else if (sort == 2)
-			INTVECindex (thy p.get(), my strings.get(), true);
+		if (sorting == kStrings_sorting::ALPHABETICAL)
+			INTVECindex (thy p.get(), my strings.get());
+		else if (sorting == kStrings_sorting::NONE)
+			;
+		else
+			Melder_throw (U"Not implemented yet.");
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");
@@ -186,6 +192,25 @@ autoStrings Strings_Permutation_permuteStrings (Strings me, Permutation thee) {
 	} catch (MelderError) {
 		Melder_throw (me, U": no permuted Strings created.");
 	}
+}
+
+autoStringsIndex Strings_to_StringsIndex (Strings me) {
+	autoStringsIndex thee = StringsIndex_create (my numberOfStrings);
+	autoPermutation sorted = Strings_to_Permutation (me, kStrings_sorting::ALPHABETICAL);
+	integer numberOfClasses = 0;
+	conststring32 strings = nullptr;
+	for (integer i = 1; i <= sorted -> numberOfElements; i ++) {
+		const integer index = sorted -> p [i];
+		const conststring32 stringsi = my strings [index].get();
+		if (i == 1 || ! Melder_equ (strings, stringsi)) {
+			numberOfClasses ++;
+			autoSimpleString him = SimpleString_create (stringsi);
+			thy classes -> addItem_move (him.move());
+			strings = stringsi;
+		}
+		thy classIndex [index] = numberOfClasses;
+	}
+	return thee;
 }
 
 autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
@@ -217,28 +242,6 @@ autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 	}
 }
 
-autoStringsIndex Strings_to_StringsIndex (Strings me) {
-	try {
-		autoStringsIndex thee = StringsIndex_create (my numberOfStrings);
-		autoPermutation sorted = Strings_to_Permutation (me, true);
-		integer numberOfClasses = 0;
-		conststring32 strings = nullptr;
-		for (integer i = 1; i <= sorted -> numberOfElements; i ++) {
-			const integer index = sorted -> p [i];
-			const conststring32 stringsi = my strings [index].get();
-			if (i == 1 || ! Melder_equ (strings, stringsi)) {
-				numberOfClasses ++;
-				autoSimpleString him = SimpleString_create (stringsi);
-				thy classes -> addItem_move (him.move());
-				strings = stringsi;
-			}
-			thy classIndex [index] = numberOfClasses;
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no StringsIndex created.");
-	}
-}
 
 autoStrings StringsIndex_to_Strings (StringsIndex me) {
 	try {

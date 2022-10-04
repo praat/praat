@@ -4892,12 +4892,12 @@ DIRECT (COMBINE_ALL_TO_ONE__Permutations_multiply) {
 	COMBINE_ALL_TO_ONE_END (U"mul_", list.size);
 }
 
-FORM (CONVERT_TWO_TO_ONE__Permutation_permutePart, U"Permutation: Permute part", U"Permutation: Permute part...") {
+FORM (CONVERT_TWO_TO_ONE__Permutation_permutePartByOther, U"Permutation: Permute part by other", U"Permutation: Permute part...") {
 	NATURAL (startPos, U"Start index", U"1")
 	OK
 DO
 	CONVERT_TWO_TO_ONE (Permutation)
-		autoPermutation result = Permutation_permutePart (me, startPos, you);
+		autoPermutation result = Permutation_permutePartByOther (me, startPos, you);
 	CONVERT_TWO_TO_ONE_END (U"")
 }
 DIRECT (MODIFY_Permutations_next) {
@@ -6841,15 +6841,21 @@ DIRECT (CONVERT_TWO_TO_ONE__Strings_to_EditDistanceTable) {
 	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
-	OPTIONMENU (sort, U"Sorting", 1)
-	OPTION (U"No")
-	OPTION (U"Alphabetical")
-	OPTION (U"Numerical")
+FORM (CONVERT_EACH_TO_ONE__Strings_to_StringsIndex, U"Strings: To StringsIndex", nullptr) {
+	OPTIONMENU_ENUM (kStrings_sorting, sorting, U"Sorting method", kStrings_sorting::DEFAULT)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Strings)
-		autoPermutation result = Strings_to_Permutation (me, sort-1);
+		autoStringsIndex result = Strings_to_StringsIndex2 (me, sorting);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
+	OPTIONMENU_ENUM (kStrings_sorting, sortingMethod, U"Sorting", kStrings_sorting::DEFAULT)
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Strings)
+		autoPermutation result = Strings_to_Permutation (me, sortingMethod);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -9996,7 +10002,7 @@ void praat_David_init () {
 	praat_addAction1 (classPermutation, 0, U"Multiply",
 			nullptr, 0, COMBINE_ALL_TO_ONE__Permutations_multiply);
 	praat_addAction1 (classPermutation, 2, U"Permute part...",
-			nullptr, 0, CONVERT_TWO_TO_ONE__Permutation_permutePart);
+			nullptr, 0, CONVERT_TWO_TO_ONE__Permutation_permutePartByOther);
 
 	praat_addAction1 (classPitch, 2, U"To DTW...", U"To PointProcess",
 			GuiMenu_HIDDEN, CONVERT_TWO_TO_ONE__Pitches_to_DTW);
@@ -10291,7 +10297,8 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Strings_to_Permutation);
 	praat_addAction1 (classStrings, 2, U"To EditDistanceTable", U"To Distributions", 0, 
 			CONVERT_TWO_TO_ONE__Strings_to_EditDistanceTable);
-
+	praat_addAction1 (classStrings, 0, U"To StringsIndex", U"To Permutation...", GuiMenu_HIDDEN, 		
+			CONVERT_EACH_TO_ONE__Strings_to_StringsIndex);
 	praat_addAction1 (classSVD, 0, U"SVD help", nullptr, 0, 
 			HELP__SVD_help);
 	praat_addAction1 (classSVD, 0, U"Query -", nullptr, 0, nullptr);
