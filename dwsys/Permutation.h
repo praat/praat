@@ -89,6 +89,12 @@ autoPermutation Permutations_multiply2 (Permutation me, Permutation thee);
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me);
 
-autoPermutation Permutation_permutePart (Permutation me, integer startPosition, Permutation other);
+autoPermutation Permutation_permutePartByOther (Permutation me, integer startPosition, Permutation other);
+
+autoPermutation Permutation_permuteSubsetByOther (Permutation me, constINTVEC const& subsetPositions, Permutation other);
+
+autoINTVEC Permutation_permuteVector (Permutation me, INTVEC const & vec);
+
+autoPermutation Permutation_moveElementsToTheFront (Permutation me, constINTVEC const& subsetPositions);
 
 #endif /* _Permutation_h_ */
