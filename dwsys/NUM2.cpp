@@ -76,6 +76,11 @@
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
 
+#include "enums_getText.h"
+#include "strings_sorting_enums.h"
+#include "enums_getValue.h"
+#include "strings_sorting_enums.h"
+
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
 
 struct pdf1_struct {

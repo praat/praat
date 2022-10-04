@@ -19,8 +19,11 @@
  */
 
 #include "Collection.h"
+#include "NUM2.h"
+#include "Strings_.h"
 
 #include "Index_def.h"
+
 
 /*
 	An Index is a summary of an array of strings.
@@ -40,6 +43,8 @@ autoIndex Index_extractPart (Index me, integer from, integer to);
 integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex);
 
 autoStringsIndex StringsIndex_create (integer numberOfItems);
+
+autoStringsIndex Strings_to_StringsIndex2 (Strings me, kStrings_sorting sorting);
 
 int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, conststring32 classLabel);
 

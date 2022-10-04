@@ -25,11 +25,6 @@
 #include "NUM2.h"
 #include "melder.h"
 
-#include "enums_getText.h"
-#include "strings_sorting_enums.h"
-#include "enums_getValue.h"
-#include "strings_sorting_enums.h"
-
 /*
 	NUMsort2 uses heapsort to sort the second array in parallel with the first one.
 
@@ -213,29 +208,14 @@ MACRO_NUMindex (double)
 void INTVECindex (INTVEC const& index, constINTVEC const& v)
 MACRO_NUMindex (integer)
 
-void INTVECindex_sortNumerically (INTVEC const& index, constSTRVEC const& strv) {
-	autoVEC av = raw_VEC (strv.size);
-	for (integer i = 1; i <= strv.size; i ++)
-		av [i] = Melder_atof (strv [i]);
-	VEC v = av.get();
-	MACRO_NUMindex (double)
-}
-
 #undef COMPARELT
 #define COMPARELT(x,y) (Melder_cmp (x,y) <  0)
 
-void INTVECindexAlphabetically (INTVEC const& index, constSTRVEC const& v)
+void INTVECindex (INTVEC const& index, constSTRVEC const& v)
 MACRO_NUMindex (const char32_t *)
 
 #undef COMPARELT
 #undef MACRO_INDEXX
-
-void INTVECindex (INTVEC const& index, constSTRVEC const& v, integer sortNumerically) {
-	if (sortNumerically)
-		INTVECindex_sortNumerically (index, v);
-	else
-		INTVECindexAlphabetically  (index, v);
-}
 
 void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool descending) {
 	Melder_assert (a.size == iv1.size && a.size == iv2.size);
