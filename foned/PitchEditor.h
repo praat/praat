@@ -35,7 +35,7 @@ Thing_define (PitchEditor, FunctionEditor) {
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
 	void v_play (double startTime, double endTime) override {
-		Pitch_hum (our pitchArea() -> pitch(), startTime, endTime);   // BUG: why no callback?
+		Pitch_hum (our pitchArea() -> pitch(), startTime, endTime, theFunctionEditor_playCallback, this);   // BUG: why no callback?
 	}
 };
 

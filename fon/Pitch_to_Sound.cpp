@@ -16,14 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2005/02/09 Pitch_to_Sound_sine
- * pb 2007/02/25 changed default sampling frequency to 44100 Hz
- * pb 2008/01/19 double
- * pb 2011/06/05 C++
- */
-
 #include "Pitch_to_PointProcess.h"
 #include "PointProcess_and_Sound.h"
 #include "Pitch_to_Sound.h"
@@ -54,11 +46,11 @@ void Pitch_play (Pitch me, double tmin, double tmax) {   // BUG: why no callback
 	}
 }
 
-void Pitch_hum (Pitch me, double tmin, double tmax) {
+void Pitch_hum (Pitch me, double tmin, double tmax, Sound_PlayCallback playCallback, Thing playBoss) {
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoSound sound = Pitch_to_Sound (me, tmin, tmax, true);
-		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
+		Sound_playPart (sound.get(), tmin, tmax, playCallback, playBoss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}

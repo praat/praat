@@ -1,6 +1,6 @@
 /* Pitch_to_Sound.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2015,2016,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 autoSound Pitch_to_Sound (Pitch me, double tmin, double tmax, bool hum);
 void Pitch_play (Pitch me, double tmin, double tmax);
-void Pitch_hum (Pitch me, double tmin, double tmax);
+void Pitch_hum (Pitch me, double tmin, double tmax, Sound_PlayCallback playCallback, Thing playBoss);
 
 /* This one converts a Pitch into a PitchTier, */
 /* then this PitchTier into a Sound (sine wave), */

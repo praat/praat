@@ -1698,7 +1698,7 @@ DIRECT (HELP_Pitch_help) {
 
 DIRECT (PLAY_Pitch_hum) {
 	PLAY_EACH (Pitch)
-		Pitch_hum (me, 0.0, 0.0);
+		Pitch_hum (me, 0.0, 0.0, nullptr, nullptr);
 	PLAY_EACH_END
 }
 
