@@ -55,21 +55,21 @@ autoSound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 	}
 }
 
-void PitchTier_playPart (PitchTier me, double tmin, double tmax, bool hum) {
+void PitchTier_playPart (PitchTier me, double tmin, double tmax, bool hum, Sound_PlayCallback callback, Thing boss) {
 	try {
 		const autoSound sound = PitchTier_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30, hum);
-		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
+		Sound_playPart (sound.get(), tmin, tmax, callback, boss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
 }
 
-void PitchTier_play (PitchTier me) {
-	PitchTier_playPart (me, my xmin, my xmax, false);
+void PitchTier_play (PitchTier me, Sound_PlayCallback callback, Thing boss) {
+	PitchTier_playPart (me, my xmin, my xmax, false, callback, boss);
 }
 
-void PitchTier_hum (PitchTier me) {
-	PitchTier_playPart (me, my xmin, my xmax, true);
+void PitchTier_hum (PitchTier me, Sound_PlayCallback callback, Thing boss) {
+	PitchTier_playPart (me, my xmin, my xmax, true, callback, boss);
 }
 
 autoSound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency) {
@@ -93,11 +93,11 @@ autoSound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, doubl
 	}
 }
 
-void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax) {
+void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax, Sound_PlayCallback callback, Thing boss) {
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		autoSound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 44100.0);
-		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
+		Sound_playPart (sound.get(), tmin, tmax, callback, boss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}

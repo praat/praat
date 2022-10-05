@@ -890,7 +890,7 @@ DIRECT (HELP_PitchTier_help) {
 
 DIRECT (PLAY_PitchTier_hum) {
 	PLAY_EACH (PitchTier)
-		PitchTier_hum (me);
+		PitchTier_hum (me, nullptr, nullptr);
 	PLAY_EACH_END
 }
 
@@ -908,13 +908,13 @@ DO
 
 DIRECT (PLAY_PitchTier_play) {
 	PLAY_EACH (PitchTier)
-		PitchTier_play (me);
+		PitchTier_play (me, nullptr, nullptr);
 	PLAY_EACH_END
 }
 
 DIRECT (PLAY_PitchTier_playSine) {
 	PLAY_EACH (PitchTier)
-		PitchTier_playPart_sine (me, 0.0, 0.0);
+		PitchTier_playPart_sine (me, 0.0, 0.0, nullptr, nullptr);
 	PLAY_EACH_END
 }
 
@@ -1267,7 +1267,7 @@ DIRECT (HELP_PointProcess_help) {
 
 DIRECT (PLAY_PointProcess_hum) {
 	PLAY_EACH (PointProcess)
-		PointProcess_hum (me, my xmin, my xmax);
+		PointProcess_hum (me, my xmin, my xmax, nullptr, nullptr);
 	PLAY_EACH_END
 }
 
@@ -1279,7 +1279,7 @@ DIRECT (NEW1_PointProcesses_intersection) {
 
 DIRECT (PLAY_PointProcess_play) {
 	PLAY_EACH (PointProcess)
-		PointProcess_play (me);
+		PointProcess_play (me, nullptr, nullptr);
 	PLAY_EACH_END
 }
 

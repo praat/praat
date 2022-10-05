@@ -810,7 +810,7 @@ DO
 		KlattGrid_formantSelection_vocalTract (me, filtersStructure, fromOralFormant, toOralFormant, fromNasalFormant, toNasalFormant, fromNasalAntiFormant, toNasalAntiFormant);
 		KlattGrid_formantSelection_coupling (me, fromTrachealFormant, toTrachealFormant, fromTrachealAntiFormant, toTrachealAntiFormant, fromDeltaFormant, toDeltaFormant, fromDeltaBandwidth, toDeltaBandwidth);
 		KlattGrid_formantSelection_frication (me, fromFricationFormant, toFricationFormant, useFricationBypass);
-		KlattGrid_playSpecial (me);
+		KlattGrid_playSpecial (me, nullptr, nullptr);
 	PLAY_EACH_END
 }
 
@@ -832,7 +832,7 @@ DIRECT (HELP__KlattGrid_help)  {
 
 DIRECT (PLAY_KlattGrid_play) {
 	PLAY_EACH (KlattGrid)
-		KlattGrid_play (me);
+		KlattGrid_play (me, nullptr, nullptr);
 	PLAY_EACH_END
 }
 

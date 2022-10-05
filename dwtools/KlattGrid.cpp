@@ -2782,7 +2782,7 @@ autoSound KlattGrid_to_Sound (KlattGrid me) {
 	}
 }
 
-void KlattGrid_playSpecial (KlattGrid me) {
+void KlattGrid_playSpecial (KlattGrid me, Sound_PlayCallback callback, Thing boss) {
 	try {
 		autoSound thee = KlattGrid_to_Sound (me);
 		const KlattGridPlayOptions him = my options.get();
@@ -2792,15 +2792,15 @@ void KlattGrid_playSpecial (KlattGrid me) {
 			his xmin = my xmin;
 			his xmax = my xmax;
 		}
-		Sound_playPart (thee.get(), his xmin, his xmax, nullptr, nullptr);
+		Sound_playPart (thee.get(), his xmin, his xmax, callback, boss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
 }
 
-void KlattGrid_play (KlattGrid me) {
+void KlattGrid_play (KlattGrid me, Sound_PlayCallback callback, Thing boss) {
 	KlattGrid_setDefaultPlayOptions (me);
-	KlattGrid_playSpecial (me);
+	KlattGrid_playSpecial (me, callback, boss);
 }
 
 /************************* Sound(s) & KlattGrid **************************************************/
