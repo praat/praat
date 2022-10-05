@@ -1267,7 +1267,7 @@ DIRECT (HELP_PointProcess_help) {
 
 DIRECT (PLAY_PointProcess_hum) {
 	PLAY_EACH (PointProcess)
-		PointProcess_hum (me, my xmin, my xmax);
+		PointProcess_hum (me, my xmin, my xmax, nullptr, nullptr);
 	PLAY_EACH_END
 }
 
@@ -1279,7 +1279,7 @@ DIRECT (NEW1_PointProcesses_intersection) {
 
 DIRECT (PLAY_PointProcess_play) {
 	PLAY_EACH (PointProcess)
-		PointProcess_play (me);
+		PointProcess_play (me, nullptr, nullptr);
 	PLAY_EACH_END
 }
 
