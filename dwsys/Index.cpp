@@ -61,8 +61,8 @@ struct structSTRVECSorter {
 	struct structStringsInfo {		
 		private:
 		struct structStringInfoData {
-			double number = - 1.0;	// interpretation of part of alpha as number
-			integer alphaPosStart = 1; // start positions of alphaPart; alphaPosEnd is fixed at the end U'\0'
+			double number;	// interpretation of part of alpha as number
+			integer alphaPosStart; // start positions of alphaPart; alphaPosEnd is fixed at the end U'\0'
 			integer numPosStart; // start of num part else 0
 			integer numPosDot; // numPosStart < numPosDot < numPosEnd if a dot occurs in the num part and breakAtDecimalPoint==true
 			integer numPosEnd; // >= numPosStart if numPosStart > 0 else undefined
@@ -169,9 +169,11 @@ struct structSTRVECSorter {
 			stringsInfoDatavector = newvectorraw <struct structStringInfoData> (strings.size);
 			for (integer i = 1; i <= strings.size; i++) {
 				stringInfo info  = getStringInfo (i);
-				const integer length = str32len (strings [i]);
-				info -> alpha = (char32 *)_Melder_calloc (length + 1, sizeof (char32));
-				str32cpy (info -> alpha, strings [i]);
+				info -> alphaPosStart = 1;
+				info -> length = str32len (strings [i]);
+				info -> alpha = (char32 *)_Melder_calloc (info -> length + 1, sizeof (char32));
+				str32cpy (info -> alpha, strings [i]); // adds the U'\0'
+				info -> number = -1.0; 
 			}
 		}
 		void setAlphaPosStartAtNextLevel (constINTVEC set) {
@@ -256,8 +258,7 @@ struct structSTRVECSorter {
 	
 	struct structSTRVECIndex {
 		autoSTRVEC classes; // the number of different strings in the originating strvec.
-		autoINTVEC classesIndex; // length of the originating strvec 
-		autoPermutation classesSorting;
+		autoINTVEC classesIndex; // has length of the originating strvec 
 		
 		void unicize (constSTRVEC const& v) {
 			integer count = 1;
@@ -265,43 +266,37 @@ struct structSTRVECSorter {
 			autoPermutation p = Permutation_create (v.size, true);
 			INTVECindex (p -> p.get(), v);
 			classes.insert (count, v [p -> p [1]]);
-			autoINTVEC tmpIndex;
-			tmpIndex.insert (1, p -> p [1]);
+			classesIndex [1] = count;
 			for (integer i = 2; i <= v.size; i ++) {
 				const integer index = p -> p [i];
-				conststring32 str = v [p -> p [i]];
-				if (Melder_cmp (v [count], str) != 0) {
+				conststring32 str = v [index];
+				if (Melder_cmp (classes [count].get(), str) != 0)
 					classes.insert (++ count, str);
-					tmpIndex.insert (count, index);
-				}
 				classesIndex [i] = count;
 			}
-			classesSorting = Permutation_create (classes.size, true);
 		}
 	};
 
-private:	
-	constSTRVEC *strvec; // efficiency: a link to the data to be sorted!
-	autoPermutation strvecIndex; // the alphabetically sorted index of the strvec
-	STRVEC strings;  // the unicized strvec, these will be sorted
-	Permutation stringsIndex; // the sorting index of these strings 
+private:
+	INTVEC strvecIndex; // link to the alphabetically sorted index of the strvec
+	STRVEC strings;  // link to the unicized strvec, these will be sorted
+	autoPermutation stringsSorting; // the sorting index of these strings 
 	bool breakAtDecimalPoint;
 	struct structStringsInfo stringsInfo;
 	struct structSTRVECIndex STRVECIndex;
 	
-	void init (constSTRVEC v, bool breakAtTheDecimalPoint ) {
+	void init (constSTRVEC const& v, bool breakAtTheDecimalPoint ) {
 		try {
 			breakAtDecimalPoint = breakAtTheDecimalPoint;
-			strvec = & v;
 			STRVECIndex.unicize (v);
 			strings = STRVECIndex.classes.get();
-			stringsIndex = STRVECIndex.classesSorting.get();
+			stringsSorting = Permutation_create (STRVECIndex.classes.size, true);
+			strvecIndex = STRVECIndex.classesIndex.get();
 		} catch (MelderError) {
 			Melder_throw (U"Cannot init the structStringsInfo.");
 		}
 	 }
-	 
-	
+
  public:
 	// 
 	autoPermutation sortAlphaStartSet (constINTVEC const& set, integer level) {
@@ -380,7 +375,7 @@ private:
 		for (integer i = 2; i <= numberOfStrings; i++) {
 			const double currentNumber = numbers [pset -> p [i]];
 			if (currentNumber != value) {
-				const integer numberOfEquals = i - startOfEquals + 1;
+				const integer numberOfEquals = i - startOfEquals;
 				if (numberOfEquals == 1) {
 					startOfEquals = i;
 					continue;
@@ -402,13 +397,12 @@ private:
 	
 	void sort (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
 		init (v, breakAtTheDecimalPoint);
-		// the alphabetically sorting index of v is available in 'strvecIndex' and v is also unicized in 'strings'
 		if (sorting == kStrings_sorting::ALPHABETICAL) {
 			 ;
 		} else if (sorting == kStrings_sorting::NUMERICAL_PART) {
 			stringsInfo.init (strings);
-			stringsInfo.updateNumPart (stringsIndex -> p.get());
-			autoPermutation p = sortAlphaStartSet (stringsIndex -> p.get(), 1);
+			stringsInfo.updateNumPart (stringsSorting -> p.get());
+			autoPermutation p = sortAlphaStartSet (stringsSorting -> p.get(), 1);
 		}
 	 }
 	 
@@ -416,13 +410,13 @@ private:
 		sort (v, breakAtTheDecimalPoint, sorting);
 		autoStringsIndex me = StringsIndex_create (v.size);
 		for (integer i = 1; i <= strings.size; i ++) {
-			conststring32 classi = strings [stringsIndex -> p [i]];
+			conststring32 classi = strings [stringsSorting -> p [i]];
 			autoSimpleString ss = SimpleString_create (classi);
 			my classes -> addItem_move (ss.move());
 		}
 		for (integer i = 1; i <= v.size; i ++)
 			my classIndex [i] = ( sorting == kStrings_sorting::ALPHABETICAL ? 
-				strvecIndex -> p [i] : stringsIndex ->  p [strvecIndex -> p [i]] );
+				strvecIndex [i] : stringsSorting -> p [strvecIndex [i]]);
 		return me;
 	 }
 };
