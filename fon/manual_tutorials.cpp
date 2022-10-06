@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20221001)
+MAN_BEGIN (U"What's new?", U"ppgb", 20221006)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.22# (6 October 2022)")
+LIST_ITEM (U"• Playing cursor in Pitch, PitchTier, KlattGrid and PointProcess windows.")
+LIST_ITEM (U"• Corrected a bug introduced in 6.2.15 whereby an added editor script would lose "
+	"the editor context if it contained a form.")
 NORMAL (U"##6.2.21# (1 October 2022)")
 LIST_ITEM (U"• Corrected a bug introduced in 6.2.15 whereby a sub-window in Inspect would crash upon clicking Change.")
 NORMAL (U"##6.2.20# (24 September 2022)")
