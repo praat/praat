@@ -644,24 +644,26 @@ void praat_executeScriptFromText (conststring32 text) {
 	}
 }
 
-void praat_executeScriptFromDialog (UiForm dia) {
-	structMelderFile file { };
-	Melder_pathToFile (dia -> scriptFilePath.get(), & file);
-	autostring32 text = MelderFile_readText (& file);
-	autoMelderFileSetDefaultDir dir (& file);
-	Melder_includeIncludeFiles (& text);
-	autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-	Interpreter_readParameters (interpreter.get(), text.get());
-	Interpreter_getArgumentsFromDialog (interpreter.get(), dia);
-	autoPraatBackground background;
-	Interpreter_run (interpreter.get(), text.get());
-}
-
 static void secondPassThroughScript (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 	conststring32 /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
-	conststring32 /* invokingButtonTitle */, bool /* modified */, void *)
+	conststring32 /* invokingButtonTitle */, bool /* modified */, void * /* closure */)
 {
-	praat_executeScriptFromDialog (sendingForm);
+	try {
+		structMelderFile file { };
+		Melder_pathToFile (sendingForm -> scriptFilePath.get(), & file);
+		autostring32 text = MelderFile_readText (& file);
+		autoMelderFileSetDefaultDir dir (& file);
+		Melder_includeIncludeFiles (& text);
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
+		Interpreter_readParameters (interpreter.get(), text.get());
+		Interpreter_getArgumentsFromDialog (interpreter.get(), sendingForm);
+		autoPraatBackground background;
+		Interpreter_run (interpreter.get(), text.get());
+		praatP.editor = nullptr;
+	} catch (MelderError) {
+		praatP.editor = nullptr;
+		throw;
+	}
 }
 
 static void firstPassThroughScript (MelderFile file) {
@@ -683,17 +685,12 @@ static void firstPassThroughScript (MelderFile file) {
 		} else {
 			autoPraatBackground background;
 			praat_executeScriptFromFile (file, nullptr);
+			praatP.editor = nullptr;   // yuck
 		}
 	} catch (MelderError) {
+		praatP.editor = nullptr;   // yuck
 		Melder_throw (U"Script ", file, U" not completed.");
 	}
-}
-
-static void fileSelectorOkCallback (UiForm dia, integer /* narg */, Stackel /* args */,
-	conststring32 /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
-	conststring32 /* invokingButtonTitle */, bool /* modified */, void *)
-{
-	firstPassThroughScript (UiFile_getFile (dia));
 }
 
 void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, integer /* narg */, Stackel /* args */,
@@ -706,14 +703,8 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, int
 }
 
 void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, conststring32 script) {
-	try {
-		praatP.editor = editor;
-		DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr);
-		praatP.editor = nullptr;
-	} catch (MelderError) {
-		praatP.editor = nullptr;
-		throw;
-	}
+	praatP.editor = editor;   // yuck
+	DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr);
 }
 
 /* End of file praat_script.cpp */
