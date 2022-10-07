@@ -648,7 +648,7 @@ void praat_addFixedButtons (GuiWindow window) {
 }
 
 static void searchProc () {
-	PRAAT__SearchManual (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+	PRAAT__SearchManual (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr, nullptr);
 }
 
 static MelderString itemTitle_about;

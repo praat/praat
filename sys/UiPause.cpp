@@ -1,6 +1,6 @@
 /* UiPause.cpp
  *
- * Copyright (C) 2009-2020 Paul Boersma
+ * Copyright (C) 2009-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@ static int theEventLoopDepth = 0;
 
 static void thePauseFormOkCallback (UiForm /* sendingForm */, integer /* narg */, Stackel /* args */,
 	conststring32 /* sendingString */, Interpreter /* interpreter */,
-	conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure) {
-	/* BUG: should also restore praatP. editor. */
+	conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure, Editor optionalEditor)
+{
 	/*
-	 * Get the data from the pause form.
-	 */
+		Get the data from the pause form.
+	*/
 	thePauseForm_clicked = UiForm_getClickedContinueButton (thePauseForm.get());
 	if (thePauseForm_clicked != theCancelContinueButton)
 		UiForm_Interpreter_addVariables (thePauseForm.get(), (Interpreter) closure);   // 'closure', not 'interpreter' or 'theInterpreter'!
@@ -43,10 +43,10 @@ static void thePauseFormCancelCallback (UiForm /* dia */, void * /* closure */) 
 		thePauseForm_clicked = -1;   // STOP button
 	}
 }
-void UiPause_begin (GuiWindow topShell, conststring32 title, Interpreter interpreter) {
+void UiPause_begin (GuiWindow topShell, Editor optionalEditor, conststring32 title, Interpreter interpreter) {
 	if (theEventLoopDepth > 0)
 		Melder_throw (U"Praat cannot have more than one pause form at a time.");
-	thePauseForm = UiForm_create (topShell, Melder_cat (U"Pause: ", title),
+	thePauseForm = UiForm_create (topShell, optionalEditor, Melder_cat (U"Pause: ", title),
 		thePauseFormOkCallback, interpreter,   // pass interpreter as closure!
 		nullptr, nullptr);
 }

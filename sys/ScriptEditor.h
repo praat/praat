@@ -23,6 +23,7 @@
 #include "Interpreter.h"
 
 Thing_define (ScriptEditor, TextEditor) {
+	Editor optionalEditor;
 	autostring32 environmentName;
 	ClassInfo editorClass;
 	autoInterpreter interpreter;
@@ -43,16 +44,16 @@ Thing_define (ScriptEditor, TextEditor) {
 };
 
 void ScriptEditor_init (ScriptEditor me,
-	Editor editor,
+	Editor optionalEditor,
 	conststring32 initialText
 );
 autoScriptEditor ScriptEditor_createFromText (
-	Editor editor,   // the scripting environment; if null, the scripting environment consists of the global windows
+	Editor optionalEditor,   // the scripting environment; if null, the scripting environment consists of the global windows
 	conststring32 initialText   // may be null
 );
 
 autoScriptEditor ScriptEditor_createFromScript_canBeNull (
-	Editor editor,
+	Editor optionalEditor,
 	Script script
 );
 

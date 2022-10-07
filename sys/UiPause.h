@@ -2,7 +2,7 @@
 #define _UiPause_h_
 /* UiPause.h
  *
- * Copyright (C) 2009-2012,2015,2016,2018,2020 Paul Boersma
+ * Copyright (C) 2009-2012,2015,2016,2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@
 
 #include "Gui.h"
 Thing_declare (Interpreter);
+Thing_declare (Editor);
 
-void UiPause_begin (GuiWindow topShell, conststring32 title, Interpreter interpreter);
+void UiPause_begin (GuiWindow topShell, Editor optionalEditor, conststring32 title, Interpreter interpreter);
 
 void UiPause_real       (conststring32 label, conststring32 defaultValue);
 void UiPause_positive   (conststring32 label, conststring32 defaultValue);

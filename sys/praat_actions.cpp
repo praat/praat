@@ -531,7 +531,7 @@ static void do_menu (Praat_Command me, bool isModified) {
 	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		UiHistory_write (U"\nrunScript: ");
 		try {
-			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script.get(), nullptr, nullptr, false, nullptr);
+			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script.get(), nullptr, nullptr, false, nullptr, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
@@ -543,7 +543,7 @@ static void do_menu (Praat_Command me, bool isModified) {
 		}
 		Ui_setAllowExecutionHook (allowExecutionHook, (void *) my callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 		try {
-			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), isModified, nullptr);
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), isModified, nullptr, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
@@ -760,7 +760,7 @@ int praat_doAction (conststring32 title, conststring32 arguments, Interpreter in
 			U"\n"
 		);
 	}
-	actionFound -> callback (nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr);
+	actionFound -> callback (nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr, nullptr);
 	return 1;
 }
 
@@ -790,7 +790,7 @@ int praat_doAction (conststring32 title, integer narg, Stackel args, Interpreter
 			U"\n"
 		);
 	}
-	actionFound -> callback (nullptr, narg, args, nullptr, interpreter, title, false, nullptr);
+	actionFound -> callback (nullptr, narg, args, nullptr, interpreter, title, false, nullptr, nullptr);
 	return 1;
 }
 
@@ -882,7 +882,7 @@ void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 			const bool isDirect = ! str32str (command -> title.get(), U"...");
 			if (isDirect) {
 			} else {
-				command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+				command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr, nullptr);
 			}
 			if (actionHasFileNameArgument (command))
 				MelderInfo_writeLine (U"\tconst char *fileName");

@@ -381,7 +381,7 @@ _form_inited_: \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
 #define EDITOR_DO_SAVE \
 	(void) interpreter; \
-	UiOutfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile _file2 { }; \
+	UiOutfile_do (cmd -> d_uiform.get(), defaultName, my boss()); } else { MelderFile file; structMelderFile _file2 { }; \
 	if (_args_) { \
 		Melder_require (_narg_ == 1, \
 			U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \

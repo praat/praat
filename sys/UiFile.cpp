@@ -58,7 +58,7 @@ void UiInfile_do (UiForm me) {
 			structMelderFile file { };
 			MelderFile_copy (& my file, & file);
 			try {
-				my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure);
+				my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure, nullptr);
 			} catch (MelderError) {
 				Melder_throw (U"File ", & file, U" not finished.");
 			}
@@ -85,7 +85,7 @@ autoUiForm UiOutfile_create (GuiWindow parent, conststring32 title,
 }
 
 static void commonOutfileCallback (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString,
-	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure)
+	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure, Editor optionalEditor)
 {
 	EditorCommand command = (EditorCommand) closure;
 	command -> commandCallback (command -> sender, command, sendingForm, narg, args, sendingString, interpreter);
@@ -105,7 +105,7 @@ autoUiForm UiInfile_createE (EditorCommand cmd, conststring32 title, conststring
 	return dia;
 }
 
-void UiOutfile_do (UiForm me, conststring32 defaultName) {
+void UiOutfile_do (UiForm me, conststring32 defaultName, Editor optionalEditor) {
 	autostring32 outfileName = GuiFileSelect_getOutfileName (nullptr, my name.get(), defaultName);
 	if (! outfileName) return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
@@ -118,7 +118,7 @@ void UiOutfile_do (UiForm me, conststring32 defaultName) {
 	UiHistory_write (U"\n");
 	UiHistory_write_colonize (my invokingButtonTitle.get());
 	try {
-		my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure);
+		my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure, optionalEditor);
 	} catch (MelderError) {
 		Melder_flushError (U"File ", & file, U" not finished.");
 	}

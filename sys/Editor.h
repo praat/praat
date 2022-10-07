@@ -30,7 +30,7 @@ Thing_define (EditorMenu, Thing) {
 	Editor d_editor;
 	autostring32 menuTitle;
 	GuiMenu menuWidget;
-	OrderedOf<structEditorCommand> commands;
+	OrderedOf<structEditorCommand> commands___;
 };
 
 typedef MelderCallback <void, structDataGui, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, conststring32, Interpreter> DataGuiCommandCallback;
@@ -55,7 +55,7 @@ typedef MelderCallback <void, structEditor, autoDaata /* publication */> Editor_
 Thing_define (Editor, DataGui) {
 	GuiWindow windowForm;
 	GuiMenuItem undoButton, searchButton;
-	OrderedOf<structEditorMenu> menus;
+	OrderedOf<structEditorMenu> menus___;
 	autoDaata previousData;   // the data that can be displayed and edited
 	char32 undoText [100];
 	Editor_DataChangedCallback d_dataChangedCallback;
