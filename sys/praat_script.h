@@ -22,14 +22,15 @@
 
 bool praat_executeCommand (Interpreter me, char32 *command);   // returns false only if nocheck cancelled an error
 void praat_executeCommandFromStandardInput (conststring32 programName);
-void praat_executeScriptFromFile (MelderFile file, conststring32 arguments);
-void praat_runScript (conststring32 fileName, integer narg, Stackel args);
-void praat_executeScriptFromCommandLine (conststring32 fileName, integer argc, char **argv);
-void praat_executeScriptFromFileNameWithArguments (conststring32 nameAndArguments);
+void praat_executeScriptFromFile (MelderFile file, conststring32 arguments, Editor optionalEditor);
+void praat_runScript (conststring32 fileName, integer narg, Stackel args);   // called only from Formula as `runScript` (last checked 2022-10-07)
+void praat_executeScriptFromCommandLine (conststring32 fileName, integer argc, char **argv);   // called only from `praat_run` (last checked 2022-10-07)
+void praat_executeScriptFromFileNameWithArguments (conststring32 nameAndArguments);   // called only from `execute` (deprecated) and external man pages with \SC (last checked 2022-10-07)
 void praat_executeScriptFromText (conststring32 text);
 extern "C" void praatlib_executeScript (const char *text8);
 void DO_praat_runScript (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter_dummy, conststring32 invokingButtonTitle, bool modified, void *dummy);
-void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, integer narg, Stackel args, conststring32 scriptPath, Interpreter interpreter_dummy, conststring32 invokingButtonTitle, bool modified, void *dummy);
+void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, integer narg, Stackel args, conststring32 scriptPath,
+		Interpreter /* interpreter */, conststring32 invokingButtonTitle, bool modified, void *dummy, Editor optionalEditor);
 void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, conststring32 script);
 
 /* End of file praat_script.h */

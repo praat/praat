@@ -72,7 +72,7 @@ static void do_menu (Praat_Command me, bool isModified) {
 	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		UiHistory_write (U"\nrunScript: ");
 		try {
-			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script.get(), nullptr, nullptr, false, nullptr);
+			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script.get(), nullptr, nullptr, false, nullptr, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
@@ -83,7 +83,7 @@ static void do_menu (Praat_Command me, bool isModified) {
 			UiHistory_write (my title.get());
 		}
 		try {
-			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), isModified, nullptr);
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), isModified, nullptr, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
@@ -478,7 +478,7 @@ int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpret
 			U"\n"
 		);
 	}
-	commandFound -> callback (nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr);
+	commandFound -> callback (nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr, nullptr);
 	return 1;
 }
 
@@ -510,7 +510,7 @@ int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interp
 			U"\n"
 		);
 	}
-	commandFound -> callback (nullptr, narg, args, nullptr, interpreter, title, false, nullptr);
+	commandFound -> callback (nullptr, narg, args, nullptr, interpreter, title, false, nullptr, nullptr);
 	return 1;
 }
 
@@ -588,7 +588,7 @@ void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool
 			const bool isDirect = ! str32str (command -> title.get(), U"...");
 			if (isDirect) {
 			} else {
-				command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+				command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr, nullptr);
 			}
 			if (commandHasFileNameArgument (command))
 				MelderInfo_writeLine (U"\tconst char *fileName");

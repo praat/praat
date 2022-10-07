@@ -1,6 +1,6 @@
 /* GuiShell.cpp
  *
- * Copyright (C) 1993-2018,2020,2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2018,2020-2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

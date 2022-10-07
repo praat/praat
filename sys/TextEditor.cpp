@@ -114,7 +114,7 @@ static void closeDocument (TextEditor me) {
 }
 
 static void cb_open_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
-	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me)
+	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me, Editor /* optionalEditor */)
 {
 	iam (TextEditor);
 	MelderFile file = UiFile_getFile (sendingForm);
@@ -129,7 +129,7 @@ static void cb_showOpen (EditorCommand cmd) {
 }
 
 static void cb_saveAs_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
-	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me)
+	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me, Editor /* optionalEditor */)
 {
 	iam (TextEditor);
 	MelderFile file = UiFile_getFile (sendingForm);
@@ -141,7 +141,7 @@ static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS_DIRECT) {
 		my saveDialog = UiOutfile_create (my windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr);
 	char32 defaultName [300];
 	Melder_sprint (defaultName,300, ! my v_fileBased () ? U"info.txt" : my name [0] ? MelderFile_name (& my file) : U"");
-	UiOutfile_do (my saveDialog.get(), defaultName);
+	UiOutfile_do (my saveDialog.get(), defaultName, nullptr);
 }
 
 static void gui_button_cb_saveAndOpen (EditorCommand cmd, GuiButtonEvent /* event */) {
@@ -350,27 +350,27 @@ static void gui_button_cb_discardAndClose (TextEditor me, GuiButtonEvent /* even
 }
 
 void structTextEditor :: v_goAway () {
-	if (v_fileBased () && dirty) {
-		if (! dirtyCloseDialog) {
+	if (our v_fileBased () && our dirty) {
+		if (! our dirtyCloseDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
-			dirtyCloseDialog = GuiDialog_create (our windowForm,
+			our dirtyCloseDialog = GuiDialog_create (our windowForm,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
 				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
-			GuiLabel_createShown (dirtyCloseDialog,
+			GuiLabel_createShown (our dirtyCloseDialog,
 				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
 				U"The text has changed! Save changes?", 0);
 			int x = Gui_LEFT_DIALOG_SPACING, y = - Gui_BOTTOM_DIALOG_SPACING;
-			GuiButton_createShown (dirtyCloseDialog,
+			GuiButton_createShown (our dirtyCloseDialog,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				U"Discard & Close", gui_button_cb_discardAndClose, this, 0);
 			x += buttonWidth + buttonSpacing;
-			GuiButton_createShown (dirtyCloseDialog,
+			GuiButton_createShown (our dirtyCloseDialog,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				U"Cancel", gui_button_cb_cancelClose, this, 0);
 			x += buttonWidth + buttonSpacing;
-			GuiButton_createShown (dirtyCloseDialog,
+			GuiButton_createShown (our dirtyCloseDialog,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				U"Save & Close", gui_button_cb_saveAndClose, this, 0);
 		}
@@ -380,7 +380,7 @@ void structTextEditor :: v_goAway () {
 			GuiThing_hide (our dirtyOpenDialog);
 		if (our dirtyReopenDialog)
 			GuiThing_hide (our dirtyReopenDialog);
-		GuiThing_show (dirtyCloseDialog);
+		GuiThing_show (our dirtyCloseDialog);
 	} else {
 		closeDocument (this);
 	}

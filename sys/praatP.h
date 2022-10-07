@@ -194,7 +194,6 @@ inline struct PraatP {
 	autostring32 title;
 	GuiWindow menuBar;
 	int phase;
-	Editor editor;   // scripting environment
 } praatP;
 
 struct autoPraatBackground {

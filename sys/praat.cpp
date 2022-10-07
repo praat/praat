@@ -277,7 +277,7 @@ void praat_write_do (UiForm dia, conststring32 extension) {
 			MelderString_copy (& defaultFileName, U"praat.", extension);
 		}
 	}
-	UiOutfile_do (dia, defaultFileName.string);
+	UiOutfile_do (dia, defaultFileName.string, nullptr);
 }
 
 static void removeAllReferencesToMoribundEditor (Editor editor) {
@@ -289,8 +289,6 @@ static void removeAllReferencesToMoribundEditor (Editor editor) {
 		for (integer ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor] == editor)
 				theCurrentPraatObjects -> list [iobject]. editors [ieditor] = nullptr;
-	if (praatP. editor == editor)
-		praatP. editor = nullptr;
 }
 
 /**
@@ -870,7 +868,7 @@ DO
 }
 
 static void gui_cb_quit (Thing /* me */) {
-	DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+	DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr, nullptr);
 }
 
 void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
@@ -914,7 +912,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			{// scope
 				autoPraatBackground background;
 				try {
-					praat_executeScriptFromFile (& messageFile, nullptr);
+					praat_executeScriptFromFile (& messageFile, nullptr, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (praatP.title.get(), U": message not completely handled.");
 				}
@@ -928,7 +926,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	static int cb_userMessage () {
 		autoPraatBackground background;
 		try {
-			praat_executeScriptFromFile (& messageFile, nullptr);
+			praat_executeScriptFromFile (& messageFile, nullptr, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (praatP.title.get(), U": message not completely handled.");
 		}
@@ -983,7 +981,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		return 0;
 	}
 	static int cb_quitApplication () {
-		DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+		DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr, nullptr);
 		return 0;
 	}
 #endif
@@ -1870,7 +1868,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, conststring32 fileNa
 		if (! MelderFile_readable (& startUp))
 			return;   // it's OK if the file doesn't exist
 		try {
-			praat_executeScriptFromFile (& startUp, nullptr);
+			praat_executeScriptFromFile (& startUp, nullptr, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (praatP.title.get(), U": start-up file ", & startUp, U" not completed.");
 		}
@@ -1976,7 +1974,7 @@ void praat_run () {
 				if (MelderFile_readable (& plugin)) {
 					Melder_backgrounding = true;
 					try {
-						praat_executeScriptFromFile (& plugin, nullptr);
+						praat_executeScriptFromFile (& plugin, nullptr, nullptr);
 					} catch (MelderError) {
 						Melder_flushError (praatP.title.get(), U": plugin ", & plugin, U" contains an error.");
 					}

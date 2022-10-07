@@ -293,7 +293,9 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"pause ", 6) || str32equ (command, U"pause")) {
 			if (theCurrentPraatApplication -> batch)
 				return true;   // in batch we ignore pause statements
-			UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", interpreter);
+			const Editor optionalEditor = interpreter -> optionalEditor;
+			const GuiWindow parentShell = ( optionalEditor ? optionalEditor -> windowForm : theCurrentPraatApplication -> topShell );
+			UiPause_begin (parentShell, optionalEditor, U"stop or continue", interpreter);
 			UiPause_comment (str32equ (command, U"pause") ? U"..." : command + 6);
 			UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, interpreter);
 		} else if (str32nequ (command, U"execute ", 8)) {
@@ -302,10 +304,10 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"editor\" is not available inside manuals.");
 			if (command [6] == U' ' && Melder_isLetter (command [7])) {
-				praatP. editor = praat_findEditorFromString (command + 7);
+				interpreter -> optionalEditor = praat_findEditorFromString (command + 7);
 			} else if (command [6] == U'\0') {
 				if (interpreter && interpreter -> editorClass) {
-					praatP. editor = praat_findEditorFromString (interpreter -> environmentName.get());
+					interpreter -> optionalEditor = praat_findEditorFromString (interpreter -> environmentName.get());
 				} else {
 					Melder_throw (U"The function \"editor\" requires an argument when called from outside an editor.");
 				}
@@ -315,7 +317,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"endeditor", 9)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"endeditor\" is not available inside manuals.");
-			praatP. editor = nullptr;
+			interpreter -> optionalEditor = nullptr;
 		} else if (str32nequ (command, U"sendsocket ", 11)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"sendsocket\" is not available inside manuals.");
@@ -429,11 +431,11 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			colon [0] = colon [1] = colon [2] = U'.';
 			colon [3] = U'\0';
 		}
-		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor) {
+		if (theCurrentPraatObjects == & theForegroundPraatObjects && interpreter && interpreter -> optionalEditor) {
 			if (hasColon) {
-				Editor_doMenuCommand (praatP. editor, command2, narg, args, nullptr, interpreter);
+				Editor_doMenuCommand (interpreter -> optionalEditor, command2, narg, args, nullptr, interpreter);
 			} else {
-				Editor_doMenuCommand (praatP. editor, command, 0, nullptr, arguments, interpreter);
+				Editor_doMenuCommand (interpreter -> optionalEditor, command, 0, nullptr, arguments, interpreter);
 			}
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (str32nequ (command, U"Save ", 5) ||
@@ -530,7 +532,7 @@ void praat_executeCommandFromStandardInput (conststring32 programName) {
 	}
 }
 
-void praat_executeScriptFromFile (MelderFile file, conststring32 arguments) {
+void praat_executeScriptFromFile (MelderFile file, conststring32 arguments, Editor optionalEditor) {
 	try {
 		autostring32 text = MelderFile_readText (file);
 		{// scope
@@ -538,7 +540,7 @@ void praat_executeScriptFromFile (MelderFile file, conststring32 arguments) {
 			autoMelderFileSetDefaultDir dir (file);   // so that script-relative file names can be used for including include files
 			Melder_includeIncludeFiles (& text);
 		}   // back to the default directory of the caller
-		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (optionalEditor);
 		if (arguments) {
 			Interpreter_readParameters (interpreter.get(), text.get());
 			Interpreter_getArgumentsFromString (interpreter.get(), arguments);   // interpret caller-relative paths for infile/outfile/folder arguments
@@ -560,7 +562,7 @@ void praat_runScript (conststring32 fileName, integer narg, Stackel args) {
 			autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used for including include files
 			Melder_includeIncludeFiles (& text);
 		}   // back to the default directory of the caller
-		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromArgs (interpreter.get(), narg, args);   // interpret caller-relative paths for infile/outfile/folder arguments
 		autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used inside the script
@@ -580,7 +582,7 @@ void praat_executeScriptFromCommandLine (conststring32 fileName, integer argc, c
 			autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used for including include files
 			Melder_includeIncludeFiles (& text);
 		}   // back to the default directory of the caller
-		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromCommandLine (interpreter.get(), argc, argv);   // interpret caller-relative paths for infile/outfile/folder arguments
 		autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used inside the script
@@ -621,7 +623,7 @@ void praat_executeScriptFromFileNameWithArguments (conststring32 nameAndArgument
 			arguments ++;
 	}
 	Melder_relativePathToFile (path, & file);
-	praat_executeScriptFromFile (& file, arguments);
+	praat_executeScriptFromFile (& file, arguments, nullptr);
 }
 
 extern "C" void praatlib_executeScript (const char *text8) {
@@ -646,65 +648,55 @@ void praat_executeScriptFromText (conststring32 text) {
 
 static void secondPassThroughScript (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 	conststring32 /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
-	conststring32 /* invokingButtonTitle */, bool /* modified */, void * /* closure */)
+	conststring32 /* invokingButtonTitle */, bool /* modified */, void * /* closure */, Editor optionalEditor)
 {
-	try {
-		structMelderFile file { };
-		Melder_pathToFile (sendingForm -> scriptFilePath.get(), & file);
-		autostring32 text = MelderFile_readText (& file);
-		autoMelderFileSetDefaultDir dir (& file);
-		Melder_includeIncludeFiles (& text);
-		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-		Interpreter_readParameters (interpreter.get(), text.get());
-		Interpreter_getArgumentsFromDialog (interpreter.get(), sendingForm);
-		autoPraatBackground background;
-		Interpreter_run (interpreter.get(), text.get());
-		praatP.editor = nullptr;
-	} catch (MelderError) {
-		praatP.editor = nullptr;
-		throw;
-	}
+	structMelderFile file { };
+	Melder_pathToFile (sendingForm -> scriptFilePath.get(), & file);
+	autostring32 text = MelderFile_readText (& file);
+	autoMelderFileSetDefaultDir dir (& file);
+	Melder_includeIncludeFiles (& text);
+	autoInterpreter interpreter = Interpreter_createFromEnvironment (optionalEditor);
+	Interpreter_readParameters (interpreter.get(), text.get());
+	Interpreter_getArgumentsFromDialog (interpreter.get(), sendingForm);
+	autoPraatBackground background;
+	Interpreter_run (interpreter.get(), text.get());
 }
 
-static void firstPassThroughScript (MelderFile file) {
+static void firstPassThroughScript (MelderFile file, Editor optionalEditor) {
 	try {
 		autostring32 text = MelderFile_readText (file);
 		{// scope
 			autoMelderFileSetDefaultDir dir (file);
 			Melder_includeIncludeFiles (& text);
 		}
-		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (optionalEditor);
 		if (Interpreter_readParameters (interpreter.get(), text.get()) > 0) {
-			autoUiForm form = Interpreter_createForm (interpreter.get(),
-				praatP.editor ? praatP.editor -> windowForm : theCurrentPraatApplication -> topShell,
-				Melder_fileToPath (file), secondPassThroughScript, nullptr, false
-			);
+			const GuiWindow parentShell = ( optionalEditor ? optionalEditor -> windowForm : theCurrentPraatApplication -> topShell );
+			autoUiForm form = Interpreter_createForm (interpreter.get(), parentShell, optionalEditor,
+					Melder_fileToPath (file), secondPassThroughScript, nullptr, false);
 			UiForm_destroyWhenUnmanaged (form.get());
 			UiForm_do (form.get(), false);
 			form. releaseToUser();
 		} else {
 			autoPraatBackground background;
-			praat_executeScriptFromFile (file, nullptr);
-			praatP.editor = nullptr;   // yuck
+			praat_executeScriptFromFile (file, nullptr, optionalEditor);
 		}
 	} catch (MelderError) {
-		praatP.editor = nullptr;   // yuck
 		Melder_throw (U"Script ", file, U" not completed.");
 	}
 }
 
 void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, integer /* narg */, Stackel /* args */,
 	conststring32 scriptPath, Interpreter /* interpreter */,
-	conststring32 /* invokingButtonTitle */, bool /* modified */, void *)
+	conststring32 /* invokingButtonTitle */, bool /* modified */, void *, Editor optionalEditor)
 {
 	structMelderFile file { };
 	Melder_relativePathToFile (scriptPath, & file);
-	firstPassThroughScript (& file);
+	firstPassThroughScript (& file, optionalEditor);
 }
 
 void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, conststring32 script) {
-	praatP.editor = editor;   // yuck
-	DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr);
+	DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr, editor);
 }
 
 /* End of file praat_script.cpp */
