@@ -445,7 +445,7 @@ autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me) {
 	}
 }
 
-autoINTVEC Permutation_permuteVector (Permutation me, INTVEC const & vec) {
+autoINTVEC Permutation_permuteVector (Permutation me, constINTVEC const & vec) {
 	try {
 		Melder_require (my numberOfElements == vec.size,
 			U"The sizes of the vector and the Permutation should be equal.");
@@ -468,20 +468,18 @@ static void checkUniqueAndInInterval (constINTVEC const& vec, integer maximum) {
 			Melder_throw (U"All numbers in the set should be unique, number ", sorted [i], U" isn't.");
 }
 
-autoPermutation Permutation_permuteSubsetByOther (Permutation me, constINTVEC const& subsetPositions, Permutation other) {
+void Permutation_permuteSubsetByOther_inout (Permutation me, constINTVEC const& subsetPositions, Permutation other) {
 	try {
 		autoPermutation thee = Data_copy (me);
 		Melder_require (subsetPositions.size == other -> numberOfElements,
 			U"The subset and the other Permutation should have the same size.");
 		checkUniqueAndInInterval (subsetPositions, my numberOfElements);
-		autoINTVEC subSet = raw_INTVEC (subsetPositions.size);
+		autoINTVEC save = raw_INTVEC (subsetPositions.size);
 		for (integer i = 1; i <= subsetPositions.size; i++)
-			subSet [i] = my p [subsetPositions [i]];
-		autoINTVEC permuted = Permutation_permuteVector (other, subSet.get());
+			save [i] = my p [subsetPositions [i]];
 		
-		for (integer ipos = 1; ipos <= subsetPositions.size; ipos ++)
-			thy p [subsetPositions [ipos]] = permuted [ipos];
-		return thee;
+		for (integer i = 1; i <= subsetPositions.size; i ++)
+			my p [subsetPositions [i]] =  save [other -> p [i]];
 	} catch (MelderError) {
 		Melder_throw (me, U": not permuted by subset");
 	}

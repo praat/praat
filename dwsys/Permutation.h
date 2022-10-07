@@ -91,9 +91,9 @@ autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me);
 
 autoPermutation Permutation_permutePartByOther (Permutation me, integer startPosition, Permutation other);
 
-autoPermutation Permutation_permuteSubsetByOther (Permutation me, constINTVEC const& subsetPositions, Permutation other);
+void Permutation_permuteSubsetByOther_inout (Permutation me, constINTVEC const& subsetPositions, Permutation other);
 
-autoINTVEC Permutation_permuteVector (Permutation me, INTVEC const & vec);
+autoINTVEC Permutation_permuteVector (Permutation me, constINTVEC const & vec);
 
 autoPermutation Permutation_moveElementsToTheFront (Permutation me, constINTVEC const& subsetPositions);
 
