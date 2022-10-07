@@ -40,13 +40,15 @@ DIRECT (PRAAT_Remove) {
 FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
 	TEXTFIELD (newName, U"New name", U"", 3)
 OK
-	WHERE (SELECTED) SET_STRING (newName, NAME)
+	WHERE (SELECTED)
+		SET_STRING (newName, NAME)
 DO
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot rename.");
 	if (theCurrentPraatObjects -> totalSelection > 1)
 		Melder_throw (U"Selection changed!\nCannot rename more than one object at a time.");
-	WHERE (SELECTED) break;
+	WHERE (SELECTED)
+		break;
 	static MelderString string;
 	MelderString_copy (& string, newName);
 	praat_cleanUpName (string.string);
@@ -58,7 +60,8 @@ DO
 		MelderString_append (& listName, ID, U". ", fullName.string);
 		praat_list_renameAndSelect (IOBJECT, listName.string);
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], fullName.string);
+			if (EDITOR [ieditor])
+				Thing_setName (EDITOR [ieditor], listName.string);
 		Thing_setName (OBJECT, string.string);
 	}
 	END_NO_NEW_DATA
@@ -67,7 +70,8 @@ DO
 FORM (NEW1_Copy, U"Copy object", U"Copy...") {
 	TEXTFIELD (newName, U"Name of new object", U"", 3)
 OK
-	WHERE (SELECTED) SET_STRING (newName, NAME)
+	WHERE (SELECTED)
+		SET_STRING (newName, NAME)
 DO
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot copy.");
