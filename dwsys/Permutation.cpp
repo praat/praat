@@ -475,7 +475,7 @@ void Permutation_permuteSubsetByOther_inout (Permutation me, constINTVEC const& 
 			U"The subset and the other Permutation should have the same size.");
 		checkUniqueAndInInterval (subsetPositions, my numberOfElements);
 		autoINTVEC save = raw_INTVEC (subsetPositions.size);
-		for (integer i = 1; i <= subsetPositions.size; i++)
+		for (integer i = 1; i <= subsetPositions.size; i ++)
 			save [i] = my p [subsetPositions [i]];
 		
 		for (integer i = 1; i <= subsetPositions.size; i ++)

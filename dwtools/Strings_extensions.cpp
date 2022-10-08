@@ -246,7 +246,7 @@ autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 autoStrings StringsIndex_to_Strings (StringsIndex me) {
 	try {
 		autoStrings thee = Strings_createFixedLength (my numberOfItems);
-		for (integer i = 1; i <= thy numberOfStrings; i ++) {
+		for (integer i = 1; i <= my numberOfItems; i ++) {
 			const SimpleString s = (SimpleString) my classes->at [my classIndex [i]];   // FIXME cast, FIXME classIndex
 			thy strings [i] = Melder_dup (s -> string.get());
 		}
