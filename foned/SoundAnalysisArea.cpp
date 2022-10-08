@@ -586,14 +586,14 @@ static void menu_cb_log2 (SoundAnalysisArea me, EDITOR_ARGS_DIRECT) {
 		do_log (me, 2);
 	VOID_EDITOR_END
 }
-static void menu_cb_logScript3 (SoundAnalysisArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_logScript3 (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 	VOID_EDITOR
-		DO_RunTheScriptFromAnyAddedEditorCommand (my functionEditor(), my instancePref_logScript3());
+		praat_executeScriptFromAddedEditorCommand (my functionEditor(), cmd, my instancePref_logScript3());
 	VOID_EDITOR_END
 }
-static void menu_cb_logScript4 (SoundAnalysisArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_logScript4 (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
 	VOID_EDITOR
-		DO_RunTheScriptFromAnyAddedEditorCommand (my functionEditor(), my instancePref_logScript4());
+		praat_executeScriptFromAddedEditorCommand (my functionEditor(), cmd, my instancePref_logScript4());
 	VOID_EDITOR_END
 }
 
