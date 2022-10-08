@@ -68,7 +68,7 @@ Thing_define (Praat_Command, Thing) {
 			and you should execute the command. */
 		/* If sendingString exists (apparently from a command file),
 			UiForm_parseString should be called, which will call this routine again with sendingForm. */
-		/* All of these things are normally taken care of by the macros defined in praat.h. */
+		/* All of these things are normally taken care of by the macros defined in praatM.h. */
 	conststring32 nameOfCallback;
 	signed char
 		visible,   // do the selected classes match class1, class2, class3 and class4?

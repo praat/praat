@@ -662,7 +662,7 @@ static void secondPassThroughScript (UiForm sendingForm, integer /* narg */, Sta
 	Interpreter_run (interpreter.get(), text.get());
 }
 
-static void firstPassThroughScript (MelderFile file, Editor optionalEditor) {
+static void firstPassThroughScript (MelderFile file, Editor optionalEditor, EditorCommand optionalCommand) {
 	try {
 		autostring32 text = MelderFile_readText (file);
 		{// scope
@@ -674,9 +674,13 @@ static void firstPassThroughScript (MelderFile file, Editor optionalEditor) {
 			const GuiWindow parentShell = ( optionalEditor ? optionalEditor -> windowForm : theCurrentPraatApplication -> topShell );
 			autoUiForm form = Interpreter_createForm (interpreter.get(), parentShell, optionalEditor,
 					Melder_fileToPath (file), secondPassThroughScript, nullptr, false);
-			UiForm_destroyWhenUnmanaged (form.get());
 			UiForm_do (form.get(), false);
-			form. releaseToUser();
+			if (optionalCommand) {
+				optionalCommand -> d_uiform = form.move();
+			} else {
+				UiForm_destroyWhenUnmanaged (form.get());
+				form. releaseToUser();
+			}
 		} else {
 			autoPraatBackground background;
 			praat_executeScriptFromFile (file, nullptr, optionalEditor);
@@ -692,11 +696,16 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, int
 {
 	structMelderFile file { };
 	Melder_relativePathToFile (scriptPath, & file);
-	firstPassThroughScript (& file, optionalEditor);
+	firstPassThroughScript (& file, optionalEditor, nullptr);
 }
 
-void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, conststring32 script) {
-	DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr, editor);
+void praat_executeScriptFromEditorCommand (Editor editor, EditorCommand command, conststring32 scriptPath) {
+	Melder_assert (editor);
+	Melder_assert (command);
+	Melder_assert (command -> d_editor == editor);
+	structMelderFile file { };
+	Melder_relativePathToFile (scriptPath, & file);
+	firstPassThroughScript (& file, editor, command);
 }
 
 /* End of file praat_script.cpp */
