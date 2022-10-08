@@ -63,29 +63,29 @@ void structIndex :: v1_info () {
 	numPart   := <nums> | <nums><alphaPart>
 	
 	numeric part should sort numerically:
-	0a, 1a, 2a, 11a
-	00a, 0a, a
+	0a, 1a, 11a, 2a, 11a -> 0a, 1a, 2a, 11a
+	a, 00a, 0a -> 00a, 0a, a (numerical as well as alphabetical order)
 	00a1, 00a2, 00a11, 0b0
 
 */
-typedef struct structSTRVECSorter *STRVECSorter;
-struct structSTRVECSorter {
-	struct structStringsInfo {		
+typedef struct structSTRVECIndexer *STRVECIndexer;
+struct structSTRVECIndexer {
+	struct structStringClassesInfo {
 		private:
-		struct structStringInfoData {
-			double number;	// interpretation of part of alpha as number
-			integer alphaPosStart; // start positions of alphaPart; alphaPosEnd is fixed at the end U'\0'
-			integer numPosStart; // start of num part else 0
+		struct structStringClassInfoData {
+			double number;	// alpha [numPosStart-1..numPosEnd-1] as a number
+			integer alphaPosStart; // start positions of alphaPart; alphaPosEnd is always fixed at the end U'\0'
+			integer numPosStart; // start of num part in alpha, else 0 if no num part
 			integer numPosDot; // numPosStart < numPosDot < numPosEnd if a dot occurs in the num part and breakAtDecimalPoint==true
 			integer numPosEnd; // >= numPosStart if numPosStart > 0 else undefined
-			integer length; 
-			mutablestring32 alpha;
-			char32 save0;
-		};	
-		using STRINFOVEC = vector<struct structStringInfoData>;
-		using autoSTRINFOVEC = autovector<struct structStringInfoData>;
-		using constSTRINFOVEC = constvector <struct structStringInfoData>;
-		typedef struct structStringInfoData *stringInfo; 
+			integer length; // strlen (alpha)
+			mutablestring32 alpha; // contains copy of a class
+			char32 save0; // temporarily use save location during masking
+		};
+		using STRINFOVEC = vector<struct structStringClassInfoData>;
+		using autoSTRINFOVEC = autovector<struct structStringClassInfoData>;
+		using constSTRINFOVEC = constvector <struct structStringClassInfoData>;
+		typedef struct structStringClassInfoData *stringInfo; 
 		
 		autoSTRINFOVEC stringsInfoDatavector;
 		bool breakAtDecimalPoint = true;
@@ -98,22 +98,24 @@ struct structSTRVECSorter {
 			}
 		}
 	
-		void unmaskAlphaTrailer (stringInfo info) { // restore the masking!
+		void unmaskAlphaTrailer (stringInfo info) { // undo the masking!
 			if (info -> numPosStart > 0 && info -> numPosEnd < info -> length)
 				info -> alpha [info -> numPosEnd] = info -> save0; 
 		}
+		
 		void maskNumTrailer (stringInfo info) {
 			if (info -> numPosStart > 0) {
 				info -> save0 = info -> alpha [info -> numPosStart - 1];
 				info -> alpha [info -> numPosStart - 1] = U'\0';
 			}
 		}
+		
 		void unmaskNumTrailer (stringInfo info) {
 			if (info -> numPosStart > 0)
 				info -> alpha [info -> numPosStart - 1] = info -> save0;
 		}
 		
-		void setNumPart (stringInfo info) {
+		void setNumber (stringInfo info) {
 			setNumPosStart (info);
 			if (info -> numPosStart > 0) {
 				setNumPosEndAndDot (info);
@@ -122,6 +124,7 @@ struct structSTRVECSorter {
 				unmaskAlphaTrailer (info); //
 			}
 		}
+		
 		/*
 			Find the first and last index of the first numeric part in a string.
 			The allowed numeric part is either <d> or <d>.<d>, where <d> a sequence of one or more digits
@@ -144,6 +147,7 @@ struct structSTRVECSorter {
 			else
 				info -> numPosStart = 0;
 		}
+		
 		void setNumPosEndAndDot (stringInfo info) {
 			if (info -> alphaPosStart < 0)
 				return;
@@ -171,14 +175,16 @@ struct structSTRVECSorter {
 			const integer relPos = p - pstart - 1;
 			info -> numPosEnd = info -> numPosStart + relPos;
 		}
+		
 		stringInfo getStringInfo (integer index) {
 			Melder_assert (index > 0 && index <= stringsInfoDatavector.size);
 			return & stringsInfoDatavector [index];
 		}
 				
 		public:
+			
 		void init (constSTRVEC const& strings) { // strings are unicized!
-			stringsInfoDatavector = newvectorraw <struct structStringInfoData> (strings.size);
+			stringsInfoDatavector = newvectorraw <struct structStringClassInfoData> (strings.size);
 			for (integer i = 1; i <= strings.size; i++) {
 				stringInfo info  = getStringInfo (i);
 				info -> alphaPosStart = 1;
@@ -198,13 +204,14 @@ struct structSTRVECSorter {
 				else if (info -> numPosEnd <= info -> length) {
 					info -> alphaPosStart = info -> numPosEnd + 1;
 					if (info -> alphaPosStart <= info -> length) {
-						setNumPart (info);
+						setNumber (info);
 						notAtEnd ++;
 					}
 				}
 			}
 			return notAtEnd;
 		}
+		
 		integer setAlphaPosStartAtNumPosStart (constINTVEC set) {
 			integer notAtEnd = 0;
 			for (integer i = 1; i <= set.size; i ++) {
@@ -218,10 +225,11 @@ struct structSTRVECSorter {
 			}
 			return notAtEnd;
 		}
+		
 		void updateNumPart (constINTVEC set) {
 			for (integer i = 1; i <= set.size; i++) {
 				stringInfo info = getStringInfo (set [i]);
-				setNumPart (info);
+				setNumber (info);
 			}
 		}
 			
@@ -253,6 +261,17 @@ struct structSTRVECSorter {
 			}
 			return numbers;
 		}
+		
+		autoVEC extractLengths (constINTVEC const& subset) {
+			autoVEC lengths = raw_VEC (subset.size);
+			for (integer i = 1; i <= subset.size; i ++) {
+				const integer irow = subset [i];
+				stringInfo info = getStringInfo (irow);
+				lengths [i] = info -> numPosEnd - info -> numPosStart + 1;
+			}
+			return lengths;
+		}
+		
 		autoSTRVEC extractAlphas (constINTVEC const& subset) {
 			autoSTRVEC alphas (subset.size);
 			for (integer i = 1; i <= subset.size; i ++) {
@@ -264,6 +283,7 @@ struct structSTRVECSorter {
 			}
 			return alphas;
 		}
+		
 		autoSTRVEC extractAlphaPart (constINTVEC const& subset) {
 			autoSTRVEC alphaPart (subset.size);
 			for (integer i = 1; i <= subset.size; i ++) {
@@ -274,119 +294,60 @@ struct structSTRVECSorter {
 			return alphaPart;
 		}
 		
-		autostring32 extractNumPartAsString (integer index) {
+		inline integer getNumstringLength (integer index) {
+			stringInfo info = getStringInfo (index);
+			return info -> numPosEnd - info -> numPosStart + 1;
+		}
+		
+		autostring32 extractNumAsString (integer index) {
 				stringInfo info = getStringInfo (index);
 				maskAlphaTrailer (info);
 				autostring32 result = Melder_dup (info -> alpha + info -> alphaPosStart - 1);
 				unmaskAlphaTrailer (info);
 				return result;
 		}
-
-		autoSTRVEC extractAlphaPartFromNumPart (constINTVEC const& subset, integer& numberOfNonEmpty)  {
-			autoSTRVEC alphaPart (subset.size);
-			numberOfNonEmpty = 0;
-			for (integer i = 1; i <= subset.size; i ++) {
-				const integer irow = subset [i];
-				stringInfo info = getStringInfo (irow);
-				if (info -> numPosStart > 0 && info -> numPosEnd < info -> length) {
-					alphaPart [i] =  Melder_dup (info -> alpha + info -> numPosEnd + 1);
-					numberOfNonEmpty ++;
-				} else
-					alphaPart [i] =  Melder_dup (U"");
-			}
-			return alphaPart;
-		}
 		
-		autoSTRVEC extractNumPartFromAlphaPart (constINTVEC const& subset, integer& numberOfNonEmpty)  {
-			autoSTRVEC numPart (subset.size);
-			numberOfNonEmpty = 0;
-			for (integer i = 1; i <= subset.size; i ++) {
-				const integer irow = subset [i];
-				stringInfo info = getStringInfo (irow);
-				if (info -> numPosStart > 0) {
-					maskAlphaTrailer (info);
-					numPart [i] =  Melder_dup (info -> alpha + info -> numPosStart - 1);
-					unmaskAlphaTrailer (info);
-					numberOfNonEmpty ++;
-				} else
-					numPart [i] =  Melder_dup (U"");
-			}
-			return numPart;
-		}
-		
-		void extractNumPartOnly (constINTVEC const& subset, autoSTRVEC & alphas, autoSTRVEC & alphaPart) {
-			
-			for (integer i = 1; i <= subset.size; i ++) {
-				const integer irow = subset [i];
-				stringInfo info = getStringInfo (irow);
-				if (info -> alphaPosStart > 0) {
-					alphaPart.insert (i, info -> alpha + info -> alphaPosStart - 1);
-					maskNumTrailer (info);
-					alphas.insert (i, info -> alpha + info -> alphaPosStart - 1);
-					unmaskNumTrailer (info);
-				} else {
-					alphaPart.insert (i, U"");
-					alphas.insert (i, U"");
-				}
-			}
-		}
-		
-		autoPermutation sortAsAlpha (constINTVEC subset) {
-			const integer numberOfStrings = subset.size;
-			autoSTRVEC alphas (numberOfStrings);
-			for (integer i = 1; i <= numberOfStrings; i ++) {
-				const integer irow = subset [i];
-				stringInfo info = getStringInfo (irow);
-				alphas.insert (i, info -> alpha + info -> alphaPosStart - 1);
-			}
-			autoPermutation p = Permutation_create (numberOfStrings, true); // TODO CHECK ?
-			INTVECindex (p -> p.get(), alphas.get());
-			return p;
+		autoINTVEC getNumstringLengths (constINTVEC const& subset) {
+			autoINTVEC lengths = raw_INTVEC (subset.size);
+			for (integer i = 1; i <= subset.size; i ++)
+				lengths [i] = getNumstringLength (subset [i]);
+			return lengths;
 		}
 	};
 	
-	struct structSTRVECIndex {
-		autoSTRVEC classes; // the number of different strings in the originating strvec.
-		autoINTVEC classesIndex; // has length of the originating strvec 
-		
-		void unicize (constSTRVEC const& v) {
-			integer count = 1;
-			classesIndex = raw_INTVEC (v.size);
-			autoPermutation p = Permutation_create (v.size, true);
-			INTVECindex (p -> p.get(), v);
-			classes.insert (count, v [p -> p [1]]);
-			classesIndex [1] = count;
-			for (integer i = 2; i <= v.size; i ++) {
-				const integer index = p -> p [i];
-				conststring32 str = v [index];
-				if (Melder_cmp (classes [count].get(), str) != 0)
-					classes.insert (++ count, str);
-				classesIndex [i] = count;
-			}
-		}
-	};
-
 private:
-	INTVEC strvecIndex; // link to the alphabetically sorted index of the strvec
-	STRVEC strings;  // link to the unicized strvec, these will be sorted
-	autoPermutation stringsSorting; // the sorting index of these strings 
+	autoINTVEC strvecIndex; // link to the alphabetically sorted index of the strvec
+	autoSTRVEC strvecClasses;  // link to the createIndexd strvec, these will be sorted
+	autoPermutation classesSorting; // the sorting index of these strings 
+	struct structStringClassesInfo stringsInfo;
 	bool breakAtDecimalPoint;
-	struct structStringsInfo stringsInfo;
-	struct structSTRVECIndex STRVECIndex;
+	
+	void createIndex (constSTRVEC const& v) {
+		integer count = 1;
+		strvecIndex = raw_INTVEC (v.size);
+		autoPermutation p = Permutation_create (v.size, true);
+		INTVECindex (p -> p.get(), v);
+		strvecClasses.insert (count, v [p -> p [1]]);
+		strvecIndex [1] = count;
+		for (integer i = 2; i <= v.size; i ++) {
+			const integer index = p -> p [i];
+			conststring32 str = v [index];
+			if (Melder_cmp (strvecClasses [count].get(), str) != 0)
+				strvecClasses.insert (++ count, str);
+			strvecIndex [i] = count;
+		}
+	}
 	
 	void init (constSTRVEC const& v, bool breakAtTheDecimalPoint ) {
 		try {
 			breakAtDecimalPoint = breakAtTheDecimalPoint;
-			STRVECIndex.unicize (v);
-			strings = STRVECIndex.classes.get();
-			stringsSorting = Permutation_create (STRVECIndex.classes.size, true);
-			strvecIndex = STRVECIndex.classesIndex.get();
+			createIndex (v);
+			classesSorting = Permutation_create (strvecClasses.size, true);
 		} catch (MelderError) {
-			Melder_throw (U"Cannot init the structStringsInfo.");
+			Melder_throw (U"Cannot init the structStringClassesInfo.");
 		}
 	 }
 
- public:
 	// the elements of set sets must always refer to the position in the structSTRVECIndex::classes
 	autoPermutation sortAlphaPartSet (constINTVEC const& set, integer level) {
 		Melder_assert (set.size > 0);
@@ -448,19 +409,21 @@ private:
 			if (valueChange || i == set.size) {
 				const integer numberOfEquals = ( valueChange ? i - startOfEquals : i - startOfEquals + 1 );
 				if (numberOfEquals > 1) {
-					autoSTRVEC numbers_strings (numberOfEquals);
 					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
 					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
 					for (integer j = 1; j <= numberOfEquals; j ++) {
 						const integer index = set [pset -> p [startOfEquals + j - 1]];
 						equalsSet_local [j] = pset -> p [startOfEquals + j - 1];
 						equalsSet_global [j] = index;
-						numbers_strings[j] = stringsInfo.extractNumPartAsString (index).move();
 					}
-					// now sort the numbers_strings
-					autoPermutation pnumbers_strings = Permutation_create (numberOfEquals, true);
-					INTVECindex (pnumbers_strings -> p.get(), numbers_strings.get());
-					Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pnumbers_strings.get()); 
+					autoINTVEC numLengths = stringsInfo.getNumstringLengths (equalsSet_global.get());
+					// now sort the numbers according to their lengths, from long to short
+					if (NUMmin (numLengths.get()) != NUMmax (numLengths.get())) {
+						autoPermutation pnumbers = Permutation_create (numberOfEquals, true);
+						INTVECindex (pnumbers -> p.get(), numLengths.get());
+						Permutation_reverse_inline (pnumbers.get(), 0, 0);
+						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pnumbers.get()); 
+					}
 					// get the alphaPart and sort it 
 					if (stringsInfo.setAlphaPosStartAfterNumPosEnd (equalsSet_global.get())) {
 						autoPermutation pequals = sortAlphaPartSet (equalsSet_global.get(), level + 1); // 
@@ -474,48 +437,51 @@ private:
 		return pset;
 	}
 	
+ public:	
 	void sort (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
+		Melder_require (v.size > 0,
+			U"There should be at least one element in your list.");
 		init (v, breakAtTheDecimalPoint);
 		if (sorting == kStrings_sorting::ALPHABETICAL) {
 			 ;
 		} else if (sorting == kStrings_sorting::NUMERICAL_PART) {
-			stringsInfo.init (strings);
-			stringsInfo.updateNumPart (stringsSorting -> p.get());
+			stringsInfo.init (strvecClasses.get());
+			stringsInfo.updateNumPart (classesSorting -> p.get());
 			autoINTVEC numStartSet, alphaStartSet;
-			autoPermutation p = Permutation_create (strings.size, true);
+			autoPermutation p = Permutation_create (strvecClasses.size, true);
 			Melder_require (stringsInfo.separateAlphaAndNumSets (p->p.get(), numStartSet, alphaStartSet),
 				U"error");
+			Melder_assert (numStartSet.size + alphaStartSet.size == strvecClasses.size);
 			autoINTVEC alphaPartSortedSet, numPartSortedSet;
 			if (numStartSet.size > 0) {
 				autoPermutation pnumPart = sortNumPartSet (numStartSet.get(), 1);
 				numPartSortedSet = Permutation_permuteVector (pnumPart.get(), numStartSet.get());
 				if (alphaStartSet.size == 0)
-					stringsSorting -> p.get()  <<=  numPartSortedSet.get();
+					classesSorting -> p.get()  <<=  numPartSortedSet.get();
 			}
 			if (alphaStartSet.size > 0) {
 				autoPermutation palphaPart = sortAlphaPartSet (alphaStartSet.get(), 1);
 				alphaPartSortedSet = Permutation_permuteVector (palphaPart.get(), alphaStartSet.get());
 				if (numStartSet.size == 0)
-					stringsSorting -> p.get()  <<=  alphaPartSortedSet.get();
+					classesSorting -> p.get()  <<=  alphaPartSortedSet.get();
 			}
-			Melder_assert (numStartSet.size + alphaStartSet.size == strings.size);
 			if (numStartSet.size > 0 && alphaStartSet.size > 0) {
-				stringsSorting -> p.part (1, numPartSortedSet.size)  <<=  numPartSortedSet.get();
-				stringsSorting -> p.part (numPartSortedSet.size + 1, stringsSorting -> numberOfElements)  <<=  alphaPartSortedSet.get();
-				Permutation_checkInvariant (stringsSorting.get());
+				classesSorting -> p.part (1, numPartSortedSet.size)  <<=  numPartSortedSet.get();
+				classesSorting -> p.part (numPartSortedSet.size + 1, classesSorting -> numberOfElements)  <<=  alphaPartSortedSet.get();
+				Permutation_checkInvariant (classesSorting.get());
 			}
 		}
 	 }
 	 
-	autoStringsIndex sortindex (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
+	autoStringsIndex index (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
 		sort (v, breakAtTheDecimalPoint, sorting);
 		autoStringsIndex me = StringsIndex_create (v.size);
-		for (integer i = 1; i <= strings.size; i ++) {
-			conststring32 classi = strings [stringsSorting -> p [i]];
+		for (integer i = 1; i <= strvecClasses.size; i ++) {
+			conststring32 classi = strvecClasses [classesSorting -> p [i]].get();
 			autoSimpleString ss = SimpleString_create (classi);
 			my classes -> addItem_move (ss.move());
 		}
-		my classIndex.get()  <<= strvecIndex;
+		my classIndex.get()  <<= strvecIndex.get();
 		return me;
 	 }
 };
@@ -589,8 +555,8 @@ void INTVECindex_num_alpha (INTVEC const& target, constSTRVEC const& v, kStrings
 /* copying of strings could be avoided by using a autovector<char32** ? */
 autoStringsIndex StringsIndex_createFrom_STRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
 	try {
-		struct structSTRVECSorter sorter;
-		autoStringsIndex me =  sorter.sortindex (strvec, breakAtDecimalPoint, sorting);	
+		struct structSTRVECIndexer indexer;
+		autoStringsIndex me =  indexer.index (strvec, breakAtDecimalPoint, sorting);	
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Could not create StringsIndex from STRVEC.");
