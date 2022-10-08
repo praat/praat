@@ -188,20 +188,7 @@ struct structSTRVECSorter {
 				info -> number = -1.0; 
 			}
 		}
-		integer setAlphaPosStartAtNextLevel (constINTVEC set) {
-			integer notAtEnd = 0;
-			for (integer i = 1; i <= set.size; i ++) {
-				stringInfo info = getStringInfo (set [i]);
-				if (info -> numPosStart == 0)
-					info -> alphaPosStart = info -> length + 1; // at \0
-				else if (info -> alphaPosStart <= info -> numPosStart) {
-					info -> alphaPosStart = info -> numPosEnd + 1;
-					if (info -> alphaPosStart <= info -> length)
-						notAtEnd ++;
-				}
-			}
-			return notAtEnd;
-		}
+		
 		integer setAlphaPosStartAfterNumPosEnd (constINTVEC set) {
 			integer notAtEnd = 0;
 			for (integer i = 1; i <= set.size; i ++) {
@@ -210,7 +197,10 @@ struct structSTRVECSorter {
 					info -> alphaPosStart = info -> length + 1; // at \0
 				else if (info -> numPosEnd <= info -> length) {
 					info -> alphaPosStart = info -> numPosEnd + 1;
-					notAtEnd ++;
+					if (info -> alphaPosStart <= info -> length) {
+						setNumPart (info);
+						notAtEnd ++;
+					}
 				}
 			}
 			return notAtEnd;
@@ -400,33 +390,37 @@ private:
 	// the elements of set sets must always refer to the position in the structSTRVECIndex::classes
 	autoPermutation sortAlphaPartSet (constINTVEC const& set, integer level) {
 		Melder_assert (set.size > 0);
-		autoPermutation palpha = Permutation_create (set.size, true);
+		autoPermutation pset = Permutation_create (set.size, true);
 		autoSTRVEC alphaPart = stringsInfo.extractAlphaPart (set);
 		autoSTRVEC alphas = stringsInfo.extractAlphas (set);
 		if (level > 1) // already sorted by init
-			INTVECindex (palpha -> p.get(), alphaPart.get()); // we want s01 before s1!
+			INTVECindex (pset -> p.get(), alphaPart.get()); // we want s01 before s1!
 		
-		autoINTVEC equalsSet = raw_INTVEC (set.size);
 		integer startOfEquals = 1;
-		conststring32 value = alphas [palpha -> p [1]].get(); // the smallest 
+		conststring32 value = alphas [pset -> p [1]].get(); // the smallest 
 		for (integer i = 2; i <= set.size; i ++) {
-			conststring32 current = alphas [palpha -> p [i]].get();
-			if (Melder_cmp (current, value) != 0) {
-				const integer numberOfEquals = i - startOfEquals;
+			conststring32 current = alphas [pset -> p [i]].get();
+			const bool valueChange = Melder_cmp (current, value) != 0;
+			if (valueChange || i == set.size) {
+				const integer numberOfEquals = ( valueChange ? i - startOfEquals : i - startOfEquals + 1 );
 				if (numberOfEquals > 1) {
-					for (integer j = 1; j <= numberOfEquals; j ++)
-						equalsSet [j] = set [palpha -> p [startOfEquals + j - 1]];
-					equalsSet.resize (numberOfEquals);
-					if (stringsInfo.setAlphaPosStartAtNumPosStart (equalsSet.get())) {
-						autoPermutation pequals = sortNumPartSet (equalsSet.get(), level);
-						Permutation_permuteSubsetByOther_inout (palpha.get(), equalsSet.get(), pequals.get());
+					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
+					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
+					for (integer j = 1; j <= numberOfEquals; j ++) {
+						const integer index = set [pset -> p [startOfEquals + j - 1]];
+						equalsSet_local [j] = pset -> p [startOfEquals + j - 1];
+						equalsSet_global [j] = index;
+					}
+					if (stringsInfo.setAlphaPosStartAtNumPosStart (equalsSet_global.get())) {
+						autoPermutation pequals = sortNumPartSet (equalsSet_global.get(), level);
+						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pequals.get());
 					}
 				}
 				value = current;
 				startOfEquals = i;
 			}
 		}
-		return palpha;
+		return pset;
 	}
 	
 	/* the elements of set must always refer to the position in the structSTRVECIndex::classes
@@ -445,34 +439,32 @@ private:
 		autoVEC numbers = stringsInfo.extractNums (set);
 		autoPermutation	pset = Permutation_create (numberOfStrings, true);
 		INTVECindex (pset -> p.get(), numbers.get());
-		/*
-			Find numbers that are equal but have different number of digits
-		*/
-		//autoSTRVEC alphas = stringsInfo.extractAlphas (set);;
-		autoINTVEC equalsSet = raw_INTVEC (numberOfStrings);
 
 		integer startOfEquals = 1;
 		double value = numbers [pset -> p [1]]; // the smallest number
 		for (integer i = 2; i <= numberOfStrings; i++) {
 			const double current = numbers [pset -> p [i]];
-			if (current != value) {
-				const integer numberOfEquals = i - startOfEquals;
+			const bool valueChange = current != value;
+			if (valueChange || i == set.size) {
+				const integer numberOfEquals = ( valueChange ? i - startOfEquals : i - startOfEquals + 1 );
 				if (numberOfEquals > 1) {
 					autoSTRVEC numbers_strings (numberOfEquals);
+					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
+					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
 					for (integer j = 1; j <= numberOfEquals; j ++) {
 						const integer index = set [pset -> p [startOfEquals + j - 1]];
-						equalsSet [j] = startOfEquals + j - 1;
+						equalsSet_local [j] = pset -> p [startOfEquals + j - 1];
+						equalsSet_global [j] = index;
 						numbers_strings[j] = stringsInfo.extractNumPartAsString (index).move();
 					}
-					equalsSet.resize (numberOfEquals);
 					// now sort the numbers_strings
 					autoPermutation pnumbers_strings = Permutation_create (numberOfEquals, true);
 					INTVECindex (pnumbers_strings -> p.get(), numbers_strings.get());
-					Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet.get(), pnumbers_strings.get()); 
-					// get the numPart and sort it 
-					if (stringsInfo.setAlphaPosStartAfterNumPosEnd (pnumbers_strings -> p.get())) {
-						autoPermutation pequals = sortAlphaPartSet (equalsSet.get(), level + 1); // 
-						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet.get(), pequals.get());
+					Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pnumbers_strings.get()); 
+					// get the alphaPart and sort it 
+					if (stringsInfo.setAlphaPosStartAfterNumPosEnd (equalsSet_global.get())) {
+						autoPermutation pequals = sortAlphaPartSet (equalsSet_global.get(), level + 1); // 
+						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pequals.get());
 					}
 				}
 				value = current;
@@ -493,16 +485,25 @@ private:
 			autoPermutation p = Permutation_create (strings.size, true);
 			Melder_require (stringsInfo.separateAlphaAndNumSets (p->p.get(), numStartSet, alphaStartSet),
 				U"error");
+			autoINTVEC alphaPartSortedSet, numPartSortedSet;
 			if (numStartSet.size > 0) {
 				autoPermutation pnumPart = sortNumPartSet (numStartSet.get(), 1);
-				Permutation_permuteSubsetByOther_inout (stringsSorting.get(), numStartSet.get(), pnumPart.get());
+				numPartSortedSet = Permutation_permuteVector (pnumPart.get(), numStartSet.get());
+				if (alphaStartSet.size == 0)
+					stringsSorting -> p.get()  <<=  numPartSortedSet.get();
 			}
 			if (alphaStartSet.size > 0) {
 				autoPermutation palphaPart = sortAlphaPartSet (alphaStartSet.get(), 1);
-				Permutation_permuteSubsetByOther_inout (stringsSorting.get(), alphaStartSet.get(), palphaPart.get());
+				alphaPartSortedSet = Permutation_permuteVector (palphaPart.get(), alphaStartSet.get());
+				if (numStartSet.size == 0)
+					stringsSorting -> p.get()  <<=  alphaPartSortedSet.get();
 			}
-			if (numStartSet.size > 0 && alphaStartSet.size > 0)
-			Permutation_moveElementsToTheFront (stringsSorting.get(), numStartSet.get());
+			Melder_assert (numStartSet.size + alphaStartSet.size == strings.size);
+			if (numStartSet.size > 0 && alphaStartSet.size > 0) {
+				stringsSorting -> p.part (1, numPartSortedSet.size)  <<=  numPartSortedSet.get();
+				stringsSorting -> p.part (numPartSortedSet.size + 1, stringsSorting -> numberOfElements)  <<=  alphaPartSortedSet.get();
+				Permutation_checkInvariant (stringsSorting.get());
+			}
 		}
 	 }
 	 
@@ -514,9 +515,7 @@ private:
 			autoSimpleString ss = SimpleString_create (classi);
 			my classes -> addItem_move (ss.move());
 		}
-		for (integer i = 1; i <= v.size; i ++)
-			my classIndex [i] = ( sorting == kStrings_sorting::ALPHABETICAL ? 
-				strvecIndex [i] : stringsSorting -> p [strvecIndex [i]]);
+		my classIndex.get()  <<= strvecIndex;
 		return me;
 	 }
 };
@@ -602,11 +601,8 @@ autoStringsIndex Strings_to_StringsIndex (Strings me); // TO remove all this
 
 autoStringsIndex Strings_to_StringsIndex2 (Strings me, kStrings_sorting sorting) {
 	try {
-		if (Melder_debug == -7) {
 		autoStringsIndex thee = StringsIndex_createFrom_STRVEC (my strings.get(), sorting, false);
 		return thee;
-		}
-		return Strings_to_StringsIndex (me);
 	} catch (MelderError) {
 		Melder_throw (me, U": no StringsIndex created.");
 	}
