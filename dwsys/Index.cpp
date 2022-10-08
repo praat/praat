@@ -392,6 +392,39 @@ private:
 			("004a", "4a", "04b", "4b")
 		strings <num><alpha><num> {"4b1","4b01"} 
 	*/
+	autoPermutation sortEqualNumbers (constINTVEC const& set, constINTVEC const& lengths, integer level) {
+		Melder_assert (set.size == lengths.size);
+		const integer numberOfLengths = lengths.size;
+		autoPermutation pset = Permutation_create (numberOfLengths, true);
+		INTVECindex (pset -> p.get(), lengths);
+		Permutation_reverse_inline (pset.get(), 0, 0);
+		integer startOfEquals = 1;
+		double value = lengths [pset -> p [1]];
+		for (integer i = 2; i <= numberOfLengths; i ++) {
+			const double current = lengths [pset -> p [i]];
+			const bool valueChange = current != value;
+			if (valueChange || i == numberOfLengths) {
+				const integer numberOfEquals = ( valueChange ? i - startOfEquals : i - startOfEquals + 1 );
+				if (numberOfEquals > 1) {
+					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
+					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
+					for (integer j = 1; j <= numberOfEquals; j ++) {
+						const integer index = set [pset -> p [startOfEquals + j - 1]];
+						equalsSet_local [j] = pset -> p [startOfEquals + j - 1];
+						equalsSet_global [j] = index;
+					}
+					if (stringsInfo.setAlphaPosStartAfterNumPosEnd (equalsSet_global.get())) {
+						autoPermutation pequals = sortAlphaPartSet (equalsSet_global.get(), level + 1); // 
+						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pequals.get());
+					}
+				}
+				value = current;
+				startOfEquals = i;
+			}
+		}
+		return pset;
+	}
+
 	autoPermutation sortNumPartSet (constINTVEC const& set, integer level) {
 		/*
 			Convert numeric part to numbers
@@ -409,6 +442,12 @@ private:
 			if (valueChange || i == set.size) {
 				const integer numberOfEquals = ( valueChange ? i - startOfEquals : i - startOfEquals + 1 );
 				if (numberOfEquals > 1) {
+					/*
+						<num> strings reduced to the same number, e.g. (04 4 004 04 4).
+						We need to sort the numbers according to their strlen (<num>) 
+						which results in (4 4 04 04 004).  Reverting the order gives (004 04 04 4 4).
+						If the strlen (<num>)'s are all equal we don't sort the lengths.  
+					*/
 					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
 					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
 					for (integer j = 1; j <= numberOfEquals; j ++) {
@@ -417,16 +456,11 @@ private:
 						equalsSet_global [j] = index;
 					}
 					autoINTVEC numLengths = stringsInfo.getNumstringLengths (equalsSet_global.get());
-					// now sort the numbers according to their lengths, from long to short
 					if (NUMmin (numLengths.get()) != NUMmax (numLengths.get())) {
-						autoPermutation pnumbers = Permutation_create (numberOfEquals, true);
-						INTVECindex (pnumbers -> p.get(), numLengths.get());
-						Permutation_reverse_inline (pnumbers.get(), 0, 0);
-						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pnumbers.get()); 
-					}
-					// get the alphaPart and sort it 
-					if (stringsInfo.setAlphaPosStartAfterNumPosEnd (equalsSet_global.get())) {
-						autoPermutation pequals = sortAlphaPartSet (equalsSet_global.get(), level + 1); // 
+						autoPermutation pe = sortEqualNumbers (equalsSet_global.get(), numLengths.get(), level);
+						Permutation_permuteSubsetByOther_inout(pset.get(), equalsSet_local.get(), pe.get());
+					} else if (stringsInfo.setAlphaPosStartAfterNumPosEnd (equalsSet_global.get())) {
+						autoPermutation pequals = sortAlphaPartSet (equalsSet_global.get(), level + 1); 
 						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pequals.get());
 					}
 				}

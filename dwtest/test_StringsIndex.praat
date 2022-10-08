@@ -3,8 +3,10 @@
 
 appendInfoLine: "test_StringsIndex.praat"
 
-str$# =     { "0b0 0a11 0a2 0a1",  "a  00a  0a", "a1 1b 11b b11 c2.2 c2..2 d3 .aa2 b4 b04 a1 a1"}
-strn$# =  { "0a1 0a2 0a11 0b0",  "00a 0a a",  "1b 11b .aa2 a1 a1 a1 b04 b4 b11 c2..2 c2.2 d3"}
+str$# =     { "0b0 0a11 0a2 0a1",  "a  00a  0a", "a1 1b 11b b11 c2.2 c2..2 d3 .aa2 b4 b04 a1 a1",
+	... "00d 00b 00c 0a "}
+strn$# =  { "0a1 0a2 0a11 0b0",  "00a 0a a",  "1b 11b .aa2 a1 a1 a1 b04 b4 b11 c2..2 c2.2 d3",
+	... "00b 00c 00d 0a" }
 
 for ivec to size(str$#)
 	.str = Create Strings from tokens: "str", str$# [ivec], " "
