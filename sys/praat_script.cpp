@@ -675,10 +675,12 @@ static void firstPassThroughScript (MelderFile file, Editor optionalEditor, Edit
 			autoUiForm form = Interpreter_createForm (interpreter.get(), parentShell, optionalEditor,
 					Melder_fileToPath (file), secondPassThroughScript, nullptr, false);
 			UiForm_do (form.get(), false);
-			if (optionalCommand)
+			if (optionalCommand) {
 				optionalCommand -> d_uiform = form.move();
-			else
+			} else {
+				UiForm_destroyWhenUnmanaged (form.get());
 				form. releaseToUser();
+			}
 		} else {
 			autoPraatBackground background;
 			praat_executeScriptFromFile (file, nullptr, optionalEditor);
@@ -697,7 +699,10 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, int
 	firstPassThroughScript (& file, optionalEditor, nullptr);
 }
 
-void praat_executeScriptFromAddedEditorCommand (Editor editor, EditorCommand command, conststring32 scriptPath) {
+void praat_executeScriptFromEditorCommand (Editor editor, EditorCommand command, conststring32 scriptPath) {
+	Melder_assert (editor);
+	Melder_assert (command);
+	Melder_assert (command -> d_editor == editor);
 	structMelderFile file { };
 	Melder_relativePathToFile (scriptPath, & file);
 	firstPassThroughScript (& file, editor, command);

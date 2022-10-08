@@ -163,7 +163,7 @@ GuiMenuItem Editor_addCommand (Editor me, conststring32 menuTitle, conststring32
 static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm /* sendingForm */,
 	integer /* narg */, Stackel /* args */, conststring32 /* sendingString */, Interpreter /* interpreter */)
 {
-	praat_executeScriptFromAddedEditorCommand (me, cmd, cmd -> script.get());
+	praat_executeScriptFromEditorCommand (me, cmd, cmd -> script.get());
 }
 
 static EditorMenu findMenu (Editor me, conststring32 menuTitle) {

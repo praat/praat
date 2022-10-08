@@ -31,7 +31,7 @@ extern "C" void praatlib_executeScript (const char *text8);
 void DO_praat_runScript (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter_dummy, conststring32 invokingButtonTitle, bool modified, void *dummy);
 void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, integer narg, Stackel args, conststring32 scriptPath,
 		Interpreter /* interpreter */, conststring32 invokingButtonTitle, bool modified, void *dummy, Editor optionalEditor);
-void praat_executeScriptFromAddedEditorCommand (Editor editor, EditorCommand command, conststring32 script);
+void praat_executeScriptFromEditorCommand (Editor editor, EditorCommand command, conststring32 script);
 
 /* End of file praat_script.h */
 #endif

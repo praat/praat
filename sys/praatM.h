@@ -349,7 +349,7 @@
 	}
 
 #define DIRECT(proc)  \
-	extern "C" void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *); \
+	extern "C" void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *, Editor); \
 	void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *, Editor) { \
 		(void) interpreter; \
 		integer IOBJECT = 0; \

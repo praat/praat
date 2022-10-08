@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2005,2007-2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,9 +268,6 @@ void UiForm_do (UiForm me, bool modified);
 	Behaviour:
 		If the user clicks "OK",
 		the form will call the `okCallback` that was registered with UiForm_create ().
-		   If the `okCallback` then returns 1, the form will disappear from the screen;
-		if it returns 0, the form will stay on the screen; this can be used
-		for enabling the user to repair mistakes in the form.
 
 		If the user clicks "Apply",
 		the form will call the `okCallback` that was registered with UiForm_create (),
