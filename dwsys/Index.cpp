@@ -57,23 +57,22 @@ void structIndex :: v1_info () {
 }
 
 /*
-	Sort strings that may have numeric substrings:
+	Sort strings that may have numeric substrings in a special way:
 	string    := <alphaPart> | <numPart>
 	alphaPart := <alphas> | <alphas><numPart>
 	numPart   := <nums> | <nums><alphaPart>
 	
-	numeric part should sort numerically:
-	0a, 1a, 11a, 2a, 11a -> 0a, 1a, 2a, 11a
+	<alphaPart> sorts alphabetical, <numPart> sorts numerical:
+	0a, 1a, 11a, 2a, 11a -> 0a, 1a, 2a, 11a, 11a
 	a, 00a, 0a -> 00a, 0a, a (numerical as well as alphabetical order)
 	00a1, 00a2, 00a11, 0b0
-
 */
 typedef struct structSTRVECIndexer *STRVECIndexer;
 struct structSTRVECIndexer {
 	struct structStringClassesInfo {
 		private:
 		struct structStringClassInfoData {
-			double number;	// alpha [numPosStart-1..numPosEnd-1] as a number
+			DigitstringNumber number;	// alpha [numPosStart-1..numPosEnd-1] as a number
 			integer alphaPosStart; // start positions of alphaPart; alphaPosEnd is always fixed at the end U'\0'
 			integer numPosStart; // start of num part in alpha, else 0 if no num part
 			integer numPosDot; // numPosStart < numPosDot < numPosEnd if a dot occurs in the num part and breakAtDecimalPoint==true
@@ -119,8 +118,15 @@ struct structSTRVECIndexer {
 			setNumPosStart (info);
 			if (info -> numPosStart > 0) {
 				setNumPosEndAndDot (info);
+				char32 *pstart = info -> alpha + info -> numPosStart - 1;
+				char32 *p = pstart;
+				while (*p == U'0')
+					p ++;
+				if (p == info -> alpha + info -> numPosEnd)
+					p --;
+				info -> number.numberOfLeadingZeros = p - pstart;
 				maskAlphaTrailer (info); // save position after last digit and put '\0'
-				info -> number = Melder_atof (info -> alpha + info -> numPosStart - 1);
+				info -> number.value = Melder_atof (p);
 				unmaskAlphaTrailer (info); //
 			}
 		}
@@ -191,7 +197,7 @@ struct structSTRVECIndexer {
 				info -> length = str32len (strings [i]);
 				info -> alpha = (char32 *)_Melder_calloc (info -> length + 1, sizeof (char32));
 				str32cpy (info -> alpha, strings [i]); // adds the U'\0'
-				info -> number = -1.0; 
+				info -> number.value = -1.0; 
 			}
 		}
 		
@@ -252,24 +258,14 @@ struct structSTRVECIndexer {
 			return done != subset.size;
 		}
 		
-		autoVEC extractNums (constINTVEC const& subset) {
-			autoVEC numbers = raw_VEC (subset.size);
+		autoDigitstringNumberVEC extractNums (constINTVEC const& subset) {
+			autoDigitstringNumberVEC numbers = newvectorraw<DigitstringNumber> (subset.size);
 			for (integer i = 1; i <= subset.size; i ++) {
 				const integer irow = subset [i];
 				stringInfo info = getStringInfo (irow);
 				numbers [i] = info -> number;
 			}
 			return numbers;
-		}
-		
-		autoVEC extractLengths (constINTVEC const& subset) {
-			autoVEC lengths = raw_VEC (subset.size);
-			for (integer i = 1; i <= subset.size; i ++) {
-				const integer irow = subset [i];
-				stringInfo info = getStringInfo (irow);
-				lengths [i] = info -> numPosEnd - info -> numPosStart + 1;
-			}
-			return lengths;
 		}
 		
 		autoSTRVEC extractAlphas (constINTVEC const& subset) {
@@ -316,8 +312,8 @@ struct structSTRVECIndexer {
 	};
 	
 private:
-	autoINTVEC strvecIndex; // link to the alphabetically sorted index of the strvec
-	autoSTRVEC strvecClasses;  // link to the createIndexd strvec, these will be sorted
+	autoINTVEC strvecIndex; // index of the strvec
+	autoSTRVEC strvecClasses;  // these will be sorted
 	autoPermutation classesSorting; // the sorting index of these strings 
 	struct structStringClassesInfo stringsInfo;
 	bool breakAtDecimalPoint;
@@ -367,10 +363,15 @@ private:
 				if (numberOfEquals > 1) {
 					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
 					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
+					/*for (integer j = 1; j <= numberOfEquals; j ++) {
+						const integer index_local = pset -> p [startOfEquals + j - 1];
+						equalsSet_local [j] = index_local;
+						equalsSet_global [j] = set [index_local];
+					}*/
 					for (integer j = 1; j <= numberOfEquals; j ++) {
-						const integer index = set [pset -> p [startOfEquals + j - 1]];
-						equalsSet_local [j] = pset -> p [startOfEquals + j - 1];
-						equalsSet_global [j] = index;
+						const integer index_local = startOfEquals + j - 1;
+						equalsSet_local [j] = index_local;
+						equalsSet_global [j] = set [pset -> p [index_local]];
 					}
 					if (stringsInfo.setAlphaPosStartAtNumPosStart (equalsSet_global.get())) {
 						autoPermutation pequals = sortNumPartSet (equalsSet_global.get(), level);
@@ -384,7 +385,8 @@ private:
 		return pset;
 	}
 	
-	/* the elements of set must always refer to the position in the structSTRVECIndex::classes
+	/*
+		The elements of the set to be sorted must always refer to the position in structSTRVECIndex::strvecClasses
 		Precondition: alphabetical sorting before sortNumPartSet is called.
 		strings {"4b","04b","4a","004a","1","d","c","004b" } were already sorted as {"004a","004b","04b","1","4a","4b","c","d"},
 		we want to sort them as {"1", "004a","004b","4a","04b","4b","c","d"}
@@ -392,75 +394,32 @@ private:
 			("004a", "4a", "04b", "4b")
 		strings <num><alpha><num> {"4b1","4b01"} 
 	*/
-	autoPermutation sortEqualNumbers (constINTVEC const& set, constINTVEC const& lengths, integer level) {
-		Melder_assert (set.size == lengths.size);
-		const integer numberOfLengths = lengths.size;
-		autoPermutation pset = Permutation_create (numberOfLengths, true);
-		INTVECindex (pset -> p.get(), lengths);
-		Permutation_reverse_inline (pset.get(), 0, 0);
-		integer startOfEquals = 1;
-		double value = lengths [pset -> p [1]];
-		for (integer i = 2; i <= numberOfLengths; i ++) {
-			const double current = lengths [pset -> p [i]];
-			const bool valueChange = current != value;
-			if (valueChange || i == numberOfLengths) {
-				const integer numberOfEquals = ( valueChange ? i - startOfEquals : i - startOfEquals + 1 );
-				if (numberOfEquals > 1) {
-					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
-					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
-					for (integer j = 1; j <= numberOfEquals; j ++) {
-						const integer index = set [pset -> p [startOfEquals + j - 1]];
-						equalsSet_local [j] = pset -> p [startOfEquals + j - 1];
-						equalsSet_global [j] = index;
-					}
-					if (stringsInfo.setAlphaPosStartAfterNumPosEnd (equalsSet_global.get())) {
-						autoPermutation pequals = sortAlphaPartSet (equalsSet_global.get(), level + 1); // 
-						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pequals.get());
-					}
-				}
-				value = current;
-				startOfEquals = i;
-			}
-		}
-		return pset;
-	}
-
 	autoPermutation sortNumPartSet (constINTVEC const& set, integer level) {
 		/*
 			Convert numeric part to numbers
 		*/
 		const integer numberOfStrings = set.size;
-		autoVEC numbers = stringsInfo.extractNums (set);
+		autoDigitstringNumberVEC numbers = stringsInfo.extractNums (set);
 		autoPermutation	pset = Permutation_create (numberOfStrings, true);
 		INTVECindex (pset -> p.get(), numbers.get());
 
 		integer startOfEquals = 1;
-		double value = numbers [pset -> p [1]]; // the smallest number
+		DigitstringNumber value = numbers [pset -> p [1]]; // the smallest DigitstringNumber
 		for (integer i = 2; i <= numberOfStrings; i++) {
-			const double current = numbers [pset -> p [i]];
-			const bool valueChange = current != value;
+			const DigitstringNumber current = numbers [pset -> p [i]];
+			const bool valueChange = ( DigitstringNumber_compare3way (current, value) != 0);
 			if (valueChange || i == set.size) {
 				const integer numberOfEquals = ( valueChange ? i - startOfEquals : i - startOfEquals + 1 );
 				if (numberOfEquals > 1) {
-					/*
-						<num> strings reduced to the same number, e.g. (04 4 004 04 4).
-						We need to sort the numbers according to their strlen (<num>) 
-						which results in (4 4 04 04 004).  Reverting the order gives (004 04 04 4 4).
-						If the strlen (<num>)'s are all equal we don't sort the lengths.  
-					*/
 					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
 					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
 					for (integer j = 1; j <= numberOfEquals; j ++) {
-						const integer index = set [pset -> p [startOfEquals + j - 1]];
-						equalsSet_local [j] = pset -> p [startOfEquals + j - 1];
-						equalsSet_global [j] = index;
+						const integer index_local = startOfEquals + j - 1;
+						equalsSet_local [j] = index_local;
+						equalsSet_global [j] = set [pset -> p [index_local]];
 					}
-					autoINTVEC numLengths = stringsInfo.getNumstringLengths (equalsSet_global.get());
-					if (NUMmin (numLengths.get()) != NUMmax (numLengths.get())) {
-						autoPermutation pe = sortEqualNumbers (equalsSet_global.get(), numLengths.get(), level);
-						Permutation_permuteSubsetByOther_inout(pset.get(), equalsSet_local.get(), pe.get());
-					} else if (stringsInfo.setAlphaPosStartAfterNumPosEnd (equalsSet_global.get())) {
-						autoPermutation pequals = sortAlphaPartSet (equalsSet_global.get(), level + 1); 
+					if (stringsInfo.setAlphaPosStartAfterNumPosEnd (equalsSet_global.get())) {
+						autoPermutation pequals = sortAlphaPartSet (equalsSet_global.get(), level + 1);
 						Permutation_permuteSubsetByOther_inout (pset.get(), equalsSet_local.get(), pequals.get());
 					}
 				}
@@ -489,13 +448,13 @@ private:
 			autoINTVEC alphaPartSortedSet, numPartSortedSet;
 			if (numStartSet.size > 0) {
 				autoPermutation pnumPart = sortNumPartSet (numStartSet.get(), 1);
-				numPartSortedSet = Permutation_permuteVector (pnumPart.get(), numStartSet.get());
+				numPartSortedSet = Permutation_permuteVector<integer> (pnumPart.get(), numStartSet.get());
 				if (alphaStartSet.size == 0)
 					classesSorting -> p.get()  <<=  numPartSortedSet.get();
 			}
 			if (alphaStartSet.size > 0) {
 				autoPermutation palphaPart = sortAlphaPartSet (alphaStartSet.get(), 1);
-				alphaPartSortedSet = Permutation_permuteVector (palphaPart.get(), alphaStartSet.get());
+				alphaPartSortedSet = Permutation_permuteVector<integer> (palphaPart.get(), alphaStartSet.get());
 				if (numStartSet.size == 0)
 					classesSorting -> p.get()  <<=  alphaPartSortedSet.get();
 			}
