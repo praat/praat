@@ -93,7 +93,10 @@ autoPermutation Permutation_permutePartByOther (Permutation me, integer startPos
 
 void Permutation_permuteSubsetByOther_inout (Permutation me, constINTVEC const& subsetPositions, Permutation other);
 
-autoINTVEC Permutation_permuteVector (Permutation me, constINTVEC const & vec);
+void Permutation_permuteVEC_inout (Permutation me, VEC vec);
+void Permutation_permuteINTVEC_inout (Permutation me, INTVEC vec);
+
+void Permutation_permuteSTRVEC_inout (Permutation me, autoSTRVEC & vec); // special
 
 autoPermutation Permutation_moveElementsToTheFront (Permutation me, constINTVEC const& subsetPositions);
 

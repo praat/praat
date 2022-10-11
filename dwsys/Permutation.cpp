@@ -445,20 +445,6 @@ autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me) {
 	}
 }
 
-autoINTVEC Permutation_permuteVector (Permutation me, constINTVEC const & vec) {
-	try {
-		Melder_require (my numberOfElements == vec.size,
-			U"The sizes of the vector and the Permutation should be equal.");
-		autoINTVEC result = copy_INTVEC (vec);
-		for (integer i = 1; i <= my numberOfElements; i ++)
-			result [i] = vec [my p [i]];
-		return result;
-	} catch (MelderError) {
-		Melder_throw (U"Vector not permuted.");
-	}
-
-}
-
 static void checkUniqueAndInInterval (constINTVEC const& vec, integer maximum) {
 	autoINTVEC sorted = sort_INTVEC (vec);
 	Melder_require (sorted [1] >= 1 && vec [sorted.size] <= maximum,
@@ -466,6 +452,45 @@ static void checkUniqueAndInInterval (constINTVEC const& vec, integer maximum) {
 	for (integer i = 2; i <= sorted.size; i ++)
 		if (sorted [i] == sorted [i - 1])
 			Melder_throw (U"All numbers in the set should be unique, number ", sorted [i], U" isn't.");
+}
+
+void Permutation_permuteVEC_inout (Permutation me, VEC vec) {
+		try {
+		Melder_require (my numberOfElements == vec.size,
+			U"The sizes of the vector and the Permutation should be equal.");
+		autoVEC save = copy_VEC (vec);
+		for (integer i = 1; i <= my numberOfElements; i ++)
+			vec [i] = save [my p [i]];
+	} catch (MelderError) {
+		Melder_throw (U"Vector not permuted.");
+	}
+
+}
+
+void Permutation_permuteINTVEC_inout (Permutation me, INTVEC vec){
+		try {
+		Melder_require (my numberOfElements == vec.size,
+			U"The sizes of the vector and the Permutation should be equal.");
+		autoINTVEC save = copy_INTVEC (vec);
+		for (integer i = 1; i <= my numberOfElements; i ++)
+			vec [i] = save [my p [i]];
+	} catch (MelderError) {
+		Melder_throw (U"Vector not permuted.");
+	}
+}
+
+void Permutation_permuteSTRVEC_inout (Permutation me, autoSTRVEC & vec) {
+	try {
+		Melder_require (my numberOfElements == vec.size,
+			U"The sizes of the vector and the Permutation should be equal.");
+		autoSTRVEC save = copy_STRVEC (vec.get());
+		autoSTRVEC vecp;
+		for (integer i = 1; i <= my numberOfElements; i ++)
+			vecp.insert (i, save [my p [i]].get());
+		vec = vecp.move();
+	} catch (MelderError) {
+		Melder_throw (U"STRVEC not permuted.");
+	}
 }
 
 void Permutation_permuteSubsetByOther_inout (Permutation me, constINTVEC const& subsetPositions, Permutation other) {
