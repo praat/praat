@@ -880,6 +880,8 @@ static void gui_button_cb_zoomToSelection (FunctionEditor me, GuiButtonEvent /* 
 	do_zoomToSelection (me);
 }
 static void do_zoomBack (FunctionEditor me) {
+	Melder_clip (my tmin, & my startZoomHistory, my tmax);
+	Melder_clip (my tmin, & my endZoomHistory, my tmax);
 	if (my endZoomHistory > my startZoomHistory) {
 		my startWindow = my startZoomHistory;
 		my endWindow = my endZoomHistory;

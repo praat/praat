@@ -71,6 +71,7 @@ enum class kInterpreter_ReturnType {
 conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType returnType, conststring32 command);
 
 Thing_define (Interpreter, Thing) {
+	Editor optionalEditor;
 	autostring32 environmentName;
 	ClassInfo editorClass;
 	int numberOfParameters, numberOfLabels, callDepth;
@@ -95,14 +96,16 @@ Thing_define (Interpreter, Thing) {
 };
 
 autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo editorClass);
-autoInterpreter Interpreter_createFromEnvironment (Editor editor);
+autoInterpreter Interpreter_createFromEnvironment (Editor optionalEditor);
 
 void Melder_includeIncludeFiles (autostring32 *text);
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text);
 Thing_declare (UiForm);
-autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 fileName,
-	void (*okCallback) (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool modified, void *closure), void *okClosure,
-	bool selectionOnly);
+autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor optionalEditor, conststring32 fileName,
+	void (*okCallback) (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString,
+			Interpreter interpreter, conststring32 invokingButtonTitle, bool modified, void *closure, Editor optionalEditor),
+	void *okClosure, bool selectionOnly
+);
 void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog);
 void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments);
 void Interpreter_getArgumentsFromArgs (Interpreter me, integer nargs, Stackel args);

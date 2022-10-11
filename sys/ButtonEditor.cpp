@@ -224,13 +224,13 @@ int structButtonEditor :: v_goToPage (conststring32 title) {
 			}
 			if (action -> script) {
 				try {
-					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, action -> script.get(), nullptr, nullptr, false, nullptr);
+					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, action -> script.get(), nullptr, nullptr, false, nullptr, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}
 			} else {
 				try {
-					action -> callback (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+					action -> callback (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}
@@ -248,13 +248,13 @@ int structButtonEditor :: v_goToPage (conststring32 title) {
 			}
 			if (menuCommand -> script) {
 				try {
-					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, menuCommand -> script.get(), nullptr, nullptr, false, nullptr);
+					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, menuCommand -> script.get(), nullptr, nullptr, false, nullptr, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}
 			} else {
 				try {
-					menuCommand -> callback (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+					menuCommand -> callback (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}

@@ -75,15 +75,19 @@
  */
 
 #define FORM(proc,name,helpTitle)  \
-	extern "C" void proc (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool isModified, void *buttonClosure); \
-	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter interpreter, conststring32 _invokingButtonTitle_, bool _isModified_, void *_buttonClosure_) { \
+	extern "C" void proc (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, \
+			Interpreter interpreter, conststring32 invokingButtonTitle, bool isModified, void *buttonClosure, Editor optionalEditor); \
+	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, \
+			Interpreter interpreter, conststring32 _invokingButtonTitle_, bool _isModified_, void *_buttonClosure_, Editor _optionalEditor_) \
+	{ \
 		integer IOBJECT = 0; \
 		(void) IOBJECT; \
 		UiField _radio_ = nullptr; \
 		(void) _radio_; \
 		static autoUiForm _dia_; \
 		if (_dia_) goto _dia_inited_; \
-		_dia_ = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, _buttonClosure_, _invokingButtonTitle_, helpTitle);
+		_dia_ = UiForm_create (theCurrentPraatApplication -> topShell, _optionalEditor_, name, \
+				proc, _buttonClosure_, _invokingButtonTitle_, helpTitle);
 
 #define REAL(realVariable, labelText, defaultStringValue)  \
 		static double realVariable; \
@@ -315,7 +319,7 @@
 				autostring32 _parkedError = Melder_dup_f (Melder_getError ()); \
 				Melder_clearError (); \
 				try { \
-					alternative (nullptr, _narg_, _args_, _sendingString_, interpreter, _invokingButtonTitle_, _isModified_, _buttonClosure_); \
+					alternative (nullptr, _narg_, _args_, _sendingString_, interpreter, _invokingButtonTitle_, _isModified_, _buttonClosure_, _optionalEditor_); \
 				} catch (MelderError) { \
 					Melder_clearError (); \
 					Melder_appendError (_parkedError.get()); \
@@ -345,8 +349,8 @@
 	}
 
 #define DIRECT(proc)  \
-	extern "C" void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *); \
-	void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *) { \
+	extern "C" void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *, Editor); \
+	void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *, Editor) { \
 		(void) interpreter; \
 		integer IOBJECT = 0; \
 		(void) IOBJECT; \
@@ -354,8 +358,11 @@
 			try {
 
 #define FORM_READ(proc,title,help,allowMult)  \
-	extern "C" void proc (UiForm sendingForm, integer, structStackel args [], conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool, void *okClosure); \
-	void proc (UiForm _sendingForm_, integer _narg_, structStackel _args_ [], conststring32 _sendingString_, Interpreter interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_) { \
+	extern "C" void proc (UiForm sendingForm, integer, structStackel args [], conststring32 sendingString, \
+			Interpreter interpreter, conststring32 invokingButtonTitle, bool, void *okClosure, Editor optionalEditor); \
+	void proc (UiForm _sendingForm_, integer _narg_, structStackel _args_ [], conststring32 _sendingString_, \
+			Interpreter interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_, Editor) \
+	{ \
 		{ static autoUiForm _dia_; \
 		if (! _dia_) \
 			_dia_ = UiInfile_create (theCurrentPraatApplication -> topShell, title, proc, _okClosure_, _invokingButtonTitle_, help, allowMult); \
@@ -382,8 +389,11 @@
 				}
 
 #define FORM_SAVE(proc,title,help,ext)  \
-	extern "C" void proc (UiForm sendingForm, integer, structStackel args [], conststring32 sendingString, Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure); \
-	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_) { \
+	extern "C" void proc (UiForm sendingForm, integer, structStackel args [], conststring32 sendingString, \
+			Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure, Editor optionalEditor); \
+	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, \
+			Interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_, Editor _optionalEditor_) \
+	{ \
 		{ static autoUiForm _dia_; \
 		if (! _dia_) \
 			_dia_ = UiOutfile_create (theCurrentPraatApplication -> topShell, title, proc, _okClosure_, _invokingButtonTitle_, help); \

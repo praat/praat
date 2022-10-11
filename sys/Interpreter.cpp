@@ -1,6 +1,6 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2021 Paul Boersma
+ * Copyright (C) 1993-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,10 +112,12 @@ autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo edi
 	}
 }
 
-autoInterpreter Interpreter_createFromEnvironment (Editor editor) {
-	if (! editor)
+autoInterpreter Interpreter_createFromEnvironment (Editor optionalEditor) {
+	if (! optionalEditor)
 		return Interpreter_create (nullptr, nullptr);
-	return Interpreter_create (editor -> name.get(), editor -> classInfo);
+	autoInterpreter interpreter = Interpreter_create (optionalEditor -> name.get(), optionalEditor -> classInfo);
+	interpreter -> optionalEditor = optionalEditor;
+	return interpreter;   // BUG: collapse
 }
 
 void Melder_includeIncludeFiles (autostring32 *inout_text) {
@@ -357,11 +359,11 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 	return npar;
 }
 
-autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 path,
-	void (*okCallback) (UiForm, integer, Stackel, conststring32, Interpreter, conststring32, bool, void *), void *okClosure,
+autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor optionalEditor, conststring32 path,
+	void (*okCallback) (UiForm, integer, Stackel, conststring32, Interpreter, conststring32, bool, void *, Editor), void *okClosure,
 	bool selectionOnly)
 {
-	autoUiForm form = UiForm_create (parent,
+	autoUiForm form = UiForm_create (parent, optionalEditor,
 		Melder_cat (selectionOnly ? U"Run script (selection only): " : U"Run script: ", my dialogTitle),
 		okCallback, okClosure, nullptr, nullptr);
 	UiField radio = nullptr;
@@ -1662,13 +1664,6 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		bool atLastLine = false, fromif = false, fromendfor = false;
 		int callDepth = 0, chopped = 0, ipar;
 		my callDepth = 0;
-		/*
-			The "environment" is null if we are in the Praat shell, or an editor otherwise.
-		*/
-		if (my editorClass)
-			praatP. editor = praat_findEditorFromString (my environmentName.get());
-		else
-			praatP. editor = nullptr;
 		/*
 			Start.
 		*/

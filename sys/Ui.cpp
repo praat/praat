@@ -654,7 +654,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 		Keep the gate for error handling.
 	*/
 	try {
-		my okCallback (me, 0, nullptr, nullptr, nullptr, nullptr, false, my buttonClosure);
+		my okCallback (me, 0, nullptr, nullptr, nullptr, nullptr, false, my buttonClosure, my optionalEditor);
 		/*
 			Write everything to history. Before destruction!
 		*/
@@ -871,12 +871,13 @@ static void gui_button_cb_browseFolder (UiField me, GuiButtonEvent /* event */) 
 		GuiText_setString (my text, chosenFolderPath.get());
 }
 
-autoUiForm UiForm_create (GuiWindow parent, conststring32 title,
+autoUiForm UiForm_create (GuiWindow parent, Editor optionalEditor, conststring32 title,
 	UiCallback okCallback, void *buttonClosure,
 	conststring32 invokingButtonTitle, conststring32 helpTitle)
 {
 	autoUiForm me = Thing_new (UiForm);
 	my d_dialogParent = parent;
+	my optionalEditor = optionalEditor;
 	Thing_setName (me.get(), title);
 	my okCallback = okCallback;
 	my buttonClosure = buttonClosure;
@@ -911,7 +912,7 @@ void UiForm_setPauseForm (UiForm me,
 }
 
 static void commonOkCallback (UiForm /* dia */, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
-	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure)
+	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure, Editor optionalEditor)
 {
 	EditorCommand cmd = (EditorCommand) closure;
 	cmd -> commandCallback (cmd -> sender, cmd, cmd -> d_uiform.get(), 0, nullptr, nullptr, interpreter);
@@ -919,7 +920,7 @@ static void commonOkCallback (UiForm /* dia */, integer /* narg */, Stackel /* a
 
 autoUiForm UiForm_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle) {
 	Editor editor = cmd -> d_editor;
-	autoUiForm dia (UiForm_create (editor -> windowForm, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle));
+	autoUiForm dia = UiForm_create (editor -> windowForm, editor, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return dia;
 }
@@ -2074,7 +2075,7 @@ void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter
 	}
 	if (iarg < narg)
 		Melder_throw (U"Command requires only ", iarg, U" arguments, not the ", narg, U" given.");
-	my okCallback (me, 0, nullptr, nullptr, interpreter, nullptr, false, my buttonClosure);
+	my okCallback (me, 0, nullptr, nullptr, interpreter, nullptr, false, my buttonClosure, my optionalEditor);
 }
 
 /*
@@ -2250,7 +2251,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 /*
 	DEPRECATED_2014 (i.e. remove in 2036)
 */
-void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpreter) {
+void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter optionalInterpreter) {
 	/*
 		This implements the dots-based scripting style
 			Create Sound from formula... sineWithNoise 1 0 1 44100 0.5 * sin (2*pi*377*x)
@@ -2295,7 +2296,7 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpr
 		}
 		stringValue [ichar] = U'\0';   // trailing null character
 		try {
-			UiField_stringToValue (my field [i].get(), stringValue, interpreter);
+			UiField_stringToValue (my field [i].get(), stringValue, optionalInterpreter);
 		} catch (MelderError) {
 			Melder_throw (U"Don't understand contents of field \"", my field [i] -> name.get(), U"\".");
 		}
@@ -2307,12 +2308,12 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpr
 	if (size > 0) {
 		Melder_skipHorizontalOrVerticalSpace (& arguments);   // rid leading spaces
 		try {
-			UiField_stringToValue (my field [size].get(), arguments, interpreter);
+			UiField_stringToValue (my field [size].get(), arguments, optionalInterpreter);
 		} catch (MelderError) {
 			Melder_throw (U"Don't understand contents of field \"", my field [size] -> name.get(), U"\".");
 		}
 	}
-	my okCallback (me, 0, nullptr, nullptr, interpreter, nullptr, false, my buttonClosure);
+	my okCallback (me, 0, nullptr, nullptr, optionalInterpreter, nullptr, false, my buttonClosure, my optionalEditor);
 }
 
 void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter) {

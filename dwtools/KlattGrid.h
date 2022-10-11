@@ -206,9 +206,9 @@ void KlattGrid_removeFormant (KlattGrid me, kKlattGridFormantType formantType, i
 /***************** KlattGrid & Sound *************************************/
 
 // reset PlayOptions to defaults
-void KlattGrid_play (KlattGrid me);
+void KlattGrid_play (KlattGrid me, Sound_PlayCallback callback, Thing boss);
 // use playOptions
-void KlattGrid_playSpecial (KlattGrid me);
+void KlattGrid_playSpecial (KlattGrid me, Sound_PlayCallback callback, Thing boss);
 
 void KlattGrid_setDefaultPlayOptions (KlattGrid me);
 

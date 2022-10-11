@@ -22,8 +22,23 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20221001)
+MAN_BEGIN (U"What's new?", U"ppgb", 20221008)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.23# (8 October 2022)")
+LIST_ITEM (U"• Fix a crash introduced in August 2020 when in the Sound window you would select a part, then click \"sel\", "
+	"then select a part, then do Cut, then click \"bak\".")
+LIST_ITEM (U"• #Rename should leave an object's ID in the title of the editor window.")
+LIST_ITEM (U"• Windows graphics should support a resolution of 690 dots per inch.")
+LIST_ITEM (U"• Editor scripting: corrected a bug introduced in 6.2.15 whereby an added editor script would lose "
+	"the editor context if it contained a form, after Apply was clicked.")
+LIST_ITEM (U"• Editor windows (such as the Sound window): showing a dialog window that calls a script "
+	"(e.g. log 3, log 4 or an added command) should remove the previous version of that window.")
+LIST_ITEM (U"• Mac editor windows: dialog windows that call scripts should disappear "
+	"when the editor goes away (as on Windows and Linux).")
+NORMAL (U"##6.2.22# (6 October 2022)")
+LIST_ITEM (U"• Playing cursor in Pitch, PitchTier, KlattGrid and PointProcess windows.")
+LIST_ITEM (U"• Corrected a bug introduced in 6.2.15 whereby an added editor script would lose "
+	"the editor context if it contained a form, after OK was clicked.")
 NORMAL (U"##6.2.21# (1 October 2022)")
 LIST_ITEM (U"• Corrected a bug introduced in 6.2.15 whereby a sub-window in Inspect would crash upon clicking Change.")
 NORMAL (U"##6.2.20# (24 September 2022)")

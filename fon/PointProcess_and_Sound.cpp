@@ -175,25 +175,25 @@ autoSound PointProcess_to_Sound_phonation
 	}
 }
 
-void PointProcess_playPart (PointProcess me, double tmin, double tmax) {
+void PointProcess_playPart (PointProcess me, double tmin, double tmax, Sound_PlayCallback callback, Thing boss) {
 	try {
 		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30);
-		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
+		Sound_playPart (sound.get(), tmin, tmax, callback, boss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
 }
 
-void PointProcess_play (PointProcess me) {
-	PointProcess_playPart (me, my xmin, my xmax);
+void PointProcess_play (PointProcess me, Sound_PlayCallback callback, Thing boss) {
+	PointProcess_playPart (me, my xmin, my xmax, callback, boss);
 }
 
-void PointProcess_hum (PointProcess me, double tmin, double tmax) {
+void PointProcess_hum (PointProcess me, double tmin, double tmax, Sound_PlayCallback callback, Thing boss) {
 	static double formant [1 + 6] = { 0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
 	static double bandwidth [1 + 6] = { 0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 	Sound_filterWithFormants (sound.get(), tmin, tmax, 6, formant, bandwidth);
-	Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
+	Sound_playPart (sound.get(), tmin, tmax, callback, boss);
 }
 
 autoSound PointProcess_to_Sound_hum (PointProcess me) {

@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2005,2007-2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ Thing_declare (EditorCommand);
 		UiField radio;
 		dia = UiForm_create
 		  (topShell,   // the parent GuiWindow of the dialog window
+			nullptr,   // an optional editor
 			U"Create a new person",   // the window title
 			DO_Person_create,   // the function to call when the user clicks OK
 			nullptr,   // the last argument to the OK routine (also for the other buttons); could be a ScriptEditor, or an EditorCommand, or an Interpreter, or nullptr
@@ -153,9 +154,8 @@ Thing_define (UiField, Thing) {
 	integer numberOfLines;
 };
 
-#define UiCallback_ARGS \
-	UiForm _sendingForm, integer _narg, Stackel _args, conststring32 _sendingString, Interpreter interpreter, conststring32 _invokingButtonTitle, bool _isModified, void *_closure
-typedef void (*UiCallback) (UiCallback_ARGS);
+using UiCallback = void (*) (UiForm _sendingForm, integer _narg, Stackel _args, conststring32 _sendingString,
+		Interpreter interpreter, conststring32 _invokingButtonTitle, bool _isModified, void *_closure, Editor optionalEditor);
 
 #define MAXIMUM_NUMBER_OF_FIELDS  50
 #define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
@@ -163,6 +163,7 @@ typedef void (*UiCallback) (UiCallback_ARGS);
 Thing_define (UiForm, Thing) {
 	EditorCommand command;
 	GuiWindow d_dialogParent;
+	Editor optionalEditor;
 	autostring32 invokingButtonTitle, helpTitle, scriptFilePath;
 	UiCallback okCallback;
 	void *buttonClosure;
@@ -198,7 +199,7 @@ Thing_define (UiForm, Thing) {
 };
 
 /* The following functions work on the screen and from batch. */
-autoUiForm UiForm_create (GuiWindow parent, conststring32 title,
+autoUiForm UiForm_create (GuiWindow parent, Editor optionalEditor, conststring32 title,
 	UiCallback okCallback, void *buttonClosure,
 	conststring32 invokingButtonTitle, conststring32 helpTitle);
 UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
@@ -267,9 +268,6 @@ void UiForm_do (UiForm me, bool modified);
 	Behaviour:
 		If the user clicks "OK",
 		the form will call the `okCallback` that was registered with UiForm_create ().
-		   If the `okCallback` then returns 1, the form will disappear from the screen;
-		if it returns 0, the form will stay on the screen; this can be used
-		for enabling the user to repair mistakes in the form.
 
 		If the user clicks "Apply",
 		the form will call the `okCallback` that was registered with UiForm_create (),
@@ -320,7 +318,7 @@ autoUiForm UiOutfile_create (GuiWindow parent, conststring32 title,
 
 void UiInfile_do (UiForm me);
 
-void UiOutfile_do (UiForm me, conststring32 defaultName);
+void UiOutfile_do (UiForm me, conststring32 defaultName, Editor optionalEditor);
 
 MelderFile UiFile_getFile (UiForm me);
 

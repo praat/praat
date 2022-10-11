@@ -27,10 +27,10 @@
 #include "KlattGridEditors.h"
 #include "EditorM.h"
 
-static void KlattGrid_Editor_defaultPlay (KlattGrid me, double tmin, double tmax) {
+static void KlattGrid_Editor_defaultPlay (KlattGrid me, FunctionEditor editor, double tmin, double tmax) {
 	my options -> xmin = tmin;
-	my options-> xmax = tmax;
-	KlattGrid_playSpecial (me);
+	my options -> xmax = tmax;
+	KlattGrid_playSpecial (me, theFunctionEditor_playCallback, editor);
 }
 
 
@@ -48,7 +48,7 @@ void structKlattGrid_RealTierEditor :: v_createMenuItems_help (EditorMenu menu) 
 }
 
 void structKlattGrid_RealTierEditor :: v_play (double startTime, double endTime) {
-	KlattGrid_Editor_defaultPlay (our klattgrid(), startTime, endTime);
+	KlattGrid_Editor_defaultPlay (our klattgrid(), this, startTime, endTime);
 }
 
 
@@ -404,7 +404,7 @@ static bool FormantGrid_isEmpty (FormantGrid me) {
 }
 
 void structKlattGrid_FormantGridEditor :: v_play (double startTime, double endTime) {
-	KlattGrid_Editor_defaultPlay (static_cast <KlattGrid> (our data()), startTime, endTime);
+	KlattGrid_Editor_defaultPlay (static_cast <KlattGrid> (our data()), this, startTime, endTime);
 }
 
 autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid klattgrid, kKlattGridFormantType formantType) {
