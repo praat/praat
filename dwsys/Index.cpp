@@ -313,37 +313,32 @@ struct structSTRVECIndexer {
 	
 private:
 	autoINTVEC strvecIndex; // index of the strvec
-	autoSTRVEC strvecClasses;  // these will be sorted
-	autoPermutation classesSorting; // the sorting index of these strings 
+	autoSTRVEC strvecClasses;  // the unique items in the STRVEC
+	autoPermutation strvecPermutation; // keeps track of the individual item position.
+	autoPermutation classesSorting; // keeps track of the sorting of 'strvecClasses'
+	autoINTVEC classChangePositios; // where does the class change in the created index at the start
 	struct structStringClassesInfo stringsInfo;
 	bool breakAtDecimalPoint;
 	
 	void createIndex (constSTRVEC const& v) {
 		integer count = 1;
 		strvecIndex = raw_INTVEC (v.size);
-		autoPermutation p = Permutation_create (v.size, true);
-		INTVECindex (p -> p.get(), v);
-		strvecClasses.insert (count, v [p -> p [1]]);
+		strvecPermutation = Permutation_create (v.size, true);
+		INTVECindex_inout (strvecPermutation -> p.get(), v);
+		strvecClasses.insert (count, v [strvecPermutation -> p [1]]);
 		strvecIndex [1] = count;
+		classChangePositios.insert (count, 1);
 		for (integer i = 2; i <= v.size; i ++) {
-			const integer index = p -> p [i];
+			const integer index = strvecPermutation -> p [i];
 			conststring32 str = v [index];
-			if (Melder_cmp (strvecClasses [count].get(), str) != 0)
+			if (Melder_cmp (strvecClasses [count].get(), str) != 0) {
 				strvecClasses.insert (++ count, str);
+				classChangePositios.insert (count, i);
+			}
 			strvecIndex [i] = count;
 		}
 	}
 	
-	void init (constSTRVEC const& v, bool breakAtTheDecimalPoint ) {
-		try {
-			breakAtDecimalPoint = breakAtTheDecimalPoint;
-			createIndex (v);
-			classesSorting = Permutation_create (strvecClasses.size, true);
-		} catch (MelderError) {
-			Melder_throw (U"Cannot init the structStringClassesInfo.");
-		}
-	 }
-
 	// the elements of set sets must always refer to the position in the structSTRVECIndex::classes
 	autoPermutation sortAlphaPartSet (constINTVEC const& set, integer level) {
 		Melder_assert (set.size > 0);
@@ -351,7 +346,7 @@ private:
 		autoSTRVEC alphaPart = stringsInfo.extractAlphaPart (set);
 		autoSTRVEC alphas = stringsInfo.extractAlphas (set);
 		if (level > 1) // already sorted by init
-			INTVECindex (pset -> p.get(), alphaPart.get()); // we want s01 before s1!
+			INTVECindex_inout (pset -> p.get(), alphaPart.get()); // we want s01 before s1!
 		
 		integer startOfEquals = 1;
 		conststring32 value = alphas [pset -> p [1]].get(); // the smallest 
@@ -401,13 +396,13 @@ private:
 		const integer numberOfStrings = set.size;
 		autoDigitstringNumberVEC numbers = stringsInfo.extractNums (set);
 		autoPermutation	pset = Permutation_create (numberOfStrings, true);
-		INTVECindex (pset -> p.get(), numbers.get());
+		INTVECindex_inout (pset -> p.get(), numbers.get());
 
 		integer startOfEquals = 1;
 		DigitstringNumber value = numbers [pset -> p [1]]; // the smallest DigitstringNumber
 		for (integer i = 2; i <= numberOfStrings; i++) {
 			const DigitstringNumber current = numbers [pset -> p [i]];
-			const bool valueChange = ( DigitstringNumber_compare3way (current, value) != 0);
+			const bool valueChange = ( DigitstringNumber_compare (current, value) != 0);
 			if (valueChange || i == set.size) {
 				const integer numberOfEquals = ( valueChange ? i - startOfEquals : i - startOfEquals + 1 );
 				if (numberOfEquals > 1) {
@@ -430,47 +425,82 @@ private:
 		return pset;
 	}
 	
- public:	
-	void sort (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
+ public:
+	autoPermutation sortSimple (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sortingMethod) {
 		Melder_require (v.size > 0,
 			U"There should be at least one element in your list.");
-		init (v, breakAtTheDecimalPoint);
+		autoPermutation sorting = Permutation_create (v.size, true);
+		if (sortingMethod == kStrings_sorting::ALPHABETICAL) {
+			 ;
+		} else if (sortingMethod == kStrings_sorting::NUMERICAL_PART) {
+			stringsInfo.init (v);
+			stringsInfo.updateNumPart (sorting -> p.get());
+			autoINTVEC numStartSet, alphaStartSet;
+			Melder_require (stringsInfo.separateAlphaAndNumSets (sorting -> p.get(), numStartSet, alphaStartSet),
+				U"error");
+			Melder_assert (numStartSet.size + alphaStartSet.size == strvecClasses.size);
+			if (numStartSet.size > 0) {
+				autoPermutation pnumPart = sortNumPartSet (numStartSet.get(), 1_integer);
+				Permutation_permuteINTVEC_inout (pnumPart.get(), numStartSet.get());
+				if (alphaStartSet.size == 0)
+					sorting -> p.get()  <<=  numStartSet.get();
+			}
+			if (alphaStartSet.size > 0) {
+				autoPermutation palphaPart = sortAlphaPartSet (alphaStartSet.get(), 1);
+				Permutation_permuteINTVEC_inout (palphaPart.get(), alphaStartSet.get());
+				if (numStartSet.size == 0)
+					sorting -> p.get()  <<=  alphaStartSet.get();
+			}
+			if (numStartSet.size > 0 && alphaStartSet.size > 0) {
+				sorting -> p.part (1, numStartSet.size)  <<=  numStartSet.get();
+				sorting -> p.part (numStartSet.size + 1, sorting -> numberOfElements)  <<=  alphaStartSet.get();
+				Permutation_checkInvariant (sorting.get());
+			}
+			return sorting;
+		}
+	}
+	
+	void sortWithIndex (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
+		Melder_require (v.size > 0,
+			U"There should be at least one element in your list.");
+		breakAtDecimalPoint = breakAtTheDecimalPoint;
+		createIndex (v);
 		if (sorting == kStrings_sorting::ALPHABETICAL) {
 			 ;
 		} else if (sorting == kStrings_sorting::NUMERICAL_PART) {
 			stringsInfo.init (strvecClasses.get());
+			autoPermutation classesSorting = Permutation_create (strvecClasses.size, true);
 			stringsInfo.updateNumPart (classesSorting -> p.get());
 			autoINTVEC numStartSet, alphaStartSet;
-			autoPermutation p = Permutation_create (strvecClasses.size, true);
-			Melder_require (stringsInfo.separateAlphaAndNumSets (p->p.get(), numStartSet, alphaStartSet),
+			Melder_require (stringsInfo.separateAlphaAndNumSets (classesSorting -> p.get(), numStartSet, alphaStartSet),
 				U"error");
 			Melder_assert (numStartSet.size + alphaStartSet.size == strvecClasses.size);
-			autoINTVEC alphaPartSortedSet, numPartSortedSet;
 			if (numStartSet.size > 0) {
 				autoPermutation pnumPart = sortNumPartSet (numStartSet.get(), 1);
-				numPartSortedSet = Permutation_permuteVector<integer> (pnumPart.get(), numStartSet.get());
+				Permutation_permuteINTVEC_inout (pnumPart.get(), numStartSet.get());
 				if (alphaStartSet.size == 0)
-					classesSorting -> p.get()  <<=  numPartSortedSet.get();
+					classesSorting -> p.get()  <<=  numStartSet.get();
 			}
 			if (alphaStartSet.size > 0) {
 				autoPermutation palphaPart = sortAlphaPartSet (alphaStartSet.get(), 1);
-				alphaPartSortedSet = Permutation_permuteVector<integer> (palphaPart.get(), alphaStartSet.get());
+				Permutation_permuteINTVEC_inout (palphaPart.get(), alphaStartSet.get());
 				if (numStartSet.size == 0)
-					classesSorting -> p.get()  <<=  alphaPartSortedSet.get();
+					classesSorting -> p.get()  <<=  alphaStartSet.get();
 			}
 			if (numStartSet.size > 0 && alphaStartSet.size > 0) {
-				classesSorting -> p.part (1, numPartSortedSet.size)  <<=  numPartSortedSet.get();
-				classesSorting -> p.part (numPartSortedSet.size + 1, classesSorting -> numberOfElements)  <<=  alphaPartSortedSet.get();
+				classesSorting -> p.part (1, numStartSet.size)  <<=  numStartSet.get();
+				classesSorting -> p.part (numStartSet.size + 1, classesSorting -> numberOfElements)  <<=  alphaStartSet.get();
 				Permutation_checkInvariant (classesSorting.get());
 			}
+			Permutation_permuteSTRVEC_inout (classesSorting.get(), strvecClasses);
 		}
 	 }
 	 
 	autoStringsIndex index (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
-		sort (v, breakAtTheDecimalPoint, sorting);
+		sortWithIndex (v, breakAtTheDecimalPoint, sorting);
 		autoStringsIndex me = StringsIndex_create (v.size);
 		for (integer i = 1; i <= strvecClasses.size; i ++) {
-			conststring32 classi = strvecClasses [classesSorting -> p [i]].get();
+			conststring32 classi = strvecClasses [i].get();
 			autoSimpleString ss = SimpleString_create (classi);
 			my classes -> addItem_move (ss.move());
 		}
@@ -538,7 +568,7 @@ void MelderString_copyPart (MelderString *me, conststring32 source, integer firs
 
 
 void INTVECindex_num_alpha (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting) {
-	INTVECindex (target, v);
+	INTVECindex_inout (target, v);
 	if (sorting == kStrings_sorting::ALPHABETICAL)
 		return;
 	else 

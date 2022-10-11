@@ -1098,7 +1098,9 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, 
 
 autoINTVEC TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
 	try {
-		return newINTVECindex (my rowLabels.get());
+		autoINTVEC result = raw_INTVEC (my rowLabels.size);
+		INTVECindex_inout (result.get(), my rowLabels.get());
+		return result;
 	} catch (MelderError) {
 		Melder_throw (me, U": no sorted index created.");
 	}
