@@ -2285,9 +2285,57 @@ void praat_run () {
 			}
 		} else {
 			try {
-				//Melder_casual (U"Script <<", theCurrentPraatApplication -> batchName.string, U">>");
+				#ifdef _WIN32
+					/*
+						Our WinMain app cannot be a true console app when run from the Console.
+
+						The following is what we expect from a console app:
+						1. After you enter `Praat.exe myScript.praat` into the Console,
+						   the Console should go to the next line, but show nothing else.
+						2. Any console output (i.e. output to stdout and stderr) should appear
+						   on this line and the next lines.
+						3. When Praat finishes, the Console should show the new prompt,
+						   like `C:\Users\Me\myFolder>`, on a new line.
+
+						Instead, if we do nothing special here, Praat will do the following in the Console:
+						1. After you enter `Praat.exe myScript.praat`, the Console will immediately
+						   present the `C:\Users\Me\myFolder>` prompt again. We know of no way
+						   to change this behaviour, short of compiling Praat as a console app.
+						2. Any console output (i.e. output to stdout and stderr) will appear
+						   immediately after the `C:\Users\Me\myFolder>` prompt.
+						3. When Praat finishes, the Console will show no new prompt, because
+						   it has already shown a prompt (too early).
+
+						The most important problem to repair is 3, because otherwise it will look
+						as if Praat has not finished. So in Chunk 2 we fake an Enter.
+
+						Problem 2 is repaired in Chunk 1 by sending a line to stderr (not stdout,
+						because the line break should not end up in a file if redirected).
+						The line that is sent should not be empty, because an empty line would suggest
+						that Praat has finished, so we send a visible comment with hashes ("##########").
+
+						Our output will still look different from a real console app because of the extra
+						prompt at the beginning (prepened to our comment) and perhaps the extra
+						empty line that will appear now at the end of the output.
+						(last checked 2022-10-12)
+
+						Chunk 1 (sending a comment to stderr):
+					*/
+					HWND optionalConsoleWindowHandle = GetConsoleWindow ();
+					if (optionalConsoleWindowHandle)
+						Melder_casual (U" ########## Running Praat script ", theCurrentPraatApplication -> batchName.string);
+				#endif
 				praat_executeScriptFromCommandLine (theCurrentPraatApplication -> batchName.string,
 						praatP.argc - praatP.argumentNumber, & praatP.argv [praatP.argumentNumber]);
+				#ifdef _WIN32
+					/*
+						Chunk 2 (faking an Enter):
+					*/
+					if (optionalConsoleWindowHandle)
+						PostMessage (optionalConsoleWindowHandle, WM_KEYDOWN, VK_RETURN, 0);
+
+					FreeConsole ();   // this may not do anything? (last checked 2022-10-12)
+				#endif
 				praat_exit (0);
 			} catch (MelderError) {
 				Melder_flushError (praatP.title.get(), U": script command <<",
