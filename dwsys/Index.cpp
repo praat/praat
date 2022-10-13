@@ -137,7 +137,7 @@ autoPermutation Permutation_createFromSorted (constSTRVEC const& strvec, kString
 
 autoStringsIndex Strings_to_StringsIndex (Strings me, kStrings_sorting sorting) {
 	try {
-		autoStringsIndex thee = StringsIndex_createFromSTRVEC (my strings.get(), sorting, false);
+		autoStringsIndex thee = StringsIndex_createFromSTRVEC (my strings.get(), sorting, true);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no StringsIndex created.");

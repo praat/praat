@@ -5,7 +5,7 @@ appendInfoLine: "test_StringsIndex.praat"
 
 str$# =     { "0b0 0a11 0a2 0a1",  "a  00a  0a", "a1 1b 11b b11 c2.2 c2..2 d3 .aa2 b4 b04 a1 a1",
 	... "00d 00b 00c 0a ", "4b 04b 4a 004a 1 d c 004b"}
-strn$# =  { "0a1 0a2 0a11 0b0",  "00a 0a a",  "1b 11b .aa2 a1 a1 a1 b04 b4 b11 c2..2 c2.2 d3",
+strn$# =  { "0a1 0a2 0a11 0b0",  "00a 0a a",  "1b 11b .aa2 a1 a1 a1 b04 b4 b11 c2.2 c2..2 d3",
 	... "00b 00c 00d 0a", "1 004a 004b 04b 4a 4b c d" }
 
 for ivec to size(str$#)
