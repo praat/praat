@@ -18,27 +18,20 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20050724
- djmw 20061212 Changed info to Melder_writeLine<x> format.
- djmw 20070102
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
- djmw 20110304 Thing_new
-*/
-
+#include "Index.h"
 #include "NUM2.h"
 #include "Permutation.h"
 #include "Strings_.h"
 
 /*
-	Sort strings that may have numeric substrings in a special way:
+	Sort strings that may have numeric substrings:
 	string    := <alphaPart> | <numPart>
 	alphaPart := <alphas> | <alphas><numPart>
 	numPart   := <nums> | <nums><alphaPart>
 	
 	<alphaPart> sorts alphabetical, <numPart> sorts numerical:
 	0a, 1a, 11a, 2a, 11a -> 0a, 1a, 2a, 11a, 11a
-	a, 00a, 0a -> 00a, 0a, a (numerical as well as alphabetical order)
+	a, 00a, 0a -> 00a, 0a, a (numerical as well as alphabetical order are equal)
 	00a1, 00a2, 00a11, 0b0
 */
 typedef struct structSTRVECIndexer *STRVECIndexer;
@@ -46,14 +39,14 @@ struct structSTRVECIndexer {
 	struct structStringClassesInfo {
 		private:
 		struct structStringClassInfoData {
-			DigitstringNumber number;	// alpha [numPosStart-1..numPosEnd-1] as a number
+			mutablestring32 alpha; // either <alphaPart> or <numPart>
+			integer length; // strlen (alpha)
 			integer alphaPosStart; // start positions of alphaPart; alphaPosEnd is always fixed at the end U'\0'
 			integer numPosStart; // start of num part in alpha, else 0 if no num part
 			integer numPosDot; // numPosStart < numPosDot < numPosEnd if a dot occurs in the num part and breakAtDecimalPoint==true
 			integer numPosEnd; // >= numPosStart if numPosStart > 0 else undefined
-			integer length; // strlen (alpha)
-			mutablestring32 alpha; // contains copy of a class
-			char32 save0; // temporarily use save location during masking
+			DigitstringNumber number;	// alpha [numPosStart-1..numPosEnd-1] as a number
+			char32 save0; // efficiency: instead of copying we mask part of alpha by putting a '\0'
 		};
 		using STRINFOVEC = vector<struct structStringClassInfoData>;
 		using autoSTRINFOVEC = autovector<struct structStringClassInfoData>;
@@ -63,7 +56,11 @@ struct structSTRVECIndexer {
 		autoSTRINFOVEC stringsInfoDatavector;
 		bool breakAtDecimalPoint = true;
 		
-		/* always use maskAlphaTrailer do something and then unmaskAlphaTrailer */
+		/*
+			We use a mask, i.e. a '\0' at positions in the string 'alpha' to mask the
+			the <alpaPart> of the <numPart> or the <numPart> of the <alpahPart>.
+			The unmask is used to undo the nask.
+		*/
 		void maskAlphaTrailer (stringInfo info) { //  save the char32 after number part and replace by U'\0'
 			if (info -> numPosStart > 0 && info -> numPosEnd < info -> length) {  
 				info -> save0 = info -> alpha [info -> numPosEnd]; // save position after last digit
@@ -71,7 +68,7 @@ struct structSTRVECIndexer {
 			}
 		}
 	
-		void unmaskAlphaTrailer (stringInfo info) { // undo the masking!
+		void maskAlphaTrailer_undo (stringInfo info) { // undo the masking!
 			if (info -> numPosStart > 0 && info -> numPosEnd < info -> length)
 				info -> alpha [info -> numPosEnd] = info -> save0; 
 		}
@@ -83,7 +80,7 @@ struct structSTRVECIndexer {
 			}
 		}
 		
-		void unmaskNumTrailer (stringInfo info) {
+		void maskNumTrailer_undo (stringInfo info) {
 			if (info -> numPosStart > 0)
 				info -> alpha [info -> numPosStart - 1] = info -> save0;
 		}
@@ -101,7 +98,7 @@ struct structSTRVECIndexer {
 				info -> number.numberOfLeadingZeros = p - pstart;
 				maskAlphaTrailer (info); // save position after last digit and put '\0'
 				info -> number.value = Melder_atof (p);
-				unmaskAlphaTrailer (info); //
+				maskAlphaTrailer_undo (info); //
 			}
 		}
 		
@@ -156,7 +153,7 @@ struct structSTRVECIndexer {
 			info -> numPosEnd = info -> numPosStart + relPos;
 		}
 		
-		stringInfo getStringInfo (integer index) {
+		inline stringInfo getStringInfo (integer index) {
 			Melder_assert (index > 0 && index <= stringsInfoDatavector.size);
 			return & stringsInfoDatavector [index];
 		}
@@ -249,7 +246,7 @@ struct structSTRVECIndexer {
 				stringInfo info = getStringInfo (irow);
 				maskNumTrailer (info);
 				alphas [i] = Melder_dup (info -> alpha + info -> alphaPosStart - 1);
-				unmaskNumTrailer (info);
+				maskNumTrailer_undo (info);
 			}
 			return alphas;
 		}
@@ -273,7 +270,7 @@ struct structSTRVECIndexer {
 				stringInfo info = getStringInfo (index);
 				maskAlphaTrailer (info);
 				autostring32 result = Melder_dup (info -> alpha + info -> alphaPosStart - 1);
-				unmaskAlphaTrailer (info);
+				maskAlphaTrailer_undo (info);
 				return result;
 		}
 		
@@ -317,10 +314,9 @@ private:
 	autoPermutation sortAlphaPartSet (constINTVEC const& set, integer level) {
 		Melder_assert (set.size > 0);
 		autoPermutation pset = Permutation_create (set.size, true);
-		autoSTRVEC alphaPart = stringsInfo.extractAlphaPart (set);
 		autoSTRVEC alphas = stringsInfo.extractAlphas (set);
 		if (level > 1) // already sorted by init
-			INTVECindex_inout (pset -> p.get(), alphaPart.get()); // we want s01 before s1!
+			INTVECindex_inout (pset -> p.get(), alphas.get()); // we want s01 before s1!
 		
 		integer startOfEquals = 1;
 		conststring32 value = alphas [pset -> p [1]].get(); // the smallest 
@@ -405,7 +401,7 @@ private:
 			U"There should be at least one element in your list.");
 		autoPermutation sorting = Permutation_create (v.size, true);
 		if (sortingMethod == kStrings_sorting::ALPHABETICAL) {
-			 ;
+			 INTVECindex_inout (sorting->p.get(), v);
 		} else if (sortingMethod == kStrings_sorting::NUMERICAL_PART) {
 			breakAtDecimalPoint = breakAtTheDecimalPoint;
 			stringsInfo.init (v);
