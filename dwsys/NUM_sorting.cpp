@@ -24,6 +24,8 @@
 
 #include "NUM2.h"
 #include "melder.h"
+#include "Permutation.h"
+#include "STRVEC_sorting.h"
 
 #include "enums_getText.h"
 #include "strings_sorting_enums.h"
@@ -85,4 +87,13 @@ autoINTMAT sortRows_INTMAT (constINTMAT mat, integer icol) { // TODO test me
 		Melder_throw (U"Matrix not sorted.");
 	}
 }
+
+void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
+	Melder_require (target.size == v.size,
+		U"The dimensions should be equal.");
+	struct structSTRVECIndexer indexer;
+	autoPermutation p = indexer.sortSimple (v, breakAtTheDecimalPoint, sorting);
+	target  <<=  p -> p.get();
+}
+
 /* End of file NUMsort.cpp */

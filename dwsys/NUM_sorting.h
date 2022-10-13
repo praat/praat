@@ -219,12 +219,12 @@ inline void INTVECindex_inout (INTVEC index, constSTRVEC const& v) {
 	INTVECindex2_inout <constSTRVEC, conststring32> (index, v, [] (conststring32 const& x, conststring32 const& y) -> bool { return Melder_cmp (x, y) < 0;});
 }
 
+void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting);
+
 inline void INTVECindex_inout (INTVEC index, constDigitstringNumberVEC const& v) {
 	INTVECindex2_inout<constDigitstringNumberVEC, DigitstringNumber> 
 		(index, v, [](DigitstringNumber const& x, DigitstringNumber const& y) -> bool { return x.compare(y) < 0; });
 }
-
-void INTVECindex_num_alpha (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting);
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
 	autoINTVEC result = raw_INTVEC (a.size);
