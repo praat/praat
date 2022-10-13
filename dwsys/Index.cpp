@@ -125,16 +125,6 @@ autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStri
 	}
 }
 
-autoPermutation Permutation_createFromSorted (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
-	try {
-		struct structSTRVECIndexer indexer;
-		autoPermutation me =  indexer.sortSimple (strvec, breakAtDecimalPoint, sorting);	
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Could not create Permutaion from STRVEC.");
-	}	
-}
-
 autoStringsIndex Strings_to_StringsIndex (Strings me, kStrings_sorting sorting) {
 	try {
 		autoStringsIndex thee = StringsIndex_createFromSTRVEC (my strings.get(), sorting, true);

@@ -96,4 +96,14 @@ void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v,  bool breakA
 	target  <<=  p -> p.get();
 }
 
+autoPermutation Permutation_createFromSorting (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
+	try {
+		struct structSTRVECIndexer indexer;
+		autoPermutation me =  indexer.sortSimple (strvec, breakAtDecimalPoint, sorting);	
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Could not create Permutation from STRVEC.");
+	}	
+}
+
 /* End of file NUMsort.cpp */

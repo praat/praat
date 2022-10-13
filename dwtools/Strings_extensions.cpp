@@ -161,17 +161,9 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	}
 }
 
-autoPermutation Strings_to_Permutation (Strings me, kStrings_sorting sorting) {
+inline autoPermutation Strings_to_Permutation (Strings me, kStrings_sorting sorting) {
 	try {
-		autoPermutation thee = Permutation_create (my numberOfStrings, true);
-		if (sorting == kStrings_sorting::ALPHABETICAL)
-			INTVECindex_inout (thy p.get(), my strings.get());
-		else if (sorting == kStrings_sorting::NONE)
-			;
-		else {
-			
-		}
-		return thee;
+		return Permutation_createFromSorting (my strings.get(), sorting, true);
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");
 	}
