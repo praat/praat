@@ -294,19 +294,20 @@ private:
 	void createIndex (constSTRVEC const& v) {
 		integer count = 1;
 		strvecIndex = raw_INTVEC (v.size);
-		strvecPermutation = Permutation_create (v.size, true);
-		INTVECindex_inout (strvecPermutation -> p.get(), v);
-		strvecClasses.insert (count, v [strvecPermutation -> p [1]]);
-		strvecIndex [1] = count;
+		autoPermutation p = Permutation_create (v.size, true);
+		INTVECindex_inout (p -> p.get(), v);
+		strvecClasses.insert (count, v [p -> p [1]]);
+		integer index = p -> p [1];
+		strvecIndex [index] = count;
 		classChangePositios.insert (count, 1);
 		for (integer i = 2; i <= v.size; i ++) {
-			const integer index = strvecPermutation -> p [i];
+			index = p -> p [i];
 			conststring32 str = v [index];
 			if (Melder_cmp (strvecClasses [count].get(), str) != 0) {
 				strvecClasses.insert (++ count, str);
 				classChangePositios.insert (count, i);
 			}
-			strvecIndex [i] = count;
+			strvecIndex [index] = count;
 		}
 	}
 	
@@ -464,6 +465,7 @@ private:
 				Permutation_checkInvariant (classesSorting.get());
 			}
 			Permutation_permuteSTRVEC_inout (classesSorting.get(), strvecClasses);
+			
 		}
 	 }
 	 
