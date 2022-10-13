@@ -16,7 +16,7 @@ OBJECTS = ChebyshevSeries.o Collection_extensions.o Command.o \
 	LegendreSeries.o \
 	MAT_numerics.o \
 	NMF.o NUM2.o NUMhuber.o NUMmachar.o \
-	NUMcomplex.o NUMfft_d.o NUMsort2.o \
+	NUMcomplex.o NUMfft_d.o NUM_sorting.o \
 	NUMmathlib.o NUMstring.o \
 	Permutation.o Permutation_and_Index.o \
 	Polynomial.o \

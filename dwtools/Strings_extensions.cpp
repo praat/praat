@@ -23,10 +23,6 @@
 #include "Strings_extensions.h"
 #include "NUM2.h"
 
-
-
-
-
 autoStrings Strings_createFixedLength (integer numberOfStrings) {
 	try {
 		Melder_require (numberOfStrings >= 0,
