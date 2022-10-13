@@ -114,15 +114,6 @@ void MelderString_copyPart (MelderString *me, conststring32 source, integer firs
 	MelderString_appendPart (me, source, first, last);
 }
 
-
-void INTVECindex_num_alpha (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting) {
-	INTVECindex_inout (target, v);
-	if (sorting == kStrings_sorting::ALPHABETICAL)
-		return;
-	else 
-		return; // TODO
-}
-
 /* copying of strings could be avoided by using a autovector<char32** ? */
 autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
 	try {
