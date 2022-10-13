@@ -51,12 +51,12 @@ autoStrings Strings_createFromSTRVEC (constSTRVEC const& strings);
 
 autoStrings Strings_extractPart (Strings me, integer start, integer end);
 
-autoStringsIndex Strings_to_StringsIndex (Strings me);
+autoStringsIndex Strings_to_StringsIndex (Strings me, kStrings_sorting sorting);
 
 autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes);
 /* Construct the index with strings in classes, index [i] = 0 when my strings [i] doesn't occur in classes */
 
-autoStringsIndex Table_to_StringsIndex_column (Table me, integer column);
+autoStringsIndex Table_to_StringsIndex_column (Table me, integer column, kStrings_sorting sorting);
 
 autoStrings StringsIndex_to_Strings (StringsIndex me);
 

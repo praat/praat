@@ -22,6 +22,7 @@
 
 #include "Strings_extensions.h"
 #include "NUM2.h"
+#include "STRVEC_sorting.h"
 
 autoStrings Strings_createFixedLength (integer numberOfStrings) {
 	try {
@@ -253,7 +254,7 @@ autoStrings StringsIndex_to_Strings (StringsIndex me) {
 	}
 }
 
-autoStringsIndex Table_to_StringsIndex_column (Table me, integer column) {
+autoStringsIndex Table_to_StringsIndex_column (Table me, integer column, kStrings_sorting sorting) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, column);
 		const integer numberOfRows = my rows.size;
@@ -262,10 +263,9 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column) {
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
 			groupLabels [irow] = Melder_dup (my rows.at [irow] -> cells [column]. string.get());   // TODO: no dup
 
-		autoStrings thee = Strings_createFromSTRVEC (groupLabels.get());
-		autoStringsIndex him = Strings_to_StringsIndex (thee.get());
-		if (Table_isColumnNumeric_ErrorFalse (me, column))
-			StringsIndex_sortNumerically (him.get());
+		autoStringsIndex him = StringsIndex_createFromSTRVEC (groupLabels.get(), sorting, true);
+		//if (Table_isColumnNumeric_ErrorFalse (me, column))
+		//	StringsIndex_sortNumerically (him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"No StringsIndex created from column ", column, U".");

@@ -431,8 +431,8 @@ private:
 				sorting -> p.part (numStartSet.size + 1, sorting -> numberOfElements)  <<=  alphaStartSet.get();
 				Permutation_checkInvariant (sorting.get());
 			}
-			return sorting;
 		}
+		return sorting;
 	}
 	
 	void sortWithIndex (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {

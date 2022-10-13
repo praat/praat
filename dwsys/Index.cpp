@@ -124,7 +124,7 @@ void INTVECindex_num_alpha (INTVEC const& target, constSTRVEC const& v, kStrings
 }
 
 /* copying of strings could be avoided by using a autovector<char32** ? */
-autoStringsIndex StringsIndex_createFrom_STRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
+autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
 	try {
 		struct structSTRVECIndexer indexer;
 		autoStringsIndex me =  indexer.index (strvec, breakAtDecimalPoint, sorting);	
@@ -144,11 +144,9 @@ autoPermutation Permutation_createFromSorted (constSTRVEC const& strvec, kString
 	}	
 }
 
-autoStringsIndex Strings_to_StringsIndex (Strings me); // TO remove all this
-
-autoStringsIndex Strings_to_StringsIndex2 (Strings me, kStrings_sorting sorting) {
+autoStringsIndex Strings_to_StringsIndex (Strings me, kStrings_sorting sorting) {
 	try {
-		autoStringsIndex thee = StringsIndex_createFrom_STRVEC (my strings.get(), sorting, false);
+		autoStringsIndex thee = StringsIndex_createFromSTRVEC (my strings.get(), sorting, false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no StringsIndex created.");

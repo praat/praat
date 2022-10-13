@@ -3518,7 +3518,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_to_StringsIndex_column, U"Table: To StringsInde
 DO
 	CONVERT_EACH_TO_ONE (Table)
 		const integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		autoStringsIndex result = Table_to_StringsIndex_column (me, icol);
+		autoStringsIndex result = Table_to_StringsIndex_column (me, icol, kStrings_sorting::NUMERICAL_PART);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", columnLabel)
 }
 
@@ -6846,7 +6846,7 @@ FORM (CONVERT_EACH_TO_ONE__Strings_to_StringsIndex, U"Strings: To StringsIndex",
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Strings)
-		autoStringsIndex result = Strings_to_StringsIndex2 (me, sorting);
+		autoStringsIndex result = Strings_to_StringsIndex (me, sorting);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
