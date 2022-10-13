@@ -401,7 +401,7 @@ private:
 			U"There should be at least one element in your list.");
 		autoPermutation sorting = Permutation_create (v.size, true);
 		if (sortingMethod == kStrings_sorting::ALPHABETICAL) {
-			 INTVECindex_inout (sorting->p.get(), v);
+			 INTVECindex_inout (sorting -> p.get(), v);
 		} else if (sortingMethod == kStrings_sorting::NUMERICAL_PART) {
 			breakAtDecimalPoint = breakAtTheDecimalPoint;
 			stringsInfo.init (v);
@@ -409,7 +409,7 @@ private:
 			autoINTVEC numStartSet, alphaStartSet;
 			Melder_require (stringsInfo.separateAlphaAndNumSets (sorting -> p.get(), numStartSet, alphaStartSet),
 				U"error");
-			Melder_assert (numStartSet.size + alphaStartSet.size == strvecClasses.size);
+			Melder_assert (numStartSet.size + alphaStartSet.size == v.size);
 			if (numStartSet.size > 0) {
 				autoPermutation pnumPart = sortNumPartSet (numStartSet.get(), 1_integer);
 				Permutation_permuteINTVEC_inout (pnumPart.get(), numStartSet.get());
@@ -479,6 +479,7 @@ private:
 		return me;
 	 }
 };
- 
+
+autoPermutation Permutation_createFromSorting (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint); 
 
 #endif /* _STRVEC_sorting_h_ */
