@@ -287,26 +287,21 @@ private:
 	autoSTRVEC strvecClasses;  // the unique items in the STRVEC
 	autoPermutation strvecPermutation; // keeps track of the individual item position.
 	autoPermutation classesSorting; // keeps track of the sorting of 'strvecClasses'
-	autoINTVEC classChangePositios; // where does the class change in the created index at the start
 	struct structStringClassesInfo stringsInfo;
 	bool breakAtDecimalPoint;
 	
 	void createIndex (constSTRVEC const& v) {
 		integer count = 1;
 		strvecIndex = raw_INTVEC (v.size);
-		autoPermutation p = Permutation_create (v.size, true);
-		INTVECindex_inout (p -> p.get(), v);
-		strvecClasses.insert (count, v [p -> p [1]]);
-		integer index = p -> p [1];
+		strvecPermutation = Permutation_create (v.size, true);
+		INTVECindex_inout (strvecPermutation -> p.get(), v);
+		integer index = strvecPermutation -> p [1];
+		strvecClasses.insert (count, v [index]);
 		strvecIndex [index] = count;
-		classChangePositios.insert (count, 1);
 		for (integer i = 2; i <= v.size; i ++) {
-			index = p -> p [i];
-			conststring32 str = v [index];
-			if (Melder_cmp (strvecClasses [count].get(), str) != 0) {
-				strvecClasses.insert (++ count, str);
-				classChangePositios.insert (count, i);
-			}
+			index = strvecPermutation -> p [i];
+			if (Melder_cmp (strvecClasses [count].get(), v [index]) != 0)
+				strvecClasses.insert (++ count, v [index]);
 			strvecIndex [index] = count;
 		}
 	}
@@ -329,11 +324,6 @@ private:
 				if (numberOfEquals > 1) {
 					autoINTVEC equalsSet_local = raw_INTVEC (numberOfEquals);
 					autoINTVEC equalsSet_global = raw_INTVEC (numberOfEquals);
-					/*for (integer j = 1; j <= numberOfEquals; j ++) {
-						const integer index_local = pset -> p [startOfEquals + j - 1];
-						equalsSet_local [j] = index_local;
-						equalsSet_global [j] = set [index_local];
-					}*/
 					for (integer j = 1; j <= numberOfEquals; j ++) {
 						const integer index_local = startOfEquals + j - 1;
 						equalsSet_local [j] = index_local;
@@ -418,7 +408,7 @@ private:
 					sorting -> p.get()  <<=  numStartSet.get();
 			}
 			if (alphaStartSet.size > 0) {
-				autoPermutation palphaPart = sortAlphaPartSet (alphaStartSet.get(), 1);
+				autoPermutation palphaPart = sortAlphaPartSet (alphaStartSet.get(), 2);
 				Permutation_permuteINTVEC_inout (palphaPart.get(), alphaStartSet.get());
 				if (numStartSet.size == 0)
 					sorting -> p.get()  <<=  alphaStartSet.get();
@@ -465,7 +455,8 @@ private:
 				Permutation_checkInvariant (classesSorting.get());
 			}
 			Permutation_permuteSTRVEC_inout (classesSorting.get(), strvecClasses);
-			
+			for (integer i = 1; i <= v.size; i ++)
+				strvecIndex [i] = classesSorting -> p [strvecIndex [i]];
 		}
 	 }
 	 
