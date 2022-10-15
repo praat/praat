@@ -484,10 +484,8 @@ void Permutation_permuteSTRVEC_inout (Permutation me, autoSTRVEC & vec) {
 		Melder_require (my numberOfElements == vec.size,
 			U"The sizes of the vector and the Permutation should be equal.");
 		autoSTRVEC save = copy_STRVEC (vec.get());
-		autoSTRVEC vecp;
 		for (integer i = 1; i <= my numberOfElements; i ++)
-			vecp.insert (i, save [my p [i]].get());
-		vec = vecp.move();
+			vec [i] = save [my p [i]].move();
 	} catch (MelderError) {
 		Melder_throw (U"STRVEC not permuted.");
 	}
