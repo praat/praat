@@ -3,7 +3,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwtools -I ../fon -I ../dwsys -I ../stat -I ../gram
+CPPFLAGS += -I ../kar -I ../melder -I ../sys -I ../dwtools -I ../fon -I ../dwsys -I ../stat -I ../gram
 
 OBJECTS = FFNet.o \
 	FFNet_Eigen.o FFNet_Matrix.o FFNet_PatternList.o \

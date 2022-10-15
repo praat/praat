@@ -3,7 +3,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon -I ../foned
+CPPFLAGS += -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon -I ../foned
 
 OBJECTS = EEG.o EEGArea.o EEGAnalysisArea.o \
    EEGWindow.o ERPTier.o ERP.o ERPArea.o ERPWindow.o \

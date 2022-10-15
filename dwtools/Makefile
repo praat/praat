@@ -4,7 +4,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS = -I . -I ../kar -I ../melder -I ../LPC -I ../fon -I ../foned -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG -I ../external/vorbis -I ../external/opusfile
+CPPFLAGS += -I . -I ../kar -I ../melder -I ../LPC -I ../fon -I ../foned -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG -I ../external/vorbis -I ../external/opusfile
 
 OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Categories.o CategoriesEditor.o \

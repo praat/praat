@@ -4,7 +4,7 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../melder
+CPPFLAGS += -I ../../melder
 
 OBJECTS = mp3.o \
 	mad_bit.o \
