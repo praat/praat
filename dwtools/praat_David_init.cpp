@@ -2465,7 +2465,7 @@ DO
 	QUERY_ONE_FOR_STRING_END
 }
 
-FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get item index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get class index from item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
@@ -2483,7 +2483,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
-FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex, U"StringsIndex: Get class index from calss label", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex, U"StringsIndex: Get class index from class label", nullptr) {
 	WORD (klasLabel, U"Class label", U"label")
 	OK
 DO
