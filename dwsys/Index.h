@@ -52,6 +52,8 @@ conststring32 StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer
 
 conststring32 StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer itemNumber);
 
+autoSTRVEC StringsIndex_listAllClasses ( StringsIndex me);
+
 integer StringsIndex_countItems (StringsIndex me, integer iclas);
 
 void StringsIndex_sortNumerically (StringsIndex me);

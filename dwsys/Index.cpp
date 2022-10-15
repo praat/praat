@@ -178,6 +178,18 @@ integer StringsIndex_countItems (StringsIndex me, integer iclass) {
 	return sum;
 }
 
+autoSTRVEC StringsIndex_listAllClasses ( StringsIndex me) {
+	try {
+		autoSTRVEC classes (my classes->size);
+		for (integer i = 1; i <= my classes->size; i ++) {
+			const SimpleString ss = (SimpleString) my classes->at [i];
+			classes [i] = Melder_dup (ss -> string.get());
+		}
+		return classes;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not list all classes.");
+	}
+}
 void StringsIndex_sortNumerically (StringsIndex me) {
 	try {
 		const integer numberOfClasses = my classes -> size;
