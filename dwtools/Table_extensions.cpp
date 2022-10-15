@@ -3728,9 +3728,6 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Melder_require (factorColumnB > 0 && factorColumnB <= my numberOfColumns && factorColumnB != column && factorColumnA != factorColumnB,
 			U"Invalid B group column number.");
 
-		const char32 *label_A = my columnHeaders [factorColumnA]. label.get();
-		const char32 *label_B = my columnHeaders [factorColumnB]. label.get();
-
 		const integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
 		autoStringsIndex levelsA = Table_to_StringsIndex_column (me, factorColumnA, kStrings_sorting::NUMERICAL_PART);
@@ -3744,6 +3741,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		const integer numberOfLevelsA = levelsA -> classes -> size;
 		const integer numberOfLevelsB = levelsB -> classes -> size;
 		
+
+		conststring32 label_A = my columnHeaders [factorColumnA]. label.get();
+		conststring32 label_B = my columnHeaders [factorColumnB]. label.get();
 		Melder_require (numberOfLevelsA > 1,
 			U"There should be at least two levels in \"", label_A, U"\".");
 		Melder_require (numberOfLevelsB > 1,
