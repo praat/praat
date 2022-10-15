@@ -19,7 +19,7 @@
 enums_begin (kStrings_sorting, 0)
 	enums_add (kStrings_sorting, 0, NONE, U"None")
 	enums_add (kStrings_sorting, 1, ALPHABETICAL, U"alphabetical")
-	enums_add (kStrings_sorting, 2, NUMERICAL_PART, U"numerical part")
+	enums_add (kStrings_sorting, 2, NATURAL, U"natural")
 //	enums_add (kStrings_sorting, 2, ALPHABETICAL_NOCASE, U"alphabetical (no case)")
 //	enums_add (kStrings_sorting, 4, NUMERICAL_PREFIX, U"numerical prefix") // 0a, 1.2b, 3a
 //	enums_add (kStrings_sorting, 5, NUMERICAL_SUFFIX, U"numerical suffix") // 0a, 4s, s1, 
@@ -27,6 +27,6 @@ enums_begin (kStrings_sorting, 0)
 //	enums_add (kStrings_sorting, 7, MONTH_SHORT, U"Month") // Jan, Feb, Mar, ...
 //	enums_add (kStrings_sorting, 8, SEASON, U"Season") // Spring, Summer, Autumn, Winter
 //	enums_add (kStrings_sorting, 9, PART_OF_DAY, U"part of day") // Morning, Afternoon, Evening, Night
-enums_end (kStrings_sorting, 2, ALPHABETICAL)
+enums_end (kStrings_sorting, 2, NATURAL)
 
 /* End of file strings_sorting_enums.h */

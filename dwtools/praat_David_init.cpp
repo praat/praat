@@ -2469,16 +2469,16 @@ FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex, U"StringsI
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	QUERY_ONE_FOR_INTEGER (Index)
+	QUERY_ONE_FOR_INTEGER (StringsIndex)
 		const integer result = Index_getClassIndexFromItemIndex (me, itemIndex);
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
-FORM (QUERY_ONE_FOR_INTEGER__Index_getIndex, U"Index: Get item index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__Index_getIndex, U"StringsIndex: Get item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	QUERY_ONE_FOR_INTEGER (Index)
+	QUERY_ONE_FOR_INTEGER (StringsIndex)
 		const integer result = Index_getClassIndexFromItemIndex (me, itemIndex);
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
@@ -2490,6 +2490,12 @@ DO
 	QUERY_ONE_FOR_INTEGER (StringsIndex)
 		const integer result = StringsIndex_getClassIndexFromClassLabel (me, klasLabel);
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
+}
+
+DIRECT (QUERY_ONE_FOR_STRING_ARRAY__StringsIndex_listAllClasses) {
+	QUERY_ONE_FOR_STRING_ARRAY (StringsIndex)
+		autoSTRVEC result = StringsIndex_listAllClasses (me);
+	QUERY_ONE_FOR_STRING_ARRAY_END
 }
 
 FORM (CONVERT_EACH_TO_ONE__Index_extractPart, U"Index: Extract part", U"Index: Extract part...") {
@@ -3518,7 +3524,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_to_StringsIndex_column, U"Table: To StringsInde
 DO
 	CONVERT_EACH_TO_ONE (Table)
 		const integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		autoStringsIndex result = Table_to_StringsIndex_column (me, icol, kStrings_sorting::NUMERICAL_PART);
+		autoStringsIndex result = Table_to_StringsIndex_column (me, icol, kStrings_sorting::NATURAL);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", columnLabel)
 }
 
@@ -8642,15 +8648,6 @@ static void praat_Eigen_draw_init (ClassInfo klas) {
 			GRAPHICS_EACH__Eigen_drawEigenvector);
 }
 
-static void praat_Index_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Get number of classes", nullptr, 0,
-		QUERY_ONE_FOR_INTEGER__Index_getNumberOfClasses);
-	praat_addAction1 (klas, 1, U"To Permutation...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Index_to_Permutation);
-	praat_addAction1 (klas, 1, U"Extract part...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Index_extractPart);
-}
-
 static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas);
 static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Draw -", nullptr, 0, nullptr);
@@ -9547,20 +9544,28 @@ void praat_David_init () {
 	praat_addAction1 (classElectroglottogram, 0, U"To Sound", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Electroglottogram_to_Sound);
 	
-	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP__Index_help);
-	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, 
-			QUERY_ONE_FOR_STRING__StringsIndex_getClassLabelFromClassIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 0, 
-		QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get label...", nullptr, 0, 
-			QUERY_ONE_FOR_STRING__StringsIndex_getItemLabelFromItemIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get class index from item index...", nullptr, 0,
-		QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex);
-	praat_addAction1 (classIndex, 1, U"Get index...", nullptr, 0, 
-		QUERY_ONE_FOR_INTEGER__Index_getIndex);
+	praat_addAction1 (classStringsIndex, 0, U"Query -", nullptr, 0, nullptr);
+		praat_addAction1 (classStringsIndex, 1, U"Get number of classes", nullptr, 1,
+				QUERY_ONE_FOR_INTEGER__Index_getNumberOfClasses);
+		praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 1, 
+				QUERY_ONE_FOR_STRING__StringsIndex_getClassLabelFromClassIndex);
+		praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 1, 
+				QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex);
+		praat_addAction1 (classStringsIndex, 1, U"Get item label...", nullptr, 1, 
+				QUERY_ONE_FOR_STRING__StringsIndex_getItemLabelFromItemIndex);
+		praat_addAction1 (classStringsIndex, 1, U"Get class index from item index...", nullptr, 1,
+				QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex);
+		praat_addAction1 (classStringsIndex, 1, U"Get index...", nullptr, 1, 
+				QUERY_ONE_FOR_INTEGER__Index_getIndex);
+		praat_addAction1 (classStringsIndex, 1, U"List all classes", nullptr, 1,
+				QUERY_ONE_FOR_STRING_ARRAY__StringsIndex_listAllClasses);
 	praat_addAction1 (classStringsIndex, 1, U"To Strings", nullptr, 0,
 			CONVERT_EACH_TO_ONE__StringsIndex_to_Strings);
+	praat_addAction1 (classStringsIndex, 1, U"To Permutation...", nullptr, 0, 
+			CONVERT_EACH_TO_ONE__Index_to_Permutation);
+	praat_addAction1 (classStringsIndex, 1, U"Extract part...", nullptr, 0, 
+			CONVERT_EACH_TO_ONE__Index_extractPart);
 
 	praat_addAction1 (classEigen, 0, U"Eigen help", nullptr, 0,
 			HELP__Eigen_help);

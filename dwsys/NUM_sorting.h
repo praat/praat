@@ -26,12 +26,15 @@
 class DigitstringNumber {
 public:	
 	integer numberOfLeadingZeros;
+	integer numberOfLeadingSpaces;
 	double value;
 
 	integer compare (DigitstringNumber const& y) const {
-		return ( value < y.value ? -1 : value > y.value ? 1 : 
-			(numberOfLeadingZeros > y.numberOfLeadingZeros ? - 1 : numberOfLeadingZeros < y.numberOfLeadingZeros ? 1 : 0)
-		);
+		return ( 
+			value < y.value ? - 1 : value > y.value ? 1 : 
+			numberOfLeadingZeros < y.numberOfLeadingZeros ? - 1 : numberOfLeadingZeros > y.numberOfLeadingZeros ? 1 :
+			numberOfLeadingSpaces < y.numberOfLeadingSpaces ? - 1 : numberOfLeadingSpaces > y.numberOfLeadingSpaces ? 1 :
+			0 );
 	}
 };
 

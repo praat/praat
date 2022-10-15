@@ -75,7 +75,7 @@ struct structSTRVECIndexer {
 		
 		void maskNumTrailer (stringInfo info) {
 			if (info -> numPosStart > 0) {
-				info -> save0 = info -> alpha [info -> numPosStart - 1];
+				info -> save0 = info -> alpha [info -> numPosStart - 1 ];
 				info -> alpha [info -> numPosStart - 1] = U'\0';
 			}
 		}
@@ -99,6 +99,11 @@ struct structSTRVECIndexer {
 				maskAlphaTrailer (info); // save position after last digit and put '\0'
 				info -> number.value = Melder_atof (p);
 				maskAlphaTrailer_undo (info); //
+				p = pstart - 1;
+				while (p >= info -> alpha && *p == U' ')
+						p --;
+				info -> number.numberOfLeadingSpaces = pstart - 1 - p;
+				info -> numPosStart -= info -> number.numberOfLeadingSpaces;
 			}
 		}
 		
@@ -196,7 +201,7 @@ struct structSTRVECIndexer {
 				if (info -> numPosStart == 0)
 					info -> alphaPosStart = info -> length + 1; // at \0
 				else if (info -> alphaPosStart <= info -> numPosStart) {
-					info -> alphaPosStart = info -> numPosStart;
+					info -> alphaPosStart = info -> numPosStart + info -> number.numberOfLeadingSpaces;
 					notAtEnd ++;
 				}
 			}
@@ -393,7 +398,7 @@ private:
 		autoPermutation sorting = Permutation_create (v.size, true);
 		if (sortingMethod == kStrings_sorting::ALPHABETICAL) {
 			 INTVECindex_inout (sorting -> p.get(), v);
-		} else if (sortingMethod == kStrings_sorting::NUMERICAL_PART) {
+		} else if (sortingMethod == kStrings_sorting::NATURAL) {
 			breakAtDecimalPoint = breakAtTheDecimalPoint;
 			stringsInfo.init (v);
 			stringsInfo.updateNumPart (sorting -> p.get());
@@ -429,7 +434,7 @@ private:
 		createIndex (v);
 		if (sorting == kStrings_sorting::ALPHABETICAL) {
 			 ;
-		} else if (sorting == kStrings_sorting::NUMERICAL_PART) {
+		} else if (sorting == kStrings_sorting::NATURAL) {
 			stringsInfo.init (strvecClasses.get());
 			classesSorting = Permutation_create (strvecClasses.size, true);
 			stringsInfo.updateNumPart (classesSorting -> p.get());
