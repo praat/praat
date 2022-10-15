@@ -256,8 +256,6 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column, kString
 			groupLabels [irow] = Melder_dup (my rows.at [irow] -> cells [column]. string.get());   // TODO: no dup
 
 		autoStringsIndex him = StringsIndex_createFromSTRVEC (groupLabels.get(), sorting, true);
-		//if (Table_isColumnNumeric_ErrorFalse (me, column))
-		//	StringsIndex_sortNumerically (him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"No StringsIndex created from column ", column, U".");
