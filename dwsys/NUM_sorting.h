@@ -23,25 +23,6 @@
 
 #include "strings_sorting_enums.h"
 
-class DigitstringNumber {
-public:	
-	integer numberOfLeadingZeros;
-	integer numberOfLeadingSpaces;
-	double value;
-
-	integer compare (DigitstringNumber const& y) const {
-		return ( 
-			value < y.value ? - 1 : value > y.value ? 1 : 
-			numberOfLeadingZeros < y.numberOfLeadingZeros ? - 1 : numberOfLeadingZeros > y.numberOfLeadingZeros ? 1 :
-			numberOfLeadingSpaces < y.numberOfLeadingSpaces ? - 1 : numberOfLeadingSpaces > y.numberOfLeadingSpaces ? 1 :
-			0 );
-	}
-};
-
-using DigitstringNumberVEC = vector<DigitstringNumber>;
-using autoDigitstringNumberVEC = autovector<DigitstringNumber>;
-using constDigitstringNumberVEC = constvector<DigitstringNumber>;
-
 /*
 	Uses heapsort to sort the second array in parallel with the first one.
 
@@ -223,11 +204,6 @@ inline void INTVECindex_inout (INTVEC index, constSTRVEC const& v) {
 }
 
 void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting);
-
-inline void INTVECindex_inout (INTVEC index, constDigitstringNumberVEC const& v) {
-	INTVECindex2_inout<constDigitstringNumberVEC, DigitstringNumber> 
-		(index, v, [](DigitstringNumber const& x, DigitstringNumber const& y) -> bool { return x.compare(y) < 0; });
-}
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
 	autoINTVEC result = raw_INTVEC (a.size);
