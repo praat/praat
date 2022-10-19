@@ -39,60 +39,44 @@
 		3. Non-numbers sort in the asciibetical order ('Z' before 'a').
 			'A' < 'B' ... < "Z' < 'a' ... 'z' 
 	
-	<alphaPart> sorts alphabetical, <numPart> sorts numerical:
+	<alphaPart> sorts the <alpha> alphabetical, <numPart> sorts the <nums> numerical:
 	0a, 1a, 11a, 2a, 11a -> 0a, 1a, 2a, 11a, 11a
 	a, 00a, 0a -> 0a, 00a, a, 
 	00a1, 00a2, 00a11, 0b0
 */
 
-class DigitstringNumber {
-public:	
-	integer numberOfLeadingZeros;
-	integer numberOfLeadingSpaces;
-	double value;
-
-	integer compareLeadings (DigitstringNumber const& y) const {
-		return (  
-			numberOfLeadingZeros < y.numberOfLeadingZeros ? - 1 : numberOfLeadingZeros > y.numberOfLeadingZeros ? 1 :
-			numberOfLeadingSpaces < y.numberOfLeadingSpaces ? - 1 : numberOfLeadingSpaces > y.numberOfLeadingSpaces ? 1 :
-			0 );
-	}
-	integer compareValue (DigitstringNumber const& y) const {
-		return ( 
-			value < y.value ? - 1 : value > y.value ? 1 : 0 
-		);
-	}
-};
-
 typedef struct structSTRVECIndexer *STRVECIndexer;
 
-typedef struct structStringDatum *stringInfo;
+typedef struct structStringDatum *stringDatum;
 typedef struct structStringDatum StringDatum;
 
-using StringInfoVec = vector<struct structStringDatum>;
-using constStringInfoVec = constvector <struct structStringDatum>;
-using autoStringInfoVec = autovector <struct structStringDatum>;
+using StringDataVec = vector<StringDatum>;
+using constStringDataVec = constvector <StringDatum>;
+using autoStringDataVec = autovector <StringDatum>;
 
-inline void INTVECindex_inout (INTVEC index, StringInfoVec const& v);
+inline void INTVECindex_inout (INTVEC index, StringDataVec const& v);
 
-struct structStringDatum {
-	mutablestring32 alpha; // either <alphaPart> or <numPart>
-	integer length; // strlen (alpha)
-	integer alphaPosStart; // start positions of alphaPart; alphaPosEnd is always fixed at the end U'\0'
+struct structNumDatum {
 	integer numPosStart; // start of num part in alpha, else 0 if no num part
 	integer numPosDot; // numPosStart < numPosDot < numPosEnd if (breakAtDecimalPoint==true and there is a dot)
 	integer numPosEnd; // >= numPosStart if numPosStart > 0 else undefined
-	DigitstringNumber number;	// alpha [numPosStart-1..numPosEnd-1] as a number
+	integer numberOfLeadingZeros;
+	integer numberOfLeadingSpaces;
+};
+typedef struct structNumDatum NumDatum;
+struct structStringDatum {
+	mutablestring32 alpha; // either <alphaPart> or <numPart>
+	integer length; // strlen (alpha)
+	integer alphaPosStart;
 	char32 save0; // efficiency: instead of copying we mask part of alpha by putting a '\0'
 	bool breakAtDecimalPoint;
+	NumDatum number;
 	
-	bool compareNumber (stringInfo y) {
-		return number.value < y -> number.value;
-	}
-	
-	integer compareNumPart (stringInfo y) {
-		const integer xlength = ( breakAtDecimalPoint ? numPosEnd - numPosStart : numPosEnd - numPosDot );
-		const integer ylength = ( y -> breakAtDecimalPoint ? y -> numPosEnd - y -> numPosStart : y -> numPosEnd - y -> numPosDot );
+	integer compareNumPart (stringDatum y) {
+		const integer xlength = ( breakAtDecimalPoint ? number.numPosEnd - number.numPosStart :
+			number.numPosEnd - number.numPosDot );
+		const integer ylength = ( y -> breakAtDecimalPoint ? y -> number.numPosEnd - y -> number.numPosStart :
+			y -> number.numPosEnd - y -> number.numPosDot );
 		if (xlength < ylength)
 			return - 1;
 		else if (xlength > ylength)
@@ -102,9 +86,9 @@ struct structStringDatum {
 			we could simply convert both to a number and compare the size
 			or do a character by character <num> comparison
 			*/
-		char32 *p = alpha + numPosStart - 1;
-		char32 *q = y -> alpha + y -> numPosStart - 1;
-		for ( ; p <= alpha + xlength; p ++, q ++) {
+		char32 *p = alpha + number.numPosStart - 1;
+		char32 *q = y -> alpha + y -> number.numPosStart - 1;
+		for ( ; p < alpha + number.numPosEnd; p ++, q ++) {
 			if (*p < *q)
 				return - 1;
 			else if (*p > *q)
@@ -114,7 +98,7 @@ struct structStringDatum {
 			return -1;
 		else if (breakAtDecimalPoint && ! y -> breakAtDecimalPoint)
 			return 1;
-		for ( ; p < alpha + numPosEnd || q < y -> alpha + y -> numPosEnd; p ++, q ++) {
+		for ( ; p < alpha + number.numPosEnd || q < y -> alpha + y -> number.numPosEnd; p ++, q ++) {
 			if (*p < *q)
 				return - 1;
 			else if (*p > *q)
@@ -124,32 +108,38 @@ struct structStringDatum {
 			both numbers are equal
 			compare the alphaPart
 		*/
-		bool xatend = setAlphaPosStartAfterNumPosEnd ();
-		bool yatend = y -> setAlphaPosStartAfterNumPosEnd ();
-		if (xatend && ! yatend)
+		bool xNotAtEnd = setAlphaPosStartAfterNumPosEnd ();
+		bool yNotAtEnd = y -> setAlphaPosStartAfterNumPosEnd ();
+		if (xNotAtEnd && ! yNotAtEnd)
 			return - 1;
-		else if (! xatend && yatend)
+		else if (! xNotAtEnd && yNotAtEnd)
 			return 1;
-		else if (xatend && yatend)
+		else if (! xNotAtEnd && ! yNotAtEnd)
 			return 0;
 		// both are not at the end 
-		integer alpaPart =  compareAlphaPart (y);
-		if (alpaPart < 0)
+		integer alphaPart =  compareAlphaPart (y);
+		if (alphaPart < 0)
 			return -1;
-		else if (alpaPart > 0)
+		else if (alphaPart > 0)
 			return 1;
 		/*
 			<alphaPart>'s are also equal,
 			let the leading zeros, spaces decide
-		*/
-		return number.compareLeadings (y -> number);
+		*/	
+		integer compareLeadings = (  
+			number.numberOfLeadingZeros < y -> number.numberOfLeadingZeros ? - 1 : 
+			number.numberOfLeadingZeros > y -> number.numberOfLeadingZeros ? 1 :
+			number.numberOfLeadingSpaces < y -> number.numberOfLeadingSpaces ? - 1 :
+			number.numberOfLeadingSpaces > y -> number.numberOfLeadingSpaces ? 1 :
+			0 );
+		return compareLeadings;
 	}
 	
-	integer compareAlphaPart (stringInfo y) {
+	integer compareAlphaPart (stringDatum y) {
 		const char32 xalpha = alpha [alphaPosStart - 1];
 		const char32 yalpha = y -> alpha [y -> alphaPosStart - 1];
 		if (xalpha <  yalpha)
-			return -1;
+			return - 1;
 		else if (xalpha  > yalpha)
 			return 1;
 		/*
@@ -169,22 +159,41 @@ struct structStringDatum {
 		maskNumTrailer_undo ();
 		y -> maskNumTrailer_undo ();
 		// <alpha>'s are equal
-		if (numPosStart > 0 && ! (y -> numPosStart > 0))
+		if (number.numPosStart > 0 && ! (y -> number.numPosStart > 0))
 			return - 1;
-		else if (! (numPosStart > 0) && y -> numPosStart > 0)
+		else if (! (number.numPosStart > 0) && y -> number.numPosStart > 0)
 			return 1;
+		else if (! (number.numPosStart > 0) && ! (y -> number.numPosStart > 0))
+			return 0;
 		setNumPosEndAndDot ();
 		y -> setNumPosEndAndDot ();
 		return compareNumPart (y);
 	}
 	
-	integer compare (stringInfo y) {
+	integer compare (stringDatum y) {
 		const char32 xalpha = alpha [alphaPosStart - 1];
 		const char32 yalpha = y -> alpha [y -> alphaPosStart - 1];
 		// ' ' < '1..9' < 
-		const integer comparison = ( xalpha < yalpha ? - 1 : xalpha > yalpha ? 1 : xalpha == U'\0' ? 0 : 
-			(xalpha >= U'0' && xalpha <= U'9') ? compareNumPart (y) : compareAlphaPart (y));
-		return comparison;
+		if (xalpha == U'\0' && yalpha != U'\0')
+			return - 1;
+		else if (xalpha != U'\0' && yalpha == U'\0')
+			return 1;
+		else if (xalpha == U'\0' && yalpha == U'\0')
+			return 0;
+		bool xIsNum = ( xalpha >= U'0' && xalpha <= U'9' );
+		bool yIsNum = ( yalpha >= U'0' && yalpha <= U'9' );
+		if (xIsNum && ! yIsNum)
+			return - 1;
+		else if (! xIsNum && yIsNum)
+			return 1;
+		NumDatum xsave = number;
+		NumDatum ysave = y -> number;
+		integer cmp = ( (xIsNum && yIsNum) ? compareNumPart (y) : compareAlphaPart (y) );
+		number = xsave;
+		y -> number = ysave;
+		alphaPosStart = 1;
+		y -> alphaPosStart = 1;
+		return cmp;
 	}
 	
 	/*
@@ -193,7 +202,7 @@ struct structStringDatum {
 		The unmask is used to undo the nask.
 	*/
 	
-	bool compareAlpha  (stringInfo y) {
+	bool compareAlpha  (stringDatum y) {
 		maskNumTrailer ();
 		y -> maskNumTrailer();
 		bool result = Melder_cmp (alpha + alphaPosStart - 1, y -> alpha + y->alphaPosStart - 1) < 0;
@@ -203,26 +212,26 @@ struct structStringDatum {
 	}
 	
 	void maskNumTrailer () {
-		if (numPosStart > 0) {
-			save0 = alpha [numPosStart - 1 ];
-			alpha [numPosStart - 1] = U'\0';
+		if (number.numPosStart > 0) {
+			save0 = alpha [number.numPosStart - 1 ];
+			alpha [number.numPosStart - 1] = U'\0';
 		}
 	}
 		
 	void maskNumTrailer_undo () {
-		if (numPosStart > 0)
-			alpha [numPosStart - 1] = save0;
+		if (number.numPosStart > 0)
+			alpha [number.numPosStart - 1] = save0;
 	}
 	void maskAlphaTrailer () { //  save the char32 after number part and replace by U'\0'
-		if (numPosStart > 0 && numPosEnd < length) {  
-			save0 = alpha [numPosEnd]; // save position after last digit
-			alpha [numPosEnd] = U'\0'; // mark number part only
+		if (number.numPosStart > 0 && number.numPosEnd < length) {  
+			save0 = alpha [number.numPosEnd]; // save position after last digit
+			alpha [number.numPosEnd] = U'\0'; // mark number part only
 		}
 	}
 
 	void maskAlphaTrailer_undo () { // undo the masking!
-		if (numPosStart > 0 && numPosEnd < length)
-			alpha [numPosEnd] = save0; 
+		if (number.numPosStart > 0 && number.numPosEnd < length)
+			alpha [number.numPosEnd] = save0; 
 		}
 	
 	/*
@@ -243,15 +252,15 @@ struct structStringDatum {
 		while (*p != U'\0' && (*p < U'0' || *p > U'9'))
 			p ++;
 		if (*p != U'\0')
-			numPosStart = 1 + p - alpha;
+			number.numPosStart = 1 + p - alpha;
 		else
-			numPosStart = 0;
+			number.numPosStart = 0;
 	}
 		
 	void setNumPosEndAndDot () {
 		if (alphaPosStart < 0)
 			return;
-		const char32 *pstart = alpha + numPosStart - 1;
+		const char32 *pstart = alpha + number.numPosStart - 1;
 		const char32 *decimalPoint = 0, *p = pstart;
 		while (*p != U'\0') {
 			if (*p == U'.') {
@@ -271,39 +280,40 @@ struct structStringDatum {
 		}
 		if (p - decimalPoint == 1) // no decimal point at end!
 			p --;
-		numPosDot = ( (breakAtDecimalPoint || decimalPoint) ? 0 : numPosStart + decimalPoint - pstart);
+		number.numPosDot = ( (breakAtDecimalPoint || decimalPoint) ? 0 : number.numPosStart + decimalPoint - pstart);
 		const integer relPos = p - pstart - 1;
-		numPosEnd = numPosStart + relPos;
+		number.numPosEnd = number.numPosStart + relPos;
 	}
 		
 	void setNumber () {
 		setNumPosStart ();
-		if (numPosStart > 0) {
+		if (number.numPosStart > 0) {
 			setNumPosEndAndDot ();
-			char32 *pstart = alpha + numPosStart - 1;
+			char32 *pstart = alpha + number.numPosStart - 1;
 			char32 *p = pstart;
 			while (*p == U'0')
 				p ++;
-			if (p == alpha + numPosEnd)
+			if (p == alpha + number.numPosEnd)
 				p --;
 			number.numberOfLeadingZeros = p - pstart;
 			maskAlphaTrailer (); // save position after last digit and put '\0'
-			number.value = Melder_atof (p);
+			//number.value = Melder_atof (p);
 			maskAlphaTrailer_undo (); //
 			p = pstart - 1;
 			while (p >= alpha && *p == U' ')
 					p --;
 			number.numberOfLeadingSpaces = pstart - 1 - p;
-			numPosStart -= number.numberOfLeadingSpaces;
+			//number.numPosStart -= number.numberOfLeadingSpaces;
+			number.numPosStart += number.numberOfLeadingZeros;
 		}
 	}
 		
 	bool setAlphaPosStartAfterNumPosEnd () {
 		bool notAtEnd = false;
-		if (numPosStart == 0)
+		if (number.numPosStart == 0)
 			alphaPosStart = length + 1; // at \0
-		else if (numPosEnd <= length) {
-			alphaPosStart = numPosEnd + 1;
+		else if (number.numPosEnd <= length) {
+			alphaPosStart = number.numPosEnd + 1;
 			if (alphaPosStart <= length) {
 				setNumber ();
 				notAtEnd = true;
@@ -314,21 +324,21 @@ struct structStringDatum {
 	
 	bool setAlphaPosStartAtNumPosStart () {
 		bool notAtEnd = false;
-		if (numPosStart == 0)
+		if (number.numPosStart == 0)
 			alphaPosStart = length + 1; // at \0
-		else if (alphaPosStart <= numPosStart) {
-			alphaPosStart = numPosStart + number.numberOfLeadingSpaces;
+		else if (alphaPosStart <= number.numPosStart) {
+			alphaPosStart = number.numPosStart + number.numberOfLeadingSpaces;
 			notAtEnd = true;
 		}
 		return notAtEnd;
 	}
 	
 	bool isAlphaPart () {
-		return alphaPosStart > 0 && numPosStart != alphaPosStart;
+		return alphaPosStart > 0 && number.numPosStart != alphaPosStart;
 	}
 	
 	bool isNumPart () {
-		return numPosStart > 0 && numPosStart == alphaPosStart;
+		return number.numPosStart > 0 && number.numPosStart == alphaPosStart;
 	}
 	
 public:
@@ -339,17 +349,13 @@ public:
 		length = str32len (string);
 		alpha = (char32 *)_Melder_calloc (length + 1, sizeof (char32));
 		str32cpy (alpha, string); // adds the U'\0'
-		number.value = 0; 
+		setNumber();
 	}
 };
 
 struct structSTRVECIndexer {
 private:
-//	using StringInfoVec = vector<struct structStringDatum>;
-//	using constStringInfoVec = constvector <struct structStringDatum>;
-//	using autoStringInfoVec = autovector <struct structStringDatum>;
-		
-	autoStringInfoVec stringsInfoDatavector;
+	autoStringDataVec stringsInfoDatavector;
 	bool breakAtDecimalPoint = true;
 	
 	autoINTVEC strvecIndex; // index of the strvec
@@ -374,17 +380,15 @@ private:
 	}
 	
 	void init (constSTRVEC const& v,  bool breakAtDecimalPoint) {
-		stringsInfoDatavector = newvectorraw <struct structStringDatum> (v.size);
+		stringsInfoDatavector = newvectorraw <StringDatum> (v.size);
 		for (integer i = 1; i <= v.size; i ++) {
 			stringsInfoDatavector [i].init (v [i], breakAtDecimalPoint);
 		}
 	}
 	
  public:
-	 
 
-
-	autoPermutation sortSimple (constSTRVEC const& v,  bool breakAtDecimalPoint, kStrings_sorting sortingMethod) {
+	autoPermutation sortSimple (constSTRVEC const& v, bool breakAtDecimalPoint, kStrings_sorting sortingMethod) {
 		Melder_require (v.size > 0,
 			U"There should be at least one element in your list.");
 		autoPermutation sorting = Permutation_create (v.size, true);
@@ -397,7 +401,7 @@ private:
 		return sorting;
 	}
 	
-	void sortWithIndex (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
+	void sortWithIndex (constSTRVEC const& v, bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
 		Melder_require (v.size > 0,
 			U"There should be at least one element in your list.");
 		breakAtDecimalPoint = breakAtTheDecimalPoint;
@@ -414,7 +418,7 @@ private:
 		}
 	 }
 	 
-	autoStringsIndex index (constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
+	autoStringsIndex index (constSTRVEC const& v, bool breakAtTheDecimalPoint, kStrings_sorting sorting) {
 		sortWithIndex (v, breakAtTheDecimalPoint, sorting);
 		autoStringsIndex me = StringsIndex_create (v.size);
 		for (integer i = 1; i <= strvecClasses.size; i ++) {
@@ -498,9 +502,11 @@ void INTVECindex3_inout (INTVEC & index, T v, bool (*compare) (Tt x, Tt y)) {
 	}
 }
 
-inline void INTVECindex_inout (INTVEC index, StringInfoVec const& v) {
-	INTVECindex3_inout <StringInfoVec, stringInfo> (index, v, [](stringInfo x, stringInfo y) -> bool 
-	{ return x -> compare (y) < 0;});
+inline void INTVECindex_inout (INTVEC index, StringDataVec const& v) {
+	INTVECindex3_inout <StringDataVec, stringDatum> (index, v, [](stringDatum x, stringDatum y) -> bool 
+	{ 	integer cmp =  x -> compare (y);
+		trace (U"compare: '", x->alpha, U"' '", y->alpha, U"' ", cmp);
+		return cmp < 0;});
 }
 
 autoPermutation Permutation_createFromSorting (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint); 

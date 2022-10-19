@@ -13,12 +13,12 @@ example2= Create Strings from tokens: "example", "pic 5,pic05,pic 5 ,pic 5 somet
 str$# =     { "0b0 0a11 0a2 0a1",  "a  00a  0a", "a1 1b 11b b11 c2.2 c2..2 d3 .aa2 b4 b04 a1 a1",
 	... "00d 00b 00c 0a ", "4b 04b 4a 004a 1 d c 004b"}
 strn$# =  { "0a1 0a2 0a11 0b0",  "0a 00a a",  "1b 11b .aa2 a1 a1 a1 b4 b04 b11 c2.2 c2..2 d3",
-	... "00b 00c 00d 0a", "1 004a 004b 04b 4a 4b c d" }
+	... "0a 00b 00c 00d", "1 4a 004a 4b 04b 004b c d" }
 
 for ivec to size(str$#)
 	.str = Create Strings from tokens: "str", str$# [ivec], " "
 	.str$# = List all strings
-	.stri = To StringsIndex: "numerical part"
+	.stri = To StringsIndex: "natural"
 	.stris= To Strings
 	.stris$# = List all strings
 	for i to size (.str$#)
@@ -27,7 +27,7 @@ for ivec to size(str$#)
 	.strn = Create Strings from tokens: "strn", strn$# [ivec], " "
 	.strn$# = List all strings
 	selectObject: .str
-	.p = To Permutation: "numerical part"
+	.p = To Permutation: "natural"
 	selectObject: .str, .p
 	.strp = Permute strings
 	.strp$# = List all strings
