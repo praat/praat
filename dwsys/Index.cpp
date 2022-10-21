@@ -118,7 +118,7 @@ void MelderString_copyPart (MelderString *me, conststring32 source, integer firs
 autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
 	try {
 		struct structSTRVECIndexer indexer;
-		autoStringsIndex me =  indexer.index (strvec, breakAtDecimalPoint, sorting);	
+		autoStringsIndex me =  indexer.index (strvec, sorting, breakAtDecimalPoint);	
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Could not create StringsIndex from STRVEC.");

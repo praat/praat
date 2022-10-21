@@ -162,10 +162,9 @@ void INTVECindex2_inout (INTVEC & index, T v, bool (*compare) (Tt const& e1, Tt 
 				break;
 			}
 		}
-		/* H3 */
+		/* H3 start siftup */
 		integer i, j = l;
-		for (;;) {
-			/* H4 */
+		for (;;) { /* H4 */
 			i = j;
 			j *= 2;
 			if (j > r)
@@ -174,11 +173,11 @@ void INTVECindex2_inout (INTVEC & index, T v, bool (*compare) (Tt const& e1, Tt 
 				j ++; /* H5 */
 			index [i] = index [j]; /* H7 */
 		}
-		for (;;) {  /*H8' */
+		for (;;) {  /*H8' R.W. Floyd page TAOCP p. 642 */
 			j = i;
-			i = j >> 1;
+			i = j / 2;
 			/* H9' */
-			if (j == l || compare (v [k], v [index [i]])) {
+			if (j == l || compare (v [k], v [index [i]])) { // errata 3rd ed.
 				index [j] = k;
 				break;
 			}
@@ -186,24 +185,41 @@ void INTVECindex2_inout (INTVEC & index, T v, bool (*compare) (Tt const& e1, Tt 
 		}
 	}
 }
-
+/*
+	The interpretation of the index is as follows:
+	v[index[i]] <= v[index[j]] if i < j,
+	therefore if index is 2, 4, 10, ...
+	the order is: v[2] <= v[4] <= v[20] <= ...
+*/
 inline void INTVECindex_inout (INTVEC index, constINTVEC const& v) {
-	INTVECindex2_inout<constINTVEC, integer> (index, v, [](integer const& x, integer const& y) -> bool { return x < y;});
+	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy)
+	 {
+		return v [ix] < v [iy];
+	 });
 }
 
 inline void INTVECindex_inout (INTVEC index, constVEC const& v) {
-	INTVECindex2_inout<constVEC, double> (index, v, [](double const& x, double const& y) -> bool { return x < y;});
+	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy)
+	 {
+		return v [ix] < v [iy];
+	 });
 }
 
 inline void INTVECindex_inout (INTVEC index, STRVEC const& v) {
-	INTVECindex2_inout <STRVEC, conststring32> (index, v, [] (conststring32 const& x, conststring32 const& y) -> bool { return Melder_cmp (x, y) < 0;});
+	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy)
+	 {
+		return Melder_cmp (v [ix], v [iy]) < 0;
+	 });
 }
 
 inline void INTVECindex_inout (INTVEC index, constSTRVEC const& v) {
-	INTVECindex2_inout <constSTRVEC, conststring32> (index, v, [] (conststring32 const& x, conststring32 const& y) -> bool { return Melder_cmp (x, y) < 0;});
+	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy)
+	 {
+		return Melder_cmp (v [ix], v [iy]) < 0;
+	 });
 }
 
-void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v,  bool breakAtTheDecimalPoint, kStrings_sorting sorting);
+void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting, bool breakAtTheDecimalPoint);
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
 	autoINTVEC result = raw_INTVEC (a.size);
