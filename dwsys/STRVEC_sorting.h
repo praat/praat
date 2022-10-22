@@ -100,22 +100,22 @@ private:
 			we could simply convert both to a number and compare the size
 			or do a character by character <num> comparison
 			*/
-		char32 *p = alpha + number.numPosStart - 1;
-		char32 *q = y -> alpha + y -> number.numPosStart - 1;
-		for ( ; p < alpha + number.numPosEnd; p ++, q ++) {
-			if (*p < *q)
+		char32 *px = alpha + number.numPosStart - 1;
+		char32 *py = y -> alpha + y -> number.numPosStart - 1;
+		for ( ; px < alpha + number.numPosEnd; px ++, py ++) {
+			if (*px < *py)
 				return - 1;
-			else if (*p > *q)
+			else if (*px > *py)
 				return 1;
 		}
 		if (! breakAtDecimalPoint && y -> breakAtDecimalPoint)
 			return -1;
 		else if (breakAtDecimalPoint && ! y -> breakAtDecimalPoint)
 			return 1;
-		for ( ; p < alpha + number.numPosEnd || q < y -> alpha + y -> number.numPosEnd; p ++, q ++) {
-			if (*p < *q)
+		for ( ; px < alpha + number.numPosEnd || py < y -> alpha + y -> number.numPosEnd; px ++, py ++) {
+			if (*px < *py)
 				return - 1;
-			else if (*p > *q)
+			else if (*px > *py)
 				return 1;
 		}
 		/*
@@ -157,9 +157,9 @@ private:
 		y -> setNumber ();
 		maskNumTrailer ();
 		y -> maskNumTrailer ();
-		char32 *p = alpha + alphaPosStart - 1;
-		char32 *q = y -> alpha + y -> alphaPosStart - 1;
-		integer cmp = str32cmp (p, q);
+		char32 *px = alpha + alphaPosStart - 1;
+		char32 *py = y -> alpha + y -> alphaPosStart - 1;
+		integer cmp = str32cmp (px, py);
 		maskNumTrailer_undo ();
 		y -> maskNumTrailer_undo ();
 		if (cmp < 0)
@@ -184,7 +184,7 @@ private:
 	
 	void maskNumTrailer () {
 		if (number.numPosStart > 0) {
-			integer posSave = number.numPosStart - number.numberOfLeadingZeros - 1;
+			integer posSave = number.numPosStart - number.numberOfLeadingZeros - number.numberOfLeadingSpaces - 1;
 			save0 = alpha [posSave];
 			alpha [posSave] = U'\0';
 		}
@@ -192,7 +192,7 @@ private:
 		
 	void maskNumTrailer_undo () {
 		if (number.numPosStart > 0)
-			alpha [number.numPosStart - number.numberOfLeadingZeros - 1] = save0;
+			alpha [number.numPosStart - number.numberOfLeadingZeros - number.numberOfLeadingSpaces - 1] = save0;
 	}
 	
 	void maskAlphaTrailer () { //  save the char32 after number part and replace by U'\0'
@@ -294,17 +294,21 @@ private:
 public:
 	
 	integer compare (stringDatum y) {
-		const char32 xalpha = alpha [alphaPosStart - 1];
-		const char32 yalpha = y -> alpha [y -> alphaPosStart - 1];
+		char32 *px = alpha + alphaPosStart - 1;
+		char32 *py = y -> alpha  + y -> alphaPosStart - 1;
 		// ' ' < '1..9' < 
-		if (xalpha == U'\0' && yalpha != U'\0')
+		if (*px == U'\0' && *py != U'\0')
 			return - 1;
-		else if (xalpha != U'\0' && yalpha == U'\0')
+		else if (*px != U'\0' && *py == U'\0')
 			return 1;
-		else if (xalpha == U'\0' && yalpha == U'\0')
+		else if (*px == U'\0' && *py == U'\0')
 			return 0;
-		bool xIsNum = ( xalpha >= U'0' && xalpha <= U'9' );
-		bool yIsNum = ( yalpha >= U'0' && yalpha <= U'9' );
+		while (*px == U' ')
+			px ++;
+		while (*py == U' ')
+			py ++;
+		bool xIsNum = ( *px >= U'0' && *px <= U'9' );
+		bool yIsNum = ( *py >= U'0' && *py <= U'9' );
 		if (xIsNum && ! yIsNum)
 			return - 1;
 		else if (! xIsNum && yIsNum)
