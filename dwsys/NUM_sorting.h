@@ -186,6 +186,7 @@ void INTVECindex2_inout (INTVEC & index, T v, bool (*compare) (Tt const& e1, Tt 
 	}
 }
 /*
+	Precondition: index must have been initialised with (1, 2, 3, ... index.size)
 	The interpretation of the index is as follows:
 	v[index[i]] <= v[index[j]] if i < j,
 	therefore if index is 2, 4, 10, ...
@@ -222,19 +223,19 @@ inline void INTVECindex_inout (INTVEC index, constSTRVEC const& v) {
 void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting, bool breakAtTheDecimalPoint);
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
-	autoINTVEC result = raw_INTVEC (a.size);
+	autoINTVEC result = to_INTVEC (a.size);
 	INTVECindex_inout (result.get(), a);
 	return result;
 }
 
 inline autoINTVEC newINTVECindex (constINTVEC const& a) {
-	autoINTVEC result = raw_INTVEC (a.size);
+	autoINTVEC result = to_INTVEC (a.size);
 	INTVECindex_inout (result.get(), a);
 	return result;
 }
 
 inline autoINTVEC newINTVECindex (constSTRVEC const& a) {
-	autoINTVEC result = raw_INTVEC (a.size);
+	autoINTVEC result = to_INTVEC (a.size);
 	INTVECindex_inout (result.get(), a);
 	return result;
 }

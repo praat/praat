@@ -37,7 +37,7 @@
 			for numbers that have the same numerical value.
 			' 5' < ' 5 ' < '5' < '05' < '005'
 		3. Non-numbers sort in the asciibetical order ('Z' before 'a').
-			'A' < 'B' ... < "Z' < 'a' ... 'z' 
+			'A' < 'B' ... < 'Z' < 'a' ... 'z' 
 	
 	<alphaPart> sorts the <alpha> alphabetical, <numPart> sorts the <nums> numerical:
 	0a, 1a, 11a, 2a, 11a -> 0a, 1a, 2a, 11a, 11a

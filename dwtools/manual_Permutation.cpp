@@ -25,6 +25,25 @@
 void manual_Permutation_init (ManPages me);
 void manual_Permutation_init (ManPages me)
 {
+MAN_BEGIN (U"natural sort order", U"djmw", 20221023)
+NORMAL (U"Natural sort order uses the following rules to sort strings: ")
+LIST_ITEM (U"1. The space character sorts before numbers; numbers sort before non-numbers. Example: \n"
+	"' 5' < '5' < 'a'")
+LIST_ITEM (U"2. Numbers sort in numerical order; leading zeroes and spaces on numbers are ignored, except as a tie-breaker "
+	"for numbers that have the same numerical value like ' 5' < ' 5 ' < '5' < '05' < '005'")
+LIST_ITEM (U"3. Non-numbers sort in the asciibetical order ('Z' before 'a'), like "
+			"'A' < 'B' ... < 'Z' < 'a' ... 'z'") 
+ENTRY (U"##Examples#")
+NORMAL (U" 1. The alphabetically sorted 'd1', 'd10', 'd11', 'd2' in natural sort order: 'd1', 'd2', 'd10', 'd11'.")
+NORMAL (U" 2. Example from https://github.com/sourcefrog/natsort/blob/master/example-out.txt. The alphabetically "
+	"sorted list of the following 29 strings '1-02', '1-2', '1-20', '10-20', 'fred', 'jane', 'pic   7', 'pic 4 else', "
+	"'pic 5', 'pic 5 ', 'pic 5 something', 'pic 6', 'pic01', 'pic02', 'pic02000', 'pic02a', 'pic05', 'pic100', "
+	"'pic100a', 'pic120', 'pic121', 'pic2', 'pic3', 'pic4', 'tom', 'x2-g8', 'x2-y08', 'x2-y7', 'x8-y8' "
+	"will appear in natural sort order as: ")
+NORMAL (U"'1-2', '1-02', '1-20', '10-20', 'fred', 'jane', 'pic01', 'pic2', 'pic02', 'pic02a', 'pic3', 'pic4', 'pic 4 else', "
+	"'pic 5', 'pic05', 'pic 5 ', 'pic 5 something', 'pic 6', 'pic   7', 'pic100', 'pic100a', 'pic120', 'pic121', 'pic02000', "
+	"'tom', 'x2-g8', 'x2-y7', 'x2-y08', 'x8-y8'.")
+MAN_END
 
 MAN_BEGIN (U"Permutation", U"djmw", 20050721)
 INTRO (U"One of the @@types of objects@ in Praat. A Permutation object with %n elements consists of some ordering of "

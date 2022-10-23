@@ -16,7 +16,7 @@ endfor
 removeObject: stringsa, pa
 
 selectObject: strings
-pn = To Permutation: "numerical part"
+pn = To Permutation: "natural"
 plusObject: strings
 stringsn = Permute strings
 for i to size (veca#)
@@ -25,10 +25,12 @@ for i to size (veca#)
 endfor
 removeObject: stringsn, pn, strings
 
-Create Table with column names: "table", 100, { "factor", "data" }
+table = Create Table with column names: "table", 100, { "factor", "data" }
 Formula: "data", "randomGauss (0, 1)"
 Formula: "factor", "randomUniform (1,6)"
 Formula: "factor",  "veca# [self]"
+
+removeObject: table
 
 appendInfoLine: "test_Strings_and_Permutation OK"
 
