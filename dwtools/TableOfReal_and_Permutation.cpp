@@ -20,6 +20,7 @@
  djmw 20050708
 */
 
+#include "Index.h"
 #include "TableOfReal_and_Permutation.h"
 #include "TableOfReal_extensions.h"
 #include "NUM2.h"
@@ -63,7 +64,7 @@ autoTableOfReal TableOfReal_Permutation_permuteColumns (TableOfReal me, Permutat
 autoPermutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfRows, true);
-		INTVECindex (thy p.get(), my rowLabels.get());
+		INTVECindex_inout (thy p.get(), my rowLabels.get(), kStrings_sorting::ALPHABETICAL, true); // only alphabetic aphabetic
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");

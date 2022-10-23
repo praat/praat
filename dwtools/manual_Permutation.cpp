@@ -1,6 +1,6 @@
 /* manual_Permutation.cpp
  *
- * Copyright (C) 2005-2019 David Weenink
+ * Copyright (C) 2005-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,25 @@
 void manual_Permutation_init (ManPages me);
 void manual_Permutation_init (ManPages me)
 {
+MAN_BEGIN (U"natural sort order", U"djmw", 20221023)
+NORMAL (U"Natural sort order uses the following rules to sort strings: ")
+LIST_ITEM (U"1. The space character sorts before numbers; numbers sort before non-numbers. Example: \n"
+	"' 5' < '5' < 'a'")
+LIST_ITEM (U"2. Numbers sort in numerical order; leading zeroes and spaces on numbers are ignored, except as a tie-breaker "
+	"for numbers that have the same numerical value like ' 5' < ' 5 ' < '5' < '05' < '005'")
+LIST_ITEM (U"3. Non-numbers sort in the asciibetical order ('Z' before 'a'), like "
+			"'A' < 'B' ... < 'Z' < 'a' ... 'z'") 
+ENTRY (U"##Examples#")
+NORMAL (U" 1. The alphabetically sorted 'd1', 'd10', 'd11', 'd2' in natural sort order: 'd1', 'd2', 'd10', 'd11'.")
+NORMAL (U" 2. Example from https://github.com/sourcefrog/natsort/blob/master/example-out.txt. The alphabetically "
+	"sorted list of the following 29 strings '1-02', '1-2', '1-20', '10-20', 'fred', 'jane', 'pic   7', 'pic 4 else', "
+	"'pic 5', 'pic 5 ', 'pic 5 something', 'pic 6', 'pic01', 'pic02', 'pic02000', 'pic02a', 'pic05', 'pic100', "
+	"'pic100a', 'pic120', 'pic121', 'pic2', 'pic3', 'pic4', 'tom', 'x2-g8', 'x2-y08', 'x2-y7', 'x8-y8' "
+	"will appear in natural sort order as: ")
+NORMAL (U"'1-2', '1-02', '1-20', '10-20', 'fred', 'jane', 'pic01', 'pic2', 'pic02', 'pic02a', 'pic3', 'pic4', 'pic 4 else', "
+	"'pic 5', 'pic05', 'pic 5 ', 'pic 5 something', 'pic 6', 'pic   7', 'pic100', 'pic100a', 'pic120', 'pic121', 'pic02000', "
+	"'tom', 'x2-g8', 'x2-y7', 'x2-y08', 'x8-y8'.")
+MAN_END
 
 MAN_BEGIN (U"Permutation", U"djmw", 20050721)
 INTRO (U"One of the @@types of objects@ in Praat. A Permutation object with %n elements consists of some ordering of "
@@ -180,6 +199,21 @@ NORMAL (U"2. With ##Index range# = [0,0], ##Block size# = 3, ##Permute within bl
 NORMAL (U"3. With the same options as 2 but ##No doublets# is %on, the previously given outcome is forbidden because "
 	"the last element of the first block (6) and the first element of the next block (9) are equal modulo 3 (the "
 	"blocksize). A valid outcome might then be ((5,4,6),(8,9,7),(3,1,2)).")
+MAN_END
+
+MAN_BEGIN (U"Permutation: Permute part...", U"djmw", 20220929)
+INTRO (U"A command to create a new @Permutation which is a copy of the first selected Permutation but with a part "
+	"that has been permuted according to a specification given by the second one.")
+ENTRY (U"Settings")
+TAG (U"##Start index#")
+DEFINITION (U"the position in the first selected Permutation where the modification by the second one should start.")
+ENTRY (U"Examples")
+NORMAL (U"Suppose the first permutation p1 is (1,2,3,4,5,6,7,8,9,10,11) and the second one p2 is (2,3,5,1,4).")
+NORMAL (U"1. With ##Start index# set to 1, the newly generated permutation p3 will be ((2,3,5,1,4), 6,7,8,9,10,11). "
+	"The new p3 will have the same number of elements as p1. The permutation p2 which has 5 elements starts to operate at "
+	"the first element and will stop after the fifth element. The first five elements in p3 will therefore equal "
+	"the permuted first five elements of p1, while the last 6 elements of p3 will be a copy of those in p1.") 
+NORMAL (U"2. With ##Start index# set to 6, the newly generated permutation will be (1,2,3,4,5, (7,8,10,6,9), 11).") 
 MAN_END
 
 MAN_BEGIN (U"Permutation: Swap blocks...", U"djmw", 20110105)
@@ -401,7 +435,7 @@ CODE (U"\"hallo\"")
 NORMAL (U"We see that the permutation always keeps identical strings together.")
 MAN_END
 
-MAN_BEGIN (U"Index: Extract part...", U"djmw", 20050725)
+MAN_BEGIN (U"Index: Extract part...", U"djmw", 20221015)
 INTRO (U"Creates a new @Index by copying a part of selected Index.")
 ENTRY (U"Example")
 NORMAL (U"Given the following Index:")
@@ -421,7 +455,7 @@ CODE (U"1 (number of columns) \"\" (no column name)")
 CODE (U"\"dag allemaal\"")
 CODE (U"\"hallo\"")
 CODE (U"\"tot morgen\"")
-CODE (U"6 (number of elements)")
+CODE (U"2 (number of elements)")
 CODE (U"2")
 CODE (U"1")
 NORMAL (U"Note that all classes stay intact and may have zero references like for example the \"tot morgen\" class. ")

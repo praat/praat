@@ -2465,31 +2465,37 @@ DO
 	QUERY_ONE_FOR_STRING_END
 }
 
-FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get item index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get class index from item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	QUERY_ONE_FOR_INTEGER (Index)
+	QUERY_ONE_FOR_INTEGER (StringsIndex)
 		const integer result = Index_getClassIndexFromItemIndex (me, itemIndex);
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
-FORM (QUERY_ONE_FOR_INTEGER__Index_getIndex, U"Index: Get item index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__Index_getIndex, U"StringsIndex: Get item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	QUERY_ONE_FOR_INTEGER (Index)
+	QUERY_ONE_FOR_INTEGER (StringsIndex)
 		const integer result = Index_getClassIndexFromItemIndex (me, itemIndex);
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
-FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex, U"StringsIndex: Get class index from calss label", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex, U"StringsIndex: Get class index from class label", nullptr) {
 	WORD (klasLabel, U"Class label", U"label")
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (StringsIndex)
 		const integer result = StringsIndex_getClassIndexFromClassLabel (me, klasLabel);
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
+}
+
+DIRECT (QUERY_ONE_FOR_STRING_ARRAY__StringsIndex_listAllClasses) {
+	QUERY_ONE_FOR_STRING_ARRAY (StringsIndex)
+		autoSTRVEC result = StringsIndex_listAllClasses (me);
+	QUERY_ONE_FOR_STRING_ARRAY_END
 }
 
 FORM (CONVERT_EACH_TO_ONE__Index_extractPart, U"Index: Extract part", U"Index: Extract part...") {
@@ -3518,7 +3524,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_to_StringsIndex_column, U"Table: To StringsInde
 DO
 	CONVERT_EACH_TO_ONE (Table)
 		const integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		autoStringsIndex result = Table_to_StringsIndex_column (me, icol);
+		autoStringsIndex result = Table_to_StringsIndex_column (me, icol, kStrings_sorting::NATURAL);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", columnLabel)
 }
 
@@ -4892,6 +4898,14 @@ DIRECT (COMBINE_ALL_TO_ONE__Permutations_multiply) {
 	COMBINE_ALL_TO_ONE_END (U"mul_", list.size);
 }
 
+FORM (CONVERT_TWO_TO_ONE__Permutation_permutePartByOther, U"Permutation: Permute part by other", U"Permutation: Permute part...") {
+	NATURAL (startPos, U"Start index", U"1")
+	OK
+DO
+	CONVERT_TWO_TO_ONE (Permutation)
+		autoPermutation result = Permutation_permutePartByOther (me, startPos, you);
+	CONVERT_TWO_TO_ONE_END (U"")
+}
 DIRECT (MODIFY_Permutations_next) {
 	MODIFY_EACH (Permutation)
 		Permutation_next_inplace (me);
@@ -6833,12 +6847,21 @@ DIRECT (CONVERT_TWO_TO_ONE__Strings_to_EditDistanceTable) {
 	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
-	BOOLEAN (sort, U"Sort", true)
+FORM (CONVERT_EACH_TO_ONE__Strings_to_StringsIndex, U"Strings: To StringsIndex", nullptr) {
+	OPTIONMENU_ENUM (kStrings_sorting, sorting, U"Sorting method", kStrings_sorting::DEFAULT)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Strings)
-		autoPermutation result = Strings_to_Permutation (me, sort);
+		autoStringsIndex result = Strings_to_StringsIndex (me, sorting);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
+	OPTIONMENU_ENUM (kStrings_sorting, sortingMethod, U"Sorting", kStrings_sorting::DEFAULT)
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Strings)
+		autoPermutation result = Strings_to_Permutation (me, sortingMethod);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -8625,15 +8648,6 @@ static void praat_Eigen_draw_init (ClassInfo klas) {
 			GRAPHICS_EACH__Eigen_drawEigenvector);
 }
 
-static void praat_Index_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Get number of classes", nullptr, 0,
-		QUERY_ONE_FOR_INTEGER__Index_getNumberOfClasses);
-	praat_addAction1 (klas, 1, U"To Permutation...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Index_to_Permutation);
-	praat_addAction1 (klas, 1, U"Extract part...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Index_extractPart);
-}
-
 static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas);
 static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Draw -", nullptr, 0, nullptr);
@@ -9530,20 +9544,28 @@ void praat_David_init () {
 	praat_addAction1 (classElectroglottogram, 0, U"To Sound", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Electroglottogram_to_Sound);
 	
-	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP__Index_help);
-	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, 
-			QUERY_ONE_FOR_STRING__StringsIndex_getClassLabelFromClassIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 0, 
-		QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get label...", nullptr, 0, 
-			QUERY_ONE_FOR_STRING__StringsIndex_getItemLabelFromItemIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get class index from item index...", nullptr, 0,
-		QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex);
-	praat_addAction1 (classIndex, 1, U"Get index...", nullptr, 0, 
-		QUERY_ONE_FOR_INTEGER__Index_getIndex);
+	praat_addAction1 (classStringsIndex, 0, U"Query -", nullptr, 0, nullptr);
+		praat_addAction1 (classStringsIndex, 1, U"Get number of classes", nullptr, 1,
+				QUERY_ONE_FOR_INTEGER__Index_getNumberOfClasses);
+		praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 1, 
+				QUERY_ONE_FOR_STRING__StringsIndex_getClassLabelFromClassIndex);
+		praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 1, 
+				QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex);
+		praat_addAction1 (classStringsIndex, 1, U"Get item label...", nullptr, 1, 
+				QUERY_ONE_FOR_STRING__StringsIndex_getItemLabelFromItemIndex);
+		praat_addAction1 (classStringsIndex, 1, U"Get class index from item index...", nullptr, 1,
+				QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex);
+		praat_addAction1 (classStringsIndex, 1, U"Get index...", nullptr, 1, 
+				QUERY_ONE_FOR_INTEGER__Index_getIndex);
+		praat_addAction1 (classStringsIndex, 1, U"List all classes", nullptr, 1,
+				QUERY_ONE_FOR_STRING_ARRAY__StringsIndex_listAllClasses);
 	praat_addAction1 (classStringsIndex, 1, U"To Strings", nullptr, 0,
 			CONVERT_EACH_TO_ONE__StringsIndex_to_Strings);
+	praat_addAction1 (classStringsIndex, 1, U"To Permutation...", nullptr, 0, 
+			CONVERT_EACH_TO_ONE__Index_to_Permutation);
+	praat_addAction1 (classStringsIndex, 1, U"Extract part...", nullptr, 0, 
+			CONVERT_EACH_TO_ONE__Index_extractPart);
 
 	praat_addAction1 (classEigen, 0, U"Eigen help", nullptr, 0,
 			HELP__Eigen_help);
@@ -9984,6 +10006,8 @@ void praat_David_init () {
 			nullptr, 0, CONVERT_EACH_TO_ONE__Permutation_invert);
 	praat_addAction1 (classPermutation, 0, U"Multiply",
 			nullptr, 0, COMBINE_ALL_TO_ONE__Permutations_multiply);
+	praat_addAction1 (classPermutation, 2, U"Permute part...",
+			nullptr, 0, CONVERT_TWO_TO_ONE__Permutation_permutePartByOther);
 
 	praat_addAction1 (classPitch, 2, U"To DTW...", U"To PointProcess",
 			GuiMenu_HIDDEN, CONVERT_TWO_TO_ONE__Pitches_to_DTW);
@@ -10278,7 +10302,8 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Strings_to_Permutation);
 	praat_addAction1 (classStrings, 2, U"To EditDistanceTable", U"To Distributions", 0, 
 			CONVERT_TWO_TO_ONE__Strings_to_EditDistanceTable);
-
+	praat_addAction1 (classStrings, 0, U"To StringsIndex...", U"To Permutation...", GuiMenu_HIDDEN, 		
+			CONVERT_EACH_TO_ONE__Strings_to_StringsIndex);
 	praat_addAction1 (classSVD, 0, U"SVD help", nullptr, 0, 
 			HELP__SVD_help);
 	praat_addAction1 (classSVD, 0, U"Query -", nullptr, 0, nullptr);
