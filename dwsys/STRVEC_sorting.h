@@ -20,6 +20,7 @@
 
 #include "Index.h"
 #include "NUM2.h"
+#include "NUM_sorting.h"
 #include "Permutation.h"
 #include "Strings_.h"
 
@@ -45,19 +46,15 @@
 	00a1, 00a2, 00a11, 0b0
 */
 
-typedef struct structSTRVECIndexer *STRVECIndexer;
+//typedef struct structSTRVECIndexer *STRVECIndexer;
 
-typedef struct structStringDatum *stringDatum;
-typedef struct structStringDatum StringDatum;
-
-using StringDataVec = vector<StringDatum>;
-using constStringDataVec = constvector <StringDatum>;
-using autoStringDataVec = autovector <StringDatum>;
-
-inline void INTVECindex_inout (INTVEC index, StringDataVec const& v);
+//typedef struct structStringDatum *stringDatum;
+//typedef struct structStringDatum StringDatum;
 
 
-struct structStringDatum {
+
+class StringDatum {
+private:
 	
 	struct structNumDatum { // for easy saving and restoring number data
 		integer numPosStart; // start of num part in alpha, else 0 if no num part
@@ -76,21 +73,19 @@ struct structStringDatum {
 	bool breakAtDecimalPoint;
 	NumDatum number;
 	
-private:
-	
-	integer compareLeadings (stringDatum y) {
-		return (number.numberOfLeadingZeros < y ->  number.numberOfLeadingZeros ? - 1 : 
-				number.numberOfLeadingZeros > y -> number.numberOfLeadingZeros ? 1 :
-				number.numberOfLeadingSpaces > y -> number.numberOfLeadingSpaces ? - 1 :
-				number.numberOfLeadingSpaces < y -> number.numberOfLeadingSpaces ? 1 :
+	integer compareLeadings (StringDatum & y) {
+		return (number.numberOfLeadingZeros < y.  number.numberOfLeadingZeros ? - 1 : 
+				number.numberOfLeadingZeros > y. number.numberOfLeadingZeros ? 1 :
+				number.numberOfLeadingSpaces > y. number.numberOfLeadingSpaces ? - 1 :
+				number.numberOfLeadingSpaces < y. number.numberOfLeadingSpaces ? 1 :
 				0 );
 	}
 	
-	integer compareNumPart (stringDatum y) {
+	integer compareNumPart (StringDatum & y) {
 		const integer xlength = ( breakAtDecimalPoint ? number.numPosEnd - number.numPosStart :
 			number.numPosEnd - number.numPosDot );
-		const integer ylength = ( y -> breakAtDecimalPoint ? y -> number.numPosEnd - y -> number.numPosStart :
-			y -> number.numPosEnd - y -> number.numPosDot );
+		const integer ylength = ( y. breakAtDecimalPoint ? y. number.numPosEnd - y. number.numPosStart :
+			y. number.numPosEnd - y. number.numPosDot );
 		if (xlength < ylength)
 			return - 1;
 		else if (xlength > ylength)
@@ -101,18 +96,18 @@ private:
 			or do a character by character <num> comparison
 			*/
 		char32 *px = alpha + number.numPosStart - 1;
-		char32 *py = y -> alpha + y -> number.numPosStart - 1;
+		char32 *py = y. alpha + y. number.numPosStart - 1;
 		for ( ; px < alpha + number.numPosEnd; px ++, py ++) {
 			if (*px < *py)
 				return - 1;
 			else if (*px > *py)
 				return 1;
 		}
-		if (! breakAtDecimalPoint && y -> breakAtDecimalPoint)
+		if (! breakAtDecimalPoint && y. breakAtDecimalPoint)
 			return -1;
-		else if (breakAtDecimalPoint && ! y -> breakAtDecimalPoint)
+		else if (breakAtDecimalPoint && ! y. breakAtDecimalPoint)
 			return 1;
-		for ( ; px < alpha + number.numPosEnd || py < y -> alpha + y -> number.numPosEnd; px ++, py ++) {
+		for ( ; px < alpha + number.numPosEnd || py < y . alpha + y. number.numPosEnd; px ++, py ++) {
 			if (*px < *py)
 				return - 1;
 			else if (*px > *py)
@@ -123,7 +118,7 @@ private:
 			compare the alphaPart
 		*/
 		bool xNotAtEnd = setAlphaPosStartAfterNumPosEnd ();
-		bool yNotAtEnd = y -> setAlphaPosStartAfterNumPosEnd ();
+		bool yNotAtEnd = y. setAlphaPosStartAfterNumPosEnd ();
 		if (xNotAtEnd && ! yNotAtEnd)
 			return 1;
 		else if (! xNotAtEnd && yNotAtEnd)
@@ -143,9 +138,9 @@ private:
 		return compareLeadings (y);
 	}
 	
-	integer compareAlphaPart (stringDatum y) {
+	integer compareAlphaPart (StringDatum & y) {
 		const char32 xalpha = alpha [alphaPosStart - 1];
-		const char32 yalpha = y -> alpha [y -> alphaPosStart - 1];
+		const char32 yalpha = y. alpha [y. alphaPosStart - 1];
 		if (xalpha <  yalpha)
 			return - 1;
 		else if (xalpha  > yalpha)
@@ -154,24 +149,24 @@ private:
 			compare the <alphas> of the <alphaPart>
 		*/
 		setNumber ();
-		y -> setNumber ();
+		y. setNumber ();
 		maskNumTrailer ();
-		y -> maskNumTrailer ();
+		y. maskNumTrailer ();
 		char32 *px = alpha + alphaPosStart - 1;
-		char32 *py = y -> alpha + y -> alphaPosStart - 1;
+		char32 *py = y. alpha + y. alphaPosStart - 1;
 		integer cmp = str32cmp (px, py);
 		maskNumTrailer_undo ();
-		y -> maskNumTrailer_undo ();
+		y. maskNumTrailer_undo ();
 		if (cmp < 0)
 			return -1;
 		else if (cmp > 0)
 			return 1;
 		// <alpha>'s are equal
-		if (number.numPosStart > 0 && ! (y -> number.numPosStart > 0))
+		if (number.numPosStart > 0 && ! (y. number.numPosStart > 0))
 			return 1;
-		else if (! (number.numPosStart > 0) && y -> number.numPosStart > 0)
+		else if (! (number.numPosStart > 0) && y. number.numPosStart > 0)
 			return - 1;
-		else if (! (number.numPosStart > 0) && ! (y -> number.numPosStart > 0))
+		else if (! (number.numPosStart > 0) && ! (y. number.numPosStart > 0))
 			return 0;
 		return compareNumPart (y);
 	}
@@ -293,9 +288,28 @@ private:
 
 public:
 	
-	integer compare (stringDatum y) {
+	StringDatum () {}
+	
+	StringDatum (conststring32 string, bool breakAtDecimalPoint) {
+		this -> breakAtDecimalPoint = breakAtDecimalPoint;
+		alphaPosStart = 1;
+		length = str32len (string);
+		alpha = (char32 *)_Melder_calloc (length + 1, sizeof (char32));
+		str32cpy (alpha, string); // adds the U'\0'
+	}
+	
+	~StringDatum () {
+		Melder_free (alpha);
+		trace (U"StringDatum: destructor");
+	}
+	
+	conststring32 getAlpha () {
+		return alpha;
+	}
+		
+	integer compare (StringDatum & y) {
 		char32 *px = alpha + alphaPosStart - 1;
-		char32 *py = y -> alpha  + y -> alphaPosStart - 1;
+		char32 *py = y. alpha  + y. alphaPosStart - 1;
 		// ' ' < '1..9' < 
 		if (*px == U'\0' && *py != U'\0')
 			return - 1;
@@ -314,15 +328,15 @@ public:
 		else if (! xIsNum && yIsNum)
 			return 1;
 		NumDatum xsave = number;
-		NumDatum ysave = y -> number;
+		NumDatum ysave = y. number;
 		integer cmp = ( (xIsNum && yIsNum) ? compareNumPart (y) : compareAlphaPart (y) );
 		number = xsave;
-		y -> number = ysave;
+		y. number = ysave;
 		alphaPosStart = 1;
-		y -> alphaPosStart = 1;
+		y. alphaPosStart = 1;
 		return cmp;
 	}
-			
+	
 	void init (conststring32 string, bool breakAtTheDecimalPoint) {
 		breakAtDecimalPoint = breakAtTheDecimalPoint;
 		alphaPosStart = 1;
@@ -333,20 +347,29 @@ public:
 	}
 };
 
-struct structSTRVECIndexer {
+
+using StringDataVec = vector<StringDatum>;
+using constStringDataVec = constvector <StringDatum>;
+using autoStringDataVec = autovector <StringDatum>;
+
+inline void INTVECindex_inout (INTVEC index, StringDataVec const& v);
+
+class STRVECIndexer {
 private:
 	autoStringDataVec stringsInfoDatavector;
-	bool breakAtDecimalPoint = true;
-	
 	autoINTVEC strvecIndex; // index of the strvec
 	autoSTRVEC strvecClasses;  // the unique items in the STRVEC
 	autoPermutation strvecPermutation; // keeps track of the individual item position.
 	autoPermutation classesSorting; // keeps track of the sorting of 'strvecClasses'
-	
-	void init (constSTRVEC const& v,  bool breakAtDecimalPoint) {
+	bool breakAtDecimalPoint = true;
+	kStrings_sorting sorting;
+		
+	void init (constSTRVEC const& v) {
 		stringsInfoDatavector = newvectorraw <StringDatum> (v.size);
 		for (integer i = 1; i <= v.size; i ++) {
+			/* TODO: this creates a memory leak. */
 			stringsInfoDatavector [i].init (v [i], breakAtDecimalPoint);
+			//stringsInfoDatavector [i] = StringDatum (v [i], breakAtDecimalPoint); // call descructor immediately
 		}
 	}
 		
@@ -371,37 +394,41 @@ private:
 	}
 	
  public:
+	 
+	STRVECIndexer () {};
+	
+	STRVECIndexer (kStrings_sorting sorting,  bool breakAtDecimalPoint)
+		: sorting (sorting), breakAtDecimalPoint (breakAtDecimalPoint) {}
 
-	autoPermutation sortSimple (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
+	autoPermutation sortSimple (constSTRVEC const& strvec) {
 		Melder_require (strvec.size > 0,
 			U"There should be at least one element in your list.");
 		autoPermutation p = Permutation_create (strvec.size, true);
 		if (sorting == kStrings_sorting::ALPHABETICAL) {
 			 INTVECindex_inout (p -> p.get(), strvec);
 		} else if (sorting == kStrings_sorting::NATURAL) {
-			init (strvec, breakAtDecimalPoint);
+			init (strvec);
 			INTVECindex_inout (p -> p.get(), stringsInfoDatavector.get());
 		}
 		return p;
 	}
 	
-	void sortClasses (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtTheDecimalPoint) {
+	void sortClasses (constSTRVEC const& strvec) {
 		Melder_require (strvec.size > 0,
 			U"There should be at least one element in your list.");
-		breakAtDecimalPoint = breakAtTheDecimalPoint;
 		createAlphabeticalIndex (strvec);
 		if (sorting == kStrings_sorting::ALPHABETICAL) {
 			 ;
 		} else if (sorting == kStrings_sorting::NATURAL) {
-			classesSorting = sortSimple (strvecClasses.get(), sorting, breakAtDecimalPoint); 
+			classesSorting = sortSimple (strvecClasses.get()); 
 			Permutation_permuteSTRVEC_inout (classesSorting.get(), strvecClasses);
 			for (integer i = 1; i <= strvec.size; i ++)
 				strvecIndex [i] = Permutation_getIndexAtValue (classesSorting.get(), strvecIndex [i]);
 		}
 	 }
 	 
-	autoStringsIndex index (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtTheDecimalPoint) {
-		sortClasses (strvec, sorting, breakAtTheDecimalPoint);
+	autoStringsIndex index (constSTRVEC const& strvec) {
+		sortClasses (strvec);
 		autoStringsIndex me = StringsIndex_create (strvec.size);
 		for (integer i = 1; i <= strvecClasses.size; i ++) {
 			conststring32 classi = strvecClasses [i].get();
@@ -440,9 +467,9 @@ static void test_index () {
 inline void INTVECindex_inout (INTVEC index, StringDataVec const& v) {
 	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy) 
 	{ 
-		StringDatum *vx = & v [ix], *vy = & v [iy];
-		integer cmp = vx -> compare (vy);
-		trace (U"compare: '", vx -> alpha, U"' ", (cmp < 0 ? U"<" : cmp == 0 ? U"==" : U">"), U" '", vy -> alpha, U"' ", ix, U" ", iy);
+		integer cmp = v [ix]. compare (v [iy]);
+		trace (U"compare: '", v [ix].getAlpha(), U"' ", (cmp < 0 ? U"<" : cmp == 0 ? U"==" : U">"), U" '",
+			   v [iy].getAlpha(), U"' ", ix, U" ", iy);
 		return cmp < 0;
 	});
 }

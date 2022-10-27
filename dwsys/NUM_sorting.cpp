@@ -88,18 +88,18 @@ autoINTMAT sortRows_INTMAT (constINTMAT mat, integer icol) { // TODO test me
 	}
 }
 
-void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting, bool breakAtTheDecimalPoint) {
+void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting, bool breakAtDecimalPoint) {
 	Melder_require (target.size == v.size,
 		U"The dimensions should be equal.");
-	struct structSTRVECIndexer indexer;
-	autoPermutation p = indexer.sortSimple (v, sorting, breakAtTheDecimalPoint);
+	STRVECIndexer indexer (sorting, breakAtDecimalPoint);
+	autoPermutation p = indexer.sortSimple (v);
 	target  <<=  p -> p.get();
 }
 
 autoPermutation Permutation_createFromSorting (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
 	try {
-		struct structSTRVECIndexer indexer;
-		autoPermutation me =  indexer.sortSimple (strvec, sorting, breakAtDecimalPoint);	
+		STRVECIndexer indexer (sorting, breakAtDecimalPoint);
+		autoPermutation me =  indexer.sortSimple (strvec);	
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Could not create Permutation from STRVEC.");
