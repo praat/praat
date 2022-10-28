@@ -46,13 +46,6 @@
 	00a1, 00a2, 00a11, 0b0
 */
 
-//typedef struct structSTRVECIndexer *STRVECIndexer;
-
-//typedef struct structStringDatum *stringDatum;
-//typedef struct structStringDatum StringDatum;
-
-
-
 class StringDatum {
 private:
 	
@@ -66,7 +59,6 @@ private:
 	};
 	typedef struct structNumDatum NumDatum;
 
-	mutablestring32 alpha; // either <alphaPart> or <numPart>
 	integer length; // strlen (alpha)
 	integer alphaPosStart;
 	char32 save0; // efficiency: instead of copying we mask part of alpha by putting a '\0'
@@ -287,11 +279,12 @@ private:
 	}
 
 public:
+	mutablestring32 alpha; // either <alphaPart> or <numPart>
 	
 	StringDatum () {}
 	
-	StringDatum (conststring32 string, bool breakAtDecimalPoint) {
-		this -> breakAtDecimalPoint = breakAtDecimalPoint;
+	StringDatum (conststring32 string, bool breakAtTheDecimalPoint) {
+		this -> breakAtDecimalPoint = breakAtTheDecimalPoint;
 		alphaPosStart = 1;
 		length = str32len (string);
 		alpha = (char32 *)_Melder_calloc (length + 1, sizeof (char32));
@@ -369,7 +362,7 @@ private:
 		for (integer i = 1; i <= v.size; i ++) {
 			/* TODO: this creates a memory leak. */
 			stringsInfoDatavector [i].init (v [i], breakAtDecimalPoint);
-			//stringsInfoDatavector [i] = StringDatum (v [i], breakAtDecimalPoint); // call descructor immediately
+			//stringsInfoDatavector [i] = StringDatum (v [i], breakAtDecimalPoint); // calls descructor immediately
 		}
 	}
 		
@@ -400,6 +393,13 @@ private:
 	STRVECIndexer (kStrings_sorting sorting,  bool breakAtDecimalPoint)
 		: sorting (sorting), breakAtDecimalPoint (breakAtDecimalPoint) {}
 
+	~STRVECIndexer () {
+		for (integer i = 1; i <= stringsInfoDatavector.size; i ++) {
+			Melder_free (stringsInfoDatavector [i]. alpha);
+		}
+		trace (U"STRVECIndexer destructor");
+	}
+	
 	autoPermutation sortSimple (constSTRVEC const& strvec) {
 		Melder_require (strvec.size > 0,
 			U"There should be at least one element in your list.");
