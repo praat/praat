@@ -26,10 +26,12 @@
 
 /*
 	Sort strings that may have numeric substrings:
-	string    := <alphaPart> | <numPart>
-	alphaPart := <alphas> | <alphas><numPart>
-	numPart   := <nums> | <nums><alphaPart>
-
+	string    	:= <alphaPart> | <numPart>;
+	<alphaPart> := <alphas> | <alphas><numPart>;
+	<numPart>   := <nums> | <nums><alphaPart>;
+	<nums>      := <spaces>[0-9]{1,n}(.[0-9]{1,n}); (...) if ! breakAtDecimalPoint
+	<alphas>	:= ! <nums>;
+	
 		Natural Order uses the following rule to sort strings:
 
 		1. The space character sorts before numbers; numbers sort before non-numbers.
@@ -66,10 +68,10 @@ private:
 	NumDatum number;
 	
 	integer compareLeadings (StringDatum & y) {
-		return (number.numberOfLeadingZeros < y.  number.numberOfLeadingZeros ? - 1 : 
-				number.numberOfLeadingZeros > y. number.numberOfLeadingZeros ? 1 :
-				number.numberOfLeadingSpaces > y. number.numberOfLeadingSpaces ? - 1 :
-				number.numberOfLeadingSpaces < y. number.numberOfLeadingSpaces ? 1 :
+		return (number.numberOfLeadingZeros < y.number.numberOfLeadingZeros ? - 1 : 
+				number.numberOfLeadingZeros > y.number.numberOfLeadingZeros ? 1 :
+				number.numberOfLeadingSpaces > y.number.numberOfLeadingSpaces ? - 1 :
+				number.numberOfLeadingSpaces < y.number.numberOfLeadingSpaces ? 1 :
 				0 );
 	}
 	
@@ -360,9 +362,7 @@ private:
 	void init (constSTRVEC const& v) {
 		stringsInfoDatavector = newvectorraw <StringDatum> (v.size);
 		for (integer i = 1; i <= v.size; i ++) {
-			/* TODO: this creates a memory leak. */
 			stringsInfoDatavector [i].init (v [i], breakAtDecimalPoint);
-			//stringsInfoDatavector [i] = StringDatum (v [i], breakAtDecimalPoint); // calls descructor immediately
 		}
 	}
 		
@@ -440,30 +440,6 @@ private:
 	 }
 };
 
-/*
-static void test_index () {
-	const integer size = 1000;
-	autoPermutation p = Permutation_create (size, true);
-	autoSTRVEC s (size);
-	char32 word [] { U"abc" };
-	for (integer irep = 1; irep <= 100; irep ++) {
-		for (integer i = 1; i <= size; i ++) {
-			char32 word [] { U"abc" };
-			word [0] = char32 (NUMrandomInteger (U'a', U'z'));
-			word [1] = char32 (NUMrandomInteger (U'a', U'z'));
-			s [i] = Melder_dup (word);
-		}
-		INTVECindex_inout (p -> p.get(), s.get());
-		for (integer i = 2; i <= size; i ++) {
-			conststring32 x = s [p -> p [i - 1]].get();
-			conststring32 y = s [p -> p [i]].get();
-			const integer cmp = Melder_cmp (x, y);
-			if (cmp > 0)
-				Melder_throw (x, U" > ", y);
-		}
-	}
-}
-*/
 inline void INTVECindex_inout (INTVEC index, StringDataVec const& v) {
 	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy) 
 	{ 
