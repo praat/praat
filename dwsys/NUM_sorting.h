@@ -117,79 +117,12 @@ void NUMsortTogether (vector<T1> a, vector<T2> b) {
 void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool descending); // TODO template
 /* Sort a together with iv1  and iv2 */
 
-template <class T, typename Tt>
-void INTVECindex2_inout (INTVEC & index, T v, bool (*compare) (Tt const& e1, Tt const& e2)) {
-	Melder_assert (v.size == index.size);
-	to_INTVEC_out (index);
-	if (v.size < 2)
-		return;   /* Already sorted. */
-	if (v.size == 2) {
-		if (compare (v [2], v [1])) {
-			index [1] = 2;
-			index [2] = 1;
-		}
-		return;
-	}
-	
-	if (v.size <= 12) {
-		for (integer i = 1; i < v.size; i ++) {
-			integer imin = i;
-			Tt min = v [index [imin]];
-			for (integer j = i + 1; j <= v.size; j ++) {
-				if (compare (v [index [j]], min)) {
-					imin = j;
-					min = v [index [j]];
-				}
-			}
-			std::swap (index [imin], index [i]);
-		}
-		return;
-	}
-	/* H1 */
-	integer l = v.size / 2 + 1;
-	integer r = v.size;
-	for (;;) { /* H2 */
-		integer k;
-		if (l > 1) {
-			l --;
-			k = index [l];
-		} else { /* l == 1 */
-			k = index [r];
-			index [r] = index [1];
-			r --;
-			if (r == 1) {
-				index [1] = k;
-				break;
-			}
-		}
-		/* H3 start siftup */
-		integer i, j = l;
-		for (;;) { /* H4 */
-			i = j;
-			j *= 2;
-			if (j > r)
-				break;
-			if (j < r && compare (v [index [j]], v [index [j + 1]]))
-				j ++; /* H5 */
-			index [i] = index [j]; /* H7 */
-		}
-		for (;;) {  /*H8' R.W. Floyd page TAOCP p. 642 */
-			j = i;
-			i = j / 2;
-			/* H9' */
-			if (j == l || compare (v [k], v [index [i]])) { // errata 3rd ed.
-				index [j] = k;
-				break;
-			}
-			index [j] = index [i];
-		}
-	}
-}
+
 /*
 	Precondition: index must have been initialised with (1, 2, 3, ... index.size)
 	The interpretation of the index is as follows:
 	v[index[i]] <= v[index[j]] if i < j,
-	therefore if index is 2, 4, 10, ...
+	therefore if index [i] is 2, 4, 10, ...
 	the order is: v[2] <= v[4] <= v[20] <= ...
 */
 inline void INTVECindex_inout (INTVEC index, constINTVEC const& v) {
