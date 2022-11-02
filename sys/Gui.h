@@ -978,8 +978,7 @@ using GuiText_ChangedCallback = MelderCallback <void, structThing /* boss */, Gu
 	typedef char * history_data;
 #endif
 
-typedef struct _history_entry_s history_entry;
-struct _history_entry_s {
+struct history_entry {
 	history_entry *prev, *next;
 	integer first, last;
 	history_data text;

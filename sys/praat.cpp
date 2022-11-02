@@ -2304,7 +2304,8 @@ void praat_run () {
 						2. Any console output (i.e. output to stdout and stderr) will appear
 						   immediately after the `C:\Users\Me\myFolder>` prompt.
 						3. When Praat finishes, the Console will show no new prompt, because
-						   it has already shown a prompt (too early).
+						   it has already shown a prompt (too early). A new prompt will appear
+						   only once you type the Enter key.
 
 						The most important problem to repair is 3, because otherwise it will look
 						as if Praat has not finished. So in Chunk 2 we fake an Enter.
