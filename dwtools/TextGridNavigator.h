@@ -2,7 +2,7 @@
 #define _TextGridNavigator_h_
 /* TextGridNavigator.h
  *
- * Copyright (C) 2020-2021 David Weenink
+ * Copyright (C) 2020-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,9 @@
 	If another tier of the TextGrid contains syntactic labels we can construct a new navigation context for this tier and 
 	combine it with the previous context to search for items that also match the syntactic context, etc.
 */
+
+autoTextGridNavigator TextGridNavigator_createSimple (double xmin, double xmax, integer tierNumber,
+	constSTRVEC const& topicLabels); 
 
 autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain);
 

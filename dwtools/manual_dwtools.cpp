@@ -5147,7 +5147,8 @@ SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Esposito 2006)\n"
 MAN_END
 
 MAN_BEGIN (U"Table: Box plots where...", U"djmw", 20140509)
-INTRO (U"A command to draw @@box plot@s from the data in a column of the selected @Table object.")
+INTRO (U"A command to draw a @@box plot@s for each factor from the data in other column(s) of the selected @Table object, "
+	"where the factors will be sorted in @@natural sort order@.")
 ENTRY (U"Example")
 NORMAL (U"To draw separate box plots for the male, female and children F0 for the @@Peterson & Barney (1952)@ data: ")
 CODE (U"Create formant table (Peterson & Barney 1952)")

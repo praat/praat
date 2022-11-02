@@ -2,7 +2,7 @@
 #define _Strings_extensions_h_
 /* Strings_extensions.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 */
 
 #include "Collection.h"
+#include "Index.h"
 #include "Strings_.h"
 #include "Permutation.h"
 #include "Index.h"
@@ -50,16 +51,16 @@ autoStrings Strings_createFromSTRVEC (constSTRVEC const& strings);
 
 autoStrings Strings_extractPart (Strings me, integer start, integer end);
 
-autoStringsIndex Strings_to_StringsIndex (Strings me);
+autoStringsIndex Strings_to_StringsIndex (Strings me, kStrings_sorting sorting);
 
 autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes);
 /* Construct the index with strings in classes, index [i] = 0 when my strings [i] doesn't occur in classes */
 
-autoStringsIndex Table_to_StringsIndex_column (Table me, integer column);
+autoStringsIndex Table_to_StringsIndex_column (Table me, integer column, kStrings_sorting sorting);
 
 autoStrings StringsIndex_to_Strings (StringsIndex me);
 
-autoPermutation Strings_to_Permutation (Strings me, bool sort);
+autoPermutation Strings_to_Permutation (Strings me, kStrings_sorting sort);
 
 autoStrings Strings_Permutation_permuteStrings (Strings me, Permutation thee);
 

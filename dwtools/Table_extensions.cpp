@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2020 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1997-2022 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3451,7 +3451,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		const integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
 		autoVEC data = raw_VEC (numberOfData);
-		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
+		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn, kStrings_sorting::NATURAL);
 		const integer numberOfLevels = levels -> classes->size;
 		
 		Melder_require (numberOfLevels > 1, 
@@ -3639,7 +3639,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 			U"Invalid group column number.");
 		const integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
-		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
+		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn, kStrings_sorting::NATURAL);
 		// copy data from Table
 		autoVEC data = raw_VEC (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
@@ -3728,13 +3728,10 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Melder_require (factorColumnB > 0 && factorColumnB <= my numberOfColumns && factorColumnB != column && factorColumnA != factorColumnB,
 			U"Invalid B group column number.");
 
-		const char32 *label_A = my columnHeaders [factorColumnA]. label.get();
-		const char32 *label_B = my columnHeaders [factorColumnB]. label.get();
-
 		const integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
-		autoStringsIndex levelsA = Table_to_StringsIndex_column (me, factorColumnA);
-		autoStringsIndex levelsB = Table_to_StringsIndex_column (me, factorColumnB);
+		autoStringsIndex levelsA = Table_to_StringsIndex_column (me, factorColumnA, kStrings_sorting::NATURAL);
+		autoStringsIndex levelsB = Table_to_StringsIndex_column (me, factorColumnB, kStrings_sorting::NATURAL);
 		/*
 			Copy data from Table
 		*/
@@ -3744,6 +3741,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		const integer numberOfLevelsA = levelsA -> classes -> size;
 		const integer numberOfLevelsB = levelsB -> classes -> size;
 		
+
+		conststring32 label_A = my columnHeaders [factorColumnA]. label.get();
+		conststring32 label_B = my columnHeaders [factorColumnB]. label.get();
 		Melder_require (numberOfLevelsA > 1,
 			U"There should be at least two levels in \"", label_A, U"\".");
 		Melder_require (numberOfLevelsB > 1,
@@ -4124,7 +4124,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 			return;
 		Table_numericize_Assert (me, dataColumn);
 		const integer numberOfData = my rows.size;
-		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn);
+		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn, kStrings_sorting::NATURAL);
 		const integer numberOfLevels = si -> classes->size;
 		if (ymin == ymax) {
 			ymax = Table_getMaximum (me, dataColumn);
@@ -4169,7 +4169,7 @@ void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
 		const integer numberOfData = my rows.size;
-		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn);
+		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn, kStrings_sorting::NATURAL);
 		const integer numberOfLevels = si -> classes->size;
 		if (ymin == ymax) {
 			ymin = 1e308, ymax = - ymin;

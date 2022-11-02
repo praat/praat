@@ -2,7 +2,7 @@
 #define _Index_h_
 /* Index.h
  *
- * Copyright (C) 2005-2020 David Weenink
+ * Copyright (C) 2005-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,11 @@
  */
 
 #include "Collection.h"
+#include "NUM2.h"
+#include "Strings_.h"
 
 #include "Index_def.h"
+
 
 /*
 	An Index is a summary of an array of strings.
@@ -41,12 +44,18 @@ integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex);
 
 autoStringsIndex StringsIndex_create (integer numberOfItems);
 
+autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint);
+
 int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, conststring32 classLabel);
 
 conststring32 StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer classNumber);
 
 conststring32 StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer itemNumber);
 
+autoSTRVEC StringsIndex_listAllClasses ( StringsIndex me);
+
 integer StringsIndex_countItems (StringsIndex me, integer iclas);
+
+void StringsIndex_sortNumerically (StringsIndex me);
 
 #endif /* _Index_h_ */

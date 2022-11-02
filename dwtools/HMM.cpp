@@ -313,7 +313,7 @@ autoHMMObservationSequence Strings_to_HMMObservationSequence (Strings me) {
 autoStringsIndex HMMObservationSequence_to_StringsIndex (HMMObservationSequence me) {
 	try {
 		autoStrings s = HMMObservationSequence_to_Strings (me);
-		autoStringsIndex thee = Strings_to_StringsIndex (s.get());
+		autoStringsIndex thee = Strings_to_StringsIndex (s.get(), kStrings_sorting::NATURAL);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no StringsIndex created.");
@@ -1669,7 +1669,7 @@ autoTableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int pr
 
 autoTableOfReal Strings_to_TableOfReal_transitions (Strings me, int probabilities) {
 	try {
-		autoStringsIndex him = Strings_to_StringsIndex (me);
+		autoStringsIndex him = Strings_to_StringsIndex (me, kStrings_sorting::ALPHABETICAL);
 		autoTableOfReal thee = StringsIndex_to_TableOfReal_transitions (him.get(), probabilities);
 		return thee;
 	} catch (MelderError) {
