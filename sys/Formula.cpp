@@ -161,7 +161,7 @@ enum { NO_SYMBOL_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_,
 		ZERO_VEC_, ZERO_MAT_,
 		LINEAR_VEC_, LINEAR_MAT_, TO_VEC_, FROM_TO_VEC_, FROM_TO_BY_VEC_, FROM_TO_COUNT_VEC_, BETWEEN_BY_VEC_, BETWEEN_COUNT_VEC_,
-		SORT_VEC_, SHUFFLE_VEC_,
+		SORT_VEC_, SORT_STRVEC_, SHUFFLE_VEC_, SHUFFLE_STRVEC_,
 		RANDOM_UNIFORM_VEC_, RANDOM_UNIFORM_MAT_,
 		RANDOM_INTEGER_VEC_, RANDOM_INTEGER_MAT_,
 		RANDOM_GAUSS_VEC_, RANDOM_GAUSS_MAT_,
@@ -298,7 +298,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed",
 	U"zero#", U"zero##",
 	U"linear#", U"linear##", U"to#", U"from_to#", U"from_to_by#", U"from_to_count#", U"between_by#", U"between_count#",
-	U"sort#", U"shuffle#",
+	U"sort#", U"sort$#", U"shuffle#", U"shuffle$#",
 	U"randomUniform#", U"randomUniform##",
 	U"randomInteger#", U"randomInteger##",
 	U"randomGauss#", U"randomGauss##",
@@ -4534,6 +4534,28 @@ static void do_between_count_VEC () {
 	autoVEC result = between_count_VEC (from->number, to->number, Melder_iround (count->number));
 	pushNumericVector (result.move());
 }
+static void do_sort_VEC () {
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	Melder_require (narg->number == 1,
+		U"The function \"sort#\" requires one argument, namely a vector.");
+	const Stackel vec = pop;
+	Melder_require (vec->which == Stackel_NUMERIC_VECTOR,
+		U"The argument of the function \"sort#\" should be a numeric vector, not ", vec->whichText(), U".");
+	autoVEC result = sort_VEC (vec->numericVector);
+	pushNumericVector (result.move());
+}
+static void do_sort_STRVEC () {
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	Melder_require (narg->number == 1,
+		U"The function \"sort$#\" requires one argument, namely a string array.");
+	const Stackel strvec = pop;
+	Melder_require (strvec->which == Stackel_STRING_ARRAY,
+		U"The argument of the function \"sort$#\" should be a string array, not ", strvec->whichText(), U".");
+	autoSTRVEC result = sort_STRVEC (strvec->stringArray);
+	pushStringVector (result.move());
+}
 static void do_shuffle_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -4545,16 +4567,16 @@ static void do_shuffle_VEC () {
 	autoVEC result = shuffle_VEC (vec->numericVector);
 	pushNumericVector (result.move());
 }
-static void do_sort_VEC () {
+static void do_shuffle_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"sort#\" requires one argument, namely a vector.");
-	const Stackel vec = pop;
-	Melder_require (vec->which == Stackel_NUMERIC_VECTOR,
-		U"The argument of the function \"sort#\" should be a numeric vector, not ", vec->whichText(), U".");
-	autoVEC result = sort_VEC (vec->numericVector);
-	pushNumericVector (result.move());
+		U"The function \"shuffle$#\" requires one argument, namely a string array.");
+	const Stackel strvec = pop;
+	Melder_require (strvec->which == Stackel_STRING_ARRAY,
+		U"The argument of the function \"shuffle$#\" should be a string array, not ", strvec->whichText(), U".");
+	autoSTRVEC result = shuffle_STRVEC (strvec->stringArray);
+	pushStringVector (result.move());
 }
 static void do_peaks_MAT () {
 	const Stackel narg = pop;
@@ -7461,7 +7483,9 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case BETWEEN_BY_VEC_: { do_between_by_VEC ();
 } break; case BETWEEN_COUNT_VEC_: { do_between_count_VEC ();
 } break; case SORT_VEC_: { do_sort_VEC ();
+} break; case SORT_STRVEC_: { do_sort_STRVEC ();
 } break; case SHUFFLE_VEC_: { do_shuffle_VEC ();
+} break; case SHUFFLE_STRVEC_: { do_shuffle_STRVEC ();
 } break; case RANDOM_UNIFORM_VEC_: { do_function_VECdd_d (NUMrandomUniform);
 } break; case RANDOM_UNIFORM_MAT_: { do_function_MATdd_d (NUMrandomUniform);
 } break; case RANDOM_INTEGER_VEC_: { do_function_VECll_l (NUMrandomInteger);

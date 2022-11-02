@@ -3272,7 +3272,7 @@ EQUATION (U"%v__%j_ = \\su__%i=1_^M  %u__%i_ %m__%ij_   (%j = 1..%N)")
 NORMAL (U"where %M is the number of rows of %m, which has to be equal to the dimension of %u, "
 	"and %N is the number of columns of %m.")
 ENTRY (U"8. String vectors")
-NORMAL (U"You can create string vactors in the following ways:")
+NORMAL (U"You can create string vectors in the following ways:")
 CODE (U"a\\$ \\#  = { \"hello\", \"goodbye\" }")
 NORMAL (U"creates a vector with two strings, which you can access as $$a\\$ \\#  [1]$, which is \"hello\", and $$a\\$ \\#  [2]$, which is \"goodbye\".")
 CODE (U"a\\$ \\#  = empty\\$ \\#  (10)")
