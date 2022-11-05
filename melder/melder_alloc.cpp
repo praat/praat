@@ -243,40 +243,6 @@ int64 Melder_movingReallocationsCount () {
 	return totalNumberOfMovingReallocs;
 }
 
-int Melder_cmp (conststring32 string1, conststring32 string2) {
-	if (! string1) string1 = U"";
-	if (! string2) string2 = U"";
-	return str32cmp (string1, string2);
-}
-
-int Melder_cmp_caseInsensitive (conststring32 string1, conststring32 string2) {
-	if (! string1) string1 = U"";
-	if (! string2) string2 = U"";
-	return str32cmp_caseInsensitive (string1, string2);
-}
-
-int Melder_ncmp (conststring32 string1, conststring32 string2, integer n) {
-	if (! string1) string1 = U"";
-	if (! string2) string2 = U"";
-	return str32ncmp (string1, string2, n);
-}
-
-int Melder_ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) {
-	if (! string1) string1 = U"";
-	if (! string2) string2 = U"";
-	return str32ncmp_caseInsensitive (string1, string2, n);
-}
-
-bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststring32 string2) {
-	if (! string1) string1 = U"";
-	if (! string2) string2 = U"";
-	if (string1 [0] == U'\0')
-		return string2 [0] == U'\0';
-	if (Melder_toLowerCase (string1 [0]) != Melder_toLowerCase (string2 [0]))
-		return false;
-	return str32equ (string1 + 1, string2 + 1);
-}
-
 #pragma mark - Generic memory functions for vectors and matrices
 
 namespace MelderArray { // reopen
