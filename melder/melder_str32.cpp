@@ -19,11 +19,14 @@
 #include "melder.h"
 
 int str32cmp_numberAware (conststring32 string1_in, conststring32 string2_in) noexcept {
+	auto isZero = [] (const char32 kar) -> bool {
+		return Melder_isDecimalNumber (kar) && (kar & 0xF) == 0;
+	};
 	/*
 		First round.
 	*/
 	conststring32 pstring1 = string1_in, pstring2 = string2_in;
-	integer totalNumberOfLeadingZeroes1 = 0, totalNumberOfLeadingZeroes2 = 0;
+	integer totalLeadingZeroes1 = 0, totalLeadingZeroes2 = 0;
 	for (;;) {
 		const char32 kar1 = *pstring1, kar2 = *pstring2;
 		if (kar1 == U'\0') {
@@ -39,12 +42,12 @@ int str32cmp_numberAware (conststring32 string1_in, conststring32 string2_in) no
 			return kar1 < kar2 ? -1 : +1;
 		if (isDigit1) {
 			integer leadingZeroes1 = 0, leadingZeroes2 = 0;
-			while (pstring1 [leadingZeroes1] == U'0')
+			while (isZero (pstring1 [leadingZeroes1]))
 				leadingZeroes1 ++;
-			while (pstring2 [leadingZeroes2] == U'0')
+			while (isZero (pstring2 [leadingZeroes2]))
 				leadingZeroes2 ++;
-			totalNumberOfLeadingZeroes1 += leadingZeroes1;
-			totalNumberOfLeadingZeroes2 += leadingZeroes2;
+			totalLeadingZeroes1 += leadingZeroes1;
+			totalLeadingZeroes2 += leadingZeroes2;
 			pstring1 += leadingZeroes1;
 			pstring2 += leadingZeroes2;
 			integer digits1 = 0, digits2 = 0;
@@ -84,9 +87,9 @@ int str32cmp_numberAware (conststring32 string1_in, conststring32 string2_in) no
 	/*
 		Second round.
 	*/
-	if (totalNumberOfLeadingZeroes1 < totalNumberOfLeadingZeroes2)
+	if (totalLeadingZeroes1 < totalLeadingZeroes2)
 		return -1;
-	if (totalNumberOfLeadingZeroes1 > totalNumberOfLeadingZeroes2)
+	if (totalLeadingZeroes1 > totalLeadingZeroes2)
 		return +1;
 	/*
 		The two strings are equivalent,
@@ -107,12 +110,10 @@ int str32cmp_numberAware (conststring32 string1_in, conststring32 string2_in) no
 		Melder_assert (isDigit1 == isDigit2);
 		if (isDigit1) {
 			integer leadingZeroes1 = 0, leadingZeroes2 = 0;
-			while (pstring1 [leadingZeroes1] == U'0')
+			while (isZero (pstring1 [leadingZeroes1]))
 				leadingZeroes1 ++;
-			while (pstring2 [leadingZeroes2] == U'0')
+			while (isZero (pstring2 [leadingZeroes2]))
 				leadingZeroes2 ++;
-			totalNumberOfLeadingZeroes1 += leadingZeroes1;
-			totalNumberOfLeadingZeroes2 += leadingZeroes2;
 			pstring1 += leadingZeroes1;
 			pstring2 += leadingZeroes2;
 			integer digits1 = 0, digits2 = 0;
