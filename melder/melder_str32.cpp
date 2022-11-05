@@ -18,11 +18,19 @@
 
 #include "melder.h"
 
-int str32cmp_numberAware (conststring32 string1, conststring32 string2) noexcept {
+int str32cmp_numberAware (conststring32 string1_in, conststring32 string2_in) noexcept {
+	/*
+		First round.
+	*/
+	conststring32 pstring1 = string1_in, pstring2 = string2_in;
+	integer totalNumberOfLeadingZeroes1 = 0, totalNumberOfLeadingZeroes2 = 0;
 	for (;;) {
-		const char32 kar1 = string1 [0], kar2 = string2 [0];
-		if (kar1 == U'\0')
-			return kar2 == U'\0' ? 0 : -1;
+		const char32 kar1 = *pstring1, kar2 = *pstring2;
+		if (kar1 == U'\0') {
+			if (kar2 != U'\0')
+				return -1;
+			break;   // the two strings are "equivalent", i.e. equal except perhaps with respect to leading zeroes
+		}
 		if (kar2 == U'\0')
 			return +1;
 		const bool isDigit1 = Melder_isDecimalNumber (kar1);
@@ -31,16 +39,18 @@ int str32cmp_numberAware (conststring32 string1, conststring32 string2) noexcept
 			return kar1 < kar2 ? -1 : +1;
 		if (isDigit1) {
 			integer leadingZeroes1 = 0, leadingZeroes2 = 0;
-			while (string1 [leadingZeroes1] == U'0')
+			while (pstring1 [leadingZeroes1] == U'0')
 				leadingZeroes1 ++;
-			while (string2 [leadingZeroes2] == U'0')
+			while (pstring2 [leadingZeroes2] == U'0')
 				leadingZeroes2 ++;
-			string1 += leadingZeroes1;
-			string2 += leadingZeroes2;
+			totalNumberOfLeadingZeroes1 += leadingZeroes1;
+			totalNumberOfLeadingZeroes2 += leadingZeroes2;
+			pstring1 += leadingZeroes1;
+			pstring2 += leadingZeroes2;
 			integer digits1 = 0, digits2 = 0;
-			while (Melder_isDecimalNumber (string1 [digits1]))
+			while (Melder_isDecimalNumber (pstring1 [digits1]))
 				digits1 ++;
-			while (Melder_isDecimalNumber (string2 [digits2]))
+			while (Melder_isDecimalNumber (pstring2 [digits2]))
 				digits2 ++;
 			if (digits1 < digits2)
 				return -1;
@@ -50,8 +60,8 @@ int str32cmp_numberAware (conststring32 string1, conststring32 string2) noexcept
 				The two digit spans are now equally long.
 			*/
 			for (integer idigit = 0; idigit < digits1; idigit ++) {
-				const char32 digit1 = string1 [idigit];
-				const char32 digit2 = string2 [idigit];
+				const char32 digit1 = pstring1 [idigit];
+				const char32 digit2 = pstring2 [idigit];
 				if (digit1 < digit2)
 					return -1;
 				if (digit1 > digit2)
@@ -60,19 +70,67 @@ int str32cmp_numberAware (conststring32 string1, conststring32 string2) noexcept
 			/*
 				The two digit sequences are the same.
 			*/
-			if (leadingZeroes1 < leadingZeroes2)
-				return -1;
-			if (leadingZeroes1 > leadingZeroes2)
-				return +1;
-			string1 += digits1;
-			string2 += digits1;
+			pstring1 += digits1;
+			pstring2 += digits1;
 		} else {
 			if (kar1 < kar2)
 				return -1;
 			if (kar1 > kar2)
 				return +1;
-			string1 ++;
-			string2 ++;
+			pstring1 ++;
+			pstring2 ++;
+		}
+	}
+	/*
+		Second round.
+	*/
+	if (totalNumberOfLeadingZeroes1 < totalNumberOfLeadingZeroes2)
+		return -1;
+	if (totalNumberOfLeadingZeroes1 > totalNumberOfLeadingZeroes2)
+		return +1;
+	/*
+		The two strings are equivalent,
+		and even have the same total number of leading zeroes.
+		Cycle again from left to right,
+		now returning as soon as the local numbers of leading zeroes are different.
+	*/
+	pstring1 = string1_in;
+	pstring2 = string2_in;
+	for (;;) {
+		const char32 kar1 = *pstring1, kar2 = *pstring2;
+		if (kar1 == U'\0') {
+			Melder_assert (kar2 == U'\0');
+			return 0;   // the two strings are identical (not just equivalent)
+		}
+		const bool isDigit1 = Melder_isDecimalNumber (kar1);
+		const bool isDigit2 = Melder_isDecimalNumber (kar2);
+		Melder_assert (isDigit1 == isDigit2);
+		if (isDigit1) {
+			integer leadingZeroes1 = 0, leadingZeroes2 = 0;
+			while (pstring1 [leadingZeroes1] == U'0')
+				leadingZeroes1 ++;
+			while (pstring2 [leadingZeroes2] == U'0')
+				leadingZeroes2 ++;
+			totalNumberOfLeadingZeroes1 += leadingZeroes1;
+			totalNumberOfLeadingZeroes2 += leadingZeroes2;
+			pstring1 += leadingZeroes1;
+			pstring2 += leadingZeroes2;
+			integer digits1 = 0, digits2 = 0;
+			while (Melder_isDecimalNumber (pstring1 [digits1]))
+				digits1 ++;
+			while (Melder_isDecimalNumber (pstring2 [digits2]))
+				digits2 ++;
+			Melder_assert (digits1 == digits2);
+			if (leadingZeroes1 < leadingZeroes2)
+				return -1;
+			if (leadingZeroes1 > leadingZeroes2)
+				return +1;
+			pstring1 += digits1;
+			pstring2 += digits1;
+		} else {
+			Melder_assert (kar1 == kar2);
+			pstring1 ++;
+			pstring2 ++;
 		}
 	}
 }
