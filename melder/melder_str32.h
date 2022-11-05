@@ -2,7 +2,7 @@
 #define _melder_str32_h_
 /* melder_str32.h
  *
- * Copyright (C) 1992-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +83,8 @@ inline int str32cmp (conststring32 string1, conststring32 string2) noexcept {
 			return 0;
 	}
 }
+int str32cmp_numberAware (conststring32 string1, conststring32 string2) noexcept;
+
 inline int str32cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept {
 	for (;; ++ string1, ++ string2) {
 		int32 diff = (int32) Melder_toLowerCase (*string1) - (int32) Melder_toLowerCase (*string2);

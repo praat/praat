@@ -1,6 +1,6 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ enum { NO_SYMBOL_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_,
 		ZERO_VEC_, ZERO_MAT_,
 		LINEAR_VEC_, LINEAR_MAT_, TO_VEC_, FROM_TO_VEC_, FROM_TO_BY_VEC_, FROM_TO_COUNT_VEC_, BETWEEN_BY_VEC_, BETWEEN_COUNT_VEC_,
-		SORT_VEC_, SORT_STRVEC_, SHUFFLE_VEC_, SHUFFLE_STRVEC_,
+		SORT_VEC_, SORT_STRVEC_, SORT_NUMBER_AWARE_STRVEC_, SHUFFLE_VEC_, SHUFFLE_STRVEC_,
 		RANDOM_UNIFORM_VEC_, RANDOM_UNIFORM_MAT_,
 		RANDOM_INTEGER_VEC_, RANDOM_INTEGER_MAT_,
 		RANDOM_GAUSS_VEC_, RANDOM_GAUSS_MAT_,
@@ -171,8 +171,9 @@ enum { NO_SYMBOL_,
 		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, COMBINE_VEC_, EDITOR_,
 		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
 		HASH_, HEX_STR_, UNHEX_STR_,
-		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_, FILE_NAMES_STRVEC_, FOLDER_NAMES_STRVEC_, SPLIT_BY_WHITESPACE_STRVEC_,
-	#define HIGH_FUNCTION_N  SPLIT_BY_WHITESPACE_STRVEC_
+		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_, FILE_NAMES_STRVEC_, FOLDER_NAMES_STRVEC_,
+		SPLIT_BY_WHITESPACE_STRVEC_, SPLIT_BY_STRVEC_,
+	#define HIGH_FUNCTION_N  SPLIT_BY_STRVEC_
 
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
@@ -298,7 +299,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed",
 	U"zero#", U"zero##",
 	U"linear#", U"linear##", U"to#", U"from_to#", U"from_to_by#", U"from_to_count#", U"between_by#", U"between_count#",
-	U"sort#", U"sort$#", U"shuffle#", U"shuffle$#",
+	U"sort#", U"sort$#", U"sort_numberAware$#", U"shuffle#", U"shuffle$#",
 	U"randomUniform#", U"randomUniform##",
 	U"randomInteger#", U"randomInteger##",
 	U"randomGauss#", U"randomGauss##",
@@ -307,7 +308,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"size", U"numberOfRows", U"numberOfColumns", U"combine#", U"editor",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
 	U"hash", U"hex$", U"unhex$",
-	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#",
+	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#", U"splitBy$#",
 
 	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
 	U"createFolder", U"createDirectory", U"setWorkingDirectory", U"variableExists",
@@ -4556,6 +4557,17 @@ static void do_sort_STRVEC () {
 	autoSTRVEC result = sort_STRVEC (strvec->stringArray);
 	pushStringVector (result.move());
 }
+static void do_sort_numberAware_STRVEC () {
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	Melder_require (narg->number == 1,
+		U"The function \"sort_numberAware$#\" requires one argument, namely a string array.");
+	const Stackel strvec = pop;
+	Melder_require (strvec->which == Stackel_STRING_ARRAY,
+		U"The argument of the function \"sort_numberAware$#\" should be a string array, not ", strvec->whichText(), U".");
+	autoSTRVEC result = sort_numberAware_STRVEC (strvec->stringArray);
+	pushStringVector (result.move());
+}
 static void do_shuffle_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -4856,11 +4868,24 @@ static void do_splitByWhitespace_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg -> which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"splitByWhitespace$#\" requires one argument, namely the file pattern.");
+		U"The function \"splitByWhitespace$#\" requires one argument, namely the string to split.");
 	const Stackel string = pop;
 	Melder_require (string->which == Stackel_STRING,
 		U"The argument of the function \"splitByWhitespace$#\" should be a string, not ", string->whichText(), U".");
 	autoSTRVEC result = splitByWhitespace_STRVEC (string->getString());
+	pushStringVector (result.move());
+}
+static void do_splitBy_STRVEC () {
+	const Stackel narg = pop;
+	Melder_assert (narg -> which == Stackel_NUMBER);
+	Melder_require (narg->number == 2,
+		U"The function \"splitBy$#\" requires two arguments, namely the the string to split and the separator.");
+	const Stackel separator = pop, string = pop;
+	Melder_require (string->which == Stackel_STRING,
+		U"The first argument of the function \"splitBy$#\" should be a string, not ", string->whichText(), U".");
+	Melder_require (separator->which == Stackel_STRING,
+		U"The second argument of the function \"splitBy$#\" (the separator) should be a string, not ", string->whichText(), U".");
+	autoSTRVEC result = splitBy_STRVEC (string->getString(), separator->getString());
 	pushStringVector (result.move());
 }
 static void do_numericVectorElement () {
@@ -7484,6 +7509,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case BETWEEN_COUNT_VEC_: { do_between_count_VEC ();
 } break; case SORT_VEC_: { do_sort_VEC ();
 } break; case SORT_STRVEC_: { do_sort_STRVEC ();
+} break; case SORT_NUMBER_AWARE_STRVEC_: { do_sort_numberAware_STRVEC ();
 } break; case SHUFFLE_VEC_: { do_shuffle_VEC ();
 } break; case SHUFFLE_STRVEC_: { do_shuffle_STRVEC ();
 } break; case RANDOM_UNIFORM_VEC_: { do_function_VECdd_d (NUMrandomUniform);
@@ -7512,6 +7538,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case FILE_NAMES_STRVEC_: { do_fileNames_STRVEC ();
 } break; case FOLDER_NAMES_STRVEC_: { do_folderNames_STRVEC ();
 } break; case SPLIT_BY_WHITESPACE_STRVEC_: { do_splitByWhitespace_STRVEC ();
+} break; case SPLIT_BY_STRVEC_: { do_splitBy_STRVEC ();
 /********** String functions: **********/
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();

@@ -1,6 +1,6 @@
 /* melder_sort.cpp
  *
- * Copyright (C) 1992-2011,2015,2017-2021 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,19 @@ void sort_STRVEC_inout (STRVEC const& array) noexcept {
 autoSTRVEC sort_STRVEC (STRVEC const& x) {
 	autoSTRVEC result = copy_STRVEC (x);
 	sort_STRVEC_inout (result.get());
+	return result;
+}
+
+void sort_numberAware_STRVEC_inout (STRVEC const& array) noexcept {
+	std::sort (array.begin(), array.end(),
+		[] (conststring32 first, conststring32 last) {
+			return str32cmp_numberAware (first, last) < 0;
+		}
+	);
+}
+autoSTRVEC sort_numberAware_STRVEC (STRVEC const& x) {
+	autoSTRVEC result = copy_STRVEC (x);
+	sort_numberAware_STRVEC_inout (result.get());
 	return result;
 }
 
