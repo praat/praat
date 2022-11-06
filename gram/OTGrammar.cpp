@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2021 Paul Boersma
+ * Copyright (C) 1997-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1727,7 +1727,8 @@ void OTGrammar_learnOne (OTGrammar me, conststring32 input, conststring32 adultO
 		/*
 			Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
 		*/
-		if (str32equ (winner -> output.get(), adultOutput)) return;   // as far as we know, the grammar is already correct: don't update rankings
+		if (str32equ (winner -> output.get(), adultOutput))
+			return;   // as far as we know, the grammar is already correct: don't update rankings
 
 		/*
 			Find (perhaps the learner's interpretation of) the adult output in the learner's own tableau
@@ -1825,7 +1826,8 @@ static integer PairDistribution_getNumberOfAttestedOutputs (PairDistribution me,
 	for (integer ipair = 1; ipair <= my pairs.size; ipair ++) {
 		PairProbability pair = my pairs.at [ipair];
 		if (str32equ (pair -> string1.get(), input) && pair -> weight > 0.0) {
-			if (out_attestedOutput) *out_attestedOutput = pair -> string2.get();
+			if (out_attestedOutput)
+				*out_attestedOutput = pair -> string2.get();
 			result ++;
 		}
 	}

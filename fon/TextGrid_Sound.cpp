@@ -1,6 +1,6 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,26 +103,27 @@ static double IntervalTier_boundaryTimeClosestTo (IntervalTier me, double tmin, 
 	integer intervalNumber = IntervalTier_timeToLowIndex (me, tmax);
 	if (intervalNumber != 0) {
 		TextInterval interval = my intervals.at [intervalNumber];
-		if (interval -> xmin > tmin && interval -> xmin < tmax) {
+		if (interval -> xmin > tmin && interval -> xmin < tmax)
 			return interval -> xmin;
-		}
 	}
 	return 0.5 * (tmin + tmax);
 }
 
 static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier boss) {
 	IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (me, U"");
-	if (my intervals.size < 2) return;
+	if (my intervals.size < 2)
+		return;
 	TextInterval firstInterval = my intervals.at [1];
-	if (Melder_equ (firstInterval -> text.get(), U"")) {
+	if (Melder_equ (firstInterval -> text.get(), U""))
 		IntervalTier_removeLeftBoundary (me, 2);
-	}
-	if (my intervals.size < 2) return;
+	if (my intervals.size < 2)
+		return;
 	TextInterval lastInterval = my intervals.at [my intervals.size];
 	if (Melder_equ (lastInterval -> text.get(), U"")) {
 		IntervalTier_removeLeftBoundary (me, my intervals.size);
 	}
-	if (my intervals.size < 3) return;
+	if (my intervals.size < 3)
+		return;
 	for (integer iinterval = my intervals.size - 1; iinterval >= 2; iinterval --) {
 		TextInterval interval = my intervals.at [iinterval];
 		if (Melder_equ (interval -> text.get(), U"")) {
@@ -354,20 +355,20 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	Graphics_setWindow (g, tmin, tmax, -1.0 - 0.5 * numberOfTiers, 1.0);
 
 	/*
-	 * Draw sound in upper part.
-	 */
+		Draw sound in upper part.
+	*/
 	integer first, last;
 	if (sound && Sampled_getWindowSamples (sound, tmin, tmax, & first, & last) > 1) {
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_line (g, tmin, 0.0, tmax, 0.0);
-		Graphics_setLineType (g, Graphics_DRAWN);      
+		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_function (g, & sound -> z [1] [0], first, last,
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 
 	/*
-	 * Draw labels in lower part.
-	 */
+		Draw labels in lower part.
+	*/
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setPercentSignIsItalic (g, useTextStyles);
 	Graphics_setNumberSignIsBold (g, useTextStyles);
@@ -385,12 +386,13 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 				double intmin = interval -> xmin, intmax = interval -> xmax;
 				if (intmin < tmin) intmin = tmin;
 				if (intmax > tmax) intmax = tmax;
-				if (intmin >= intmax) continue;
+				if (intmin >= intmax)
+					continue;
 				if (showBoundaries && intmin > tmin && intmin < tmax) {
 					Graphics_setLineType (g, Graphics_DOTTED);
 					Graphics_line (g, intmin, -1.0, intmin, 1.0);   // in sound part
 					Graphics_setLineType (g, Graphics_DRAWN);
-				}      
+				}
 				/* Draw left boundary. */
 				if (intmin > tmin && intmin < tmax) Graphics_line (g, intmin, ymin, intmin, ymax);
 				/* Draw label text. */
@@ -637,27 +639,33 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (integer i = 1; i <= tier -> intervals.size; i ++) {
 				TextInterval interval = tier -> intervals.at [i];
-				double tleft = interval -> xmin, tright = interval -> xmax, tmid, f0;
-				if (! interval -> text || ! interval -> text [0]) continue;
-				if (tleft < pitch -> xmin) tleft = pitch -> xmin;
-				if (tright > pitch -> xmax) tright = pitch -> xmax;
-				tmid = (tleft + tright) / 2;
-				if (tmid < tmin || tmid > tmax) continue;
-				f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), tmid), Pitch_LEVEL_FREQUENCY, (int) unit);
-				if (f0 < fmin || f0 > fmax) continue;
+				if (! interval -> text || ! interval -> text [0])
+					continue;
+				const double tleft = Melder_clippedLeft (pitch -> xmin, interval -> xmin);
+				const double tright = Melder_clippedRight (interval -> xmax, pitch -> xmax);
+				const double tmid = 0.5 * (tleft + tright);
+				if (tmid < tmin || tmid > tmax)
+					continue;
+				const double f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), tmid), Pitch_LEVEL_FREQUENCY, (int) unit);
+				if (f0 < fmin || f0 > fmax)
+					continue;
 				Graphics_text (g,
 					horizontalAlignment == (int) Graphics_LEFT ? tleft : horizontalAlignment == (int) Graphics_RIGHT ? tright : tmid,
-					f0, interval -> text.get());
+					f0, interval -> text.get()
+				);
 			}
 		} else {
 			TextTier tier = static_cast <TextTier> (anyTier);
 			for (integer i = 1; i <= tier -> points.size; i ++) {
 				TextPoint point = tier -> points.at [i];
-				double t = point -> number;
-				if (! point -> mark || ! point -> mark [0]) continue;
-				if (t < tmin || t > tmax) continue;
-				double f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), t), Pitch_LEVEL_FREQUENCY, (int) unit);
-				if (f0 < fmin || f0 > fmax) continue;
+				const double t = point -> number;
+				if (! point -> mark || ! point -> mark [0])
+					continue;
+				if (t < tmin || t > tmax)
+					continue;
+				const double f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), t), Pitch_LEVEL_FREQUENCY, (int) unit);
+				if (f0 < fmin || f0 > fmax)
+					continue;
 				Graphics_text (g, t, f0, point -> mark.get());
 			}
 		}
