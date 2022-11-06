@@ -369,12 +369,18 @@ static void charSize (Graphics anyGraphics, _Graphics_widechar *lc) {
 		GraphicsPostscript me = static_cast <GraphicsPostscript> (anyGraphics);
 		const int normalSize = (int) ((double) my fontSize * (double) my resolution / 72.0);
 		Longchar_Info info = lc -> karInfo;
-		const int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
-				info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
-				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer_;
-		const int style = lc -> style == Graphics_ITALIC ? Graphics_ITALIC :
+		const int font =
+			info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
+			info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
+			info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS :
+			lc -> font.integer_
+		;
+		const int style =
+			lc -> style == Graphics_ITALIC ? Graphics_ITALIC :
 			lc -> style == Graphics_BOLD || lc -> link ? Graphics_BOLD :
-			lc -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC : 0;
+			lc -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC :
+			0
+		;
 		if (! my fontInfos [font] [style]) {
 			const char *fontInfo, *secondaryFontInfo = nullptr, *tertiaryFontInfo = nullptr;
 			if (font == (int) kGraphics_font::COURIER) {
@@ -1662,16 +1668,15 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 	if (my recording) {
 		const conststring8 txt_utf8 = Melder_peek32to8 (txt);
-		const int length = strlen (txt_utf8) / sizeof (double) + 1;   // TODO: integer overflow
+		const integer length = str8len (txt_utf8) / (int) sizeof (double) + 1;
 		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
 	} else {
 		if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {
 			const double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
 			integer numberOfLines = 1;
-			for (const char32 *p = & txt [0]; *p != U'\0'; p ++) {
+			for (const char32 *p = & txt [0]; *p != U'\0'; p ++)
 				if (*p == U'\n')
 					numberOfLines ++;
-			}
 			yWC += (
 				my verticalTextAlignment == Graphics_TOP ?
 					0.0

@@ -641,7 +641,7 @@ static void convertBooleansAndChoicesToNumbersAndRelativeToAbsolutePaths (Interp
 
 void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments) {
 	int size = my numberOfParameters;
-	integer length = str32len (arguments);
+	const integer length = str32len (arguments);
 	while (size >= 1 && my parameters [size] [0] == U'\0')
 		size --;   /* Ignore fields without a variable name (button, comment). */
 	tidyUpParameterNames (me, size);
@@ -1072,7 +1072,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 		}
 		p ++;   // step over parenthesis or colon
 	}
-	integer callLength = str32len (callName);
+	const integer callLength = str32len (callName);
 	integer iline = 1;
 	for (; iline <= lines.size; iline ++) {
 		if (! str32nequ (lines [iline], U"procedure ", 10))
@@ -1080,10 +1080,11 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 		char32 *q = lines [iline] + 10;
 		while (Melder_isHorizontalSpace (*q))
 			q ++;   // skip whitespace before procedure name
-		char32 *procName = q;
+		char32 * const procName = q;
 		while (Melder_staysWithinInk (*q) && *q != U'(' && *q != U':')
 			q ++;
-		if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
+		if (q == procName)
+			Melder_throw (U"Missing procedure name after 'procedure'.");
 		if (q - procName == callLength && str32nequ (procName, callName, callLength)) {
 			/*
 				We found the procedure definition.
@@ -1091,7 +1092,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 			if (++ my callDepth > Interpreter_MAX_CALL_DEPTH)
 				Melder_throw (U"Call depth greater than ", Interpreter_MAX_CALL_DEPTH, U".");
 			str32cpy (my procedureNames [my callDepth], callName);
-			bool parenthesisOrColonFound = ( *q == U'(' || *q == U':' );
+			const bool parenthesisOrColonFound = ( *q == U'(' || *q == U':' );
 			if (*q)
 				q ++;   // step over parenthesis or colon or first white space
 			if (! parenthesisOrColonFound) {
@@ -1159,7 +1160,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 					my callDepth --;
 					autostring32 value = Interpreter_stringExpression (me, argument.string);
 					my callDepth ++;
-					char32 save = *q;
+					const char32 save = *q;
 					*q = U'\0';
 					InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
 					*q = save;
@@ -1171,7 +1172,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 						my callDepth --;
 						Interpreter_numericMatrixExpression (me, argument.string, & value, & owned);
 						my callDepth ++;
-						char32 save = *q;
+						const char32 save = *q;
 						*q = U'\0';
 						InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
 						*q = save;
@@ -1182,7 +1183,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 						my callDepth --;
 						Interpreter_stringArrayExpression (me, argument.string, & value, & owned);
 						my callDepth ++;
-						char32 save = *q;
+						const char32 save = *q;
 						*q = U'\0';
 						InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
 						*q = save;
@@ -1193,7 +1194,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 						my callDepth --;
 						Interpreter_numericVectorExpression (me, argument.string, & value, & owned);
 						my callDepth ++;
-						char32 save = *q;
+						const char32 save = *q;
 						*q = U'\0';
 						InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
 						*q = save;
@@ -1204,7 +1205,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 					my callDepth --;
 					Interpreter_numericExpression (me, argument.string, & value);
 					my callDepth ++;
-					char32 save = *q;
+					const char32 save = *q;
 					*q = U'\0';
 					InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName);
 					*q = save;
@@ -1239,7 +1240,7 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 		Melder_throw (U"Missing procedure name after 'call'.");
 	bool hasArguments = ( *p != U'\0' );
 	*p = U'\0';   // close procedure name
-	integer callLength = str32len (callName);
+	const integer callLength = str32len (callName);
 	integer iline = 1;
 	for (; iline <= lines.size; iline ++) {
 		if (! str32nequ (lines [iline], U"procedure ", 10))
@@ -1693,7 +1694,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 			*/
 			#if 0
 				chopped = 0;
-				int length = str32len (command);
+				const integer length = str32len (command);
 				while (length > 0) {
 					char kar = command [-- length];
 					if (! Melder_isHorizontalSpace (kar))
@@ -1838,12 +1839,12 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						/*
 							Found a variable (p points to the left quote, q to the right quote). Substitute.
 						*/
-						integer headlen = p - command2.string;
+						const integer headlen = p - command2.string;
 						conststring32 string = ( var -> stringValue ? var -> stringValue.get() :
 								percent ? Melder_percent (var -> numericValue, precision) :
 								precision >= 0 ?  Melder_fixed (var -> numericValue, precision) :
 								Melder_double (var -> numericValue) );
-						integer arglen = str32len (string);
+						const integer arglen = str32len (string);
 						MelderString_ncopy (& buffer, command2.string, headlen);
 						MelderString_append (& buffer, string, q + 1);
 						MelderString_copy (& command2, buffer.string);   // This invalidates p!! (really bad bug 20070203)
@@ -2566,7 +2567,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									if (! var)
 										Melder_throw (U"The string ", variableName, U" does not exist.\n"
 													  U"You can increment (+=) only existing strings.");
-									integer oldLength = str32len (var -> stringValue.get()), extraLength = str32len (stringValue.get());
+									const integer oldLength = str32len (var -> stringValue.get());
+									const integer extraLength = str32len (stringValue.get());
 									autostring32 newString = autostring32 (oldLength + extraLength, false);
 									str32cpy (newString.get(), var -> stringValue.get());
 									str32cpy (newString.get() + oldLength, stringValue.get());
@@ -2602,7 +2604,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									/*
 										Statement like: values## = Get all values
 									*/
-									bool status = praat_executeCommand (me, p);
+									const bool status = praat_executeCommand (me, p);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
 									if (! status)
 										var -> numericMatrixValue = autoMAT();   // anything can have happened, including an incorrect returnType

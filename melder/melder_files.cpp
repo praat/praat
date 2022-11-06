@@ -373,7 +373,7 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 		str32cpy (parent -> path, dir -> path);
 		char32 *colon = str32chr (parent -> path, U':');
 		if (colon) {
-			int length = str32len (parent -> path);
+			const integer length = str32len (parent -> path);
 			char32 *backslash = str32rchr (parent -> path, U'\\');
 			if (backslash) {   //   C:\WINDOWS\FONTS or C:\WINDOWS or C:\   - (cannot add a line comment with a backslash)
 				if (backslash - parent -> path == length - 1) {   //   C:\   -
@@ -387,7 +387,7 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 				Melder_getDesktop (parent);   // empty string
 			}
 		} else if (parent -> path [0] == U'\\' && parent -> path [1] == U'\\') {
-			int length = str32len (parent -> path);
+			const integer length = str32len (parent -> path);
 			char32 *backslash = str32rchr (parent -> path + 2, U'\\');
 			if (backslash) {   //   \\Swine\Apps\Praats or \\Swine\Apps or \\Swine\   -
 				if (backslash - parent -> path == length - 1) {   //   \\Swine\   -
@@ -421,7 +421,7 @@ void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir 
 			Melder_sprint (subdir -> path,kMelder_MAXPATH+1, parent -> path, U"/", subdirName);
 		}
 	#elif defined (_WIN32)
-		int length = str32len (parent -> path);
+		const integer length = str32len (parent -> path);
 		char32 *backslash = str32rchr (parent -> path, U'\\');
 		if (backslash && backslash - parent -> path == length - 1) {   //   C:\ or \\Swine\   -
 			Melder_sprint (subdir -> path, kMelder_MAXPATH+1, parent -> path, subdirName);

@@ -33,7 +33,7 @@ bool Melder_numberMatchesCriterion (double value, kMelder_number which, double c
 inline static char32 * str32str_word_optionallyCaseSensitive (conststring32 string, conststring32 find,
 	bool ink, bool caseSensitive, bool startFree, bool endFree) noexcept
 {
-	integer length = str32len (find);
+	const integer length = str32len (find);
 	if (length == 0)
 		return (char32 *) string;
 	conststring32 movingString = string;

@@ -492,7 +492,8 @@ static void do_log (SoundAnalysisArea me, int which) {
 		/*
 			Found a right quote. Get potential variable name.
 		*/
-		for (r = p + 1, s = varName; q - r > 0; r ++, s ++) *s = *r;
+		for (r = p + 1, s = varName; q - r > 0; r ++, s ++)
+			*s = *r;
 		*s = U'\0';   // trailing null byte
 		colon = str32chr (varName, U':');
 		if (colon) {
@@ -541,20 +542,20 @@ static void do_log (SoundAnalysisArea me, int which) {
 			value = Matrix_getValueAtXY (my d_spectrogram.get(), tmin, my d_spectrogram_cursor);
 		}
 		if (isdefined (value)) {
-			integer varlen = (q - p) - 1, headlen = p - format;
+			const integer varlen = (q - p) - 1, headlen = p - format;
 			char32 formattedNumber [400];
 			if (precision >= 0)
 				Melder_sprint (formattedNumber,400, Melder_fixed (value, precision));
 			else
 				Melder_sprint (formattedNumber,400, value);
-			integer arglen = str32len (formattedNumber);
+			const integer arglen = str32len (formattedNumber);
 			static MelderString buffer;
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, formattedNumber, p + varlen + 2);
 			str32cpy (format, buffer.string);
 			p += arglen - 1;
 		} else if (stringValue) {
-			integer varlen = (q - p) - 1, headlen = p - format, arglen = str32len (stringValue);
+			const integer varlen = (q - p) - 1, headlen = p - format, arglen = str32len (stringValue);
 			static MelderString buffer;
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, stringValue, p + varlen + 2);

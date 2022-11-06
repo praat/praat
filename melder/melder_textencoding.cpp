@@ -1,6 +1,6 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2021 Paul Boersma
+ * Copyright (C) 2007-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -538,7 +538,7 @@ conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines) {
 	if (++ bufferNumber == 19)
 		bufferNumber = 0;
 	MelderString16_empty (& buffers [bufferNumber]);
-	int64 n = str32len (text);
+	const int64 n = str32len (text);
 	if (nativizeNewlines) {
 		for (int64 i = 0; i <= n; i ++) {
 			#ifdef _WIN32
@@ -559,7 +559,7 @@ conststring16 Melder_peek32to16 (conststring32 text) {
 
 autostring16 Melder_32to16 (conststring32 text) {
 	conststring16 text16 = Melder_peek32to16 (text);
-	int64 length = str16len (text16);
+	const int64 length = str16len (text16);
 	autostring16 result (length);
 	str16cpy (result.get(), text16);
 	return result;
@@ -568,7 +568,7 @@ autostring16 Melder_32to16 (conststring32 text) {
 #if defined (_WIN32)
 autostringW Melder_32toW (conststring32 text) {
 	conststringW textW = Melder_peek32toW (text);
-	int64 length = str16len ((conststring16) textW);
+	const int64 length = str16len ((conststring16) textW);
 	autostringW result (length);
 	str16cpy ((mutablestring16) result.get(), (conststring16) textW);
 	return result;
@@ -581,7 +581,7 @@ conststringW Melder_peek32toW_fileSystem (conststring32 string) {
 }
 autostringW Melder_32toW_fileSystem (conststring32 text) {
 	conststringW textW = Melder_peek32toW_fileSystem (text);
-	int64 length = str16len ((conststring16) textW);
+	const int64 length = str16len ((conststring16) textW);
 	autostringW result (length);
 	str16cpy ((mutablestring16) result.get(), (conststring16) textW);
 	return result;

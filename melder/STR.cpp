@@ -48,23 +48,21 @@ autostring32 hex_STR (conststring32 str, uint64 key) {
 }
 
 autostring32 left_STR (conststring32 str, integer newLength) {
-	integer length = str32len (str);
-	if (newLength < 0)
-		newLength = 0;
-	if (newLength > length)
-		newLength = length;
+	const integer length = str32len (str);
+	Melder_clip (0_integer, & newLength, length);
 	autostring32 result (newLength);
 	str32ncpy (result.get(), str, newLength);
 	return result;
 }
 
 autostring32 mid_STR (conststring32 str, integer startingPosition_1, integer numberOfCharacters) {
-	integer length = str32len (str), endPosition_1 = startingPosition_1 + numberOfCharacters - 1;
+	const integer length = str32len (str);
+	integer endPosition_1 = startingPosition_1 + numberOfCharacters - 1;
 	if (startingPosition_1 < 1)
 		startingPosition_1 = 1;
 	if (endPosition_1 > length)
 		endPosition_1 = length;
-	integer newLength = endPosition_1 - startingPosition_1 + 1;
+	const integer newLength = endPosition_1 - startingPosition_1 + 1;
 	if (newLength <= 0)
 		return Melder_dup (U"");
 	autostring32 result (newLength);
@@ -298,11 +296,8 @@ autostring32 replace_regex_STR (conststring32 string,
 }
 
 autostring32 right_STR (conststring32 str, integer newLength) {
-	integer length = str32len (str);
-	if (newLength < 0)
-		newLength = 0;
-	if (newLength > length)
-		newLength = length;
+	const integer length = str32len (str);
+	Melder_clip (0_integer, & newLength, length);
 	return Melder_dup (str + length - newLength);
 }
 

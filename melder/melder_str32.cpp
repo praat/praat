@@ -20,11 +20,13 @@
 
 #pragma mark - first one 8-bit string function...
 
-integer str8len (conststring8 string) {
-	const char *p = & string [0];
+integer str8len (conststring8 stringOrNull) {
+	if (! stringOrNull)
+		return 0;
+	const char *p = & stringOrNull [0];
 	while (*p != '\0')
 		++ p;
-	integer result = p - string;
+	const integer result = p - stringOrNull;
 	if (sizeof (integer) == 4)
 		Melder_assert (result >= 0);
 	return result;
@@ -32,11 +34,13 @@ integer str8len (conststring8 string) {
 
 #pragma mark - ...then two 16-bit string functions...
 
-integer str16len (conststring16 string) noexcept {
-	const char16 *p = & string [0];
+integer str16len (conststring16 stringOrNull) noexcept {
+	if (! stringOrNull)
+		return 0;
+	const char16 *p = & stringOrNull [0];
 	while (*p != u'\0')
 		++ p;
-	return p - string;
+	return p - stringOrNull;
 }
 mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept {
 	char16 *p = & target [0];
@@ -48,11 +52,13 @@ mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept
 
 #pragma mark - ...and the remainder are 32-bit string functions
 
-integer str32len (conststring32 string) noexcept {
-	const char32 *p = & string [0];
+integer str32len (conststring32 stringOrNull) noexcept {
+	if (! stringOrNull)
+		return 0;
+	const char32 *p = & stringOrNull [0];
 	while (*p != U'\0')
 		++ p;
-	return p - string;
+	return p - stringOrNull;
 }
 mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept {
 	char32 *p = & target [0];

@@ -1,6 +1,6 @@
 /* MelderFile.cpp
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ void MelderFile_write (MelderFile file, conststring32 string) {
 		return;
 	if (! string)
 		return;
-	int64 length = str32len (string);
+	const int64 length = str32len (string);
 	FILE *f = file -> filePointer;
 	if (file -> outputEncoding == kMelder_textOutputEncoding_ASCII || file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1) {
 		for (int64 i = 0; i < length; i ++) {

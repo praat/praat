@@ -118,7 +118,9 @@ static void drawNow (RunnerMFC me) {
 					*visibleText_q = U'\0';
 				textToDraw = visibleText_p;   // override
 				if (visibleText_q)
-					visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
+					visibleText_p = visibleText_q + 1;
+				else
+					visibleText_p += str32len (visibleText_p);
 			}
 			if (str32nequ (textToDraw, U"\\FI", 3)) {
 				structMelderFile file { };

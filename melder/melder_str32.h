@@ -45,10 +45,10 @@ int Melder_cmp (conststring32 string1orNull, conststring32 string2orNull) noexce
 /*
 	Are strings identical?
 
-	str32equ() simply computes whether str32cmp() return 0 or not.
+	str32equ() simply computes whether str32cmp() would return 0 or not.
 */
-bool str32equ (conststring32 string1, conststring32 string2) noexcept;
-int Melder_equ (conststring32 string1orNull, conststring32 string2orNull) noexcept;
+//bool str32equ (conststring32 string1, conststring32 string2) noexcept;
+//bool Melder_equ (conststring32 string1orNull, conststring32 string2orNull) noexcept;
 
 /*
 	What is the sorting order of two strings?
@@ -85,7 +85,7 @@ int Melder_coll (conststring32 string1orNull, conststring32 string2orNull) noexc
 	After all, "hello-8" could have to be interpreted as 'hello, version 8',
 	with the hyphen separating the word from the number. If that is indeed
 	the interpretation, "hello-9" should sort after "hello-8", and this is what happens.
-	Basically, hyphens are simply regarded as non-digits.
+	Basically, str32coll_numberAware() simply regards hyphens as non-digits.
 
 	CAN THIS HANDLE FLOATING-POINT NUMBERS?
 
@@ -98,7 +98,7 @@ int Melder_coll (conststring32 string1orNull, conststring32 string2orNull) noexc
 	is the same for both strings, so that "file8.11" will sort before "file8.20".
 	By supporting integers, we do support fixed-point numbers:
 	even without special trickery, "file8.11" will nicely sort before "file14.03".
-	Basically, dots are simply regarded as non-digits.
+	Basically, str32coll_numberAware() simply regards dots as non-digits.
 */
 int str32coll_numberAware (conststring32 string1, conststring32 string2) noexcept;
 int Melder_coll_numberAware (conststring32 string1, conststring32 string2) noexcept;
