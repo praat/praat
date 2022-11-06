@@ -50,7 +50,7 @@ static autoDaata newAutoData () {
 	return data;
 }
 static integer length (conststring32 s) {
-	integer result = str32len (s);
+	const integer result = str32len (s);
 	Melder_free (s);
 	return result;
 }

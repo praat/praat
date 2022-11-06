@@ -1,6 +1,6 @@
 /* GraphicsPostscript.cpp
  *
- * Copyright (C) 1992-2007,2009,2011,2012,2014-2017,2020 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2017,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,14 +177,18 @@ autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, kGr
 
 #if defined (macintosh)
 static int Eps_postScript_printf (void *stream, const char *format, ... ) {
-	static char theLine [3002];
+	constexpr integer bufferSize = 3002;
+	static char theLine [bufferSize];
 	char *p;
 	va_list args;
 	va_start (args, format);
-	vsprintf (theLine, format, args);
+	vsnprintf (theLine, bufferSize, format, args);
+	theLine [bufferSize - 1] = '\0';
 	va_end (args);
-	for (p = theLine; *p != '\0'; p ++) if (*p == '\n') *p = '\r';
-	return fwrite (theLine, sizeof (char), strlen (theLine), reinterpret_cast <FILE *> (stream));
+	for (p = theLine; *p != '\0'; p ++)
+		if (*p == '\n')
+			*p = '\r';
+	return (int) fwrite (theLine, sizeof (char), strlen (theLine), reinterpret_cast <FILE *> (stream));
 }
 #endif
 

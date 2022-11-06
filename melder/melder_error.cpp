@@ -1,6 +1,6 @@
 /* melder_error.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ static char32 theErrorBuffer [BUFFER_LENGTH];   // safe in low-memory situations
 void MelderError::_append (conststring32 message) {
 	if (! message)
 		return;
-	integer length = str32len (theErrorBuffer), messageLength = str32len (message);
+	const integer length = str32len (theErrorBuffer), messageLength = str32len (message);
 	if (length + messageLength >= BUFFER_LENGTH)
 		return;
 	str32cpy (theErrorBuffer + length, message);
