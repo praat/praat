@@ -61,7 +61,7 @@ static void TextGridNavigator_checkTierNumberNotInUse (TextGridNavigator me, int
 	for (integer inum = 1; inum <= my tierNavigators.size; inum ++) {
 		TextGridTierNavigator tn = my tierNavigators.at [inum];
 		Melder_require (tn -> tierNumber != tierNumber,
-			U"The tiernumber you want tor add is already in use.");
+			U"The tiernumber you want to add is already in use.");
 	}
 }
 

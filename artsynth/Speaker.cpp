@@ -1,6 +1,6 @@
 /* Speaker.cpp
  *
- * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,12 @@ autoSpeaker Speaker_create (conststring32 kindOfSpeaker, int16 numberOfVocalCord
 	/* That was a male speaker, so we need scaling for other speakers:		*/
 
 	double scaling;
-	if (Melder_equ_firstCharacterCaseInsensitive (kindOfSpeaker, U"male")) my relativeSize = 1.1;
-	else if (Melder_equ_firstCharacterCaseInsensitive (kindOfSpeaker, U"child")) my relativeSize = 0.7;
-	else my relativeSize = 1.0;
+	if (Melder_equ_firstCharacterCaseInsensitive (kindOfSpeaker, U"male"))
+		my relativeSize = 1.1;
+	else if (Melder_equ_firstCharacterCaseInsensitive (kindOfSpeaker, U"child"))
+		my relativeSize = 0.7;
+	else
+		my relativeSize = 1.0;
 	scaling = my relativeSize;
 
 	/* Laryngeal system. Data for male speaker from Ishizaka and Flanagan.	*/

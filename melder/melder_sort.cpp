@@ -70,7 +70,7 @@ autoSTRVEC sort_STRVEC (STRVEC const& x) {
 void sort_numberAware_STRVEC_inout (STRVEC const& array) noexcept {
 	std::sort (array.begin(), array.end(),
 		[] (conststring32 first, conststring32 last) {
-			return str32cmp_numberAware (first, last) < 0;
+			return str32coll_numberAware (first, last) < 0;
 		}
 	);
 }

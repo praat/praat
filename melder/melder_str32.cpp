@@ -18,14 +18,162 @@
 
 #include "melder.h"
 
-int str32cmp_numberAware (conststring32 string1_in, conststring32 string2_in) noexcept {
+#pragma mark - first one 8-bit string function...
+
+integer str8len (conststring8 string) {
+	const char *p = & string [0];
+	while (*p != '\0')
+		++ p;
+	integer result = p - string;
+	if (sizeof (integer) == 4)
+		Melder_assert (result >= 0);
+	return result;
+}
+
+#pragma mark - ...then two 16-bit string functions...
+
+integer str16len (conststring16 string) noexcept {
+	const char16 *p = & string [0];
+	while (*p != u'\0')
+		++ p;
+	return p - string;
+}
+mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept {
+	char16 *p = & target [0];
+	while (* source != u'\0')
+		* p ++ = * source ++;
+	*p = u'\0';
+	return target;
+}
+
+#pragma mark - ...and the remainder are 32-bit string functions
+
+integer str32len (conststring32 string) noexcept {
+	const char32 *p = & string [0];
+	while (*p != U'\0')
+		++ p;
+	return p - string;
+}
+mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept {
+	char32 *p = & target [0];
+	while (* source != U'\0')
+		* p ++ = * source ++;
+	*p = U'\0';
+	return target;
+}
+mutablestring32 str32cat (mutablestring32 target, conststring32 source) noexcept {
+	char32 *p = & target [0];
+	while (*p != U'\0')
+		++ p;
+	while (* source != U'\0')
+		* p ++ = * source ++;
+	*p = U'\0';
+	return target;
+}
+char32 * stp32cpy (mutablestring32 target, conststring32 source) noexcept {
+	char32 *p = & target [0];
+	while (* source != U'\0')
+		* p ++ = * source ++;
+	*p = U'\0';
+	return p;
+}
+mutablestring32 str32ncpy (mutablestring32 target, conststring32 source, integer n) noexcept {
+	char32 *p = & target [0];
+	for (; n > 0 && *source != U'\0'; -- n)
+		* p ++ = * source ++;
+	for (; n > 0; -- n)
+		* p ++ = U'\0';
+	return target;
+}
+
+#pragma mark - SEARCHING
+
+char32 * str32str (conststring32 string, conststring32 find) noexcept {
+	integer length = str32len (find);
+	if (length == 0)
+		return (char32 *) string;
+	char32 firstCharacter = * find ++;   // optimization
+	do {
+		char32 kar;
+		do {
+			kar = * string ++;
+			if (kar == U'\0')
+				return nullptr;
+		} while (kar != firstCharacter);
+	} while (str32ncmp (string, find, length - 1));
+	return (char32 *) (string - 1);
+}
+char32 * str32str_caseInsensitive (conststring32 string, conststring32 find) noexcept {
+	integer length = str32len (find);
+	if (length == 0)
+		return (char32 *) string;
+	char32 firstCharacter = Melder_toLowerCase (* find ++);   // optimization
+	do {
+		char32 kar;
+		do {
+			kar = Melder_toLowerCase (* string ++);
+			if (kar == U'\0')
+				return nullptr;
+		} while (kar != firstCharacter);
+	} while (str32ncmp_caseInsensitive (string, find, length - 1));
+	return (char32 *) (string - 1);
+}
+char32 * str32str_optionallyCaseSensitive (conststring32 string, conststring32 find, bool caseSensitive) noexcept {
+	return caseSensitive ? str32str (string, find) : str32str_caseInsensitive (string, find);
+}
+
+#pragma mark - EQUIVALENCE OF TWO STRINGS
+
+int str32cmp (conststring32 string1, conststring32 string2) noexcept {
+	for (;; ++ string1, ++ string2) {
+		const char32 kar1 = *string1, kar2 = *string2;
+		if (kar1 < kar2)
+			return -1;
+		if (kar1 > kar2)
+			return +1;
+		/*
+			kar1 is now equal to kar2
+		*/
+		if (kar1 == U'\0')
+			return 0;
+	}
+}
+int Melder_cmp (conststring32 string1, conststring32 string2) noexcept {
+	if (! string1) string1 = U"";
+	if (! string2) string2 = U"";
+	return str32cmp (string1, string2);
+}
+
+#pragma mark - SORTING OF TWO STRINGS
+
+int str32coll (conststring32 string1, conststring32 string2) noexcept {
+	for (;; ++ string1, ++ string2) {
+		const char32 kar1 = *string1, kar2 = *string2;
+		if (kar1 < kar2)
+			return -1;
+		if (kar1 > kar2)
+			return +1;
+		/*
+			kar1 is now equal to kar2
+		*/
+		if (kar1 == U'\0')
+			return 0;
+	}
+}
+int Melder_coll (conststring32 string1, conststring32 string2) noexcept {
+	if (! string1) string1 = U"";
+	if (! string2) string2 = U"";
+	return str32cmp (string1, string2);
+}
+
+int str32coll_numberAware (conststring32 string1, conststring32 string2) noexcept {
 	auto isZero = [] (const char32 kar) -> bool {
 		return Melder_isDecimalNumber (kar) && (kar & 0xF) == 0;
 	};
 	/*
 		First round.
 	*/
-	conststring32 pstring1 = string1_in, pstring2 = string2_in;
+	conststring32 pstring1 = string1, pstring2 = string2;
 	integer totalLeadingZeroes1 = 0, totalLeadingZeroes2 = 0;
 	for (;;) {
 		const char32 kar1 = *pstring1, kar2 = *pstring2;
@@ -97,37 +245,32 @@ int str32cmp_numberAware (conststring32 string1_in, conststring32 string2_in) no
 		Cycle again from left to right,
 		now returning as soon as the local numbers of leading zeroes are different.
 	*/
-	pstring1 = string1_in;
-	pstring2 = string2_in;
+	pstring1 = string1;
+	pstring2 = string2;
 	for (;;) {
 		const char32 kar1 = *pstring1, kar2 = *pstring2;
 		if (kar1 == U'\0') {
 			Melder_assert (kar2 == U'\0');
 			return 0;   // the two strings are identical (not just equivalent)
 		}
-		const bool isDigit1 = Melder_isDecimalNumber (kar1);
-		const bool isDigit2 = Melder_isDecimalNumber (kar2);
-		Melder_assert (isDigit1 == isDigit2);
-		if (isDigit1) {
+		const bool isDigit = Melder_isDecimalNumber (kar1);
+		if (isDigit) {
 			integer leadingZeroes1 = 0, leadingZeroes2 = 0;
 			while (isZero (pstring1 [leadingZeroes1]))
 				leadingZeroes1 ++;
 			while (isZero (pstring2 [leadingZeroes2]))
 				leadingZeroes2 ++;
-			pstring1 += leadingZeroes1;
-			pstring2 += leadingZeroes2;
-			integer digits1 = 0, digits2 = 0;
-			while (Melder_isDecimalNumber (pstring1 [digits1]))
-				digits1 ++;
-			while (Melder_isDecimalNumber (pstring2 [digits2]))
-				digits2 ++;
-			Melder_assert (digits1 == digits2);
 			if (leadingZeroes1 < leadingZeroes2)
 				return -1;
 			if (leadingZeroes1 > leadingZeroes2)
 				return +1;
-			pstring1 += digits1;
-			pstring2 += digits1;
+			pstring1 += leadingZeroes1;
+			pstring2 += leadingZeroes1;
+			integer digits = 0;
+			while (Melder_isDecimalNumber (pstring1 [digits]))
+				digits ++;
+			pstring1 += digits;
+			pstring2 += digits;
 		} else {
 			Melder_assert (kar1 == kar2);
 			pstring1 ++;
@@ -135,32 +278,76 @@ int str32cmp_numberAware (conststring32 string1_in, conststring32 string2_in) no
 		}
 	}
 }
-
-int Melder_cmp (conststring32 string1, conststring32 string2) {
+int Melder_coll_numberAware (conststring32 string1, conststring32 string2) noexcept {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
-	return str32cmp (string1, string2);
+	return str32coll_numberAware (string1, string2);
 }
 
-int Melder_cmp_caseInsensitive (conststring32 string1, conststring32 string2) {
+int str32cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept {
+	for (;; ++ string1, ++ string2) {
+		const char32 kar1 = Melder_toLowerCase (*string1);
+		const char32 kar2 = Melder_toLowerCase (*string2);
+		if (kar1 < kar2)
+			return -1;
+		if (kar1 > kar2)
+			return +1;
+		if (kar1 == U'\0')
+			return 0;
+	}
+}
+int Melder_cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32cmp_caseInsensitive (string1, string2);
 }
 
-int Melder_ncmp (conststring32 string1, conststring32 string2, integer n) {
+int str32cmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, bool caseSensitive) noexcept {
+	return caseSensitive ? str32cmp (string1, string2) : str32cmp_caseInsensitive (string1, string2);
+}
+
+int str32ncmp (conststring32 string1, conststring32 string2, integer n) noexcept {
+	for (; n > 0; -- n, ++ string1, ++ string2) {
+		const char32 kar1 = *string1, kar2 = *string2;
+		if (kar1 < kar2)
+			return -1;
+		if (kar1 > kar2)
+			return +1;
+		if (kar1 == U'\0')
+			return 0;
+	}
+	return 0;
+}
+int Melder_ncmp (conststring32 string1, conststring32 string2, integer n) noexcept {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp (string1, string2, n);
 }
 
-int Melder_ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) {
+int str32ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) noexcept {
+	for (; n > 0; -- n, ++ string1, ++ string2) {
+		const char32 kar1 = Melder_toLowerCase (*string1);
+		const char32 kar2 = Melder_toLowerCase (*string2);
+		if (kar1 < kar2)
+			return -1;
+		if (kar1 > kar2)
+			return +1;
+		if (kar1 == U'\0')
+			return 0;
+	}
+	return 0;
+}
+int Melder_ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) noexcept {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp_caseInsensitive (string1, string2, n);
 }
 
-bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststring32 string2) {
+int str32ncmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, integer n, bool caseSensitive) noexcept {
+	return caseSensitive ? str32ncmp (string1, string2, n) : str32ncmp_caseInsensitive (string1, string2, n);
+}
+
+bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststring32 string2) noexcept {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	if (string1 [0] == U'\0')
