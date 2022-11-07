@@ -189,6 +189,66 @@ DIRECT (QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listCeilingFrequencies) {
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
+FORM (QUERY_ONE_FOR_REAL__FormantPath_getOptimalCeiling, U"FormantPath: Get optimal ceiling", U"") {
+	REAL (tmin, U"left Time range (s)", U"0.0")
+	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	OK
+DO
+	QUERY_ONE_FOR_REAL (FormantPath)
+		double result = FormantPath_getOptimalCeiling (me, tmin, tmax, parameters, powerf);
+	QUERY_ONE_FOR_REAL_END (U"")
+}
+
+FORM (QUERY_ONE_FOR_REAL__FormantPath_getStressOfCandidate, U"FormantPath: Get stress of candidate", U"") {
+	REAL (tmin, U"left Time range (s)", U"0.0")
+	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	NATURAL (candidate, U"Candidate number", U"5")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	OK
+DO
+	QUERY_ONE_FOR_REAL (FormantPath)
+		double result = FormantPath_getStressOfCandidate (me, tmin, tmax, 0, 0, parameters, powerf, candidate);
+	QUERY_ONE_FOR_REAL_END (U"")
+}
+
+FORM (QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listStressOfCandidates, U"FormantPath: List stress of candidates", U"") {
+	REAL (tmin, U"left Time range (s)", U"0.0")
+	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	OK
+DO
+	QUERY_ONE_FOR_REAL_VECTOR (FormantPath)
+		autoVEC result = FormantPath_getStressOfCandidates (me, tmin, tmax, 0, 0, parameters, powerf);
+	QUERY_ONE_FOR_REAL_VECTOR_END
+}
+
+FORM (MODIFY_EACH__FormantPath_setPath, U"FormantPath: Set path", U"") {
+	REAL (tmin, U"left Time range (s)", U"0.0")
+	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	NATURAL (candidate, U"Candidate number", U"5")
+	OK
+DO
+	MODIFY_EACH (FormantPath)
+		FormantPath_setPath	(me, tmin, tmax, candidate);
+	MODIFY_EACH_END	
+}
+
+FORM (MODIFY_EACH__FormantPath_setOptimalPath, U"", U"") {
+	REAL (tmin, U"left Time range (s)", U"0.0")
+	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	OK
+DO
+	MODIFY_EACH (FormantPath)
+		FormantPath_setOptimalPath (me, tmin, tmax, parameters, powerf);
+	MODIFY_EACH_END
+}
+
 FORM (CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_stress, U"FormantPath: To Matrix (stress)", nullptr) {
 	POSITIVE (windowLength, U"Window length", U"0.025")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3")
@@ -1500,6 +1560,17 @@ void praat_uvafon_LPC_init () {
 			QUERY_ONE_FOR_REAL__FormantPath_getNumberOfCandidates);
 		praat_addAction1 (classFormantPath, 0, U"List ceiling frequencies", nullptr, 1,
 			QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listCeilingFrequencies);
+		praat_addAction1 (classFormantPath, 0, U"Get stress of candidate...", nullptr, 1,
+			QUERY_ONE_FOR_REAL__FormantPath_getStressOfCandidate);
+		praat_addAction1 (classFormantPath, 0, U"List stress of candidates...", nullptr, 1,
+			QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listStressOfCandidates);
+		praat_addAction1 (classFormantPath, 0, U"Get optimal ceiling...", nullptr, 1,
+			QUERY_ONE_FOR_REAL__FormantPath_getOptimalCeiling);
+	praat_addAction1 (classFormantPath, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_addAction1 (classFormantPath, 0, U"Set path...", nullptr, 1,
+			MODIFY_EACH__FormantPath_setPath);
+		praat_addAction1 (classFormantPath, 0, U"Set optimal path...", nullptr, 1,
+			MODIFY_EACH__FormantPath_setOptimalPath);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", nullptr,0, 
 			CONVERT_EACH_TO_ONE__FormantPath_extractFormant);
 	praat_addAction1 (classFormantPath, 0, U"To Matrix (stress)...", nullptr,0, 
