@@ -143,8 +143,9 @@ void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGri
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
 	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchDomainAlignment matchDomainAlignment) {
 	try {
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
-			U"The domains of the TextGridNavigator and the textGrid should be equal.");
+		/*
+			We can't require the domains of the navigator and the new tier to be equal because they might be slightly different.  
+		*/
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 		TextGridNavigator_checkTierNumberNotInUse (me, tierNumber);
 		autoNavigationContext navigationContext = NavigationContext_create (
