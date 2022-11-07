@@ -397,7 +397,7 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 }
 
 
-static double FormantPath_getStressOfCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
+double FormantPath_getStressOfCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
 	constINTVEC const& parameters, double powerf, integer candidate) {
 	Melder_require (candidate > 0 && candidate <= my formantCandidates. size,
 		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
@@ -406,22 +406,33 @@ static double FormantPath_getStressOfCandidate (FormantPath me, double tmin, dou
 	return FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 }
 
-/*
-	integer FormantPath_getOptimalCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
-		constINTVEC const& parameters, double powerf);
-	integer FormantPath_getOptimalCeiling (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
-		constINTVEC const& parameters, double powerf) {
-		return my ceiling [FormantPath_getOptimalCandidate (me, tmin, tmax, fromFormant, toFormant, parameters, powerf)];
-	}
-	
-	void FormantPath_setPath (FormantPath me, double tmin, double tmax, integer candidate);
-*/
-
 autoVEC FormantPath_getStressOfCandidates (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
+	
 	autoVEC stresses = raw_VEC (my formantCandidates.size);
 	for (integer candidate = 1; candidate <= my formantCandidates.size; candidate ++)
 		stresses [candidate] = FormantPath_getStressOfCandidate (me, tmin, tmax, fromFormant, toFormant, parameters, powerf, candidate);
 	return stresses;
+}
+
+double FormantPath_getOptimalCeiling (FormantPath me, double tmin, double tmax, constINTVEC const& parameters, double powerf) {
+	autoVEC stresses = FormantPath_getStressOfCandidates (me, tmin, tmax, 0, 0, parameters, powerf);
+	const integer minPos = NUMminPos (stresses.get());
+	return my ceilings [minPos];
+}
+
+void FormantPath_setPath (FormantPath me, double tmin, double tmax, integer selectedCandidate) {
+	Melder_require (selectedCandidate > 0 && selectedCandidate <= my path.size,
+		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
+	integer ifmin, ifmax;
+	if (Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax) > 0)
+		for (integer iframe = ifmin; iframe <= ifmax; iframe ++)
+			my path [iframe] = selectedCandidate;
+}
+
+void FormantPath_setOptimalPath (FormantPath me, double tmin, double tmax, constINTVEC const& parameters, double powerf) {
+	autoVEC stresses = FormantPath_getStressOfCandidates (me, tmin, tmax, 0, 0, parameters, powerf);
+	const integer minPos = NUMminPos (stresses.get());
+	FormantPath_setPath (me, tmin, tmax, minPos);
 }
 
 autoTable FormantPath_downTo_Table_stresses (FormantPath me, double tmin, double tmax, constINTVEC const& parameters,

@@ -52,15 +52,24 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks);
 autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTracks, bool maximumCosts);
 autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
 
-autoVEC FormantPath_getStressOfCandidates (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf);
+double FormantPath_getStressOfCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
+	constINTVEC const& parameters, double powerf, integer candidate);
 
-autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight,
-	double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta
-);
+autoVEC FormantPath_getStressOfCandidates (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
+	constINTVEC const& parameters, double powerf);
 
-void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight,
-	double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf
-);
+double FormantPath_getOptimalCeiling (FormantPath me, double tmin, double tmax, constINTVEC const& parameters, double powerf);
+
+autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight,
+	double ceilingChangeWeight,	double intensityModulationStepSize, double windowLength, constINTVEC const& parameters,
+	double powerf, autoMatrix *out_delta);
+
+void FormantPath_setPath (FormantPath me, double tmin, double tmax, integer selectedCandidate);
+void FormantPath_setOptimalPath (FormantPath me, double tmin, double tmax, constINTVEC const& parameters, double powerf);
+
+void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, 
+	double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters,
+	double powerf);
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
 	double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingExtensionFraction,
