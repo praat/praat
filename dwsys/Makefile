@@ -1,5 +1,5 @@
 # makefile for library "dwsys".
-# David Weenink 20220830
+# David Weenink 20221107
 # Paul Boersma 2018-08-10
 
 include ../makefile.defs
@@ -16,7 +16,7 @@ OBJECTS = ChebyshevSeries.o Collection_extensions.o Command.o \
 	LegendreSeries.o \
 	MAT_numerics.o \
 	NMF.o NUM2.o NUMhuber.o NUMmachar.o \
-	NUMcomplex.o NUMfft_d.o NUM_sorting.o \
+	NUMcomplex.o NUMfft_d.o NUMsorting.o \
 	NUMmathlib.o NUMstring.o \
 	Permutation.o Permutation_and_Index.o \
 	Polynomial.o \
