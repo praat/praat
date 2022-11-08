@@ -1,4 +1,4 @@
-/* NUMsort.cpp
+/* NUMsorting.cpp
  *
  * Copyright (C) 1993-2022 David Weenink
  *
@@ -22,11 +22,7 @@
  djmw 20120305 Latest modification
 */
 
-#include "NUM2.h"
-#include "melder.h"
-#include "Permutation.h"
-#include "STRVEC_sorting.h"
-
+#include "NUMsorting.h"
 #include "enums_getText.h"
 #include "strings_sorting_enums.h"
 #include "enums_getValue.h"
@@ -86,24 +82,6 @@ autoINTMAT sortRows_INTMAT (constINTMAT mat, integer icol) { // TODO test me
 	} catch (MelderError) {
 		Melder_throw (U"Matrix not sorted.");
 	}
-}
-
-void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting, bool breakAtDecimalPoint) {
-	Melder_require (target.size == v.size,
-		U"The dimensions should be equal.");
-	STRVECIndexer indexer (sorting, breakAtDecimalPoint);
-	autoPermutation p = indexer.sortSimple (v);
-	target  <<=  p -> p.get();
-}
-
-autoPermutation Permutation_createFromSorting (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
-	try {
-		STRVECIndexer indexer (sorting, breakAtDecimalPoint);
-		autoPermutation me =  indexer.sortSimple (strvec);	
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Could not create Permutation from STRVEC.");
-	}	
 }
 
 /* End of file NUMsort.cpp */

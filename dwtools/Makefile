@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 6 June 2022
+# 25 october 2022
 
 include ../makefile.defs
 
@@ -52,7 +52,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Spectrum_and_AnalyticSound.o Spectrum_and_MultiSampledSpectrogram.o \
 	SSCP.o Strings_extensions.o \
 	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o \
-	Table_and_Strings.o Table_extensions.o TableOfReal_and_SVD.o \
+	Table_and_Strings.o Table_extensions.o Table_dataSets.o TableOfReal_and_SVD.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Discriminant.o TableOfReal_and_Permutation.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \

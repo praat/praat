@@ -3455,7 +3455,8 @@ DO
 		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factor_string);
 		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		autoTable means, meansDiff, meansDiffProbabilities;
-		autoTable anova = Table_getOneWayAnalysisOfVarianceF (me, dataColumn, factorColumn, &means, &meansDiff, & meansDiffProbabilities);
+		autoTable anova = Table_getOneWayAnalysisOfVarianceF (me, dataColumn, factorColumn, & means,
+			& meansDiff, & meansDiffProbabilities);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"One-way analysis of \"", dataColumn_string, U"\" by \"", factor_string, U"\".\n");
 		Table_printAsAnovaTable (anova.get());
@@ -3524,7 +3525,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_to_StringsIndex_column, U"Table: To StringsInde
 DO
 	CONVERT_EACH_TO_ONE (Table)
 		const integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		autoStringsIndex result = Table_to_StringsIndex_column (me, icol, kStrings_sorting::NATURAL);
+		autoStringsIndex result = Table_to_StringsIndex_column (me, icol, kStrings_sorting::NUMBER_AWARE);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", columnLabel)
 }
 
@@ -6856,10 +6857,21 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation_old, U"Strings: To Permutation", U"Strings: To Permutation...") {
+	OPTIONMENU (sort, U"Sorting", 1)
+	OPTION (U"No")
+	OPTION (U"Alphabetical")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Strings)
+		autoPermutation result = Strings_to_Permutation (me, (sort == 1 ? kStrings_sorting::NONE : kStrings_sorting::ALPHABETICAL));
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
 	OPTIONMENU_ENUM (kStrings_sorting, sortingMethod, U"Sorting", kStrings_sorting::DEFAULT)
 	OK
-DO
+DO_ALTERNATIVE (CONVERT_EACH_TO_ONE__Strings_to_Permutation_old)	
 	CONVERT_EACH_TO_ONE (Strings)
 		autoPermutation result = Strings_to_Permutation (me, sortingMethod);
 	CONVERT_EACH_TO_ONE_END (my name.get())

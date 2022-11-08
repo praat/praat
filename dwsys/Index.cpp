@@ -28,7 +28,6 @@
 #include "Index.h"
 #include "NUM2.h"
 #include "Permutation.h"
-#include "STRVEC_sorting.h"
 
 #include "oo_DESTROY.h"
 #include "Index_def.h"
@@ -97,28 +96,33 @@ autoStringsIndex StringsIndex_create (integer numberOfItems) {
 	}
 }
 
-
-void MelderString_appendPart (MelderString *me, conststring32 source, integer first, integer last) {
-	const integer length = str32len (source);
-	Melder_assert (first <= length);
-	if (last == 0)
-		last = length;
-	last = std::min (last, length);
-	for (integer ichar = first; ichar <= last; ichar ++)
-			MelderString_appendCharacter(me, source [ichar - 1]); // 0-based
-	MelderString_appendCharacter (me, U'\0');
+static void StringsIndex_addClass (StringsIndex me, conststring32 classi) {
+	autoSimpleString ss = SimpleString_create (classi);
+	my classes -> addItem_move (ss.move());
 }
 
-void MelderString_copyPart (MelderString *me, conststring32 source, integer first, integer last) {
-	MelderString_empty (me);
-	MelderString_appendPart (me, source, first, last);
-}
-
-/* copying of strings could be avoided by using a autovector<char32** ? */
-autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint) {
+autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStrings_sorting sorting) {
 	try {
-		STRVECIndexer indexer (sorting, breakAtDecimalPoint);
-		autoStringsIndex me =  indexer.index (strvec);	
+		autoStringsIndex me = StringsIndex_create (strvec.size);
+		autoPermutation p = Permutation_create (strvec.size, true);
+		if (sorting == kStrings_sorting::ALPHABETICAL) 
+			INTVECindex_inout (p -> p.get(), strvec);
+		else if (sorting == kStrings_sorting::NUMBER_AWARE)
+			INTVECindex_numberAware_inout (p -> p.get(), strvec);
+		integer iclass = 1;
+		integer index = p -> p [1];
+		conststring32 classi = strvec [index];
+		StringsIndex_addClass (me.get(), strvec [index]);
+		my classIndex [index] = iclass;
+		for (integer i = 2; i <= strvec.size; i ++) {
+			index = p -> p [i];
+			if (Melder_cmp (classi, strvec [index]) != 0) {
+				StringsIndex_addClass (me.get(), strvec [index]);
+				classi = strvec [index];
+				iclass ++;
+			}
+			my classIndex [index] = iclass;
+		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Could not create StringsIndex from STRVEC.");
@@ -127,7 +131,7 @@ autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStri
 
 autoStringsIndex Strings_to_StringsIndex (Strings me, kStrings_sorting sorting) {
 	try {
-		autoStringsIndex thee = StringsIndex_createFromSTRVEC (my strings.get(), sorting, true);
+		autoStringsIndex thee = StringsIndex_createFromSTRVEC (my strings.get(), sorting);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no StringsIndex created.");
@@ -212,6 +216,7 @@ void StringsIndex_sortNumerically (StringsIndex me) {
 		Melder_throw (me, U": could not be sorted numerically.");
 	}
 }
+
 
 
 /* End of Index.cpp */

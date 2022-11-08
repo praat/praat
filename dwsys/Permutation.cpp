@@ -535,4 +535,18 @@ autoPermutation Permutation_moveElementsToTheFront (Permutation me, constINTVEC 
 		Melder_throw (me, U": not permuted by subset");
 	}
 }
+
+autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kStrings_sorting sorting) {
+	try {
+		autoPermutation me = Permutation_create (strvec.size, true);
+		if (sorting == kStrings_sorting::ALPHABETICAL) 
+			INTVECindex_inout (my p.get(), strvec);
+		else if (sorting == kStrings_sorting::NUMBER_AWARE)
+			INTVECindex_numberAware_inout (my p.get(), strvec);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Could not create Permutation from STRVEC.");
+	}	
+}
+
 /* End of Permutation.cpp */

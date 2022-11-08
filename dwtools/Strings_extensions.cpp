@@ -22,7 +22,6 @@
 
 #include "Strings_extensions.h"
 #include "NUM2.h"
-#include "STRVEC_sorting.h"
 
 autoStrings Strings_createFixedLength (integer numberOfStrings) {
 	try {
@@ -163,7 +162,7 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 
 inline autoPermutation Strings_to_Permutation (Strings me, kStrings_sorting sorting) {
 	try {
-		return Permutation_createFromSorting (my strings.get(), sorting, true);
+		return Permutation_createAsSortingIndex (my strings.get(), sorting);
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");
 	}
@@ -255,7 +254,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column, kString
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
 			groupLabels [irow] = Melder_dup (my rows.at [irow] -> cells [column]. string.get());   // TODO: no dup
 
-		autoStringsIndex him = StringsIndex_createFromSTRVEC (groupLabels.get(), sorting, true);
+		autoStringsIndex him = StringsIndex_createFromSTRVEC (groupLabels.get(), sorting);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"No StringsIndex created from column ", column, U".");

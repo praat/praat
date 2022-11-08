@@ -1,6 +1,6 @@
-#ifndef _NUM_sorting_h_
-#define _NUM_sorting_h_
-/* NUM_sorting.h
+#ifndef _NUMsorting_h_
+#define _NUMsorting_h_
+/* NUMsorting.h
  *
  * Copyright (C) 2022 David Weenink
  *
@@ -18,8 +18,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "STRVEC.h"
 #include "melder.h"
+#include "STRVEC.h"
 
 #include "strings_sorting_enums.h"
 
@@ -134,26 +134,31 @@ inline void INTVECindex_inout (INTVEC index, constINTVEC const& v) {
 
 inline void INTVECindex_inout (INTVEC index, constVEC const& v) {
 	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy)
-	 {
+	{
 		return v [ix] < v [iy];
-	 });
+	});
 }
 
 inline void INTVECindex_inout (INTVEC index, STRVEC const& v) {
 	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy)
-	 {
+	{
 		return Melder_cmp (v [ix], v [iy]) < 0;
-	 });
+	});
 }
 
 inline void INTVECindex_inout (INTVEC index, constSTRVEC const& v) {
 	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy)
-	 {
+	{
 		return Melder_cmp (v [ix], v [iy]) < 0;
-	 });
+	});
 }
 
-void INTVECindex_inout (INTVEC const& target, constSTRVEC const& v, kStrings_sorting sorting, bool breakAtTheDecimalPoint);
+inline void INTVECindex_numberAware_inout (INTVEC const& index, constSTRVEC const& v) {
+	std::stable_sort (index.begin(), index.end(), [& v] (integer ix, integer iy)
+	{
+		return str32coll_numberAware (v [ix], v [iy]) < 0;
+	});
+}
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
 	autoINTVEC result = to_INTVEC (a.size);
@@ -193,6 +198,6 @@ inline void VECrankSorted (VECVU const& a) {
 	if (j == a.size)
 		a [a.size] = a.size;
 }
- 
- #endif /* _NUM_sorting_h_ */
+
+ #endif /* _NUMsorting_h_ */
  
