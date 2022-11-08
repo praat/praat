@@ -34,7 +34,7 @@ integer Melder8_length (conststring8 stringOrNull) {
 
 #pragma mark - ...then two 16-bit string functions...
 
-integer str16len (conststring16 stringOrNull) noexcept {
+integer Melder16_length (conststring16 stringOrNull) noexcept {
 	if (! stringOrNull)
 		return 0;
 	const char16 *p = & stringOrNull [0];

@@ -559,7 +559,7 @@ conststring16 Melder_peek32to16 (conststring32 text) {
 
 autostring16 Melder_32to16 (conststring32 text) {
 	conststring16 text16 = Melder_peek32to16 (text);
-	const int64 length = str16len (text16);
+	const integer length = Melder16_length (text16);
 	autostring16 result (length);
 	str16cpy (result.get(), text16);
 	return result;
@@ -568,7 +568,7 @@ autostring16 Melder_32to16 (conststring32 text) {
 #if defined (_WIN32)
 autostringW Melder_32toW (conststring32 text) {
 	conststringW textW = Melder_peek32toW (text);
-	const int64 length = str16len ((conststring16) textW);
+	const integer length = Melder16_length ((conststring16) textW);
 	autostringW result (length);
 	str16cpy ((mutablestring16) result.get(), (conststring16) textW);
 	return result;
@@ -581,7 +581,7 @@ conststringW Melder_peek32toW_fileSystem (conststring32 string) {
 }
 autostringW Melder_32toW_fileSystem (conststring32 text) {
 	conststringW textW = Melder_peek32toW_fileSystem (text);
-	const int64 length = str16len ((conststring16) textW);
+	const integer length = Melder16_length ((conststring16) textW);
 	autostringW result (length);
 	str16cpy ((mutablestring16) result.get(), (conststring16) textW);
 	return result;

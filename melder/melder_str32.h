@@ -20,7 +20,7 @@
 
 integer Melder8_length (conststring8 string);   // can except on 32-bit platforms if the string is longer than 2^31-1 characters
 
-integer str16len (conststring16 string) noexcept;
+integer Melder16_length (conststring16 string) noexcept;
 mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept;
 
 integer str32len (conststring32 string) noexcept;
