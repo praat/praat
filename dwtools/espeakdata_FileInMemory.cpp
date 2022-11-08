@@ -98,7 +98,7 @@ static conststring32 get_wordAfterPrecursor_u8 (constvector<unsigned char> const
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
 	if (pmatch) {
-		pmatch += str32len (precursor); // skip 'precursor'
+		pmatch += Melder_length (precursor); // skip 'precursor'
 		while (*pmatch == U' ' || *pmatch == U'\t')
 			pmatch ++; // skip whitespace after 'precursor'
 		p = word;
@@ -124,7 +124,7 @@ static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> con
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
 	if (pmatch) {
-		pmatch += str32len (precursor); // skip 'precursor'
+		pmatch += Melder_length (precursor); // skip 'precursor'
 		while (*pmatch == U' ' || *pmatch == U'\t')
 			pmatch ++; // skip whitespace after 'precursor'
 		//pmatch --;

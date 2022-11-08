@@ -19,7 +19,7 @@
 enums_begin (kStrings_sorting, 0)
 	enums_add (kStrings_sorting, 0, NONE, U"None")
 	enums_add (kStrings_sorting, 1, ALPHABETICAL, U"alphabetical")
-	enums_add (kStrings_sorting, 2, NUMBER_AWARE, U"number aware")
+	enums_add (kStrings_sorting, 2, NUMBER_AWARE, U"number-aware")
 enums_end (kStrings_sorting, 2, NUMBER_AWARE)
 
 /* End of file strings_sorting_enums.h */

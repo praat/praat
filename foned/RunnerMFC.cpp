@@ -104,7 +104,7 @@ static void drawNow (RunnerMFC me) {
 			if (visibleText_q)
 				visibleText_p = visibleText_q + 1;
 			else
-				visibleText_p += str32len (visibleText_p);
+				visibleText_p += Melder_length (visibleText_p);
 		} else {
 			Graphics_text (my graphics.get(), 0.5, 1.0, my experiment -> runText.get());
 		}
@@ -120,7 +120,7 @@ static void drawNow (RunnerMFC me) {
 				if (visibleText_q)
 					visibleText_p = visibleText_q + 1;
 				else
-					visibleText_p += str32len (visibleText_p);
+					visibleText_p += Melder_length (visibleText_p);
 			}
 			if (str32nequ (textToDraw, U"\\FI", 3)) {
 				structMelderFile file { };

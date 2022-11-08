@@ -293,7 +293,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 				sum += p * pout;
 			}
 			Melder_sprint (string, 1000, firstInput, U" \\-> ");
-			const integer length = str32len (string);
+			const integer length = Melder_length (string);
 			for (integer idist = 1; idist <= dist -> numberOfRows; idist ++)
 				if (str32nequ (string, dist -> rowLabels [idist].get(), length))
 					sumDist += dist -> data [idist] [column];

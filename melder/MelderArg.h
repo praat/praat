@@ -62,7 +62,7 @@ struct MelderArg {
 };
 
 inline integer MelderArg__length (const MelderArg& arg) {
-	return arg._arg ? str32len (arg._arg) : 0;
+	return Melder_length (arg._arg);
 }
 template <typename... Args>
 integer MelderArg__length (const MelderArg& first, Args... rest) {

@@ -2822,7 +2822,7 @@ static void do_add () {
 		/*
 			result$ = x$ + y$
 		*/
-		const integer length1 = str32len (x->getString()), length2 = str32len (y->getString());
+		const integer length1 = Melder_length (x->getString()), length2 = Melder_length (y->getString());
 		autostring32 result (length1 + length2);
 		str32cpy (result.get(), x->getString());
 		str32cpy (result.get() + length1, y->getString());
@@ -2946,7 +2946,9 @@ static void do_sub () {
 		}
 	}
 	if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		const integer length1 = str32len (x->getString()), length2 = str32len (y->getString()), newlength = length1 - length2;
+		const integer length1 = Melder_length (x->getString());
+		const integer length2 = Melder_length (y->getString());
+		const integer newlength = length1 - length2;
 		autostring32 result;
 		if (newlength >= 0 && str32nequ (x->getString() + newlength, y->getString(), length2)) {
 			result = autostring32 (newlength);
@@ -4997,7 +4999,7 @@ static void do_indexedStringVariable () {
 static void do_length () {
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		double result = str32len (s->getString());
+		const double result = NUMlength (s->getString());
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"length\" requires a string, not ", s->whichText(), U".");
@@ -5132,7 +5134,7 @@ static void do_mid_STR () {
 static void do_unicodeToBackslashTrigraphs_STR () {
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		const integer length = str32len (s->getString());
+		const integer length = Melder_length (s->getString());
 		autostring32 trigraphs (3 * length);
 		Longchar_genericize (s->getString(), trigraphs.get());
 		pushString (trigraphs.move());
@@ -5143,7 +5145,7 @@ static void do_unicodeToBackslashTrigraphs_STR () {
 static void do_backslashTrigraphsToUnicode_STR () {
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		const integer length = str32len (s->getString());
+		const integer length = Melder_length (s->getString());
 		autostring32 unicode (length);
 		Longchar_nativize (s->getString(), unicode.get(), false);   // noexcept
 		pushString (unicode.move());
@@ -5179,7 +5181,7 @@ static void do_rindex () {
 	if (whole->which == Stackel_STRING && part->which == Stackel_STRING) {
 		char32 *lastSubstring = str32str (whole->getString(), part->getString());
 		if (part->getString() [0] == U'\0') {
-			const integer result = str32len (whole->getString());
+			const integer result = Melder_length (whole->getString());
 			pushNumber (result);
 		} else if (lastSubstring) {
 			for (;;) {
@@ -5260,7 +5262,7 @@ static void do_extractNumber () {
 			pushNumber (undefined);
 		} else {
 			/* Skip the prompt. */
-			substring += str32len (t->getString());
+			substring += Melder_length (t->getString());
 			/* Skip white space. */
 			while (Melder_isHorizontalOrVerticalSpace (*substring)) substring ++;
 			if (substring [0] == U'\0' || str32nequ (substring, U"--undefined--", 13)) {
@@ -5305,7 +5307,7 @@ static void do_extractText_STR (bool singleWord) {
 		} else {
 			integer length;
 			/* Skip the prompt. */
-			substring += str32len (t->getString());
+			substring += Melder_length (t->getString());
 			if (singleWord) {
 				/* Skip white space. */
 				while (Melder_isHorizontalOrVerticalSpace (*substring)) substring ++;

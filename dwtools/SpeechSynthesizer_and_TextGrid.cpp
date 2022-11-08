@@ -504,7 +504,7 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 			/*
 				Compensation for long words: 5 characters / word
 			*/
-			const double wordsPerMinute_rawText = 60.0 * (str32len (his text.get()) / 5.0) / duration_soundTrimmed;
+			const double wordsPerMinute_rawText = 60.0 * (Melder_length (his text.get()) / 5.0) / duration_soundTrimmed;
 			my d_wordsPerMinute = Melder_ifloor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
 		

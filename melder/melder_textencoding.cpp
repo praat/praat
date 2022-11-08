@@ -154,8 +154,8 @@ integer Melder_killReturns_inplace (char32 *text) {
 	return Melder_killReturns_inplaceCHAR <char32> (text);
 }
 
-size_t str32len_utf8 (conststring32 string, bool nativizeNewlines) {
-	size_t length = 0;
+int64 Melder_length_utf8 (conststring32 string, bool nativizeNewlines) {
+	int64 length = 0;
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++) {
 		char32 kar = *p;
 		if (kar <= 0x00'007F) {
@@ -177,8 +177,8 @@ size_t str32len_utf8 (conststring32 string, bool nativizeNewlines) {
 	return length;
 }
 
-size_t str32len_utf16 (conststring32 string, bool nativizeNewlines) {
-	size_t length = 0;
+int64 Melder_length_utf16 (conststring32 string, bool nativizeNewlines) {
+	int64 length = 0;
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++) {
 		char32 kar = *p;
 		if (kar <= 0x00'007F) {
@@ -418,7 +418,7 @@ void Melder_8to32_inplace (conststring8 string8, mutablestring32 string32, kMeld
 autostring32 Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding) {
 	if (! string)
 		return autostring32();
-	autostring32 result (str8len (string));
+	autostring32 result (Melder8_length (string));
 	Melder_8to32_inplace (string, result.get(), inputEncoding);
 	return result;
 }
@@ -426,7 +426,7 @@ autostring32 Melder_8to32 (const char *string, kMelder_textInputEncoding inputEn
 autostring32 Melder_8to32 (const char *string) {
 	if (! string)
 		return autostring32();
-	autostring32 result (str8len (string));
+	autostring32 result (Melder8_length (string));
 	Melder_8to32_inplace (string, result.get(), kMelder_textInputEncoding::UTF8);
 	return result;
 }
@@ -507,9 +507,9 @@ conststring8 Melder_peek32to8 (conststring32 text) {
 	if (++ bufferNumber == 19)
 		bufferNumber = 0;
 	constexpr int64 maximumNumberOfUTF8bytesPerUTF32point = 4;   // becausse we use only the lower 21 bits
-	const int64 numberOfUTF32points = str32len (text);
+	const int64 numberOfUTF32points = Melder_length (text);
 	const int64 maximumNumberOfBytesNeeded = numberOfUTF32points * maximumNumberOfUTF8bytesPerUTF32point + 1;
-	if ((bufferSizes [bufferNumber] - maximumNumberOfBytesNeeded) * (int64) sizeof (char) >= 10'000) {
+	if ((bufferSizes [bufferNumber] - maximumNumberOfBytesNeeded) * (integer) sizeof (char) >= 10'000) {
 		Melder_free (buffers [bufferNumber]);
 		bufferSizes [bufferNumber] = 0;
 	}
@@ -525,7 +525,7 @@ conststring8 Melder_peek32to8 (conststring32 text) {
 autostring8 Melder_32to8 (conststring32 string) {
 	if (! string)
 		return autostring8();
-	autostring8 result (str32len_utf8 (string, true));
+	autostring8 result (Melder_length_utf8 (string, true));
 	Melder_32to8_inplace (string, result.get());
 	return result;
 }
@@ -538,7 +538,7 @@ conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines) {
 	if (++ bufferNumber == 19)
 		bufferNumber = 0;
 	MelderString16_empty (& buffers [bufferNumber]);
-	const int64 n = str32len (text);
+	const int64 n = Melder_length (text);
 	if (nativizeNewlines) {
 		for (int64 i = 0; i <= n; i ++) {
 			#ifdef _WIN32
@@ -559,7 +559,7 @@ conststring16 Melder_peek32to16 (conststring32 text) {
 
 autostring16 Melder_32to16 (conststring32 text) {
 	conststring16 text16 = Melder_peek32to16 (text);
-	const int64 length = str16len (text16);
+	const integer length = Melder16_length (text16);
 	autostring16 result (length);
 	str16cpy (result.get(), text16);
 	return result;
@@ -568,7 +568,7 @@ autostring16 Melder_32to16 (conststring32 text) {
 #if defined (_WIN32)
 autostringW Melder_32toW (conststring32 text) {
 	conststringW textW = Melder_peek32toW (text);
-	const int64 length = str16len ((conststring16) textW);
+	const integer length = Melder16_length ((conststring16) textW);
 	autostringW result (length);
 	str16cpy ((mutablestring16) result.get(), (conststring16) textW);
 	return result;
@@ -581,7 +581,7 @@ conststringW Melder_peek32toW_fileSystem (conststring32 string) {
 }
 autostringW Melder_32toW_fileSystem (conststring32 text) {
 	conststringW textW = Melder_peek32toW_fileSystem (text);
-	const int64 length = str16len ((conststring16) textW);
+	const integer length = Melder16_length ((conststring16) textW);
 	autostringW result (length);
 	str16cpy ((mutablestring16) result.get(), (conststring16) textW);
 	return result;
@@ -597,7 +597,7 @@ void Melder_32to8_fileSystem_inplace (conststring32 string, char *utf8) {
 			TODO: why not CFStringGetFileSystemRepresentation? perhaps because it's available from 10.4, whereas CFStringNormalize from 10.2
 		*/
 		UniChar unipath [kMelder_MAXPATH+1];
-		const int64 n = str32len (string);
+		const int64 n = Melder_length (string);
 		int n_utf16 = 0;
 		for (int64 i = 0; i < n; i ++) {
 			char32 kar = (char32) string [i];   // change sign (bit 32 is never used)

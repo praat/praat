@@ -1,6 +1,6 @@
 /* melder_strings.cpp
  *
- * Copyright (C) 2006-2012,2014-2021 Paul Boersma
+ * Copyright (C) 2006-2012,2014-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ inline static void MelderString_expand_ (STRING_TYPE *me, int64 sizeNeeded) {
 		totalNumberOfDeallocations += 1;
 		totalDeallocationSize += my bufferSize * (int64) sizeof (CHARACTER_TYPE);
 	}
-	int64 bytesNeeded = sizeNeeded * (int64) sizeof (CHARACTER_TYPE);
+	int64 bytesNeeded = sizeNeeded * (integer) sizeof (CHARACTER_TYPE);
 	Melder_assert (bytesNeeded > 0);
 	try {
 		if (Melder_debug == 34)
@@ -84,7 +84,7 @@ void MelderString_expand (MelderString *me, int64 sizeNeeded) {
 void MelderString16_empty (MelderString16 *me) {
 	if (my bufferSize * (int64) sizeof (char16) >= FREE_THRESHOLD_BYTES)
 		MelderString16_free (me);
-	int64 sizeNeeded = 1;
+	const int64 sizeNeeded = 1;
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand_ <MelderString16, char16> (me, sizeNeeded);
 	my string [0] = u'\0';
@@ -94,7 +94,7 @@ void MelderString16_empty (MelderString16 *me) {
 void MelderString_empty (MelderString *me) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
-	int64 sizeNeeded = 1;
+	const int64 sizeNeeded = 1;
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand_ <MelderString, char32> (me, sizeNeeded);
 	my string [0] = U'\0';
@@ -106,10 +106,10 @@ void MelderString_ncopy (MelderString *me, conststring32 source, int64 n) {
 		MelderString_free (me);
 	if (! source)
 		source = U"";
-	int64 length = str32len (source);
+	int64 length = Melder_length (source);
 	if (length > n)
 		length = n;
-	int64 sizeNeeded = length + 1;
+	const int64 sizeNeeded = length + 1;
 	Melder_assert (sizeNeeded > 0);
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand_ <MelderString, char32> (me, sizeNeeded);
@@ -119,7 +119,7 @@ void MelderString_ncopy (MelderString *me, conststring32 source, int64 n) {
 }
 
 void MelderString16_appendCharacter (MelderString16 *me, char32 kar) {
-	int64 sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null character
+	const int64 sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null character
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand_ <MelderString16, char16> (me, sizeNeeded);
 	if (kar <= 0x00'FFFF) {
@@ -139,7 +139,7 @@ void MelderString16_appendCharacter (MelderString16 *me, char32 kar) {
 }
 
 void MelderString_appendCharacter (MelderString *me, char32 character) {
-	int64 sizeNeeded = my length + 2;   // make room for character and null character
+	const int64 sizeNeeded = my length + 2;   // make room for character and null character
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand_ <MelderString, char32> (me, sizeNeeded);
 	my string [my length] = character;

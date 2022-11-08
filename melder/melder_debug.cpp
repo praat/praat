@@ -108,7 +108,7 @@ conststring8 MelderTrace::_peek32to8 (conststring32 string) {
 		return "";
 	static char *buffer { nullptr };
 	static int64 bufferSize { 0 };
-	int64 n = str32len (string);
+	const int64 n = Melder_length (string);
 	int64 sizeNeeded = n * 4 + 1;
 	if ((bufferSize - sizeNeeded) * (int64) sizeof (char) >= 10'000) {
 		free (buffer);
@@ -152,8 +152,8 @@ conststring16 MelderTrace::_peek32to16 (conststring32 string) {
 		return u"";
 	static char16 *buffer { nullptr };
 	static int64 bufferSize { 0 };
-	int64 n = str32len (string);
-	int64 sizeNeeded = n * 2 + 1;
+	const int64 n = Melder_length (string);
+	const int64 sizeNeeded = n * 2 + 1;
 	if ((bufferSize - sizeNeeded) * (int64) sizeof (char16) >= 10'000) {
 		free (buffer);
 		bufferSize = 0;

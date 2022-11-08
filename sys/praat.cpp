@@ -2109,7 +2109,7 @@ void praat_run () {
 		Melder_assert ((uint32) dummy == 3000000000);
 	}
 	{
-		Melder_assert (str32len (U"hello") == 5);
+		Melder_assert (Melder_length (U"hello") == 5);
 		Melder_assert (str32ncmp (U"hellogoodbye", U"hellogee", 6) == 0);
 		Melder_assert (str32ncmp (U"hellogoodbye", U"hellogee", 7) > 0);
 		Melder_assert (str32str (U"hellogoodbye", U"ogo"));

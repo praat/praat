@@ -633,7 +633,7 @@ DO
 	QUERY_ONE_FOR_STRING (SpellingChecker)
 		if (startingCharacter < 0)
 			Melder_throw (U"Your starting character should be 0 or positive.");
-		if (startingCharacter > str32len (sentence))
+		if (startingCharacter > Melder_length (sentence))
 			Melder_throw (U"Your starting character should not exceed the end of the sentence.");
 		conststring32 result = SpellingChecker_nextNotAllowedWord (me, sentence, & startingCharacter);
 	QUERY_ONE_FOR_STRING_END

@@ -2912,7 +2912,7 @@ static int match (char32 *prog, int *branch_index_param) {
 
 				if (*opnd != *Reg_Input)
 					MATCH_RETURN (0)
-				int len = str32len (opnd);
+				int len = Melder_length (opnd);
 				if (End_Of_String != NULL && Reg_Input + len > End_Of_String)
 					MATCH_RETURN (0)
 				if (len > 1  && str32ncmp (opnd, Reg_Input, len) != 0)

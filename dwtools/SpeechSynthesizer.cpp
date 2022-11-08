@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2021 David Weenink
+//  * Copyright (C) 2011-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -473,7 +473,7 @@ static void IntervalTier_removeVeryShortIntervals (IntervalTier me) {
 static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin, double xmax) {
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	try {
-		const integer textLength = str32len (text);
+		const integer textLength = Melder_length (text);
 		const integer numberOfRows = my rows.size;
 		const integer timeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"time");
 		const integer typeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"type");
@@ -655,7 +655,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 			conststringW textW = Melder_peek32toW (text);
 			espeak_ng_Synthesize (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#else
-			espeak_ng_Synthesize (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
+			espeak_ng_Synthesize (text, Melder_length (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#endif
 				
 		espeak_ng_Terminate ();

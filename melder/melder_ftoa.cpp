@@ -530,7 +530,7 @@ static int iPadBuffer { 0 };
 conststring32 Melder_pad (int64 width, conststring32 string) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS)
 		iPadBuffer = 0;
-	const int64 length = str32len (string);
+	const int64 length = Melder_length (string);
 	const int64 tooShort = width - length;
 	if (tooShort <= 0)
 		return string;
@@ -544,7 +544,7 @@ conststring32 Melder_pad (int64 width, conststring32 string) {
 conststring32 Melder_pad (conststring32 string, int64 width) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS)
 		iPadBuffer = 0;
-	const int64 length = str32len (string);
+	const int64 length = Melder_length (string);
 	const int64 tooShort = width - length;
 	if (tooShort <= 0)
 		return string;
@@ -557,7 +557,7 @@ conststring32 Melder_pad (conststring32 string, int64 width) {
 conststring32 Melder_truncate (int64 width, conststring32 string) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS)
 		iPadBuffer = 0;
-	const int64 length = str32len (string);
+	const int64 length = Melder_length (string);
 	const int64 tooLong = length - width;
 	if (tooLong <= 0)
 		return string;
@@ -568,7 +568,7 @@ conststring32 Melder_truncate (int64 width, conststring32 string) {
 conststring32 Melder_truncate (conststring32 string, int64 width) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS)
 		iPadBuffer = 0;
-	const int64 length = str32len (string);
+	const int64 length = Melder_length (string);
 	const int64 tooLong = length - width;
 	if (tooLong <= 0)
 		return string;
@@ -579,7 +579,7 @@ conststring32 Melder_truncate (conststring32 string, int64 width) {
 conststring32 Melder_padOrTruncate (int64 width, conststring32 string) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS)
 		iPadBuffer = 0;
-	const int64 length = str32len (string);
+	const int64 length = Melder_length (string);
 	const int64 tooLong = length - width;
 	if (tooLong == 0)
 		return string;
@@ -598,7 +598,7 @@ conststring32 Melder_padOrTruncate (int64 width, conststring32 string) {
 conststring32 Melder_padOrTruncate (conststring32 string, int64 width) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS)
 		iPadBuffer = 0;
-	const int64 length = str32len (string);
+	const int64 length = Melder_length (string);
 	const int64 tooLong = length - width;
 	if (tooLong == 0)
 		return string;

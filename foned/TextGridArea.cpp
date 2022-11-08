@@ -143,7 +143,7 @@ static void insertBoundaryOrPoint (TextGridArea me, integer itier, double t1, do
 			*/
 			integer left, right;
 			autostring32 text = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & left, & right);
-			const bool wholeTextIsSelected = ( right - left == str32len (text.get()) );
+			const bool wholeTextIsSelected = ( right - left == Melder_length (text.get()) );
 			rightNewInterval = TextInterval_create (t2, interval -> xmax, text.get() + right);
 			text [right] = U'\0';
 			midNewInterval = TextInterval_create (t1, t2, text.get() + left);
@@ -918,7 +918,7 @@ static void findInTier (TextGridArea me) {
 					FunctionEditor_scrollToView (my functionEditor(), my startSelection());
 					if (my editable ())
 						GuiText_setSelection (my functionEditor() -> textArea,
-							position - text, position - text + str32len (my findString.get()));
+							position - text, position - text + Melder_length (my findString.get()));
 					return;
 				}
 			}
@@ -940,7 +940,7 @@ static void findInTier (TextGridArea me) {
 					FunctionEditor_scrollToView (my functionEditor(), point -> number);
 					if (my editable ())
 						GuiText_setSelection (my functionEditor() -> textArea,
-							position - text, position - text + str32len (my findString.get()));
+							position - text, position - text + Melder_length (my findString.get()));
 					return;
 				}
 			}
@@ -958,7 +958,7 @@ static void do_find (TextGridArea me) {
 			const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
 			if (position)
 				GuiText_setSelection (my functionEditor() -> textArea,
-					position - label.get(), position - label.get() + str32len (my findString.get()));
+					position - label.get(), position - label.get() + Melder_length (my findString.get()));
 			else
 				findInTier (me);
 		} else
@@ -1655,7 +1655,7 @@ static void checkSpellingInTier (TextGridArea me) {
 					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
 					FunctionEditor_scrollToView (my functionEditor(), my startSelection());
 					GuiText_setSelection (my functionEditor() -> textArea,
-							position, position + str32len (notAllowed));
+							position, position + Melder_length (notAllowed));
 					return;
 				}
 			}
@@ -1676,7 +1676,7 @@ static void checkSpellingInTier (TextGridArea me) {
 					my setSelection (point -> number, point -> number);
 					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
 					FunctionEditor_scrollToView (my functionEditor(), point -> number);
-					GuiText_setSelection (my functionEditor() -> textArea, position, position + str32len (notAllowed));
+					GuiText_setSelection (my functionEditor() -> textArea, position, position + Melder_length (notAllowed));
 					return;
 				}
 			}
@@ -1694,7 +1694,7 @@ static void menu_cb_CheckSpelling (TextGridArea me, EDITOR_ARGS_DIRECT) {
 		conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.get(), & position);
 		if (notAllowed)
 			GuiText_setSelection (my functionEditor() -> textArea,
-					position, position + str32len (notAllowed));
+					position, position + Melder_length (notAllowed));
 		else
 			checkSpellingInTier (me);
 	}
@@ -1707,7 +1707,7 @@ static void menu_cb_CheckSpellingInInterval (TextGridArea me, EDITOR_ARGS_DIRECT
 		conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.get(), & position);
 		if (notAllowed)
 			GuiText_setSelection (my functionEditor() -> textArea,
-					position, position + str32len (notAllowed));
+					position, position + Melder_length (notAllowed));
 	}
 }
 static void menu_cb_AddToUserDictionary (TextGridArea me, EDITOR_ARGS_DIRECT) {
@@ -1910,7 +1910,7 @@ void structTextGridArea :: v_updateText () {
 		our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
 		trace (U"setting new text ", newText);
 		GuiText_setString (our functionEditor() -> textArea, newText);
-		const integer cursor = str32len (newText);   // at end
+		const integer cursor = Melder_length (newText);   // at end
 		GuiText_setSelection (our functionEditor() -> textArea, cursor, cursor);
 		our suppressRedraw = false;
 	}
@@ -1960,7 +1960,7 @@ void TextGridArea_clickSelectionViewer (TextGridArea me, double x_fraction, doub
 	if (columnNumber < 1 || columnNumber > 10)
 		return;
 	conststring32 character = characters [rowNumber-1] [columnNumber-1];
-	character += str32len (character) - 1;
+	character += Melder_length (character) - 1;
 	if (my functionEditor() -> textArea) {
 		integer first = 0, last = 0;
 		autostring32 oldText = GuiText_getStringAndSelectionPosition (my functionEditor() -> textArea, & first, & last);

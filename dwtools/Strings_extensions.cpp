@@ -39,7 +39,7 @@ autoStrings Strings_createFixedLength (integer numberOfStrings) {
 autoStrings Strings_createAsCharacters (conststring32 string) {
 	try {
 		autoStrings me = Thing_new (Strings);
-		my numberOfStrings = str32len (string);
+		my numberOfStrings = Melder_length (string);
 		my strings = autoSTRVEC (my numberOfStrings);
 		for (integer i = 1; i <= my numberOfStrings; i ++)
 			my strings [i] = Melder_dup (Melder_character (*string ++));

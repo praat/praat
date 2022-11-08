@@ -45,7 +45,7 @@ static char32 theErrorBuffer [BUFFER_LENGTH];   // safe in low-memory situations
 void MelderError::_append (conststring32 message) {
 	if (! message)
 		return;
-	const integer length = str32len (theErrorBuffer), messageLength = str32len (message);
+	const integer length = Melder_length (theErrorBuffer), messageLength = Melder_length (message);
 	if (length + messageLength >= BUFFER_LENGTH)
 		return;
 	str32cpy (theErrorBuffer + length, message);

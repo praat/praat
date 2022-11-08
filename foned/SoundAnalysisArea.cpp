@@ -548,14 +548,14 @@ static void do_log (SoundAnalysisArea me, int which) {
 				Melder_sprint (formattedNumber,400, Melder_fixed (value, precision));
 			else
 				Melder_sprint (formattedNumber,400, value);
-			const integer arglen = str32len (formattedNumber);
+			const integer arglen = Melder_length (formattedNumber);
 			static MelderString buffer;
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, formattedNumber, p + varlen + 2);
 			str32cpy (format, buffer.string);
 			p += arglen - 1;
 		} else if (stringValue) {
-			const integer varlen = (q - p) - 1, headlen = p - format, arglen = str32len (stringValue);
+			const integer varlen = (q - p) - 1, headlen = p - format, arglen = Melder_length (stringValue);
 			static MelderString buffer;
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, stringValue, p + varlen + 2);

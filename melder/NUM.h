@@ -1,7 +1,7 @@
 #pragma once
 /* NUM.h
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,7 +246,7 @@ inline bool NUMisSymmetric (constMATVU const& x) noexcept {
 }
 
 inline double NUMlength (conststring32 str) {
-	return str ? double (str32len (str)) : 0.0;
+	return double (Melder_length (str));
 }
 
 inline double NUMlog2 (double x) {

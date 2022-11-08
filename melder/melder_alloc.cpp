@@ -1,6 +1,6 @@
 /* melder_alloc.cpp
  *
- * Copyright (C) 1992-2007,2009,2011,2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +202,7 @@ void * _Melder_calloc_f (int64 nelem, int64 elsize) {
 autostring32 Melder_dup (conststring32 string /* cattable */) {
 	if (! string)
 		return autostring32();
-	int64 size = (int64) str32len (string) + 1;   // guaranteed to be positive
+	const int64 size = (int64) Melder_length (string) + 1;   // guaranteed to be positive
 	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" characters. Use a 64-bit edition of Praat instead?");
 	autostring32 result (size, false);   // guarded conversion
@@ -215,7 +215,7 @@ autostring32 Melder_dup (conststring32 string /* cattable */) {
 autostring32 Melder_dup_f (conststring32 string /* cattable */) {
 	if (! string)
 		return autostring32();
-	int64 size = (int64) str32len (string) + 1;
+	const int64 size = (int64) Melder_length (string) + 1;
 	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
 		Melder_fatal (U"(Melder_dup_f:) Can never allocate ", Melder_bigInteger (size), U" characters.");
 	autostring32 result (size, true);

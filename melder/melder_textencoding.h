@@ -2,7 +2,7 @@
 #define _melder_textencoding_h_
 /* melder_textencoding.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@ extern char32 Melder_decodeWindowsLatin1 [256];
 integer Melder_killReturns_inplace (mutablestring32 text);
 integer Melder_killReturns_inplace (mutablestring8 text);
 
-size_t str32len_utf8  (conststring32 string, bool nativizeNewlines);
-size_t str32len_utf16 (conststring32 string, bool nativizeNewlines);
+int64 Melder_length_utf8  (conststring32 string, bool nativizeNewlines);
+int64 Melder_length_utf16 (conststring32 string, bool nativizeNewlines);
 
 extern "C" conststring32 Melder_peek8to32 (conststring8 string);
 void Melder_8to32_inplace (conststring8 source, mutablestring32 target, kMelder_textInputEncoding inputEncoding);

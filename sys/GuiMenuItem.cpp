@@ -158,7 +158,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 	uint32 accelerator = flags & 127;
 	Melder_assert (title);
 	static MelderString neatTitle;
-	const integer titleLength = str32len (title);
+	const integer titleLength = Melder_length (title);
 	if (titleLength > 0 && title [titleLength - 1] == U':') {
 		/*
 			bikeshed choices

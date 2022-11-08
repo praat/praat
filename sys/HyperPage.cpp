@@ -143,7 +143,7 @@ void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, doubl
 {
 	if (my rightMargin == 0.0)
 		return;   // no infinite heights please
-	const double heightGuess = size * (1.2/72) * ((integer) size * str32len (text) / (int) (my rightMargin * 150));
+	const double heightGuess = size * (1.2/72) * ((integer) size * Melder_length (text) / (int) (my rightMargin * 150));
 
 	if (! my printing) {
 		Graphics_Link *paragraphLinks;
@@ -187,7 +187,7 @@ void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, doubl
 		Graphics_setFontSize (my ps, size);
 		my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
 		my d_y -= size * (1.2/72);
-		if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance + size * (1.2/72) * (str32len (text) / (6.0 * 10))) {
+		if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance + size * (1.2/72) * (Melder_length (text) / (6.0 * 10))) {
 			Graphics_nextSheetOfPaper (my ps);
 			if (my d_printingPageNumber != 0)
 				my d_printingPageNumber ++;

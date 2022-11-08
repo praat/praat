@@ -2076,9 +2076,9 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 		/*
 			Kill final new-line symbols.
 	 	*/
-		for (int64 length = str32len (string.get());
+		for (int64 length = Melder_length (string.get());
 		     length > 0 && string [length - 1] == U'\n';
-			 length = str32len (string.get()))
+			 length = Melder_length (string.get()))
 		{
 			string [length - 1] = U'\0';
 		}
@@ -2090,9 +2090,12 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 		const char32 *p = & string [0];
 		for (;;) {
 			char32 kar = *p++;
-			if (kar == U'\0') Melder_throw (U"No rows.");
-			if (kar == U'\n') break;
-			if (kar == separator) numberOfColumns ++;
+			if (kar == U'\0')
+				Melder_throw (U"No rows.");
+			if (kar == U'\n')
+				break;
+			if (kar == separator)
+				numberOfColumns ++;
 		}
 
 		/*
@@ -2106,8 +2109,10 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 				if (interpretQuotes && kar == U'\"')
 					withinQuotes = ! withinQuotes;
 				if (! withinQuotes) {
-					if (kar == U'\0') break;
-					if (kar == U'\n') numberOfRows ++;
+					if (kar == U'\0')
+						break;
+					if (kar == U'\n')
+						numberOfRows ++;
 				}
 			}
 		}

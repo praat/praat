@@ -1,6 +1,6 @@
 /* abcio.cpp
  *
- * Copyright (C) 1992-2011,2015,2017-2020 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1984,23 +1984,23 @@ void binputw8 (conststring32 s, FILE *f) {
 		if (! s) {
 			binputu8 (0, f);
 		} else {
-			uint32 length = str32len (s);
+			uint32 length = Melder_length (s);
 			if (length > UINT8_MAX - 1) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 254 characters.");
 				length = UINT8_MAX - 1;
 			}
 			if (Melder_isValidAscii (s)) {
 				/*
-				 * ASCII
-				 */
+					ASCII
+				*/
 				binputu8 (length, f);
 				for (size_t i = 0; i < length; i ++) {
 					binputu8 ((unsigned int) (char) s [i], f);
 				}
 			} else {
 				/*
-				 * UTF-16
-				 */
+					UTF-16
+				*/
 				binputu8 (0xFF, f);   // an escape for multibyte encoding
 				binputu8 (length, f);
 				for (size_t i = 0; i < length; i ++) {
@@ -2018,23 +2018,23 @@ void binputw16 (conststring32 s, FILE *f) {
 		if (! s) {
 			binputu16 (0, f);
 		} else {
-			int64 length = str32len (s);
+			int64 length = Melder_length (s);
 			if (length > UINT16_MAX - 1) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 65534 characters.");
 				length = UINT16_MAX - 1;
 			}
 			if (Melder_isValidAscii (s)) {
 				/*
-				 * ASCII
-				 */
+					ASCII
+				*/
 				binputu16 ((uint16) length, f);
 				for (int64 i = 0; i < length; i ++) {
 					binputu8 ((unsigned int) (char8) s [i], f);
 				}
 			} else {
 				/*
-				 * UTF-16
-				 */
+					UTF-16
+				*/
 				binputu16 (0xFFFF, f);   // an escape for multibyte encoding
 				binputu16 ((uint16) length, f);
 				for (int64 i = 0; i < length; i ++) {
@@ -2052,23 +2052,23 @@ void binputw32 (conststring32 s, FILE *f) {
 		if (! s) {
 			binputu32 (0, f);
 		} else {
-			int64 length = str32len (s);
+			int64 length = Melder_length (s);
 			if (length > UINT32_MAX - 1) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 4,294,967,294 characters.");
 				length = UINT32_MAX - 1;
 			}
 			if (Melder_isValidAscii (s)) {
 				/*
-				 * ASCII
-				 */
+					ASCII
+				*/
 				binputu32 ((uint32) length, f);
 				for (int64 i = 0; i < length; i ++) {
 					binputu8 ((unsigned int) (char) s [i], f);
 				}
 			} else {
 				/*
-				 * UTF-16
-				 */
+					UTF-16
+				*/
 				binputu32 (0xFFFF'FFFF, f);   // an escape for multibyte encoding
 				binputu32 ((uint32) length, f);
 				for (int64 i = 0; i < length; i ++) {

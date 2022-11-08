@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2011,2015,2017-2020 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,11 +191,12 @@ autostring8 bingets8 (FILE *f);   void binputs8 (const char *s, FILE *f);   // 0
 autostring8 bingets16 (FILE *f);   void binputs16 (const char *s, FILE *f);   // 0..65535 characters
 autostring8 bingets32 (FILE *f);   void binputs32 (const char *s, FILE *f);   // 0..4294967295 characters
 /*
-	Read or write a string from or to `str32len(s)` UTF-16LE or ASCII characters plus 1, 2, or 4 bytes in the stream `f`,
-	in a Pascal-style format: first the length, then the characters, without a trailing null byte.
+	Read or write a string from or to `Melder_length(s)` UTF-16LE or ASCII characters
+	plus 1, 2, or 4 bytes in the stream `f`, in a Pascal-style format:
+	first the length, then the characters, without a trailing null byte.
 	bingetsxxx returns a new 'malloc'ed null-terminated C string (for the caller to `free` it).
 	Fail if out of memory.
-	binputsxxx expects a null-terminated C string whose `str32len` fits in 1, 2, or 4 bytes.
+	binputsxxx expects a null-terminated C string whose `Melder_length` fits in 1, 2, or 4 bytes.
 */
 autostring32 bingetw8 (FILE *f);   void binputw8 (conststring32 s, FILE *f);
 autostring32 bingetw16 (FILE *f);   void binputw16 (conststring32 s, FILE *f);

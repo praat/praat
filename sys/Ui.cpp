@@ -173,8 +173,8 @@ static autoUiField UiField_create (_kUiField_type type, conststring32 nameOrNull
 				p [-1] = U'\0';
 		}
 		p = shortName;
-		if (*p != U'\0' && p [str32len (p) - 1] == U':')
-			p [str32len (p) - 1] = U'\0';
+		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
+			p [Melder_length (p) - 1] = U'\0';
 		Thing_setName (me.get(), shortName);
 	}
 	return me;
@@ -1243,7 +1243,7 @@ void UiForm_finish (UiForm me) {
 				Gui_OPTIONMENU_HEIGHT
 			: thy type == _kUiField_type::LIST_ ?
 				LIST_HEIGHT
-			: thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue.get()) - 1] != U'.' && ifield != my numberOfFields ?
+			: thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [Melder_length (thy stringValue.get()) - 1] != U'.' && ifield != my numberOfFields ?
 				headerLabelHeight
 			: thouHastVerticallyAddedLabel ?
 				multiLineTextHeight (thy numberOfLines)
@@ -2093,7 +2093,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::REAL_OR_UNDEFINED_:
 		case _kUiField_type::POSITIVE_:
 		{
-			if (str32spn (string, U" \t") == str32len (string))
+			if (str32spn (string, U" \t") == Melder_length (string))
 				Melder_throw (U"Argument “", my name.get(), U"” empty.");
 			Interpreter_numericExpression (interpreter, string, & my realValue);
 			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
@@ -2107,7 +2107,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::INTEGER_:
 		case _kUiField_type::NATURAL_:
 		case _kUiField_type::CHANNEL_: {
-			if (str32spn (string, U" \t") == str32len (string))
+			if (str32spn (string, U" \t") == Melder_length (string))
 				Melder_throw (U"Argument “", my name.get(), U"” empty.");
 			if (my type == _kUiField_type::CHANNEL_ && (str32equ (string, U"All") || str32equ (string, U"Average"))) {
 				my integerValue = 0;
@@ -2348,7 +2348,7 @@ void UiForm_setReal (UiForm me, double *p_variable, double value) {
 						if ((str32chr (field -> stringDefaultValue.get(), U'.') || str32chr (field -> stringDefaultValue.get(), U'e')) &&
 							! (str32chr (s, U'.') || str32chr (s, U'e')))
 						{
-							str32cpy (s + str32len (s), U".0");
+							str32cpy (s + Melder_length (s), U".0");
 						}
 						GuiText_setString (field -> text, s);
 					}
