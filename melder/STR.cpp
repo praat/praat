@@ -25,7 +25,7 @@ static uint64 hexSecret = UINT64_C (5'847'171'831'059'823'557);
 autostring8 hex_STR8 (conststring8 str, uint64 key) {
 	if (key != 0)
 		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
-	autostring8 result (str8len (str) * 2);
+	autostring8 result (Melder8_length (str) * 2);
 	char *to = & result [0];
 	for (const char8 *from = (char8 *) & str [0]; *from != '\0'; from ++) {
 		integer value = *from;
@@ -304,7 +304,7 @@ autostring32 right_STR (conststring32 str, integer newLength) {
 autostring8 unhex_STR8 (conststring8 str, uint64 key) {
 	if (key != 0)
 		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
-	autostring8 result (str8len (str) / 2);
+	autostring8 result (Melder8_length (str) / 2);
 	char *to = & result [0];
 	for (const char8 *from = (char8 *) & str [0];;) {
 		char8 code1 = *from ++;

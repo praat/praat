@@ -130,7 +130,7 @@ void _CollectionOfDaata_v1_readText (_CollectionOfDaata* me, MelderReadText text
 				char *location = & line [n];
 				if (*location == ' ')
 					n ++;   // skip space character
-				integer length = str8len (location);
+				const integer length = Melder8_length (location);
 				if (length > 0 && location [length - 1] == '\n')
 					location [length - 1] = '\0';
 				Thing_setName (my at [i], Melder_peek8to32 (line.get()+n));

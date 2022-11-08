@@ -244,7 +244,7 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
 			Melder_throw (U"This is not a Praat picture file.");
 		*end = '\0';
 		rewind (f);
-		fread (line, 1, integer_to_uinteger (end - line + str8len (tag)), f);
+		fread (line, 1, integer_to_uinteger (end - line + Melder8_length (tag)), f);
 		Graphics_readRecordings (my graphics.get(), f);
 		Graphics_updateWs (my graphics.get());
 		f.close (file);

@@ -1668,7 +1668,7 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 	if (my recording) {
 		const conststring8 txt_utf8 = Melder_peek32to8 (txt);
-		const integer length = str8len (txt_utf8) / (int) sizeof (double) + 1;
+		const integer length = Melder8_length (txt_utf8) / (integer) sizeof (double) + 1;
 		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
 	} else {
 		if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {

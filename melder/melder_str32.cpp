@@ -20,7 +20,7 @@
 
 #pragma mark - first one 8-bit string function...
 
-integer str8len (conststring8 stringOrNull) {
+integer Melder8_length (conststring8 stringOrNull) {
 	if (! stringOrNull)
 		return 0;
 	const char *p = & stringOrNull [0];
