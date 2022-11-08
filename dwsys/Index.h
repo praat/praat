@@ -44,7 +44,7 @@ integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex);
 
 autoStringsIndex StringsIndex_create (integer numberOfItems);
 
-autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStrings_sorting sorting, bool breakAtDecimalPoint);
+autoStringsIndex StringsIndex_createFromSTRVEC (constSTRVEC const& strvec, kStrings_sorting sorting);
 
 int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, conststring32 classLabel);
 

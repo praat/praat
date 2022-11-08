@@ -18,7 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "melder.h"
 #include "Collection.h"
+#include "NUMsorting.h"
 
 #include "Permutation_def.h"
 
@@ -36,6 +38,8 @@ autoPermutation Permutation_create (integer numberOfElements, bool identity);
 		with the identical permutation (1,2,..n) if identity is true
 		else create a random permutation
 */
+
+autoPermutation Permutation_createAsSortingIndex (constSTRVEC const& strvec, kStrings_sorting sorting);
 
 void Permutation_checkInvariant (Permutation me);
 /* Check that the elements, if sorted ascendingly, are exactly equal to the identity (1,2,...). */

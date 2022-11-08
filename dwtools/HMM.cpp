@@ -313,7 +313,7 @@ autoHMMObservationSequence Strings_to_HMMObservationSequence (Strings me) {
 autoStringsIndex HMMObservationSequence_to_StringsIndex (HMMObservationSequence me) {
 	try {
 		autoStrings s = HMMObservationSequence_to_Strings (me);
-		autoStringsIndex thee = Strings_to_StringsIndex (s.get(), kStrings_sorting::NATURAL);
+		autoStringsIndex thee = Strings_to_StringsIndex (s.get(), kStrings_sorting::NUMBER_AWARE);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no StringsIndex created.");

@@ -26,7 +26,7 @@
 #include <limits.h>
 #include "melder.h"
 #include "MAT_numerics.h"
-#include "NUM_sorting.h"
+#include "NUMsorting.h"
 
 /*
 	A tipical iteration goes like
