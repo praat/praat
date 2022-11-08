@@ -128,18 +128,18 @@ const struct TIMIT_key {
 	{"2", "\\'2"}		/* secondary stress marker */
 };
 
-#define TIMIT_NLABELS (sizeof TIMIT_toIpaTable / sizeof TIMIT_toIpaTable [1] - 1)
+constexpr integer TIMIT_NLABELS = ((integer) sizeof TIMIT_toIpaTable / (integer) sizeof TIMIT_toIpaTable [1] - 1);
 static const char *TIMIT_DELIMITER = "h#";
 
 static const char *timitLabelToIpaLabel (const char timitLabel []) {
-	for (integer i = 1; i <= TIMIT_NLABELS; i++)
-		if (!strcmp (TIMIT_toIpaTable [i].timitLabel, timitLabel))
+	for (integer i = 1; i <= TIMIT_NLABELS; i ++)
+		if (! strcmp (TIMIT_toIpaTable [i].timitLabel, timitLabel))
 			return TIMIT_toIpaTable [i].ipaLabel;
 	return timitLabel;
 }
 
 static bool isTimitPhoneticLabel (const char label []) {
-	for (integer i = 1; i <= TIMIT_NLABELS; i++)
+	for (integer i = 1; i <= TIMIT_NLABELS; i ++)
 		if (! strcmp (TIMIT_toIpaTable [i].timitLabel, label))
 			return true;
 	return false;
@@ -832,7 +832,7 @@ double TextGrid_getTotalDurationOfIntervalsWhere (TextGrid me, integer tierNumbe
 			if (Melder_stringMatchesCriterion (interval -> text.get(), which, criterion, true))
 				totalDuration += interval -> xmax - interval -> xmin;
 		}
-		return totalDuration;
+		return double (totalDuration);
 	} catch (MelderError) {
 		Melder_throw (me, U": interval durations not counted.");
 	}
