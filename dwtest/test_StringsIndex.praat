@@ -10,14 +10,14 @@ str = Create Strings from tokens: "example1", "1-2,1-02,1-20,10-20,fred,jane,pic
 
 str$# = List all strings
 strs$# = shuffle$# (str$#)
-stri = To StringsIndex: "number aware"
+stri = To StringsIndex: "number-aware"
 stris= To Strings
 stris$# = List all strings
 for i to size (str$#)
 	assert str$#  [i] = stris$# [i]
 endfor
 selectObject: str
-p = To Permutation: "number aware"
+p = To Permutation: "number-aware"
 selectObject: str, p
 strp = Permute strings
 strp$# = List all strings
