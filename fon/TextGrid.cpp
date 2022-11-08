@@ -999,11 +999,11 @@ autoTextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double 
 }
 
 integer TextInterval_labelLength (TextInterval me) {
-	return my text ? str32len (my text.get()) : 0;
+	return Melder_length (my text.get());
 }
 
 integer TextPoint_labelLength (TextPoint me) {
-	return my mark ? str32len (my mark.get()) : 0;
+	return Melder_length (my mark.get());
 }
 
 integer IntervalTier_maximumLabelLength (IntervalTier me) {

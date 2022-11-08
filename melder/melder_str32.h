@@ -23,7 +23,7 @@ integer Melder8_length (conststring8 string);   // can except on 32-bit platform
 integer Melder16_length (conststring16 string) noexcept;
 mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept;
 
-integer str32len (conststring32 string) noexcept;
+integer Melder_length (conststring32 string) noexcept;
 mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept;
 mutablestring32 str32cat (mutablestring32 target, conststring32 source) noexcept;
 char32 * stp32cpy (mutablestring32 target, conststring32 source) noexcept;

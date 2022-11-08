@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2021 Paul Boersma
+ * Copyright (C) 1996-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -455,7 +455,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 			numberOfPictures ++;
 			structMelderFile pngFile;
 			MelderFile_copy (file, & pngFile);
-			pngFile. path [str32len (pngFile. path) - 5] = U'\0';   // delete extension ".html"
+			pngFile. path [Melder_length (pngFile. path) - 5] = U'\0';   // delete extension ".html"
 			str32cat (pngFile. path, Melder_cat (U"_", numberOfPictures, U".png"));
 			{// scope
 				autoGraphics graphics = Graphics_create_pngfile (& pngFile, 300, 0.0, paragraph -> width, 0.0, paragraph -> height);
@@ -478,7 +478,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 			numberOfPictures ++;
 			structMelderFile pngFile;
 			MelderFile_copy (file, & pngFile);
-			pngFile. path [str32len (pngFile. path) - 5] = U'\0';   // delete extension ".html"
+			pngFile. path [Melder_length (pngFile. path) - 5] = U'\0';   // delete extension ".html"
 			str32cat (pngFile. path, Melder_cat (U"_", numberOfPictures, U".png"));
 			{// scope
 				autoGraphics graphics = Graphics_create_pngfile (& pngFile, 300, 0.0, paragraph -> width, 0.0, paragraph -> height);
@@ -900,7 +900,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		integer ilink, jlink;
 		if (page -> paragraphs.size > 0) {
 			conststring32 text = page -> paragraphs [page -> paragraphs.size]. text;
-			if (text && text [0] != U'\0' && text [str32len (text) - 1] != U':')
+			if (text && text [0] != U'\0' && text [Melder_length (text) - 1] != U':')
 				MelderString_append (buffer, U"<h3>Links to this page</h3>\n");
 		}
 		MelderString_append (buffer, U"<ul>\n");
@@ -955,7 +955,7 @@ void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath) {
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
 		char32 fileName [256];
-		Melder_assert (str32len (page -> title.get()) < 256 - 100);
+		Melder_assert (Melder_length (page -> title.get()) < 256 - 100);
 		trace (U"page ", ipage, U": ", page -> title.get());
 		Melder_sprint (fileName,256,  page -> title.get());
 		for (char32 *p = fileName; *p; p ++)

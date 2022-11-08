@@ -220,7 +220,7 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 			Melder_getDefaultDir (& dir);   // BUG
 			Melder_sprint (file -> path,kMelder_MAXPATH+1,
 				dir. path,
-				dir. path [0] != U'\0' && dir. path [str32len (dir. path) - 1] == U'\\' ? U"" : U"\\",
+				dir. path [0] != U'\0' && dir. path [Melder_length (dir. path) - 1] == U'\\' ? U"" : U"\\",
 				path
 			);
 		}
@@ -274,7 +274,7 @@ void MelderDir_getFile (MelderDir parent, conststring32 fileName, MelderFile fil
 		else
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, parent -> path, U"/", fileName);
 	#elif defined (_WIN32)
-		if (str32rchr (file -> path, U'\\') - file -> path == str32len (file -> path) - 1)
+		if (str32rchr (file -> path, U'\\') - file -> path == Melder_length (file -> path) - 1)
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, parent -> path, fileName);
 		else
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, parent -> path, U"\\", fileName);
@@ -373,7 +373,7 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 		str32cpy (parent -> path, dir -> path);
 		char32 *colon = str32chr (parent -> path, U':');
 		if (colon) {
-			const integer length = str32len (parent -> path);
+			const integer length = Melder_length (parent -> path);
 			char32 *backslash = str32rchr (parent -> path, U'\\');
 			if (backslash) {   //   C:\WINDOWS\FONTS or C:\WINDOWS or C:\   - (cannot add a line comment with a backslash)
 				if (backslash - parent -> path == length - 1) {   //   C:\   -
@@ -387,7 +387,7 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 				Melder_getDesktop (parent);   // empty string
 			}
 		} else if (parent -> path [0] == U'\\' && parent -> path [1] == U'\\') {
-			const integer length = str32len (parent -> path);
+			const integer length = Melder_length (parent -> path);
 			char32 *backslash = str32rchr (parent -> path + 2, U'\\');
 			if (backslash) {   //   \\Swine\Apps\Praats or \\Swine\Apps or \\Swine\   -
 				if (backslash - parent -> path == length - 1) {   //   \\Swine\   -
@@ -421,7 +421,7 @@ void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir 
 			Melder_sprint (subdir -> path,kMelder_MAXPATH+1, parent -> path, U"/", subdirName);
 		}
 	#elif defined (_WIN32)
-		const integer length = str32len (parent -> path);
+		const integer length = Melder_length (parent -> path);
 		char32 *backslash = str32rchr (parent -> path, U'\\');
 		if (backslash && backslash - parent -> path == length - 1) {   //   C:\ or \\Swine\   -
 			Melder_sprint (subdir -> path, kMelder_MAXPATH+1, parent -> path, subdirName);
@@ -569,7 +569,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			Melder_appendError (U"Hint: empty file name.");
 		else if (path [0] == U' ' || path [0] == U'\t')
 			Melder_appendError (U"Hint: file name starts with a space or tab.");
-		else if (path [str32len (path) - 1] == U' ' || path [str32len (path) - 1] == U'\t')
+		else if (path [Melder_length (path) - 1] == U' ' || path [Melder_length (path) - 1] == U'\t')
 			Melder_appendError (U"Hint: file name ends in a space or tab.");
 		else if (str32chr (path, U'\n'))
 			Melder_appendError (U"Hint: file name contains a newline symbol.");
@@ -759,7 +759,7 @@ void Melder_getDefaultDir (MelderDir dir) {
 			str32cpy (dir -> path, theDefaultDir. path);
 		else
 			Melder_throw (Melder_peek8to32 (strerror (errno)));
-		Melder_assert (str32len (dir -> path) <= kMelder_MAXPATH);
+		Melder_assert (Melder_length (dir -> path) <= kMelder_MAXPATH);
 	#elif defined (_WIN32)
 		static WCHAR dirPathW [kMelder_MAXPATH+1];
 		GetCurrentDirectory (kMelder_MAXPATH+1, dirPathW);
@@ -995,7 +995,7 @@ void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutp
 			#define putc_unlocked  putc
 		#endif
 		flockfile (f);
-		const integer n = str32len (text);
+		const integer n = Melder_length (text);
 		for (integer i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
@@ -1007,7 +1007,7 @@ void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutp
 		funlockfile (f);
 	} else {
 		binputu16 (0xFEFF, f);   // Byte Order Mark
-		const integer n = str32len (text);
+		const integer n = Melder_length (text);
 		for (integer i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
@@ -1062,8 +1062,8 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 				Append ASCII or ISOLatin1 text to ASCII or ISOLatin1 file.
 			*/
 			autofile f2 = Melder_fopen (file, "ab");
-			const int64 n = str32len (text);
-			for (int64 i = 0; i < n; i ++) {
+			const integer n = Melder_length (text);
+			for (integer i = 0; i < n; i ++) {
 				const char32 kar = text [i];
 				#ifdef _WIN32
 					if (kar == U'\n')
@@ -1079,7 +1079,7 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 			autostring32 oldText = MelderFile_readText (file);
 			autofile f2 = Melder_fopen (file, "wb");
 			binputu16 (0xfeff, f2);
-			int64 n = str32len (oldText.get());
+			integer n = Melder_length (oldText.get());
 			for (int64 i = 0; i < n; i ++) {
 				char32 kar = oldText [i];
 				#ifdef _WIN32
@@ -1096,8 +1096,8 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 					binputu16 (UNICODE_REPLACEMENT_CHARACTER, f2);
 				}
 			}
-			n = str32len (text);
-			for (int64 i = 0; i < n; i ++) {
+			n = Melder_length (text);
+			for (integer i = 0; i < n; i ++) {
 				char32 kar = text [i];
 				#ifdef _WIN32
 					if (kar == U'\n')
@@ -1117,8 +1117,8 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 		}
 	} else {
 		autofile f2 = Melder_fopen (file, "ab");
-		const int64 n = str32len (text);
-		for (int64 i = 0; i < n; i ++) {
+		const integer n = Melder_length (text);
+		for (integer i = 0; i < n; i ++) {
 			if (type == 1) {
 				char32 kar = text [i];
 				#ifdef _WIN32

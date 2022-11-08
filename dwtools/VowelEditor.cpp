@@ -511,7 +511,7 @@ static void Table_addColumnIfNotExists_colour (Table me, conststring32 colour) {
 
 static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
 	try {
-		Melder_require (str32len (my instancePref_marks_fileName()) > 0,
+		Melder_require (Melder_length (my instancePref_marks_fileName()) > 0,
 			U"No file with vowel marks has been defined.");
 		structMelderFile file { };
 		Melder_pathToFile (my instancePref_marks_fileName(), & file);
@@ -1371,7 +1371,7 @@ autoVowelEditor VowelEditor_create (conststring32 title) {
 			my setInstancePref_synthesis_q1 (Melder_atof (my default_synthesis_q1()));
 			my setInstancePref_synthesis_q2 (Melder_atof (my default_synthesis_q2()));
 		}
-		if (str32len (my instancePref_synthesis_extraFBPairs()) == 0)
+		if (Melder_length (my instancePref_synthesis_extraFBPairs()) == 0)
 			my setInstancePref_synthesis_extraFBPairs (my default_synthesis_extraFBPairs ());
 		my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my instancePref_synthesis_extraFBPairs());
 		Melder_assert (my extraFrequencyBandwidthPairs.size >= 4);   // for deprecated Set F3 & F4

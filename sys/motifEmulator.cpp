@@ -160,7 +160,7 @@ static int Native_titleWidth (GuiObject me) {
 		ReleaseDC (my parent -> window, dc);
 		return size. cx;
 	} else {
-		return 7 * str32len (my name.get());
+		return 7 * Melder_length (my name.get());
 	}
 }
 

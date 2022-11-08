@@ -271,7 +271,7 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 		 * Determine the position of the new command.
 		 */
 		integer position;
-		if (str32len (after) && after [0] != U'*') {   // search for existing command with same selection
+		if (Melder_length (after) && after [0] != U'*') {   // search for existing command with same selection
 			integer found = lookUpMatchingMenuCommand (window, menu, after);
 			if (found) {
 				position = found + 1;   // after 'after'
@@ -471,7 +471,7 @@ int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpret
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
 			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
 			U"\"",
-			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			scriptIsInPlugin ? scriptPath + Melder_length (preferencesFolderPath) : scriptPath,
 			U"\"",
 			arguments && arguments [0] ? U", " : U"",
 			arguments && arguments [0] ? arguments : U"",
@@ -504,7 +504,7 @@ int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interp
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
 			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
 			U"\"",
-			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			scriptIsInPlugin ? scriptPath + Melder_length (preferencesFolderPath) : scriptPath,
 			U"\"",
 			narg > 0 ? U", ..." : U"",
 			U"\n"

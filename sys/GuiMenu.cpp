@@ -419,10 +419,10 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, conststring32 title, uint32 fl
 				Menu title positioning information is maintained in that GuiWindow.
 			*/
 			NSRect parentRect = [(NSView *) window -> d_widget   frame];   // this is the window's top form
-			integer parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
+			const integer parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
 			if (window -> d_menuBarWidth == 0)
 				window -> d_menuBarWidth = -1;
-			integer width = 18 + 7 * str32len (title), height = 35 /*25*/;
+			const integer width = 18 + 7 * Melder_length (title), height = 35 /*25*/;
 			integer x = window -> d_menuBarWidth, y = parentHeight + 1 - height;
             NSUInteger resizingMask = NSViewMinYMargin;
 			if (Melder_equ (title, U"Help")) {

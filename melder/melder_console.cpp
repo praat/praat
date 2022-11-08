@@ -1,6 +1,6 @@
 /* melder_console.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ void MelderConsole::write (conststring32 message, bool useStderr) {
 		}
 		fflush (f);
 	} else if (MelderConsole :: encoding == Encoding::ANSI) {
-		integer n = str32len (message);
+		const integer n = Melder_length (message);
 		for (integer i = 0; i < n; i ++) {
 			/*
 				We convert Unicode to ISO 8859-1 by simple truncation. This loses information.

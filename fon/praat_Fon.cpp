@@ -2602,7 +2602,7 @@ FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create St
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
 	#elif defined (_WIN32)
 	{
-		static integer len = str32len (homeDirectory);
+		static integer len = Melder_length (homeDirectory);
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory,
 				len == 0 || homeDirectory [len - 1] != U'\\' ? U"\\" : U"", U"*.wav");
 	}
@@ -2627,7 +2627,7 @@ FORM (NEW1_Strings_createAsFolderList, U"Create Strings as folder list", U"Creat
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
 	#elif defined (_WIN32)
 	{
-		integer len = str32len (homeDirectory);
+		const integer len = Melder_length (homeDirectory);
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, len == 0 || homeDirectory [len - 1] != U'\\' ? U"\\" : U"");
 	}
 	#else

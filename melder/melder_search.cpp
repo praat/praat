@@ -33,7 +33,7 @@ bool Melder_numberMatchesCriterion (double value, kMelder_number which, double c
 inline static char32 * str32str_word_optionallyCaseSensitive (conststring32 string, conststring32 find,
 	bool ink, bool caseSensitive, bool startFree, bool endFree) noexcept
 {
-	const integer length = str32len (find);
+	const integer length = Melder_length (find);
 	if (length == 0)
 		return (char32 *) string;
 	conststring32 movingString = string;
@@ -89,13 +89,13 @@ bool Melder_stringMatchesCriterion (conststring32 value, kMelder_string which, c
 		case kMelder_string::STARTS_WITH:
 		case kMelder_string::DOES_NOT_START_WITH:
 		{
-			const bool doesMatch = str32nequ_optionallyCaseSensitive (value, criterion, str32len (criterion), caseSensitive);
+			const bool doesMatch = str32nequ_optionallyCaseSensitive (value, criterion, Melder_length (criterion), caseSensitive);
 			return which == kMelder_string::STARTS_WITH ? doesMatch : ! doesMatch;
 		}
 		case kMelder_string::ENDS_WITH:
 		case kMelder_string::DOES_NOT_END_WITH:
 		{
-			const integer criterionLength = str32len (criterion), valueLength = str32len (value);
+			const integer criterionLength = Melder_length (criterion), valueLength = Melder_length (value);
 			const bool doesMatch = ( criterionLength <= valueLength &&
 				str32equ_optionallyCaseSensitive (value + valueLength - criterionLength, criterion, caseSensitive) );
 			return which == kMelder_string::ENDS_WITH ? doesMatch : ! doesMatch;

@@ -52,7 +52,7 @@ mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept
 
 #pragma mark - ...and the remainder are 32-bit string functions
 
-integer str32len (conststring32 stringOrNull) noexcept {
+integer Melder_length (conststring32 stringOrNull) noexcept {
 	if (! stringOrNull)
 		return 0;
 	const char32 *p = & stringOrNull [0];
@@ -95,7 +95,7 @@ mutablestring32 str32ncpy (mutablestring32 target, conststring32 source, integer
 #pragma mark - SEARCHING
 
 char32 * str32str (conststring32 string, conststring32 find) noexcept {
-	integer length = str32len (find);
+	const integer length = Melder_length (find);
 	if (length == 0)
 		return (char32 *) string;
 	char32 firstCharacter = * find ++;   // optimization
@@ -110,7 +110,7 @@ char32 * str32str (conststring32 string, conststring32 find) noexcept {
 	return (char32 *) (string - 1);
 }
 char32 * str32str_caseInsensitive (conststring32 string, conststring32 find) noexcept {
-	integer length = str32len (find);
+	const integer length = Melder_length (find);
 	if (length == 0)
 		return (char32 *) string;
 	char32 firstCharacter = Melder_toLowerCase (* find ++);   // optimization

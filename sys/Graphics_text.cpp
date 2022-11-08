@@ -877,7 +877,7 @@ static char32 *charCodes;
 static int initBuffer (conststring32 txt) {
 	try {
 		constexpr integer maximumNumberOfReplacementCharactersPerCharacter = 2;
-		integer sizeNeeded = maximumNumberOfReplacementCharactersPerCharacter * str32len (txt) + 1;
+		integer sizeNeeded = maximumNumberOfReplacementCharactersPerCharacter * Melder_length (txt) + 1;
 		if (sizeNeeded > bufferSize) {
 			sizeNeeded += sizeNeeded / 2 + 100;
 			Melder_free (theWidechar);

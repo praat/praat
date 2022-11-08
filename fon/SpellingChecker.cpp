@@ -88,7 +88,7 @@ static int startsWithCapital (conststring32 word) {
 }
 
 bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
-	const integer wordLength = str32len (word);
+	const integer wordLength = Melder_length (word);
 	if (my allowAllWordsContaining && my allowAllWordsContaining [0]) {
 		char32 *p = & my allowAllWordsContaining [0];
 		while (*p) {
@@ -127,7 +127,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 					Allow word if starts with this prefix
 					and this prefix is followed by a capital.
 				*/
-				if (str32str (word, token) == word && startsWithCapital (word + str32len (token)))
+				if (str32str (word, token) == word && startsWithCapital (word + Melder_length (token)))
 					return true;
 			}
 		}
@@ -149,7 +149,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 			while (*p != U'\0' && *p != U' ')
 				*q ++ = *p ++;
 			*q = U'\0';   // trailing null character
-			const integer tokenLength = str32len (token);
+			const integer tokenLength = Melder_length (token);
 			if (wordLength >= tokenLength && str32nequ (token, word, tokenLength))
 				return true;
 		}
@@ -162,7 +162,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 			while (*p != U'\0' && *p != U' ')
 				*q ++ = *p ++;
 			*q = U'\0';   // trailing null character
-			const integer tokenLength = str32len (token);
+			const integer tokenLength = Melder_length (token);
 			if (wordLength >= tokenLength && str32nequ (token, word + wordLength - tokenLength, tokenLength))
 				return true;
 		}
@@ -170,7 +170,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 	if (WordList_hasWord (my wordList.get(), word))
 		return true;
 	if (my userDictionary->size > 0) {
-		if (str32len (word) > 3333)
+		if (Melder_length (word) > 3333)
 			return false;   // superfluous, because WordList_hasWord already checked; but safe
 		static char32 buffer [3*3333+1];
 		Longchar_nativize (word, buffer, false);

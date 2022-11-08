@@ -1,6 +1,6 @@
 /* STRVEC.cpp
  *
- * Copyright (C) 2006,2007,2009,2011,2012,2015-2021 Paul Boersma
+ * Copyright (C) 2006,2007,2009,2011,2012,2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 	#if defined (_WIN32)
 		try {
 			char32 searchPath [kMelder_MAXPATH+1];
-			const integer len = str32len (path);
+			const integer len = Melder_length (path);
 			const bool hasAsterisk = !! str32chr (path, U'*');
 			const bool endsInSeparator = ( len != 0 && path [len - 1] == U'\\' );
 			autoSTRVEC strings;
@@ -120,7 +120,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 				//Melder_casual (U"file ", filePath. string, U" mode ", stats. st_mode / 4096);
 				if ((! wantDirectories && S_ISREG (stats. st_mode)) || (wantDirectories && S_ISDIR (stats. st_mode))) {
 					Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
-					const int64 length = str32len (buffer32);
+					const int64 length = Melder_length (buffer32);
 					integer numberOfMatchedCharacters = 0;
 					bool doesTheLeftMatch = true;
 					if (left. length != 0) {
@@ -203,7 +203,7 @@ autoSTRVEC splitByWhitespace_STRVEC (conststring32 string) {
 autoSTRVEC splitBy_STRVEC (conststring32 string, conststring32 separator) {
 	if (! string)
 		return autoSTRVEC();   // accept null pointer input
-	const integer separatorLength = str32len (separator);
+	const integer separatorLength = Melder_length (separator);
 	const char32 *p = & string [0];
 	const char32 *locationOfSeparator = str32str (p, separator);
 	if (! locationOfSeparator) {

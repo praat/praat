@@ -116,7 +116,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	}
 	const conststring32 obscuredLabel = U"#!praatObscured";
 	if (Melder_stringMatchesCriterion (text.get(), kMelder_string::STARTS_WITH, obscuredLabel, true)) {
-		const integer obscuredLabelLength = str32len (obscuredLabel);
+		const integer obscuredLabelLength = Melder_length (obscuredLabel);
 		const double fileKey_real = Melder_atof (MelderFile_name (& file));
 		const uint64 fileKey = ( isdefined (fileKey_real) ? uint64 (fileKey_real) : 0 );
 		char32 *restOfText = & text [obscuredLabelLength];
@@ -255,11 +255,11 @@ static void menu_cb_pasteHistory (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	char32 *history = UiHistory_get ();
 	if (! history || history [0] == U'\0')
 		Melder_throw (U"No history.");
-	integer length = str32len (history);
+	integer length = Melder_length (history);
 	if (history [length - 1] != U'\n') {
 		UiHistory_write (U"\n");
 		history = UiHistory_get ();
-		length = str32len (history);
+		length = Melder_length (history);
 	}
 	if (history [0] == U'\n') {
 		history ++;

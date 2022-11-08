@@ -413,7 +413,7 @@ static void menu_cb_erase (TextEditor me, EDITOR_ARGS_DIRECT) {
 static bool getSelectedLines (TextEditor me, integer *firstLine, integer *lastLine) {
 	integer left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
-	integer textLength = str32len (text.get());
+	const integer textLength = Melder_length (text.get());
 	Melder_assert (left >= 0);
 	Melder_assert (left <= right);
 	if (right > textLength)
@@ -444,8 +444,8 @@ static void do_find (TextEditor me) {
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	char32 *location = str32str (& text [right], theFindString.get());
 	if (location) {
-		integer index = location - text.get();
-		GuiText_setSelection (my textWidget, index, index + str32len (theFindString.get()));
+		const integer index = location - text.get();
+		GuiText_setSelection (my textWidget, index, index + Melder_length (theFindString.get()));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
 			GuiThing_show (my windowForm);
@@ -456,8 +456,8 @@ static void do_find (TextEditor me) {
 		*/
 		location = str32str (text.get(), theFindString.get());
 		if (location) {
-			integer index = location - text.get();
-			GuiText_setSelection (my textWidget, index, index + str32len (theFindString.get()));
+			const integer index = location - text.get();
+			GuiText_setSelection (my textWidget, index, index + Melder_length (theFindString.get()));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32
 				GuiThing_show (my windowForm);
@@ -478,7 +478,7 @@ static void do_replace (TextEditor me) {
 	integer left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	GuiText_replace (my textWidget, left, right, theReplaceString.get());
-	GuiText_setSelection (my textWidget, left, left + str32len (theReplaceString.get()));
+	GuiText_setSelection (my textWidget, left, left + Melder_length (theReplaceString.get()));
 	GuiText_scrollToSelection (my textWidget);
 	#ifdef _WIN32
 		GuiThing_show (my windowForm);
@@ -573,11 +573,10 @@ static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
 				}
 			}
 		}
-		if (left == str32len (text.get())) {
+		if (left == Melder_length (text.get()))
 			right = left;
-		} else if (text [right] == U'\n') {
+		else if (text [right] == U'\n')
 			right ++;
-		}
 		GuiText_setSelection (my textWidget, left, right);
 		GuiText_scrollToSelection (my textWidget);
 	EDITOR_END
@@ -600,12 +599,15 @@ static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS_DIRECT) {
 		} else if (kar == U'\\') {
 			MelderInfo_write (U"\\\\");
 		} else if (kar > 127) {
-			if (kar <= 0x00FFFF) {
+			if (kar <= 0x00FFFF)
 				MelderInfo_write (U"\\u", hex [kar >> 12], hex [(kar >> 8) & 0x00'000F], hex [(kar >> 4) & 0x00'000F], hex [kar & 0x00'000F]);
-			} else {
-				MelderInfo_write (U"\\U", hex [kar >> 28], hex [(kar >> 24) & 0x00'000F], hex [(kar >> 20) & 0x00'000F], hex [(kar >> 16) & 0x00'000F],
-					hex [(kar >> 12) & 0x00'000F], hex [(kar >> 8) & 0x00'000F], hex [(kar >> 4) & 0x00'000F], hex [kar & 0x00'000F]);
-			}
+			else
+				MelderInfo_write (U"\\U",
+					hex [kar >> 28], hex [(kar >> 24) & 0x00'000F],
+					hex [(kar >> 20) & 0x00'000F], hex [(kar >> 16) & 0x00'000F],
+					hex [(kar >> 12) & 0x00'000F], hex [(kar >> 8) & 0x00'000F],
+					hex [(kar >> 4) & 0x00'000F], hex [kar & 0x00'000F]
+				);
 		} else {
 			buffer [0] = *p;
 			MelderInfo_write (& buffer [0]);

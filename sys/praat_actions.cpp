@@ -753,7 +753,7 @@ int praat_doAction (conststring32 title, conststring32 arguments, Interpreter in
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
 			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
 			U"\"",
-			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			scriptIsInPlugin ? scriptPath + Melder_length (preferencesFolderPath) : scriptPath,
 			U"\"",
 			arguments && arguments [0] ? U", " : U"",
 			arguments && arguments [0] ? arguments : U"",
@@ -784,7 +784,7 @@ int praat_doAction (conststring32 title, integer narg, Stackel args, Interpreter
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
 			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
 			U"\"",
-			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			scriptIsInPlugin ? scriptPath + Melder_length (preferencesFolderPath) : scriptPath,
 			U"\"",
 			narg > 0 ? U", ..." : U"",
 			U"\n"

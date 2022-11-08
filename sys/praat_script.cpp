@@ -306,11 +306,10 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			if (command [6] == U' ' && Melder_isLetter (command [7])) {
 				interpreter -> optionalEditor = praat_findEditorFromString (command + 7);
 			} else if (command [6] == U'\0') {
-				if (interpreter && interpreter -> editorClass) {
+				if (interpreter && interpreter -> editorClass)
 					interpreter -> optionalEditor = praat_findEditorFromString (interpreter -> environmentName.get());
-				} else {
+				else
 					Melder_throw (U"The function \"editor\" requires an argument when called from outside an editor.");
-				}
 			} else {
 				Interpreter_voidExpression (interpreter, command);
 			}
@@ -377,9 +376,9 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			}
 		} else {
 			/*
-			 * This must be a formula command:
-			 *    proc (args)
-			 */
+				This must be a formula command:
+					proc (args)
+			*/
 			Interpreter_voidExpression (interpreter, command);
 		}
 	} else {   /* Simulate menu choice. */
@@ -395,9 +394,8 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 				if (arguments [1] == U'\0') {
 					arguments = & arguments [1];   // empty string
 				} else {
-					if (arguments [1] != U' ') {
+					if (arguments [1] != U' ')
 						Melder_throw (U"There should be a space after the colon.");
-					}
 					arguments [1] = U'\0';   // new end of "command"
 					arguments += 2;   // the arguments start after the space
 				}
@@ -409,9 +407,8 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 				if (*arguments == U'\0') {
 					// empty string
 				} else {
-					if (*arguments != U' ') {
+					if (*arguments != U' ')
 						Melder_throw (U"There should be a space after the three dots.");
-					}
 					*arguments = U'\0';   // new end of "command"
 					arguments ++;   // the arguments start after the space
 				}
@@ -432,11 +429,10 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			colon [3] = U'\0';
 		}
 		if (theCurrentPraatObjects == & theForegroundPraatObjects && interpreter && interpreter -> optionalEditor) {
-			if (hasColon) {
+			if (hasColon)
 				Editor_doMenuCommand (interpreter -> optionalEditor, command2, narg, args, nullptr, interpreter);
-			} else {
+			else
 				Editor_doMenuCommand (interpreter -> optionalEditor, command, 0, nullptr, arguments, interpreter);
-			}
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (str32nequ (command, U"Save ", 5) ||
 			 str32nequ (command, U"Write ", 6) ||
@@ -447,62 +443,57 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else {
 			bool theCommandIsAnExistingAction = false;
 			try {
-				if (hasColon) {
+				if (hasColon)
 					theCommandIsAnExistingAction = praat_doAction (command2, narg, args, interpreter);
-				} else {
+				else
 					theCommandIsAnExistingAction = praat_doAction (command, arguments, interpreter);
-				}
 			} catch (MelderError) {
 				/*
-				 * We only get here if the command *was* an existing action.
-				 * Anything could have gone wrong in its execution,
-				 * but one invisible problem can be checked here.
-				 */
-				if (hasDots && arguments [0] != U'\0' && arguments [str32len (arguments) - 1] == U' ') {
+					We only get here if the command *was* an existing action.
+					Anything could have gone wrong in its execution,
+					but one invisible problem can be checked here.
+				*/
+				if (hasDots && arguments [0] != U'\0' && arguments [Melder_length (arguments) - 1] == U' ')
 					Melder_throw (U"It may be helpful to remove the trailing spaces in \"", arguments, U"\".");
-				} else {
+				else
 					throw;
-				}
 			}
 			if (! theCommandIsAnExistingAction) {
 				bool theCommandIsAnExistingMenuCommand = false;
 				try {
-					if (hasColon) {
+					if (hasColon)
 						theCommandIsAnExistingMenuCommand = praat_doMenuCommand (command2, narg, args, interpreter);
-					} else {
+					else
 						theCommandIsAnExistingMenuCommand = praat_doMenuCommand (command, arguments, interpreter);
-					}
 				} catch (MelderError) {
 					/*
-					 * We only get here if the command *was* an existing menu command.
-					 * Anything could have gone wrong in its execution,
-					 * but one invisible problem can be checked here.
-					 */
-					if (hasDots && arguments [0] != U'\0' && arguments [str32len (arguments) - 1] == U' ') {
+						We only get here if the command *was* an existing menu command.
+						Anything could have gone wrong in its execution,
+						but one invisible problem can be checked here.
+					*/
+					if (hasDots && arguments [0] != U'\0' && arguments [Melder_length (arguments) - 1] == U' ')
 						Melder_throw (U"It may be helpful to remove the trailing spaces in \"", arguments, U"\".");
-					} else {
+					else
 						throw;
-					}
 				}
 				if (! theCommandIsAnExistingMenuCommand) {
-					const integer length = str32len (command);
-					if (str32nequ (command, U"ARGS ", 5)) {
+					const integer length = Melder_length (command);
+					if (str32nequ (command, U"ARGS ", 5))
 						Melder_throw (U"Command \"ARGS\" no longer supported. Instead use \"form\" and \"endform\".");
-					} else if (str32chr (command, U'=')) {
+					else if (str32chr (command, U'='))
 						Melder_throw (U"Command \"", command, U"\" not recognized.\n"
 							U"Probable cause: you are trying to use a variable name that starts with a capital.");
-					} else if (length >= 1 && Melder_isHorizontalSpace (command [length - 1])) {
+					else if (length >= 1 && Melder_isHorizontalSpace (command [length - 1]))
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It may be helpful to remove the trailing spaces.");
-					} else if (length >= 2 && Melder_isHorizontalSpace (command [length - 2]) && command [length - 1] == U':') {
+					else if (length >= 2 && Melder_isHorizontalSpace (command [length - 2]) && command [length - 1] == U':')
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It may be helpful to remove the space before the colon.");
-					} else if (str32nequ (command, U"\"ooTextFile\"", 12)) {
+					else if (str32nequ (command, U"\"ooTextFile\"", 12))
 						Melder_throw (U"Command \"", command, U"\" not available for current selection. "
 							U"It is possible that this file is not a Praat script but a Praat data file that you can open with \"Read from file...\".");
-					} else {
+					else
 						Melder_throw (U"Command \"", command, U"\" not available for current selection.");
-					}
 				}
 			}
 		}

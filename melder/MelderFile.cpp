@@ -86,7 +86,7 @@ void MelderFile_write (MelderFile file, conststring32 string) {
 		return;
 	if (! string)
 		return;
-	const int64 length = str32len (string);
+	const int64 length = Melder_length (string);
 	FILE *f = file -> filePointer;
 	if (file -> outputEncoding == kMelder_textOutputEncoding_ASCII || file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1) {
 		for (int64 i = 0; i < length; i ++) {

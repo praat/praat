@@ -1126,7 +1126,7 @@ void GuiText_replace (GuiText me, integer from_pos, integer to_pos, conststring3
 		}
 	#elif motif
 		Melder_assert (MEMBER (my d_widget, Text));
-		autostring32 winText (2 * str32len (text), true);   // all newlines
+		autostring32 winText (2 * Melder_length (text), true);   // all newlines
 		char32 *to = & winText [0];
 		/*
 			Replace all LF with CR/LF.
@@ -1246,7 +1246,7 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 		autostring32 text = GuiText_getString (me);
 		if (first < 0) first = 0;
 		if (last < 0) last = 0;
-		integer length = str32len (text.get());
+		const integer length = Melder_length (text.get());
 		if (first >= length) first = length;
 		if (last >= length) last = length;
 		/*
@@ -1315,13 +1315,18 @@ void GuiText_setString (GuiText me, conststring32 text, bool undoable) {
 			gtk_text_buffer_insert_interactive (textBuffer, & start, textUtf8, strlen (textUtf8), gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
 	#elif motif
-		autostring32 winText (2 * str32len (text), true);   // all new lines
+		autostring32 winText (2 * Melder_length (text), true);   // all new lines
 		char32 *to = & winText [0];
 		/*
 			Replace all LF with CR/LF.
 		*/
 		for (const char32 *from = & text [0]; *from != U'\0'; from ++, to ++)
-			if (*from == U'\n') { *to = 13; * ++ to = U'\n'; } else *to = *from;
+			if (*from == U'\n') {
+				*to = 13;
+				* ++ to = U'\n';
+			} else {
+				*to = *from;
+			}
 		*to = U'\0';
 		SetWindowTextW (my d_widget -> window, Melder_peek32toW (winText.get()));
 		UpdateWindow (my d_widget -> window);

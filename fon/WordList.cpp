@@ -52,7 +52,7 @@ void structWordList :: v1_info () {
 	structDaata :: v1_info ();
 	const integer n = WordList_count (this);
 	if (our length == 0)
-		our length = str32len (our string.get());
+		our length = Melder_length (our string.get());
 	MelderInfo_writeLine (U"Number of words: ", n);
 	MelderInfo_writeLine (U"Number of characters: ", length - n);
 }
@@ -107,7 +107,7 @@ void structWordList :: v1_readBinary (FILE *f, int formatVersion) {
 			Melder_throw (U"Length in header (", our length, U") does not match length of string (", (integer) (p - & our string [0]), U").");
 	} else {
 		our string = bingetw32 (f);
-		our length = str32len (our string.get());
+		our length = Melder_length (our string.get());
 	}
 }
 
@@ -138,7 +138,7 @@ autoWordList Strings_to_WordList (Strings me) {
 
 		integer totalLength = 0;
 		for (integer i = 1; i <= your size; i ++)
-			totalLength += str32len (your at [i]->string.get()) + 1;   // include trailing newline symbol
+			totalLength += Melder_length (your at [i]->string.get()) + 1;   // include trailing newline symbol
 
 		autoWordList him = Thing_new (WordList);
 		his length = totalLength;
@@ -149,7 +149,7 @@ autoWordList Strings_to_WordList (Strings me) {
 		char32 *q = & his string [0];
 		for (integer i = 1; i <= your size; i ++) {
 			str32cpy (q, your at [i]->string.get());
-			q += str32len (your at [i]->string.get());
+			q += Melder_length (your at [i]->string.get());
 			*q ++ = U'\n';
 		}
 		*q = U'\0';
@@ -221,11 +221,11 @@ static int compare (conststring32 word, conststring32 p) {
 static char32 buffer [3333+1];
 
 bool WordList_hasWord (WordList me, conststring32 word) {
-	if (str32len (word) > 3333)
+	if (Melder_length (word) > 3333)
 		return false;
 	Longchar_nativize (word, buffer, false);
 	if (! my length)
-		my length = str32len (my string.get());
+		my length = Melder_length (my string.get());
 	integer p = my length / 2, d = p / 2;
 	while (d > 20) {
 		p = gotoStart (me, p);

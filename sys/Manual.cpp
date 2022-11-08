@@ -132,7 +132,7 @@ void structManual :: v_draw () {
 		bool goAhead = true;
 		if (page -> paragraphs.size > 0) {
 			conststring32 text = page -> paragraphs [page -> paragraphs.size]. text;
-			if (! text || text [0] == U'\0' || text [str32len (text) - 1] != U':') {
+			if (! text || text [0] == U'\0' || text [Melder_length (text) - 1] != U':') {
 				if (our printing && our suppressLinksHither)
 					goAhead = false;
 				else
@@ -264,7 +264,7 @@ static double searchToken (ManPages me, integer ipage, conststring32 token) {
 			ptoken = str32str (buffer.string, token);
 			if (ptoken) {
 				goodness += 10.0;   // ten points for every paragraph with a match!
-				if (str32str (ptoken + str32len (token), token))
+				if (str32str (ptoken + Melder_length (token), token))
 					goodness += 1.0;   // one point for every second occurrence in a paragraph!
 			}
 		}
@@ -491,8 +491,8 @@ autoManual Manual_create (conststring32 title, ManPages manPages, bool ownManPag
 		char32 windowTitle [101];
 		if (manPages -> pages.at [1] -> title [0] == U'-') {
 			Melder_sprint (windowTitle,101, & manPages -> pages.at [1] -> title [1]);
-			if (windowTitle [str32len (windowTitle) - 1] == U'-')
-				windowTitle [str32len (windowTitle) - 1] = U'\0';
+			if (windowTitle [Melder_length (windowTitle) - 1] == U'-')
+				windowTitle [Melder_length (windowTitle) - 1] = U'\0';
 		} else {
 			Melder_sprint (windowTitle,101, U"Praat Manual");
 		}
