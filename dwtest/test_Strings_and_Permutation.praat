@@ -16,7 +16,7 @@ endfor
 removeObject: stringsa, pa
 
 selectObject: strings
-pn = To Permutation: "natural"
+pn = To Permutation: "number aware"
 plusObject: strings
 stringsn = Permute strings
 for i to size (veca#)
