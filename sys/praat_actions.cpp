@@ -35,25 +35,42 @@ static bool actionsInvisible = false;
 
 static void fixSelectionSpecification (ClassInfo *class1, integer *n1, ClassInfo *class2, integer *n2, ClassInfo *class3, integer *n3) {
 /*
- * Function:
- *	sort the specification pairs *class(i), *n(i) according to class name, with null classes at the end.
- * Postconditions:
- *	if (*class2) !! *class1;
- *	if (*class3) !! *class2;
- *	(*class1) -> className <= (*class2) -> className <= (*class3) -> className;
- * Usage:
- *	Called by praat_addAction () and praat_removeAction ().
- */
+	Function:
+		sort the specification pairs *class(i), *n(i) according to class name, with null classes at the end.
+	Postconditions:
+		if (*class2) !! *class1;
+		if (*class3) !! *class2;
+		(*class1) -> className <= (*class2) -> className <= (*class3) -> className;
+	Usage:
+		Called by praat_addAction () and praat_removeAction ().
+*/
 
-	/* Fix unusual input bubblewise. */
+	/*
+		Fix unusual input bubblewise.
+	*/
+	if (! *class1 && *class2) {
+		*class1 = *class2;
+		*n1 = *n2;
+		*class2 = nullptr;
+		*n2 = 0;
+	}
+	if (! *class2 && *class3) {
+		*class2 = *class3;
+		*n2 = *n3;
+		*class3 = nullptr;
+		*n3 = 0;
+		if (! *class1 && *class2) {
+			*class1 = *class2;
+			*n1 = *n2;
+			*class2 = nullptr;
+			*n2 = 0;
+		}
+	}
 
-	if (! *class1 && *class2) { *class1 = *class2; *n1 = *n2; *class2 = nullptr; *n2 = 0; }
-	if (! *class2 && *class3) { *class2 = *class3; *n2 = *n3; *class3 = nullptr; *n3 = 0;
-		if (! *class1 && *class2) { *class1 = *class2; *n1 = *n2; *class2 = nullptr; *n2 = 0; } }
-
-	/* Now: if *class3, then *class2, and if *class2, then *class1.
-	 * Bubble-sort the input by class name.
-	 */
+	/*
+		Now: if *class3, then *class2, and if *class2, then *class1.
+		Bubble-sort the input by class name.
+	*/
 	if (*class2 && str32cmp ((*class1) -> className, (*class2) -> className) > 0) {
 		ClassInfo helpClass1 = *class1; *class1 = *class2; *class2 = helpClass1;
 		integer helpN1 = *n1; *n1 = *n2; *n2 = helpN1;
@@ -70,15 +87,17 @@ static void fixSelectionSpecification (ClassInfo *class1, integer *n1, ClassInfo
 
 static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, ClassInfo class4, conststring32 title) {
 /*
- * An action command is fully specified by its environment (the selected classes) and its title.
- * Precondition:
- *	class1, class2, and class3 must be in sorted order.
- */
+	An action command is fully specified by its environment (the selected classes) and its title.
+	Precondition:
+		class1, class2, and class3 must be in sorted order.
+*/
 	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		if (class1 == action -> class1 && class2 == action -> class2 &&
-		    class3 == action -> class3 && class4 == action -> class4 &&
-		    title && action -> title && str32equ (action -> title.get(), title)) return i;
+			class3 == action -> class3 && class4 == action -> class4 &&
+			title && action -> title && str32equ (action -> title.get(), title)
+		)
+			return i;
 	}
 	return 0;   // not found
 }
@@ -117,14 +136,15 @@ static void praat_addAction4__ (ClassInfo class1, integer n1, ClassInfo class2, 
 				class1 ? class1 -> className : U"", U" ",
 				class2 ? class2 -> className : U"", U" ",
 				class3 ? class3 -> className : U"", U" ",
-				class4 ? class4 -> className : U"", U".");
+				class4 ? class4 -> className : U"", U"."
+			);
 
 		if (! class1)
 			Melder_throw (U"The action command \"", title, U"\" has no first class.");
 
 		/*
-		 * Determine the position of the new command.
-		 */
+			Determine the position of the new command.
+		*/
 		integer position;
 		if (after && after [0] != U'*') {   // search for existing command with same selection
 			integer found = lookUpMatchingAction (class1, class2, class3, class4, after);
@@ -137,8 +157,8 @@ static void praat_addAction4__ (ClassInfo class1, integer n1, ClassInfo class2, 
 		}
 
 		/*
-		 * Make new command.
-		 */
+			Make new command.
+		*/
 		autoPraat_Command action = Thing_new (Praat_Command);
 		action -> class1 = class1;
 		action -> n1 = n1;
@@ -159,8 +179,8 @@ static void praat_addAction4__ (ClassInfo class1, integer n1, ClassInfo class2, 
 		action -> attractive = attractive;
 
 		/*
-		 * Insert new command.
-		 */
+			Insert new command.
+		*/
 		theActions. addItemAtPosition_move (action.move(), position);
 	} catch (MelderError) {
 		Melder_flushError ();
@@ -190,12 +210,14 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 		flags |= GuiMenu_HIDDEN;
 	} while (pSeparator);
 	praat_addAction4__ (class1, n1, class2, n2, class3, n3, class4, n4,
-		pTitle, after, flags | GuiMenu_HIDDEN, callback, nameOfCallback);
+			pTitle, after, flags | GuiMenu_HIDDEN, callback, nameOfCallback);
 }
 
 static void deleteDynamicMenu () {
-	if (praatP.phase != praat_HANDLING_EVENTS) return;
-	if (actionsInvisible) return;
+	if (praatP.phase != praat_HANDLING_EVENTS)
+		return;
+	if (actionsInvisible)
+		return;
 	static integer numberOfDeletions;
 	trace (U"deletion #", ++ numberOfDeletions);
 	for (integer i = 1; i <= theActions.size; i ++) {
@@ -240,7 +262,8 @@ static void deleteDynamicMenu () {
 }
 
 static void updateDynamicMenu () {
-	if (praatP.phase != praat_HANDLING_EVENTS) return;
+	if (praatP.phase != praat_HANDLING_EVENTS)
+		return;
 	praat_sortActions ();
 	deleteDynamicMenu ();
 	praat_show ();
@@ -267,8 +290,8 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 			Melder_throw (U"Command \"", title, U"\" has no first class.");
 
 		/*
-		 * If the button already exists, remove it.
-		 */
+			If the button already exists, remove it.
+		*/
 		{// scope
 			integer found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 			if (found)
@@ -276,23 +299,22 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 		}
 
 		/*
-		 * Determine the position of the new command.
-		 */
+			Determine the position of the new command.
+		*/
 		integer position;
 		if (after [0] != U'\0') {   // search for existing command with same selection
 			integer found = lookUpMatchingAction (class1, class2, class3, nullptr, after);
-			if (found) {
+			if (found)
 				position = found + 1;   // after 'after'
-			} else {
+			else
 				position = theActions.size + 1;   // at end
-			}
 		} else {
 			position = theActions.size + 1;   // at end
 		}
 
 		/*
-		 * Create new command.
-		 */
+			Create new command.
+		*/
 		autoPraat_Command action = Thing_new (Praat_Command);
 		action -> class1 = class1;
 		action -> n1 = n1;
@@ -319,8 +341,8 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 		}
 
 		/*
-		 * Insert new command.
-		 */
+			Insert new command.
+		*/
 		theActions. addItemAtPosition_move (action.move(), position);
 		updateDynamicMenu ();
 	} catch (MelderError) {
@@ -337,7 +359,8 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 			Melder_throw (U"Action command \"", class1 -> className,
 				class2 ? U" & ": U"", class2 -> className,
 				class3 ? U" & ": U"", class3 -> className,
-				U": ", title, U"\" not found.");
+				U": ", title, U"\" not found."
+			);
 		}
 		theActions. removeItem (found);
 	} catch (MelderError) {
@@ -496,16 +519,24 @@ static bool allowExecutionHook (void *closure) {
 		Praat_Command me = theActions.at [i];
 		if (my callback == callback) {
 			integer sel1, sel2 = 0, sel3 = 0, sel4 = 0;
-			if (! my class1) Melder_throw (U"No class1???");
+			if (! my class1)
+				Melder_throw (U"No class1???");
 			numberOfMatchingCallbacks += 1;
-			if (! firstMatchingCallback) firstMatchingCallback = i;
-			sel1 = my class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (my class1);
-			if (sel1 == 0) continue;
-			if (my class2 && (sel2 = praat_numberOfSelected (my class2)) == 0) continue;
-			if (my class3 && (sel3 = praat_numberOfSelected (my class3)) == 0) continue;
-			if (my class4 && (sel4 = praat_numberOfSelected (my class4)) == 0) continue;
-			if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;
-			if ((my n1 && sel1 != my n1) || (my n2 && sel2 != my n2) || (my n3 && sel3 != my n3) || (my n4 && sel4 != my n4)) continue;
+			if (firstMatchingCallback == 0)
+				firstMatchingCallback = i;
+			sel1 = ( my class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (my class1) );
+			if (sel1 == 0)
+				continue;
+			if (my class2 && (sel2 = praat_numberOfSelected (my class2)) == 0)
+				continue;
+			if (my class3 && (sel3 = praat_numberOfSelected (my class3)) == 0)
+				continue;
+			if (my class4 && (sel4 = praat_numberOfSelected (my class4)) == 0)
+				continue;
+			if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection)
+				continue;
+			if ((my n1 && sel1 != my n1) || (my n2 && sel2 != my n2) || (my n3 && sel3 != my n3) || (my n4 && sel4 != my n4))
+				continue;
 			return true;   // found a matching action
 		}
 	}
@@ -569,50 +600,65 @@ void praat_actions_show () {
 		const int BUTTON_VSPACING = 5;
 	#endif
 	/*
-	 * The selection has changed;
-	 * kill the dynamic menu and the write menu.
-	 */
+		The selection has changed;
+		kill the dynamic menu and the write menu.
+	*/
 	if (! theCurrentPraatApplication -> batch) {
 		deleteDynamicMenu ();
 		if (! Melder_backgrounding) {
 			GuiThing_setSensitive (praat_writeMenu, false);
-			if (praat_writeMenuSeparator) GuiThing_hide (praat_writeMenuSeparator);
+			if (praat_writeMenuSeparator)
+				GuiThing_hide (praat_writeMenuSeparator);
 		}
 
-		/* Determine the visibility and sensitivity of all the actions.
-		 */
+		/*
+			Determine the visibility and sensitivity of all the actions.
+		*/
 		if (theCurrentPraatObjects -> totalSelection != 0 && ! Melder_backgrounding)
 			GuiThing_setSensitive (praat_writeMenu, true);
 	}
 	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		integer sel1 = 0, sel2 = 0, sel3 = 0, sel4 = 0;
-		integer n1 = action -> n1, n2 = action -> n2, n3 = action -> n3, n4 = action -> n4;
+		const integer n1 = action -> n1, n2 = action -> n2, n3 = action -> n3, n4 = action -> n4;
 
-		/* Clean up from previous selection. */
-
+		/*
+			Clean up from previous selection.
+		*/
 		action -> visible = false;
 		action -> executable = false;
 
-		/* Match the actually selected classes with the selection required for this visibility. */
-
-		if (! action -> class1) continue;   // at least one class selected
-		sel1 = action -> class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (action -> class1);
-		if (sel1 == 0) continue;
-		if (action -> class2 && (sel2 = praat_numberOfSelected (action -> class2)) == 0) continue;
-		if (action -> class3 && (sel3 = praat_numberOfSelected (action -> class3)) == 0) continue;
-		if (action -> class4 && (sel4 = praat_numberOfSelected (action -> class4)) == 0) continue;
-		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;   // other classes selected? Do not show
+		/*
+			Match the actually selected classes with the selection required for this visibility.
+		*/
+		if (! action -> class1)
+			continue;   // at least one class selected
+		sel1 = ( action -> class1 == classDaata ? theCurrentPraatObjects -> totalSelection : praat_numberOfSelected (action -> class1) );
+		if (sel1 == 0)
+			continue;
+		if (action -> class2 && (sel2 = praat_numberOfSelected (action -> class2)) == 0)
+			continue;
+		if (action -> class3 && (sel3 = praat_numberOfSelected (action -> class3)) == 0)
+			continue;
+		if (action -> class4 && (sel4 = praat_numberOfSelected (action -> class4)) == 0)
+			continue;
+		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection)
+			continue;   // other classes selected? Do not show
 		action -> visible = ! action -> hidden;
 
-		/* Match the actually selected objects with the selection required for this action. */
-
-		if (! action -> callback) continue;   // separators are not executable
-		if ((n1 && sel1 != n1) || (n2 && sel2 != n2) || (n3 && sel3 != n3) || (n4 && sel4 != n4)) continue;
+		/*
+			Match the actually selected objects with the selection required for this action.
+		*/
+		if (! action -> callback)
+			continue;   // separators are not executable
+		if ((n1 && sel1 != n1) || (n2 && sel2 != n2) || (n3 && sel3 != n3) || (n4 && sel4 != n4))
+			continue;
 		action -> executable = true;
 	}
 
-	/* Create a new column of buttons in the dynamic menu. */
+	/*
+		Create a new column of buttons in the dynamic menu.
+	*/
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		actionsInvisible = false;
 		GuiMenu currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;
@@ -620,15 +666,21 @@ void praat_actions_show () {
 		int y = Machine_getMenuBarBottom () + 10;
 		for (integer i = 1; i <= theActions.size; i ++) {   // add buttons or make existing buttons sensitive (executable)
 			Praat_Command me = theActions.at [i];
-			if (my depth == 0) currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
-			if (my depth == 1) currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
-			if (! my visible) continue;
+			if (my depth == 0) {
+				currentSubmenu1 = nullptr;
+				currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
+			}
+			if (my depth == 1)
+				currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
+			if (! my visible)
+				continue;
 			if (my callback) {
-				/* Apparently a true command: create a button in the dynamic menu.
-				 * If it is a subcommand (depth > 0), put it in the current submenu,
-				 * but only if this exists (umbrella against stray submenu specifications).
-				 */
-				GuiMenu parentMenu = my depth > 1 && currentSubmenu2 ? currentSubmenu2 : my depth > 0 && currentSubmenu1 ? currentSubmenu1 : nullptr;
+				/*
+					Apparently a true command: create a button in the dynamic menu.
+					If it is a subcommand (depth > 0), put it in the current submenu,
+					but only if this exists (umbrella against stray submenu specifications).
+				*/
+				GuiMenu parentMenu = ( my depth > 1 && currentSubmenu2 ? currentSubmenu2 : my depth > 0 && currentSubmenu1 ? currentSubmenu1 : nullptr );
 
 				if (str32nequ (my title.get(), U"Save ", 5) || str32nequ (my title.get(), U"Write ", 6) || str32nequ (my title.get(), U"Append to ", 10)) {
 					parentMenu = praat_writeMenu;
@@ -642,37 +694,39 @@ void praat_actions_show () {
 				if (parentMenu) {
 					my button = GuiMenu_addItem (parentMenu, my title.get(),
 						( my executable ? 0 : GuiMenu_INSENSITIVE ),
-						cb_menu, me);
+						cb_menu, me
+					);
 				} else {
 					my button = GuiButton_createShown (praat_form,
 						BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
 						my title.get(), gui_button_cb_menu,
-						me,
-							( my executable ? 0 : GuiButton_INSENSITIVE ) | ( my attractive ? GuiButton_ATTRACTIVE : 0 ));
+						me, ( my executable ? 0 : GuiButton_INSENSITIVE ) | ( my attractive ? GuiButton_ATTRACTIVE : 0 )
+					);
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
 				}
 			} else if (i == theActions.size || theActions.at [i + 1] -> depth == 0) {
 				/*
-				 * Apparently a labelled separator.
-				 */
+					Apparently a labelled separator.
+				*/
 				my button = GuiLabel_createShown (praat_form, BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_LABEL_HEIGHT, my title.get(), 0);
 				y += Gui_LABEL_HEIGHT + BUTTON_VSPACING;
 			} else if (! my title || my title [0] == U'-') {
 				/*
-				 * Apparently a separator in a submenu.
-				 */
+					Apparently a separator in a submenu.
+				*/
 				if (currentSubmenu2 || currentSubmenu1) {   // these separators are not shown in a flattened menu
 					my button = GuiMenu_addSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1);
 					GuiThing_show (my button);
 				}
 			} else {
 				/*
-				 * Apparently a submenu.
-				 */
+					Apparently a submenu.
+				*/
 				if (my depth == 0 || ! currentSubmenu1) {
 					currentSubmenu1 = GuiMenu_createInForm (praat_form,
 						BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
-						my title.get(), 0);
+						my title.get(), 0
+					);
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
 					my button = currentSubmenu1 -> d_cascadeButton.get();
 				} else {
@@ -686,7 +740,8 @@ void praat_actions_show () {
 }
 
 void praat_actions_createWriteMenu (GuiWindow window) {
-	if (theCurrentPraatApplication -> batch) return;
+	if (theCurrentPraatApplication -> batch)
+		return;
 	praat_writeMenu = GuiMenu_createInWindow (window, U"Save", GuiMenu_INSENSITIVE);
 	#if gtk
 		GuiMenu_addSeparator (praat_writeMenu);
@@ -694,7 +749,8 @@ void praat_actions_createWriteMenu (GuiWindow window) {
 }
 
 void praat_actions_createDynamicMenu (GuiWindow window) {
-	if (theCurrentPraatApplication -> batch) return;
+	if (theCurrentPraatApplication -> batch)
+		return;
 	praat_form = window;
 }
 
@@ -728,7 +784,8 @@ void praat_saveToggledActions (MelderString *buffer) {
 				U" ", my class1 -> className,
 				U" ", ( my class2 ? my class2 -> className : U"\"\"" ),
 				U" ", ( my class3 ? my class3 -> className : U"\"\"" ),
-				U" ", my title.get(), U"\n");
+				U" ", my title.get(), U"\n"
+			);
 		}
 	}
 }
