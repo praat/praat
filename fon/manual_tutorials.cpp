@@ -3191,7 +3191,7 @@ CODE (U"The GNU General Public License does not permit incorporating your progra
 	"<https://www.gnu.org/licenses/why-not-lgpl.html>.")
 MAN_END
 
-MAN_BEGIN (U"Privacy and security", U"ppgb", 20220121)
+MAN_BEGIN (U"Privacy and security", U"ppgb", 20221109)
 INTRO (U"Praat is an \"isolated\" app. You download it from praat.org, "
 	"then record sounds into Praat (all in RAM) or open a sound file, "
 	"then analyse or manipulate that sound. The only way in which your results "
@@ -3211,7 +3211,7 @@ NORMAL (U"When you are using Praat, you can be assured that Praat does not attem
 	"or pictures or settings to the Praat team. "
 	"In fact, Praat never accesses the Internet, not even to @@checking for updates|check for updates@.")
 ENTRY (U"No telemetry")
-NORMAL (U"Praat does no telemetry, i.e. it does not send anything to the Praat team while you are using Praat:")
+NORMAL (U"Praat does not send anything to the Praat team while you are using Praat:")
 LIST_ITEM (U"\\bu No surveillance")
 LIST_ITEM (U"\\bu No tracking")
 LIST_ITEM (U"\\bu No Google Analytics")
@@ -3224,12 +3224,12 @@ NORMAL (U"Praat will save your preferences to your own disk on your own computer
 	"The goal of this is to provide a continuous user experience, and is what you probably expect, "
 	"because most apps that you use on your computer work this way.")
 ENTRY (U"What we do measure")
-NORMAL (U"Praat does no telemetry, i.e. it does not send us anything while you are using Praat. "
-	"We do receive some information, though, when %you contact %us. This happens when you download "
+NORMAL (U"As mentioned above, Praat does no telemetry, i.e. it does not send us anything while you are using Praat. "
+	"We %do% receive some information, though, when %you contact %us. This happens when you download "
 	"a new Praat version for your computer. We log the Praat downloads, so that we can potentially count "
 	"how often which edition and which version of Praat is downloaded.")
 ENTRY (U"Wouldn’t telemetry be useful for the quality of Praat?")
-NORMAL (U"Companies that use telemetry tend to argue that gathering information on how their app is used "
+NORMAL (U"Companies that use telemetry tend to justify that by arguing that gathering information on how their app is used "
 	"is useful for improving the quality of their app (by collecting error messages), "
 	"or to know which features are rarely used, so that those features can be removed.")
 NORMAL (U"We are skeptical. If we, as Praat developers, have made a programming error, "
