@@ -6858,7 +6858,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation_old, U"Strings: To Permutation", U"Strings: To Permutation...") {
-	BOOLEAN (sort, U"Sorting", 1)
+	BOOLEAN (sort, U"Sort", true)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Strings)
