@@ -6858,13 +6858,11 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Strings_to_Permutation_old, U"Strings: To Permutation", U"Strings: To Permutation...") {
-	OPTIONMENU (sort, U"Sorting", 1)
-	OPTION (U"No")
-	OPTION (U"Alphabetical")
+	BOOLEAN (sort, U"Sorting", 1)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Strings)
-		autoPermutation result = Strings_to_Permutation (me, (sort == 1 ? kStrings_sorting::NONE : kStrings_sorting::ALPHABETICAL));
+		autoPermutation result = Strings_to_Permutation (me, (sort ? kStrings_sorting::ALPHABETICAL : kStrings_sorting::NONE));
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
