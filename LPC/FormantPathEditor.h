@@ -94,9 +94,19 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 	conststring32 v_selectionViewerName ()
 		override { return U"Formant candidates"; }
 	void v_drawLegends () override {
-		FunctionArea_drawLegend (our formantPathArea().get(),
-			FunctionArea_legend_SPECKLES U" ##modifiable FormantPath", Melder_RED
-		);
+		FormantPathArea you = our formantPathArea().get();
+		const bool showAnalyses = ( your endWindow() - your startWindow() <= your instancePref_longestAnalysis() );
+		if (showAnalyses)
+			FunctionArea_drawLegend (our formantPathArea().get(),
+				your instancePref_spectrogram_show() ? FunctionArea_legend_GREYS U" %%derived spectrogram" : U"",
+				1.2 * Melder_BLACK,
+				your instancePref_intensity_show() ? FunctionArea_legend_LINES U" %%derived intensity" : U"",
+				1.2 * Melder_GREEN,
+				your instancePref_pitch_show() ? FunctionArea_legend_LINES_SPECKLES U" %%derived pitch" : U"",
+				1.2 * Melder_BLUE,
+				FunctionArea_legend_SPECKLES U" ##modifiable FormantPath",
+				1.2 * Melder_RED
+			);
 		if (our soundArea())
 			FunctionArea_drawLegend (our soundArea().get(),
 				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound",
