@@ -218,7 +218,10 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 			if (! warningGiven) {
 				warningGiven = true;
 				Melder_warning (U"The menu \"", menuTitle, U"\" no longer exists. The command \"", itemTitle,
-						U"\" has been installed in the menu \"", alternativeMenuTitle, U"\" instead. You could consider updating the script \"", script, U"\".");
+					U"\" has been installed in the menu \"", alternativeMenuTitle, U"\" instead. "
+					U"You could consider updating the script that installed \"", script, U"\", "
+					U"which is either the buttons file or a plug-in."
+				);
 			}
 			return menuItem;
 		} // else issue the original warning
@@ -227,7 +230,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 		U"Menu \"", menuTitle, U"\" does not exist.\n"
 		U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U"\".\n"
 		U"To fix this, go to Praat->Preferences->Buttons->Editors, and remove the script from this menu.\n"
-		U"You may want to install the script in a different menu."
+		U"You may then want to install the script in a different menu."
 	);
 	return nullptr;
 }

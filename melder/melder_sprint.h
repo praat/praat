@@ -2,7 +2,7 @@
 #define _melder_sprint_h_
 /* melder_sprint.h
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ void _recursiveTemplate_Melder_sprint (char32 **inout_pointer, const MelderArg& 
 
 template <typename... Args>
 void Melder_sprint (mutablestring32 buffer, int64 bufferSize, const MelderArg& first, Args... rest) {
-	integer length = MelderArg__length (first, rest...);
+	const integer length = MelderArg__length (first, rest...);
 	if (length >= bufferSize) {
 		for (int64 i = 0; i < bufferSize; i ++)
 			buffer [i] = U'?';
