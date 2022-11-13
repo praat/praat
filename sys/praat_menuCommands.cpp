@@ -520,12 +520,11 @@ Praat_Command praat_getMenuCommand (integer i)
 	{ return i < 1 || i > theCommands.size ? nullptr : theCommands.at [i]; }
 
 void praat_addCommandsToEditor (Editor me) {
-	conststring32 windowName = my classInfo -> className;
+	conststring32 windowClassName = my classInfo -> className;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
-		if (str32equ (command -> window.get(), windowName)) {
+		if (str32equ (command -> window.get(), windowClassName))
 			Editor_addCommandScript (me, command -> menu.get(), command -> title.get(), 0, command -> script.get());
-		}
 	}
 }
 
