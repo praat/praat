@@ -7101,7 +7101,7 @@ FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: 
 	SENTENCE (yColumn_string, U"Vertical column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
-	SENTENCE (xColumn_string, U"Horizonal column", U"")
+	SENTENCE (xColumn_string, U"Horizontal column (optional)", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
 	WORD (text, U"Text", U"+")
@@ -7113,7 +7113,7 @@ FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: 
 DO
 	GRAPHICS_EACH (Table)
 		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		const integer xcolumn = Table_findColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer xcolumn = str32equ (xColumn_string, U"") ? 0 : Table_getColumnIndexFromColumnLabel (me, xColumn_string);
 		Table_lineGraphWhere (me, GRAPHICS, xcolumn, xmin, xmax, ycolumn, ymin, ymax, text, angle, garnish, condition, interpreter);
 	GRAPHICS_EACH_END
 }

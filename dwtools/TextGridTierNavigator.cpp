@@ -282,7 +282,7 @@ void TextGridTierNavigator_modifyBeforeRange (TextGridTierNavigator me, integer 
 }
 
 void TextGridTierNavigator_modifyAfterRange (TextGridTierNavigator me, integer from, integer to) {
-	Melder_require (from > 0 &&  to > 0,
+	Melder_require (from > 0 && to > 0,
 		U"Both numbers in the after range should be positive.");
 	my afterRange.first = std::min (from, to);
 	my afterRange.last = std::max (from, to);
