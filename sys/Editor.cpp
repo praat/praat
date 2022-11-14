@@ -354,8 +354,10 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 	my v_goAway ();
 }
 
-static void menu_cb_close (Editor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_close (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	my v_goAway ();
+	if (interpreter -> optionalEditor == me)
+		interpreter -> optionalEditor = nullptr;
 }
 
 static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
