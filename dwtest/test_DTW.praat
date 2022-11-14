@@ -1,5 +1,5 @@
 # test_DTW.praat
-# djmw 20100504, 20120223
+# djmw 20100504, 20120223, 20221114
 
 printline DTW_test start
 
@@ -8,6 +8,13 @@ s1 = Create Sound from formula... s1 Mono 0 1 44100 1/2 * sin(2*pi*377*x) + rand
 s2 = Copy... s2
 plus s1
 dtw = To DTW... 0.015 stepSize 0.1 1/2 < slope < 2
+#  the save crashed before praat6.3
+Save as binary file: "dtw_willberemovedXXX.DTW"
+dtwcopy = Read from file: "dtw_willberemovedXXX.DTW"
+deleteFile: "dtw_willberemovedXXX.DTW"
+removeObject: dtwcopy 
+
+selectObject: dtw
 printline 'tab$' Slope constraint
 nx = Get maximum consecutive steps... X
 assert nx <= 2

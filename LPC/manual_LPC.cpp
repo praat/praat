@@ -59,22 +59,25 @@ TAG (U"##From coefficient#, ##To coefficient#")
 DEFINITION (U"the range of coefficients that will be represented.")
 MAN_END
 
-MAN_BEGIN (U"CC: To DTW...", U"djmw", 19960918)
-INTRO (U"You can choose this command after selecting 2 objects with cepstral "
-	"coefficients (two @MFCC's or @LFCC's). "
+MAN_BEGIN (U"CC: To DTW...", U"djmw", 20221114)
+INTRO (U"You can choose this command after selecting two objects with cepstral coefficients (two @MFCC's or @LFCC's). "
 	"With this command you perform dynamic time warping. ")
 ENTRY (U"Algorithm")
-NORMAL (U"First we calculate distances between cepstral coefficients: ")
-LIST_ITEM (U"The distance between frame %i (from me) and %j (from thee) is:")
-LIST_ITEM (U"    %wc \\.c %d1 + %wle \\.c %d2 + %wr \\.c %d3,")
-LIST_ITEM (U"    where %wc, %wle & %wr are user-supplied weights and")
-LIST_ITEM (U"      %d1 = \\su (%k=1..%nCoefficients; (%c__%ik_ - %c__%jk_)^2)")
-LIST_ITEM (U"      %d2 = (c__%i0_ - c__%j0_)^2")
-LIST_ITEM (U"      %d3 = \\su (%k=1..%nCoefficients; (%r__%ik_ - %r__%jk_)^2), with ")
-LIST_ITEM (U"      %r__%ik_ the regression coefficient of the cepstral coefficients "
-	"from the frames within a time span of %dtr seconds. "
-	"c__%ij_ is %j-th cepstral coefficient in frame %i. ")
-NORMAL (U"Next we find the optimal path through the distance matrix with a "
+NORMAL (U"First we calculate the distance matrix %D of all the distances between the cepstral frames of the two objects. "
+	"This matrix has %n__1_ rows, the number of frames in the first object, and %n__2_ columns, the number of frames "
+	"in the second object.")
+NORMAL (U"The elements of %D are the distances %d__%ij_ between frame %i (from the first object) and frame %j "
+	"(from the second one). The %d__%ij_ are composed of three parts:")
+EQUATION (U"%d__%ij_ = %w__1_ \\.c %d__1_ + %w__2_ \\.c %d__2_ + %w__3_ \\.c %d__3_,")
+NORMAL (U"where %w__1_, %w__2_ and %w__3_ are user-supplied weights and ")
+TAG (U"%d__1_ = \\su^^N^__%k=1_ (%c__%ik_ - %c__%jk_)^2), ")
+DEFINITION (U"the sum of the squared distances between the %N cepstral coefficients of the two frames. ")
+TAG (U"%d__2_ = (c__%i0_ - c__%j0_)^2")
+DEFINITION (U"the difference between the average 'power' of the two frames.")
+TAG (U"%d__3_ = \\su^^N^__%k=1_ (%r__%ik_ - %r__%jk_)^2), ")
+DEFINITION (U"in which %r__%ik_ is the regression coefficient of the cepstral coefficient %k, calculated "
+	"from the frames within a time span of %T seconds, the %%regression window length%, around the centre of frame %i.")
+NORMAL (U"After calculation of all the frame distances %d__%ij_, we find the optimal path through the distance matrix %D with a "
 	"Viterbi-algorithm.")
 MAN_END
 
