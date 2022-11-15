@@ -9560,7 +9560,7 @@ void praat_David_init () {
 
 	praat_addAction1 (classElectroglottogram, 0, U"High-pass filter...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Electroglottogram_highPassFilter);
-	praat_addAction1 (classElectroglottogram, 0, U"To TextGrid (closed glottis)...", nullptr, 0,
+	praat_addAction1 (classElectroglottogram, 0, U"To TextGrid (closed glottis)... || Get closed glottis intervals...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Electroglottogram_to_TextGrid_closedGlottis);
 	praat_addAction1 (classElectroglottogram, 0, U"To AmplitudeTier (levels)...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Electroglottogram_to_AmplitudeTier_levels);
