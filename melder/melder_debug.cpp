@@ -153,7 +153,7 @@ conststring16 MelderTrace::_peek32to16 (conststring32 string) {
 	static char16 *buffer { nullptr };
 	static int64 bufferSize { 0 };
 	const int64 n = Melder_length (string);
-	const int64 sizeNeeded = n * 2 + 1;
+	int64 sizeNeeded = n * 2 + 1;
 	if ((bufferSize - sizeNeeded) * (int64) sizeof (char16) >= 10'000) {
 		free (buffer);
 		bufferSize = 0;
