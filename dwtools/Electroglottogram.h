@@ -2,7 +2,7 @@
 #define _Electroglottogram_h_
 /* Electroglottogram.h
  *
- * Copyright (C) 2019 David Weenink
+ * Copyright (C) 2019-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ autoTextTier Electroglottogram_to_TextTier_closedGlottis (Electroglottogram me, 
 
 autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, autoAmplitudeTier *out_peaks, autoAmplitudeTier *out_valleys);
 
-autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction);
+autoTextGrid Electroglottogram_to_TextGrid_closedGlottis (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction);
 
 autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing, bool peak99);
 /* The real derivative */
