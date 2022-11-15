@@ -121,7 +121,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_QUESTION (d_estimateSpeechRate)
 	#endif
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		// Filled by the callback
 		oo_OBJECT (Table, 0, d_events)
 		oo_DOUBLE (d_internalSamplingFrequency)

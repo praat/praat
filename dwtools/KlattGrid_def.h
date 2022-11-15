@@ -77,7 +77,7 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 	oo_OBJECT (IntensityTier, 0, aspirationAmplitude) // dB
 	oo_OBJECT (IntensityTier, 0, breathinessAmplitude) // dB
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (PhonationGridPlayOptions, 0, options)
 	#endif
 
@@ -120,7 +120,7 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 	oo_COLLECTION_OF (OrderedOf, oral_formants_amplitudes, IntensityTier, 0)
 	oo_COLLECTION_OF (OrderedOf, nasal_formants_amplitudes, IntensityTier, 0)
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (VocalTractGridPlayOptions, 0, options)
 	#endif
 
@@ -164,7 +164,7 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 	oo_COLLECTION_OF (OrderedOf, tracheal_formants_amplitudes, IntensityTier, 0)
 	oo_OBJECT (FormantGrid, 0, delta_formants)
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (PhonationTier, 0, glottis)
 		oo_OBJECT (CouplingGridPlayOptions, 0, options)
 	#endif
@@ -203,7 +203,7 @@ oo_DEFINE_CLASS (FricationGrid, Function)
 	oo_COLLECTION_OF (OrderedOf, frication_formants_amplitudes, IntensityTier, 0)
 	oo_OBJECT (IntensityTier, 0, bypass) // dB
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (FricationGridPlayOptions, 0, options)
 	#endif
 
@@ -242,7 +242,7 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 	oo_OBJECT (FricationGrid, 0, frication)   // frication source
 	oo_OBJECT (IntensityTier, 0, gain)        // final scaling
 
-	#if !oo_READING && !oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (KlattGridPlayOptions, 0, options)
 	#endif
 

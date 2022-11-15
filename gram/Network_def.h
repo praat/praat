@@ -1,6 +1,6 @@
 /* Network_def.h
  *
- * Copyright (C) 2009-2019 Paul Boersma
+ * Copyright (C) 2009-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ oo_DEFINE_STRUCT (NetworkNode)
 	oo_BOOLEAN (clamped)
 	oo_DOUBLE (activity)
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_DOUBLE (excitation)
 	#endif
 

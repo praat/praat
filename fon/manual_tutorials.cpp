@@ -22,8 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20221008)
+MAN_BEGIN (U"What's new?", U"ppgb", 20221115)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3# (15 November 2022)")
+LIST_ITEM (U"• Number-aware sorting for labels when drawing tables.")
+LIST_ITEM (U"• Scripting: sort\\$ \\# ( ), shuffle\\$ \\# ( ), sort\\_ numberAware\\$ \\# ( ).")
+LIST_ITEM (U"• Fixed a crash when saving (or copying) a DTW object.")
+LIST_ITEM (U"• Scripting: fixed a crash when using Close after \"editor\".")
 NORMAL (U"##6.2.23# (8 October 2022)")
 LIST_ITEM (U"• Fix a crash introduced in August 2020 when in the Sound window you would select a part, then click \"sel\", "
 	"then select a part, then do Cut, then click \"bak\".")

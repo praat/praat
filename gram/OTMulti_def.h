@@ -1,6 +1,6 @@
 /* OTMulti_def.h
  *
- * Copyright (C) 2005,2007,2009-2011,2015-2019 Paul Boersma
+ * Copyright (C) 2005,2007,2009-2011,2015-2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ oo_DEFINE_STRUCT (OTConstraint)
 		oo_VERSION_END
 	#endif
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_BOOLEAN (tiedToTheLeft)
 		oo_BOOLEAN (tiedToTheRight)
 	#endif
@@ -49,7 +49,7 @@ oo_DEFINE_STRUCT (OTCandidate)
 	oo_INTEGER (numberOfConstraints)
 	oo_INTVEC16 (marks, numberOfConstraints)
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_DOUBLE (harmony)
 		oo_DOUBLE (probability)
 	#endif
