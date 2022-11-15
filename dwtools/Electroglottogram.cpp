@@ -217,15 +217,16 @@ autoAmplitudeTier Electroglottogram_and_AmplitudeTiers_getLevels (Electroglottog
 		}
 }
 
-autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction) {
+autoTextGrid Electroglottogram_to_TextGrid_closedGlottis (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction) {
 	try {
 		autoAmplitudeTier peaks, valleys;
 		autoAmplitudeTier levels = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks, & valleys);
 		
 		const double maximum = RealTier_getMaximumValue (peaks.get());
 		const double minimumPeakAmplitude = maximum * peakThresholdFraction;
-
-		autoIntervalTier intervalTier = IntervalTier_create (my xmin, my xmax);
+		
+		autoTextGrid  thee = TextGrid_create (my xmin, my xmax, U"closedGlottis", U"");
+		IntervalTier intervalTier = static_cast <IntervalTier> (thy tiers -> at [1]);
 		double previousOpeningTime = my xmin;
 		for (integer ipoint = 1; ipoint <= peaks -> points. size; ipoint ++) {
 			const RealPoint peak = peaks -> points.at [ipoint];
@@ -237,16 +238,16 @@ autoIntervalTier Electroglottogram_getClosedGlottisIntervals (Electroglottogram 
 				closingTime = Vector_getNearestLevelCrossing (me, 1, peakPosition, level, kVectorSearchDirection::LEFT);
 				openingTime = Vector_getNearestLevelCrossing (me, 1, peakPosition, level, kVectorSearchDirection::RIGHT);
 				if (isdefined (closingTime) && isdefined (openingTime) && closingTime != previousOpeningTime) {
-					IntervalTier_insertBoundary (intervalTier.get(), closingTime);
-					IntervalTier_insertBoundary (intervalTier.get(), openingTime);
+					IntervalTier_insertBoundary (intervalTier, closingTime);
+					IntervalTier_insertBoundary (intervalTier, openingTime);
 					const double midPoint = 0.5 * (closingTime + openingTime);
-					const integer intervalNumber = IntervalTier_timeToIndex (intervalTier.get(), midPoint);
-					IntervalTier_setIntervalText (intervalTier.get(), intervalNumber, U"c");
+					const integer intervalNumber = IntervalTier_timeToIndex (intervalTier, midPoint);
+					IntervalTier_setIntervalText (intervalTier, intervalNumber, U"c");
 					previousOpeningTime = openingTime;
 				}
 			}
 		}
-		return intervalTier;
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": TextTier not created.");
 	}
