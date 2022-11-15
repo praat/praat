@@ -2372,7 +2372,8 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_filtered")
 }
 
-FORM (CONVERT_EACH_TO_ONE__Electroglottogram_getClosedGlottisIntervals, U"Electroglottogram: To IntervalTier", U"") {
+FORM (CONVERT_EACH_TO_ONE__Electroglottogram_to_TextGrid_closedGlottis, U"Electroglottogram: To TextGrid (closed glottis)",
+	U"Electroglottogram: To TextGrid (closed glottis)...") {
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
 	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
@@ -2382,7 +2383,7 @@ DO
 	Melder_require (closingThreshold < 1.0,
 		U"The closing threshold should be smaller than 1.");
 	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoIntervalTier result = Electroglottogram_getClosedGlottisIntervals (me, pitchFloor, pitchCeiling, 
+		autoTextGrid result = Electroglottogram_to_TextGrid_closedGlottis (me, pitchFloor, pitchCeiling, 
 			closingThreshold, peakThresholdFraction
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
@@ -9559,8 +9560,8 @@ void praat_David_init () {
 
 	praat_addAction1 (classElectroglottogram, 0, U"High-pass filter...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Electroglottogram_highPassFilter);
-	praat_addAction1 (classElectroglottogram, 0, U"Get closed glottis intervals...", nullptr, 0,
-			CONVERT_EACH_TO_ONE__Electroglottogram_getClosedGlottisIntervals);
+	praat_addAction1 (classElectroglottogram, 0, U"To TextGrid (closed glottis)... || Get closed glottis intervals...", nullptr, 0,
+			CONVERT_EACH_TO_ONE__Electroglottogram_to_TextGrid_closedGlottis);
 	praat_addAction1 (classElectroglottogram, 0, U"To AmplitudeTier (levels)...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Electroglottogram_to_AmplitudeTier_levels);
 	praat_addAction1 (classElectroglottogram, 0, U"Derivative...", nullptr, 0, 

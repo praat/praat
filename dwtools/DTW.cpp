@@ -1,6 +1,6 @@
 /* DTW.cpp
  *
- * Copyright (C) 1993-2020 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2022 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -296,6 +296,7 @@ void DTW_pathRemoveRedundantNodes (DTW me) {
 	if (skip > 0)
 		my path [++ i] = my path [my pathLength];
 	my pathLength = i;
+	my path.resize (my pathLength); // maintain invariant
 }
 
 /* Prototype must be on y-axis and test on x-axis */
@@ -332,6 +333,7 @@ autoDTW DTW_swapAxes (DTW me) {
 			thy path [i]. x = my path [i]. y;
 			thy path [i]. y = my path [i]. x;
 		}
+		thy path.resize (thy pathLength); // maintain invariant
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": axes not swapped.");
@@ -1400,7 +1402,7 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
         if (pathIndex > 1)
             for (integer j = 1; j <= my pathLength; j ++)
                 my path [j] = my path [pathIndex ++];
-
+		my path.resize (my pathLength); // maintain invariant
         DTW_Path_recode (me);
         if (cumulativeDists) {
             autoMatrix him = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,

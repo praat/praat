@@ -2408,7 +2408,7 @@ NORMAL (U"We take the first central difference, "
 NORMAL (U"The real derivative can be found by using the @@Electroglottogram: Derivative...|Derivative...@ method.")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: Get closed glottis intervals...", U"djmw", 20190906)
+MAN_BEGIN (U"Electroglottogram: To TextGrid (closed glottis)...", U"djmw", 20221115)
 INTRO (U"Calculates the intervals where the glottis is closed from the selected @@Electroglottogram@.")
 ENTRY (U"Settings")
 TAG (U"##Pitch floor (Hz)#")
