@@ -27,7 +27,7 @@ oo_DEFINE_CLASS (FunctionSeries, Function)
 	oo_INTEGER (numberOfCoefficients)
 	oo_VEC (coefficients, numberOfCoefficients)
 	
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_INTEGER (_capacity)
 	#endif
 		

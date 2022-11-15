@@ -1,7 +1,6 @@
 # data.praat
-# Paul Boersma, 22 January 2009
+# Paul Boersma, 15 November 2022
 # Checks Copy, Equal, Read, Save.
-# 8 March 2020
 
 tracing$ = "no"
 
@@ -96,6 +95,7 @@ selectObject: sound
 soundCopy = Copy: "soundCopy"
 plusObject: sound
 dtw = To DTW: 0.015, 0.005, 0.1, "1/2 < slope < 2"
+removeObject: soundCopy
 @test (dtw)
 
 appendInfoLine: "TextGrid"

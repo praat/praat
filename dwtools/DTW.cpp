@@ -296,7 +296,7 @@ void DTW_pathRemoveRedundantNodes (DTW me) {
 	if (skip > 0)
 		my path [++ i] = my path [my pathLength];
 	my pathLength = i;
-	my path.resize (my pathLength); // maintain invariant
+	my path.resize (my pathLength);   // maintain invariant
 }
 
 /* Prototype must be on y-axis and test on x-axis */
@@ -333,7 +333,7 @@ autoDTW DTW_swapAxes (DTW me) {
 			thy path [i]. x = my path [i]. y;
 			thy path [i]. y = my path [i]. x;
 		}
-		thy path.resize (thy pathLength); // maintain invariant
+		thy path.resize (thy pathLength);   // maintain invariant
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": axes not swapped.");
@@ -819,8 +819,9 @@ autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, bool matchStart, 
 		autoMatrix m1 = Spectrogram_to_Matrix (me);
 		autoMatrix m2 = Spectrogram_to_Matrix (thee);
 
-		// Take log10 for dB's (4e-10 scaling not necessary)
-
+		/*
+			Take log10 for dB's (4e-10 scaling not necessary)
+		*/
 		for (integer i = 1; i <= my ny; i ++) {
 			for (integer j = 1; j <= my nx; j ++)
 				m1 -> z [i] [j] = 10.0 * log10 (m1 -> z [i] [j]);
@@ -1049,22 +1050,22 @@ static void DTW_Polygon_setUnreachableParts (DTW me, Polygon thee, INTMAT const&
 }
 
 #define DTW_ISREACHABLE(y,x) ((psi [y] [x] != DTW_UNREACHABLE) && (psi [y] [x] != DTW_FORBIDDEN))
-static void DTW_findPath_special (DTW me, bool matchStart, bool matchEnd, int slope, autoMatrix *cumulativeDists) {
-    (void) matchStart;
-    (void) matchEnd;
+static void DTW_findPath_special (DTW me, bool /* matchStart */, bool /* matchEnd */, int slope, autoMatrix *cumulativeDists) {
 	try {
-       autoPolygon thee = DTW_to_Polygon (me, 0.0, slope);
-       DTW_Polygon_findPathInside (me, thee.get(), slope, cumulativeDists);
+		autoPolygon thee = DTW_to_Polygon (me, 0.0, slope);
+		DTW_Polygon_findPathInside (me, thee.get(), slope, cumulativeDists);
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot find path.");
 	}
 }
 
-// Intersection of two straight lines y = a [i]*x+b [i], where a [2] = 1 / a [1]. Point (x1,y1) is on first line,
-// point (x2,y2) is on second line.
+/*
+	Intersection of two straight lines y = a [i]*x+b [i], where a [2] = 1 / a [1]. Point (x1,y1) is on first line,
+	point (x2,y2) is on second line.
+*/
 static void getIntersectionPoint (double x1, double y1, double x2, double y2, double a, double *x3, double *y3) {
-    *x3 = (y2 - y1 + a * x1 - x2 / a) / (a - 1.0 / a);
-    *y3 = a * *x3 + y1 - a * x1;
+	*x3 = (y2 - y1 + a * x1 - x2 / a) / (a - 1.0 / a);
+	*y3 = a * *x3 + y1 - a * x1;
 }
 
 autoPolygon DTW_to_Polygon (DTW me, double band, int slope) {
@@ -1219,18 +1220,18 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
 		for (integer i = 1; i <= my ny; i ++)
 			psi [i] [1] = DTW_UNREACHABLE;
 
-        /*
-        	Make begin part of first column reachable.
+		/*
+			Make begin part of first column reachable.
 		*/
-        const integer rowto = ( localSlope != 1 ? Melder_ifloor (slopes [localSlope]) + 1 : delta_xy );
-        for (integer iy = 2; iy <= rowto; iy ++) {
-            if (localSlope != 1) {
-                delta [iy] [1] = delta [iy - 1] [1] + my z [iy] [1];
-                psi [iy] [1] = DTW_Y;
-            } else {
-                psi [iy] [1] = DTW_START;   // will be adapted by DTW_Polygon_setUnreachableParts
-            }
-        }
+		const integer rowto = ( localSlope != 1 ? Melder_ifloor (slopes [localSlope]) + 1 : delta_xy );
+		for (integer iy = 2; iy <= rowto; iy ++) {
+			if (localSlope != 1) {
+				delta [iy] [1] = delta [iy - 1] [1] + my z [iy] [1];
+				psi [iy] [1] = DTW_Y;
+			} else {
+				psi [iy] [1] = DTW_START;   // will be adapted by DTW_Polygon_setUnreachableParts
+			}
+		}
 		/*
 			Make begin part of first row reachable.
 		*/
@@ -1249,73 +1250,76 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
 		*/
 		DTW_Polygon_setUnreachableParts (me, thee, psi.get());
 
-        // Forward pass.
-        integer numberOfIsolatedPoints = 0;
-        autoMelderProgress progress (U"Find path");
-        for (integer j = 2; j <= my nx; j ++) {
-            for (integer i = 2; i <= my ny; i ++) {
-                if (! DTW_ISREACHABLE (i, j)) continue;
-                double g, gmin = DTW_BIG;
-                integer direction = 0;
-                if (DTW_ISREACHABLE (i - 1, j - 1)) {
-                    gmin = delta [i - 1] [j - 1] + 2.0 * my z [i] [j];
-                    direction = DTW_XANDY;
-                } else if (DTW_ISREACHABLE (i, j - 1)) {
-                    gmin = delta [i] [j - 1] + my z [i] [j];
-                    direction = DTW_X;
-                } else if (DTW_ISREACHABLE (i - 1, j)) {
-                    gmin = delta [i - 1] [j] + my z [i] [j];
-                    direction = DTW_Y;
-                } else {
-                    numberOfIsolatedPoints ++;
-                    continue;
-                }
+		/*
+			Forward pass.
+		*/
+		integer numberOfIsolatedPoints = 0;
+		autoMelderProgress progress (U"Find path");
+		for (integer j = 2; j <= my nx; j ++) {
+			for (integer i = 2; i <= my ny; i ++) {
+				if (! DTW_ISREACHABLE (i, j))
+					continue;
+				double g, gmin = DTW_BIG;
+				integer direction = 0;
+				if (DTW_ISREACHABLE (i - 1, j - 1)) {
+					gmin = delta [i - 1] [j - 1] + 2.0 * my z [i] [j];
+					direction = DTW_XANDY;
+				} else if (DTW_ISREACHABLE (i, j - 1)) {
+					gmin = delta [i] [j - 1] + my z [i] [j];
+					direction = DTW_X;
+				} else if (DTW_ISREACHABLE (i - 1, j)) {
+					gmin = delta [i - 1] [j] + my z [i] [j];
+					direction = DTW_Y;
+				} else {
+					numberOfIsolatedPoints ++;
+					continue;
+				}
 
-                switch (localSlope) {
-                case 1:  {   // no restriction
-                    if (DTW_ISREACHABLE (i, j - 1) && ((g = delta [i] [j - 1] + my z [i] [j]) < gmin)) {
-                        gmin = g;
-                        direction = DTW_X;
-                    }
-                    if (DTW_ISREACHABLE (i - 1, j) && ((g = delta [i - 1] [j] + my z [i] [j]) < gmin)) {
-                        gmin = g;
-                        direction = DTW_Y;
-                    }
-                }
-                break;
+				switch (localSlope) {
+				case 1:  {   // no restriction
+					if (DTW_ISREACHABLE (i, j - 1) && ((g = delta [i] [j - 1] + my z [i] [j]) < gmin)) {
+						gmin = g;
+						direction = DTW_X;
+					}
+					if (DTW_ISREACHABLE (i - 1, j) && ((g = delta [i - 1] [j] + my z [i] [j]) < gmin)) {
+						gmin = g;
+						direction = DTW_Y;
+					}
+				}
+				break;
 
-                /*
+				/*
 					Sakoe & Chiba (1978) define the slope constraint measure as P = n / m, 
 						where n is the number of steps in the diagonal and 
 						m the number of steps in one of the other directions.
 						
 					P = 1/2
 				*/
-                case 2: {   // P = 1/2
-                    if (j >= 4 && DTW_ISREACHABLE (i - 1, j - 3) && psi [i] [j - 1] == DTW_X && psi [i] [j - 2] == DTW_XANDY &&
-                        (g = delta [i-1] [j-3] + 2.0 * my z [i] [j-2] + my z [i] [j-1] + my z [i] [j]) < gmin) {
-                        gmin = g;
-                        direction = DTW_X;
-                    }
-                    if (j >= 3 && DTW_ISREACHABLE (i - 1, j - 2) && psi [i] [j - 1] == DTW_XANDY &&
-                        (g = delta [i - 1] [j - 2] + 2.0 * my z [i] [j - 1] + my z [i] [j]) < gmin) {
-                        gmin = g;
-                        direction = DTW_X;
-                    }
-                    if (i >= 3 && DTW_ISREACHABLE (i - 2, j - 1) && psi [i - 1] [j] == DTW_XANDY &&
-                        (g = delta [i - 2] [j - 1] + 2.0 * my z [i - 1] [j] + my z [i] [j]) < gmin) {
-                        gmin = g;
-                        direction = DTW_Y;
-                    }
-                    if (i >= 4 && DTW_ISREACHABLE (i - 3, j - 1) && psi [i - 1] [j] == DTW_Y && psi [i - 2] [j] == DTW_XANDY &&
-                        (g = delta [i-3] [j-1] + 2.0 * my z [i-2] [j] + my z [i-1] [j] + my z [i] [j]) < gmin) {
-                        gmin = g;
-                        direction = DTW_Y;
-                    }
-                }
-                break;
+				case 2: {   // P = 1/2
+					if (j >= 4 && DTW_ISREACHABLE (i - 1, j - 3) && psi [i] [j - 1] == DTW_X && psi [i] [j - 2] == DTW_XANDY &&
+						(g = delta [i-1] [j-3] + 2.0 * my z [i] [j-2] + my z [i] [j-1] + my z [i] [j]) < gmin) {
+						gmin = g;
+						direction = DTW_X;
+					}
+					if (j >= 3 && DTW_ISREACHABLE (i - 1, j - 2) && psi [i] [j - 1] == DTW_XANDY &&
+						(g = delta [i - 1] [j - 2] + 2.0 * my z [i] [j - 1] + my z [i] [j]) < gmin) {
+						gmin = g;
+						direction = DTW_X;
+					}
+					if (i >= 3 && DTW_ISREACHABLE (i - 2, j - 1) && psi [i - 1] [j] == DTW_XANDY &&
+						(g = delta [i - 2] [j - 1] + 2.0 * my z [i - 1] [j] + my z [i] [j]) < gmin) {
+						gmin = g;
+						direction = DTW_Y;
+					}
+					if (i >= 4 && DTW_ISREACHABLE (i - 3, j - 1) && psi [i - 1] [j] == DTW_Y && psi [i - 2] [j] == DTW_XANDY &&
+						(g = delta [i-3] [j-1] + 2.0 * my z [i-2] [j] + my z [i-1] [j] + my z [i] [j]) < gmin) {
+						gmin = g;
+						direction = DTW_Y;
+					}
+				}
+				break;
 
-                // P = 1
+				// P = 1
 
 				case 3: {
 					if (j >= 3 && DTW_ISREACHABLE (i - 1, j - 2) && psi [i] [j - 1] == DTW_XANDY &&
@@ -1349,70 +1353,72 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
 						direction = DTW_Y;
 					}
 				}
-                break;
-                default:
-                break;
-                }
-                Melder_assert (direction != 0);
-                psi [i] [j] = direction;
-                delta [i] [j] = gmin;
-            }
-            if ((j % 10) == 2)
-                Melder_progress (0.999 * j / my nx, U"Calculate time warp: frame ", j, U" from ", my nx, U".");
-        }
+				break;
+				default:
+				break;
+				}
+				Melder_assert (direction != 0);
+				psi [i] [j] = direction;
+				delta [i] [j] = gmin;
+			}
+			if (j % 10 == 2)
+				Melder_progress (0.999 * j / my nx, U"Calculate time warp: frame ", j, U" from ", my nx, U".");
+		}
 
-        // Find minimum at end of path and trace back.
-
-        integer iy = my ny;
-        double minimum = delta [iy] [my nx];
-        for (integer i = my ny - 1; i > 0; i --) {
-            if (! DTW_ISREACHABLE (i, my nx)) {
-                break;   // we're in unreachable places
-            } else if (delta [i] [my nx] < minimum) {
-                minimum = delta [iy = i] [my nx];
-            }
-        }
+		/*
+			Find minimum at end of path and trace back.
+		*/
+		integer iy = my ny;
+		double minimum = delta [iy] [my nx];
+		for (integer i = my ny - 1; i > 0; i --) {
+			if (! DTW_ISREACHABLE (i, my nx)) {
+				break;   // we're in unreachable places
+			} else if (delta [i] [my nx] < minimum) {
+				minimum = delta [iy = i] [my nx];
+			}
+		}
 
 		integer pathIndex = my nx + my ny - 1;   // maximum path length
-        my weightedDistance = minimum / (my nx + my ny);
-        my path [pathIndex]. y = iy;
-        integer ix = my path [pathIndex]. x = my nx;
+		my weightedDistance = minimum / (my nx + my ny);
+		my path [pathIndex]. y = iy;
+		integer ix = my path [pathIndex]. x = my nx;
 
-        // Fill path backwards.
+		/*
+			Fill path backwards.
+		*/
+		while (ix > 1) {
+			if (psi [iy] [ix] == DTW_XANDY) {
+				ix --;
+				iy --;
+			} else if (psi [iy] [ix] == DTW_X) {
+				ix --;
+			} else if (psi [iy] [ix] == DTW_Y) {
+				iy --;
+			} else if (psi [iy] [ix] == DTW_START) {
+				break;
+			}
+			if (pathIndex < 2 || iy < 1)
+				break;
+			//Melder_assert (pathIndex > 1 && iy > 0);
+			my path [-- pathIndex]. x = ix;
+			my path [pathIndex]. y = iy;
+		}
 
-        while (ix > 1) {
-            if (psi [iy] [ix] == DTW_XANDY) {
-                ix --;
-                iy --;
-            } else if (psi [iy] [ix] == DTW_X) {
-                ix --;
-            } else if (psi [iy] [ix] == DTW_Y) {
-                iy --;
-            } else if (psi [iy] [ix] == DTW_START) {
-                break;
-            }
-            if (pathIndex < 2 || iy < 1)
-            	break;
-            //Melder_assert (pathIndex > 1 && iy > 0);
-            my path [-- pathIndex]. x = ix;
-            my path [pathIndex]. y = iy;
-        }
-
-        my pathLength = my nx + my ny - 1 - pathIndex + 1;
-        if (pathIndex > 1)
-            for (integer j = 1; j <= my pathLength; j ++)
-                my path [j] = my path [pathIndex ++];
-		my path.resize (my pathLength); // maintain invariant
-        DTW_Path_recode (me);
-        if (cumulativeDists) {
-            autoMatrix him = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-                my ymin, my ymax, my ny, my dy, my y1);
+		my pathLength = my nx + my ny - 1 - pathIndex + 1;
+		if (pathIndex > 1)
+			for (integer j = 1; j <= my pathLength; j ++)
+				my path [j] = my path [pathIndex ++];
+		my path.resize (my pathLength);   // maintain invariant
+		DTW_Path_recode (me);
+		if (cumulativeDists) {
+			autoMatrix him = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
+					my ymin, my ymax, my ny, my dy, my y1);
 			his z.all()  <<=  delta.all();
-            *cumulativeDists = him.move();
-        }
-    } catch (MelderError) {
-        Melder_throw (me, U": cannot find path.");
-    }
+			*cumulativeDists = him.move();
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot find path.");
+	}
 }
 
 /* End of file DTW.cpp */

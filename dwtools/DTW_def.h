@@ -52,7 +52,7 @@ oo_DEFINE_CLASS (DTW, Matrix)
 	oo_INTEGER (pathLength)
 	oo_STRUCTVEC (DTW_Path, path, pathLength)
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_DOUBLE (wx)
 		oo_DOUBLE (wy)
 		oo_DOUBLE (wd)
