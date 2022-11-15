@@ -160,7 +160,7 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	}
 }
 
-inline autoPermutation Strings_to_Permutation (Strings me, kStrings_sorting sorting) {
+autoPermutation Strings_to_Permutation (Strings me, kStrings_sorting sorting) {
 	try {
 		return Permutation_createAsSortingIndex (my strings.get(), sorting);
 	} catch (MelderError) {
