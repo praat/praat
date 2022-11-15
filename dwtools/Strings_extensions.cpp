@@ -183,28 +183,9 @@ autoStrings Strings_Permutation_permuteStrings (Strings me, Permutation thee) {
 	}
 }
 
-autoStringsIndex Strings_to_StringsIndex (Strings me) {
-	autoStringsIndex thee = StringsIndex_create (my numberOfStrings);
-	autoPermutation sorted = Strings_to_Permutation (me, kStrings_sorting::ALPHABETICAL);
-	integer numberOfClasses = 0;
-	conststring32 strings = nullptr;
-	for (integer i = 1; i <= sorted -> numberOfElements; i ++) {
-		const integer index = sorted -> p [i];
-		const conststring32 stringsi = my strings [index].get();
-		if (i == 1 || ! Melder_equ (strings, stringsi)) {
-			numberOfClasses ++;
-			autoSimpleString him = SimpleString_create (stringsi);
-			thy classes -> addItem_move (him.move());
-			strings = stringsi;
-		}
-		thy classIndex [index] = numberOfClasses;
-	}
-	return thee;
-}
-
 autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 	try {
-		autoStringsIndex tmp = Strings_to_StringsIndex (classes);
+		autoStringsIndex tmp = Strings_to_StringsIndex (classes, kStrings_sorting::ALPHABETICAL);
 		const integer numberOfClasses = tmp -> classes->size;
 
 		autoStringsIndex him = StringsIndex_create (my numberOfStrings);
