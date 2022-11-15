@@ -75,7 +75,7 @@ oo_DEFINE_CLASS (Manipulation, Function)
 		oo_DOUBLE (dummy9)
 	oo_ENDFROM
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (LPC, 0, lpc)
 	#endif
 

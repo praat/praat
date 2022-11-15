@@ -38,7 +38,7 @@ oo_DEFINE_STRUCT (SoundMFC)
 
 	oo_STRING (name)
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (Sound, 0, sound)
 	#endif
 
@@ -54,7 +54,7 @@ oo_DEFINE_STRUCT (StimulusMFC)
 		oo_STRING (visibleText)
 	oo_ENDFROM
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (Sound, 0, sound)
 	#endif
 
@@ -78,7 +78,7 @@ oo_DEFINE_STRUCT (ResponseMFC)
 	oo_ENDFROM
 	oo_STRING (name)
 
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_OBJECT (Sound, 0, sound)
 	#endif
 
@@ -171,7 +171,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 		oo_INTEGER (numberOfGoodnessCategories)
 		oo_STRUCTVEC (GoodnessMFC, goodness, numberOfGoodnessCategories)
 	oo_ENDFROM
-	#if ! oo_READING && ! oo_WRITING
+	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 		oo_DOUBLE (samplePeriod)
 		oo_INTEGER (numberOfChannels)
 		oo_BOOLEAN (pausing)

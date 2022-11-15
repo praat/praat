@@ -83,7 +83,7 @@ static void WarpingPath_getPath (WarpingPath me, constINTMAT const& psi, integer
 			ix --;
 		} else if (psi [1 + iy] [1 + ix] == WARPING_fromBelow) {
 			iy --;
-		} else { // WARPING_fromDiag
+		} else {   // WARPING_fromDiag
 			ix --;
 			iy --;
 		}

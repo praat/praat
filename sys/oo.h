@@ -213,7 +213,7 @@
 	For fields that are not destroyed, copied, or compared, either (i.e., only declarations),
 		use:  #if oo_DECLARING
 	For fields that do not take part in I/O (e.g. redundant or temporary fields),
-		use:  #if ! oo_READING && ! oo_WRITING
+		use:  #if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
 	For fields that should not be read (e.g., when expanding a database file),
 		use:  #if ! oo_READING
 	For fields that should not be written (e.g., when shrinking a database file),
