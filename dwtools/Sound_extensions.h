@@ -128,8 +128,8 @@ void Sound_scale_dB (Sound me, double level_dB);
 */
 
 void Sound_fade (Sound me, int channel, double t, double fadeTime, bool fadeOut, bool fadeGlobal);
-/* if inout <= 0 fade in with (1-cos)/2  else fade out with (1+cos)/2
-	channel = 0 (all), 1 (left), 2 (right).
+/* if !fadeOut fade in with (1-cos)/2  else fade out with (1+cos)/2
+	channel = 0 (all).
 */
 
 void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, kSoundDrawingDirection drawingDirection, bool garnish);

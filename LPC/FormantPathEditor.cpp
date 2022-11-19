@@ -22,6 +22,12 @@
 #include "FormantPathEditor.h"
 #include "Graphics_extensions.h"
 #include "EditorM.h"
+#include "Formant_extensions.h"
+#include "LPC_and_Formant.h"
+#include "PitchTier.h"
+#include "PitchTier_to_PointProcess.h"
+#include "Sound_and_LPC.h"
+#include "Sound_extensions.h"
 
 Thing_implement (FormantPathEditor, FunctionEditor, 0);
 
@@ -31,6 +37,7 @@ Thing_implement (FormantPathEditor, FunctionEditor, 0);
 #include "FormantPathEditor_prefs.h"
 #include "Prefs_copyToInstance.h"
 #include "FormantPathEditor_prefs.h"
+#include "PointProcess_and_Sound.h"
 
 void structFormantPathEditor :: v1_info () {
 	FormantPathEditor_Parent :: v1_info ();
@@ -44,6 +51,82 @@ void structFormantPathEditor :: v1_info () {
 MelderColour markedCandidatesColour =  MelderColour (0.984,0.984, 0.7);
 
 /********** UTILITIES **********/
+
+#define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
+
+static autoPitchTier Pitch_to_PitchTier_part (Pitch me, double tmin, double tmax) {
+	try {
+		autoPitchTier thee = PitchTier_create (tmin, tmax);
+		for (integer i = 1; i <= my nx; i ++) {
+			const double time = Sampled_indexToX (me, i);
+			if (time < tmin)
+				continue;
+			if (time > tmax)
+				break;
+			const double frequency = my frames [i]. candidates [1]. frequency;
+			/*
+				Count only voiced frames.
+			*/
+			if (Pitch_util_frequencyIsVoiced (frequency, my ceiling)) {
+				RealTier_addPoint (thee.get(), time, frequency);
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": part not converted to PitchTier.");
+	}
+}
+
+static autoPointProcess PointProcess_extractPart (PointProcess me, double tmin, double tmax) {
+	try {
+		integer i1 = 1, i2 = my nt;
+		const double t = my t [i1];
+		while (my t [i1] < tmin)
+			i1 ++;
+		while (my t [i2] > tmax)
+			i2 --;
+		const integer nt = i2 - i1 + 1;
+		Melder_require (nt > 0,
+			U"There must be at least one point in the interval.");
+		autoPointProcess thee = PointProcess_create (tmin, tmax, nt);
+		thy nt = nt;
+		thy t.size = nt;
+		thy t.get()  <<= my t.part (i1, i2);
+		return thee;
+	} catch (MelderError) {
+			Melder_throw (me, U": could not extract part.");
+	}
+}
+
+static autoSound FormantPathEditor_getResynthesis (FormantPathEditor me) {
+	Melder_require (my startSelection != my endSelection,
+		U"Please make a selection first.");
+	constexpr double fadeTime = 0.005;
+	double tmin = my startSelection - fadeTime, tmax = my endSelection + fadeTime;
+	Melder_clipLeft (my tmin, & tmin);
+	Melder_clipRight (& tmax, my tmax);
+	
+	SoundAnalysisArea_haveVisiblePitch (my formantPathArea().get());
+	Pitch pitch = my formantPathArea() -> d_pitch.get();
+	autoPitchTier pitchtierPart = Pitch_to_PitchTier_part (pitch, tmin, tmax);
+	
+	SoundAnalysisArea_haveVisiblePulses (my formantPathArea().get());
+	PointProcess pulses = my formantPathArea() -> d_pulses.get();
+	autoPointProcess pulsesPart = PointProcess_extractPart (pulses, tmin, tmax);
+	
+	autoPointProcess pulses2 = PitchTier_Point_to_PointProcess (pitchtierPart.get(), pulsesPart.get(), MAX_T);
+	const double samplingFrequency = 22050.0;
+	autoSound train = PointProcess_to_Sound_pulseTrain (pulses2.get(), samplingFrequency , 0.7, 0.05, 30);
+	
+	autoFormant formantPart = Formant_extractPart (my formantPathArea() -> d_formant.get(), tmin, tmax);
+	autoLPC lpc = Formant_to_LPC (formantPart.get(), 1.0 / samplingFrequency);
+	
+	autoSound sound = LPC_Sound_filter (lpc.get(), train.get(), false);
+	Vector_scale (sound.get(), 0.99);
+	Sound_fade (sound.get(), 0, sound -> xmin, fadeTime, false, true);
+	Sound_fade (sound.get(), 0, sound -> xmax, -fadeTime, true, true);
+	return sound;
+}
 
 static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_startTime, double *out_endTime, double *out_xCursor, double *out_yCursor) {
 	double startTime = my startWindow, endTime = my endWindow;
@@ -296,8 +379,14 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 }
 
 void structFormantPathEditor :: v_play (double startingTime, double endTime) {
-	if (our soundArea())
-		SoundArea_play (our soundArea().get(), startingTime, endTime);
+	if (our soundArea()) {
+		if (our clickWasModifiedByShiftKey) {
+			autoSound resynthesis = FormantPathEditor_getResynthesis (this);
+			Sound_playPart (resynthesis.get(), startingTime, endTime, theFunctionEditor_playCallback, this);
+		} else {
+			SoundArea_play (our soundArea().get(), startingTime, endTime);
+		}
+	}
 }
 
 /********** EXPORTED **********/
