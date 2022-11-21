@@ -277,7 +277,7 @@ void praat_write_do (UiForm dia, conststring32 extension) {
 			MelderString_copy (& defaultFileName, U"praat.", extension);
 		}
 	}
-	UiOutfile_do (dia, defaultFileName.string, nullptr);
+	UiOutfile_do (dia, defaultFileName.string);
 }
 
 static void removeAllReferencesToMoribundEditor (Editor editor) {
