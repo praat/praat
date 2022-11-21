@@ -28,10 +28,10 @@ Thing_implement (TextGridEditor, FunctionEditor, 0);
 #include "Prefs_copyToInstance.h"
 #include "TextGridEditor_prefs.h"
 
-static void menu_cb_TextGridEditorHelp (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"TextGridEditor") }
-static void menu_cb_AboutSpecialSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Special symbols") }
-static void menu_cb_PhoneticSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Phonetic symbols") }
-static void menu_cb_AboutTextStyles (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Text styles") }
+static void menu_cb_TextGridEditorHelp (TextGridEditor, EDITOR_ARGS) { HELP (U"TextGridEditor") }
+static void menu_cb_AboutSpecialSymbols (TextGridEditor, EDITOR_ARGS) { HELP (U"Special symbols") }
+static void menu_cb_PhoneticSymbols (TextGridEditor, EDITOR_ARGS) { HELP (U"Phonetic symbols") }
+static void menu_cb_AboutTextStyles (TextGridEditor, EDITOR_ARGS) { HELP (U"Text styles") }
 
 void structTextGridEditor :: v_createMenuItems_help (EditorMenu menu) {
 	TextGridEditor_Parent :: v_createMenuItems_help (menu);

@@ -29,7 +29,7 @@
 
 Thing_implement (OTMultiEditor, HyperPage, 0);
 
-static void menu_cb_evaluate (OTMultiEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_evaluate (OTMultiEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Evaluate", nullptr)
 		REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	EDITOR_OK
@@ -41,21 +41,21 @@ static void menu_cb_evaluate (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_evaluate_noise_2_0 (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_evaluate_noise_2_0 (OTMultiEditor me, EDITOR_ARGS) {
 	Editor_save (me, U"Evaluate (noise 2.0)");
 	OTMulti_newDisharmonies (my otMulti(), 2.0);
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_evaluate_tinyNoise (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_evaluate_tinyNoise (OTMultiEditor me, EDITOR_ARGS) {
 	Editor_save (me, U"Evaluate (tiny noise)");
 	OTMulti_newDisharmonies (my otMulti(), 1e-9);
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Edit ranking", nullptr)
 		MUTABLE_LABEL (constraintLabel, U"")
 		REAL (rankingValue, U"Ranking value", U"100.0")
@@ -78,7 +78,7 @@ static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_learnOne (OTMultiEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_learnOne (OTMultiEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Learn one", U"OTGrammar: Learn one...")
 		OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
 				U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
@@ -101,7 +101,7 @@ static void menu_cb_learnOne (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_removeConstraint (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_removeConstraint (OTMultiEditor me, EDITOR_ARGS) {
 	if (my selectedConstraint < 1 || my selectedConstraint > my otMulti() -> numberOfConstraints)
 		Melder_throw (U"Select a constraint first.");
 	OTConstraint constraint = & my otMulti() -> constraints [my otMulti() -> index [my selectedConstraint]];
@@ -111,7 +111,7 @@ static void menu_cb_removeConstraint (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_resetAllRankings (OTMultiEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_resetAllRankings (OTMultiEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Reset all rankings", nullptr)
 		REAL (ranking, U"Ranking", U"100.0")
 	EDITOR_OK
@@ -123,7 +123,7 @@ static void menu_cb_resetAllRankings (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_OTLearningTutorial (OTMultiEditor, EDITOR_ARGS_DIRECT) {
+static void menu_cb_OTLearningTutorial (OTMultiEditor, EDITOR_ARGS) {
 	Melder_help (U"OT learning");
 }
 

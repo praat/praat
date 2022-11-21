@@ -946,7 +946,7 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 	}
 }
 
-static void menu_cb_writeWav (SoundRecorder me, EDITOR_ARGS_FORM) {
+static void menu_cb_writeWav (SoundRecorder me, EDITOR_ARGS) {
 	EDITOR_FORM_SAVE (U"Save as WAV file", nullptr)
 		autostring32 name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name.get(), U".wav");
@@ -955,7 +955,7 @@ static void menu_cb_writeWav (SoundRecorder me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_writeAifc (SoundRecorder me, EDITOR_ARGS_FORM) {
+static void menu_cb_writeAifc (SoundRecorder me, EDITOR_ARGS) {
 	EDITOR_FORM_SAVE (U"Save as AIFC file", nullptr)
 		autostring32 name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name.get(), U".aifc");
@@ -964,7 +964,7 @@ static void menu_cb_writeAifc (SoundRecorder me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_writeNextSun (SoundRecorder me, EDITOR_ARGS_FORM) {
+static void menu_cb_writeNextSun (SoundRecorder me, EDITOR_ARGS) {
 	EDITOR_FORM_SAVE (U"Save as NeXT/Sun file", nullptr)
 		autostring32 name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name.get(), U".au");
@@ -973,7 +973,7 @@ static void menu_cb_writeNextSun (SoundRecorder me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_writeNist (SoundRecorder me, EDITOR_ARGS_FORM) {
+static void menu_cb_writeNist (SoundRecorder me, EDITOR_ARGS) {
 	EDITOR_FORM_SAVE (U"Save as NIST file", nullptr)
 		autostring32 name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name.get(), U".nist");
@@ -989,16 +989,16 @@ static void updateMenus (SoundRecorder me) {
 			my instancePref_meter_which() == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
 }
 
-static void menu_cb_intensity (SoundRecorder me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_intensity (SoundRecorder me, EDITOR_ARGS) {
 	my setInstancePref_meter_which (kSoundRecorder_meter::INTENSITY);
 	updateMenus (me);
 }
-static void menu_cb_centreOfGravityVersusIntensity (SoundRecorder me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_centreOfGravityVersusIntensity (SoundRecorder me, EDITOR_ARGS) {
 	my setInstancePref_meter_which (kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
 	updateMenus (me);
 }
 
-static void menu_cb_SoundRecorder_help (SoundRecorder, EDITOR_ARGS_DIRECT) { Melder_help (U"SoundRecorder"); }
+static void menu_cb_SoundRecorder_help (SoundRecorder, EDITOR_ARGS) { Melder_help (U"SoundRecorder"); }
 
 void structSoundRecorder :: v_createMenus () {
 	SoundRecorder_Parent :: v_createMenus ();

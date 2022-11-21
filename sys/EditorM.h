@@ -22,13 +22,13 @@
 	#error Include either praatM.h or EditorM.h, but not both.
 #endif
 
-#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter interpreter
-#define EDITOR_ARGS_FORM_FORWARD  cmd, _sendingForm_, _narg_, _args_, _sendingString_, interpreter
-#define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, conststring32, Interpreter
-#define EDITOR_ARGS_CMD_FORWARD  cmd, nullptr, 0, nullptr, nullptr, nullptr
-#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter
-#define EDITOR_ARGS_DIRECT_WITH_OUTPUT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter interpreter
-#define EDITOR_ARGS_DIRECT_FORWARD  nullptr, nullptr, 0, nullptr, nullptr, nullptr
+#define EDITOR_ARGS  \
+	[[maybe_unused]] EditorCommand cmd, \
+	[[maybe_unused]] UiForm _sendingForm_, \
+	[[maybe_unused]] integer _narg_, \
+	[[maybe_unused]] Stackel _args_, \
+	[[maybe_unused]] conststring32 _sendingString_, \
+	[[maybe_unused]] Interpreter optionalInterpreter
 
 #define EDITOR_FORM(title, helpTitle)  \
 	UiField _radio_ = nullptr; \
@@ -44,7 +44,7 @@ _form_inited_: \
 #define EDITOR_DO  \
 		UiForm_do (cmd -> d_uiform.get(), false); \
 	} else if (! _sendingForm_) { \
-		UiForm_parseStringE (cmd, _narg_, _args_, _sendingString_, interpreter); \
+		UiForm_parseStringE (cmd, _narg_, _args_, _sendingString_, optionalInterpreter); \
 	} else {
 
 #define EDITOR_END  \
@@ -380,7 +380,7 @@ _form_inited_: \
 		cmd -> d_uiform = UiOutfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
 #define EDITOR_DO_SAVE \
-	(void) interpreter; \
+	(void) optionalInterpreter; \
 	UiOutfile_do (cmd -> d_uiform.get(), defaultName, my boss()); } else { MelderFile file; structMelderFile _file2 { }; \
 	if (_args_) { \
 		Melder_require (_narg_ == 1, \
@@ -401,7 +401,7 @@ _form_inited_: \
 		cmd -> d_uiform = UiInfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) {
 #define EDITOR_DO_READ \
-	(void) interpreter; \
+	(void) optionalInterpreter; \
 	UiInfile_do (cmd -> d_uiform.get()); } else { MelderFile file; structMelderFile _file2 { }; \
 	if (_args_) { \
 		Melder_require (_narg_ == 1, \
@@ -429,38 +429,38 @@ _form_inited_: \
 
 #define INFO_EDITOR
 #define INFO_EDITOR_END  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::STRING_;
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::STRING_;
 
 #define INFO_DATA  \
 	DATA_BEGIN__
 #define INFO_DATA_END  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::STRING_;
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::STRING_;
 
 #define FOR_REAL__(...)  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 	Melder_information (result, __VA_ARGS__);
 
 #define FOR_INTEGER__(...)  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::INTEGER_; \
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::INTEGER_; \
 	Melder_information (double (result), __VA_ARGS__);
 
 #define FOR_BOOLEAN__(...)  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::BOOLEAN_; \
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::BOOLEAN_; \
 	Melder_information (double (result), __VA_ARGS__);
 
 #define FOR_COMPLEX__(...)  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::STRING_; /* TODO: make true complex types in script */ \
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::STRING_; /* TODO: make true complex types in script */ \
 	Melder_information (result, __VA_ARGS__);
 
 #define FOR_STRING__  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	Melder_information (result);
 
 #define QUERY_EDITOR_FOR_REAL
@@ -507,15 +507,15 @@ _form_inited_: \
 #define CONVERT_DATA_TO_ONE  \
 	DATA_BEGIN__
 #define CONVERT_DATA_TO_ONE_END(...)  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	Thing_setName (result.get(), __VA_ARGS__); \
 	Editor_broadcastPublication (my boss(), result.move());
 
 #define CREATE_ONE
 #define CREATE_ONE_END(...)  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+	if (optionalInterpreter) \
+		optionalInterpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	Thing_setName (result.get(), __VA_ARGS__); \
 	Editor_broadcastPublication (my boss(), result.move());
 

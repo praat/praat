@@ -42,7 +42,7 @@ Thing_implement (CategoriesEditor, Editor, 0);
 
 static const conststring32 CategoriesEditor_EMPTYLABEL = U"(empty)";
 
-static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS_DIRECT) {
+static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS) {
 	Melder_help (U"CategoriesEditor");
 }
 

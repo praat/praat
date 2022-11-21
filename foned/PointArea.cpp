@@ -43,7 +43,7 @@ void structPointArea :: v_drawInside () {
 
 #pragma mark - PointArea Query menu
 
-static void QUERY_DATA_FOR_REAL__getJitter_local (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getJitter_local (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure jitter, make a selection first.");
@@ -51,7 +51,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_local (PointArea me, EDITOR_ARGS_DIRE
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void QUERY_DATA_FOR_REAL__getJitter_local_absolute (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getJitter_local_absolute (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure jitter, make a selection first.");
@@ -59,7 +59,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_local_absolute (PointArea me, EDITOR_
 	QUERY_DATA_FOR_REAL_END (U" seconds");
 }
 
-static void QUERY_DATA_FOR_REAL__getJitter_rap (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getJitter_rap (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure jitter, make a selection first.");
@@ -67,7 +67,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_rap (PointArea me, EDITOR_ARGS_DIRECT
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void QUERY_DATA_FOR_REAL__getJitter_ppq5 (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getJitter_ppq5 (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure jitter, make a selection first.");
@@ -75,7 +75,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_ppq5 (PointArea me, EDITOR_ARGS_DIREC
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void QUERY_DATA_FOR_REAL__getJitter_ddp (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getJitter_ddp (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure jitter, make a selection first.");
@@ -83,7 +83,7 @@ static void QUERY_DATA_FOR_REAL__getJitter_ddp (PointArea me, EDITOR_ARGS_DIRECT
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void QUERY_DATA_FOR_REAL__getShimmer_local (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getShimmer_local (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure shimmer, make a selection first.");
@@ -92,7 +92,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_local (PointArea me, EDITOR_ARGS_DIR
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void QUERY_DATA_FOR_REAL__getShimmer_local_dB (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getShimmer_local_dB (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure shimmer, make a selection first.");
@@ -101,7 +101,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_local_dB (PointArea me, EDITOR_ARGS_
 	QUERY_DATA_FOR_REAL_END (U" dB")
 }
 
-static void QUERY_DATA_FOR_REAL__getShimmer_apq3 (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getShimmer_apq3 (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure shimmer, make a selection first.");
@@ -110,7 +110,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_apq3 (PointArea me, EDITOR_ARGS_DIRE
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void QUERY_DATA_FOR_REAL__getShimmer_apq5 (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getShimmer_apq5 (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure shimmer, make a selection first.");
@@ -119,7 +119,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_apq5 (PointArea me, EDITOR_ARGS_DIRE
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void QUERY_DATA_FOR_REAL__getShimmer_apq11 (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getShimmer_apq11 (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure shimmer, make a selection first.");
@@ -128,7 +128,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_apq11 (PointArea me, EDITOR_ARGS_DIR
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void QUERY_DATA_FOR_REAL__getShimmer_dda (PointArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getShimmer_dda (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		Melder_require (my startSelection() != my endSelection(),
 			U"To measure shimmer, make a selection first.");
@@ -137,7 +137,7 @@ static void QUERY_DATA_FOR_REAL__getShimmer_dda (PointArea me, EDITOR_ARGS_DIREC
 	QUERY_DATA_FOR_REAL_END (U"")
 }
 
-static void MODIFY_DATA__removePoints (PointArea me, EDITOR_ARGS_DIRECT) {
+static void MODIFY_DATA__removePoints (PointArea me, EDITOR_ARGS) {
 	MODIFY_DATA (U"Remove point(s)")
 		if (my startSelection() == my endSelection())
 			PointProcess_removePointNear (my pointProcess(), my startSelection());
@@ -146,13 +146,13 @@ static void MODIFY_DATA__removePoints (PointArea me, EDITOR_ARGS_DIRECT) {
 	MODIFY_DATA_END
 }
 
-static void MODIFY_DATA__addPointAtCursor (PointArea me, EDITOR_ARGS_DIRECT) {
+static void MODIFY_DATA__addPointAtCursor (PointArea me, EDITOR_ARGS) {
 	MODIFY_DATA (U"Add point")
 		PointProcess_addPoint (my pointProcess(), 0.5 * (my startSelection() + my endSelection()));
 	MODIFY_DATA_END
 }
 
-static void MODIFY_DATA__addPointAt (PointArea me, EDITOR_ARGS_FORM) {
+static void MODIFY_DATA__addPointAt (PointArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add point", nullptr)
 		REAL (position, U"Position", U"0.0");
 	EDITOR_OK

@@ -21,11 +21,11 @@
 
 Thing_implement (PitchTierEditor, FunctionEditor, 0);
 
-static void menu_cb_PitchTierEditorHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) {
+static void menu_cb_PitchTierEditorHelp (PitchTierEditor, EDITOR_ARGS) {
 	HELP (U"PitchTierEditor")
 }
 
-static void menu_cb_PitchTierHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) {
+static void menu_cb_PitchTierHelp (PitchTierEditor, EDITOR_ARGS) {
 	HELP (U"PitchTier")
 }
 

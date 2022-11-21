@@ -103,7 +103,7 @@ static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stack
 	Interpreter_run (my interpreter.get(), text.get());
 }
 
-static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
 	bool isObscured = false;
 	if (my interpreter -> running)
 		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
@@ -155,7 +155,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	}
 }
 
-static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
 		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
 	autostring32 text = GuiText_getSelection (my textWidget);
@@ -182,7 +182,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	}
 }
 
-static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add to menu", U"Add to fixed menu...")
 		WORD (window, U"Window", U"?")
 		SENTENCE (menu, U"Menu", U"File")
@@ -203,7 +203,7 @@ static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_addToFixedMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_addToFixedMenu (ScriptEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add to fixed menu", U"Add to fixed menu...");
 		RADIOSTR (window, U"Window", 1)
 			RADIOBUTTON (U"Objects")
@@ -224,7 +224,7 @@ static void menu_cb_addToFixedMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_addToDynamicMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_addToDynamicMenu (ScriptEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add to dynamic menu", U"Add to dynamic menu...")
 		WORD (class1, U"Class 1", U"Sound")
 		INTEGER (number1, U"Number 1", U"0")
@@ -247,11 +247,11 @@ static void menu_cb_addToDynamicMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_clearHistory (ScriptEditor /* me */, EDITOR_ARGS_DIRECT) {
+static void menu_cb_clearHistory (ScriptEditor /* me */, EDITOR_ARGS) {
 	UiHistory_clear ();
 }
 
-static void menu_cb_pasteHistory (ScriptEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_pasteHistory (ScriptEditor me, EDITOR_ARGS) {
 	char32 *history = UiHistory_get ();
 	if (! history || history [0] == U'\0')
 		Melder_throw (U"No history.");
@@ -272,7 +272,7 @@ static void menu_cb_pasteHistory (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_scrollToSelection (my textWidget);
 }
 
-static void menu_cb_expandIncludeFiles (ScriptEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_expandIncludeFiles (ScriptEditor me, EDITOR_ARGS) {
 	structMelderFile file { };
 	autostring32 text = GuiText_getString (my textWidget);
 	if (my name [0]) {
@@ -283,17 +283,17 @@ static void menu_cb_expandIncludeFiles (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_setString (my textWidget, text.get());
 }
 
-static void menu_cb_AboutScriptEditor (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"ScriptEditor"); }
-static void menu_cb_ScriptingTutorial (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Scripting"); }
-static void menu_cb_ScriptingExamples (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Scripting examples"); }
-static void menu_cb_PraatScript (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Praat script"); }
-static void menu_cb_FormulasTutorial (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Formulas"); }
-static void menu_cb_Functions (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Functions"); }
-static void menu_cb_DemoWindow (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Demo window"); }
-static void menu_cb_TheHistoryMechanism (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"History mechanism"); }
-static void menu_cb_InitializationScripts (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Initialization script"); }
-static void menu_cb_AddingToAFixedMenu (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Add to fixed menu..."); }
-static void menu_cb_AddingToADynamicMenu (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Add to dynamic menu..."); }
+static void menu_cb_AboutScriptEditor (ScriptEditor, EDITOR_ARGS) { Melder_help (U"ScriptEditor"); }
+static void menu_cb_ScriptingTutorial (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Scripting"); }
+static void menu_cb_ScriptingExamples (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Scripting examples"); }
+static void menu_cb_PraatScript (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Praat script"); }
+static void menu_cb_FormulasTutorial (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Formulas"); }
+static void menu_cb_Functions (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Functions"); }
+static void menu_cb_DemoWindow (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Demo window"); }
+static void menu_cb_TheHistoryMechanism (ScriptEditor, EDITOR_ARGS) { Melder_help (U"History mechanism"); }
+static void menu_cb_InitializationScripts (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Initialization script"); }
+static void menu_cb_AddingToAFixedMenu (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Add to fixed menu..."); }
+static void menu_cb_AddingToADynamicMenu (ScriptEditor, EDITOR_ARGS) { Melder_help (U"Add to dynamic menu..."); }
 
 void structScriptEditor :: v_createMenus () {
 	ScriptEditor_Parent :: v_createMenus ();

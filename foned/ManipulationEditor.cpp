@@ -32,7 +32,7 @@ Thing_implement (ManipulationPulsesArea, PointArea, 0);
 
 #pragma mark - ManipPulsesArea Modify
 
-static void menu_cb_removePulses (ManipulationPulsesArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_removePulses (ManipulationPulsesArea me, EDITOR_ARGS) {
 	MODIFY_DATA (U"Remove pulse(s)")
 		if (my startSelection() == my endSelection())
 			PointProcess_removePointNear (my pulses(), my startSelection());
@@ -40,12 +40,12 @@ static void menu_cb_removePulses (ManipulationPulsesArea me, EDITOR_ARGS_DIRECT)
 			PointProcess_removePointsBetween (my pulses(), my startSelection(), my endSelection());
 	MODIFY_DATA_END
 }
-static void menu_cb_addPulseAtCursor (ManipulationPulsesArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_addPulseAtCursor (ManipulationPulsesArea me, EDITOR_ARGS) {
 	MODIFY_DATA (U"Add pulse")
 		PointProcess_addPoint (my pulses(), 0.5 * (my startSelection() + my endSelection()));
 	MODIFY_DATA_END
 }
-static void menu_cb_addPulseAt (ManipulationPulsesArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_addPulseAt (ManipulationPulsesArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add pulse", nullptr)
 		REAL (position, U"Position (s)", U"0.0")
 	EDITOR_OK
@@ -96,7 +96,7 @@ Thing_implement (ManipulationPitchTierArea, PitchTierArea, 0);
 
 #pragma mark - ManipPitchTierArea Modify
 
-static void menu_cb_removePitchPoints (ManipulationPitchTierArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_removePitchPoints (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	if (! my pitch())
 		return;
 	MODIFY_DATA (U"Remove pitch point(s)")
@@ -106,14 +106,14 @@ static void menu_cb_removePitchPoints (ManipulationPitchTierArea me, EDITOR_ARGS
 			AnyTier_removePointsBetween (my pitch()->asAnyTier(), my startSelection(), my endSelection());
 	MODIFY_DATA_END
 }
-static void menu_cb_addPitchPointAtCursor (ManipulationPitchTierArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_addPitchPointAtCursor (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	if (! my pitch())
 		return;
 	MODIFY_DATA (U"Add pitch point")
 		RealTier_addPoint (my pitch(), 0.5 * (my startSelection() + my endSelection()), my ycursor);
 	MODIFY_DATA_END
 }
-static void menu_cb_addPitchPointAtSlice (ManipulationPitchTierArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_addPitchPointAtSlice (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	if (! my borrowedPulsesArea || ! my borrowedPulsesArea -> pulses())
 		Melder_throw (U"There are no pulses.");
 	if (! my pitch())
@@ -159,7 +159,7 @@ static void menu_cb_addPitchPointAtSlice (ManipulationPitchTierArea me, EDITOR_A
 		RealTierArea_addPointAt (me, 0.5 * (my startSelection() + my endSelection()), desiredY);
 	MODIFY_DATA_END
 }
-static void menu_cb_addPitchPointAt (ManipulationPitchTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_addPitchPointAt (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add pitch point", nullptr)
 		REAL (time, U"Time (s)", U"0.0")
 		REAL (frequency, U"Frequency (Hz or st)", U"100.0")
@@ -174,7 +174,7 @@ static void menu_cb_addPitchPointAt (ManipulationPitchTierArea me, EDITOR_ARGS_F
 		MODIFY_DATA_END
 	EDITOR_END
 }
-static void menu_cb_stylizePitch (ManipulationPitchTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_stylizePitch (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Stylize pitch", U"PitchTier: Stylize...")
 		REAL (frequencyResolution, U"Frequency resolution", my default_pitch_stylize_frequencyResolution ())
 		RADIO (units, U"Units", my default_pitch_stylize_useSemitones () + 1)
@@ -193,14 +193,14 @@ static void menu_cb_stylizePitch (ManipulationPitchTierArea me, EDITOR_ARGS_FORM
 		MODIFY_DATA_END
 	EDITOR_END
 }
-static void menu_cb_stylizePitch_2st (ManipulationPitchTierArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_stylizePitch_2st (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	if (! my pitch())
 		return;
 	MODIFY_DATA (U"Stylize pitch")
 		PitchTier_stylize (my pitch(), 2.0, true);
 	MODIFY_DATA_END
 }
-static void menu_cb_interpolateQuadratically (ManipulationPitchTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_interpolateQuadratically (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Interpolate quadratically", nullptr)
 		NATURAL (numberOfPointsPerParabola, U"Number of points per parabola", my default_pitch_interpolateQuadratically_numberOfPointsPerParabola ())
 		RADIO (units, U"Units", my default_pitch_stylize_useSemitones () + 1)
@@ -219,7 +219,7 @@ static void menu_cb_interpolateQuadratically (ManipulationPitchTierArea me, EDIT
 		MODIFY_DATA_END
 	EDITOR_END
 }
-static void menu_cb_shiftPitchFrequencies (ManipulationPitchTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_shiftPitchFrequencies (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Shift pitch frequencies", nullptr)
 		REAL (frequencyShift, U"Frequency shift", U"-20.0")
 		OPTIONMENU (unit_i, U"Unit", 1)
@@ -249,7 +249,7 @@ static void menu_cb_shiftPitchFrequencies (ManipulationPitchTierArea me, EDITOR_
 		}
 	EDITOR_END
 }
-static void menu_cb_multiplyPitchFrequencies (ManipulationPitchTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_multiplyPitchFrequencies (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Multiply pitch frequencies", nullptr)
 		POSITIVE (factor, U"Factor", U"1.2")
 		LABEL (U"The multiplication is always done in hertz.")
@@ -262,7 +262,7 @@ static void menu_cb_multiplyPitchFrequencies (ManipulationPitchTierArea me, EDIT
 		MODIFY_DATA_END
 	EDITOR_END
 }
-static void menu_cb_setPitchRange (ManipulationPitchTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_setPitchRange (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Set pitch range", nullptr)
 		REAL (dataFreeMinimum, U"Data-free minimum (Hz)", my default_dataFreeMinimum())
 		REAL (dataFreeMaximum, U"Data-free maximum (Hz)", my default_dataFreeMaximum())
@@ -312,7 +312,7 @@ void structManipulationPitchTierArea :: v_createMenus () {
 
 Thing_implement (ManipulationDurationTierArea, DurationTierArea, 0);
 
-static void menu_cb_setDurationRange (ManipulationDurationTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_setDurationRange (ManipulationDurationTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Set duration range", nullptr)
 		REAL (dataFreeMinimum, U"Data-free minimum", my default_dataFreeMinimum())
 		REAL (dataFreeMaximum, U"Data-free maximum", my default_dataFreeMaximum())
@@ -332,7 +332,7 @@ static void menu_cb_setDurationRange (ManipulationDurationTierArea me, EDITOR_AR
 		FunctionEditor_redraw (my functionEditor());
 	EDITOR_END
 }
-static void menu_cb_removeDurationPoints (ManipulationDurationTierArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_removeDurationPoints (ManipulationDurationTierArea me, EDITOR_ARGS) {
 	if (! my duration())
 		return;
 	MODIFY_DATA (U"Remove duration point(s)")
@@ -342,14 +342,14 @@ static void menu_cb_removeDurationPoints (ManipulationDurationTierArea me, EDITO
 			AnyTier_removePointsBetween (my duration()->asAnyTier(), my startSelection(), my endSelection());
 	MODIFY_DATA_END
 }
-static void menu_cb_addDurationPointAtCursor (ManipulationDurationTierArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_addDurationPointAtCursor (ManipulationDurationTierArea me, EDITOR_ARGS) {
 	if (! my duration())
 		return;
 	MODIFY_DATA (U"Add duration point")
 		RealTier_addPoint (my duration(), 0.5 * (my startSelection() + my endSelection()), my ycursor);
 	MODIFY_DATA_END
 }
-static void menu_cb_addDurationPointAt (ManipulationDurationTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_addDurationPointAt (ManipulationDurationTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add duration point", nullptr)
 		REAL (time, U"Time (s)", U"0.0");
 		REAL (relativeDuration, U"Relative duration", U"1.0");
@@ -418,31 +418,31 @@ void structManipulationEditor :: v_updateMenuItems () {
 
 /***** FILE MENU *****/
 
-static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, EDITOR_ARGS) {
 	CONVERT_DATA_TO_ONE
 		autoSound result = Data_copy (my soundArea() -> sound());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_ARGS) {
 	CONVERT_DATA_TO_ONE
 		autoPointProcess result = Data_copy (my pulsesArea() -> pulses());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR_ARGS) {
 	CONVERT_DATA_TO_ONE
 		autoPitchTier result = Data_copy (my pitchTierArea() -> pitch());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDITOR_ARGS) {
 	CONVERT_DATA_TO_ONE
 		autoDurationTier result = Data_copy (my durationTierArea() -> duration());
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS) {
 	CONVERT_DATA_TO_ONE
 		autoSound result = Manipulation_to_Sound (my manipulation(), my synthesisMethod);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
@@ -463,11 +463,11 @@ void structManipulationEditor :: v_restoreData () {
 }
 
 
-static void menu_cb_ManipulationEditorHelp (ManipulationEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"ManipulationEditor"); }
-static void menu_cb_ManipulationHelp (ManipulationEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Manipulation"); }
+static void menu_cb_ManipulationEditorHelp (ManipulationEditor, EDITOR_ARGS) { Melder_help (U"ManipulationEditor"); }
+static void menu_cb_ManipulationHelp (ManipulationEditor, EDITOR_ARGS) { Melder_help (U"Manipulation"); }
 
 #define menu_cb_Synth_common(menu_cb,meth) \
-static void menu_cb (ManipulationEditor me, EDITOR_ARGS_DIRECT) { \
+static void menu_cb (ManipulationEditor me, EDITOR_ARGS) { \
 	prefs_synthesisMethod = my synthesisMethod = meth; \
 	my v_updateMenuItems (); \
 }

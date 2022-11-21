@@ -136,7 +136,7 @@ static void cb_saveAs_ok (UiForm sendingForm, integer /* narg */, Stackel /* arg
 	saveDocument (me, file);
 }
 
-static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS) {
 	if (! my saveDialog)
 		my saveDialog = UiOutfile_create (my windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr);
 	char32 defaultName [300];
@@ -171,7 +171,7 @@ static void gui_button_cb_discardAndOpen (EditorCommand cmd, GuiButtonEvent /* e
 	cb_showOpen (cmd);
 }
 
-static void menu_cb_open (TextEditor me, EDITOR_ARGS_CMD) {
+static void menu_cb_open (TextEditor me, EDITOR_ARGS) {
 	if (my dirty) {
 		if (! my dirtyOpenDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
@@ -230,7 +230,7 @@ static void gui_button_cb_discardAndNew (EditorCommand cmd, GuiButtonEvent /* ev
 	newDocument (me);
 }
 
-static void menu_cb_new (TextEditor me, EDITOR_ARGS_CMD) {
+static void menu_cb_new (TextEditor me, EDITOR_ARGS) {
 	if (my v_fileBased () && my dirty) {
 		if (! my dirtyNewDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
@@ -272,7 +272,7 @@ static void gui_button_cb_discardAndReopen (EditorCommand cmd, GuiButtonEvent /*
 	openDocument (me, & my file);
 }
 
-static void menu_cb_reopen (TextEditor me, EDITOR_ARGS_CMD) {
+static void menu_cb_reopen (TextEditor me, EDITOR_ARGS) {
 	Melder_assert (my v_fileBased());
 	if (my name [0] == U'\0') {
 		Melder_throw (U"Cannot reopen from disk, because the text has never been saved yet.");
@@ -308,11 +308,11 @@ static void menu_cb_reopen (TextEditor me, EDITOR_ARGS_CMD) {
 	}
 }
 
-static void menu_cb_clear (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_clear (TextEditor me, EDITOR_ARGS) {
 	my v_clear ();
 }
 
-static void menu_cb_save (TextEditor me, EDITOR_ARGS_CMD) {
+static void menu_cb_save (TextEditor me, EDITOR_ARGS) {
 	if (my name [0]) {
 		try {
 			saveDocument (me, & my file);
@@ -386,27 +386,27 @@ void structTextEditor :: v_goAway () {
 	}
 }
 
-static void menu_cb_undo (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_undo (TextEditor me, EDITOR_ARGS) {
 	GuiText_undo (my textWidget);
 }
 
-static void menu_cb_redo (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_redo (TextEditor me, EDITOR_ARGS) {
 	GuiText_redo (my textWidget);
 }
 
-static void menu_cb_cut (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_cut (TextEditor me, EDITOR_ARGS) {
 	GuiText_cut (my textWidget);  // use ((XmAnyCallbackStruct *) call) -> event -> xbutton. time
 }
 
-static void menu_cb_copy (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_copy (TextEditor me, EDITOR_ARGS) {
 	GuiText_copy (my textWidget);
 }
 
-static void menu_cb_paste (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_paste (TextEditor me, EDITOR_ARGS) {
 	GuiText_paste (my textWidget);
 }
 
-static void menu_cb_erase (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_erase (TextEditor me, EDITOR_ARGS) {
 	GuiText_remove (my textWidget);
 }
 
@@ -485,7 +485,7 @@ static void do_replace (TextEditor me) {
 	#endif
 }
 
-static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_find (TextEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Find", nullptr)
 		TEXTFIELD (findString, U"Find", U"", 5)
 	EDITOR_OK
@@ -506,15 +506,15 @@ static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_findAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_findAgain (TextEditor me, EDITOR_ARGS) {
 	do_find (me);
 }
 
-static void menu_cb_useSelectionForFind (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_useSelectionForFind (TextEditor me, EDITOR_ARGS) {
 	theFindString = GuiText_getSelection (my textWidget);
 }
 
-static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_replace (TextEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Find", nullptr)
 		LABEL (U"This is a \"slow\" find-and-replace method;")
 		LABEL (U"if the selected text is identical to the Find string,")
@@ -533,11 +533,11 @@ static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_replaceAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_replaceAgain (TextEditor me, EDITOR_ARGS) {
 	do_replace (me);
 }
 
-static void menu_cb_whereAmI (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_whereAmI (TextEditor me, EDITOR_ARGS) {
 	integer numberOfLinesLeft, numberOfLinesRight;
 	if (! getSelectedLines (me, & numberOfLinesLeft, & numberOfLinesRight)) {
 		Melder_information (U"The cursor is on line ", numberOfLinesLeft, U".");
@@ -548,7 +548,7 @@ static void menu_cb_whereAmI (TextEditor me, EDITOR_ARGS_DIRECT) {
 	}
 }
 
-static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Go to line", nullptr)
 		NATURAL (lineToGo, U"Line", U"1")
 	EDITOR_OK
@@ -582,7 +582,7 @@ static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS) {
 	autostring32 text = GuiText_getString (my textWidget);
 	char32 buffer [2] = U" ";
 	const conststring32 hex [16] = { U"0", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8", U"9", U"A", U"B", U"C", U"D", U"E", U"F" };
@@ -632,12 +632,12 @@ static void setFontSize (TextEditor me, double fontSize) {
 	updateSizeMenu (me);
 }
 
-static void menu_cb_10 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 10.0); }
-static void menu_cb_12 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 12.0); }
-static void menu_cb_14 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 14.0); }
-static void menu_cb_18 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18.0); }
-static void menu_cb_24 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24.0); }
-static void menu_cb_fontSize (TextEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_10 (TextEditor me, EDITOR_ARGS) { setFontSize (me, 10.0); }
+static void menu_cb_12 (TextEditor me, EDITOR_ARGS) { setFontSize (me, 12.0); }
+static void menu_cb_14 (TextEditor me, EDITOR_ARGS) { setFontSize (me, 14.0); }
+static void menu_cb_18 (TextEditor me, EDITOR_ARGS) { setFontSize (me, 18.0); }
+static void menu_cb_24 (TextEditor me, EDITOR_ARGS) { setFontSize (me, 24.0); }
+static void menu_cb_fontSize (TextEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Text window: Font size", nullptr)
 		POSITIVE (fontSize, U"Font size (points)", U"12")
 	EDITOR_OK

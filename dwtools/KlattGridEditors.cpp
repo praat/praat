@@ -38,7 +38,7 @@ static void KlattGrid_Editor_defaultPlay (KlattGrid me, FunctionEditor editor, d
 
 Thing_implement (KlattGrid_RealTierEditor, RealTierEditor, 0);
 
-static void menu_cb_KlattGridHelp (KlattGrid_RealTierEditor, EDITOR_ARGS_DIRECT) {
+static void menu_cb_KlattGridHelp (KlattGrid_RealTierEditor, EDITOR_ARGS) {
 	Melder_help (U"KlattGrid");
 }
 
@@ -56,7 +56,7 @@ void structKlattGrid_RealTierEditor :: v_play (double startTime, double endTime)
 
 Thing_implement (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor, 0);
 
-static void menu_cb_IntensityTierHelp (KlattGrid_IntensityTierEditor, EDITOR_ARGS_DIRECT) {
+static void menu_cb_IntensityTierHelp (KlattGrid_IntensityTierEditor, EDITOR_ARGS) {
 	Melder_help (U"IntensityTier");
 }
 
@@ -78,11 +78,11 @@ Thing_implement (KlattGrid_PitchTierArea, PitchTierArea, 0);
 
 Thing_implement (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor, 0);
 
-static void menu_cb_KlattGrid_PitchTierEditorHelp (KlattGrid_PitchTierEditor, EDITOR_ARGS_DIRECT) {
+static void menu_cb_KlattGrid_PitchTierEditorHelp (KlattGrid_PitchTierEditor, EDITOR_ARGS) {
 	Melder_help (U"PitchTierEditor");
 }
 
-static void menu_cb_PitchTierHelp (KlattGrid_PitchTierEditor, EDITOR_ARGS_DIRECT) {
+static void menu_cb_PitchTierHelp (KlattGrid_PitchTierEditor, EDITOR_ARGS) {
 	Melder_help (U"PitchTier");
 }
 

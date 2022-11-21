@@ -348,7 +348,7 @@ void structDataSubEditor :: v_createChildren () {
 	}
 }
 
-static void menu_cb_help (DataSubEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Inspect"); }
+static void menu_cb_help (DataSubEditor, EDITOR_ARGS) { Melder_help (U"Inspect"); }
 
 void structDataSubEditor :: v_createMenuItems_help (EditorMenu menu) {
 	DataSubEditor_Parent :: v_createMenuItems_help (menu);

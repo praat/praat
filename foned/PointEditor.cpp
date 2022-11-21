@@ -22,7 +22,7 @@
 
 Thing_implement (PointEditor, FunctionEditor, 0);
 
-static void HELP__PointEditorHelp (PointEditor, EDITOR_ARGS_DIRECT) {
+static void HELP__PointEditorHelp (PointEditor, EDITOR_ARGS) {
 	HELP (U"PointEditor")
 }
 

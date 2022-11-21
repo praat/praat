@@ -57,7 +57,7 @@ void structTableEditor :: v1_dataChanged (Editor /* sender */) {
 
 /********** FILE MENU **********/
 
-static void menu_cb_preferences (TableEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_preferences (TableEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"TableEditor preferences", nullptr);
 		OPTIONMENU (useTextStyles, U"The symbols %#_^ in labels", my default_useTextStyles() + 1)
 			OPTION (U"are shown as typed")
@@ -76,16 +76,16 @@ static void menu_cb_preferences (TableEditor me, EDITOR_ARGS_FORM) {
 /*
 	On macOS, Cut/Copy/Paste are already available in the Praat:Edit menu.
 */
-static void menu_cb_CutText (TableEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_CutText (TableEditor me, EDITOR_ARGS) {
 	GuiText_cut (my text);
 }
-static void menu_cb_CopyText (TableEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_CopyText (TableEditor me, EDITOR_ARGS) {
 	GuiText_copy (my text);
 }
-static void menu_cb_PasteText (TableEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_PasteText (TableEditor me, EDITOR_ARGS) {
 	GuiText_paste (my text);
 }
-static void menu_cb_EraseText (TableEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_EraseText (TableEditor me, EDITOR_ARGS) {
 	GuiText_remove (my text);
 }
 #endif
@@ -94,7 +94,7 @@ static void menu_cb_EraseText (TableEditor me, EDITOR_ARGS_DIRECT) {
 
 /********** HELP MENU **********/
 
-static void menu_cb_TableEditorHelp (TableEditor, EDITOR_ARGS_DIRECT) {
+static void menu_cb_TableEditorHelp (TableEditor, EDITOR_ARGS) {
 	Melder_help (U"TableEditor");
 }
 

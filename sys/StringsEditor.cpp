@@ -22,7 +22,7 @@
 
 Thing_implement (StringsEditor, Editor, 0);
 
-static void menu_cb_help (StringsEditor /* me */, EDITOR_ARGS_DIRECT) {
+static void menu_cb_help (StringsEditor /* me */, EDITOR_ARGS) {
 	HELP (U"StringsEditor")
 }
 

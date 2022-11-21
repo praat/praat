@@ -69,7 +69,7 @@ void structFormantPathArea :: v_draw_analysis_formants () {
 }
 
 
-static void menu_cb_FormantColourSettings (FormantPathArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_FormantColourSettings (FormantPathArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
 		WORD (oddPathColour_string, U"Dots in F1, F3, F5", my default_formant_path_oddColour())
 		WORD (evenPathColour_string, U"Dots in F2, F4", my default_formant_path_evenColour())
@@ -83,7 +83,7 @@ static void menu_cb_FormantColourSettings (FormantPathArea me, EDITOR_ARGS_FORM)
 	EDITOR_END
 }
 
-static void menu_cb_DrawVisibleFormantContour (FormantPathArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_DrawVisibleFormantContour (FormantPathArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Draw visible formant contour", nullptr)
 		my v_form_pictureWindow (cmd);   // BUG: move to area
 		my v_form_pictureMargins (cmd);
@@ -114,13 +114,13 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathArea me, EDITOR_ARGS_F
 	EDITOR_END
 }
 
-static void menu_cb_showFormants (FormantPathArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_showFormants (FormantPathArea me, EDITOR_ARGS) {
 	my setInstancePref_formant_show (! my instancePref_formant_show());   // toggle
 	GuiMenuItem_check (my formantToggle, my instancePref_formant_show());   // in case we're called from a script
 	FunctionEditor_redraw (my functionEditor());
 }
 
-static void INFO_DATA__formantListing (FormantPathArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void INFO_DATA__formantListing (FormantPathArea me, EDITOR_ARGS) {
 	INFO_DATA
 		const double startTime = my startSelection(), endTime = my endSelection();
 		MelderInfo_open ();
