@@ -1356,7 +1356,7 @@ static void INFO_DATA__formantListing (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_
 	INFO_DATA_END
 }
 
-static void do_getFormant (SoundAnalysisArea me, integer iformant, Interpreter interpreter) {
+static void do_getFormant (SoundAnalysisArea me, integer iformant, Interpreter optionalInterpreter) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -1370,7 +1370,7 @@ static void do_getFormant (SoundAnalysisArea me, integer iformant, Interpreter i
 		: Melder_cat (U" Hz (mean F", iformant, U" ", SoundAnalysisArea_partString_locative (part), U")")
 	)
 }
-static void do_getBandwidth (SoundAnalysisArea me, integer iformant, Interpreter interpreter) {
+static void do_getBandwidth (SoundAnalysisArea me, integer iformant, Interpreter optionalInterpreter) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -1385,28 +1385,28 @@ static void do_getBandwidth (SoundAnalysisArea me, integer iformant, Interpreter
 	)
 }
 static void QUERY_DATA_FOR_REAL__getFirstFormant (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	do_getFormant (me, 1, interpreter);
+	do_getFormant (me, 1, optionalInterpreter);
 }
 static void QUERY_DATA_FOR_REAL__getFirstBandwidth (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	do_getBandwidth (me, 1, interpreter);
+	do_getBandwidth (me, 1, optionalInterpreter);
 }
 static void QUERY_DATA_FOR_REAL__getSecondFormant (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	do_getFormant (me, 2, interpreter);
+	do_getFormant (me, 2, optionalInterpreter);
 }
 static void QUERY_DATA_FOR_REAL__getSecondBandwidth (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	do_getBandwidth (me, 2, interpreter);
+	do_getBandwidth (me, 2, optionalInterpreter);
 }
 static void QUERY_DATA_FOR_REAL__getThirdFormant (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	do_getFormant (me, 3, interpreter);
+	do_getFormant (me, 3, optionalInterpreter);
 }
 static void QUERY_DATA_FOR_REAL__getThirdBandwidth (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	do_getBandwidth (me, 3, interpreter);
+	do_getBandwidth (me, 3, optionalInterpreter);
 }
 static void QUERY_DATA_FOR_REAL__getFourthFormant (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	do_getFormant (me, 4, interpreter);
+	do_getFormant (me, 4, optionalInterpreter);
 }
 static void QUERY_DATA_FOR_REAL__getFourthBandwidth (SoundAnalysisArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
-	do_getBandwidth (me, 4, interpreter);
+	do_getBandwidth (me, 4, optionalInterpreter);
 }
 
 static void QUERY_DATA_FOR_REAL__getFormant (SoundAnalysisArea me, EDITOR_ARGS_FORM) {
@@ -1414,7 +1414,7 @@ static void QUERY_DATA_FOR_REAL__getFormant (SoundAnalysisArea me, EDITOR_ARGS_F
 		NATURAL (formantNumber, U"Formant number", U"5")
 	EDITOR_OK
 	EDITOR_DO
-		do_getFormant (me, formantNumber, interpreter);
+		do_getFormant (me, formantNumber, optionalInterpreter);
 	EDITOR_END
 }
 
@@ -1423,7 +1423,7 @@ static void QUERY_DATA_FOR_REAL__getBandwidth (SoundAnalysisArea me, EDITOR_ARGS
 		NATURAL (formantNumber, U"Formant number", U"5")
 	EDITOR_OK
 	EDITOR_DO
-		do_getBandwidth (me, formantNumber, interpreter);
+		do_getBandwidth (me, formantNumber, optionalInterpreter);
 	EDITOR_END
 }
 

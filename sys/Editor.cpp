@@ -356,15 +356,20 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_close (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	my v_goAway ();
-	if (interpreter -> optionalEditor == me)
-		interpreter -> optionalEditor = nullptr;
+	if (optionalInterpreter && optionalInterpreter -> optionalEditor == me)
+		optionalInterpreter -> optionalEditor = nullptr;
 }
 
 static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
 	my v_restoreData ();
-	if (str32nequ (my undoText, U"Undo", 4)) my undoText [0] = U'R', my undoText [1] = U'e';
-	else if (str32nequ (my undoText, U"Redo", 4)) my undoText [0] = U'U', my undoText [1] = U'n';
-	else str32cpy (my undoText, U"Undo?");
+	if (str32nequ (my undoText, U"Undo", 4)) {
+		my undoText [0] = U'R';
+		my undoText [1] = U'e';
+	} else if (str32nequ (my undoText, U"Redo", 4)) {
+		my undoText [0] = U'U';
+		my undoText [1] = U'n';
+	} else
+		str32cpy (my undoText, U"Undo?");
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
 	#elif motif

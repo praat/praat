@@ -577,7 +577,7 @@ static void print (void *void_me, Graphics graphics) {
 
 void structHyperPage :: v9_destroy () noexcept {
 	if (our praatApplication) {
-		for (int iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
+		for (integer iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
 			((PraatObjects) our praatObjects) -> list [iobject]. name. reset();
 			forget (((PraatObjects) our praatObjects) -> list [iobject]. object);
 		}
@@ -632,7 +632,7 @@ extern "C" void GRAPHICS_PostScript_settings (UiForm sendingForm, int narg, Stac
 static void menu_cb_postScriptSettings (HyperPage me, EDITOR_ARGS_FORM) {
 	(void) me;
 	(void) cmd;
-	GRAPHICS_PostScript_settings (_sendingForm_, _narg_, _args_, _sendingString_, interpreter, nullptr, false, nullptr);
+	GRAPHICS_PostScript_settings (_sendingForm_, _narg_, _args_, _sendingString_, optionalInterpreter, nullptr, false, nullptr);
 }
 
 #ifdef macintosh
