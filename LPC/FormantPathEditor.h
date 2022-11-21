@@ -84,6 +84,9 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 	bool v_hasSelectionViewer () override { return true; }
 	void v_drawSelectionViewer ()
 		override;
+	void v_drawRealTimeSelectionViewer (double /* time */) override {
+		v_drawSelectionViewer (); // avoid discontinuity during play
+	}
 	void v_clickSelectionViewer (double xWC, double yWC)
 		override;
 	void v_play (double startTime, double endTime)

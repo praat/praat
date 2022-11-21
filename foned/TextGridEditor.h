@@ -80,6 +80,10 @@ Thing_define (TextGridEditor, FunctionEditor) {
 	void v_drawSelectionViewer () override {
 		TextGridArea_drawSelectionViewer (our textGridArea().get());
 	}
+	void v_drawRealTimeSelectionViewer (double /* time */) override {
+		TextGridArea_drawSelectionViewer (our textGridArea().get()); // avoid discontinuity during play
+	}
+
 	void v_clickSelectionViewer (double x_fraction, double y_fraction) override {
 		TextGridArea_clickSelectionViewer (our textGridArea().get(), x_fraction, y_fraction);
 	}
