@@ -21,8 +21,8 @@
 
 Thing_implement (SoundEditor, FunctionEditor, 0);
 
-static void menu_cb_SoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"SoundEditor"); }
-static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"LongSoundEditor"); }
+static void menu_cb_SoundEditorHelp (SoundEditor, EDITOR_ARGS) { Melder_help (U"SoundEditor"); }
+static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS) { Melder_help (U"LongSoundEditor"); }
 
 void structSoundEditor :: v_createMenuItems_help (EditorMenu menu) {
 	structFunctionEditor :: v_createMenuItems_help (menu);

@@ -29,7 +29,7 @@ Thing_implement (PitchArea, FunctionArea, 0);
 
 #pragma mark - PitchArea Query selection
 
-static void QUERY_DATA_FOR_REAL__getPitch (PitchArea me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_DATA_FOR_REAL__getPitch (PitchArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL
 		const double result = ( my startSelection() == my endSelection()
 			? Pitch_getValueAtTime (my pitch(), my startSelection(), kPitch_unit::HERTZ, 1)
@@ -41,7 +41,7 @@ static void QUERY_DATA_FOR_REAL__getPitch (PitchArea me, EDITOR_ARGS_DIRECT_WITH
 
 #pragma mark - PitchArea Modify whole
 
-static void menu_cb_setCeiling (PitchArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_setCeiling (PitchArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Change ceiling", nullptr)
 		POSITIVE (ceiling, U"Ceiling (Hz)", U"600.0")
 	EDITOR_OK
@@ -53,7 +53,7 @@ static void menu_cb_setCeiling (PitchArea me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_pathFinder (PitchArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_pathFinder (PitchArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Path finder", nullptr)
 		REAL (silenceThreshold, U"Silence threshold", U"0.03")
 		REAL (voicingThreshold, U"Voicing threshold", U"0.45")
@@ -75,31 +75,31 @@ static void menu_cb_pathFinder (PitchArea me, EDITOR_ARGS_FORM) {
 
 #pragma mark - PitchArea Modify selection
 
-static void menu_cb_octaveUp (PitchArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_octaveUp (PitchArea me, EDITOR_ARGS) {
 	MODIFY_DATA (U"Octave up")
 		Pitch_step (my pitch(), 2.0, 0.1, my startSelection(), my endSelection());
 	MODIFY_DATA_END
 }
 
-static void menu_cb_fifthUp (PitchArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_fifthUp (PitchArea me, EDITOR_ARGS) {
 	MODIFY_DATA (U"Fifth up")
 		Pitch_step (my pitch(), 1.5, 0.1, my startSelection(), my endSelection());
 	MODIFY_DATA_END
 }
 
-static void menu_cb_fifthDown (PitchArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_fifthDown (PitchArea me, EDITOR_ARGS) {
 	MODIFY_DATA (U"Fifth down")
 		Pitch_step (my pitch(), 1 / 1.5, 0.1, my startSelection(), my endSelection());
 	MODIFY_DATA_END
 }
 
-static void menu_cb_octaveDown (PitchArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_octaveDown (PitchArea me, EDITOR_ARGS) {
 	MODIFY_DATA (U"Octave down")
 		Pitch_step (my pitch(), 0.5, 0.1, my startSelection(), my endSelection());
 	MODIFY_DATA_END
 }
 
-static void menu_cb_voiceless (PitchArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_voiceless (PitchArea me, EDITOR_ARGS) {
 	const integer ileft = Melder_clippedLeft (1_integer, Sampled_xToHighIndex (my pitch(), my startSelection()));
 	const integer iright = Melder_clippedRight (Sampled_xToLowIndex (my pitch(), my endSelection()), my pitch() -> nx);
 	MODIFY_DATA (U"Unvoice")

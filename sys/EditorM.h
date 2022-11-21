@@ -29,15 +29,6 @@
 	[[maybe_unused]] Stackel _args_, \
 	[[maybe_unused]] conststring32 _sendingString_, \
 	[[maybe_unused]] Interpreter optionalInterpreter
-#define EDITOR_ARGS_FORWARD  cmd, _sendingForm_, _narg_, _args_, _sendingString_, optionalInterpreter
-
-#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter optionalInterpreter
-#define EDITOR_ARGS_FORM_FORWARD  cmd, _sendingForm_, _narg_, _args_, _sendingString_, optionalInterpreter
-#define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, conststring32, Interpreter
-#define EDITOR_ARGS_CMD_FORWARD  cmd, nullptr, 0, nullptr, nullptr, nullptr
-#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter
-#define EDITOR_ARGS_DIRECT_WITH_OUTPUT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter optionalInterpreter
-#define EDITOR_ARGS_DIRECT_FORWARD  nullptr, nullptr, 0, nullptr, nullptr, nullptr
 
 #define EDITOR_FORM(title, helpTitle)  \
 	UiField _radio_ = nullptr; \

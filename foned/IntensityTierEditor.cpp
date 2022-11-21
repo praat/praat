@@ -21,7 +21,7 @@
 
 Thing_implement (IntensityTierEditor, RealTierEditor, 0);
 
-static void HELP_IntensityTierHelp (IntensityTierEditor, EDITOR_ARGS_DIRECT) {
+static void HELP_IntensityTierHelp (IntensityTierEditor, EDITOR_ARGS) {
 	HELP (U"IntensityTier")
 }
 
