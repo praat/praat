@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 2010-2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		static structMelderDir dir { };
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
+		gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (parent -> d_gtkWindow));
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
 		if (MelderDir_isNull (& dir))   // first time?
 			Melder_getDefaultDir (& dir);
@@ -128,6 +129,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 		static structMelderFile file;
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
+		gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (parent -> d_gtkWindow));
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), true);
 		if (file. path [0] != U'\0')
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
@@ -190,6 +192,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow parent, conststring32 title)
 		static structMelderFile file;
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "Choose", GTK_RESPONSE_ACCEPT, nullptr);
+		gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (parent -> d_gtkWindow));
 		if (file. path [0] != U'\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
 		}

@@ -355,11 +355,11 @@
 	extern "C" void proc (UiForm sendingForm, integer, structStackel args [], conststring32 sendingString, \
 			Interpreter interpreter, conststring32 invokingButtonTitle, bool, void *okClosure, Editor optionalEditor); \
 	void proc (UiForm _sendingForm_, integer _narg_, structStackel _args_ [], conststring32 _sendingString_, \
-			Interpreter interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_, Editor) \
+			Interpreter interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_, Editor _optionalEditor_) \
 	{ \
 		{ static autoUiForm _dia_; \
 		if (! _dia_) \
-			_dia_ = UiInfile_create (theCurrentPraatApplication -> topShell, title, proc, _okClosure_, _invokingButtonTitle_, help, allowMult); \
+			_dia_ = UiInfile_create (theCurrentPraatApplication -> topShell, _optionalEditor_, title, proc, _okClosure_, _invokingButtonTitle_, help, allowMult); \
 		if (_narg_ < 0) UiForm_info (_dia_.get(), _narg_); else if (! _args_ && ! _sendingForm_ && ! _sendingString_) { \
 			UiInfile_do (_dia_.get()); \
 		} else { \
@@ -389,7 +389,7 @@
 	{ \
 		{ static autoUiForm _dia_; \
 		if (! _dia_) \
-			_dia_ = UiOutfile_create (theCurrentPraatApplication -> topShell, title, proc, _okClosure_, _invokingButtonTitle_, help); \
+			_dia_ = UiOutfile_create (theCurrentPraatApplication -> topShell, _optionalEditor_, title, proc, _okClosure_, _invokingButtonTitle_, help); \
 		if (_narg_ < 0) UiForm_info (_dia_.get(), _narg_); else if (! _args_ && ! _sendingForm_ && ! _sendingString_) { \
 			praat_write_do (_dia_.get(), ext); \
 		} else { \

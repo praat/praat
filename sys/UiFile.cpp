@@ -30,11 +30,12 @@ MelderFile UiFile_getFile (UiForm me) {
 
 /********** READING A FILE **********/
 
-autoUiForm UiInfile_create (GuiWindow parent, conststring32 title,
+autoUiForm UiInfile_create (GuiWindow parent, Editor optionalEditor, conststring32 title,
 	UiCallback okCallback, void *okClosure,
 	conststring32 invokingButtonTitle, conststring32 helpTitle, bool allowMultipleFiles)
 {
 	autoUiForm me = Thing_new (UiForm);
+	my optionalEditor = optionalEditor;
 	my okCallback = okCallback;
 	my buttonClosure = okClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);
@@ -58,7 +59,7 @@ void UiInfile_do (UiForm me) {
 			structMelderFile file { };
 			MelderFile_copy (& my file, & file);
 			try {
-				my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure, nullptr);
+				my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure, my optionalEditor);
 			} catch (MelderError) {
 				Melder_throw (U"File ", & file, U" not finished.");
 			}
@@ -70,10 +71,11 @@ void UiInfile_do (UiForm me) {
 
 /********** WRITING A FILE **********/
 
-autoUiForm UiOutfile_create (GuiWindow parent, conststring32 title,
+autoUiForm UiOutfile_create (GuiWindow parent, Editor optionalEditor, conststring32 title,
 	UiCallback okCallback, void *okClosure, conststring32 invokingButtonTitle, conststring32 helpTitle)
 {
 	autoUiForm me = Thing_new (UiForm);
+	my optionalEditor = optionalEditor;
 	my okCallback = okCallback;
 	my buttonClosure = okClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);
@@ -85,7 +87,7 @@ autoUiForm UiOutfile_create (GuiWindow parent, conststring32 title,
 }
 
 static void commonOutfileCallback (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString,
-	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure, Editor optionalEditor)
+	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure, Editor /* optionalEditor */)
 {
 	EditorCommand command = (EditorCommand) closure;
 	command -> commandCallback (command -> sender, command, sendingForm, narg, args, sendingString, interpreter);
@@ -93,21 +95,22 @@ static void commonOutfileCallback (UiForm sendingForm, integer narg, Stackel arg
 
 autoUiForm UiOutfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle) {
 	Editor editor = cmd -> d_editor;
-	autoUiForm dia = UiOutfile_create (editor -> windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
+	autoUiForm dia = UiOutfile_create (editor -> windowForm, editor, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return dia;
 }
 
 autoUiForm UiInfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle) {
 	Editor editor = cmd -> d_editor;
-	autoUiForm dia = UiInfile_create (editor -> windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
+	autoUiForm dia = UiInfile_create (editor -> windowForm, editor, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
 	dia -> command = cmd;
 	return dia;
 }
 
-void UiOutfile_do (UiForm me, conststring32 defaultName, Editor optionalEditor) {
-	autostring32 outfileName = GuiFileSelect_getOutfileName (nullptr, my name.get(), defaultName);
-	if (! outfileName) return;   // cancelled
+void UiOutfile_do (UiForm me, conststring32 defaultName) {
+	autostring32 outfileName = GuiFileSelect_getOutfileName (my d_dialogParent, my name.get(), defaultName);
+	if (! outfileName)
+		return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_flushError (U"Dialog \"", my name.get(), U"\" cancelled.");
 		return;
@@ -118,7 +121,7 @@ void UiOutfile_do (UiForm me, conststring32 defaultName, Editor optionalEditor) 
 	UiHistory_write (U"\n");
 	UiHistory_write_colonize (my invokingButtonTitle.get());
 	try {
-		my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure, optionalEditor);
+		my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure, my optionalEditor);
 	} catch (MelderError) {
 		Melder_flushError (U"File ", & file, U" not finished.");
 	}

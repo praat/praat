@@ -308,17 +308,17 @@ MelderColour UiForm_getColour_check (UiForm me, conststring32 fieldName);
 void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter);
 void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpreter);
 
-autoUiForm UiInfile_create (GuiWindow parent, conststring32 title,
+autoUiForm UiInfile_create (GuiWindow parent, Editor optionalEditor, conststring32 title,
   UiCallback okCallback, void *okClosure,
   conststring32 invokingButtonTitle, conststring32 helpTitle, bool allowMultipleFiles);
 
-autoUiForm UiOutfile_create (GuiWindow parent, conststring32 title,
+autoUiForm UiOutfile_create (GuiWindow parent, Editor optionalEditor, conststring32 title,
   UiCallback okCallback, void *okClosure,
   conststring32 invokingButtonTitle, conststring32 helpTitle);
 
 void UiInfile_do (UiForm me);
 
-void UiOutfile_do (UiForm me, conststring32 defaultName, Editor optionalEditor);
+void UiOutfile_do (UiForm me, conststring32 defaultName);
 
 MelderFile UiFile_getFile (UiForm me);
 
