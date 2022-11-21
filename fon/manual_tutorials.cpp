@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20221115)
+MAN_BEGIN (U"What's new?", U"ppgb", 20221121)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.01# (21 November 2022)")
+LIST_ITEM (U"• Fixed a crash when closing an editor window by choosing Close (or by typing Command-W).")
 NORMAL (U"##6.3# (15 November 2022)")
 LIST_ITEM (U"• Number-aware sorting for labels when drawing tables.")
 LIST_ITEM (U"• Scripting: sort\\$ \\# ( ), shuffle\\$ \\# ( ), sort\\_ numberAware\\$ \\# ( ).")

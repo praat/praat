@@ -31,9 +31,9 @@
 	[[maybe_unused]] Interpreter optionalInterpreter
 
 #define EDITOR_FORM(title, helpTitle)  \
-	UiField _radio_ = nullptr; \
-	(void) _radio_; \
-	if (cmd -> d_uiform) goto _form_inited_; \
+	[[maybe_unused]] UiField _radio_ = nullptr; \
+	if (cmd -> d_uiform) \
+		goto _form_inited_; \
 	cmd -> d_uiform = UiForm_createE (cmd, title, cmd -> itemTitle.get(), helpTitle);
 
 #define EDITOR_OK  \
@@ -303,9 +303,8 @@ _form_inited_: \
 
 #define RADIO_ENUM_FIELD(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	{/* type checks */ \
-		enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
+		[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
-		(void) _compilerTypeCheckDummy; \
 	} \
 	{/* scope */ \
 		UiField _radio = UiForm_addRadio (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
@@ -324,9 +323,8 @@ _form_inited_: \
 
 #define OPTIONMENU_ENUM_FIELD(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	{/* type checks */ \
-		enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
+		[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
-		(void) _compilerTypeCheckDummy; \
 	} \
 	{/* scope */ \
 		UiField _radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
@@ -380,7 +378,6 @@ _form_inited_: \
 		cmd -> d_uiform = UiOutfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
 #define EDITOR_DO_SAVE \
-	(void) optionalInterpreter; \
 	UiOutfile_do (cmd -> d_uiform.get(), defaultName, my boss()); } else { MelderFile file; structMelderFile _file2 { }; \
 	if (_args_) { \
 		Melder_require (_narg_ == 1, \
@@ -401,7 +398,6 @@ _form_inited_: \
 		cmd -> d_uiform = UiInfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) {
 #define EDITOR_DO_READ \
-	(void) optionalInterpreter; \
 	UiInfile_do (cmd -> d_uiform.get()); } else { MelderFile file; structMelderFile _file2 { }; \
 	if (_args_) { \
 		Melder_require (_narg_ == 1, \
