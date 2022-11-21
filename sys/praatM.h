@@ -2,7 +2,7 @@
 #define _praatM_h_
 /* praatM.h
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,12 +80,11 @@
 	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, \
 			Interpreter interpreter, conststring32 _invokingButtonTitle_, bool _isModified_, void *_buttonClosure_, Editor _optionalEditor_) \
 	{ \
-		integer IOBJECT = 0; \
-		(void) IOBJECT; \
-		UiField _radio_ = nullptr; \
-		(void) _radio_; \
+		[[maybe_unused]] integer IOBJECT = 0; \
+		[[maybe_unused]] UiField _radio_ = nullptr; \
 		static autoUiForm _dia_; \
-		if (_dia_) goto _dia_inited_; \
+		if (_dia_) \
+			goto _dia_inited_; \
 		_dia_ = UiForm_create (theCurrentPraatApplication -> topShell, _optionalEditor_, name, \
 				proc, _buttonClosure_, _invokingButtonTitle_, helpTitle);
 
@@ -214,9 +213,8 @@
 #define RADIO_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
 		static enum EnumeratedType enumeratedVariable; \
 		{/* type checks */ \
-			enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
+			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
-			(void) _compilerTypeCheckDummy; \
 		} \
 		_radio_ = UiForm_addRadio (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, labelText, \
 			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
@@ -226,9 +224,8 @@
 #define OPTIONMENU_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
 		static EnumeratedType enumeratedVariable; \
 		{/* type checks */ \
-			enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
+			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
-			(void) _compilerTypeCheckDummy; \
 		} \
 		_radio_ = UiForm_addOptionMenu (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, labelText, \
 			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
@@ -238,9 +235,8 @@
 #define OPTIONMENU_ENUMSTR(EnumeratedType, enumeratedVariableAsString, labelText, defaultValue)  \
 		static char32 *enumeratedVariableAsString; \
 		{/* type checks */ \
-			enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
+			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
-			(void) _compilerTypeCheckDummy; \
 		} \
 		_radio_ = UiForm_addOptionMenu (_dia_.get(), nullptr, & enumeratedVariableAsString, U"" #enumeratedVariableAsString, labelText, \
 			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
@@ -350,10 +346,8 @@
 
 #define DIRECT(proc)  \
 	extern "C" void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *, Editor); \
-	void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *, Editor) { \
-		(void) interpreter; \
-		integer IOBJECT = 0; \
-		(void) IOBJECT; \
+	void proc (UiForm, integer, Stackel, conststring32, [[maybe_unused]] Interpreter interpreter, conststring32, bool, void *, Editor) { \
+		[[maybe_unused]] integer IOBJECT = 0; \
 		{ { \
 			try {
 
@@ -371,8 +365,7 @@
 		} else { \
 			try { \
 				MelderFile file; \
-				integer IOBJECT = 0; \
-				(void) IOBJECT; \
+				[[maybe_unused]] integer IOBJECT = 0; \
 				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persist into the outer scope */ \
 				if (_args_) { \
 					Melder_require (_narg_ == 1, \
@@ -402,8 +395,7 @@
 		} else { \
 			try { \
 				MelderFile file; \
-				integer IOBJECT = 0; \
-				(void) IOBJECT; \
+				[[maybe_unused]] integer IOBJECT = 0; \
 				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persist into the outer scope */ \
 				if (_args_) { \
 					Melder_require (_narg_ == 1, \
