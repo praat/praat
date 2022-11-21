@@ -28,8 +28,8 @@ Thing_implement (SpectrumEditor, FunctionEditor, 0);
 #include "Prefs_copyToInstance.h"
 #include "SpectrumEditor_prefs.h"
 
-static void menu_cb_help_SpectrumEditor (SpectrumEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"SpectrumEditor"); }
-static void menu_cb_help_Spectrum (SpectrumEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Spectrum"); }
+static void menu_cb_help_SpectrumEditor (SpectrumEditor, EDITOR_ARGS) { Melder_help (U"SpectrumEditor"); }
+static void menu_cb_help_Spectrum (SpectrumEditor, EDITOR_ARGS) { Melder_help (U"Spectrum"); }
 
 void structSpectrumEditor :: v_createMenuItems_help (EditorMenu menu) {
 	SpectrumEditor_Parent :: v_createMenuItems_help (menu);

@@ -449,7 +449,7 @@ void structFunctionEditor :: v_prefs_getValues (EditorCommand cmd) {
 			area -> v_prefs_getValues (cmd);
 	}
 }
-static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Preferences", nullptr)
 		BOOLEAN (showSelectionViewer, Melder_cat (U"Show ", my v_selectionViewerName()), my default_showSelectionViewer())
 		my v_prefs_addFields (cmd);
@@ -469,22 +469,22 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 
 #pragma mark - FuncEd Time query selection
 
-static void QUERY_EDITOR_FOR_REAL__getStartOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_EDITOR_FOR_REAL__getStartOfSelection (FunctionEditor me, EDITOR_ARGS) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my startSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = 0.5 * (my startSelection + my endSelection);
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getEndOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_EDITOR_FOR_REAL__getEndOfSelection (FunctionEditor me, EDITOR_ARGS) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my endSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getLengthOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_EDITOR_FOR_REAL__getLengthOfSelection (FunctionEditor me, EDITOR_ARGS) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my endSelection - my startSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
@@ -493,7 +493,7 @@ static void QUERY_EDITOR_FOR_REAL__getLengthOfSelection (FunctionEditor me, EDIT
 
 #pragma mark - FuncEd Time set selection
 
-static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_select (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Select", nullptr)
 		REAL (startOfSelection, Melder_cat (U"Start of selection (", my v_format_units_short(), U")"), U"0.0")
 		REAL (endOfSelection,   Melder_cat (U"End of selection (",   my v_format_units_short(), U")"), U"1.0")
@@ -517,7 +517,7 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 		updateGroup (me);
 	EDITOR_END
 }
-static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Widen or shrink selection", nullptr)
 		POSITIVE (newWidthOfSelection, Melder_cat (U"New width of selection (", my v_format_units_short(), U")"), U"0.3")
 		RADIO_ENUM (kGraphics_horizontalAlignment, alignmentWithCurrentSelection, U"Alignment with current selection", kGraphics_horizontalAlignment::CENTRE)
@@ -558,7 +558,7 @@ static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS_FORM)
 		updateGroup (me);
 	EDITOR_END
 }
-static void menu_cb_moveCursorToStartOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_moveCursorToStartOfSelection (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		my endSelection = my startSelection;
 		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
@@ -567,7 +567,7 @@ static void menu_cb_moveCursorToStartOfSelection (FunctionEditor me, EDITOR_ARGS
 		updateGroup (me);
 	VOID_EDITOR_END
 }
-static void menu_cb_moveCursorToEndOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_moveCursorToEndOfSelection (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		my startSelection = my endSelection;
 		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
@@ -576,7 +576,7 @@ static void menu_cb_moveCursorToEndOfSelection (FunctionEditor me, EDITOR_ARGS_D
 		updateGroup (me);
 	VOID_EDITOR_END
 }
-static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Move cursor to", nullptr)
 		REAL (position, Melder_cat (U"Position (", my v_format_units_short(), U")"), U"0.0")
 	EDITOR_OK
@@ -593,7 +593,7 @@ static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
 		updateGroup (me);
 	EDITOR_END
 }
-static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Move cursor by", nullptr)
 		REAL (distance, Melder_cat (U"Distance (", my v_format_units_short(), U")"), U"0.05")
 	EDITOR_OK
@@ -607,7 +607,7 @@ static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		updateGroup (me);
 	EDITOR_END
 }
-static void menu_cb_moveStartOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_moveStartOfSelectionBy (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Move start of selection by", nullptr)
 		REAL (distance, Melder_cat (U"Distance (", my v_format_units_short(), U")"), U"0.05")
 	EDITOR_OK
@@ -621,7 +621,7 @@ static void menu_cb_moveStartOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM)
 		updateGroup (me);
 	EDITOR_END
 }
-static void menu_cb_moveEndOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_moveEndOfSelectionBy (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Move end of selection by", nullptr)
 		REAL (distance, Melder_cat (U"Distance (", my v_format_units_short(), U")"), U"0.05")
 	EDITOR_OK
@@ -670,7 +670,7 @@ void FunctionEditor_scrollToView (FunctionEditor me, double t) {
 		FunctionEditor_marksChanged (me, true);
 	}
 }
-static void menu_cb_selectionStepSettings (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_selectionStepSettings (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Selection step settings", nullptr)
 		POSITIVE (arrowScrollStep, Melder_cat (U"Arrow scroll step (", my v_format_units_short(), U")"), my default_arrowScrollStep())
 	EDITOR_OK
@@ -679,7 +679,7 @@ static void menu_cb_selectionStepSettings (FunctionEditor me, EDITOR_ARGS_FORM) 
 		my setInstancePref_arrowScrollStep (arrowScrollStep);
 	EDITOR_END
 }
-static void menu_cb_selectEarlier (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_selectEarlier (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		my startSelection -= my instancePref_arrowScrollStep();
 		if (my startSelection < my tmin + 1e-12)
@@ -691,7 +691,7 @@ static void menu_cb_selectEarlier (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
-static void menu_cb_selectLater (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_selectLater (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		my startSelection += my instancePref_arrowScrollStep();
 		if (my startSelection > my tmax - 1e-12)
@@ -703,7 +703,7 @@ static void menu_cb_selectLater (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
-static void menu_cb_moveStartOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_moveStartOfSelectionLeft (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		my startSelection -= my instancePref_arrowScrollStep();
 		if (my startSelection < my tmin + 1e-12)
@@ -712,7 +712,7 @@ static void menu_cb_moveStartOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIR
 		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
-static void menu_cb_moveStartOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_moveStartOfSelectionRight (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		my startSelection += my instancePref_arrowScrollStep();
 		if (my startSelection > my tmax - 1e-12)
@@ -726,7 +726,7 @@ static void menu_cb_moveStartOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DI
 		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
-static void menu_cb_moveEndOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_moveEndOfSelectionLeft (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		my endSelection -= my instancePref_arrowScrollStep();
 		if (my endSelection < my tmin + 1e-12)
@@ -740,7 +740,7 @@ static void menu_cb_moveEndOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIREC
 		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
-static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		my endSelection += my instancePref_arrowScrollStep();
 		if (my endSelection > my tmax - 1e-12)
@@ -753,17 +753,17 @@ static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRE
 
 #pragma mark - FuncEd Time query visible part
 
-static void QUERY_EDITOR_FOR_REAL__getStartOfVisiblePart (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_EDITOR_FOR_REAL__getStartOfVisiblePart (FunctionEditor me, EDITOR_ARGS) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my startWindow;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getEndOfVisiblePart (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_EDITOR_FOR_REAL__getEndOfVisiblePart (FunctionEditor me, EDITOR_ARGS) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my endWindow;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getLengthOfVisiblePart (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void QUERY_EDITOR_FOR_REAL__getLengthOfVisiblePart (FunctionEditor me, EDITOR_ARGS) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my endWindow - my startWindow;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
@@ -772,7 +772,7 @@ static void QUERY_EDITOR_FOR_REAL__getLengthOfVisiblePart (FunctionEditor me, ED
 
 #pragma mark - FuncEd Time set visible part
 
-static void menu_cb_zoomAndScrollSettings (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_zoomAndScrollSettings (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Zoom and scroll settings", nullptr)
 		BOOLEAN (synchronizeZoomAndScroll, U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll())
 	EDITOR_OK
@@ -785,7 +785,7 @@ static void menu_cb_zoomAndScrollSettings (FunctionEditor me, EDITOR_ARGS_FORM) 
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
-static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Zoom", nullptr)
 		REAL (from, Melder_cat (U"From (", my v_format_units_short(), U")"), U"0.0")
 		REAL (to,   Melder_cat (U"To (", my v_format_units_short(), U")"),   U"1.0")
@@ -897,38 +897,38 @@ static void do_zoomBack (FunctionEditor me) {
 static void gui_button_cb_zoomBack (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomBack (me);
 }
-static void menu_cb_showAll (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_showAll (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		do_showAll (me);
 	VOID_EDITOR_END
 }
-static void menu_cb_zoomIn (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_zoomIn (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		do_zoomIn (me);
 	VOID_EDITOR_END
 }
-static void menu_cb_zoomOut (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_zoomOut (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		do_zoomOut (me);
 	VOID_EDITOR_END
 }
-static void menu_cb_zoomToSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_zoomToSelection (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		do_zoomToSelection (me);
 	VOID_EDITOR_END
 }
-static void menu_cb_zoomBack (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_zoomBack (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		do_zoomBack (me);
 	VOID_EDITOR_END
 }
-static void menu_cb_pageUp (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_pageUp (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_shift()
 		FunctionEditor_shift (me, -RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
 	VOID_EDITOR_END
 }
-static void menu_cb_pageDown (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_pageDown (FunctionEditor me, EDITOR_ARGS) {
 	VOID_EDITOR
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_shift()
 		FunctionEditor_shift (me, +RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
@@ -938,7 +938,7 @@ static void menu_cb_pageDown (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 
 #pragma mark - FunctionEditor View/Audio
 
-static void PLAY_DATA__play (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void PLAY_DATA__play (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Play", nullptr)
 		REAL (from, Melder_cat (U"From (", my v_format_units_short(), U")"), U"0.0")
 		REAL (to,   Melder_cat (U"To (", my v_format_units_short(), U")"),   U"1.0")
@@ -950,7 +950,7 @@ static void PLAY_DATA__play (FunctionEditor me, EDITOR_ARGS_FORM) {
 		my v_play (from, to);
 	EDITOR_END
 }
-static void PLAY_DATA__playOrStop (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void PLAY_DATA__playOrStop (FunctionEditor me, EDITOR_ARGS) {
 	PLAY_DATA
 		if (MelderAudio_isPlaying) {
 			MelderAudio_stopPlaying (MelderAudio_EXPLICIT);
@@ -964,13 +964,13 @@ static void PLAY_DATA__playOrStop (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 		}
 	PLAY_DATA_END
 }
-static void PLAY_DATA__playWindow (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void PLAY_DATA__playWindow (FunctionEditor me, EDITOR_ARGS) {
 	PLAY_DATA
 		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 		my v_play (my startWindow, my endWindow);
 	PLAY_DATA_END
 }
-static void PLAY_DATA__interruptPlaying (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void PLAY_DATA__interruptPlaying (FunctionEditor me, EDITOR_ARGS) {
 	PLAY_DATA
 		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	PLAY_DATA_END
@@ -1125,7 +1125,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		updateGroup (me);
 }
 
-static void HELP__intro (FunctionEditor /* me */, EDITOR_ARGS_DIRECT) {
+static void HELP__intro (FunctionEditor /* me */, EDITOR_ARGS) {
 	HELP (U"Intro")
 }
 

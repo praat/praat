@@ -21,7 +21,7 @@
 
 Thing_implement (AmplitudeTierEditor, RealTierEditor, 0);
 
-static void HELP_AmplitudeTierHelp (AmplitudeTierEditor /* me */, EDITOR_ARGS_DIRECT) {
+static void HELP_AmplitudeTierHelp (AmplitudeTierEditor /* me */, EDITOR_ARGS) {
 	HELP (U"AmplitudeTier")
 }
 

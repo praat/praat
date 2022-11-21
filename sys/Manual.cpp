@@ -38,7 +38,7 @@ static const conststring32 month [] =
 	{ U"", U"January", U"February", U"March", U"April", U"May", U"June",
 	  U"July", U"August", U"September", U"October", U"November", U"December" };
 
-static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
+static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS) {
 	EDITOR_FORM_SAVE (U"Save as HTML file", nullptr)
 		autoMelderString buffer;
 		MelderString_copy (& buffer, my manPages() -> pages.at [my visiblePageNumber] -> title.get());
@@ -55,7 +55,7 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS_FORM) {
+static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
 		FOLDER (folder, U"Folder", U"")
 	EDITOR_OK
@@ -65,7 +65,7 @@ static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
+static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Search for page", nullptr)
 		static ManPages manPages;   // BUG: why?
 		static constSTRVEC pages;
@@ -196,7 +196,7 @@ static void print (void *void_me, Graphics graphics) {
 	my printPagesStartingWith = nullptr;
 }
 
-static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
+static void menu_cb_printRange (Manual me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Print range", nullptr)
 		SENTENCE (leftOrInsideHeader, U"Left or inside header", U"")
 		SENTENCE (middleHeader, U"Middle header", U"")
@@ -392,7 +392,7 @@ void structManual :: v_createChildren () {
 	our searchText = GuiText_createShown (our windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
-static void menu_cb_help (Manual me, EDITOR_ARGS_DIRECT) { HyperPage_goToPage (me, U"Manual"); }
+static void menu_cb_help (Manual me, EDITOR_ARGS) { HyperPage_goToPage (me, U"Manual"); }
 
 void structManual :: v_createMenus () {
 	Manual_Parent :: v_createMenus ();

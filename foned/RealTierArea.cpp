@@ -249,17 +249,17 @@ bool structRealTierArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 
 #pragma mark - RealTierArea Modify
 
-static void menu_cb_removePoints (RealTierArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_removePoints (RealTierArea me, EDITOR_ARGS) {
 	FunctionArea_save (me, U"Remove point(s)");
 	RealTierArea_removePoints (me);
 	FunctionArea_broadcastDataChanged (me);
 }
-static void menu_cb_addPointAtCursor (RealTierArea me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_addPointAtCursor (RealTierArea me, EDITOR_ARGS) {
 	FunctionArea_save (me, U"Add point");
 	RealTierArea_addPointAtCursor (me);
 	FunctionArea_broadcastDataChanged (me);
 }
-static void menu_cb_addPointAt (RealTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_addPointAt (RealTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add point", nullptr)
 		REAL (time, U"Time (s)", U"0.0")
 		REAL (desiredY, my v_quantityText (), U"0.0")
@@ -276,7 +276,7 @@ static void menu_cb_addPointAt (RealTierArea me, EDITOR_ARGS_FORM) {
 
 #pragma mark - RealTierArea View vertical
 
-static void menu_cb_setRange (RealTierArea me, EDITOR_ARGS_FORM) {
+static void menu_cb_setRange (RealTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (my v_setRangeTitle (), nullptr)
 		REAL (ymin, my v_minimumLabelText (), my default_dataFreeMinimum())
 		REAL (ymax, my v_maximumLabelText (), my default_dataFreeMaximum())

@@ -72,7 +72,7 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_
 
 /***** TIER MENU *****/
 
-static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Candidate modelling settings", U"Candidate modelling settings...")		
 		SENTENCE (parameters_string, U"Coefficients by track", my default_modeler_numberOfParametersPerTrack())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
@@ -93,7 +93,7 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 	EDITOR_END
 }
 
-static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Formant modeler advanced drawing settings", nullptr)
 		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_modeler_draw_estimatedModels())
 		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz())
@@ -113,7 +113,7 @@ static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDIT
 	EDITOR_END
 }
 
-static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Find path", nullptr)
 		LABEL (U"Within frame:")
 		REAL (qWeight, U"F/B weight (0-1)", U"1.0")
@@ -135,7 +135,7 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 	EDITOR_END
 }
 
-static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Draw visible candidates", nullptr)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
@@ -167,7 +167,7 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 	EDITOR_END
 }
 
-static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS) {
 	INFO_DATA
 		double startTime = my startSelection, endTime = my endSelection;
 		if (my startSelection == my endSelection) {
@@ -184,10 +184,10 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DI
 
 /***** HELP MENU *****/
 
-static void menu_cb_FormantPathEditorHelp (FormantPathEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"FormantPathEditor"); }
-static void menu_cb_AboutSpecialSymbols (FormantPathEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Special symbols"); }
-static void menu_cb_PhoneticSymbols (FormantPathEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Phonetic symbols"); }
-static void menu_cb_AboutTextStyles (FormantPathEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Text styles"); }
+static void menu_cb_FormantPathEditorHelp (FormantPathEditor, EDITOR_ARGS) { Melder_help (U"FormantPathEditor"); }
+static void menu_cb_AboutSpecialSymbols (FormantPathEditor, EDITOR_ARGS) { Melder_help (U"Special symbols"); }
+static void menu_cb_PhoneticSymbols (FormantPathEditor, EDITOR_ARGS) { Melder_help (U"Phonetic symbols"); }
+static void menu_cb_AboutTextStyles (FormantPathEditor, EDITOR_ARGS) { Melder_help (U"Text styles"); }
 
 void structFormantPathEditor :: v_createMenus () {
 	FormantPathEditor_Parent :: v_createMenus ();

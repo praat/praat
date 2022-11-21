@@ -577,7 +577,7 @@ static void print (void *void_me, Graphics graphics) {
 
 void structHyperPage :: v9_destroy () noexcept {
 	if (our praatApplication) {
-		for (int iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
+		for (integer iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
 			((PraatObjects) our praatObjects) -> list [iobject]. name. reset();
 			forget (((PraatObjects) our praatObjects) -> list [iobject]. object);
 		}
@@ -629,20 +629,20 @@ static void gui_drawingarea_cb_mouse (HyperPage me, GuiDrawingArea_MouseEvent ev
 
 extern "C" void GRAPHICS_PostScript_settings (UiForm sendingForm, int narg, Stackel args, conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool modified, void *buttonClosure);
 
-static void menu_cb_postScriptSettings (HyperPage me, EDITOR_ARGS_FORM) {
+static void menu_cb_postScriptSettings (HyperPage me, EDITOR_ARGS) {
 	(void) me;
 	(void) cmd;
-	GRAPHICS_PostScript_settings (_sendingForm_, _narg_, _args_, _sendingString_, interpreter, nullptr, false, nullptr);
+	GRAPHICS_PostScript_settings (_sendingForm_, _narg_, _args_, _sendingString_, optionalInterpreter, nullptr, false, nullptr);
 }
 
 #ifdef macintosh
-static void menu_cb_pageSetup (HyperPage me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_pageSetup (HyperPage me, EDITOR_ARGS) {
 	(void) me;
 	Printer_pageSetup ();
 }
 #endif
 
-static void menu_cb_print (HyperPage me, EDITOR_ARGS_FORM) {
+static void menu_cb_print (HyperPage me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Print", nullptr)
 		SENTENCE_FIELD (my insideHeader, U"Left or inside header", U"")
 		SENTENCE_FIELD (my middleHeader, U"Middle header", U"")
@@ -661,7 +661,7 @@ static void menu_cb_print (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_font (HyperPage me, EDITOR_ARGS_FORM) {
+static void menu_cb_font (HyperPage me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Font", nullptr)
 		RADIO (font, U"Font", 1)
 			RADIOBUTTON (U"Times")
@@ -690,13 +690,13 @@ static void setFontSize (HyperPage me, double fontSize) {
 		Graphics_updateWs (my graphics.get());
 }
 
-static void menu_cb_10 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 10.0); }
-static void menu_cb_12 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 12.0); }
-static void menu_cb_14 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 14.0); }
-static void menu_cb_18 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18.0); }
-static void menu_cb_24 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24.0); }
+static void menu_cb_10 (HyperPage me, EDITOR_ARGS) { setFontSize (me, 10.0); }
+static void menu_cb_12 (HyperPage me, EDITOR_ARGS) { setFontSize (me, 12.0); }
+static void menu_cb_14 (HyperPage me, EDITOR_ARGS) { setFontSize (me, 14.0); }
+static void menu_cb_18 (HyperPage me, EDITOR_ARGS) { setFontSize (me, 18.0); }
+static void menu_cb_24 (HyperPage me, EDITOR_ARGS) { setFontSize (me, 24.0); }
 
-static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
+static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Font size", nullptr)
 		POSITIVE (fontSize, U"Font size (points)", my default_fontSize ())
 	EDITOR_OK
@@ -706,7 +706,7 @@ static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
+static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Search for page", nullptr)
 		TEXTFIELD (page, U"Page", U"a", 2)
 	EDITOR_OK
@@ -760,7 +760,7 @@ static void updateVerticalScrollBar (HyperPage me)
 	my history [my historyPointer]. top = 0/*my top*/;
 }
 
-static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS) {
 	if (! my verticalScrollBar)
 		return;
 	const double value = Melder_clippedLeft (0.0, GuiScrollBar_getValue (my verticalScrollBar) - 24.0);
@@ -771,7 +771,7 @@ static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
 	}
 }
 
-static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS) {
 	if (! my verticalScrollBar)
 		return;
 	const double value = Melder_clippedRight (GuiScrollBar_getValue (my verticalScrollBar) + 24.0, (PAGE_HEIGHT * 5.0) - 25.0);
@@ -796,7 +796,7 @@ static void do_back (HyperPage me) {
 	}
 }
 
-static void menu_cb_back (HyperPage me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_back (HyperPage me, EDITOR_ARGS) {
 	do_back (me);
 }
 
@@ -816,7 +816,7 @@ static void do_forth (HyperPage me) {
 	}
 }
 
-static void menu_cb_forth (HyperPage me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_forth (HyperPage me, EDITOR_ARGS) {
 	do_forth (me);
 }
 

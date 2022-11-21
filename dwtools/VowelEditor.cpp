@@ -699,11 +699,11 @@ static void updateInfoLabels (VowelEditor me) {
 	GuiLabel_setText (my endInfo, statusInfo.string);	
 }
 
-static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
+static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS) {
 	HELP (U"VowelEditor")
 }
 
-static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS) {
 	INFO_EDITOR
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Trajectory info:");
@@ -720,7 +720,7 @@ static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTP
 	INFO_EDITOR_END
 }
 
-static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Preferences", nullptr);
 		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse())
 		LABEL (U"F1 and F2 frequencies are specified by the trajectory.")
@@ -773,7 +773,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"F1 (vert) and F2 (hor) view ranges", nullptr);
 		POSITIVE (f1min, U"left F1 range (Hz)", my default_window_f1min())
 		POSITIVE (f1max, U"right F1 range (Hz)", my default_window_f1max())
@@ -793,20 +793,20 @@ static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void CREATE_ONE__publishSound (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CREATE_ONE__publishSound (VowelEditor me, EDITOR_ARGS) {
 	CREATE_ONE
 		autoSound result = VowelEditor_createTargetSound (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CREATE_ONE__Extract_FormantGrid (VowelEditor me, EDITOR_ARGS) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoFormantGrid result = VowelEditor_to_FormantGrid (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoFormantGrid fg = VowelEditor_to_FormantGrid (me);
@@ -818,14 +818,14 @@ static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT_WI
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoPitchTier result = VowelEditor_to_PitchTier (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		const conststring32 columnNames [] = { U"Time", U"F1", U"F2", U"Colour" };
@@ -840,7 +840,7 @@ static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_D
 	CREATE_ONE_END (U"untitled")
 }
 
-static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Draw trajectory", nullptr)
 		my v_form_pictureWindow (cmd);
 		BOOLEAN (garnish, U"Garnish", true)
@@ -856,7 +856,7 @@ static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Show one vowel mark", nullptr);
 		WORD (mark, U"Mark", U"u")
 		POSITIVE (f1, U"F1 (Hz)", U"300.0")
@@ -884,7 +884,7 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Show vowel marks", nullptr);
 		OPTIONMENU_ENUM (kVowelEditor_marksDataSet, dataSet, U"Data set", my default_marks_dataSet ())
 		OPTIONMENU_ENUM (kVowelEditor_speakerType, speaker, U"Speaker", my default_marks_speakerType ())
@@ -905,7 +905,7 @@ static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		my setInstancePref_marks_fileName (Melder_fileToPath (file));
@@ -916,7 +916,7 @@ static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_setF0 (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_setF0 (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Set f0", nullptr);
 		POSITIVE (f0Start, U"Start f0 (Hz)", my default_f0_start())
 		REAL (f0Slope, U"Slope (oct/s)", my default_f0_slope())
@@ -932,7 +932,7 @@ static void menu_cb_setF0 (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 20200404
+static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS) { // deprecated 20200404
 	EDITOR_FORM (U"Set F3 & F4", nullptr);
 		POSITIVE (f3, U"F3 (Hz)", U"2500.0")
 		POSITIVE (b3, U"B3 (Hz)", U"250.0")
@@ -950,13 +950,13 @@ static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 2
 	EDITOR_END
 }
 
-static void menu_cb_reverseTrajectory (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_reverseTrajectory (VowelEditor me, EDITOR_ARGS) {
 	Trajectory_reverse (my trajectory.get());
 	updateInfoLabels (me);
 	Graphics_updateWs (my graphics.get());
 }
 
-static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"New Trajectory", nullptr);
 		POSITIVE (startF1, U"Start F1 (Hz)", U"700.0")
 		POSITIVE (startF2, U"Start F2 (Hz)", U"1200.0")
@@ -982,7 +982,7 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Extend Trajectory", nullptr);
 		POSITIVE (toF1, U"To F1 (Hz)", U"500.0")
 		POSITIVE (toF2, U"To F2 (Hz)", U"1500.0")
@@ -1009,7 +1009,7 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_modifyTrajectoryDuration (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_modifyTrajectoryDuration (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Modify duration", nullptr);
 		POSITIVE (newDuration, U"New duration (s)", my default_trajectory_duration())
 	EDITOR_OK
@@ -1023,7 +1023,7 @@ static void menu_cb_modifyTrajectoryDuration (VowelEditor me, EDITOR_ARGS_FORM) 
 	EDITOR_END
 }
 
-static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Shift trajectory", nullptr);
 		REAL (f1_st, U"F1 (semitones)", U"0.5")
 		REAL (f2_st, U"F2 (semitones)", U"0.5")
@@ -1035,7 +1035,7 @@ static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_trajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 20200404
+static void menu_cb_trajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS) { // deprecated 20200404
 	EDITOR_FORM (U"Trajectory time marks every", nullptr);
 		POSITIVE (distance, U"Distance (s)", my default_trajectory_markEvery())
 	EDITOR_OK
@@ -1046,7 +1046,7 @@ static void menu_cb_trajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FORM) 
 	EDITOR_END
 }
 
-static void menu_cb_trajectory_colour (VowelEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_trajectory_colour (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Trajectory colour settings", nullptr);
 		REAL (startTime, U"left Time range (s)", U"0.0")
 		REAL (endTime, U"right Time range (s)", my default_trajectory_duration())

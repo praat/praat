@@ -21,8 +21,8 @@
 
 Thing_implement (PitchEditor, FunctionEditor, 0);
 
-static void menu_cb_PitchEditorHelp (PitchEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"PitchEditor"); }
-static void menu_cb_PitchHelp (PitchEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Pitch"); }
+static void menu_cb_PitchEditorHelp (PitchEditor, EDITOR_ARGS) { Melder_help (U"PitchEditor"); }
+static void menu_cb_PitchHelp (PitchEditor, EDITOR_ARGS) { Melder_help (U"Pitch"); }
 
 void structPitchEditor :: v_createMenuItems_help (EditorMenu menu) {
 	PitchEditor_Parent :: v_createMenuItems_help (menu);

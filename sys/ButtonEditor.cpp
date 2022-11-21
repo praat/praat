@@ -319,7 +319,7 @@ void structButtonEditor :: v_createChildren () {
 	GuiRadioGroup_end ();
 }
 
-static void menu_cb_ButtonEditorHelp (ButtonEditor /* me */, EDITOR_ARGS_DIRECT) { Melder_help (U"ButtonEditor"); }
+static void menu_cb_ButtonEditorHelp (ButtonEditor /* me */, EDITOR_ARGS) { Melder_help (U"ButtonEditor"); }
 
 void structButtonEditor :: v_createMenuItems_help (EditorMenu menu) {
 	ButtonEditor_Parent :: v_createMenuItems_help (menu);

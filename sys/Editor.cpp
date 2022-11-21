@@ -344,7 +344,7 @@ void structEditor :: v_restoreData () {
 		Thing_swap (our data(), our previousData.get());
 }
 
-static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 	if (my data()) {
 		structMelderFile file { };
 		MelderDir_getFile (& Melder_preferencesFolder, U"praat_backToCaller.Data", & file);
@@ -354,17 +354,22 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 	my v_goAway ();
 }
 
-static void menu_cb_close (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void menu_cb_close (Editor me, EDITOR_ARGS) {
 	my v_goAway ();
-	if (interpreter -> optionalEditor == me)
-		interpreter -> optionalEditor = nullptr;
+	if (optionalInterpreter && optionalInterpreter -> optionalEditor == me)
+		optionalInterpreter -> optionalEditor = nullptr;
 }
 
-static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_undo (Editor me, EDITOR_ARGS) {
 	my v_restoreData ();
-	if (str32nequ (my undoText, U"Undo", 4)) my undoText [0] = U'R', my undoText [1] = U'e';
-	else if (str32nequ (my undoText, U"Redo", 4)) my undoText [0] = U'U', my undoText [1] = U'n';
-	else str32cpy (my undoText, U"Undo?");
+	if (str32nequ (my undoText, U"Undo", 4)) {
+		my undoText [0] = U'R';
+		my undoText [1] = U'e';
+	} else if (str32nequ (my undoText, U"Redo", 4)) {
+		my undoText [0] = U'U';
+		my undoText [1] = U'n';
+	} else
+		str32cpy (my undoText, U"Undo?");
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
 	#elif motif
@@ -376,16 +381,16 @@ static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_searchManual (Editor /* me */, EDITOR_ARGS_DIRECT) {
+static void menu_cb_searchManual (Editor /* me */, EDITOR_ARGS) {
 	Melder_search ();
 }
 
-static void menu_cb_newScript (Editor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_newScript (Editor me, EDITOR_ARGS) {
 	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
 	scriptEditor.releaseToUser();
 }
 
-static void menu_cb_openScript (Editor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_openScript (Editor me, EDITOR_ARGS) {
 	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
 	TextEditor_showOpen (scriptEditor.get());
 	scriptEditor.releaseToUser();
@@ -396,13 +401,13 @@ void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
 		our undoButton = EditorMenu_addCommand (menu, U"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
-static void INFO_EDITOR__settingsReport (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void INFO_EDITOR__settingsReport (Editor me, EDITOR_ARGS) {
 	INFO_EDITOR
 		Thing_info (me);
 	INFO_EDITOR_END
 }
 
-static void INFO_DATA__info (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+static void INFO_DATA__info (Editor me, EDITOR_ARGS) {
 	INFO_DATA
 		if (my data())
 			Thing_info (my data());
