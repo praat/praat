@@ -54,14 +54,14 @@ MelderColour markedCandidatesColour =  MelderColour (0.984,0.984, 0.7);
 
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
-static autoPitchTier Pitch_to_PitchTier_part (Pitch me, double tmin, double tmax) {
+static autoPitchTier Pitch_to_PitchTier_part (Pitch me, double startTime, double endTime) {
 	try {
-		autoPitchTier thee = PitchTier_create (tmin, tmax);
+		autoPitchTier thee = PitchTier_create (startTime, endTime);
 		for (integer i = 1; i <= my nx; i ++) {
 			const double time = Sampled_indexToX (me, i);
-			if (time < tmin)
+			if (time < startTime)
 				continue;
-			if (time > tmax)
+			if (time > endTime)
 				break;
 			const double frequency = my frames [i]. candidates [1]. frequency;
 			/*
@@ -77,17 +77,17 @@ static autoPitchTier Pitch_to_PitchTier_part (Pitch me, double tmin, double tmax
 	}
 }
 
-static autoPointProcess PointProcess_extractPart (PointProcess me, double tmin, double tmax) {
+static autoPointProcess PointProcess_extractPart (PointProcess me, double startTime, double endTime) {
 	try {
 		integer i1 = 1, i2 = my nt;
-		while (my t [i1] < tmin)
+		while (my t [i1] < startTime)
 			i1 ++;
-		while (my t [i2] > tmax)
+		while (my t [i2] > endTime)
 			i2 --;
 		const integer nt = i2 - i1 + 1;
 		Melder_require (nt > 0,
 			U"There must be at least one point in the interval.");
-		autoPointProcess thee = PointProcess_create (tmin, tmax, nt);
+		autoPointProcess thee = PointProcess_create (startTime, endTime, nt);
 		thy nt = nt;
 		thy t.size = nt;
 		thy t.get()  <<= my t.part (i1, i2);
@@ -97,21 +97,21 @@ static autoPointProcess PointProcess_extractPart (PointProcess me, double tmin, 
 	}
 }
 
-static autoSound FormantPathEditor_getResynthesis (FormantPathEditor me, double tmin, double tmax) {
+static autoSound FormantPathEditor_getResynthesis (FormantPathEditor me, double startTime, double endTime) {
 	try {
 		SoundAnalysisArea_haveVisiblePitch (my formantPathArea().get());
 		Pitch pitch = my formantPathArea() -> d_pitch.get();
-		autoPitchTier pitchtierPart = Pitch_to_PitchTier_part (pitch, tmin, tmax);
+		autoPitchTier pitchtierPart = Pitch_to_PitchTier_part (pitch, startTime, endTime);
 		
 		SoundAnalysisArea_haveVisiblePulses (my formantPathArea().get());
 		PointProcess pulses = my formantPathArea() -> d_pulses.get();
-		autoPointProcess pulsesPart = PointProcess_extractPart (pulses, tmin, tmax);
+		autoPointProcess pulsesPart = PointProcess_extractPart (pulses, startTime, endTime);
 		
 		autoPointProcess pulses2 = PitchTier_Point_to_PointProcess (pitchtierPart.get(), pulsesPart.get(), MAX_T);
 		const double samplingFrequency = 22050.0;
 		autoSound train = PointProcess_to_Sound_pulseTrain (pulses2.get(), samplingFrequency , 0.7, 0.05, 30);
 		
-		autoFormant formantPart = Formant_extractPart (my formantPathArea() -> d_formant.get(), tmin, tmax);
+		autoFormant formantPart = Formant_extractPart (my formantPathArea() -> d_formant.get(), startTime, endTime);
 		autoLPC lpc = Formant_to_LPC (formantPart.get(), 1.0 / samplingFrequency);
 		
 		autoSound sound = LPC_Sound_filter (lpc.get(), train.get(), false);
