@@ -85,8 +85,10 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 	}
 	static void _guiGtkMenuItem_activateCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiMenuItem);
-		if (my d_callbackBlocked) return;
-		if (G_OBJECT_TYPE (widget) == GTK_TYPE_RADIO_MENU_ITEM && ! gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (widget))) return;
+		if (my d_callbackBlocked)
+			return;
+		if (G_OBJECT_TYPE (widget) == GTK_TYPE_RADIO_MENU_ITEM && ! gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (widget)))
+			return;
 		structGuiMenuItemEvent event { me, false, false, false };
 		if (my d_callback) {
 			try {
@@ -362,12 +364,12 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 	my d_boss = boss;
 	#if gtk
 		if (commandCallback) {
-			if (flags == GuiMenu_TAB) {
+			if (accelerator == GuiMenu_TAB && ! (flags & GuiMenu_SHIFT)) {
 				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu -> d_widget)));
 				trace (U"tab set in GTK window ", Melder_pointer (shell));
 				g_object_set_data (G_OBJECT (shell), "tabCallback", (gpointer) _guiGtkMenuItem_activateCallback);
 				g_object_set_data (G_OBJECT (shell), "tabClosure", (gpointer) me.get());
-			} else if (flags == (GuiMenu_TAB | GuiMenu_SHIFT)) {
+			} else if (accelerator == GuiMenu_TAB && (flags & GuiMenu_SHIFT)) {
 				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu -> d_widget)));
 				trace (U"shift-tab set in GTK window ", Melder_pointer (shell));
 				g_object_set_data (G_OBJECT (shell), "shiftTabCallback", (gpointer) _guiGtkMenuItem_activateCallback);
