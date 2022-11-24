@@ -80,9 +80,9 @@ static autoPitchTier Pitch_to_PitchTier_part (Pitch me, double startTime, double
 static autoPointProcess PointProcess_extractPart (PointProcess me, double startTime, double endTime) {
 	try {
 		integer i1 = 1, i2 = my nt;
-		while (my t [i1] < startTime)
+		while (i1 <= my nt && my t [i1] < startTime)
 			i1 ++;
-		while (my t [i2] > endTime)
+		while (i2 >= 1 && my t [i2] > endTime)
 			i2 --;
 		const integer nt = i2 - i1 + 1;
 		Melder_require (nt > 0,
