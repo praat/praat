@@ -22,10 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20221121)
+MAN_BEGIN (U"What's new?", U"ppgb", 20221125)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.02# (xx November 2022)")
+LIST_ITEM (U"• Linux: corrected a bug introduced in 6.2.20 by which typing Tab would not start a Sound.")
+LIST_ITEM (U"• Sound window: corrected a bug introduced in 6.2.19 by which drawing selection hairs could not be switched off "
+	"(or on) when painting a spectrogram to the Picture window.")
 NORMAL (U"##6.3.01# (21 November 2022)")
-LIST_ITEM (U"• Fixed a crash when closing an editor window by choosing Close (or by typing Command-W).")
+LIST_ITEM (U"• Fixed a crash introduced in 6.3 when closing an editor window by choosing Close (or by typing Command-W).")
 NORMAL (U"##6.3# (15 November 2022)")
 LIST_ITEM (U"• Number-aware sorting for labels when drawing tables.")
 LIST_ITEM (U"• Scripting: sort\\$ \\# ( ), shuffle\\$ \\# ( ), sort\\_ numberAware\\$ \\# ( ).")
