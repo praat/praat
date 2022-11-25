@@ -41,14 +41,12 @@ void structFunctionArea :: v_form_pictureSelection (EditorCommand cmd) {
 	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection__drawSelectionHairs, nullptr, U"Draw selection hairs", true);
 }
 void structFunctionArea :: v_ok_pictureSelection (EditorCommand cmd) {
-	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
-	SET_BOOLEAN (v_form_pictureSelection__drawSelectionTimes, my classPref_picture_drawSelectionTimes())
-	SET_BOOLEAN (v_form_pictureSelection__drawSelectionHairs, my classPref_picture_drawSelectionHairs())
+	SET_BOOLEAN (v_form_pictureSelection__drawSelectionTimes, our classPref_picture_drawSelectionTimes())
+	SET_BOOLEAN (v_form_pictureSelection__drawSelectionHairs, our classPref_picture_drawSelectionHairs())
 }
-void structFunctionArea :: v_do_pictureSelection (EditorCommand cmd) {
-	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
-	my setClassPref_picture_drawSelectionTimes (v_form_pictureSelection__drawSelectionTimes);
-	my setClassPref_picture_drawSelectionHairs (v_form_pictureSelection__drawSelectionHairs);
+void structFunctionArea :: v_do_pictureSelection (EditorCommand /* cmd */) {
+	our setClassPref_picture_drawSelectionTimes (v_form_pictureSelection__drawSelectionTimes);
+	our setClassPref_picture_drawSelectionHairs (v_form_pictureSelection__drawSelectionHairs);
 }
 
 void FunctionArea_drawRightMark (FunctionArea me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment) {
