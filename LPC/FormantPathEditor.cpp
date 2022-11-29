@@ -24,6 +24,7 @@
 #include "EditorM.h"
 #include "Formant_extensions.h"
 #include "LPC_and_Formant.h"
+#include "NUM2.h"
 #include "PitchTier.h"
 #include "PitchTier_to_PointProcess.h"
 #include "Sound_and_LPC.h"
@@ -148,6 +149,25 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_
 				my formantPathArea() -> d_spectrogram_cursor < my formantPathArea() -> instancePref_spectrogram_viewTo() ? my formantPathArea() -> d_spectrogram_cursor : -1000.0 );
 }
 
+static void Formant_replaceFrames (Formant target, integer beginFrame, integer endFrame, Formant source) {
+	// Precondition target and source have exactly the same Sampled xmin, xmax, x1, nx, dx
+	if (beginFrame == endFrame && beginFrame == 0) {
+		beginFrame = 1;
+		endFrame = target -> nx;
+	}
+	Melder_require (beginFrame <= endFrame,
+		U"The start frame should not be after the end frame.");
+	Melder_require (beginFrame > 0, 
+		U"The begin frame should be larger than zero.");
+	Melder_require (endFrame <= target->nx,
+		U"The end frame sould not be larger than ", target->nx);
+	for (integer iframe = beginFrame ; iframe <= endFrame; iframe ++) {
+		Formant_Frame targetFrame = & target -> frames [iframe];
+		Formant_Frame sourceFrame = & source -> frames [iframe];
+		sourceFrame -> copy (targetFrame);
+	}
+}
+
 /********** METHODS **********/
 
 /***** TIER MENU *****/
@@ -213,6 +233,28 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS) {
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
+}
+
+static void menu_cb_selectCandidateWithlowestStress (FormantPathEditor me, EDITOR_ARGS) {
+	double startTime = my startSelection, endTime = my endSelection;
+	if (my startSelection == my endSelection) {
+		startTime = my startWindow;
+		endTime = my endWindow;
+	}
+	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
+	autoVEC stresses = FormantPath_getStressOfCandidates (my formantPath(), startTime, endTime, 0, 0, parameters.get(), 
+		my instancePref_modeler_varianceExponent());
+	const integer minPos = NUMminPos (stresses.get());
+	my selectedCandidate = minPos;
+	Editor_save (me, U"Change ceiling");
+	integer ifmin, ifmax;
+	Sampled_getWindowSamples (my formantPath(), startTime, endTime, & ifmin, & ifmax);
+	for (integer iframe = ifmin; iframe <= ifmax; iframe ++)
+		my formantPath() -> path [iframe] = my selectedCandidate;
+	Formant source = my formantPath() -> formantCandidates.at [my selectedCandidate];
+	Formant_replaceFrames (my formantPathArea() -> d_formant.get(), ifmin, ifmax, source);
+	FunctionEditor_redraw (me);
+	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS) {
@@ -293,8 +335,11 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu menu = Editor_addMenu (this, U"Candidates", 0);
 	EditorMenu_addCommand (menu, U"Candidate modelling settings...", 0, menu_cb_candidate_modellingSettings);
 	EditorMenu_addCommand (menu, U"Advanced candidate drawing settings...", 0, menu_cb_AdvancedCandidateDrawingSettings);
-	EditorMenu_addCommand (menu, U"-- drawing --", 0, 0);
-	EditorMenu_addCommand (menu, U"Find path...", 0, menu_cb_candidates_FindPath);
+	EditorMenu_addCommand (menu, U"- Draw candidates to picture window:", 0, nullptr);
+		EditorMenu_addCommand (menu, U"Draw visible candidates...", 1, menu_cb_DrawVisibleCandidates);
+	EditorMenu_addCommand (menu, U"- Select candidates:", 0, nullptr);
+		EditorMenu_addCommand (menu, U"Select candidate with lowest stress", 1, menu_cb_selectCandidateWithlowestStress);
+	EditorMenu_addCommand (menu, U"Find path...", 1, menu_cb_candidates_FindPath);
 	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
 	EditorMenu_addCommand (menu, U"-- candidate queries --", 0, 0);
 	EditorMenu_addCommand (menu, U"Stress of fits listing", 0, INFO_DATA__stressOfFitsListing);
@@ -351,25 +396,6 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	Graphics_unsetInner (our graphics.get());
 	previousStartTime = startTime;
 	previousEndTime = endTime;
-}
-
-static void Formant_replaceFrames (Formant target, integer beginFrame, integer endFrame, Formant source) {
-	// Precondition target and source have exactly the same Sampled xmin, xmax, x1, nx, dx
-	if (beginFrame == endFrame && beginFrame == 0) {
-		beginFrame = 1;
-		endFrame = target -> nx;
-	}
-	Melder_require (beginFrame <= endFrame,
-		U"The start frame should not be after the end frame.");
-	Melder_require (beginFrame > 0, 
-		U"The begin frame should be larger than zero.");
-	Melder_require (endFrame <= target->nx,
-		U"The end frame sould not be larger than ", target->nx);
-	for (integer iframe = beginFrame ; iframe <= endFrame; iframe ++) {
-		Formant_Frame targetFrame = & target -> frames [iframe];
-		Formant_Frame sourceFrame = & source -> frames [iframe];
-		sourceFrame -> copy (targetFrame);
-	}
 }
 
 void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) {
