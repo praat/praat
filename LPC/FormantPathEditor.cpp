@@ -340,7 +340,6 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"- Select candidates:", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Select candidate with lowest stress", 1, menu_cb_selectCandidateWithlowestStress);
 	EditorMenu_addCommand (menu, U"Find path...", 1, menu_cb_candidates_FindPath);
-	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
 	EditorMenu_addCommand (menu, U"-- candidate queries --", 0, 0);
 	EditorMenu_addCommand (menu, U"Stress of fits listing", 0, INFO_DATA__stressOfFitsListing);
 	if (soundArea()) {
