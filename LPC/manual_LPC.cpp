@@ -28,12 +28,12 @@
 void manual_LPC (ManPages me);
 void manual_LPC (ManPages me)
 {
-MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20210813)
+MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20221129)
 INTRO (U"A command in the #Candidates menu of the @FormantPathEditor window.")
 TAG (U"##Coefficients by track#")
 DEFINITION (U"determines how many coefficients will be used in the modelling of a formant track. "
-	"The first number determines the number of coefficients that will be used for modeling formant 1 with a polynomial function."
-	"The second number determines the number of coefficients for the modelling of formant 2, and so on. " 
+
+"The second number determines the number of coefficients for the modelling of formant 2, and so on. " 
 	"For example, if you specify \"4 3 3\", the first three formants will be modelled. Formant 1 will be modelled with 4 "
 	"coefficients which means that a third order polynomial is used for modelling. Formant 2 and formant 3 are modelled with "
 	"3 coefficients which means that their tracks will be modelled as parabolas.")
