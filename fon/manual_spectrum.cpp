@@ -130,7 +130,7 @@ DEFINITION (U"the power spectral density, expressed in dB. ")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get bin number from frequency...", U"ppgb", 20140421)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return bin")
 NORMAL (U"the band number belonging to the specified frequency, expressed as a real number.")
 ENTRY (U"Example")
@@ -147,13 +147,13 @@ CODE (U"rightBin = ceiling (bin)")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get bin width", U"ppgb", 20041122)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the with of a bin, expressed in hertz.")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get frequency from bin number...", U"ppgb", 20041122)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the frequency (in hertz) associated with a specified bin number.")
 ENTRY (U"Setting")
@@ -167,7 +167,7 @@ NORMAL (U"where %f__1_ is the frequency associated with the centre of the first 
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get frequency of maximum...", U"ppgb", 20200912)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the frequency (in hertz) associated with the maximum energy density.")
 ENTRY (U"Settings")
@@ -184,7 +184,7 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get frequency of minimum...", U"ppgb", 20200912)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the frequency (in hertz) associated with the minimum energy density.")
 ENTRY (U"Settings")
@@ -199,19 +199,19 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc) of the
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get highest frequency", U"ppgb", 20041122)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the highest frequency, expressed in hertz.")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get lowest frequency", U"ppgb", 20041122)
-INTRO (U"A @query to the selected @Ltas object for its lowest frequency.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object for its lowest frequency.")
 ENTRY (U"Return value")
 NORMAL (U"the lowest frequency, expressed in Hertz. It is usually 0 Hz.")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get maximum...", U"ppgb", 20200912)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the maximum value (in dB) within a specified frequency range.")
 ENTRY (U"Settings")
@@ -228,7 +228,7 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get mean...", U"ppgb", 20041122)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean value (in dB) within a specified frequency range.")
 ENTRY (U"Settings")
@@ -246,7 +246,7 @@ NORMAL (U"where %n is the number of band centres between %f__1_ and %f__2_.")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get minimum...", U"ppgb", 20200912)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the minimum value (in dB) within a specified frequency range.")
 ENTRY (U"Settings")
@@ -263,13 +263,13 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get number of bins", U"ppgb", 20041122)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the total number of frequency bins.")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get standard deviation...", U"ppgb", 19991016)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation (in dB) of the LTAS within a specified frequency domain.")
 ENTRY (U"Settings")
@@ -287,7 +287,7 @@ NORMAL (U"where %n is the number of band centres between %f__1_ and %f__2_. Note
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get value at frequency...", U"ppgb", 20101228)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the value (in dB) at a specified frequency. "
 	"If %frequency is outside the bands of the Ltas, the result is 0.")
@@ -300,7 +300,7 @@ DEFINITION (U"the interpolation method, see @@vector value interpolation@. "
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get value in bin...", U"ppgb", 20041122)
-INTRO (U"A @query to the selected @Ltas object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the LTAS value (in dB) in a specified bin. "
 	"If the bin number is less than 1 or greater than the number of bin, the result is 0; "

@@ -374,7 +374,67 @@ void structSoundAnalysisArea :: v1_info () {
 }
 
 
-#pragma mark - SoundAnalysisArea Query menu
+#pragma mark - SoundAnalysisArea Analysis settings menu
+
+static void menu_cb_showAnalyses (SoundAnalysisArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Show analyses", nullptr)
+		BOOLEAN  (showSpectrogram, U"Show spectrogram",     my default_spectrogram_show ())
+		BOOLEAN  (showPitch,       U"Show pitch",           my default_pitch_show       ())
+		BOOLEAN  (showIntensity,   U"Show intensity",       my default_intensity_show   ())
+		BOOLEAN  (showFormants,    U"Show formants",        my default_formant_show     ())
+		BOOLEAN  (showPulses,      U"Show pulses",          my default_pulses_show      ())
+		POSITIVE (longestAnalysis, U"Longest analysis (s)", my default_longestAnalysis  ())
+	EDITOR_OK
+		SET_BOOLEAN (showSpectrogram, my instancePref_spectrogram_show())
+		SET_BOOLEAN (showPitch,       my instancePref_pitch_show())
+		SET_BOOLEAN (showIntensity,   my instancePref_intensity_show())
+		SET_BOOLEAN (showFormants,    my instancePref_formant_show())
+		SET_BOOLEAN (showPulses,      my instancePref_pulses_show())
+		SET_REAL    (longestAnalysis, my instancePref_longestAnalysis())
+	EDITOR_DO
+		my setInstancePref_spectrogram_show (showSpectrogram);
+		my setInstancePref_pitch_show       (showPitch);
+		my setInstancePref_intensity_show   (showIntensity);
+		my setInstancePref_formant_show     (showFormants);
+		my setInstancePref_pulses_show      (showPulses);
+		GuiMenuItem_check (my spectrogramToggle, showSpectrogram);
+		GuiMenuItem_check (my pitchToggle,       showPitch);
+		GuiMenuItem_check (my intensityToggle,   showIntensity);
+		GuiMenuItem_check (my formantToggle,     showFormants);
+		GuiMenuItem_check (my pulsesToggle,      showPulses);
+		my setInstancePref_longestAnalysis (longestAnalysis);
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
+static void menu_cb_timeStepSettings (SoundAnalysisArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Time step settings", U"Time step settings...")
+		OPTIONMENU_ENUM (kSoundAnalysisArea_timeStepStrategy, timeStepStrategy,
+				U"Time step strategy", my default_timeStepStrategy ())
+		LABEL (U"")
+		LABEL (U"If the time step strategy is \"fixed\":")
+		POSITIVE (fixedTimeStep, U"Fixed time step (s)", my default_fixedTimeStep ())
+		LABEL (U"")
+		LABEL (U"If the time step strategy is \"view-dependent\":")
+		NATURAL (numberOfTimeStepsPerView, U"Number of time steps per view", my default_numberOfTimeStepsPerView ())
+	EDITOR_OK
+		SET_ENUM (timeStepStrategy, kSoundAnalysisArea_timeStepStrategy, my instancePref_timeStepStrategy())
+		SET_REAL (fixedTimeStep, my instancePref_fixedTimeStep())
+		SET_INTEGER (numberOfTimeStepsPerView, my instancePref_numberOfTimeStepsPerView())
+	EDITOR_DO
+		my setInstancePref_timeStepStrategy (timeStepStrategy);
+		my setInstancePref_fixedTimeStep (fixedTimeStep);
+		my setInstancePref_numberOfTimeStepsPerView (numberOfTimeStepsPerView);
+		my d_pitch. reset();
+		my d_formant. reset();
+		my d_intensity. reset();
+		my d_pulses. reset();
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
+
+#pragma mark - SoundAnalysisArea Analyses settings menu
 
 enum {
 	SoundAnalysisArea_PART_CURSOR = 1,
@@ -596,66 +656,6 @@ static void menu_cb_logScript4 (SoundAnalysisArea me, EDITOR_ARGS) {
 	VOID_EDITOR
 		praat_executeScriptFromEditorCommand (my functionEditor(), cmd, my instancePref_logScript4());
 	VOID_EDITOR_END
-}
-
-
-#pragma mark - SoundAnalysisArea Settings menu
-
-static void menu_cb_showAnalyses (SoundAnalysisArea me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Show analyses", nullptr)
-		BOOLEAN  (showSpectrogram, U"Show spectrogram",     my default_spectrogram_show ())
-		BOOLEAN  (showPitch,       U"Show pitch",           my default_pitch_show       ())
-		BOOLEAN  (showIntensity,   U"Show intensity",       my default_intensity_show   ())
-		BOOLEAN  (showFormants,    U"Show formants",        my default_formant_show     ())
-		BOOLEAN  (showPulses,      U"Show pulses",          my default_pulses_show      ())
-		POSITIVE (longestAnalysis, U"Longest analysis (s)", my default_longestAnalysis  ())
-	EDITOR_OK
-		SET_BOOLEAN (showSpectrogram, my instancePref_spectrogram_show())
-		SET_BOOLEAN (showPitch,       my instancePref_pitch_show())
-		SET_BOOLEAN (showIntensity,   my instancePref_intensity_show())
-		SET_BOOLEAN (showFormants,    my instancePref_formant_show())
-		SET_BOOLEAN (showPulses,      my instancePref_pulses_show())
-		SET_REAL    (longestAnalysis, my instancePref_longestAnalysis())
-	EDITOR_DO
-		my setInstancePref_spectrogram_show (showSpectrogram);
-		my setInstancePref_pitch_show       (showPitch);
-		my setInstancePref_intensity_show   (showIntensity);
-		my setInstancePref_formant_show     (showFormants);
-		my setInstancePref_pulses_show      (showPulses);
-		GuiMenuItem_check (my spectrogramToggle, showSpectrogram);
-		GuiMenuItem_check (my pitchToggle,       showPitch);
-		GuiMenuItem_check (my intensityToggle,   showIntensity);
-		GuiMenuItem_check (my formantToggle,     showFormants);
-		GuiMenuItem_check (my pulsesToggle,      showPulses);
-		my setInstancePref_longestAnalysis (longestAnalysis);
-		FunctionEditor_redraw (my functionEditor());
-	EDITOR_END
-}
-
-static void menu_cb_timeStepSettings (SoundAnalysisArea me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Time step settings", U"Time step settings...")
-		OPTIONMENU_ENUM (kSoundAnalysisArea_timeStepStrategy, timeStepStrategy,
-				U"Time step strategy", my default_timeStepStrategy ())
-		LABEL (U"")
-		LABEL (U"If the time step strategy is \"fixed\":")
-		POSITIVE (fixedTimeStep, U"Fixed time step (s)", my default_fixedTimeStep ())
-		LABEL (U"")
-		LABEL (U"If the time step strategy is \"view-dependent\":")
-		NATURAL (numberOfTimeStepsPerView, U"Number of time steps per view", my default_numberOfTimeStepsPerView ())
-	EDITOR_OK
-		SET_ENUM (timeStepStrategy, kSoundAnalysisArea_timeStepStrategy, my instancePref_timeStepStrategy())
-		SET_REAL (fixedTimeStep, my instancePref_fixedTimeStep())
-		SET_INTEGER (numberOfTimeStepsPerView, my instancePref_numberOfTimeStepsPerView())
-	EDITOR_DO
-		my setInstancePref_timeStepStrategy (timeStepStrategy);
-		my setInstancePref_fixedTimeStep (fixedTimeStep);
-		my setInstancePref_numberOfTimeStepsPerView (numberOfTimeStepsPerView);
-		my d_pitch. reset();
-		my d_formant. reset();
-		my d_intensity. reset();
-		my d_pulses. reset();
-		FunctionEditor_redraw (my functionEditor());
-	EDITOR_END
 }
 
 

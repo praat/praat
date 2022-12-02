@@ -3301,16 +3301,20 @@ NORMAL (U"Questions about how to use Praat for your specific cases "
 MAN_END
 
 MAN_BEGIN (U"Praat menu", U"ppgb", 20161227)
-INTRO (U"The first menu in the @@Object window@. "
+INTRO (U"The first menu in the @@Objects window@. "
 	"In macOS, this menu is in the main menu bar along the top of the screen.")
 MAN_END
 
+MAN_BEGIN (U"Analyses menu", U"ppgb", 20221202)
+INTRO (U"A menu in the @SoundEditor or @TextGridEditor.")
+MAN_END
+
 MAN_BEGIN (U"Copy...", U"ppgb", 20111018)
-INTRO (U"One of the fixed buttons in the @@Object window@.")
+INTRO (U"One of the fixed buttons in the @@Objects window@.")
 ENTRY (U"Availability")
 NORMAL (U"You can choose this command after selecting one object of any type.")
 ENTRY (U"Behaviour")
-NORMAL (U"The Object window copies the selected object, and all the data it contains, "
+NORMAL (U"The Objects window copies the selected object, and all the data it contains, "
 	"to a new object, which will appear at the bottom of the List of Objects.")
 ENTRY (U"Example")
 NORMAL (U"If you select \"Sound hallo\" and click `Copy...', "
@@ -3325,8 +3329,8 @@ NORMAL (U"This menu contains commands for drawing the object to the @@Picture wi
 MAN_END
 
 MAN_BEGIN (U"Dynamic menu", U"ppgb", 20110131)
-INTRO (U"A column of buttons in the right-hand part of the @@Object window@, "
-	"plus the #Save menu in the Object window.")
+INTRO (U"A column of buttons in the right-hand part of the @@Objects window@, "
+	"plus the @@Save menu@ in the Objects window.")
 NORMAL (U"If you select one or more @objects in the list, "
 	"the possible actions that you can perform with the selected objects "
 	"will appear in the dynamic menu. "
@@ -3412,10 +3416,10 @@ NORMAL (U"Boersma, Paul (2001). Praat, a system for doing phonetics by computer.
 NORMAL (U"This paper can be downloaded from Boersma's website.")
 MAN_END
 
-MAN_BEGIN (U"FAQ: Pitch analysis", U"ppgb", 20060913)
+MAN_BEGIN (U"FAQ: Pitch analysis", U"ppgb", 20221202)
 NORMAL (U"#Question: what algorithm is used for pitch analysis?")
 NORMAL (U"Answer: see @@Sound: To Pitch (ac)...@. The 1993 article is downloadable from "
-	"http://www.fon.hum.uva.nl/paul/")
+	"https://www.fon.hum.uva.nl/paul/")
 NORMAL (U"#Question: why does Praat consider my sound voiceless while I hear it as voiced?")
 NORMAL (U"There are at least five possibilities. Most of them can be checked by zooming in on the @waveform.")
 NORMAL (U"The first possibility is that the pitch has fallen below the @@pitch floor@. For instance, "
@@ -3444,13 +3448,13 @@ NORMAL (U"The fifth possibility is that the part analysed as voiceless is much l
 NORMAL (U"#Question: why do I get different results for the maximum pitch if...?")
 NORMAL (U"If you select a Sound and choose @@Sound: To Pitch...@, the time step will usually "
 	"be 0.01 seconds. The resulting @Pitch object will have values for times that are "
-	"0.01 seconds apart. If you then click Info or choose ##Get maximum pitch# from the #Query menu, "
+	"0.01 seconds apart. If you then click Info or choose ##Get maximum pitch# from the @@Query submenu@, "
 	"the result is based on those time points. By contrast, if you choose ##Get maximum pitch# "
-	"from the #Pitch menu in the SoundEditor window, the result will be based on the visible points, "
+	"from the @@Pitch menu@ in the SoundEditor window, the result will be based on the visible points, "
 	"of which there tend to be a hundred in the visible window. These different time spacings will "
 	"lead to slightly different pitch contours.")
 NORMAL (U"If you choose ##Move cursor to maximum pitch#, then choose ##Get pitch# from the "
-	"#%Pitch menu, the result will be different again. This is because ##Get maximum pitch# "
+	"@@Pitch menu@, the result will be different again. This is because ##Get maximum pitch# "
 	"can do a parabolic interpolation around the maximum, whereas ##Get pitch#, not realizing "
 	"that the cursor is at a maximum, does a stupid linear interpolation, which tends to lead to "
 	"lower values.")
@@ -3546,6 +3550,10 @@ LIST_ITEM (U"• @@LPC & Sound: Filter...@")
 LIST_ITEM (U"• @@LPC & Sound: Filter (inverse)@")
 MAN_END
 
+MAN_BEGIN (U"Formants menu", U"ppgb", 20221202)
+INTRO (U"A menu in the @SoundEditor or @TextGridEditor.")
+MAN_END
+
 MAN_BEGIN (U"Formants & LPC menu", U"ppgb", 20011107)
 INTRO (U"A menu that occurs in the @@Dynamic menu@ for a @Sound.")
 NORMAL (U"This menu contains commands for analysing the formant contours of the selected Sound:")
@@ -3559,16 +3567,16 @@ LIST_ITEM (U"@@Sound: To LPC (marple)...")
 LIST_ITEM (U"@@Sound: To MFCC...")
 MAN_END
 
-MAN_BEGIN (U"Get first formant", U"ppgb", 20011107)
-INTRO (U"One of the commands in the @@Query menu@ of the @SoundEditor and the @TextGridEditor.")
+MAN_BEGIN (U"Get first formant", U"ppgb", 20221202)
+INTRO (U"One of the query commands in the @@Formants menu@ of the @SoundEditor and the @TextGridEditor.")
 MAN_END
 
-MAN_BEGIN (U"Get pitch", U"ppgb", 20010417)
-INTRO (U"One of the commands in the @@Query menu@ of the @SoundEditor and the @TextGridEditor.")
+MAN_BEGIN (U"Get pitch", U"ppgb", 20221202)
+INTRO (U"One of the query commands in the @@Pitch menu@ of the @SoundEditor and the @TextGridEditor.")
 MAN_END
 
-MAN_BEGIN (U"Get second formant", U"ppgb", 20011107)
-INTRO (U"One of the commands in the @@Query menu@ of the @SoundEditor and the @TextGridEditor.")
+MAN_BEGIN (U"Get second formant", U"ppgb", 20221202)
+INTRO (U"One of the query commands in the @@Formants menu@ of the @SoundEditor and the @TextGridEditor.")
 MAN_END
 
 MAN_BEGIN (U"Goodies", U"ppgb", 20050822)
@@ -3576,7 +3584,7 @@ INTRO (U"The title of a submenu of the @@Praat menu@.")
 MAN_END
 
 MAN_BEGIN (U"Info", U"ppgb", 19980101)
-INTRO (U"One of the fixed buttons in the @@Object window@.")
+INTRO (U"One of the fixed buttons in the @@Objects window@.")
 ENTRY (U"Availability")
 NORMAL (U"You can choose this command after choosing one object.")
 ENTRY (U"Purpose")
@@ -3595,7 +3603,7 @@ NORMAL (U"Apart from the @Info command, which writes general information about t
 MAN_END
 
 MAN_BEGIN (U"Inspect", U"ppgb", 19960904)
-INTRO (U"One of the fixed buttons in the @@Object window@.")
+INTRO (U"One of the fixed buttons in the @@Objects window@.")
 NORMAL (U"You can use this command after selecting one object in the list.")
 NORMAL (U"The contents of the selected object will become visible in a Data Editor. "
 	"You can then view and change the data in the object, "
@@ -3691,17 +3699,17 @@ MAN_END
 MAN_BEGIN (U"Intro 1.1. Recording a sound", U"ppgb", 20201120)
 INTRO (U"To record a speech sound into Praat, you need a computer with a microphone.")
 NORMAL (U"To record from the microphone, perform the following steps:")
-LIST_ITEM (U"1. Choose @@Record mono Sound...@ from the @@New menu@ in the @@Object window@. "
+LIST_ITEM (U"1. Choose @@Record mono Sound...@ from the @@New menu@ in the @@Objects window@. "
 	"A @SoundRecorder window will appear on your screen.")
 LIST_ITEM (U"2. On the left in the SoundRecorder window, choose the appropriate input device, e.g. choose ##Internal microphone#. "
 	"(On Windows, instead right-click the loudspeaker symbol in the Start bar; see @SoundRecorder for more details.)")
 LIST_ITEM (U"3. Use the #Record and #Stop buttons to record a few seconds of your speech.")
 LIST_ITEM (U"4. Use the #Play button to hear what you have recorded.")
 LIST_ITEM (U"5. Repeat steps 3 and 4 until you are satisfied with your recording.")
-LIST_ITEM (U"6. Click the ##Save to list# button. Your recording will now appear in the Object window, "
+LIST_ITEM (U"6. Click the ##Save to list# button. Your recording will now appear in the Objects window, "
 	"where it will be called \"Sound sound\".")
 LIST_ITEM (U"7. You can now close the SoundRecorder window.")
-LIST_ITEM (U"8. When you saved your sound to the Object window, some buttons appeared in that window. "
+LIST_ITEM (U"8. When you saved your sound to the Objects window, some buttons appeared in that window. "
 	"These buttons show you what you can do with the sound. Try the #Play and @@View & Edit@ buttons.")
 NORMAL (U"For more information on recording, see the @SoundRecorder manual page.")
 MAN_END
@@ -3710,7 +3718,7 @@ MAN_BEGIN (U"Intro 1.2. Reading a sound from disk", U"ppgb", 20041126)
 INTRO (U"Apart from recording a new sound from a microphone, you could read an existing sound file from your disk.")
 NORMAL (U"With @@Read from file...@ from the @@Open menu@, "
 	"Praat will be able to read most standard types of sound files, e.g. WAV files. "
-	"They will appear as @Sound objects in the Object window. For instance, if you open the file ##hello.wav#, "
+	"They will appear as @Sound objects in the Objects window. For instance, if you open the file ##hello.wav#, "
 	"an object called \"Sound hello\" will appear in the list.")
 NORMAL (U"If you do not have a sound file on your disk, you can download a WAV file (or so) from the Internet, "
 	"then read that file into Praat with ##Read from file...#.")
@@ -3723,7 +3731,7 @@ MAN_END
 
 MAN_BEGIN (U"Intro 2. What to do with a sound", U"ppgb", 20110131)
 INTRO (U"As soon as you have a @Sound in the @@List of Objects@, "
-	"the buttons in the @@Dynamic menu@ (the right-hand part of the @@Object window@) "
+	"the buttons in the @@Dynamic menu@ (the right-hand part of the @@Objects window@) "
 	"will show you what you can do with it.")
 LIST_ITEM (U"@@Intro 2.1. Saving a sound to disk")
 LIST_ITEM (U"@@Intro 2.2. Viewing and editing a sound")
@@ -3956,11 +3964,11 @@ DEFINITION (U"determines how much stronger weak spectra should be made before dr
 	"so that its maximum will be seen at 44 dB (thus making this frame visible).")
 MAN_END
 
-MAN_BEGIN (U"Intro 3.3. Querying the spectrogram", U"ppgb", 20220907)
+MAN_BEGIN (U"Intro 3.3. Querying the spectrogram", U"ppgb", 20221202)
 NORMAL (U"If you click anywhere inside the spectrogram, a cursor cross will appear, "
 	"and you will see the time and frequency in red at the top and to the left of the window. "
 	"To see the time in the Info window, "
-	"choose ##Get cursor# from the #Query menu or press the F6 key. "
+	"choose ##Get cursor# from the #Spectrogram menu or press the F6 key. "
 	"To see the frequency in the Info window, "
 	"choose ##Get frequency# from the #Spectrogram menu.")
 NORMAL (U"To query the power of the spectrogram at the cursor cross, "
@@ -4457,7 +4465,7 @@ INTRO (U"See @@Intro 7. Annotation@.")
 MAN_END
 
 MAN_BEGIN (U"List of Objects", U"ppgb", 20210228)
-INTRO (U"A list in the left-hand part of the @@Object window@.")
+INTRO (U"A list in the left-hand part of the @@Objects window@.")
 ENTRY (U"Purpose")
 NORMAL (U"If you select one or more @objects in this list, "
 	"the possible actions that you can perform with the selected objects "
@@ -4469,7 +4477,7 @@ NORMAL (U"To change the selection of one object (without changing the others), u
 MAN_END
 
 MAN_BEGIN (U"New menu", U"ppgb", 20161013)
-INTRO (U"The ##New menu# is one of the menus in the @@Object window@. "
+INTRO (U"The ##New menu# is one of the menus in the @@Objects window@. "
 	"You use this menu to create new objects from scratch. It contains the following commands:")
 LIST_ITEM (U"• @@Record mono Sound...@")
 LIST_ITEM (U"• @@Record stereo Sound...@")
@@ -4493,7 +4501,7 @@ NORMAL (U"To create new objects from files on disk, use the @@Open menu@ instead
 	"Objects can also often be create from other objects, with commands that start with ##To#.")
 MAN_END
 
-MAN_BEGIN (U"Object window", U"ppgb", 20140212)
+MAN_BEGIN (U"Objects window", U"ppgb", 20140212)
 INTRO (U"One of the two main windows in the Praat program.")
 ENTRY (U"Subdivision")
 LIST_ITEM (U"To the left: the @@List of Objects@.")
@@ -4506,9 +4514,9 @@ LIST_ITEM (U"• @@Copy...")
 LIST_ITEM (U"• @@Remove")
 LIST_ITEM (U"• @@Inspect")
 ENTRY (U"Menus")
-LIST_ITEM (U"The Object window contains several fixed menus: "
+LIST_ITEM (U"The Objects window contains several fixed menus: "
 	"the #Praat, #New, #Open, and #Help menus. "
-	"It also contains the #Save menu, whose contents vary with the kinds of selected objects, "
+	"It also contains the @@Save menu@, whose contents vary with the kinds of selected objects, "
 	"and must, therefore, be considered part of the dynamic menu.")
 ENTRY (U"The Praat menu")
 LIST_ITEM (U"• @@New Praat script@: creates an empty @@ScriptEditor@")
@@ -4538,6 +4546,10 @@ LIST_ITEM (U"@@Sound: To Harmonicity (cc)...")
 LIST_ITEM (U"@@Sound: To Harmonicity (ac)...")
 MAN_END
 
+MAN_BEGIN (U"Pitch menu", U"ppgb", 20221202)
+INTRO (U"A menu in the @SoundEditor or @TextGridEditor.")
+MAN_END
+
 MAN_BEGIN (U"Pitch settings...", U"ppgb", 20030316)
 INTRO (U"A command in the Pitch menu of the @SoundEditor and @TextGridEditor windows. "
 	"See @@Intro 4.2. Configuring the pitch contour@.")
@@ -4552,23 +4564,31 @@ NORMAL (U"A Play button is also available in the @SoundRecorder window "
 	"you will usually play a sound by clicking on any of the rectangles around the data.")
 MAN_END
 
-MAN_BEGIN (U"Query", U"ppgb", 20021218)
+MAN_BEGIN (U"Query submenu", U"ppgb", 20221202)
+INTRO (U"A submenu that appears in the @@Objects window@ if you select an object of almost any type.")
 INTRO (U"Query commands give you information about objects.")
 NORMAL (U"Most query commands start with the word #%Get or sometimes the word #%Count. "
-	"You will find these commands in two places: under the #Query menu that usually appears if you "
-	"select an @@Objects|object@ in the list, and in the #Query menus of the @editors.")
+	"You will find these commands in two places: under the @@Query submenu@ that usually appears if you "
+	"select an @@Objects|object@ in the list, and in the query parts of several menus of the @editors "
+	"(such as the @@Pitch menu@, the @@Formants menu@ or the @@Spectrogram menu@.")
 ENTRY (U"Behaviour")
 NORMAL (U"If you click a query command, the answer will be written to the @@Info window@.")
 ENTRY (U"Scripting")
 NORMAL (U"In a script, you can still use query commands to write the information to the Info window "
 	"but you can also use any query command to put the information into a variable. "
 	"(see @@Scripting 6.3. Query commands@). In such a case, the value will not be written into the Info window.")
+ENTRY (U"Some pages that link here")
 ENTRY (U"Query commands in the Praat program")
-NORMAL (U"The Praat program contains the following query commands:")
-MAN_END
-
-MAN_BEGIN (U"Query menu", U"ppgb", 20010417)
-INTRO (U"One of the menus in most @editors.")
+LIST_ITEM (U"@@FAQ: Pitch analysis")
+LIST_ITEM (U"@@Formulas 8. Attributes of objects")
+LIST_ITEM (U"@@OT learning 7. Learning from overt forms")
+LIST_ITEM (U"@@Script for listing F0 statistics")
+LIST_ITEM (U"@@Scripting 3.3. Numeric queries")
+LIST_ITEM (U"@@Scripting 3.5. String queries")
+LIST_ITEM (U"@@Scripting 6.2. Writing to the Info window")
+LIST_ITEM (U"@@time domain")
+LIST_ITEM (U"@@Voice 6. Automating voice analysis with a script")
+NORMAL (U"The Praat program contains at least the following query commands:")
 MAN_END
 
 MAN_BEGIN (U"Quit", U"ppgb", 20050822)
@@ -4608,7 +4628,7 @@ LIST_ITEM (U"• If the file contains one object of type Pitch, named \"hallo\",
 MAN_END
 
 MAN_BEGIN (U"Open menu", U"ppgb", 20110111)
-INTRO (U"One of the menus in the @@Object window@.")
+INTRO (U"One of the menus in the @@Objects window@.")
 NORMAL (U"With the Open menu, you read one or more @objects from a file on disk into memory. "
 	"The resulting object(s) will appear in the @@List of Objects@.")
 NORMAL (U"The Open menu contains the command @@Read from file...@, which recognizes most file types, "
@@ -4618,7 +4638,7 @@ NORMAL (U"The Open menu contains the command @@Read from file...@, which recogni
 MAN_END
 
 MAN_BEGIN (U"Remove", U"ppgb", 20021212)
-INTRO (U"One of the fixed buttons in the @@Object window@.")
+INTRO (U"One of the fixed buttons in the @@Objects window@.")
 NORMAL (U"You can choose this command after selecting one or more @objects in the list.")
 NORMAL (U"The selected objects will permanently disappear from the list, "
 	"and the computer memory that they occupied will be freed.")
@@ -4626,17 +4646,17 @@ NORMAL (U"To save your data before removing, choose a command from the @@Save me
 MAN_END
 
 MAN_BEGIN (U"Rename...", U"ppgb", 20111018)
-INTRO (U"One of the fixed buttons in the @@Object window@.")
+INTRO (U"One of the fixed buttons in the @@Objects window@.")
 ENTRY (U"Availability")
 NORMAL (U"You can choose this command after selecting one object of any type.")
 ENTRY (U"Purpose")
 NORMAL (U"You can give the selected object a new name.")
 ENTRY (U"Behaviour")
-NORMAL (U"If you type special symbols or spaces, the Object window will replace them with underscores.")
+NORMAL (U"If you type special symbols or spaces, the Objects window will replace them with underscores.")
 MAN_END
 
 MAN_BEGIN (U"Save menu", U"ppgb", 20211015)
-INTRO (U"One of the menus in the @@Object window@.")
+INTRO (U"One of the menus in the @@Objects window@.")
 ENTRY (U"Purpose")
 NORMAL (U"With the #Save menu, you write one or more selected @objects from memory to a file on disk. "
 	"The data can be read in again with one of the commands in the @@Open menu@ "
@@ -4660,7 +4680,7 @@ INTRO (U"One of the commands in the @@Save menu@.")
 ENTRY (U"Availability")
 NORMAL (U"You can choose this command after selecting one or more @objects.")
 ENTRY (U"Behaviour")
-NORMAL (U"The Object window will ask you for a file name. "
+NORMAL (U"The Objects window will ask you for a file name. "
 	"After you click OK, the objects will be written to a binary file on disk.")
 ENTRY (U"Usage")
 NORMAL (U"The file can be read again with @@Read from file...@.")
@@ -4674,7 +4694,7 @@ INTRO (U"One of the commands in the @@Save menu@.")
 ENTRY (U"Availability")
 NORMAL (U"You can choose this command after selecting one or more @objects.")
 ENTRY (U"Behaviour")
-NORMAL (U"The Object window will ask you for a file name. "
+NORMAL (U"The Objects window will ask you for a file name. "
 	"After you click OK, the objects will be written to a text file on disk.")
 ENTRY (U"File format")
 NORMAL (U"The format is much shorter than the one described at @@Save as text file...@. "
@@ -4687,7 +4707,7 @@ INTRO (U"One of the commands in the @@Save menu@.")
 ENTRY (U"Availability")
 NORMAL (U"You can choose this command after selecting one or more @objects.")
 ENTRY (U"Behaviour")
-NORMAL (U"The Object window will ask you for a file name. "
+NORMAL (U"The Objects window will ask you for a file name. "
 	"After you click OK, the objects will be written to a text file on disk.")
 ENTRY (U"File format")
 NORMAL (U"If you selected a single object, e.g., of type Pitch, "
@@ -5062,8 +5082,12 @@ NORMAL (U"You can manipulate the source signal in the same way you that would ma
 	"for instance with the @ManipulationEditor.")
 MAN_END
 
-MAN_BEGIN (U"Spectrogram settings...", U"ppgb", 20030316)
-INTRO (U"A command in the Spectrogram menu of the @SoundEditor and @TextGridEditor windows. "
+MAN_BEGIN (U"Spectrogram menu", U"ppgb", 20221202)
+INTRO (U"A menu in the @SoundEditor or @TextGridEditor.")
+MAN_END
+
+MAN_BEGIN (U"Spectrogram settings...", U"ppgb", 20221202)
+INTRO (U"A command in the @@Spectrogram menu@ of the @SoundEditor and @TextGridEditor windows. "
 	"See @@Intro 3.2. Configuring the spectrogram@.")
 MAN_END
 

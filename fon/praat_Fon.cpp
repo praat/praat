@@ -2878,7 +2878,7 @@ DO
 // MARK: - Help menu
 
 DIRECT (HELP_PraatIntro) { HELP (U"Intro") }
-DIRECT (HELP_ObjectWindow) { HELP (U"Object window") }
+DIRECT (HELP_ObjectWindow) { HELP (U"Objects window") }
 DIRECT (HELP_FrequentlyAskedQuestions) { HELP (U"FAQ (Frequently Asked Questions)") }
 DIRECT (HELP_TypesOfObjects) { HELP (U"Types of objects") }
 DIRECT (HELP_Editors) { HELP (U"Editors") }
@@ -3010,7 +3010,7 @@ void praat_uvafon_init () {
 
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?', HELP_PraatIntro);
 	#ifndef macintosh
-		praat_addMenuCommand (U"Objects", U"Help", U"Object window", nullptr, 0, HELP_ObjectWindow);
+		praat_addMenuCommand (U"Objects", U"Help", U"Objects window", nullptr, 0, HELP_ObjectWindow);
 	#endif
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Frequently asked questions",
 			nullptr, 0, HELP_FrequentlyAskedQuestions);
@@ -3055,7 +3055,7 @@ void praat_uvafon_init () {
 #ifdef macintosh
 	praat_addMenuCommand (U"Objects", U"Help", U"Praat Intro",
 			nullptr, '?', HELP_PraatIntro);
-	praat_addMenuCommand (U"Objects", U"Help", U"Object window help",
+	praat_addMenuCommand (U"Objects", U"Help", U"Objects window help",
 			nullptr, 0, HELP_ObjectWindow);
 	praat_addMenuCommand (U"Objects", U"Help", U"-- manual --",
 			nullptr, 0, nullptr);

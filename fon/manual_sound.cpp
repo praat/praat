@@ -667,7 +667,7 @@ NORMAL (U"See the @Formulas tutorial for examples and explanations.")
 MAN_END
 
 MAN_BEGIN (U"Sound: Get absolute extremum...", U"ppgb", 20040711)
-INTRO (U"A @query to the selected @Sound object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Sound object.")
 ENTRY (U"Return value")
 NORMAL (U"the absolute extremum (in Pascal) within a specified time window.")
 ENTRY (U"Settings")
@@ -681,7 +681,7 @@ DEFINITION (U"the interpolation method (None, Parabolic, Sinc) of the @@vector p
 MAN_END
 
 MAN_BEGIN (U"Sound: Get energy...", U"ppgb", 20210719)
-INTRO (U"A @query to the selected @Sound object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Sound object.")
 ENTRY (U"Availability")
 NORMAL (U"This command becomes available in the Query submenu when you select one Sound. "
 	"Like most query commands, it is greyed out if you select two Sounds or more.")
@@ -743,7 +743,7 @@ NORMAL (U"If the sound is not defined everywhere between %t__1_ and %t__2_, then
 MAN_END
 
 MAN_BEGIN (U"Sound: Get energy in air", U"ppgb", 20070129)
-INTRO (U"A @query to the selected @Sound object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Sound object.")
 ENTRY (U"Return value")
 NORMAL (U"The energy in air, expressed in Joule/m^2.")
 ENTRY (U"Algorithm")
@@ -758,7 +758,7 @@ NORMAL (U"For an air-independent interpretation of the energy, see @@Sound: Get 
 MAN_END
 
 MAN_BEGIN (U"Sound: Get intensity (dB)", U"ppgb", 20070129)
-INTRO (U"A @query to the selected @Sound object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Sound object.")
 ENTRY (U"Return value")
 NORMAL (U"the intensity in air, expressed in dB relative to the auditory threshold.")
 ENTRY (U"Algorithm")
@@ -772,8 +772,8 @@ NORMAL (U"For the intensity in Watt/m^2, see @@Sound: Get power in air@. For an 
 	"see @@Excitation: Get loudness@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get maximum...", U"ppgb", 20200912)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get maximum...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the maximum amplitude (sound pressure in Pascal) within a specified time window.")
 ENTRY (U"Settings")
 TAG (U"##Time range (s)")
@@ -785,8 +785,8 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get mean...", U"ppgb", 20041123)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get mean...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the mean amplitude (sound pressure in Pascal) within a specified time range.")
 ENTRY (U"Setting")
 TAG (U"##Time range (s)")
@@ -798,8 +798,8 @@ EQUATION (U"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %x(%t) %dt")
 NORMAL (U"where %x(%t) is the amplitude of the sound in Pa.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get minimum...", U"ppgb", 20200912)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get minimum...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the minimum amplitude (sound pressure in Pascal) within a specified time window.")
 ENTRY (U"Settings")
 TAG (U"##Time range (s)")
@@ -811,8 +811,8 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get nearest zero crossing...", U"ppgb", 20041123)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get nearest zero crossing...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the time associated with the zero crossing nearest to a specified time point. "
 	"It is @undefined if there are no zero crossings or if the specified time is outside the time domain of the sound. "
 	"Linear interpolation is used between sample points.")
@@ -821,8 +821,8 @@ TAG (U"##Time (s)")
 DEFINITION (U"the time for which you want to get the time of the nearest zero crossing.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get power...", U"ppgb", 20070129)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get power...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the power within a specified time window. "
 	"If the unit of sound amplitude is Pa (Pascal), the unit of power will be Pa^2.")
 ENTRY (U"Setting")
@@ -839,8 +839,8 @@ NORMAL (U"For an interpretation of the power as the sound power in air, see @@So
 	"For the total energy, see @@Sound: Get energy...@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get power in air", U"ppgb", 20070129)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get power in air", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the power in air, expressed in Watt/m^2.")
 ENTRY (U"Mathematical definition")
 NORMAL (U"The power of a sound in air is defined as")
@@ -853,8 +853,8 @@ NORMAL (U"For an air-independent interpretation of the power, see @@Sound: Get p
 	"see @@Sound: Get intensity (dB)@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get root-mean-square...", U"ppgb", 20070129)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get root-mean-square...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the root-mean-square (rms) value of the sound pressure, expressed in Pascal.")
 ENTRY (U"Setting")
 TAG (U"##Time range (s)")
@@ -867,8 +867,8 @@ NORMAL (U"where %x(%t) is the amplitude of the sound. "
 	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get standard deviation...", U"ppgb", 20041123)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get standard deviation...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the standard deviation (in Pascal) of the sound pressure within a specified window. "
 	"If the sound contains less than 2 samples, the value is @undefined.")
 ENTRY (U"Setting")
@@ -884,8 +884,8 @@ EQUATION (U"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
 NORMAL (U"where %n is the number of sample centres between %t__1_ and %t__2_. Note the \"minus 1\".")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get time of maximum...", U"ppgb", 20200912)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get time of maximum...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the time (in seconds) associated with the maximum pressure in a specified time range.")
 ENTRY (U"Settings")
 TAG (U"##Time range (s)")
@@ -897,8 +897,8 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get time of minimum...", U"ppgb", 20200912)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get time of minimum...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the time (in seconds) associated with the minimum pressure in a specified time range.")
 ENTRY (U"Settings")
 TAG (U"##Time range (s)")
@@ -910,8 +910,8 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get value at sample number...", U"ppgb", 20040420)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get value at sample number...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show the amplitude (sound pressure in Pascal) at a specified sample number. "
 	"If the sample number is less than 1 or greater than the number of samples, the result is @undefined.")
 ENTRY (U"Setting")
@@ -919,8 +919,8 @@ TAG (U"##Sample number")
 DEFINITION (U"the sample number at which the value is to be evaluated.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get value at time...", U"ppgb", 20200912)
-INTRO (U"A command available in the #Query menu if you select a @Sound object. "
+MAN_BEGIN (U"Sound: Get value at time...", U"ppgb", 20221202)
+INTRO (U"A command available in the @@Query submenu@ if you select a @Sound object. "
 	"The Info window will show an estimate of the amplitude (sound pressure in Pascal) at a specified time. "
 	"If that time is outside the samples of the Sound, the result is equal to the value of the nearest sample; "
 	"otherwise, the result is an interpolated value.")
