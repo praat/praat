@@ -57,7 +57,7 @@ NORMAL (U"See the @Formulas tutorial for examples and explanations.")
 MAN_END
 
 MAN_BEGIN (U"Harmonicity: Get maximum...", U"ppgb", 20200912)
-INTRO (U"A @query to the selected @Harmonicity object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the maximum value, expressed in dB.")
 ENTRY (U"Settings")
@@ -72,7 +72,7 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc, #sinc7
 MAN_END
 
 MAN_BEGIN (U"Harmonicity: Get mean...", U"ppgb", 20041107)
-INTRO (U"A @query to the selected @Harmonicity object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean value, expressed in dB.")
 ENTRY (U"Setting")
@@ -88,7 +88,7 @@ NORMAL (U"where %x(%t) is the harmonicity (in dB) as a function of time. "
 MAN_END
 
 MAN_BEGIN (U"Harmonicity: Get minimum...", U"ppgb", 20200912)
-INTRO (U"A @query to the selected @Harmonicity object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the minimum value, expressed in dB.")
 ENTRY (U"Settings")
@@ -102,7 +102,7 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 MAN_END
 
 MAN_BEGIN (U"Harmonicity: Get standard deviation...", U"ppgb", 20041107)
-INTRO (U"A @query to the selected @Harmonicity object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation, expressed in dB.")
 ENTRY (U"Setting")
@@ -119,7 +119,7 @@ NORMAL (U"where %n is the number of frame centres between %t__1_ and %t__2_. Not
 MAN_END
 
 MAN_BEGIN (U"Harmonicity: Get time of maximum...", U"ppgb", 20200912)
-INTRO (U"A @query to the selected @Harmonicity object for the time associated with its maximum value.")
+INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object for the time associated with its maximum value.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the maximum HNR value.")
 ENTRY (U"Settings")
@@ -133,7 +133,7 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 MAN_END
 
 MAN_BEGIN (U"Harmonicity: Get time of minimum...", U"ppgb", 20200912)
-INTRO (U"A @query to the selected @Harmonicity object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the minimum HNR value.")
 ENTRY (U"Settings")
@@ -147,7 +147,7 @@ DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sin
 MAN_END
 
 MAN_BEGIN (U"Harmonicity: Get value at time...", U"ppgb", 20041107)
-INTRO (U"A @query to the selected @Harmonicity object to .")
+INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object to .")
 ENTRY (U"Return value")
 NORMAL (U"an estimate (in dB) of the value at a specified time. "
 	"If this time is outside the time domain or outside the samples of the Harmonicity, the result is @undefined.")
@@ -161,7 +161,7 @@ DEFINITION (U"the interpolation method, see @@vector value interpolation@. "
 MAN_END
 
 MAN_BEGIN (U"Harmonicity: Get value in frame...", U"ppgb", 20041107)
-INTRO (U"A @query to the selected @Harmonicity object.")
+INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the value in a specified frame, expressed in dB. "
 	"If the index is less than 1 or greater than the number of frames, the result is @undefined.")
@@ -473,7 +473,7 @@ NORMAL (U"The times of all the pitch points are trivially copied, and so is the 
 MAN_END
 
 MAN_BEGIN (U"PitchTier: Get mean (curve)...", U"ppgb", 20170618)
-INTRO (U"A @query to the selected @PitchTier object.")
+INTRO (U"A @@Query submenu|query@ to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean of the curve within a specified time window.")
 ENTRY (U"Settings")
@@ -494,7 +494,7 @@ NORMAL (U"To get the mean of the pitch points, i.e. not weighted by the duration
 MAN_END
 
 MAN_BEGIN (U"PitchTier: Get mean (points)...", U"ppgb", 20010821)
-INTRO (U"A @query to the selected @PitchTier object.")
+INTRO (U"A @@Query submenu|query@ to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean of the points within a specified time window.")
 ENTRY (U"Settings")
@@ -507,7 +507,7 @@ NORMAL (U"To get the mean in the entire curve, i.e. weighted by the durations of
 MAN_END
 
 MAN_BEGIN (U"PitchTier: Get standard deviation (curve)...", U"ppgb", 20010821)
-INTRO (U"A @query to the selected @PitchTier object.")
+INTRO (U"A @@Query submenu|query@ to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation in the curve within a specified time window.")
 ENTRY (U"Settings")
@@ -525,7 +525,7 @@ NORMAL (U"To get the standard deviation in the points only, i.e. not weighted by
 MAN_END
 
 MAN_BEGIN (U"PitchTier: Get standard deviation (points)...", U"ppgb", 20010821)
-INTRO (U"A @query to the selected @PitchTier object.")
+INTRO (U"A @@Query submenu|query@ to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation in the points within a specified time window.")
 ENTRY (U"Settings")

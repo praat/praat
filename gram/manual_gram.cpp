@@ -286,7 +286,7 @@ NORMAL (U"The second tableau shows that /pa/ always surfaces as [pa], which is n
 MAN_END
 
 MAN_BEGIN (U"OT learning 2.2. Inside the grammar", U"ppgb", 20110129)
-NORMAL (U"You can save an @OTGrammar grammar as a text file by choosing @@Save as text file...@ from the #Save menu "
+NORMAL (U"You can save an @OTGrammar grammar as a text file by choosing @@Save as text file...@ from the @@Save menu@ "
 	"of the Objects window. For the N\\s{O}C\\s{ODA} example, the contents of the file will look like:")
 CODE (U"File type = \"ooTextFile\"")
 CODE (U"Object class = \"OTGrammar 2\"")
@@ -962,7 +962,7 @@ NORMAL (U"In Tesar & Smolensky's view, the underlying form can be trivially comp
 	"this is the same result as in Tesar & Smolensky's "
 	"version, but crucial differences between the two versions will appear when faithfulness constraints are involved).")
 NORMAL (U"In Praat, you can do interpretive parsing. For example, create a grammar with ##Create metrics grammar...# "
-	"from the @@New menu@. Then choose ##Get interpretive parse...# from the #Query submenu and supply \"[L1 L L]\" for the "
+	"from the @@New menu@. Then choose ##Get interpretive parse...# from the @@Query submenu@ and supply \"[L1 L L]\" for the "
 	"overt form, which means a sequence of three light syllables with a main stress on the first. The Info window will show you "
 	"the optimal underlying and surface forms, given the current constraint ranking.")
 ENTRY (U"Learning from partial forms")

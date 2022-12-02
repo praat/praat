@@ -936,7 +936,7 @@ static void menu_cb_pageDown (FunctionEditor me, EDITOR_ARGS) {
 }
 
 
-#pragma mark - FunctionEditor View/Audio
+#pragma mark - FunctionEditor Play menu
 
 static void PLAY_DATA__play (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Play", nullptr)
@@ -975,9 +975,6 @@ static void PLAY_DATA__interruptPlaying (FunctionEditor me, EDITOR_ARGS) {
 		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	PLAY_DATA_END
 }
-
-
-#pragma mark - FunctionEditor View all
 
 void structFunctionEditor :: v_createMenuItems_play (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Audio:", 0, nullptr);

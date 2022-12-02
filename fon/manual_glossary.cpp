@@ -190,7 +190,7 @@ MAN_END
 
 MAN_BEGIN (U"objects", U"ppgb", 20030528)
 INTRO (U"The things that contain the data in the Praat program.")
-NORMAL (U"The objects are visible in the @@List of Objects@ in the @@Object window@.")
+NORMAL (U"The objects are visible in the @@List of Objects@ in the @@Objects window@.")
 NORMAL (U"Most objects are contained in memory: they are %not files! "
 	"Therefore, you may want to save them with one of the commands from the @@Save menu@ "
 	"before you @Quit. "
@@ -451,7 +451,7 @@ NORMAL (U"On a clock, time runs around in circles. In Praat's editor windows, ti
 	"To see another part, you %scroll backward or forward.")
 MAN_END
 
-MAN_BEGIN (U"time domain", U"ppgb", 20140421)
+MAN_BEGIN (U"time domain", U"ppgb", 20221202)
 INTRO (U"This manual page assumes that you have read the @Intro.")
 NORMAL (U"Many objects in Praat are %%functions of time%. Examples are: "
 	"@Sound, @Pitch, @Spectrogram, @Formant, @Intensity, @TextGrid, "
@@ -477,7 +477,7 @@ NORMAL (U"If you select an object that is a function of time and click #Info, "
 	"the Info window will tell you the start time, the end time, and the total duration (among other properties of the object).")
 ENTRY (U"Time domain query commands")
 NORMAL (U"If you select an object that is a function of time, "
-	"the following three commands will become available in the #Query menu:")
+	"the following three commands will become available in the @@Query submenu@:")
 LIST_ITEM (U"##Get start time")
 LIST_ITEM (U"##Get end time")
 LIST_ITEM (U"##Get total duration")

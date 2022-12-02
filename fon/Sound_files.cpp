@@ -1,6 +1,6 @@
 /* Sound_files.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2018,2020,2022 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

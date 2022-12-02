@@ -92,7 +92,7 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 MAN_END
 
 MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210813)
-INTRO (U"A command available in the ##Query# menu if you select a @@Formant@ object. The Info window will show the characteristics of the slope of the chosen interval as a vector with a number of values.")
+INTRO (U"A command available in the @@Query submenu@ if you select a @@Formant@ object. The Info window will show the characteristics of the slope of the chosen interval as a vector with a number of values.")
 ENTRY (U"Settings")
 TAG (U"##Formant number#,")
 DEFINITION (U"defines the formant whose slope characteristics you want.")

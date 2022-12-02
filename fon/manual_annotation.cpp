@@ -267,7 +267,7 @@ NORMAL (U"To copy the selected part of the Sound or LongSound as a Sound to the 
 NORMAL (U"If you are viewing a LongSound, you can save the selected part of it to a 16-bit sound file "
 	"(AIFF, AIFC, WAV, NeXT/Sun, NIST) with a command from the File menu.")
 ENTRY (U"Accelerations")
-NORMAL (U"To save the @TextGrid object as a text file without going to the @@Object window@: "
+NORMAL (U"To save the @TextGrid object as a text file without going to the @@Objects window@: "
 	"choose ##Save TextGrid as text file...# from the #File menu.")
 ENTRY (U"Searching")
 NORMAL (U"The Search menu contains the command #Find (@@Keyboard shortcuts|Command-F@), which will allow you to specify "
