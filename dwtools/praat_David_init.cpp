@@ -7018,6 +7018,12 @@ DIRECT (CREATE_ONE__Table_create_petersonBarney1952) {
 	CREATE_ONE_END (U"pb")
 }
 
+DIRECT (CREATE_ONE__Table_create_hillenbrandEtAl1995) {
+	CREATE_ONE
+		autoTable result = Table_create_hillenbrandEtAl1995 ();
+	CREATE_ONE_END (U"h95")
+}
+
 DIRECT (CREATE_ONE__Table_create_polsVanNierop1973) {
 	CREATE_ONE
 		autoTable result = Table_create_polsVanNierop1973 ();
@@ -8994,6 +9000,9 @@ void praat_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Data sets from the literature", U"Create Table without column names...", 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Data sets from the literature", 2,
 			CREATE_ONE__Table_create_petersonBarney1952);
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Hillenbrand et al 1995)", U"Data sets from the literature", 
+		GuiMenu_HIDDEN + GuiMenu_DEPTH_2,
+			CREATE_ONE__Table_create_hillenbrandEtAl1995);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Pols & Van Nierop 1973)", U"Create formant table (Peterson & Barney 1952)", 2,
 			CREATE_ONE__Table_create_polsVanNierop1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Weenink 1985)", U"Create formant table (Pols & Van Nierop 1973)", 2,
