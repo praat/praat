@@ -6558,7 +6558,7 @@ autoTable Table_create_hillenbrandEtAl1995 () {
 		for (integer j = 0; j < 42; j ++)
 			row -> cells [j + 6]. string = Melder_dup (Melder_integer (hillenbranddata [irow - 1].data [j]));
 		const double dur = hillenbranddata [irow - 1]. data [1] / 1000.0;
-		row ->  cells [2]. string = Melder_dup (Melder_fixed (dur, 3));
+		row ->  cells [7]. string = Melder_dup (Melder_fixed (dur, 3));
 	}
 			
 	for (integer icol = 1; icol <= numberOfColumns; icol ++) {
