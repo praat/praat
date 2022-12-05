@@ -187,128 +187,210 @@ static void readError () {
 	Melder_throw (U"Error reading bytes from file.");
 }
 
-autoSound Sound_readFromKayFile (MelderFile file) {
+static autoDaata Sound_readFromKayFile (FILE *f) {
+	uint32 chunkSize = bingetu32LE (f);
+	if (chunkSize & 1)
+		chunkSize += 1;   // round up to even
+	if (chunkSize != 32 && chunkSize != 44)
+		Melder_throw (U"Unknown chunk size ", chunkSize, U". Please report to paul.boersma@uva.nl.");
+	char data [100];
+	if (fread (data, 1, 20, f) < 20)
+		readError ();
+	const double samplingFrequency = bingetu32LE (f);   // converting up (from 32 to 53 bits)
+	const integer numberOfSamples = bingetu32LE (f);
+	if (samplingFrequency <= 0 || samplingFrequency > 1e7 || numberOfSamples >= 1000000000)
+		Melder_throw (U"Not a correct Kay file.");
+	const int16 tmp1 = bingeti16LE (f);
+	const int16 tmp2 = bingeti16LE (f);
+	integer numberOfChannels = ( tmp1 == -1 || tmp2 == -1 ? 1 : 2 );
+	if (chunkSize == 44) {
+		const int16 tmp3 = bingeti16LE (f);
+		if (tmp3 != -1)
+			numberOfChannels ++;
+		const int16 tmp4 = bingeti16LE (f);
+		if (tmp4 != -1)
+			numberOfChannels ++;
+		const int16 tmp5 = bingeti16LE (f);
+		if (tmp5 != -1)
+			numberOfChannels ++;
+		const int16 tmp6 = bingeti16LE (f);
+		if (tmp6 != -1)
+			numberOfChannels ++;
+		const int16 tmp7 = bingeti16LE (f);
+		if (tmp7 != -1)
+			numberOfChannels ++;
+		const int16 tmp8 = bingeti16LE (f);
+		if (tmp8 != -1)
+			numberOfChannels ++;
+	}
+	/*
+		SD chunk.
+	*/
+	autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / samplingFrequency, samplingFrequency);
+	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+		if (fread (data, 1, 4, f) < 4)
+			readError ();
+		while (! strnequ (data, "SD", 2)) {
+			if (feof ((FILE *) f))
+				Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
+			chunkSize = bingetu32LE (f);
+			if (chunkSize & 1)
+				chunkSize += 1;   // round up to even
+			Melder_casual (U"Chunk ",
+				data [0], U" ", data [1], U" ", data [2], U" ", data [3], U" ", chunkSize);
+			fseek (f, chunkSize, SEEK_CUR);
+			if (fread (data, 1, 4, f) < 4)
+				readError ();
+		}
+		chunkSize = bingetu32LE (f);
+		integer residual = chunkSize - numberOfSamples * 2;
+		if (residual < 0)
+			Melder_throw (U"Incomplete SD chunk: attested size ", chunkSize, U" bytes,"
+				U" announced size ", numberOfSamples * 2, U" bytes. Please report to paul.boersma@uva.nl.");
+
+		for (integer i = 1; i <= numberOfSamples; i ++)
+			my z [ichan] [i] = (double) bingeti16LE (f) / 32768.0;
+		fseek (f, residual, SEEK_CUR);
+	}
+	//Melder_casual (ftell (f));
+	return me;
+}
+static autoDaata Sounds_readFromKayNasalityFile (FILE *f) {
+	uint32 chunkSize = bingetu32LE (f);
+	if (chunkSize & 1)
+		chunkSize += 1;   // round up to even
+	if (chunkSize != 100)
+		Melder_throw (U"Unknown chunk size ", chunkSize, U". Please report to paul.boersma@uva.nl.");
+	char data [100];
+	if (fread (data, 1, 20, f) < 20)
+		readError ();
+	const int16 tmp1 = bingeti16LE (f);
+	const int16 tmp2 = bingeti16LE (f);
+	integer numberOfChannels = ( tmp1 == -1 || tmp2 == -1 ? 1 : 2 );
+	const int16 tmp3 = bingeti16LE (f);
+	if (tmp3 != -1)
+		numberOfChannels ++;
+	const int16 tmp4 = bingeti16LE (f);
+	if (tmp4 != -1)
+		numberOfChannels ++;
+	const int16 tmp5 = bingeti16LE (f);
+	if (tmp5 != -1)
+		numberOfChannels ++;
+	const int16 tmp6 = bingeti16LE (f);
+	if (tmp6 != -1)
+		numberOfChannels ++;
+	const int16 tmp7 = bingeti16LE (f);
+	if (tmp7 != -1)
+		numberOfChannels ++;
+	const int16 tmp8 = bingeti16LE (f);
+	if (tmp8 != -1)
+		numberOfChannels ++;
+	double channelSamplingFrequencies [1+8] = { 0.0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined };
+	for (int ichan = 1; ichan <= 8; ichan ++)
+		channelSamplingFrequencies [ichan] = bingetu32LE (f);   // converting up (from 32 to 53 bits)
+	if (false) {
+		const double samplingFrequency = channelSamplingFrequencies [1];
+		for (int ichan = 2; ichan <= 8; ichan ++)
+			if (ichan <= numberOfChannels) {
+				if (channelSamplingFrequencies [ichan] != samplingFrequency)
+					Melder_throw (U"Sampling frequencies of different channels (1 = ",
+						samplingFrequency, U" Hz, and ", ichan, U" = ", channelSamplingFrequencies [ichan],
+						U" Hz) do not match."
+					);
+			} else {
+				if (channelSamplingFrequencies [ichan] != 0.0)
+					Melder_throw (U"Sampling frequency of non-existent channel ", ichan,
+						U" should be 0 but is ", channelSamplingFrequencies [ichan], U" Hz."
+					);
+			}
+	}
+	integer channelNumbersOfSamples [1+8] = { 0, -1, -1, -1, -1, -1, -1, -1, -1 };
+	for (int ichan = 1; ichan <= 8; ichan ++)
+		channelNumbersOfSamples [ichan] = bingetu32LE (f);
+	if (false) {
+		const integer numberOfSamples = channelNumbersOfSamples [1];
+		for (int ichan = 2; ichan <= 8; ichan ++)
+			if (ichan <= numberOfChannels) {
+				if (channelNumbersOfSamples [ichan] != numberOfSamples)
+					Melder_throw (U"Sample counts of different channels (1 = ",
+						numberOfSamples, U" Hz, and ", ichan, U" = ", channelNumbersOfSamples [ichan],
+						U" Hz) do not match."
+					);
+			} else {
+				if (channelNumbersOfSamples [ichan] != 0)
+					Melder_throw (U"Sample count of non-existent channel ", ichan,
+						U" should be 0 but is ", channelNumbersOfSamples [ichan], U"."
+					);
+			}
+	}
+	/*
+		SD chunk.
+	*/
+	autoCollection me = Collection_create ();
+	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+		if (fread (data, 1, 4, f) < 4)
+			readError ();
+		while (! strnequ (data, "SD", 2)) {
+			if (feof ((FILE *) f))
+				Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
+			chunkSize = bingetu32LE (f);
+			if (chunkSize & 1)
+				chunkSize += 1;   // round up to even
+			Melder_casual (U"Chunk ",
+				data [0], U" ", data [1], U" ", data [2], U" ", data [3], U" ", chunkSize);
+			fseek (f, chunkSize, SEEK_CUR);
+			if (fread (data, 1, 4, f) < 4)
+				readError ();
+		}
+		chunkSize = bingetu32LE (f);
+		//integer residual = chunkSize - numberOfSamples * 2;
+		//if (residual < 0)
+		//	Melder_throw (U"Incomplete SD chunk: attested size ", chunkSize, U" bytes,"
+		//		U" announced size ", numberOfSamples * 2, U" bytes. Please report to paul.boersma@uva.nl.");
+		autoSound you = Sound_createSimple (1,
+			channelNumbersOfSamples [ichan] / channelSamplingFrequencies [ichan],
+			channelSamplingFrequencies [ichan]
+		);
+		if (channelNumbersOfSamples [ichan] == channelNumbersOfSamples [1])
+			for (integer i = 1; i <= channelNumbersOfSamples [ichan]; i ++)
+				your z [1] [i] = (double) bingeti16LE (f) / 32768.0;
+		else
+			for (integer i = 1; i <= channelNumbersOfSamples [ichan]; i ++)
+				your z [1] [i] = (double) bingeti16LE (f) / 100.0;
+		//fseek (f, residual, SEEK_CUR);
+		Thing_setName (you.get(), ichan == 1 ? U"_nasal" : ichan == 2 ? U"_oral" : U"_nasalance");
+		my addItem_move (you.move());
+	}
+	//Melder_casual (ftell (f));
+	return me;
+}
+
+autoDaata Sound_readFromAnyKayFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
-
-		/* Read header of KAY file: 12 bytes. */
-
+		/*
+			Read header of KAY file: 12 bytes.
+		*/
 		char data [100];
-		if (fread (data, 1, 12, f) < 12)
+		if (fread (data, 1, 8, f) < 8)
 			readError ();
 		if (! strnequ (data, "FORMDS16", 8))
 			Melder_throw (U"Not a KAY DS-16 file.");
-
-		/* HEDR or HDR8 chunk */
-
 		if (fread (data, 1, 4, f) < 4)   // this contains the size of the DS16 chunk: typically 12 bytes less than the size of the file
+			readError ();
+		/*
+			Read header of HEDR or HDR8 or NHDR chunk.
+		*/
+		if (fread (data, 1, 4, f) < 4)
 			readError ();
 		if (! strnequ (data, "HEDR", 4) && ! strnequ (data, "HDR8", 4) && ! strnequ (data, "NHDR", 4))
 			Melder_throw (U"Missing HEDR or HDR8 or NHDR chunk. Please report to paul.boersma@uva.nl.");
-		uint32 chunkSize = bingetu32LE (f);
-		if (chunkSize & 1)
-			chunkSize += 1;   // round up to even
-		if (chunkSize != 32 && chunkSize != 44 && chunkSize != 100)
-			Melder_throw (U"Unknown chunk size ", chunkSize, U". Please report to paul.boersma@uva.nl.");
-		if (fread (data, 1, 20, f) < 20)
-			readError ();
-		double samplingFrequency;
-		uint32 numberOfSamples;
-		if (chunkSize == 32 || chunkSize == 44) {
-			samplingFrequency = bingetu32LE (f);   // converting up (from 32 to 53 bits)
-			numberOfSamples = bingetu32LE (f);
-			if (samplingFrequency <= 0 || samplingFrequency > 1e7 || numberOfSamples >= 1000000000)
-				Melder_throw (U"Not a correct Kay file.");
-		}
-		const int16 tmp1 = bingeti16LE (f);
-		const int16 tmp2 = bingeti16LE (f);
-		integer numberOfChannels = ( tmp1 == -1 || tmp2 == -1 ? 1 : 2 );
-		if (chunkSize == 44 || chunkSize == 100) {
-			const int16 tmp3 = bingeti16LE (f);
-			if (tmp3 != -1)
-				numberOfChannels ++;
-			const int16 tmp4 = bingeti16LE (f);
-			if (tmp4 != -1)
-				numberOfChannels ++;
-			const int16 tmp5 = bingeti16LE (f);
-			if (tmp5 != -1)
-				numberOfChannels ++;
-			const int16 tmp6 = bingeti16LE (f);
-			if (tmp6 != -1)
-				numberOfChannels ++;
-			const int16 tmp7 = bingeti16LE (f);
-			if (tmp7 != -1)
-				numberOfChannels ++;
-			const int16 tmp8 = bingeti16LE (f);
-			if (tmp8 != -1)
-				numberOfChannels ++;
-		}
-		if (chunkSize == 100) {
-			samplingFrequency = bingetu32LE (f);   // converting up (from 32 to 53 bits)
-			for (int ichan = 2; ichan <= 8; ichan ++) {
-				const double channelSamplingFrequency = bingetu32LE (f);
-				if (ichan <= numberOfChannels) {
-					if (channelSamplingFrequency != samplingFrequency)
-						Melder_throw (U"Sampling frequencies of different channels (1 = ",
-							samplingFrequency, U" Hz, and ", ichan, U" = ", channelSamplingFrequency,
-							U" Hz) do not match."
-						);
-				} else {
-					if (channelSamplingFrequency != 0.0)
-						Melder_throw (U"Sampling frequency of non-existent channel ", ichan,
-							U" should be 0 but is ", channelSamplingFrequency, U" Hz."
-						);
-				}
-			}
-			numberOfSamples = bingetu32LE (f);
-			for (int ichan = 2; ichan <= 8; ichan ++) {
-				const double channelNumberOfSamples = bingetu32LE (f);
-				if (ichan <= numberOfChannels) {
-					if (channelNumberOfSamples != numberOfSamples)
-						Melder_throw (U"Sample counts of different channels (1 = ",
-							numberOfSamples, U" Hz, and ", ichan, U" = ", channelNumberOfSamples,
-							U" Hz) do not match."
-						);
-				} else {
-					if (channelNumberOfSamples != 0)
-						Melder_throw (U"Sample count of non-existent channel ", ichan,
-							U" should be 0 but is ", channelNumberOfSamples, U"."
-						);
-				}
-			}
-		}
-
-		/* SD chunk */
-
-		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / samplingFrequency, samplingFrequency);
-		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
-			if (fread (data, 1, 4, f) < 4)
-				readError ();
-			while (! strnequ (data, "SD", 2)) {
-				if (feof ((FILE *) f))
-					Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
-				chunkSize = bingetu32LE (f);
-				if (chunkSize & 1)
-					chunkSize += 1;   // round up to even
-				Melder_casual (U"Chunk ",
-					data [0], U" ", data [1], U" ", data [2], U" ", data [3], U" ", chunkSize);
-				fseek (f, chunkSize, SEEK_CUR);
-				if (fread (data, 1, 4, f) < 4)
-					readError ();
-			}
-			chunkSize = bingetu32LE (f);
-			integer residual = chunkSize - numberOfSamples * 2;
-			if (residual < 0)
-				Melder_throw (U"Incomplete SD chunk: attested size ", chunkSize, U" bytes,"
-					U" announced size ", numberOfSamples * 2, U" bytes. Please report to paul.boersma@uva.nl.");
-
-			for (integer i = 1; i <= numberOfSamples; i ++)
-				my z [ichan] [i] = (double) bingeti16LE (f) / 32768.0;
-			fseek (f, residual, SEEK_CUR);
-		}
-		//Melder_casual (ftell (f));
+		/*
+			Read remainder of HEDR or HDR8 or NHDR chunk.
+		*/
+		autoDaata result = ( strnequ (data, "NHDR", 4) ? Sounds_readFromKayNasalityFile (f) : Sound_readFromKayFile (f) );
 		f.close (file);
-		return me;
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from Kay file ", file, U".");
 	}
