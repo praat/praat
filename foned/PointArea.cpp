@@ -41,7 +41,7 @@ void structPointArea :: v_drawInside () {
 }
 
 
-#pragma mark - PointArea Query menu
+#pragma mark - PointArea Query submenu
 
 static void QUERY_DATA_FOR_REAL__getJitter_local (PointArea me, EDITOR_ARGS) {
 	QUERY_DATA_FOR_REAL

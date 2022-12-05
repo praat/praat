@@ -940,7 +940,7 @@ NORMAL (U"First all row and column labels are changed according to the search "
 MAN_END
 
 MAN_BEGIN (U"Confusion: Get fraction correct", U"djmw", 20000225)
-INTRO (U"A @@query@ to ask the selected @Confusion matrix for the fraction of "
+INTRO (U"A @@Query submenu|query@ to ask the selected @Confusion matrix for the fraction of "
 	"correct classifications.")
 NORMAL (U"The \"fraction correct\" is defined as the quotient of the number "
 	"of correct classifications and the sum of the entries in the matrix.")
@@ -2523,7 +2523,7 @@ MAN_BEGIN (U"FilterBank: Draw frequency scales...", U"djmw", 20030901)
 MAN_END
 
 MAN_BEGIN (U"FilterBank: Get frequency in Hertz...", U"djmw", 20030901)
-INTRO (U"A @query to the selected FilterBank object.")
+INTRO (U"A @@Query submenu|query@ to the selected FilterBank object.")
 ENTRY (U"Return value")
 NORMAL (U"a frequency value in Hertz.")
 MAN_END

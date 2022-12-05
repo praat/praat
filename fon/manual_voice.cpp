@@ -214,7 +214,7 @@ NORMAL (U"The difference between Praat's and MDVP's jitter measures is due to a 
 	"For detailed illustrations, see @@Boersma (2009a)@.")
 MAN_END
 
-MAN_BEGIN (U"Voice 6. Automating voice analysis with a script", U"ppgb", 20140421)
+MAN_BEGIN (U"Voice 6. Automating voice analysis with a script", U"ppgb", 20221202)
 INTRO (U"In a Praat script you usually do not want to raise a Sound window. "
 	"Instead, you probably want to work with objects in the Objects window only. "
 	"This page tells you how to do that for voice analysis.")
@@ -240,10 +240,10 @@ NORMAL (U"What you should %not do if you want to perform voice analysis is to cr
 	"the resulting pulses would not be aligned to the periods in the Sound.")
 ENTRY (U"2. Measuring jitter from a script")
 NORMAL (U"Once you have a PointProcess that represents the periods in the Sound, "
-	"you can select it and choose some ##Get jitter# commands from the #Query menu.")
+	"you can select it and choose some ##Get jitter# commands from the @@Query submenu@.")
 ENTRY (U"3. Measuring shimmer from a script")
 NORMAL (U"Once you have a PointProcess that represents the periods in the Sound, "
-	"you can select it together with the Sound, then choose some ##Get shimmer# commands from the #Query menu.")
+	"you can select it together with the Sound, then choose some ##Get shimmer# commands from the @@Query submenu@.")
 ENTRY (U"4. Getting the whole voice report from a script")
 NORMAL (U"If you select the Sound, the Pitch, and the PointProcess together (all three), "
 	"there will be a button that says ##Voice report...#. If you press it, the voice report "

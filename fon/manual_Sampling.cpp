@@ -23,8 +23,8 @@
 void manual_Sampling_init (ManPages me);
 void manual_Sampling_init (ManPages me) {
 
-MAN_BEGIN (U"Get sampling period", U"ppgb", 20140421)
-INTRO (U"A command that becomes available in the #Query menu if you select a @Sound object.")
+MAN_BEGIN (U"Get sampling period", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a @Sound object.")
 NORMAL (U"The Info window will tell you the @@sampling period@ in seconds.")
 ENTRY (U"Usage")
 NORMAL (U"You will not often choose this command with the mouse, "
@@ -36,8 +36,8 @@ ENTRY (U"Details for hackers")
 NORMAL (U"With @Inspect, you can see how the sampling period is stored in a #Sound object: it is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (U"Get sampling frequency", U"ppgb", 20140421)
-INTRO (U"A command that becomes available in the #Query menu if you select a @Sound object.")
+MAN_BEGIN (U"Get sampling frequency", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a @Sound object.")
 NORMAL (U"The Info window will tell you the @@sampling frequency@ in hertz.")
 ENTRY (U"Usage")
 NORMAL (U"You will not often choose this command with the mouse, "
@@ -50,8 +50,8 @@ NORMAL (U"The sampling frequency is defined as 1 / (\\De%t), where \\De%t is the
 	"See @@Get sampling period@.")
 MAN_END
 
-MAN_BEGIN (U"Get time from sample number...", U"ppgb", 20040420)
-INTRO (U"A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
+MAN_BEGIN (U"Get time from sample number...", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a @Sound or @LongSound object.")
 NORMAL (U"The Info window will tell you the time (in seconds) associated with the sample number that you specify.")
 ENTRY (U"Setting")
 TAG (U"##Sample number")
@@ -66,8 +66,8 @@ NORMAL (U"If you select a Sound or LongSound and click @Inspect, "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (U"Get sample number from time...", U"ppgb", 20140421)
-INTRO (U"A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
+MAN_BEGIN (U"Get sample number from time...", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a @Sound or @LongSound object.")
 NORMAL (U"The Info window will tell you the sample number belonging to the time that you specify. "
 	"The result is presented as a real number.")
 ENTRY (U"Setting")
@@ -94,8 +94,8 @@ NORMAL (U"If you select a Sound or LongSound and click @Inspect, "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (U"Get number of samples", U"ppgb", 20040420)
-INTRO (U"A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
+MAN_BEGIN (U"Get number of samples", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a @Sound or @LongSound object.")
 NORMAL (U"The Info window will tell you the total number of time samples in this object.")
 ENTRY (U"Example")
 NORMAL (U"If the sampling frequency is 44100 hertz, a recording with a duration of 60 seconds "
@@ -105,8 +105,8 @@ NORMAL (U"If you select a Sound or LongSound and click @Inspect, "
 	"you can see how the number of samples is stored in the object: it is the #nx attribute.")
 MAN_END
 
-MAN_BEGIN (U"Get time from frame number...", U"ppgb", 20040420)
-INTRO (U"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
+MAN_BEGIN (U"Get time from frame number...", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
 NORMAL (U"The Info window will tell you the time associated with the frame number that you specify.")
 ENTRY (U"Setting")
@@ -122,8 +122,8 @@ NORMAL (U"If you select one of the above objects and click @Inspect, "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (U"Get frame number from time...", U"ppgb", 20140421)
-INTRO (U"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
+MAN_BEGIN (U"Get frame number from time...", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
 NORMAL (U"The Info window will tell you the frame number belonging to the time that you specify. "
 	"The result is presented as a real number.")
@@ -152,8 +152,8 @@ NORMAL (U"If you select one of the above objects and click @Inspect, "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (U"Get time step", U"ppgb", 20040420)
-INTRO (U"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
+MAN_BEGIN (U"Get time step", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
 NORMAL (U"The Info window will tell you the time difference between consecutive frames, e.g. "
 	"the time difference between consecutive formant circles in the sound editor window.")
@@ -162,8 +162,8 @@ NORMAL (U"If you select one of the above objects and click @Inspect, "
 	"you can see how the time step is stored in the object: it is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (U"Get number of frames", U"ppgb", 20040420)
-INTRO (U"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
+MAN_BEGIN (U"Get number of frames", U"ppgb", 20221202)
+INTRO (U"A command that becomes available in the @@Query submenu@ if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
 NORMAL (U"The Info window will tell you the total number of time frames in the object.")
 ENTRY (U"Details for hackers")

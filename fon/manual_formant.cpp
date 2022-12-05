@@ -132,7 +132,7 @@ NORMAL (U"For an example, see @@Source-filter synthesis@.")
 MAN_END
 
 MAN_BEGIN (U"Formant: Get bandwidth at time...", U"ppgb", 19991016)
-INTRO (U"A @query to the selected @Formant object for the bandwidth of the specified formant at the specified time.")
+INTRO (U"A @@Query submenu|query@ to the selected @Formant object for the bandwidth of the specified formant at the specified time.")
 ENTRY (U"Settings")
 TAG (U"##Formant number")
 DEFINITION (U"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
@@ -154,7 +154,7 @@ NORMAL (U"If possible (i.e. if the adjacent frame has enough formants), "
 MAN_END
 
 MAN_BEGIN (U"Formant: Get maximum...", U"ppgb", 19991016)
-INTRO (U"A @query to ask the selected @Formant object for the maximum value of the specified formant.")
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for the maximum value of the specified formant.")
 ENTRY (U"Return value")
 NORMAL (U"the maximum, in hertz or Bark.")
 ENTRY (U"Settings")
@@ -171,7 +171,7 @@ DEFINITION (U"the interpolation method (#None or #Parabolic). See @@vector peak 
 MAN_END
 
 MAN_BEGIN (U"Formant: Get mean...", U"ppgb", 20140421)
-INTRO (U"A @query to ask the selected @Formant object for the mean value of the specified formant.")
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for the mean value of the specified formant.")
 ENTRY (U"Return value")
 NORMAL (U"the mean, in hertz or Bark.")
 ENTRY (U"Settings")
@@ -191,7 +191,7 @@ NORMAL (U"In this case, the value will not be written into the Info window.")
 MAN_END
 
 MAN_BEGIN (U"Formant: Get minimum...", U"ppgb", 19991016)
-INTRO (U"A @query to ask the selected @Formant object for the minimum value of the specified formant.")
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for the minimum value of the specified formant.")
 ENTRY (U"Return value")
 NORMAL (U"the minimum, in hertz or Bark.")
 ENTRY (U"Settings")
@@ -208,7 +208,7 @@ DEFINITION (U"the interpolation method (#None or #Parabolic). See @@vector peak 
 MAN_END
 
 MAN_BEGIN (U"Formant: Get number of formants", U"ppgb", 19991016)
-INTRO (U"A @query to ask the selected @Formant object for the number of formants in a specified frame.")
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for the number of formants in a specified frame.")
 ENTRY (U"Setting")
 TAG (U"##Frame number")
 DEFINITION (U"the frame number whose formant count is sought.")
@@ -217,7 +217,7 @@ NORMAL (U"the number of formants.")
 MAN_END
 
 MAN_BEGIN (U"Formant: Get quantile...", U"ppgb", 19991016)
-INTRO (U"A @query to ask the selected @Formant object for an estimation of the specified quantile of the distribution "
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for an estimation of the specified quantile of the distribution "
 	"that underlies the attested values of the specified formant.")
 ENTRY (U"Return value")
 NORMAL (U"the quantile, in hertz or Bark.")
@@ -241,7 +241,7 @@ NORMAL (U"First, the available formant values within the selected time domain ar
 MAN_END
 
 MAN_BEGIN (U"Formant: Get standard deviation", U"ppgb", 19991016)
-INTRO (U"A @query to ask the selected @Formant object for the standard deviation of the attested values of the specified formant "
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for the standard deviation of the attested values of the specified formant "
 	"within a specified time domain.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation, in hertz or Bark.")
@@ -257,7 +257,7 @@ DEFINITION (U"the units of the result (#Hertz or #Bark).")
 MAN_END
 
 MAN_BEGIN (U"Formant: Get time of maximum...", U"ppgb", 19991016)
-INTRO (U"A @query to ask the selected @Formant object for the time associated with the maximum value "
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for the time associated with the maximum value "
 	"of a specified formant within a specified time domain.")
 ENTRY (U"Settings")
 TAG (U"##Formant number")
@@ -275,7 +275,7 @@ NORMAL (U"the time expressed in seconds. If no relevant formants are found, the 
 MAN_END
 
 MAN_BEGIN (U"Formant: Get time of minimum...", U"ppgb", 19991016)
-INTRO (U"A @query to ask the selected @Formant object for the time associated with the minimum value "
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for the time associated with the minimum value "
 	"of a specified formant within a specified time domain.")
 ENTRY (U"Settings")
 TAG (U"##Formant number")
@@ -293,7 +293,7 @@ NORMAL (U"the time expressed in seconds. If no relevant formants are found, the 
 MAN_END
 
 MAN_BEGIN (U"Formant: Get value at time...", U"ppgb", 19991016)
-INTRO (U"A @query to ask the selected @Formant object for the frequency of the specified formant at the specified time.")
+INTRO (U"A @@Query submenu|query@ to ask the selected @Formant object for the frequency of the specified formant at the specified time.")
 ENTRY (U"Settings")
 TAG (U"##Formant number")
 DEFINITION (U"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")

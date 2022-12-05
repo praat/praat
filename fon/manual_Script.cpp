@@ -23,14 +23,14 @@ void manual_Script_init (ManPages me);
 void manual_Script_init (ManPages me) {
 
 MAN_BEGIN (U"Action commands", U"ppgb", 20110129)
-INTRO (U"The commands in the @@Dynamic menu@ of the @@Object window@.")
+INTRO (U"The commands in the @@Dynamic menu@ of the @@Objects window@.")
 NORMAL (U"These commands are only available if the right kinds of objects are selected. They are shown in a scrollable list, "
-	"or in the #Save menu if they start with \"Save as \" or \"Append to \".")
+	"or in the @@Save menu@ if they start with \"Save as \" or \"Append to \".")
 MAN_END
 
 MAN_BEGIN (U"Add action command...", U"ppgb", 20060920)
-INTRO (U"One of the hidden commands in the #Praat menu of the @@Object window@. "
-	"With this command, you add a button to the dynamic menu in the Object window.")
+INTRO (U"One of the hidden commands in the #Praat menu of the @@Objects window@. "
+	"With this command, you add a button to the dynamic menu in the Objects window.")
 ENTRY (U"Settings")
 NORMAL (U"See @@Add to dynamic menu...@.")
 ENTRY (U"Usage")
@@ -40,7 +40,7 @@ NORMAL (U"Normally, however, if you want to add a command to the dynamic menu, "
 MAN_END
 
 MAN_BEGIN (U"Add menu command...", U"ppgb", 20060920)
-INTRO (U"One of the hidden commands in the #Praat menu of the @@Object window@. "
+INTRO (U"One of the hidden commands in the #Praat menu of the @@Objects window@. "
 	"With this command, you add a button to any of the fixed menus in the Object or Picture window.")
 ENTRY (U"Settings")
 NORMAL (U"See @@Add to fixed menu...@.")
@@ -52,7 +52,7 @@ MAN_END
 
 MAN_BEGIN (U"Add to dynamic menu...", U"ppgb", 20140107)
 INTRO (U"A command in the #File menu of the @ScriptEditor.")
-NORMAL (U"With this command, you add a button to the dynamic menu in the @@Object window@. "
+NORMAL (U"With this command, you add a button to the dynamic menu in the @@Objects window@. "
 	"This button will only be visible if the specified combination of objects is selected. "
 	"Clicking the button will invoke the specified @@Praat script@.")
 ENTRY (U"Settings")
@@ -109,7 +109,7 @@ MAN_END
 
 MAN_BEGIN (U"Add to fixed menu...", U"ppgb", 20140107)
 INTRO (U"A command in the #File menu of the @ScriptEditor.")
-NORMAL (U"With this command, you add a button to any fixed menu in the @@Object window@ or in the @@Picture window@. "
+NORMAL (U"With this command, you add a button to any fixed menu in the @@Objects window@ or in the @@Picture window@. "
 	"Clicking the added button will invoke the specified @@Praat script@.")
 ENTRY (U"Settings")
 TAG (U"%Window")
@@ -186,7 +186,7 @@ MAN_END
 MAN_BEGIN (U"ButtonEditor", U"ppgb", 20060920)
 INTRO (U"An editor for viewing, hiding, showing, removing, and executing the commands "
 	"in the fixed and dynamic menus of the Praat program. To open it, choose ##Buttons...# "
-	"from the #Praat menu of the @@Object window@.")
+	"from the #Praat menu of the @@Objects window@.")
 ENTRY (U"What the button editor shows")
 NORMAL (U"The button editor gives a list of:")
 LIST_ITEM (U"1. The five fixed buttons.")
@@ -258,7 +258,7 @@ NORMAL (U"See the @Formulas tutorial for all the things that you can calculate w
 MAN_END
 
 MAN_BEGIN (U"Calculator...", U"ppgb", 20050822)
-INTRO (U"A command in the @Goodies submenu of the @@Praat menu@ of the @@Object window@. Shortcut: @@Keyboard shortcuts|Command-U@. "
+INTRO (U"A command in the @Goodies submenu of the @@Praat menu@ of the @@Objects window@. Shortcut: @@Keyboard shortcuts|Command-U@. "
 	"Choosing this command brings up Praat's @calculator.")
 MAN_END
 
@@ -275,7 +275,7 @@ EQUATION (U"differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)"
 MAN_END
 
 MAN_BEGIN (U"Fixed menu commands", U"ppgb", 20120915)
-INTRO (U"The commands in the fixed menus of the @@Object window@ (#Praat, #New, #Open, #Help, #Goodies, "
+INTRO (U"The commands in the fixed menus of the @@Objects window@ (#Praat, #New, #Open, #Help, #Goodies, "
 	"#Preferences, and #Technical) and the @@Picture window@ (#File, #Edit, #Margins, #World, #Select, #Pen, #Font, #Help).")
 NORMAL (U"These commands are always clickable (if not hidden) and scriptable (if not added).")
 MAN_END
@@ -1100,7 +1100,7 @@ CODE (U"800;sqrt(2)*sin(2*pi*103*0.5)+10\\^ (-40/20)*randomGauss(0,1)")
 NORMAL (U"evaluates to 800.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 8. Attributes of objects", U"ppgb", 20170614)
+MAN_BEGIN (U"Formulas 8. Attributes of objects", U"ppgb", 20221202)
 NORMAL (U"You can refer to several attributes of objects that are visible in the @@List of Objects@. "
 	"To do so, use either the unique ID of the object, or the type and the name of the object. "
 	"Thus, $$object[113]$ refers to the object that has the number 113 in the list, "
@@ -1117,7 +1117,7 @@ CODE (U"object[3].nx")
 NORMAL (U"or")
 CODE (U"object[\"Sound mysound\"].nx")
 NORMAL (U"After you click OK, the Info window will show the number of samples. Since you could have got this result "
-	"by simply selecting the object and choosing ##%%Get number of samples#% from the @Query menu, "
+	"by simply selecting the object and choosing ##%%Get number of samples#% from the @@Query submenu@, "
 	"these attribute tricks are not very useful in the calculator. "
 	"We will see that they are much more useful in creation and modification formulas and in scripts.")
 ENTRY (U"List of possible attributes")
@@ -1515,7 +1515,7 @@ ENTRY (U"What commands are hidden by default?")
 NORMAL (U"Commands that are expected to be of very limited use, are hidden by default. Examples are:")
 LIST_ITEM (U"1. The commands @@Add menu command...@, ##Hide menu command...#, ##Show menu command...#, "
 	"@@Add action command...@, ##Hide action command...#, and ##Show action command...# in the #Praat menu "
-	"of the @@Object window@. These are used in the @@buttons file@ and could be used by an @@initialization script@ or a @@plug-ins|plug-in@ "
+	"of the @@Objects window@. These are used in the @@buttons file@ and could be used by an @@initialization script@ or a @@plug-ins|plug-in@ "
 	"as well; in an interactive session, however, the functionality of these commands is part of the "
 	"@ScriptEditor and the @ButtonEditor.")
 LIST_ITEM (U"2. The command ##Read from old Praat picture file...# in the #File menu of the @@Picture window@. "
@@ -1805,7 +1805,7 @@ ENTRY (U"2. Some more commands")
 NORMAL (U"In the above example, you could use the #Play command because that was "
 	"the text on a button currently available in the dynamic menu. "
 	"Apart from these selection-dependent (dynamic) commands, "
-	"you can also use all fixed commands from the menus of the @@Object window@ "
+	"you can also use all fixed commands from the menus of the @@Objects window@ "
 	"and the @@Picture window@. For instance, try the following script:")
 CODE (U"Erase all")
 CODE (U"Draw inner box")
@@ -2213,10 +2213,10 @@ NORMAL (U"If you thought that $c would end up having the value 11.6, then you're
 	"consult anybody who writes programs.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 3.3. Numeric queries", U"ppgb", 20140111)
+MAN_BEGIN (U"Scripting 3.3. Numeric queries", U"ppgb", 20221202)
 INTRO (U"Now that you know how to script a menu command, and you know how variables work, "
 	"you are ready to combine the two.")
-NORMAL (U"Suppose you have selected a Sound in the object list. One of the commands available in the #Query menu "
+NORMAL (U"Suppose you have selected a Sound in the object list. One of the commands available in the @@Query submenu@ "
 	"is ##Get power...#. When you choose it, you will see the following settings window:")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (1), U""   // 7 - 3 * 0.3 (three is the number of additional radio buttons)
 	Manual_DRAW_SETTINGS_WINDOW ("Sound: Get power", 1)
@@ -2270,10 +2270,10 @@ LIST_ITEM (U"6. Still in line 3, the string value \"Hello world\" is assigned to
 LIST_ITEM (U"7. Line 4 reports in the Info window: $$The whole sentence is: Hello world$")
 MAN_END
 
-MAN_BEGIN (U"Scripting 3.5. String queries", U"ppgb", 20140111)
-INTRO (U"Just as you can use menu commands (usually in a #Query menu) to query @@Scripting 3.3. Numeric queries|numbers@, "
+MAN_BEGIN (U"Scripting 3.5. String queries", U"ppgb", 20221202)
+INTRO (U"Just as you can use menu commands (usually in a @@Query submenu@) to query @@Scripting 3.3. Numeric queries|numbers@, "
 	"you can query texts as well.")
-NORMAL (U"For instance, when you select a Textgrid, the #Query menu will contain the command ##Get label of interval...#, "
+NORMAL (U"For instance, when you select a Textgrid, the @@Query submenu@ will contain the command ##Get label of interval...#, "
 	"which takes two numeric arguments, namely ##Tier number# and ##Interval number#:")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2), U""
 	Manual_DRAW_SETTINGS_WINDOW ("TextGrid: Get label of interval", 2)
@@ -3476,8 +3476,8 @@ NORMAL (U"then running the current script will run the above-mentioned script $$
 	"which will play the file $$/Users/miep/research/project19/sounds/sound3.wav$.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.2. Writing to the Info window", U"ppgb", 20140111)
-NORMAL (U"With the @Info button and several commands in the #Query menus, "
+MAN_BEGIN (U"Scripting 6.2. Writing to the Info window", U"ppgb", 20221202)
+NORMAL (U"With the @Info button and several commands in the @@Query submenu@ (or with query commands in menus in the editors), "
 	"you write to the @@Info window@ (if your program is run from the command line, "
 	"the text goes to the console window or to %stdout instead; see @@Scripting 6.9. Calling from the command line|\\SS6.9).")
 NORMAL (U"The commands #writeInfo, #writeInfoLine, #appendInfo and #appendInfoLine "
@@ -4495,12 +4495,12 @@ CODE (U"for i to (tmax-tmin)/0.01")
 CODE (U"endfor")
 MAN_END
 
-MAN_BEGIN (U"Script for listing F0 statistics", U"ppgb", 20140112)
+MAN_BEGIN (U"Script for listing F0 statistics", U"ppgb", 20221202)
 INTRO (U"\"I need to split the wave into 50 msec sections, and then for each of those sections "
 	"get the F0 statistics. That is, for each 50 msec section of speech I want to get the average F0, "
 	"min, max, and standard deviation.\"")
 NORMAL (U"First you create the complete pitch contour, i.e., you select the Sound and choose "
-	"@@Sound: To Pitch...|To Pitch...@. You can then use the commands from the #Query menu in a loop:")
+	"@@Sound: To Pitch...|To Pitch...@. You can then use the commands from the @@Query submenu@ in a loop:")
 CODE (U"startTime = Get start time")
 CODE (U"endTime = Get end time")
 CODE (U"numberOfTimeSteps = (endTime - startTime) / 0.05")
