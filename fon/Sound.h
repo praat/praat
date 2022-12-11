@@ -306,7 +306,7 @@ void Sound_saveAsKayFile (Sound me, MelderFile file);   // 16-bit
 void Sound_saveAsSesamFile (Sound me, MelderFile file);   // 12-bit SESAM/LVS
 
 autoSound Sound_readFromSoundFile (MelderFile file);   // AIFF, WAV, NeXT/Sun, or NIST
-autoSound Sound_readFromKayFile (MelderFile file);   // 16-bit
+autoDaata Sound_readFromAnyKayFile (MelderFile file);   // 16-bit
 autoSound Sound_readFromSesamFile (MelderFile file);   // 12-bit SESAM/LVS
 autoSound Sound_readFromBellLabsFile (MelderFile file);   // 16-bit
 autoSound Sound_readFromRawAlawFile (MelderFile file);
