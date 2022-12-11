@@ -285,44 +285,42 @@ static autoDaata Sounds_readFromKayNasalityFile (FILE *f) {
 	const int16 tmp8 = bingeti16LE (f);
 	if (tmp8 != -1)
 		numberOfChannels ++;
+	Melder_require (numberOfChannels >= 2,
+		U"Expecting at least two channels (nasal and oral) instead of ", numberOfChannels,
+		U". Please report to paul.boersma@uva.nl."
+	);
+	Melder_require (numberOfChannels <= 3,
+		U"Expecting at most three channels (nasal, oral and nasalance) instead of ", numberOfChannels,
+		U". Please report to paul.boersma@uva.nl."
+	);
 	double channelSamplingFrequencies [1+8] = { 0.0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined };
 	for (int ichan = 1; ichan <= 8; ichan ++)
 		channelSamplingFrequencies [ichan] = bingetu32LE (f);   // converting up (from 32 to 53 bits)
-	if (false) {
-		const double samplingFrequency = channelSamplingFrequencies [1];
-		for (int ichan = 2; ichan <= 8; ichan ++)
-			if (ichan <= numberOfChannels) {
-				if (channelSamplingFrequencies [ichan] != samplingFrequency)
-					Melder_throw (U"Sampling frequencies of different channels (1 = ",
-						samplingFrequency, U" Hz, and ", ichan, U" = ", channelSamplingFrequencies [ichan],
-						U" Hz) do not match."
-					);
-			} else {
-				if (channelSamplingFrequencies [ichan] != 0.0)
-					Melder_throw (U"Sampling frequency of non-existent channel ", ichan,
-						U" should be 0 but is ", channelSamplingFrequencies [ichan], U" Hz."
-					);
-			}
-	}
+	Melder_require (channelSamplingFrequencies [2] == channelSamplingFrequencies [1],
+		U"Expecting equal sampling frequencies for channels 1 (nasal) and 2 (oral), "
+		"but found differing sampling frequencies (", channelSamplingFrequencies [1],
+		U" and ", channelSamplingFrequencies [2], U" Hz, respectively). Please report to paul.boersma@uva.nl."
+	);
+	for (integer ichan = numberOfChannels + 1; ichan <= 8; ichan ++)
+		Melder_require (channelSamplingFrequencies [ichan] == 0.0,
+			U"Sampling frequency of non-existent channel ", ichan,
+			U" should be 0 but is ", channelSamplingFrequencies [ichan],
+			U" Hz. Please report to paul.boersma@uva.nl."
+		);
 	integer channelNumbersOfSamples [1+8] = { 0, -1, -1, -1, -1, -1, -1, -1, -1 };
-	for (int ichan = 1; ichan <= 8; ichan ++)
+	for (integer ichan = 1; ichan <= 8; ichan ++)
 		channelNumbersOfSamples [ichan] = bingetu32LE (f);
-	if (false) {
-		const integer numberOfSamples = channelNumbersOfSamples [1];
-		for (int ichan = 2; ichan <= 8; ichan ++)
-			if (ichan <= numberOfChannels) {
-				if (channelNumbersOfSamples [ichan] != numberOfSamples)
-					Melder_throw (U"Sample counts of different channels (1 = ",
-						numberOfSamples, U" Hz, and ", ichan, U" = ", channelNumbersOfSamples [ichan],
-						U" Hz) do not match."
-					);
-			} else {
-				if (channelNumbersOfSamples [ichan] != 0)
-					Melder_throw (U"Sample count of non-existent channel ", ichan,
-						U" should be 0 but is ", channelNumbersOfSamples [ichan], U"."
-					);
-			}
-	}
+	Melder_require (channelNumbersOfSamples [2] == channelNumbersOfSamples [1],
+		U"Expecting equal numbers of samples in channels 1 (nasal) and 2 (oral), "
+		"but found differing numbers of samples (", channelNumbersOfSamples [1],
+		U" and ", channelNumbersOfSamples [2], U", respectively). Please report to paul.boersma@uva.nl."
+	);
+	for (integer ichan = numberOfChannels + 1; ichan <= 8; ichan ++)
+		Melder_require (channelNumbersOfSamples [ichan] == 0,
+			U"Sample count of non-existent channel ", ichan,
+			U" should be 0 but is ", channelNumbersOfSamples [ichan],
+			U". Please report to paul.boersma@uva.nl."
+		);
 	/*
 		SD chunk.
 	*/
