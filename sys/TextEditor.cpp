@@ -63,6 +63,8 @@ void structTextEditor :: v_nameChanged () {
 	}
 }
 
+#pragma mark - File menu
+
 static void openDocument (TextEditor me, MelderFile file) {
 	for (integer ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size; ieditor ++) {
 		TextEditor editor = theReferencesToAllOpenTextEditors.at [ieditor];
@@ -85,9 +87,9 @@ static void openDocument (TextEditor me, MelderFile file) {
 	autostring32 text = MelderFile_readText (file);
 	GuiText_setString (my textWidget, text.get());
 	/*
-	 * GuiText_setString has invoked the changeCallback,
-	 * which has set `my dirty` to `true`. Fix this.
-	 */
+		GuiText_setString has invoked the changeCallback,
+		which has set `my dirty` to `true`. Fix this.
+	*/
 	my dirty = false;
 	MelderFile_copy (file, & my file);
 	Thing_setName (me, Melder_fileToPath (file));
@@ -386,6 +388,8 @@ void structTextEditor :: v_goAway () {
 	}
 }
 
+#pragma mark - Edit menu
+
 static void menu_cb_undo (TextEditor me, EDITOR_ARGS) {
 	GuiText_undo (my textWidget);
 }
@@ -430,16 +434,108 @@ static bool getSelectedLines (TextEditor me, integer *firstLine, integer *lastLi
 	if (left == right)
 		return false;
 	*lastLine = *firstLine;
-	for (; i < right; i ++)
+	for (; i < right - 1; i ++)   // a newline at the end of a line is ignored (it belongs to the previous line)
 		if (text [i] == U'\n')
 			(*lastLine) ++;
 	return true;
 }
 
+static integer getPositionToInsertTabBeforeSelection (conststring32 text, const integer startingPosition) {
+	if (startingPosition == 0)
+		return 0;   // we will insert a tab at the start of the text
+	for (integer position = startingPosition - 1; position >= 0; position --)
+		if (text [position] == U'\n')
+			return position + 1;   // we will insert a tab after the last newline
+	return 0;   // we were on line 1 and will therefore insert a tab at the start of the text
+}
+static void menu_cb_shiftRight (TextEditor me, EDITOR_ARGS) {
+	/*
+		Get the old text from the GuiText.
+	*/
+	integer leftPosition, rightPosition;   // based between characters
+	autostring32 oldText = GuiText_getStringAndSelectionPosition (my textWidget, & leftPosition, & rightPosition);
+
+	/*
+		Convert the old text to the new text.
+	*/
+	autoMelderString newText;
+	const integer positionToInsertTabBeforeSelection = getPositionToInsertTabBeforeSelection (oldText.get(), leftPosition);
+	MelderString_ncopy (& newText, oldText.get(), positionToInsertTabBeforeSelection);
+	MelderString_appendCharacter (& newText, U'\t');
+	MelderString_nappend (& newText, & oldText [positionToInsertTabBeforeSelection],
+			leftPosition - positionToInsertTabBeforeSelection);
+	for (integer position = leftPosition; position < rightPosition; position ++) {
+		MelderString_appendCharacter (& newText, oldText [position]);
+		if (position < rightPosition - 1 && oldText [position] == U'\n')   // a newline at the end of the selection is ignored (it belongs to the previous line)
+			MelderString_appendCharacter (& newText, U'\t');
+	}
+	const integer newEndOfSelection = newText.length;
+	MelderString_append (& newText, & oldText [rightPosition]);
+
+	/*
+		Put the new text into the GuiText.
+	*/
+	GuiText_setString (my textWidget, newText.string);
+	GuiText_setSelection (my textWidget, leftPosition + 1, newEndOfSelection);
+	GuiText_scrollToSelection (my textWidget);
+	#ifdef _WIN32
+		GuiThing_show (my windowForm);
+	#endif
+}
+
+static integer getPositionToDeleteTabBeforeSelection (conststring32 text, const integer startingPosition) {
+	if (startingPosition == 0)
+		return -1;   // we cannot delete a tab before the start of the text
+	for (integer position = startingPosition - 2; position >= 0; position --)
+		if (text [position] == U'\n' && text [position + 1] == U'\t')
+			return position + 1;   // we will delete a tab after the last newline
+	return text [0] == U'\t' ? 0 : -1;   // we were on line 1 and may therefore insert a tab at the start of the text
+}
+static void menu_cb_shiftLeft (TextEditor me, EDITOR_ARGS) {
+	/*
+		Get the old text from the GuiText.
+	*/
+	integer leftPosition, rightPosition;   // based between characters
+	autostring32 oldText = GuiText_getStringAndSelectionPosition (my textWidget, & leftPosition, & rightPosition);
+
+	/*
+		Convert the old text to the new text.
+	*/
+	autoMelderString newText;
+	const integer positionToDeleteTabBeforeSelection = getPositionToDeleteTabBeforeSelection (oldText.get(), leftPosition);
+	const bool haveToDeleteTabBeforeSelection = ( positionToDeleteTabBeforeSelection >= 0 );
+	if (haveToDeleteTabBeforeSelection) {
+		MelderString_ncopy (& newText, oldText.get(), positionToDeleteTabBeforeSelection);
+		// skip the tab
+		constexpr integer numberOfDeletedTabs = 1;
+		MelderString_nappend (& newText, & oldText [positionToDeleteTabBeforeSelection + numberOfDeletedTabs],
+				leftPosition - (positionToDeleteTabBeforeSelection + numberOfDeletedTabs));
+	} else {
+		MelderString_ncopy (& newText, oldText.get(), leftPosition);
+	}
+	for (integer position = leftPosition; position < rightPosition; position ++)
+		if (oldText [position] != U'\t' || position > leftPosition && oldText [position - 1] != U'\n')
+			MelderString_appendCharacter (& newText, oldText [position]);
+	const integer newEndOfSelection = newText.length;
+	MelderString_append (& newText, & oldText [rightPosition]);
+
+	/*
+		Put the new text into the GuiText.
+	*/
+	GuiText_setString (my textWidget, newText.string);
+	GuiText_setSelection (my textWidget, leftPosition - ( haveToDeleteTabBeforeSelection ? 1 : 0 ), newEndOfSelection);
+	GuiText_scrollToSelection (my textWidget);
+	#ifdef _WIN32
+		GuiThing_show (my windowForm);
+	#endif
+}
+
+#pragma mark - Search menu
+
 static autostring32 theFindString, theReplaceString;
 static void do_find (TextEditor me) {
-	if (! theFindString)
-		return;   // e.g. when the user does "Find again" before having done any "Find"
+	if (! theFindString)   // e.g. when the user does "Find again" before having done any "Find"
+		return;
 	integer left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	char32 *location = str32str (& text [right], theFindString.get());
@@ -469,7 +565,8 @@ static void do_find (TextEditor me) {
 }
 
 static void do_replace (TextEditor me) {
-	if (! theReplaceString) return;   // e.g. when the user does "Replace again" before having done any "Replace"
+	if (! theReplaceString)   // e.g. when the user does "Replace again" before having done any "Replace"
+		return;
 	autostring32 selection = GuiText_getSelection (my textWidget);
 	if (! Melder_equ (selection.get(), theFindString.get())) {
 		do_find (me);
@@ -524,8 +621,10 @@ static void menu_cb_replace (TextEditor me, EDITOR_ARGS) {
 		TEXTFIELD (findString, U"Find", U"", 5)
 		TEXTFIELD (replaceString, U"Replace with", U"", 5)
 	EDITOR_OK
-		if (theFindString) SET_STRING (findString, theFindString.get());
-		if (theReplaceString) SET_STRING (replaceString, theReplaceString.get());
+		if (theFindString)
+			SET_STRING (findString, theFindString.get());
+		if (theReplaceString)
+			SET_STRING (replaceString, theReplaceString.get());
 	EDITOR_DO
 		theFindString = Melder_dup (findString);
 		theReplaceString = Melder_dup (replaceString);
@@ -620,11 +719,16 @@ static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS) {
 /***** 'Font' menu *****/
 
 static void updateSizeMenu (TextEditor me) {
-	if (my fontSizeButton_10) GuiMenuItem_check (my fontSizeButton_10, my instancePref_fontSize() == 10.0);
-	if (my fontSizeButton_12) GuiMenuItem_check (my fontSizeButton_12, my instancePref_fontSize() == 12.0);
-	if (my fontSizeButton_14) GuiMenuItem_check (my fontSizeButton_14, my instancePref_fontSize() == 14.0);
-	if (my fontSizeButton_18) GuiMenuItem_check (my fontSizeButton_18, my instancePref_fontSize() == 18.0);
-	if (my fontSizeButton_24) GuiMenuItem_check (my fontSizeButton_24, my instancePref_fontSize() == 24.0);
+	if (my fontSizeButton_10)
+		GuiMenuItem_check (my fontSizeButton_10, my instancePref_fontSize() == 10.0);
+	if (my fontSizeButton_12)
+		GuiMenuItem_check (my fontSizeButton_12, my instancePref_fontSize() == 12.0);
+	if (my fontSizeButton_14)
+		GuiMenuItem_check (my fontSizeButton_14, my instancePref_fontSize() == 14.0);
+	if (my fontSizeButton_18)
+		GuiMenuItem_check (my fontSizeButton_18, my instancePref_fontSize() == 18.0);
+	if (my fontSizeButton_24)
+		GuiMenuItem_check (my fontSizeButton_24, my instancePref_fontSize() == 24.0);
 }
 static void setFontSize (TextEditor me, double fontSize) {
 	GuiText_setFontSize (my textWidget, fontSize);
@@ -684,6 +788,9 @@ void structTextEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Copy", 'C', menu_cb_copy);
 	Editor_addCommand (this, U"Edit", U"Paste", 'V', menu_cb_paste);
 	Editor_addCommand (this, U"Edit", U"Erase", 0, menu_cb_erase);
+	Editor_addCommand (this, U"Edit", U"-- layout --", 0, nullptr);
+	Editor_addCommand (this, U"Edit", U"Shift right", ']', menu_cb_shiftRight);
+	Editor_addCommand (this, U"Edit", U"Shift left", '[', menu_cb_shiftLeft);
 
 	Editor_addMenu (this, U"Search", 0);
 	Editor_addCommand (this, U"Search", U"Find...", 'F', menu_cb_find);
