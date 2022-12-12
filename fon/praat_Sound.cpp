@@ -2046,7 +2046,7 @@ static autoDaata bellLabsFileRecognizer (integer nread, const char *header, Meld
 static autoDaata kayFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread <= 12 || ! strnequ (& header [0], "FORMDS16", 8))
 		return autoDaata ();
-	return Sound_readFromKayFile (file);
+	return Sound_readFromAnyKayFile (file);
 }
 
 /***** override play and record buttons in manuals *****/

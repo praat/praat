@@ -118,6 +118,19 @@ void MelderString_ncopy (MelderString *me, conststring32 source, int64 n) {
 	my length = length;
 }
 
+void MelderString_nappend (MelderString *me, conststring32 source, integer n) {
+	if (! source)
+		source = U"";
+	const integer numberOfCharactersToAppend = Melder_clippedRight (n, Melder_length (source));
+	const int64 sizeNeeded = my length + numberOfCharactersToAppend + 1;
+	Melder_assert (sizeNeeded > 0);
+	if (sizeNeeded > my bufferSize)
+		MelderString_expand_ <MelderString, char32> (me, sizeNeeded);
+	str32ncpy (my string + my length, source, numberOfCharactersToAppend);
+	my length += numberOfCharactersToAppend;
+	my string [my length] = U'\0';
+}
+
 void MelderString16_appendCharacter (MelderString16 *me, char32 kar) {
 	const int64 sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null character
 	if (sizeNeeded > my bufferSize)

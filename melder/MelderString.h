@@ -2,7 +2,7 @@
 #define _melder_string_h_
 /* MelderString.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ void MelderString16_empty (MelderString16 *me);   // sets to empty string (buffe
 void MelderString_empty (MelderString *me);   // sets to empty string (buffer shrunk if very large)
 void MelderString_expand (MelderString *me, int64 sizeNeeded);   // increases the buffer size; there's normally no need to call this
 void MelderString_ncopy (MelderString *me, conststring32 source, int64 n);
+void MelderString_nappend (MelderString *me, conststring32 source, integer n);
 
 inline void _recursiveTemplate_MelderString_append (MelderString *me, const MelderArg& arg) {
 	if (arg._arg) {
