@@ -485,11 +485,17 @@ static void menu_cb_shiftRight (TextEditor me, EDITOR_ARGS) {
 
 static integer getPositionToDeleteTabBeforeSelection (conststring32 text, const integer startingPosition) {
 	if (startingPosition == 0)
-		return -1;   // we cannot delete a tab before the start of the text
-	for (integer position = startingPosition - 2; position >= 0; position --)
-		if (text [position] == U'\n' && text [position + 1] == U'\t')
-			return position + 1;   // we will delete a tab after the last newline
-	return text [0] == U'\t' ? 0 : -1;   // we were on line 1 and may therefore insert a tab at the start of the text
+		if (text [startingPosition] == U'\t')
+			return 0;   // we can delete a tab from the start of the text
+		else
+			return -1;   // we cannot delete a tab before the start of the text
+	for (integer position = startingPosition - 1; position >= 0; position --)
+		if (text [position] == U'\n')
+			if (text [position + 1] == U'\t')
+				return position + 1;   // we will delete a tab after the last newline
+			else
+				return -1;   // we will not look past the last newline
+	return text [0] == U'\t' ? 0 : -1;   // we were on line 1 and may therefore delete a tab at the start of the text
 }
 static void menu_cb_shiftLeft (TextEditor me, EDITOR_ARGS) {
 	/*
@@ -500,30 +506,55 @@ static void menu_cb_shiftLeft (TextEditor me, EDITOR_ARGS) {
 
 	/*
 		Convert the old text to the new text.
+		First the part before the selection.
 	*/
 	autoMelderString newText;
 	const integer positionToDeleteTabBeforeSelection = getPositionToDeleteTabBeforeSelection (oldText.get(), leftPosition);
 	const bool haveToDeleteTabBeforeSelection = ( positionToDeleteTabBeforeSelection >= 0 );
-	if (haveToDeleteTabBeforeSelection) {
+	if (positionToDeleteTabBeforeSelection == leftPosition) {
 		MelderString_ncopy (& newText, oldText.get(), positionToDeleteTabBeforeSelection);
 		// skip the tab
-		constexpr integer numberOfDeletedTabs = 1;
-		MelderString_nappend (& newText, & oldText [positionToDeleteTabBeforeSelection + numberOfDeletedTabs],
-				leftPosition - (positionToDeleteTabBeforeSelection + numberOfDeletedTabs));
+		constexpr integer numberOfDeletedTabsInThisPart = 0;
+		MelderString_nappend (& newText, & oldText [positionToDeleteTabBeforeSelection + numberOfDeletedTabsInThisPart],
+				leftPosition - (positionToDeleteTabBeforeSelection + numberOfDeletedTabsInThisPart));
+	} else if (haveToDeleteTabBeforeSelection) {
+		MelderString_ncopy (& newText, oldText.get(), positionToDeleteTabBeforeSelection);
+		// skip the tab
+		constexpr integer numberOfDeletedTabsInThisPart = 1;
+		MelderString_nappend (& newText, & oldText [positionToDeleteTabBeforeSelection + numberOfDeletedTabsInThisPart],
+				leftPosition - (positionToDeleteTabBeforeSelection + numberOfDeletedTabsInThisPart));
 	} else {
 		MelderString_ncopy (& newText, oldText.get(), leftPosition);
 	}
-	for (integer position = leftPosition; position < rightPosition; position ++)
-		if (oldText [position] != U'\t' || position > leftPosition && oldText [position - 1] != U'\n')
-			MelderString_appendCharacter (& newText, oldText [position]);
+	/*
+		Then the part inside the selection.
+	*/
+	if (positionToDeleteTabBeforeSelection == leftPosition) {
+		constexpr integer numberOfDeletedTabsInThisPart = 1;
+		for (integer position = leftPosition + numberOfDeletedTabsInThisPart; position < rightPosition; position ++)
+			if (oldText [position] != U'\t' || position > leftPosition && oldText [position - 1] != U'\n')
+				MelderString_appendCharacter (& newText, oldText [position]);
+	} else {
+		constexpr integer numberOfDeletedTabsInThisPart = 0;
+		for (integer position = leftPosition + numberOfDeletedTabsInThisPart; position < rightPosition; position ++)
+			if (oldText [position] != U'\t' || position > leftPosition && oldText [position - 1] != U'\n')
+				MelderString_appendCharacter (& newText, oldText [position]);
+	}
+	/*
+		And finally the part after the selection.
+	*/
 	const integer newEndOfSelection = newText.length;
-	MelderString_append (& newText, & oldText [rightPosition]);
+	if (positionToDeleteTabBeforeSelection == rightPosition)
+		MelderString_append (& newText, & oldText [rightPosition + 1]);
+	else
+		MelderString_append (& newText, & oldText [rightPosition]);
 
 	/*
 		Put the new text into the GuiText.
 	*/
 	GuiText_setString (my textWidget, newText.string);
-	GuiText_setSelection (my textWidget, leftPosition - ( haveToDeleteTabBeforeSelection ? 1 : 0 ), newEndOfSelection);
+	GuiText_setSelection (my textWidget, leftPosition -
+			( haveToDeleteTabBeforeSelection && positionToDeleteTabBeforeSelection != leftPosition ? 1 : 0 ), newEndOfSelection);
 	GuiText_scrollToSelection (my textWidget);
 	#ifdef _WIN32
 		GuiThing_show (my windowForm);
@@ -681,6 +712,8 @@ static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS) {
 	EDITOR_END
 }
 
+#pragma mark - Convert menu
+
 static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS) {
 	autostring32 text = GuiText_getString (my textWidget);
 	char32 buffer [2] = U" ";
@@ -716,7 +749,7 @@ static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS) {
 	MelderInfo_close ();
 }
 
-/***** 'Font' menu *****/
+#pragma mark - Font menu
 
 static void updateSizeMenu (TextEditor me) {
 	if (my fontSizeButton_10)
@@ -834,6 +867,8 @@ autoTextEditor TextEditor_create (conststring32 initialText) {
 		Melder_throw (U"Text window not created.");
 	}
 }
+
+#pragma mark - Export
 
 void TextEditor_showOpen (TextEditor me) {
 	cb_showOpen (Editor_getMenuCommand (me, U"File", U"Open..."));
