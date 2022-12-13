@@ -1265,6 +1265,26 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantPath_robust, U"Sound: To FormantPath (robust)", U"Sound: To FormantPath (burg)...") {
+	REAL (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
+	REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	POSITIVE (numberOfStandardDeviations, U"Number of std. dev.", U"1.5")
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"5")
+	REAL (tolerance, U"Tolerance", U"0.000001")
+	LABEL (U"The maximum and minimum ceilings are determined as:")
+	LABEL (U" middleCeiling * exp(+/- ceilingStepSize * numberOfStepsToACeiling).")
+	POSITIVE (ceilingStepSize, U"Ceiling step size", U"0.05")
+	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Sound)
+		autoFormantPath result = Sound_to_FormantPath_robust (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, ceilingStepSize, numberOfStepsToACeiling);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 #define Sound_to_LPC_addWarning \
 	LABEL (U"Warning 1:  for formant analysis, use \"To Formant\" instead.") \
 	LABEL (U"Warning 2:  if you do use \"To LPC\", you may want to resample first.") \
@@ -1786,6 +1806,8 @@ void praat_uvafon_LPC_init () {
 			CONVERT_EACH_TO_ONE__Sound_to_FormantPath);
 	praat_addAction1 (classSound, 0, U"To FormantPath (burg)...", U"To FormantPath...", 1, 
 			CONVERT_EACH_TO_ONE__Sound_to_FormantPath_burg);
+	praat_addAction1 (classSound, 0, U"To FormantPath (robust)...", U"To FormantPath (burg)...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, 
+			CONVERT_EACH_TO_ONE__Sound_to_FormantPath_robust);
 	praat_addAction1 (classSound, 0, U"To LPC", U"To FormantPath...", 1, nullptr);
 	praat_addAction1 (classSound, 0, U"To LPC (autocorrelation)...", U"To LPC", 2,
 			CONVERT_EACH_TO_ONE__Sound_to_LPC_autocorrelation);
