@@ -43,8 +43,8 @@ void MelderString_free (MelderString *me);   // frees the buffer (and sets other
 void MelderString16_empty (MelderString16 *me);   // sets to empty string (buffer shrunk if very large)
 void MelderString_empty (MelderString *me);   // sets to empty string (buffer shrunk if very large)
 void MelderString_expand (MelderString *me, int64 sizeNeeded);   // increases the buffer size; there's normally no need to call this
-void MelderString_ncopy (MelderString *me, conststring32 source, int64 n);
-void MelderString_nappend (MelderString *me, conststring32 source, integer n);
+void MelderString_ncopy (MelderString *me, conststring32 sourceOrNull, int64 n);
+void MelderString_nappend (MelderString *me, conststring32 sourceOrNull, integer n);
 
 inline void _recursiveTemplate_MelderString_append (MelderString *me, const MelderArg& arg) {
 	if (arg._arg) {
