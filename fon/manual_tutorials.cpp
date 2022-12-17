@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20221129)
+MAN_BEGIN (U"What's new?", U"ppgb", 20221217)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.03# (17 December 2022)")
+LIST_ITEM (U"• Sound files: read Kay\\re Nasometer\\tm files (as separate channels).")
+LIST_ITEM (U"• Script window: indent and exdent.")
+LIST_ITEM (U"• Scripting: conserve editor environment in $runScript.")
 NORMAL (U"##6.3.02# (29 November 2022)")
 LIST_ITEM (U"• Linux: corrected a bug introduced in 6.2.20 by which typing Tab would not start a Sound.")
 LIST_ITEM (U"• Sound window: corrected a bug introduced in 6.2.19 by which drawing selection hairs could not be switched off "
