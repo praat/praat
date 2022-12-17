@@ -363,8 +363,8 @@ void praat_newWithFile (autoDaata me, MelderFile file, conststring32 myName) {
 	if (myName && myName [0]) {
 		MelderString_copy (& givenName, myName);
 		/*
-		 * Remove extension.
-		 */
+			Remove extension.
+		*/
 		char32 *p = str32rchr (givenName.string, U'.');
 		if (p)
 			*p = U'\0';
