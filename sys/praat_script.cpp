@@ -543,7 +543,7 @@ void praat_executeScriptFromFile (MelderFile file, conststring32 arguments, Edit
 	}
 }
 
-void praat_runScript (conststring32 fileName, integer narg, Stackel args) {
+void praat_runScript (conststring32 fileName, integer narg, Stackel args, Editor optionalEditor) {
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName, & file);
 	try {
@@ -553,7 +553,7 @@ void praat_runScript (conststring32 fileName, integer narg, Stackel args) {
 			autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used for including include files
 			Melder_includeIncludeFiles (& text);
 		}   // back to the default directory of the caller
-		autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (optionalEditor);
 		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromArgs (interpreter.get(), narg, args);   // interpret caller-relative paths for infile/outfile/folder arguments
 		autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used inside the script

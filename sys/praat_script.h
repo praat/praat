@@ -23,7 +23,7 @@
 bool praat_executeCommand (Interpreter me, char32 *command);   // returns false only if nocheck cancelled an error
 void praat_executeCommandFromStandardInput (conststring32 programName);
 void praat_executeScriptFromFile (MelderFile file, conststring32 arguments, Editor optionalEditor);
-void praat_runScript (conststring32 fileName, integer narg, Stackel args);   // called only from Formula as `runScript` (last checked 2022-10-07)
+void praat_runScript (conststring32 fileName, integer narg, Stackel args, Editor optionalEditor);   // called only from Formula as `runScript` (last checked 2022-10-07)
 void praat_executeScriptFromCommandLine (conststring32 fileName, integer argc, char **argv);   // called only from `praat_run` (last checked 2022-10-07)
 void praat_executeScriptFromFileNameWithArguments (conststring32 nameAndArguments);   // called only from `execute` (deprecated) and external man pages with \SC (last checked 2022-10-07)
 void praat_executeScriptFromText (conststring32 text);
