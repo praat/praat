@@ -77,7 +77,7 @@ inline static void MelderString_expand_ (STRING_TYPE *me, int64 sizeNeeded) {
 	totalAllocationSize += bytesNeeded;
 }
 
-void MelderString_expand (MelderString *me, int64 sizeNeeded) {
+void _private_MelderString_expand (MelderString *me, int64 sizeNeeded) {
 	MelderString_expand_ <MelderString, char32> (me, sizeNeeded);
 }
 
