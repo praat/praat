@@ -3172,11 +3172,13 @@ autoTable Table_create_ganong1980 () {
 	}
 }
 
-autoTable Table_createHillenbrandEtAl1995 () {
-	const conststring32 columnLabels [] = {U"name", U"f0", U"dur", U"F1", U"F2", U"F3", 
-		U"F1_10", U"F2_10", U"F3_10", U"F1_20", U"F2_20", U"F3_20", U"F1_30", U"F2_30", U"F3_30", U"F1_40", U"F2_40", U"F3_40",
-		U"F1_50", U"F2_50", U"F3_50", U"F1_60", U"F2_60", U"F3_60", U"F1_70", U"F2_70", U"F3_70", U"F1_80", U"F2_80", U"F3_80", 
-		U"perc", U"iy", U"ih", U"ei", U"eh", U"ae", U"ah", U"aw", U"oa", U"oo", U"uw", U"uh", U"er"};
+autoTable Table_create_hillenbrandEtAl1995 () {
+	const conststring32 columnLabels [] = {
+		U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"f0", U"dur", U"F1", U"F2", U"F3", 
+		U"F1_10", U"F2_10", U"F3_10", U"F1_20", U"F2_20", U"F3_20", U"F1_30", U"F2_30", U"F3_30", U"F1_40",
+		U"F2_40", U"F3_40",	U"F1_50", U"F2_50", U"F3_50", U"F1_60", U"F2_60", U"F3_60", U"F1_70", U"F2_70",
+		U"F3_70", U"F1_80", U"F2_80", U"F3_80", U"perc", U"iy", U"ih", U"ei", U"eh", U"ae", 
+		U"ah", U"aw", U"oa", U"oo", U"uw", U"uh", U"er"};
 
 	struct structHillenbrandDatum {
 		char name [6];
@@ -6521,15 +6523,42 @@ autoTable Table_createHillenbrandEtAl1995 () {
 	};
 	autoSTRVEC vowels ({U"ae", U"ah", U"aw", U"eh", U"ei", U"er", U"ih", U"iy", U"oa", U"oo", U"uh", U"uw"});
 	autoSTRVEC ipa    ({U"æ",  U"ɑ",  U"ɔ",  U"ɛ",  U"e",  U"ɝ",  U"ɪ",  U"i",  U"o",  U"ʊ",  U"ʌ",  U"u"});
-	const integer numberOfRows = 1668, numberOfColumns = 43;
+	const integer numberOfRows = 1668, numberOfColumns = 47;
 	autoTable me = Table_create (numberOfRows, numberOfColumns);
 	for (integer irow = 1; irow <= numberOfRows; irow ++) {
 		const TableRow row = my rows.at [irow];
-		row -> cells [1]. string = Melder_dup (Melder_peek8to32 (hillenbranddata [irow - 1].name));
+		conststring32 name = Melder_peek8to32 (hillenbranddata [irow - 1].name);
+		if (name [0] == U'm') {
+			row -> cells [1]. string = Melder_dup (U"m"); // Type
+			row -> cells [2]. string = Melder_dup (U"m"); // Sex
+		} else if (name[0] == U'w') {
+			row -> cells [1]. string = Melder_dup (U"w");
+			row -> cells [2]. string = Melder_dup (U"f");
+		} else if (name[0] == U'b') {
+			row -> cells [1]. string = Melder_dup (U"c");
+			row -> cells [2]. string = Melder_dup (U"m");
+		} else if (name[0] == U'g') {
+			row -> cells [1]. string = Melder_dup (U"c");
+			row -> cells [2]. string = Melder_dup (U"f");
+		}
+		char32 tmp [3] = U"\0\0";
+		if (name [1] == U'0') {
+			tmp [0] = name [2]; tmp [1] = U'\0';
+		} else {
+			tmp [0] = name [1]; tmp [1] = name [2];
+		}
+		row -> cells [3]. string = Melder_dup (tmp); // Speaker
+		tmp [0] = name [3]; tmp [1] = name [4];
+		row -> cells [4]. string = Melder_dup (tmp); // Vowel
+		for (integer ivowel = 1; ivowel <= vowels.size; ivowel ++) {
+			if (Melder_cmp (vowels [ivowel].get(), tmp) == 0) {
+				row -> cells [5]. string = Melder_dup (ipa [ivowel].get()); // Vowel
+			}
+		}
 		for (integer j = 0; j < 42; j ++)
-			row -> cells [j + 2]. string = Melder_dup (Melder_integer (hillenbranddata [irow - 1].data [j]));
+			row -> cells [j + 6]. string = Melder_dup (Melder_integer (hillenbranddata [irow - 1].data [j]));
 		const double dur = hillenbranddata [irow - 1]. data [1] / 1000.0;
-		row ->  cells [2]. string = Melder_dup (Melder_fixed (dur, 3));
+		row ->  cells [7]. string = Melder_dup (Melder_fixed (dur, 3));
 	}
 			
 	for (integer icol = 1; icol <= numberOfColumns; icol ++) {

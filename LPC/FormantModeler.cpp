@@ -402,7 +402,7 @@ void FormantModeler_drawModel_inside (FormantModeler me, Graphics g, double tmin
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		DataModeler ffi = my trackmodelers.at [itrack];
-		Graphics_setColour (g, itrack % 2 == 1 ? oddTracks : evenTracks );
+		Graphics_setColour (g, Melder_BLUE); //itrack % 2 == 1 ? oddTracks : evenTracks );
 		DataModeler_drawModel_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfPoints);
 	}
 }

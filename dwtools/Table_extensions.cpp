@@ -641,9 +641,10 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		longdouble nh = 0.0;
 		for (integer i = 1; i <= numberOfLevelsA; i ++) {
 			for (integer j = 1; j <= numberOfLevelsB; j ++) {
+				SimpleString ai = static_cast <SimpleString> (levelsA -> classes -> at [i]);
+				SimpleString aj = static_cast <SimpleString> (levelsA -> classes -> at [j]);
 				Melder_require (factorLevelSizes [i] [j] > 0,
-					U"Level ", levelsA -> classes->at [i], U" of ", levelsA -> classes->at [j],
-					U" has no data.");
+					U"Level ", ai -> string.get(), U" of ", aj -> string.get(),	U" has no data.");
 				factorLevelMeans [i] [j] /= factorLevelSizes [i] [j];
 				nh += 1.0 / factorLevelSizes [i] [j];
 			}

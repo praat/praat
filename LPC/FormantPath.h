@@ -84,6 +84,14 @@ static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeSt
 			formantCeiling, analysisWidth, preemphasisFrequency, ceilingExtensionFraction, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
 }
 
+static inline autoFormantPath Sound_to_FormantPath_robust (Sound me, double timeStep, double maximumNumberOfFormants,
+	double formantCeiling, double analysisWidth, double preemphasisFrequency, double numberOfStandardDeviations, 
+	integer maximumNumberOfIterations, double tolerance, double ceilingExtensionFraction, integer numberOfStepsToACeiling)
+{
+	return Sound_to_FormantPath_any (me, kLPC_Analysis::ROBUST, timeStep, maximumNumberOfFormants,
+			formantCeiling, analysisWidth, preemphasisFrequency, ceilingExtensionFraction, numberOfStepsToACeiling, 1e-6, 1e-6, numberOfStandardDeviations, tolerance, maximumNumberOfIterations, nullptr);
+}
+
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, 
 	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants,
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
