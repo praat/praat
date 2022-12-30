@@ -423,6 +423,8 @@ double FormantPath_getOptimalCeiling (FormantPath me, double tmin, double tmax, 
 void FormantPath_setPath (FormantPath me, double tmin, double tmax, integer selectedCandidate) {
 	Melder_require (selectedCandidate > 0 && selectedCandidate <= my path.size,
 		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
+	Function_intersectRangeWithDomain (me, & tmin, & tmax);
 	integer ifmin, ifmax;
 	if (Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax) > 0)
 		for (integer iframe = ifmin; iframe <= ifmax; iframe ++)
