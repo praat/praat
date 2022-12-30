@@ -755,6 +755,39 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 	}
 }
 
+/*
+	The time derivative of a Sound can most easily be calculated in the spectral domain
+	in which a sound s(t) can represented as
+		s(t) = integral (S(f) exp(2*pi*i*f*t) * df), where S(f) is the complex spectrum.
+	The time derivative is:
+		d(s(t)/dt = integral (S(f)*2*pi*i*f * d/dt(exp(2*pi*f*t)) * df)
+			= integral (S(f)*2*pi*i*f * exp(2*pi*f*t) * df)
+			= (2*pi*f) * integral (i*S(f) * exp (2*pi*f*t) * df)
+			= (2*pi*f) * integral (-Im(S), Re (s)) * exp (2*pi*f*t) * df)
+	Transforming back to the time domain gives the desired result.
+	We leave out the scale factor of 2pi.
+*/
+autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing, bool peak99) {
+		try {
+			autoSpectrum thee = Sound_to_Spectrum (me, false);
+			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
+				const double frequency = Sampled_indexToX (thee.get(), ifreq);
+				const double im = thy z [2] [ifreq];
+				thy z [2] [ifreq] = frequency * thy z [1] [ifreq]; // forget about scale factor 2*pi
+				thy z [1] [ifreq] = - frequency * im;
+			}
+			const double nyquistFrequency = 0.5 / my dx;
+			if (lowPassFrequency < nyquistFrequency)
+				Spectrum_passHannBand (thee.get(), 0.0, lowPassFrequency, smoothing);
+			autoSound him = Spectrum_to_Sound (thee.get());
+			if (peak99)
+				Vector_scale (him.get(), 0.99);
+			return him;
+		} catch (MelderError) {
+			Melder_throw (me, U": cannot create the derivative of the Electroglottogram.");
+		}
+}
+
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
 		return;    // above Nyquist?

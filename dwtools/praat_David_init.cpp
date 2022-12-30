@@ -2417,7 +2417,7 @@ FORM (CONVERT_EACH_TO_ONE__Electroglottogram_derivative, U"Electroglottogram: De
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoSound result = Electroglottogram_derivative (me, lowPassFrequency, smoothing, peak99);
+		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, peak99);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_derivative")
 }
 
@@ -6105,6 +6105,18 @@ DO
 			smoothingBandwidth, noiseReduction_dB, noiseReductionMethod
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_denoised")
+}
+
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Sound_derivative, U"Sound: To Sound (derivative)", U"Sound: To Sound (derivative)...") {
+	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"8000.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"50.0")
+	BOOLEAN (peak99, U"Scale absolute peak at 0.99", 1)
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Sound)
+		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, peak99);
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_derivative")
+	
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") {
@@ -10211,6 +10223,8 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Sound_removeNoise);
 	praat_addAction1 (classSound, 0, U"Reduce noise...", U"Filter (formula)...", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Sound_reduceNoise);
+	praat_addAction1 (classSound, 0, U"To Sound (derivative)...", U"Filter (formula)...", GuiMenu_DEPTH_1,
+			CONVERT_EACH_TO_ONE__Sound_to_Sound_derivative);
 
 	praat_addAction1 (classSound, 0, U"Change gender...", U"Deepen band modulation...", 1, 
 			CONVERT_EACH_TO_ONE__Sound_changeGender);
