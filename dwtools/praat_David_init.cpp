@@ -2417,7 +2417,7 @@ FORM (CONVERT_EACH_TO_ONE__Electroglottogram_derivative, U"Electroglottogram: De
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoSound result = Electroglottogram_derivative (me, lowPassFrequency, smoothing, peak99);
+		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, peak99);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_derivative")
 }
 
@@ -3487,7 +3487,7 @@ DO
 		autoTable means, sizes;
 		autoTable anova = Table_getTwoWayAnalysisOfVarianceF (me, dataColumn, firstFactorColumn, secondFactorColumn, &means, &sizes);
 		MelderInfo_open ();
-			MelderInfo_writeLine (U"Two-way analysis of \"", dataColumn_string, U"\" by \"", firstFactor_string, U"\" and \"", secondFactor_string, U".\n");
+			MelderInfo_writeLine (U"Two-way analysis of \"", dataColumn_string, U"\" by \"", firstFactor_string, U"\" and \"", secondFactor_string, U"\".\n");
 			Table_printAsAnovaTable (anova.get());
 			MelderInfo_writeLine (U"\nMeans:\n");
 			Table_printAsMeansTable (means.get());
@@ -6107,6 +6107,18 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_denoised")
 }
 
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Sound_derivative, U"Sound: To Sound (derivative)", U"Sound: To Sound (derivative)...") {
+	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"8000.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"50.0")
+	BOOLEAN (peak99, U"Scale absolute peak at 0.99", 1)
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Sound)
+		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, peak99);
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_derivative")
+	
+}
+
 FORM (CONVERT_EACH_TO_ONE__Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") {
 	REAL (fromTime, U"left Noise time range (s)", U"0.0")
 	REAL (toTime, U"right Noise time range (s)", U"0.0")
@@ -7016,6 +7028,12 @@ DIRECT (CREATE_ONE__Table_create_petersonBarney1952) {
 	CREATE_ONE
 		autoTable result = Table_create_petersonBarney1952 ();
 	CREATE_ONE_END (U"pb")
+}
+
+DIRECT (CREATE_ONE__Table_create_hillenbrandEtAl1995) {
+	CREATE_ONE
+		autoTable result = Table_create_hillenbrandEtAl1995 ();
+	CREATE_ONE_END (U"h95")
 }
 
 DIRECT (CREATE_ONE__Table_create_polsVanNierop1973) {
@@ -8994,6 +9012,9 @@ void praat_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Data sets from the literature", U"Create Table without column names...", 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Data sets from the literature", 2,
 			CREATE_ONE__Table_create_petersonBarney1952);
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Hillenbrand et al. 1995)", U"Data sets from the literature", 
+		GuiMenu_HIDDEN + GuiMenu_DEPTH_2,
+			CREATE_ONE__Table_create_hillenbrandEtAl1995);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Pols & Van Nierop 1973)", U"Create formant table (Peterson & Barney 1952)", 2,
 			CREATE_ONE__Table_create_polsVanNierop1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Weenink 1985)", U"Create formant table (Pols & Van Nierop 1973)", 2,
@@ -10202,6 +10223,8 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Sound_removeNoise);
 	praat_addAction1 (classSound, 0, U"Reduce noise...", U"Filter (formula)...", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Sound_reduceNoise);
+	praat_addAction1 (classSound, 0, U"To Sound (derivative)...", U"Filter (formula)...", GuiMenu_DEPTH_1,
+			CONVERT_EACH_TO_ONE__Sound_to_Sound_derivative);
 
 	praat_addAction1 (classSound, 0, U"Change gender...", U"Deepen band modulation...", 1, 
 			CONVERT_EACH_TO_ONE__Sound_changeGender);

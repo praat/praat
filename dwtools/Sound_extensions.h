@@ -63,9 +63,17 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 	starting at t3 in thee.
 */
 
+autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing, bool peak99);
+/*
+	The real derivative
+*/
+
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency);
-/* deEmphasis = exp(- 2 * NUMpi * deEmphasisFrequency * my dx); */
-/* for (i=my nx; i >=2; i-- ) my z [1] [i] -= preEmphasis * my z [1] [i-1]; */
+/*
+	Approximation of derivative by first order difference.
+	deEmphasis = exp(- 2 * NUMpi * deEmphasisFrequency * my dx);
+	for (i=my nx; i >=2; i-- ) my z [1] [i] -= preEmphasis * my z [1] [i-1];
+*/
 
 void Sound_deEmphasis (Sound me, double preEmphasisFrequency);
 /*	for (i=2; i <= my nx; i++ ) my z [1] [i] += deEmphasis * my z [1] [i-1]; */

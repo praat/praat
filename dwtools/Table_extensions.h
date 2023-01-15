@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,8 @@ autoINTVEC Table_listRowNumbersWhere (Table me, conststring32 formula, Interpret
 autoVEC Table_getColumnVector (Table me, integer columnNumber);
 
 autoTable Table_create_petersonBarney1952 ();
+
+autoTable Table_create_hillenbrandEtAl1995 ();
 
 autoTable Table_create_polsVanNierop1973 ();
 

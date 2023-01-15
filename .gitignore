@@ -30,3 +30,4 @@ Praat.exe
 # files created by R scripts in the test folders
 .Rdata
 .Rhistory
+.Rproj.user
