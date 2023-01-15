@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2022 Paul Boersma
+ * Copyright (C) 2011-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -650,17 +650,17 @@ autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 						U" (", other -> channelNames [ichan].get(), U") than in ", first, U" (", channelNames [ichan].get(), U").");
 			}
 		}
-		OrderedOf<structSound> soundList;
+		autoSoundList soundList = SoundList_create ();
 		OrderedOf<structTextGrid> textgridList;
 		for (integer ieeg = 1; ieeg <= my size; ieeg ++) {
 			EEG eeg = my at [ieeg];
-			soundList. addItem_ref (eeg -> sound.get());
+			soundList -> addItem_ref (eeg -> sound.get());
 			textgridList. addItem_ref (eeg -> textgrid.get());
 		}
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = numberOfChannels;
 		thy channelNames = std::move (channelNames);
-		thy sound = Sounds_concatenate (soundList, 0.0);
+		thy sound = Sounds_concatenate (soundList.get(), 0.0);
 		thy textgrid = TextGrids_concatenate (& textgridList);
 		thy xmin = thy textgrid -> xmin;
 		thy xmax = thy textgrid -> xmax;

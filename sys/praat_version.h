@@ -1,5 +1,5 @@
-#define PRAAT_VERSION_STR 6.3.03
-#define PRAAT_VERSION_NUM 6303
-#define PRAAT_YEAR 2022
-#define PRAAT_MONTH December
-#define PRAAT_DAY 17
+#define PRAAT_VERSION_STR 6.3.04beta
+#define PRAAT_VERSION_NUM 6304
+#define PRAAT_YEAR 2023
+#define PRAAT_MONTH January
+#define PRAAT_DAY 14

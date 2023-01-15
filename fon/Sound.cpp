@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -472,12 +472,12 @@ autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	}
 }
 
-autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) {
+autoSound Sounds_concatenate (SoundList list, double overlapTime) {
 	try {
 		integer sharedNumberOfChannels = 0, totalNumberOfSamples = 0;
 		double sharedTimeStep = 0.0;
-		for (integer i = 1; i <= list.size; i ++) {
-			const Sound sound = list.at [i];
+		for (integer i = 1; i <= list->size; i ++) {
+			const Sound sound = list->at [i];
 			if (sharedNumberOfChannels == 0) {
 				sharedNumberOfChannels = sound -> ny;
 			} else if (sound -> ny != sharedNumberOfChannels) {
@@ -492,7 +492,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 			totalNumberOfSamples += sound -> nx;
 		}
 		const integer numberOfSmoothingSamples = Melder_iround (overlapTime / sharedTimeStep);
-		totalNumberOfSamples -= numberOfSmoothingSamples * (list.size - 1);
+		totalNumberOfSamples -= numberOfSmoothingSamples * (list->size - 1);
 		autoSound thee = Sound_create (sharedNumberOfChannels, 0.0, totalNumberOfSamples * sharedTimeStep,
 				totalNumberOfSamples, sharedTimeStep, 0.5 * sharedTimeStep);
 		autoVEC smoother;
@@ -503,12 +503,12 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 				smoother [i] = 0.5 - 0.5 * cos (factor * (i - 0.5));
 		}
 		integer sampleOffset = 0;
-		for (integer i = 1; i <= list.size; i ++) {
-			const Sound sound = list.at [i];
+		for (integer i = 1; i <= list->size; i ++) {
+			const Sound sound = list->at [i];
 			if (numberOfSmoothingSamples > 2 * sound -> nx)
 				Melder_throw (U"At least one of the sounds is shorter than twice the overlap time.\nChoose a shorter overlap time.");
 			const bool thisIsTheFirstSound = ( i == 1 );
-			const bool thisIsTheLastSound = ( i == list.size );
+			const bool thisIsTheLastSound = ( i == list->size );
 			const bool weNeedSmoothingAtTheStartOfThisSound = ! thisIsTheFirstSound;
 			const bool weNeedSmoothingAtTheEndOfThisSound = ! thisIsTheLastSound;
 			const integer numberOfSmoothingSamplesAtTheStartOfThisSound = ( weNeedSmoothingAtTheStartOfThisSound ? numberOfSmoothingSamples : 0 );

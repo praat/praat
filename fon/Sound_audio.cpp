@@ -1,6 +1,6 @@
 /* Sound_audio.cpp
  *
- * Copyright (C) 1992-2020,2022 Paul Boersma
+ * Copyright (C) 1992-2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -543,9 +543,13 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 	}
 }
 
-void Sound_play (Sound me, Sound_PlayCallback playCallback, Thing playClosure)
-{
+void Sound_play (Sound me, Sound_PlayCallback playCallback, Thing playClosure) {
 	Sound_playPart (me, my xmin, my xmax, playCallback, playClosure);
+}
+
+void SoundList_play (SoundList me, Sound_PlayCallback playCallback, Thing playClosure) {
+	autoSound cat = Sounds_concatenate (me, 0.0);
+	Sound_play (cat.get(), playCallback, playClosure);
 }
 
 /* End of file Sound_audio.cpp */
