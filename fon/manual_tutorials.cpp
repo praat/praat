@@ -5179,11 +5179,11 @@ NORMAL (U"Bureaucracy")
 LIST_ITEM (U"• @WordList, @SpellingChecker")
 MAN_END
 
-MAN_BEGIN (U"Unicode", U"ppgb", 20110129)
-INTRO (U"Praat is becoming a fully international program: "
+MAN_BEGIN (U"Unicode", U"ppgb", 20230115)
+INTRO (U"Praat aims at being a fully international program: "
 	"the texts in Praat's TextGrids, Tables, scripts, or Info window (and elsewhere) can contain many types of characters "
 	"(see @@special symbols@). "
-	"For this reason, Praat saves its text files in one of two possible formats: ASCII or UTF-16.")
+	"For this reason, Praat saves its text files in one of two possible formats: UTF-8 (including ASCII) or UTF-16.")
 ENTRY (U"ASCII text files")
 NORMAL (U"If your TextGrid (or Table, or script, or Info window...) contains only characters that can be encoded as ASCII, "
 	"namely the characters !\\\" \\# \\$ \\% &\\' ()*+,-./0123456789:;<=>?\\@  "
@@ -5203,7 +5203,7 @@ NORMAL (U"If you want to export your Table to Microsoft Excel or to SPSS, or if 
 	"by somebody else's Perl script, then there will be no problem if your Table contains only ASCII characters (see above). "
 	"But if your Table contains any other (i.e. non-ASCII) characters, you may be in trouble, because Praat will write the Table "
 	"as an UTF-16 text file, and not all of the programs just mentioned can read such files yet.")
-NORMAL (U"What you can do is go to ##Text writing preferences...# in the #Preferences submenu of the #Praat menu, "
+NORMAL (U"What you can do is go to ##Text writing settings...# in the #Settings submenu of the #Praat menu, "
 	"and there set the output encoding to ##UTF-8#. Praat will from then on save your text files in the UTF-8 format, "
 	"which means one byte for every ASCII character and 2 to 4 bytes for every non-ASCII character. "
 	"Especially on Linux, many programs understand UTF-8 text and will display the correct characters. "

@@ -2,7 +2,7 @@
 #define _praatM_h_
 /* praatM.h
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -912,7 +912,7 @@
 /*
 	If there is no exception, the object will change fully.
 	WEAK exception guarantee: if there is an exception, the object may change,
-	although it will end up in sort-of reasonable (at least inspectable) state.
+	although it will end up in a sort-of reasonable (at least inspectable) state.
 	To stay on the safe side, a praat_dataChanged() message is sent to the editors,
 	independently of whether there is an exception.
 */

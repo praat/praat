@@ -1,6 +1,6 @@
 /* praat_Sound.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -358,18 +358,18 @@ DIRECT (COMBINE_ALL_TO_ONE__Sounds_combineIntoSoundSet) {
 }
 
 DIRECT (COMBINE_ALL_TO_ONE__Sounds_concatenate) {
-	COMBINE_ALL_TO_ONE (Sound)
-		autoSound result = Sounds_concatenate (list, 0.0);
-	COMBINE_ALL_TO_ONE_END (U"chain")
+	COMBINE_ALL_LISTED_TO_ONE (Sound, SoundList)
+		autoSound result = Sounds_concatenate (list.get(), 0.0);
+	COMBINE_ALL_LISTED_TO_ONE_END (U"chain")
 }
 
 FORM (COMBINE_ALL_TO_ONE__Sounds_concatenateWithOverlap, U"Sounds: Concatenate with overlap", U"Sounds: Concatenate with overlap...") {
 	POSITIVE (overlap, U"Overlap (s)", U"0.01")
 	OK
 DO
-	COMBINE_ALL_TO_ONE (Sound)
-		autoSound result = Sounds_concatenate (list, overlap);
-	COMBINE_ALL_TO_ONE_END (U"chain")
+	COMBINE_ALL_LISTED_TO_ONE (Sound, SoundList)
+		autoSound result = Sounds_concatenate (list.get(), overlap);
+	COMBINE_ALL_LISTED_TO_ONE_END (U"chain")
 }
 
 DIRECT (CONVERT_ALL_TO_MULTIPLE__Sounds_concatenateRecoverably) {
@@ -1145,9 +1145,9 @@ DO
 }
 
 DIRECT (PLAY_EACH__Sound_play) {
-	PLAY_EACH (Sound)
-		Sound_play (me, nullptr, nullptr);   // BUG: exception-safe?
-	PLAY_EACH_END
+	FIND_ALL_LISTED (Sound, SoundList)
+		SoundList_play (list.get(), nullptr, nullptr);
+	END_NO_NEW_DATA
 }
 
 FORM (MODIFY_Sound_preemphasizeInplace, U"Sound: Pre-emphasize (in-place)", U"Sound: Pre-emphasize (in-place)...") {

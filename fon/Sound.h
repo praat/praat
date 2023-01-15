@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2005,2006-2008,2010-2019,2021,2022 Paul Boersma
+ * Copyright (C) 1992-2005,2006-2008,2010-2019,2021-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +174,6 @@ autoSound Sound_createAsToneComplex (double startingTime, double endTime,
 #define Sound_TONE_COMPLEX_SINE  0
 #define Sound_TONE_COMPLEX_COSINE  1
 
-autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime);
 void Sound_multiplyByWindow (Sound me, kSound_windowShape windowShape);
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);
@@ -345,6 +344,9 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 */
 Collection_define (SoundList, OrderedOf, Sound) {
 };
+
+autoSound Sounds_concatenate (SoundList list, double overlapTime);
+void SoundList_play (SoundList me, Sound_PlayCallback playCallback, Thing playClosure);
 
 /* End of file Sound.h */
 #endif

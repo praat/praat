@@ -1416,7 +1416,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		Also create names for message and tracing files.
 	*/
 	if (MelderDir_isNull (& Melder_preferencesFolder)) {   // not yet set by the --pref-dir option?
-		structMelderDir prefParentDir { };   // directory under which to store our preferences directory
+		structMelderDir prefParentDir { };   // folder under which to store our preferences folder
 		Melder_getPrefDir (& prefParentDir);
 
 		/*
