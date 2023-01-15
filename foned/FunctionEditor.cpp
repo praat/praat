@@ -449,8 +449,8 @@ void structFunctionEditor :: v_prefs_getValues (EditorCommand cmd) {
 			area -> v_prefs_getValues (cmd);
 	}
 }
-static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Preferences", nullptr)
+static void menu_cb_editorSettings (FunctionEditor me, EDITOR_ARGS) {   // TODO: make visible
+	EDITOR_FORM (U"Editor settings", nullptr)
 		BOOLEAN (showSelectionViewer, Melder_cat (U"Show ", my v_selectionViewerName()), my default_showSelectionViewer())
 		my v_prefs_addFields (cmd);
 	EDITOR_OK

@@ -125,7 +125,7 @@ GuiMenu praat_objects_resolveMenu (conststring32 menu) {
 		str32equ (menu, U"Open") || str32equ (menu, U"Read") ? readMenu :
 		str32equ (menu, U"Help") ? helpMenu :
 		str32equ (menu, U"Goodies") ? goodiesMenu :
-		str32equ (menu, U"Preferences") ? preferencesMenu :
+		str32equ (menu, U"Settings") || str32equ (menu, U"Preferences") ? preferencesMenu :
 		str32equ (menu, U"Technical") ? technicalMenu :
 		#ifdef macintosh
 			str32equ (menu, U"ApplicationHelp") ? applicationHelpMenu :
@@ -255,9 +255,9 @@ DO
 	PRAAT_END
 }
 
-/********** Callbacks of the Preferences menu. **********/
+/********** Callbacks of the Settings menu. **********/
 
-FORM (PREFS__TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
+FORM (SETTINGS__TextReadingSettings, U"Text reading settings", U"Unicode") {
 	RADIO_ENUM (kMelder_textInputEncoding, encodingOf8BitTextFiles,
 			U"Encoding of 8-bit text files", kMelder_textInputEncoding::DEFAULT)
 OK
@@ -268,7 +268,7 @@ DO
 	PREFS_END
 }
 
-FORM (PREFS__TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
+FORM (SETTINGS__TextWritingSettings, U"Text writing settings", U"Unicode") {
 	RADIO_ENUM (kMelder_textOutputEncoding, outputEncoding,
 			U"Output encoding", kMelder_textOutputEncoding::DEFAULT)
 OK
@@ -279,7 +279,7 @@ DO
 	PREFS_END
 }
 
-FORM (PREFS__GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
+FORM (SETTINGS__CjkFontStyleSettings, U"CJK font style settings", nullptr) {
 	OPTIONMENU_ENUM (kGraphics_cjkFontStyle, cjkFontStyle,
 			U"CJK font style", kGraphics_cjkFontStyle::DEFAULT)
 OK
@@ -377,7 +377,7 @@ FORM_SAVE (GRAPHICS_saveDemoWindowAsPdfFile, U"Save Demo window as PDF file", nu
 
 /********** Callbacks of the Technical menu. **********/
 
-FORM (PREFS__debug, U"Set debugging options", nullptr) {
+FORM (SETTINGS__debug, U"Set debugging options", nullptr) {
 	LABEL (U"If you switch Tracing on, Praat will write lots of detailed ")
 	LABEL (U"information about what goes on in Praat")
 	structMelderDir dir;
@@ -796,68 +796,72 @@ void praat_addMenus (GuiWindow window) {
 
 	GuiMenuItem menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Goodies", nullptr, GuiMenu_UNHIDABLE, nullptr);
 	goodiesMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Goodies", U"Calculator...", nullptr, 'U',
-			INFO_NONE__praat_calculator);
-	praat_addMenuCommand (U"Objects", U"Goodies", U"Report difference of two proportions...", nullptr, 0, INFO_reportDifferenceOfTwoProportions);
+	praat_addMenuCommand (U"Objects", U"Goodies", U"Calculator...",
+			nullptr, 'U', INFO_NONE__praat_calculator);
+	praat_addMenuCommand (U"Objects", U"Goodies", U"Report difference of two proportions...",
+			nullptr, 0, INFO_reportDifferenceOfTwoProportions);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"-- demo window --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Save Demo window as PDF file...", nullptr, 0, GRAPHICS_saveDemoWindowAsPdfFile);
 
-	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Preferences", nullptr, GuiMenu_UNHIDABLE, nullptr);
+	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Settings", nullptr, GuiMenu_UNHIDABLE, nullptr);
 	preferencesMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Buttons...", nullptr, GuiMenu_UNHIDABLE,
-			PRAAT__editButtons);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"-- encoding prefs --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Text reading preferences...", nullptr, 0,
-			PREFS__TextInputEncodingSettings);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Text writing preferences...", nullptr, 0,
-			PREFS__TextOutputEncodingSettings);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"CJK font style preferences...", nullptr, 0,
-			PREFS__GraphicsCjkFontStyleSettings);
+	praat_addMenuCommand (U"Objects", U"Settings", U"Buttons...",
+			nullptr, GuiMenu_UNHIDABLE, PRAAT__editButtons);
+	praat_addMenuCommand (U"Objects", U"Settings", U"-- encoding prefs --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"Settings", U"Text reading settings... || Text reading preferences...",
+			nullptr, 0, SETTINGS__TextReadingSettings);   // alternative GuiMenu_DEPRECATED_2023
+	praat_addMenuCommand (U"Objects", U"Settings", U"Text writing settings... || Text writing preferences...",
+			nullptr, 0, SETTINGS__TextWritingSettings);   // alternative GuiMenu_DEPRECATED_2023
+	praat_addMenuCommand (U"Objects", U"Settings", U"CJK font style settings... || CJK font style preferences...",
+			nullptr, 0, SETTINGS__CjkFontStyleSettings);   // alternative GuiMenu_DEPRECATED_2023
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Technical", nullptr, GuiMenu_UNHIDABLE, nullptr);
 	technicalMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use", nullptr, 0,
-			INFO_NONE__reportMemoryUse);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties", nullptr, 0,
-			INFO_NONE__reportIntegerProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report system properties", nullptr, 0,
-			INFO_NONE__reportSystemProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties", nullptr, 0,
-			INFO_NONE__reportGraphicalProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties", nullptr, 0,
-			INFO_NONE__reportTextProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report font properties", nullptr, 0,
-			INFO_NONE__reportFontProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", nullptr, 0,
-			PREFS__debug);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use",
+			nullptr, 0, INFO_NONE__reportMemoryUse);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties",
+			nullptr, 0, INFO_NONE__reportIntegerProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report system properties",
+			nullptr, 0, INFO_NONE__reportSystemProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties",
+			nullptr, 0, INFO_NONE__reportGraphicalProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties",
+			nullptr, 0, INFO_NONE__reportTextProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report font properties",
+			nullptr, 0, INFO_NONE__reportFontProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...",
+			nullptr, 0, SETTINGS__debug);
 	praat_addMenuCommand (U"Objects", U"Technical", U"-- api --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0,
-			INFO_NONE__listReadableTypesOfObjects);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Create C interface...", nullptr, 0, INFO_praat_library_createC);
+	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects",
+			nullptr, 0, INFO_NONE__listReadableTypesOfObjects);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Create C interface...",
+			nullptr, 0, INFO_praat_library_createC);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, GuiMenu_ATTRACTIVE | 'O', READMANY_Data_readFromFile);
 
-	praat_addAction1 (classDaata, 0, U"Save as text file...", nullptr, 0, SAVE_Data_writeToTextFile);
-	praat_addAction1 (classDaata, 0,   U"Write to text file...", nullptr, GuiMenu_DEPRECATED_2011, SAVE_Data_writeToTextFile);
-	praat_addAction1 (classDaata, 0, U"Save as short text file...", nullptr, 0, SAVE_Data_writeToShortTextFile);
-	praat_addAction1 (classDaata, 0,   U"Write to short text file...", nullptr, GuiMenu_DEPRECATED_2011, SAVE_Data_writeToShortTextFile);
-	praat_addAction1 (classDaata, 0, U"Save as binary file...", nullptr, 0, SAVE_Data_writeToBinaryFile);
-	praat_addAction1 (classDaata, 0,   U"Write to binary file...", nullptr, GuiMenu_DEPRECATED_2011, SAVE_Data_writeToBinaryFile);
+	praat_addAction1 (classDaata, 0, U"Save as text file... || Write to text file...",
+			nullptr, 0, SAVE_Data_writeToTextFile);   // alternative GuiMenu_DEPRECATED_2011
+	praat_addAction1 (classDaata, 0, U"Save as short text file... || Write to short text file...",
+			nullptr, 0, SAVE_Data_writeToShortTextFile);   // alternative GuiMenu_DEPRECATED_2011
+	praat_addAction1 (classDaata, 0, U"Save as binary file... || Write to binary file...",
+			nullptr, 0, SAVE_Data_writeToBinaryFile);   // alternative GuiMenu_DEPRECATED_2011
 
-	praat_addAction1 (classManPages, 1, U"Save to HTML folder...", nullptr, 0, PRAAT_ManPages_saveToHtmlFolder);
-	praat_addAction1 (classManPages, 1, U"Save to HTML directory...", nullptr, GuiMenu_DEPRECATED_2020, PRAAT_ManPages_saveToHtmlFolder);
-	praat_addAction1 (classManPages, 1, U"View", nullptr, 0, WINDOW_ManPages_view);
+	praat_addAction1 (classManPages, 1, U"Save to HTML folder... || Save to HTML directory...",
+			nullptr, 0, PRAAT_ManPages_saveToHtmlFolder);   // alternative GuiMenu_DEPRECATED_2020
+	praat_addAction1 (classManPages, 1, U"View",
+			nullptr, 0, WINDOW_ManPages_view);
 }
 
 void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- manual --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", nullptr, 0,
-			PRAAT__GoToManualPage);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Save manual to HTML folder...", nullptr, GuiMenu_HIDDEN, HELP_SaveManualToHtmlFolder);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", Melder_cat (U"Search ", praatP.title.get(), U" manual..."), nullptr, 'M' | GuiMenu_NO_API,
-			PRAAT__SearchManual);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string, nullptr, GuiMenu_UNHIDABLE,
-			PRAAT__About);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...",
+			nullptr, 0, PRAAT__GoToManualPage);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Save manual to HTML folder...",
+			nullptr, GuiMenu_HIDDEN, HELP_SaveManualToHtmlFolder);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", Melder_cat (U"Search ", praatP.title.get(), U" manual..."),
+			nullptr, 'M' | GuiMenu_NO_API, PRAAT__SearchManual);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string,
+			nullptr, GuiMenu_UNHIDABLE, PRAAT__About);
 
 	#if defined (macintosh)
 		Gui_setOpenDocumentCallback (cb_openDocument, cb_finishedOpeningDocuments);

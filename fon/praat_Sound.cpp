@@ -256,7 +256,7 @@ FORM_SAVE (SAVE_ONE__LongSound_saveRightChannelAsWavFile, U"Save right channel a
 	SAVE_ONE_END
 }
 
-FORM (PREFS__LongSoundPrefs, U"LongSound preferences", U"LongSound") {
+FORM (SETTINGS__LongSoundSettings, U"LongSound settings", U"LongSound") {
 	LABEL (U"This setting determines the maximum number of seconds")
 	LABEL (U"for viewing the waveform and playing a sound in the LongSound window.")
 	LABEL (U"The LongSound window can become very slow if you set it too high.")
@@ -1752,7 +1752,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Sound_to_TextTier) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (PREFS__SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
+FORM (SETTINGS__SoundRecordingSettings, U"Sound recording settings", U"SoundRecorder") {
 	NATURAL (bufferSize, U"Buffer size (MB)", U"60")
 	OPTIONMENU_ENUM (kMelder_inputSoundSystem, inputSoundSystem,
 			U"Input sound system", kMelder_inputSoundSystem::DEFAULT)
@@ -1768,7 +1768,7 @@ DO
 	PREFS_END
 }
 
-FORM (PREFS__SoundOutputPrefs, U"Sound playing preferences", nullptr) {
+FORM (SETTINGS__SoundPlayingSettings, U"Sound playing settings", nullptr) {
 	LABEL (U"The following determines how sounds are played.")
 	LABEL (U"Between parentheses, you find what you can do simultaneously.")
 	LABEL (U"Decrease asynchronicity if sound plays with discontinuities.")
@@ -2151,13 +2151,13 @@ void praat_Sound_init () {
 	praat_addMenuCommand (U"Objects", U"Goodies", U"-- sound goodies --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Stop playing sound", nullptr, GuiMenu_ESCAPE,
 			PLAY__stopPlayingSound);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"-- sound prefs --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound recording preferences...", nullptr, 0,
-			PREFS__SoundInputPrefs);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound playing preferences...", nullptr, 0,
-			PREFS__SoundOutputPrefs);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"LongSound preferences...", nullptr, 0,
-			PREFS__LongSoundPrefs);
+	praat_addMenuCommand (U"Objects", U"Settings", U"-- sound settings --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"Settings", U"Sound recording settings... || Sound recording preferences...", nullptr, 0,
+			SETTINGS__SoundRecordingSettings);   // alternative GuiMenu_DEPRECATED_2023
+	praat_addMenuCommand (U"Objects", U"Settings", U"Sound playing settings... || Sound playing preferences...", nullptr, 0,
+			SETTINGS__SoundPlayingSettings);   // alternative GuiMenu_DEPRECATED_2023
+	praat_addMenuCommand (U"Objects", U"Settings", U"LongSound settings... || LongSound preferences...", nullptr, 0,
+			SETTINGS__LongSoundSettings);   // alternative GuiMenu_DEPRECATED_2023
 #ifdef HAVE_PULSEAUDIO
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report sound server properties", U"Report system properties", 0,
 			INFO_NONE__Praat_reportSoundServerProperties);

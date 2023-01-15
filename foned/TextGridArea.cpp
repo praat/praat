@@ -1078,8 +1078,8 @@ static void gui_text_cb_changed (TextGridArea me, GuiTextEvent /* event */) {
 
 #pragma mark - TextGridArea TextGrid/Prefs
 
-static void menu_cb_TextGridPreferences (TextGridArea me, EDITOR_ARGS) {
-	EDITOR_FORM (U"TextGrid preferences", nullptr)
+static void menu_cb_TextGridSettings (TextGridArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"TextGrid settings", nullptr)
 		POSITIVE (fontSize, U"Font size (points)", my default_fontSize())
 		OPTIONMENU_ENUM (kGraphics_horizontalAlignment, textAlignmentInIntervals,
 				U"Text alignment in intervals", kGraphics_horizontalAlignment::DEFAULT)
@@ -1723,8 +1723,8 @@ static void menu_cb_AddToUserDictionary (TextGridArea me, EDITOR_ARGS) {
 
 void structTextGridArea :: v_createMenus () {
 	EditorMenu textGridMenu = Editor_addMenu (our functionEditor(), U"TextGrid", 0);
-	FunctionAreaMenu_addCommand (textGridMenu, U"TextGrid preferences...", 0,
-			menu_cb_TextGridPreferences, this);
+	FunctionAreaMenu_addCommand (textGridMenu, U"TextGrid settings... || TextGrid preferences...", 0,
+			menu_cb_TextGridSettings, this);   // alternative deprecated 2023
 	if (editable()) {
 		FunctionAreaMenu_addCommand (textGridMenu, U"-- encoding --", 0, nullptr, this);
 		FunctionAreaMenu_addCommand (textGridMenu, U"Convert entire TextGrid to backslash trigraphs", 0,
