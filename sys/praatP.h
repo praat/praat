@@ -40,7 +40,7 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 
 /*
 	For the Praat objects window:
-	'window' is "Objects", 'menu' is "Praat", "New", "Open", "Help", "Preferences", "Goodies", or "Technical".
+	'window' is "Objects", 'menu' is "Praat", "New", "Open", "Help", "Settings", "Goodies", or "Technical".
 	For the Praat picture window:
 	'window' is "Picture", 'menu' is "File", "Edit", "Margins", "World", "Select", "Pen", "Font", or "Help".
 */

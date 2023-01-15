@@ -58,7 +58,7 @@ void structTableEditor :: v1_dataChanged (Editor /* sender */) {
 /********** FILE MENU **********/
 
 static void menu_cb_preferences (TableEditor me, EDITOR_ARGS) {
-	EDITOR_FORM (U"TableEditor preferences", nullptr);
+	EDITOR_FORM (U"TableEditor settings", nullptr);
 		OPTIONMENU (useTextStyles, U"The symbols %#_^ in labels", my default_useTextStyles() + 1)
 			OPTION (U"are shown as typed")
 			OPTION (U"mean italic/bold/sub/super")

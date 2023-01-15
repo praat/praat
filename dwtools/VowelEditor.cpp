@@ -720,8 +720,8 @@ static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS) {
 	INFO_EDITOR_END
 }
 
-static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Preferences", nullptr);
+static void menu_cb_settings (VowelEditor me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Settings", nullptr);
 		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse())
 		LABEL (U"F1 and F2 frequencies are specified by the trajectory.")
 		LABEL (U"The bandwidths of a formant can be specified by its Q-value")
@@ -1185,7 +1185,7 @@ static void updateWidgets (void *void_me) {
 void structVowelEditor :: v_createMenus () {
 	VowelEditor_Parent :: v_createMenus ();
 
-	Editor_addCommand (this, U"File", U"Preferences...", 0, menu_cb_prefs);
+	Editor_addCommand (this, U"File", U"Settings...", 0, menu_cb_settings);
 	Editor_addCommand (this, U"File", U"-- publish data --", 0, nullptr);
 	Editor_addCommand (this, U"File", U"Publish Sound", 0,
 			CREATE_ONE__publishSound);
