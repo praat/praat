@@ -2083,6 +2083,27 @@ INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"A Polygon object represents a sequence of points (%%x__i_, %%y__i_) in a two-dimensional space.")
 MAN_END
 
+MAN_BEGIN (U"Create Polygon from values...", U"David Weenink & Paul Boersma", 20230116)
+INTRO (U"Creates a @@Polygon@ from user-supplied x\\--y pairs (“points” or “vertices”).")
+ENTRY (U"Settings")
+TAG (U"##Name")
+DEFINITION (U"defines the name of the resulting Polygon.")
+TAG (U"##X values")
+DEFINITION (U"the X-coordinates of the vertices of the Polygon.")
+TAG (U"##Y values")
+DEFINITION (U"the Y-coordinates of the vertices of the Polygon.")
+ENTRY (U"Example")
+NORMAL (U"The command ##Create Polygon from values: \"triangle\", \"0 50 20\", \"0 10 80\"# "
+	"defines a Polygon with the three points (0, 0), (50, 10), and (20, 80). "
+	"In the figure the three points are indicated with open circles while the Polygon is drawn as a closed figure.")
+SCRIPT (4,4,
+	U"Create Polygon from values: \"triangle\", \"0 50 20\", \"0 10 80\"\n"
+	U"Draw circles: 0, 0, 0, 0, 3\n"
+	U"Draw closed: 0, 0, 0, 0\n"
+	U"Remove\n"
+)
+MAN_END
+
 MAN_BEGIN (U"Read Matrix from raw text file...", U"ppgb", 19980322)
 INTRO (U"A command to read a @Matrix object from a file on disk.")
 ENTRY (U"File format")

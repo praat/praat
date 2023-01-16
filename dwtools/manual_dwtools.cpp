@@ -3208,21 +3208,6 @@ MAN_BEGIN (U"Polygon: Rotate...", U"djmw", 20100418)
 INTRO (U"Rotates the selected @@Polygon@ counterclockwise with respect to the given coordinates.")
 MAN_END
 
-MAN_BEGIN (U"Create simple Polygon...", U"djmw", 20140117)
-INTRO (U"Creates a @@Polygon@ from user  supplied x/y pairs.")
-ENTRY (U"Settings")
-TAG (U"##Name")
-DEFINITION (U"defines the name of the resulting Polygon.")
-TAG (U"##Vertices as X-Y pairs#,")
-DEFINITION (U"defines the x-y values of the vertices of the Polygon. The Polygon will be automatically closed, i.e., the first and the last point will be connected.")
-ENTRY (U"Example")
-NORMAL (U"The command ##Create simple Polygon: \"p\", \"0.0 0.0 0.0 1.0 1.0 0.0\"# defines  a Polygon with three points. In the figure the three points are indicated with open circles while the Polygon is drawn as a closed figure.")
-SCRIPT (4,4, U"Create simple Polygon: \"p\", \"0.0 0.0 0.0 1.0 1.0 0.0\"\n"
-	"Draw circles: 0, 1, 0, 1, 3\n"
-	"Draw closed: 0, 1, 0, 1\n"
-	"Remove\n")
-MAN_END
-
 MAN_BEGIN (U"Polygon: Get location of point...", U"djmw", 20120220)
 INTRO (U"Determines whether a given point is on the ##I#nside, the ##O#utside, on an ##E#dge or on a ##V#ertex of the selected Polygon.")
 ENTRY (U"Algorithm")
