@@ -1,6 +1,6 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,16 +215,16 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	const double row_real = (y - my y1) / my dy + 1.0;
 	const double col_real = (x - my x1) / my dx + 1.0;
 	/*
-	 * We imagine a unit square around every (xi, yi) point in the matrix.
-	 * For (x, y) values outside the union of these squares, the z value is undefined.
-	 */
+		We imagine a unit square around every (xi, yi) point in the matrix.
+		For (x, y) values outside the union of these squares, the z value is undefined.
+	*/
 	if (row_real < 0.5 || row_real > my ny + 0.5)
 		return undefined;
 	if (col_real < 0.5 || col_real > my nx + 0.5)
 		return undefined;
 	/*
-	 * Determine the four nearest (xi, yi) points.
-	 */
+		Determine the four nearest (xi, yi) points.
+	*/
 	integer bottomRow = Melder_ifloor (row_real);   // 0 <= bottomRow <= my ny
 	integer topRow = bottomRow + 1;         // 1 <= topRow <= my ny + 1
 	integer leftCol = Melder_ifloor (col_real);     // 0 <= leftCol <= my nx
@@ -232,13 +232,13 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	double drow = row_real - bottomRow;    // 0.0 <= drow < 1.0
 	double dcol = col_real - leftCol;      // 0.0 <= dcol < 1.0
 	/*
-	 * If adjacent points exist
-	 * (i.e., both row numbers are between 1 and my ny,
-	 *  or both column numbers are between 1 and my nx),
-	 * we do linear interpolation.
-	 * If not, we do constant extrapolation,
-	 * which can be simulated by an interpolation between equal z values.
-	 */
+		If adjacent points exist
+		(i.e., both row numbers are between 1 and my ny,
+		 or both column numbers are between 1 and my nx),
+		we do linear interpolation.
+		If not, we do constant extrapolation,
+		which can be simulated by an interpolation between equal z values.
+	*/
 	if (bottomRow < 1)
 		bottomRow = 1;         // 1 <= bottomRow <= my ny
 	if (topRow > my ny)
@@ -296,7 +296,7 @@ void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ym
 void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double height)
 {
-	bool xreversed = xmin > xmax, yreversed = ymin > ymax;
+	const bool xreversed = xmin > xmax, yreversed = ymin > ymax;
 	if (xmax == xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax == ymin) { ymin = my ymin; ymax = my ymax; }
 	if (xreversed) { double temp = xmin; xmin = xmax; xmax = temp; }
@@ -304,7 +304,8 @@ void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, dou
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
-	if (xmin == xmax || ymin == ymax) return;
+	if (xmin == xmax || ymin == ymax)
+		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xreversed ? xmax : xmin, xreversed ? xmin : xmax, yreversed ? ymax : ymin, yreversed ? ymin : ymax);
 	Graphics_contour (g, my z.part (iymin, iymax, ixmin, ixmax),

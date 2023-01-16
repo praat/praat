@@ -2011,6 +2011,21 @@ DO
 
 // MARK: - POLYGON
 
+FORM (NEW1_Polygon_createFromValues, U"Create Polygon from values", U"Create Polygon from values...") {
+	WORD (name, U"Name", U"triangle")
+	REALVECTOR (xValues, U"X values", WHITESPACE_SEPARATED_, U"0 50 20")
+	REALVECTOR (yValues, U"Y values", WHITESPACE_SEPARATED_, U"0 10 80")
+	OK
+DO
+	CREATE_ONE
+		Melder_require (xValues.size == yValues.size,
+			U"The number of x values should equal the number of y values.");
+		autoPolygon result = Polygon_create (xValues.size);
+		result -> x.all()  <<=  xValues;
+		result -> y.all()  <<=  yValues;
+	CREATE_ONE_END (name);
+}
+
 FORM (GRAPHICS_Polygon_draw, U"Polygon: Draw", nullptr) {
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"0.0 (= all)")
@@ -2987,6 +3002,9 @@ void praat_uvafon_init () {
 
 	praat_addMenuCommand (U"Objects", U"New", U"Generics", nullptr, 0, nullptr);
 		praat_Matrix_init ();
+		praat_addMenuCommand (U"Objects", U"New", U"Polygon", nullptr, 1, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Polygon from values...", nullptr, 2,
+			NEW1_Polygon_createFromValues);
 		praat_addMenuCommand (U"Objects", U"New", U"-- new strings --",
 				nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 1, nullptr);
