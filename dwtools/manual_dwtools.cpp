@@ -5917,7 +5917,7 @@ DEFINITION (U"when on, only the before and / or the after label set will be used
 	"could also be reached by leaving the topic set empty.")
 MAN_END
 
-MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210726)
+MAN_BEGIN (U"TextGridNavigator", U"djmw", 20230117)
 INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi-tier search machine.")
 ENTRY (U"What is a multi-tier search machine?")
 NORMAL (U"A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria "
@@ -5985,9 +5985,10 @@ CODE (U"... { \"a\", \"e\", \"i\", \"o\", \"u\" }, \"is equal to\", \"OR\",")
 CODE (U"... { \"p\", \"t\", \"k\" }, \"is equal to\", \"OR\",")
 CODE (U"... { \"m\", \"n\" }, \"is equal to\", \"OR\",")
 CODE (U"... \"before and after\", \"false\", \"Topic start to Topic end\"")
-NORMAL (U"These two examples involve only searches on one tier and the two cases follow the same scheme: they "
-	"search for a %%topic label% which may be preceded by a %%before label% and/or followed by an %after label%. "
-	"The %topic, %before and %after label belong to different sets (the three sets may of course have labels in common). With a choice from a number of "
+NORMAL (U"This example and the one above involve only searches on one tier and both follow the same scheme: they "
+	"search for a %%topic label% which may be preceded by a %%before label% and/or followed by an %%after label%. "
+	"The %topic, %before and %%after label% belong to different sets (the three sets may of course have labels in common). "
+	"With a choice from a number of "
 	"use criterions like ##Before or After, not both# or ##Before and After# you specify how the corresponding label "
 	"sets will be used during the matching.")
 NORMAL (U"For each tier in the TextGrid, we can define a tier search based on tier-specific sets of %%topic labels%, and/ or "
@@ -5995,13 +5996,13 @@ NORMAL (U"For each tier in the TextGrid, we can define a tier search based on ti
 	"the kind of match that we want. This is all specified in a tier's @@NavigationContext@. ")
 
 ENTRY (U"Example 3: Multi-tier search by combining single-tier searches")
-NORMAL (U"A multi-tier search naviagtor can be created by successively adding one or more single tier searches to an "
+NORMAL (U"A multi-tier search navigator can be created by successively adding one or more single tier searches to an "
 	"already existing TextGridNavigator. Each tier added for searching should have a unique tier number. "
 	"To combine the matches on different tiers we have to chose how to relate these matches on the basis of time because time is "
 	"the only feature that all tiers have in common as they all have the same time domain. "
 	"Suppose the TextGrid has two tiers: the first is a phoneme tier like we used in the previous example and the second "
 	"is a syntactic tier where intervals may be labeled as \"Noun\", \"Determiner\", \"Verb\" etc. "
-	"Next we want to restrict the vowel search on tier 1 to only those vowels that are within an interval at tier 2 that "
+	"We want to restrict the vowel search on tier 1 to only those vowels that are within an interval at tier 2 that "
 	"is labeled as \"Noun\" and is preceded by an interval labeled \"Determiner\". "
 	"The only complexity of a multi-tier TextGrid navigator is within its creation process. The following script shows how "
 	"to create the two-tier navigator.")	
@@ -6028,11 +6029,11 @@ NORMAL (U"The script starts by creating the navigator for the %topic tier, tier 
 	"The chosen match domain on the %topic tier will %always serve as the anchor for the comparisons with matches on other tiers. "
 	"The ##Add search tier# command adds a tier to the navigator that will be searched for combinations of a \"Noun\" label "
 	"preceded by a \"Determiner\" label. "
-	"The @@NavigationContext@ for this tier therefore consists of only a topic set and a before set and both have "
+	"The @@NavigationContext@ for this tier therefore consists of only a %topic set and a %before set and both have "
 	"only one member. "  
-	"The matches on the added search tier will be used to limit the number of matches on the topic tier by checking if a "
+	"The matches on the added search tier will be used to limit the number of matches on the %topic tier by checking if a "
 	"specified time relation between the match domains on both tiers exist. "
-	"Suppose that on both tiers we have a match which means that on the topic tier we found a vowel that is preceded "
+	"Suppose that on both tiers we have a match which means that on the %topic tier we found a vowel that is preceded "
 	"by a plosive and followed by a nasal, and, on the syntax tier we found an interval labeled \"Noun\" that is preceded "
 	"by an interval labeled \"Determiner\". The start and end time of the match domain on the topic tier equal the start and "
 	"end time of the vowel interval; name them %tmin1 and %tmax1, respectively. The match domain on the syntax tier will be "
