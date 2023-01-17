@@ -6071,12 +6071,12 @@ DEFINITION (U"defines the start and end times of the match domain on this tier. 
 	"therefore this option is irrelevant for single-tier searches.")
 MAN_END
 
-MAN_BEGIN (U"TextGridNavigator & TextGrid: Add search tier...", U"djmw", 20210723)
+MAN_BEGIN (U"TextGridNavigator & TextGrid: Add search tier...", U"djmw", 20220117)
 INTRO (U"A command to extend the search of the selected @@TextGridNavigator@ with another tier of the selected @@TextGrid@. ")
 ENTRY (U"Settings")
 TAG (U"##Tier number#")
 DEFINITION (U"defines the tier of the TextGrid that will also be used to limit make the searches more specific. This tier has to be different from the tiers that are already in use.")
-TAG (U"The @@NavigationContext|navigation context@ for this tiers has to be defined.")
+TAG (U"The @@NavigationContext|navigation context@ for this tier has to be defined.")
 TAG (U"##Match domain#")
 DEFINITION (U"defines the start and end times of the match domain on this tier. Various options exist, the default, "
 	"##Topic start to Topic end# takes the start time and end time of the interval that matches the topic on this tier. ")
