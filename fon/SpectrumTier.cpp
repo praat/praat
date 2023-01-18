@@ -1,6 +1,6 @@
 /* SpectrumTier.cpp
  *
- * Copyright (C) 20072008,2010-2012,2015,2016,2018,2020,2022 Paul Boersma
+ * Copyright (C) 20072008,2010-2012,2015,2016,2018,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ void structSpectrumTier :: v1_info () {
 	MelderInfo_writeLine (U"Maximum power value: ", RealTier_getMaximumValue (this), U" dB/Hz");
 }
 
-autoSpectrumTier SpectrumTier_create (double fmin, double fmax) {
+autoSpectrumTier SpectrumTier_create (const double fmin, const double fmax) {
 	try {
 		autoSpectrumTier me = Thing_new (SpectrumTier);
 		RealTier_init (me.get(), fmin, fmax);
@@ -41,13 +41,23 @@ autoSpectrumTier SpectrumTier_create (double fmin, double fmax) {
 	}
 }
 
-void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, bool garnish, conststring32 method)
-{
+void SpectrumTier_draw (
+	const SpectrumTier me,
+	const Graphics g,
+	const double fmin, const double fmax,
+	const double pmin, const double pmax,
+	const bool garnish,
+	const conststring32 method
+) {
 	RealTier_draw (me, g, fmin, fmax, pmin, pmax, garnish, method, U"Power spectral density (dB)");
 }
 
-void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
+void SpectrumTier_list (
+	const SpectrumTier me,
+	const bool includeIndexes,
+	const bool includeFrequency,
+	const bool includePowerDensity
+) {
 	try {
 		autoTable table = SpectrumTier_downto_Table (me, includeIndexes, includeFrequency, includePowerDensity);
 		Table_list (table.get(), false);
@@ -56,14 +66,19 @@ void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFreque
 	}
 }
 
-autoTable SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {
+autoTable SpectrumTier_downto_Table (
+	const SpectrumTier me,
+	const bool includeIndexes,
+	const bool includeFrequency,
+	const bool includePowerDensity
+) {
 	return RealTier_downto_Table (me,
 		includeIndexes ? U"index" : nullptr,
 		includeFrequency ? U"freq(Hz)" : nullptr,
 		includePowerDensity ? U"pow(dB/Hz)" : nullptr);
 }
 
-autoSpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me) {
+autoSpectrumTier Spectrum_to_SpectrumTier_peaks (const Spectrum me) {
 	try {
 		autoLtas ltas = Spectrum_to_Ltas_1to1 (me);
 		autoSpectrumTier thee = Ltas_to_SpectrumTier_peaks (ltas.get());
