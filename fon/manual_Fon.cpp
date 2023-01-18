@@ -1,6 +1,6 @@
 /* manual_Fon.cpp
  *
- * Copyright (C) 1992-2008,2010,2011,2014-2017,2019-2021 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017,2019-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2096,12 +2096,12 @@ ENTRY (U"Example")
 NORMAL (U"The command ##Create Polygon from values: \"triangle\", \"0 50 20\", \"0 10 80\"# "
 	"defines a Polygon with the three points (0, 0), (50, 10), and (20, 80). "
 	"In the figure the three points are indicated with open circles while the Polygon is drawn as a closed figure.")
-SCRIPT (4,4,
-	U"Create Polygon from values: \"triangle\", \"0 50 20\", \"0 10 80\"\n"
-	U"Draw circles: 0, 0, 0, 0, 3\n"
-	U"Draw closed: 0, 0, 0, 0\n"
-	U"Remove\n"
-)
+{ kManPage_type::SCRIPT, UR"~~~(
+	Create Polygon from values: "triangle", "0 50 20", "0 10 80"
+	Draw circles: 0, 0, 0, 0, 3
+	Draw closed: 0, 0, 0, 0
+	Remove
+)~~~", 4, 4, nullptr },
 MAN_END
 
 MAN_BEGIN (U"Read Matrix from raw text file...", U"ppgb", 19980322)
