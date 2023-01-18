@@ -46,7 +46,7 @@ autoAnalyticSound AnalyticSound_create (double xmin, double xmax, integer nx, do
 	}
 }
 
-void Spectrum_into_AnalyticSound (Spectrum me, AnalyticSound thee) {
+static void Spectrum_into_AnalyticSound (Spectrum me, AnalyticSound thee) {
 	try {
 		autoSound him = Spectrum_to_Sound (me);
 		const integer nx = std::min (his nx, thy nx);
