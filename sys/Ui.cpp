@@ -2861,7 +2861,7 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 		*/
 		lowerCaseFieldName.string [0] = Melder_toLowerCase (lowerCaseFieldName.string [0]);
 		for (char32 *p = & lowerCaseFieldName.string [0]; *p != U'\0'; p ++) {
-			if (*p == U' ')
+			if (Melder_isHorizontalSpace (*p))
 				*p = U'_';
 		}
 		switch (field -> type)

@@ -491,6 +491,40 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 	return npar;
 }
 
+static void tidyUpParameterNames (Interpreter me, integer size) {
+	for (integer ipar = 1; ipar <= size; ipar ++) {
+		mutablestring32 p = my parameters [ipar];
+		/*
+			Ignore buttons and comments again (after `size` was
+			made smaller than my numberOfParameters).
+		*/
+		if (! *p)
+			continue;
+		/*
+			Change spaces to underscores.
+			This has to come before stripping.
+		*/
+		for (p = my parameters [ipar]; *p != U'\0'; p ++)
+			if (Melder_isHorizontalSpace (*p))
+				*p = U'_';
+		/*
+			Strip parentheses off parameter name.
+		*/
+		p = my parameters [ipar];
+		if ((p = str32chr (p, U'(')) != nullptr) {
+			*p = U'\0';
+			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
+				p [-1] = U'\0';
+		}
+		/*
+			Strip colon off parameter name.
+		*/
+		p = my parameters [ipar];
+		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
+			p [Melder_length (p) - 1] = U'\0';
+	}
+}
+
 autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor optionalEditor, conststring32 path,
 	void (*okCallback) (UiForm, integer, Stackel, conststring32, Interpreter, conststring32, bool, void *, Editor), void *okClosure,
 	bool selectionOnly)
@@ -615,47 +649,21 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor opti
 				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			}
 		}
-		/*
-			Strip parentheses and colon off parameter name.
-		*/
-		if ((p = str32chr (my parameters [ipar], U'(')) != nullptr) {
-			*p = U'\0';
-			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
-				p [-1] = U'\0';
-		}
-		p = my parameters [ipar];
-		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
-			p [Melder_length (p) - 1] = U'\0';
 	}
+	tidyUpParameterNames (me, my numberOfParameters);
 	UiForm_finish (form.get());
 	return form;
 }
 
 void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
+	tidyUpParameterNames (me, my numberOfParameters);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-		char32 parameter [100], *p;
-		/*
-			Strip parentheses and colon off parameter name.
-		*/
-		if ((p = str32chr (my parameters [ipar], U'(')) != nullptr) {
-			*p = U'\0';
-			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
-				p [-1] = U'\0';
-		}
-		p = my parameters [ipar];
-		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
-			p [Melder_length (p) - 1] = U'\0';
-		/*
-			Convert spaces to underscores.
-		*/
-		for (p = my parameters [ipar]; *p != U'\0'; p ++)
-			if (*p == U' ')
-				*p = U'_';
+		char32 parameter [1+Interpreter_MAX_PARAMETER_LENGTH];
 		/*
 			Convert underscores to spaces.
 		*/
 		str32cpy (parameter, my parameters [ipar]);
-		p = & parameter [0];
+		char32 *p = & parameter [0];
 		while (*p) {
 			if (*p == U'_')
 				*p = U' ';
@@ -757,35 +765,6 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			default:
 				Melder_fatal (U"Unhandled parameter type ", my types [ipar]);
 		}
-	}
-}
-
-static void tidyUpParameterNames (Interpreter me, integer size) {
-	for (integer ipar = 1; ipar <= size; ipar ++) {
-		mutablestring32 p = my parameters [ipar];
-		/*
-			Ignore buttons and comments again (after `size` was
-			made smaller than my numberOfParameters).
-		*/
-		if (! *p)
-			continue;
-		/*
-			Strip parentheses and colon off parameter name.
-		*/
-		if ((p = str32chr (p, U'(')) != nullptr) {
-			*p = U'\0';
-			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
-				p [-1] = U'\0';
-		}
-		p = my parameters [ipar];
-		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
-			p [Melder_length (p) - 1] = U'\0';
-		/*
-			Change spaces to underscores.
-		*/
-		for (p = my parameters [ipar]; *p != U'\0'; p ++)
-			if (*p == U' ')
-				*p = U'_';
 	}
 }
 
