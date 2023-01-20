@@ -1,8 +1,8 @@
 form: "manually/Form2"
 	positive Frequency_(Hz) 10000
-	infile: "Input file (Hz)", "hello.wav"
-	outfile Output_file hello.wav
-	folder Folder hello.wav
+	infile: 1, "Input file (Hz)", "innetje.wav"
+	outfile: "Output_file", "uitje.wav"
+	folder: "Folder", "mapje"
 	;realvector Numbers1 (formula) { 10, 80, 20 }
 	;realvector Numbers2 (whitespace-separated) 8 19 -1.5
 endform
