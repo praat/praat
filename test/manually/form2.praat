@@ -1,9 +1,9 @@
-form manually/Form2
-	infile Input_file hello.wav
+form: "manually/Form2"
+	infile: "Input file", "hello.wav"
 	outfile Output_file hello.wav
 	folder Folder hello.wav
-	realvector Numbers1 (formula) { 10, 80, 20 }
-	realvector Numbers2 (whitespace-separated) 8 19 -1.5
+	;realvector Numbers1 (formula) { 10, 80, 20 }
+	;realvector Numbers2 (whitespace-separated) 8 19 -1.5
 endform
 
 appendInfoLine: "Form2..."

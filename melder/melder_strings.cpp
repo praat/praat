@@ -1,6 +1,6 @@
 /* melder_strings.cpp
  *
- * Copyright (C) 2006-2012,2014-2022 Paul Boersma
+ * Copyright (C) 2006-2012,2014-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,6 +161,13 @@ void MelderString_get (MelderString *me, char32 *destination) {
 		str32cpy (destination, my string);
 	else
 		destination [0] = U'\0';
+}
+
+void MelderString_truncate (MelderString *me, integer maximumLength) {
+	if (maximumLength < my length) {
+		my length = maximumLength;
+		my string [my length] = U'\0';
+	}
 }
 
 int64 MelderString_allocationCount () {

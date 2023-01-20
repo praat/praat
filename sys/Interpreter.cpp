@@ -205,6 +205,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 	char32 *formLocation = nullptr;
 	integer npar = 0;
 	my dialogTitle.reset();
+	autoMelderString string;
 	/*
 		Look for a "form" line.
 	*/
@@ -235,10 +236,10 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 		if (*endOfLine == U'\0')
 			Melder_throw (U"Unfinished form (only a “form” line).");
 		if (formLocation [4] == U':') {
-			autoMelderString string;
+			MelderString_empty (& string);
 			if (dialogTitle [0] != U'"')
 				Melder_throw (U"The title of a form should start with a double quote character (\").");
-			const char32* p = dialogTitle + 1;
+			char32* p = dialogTitle + 1;   // BUG: could be const (change Melder_skipHorizontalSpace())
 			for (; p < endOfLine; p ++) {
 				if (*p == U'"')
 					if (p [1] == U'"') {
@@ -250,13 +251,10 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			}
 			if (*p != U'"')
 				Melder_throw (U"Missing closing quote character in the title of the form.");
-			for (++ p; p < endOfLine; p ++)
-				if (*p == U';')
-					break;   // ignore everything else on the line
-				else if (Melder_isHorizontalSpace (*p))
-					;   // do nothing
-				else
-					Melder_throw (U"Stray characters after closing quote in form title.");
+			p ++;   // skip closing quote
+			Melder_skipHorizontalSpace (& p);
+			if (! Melder_isEndOfLine (*p) && *p != U';')
+				Melder_throw (U"Stray characters after closing quote in form title.");
 			my dialogTitle = Melder_dup (string.string);
 		} else {
 			my dialogTitle = Melder_ndup (dialogTitle, endOfLine - dialogTitle);
@@ -274,16 +272,28 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					Melder_throw (U"Unfinished form (missing “endform”).");
 				startOfLine = Melder_findEndOfHorizontalSpace (endOfLine + 1);
 			}
+			endOfLine = Melder_findEndOfLine (startOfLine);
+			/*
+				Break on endform.
+			*/
 			if (str32nequ (startOfLine, U"endform", 7) && Melder_isEndOfInk (startOfLine [7]))
 				break;
+			/*
+				Recognize parameter name, argument value,
+				and perhaps format name and/or number of lines.
+			*/
 			char32 *parameterLocation;
+			bool hasColon = false;
+			auto isEndOfInkOrColon = [] (const char32 kar) { return kar == U':' || Melder_isEndOfInk (kar); };
 			if (str32nequ (startOfLine, U"word", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_WORD; parameterLocation = startOfLine + 4; }
 			else if (str32nequ (startOfLine, U"sentence", 8) && Melder_isEndOfInk (startOfLine [8]))
 				{ type = Interpreter_SENTENCE; parameterLocation = startOfLine + 8; }
-			else if (str32nequ (startOfLine, U"infile", 6) && Melder_isEndOfInk (startOfLine [6]))
-				{ type = Interpreter_INFILE; parameterLocation = startOfLine + 6; }
-			else if (str32nequ (startOfLine, U"infile1", 7) && Melder_isEndOfInk (startOfLine [7]))
+			else if (str32nequ (startOfLine, U"infile", 6) && isEndOfInkOrColon (startOfLine [6])) {
+				type = Interpreter_INFILE;
+				hasColon = ( startOfLine [6] == U':' );
+				parameterLocation = startOfLine + 6 + hasColon;
+			} else if (str32nequ (startOfLine, U"infile1", 7) && Melder_isEndOfInk (startOfLine [7]))
 				{ type = Interpreter_INFILE1; parameterLocation = startOfLine + 7; }
 			else if (str32nequ (startOfLine, U"outfile", 7) && Melder_isEndOfInk (startOfLine [7]))
 				{ type = Interpreter_OUTFILE; parameterLocation = startOfLine + 7; }
@@ -346,7 +356,6 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			else if (str32nequ (startOfLine, U"comment", 7) && Melder_isEndOfInk (startOfLine [7]))
 				{ type = Interpreter_COMMENT; parameterLocation = startOfLine + 7; }
 			else {
-				endOfLine = Melder_findEndOfLine (startOfLine);
 				*endOfLine = U'\0';   // destroy input in order to limit printing of parameter type
 				Melder_throw (U"Unknown parameter type inside form:\n“", startOfLine, U"”.");
 			}
@@ -370,23 +379,84 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				my arguments [4] := "Green"
 				my arguments [5] := "Blue"
 			*/
+			const mutablestring32 parameter = my parameters [++ my numberOfParameters];
+			char32* p = parameterLocation;
 			if (type <= Interpreter_MAXIMUM_TYPE_WITH_VARIABLE_NAME) {
-				Melder_skipHorizontalSpace (& parameterLocation);
-				if (Melder_isEndOfLine (*parameterLocation)) {
-					*parameterLocation = U'\0';   // destroy input in order to limit printing of line
+				Melder_skipHorizontalSpace (& p);
+				if (Melder_isEndOfLine (*p)) {
+					*p = U'\0';   // destroy input in order to limit printing of line
 					Melder_throw (U"Missing parameter:\n“", startOfLine, U"”.");
 				}
-				char32 *q = my parameters [++ my numberOfParameters];
-				while (Melder_staysWithinInk (*parameterLocation))
-					* (q ++) = * (parameterLocation ++);
-				*q = U'\0';
+				MelderString_empty (& string);
+				if (hasColon) {
+					if (*p != U'"') {
+						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"Missing opening quote after colon in form field:\n“", startOfLine, U"”.");
+					}
+					p ++;   // skip opening quote
+					for (; p < endOfLine; p ++) {
+						if (*p == U'"')
+							if (p [1] == U'"') {   // look ahead
+								p ++;
+								continue;
+							} else
+								break;
+						MelderString_appendCharacter (& string, *p);
+					}
+					if (*p != U'"') {
+						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"Missing closing quote character in parameter name:\n“", startOfLine, U"”.");
+					}
+					p ++;   // skip closing quote
+					Melder_skipHorizontalSpace (& p);
+					if (*p != U',') {
+						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"Missing comma after parameter name:\n“", startOfLine, U"”.");
+					}
+					p ++;   // skip comma
+				} else {
+					while (Melder_staysWithinInk (*p))
+						MelderString_appendCharacter (& string, *(p ++));
+				}
+				MelderString_truncate (& string, Interpreter_MAX_PARAMETER_LENGTH);
+				str32cpy (parameter, string.string);
+				parameter [string.length] = U'\0';
 				npar ++;
 			} else {
-				my parameters [++ my numberOfParameters] [0] = U'\0';
+				parameter [0] = U'\0';
 			}
-			char32 *argumentLocation;
+			Melder_skipHorizontalSpace (& p);
+			MelderString_empty (& string);
+			if (hasColon) {
+				if (*p != U'"') {
+					*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+					Melder_throw (U"Missing opening quote after comma in form field:\n“", startOfLine, U"”.");
+				}
+				p ++;   // skip opening quote
+				for (; p < endOfLine; p ++) {
+					if (*p == U'"')
+						if (p [1] == U'"') {
+							p ++;
+							continue;
+						} else
+							break;
+					MelderString_appendCharacter (& string, *p);
+				}
+				if (*p != U'"') {
+					*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+					Melder_throw (U"Missing closing quote character in default argument:\n“", startOfLine, U"”.");
+				}
+				p ++;   // skip closing quote
+				Melder_skipHorizontalSpace (& p);
+				if (! Melder_isEndOfLine (*p) && *p != U';')
+					Melder_throw (U"Stray characters after default argument in form title:\n“", startOfLine, U"”.");
+			} else {
+				while (Melder_staysWithinInk (*p))
+					MelderString_appendCharacter (& string, *(p ++));
+			}
+			#if 0
 			if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE) {
-				char32 *formatLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+				char32 *formatLocation = Melder_findEndOfHorizontalSpace (p);
 				if (Melder_isEndOfLine (*formatLocation)) {
 					*formatLocation = U'\0';   // destroy input in order to limit printing of line
 					Melder_throw (U"Missing format:\n“", startOfLine, U"”.");
@@ -407,14 +477,12 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				*q = U'\0';
 				argumentLocation = Melder_findEndOfHorizontalSpace (formatLocation);
 			} else {
-				argumentLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+				argumentLocation = Melder_findEndOfHorizontalSpace (p);
 			}
-			endOfLine = Melder_findEndOfLine (argumentLocation);
+			#endif
 			if (Melder_isEndOfText (*endOfLine))
 				Melder_throw (U"Unfinished form (missing “endform”).");
-			*endOfLine = U'\0';   // destroy input temporarily in order to limit copying of argument
-			my arguments [my numberOfParameters] = Melder_dup_f (argumentLocation);
-			*endOfLine = U'\n';   // restore input
+			my arguments [my numberOfParameters] = Melder_dup_f (string.string);
 			my types [my numberOfParameters] = type;
 		}
 	} else {
@@ -578,6 +646,12 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
 			p [Melder_length (p) - 1] = U'\0';
 		/*
+			Convert spaces to underscores.
+		*/
+		for (p = my parameters [ipar]; *p != U'\0'; p ++)
+			if (*p == U' ')
+				*p = U'_';
+		/*
 			Convert underscores to spaces.
 		*/
 		str32cpy (parameter, my parameters [ipar]);
@@ -706,6 +780,12 @@ static void tidyUpParameterNames (Interpreter me, integer size) {
 		p = my parameters [ipar];
 		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
 			p [Melder_length (p) - 1] = U'\0';
+		/*
+			Change spaces to underscores.
+		*/
+		for (p = my parameters [ipar]; *p != U'\0'; p ++)
+			if (*p == U' ')
+				*p = U'_';
 	}
 }
 
