@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1993-2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ Thing_define (InterpreterVariable, SimpleString) {
 #define Interpreter_MAXNUM_PARAMETERS  400
 #define Interpreter_MAXNUM_LABELS  1000
 #define Interpreter_MAX_CALL_DEPTH  50
-#define Interpreter_MAX_DIALOG_TITLE_LENGTH  100
 
 #define Interpreter_MAX_LABEL_LENGTH  99
 
@@ -82,7 +81,8 @@ Thing_define (Interpreter, Thing) {
 	char32 choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100];
 	char32 labelNames [1+Interpreter_MAXNUM_LABELS] [1+Interpreter_MAX_LABEL_LENGTH];
 	integer labelLines [1+Interpreter_MAXNUM_LABELS];
-	char32 dialogTitle [1+Interpreter_MAX_DIALOG_TITLE_LENGTH], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
+	autostring32 dialogTitle;
+	char32 procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
 	std::unordered_map <std::u32string, autoInterpreterVariable> variablesMap;
 	bool running, stopped;
 

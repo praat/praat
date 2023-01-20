@@ -2,7 +2,7 @@
 #define _melder_str32_h_
 /* melder_str32.h
  *
- * Copyright (C) 1992-2018,2020-2022 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,11 +92,11 @@ int Melder_coll (conststring32 string1orNull, conststring32 string2orNull) noexc
 	No, it cannot, because of an ambiguity between separating dots and decimal points.
 	After all, "file8.2" could have to be interpreted as 'chapter 8, section 2'
 	and in that case will have to sort before "file8.11".
-	Af you want to interpret 8.2 and 8.11 as floating-point numbers,
+	If you want to interpret 8.2 and 8.11 as floating-point numbers,
 	which sort in the opposite order from chapter–section semantics,
 	you will have to make sure that the number of digits after the decimal point
 	is the same for both strings, so that "file8.11" will sort before "file8.20".
-	By supporting integers, we do support fixed-point numbers:
+	By supporting integers, we do support *fixed*-point numbers:
 	even without special trickery, "file8.11" will nicely sort before "file14.03".
 	Basically, str32coll_numberAware() simply regards dots as non-digits.
 */
