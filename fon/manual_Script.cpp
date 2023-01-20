@@ -1,6 +1,6 @@
 /* manual_Script.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3334,7 +3334,7 @@ LIST_ITEM (U"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn,
 LIST_ITEM (U"@@Scripting 6.9. Calling from the command line")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20211214)
+MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20230119)
 NORMAL (U"You can cause a Praat script to prompt for arguments. The file $$playSine.praat$ may contain the following:")
 CODE (U"#form Play a sine wave")
 	CODE1 (U"#positive Sine_frequency_(Hz) 377")
@@ -3398,7 +3398,7 @@ NORMAL (U"In the script following this form, the variables will be known as %%na
 NORMAL (U"The variable associated with a radio box will get a numeric as well as a string value:")
 CODE (U"#form Fill attributes")
 	CODE1 (U"#comment Choose any colour and texture for your paintings")
-	CODE1 (U"#choice Colour: 5")
+	CODE1 (U"#choice Colour 5")
 		CODE2 (U"#button Dark red")
 		CODE2 (U"#button Sea green")
 		CODE2 (U"#button Navy blue")
@@ -3423,7 +3423,7 @@ NORMAL (U"The field types #optionmenu and #option are completely analogous to #c
 	"but use up much less space on the screen:")
 CODE (U"#form Fill attributes")
 	CODE1 (U"#comment Choose any colour and texture for your paintings")
-	CODE1 (U"#optionmenu Colour: 5")
+	CODE1 (U"#optionmenu Colour 5")
 		CODE2 (U"#option Dark red")
 		CODE2 (U"#option Sea green")
 		CODE2 (U"#option Navy blue")
@@ -3643,7 +3643,7 @@ CODE (U"time = stopwatch")
 CODE (U"writeInfoLine: a, \" \", fixed\\$  (time, 3)")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20201020)
+MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20230119)
 INTRO (U"You can temporarily halt a Praat script:")
 TAG (U"#pauseScript: %message")
 DEFINITION (U"suspends execution of the script, and allows the user to interrupt it. "
@@ -3771,7 +3771,8 @@ NORMAL (U"A folder selector window will appear, with (in this example) \"Choose 
 	"if the user clicks #Cancel, the variable $$folderName\\$ $ will contain the empty string (\"\").")
 ENTRY (U"A non-pausing pause window without a Stop button")
 NORMAL (U"Especially if you use the pause window within the @@Demo window@, you may not want to give the user the capability of "
-	"ending the script by hitting #Stop or closing the pause window. In that case, you can add an extra argument to #endPause "
+	"ending the script by hitting #Stop or closing the pause window. "
+	"In that case, you can add an extra numeric argument to #endPause (at the end)"
 	"that denotes the cancel button:")
 CODE (U"#beginPause: \"Learning settings\"")
 	CODE1 (U"#positive: \"Learning rate\", \"0.01\"")

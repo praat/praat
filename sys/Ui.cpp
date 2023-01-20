@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1003,7 +1003,9 @@ UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName
 	return thee;
 }
 
-UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue, integer numberOfLines) {
+UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName,
+	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::TEXT_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
@@ -1012,98 +1014,118 @@ UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variab
 	return thee;
 }
 
-UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 variableName,
+	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::FORMULA_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 5;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName,
+	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::INFILE_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 3;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName,
+	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::OUTFILE_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 3;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName,
+	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::FOLDER_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 3;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue) {
+UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName,
+	conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::REALVECTOR_, label);
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVectorVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 7;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue) {
+UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName,
+	conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVEVECTOR_, label);
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVectorVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 7;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32 variableName, conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
+UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32 variableName,
+	conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::INTEGERVECTOR_, label);
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVectorVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 7;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32 variableName, conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
+UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32 variableName,
+	conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::NATURALVECTOR_, label);
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVectorVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 7;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName, conststring32 label, constMATVU defaultValue) {
+UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName,
+	conststring32 label, constMATVU defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::REALMATRIX_, label);
 	thy numericMatrixDefaultValue = copy_MAT (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 10;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
-UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 label, constSTRVEC defaultValue, integer numberOfLines) {
+UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 variableName,
+	conststring32 label, constSTRVEC defaultValue, integer numberOfLines)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::STRINGARRAY_, label);
 	thy stringArrayDefaultValue = copy_STRVEC (defaultValue);
 	thy stringArrayFormat = theStringArrayFormat;
 	thy stringArrayVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = numberOfLines;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 

@@ -2,7 +2,7 @@
 #define _melder_string32_h_
 /* melder_string32.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,8 @@ public:
 		return tmp;
 	}
 	void reset () {
-		if (our ptr) Melder_free (our ptr);
+		if (our ptr)
+			Melder_free (our ptr);
 	}
 	void resize (int64 newLength) {
 		T *tmp = (T *) Melder_realloc (our ptr, (newLength + 1) * (int64) sizeof (T));
@@ -154,6 +155,7 @@ typedef _autostring <char32> autostring32;
 
 autostring32 Melder_dup (conststring32 string /* cattable */);
 autostring32 Melder_dup_f (conststring32 string /* cattable */);
+autostring32 Melder_ndup (conststring32 string /* cattable */, integer n);
 
 /* End of file melder_string32.h */
 #endif

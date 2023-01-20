@@ -1,6 +1,6 @@
 /* Spectrum_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2015-2017,2019,2020 Paul Boersma
+ * Copyright (C) 1992-2011,2015-2017,2019,2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "Spectrum_to_Formant.h"
 
-autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
+autoFormant Spectrum_to_Formant (Spectrum me, const integer maxnFormants) {
 	try {
 		integer nfreq = my nx;
 		autoVEC power = zero_VEC (nfreq);

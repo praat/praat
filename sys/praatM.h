@@ -148,64 +148,77 @@
 
 #define REALVECTOR(realVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constVEC realVectorVariable; \
-		UiForm_addRealVector (_dia_.get(), & realVectorVariable, U"" #realVectorVariable, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
+		UiForm_addRealVector (_dia_.get(), & realVectorVariable, U"" #realVectorVariable, \
+				labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
 
 #define POSITIVEVECTOR(realVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constVEC realVectorVariable; \
-		UiForm_addPositiveVector (_dia_.get(), & realVectorVariable, U"" #realVectorVariable, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
+		UiForm_addPositiveVector (_dia_.get(), & realVectorVariable, U"" #realVectorVariable, \
+				labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
 
 #define INTEGERVECTOR(integerVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constINTVEC integerVectorVariable; \
-		UiForm_addIntegerVector (_dia_.get(), & integerVectorVariable, U"" #integerVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
+		UiForm_addIntegerVector (_dia_.get(), & integerVectorVariable, U"" #integerVectorVariable, \
+				labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
 
 #define NATURALVECTOR(integerVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constINTVEC integerVectorVariable; \
-		UiForm_addNaturalVector (_dia_.get(), & integerVectorVariable, U"" #integerVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
+		UiForm_addNaturalVector (_dia_.get(), & integerVectorVariable, U"" #integerVectorVariable, \
+				labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
 
 #define REALMATRIX(numericMatrixVariable, labelText, defaultNumericMatrixValue)  \
 		static constMAT numericMatrixVariable; \
-		UiForm_addRealMatrix (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, labelText, defaultNumericMatrixValue.get());
+		UiForm_addRealMatrix (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, \
+				labelText, defaultNumericMatrixValue.get());
 
 #define STRINGARRAY(stringArrayVariable, labelText, ...)  \
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
-			UiForm_addStringArray (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue)); \
+			UiForm_addStringArray (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, \
+					labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue)); \
 		}
 
 #define STRINGARRAY_LINES(numberOfLines, stringArrayVariable, labelText, ...)  \
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
-			UiForm_addStringArray (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue), numberOfLines); \
+			UiForm_addStringArray (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, \
+					labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue), numberOfLines); \
 		}
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
-		_radio_ = UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, labelText, defaultOptionNumber, 1);
+		_radio_ = UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
+				labelText, defaultOptionNumber, 1);
 
 #define RADIOx(intVariable, labelText, defaultOptionNumber, base)  \
 		static int intVariable; \
-		_radio_ = UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, labelText, defaultOptionNumber, base);
+		_radio_ = UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
+				labelText, defaultOptionNumber, base);
 
 #define RADIOSTR(stringVariable, labelText, defaultOptionNumber)  \
 		static conststring32 stringVariable; \
-		_radio_ = UiForm_addRadio (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, labelText, defaultOptionNumber, 1);
+		_radio_ = UiForm_addRadio (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
+				labelText, defaultOptionNumber, 1);
 
 #define RADIOBUTTON(labelText)  \
 		UiRadio_addButton (_radio_, labelText);
 
 #define OPTIONMENU(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), & intVariable, nullptr, U"" #intVariable, labelText, defaultOptionNumber, 1);
+		_radio_ = UiForm_addOptionMenu (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
+				labelText, defaultOptionNumber, 1);
 
 #define OPTIONMENUx(intVariable, labelText, defaultOptionNumber, base)  \
 		static int intVariable; \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), & intVariable, nullptr, U"" #intVariable, labelText, defaultOptionNumber, base);
+		_radio_ = UiForm_addOptionMenu (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
+				labelText, defaultOptionNumber, base);
 
 #define OPTIONMENUSTR(stringVariable, labelText, defaultOptionNumber)  \
 		static conststring32 stringVariable; \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, labelText, defaultOptionNumber, 1);
+		_radio_ = UiForm_addOptionMenu (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
+				labelText, defaultOptionNumber, 1);
 
 #define OPTION(labelText)  \
 		UiOptionMenu_addButton (_radio_, labelText);
@@ -216,8 +229,8 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		_radio_ = UiForm_addRadio (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, labelText, \
-			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+		_radio_ = UiForm_addRadio (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
+				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
 			UiRadio_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
@@ -227,8 +240,8 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, labelText, \
-			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+		_radio_ = UiForm_addOptionMenu (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
+				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
 			UiOptionMenu_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
@@ -238,18 +251,20 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), nullptr, & enumeratedVariableAsString, U"" #enumeratedVariableAsString, labelText, \
-			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+		_radio_ = UiForm_addOptionMenu (_dia_.get(), nullptr, & enumeratedVariableAsString, U"" #enumeratedVariableAsString, \
+				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
 			UiOptionMenu_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
 #define LIST(integerVariable, labelText, strings, defaultOptionNumber)  \
 		static integer integerVariable; \
-		UiForm_addList (_dia_.get(), & integerVariable, nullptr, U"" #integerVariable, labelText, strings, defaultOptionNumber);
+		UiForm_addList (_dia_.get(), & integerVariable, nullptr, U"" #integerVariable, \
+				labelText, strings, defaultOptionNumber);
 
 #define LISTSTR(stringVariable, labelText, numberOfStrings, strings, defaultOptionNumber)  \
 		static char32 *stringVariable; \
-		UiForm_addList (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, labelText, strings, defaultOptionNumber);
+		UiForm_addList (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
+				labelText, strings, defaultOptionNumber);
 
 #define FILE_IN(labelText)  \
 		UiForm_addFileIn (_dia_.get(), labelText);

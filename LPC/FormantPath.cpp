@@ -386,7 +386,7 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 				const double time = my x1 + (iframe - 1) * my dx;
 				const double startTime = time - 0.5 * windowLength;
 				const double endTime = time + 0.5 * windowLength;
-				autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime,  parameters);
+				autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime, parameters);
 				thy z [candidate] [iframe] = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 			}
 		}
@@ -398,7 +398,8 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 
 
 double FormantPath_getStressOfCandidate (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant,
-	constINTVEC const& parameters, double powerf, integer candidate) {
+	constINTVEC const& parameters, double powerf, integer candidate)
+{
 	Melder_require (candidate > 0 && candidate <= my formantCandidates. size,
 		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
 	const Formant formant = (Formant) my formantCandidates.at [candidate];
@@ -406,8 +407,9 @@ double FormantPath_getStressOfCandidate (FormantPath me, double tmin, double tma
 	return FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 }
 
-autoVEC FormantPath_getStressOfCandidates (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
-	
+autoVEC FormantPath_getStressOfCandidates (FormantPath me, double tmin, double tmax,
+	integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf)
+{
 	autoVEC stresses = raw_VEC (my formantCandidates.size);
 	for (integer candidate = 1; candidate <= my formantCandidates.size; candidate ++)
 		stresses [candidate] = FormantPath_getStressOfCandidate (me, tmin, tmax, fromFormant, toFormant, parameters, powerf, candidate);
@@ -693,7 +695,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 			Graphics_setLineType (g, Graphics_DASHED);
 			if (xCursor > tmin && xCursor <= tmax)
 				Graphics_line (g, xCursor, 0.0, xCursor, fmax);
-			if (yCursor > 0.0 && yCursor < fmax)
+			if (yCursor > fmin && yCursor < fmax)
 				Graphics_line (g, tmin, yCursor, tmax, yCursor);
 			Graphics_setColour (g, Melder_BLACK);
 			Graphics_setLineType (g, Graphics_DRAWN);
