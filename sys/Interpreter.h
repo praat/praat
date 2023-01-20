@@ -75,7 +75,7 @@ Thing_define (Interpreter, Thing) {
 	autostring32 environmentName;
 	ClassInfo editorClass;
 	int numberOfParameters, numberOfLabels, callDepth;
-	int types [1+Interpreter_MAXNUM_PARAMETERS];
+	int types [1+Interpreter_MAXNUM_PARAMETERS], numbersOfLines [1+Interpreter_MAXNUM_PARAMETERS];
 	char32 parameters [1+Interpreter_MAXNUM_PARAMETERS] [1+Interpreter_MAX_PARAMETER_LENGTH];
 	char32 formats [1+Interpreter_MAXNUM_PARAMETERS] [40];
 	autostring32 arguments [1+Interpreter_MAXNUM_PARAMETERS];
