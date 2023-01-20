@@ -2,7 +2,7 @@
 #define _melder_string_h_
 /* MelderString.h
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,6 +92,7 @@ void MelderString_copy (MelderString *me, const MelderArg& first, Args... rest) 
 void MelderString16_appendCharacter (MelderString16 *me, char32 character);
 void MelderString_appendCharacter (MelderString *me, char32 character);
 void MelderString_get (MelderString *me, char32 *destination);   // performs no boundary checking
+void MelderString_truncate (MelderString *me, integer maximumLength);
 int64 MelderString_allocationCount ();
 int64 MelderString_deallocationCount ();
 int64 MelderString_allocationSize ();
