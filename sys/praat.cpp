@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2316,7 +2316,7 @@ void praat_run () {
 						that Praat has finished, so we send a visible comment with hashes ("##########").
 
 						Our output will still look different from a real console app because of the extra
-						prompt at the beginning (prepened to our comment) and perhaps the extra
+						prompt at the beginning (prepended to our comment) and perhaps the extra
 						empty line that will appear now at the end of the output.
 						(last checked 2022-10-12)
 

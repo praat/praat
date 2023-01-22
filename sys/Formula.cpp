@@ -155,6 +155,8 @@ enum { NO_SYMBOL_,
 		REAL_, POSITIVE_, INTEGER_, NATURAL_,
 		WORD_, SENTENCE_, TEXT_, BOOLEAN_,
 		CHOICE_, OPTION_MENU_, OPTION_,
+		INFILE_, OUTFILE_, FOLDER_,
+		REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_,
 		COMMENT_, END_PAUSE_FORM_,
 		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
@@ -293,6 +295,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"beginForm", U"beginPause", U"real", U"positive", U"integer", U"natural",
 	U"word", U"sentence", U"text", U"boolean",
 	U"choice", U"optionMenu", U"option",
+	U"infile", U"outfile", U"folder",
+	U"realvector", U"positivevector", U"integervector", U"naturalvector",
 	U"comment", U"endPause",
 	U"chooseReadFile$", U"chooseWriteFile$", U"chooseFolder$", U"chooseDirectory$",
 	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoPeekInput", U"demoInput", U"demoClickedIn",
@@ -6489,13 +6493,31 @@ static void do_text () {
 		U"The function “text” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
-		U"The function “text” requires 2 or 3 arguments (a label, a default value, and an optional number of lines), not ", n->number, U".");
+		U"The function “text” requires 2 or 3 arguments (an optional number of lines, a label, and a default value), not ", n->number, U".");
 	integer numberOfLines = 1;   // the default
 	if (n->number == 3) {
-		const Stackel _numberOfLines = pop;
+		/*
+			For compatibility, the number of lines might be at the end.
+		*/
+		const Stackel arg3 = pop, arg2 = pop, arg1 = pop;
+		if (arg1->which == Stackel_STRING && arg2->which == Stackel_STRING && arg3->which == Stackel_NUMBER) {
+			UiPause_text (arg1->getString(), arg2->getString(), Melder_iround (arg3->number));
+			pushNumber (1);
+			return;
+		}
+		const Stackel defaultValue = arg3;
+		Melder_require (defaultValue->which == Stackel_STRING,
+			U"The third argument of “text” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+		const Stackel label = arg2;
+		Melder_require (label->which == Stackel_STRING,
+			U"The second argument of “text” (the label) should be a string, not ", label->whichText(), U".");
+		const Stackel _numberOfLines = arg1;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
-			U"The third argument of “text” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+			U"The first argument of “text” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
 		numberOfLines = Melder_iround (_numberOfLines->number);
+		UiPause_text (label->getString(), defaultValue->getString(), numberOfLines);
+		pushNumber (1);
+		return;
 	}
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
@@ -6504,6 +6526,184 @@ static void do_text () {
 	Melder_require (label->which == Stackel_STRING,
 		U"The first argument of “text” (the label) should be a string, not ", label->whichText(), U".");
 	UiPause_text (label->getString(), defaultValue->getString(), numberOfLines);
+	pushNumber (1);
+}
+static void do_infile () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function “infile” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number >= 2 && n->number <= 3,
+		U"The function “infile” requires 2 or 3 arguments (an optional number of lines, a label, and a default value), not ", n->number, U".");
+	integer numberOfLines = 3;   // the default
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The last argument of “infile” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The penultimate argument of “infile” (the label) should be a string, not ", label->whichText(), U".");
+	if (n->number == 3) {
+		const Stackel _numberOfLines = pop;
+		Melder_require (_numberOfLines->which == Stackel_NUMBER,
+			U"The first argument of “infile” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+		numberOfLines = Melder_iround (_numberOfLines->number);
+	}
+	UiPause_infile (label->getString(), defaultValue->getString(), numberOfLines);
+	pushNumber (1);
+}
+static void do_outfile () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function “outfile” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number >= 2 && n->number <= 3,
+		U"The function “outfile” requires 2 or 3 arguments (an optional number of lines, a label, and a default value), not ", n->number, U".");
+	integer numberOfLines = 3;   // the default
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The last argument of “outfile” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The penultimate argument of “outfile” (the label) should be a string, not ", label->whichText(), U".");
+	if (n->number == 3) {
+		const Stackel _numberOfLines = pop;
+		Melder_require (_numberOfLines->which == Stackel_NUMBER,
+			U"The first argument of “outfile” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+		numberOfLines = Melder_iround (_numberOfLines->number);
+	}
+	UiPause_outfile (label->getString(), defaultValue->getString(), numberOfLines);
+	pushNumber (1);
+}
+static void do_folder () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function “folder” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number >= 2 && n->number <= 3,
+		U"The function “folder” requires 2 or 3 arguments (an optional number of lines, a label, and a default value), not ", n->number, U".");
+	integer numberOfLines = 3;   // the default
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The last argument of “folder” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The penultimate argument of “folder” (the label) should be a string, not ", label->whichText(), U".");
+	if (n->number == 3) {
+		const Stackel _numberOfLines = pop;
+		Melder_require (_numberOfLines->which == Stackel_NUMBER,
+			U"The first argument of “folder” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+		numberOfLines = Melder_iround (_numberOfLines->number);
+	}
+	UiPause_folder (label->getString(), defaultValue->getString(), numberOfLines);
+	pushNumber (1);
+}
+static void do_realvector () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function “realvector” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number >= 3 && n->number <= 4,
+		U"The function “realvector” requires 3 or 4 arguments (an optional number of lines, a label, a format, and a default value), not ", n->number, U".");
+	integer numberOfLines = 7;   // the default
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The last argument of “realvector” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel _format = pop;
+	Melder_require (_format->which == Stackel_STRING,
+		U"The penultimate argument of “realvector” (the format) should be a string, not ", _format->whichText(), U".");
+	kUi_realVectorFormat format = kUi_realVectorFormat_getValue (_format->getString());
+	Melder_require (format != kUi_realVectorFormat::UNDEFINED,
+		U"The format should be “(whitespace-separated)” or “(formula)”, not “", _format->getString(), U"”.");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The antepenultimate argument of “realvector” (the label) should be a string, not ", label->whichText(), U".");
+	if (n->number == 4) {
+		const Stackel _numberOfLines = pop;
+		Melder_require (_numberOfLines->which == Stackel_NUMBER,
+			U"The first argument of “realvector” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+		numberOfLines = Melder_iround (_numberOfLines->number);
+	}
+	UiPause_realvector (label->getString(), format, defaultValue->getString(), numberOfLines);
+	pushNumber (1);
+}
+static void do_positivevector () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function “positivevector” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number >= 3 && n->number <= 4,
+		U"The function “positivevector” requires 3 or 4 arguments (an optional number of lines, a label, a format, and a default value), not ", n->number, U".");
+	integer numberOfLines = 7;   // the default
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The last argument of “positivevector” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel _format = pop;
+	Melder_require (_format->which == Stackel_STRING,
+		U"The penultimate argument of “positivevector” (the format) should be a string, not ", _format->whichText(), U".");
+	kUi_realVectorFormat format = kUi_realVectorFormat_getValue (_format->getString());
+	Melder_require (format != kUi_realVectorFormat::UNDEFINED,
+		U"The format should be “(whitespace-separated)” or “(formula)”, not “", _format->getString(), U"”.");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The antepenultimate argument of “positivevector” (the label) should be a string, not ", label->whichText(), U".");
+	if (n->number == 4) {
+		const Stackel _numberOfLines = pop;
+		Melder_require (_numberOfLines->which == Stackel_NUMBER,
+			U"The first argument of “positivevector” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+		numberOfLines = Melder_iround (_numberOfLines->number);
+	}
+	UiPause_positivevector (label->getString(), format, defaultValue->getString(), numberOfLines);
+	pushNumber (1);
+}
+static void do_integervector () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function “integervector” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number >= 3 && n->number <= 4,
+		U"The function “integervector” requires 3 or 4 arguments (an optional number of lines, a label, a format, and a default value), not ", n->number, U".");
+	integer numberOfLines = 7;   // the default
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The last argument of “integervector” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel _format = pop;
+	Melder_require (_format->which == Stackel_STRING,
+		U"The penultimate argument of “integervector” (the format) should be a string, not ", _format->whichText(), U".");
+	kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (_format->getString());
+	Melder_require (format != kUi_integerVectorFormat::UNDEFINED,
+		U"The format should be “(whitespace-separated)”, “(ranges)”, or “(formula)”, not “", _format->getString(), U"”.");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The antepenultimate argument of “integervector” (the label) should be a string, not ", label->whichText(), U".");
+	if (n->number == 4) {
+		const Stackel _numberOfLines = pop;
+		Melder_require (_numberOfLines->which == Stackel_NUMBER,
+			U"The first argument of “integervector” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+		numberOfLines = Melder_iround (_numberOfLines->number);
+	}
+	UiPause_integervector (label->getString(), format, defaultValue->getString(), numberOfLines);
+	pushNumber (1);
+}
+static void do_naturalvector () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function “naturalvector” is not available inside manuals.");
+	const Stackel n = pop;
+	Melder_require (n->number >= 3 && n->number <= 4,
+		U"The function “naturalvector” requires 3 or 4 arguments (an optional number of lines, a label, a format, and a default value), not ", n->number, U".");
+	integer numberOfLines = 7;   // the default
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The last argument of “naturalvector” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel _format = pop;
+	Melder_require (_format->which == Stackel_STRING,
+		U"The penultimate argument of “naturalvector” (the format) should be a string, not ", _format->whichText(), U".");
+	kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (_format->getString());
+	Melder_require (format != kUi_integerVectorFormat::UNDEFINED,
+		U"The format should be “(whitespace-separated)”, “(ranges)”, or “(formula)”, not “", _format->getString(), U"”.");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The antepenultimate argument of “naturalvector” (the label) should be a string, not ", label->whichText(), U".");
+	if (n->number == 4) {
+		const Stackel _numberOfLines = pop;
+		Melder_require (_numberOfLines->which == Stackel_NUMBER,
+			U"The first argument of “naturalvector” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+		numberOfLines = Melder_iround (_numberOfLines->number);
+	}
+	UiPause_naturalvector (label->getString(), format, defaultValue->getString(), numberOfLines);
 	pushNumber (1);
 }
 static void do_boolean () {
@@ -7684,6 +7884,13 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case CHOICE_: { do_choice ();
 } break; case OPTION_MENU_: { do_optionMenu ();
 } break; case OPTION_: { do_option ();
+} break; case INFILE_: { do_infile ();
+} break; case OUTFILE_: { do_outfile ();
+} break; case FOLDER_: { do_folder ();
+} break; case REALVECTOR_: { do_realvector ();
+} break; case POSITIVEVECTOR_: { do_positivevector ();
+} break; case INTEGERVECTOR_: { do_integervector ();
+} break; case NATURALVECTOR_: { do_naturalvector ();
 } break; case COMMENT_: { do_comment ();
 } break; case END_PAUSE_FORM_: { do_endPauseForm ();
 } break; case CHOOSE_READ_FILE_STR_: { do_chooseReadFileStr ();

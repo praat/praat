@@ -1123,7 +1123,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, integer narg, Stackel arg
 		my arguments [ipar] =
 			arg -> which == Stackel_NUMBER ? Melder_dup (Melder_double (arg -> number)) :
 			arg -> which == Stackel_STRING ? Melder_dup (arg -> getString()) :
-			arg -> which == Stackel_NUMERIC_VECTOR ? Melder_dup (Melder_VEC (arg -> numericVector)) :
+			arg -> which == Stackel_NUMERIC_VECTOR ? Melder_dup (Melder_VEC (arg -> numericVector, true)) :
 			autostring32();
 		Melder_assert (my arguments [ipar]);
 	}
