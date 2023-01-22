@@ -801,7 +801,7 @@ LIST_ITEM (U"Page-down (in sound windows): Scroll page forward")
 LIST_ITEM (U"Escape: Interrupt playing")
 MAN_END
 
-MAN_BEGIN (U"Log files", U"ppgb", 20221202)
+MAN_BEGIN (U"Log files", U"ppgb", 20230122)
 INTRO (U"With some commands in the @@Analyses menu@ of the @SoundEditor and @TextGridEditor, "
 	"you can write combined information about times, pitch values, formants, and intensities "
 	"to the @@Info window@ and/or to a log file.")
@@ -885,8 +885,8 @@ NORMAL (U"You can make this script accessible with @@Keyboard shortcuts|Option-F
 	"in the ##Log settings...# window.")
 NORMAL (U"These scripts may take arguments. Suppose, for instance, that you want to specify a vowel symbol "
 	"as you press @@Keyboard shortcuts|Option-F12@. The following script will take care of that:")
-CODE (U"form Save vowel and formants")
-CODE1 (U"word Vowel a")
+CODE (U"form: \"Save vowel and formants\"")
+CODE1 (U"word: \"Vowel\", \"a\"")
 CODE (U"endform")
 CODE (U"f1 = Get first formant")
 CODE (U"f2 = Get second formant")

@@ -1,6 +1,6 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,10 +151,11 @@ enum { NO_SYMBOL_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
 		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
-		BEGIN_PAUSE_FORM_, PAUSE_FORM_ADD_REAL_, PAUSE_FORM_ADD_POSITIVE_, PAUSE_FORM_ADD_INTEGER_, PAUSE_FORM_ADD_NATURAL_,
-		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
-		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
-		PAUSE_FORM_ADD_COMMENT_, END_PAUSE_FORM_,
+		BEGIN_FORM_, BEGIN_PAUSE_FORM_,
+		REAL_, POSITIVE_, INTEGER_, NATURAL_,
+		WORD_, SENTENCE_, TEXT_, BOOLEAN_,
+		CHOICE_, OPTION_MENU_, OPTION_,
+		COMMENT_, END_PAUSE_FORM_,
 		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
@@ -289,7 +290,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"left$", U"right$", U"mid$",
 	U"selected", U"selected$", U"numberOfSelected", U"selected#",
 	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
-	U"beginPause", U"real", U"positive", U"integer", U"natural",
+	U"beginForm", U"beginPause", U"real", U"positive", U"integer", U"natural",
 	U"word", U"sentence", U"text", U"boolean",
 	U"choice", U"optionMenu", U"option",
 	U"comment", U"endPause",
@@ -729,12 +730,12 @@ static void Formula_lexan () {
 			char32 *underscore = str32chr (token.string, '_');
 			if (str32equ (token.string, U"Self")) {
 				if (! theSource)
-					formulaError (U"Cannot use \"Self\" if there is no current object.", ikar);
+					formulaError (U"Cannot use “Self” if there is no current object.", ikar);
 				newtok (MATRIX_)
 				tokmatrix (theSource);
 			} else if (str32equ (token.string, U"Self$")) {
 				if (! theSource)
-					formulaError (U"Cannot use \"Self$\" if there is no current object.", ikar);
+					formulaError (U"Cannot use “Self$” if there is no current object.", ikar);
 				newtok (MATRIX_STR_)
 				tokmatrix (theSource);
 			} else if (! underscore) {
@@ -763,7 +764,13 @@ static void Formula_lexan () {
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			}
 		} else if (kar == U'(') {
-			newtok (OPENING_PARENTHESIS_)
+			newchar;
+			if (kar == U'=') {
+				newtok (END_)   // "(=" = final comment
+			} else {
+				oldchar;
+				newtok (OPENING_PARENTHESIS_)
+			}
 		} else if (kar == U')') {
 			newtok (CLOSING_PARENTHESIS_)
 		} else if (kar == U'+') {
@@ -777,7 +784,7 @@ static void Formula_lexan () {
 		} else if (kar == U'*') {
 			newchar;
 			if (kar == U'*') {
-				newtok (POWER_)   /* "**" = "^" */
+				newtok (POWER_)   // "**" = "^"
 			} else {
 				oldchar;
 				newtok (MUL_)
@@ -785,16 +792,16 @@ static void Formula_lexan () {
 		} else if (kar == U'/') {
 			newchar;
 			if (kar == U'=') {
-				newtok (NE_)   /* "/=" = "<>" */
+				newtok (NE_)   // "/=" = "<>"
 			} else {
 				oldchar;
 				newtok (RDIV_)
 			}
 		} else if (kar == U'=') {
-			newtok (EQ_)   /* "=" */
+			newtok (EQ_)   // "="
 			newchar;
 			if (kar != U'=') {
-				oldchar;   /* "==" = "=" */
+				oldchar;   // "==" = "="
 			}
 		} else if (kar == U'>') {
 			newchar;
@@ -817,7 +824,7 @@ static void Formula_lexan () {
 		} else if (kar == U'!') {
 			newchar;
 			if (kar == U'=') {
-				newtok (NE_)   /* "!=" = "<>" */
+				newtok (NE_)   // "!=" = "<>"
 			} else {
 				oldchar;
 				newtok (NOT_)
@@ -841,7 +848,7 @@ static void Formula_lexan () {
 			newtok (CALL_)
 			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 			numberOfStringConstants ++;
-		} else if (kar == U'\"') {
+		} else if (kar == U'"') {
 			/*
 				String constant.
 			*/
@@ -850,9 +857,9 @@ static void Formula_lexan () {
 			for (;;) {
 				if (kar == U'\0')
 					formulaError (U"No closing quote in string constant", ikar);
-				if (kar == U'\"') {
+				if (kar == U'"') {
 					newchar;
-					if (kar == U'\"')
+					if (kar == U'"')
 						stringtokchar
 					else break;
 				} else {
@@ -920,8 +927,8 @@ static void fit (integer symbol) {
 		const bool needQuotes2 = ! str32chr (symbolName2, U' ');
 		static MelderString message;
 		MelderString_copy (& message,
-			U"Expected ", ( needQuotes1 ? U"\"" : nullptr ), symbolName1, ( needQuotes1 ? U"\"" : nullptr ),
-			U", but found ", ( needQuotes2 ? U"\"" : nullptr ), symbolName2, ( needQuotes2 ? U"\"" : nullptr ));
+			U"Expected ", ( needQuotes1 ? U"“" : nullptr ), symbolName1, ( needQuotes1 ? U"”" : nullptr ),
+			U", but found ", ( needQuotes2 ? U"“" : nullptr ), symbolName2, ( needQuotes2 ? U"”" : nullptr ));
 		formulaError (message.string, lexan [ilexan]. position);
 	}
 }
@@ -936,7 +943,7 @@ static bool fitArguments () {
     const bool needQuotes2 = ! str32chr (symbolName2, U' ');
     static MelderString message;
     MelderString_copy (& message,
-		U"Expected \"(\" or \":\", but found ", ( needQuotes2 ? U"\"" : nullptr ), symbolName2, ( needQuotes2 ? U"\"" : nullptr ));
+		U"Expected “(” or “:”, but found ", ( needQuotes2 ? U"“" : nullptr ), symbolName2, ( needQuotes2 ? U"”" : nullptr ));
     formulaError (message.string, lexan [ilexan]. position);
     return false;   // will never occur
 }
@@ -1163,8 +1170,8 @@ static void parsePowerFactor () {
 							fit (CLOSING_BRACKET_);
 							return;
 						default:
-							formulaError (U"After \"object [number].\" there should be \"xmin\", \"xmax\", \"ymin\", "
-								"\"ymax\", \"nx\", \"ny\", \"dx\", \"dy\", \"nrow\" or \"ncol\"", lexan [ilexan]. position);
+							formulaError (U"After “object [number].” there should be “xmin”, “xmax”, “ymin”, "
+								"“ymax”, “nx”, “ny”, “dx”, “dy”, “nrow” or “ncol”", lexan [ilexan]. position);
 					}
 				} else if (symbol == OPENING_BRACKET_) {
 					parseExpression ();
@@ -1215,7 +1222,7 @@ static void parsePowerFactor () {
 				}
 			}
 		} else {
-			formulaError (U"After \"object\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
+			formulaError (U"After “object” there should be “(” or “[”", lexan [ilexan]. position);
 		}
 		return;
 	}
@@ -1261,7 +1268,7 @@ static void parsePowerFactor () {
 				}
 			}
 		} else {
-			formulaError (U"After \"object$\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
+			formulaError (U"After “object$” there should be “(” or “[”", lexan [ilexan]. position);
 		}
 		return;
 	}
@@ -1338,7 +1345,7 @@ static void parsePowerFactor () {
 			switch (newread) {
 				case XMIN_:
 					if (! thy v_hasGetXmin ()) {
-						formulaError (U"Attribute \"xmin\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “xmin” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getXmin ());
@@ -1346,7 +1353,7 @@ static void parsePowerFactor () {
 					}
 				case XMAX_:
 					if (! thy v_hasGetXmax ()) {
-						formulaError (U"Attribute \"xmax\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “xmax” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getXmax ());
@@ -1354,7 +1361,7 @@ static void parsePowerFactor () {
 					}
 				case YMIN_:
 					if (! thy v_hasGetYmin ()) {
-						formulaError (U"Attribute \"ymin\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “ymin” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getYmin ());
@@ -1362,7 +1369,7 @@ static void parsePowerFactor () {
 					}
 				case YMAX_:
 					if (! thy v_hasGetYmax ()) {
-						formulaError (U"Attribute \"ymax\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “ymax” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getYmax ());
@@ -1370,7 +1377,7 @@ static void parsePowerFactor () {
 					}
 				case NX_:
 					if (! thy v_hasGetNx ()) {
-						formulaError (U"Attribute \"nx\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “nx” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getNx ());
@@ -1378,7 +1385,7 @@ static void parsePowerFactor () {
 					}
 				case NY_:
 					if (! thy v_hasGetNy ()) {
-						formulaError (U"Attribute \"ny\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “ny” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getNy ());
@@ -1386,7 +1393,7 @@ static void parsePowerFactor () {
 					}
 				case DX_:
 					if (! thy v_hasGetDx ()) {
-						formulaError (U"Attribute \"dx\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “dx” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getDx ());
@@ -1394,7 +1401,7 @@ static void parsePowerFactor () {
 					}
 				case DY_:
 					if (! thy v_hasGetDy ()) {
-						formulaError (U"Attribute \"dy\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “dy” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getDy ());
@@ -1402,7 +1409,7 @@ static void parsePowerFactor () {
 					}
 				case NCOL_:
 					if (! thy v_hasGetNcol ()) {
-						formulaError (U"Attribute \"ncol\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “ncol” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getNcol ());
@@ -1410,7 +1417,7 @@ static void parsePowerFactor () {
 					}
 				case NROW_:
 					if (! thy v_hasGetNrow ()) {
-						formulaError (U"Attribute \"nrow\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “nrow” not defined for this object", lexan [ilexan]. position);
 					} else {
 						newparse (NUMBER_);
 						parsenumber (thy v_getNrow ());
@@ -1418,7 +1425,7 @@ static void parsePowerFactor () {
 					}
 				case ROW_STR_:
 					if (! thy v_hasGetRowStr ()) {
-						formulaError (U"Attribute \"row$\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “row$” not defined for this object", lexan [ilexan]. position);
 					} else {
 						fit (OPENING_BRACKET_);
 						parseExpression ();
@@ -1429,7 +1436,7 @@ static void parsePowerFactor () {
 					}
 				case COL_STR_:
 					if (! thy v_hasGetColStr ()) {
-						formulaError (U"Attribute \"col$\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute “col$” not defined for this object", lexan [ilexan]. position);
 					} else {
 						fit (OPENING_BRACKET_);
 						parseExpression ();
@@ -1441,7 +1448,7 @@ static void parsePowerFactor () {
 				default: formulaError (U"Unknown attribute.", lexan [ilexan]. position);
 			}
 		} else {
-			formulaError (U"After a name of a matrix there should be \"(\", \"[\", or \".\"", lexan [ilexan]. position);
+			formulaError (U"After a name of a matrix there should be “(”, “[”, or “.”", lexan [ilexan]. position);
 		}
 		return;
 	}
@@ -1470,7 +1477,7 @@ static void parsePowerFactor () {
 				}
 			}
 		} else {
-			formulaError (U"After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
+			formulaError (U"After a name of a matrix$ there should be “[”", lexan [ilexan]. position);
 		}
 		return;
 	}
@@ -2058,7 +2065,7 @@ static integer praat_findObjectByName (conststring32 name) {
 		MelderString_copy (& buffer, name);
 		char32 *spaceLocation = str32chr (buffer.string, U' ');
 		if (! spaceLocation)
-			Melder_throw (U"Missing space in object name \"", name, U"\".");
+			Melder_throw (U"Missing space in object name “", name, U"”.");
 		*spaceLocation = U'\0';
 		conststring32 className = & buffer.string [0], givenName = spaceLocation + 1;
 		WHERE_DOWN (1) {
@@ -2073,7 +2080,7 @@ static integer praat_findObjectByName (conststring32 name) {
 				return IOBJECT;
 		}
 	}
-	Melder_throw (U"No object with name \"", name, U"\".");
+	Melder_throw (U"No object with name “", name, U"”.");
 }
 
 static void Formula_evaluateConstants () {
@@ -2291,7 +2298,7 @@ static Stackel theStack;
 static integer w, wmax;   /* w = stack pointer; */
 #define pop  & theStack [w --]
 #define topOfStack  & theStack [w]
-inline static void pushNumber (double x) {
+inline static void pushNumber (const double x) {
 	/* inline runs 10 to 20 percent faster; here's the test script:
 		stopwatch
 		Create Sound from formula: "test", 1, 0.0, 1000.0, 44100, ~ x + 1 + 2 + 3 + 4 + 5 + 6
@@ -2404,7 +2411,7 @@ static void do_not () {
 	if (x->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) ? undefined : x->number == 0.0 ? 1.0 : 0.0);
 	} else {
-		Melder_throw (U"Cannot negate (\"not\") ", x->whichText(), U".");
+		Melder_throw (U"Cannot negate (“not”) ", x->whichText(), U".");
 	}
 }
 static void do_eq () {
@@ -3250,7 +3257,7 @@ static void do_idiv () {
 		pushNumber (floor (x->number / y->number));
 		return;
 	}
-	Melder_throw (U"Cannot divide (\"div\") ", x->whichText(), U" by ", y->whichText(), U".");
+	Melder_throw (U"Cannot divide (“div”) ", x->whichText(), U" by ", y->whichText(), U".");
 }
 static void do_mod () {
 	const Stackel y = pop, x = pop;
@@ -3258,7 +3265,7 @@ static void do_mod () {
 		pushNumber (x->number - floor (x->number / y->number) * y->number);
 		return;
 	}
-	Melder_throw (U"Cannot divide (\"mod\") ", x->whichText(), U" by ", y->whichText(), U".");
+	Melder_throw (U"Cannot divide (“mod”) ", x->whichText(), U" by ", y->whichText(), U".");
 }
 static void do_minus () {
 	const Stackel x = pop;
@@ -3782,7 +3789,7 @@ static void do_do () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	if (narg->number < 1)
-		Melder_throw (U"The function \"do\" requires at least one argument, namely a menu command.");
+		Melder_throw (U"The function “do” requires at least one argument, namely a menu command.");
 	const integer numberOfArguments = Melder_iround (narg->number) - 1;
 	#define MAXNUM_FIELDS  40
 	structStackel stack [1+MAXNUM_FIELDS];
@@ -3791,7 +3798,7 @@ static void do_do () {
 		stack [iarg] = std::move (*arg);
 	}
 	if (stack [0]. which != Stackel_STRING)
-		Melder_throw (U"The first argument of the function \"do\" should be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
+		Melder_throw (U"The first argument of the function “do” should be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
 	conststring32 command = stack [0]. getString();
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && theInterpreter -> optionalEditor) {
 		autoMelderString valueString;
@@ -3813,7 +3820,7 @@ static void do_do () {
 		if (! praat_doAction (command2.get(), numberOfArguments, & stack [0], theInterpreter) &&
 		    ! praat_doMenuCommand (command2.get(), numberOfArguments, & stack [0], theInterpreter))
 		{
-			Melder_throw (U"Command \"", command, U"\" not available for current selection.");
+			Melder_throw (U"Command “", command, U"” not available for current selection.");
 		}
 		//praat_updateSelection ();
 		double value = undefined;
@@ -3840,7 +3847,7 @@ static void do_evaluate () {
 		double result;
 		Interpreter_numericExpression (theInterpreter, expression->getString(), & result);
 		pushNumber (result);
-	} else Melder_throw (U"The argument of the function \"evaluate\" should be a string with a numeric expression, not ", expression->whichText());
+	} else Melder_throw (U"The argument of the function “evaluate” should be a string with a numeric expression, not ", expression->whichText());
 }
 static void do_evaluate_nocheck () {
 	const Stackel expression = pop;
@@ -3853,14 +3860,14 @@ static void do_evaluate_nocheck () {
 			Melder_clearError ();
 			pushNumber (undefined);
 		}
-	} else Melder_throw (U"The argument of the function \"evaluate_nocheck\" should be a string with a numeric expression, not ", expression->whichText());
+	} else Melder_throw (U"The argument of the function “evaluate_nocheck” should be a string with a numeric expression, not ", expression->whichText());
 }
 static void do_evaluate_STR () {
 	const Stackel expression = pop;
 	if (expression->which == Stackel_STRING) {
 		autostring32 result = Interpreter_stringExpression (theInterpreter, expression->getString());
 		pushString (result.move());
-	} else Melder_throw (U"The argument of the function \"evaluate$\" should be a string with a string expression, not ", expression->whichText());
+	} else Melder_throw (U"The argument of the function “evaluate$” should be a string with a string expression, not ", expression->whichText());
 }
 static void do_evaluate_nocheck_STR () {
 	const Stackel expression = pop;
@@ -3872,13 +3879,13 @@ static void do_evaluate_nocheck_STR () {
 			Melder_clearError ();
 			pushString (Melder_dup (U""));
 		}
-	} else Melder_throw (U"The argument of the function \"evaluate_nocheck$\" should be a string with a string expression, not ", expression->whichText());
+	} else Melder_throw (U"The argument of the function “evaluate_nocheck$” should be a string with a string expression, not ", expression->whichText());
 }
 static void do_do_STR () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	if (narg->number < 1)
-		Melder_throw (U"The function \"do$\" requires at least one argument, namely a menu command.");
+		Melder_throw (U"The function “do$” requires at least one argument, namely a menu command.");
 	const integer numberOfArguments = Melder_iround (narg->number) - 1;
 	#define MAXNUM_FIELDS  40
 	structStackel stack [1+MAXNUM_FIELDS];
@@ -3887,7 +3894,7 @@ static void do_do_STR () {
 		stack [iarg] = std::move (*arg);
 	}
 	if (stack [0]. which != Stackel_STRING)
-		Melder_throw (U"The first argument of the function \"do$\" should be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
+		Melder_throw (U"The first argument of the function “do$” should be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
 	conststring32 command = stack [0]. getString();
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && theInterpreter -> optionalEditor) {
 		static MelderString info;
@@ -3909,7 +3916,7 @@ static void do_do_STR () {
 		if (! praat_doAction (command2.get(), numberOfArguments, & stack [0], theInterpreter) &&
 		    ! praat_doMenuCommand (command2.get(), numberOfArguments, & stack [0], theInterpreter))
 		{
-			Melder_throw (U"Command \"", command, U"\" not available for current selection.");
+			Melder_throw (U"Command “", command, U"” not available for current selection.");
 		}
 		praat_updateSelection ();
 		pushString (Melder_dup (info.string));
@@ -4010,14 +4017,14 @@ static void shared_do_writeFile (autoMelderString *text, integer numberOfArgumen
 }
 static void do_writeFile () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"writeFile\" is not available inside manuals.");
+		U"The function “writeFile” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	const Stackel fileName = & theStack [w + 1];
 	Melder_require (fileName->which == Stackel_STRING,
-		U"The first argument of \"writeFile\" should be a string (a file name), not ", fileName->whichText(), U".");
+		U"The first argument of “writeFile” should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	structMelderFile file { };
@@ -4027,14 +4034,14 @@ static void do_writeFile () {
 }
 static void do_writeFileLine () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"writeFileLine\" is not available inside manuals.");
+		U"The function “writeFileLine” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	const Stackel fileName = & theStack [w + 1];
 	Melder_require (fileName->which == Stackel_STRING,
-		U"The first argument of \"writeFileLine\" should be a string (a file name), not ", fileName->whichText(), U".");
+		U"The first argument of “writeFileLine” should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	MelderString_appendCharacter (& text, U'\n');
@@ -4045,14 +4052,14 @@ static void do_writeFileLine () {
 }
 static void do_appendFile () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"appendFile\" is not available inside manuals.");
+		U"The function “appendFile” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	const Stackel fileName = & theStack [w + 1];
 	Melder_require (fileName->which == Stackel_STRING,
-		U"The first argument of \"appendFile\" should be a string (a file name), not ", fileName->whichText(), U".");
+		U"The first argument of “appendFile” should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	structMelderFile file { };
@@ -4062,14 +4069,14 @@ static void do_appendFile () {
 }
 static void do_appendFileLine () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"appendFileLine\" is not available inside manuals.");
+		U"The function “appendFileLine” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	const Stackel fileName = & theStack [w + 1];
 	Melder_require (fileName->which == Stackel_STRING,
-		U"The first argument of \"appendFileLine\" should be a string (a file name), not ", fileName->whichText(), U".");
+		U"The first argument of “appendFileLine” should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	MelderString_appendCharacter (& text, '\n');
@@ -4080,7 +4087,7 @@ static void do_appendFileLine () {
 }
 static void do_pauseScript () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"pause\" is not available inside manuals.");
+		U"The function “pause” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
@@ -4157,11 +4164,11 @@ static void do_runScript () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
 	if (numberOfArguments < 1)
-		Melder_throw (U"The function \"runScript\" requires at least one argument, namely the file name.");
+		Melder_throw (U"The function “runScript” requires at least one argument, namely the file name.");
 	w -= numberOfArguments;
 	const Stackel fileName = & theStack [w + 1];
 	Melder_require (fileName->which == Stackel_STRING,
-		U"The first argument to \"runScript\" should be a string (the file name), not ", fileName->whichText());
+		U"The first argument to “runScript” should be a string (the file name), not ", fileName->whichText());
 	theLevel += 1;
 	if (theLevel > MAXIMUM_NUMBER_OF_LEVELS) {
 		theLevel -= 1;
@@ -4178,7 +4185,7 @@ static void do_runScript () {
 }
 static void do_runSystem () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"runSystem\" is not available inside manuals.");
+		U"The function “runSystem” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
@@ -4194,14 +4201,14 @@ static void do_runSystem () {
 	try {
 		Melder_system (text.string);
 	} catch (MelderError) {
-		Melder_throw (U"System command \"", text.string, U"\" returned error status;\n"
+		Melder_throw (U"System command “", text.string, U"” returned error status;\n"
 			U"if you want to ignore this, use `runSystem_nocheck' instead of `runSystem'.");
 	}
 	pushNumber (1);
 }
 static void do_runSystem_nocheck () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"runSystem\" is not available inside manuals.");
+		U"The function “runSystem” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
@@ -4223,14 +4230,14 @@ static void do_runSystem_nocheck () {
 }
 static void do_runSubprocess () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"runSubprocess\" is not available inside manuals.");
+		U"The function “runSubprocess” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	const Stackel commandFile = & theStack [w + 1];
 	Melder_require (commandFile->which == Stackel_STRING,
-		U"The first argument to \"runSubprocess\" should be a command name.");
+		U"The first argument to “runSubprocess” should be a command name.");
 	autoSTRVEC arguments (numberOfArguments - 1);
 	for (int iarg = 1; iarg < numberOfArguments; iarg ++) {
 		const Stackel arg = & theStack [w + 1 + iarg];
@@ -4242,7 +4249,7 @@ static void do_runSubprocess () {
 	try {
 		Melder_execv (commandFile->getString(), numberOfArguments - 1, arguments.peek2());
 	} catch (MelderError) {
-		Melder_throw (U"Command \"", commandFile->getString(), U"\" returned error status.");
+		Melder_throw (U"Command “", commandFile->getString(), U"” returned error status.");
 	}
 	pushNumber (1);
 }
@@ -4250,15 +4257,15 @@ static void do_min () {
 	const Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
 	Melder_require (n->number >= 1,
-		U"The function \"min\" requires at least one argument.");
+		U"The function “min” requires at least one argument.");
 	const Stackel last = pop;
 	Melder_require (last->which == Stackel_NUMBER,
-		U"The function \"min\" can only have numeric arguments, not ", last->whichText(), U".");
+		U"The function “min” can only have numeric arguments, not ", last->whichText(), U".");
 	double result = last->number;
 	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		const Stackel previous = pop;
 		Melder_require (previous->which == Stackel_NUMBER,
-			U"The function \"min\" can only have numeric arguments, not ", previous->whichText(), U".");
+			U"The function “min” can only have numeric arguments, not ", previous->whichText(), U".");
 		result = isundef (result) || isundef (previous->number) ? undefined :
 			result < previous->number ? result : previous->number;
 	}
@@ -4268,15 +4275,15 @@ static void do_max () {
 	const Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
 	Melder_require (n->number >= 1,
-		U"The function \"max\" requires at least one argument.");
+		U"The function “max” requires at least one argument.");
 	const Stackel last = pop;
 	Melder_require (last->which == Stackel_NUMBER,
-		U"The function \"max\" can only have numeric arguments, not ", last->whichText(), U".");
+		U"The function “max” can only have numeric arguments, not ", last->whichText(), U".");
 	double result = last->number;
 	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		Stackel previous = pop;
 		Melder_require (previous->which == Stackel_NUMBER,
-			U"The function \"max\" can only have numeric arguments, not ", previous->whichText(), U".");
+			U"The function “max” can only have numeric arguments, not ", previous->whichText(), U".");
 		result = isundef (result) || isundef (previous->number) ? undefined :
 			result > previous->number ? result : previous->number;
 	}
@@ -4286,16 +4293,16 @@ static void do_imin () {
 	const Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
 	Melder_require (n->number >= 1,
-		U"The function \"imin\" requires at least one argument.");
+		U"The function “imin” requires at least one argument.");
 	const Stackel last = pop;
 	Melder_require (last->which == Stackel_NUMBER,
-		U"The function \"imin\" can only have numeric arguments, not ", last->whichText(), U".");
+		U"The function “imin” can only have numeric arguments, not ", last->whichText(), U".");
 	double minimum = last->number;
 	double result = n->number;
 	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		Stackel previous = pop;
 		Melder_require (previous->which == Stackel_NUMBER,
-			U"The function \"imin\" can only have numeric arguments, not ", previous->whichText(), U".");
+			U"The function “imin” can only have numeric arguments, not ", previous->whichText(), U".");
 		if (isundef (minimum) || isundef (previous->number)) {
 			minimum = undefined;
 			result = undefined;
@@ -4310,7 +4317,7 @@ static void do_imax () {
 	const Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
 	Melder_require (n->number >= 1,
-		U"The function \"imax\" requires at least one argument.");
+		U"The function “imax” requires at least one argument.");
 	const Stackel last = pop;
 	if (last->which == Stackel_NUMBER) {
 		double maximum = last->number;
@@ -4318,7 +4325,7 @@ static void do_imax () {
 		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 			const Stackel previous = pop;
 			Melder_require (previous->which == Stackel_NUMBER,
-				U"The function \"imax\" cannot mix a numeric argument with ", previous->whichText(), U".");
+				U"The function “imax” cannot mix a numeric argument with ", previous->whichText(), U".");
 			if (isundef (maximum) || isundef (previous->number)) {
 				maximum = undefined;
 				result = undefined;
@@ -4330,7 +4337,7 @@ static void do_imax () {
 		pushNumber (result);
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		Melder_require (n->number == 1,
-			U"The function \"imax\" requires exactly one vector argument.");
+			U"The function “imax” requires exactly one vector argument.");
 		const integer numberOfElements = last->numericVector.size;
 		integer result = 1;
 		double maximum = last->numericVector [1];
@@ -4350,12 +4357,12 @@ static void do_norm () {
 	const Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
 	Melder_require (n->number == 1 || n->number == 2,
-		U"The function \"norm\" requires one or two arguments.");
+		U"The function “norm” requires one or two arguments.");
 	double powerNumber = 2.0;
 	if (n->number == 2) {
 		const Stackel power = pop;
 		if (power->which != Stackel_NUMBER)
-			Melder_throw (U"The second argument to \"norm\" should be a number, not ", power->whichText(), U".");
+			Melder_throw (U"The second argument to “norm” should be a number, not ", power->whichText(), U".");
 		powerNumber = power->number;
 	}
 	const Stackel x = pop;
@@ -4372,17 +4379,17 @@ static void do_zero_VEC () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer rank = Melder_iround (narg->number);
 	Melder_require (rank >= 1,
-		U"The function \"zero#\" requires an argument.");
+		U"The function “zero#” requires an argument.");
 	Melder_require (rank <= 1,
-		U"The function \"zero#\" cannot have more than one argument (consider using zero##).");
+		U"The function “zero#” cannot have more than one argument (consider using zero##).");
 	const Stackel nelem = pop;
 	Melder_require (nelem->which == Stackel_NUMBER,
-		U"In the function \"zero#\", the number of elements should be a number, not ", nelem->whichText(), U".");
+		U"In the function “zero#”, the number of elements should be a number, not ", nelem->whichText(), U".");
 	const double numberOfElements = nelem->number;
 	Melder_require (isdefined (numberOfElements),
-		U"In the function \"zero#\", the number of elements is undefined.");
+		U"In the function “zero#”, the number of elements is undefined.");
 	Melder_require (numberOfElements >= 0.0,
-		U"In the function \"zero#\", the number of elements should not be negative.");
+		U"In the function “zero#”, the number of elements should not be negative.");
 	pushNumericVector (zero_VEC (Melder_iround (numberOfElements)));
 }
 static void do_zero_MAT () {
@@ -4390,23 +4397,23 @@ static void do_zero_MAT () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer rank = Melder_iround (narg->number);
 	Melder_require (rank == 2,
-		U"The function \"zero##\" requires two arguments.");
+		U"The function “zero##” requires two arguments.");
 	const Stackel ncol = pop;
 	Melder_require (ncol->which == Stackel_NUMBER,
-		U"In the function \"zero##\", the number of columns should be a number, not ", ncol->whichText(), U".");
+		U"In the function “zero##”, the number of columns should be a number, not ", ncol->whichText(), U".");
 	const double numberOfColumns = ncol->number;
 	const Stackel nrow = pop;
 	Melder_require (nrow->which == Stackel_NUMBER,
-		U"In the function \"zero##\", the number of rows should be a number, not ", nrow->whichText(), U".");
+		U"In the function “zero##”, the number of rows should be a number, not ", nrow->whichText(), U".");
 	const double numberOfRows = nrow->number;
 	Melder_require (isdefined (numberOfRows),
-		U"In the function \"zero##\", the number of rows is undefined.");
+		U"In the function “zero##”, the number of rows is undefined.");
 	Melder_require (isdefined (numberOfColumns),
-		U"In the function \"zero##\", the number of columns is undefined.");
+		U"In the function “zero##”, the number of columns is undefined.");
 	Melder_require (numberOfRows >= 0.0,
-		U"In the function \"zero##\", the number of rows should not be negative.");
+		U"In the function “zero##”, the number of rows should not be negative.");
 	Melder_require (numberOfColumns >= 0.0,
-		U"In the function \"zero##\", the number of columns should not be negative.");
+		U"In the function “zero##”, the number of columns should not be negative.");
 	autoMAT result = zero_MAT (Melder_iround (numberOfRows), Melder_iround (numberOfColumns));
 	pushNumericMatrix (result.move());
 }
@@ -4415,34 +4422,34 @@ static void do_linear_VEC () {
 	Melder_assert (stackel_narg->which == Stackel_NUMBER);
 	const integer narg = Melder_iround (stackel_narg->number);
 	Melder_require (narg == 3 || narg == 4,
-		U"The function \"linear#\" requires three or four arguments.");
+		U"The function “linear#” requires three or four arguments.");
 	bool excludeEdges = false;   // default
 	if (narg == 4) {
 		Stackel stack_excludeEdges = pop;
 		if (stack_excludeEdges->which != Stackel_NUMBER)
-			Melder_throw (U"In the function \"linear#\", the edge exclusion flag (fourth argument) should be a number, not ", stack_excludeEdges->whichText(), U".");
+			Melder_throw (U"In the function “linear#”, the edge exclusion flag (fourth argument) should be a number, not ", stack_excludeEdges->whichText(), U".");
 		excludeEdges = Melder_iround (stack_excludeEdges->number);
 	}
 	const Stackel stack_numberOfSteps = pop, stack_maximum = pop, stack_minimum = pop;
 	Melder_require (stack_minimum -> which == Stackel_NUMBER,
-		U"In the function \"linear#\", the minimum (first argument) should be a number, not ", stack_minimum->whichText(), U".");
+		U"In the function “linear#”, the minimum (first argument) should be a number, not ", stack_minimum->whichText(), U".");
 	const double minimum = stack_minimum->number;
 	Melder_require (isdefined (minimum),
-		U"Undefined minimum in the function \"linear#\" (first argument).");
+		U"Undefined minimum in the function “linear#” (first argument).");
 	Melder_require (stack_maximum->which == Stackel_NUMBER,
-		U"In the function \"linear#\", the maximum (second argument) should be a number, not ", stack_maximum->whichText(), U".");
+		U"In the function “linear#”, the maximum (second argument) should be a number, not ", stack_maximum->whichText(), U".");
 	const double maximum = stack_maximum->number;
 	Melder_require (isdefined (maximum),
-		U"Undefined maximum in the function \"linear#\" (second argument).");
+		U"Undefined maximum in the function “linear#” (second argument).");
 	Melder_require (maximum >= minimum,
-		U"Maximum (", maximum, U") smaller than minimum (", minimum, U") in function \"linear#\".");
+		U"Maximum (", maximum, U") smaller than minimum (", minimum, U") in function “linear#”.");
 	Melder_require (stack_numberOfSteps -> which == Stackel_NUMBER,
-		U"In the function \"linear#\", the number of steps (third argument) should be a number, not ", stack_numberOfSteps->whichText(), U".");
+		U"In the function “linear#”, the number of steps (third argument) should be a number, not ", stack_numberOfSteps->whichText(), U".");
 	Melder_require (isdefined (stack_numberOfSteps->number),
-		U"Undefined number of steps in the function \"linear#\" (third argument).");
+		U"Undefined number of steps in the function “linear#” (third argument).");
 	const integer numberOfSteps = Melder_iround (stack_numberOfSteps->number);
 	Melder_require (numberOfSteps > 0,
-		U"In the function \"linear#\", the number of steps (third argument) should be positive, not ", numberOfSteps, U".");
+		U"In the function “linear#”, the number of steps (third argument) should be positive, not ", numberOfSteps, U".");
 	autoVEC result = raw_VEC (numberOfSteps);
 	for (integer ielem = 1; ielem <= numberOfSteps; ielem ++) {
 		result [ielem] = excludeEdges ?
@@ -4460,7 +4467,7 @@ static void do_to_VEC () {
 		U"The function to#() requires one argument.");
 	const Stackel to = pop;
 	Melder_require (to->which == Stackel_NUMBER,
-		U"In the function \"to#\", the argument should be a number, not ", to->whichText(), U".");
+		U"In the function “to#”, the argument should be a number, not ", to->whichText(), U".");
 	autoVEC result = to_VEC (to->number);
 	pushNumericVector (result.move());
 }
@@ -4468,12 +4475,12 @@ static void do_from_to_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 2,
-		U"The function \"from_to#\" requires two arguments.");
+		U"The function “from_to#” requires two arguments.");
 	const Stackel to = pop, from = pop;
 	Melder_require (from->which == Stackel_NUMBER,
-		U"In the function \"from_to#\", the first argument should be a number, not ", from->whichText(), U".");
+		U"In the function “from_to#”, the first argument should be a number, not ", from->whichText(), U".");
 	Melder_require (to->which == Stackel_NUMBER,
-		U"In the function \"from_to#\", the second argument should be a number, not ", to->whichText(), U".");
+		U"In the function “from_to#”, the second argument should be a number, not ", to->whichText(), U".");
 	autoVEC result = from_to_VEC (from->number, to->number);
 	pushNumericVector (result.move());
 }
@@ -4481,14 +4488,14 @@ static void do_from_to_by_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 3,
-		U"The function \"from_to_by#\" requires three arguments.");
+		U"The function “from_to_by#” requires three arguments.");
 	const Stackel by = pop, to = pop, from = pop;
 	Melder_require (from->which == Stackel_NUMBER,
-		U"In the function \"from_to_by#\", the first argument should be a number, not ", from->whichText(), U".");
+		U"In the function “from_to_by#”, the first argument should be a number, not ", from->whichText(), U".");
 	Melder_require (to->which == Stackel_NUMBER,
-		U"In the function \"from_to_by#\", the second argument should be a number, not ", to->whichText(), U".");
+		U"In the function “from_to_by#”, the second argument should be a number, not ", to->whichText(), U".");
 	Melder_require (by->which == Stackel_NUMBER,
-		U"In the function \"from_to_by#\", the third argument should be a number (the step), not ", by->whichText(), U".");
+		U"In the function “from_to_by#”, the third argument should be a number (the step), not ", by->whichText(), U".");
 	autoVEC result = from_to_by_VEC (from->number, to->number, by->number);
 	pushNumericVector (result.move());
 }
@@ -4496,14 +4503,14 @@ static void do_from_to_count_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 3,
-		U"The function \"from_to_count#\" requires three arguments.");
+		U"The function “from_to_count#” requires three arguments.");
 	const Stackel count = pop, to = pop, from = pop;
 	Melder_require (from->which == Stackel_NUMBER,
-		U"In the function \"from_to_count#\", the first argument should be a number, not ", from->whichText(), U".");
+		U"In the function “from_to_count#”, the first argument should be a number, not ", from->whichText(), U".");
 	Melder_require (to->which == Stackel_NUMBER,
-		U"In the function \"from_to_count#\", the second argument should be a number, not ", to->whichText(), U".");
+		U"In the function “from_to_count#”, the second argument should be a number, not ", to->whichText(), U".");
 	Melder_require (count->which == Stackel_NUMBER,
-		U"In the function \"from_to_count#\", the third argument should be a number (the count), not ", count->whichText(), U".");
+		U"In the function “from_to_count#”, the third argument should be a number (the count), not ", count->whichText(), U".");
 	autoVEC result = from_to_count_VEC (from->number, to->number, Melder_iround (count->number));
 	pushNumericVector (result.move());
 }
@@ -4511,14 +4518,14 @@ static void do_between_by_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 3,
-		U"The function \"between_by#\" requires three arguments.");
+		U"The function “between_by#” requires three arguments.");
 	const Stackel by = pop, to = pop, from = pop;
 	Melder_require (from->which == Stackel_NUMBER,
-		U"In the function \"between_by#\", the first argument should be a number, not ", from->whichText(), U".");
+		U"In the function “between_by#”, the first argument should be a number, not ", from->whichText(), U".");
 	Melder_require (to->which == Stackel_NUMBER,
-		U"In the function \"between_by#\", the second argument should be a number, not ", to->whichText(), U".");
+		U"In the function “between_by#”, the second argument should be a number, not ", to->whichText(), U".");
 	Melder_require (by->which == Stackel_NUMBER,
-		U"In the function \"between_by#\", the third argument should be a number (the step), not ", by->whichText(), U".");
+		U"In the function “between_by#”, the third argument should be a number (the step), not ", by->whichText(), U".");
 	autoVEC result = between_by_VEC (from->number, to->number, by->number);
 	pushNumericVector (result.move());
 }
@@ -4526,14 +4533,14 @@ static void do_between_count_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 3,
-		U"The function \"between_count#\" requires three arguments.");
+		U"The function “between_count#” requires three arguments.");
 	const Stackel count = pop, to = pop, from = pop;
 	Melder_require (from->which == Stackel_NUMBER,
-		U"In the function \"between_count#\", the first argument should be a number, not ", from->whichText(), U".");
+		U"In the function “between_count#”, the first argument should be a number, not ", from->whichText(), U".");
 	Melder_require (to->which == Stackel_NUMBER,
-		U"In the function \"between_count#\", the second argument should be a number, not ", to->whichText(), U".");
+		U"In the function “between_count#”, the second argument should be a number, not ", to->whichText(), U".");
 	Melder_require (count->which == Stackel_NUMBER,
-		U"In the function \"between_count#\", the third argument should be a number (the count), not ", count->whichText(), U".");
+		U"In the function “between_count#”, the third argument should be a number (the count), not ", count->whichText(), U".");
 	autoVEC result = between_count_VEC (from->number, to->number, Melder_iround (count->number));
 	pushNumericVector (result.move());
 }
@@ -4541,10 +4548,10 @@ static void do_sort_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"sort#\" requires one argument, namely a vector.");
+		U"The function “sort#” requires one argument, namely a vector.");
 	const Stackel vec = pop;
 	Melder_require (vec->which == Stackel_NUMERIC_VECTOR,
-		U"The argument of the function \"sort#\" should be a numeric vector, not ", vec->whichText(), U".");
+		U"The argument of the function “sort#” should be a numeric vector, not ", vec->whichText(), U".");
 	autoVEC result = sort_VEC (vec->numericVector);
 	pushNumericVector (result.move());
 }
@@ -4552,10 +4559,10 @@ static void do_sort_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"sort$#\" requires one argument, namely a string array.");
+		U"The function “sort$#” requires one argument, namely a string array.");
 	const Stackel strvec = pop;
 	Melder_require (strvec->which == Stackel_STRING_ARRAY,
-		U"The argument of the function \"sort$#\" should be a string array, not ", strvec->whichText(), U".");
+		U"The argument of the function “sort$#” should be a string array, not ", strvec->whichText(), U".");
 	autoSTRVEC result = sort_STRVEC (strvec->stringArray);
 	pushStringVector (result.move());
 }
@@ -4563,10 +4570,10 @@ static void do_sort_numberAware_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"sort_numberAware$#\" requires one argument, namely a string array.");
+		U"The function “sort_numberAware$#” requires one argument, namely a string array.");
 	const Stackel strvec = pop;
 	Melder_require (strvec->which == Stackel_STRING_ARRAY,
-		U"The argument of the function \"sort_numberAware$#\" should be a string array, not ", strvec->whichText(), U".");
+		U"The argument of the function “sort_numberAware$#” should be a string array, not ", strvec->whichText(), U".");
 	autoSTRVEC result = sort_numberAware_STRVEC (strvec->stringArray);
 	pushStringVector (result.move());
 }
@@ -4574,10 +4581,10 @@ static void do_shuffle_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"shuffle#\" requires one argument, namely a vector.");
+		U"The function “shuffle#” requires one argument, namely a vector.");
 	const Stackel vec = pop;
 	Melder_require (vec->which == Stackel_NUMERIC_VECTOR,
-		U"The argument of the function \"shuffle#\" should be a numeric vector, not ", vec->whichText(), U".");
+		U"The argument of the function “shuffle#” should be a numeric vector, not ", vec->whichText(), U".");
 	autoVEC result = shuffle_VEC (vec->numericVector);
 	pushNumericVector (result.move());
 }
@@ -4585,10 +4592,10 @@ static void do_shuffle_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"shuffle$#\" requires one argument, namely a string array.");
+		U"The function “shuffle$#” requires one argument, namely a string array.");
 	const Stackel strvec = pop;
 	Melder_require (strvec->which == Stackel_STRING_ARRAY,
-		U"The argument of the function \"shuffle$#\" should be a string array, not ", strvec->whichText(), U".");
+		U"The argument of the function “shuffle$#” should be a string array, not ", strvec->whichText(), U".");
 	autoSTRVEC result = shuffle_STRVEC (strvec->stringArray);
 	pushStringVector (result.move());
 }
@@ -4619,7 +4626,7 @@ static void do_size () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"size\" requires one (vector) argument.");
+		U"The function “size” requires one (vector) argument.");
 	const Stackel array = pop;
 	if (array->which == Stackel_NUMERIC_VECTOR) {
 		pushNumber (array->numericVector.size);
@@ -4633,7 +4640,7 @@ static void do_numberOfRows () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"numberOfRows\" requires one argument, namely a matrix.");
+		U"The function “numberOfRows” requires one argument, namely a matrix.");
 	const Stackel array = pop;
 	if (array->which == Stackel_NUMERIC_MATRIX) {
 		pushNumber (array->numericMatrix.nrow);
@@ -4646,7 +4653,7 @@ static void do_numberOfColumns () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"numberOfColumns\" requires one argument, namely a matrix.");
+		U"The function “numberOfColumns” requires one argument, namely a matrix.");
 	const Stackel array = pop;
 	if (array->which == Stackel_NUMERIC_MATRIX) {
 		pushNumber (array->numericMatrix.ncol);
@@ -4670,7 +4677,7 @@ static void do_combine_VEC () {
 		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
 			elementCounter += arg->numericMatrix.nrow * arg->numericMatrix.ncol;
 		} else {
-			Melder_throw (U"The function \"combine#\" only takes numbers, vectors and matrices,"
+			Melder_throw (U"The function “combine#” only takes numbers, vectors and matrices,"
 				" not ", arg->whichText(), U".");
 		}
 	}
@@ -4703,7 +4710,7 @@ static void do_editor () {
 		if (theInterpreter && theInterpreter -> editorClass) {
 			theInterpreter -> optionalEditor = praat_findEditorFromString (theInterpreter -> environmentName.get());
 		} else {
-			Melder_throw (U"The function \"editor\" requires an argument when called from outside an editor.");
+			Melder_throw (U"The function “editor” requires an argument when called from outside an editor.");
 		}
 	} else if (narg->number == 1) {
 		const Stackel editor = pop;
@@ -4712,10 +4719,10 @@ static void do_editor () {
 		} else if (editor->which == Stackel_NUMBER) {
 			theInterpreter -> optionalEditor = praat_findEditorById (Melder_iround (editor->number));
 		} else {
-			Melder_throw (U"The function \"editor\" requires a numeric or string argument, not ", editor->whichText(), U".");
+			Melder_throw (U"The function “editor” requires a numeric or string argument, not ", editor->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"editor\" requires 0 or 1 arguments, not ", narg->number, U".");
+		Melder_throw (U"The function “editor” requires 0 or 1 arguments, not ", narg->number, U".");
 	}
 	pushNumber (1);
 }
@@ -4741,21 +4748,21 @@ static void do_random_initializeWithSeedUnsafelyButPredictably () {
 		if (s->which == Stackel_NUMBER) {
 			const double seed = s->number;
 			if (seed < 0.0 || seed > double (INT54_MAX))
-				Melder_throw (U"For the function \"random_initializeWithSeedUnsafelyButPredictably\", "
+				Melder_throw (U"For the function “random_initializeWithSeedUnsafelyButPredictably”, "
 						"the seed should be between 0 and ", double (INT54_MAX), U".");
 			NUMrandom_initializeWithSeedUnsafelyButPredictably (uint64 (round (seed)));
 		} else {
-			Melder_throw (U"The function \"hash\" requires a string, not ", s->whichText(), U".");
+			Melder_throw (U"The function “hash” requires a string, not ", s->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"random_initializeWithSeedUnsafelyButPredictably\" requires 1 argument (the seed), not ", narg->number, U".");
+		Melder_throw (U"The function “random_initializeWithSeedUnsafelyButPredictably” requires 1 argument (the seed), not ", narg->number, U".");
 	}
 	pushNumber (1);
 }
 static void do_random_initializeSafelyAndUnpredictably () {
 	const Stackel narg = pop;
 	Melder_require (narg->number == 0,
-		U"The function \"random_initializeSafelyAndUnpredictably\" requires 0 arguments, not ", narg->number, U".");
+		U"The function “random_initializeSafelyAndUnpredictably” requires 0 arguments, not ", narg->number, U".");
 	NUMrandom_initializeSafelyAndUnpredictably ();
 	pushNumber (1);
 }
@@ -4768,10 +4775,10 @@ static void do_hash () {
 			const double result = NUMhashString (s->getString());
 			pushNumber (result);
 		} else {
-			Melder_throw (U"The function \"hash\" requires a string, not ", s->whichText(), U".");
+			Melder_throw (U"The function “hash” requires a string, not ", s->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"hash\" requires 1 argument, not ", narg->number, U".");
+		Melder_throw (U"The function “hash” requires 1 argument, not ", narg->number, U".");
 	}
 }
 static void do_hex_STR () {
@@ -4783,7 +4790,7 @@ static void do_hex_STR () {
 			autostring32 result = hex_STR (s->getString());
 			pushString (result.move());
 		} else {
-			Melder_throw (U"The function \"hex$\" requires a string, not ", s->whichText(), U".");
+			Melder_throw (U"The function “hex$” requires a string, not ", s->whichText(), U".");
 		}
 	} else if (narg->number == 2) {
 		const Stackel k = pop, s = pop;
@@ -4791,10 +4798,10 @@ static void do_hex_STR () {
 			autostring32 result = hex_STR (s->getString(), uint64 (round (k->number)));
 			pushString (result.move());
 		} else {
-			Melder_throw (U"The function \"hex$\" requires a string and a number, not ", s->whichText(), U".");
+			Melder_throw (U"The function “hex$” requires a string and a number, not ", s->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"hex$\" requires 1 or 2 arguments, not ", narg->number, U".");
+		Melder_throw (U"The function “hex$” requires 1 or 2 arguments, not ", narg->number, U".");
 	}
 }
 static void do_unhex_STR () {
@@ -4806,7 +4813,7 @@ static void do_unhex_STR () {
 			autostring32 result = unhex_STR (s->getString());
 			pushString (result.move());
 		} else {
-			Melder_throw (U"The function \"unhex$\" requires a string, not ", s->whichText(), U".");
+			Melder_throw (U"The function “unhex$” requires a string, not ", s->whichText(), U".");
 		}
 	} else if (narg->number == 2) {
 		const Stackel k = pop, s = pop;
@@ -4814,20 +4821,20 @@ static void do_unhex_STR () {
 			autostring32 result = unhex_STR (s->getString(), uint64 (round (k->number)));
 			pushString (result.move());
 		} else {
-			Melder_throw (U"The function \"unhex$\" requires a string and a number, not ", s->whichText(), U".");
+			Melder_throw (U"The function “unhex$” requires a string and a number, not ", s->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"unhex$\" requires 1 or 2 arguments, not ", narg->number, U".");
+		Melder_throw (U"The function “unhex$” requires 1 or 2 arguments, not ", narg->number, U".");
 	}
 }
 static void do_empty_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"empty$#\" requires one argument, namely the number of elements.");
+		U"The function “empty$#” requires one argument, namely the number of elements.");
 	const Stackel numberOfElements = pop;
 	Melder_require (numberOfElements->which == Stackel_NUMBER,
-		U"The argument of the function \"empty$#\" should be a number (namely the number of elements), not ", numberOfElements->whichText(), U".");
+		U"The argument of the function “empty$#” should be a number (namely the number of elements), not ", numberOfElements->whichText(), U".");
 	autoSTRVEC result { Melder_iround (numberOfElements->number) };
 	pushStringVector (result.move());
 }
@@ -4835,10 +4842,10 @@ static void do_readLinesFromFile_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"readFile$#\" requires one argument, namely the file pattern.");
+		U"The function “readFile$#” requires one argument, namely the file pattern.");
 	const Stackel fileName = pop;
 	if (fileName->which != Stackel_STRING)
-		Melder_throw (U"The argument of the function \"readFile$#\" should be a string (namely the file pattern), not ", fileName->whichText(), U".");
+		Melder_throw (U"The argument of the function “readFile$#” should be a string (namely the file pattern), not ", fileName->whichText(), U".");
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName->getString(), & file);
 	autoSTRVEC result = readLinesFromFile_STRVEC (& file);
@@ -4848,10 +4855,10 @@ static void do_fileNames_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"fileNames$#\" requires one argument, namely the file pattern.");
+		U"The function “fileNames$#” requires one argument, namely the file pattern.");
 	const Stackel filePattern = pop;
 	if (filePattern->which != Stackel_STRING)
-		Melder_throw (U"The argument of the function \"fileNames$#\" should be a string (namely the file path and pattern), not ", filePattern->whichText(), U".");
+		Melder_throw (U"The argument of the function “fileNames$#” should be a string (namely the file path and pattern), not ", filePattern->whichText(), U".");
 	autoSTRVEC result = fileNames_STRVEC (filePattern->getString());
 	pushStringVector (result.move());
 }
@@ -4859,10 +4866,10 @@ static void do_folderNames_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"folderNames$#\" requires one argument, namely the file pattern.");
+		U"The function “folderNames$#” requires one argument, namely the file pattern.");
 	const Stackel folderPattern = pop;
 	Melder_require (folderPattern->which == Stackel_STRING,
-		U"The argument of the function \"folderNames$#\" should be a string (namely the folder path), not ", folderPattern->whichText(), U".");
+		U"The argument of the function “folderNames$#” should be a string (namely the folder path), not ", folderPattern->whichText(), U".");
 	autoSTRVEC result = folderNames_STRVEC (folderPattern->getString());
 	pushStringVector (result.move());
 }
@@ -4870,10 +4877,10 @@ static void do_splitByWhitespace_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg -> which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function \"splitByWhitespace$#\" requires one argument, namely the string to split.");
+		U"The function “splitByWhitespace$#” requires one argument, namely the string to split.");
 	const Stackel string = pop;
 	Melder_require (string->which == Stackel_STRING,
-		U"The argument of the function \"splitByWhitespace$#\" should be a string, not ", string->whichText(), U".");
+		U"The argument of the function “splitByWhitespace$#” should be a string, not ", string->whichText(), U".");
 	autoSTRVEC result = splitByWhitespace_STRVEC (string->getString());
 	pushStringVector (result.move());
 }
@@ -4881,12 +4888,12 @@ static void do_splitBy_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg -> which == Stackel_NUMBER);
 	Melder_require (narg->number == 2,
-		U"The function \"splitBy$#\" requires two arguments, namely the the string to split and the separator.");
+		U"The function “splitBy$#” requires two arguments, namely the the string to split and the separator.");
 	const Stackel separator = pop, string = pop;
 	Melder_require (string->which == Stackel_STRING,
-		U"The first argument of the function \"splitBy$#\" should be a string, not ", string->whichText(), U".");
+		U"The first argument of the function “splitBy$#” should be a string, not ", string->whichText(), U".");
 	Melder_require (separator->which == Stackel_STRING,
-		U"The second argument of the function \"splitBy$#\" (the separator) should be a string, not ", string->whichText(), U".");
+		U"The second argument of the function “splitBy$#” (the separator) should be a string, not ", string->whichText(), U".");
 	autoSTRVEC result = splitBy_STRVEC (string->getString(), separator->getString());
 	pushStringVector (result.move());
 }
@@ -5002,7 +5009,7 @@ static void do_length () {
 		const double result = NUMlength (s->getString());
 		pushNumber (result);
 	} else {
-		Melder_throw (U"The function \"length\" requires a string, not ", s->whichText(), U".");
+		Melder_throw (U"The function “length” requires a string, not ", s->whichText(), U".");
 	}
 }
 static void do_number () {
@@ -5011,7 +5018,7 @@ static void do_number () {
 		double result = Melder_atof (s->getString());
 		pushNumber (result);
 	} else {
-		Melder_throw (U"The function \"number\" requires a string, not ", s->whichText(), U".");
+		Melder_throw (U"The function “number” requires a string, not ", s->whichText(), U".");
 	}
 }
 static void do_fileReadable () {
@@ -5021,31 +5028,31 @@ static void do_fileReadable () {
 		Melder_relativePathToFile (s->getString(), & file);
 		pushNumber (MelderFile_readable (& file));
 	} else {
-		Melder_throw (U"The function \"fileReadable\" requires a string, not ", s->whichText(), U".");
+		Melder_throw (U"The function “fileReadable” requires a string, not ", s->whichText(), U".");
 	}
 }
 static void do_tryToWriteFile () {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"tryToWriteFile\" is not available inside manuals.");
+		Melder_throw (U"The function “tryToWriteFile” is not available inside manuals.");
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
 		Melder_relativePathToFile (s->getString(), & file);
 		pushNumber (Melder_tryToWriteFile (& file));
 	} else {
-		Melder_throw (U"The function \"tryToWriteFile\" requires a string, not ", s->whichText(), U".");
+		Melder_throw (U"The function “tryToWriteFile” requires a string, not ", s->whichText(), U".");
 	}
 }
 static void do_tryToAppendFile () {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"tryToAppendFile\" is not available inside manuals.");
+		Melder_throw (U"The function “tryToAppendFile” is not available inside manuals.");
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
 		Melder_relativePathToFile (s->getString(), & file);
 		pushNumber (Melder_tryToAppendFile (& file));
 	} else {
-		Melder_throw (U"The function \"tryToAppendFile\" requires a string, not ", s->whichText(), U".");
+		Melder_throw (U"The function “tryToAppendFile” requires a string, not ", s->whichText(), U".");
 	}
 }
 static void do_date_STR () {
@@ -5077,17 +5084,17 @@ static void do_left_STR () {
 		if (s->which == Stackel_STRING) {
 			pushString (left_STR (s->getString()));
 		} else {
-			Melder_throw (U"The function \"left$\" requires a string (or a string and a number).");
+			Melder_throw (U"The function “left$” requires a string (or a string and a number).");
 		}
 	} else if (narg->number == 2) {
 		const Stackel n = pop, s = pop;
 		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
 			pushString (left_STR (s->getString(), Melder_iround (n->number)));
 		} else {
-			Melder_throw (U"The function \"left$\" requires a string and a number (or a string only).");
+			Melder_throw (U"The function “left$” requires a string and a number (or a string only).");
 		}
 	} else {
-		Melder_throw (U"The function \"left$\" requires one or two arguments: a string and optionally a number.");
+		Melder_throw (U"The function “left$” requires one or two arguments: a string and optionally a number.");
 	}
 	trace (U"exit");
 }
@@ -5098,17 +5105,17 @@ static void do_right_STR () {
 		if (s->which == Stackel_STRING) {
 			pushString (right_STR (s->getString()));
 		} else {
-			Melder_throw (U"The function \"right$\" requires a string (or a string and a number).");
+			Melder_throw (U"The function “right$” requires a string (or a string and a number).");
 		}
 	} else if (narg->number == 2) {
 		const Stackel n = pop, s = pop;
 		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
 			pushString (right_STR (s->getString(), Melder_iround (n->number)));
 		} else {
-			Melder_throw (U"The function \"right$\" requires a string and a number (or a string only).");
+			Melder_throw (U"The function “right$” requires a string and a number (or a string only).");
 		}
 	} else {
-		Melder_throw (U"The function \"right$\" requires one or two arguments: a string and optionally a number.");
+		Melder_throw (U"The function “right$” requires one or two arguments: a string and optionally a number.");
 	}
 }
 static void do_mid_STR () {
@@ -5118,17 +5125,17 @@ static void do_mid_STR () {
 		if (str->which == Stackel_STRING && position->which == Stackel_NUMBER) {
 			pushString (mid_STR (str->getString(), Melder_iround (position->number)));
 		} else {
-			Melder_throw (U"The function \"mid$\" requires a string and a number (or two).");
+			Melder_throw (U"The function “mid$” requires a string and a number (or two).");
 		}
 	} else if (narg->number == 3) {
 		const Stackel numberOfCharacters = pop, startingPosition = pop, str = pop;
 		if (str->which == Stackel_STRING && startingPosition->which == Stackel_NUMBER && numberOfCharacters->which == Stackel_NUMBER) {
 			pushString (mid_STR (str->getString(), Melder_iround (startingPosition->number), Melder_iround (numberOfCharacters->number)));
 		} else {
-			Melder_throw (U"The function \"mid$\" requires a string and two numbers (or one).");
+			Melder_throw (U"The function “mid$” requires a string and two numbers (or one).");
 		}
 	} else {
-		Melder_throw (U"The function \"mid$\" requires two or three arguments.");
+		Melder_throw (U"The function “mid$” requires two or three arguments.");
 	}
 }
 static void do_unicodeToBackslashTrigraphs_STR () {
@@ -5139,7 +5146,7 @@ static void do_unicodeToBackslashTrigraphs_STR () {
 		Longchar_genericize (s->getString(), trigraphs.get());
 		pushString (trigraphs.move());
 	} else {
-		Melder_throw (U"The function \"unicodeToBackslashTrigraphs$\" requires a string, not ", s->whichText(), U".");
+		Melder_throw (U"The function “unicodeToBackslashTrigraphs$” requires a string, not ", s->whichText(), U".");
 	}
 }
 static void do_backslashTrigraphsToUnicode_STR () {
@@ -5150,7 +5157,7 @@ static void do_backslashTrigraphsToUnicode_STR () {
 		Longchar_nativize (s->getString(), unicode.get(), false);   // noexcept
 		pushString (unicode.move());
 	} else {
-		Melder_throw (U"The function \"unicodeToBackslashTrigraphs$\" requires a string, not ", s->whichText(), U".");
+		Melder_throw (U"The function “unicodeToBackslashTrigraphs$” requires a string, not ", s->whichText(), U".");
 	}
 }
 static void do_environment_STR () {
@@ -5160,7 +5167,7 @@ static void do_environment_STR () {
 		autostring32 result = Melder_dup (value ? value : U"");
 		pushString (result.move());
 	} else {
-		Melder_throw (U"The function \"environment$\" requires a string, not ", s->whichText(), U".");
+		Melder_throw (U"The function “environment$” requires a string, not ", s->whichText(), U".");
 	}
 }
 static void do_index () {
@@ -5172,7 +5179,7 @@ static void do_index () {
 	} else if (s->which == Stackel_STRING_ARRAY && t->which == Stackel_STRING) {
 		pushNumber (NUMfindFirst (s->stringArray, t->getString()));
 	} else {
-		Melder_throw (U"The function \"index\" requires two strings, not ",
+		Melder_throw (U"The function “index” requires two strings, not ",
 			s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
@@ -5195,7 +5202,7 @@ static void do_rindex () {
 			pushNumber (0);   // 0 is the special case, meaning "not found"
 		}
 	} else {
-		Melder_throw (U"The function \"rindex\" requires two strings, not ",
+		Melder_throw (U"The function “rindex” requires two strings, not ",
 			whole->whichText(), U" and ", part->whichText(), U".");
 	}
 }
@@ -5205,8 +5212,8 @@ static void do_stringMatchesCriterion (kMelder_string criterion) {
 		const bool result = Melder_stringMatchesCriterion (s->getString(), criterion, t->getString(), true);
 		pushNumber (result);
 	} else {
-		Melder_throw (U"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
-			U"\" requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
+		Melder_throw (U"The function “", Formula_instructionNames [parse [programPointer]. symbol],
+			U"” requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
 static void do_index_regex (int backward) {
@@ -5226,8 +5233,8 @@ static void do_index_regex (int backward) {
 			}
 		}
 	} else {
-		Melder_throw (U"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
-			U"\" requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
+		Melder_throw (U"The function “", Formula_instructionNames [parse [programPointer]. symbol],
+			U"” requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
 static void do_replace_STR () {
@@ -5236,7 +5243,7 @@ static void do_replace_STR () {
 		autostring32 result = replace_STR (s->getString(), t->getString(), u->getString(), Melder_iround (x->number));
 		pushString (result.move());
 	} else {
-		Melder_throw (U"The function \"replace$\" requires three strings and a number.");
+		Melder_throw (U"The function “replace$” requires three strings and a number.");
 	}
 }
 static void do_replace_regex_STR () {
@@ -5251,7 +5258,7 @@ static void do_replace_regex_STR () {
 			pushString (result.move());
 		}
 	} else {
-		Melder_throw (U"The function \"replace_regex$\" requires three strings and a number.");
+		Melder_throw (U"The function “replace_regex$” requires three strings and a number.");
 	}
 }
 static void do_extractNumber () {
@@ -5293,8 +5300,8 @@ static void do_extractNumber () {
 			}
 		}
 	} else {
-		Melder_throw (U"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
-			U"\" requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
+		Melder_throw (U"The function “", Formula_instructionNames [parse [programPointer]. symbol],
+			U"” requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
 static void do_extractText_STR (bool singleWord) {
@@ -5326,8 +5333,8 @@ static void do_extractText_STR (bool singleWord) {
 		}
 		pushString (result.move());
 	} else {
-		Melder_throw (U"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
-			U"\" requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
+		Melder_throw (U"The function “", Formula_instructionNames [parse [programPointer]. symbol],
+			U"” requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
 static void do_selected () {
@@ -5343,7 +5350,7 @@ static void do_selected () {
 		} else if (a->which == Stackel_NUMBER) {
 			result = praat_idOfSelected (nullptr, Melder_iround (a->number));
 		} else {
-			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
+			Melder_throw (U"The function “selected” requires a string (an object type name) and/or a number.");
 		}
 	} else if (n->number == 2) {
 		const Stackel x = pop, s = pop;
@@ -5351,10 +5358,10 @@ static void do_selected () {
 			const ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			result = praat_idOfSelected (klas, Melder_iround (x->number));
 		} else {
-			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
+			Melder_throw (U"The function “selected” requires a string (an object type name) and/or a number.");
 		}
 	} else {
-		Melder_throw (U"The function \"selected\" requires 0, 1, or 2 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “selected” requires 0, 1, or 2 arguments, not ", n->number, U".");
 	}
 	pushNumber (result);
 }
@@ -5371,7 +5378,7 @@ static void do_selected_STR () {
 		} else if (a->which == Stackel_NUMBER) {
 			resultSource = praat_nameOfSelected (nullptr, Melder_iround (a->number));
 		} else {
-			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and/or a number.");
+			Melder_throw (U"The function “selected$” requires a string (an object type name) and/or a number.");
 		}
 	} else if (n->number == 2) {
 		const Stackel x = pop, s = pop;
@@ -5379,10 +5386,10 @@ static void do_selected_STR () {
 			ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			resultSource = praat_nameOfSelected (klas, Melder_iround (x->number));
 		} else {
-			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and a number.");
+			Melder_throw (U"The function “selected$” requires a string (an object type name) and a number.");
 		}
 	} else {
-		Melder_throw (U"The function \"selected$\" requires 0, 1, or 2 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “selected$” requires 0, 1, or 2 arguments, not ", n->number, U".");
 	}
 	pushString (Melder_dup (resultSource));
 }
@@ -5397,10 +5404,10 @@ static void do_numberOfSelected () {
 			const ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			result = praat_numberOfSelected (klas);
 		} else {
-			Melder_throw (U"The function \"numberOfSelected\" requires a string (an object type name), not ", s->whichText(), U".");
+			Melder_throw (U"The function “numberOfSelected” requires a string (an object type name), not ", s->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"numberOfSelected\" requires 0 or 1 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “numberOfSelected” requires 0 or 1 arguments, not ", n->number, U".");
 	}
 	pushNumber (result);
 }
@@ -5415,10 +5422,10 @@ static void do_selected_VEC () {
 			const ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			result = praat_idsOfAllSelected (klas);
 		} else {
-			Melder_throw (U"The function \"numberOfSelected\" requires a string (an object type name), not ", s->whichText(), U".");
+			Melder_throw (U"The function “numberOfSelected” requires a string (an object type name), not ", s->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"numberOfSelected\" requires 0 or 1 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “numberOfSelected” requires 0 or 1 arguments, not ", n->number, U".");
 	}
 	pushNumericVector (result.move());
 }
@@ -5440,7 +5447,7 @@ static void do_selectObject () {
 				praat_select (IOBJECT);
 			}
 		} else {
-			Melder_throw (U"The function \"selectObject\" takes numbers, strings, or numeric vectors, not ", object->whichText());
+			Melder_throw (U"The function “selectObject” takes numbers, strings, or numeric vectors, not ", object->whichText());
 		}
 	}
 	praat_show ();
@@ -5463,7 +5470,7 @@ static void do_plusObject () {
 				praat_select (IOBJECT);
 			}
 		} else {
-			Melder_throw (U"The function \"plusObject\" takes numbers, strings, or numeric vectors, not ", object->whichText(), U".");
+			Melder_throw (U"The function “plusObject” takes numbers, strings, or numeric vectors, not ", object->whichText(), U".");
 		}
 	}
 	praat_show ();
@@ -5486,7 +5493,7 @@ static void do_minusObject () {
 				praat_deselect (IOBJECT);
 			}
 		} else {
-			Melder_throw (U"The function \"minusObject\" takes numbers, strings, or numeric vectors, not ", object->whichText(), U".");
+			Melder_throw (U"The function “minusObject” takes numbers, strings, or numeric vectors, not ", object->whichText(), U".");
 		}
 	}
 	praat_show ();
@@ -5509,7 +5516,7 @@ static void do_removeObject () {
 				praat_removeObject (IOBJECT);
 			}
 		} else {
-			Melder_throw (U"The function \"removeObject\" takes numbers, strings, or numeric vectors, not ", object->whichText(), U".");
+			Melder_throw (U"The function “removeObject” takes numbers, strings, or numeric vectors, not ", object->whichText(), U".");
 		}
 	}
 	praat_show ();
@@ -5526,7 +5533,7 @@ static Daata _do_object (Stackel object, conststring32 expressionMessage) {
 	} else if (object -> which == Stackel_OBJECT) {
 		data = object -> object;
 	} else {
-		Melder_throw (U"The expression \"", expressionMessage, U"\" requires xx to be a number or a string, not ", object->whichText(), U".");
+		Melder_throw (U"The expression “", expressionMessage, U"” requires xx to be a number or a string, not ", object->whichText(), U".");
 	}
 	return data;
 }
@@ -5534,79 +5541,79 @@ static void do_object_xmin () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].xmin");
 	Melder_require (data -> v_hasGetXmin (),
-		U"An object of type ", Thing_className (data), U" has no \"xmin\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “xmin” attribute.");
 	pushNumber (data -> v_getXmin ());
 }
 static void do_object_xmax () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].xmax");
 	Melder_require (data -> v_hasGetXmax (),
-		U"An object of type ", Thing_className (data), U" has no \"xmax\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “xmax” attribute.");
 	pushNumber (data -> v_getXmax ());
 }
 static void do_object_ymin () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].ymin");
 	Melder_require (data -> v_hasGetYmin (),
-		U"An object of type ", Thing_className (data), U" has no \"ymin\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “ymin” attribute.");
 	pushNumber (data -> v_getYmin ());
 }
 static void do_object_ymax () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].ymax");
 	Melder_require (data -> v_hasGetYmax (),
-		U"An object of type ", Thing_className (data), U" has no \"ymax\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “ymax” attribute.");
 	pushNumber (data -> v_getYmax ());
 }
 static void do_object_nx () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].nx");
 	Melder_require (data -> v_hasGetNx (),
-		U"An object of type ", Thing_className (data), U" has no \"nx\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “nx” attribute.");
 	pushNumber (data -> v_getNx ());
 }
 static void do_object_ny () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].ny");
 	Melder_require (data -> v_hasGetNy (),
-		U"An object of type ", Thing_className (data), U" has no \"ny\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “ny” attribute.");
 	pushNumber (data -> v_getNy ());
 }
 static void do_object_dx () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].dx");
 	Melder_require (data -> v_hasGetDx (),
-		U"An object of type ", Thing_className (data), U" has no \"dx\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “dx” attribute.");
 	pushNumber (data -> v_getDx ());
 }
 static void do_object_dy () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].dy");
 	Melder_require (data -> v_hasGetDy (),
-		U"An object of type ", Thing_className (data), U" has no \"dy\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “dy” attribute.");
 	pushNumber (data -> v_getDy ());
 }
 static void do_object_nrow () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].nrow");
 	Melder_require (data -> v_hasGetNrow (),
-		U"An object of type ", Thing_className (data), U" has no \"nrow\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “nrow” attribute.");
 	pushNumber (data -> v_getNrow ());
 }
 static void do_object_ncol () {
 	const Stackel object = pop;
 	const Daata data = _do_object (object, U"object[xx].ncol");
 	Melder_require (data -> v_hasGetNcol (),
-		U"An object of type ", Thing_className (data), U" has no \"ncol\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “ncol” attribute.");
 	pushNumber (data -> v_getNcol ());
 }
 static void do_object_row_STR () {
 	const Stackel index = pop, object = pop;
 	const Daata data = _do_object (object, U"object[xx].row$[]");
 	Melder_require (data -> v_hasGetRowStr (),
-		U"An object of type ", Thing_className (data), U" has no \"row$[]\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “row$[]” attribute.");
 	Melder_require (index -> which == Stackel_NUMBER,
-		U"The expression \"object[].row$[xx]\" requires xx to be a number, not ", index->whichText(), U".");
+		U"The expression “object[].row$[xx]” requires xx to be a number, not ", index->whichText(), U".");
 	const integer number = Melder_iround (index->number);
 	autostring32 result = Melder_dup (data -> v_getRowStr (number));
 	if (! result)
@@ -5617,9 +5624,9 @@ static void do_object_col_STR () {
 	const Stackel index = pop, object = pop;
 	const Daata data = _do_object (object, U"object[xx].col$[]");
 	Melder_require (data -> v_hasGetColStr (),
-		U"An object of type ", Thing_className (data), U" has no \"col$[]\" attribute.");
+		U"An object of type ", Thing_className (data), U" has no “col$[]” attribute.");
 	Melder_require (index -> which == Stackel_NUMBER,
-		U"The expression \"object[].col$[xx]\" requires xx to be a number, not ", index->whichText(), U".");
+		U"The expression “object[].col$[xx]” requires xx to be a number, not ", index->whichText(), U".");
 	const integer number = Melder_iround (index->number);
 	autostring32 result = Melder_dup (data -> v_getColStr (number));
 	if (! result)
@@ -5632,7 +5639,7 @@ static void do_string_STR () {
 		autostring32 result = Melder_dup (Melder_double (value->number));
 		pushString (result.move());
 	} else {
-		Melder_throw (U"The function \"string$\" requires a number, not ", value->whichText(), U".");
+		Melder_throw (U"The function “string$” requires a number, not ", value->whichText(), U".");
 	}
 }
 static void do_numbers_VEC () {
@@ -5647,7 +5654,7 @@ static void do_numbers_VEC () {
 			result [i] = Melder_atof (strings [i]);
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"numbers#\" requires a string array, not ", stringsel->whichText(), U".");
+		Melder_throw (U"The function “numbers#” requires a string array, not ", stringsel->whichText(), U".");
 	}
 }
 static void do_sleep () {
@@ -5656,7 +5663,7 @@ static void do_sleep () {
 		Melder_sleep (value->number);
 		pushNumber (1);
 	} else {
-		Melder_throw (U"The function \"sleep\" requires a number, not ", value->whichText(), U".");
+		Melder_throw (U"The function “sleep” requires a number, not ", value->whichText(), U".");
 	}
 }
 static void do_unicode () {
@@ -5664,7 +5671,7 @@ static void do_unicode () {
 	if (value->which == Stackel_STRING) {
 		pushNumber (value->getString() [0]);
 	} else {
-		Melder_throw (U"The function \"unicode\" requires a character, not ", value->whichText(), U".");
+		Melder_throw (U"The function “unicode” requires a character, not ", value->whichText(), U".");
 	}
 }
 static void do_unicode_STR () {
@@ -5673,12 +5680,12 @@ static void do_unicode_STR () {
 		Melder_require (value->number >= 0.0 && value->number < (double) (1 << 21),
 			U"A unicode number cannot be greater than ", (1 << 21) - 1, U".");
 		Melder_require (value->number < 0xD800 || value->number > 0xDFFF,
-			U"A unicode number cannot lie between 0xD800 and 0xDFFF. Those are \"surrogates\".");
+			U"A unicode number cannot lie between 0xD800 and 0xDFFF. Those are “surrogates”.");
 		char32 string [2] = { U'\0', U'\0' };
 		string [0] = (char32) value->number;
 		pushString (Melder_dup (string).move());
 	} else {
-		Melder_throw (U"The function \"unicode$\" requires a number, not ", value->whichText(), U".");
+		Melder_throw (U"The function “unicode$” requires a number, not ", value->whichText(), U".");
 	}
 }
 static void do_fixed_STR () {
@@ -5687,7 +5694,7 @@ static void do_fixed_STR () {
 		autostring32 result = Melder_dup (Melder_fixed (value->number, Melder_iround (precision->number)));
 		pushString (result.move());
 	} else {
-		Melder_throw (U"The function \"fixed$\" requires two numbers (value and precision), not ", value->whichText(), U" and ", precision->whichText(), U".");
+		Melder_throw (U"The function “fixed$” requires two numbers (value and precision), not ", value->whichText(), U" and ", precision->whichText(), U".");
 	}
 }
 static void do_percent_STR () {
@@ -5696,7 +5703,7 @@ static void do_percent_STR () {
 		autostring32 result = Melder_dup (Melder_percent (value->number, Melder_iround (precision->number)));
 		pushString (result.move());
 	} else {
-		Melder_throw (U"The function \"percent$\" requires two numbers (value and precision), not ", value->whichText(), U" and ", precision->whichText(), U".");
+		Melder_throw (U"The function “percent$” requires two numbers (value and precision), not ", value->whichText(), U" and ", precision->whichText(), U".");
 	}
 }
 static void do_hexadecimal_STR () {
@@ -5705,12 +5712,12 @@ static void do_hexadecimal_STR () {
 		autostring32 result = Melder_dup (Melder_hexadecimal (Melder_iround (value->number), Melder_iround (precision->number)));
 		pushString (result.move());
 	} else {
-		Melder_throw (U"The function \"hexadecimal$\" requires two numbers (value and precision), not ", value->whichText(), U" and ", precision->whichText(), U".");
+		Melder_throw (U"The function “hexadecimal$” requires two numbers (value and precision), not ", value->whichText(), U" and ", precision->whichText(), U".");
 	}
 }
 static void do_deleteFile () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"deleteFile\" is not available inside manuals.");
+		U"The function “deleteFile” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderFile file { };
@@ -5718,12 +5725,12 @@ static void do_deleteFile () {
 		MelderFile_delete (& file);
 		pushNumber (1);
 	} else {
-		Melder_throw (U"The function \"deleteFile\" requires a string, not ", f->whichText(), U".");
+		Melder_throw (U"The function “deleteFile” requires a string, not ", f->whichText(), U".");
 	}
 }
 static void do_createFolder () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"createFolder\" is not available inside manuals.");
+		U"The function “createFolder” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderDir currentDirectory { };
@@ -5735,12 +5742,12 @@ static void do_createFolder () {
 		#endif
 		pushNumber (1);
 	} else {
-		Melder_throw (U"The function \"createFolder\" requires a string, not ", f->whichText(), U".");
+		Melder_throw (U"The function “createFolder” requires a string, not ", f->whichText(), U".");
 	}
 }
 static void do_createDirectory () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"createDirectory\" is not available inside manuals.");
+		U"The function “createDirectory” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderDir currentDirectory { };
@@ -5752,7 +5759,7 @@ static void do_createDirectory () {
 		#endif
 		pushNumber (1);
 	} else {
-		Melder_throw (U"The function \"createDirectory\" requires a string, not ", f->whichText(), U".");
+		Melder_throw (U"The function “createDirectory” requires a string, not ", f->whichText(), U".");
 	}
 }
 static void do_setWorkingDirectory () {
@@ -5763,7 +5770,7 @@ static void do_setWorkingDirectory () {
 		Melder_setDefaultDir (& folder);
 		pushNumber (1);
 	} else {
-		Melder_throw (U"The function \"setWorkingDirectory\" requires a string, not ", f->whichText(), U".");
+		Melder_throw (U"The function “setWorkingDirectory” requires a string, not ", f->whichText(), U".");
 	}
 }
 static void do_variableExists () {
@@ -5772,7 +5779,7 @@ static void do_variableExists () {
 		bool result = !! Interpreter_hasVariable (theInterpreter, f->getString());
 		pushNumber (result);
 	} else {
-		Melder_throw (U"The function \"variableExists\" requires a string, not ", f->whichText(), U".");
+		Melder_throw (U"The function “variableExists” requires a string, not ", f->whichText(), U".");
 	}
 }
 static void do_readFile () {
@@ -5783,7 +5790,7 @@ static void do_readFile () {
 		autostring32 text = MelderFile_readText (& file);
 		pushNumber (Melder_atof (text.get()));
 	} else {
-		Melder_throw (U"The function \"readFile\" requires a string (a file name), not ", f->whichText(), U".");
+		Melder_throw (U"The function “readFile” requires a string (a file name), not ", f->whichText(), U".");
 	}
 }
 static void do_readFile_STR () {
@@ -5794,7 +5801,7 @@ static void do_readFile_STR () {
 		autostring32 text = MelderFile_readText (& file);
 		pushString (text.move());
 	} else {
-		Melder_throw (U"The function \"readFile$\" requires a string (a file name), not ", f->whichText(), U".");
+		Melder_throw (U"The function “readFile$” requires a string (a file name), not ", f->whichText(), U".");
 	}
 }
 static void do_tensorLiteral () {
@@ -5859,11 +5866,11 @@ static void do_row_VEC () {
 		const constMAT mat = mat_->numericMatrix;
 		const integer rowNumber = Melder_iround (rowNumber_->number);
 		Melder_require (rowNumber >= 1 && rowNumber <= mat.nrow,
-			U"In the function \"row#\", the row number should be between 1 and ", mat.nrow, U".");
+			U"In the function “row#”, the row number should be between 1 and ", mat.nrow, U".");
 		autoVEC result = copy_VEC (mat.row (rowNumber));
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"row#\" requires a matrix and a row number, not ", mat_->whichText(), U" and ", rowNumber_->whichText(), U".");
+		Melder_throw (U"The function “row#” requires a matrix and a row number, not ", mat_->whichText(), U" and ", rowNumber_->whichText(), U".");
 	}
 }
 static void do_col_VEC () {
@@ -5875,11 +5882,11 @@ static void do_col_VEC () {
 		const constMAT mat = mat_->numericMatrix;
 		const integer colNumber = Melder_iround (colNumber_->number);
 		Melder_require (colNumber >= 1 && colNumber <= mat.ncol,
-			U"In the function \"col#\", the column number should be between 1 and ", mat.ncol, U".");
+			U"In the function “col#”, the column number should be between 1 and ", mat.ncol, U".");
 		autoVEC result = copy_VEC (mat.column (colNumber));
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"col#\" requires a matrix and a column number, not ", mat_->whichText(), U" and ", colNumber_->whichText(), U".");
+		Melder_throw (U"The function “col#” requires a matrix and a column number, not ", mat_->whichText(), U" and ", colNumber_->whichText(), U".");
 	}
 }
 static void do_inner () {
@@ -5890,7 +5897,7 @@ static void do_inner () {
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
 		pushNumber (NUMinner (x->numericVector, y->numericVector));
 	} else {
-		Melder_throw (U"The function \"inner\" requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “inner” requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_outer_MAT () {
@@ -5902,7 +5909,7 @@ static void do_outer_MAT () {
 		autoMAT result = outer_MAT (x->numericVector, y->numericVector);
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"outer##\" requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “outer##” requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_mul_VEC () {
@@ -5916,7 +5923,7 @@ static void do_mul_VEC () {
 		*/
 		const integer xSize = x->numericVector.size, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xSize,
-			U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
+			U"In the function “mul#”, the dimension of the vector and the number of rows of the matrix should be equal, "
 			U"not ", xSize, U" and ", yNrow
 		);
 		autoVEC result = mul_VEC (x->numericVector, y->numericMatrix);
@@ -5927,13 +5934,13 @@ static void do_mul_VEC () {
 		*/
 		const integer xNcol = x->numericMatrix.ncol, ySize = y->numericVector.size;
 		Melder_require (ySize == xNcol,
-			U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
+			U"In the function “mul#”, the number of columns of the matrix and the dimension of the vector should be equal, "
 			U"not ", xNcol, U" and ", ySize, U"."
 		);
 		autoVEC result = mul_VEC (x->numericMatrix, y->numericVector);
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"mul#\" requires a vector and a matrix, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “mul#” requires a vector and a matrix, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_mul_MAT () {
@@ -5947,14 +5954,14 @@ static void do_mul_MAT () {
 		*/
 		const integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xNcol,
-			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
+			U"In the function “mul##”, the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U"."
 		);
 		autoMAT result = zero_MAT (x->numericMatrix.nrow, y->numericMatrix.ncol);
 		_mul_allowAllocation_MAT_out (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “mul##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_mul_metal_MAT () {
@@ -5968,14 +5975,14 @@ static void do_mul_metal_MAT () {
 		*/
 		const integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xNcol,
-			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
+			U"In the function “mul##”, the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U"."
 		);
 		autoMAT result = zero_MAT (x->numericMatrix.nrow, y->numericMatrix.ncol);
 		MATmul_forceMetal_ (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"mul_metal##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “mul_metal##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_mul_fast_MAT () {
@@ -5989,13 +5996,13 @@ static void do_mul_fast_MAT () {
 		*/
 		const integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xNcol,
-			U"In the function \"mul_fast##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
+			U"In the function “mul_fast##”, the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U"."
 		);
 		autoMAT result = mul_fast_MAT (x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"mul_fast##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “mul_fast##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_mul_tn_MAT () {
@@ -6009,13 +6016,13 @@ static void do_mul_tn_MAT () {
 		*/
 		const integer xNrow = x->numericMatrix.nrow, yNrow = y->numericMatrix.nrow;
 		Melder_require (yNrow == xNrow,
-			U"In the function \"mul_tn##\", the number of rows of the first matrix and the number of rows of the second matrix should be equal, "
+			U"In the function “mul_tn##”, the number of rows of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNrow, U" and ", yNrow, U"."
 		);
 		autoMAT result = mul_allowAllocation_MAT (x->numericMatrix.transpose(), y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"mul_tn##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “mul_tn##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_mul_nt_MAT () {
@@ -6029,13 +6036,13 @@ static void do_mul_nt_MAT () {
 		*/
 		const integer xNcol = x->numericMatrix.ncol, yNcol = y->numericMatrix.ncol;
 		Melder_require (yNcol == xNcol,
-			U"In the function \"mul_tn##\", the number of columns of the first matrix and the number of columns of the second matrix should be equal, "
+			U"In the function “mul_tn##”, the number of columns of the first matrix and the number of columns of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNcol, U"."
 		);
 		autoMAT result = mul_allowAllocation_MAT (x->numericMatrix, y->numericMatrix.transpose());
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"mul_nt##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “mul_nt##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_mul_tt_MAT () {
@@ -6049,13 +6056,13 @@ static void do_mul_tt_MAT () {
 		*/
 		const integer xNrow = x->numericMatrix.nrow, yNcol = y->numericMatrix.ncol;
 		Melder_require (yNcol == xNrow,
-			U"In the function \"mul_tt##\", the number of rows of the first matrix and the number of columns of the second matrix should be equal, "
+			U"In the function “mul_tt##”, the number of rows of the first matrix and the number of columns of the second matrix should be equal, "
 			U"not ", xNrow, U" and ", yNcol, U"."
 		);
 		autoMAT result = mul_allowAllocation_MAT (x->numericMatrix.transpose(), y->numericMatrix.transpose());
 		pushNumericMatrix (result.move());
 	} else {
-		Melder_throw (U"The function \"mul_tt##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “mul_tt##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_transpose_MAT () {
@@ -6085,7 +6092,7 @@ static void do_transpose_MAT () {
 			x->owned = true;
 		}
 	} else {
-		Melder_throw (U"The function \"transpose##\" requires a matrix, not ", x->whichText(), U".");
+		Melder_throw (U"The function “transpose##” requires a matrix, not ", x->whichText(), U".");
 	}
 }
 static void do_rowSums_VEC () {
@@ -6094,7 +6101,7 @@ static void do_rowSums_VEC () {
 		autoVEC result = rowSums_VEC (x->numericMatrix);
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"rowSums#\" requires a matrix, not ", x->whichText(), U".");
+		Melder_throw (U"The function “rowSums#” requires a matrix, not ", x->whichText(), U".");
 	}
 }
 static void do_columnSums_VEC () {
@@ -6108,7 +6115,7 @@ static void do_columnSums_VEC () {
 		autoVEC result = columnSums_VEC (x->numericMatrix);
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"columnSums#\" requires a matrix, not ", x->whichText(), U".");
+		Melder_throw (U"The function “columnSums#” requires a matrix, not ", x->whichText(), U".");
 	}
 }
 static void do_repeat_VEC () {
@@ -6122,7 +6129,7 @@ static void do_repeat_VEC () {
 				result [(i - 1) * n_old + j] = x->numericVector [j];
 		pushNumericVector (result.move());
 	} else {
-		Melder_throw (U"The function \"repeat#\" requires a vector and a number, not ", x->whichText(), U" and ", n->whichText(), U".");
+		Melder_throw (U"The function “repeat#” requires a vector and a number, not ", x->whichText(), U" and ", n->whichText(), U".");
 	}
 }
 static void do_rowInners_VEC () {
@@ -6134,7 +6141,7 @@ static void do_rowInners_VEC () {
 		);
 		pushNumericVector (rowInners_VEC (x->numericMatrix, y->numericMatrix));
 	} else {
-		Melder_throw (U"The function \"rowInners#\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “rowInners#” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_solve_VEC () {
@@ -6146,7 +6153,7 @@ static void do_solve_VEC () {
 		);
 		pushNumericVector (newVECsolve (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
 	} else {
-		Melder_throw (U"The function \"solve#\" requires a matrix and a vector, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “solve#” requires a matrix and a vector, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 
@@ -6163,7 +6170,7 @@ static void do_solveWeaklyConstrained_VEC () {
 			U"Argument 4, the squared length of the solution vector should not be negative.");
 		pushNumericVector (newVECsolveWeaklyConstrainedLinearRegression (x->numericMatrix, y->numericVector, alpha->number, delta->number));
 	} else {
-		Melder_throw (U"The function \"solveWeaklyConstrained#\" requires a matrix, a vector, and two numbers not ", x->whichText(), U", ",
+		Melder_throw (U"The function “solveWeaklyConstrained#” requires a matrix, a vector, and two numbers not ", x->whichText(), U", ",
 			y->whichText(), U", ", alpha->whichText(), U" and ", delta->whichText(), U".");
 	}
 }
@@ -6176,7 +6183,7 @@ static void do_solve_MAT () {
 			x->numericMatrix.nrow, U" and ", y->numericMatrix.nrow);
 		pushNumericMatrix (newMATsolve (x->numericMatrix, y->numericMatrix, NUMeps * x->numericMatrix.nrow * x->numericMatrix.ncol));
 	} else {
-		Melder_throw (U"The function \"solve##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+		Melder_throw (U"The function “solve##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 
@@ -6200,7 +6207,7 @@ static void do_solveSparse_VEC () {
 			const double tolerance = tol->number;
 			pushNumericVector (newVECsolveSparse_IHT (d, yy, numberOfNonzeros,  maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
-			Melder_throw (U"The function \"solveSparse#\" requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
+			Melder_throw (U"The function “solveSparse#” requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
 			niter->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}
 	} else if (n -> number == 7) {
@@ -6227,11 +6234,11 @@ static void do_solveSparse_VEC () {
 			VECsolveSparse_IHT (xs.all(), d, yy, numberOfNonzeros, maximumNumberOfIterations, tolerance, infoLevel);
 			pushNumericVector (xs.move());
 		} else {
-			Melder_throw (U"The function \"solveSparse#\" requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
+			Melder_throw (U"The function “solveSparse#” requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
 			niter->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}
 	} else {
-		Melder_throw (U"The function \"solveSparse#\" requires six or seven arguments.");
+		Melder_throw (U"The function “solveSparse#” requires six or seven arguments.");
 	}
 }
 
@@ -6257,7 +6264,7 @@ static void do_solveNonnegative_VEC () {
 			VECsolveNonnegativeLeastSquaresRegression (x.get(), a, yy, maximumNumberOfIterations, tolerance, infoLevel);
 			pushNumericVector (x.move());
 		} else {
-			Melder_throw (U"The function \"solveNonnegative#\" requires a matrix, a vector, a vector and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", xstart->whichText(), U", ",
+			Melder_throw (U"The function “solveNonnegative#” requires a matrix, a vector, a vector and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", xstart->whichText(), U", ",
 			itermax->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}
 	} else if (n -> number == 5) {
@@ -6274,16 +6281,34 @@ static void do_solveNonnegative_VEC () {
 				U"The number of rows in the matrix should equal the size of the vector.");
 			pushNumericVector (newVECsolveNonnegativeLeastSquaresRegression (a, yy, maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
-			Melder_throw (U"The function \"solveNonnegative#\" requires a matrix, a vector, and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", itermax->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
+			Melder_throw (U"The function “solveNonnegative#” requires a matrix, a vector, and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", itermax->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}
 	} else {
-		Melder_throw (U"The function \"solveNonnegative#\" requires five or six arguments.");
+		Melder_throw (U"The function “solveNonnegative#” requires five or six arguments.");
 	}
 }
 
+static void do_beginForm () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function “beginForm” is not available inside manuals.");
+	const Stackel n = pop;
+	if (n->number == 1) {
+		const Stackel title = pop;
+		if (title->which == Stackel_STRING) {
+			const Editor optionalEditor = theInterpreter -> optionalEditor;
+			const GuiWindow parentShell = ( optionalEditor ? optionalEditor -> windowForm : theCurrentPraatApplication -> topShell );
+			Interpreter_beginForm (theInterpreter, parentShell, optionalEditor, title->getString());
+		} else {
+			Melder_throw (U"The function “beginForm” requires a string (the title), not ", title->whichText(), U".");
+		}
+	} else {
+		Melder_throw (U"The function “beginForm” requires 1 argument (a title), not ", n->number, U".");
+	}
+	pushNumber (1);
+}
 static void do_beginPauseForm () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"beginPauseForm\" is not available inside manuals.");
+		U"The function “beginPauseForm” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 1) {
 		const Stackel title = pop;
@@ -6292,16 +6317,16 @@ static void do_beginPauseForm () {
 			const GuiWindow parentShell = ( optionalEditor ? optionalEditor -> windowForm : theCurrentPraatApplication -> topShell );
 			UiPause_begin (parentShell, optionalEditor, title->getString(), theInterpreter);
 		} else {
-			Melder_throw (U"The function \"beginPauseForm\" requires a string (the title), not ", title->whichText(), U".");
+			Melder_throw (U"The function “beginPauseForm” requires a string (the title), not ", title->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"beginPauseForm\" requires 1 argument (a title), not ", n->number, U".");
+		Melder_throw (U"The function “beginPauseForm” requires 1 argument (a title), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddReal () {
+static void do_real () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"real\" is not available inside manuals.");
+		U"The function “real” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
@@ -6311,22 +6336,27 @@ static void do_pauseFormAddReal () {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
-			Melder_throw (U"The second argument of \"real\" (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
+			Melder_throw (U"The second argument of “real” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
 		}
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_real (label->getString(), defaultString);
+			if (theInterpreter -> formPass > 0) {
+				const double result = Interpreter_real (theInterpreter, label->getString(), defaultString);
+				pushNumber (result);
+			} else {
+				UiPause_real (label->getString(), defaultString);
+				pushNumber (1);
+			}
 		} else {
-			Melder_throw (U"The first argument of \"real\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “real” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"real\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “real” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
-	pushNumber (1);
 }
-static void do_pauseFormAddPositive () {
+static void do_positive () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"positive\" is not available inside manuals.");
+		U"The function “positive” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
@@ -6336,22 +6366,27 @@ static void do_pauseFormAddPositive () {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
-			Melder_throw (U"The second argument of \"positive\" (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
+			Melder_throw (U"The second argument of “positive” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
 		}
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_positive (label->getString(), defaultString);
+			if (theInterpreter -> formPass > 0) {
+				const double result = Interpreter_positive (theInterpreter, label->getString(), defaultString);
+				pushNumber (result);
+			} else {
+				UiPause_positive (label->getString(), defaultString);
+				pushNumber (1);
+			}
 		} else {
-			Melder_throw (U"The first argument of \"positive\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “positive” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"positive\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “positive” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
-	pushNumber (1);
 }
-static void do_pauseFormAddInteger () {
+static void do_integer () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"integer\" is not available inside manuals.");
+		U"The function “integer” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
@@ -6361,22 +6396,25 @@ static void do_pauseFormAddInteger () {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
-			Melder_throw (U"The second argument of \"integer\" (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
+			Melder_throw (U"The second argument of “integer” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
 		}
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_integer (label->getString(), defaultString);
+			if (theInterpreter -> formPass > 0)
+				Interpreter_integer (theInterpreter, label->getString(), defaultString);
+			else
+				UiPause_integer (label->getString(), defaultString);
 		} else {
-			Melder_throw (U"The first argument of \"integer\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “integer” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"integer\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “integer” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddNatural () {
+static void do_natural () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"natural\" is not available inside manuals.");
+		U"The function “natural” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
@@ -6386,179 +6424,188 @@ static void do_pauseFormAddNatural () {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
-			Melder_throw (U"The second argument of \"natural\" (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
+			Melder_throw (U"The second argument of “natural” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
 		}
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_natural (label->getString(), defaultString);
+			if (theInterpreter -> formPass > 0)
+				Interpreter_natural (theInterpreter, label->getString(), defaultString);
+			else
+				UiPause_natural (label->getString(), defaultString);
 		} else {
-			Melder_throw (U"The first argument of \"natural\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “natural” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"natural\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “natural” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddWord () {
+static void do_word () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"word\" is not available inside manuals.");
+		U"The function “word” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
 		Melder_require (defaultValue->which == Stackel_STRING,
-			U"The second argument of \"word\" (the default value) should be a string, not ", defaultValue->whichText(), U".");
+			U"The second argument of “word” (the default value) should be a string, not ", defaultValue->whichText(), U".");
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_word (label->getString(), defaultValue->getString());
+			if (theInterpreter -> formPass > 0)
+				Interpreter_word (theInterpreter, label->getString(), defaultValue->getString());
+			else
+				UiPause_word (label->getString(), defaultValue->getString());
 		} else {
-			Melder_throw (U"The first argument of \"word\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “word” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"word\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “word” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddSentence () {
+static void do_sentence () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"sentence\" is not available inside manuals.");
+		U"The function “sentence” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
 		Melder_require (defaultValue->which == Stackel_STRING,
-			U"The second argument of \"sentence\" (the default value) should be a string, not ", defaultValue->whichText(), U".");
+			U"The second argument of “sentence” (the default value) should be a string, not ", defaultValue->whichText(), U".");
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_sentence (label->getString(), defaultValue->getString());
+			if (theInterpreter -> formPass > 0)
+				Interpreter_sentence (theInterpreter, label->getString(), defaultValue->getString());
+			else
+				UiPause_sentence (label->getString(), defaultValue->getString());
 		} else {
-			Melder_throw (U"The first argument of \"sentence\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “sentence” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"sentence\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “sentence” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddText () {
+static void do_text () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"text\" is not available inside manuals.");
+		U"The function “text” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
-		U"The function \"text\" requires 2 or 3 arguments (a label, a default value, and an optional number of lines), not ", n->number, U".");
+		U"The function “text” requires 2 or 3 arguments (a label, a default value, and an optional number of lines), not ", n->number, U".");
 	integer numberOfLines = 1;   // the default
 	if (n->number == 3) {
 		const Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
-			U"The third argument of \"text\" (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+			U"The third argument of “text” (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
 		numberOfLines = Melder_iround (_numberOfLines->number);
 	}
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
-		U"The second argument of \"text\" (the default value) should be a string, not ", defaultValue->whichText(), U".");
+		U"The second argument of “text” (the default value) should be a string, not ", defaultValue->whichText(), U".");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The first argument of \"text\" (the label) should be a string, not ", label->whichText(), U".");
+		U"The first argument of “text” (the label) should be a string, not ", label->whichText(), U".");
 	UiPause_text (label->getString(), defaultValue->getString(), numberOfLines);
 	pushNumber (1);
 }
-static void do_pauseFormAddBoolean () {
+static void do_boolean () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"boolean\" is not available inside manuals.");
+		U"The function “boolean” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
 		Melder_require (defaultValue->which == Stackel_NUMBER,
-			U"The second argument of \"boolean\" (the default value) should be a number (0 or 1), not ", defaultValue->whichText(), U".");
+			U"The second argument of “boolean” (the default value) should be a number (0 or 1), not ", defaultValue->whichText(), U".");
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_boolean (label->getString(), defaultValue->number != 0.0);
 		} else {
-			Melder_throw (U"The first argument of \"boolean\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “boolean” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"boolean\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “boolean” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddChoice () {
+static void do_choice () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"choice\" is not available inside manuals.");
+		U"The function “choice” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
-			Melder_throw (U"The second argument of \"choice\" (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
+			Melder_throw (U"The second argument of “choice” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
 		}
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_choice (label->getString(), Melder_iround (defaultValue->number));
 		} else {
-			Melder_throw (U"The first argument of \"choice\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “choice” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"choice\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “choice” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddOptionMenu () {
+static void do_optionMenu () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"optionMenu\" is not available inside manuals.");
+		U"The function “optionMenu” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
-			Melder_throw (U"The second argument of \"optionMenu\" (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
+			Melder_throw (U"The second argument of “optionMenu” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
 		}
 		const Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_optionMenu (label->getString(), Melder_iround (defaultValue->number));
 		} else {
-			Melder_throw (U"The first argument of \"optionMenu\" (the label) should be a string, not ", label->whichText(), U".");
+			Melder_throw (U"The first argument of “optionMenu” (the label) should be a string, not ", label->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"optionMenu\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The function “optionMenu” requires 2 arguments (a label and a default value), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddOption () {
+static void do_option () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"option\" is not available inside manuals.");
+		U"The function “option” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 1) {
 		const Stackel text = pop;
 		if (text->which == Stackel_STRING) {
 			UiPause_option (text->getString());
 		} else {
-			Melder_throw (U"The argument of \"option\" should be a string (the text), not ", text->whichText(), U".");
+			Melder_throw (U"The argument of “option” should be a string (the text), not ", text->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"option\" requires 1 argument (a text), not ", n->number, U".");
+		Melder_throw (U"The function “option” requires 1 argument (a text), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
-static void do_pauseFormAddComment () {
+static void do_comment () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"comment\" is not available inside manuals.");
+		U"The function “comment” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 1) {
 		const Stackel text = pop;
 		if (text->which == Stackel_STRING) {
 			UiPause_comment (text->getString());
 		} else {
-			Melder_throw (U"The argument of \"comment\" should be a string (the text), not ", text->whichText(), U".");
+			Melder_throw (U"The argument of “comment” should be a string (the text), not ", text->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"comment\" requires 1 argument (a text), not ", n->number, U".");
+		Melder_throw (U"The function “comment” requires 1 argument (a text), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
 static void do_endPauseForm () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"endPause\" is not available inside manuals.");
+		U"The function “endPause” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number < 2 || n->number > 12)
-		Melder_throw (U"The function \"endPause\" requires 2 to 12 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “endPause” requires 2 to 12 arguments, not ", n->number, U".");
 	const Stackel d = pop;
 	if (d->which != Stackel_NUMBER)
-		Melder_throw (U"The last argument of \"endPause\" should be a number (the default or cancel continue button), not ", d->whichText(), U".");
+		Melder_throw (U"The last argument of “endPause” should be a number (the default or cancel continue button), not ", d->whichText(), U".");
 	/* mutable */ integer numberOfContinueButtons = Melder_iround (n->number) - 1;
 	/* mutable */ integer cancelContinueButton = 0, defaultContinueButton = Melder_iround (d->number);
 	Stackel ca = pop;
@@ -6567,7 +6614,7 @@ static void do_endPauseForm () {
 		defaultContinueButton = Melder_iround (ca->number);
 		numberOfContinueButtons -= 1;
 		if (cancelContinueButton < 0 || cancelContinueButton > numberOfContinueButtons)
-			Melder_throw (U"Your last argument of \"endPause\" is the number of the cancel button; it cannot be ", cancelContinueButton,
+			Melder_throw (U"Your last argument of “endPause” is the number of the cancel button; it cannot be ", cancelContinueButton,
 				U" but should be 0 (no cancel or stop button) or lie between 1 and ", numberOfContinueButtons, U".");
 		if (cancelContinueButton == 0)
 			cancelContinueButton = -1;
@@ -6577,7 +6624,7 @@ static void do_endPauseForm () {
 		co [i] = ( cancelContinueButton != 0 || i != numberOfContinueButtons ? pop : ca );
 		if (co[i]->which != Stackel_STRING)
 			Melder_throw (U"Each of the first ", numberOfContinueButtons,
-				U" argument(s) of \"endPause\" should be a string (a button text), not ", co[i]->whichText(), U".");
+				U" argument(s) of “endPause” should be a string (a button text), not ", co[i]->whichText(), U".");
 	}
 	const integer buttonClicked = UiPause_end (numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
 		! co [1] ? nullptr : co[1]->getString(), ! co [2] ? nullptr : co[2]->getString(),
@@ -6591,7 +6638,7 @@ static void do_endPauseForm () {
 }
 static void do_chooseReadFileStr () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"chooseReadFile$\" is not available inside manuals.");
+		U"The function “chooseReadFile$” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 1) {
 		const Stackel title = pop;
@@ -6604,15 +6651,15 @@ static void do_chooseReadFileStr () {
 				pushString (Melder_dup (fileName -> string.get()));
 			}
 		} else {
-			Melder_throw (U"The argument of \"chooseReadFile$\" should be a string (the title), not ", title->whichText(), U".");
+			Melder_throw (U"The argument of “chooseReadFile$” should be a string (the title), not ", title->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"chooseReadFile$\" requires 1 argument (a title), not ", n->number, U".");
+		Melder_throw (U"The function “chooseReadFile$” requires 1 argument (a title), not ", n->number, U".");
 	}
 }
 static void do_chooseWriteFileStr () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"chooseWriteFile$\" is not available inside manuals.");
+		U"The function “chooseWriteFile$” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 2) {
 		const Stackel defaultName = pop, title = pop;
@@ -6622,15 +6669,15 @@ static void do_chooseWriteFileStr () {
 				result = Melder_dup (U"");
 			pushString (result.move());
 		} else {
-			Melder_throw (U"The arguments of \"chooseWriteFile$\" should be two strings (the title and the default name).");
+			Melder_throw (U"The arguments of “chooseWriteFile$” should be two strings (the title and the default name).");
 		}
 	} else {
-		Melder_throw (U"The function \"chooseWriteFile$\" requires 2 arguments (a title and a default name), not ", n->number, U".");
+		Melder_throw (U"The function “chooseWriteFile$” requires 2 arguments (a title and a default name), not ", n->number, U".");
 	}
 }
 static void do_chooseFolder_STR () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"chooseFolder$\" is not available inside manuals.");
+		U"The function “chooseFolder$” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 1) {
 		const Stackel title = pop;
@@ -6640,15 +6687,15 @@ static void do_chooseFolder_STR () {
 				result = Melder_dup (U"");
 			pushString (result.move());
 		} else {
-			Melder_throw (U"The argument of \"chooseFolder$\" should be a string (the title).");
+			Melder_throw (U"The argument of “chooseFolder$” should be a string (the title).");
 		}
 	} else {
-		Melder_throw (U"The function \"chooseFolder$\" requires 1 argument (a title), not ", n->number, U".");
+		Melder_throw (U"The function “chooseFolder$” requires 1 argument (a title), not ", n->number, U".");
 	}
 }
 static void do_chooseDirectory_STR () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function \"chooseDirectory$\" is not available inside manuals.");
+		U"The function “chooseDirectory$” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 1) {
 		const Stackel title = pop;
@@ -6658,10 +6705,10 @@ static void do_chooseDirectory_STR () {
 				result = Melder_dup (U"");
 			pushString (result.move());
 		} else {
-			Melder_throw (U"The argument of \"chooseDirectory$\" should be a string (the title).");
+			Melder_throw (U"The argument of “chooseDirectory$” should be a string (the title).");
 		}
 	} else {
-		Melder_throw (U"The function \"chooseDirectory$\" requires 1 argument (a title), not ", n->number, U".");
+		Melder_throw (U"The function “chooseDirectory$” requires 1 argument (a title), not ", n->number, U".");
 	}
 }
 static void do_demoWindowTitle () {
@@ -6671,31 +6718,31 @@ static void do_demoWindowTitle () {
 		if (title->which == Stackel_STRING) {
 			Demo_windowTitle (title->getString());
 		} else {
-			Melder_throw (U"The argument of \"demoWindowTitle\" should be a string (the title), not ", title->whichText(), U".");
+			Melder_throw (U"The argument of “demoWindowTitle” should be a string (the title), not ", title->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"demoWindowTitle\" requires 1 argument (a title), not ", n->number, U".");
+		Melder_throw (U"The function “demoWindowTitle” requires 1 argument (a title), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
 static void do_demoShow () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoShow\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoShow” requires 0 arguments, not ", n->number, U".");
 	Demo_show ();
 	pushNumber (1);
 }
 static void do_demoWaitForInput () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoWaitForInput\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoWaitForInput” requires 0 arguments, not ", n->number, U".");
 	Demo_waitForInput (theInterpreter);
 	pushNumber (1);
 }
 static void do_demoPeekInput () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoPeekInput\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoPeekInput” requires 0 arguments, not ", n->number, U".");
 	Demo_peekInput (theInterpreter);
 	pushNumber (1);
 }
@@ -6707,10 +6754,10 @@ static void do_demoInput () {
 			const bool result = Demo_input (keys->getString());
 			pushNumber (result);
 		} else {
-			Melder_throw (U"The argument of \"demoInput\" should be a string (the keys), not ", keys->whichText(), U".");
+			Melder_throw (U"The argument of “demoInput” should be a string (the keys), not ", keys->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function \"demoInput\" requires 1 argument (keys), not ", n->number, U".");
+		Melder_throw (U"The function “demoInput” requires 1 argument (keys), not ", n->number, U".");
 	}
 }
 static void do_demoClickedIn () {
@@ -6721,44 +6768,44 @@ static void do_demoClickedIn () {
 			const bool result = Demo_clickedIn (left->number, right->number, bottom->number, top->number);
 			pushNumber (result);
 		} else {
-			Melder_throw (U"All arguments of \"demoClickedIn\" should be numbers (the x and y ranges).");
+			Melder_throw (U"All arguments of “demoClickedIn” should be numbers (the x and y ranges).");
 		}
 	} else {
-		Melder_throw (U"The function \"demoClickedIn\" requires 4 arguments (x and y ranges), not ", n->number, U".");
+		Melder_throw (U"The function “demoClickedIn” requires 4 arguments (x and y ranges), not ", n->number, U".");
 	}
 }
 static void do_demoClicked () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoClicked\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoClicked” requires 0 arguments, not ", n->number, U".");
 	const bool result = Demo_clicked ();
 	pushNumber (result);
 }
 static void do_demoX () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoX\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoX” requires 0 arguments, not ", n->number, U".");
 	const double result = Demo_x ();
 	pushNumber (result);
 }
 static void do_demoY () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoY\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoY” requires 0 arguments, not ", n->number, U".");
 	const double result = Demo_y ();
 	pushNumber (result);
 }
 static void do_demoKeyPressed () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoKeyPressed\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoKeyPressed” requires 0 arguments, not ", n->number, U".");
 	const bool result = Demo_keyPressed ();
 	pushNumber (result);
 }
 static void do_demoKey () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoKey\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoKey” requires 0 arguments, not ", n->number, U".");
 	autostring32 key (1);
 	key [0] = Demo_key ();
 	pushString (key.move());
@@ -6766,21 +6813,21 @@ static void do_demoKey () {
 static void do_demoShiftKeyPressed () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoShiftKeyPressed\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoShiftKeyPressed” requires 0 arguments, not ", n->number, U".");
 	const bool result = Demo_shiftKeyPressed ();
 	pushNumber (result);
 }
 static void do_demoCommandKeyPressed () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoCommandKeyPressed\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoCommandKeyPressed” requires 0 arguments, not ", n->number, U".");
 	const bool result = Demo_commandKeyPressed ();
 	pushNumber (result);
 }
 static void do_demoOptionKeyPressed () {
 	const Stackel n = pop;
 	if (n->number != 0)
-		Melder_throw (U"The function \"demoOptionKeyPressed\" requires 0 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “demoOptionKeyPressed” requires 0 arguments, not ", n->number, U".");
 	const bool result = Demo_optionKeyPressed ();
 	pushNumber (result);
 }
@@ -6793,7 +6840,7 @@ static integer Stackel_getRowNumber (Stackel row, Daata thee) {
 			Melder_throw (U"Objects of type ", Thing_className (thee), U" do not have row labels, so row indexes have to be numbers.");
 		result = Melder_iround (thy v_getRowIndex (row->getString()));
 		if (result == 0)
-			Melder_throw (U"Object \"", thy name.get(), U"\" has no row labelled \"", row->getString(), U"\".");
+			Melder_throw (U"Object “", thy name.get(), U"” has no row labelled “", row->getString(), U"”.");
 	} else {
 		Melder_throw (U"A row index should be a number or a string, not ", row->whichText(), U".");
 	}
@@ -6808,7 +6855,7 @@ static integer Stackel_getColumnNumber (Stackel column, Daata thee) {
 			Melder_throw (U"Objects of type ", Thing_className (thee), U" do not have column labels, so column indexes have to be numbers.");
 		result = Melder_iround (thy v_getColIndex (column->getString()));
 		if (result == 0)
-			Melder_throw (U"Object ", thee, U" has no column labelled \"", column->getString(), U"\".");
+			Melder_throw (U"Object ", thee, U" has no column labelled “", column->getString(), U"”.");
 	} else {
 		Melder_throw (U"A column index should be a number or a string, not ", column->whichText(), U".");
 	}
@@ -6817,7 +6864,7 @@ static integer Stackel_getColumnNumber (Stackel column, Daata thee) {
 static void do_self0 (integer irow, integer icol) {
 	const Daata me = theSource;
 	if (! me)
-		Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+		Melder_throw (U"The name “self” is restricted to formulas for objects.");
 	if (my v_hasGetCell ()) {
 		pushNumber (my v_getCell ());
 	} else if (my v_hasGetVector ()) {
@@ -6850,7 +6897,7 @@ static void do_self0 (integer irow, integer icol) {
 static void do_selfStr0 (integer irow, integer icol) {
 	const Daata me = theSource;
 	if (! me)
-		Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
+		Melder_throw (U"The name “self$” is restricted to formulas for objects.");
 	if (my v_hasGetCellStr ()) {
 		pushString (Melder_dup (my v_getCellStr ()));
 	} else if (my v_hasGetVectorStr ()) {
@@ -6898,7 +6945,7 @@ static void do_toObject () {
 			Melder_throw (U"No such object: ", object->getString());
 		thee = (Daata) theCurrentPraatObjects -> list [i]. object;
 	} else {
-		Melder_throw (U"The first argument to \"object\" should be a number (unique ID) or a string (name), not ", object->whichText(), U".");
+		Melder_throw (U"The first argument to “object” should be a number (unique ID) or a string (name), not ", object->whichText(), U".");
 	}
 	pushObject (thee);
 }
@@ -6967,7 +7014,7 @@ static void do_selfMatrix1 (integer irow) {
 	const Daata me = theSource;
 	const Stackel column = pop;
 	if (! me)
-		Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+		Melder_throw (U"The name “self” is restricted to formulas for objects.");
 	integer icol = Stackel_getColumnNumber (column, me);
 	if (my v_hasGetVector ()) {
 		pushNumber (my v_getVector (irow, icol));
@@ -6987,7 +7034,7 @@ static void do_selfMatrix1_STR (integer irow) {
 	const Daata me = theSource;
 	const Stackel column = pop;
 	if (! me)
-		Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
+		Melder_throw (U"The name “self$” is restricted to formulas for objects.");
 	const integer icol = Stackel_getColumnNumber (column, me);
 	if (my v_hasGetVectorStr ()) {
 		pushString (Melder_dup (my v_getVectorStr (icol)));
@@ -7079,22 +7126,22 @@ static void do_selfMatrix2 () {
 	const Daata me = theSource;
 	Stackel column = pop, row = pop;
 	if (! me)
-		Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+		Melder_throw (U"The name “self” is restricted to formulas for objects.");
 	const integer irow = Stackel_getRowNumber (row, me);
 	const integer icol = Stackel_getColumnNumber (column, me);
 	if (! my v_hasGetMatrix ())
-		Melder_throw (Thing_className (me), U" objects like \"self\" accept no [row, column] indexing.");
+		Melder_throw (Thing_className (me), U" objects like “self” accept no [row, column] indexing.");
 	pushNumber (my v_getMatrix (irow, icol));
 }
 static void do_selfMatrix2_STR () {
 	const Daata me = theSource;
 	const Stackel column = pop, row = pop;
 	if (! me)
-		Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
+		Melder_throw (U"The name “self$” is restricted to formulas for objects.");
 	const integer irow = Stackel_getRowNumber (row, me);
 	const integer icol = Stackel_getColumnNumber (column, me);
 	if (! my v_hasGetMatrixStr ())
-		Melder_throw (Thing_className (me), U" objects like \"self$\" accept no [row, column] indexing for string cells.");
+		Melder_throw (Thing_className (me), U" objects like “self$” accept no [row, column] indexing for string cells.");
 	pushString (Melder_dup (my v_getMatrixStr (irow, icol)));
 }
 static void do_objectCell2 () {
@@ -7215,7 +7262,7 @@ static void do_selfFunction1 (integer irow) {
 	const Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
 		if (! me)
-			Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+			Melder_throw (U"The name “self” is restricted to formulas for objects.");
 		if (my v_hasGetFunction1 ()) {
 			pushNumber (my v_getFunction1 (irow, x->number));
 		} else if (my v_hasGetFunction2 ()) {
@@ -7225,10 +7272,10 @@ static void do_selfFunction1 (integer irow) {
 			const double y = my v_getY (irow);
 			pushNumber (my v_getFunction2 (x->number, y));
 		} else {
-			Melder_throw (Thing_className (me), U" objects like \"self\" accept no (x) values.");
+			Melder_throw (Thing_className (me), U" objects like “self” accept no (x) values.");
 		}
 	} else {
-		Melder_throw (Thing_className (me), U" objects like \"self\" accept only numeric x values.");
+		Melder_throw (Thing_className (me), U" objects like “self” accept only numeric x values.");
 	}
 }
 static void do_objectLocation1 (integer irow) {
@@ -7286,9 +7333,9 @@ static void do_selfFunction2 () {
 	const Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (! me)
-			Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
+			Melder_throw (U"The name “self” is restricted to formulas for objects.");
 		if (! my v_hasGetFunction2 ())
-			Melder_throw (Thing_className (me), U" objects like \"self\" accept no (x, y) values.");
+			Melder_throw (Thing_className (me), U" objects like “self” accept no (x, y) values.");
 		pushNumber (my v_getFunction2 (x->number, y->number));
 	} else {
 		Melder_throw (Thing_className (me), U" objects accept only numeric x values.");
@@ -7361,12 +7408,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case X_: {
 	Daata me = theSource;
 	Melder_require (my v_hasGetX (),
-		U"No values for \"x\" for this object.");
+		U"No values for “x” for this object.");
 	pushNumber (my v_getX (col));
 } break; case Y_: {
 	Daata me = theSource;
 	Melder_require (my v_hasGetY (),
-		U"No values for \"y\" for this object.");
+		U"No values for “y” for this object.");
 	pushNumber (my v_getY (row));
 } break; case NOT_: { do_not ();
 } break; case EQ_: { do_eq ();
@@ -7624,19 +7671,20 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case SOLVE_MAT_: { do_solve_MAT ();
 } break; case SOLVE_WEAKLYCONSTRAINED_VEC_: { do_solveWeaklyConstrained_VEC ();
 /********** Pause window functions: **********/
+} break; case BEGIN_FORM_: { do_beginForm ();
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
-} break; case PAUSE_FORM_ADD_REAL_: { do_pauseFormAddReal ();
-} break; case PAUSE_FORM_ADD_POSITIVE_: { do_pauseFormAddPositive ();
-} break; case PAUSE_FORM_ADD_INTEGER_: { do_pauseFormAddInteger ();
-} break; case PAUSE_FORM_ADD_NATURAL_: { do_pauseFormAddNatural ();
-} break; case PAUSE_FORM_ADD_WORD_: { do_pauseFormAddWord ();
-} break; case PAUSE_FORM_ADD_SENTENCE_: { do_pauseFormAddSentence ();
-} break; case PAUSE_FORM_ADD_TEXT_: { do_pauseFormAddText ();
-} break; case PAUSE_FORM_ADD_BOOLEAN_: { do_pauseFormAddBoolean ();
-} break; case PAUSE_FORM_ADD_CHOICE_: { do_pauseFormAddChoice ();
-} break; case PAUSE_FORM_ADD_OPTION_MENU_: { do_pauseFormAddOptionMenu ();
-} break; case PAUSE_FORM_ADD_OPTION_: { do_pauseFormAddOption ();
-} break; case PAUSE_FORM_ADD_COMMENT_: { do_pauseFormAddComment ();
+} break; case REAL_: { do_real ();
+} break; case POSITIVE_: { do_positive ();
+} break; case INTEGER_: { do_integer ();
+} break; case NATURAL_: { do_natural ();
+} break; case WORD_: { do_word ();
+} break; case SENTENCE_: { do_sentence ();
+} break; case TEXT_: { do_text ();
+} break; case BOOLEAN_: { do_boolean ();
+} break; case CHOICE_: { do_choice ();
+} break; case OPTION_MENU_: { do_optionMenu ();
+} break; case OPTION_: { do_option ();
+} break; case COMMENT_: { do_comment ();
 } break; case END_PAUSE_FORM_: { do_endPauseForm ();
 } break; case CHOOSE_READ_FILE_STR_: { do_chooseReadFileStr ();
 } break; case CHOOSE_WRITE_FILE_STR_: { do_chooseWriteFileStr ();
@@ -7671,7 +7719,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {
-		Melder_throw (U"A condition between \"if\" and \"then\" should be a number, not ", condition->whichText(), U".");
+		Melder_throw (U"A condition between “if” and “then” should be a number, not ", condition->whichText(), U".");
 	}
 } break; case IFFALSE_: {
 	Stackel condition = pop;
@@ -7680,7 +7728,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {
-		Melder_throw (U"A condition between \"if\" and \"then\" should be a number, not ", condition->whichText(), U".");
+		Melder_throw (U"A condition between “if” and “then” should be a number, not ", condition->whichText(), U".");
 	}
 } break; case GOTO_: {
 	programPointer = f [programPointer]. content.label - theOptimize;
@@ -7772,7 +7820,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case STRING_ARRAY_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushStringVectorReference (var -> stringArrayValue.get());
-} break; default: Melder_throw (U"Symbol \"", Formula_instructionNames [parse [programPointer]. symbol], U"\" without action.");
+} break; default: Melder_throw (U"Symbol “", Formula_instructionNames [parse [programPointer]. symbol], U"” without action.");
 			} // endswitch
 			programPointer ++;
 		} // endwhile
