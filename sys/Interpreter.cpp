@@ -3226,15 +3226,10 @@ void Interpreter_voidExpression (Interpreter me, conststring32 expression) {
 }
 
 void Interpreter_numericExpression (Interpreter me, conststring32 expression, double *out_value) {
-	Melder_assert (out_value);
-	if (str32str (expression, U"(=")) {
-		*out_value = Melder_atof (expression);
-	} else {
-		Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
-		Formula_Result result;
-		Formula_run (0, 0, & result);
-		*out_value = result. numericResult;
-	}
+	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
+	Formula_Result result;
+	Formula_run (0, 0, & result);
+	*out_value = result. numericResult;
 }
 
 void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, VEC *out_value, bool *out_owned) {

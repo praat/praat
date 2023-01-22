@@ -763,7 +763,13 @@ static void Formula_lexan () {
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			}
 		} else if (kar == U'(') {
-			newtok (OPENING_PARENTHESIS_)
+			newchar;
+			if (kar == U'=') {
+				newtok (END_)   // "(=" = final comment
+			} else {
+				oldchar;
+				newtok (OPENING_PARENTHESIS_)
+			}
 		} else if (kar == U')') {
 			newtok (CLOSING_PARENTHESIS_)
 		} else if (kar == U'+') {
