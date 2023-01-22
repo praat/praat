@@ -2,7 +2,7 @@
 #define _melder_tensor_h_
 /* melder_tensor.h
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1468,7 +1468,7 @@ inline autoBYTEMAT copy_BYTEMAT (constBYTEMATVU source) {
 	return newmatrixcopy (source);
 }
 
-conststring32 Melder_VEC (constVECVU const& value);
+conststring32 Melder_VEC (constVECVU const& value, bool horizontal = false);
 conststring32 Melder_MAT (constMATVU const& value);
 
 inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {

@@ -2,7 +2,7 @@
 #define _UiPause_h_
 /* UiPause.h
  *
- * Copyright (C) 2009-2012,2015,2016,2018,2020,2022 Paul Boersma
+ * Copyright (C) 2009-2012,2015,2016,2018,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,29 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Gui.h"
-Thing_declare (Interpreter);
-Thing_declare (Editor);
+#include "Ui.h"
 
 void UiPause_begin (GuiWindow topShell, Editor optionalEditor, conststring32 title, Interpreter interpreter);
 
-void UiPause_real       (conststring32 label, conststring32 defaultValue);
-void UiPause_positive   (conststring32 label, conststring32 defaultValue);
-void UiPause_integer    (conststring32 label, conststring32 defaultValue);
-void UiPause_natural    (conststring32 label, conststring32 defaultValue);
-void UiPause_word       (conststring32 label, conststring32 defaultValue);
-void UiPause_sentence   (conststring32 label, conststring32 defaultValue);
-void UiPause_text       (conststring32 label, conststring32 defaultValue, integer numberOfLines);
-void UiPause_boolean    (conststring32 label, bool defaultValue);
-void UiPause_choice     (conststring32 label, int defaultValue);
-void UiPause_optionMenu (conststring32 label, int defaultValue);
-void UiPause_option     (conststring32 label);
-void UiPause_comment    (conststring32 label);
+void UiPause_real           (conststring32 label, conststring32 defaultValue);
+void UiPause_positive       (conststring32 label, conststring32 defaultValue);
+void UiPause_integer        (conststring32 label, conststring32 defaultValue);
+void UiPause_natural        (conststring32 label, conststring32 defaultValue);
+void UiPause_word           (conststring32 label, conststring32 defaultValue);
+void UiPause_sentence       (conststring32 label, conststring32 defaultValue);
+void UiPause_text           (conststring32 label, conststring32 defaultValue, integer numberOfLines);
+void UiPause_boolean        (conststring32 label, bool defaultValue);
+void UiPause_infile         (conststring32 label, conststring32 defaultValue, integer numberOfLines);
+void UiPause_outfile        (conststring32 label, conststring32 defaultValue, integer numberOfLines);
+void UiPause_folder         (conststring32 label, conststring32 defaultValue, integer numberOfLines);
+void UiPause_realvector     (conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines);
+void UiPause_positivevector (conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines);
+void UiPause_integervector  (conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines);
+void UiPause_naturalvector  (conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines);
+void UiPause_choice         (conststring32 label, int defaultValue);
+void UiPause_optionMenu     (conststring32 label, int defaultValue);
+void UiPause_option         (conststring32 label);
+void UiPause_comment        (conststring32 label);
 
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	conststring32 continueText1, conststring32 continueText2, conststring32 continueText3,

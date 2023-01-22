@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2022 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -483,14 +483,14 @@ conststring32 Melder_colour (MelderColour colour) {
 static MelderString theTensorBuffers [NUMBER_OF_TENSOR_BUFFERS];
 static int iTensorBuffer { 0 };
 
-conststring32 Melder_VEC (constVECVU const& value) {
+conststring32 Melder_VEC (constVECVU const& value, const bool horizontal) {
 	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS)
 		iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
 	if (! NUMisEmpty (value))
 		for (integer i = 1; i <= value.size; i ++)
-			MelderString_append (string, value [i], U'\n');
+			MelderString_append (string, value [i], horizontal ? U' ' : U'\n');
 	return string -> string;
 }
 conststring32 Melder_MAT (constMATVU const& value) {
