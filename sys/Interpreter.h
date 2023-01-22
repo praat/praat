@@ -39,8 +39,10 @@ Thing_define (InterpreterVariable, SimpleString) {
 
 #define Interpreter_MAX_LABEL_LENGTH  99
 #define Interpreter_MAX_PARAMETER_LENGTH  99
+#define Interpreter_MAX_FORMAT_LENGTH  39
 
 Thing_declare (UiForm);
+Thing_declare (UiField);
 Thing_declare (Editor);
 
 enum class kInterpreter_ReturnType {
@@ -77,7 +79,7 @@ Thing_define (Interpreter, Thing) {
 	int numberOfParameters, numberOfLabels, callDepth;
 	int types [1+Interpreter_MAXNUM_PARAMETERS], numbersOfLines [1+Interpreter_MAXNUM_PARAMETERS];
 	char32 parameters [1+Interpreter_MAXNUM_PARAMETERS] [1+Interpreter_MAX_PARAMETER_LENGTH];
-	char32 formats [1+Interpreter_MAXNUM_PARAMETERS] [40];
+	char32 formats [1+Interpreter_MAXNUM_PARAMETERS] [1+Interpreter_MAX_FORMAT_LENGTH];
 	autostring32 arguments [1+Interpreter_MAXNUM_PARAMETERS];
 	char32 choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100];
 	char32 labelNames [1+Interpreter_MAXNUM_LABELS] [1+Interpreter_MAX_LABEL_LENGTH];
@@ -86,6 +88,14 @@ Thing_define (Interpreter, Thing) {
 	char32 procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
 	std::unordered_map <std::u32string, autoInterpreterVariable> variablesMap;
 	bool running, stopped;
+
+	/*
+		For beginForm().
+	*/
+	autoUiForm form;
+	int formPass, nparForm;
+	UiField radio;
+	int clickedFormButton;
 
 	kInterpreter_ReturnType returnType;   // automatically initialized as kInterpreter_ReturnType::VOID_
 	bool returnedBoolean;
@@ -124,6 +134,20 @@ void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formul
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key);
+
+void Interpreter_beginForm (Interpreter me, GuiWindow topShell, Editor optionalEditor, conststring32 dialogTitle);
+double Interpreter_real (Interpreter me, conststring32 label, conststring32 defaultValue);
+double Interpreter_positive (Interpreter me, conststring32 label, conststring32 defaultValue);
+void Interpreter_integer (Interpreter me, conststring32 label, conststring32 defaultValue);
+void Interpreter_natural (Interpreter me, conststring32 label, conststring32 defaultValue);
+void Interpreter_word (Interpreter me, conststring32 label, conststring32 defaultValue);
+void Interpreter_sentence (Interpreter me, conststring32 label, conststring32 defaultValue);
+void Interpreter_text (Interpreter me, conststring32 label, conststring32 defaultValue, integer numberOfLines);
+void Interpreter_boolean (Interpreter me, conststring32 label, bool defaultValue);
+void Interpreter_choice (Interpreter me, conststring32 label, int defaultValue);
+void Interpreter_optionMenu (Interpreter me, conststring32 label, int defaultValue);
+void Interpreter_option (Interpreter me, conststring32 label);
+void Interpreter_comment (Interpreter me, conststring32 label);
 
 /* End of file Interpreter.h */
 #endif

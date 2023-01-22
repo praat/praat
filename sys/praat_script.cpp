@@ -548,15 +548,30 @@ void praat_runScript (conststring32 fileName, integer narg, Stackel args, Editor
 	Melder_relativePathToFile (fileName, & file);
 	try {
 		autostring32 text = MelderFile_readText (& file);
+		/*
+			We switch between default directories no fewer than four times:
+			1. runScript() tends to be called from a script that we call the "caller";
+			   when we enter runScript(), the default directory is the caller's folder,
+			   as was appropriate for the use of file names in the caller before runScript(),
+			   which had to be interpreted relative to the caller's folder.
+			2. runScript() will call a script that we call the "callee";
+			   include files have to be included from the callee's folder.
+			3. For expanding any infile/outfile/folder arguments to runScript(),
+			   we have to be back in the caller's folder.
+			4. Inside the callee, file names will have to be interpreted relative to the callee's folder.
+			5. After runScript() finishes, we will have to be back in the caller's folder,
+			   so that the use of file names in the caller after runScript()
+			   will be interpreted relative to the caller's folder again.
+		*/
 		{// scope
 			autoMelderSaveDefaultDir saveDir;
-			autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used for including include files
+			autoMelderFileSetDefaultDir dir (& file);   // so that callee-relative file names can be used for including include files
 			Melder_includeIncludeFiles (& text);
 		}   // back to the default directory of the caller
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (optionalEditor);
 		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromArgs (interpreter.get(), narg, args);   // interpret caller-relative paths for infile/outfile/folder arguments
-		autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used inside the script
+		autoMelderFileSetDefaultDir dir (& file);   // so that callee-relative file names can be used inside the script
 		Interpreter_run (interpreter.get(), text.get());
 	} catch (MelderError) {
 		Melder_throw (U"Script ", & file, U" not completed.");   // don't refer to 'fileName', because its contents may have changed

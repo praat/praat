@@ -188,6 +188,141 @@ void Melder_includeIncludeFiles (autostring32 *inout_text) {
 	}
 }
 
+void Interpreter_beginForm (Interpreter me, GuiWindow topShell, Editor optionalEditor, conststring32 dialogTitle) {
+	if (my formPass == 0) {
+		my dialogTitle = Melder_dup (dialogTitle);
+		my formPass = 1;
+		my numberOfParameters = 0;
+		my nparForm = 0;
+	} else if (my formPass == 2) {
+		;   // ignore
+	} else {
+		Melder_throw (U"Cannot nest multiple instances of “beginForm()” (depth ", my formPass, U").");
+	}
+}
+static bool parameterMatchesLabel (conststring32 parameter, conststring32 label) {
+	/*
+		A param,eter matches a label if they are equal or if
+		the label has an additional opening parenthesis, optionally preceded by a space.
+		For example, the parameter "Pitch ceiling" matches the label "Pitch ceiling (Hz)".
+	*/
+	for (; *parameter != U'\0' && *label != U'\0'; parameter ++, label ++)
+		if (*parameter != *label)
+			return false;
+	if (*parameter == U'\0')
+		if (*label == U'\0' || *label == U'(' || *label == U' ' && label [1] == U'(')
+			return true;
+	return false;
+}
+double Interpreter_real (Interpreter me, conststring32 label, conststring32 defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “real” should be between a “beginForm” and an “endform”.");
+	else if (my formPass == 1) {
+		my types [++ my numberOfParameters] = Interpreter_REAL;
+		str32ncpy (my parameters [my numberOfParameters], label, Interpreter_MAX_PARAMETER_LENGTH);   // final null character will stay
+		my arguments [my numberOfParameters] = Melder_dup (defaultValue);
+		my nparForm ++;
+	} else {
+		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++) {
+			if (my types [ipar] == Interpreter_REAL && parameterMatchesLabel (my parameters [ipar], label)) {
+				Melder_assert (my arguments [ipar]);
+				return Melder_atof (my arguments [ipar].get());
+			}
+		}
+		Melder_throw (U"Field “", label, U"” not found in form.");
+	}
+	return undefined;
+}
+double Interpreter_positive (Interpreter me, conststring32 label, conststring32 defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “positive” should be between a “beginForm” and an “endform”.");
+	else if (my formPass == 1) {
+		my types [++ my numberOfParameters] = Interpreter_POSITIVE;
+		str32ncpy (my parameters [my numberOfParameters], label, Interpreter_MAX_PARAMETER_LENGTH);   // final null character will stay
+		my arguments [my numberOfParameters] = Melder_dup (defaultValue);
+		my nparForm ++;
+	} else {
+		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++) {
+			if (my types [ipar] == Interpreter_POSITIVE && parameterMatchesLabel (my parameters [ipar], label)) {
+				Melder_casual (U"Parameter: ", my parameters [ipar], U"; label: ", label);
+				Melder_assert (my arguments [ipar]);
+				return Melder_atof (my arguments [ipar].get());
+			}
+		}
+		Melder_throw (U"Field “", label, U"” not found in form.");
+	}
+	return undefined;
+}
+void Interpreter_integer (Interpreter me, conststring32 label, conststring32 defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “integer” should be between a “beginForm” and an “endform”.");
+	UiForm_addInteger (my form.get(), nullptr, nullptr, label, defaultValue);
+	my nparForm ++;
+}
+void Interpreter_natural (Interpreter me, conststring32 label, conststring32 defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “natural” should be between a “beginForm” and an “endform”.");
+	UiForm_addNatural (my form.get(), nullptr, nullptr, label, defaultValue);
+	my nparForm ++;
+}
+void Interpreter_word (Interpreter me, conststring32 label, conststring32 defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “word” should be between a “beginForm” and an “endform”.");
+	UiForm_addWord (my form.get(), nullptr, nullptr, label, defaultValue);
+	my nparForm ++;
+}
+void Interpreter_sentence (Interpreter me, conststring32 label, conststring32 defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “sentence” should be between a “beginForm” and an “endform”.");
+	UiForm_addSentence (my form.get(), nullptr, nullptr, label, defaultValue);
+	my nparForm ++;
+}
+void Interpreter_text (Interpreter me, conststring32 label, conststring32 defaultValue, integer numberOfLines) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “text” should be between a “beginForm” and an “endform”.");
+	UiForm_addText (my form.get(), nullptr, nullptr, label, defaultValue, numberOfLines);
+	my nparForm ++;
+}
+void Interpreter_boolean (Interpreter me, conststring32 label, bool defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “boolean” should be between a “beginForm” and an “endform”.");
+	UiForm_addBoolean (my form.get(), nullptr, nullptr, label, defaultValue);
+	my nparForm ++;
+}
+void Interpreter_choice (Interpreter me, conststring32 label, int defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “choice” should be between a “beginForm” and an “endform”.");
+	my radio = UiForm_addRadio (my form.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
+	my nparForm ++;
+}
+void Interpreter_optionMenu (Interpreter me, conststring32 label, int defaultValue) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “optionMenu” should be between a “beginForm” and an “endform”.");
+	my radio = UiForm_addOptionMenu (my form.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
+	my nparForm ++;
+}
+void Interpreter_option (Interpreter me, conststring32 label) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “option” should be between a “beginForm” and an “endform”.");
+	if (! my radio) {
+		my form. reset();
+		Melder_throw (U"Found the function “option” without a preceding “choice” or “optionMenu”.");
+	}
+	UiOptionMenu_addButton (my radio, label);
+}
+void Interpreter_comment (Interpreter me, conststring32 label) {
+	if (my formPass == 0)
+		Melder_throw (U"The function “comment” should be between a “beginForm” and an “endform”.");
+	UiForm_addLabel (my form.get(), nullptr, label);
+}
+
+static integer readParametersFromBeginForm (Interpreter me, mutablestring32 text) {
+	my formPass = 0;
+	Interpreter_run (me, text);
+	Melder_assert (my formPass == 2);   // should have passed through `endform`
+	return my nparForm;
+}
+
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 	char32 *formLocation = nullptr;
 	integer npar = 0;
@@ -207,6 +342,8 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				formLocation = p;
 				break;
 			}
+			if (str32nequ (p, U"beginForm", 9) && (p [9] == U':' || p [9] == U'(' || Melder_isHorizontalSpace(p [9])))
+				return readParametersFromBeginForm (me, text);
 			Melder_skipToEndOfLine (& p);
 			if (*p == U'\0')
 				break;
@@ -269,73 +406,105 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				Recognize parameter name, argument value,
 				and perhaps format name and/or number of lines.
 			*/
-			char32 *parameterLocation;
+			char32 *p = nullptr;
 			bool hasColon = false;
 			auto isEndOfInkOrColon = [] (const char32 kar) { return kar == U':' || Melder_isEndOfInk (kar); };
 			if (str32nequ (startOfLine, U"word", 4) && isEndOfInkOrColon (startOfLine [4])) {
 				type = Interpreter_WORD;
-				parameterLocation = startOfLine + 4;
+				p = startOfLine + 4 + hasColon;
 			} else if (str32nequ (startOfLine, U"sentence", 8) && isEndOfInkOrColon (startOfLine [8])) {
 				type = Interpreter_SENTENCE;
-				parameterLocation = startOfLine + 8;
+				p = startOfLine + 8 + hasColon;
 			} else if (str32nequ (startOfLine, U"infile", 6) && isEndOfInkOrColon (startOfLine [6])) {
 				type = Interpreter_INFILE;
 				hasColon = ( startOfLine [6] == U':' );
-				parameterLocation = startOfLine + 6 + hasColon;
+				p = startOfLine + 6 + hasColon;
 			} else if (str32nequ (startOfLine, U"outfile", 7) && isEndOfInkOrColon (startOfLine [7])) {
 				type = Interpreter_OUTFILE;
 				hasColon = ( startOfLine [7] == U':' );
-				parameterLocation = startOfLine + 7 + hasColon;
+				p = startOfLine + 7 + hasColon;
 			} else if (str32nequ (startOfLine, U"folder", 6) && isEndOfInkOrColon (startOfLine [6])) {
 				type = Interpreter_FOLDER;
 				hasColon = ( startOfLine [6] == U':' );
-				parameterLocation = startOfLine + 6 + hasColon;
-			}  else if (str32nequ (startOfLine, U"text", 4) && isEndOfInkOrColon (startOfLine [4]))
-				{ type = Interpreter_TEXT; parameterLocation = startOfLine + 4; }
-			else if (str32nequ (startOfLine, U"real", 4) && isEndOfInkOrColon (startOfLine [4]))
-				{ type = Interpreter_REAL; parameterLocation = startOfLine + 4; }
-			else if (str32nequ (startOfLine, U"positive", 8) && isEndOfInkOrColon (startOfLine [8]))
-				{ type = Interpreter_POSITIVE; parameterLocation = startOfLine + 8; }
-			else if (str32nequ (startOfLine, U"integer", 7) && isEndOfInkOrColon (startOfLine [7]))
-				{ type = Interpreter_INTEGER; parameterLocation = startOfLine + 7; }
-			else if (str32nequ (startOfLine, U"natural", 7) && isEndOfInkOrColon (startOfLine [7]))
-				{ type = Interpreter_NATURAL; parameterLocation = startOfLine + 7; }
-			else if (str32nequ (startOfLine, U"boolean", 7) && isEndOfInkOrColon (startOfLine [7]))
-				{ type = Interpreter_BOOLEAN; parameterLocation = startOfLine + 7; }
-			else if (str32nequ (startOfLine, U"realvector", 10) && isEndOfInkOrColon (startOfLine [10]))
-				{ type = Interpreter_REALVECTOR; parameterLocation = startOfLine + 10; }
-			else if (str32nequ (startOfLine, U"positivevector", 14) && isEndOfInkOrColon (startOfLine [14]))
-				{ type = Interpreter_POSITIVEVECTOR; parameterLocation = startOfLine + 14; }
-			else if (str32nequ (startOfLine, U"positivevector1", 15) && isEndOfInkOrColon (startOfLine [15]))
-				{ type = Interpreter_INTEGERVECTOR; parameterLocation = startOfLine + 13; }
-			else if (str32nequ (startOfLine, U"integervector1", 14) && isEndOfInkOrColon (startOfLine [14]))
-				{ type = Interpreter_NATURALVECTOR; parameterLocation = startOfLine + 13; }
-			else if (str32nequ (startOfLine, U"naturalvector1", 14) && isEndOfInkOrColon (startOfLine [14]))
-				{ type = Interpreter_REALMATRIX; parameterLocation = startOfLine + 10; }
-			else if (str32nequ (startOfLine, U"choice", 6) && isEndOfInkOrColon (startOfLine [6]))
-				{ type = Interpreter_CHOICE; parameterLocation = startOfLine + 6; }
-			else if (str32nequ (startOfLine, U"optionmenu", 10) && isEndOfInkOrColon (startOfLine [10]))
-				{ type = Interpreter_OPTIONMENU; parameterLocation = startOfLine + 10; }
-			else if (str32nequ (startOfLine, U"button", 6) && isEndOfInkOrColon (startOfLine [6]))
-				{ type = Interpreter_BUTTON; parameterLocation = startOfLine + 6; }
-			else if (str32nequ (startOfLine, U"option", 6) && isEndOfInkOrColon (startOfLine [6]))
-				{ type = Interpreter_OPTION; parameterLocation = startOfLine + 6; }
-			else if (str32nequ (startOfLine, U"comment", 7) && isEndOfInkOrColon (startOfLine [7]))
-				{ type = Interpreter_COMMENT; parameterLocation = startOfLine + 7; }
-			else {
+				p = startOfLine + 6 + hasColon;
+			}  else if (str32nequ (startOfLine, U"text", 4) && isEndOfInkOrColon (startOfLine [4])) {
+				type = Interpreter_TEXT;
+				hasColon = ( startOfLine [4] == U':' );
+				p = startOfLine + 4 + hasColon;
+			} else if (str32nequ (startOfLine, U"real", 4) && isEndOfInkOrColon (startOfLine [4])) {
+				type = Interpreter_REAL;
+				hasColon = ( startOfLine [4] == U':' );
+				p = startOfLine + 4 + hasColon;
+			} else if (str32nequ (startOfLine, U"positive", 8) && isEndOfInkOrColon (startOfLine [8])) {
+				type = Interpreter_POSITIVE;
+				hasColon = ( startOfLine [8] == U':' );
+				p = startOfLine + 8 + hasColon;
+			} else if (str32nequ (startOfLine, U"integer", 7) && isEndOfInkOrColon (startOfLine [7])) {
+				type = Interpreter_INTEGER;
+				hasColon = ( startOfLine [7] == U':' );
+				p = startOfLine + 7 + hasColon;
+			} else if (str32nequ (startOfLine, U"natural", 7) && isEndOfInkOrColon (startOfLine [7])) {
+				type = Interpreter_NATURAL;
+				hasColon = ( startOfLine [7] == U':' );
+				p = startOfLine + 7 + hasColon;
+			} else if (str32nequ (startOfLine, U"boolean", 7) && isEndOfInkOrColon (startOfLine [7])) {
+				type = Interpreter_BOOLEAN;
+				hasColon = ( startOfLine [7] == U':' );
+				p = startOfLine + 7 + hasColon;
+			} else if (str32nequ (startOfLine, U"realvector", 10) && isEndOfInkOrColon (startOfLine [10])) {
+				type = Interpreter_REALVECTOR;
+				hasColon = ( startOfLine [10] == U':' );
+				p = startOfLine + 10 + hasColon;
+			} else if (str32nequ (startOfLine, U"positivevector", 14) && isEndOfInkOrColon (startOfLine [14])) {
+				type = Interpreter_POSITIVEVECTOR;
+				hasColon = ( startOfLine [14] == U':' );
+				p = startOfLine + 14 + hasColon;
+			} else if (str32nequ (startOfLine, U"integervector", 13) && isEndOfInkOrColon (startOfLine [13])) {
+				type = Interpreter_INTEGERVECTOR;
+				hasColon = ( startOfLine [13] == U':' );
+				p = startOfLine + 13 + hasColon;
+			} else if (str32nequ (startOfLine, U"naturalvector", 14) && isEndOfInkOrColon (startOfLine [14])) {
+				type = Interpreter_NATURALVECTOR;
+				hasColon = ( startOfLine [13] == U':' );
+				p = startOfLine + 13 + hasColon;
+			} else if (str32nequ (startOfLine, U"realmatrix", 10) && isEndOfInkOrColon (startOfLine [10])) {
+				type = Interpreter_REALMATRIX;
+				hasColon = ( startOfLine [10] == U':' );
+				p = startOfLine + 10 + hasColon;
+			} else if (str32nequ (startOfLine, U"choice", 6) && isEndOfInkOrColon (startOfLine [6])) {
+				type = Interpreter_CHOICE;
+				hasColon = ( startOfLine [6] == U':' );
+				p = startOfLine + 6 + hasColon;
+			} else if (str32nequ (startOfLine, U"optionmenu", 10) && isEndOfInkOrColon (startOfLine [10])) {
+				type = Interpreter_OPTIONMENU;
+				hasColon = ( startOfLine [10] == U':' );
+				p = startOfLine + 10 + hasColon;
+			} else if (str32nequ (startOfLine, U"button", 6) && isEndOfInkOrColon (startOfLine [6])) {
+				type = Interpreter_BUTTON;
+				hasColon = ( startOfLine [6] == U':' );
+				p = startOfLine + 6 + hasColon;
+			} else if (str32nequ (startOfLine, U"option", 6) && isEndOfInkOrColon (startOfLine [6])) {
+				type = Interpreter_OPTION;
+				hasColon = ( startOfLine [6] == U':' );
+				p = startOfLine + 6 + hasColon;
+			} else if (str32nequ (startOfLine, U"comment", 7) && isEndOfInkOrColon (startOfLine [7])) {
+				type = Interpreter_COMMENT;
+				hasColon = ( startOfLine [7] == U':' );
+				p = startOfLine + 7 + hasColon;
+			} else {
 				*endOfLine = U'\0';   // destroy input in order to limit printing of parameter type
 				Melder_throw (U"Unknown parameter type inside form:\n“", startOfLine, U"”.");
 			}
 			/*
 				Example:
-					form Something
-						real Time_(s) 3.14 (= pi)
-						choice Colour 2
-							button Red
-							button Green
-							button Blue
+					form: "Something"
+						real: "Time (s)", "3.14 (= pi)"
+						choice: "Colour", 2
+							button: "Red"
+							button: "Green"
+							button: "Blue"
 					endform
-				my parameters [1] := "Time_(s)"
+				my parameters [1] := "Time (s)"
 				my parameters [2] := "Colour"
 				my parameters [3] := ""
 				my parameters [4] := ""
@@ -345,9 +514,10 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				my arguments [3] := "Red"   (funny, but needed in Interpreter_getArgumentsFromString)
 				my arguments [4] := "Green"
 				my arguments [5] := "Blue"
+				(last checked 2023-01-21)
 			*/
+			Melder_assert (p);
 			const mutablestring32 parameter = my parameters [++ my numberOfParameters];
-			char32* p = parameterLocation;
 			if (type <= Interpreter_MAXIMUM_TYPE_WITH_VARIABLE_NAME) {
 				Melder_skipHorizontalSpace (& p);
 				if (Melder_isEndOfLine (*p)) {
@@ -355,7 +525,11 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					Melder_throw (U"Missing parameter:\n“", startOfLine, U"”.");
 				}
 				MelderString_empty (& string);
+				my numbersOfLines [my numberOfParameters] = 0;
 				if (hasColon) {
+					/*
+						Parse optional number-of-lines (including final comma).
+					*/
 					if (Melder_isAsciiDecimalNumber (*p)) {
 						if (!(
 							type == Interpreter_TEXT ||
@@ -379,9 +553,12 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 						p ++;   // skip comma
 						Melder_skipHorizontalSpace (& p);
 					}
+					/*
+						Parse obligatory variable name (including final comma).
+					*/
 					if (*p != U'"') {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"Missing opening quote after colon in form field:\n“", startOfLine, U"”.");
+						Melder_throw (U"Missing opening quote for parameter name in form field:\n“", startOfLine, U"”.");
 					}
 					p ++;   // skip opening quote
 					for (; p < endOfLine; p ++) {
@@ -416,16 +593,27 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				parameter [0] = U'\0';
 			}
 			Melder_skipHorizontalSpace (& p);
-			MelderString_empty (& string);
-			if (hasColon) {
+			/*
+				Parse format type.
+			*/
+			if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE) {
+				if (! hasColon) {
+					*p = U'\0';
+					Melder_throw (U"Vector fields in forms are available only if immediately followed by a colon:\n“", startOfLine, U"”.");
+				}
+				MelderString_empty (& string);
+				if (Melder_isEndOfLine (*p)) {
+					*p = U'\0';   // destroy input in order to limit printing of line
+					Melder_throw (U"Missing format:\n“", startOfLine, U"”.");
+				}
 				if (*p != U'"') {
 					*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-					Melder_throw (U"Missing opening quote after comma in form field:\n“", startOfLine, U"”.");
+					Melder_throw (U"Missing opening quote for vector format:\n“", startOfLine, U"”.");
 				}
 				p ++;   // skip opening quote
 				for (; p < endOfLine; p ++) {
 					if (*p == U'"')
-						if (p [1] == U'"') {
+						if (p [1] == U'"') {   // look ahead
 							p ++;
 							continue;
 						} else
@@ -434,9 +622,66 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				}
 				if (*p != U'"') {
 					*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-					Melder_throw (U"Missing closing quote character in default argument:\n“", startOfLine, U"”.");
+					Melder_throw (U"Missing closing quote for vector format:\n“", startOfLine, U"”.");
 				}
 				p ++;   // skip closing quote
+				Melder_skipHorizontalSpace (& p);
+				if (*p != U',') {
+					*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+					Melder_throw (U"Missing comma after vector format:\n“", startOfLine, U"”.");
+				}
+				p ++;   // skip comma
+				Melder_skipHorizontalSpace (& p);
+				/*
+					Install format type.
+				*/
+				MelderString_truncate (& string, Interpreter_MAX_FORMAT_LENGTH);
+				str32cpy (my formats [my numberOfParameters], string.string);
+				my formats [my numberOfParameters] [string.length] = U'\0';
+			}
+			/*
+				Parse obligatory content of argument.
+			*/
+			MelderString_empty (& string);
+			if (hasColon) {
+				if (Melder_isAsciiDecimalNumber (*p)) {
+					if (type != Interpreter_CHOICE && type != Interpreter_BOOLEAN) {
+						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"Only “choice” and “boolean” fields can take a number:\n“", startOfLine, U"”.");
+					}
+					const integer value = Melder_atoi (p);
+					if (type == Interpreter_CHOICE)
+						MelderString_append (& string, value);
+					else
+						MelderString_appendCharacter (& string, value != 0 ? U'1' : U'0');
+					p ++;   // skip first digit
+					while (Melder_isAsciiDecimalNumber (*p))
+						p ++;   // skip next digit
+				} else {
+					if (*p != U'"') {
+						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"Missing opening quote after comma in form field:\n“", startOfLine, U"”.");
+					}
+					if (type == Interpreter_CHOICE) {
+						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"A “choice” field can take only a number, not a string:\n“", startOfLine, U"”.");
+					}
+					p ++;   // skip opening quote
+					for (; p < endOfLine; p ++) {
+						if (*p == U'"')
+							if (p [1] == U'"') {
+								p ++;
+								continue;
+							} else
+								break;
+						MelderString_appendCharacter (& string, *p);
+					}
+					if (*p != U'"') {
+						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"Missing closing quote character in default argument:\n“", startOfLine, U"”.");
+					}
+					p ++;   // skip closing quote
+				}
 				Melder_skipHorizontalSpace (& p);
 				if (! Melder_isEndOfLine (*p) && *p != U';')
 					Melder_throw (U"Stray characters after default argument in form title:\n“", startOfLine, U"”.");
@@ -444,32 +689,6 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				while (Melder_staysWithinInk (*p))
 					MelderString_appendCharacter (& string, *(p ++));
 			}
-			#if 0
-			if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE) {
-				char32 *formatLocation = Melder_findEndOfHorizontalSpace (p);
-				if (Melder_isEndOfLine (*formatLocation)) {
-					*formatLocation = U'\0';   // destroy input in order to limit printing of line
-					Melder_throw (U"Missing format:\n“", startOfLine, U"”.");
-				}
-				char32 *q = my formats [my numberOfParameters];
-				if (*formatLocation != U'(') {
-					*formatLocation = U'\0';   // destroy input in order to limit printing of line
-					Melder_throw (U"Missing format (should start with “(”):\n“", startOfLine, U"”.");
-				}
-				while (*formatLocation != U')') {
-					if (Melder_isEndOfLine (*formatLocation)) {
-						*formatLocation = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"Incomplete format (should end in “)”):\n“", startOfLine, U"”.");
-					}
-					* (q ++) = * (formatLocation ++);
-				}
-				* (q ++) = * (formatLocation ++);   // copy the closing parenthesis
-				*q = U'\0';
-				argumentLocation = Melder_findEndOfHorizontalSpace (formatLocation);
-			} else {
-				argumentLocation = Melder_findEndOfHorizontalSpace (p);
-			}
-			#endif
 			if (Melder_isEndOfText (*endOfLine))
 				Melder_throw (U"Unfinished form (missing “endform”).");
 			my arguments [my numberOfParameters] = Melder_dup_f (string.string);
@@ -574,29 +793,65 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor opti
 			} break; case Interpreter_NATURAL: {
 				UiForm_addNatural (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			} break; case Interpreter_BOOLEAN: {
-				UiForm_addBoolean (form.get(), nullptr, nullptr, parameter, my arguments [ipar] [0] == U'1' ||
-					my arguments [ipar] [0] == U'y' || my arguments [ipar] [0] == U'Y' ||
-					(my arguments [ipar] [0] == U'o' && my arguments [ipar] [1] == U'n'));
+				mutablestring32 arg = & my arguments [ipar] [0];
+				if (
+					str32equ (arg, U"1") ||
+					str32equ (arg, U"yes") || str32equ (arg, U"on") ||
+					str32equ (arg, U"Yes") || str32equ (arg, U"On") ||
+					str32equ (arg, U"YES") || str32equ (arg, U"ON")
+				) {
+					str32cpy (arg, U"1");
+				} else if (
+					str32equ (arg, U"0") ||
+					str32equ (arg, U"no") || str32equ (arg, U"off") ||
+					str32equ (arg, U"No") || str32equ (arg, U"Off") ||
+					str32equ (arg, U"NO") || str32equ (arg, U"OFF")
+				) {
+					str32cpy (arg, U"0");
+				} else {
+					Melder_throw (U"Unknown value “", arg, U"” for boolean “", my parameters [ipar], U"”.");
+				}
+				UiForm_addBoolean (form.get(), nullptr, nullptr, parameter, my arguments [ipar] [0] == U'1');
 			} break; case Interpreter_REALVECTOR: {
 				kUi_realVectorFormat format = kUi_realVectorFormat_getValue (my formats [ipar]);
 				if (format == kUi_realVectorFormat::UNDEFINED)
 					Melder_throw (U"Undefined real vector format “", my formats [ipar], U"”.");
-				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+				if (my numbersOfLines [ipar] == 0)
+					UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+				else
+					UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get(),
+							my numbersOfLines [ipar]);
 			} break; case Interpreter_POSITIVEVECTOR: {
 				kUi_realVectorFormat format = kUi_realVectorFormat_getValue (my formats [ipar]);
 				if (format == kUi_realVectorFormat::UNDEFINED)
 					Melder_throw (U"Undefined positive vector format “", my formats [ipar], U"”.");
-				UiForm_addPositiveVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+				if (my numbersOfLines [ipar] == 0)
+					UiForm_addPositiveVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+				else
+					UiForm_addPositiveVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get(),
+							my numbersOfLines [ipar]);
 			} break; case Interpreter_INTEGERVECTOR: {
 				kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (my formats [ipar]);
 				if (format == kUi_integerVectorFormat::UNDEFINED)
 					Melder_throw (U"Undefined integer vector format “", my formats [ipar], U"”.");
-				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+				if (my numbersOfLines [ipar] == 0)
+					UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+				else
+					UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get(),
+							my numbersOfLines [ipar]);
 			} break; case Interpreter_NATURALVECTOR: {
 				kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (my formats [ipar]);
 				if (format == kUi_integerVectorFormat::UNDEFINED)
 					Melder_throw (U"Undefined natural vector format “", my formats [ipar], U"”.");
-				UiForm_addNaturalVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat_getValue (my formats [ipar]), my arguments [ipar].get());
+				if (my numbersOfLines [ipar] == 0)
+					UiForm_addNaturalVector (form.get(), nullptr, nullptr, parameter,
+						kUi_integerVectorFormat_getValue (my formats [ipar]), my arguments [ipar].get()
+					);
+				else
+					UiForm_addNaturalVector (form.get(), nullptr, nullptr, parameter,
+						kUi_integerVectorFormat_getValue (my formats [ipar]), my arguments [ipar].get(),
+						my numbersOfLines [ipar]
+					);
 			} break; case Interpreter_REALMATRIX: {
 				Melder_throw (U"Cannot handle matrices in forms yet.");   // TODO
 			//	UiForm_addRealMatrix (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
@@ -863,7 +1118,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, integer narg, Stackel arg
 			Melder_throw (U"Found ", narg, U" arguments but expected more.");
 		Stackel arg = & args [++ iarg];
 		/*
-			... and replace with the actual arguments.
+			... and replace with the actual arguments. BUG: this loses type information.
 		*/
 		my arguments [ipar] =
 			arg -> which == Stackel_NUMBER ? Melder_dup (Melder_double (arg -> number)) :
@@ -2105,6 +2360,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"Unmatched 'endproc'.");
 								lineNumber = callStack [callDepth --];
 								-- my callDepth;
+							} else if (str32nequ (command2.string, U"endform", 7) &&   // matching beginForm()
+									(! Melder_staysWithinInk (lines [lineNumber] [7]) || lines [lineNumber] [7] == U';'))
+							{
+								if (my formPass == 1) {
+									lineNumber = numberOfLines;   // go after end
+									my formPass = 2;
+								}
 							} else fail = true;
 						} else if (str32nequ (command2.string, U"else", 4) &&
 								(! Melder_staysWithinInk (command2.string [4]) || command2.string [4] == U';'))

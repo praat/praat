@@ -109,7 +109,7 @@ Create Sound from formula... 'Naam' Mono begintijd eindtijd samplefrequentie
 */
 MAN_END
 
-MAN_BEGIN (U"Create Sound as tone complex...", U"ppgb", 20170828)
+MAN_BEGIN (U"Create Sound as tone complex...", U"ppgb", 20220122)
 INTRO (U"A command in the @@New menu@ to create a @Sound as the sum of a number of sine waves "
 	"with equidistant frequencies.")
 ENTRY (U"Settings")
@@ -170,8 +170,8 @@ NORMAL (U"Suppose you need a sum of sine waves with frequencies 105, 205, 305, .
 	"and with relative amplitudes 1, 1/2, 1/3, ..., 1/19. You could build a script that computes "
 	"the various components, and add them to each other as you go along. Instead of calling 19 "
 	"scripts, however, you can achieve this with the following more general script:")
-CODE (U"form Add waves with decreasing amplitudes")
-	CODE1 (U"natural Number_of_components 19")
+CODE (U"form: \"Add waves with decreasing amplitudes\"")
+	CODE1 (U"natural: \"Number of components\", \"19\"")
 CODE (U"endform")
 CODE (U"\\#  Create a Matrix with frequency and amplitude information in each row:")
 CODE (U"Create simple Matrix: \"freqAndGain\", number_of_components, 2, ~ 0")
