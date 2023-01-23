@@ -1039,7 +1039,8 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 						 * we correct for this.
 						 */
 						if (codes16 [length - 1] == u' ')
-							lc -> width += 25.0 * lc -> size / 100.0;
+							lc -> width += ( lc->font.integer_ == (int) kGraphics_font::COURIER || lc->style == Graphics_CODE ? 60.0 :
+									next->font.integer_ == (int) kGraphics_font::COURIER || next->style == Graphics_CODE ? 37.5 : 25.0 ) * lc -> size / 100.0;
 					}
 				#endif
 				nchars = 0;
