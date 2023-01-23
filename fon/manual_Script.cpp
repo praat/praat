@@ -65,12 +65,12 @@ DEFINITION (U"the number of objects of %class1 that have to be selected. For mos
 	"If the number of selected objects is different from %number1, the button will be visible but insensitive.")
 TAG (U"%%Class 2")
 DEFINITION (U"the name of the class of the second object to be selected, different from %class1. "
-	"Normally the empty string (\"\").")
+	"Normally the empty string (\\\" \\\" ).")
 TAG (U"%%Number 2")
 DEFINITION (U"the number of selected objects of %class2.")
 TAG (U"%%Class 3")
 DEFINITION (U"the name of the class of the third object to be selected, different from %class1 and %class2. "
-	"Normally the empty string (\"\").")
+	"Normally the empty string (\\\" \\\" ).")
 TAG (U"%%Number 3")
 DEFINITION (U"the number of selected objects of %class3.")
 TAG (U"%%Command")
@@ -80,7 +80,7 @@ DEFINITION (U"the title of the new command button (or label, or submenu title). 
 	"If the command starts with \"Save as \", it will be placed in the @@Save menu@.")
 TAG (U"%%After command")
 DEFINITION (U"a button title in the dynamic menu or submenu where you want your new button. "
-	"If you specify the empty string (\"\"), your button will be put at the bottom. "
+	"If you specify the empty string (\\\" \\\" ), your button will be put at the bottom. "
 	"You can specify a push button, a label (subheader), or a cascade button (submenu title) here.")
 TAG (U"%%Depth")
 DEFINITION (U"0 if you want your button in the main menu, 1 if you want it in a submenu.")
@@ -124,7 +124,7 @@ DEFINITION (U"the title of the new menu button. To get a separator line instead 
 	"you specify a unique string that starts with a hyphen ('-'); the @ButtonEditor contains many examples of this.")
 TAG (U"%%After command")
 DEFINITION (U"a button title in the menu or submenu after which you want your new button to be inserted. "
-	"If you specify the empty string (\"\"), your button will be put in the main menu.")
+	"If you specify the empty string (\\\" \\\" ), your button will be put in the main menu.")
 TAG (U"%Depth")
 DEFINITION (U"0 if you want your button in the main menu, 1 if you want it in a submenu.")
 TAG (U"%Script")
@@ -1776,8 +1776,8 @@ LIST_ITEM1 (U"@@Scripting 8.2. The sendpraat program")
 // 9. Hiding your script
 // 9.1 Incorporating your script into Praat
 // 9.2 Incorporating many scripts into Praat (plug-ins)
-LIST_ITEM (U"@@Scripting 9.1. Turning a script into a stand-alone program")
-LIST_ITEM (U"@@Scripting 9.2. Old functions")
+LIST_ITEM (U"@@Scripting 9. Turning a script into a stand-alone program")
+LIST_ITEM (U"@@Scripting 10. Old functions")
 NORMAL (U"Also see the @@scripting examples@.")
 MAN_END
 
@@ -3783,7 +3783,7 @@ CODE (U"if fileName\\$  <> \"\"")
 CODE (U"endif")
 NORMAL (U"A file selector window will appear, with (in this example) \"Open a table file\" as the title. "
 	"If the user clicks #OK, the variable $$fileName\\$ $ will contain the name of the file that the user selected; "
-	"if the user clicks #Cancel, the variable $$fileName\\$ $ will contain the empty string (\"\").")
+	"if the user clicks #Cancel, the variable $$fileName\\$ $ will contain the empty string (\\\" \\\" ).")
 NORMAL (U"If you want the user to choose a file name for writing (saving), do")
 CODE (U"selectObject: mySound")
 CODE (U"fileName\\$  = ##chooseWriteFile\\$ #: \"Save as a WAV file\", \"mySound.wav\"")
@@ -3795,7 +3795,7 @@ NORMAL (U"A file selector window will appear, with (in this example) \"Save as a
 	"If the user clicks #OK, the form will ask for confirmation if the file name that the user typed already exists. "
 	"If the user clicks #OK with a new file name, or clicks #OK in the confirmation window, "
 	"the variable $$fileName\\$ $ will contain the file name that the user typed; "
-	"if the user clicks #Cancel at any point, the variable $$fileName\\$ $ will contain the empty string (\"\").")
+	"if the user clicks #Cancel at any point, the variable $$fileName\\$ $ will contain the empty string (\\\" \\\" ).")
 NORMAL (U"If you want the user to choose a folder (directory) name, do")
 CODE (U"folderName\\$  = ##chooseFolder\\$ #: \"Choose a folder to save all the new files in\"")
 CODE (U"if folderName\\$  <> \"\"")
@@ -3806,11 +3806,11 @@ CODE (U"if folderName\\$  <> \"\"")
 CODE (U"endif")
 NORMAL (U"A folder selector window will appear, with (in this example) \"Choose a folder to save all the new files in\" as the title. "
 	"If the user clicks #OK, the variable $$folderName\\$ $ will contain the name of the folder that the user selected; "
-	"if the user clicks #Cancel, the variable $$folderName\\$ $ will contain the empty string (\"\").")
+	"if the user clicks #Cancel, the variable $$folderName\\$ $ will contain the empty string (\\\" \\\" ).")
 ENTRY (U"A non-pausing pause window without a Stop button")
 NORMAL (U"Especially if you use the pause window within the @@Demo window@, you may not want to give the user the capability of "
 	"ending the script by hitting #Stop or closing the pause window. "
-	"In that case, you can add an extra numeric argument to #endPause (at the end)"
+	"In that case, you can add an extra numeric argument to #endPause (at the end) "
 	"that denotes the cancel button:")
 CODE (U"#beginPause: \"Learning settings\"")
 	CODE1 (U"#positive: \"Learning rate\", \"0.01\"")
@@ -4325,7 +4325,7 @@ NORMAL (U"You can run scripts from the @ScriptEditor. If you will have to use th
 NORMAL (U"(You can also run scripts from the command line. See @@Scripting 6.9. Calling from the command line|\\SS6.9@)")
 */
 
-MAN_BEGIN (U"Scripting 9.1. Turning a script into a stand-alone program", U"ppgb", 20201229)
+MAN_BEGIN (U"Scripting 9. Turning a script into a stand-alone program", U"ppgb", 20201229)
 INTRO (U"You can turn your script into a double-clickable stand-alone program by including it into Praat's #main procedure. "
 	"If you want to try this, you should already know how to compile and link the Praat program on your computer.")
 NORMAL (U"These stand-alone programs do not show the Objects window and the Picture window; "
@@ -4358,7 +4358,7 @@ CODE (U"createFolder: preferencesDirectory\\$  + \"/apps\"")
 CODE (U"createFolder: preferencesDirectory\\$  + \"/apps/GuineaPigAnalyzer\"")
 MAN_END
 
-MAN_BEGIN (U"Scripting 9.2. Old functions", U"ppgb", 20140112)
+MAN_BEGIN (U"Scripting 10. Old functions", U"ppgb", 20140112)
 INTRO (U"The Praat scripting language improves and changes, but old scripts should continue to work correctly. "
 	"Here are some examples of what you can see in old scripts, and what they mean:")
 NORMAL (U"The meaning of")
@@ -4637,7 +4637,7 @@ MAN_END
 MAN_BEGIN (U"Demo window", U"ppgb", 20201229)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
-	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
+	"and stand-alone programs (see @@Scripting 9. Turning a script into a stand-alone program@).")
 NORMAL (U"The Demo window is Praat's least visible window: you can create it only through a script. "
 	"Try the following script after selecting a Sound object:")
 CODE (U"demo Draw: 0, 3, -1, 1, \"yes\", \"curve\"")

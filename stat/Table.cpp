@@ -277,21 +277,30 @@ void Table_setColumnLabel (Table me, integer columnNumber, conststring32 label /
 	}
 }
 
-integer Table_findColumnIndexFromColumnLabel (constTable me, conststring32 label) noexcept {
+integer Table_findColumnIndexFromColumnLabel (
+	const constTable me,
+	const conststring32 label
+) noexcept {
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 		if (my columnHeaders [icol]. label && str32equ (my columnHeaders [icol]. label.get(), label))
 			return icol;
 	return 0;
 }
 
-integer Table_getColumnIndexFromColumnLabel (Table me, conststring32 columnLabel) {
+integer Table_getColumnIndexFromColumnLabel (
+	const constTable me,
+	const conststring32 columnLabel
+) {
 	integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnLabel);
 	if (columnNumber == 0)
 		Melder_throw (me, U": there is no column named \"", columnLabel, U"\".");
 	return columnNumber;
 }
 
-autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 columnLabels_string) {
+autoINTVEC Table_getColumnIndicesFromColumnLabelString (
+	const constTable me,
+	const conststring32 columnLabels_string
+) {
 	autoSTRVEC columnLabels = splitByWhitespace_STRVEC (columnLabels_string);
 	if (columnLabels.size < 1)
 		Melder_throw (me, U": you specified an empty list of columns.");
@@ -301,9 +310,13 @@ autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 
 	return columns;
 }
 
-integer Table_searchColumn (Table me, integer columnNumber, conststring32 value) noexcept {
+integer Table_searchColumn (
+	const constTable me,
+	const integer columnNumber,
+	const conststring32 value
+) noexcept {
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
-		TableRow row = my rows.at [irow];
+		const constTableRow row = my rows.at [irow];
 		if (row -> cells [columnNumber]. string && str32equ (row -> cells [columnNumber]. string.get(), value))
 			return irow;
 	}
@@ -453,22 +466,44 @@ static void Table_numericize_checkDefined (Table me, integer columnNumber) {
 conststring32 Table_getStringValue_Assert (Table me, integer rowNumber, integer columnNumber) {
 	Melder_assert (rowNumber >= 1 && rowNumber <= my rows.size);
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
-	const TableRow row = my rows.at [rowNumber];
+	const constTableRow row = my rows.at [rowNumber];
 	return row -> cells [columnNumber]. string ? row -> cells [columnNumber]. string.get() : U"";
 }
 
 double Table_getNumericValue_Assert (Table me, integer rowNumber, integer columnNumber) {
 	Melder_assert (rowNumber >= 1 && rowNumber <= my rows.size);
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
-	const TableRow row = my rows.at [rowNumber];
-	Table_numericize_Assert (me, columnNumber);
-	return row -> cells [columnNumber]. number;
+	#if 1
+		/*
+			ALIASING ALERT
+
+			Please anybody provide proof of whether the following three lines would be correct or not.
+		*/
+		const constTableRow row = my rows.at [rowNumber];   // the compiler accepts this...
+		Table_numericize_Assert (me, columnNumber);   // ...but due to aliasing this changes the contents of `row`...
+		return row -> cells [columnNumber]. number;   // ...and the new value of `number` is used here
+		/*
+			This may be (potential) Undefined Behavior.
+			(It will be true UB as soon as `cells` is const, which is not yet the case;
+			 e.g. `row -> cells [columnNumber]. number = 0.0;` is still accepted by the compiler.)
+			(last checked 2023-01-23)
+
+			cppreference.com/w/cpp/language/cv:
+			"attempt to [modify a const object] indirectly (e.g., by modifying the const object
+			 through a reference or pointer to non-const type) results in undefined behavior"
+			(last checked 2023-01-23)
+		*/
+	#else
+		Table_numericize_Assert (me, columnNumber);   // order before establishing a const pointer to within `me`
+		const constTableRow row = my rows.at [rowNumber];   // this establishes a const pointer to within `me`
+		return row -> cells [columnNumber]. number;
+	#endif
 }
 
 static double getSum (Table me, integer columnNumber) {
-	longdouble sum = 0.0;
+	/* mutable sum */ longdouble sum = 0.0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
-		const TableRow row = my rows.at [irow];
+		const constTableRow row = my rows.at [irow];
 		sum += row -> cells [columnNumber]. number;
 	}
 	return double (sum);
@@ -1026,7 +1061,10 @@ static autoTable Table_rowsToColumns (Table me, constINTVECVU const& factorColum
 	}
 }
 
-autoINTVEC Table_columnNamesToNumbers (Table me, constSTRVEC const& columnNames) {
+autoINTVEC Table_columnNamesToNumbers (
+	const constTable me,
+	const constSTRVEC & columnNames
+) {
 	autoINTVEC columnNumbers = zero_INTVEC (columnNames.size);
 	for (integer i = 1; i <= columnNames.size; i ++)
 		columnNumbers [i] = Table_getColumnIndexFromColumnLabel (me, columnNames [i]);
@@ -1316,11 +1354,16 @@ void Table_formula (Table me, integer icol, conststring32 expression, Interprete
 	Table_formula_columnRange (me, icol, icol, expression, interpreter);
 }
 
-double Table_getCorrelation_pearsonR (Table me, integer column1, integer column2, double significanceLevel,
-	double *out_significance, double *out_lowerLimit, double *out_upperLimit)
+double Table_getCorrelation_pearsonR (
+	const Table me,
+	const integer column1,
+	const integer column2,
+	const double significanceLevel,
+	double *const out_significance,
+	double *const out_lowerLimit,
+	double *const out_upperLimit)
 {
 	const integer n = my rows.size;
-	double correlation;
 	longdouble sum1 = 0.0, sum2 = 0.0, sum12 = 0.0, sum11 = 0.0, sum22 = 0.0;
 	if (out_significance) *out_significance = undefined;
 	if (out_lowerLimit)   *out_lowerLimit   = undefined;
@@ -1338,8 +1381,8 @@ double Table_getCorrelation_pearsonR (Table me, integer column1, integer column2
 		sum1 += row -> cells [column1]. number;
 		sum2 += row -> cells [column2]. number;
 	}
-	double mean1 = double (sum1) / n;
-	double mean2 = double (sum2) / n;
+	const double mean1 = double (sum1) / n;
+	const double mean2 = double (sum2) / n;
 	for (integer irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows.at [irow];
 		const double d1 = row -> cells [column1]. number - mean1, d2 = row -> cells [column2]. number - mean2;
@@ -1347,7 +1390,7 @@ double Table_getCorrelation_pearsonR (Table me, integer column1, integer column2
 		sum11 += d1 * d1;
 		sum22 += d2 * d2;
 	}
-	correlation = ( sum11 == 0.0 || sum22 == 0.0 ? undefined :
+	const double correlation = ( sum11 == 0.0 || sum22 == 0.0 ? undefined :
 			double (sum12) / sqrt (double (sum11) * double (sum22)) );
 	if (out_significance && isdefined (correlation) && n >= 3)
 		*out_significance = fabs (correlation) == 1.0 ? 0.0 :
@@ -1371,9 +1414,15 @@ double Table_getCorrelation_pearsonR (Table me, integer column1, integer column2
 	return correlation;
 }
 
-double Table_getCorrelation_kendallTau (Table me, integer column1, integer column2, double significanceLevel,
-	double *out_significance, double *out_lowerLimit, double *out_upperLimit)
-{
+double Table_getCorrelation_kendallTau (
+	const Table me,
+	const integer column1,
+	const integer column2,
+	const double significanceLevel,
+	double *const out_significance,
+	double *const out_lowerLimit,
+	double *const out_upperLimit
+) {
 	const integer n = my rows.size;
 	integer numberOfConcordants = 0, numberOfDiscordants = 0, numberOfExtra1 = 0, numberOfExtra2 = 0;
 	if (out_significance) *out_significance = undefined;
@@ -1418,9 +1467,17 @@ double Table_getCorrelation_kendallTau (Table me, integer column1, integer colum
 	return correlation;
 }
 
-double Table_getDifference_studentT (Table me, integer column1, integer column2, double significanceLevel,
-	double *out_t, double *out_numberOfDegreesOfFreedom, double *out_significance, double *out_lowerLimit, double *out_upperLimit)
-{
+double Table_getDifference_studentT (
+	const Table me,
+	const integer column1,
+	const integer column2,
+	const double significanceLevel,
+	double *const out_t,
+	double *const out_numberOfDegreesOfFreedom,
+	double *const out_significance,
+	double *const out_lowerLimit,
+	double *const out_upperLimit
+) {
 	if (out_t)                        *out_t                        = undefined;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = undefined;
 	if (out_significance)             *out_significance             = undefined;
@@ -1465,9 +1522,15 @@ double Table_getDifference_studentT (Table me, integer column1, integer column2,
 	return meanDifference;
 }
 
-double Table_getMean_studentT (Table me, integer column, double significanceLevel,
-	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
-{
+double Table_getMean_studentT (
+	const Table me,
+	const integer column,
+	const double significanceLevel,
+	double *const out_tFromZero,
+	double *const out_numberOfDegreesOfFreedom,
+	double *const out_significanceFromZero,
+	double *const out_lowerLimit, double *const out_upperLimit
+) {
 	const integer n = my rows.size;
 	if (out_tFromZero)                *out_tFromZero                = undefined;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = undefined;
@@ -1487,7 +1550,7 @@ double Table_getMean_studentT (Table me, integer column, double significanceLeve
 		TableRow row = my rows.at [irow];
 		sum += row -> cells [column]. number;
 	}
-	double mean = double (sum) / n;
+	const double mean = double (sum) / n;
 	if (n >= 2 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
 		longdouble sumOfSquares = 0.0;
 		for (integer irow = 1; irow <= n; irow ++) {
@@ -1509,8 +1572,17 @@ double Table_getMean_studentT (Table me, integer column, double significanceLeve
 	return mean;
 }
 
-double Table_getGroupMean_studentT (Table me, integer column, integer groupColumn, conststring32 group, double significanceLevel,
-	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
+double Table_getGroupMean_studentT (
+	const Table me,
+	const integer column,
+	const integer groupColumn,
+	const conststring32 group,
+	const double significanceLevel,
+	double *const out_tFromZero,
+	double *const out_numberOfDegreesOfFreedom,
+	double *const out_significanceFromZero,
+	double *const out_lowerLimit,
+	double *const out_upperLimit)
 {
 	if (out_tFromZero)                *out_tFromZero                = undefined;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = undefined;
@@ -1562,8 +1634,18 @@ double Table_getGroupMean_studentT (Table me, integer column, integer groupColum
 	return mean;
 }
 
-double Table_getGroupDifference_studentT (Table me, integer column, integer groupColumn, conststring32 group1, conststring32 group2, double significanceLevel,
-	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
+double Table_getGroupDifference_studentT (
+	const Table me,
+	const integer column,
+	const integer groupColumn,
+	const conststring32 group1,
+	const conststring32 group2,
+	const double significanceLevel,
+	double *const out_tFromZero,
+	double *const out_numberOfDegreesOfFreedom,
+	double *const out_significanceFromZero,
+	double *const out_lowerLimit,
+	double *const out_upperLimit)
 {
 	if (out_tFromZero)                *out_tFromZero                = undefined;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = undefined;
@@ -1575,10 +1657,10 @@ double Table_getGroupDifference_studentT (Table me, integer column, integer grou
 	if (groupColumn < 1 || groupColumn > my numberOfColumns)
 		return undefined;
 	Table_numericize_Assert (me, column);
-	integer n1 = 0, n2 = 0;
-	longdouble sum1 = 0.0, sum2 = 0.0;
+	/* mutable count */ integer n1 = 0, n2 = 0;
+	/* mutable sum */ longdouble sum1 = 0.0, sum2 = 0.0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
-		TableRow row = my rows.at [irow];
+		const constTableRow row = my rows.at [irow];
 		if (row -> cells [groupColumn]. string) {
 			if (str32equ (row -> cells [groupColumn]. string.get(), group1)) {
 				n1 ++;
@@ -1625,9 +1707,15 @@ double Table_getGroupDifference_studentT (Table me, integer column, integer grou
 	return difference;
 }
 
-double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integer groupColumn, conststring32 group1, conststring32 group2,
-	double *out_rankSum, double *out_significanceFromZero)
-{
+double Table_getGroupDifference_wilcoxonRankSum (
+	const Table me,
+	const integer column,
+	const integer groupColumn,
+	const conststring32 group1,
+	const conststring32 group2,
+	double *const out_rankSum,
+	double *const out_significanceFromZero
+) {
 	if (out_rankSum)              *out_rankSum              = undefined;
 	if (out_significanceFromZero) *out_significanceFromZero = undefined;
 	if (column < 1 || column > my numberOfColumns)
@@ -1635,7 +1723,7 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	if (groupColumn < 1 || groupColumn > my numberOfColumns)
 		return undefined;
 	Table_numericize_Assert (me, column);
-	integer n1 = 0, n2 = 0;
+	/* mutable count */ integer n1 = 0, n2 = 0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		const TableRow row = my rows.at [irow];
 		if (row -> cells [groupColumn]. string) {
@@ -1666,7 +1754,7 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	Table_numericize_Assert (ranks.get(), 3);
 	const integer sortingColumns [] = { 2 };
 	Table_sortRows_Assert (ranks.get(), ARRAY_TO_INTVEC (sortingColumns));
-	double totalNumberOfTies3 = 0.0;
+	/* mutable count */ longdouble totalNumberOfTies3 = 0.0;
 	for (integer irow = 1; irow <= ranks -> rows.size; irow ++) {
 		TableRow row = ranks -> rows.at [irow];
 		const double value = row -> cells [2]. number;
@@ -1686,14 +1774,14 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	}
 	Table_numericize_Assert (ranks.get(), 3);
 	const double maximumRankSum = double (n1) * double (n2);
-	longdouble rankSum = 0.0;
+	/* mutable sum */ longdouble rankSum = 0.0;
 	for (integer irow = 1; irow <= ranks -> rows.size; irow ++) {
 		const TableRow row = ranks -> rows.at [irow];
 		if (row -> cells [1]. number == 1.0)
 			rankSum += row -> cells [3]. number;
 	}
 	rankSum -= 0.5 * double (n1) * (double (n1) + 1.0);
-	const double stdev = sqrt (maximumRankSum * (double (n) + 1.0 - totalNumberOfTies3 / n / (n - 1)) / 12.0);
+	const double stdev = sqrt (maximumRankSum * (double (n) + 1.0 - (double) totalNumberOfTies3 / n / (n - 1)) / 12.0);
 	if (out_rankSum)
 		*out_rankSum = double (rankSum);
 	if (out_significanceFromZero)
@@ -1706,7 +1794,12 @@ double Table_getOneWayAnovaSignificance (Table me, integer col1, integer col2);
 double Table_getFisherFLowerLimit (Table me, integer col1, integer col2, double significanceLevel);
 double Table_getFisherFUpperLimit (Table me, integer col1, integer col2, double significanceLevel);
 
-bool Table_getExtrema (Table me, integer icol, double *minimum, double *maximum) {
+bool Table_getExtrema (
+	const Table me,
+	const integer icol,
+	double *const minimum,
+	double *const maximum
+) {
 	const integer n = my rows.size;
 	if (icol < 1 || icol > my numberOfColumns || n == 0) {
 		*minimum = *maximum = undefined;
@@ -1774,7 +1867,8 @@ void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycol
 		TableRow row = my rows.at [irow];
 		const double x = row -> cells [xcolumn]. number, y = row -> cells [ycolumn]. number;
 		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmax < xmin && x >= xmax && x <= xmin)) &&
-			((ymin < ymax && y >= ymin && y <= ymax) || (ymax < ymin && y >= ymax && y <= ymin)))
+			((ymin < ymax && y >= ymin && y <= ymax) || (ymax < ymin && y >= ymax && y <= ymin))
+		)
 			Graphics_mark (g, x, y, markSize_mm, mark);
 	}
 	Graphics_unsetInner (g);
@@ -1880,7 +1974,10 @@ static conststring32 visibleString (conststring32 s) {
 	return ( s && s [0] != U'\0' ? s : U"?" );
 }
 
-void Table_list (Table me, bool includeRowNumbers) {
+void Table_list (
+	const constTable me,
+	const bool includeRowNumbers
+) {
 	MelderInfo_open ();
 	if (includeRowNumbers) {
 		MelderInfo_write (U"row");

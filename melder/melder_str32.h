@@ -100,7 +100,7 @@ int Melder_coll (conststring32 string1orNull, conststring32 string2orNull) noexc
 	even without special trickery, "file8.11" will nicely sort before "file14.03".
 	Basically, str32coll_numberAware() simply regards dots as non-digits.
 */
-int str32coll_numberAware (conststring32 string1, conststring32 string2) noexcept;
+int str32coll_numberAware (conststring32 string1, conststring32 string2, bool caseAware = false) noexcept;
 int Melder_coll_numberAware (conststring32 string1, conststring32 string2) noexcept;
 int str32cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept;
 int Melder_cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept;
