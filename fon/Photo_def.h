@@ -1,6 +1,6 @@
 /* Photo_def.h
  *
- * Copyright (C) 2013-2018,2022 Paul Boersma
+ * Copyright (C) 2013-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,33 +28,33 @@ oo_DEFINE_CLASS (Photo, SampledXY)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		bool v_hasGetNrow ()
+		bool v_hasGetNrow () const
 			override { return true; }
-		double v_getNrow ()
+		double v_getNrow () const
 			override { return ny; }
-		bool v_hasGetNcol ()
+		bool v_hasGetNcol () const
 			override { return true; }
-		double v_getNcol ()
+		double v_getNcol () const
 			override { return nx; }
-		bool v_hasGetYmin ()
+		bool v_hasGetYmin () const
 			override { return true; }
-		double v_getYmin ()
+		double v_getYmin () const
 			override { return ymin; }
-		bool v_hasGetYmax ()
+		bool v_hasGetYmax () const
 			override { return true; }
-		double v_getYmax ()
+		double v_getYmax () const
 			override { return ymax; }
-		bool v_hasGetNy ()
+		bool v_hasGetNy () const
 			override { return true; }
-		double v_getNy ()
+		double v_getNy () const
 			override { return ny; }
-		bool v_hasGetDy ()
+		bool v_hasGetDy () const
 			override { return true; }
-		double v_getDy ()
+		double v_getDy () const
 			override { return dy; }
-		bool v_hasGetY ()
+		bool v_hasGetY () const
 			override { return true; }
-		double v_getY (integer iy)
+		double v_getY (const integer iy) const
 			override { return y1 + (iy - 1) * dy; }
 	#endif
 

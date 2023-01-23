@@ -2,7 +2,7 @@
 #define _VocalTract_h_
 /* VocalTract.h
  *
- * Copyright (C) 1992-2012,2015-2018,2022 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 Thing_define (VocalTract, Vector) {
 	void v1_info ()
 		override;
-	int v_domainQuantity ()
+	int v_domainQuantity () const
 		override { return MelderQuantity_DISTANCE_FROM_GLOTTIS_METRES; }
 };
 

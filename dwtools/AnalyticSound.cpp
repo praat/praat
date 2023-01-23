@@ -22,7 +22,7 @@
 
 Thing_implement (AnalyticSound, Sound, 0);
 
-double structAnalyticSound :: v_getValueAtSample (integer isamp, integer which, int /* unit */) {
+double structAnalyticSound :: v_getValueAtSample (integer isamp, integer which, int /* unit */) const {
 	/*
 		Preconditions: 
 			1 <= isample <= nx 

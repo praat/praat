@@ -1,6 +1,6 @@
 /* Strings_def.h
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2018,2020,2022 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2018,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,15 +33,15 @@ oo_DEFINE_CLASS (Strings, Daata)
 		void maintainInvariants () {
 			our numberOfStrings = our strings.size;
 		}
-		void checkStringNumber (integer stringNumber) {
+		void checkStringNumber (const integer stringNumber) {
 			Melder_require (stringNumber >= 1,
 				U"The element number should be at least 1, not ", stringNumber, U".");
 			Melder_require (stringNumber <= our numberOfStrings,
 				U"The element number should be at most the number of elements (", our numberOfStrings, U"), not", stringNumber, U".");
 		}
-		bool v_hasGetVectorStr ()
+		bool v_hasGetVectorStr () const
 			override { return true; }
-		conststring32 v_getVectorStr (integer icol)
+		conststring32 v_getVectorStr (integer icol) const
 			override;
 	#endif
 

@@ -2,7 +2,7 @@
 #define _Spectrogram_h_
 /* Spectrogram.h
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2019,2022 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2019,2022,2023 David Weenink & Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 Thing_define (Spectrogram, Matrix) {
 	void v1_info ()
 		override;
-	int v_domainQuantity ()
+	int v_domainQuantity () const
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 

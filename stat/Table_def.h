@@ -1,6 +1,6 @@
 /* Table_def.h
  *
- * Copyright (C) 2002-2007,2011,2012,2014-2019,2022 Paul Boersma
+ * Copyright (C) 2002-2007,2011,2012,2014-2019,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,29 +67,29 @@ oo_DEFINE_CLASS (Table, Daata)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		bool v_hasGetNrow ()
+		bool v_hasGetNrow () const
 			override { return true; }
-		double v_getNrow ()
+		double v_getNrow () const
 			override { return rows.size; }
-		bool v_hasGetNcol ()
+		bool v_hasGetNcol () const
 			override { return true; }
-		double v_getNcol ()
+		double v_getNcol () const
 			override { return numberOfColumns; }
-		bool v_hasGetColStr ()
+		bool v_hasGetColStr () const
 			override { return true; }
-		conststring32 v_getColStr (integer columnNumber)
+		conststring32 v_getColStr (integer columnNumber) const
 			override;
-		bool v_hasGetMatrix ()
+		bool v_hasGetMatrix () const
 			override { return true; }
-		double v_getMatrix (integer rowNumber, integer columnNumber)
+		double v_getMatrix (integer rowNumber, integer columnNumber) const
 			override;
-		bool v_hasGetMatrixStr ()
+		bool v_hasGetMatrixStr () const
 			override { return true; }
-		conststring32 v_getMatrixStr (integer rowNumber, integer columnNumber)
+		conststring32 v_getMatrixStr (integer rowNumber, integer columnNumber) const
 			override;
-		bool v_hasGetColIndex ()
+		bool v_hasGetColIndex () const
 			override { return true; }
-		double v_getColIndex (conststring32 columnLabel)
+		double v_getColIndex (conststring32 columnLabel) const
 			override;
 	#endif
 

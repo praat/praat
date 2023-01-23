@@ -2,7 +2,7 @@
 #define _TableOfReal_h_
 /* TableOfReal.h
  *
- * Copyright (C) 1992-2005,2007,2009,2011,2012,2015-2018,2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009,2011,2012,2015-2018,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ void TableOfReal_insertRow (TableOfReal me, integer rowNumber);
 void TableOfReal_insertColumn (TableOfReal me, integer columnNumber);
 void TableOfReal_setRowLabel    (TableOfReal me, integer rowNumber, conststring32 label /* cattable */);
 void TableOfReal_setColumnLabel (TableOfReal me, integer columnNumber, conststring32 label /* cattable */);
-integer TableOfReal_rowLabelToIndex    (TableOfReal me, conststring32 label /* cattable */);
-integer TableOfReal_columnLabelToIndex (TableOfReal me, conststring32 label /* cattable */);
+integer TableOfReal_rowLabelToIndex    (constTableOfReal me, conststring32 label /* cattable */);
+integer TableOfReal_columnLabelToIndex (constTableOfReal me, conststring32 label /* cattable */);
 double TableOfReal_getColumnMean (TableOfReal me, integer columnNumber);
 double TableOfReal_getColumnStdev (TableOfReal me, integer columnNumber);
 

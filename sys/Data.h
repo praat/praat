@@ -2,7 +2,7 @@
 #define _Data_h_
 /* Data.h
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2019,2021,2022 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2019,2021-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,31 +53,31 @@ Thing_define (Daata, Thing) {
 	virtual void v1_readBinary (FILE * /* f */, int /* formatVersion */) { }
 	virtual void v_repair () { }   // after reading Praat data files created by others
 	// methods for scripting:
-	virtual bool v_hasGetNrow      () { return false; }   virtual double        v_getNrow      ()                                       { return undefined; }
-	virtual bool v_hasGetNcol      () { return false; }   virtual double        v_getNcol      ()                                       { return undefined; }
-	virtual bool v_hasGetXmin      () { return false; }   virtual double        v_getXmin      ()                                       { return undefined; }
-	virtual bool v_hasGetXmax      () { return false; }   virtual double        v_getXmax      ()                                       { return undefined; }
-	virtual bool v_hasGetYmin      () { return false; }   virtual double        v_getYmin      ()                                       { return undefined; }
-	virtual bool v_hasGetYmax      () { return false; }   virtual double        v_getYmax      ()                                       { return undefined; }
-	virtual bool v_hasGetNx        () { return false; }   virtual double        v_getNx        ()                                       { return undefined; }
-	virtual bool v_hasGetNy        () { return false; }   virtual double        v_getNy        ()                                       { return undefined; }
-	virtual bool v_hasGetDx        () { return false; }   virtual double        v_getDx        ()                                       { return undefined; }
-	virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                                       { return undefined; }
-	virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (integer /* ix */)                       { return undefined; }
-	virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (integer /* iy */)                       { return undefined; }
-	virtual bool v_hasGetRowStr    () { return false; }   virtual conststring32 v_getRowStr    (integer /* irow */)                     { return nullptr;   }
-	virtual bool v_hasGetColStr    () { return false; }   virtual conststring32 v_getColStr    (integer /* icol */)                     { return nullptr;   }
-	virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                                       { return undefined; }
-	virtual bool v_hasGetCellStr   () { return false; }   virtual conststring32 v_getCellStr   ()                                       { return nullptr;   }
-	virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (integer /* irow */, integer /* icol */) { return undefined; }
-	virtual bool v_hasGetVectorStr () { return false; }   virtual conststring32 v_getVectorStr (integer /* icol */)                     { return nullptr;   }
-	virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (integer /* irow */, integer /* icol */) { return undefined; }
-	virtual bool v_hasGetMatrixStr () { return false; }   virtual conststring32 v_getMatrixStr (integer /* irow */, integer /* icol */) { return nullptr;   }
-	virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                                       { return undefined; }
-	virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (integer /* irow */, double /* x */)     { return undefined; }
-	virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double /* x */, double /* y */)         { return undefined; }
-	virtual bool v_hasGetRowIndex  () { return false; }   virtual double        v_getRowIndex  (conststring32 /* rowLabel */)           { return undefined; }
-	virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (conststring32 /* colLabel */)           { return undefined; }
+	virtual bool v_hasGetNrow      () const { return false; }   virtual double        v_getNrow      ()                                       const { return undefined; }
+	virtual bool v_hasGetNcol      () const { return false; }   virtual double        v_getNcol      ()                                       const { return undefined; }
+	virtual bool v_hasGetXmin      () const { return false; }   virtual double        v_getXmin      ()                                       const { return undefined; }
+	virtual bool v_hasGetXmax      () const { return false; }   virtual double        v_getXmax      ()                                       const { return undefined; }
+	virtual bool v_hasGetYmin      () const { return false; }   virtual double        v_getYmin      ()                                       const { return undefined; }
+	virtual bool v_hasGetYmax      () const { return false; }   virtual double        v_getYmax      ()                                       const { return undefined; }
+	virtual bool v_hasGetNx        () const { return false; }   virtual double        v_getNx        ()                                       const { return undefined; }
+	virtual bool v_hasGetNy        () const { return false; }   virtual double        v_getNy        ()                                       const { return undefined; }
+	virtual bool v_hasGetDx        () const { return false; }   virtual double        v_getDx        ()                                       const { return undefined; }
+	virtual bool v_hasGetDy        () const { return false; }   virtual double        v_getDy        ()                                       const { return undefined; }
+	virtual bool v_hasGetX         () const { return false; }   virtual double        v_getX         (integer /* ix */)                       const { return undefined; }
+	virtual bool v_hasGetY         () const { return false; }   virtual double        v_getY         (integer /* iy */)                       const { return undefined; }
+	virtual bool v_hasGetRowStr    () const { return false; }   virtual conststring32 v_getRowStr    (integer /* irow */)                     const { return nullptr;   }
+	virtual bool v_hasGetColStr    () const { return false; }   virtual conststring32 v_getColStr    (integer /* icol */)                     const { return nullptr;   }
+	virtual bool v_hasGetCell      () const { return false; }   virtual double        v_getCell      ()                                       const { return undefined; }
+	virtual bool v_hasGetCellStr   () const { return false; }   virtual conststring32 v_getCellStr   ()                                       const { return nullptr;   }
+	virtual bool v_hasGetVector    () const { return false; }   virtual double        v_getVector    (integer /* irow */, integer /* icol */) const { return undefined; }
+	virtual bool v_hasGetVectorStr () const { return false; }   virtual conststring32 v_getVectorStr (integer /* icol */)                     const { return nullptr;   }
+	virtual bool v_hasGetMatrix    () const { return false; }   virtual double        v_getMatrix    (integer /* irow */, integer /* icol */) const { return undefined; }
+	virtual bool v_hasGetMatrixStr () const { return false; }   virtual conststring32 v_getMatrixStr (integer /* irow */, integer /* icol */) const { return nullptr;   }
+	virtual bool v_hasGetFunction0 () const { return false; }   virtual double        v_getFunction0 ()                                       const { return undefined; }
+	virtual bool v_hasGetFunction1 () const { return false; }   virtual double        v_getFunction1 (integer /* irow */, double /* x */)     const { return undefined; }
+	virtual bool v_hasGetFunction2 () const { return false; }   virtual double        v_getFunction2 (double /* x */, double /* y */)         const { return undefined; }
+	virtual bool v_hasGetRowIndex  () const { return false; }   virtual double        v_getRowIndex  (conststring32 /* rowLabel */)           const { return undefined; }
+	virtual bool v_hasGetColIndex  () const { return false; }   virtual double        v_getColIndex  (conststring32 /* colLabel */)           const { return undefined; }
 };
 
 template <class T> autoSomeThing<T> Data_copy (const T* data) {

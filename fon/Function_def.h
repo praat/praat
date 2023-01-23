@@ -31,25 +31,25 @@ oo_DEFINE_CLASS (Function, Daata)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		bool v_hasGetXmin ()
+		bool v_hasGetXmin () const
 			override { return true; }
-		double v_getXmin ()
+		double v_getXmin () const
 			override { return xmin; }
-		bool v_hasGetXmax ()
+		bool v_hasGetXmax () const
 			override { return true; }
-		double v_getXmax ()
+		double v_getXmax () const
 			override { return xmax; }
 
-		virtual int v_domainQuantity () { return 0; }
-		virtual int v_getMinimumUnit (integer /* level */) { return 0; }
-		virtual int v_getMaximumUnit (integer /* level */) { return 0; }
-		virtual conststring32 v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
+		virtual int v_domainQuantity () const { return 0; }
+		virtual int v_getMinimumUnit (integer /* level */) const { return 0; }
+		virtual int v_getMaximumUnit (integer /* level */) const { return 0; }
+		virtual conststring32 v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */) const
 			{ return U""; }
-		virtual bool v_isUnitLogarithmic (integer /* level */, int /* unit */)
+		virtual bool v_isUnitLogarithmic (integer /* level */, int /* unit */) const
 			{ return false; }
-		virtual double v_convertStandardToSpecialUnit (double value, integer /* level */, int /* unit */)
+		virtual double v_convertStandardToSpecialUnit (double value, integer /* level */, int /* unit */) const
 			{ return value; }
-		virtual double v_convertSpecialToStandardUnit (double value, integer /* level */, int /* unit */)
+		virtual double v_convertSpecialToStandardUnit (double value, integer /* level */, int /* unit */) const
 			{ return value; }
 		virtual void v_shiftX (double xfrom, double xto);
 		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);

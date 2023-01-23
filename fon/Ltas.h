@@ -2,7 +2,7 @@
 #define _Ltas_h_
 /* Ltas.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2019,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@
 Thing_define (Ltas, Vector) {
 	void v1_info ()
 		override;
-	int v_domainQuantity ()
+	int v_domainQuantity () const
 		override { return MelderQuantity_FREQUENCY_HERTZ; }
-	double v_convertStandardToSpecialUnit (double value, integer level, int unit)
+	double v_convertStandardToSpecialUnit (double value, integer level, int unit) const
 		override;
-	double v_convertSpecialToStandardUnit (double value, integer level, int unit)
+	double v_convertSpecialToStandardUnit (double value, integer level, int unit) const
 		override;
 };
 

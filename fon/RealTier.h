@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2005,2007-2012,2015-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2015-2018,2020,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,28 +47,28 @@ autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas)
 		result -> points.size == 0;
 */
 
-double RealTier_getValueAtIndex (RealTier me, integer point);
+double RealTier_getValueAtIndex (constRealTier me, integer point);
 /* No points or 'point' out of range: undefined. */
 
-double RealTier_getValueAtTime (RealTier me, double t);
+double RealTier_getValueAtTime (constRealTier me, double t);
 /* Inside points: linear intrapolation. */
 /* Outside points: constant extrapolation. */
 /* No points: undefined. */
 
-double RealTier_getMinimumValue (RealTier me);
-double RealTier_getMaximumValue (RealTier me);
-double RealTier_getArea (RealTier me, double tmin, double tmax);
-double RealTier_getMean_curve (RealTier me, double tmin, double tmax);
-double RealTier_getMean_points (RealTier me, double tmin, double tmax);
-double RealTier_getStandardDeviation_curve (RealTier me, double tmin, double tmax);
-double RealTier_getStandardDeviation_points (RealTier me, double tmin, double tmax);
+double RealTier_getMinimumValue (constRealTier me);
+double RealTier_getMaximumValue (constRealTier me);
+double RealTier_getArea (constRealTier me, double tmin, double tmax);
+double RealTier_getMean_curve (constRealTier me, double tmin, double tmax);
+double RealTier_getMean_points (constRealTier me, double tmin, double tmax);
+double RealTier_getStandardDeviation_curve (constRealTier me, double tmin, double tmax);
+double RealTier_getStandardDeviation_points (constRealTier me, double tmin, double tmax);
 
 void RealTier_addPoint (RealTier me, double t, double value);
-void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax,
+void RealTier_draw (constRealTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, bool garnish, conststring32 method, conststring32 quantity);
-autoTableOfReal RealTier_downto_TableOfReal (RealTier me, conststring32 timeLabel, conststring32 valueLabel);
+autoTableOfReal RealTier_downto_TableOfReal (constRealTier me, conststring32 timeLabel, conststring32 valueLabel);
 
-void RealTier_interpolateQuadratically (RealTier me, integer numberOfPointsPerParabola, int logarithmically);
+void RealTier_interpolateQuadratically (RealTier me, integer numberOfPointsPerParabola, bool logarithmically);
 
 autoTable RealTier_downto_Table (RealTier me, conststring32 indexText, conststring32 timeText, conststring32 valueText);
 autoRealTier Vector_to_RealTier (Vector me, integer channel, ClassInfo klas);

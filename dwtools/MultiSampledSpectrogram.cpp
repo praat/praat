@@ -41,7 +41,7 @@
 
 Thing_implement (FrequencyBin, Matrix, 2);
 
-double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which, int unit) {
+double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which, int unit) const {
 	if (unit == 0)
 		return ( which == 1 ? z [1] [iframe] : which == 2 ? z [2] [iframe] : undefined );
 	const double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
@@ -62,17 +62,17 @@ void structMultiSampledSpectrogram :: v1_info () {
 	MelderInfo_writeLine (U"Number of frames in all bins: ", MultiSampledSpectrogram_getNumberOfFrames (this));
 }
 
-double structMultiSampledSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) {
+double structMultiSampledSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) const {
 	FrequencyBin bin = frequencyBins.at [ifreq];
 	const double value = bin -> v_getValueAtSample (iframe, 1, unit);
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, iframe, unit) : undefined );
 }
 
-double structMultiSampledSpectrogram :: v_myFrequencyUnitToHertz (double f) {
+double structMultiSampledSpectrogram :: v_myFrequencyUnitToHertz (double f) const {
 	return f;
 }
 
-double structMultiSampledSpectrogram :: v_hertzToMyFrequencyUnit (double f) {
+double structMultiSampledSpectrogram :: v_hertzToMyFrequencyUnit (double f) const {
 	return f;
 }
 

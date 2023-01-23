@@ -54,12 +54,12 @@ void structFormantPath :: v1_info () {
 		MelderInfo_writeLine (U"Ceiling ", ic, U": ", ceilings [ic], U" Hz");
 }
 
-double structFormantPath :: v_getValueAtSample (integer iframe, integer which, int units) {
+double structFormantPath :: v_getValueAtSample (integer iframe, integer which, int units) const {
 	const Formant formant = reinterpret_cast<Formant> (our formantCandidates.at [our path [iframe]]);
 	return formant -> v_getValueAtSample (iframe, which, units);
 }
 
-conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*/, uint32 /*flags*/) {
+conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*/, uint32 /*flags*/) const {
 	return U"Frequency (Hz)";
 };
 

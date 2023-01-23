@@ -1,6 +1,6 @@
 /* Vector.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ Thing_implement (Vector, Matrix, 2);
 	or if `rowNumber` == 0, then the average value of all the channels.
 	The value is assumed to be zero in columns outside the domain.
 */
-double structVector :: v_getVector (integer rowNumber, integer columnNumber) {
+double structVector :: v_getVector (integer rowNumber, integer columnNumber) const {
 	if (columnNumber < 1 || columnNumber > our nx)
 		return 0.0;
 	if (our ny == 1)
@@ -52,7 +52,7 @@ double structVector :: v_getVector (integer rowNumber, integer columnNumber) {
 	There is linear interpolation between columns.
 	The value is assumed to be zero in columns outside the domain.
 */
-double structVector :: v_getFunction1 (integer rowNumber, double x) {
+double structVector :: v_getFunction1 (integer rowNumber, double x) const {
 	const double columnNumber_real = (x - our x1) / our dx + 1.0;
 	const integer leftColumnNumber = Melder_ifloor (columnNumber_real);
 	const double columnNumber_phase = columnNumber_real - leftColumnNumber;
@@ -96,7 +96,7 @@ double structVector :: v_getFunction1 (integer rowNumber, double x) {
 	return (1.0 - columnNumber_phase) * leftValue + columnNumber_phase * rightValue;
 }
 
-double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int unit) {
+double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int unit) const {
 /*
 	Preconditions:
 		1 <= isamp <= my nx

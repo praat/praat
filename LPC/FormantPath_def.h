@@ -26,11 +26,11 @@ oo_DEFINE_CLASS (FormantPath, Sampled)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		int v_domainQuantity ()
+		int v_domainQuantity () const
 			override { return MelderQuantity_TIME_SECONDS; }
-		conststring32 v_getUnitText (integer level, int unit, uint32 flags)
+		conststring32 v_getUnitText (integer level, int unit, uint32 flags) const
 			override;
-		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
+		double v_getValueAtSample (integer sampleNumber, integer level, int unit) const
 			override;
 		conststring32 v_getIndexText () const
 			override { return U"frame number"; }

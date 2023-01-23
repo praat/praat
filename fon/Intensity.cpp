@@ -1,6 +1,6 @@
 /* Intensity.cpp
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2019,2022 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2019,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ void structIntensity :: v1_info () {
 	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
-double structIntensity :: v_convertStandardToSpecialUnit (double value, integer /* level */, int unit) {
+double structIntensity :: v_convertStandardToSpecialUnit (double value, integer /* level */, int unit) const {
 	if (unit == 1) {
 		return pow (10.0, 0.1 * value);   // energy
 	} else if (unit == 2) {
@@ -41,7 +41,7 @@ double structIntensity :: v_convertStandardToSpecialUnit (double value, integer 
 	return value;   // default, especially if units == 0 (as in Vector_getMean) or units == 3 (averaging_DB)
 }
 
-double structIntensity :: v_convertSpecialToStandardUnit (double value, integer /* level */, int unit) {
+double structIntensity :: v_convertSpecialToStandardUnit (double value, integer /* level */, int unit) const {
 	return
 		unit == 1 ?
 			10.0 * log10 (value) :   // value = energy

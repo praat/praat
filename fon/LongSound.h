@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2017,2019,2022 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2017,2019,2022,2023 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ Thing_define (LongSound, SampledXY) {
 		override;
 	bool v_writable ()
 		override { return false; }
-	int v_domainQuantity ()
+	int v_domainQuantity () const
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 

@@ -25,7 +25,7 @@
 /********** class OptimalCeilingTier **********/
 
 Thing_define (OptimalCeilingTier, RealTier) {
-	int v_domainQuantity ()
+	int v_domainQuantity () const
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 

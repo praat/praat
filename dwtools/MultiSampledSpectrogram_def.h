@@ -33,7 +33,7 @@ oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		double v_getValueAtSample (integer ifreq, integer iframe, int unit)
+		double v_getValueAtSample (integer ifreq, integer iframe, int unit) const
 			override;
 		virtual double v_myFrequencyUnitToHertz (double x);
 		virtual double v_hertzToMyFrequencyUnit (double f_hz);

@@ -34,7 +34,7 @@
 
 Thing_implement (Cepstrum, Matrix, 2);
 
-double structCepstrum :: v_getValueAtSample (integer isamp, integer which, int units) {
+double structCepstrum :: v_getValueAtSample (integer isamp, integer which, int units) const {
 	if (which == 1) {
 		if (units == 0)
 			return z [1] [isamp];

@@ -2,7 +2,7 @@
 #define _Function_h_
 /* Function.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2018,2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,9 +123,9 @@ double Function_window (double tim, int windowType);
 /*
  * Procedures to adapt a range to the extent of the function domain.
  */
-void Function_unidirectionalAutowindow (Function me, double *xmin, double *xmax);
-void Function_bidirectionalAutowindow (Function me, double *x1, double *x2);
-bool Function_intersectRangeWithDomain (Function me, double *x1, double *x2);
+void Function_unidirectionalAutowindow (constFunction me, double *xmin, double *xmax);
+void Function_bidirectionalAutowindow (constFunction me, double *x1, double *x2);
+bool Function_intersectRangeWithDomain (constFunction me, double *x1, double *x2);
 
 void Function_shiftXBy (Function me, double shift);
 void Function_shiftXTo (Function me, double xfrom, double xto);

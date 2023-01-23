@@ -22,7 +22,7 @@
 
 Thing_implement (PowerCepstrum, Cepstrum, 2);   // derives from Matrix; therefore also version 2
 
-double structPowerCepstrum :: v_getValueAtSample (integer isamp, integer row, int units) {
+double structPowerCepstrum :: v_getValueAtSample (integer isamp, integer row, int units) const {
 	double result = undefined;
 	if (row == 1) {
 		if (units == 0)

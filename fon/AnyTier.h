@@ -2,7 +2,7 @@
 #define _AnyTier_h_
 /* AnyTier.h
  *
- * Copyright (C) 1992-2005,2007,2011,2015-2017,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015-2017,2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,17 +33,17 @@ Thing_define (AnyTier, Function) {
 		override;
 };
 
-integer AnyTier_timeToLowIndex (AnyTier me, double time);
+integer AnyTier_timeToLowIndex (constAnyTier me, double time);
 
-integer AnyTier_timeToHighIndex (AnyTier me, double time);
+integer AnyTier_timeToHighIndex (constAnyTier me, double time);
 
-integer AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, integer *imin, integer *imax);
+integer AnyTier_getWindowPoints (constAnyTier me, double tmin, double tmax, integer *imin, integer *imax);
 
-integer AnyTier_timeToNearestIndex (AnyTier me, double time);
-integer AnyTier_timeToNearestIndexInIndexWindow (AnyTier me, double time, integer imin, integer imax);
-integer AnyTier_timeToNearestIndexInTimeWindow (AnyTier me, double time, double tmin, double tmax);
+integer AnyTier_timeToNearestIndex (constAnyTier me, double time);
+integer AnyTier_timeToNearestIndexInIndexWindow (constAnyTier me, double time, integer imin, integer imax);
+integer AnyTier_timeToNearestIndexInTimeWindow (constAnyTier me, double time, double tmin, double tmax);
 
-integer AnyTier_hasPoint (AnyTier me, double t);
+integer AnyTier_hasPoint (constAnyTier me, double t);
 
 void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point);
 
@@ -53,10 +53,11 @@ void AnyTier_removePointNear (AnyTier me, double time);
 
 void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax);
 
-autoPointProcess AnyTier_downto_PointProcess (AnyTier me);
+autoPointProcess AnyTier_downto_PointProcess (constAnyTier me);
 
 #define AnyTier_METHODS \
 	AnyTier asAnyTier () { return reinterpret_cast <AnyTier> (this); } \
+	constAnyTier asConstAnyTier () const { return reinterpret_cast <constAnyTier> (this); } \
 	void v_shiftX (double xfrom, double xto) \
 		override { ((AnyTier) this) -> structAnyTier::v_shiftX (xfrom, xto); } \
 	void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) \

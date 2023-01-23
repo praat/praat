@@ -82,12 +82,12 @@ void structMatrix :: v1_readText (MelderReadText text, int formatVersion) {
 	our z = matrix_readText_r64 (our ny, our nx, text, "z");
 }
 
-double structMatrix :: v_getValueAtSample (integer isamp, integer ilevel, int unit) {
+double structMatrix :: v_getValueAtSample (integer isamp, integer ilevel, int unit) const {
 	const double value = our z [ilevel] [isamp];
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined );
 }
 
-double structMatrix :: v_getMatrix (integer irow, integer icol) {
+double structMatrix :: v_getMatrix (integer irow, integer icol) const {
 	if (irow < 1 || irow > our ny)
 		return 0.0;
 	if (icol < 1 || icol > our nx)
@@ -95,7 +95,7 @@ double structMatrix :: v_getMatrix (integer irow, integer icol) {
 	return z [irow] [icol];
 }
 
-double structMatrix :: v_getFunction2 (double x, double y) {
+double structMatrix :: v_getFunction2 (double x, double y) const {
 	const double rrow = (y - our y1) / our dy + 1.0;
 	const double rcol = (x - our x1) / our dx + 1.0;
 	const integer irow = Melder_ifloor (rrow), icol = Melder_ifloor (rcol);

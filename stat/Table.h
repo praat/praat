@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2012,2014-2019,2021,2022 Paul Boersma
+ * Copyright (C) 2002-2012,2014-2019,2021-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ void Table_removeColumn (Table me, integer column);
 void Table_insertRow (Table me, integer row);
 void Table_insertColumn (Table me, integer column, conststring32 label /* cattable */);
 void Table_setColumnLabel (Table me, integer column, conststring32 label /* cattable */);
-integer Table_findColumnIndexFromColumnLabel (Table me, conststring32 label) noexcept;
+integer Table_findColumnIndexFromColumnLabel (constTable me, conststring32 label) noexcept;
 integer Table_getColumnIndexFromColumnLabel (Table me, conststring32 columnLabel);
 autoINTVEC Table_columnNamesToNumbers (Table me, constSTRVEC const& columnNames);
 autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 string);

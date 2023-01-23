@@ -23,7 +23,7 @@
 #include "Intensity.h"
 
 Thing_define (AnalyticSound, Sound) {
-	double v_getValueAtSample (integer isample, integer which, int unit)
+	double v_getValueAtSample (integer isample, integer which, int unit) const
 		override;
 };
 

@@ -64,7 +64,7 @@ void structMelSpectrogram :: v1_info () {
 }
 
 // Preconditions: 1 <= iframe <= nx; 1 <= irow <= ny
-double structBandFilterSpectrogram :: v_getValueAtSample (integer iframe, integer ifreq, int units) {
+double structBandFilterSpectrogram :: v_getValueAtSample (integer iframe, integer ifreq, int units) const {
 	double val = undefined;
 	if (units == 0)
 		val = z [ifreq] [iframe];

@@ -1,6 +1,6 @@
 /* TableOfReal.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,23 +92,27 @@ void structTableOfReal :: v1_info () {
 	MelderInfo_writeLine (U"Number of columns: ", our numberOfColumns);
 }
 
-conststring32 structTableOfReal :: v_getRowStr (integer irow) {
-	if (irow < 1 || irow > our numberOfRows) return nullptr;
+conststring32 structTableOfReal :: v_getRowStr (const integer irow) const {
+	if (irow < 1 || irow > our numberOfRows)
+		return nullptr;
 	return our rowLabels [irow] ? our rowLabels [irow].get() : U"";
 }
-conststring32 structTableOfReal :: v_getColStr (integer icol) {
-	if (icol < 1 || icol > our numberOfColumns) return nullptr;
+conststring32 structTableOfReal :: v_getColStr (const integer icol) const {
+	if (icol < 1 || icol > our numberOfColumns)
+		return nullptr;
 	return our columnLabels [icol] ? our columnLabels [icol].get() : U"";
 }
-double structTableOfReal :: v_getMatrix (integer irow, integer icol) {
-	if (irow < 1 || irow > our numberOfRows) return undefined;
-	if (icol < 1 || icol > our numberOfColumns) return undefined;
+double structTableOfReal :: v_getMatrix (const integer irow, const integer icol) const {
+	if (irow < 1 || irow > our numberOfRows)
+		return undefined;
+	if (icol < 1 || icol > our numberOfColumns)
+		return undefined;
 	return our data [irow] [icol];
 }
-double structTableOfReal :: v_getRowIndex (conststring32 rowLabel) {
+double structTableOfReal :: v_getRowIndex (const conststring32 rowLabel) const {
 	return TableOfReal_rowLabelToIndex (this, rowLabel);
 }
-double structTableOfReal :: v_getColIndex (conststring32 columnLabel) {
+double structTableOfReal :: v_getColIndex (const conststring32 columnLabel) const {
 	return TableOfReal_columnLabelToIndex (this, columnLabel);
 }
 
@@ -135,14 +139,14 @@ autoTableOfReal TableOfReal_create (integer numberOfRows, integer numberOfColumn
 
 /***** QUERY *****/
 
-integer TableOfReal_rowLabelToIndex (TableOfReal me, conststring32 label) {
+integer TableOfReal_rowLabelToIndex (const constTableOfReal me, const conststring32 label) {
 	for (integer irow = 1; irow <= my numberOfRows; irow ++)
 		if (my rowLabels [irow] && str32equ (my rowLabels [irow].get(), label))
 			return irow;
 	return 0;
 }
 
-integer TableOfReal_columnLabelToIndex (TableOfReal me, conststring32 label) {
+integer TableOfReal_columnLabelToIndex (const constTableOfReal me, const conststring32 label) {
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 		if (my columnLabels [icol] && str32equ (my columnLabels [icol].get(), label))
 			return icol;

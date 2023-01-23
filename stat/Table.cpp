@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2022 Paul Boersma
+ * Copyright (C) 2002-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,13 +50,13 @@ void structTable :: v1_info () {
 	MelderInfo_writeLine (U"Number of columns: ", our numberOfColumns);
 }
 
-conststring32 structTable :: v_getColStr (integer columnNumber) {
+conststring32 structTable :: v_getColStr (const integer columnNumber) const {
 	if (columnNumber < 1 || columnNumber > our numberOfColumns)
 		return nullptr;
 	return our columnHeaders [columnNumber]. label ? our columnHeaders [columnNumber]. label.get() : U"";
 }
 
-double structTable :: v_getMatrix (integer rowNumber, integer columnNumber) {
+double structTable :: v_getMatrix (const integer rowNumber, const integer columnNumber) const {
 	if (rowNumber < 1 || rowNumber > our rows.size)
 		return undefined;
 	if (columnNumber < 1 || columnNumber > our numberOfColumns)
@@ -65,7 +65,7 @@ double structTable :: v_getMatrix (integer rowNumber, integer columnNumber) {
 	return stringValue ? Melder_atof (stringValue) : undefined;
 }
 
-conststring32 structTable :: v_getMatrixStr (integer rowNumber, integer columnNumber) {
+conststring32 structTable :: v_getMatrixStr (const integer rowNumber, const integer columnNumber) const {
 	if (rowNumber < 1 || rowNumber > our rows.size)
 		return U"";
 	if (columnNumber < 1 || columnNumber > our numberOfColumns)
@@ -74,7 +74,7 @@ conststring32 structTable :: v_getMatrixStr (integer rowNumber, integer columnNu
 	return stringValue ? stringValue : U"";
 }
 
-double structTable :: v_getColIndex (conststring32 columnLabel) {
+double structTable :: v_getColIndex (const conststring32 columnLabel) const {
 	return Table_findColumnIndexFromColumnLabel (this, columnLabel);
 }
 
@@ -277,7 +277,7 @@ void Table_setColumnLabel (Table me, integer columnNumber, conststring32 label /
 	}
 }
 
-integer Table_findColumnIndexFromColumnLabel (Table me, conststring32 label) noexcept {
+integer Table_findColumnIndexFromColumnLabel (constTable me, conststring32 label) noexcept {
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 		if (my columnHeaders [icol]. label && str32equ (my columnHeaders [icol]. label.get(), label))
 			return icol;

@@ -1,6 +1,6 @@
 /* EEG_def.h
  *
- * Copyright (C) 2011,2012,2014-2018,2022 Paul Boersma
+ * Copyright (C) 2011,2012,2014-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ oo_DEFINE_CLASS (EEG, Function)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		int v_domainQuantity ()
+		int v_domainQuantity () const
 			override { return MelderQuantity_TIME_SECONDS; }
 		void v_shiftX (double xfrom, double xto)
 			override;

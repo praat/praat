@@ -1,6 +1,6 @@
 /* TableOfReal_def.h
  *
- * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2022 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,33 +29,33 @@ oo_DEFINE_CLASS (TableOfReal, Daata)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		bool v_hasGetNrow ()
+		bool v_hasGetNrow () const
 			override { return true; }
-		double v_getNrow ()
+		double v_getNrow () const
 			override { return numberOfRows; }
-		bool v_hasGetNcol ()
+		bool v_hasGetNcol () const
 			override { return true; }
-		double v_getNcol ()
+		double v_getNcol () const
 			override { return numberOfColumns; }
-		bool v_hasGetRowStr ()
+		bool v_hasGetRowStr () const
 			override { return true; }
-		conststring32 v_getRowStr (integer irow)
+		conststring32 v_getRowStr (integer irow) const
 			override;
-		bool v_hasGetColStr ()
+		bool v_hasGetColStr () const
 			override { return true; }
-		conststring32 v_getColStr (integer icol)
+		conststring32 v_getColStr (integer icol) const
 			override;
-		bool v_hasGetMatrix ()
+		bool v_hasGetMatrix () const
 			override { return true; }
-		double v_getMatrix (integer irow, integer icol)
+		double v_getMatrix (integer irow, integer icol) const
 			override;
-		bool v_hasGetRowIndex ()
+		bool v_hasGetRowIndex () const
 			override { return true; }
-		double v_getRowIndex (conststring32 rowLabel)
+		double v_getRowIndex (conststring32 rowLabel) const
 			override;
-		bool v_hasGetColIndex ()
+		bool v_hasGetColIndex () const
 			override { return true; }
-		double v_getColIndex (conststring32 columnLabel)
+		double v_getColIndex (conststring32 columnLabel) const
 			override;
 	#endif
 

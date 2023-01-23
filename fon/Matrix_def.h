@@ -1,6 +1,6 @@
 /* Matrix_def.h
  *
- * Copyright (C) 1992-2005,2008,2011-2013,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2008,2011-2013,2015-2019,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,23 +37,23 @@ oo_DEFINE_CLASS (Matrix, SampledXY)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		bool v_hasGetNrow ()
+		bool v_hasGetNrow () const
 			override { return true; }
-		double v_getNrow ()
+		double v_getNrow () const
 			override { return ny; }
-		bool v_hasGetNcol ()
+		bool v_hasGetNcol () const
 			override { return true; }
-		double v_getNcol ()
+		double v_getNcol () const
 			override { return nx; }
-		bool v_hasGetMatrix ()
+		bool v_hasGetMatrix () const
 			override { return true; }
-		double v_getMatrix (integer irow, integer icol)
+		double v_getMatrix (integer irow, integer icol) const
 			override;
-		bool v_hasGetFunction2 ()
+		bool v_hasGetFunction2 () const
 			override { return true; }
-		double v_getFunction2 (double x, double y)
+		double v_getFunction2 (double x, double y) const
 			override;
-		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
+		double v_getValueAtSample (integer sampleNumber, integer level, int unit) const
 			override;
 	#endif
 

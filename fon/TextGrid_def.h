@@ -1,6 +1,6 @@
 /* TextGrid_def.h
  *
- * Copyright (C) 1992-2012,2014-2016,2018,2022 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2016,2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ oo_DEFINE_CLASS (TextInterval, Function)
 	oo_STRING (text)
 
 	#if oo_DECLARING
-		int v_domainQuantity ()
+		int v_domainQuantity () const
 			override { return MelderQuantity_TIME_SECONDS; }
 	#endif
 
@@ -48,7 +48,7 @@ oo_DEFINE_CLASS (TextTier, Function)   // a kind of AnyTier though
 	#if oo_DECLARING
 		AnyTier_METHODS
 
-		int v_domainQuantity ()
+		int v_domainQuantity () const
 			override { return MelderQuantity_TIME_SECONDS; }
 	#endif
 
@@ -62,7 +62,7 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 	oo_COLLECTION_OF (SortedSetOfDoubleOf, intervals, TextInterval, 0)
 
 	#if oo_DECLARING
-		int v_domainQuantity ()
+		int v_domainQuantity () const
 			override { return MelderQuantity_TIME_SECONDS; }
 		void v_shiftX (double xfrom, double xto)
 			override;
@@ -84,7 +84,7 @@ oo_DEFINE_CLASS (TextGrid, Function)
 			override;
 		void v_repair ()
 			override;
-		int v_domainQuantity ()
+		int v_domainQuantity () const
 			override { return MelderQuantity_TIME_SECONDS; }
 		void v_shiftX (double xfrom, double xto)
 			override;
