@@ -106,7 +106,7 @@ autoTable Table_createWithoutColumnNames (integer numberOfRows, integer numberOf
 
 conststring32 Table_messageColumn (Table me, integer column) {
 	if (column >= 1 && column <= my numberOfColumns && my columnHeaders [column]. label && my columnHeaders [column]. label [0] != U'\0')
-		return Melder_cat (U"\"", my columnHeaders [column]. label.get(), U"\"");
+		return Melder_cat (U"“", my columnHeaders [column]. label.get(), U"”");
 	else
 		return Melder_integer (column);
 }
@@ -456,8 +456,8 @@ static void Table_numericize_checkDefined (Table me, integer columnNumber) {
 		const TableRow row = my rows.at [irow];
 		if (isundef (row -> cells [columnNumber]. number)) {
 			Melder_throw (me, U": the cell in row ", irow,
-				U" of column \"", my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label.get() : Melder_integer (columnNumber),
-				U"\" is undefined."
+				U" of column “", my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label.get() : Melder_integer (columnNumber),
+				U"” is undefined."
 			);
 		}
 	}
