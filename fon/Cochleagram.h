@@ -2,7 +2,7 @@
 #define _Cochleagram_h_
 /* Cochleagram.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2015-2017,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "Matrix.h"
 
 Thing_define (Cochleagram, Matrix) {
-	int v_domainQuantity ()
+	int v_domainQuantity () const
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 

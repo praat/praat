@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,6 @@ autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv
 autoPitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval);
 autoPitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp);
 autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp);
-autoTableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones);
+autoTableOfReal PitchTier_downto_TableOfReal (constPitchTier me, bool useSemitones);
 
 /* End of file PitchTier_to_PointProcess.h */

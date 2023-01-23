@@ -1,6 +1,6 @@
 /* Pitch_def.h
  *
- * Copyright (C) 1992-2006,2008,2011,2012,2015-2020,2022 Paul Boersma
+ * Copyright (C) 1992-2006,2008,2011,2012,2015-2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,21 +85,21 @@ oo_DEFINE_CLASS (Pitch, Sampled)
 	#if oo_DECLARING
 		void v1_info ()
 			override;
-		int v_domainQuantity ()
+		int v_domainQuantity () const
 			override { return MelderQuantity_TIME_SECONDS; }
-		int v_getMinimumUnit (integer level)
+		int v_getMinimumUnit (integer level) const
 			override;
-		int v_getMaximumUnit (integer level)
+		int v_getMaximumUnit (integer level) const
 			override;
-		conststring32 v_getUnitText (integer level, int unit, uint32 flags)
+		conststring32 v_getUnitText (integer level, int unit, uint32 flags) const
 			override;
-		bool v_isUnitLogarithmic (integer level, int unit)
+		bool v_isUnitLogarithmic (integer level, int unit) const
 			override;
-		double v_convertStandardToSpecialUnit (double value, integer level, int unit)
+		double v_convertStandardToSpecialUnit (double value, integer level, int unit) const
 			override;
-		double v_convertSpecialToStandardUnit (double value, integer level, int unit)
+		double v_convertSpecialToStandardUnit (double value, integer level, int unit) const
 			override;
-		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
+		double v_getValueAtSample (integer sampleNumber, integer level, int unit) const
 			override;
 		conststring32 v_getIndexText () const
 			override { return U"frame number"; }

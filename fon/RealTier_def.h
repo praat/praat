@@ -1,6 +1,6 @@
 /* RealTier_def.h
  *
- * Copyright (C) 1992-2012,2014-2018,2022 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,27 +41,27 @@ oo_DEFINE_CLASS (RealTier, Function)   // syntactic inheritance
 
 		void v1_info ()
 			override;
-		bool v_hasGetNx ()
+		bool v_hasGetNx () const
 			override { return true; }
-		double v_getNx ()
+		double v_getNx () const
 			override { return points.size; }
-		bool v_hasGetX ()
+		bool v_hasGetX () const
 			override { return true; }
-		double v_getX (integer ix)
+		double v_getX (const integer ix) const
 			override { return points.at [ix] -> number; }
-		bool v_hasGetNcol ()
+		bool v_hasGetNcol () const
 			override { return true; }
-		double v_getNcol ()
+		double v_getNcol () const
 			override { return points.size; }
-		bool v_hasGetVector ()
+		bool v_hasGetVector () const
 			override { return true; }
-		double v_getVector (integer irow, integer icol)
+		double v_getVector (integer irow, integer icol) const
 			override;
-		bool v_hasGetFunction1 ()
+		bool v_hasGetFunction1 () const
 			override { return true; }
-		double v_getFunction1 (integer irow, double x)
+		double v_getFunction1 (integer irow, double x) const
 			override;
-		conststring32 v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
+		conststring32 v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */) const
 			override { return U"Time (s)"; }
 	#endif
 

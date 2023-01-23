@@ -1,6 +1,6 @@
 /* FormantGrid.cpp
  *
- * Copyright (C) 2008,2009,2011,2012,2014-2020 Paul Boersma & David Weenink
+ * Copyright (C) 2008,2009,2011,2012,2014-2020,2023 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +41,12 @@
 
 Thing_implement (FormantGrid, Function, 0);
 
-double structFormantGrid :: v_getVector (integer irow, integer icol) {
+double structFormantGrid :: v_getVector (const integer irow, const integer icol) const {
 	RealTier tier = our formants.at [irow];
 	return RealTier_getValueAtIndex (tier, icol);
 }
 
-double structFormantGrid :: v_getFunction1 (integer irow, double x) {
+double structFormantGrid :: v_getFunction1 (const integer irow, const double x) const {
 	RealTier tier = our formants.at [irow];
 	return RealTier_getValueAtTime (tier, x);
 }

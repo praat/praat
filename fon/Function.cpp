@@ -1,6 +1,6 @@
 /* Function.cpp
  *
- * Copyright (C) 1992-2012,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2018,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,30 +147,37 @@ double Function_window (double tim, int windowType) {
 	}
 }
 
-void Function_unidirectionalAutowindow (Function me, double *xmin, double *xmax) {
+void Function_unidirectionalAutowindow (const constFunction me, double *const xmin, double *const xmax) {
 	if (*xmin >= *xmax) {
 		*xmin = my xmin;
 		*xmax = my xmax;
 	}
 }
 
-void Function_bidirectionalAutowindow (Function me, double *x1, double *x2) {
+void Function_bidirectionalAutowindow (const constFunction me, double *const x1, double *const x2) {
 	if (*x1 == *x2) {
 		*x1 = my xmin;
 		*x2 = my xmax;
 	}
 }
 
-bool Function_intersectRangeWithDomain (Function me, double *x1, double *x2) {
-	if (*x1 == *x2) return false;
+bool Function_intersectRangeWithDomain (const constFunction me, double *const x1, double *const x2) {
+	if (*x1 == *x2)
+		return false;
 	if (*x1 < *x2) {
-		if (*x1 < my xmin) *x1 = my xmin;   // intersect requested range with logical domain
-		if (*x2 > my xmax) *x2 = my xmax;
-		if (*x2 <= *x1) return false;   // requested range and logical domain do not intersect
+		if (*x1 < my xmin)
+			*x1 = my xmin;   // intersect requested range with logical domain   // TODO: try Melder_clipLeft()
+		if (*x2 > my xmax)
+			*x2 = my xmax;
+		if (*x2 <= *x1)
+			return false;   // requested range and logical domain do not intersect
 	} else {
-		if (*x2 < my xmin) *x2 = my xmin;   // intersect requested range with logical domain
-		if (*x1 > my xmax) *x1 = my xmax;
-		if (*x1 <= *x2) return false;   // requested range and logical domain do not intersect
+		if (*x2 < my xmin)
+			*x2 = my xmin;   // intersect requested range with logical domain
+		if (*x1 > my xmax)
+			*x1 = my xmax;
+		if (*x1 <= *x2)
+			return false;   // requested range and logical domain do not intersect
 	}
 	return true;
 }

@@ -2,7 +2,7 @@
 #define _IntensityTier_h_
 /* IntensityTier.h
  *
- * Copyright (C) 1992-2005,2007,2010-2012,2015-2018,2020-2022 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2010-2012,2015-2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "Sound.h"
 
 Thing_define (IntensityTier, RealTier) {
-	int v_domainQuantity ()
+	int v_domainQuantity () const
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 

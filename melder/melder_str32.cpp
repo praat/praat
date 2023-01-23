@@ -172,7 +172,7 @@ int Melder_coll (/*mut*/ conststring32 string1, /*mut*/ conststring32 string2) n
 	return str32cmp (string1, string2);
 }
 
-int str32coll_numberAware (const conststring32 string1, const conststring32 string2) noexcept {
+int str32coll_numberAware (const conststring32 string1, const conststring32 string2, const bool caseAware) noexcept {
 	auto isZero = [] (const char32 kar) -> bool {
 		return Melder_isDecimalNumber (kar) && (kar & 0xF) == 0;
 	};
@@ -182,7 +182,8 @@ int str32coll_numberAware (const conststring32 string1, const conststring32 stri
 	conststring32 pstring1 = string1, pstring2 = string2;
 	integer totalLeadingZeroes1 = 0, totalLeadingZeroes2 = 0;
 	for (;;) {
-		const char32 kar1 = *pstring1, kar2 = *pstring2;
+		const char32 kar1 = ( caseAware ? Melder_toLowerCase (*pstring1) : *pstring1 );
+		const char32 kar2 = ( caseAware ? Melder_toLowerCase (*pstring2) : *pstring2 );
 		if (kar1 == U'\0') {
 			if (kar2 != U'\0')
 				return -1;
@@ -246,7 +247,7 @@ int str32coll_numberAware (const conststring32 string1, const conststring32 stri
 	if (totalLeadingZeroes1 > totalLeadingZeroes2)
 		return +1;
 	/*
-		The two strings are equivalent,
+		The two strings are equivalent numberwise,
 		and even have the same total number of leading zeroes.
 		Cycle again from left to right,
 		now returning as soon as the local numbers of leading zeroes are different.
@@ -254,10 +255,15 @@ int str32coll_numberAware (const conststring32 string1, const conststring32 stri
 	pstring1 = string1;
 	pstring2 = string2;
 	for (;;) {
-		const char32 kar1 = *pstring1, kar2 = *pstring2;
+		const char32 kar1 = ( caseAware ? Melder_toLowerCase (*pstring1) : *pstring1 );
+		const char32 kar2 = ( caseAware ? Melder_toLowerCase (*pstring2) : *pstring2 );
 		if (kar1 == U'\0') {
 			Melder_assert (kar2 == U'\0');
-			return 0;   // the two strings are identical (not just equivalent)
+			/*
+				The two strings are identical (not just equivalent numberwise).
+				They could still differ in case.
+			*/
+			return caseAware ? str32coll (string1, string2) : 0;
 		}
 		const bool isDigit = Melder_isDecimalNumber (kar1);
 		if (isDigit) {

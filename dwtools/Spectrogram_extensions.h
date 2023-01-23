@@ -44,7 +44,7 @@
 Thing_define (BandFilterSpectrogram, Matrix) {
 	void v1_info ()
 		override;
-	double v_getValueAtSample (integer icol, integer irow, int units)
+	double v_getValueAtSample (integer icol, integer irow, int units) const
 		override;
 
 	virtual double v_frequencyToHertz (double f) { return f; }

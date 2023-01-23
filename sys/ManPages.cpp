@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2022 Paul Boersma
+ * Copyright (C) 1996-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,19 +250,7 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, i
 }
 
 static bool pageCompare (ManPage me, ManPage thee) {
-	const char32 *p = & my title [0], *q = & thy title [0];
-	for (;;) {
-		const char32 plower = Melder_toLowerCase (*p), qlower = Melder_toLowerCase (*q);
-		if (plower < qlower)
-			return true;
-		if (plower > qlower)
-			return false;
-		if (plower == U'\0')
-			return str32cmp (my title.get(), thy title.get()) < 0;
-		p ++;
-		q ++;
-	}
-	return false;   // should not occur
+	return str32coll_numberAware (my title.get(), thy title.get(), true) < 0;
 }
 
 static integer lookUp_unsorted (ManPages me, conststring32 title) {

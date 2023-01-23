@@ -1,6 +1,6 @@
 /* AnyTier.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2015-2018,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,14 +59,14 @@ void structAnyTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 	}
 }
 
-integer AnyTier_timeToLowIndex (AnyTier me, double time) {
+integer AnyTier_timeToLowIndex (const constAnyTier me, const double time) {
 	if (my points.size == 0)
 		return 0;   // undefined
-	integer ileft = 1, iright = my points.size;
-	double tleft = my points.at [ileft] -> number;
+	/* mutable */ integer ileft = 1, iright = my points.size;
+	/* mutable */ double tleft = my points.at [ileft] -> number;
 	if (time < tleft)
 		return 0;   // offleft
-	double tright = my points.at [iright] -> number;
+	/* mutable */ double tright = my points.at [iright] -> number;
 	if (time >= tright)
 		return iright;
 	Melder_assert (time >= tleft && time < tright);
@@ -90,14 +90,14 @@ integer AnyTier_timeToLowIndex (AnyTier me, double time) {
 	return ileft;
 }
 
-integer AnyTier_timeToHighIndex (AnyTier me, double time) {
+integer AnyTier_timeToHighIndex (const constAnyTier me, const double time) {
 	if (my points.size == 0)
 		return 0;   // undefined; is this right?
-	integer ileft = 1, iright = my points.size;
+	/* mutable */ integer ileft = 1, iright = my points.size;
 	double tleft = my points.at [ileft] -> number;
 	if (time <= tleft)
 		return 1;
-	double tright = my points.at [iright] -> number;
+	/* mutable */ double tright = my points.at [iright] -> number;
 	if (time > tright)
 		return iright + 1;   // offright
 	Melder_assert (time > tleft && time <= tright);
@@ -121,7 +121,7 @@ integer AnyTier_timeToHighIndex (AnyTier me, double time) {
 	return iright;
 }
 
-integer AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, integer *imin, integer *imax) {
+integer AnyTier_getWindowPoints (const constAnyTier me, const double tmin, const double tmax, integer * const imin, integer * const imax) {
 	if (my points.size == 0)
 		return 0;
 	*imin = AnyTier_timeToHighIndex (me, tmin);
@@ -131,16 +131,16 @@ integer AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, integer *
 	return *imax - *imin + 1;
 }
 	
-integer AnyTier_timeToNearestIndexInIndexWindow (AnyTier me, double time, integer imin, integer imax) {
+integer AnyTier_timeToNearestIndexInIndexWindow (const constAnyTier me, const double time, const integer imin, const integer imax) {
 	Melder_assert (imin >= 1);
 	Melder_assert (imax <= my points.size);
 	if (imax < imin)
 		return 0;   // undefined
-	integer ileft = imin, iright = imax;
-	double tleft = my points.at [ileft] -> number;
+	/* mutable */ integer ileft = imin, iright = imax;
+	/* mutable */ double tleft = my points.at [ileft] -> number;
 	if (time <= tleft)
 		return ileft;
-	double tright = my points.at [iright] -> number;
+	/* mutable */ double tright = my points.at [iright] -> number;
 	if (time >= tright)
 		return iright;
 	Melder_assert (time > tleft && time < tright);
@@ -164,23 +164,24 @@ integer AnyTier_timeToNearestIndexInIndexWindow (AnyTier me, double time, intege
 	return time - tleft <= tright - time ? ileft : iright;
 }
 
-integer AnyTier_timeToNearestIndex (AnyTier me, double time) {
+integer AnyTier_timeToNearestIndex (const constAnyTier me, const double time) {
 	return AnyTier_timeToNearestIndexInIndexWindow (me, time, 1, my points.size);
 }
 
-integer AnyTier_timeToNearestIndexInTimeWindow (AnyTier me, double time, double tmin, double tmax) {
-	integer imin, imax, n = AnyTier_getWindowPoints (me, tmin, tmax, & imin, & imax);
+integer AnyTier_timeToNearestIndexInTimeWindow (const constAnyTier me, const double time, const double tmin, const double tmax) {
+	/* mutable */ integer imin, imax;
+	const integer n = AnyTier_getWindowPoints (me, tmin, tmax, & imin, & imax);
 	return n == 0 ? 0 : AnyTier_timeToNearestIndexInIndexWindow (me, time, imin, imax);
 }
 
-integer AnyTier_hasPoint (AnyTier me, double t) {
+integer AnyTier_hasPoint (const constAnyTier me, const double t) {
 	if (my points.size == 0)
 		return 0;   // point not found
-	integer ileft = 1, iright = my points.size;
-	double tleft = my points.at [ileft] -> number;
+	/* mutable */ integer ileft = 1, iright = my points.size;
+	/* mutable */ double tleft = my points.at [ileft] -> number;
 	if (t < tleft)
 		return 0;   // offleft
-	double tright = my points.at [iright] -> number;
+	/* mutable */ double tright = my points.at [iright] -> number;
 	if (t > tright)
 		return 0;   // offright
 	if (t == tleft)
@@ -211,7 +212,7 @@ integer AnyTier_hasPoint (AnyTier me, double t) {
 	return 0;   // point not found
 }
 
-void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point) {
+void AnyTier_addPoint_move (const AnyTier me, autoAnyPoint point) {
 	try {
 		my points. addItem_move (point.move());
 	} catch (MelderError) {
@@ -219,18 +220,18 @@ void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point) {
 	}
 }
 
-void AnyTier_removePoint (AnyTier me, integer i) {
+void AnyTier_removePoint (const AnyTier me, const integer i) {
 	if (i >= 1 && i <= my points.size)
 		my points. removeItem (i);
 }
 
-void AnyTier_removePointNear (AnyTier me, double time) {
+void AnyTier_removePointNear (const AnyTier me, const double time) {
 	const integer ipoint = AnyTier_timeToNearestIndex (me, time);
 	if (ipoint > 0)
 		my points. removeItem (ipoint);
 }
 
-void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
+void AnyTier_removePointsBetween (const AnyTier me, const double tmin, const double tmax) {
 	if (my points.size == 0)
 		return;
 	const integer ileft = AnyTier_timeToHighIndex (me, tmin);
@@ -239,7 +240,7 @@ void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
 		my points. removeItem (i);
 }
 
-autoPointProcess AnyTier_downto_PointProcess (AnyTier me) {
+autoPointProcess AnyTier_downto_PointProcess (const constAnyTier me) {
 	try {
 		const integer numberOfPoints = my points.size;
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);

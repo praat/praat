@@ -29,7 +29,7 @@
 
 Thing_implement (PowerCepstrogram, Matrix, 2); // derives from Matrix -> also version 2
 
-double structPowerCepstrogram :: v_getValueAtSample (integer sampleNumber, integer row, int unit) {
+double structPowerCepstrogram :: v_getValueAtSample (integer sampleNumber, integer row, int unit) const {
 	double result = undefined;
 	if (row >= 1 && row <= ny) {
 		if (unit == 0)

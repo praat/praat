@@ -58,7 +58,7 @@ void structStrings :: v1_info () {
 	MelderInfo_writeLine (U"Longest string: ", Strings_maximumLength (this), U" characters");
 }
 
-conststring32 structStrings :: v_getVectorStr (integer icol) {
+conststring32 structStrings :: v_getVectorStr (const integer icol) const {
 	if (icol < 1 || icol > our numberOfStrings)
 		return U"";
 	char32 *stringValue = strings [icol].get();

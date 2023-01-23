@@ -1,6 +1,6 @@
 /* Sampled_def.h
  *
- * Copyright (C) 1992-2005,2011,2014-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2014-2018,2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,30 +34,30 @@ oo_DEFINE_CLASS (Sampled, Function)
 	#endif
 
 	#if oo_DECLARING
-		bool v_hasGetNx ()
+		bool v_hasGetNx () const
 			override { return true; }
-		double v_getNx ()
+		double v_getNx () const
 			override { return nx; }
-		bool v_hasGetDx ()
+		bool v_hasGetDx () const
 			override { return true; }
-		double v_getDx ()
+		double v_getDx () const
 			override { return dx; }
-		bool v_hasGetX ()
+		bool v_hasGetX () const
 			override { return true; }
-		double v_getX (integer ix)
+		double v_getX (const integer ix) const
 			override { return x1 + (ix - 1) * dx; }
 		void v_shiftX (double xfrom, double xto)
 			override;
 		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
 			override;
 
-		virtual double v_getValueAtSample (integer /* isamp */, integer /* ilevel */, int /* unit */)
+		virtual double v_getValueAtSample (integer /* isamp */, integer /* ilevel */, int /* unit */) const
 			{ return undefined; }
 		virtual conststring32 v_getIndexText () const
 			{ return U"index"; }
 		virtual conststring32 v_getNxText () const
 			{ return U"nx"; }
-		virtual void checkIndex (integer index) {
+		virtual void checkIndex (const integer index) {
 			Melder_require (index >= 1,
 				U"The ", our v_getIndexText (), U" should be at least 1, but is ", index, U" instead.");
 			Melder_require (index <= our nx,

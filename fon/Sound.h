@@ -28,15 +28,15 @@
 Thing_define (Sound, Vector) {
 	void v1_info ()
 		override;
-	bool v_hasGetMatrix ()
+	bool v_hasGetMatrix () const
 		override { return true; }
-	double v_getMatrix (integer irow, integer icol)
+	double v_getMatrix (integer irow, integer icol) const
 		override;
-	bool v_hasGetFunction2 ()
+	bool v_hasGetFunction2 () const
 		override { return true; }
-	double v_getFunction2 (double x, double y)
+	double v_getFunction2 (double x, double y) const
 		override;
-	int v_domainQuantity ()
+	int v_domainQuantity () const
 		override { return MelderQuantity_TIME_SECONDS; }
 };
 

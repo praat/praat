@@ -1,6 +1,6 @@
 /* FormantGrid_def.h
  *
- * Copyright (C) 2008-2011,2015,2017 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2012,2015-2018,2023 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@ oo_DEFINE_CLASS (FormantGrid, Function)
 	oo_COLLECTION_OF (OrderedOf, bandwidths, RealTier, 0)
 
 	#if oo_DECLARING
-		bool v_hasGetVector ()
+		bool v_hasGetVector () const
 			override { return true; }
-		double v_getVector (integer irow, integer icol)
+		double v_getVector (integer irow, integer icol) const
 			override;
-		bool v_hasGetFunction1 ()
+		bool v_hasGetFunction1 () const
 			override { return true; }
-		double v_getFunction1 (integer irow, double x)
+		double v_getFunction1 (integer irow, double x) const
 			override;
-		conststring32 v_getUnitText (integer ilevel, int /* unit */, uint32 /* flags */)
+		conststring32 v_getUnitText (integer ilevel, int /* unit */, uint32 /* flags */) const
 			override { return ilevel & 1 ? U"Formant (Hz)" : U"Bandwidth (Hz)"; }
 		void v_shiftX (double xfrom, double xto)
 			override;

@@ -95,7 +95,7 @@ void structSound :: v1_info () {
 	}
 }
 
-double structSound :: v_getMatrix (integer irow, integer icol) {
+double structSound :: v_getMatrix (const integer irow, const integer icol) const {
 	if (irow < 1 || irow > our ny) {
 		if (irow == 0) {
 			if (icol < 1 || icol > nx)
@@ -116,7 +116,7 @@ double structSound :: v_getMatrix (integer irow, integer icol) {
 	return our z [irow] [icol];
 }
 
-double structSound :: v_getFunction2 (double x, double y) {
+double structSound :: v_getFunction2 (const double x, const double y) const {
 	const integer channel = Melder_ifloor (y);
 	if (channel < 0 || channel > our ny || y != (double) channel)
 		return 0.0;

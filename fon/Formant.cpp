@@ -1,6 +1,6 @@
 /* Formant.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2020,2022 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ void structFormant :: v1_info () {
 	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
-double structFormant :: v_getValueAtSample (integer iframe, integer which, int units) {
+double structFormant :: v_getValueAtSample (integer iframe, integer which, int units) const {
 	const Formant_Frame frame = & our frames [iframe];
 	const integer iformant = which >> 1;
 	if (iformant < 1 || iformant > frame -> numberOfFormants)

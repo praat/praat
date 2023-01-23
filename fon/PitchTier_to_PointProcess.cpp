@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2005,2011,2012,2015-2017,2019 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2012,2015-2017,2019,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp
 	}
 }
 
-autoTableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones) {
+autoTableOfReal PitchTier_downto_TableOfReal (const constPitchTier me, const bool useSemitones) {
 	try {
 		autoTableOfReal thee = RealTier_downto_TableOfReal (me, U"Time", U"F0");
 		if (useSemitones)

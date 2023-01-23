@@ -27,17 +27,17 @@ void structConstantQLog2FSpectrogram :: v1_info () {
 	MelderInfo_writeLine (U"Quality factor Q: ", ConstantQLog2FSpectrogram_getQualityFactor (this));
 }
 
-double structConstantQLog2FSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) {
+double structConstantQLog2FSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) const {
 	FrequencyBin bin = frequencyBins.at [ifreq];
 	const double value = bin -> v_getValueAtSample (iframe, 1, unit);
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, iframe, unit) : undefined );
 }
 
-double structConstantQLog2FSpectrogram :: v_myFrequencyUnitToHertz (double log2_f) {
+double structConstantQLog2FSpectrogram :: v_myFrequencyUnitToHertz (double log2_f) const {
 	return exp2 (log2_f);
 }
 
-double structConstantQLog2FSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz) {
+double structConstantQLog2FSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz) const {
 	return ( f_hz > 0.0 ? log2 (f_hz) : undefined );
 }
 

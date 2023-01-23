@@ -1,6 +1,6 @@
 /* Pitch.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2021 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,15 +46,15 @@
 
 Thing_implement (Pitch, Sampled, 1);
 
-int structPitch :: v_getMinimumUnit (integer level) {
+int structPitch :: v_getMinimumUnit (const integer level) const {
 	return level == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MIN : Pitch_STRENGTH_UNIT_min;
 }
 
-int structPitch :: v_getMaximumUnit (integer level) {
+int structPitch :: v_getMaximumUnit (const integer level) const {
 	return level == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MAX : Pitch_STRENGTH_UNIT_max;
 }
 
-conststring32 structPitch :: v_getUnitText (integer level, int unit, uint32 flags) {
+conststring32 structPitch :: v_getUnitText (const integer level, const int unit, const uint32 flags) const {
 	if (level == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == (int) kPitch_unit::HERTZ ?
@@ -85,11 +85,11 @@ conststring32 structPitch :: v_getUnitText (integer level, int unit, uint32 flag
 	return U"unknown";
 }
 
-bool structPitch :: v_isUnitLogarithmic (integer level, int unit) {
+bool structPitch :: v_isUnitLogarithmic (const integer level, const int unit) const {
 	return level == Pitch_LEVEL_FREQUENCY && unit == (int) kPitch_unit::HERTZ_LOGARITHMIC;
 }
 
-double structPitch :: v_convertStandardToSpecialUnit (double value, integer level, int unit) {
+double structPitch :: v_convertStandardToSpecialUnit (const double value, const integer level, const int unit) const {
 	if (level == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == (int) kPitch_unit::HERTZ ? value :
@@ -113,7 +113,7 @@ double structPitch :: v_convertStandardToSpecialUnit (double value, integer leve
 	}
 }
 
-double structPitch :: v_convertSpecialToStandardUnit (double value, integer level, int unit) {
+double structPitch :: v_convertSpecialToStandardUnit (const double value, const integer level, const int unit) const {
 	if (level == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == (int) kPitch_unit::HERTZ ? value :
@@ -136,7 +136,7 @@ double structPitch :: v_convertSpecialToStandardUnit (double value, integer leve
 	  (unit) == kPitch_unit::SEMITONES_1 || (unit) == kPitch_unit::SEMITONES_100 ||  \
 	  (unit) == kPitch_unit::SEMITONES_200 || (unit) == kPitch_unit::SEMITONES_440 )
 
-double structPitch :: v_getValueAtSample (integer iframe, integer ilevel, int unit) {
+double structPitch :: v_getValueAtSample (const integer iframe, const integer ilevel, const int unit) const {
 	const double f = our frames [iframe]. candidates [1]. frequency;
 	if (! Pitch_util_frequencyIsVoiced (f, our ceiling))
 		return undefined;

@@ -26,11 +26,11 @@
 Thing_define (ConstantQLog2FSpectrogram, MultiSampledSpectrogram) {
 	void v1_info ()
 		override;
-	double v_getValueAtSample (integer ifreq, integer iframe, int unit)
+	double v_getValueAtSample (integer ifreq, integer iframe, int unit) const
 		override;
-	double v_myFrequencyUnitToHertz (double log2_f)
+	double v_myFrequencyUnitToHertz (double log2_f) const
 		override;
-	double v_hertzToMyFrequencyUnit (double f_hz)
+	double v_hertzToMyFrequencyUnit (double f_hz) const
 		override;
 };
 
@@ -49,9 +49,9 @@ autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (Const
 Thing_define (GaborSpectrogram, MultiSampledSpectrogram) {
 	void v1_info ()
 		override;
-	double v_myFrequencyUnitToHertz (double f)
+	double v_myFrequencyUnitToHertz (double f) const
 		override { return f; }
-	double v_hertzToMyFrequencyUnit (double f)
+	double v_hertzToMyFrequencyUnit (double f) const
 		override { return f; }
 };
 

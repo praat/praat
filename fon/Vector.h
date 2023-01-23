@@ -2,7 +2,7 @@
 #define _Vector_h_
 /* Vector.h
  *
- * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +24,19 @@
 #include "Matrix.h"
 
 Thing_define (Vector, Matrix) {
-	bool v_hasGetVector ()
+	bool v_hasGetVector () const
 		override { return true; }
-	double v_getVector (integer irow, integer icol)
+	double v_getVector (integer irow, integer icol) const
 		override;
-	bool v_hasGetFunction1 ()
+	bool v_hasGetFunction1 () const
 		override { return true; }
-	double v_getFunction1 (integer irow, double x)
+	double v_getFunction1 (integer irow, double x) const
 		override;
-	bool v_hasGetMatrix ()
+	bool v_hasGetMatrix () const
 		override { return false; }
-	bool v_hasGetFunction2 ()
+	bool v_hasGetFunction2 () const
 		override { return false; }
-	double v_getValueAtSample (integer isamp, integer ilevel, int unit)
+	double v_getValueAtSample (integer isamp, integer ilevel, int unit) const
 		override;
 
 	VEC channel (integer channelNumber) { return z.row (channelNumber); }

@@ -37,7 +37,7 @@
 */
 
 Thing_define (PowerCepstrum, Cepstrum) {
-	double v_getValueAtSample (integer isamp, integer which, int units)
+	double v_getValueAtSample (integer isamp, integer which, int units) const
 		override;
 };
 

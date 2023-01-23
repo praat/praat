@@ -23,7 +23,7 @@
 
 
 Thing_define (FrequencyBin, AnalyticSound) {
-	double v_getValueAtSample (integer isample, integer which, int unit)
+	double v_getValueAtSample (integer isample, integer which, int unit) const
 		override;
 };
 

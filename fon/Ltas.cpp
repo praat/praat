@@ -41,7 +41,7 @@ void structLtas :: v1_info () {
 	MelderInfo_writeLine (U"Total SPL: ", Melder_single (10.0 * log10 (meanPowerDensity * (xmax - xmin))), U" dB");
 }
 
-double structLtas :: v_convertStandardToSpecialUnit (double value, integer /* level */, int unit) {
+double structLtas :: v_convertStandardToSpecialUnit (double value, integer /* level */, int unit) const {
 	if (unit == 1) {
 		return pow (10.0, 0.1 * value);   // energy
 	} else if (unit == 2) {
@@ -50,7 +50,7 @@ double structLtas :: v_convertStandardToSpecialUnit (double value, integer /* le
 	return value;
 }
 
-double structLtas :: v_convertSpecialToStandardUnit (double value, integer /* level */, int unit) {
+double structLtas :: v_convertSpecialToStandardUnit (double value, integer /* level */, int unit) const {
 	return
 		unit == 1 ?
 			10.0 * log10 (value) :   // value = energy
