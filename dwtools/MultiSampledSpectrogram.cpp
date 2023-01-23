@@ -48,7 +48,7 @@ double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which, 
 	return ( unit == 1 ? power : unit == 2 ? 10.0 * log10 ((power + 1e-30) / 4e-10) : undefined );
 }
 
-Thing_implement (MultiSampledSpectrogram, Sampled, 0);
+Thing_implement_pureVirtual (MultiSampledSpectrogram, Sampled, 0);
 
 void structMultiSampledSpectrogram :: v1_info () {
 	structDaata :: v1_info ();
