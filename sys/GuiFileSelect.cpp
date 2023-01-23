@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2022 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 2010-2023 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,18 +53,19 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		setlocale (LC_ALL, "C");
 	#elif motif
-		static OPENFILENAMEW openFileName, dummy;
-		static WCHAR fullFileNameW [3000+2];
+		static OPENFILENAMEW openFileName;   // TODO: replace with Common Item Dialog API (since Vista)
+		constexpr integer MAXIMUM_SIZE = 3000000;
+		autostringW fullFileNameW (MAXIMUM_SIZE + 2);
 		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
 		openFileName. lStructSize = sizeof (OPENFILENAMEW);
 		openFileName. hwndOwner = parent && parent -> d_xmShell ? (HWND) XtWindow (parent -> d_xmShell) : nullptr;
 		openFileName. hInstance = nullptr;
 		openFileName. lpstrFilter = L"All Files\0*.*\0";
-		ZeroMemory (fullFileNameW, (3000+2) * sizeof (WCHAR));
+		ZeroMemory (fullFileNameW.get(), (MAXIMUM_SIZE+2) * sizeof (WCHAR));
 		openFileName. lpstrCustomFilter = nullptr;
 		openFileName. nMaxCustFilter = 0;
-		openFileName. lpstrFile = fullFileNameW;
-		openFileName. nMaxFile = 3000;
+		openFileName. lpstrFile = fullFileNameW.get();
+		openFileName. nMaxFile = MAXIMUM_SIZE;
 		openFileName. lpstrFileTitle = nullptr;
 		openFileName. nMaxFileTitle = 0;
 		openFileName. lpstrInitialDir = nullptr;
@@ -82,19 +83,19 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
 		GetVersionEx (& osVersionInfo);
 		if (GetOpenFileNameW (& openFileName)) {
-			int firstFileNameLength = wcslen (fullFileNameW);
+			int firstFileNameLength = wcslen (fullFileNameW.get());
 			if (fullFileNameW [firstFileNameLength + 1] == L'\0') {
 				/*
 					The user selected one file.
 				*/
-				my addString_copy (Melder_peekWto32 (fullFileNameW));
+				my addString_copy (Melder_peekWto32 (fullFileNameW.get()));
 			} else {
 				/*
 					The user selected multiple files.
 					'fullFileNameW' is a folder name; the file names follow.
 				*/
 				structMelderDir dir { };
-				Melder_pathToDir (Melder_peekWto32 (fullFileNameW), & dir);
+				Melder_pathToDir (Melder_peekWto32 (fullFileNameW.get()), & dir);
 				for (const WCHAR *p = & fullFileNameW [firstFileNameLength + 1]; *p != L'\0'; p += wcslen (p) + 1) {
 					structMelderFile file { };
 					MelderDir_getFile (& dir, Melder_peekWto32 (p), & file);
