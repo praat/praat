@@ -642,8 +642,8 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			/*
 				Parse obligatory content of argument.
 			*/
-			MelderString_empty (& string);
 			if (hasColon) {
+				MelderString_empty (& string);
 				if (Melder_isAsciiDecimalNumber (*p)) {
 					if (type != Interpreter_CHOICE && type != Interpreter_BOOLEAN) {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
@@ -685,14 +685,13 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				Melder_skipHorizontalSpace (& p);
 				if (! Melder_isEndOfLine (*p) && *p != U';')
 					Melder_throw (U"Stray characters after default argument in form title:\n“", startOfLine, U"”.");
+				my arguments [my numberOfParameters] = Melder_dup_f (string.string);
 			} else {
-				while (Melder_staysWithinInk (*p))
-					MelderString_appendCharacter (& string, *(p ++));
+				my arguments [my numberOfParameters] = Melder_ndup (p, endOfLine - p);
 			}
+			my types [my numberOfParameters] = type;
 			if (Melder_isEndOfText (*endOfLine))
 				Melder_throw (U"Unfinished form (missing “endform”).");
-			my arguments [my numberOfParameters] = Melder_dup_f (string.string);
-			my types [my numberOfParameters] = type;
 		}
 	} else {
 		npar = my numberOfParameters = 0;
