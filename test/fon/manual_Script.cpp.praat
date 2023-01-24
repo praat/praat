@@ -16,6 +16,12 @@ assert 4^3 ^ 2 = 262144
 
 assert (4 ^ 3) ^ 2 = 4096
 
+assert (-2)^6 = 64
+
+assert -(2^6) = -64
+
+assert -(2)^6 = -64
+
 assert 1/4*5 = 1.25
 assert 1 / 4*5 = 1.25
 assert 1 / (4*5) = 0.05
@@ -55,6 +61,63 @@ assert 54 div (5 * 3) = 3
 assert 54 mod 5 * 3 = 12
 
 assert 54 mod (5 * 3) = 9
+
+assert 3 - 8 + 7 = 2
+
+assert 3 - (8 + 7) = -12
+
+assert 3 + 8 * 7 = 59
+
+assert (3 + 8) * 7 = 77
+
+assert 3 + - (2 ^ 4) = -13
+
+assert 3 + 5 / 2 + 3 = 8.5
+
+assert (3 + 5) / (2 + 3) = 1.6
+
+assert ( 5 + 6 = 10 ) = 0
+
+assert ( 5 + 6 = 11 ) = 1
+
+assert ( 5 + 6 <> 10 ) = 1
+
+assert ( 5 + 6 <> 11 ) = 0
+
+assert ( 5 + 6 < 10 ) = 0
+
+assert ( 5 + 6 < 11 ) = 0
+
+assert ( 5 + 6 > 10 ) = 1
+
+assert ( 5 + 6 > 11 ) = 0
+
+assert ( 5 + 6 <= 10 ) = 0
+
+assert ( 5 + 6 <= 11 ) = 1
+
+assert ( 5 + 6 >= 10 ) = 1
+
+assert ( 5 + 6 >= 11 ) = 1
+
+assert ( not 5 + 6 = 10 ) = 1
+
+x = 7
+assert ( x > 5 and x < 10 ) = 1
+assert ( not x <= 5 and not x >= 10 ) = 1
+assert ( not (x <= 5 or x >= 10) ) = 1
+x = 3
+assert ( x > 5 and x < 10 ) = 0
+assert ( not x <= 5 and not x >= 10 ) = 0
+assert ( not (x <= 5 or x >= 10) ) = 0
+x = 11
+assert ( x > 5 and x < 10 ) = 0
+assert ( not x <= 5 and not x >= 10 ) = 0
+assert ( not (x <= 5 or x >= 10) ) = 0
+x = undefined
+assert ( x > 5 and x < 10 ) = 0
+assert ( not x <= 5 and not x >= 10 ) = 1
+assert ( not (x <= 5 or x >= 10) ) = 1
 
 string$ = "hallo"
 length = length (string$ + "dag")

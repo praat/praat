@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,20 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20221217)
+MAN_BEGIN (U"What's new?", U"ppgb", 20230124)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.04# (24 January 2023)")
+LIST_ITEM (U"• Playing multiple sounds with #Play now concatenates them without breaks, "
+	"and is interruptable by the Escape key.")
+LIST_ITEM (U"• Renamed the remaining occurrences of “Preferences” with “Settings” "
+	"(old scripts will continue to work).")
+LIST_ITEM (U"• ##Create Polygon from values...")
+LIST_ITEM (U"• ##Sound: To Sound (derivative)...")
+LIST_ITEM (U"• Scripting: forms now look more like other commands.")
+LIST_ITEM (U"• Scripting: forms can contain #infile, #outfile, #folder, #realvector, "
+	"#positivevector, #integervector and #naturalvector fields.")
+LIST_ITEM (U"• Scripting: in forms and pause forms, you can now set the number of lines in "
+	"#text, #infile, #outfile, #folder, and vector fields.")
 NORMAL (U"##6.3.03# (17 December 2022)")
 LIST_ITEM (U"• Sound files: read Kay\\re Nasometer\\tm files (as separate channels).")
 LIST_ITEM (U"• Script window: indent and exdent.")

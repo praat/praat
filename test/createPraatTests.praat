@@ -1,5 +1,5 @@
 # Praat script createPraatTests.praat
-# Paul Boersma 2020-12-30
+# Paul Boersma 2023-01-24
 
 # This script extracts tests from C++ source code files
 # in which Praat script snippets have been inserted
@@ -50,6 +50,9 @@ procedure createTest: .folder$, .file$
 				.numberOfLeadingTabs = index (.line$, "/*@praat")
 				label again
 				.iline += 1
+				if .iline > size (.lines$#)
+					exitScript: "Early end of file detected in ", .file$
+				endif
 				.line$ = .lines$# [.iline]
 				goto finish index (.line$, "@*/")
 				appendFileLine: .targetFile$, mid$ (.line$, .numberOfLeadingTabs + 1, 1000)

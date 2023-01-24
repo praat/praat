@@ -1821,6 +1821,10 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 	InterpreterVariable var = Interpreter_hasVariable (me, vectorName);
 	if (! var)
 		Melder_throw (U"Vector ", vectorName, U" does not exist.");
+	/*@praat
+		asserterror Vector interpreter_assignToVector# does not exist.
+		interpreter_assignToVector# [5] = 3
+	@*/
 	if (indexValue < 1)
 		Melder_throw (U"A vector index cannot be less than 1 (the index you supplied is ", indexValue, U").");
 	if (indexValue > var -> numericVectorValue.size)
@@ -3144,9 +3148,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Reversing the order of the first and second step would fail the following test:
 								*/
 								/*@praat
-									asserterror Variable interpreter_assignToVector# does not exist.
+									asserterror Unknown variable:'newline$'« interpreter_assignToVector#
 									interpreter_assignToVector# = interpreter_assignToVector# + 5
-								*/
+								@*/
 								p ++;   // step over equals sign
 								while (Melder_isHorizontalSpace (*p))
 									p ++;   // go to first token after assignment
@@ -3183,6 +3187,10 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (! var)
 									Melder_throw (U"The vector ", vectorName.string, U" does not exist.\n"
 									              U"You can increment (+=) only existing vectors.");
+								/*@praat
+									asserterror The vector interpreter_assignToVector# does not exist.
+									interpreter_assignToVector# += 5
+								@*/
 								Formula_Result result;
 								Interpreter_anyExpression (me, p += 2, & result);
 								if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {

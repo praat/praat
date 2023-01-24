@@ -54,7 +54,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		setlocale (LC_ALL, "C");
 	#elif motif
 		static OPENFILENAMEW openFileName;   // TODO: replace with Common Item Dialog API (since Vista)
-		constexpr integer MAXIMUM_SIZE = 3000000;
+		constexpr integer MAXIMUM_SIZE = 3'000'000;
 		autostringW fullFileNameW (MAXIMUM_SIZE + 2);
 		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
 		openFileName. lStructSize = sizeof (OPENFILENAMEW);
@@ -83,7 +83,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
 		GetVersionEx (& osVersionInfo);
 		if (GetOpenFileNameW (& openFileName)) {
-			int firstFileNameLength = wcslen (fullFileNameW.get());
+			const integer firstFileNameLength = wcslen (fullFileNameW.get());
 			if (fullFileNameW [firstFileNameLength + 1] == L'\0') {
 				/*
 					The user selected one file.
