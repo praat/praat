@@ -127,27 +127,64 @@ void MelderString_nappend (MelderString *me, conststring32 sourceOrNull, integer
 	my string [my length] = U'\0';
 }
 
-void MelderString16_appendCharacter (MelderString16 *me, char32 kar) {
+void MelderString16_appendCharacter (MelderString16 *const me, const char32 kar) {
 	const int64 sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null character
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand_ <MelderString16, char16> (me, sizeNeeded);
 	if (kar <= 0x00'FFFF) {
-		my string [my length] = (char16) kar;   // guarded cast
+		/*
+			A character between 0x0000 and 0xD7FF or between 0xE000 and 0xFFFF.
+
+			If the input contains a number between 0xD800 and 0xDFFF
+			(the range reserved for "surrogates", see below),
+			then we don't check this. In the best case, we will have
+			a valid surrogate pair (a "high surrogate between 0xD800 and 0xDBFF"
+			followed by a "low surrogate" between 0xDC00 and 0xDFFF),
+			perhaps caused by an earlier incorrect conversion from UTF-16 to UTF-32,
+			and in the worst case the output will turn up with an "unpaired surrogate",
+			perhaps caused by reading a Windows file path, which can legally consist of
+			a sequence of freely chosen WCHARs between 0x0000 and 0xFFFF.
+
+			Thus, not checking for surrogates, which strictly speaking constitute
+			illegal UTF-16, is probably correct, and even desired on Windows.
+			So please do not change this strategy, except for very good reasons,
+			which you should then please explain here.
+		*/
+		my string [my length] = (char16) kar;   // guarded cast (i.e. cannot overflow, because of prior check)
 		my length ++;
 	} else if (kar <= 0x10'FFFF) {
-		kar -= 0x01'0000;
-		my string [my length] = (char16) (0x00'D800 | (kar >> 10));
+		/*
+			We turn 21-bit numbers between 0x01'0000 and 0x10'FFFF
+			into 20-bit numbers between 0 and 0x0F'FFFF.
+		*/
+		const char32 distanceAboveBMP = kar - 0x01'0000;
+		/*
+			We put the high 10 bits of the 20-bit number
+			into a place between 0xD800 and 0xDBFF;
+			this result will always be recognizable as a "high surrogate".
+		*/
+		my string [my length] = (char16) (0x00'D800 | (distanceAboveBMP >> 10));
 		my length ++;
-		my string [my length] = (char16) (0x00'DC00 | (kar & 0x00'03FF));
+		/*
+			We put the low 10 bits of the 20-bit number
+			into a place between 0xDC00 and 0xDFFF;
+			this result will always be recognizable as a "low surrogate".
+		*/
+		my string [my length] = (char16) (0x00'DC00 | (distanceAboveBMP & 0x00'03FF));
 		my length ++;
 	} else {
+		/*
+			These illegal cases are outside the Unicode codespace,
+			and cannot be converted to UTF-16.
+			Gently hint at the problem in the output, by showing "�".
+		*/
 		my string [my length] = UNICODE_REPLACEMENT_CHARACTER;
 		my length ++;
 	}
 	my string [my length] = u'\0';
 }
 
-void MelderString_appendCharacter (MelderString *me, char32 character) {
+void MelderString_appendCharacter (MelderString *me, const char32 character) {
 	const int64 sizeNeeded = my length + 2;   // make room for character and null character
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand_ <MelderString, char32> (me, sizeNeeded);
@@ -156,14 +193,14 @@ void MelderString_appendCharacter (MelderString *me, char32 character) {
 	my string [my length] = U'\0';
 }
 
-void MelderString_get (MelderString *me, char32 *destination) {
+void MelderString_get (MelderString *me, char32 *const destination) {
 	if (my string)
 		str32cpy (destination, my string);
 	else
 		destination [0] = U'\0';
 }
 
-void MelderString_truncate (MelderString *me, integer maximumLength) {
+void MelderString_truncate (MelderString *const me, const integer maximumLength) {
 	if (maximumLength < my length) {
 		my length = maximumLength;
 		my string [my length] = U'\0';

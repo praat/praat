@@ -657,7 +657,7 @@ CODE (U"17")
 CODE (U"13.5")
 MAN_END
 
-MAN_BEGIN (U"Formulas 3. Operators", U"ppgb", 20170913)
+MAN_BEGIN (U"Formulas 3. Operators", U"ppgb", 20230124)
 NORMAL (U"In formulas you can use the numerical and logical operators that are described on this page. "
 	"The order of evaluation of the operators is the order that is most usual in programming languages. "
 	"To force a different order, you use parentheses.")
@@ -682,9 +682,9 @@ NORMAL (U"The following construction is not allowed because of an ambiguity betw
 	"and negation of a positive number:")
 CODE (U"-2\\^ 6 \\-> ?")
 NORMAL (U"Instead, you use any of the following:")
-CODE (U"(-2)\\^ 6 \\-> 64")
-CODE (U"-(2\\^ 6) \\-> -64")
-CODE (U"-(2)\\^ 6 \\-> -64")
+CODE (U"(-2)\\^ 6 \\-> 64")                           //@praat assert (-2)^6 = 64
+CODE (U"-(2\\^ 6) \\-> -64")                          //@praat assert -(2^6) = -64
+CODE (U"-(2)\\^ 6 \\-> -64")                          //@praat assert -(2)^6 = -64
 NORMAL (U"The operators with the next highest precedence are #multiplication (*) and #division (/). They are evaluated "
 	"from left to right:")
 CODE (U"1/4*5 \\-> 1.25        (from left to right)")
@@ -723,34 +723,52 @@ CODE (U"54 mod 5 * 3 \\-> 12")                                                  
 CODE (U"54 mod (5 * 3) \\-> 9")                                                      //@praat assert 54 mod (5 * 3) = 9
 NORMAL (U"The operators with the next highest precedence are #addition (+) and #subtraction (-), "
 	"evaluated from left to right:")
-CODE (U"3 - 8 + 7 \\-> 2       (from left to right)")
-CODE (U"3 - (8 + 7) \\-> -12   (use parentheses to change the order)")
-CODE (U"3 + 8 * 7 \\-> 59      (multiplication before addition)")
-CODE (U"(3 + 8) * 7 \\-> 77    (use parentheses to change the order)")
-CODE (U"3 + - (2 \\^  4) \\-> -13   (exponentiation, negation, addition)")
-CODE (U"3 + 5 / 2 + 3 \\-> 8.5")
-CODE (U"(3 + 5) / (2 + 3) \\-> 1.6")
+CODE (U"3 - 8 + 7 \\-> 2       (from left to right)")                                //@praat assert 3 - 8 + 7 = 2
+CODE (U"3 - (8 + 7) \\-> -12   (use parentheses to change the order)")               //@praat assert 3 - (8 + 7) = -12
+CODE (U"3 + 8 * 7 \\-> 59      (multiplication before addition)")                    //@praat assert 3 + 8 * 7 = 59
+CODE (U"(3 + 8) * 7 \\-> 77    (use parentheses to change the order)")               //@praat assert (3 + 8) * 7 = 77
+CODE (U"3 + - (2 \\^  4) \\-> -13   (exponentiation, negation, addition)")           //@praat assert 3 + - (2 ^ 4) = -13
+CODE (U"3 + 5 / 2 + 3 \\-> 8.5")                                                     //@praat assert 3 + 5 / 2 + 3 = 8.5
+CODE (U"(3 + 5) / (2 + 3) \\-> 1.6")                                                 //@praat assert (3 + 5) / (2 + 3) = 1.6
 NORMAL (U"The operators with the next highest precedence are the #comparison operators "
 	"($$=, <>, <, >, <=, >=$). These operators always yield 0 (%false) or 1 (%true):")
-CODE (U"5 + 6 = 10 \\-> 0      (equal)")
-CODE (U"5 + 6 = 11 \\-> 1")
-CODE (U"5 + 6 <> 10 \\-> 1     (unequal)")
-CODE (U"5 + 6 <> 11 \\-> 0")
-CODE (U"5 + 6 < 10 \\-> 0      (less than)")
-CODE (U"5 + 6 < 11 \\-> 0")
-CODE (U"5 + 6 > 10 \\-> 1      (greater than)")
-CODE (U"5 + 6 > 11 \\-> 0")
-CODE (U"5 + 6 <= 10 \\-> 0     (less than or equal)")
-CODE (U"5 + 6 <= 11 \\-> 1")
-CODE (U"5 + 6 >= 10 \\-> 1     (greater or equal)")
-CODE (U"5 + 6 >= 11 \\-> 1")
+CODE (U"5 + 6 = 10 \\-> 0      (equal)")                                             //@praat assert ( 5 + 6 = 10 ) = 0
+CODE (U"5 + 6 = 11 \\-> 1")                                                          //@praat assert ( 5 + 6 = 11 ) = 1
+CODE (U"5 + 6 <> 10 \\-> 1     (unequal)")                                           //@praat assert ( 5 + 6 <> 10 ) = 1
+CODE (U"5 + 6 <> 11 \\-> 0")                                                         //@praat assert ( 5 + 6 <> 11 ) = 0
+CODE (U"5 + 6 < 10 \\-> 0      (less than)")                                         //@praat assert ( 5 + 6 < 10 ) = 0
+CODE (U"5 + 6 < 11 \\-> 0")                                                          //@praat assert ( 5 + 6 < 11 ) = 0
+CODE (U"5 + 6 > 10 \\-> 1      (greater than)")                                      //@praat assert ( 5 + 6 > 10 ) = 1
+CODE (U"5 + 6 > 11 \\-> 0")                                                          //@praat assert ( 5 + 6 > 11 ) = 0
+CODE (U"5 + 6 <= 10 \\-> 0     (less than or equal)")                                //@praat assert ( 5 + 6 <= 10 ) = 0
+CODE (U"5 + 6 <= 11 \\-> 1")                                                         //@praat assert ( 5 + 6 <= 11 ) = 1
+CODE (U"5 + 6 >= 10 \\-> 1     (greater or equal)")                                  //@praat assert ( 5 + 6 >= 10 ) = 1
+CODE (U"5 + 6 >= 11 \\-> 1")                                                         //@praat assert ( 5 + 6 >= 11 ) = 1
 NORMAL (U"The comparison operators are mainly used in #if, #while, and #until conditions.")
 NORMAL (U"The operators of lowest precedence are the #logical operators (#not, #and, and #or), of which #not has the "
 	"highest precedence and #or the lowest:")
-CODE (U"not 5 + 6 = 10 \\-> 1")
+CODE (U"not 5 + 6 = 10 \\-> 1")                                                      //@praat assert ( not 5 + 6 = 10 ) = 1
 CODE (U"x > 5 and x < 10               (is x between 5 and 10?)")
-CODE (U"not x <= 5 and not x >= 10     (means the same as the previous line)")
-CODE (U"not (x <= 5 or x >= 10)        (means the same as the previous line, unless x is undefined)")
+CODE (U"not x <= 5 and not x >= 10     (means the same as the previous line, except if x is undefined)")
+CODE (U"not (x <= 5 or x >= 10)        (again means the same, except if x is undefined)")
+/*@praat
+	x = 7
+	assert ( x > 5 and x < 10 ) = 1
+	assert ( not x <= 5 and not x >= 10 ) = 1
+	assert ( not (x <= 5 or x >= 10) ) = 1
+	x = 3
+	assert ( x > 5 and x < 10 ) = 0
+	assert ( not x <= 5 and not x >= 10 ) = 0
+	assert ( not (x <= 5 or x >= 10) ) = 0
+	x = 11
+	assert ( x > 5 and x < 10 ) = 0
+	assert ( not x <= 5 and not x >= 10 ) = 0
+	assert ( not (x <= 5 or x >= 10) ) = 0
+	x = undefined
+	assert ( x > 5 and x < 10 ) = 0
+	assert ( not x <= 5 and not x >= 10 ) = 1
+	assert ( not (x <= 5 or x >= 10) ) = 1
+@*/
 ENTRY (U"String comparison")
 TAG (U"##a\\$  = b\\$ ")
 DEFINITION (U"gives the value %true (= 1) if the strings are equal, and %false (= 0) otherwise.")

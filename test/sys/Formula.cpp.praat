@@ -207,6 +207,16 @@ assert log10 (10.0) = 1.0
 assert log10 (11.0) > 1.0
 assert log10 (undefined) = undefined
 
+assert sigmoid (0.0) = 0.5
+assert sigmoid (-1000) = 0
+assert arctanh (1000) = undefined
+
+assert invSigmoid (0.5) = 0.0
+assert invSigmoid (-1.0) = undefined   ; not a number
+assert invSigmoid (0.0) = undefined   ; minus infinity
+assert invSigmoid (1.0) = undefined   ; plus infinity
+assert invSigmoid (2.0) = undefined   ; not a number
+
 #
 # A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence
 # should be 9981545732273789042.
@@ -220,6 +230,11 @@ a *= 2 ^ 64
 roundingError = a - 9981545732273789042
 writeInfoLine: fixed$ (a, 0), " ", roundingError
 assert roundingError <= 2048   ; actually usually zero
+
+a# = zero# (0)   ; edge case
+a## = { a#, a# }
+assert numberOfRows (a##) = 2
+assert numberOfColumns (a##) = 0
 
 assert transpose## ({ { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } }) = { { 1, 4, 7 }, { 2, 5, 8 }, { 3, 6, 9 } }
 
