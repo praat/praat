@@ -156,13 +156,13 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 
 Thing_implement (UiField, Thing, 0);
 
-static autoUiField UiField_create (_kUiField_type type, conststring32 nameOrNull) {
+static autoUiField UiField_create (_kUiField_type type, conststring32 labelTextOrNull) {
 	autoUiField me = Thing_new (UiField);
 	my type = type;
-	my formLabel = Melder_dup (nameOrNull);
-	if (nameOrNull) {
+	my labelText = Melder_dup (labelTextOrNull);
+	if (labelTextOrNull) {
 		char32 shortName [1+100], *p;
-		str32ncpy (shortName, nameOrNull, 100);
+		str32ncpy (shortName, labelTextOrNull, 100);
 		shortName [100] = U'\0';
 		/*
 			Strip parentheses and colon off parameter name.
@@ -184,25 +184,25 @@ static autoUiField UiField_create (_kUiField_type type, conststring32 nameOrNull
 
 Thing_implement (UiOption, Thing, 0);
 
-static autoUiOption UiOption_create (conststring32 label) {
+static autoUiOption UiOption_create (conststring32 optionText) {
 	autoUiOption me = Thing_new (UiOption);
-	Thing_setName (me.get(), label);
+	Thing_setName (me.get(), optionText);
 	return me;
 }
 
-UiOption UiRadio_addButton (UiField me, conststring32 label) {
+UiOption UiRadio_addButton (UiField me, conststring32 optionText) {
 	if (! me)
 		return nullptr;
 	Melder_assert (my type == _kUiField_type::RADIO_ || my type == _kUiField_type::OPTIONMENU_);
-	autoUiOption thee = UiOption_create (label);
+	autoUiOption thee = UiOption_create (optionText);
 	return my options. addItem_move (thee.move());
 }
 
-UiOption UiOptionMenu_addButton (UiField me, conststring32 label) {
+UiOption UiOptionMenu_addButton (UiField me, conststring32 optionText) {
 	if (! me)
 		return nullptr;
 	Melder_assert (my type == _kUiField_type::RADIO_ || my type == _kUiField_type::OPTIONMENU_);
-	autoUiOption thee = UiOption_create (label);
+	autoUiOption thee = UiOption_create (optionText);
 	return my options. addItem_move (thee.move());
 }
 
@@ -925,78 +925,78 @@ autoUiForm UiForm_createE (EditorCommand cmd, conststring32 title, conststring32
 	return dia;
 }
 
-static UiField UiForm_addField (UiForm me, _kUiField_type type, conststring32 label) {
+static UiField UiForm_addField (UiForm me, _kUiField_type type, conststring32 labelText) {
 	if (my numberOfFields == MAXIMUM_NUMBER_OF_FIELDS)
 		Melder_throw (U"Cannot have more than ", MAXIMUM_NUMBER_OF_FIELDS, U"fields in a form.");
-	my field [++ my numberOfFields] = UiField_create (type, label);
+	my field [++ my numberOfFields] = UiField_create (type, labelText);
 	return my field [my numberOfFields].get();
 }
 
-UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::REAL_, label);
+UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::REAL_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
 	return thee;
 }
 
-UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::REAL_OR_UNDEFINED_, label);
+UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::REAL_OR_UNDEFINED_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
 	return thee;
 }
 
-UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVE_, label);
+UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVE_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
 	return thee;
 }
 
-UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::INTEGER_, label);
+UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::INTEGER_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
 	return thee;
 }
 
-UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::NATURAL_, label);
+UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::NATURAL_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
 	return thee;
 }
 
-UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::WORD_, label);
+UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::WORD_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
 	return thee;
 }
 
-UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::SENTENCE_, label);
+UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::SENTENCE_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
 	return thee;
 }
 
-UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label) {
+UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 labelText) {
 	UiField thee = UiForm_addField (me, _kUiField_type::LABEL_, U"");   // this field gets no name; so that the user can give it any title
 	thy stringVariable = variable;
-	thy stringValue = Melder_dup (label);
+	thy stringValue = Melder_dup (labelText);
 	return thee;
 }
 
-UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName, conststring32 label, bool defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::BOOLEAN_, label);
+UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName, conststring32 labelText, bool defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::BOOLEAN_, labelText);
 	thy integerDefaultValue = defaultValue;
 	thy boolVariable = variable;
 	thy variableName = variableName;
@@ -1004,9 +1004,9 @@ UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName
 }
 
 UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName,
-	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::TEXT_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::TEXT_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1015,9 +1015,9 @@ UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variab
 }
 
 UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 variableName,
-	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::FORMULA_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::FORMULA_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1026,9 +1026,9 @@ UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 var
 }
 
 UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName,
-	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::INFILE_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::INFILE_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1037,9 +1037,9 @@ UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 vari
 }
 
 UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName,
-	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::OUTFILE_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::OUTFILE_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1048,9 +1048,9 @@ UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 var
 }
 
 UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName,
-	conststring32 label, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::FOLDER_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::FOLDER_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1059,9 +1059,9 @@ UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 vari
 }
 
 UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName,
-	conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::REALVECTOR_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::REALVECTOR_, labelText);
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVectorVariable = variable;
@@ -1071,9 +1071,9 @@ UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 varia
 }
 
 UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName,
-	conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVEVECTOR_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVEVECTOR_, labelText);
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVectorVariable = variable;
@@ -1083,9 +1083,9 @@ UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 v
 }
 
 UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32 variableName,
-	conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::INTEGERVECTOR_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::INTEGERVECTOR_, labelText);
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVectorVariable = variable;
@@ -1095,9 +1095,9 @@ UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32
 }
 
 UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32 variableName,
-	conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
+	conststring32 labelText, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::NATURALVECTOR_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::NATURALVECTOR_, labelText);
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVectorVariable = variable;
@@ -1107,9 +1107,9 @@ UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32
 }
 
 UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName,
-	conststring32 label, constMATVU defaultValue, integer numberOfLines)
+	conststring32 labelText, constMATVU defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::REALMATRIX_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::REALMATRIX_, labelText);
 	thy numericMatrixDefaultValue = copy_MAT (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
@@ -1118,9 +1118,9 @@ UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 varia
 }
 
 UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 variableName,
-	conststring32 label, constSTRVEC defaultValue, integer numberOfLines)
+	conststring32 labelText, constSTRVEC defaultValue, integer numberOfLines)
 {
-	UiField thee = UiForm_addField (me, _kUiField_type::STRINGARRAY_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::STRINGARRAY_, labelText);
 	thy stringArrayDefaultValue = copy_STRVEC (defaultValue);
 	thy stringArrayFormat = theStringArrayFormat;
 	thy stringArrayVariable = variable;
@@ -1129,8 +1129,8 @@ UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 v
 	return thee;
 }
 
-UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base) {
-	UiField thee = UiForm_addField (me, _kUiField_type::RADIO_, label);
+UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
+	UiField thee = UiForm_addField (me, _kUiField_type::RADIO_, labelText);
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
@@ -1139,8 +1139,8 @@ UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVaria
 	return thee;
 }
 
-UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base) {
-	UiField thee = UiForm_addField (me, _kUiField_type::OPTIONMENU_, label);
+UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
+	UiField thee = UiForm_addField (me, _kUiField_type::OPTIONMENU_, labelText);
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
@@ -1149,8 +1149,8 @@ UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *string
 	return thee;
 }
 
-UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, constSTRVEC strings, integer defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::LIST_, label);
+UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, constSTRVEC strings, integer defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::LIST_, labelText);
 	thy strings = strings;
 	thy integerDefaultValue = defaultValue;
 	thy integerVariable = integerVariable;
@@ -1159,16 +1159,16 @@ UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stri
 	return thee;
 }
 
-UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::COLOUR_, label);
+UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::COLOUR_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy colourVariable = colourVariable;
 	thy variableName = variableName;
 	return thee;
 }
 
-UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::CHANNEL_, label);
+UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::CHANNEL_, labelText);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
@@ -1254,7 +1254,7 @@ void UiForm_finish (UiForm me) {
 			thy type == _kUiField_type::STRINGARRAY_
 		;
 		if (thouHastVerticallyAddedLabel)
-			dialogHeight += (headerLabelHeight + Gui_VERTICAL_DIALOG_SPACING_SAME) * !! thy formLabel;
+			dialogHeight += (headerLabelHeight + Gui_VERTICAL_DIALOG_SPACING_SAME) * !! thy labelText;
 		thy y = dialogHeight;
 		dialogHeight +=
 			thy type == _kUiField_type::BOOLEAN_ ?
@@ -1297,7 +1297,7 @@ void UiForm_finish (UiForm me) {
 					ylabel += 3;
 				#endif
 				if (str32nequ (thy name.get(), U"left ", 5)) {
-					MelderString_copy (& theFinishBuffer, thy formLabel.get() + 5);
+					MelderString_copy (& theFinishBuffer, thy labelText.get() + 5);
 					appendColon ();
 					thy label = GuiLabel_createShown (form, 0, Gui_LEFT_DIALOG_SPACING + labelWidth, ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
@@ -1306,7 +1306,7 @@ void UiForm_finish (UiForm me) {
 					thy text = GuiText_createShown (form, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
 						thy y, thy y + Gui_TEXTFIELD_HEIGHT, 0);
 				} else {
-					MelderString_copy (& theFinishBuffer, thy formLabel.get());
+					MelderString_copy (& theFinishBuffer, thy labelText.get());
 					appendColon ();
 					thy label = GuiLabel_createShown (form, 0, Gui_LEFT_DIALOG_SPACING + labelWidth,
 						ylabel, ylabel + textFieldHeight,
@@ -1318,7 +1318,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::TEXT_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1333,7 +1333,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::REALVECTOR_:
 			case _kUiField_type::POSITIVEVECTOR_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1354,7 +1354,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::INTEGERVECTOR_:
 			case _kUiField_type::NATURALVECTOR_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1374,7 +1374,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::REALMATRIX_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1395,7 +1395,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::STRINGARRAY_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1415,7 +1415,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::FORMULA_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1429,7 +1429,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::INFILE_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1447,7 +1447,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::OUTFILE_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1465,7 +1465,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::FOLDER_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
 				thy label = GuiLabel_createShown (form,
@@ -1497,7 +1497,7 @@ void UiForm_finish (UiForm me) {
 				#if defined (macintosh)
 					ylabel += 1;
 				#endif
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				thy label = GuiLabel_createShown (form, Gui_LEFT_DIALOG_SPACING, Gui_LEFT_DIALOG_SPACING + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
@@ -1520,7 +1520,7 @@ void UiForm_finish (UiForm me) {
 				#if defined (macintosh)
 					ylabel += 2;
 				#endif
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				thy label = GuiLabel_createShown (form, Gui_LEFT_DIALOG_SPACING, Gui_LEFT_DIALOG_SPACING + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
@@ -1534,7 +1534,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::BOOLEAN_:
 			{
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				/*field -> label = GuiLabel_createShown (form, x, x + labelWidth, thy y, thy y + Gui_CHECKBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT); */
 				thy checkButton = GuiCheckButton_createShown (form,
@@ -1545,7 +1545,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::LIST_:
 			{
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
-				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy labelText.get());
 				appendColon ();
 				thy label = GuiLabel_createShown (form, Gui_LEFT_DIALOG_SPACING, Gui_LEFT_DIALOG_SPACING + labelWidth, thy y + 1, thy y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
@@ -1640,8 +1640,8 @@ void UiForm_do (UiForm me, bool modified) {
 }
 
 static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelField) {
-	if (my formLabel && str32chr (my formLabel.get(), U':'))
-		trace (U"Form label with colon: ", my formLabel.get());
+	if (my labelText && str32chr (my labelText.get(), U':'))
+		trace (U"Form label with colon: ", my labelText.get());
 	if (my type == _kUiField_type::LABEL_) {
 		const bool weAreFollowedByAWideField =
 			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::FORMULA_ ||
@@ -1719,8 +1719,8 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 		Write the title of the field.
 	*/
 	char32 cName [100], *q = & cName [0];
-	Melder_assert (my formLabel);
-	const char32 *p = & my formLabel [0];
+	Melder_assert (my labelText);
+	const char32 *p = & my labelText [0];
 	*q ++ = Melder_toLowerCase (*p ++);
 	bool up = false;
 	for (; *p != U'\0'; p ++) {
@@ -1745,7 +1745,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 	}
 	*q = U'\0';
 	if (! my variableName)
-		Melder_warning (U"Missing variable name for field label: ", my formLabel.get());
+		Melder_warning (U"Missing variable name for field label: ", my labelText.get());
 	MelderInfo_write (my variableName ? my variableName : cName);
 	if (! isLastNonLabelField)
 		MelderInfo_write (U",");

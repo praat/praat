@@ -202,7 +202,7 @@ void Interpreter_beginForm (Interpreter me, GuiWindow topShell, Editor optionalE
 }
 static bool parameterMatchesLabel (conststring32 parameter, conststring32 label) {
 	/*
-		A param,eter matches a label if they are equal or if
+		A parameter matches a label if they are equal or if
 		the label has an additional opening parenthesis, optionally preceded by a space.
 		For example, the parameter "Pitch ceiling" matches the label "Pitch ceiling (Hz)".
 	*/
@@ -2915,7 +2915,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									typeOfAssignment = 1;   // adding assignment
 									p ++;
 								} else {
-									Melder_throw (U"Missing \"=\", \"+=\", \"<\", or \">\" after variable ", variableName, U".");
+									Melder_throw (U"Missing “=” after string variable ", variableName, U" followed by “+”.");
 								}
 							} else if (*p == U'<') {
 								typeOfAssignment = 2;   // read from file
@@ -2926,7 +2926,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								} else {
 									typeOfAssignment = 4;   // save to file
 								}
-							} else Melder_throw (U"Missing \"=\", \"+=\", \"<\", or \">\" after variable ", variableName, U".");
+							} else Melder_throw (U"Missing “=”, “+=”, “<”, or “>” after string variable ", variableName, U".");
 							*endOfVariable = U'\0';
 							p ++;
 							while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment or I/O symbol
@@ -2993,7 +2993,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 													  U"You can increment (+=) only existing strings.");
 									const integer oldLength = Melder_length (var -> stringValue.get());
 									const integer extraLength = Melder_length (stringValue.get());
-									autostring32 newString = autostring32 (oldLength + extraLength, false);
+									autostring32 newString (oldLength + extraLength, false);
 									str32cpy (newString.get(), var -> stringValue.get());
 									str32cpy (newString.get() + oldLength, stringValue.get());
 									var -> stringValue = newString.move();

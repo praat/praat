@@ -115,7 +115,7 @@ enum class _kUiField_type {
 
 Thing_define (UiField, Thing) {
 	_kUiField_type type;
-	autostring32 formLabel;
+	autostring32 labelText;
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
@@ -184,6 +184,7 @@ Thing_define (UiForm, Thing) {
 	conststring32 continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];   // references to strings owned by a script
 	int numberOfFields;
 	autoUiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
+	UiField latestUsedRadio;
 	GuiButton okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 	bool destroyWhenUnmanaged, isPauseForm;
 
@@ -204,56 +205,56 @@ autoUiForm UiForm_create (GuiWindow parent, Editor optionalEditor, conststring32
 	conststring32 invokingButtonTitle, conststring32 helpTitle
 );
 UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
+		conststring32 labelText, conststring32 defaultValue);
 UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
+		conststring32 labelText, conststring32 defaultValue);
 UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
+		conststring32 labelText, conststring32 defaultValue);
 UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
+		conststring32 labelText, conststring32 defaultValue);
 UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
+		conststring32 labelText, conststring32 defaultValue);
 UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
+		conststring32 labelText, conststring32 defaultValue);
 UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
-UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label);
+		conststring32 labelText, conststring32 defaultValue);
+UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 labelText);
 UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName,
-		conststring32 label, bool defaultValue);
+		conststring32 labelText, bool defaultValue);
 UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue, integer numberOfLines = 1);
+		conststring32 labelText, conststring32 defaultValue, integer numberOfLines = 1);
 UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue, integer numberOfLines = 5);
+		conststring32 labelText, conststring32 defaultValue, integer numberOfLines = 5);
 UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue, integer numberOfLines = 3);
+		conststring32 labelText, conststring32 defaultValue, integer numberOfLines = 3);
 UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue, integer numberOfLines = 3);
+		conststring32 labelText, conststring32 defaultValue, integer numberOfLines = 3);
 UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue, integer numberOfLines = 3);
+		conststring32 labelText, conststring32 defaultValue, integer numberOfLines = 3);
 UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName,
-		conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines = 7);
+		conststring32 labelText, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines = 7);
 UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName,
-		conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines = 7);
+		conststring32 labelText, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines = 7);
 UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32 variableName,
-		conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines = 7);
+		conststring32 labelText, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines = 7);
 UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32 variableName,
-		conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines = 7);
+		conststring32 labelText, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines = 7);
 UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName,
-		conststring32 label, constMATVU defaultValue, integer numberOfLines = 10);
+		conststring32 labelText, constMATVU defaultValue, integer numberOfLines = 10);
 UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 variableName,
-		conststring32 label, constSTRVEC defaultValue, integer numberOfLines = 7);
+		conststring32 labelText, constSTRVEC defaultValue, integer numberOfLines = 7);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
-		conststring32 label, int defaultValue, int base);
-UiOption UiRadio_addButton (UiField me, conststring32 label);
+		conststring32 labelText, int defaultValue, int base);
+UiOption UiRadio_addButton (UiField me, conststring32 labelText);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
-		conststring32 label, int defaultValue, int base);
+		conststring32 labelText, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, conststring32 label);
 UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName,
-		conststring32 label, constSTRVEC strings, integer defaultValue);
+		conststring32 labelText, constSTRVEC strings, integer defaultValue);
 UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
+		conststring32 labelText, conststring32 defaultValue);
 UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName,
-		conststring32 label, conststring32 defaultValue);
+		conststring32 labelText, conststring32 defaultValue);
 void UiForm_finish (UiForm me);
 
 void UiForm_destroyWhenUnmanaged (UiForm me);
