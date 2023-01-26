@@ -22,15 +22,16 @@
 	#include <Shlobj.h>
 #endif
 
-autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 title, bool allowMultipleFiles) {
+autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststring32 title, bool allowMultipleFiles) {
 	autoMelderSaveDefaultDir saveDir;
 	autoStringSet me = StringSet_create ();
 	#if gtk
-		(void) parent;
 		static structMelderDir dir { };
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
-		gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (parent -> d_gtkWindow));
+		Melder_assert (dialog);
+		if (optionalParent)
+			gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (optionalParent -> d_gtkWindow));
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
 		if (MelderDir_isNull (& dir))   // first time?
 			Melder_getDefaultDir (& dir);
@@ -58,7 +59,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		autostringW fullFileNameW (MAXIMUM_SIZE + 2);
 		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
 		openFileName. lStructSize = sizeof (OPENFILENAMEW);
-		openFileName. hwndOwner = parent && parent -> d_xmShell ? (HWND) XtWindow (parent -> d_xmShell) : nullptr;
+		openFileName. hwndOwner = ( optionalParent && optionalParent -> d_xmShell ? (HWND) XtWindow (optionalParent -> d_xmShell) : nullptr );
 		openFileName. hInstance = nullptr;
 		openFileName. lpstrFilter = L"All Files\0*.*\0";
 		ZeroMemory (fullFileNameW.get(), (MAXIMUM_SIZE+2) * sizeof (WCHAR));
@@ -105,7 +106,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		}
 		setlocale (LC_ALL, "C");
 	#elif cocoa
-		(void) parent;
+		(void) optionalParent;
 		NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
 		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
 		[openPanel setAllowsMultipleSelection: allowMultipleFiles];
@@ -122,15 +123,15 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 	return me;
 }
 
-autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title, conststring32 defaultName) {
+autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring32 title, conststring32 defaultName) {
 	autoMelderSaveDefaultDir saveDir;
 	autostring32 outfileName;
 	#if gtk
-		(void) parent;
 		static structMelderFile file;
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
-		gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (parent -> d_gtkWindow));
+		if (optionalParent)
+			gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (optionalParent -> d_gtkWindow));
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), true);
 		if (file. path [0] != U'\0')
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
@@ -150,7 +151,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 		wcsncpy (fullFileNameW, Melder_peek32toW_fileSystem (defaultName), 300+2);
 		fullFileNameW [300+1] = L'\0';
 		openFileName. lStructSize = sizeof (OPENFILENAMEW);
-		openFileName. hwndOwner = parent && parent -> d_xmShell ? (HWND) XtWindow (parent -> d_xmShell) : nullptr;
+		openFileName. hwndOwner = ( optionalParent && optionalParent -> d_xmShell ? (HWND) XtWindow (optionalParent -> d_xmShell) : nullptr );
 		openFileName. lpstrFilter = nullptr;   // like *.txt
 		openFileName. lpstrCustomFilter = customFilter;
 		openFileName. nMaxCustFilter = 100;
@@ -165,7 +166,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 			outfileName = Melder_Wto32 (fullFileNameW);
 		setlocale (LC_ALL, "C");
 	#elif cocoa
-		(void) parent;
+		(void) optionalParent;
 		NSSavePanel	*savePanel = [NSSavePanel savePanel];   // will be autoreleased (release will crash; 2020-11-12)
 		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
 		[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peek32to8_fileSystem (defaultName)]];
@@ -185,18 +186,17 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 	return outfileName;
 }
 
-autostring32 GuiFileSelect_getFolderName (GuiWindow parent, conststring32 title) {
+autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring32 title) {
 	autoMelderSaveDefaultDir saveDir;
 	autostring32 directoryName;
 	#if gtk
-		(void) parent;
 		static structMelderFile file;
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "Choose", GTK_RESPONSE_ACCEPT, nullptr);
-		gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (parent -> d_gtkWindow));
-		if (file. path [0] != U'\0') {
+		if (optionalParent)
+			gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (optionalParent -> d_gtkWindow));
+		if (file. path [0] != U'\0')
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
-		}
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *directoryName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 			directoryName = Melder_8to32 (directoryName_utf8);
@@ -213,7 +213,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow parent, conststring32 title)
 			comInited = true;
 		}
 		static BROWSEINFO info;
-		info. hwndOwner = parent && parent -> d_xmShell ? (HWND) XtWindow (parent -> d_xmShell) : nullptr;
+		info. hwndOwner = ( optionalParent && optionalParent -> d_xmShell ? (HWND) XtWindow (optionalParent -> d_xmShell) : nullptr );
 		info. ulFlags = BIF_USENEWUI;
 		info. pidlRoot = nullptr;   // everything on the computer should be browsable
 		info. pszDisplayName = nullptr;   // this would only give the bare folder name, not the full path
@@ -224,7 +224,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow parent, conststring32 title)
 		directoryName = Melder_Wto32 (fullFileNameW);
 		setlocale (LC_ALL, "C");
 	#elif cocoa
-		(void) parent;
+		(void) optionalParent;
 		NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
 		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
 		[openPanel setAllowsMultipleSelection: NO];

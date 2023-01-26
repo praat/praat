@@ -122,7 +122,7 @@
 
 #define LABEL(labelText)  UiForm_addLabel (_dia_.get(), nullptr, labelText);
 
-#define MUTABLE_LABEL(stringVariable, labelText) \
+#define MUTABLE_LABEL(stringVariable, labelText)  \
 		static conststring32 stringVariable; \
 		UiForm_addLabel (_dia_.get(), & stringVariable, labelText);
 
@@ -427,13 +427,13 @@
 				}
 
 #define CREATE_MULTIPLE
-#define CREATE_MULTIPLE_END \
+#define CREATE_MULTIPLE_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	END_WITH_NEW_DATA
 
 #define CREATE_ONE
-#define CREATE_ONE_END(...) \
+#define CREATE_ONE_END(...)  \
 	praat_new (result.move(), __VA_ARGS__); \
 	CREATE_MULTIPLE_END
 
@@ -471,7 +471,7 @@
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) (you ? him : you) = (klas2) OBJECT; \
 	if (me && you && him) break; }
 
-#define FIND_ONE_AND_GENERIC(klas1,klas2) \
+#define FIND_ONE_AND_GENERIC(klas1,klas2)  \
 	klas1 me = nullptr; klas2 you = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; \
 	else if (Thing_isSubclass (CLASS, class##klas2)) { you = (klas2) OBJECT; } } \
@@ -898,7 +898,7 @@
 
 #define QUERY_ONE_FOR_STRING_ARRAY(klas)  \
 	FIND_ONE (klas)
-#define QUERY_ONE_FOR_STRING_ARRAY_END \
+#define QUERY_ONE_FOR_STRING_ARRAY_END  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::STRINGARRAY_; \
 		interpreter -> returnedStringArray = result.move(); \
@@ -956,7 +956,7 @@
 	EACH_END__ \
 	MODIFY_END__
 
-#define MODIFY_ALL(klas) \
+#define MODIFY_ALL(klas)  \
 	FIND_ALL (klas) \
 	FIRST_STRONG_BEGIN__
 #define MODIFY_ALL_END  \
@@ -1178,13 +1178,13 @@
 */
 
 #define READ_MULTIPLE
-#define READ_MULTIPLE_END \
+#define READ_MULTIPLE_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	END_WITH_NEW_DATA
 
 #define READ_ONE
-#define READ_ONE_END \
+#define READ_ONE_END  \
 	praat_newWithFile (result.move(), file, MelderFile_name (file)); \
 	READ_MULTIPLE_END
 
