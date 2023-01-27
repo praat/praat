@@ -180,8 +180,8 @@ static autoUiField UiField_create (_kUiField_type type, conststring32 labelTextO
 				p [-1] = U'\0';
 		}
 		p = shortName;
-		if (*p != U'\0' && p [Melder_length (p) - 1] == U':') [[unlikely]]
-			p [Melder_length (p) - 1] = U'\0';
+		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
+			p [Melder_length (p) - 1] = U'\0';   // unlikely
 		Thing_setName (me.get(), shortName);
 	}
 	return me;
