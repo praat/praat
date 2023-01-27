@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.rpi
 
 # System: Raspberry Pi
-# Paul Boersma 2021-12-27
+# Paul Boersma 2023-01-27
 
 CC ?= gcc
 CXX ?= g++
@@ -14,7 +14,7 @@ COMMONFLAGS = -DUNIX -Dlinux -DJACK -DPA_LITTLE_ENDIAN -Draspberrypi -D_FILE_OFF
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
-CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
+CXXFLAGS = -std=c++2a $(COMMONFLAGS) -Wshadow
 
 EXECUTABLE = praat
 
