@@ -78,13 +78,13 @@ static conststring32 formatNumericMatrix (constMAT cells, kUi_realMatrixFormat f
 }
 
 static void MelderString_appendQuoted (MelderString *buffer, conststring32 string) {
-	MelderString_appendCharacter (buffer, U'\"');
+	MelderString_appendCharacter (buffer, U'"');
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++)
-		if (*p == U'\"')
+		if (*p == U'"')
 			MelderString_append (buffer, U"\"\"");
 		else
 			MelderString_appendCharacter (buffer, *p);
-	MelderString_appendCharacter (buffer, U'\"');
+	MelderString_appendCharacter (buffer, U'"');
 }
 
 static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayFormat format) {
@@ -93,7 +93,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 	switch (format) {
 		case kUi_stringArrayFormat::WHITESPACE_SEPARATED_: {
 			for (integer i = 1; i <= strings.size; i ++) {
-				if (str32chr (strings [i], U'\"') || Melder_findHorizontalOrVerticalSpace (strings [i]))
+				if (str32chr (strings [i], U'"') || Melder_findHorizontalOrVerticalSpace (strings [i]))
 					MelderString_appendQuoted (& buffer, strings [i]);
 				else
 					MelderString_append (& buffer, strings [i]);
@@ -102,7 +102,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 			}
 		} break; case kUi_stringArrayFormat::COMMA_SEPARATED_: {
 			for (integer i = 1; i <= strings.size; i ++) {
-				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U','))
+				if (str32chr (strings [i], U'"') || str32chr (strings [i], U','))
 					MelderString_appendQuoted (& buffer, strings [i]);
 				else
 					MelderString_append (& buffer, strings [i]);
@@ -111,7 +111,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 			}
 		} break; case kUi_stringArrayFormat::SEMICOLON_SEPARATED_: {
 			for (integer i = 1; i <= strings.size; i ++) {
-				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U';'))
+				if (str32chr (strings [i], U'"') || str32chr (strings [i], U';'))
 					MelderString_appendQuoted (& buffer, strings [i]);
 				else
 					MelderString_append (& buffer, strings [i]);
@@ -120,7 +120,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 			}
 		} break; case kUi_stringArrayFormat::PIPE_SEPARATED_: {
 			for (integer i = 1; i <= strings.size; i ++) {
-				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U'|'))
+				if (str32chr (strings [i], U'"') || str32chr (strings [i], U'|'))
 					MelderString_appendQuoted (& buffer, strings [i]);
 				else
 					MelderString_append (& buffer, strings [i]);
@@ -159,13 +159,20 @@ Thing_implement (UiField, Thing, 0);
 static autoUiField UiField_create (_kUiField_type type, conststring32 labelTextOrNull) {
 	autoUiField me = Thing_new (UiField);
 	my type = type;
-	my labelText = Melder_dup (labelTextOrNull);
 	if (labelTextOrNull) {
+		/*
+			The label text is for instance "Pitch ceiling (Hz)".
+		*/
+		my labelText = Melder_dup (labelTextOrNull);
+
+		/*
+			The name is for instance "Pitch ceiling".
+		*/
 		char32 shortName [1+100], *p;
 		str32ncpy (shortName, labelTextOrNull, 100);
 		shortName [100] = U'\0';
 		/*
-			Strip parentheses and colon off parameter name.
+			Strip parentheses and the occasional colon off the parameter name.
 		*/
 		if (!! (p = (char32 *) str32chr (shortName, U'('))) {
 			*p = U'\0';
@@ -173,7 +180,7 @@ static autoUiField UiField_create (_kUiField_type type, conststring32 labelTextO
 				p [-1] = U'\0';
 		}
 		p = shortName;
-		if (*p != U'\0' && p [Melder_length (p) - 1] == U':')
+		if (*p != U'\0' && p [Melder_length (p) - 1] == U':') [[unlikely]]
 			p [Melder_length (p) - 1] = U'\0';
 		Thing_setName (me.get(), shortName);
 	}
@@ -301,7 +308,7 @@ static void UiField_widgetToValue (UiField me) {
 			autostring32 text = GuiText_getString (my text);   // the text as typed by the user
 			Interpreter_numericExpression (nullptr, text.get(), & my realValue);
 			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
-				Melder_throw (U"“", my name.get(), U"” has the value \"undefined\".");
+				Melder_throw (U"“", my name.get(), U"” has the value “undefined”.");
 			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
 				Melder_throw (U"“", my name.get(), U"” should be greater than 0.0.");
 			if (my realVariable)
@@ -556,7 +563,7 @@ void UiHistory_write_expandQuotes (conststring32 string) {
 	if (! string)
 		return;
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++) {
-		if (*p == U'\"')
+		if (*p == U'"')
 			MelderString_append (& theHistory, U"\"\"");
 		else
 			MelderString_appendCharacter (& theHistory, *p);
@@ -1851,12 +1858,12 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::POSITIVE_:
 		{
 			if (arg -> which != Stackel_NUMBER)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", arg -> whichText(), U".");
+				Melder_throw (U"Argument “", my name.get(), U"” should be a number, not ", arg -> whichText(), U".");
 			my realValue = arg -> number;
 			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
-				Melder_throw (U"Argument \"", my name.get(), U"\" has the value \"undefined\".");
+				Melder_throw (U"Argument “", my name.get(), U"” has the value “undefined”.");
 			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
-				Melder_throw (U"Argument \"", my name.get(), U"\" must be greater than 0.");
+				Melder_throw (U"Argument “", my name.get(), U"” must be greater than 0.");
 			if (my realVariable)
 				*my realVariable = my realValue;
 		}
@@ -1874,21 +1881,21 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 					} else if (str32equ (arg -> getString(), U"Right") || str32equ (arg -> getString(), U"Stereo")) {
 						my integerValue = 2;
 					} else {
-						Melder_throw (U"Channel argument \"", my name.get(),
-							U"\" can only be a number or one of the strings \"All\", \"Average\", \"Left\", \"Right\", \"Mono\" or \"Stereo\".");
+						Melder_throw (U"Channel argument “", my name.get(),
+							U"” can only be a number or one of the strings “All”, “Average”, “Left”, “Right”, “Mono” or “Stereo”.");
 					}
 				} else {
-					Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", arg -> whichText(), U".");
+					Melder_throw (U"Argument “", my name.get(), U"” should be a number, not ", arg -> whichText(), U".");
 				}
 			} else if (arg -> which == Stackel_NUMBER) {
 				double realValue = arg -> number;
 				my integerValue = Melder_iround (realValue);
 				Melder_require (my integerValue == realValue,
-					U"Argument \"", my name.get(), U"\" should be a whole number.");
+					U"Argument “", my name.get(), U"” should be a whole number.");
 				if (my type == _kUiField_type::NATURAL_ && my integerValue < 1)
-					Melder_throw (U"Argument \"", my name.get(), U"\" should be a positive whole number.");
+					Melder_throw (U"Argument “", my name.get(), U"” should be a positive whole number.");
 			} else {
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", arg -> whichText(), U".");
+				Melder_throw (U"Argument “", my name.get(), U"” should be a number, not ", arg -> whichText(), U".");
 			}
 			if (my integerVariable)
 				*my integerVariable = my integerValue;
@@ -1903,7 +1910,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::FOLDER_:
 		{
 			if (arg -> which != Stackel_STRING)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
+				Melder_throw (U"Argument “", my name.get(), U"” should be a string, not ", arg -> whichText(), U".");
 			my stringValue = Melder_dup (arg -> getString());
 			if (my stringVariable)
 				*my stringVariable = my stringValue.get();   // BUG dangle
@@ -1913,7 +1920,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::POSITIVEVECTOR_:
 		{
 			if (arg -> which != Stackel_NUMERIC_VECTOR && arg -> which != Stackel_STRING)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
+				Melder_throw (U"Argument “", my name.get(), U"” should be a numeric vector, not ", arg -> whichText(), U".");
 			if (arg -> which == Stackel_STRING) {
 				my realVectorValue = splitByWhitespace_VEC (arg -> getString());
 			} else if (arg -> owned) {
@@ -1934,7 +1941,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::NATURALVECTOR_:
 		{
 			if (arg -> which != Stackel_NUMERIC_VECTOR && arg -> which != Stackel_STRING)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
+				Melder_throw (U"Argument “", my name.get(), U"” should be a numeric vector, not ", arg -> whichText(), U".");
 			if (arg -> which == Stackel_STRING) {
 				my integerVectorValue = splitByWhitespaceWithRanges_INTVEC (arg -> getString());
 			} else {
@@ -1956,7 +1963,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::REALMATRIX_:
 		{
 			if (arg -> which != Stackel_NUMERIC_MATRIX)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric matrix, not ", arg -> whichText(), U".");
+				Melder_throw (U"Argument “", my name.get(), U"” should be a numeric matrix, not ", arg -> whichText(), U".");
 			if (arg -> owned) {
 				my numericMatrixValue. adoptFromAmbiguousOwner (arg -> numericMatrix);
 				arg -> owned = false;
@@ -1970,7 +1977,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::STRINGARRAY_:
 		{
 			if (arg -> which != Stackel_STRING_ARRAY && arg -> which != Stackel_STRING)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string array, not ", arg -> whichText(), U".");
+				Melder_throw (U"Argument “", my name.get(), U"” should be a string array, not ", arg -> whichText(), U".");
 			if (arg -> which == Stackel_STRING) {
 				my stringArrayValue = splitByWhitespace_STRVEC (arg -> getString());
 			} else if (arg -> owned) {
@@ -1991,13 +1998,13 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				} else if (str32equ (arg -> getString(), U"yes") || str32equ (arg -> getString(), U"on")) {
 					my integerValue = 1;
 				} else {
-					Melder_throw (U"Boolean argument \"", my name.get(),
-						U"\" can only be a number or one of the strings \"yes\" or \"no\".");
+					Melder_throw (U"Boolean argument “", my name.get(),
+						U"” can only be a number or one of the strings “yes” or “no”.");
 				}
 			} else if (arg -> which == Stackel_NUMBER) {
 				my integerValue = ( arg -> number == 0.0 ? 0.0 : 1.0 );
 			} else {
-				Melder_throw (U"Boolean argument \"", my name.get(), U"\" should be a number (0 or 1), not ", arg -> whichText(), U".");
+				Melder_throw (U"Boolean argument “", my name.get(), U"” should be a number (0 or 1), not ", arg -> whichText(), U".");
 			}
 			if (my boolVariable)
 				*my boolVariable = my integerValue;
@@ -2007,7 +2014,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::OPTIONMENU_:
 		{
 			if (arg -> which != Stackel_STRING)
-				Melder_throw (U"Option argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
+				Melder_throw (U"Option argument “", my name.get(), U"” should be a string, not ", arg -> whichText(), U".");
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
@@ -2026,7 +2033,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			}
 			if (my integerValue == 0) {
 				if (my intVariable)
-					Melder_throw (U"Option argument \"", my name.get(), U"\" cannot have the value \"", arg -> getString(), U"\".");
+					Melder_throw (U"Option argument “", my name.get(), U"” cannot have the value “", arg -> getString(), U"”.");
 				if (my stringVariable) {
 					*my stringVariable = arg -> getString();
 					return;
@@ -2041,13 +2048,13 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::LIST_:
 		{
 			if (arg -> which != Stackel_STRING)
-				Melder_throw (U"List argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
+				Melder_throw (U"List argument “", my name.get(), U"” should be a string, not ", arg -> whichText(), U".");
 			integer i = 1;
 			for (; i <= my strings.size; i ++)
 				if (str32equ (arg -> getString(), my strings [i]))
 					break;
 			if (i > my strings.size)
-				Melder_throw (U"List argument \"", my name.get(), U"\" cannot have the value \"", arg -> getString(), U"\".");
+				Melder_throw (U"List argument “", my name.get(), U"” cannot have the value “", arg -> getString(), U"”.");
 			my integerValue = i;
 			if (my integerVariable)
 				*my integerVariable = my integerValue;
@@ -2059,7 +2066,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		{
 			if (arg -> which == Stackel_NUMBER) {
 				if (arg -> number < 0.0 || arg -> number > 1.0)
-					Melder_throw (U"Grey colour argument \"", my name.get(), U"\" has to lie between 0.0 and 1.0.");
+					Melder_throw (U"Grey colour argument “", my name.get(), U"” has to lie between 0.0 and 1.0.");
 				my colourValue. red = my colourValue. green = my colourValue. blue = arg -> number;
 			} else if (arg -> which == Stackel_STRING) {
 				autostring32 string2 = Melder_dup (arg -> getString());
@@ -2067,11 +2074,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				if (colour.valid())
 					my colourValue = colour;
 				else
-					Melder_throw (U"Cannot compute a colour from \"", string2.get(), U"\".");
+					Melder_throw (U"Cannot compute a colour from “", string2.get(), U"”.");
 			} else if (arg -> which == Stackel_NUMERIC_VECTOR) {
 				my colourValue = MelderColour (arg -> numericVector);
 			} else
-				Melder_throw (U"Colour argument \"", my name.get(), U"\" should be a string or number or numeric vector, not ", arg -> whichText(), U".");
+				Melder_throw (U"Colour argument “", my name.get(), U"” should be a string or number or numeric vector, not ", arg -> whichText(), U".");
 			if (my colourVariable)
 				*my colourVariable = my colourValue;
 		}
@@ -2092,7 +2099,7 @@ void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter
 			continue;   // ignore non-trailing fields without a value
 		iarg ++;
 		if (iarg > narg)
-			Melder_throw (U"Command requires more than the given ", narg, U" arguments: argument \"", my field [i] -> name.get(), U"\" not given.");
+			Melder_throw (U"Command requires more than the given ", narg, U" arguments: argument “", my field [i] -> name.get(), U"” not given.");
 		UiField_argToValue (my field [i].get(), & args [iarg], interpreter);
 	}
 	if (iarg < narg)
@@ -2119,9 +2126,9 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 				Melder_throw (U"Argument “", my name.get(), U"” empty.");
 			Interpreter_numericExpression (interpreter, string, & my realValue);
 			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
-				Melder_throw (U"\"", my name.get(), U"\" has the value \"undefined\".");
+				Melder_throw (U"“", my name.get(), U"” has the value “undefined”.");
 			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
-				Melder_throw (U"\"", my name.get(), U"\" must be greater than 0.");
+				Melder_throw (U"“", my name.get(), U"” must be greater than 0.");
 			if (my realVariable)
 				*my realVariable = my realValue;
 		}
@@ -2143,7 +2150,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 				my integerValue = Melder_iround (realValue);
 			}
 			if (my type == _kUiField_type::NATURAL_ && my integerValue < 1)
-				Melder_throw (U"\"", my name.get(), U"\" should be a positive whole number.");
+				Melder_throw (U"“", my name.get(), U"” should be a positive whole number.");
 			if (my integerVariable)
 				*my integerVariable = my integerValue;
 		}
@@ -2219,9 +2226,8 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 						my integerValue = i;
 				}
 			}
-			if (my integerValue == 0) {
-				Melder_throw (U"Field \"", my name.get(), U"\" must not have the value \"", string, U"\".");
-			}
+			if (my integerValue == 0)
+				Melder_throw (U"Field “", my name.get(), U"” must not have the value “", string, U"”.");
 			if (my intVariable)
 				*my intVariable = int (my integerValue) - my subtract;
 			if (my stringVariable)
@@ -2235,7 +2241,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 				if (str32equ (string, my strings [i]))
 					break;
 			if (i > my strings.size)
-				Melder_throw (U"Field \"", my name.get(), U"\" must not have the value \"", string, U"\".");
+				Melder_throw (U"Field “", my name.get(), U"” must not have the value “", string, U"”.");
 			my integerValue = i;
 			if (my integerVariable)
 				*my integerVariable = my integerValue;
@@ -2256,7 +2262,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 					my colourValue = MelderColour (greyValue);
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_throw (U"Cannot compute a colour from \"", string2.get(), U"\".");
+					Melder_throw (U"Cannot compute a colour from “", string2.get(), U"”.");
 				}
 			}
 			if (my colourVariable)
@@ -2303,12 +2309,12 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter optiona
 			will be passed to the dialog as a single argument containing the text
 				I said "hello"
 		*/
-		if (*arguments == U'\"') {
+		if (*arguments == U'"') {
 			arguments ++;   // do not include leading double quote
 			for (;;) {
 				if (*arguments == U'\0')
 					Melder_throw (U"Missing matching quote.");
-				if (*arguments == U'\"' && * ++ arguments != U'\"')
+				if (*arguments == U'"' && * ++ arguments != U'"')
 					break;   // remember second quote
 				stringValue [ichar ++] = *arguments ++;
 			}
@@ -2320,7 +2326,7 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter optiona
 		try {
 			UiField_stringToValue (my field [i].get(), stringValue, optionalInterpreter);
 		} catch (MelderError) {
-			Melder_throw (U"Don't understand contents of field \"", my field [i] -> name.get(), U"\".");
+			Melder_throw (U"Don't understand contents of field “", my field [i] -> name.get(), U"”.");
 		}
 	}
 	/*
@@ -2332,7 +2338,7 @@ void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter optiona
 		try {
 			UiField_stringToValue (my field [size].get(), arguments, optionalInterpreter);
 		} catch (MelderError) {
-			Melder_throw (U"Don't understand contents of field \"", my field [size] -> name.get(), U"\".");
+			Melder_throw (U"Don't understand contents of field “", my field [size] -> name.get(), U"”.");
 		}
 	}
 	my okCallback (me, 0, nullptr, nullptr, optionalInterpreter, nullptr, false, my buttonClosure, my optionalEditor);
@@ -2346,7 +2352,7 @@ void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, constst
 }
 
 static void fatalField (UiForm dia) {
-	Melder_fatal (U"Wrong field in command window \"", dia -> name.get(), U"\".");
+	Melder_fatal (U"Wrong field in command window “", dia -> name.get(), U"”.");
 }
 
 void UiForm_setReal (UiForm me, double *p_variable, double value) {
@@ -2384,7 +2390,7 @@ void UiForm_setReal (UiForm me, double *p_variable, double value) {
 			return;
 		}
 	}
-	Melder_fatal (U"Real field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Real field not found in command window “", my name.get(), U"”.");
 }
 
 void UiForm_setRealAsString (UiForm me, double *p_variable, conststring32 stringValue) {
@@ -2408,7 +2414,7 @@ void UiForm_setRealAsString (UiForm me, double *p_variable, conststring32 string
 			return;
 		}
 	}
-	Melder_fatal (U"Real field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Real field not found in command window “", my name.get(), U"”.");
 }
 
 void UiForm_setInteger (UiForm me, integer *p_variable, integer value) {
@@ -2443,7 +2449,7 @@ void UiForm_setInteger (UiForm me, integer *p_variable, integer value) {
 			return;
 		}
 	}
-	Melder_fatal (U"Integer field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Integer field not found in command window “", my name.get(), U"”.");
 }
 
 void UiForm_setIntegerAsString (UiForm me, integer *p_variable, conststring32 stringValue /* cattable */) {
@@ -2477,7 +2483,7 @@ void UiForm_setIntegerAsString (UiForm me, integer *p_variable, conststring32 st
 			return;
 		}
 	}
-	Melder_fatal (U"Integer field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Integer field not found in command window “", my name.get(), U"”.");
 }
 
 void UiForm_setBoolean (UiForm me, bool *p_variable, bool value) {
@@ -2499,7 +2505,7 @@ void UiForm_setBoolean (UiForm me, bool *p_variable, bool value) {
 			return;
 		}
 	}
-	Melder_fatal (U"Boolean field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Boolean field not found in command window “", my name.get(), U"”.");
 }
 
 void UiForm_setOption (UiForm me, int *p_variable, int value) {
@@ -2531,7 +2537,7 @@ void UiForm_setOption (UiForm me, int *p_variable, int value) {
 			return;
 		}
 	}
-	Melder_fatal (U"Option field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Option field not found in command window “", my name.get(), U"”.");
 }
 
 void UiForm_setOptionAsString (UiForm me, int *p_variable, conststring32 stringValue) {
@@ -2573,7 +2579,7 @@ void UiForm_setOptionAsString (UiForm me, int *p_variable, conststring32 stringV
 			return;
 		}
 	}
-	Melder_fatal (U"Option field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Option field not found in command window “", my name.get(), U"”.");
 }
 
 void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 value /* cattable */) {
@@ -2608,7 +2614,7 @@ void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 value
 			return;
 		}
 	}
-	Melder_fatal (U"Text field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Text field not found in command window “", my name.get(), U"”.");
 }
 
 void UiForm_setColourAsGreyValue (UiForm me, MelderColour *p_variable, double greyValue) {
@@ -2630,7 +2636,7 @@ void UiForm_setColourAsGreyValue (UiForm me, MelderColour *p_variable, double gr
 			return;
 		}
 	}
-	Melder_fatal (U"Colour field not found in command window \"", my name.get(), U"\".");
+	Melder_fatal (U"Colour field not found in command window “", my name.get(), U"”.");
 }
 
 static UiField findField (UiForm me, conststring32 fieldName) {
@@ -2643,7 +2649,7 @@ static UiField findField (UiForm me, conststring32 fieldName) {
 static UiField findField_check (UiForm me, conststring32 fieldName) {
 	UiField result = findField (me, fieldName);
 	if (! result)
-		Melder_throw (U"Cannot find field \"", fieldName, U"\" in form.\n"
+		Melder_throw (U"Cannot find field “", fieldName, U"” in form.\n"
 			U"The script may have changed while the form was open.\n"
 			U"Please click Cancel in the form and try again.");
 	return result;
@@ -2662,7 +2668,7 @@ double UiForm_getReal_check (UiForm me, conststring32 fieldName) {
 		break;
 		default:
 		{
-			Melder_throw (U"Cannot find a real value in field \"", fieldName, U"\" in the form.\n"
+			Melder_throw (U"Cannot find a real value in field “", fieldName, U"” in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
 		}
@@ -2673,7 +2679,7 @@ double UiForm_getReal_check (UiForm me, conststring32 fieldName) {
 integer UiForm_getInteger (UiForm me, conststring32 fieldName) {
 	UiField field = findField (me, fieldName);
 	if (! field)
-		Melder_fatal (U"(UiForm_getInteger:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+		Melder_fatal (U"(UiForm_getInteger:) No field “", fieldName, U"” in command window “", my name.get(), U"”.");
 	switch (field -> type)
 	{
 		case _kUiField_type::INTEGER_:
@@ -2712,7 +2718,7 @@ integer UiForm_getInteger_check (UiForm me, conststring32 fieldName) {
 		break;
 		default:
 		{
-			Melder_throw (U"Cannot find an integer value in field \"", fieldName, U"\" in the form.\n"
+			Melder_throw (U"Cannot find an integer value in field “", fieldName, U"” in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
 		}
@@ -2723,7 +2729,7 @@ integer UiForm_getInteger_check (UiForm me, conststring32 fieldName) {
 char32 * UiForm_getString (UiForm me, conststring32 fieldName) {
 	UiField field = findField (me, fieldName);
 	if (! field)
-		Melder_fatal (U"(UiForm_getString:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+		Melder_fatal (U"(UiForm_getString:) No field “", fieldName, U"” in command window “", my name.get(), U"”.");
 	switch (field -> type)
 	{
 		case _kUiField_type::WORD_:
@@ -2785,7 +2791,7 @@ char32 * UiForm_getString_check (UiForm me, conststring32 fieldName) {
 		break;
 		default:
 		{
-			Melder_throw (U"Cannot find a string in field \"", fieldName, U"\" in the form.\n"
+			Melder_throw (U"Cannot find a string in field “", fieldName, U"” in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
 		}
@@ -2796,7 +2802,7 @@ char32 * UiForm_getString_check (UiForm me, conststring32 fieldName) {
 VEC UiForm_getRealVector (UiForm me, conststring32 fieldName) {
 	UiField field = findField (me, fieldName);
 	if (! field)
-		Melder_fatal (U"(UiForm_getRealVector:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+		Melder_fatal (U"(UiForm_getRealVector:) No field “", fieldName, U"” in command window “", my name.get(), U"”.");
 	switch (field -> type)
 	{
 		case _kUiField_type::REALVECTOR_:
@@ -2816,7 +2822,7 @@ VEC UiForm_getRealVector (UiForm me, conststring32 fieldName) {
 INTVEC UiForm_getIntegerVector (UiForm me, conststring32 fieldName) {
 	UiField field = findField (me, fieldName);
 	if (! field)
-		Melder_fatal (U"(UiForm_getIntegerVector:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+		Melder_fatal (U"(UiForm_getIntegerVector:) No field “", fieldName, U"” in command window “", my name.get(), U"”.");
 	switch (field -> type)
 	{
 		case _kUiField_type::INTEGERVECTOR_:
@@ -2843,7 +2849,7 @@ MelderColour UiForm_getColour_check (UiForm me, conststring32 fieldName) {
 		break;
 		default:
 		{
-			Melder_throw (U"Cannot find a colour value in field \"", fieldName, U"\" in the form.\n"
+			Melder_throw (U"Cannot find a colour value in field “", fieldName, U"” in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
 		}

@@ -220,6 +220,7 @@ autostring32 Melder_ndup (conststring32 string /* cattable */, integer n) {
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" characters. Use a 64-bit edition of Praat instead?");
 	autostring32 result (size, false);   // guarded conversion
 	str32ncpy (result.get(), string, n);
+	result [n] = U'\0';
 	if (Melder_debug == 34)
 		Melder_casual (U"Melder_ndup\t", Melder_pointer (result.get()), U"\t", Melder_bigInteger (size), U"\t", sizeof (char32));
 	return result;
