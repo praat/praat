@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2022 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2023 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -552,9 +552,9 @@ void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeC
 
 /********** GuiFileSelect **********/
 
-autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 title, bool allowMultipleFiles);
-autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title, conststring32 defaultName);
-autostring32 GuiFileSelect_getFolderName (GuiWindow parent, conststring32 title);
+autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststring32 title, bool allowMultipleFiles);
+autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring32 title, conststring32 defaultName);
+autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring32 title);
 
 /********** GuiForm **********/
 

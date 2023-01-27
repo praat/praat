@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20230124)
+MAN_BEGIN (U"What's new?", U"ppgb", 20230127)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.05# (27 January 2023)")
+LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which some old-style forms could not be read.")
+LIST_ITEM (U"• Repaired an old bug by which ##chooseReadString$()# could crash on Linux.")
 NORMAL (U"##6.3.04# (24 January 2023)")
 LIST_ITEM (U"• Playing multiple sounds with #Play now concatenates them without breaks, "
 	"and is interruptable by the Escape key.")
