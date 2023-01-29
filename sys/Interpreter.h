@@ -89,14 +89,6 @@ Thing_define (Interpreter, Thing) {
 	std::unordered_map <std::u32string, autoInterpreterVariable> variablesMap;
 	bool running, stopped;
 
-	/*
-		For beginForm().
-	*/
-	autoUiForm form;
-	int formPass, nparForm;
-	UiField radio;
-	int clickedFormButton;
-
 	kInterpreter_ReturnType returnType;   // automatically initialized as kInterpreter_ReturnType::VOID_
 	bool returnedBoolean;
 	autostring32 returnedString;
@@ -134,20 +126,6 @@ void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formul
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key);
-
-void Interpreter_beginForm (Interpreter me, GuiWindow topShell, Editor optionalEditor, conststring32 dialogTitle);
-double Interpreter_real (Interpreter me, conststring32 label, conststring32 defaultValue);
-double Interpreter_positive (Interpreter me, conststring32 label, conststring32 defaultValue);
-void Interpreter_integer (Interpreter me, conststring32 label, conststring32 defaultValue);
-void Interpreter_natural (Interpreter me, conststring32 label, conststring32 defaultValue);
-void Interpreter_word (Interpreter me, conststring32 label, conststring32 defaultValue);
-void Interpreter_sentence (Interpreter me, conststring32 label, conststring32 defaultValue);
-void Interpreter_text (Interpreter me, conststring32 label, conststring32 defaultValue, integer numberOfLines);
-void Interpreter_boolean (Interpreter me, conststring32 label, bool defaultValue);
-void Interpreter_choice (Interpreter me, conststring32 label, int defaultValue);
-void Interpreter_optionMenu (Interpreter me, conststring32 label, int defaultValue);
-void Interpreter_option (Interpreter me, conststring32 label);
-void Interpreter_comment (Interpreter me, conststring32 label);
 
 /* End of file Interpreter.h */
 #endif
