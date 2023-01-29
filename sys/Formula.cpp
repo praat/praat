@@ -151,7 +151,7 @@ enum { NO_SYMBOL_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
 		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
-		BEGIN_FORM_, BEGIN_PAUSE_FORM_,
+		BEGIN_PAUSE_FORM_,
 		REAL_, POSITIVE_, INTEGER_, NATURAL_,
 		WORD_, SENTENCE_, TEXT_, BOOLEAN_,
 		CHOICE_, OPTION_MENU_, OPTION_,
@@ -292,7 +292,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"left$", U"right$", U"mid$",
 	U"selected", U"selected$", U"numberOfSelected", U"selected#",
 	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
-	U"beginForm", U"beginPause", U"real", U"positive", U"integer", U"natural",
+	U"beginPause", U"real", U"positive", U"integer", U"natural",
 	U"word", U"sentence", U"text", U"boolean",
 	U"choice", U"optionMenu", U"option",
 	U"infile", U"outfile", U"folder",
@@ -6292,24 +6292,6 @@ static void do_solveNonnegative_VEC () {
 	}
 }
 
-static void do_beginForm () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function “beginForm” is not available inside manuals.");
-	const Stackel n = pop;
-	if (n->number == 1) {
-		const Stackel title = pop;
-		if (title->which == Stackel_STRING) {
-			const Editor optionalEditor = theInterpreter -> optionalEditor;
-			const GuiWindow parentShell = ( optionalEditor ? optionalEditor -> windowForm : theCurrentPraatApplication -> topShell );
-			Interpreter_beginForm (theInterpreter, parentShell, optionalEditor, title->getString());
-		} else {
-			Melder_throw (U"The function “beginForm” requires a string (the title), not ", title->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “beginForm” requires 1 argument (a title), not ", n->number, U".");
-	}
-	pushNumber (1);
-}
 static void do_beginPauseForm () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “beginPauseForm” is not available inside manuals.");
@@ -6332,160 +6314,113 @@ static void do_real () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “real” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		conststring32 defaultString = nullptr;
-		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->getString();
-		} else if (defaultValue->which == Stackel_NUMBER) {
-			defaultString = Melder_double (defaultValue->number);
-		} else {
-			Melder_throw (U"The second argument of “real” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
-		}
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			if (theInterpreter -> formPass > 0) {
-				const double result = Interpreter_real (theInterpreter, label->getString(), defaultString);
-				pushNumber (result);
-			} else {
-				UiPause_real (label->getString(), defaultString);
-				pushNumber (1);
-			}
-		} else {
-			Melder_throw (U"The first argument of “real” (the label) should be a string, not ", label->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “real” requires 2 arguments (a label and a default value), not ", n->number, U".");
-	}
+	Melder_require (n->number == 2,
+		U"The function “real” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	conststring32 defaultString = nullptr;
+	if (defaultValue->which == Stackel_STRING)
+		defaultString = defaultValue->getString();
+	else if (defaultValue->which == Stackel_NUMBER)
+		defaultString = Melder_double (defaultValue->number);
+	else
+		Melder_throw (U"The second argument of “real” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “real” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_real (label->getString(), defaultString);
+	pushNumber (1);
 }
 static void do_positive () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “positive” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		conststring32 defaultString = nullptr;
-		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->getString();
-		} else if (defaultValue->which == Stackel_NUMBER) {
-			defaultString = Melder_double (defaultValue->number);
-		} else {
-			Melder_throw (U"The second argument of “positive” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
-		}
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			if (theInterpreter -> formPass > 0) {
-				const double result = Interpreter_positive (theInterpreter, label->getString(), defaultString);
-				pushNumber (result);
-			} else {
-				UiPause_positive (label->getString(), defaultString);
-				pushNumber (1);
-			}
-		} else {
-			Melder_throw (U"The first argument of “positive” (the label) should be a string, not ", label->whichText(), U".");
-		}
+	Melder_require (n->number == 2,
+		U"The function “positive” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	conststring32 defaultString = nullptr;
+	if (defaultValue->which == Stackel_STRING) {
+		defaultString = defaultValue->getString();
+	} else if (defaultValue->which == Stackel_NUMBER) {
+		defaultString = Melder_double (defaultValue->number);
 	} else {
-		Melder_throw (U"The function “positive” requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The second argument of “positive” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
 	}
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “positive” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_positive (label->getString(), defaultString);
+	pushNumber (1);
 }
 static void do_integer () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “integer” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		conststring32 defaultString = nullptr;
-		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->getString();
-		} else if (defaultValue->which == Stackel_NUMBER) {
-			defaultString = Melder_double (defaultValue->number);
-		} else {
-			Melder_throw (U"The second argument of “integer” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
-		}
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			if (theInterpreter -> formPass > 0)
-				Interpreter_integer (theInterpreter, label->getString(), defaultString);
-			else
-				UiPause_integer (label->getString(), defaultString);
-		} else {
-			Melder_throw (U"The first argument of “integer” (the label) should be a string, not ", label->whichText(), U".");
-		}
+	Melder_require (n->number == 2,
+		U"The function “integer” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	conststring32 defaultString = nullptr;
+	if (defaultValue->which == Stackel_STRING) {
+		defaultString = defaultValue->getString();
+	} else if (defaultValue->which == Stackel_NUMBER) {
+		defaultString = Melder_double (defaultValue->number);
 	} else {
-		Melder_throw (U"The function “integer” requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The second argument of “integer” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
 	}
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “integer” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_integer (label->getString(), defaultString);
 	pushNumber (1);
 }
 static void do_natural () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “natural” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		conststring32 defaultString = nullptr;
-		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->getString();
-		} else if (defaultValue->which == Stackel_NUMBER) {
-			defaultString = Melder_double (defaultValue->number);
-		} else {
-			Melder_throw (U"The second argument of “natural” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
-		}
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			if (theInterpreter -> formPass > 0)
-				Interpreter_natural (theInterpreter, label->getString(), defaultString);
-			else
-				UiPause_natural (label->getString(), defaultString);
-		} else {
-			Melder_throw (U"The first argument of “natural” (the label) should be a string, not ", label->whichText(), U".");
-		}
+	Melder_require (n->number == 2,
+		U"The function “natural” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	conststring32 defaultString = nullptr;
+	if (defaultValue->which == Stackel_STRING) {
+		defaultString = defaultValue->getString();
+	} else if (defaultValue->which == Stackel_NUMBER) {
+		defaultString = Melder_double (defaultValue->number);
 	} else {
-		Melder_throw (U"The function “natural” requires 2 arguments (a label and a default value), not ", n->number, U".");
+		Melder_throw (U"The second argument of “natural” (the default value) should be a string or a number, not ", defaultValue->whichText(), U".");
 	}
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “natural” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_natural (label->getString(), defaultString);
 	pushNumber (1);
 }
 static void do_word () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “word” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		Melder_require (defaultValue->which == Stackel_STRING,
-			U"The second argument of “word” (the default value) should be a string, not ", defaultValue->whichText(), U".");
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			if (theInterpreter -> formPass > 0)
-				Interpreter_word (theInterpreter, label->getString(), defaultValue->getString());
-			else
-				UiPause_word (label->getString(), defaultValue->getString());
-		} else {
-			Melder_throw (U"The first argument of “word” (the label) should be a string, not ", label->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “word” requires 2 arguments (a label and a default value), not ", n->number, U".");
-	}
+	Melder_require (n->number == 2,
+		U"The function “word” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The second argument of “word” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “word” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_word (label->getString(), defaultValue->getString());
 	pushNumber (1);
 }
 static void do_sentence () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “sentence” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		Melder_require (defaultValue->which == Stackel_STRING,
-			U"The second argument of “sentence” (the default value) should be a string, not ", defaultValue->whichText(), U".");
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			if (theInterpreter -> formPass > 0)
-				Interpreter_sentence (theInterpreter, label->getString(), defaultValue->getString());
-			else
-				UiPause_sentence (label->getString(), defaultValue->getString());
-		} else {
-			Melder_throw (U"The first argument of “sentence” (the label) should be a string, not ", label->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “sentence” requires 2 arguments (a label and a default value), not ", n->number, U".");
-	}
+	Melder_require (n->number == 2,
+		U"The function “sentence” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The second argument of “sentence” (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “sentence” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_sentence (label->getString(), defaultValue->getString());
 	pushNumber (1);
 }
 static void do_text () {
@@ -6493,7 +6428,7 @@ static void do_text () {
 		U"The function “text” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
-		U"The function “text” requires 2 or 3 arguments (an optional number of lines, a label, and a default value), not ", n->number, U".");
+		U"The function “text” requires 2 or 3 arguments (an optional number of lines, a label text, and a default value), not ", n->number, U".");
 	integer numberOfLines = 1;   // the default
 	if (n->number == 3) {
 		/*
@@ -6524,7 +6459,7 @@ static void do_text () {
 		U"The second argument of “text” (the default value) should be a string, not ", defaultValue->whichText(), U".");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The first argument of “text” (the label) should be a string, not ", label->whichText(), U".");
+		U"The first argument of “text” (the label text) should be a string, not ", label->whichText(), U".");
 	UiPause_text (label->getString(), defaultValue->getString(), numberOfLines);
 	pushNumber (1);
 }
@@ -6533,14 +6468,14 @@ static void do_infile () {
 		U"The function “infile” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
-		U"The function “infile” requires 2 or 3 arguments (an optional number of lines, a label, and a default value), not ", n->number, U".");
+		U"The function “infile” requires 2 or 3 arguments (an optional number of lines, a label text, and a default value), not ", n->number, U".");
 	integer numberOfLines = 3;   // the default
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
 		U"The last argument of “infile” (the default value) should be a string, not ", defaultValue->whichText(), U".");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The penultimate argument of “infile” (the label) should be a string, not ", label->whichText(), U".");
+		U"The penultimate argument of “infile” (the label text) should be a string, not ", label->whichText(), U".");
 	if (n->number == 3) {
 		const Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
@@ -6555,14 +6490,14 @@ static void do_outfile () {
 		U"The function “outfile” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
-		U"The function “outfile” requires 2 or 3 arguments (an optional number of lines, a label, and a default value), not ", n->number, U".");
+		U"The function “outfile” requires 2 or 3 arguments (an optional number of lines, a label text, and a default value), not ", n->number, U".");
 	integer numberOfLines = 3;   // the default
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
 		U"The last argument of “outfile” (the default value) should be a string, not ", defaultValue->whichText(), U".");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The penultimate argument of “outfile” (the label) should be a string, not ", label->whichText(), U".");
+		U"The penultimate argument of “outfile” (the label text) should be a string, not ", label->whichText(), U".");
 	if (n->number == 3) {
 		const Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
@@ -6577,14 +6512,14 @@ static void do_folder () {
 		U"The function “folder” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
-		U"The function “folder” requires 2 or 3 arguments (an optional number of lines, a label, and a default value), not ", n->number, U".");
+		U"The function “folder” requires 2 or 3 arguments (an optional number of lines, a label text, and a default value), not ", n->number, U".");
 	integer numberOfLines = 3;   // the default
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
 		U"The last argument of “folder” (the default value) should be a string, not ", defaultValue->whichText(), U".");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The penultimate argument of “folder” (the label) should be a string, not ", label->whichText(), U".");
+		U"The penultimate argument of “folder” (the label text) should be a string, not ", label->whichText(), U".");
 	if (n->number == 3) {
 		const Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
@@ -6599,7 +6534,7 @@ static void do_realvector () {
 		U"The function “realvector” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 3 && n->number <= 4,
-		U"The function “realvector” requires 3 or 4 arguments (an optional number of lines, a label, a format, and a default value), not ", n->number, U".");
+		U"The function “realvector” requires 3 or 4 arguments (an optional number of lines, a label text, a format, and a default value), not ", n->number, U".");
 	integer numberOfLines = 7;   // the default
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
@@ -6612,7 +6547,7 @@ static void do_realvector () {
 		U"The format should be “(whitespace-separated)” or “(formula)”, not “", _format->getString(), U"”.");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The antepenultimate argument of “realvector” (the label) should be a string, not ", label->whichText(), U".");
+		U"The antepenultimate argument of “realvector” (the label text) should be a string, not ", label->whichText(), U".");
 	if (n->number == 4) {
 		const Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
@@ -6627,7 +6562,7 @@ static void do_positivevector () {
 		U"The function “positivevector” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 3 && n->number <= 4,
-		U"The function “positivevector” requires 3 or 4 arguments (an optional number of lines, a label, a format, and a default value), not ", n->number, U".");
+		U"The function “positivevector” requires 3 or 4 arguments (an optional number of lines, a label text, a format, and a default value), not ", n->number, U".");
 	integer numberOfLines = 7;   // the default
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
@@ -6640,7 +6575,7 @@ static void do_positivevector () {
 		U"The format should be “(whitespace-separated)” or “(formula)”, not “", _format->getString(), U"”.");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The antepenultimate argument of “positivevector” (the label) should be a string, not ", label->whichText(), U".");
+		U"The antepenultimate argument of “positivevector” (the label text) should be a string, not ", label->whichText(), U".");
 	if (n->number == 4) {
 		const Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
@@ -6655,7 +6590,7 @@ static void do_integervector () {
 		U"The function “integervector” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 3 && n->number <= 4,
-		U"The function “integervector” requires 3 or 4 arguments (an optional number of lines, a label, a format, and a default value), not ", n->number, U".");
+		U"The function “integervector” requires 3 or 4 arguments (an optional number of lines, a label text, a format, and a default value), not ", n->number, U".");
 	integer numberOfLines = 7;   // the default
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
@@ -6668,7 +6603,7 @@ static void do_integervector () {
 		U"The format should be “(whitespace-separated)”, “(ranges)”, or “(formula)”, not “", _format->getString(), U"”.");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The antepenultimate argument of “integervector” (the label) should be a string, not ", label->whichText(), U".");
+		U"The antepenultimate argument of “integervector” (the label text) should be a string, not ", label->whichText(), U".");
 	if (n->number == 4) {
 		const Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
@@ -6683,7 +6618,7 @@ static void do_naturalvector () {
 		U"The function “naturalvector” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 3 && n->number <= 4,
-		U"The function “naturalvector” requires 3 or 4 arguments (an optional number of lines, a label, a format, and a default value), not ", n->number, U".");
+		U"The function “naturalvector” requires 3 or 4 arguments (an optional number of lines, a label text, a format, and a default value), not ", n->number, U".");
 	integer numberOfLines = 7;   // the default
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_STRING,
@@ -6696,7 +6631,7 @@ static void do_naturalvector () {
 		U"The format should be “(whitespace-separated)”, “(ranges)”, or “(formula)”, not “", _format->getString(), U"”.");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The antepenultimate argument of “naturalvector” (the label) should be a string, not ", label->whichText(), U".");
+		U"The antepenultimate argument of “naturalvector” (the label text) should be a string, not ", label->whichText(), U".");
 	if (n->number == 4) {
 		const Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,
@@ -6710,91 +6645,70 @@ static void do_boolean () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “boolean” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		Melder_require (defaultValue->which == Stackel_NUMBER,
-			U"The second argument of “boolean” (the default value) should be a number (0 or 1), not ", defaultValue->whichText(), U".");
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			UiPause_boolean (label->getString(), defaultValue->number != 0.0);
-		} else {
-			Melder_throw (U"The first argument of “boolean” (the label) should be a string, not ", label->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “boolean” requires 2 arguments (a label and a default value), not ", n->number, U".");
-	}
+	Melder_require (n->number == 2,
+		U"The function “boolean” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_NUMBER,
+		U"The second argument of “boolean” (the default value) should be a number (0 or 1), not ", defaultValue->whichText(), U".");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “boolean” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_boolean (label->getString(), defaultValue->number != 0.0);
 	pushNumber (1);
 }
 static void do_choice () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “choice” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		if (defaultValue->which != Stackel_NUMBER) {
-			Melder_throw (U"The second argument of “choice” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
-		}
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			UiPause_choice (label->getString(), Melder_iround (defaultValue->number));
-		} else {
-			Melder_throw (U"The first argument of “choice” (the label) should be a string, not ", label->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “choice” requires 2 arguments (a label and a default value), not ", n->number, U".");
-	}
+	Melder_require (n->number == 2,
+		U"The function “choice” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	Melder_require (defaultValue->which != Stackel_NUMBER,
+		U"The second argument of “choice” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “choice” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_choice (label->getString(), Melder_iround (defaultValue->number));
 	pushNumber (1);
 }
 static void do_optionMenu () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “optionMenu” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultValue = pop;
-		if (defaultValue->which != Stackel_NUMBER) {
-			Melder_throw (U"The second argument of “optionMenu” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
-		}
-		const Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			UiPause_optionMenu (label->getString(), Melder_iround (defaultValue->number));
-		} else {
-			Melder_throw (U"The first argument of “optionMenu” (the label) should be a string, not ", label->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “optionMenu” requires 2 arguments (a label and a default value), not ", n->number, U".");
+	Melder_require (n->number == 2,
+		U"The function “optionMenu” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+	const Stackel defaultValue = pop;
+	if (defaultValue->which != Stackel_NUMBER) {
+		Melder_throw (U"The second argument of “optionMenu” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
 	}
+	const Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of “optionMenu” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_optionMenu (label->getString(), Melder_iround (defaultValue->number));
 	pushNumber (1);
 }
 static void do_option () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “option” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 1) {
+	Melder_require (n->number == 1,
+		U"The function “option” requires 1 argument (a text), not ", n->number, U".");
 		const Stackel text = pop;
-		if (text->which == Stackel_STRING) {
-			UiPause_option (text->getString());
-		} else {
-			Melder_throw (U"The argument of “option” should be a string (the text), not ", text->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “option” requires 1 argument (a text), not ", n->number, U".");
-	}
+	Melder_require (text->which == Stackel_STRING,
+		U"The argument of “option” should be a string (the text), not ", text->whichText(), U".");
+	UiPause_option (text->getString());
 	pushNumber (1);
 }
 static void do_comment () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “comment” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 1) {
-		const Stackel text = pop;
-		if (text->which == Stackel_STRING) {
-			UiPause_comment (text->getString());
-		} else {
-			Melder_throw (U"The argument of “comment” should be a string (the text), not ", text->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function “comment” requires 1 argument (a text), not ", n->number, U".");
-	}
+	Melder_require (n->number == 1,
+		U"The function “comment” requires 1 argument (a text), not ", n->number, U".");
+	const Stackel text = pop;
+	Melder_require (text->which == Stackel_STRING,
+		U"The argument of “comment” should be a string (the text), not ", text->whichText(), U".");
+	UiPause_comment (text->getString());
 	pushNumber (1);
 }
 static void do_endPauseForm () {
@@ -6840,76 +6754,60 @@ static void do_chooseReadFileStr () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “chooseReadFile$” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 1) {
-		const Stackel title = pop;
-		if (title->which == Stackel_STRING) {
-			autoStringSet fileNames = GuiFileSelect_getInfileNames (nullptr, title->getString(), false);
-			if (fileNames->size == 0) {
-				pushString (Melder_dup (U""));
-			} else {
-				SimpleString fileName = fileNames->at [1];
-				pushString (Melder_dup (fileName -> string.get()));
-			}
-		} else {
-			Melder_throw (U"The argument of “chooseReadFile$” should be a string (the title), not ", title->whichText(), U".");
-		}
+	Melder_require (n->number == 1,
+		U"The function “chooseReadFile$” requires 1 argument (a title), not ", n->number, U".");
+	const Stackel title = pop;
+	Melder_require (title->which == Stackel_STRING,
+		U"The argument of “chooseReadFile$” should be a string (the title), not ", title->whichText(), U".");
+	autoStringSet fileNames = GuiFileSelect_getInfileNames (nullptr, title->getString(), false);
+	if (fileNames->size == 0) {
+		pushString (Melder_dup (U""));
 	} else {
-		Melder_throw (U"The function “chooseReadFile$” requires 1 argument (a title), not ", n->number, U".");
+		SimpleString fileName = fileNames->at [1];
+		pushString (Melder_dup (fileName -> string.get()));
 	}
 }
 static void do_chooseWriteFileStr () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “chooseWriteFile$” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 2) {
-		const Stackel defaultName = pop, title = pop;
-		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getOutfileName (nullptr, title->getString(), defaultName->getString());
-			if (! result)
-				result = Melder_dup (U"");
-			pushString (result.move());
-		} else {
-			Melder_throw (U"The arguments of “chooseWriteFile$” should be two strings (the title and the default name).");
-		}
-	} else {
-		Melder_throw (U"The function “chooseWriteFile$” requires 2 arguments (a title and a default name), not ", n->number, U".");
-	}
+	Melder_require (n->number == 2,
+		U"The function “chooseWriteFile$” requires 2 arguments (a title and a default name), not ", n->number, U".");
+	const Stackel defaultName = pop, title = pop;
+	Melder_require (title->which == Stackel_STRING && defaultName->which == Stackel_STRING,
+		U"The arguments of “chooseWriteFile$” should be two strings (the title and the default name).");
+	autostring32 result = GuiFileSelect_getOutfileName (nullptr, title->getString(), defaultName->getString());
+	if (! result)
+		result = Melder_dup (U"");
+	pushString (result.move());
 }
 static void do_chooseFolder_STR () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “chooseFolder$” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 1) {
-		const Stackel title = pop;
-		if (title->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getFolderName (nullptr, title->getString());
-			if (! result)
-				result = Melder_dup (U"");
-			pushString (result.move());
-		} else {
-			Melder_throw (U"The argument of “chooseFolder$” should be a string (the title).");
-		}
-	} else {
-		Melder_throw (U"The function “chooseFolder$” requires 1 argument (a title), not ", n->number, U".");
-	}
+	Melder_require (n->number == 1,
+		U"The function “chooseFolder$” requires 1 argument (a title), not ", n->number, U".");
+	const Stackel title = pop;
+	Melder_require (title->which == Stackel_STRING,
+		U"The argument of “chooseFolder$” should be a string (the title).");
+	autostring32 result = GuiFileSelect_getFolderName (nullptr, title->getString());
+	if (! result)
+		result = Melder_dup (U"");
+	pushString (result.move());
 }
 static void do_chooseDirectory_STR () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “chooseDirectory$” is not available inside manuals.");
 	const Stackel n = pop;
-	if (n->number == 1) {
-		const Stackel title = pop;
-		if (title->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getFolderName (nullptr, title->getString());
-			if (! result)
-				result = Melder_dup (U"");
-			pushString (result.move());
-		} else {
-			Melder_throw (U"The argument of “chooseDirectory$” should be a string (the title).");
-		}
-	} else {
-		Melder_throw (U"The function “chooseDirectory$” requires 1 argument (a title), not ", n->number, U".");
-	}
+	Melder_require (n->number == 1,
+		U"The function “chooseDirectory$” requires 1 argument (a title), not ", n->number, U".");
+	const Stackel title = pop;
+	Melder_require (title->which == Stackel_STRING,
+		U"The argument of “chooseDirectory$” should be a string (the title).");
+	autostring32 result = GuiFileSelect_getFolderName (nullptr, title->getString());
+	if (! result)
+		result = Melder_dup (U"");
+	pushString (result.move());
 }
 static void do_demoWindowTitle () {
 	const Stackel n = pop;
@@ -7871,7 +7769,6 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case SOLVE_MAT_: { do_solve_MAT ();
 } break; case SOLVE_WEAKLYCONSTRAINED_VEC_: { do_solveWeaklyConstrained_VEC ();
 /********** Pause window functions: **********/
-} break; case BEGIN_FORM_: { do_beginForm ();
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
 } break; case REAL_: { do_real ();
 } break; case POSITIVE_: { do_positive ();

@@ -188,18 +188,6 @@ void Melder_includeIncludeFiles (autostring32 *inout_text) {
 	}
 }
 
-void Interpreter_beginForm (Interpreter me, GuiWindow topShell, Editor optionalEditor, conststring32 dialogTitle) {
-	if (my formPass == 0) {
-		my dialogTitle = Melder_dup (dialogTitle);
-		my formPass = 1;
-		my numberOfParameters = 0;
-		my nparForm = 0;
-	} else if (my formPass == 2) {
-		;   // ignore
-	} else {
-		Melder_throw (U"Cannot nest multiple instances of “beginForm()” (depth ", my formPass, U").");
-	}
-}
 static bool parameterMatchesLabel (conststring32 parameter, conststring32 label) {
 	/*
 		A parameter matches a label if they are equal or if
@@ -213,114 +201,6 @@ static bool parameterMatchesLabel (conststring32 parameter, conststring32 label)
 		if (*label == U'\0' || *label == U'(' || *label == U' ' && label [1] == U'(')
 			return true;
 	return false;
-}
-double Interpreter_real (Interpreter me, conststring32 label, conststring32 defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “real” should be between a “beginForm” and an “endform”.");
-	else if (my formPass == 1) {
-		my types [++ my numberOfParameters] = Interpreter_REAL;
-		str32ncpy (my parameters [my numberOfParameters], label, Interpreter_MAX_PARAMETER_LENGTH);   // final null character will stay
-		my arguments [my numberOfParameters] = Melder_dup (defaultValue);
-		my nparForm ++;
-	} else {
-		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-			if (my types [ipar] == Interpreter_REAL && parameterMatchesLabel (my parameters [ipar], label)) {
-				Melder_assert (my arguments [ipar]);
-				return Melder_atof (my arguments [ipar].get());
-			}
-		}
-		Melder_throw (U"Field “", label, U"” not found in form.");
-	}
-	return undefined;
-}
-double Interpreter_positive (Interpreter me, conststring32 label, conststring32 defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “positive” should be between a “beginForm” and an “endform”.");
-	else if (my formPass == 1) {
-		my types [++ my numberOfParameters] = Interpreter_POSITIVE;
-		str32ncpy (my parameters [my numberOfParameters], label, Interpreter_MAX_PARAMETER_LENGTH);   // final null character will stay
-		my arguments [my numberOfParameters] = Melder_dup (defaultValue);
-		my nparForm ++;
-	} else {
-		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-			if (my types [ipar] == Interpreter_POSITIVE && parameterMatchesLabel (my parameters [ipar], label)) {
-				Melder_casual (U"Parameter: ", my parameters [ipar], U"; label: ", label);
-				Melder_assert (my arguments [ipar]);
-				return Melder_atof (my arguments [ipar].get());
-			}
-		}
-		Melder_throw (U"Field “", label, U"” not found in form.");
-	}
-	return undefined;
-}
-void Interpreter_integer (Interpreter me, conststring32 label, conststring32 defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “integer” should be between a “beginForm” and an “endform”.");
-	UiForm_addInteger (my form.get(), nullptr, nullptr, label, defaultValue);
-	my nparForm ++;
-}
-void Interpreter_natural (Interpreter me, conststring32 label, conststring32 defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “natural” should be between a “beginForm” and an “endform”.");
-	UiForm_addNatural (my form.get(), nullptr, nullptr, label, defaultValue);
-	my nparForm ++;
-}
-void Interpreter_word (Interpreter me, conststring32 label, conststring32 defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “word” should be between a “beginForm” and an “endform”.");
-	UiForm_addWord (my form.get(), nullptr, nullptr, label, defaultValue);
-	my nparForm ++;
-}
-void Interpreter_sentence (Interpreter me, conststring32 label, conststring32 defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “sentence” should be between a “beginForm” and an “endform”.");
-	UiForm_addSentence (my form.get(), nullptr, nullptr, label, defaultValue);
-	my nparForm ++;
-}
-void Interpreter_text (Interpreter me, conststring32 label, conststring32 defaultValue, integer numberOfLines) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “text” should be between a “beginForm” and an “endform”.");
-	UiForm_addText (my form.get(), nullptr, nullptr, label, defaultValue, numberOfLines);
-	my nparForm ++;
-}
-void Interpreter_boolean (Interpreter me, conststring32 label, bool defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “boolean” should be between a “beginForm” and an “endform”.");
-	UiForm_addBoolean (my form.get(), nullptr, nullptr, label, defaultValue);
-	my nparForm ++;
-}
-void Interpreter_choice (Interpreter me, conststring32 label, int defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “choice” should be between a “beginForm” and an “endform”.");
-	my radio = UiForm_addRadio (my form.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
-	my nparForm ++;
-}
-void Interpreter_optionMenu (Interpreter me, conststring32 label, int defaultValue) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “optionMenu” should be between a “beginForm” and an “endform”.");
-	my radio = UiForm_addOptionMenu (my form.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
-	my nparForm ++;
-}
-void Interpreter_option (Interpreter me, conststring32 label) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “option” should be between a “beginForm” and an “endform”.");
-	if (! my radio) {
-		my form. reset();
-		Melder_throw (U"Found the function “option” without a preceding “choice” or “optionMenu”.");
-	}
-	UiOptionMenu_addButton (my radio, label);
-}
-void Interpreter_comment (Interpreter me, conststring32 label) {
-	if (my formPass == 0)
-		Melder_throw (U"The function “comment” should be between a “beginForm” and an “endform”.");
-	UiForm_addLabel (my form.get(), nullptr, label);
-}
-
-static integer readParametersFromBeginForm (Interpreter me, mutablestring32 text) {
-	my formPass = 0;
-	Interpreter_run (me, text);
-	Melder_assert (my formPass == 2);   // should have passed through `endform`
-	return my nparForm;
 }
 
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
@@ -342,8 +222,6 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				formLocation = p;
 				break;
 			}
-			if (str32nequ (p, U"beginForm", 9) && (p [9] == U':' || p [9] == U'(' || Melder_isHorizontalSpace(p [9])))
-				return readParametersFromBeginForm (me, text);
 			Melder_skipToEndOfLine (& p);
 			if (*p == U'\0')
 				break;
@@ -2363,13 +2241,6 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"Unmatched 'endproc'.");
 								lineNumber = callStack [callDepth --];
 								-- my callDepth;
-							} else if (str32nequ (command2.string, U"endform", 7) &&   // matching beginForm()
-									(! Melder_staysWithinInk (lines [lineNumber] [7]) || lines [lineNumber] [7] == U';'))
-							{
-								if (my formPass == 1) {
-									lineNumber = numberOfLines;   // go after end
-									my formPass = 2;
-								}
 							} else fail = true;
 						} else if (str32nequ (command2.string, U"else", 4) &&
 								(! Melder_staysWithinInk (command2.string [4]) || command2.string [4] == U';'))
