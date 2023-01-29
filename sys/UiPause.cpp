@@ -20,7 +20,6 @@
 #include "praatP.h"
 
 static autoUiForm thePauseForm;
-static UiField thePauseFormRadio = nullptr;
 static int thePauseForm_clicked = 0;
 static int theCancelContinueButton = 0;
 static int theEventLoopDepth = 0;
@@ -128,21 +127,21 @@ void UiPause_naturalvector (conststring32 label, kUi_integerVectorFormat default
 void UiPause_choice (conststring32 label, int defaultValue) {
 	if (! thePauseForm)
 		Melder_throw (U"The function “choice” should be between a “beginPause” and an “endPause”.");
-	thePauseFormRadio = UiForm_addRadio (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
+	UiForm_addRadio (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
 }
 void UiPause_optionMenu (conststring32 label, int defaultValue) {
 	if (! thePauseForm)
 		Melder_throw (U"The function “optionMenu” should be between a “beginPause” and an “endPause”.");
-	thePauseFormRadio = UiForm_addOptionMenu (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
+	UiForm_addOptionMenu (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
 }
-void UiPause_option (conststring32 label) {
+void UiPause_option (conststring32 optionText) {
 	if (! thePauseForm)
 		Melder_throw (U"The function “option” should be between a “beginPause” and an “endPause”.");
-	if (! thePauseFormRadio) {
+	UiOption option = UiForm_addOption (thePauseForm.get(), optionText);
+	if (! option) {
 		thePauseForm. reset();
 		Melder_throw (U"Found the function “option” without a preceding “choice” or “optionMenu”.");
 	}
-	UiOptionMenu_addButton (thePauseFormRadio, label);
 }
 void UiPause_comment (conststring32 label) {
 	if (! thePauseForm)
@@ -216,7 +215,6 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 		praat_background ();
 	/* BUG: should also restore praatP. editor. */
 	thePauseForm. releaseToUser();   // undangle
-	thePauseFormRadio = nullptr;   // undangle
 	if (thePauseForm_clicked == -1) {
 		Interpreter_stop (interpreter);
 		Melder_throw (U"You interrupted the script.");
