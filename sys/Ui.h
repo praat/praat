@@ -31,7 +31,6 @@ Thing_declare (EditorCommand);
 {
 	static autoUiForm dia;
 	if (! dia) {
-		UiField radio;
 		dia = UiForm_create
 		  (topShell,   // the parent GuiWindow of the dialog window
 			nullptr,   // an optional editor
@@ -47,9 +46,9 @@ Thing_declare (EditorCommand);
 		static bool beard;
 		UiForm_addBoolean (dia.get(), & beard, U"beard", U"Beard", false);
 		static int sex;
-		radio = UiForm_addRadio (dia.get(), & sex, U"sex", U"Sex", 1);
-			UiRadio_addButton (radio, U"Female");
-			UiRadio_addButton (radio, U"Male");
+		UiForm_addRadio (dia.get(), & sex, U"sex", U"Sex", 1);
+			UiForm_addOption (dia.get(), U"Female");
+			UiForm_addOption (dia.get(), U"Male");
 		UiForm_addWord (dia.get(), colour, U"colour", U"Colour", U"black");
 		UiForm_addLabel (dia.get(), U"features", U"Some less conspicuous features:");
 		static integer numberOfBirthMarks;
@@ -245,10 +244,9 @@ UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 v
 		conststring32 labelText, constSTRVEC defaultValue, integer numberOfLines = 7);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
 		conststring32 labelText, int defaultValue, int base);
-UiOption UiRadio_addButton (UiField me, conststring32 labelText);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
 		conststring32 labelText, int defaultValue, int base);
-UiOption UiOptionMenu_addButton (UiField me, conststring32 label);
+UiOption UiForm_addOption (UiForm me, conststring32 optionText);
 UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName,
 		conststring32 labelText, constSTRVEC strings, integer defaultValue);
 UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName,

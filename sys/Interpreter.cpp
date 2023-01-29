@@ -618,7 +618,6 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor opti
 	autoUiForm form = UiForm_create (parent, optionalEditor,
 		Melder_cat (selectionOnly ? U"Run script (selection only): " : U"Run script: ", my dialogTitle.get()),
 		okCallback, okClosure, nullptr, nullptr);
-	UiField radio = nullptr;
 	if (path)
 		form -> scriptFilePath = Melder_dup (path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
@@ -733,15 +732,13 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor opti
 				Melder_throw (U"Cannot handle matrices in forms yet.");   // TODO
 			//	UiForm_addRealMatrix (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			} break; case Interpreter_CHOICE: {
-				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, (int) Melder_atoi (my arguments [ipar].get()), 1);
+				UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, (int) Melder_atoi (my arguments [ipar].get()), 1);
 			} break; case Interpreter_OPTIONMENU: {
-				radio = UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, (int) Melder_atoi (my arguments [ipar].get()), 1);
+				UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, (int) Melder_atoi (my arguments [ipar].get()), 1);
 			} break; case Interpreter_BUTTON: {
-				if (radio)
-					UiRadio_addButton (radio, my arguments [ipar].get());
+				UiForm_addOption (form.get(), my arguments [ipar].get());
 			} break; case Interpreter_OPTION: {
-				if (radio)
-					UiOptionMenu_addButton (radio, my arguments [ipar].get());
+				UiForm_addOption (form.get(), my arguments [ipar].get());
 			} break; case Interpreter_COMMENT: {
 				UiForm_addLabel (form.get(), nullptr, my arguments [ipar].get());
 			} break; default: {

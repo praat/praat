@@ -81,7 +81,6 @@
 			Interpreter interpreter, conststring32 _invokingButtonTitle_, bool _isModified_, void *_buttonClosure_, Editor _optionalEditor_) \
 	{ \
 		[[maybe_unused]] integer IOBJECT = 0; \
-		[[maybe_unused]] UiField _radio_ = nullptr; \
 		static autoUiForm _dia_; \
 		if (_dia_) \
 			goto _dia_inited_; \
@@ -189,39 +188,39 @@
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
-		_radio_ = UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
+		UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
 				labelText, defaultOptionNumber, 1);
 
 #define RADIOx(intVariable, labelText, defaultOptionNumber, base)  \
 		static int intVariable; \
-		_radio_ = UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
+		UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
 				labelText, defaultOptionNumber, base);
 
 #define RADIOSTR(stringVariable, labelText, defaultOptionNumber)  \
 		static conststring32 stringVariable; \
-		_radio_ = UiForm_addRadio (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
+		UiForm_addRadio (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
 				labelText, defaultOptionNumber, 1);
 
-#define RADIOBUTTON(labelText)  \
-		UiRadio_addButton (_radio_, labelText);
+#define RADIOBUTTON(optionText)  \
+		UiForm_addOption (_dia_.get(), optionText);
 
 #define OPTIONMENU(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
+		UiForm_addOptionMenu (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
 				labelText, defaultOptionNumber, 1);
 
 #define OPTIONMENUx(intVariable, labelText, defaultOptionNumber, base)  \
 		static int intVariable; \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
+		UiForm_addOptionMenu (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
 				labelText, defaultOptionNumber, base);
 
 #define OPTIONMENUSTR(stringVariable, labelText, defaultOptionNumber)  \
 		static conststring32 stringVariable; \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
+		UiForm_addOptionMenu (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
 				labelText, defaultOptionNumber, 1);
 
-#define OPTION(labelText)  \
-		UiOptionMenu_addButton (_radio_, labelText);
+#define OPTION(optionText)  \
+		UiForm_addOption (_dia_.get(), optionText);
 
 #define RADIO_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
 		static enum EnumeratedType enumeratedVariable; \
@@ -229,10 +228,10 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		_radio_ = UiForm_addRadio (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
+		UiForm_addRadio (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
 				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
-			UiRadio_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) ienum));
+			UiForm_addOption (_dia_.get(), EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
 #define OPTIONMENU_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
 		static EnumeratedType enumeratedVariable; \
@@ -240,10 +239,10 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
+		UiForm_addOptionMenu (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
 				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
-			UiOptionMenu_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) ienum));
+			UiForm_addOption (_dia_.get(), EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
 #define OPTIONMENU_ENUMSTR(EnumeratedType, enumeratedVariableAsString, labelText, defaultValue)  \
 		static char32 *enumeratedVariableAsString; \
@@ -251,10 +250,10 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		_radio_ = UiForm_addOptionMenu (_dia_.get(), nullptr, & enumeratedVariableAsString, U"" #enumeratedVariableAsString, \
+		UiForm_addOptionMenu (_dia_.get(), nullptr, & enumeratedVariableAsString, U"" #enumeratedVariableAsString, \
 				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
-			UiOptionMenu_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) ienum));
+			UiForm_addOption (_dia_.get(), EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
 #define LIST(integerVariable, labelText, strings, defaultOptionNumber)  \
 		static integer integerVariable; \

@@ -197,20 +197,15 @@ static autoUiOption UiOption_create (conststring32 optionText) {
 	return me;
 }
 
-UiOption UiRadio_addButton (UiField me, conststring32 optionText) {
+UiOption UiForm_addOption (UiForm me, conststring32 optionText) {
 	if (! me)
 		return nullptr;
-	Melder_assert (my type == _kUiField_type::RADIO_ || my type == _kUiField_type::OPTIONMENU_);
-	autoUiOption thee = UiOption_create (optionText);
-	return my options. addItem_move (thee.move());
-}
-
-UiOption UiOptionMenu_addButton (UiField me, conststring32 optionText) {
-	if (! me)
+	UiField you = my latestUsedRadio;
+	if (! you)
 		return nullptr;
-	Melder_assert (my type == _kUiField_type::RADIO_ || my type == _kUiField_type::OPTIONMENU_);
-	autoUiOption thee = UiOption_create (optionText);
-	return my options. addItem_move (thee.move());
+	Melder_assert (your type == _kUiField_type::RADIO_ || your type == _kUiField_type::OPTIONMENU_);
+	autoUiOption option = UiOption_create (optionText);
+	return your options. addItem_move (option.move());
 }
 
 /***** Things to do with UiField objects. *****/
@@ -1138,6 +1133,7 @@ UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 v
 
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
 	UiField thee = UiForm_addField (me, _kUiField_type::RADIO_, labelText);
+	my latestUsedRadio = thee;
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
@@ -1148,6 +1144,7 @@ UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVaria
 
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
 	UiField thee = UiForm_addField (me, _kUiField_type::OPTIONMENU_, labelText);
+	my latestUsedRadio = thee;
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;

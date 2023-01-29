@@ -3352,7 +3352,7 @@ LIST_ITEM (U"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn,
 LIST_ITEM (U"@@Scripting 6.9. Calling from the command line")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20230122)
+MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20230129)
 NORMAL (U"You can cause a Praat script to prompt for arguments. The file $$playSine.praat$ may contain the following:")
 CODE (U"#form: \"Play a sine wave\"")
 	CODE1 (U"#positive: \"Sine frequency (Hz)\", \"377.0\"")
@@ -3399,9 +3399,9 @@ DEFINITION (U"a check box will be shown; to switch it on, "
 	"set the initial value to $$\"on\"$, $$\"yes\"$, $$\"ON\"$, $$\"YES\"$, $$\"On\"$ or $$\"Yes\"$; "
 	"to switch it off, set it to $$\"off\"$, $$\"no\"$, $$\"OFF\"$, $$\"NO\"$, $$\"Off\"$ or $$\"No\"$.")
 TAG (U"#choice: %%variable\\$ %, %initialValue")
-DEFINITION (U"a radio box will be shown; the value is 1 or higher. This is followed by a series of:")
-TAG (U"#button: %%text\\$ %")
-DEFINITION (U"a button in a radio box.")
+DEFINITION (U"a multiple-choice box (or “radio box”) will be shown; the value is 1 or higher. This is followed by a series of:")
+TAG (U"#option: %%text\\$ %")
+DEFINITION (U"an option button in a multiple-choice box.")
 TAG (U"#comment: %%text\\$ %")
 DEFINITION (U"a line with any text.")
 TAG (U"#infile: %%variable\\$ %, %%initialValue\\$ %")
@@ -3437,27 +3437,27 @@ NORMAL (U"The variable associated with a radio box will get a numeric as well as
 CODE (U"#form: \"Fill attributes\"")
 	CODE1 (U"#comment: \"Choose any colour and texture for your paintings\"")
 	CODE1 (U"#choice: \"Colour\", 5")
-		CODE2 (U"#button: \"Dark red\"")
-		CODE2 (U"#button: \"Sea green\"")
-		CODE2 (U"#button: \"Navy blue\"")
-		CODE2 (U"#button: \"Canary yellow\"")
-		CODE2 (U"#button: \"Black\"")
-		CODE2 (U"#button: \"White\"")
+		CODE2 (U"#option: \"Dark red\"")
+		CODE2 (U"#option: \"Sea green\"")
+		CODE2 (U"#option: \"Navy blue\"")
+		CODE2 (U"#option: \"Canary yellow\"")
+		CODE2 (U"#option: \"Black\"")
+		CODE2 (U"#option: \"White\"")
 	CODE1 (U"#choice: \"Texture\", 1")
-		CODE2 (U"#button: \"Smooth\"")
-		CODE2 (U"#button: \"Rough\"")
-		CODE2 (U"#button: \"With holes\"")
+		CODE2 (U"#option: \"Smooth\"")
+		CODE2 (U"#option: \"Rough\"")
+		CODE2 (U"#option: \"With holes\"")
 CODE (U"#endform")
 CODE (U"#writeInfoLine: \"You chose the colour \", colour\\$ , \" and the texture \", texture\\$ , \".\"")
-NORMAL (U"This shows two radio boxes. In the Colour box, the fifth button (Black) is the standard value here. "
+NORMAL (U"This shows two multiple-choice boxes. In the Colour box, the fifth button (Black) is the standard value here. "
 	"If you click on “Navy blue” and then #%OK, the variable %colour will have the value 3, "
 	"and the variable %%colour\\$ % will have the value \"Navy blue\". "
 	"So you can test the value of the Colour box in either of the following ways:")
 CODE (U"if colour = 4")
 NORMAL (U"or")
 CODE (U"if colour\\$  = \"Canary yellow\"")
-NORMAL (U"The field types #optionmenu and #option are completely analogous to #choice and #button, "
-	"but use up much less space on the screen:")
+NORMAL (U"The field type #optionmenu is completely analogous to #choice, "
+	"but uses up much less space on the screen:")
 CODE (U"#form: \"Fill attributes\"")
 	CODE1 (U"#comment: \"Choose any colour and texture for your paintings\"")
 	CODE1 (U"#optionmenu: \"Colour\", 5")

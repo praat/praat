@@ -6663,7 +6663,7 @@ static void do_choice () {
 	Melder_require (n->number == 2,
 		U"The function “choice” requires 2 arguments (a label text and a default value), not ", n->number, U".");
 	const Stackel defaultValue = pop;
-	Melder_require (defaultValue->which != Stackel_NUMBER,
+	Melder_require (defaultValue->which == Stackel_NUMBER,
 		U"The second argument of “choice” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
@@ -6678,9 +6678,8 @@ static void do_optionMenu () {
 	Melder_require (n->number == 2,
 		U"The function “optionMenu” requires 2 arguments (a label text and a default value), not ", n->number, U".");
 	const Stackel defaultValue = pop;
-	if (defaultValue->which != Stackel_NUMBER) {
-		Melder_throw (U"The second argument of “optionMenu” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
-	}
+	Melder_require (defaultValue->which == Stackel_NUMBER,
+		U"The second argument of “optionMenu” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
 		U"The first argument of “optionMenu” (the label text) should be a string, not ", label->whichText(), U".");
@@ -6760,12 +6759,10 @@ static void do_chooseReadFileStr () {
 	Melder_require (title->which == Stackel_STRING,
 		U"The argument of “chooseReadFile$” should be a string (the title), not ", title->whichText(), U".");
 	autoStringSet fileNames = GuiFileSelect_getInfileNames (nullptr, title->getString(), false);
-	if (fileNames->size == 0) {
-		pushString (Melder_dup (U""));
-	} else {
-		SimpleString fileName = fileNames->at [1];
-		pushString (Melder_dup (fileName -> string.get()));
-	}
+	if (fileNames->size == 0)
+		return pushString (Melder_dup (U""));
+	SimpleString fileName = fileNames->at [1];
+	pushString (Melder_dup (fileName -> string.get()));
 }
 static void do_chooseWriteFileStr () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
