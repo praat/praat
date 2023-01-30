@@ -1,5 +1,5 @@
 # test/manually/pauseForm.praat
-# Paul Boersma 2023-01-22
+# Paul Boersma 2023-01-30
 
 writeInfoLine: "script"
 compression = 1

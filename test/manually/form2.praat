@@ -8,13 +8,17 @@ form: "manually/Form2"
 	positive: "right Pitch range (Hz)", "500.0"
 	text ttt Paul
 	text: "Tekstje", "abc"
-	text: 7, "Tekst", "abcdef"
+	text: 2, "Tekst", "abcdef"
 	realvector: "Numbers1", "(formula)", "{ 10, 80, 20 }"
 	realvector: 3, "Numbers2", "(whitespace-separated)", "8 19 -1.5"
 	choice: "Foreground colour", 2
 		option: "Red"
 		option: "Green"
 		option: "Blue"
+	optionmenu: "Texture", 1
+		option: "Smooth"
+		option: "Rough"
+		option: "With holes"
 endform
 
 appendInfoLine: "Form2..."
@@ -32,6 +36,8 @@ appendInfoLine: "Numbers1: <<", numbers1#, ">>"
 appendInfoLine: "Numbers2: <<", numbers2#, ">>"
 appendInfoLine: "Colour: <<", foreground_colour, ">>"
 appendInfoLine: "Colour: <<", foreground_colour$, ">>"
+appendInfoLine: "Texture: <<", texture, ">>"
+appendInfoLine: "Texture: <<", texture$, ">>"
 
 # if called from test/script/form1.praat:
 assert numbers1# = { 16, -17.6, 5 }

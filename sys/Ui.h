@@ -131,7 +131,7 @@ Thing_define (UiField, Thing) {
 	GuiLabel label;
 	GuiText text;
 	GuiCheckButton checkButton;
-	GuiRadioButton radioButton;
+	GuiRadioButton radioButton;   // for RADIO_
 	GuiList list;
 	GuiOptionMenu optionMenu;
 	GuiButton pushButton;   // like "Browse..." for INFILE_, OUTFILE_, FOLDER_ (2021-03-30)

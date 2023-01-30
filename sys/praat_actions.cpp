@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2018,2020-2022 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -558,7 +558,7 @@ static bool allowExecutionHook (void *closure) {
 	return false;
 }
 
-static void do_menu (Praat_Command me, bool isModified) {
+static void do_menu (Praat_Command me, const bool isModified) {
 	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		UiHistory_write (U"\nrunScript: ");
 		try {
@@ -584,12 +584,12 @@ static void do_menu (Praat_Command me, bool isModified) {
 }
 
 static void cb_menu (Praat_Command me, GuiMenuItemEvent event) {
-	bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
+	const bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
 	do_menu (me, isModified);
 }
 
 static void gui_button_cb_menu (Praat_Command me, GuiButtonEvent event) {
-	bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
+	const bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
 	do_menu (me, isModified);
 }
 
