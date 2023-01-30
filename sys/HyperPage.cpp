@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2022 Paul Boersma
+ * Copyright (C) 1996-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -663,9 +663,9 @@ static void menu_cb_print (HyperPage me, EDITOR_ARGS) {
 
 static void menu_cb_font (HyperPage me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Font", nullptr)
-		RADIO (font, U"Font", 1)
-			RADIOBUTTON (U"Times")
-			RADIOBUTTON (U"Helvetica")
+		CHOICE (font, U"Font", 1)
+			OPTION (U"Times")
+			OPTION (U"Helvetica")
 	EDITOR_OK
 		SET_OPTION (font, my instancePref_font() == kGraphics_font::TIMES ? 1 :
 				my instancePref_font() == kGraphics_font::HELVETICA ? 2 : my instancePref_font() == kGraphics_font::PALATINO ? 3 : 1);

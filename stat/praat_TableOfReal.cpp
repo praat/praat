@@ -1,6 +1,6 @@
 /* praat_TableOfReal.cpp
  *
- * Copyright (C) 1992-2018,2021,2022 Paul Boersma
+ * Copyright (C) 1992-2018,2021-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,11 @@ DIRECT (HELP_TableOfReal_help) {
 FORM (GRAPHICS_TableOfReal_drawAsNumbers, U"Draw as numbers", nullptr) {
 	NATURAL (fromRow, U"From row", U"1")
 	INTEGER (toRow, U"To row", U"0 (= all)")
-	RADIO (format, U"Format", 3)
-		RADIOBUTTON (U"decimal")
-		RADIOBUTTON (U"exponential")
-		RADIOBUTTON (U"free")
-		RADIOBUTTON (U"rational")
+	CHOICE (format, U"Format", 3)
+		OPTION (U"decimal")
+		OPTION (U"exponential")
+		OPTION (U"free")
+		OPTION (U"rational")
 	NATURAL (precision, U"Precision", U"5")
 	OK
 DO
@@ -48,11 +48,11 @@ DO
 FORM (GRAPHICS_TableOfReal_drawAsNumbers_if, U"Draw as numbers if...", nullptr) {
 	NATURAL (fromRow, U"From row", U"1")
 	INTEGER (toRow, U"To row", U"0 (= all)")
-	RADIO (format, U"Format", 3)
-		RADIOBUTTON (U"decimal")
-		RADIOBUTTON (U"exponential")
-		RADIOBUTTON (U"free")
-		RADIOBUTTON (U"rational")
+	CHOICE (format, U"Format", 3)
+		OPTION (U"decimal")
+		OPTION (U"exponential")
+		OPTION (U"free")
+		OPTION (U"rational")
 	NATURAL (precision, U"Precision", U"5")
 	FORMULA (condition, U"Condition", U"self <> 0")
 	OK

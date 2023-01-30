@@ -139,10 +139,10 @@ DO
 FORM (GRAPHICS_EACH__FFNet_drawWeightsToLayer, U"FFNet: Draw weights to layer", nullptr) {
 	LABEL (U"Warning: Disapproved. Use \"Draw weights..\" instead.")
 	NATURAL (layer, U"Layer number", U"1")
-	RADIO (scale, U"Scale", 1)
-		RADIOBUTTON (U"by maximum of all weights to layer")
-		RADIOBUTTON (U"by maximum weight from 'from-unit'")
-		RADIOBUTTON (U"by maximum weight to 'to-unit'")
+	CHOICE (scale, U"Scale", 1)
+		OPTION (U"by maximum of all weights to layer")
+		OPTION (U"by maximum weight from 'from-unit'")
+		OPTION (U"by maximum weight to 'to-unit'")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -345,9 +345,9 @@ DIRECT (HINT__hint_FFNet_PatternList_Categories_learn) {
 /******************* FFNet && ActivationList ******************************************/
 
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0) {
-	RADIO (categorizationgMethod, U"Categorization method", 1)
-		RADIOBUTTON (U"winner-takes-all")
-		RADIOBUTTON (U"stochastic")
+	CHOICE (categorizationgMethod, U"Categorization method", 1)
+		OPTION (U"winner-takes-all")
+		OPTION (U"stochastic")
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, ActivationList)
@@ -402,9 +402,9 @@ DO
 }
 
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
-	RADIO (categorizationgMethod, U"Categorization method", 1)
-		RADIOBUTTON (U"winner-takes-all")
-		RADIOBUTTON (U"stochastic")
+	CHOICE (categorizationgMethod, U"Categorization method", 1)
+		OPTION (U"winner-takes-all")
+		OPTION (U"stochastic")
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, PatternList)
@@ -424,9 +424,9 @@ DO
 /*********** FFNet & PatternList & ActivationList **********************************/
 
 FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList & ActivationList: Get total costs", U"FFNet & PatternList & ActivationList: Get total costs...") {
-	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"minimum-squared-error")
-		RADIOBUTTON (U"minimum-cross-entropy")
+	CHOICE (costFunctionType, U"Cost function", 1)
+		OPTION (U"minimum-squared-error")
+		OPTION (U"minimum-cross-entropy")
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
@@ -435,9 +435,9 @@ DO
 }
 
 FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
-	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"minimum-squared-error")
-		RADIOBUTTON (U"minimum-cross-entropy")
+	CHOICE (costFunctionType, U"Cost function", 1)
+		OPTION (U"minimum-squared-error")
+		OPTION (U"minimum-cross-entropy")
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
@@ -449,9 +449,9 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_ActivationList_lear
 	// NATURAL (U"Layer", U"1")
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
-	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"minimum-squared-error")
-		RADIOBUTTON (U"minimum-cross-entropy")
+	CHOICE (costFunctionType, U"Cost function", 1)
+		OPTION (U"minimum-squared-error")
+		OPTION (U"minimum-cross-entropy")
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, ActivationList)
@@ -467,9 +467,9 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_ActivationList_lear
 	LABEL (U"Specific for this minimization")
 	POSITIVE (learningRate, U"Learning rate", U"0.1")
 	REAL (momentum, U"Momentum", U"0.9")
-	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"minimum-squared-error")
-		RADIOBUTTON (U"minimum-cross-entropy")
+	CHOICE (costFunctionType, U"Cost function", 1)
+		OPTION (U"minimum-squared-error")
+		OPTION (U"minimum-cross-entropy")
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, ActivationList)
@@ -480,9 +480,9 @@ DO
 /*********** FFNet & PatternList & Categories **********************************/
 
 FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & Categories: Get total costs", U"FFNet & PatternList & Categories: Get total costs...") {
-	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"minimum-squared-error")
-		RADIOBUTTON (U"minimum-cross-entropy")
+	CHOICE (costFunctionType, U"Cost function", 1)
+		OPTION (U"minimum-squared-error")
+		OPTION (U"minimum-cross-entropy")
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
@@ -491,9 +491,9 @@ DO
 }
 
 FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
-	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"minimum-squared-error")
-		RADIOBUTTON (U"minimum-cross-entropy")
+	CHOICE (costFunctionType, U"Cost function", 1)
+		OPTION (U"minimum-squared-error")
+		OPTION (U"minimum-cross-entropy")
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
@@ -504,9 +504,9 @@ DO
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
-	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"minimum-squared-error")
-		RADIOBUTTON (U"minimum-cross-entropy")
+	CHOICE (costFunctionType, U"Cost function", 1)
+		OPTION (U"minimum-squared-error")
+		OPTION (U"minimum-cross-entropy")
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, Categories)
@@ -520,9 +520,9 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_Categories_learnSlo
 	LABEL (U"Specific for this minimization")
 	POSITIVE (learningRate, U"Learning rate", U"0.1")
 	REAL (momentum, U"Momentum", U"0.9")
-	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"minimum-squared-error")
-		RADIOBUTTON (U"minimum-cross-entropy")
+	CHOICE (costFunctionType, U"Cost function", 1)
+		OPTION (U"minimum-squared-error")
+		OPTION (U"minimum-cross-entropy")
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, Categories)

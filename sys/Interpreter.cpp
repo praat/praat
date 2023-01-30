@@ -426,7 +426,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 						Melder_skipHorizontalSpace (& p);
 						if (*p != U',') {
 							*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-							Melder_throw (U"Missing comma after number of lines:\n“", startOfLine, U"”.");
+							Melder_throw (U"Missing comma after number of lines:\n", startOfLine);
 						}
 						p ++;   // skip comma
 						Melder_skipHorizontalSpace (& p);
@@ -436,7 +436,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					*/
 					if (*p != U'"') {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"Missing opening quote for parameter name in form field:\n“", startOfLine, U"”.");
+						Melder_throw (U"Missing opening quote for parameter name in form field:\n", startOfLine);
 					}
 					p ++;   // skip opening quote
 					for (; p < endOfLine; p ++) {
@@ -450,13 +450,13 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					}
 					if (*p != U'"') {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"Missing closing quote character in parameter name:\n“", startOfLine, U"”.");
+						Melder_throw (U"Missing closing quote character in parameter name:\n", startOfLine);
 					}
 					p ++;   // skip closing quote
 					Melder_skipHorizontalSpace (& p);
 					if (*p != U',') {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"Missing comma after parameter name:\n“", startOfLine, U"”.");
+						Melder_throw (U"Missing comma after parameter name:\n", startOfLine);
 					}
 					p ++;   // skip comma
 				} else {
@@ -477,7 +477,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE) {
 				if (! hasColon) {
 					*p = U'\0';
-					Melder_throw (U"Vector fields in forms are available only if immediately followed by a colon:\n“", startOfLine, U"”.");
+					Melder_throw (U"Vector fields in forms are available only if immediately followed by a colon:\n", startOfLine);
 				}
 				MelderString_empty (& string);
 				if (Melder_isEndOfLine (*p)) {
@@ -486,7 +486,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				}
 				if (*p != U'"') {
 					*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-					Melder_throw (U"Missing opening quote for vector format:\n“", startOfLine, U"”.");
+					Melder_throw (U"Missing opening quote for vector format:\n", startOfLine);
 				}
 				p ++;   // skip opening quote
 				for (; p < endOfLine; p ++) {
@@ -500,13 +500,13 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				}
 				if (*p != U'"') {
 					*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-					Melder_throw (U"Missing closing quote for vector format:\n“", startOfLine, U"”.");
+					Melder_throw (U"Missing closing quote for vector format:\n", startOfLine);
 				}
 				p ++;   // skip closing quote
 				Melder_skipHorizontalSpace (& p);
 				if (*p != U',') {
 					*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-					Melder_throw (U"Missing comma after vector format:\n“", startOfLine, U"”.");
+					Melder_throw (U"Missing comma after vector format:\n", startOfLine);
 				}
 				p ++;   // skip comma
 				Melder_skipHorizontalSpace (& p);
@@ -523,9 +523,9 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			if (hasColon) {
 				MelderString_empty (& string);
 				if (Melder_isAsciiDecimalNumber (*p)) {
-					if (type != Interpreter_CHOICE && type != Interpreter_BOOLEAN) {
+					if (type != Interpreter_CHOICE && type != Interpreter_OPTIONMENU && type != Interpreter_BOOLEAN) {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"Only “choice” and “boolean” fields can take a number:\n“", startOfLine, U"”.");
+						Melder_throw (U"Only “choice”, “optionmenu” and “boolean” fields can take a number:\n", startOfLine);
 					}
 					const integer value = Melder_atoi (p);
 					if (type == Interpreter_CHOICE)
@@ -538,11 +538,11 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				} else {
 					if (*p != U'"') {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"Missing opening quote after comma in form field:\n“", startOfLine, U"”.");
+						Melder_throw (U"Missing opening quote after comma in form field:\n", startOfLine);
 					}
 					if (type == Interpreter_CHOICE) {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"A “choice” field can take only a number, not a string:\n“", startOfLine, U"”.");
+						Melder_throw (U"A “choice” field can take only a number, not a string:\n", startOfLine);
 					}
 					p ++;   // skip opening quote
 					for (; p < endOfLine; p ++) {
@@ -556,13 +556,13 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					}
 					if (*p != U'"') {
 						*(p + 1) = U'\0';   // destroy input in order to limit printing of line
-						Melder_throw (U"Missing closing quote character in default argument:\n“", startOfLine, U"”.");
+						Melder_throw (U"Missing closing quote character in default argument:\n", startOfLine);
 					}
 					p ++;   // skip closing quote
 				}
 				Melder_skipHorizontalSpace (& p);
 				if (! Melder_isEndOfLine (*p) && *p != U';')
-					Melder_throw (U"Stray characters after default argument in form title:\n“", startOfLine, U"”.");
+					Melder_throw (U"Stray characters after default argument in form title:\n", startOfLine);
 				my arguments [my numberOfParameters] = Melder_dup_f (string.string);
 			} else {
 				my arguments [my numberOfParameters] = Melder_ndup (p, endOfLine - p);

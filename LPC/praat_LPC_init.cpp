@@ -422,7 +422,7 @@ DO
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"PowerCepstrum: Get peak...") {
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	OK
 DO
@@ -435,7 +435,7 @@ DO
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakInQuefrencyInterval, U"", nullptr) {
 	REAL (fromQuefrency, U"left Quefrency interval (s)", U"0.0033 (=300 Hz)")
 	REAL (toQuefrency, U"right Quefrency interval (s)", U"0.01667 (=60 Hz)")
-	RADIO_ENUM (kCepstrum_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kCepstrum_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kCepstrum_peakInterpolation :: PARABOLIC)
 	OK
 DO
@@ -448,7 +448,7 @@ DO
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of peak", U"PowerCepstrum: Get quefrency of peak...") {
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	OK
 DO
@@ -561,7 +561,7 @@ DO
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence", U"PowerCepstrum: Get peak prominence...") {
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
@@ -748,7 +748,7 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	LABEL (U"Trend line:")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
@@ -794,7 +794,7 @@ FORM (LIST__PowerCepstrogram_listCPP, U"PowerCepstrogram: List cepstral peak pro
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
@@ -819,7 +819,7 @@ FORM (NEW__PowerCepstrogram_to_Table_CPP, U"PowerCepstrogram: To Table (cepstral
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
@@ -868,11 +868,11 @@ FORM (CONVERT_TWO_TO_ONE__Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: T
 	LABEL (U"Boundary conditions for time warp")
 	BOOLEAN (matchBeginPositions, U"Match begin positions", false)
 	BOOLEAN (matchEndPositions, U"Match end positions", false)
-	RADIO (slopeConstraintType, U"Slope constraints", 1)
-		RADIOBUTTON (U"no restriction")
-		RADIOBUTTON (U"1/3 < slope < 3")
-		RADIOBUTTON (U"1/2 < slope < 2")
-		RADIOBUTTON (U"2/3 < slope < 3/2")
+	CHOICE (slopeConstraintType, U"Slope constraints", 1)
+		OPTION (U"no restriction")
+		OPTION (U"1/3 < slope < 3")
+		OPTION (U"1/2 < slope < 2")
+		OPTION (U"2/3 < slope < 3/2")
 	OK
 DO
 	CONVERT_TWO_TO_ONE (Cepstrumc)

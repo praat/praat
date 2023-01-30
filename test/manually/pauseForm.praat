@@ -1,5 +1,5 @@
 # test/manually/pauseForm.praat
-# Paul Boersma 2023-01-22
+# Paul Boersma 2023-01-30
 
 writeInfoLine: "script"
 compression = 1
@@ -25,7 +25,7 @@ for i to 5
 				option ("MP3")
 				option ("Ogg")
 		endif
-		optionMenu: "Number of channels", number_of_channels
+		optionmenu: "Number of channels", number_of_channels
 			option: "mono"
 			option: "stereo"
 			option: "quadro"

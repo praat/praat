@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,14 +317,14 @@ DO
 }
 
 FORM (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...") {
-	RADIOx (horizontalAlignment, U"Horizontal alignment", 2, 0)
-		RADIOBUTTON (U"left")
-		RADIOBUTTON (U"centre")
-		RADIOBUTTON (U"right")
-	RADIOx (verticalAlignment, U"Vertical alignment", 2, 0)
-		RADIOBUTTON (U"bottom")
-		RADIOBUTTON (U"half")
-		RADIOBUTTON (U"top")
+	CHOICEx (horizontalAlignment, U"Horizontal alignment", 2, 0)
+		OPTION (U"left")
+		OPTION (U"centre")
+		OPTION (U"right")
+	CHOICEx (verticalAlignment, U"Vertical alignment", 2, 0)
+		OPTION (U"bottom")
+		OPTION (U"half")
+		OPTION (U"top")
 	REAL (rotation, U"Rotation (degrees)", U"0")
 	TEXTFIELD (text, U"Text", U"", 3)
 OK
@@ -554,12 +554,12 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 	#if defined (_WIN32)
 		BOOLEAN (allowDirectPostscript, U"Allow direct PostScript", true);
 	#endif
-	RADIO_ENUM (kGraphicsPostscript_spots, greyResolution,
+	CHOICE_ENUM (kGraphicsPostscript_spots, greyResolution,
 			U"Grey resolution", kGraphicsPostscript_spots::DEFAULT)
 	#if defined (UNIX)
-		RADIO_ENUM (kGraphicsPostscript_paperSize, paperSize,
+		CHOICE_ENUM (kGraphicsPostscript_paperSize, paperSize,
 				U"Paper size", kGraphicsPostscript_paperSize::DEFAULT)
-		RADIO_ENUM (kGraphicsPostscript_orientation, orientation,
+		CHOICE_ENUM (kGraphicsPostscript_orientation, orientation,
 				U"Orientation", kGraphicsPostscript_orientation::DEFAULT)
 		POSITIVE (magnification, U"Magnification", U"1.0");
 		#if defined (linux)
@@ -568,7 +568,7 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 			TEXTFIELD (printCommand, U"Print command", U"lp -c %s", 4)
 		#endif
 	#endif
-	RADIO_ENUM (kGraphicsPostscript_fontChoiceStrategy, fontChoiceStrategy,
+	CHOICE_ENUM (kGraphicsPostscript_fontChoiceStrategy, fontChoiceStrategy,
 			U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy::DEFAULT)
 OK
 	#if defined (_WIN32)
@@ -1440,9 +1440,9 @@ DO
 }
 
 FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in world coordinates", nullptr) {
-	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
-		RADIOBUTTON (U"XIPA")
-		RADIOBUTTON (U"SILIPA")
+	CHOICEx (phoneticFont, U"Phonetic font", 1, 0)
+		OPTION (U"XIPA")
+		OPTION (U"SILIPA")
 	TEXTFIELD (text, U"Text", U"Hello world", 3)
 	OK
 DO
@@ -1458,9 +1458,9 @@ DO
 
 
 FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", nullptr) {
-	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
-		RADIOBUTTON (U"XIPA")
-		RADIOBUTTON (U"SILIPA")
+	CHOICEx (phoneticFont, U"Phonetic font", 1, 0)
+		OPTION (U"XIPA")
+		OPTION (U"SILIPA")
 	TEXTFIELD (text, U"Text", U"Hello world", 3)
 	OK
 DO

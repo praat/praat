@@ -1,6 +1,6 @@
 /* praat_TimeFunction.cpp
  *
- * Copyright (C) 1992-2017,2022 Paul Boersma
+ * Copyright (C) 1992-2017,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ DO
 }
 
 FORM (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
-	RADIO (shift, U"Shift", 1)
+	CHOICE (shift, U"Shift", 1)
 		OPTION (U"start time")
 		OPTION (U"centre time")
 		OPTION (U"end time")

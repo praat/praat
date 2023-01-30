@@ -257,24 +257,20 @@ _form_inited_: \
 	NATURALVECTOR_FIELD (integerVectorVariable, labelText, defaultFormat, defaultStringValue)
 
 
-#define RADIO_VARIABLE(optionVariable)  \
+#define CHOICE_VARIABLE(optionVariable)  \
 	static int optionVariable;
 
-#define RADIO_FIELD(optionVariable, labelText, defaultValue)  \
+#define CHOICE_FIELD(optionVariable, labelText, defaultValue)  \
 	UiForm_addRadio (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
 
-#define RADIO(optionVariable, labelText, defaultValue)  \
-	RADIO_VARIABLE (optionVariable) \
-	RADIO_FIELD (optionVariable, labelText, defaultValue)
+#define CHOICE(optionVariable, labelText, defaultValue)  \
+	CHOICE_VARIABLE (optionVariable) \
+	CHOICE_FIELD (optionVariable, labelText, defaultValue)
 
 
-#define RADIOSTR(stringVariable, labelText, defaultValue)  \
+#define CHOICESTR(stringVariable, labelText, defaultValue)  \
 	static conststring32 stringVariable; \
 	UiForm_addRadio (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
-
-
-#define RADIOBUTTON(labelText)  \
-	UiForm_addOption (cmd -> d_uiform.get(), labelText);
 
 
 #define OPTIONMENU_VARIABLE(optionVariable)  \
@@ -297,10 +293,10 @@ _form_inited_: \
 	UiForm_addOption (cmd -> d_uiform.get(), labelText);
 
 
-#define RADIO_ENUM_VARIABLE(EnumeratedType, enumeratedVariable)  \
+#define CHOICE_ENUM_VARIABLE(EnumeratedType, enumeratedVariable)  \
 	static enum EnumeratedType enumeratedVariable; \
 
-#define RADIO_ENUM_FIELD(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
+#define CHOICE_ENUM_FIELD(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
 	{/* type checks */ \
 		[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
@@ -310,9 +306,9 @@ _form_inited_: \
 	for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
 		UiForm_addOption (cmd -> d_uiform.get(), EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
 
-#define RADIO_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
-	RADIO_ENUM_VARIABLE (EnumeratedType, enumeratedVariable) \
-	RADIO_ENUM_FIELD (EnumeratedType, enumeratedVariable, labelText, defaultValue)
+#define CHOICE_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
+	CHOICE_ENUM_VARIABLE (EnumeratedType, enumeratedVariable) \
+	CHOICE_ENUM_FIELD (EnumeratedType, enumeratedVariable, labelText, defaultValue)
 
 
 #define OPTIONMENU_ENUM_VARIABLE(EnumeratedType, enumeratedVariable)  \

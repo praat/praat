@@ -117,9 +117,9 @@ DO
 
 FORM (SAVE_ONE__LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
 	OUTFILE (audioFile, U"Audio file", U"")
-	RADIO (type, U"Type", 3)
+	CHOICE (type, U"Type", 3)
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
-		RADIOBUTTON (Melder_audioFileTypeString (i))
+		OPTION (Melder_audioFileTypeString (i))
 	}}
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"10.0")
@@ -323,9 +323,9 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_autoCorrelate, U"Sound: autocorrelate", U"Sound: Autocorrelate...") {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
  	OK
 DO
@@ -430,9 +430,9 @@ DIRECT (CONVERT_TWO_TO_ONE__Sounds_convolve_old) {
 }
 
 FORM (CONVERT_TWO_TO_ONE__Sounds_convolve, U"Sounds: Convolve", U"Sounds: Convolve...") {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
@@ -547,9 +547,9 @@ FORM (CREATE_ONE__Sound_createAsToneComplex, U"Create Sound as tone complex", U"
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
-	RADIOx (phase, U"Phase", 2, Sound_TONE_COMPLEX_SINE)
-		RADIOBUTTON (U"sine")
-		RADIOBUTTON (U"cosine")
+	CHOICEx (phase, U"Phase", 2, Sound_TONE_COMPLEX_SINE)
+		OPTION (U"sine")
+		OPTION (U"cosine")
 	POSITIVE (frequencyStep, U"Frequency step (Hz)", U"100.0")
 	REAL (firstFrequency, U"First frequency (Hz)", U"0.0 (= frequency step)")
 	REAL (ceiling, U"Ceiling (Hz)", U"0.0 (= Nyquist)")
@@ -574,9 +574,9 @@ DO
 }
 
 FORM (CONVERT_TWO_TO_ONE__Sounds_crossCorrelate, U"Sounds: Cross-correlate", U"Sounds: Cross-correlate...") {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO_ALTERNATIVE (CONVERT_TWO_TO_ONE__old_Sounds_crossCorrelate)
@@ -836,7 +836,7 @@ DO
 FORM (QUERY_ONE_FOR_REAL__Sound_getAbsoluteExtremum, U"Sound: Get absolute extremum", U"Sound: Get absolute extremum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -879,7 +879,7 @@ DIRECT (QUERY_ONE_FOR_REAL__Sound_getIntensity_dB) {
 FORM (QUERY_ONE_FOR_REAL__Sound_getMaximum, U"Sound: Get maximum", U"Sound: Get maximum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -913,7 +913,7 @@ DO_ALTERNATIVE (QUERY_ONE_FOR_REAL__old_Sound_getMean)
 FORM (QUERY_ONE_FOR_REAL__Sound_getMinimum, U"Sound: Get minimum", U"Sound: Get minimum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -1033,7 +1033,7 @@ DIRECT (NUMVEC_Sound_listAllSampleTimes) {
 FORM (QUERY_ONE_FOR_REAL__Sound_getTimeOfMaximum, U"Sound: Get time of maximum", U"Sound: Get time of maximum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -1045,7 +1045,7 @@ DO
 FORM (QUERY_ONE_FOR_REAL__Sound_getTimeOfMinimum, U"Sound: Get time of minimum", U"Sound: Get time of minimum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -1078,7 +1078,7 @@ DO_ALTERNATIVE (QUERY_ONE_FOR_REAL__old_Sound_getValueAtIndex)
 
 FORM (QUERY_ONE_FOR_REAL__old_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value at time...") {
 	REAL (time, U"Time (s)", U"0.5")
-	RADIO_ENUM (kVector_valueInterpolation, valueInterpolationType,
+	CHOICE_ENUM (kVector_valueInterpolation, valueInterpolationType,
 			U"Interpolation", kVector_valueInterpolation::SINC70)
 	OK
 DO
@@ -1090,7 +1090,7 @@ DO
 FORM (QUERY_ONE_FOR_REAL__Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value at time...") {
 	CHANNEL (channel, U"Channel", U"0 (= average)")
 	REAL (time, U"Time (s)", U"0.5")
-	RADIO_ENUM (kVector_valueInterpolation, valueInterpolationType,
+	CHOICE_ENUM (kVector_valueInterpolation, valueInterpolationType,
 			U"Interpolation", kVector_valueInterpolation::SINC70)
 	OK
 DO_ALTERNATIVE (QUERY_ONE_FOR_REAL__old_Sound_getValueAtTime)
@@ -1226,7 +1226,7 @@ FORM (RECORD_ONE__Sound_record_fixedTime, U"Record Sound", nullptr) {
 	LABEL (U"   to work on all computers.")
 	LABEL (U"The “Gain” and “Balance” settings tend to be obsolete")
 	LABEL (U"   and may not work at all on your computer.")
-	RADIO (inputSource, U"Input source", 1)
+	CHOICE (inputSource, U"Input source", 1)
 		OPTION (U"microphone")
 		OPTION (U"line")
 	REAL (gain, U"Gain (0-1)", U"1.0")
@@ -1364,7 +1364,7 @@ DO_ALTERNATIVE (MODIFY_old_Sound_setValueAtIndex)
 FORM (MODIFY_Sound_setPartToZero, U"Sound: Set part to zero", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (cut, U"Cut", 2, 0)
+	CHOICEx (cut, U"Cut", 2, 0)
 		OPTION (U"at exactly these times")
 		OPTION (U"at nearest zero crossing")
 	OK
@@ -1651,7 +1651,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_PointProcess_extrema, U"Sound: To PointProce
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
 	BOOLEAN (includeMaxima, U"Include maxima", true)
 	BOOLEAN (includeMinima, U"Include minima", false)
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 		U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -1705,7 +1705,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrogram, U"Sound: To Spectrogram", U"Sou
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
 	POSITIVE (timeStep, U"Time step (s)", U"0.002")
 	POSITIVE (frequencyStep, U"Frequency step (Hz)", U"20.0")
-	RADIO_ENUM (kSound_to_Spectrogram_windowShape, windowShape,
+	CHOICE_ENUM (kSound_to_Spectrogram_windowShape, windowShape,
 			U"Window shape", kSound_to_Spectrogram_windowShape::DEFAULT)
 	OK
 DO

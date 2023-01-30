@@ -1,6 +1,6 @@
 /* FunctionEditor.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -520,7 +520,7 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS) {
 static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Widen or shrink selection", nullptr)
 		POSITIVE (newWidthOfSelection, Melder_cat (U"New width of selection (", my v_format_units_short(), U")"), U"0.3")
-		RADIO_ENUM (kGraphics_horizontalAlignment, alignmentWithCurrentSelection, U"Alignment with current selection", kGraphics_horizontalAlignment::CENTRE)
+		CHOICE_ENUM (kGraphics_horizontalAlignment, alignmentWithCurrentSelection, U"Alignment with current selection", kGraphics_horizontalAlignment::CENTRE)
 	EDITOR_OK
 	EDITOR_DO
 		const double currentWidthOfSelection = my endSelection - my startSelection;

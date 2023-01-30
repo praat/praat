@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2018,2020-2022 Paul Boersma
+ * Copyright (C) 2011-2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -374,7 +374,7 @@ FORM (NEW_ERP_downto_Table, U"ERP: Down to Table", nullptr) {
 	BOOLEAN (includeTime, U"Include time", true)
 	NATURAL (timeDecimals, U"Time decimals", U"6")
 	NATURAL (voltageDecimals, U"Voltage decimals", U"12")
-	RADIOx (voltageUnits, U"Voltage units", 1, 1)
+	CHOICEx (voltageUnits, U"Voltage units", 1, 1)
 		OPTION (U"volt")
 		OPTION (U"microvolt")
 	OK
@@ -420,7 +420,7 @@ FORM (GRAPHICS_ERP_drawScalp_colour, U"ERP: Draw scalp (colour)", nullptr) {
 	REAL (toTime, U"right Time range", U"0.2")
 	REAL (fromVoltage, U"left Voltage range (V)", U"10e-6")
 	REAL (toVoltage, U"right Voltage range", U"-10e-6")
-	RADIO_ENUM (kGraphics_colourScale, colourScale,
+	CHOICE_ENUM (kGraphics_colourScale, colourScale,
 			U"Colour scale", kGraphics_colourScale::BLUE_TO_RED)
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
@@ -434,7 +434,7 @@ DO
 FORM (GRAPHICS_ERP_drawScalp_garnish, U"ERP: Draw scalp (garnish)", nullptr) {
 	REAL (fromVoltage, U"left Voltage range (V)", U"10e-6")
 	REAL (toVoltage, U"right Voltage range", U"-10e-6")
-	RADIO_ENUM (kGraphics_colourScale, colourScale,
+	CHOICE_ENUM (kGraphics_colourScale, colourScale,
 			U"Colour scale", kGraphics_colourScale::BLUE_TO_RED)
 	OK
 DO
@@ -469,7 +469,7 @@ FORM (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -485,7 +485,7 @@ FORM (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time 
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -501,7 +501,7 @@ FORM (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -517,7 +517,7 @@ FORM (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time 
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
@@ -688,7 +688,7 @@ DIRECT (NEW_ERPTier_to_ERP_mean) {
 
 FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where column (number)", nullptr) {
 	WORD (extractAllEventsWhereColumn___, U"Extract all events where column...", U"")
-	RADIO_ENUM (kMelder_number, ___is___, U"...is...", kMelder_number::DEFAULT)
+	CHOICE_ENUM (kMelder_number, ___is___, U"...is...", kMelder_number::DEFAULT)
 	REAL (___theNumber, U"...the number", U"0.0")
 	OK
 DO

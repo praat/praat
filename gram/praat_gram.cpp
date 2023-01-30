@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2022 Paul Boersma
+ * Copyright (C) 1997-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,7 +260,7 @@ DO
 }
 
 FORM (MODIFY_EACH__Network_setActivityClippingRule, U"Network: Set activity clipping rule", nullptr) {
-	RADIO_ENUM (kNetwork_activityClippingRule, activityClippingRule,
+	CHOICE_ENUM (kNetwork_activityClippingRule, activityClippingRule,
 			U"Activity clipping rule", kNetwork_activityClippingRule::DEFAULT)
 	OK
 DO
@@ -386,9 +386,9 @@ DIRECT (CREATE_ONE__Create_NPA_distribution) {
 }
 
 FORM (CREATE_ONE__Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create tongue-root grammar...") {
-	RADIO_ENUM (kOTGrammar_createTongueRootGrammar_constraintSet, constraintSet,
+	CHOICE_ENUM (kOTGrammar_createTongueRootGrammar_constraintSet, constraintSet,
 			U"Constraint set", kOTGrammar_createTongueRootGrammar_constraintSet::DEFAULT)
-	RADIO_ENUM (kOTGrammar_createTongueRootGrammar_ranking, ranking,
+	CHOICE_ENUM (kOTGrammar_createTongueRootGrammar_ranking, ranking,
 			U"Ranking", kOTGrammar_createTongueRootGrammar_ranking::DEFAULT)
 	OK
 DO
@@ -798,7 +798,7 @@ DO
 // MARK: Modify behaviour
 
 FORM (MODIFY_EACH__OTGrammar_setDecisionStrategy, U"OTGrammar: Set decision strategy", nullptr) {
-	RADIO_ENUM (kOTGrammar_decisionStrategy, decisionStrategy,
+	CHOICE_ENUM (kOTGrammar_decisionStrategy, decisionStrategy,
 			U"Decision strategy", kOTGrammar_decisionStrategy::DEFAULT)
 OK
 	FIND_ONE (OTGrammar)
@@ -1342,7 +1342,7 @@ DO
 // MARK: Modify behaviour
 
 FORM (MODIFY_EACH__OTMulti_setDecisionStrategy, U"OTMulti: Set decision strategy", nullptr) {
-	RADIO_ENUM (kOTGrammar_decisionStrategy, decisionStrategy,
+	CHOICE_ENUM (kOTGrammar_decisionStrategy, decisionStrategy,
 			U"Decision strategy", kOTGrammar_decisionStrategy::DEFAULT)
 OK
 	FIND_ONE (OTMulti)
@@ -1441,7 +1441,7 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_EACH__Net_spreadUp, U"Net: Spread up", nullptr) {
-	RADIO_ENUM (kLayer_activationType, activationType,
+	CHOICE_ENUM (kLayer_activationType, activationType,
 			U"Activation type", kLayer_activationType::STOCHASTIC)
 	OK
 DO
@@ -1451,7 +1451,7 @@ DO
 }
 
 FORM (MODIFY_EACH__Net_spreadDown, U"Net: Spread down", nullptr) {
-	RADIO_ENUM (kLayer_activationType, activationType,
+	CHOICE_ENUM (kLayer_activationType, activationType,
 			U"Activation type", kLayer_activationType::DETERMINISTIC)
 	OK
 DO
@@ -1603,7 +1603,7 @@ DO
 }
 
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__Net_PatternList_to_ActivationList, U"Net & PatternList: To ActivationList", nullptr) {
-	RADIO_ENUM (kLayer_activationType, activationType,
+	CHOICE_ENUM (kLayer_activationType, activationType,
 			U"Activation type", kLayer_activationType::DETERMINISTIC)
 	OK
 DO

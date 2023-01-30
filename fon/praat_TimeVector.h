@@ -2,7 +2,7 @@
 #define _praat_TimeVector_h_
 /* praat_TimeVector.h
  *
- * Copyright (C) 2016,2017,2020 Paul Boersma
+ * Copyright (C) 2016,2017,2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,12 @@
 
 #define praat_TimeVector_INTERPOLATED_VALUE(time,valueInterpolationType) \
 	REAL (time, U"Time (s)", U"0.5") \
-	RADIO_ENUM (kVector_valueInterpolation, valueInterpolationType, \
+	CHOICE_ENUM (kVector_valueInterpolation, valueInterpolationType, \
 		U"Interpolation", kVector_valueInterpolation::CUBIC)
 
 #define praat_TimeVector_INTERPOLATED_EXTREMUM(fromTime,toTime,peakInterpolationType) \
 	praat_TimeFunction_RANGE (fromTime, toTime) \
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType, \
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType, \
 		U"Interpolation", kVector_peakInterpolation::PARABOLIC)
 
 /* End of file praat_TimeVector.h */
