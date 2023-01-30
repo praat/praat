@@ -1,6 +1,6 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2005,2007-2018,2020-2022 Paul Boersma
+ * Copyright (C) 1997-2005,2007-2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,9 +205,9 @@ static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS) {
 
 static void menu_cb_addToFixedMenu (ScriptEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Add to fixed menu", U"Add to fixed menu...");
-		RADIOSTR (window, U"Window", 1)
-			RADIOBUTTON (U"Objects")
-			RADIOBUTTON (U"Picture")
+		CHOICESTR (window, U"Window", 1)
+			OPTION (U"Objects")
+			OPTION (U"Picture")
 		SENTENCE (menu, U"Menu", U"New")
 		SENTENCE (command, U"Command", U"Do it...")
 		SENTENCE (afterCommand, U"After command", U"")

@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2019,2021,2022 Paul Boersma
+ * Copyright (C) 1992-2019,2021-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -939,7 +939,7 @@ DIRECT (COMBINE_ALL_TO_ONE__Tables_append) {
 
 FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", nullptr) {
 	SENTENCE (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
-	RADIO_ENUM (kMelder_number, ___is___, U"...is...", kMelder_number::DEFAULT)
+	CHOICE_ENUM (kMelder_number, ___is___, U"...is...", kMelder_number::DEFAULT)
 	REAL (___theNumber, U"...the number", U"0.0")
 	OK
 DO

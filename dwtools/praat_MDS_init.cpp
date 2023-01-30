@@ -379,10 +379,10 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__Confusion_to_Similarity, U"Confusion: To Similarity", U"Confusion: To Similarity...") {
 	BOOLEAN (normalize, U"Normalize", true)
-	RADIO (symmetrizeMethod, U"Symmetrization", 1)
-		RADIOBUTTON (U"no symmetrization")
-		RADIOBUTTON (U"average (s[i][j] = (c[i][j]+c[j][i])/2)")
-		RADIOBUTTON (U"Houtgast (s[i][j]= sum (min(c[i][k],c[j][k])))")
+	CHOICE (symmetrizeMethod, U"Symmetrization", 1)
+		OPTION (U"no symmetrization")
+		OPTION (U"average (s[i][j] = (c[i][j]+c[j][i])/2)")
+		OPTION (U"Houtgast (s[i][j]= sum (min(c[i][k],c[j][k])))")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Confusion)
@@ -407,10 +407,10 @@ DIRECT (CONVERT_EACH_TO_ONE__Confusion_to_ContingencyTable) {
 
 FORM (CONVERT_EACH_TO_ONE__ContingencyTable_to_Configuration_ca, U"ContingencyTable: To Configuration (ca)", U"ContingencyTable: To Configuration (ca)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
-	RADIO (scalingType, U"Scaling of final configuration", 3)
-		RADIOBUTTON (U"row points in centre of gravity of column points")
-		RADIOBUTTON (U"column points in centre of gravity of row points")
-		RADIOBUTTON (U"row points and column points symmetric")
+	CHOICE (scalingType, U"Scaling of final configuration", 3)
+		OPTION (U"row points in centre of gravity of column points")
+		OPTION (U"column points in centre of gravity of row points")
+		OPTION (U"row points and column points symmetric")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (ContingencyTable)

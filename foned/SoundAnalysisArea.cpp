@@ -1,6 +1,6 @@
 /* SoundAnalysisArea.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -859,7 +859,7 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 				U"Unit", my default_pitch_unit ())
 		LABEL (U"The autocorrelation method optimizes for intonation research;")
 		LABEL (U"and the cross-correlation method optimizes for voice research:")
-		RADIO_ENUM (kSoundAnalysisArea_pitch_analysisMethod, analysisMethod,
+		CHOICE_ENUM (kSoundAnalysisArea_pitch_analysisMethod, analysisMethod,
 				U"Analysis method", my default_pitch_method())
 		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod,
 				U"Drawing method", my default_pitch_drawingMethod())
@@ -1113,7 +1113,7 @@ static void menu_cb_intensitySettings (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Intensity settings", U"Intro 6.2. Configuring the intensity contour")
 		REAL (viewFrom, U"left View range (dB)",  my default_intensity_viewFrom ())
 		REAL (viewTo,   U"right View range (dB)", my default_intensity_viewTo   ())
-		RADIO_ENUM (kSoundAnalysisArea_intensity_averagingMethod, averagingMethod,
+		CHOICE_ENUM (kSoundAnalysisArea_intensity_averagingMethod, averagingMethod,
 				U"Averaging method", my default_intensity_averagingMethod ())
 		BOOLEAN (subtractMeanPressure, U"Subtract mean pressure", my default_intensity_subtractMeanPressure ())
 		LABEL (U"Note: the pitch floor is taken from the pitch settings.")
@@ -1279,7 +1279,7 @@ static void menu_cb_formantSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 
 static void menu_cb_advancedFormantSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Advanced formant settings", U"Advanced formant settings...")
-		RADIO_ENUM (kSoundAnalysisArea_formant_analysisMethod, method,
+		CHOICE_ENUM (kSoundAnalysisArea_formant_analysisMethod, method,
 				U"Method", my default_formant_method ())
 		POSITIVE (preemphasisFrom, U"Pre-emphasis from (Hz)", my default_formant_preemphasisFrom ())
 	EDITOR_OK

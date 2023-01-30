@@ -1,6 +1,6 @@
 /* praat_Tiers.cpp
  *
- * Copyright (C) 1992-2018,2020-2022 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -765,9 +765,9 @@ DIRECT (NEW_PitchTier_downto_RealTier) {
 }
 
 FORM (NEW_PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", nullptr) {
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"semitones")
+	CHOICEx (unit, U"Unit", 1, 0)
+		OPTION (U"Hertz")
+		OPTION (U"semitones")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (PitchTier)
@@ -896,9 +896,9 @@ DIRECT (PLAY_PitchTier_hum) {
 
 FORM (MODIFY_PitchTier_interpolateQuadratically, U"PitchTier: Interpolate quadratically", nullptr) {
 	NATURAL (numberOfPointsPerParabola, U"Number of points per parabola", U"4")
-	RADIOx (unit, U"Unit", 2, 0)
-		RADIOBUTTON (U"Hz")
-		RADIOBUTTON (U"semitones")
+	CHOICEx (unit, U"Unit", 2, 0)
+		OPTION (U"Hz")
+		OPTION (U"semitones")
 	OK
 DO
 	MODIFY_EACH (PitchTier)
@@ -954,9 +954,9 @@ DO
 
 FORM (MODIFY_PitchTier_stylize, U"PitchTier: Stylize", U"PitchTier: Stylize...") {
 	REAL (frequencyResolution, U"Frequency resolution", U"4.0")
-	RADIOx (unit, U"Unit", 2, 0)
-		RADIOBUTTON (U"Hz")
-		RADIOBUTTON (U"semitones")
+	CHOICEx (unit, U"Unit", 2, 0)
+		OPTION (U"Hz")
+		OPTION (U"semitones")
 	OK
 DO
 	MODIFY_EACH (PitchTier)

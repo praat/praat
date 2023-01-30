@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ DO
 /********** Callbacks of the Settings menu. **********/
 
 FORM (SETTINGS__TextReadingSettings, U"Text reading settings", U"Unicode") {
-	RADIO_ENUM (kMelder_textInputEncoding, encodingOf8BitTextFiles,
+	CHOICE_ENUM (kMelder_textInputEncoding, encodingOf8BitTextFiles,
 			U"Encoding of 8-bit text files", kMelder_textInputEncoding::DEFAULT)
 OK
 	SET_ENUM (encodingOf8BitTextFiles, kMelder_textInputEncoding, Melder_getInputEncoding ())
@@ -269,7 +269,7 @@ DO
 }
 
 FORM (SETTINGS__TextWritingSettings, U"Text writing settings", U"Unicode") {
-	RADIO_ENUM (kMelder_textOutputEncoding, outputEncoding,
+	CHOICE_ENUM (kMelder_textOutputEncoding, outputEncoding,
 			U"Output encoding", kMelder_textOutputEncoding::DEFAULT)
 OK
 	SET_ENUM (outputEncoding, kMelder_textOutputEncoding, Melder_getOutputEncoding ())

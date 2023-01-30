@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,9 +177,9 @@ static void menu_cb_addPitchPointAt (ManipulationPitchTierArea me, EDITOR_ARGS) 
 static void menu_cb_stylizePitch (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Stylize pitch", U"PitchTier: Stylize...")
 		REAL (frequencyResolution, U"Frequency resolution", my default_pitch_stylize_frequencyResolution ())
-		RADIO (units, U"Units", my default_pitch_stylize_useSemitones () + 1)
-			RADIOBUTTON (U"Hertz")
-			RADIOBUTTON (U"semitones")
+		CHOICE (units, U"Units", my default_pitch_stylize_useSemitones () + 1)
+			OPTION (U"Hertz")
+			OPTION (U"semitones")
 	EDITOR_OK
 		SET_REAL   (frequencyResolution, my instancePref_pitch_stylize_frequencyResolution())
 		SET_OPTION (units,               my instancePref_pitch_stylize_useSemitones() + 1)
@@ -203,9 +203,9 @@ static void menu_cb_stylizePitch_2st (ManipulationPitchTierArea me, EDITOR_ARGS)
 static void menu_cb_interpolateQuadratically (ManipulationPitchTierArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Interpolate quadratically", nullptr)
 		NATURAL (numberOfPointsPerParabola, U"Number of points per parabola", my default_pitch_interpolateQuadratically_numberOfPointsPerParabola ())
-		RADIO (units, U"Units", my default_pitch_stylize_useSemitones () + 1)
-			RADIOBUTTON (U"Hertz")
-			RADIOBUTTON (U"semitones")
+		CHOICE (units, U"Units", my default_pitch_stylize_useSemitones () + 1)
+			OPTION (U"Hertz")
+			OPTION (U"semitones")
 	EDITOR_OK
 		SET_INTEGER (numberOfPointsPerParabola, my instancePref_pitch_interpolateQuadratically_numberOfPointsPerParabola())
 		SET_OPTION  (units,                     my instancePref_pitch_stylize_useSemitones() + 1)

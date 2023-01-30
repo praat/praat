@@ -837,7 +837,7 @@ DIRECT (PLAY_KlattGrid_play) {
 }
 
 FORM (GRAPHICS_EACH__KlattGrid_draw, U"KlattGrid: Draw", nullptr) {
-	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
+	CHOICE_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
 	OK
 DO
 	GRAPHICS_EACH (KlattGrid)
@@ -846,7 +846,7 @@ DO
 }
 
 FORM (GRAPHICS_EACH__KlattGrid_drawVocalTract, U"KlattGrid: Draw vocal tract", nullptr) {
-	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
+	CHOICE_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
 	BOOLEAN (includeTrachealFormants, U"Include tracheal formants", true);
 	OK
 DO
@@ -878,7 +878,7 @@ DO
 }
 
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_KlattGrid_filterByVocalTract, U"Sound & KlattGrid: Filter by vocal tract", U"Sound & KlattGrid: Filter by vocal tract...") {
-	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Vocal tract filter model", kKlattGridFilterModel::DEFAULT)
+	CHOICE_ENUM (kKlattGridFilterModel, filterModel, U"Vocal tract filter model", kKlattGridFilterModel::DEFAULT)
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Sound, KlattGrid)

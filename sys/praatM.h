@@ -46,14 +46,14 @@
 	TEXTFIELD (variable, labelText, defaultStringValue, numberOfLines)
 	REALVECTOR (variable, labelText, WHITESPACE_SEPARATED_, defaultStringValue)
 	REALMATRIX (variable, labelText, ONE_ROW_PER_LINE_, defaultStringValue)
-	RADIO (variable, labelText, defaultOptionNumber, base)
-		this should be followed by two or more RADIOBUTTONs;
-		the initial value is between base and the number of radio buttons plus base-1.
-	RADIOBUTTON (labelText)
+	CHOICE (variable, labelText, defaultOptionNumber, base)
+		this should be followed by two or more OPTIONs;
+		the initial value is between base and the number of choice buttons plus base-1.
+		OPTION (labelText)
 	OPTIONMENU (variable, labelText, defaultOptionNumber)
 		this should be followed by two or more OPTIONs;
 		the initial value is between 1 and the number of options.
-	OPTION (labelText)
+		OPTION (labelText)
 	LIST (variable, labelText, strings, defaultOptionNumber)
 	OK
 		this statement is obligatory.
@@ -186,23 +186,20 @@
 					labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue), numberOfLines); \
 		}
 
-#define RADIO(intVariable, labelText, defaultOptionNumber)  \
+#define CHOICE(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
 		UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
 				labelText, defaultOptionNumber, 1);
 
-#define RADIOx(intVariable, labelText, defaultOptionNumber, base)  \
+#define CHOICEx(intVariable, labelText, defaultOptionNumber, base)  \
 		static int intVariable; \
 		UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, \
 				labelText, defaultOptionNumber, base);
 
-#define RADIOSTR(stringVariable, labelText, defaultOptionNumber)  \
+#define CHOICESTR(stringVariable, labelText, defaultOptionNumber)  \
 		static conststring32 stringVariable; \
 		UiForm_addRadio (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, \
 				labelText, defaultOptionNumber, 1);
-
-#define RADIOBUTTON(optionText)  \
-		UiForm_addOption (_dia_.get(), optionText);
 
 #define OPTIONMENU(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
@@ -222,7 +219,7 @@
 #define OPTION(optionText)  \
 		UiForm_addOption (_dia_.get(), optionText);
 
-#define RADIO_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
+#define CHOICE_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue)  \
 		static enum EnumeratedType enumeratedVariable; \
 		{/* type checks */ \
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \

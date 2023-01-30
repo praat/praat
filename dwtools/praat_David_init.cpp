@@ -162,11 +162,11 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 	LABEL (U"Boundary conditions") \
 	BOOLEAN (matchStart, U"Match begin positions", false) \
 	BOOLEAN (matchEnd, U"Match end positions", false) \
-	RADIO (slopeConstraint, U"Slope constraint", 1) \
-		RADIOBUTTON (U"no restriction") \
-		RADIOBUTTON (U"1/3 < slope < 3") \
-		RADIOBUTTON (U"1/2 < slope < 2") \
-		RADIOBUTTON (U"2/3 < slope < 3/2")
+	CHOICE (slopeConstraint, U"Slope constraint", 1) \
+		OPTION (U"no restriction") \
+		OPTION (U"1/3 < slope < 3") \
+		OPTION (U"1/2 < slope < 2") \
+		OPTION (U"2/3 < slope < 3/2")
 
 #undef INCLUDE_DTW_SLOPES
 
@@ -255,10 +255,10 @@ DO
 FORM (GRAPHICS_EACH__BarkFilter_drawSekeyHansonFilterFunctions, U"BarkFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
 	INTEGER (fromFilter, U"left Filter range", U"0")
 	INTEGER (toFilter, U"right Filter range", U"0")
-	RADIO (frequencyScale, U"Frequency scale", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-		RADIOBUTTON (U"mel")
+	CHOICE (frequencyScale, U"Frequency scale", 1)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
+		OPTION (U"mel")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	BOOLEAN (amplitudeScale_dB, U"Amplitude scale in dB", true)
@@ -277,9 +277,9 @@ DO
 FORM (GRAPHICS_EACH__BarkSpectrogram_drawSekeyHansonAuditoryFilters, U"BarkSpectrogram: Draw Sekey-Hanson auditory filters", U"BarkSpectrogram: Draw Sekey-Hanson auditory filters...") {
 	INTEGER (fromFilter, U"left Filter range", U"0")
 	INTEGER (toFilter, U"right Filter range", U"0")
-	RADIO (frequencyScale, U"Frequency scale", 2)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	CHOICE (frequencyScale, U"Frequency scale", 2)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	BOOLEAN (amplitudeScale_dB, U"Amplitude scale in dB", true)
@@ -785,9 +785,9 @@ FORM (CONVERT_EACH_TO_ONE__Confusion_condense, U"Confusion: Condense", U"Confusi
 	SENTENCE (search_string, U"Search", U"^(u|i)$")
 	SENTENCE (replace_string, U"Replace", U"high")
 	INTEGER (replaceLimit, U"Replace limit", U"0 (= unlimited)")
-	RADIOx (matchType, U"Search and replace are", 2, 0)
-		RADIOBUTTON (U"literals")
-		RADIOBUTTON (U"Regular Expressions")
+	CHOICEx (matchType, U"Search and replace are", 2, 0)
+		OPTION (U"literals")
+		OPTION (U"Regular Expressions")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Confusion)
@@ -830,11 +830,11 @@ DO
 
 FORM (GRAPHICS_EACH__Confusion_drawAsNumbers, U"Confusion: Draw as numbers", nullptr) {
 	BOOLEAN (drawMarginals, U"Draw marginals", true)
-	RADIO (format, U"Format", 3)
-		RADIOBUTTON (U"decimal")
-		RADIOBUTTON (U"exponential")
-		RADIOBUTTON (U"free")
-		RADIOBUTTON (U"rational")
+	CHOICE (format, U"Format", 3)
+		OPTION (U"decimal")
+		OPTION (U"exponential")
+		OPTION (U"free")
+		OPTION (U"rational")
 	NATURAL (precision, U"Precision", U"5")
 	OK
 DO
@@ -931,9 +931,9 @@ DIRECT (HELP__Correlation_help) {
 FORM (CONVERT_EACH_TO_ONE__Correlation_confidenceIntervals, U"Correlation: Confidence intervals...", U"Correlation: Confidence intervals...") {
 	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
 	INTEGER (numberOfTests, U"Number of tests (Bonferroni correction)", U"0")
-	RADIO (approximation, U"Approximation", 1)
-		RADIOBUTTON (U"Ruben")
-		RADIOBUTTON (U"Fisher")
+	CHOICE (approximation, U"Approximation", 1)
+		OPTION (U"Ruben")
+		OPTION (U"Fisher")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Correlation)
@@ -1604,11 +1604,11 @@ DO
 /********************** DTW *******************************************/
 
 FORM (MODIFY_DTW_Polygon_findPathInside, U"DTW & Polygon: Find path inside", nullptr) {
-    RADIO (slopeConstraint, U"Slope constraint", 1)
-		RADIOBUTTON (U"no restriction")
-		RADIOBUTTON (U"1/3 < slope < 3")
-		RADIOBUTTON (U"1/2 < slope < 2")
-		RADIOBUTTON (U"2/3 < slope < 3/2")
+    CHOICE (slopeConstraint, U"Slope constraint", 1)
+		OPTION (U"no restriction")
+		OPTION (U"1/3 < slope < 3")
+		OPTION (U"1/2 < slope < 2")
+		OPTION (U"2/3 < slope < 3/2")
     OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (DTW, Polygon)
@@ -1617,11 +1617,11 @@ DO
 }
 
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__DTW_Polygon_to_Matrix_cumulativeDistances, U"DTW & Polygon: To Matrix (cum. distances)", nullptr) {
-    RADIO (slopeConstraint, U"Slope constraint", 1)
-		RADIOBUTTON (U"no restriction")
-		RADIOBUTTON (U"1/3 < slope < 3")
-		RADIOBUTTON (U"1/2 < slope < 2")
-		RADIOBUTTON (U"2/3 < slope < 3/2")
+    CHOICE (slopeConstraint, U"Slope constraint", 1)
+		OPTION (U"no restriction")
+		OPTION (U"1/3 < slope < 3")
+		OPTION (U"1/2 < slope < 2")
+		OPTION (U"2/3 < slope < 3/2")
     OK
 DO
     CONVERT_ONE_AND_ONE_TO_ONE (DTW, Polygon)
@@ -1952,11 +1952,11 @@ DO
 
 FORM (MODIFY_DTW_findPath_bandAndSlope, U"DTW: find path (band & slope)", nullptr) {
     REAL (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
-    RADIO (slopeConstraint, U"Slope constraint", 1)
-		RADIOBUTTON (U"no restriction")
-		RADIOBUTTON (U"1/3 < slope < 3")
-		RADIOBUTTON (U"1/2 < slope < 2")
-		RADIOBUTTON (U"2/3 < slope < 3/2")
+    CHOICE (slopeConstraint, U"Slope constraint", 1)
+		OPTION (U"no restriction")
+		OPTION (U"1/3 < slope < 3")
+		OPTION (U"1/2 < slope < 2")
+		OPTION (U"2/3 < slope < 3/2")
     OK
 DO
     MODIFY_EACH (DTW)
@@ -1966,11 +1966,11 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__DTW_to_Matrix_cumulativeDistances, U"DTW: To Matrix", nullptr) {
     REAL (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
-    RADIO (slopeConstraint, U"Slope constraint", 1)
-		RADIOBUTTON (U"no restriction")
-		RADIOBUTTON (U"1/3 < slope < 3")
-		RADIOBUTTON (U"1/2 < slope < 2")
-		RADIOBUTTON (U"2/3 < slope < 3/2")
+    CHOICE (slopeConstraint, U"Slope constraint", 1)
+		OPTION (U"no restriction")
+		OPTION (U"1/3 < slope < 3")
+		OPTION (U"1/2 < slope < 2")
+		OPTION (U"2/3 < slope < 3/2")
     OK
 DO
     CONVERT_EACH_TO_ONE (DTW)
@@ -1980,11 +1980,11 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__DTW_to_Polygon, U"DTW: To Polygon...", nullptr) {
     REAL (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.1")
-    RADIO (slopeConstraint, U"Slope constraint", 1)
-		RADIOBUTTON (U"no restriction")
-		RADIOBUTTON (U"1/3 < slope < 3")
-		RADIOBUTTON (U"1/2 < slope < 2")
-		RADIOBUTTON (U"2/3 < slope < 3/2")
+    CHOICE (slopeConstraint, U"Slope constraint", 1)
+		OPTION (U"no restriction")
+		OPTION (U"1/3 < slope < 3")
+		OPTION (U"1/2 < slope < 2")
+		OPTION (U"2/3 < slope < 3/2")
     OK
 DO
     CONVERT_EACH_TO_ONE (DTW)
@@ -2053,11 +2053,11 @@ DO
 }
 
 FORM (GRAPHICS_EACH__EditDistanceTable_draw, U"EditDistanceTable_draw", nullptr) {
-	RADIO (format, U"Format", 3)
-		RADIOBUTTON (U"decimal")
-		RADIOBUTTON (U"exponential")
-		RADIOBUTTON (U"free")
-		RADIOBUTTON (U"rational")
+	CHOICE (format, U"Format", 3)
+		OPTION (U"decimal")
+		OPTION (U"exponential")
+		OPTION (U"free")
+		OPTION (U"rational")
 	NATURAL (precision, U"Precision", U"1")
 	REAL (angle, U"Rotate source labels by (degrees)", U"0.0")
 	OK
@@ -2124,11 +2124,11 @@ DO
 }
 
 FORM (QUERY_ONE_FOR_REAL__EditCostsTable_getCosts_others, U"EditCostsTable: Get cost (others)", nullptr) {
-	RADIO (costTypes, U"Others cost type", 1)
-		RADIOBUTTON (U"insertion")
-		RADIOBUTTON (U"deletion")
-		RADIOBUTTON (U"equality")
-		RADIOBUTTON (U"inequality")
+	CHOICE (costTypes, U"Others cost type", 1)
+		OPTION (U"insertion")
+		OPTION (U"deletion")
+		OPTION (U"equality")
+		OPTION (U"inequality")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (EditCostsTable)
@@ -2794,16 +2794,16 @@ DO
 }
 
 FORM (GRAPHICS_EACH__FilterBank_drawFrequencyScales, U"FilterBank: Draw frequency scales", U"FilterBank: Draw frequency scales...") {
-	RADIO (xFrequencyScale, U"Horizontal frequency scale", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-		RADIOBUTTON (U"mel")
+	CHOICE (xFrequencyScale, U"Horizontal frequency scale", 1)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
+		OPTION (U"mel")
 	REAL (xFromFrequency, U"left Horizontal frequency range", U"0.0")
 	REAL (xToFrequency, U"right Horizontal frequency range", U"0.0")
-	RADIO (yFrequencyScale, U"Vertical frequency scale", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-		RADIOBUTTON (U"mel")
+	CHOICE (yFrequencyScale, U"Vertical frequency scale", 1)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
+		OPTION (U"mel")
 	REAL (yFromFrequency, U"left Vertical frequency range", U"0.0")
 	REAL (yToFrequency, U"right Vertical frequency range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -2903,10 +2903,10 @@ DO
 
 FORM (QUERY_ONE_FOR_REAL__FilterBank_getFrequencyInHertz, U"FilterBank: Get frequency in Hertz", U"FilterBank: Get frequency in Hertz...") {
 	REAL (frequency, U"Frequency", U"10.0")
-	RADIO (frequencyUnit, U"Unit", 2)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-		RADIOBUTTON (U"mel")
+	CHOICE (frequencyUnit, U"Unit", 2)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
+		OPTION (U"mel")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FilterBank)
@@ -2916,10 +2916,10 @@ DO
 
 FORM (QUERY_ONE_FOR_REAL__FilterBank_getFrequencyInBark, U"FilterBank: Get frequency in Bark", U"FilterBank: Get frequency in Bark...") {
 	REAL (frequency, U"Frequency", U"93.17")
-	RADIO (frequencyUnit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-		RADIOBUTTON (U"mel")
+	CHOICE (frequencyUnit, U"Unit", 1)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
+		OPTION (U"mel")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FilterBank)
@@ -2929,10 +2929,10 @@ DO
 
 FORM (QUERY_ONE_FOR_REAL__FilterBank_getFrequencyInMel, U"FilterBank: Get frequency in mel", U"FilterBank: Get frequency in mel...") {
 	REAL (frequency, U"Frequency", U"1000.0")
-	RADIO (frequencyUnit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-		RADIOBUTTON (U"mel")
+	CHOICE (frequencyUnit, U"Unit", 1)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
+		OPTION (U"mel")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FilterBank)
@@ -2974,9 +2974,9 @@ DO
 }
 
 FORM (CONVERT_TWO_TO_ONE__FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr) {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
@@ -2986,9 +2986,9 @@ DO
 }
 
 FORM (CONVERT_TWO_TO_ONE__BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
@@ -2998,9 +2998,9 @@ DO
 }
 
 FORM (CONVERT_TWO_TO_ONE__FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
@@ -3010,9 +3010,9 @@ DO
 }
 
 FORM (CONVERT_TWO_TO_ONE__BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
@@ -3043,10 +3043,10 @@ FORM (GRAPHICS_EACH__FormantFilter_drawFilterFunctions, U"FormantFilter: Draw fi
 	INTEGER (fromFilter, U"left Filter range", U"0")
 	INTEGER (toFilter, U"right Filter range", U"0")
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"100.0")
-	RADIO (frequencyScale, U"Frequency scale", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-		RADIOBUTTON (U"mel")
+	CHOICE (frequencyScale, U"Frequency scale", 1)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
+		OPTION (U"mel")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	BOOLEAN (dBScale, U"Amplitude scale in dB", 1)
@@ -3334,9 +3334,9 @@ DIRECT (CREATE_ONE__KlattTable_createExample) {
 
 FORM (CONVERT_EACH_TO_ONE__KlattTable_to_Sound, U"KlattTable: To Sound", U"KlattTable: To Sound...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"16000")
-	RADIO (synthesisModel, U"Synthesis model", 1)
-		RADIOBUTTON (U"cascade")
-		RADIOBUTTON (U"parallel")
+	CHOICE (synthesisModel, U"Synthesis model", 1)
+		OPTION (U"cascade")
+		OPTION (U"parallel")
 	NATURAL (numberOfFormants, U"Number of formants", U"5")
 	POSITIVE (frameDuration, U"Frame duration (s)", U"0.005")
 	REAL (flutter_percentage, U"Flutter percentage (%)", U"0.0")   // ppgb: foutgevoelig
@@ -3700,10 +3700,10 @@ DIRECT (COMPVEC_Matrix_listEigenvalues) {
 
 FORM (MODIFY_Matrix_scale, U"Matrix: Scale", nullptr) {
 	LABEL (U"self[row, col] := self[row, col] / `Scale factor'")
-	RADIO (scaleMethod, U"Scale factor", 1)
-		RADIOBUTTON (U"extremum in matrix")
-		RADIOBUTTON (U"extremum in each row")
-		RADIOBUTTON (U"extremum in each column")
+	CHOICE (scaleMethod, U"Scale factor", 1)
+		OPTION (U"extremum in matrix")
+		OPTION (U"extremum in each row")
+		OPTION (U"extremum in each column")
 	OK
 DO
 	MODIFY_EACH (Matrix)
@@ -4055,10 +4055,10 @@ DIRECT (HELP__MelSpectrogram_help) {
 FORM (GRAPHICS_EACH__MelFilter_drawFilterFunctions, U"MelFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
 	INTEGER (fromFilter, U"left Filter range", U"0")
 	INTEGER (toFilter, U"right Filter range", U"0")
-	RADIO (frequencyScale, U"Frequency scale", 1)
-	RADIOBUTTON (U"Hertz")
-	RADIOBUTTON (U"Bark")
-	RADIOBUTTON (U"mel")
+	CHOICE (frequencyScale, U"Frequency scale", 1)
+		OPTION (U"Hertz")
+		OPTION (U"Bark")
+		OPTION (U"mel")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	BOOLEAN (dBScale, U"Amplitude scale in dB", false)
@@ -4077,9 +4077,9 @@ DO
 FORM (GRAPHICS_EACH__MelSpectrogram_drawTriangularFilterFunctions, U"MelSpectrogram: Draw triangulat filter functions", U"MelSpectrogram: Draw filter functions...") {
 	INTEGER (fromFilter, U"left Filter range", U"0")
 	INTEGER (toFilter, U"right Filter range", U"0")
-	RADIO (frequencyScale, U"Frequency scale", 1)
-	RADIOBUTTON (U"mel")
-	RADIOBUTTON (U"Hertz")
+	CHOICE (frequencyScale, U"Frequency scale", 1)
+		OPTION (U"mel")
+		OPTION (U"Hertz")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	BOOLEAN (dBScale, U"Amplitude scale in dB", false)
@@ -4249,9 +4249,9 @@ DO
 }
 
 FORM (CONVERT_TWO_TO_ONE__MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
@@ -4261,9 +4261,9 @@ DO
 }
 
 FORM (CONVERT_TWO_TO_ONE__MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
-	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+	CHOICE_ENUM (kSounds_convolve_scaling, amplitudeScaling,
 			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
-	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+	CHOICE_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
@@ -5730,11 +5730,11 @@ FORM (CONVERT_TWO_TO_ONE__Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
     POSITIVE (timeStep, U"Time step (s)", U"0.005")
     LABEL (U"")
     REAL (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.1")
-    RADIO (slopeConstraint, U"Slope constraint", 1)
-		RADIOBUTTON (U"no restriction")
-		RADIOBUTTON (U"1/3 < slope < 3")
-		RADIOBUTTON (U"1/2 < slope < 2")
-		RADIOBUTTON (U"2/3 < slope < 3/2")
+    CHOICE (slopeConstraint, U"Slope constraint", 1)
+		OPTION (U"no restriction")
+		OPTION (U"1/3 < slope < 3")
+		OPTION (U"1/2 < slope < 2")
+		OPTION (U"2/3 < slope < 3/2")
     OK
 DO
     CONVERT_TWO_TO_ONE (Sound)
@@ -6333,9 +6333,9 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domain", nullptr) {
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
 	INTEGER (interpolationDepth, U"Interpolation depth", U"50")
-	RADIO (scale, U"Interpolation scale", 1)
-		RADIOBUTTON (U"linear")
-		RADIOBUTTON (U"logarithmic")
+	CHOICE (scale, U"Interpolation scale", 1)
+		OPTION (U"linear")
+		OPTION (U"logarithmic")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Spectrum)
@@ -6832,9 +6832,9 @@ FORM (CONVERT_EACH_TO_ONE__Strings_change, U"Strings: Change", U"Strings: Change
 	SENTENCE (search_string, U"Search", U"a")
 	SENTENCE (replace_string, U"Replace", U"a")
 	INTEGER (replaceLimit, U"Replace limit", U"0 (= unlimited)")
-	RADIO (stringType, U"Search and replace are:", 1)
-	RADIOBUTTON (U"literals")
-	RADIOBUTTON (U"Regular Expressions")
+	CHOICE (stringType, U"Search and replace are:", 1)
+		OPTION (U"literals")
+		OPTION (U"Regular Expressions")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Strings)
@@ -7502,7 +7502,7 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
 	SENTENCE (dataColumns_string, U"Extract all rows where columns...", U"F1 F2 F3")
-	RADIO_ENUM (kMelder_number, haveAMahalanobisDistance,
+	CHOICE_ENUM (kMelder_number, haveAMahalanobisDistance,
 			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
 	REAL (numberOfSigmas, U"...the number", U"2.0")
 	SENTENCE (factorColumn_string, U"Factor column", U"")
@@ -7678,10 +7678,10 @@ DO
 }
 
 FORM (CREATE_ONE__TableOfReal_create_weenink1983, U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Weenink 1985)...") {
-	RADIO (speakerGroup, U"Speakers group", 1)
-		RADIOBUTTON (U"men")
-		RADIOBUTTON (U"women")
-		RADIOBUTTON (U"children")
+	CHOICE (speakerGroup, U"Speakers group", 1)
+		OPTION (U"men")
+		OPTION (U"women")
+		OPTION (U"children")
 	OK
 DO
 	CREATE_ONE
@@ -7777,10 +7777,10 @@ FORM (GRAPHICS_EACH__TableOfReal_drawVectors, U"Draw vectors", U"TableOfReal: Dr
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	RADIO (vectorType, U"Vector type", 1)
-		RADIOBUTTON (U"arrow")
-		RADIOBUTTON (U"double arrow")
-		RADIOBUTTON (U"line")
+	CHOICE (vectorType, U"Vector type", 1)
+		OPTION (U"arrow")
+		OPTION (U"double arrow")
+		OPTION (U"line")
 	INTEGER (labelSize, U"Label size", U"10")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
@@ -8092,9 +8092,9 @@ DO
 
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
 	POSITIVE (extendDomainBy, U"Extend domain by (s)", U"1.0")
-	RADIO (position, U"At", 1)
-		RADIOBUTTON (U"end")
-		RADIOBUTTON (U"start")
+	CHOICE (position, U"At", 1)
+		OPTION (U"end")
+		OPTION (U"start")
 	OK
 DO
 	MODIFY_EACH (TextGrid)
@@ -8108,9 +8108,9 @@ FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval texts",
 	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
 	SENTENCE (replace_string, U"Replace", U"b")
-	RADIO (searchType, U"Search and replace strings are", 1)
-		RADIOBUTTON (U"literals")
-		RADIOBUTTON (U"Regular Expressions")
+	CHOICE (searchType, U"Search and replace strings are", 1)
+		OPTION (U"literals")
+		OPTION (U"Regular Expressions")
 	OK
 DO
 	MODIFY_EACH (TextGrid)
@@ -8127,9 +8127,9 @@ FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point texts", U"Tex
 	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
 	SENTENCE (replace_string, U"Replace", U"b")
-	RADIO (searchType, U"Search and replace strings are", 1)
-		RADIOBUTTON (U"literals")
-		RADIOBUTTON (U"Regular Expressions")
+	CHOICE (searchType, U"Search and replace strings are", 1)
+		OPTION (U"literals")
+		OPTION (U"Regular Expressions")
 	OK
 DO
 	MODIFY_EACH (TextGrid)

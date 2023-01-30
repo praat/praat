@@ -111,7 +111,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_ConstantQLog2FSpectrogram, U"Sound: To Const
 	NATURAL (numberOfFrequencyBinsPerOctave, U"Number of frequency bins / octave", U"24")
 	POSITIVE (frequencyResolutionInBins, U"Frequency resolution (bins)", U"1.0")
 	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"1.0")
-	RADIO_ENUM (kSound_windowShape, filterShape,
+	CHOICE_ENUM (kSound_windowShape, filterShape,
 			U"Filter shape", kSound_windowShape::DEFAULT)
 	OK
 DO
@@ -147,7 +147,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_GaborSpectrogram, U"Sound: To GaborSpectrogr
 	POSITIVE (filterBandwidth, U"Filter bandwidth (Hz)", U"40.0")
 	POSITIVE (frequencyStep, U"Frequency step (hz)", U"20.0")
 	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"1.0")
-	RADIO_ENUM (kSound_windowShape, filterShape,
+	CHOICE_ENUM (kSound_windowShape, filterShape,
 			U"Filter shape", kSound_windowShape::DEFAULT)
 	OK
 DO

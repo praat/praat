@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -456,10 +456,10 @@ DO
 // MARK: - PITCH & TEXTTIER
 
 FORM (NEW1_Pitch_TextTier_to_PitchTier, U"Pitch & TextTier to PitchTier", U"Pitch & TextTier: To PitchTier...") {
-	RADIOx (unvoicedStrategy, U"Unvoiced strategy", 3, 0)
-		RADIOBUTTON (U"zero")
-		RADIOBUTTON (U"error")
-		RADIOBUTTON (U"interpolate")
+	CHOICEx (unvoicedStrategy, U"Unvoiced strategy", 3, 0)
+		OPTION (U"zero")
+		OPTION (U"error")
+		OPTION (U"interpolate")
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Pitch, TextTier)

@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -374,9 +374,9 @@ DO
 FORM (REAL_Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at time...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (time, U"Time (s)", U"0.5")
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
-	RADIO (interpolation, U"Interpolation", 1)   // ignored
-		RADIOBUTTON (U"linear")
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICE (interpolation, U"Interpolation", 1)   // ignored
+		OPTION (U"linear")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Formant)
@@ -387,9 +387,9 @@ DO
 FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (time, U"Time (s)", U"0.5")
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
-	RADIO (interpolation, U"Interpolation", 1)   // ignored
-		RADIOBUTTON (U"linear")
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICE (interpolation, U"Interpolation", 1)   // ignored
+		OPTION (U"linear")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Formant)
@@ -400,10 +400,10 @@ DO
 FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"none")
+		OPTION (U"parabolic")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Formant)
@@ -414,10 +414,10 @@ DO
 FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"none")
+		OPTION (U"parabolic")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Formant)
@@ -428,10 +428,10 @@ DO
 FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"none")
+		OPTION (U"parabolic")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Formant)
@@ -442,10 +442,10 @@ DO
 FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"none")
+		OPTION (U"parabolic")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Formant)
@@ -462,7 +462,7 @@ DIRECT (INTEGER_Formant_getMaximumNumberOfFormants) {
 FORM (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Formant)
@@ -490,7 +490,7 @@ DO
 FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
@@ -502,7 +502,7 @@ DO
 FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
@@ -514,7 +514,7 @@ DO
 FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
+	CHOICE_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Formant)
@@ -831,10 +831,10 @@ DO
 
 FORM (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO (averagingMethod, U"Averaging method", 1)
-		RADIOBUTTON (U"energy")
-		RADIOBUTTON (U"sones")
-		RADIOBUTTON (U"dB")
+	CHOICE (averagingMethod, U"Averaging method", 1)
+		OPTION (U"energy")
+		OPTION (U"sones")
+		OPTION (U"dB")
 	OK
 DO_ALTERNATIVE (REAL_old_Intensity_getMean)
 	QUERY_ONE_FOR_REAL (Intensity)
@@ -900,10 +900,10 @@ FORM (GRAPHICS_Pitch_Intensity_draw, U"Plot intensity by pitch", nullptr) {
 	REAL (fromIntensity, U"From intensity (dB)", U"0.0")
 	REAL (toIntensity, U"To intensity (dB)", U"100.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	RADIO (drawingMethod, U"Drawing method", 1)
-		RADIOBUTTON (U"speckles")
-		RADIOBUTTON (U"curve")
-		RADIOBUTTON (U"speckles and curve")
+	CHOICE (drawingMethod, U"Drawing method", 1)
+		OPTION (U"speckles")
+		OPTION (U"curve")
+		OPTION (U"speckles and curve")
 	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Pitch, Intensity)
@@ -1040,7 +1040,7 @@ DO
 FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
@@ -1052,7 +1052,7 @@ DO
 FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
@@ -1066,10 +1066,10 @@ FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
 	REAL (environmentMax, U"right Environment (Hz)", U"4200.0")
 	REAL (peakMin, U"left Peak (Hz)", U"2400.0")
 	REAL (peakMax, U"right Peak (Hz)", U"3200.0")
-	RADIO (averagingMethod, U"Averaging method", 1)
-		RADIOBUTTON (U"energy")
-		RADIOBUTTON (U"sones")
-		RADIOBUTTON (U"dB")
+	CHOICE (averagingMethod, U"Averaging method", 1)
+		OPTION (U"energy")
+		OPTION (U"sones")
+		OPTION (U"dB")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Ltas)
@@ -1086,7 +1086,7 @@ DO
 FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
@@ -1098,10 +1098,10 @@ DO
 FORM (REAL_Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO (averagingMethod, U"Averaging method", 1)
-		RADIOBUTTON (U"energy")
-		RADIOBUTTON (U"sones")
-		RADIOBUTTON (U"dB")
+	CHOICE (averagingMethod, U"Averaging method", 1)
+		OPTION (U"energy")
+		OPTION (U"sones")
+		OPTION (U"dB")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Ltas)
@@ -1113,7 +1113,7 @@ DO
 FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+	CHOICE_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
@@ -1133,10 +1133,10 @@ FORM (REAL_Ltas_getSlope, U"Ltas: Get slope", 0) {
 	REAL (lowBandTo, U"right Low band (Hz)", U"1000.0")
 	REAL (highBandFrom, U"left High band (Hz)", U"1000.0")
 	REAL (highBandTo, U"right High band (Hz)", U"4000.0")
-	RADIO (averagingMethod, U"Averaging method", 1)
-		RADIOBUTTON (U"energy")
-		RADIOBUTTON (U"sones")
-		RADIOBUTTON (U"dB")
+	CHOICE (averagingMethod, U"Averaging method", 1)
+		OPTION (U"energy")
+		OPTION (U"sones")
+		OPTION (U"dB")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Ltas)
@@ -1147,10 +1147,10 @@ DO
 FORM (REAL_Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get standard deviation...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO (averagingMethod, U"Averaging method", 1)
-		RADIOBUTTON (U"energy")
-		RADIOBUTTON (U"sones")
-		RADIOBUTTON (U"dB")
+	CHOICE (averagingMethod, U"Averaging method", 1)
+		OPTION (U"energy")
+		OPTION (U"sones")
+		OPTION (U"dB")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Ltas)
@@ -1164,7 +1164,7 @@ DO
 
 FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...") {
 	REAL (frequency, U"Frequency (Hz)", U"1500.0")
-	RADIO_ENUM (kVector_valueInterpolation, valueInterpolationType,
+	CHOICE_ENUM (kVector_valueInterpolation, valueInterpolationType,
 			U"Interpolation", kVector_valueInterpolation :: NEAREST)
 	OK
 DO
@@ -1543,9 +1543,9 @@ DIRECT (NEW_Pitch_tabulateCandidates) {
 FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"none")
+		OPTION (U"parabolic")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Pitch)
@@ -1557,9 +1557,9 @@ DO
 FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"none")
+		OPTION (U"parabolic")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Pitch)
@@ -1580,11 +1580,11 @@ DO
 }
 
 FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
-	RADIO (unit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"mel")
-		RADIOBUTTON (U"semitones")
-		RADIOBUTTON (U"ERB")
+	CHOICE (unit, U"Unit", 1)
+		OPTION (U"Hertz")
+		OPTION (U"mel")
+		OPTION (U"semitones")
+		OPTION (U"ERB")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Pitch)
@@ -1644,9 +1644,9 @@ DO
 FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"none")
+		OPTION (U"parabolic")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Pitch)
@@ -1657,9 +1657,9 @@ DO
 FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"none")
+		OPTION (U"parabolic")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Pitch)
@@ -1670,9 +1670,9 @@ DO
 FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"nearest")
-		RADIOBUTTON (U"linear")
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"nearest")
+		OPTION (U"linear")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Pitch)
@@ -1717,9 +1717,9 @@ DIRECT (NEW_Pitch_killOctaveJumps) {
 FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: List values at times...") {
 	REALVECTOR (times, U"Times (s)", WHITESPACE_SEPARATED_, U"0.5 0.7 2.0")
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
-	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"nearest")
-		RADIOBUTTON (U"linear")
+	CHOICEx (interpolation, U"Interpolation", 2, 0)
+		OPTION (U"nearest")
+		OPTION (U"linear")
 	OK
 DO
 	QUERY_ONE_FOR_REAL_VECTOR (Pitch)
@@ -1904,7 +1904,7 @@ DIRECT (NEW_Pitch_to_Sound_hum) {
 
 FORM (NEW_Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
-	RADIOx (cutVoicelessStretches, U"Cut voiceless stretches", 2, 0)
+	CHOICEx (cutVoicelessStretches, U"Cut voiceless stretches", 2, 0)
 		OPTION (U"exactly")
 		OPTION (U"at nearest zero crossings")
 	OK
@@ -1936,10 +1936,10 @@ FORM (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"500.0")
-	RADIOx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
-		RADIOBUTTON (U"normal")
-		RADIOBUTTON (U"dotted")
-		RADIOBUTTON (U"blank")
+	CHOICEx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
+		OPTION (U"normal")
+		OPTION (U"dotted")
+		OPTION (U"blank")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -1953,10 +1953,10 @@ FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"500.0")
-	RADIOx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
-		RADIOBUTTON (U"normal")
-		RADIOBUTTON (U"dotted")
-		RADIOBUTTON (U"blank")
+	CHOICEx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
+		OPTION (U"normal")
+		OPTION (U"dotted")
+		OPTION (U"blank")
 	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
@@ -2776,9 +2776,9 @@ FORM (NEW_Strings_replaceAll, U"Strings: Replace all", nullptr) {
 	SENTENCE (find, U"Find", U"a")
 	SENTENCE (replaceWith, U"Replace with", U"b")
 	INTEGER (replaceLimitPerString, U"Replace limit per string", U"0 (= unlimited)")
-	RADIOx (findAndReplaceStringsAre, U"Find and replace strings are", 1, 0)
-		RADIOBUTTON (U"literals")
-		RADIOBUTTON (U"regular expressions")
+	CHOICEx (findAndReplaceStringsAre, U"Find and replace strings are", 1, 0)
+		OPTION (U"literals")
+		OPTION (U"regular expressions")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Strings)
@@ -2834,11 +2834,11 @@ DIRECT (NEW_Transition_conflate) {
 }
 
 FORM (GRAPHICS_Transition_drawAsNumbers, U"Draw as numbers", nullptr) {
-	RADIO (format, U"Format", 1)
-		RADIOBUTTON (U"decimal")
-		RADIOBUTTON (U"exponential")
-		RADIOBUTTON (U"free")
-		RADIOBUTTON (U"rational")
+	CHOICE (format, U"Format", 1)
+		OPTION (U"decimal")
+		OPTION (U"exponential")
+		OPTION (U"free")
+		OPTION (U"rational")
 	NATURAL (precision, U"Precision", U"2")
 	OK
 DO
