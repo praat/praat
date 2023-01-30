@@ -154,7 +154,7 @@ enum { NO_SYMBOL_,
 		BEGIN_PAUSE_FORM_,
 		REAL_, POSITIVE_, INTEGER_, NATURAL_,
 		WORD_, SENTENCE_, TEXT_, BOOLEAN_,
-		CHOICE_, OPTION_MENU_, OPTION_,
+		CHOICE_, OPTIONMENU_, OPTION_MENU_, OPTION_,
 		INFILE_, OUTFILE_, FOLDER_,
 		REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_,
 		COMMENT_, END_PAUSE_FORM_,
@@ -294,7 +294,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
 	U"beginPause", U"real", U"positive", U"integer", U"natural",
 	U"word", U"sentence", U"text", U"boolean",
-	U"choice", U"optionMenu", U"option",
+	U"choice", U"optionmenu", U"optionMenu", U"option",
 	U"infile", U"outfile", U"folder",
 	U"realvector", U"positivevector", U"integervector", U"naturalvector",
 	U"comment", U"endPause",
@@ -6671,19 +6671,19 @@ static void do_choice () {
 	UiPause_choice (label->getString(), Melder_iround (defaultValue->number));
 	pushNumber (1);
 }
-static void do_optionMenu () {
+static void do_optionmenu () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function “optionMenu” is not available inside manuals.");
+		U"The function “optionmenu” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
-		U"The function “optionMenu” requires 2 arguments (a label text and a default value), not ", n->number, U".");
+		U"The function “optionmenu” requires 2 arguments (a label text and a default value), not ", n->number, U".");
 	const Stackel defaultValue = pop;
 	Melder_require (defaultValue->which == Stackel_NUMBER,
-		U"The second argument of “optionMenu” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
+		U"The second argument of “optionmenu” (the default value) should be a whole number, not ", defaultValue->whichText(), U".");
 	const Stackel label = pop;
 	Melder_require (label->which == Stackel_STRING,
-		U"The first argument of “optionMenu” (the label text) should be a string, not ", label->whichText(), U".");
-	UiPause_optionMenu (label->getString(), Melder_iround (defaultValue->number));
+		U"The first argument of “optionmenu” (the label text) should be a string, not ", label->whichText(), U".");
+	UiPause_optionmenu (label->getString(), Melder_iround (defaultValue->number));
 	pushNumber (1);
 }
 static void do_option () {
@@ -7776,7 +7776,8 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case TEXT_: { do_text ();
 } break; case BOOLEAN_: { do_boolean ();
 } break; case CHOICE_: { do_choice ();
-} break; case OPTION_MENU_: { do_optionMenu ();
+} break; case OPTIONMENU_: { do_optionmenu ();
+} break; case OPTION_MENU_: { do_optionmenu ();   // alternative spelling, deprecated 2023
 } break; case OPTION_: { do_option ();
 } break; case INFILE_: { do_infile ();
 } break; case OUTFILE_: { do_outfile ();

@@ -38,7 +38,7 @@ void UiPause_positivevector (conststring32 label, kUi_realVectorFormat defaultFo
 void UiPause_integervector  (conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines);
 void UiPause_naturalvector  (conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines);
 void UiPause_choice         (conststring32 label, int defaultValue);
-void UiPause_optionMenu     (conststring32 label, int defaultValue);
+void UiPause_optionmenu     (conststring32 label, int defaultValue);
 void UiPause_option         (conststring32 label);
 void UiPause_comment        (conststring32 label);
 

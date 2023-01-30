@@ -3730,7 +3730,7 @@ CODE (U"for i to 5")
 				CODE4 (U"#option: \"MP3\"")
 				CODE4 (U"#option: \"Ogg\"")
 		CODE2 (U"endif")
-		CODE2 (U"#optionMenu: \"Number of channels\", number_of_channels")
+		CODE2 (U"#optionmenu: \"Number of channels\", number_of_channels")
 			CODE3 (U"#option: \"mono\"")
 			CODE3 (U"#option: \"stereo\"")
 			CODE3 (U"#option: \"quadro\"")
@@ -3744,7 +3744,7 @@ CODE (U"for i to 5")
 	CODE1 (U"appendInfoLine: \"Array: \", array_of_reals\\# ")
 CODE (U"endfor")
 NORMAL (U"This example uses several tricks. A useful one is seen with %number_of_channels: "
-	"this is at the same time the value that is passed to #optionMenu (and therefore determines the setting of "
+	"this is at the same time the value that is passed to #optionmenu (and therefore determines the setting of "
 	"the \"Number of channels\" menu when the window appears) and the name of the variable in which the user's "
 	"chosen value of \"Number of channels\" is stored (because \"number_of_channels\" is what you get "
 	"by replacing the spaces in \"Number of channels\" with underscores and turning its first letter to lower case).")

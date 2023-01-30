@@ -129,9 +129,9 @@ void UiPause_choice (conststring32 label, int defaultValue) {
 		Melder_throw (U"The function “choice” should be between a “beginPause” and an “endPause”.");
 	UiForm_addRadio (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
 }
-void UiPause_optionMenu (conststring32 label, int defaultValue) {
+void UiPause_optionmenu (conststring32 label, int defaultValue) {
 	if (! thePauseForm)
-		Melder_throw (U"The function “optionMenu” should be between a “beginPause” and an “endPause”.");
+		Melder_throw (U"The function “optionmenu” should be between a “beginPause” and an “endPause”.");
 	UiForm_addOptionMenu (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
 }
 void UiPause_option (conststring32 optionText) {
@@ -140,7 +140,7 @@ void UiPause_option (conststring32 optionText) {
 	UiOption option = UiForm_addOption (thePauseForm.get(), optionText);
 	if (! option) {
 		thePauseForm. reset();
-		Melder_throw (U"Found the function “option” without a preceding “choice” or “optionMenu”.");
+		Melder_throw (U"Found the function “option” without a preceding “choice” or “optionmenu”.");
 	}
 }
 void UiPause_comment (conststring32 label) {
