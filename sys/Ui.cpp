@@ -203,7 +203,7 @@ UiOption UiForm_addOption (UiForm me, conststring32 optionText) {
 	UiField you = my latestUsedRadio;
 	if (! you)
 		return nullptr;
-	Melder_assert (your type == _kUiField_type::RADIO_ || your type == _kUiField_type::OPTIONMENU_);
+	Melder_assert (your type == _kUiField_type::CHOICE_ || your type == _kUiField_type::OPTIONMENU_);
 	autoUiOption option = UiOption_create (optionText);
 	return your options. addItem_move (option.move());
 }
@@ -266,7 +266,7 @@ static void UiField_setDefault (UiField me) {
 			GuiCheckButton_setValue (my checkButton, my integerDefaultValue);
 		}
 		break;
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		{
 			for (int i = 1; i <= my options.size; i ++) {
 				if (i == my integerDefaultValue) {
@@ -487,7 +487,7 @@ static void UiField_widgetToValue (UiField me) {
 				*my boolVariable = my integerValue;
 		}
 		break;
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		{
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
@@ -766,7 +766,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 						UiHistory_write (field -> integerValue ? (next -- ? U", \"yes\"" : U" \"yes\"") : (next -- ? U", \"no\"" : U" \"no\""));
 					}
 					break;
-					case _kUiField_type::RADIO_:
+					case _kUiField_type::CHOICE_:
 					case _kUiField_type::OPTIONMENU_:
 					{
 						UiOption b = field -> options.at [field -> integerValue];
@@ -1132,7 +1132,7 @@ UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 v
 }
 
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
-	UiField thee = UiForm_addField (me, _kUiField_type::RADIO_, labelText);
+	UiField thee = UiForm_addField (me, _kUiField_type::CHOICE_, labelText);
 	my latestUsedRadio = thee;
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
@@ -1241,7 +1241,7 @@ void UiForm_finish (UiForm me) {
 		dialogHeight +=
 			ifield == 1 ?
 				Gui_TOP_DIALOG_SPACING
-			: thy type == _kUiField_type::RADIO_ || previous -> type == _kUiField_type::RADIO_ ?
+			: thy type == _kUiField_type::CHOICE_ || previous -> type == _kUiField_type::CHOICE_ ?
 				Gui_VERTICAL_DIALOG_SPACING_DIFFERENT
 			: thy type >= _kUiField_type::LABELLED_TEXT_MIN_ && thy type <= _kUiField_type::LABELLED_TEXT_MAX_ && str32nequ (thy name.get(), U"right ", 6) &&
 					previous -> type >= _kUiField_type::LABELLED_TEXT_MIN_ && previous -> type <= _kUiField_type::LABELLED_TEXT_MAX_ &&
@@ -1263,7 +1263,7 @@ void UiForm_finish (UiForm me) {
 		dialogHeight +=
 			thy type == _kUiField_type::BOOLEAN_ ?
 				Gui_CHECKBUTTON_HEIGHT
-			: thy type == _kUiField_type::RADIO_ ?
+			: thy type == _kUiField_type::CHOICE_ ?
 				thy options.size * Gui_RADIOBUTTON_HEIGHT + (thy options.size - 1) * Gui_RADIOBUTTON_SPACING
 			: thy type == _kUiField_type::OPTIONMENU_ ?
 				Gui_OPTIONMENU_HEIGHT
@@ -1495,7 +1495,7 @@ void UiForm_finish (UiForm me) {
 				);
 			}
 			break;
-			case _kUiField_type::RADIO_:
+			case _kUiField_type::CHOICE_:
 			{
 				int ylabel = thy y;
 				#if defined (macintosh)
@@ -1700,7 +1700,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			isText = true;
 		}
 		break;
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		case _kUiField_type::OPTIONMENU_:
 		{
 			MelderInfo_write (U"\tconst char *");
@@ -2007,7 +2007,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				*my boolVariable = my integerValue;
 		}
 		break;
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		case _kUiField_type::OPTIONMENU_:
 		{
 			if (arg -> which != Stackel_STRING)
@@ -2204,7 +2204,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 				*my boolVariable = my integerValue;
 		}
 		break;
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		case _kUiField_type::OPTIONMENU_:
 		{
 			my integerValue = 0;
@@ -2511,7 +2511,7 @@ void UiForm_setOption (UiForm me, int *p_variable, int value) {
 		if (field -> intVariable == p_variable) {
 			switch (field -> type)
 			{
-				case _kUiField_type::RADIO_:
+				case _kUiField_type::CHOICE_:
 				{
 					if (value < 1 || value > field -> options.size)
 						value = 1;   // guard against incorrect prefs file
@@ -2543,7 +2543,7 @@ void UiForm_setOptionAsString (UiForm me, int *p_variable, conststring32 stringV
 		if (field -> intVariable == p_variable) {
 			switch (field -> type)
 			{
-				case _kUiField_type::RADIO_:
+				case _kUiField_type::CHOICE_:
 				{
 					for (int i = 1; i <= field -> options.size; i ++) {
 						UiOption b = field -> options.at [i];
@@ -2683,7 +2683,7 @@ integer UiForm_getInteger (UiForm me, conststring32 fieldName) {
 		case _kUiField_type::NATURAL_:
 		case _kUiField_type::CHANNEL_:
 		case _kUiField_type::BOOLEAN_:
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		case _kUiField_type::OPTIONMENU_:
 		case _kUiField_type::LIST_:
 		{
@@ -2706,7 +2706,7 @@ integer UiForm_getInteger_check (UiForm me, conststring32 fieldName) {
 		case _kUiField_type::NATURAL_:
 		case _kUiField_type::CHANNEL_:
 		case _kUiField_type::BOOLEAN_:
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		case _kUiField_type::OPTIONMENU_:
 		case _kUiField_type::LIST_:
 		{
@@ -2740,7 +2740,7 @@ char32 * UiForm_getString (UiForm me, conststring32 fieldName) {
 			return field -> stringValue.get();   // BUG dangle
 		}
 		break;
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		case _kUiField_type::OPTIONMENU_:
 		{
 			UiOption b = field -> options.at [field -> integerValue];
@@ -2774,7 +2774,7 @@ char32 * UiForm_getString_check (UiForm me, conststring32 fieldName) {
 			return field -> stringValue.get();
 		}
 		break;
-		case _kUiField_type::RADIO_:
+		case _kUiField_type::CHOICE_:
 		case _kUiField_type::OPTIONMENU_:
 		{
 			UiOption b = field -> options.at [field -> integerValue];
@@ -2886,7 +2886,7 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				var -> numericValue = field -> realValue;
 			}
 			break;
-			case _kUiField_type::RADIO_:
+			case _kUiField_type::CHOICE_:
 			case _kUiField_type::OPTIONMENU_:
 			{
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);

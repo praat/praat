@@ -105,7 +105,7 @@ enum class _kUiField_type {
 	REALMATRIX_ = 20,
 	STRINGARRAY_ = 21,
 	BOOLEAN_ = 22,
-	RADIO_ = 23,
+	CHOICE_ = 23,
 	OPTIONMENU_ = 24,
 	LIST_ = 25,
 	LABELLED_TEXT_MIN_ = 1,
@@ -131,7 +131,7 @@ Thing_define (UiField, Thing) {
 	GuiLabel label;
 	GuiText text;
 	GuiCheckButton checkButton;
-	GuiRadioButton radioButton;   // for RADIO_
+	GuiRadioButton radioButton;   // for CHOICE_
 	GuiList list;
 	GuiOptionMenu optionMenu;
 	GuiButton pushButton;   // like "Browse..." for INFILE_, OUTFILE_, FOLDER_ (2021-03-30)
