@@ -4263,17 +4263,34 @@ static void do_min () {
 	Melder_require (n->number >= 1,
 		U"The function “min” requires at least one argument.");
 	const Stackel last = pop;
-	Melder_require (last->which == Stackel_NUMBER,
-		U"The function “min” can only have numeric arguments, not ", last->whichText(), U".");
-	double result = last->number;
-	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
-		const Stackel previous = pop;
-		Melder_require (previous->which == Stackel_NUMBER,
-			U"The function “min” can only have numeric arguments, not ", previous->whichText(), U".");
-		result = isundef (result) || isundef (previous->number) ? undefined :
-			result < previous->number ? result : previous->number;
+	if (last->which == Stackel_NUMBER) {
+		double result = last->number;
+		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
+			const Stackel previous = pop;
+			Melder_require (previous->which == Stackel_NUMBER,
+				U"The function “min” cannot mix a numeric argument with ", previous->whichText(), U".");
+			result = isundef (result) || isundef (previous->number) ? undefined :
+					result < previous->number ? result : previous->number;
+		}
+		pushNumber (result);
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		/*@praat
+			assert min ({ 5, 6, 1, 7 }) = 1
+			assert min ({ undefined, 6, 1, 7 }) = 1
+			assert min ({ 5, undefined, 1, 7 }) = 1
+			assert min ({ 5, 6, undefined, 7 }) = 5
+			assert min ({ 5, 6, 1, undefined }) = 1
+			assert min ({ undefined, undefined }) = undefined
+			assert min ({ undefined }) = undefined
+			assert min ({ }) = undefined
+		@*/
+		Melder_require (n->number == 1,
+			U"The function “min” requires exactly one vector argument.");
+		pushNumber (NUMmin (last->numericVector));
+	} else {
+		const Stackel nn = pop;
+		Melder_throw (U"Cannot compute the minimum of ", nn->whichText(), U".");
 	}
-	pushNumber (result);
 }
 static void do_max () {
 	const Stackel n = pop;
@@ -4281,17 +4298,24 @@ static void do_max () {
 	Melder_require (n->number >= 1,
 		U"The function “max” requires at least one argument.");
 	const Stackel last = pop;
-	Melder_require (last->which == Stackel_NUMBER,
-		U"The function “max” can only have numeric arguments, not ", last->whichText(), U".");
-	double result = last->number;
-	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
-		Stackel previous = pop;
-		Melder_require (previous->which == Stackel_NUMBER,
-			U"The function “max” can only have numeric arguments, not ", previous->whichText(), U".");
-		result = isundef (result) || isundef (previous->number) ? undefined :
-			result > previous->number ? result : previous->number;
+	if (last->which == Stackel_NUMBER) {
+		double result = last->number;
+		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
+			Stackel previous = pop;
+			Melder_require (previous->which == Stackel_NUMBER,
+				U"The function “max” cannot mix a numeric argument with ", previous->whichText(), U".");
+			result = isundef (result) || isundef (previous->number) ? undefined :
+				result > previous->number ? result : previous->number;
+		}
+		pushNumber (result);
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (n->number == 1,
+			U"The function “max” requires exactly one vector argument.");
+		pushNumber (NUMmax (last->numericVector));
+	} else {
+		const Stackel nn = pop;
+		Melder_throw (U"Cannot compute the maximum of ", nn->whichText(), U".");
 	}
-	pushNumber (result);
 }
 static void do_imin () {
 	const Stackel n = pop;
@@ -4299,23 +4323,39 @@ static void do_imin () {
 	Melder_require (n->number >= 1,
 		U"The function “imin” requires at least one argument.");
 	const Stackel last = pop;
-	Melder_require (last->which == Stackel_NUMBER,
-		U"The function “imin” can only have numeric arguments, not ", last->whichText(), U".");
-	double minimum = last->number;
-	double result = n->number;
-	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
-		Stackel previous = pop;
-		Melder_require (previous->which == Stackel_NUMBER,
-			U"The function “imin” can only have numeric arguments, not ", previous->whichText(), U".");
-		if (isundef (minimum) || isundef (previous->number)) {
-			minimum = undefined;
-			result = undefined;
-		} else if (previous->number < minimum) {
-			minimum = previous->number;
-			result = j;
+	if (last->which == Stackel_NUMBER) {
+		double minimum = last->number;
+		double result = n->number;
+		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
+			Stackel previous = pop;
+			Melder_require (previous->which == Stackel_NUMBER,
+				U"The function “imin” cannot mix a numeric argument with ", previous->whichText(), U".");
+			if (isundef (minimum) || isundef (previous->number)) {
+				minimum = undefined;
+				result = undefined;
+			} else if (previous->number < minimum) {
+				minimum = previous->number;
+				result = j;
+			}
 		}
+		pushNumber (result);
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (n->number == 1,
+			U"The function “imin” requires exactly one vector argument.");
+		const integer numberOfElements = last->numericVector.size;
+		integer result = 1;
+		double minimum = last->numericVector [1];
+		for (integer i = 2; i <= numberOfElements; i ++) {
+			if (last->numericVector [i] < minimum) {
+				result = i;
+				minimum = last->numericVector [i];
+			}
+		}
+		pushNumber (result);
+	} else {
+		const Stackel nn = pop;
+		Melder_throw (U"Cannot compute the imin of ", nn->whichText(), U".");
 	}
-	pushNumber (result);
 }
 static void do_imax () {
 	const Stackel n = pop;

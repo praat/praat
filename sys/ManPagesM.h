@@ -2,7 +2,7 @@
 #define _ManPagesM_h_
 /* ManPagesM.h
  *
- * Copyright (C) 1996-2005,2007,2009,2011,2014-2018,2021 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2009,2011,2014-2018,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@
 	"Draw rectangle... 265 279 y-7 y+7\n" \
 	"Text... 281 left y half " label "\n" \
 	"y += 40\n"
-#define Manual_DRAW_SETTINGS_WINDOW_RADIO(label,text,on) \
+#define Manual_DRAW_SETTINGS_WINDOW_CHOICE(label,text,on) \
 	"if \"" label "\" <> \"\"\n" \
 	"    Text... 255 right y half " label ":\n" \
 	"endif\n" \

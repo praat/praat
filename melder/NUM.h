@@ -253,18 +253,20 @@ inline double NUMlog2 (double x) {
 	return log (x) * NUMlog2e;
 }
 
-inline double NUMmax (constVECVU const& vec) {
-	if (NUMisEmpty (vec))
-		return undefined;
-	double maximum = vec [1];
-	for (integer i = 2; i <= vec.size; i ++) {
+inline double NUMmax (   // ignore NaNs
+	constVECVU const& vec
+) {
+	double maximum = - std::numeric_limits<double>::infinity();
+	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
-		if (value > maximum)
+		if (value > maximum)   // NaN-safe
 			maximum = value;
 	}
 	return maximum;
 }
-inline integer NUMmax (const constINTVECVU& vec) {
+inline integer NUMmax (
+	const constINTVECVU& vec
+) {
 	if (NUMisEmpty (vec))
 		return INTEGER_MIN;
 	integer maximum = vec [1];
@@ -275,13 +277,13 @@ inline integer NUMmax (const constINTVECVU& vec) {
 	}
 	return maximum;
 }
-inline double NUMmax (constMATVU const& mat) {
-	if (NUMisEmpty (mat))
-		return undefined;
-	double maximum = NUMmax (mat [1]);
-	for (integer irow = 2; irow <= mat.nrow; irow ++) {
+inline double NUMmax (   // ignore NaNs
+	constMATVU const& mat
+) {
+	double maximum = - std::numeric_limits<double>::infinity();
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		const double value = NUMmax (mat [irow]);
-		if (value > maximum)
+		if (value > maximum)   // NaN-safe
 			maximum = value;
 	}
 	return maximum;
@@ -296,18 +298,20 @@ extern double NUMmean (constMATVU const& mat) noexcept;
 extern MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept;
 extern MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept;
 
-inline double NUMmin (constVECVU const& vec) {
-	if (NUMisEmpty (vec))
-		return undefined;
-	double minimum = vec [1];
-	for (integer i = 2; i <= vec.size; i ++) {
+inline double NUMmin (   // ignore NaNs
+	constVECVU const& vec
+) {
+	double minimum = + std::numeric_limits<double>::infinity();
+	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
-		if (value < minimum)
+		if (value < minimum)   // NaN-safe
 			minimum = value;
 	}
 	return minimum;
 }
-inline integer NUMmin (const constINTVECVU& vec) {
+inline integer NUMmin (
+	const constINTVECVU& vec
+) {
 	if (NUMisEmpty (vec))
 		return INTEGER_MAX;
 	integer minimum = vec [1];
@@ -318,13 +322,13 @@ inline integer NUMmin (const constINTVECVU& vec) {
 	}
 	return minimum;
 }
-inline double NUMmin (constMATVU const& mat) {
-	if (NUMisEmpty (mat))
-		return undefined;
-	double minimum = NUMmin (mat [1]);
-	for (integer irow = 2; irow <= mat.nrow; irow ++) {
+inline double NUMmin (   // ignore NaNs
+	constMATVU const& mat
+) {
+	double minimum = + std::numeric_limits<double>::infinity();
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		const double value = NUMmin (mat [irow]);
-		if (value < minimum)
+		if (value < minimum)   // NaN-safe
 			minimum = value;
 	}
 	return minimum;
