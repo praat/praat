@@ -25,7 +25,7 @@ void manual_tutorials_init (ManPages me) {
 MAN_BEGIN (U"What's new?", U"ppgb", 20230131)
 INTRO (U"Latest changes in Praat.")
 NORMAL (U"##6.3.06# (31 January 2023)")
-LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $optionmenu would not work in script forms.")
+LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $optionmenu would not work in new-style script forms.")
 LIST_ITEM (U"• Scripting: $$min()$, $$max()$, $$imin()$ and $$imax()$ for vectors.")
 NORMAL (U"##6.3.05# (27 January 2023)")
 LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which some old-style forms could not be read.")
