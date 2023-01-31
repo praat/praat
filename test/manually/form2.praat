@@ -45,5 +45,6 @@ assert numbers2# = { 6, 7, 8 }
 assert endsWith (input_file$, "test/script/2345")   ; should not be possible
 assert endsWith (output_file$, "test/script/../abc.txt")
 assert endsWith (folder$, "test/script/subfolder/wav2vec")
+assert texture$ = "With holes"
 
 appendInfoLine: "OK manually/Form2"
