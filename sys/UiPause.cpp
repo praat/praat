@@ -127,7 +127,7 @@ void UiPause_naturalvector (conststring32 label, kUi_integerVectorFormat default
 void UiPause_choice (conststring32 label, int defaultValue) {
 	if (! thePauseForm)
 		Melder_throw (U"The function “choice” should be between a “beginPause” and an “endPause”.");
-	UiForm_addRadio (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
+	UiForm_addChoice (thePauseForm.get(), nullptr, nullptr, nullptr, label, defaultValue, 1);
 }
 void UiPause_optionmenu (conststring32 label, int defaultValue) {
 	if (! thePauseForm)

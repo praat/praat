@@ -261,7 +261,7 @@ _form_inited_: \
 	static int optionVariable;
 
 #define CHOICE_FIELD(optionVariable, labelText, defaultValue)  \
-	UiForm_addRadio (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
+	UiForm_addChoice (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
 
 #define CHOICE(optionVariable, labelText, defaultValue)  \
 	CHOICE_VARIABLE (optionVariable) \
@@ -270,7 +270,7 @@ _form_inited_: \
 
 #define CHOICESTR(stringVariable, labelText, defaultValue)  \
 	static conststring32 stringVariable; \
-	UiForm_addRadio (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
+	UiForm_addChoice (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
 
 
 #define OPTIONMENU_VARIABLE(optionVariable)  \
@@ -301,7 +301,7 @@ _form_inited_: \
 		[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
 	} \
-	UiForm_addRadio (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
+	UiForm_addChoice (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
 			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 	for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
 		UiForm_addOption (cmd -> d_uiform.get(), EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \

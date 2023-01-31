@@ -46,7 +46,7 @@ Thing_declare (EditorCommand);
 		static bool beard;
 		UiForm_addBoolean (dia.get(), & beard, U"beard", U"Beard", false);
 		static int sex;
-		UiForm_addRadio (dia.get(), & sex, U"sex", U"Sex", 1);
+		UiForm_addChoice (dia.get(), & sex, U"sex", U"Sex", 1);
 			UiForm_addOption (dia.get(), U"Female");
 			UiForm_addOption (dia.get(), U"Male");
 		UiForm_addWord (dia.get(), colour, U"colour", U"Colour", U"black");
@@ -62,12 +62,12 @@ Thing_declare (EditorCommand);
 	UiForm_do (dia.get(), false);   // show dialog box
 }
 	Real, Positive, Integer, Natural, Channel, Word, and Sentence show a label and an editable text field.
-	Radio shows a label and has Button children stacked below it.
-	OptionMenu shows a label and has Button children in a menu.
+	Choice shows a label and has Option children stacked below it.
+	OptionMenu shows a label and has Option children in a menu.
 	Label only shows its value.
-	Text, Numvec and Nummat show an editable text field over the whole width of the form.
+	Text, RealVector and RealVector show an editable text field over the whole width of the form.
 	Boolean shows a labeled toggle button which is on (true) or off (false).
-	Button does the same inside a radio box or option menu.
+	Option does the same inside a choice box or option menu.
 	List shows a scrollable list.
 	Colour shows a label and an editable text field for a grey value between 0.0 and 1.0, a colour name, or {r,g,b}.
 	Channel shows a label and an editable text field for a natural number or one of the texts "Left", "Right", "Mono" or "Stereo".
@@ -183,7 +183,7 @@ Thing_define (UiForm, Thing) {
 	conststring32 continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];   // references to strings owned by a script
 	int numberOfFields;
 	autoUiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
-	UiField latestUsedRadio;
+	UiField referenceToLatestUsedChoiceOrOptionMenu;
 	GuiButton okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 	bool destroyWhenUnmanaged, isPauseForm;
 
@@ -242,7 +242,7 @@ UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 varia
 		conststring32 labelText, constMATVU defaultValue, integer numberOfLines = 10);
 UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 variableName,
 		conststring32 labelText, constSTRVEC defaultValue, integer numberOfLines = 7);
-UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
+UiField UiForm_addChoice (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
 		conststring32 labelText, int defaultValue, int base);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
 		conststring32 labelText, int defaultValue, int base);
@@ -279,7 +279,7 @@ void UiForm_setPauseForm (UiForm me,
 	void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 text /* cattable */);
 /* Boolean fields: */
 	void UiForm_setBoolean (UiForm me, bool *p_variable, bool value);
-/* Radio and OptionMenu fields: */
+/* Choice and OptionMenu fields: */
 	void UiForm_setOption (UiForm me, int *p_variable, int value);
 	void UiForm_setOptionAsString (UiForm me, int *p_variable, conststring32 stringValue /* cattable */);
 /* Colour fields: */
@@ -318,9 +318,9 @@ void UiForm_info (UiForm me, integer narg);
 	without anything from parentheses or from a colon.
 	These functions work from the GUI as well as from a script.
 */
-integer UiForm_getInteger (UiForm me, conststring32 fieldName);   // Integer, Natural, Boolean, Radio, List
-char32 * UiForm_getString (UiForm me, conststring32 fieldName);   // Word, Sentence, Text, RealMatrix, Radio, List
-MelderFile UiForm_getFile (UiForm me, conststring32 fieldName);   // FileIn, FileOut
+integer UiForm_getInteger (UiForm me, conststring32 fieldName);   // Integer, Natural, Boolean, Choice, OptionMenu, List
+char32 * UiForm_getString (UiForm me, conststring32 fieldName);   // Word, Sentence, Text, RealMatrix, Choice, OptionMenu, List
+MelderFile UiForm_getFile (UiForm me, conststring32 fieldName);   // Infile, Outfile
 VEC UiForm_getRealVector (UiForm me, conststring32 fieldName);   // RealVector
 INTVEC UiForm_getIntegerVector (UiForm me, conststring32 fieldName);   // IntegerVector
 

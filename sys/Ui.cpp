@@ -200,7 +200,7 @@ static autoUiOption UiOption_create (conststring32 optionText) {
 UiOption UiForm_addOption (UiForm me, conststring32 optionText) {
 	if (! me)
 		return nullptr;
-	UiField you = my latestUsedRadio;
+	UiField you = my referenceToLatestUsedChoiceOrOptionMenu;
 	if (! you)
 		return nullptr;
 	Melder_assert (your type == _kUiField_type::CHOICE_ || your type == _kUiField_type::OPTIONMENU_);
@@ -936,6 +936,7 @@ static UiField UiForm_addField (UiForm me, _kUiField_type type, conststring32 la
 
 UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::REAL_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
@@ -944,6 +945,7 @@ UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName,
 
 UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::REAL_OR_UNDEFINED_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
@@ -952,6 +954,7 @@ UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 va
 
 UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVE_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
@@ -960,6 +963,7 @@ UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableN
 
 UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::INTEGER_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
@@ -968,6 +972,7 @@ UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableN
 
 UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NATURAL_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
@@ -976,6 +981,7 @@ UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableN
 
 UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::WORD_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -984,6 +990,7 @@ UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variab
 
 UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::SENTENCE_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -992,6 +999,7 @@ UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 va
 
 UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 labelText) {
 	UiField thee = UiForm_addField (me, _kUiField_type::LABEL_, U"");   // this field gets no name; so that the user can give it any title
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringVariable = variable;
 	thy stringValue = Melder_dup (labelText);
 	return thee;
@@ -999,6 +1007,7 @@ UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label
 
 UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName, conststring32 labelText, bool defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::BOOLEAN_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy integerDefaultValue = defaultValue;
 	thy boolVariable = variable;
 	thy variableName = variableName;
@@ -1009,6 +1018,7 @@ UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variab
 	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::TEXT_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1020,6 +1030,7 @@ UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 var
 	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::FORMULA_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1031,6 +1042,7 @@ UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 vari
 	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::INFILE_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1042,6 +1054,7 @@ UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 var
 	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::OUTFILE_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1053,6 +1066,7 @@ UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 vari
 	conststring32 labelText, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::FOLDER_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1064,6 +1078,7 @@ UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 varia
 	conststring32 labelText, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::REALVECTOR_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVectorVariable = variable;
@@ -1076,6 +1091,7 @@ UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 v
 	conststring32 labelText, kUi_realVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVEVECTOR_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVectorVariable = variable;
@@ -1088,6 +1104,7 @@ UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32
 	conststring32 labelText, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::INTEGERVECTOR_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVectorVariable = variable;
@@ -1100,6 +1117,7 @@ UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32
 	conststring32 labelText, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::NATURALVECTOR_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVectorVariable = variable;
@@ -1112,6 +1130,7 @@ UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 varia
 	conststring32 labelText, constMATVU defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::REALMATRIX_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy numericMatrixDefaultValue = copy_MAT (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
@@ -1123,6 +1142,7 @@ UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 v
 	conststring32 labelText, constSTRVEC defaultValue, integer numberOfLines)
 {
 	UiField thee = UiForm_addField (me, _kUiField_type::STRINGARRAY_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringArrayDefaultValue = copy_STRVEC (defaultValue);
 	thy stringArrayFormat = theStringArrayFormat;
 	thy stringArrayVariable = variable;
@@ -1131,9 +1151,9 @@ UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 v
 	return thee;
 }
 
-UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
+UiField UiForm_addChoice (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
 	UiField thee = UiForm_addField (me, _kUiField_type::CHOICE_, labelText);
-	my latestUsedRadio = thee;
+	my referenceToLatestUsedChoiceOrOptionMenu = thee;
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
@@ -1144,7 +1164,7 @@ UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVaria
 
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
 	UiField thee = UiForm_addField (me, _kUiField_type::OPTIONMENU_, labelText);
-	my latestUsedRadio = thee;
+	my referenceToLatestUsedChoiceOrOptionMenu = thee;
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
@@ -1155,6 +1175,7 @@ UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *string
 
 UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, constSTRVEC strings, integer defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::LIST_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy strings = strings;
 	thy integerDefaultValue = defaultValue;
 	thy integerVariable = integerVariable;
@@ -1165,6 +1186,7 @@ UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stri
 
 UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::COLOUR_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy colourVariable = colourVariable;
 	thy variableName = variableName;
@@ -1173,6 +1195,7 @@ UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32
 
 UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::CHANNEL_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
