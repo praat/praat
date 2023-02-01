@@ -321,7 +321,7 @@ NORMAL (U"We start by determining the @@Sound: To Covariance (channels)...|covar
 NORMAL (U"In mathematical terms. For an %n-channel sound, if #E is the matrix with the eigenvectors and #D=diag (%d__1_, %d__2_,..., %d__n_) is the diagonal matrix with the "
     "eigenvalues of the covariance matrix, then the whitening matrix is #W = #E#D^^-1/2^#E\\'p, where #D^^-1/2^=diag (%d__1_^^-1/2^, ..., %d__p_^^-1/2^, 0, ..., 0). Only the %p most important eigenvalues have been retained, where %p was determined as the smallest integer for which (%d__1_+%d__2_+...%d__%p_)/(%d__1_+%d__2_+ ... + %d__%n_) >= %%varianceFractionToKeep%.")
 NORMAL (U"The resulting sound samples of the whitened sound, %w__%ij_, are then calculated from the samples of the "
-    "original sound, %s__%kj_, as %w__%ij_ = \\Si__%k_ W__%ik_ %s__%kj_, where 1 \\<_ %i \\<_%p, 1 \\<_ %j \\<_ numberOfSamples and 1 \\<_ %k \\<_ %n.")
+    "original sound, %s__%kj_, as %w__%ij_ = \\Si__%k_ W__%ik_ %s__%kj_, where 1 \\<_ %i \\<_ %p, 1 \\<_ %j \\<_ numberOfSamples and 1 \\<_ %k \\<_ %n.")
 MAN_END
 
 MAN_BEGIN (U"blind source separation", U"djmw", 20120907)

@@ -1110,7 +1110,7 @@ NORMAL (U"In Windows 10, you can choose your input device by right-clicking on t
 ENTRY (U"Watching the input level")
 NORMAL (U"While recording, you can watch the input level as a green rectangle whose size changes. "
 	"Whenever the input is loud, the top of the rectangle becomes yellow; if it turns red, the sound may have been clipped. "
-	"In the Meter menu you cna choose other visualizations, "
+	"In the Meter menu you can choose other visualizations, "
 	"such as a moving ball that measures spectral centre of gravity (horizontally) versus intensity (vertically).")
 ENTRY (U"The File menu")
 NORMAL (U"If your computer has little memory, a very long recorded sound might be too big to be copied to the list of objects. "

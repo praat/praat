@@ -26,11 +26,11 @@ MAN_BEGIN (U"Action commands", U"ppgb", 20230130)
 INTRO (U"The commands in the @@Dynamic menu@ of the @@Objects window@.")
 NORMAL (U"These commands are available only if the right kinds of objects are selected. "
 	"They are shown in a list in the right half of the Objects window, "
-	"or in the @@Save menu@ if they start with “Save as” or “Append to”.")
+	"or in the @@Save menu@ if they start with ##Save as# or ##Append to#.")
 MAN_END
 
 MAN_BEGIN (U"Add action command...", U"ppgb", 20230130)
-INTRO (U"One of the hidden commands in the #Praat menu of the @@Objects window@. "
+INTRO (U"One of the hidden commands in the Praat menu of the @@Objects window@. "
 	"With this command, you add a button to the dynamic menu in the right half of the Objects window.")
 ENTRY (U"Settings")
 NORMAL (U"See @@Add to dynamic menu...@.")
@@ -41,7 +41,7 @@ NORMAL (U"Normally, however, if you want to add a command to the dynamic menu, "
 MAN_END
 
 MAN_BEGIN (U"Add menu command...", U"ppgb", 20230130)
-INTRO (U"One of the hidden commands in the #Praat menu of the @@Objects window@. "
+INTRO (U"One of the hidden commands in the Praat menu of the @@Objects window@. "
 	"With this command, you add a button to any of the fixed menus in the Objects or Picture window.")
 ENTRY (U"Settings")
 NORMAL (U"See @@Add to fixed menu...@.")
@@ -52,7 +52,7 @@ NORMAL (U"Normally, however, if you want to add a command to a fixed menu, "
 MAN_END
 
 MAN_BEGIN (U"Add to dynamic menu...", U"ppgb", 20140107)
-INTRO (U"A command in the #File menu of the @ScriptEditor.")
+INTRO (U"A command in the File menu of the @ScriptEditor.")
 NORMAL (U"With this command, you add a button to the dynamic menu in the @@Objects window@. "
 	"This button will only be visible if the specified combination of objects is selected. "
 	"Clicking the button will invoke the specified @@Praat script@.")
@@ -66,22 +66,22 @@ DEFINITION (U"the number of objects of %class1 that have to be selected. For mos
 	"If the number of selected objects is different from %number1, the button will be visible but insensitive.")
 TAG (U"%%Class 2")
 DEFINITION (U"the name of the class of the second object to be selected, different from %class1. "
-	"Normally the empty string (\\\" \\\" ).")
+	"Normally the empty string (“”).")
 TAG (U"%%Number 2")
 DEFINITION (U"the number of selected objects of %class2.")
 TAG (U"%%Class 3")
 DEFINITION (U"the name of the class of the third object to be selected, different from %class1 and %class2. "
-	"Normally the empty string (\\\" \\\" ).")
+	"Normally the empty string (“”).")
 TAG (U"%%Number 3")
 DEFINITION (U"the number of selected objects of %class3.")
 TAG (U"%%Command")
 DEFINITION (U"the title of the new command button (or label, or submenu title). "
 	"To get a separator line instead of a command text (only in a submenu), "
-	"you specify a unique string that starts with a hyphen ('-'); the @ButtonEditor may contain some examples of this. "
-	"If the command starts with \"Save as \", it will be placed in the @@Save menu@.")
+	"you specify a unique string that starts with a hyphen (“-”); the @ButtonEditor may contain some examples of this. "
+	"If the command starts with ##Save as# or ##Append to#, it will be placed in the @@Save menu@.")
 TAG (U"%%After command")
 DEFINITION (U"a button title in the dynamic menu or submenu where you want your new button. "
-	"If you specify the empty string (\\\" \\\" ), your button will be put at the bottom. "
+	"If you specify the empty string (“”), your button will be put at the bottom. "
 	"You can specify a push button, a label (subheader), or a cascade button (submenu title) here.")
 TAG (U"%%Depth")
 DEFINITION (U"0 if you want your button in the main menu, 1 if you want it in a submenu.")
@@ -91,8 +91,8 @@ DEFINITION (U"the full path name of the script to invoke. If you saved the scrip
 	"If you do not specify a script, you will get a separating label or cascading menu title instead, "
 	"depending on the %depth of the following command.")
 ENTRY (U"Example")
-NORMAL (U"If one object of class Sound is selected, you want a submenu called \"Filters\" "
-	"after the #Convolve button, containing the commands \"Autocorrelation\" and \"Band filter...\", "
+NORMAL (U"If one object of class Sound is selected, you want a new submenu called “Filters” "
+	"after the #Convolve button, containing your new commands “Autocorrelation” and “Band filter...”, "
 	"separated by a horizontal separator line:")
 CODE (U"Add to dynamic menu: \"Sound\", 0, \"\", 0, \"\", 0, \"Filters -\", \"Convolve\", 0, \"\"")
 CODE (U"Add to dynamic menu: \"Sound\", 1, \"\", 0, \"\", 0, \"Autocorrelation\", \"Filters -\", 1, \"/u/praats/demo/autocorrelation.praat\"")
@@ -109,39 +109,40 @@ NORMAL (U"To add a dynamic button from a script (perhaps your @@initialization s
 MAN_END
 
 MAN_BEGIN (U"Add to fixed menu...", U"ppgb", 20140107)
-INTRO (U"A command in the #File menu of the @ScriptEditor.")
+INTRO (U"A command in the File menu of the @ScriptEditor.")
 NORMAL (U"With this command, you add a button to any fixed menu in the @@Objects window@ or in the @@Picture window@. "
 	"Clicking the added button will invoke the specified @@Praat script@.")
 ENTRY (U"Settings")
-TAG (U"%Window")
+TAG (U"#Window")
 DEFINITION (U"the name of the window (“Objects” or “Picture”) that contains the menu that you want to change.")
-TAG (U"%Menu")
-DEFINITION (U"the title of the menu that you want to change. If %window is “Objects”, you can specify "
-	"the #Praat, #New, #Open, #Help, #Goodies, #Preferences, or #Technical menu (for the #Save menu, which depends on the objects selected, "
-	"you would use @@Add to dynamic menu...@ instead). If %window is “Picture”, you can specify "
-	"the #File, #Edit, #Margins, #World, #Select, #Pen, #Font, or #Help menu.")
-TAG (U"%Command")
+TAG (U"#Menu")
+DEFINITION (U"the title of the menu that you want to change. If #Window is “Objects”, you can specify "
+	"the Praat, New, Open, Help, Goodies, Settings, or Technical menu (for the Save menu, "
+	"which depends on the objects selected, "
+	"you would use @@Add to dynamic menu...@ instead). If #Window is “Picture”, you can specify "
+	"the File, Edit, Margins, World, Select, Pen, Font, or Help menu.")
+TAG (U"#Command")
 DEFINITION (U"the title of the new menu button. To get a separator line instead of a command text, "
 	"you specify a unique string that starts with a hyphen (“-”); the @ButtonEditor contains many examples of this.")
-TAG (U"%%After command")
+TAG (U"##After command")
 DEFINITION (U"a button title in the menu or submenu after which you want your new button to be inserted. "
-	"If you specify the empty string (\\\" \\\" ), your button will be put in the main menu.")
-TAG (U"%Depth")
+	"If you specify the empty string (“”), your button will be put in the main menu.")
+TAG (U"#Depth")
 DEFINITION (U"0 if you want your button in the main menu, 1 if you want it in a submenu.")
 TAG (U"%Script")
 DEFINITION (U"the full path name of the script to invoke. If you saved the script you are editing, "
 	"its name will already have been filled in here. If you do not specify a script, "
 	"you will get a cascading menu title instead.")
 ENTRY (U"Example 1")
-NORMAL (U"In the #Matrix submenu of the @@New menu@, you want a separator line followed by the command \"Peaks\":")
+NORMAL (U"In the Matrix submenu of the @@New menu@, you want a separator line followed by the command #Peaks:")
 CODE (U"Add to fixed menu: \"Objects\", \"New\", \"-- peaks --\", \"Create simple Matrix...\", 1, \"\"")
 CODE (U"Add to fixed menu: \"Objects\", \"New\", \"Peaks\", \"-- peaks --\", 1, \"/u/praats/demo/peaks.praat\"")
 ENTRY (U"Example 2")
-NORMAL (U"In the @@New menu@, you want a submenu called \"Demo\", with a subitem titled \"Lorenz...\":")
+NORMAL (U"In the @@New menu@, you want a submenu called “Demo”, with a subitem titled “Lorenz...”:")
 CODE (U"Add to fixed menu: \"Objects\", \"New\", \"Demo\", \"\", 0,, \"\"")
-CODE (U"Add to fixed menu: \"Objects\", \"New\", \"Lorenz...\", \"Demo\", 1, \"/u/praats/demo/lorentz.praat\"")
+CODE (U"Add to fixed menu: \"Objects\", \"New\", \"Lorenz...\", \"Demo\", 1, \"/u/praats/demo/lorenz.praat\"")
 ENTRY (U"Usage convention")
-NORMAL (U"Please adhere to the convention that command that take arguments, such as \"Lorenz...\" above, end in three dots.")
+NORMAL (U"Please adhere to the convention that commands that take arguments, such as “Lorenz...” above, end in three dots.")
 ENTRY (U"Using this command in a script")
 NORMAL (U"To add a fixed button from a script (perhaps your @@initialization script@ or a @@plug-ins|plug-in@), "
 	"use the hidden shell command @@Add menu command...@ instead.")
@@ -150,8 +151,8 @@ MAN_END
 MAN_BEGIN (U"binomialQ", U"ppgb", 20140223)
 INTRO (U"A function that can be used in @@Formulas@. The complement of the cumulative binomial distribution.")
 ENTRY (U"Syntax")
-TAG (U"$$binomialQ (%p, %k, %n)")
-DEFINITION (U"the probability that in %n trials an event with probability %p will occur at least %k times.")
+TAG (U"$$#binomialQ (%p, %k, %n)")
+DEFINITION (U"the probability that in $%n trials an event with probability $%p will occur at least $%k times.")
 ENTRY (U"Calculator example")
 NORMAL (U"A die is suspected to yield more sixes than a perfect die would do. In order to test this suspicion, "
 	"you throw it 1,000 times. The result is 211 sixes.")
@@ -164,16 +165,16 @@ NORMAL (U"You convert 1000 values of pitch targets in Hz to the nearest note on 
 	"Do our subjects have a preference for the white keys? "
 	"The following script computes the probability that in the case of no preference the subjects "
 	"would target the white keys at least 597 times. This is compared with a %\\ci^2 test.")
-CODE (U"a = 597")
-CODE (U"b = 403")
-CODE (U"p = 7/12 ; no preference")
-CODE (U"writeInfoLine: \"*** Binomial test \", a, \", \", b, \", p = \", fixed\\$  (p, 6), \" ***\"")
-CODE (U"pbin = binomialQ (p, a, a+b)")
-CODE (U"appendInfoLine: \"P (binomial) = \", fixed\\$  (pbin, 6)")
+CODE (U"%a = 597")
+CODE (U"%b = 403")
+CODE (U"%p = 7/12   ; no preference")
+CODE (U"writeInfoLine: \"*** Binomial test \", %a, \", \", %b, \", p = \", fixed\\$  (%p, 6), \" ***\"")
+CODE (U"%pbin = binomialQ (%p, %a, %a+%b)")
+CODE (U"appendInfoLine: \"P (binomial) = \", fixed\\$  (%pbin, 6)")
 CODE (U"\\#  Chi-square test with Yates correction:")
-CODE (U"x2 = (a - 1/2 - p * (a+b))\\^ 2/(p*(a+b)) + (b + 1/2 - (1-p) * (a+b))\\^ 2/((1-p)*(a+b))")
-CODE (U"px2 = chiSquareQ (x2, 1)")
-CODE (U"appendInfoLine: \"P (chi-square) = \", fixed\\$  (px2, 6)")
+CODE (U"%x2 = (%a - 1/2 - %p * (%a+%b))\\^ 2/(%p*(%a+%b)) + (%b + 1/2 - (1-%p) * (%a+%b))\\^ 2/((1-%p)*(%a+%b))")
+CODE (U"%px2 = chiSquareQ (%x2, 1)")
+CODE (U"appendInfoLine: \"P (chi-square) = \", fixed\\$  (%px2, 6)")
 NORMAL (U"The result is:")
 CODE (U"*** Binomial test 597, 403, p = 0.583333 ***")
 CODE (U"P (binomial) = 0.199330")
@@ -243,12 +244,12 @@ NORMAL (U"To hide a built-in command from a fixed or dynamic menu, or to make a 
 	"you typically use the @ButtonEditor.")
 ENTRY (U"Where is the buttons file?")
 NORMAL (U"The buttons file is in your Praat @@preferences folder@.")
-NORMAL (UR"(On Windows the file is called ##Buttons5.ini#,
-for instance ##C:\bsUsers\bsMiep\bsPraat\bsButtons5.ini#.)")
-NORMAL (U"On MacOS it is called #Buttons5, "
-	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Buttons5#.")
-NORMAL (U"On Linux it is called #buttons5, "
-	"for instance ##/home/miep/.praat-dir/buttons5#.")
+NORMAL (UR"(On Windows the file is called “Buttons5.ini”,
+for instance “C:\bsUsers\bsMiep\bsPraat\bsButtons5.ini”.)")
+NORMAL (U"On MacOS it is called “Buttons5”, "
+	"for instance “/Users/miep/Library/Preferences/Praat Prefs/Buttons5”.")
+NORMAL (U"On Linux it is called “buttons5”, "
+	"for instance “/home/miep/.praat-dir/buttons5”.")
 MAN_END
 
 MAN_BEGIN (U"Calculator", U"ppgb", 20210228)
@@ -264,7 +265,7 @@ INTRO (U"A command in the @Goodies submenu of the @@Praat menu@ of the @@Objects
 MAN_END
 
 MAN_BEGIN (U"Clear history", U"ppgb", 20000927)
-INTRO (U"A command in the #Edit menu of the @ScriptEditor for clearing the remembered history. "
+INTRO (U"A command in the Edit menu of the @ScriptEditor for clearing the remembered history. "
 	"See @@History mechanism@.")
 MAN_END
 
@@ -276,20 +277,20 @@ EQUATION (U"differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)"
 MAN_END
 
 MAN_BEGIN (U"Fixed menu commands", U"ppgb", 20120915)
-INTRO (U"The commands in the fixed menus of the @@Objects window@ (#Praat, #New, #Open, #Help, #Goodies, "
-	"#Preferences, and #Technical) and the @@Picture window@ (#File, #Edit, #Margins, #World, #Select, #Pen, #Font, #Help).")
+INTRO (U"The commands in the fixed menus of the @@Objects window@ (Praat, New, Open, Help, Goodies, "
+	"Preferences, and Technical) and the @@Picture window@ (File, Edit, Margins, World, Select, Pen, Font, Help).")
 NORMAL (U"These commands are always clickable (if not hidden) and scriptable (if not added).")
 MAN_END
 
 MAN_BEGIN (U"Formulas", U"ppgb", 20170916)
 INTRO (U"You can use numeric expressions and string (text) expressions in many places in Praat:")
-LIST_ITEM (U"\\bu in the @calculator in Praat's @Goodies submenu;")
+LIST_ITEM (U"\\bu in the @calculator in Praat’s @Goodies submenu;")
 LIST_ITEM (U"\\bu in the numeric fields of most settings windows;")
 LIST_ITEM (U"\\bu in a @@Praat script@.")
 NORMAL (U"For some types of objects (mainly Sound and Matrix), you can also apply formulas to all their contents at the same time:")
 LIST_ITEM (U"\\bu when you create a Sound or a Matrix from the @@New menu@;")
 LIST_ITEM (U"\\bu when you choose @@Formula...@ from the @Modify menu for a selected object.")
-NORMAL (U"You can read this tutorial sequentially with the help of the “< 1” and “1 >” buttons.")
+NORMAL (U"You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.")
 LIST_ITEM (U"1. @@Formulas 1. My first formulas|My first formulas@")
 LIST_ITEM1 (U"1.1. @@Formulas 1.1. Formulas in the calculator|Formulas in the calculator@")
 LIST_ITEM1 (U"1.2. @@Formulas 1.2. Numeric expressions|Numeric expressions@")
@@ -439,10 +440,10 @@ INTRO (U"With some commands in the @@New menu@, you can supply a formula that Pr
 ENTRY (U"Creating a Sound from a formula")
 NORMAL (U"Choose @@Create Sound from formula...@ and type the following into the #%Formula field:")
 CODE (U"1/2 * sin (2 * pi * 377 * x)")
-NORMAL (U"When you click OK, a new @Sound object will appear in the list. "
+NORMAL (U"When you click #OK, a new @Sound object will appear in the list. "
 	"After you click ##View & Edit# and zoom in a couple of times, you will see that the sound is a sine wave "
-	"with a frequency of 377 hertz (cycles per second). This worked because the %x in the formula represents the time, "
-	"i.e. the formula was applied to every sample separately, with a different value of %x for each sample.")
+	"with a frequency of 377 hertz (cycles per second). This worked because the $x in the formula represents the time, "
+	"i.e. the formula was applied to every sample separately, with a different value of $x for each sample.")
 ENTRY (U"Creating a Matrix from a formula")
 NORMAL (U"Choose @@Create simple Matrix...@ and type the following into the #%Formula field:")
 CODE (U"8")
@@ -452,9 +453,9 @@ NORMAL (U"When you click OK, a new @Matrix object will appear in the list. When 
 NORMAL (U"A more interesting example is the formula")
 CODE (U"row * col")
 NORMAL (U"For the resulting Matrix, "
-	"choose @@Matrix: Paint cells...|Paint cells...@ and click OK. The Picture window will show a 10\\xx10 "
+	"choose @@Matrix: Paint cells...|Paint cells...@ and click #OK. The Picture window will show a 10\\xx10 "
 	"matrix whose elements are the product of the row and column numbers, i.e., they have values between "
-	"1 and 100. Beside %row and %col, you can use %x for the distance along the horizontal axis and %y for the "
+	"1 and 100. Beside $row and $col, you can use $x for the distance along the horizontal axis and $y for the "
 	"distance along the vertical axis; see the following page for examples.")
 MAN_END
 
@@ -470,7 +471,7 @@ CODE (U"self * 3")
 NORMAL (U"Click OK, then click #Play again. The sound is much louder now. You have multiplied the amplitude of every sample "
 	"in the sound with a factor of 3.")
 ENTRY (U"Replacing the contents of a Sound with a formula")
-NORMAL (U"If you don't use $self in your formula, the formula does not refer to the existing contents of the Sound. Hence, the formula ")
+NORMAL (U"If you don’t use $self in your formula, the formula does not refer to the existing contents of the Sound. Hence, the formula ")
 CODE (U"1/2 * sin (2 * pi * 377 * x)")
 NORMAL (U"will simply replace your recorded speech with a 377-Hz sine wave.")
 ENTRY (U"Modifying a Matrix with a formula")
@@ -490,7 +491,7 @@ NORMAL (U"The formula first works on the first row, and in that row from the fir
 CODE (U"self + self [row, col - 1]")
 NORMAL (U"integrates each row.")
 ENTRY (U"Referring to the current position in the object")
-NORMAL (U"You can refer to the current position in a Matrix (or Sound, etc.) by index or by %x and %y values:")
+NORMAL (U"You can refer to the current position in a Matrix (or Sound, etc.) by index or by $x and $y values:")
 TAG (U"#row")
 DEFINITION (U"the current row")
 TAG (U"#col")
@@ -532,48 +533,49 @@ INTRO (U"In scripts, you can assign numeric expressions to numeric variables, "
 ENTRY (U"Example: report a square")
 NORMAL (U"Choose @@New Praat script@ from the @@Praat menu@. A script editor window will become visible. "
 	"Type the following lines into that window:")
-CODE (U"x = 99")
-CODE (U"x2 = x * x")
-CODE (U"writeInfoLine: \"The square of \", x, \" is \", x2, \".\"")
-NORMAL (U"This is an example of a simple @@Praat script@; it assigns the results of the numeric formulas $$99$ and $$x * x$ "
-	"to the numeric variables %x and %x2. Note that the formula $$x * x$ itself refers to the variable %x. "
-	"To run (execute) this script, type @@Keyboard shortcuts|Command-R@ or choose #Run from the #Run menu. "
+CODE (U"%x = 99")
+CODE (U"%x2 = %x * %x")
+CODE (U"writeInfoLine: “The square of ”, %x, “ is ”, %x2, “.”")
+NORMAL (U"This is an example of a simple @@Praat script@; "
+	"it assigns the results of the numeric formulas $$99$ and $$%x * %x$ "
+	"to the numeric variables $%x and $%x2. Note that the formula $$%x * %x$ itself refers to the variable $%x. "
+	"To run (execute) this script, type @@Keyboard shortcuts|Command-R@ or choose #Run from the Run menu. "
 	"Praat will then write the following text into the Info window:")
 CODE (U"The square of 99 is 9801.")
 NORMAL (U"For more information on scripts, see the @Scripting tutorial.")
 ENTRY (U"Example: rename the city of Washington")
 NORMAL (U"Type the following text into the script editor window:")
-CODE (U"current\\$  = \"Bush\"")
-CODE (U"previous\\$  = \"Clinton\"")
-CODE (U"famous\\$  = \"Lincoln\"")
-CODE (U"newCapital\\$  = current\\$  + mid\\$  (famous\\$ , 2, 3) + right\\$  (previous\\$ , 3)")
-CODE (U"writeInfoLine: \"The new capital will be \", newCapital\\$ , \".\"")
-NORMAL (U"This script assigns the results of four string expressions to the four string variables %%current\\$ %, "
-	"%%previous\\$ %, %%famous\\$ %, and %%newCapital\\$ %. The dollar sign is the notation for a string variable or "
-	"for a function whose result is a string (like ##left\\$ #). Note that the formula in the fourth line refers to three existing "
+CODE (U"%%current\\$ % = “Bush”")
+CODE (U"%%previous\\$ % = “Clinton”")
+CODE (U"%%famous\\$ % = “Lincoln”")
+CODE (U"%%newCapital\\$ % = %%current\\$ % + mid\\$  (%%famous\\$ %, 2, 3) + right\\$  (%%previous\\$ %, 3)")
+CODE (U"writeInfoLine: “The new capital will be ”, %%newCapital\\$ %, “.”")
+NORMAL (U"This script assigns the results of four string expressions to the four string variables $$%%current\\$ %$, "
+	"$$%%previous\\$ %$, $$%%famous\\$ %$, and $$%%newCapital\\$ %$. The dollar sign is the notation for a string variable or "
+	"for a function whose result is a string (like $$left\\$ $). Note that the formula in the fourth line refers to three existing "
 	"variables.")
 NORMAL (U"To see what the new name of the capital will be, choose #Run.")
 ENTRY (U"Example: report five squares")
 NORMAL (U"Type the following script:")
-CODE (U"x\\#  = { 1, 2, 3, 4, 5 }")
-CODE (U"x2\\#  = x\\#  * x\\# ")
-CODE (U"writeInfoLine: \"The squares of \", x\\# , \" are \", x2\\# , \".\"")
+CODE (U"%%x\\# % = { 1, 2, 3, 4, 5 }")
+CODE (U"%%x2\\# % = %%x\\# % * %%x\\# %")
+CODE (U"writeInfoLine: “The squares of ”, %%x\\# %, “ are ”, %%x2\\# %, “.”")
 NORMAL (U"Praat will then write the following text into the Info window:")
 CODE (U"The squares of 1 2 3 4 5 are 1 4 9 16 25.")
 ENTRY (U"Example: numeric expressions in settings in scripts")
 NORMAL (U"As in real settings windows, you can use numeric expressions in all numeric fields. "
 	"The example of two pages back becomes:")
-CODE (U"Create Sound from formula: \"sine\", 1, 0, 10000 / 44100, 44100, ~ 0.9 * sin (2*pi*377*x)")
+CODE (U"Create Sound from formula: “sine”, 1, 0, 10000 / 44100, 44100, ~ 0.9 * sin (2*pi*377*x)")
 ENTRY (U"Example: string expressions in settings in scripts")
 NORMAL (U"As in real settings windows, you can use string expressions in all text fields:")
-CODE (U"soundName\\$  = \"hello\"")
-CODE (U"Read from file: soundName\\$  + \".wav\"")
+CODE (U"%%soundName\\$ % = “hello”")
+CODE (U"Read from file: %%soundName\\$ % + “.wav”")
 ENTRY (U"Example: numeric expressions in creation in scripts")
 NORMAL (U"Suppose you want to generate a sine wave whose frequency is held in a variable. This is the way:")
-CODE (U"frequency = 377")
-CODE (U"Create Sound from formula: \"sine\", 1, 0.0, 1.0, 44100, ~ 0.9 * sin (2*pi*frequency*x)")
-NORMAL (U"In this example, Praat will protest if %x is a variable as well, because that would be ambiguous "
-	"with the %x that refers to the time in the sound (see @@Formulas 1.7. Formulas for modification@).")
+CODE (U"%frequency = 377")
+CODE (U"Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 0.9 * sin (2*pi*%frequency*x)")
+NORMAL (U"In this example, Praat will protest if $x is a variable as well ($%x), because that would be ambiguous "
+	"with the $x that refers to the time in the sound (see @@Formulas 1.7. Formulas for modification@).")
 MAN_END
 
 MAN_BEGIN (U"Formulas 2. Representations", U"ppgb", 20170916)
@@ -1751,7 +1753,7 @@ INTRO (U"This is one of the tutorials of the Praat program. It assumes you are f
 NORMAL (U"A %script is a text that consists of menu commands and action commands. "
 	"If you %run the script (perhaps from a @ScriptEditor), "
 	"the commands are executed as if you clicked on them.")
-NORMAL (U"You can read this tutorial sequentially with the help of the “< 1” and “1 >” buttons.")
+NORMAL (U"You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.")
 LIST_ITEM (U"@@Scripting 1. Your first scripts@ (how to create, how to run, how to save)")
 LIST_ITEM (U"@@Scripting 2. How to script settings windows@ (numeric, boolean, multiple-choice, text, file)")
 LIST_ITEM (U"@@Scripting 3. Simple language elements")
@@ -1760,7 +1762,7 @@ LIST_ITEM1 (U"@@Scripting 3.2. Numeric variables@ (assignments)")
 LIST_ITEM1 (U"@@Scripting 3.3. Numeric queries")
 LIST_ITEM1 (U"@@Scripting 3.4. String variables@ (assignments)")
 LIST_ITEM1 (U"@@Scripting 3.5. String queries")
-LIST_ITEM1 (U"@@Scripting 3.6. \"For\" loops@ (for, endfor)")
+LIST_ITEM1 (U"@@Scripting 3.6. “For” loops@ (for, endfor)")
 LIST_ITEM1 (U"@@Scripting 3.7. Layout@ (white space, comments, continuation lines)")
 LIST_ITEM (U"@@Scripting 4. Object selection@")
 LIST_ITEM1 (U"@@Scripting 4.1. Selecting objects")
@@ -1800,12 +1802,12 @@ LIST_ITEM (U"@@Scripting 10. Old functions")
 NORMAL (U"Also see the @@scripting examples@.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 1. Your first scripts", U"ppgb", 20201229)
+MAN_BEGIN (U"Scripting 1. Your first scripts", U"ppgb", 20230201)
 INTRO (U"This page tells you how to create, run and save a script. "
 	"To get a feel for how it works, you are advised to try out all the steps.")
 ENTRY (U"1. A minimal script")
 NORMAL (U"Suppose that you want to create a script that allows you to play a selected Sound object twice. "
-	"You first create an empty script, by choosing @@New Praat script@ from the #Praat menu in the ##Praat Objects# window. "
+	"You first create an empty script, by choosing @@New Praat script@ from the Praat menu in the Objects window. "
 	"A @ScriptEditor window will appear on your screen:")
 SCRIPT (6, 4, U""
 	Manual_DRAW_WINDOW (4, "untitled script", "File   Edit   Search   Convert   Font   Run   Help")
@@ -1817,12 +1819,13 @@ SCRIPT (6, 4, U""
 NORMAL (U"In this window, you type")
 CODE (U"Play")
 CODE (U"Play")
-NORMAL (U"Now select a Sound in the ##Praat Objects# window. As you expect from selecting a Sound, a #Play button will "
-	"appear in the dynamic menu. If you now choose #Run from the #Run menu in the ScriptEditor, Praat will play the sound twice. "
+NORMAL (U"Now select a Sound in the Objects window. As you expect from selecting a Sound, a #Play button will "
+	"appear in the dynamic menu. If you now choose #Run from the Run menu in the ScriptEditor, "
+	"Praat will play the sound twice. "
 	"This works because #Play is a command that becomes available in the dynamic menu when you select a Sound.")
 ENTRY (U"2. Some more commands")
-NORMAL (U"In the above example, you could use the #Play command because that was "
-	"the text on a button currently available in the dynamic menu. "
+NORMAL (U"In the above example, you could use $Play in your script because the #Play command was available, "
+	"i.e. because “Play” was the text on a button currently available in the dynamic menu. "
 	"Apart from these selection-dependent (dynamic) commands, "
 	"you can also use all fixed commands from the menus of the @@Objects window@ "
 	"and the @@Picture window@. For instance, try the following script:")
@@ -1831,33 +1834,34 @@ CODE (U"Draw inner box")
 CODE (U"Play")
 CODE (U"Play")
 CODE (U"Erase all")
-NORMAL (U"When you run this script, you'll see a rectangle appear in the ##Praat Picture# window "
-	"(that's what the command ##Draw inner box# in the #Margins menu does), "
-	"then you'll hear the Sound play twice, then you’ll see the rectangle disappear from the Picture window "
-	"(that's what the command ##Erase all# from the #Edit menu does).")
+NORMAL (U"When you run this script, you’ll see a rectangle appear in the Picture window "
+	"(that’s what the command ##Draw inner box# in the #Margins menu does), "
+	"then you’ll hear the Sound play twice, then you’ll see the rectangle disappear from the Picture window "
+	"(that’s what the command ##Erase all# from the Edit menu does).")
 NORMAL (U"Here we see that the Praat scripting language is an example of a %%procedural programming language%, "
 	"which means that the five %statements are executed in the order in which they appear in the script, "
-	"i.e. first ##Erase all#, then ##Draw inner box#, then ##Play# twice, and finally ##Erase all#.")
+	"i.e. first ##Erase all#, then ##Draw inner box#, then #Play twice, and finally ##Erase all#.")
 ENTRY (U"3. Experimenting with your script")
 NORMAL (U"You don't have to be afraid of making mistakes. Here are a couple that you can try to make.")
 NORMAL (U"First, try to run the script when a Sound is not selected "
 	"(e.g. you create a Pitch object from it and keep that selected, or you throw away the Sound). "
-	"You will notice that Praat gives you an error message saying ##The command “Play” is not available for the current selection#. "
+	"You will notice that Praat gives you an error message saying "
+	"“The command “Play” is not available for the current selection”. "
 	"Indeed, if you select a Pitch or if you select nothing, then no command #Play appears in the dynamic menu, "
 	"so the script cannot execute it. Note that the commands ##Erase all# and ##Draw inner box# are still available, "
 	"because they continue to be present in the menus of the Picture window; "
-	"therefore, the script will execute the first two lines ($$Erase all $and$$ Draw inner box$) "
-	"and stop running at the third line, i.e. at your first$$ Play$. "
+	"therefore, the script will execute the first two lines ($$Erase all$ and $$Draw inner box$) "
+	"and stop running at the third line, i.e. at your first $$Play$. "
 	"The result is that the “box” will stay visible in the Picture window, because the fifth line of the script, "
 	"which should erase the box, is never executed.")
 NORMAL (U"Second, try to mistype a command (there’s a good chance you already did it by accident), "
-	"e.g. write$$ PLay $instead of$$ Play$, or$$ Draw inner bocks $or whatever. "
+	"e.g. write $$PLay$ instead of $$Play$, or $$Draw inner bocks$ or whatever. "
 	"Again, you are likely to get a message saying that that command is not available. "
 	"Such messages are the most common messages that you’ll see when writing scripts; "
 	"now you know that they mean either that you mistyped something or that you made the wrong selection.")
 ENTRY (U"4. Saving your script")
-NORMAL (U"The #File menu of the ScriptEditor has a command #Save, "
-	"with which you can save your script as a file on disk, for instance under the name$$ test.praat$.")
+NORMAL (U"The File menu of the ScriptEditor has a command #Save, "
+	"with which you can save your script as a file on disk, for instance under the name “test.praat”.")
 NORMAL (U"Please try this with the five-line script you just typed. "
 	"After saving the script, the name of the script file will appear in the window title:")
 SCRIPT (6, 4, U""
@@ -1871,11 +1875,11 @@ SCRIPT (6, 4, U""
 	"Draw rectangle: 0, 560, 0, 360\n"
 )
 NORMAL (U"After you save your script, you can close the ScriptEditor window without losing the script: "
-	"you can reopen the script file by using @@Open Praat script...@ from the #Praat menu, "
-	"or by choosing ##New Praat script# again, followed by ##Open...# from the ScriptEditor's #File menu.")
-NORMAL (U"It advisable to use$$ .praat $as the extension for script file names. "
-	"On the Mac, if you double-click a$$ .praat $file, Praat will automatically start up and show the script. "
-	"On the Mac and on Windows, if you drag a$$ .praat $file on the Praat icon, Praat will also start up and show the script.")
+	"you can reopen the script file by using @@Open Praat script...@ from the Praat menu, "
+	"or by choosing ##New Praat script# again, followed by ##Open...# from the ScriptEditor’s File menu.")
+NORMAL (U"It advisable to use “.praat” as the extension for script file names. "
+	"On the Mac, if you double-click a “.praat” file, Praat will automatically start up and show the script. "
+	"On the Mac and on Windows, if you drag a “.praat” file on the Praat icon, Praat will also start up and show the script.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 2. How to script settings windows", U"ppgb", 20230130)
@@ -2057,7 +2061,7 @@ LIST_ITEM (U"@@Scripting 3.2. Numeric variables@ (assignments)")
 LIST_ITEM (U"@@Scripting 3.3. Numeric queries")
 LIST_ITEM (U"@@Scripting 3.4. String variables@ (assignments)")
 LIST_ITEM (U"@@Scripting 3.5. String queries")
-LIST_ITEM (U"@@Scripting 3.6. \"For\" loops@ (for, endfor)")
+LIST_ITEM (U"@@Scripting 3.6. “For” loops@ (for, endfor)")
 LIST_ITEM (U"@@Scripting 3.7. Layout@ (white space, comments, continuation lines)")
 MAN_END
 
@@ -2173,62 +2177,62 @@ NORMAL (U"Line 5 finally writes the text.")
 NORMAL (U"For more information on these commands, see @@Picture window@.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 3.2. Numeric variables", U"ppgb", 20230130)
+MAN_BEGIN (U"Scripting 3.2. Numeric variables", U"ppgb", 20230201)
 INTRO (U"In any general procedural programming language you can work with %variables, "
 	"which are places in your computer's memory where you can store a number or anything else.")
-NORMAL (U"For instance, you could put the number 3.1 into the variable $b in the following way:")
-CODE (U"b = 3.1")
-NORMAL (U"This statement is called as %assignment, i.e., you %assign the %value 3.1 to the %variable $b. "
-	"We read this statement aloud as “b becomes 3.1” (or “b gets 3.1”, but not “b is 3.1”). "
-	"What this means is that after this statement, the memory location $b %contains the numeric value (number) 3.1.")
-NORMAL (U"You can regard a variable as a box: you put the value 3.1 into the box named $b. "
-	"Or you can regard a variable as a house: the house is called $b and now the family “3.1” is living there. "
+NORMAL (U"For instance, you could put the number 3.1 into the variable $%b in the following way:")
+CODE (U"%b = 3.1")
+NORMAL (U"This statement is called as %assignment, i.e., you %assign the %value 3.1 to the %variable $%b. "
+	"We read this statement aloud as “$%b becomes 3.1” (or “$%b gets 3.1”, but not “$%b is 3.1”). "
+	"What this means is that after this statement, the memory location $%b %contains the numeric value (number) 3.1.")
+NORMAL (U"You can regard a variable as a box: you put the value 3.1 into the box named $%b. "
+	"Or you can regard a variable as a house: the house is called $%b and now the family “3.1” is living there. "
 	"Or you can regard it as any other storage location.")
 NORMAL (U"To see what value a variable contains (what’s in the box, or who lives in the house), "
-	"you can use the #writeInfoLine function:")
-CODE (U"b = 3.1")
-CODE (U"writeInfoLine: \"The value is \", b, \".\"")
-NORMAL (U"This will put the text $$The value is 3.1.$ into the Info window, as you are invited to verify.")
+	"you can use the $#writeInfoLine function:")
+CODE (U"%b = 3.1")
+CODE (U"writeInfoLine: “The value is ”, %b, “.”")
+NORMAL (U"This will put the text “$$The value is 3.1.$” into the Info window, as you are invited to verify.")
 NORMAL (U"A variable is called a variable because it is %variable, i.e. its value can change. Try the script")
-CODE (U"b = 3.1")
-CODE (U"b = 5.8")
-CODE (U"writeInfoLine: \"The value is \", b, \".\"")
-NORMAL (U"You will see that $b ends up having the value 5.8. The first line puts the value 3.1 there, but the second line "
+CODE (U"%b = 3.1")
+CODE (U"%b = 5.8")
+CODE (U"writeInfoLine: “The value is ”, %b, “.”")
+NORMAL (U"You will see that $%b ends up having the value 5.8. The first line puts the value 3.1 there, but the second line "
 	"replaces it with 5.8. It’s like taking the 3.1 out of the box and putting the 5.8 in its stead. "
 	"Or the family 3.1 moves from the house, and the family called 5.8 moves in.")
-NORMAL (U"In an assignment, the part to the right of the “becomes” sign (the “=” sign) doesn't have to be a number; "
+NORMAL (U"In an assignment, the part to the right of the “becomes” sign (the “=” sign) doesn’t have to be a number; "
 	"it can be any %formula that %evaluates to a number. For instance, the script")
-CODE (U"b = 3.1 * 2")
-CODE (U"writeInfoLine: \"The value is \", b, \".\"")
-NORMAL (U"puts the text $$The value is 6.2.$ into the Info window. This works because Praat handles the first line "
+CODE (U"%b = 3.1 * 2")
+CODE (U"writeInfoLine: “The value is ”, b, “.”")
+NORMAL (U"puts the text “$$The value is 6.2.$” into the Info window. This works because Praat handles the first line "
 	"in the following way:")
 LIST_ITEM (U"1. the formula $$3.1 * 2$ is %evaluated (i.e. its value is computed), and the result is 6.2.")
-LIST_ITEM (U"2. the value 6.2 is subsequently stored in the variable $b.")
-NORMAL (U"After line 1 has been executed, the variable $b just contains the value 6.2, nothing more; "
-	"the variable $b doesn't remember that that value has been computed by multiplying 3.1 with 2.")
+LIST_ITEM (U"2. the value 6.2 is subsequently stored in the variable $%b.")
+NORMAL (U"After line 1 has been executed, the variable $%b just contains the value 6.2, nothing more; "
+	"the variable $%b doesn’t remember that that value has been computed by multiplying 3.1 with 2.")
 NORMAL (U"Formulas can contain more things than numbers: they can also contain other variables:")
-CODE (U"b = 3.1")
-CODE (U"c = b * 2")
-CODE (U"writeInfoLine: \"The value of b is \", b, \", and the value of c is \", c, \".\"")
-NORMAL (U"In the first line, $b gets the value 3.1. In the second line, the formula $$b * 2$ first has to be evaluated. "
-	"Praat looks up the value of $b (which is 3.1), so that it knows that the formula actually means $$3.1 * 2$. "
+CODE (U"%b = 3.1")
+CODE (U"%c = %b * 2")
+CODE (U"writeInfoLine: “The value of b is ”, %b, “, and the value of c is ”, %c, “.”")
+NORMAL (U"In the first line, $%b gets the value 3.1. In the second line, the formula $$%b * 2$ first has to be evaluated. "
+	"Praat looks up the value of $%b (which is 3.1), so that it knows that the formula actually means $$3.1 * 2$. "
 	"Praat evaluates this formula and stores the result (namely the value 6.2) "
-	"into the variable $c, which will then contain nothing else than the value 6.2. "
-	"The Info window thus reports $$The value of b is 3.1, and the value of c is 6.2.$.")
+	"into the variable $%c, which will then contain nothing else than the value 6.2. "
+	"The Info window thus reports “$$The value of b is 3.1, and the value of c is 6.2.$”.")
 NORMAL (U"After these explanations, consider the following script:")
-CODE (U"b = 3.1")
-CODE (U"c = b * 2")
-CODE (U"b = 5.8")
-CODE (U"writeInfoLine: \"The value of c is \", c, \".\"")
+CODE (U"%b = 3.1")
+CODE (U"%c = %b * 2")
+CODE (U"%b = 5.8")
+CODE (U"writeInfoLine: “The value of c is ”, %c, “.”")
 NORMAL (U"Can you figure out what the Info will report? If you think it will report "
-	"$$The value of c is 6.2.$, then you are correct: after the first line, $b contains the value 3.1; "
-	"after the second line, the value of $c is therefore 6.2, and nothing more; "
-	"after line 3, the value of $b has changed to 5.8, but the value of $c hasn’t changed and is still 6.2.")
-NORMAL (U"If you thought that $c would end up having the value 11.6, then you’re thinking in terms "
-	"of a non-procedural language such as Prolog; you may have thought that the thing assigned to $c in the second line "
-	"is the whole %formula $$b * 2$, so that $c changes when $b changes. But this is not the case: "
-	"the thing stored in $c is just the %value of the formula $$b * 2$ at that moment, which is 6.2, "
-	"and $c doesn’t remember how it got that value. If you have trouble understanding this, "
+	"“$$The value of c is 6.2.$”, then you are correct: after the first line, $%b contains the value 3.1; "
+	"after the second line, the value of $%c is therefore 6.2, and nothing more; "
+	"after line 3, the value of $%b has changed to 5.8, but the value of $%c hasn’t changed and is still 6.2.")
+NORMAL (U"If you thought that $%c would end up having the value 11.6, then you’re thinking in terms "
+	"of a non-procedural language such as Prolog; you may have thought that the thing assigned to $%c in the second line "
+	"is the whole %formula $$%b * 2$, so that $%c changes when $%b changes. But this is not the case: "
+	"the thing stored in $%c is just the %value of the formula $$%b * 2$ at that moment, which is 6.2, "
+	"and $%c doesn’t remember how it got that value. If you have trouble understanding this, "
 	"consult anybody who writes programs.")
 MAN_END
 
@@ -2252,10 +2256,10 @@ NORMAL (U"This is the mean power of the whole Sound.")
 NORMAL (U"In a script, you want to use the value of this power in the script itself, not in the Info window, "
 	"perhaps because you want to do computations with it or because you want to report the value with a nice text around it. "
 	"This is how you do the latter:")
-CODE (U"power = Get power: 0.0, 0.0")
-CODE (U"writeInfoLine: \"The power of this sound is \", power, \" Pascal-squared.\"")
+CODE (U"%power = Get power: 0.0, 0.0")
+CODE (U"writeInfoLine: “The power of this sound is ”, %power, “ Pascal-squared.”")
 NORMAL (U"The first line of this script executes the menu command ##Get power...#, "
-	"but puts the value 0.1350605005239421 into the variable $power instead of into the Info window "
+	"but puts the value 0.1350605005239421 into the variable $%power instead of into the Info window "
 	"(the variable can have any name you like, as long as it starts with a lower-case letter "
 	"and consists of letters and digits; see @@Scripting 5.1. Variables@).")
 NORMAL (U"The second line then reports the value in the Info window, this time with a nice text around it:")
@@ -2308,9 +2312,9 @@ SCRIPT (6, 3, U""
 )
 NORMAL (U"In a script, you will want to put the result of the query in a string variable instead of in the Info window, "
 	"because you want to manipulate it further:")
-CODE (U"text\\$  = Get label of interval: 1, 3")
-CODE (U"writeInfoLine: \"The text in interval 3 of tier 1 is: \", text\\$ ")
-NORMAL (U"The script first stores the text of the interval, i.e. $$hello$, into the variable ##text\\$ #, "
+CODE (U"%%text\\$ % = Get label of interval: 1, 3")
+CODE (U"writeInfoLine: “The text in interval 3 of tier 1 is: ”, %%text\\$ %")
+NORMAL (U"The script first stores the text of the interval, i.e. $$hello$, into the variable %%text\\$ %, "
 	"then writes it, preceded by some informative text, into the Info window:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
@@ -2322,8 +2326,8 @@ NORMAL (U"Hey, yet another way to implement \"Hello world\" with the Praat scrip
 ENTRY (U"The difference between numeric queries and string queries")
 NORMAL (U"A string query stores in a string variable the whole text that would appear in the Info window. "
 	"For instance, the script")
-CODE (U"power\\$  = Get power: 0.0, 0.0")
-CODE (U"writeInfoLine: power\\$ ")
+CODE (U"%%power\\$ % = Get power: 0.0, 0.0")
+CODE (U"writeInfoLine: %%power\\$ %")
 NORMAL (U"could give you the following result:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
@@ -2333,8 +2337,8 @@ SCRIPT (6, 3, U""
 )
 NORMAL (U"A numeric query stores in a numeric variable only the first number that it can find in the text that would appear in the Info window. "
 	"For instance, the script")
-CODE (U"power = Get power: 0.0, 0.0")
-CODE (U"writeInfoLine: power")
+CODE (U"%power = Get power: 0.0, 0.0")
+CODE (U"writeInfoLine: %power")
 NORMAL (U"could give you the following result:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
@@ -2344,11 +2348,11 @@ SCRIPT (6, 3, U""
 )
 MAN_END
 
-MAN_BEGIN (U"Scripting 3.6. \"For\" loops", U"ppgb", 20140111)
+MAN_BEGIN (U"Scripting 3.6. “For” loops", U"ppgb", 20140111)
 INTRO (U"The power of a procedural programming language is most easily illustrated with the %%for-loop%.")
 NORMAL (U"Take the example of the @@Scripting 3.5. String queries|previous page@, "
 	"whereas you wanted to know the text in the third interval of the first tier of a selected TextGrid. "
-	"It's easy to imagine that you actually want the texts of %%all the first five% intervals. "
+	"It’s easy to imagine that you actually want the texts of %%all the first five% intervals. "
 	"With knowledge from the previous sections, you could write it like this:")
 CODE (U"writeInfoLine: \"The texts in the first five intervals:\"")
 CODE (U"text\\$  = Get label of interval: 1, 1")
@@ -2376,46 +2380,46 @@ SCRIPT (6, 3, U""
 NORMAL (U"This can be done more nicely. The first step is to realize that the sentences starting with $$text\\$ $ are similar to each other, "
 	"and the sentence starting with $appendInfoLine are also similar to each other. They only differ in the interval number, "
 	"and can therefore be made %identical by using a variable for the interval number, like this:")
-CODE (U"writeInfoLine: \"The texts in the first five intervals:\"")
-CODE (U"intervalNumber = 1")
-CODE (U"text\\$  = Get label of interval: 1, intervalNumber")
-CODE (U"appendInfoLine: \"Interval \", intervalNumber, \": \", text\\$ ")
-CODE (U"intervalNumber = 2")
-CODE (U"text\\$  = Get label of interval: 1, intervalNumber")
-CODE (U"appendInfoLine: \"Interval \", intervalNumber, \": \", text\\$ ")
+CODE (U"writeInfoLine: “The texts in the first five intervals:”")
+CODE (U"%intervalNumber = 1")
+CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
+CODE (U"%intervalNumber = 2")
+CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
 CODE (U"intervalNumber = 3")
-CODE (U"text\\$  = Get label of interval: 1, intervalNumber")
-CODE (U"appendInfoLine: \"Interval \", intervalNumber, \": \", text\\$ ")
+CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
 CODE (U"intervalNumber = 4")
-CODE (U"text\\$  = Get label of interval: 1, intervalNumber")
-CODE (U"appendInfoLine: \"Interval \", intervalNumber, \": \", text\\$ ")
+CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
 CODE (U"intervalNumber = 5")
-CODE (U"text\\$  = Get label of interval: 1, intervalNumber")
-CODE (U"appendInfoLine: \"Interval \", intervalNumber, \": \", text\\$ ")
+CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
 NORMAL (U"A new trick that you see here is that as a numeric argument (##Interval number#, "
 	"the second argument to ##Get label of interval...#), you can use not only a number "
-	"(as in all previous examples), but also a variable ($intervalNumber). "
+	"(as in all previous examples), but also a variable ($%intervalNumber). "
 	"The rest of the script should be known stuff by now.")
 NORMAL (U"The script above is long, but it can be made much shorter with the use of a %%for-loop%:")
-CODE (U"writeInfoLine: \"The texts in the first five intervals:\"")
+CODE (U"writeInfoLine: “The texts in the first five intervals:”")
 CODE (U"for intervalNumber from 1 to 5")
-CODE1 (U"text\\$  = Get label of interval: 1, intervalNumber")
-CODE1 (U"appendInfoLine: \"Interval \", intervalNumber, \": \", text\\$ ")
+	CODE1 (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
+	CODE1 (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
 CODE (U"endfor")
 NORMAL (U"The two lines that were repeated five times in the previous version now show up with indentation "
-	"between a %for line and its corresponding %endfor. Those two lines (the $$text\\$ $ and the $appendInfoLine line) "
-	"are executed five times: for $intervalNumber equal to 1, for $intervalNumber equal to 2, for $intervalNumber equal to 3, "
-	"for $intervalNumber equal to 4, and for $intervalNumber equal to 5, in that order.")
+	"between a $for line and its corresponding $endfor. Those two lines (the $$text\\$ $ and the $appendInfoLine line) "
+	"are executed five times: for $%intervalNumber equal to 1, for $%intervalNumber equal to 2, for $%intervalNumber equal to 3, "
+	"for $%intervalNumber equal to 4, and for $%intervalNumber equal to 5, in that order.")
 NORMAL (U"In the above example, using a loop does not do much more than save eight lines, at the cost of adding two new lines. "
 	"But imagine the case in which you want to list %all the texts in the intervals: "
 	"the version without the loop is no longer possible. By contrast, the version %with the loop is still possible, "
 	"because we have the command ##Get number of intervals...#, which gives us the number of intervals in the specified tier "
 	"(here, tier 1). So you do:")
-CODE (U"numberOfIntervals = Get number of intervals: 1")
-CODE (U"writeInfoLine: \"The texts in all \", numberOfIntervals, \" intervals:\"")
-CODE (U"for intervalNumber from 1 to numberOfIntervals")
-CODE1 (U"text\\$  = Get label of interval: 1, intervalNumber")
-CODE1 (U"appendInfoLine: \"Interval \", intervalNumber, \": \", text\\$ ")
+CODE (U"%numberOfIntervals = Get number of intervals: 1")
+CODE (U"writeInfoLine: “The texts in all ”, %numberOfIntervals, “ intervals:”")
+CODE (U"for %intervalNumber from 1 to %numberOfIntervals")
+	CODE1 (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
+	CODE1 (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
 CODE (U"endfor")
 NORMAL (U"This may yield something like")
 SCRIPT (6, 3, U""
@@ -2434,14 +2438,15 @@ SCRIPT (6, 3, U""
 NORMAL (U"This is the first script in this tutorial that is useful in itself. On the basis of it "
 	"you can create all kinds of ways to list the texts in intervals. Here is how you would also list the durations "
 	"of those intervals:")
-CODE (U"numberOfIntervals = Get number of intervals: 1")
-CODE (U"writeInfoLine: \"The durations and texts in all \", numberOfIntervals, \" intervals:\"")
-CODE (U"for intervalNumber from 1 to numberOfIntervals")
-CODE1 (U"startTime = Get start point: 1, intervalNumber")
-CODE1 (U"endTime = Get end point: 1, intervalNumber")
-CODE1 (U"duration = endTime - startTime")
-CODE1 (U"text\\$  = Get label of interval: 1, intervalNumber")
-CODE1 (U"appendInfoLine: \"Interval \", intervalNumber, \" is \", duration, \" seconds long and contains the text: \", text\\$ ")
+CODE (U"%numberOfIntervals = Get number of intervals: 1")
+CODE (U"writeInfoLine: “The durations and texts in all ”, %numberOfIntervals, “ intervals:”")
+CODE (U"for %intervalNumber from 1 to %numberOfIntervals")
+	CODE1 (U"%startTime = Get start point: 1, %intervalNumber")
+	CODE1 (U"%endTime = Get end point: 1, %intervalNumber")
+	CODE1 (U"%duration = %endTime - %startTime")
+	CODE1 (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
+	CODE1 (U"appendInfoLine: “Interval ”, %intervalNumber, “ is ”, "
+			"%duration, “ seconds long and contains the text: ”, %%text\\$ %")
 CODE (U"endfor")
 MAN_END
 
@@ -2449,45 +2454,45 @@ MAN_BEGIN (U"Scripting 3.7. Layout", U"ppgb", 20170904)
 INTRO (U"This chapter handles the way you use white space, comments, and continuation lines in a Praat script.")
 ENTRY (U"White space")
 NORMAL (U"Praat ignores all white space (spaces and tabs) that you put at the beginning of lines. The indentation "
-	"that you saw on the @@Scripting 3.6. \"For\" loops|previous page@ was therefore used solely for readability. "
+	"that you saw on the @@Scripting 3.6. “For” loops|previous page@ was therefore used solely for readability. "
 	"You are advised to use indenting, though, with three or four spaces for each level, "
 	"as in the following example, which loops over all tiers and intervals of a TextGrid:")
-CODE (U"writeInfoLine: \"The texts in all tiers and intervals:\"")
-CODE (U"numberOfTiers = Get number of tiers")
-CODE (U"for tierNumber from 1 to numberOfTiers")
-CODE1 (U"numberOfIntervals = Get number of intervals: tierNumber")
-CODE1 (U"for intervalNumber from 1 to numberOfIntervals")
-CODE2 (U"text\\$  = Get label of interval: tierNumber, intervalNumber")
-CODE2 (U"appendInfoLine: \"Tier \", tierNumber, \", interval \", intervalNumber, \": \", text\\$ ")
-CODE1 (U"endfor")
+CODE (U"writeInfoLine: “The texts in all tiers and intervals:”")
+CODE (U"%numberOfTiers = Get number of tiers")
+CODE (U"for %tierNumber from 1 to %numberOfTiers")
+	CODE1 (U"%numberOfIntervals = Get number of intervals: %tierNumber")
+	CODE1 (U"for %intervalNumber from 1 to %numberOfIntervals")
+		CODE2 (U"%%text\\$ % = Get label of interval: %tierNumber, %intervalNumber")
+		CODE2 (U"appendInfoLine: “Tier ”, %tierNumber, “, interval ”, %intervalNumber, “: ”, %%text\\$ %")
+	CODE1 (U"endfor")
 CODE (U"endfor")
 NORMAL (U"Praat also ignores lines that are empty or consist solely of white space, "
 	"so you use those to structure your script visually.")
 ENTRY (U"Comments")
-NORMAL (U"Comments are lines that start with \"\\# \" or \";\". Praat ignores these lines when your script is running:")
+NORMAL (U"Comments are lines that start with “\\# ” or “;”. Praat ignores these lines when your script is running:")
 CODE (U"\\#  Create 1 second of a sine wave with a frequency of 100 Hertz,")
 CODE (U"\\#  sampled at 44100 Hz:")
-CODE (U"Create Sound from formula: \"sine\", 1, 0, 1, 44100, ~ sin (2*pi*100*x)")
+CODE (U"Create Sound from formula: “sine”, 1, 0, 1, 44100, ~ sin (2*pi*100*x)")
 NORMAL (U"Because of its visibility, you are advised to use “\\# ” for comments that structure your script, "
 	"and “;” perhaps only for “commenting out” a statement, i.e. to temporarily put it before a line "
 	"that you don’t want to execute.")
 ENTRY (U"Continuation lines")
 NORMAL (U"There is normally one line per statement, and one statement per line. But some statements are very long, "
 	"such as this one on a previous page:")
-CODE1 (U"appendInfoLine: \"Interval \", intervalNumber, \" is \", duration, \" seconds long and contains the text: \", text\\$ ")
+CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “ is ”, %duration, “ seconds long and contains the text: ”, %%text\\$ %")
 NORMAL (U"By making the current window wider, you can see that I really put this whole statement on a single line. "
 	"I could have distributed it over two lines in the following way, by using three dots (an %ellipsis):")
-CODE1 (U"appendInfoLine: \"Interval \", intervalNumber, \" is \", duration, \" seconds long")
-CODE1 (U"... and contains the text: \", text\\$ ")
+CODE (U"appendInfoLine: “Interval ”, %intervalNumber, ” is ”, %duration, ” seconds long")
+CODE (U"... and contains the text: ”, %%text\\$ %")
 NORMAL (U"Here is another common type of example:")
-CODE (U"Create Sound from formula: \"windowedSine\", 1, 0, 1, 44100,")
+CODE (U"Create Sound from formula: “windowedSine”, 1, 0, 1, 44100,")
 CODE (U"... ~ 0.5 * sin(2*pi*1000*x) * exp(-0.5*((x-0.5)/0.1)\\^ 2)")
 NORMAL (U"You will normally want to follow such an ellipsis with a space, unless you want to concatenate "
 	"the parts of a long word:")
 CODE (U"Select outer viewport: 0, 10, 0, 4")
-CODE (U"Text top: \"yes\", \"It's a long way to Llanfairpwllgwyngyll")
+CODE (U"Text top: “yes”, “It’s a long way to Llanfairpwllgwyngyll")
 CODE (U"...gogerychwyrndrobwllllantysiliogogogoch,")
-CODE (U"... unless you start from Tyddyn-y-felin.\"")
+CODE (U"... unless you start from Tyddyn-y-felin.”")
 MAN_END
 
 MAN_BEGIN (U"Scripting 4. Object selection", U"ppgb", 20130501)

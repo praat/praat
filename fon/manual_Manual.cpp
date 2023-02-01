@@ -28,22 +28,22 @@ ENTRY (U"How to find what you are looking for")
 NORMAL (U"You can navigate the manual in several ways:")
 LIST_ITEM (U"\\bu To go to the Intro, use the #Home button.")
 LIST_ITEM (U"\\bu To go to the information behind a %link (a piece of blue text), just click on it.")
-LIST_ITEM (U"\\bu To go forward and backward through a tutorial with numbered pages, use ##1 ># and ##< 1#.")
+LIST_ITEM (U"\\bu To go forward and backward through a tutorial with numbered pages, use “##1 >#” and “##< 1#”.")
 LIST_ITEM (U"\\bu To %revisit previous pages, use the #< and #> buttons.")
 LIST_ITEM (U"\\bu To browse %alphabetically, use the horizontal scroll bar and the buttons "
-	"named ##< 1# and ##1 >#, or the ##Search for page (list)...# command in the ##Go to# menu.")
+	"named “##< 1#” and “##1 >#”, or the ##Search for page (list)...# command in the “Go to” menu.")
 LIST_ITEM (U"\\bu To find a page with a %%known title%, use the ##Search for page...# command.")
 NORMAL (U"The fastest way to find what you want is usually the #Search button.")
 ENTRY (U"Search")
 NORMAL (U"In the text field after the Search button, you can type strings, separated by spaces. "
-	"When you press the #Return (or #Enter) key, or click the #Search button, "
+	"When you press the Return (or Enter) key, or click the #Search button, "
 	"all manual pages are searched for the combination of strings that you typed. "
 	"The titles of the 20 best matching pages are displayed as links.")
 NORMAL (U"##Example:# to know how to create a pitch contour from a sound, type")
 CODE (U"sou pit")
-NORMAL (U"and press #Return. The best matches should appear on top. These should include "
+NORMAL (U"and press Return. The best matches should appear on top. These should include "
 	"##Sound: To Pitch (ac)...# and ##Sound: To Pitch (cc)...#.")
-NORMAL (U"The search is case-insensitive. For instance, the search string \"$script\" will give you all "
+NORMAL (U"The search is case-insensitive. For instance, the search string “$script” will give you all "
 	"the pages that contain the words %script, %Script, %description, %PostScript, or %SCRIPT, and so on.")
 NORMAL (U"#Background. The search algorithm uses the following heuristics:")
 LIST_ITEM (U"\\bu A match in the page title is better than one in the rest of the text.")

@@ -93,7 +93,7 @@ LIST_ITEM (U"• Windows graphics should support a resolution of 690 dots per in
 LIST_ITEM (U"• Editor scripting: corrected a bug introduced in 6.2.15 whereby an added editor script would lose "
 	"the editor context if it contained a form, after #Apply was clicked.")
 LIST_ITEM (U"• Editor windows (such as the Sound window): showing a dialog window that calls a script "
-	"(e.g. log 3, log 4 or an added command) should remove the previous version of that window.")
+	"(e.g. ##Log script 3#, ##Log script 4# or an added command) should remove the previous version of that window.")
 LIST_ITEM (U"• Mac editor windows: dialog windows that call scripts should disappear "
 	"when the editor goes away (as on Windows and Linux).")
 NORMAL (U"##6.2.22# (6 October 2022)")
