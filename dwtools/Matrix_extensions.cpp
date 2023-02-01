@@ -145,10 +145,9 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 
 void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) {
-		ymin = my ymin;
-		ymax = my ymax;
-	}
+	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
+	if (xmin >= xmax || ymin >= ymax)
+		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	
@@ -218,10 +217,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 	if (nBins <= 0)
 		return;
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) {
-		ymin = my ymin;
-		ymax = my ymax;
-	}
+	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) || 
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0))
@@ -361,10 +357,7 @@ autoMatrix Matrix_solveEquation (Matrix me, Matrix thee, double tolerance) {
 
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) {
-		ymin = my ymin;
-		ymax = my ymax;
-	}
+	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
@@ -376,10 +369,7 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
 
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) {
-		ymin = my ymin;
-		ymax = my ymax;
-	}
+	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0))

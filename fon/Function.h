@@ -41,13 +41,13 @@ void Function_init (Function me, double xmin, double xmax);
 int Function_getDomainQuantity (Function me);   // as input for MelderQuantity_getXXX
 
 /*
- * A function value is often expressed in some unit, such as:
- * Pa, Hz, dB, sones.
- * In the following, 'ilevel' is for multidimensional functions; it could be the row number of a matrix,
- * or pitch height (Hz) vs. pitch strength (dimensionless), and so on.
- * 'unit' is enumerated type that has to be defined in the header files of the descendant class,
- * starting from 0, which should be the default unit; e.g. for pitch: 0 = Hz, 1 = logHz, 2 = semitones, 3 = mel.
- */
+	A function value is often expressed in some unit, such as:
+		Pa, Hz, dB, sones.
+	In the following, `ilevel` is for multidimensional functions; it could be the row number of a matrix,
+	or pitch height (Hz) vs. pitch strength (dimensionless), and so on.
+	`unit` is an enumerated type that has to be defined in the header files of the descendant class,
+	starting from 0, which should be the default unit; e.g. for pitch: 0 = Hz, 1 = logHz, 2 = semitones, 3 = mel.
+*/
 int Function_getMinimumUnit (Function me, integer ilevel);
 int Function_getMaximumUnit (Function me, integer ilevel);
 
@@ -62,8 +62,10 @@ double Function_convertStandardToSpecialUnit (Function me, double value, integer
 double Function_convertSpecialToStandardUnit (Function me, double value, integer level, int unit);
 double Function_convertToNonlogarithmic (Function me, double value, integer level, int unit);
 
-/* The domain of a function can be changed by windowing. */
-/* Here follow some window functions. */
+/*
+	The domain of a function can be changed by windowing.
+	Here follow some window functions.
+*/
 
 #define Function_RECTANGULAR  0
 #define Function_TRIANGULAR  1
@@ -121,11 +123,23 @@ double Function_window (double tim, int windowType);
 */
 
 /*
- * Procedures to adapt a range to the extent of the function domain.
- */
-void Function_unidirectionalAutowindow (constFunction me, double *xmin, double *xmax);
-void Function_bidirectionalAutowindow (constFunction me, double *x1, double *x2);
-bool Function_intersectRangeWithDomain (constFunction me, double *x1, double *x2);
+	Procedures to adapt a range to the extent of the function domain.
+*/
+void Function_unidirectionalAutowindow (
+	const constFunction me,
+	double *const xmin,
+	double *const xmax
+);
+void Function_bidirectionalAutowindow (
+	const constFunction me,
+	double *const x1,
+	double *const x2
+);
+bool Function_intersectRangeWithDomain (
+	const constFunction me,
+	double *const x1,
+	double *const x2
+);
 
 void Function_shiftXBy (Function me, double shift);
 void Function_shiftXTo (Function me, double xfrom, double xto);
