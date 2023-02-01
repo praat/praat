@@ -1,6 +1,6 @@
 /* Spectrogram.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,10 +56,7 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 	double maximum, int autoscaling, double dynamic, double preemphasis, double dynamicCompression)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	if (fmax <= fmin) {
-		fmin = my ymin;
-		fmax = my ymax;
-	}
+	SampledXY_unidirectionalAutowindowY (me, & fmin, & fmax);
 	integer itmin, itmax, ifmin, ifmax;
 	const auto nt = Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax);
 	const auto nf = Matrix_getWindowSamplesY (me, fmin - 0.49999 * my dy, fmax + 0.49999 * my dy, & ifmin, & ifmax);

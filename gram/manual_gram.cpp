@@ -115,15 +115,15 @@ LIST_ITEM (U"\tlow\tə\ta")
 ENTRY (U"Constraints")
 NORMAL (U"The resulting OTGrammar will usually contain at least the following five constraints:")
 TAG (U"*[rtr / hi]")
-DEFINITION (U"\"do not implement [retracted tongue root] if the vowel is high.\"")
+DEFINITION (U"“do not implement [retracted tongue root] if the vowel is high.”")
 TAG (U"*[atr / lo]")
-DEFINITION (U"\"do not implement [advanced tongue root] if the vowel is low.\"")
+DEFINITION (U"“do not implement [advanced tongue root] if the vowel is low.”")
 TAG (U"P\\s{ARSE} (rtr)")
-DEFINITION (U"\"make an underlying [retracted tongue root] specification surface.\"")
+DEFINITION (U"“make an underlying [retracted tongue root] specification surface.”")
 TAG (U"P\\s{ARSE} (atr)")
-DEFINITION (U"\"make an underlying [advanced tongue root] specification surface.\"")
+DEFINITION (U"“make an underlying [advanced tongue root] specification surface.”")
 TAG (U"*G\\s{ESTURE} (contour)")
-DEFINITION (U"\"do not go from advanced to retracted tongue root, nor the other way around, within a word.\"")
+DEFINITION (U"“do not go from advanced to retracted tongue root, nor the other way around, within a word.”")
 NORMAL (U"This set of constraints thus comprises: ")
 LIST_ITEM (U"• two %%##grounding conditions#% (@@Archangeli & Pulleyblank (1994)@), "
 	"which we can see as gestural constraints;")
@@ -133,17 +133,17 @@ LIST_ITEM (U"• a %%##harmony constraint#%, which, if crucially ranked higher t
 	"forces %%##tongue-root harmony#%.")
 NORMAL (U"In addition, there may be the following four constraints:")
 TAG (U"*[rtr / mid]")
-DEFINITION (U"\"do not implement [retracted tongue root] if the vowel is mid; universally ranked lower "
-	"than *[rtr / hi].\"")
+DEFINITION (U"“do not implement [retracted tongue root] if the vowel is mid; universally ranked lower "
+	"than *[rtr / hi].”")
 TAG (U"*[rtr / lo]")
-DEFINITION (U"\"do not implement [retracted tongue root] if the vowel is low; universally ranked lower "
-	"than *[rtr / mid].\"")
+DEFINITION (U"“do not implement [retracted tongue root] if the vowel is low; universally ranked lower "
+	"than *[rtr / mid].”")
 TAG (U"*[atr / mid]")
-DEFINITION (U"\"do not implement [advanced tongue root] if the vowel is mid; universally ranked lower "
-	"than *[atr / lo].\"")
+DEFINITION (U"“do not implement [advanced tongue root] if the vowel is mid; universally ranked lower "
+	"than *[atr / lo].”")
 TAG (U"*[atr / hi]")
-DEFINITION (U"\"do not implement [advanced tongue root] if the vowel is high; universally ranked lower "
-	"than *[atr / mid].\"")
+DEFINITION (U"“do not implement [advanced tongue root] if the vowel is high; universally ranked lower "
+	"than *[atr / mid].”")
 NORMAL (U"The universal rankings referred to are due to the %%##local-ranking principle#% (@@Boersma (1998)@). "
 	"A learning algorithm may enforce this principle, e.g., if *[rtr / hi] falls down the ranking scale, "
 	"*[rtr / mid] may be pushed along.")
@@ -168,7 +168,7 @@ MAN_END
 MAN_BEGIN (U"OT learning", U"ppgb", 20070423)
 INTRO (U"This tutorial describes how you can draw Optimality-Theoretic and Harmonic-Grammar tableaus and "
 	"simulate Optimality-Theoretic and Harmonic-Grammar learning with Praat.")
-NORMAL (U"You can read this tutorial sequentially with the help of the \"< 1\" and \"1 >\" buttons.")
+NORMAL (U"You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.")
 LIST_ITEM (U"1. @@OT learning 1. Kinds of grammars|Kinds of grammars@ (ordinal and stochastic, @OTGrammar)")
 LIST_ITEM (U"2. @@OT learning 2. The grammar|The grammar@")
 LIST_ITEM1 (U"2.1. @@OT learning 2.1. Viewing a grammar|Viewing a grammar@ (N\\s{O}C\\s{ODA} example, @OTGrammarEditor)")
@@ -305,7 +305,7 @@ CODE (U"input [1]: \"pat\" 2")
 CODE (U"input [2]: \"pa\" 1")
 	CODE1 (U"candidate [1]: \"pa\" 0 0")
 NORMAL (U"To understand more about this data structure, consult the @OTGrammar class description "
-	"or click #Inspect after selecting the OTGrammar object. The $$\"\\bss{...}\"$ braces ensure that "
+	"or click #Inspect after selecting the OTGrammar object. The “$$\\bss{...}$” braces ensure that "
 	"the constraint names show up with their traditional small capitals (see @@Text styles@).")
 NORMAL (U"You can read this text file into Praat again with @@Read from file...@ from the #Open menu in the Objects window.")
 MAN_END
@@ -351,9 +351,9 @@ CODE (U"\"pat\" 2")
 	CODE1 (U"\"pat\" 0 1")
 	CODE1 (U"\"pa\"  1 0")
 NORMAL (U"The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
-	"In this tutorial I mostly assume OT's strict ranking, "
-	"but you can experiment with Smolensky's $$<HarmonicGrammar>$ (where the constraint disharmonies represent addable, "
-	"possibly negative weights), or with Frank Keller's $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
+	"In this tutorial I mostly assume OT’s strict ranking, "
+	"but you can experiment with Smolensky’s $$<HarmonicGrammar>$ (where the constraint disharmonies represent addable, "
+	"possibly negative weights), or with Frank Keller’s $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
 	"that negative disharmonies do not count), or with $$<PositiveHG>$ (like Harmonic Grammar, but with the restriction "
 	"that disharmonies below 1.0 have weight 1.0), or with $$<ExponentialHG>$ (where the weights are exp(disharmony), somewhere "
 	"between Harmonic Grammar and Linear OT), or with a $$<MaximumEntropy>$ grammar "
@@ -420,7 +420,7 @@ NORMAL (U"To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lo
 	"To achieve this even with zero noise, "
 	"go to the OTGrammar window and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
 	"(a spade symbol ♠︎ will mark the selected constraint), "
-	"and choose ##Edit ranking...# from the #Edit menu, or use the keyboard shortcut @@Keyboard shortcuts|Command-E.")
+	"and choose ##Edit ranking...# from the Edit menu, or use the keyboard shortcut @@Keyboard shortcuts|Command-E.")
 NORMAL (U"In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click OK. "
 	"This is what you will then see in the OTGrammar window:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
@@ -531,13 +531,13 @@ MAN_BEGIN (U"OT learning 2.9. Output distributions", U"ppgb", 20110808)
 NORMAL (U"To ask the grammar to produce %many outputs for a specified input form, "
 	"and collect them in a @Strings object, "
 	"you select an @OTGrammar and choose @@OTGrammar: Input to outputs...|Input to outputs...@.")
-NORMAL (U"For example, select the object \"OTGrammar assimilation\" from our place assimilation example "
+NORMAL (U"For example, select the object “OTGrammar assimilation” from our place assimilation example "
 	"(@@OT learning 2.6. Variable output|§2.6@), and click ##Input to outputs...#. "
-	"In the resulting command window, you specify 1000 trials, a noise strength of 2.0, and \"an+pa\" for the input form.")
+	"In the resulting command window, you specify 1000 trials, a noise strength of 2.0, and “an+pa” for the input form.")
 NORMAL (U"After you click OK, a @Strings object will appear in the list. "
 	"If you click Info, you will see that it contains 1000 strings. "
-	"If you click Inspect, you will see that most of the strings are \"ampa\", "
-	"but some of them are \"anpa\". These are the output forms computed from 1000 evaluations "
+	"If you click Inspect, you will see that most of the strings are “ampa”, "
+	"but some of them are “anpa”. These are the output forms computed from 1000 evaluations "
 	"for the input /an+pa/.")
 NORMAL (U"To count how many instances of [ampa] and [anpa] were generated, you select the @Strings object "
 	"and click @@Strings: To Distributions|To Distributions@. You will see a new @Distributions object appear in the list. "
@@ -574,7 +574,7 @@ NORMAL (U"To measure the outcomes of all the possible inputs at once, you select
 	"and choose @@OTGrammar: To output Distributions...|To output Distributions...@. "
 	"As an example, try this on our place assimilation grammar. You can supply 1000000 for the number of trials, "
 	"and the usual 2.0 for the standard deviation of the noise. "
-	"After you click OK, a @Distributions object will appear in the list. "
+	"After you click #OK, a @Distributions object will appear in the list. "
 	"If you draw this to the Picture window, the result will look like:")
 LIST_ITEM (U"\t/an+pa/ \\-> anpa\t169855")
 LIST_ITEM (U"\t/an+pa/ \\-> ampa\t830145")
@@ -607,16 +607,16 @@ CODE (U"\"an+pa\"  \"anpa\"   20")
 CODE (U"\"an+pa\"  \"ampa\"   80")
 NORMAL (U"The values appear to represent percentages, but they could also have been 1.0, 0.0, 0.2, and 0.8, "
 	"or any other values with the same proportions. We could also have left out the second pair "
-	"and specified \"3 pairs\" instead of \"4 pairs\" in the third line.")
+	"and specified “3 pairs” instead of “4 pairs” in the third line.")
 NORMAL (U"We can create this pair distribution with ##Create place assimilation distribution# from the "
 	"Optimality Theory submenu of the @@New menu@ in the Objects window. To see that it really contains "
 	"the above data, you can draw it to the Picture window. To change the values, use Inspect "
 	"(in which case you should remember to click Change after any change).")
 NORMAL (U"To generate input-output pairs from the above distribution, select the @PairDistribution and click "
 	"@@PairDistribution: To Stringses...|To Stringses...@. "
-	"If you then just click OK, there will appear two @Strings objects in the list, called \"input\" "
-	"(underlying forms) and \"output\" (surface forms). Both contain 1000 strings. If you Inspect them both, "
-	"you can see that e.g. the 377th string in \"input\" corresponds to the 377th string in \"output\", "
+	"If you then just click OK, there will appear two @Strings objects in the list, called “input” "
+	"(underlying forms) and “output” (surface forms). Both contain 1000 strings. If you Inspect them both, "
+	"you can see that e.g. the 377th string in “input” corresponds to the 377th string in “output”, "
 	"i.e., the two series of strings are aligned. See also the example at @@PairDistribution: To Stringses...@.")
 NORMAL (U"These two Strings objects are sufficient to help an @OTGrammar grammar to change its constraint rankings "
 	"in such a way that the output distributions generated by the grammar match the output distributions "
@@ -626,11 +626,11 @@ MAN_END
 MAN_BEGIN (U"OT learning 3.2. Data from another grammar", U"ppgb", 20110128)
 NORMAL (U"Instead of generating input-output pairs directly from a @PairDistribution object, "
 	"you can also generate input forms and their winning outputs from an @OTGrammar grammar. Of course, "
-	"that's what the language data presented to real children comes from. Our example will be "
+	"that’s what the language data presented to real children comes from. Our example will be "
 	"a tongue-root harmony grammar.")
 NORMAL (U"Choose @@Create tongue-root grammar...@ from the Optimality Theory submenu of the @@New menu@. "
-	"Set %%Constraint set% to \"Five\", and %Ranking to \"Wolof\". Click OK. An object called "
-	"\"OTGrammar Wolof\" will appear in the list. Click ##View & Edit#. You will see the following grammar "
+	"Set ##Constraint set# to #Five, and #Ranking to #Wolof. Click #OK. An object called "
+	"“OTGrammar Wolof” will appear in the list. Click ##View & Edit#. You will see the following grammar "
 	"appear in the @OTGrammarEditor:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t##*[rtr / hi]#\t      100.000\t      100.000\t       1.000")
@@ -684,7 +684,7 @@ ENTRY (U"Generating outputs from the grammar")
 NORMAL (U"To compute the outputs for the above set of input forms, select %both the @OTGrammar object "
 	"%and the input @Strings object, and choose @@OTGrammar & Strings: Inputs to outputs...|Inputs to outputs...@, "
 	"perhaps specifying zero evaluation noise. "
-	"A new Strings objects called \"Wolof_out\" will appear in the list. "
+	"A new Strings objects called “Wolof_out” will appear in the list. "
 	"If you Inspect it, you will see that it contains a string sequence aligned with the original input strings:")
 EQUATION (U"ɛta, ɛtɛ, ɛti, itɛ, ɛtɛ, iti, ɛti, iti, iti, ɛtɛ, ...")
 NORMAL (U"In this way, we have created two Strings objects, which together form a series of input-output pairs "
@@ -696,9 +696,9 @@ NORMAL (U"With the data from a tongue-root-harmony language with five completely
 	"we can have a throw at learning this language, starting with a grammar in which all the constraints "
 	"are ranked at the same height, or randomly ranked, or with articulatory constraints outranking "
 	"faithfulness constraints.")
-NORMAL (U"Let's try the third of these. Create an infant tongue-root grammar by choosing "
-	"@@Create tongue-root grammar...@ and specifying \"Five\" for the constraint set "
-	"and \"Infant\" for the ranking. The result after a single evaluation will be like:")
+NORMAL (U"Let’s try the third of these. Create an infant tongue-root grammar by choosing "
+	"@@Create tongue-root grammar...@ and specifying “Five” for the constraint set "
+	"and “Infant” for the ranking. The result after a single evaluation will be like:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t##*G\\s{ESTURE} (contour)#\t      100.000\t      100.631\t       1.000")
 LIST_ITEM1 (U"\t##*[atr / lo]#\t      100.000\t      100.244\t       1.000")

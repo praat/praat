@@ -1,6 +1,6 @@
 /* manual_Artsynth.cpp
  *
- * Copyright (C) 1992-2005,2007,2010,2011,2014-2017,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2010,2011,2014-2017,2020,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ MAN_BEGIN (U"Create Speaker...", U"ppgb", 20101212)
 INTRO (U"A command to create a @Speaker object. See @@Articulatory synthesis@.")
 ENTRY (U"Settings")
 TAG (U"##Name")
-DEFINITION (U"the name that you give to the created object. The standard name is \"speaker\", "
+DEFINITION (U"the name that you give to the created object. The standard name is “speaker”, "
 	"but if you work with multiple Speaker objects, give them sensible names to reduce confusion.")
 TAG (U"##Kind of speaker")
 DEFINITION (U"Choose from #Female, #Male, or #Child. The only difference is a relative size.")

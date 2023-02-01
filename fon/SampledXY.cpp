@@ -1,6 +1,6 @@
 /* SampledXY.cpp
  *
- * Copyright (C) 1992-2017,2019,2021 Paul Boersma
+ * Copyright (C) 1992-2017,2019,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,13 @@ void SampledXY_init (SampledXY me,
 	my y1 = y1;
 }
 
-integer SampledXY_getWindowSamplesY (SampledXY me, double fromY, double toY, integer *iymin, integer *iymax) {
+integer SampledXY_getWindowSamplesY (
+	const constSampledXY me,
+	const double fromY,
+	const double toY,
+	integer *const iymin,
+	integer *const iymax
+) {
 	const double riymin = 1.0 + Melder_roundUp   ((fromY - my y1) / my dy);
 	const double riymax = 1.0 + Melder_roundDown ((toY - my y1) / my dy);   // could be above 32-bit LONG_MAX
 	*iymin = ( riymin < 1.0 ? 1 : (integer) riymin );
@@ -73,6 +79,27 @@ integer SampledXY_getWindowSamplesY (SampledXY me, double fromY, double toY, int
 	if (*iymin > *iymax)
 		return 0;
 	return *iymax - *iymin + 1;
+}
+
+void SampledXY_unidirectionalAutowindowY (
+	const constSampledXY me,
+	double *const ymin,
+	double *const ymax
+) {
+	if (*ymin >= *ymax) {
+		*ymin = my ymin;
+		*ymax = my ymax;
+	}
+}
+void SampledXY_bidirectionalAutowindowY (
+	const constSampledXY me,
+	double *const y1,
+	double *const y2
+) {
+	if (*y1 == *y2) {
+		*y1 = my ymin;
+		*y2 = my ymax;
+	}
 }
 
 /* End of file SampledXY.cpp */

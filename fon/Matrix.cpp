@@ -229,8 +229,8 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	integer topRow = bottomRow + 1;         // 1 <= topRow <= my ny + 1
 	integer leftCol = Melder_ifloor (col_real);     // 0 <= leftCol <= my nx
 	integer rightCol = leftCol + 1;         // 1 <= rightCol <= my nx + 1
-	double drow = row_real - bottomRow;    // 0.0 <= drow < 1.0
-	double dcol = col_real - leftCol;      // 0.0 <= dcol < 1.0
+	const double drow = row_real - bottomRow;    // 0.0 <= drow < 1.0
+	const double dcol = col_real - leftCol;      // 0.0 <= dcol < 1.0
 	/*
 		If adjacent points exist
 		(i.e., both row numbers are between 1 and my ny,
@@ -239,14 +239,10 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 		If not, we do constant extrapolation,
 		which can be simulated by an interpolation between equal z values.
 	*/
-	if (bottomRow < 1)
-		bottomRow = 1;         // 1 <= bottomRow <= my ny
-	if (topRow > my ny)
-		topRow = my ny;        // 1 <= topRow <= my ny
-	if (leftCol < 1)
-		leftCol = 1;           // 1 <= leftCol <= my nx
-	if (rightCol > my nx)
-		rightCol = my nx;      // 1 <= rightCol <= my nx
+	Melder_clipLeft (1_integer, & bottomRow);   // 1 <= bottomRow <= my ny
+	Melder_clipRight (& topRow, my ny);         // 1 <= topRow <= my ny
+	Melder_clipLeft (1_integer, & leftCol);     // 1 <= leftCol <= my nx
+	Melder_clipRight (& rightCol, my nx);       // 1 <= rightCol <= my nx
 	return (1.0 - drow) * (1.0 - dcol) * my z [bottomRow] [leftCol] +
 		drow * (1.0 - dcol) * my z [topRow] [leftCol] +
 		(1.0 - drow) * dcol * my z [bottomRow] [rightCol] +
@@ -265,10 +261,7 @@ void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ym
 	double minimum, double maximum)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) {
-		ymin = my ymin;
-		ymax = my ymax;
-	}
+	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
@@ -283,8 +276,9 @@ void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ym
 	Graphics_setInner (g);
 	for (integer iy = iymin; iy <= iymax; iy ++) {
 		Graphics_setWindow (g, xmin, xmax,
-				minimum - (iy - iymin) * (maximum - minimum),
-				maximum + (iymax - iy) * (maximum - minimum));
+			minimum - (iy - iymin) * (maximum - minimum),
+			maximum + (iymax - iy) * (maximum - minimum)
+		);
 		Graphics_function (g, & my z [iy] [0], ixmin, ixmax,
 				Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	}
@@ -296,22 +290,34 @@ void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ym
 void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double height)
 {
-	const bool xreversed = xmin > xmax, yreversed = ymin > ymax;
-	if (xmax == xmin) { xmin = my xmin; xmax = my xmax; }
-	if (ymax == ymin) { ymin = my ymin; ymax = my ymax; }
-	if (xreversed) { double temp = xmin; xmin = xmax; xmax = temp; }
-	if (yreversed) { double temp = ymin; ymin = ymax; ymax = temp; }
+	Function_bidirectionalAutowindow (me, & xmin, & xmax);
+	SampledXY_bidirectionalAutowindowY (me, & ymin, & ymax);
+	const bool xreversed = xmin > xmax;
+	if (xreversed)
+		std::swap (xmin, xmax);
+	const bool yreversed = ymin > ymax;
+	if (yreversed)
+		std::swap (ymin, ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (xmin == xmax || ymin == ymax)
 		return;
 	Graphics_setInner (g);
-	Graphics_setWindow (g, xreversed ? xmax : xmin, xreversed ? xmin : xmax, yreversed ? ymax : ymin, yreversed ? ymin : ymax);
-	Graphics_contour (g, my z.part (iymin, iymax, ixmin, ixmax),
-		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
-		height);
+	Graphics_setWindow (g,
+		xreversed ? xmax : xmin,
+		xreversed ? xmin : xmax,
+		yreversed ? ymax : ymin,
+		yreversed ? ymin : ymax
+	);
+	Graphics_contour (g,
+		my z.part (iymin, iymax, ixmin, ixmax),
+		Matrix_columnToX (me, ixmin),
+		Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin),
+		Matrix_rowToY (me, iymax),
+		height
+	);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
 }
@@ -319,24 +325,33 @@ void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, dou
 void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum)
 {
-	double border [1 + 8];
-	if (xmax == xmin) { xmin = my xmin; xmax = my xmax; }
-	if (ymax == ymin) { ymin = my ymin; ymax = my ymax; }
+	Function_bidirectionalAutowindow (me, & xmin, & xmax);
+	SampledXY_bidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (maximum <= minimum)
 		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
-	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
+	if (maximum <= minimum) {
+		minimum -= 1.0;
+		maximum += 1.0;
+	}
+	double border [1 + 8];
 	for (integer iborder = 1; iborder <= 8; iborder ++)
 		border [iborder] = minimum + iborder * (maximum - minimum) / (8 + 1);
-	if (xmin == xmax || ymin == ymax) return;
+	if (xmin == xmax || ymin == ymax)
+		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_altitude (g, my z.part (iymin, iymax, ixmin, ixmax),
-		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
-		8, border);
+	Graphics_altitude (g,
+		my z.part (iymin, iymax, ixmin, ixmax),
+		Matrix_columnToX (me, ixmin),
+		Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin),
+		Matrix_rowToY (me, iymax),
+		8,
+		border
+	);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
 }
@@ -346,22 +361,31 @@ void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, doub
 {
 	double border [1 + 30];
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (maximum <= minimum)
 		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
-	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
+	if (maximum <= minimum) {
+		minimum -= 1.0;
+		maximum += 1.0;
+	}
 	for (integer iborder = 1; iborder <= 30; iborder ++)
 		border [iborder] = minimum + iborder * (maximum - minimum) / (30 + 1);
-	if (xmin >= xmax || ymin >= ymax) return;
+	if (xmin >= xmax || ymin >= ymax)
+		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_grey (g, my z.part (iymin, iymax, ixmin, ixmax),
-		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
-		30, border);
+	Graphics_grey (g,
+		my z.part (iymin, iymax, ixmin, ixmax),
+		Matrix_columnToX (me, ixmin),
+		Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin),
+		Matrix_rowToY (me, iymax),
+		30,
+		border
+	);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
 }
@@ -370,10 +394,7 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	double minimum, double maximum, bool interpolate)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) {
-		ymin = my ymin;
-		ymax = my ymax;
-	}
+	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx,
 		& ixmin, & ixmax);
@@ -390,15 +411,25 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	if (interpolate)
-		Graphics_image (g, my z.part (iymin, iymax, ixmin, ixmax),
-			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
-			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
-			minimum, maximum);
+		Graphics_image (g,
+			my z.part (iymin, iymax, ixmin, ixmax),
+			Sampled_indexToX   (me, ixmin - 0.5),
+			Sampled_indexToX   (me, ixmax + 0.5),
+			SampledXY_indexToY (me, iymin - 0.5),
+			SampledXY_indexToY (me, iymax + 0.5),
+			minimum,
+			maximum
+		);
 	else
-		Graphics_cellArray (g, my z.part (iymin, iymax, ixmin, ixmax),
-			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
-			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
-			minimum, maximum);
+		Graphics_cellArray (g,
+			my z.part (iymin, iymax, ixmin, ixmax),
+			Sampled_indexToX   (me, ixmin - 0.5),
+			Sampled_indexToX   (me, ixmax + 0.5),
+			SampledXY_indexToY (me, iymin - 0.5),
+			SampledXY_indexToY (me, iymax + 0.5),
+			minimum,
+			maximum
+		);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
 }
@@ -419,19 +450,29 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 	double minimum, double maximum, double elevation, double azimuth)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (maximum <= minimum)
 		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
-	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
+	if (maximum <= minimum) {
+		minimum -= 1.0;
+		maximum += 1.0;
+	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, -1.0, 1.0, minimum, maximum);
-	Graphics_surface (g, my z.part (iymin, iymax, ixmin, ixmax),
-		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
-		minimum, maximum, elevation, azimuth);
+	Graphics_surface (g,
+		my z.part (iymin, iymax, ixmin, ixmax),
+		Matrix_columnToX (me, ixmin),
+		Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin),
+		Matrix_rowToY (me, iymax),
+		minimum,
+		maximum,
+		elevation,
+		azimuth
+	);
 	Graphics_unsetInner (g);
 }
 

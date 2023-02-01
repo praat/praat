@@ -67,7 +67,7 @@ static conststring32 extractLink (conststring32 text, const char32 *p, char32 *l
 		const char32 *from = p + 2;
 		while (*from != U'@' && *from != U'|' && *from != U'\0') {
 			if (to >= max)
-				Melder_throw (U"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
+				Melder_throw (U"(ManPages::grind:) Link starting with “@@” is too long:\n", text);
 			*to ++ = *from ++;
 		}
 		if (*from == U'|') {
@@ -317,7 +317,7 @@ static void grind (ManPages me) {
 					continue;   // ignore "FILE" links
 				integer jpage = lookUp_sorted (me, link);
 				if (jpage == 0) {
-					MelderInfo_writeLine (U"Page \"", page -> title.get(), U"\" contains a dangling link to \"", link, U"\".");
+					MelderInfo_writeLine (U"Page “", page -> title.get(), U"” contains a dangling link to “", link, U"”.");
 					ndangle ++;
 				} else {
 					bool alreadyPresent = false;
@@ -401,7 +401,7 @@ static const struct stylesInfo {
 /* LIST_ITEM: */ { U"<dd>", U"" },
 /* TAG: */ { U"<dt>", U"" },
 /* DEFINITION: */ { U"<dd>", U"" },
-/* CODE: */ { U"<code>", U"<br></code>" },
+/* CODE: */ { U"<code>&nbsp;&nbsp;&nbsp;", U"<br></code>" },
 /* PROTOTYPE: */ { U"<p>", U"</p>" },
 /* EQUATION: */ { U"<table width=\"100%\"><tr><td align=middle>", U"</table>" },
 /* PICTURE: */ { U"<p>", U"</p>" },
@@ -415,11 +415,11 @@ static const struct stylesInfo {
 /* DEFINITION1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
-/* CODE1: */ { U"<code>&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE2: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE3: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE4: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE5: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" }
+/* CODE1: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
+/* CODE2: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
+/* CODE3: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
+/* CODE4: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
+/* CODE5: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" }
 };
 
 static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <structManPage_Paragraph> const& paragraphs, MelderString *buffer) {
@@ -457,8 +457,10 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 				Graphics_setWindow (graphics.get(), 0, 1, 0, 1);
 				Graphics_setTextAlignment (graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 			}
-			MelderString_append (buffer, Melder_cat (U"<p align=middle><img height=", paragraph -> height * 100,
-				U" width=", paragraph -> width * 100, U" src=", MelderFile_name (& pngFile), U"></p>"));
+			MelderString_append (buffer,
+				U"<p align=middle><img height=", paragraph -> height * 100,
+				U" width=", paragraph -> width * 100, U" src=", MelderFile_name (& pngFile), U"></p>"
+			);
 			continue;
 		}
 		if (paragraph -> type == kManPage_type::SCRIPT) {
@@ -494,7 +496,10 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 				theCurrentPraatPicture -> x2NDC = paragraph -> width;
 				theCurrentPraatPicture -> y1NDC = 0.0;
 				theCurrentPraatPicture -> y2NDC = paragraph -> height;
-				Graphics_setViewport (graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+				Graphics_setViewport (graphics.get(),
+					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC,
+					theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC
+				);
 				Graphics_setWindow (graphics.get(), 0.0, 1.0, 0.0, 1.0);
 				integer x1DC, y1DC, x2DC, y2DC;
 				Graphics_WCtoDC (graphics.get(), 0.0, 0.0, & x1DC, & y2DC);
@@ -505,7 +510,10 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 				theCurrentPraatPicture -> x2NDC = paragraph -> width;
 				theCurrentPraatPicture -> y1NDC = 0.0;
 				theCurrentPraatPicture -> y2NDC = paragraph -> height;
-				Graphics_setViewport (graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+				Graphics_setViewport (graphics.get(),
+					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC,
+					theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC
+				);
 				{// scope
 					autoMelderProgressOff progress;
 					autoMelderWarningOff warning;
@@ -524,8 +532,10 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 				Graphics_setWindow (graphics.get(), 0.0, 1.0, 0.0, 1.0);
 				Graphics_setTextAlignment (graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 			}
-			MelderString_append (buffer, U"<p align=middle><img height=", paragraph -> height * 100,
-				U" width=", paragraph -> width * 100, U" src=", MelderFile_name (& pngFile), U"></p>");
+			MelderString_append (buffer,
+				U"<p align=middle><img height=", paragraph -> height * 100,
+				U" width=", paragraph -> width * 100, U" src=", MelderFile_name (& pngFile), U"></p>"
+			);
 			theCurrentPraatApplication = & theForegroundPraatApplication;
 			theCurrentPraatObjects = & theForegroundPraatObjects;
 			theCurrentPraatPicture = & theForegroundPraatPicture;
@@ -552,7 +562,8 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 			}
 			MelderString_append (buffer, stylesInfo [(int) paragraph -> type]. htmlIn, U"\n");
 		}
-		bool inTable = !! str32chr (p, U'\t'), inPromptedTable = false;
+		/* mutable */ bool inTable = !! str32chr (p, U'\t');
+		/* mutable */ bool inPromptedTable = false;
 		if (inTable) {
 			if (*p == U'\t') {
 				MelderString_append (buffer, U"<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>");
@@ -563,25 +574,25 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 			}
 		}
 		/*
-		 * Leading spaces should be visible (mainly used in code fragments).
-		 */
+			Leading spaces should be visible (mainly used in code fragments).
+		*/
 		while (*p == U' ') {
 			MelderString_append (buffer, U"&nbsp;");
 			p ++;
 		}
 		while (*p) {
-				if (wordItalic && ! isSingleWordCharacter (*p)) {
-					MelderString_append (buffer, U"</i>");
-					wordItalic = false;
-				}
-				if (wordBold && ! isSingleWordCharacter (*p)) {
-					MelderString_append (buffer, U"</b>");
-					wordBold = false;
-				}
-				if (wordCode && ! isSingleWordCharacter (*p)) {
-					MelderString_append (buffer, U"</code>");
-					wordCode = false;
-				}
+			if (wordItalic && ! isSingleWordCharacter (*p)) {
+				MelderString_append (buffer, U"</i>");
+				wordItalic = false;
+			}
+			if (wordBold && ! isSingleWordCharacter (*p)) {
+				MelderString_append (buffer, U"</b>");
+				wordBold = false;
+			}
+			if (wordCode && ! isSingleWordCharacter (*p)) {
+				MelderString_append (buffer, U"</font></code>");
+				wordCode = false;
+			}
 			if (*p == U'@') {
 				static MelderString link, linkText;
 				MelderString_empty (& link);
@@ -609,7 +620,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 								}
 							} else {
 								if (*p == U'\\') {
-									char32 kar1 = *++p, kar2 = *++p;
+									const char32 kar1 = *++p, kar2 = *++p;
 									Longchar_Info info = Longchar_getInfo (kar1, kar2);
 									if (info -> unicode < 127) {
 										MelderString_appendCharacter (& linkText, info -> unicode ? info -> unicode : U'?');
@@ -640,7 +651,8 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 						p ++;
 				} else {
 					p ++;
-					while (isSingleWordCharacter (*p) && *p != U'\0') MelderString_append (& link, *p++);
+					while (isSingleWordCharacter (*p) && *p != U'\0')
+						MelderString_append (& link, *p++);
 					MelderString_copy (& linkText, link.string);
 				}
 				/*
@@ -651,13 +663,13 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 					Melder_throw (U"No such manual page: ", link.string);
 				link.string [0] = my pages.at [linkPageNumber] -> title [0];
 				/*
-				 * We write the link in the following format:
-				 *     <a href="link.html">linkText</a>
-				 * If "link" (initial lower case) is not in the manual, we write "Link.html" instead.
-				 * All spaces and strange symbols in "link" are replaced by underscores,
-				 * because it will be a file name (see ManPages_writeAllToHtmlDir).
-				 * The file name will have no more than 30 or 60 characters, and no less than 1.
-				 */
+					We write the link in the following format:
+						<a href="link.html">linkText</a>
+					If "link" (initial lower case) is not in the manual, we write "Link.html" instead.
+					All spaces and strange symbols in "link" are replaced by underscores,
+					because it will be a file name (see ManPages_writeAllToHtmlDir).
+					The file name will have no more than 30 or 60 characters, and no less than 1.
+				*/
 				MelderString_append (buffer, U"<a href=\"");
 				if (str32nequ (link.string, U"\\FI", 3)) {
 					MelderString_append (buffer, link.string + 3);   // file link
@@ -743,15 +755,25 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 				}
 			} else if (*p == U'$') {
 				if (inCode) {
-					MelderString_append (buffer, U"</code>");
+					MelderString_append (buffer, U"</font></code>");
 					inCode = false;
 					p ++;
 				} else if (p [1] == U'$') {
-					MelderString_append (buffer, U"<code>");
+					MelderString_append (buffer, U"<code><font size=+1>");
 					inCode = true;
 					p += 2;
+				} else if (p [1] == U'%') {
+					MelderString_append (buffer, U"<code><font size=+1><i>");
+					wordCode = true;
+					wordItalic = true;
+					p += 2;
+				} else if (p [1] == U'#') {
+					MelderString_append (buffer, U"<code><font size=+1><b>");
+					wordCode = true;
+					wordBold = true;
+					p += 2;
 				} else {
-					MelderString_append (buffer, U"<code>");
+					MelderString_append (buffer, U"<code><font size=+1>");
 					wordCode = true;
 					p ++;
 				}
@@ -847,7 +869,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 			inBold = wordBold = false;
 		}
 		if (inCode || wordCode) {
-			MelderString_append (buffer, U"</code>");
+			MelderString_append (buffer, U"</font></code>");
 			inCode = wordCode = false;
 		}
 		if (inSub) {
@@ -876,13 +898,17 @@ static const conststring32 month [] =
 
 static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, MelderString *buffer) {
 	ManPage page = my pages.at [ipage];
-	MelderString_append (buffer, U"<html><head><meta name=\"robots\" content=\"index,follow\">"
+	MelderString_append (buffer,
+		U"<html><head><meta name=\"robots\" content=\"index,follow\">"
 		U"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"
-		U"<title>", page -> title.get(), U"</title></head><body bgcolor=\"#FFFFFF\">\n\n");
-	MelderString_append (buffer, U"<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor=\"#CCCC00\">"
+		U"<title>", page -> title.get(), U"</title></head><body bgcolor=\"#FFFFFF\">\n\n"
+	);
+	MelderString_append (buffer,
+		U"<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor=\"#CCCC00\">"
 		U"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
 		U"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
-		page -> title.get(), U"\n</b></font></table></table>\n");
+		page -> title.get(), U"\n</b></font></table></table>\n"
+	);
 	writeParagraphsAsHtml (me, file, page -> paragraphs.get(), buffer);
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		integer ilink, jlink;
@@ -959,9 +985,9 @@ void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath) {
 		MelderDir_getFile (& dir, fileName, & file);
 		writePageAsHtml (me, & file, ipage, & buffer);
 		/*
-		 * An optimization because reading is much faster than writing:
-		 * we write the file only if the old file is different or doesn't exist.
-		 */
+			An optimization because reading is much faster than writing:
+			we write the file only if the old file is different or doesn't exist.
+		*/
 		autostring32 oldText;
 		try {
 			oldText = MelderFile_readText (& file);
