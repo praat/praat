@@ -854,7 +854,7 @@ static void Formula_lexan () {
 			numberOfStringConstants ++;
 		} else if (kar == U'"') {
 			/*
-				String constant.
+				String constant, straight-quote version.
 			*/
 			newchar;
 			stringtokon;
@@ -872,6 +872,23 @@ static void Formula_lexan () {
 			}
 			stringtokoff;
 			oldchar;
+			newtok (STRING_)
+			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
+			numberOfStringConstants ++;
+		} else if (kar == U'“') {
+			/*
+				String constant, curly-quote version.
+			*/
+			newchar;
+			stringtokon;
+			for (;;) {
+				if (kar == U'\0')
+					formulaError (U"No closing quote in string constant", ikar);
+				if (kar == U'”')
+					break;
+				stringtokchar
+			}
+			stringtokoff;
 			newtok (STRING_)
 			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 			numberOfStringConstants ++;

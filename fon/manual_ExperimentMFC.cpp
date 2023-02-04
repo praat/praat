@@ -1,6 +1,6 @@
 /* manual_ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2011,2013,2015-2017,2019-2021 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2015-2017,2019-2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,12 +151,12 @@ LIST_ITEM (U"Sounds/hid.wav")
 LIST_ITEM (U"Sounds/hood.wav")
 LIST_ITEM (U"Sounds/hud.wav")
 NORMAL (U"You need not use WAV files. You can also use AIFF files, "
-	"in which case %stimulusFileNameTail would probably be \".aiff\", or any other "
+	"in which case $%stimulusFileNameTail would probably be “.aiff”, or any other "
 	"type of sound file that Praat supports. But all sound files must have the same number of channels "
 	"(i.e. all mono or all stereo) and the same sampling frequency.")
 NORMAL (U"In this example, the experiment will look for the sound files in the folder #Sounds, "
 	"which has to be in the same folder as your experiment file. "
-	"In other words, \"Sounds/heed.wav\" is a %%relative file path%.")
+	"In other words, “Sounds/heed.wav” is a %%relative file path%.")
 NORMAL (U"Instead of a relative path, you can also supply a %%full file path%. "
 	"Such a path depends on your computer and on your operating system. "
 	"For instance, if you have a Windows computer and the stimuli are in the folder ##D:\\bsCorpus\\bsAutumn\\bsSpeaker23#, "
@@ -169,7 +169,7 @@ NORMAL (U"But relative file paths will usually be preferred: they are more %port
 	"from one computer to another without changing the experiment file, "
 	"as long as you put the experiment file in the same folder as where you put the folder #Sounds. "
 	"Or you can put the whole experiment on a USB stick and run the experiment directly from the stick. "
-	"Since Praat supports the forward slash \"/\" as a folder separator on all computers, "
+	"Since Praat supports the forward slash “/” as a folder separator on all computers, "
 	"you can run the exact same experiment on Macintosh, Windows and Unix computers, "
 	"independent of the type of computer where you have created your experiment.")
 MAN_END
@@ -250,16 +250,16 @@ NORMAL (U"Every trial comes with the same set of response categories. "
 	"The @@ExperimentMFC 2.1. The experiment file|example experiment@ has five of them. "
 	"For each response category, you supply the area of the screen where a rectangle will be drawn. "
 	"The whole screen measures from 0.0 (left) to 1.0 (right) and from 0.0 (bottom) to 1.0 (top). "
-	"Thus, \"0.2 0.3 0.7 0.8\" means that a rectangle will be drawn somewhere in the top left quadrant "
-	"of the screen. You also supply the text that will be drawn in this rectangle, for instance the text \"h I d\". "
+	"Thus, “0.2 0.3 0.7 0.8” means that a rectangle will be drawn somewhere in the top left quadrant "
+	"of the screen. You also supply the text that will be drawn in this rectangle, for instance the text “h I d”. "
 	"After this you supply the font size for this text, for instance 40.")
 NORMAL (U"The second text that you supply for every response is a response key on the keyboard. "
-	"In the above example this is \"\", i.e. the subject cannot press a key as a response. "
-	"If you want the user to be able to press the \"m\" key instead of clicking in the \"h I d\" rectangle, "
+	"In the above example this is “”, i.e. the subject cannot press a key as a response. "
+	"If you want the user to be able to press the “m” key instead of clicking in the “h I d” rectangle, "
 	"the line in the experiment file would be:")
 CODE1 (U"0.2 0.3 0.7 0.8 \"h I d\" 40 \"m\" \"i\"")
 NORMAL (U"The third text that you supply for each rectangle is the response category as it will be reported by Praat to you when the user clicks it, "
-	"e.g. the text \"i\". If you want Praat to ignore mouse clicks on this rectangle, specify an empty response "
+	"e.g. the text “i”. If you want Praat to ignore mouse clicks on this rectangle, specify an empty response "
 	"category, i.e. \"\".")
 NORMAL (U"The border of the rectangles will be maroon, the background of the screen will be light grey. "
 	"The colour of clickable rectangles will be yellow, that of non-clickable rectangles (those with "
@@ -288,7 +288,7 @@ NORMAL (U"A text file with an ExperimentMFC object can be read into Praat with @
 	"(it is not a script but a data file, so do not try to read it with ##Open Praat script...#). "
 	"You can then choose #Run. After the experiment finishes, you can close the experiment window "
 	"and choose ##Extract results#. The resulting ResultsMFC object contains for each trial the stimulus "
-	"name (e.g. \"hood\"), the response category (e.g. \"u\"), and the goodness judgment (e.g. 4). "
+	"name (e.g. “hood”), the response category (e.g. “u”), and the goodness judgment (e.g. 4). "
 	"You will want to save this ResultsMFC object to a text file with @@Save as text file...@. "
 	"You may want to call these text files by the names of the subjects, e.g. ##ts.ResultsMFC# "
 	"and ##mj.ResultsMFC#. Once you have collected the results of all your subjects, you can read "
@@ -364,7 +364,7 @@ NORMAL (U"The experimenter does not have to create the stimulus pairs as sound f
 	"Praat will play the files ##320.wav# and ##300.wav#. These two substimuli will be separated here by a silence "
 	"of 0.8 seconds, called the %%inter-stimulus interval% (or %stimulusMedialSilenceDuration).")
 NORMAL (U"Note that the text in this file is rather different from the previous example. "
-	"It does not matter whether you write \"numberOfDifferentStimuli\", or \"different stimuli\", or anything else; "
+	"It does not matter whether you write $%numberOfDifferentStimuli, or $$%%different stimuli%$, or anything else; "
 	"Praat ignores these texts as long as they do not contain numbers, quoted strings, or things between <>.")
 MAN_END
 
@@ -382,10 +382,10 @@ CODE (U"initial silence 0.5")
 CODE (U"inter-stimulus interval 0.3")
 CODE (U"final silence 0")
 CODE (U"100 stimuli")
-CODE1 (U"\"300,300,320\"  \"\"  \"300,320,340\"  \"\"  \"300,340,340\"  \"\"  \"300,340,360\"  \"\"")
-CODE1 (U"...")
-CODE1 (U"(and 96 more triplets of substimuli)")
-CODE1 (U"...")
+	CODE1 (U"\"300,300,320\"  \"\"  \"300,320,340\"  \"\"  \"300,340,340\"  \"\"  \"300,340,360\"  \"\"")
+	CODE1 (U"...")
+	CODE1 (U"(and 96 more triplets of substimuli)")
+	CODE1 (U"...")
 CODE (U"4 replications")
 CODE (U"break every 50")
 CODE (U"<PermuteBalancedNoDoublets>")
@@ -399,9 +399,9 @@ CODE (U"ok button 0 0 0 0 \"\" \"\"")
 CODE (U"oops button 0 0 0 0 \"\" \"\"")
 CODE (U"responses are sounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (U"3 response categories")
-CODE1 (U"0.1 0.3 0.4 0.6 \"first\" 30 \"\" \"A\"")
-CODE1 (U"0.4 0.6 0.4 0.6 \"second\" 30 \"\" \"\"")
-CODE1 (U"0.7 0.9 0.4 0.6 \"third\" 30 \"\" \"B\"")
+	CODE1 (U"0.1 0.3 0.4 0.6 \"first\" 30 \"\" \"A\"")
+	CODE1 (U"0.4 0.6 0.4 0.6 \"second\" 30 \"\" \"\"")
+	CODE1 (U"0.7 0.9 0.4 0.6 \"third\" 30 \"\" \"B\"")
 CODE (U"0 goodness categories")
 NORMAL (U"In this example, the subject has to click 400 times. She sees three buttons, "
 	"labelled %first, %second, and %third, but the second button (the one with the empty response category) "
@@ -505,15 +505,15 @@ MAN_BEGIN (U"ExperimentMFC 4.1. The replay button", U"ppgb", 20051205)
 INTRO (U"The @@ExperimentMFC 2.1. The experiment file|example experiment@ contained the following lines:")
 CODE (U"maximumNumberOfReplays = 0")
 CODE (U"replayButton = 0 0 0 0 \"\" \"\"")
-NORMAL (U"This means that that experiment did not have a replay button. "
+NORMAL (U"This means that that experiment did not have a #replay button. "
 	"To add a replay button along the lower edge of the screen, you do something like")
 CODE (U"maximumNumberOfReplays = 1000")
 CODE (U"replayButton = 0.3 0.7 0.01 0.07 \"Click here to play the last sound again\" \"\"")
 NORMAL (U"If you supply a right edge (here 0.7) that is greater than the left edge (here 0.3), "
-	"Praat will know that you want to show a replay button.")
+	"Praat will know that you want to show a #replay button.")
 NORMAL (U"When the participant clicks this button, Praat will play the current stimulus again. "
 	"In this example, the button will be visible until the partipant has clicked it 1000 times.")
-NORMAL (U"To assign a keyboard shortcut to the replay button, do something like")
+NORMAL (U"To assign a keyboard shortcut to the #replay button, do something like")
 CODE (U"maximumNumberOfReplays = 1000")
 CODE (U"replayButton = 0.1 0.9 0.01 0.07 \"Click here or press the space bar to play the last sound again\" \" \"")
 MAN_END
@@ -521,17 +521,17 @@ MAN_END
 MAN_BEGIN (U"ExperimentMFC 4.2. The OK button", U"ppgb", 20051205)
 INTRO (U"The @@ExperimentMFC 2.1. The experiment file|example experiment@ contained the following lines:")
 CODE (U"okButton = 0 0 0 0 \"\" \"\"")
-NORMAL (U"This means that that experiment did not have an OK button. "
+NORMAL (U"This means that that experiment did not have an #OK button. "
 	"To add an OK button in the lower right corner of the screen, you do something like")
 CODE (U"okButton = 0.8 0.95 0.05 0.15 \"OK\" \"\"")
 NORMAL (U"If you supply a right edge (here 0.95) that is greater than the left edge (here 0.8), "
-	"Praat will know that you want to show an OK button.")
-NORMAL (U"The behaviour of the experiment changes appreciably if you include an OK button. "
-	"If you do not include an OK button, Praat will present the next stimulus as soon as the participant "
+	"Praat will know that you want to show an #OK button.")
+NORMAL (U"The behaviour of the experiment changes appreciably if you include an #OK button. "
+	"If you do not include an #OK button, Praat will present the next stimulus as soon as the participant "
 	"has clicked a response category (and a goodness category, if there are such). "
-	"If you do include an OK button, it will become visible to the participant as soon as she has chosen "
+	"If you do include an #OK button, it will become visible to the participant as soon as she has chosen "
 	"a response category (and a goodness category, if there are such). "
-	"The participant can then click the OK button, but she can also choose to click the response "
+	"The participant can then click the #OK button, but she can also choose to click the response "
 	"(and goodness buttons) a bit more first.")
 NORMAL (U"The OK button seems to be useful only if there is also a replay button, "
 	"or if the response categories are sounds (see @@ExperimentMFC 6. Responses are sounds@).")
@@ -542,16 +542,16 @@ MAN_END
 MAN_BEGIN (U"ExperimentMFC 4.3. The oops button", U"ppgb", 20051205)
 INTRO (U"The @@ExperimentMFC 2.1. The experiment file|example experiment@ contained the following lines:")
 CODE (U"oopsButton = 0 0 0 0 \"\" \"\"")
-NORMAL (U"This means that that experiment did not have an oops button. "
-	"To add an oops button in the lower left corner of the screen, you do something like")
+NORMAL (U"This means that that experiment did not have an #oops button. "
+	"To add an #oops button in the lower left corner of the screen, you do something like")
 CODE (U"oopsButton = 0.05 0.2 0.05 0.15 \"oops\" \"\"")
 NORMAL (U"If you supply a right edge (here 0.2) that is greater than the left edge (here 0.05), "
-	"Praat will know that you want to show an oops button.")
-NORMAL (U"If you include an oops button, it will become visible to the participant for every stimulus except the first, "
+	"Praat will know that you want to show an #oops button.")
+NORMAL (U"If you include an #oops button, it will become visible to the participant for every stimulus except the first, "
 	"and it will also be visible on the pause (break) screens and on the final screen.")
-NORMAL (U"If the participant clicks the oops button, Praat will forget everything the participant did "
+NORMAL (U"If the participant clicks the #oops button, Praat will forget everything the participant did "
 	"with the current stimulus and the previous stimulus. The experiment will continue with playing "
-	"the previous stimulus again and waiting for the participant's choice.")
+	"the previous stimulus again and waiting for the participant’s choice.")
 MAN_END
 
 MAN_BEGIN (U"ExperimentMFC 5. Stimulus-dependent texts", U"ppgb", 20051205)
@@ -622,7 +622,7 @@ CODE (U"numberOfDifferentResponses = 2")
 	CODE1 (U"0.6 0.8 0.7 0.8 \"\" 40 \"\" \"right\"")
 NORMAL (U"In this case, the two response buttons show either \"path\" and \"path\", or \"dart\" and \"tart\".")
 NORMAL (U"In the ResultsMFC (see @@ExperimentMFC 2.9. How an experiment proceeds@), "
-	"the stimuli will be recorded as \"bpath1|bath|path\" and the like, not just as \"bpath1\". "
+	"the stimuli will be recorded as “bpath1|bath|path” and the like, not just as “bpath1”. "
 	"Praat does this in order to be able to cope with balanced designs such as")
 CODE1 (U"\"bpath1\"  \"|bath|path\"")
 CODE1 (U"\"bpath1\"  \"|path|bath\"")
@@ -646,7 +646,7 @@ MAN_BEGIN (U"ExperimentMFC 6. Responses are sounds", U"ppgb", 20160925)
 INTRO (U"In the @@ExperimentMFC 2.1. The experiment file|example experiment@, "
 	"the stimuli were sounds, and the responses were categories whose labels appeared on buttons. "
 	"Sometimes you want it the other way around.")
-NORMAL (U"An example is the %%/i/ prototype% task: the top of the screen just says \"Please choose the best %ee\", "
+NORMAL (U"An example is the %%/i/ prototype% task: the top of the screen just says “Please choose the best %ee”, "
 	"and no stimulus sound is played. Instead, the participant can click repeatedly on an array of 40 buttons, "
 	"each of which contains a different [i]-like sound. That is, if the participant clicks on a response button, "
 	"an [i]-like sound is played, and every response button has its own sound.")
@@ -704,20 +704,20 @@ CODE (U"numberOfGoodnessCategories = 5")
 	CODE1 (U"0.55 0.65 0.10 0.20 \"4\" 24 \"\"")
 	CODE1 (U"0.65 0.75 0.10 0.20 \"5 (good)\" 24 \"\"")
 NORMAL (U"The participant will see 16 squares on the screen. First she will have to find the best /i/, "
-	"then the best /\\ic/. The sound files ##Sounds/i11.wav# and so on must exist and have the same sampling frequency. "
+	"then the best /\\ic/. The sound files “Sounds/i11.wav” and so on must exist and have the same sampling frequency. "
 	"A silence of 0.3 seconds is played just before each response sound.")
 MAN_END
 
 MAN_BEGIN (U"ExperimentMFC 7. Blanking the screen", U"ppgb", 20130102)
-INTRO (U"In all the earlier examples, the flag %blankWhilePlaying was set to <no>. This means that in all those cases "
+INTRO (U"In all the earlier examples, the flag $%blankWhilePlaying was set to $$<no>$. This means that in all those cases "
 	"the participant will immediately see the response categories when the sound starts playing "
 	"(or even earlier, if there is an initial silence).")
-NORMAL (U"This can be changed by setting %blankWhilePlaying to <yes>. When you do that, the participant will see a blank screen "
+NORMAL (U"This can be changed by setting $%blankWhilePlaying to $$<yes>$. When you do that, the participant will see a blank screen "
 	"while the stimulus is playing, and the response buttons will come up only after the sound has finished. "
 	"This is useful if you want to prevent the participant from clicking before the sound has finished, "
 	"or for priming experiments. Reaction times are measured from when the response buttons appear.")
 NORMAL (U"If you want the response buttons to come up 0.5 seconds after the sound finishes playing, "
-	"you set the %stimulusFinalSilenceDuration to 0.5.")
+	"you set the $%stimulusFinalSilenceDuration to 0.5.")
 MAN_END
 
 MAN_BEGIN (U"ExperimentMFC 8. Running multiple experiments", U"ppgb", 20160925)
@@ -725,7 +725,7 @@ INTRO (U"In all the earlier examples, either the set of stimulus sounds or the s
 	"the same throughout the experiment. If you want more than one set of stimuli, or more than one set of responses, "
 	"you can run several experiments after each other, simply by selecting more than one experiment, then clicking #Run.")
 NORMAL (U"You can put all these ExperimentMFC objects in one text file. The following example contains two experiments. "
-	"The second line has to contain the text \"Collection\", followed by the number of experiments:")
+	"The second line has to contain the text $$\"Collection\"$, followed by the number of experiments:")
 CODE (U"\"ooTextFile\"")
 CODE (U"\"Collection\" 2")
 CODE (U"")
@@ -796,7 +796,7 @@ CODE (U"numberOfDifferentResponses = 6")
 CODE (U"numberOfGoodnessCategories = 0")
 NORMAL (U"In this example, the participant first has to choose the best /i/ from among six [i]-like sounds, "
 	"which are in the sound files ##i1.wav# through ##i6.wav#. After that, she has to choose the best /u/ "
-	"from among six [u]-like sounds, which are in the sound files ##u1.wav# through ##u6.wav#. "
+	"from among six [u]-like sounds, which are in the sound files “u1.wav” through “u6.wav”. "
 	"The percent signs in \\% \\% ee\\%  mean that %ee will be italicized.")
 NORMAL (U"If you read this file with ##Read from file...#, you will see two ExperimentMFC objects, "
 	"named #i and #u. They both stand selected. You then click #Run, and after the participant finishes, "

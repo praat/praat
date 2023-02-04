@@ -1865,13 +1865,13 @@ NORMAL (U"The File menu of the ScriptEditor has a command #Save, "
 NORMAL (U"Please try this with the five-line script you just typed. "
 	"After saving the script, the name of the script file will appear in the window title:")
 SCRIPT (6, 4, U""
-	Manual_DRAW_WINDOW (4, "Script \"/Users/Rose/Desktop/test.praat\"", "File   Edit   Search   Convert   Font   Run   Help")
+	Manual_DRAW_WINDOW (4, "Script “/Users/Rose/Desktop/test.praat”", "File   Edit   Search   Convert   Font   Run   Help")
 	"Courier\n"
-	"Text: 0, \"left\",  75, \"half\", \"\\s{Erase all}\"\n"
-	"Text: 0, \"left\",  90, \"half\", \"\\s{Draw inner box}\"\n"
-	"Text: 0, \"left\", 105, \"half\", \"\\s{Play}\"\n"
-	"Text: 0, \"left\", 120, \"half\", \"\\s{Play}\"\n"
-	"Text: 0, \"left\", 135, \"half\", \"\\s{Erase all}\"\n"
+	"Text: 0, “left”,  75, “half”, “\\s{Erase all}”\n"
+	"Text: 0, “left”,  90, “half”, “\\s{Draw inner box}”\n"
+	"Text: 0, “left”, 105, “half”, “\\s{Play}”\n"
+	"Text: 0, “left”, 120, “half”, “\\s{Play}”\n"
+	"Text: 0, “left”, 135, “half”, “\\s{Erase all}”\n"
 	"Draw rectangle: 0, 560, 0, 360\n"
 )
 NORMAL (U"After you save your script, you can close the ScriptEditor window without losing the script: "
@@ -1900,7 +1900,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 NORMAL (U"In this example, all the settings have their standard values: you want to draw the whole time domain of the Sound, "
 	"you want to have autoscaling vertically, you want to see garnishings around the picture (a box, labelled axes, and numbers), "
 	"and you want the waveform to be drawn as a curve. Pressing the OK button in the above window is equivalent to executing the following script line:")
-CODE (U"Draw: 0, 0, 0, 0, \"yes\", \"Curve\"")
+CODE (U"Draw: 0, 0, 0, 0, “yes”, “Curve”")
 NORMAL (U"You see that in a script, all of the arguments are supplied after the command, preceded by a colon and separated by commas, "
 	"in the same order as in the settings window, counted from top to bottom (and, within a line, from left to right). "
 	"The texts “(= all)” and “(= auto)” above are just Praat’s explanations of what it means to type a zero in those fields "
@@ -1915,7 +1915,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU ("Drawing method", "Poles")
 )
 NORMAL (U"In a script this would look like")
-CODE (U"Draw: 1.0, 3.2, -1, 1, \"no\", \"Poles\"")
+CODE (U"Draw: 1.0, 3.2, -1, 1, “no”, “Poles”")
 ENTRY (U"1. Numeric arguments")
 NORMAL (U"The first four arguments in the above examples are %%numeric arguments%: they are (real or integer) numbers. "
 	"You just write them in the script as you would write them into the settings window.")
@@ -1942,7 +1942,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6.1), U""   // 7 - 3 * 0.3 (three is
 )
 NORMAL (U"In supplying arguments to a command in a script, there is no difference between an option menu and a radio box. "
 	"This last example will therefore again look like the following in a script:")
-CODE (U"Draw: 1.0, 3.2, -1, 1, \"no\", \"Poles\"")
+CODE (U"Draw: 1.0, 3.2, -1, 1, “no”, “Poles”")
 ENTRY (U"4. Text arguments")
 NORMAL (U"Consider another frequently used menu command, namely ##Create Sound from formula...# in the #New menu:")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6.6), U""
@@ -1955,7 +1955,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Formula", "1/2 * sin(2*pi*377*x)")
 )
 NORMAL (U"In a script this would look like:")
-CODE (U"Create Sound from formula: \"sine\", 1, 0.0, 1.0, 44100, \"1/2 * sin(2*pi*377*x)\"")
+CODE (U"Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, “1/2 * sin(2*pi*377*x)”")
 NORMAL (U"Both the first argument (#Name) and the sixth argument (#Formula) are %%text arguments%. "
 	"In a script they are written within quotes.")
 ENTRY (U"5. Formula arguments")
@@ -1975,7 +1975,7 @@ NORMAL (U"The required doubling of string-internal double quotes is awkward. "
 	"Therefore, there exists a special way for typing formula arguments, namely with the tilde (\"~\"):")
 CODE (UR"~~~(Formula: "correct", ~ self\$  ["response"] = self\$  ["stimulus"]")~~~")
 NORMAL (U"This means that you can write the example of section 4 in an analogous way:")
-CODE (U"Create Sound from formula: \"sine\", 1, 0.0, 1.0, 44100, ~ 1/2 * sin(2*pi*377*x)")
+CODE (U"Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 1/2 * sin(2*pi*377*x)")
 NORMAL (U"The tilde is probably the preferred way to write formula arguments. "
 	"You should remember, however, that the result is still a string (i.e. text), "
 	"and you can treat it as a string with the string methods described later on in this tutorial.")
@@ -1990,35 +1990,35 @@ NORMAL (U"A complete path includes both the folder (directory) hierarchy and the
 	"and your home folder contains a folder #Sounds, "
 	"and this folder contains a folder #Animals, and this contains the file ##miauw.wav#, "
 	"you can open that file as follows:")
-CODE (U"Read from file: \"C:/Users/Miep/Sounds/Animals/miauw.wav\"   ; Windows")
-CODE (U"Read from file: \"/Users/Miep/Sounds/Animals/miauw.wav\"   ; Mac")
-CODE (U"Read from file: \"/home/miep/Sounds/Animals/miauw.wav\"   ; Linux")
+CODE (U"Read from file: “C:/Users/Miep/Sounds/Animals/miauw.wav”   ; Windows")
+CODE (U"Read from file: “/Users/Miep/Sounds/Animals/miauw.wav”   ; Mac")
+CODE (U"Read from file: “/home/miep/Sounds/Animals/miauw.wav”   ; Linux")
 NORMAL (U"(the part before your user name may be slightly different on your computer; "
 	"use your command or terminal window to find out)")
 NORMAL (U"In these examples, “C” is the Windows %%drive letter% and "
 	"##/Users/Miep# or ##/home/Miep# is your %%home folder%. Both the home folder and the drive letter "
 	"can be abbreviated away by using the tilde (“~”) in the path "
 	"(this tilde has nothing to do with the tilde used in formula arguments):")
-CODE (U"Read from file: \"~/Sounds/Animals/miauw.wav\"")
+CODE (U"Read from file: “~/Sounds/Animals/miauw.wav”")
 NORMAL (U"If your #Sounds folder is not in your home folder but on your desktop, you do")
-CODE (U"Read from file: \"~/Desktop/Sounds/Animals/miauw.wav\"")
+CODE (U"Read from file: “~/Desktop/Sounds/Animals/miauw.wav”")
 NORMAL (U"(this works because on all three platforms, the desktop folder is a subfolder of your home folder)")
 NORMAL (U"If your Sounds folder is on a USB drive called PORCH, it would be something like:")
-CODE (U"Read from file: \"G:/Sounds/Animals/miauw.wav\"   ; Windows")
-CODE (U"Read from file: \"/Volumes/PORCH/Sounds/Animals/miauw.wav\"   ; Mac")
-CODE (U"Read from file: \"/media/PORCH/Sounds/Animals/miauw.wav\"   ; Linux")
+CODE (U"Read from file: “G:/Sounds/Animals/miauw.wav”   ; Windows")
+CODE (U"Read from file: “/Volumes/PORCH/Sounds/Animals/miauw.wav”   ; Mac")
+CODE (U"Read from file: “/media/PORCH/Sounds/Animals/miauw.wav”   ; Linux")
 NORMAL (U"Instead of all these complete path names, you can use %relative path names. "
 	"These are taken as relative to the folder in which your script resides, "
 	"and help to make your script portable if you move the script along with your data.")
 NORMAL (U"Thus, if your script (after you have saved it!) is in the #Animals folder mentioned above, "
 	"i.e. in the same folder as ##miauw.wav#, you would simply open the file with")
-CODE (U"Read from file: \"miauw.wav\"")
+CODE (U"Read from file: “miauw.wav”")
 NORMAL (U"If your script is in the #Sounds folder mentioned above, "
 	"i.e. in the same folder as where the #Animals folder is, you would open the file with")
-CODE (U"Read from file: \"Animals/miauw.aifc\"")
+CODE (U"Read from file: “Animals/miauw.aifc”")
 NORMAL (U"If your script is in the folder #Scripts that is inside the #Sounds folder, "
 	"i.e. if your script is a sister folder of the #Animals folder, you would open the file with")
-CODE (U"Read from file: \"../Animals/miauw.aifc\"")
+CODE (U"Read from file: “../Animals/miauw.aifc”")
 NORMAL (U"where “..” is the general way on all platforms to go one folder up in the hierarchy.")
 NORMAL (U"Note that on Windows you could use the backslash (“\\bs”) instead of the forward slash (“/”), "
 	"but with the forward slash your script will work on all three platforms.")
@@ -2034,7 +2034,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("To y", "1.0")
 )
 NORMAL (U"For the colour, you can supply, as text, one of the 16 explicit names that also appear in the Pen menu:")
-CODE (U"Paint rectangle: \"maroon\", 0.0, 1.0, 0.0, 1.0")
+CODE (U"Paint rectangle: “maroon”, 0.0, 1.0, 0.0, 1.0")
 NORMAL (U"Alternatively, you can supply a grey value, as a number between 0.0 (black) and 1.0 (white). The following produces a very light grey:")
 CODE (U"Paint rectangle: 0.9, 0.0, 1.0, 0.0, 1.0")
 NORMAL (U"Finally, you can supply an explicit RGB (red\\--green\\--blue) value, as a “vector” of three numbers between 0.0 and 1.0. "
@@ -2071,18 +2071,18 @@ MAN_END
 	"Select inner viewport: 0.2, 5.8, 0.8, 0.8+worldHeight\n" \
 	"Axes: 0, 5.6, worldHeight, 0\n" \
 	"vpLeft = " #vpLeft "\nvpRight = " #vpRight "\nvpTop = " #vpTop "\nvpBottom = " #vpBottom "\n" \
-	"Paint rectangle: \"Pink\", vpLeft, vpRight, vpTop, vpBottom\n" \
-	"Paint rectangle: \"White\", vpLeft+0.69, vpRight-0.69, vpTop+0.46, vpBottom-0.46\n" \
+	"Paint rectangle: “Pink”, vpLeft, vpRight, vpTop, vpBottom\n" \
+	"Paint rectangle: “White”, vpLeft+0.69, vpRight-0.69, vpTop+0.46, vpBottom-0.46\n" \
 	"Yellow\n" \
 	"Draw line: 3, 0, 3, worldHeight\n" \
 	"for i to worldHeight/3\n" \
 	"   Draw line: 0, i*3, 5.6, i*3\n" \
 	"Red\n" \
 	"for i to 5\n" \
-	"   Text special: i, \"centre\", 0, \"top\", \"Helvetica\", fontSize/1.2, \"0\", string$(i)\n" \
+	"   Text special: i, “centre”, 0, “top”, “Helvetica”, fontSize/1.2, “0”, string$(i)\n" \
 	"endfor\n" \
 	"for i to worldHeight\n" \
-	"   Text special: 0, \"left\", i, \"half\", \"Helvetica\", fontSize/1.2, \"0\", string$(i)\n" \
+	"   Text special: 0, “left”, i, “half”, “Helvetica”, fontSize/1.2, “0”, string$(i)\n" \
 	"endfor\n" \
 	"Black\n" \
 	"Draw line: 0, 0, 5.6, 0\n" \
@@ -2094,44 +2094,44 @@ NORMAL (U"For the Praat scripting language, there are two answers.")
 ENTRY (U"1. “Hello world” in the Info window")
 NORMAL (U"The simplest answer is that you open the ScriptEditor window with ##New Praat script# from the #Praat menu, "
 	"then type the following line into the ScriptEditor window:")
-CODE (U"writeInfoLine: \"Hello world\"")
+CODE (U"writeInfoLine: “Hello world”")
 NORMAL (U"and finally choose #Run from the #Run menu.")
 NORMAL (U"When you try this, the result should be that the Info window comes to the front, and that it shows the text $$Hello world$:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{Hello world}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{Hello world}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 NORMAL (U"Now suppose that you to write two lines instead of just one, so you try a script with two lines:")
-CODE (U"writeInfoLine: \"Hello world\"")
-CODE (U"writeInfoLine: \"How do you do?\"")
-NORMAL (U"This turns out not to do what you want: it seems to write only the text $$How do you do?$. "
+CODE (U"writeInfoLine: “Hello world”")
+CODE (U"writeInfoLine: “How do you do?”")
+NORMAL (U"This turns out not to do what you want: it seems to write only the text “How do you do?”. "
 	"This happens because the #writeInfoLine function first erases the Info window, then writes the line of text. "
-	"So the first line of the script did write the text $$Hello world$, but the second line wiped it out "
-	"and wrote $$How do you do?$ instead. The script that does what you want is")
-CODE (U"writeInfoLine: \"Hello world\"")
-CODE (U"appendInfoLine: \"How do you do?\"")
+	"So the first line of the script did write the text “Hello world”, but the second line wiped it out "
+	"and wrote “How do you do?” instead. The script that does what you want is")
+CODE (U"writeInfoLine: “Hello world”")
+CODE (U"appendInfoLine: “How do you do?”")
 NORMAL (U"Now the result will be")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{Hello world}\"\n"
-	"Text: 0, \"left\", 90, \"half\", \"\\s{How do you do?}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{Hello world}”\n"
+	"Text: 0, “left”, 90, “half”, “\\s{How do you do?}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 NORMAL (U"This works because #appendInfoLine writes a line without erasing the Info window first.")
 NORMAL (U"Finally, try the following script:")
-CODE (U"appendInfoLine: \"Another try\"")
-CODE (U"appendInfoLine: \"Goodbye\"")
+CODE (U"appendInfoLine: “Another try”")
+CODE (U"appendInfoLine: “Goodbye”")
 NORMAL (U"The result could be")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{Hello world}\"\n"
-	"Text: 0, \"left\", 90, \"half\", \"\\s{How do you do?}\"\n"
-	"Text: 0, \"left\", 105, \"half\", \"\\s{Another try}\"\n"
-	"Text: 0, \"left\", 120, \"half\", \"\\s{Goodbye}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{Hello world}”\n"
+	"Text: 0, “left”, 90, “half”, “\\s{How do you do?}”\n"
+	"Text: 0, “left”, 105, “half”, “\\s{Another try}”\n"
+	"Text: 0, “left”, 120, “half”, “\\s{Goodbye}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 NORMAL (U"In other words, #appendInfoLine writes lines into the Info window without erasing it, even if you run a script anew. "
@@ -2141,14 +2141,14 @@ ENTRY (U"2. “Hello world” in the Picture window.")
 NORMAL (U"You can also show text in the Picture window. If you are an experienced Praat user, you have probably used the comamnd ##Text top...# before. "
 	"You can use it do draw a text at the top of the current %viewport, which is the part of the Picture window where the next drawing will occur "
 	"and which is marked by the pink %margins. Thus, when you select the top 4\\xx3 inches of the Picture window (with the mouse), "
-	"set the font size to 12 (with the #Pen menu), and run the script")
-CODE (U"Text top: \"yes\", \"Hello world\"")
+	"set the font size to 12 (with the Pen menu), and run the script")
+CODE (U"Text top: “yes”, “Hello world”")
 NORMAL (U"then you’ll see")
 SCRIPT (6, 4.5, U""
 	Manual_DRAW_PICTURE_WINDOW (4.5, 0,4,0,3)
 	"Select outer viewport: 0.2, 4.2, 0.8, 12\n" \
 	"Times\n" \
-	"Text top: \"yes\", \"Hello world\"\n" \
+	"Text top: “yes”, “Hello world”\n" \
 	"Select inner viewport: 0.2, 5.8, 0.2, 4.3\n"\
 	"Axes: 0, 1, 0, 1\n" \
 	"Draw rectangle: 0, 1, 0, 1\n"
@@ -2160,14 +2160,14 @@ CODE (U"Erase all")
 CODE (U"Times")
 CODE (U"Font size: 12")
 CODE (U"Select outer viewport: 0, 4, 0, 3")
-CODE (U"Text top: \"yes\", \"Hello world\"")
+CODE (U"Text top: “yes”, “Hello world”")
 NORMAL (U"In this script, line 1 erases the Picture window, so that nothing besides your text can appear in the Picture window.")
 NORMAL (U"Line 2 executes the command #Times from the #Font menu, so that the script will always draw the text in Times, "
-	"even if you choose #Helvetica in the #Font menu with the mouse before you run the script "
-	"(after the script has run, you’ll see that #Times is chosen in the #Font menu).")
+	"even if you choose #Helvetica in the Font menu with the mouse before you run the script "
+	"(after the script has run, you’ll see that #Times is chosen in the Font menu).")
 NORMAL (U"Line 3 executes the command ##Font size...# from the #Font menu, setting the font size to 12 and setting the width of the pink margins "
 	"accordingly.")
-NORMAL (U"Line 4 executes the command @@Select outer viewport...@ from the #Select menu. "
+NORMAL (U"Line 4 executes the command @@Select outer viewport...@ from the Select menu. "
 	"This performs an action that you would normally do by dragging the mouse, "
 	"namely selecting the part of the Picture window that runs from 0 to 4 inches horizontally "
 	"and from 0 to 3 inches vertically. After running the script, "
@@ -2249,7 +2249,7 @@ NORMAL (U"When you click OK, something like the following will appear in the Inf
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{0.1350605005239421 Pa2}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{0.1350605005239421 Pa2}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 NORMAL (U"This is the mean power of the whole Sound.")
@@ -2266,7 +2266,7 @@ NORMAL (U"The second line then reports the value in the Info window, this time w
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{The power of this sound is 0.1350605005239421 Pascal-squared.}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{The power of this sound is 0.1350605005239421 Pascal-squared.}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 MAN_END
@@ -2274,22 +2274,22 @@ MAN_END
 MAN_BEGIN (U"Scripting 3.4. String variables", U"ppgb", 20130411)
 INTRO (U"Just as you can store @@Scripting 3.2. Numeric variables|numeric variables@, "
 	"you can store %%string variables%, which contain text instead of numbers. Here is an example:")
-CODE (U"word1\\$  = \"Hello\"")
-CODE (U"word2\\$  = \"world\"")
-CODE (U"sentence\\$  = word1\\$  + \" \" + word2\\$ ")
-CODE (U"writeInfoLine: \"The whole sentence is: \", sentence\\$ ")
+CODE (U"%%word1\\$ % = “Hello”")
+CODE (U"%%word2\\$ % = “world”")
+CODE (U"%%sentence\\$ % = %%word1\\$ % + “ ” + %%word2\\$ %")
+CODE (U"writeInfoLine: “The whole sentence is: ”, %%sentence\\$ %")
 NORMAL (U"Yes, this is another way to get the sentence $$Hello world$ into the Info window. "
 	"It's a more linguistically valid way to do it, and here is how it works:")
-LIST_ITEM (U"1. In line 1, the value \"Hello\", which is a text (as we can see by its use of quotes), "
+LIST_ITEM (U"1. In line 1, the value “Hello”, which is a text (as we can see by its use of quotes), "
 	"is stored into the variable $$word1\\$ $, which is a string variable (as we can see because its name ends in a dollar sign).")
-LIST_ITEM (U"2. In line 2, the text value \"world\" is stored into the string variable $$word2\\$ $.")
-LIST_ITEM (U"3. In line 3, we have the formula $$word1\\$  + \" \" + word2\\$ $, which contains two variables, "
-	"namely $$word1\\$ $ and $$word2\\$ $.")
-LIST_ITEM (U"4. The values of the two variables are \"Hello\" and \"world\", respectively, "
-	"so what the formula actually says is \"Hello\" + \" \" + \"world\".")
-LIST_ITEM (U"5. The pluses in the formula mean \"concatenate\", so we concatenate the three strings "
-	"\"Hello\", \" \", and \"world\", giving the longer string \"Hello world\".")
-LIST_ITEM (U"6. Still in line 3, the string value \"Hello world\" is assigned to the string variable $$sentence\\$ $.")
+LIST_ITEM (U"2. In line 2, the text value “world” is stored into the string variable $$word2\\$ $.")
+LIST_ITEM (U"3. In line 3, we have the formula $$%%word1\\$ % + “ ” + %%word2\\$ %$, which contains two variables, "
+	"namely $$%%word1\\$ %$ and $$%%word2\\$ %$.")
+LIST_ITEM (U"4. The values of the two variables are “Hello” and “world”, respectively, "
+	"so what the formula actually says is “Hello” + “ ” + “world”.")
+LIST_ITEM (U"5. The pluses in the formula mean “concatenate”, so we concatenate the three strings "
+	"“Hello”, “ ”, and “world”, giving the longer string “Hello world”.")
+LIST_ITEM (U"6. Still in line 3, the string value “Hello world” is assigned to the string variable $$%%sentence\\$ %$.")
 LIST_ITEM (U"7. Line 4 reports in the Info window: $$The whole sentence is: Hello world$")
 MAN_END
 
@@ -2307,7 +2307,7 @@ NORMAL (U"When you click OK, and interval 3 of tier 1 happens to contain the tex
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{hello}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{hello}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 NORMAL (U"In a script, you will want to put the result of the query in a string variable instead of in the Info window, "
@@ -2319,10 +2319,10 @@ NORMAL (U"The script first stores the text of the interval, i.e. $$hello$, into 
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{The text in interval 3 of tier 1 is: hello}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{The text in interval 3 of tier 1 is: hello}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
-NORMAL (U"Hey, yet another way to implement \"Hello world\" with the Praat scripting language!")
+NORMAL (U"Hey, yet another way to implement “Hello world” with the Praat scripting language!")
 ENTRY (U"The difference between numeric queries and string queries")
 NORMAL (U"A string query stores in a string variable the whole text that would appear in the Info window. "
 	"For instance, the script")
@@ -2332,7 +2332,7 @@ NORMAL (U"could give you the following result:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{0.1350605005239421 Pa2}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{0.1350605005239421 Pa2}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 NORMAL (U"A numeric query stores in a numeric variable only the first number that it can find in the text that would appear in the Info window. "
@@ -2343,7 +2343,7 @@ NORMAL (U"could give you the following result:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{0.1350605005239421}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{0.1350605005239421}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 MAN_END
@@ -2354,27 +2354,27 @@ NORMAL (U"Take the example of the @@Scripting 3.5. String queries|previous page@
 	"whereas you wanted to know the text in the third interval of the first tier of a selected TextGrid. "
 	"It’s easy to imagine that you actually want the texts of %%all the first five% intervals. "
 	"With knowledge from the previous sections, you could write it like this:")
-CODE (U"writeInfoLine: \"The texts in the first five intervals:\"")
-CODE (U"text\\$  = Get label of interval: 1, 1")
-CODE (U"appendInfoLine: \"Interval 1: \", text\\$ ")
-CODE (U"text\\$  = Get label of interval: 1, 2")
-CODE (U"appendInfoLine: \"Interval 2: \", text\\$ ")
-CODE (U"text\\$  = Get label of interval: 1, 3")
-CODE (U"appendInfoLine: \"Interval 3: \", text\\$ ")
-CODE (U"text\\$  = Get label of interval: 1, 4")
-CODE (U"appendInfoLine: \"Interval 4: \", text\\$ ")
-CODE (U"text\\$  = Get label of interval: 1, 5")
-CODE (U"appendInfoLine: \"Interval 5: \", text\\$ ")
+CODE (U"writeInfoLine: “The texts in the first five intervals:”")
+CODE (U"%%text\\$ % = Get label of interval: 1, 1")
+CODE (U"appendInfoLine: “Interval 1: ”, %%text\\$ %")
+CODE (U"%%text\\$ % = Get label of interval: 1, 2")
+CODE (U"appendInfoLine: “Interval 2: ”, %%text\\$ %")
+CODE (U"%%text\\$ % = Get label of interval: 1, 3")
+CODE (U"appendInfoLine: “Interval 3: ”, %%text\\$ %")
+CODE (U"%%text\\$ % = Get label of interval: 1, 4")
+CODE (U"appendInfoLine: “Interval 4: ”, %%text\\$ %")
+CODE (U"%%text\\$ % = Get label of interval: 1, 5")
+CODE (U"appendInfoLine: “Interval 5: ”, %%text\\$ %")
 NORMAL (U"The result will be something like")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{The texts in the first five intervals:}\"\n"
-	"Text: 0, \"left\", 90, \"half\", \"\\s{Interval 1: I}\"\n"
-	"Text: 0, \"left\", 105, \"half\", \"\\s{Interval 2: say}\"\n"
-	"Text: 0, \"left\", 120, \"half\", \"\\s{Interval 3: hello}\"\n"
-	"Text: 0, \"left\", 135, \"half\", \"\\s{Interval 4: and}\"\n"
-	"Text: 0, \"left\", 150, \"half\", \"\\s{Interval 5: you}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{The texts in the first five intervals:}”\n"
+	"Text: 0, “left”, 90, “half”, “\\s{Interval 1: I}”\n"
+	"Text: 0, “left”, 105, “half”, “\\s{Interval 2: say}”\n"
+	"Text: 0, “left”, 120, “half”, “\\s{Interval 3: hello}”\n"
+	"Text: 0, “left”, 135, “half”, “\\s{Interval 4: and}”\n"
+	"Text: 0, “left”, 150, “half”, “\\s{Interval 5: you}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 NORMAL (U"This can be done more nicely. The first step is to realize that the sentences starting with $$text\\$ $ are similar to each other, "
@@ -2402,7 +2402,7 @@ NORMAL (U"A new trick that you see here is that as a numeric argument (##Interva
 	"The rest of the script should be known stuff by now.")
 NORMAL (U"The script above is long, but it can be made much shorter with the use of a %%for-loop%:")
 CODE (U"writeInfoLine: “The texts in the first five intervals:”")
-CODE (U"for intervalNumber from 1 to 5")
+CODE (U"for %intervalNumber from 1 to 5")
 	CODE1 (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
 	CODE1 (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
 CODE (U"endfor")
@@ -2425,14 +2425,14 @@ NORMAL (U"This may yield something like")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
-	"Text: 0, \"left\", 75, \"half\", \"\\s{The texts in all 7 intervals:}\"\n"
-	"Text: 0, \"left\", 90, \"half\", \"\\s{Interval 1: I}\"\n"
-	"Text: 0, \"left\", 105, \"half\", \"\\s{Interval 2: say}\"\n"
-	"Text: 0, \"left\", 120, \"half\", \"\\s{Interval 3: hello}\"\n"
-	"Text: 0, \"left\", 135, \"half\", \"\\s{Interval 4: and}\"\n"
-	"Text: 0, \"left\", 150, \"half\", \"\\s{Interval 5: you}\"\n"
-	"Text: 0, \"left\", 165, \"half\", \"\\s{Interval 6: say}\"\n"
-	"Text: 0, \"left\", 180, \"half\", \"\\s{Interval 7: goodbye}\"\n"
+	"Text: 0, “left”, 75, “half”, “\\s{The texts in all 7 intervals:}”\n"
+	"Text: 0, “left”, 90, “half”, “\\s{Interval 1: I}”\n"
+	"Text: 0, “left”, 105, “half”, “\\s{Interval 2: say}”\n"
+	"Text: 0, “left”, 120, “half”, “\\s{Interval 3: hello}”\n"
+	"Text: 0, “left”, 135, “half”, “\\s{Interval 4: and}”\n"
+	"Text: 0, “left”, 150, “half”, “\\s{Interval 5: you}”\n"
+	"Text: 0, “left”, 165, “half”, “\\s{Interval 6: say}”\n"
+	"Text: 0, “left”, 180, “half”, “\\s{Interval 7: goodbye}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
 NORMAL (U"This is the first script in this tutorial that is useful in itself. On the basis of it "
@@ -2514,7 +2514,7 @@ NORMAL (U"Suppose you start Praat and use ##Create Sound as tone...# to create a
 CODE (U"#selectObject: 1")
 CODE (U"Play")
 NORMAL (U"or")
-CODE (U"#selectObject: \"Sound tone\"")
+CODE (U"#selectObject: “Sound tone”")
 CODE (U"Play")
 NORMAL (U"So you can select an object either by its unique ID (identifier: the unique number by which it appears in the list) "
 	"or by name.")
@@ -2523,41 +2523,41 @@ NORMAL (U"The function #selectObject works by first deselecting all objects, and
 	"When the Sound is selected, you can select the Spectrum as well by doing")
 CODE (U"#plusObject: 2")
 NORMAL (U"or")
-CODE (U"#plusObject: \"Spectrum tone\"")
+CODE (U"#plusObject: “Spectrum tone”")
 NORMAL (U"If you then want to deselect the Sound, and keep the Spectrum selected, you can do")
 CODE (U"#minusObject: 1")
 NORMAL (U"or")
-CODE (U"#minusObject: \"Sound tone\"")
+CODE (U"#minusObject: “Sound tone”")
 NORMAL (U"All these functions can take more than one argument. To select the Sound and the Spectrum together, you can do")
 CODE (U"#selectObject: 1, 2")
 NORMAL (U"or")
-CODE (U"#selectObject: \"Sound tone\", \"Spectrum tone\"")
+CODE (U"#selectObject: “Sound tone”, “Spectrum tone”")
 NORMAL (U"or even")
-CODE (U"#selectObject: 1, \"Spectrum tone\"")
+CODE (U"#selectObject: 1, “Spectrum tone”")
 NORMAL (U"or, using a numeric vector:")
-CODE (U"myObjects\\#  = { 1, 2 }")
-CODE (U"#selectObject: myObjects\\# ")
+CODE (U"%%myObjects\\# % = { 1, 2 }")
+CODE (U"#selectObject: %%myObjects\\# %")
 ENTRY (U"How to refer to objects created in your script")
 NORMAL (U"In a script, you typically don't know whether the IDs of the objects are 1 and 2, or much higher numbers. "
 	"Fortunately, commands that create a new object give you the ID of the object that is created, "
 	"so that you can refer to the object later on. For instance, suppose you want to generate a sine wave, play it, "
 	"draw its spectrum, and then throw away both the Sound and the Spectrum. Here is how you do it:")
-CODE (U"sound = Create Sound as pure tone: \"sine377\",")
+CODE (U"%sound = Create Sound as pure tone: “sine377”,")
 CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
 CODE (U"Play   ; the Sound is selected, so it plays")
-CODE (U"To Spectrum: \"yes\"")
-CODE (U"Draw: 0, 5000, 20, 80, \"yes\"   ; the Spectrum is selected, so it is drawn")
+CODE (U"To Spectrum: “yes”")
+CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
 CODE (U"\\#  Remove the created Spectrum and Sound:")
 CODE (U"#plusObject: sound   ; the Spectrum was already selected")
 CODE (U"Remove")
 NORMAL (U"You could also select the objects by name:")
-CODE (U"Create Sound as pure tone: \"sine377\",")
+CODE (U"Create Sound as pure tone: “sine377”,")
 CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; no need to remember the ID of the Sound")
 CODE (U"Play   ; the Sound is selected, so it plays")
-CODE (U"To Spectrum: \"yes\"")
-CODE (U"Draw: 0, 5000, 20, 80, \"yes\"   ; the Spectrum is selected, so it is drawn")
+CODE (U"To Spectrum: “yes”")
+CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
 CODE (U"\\#  Remove the created Spectrum and Sound:")
-CODE (U"#plusObject: \"Sound sine377\"   ; the Spectrum was already selected")
+CODE (U"#plusObject: “Sound sine377”   ; the Spectrum was already selected")
 CODE (U"Remove")
 NORMAL (U"This works even if there are multiple objects called “Sound sine377”, "
 	"because if there are more objects with the same name, #selectObject and #plusObject select the most recently created one, "
@@ -2567,27 +2567,27 @@ MAN_END
 MAN_BEGIN (U"Scripting 4.2. Removing objects", U"ppgb", 20140111)
 NORMAL (U"In @@Scripting 4.1. Selecting objects|\\SS4.1@ we saw that objects could be removed by selecting them first and then calling the #Remove command. "
 	"A faster way is the #removeObject function, which can also remove unselected objects:")
-CODE (U"sound = Create Sound as pure tone: \"sine377\",")
+CODE (U"%sound = Create Sound as pure tone: “sine377”,")
 CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
 CODE (U"Play   ; the Sound is selected, so it plays")
-CODE (U"spectrum = To Spectrum: \"yes\"   ; remember the ID of the Spectrum")
-CODE (U"Draw: 0, 5000, 20, 80, \"yes\"   ; the Spectrum is selected, so it is drawn")
+CODE (U"%spectrum = To Spectrum: “yes”   ; remember the ID of the Spectrum")
+CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
 CODE (U"\\#  Remove the created Spectrum and Sound:")
-CODE (U"#removeObject: sound, spectrum   ; remove one selected and one unselected object")
+CODE (U"#removeObject: %sound, %spectrum   ; remove one selected and one unselected object")
 NORMAL (U"The #removeObject function keeps the objects selected that were selected before "
 	"(except of course the ones it throws away). "
 	"This allows you to easily throw away objects as soon as you no longer need them:")
-CODE (U"sound = Create Sound as pure tone: \"sine377\",")
+CODE (U"%sound = Create Sound as pure tone: “sine377”,")
 CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
 CODE (U"Play   ; the Sound is selected, so it plays")
-CODE (U"spectrum = To Spectrum: \"yes\"")
-CODE (U"#removeObject: sound   ; we no longer need the Sound, so we remove it")
-CODE (U"Draw: 0, 5000, 20, 80, \"yes\"   ; the Spectrum is still selected, so it is drawn")
-CODE (U"#removeObject: spectrum   ; remove the last object created by the script")
+CODE (U"%spectrum = To Spectrum: “yes”")
+CODE (U"#removeObject: %sound   ; we no longer need the Sound, so we remove it")
+CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is still selected, so it is drawn")
+CODE (U"#removeObject: %spectrum   ; remove the last object created by the script")
 ENTRY (U"Selecting and removing all objects from the list (don't)")
-NORMAL (U"A very strange command, which you should not normally use, is ##select all#:")
-CODE1 (U"##select all")
-CODE1 (U"Remove")
+NORMAL (U"A very strange command, which you should not normally use, is $$select all$:")
+	CODE1 (U"##select all")
+	CODE1 (U"Remove")
 NORMAL (U"This selects all objects in the list and then removes them. "
 	"Please try not to use this, because it will remove even the objects that your script did not create! "
 	"After all, you don’t want the users of your script to lose the objects they created! "
@@ -2599,54 +2599,54 @@ MAN_BEGIN (U"Scripting 4.3. Querying objects", U"ppgb", 20180427)
 NORMAL (U"You can get the name of a selected object into a string variable. "
 	"For instance, the following reads the name of the second selected Sound "
 	"(as counted from the top of the list of objects) into the variable %name\\$ :")
-CODE (U"name\\$  = ##selected\\$ # (\"Sound\", 2)")
-NORMAL (U"If the Sound was called \"Sound hallo\", the variable %name\\$  will contain the string \"hallo\". "
+CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”, 2)")
+NORMAL (U"If the Sound was called “Sound hallo”, the variable $$%%name\\$ %$ will contain the string “hallo”. "
 	"To get the name of the topmost selected Sound object, you can leave out the number:")
-CODE (U"name\\$  = ##selected\\$ # (\"Sound\")")
+CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”)")
 NORMAL (U"To get the full name (type + name) of the third selected object, you do:")
-CODE (U"fullName\\$  = ##selected\\$ # (3)")
+CODE (U"%%fullName\\$ % = ##selected\\$ # (3)")
 NORMAL (U"To get the full name of the topmost selected object, you do:")
-CODE (U"fullName\\$  = ##selected\\$ # ()")
+CODE (U"%%fullName\\$ % = ##selected\\$ # ()")
 NORMAL (U"To get the type and name out of the full name, you do:")
-CODE (U"type\\$  = extractWord\\$  (fullName\\$ , \"\")")
-CODE (U"name\\$  = extractLine\\$  (fullName\\$ , \" \")")
+CODE (U"%%type\\$ % = extractWord\\$  (%%fullName\\$ %, “”)")
+CODE (U"%%name\\$ % = extractLine\\$  (%%fullName\\$ %, “ ”)")
 NORMAL (U"Negative numbers count from the bottom. Thus, to get the name of the bottom-most selected Sound "
 	"object, you say")
-CODE (U"name\\$  = ##selected\\$ # (\"Sound\", -1)")
-NORMAL (U"You would use ##selected\\$ # for drawing the object name in a picture:")
+CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”, -1)")
+NORMAL (U"You would use $$selected\\$ ()$$ for drawing the object name in a picture:")
 CODE (U"Draw: 0, 0, 0, 0, \"yes\"")
-CODE (U"name\\$  = ##selected\\$ # (\"Sound\")")
-CODE (U"Text top: \"no\", \"This is sound \" + name\\$ ")
+CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”)")
+CODE (U"Text top: “no”, “This is sound ” + %%name\\$ %")
 NORMAL (U"For identifying previously selected objects, this method is not very suitable, since "
 	"there may be multiple objects with the same name:")
 CODE (U"\\#  The following two lines are OK:")
-CODE (U"soundName\\$  = ##selected\\$ # (\"Sound\", -1)")
-CODE (U"pitchName\\$  = ##selected\\$ # (\"Pitch\")")
+CODE (U"%%soundName\\$ % = ##selected\\$ # (“Sound”, -1)")
+CODE (U"%%pitchName\\$ % = ##selected\\$ # (“Pitch”)")
 CODE (U"\\#  But the following line is questionable, since it doesn't")
 CODE (U"\\#  necessarily select the previously selected Pitch again:")
-CODE (U"#selectObject: \"Pitch \" + pitchName\\$ ")
-NORMAL (U"Instead of this error-prone approach, you should get the object's unique ID. "
+CODE (U"#selectObject: “Pitch ” + %%pitchName\\$ %")
+NORMAL (U"Instead of this error-prone approach, you should get the object’s unique ID. "
 	"The correct version of our example becomes:")
-CODE (U"sound = #selected (\"Sound\", -1)")
-CODE (U"pitch = #selected (\"Pitch\")")
+CODE (U"%sound = #selected (“Sound”, -1)")
+CODE (U"%pitch = #selected (“Pitch”)")
 CODE (U"\\#  Correct:")
-CODE (U"#selectObject: pitch")
+CODE (U"#selectObject: %pitch")
 NORMAL (U"To get the number of selected Sound objects into a variable, use")
-CODE (U"numberOfSelectedSounds = #numberOfSelected (\"Sound\")")
+CODE (U"%numberOfSelectedSounds = #numberOfSelected (“Sound”)")
 NORMAL (U"To get the number of selected objects into a variable, use")
-CODE (U"numberOfSelectedObjects = #numberOfSelected ()")
+CODE (U"%numberOfSelectedObjects = #numberOfSelected ()")
 ENTRY (U"Example: doing something to every selected Sound")
-CODE (U"sounds\\#  = ##selected\\# # (\"Sound\")")
+CODE (U"%%sounds\\# % = ##selected\\# # (“Sound”)")
 CODE (U"\\#  Median pitches of all selected sounds:")
-CODE (U"#for i to size (sounds\\# )")
-	CODE1 (U"#selectObject: sounds\\#  [i]")
+CODE (U"#for %i to size (%%sounds\\# %)")
+	CODE1 (U"#selectObject: %%sounds\\# % [%i]")
 	CODE1 (U"To Pitch: 0.0, 75, 600")
-	CODE1 (U"f0 = Get quantile: 0, 0, 0.50, \"Hertz\"")
-	CODE1 (U"appendInfoLine: f0")
+	CODE1 (U"%f0 = Get quantile: 0, 0, 0.50, “Hertz”")
+	CODE1 (U"appendInfoLine: %f0")
 	CODE1 (U"Remove")
 CODE (U"#endfor")
 CODE (U"\\#  Restore selection:")
-CODE (U"#selectObject (sounds\\# )")
+CODE (U"#selectObject (%%sounds\\# %)")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20170718)
@@ -2672,17 +2672,17 @@ ENTRY (U"Numeric variables")
 NORMAL (U"Numeric variables can hold integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
 	"or real numbers between -10^^308^ and +10^^308^. The smallest numbers lie near -10^^-308^ and +10^^-308^.")
 NORMAL (U"You use numeric variables in your script like this:")
-CODE (U"#length = 10")
-CODE (U"Draw line: 0, #length, 1, 1")
+CODE (U"#%length = 10")
+CODE (U"Draw line: 0, #%length, 1, 1")
 NORMAL (U"This draws a line in the Picture window from position (0, 10) to position (1, 1). "
-	"In the first line, you assign the value 10 to the variable called %length, "
-	"and in the second line you use the value of %length as the second argument to the command \"Draw line...\".")
+	"In the first line, you assign the value 10 to the variable called $%length, "
+	"and in the second line you use the value of $%length as the second argument to the command ##Draw line...#.")
 NORMAL (U"Names of numeric variables must start with a lower-case letter, optionally followed by a sequence "
 	"of letters, digits, and underscores.")
 ENTRY (U"String variables")
 NORMAL (U"You use string variables, which contain text, as follows:")
-CODE (U"##title\\$ # = \"Dutch nasal place assimilation\"")
-CODE (U"Text top: \"yes\", ##title\\$ #")
+CODE (U"%%##title\\$ #% = “Dutch nasal place assimilation”")
+CODE (U"Text top: “yes”, ##%%title\\$ %#")
 NORMAL (U"This writes the text \"Dutch nasal place assimilation\"")
 NORMAL (U"As in the programming language Basic, the names of string variables end in a dollar sign.")
 ENTRY (U"Making numeric variables visible")
@@ -2753,7 +2753,7 @@ NORMAL (U"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, a
 	"Finally, we have $$praatVersion\\$ $, which is “" stringize(PRAAT_VERSION_STR) "” for the current version of Praat.")
 ENTRY (U"Functions that handle variables")
 NORMAL (U"To check whether a variable exists, you can use the function")
-CODE (U"%variableExists (%%variableName\\$ %)")
+CODE (U"#variableExists (%%variableName\\$ %)")
 /*@praat
 	fgh = 567
 	assert variableExists ("fgh")
