@@ -4252,7 +4252,7 @@ LIST_ITEM (U"@@Scripting 8.1. The sendpraat subroutine")
 LIST_ITEM (U"@@Scripting 8.2. The sendpraat program")
 MAN_END
 
-MAN_BEGIN (U"Scripting 8.1. The sendpraat subroutine", U"ppgb", 20211207)
+MAN_BEGIN (U"Scripting 8.1. The sendpraat subroutine", U"ppgb", 20230204)
 INTRO (U"Sendpraat can be a subroutine for sending messages to a %running Praat program.")
 ENTRY (U"Syntax")
 LIST_ITEM (U"##sendpraat (void *#%display##, const char *#%program##, long #%timeOut##, char *#%text##);")
@@ -4285,7 +4285,7 @@ NORMAL (U"Suppose you have a sound file whose name is in the variable $fileName,
 	"and you want the program #Praat, which can play sounds, "
 	"to play this sound backwards.")
 CODE (U"char message [1000], *errorMessage;")
-CODE (U"sprintf (message, \"Read from file... \\% s\\bsnPlay reverse\\bsnRemove\", fileName);")
+CODE (U"snprintf (message,1000, \"Read from file: ~\\% s\\bsnPlay reverse\\bsnRemove\", fileName);")
 CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 3000, message);")
 NORMAL (U"This will work because ##Play reverse# is an action command "
 	"that becomes available in the dynamic menu when a Sound is selected. "

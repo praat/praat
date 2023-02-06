@@ -40,29 +40,29 @@ const char * Melder8_integer (int64 value) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
 		ibuffer = 0;
 	if (sizeof (long_not_integer) == 8) {
-		const int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%ld", (long_not_integer) value);   // cast to identical type, to make compiler happy
+		const int n = snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%ld", (long_not_integer) value);   // cast to identical type, to make compiler happy
 		Melder_assert (n > 0);
 		Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	} else if (sizeof (long long) == 8) {
 		/*
-		 * There are buggy platforms (namely 32-bit Mingw on Windows XP) that support long long and %lld but that convert
-		 * the argument to a 32-bit long.
-		 * There are also buggy platforms (namely 32-bit gcc on Linux) that support long long and %I64d but that convert
-		 * the argument to a 32-bit long.
-		 */
+			There are buggy platforms (namely 32-bit Mingw on Windows XP) that support long long and %lld but that convert
+			the argument to a 32-bit long.
+			There are also buggy platforms (namely 32-bit gcc on Linux) that support long long and %I64d but that convert
+			the argument to a 32-bit long.
+		*/
 		static const char *formatString = nullptr;
 		if (! formatString) {
 			char tryBuffer [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 			formatString = "%lld";
-			sprintf (tryBuffer, formatString, 1000000000000LL);
+			snprintf (tryBuffer,MAXIMUM_NUMERIC_STRING_LENGTH+1, formatString, 1000000000000LL);
 			if (! strequ (tryBuffer, "1000000000000")) {
 				formatString = "%I64d";
-				sprintf (tryBuffer, formatString, 1000000000000LL);
+				snprintf (tryBuffer,MAXIMUM_NUMERIC_STRING_LENGTH+1, formatString, 1000000000000LL);
 				if (! strequ (tryBuffer, "1000000000000"))
 					Melder_fatal (U"Found no way to print 64-bit integers on this machine.");
 			}
 		}
-		const int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, formatString, value);
+		const int n = snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, formatString, value);
 		Melder_assert (n > 0);
 		Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	} else {
@@ -81,7 +81,7 @@ const char * Melder8_bigInteger (int64 value) {
 	char *text = buffers8 [ibuffer];
 	text [0] = '\0';
 	if (value < 0) {
-		sprintf (text, "-");
+		snprintf (text,MAXIMUM_NUMERIC_STRING_LENGTH+1, "-");
 		value = - value;
 	}
 	const int quintillions =  value / 1000000000000000000LL;
@@ -160,11 +160,11 @@ const char * Melder8_double (double value) {
 		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
-	sprintf (buffers8 [ibuffer], "%.15g", value);
+	snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.15g", value);
 	if (strtod (buffers8 [ibuffer], nullptr) != value) {
-		sprintf (buffers8 [ibuffer], "%.16g", value);
+		snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.16g", value);
 		if (strtod (buffers8 [ibuffer], nullptr) != value)
-			sprintf (buffers8 [ibuffer], "%.17g", value);
+			snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.17g", value);
 	}
 	return buffers8 [ibuffer];
 }
@@ -178,11 +178,11 @@ const char * Melder8_double_overtlyReal (double value) {
 		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
-	sprintf (buffers8 [ibuffer], "%.15g", value);
+	snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.15g", value);
 	if (strtod (buffers8 [ibuffer], nullptr) != value) {
-		sprintf (buffers8 [ibuffer], "%.16g", value);
+		snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.16g", value);
 		if (strtod (buffers8 [ibuffer], nullptr) != value)
-			sprintf (buffers8 [ibuffer], "%.17g", value);
+			snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.17g", value);
 	}
 	if (! strchr (buffers8 [ibuffer], '.') && ! strchr (buffers8 [ibuffer], 'e') && ! strchr (buffers8 [ibuffer], 'E'))
 		strcat (buffers8 [ibuffer], ".0");
@@ -198,7 +198,7 @@ const char * Melder8_single (double value) {
 		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
-	sprintf (buffers8 [ibuffer], "%.9g", value);
+	snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.9g", value);
 	return buffers8 [ibuffer];
 }
 conststring32 Melder_single (double value) {
@@ -211,7 +211,7 @@ const char * Melder8_half (double value) {
 		ibuffer = 0;
 	if (isundef (value))
 		return "--undefined--";
-	sprintf (buffers8 [ibuffer], "%.4g", value);
+	snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.4g", value);
 	return buffers8 [ibuffer];
 }
 conststring32 Melder_half (double value) {
@@ -309,11 +309,11 @@ const char * Melder8_dcomplex (dcomplex value) {
 		ibuffer = 0;
 	if (isundef (value.real()) || isundef (value.imag()))
 		return "--undefined--";
-	sprintf (buffers8 [ibuffer], "%.15g", value.real());
+	snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.15g", value.real());
 	if (strtod (buffers8 [ibuffer], nullptr) != value.real()) {
-		sprintf (buffers8 [ibuffer], "%.16g", value.real());
+		snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.16g", value.real());
 		if (strtod (buffers8 [ibuffer], nullptr) != value.real())
-			sprintf (buffers8 [ibuffer], "%.17g", value.real());
+			snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.17g", value.real());
 	}
 	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
 	*p = ( value.imag() < 0.0 ? '-' : '+' );
@@ -338,7 +338,7 @@ const char * Melder8_scomplex (dcomplex value) {
 		ibuffer = 0;
 	if (isundef (value.real()) || isundef (value.imag()))
 		return "--undefined--";
-	sprintf (buffers8 [ibuffer], "%.9g", value.real());
+	snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.9g", value.real());
 	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
 	*p = ( value.imag() < 0.0 ? '-' : '+' );
 	sprintf (++ p, "%.9g", fabs (value.imag()));
@@ -361,7 +361,7 @@ conststring32 Melder_float (conststring32 number) {
 		while (*n != U'e')
 			*(b++) = *(n++);
 		*b = U'\0';
-		if (number [0] == '1' && number [1] == 'e') {
+		if (number [0] == U'1' && number [1] == U'e') {
 			str32cpy (buffers32 [ibuffer], U"10^^");
 			b = buffers32 [ibuffer] + 4;
 		} else {
@@ -400,11 +400,11 @@ const char * Melder8_naturalLogarithm (double lnNumber) {
 			remainder10 *= 10.0;
 			ceiling --;
 		}
-		sprintf (buffers8 [ibuffer], "%.15g", remainder10);
+		snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.15g", remainder10);
 		if (strtod (buffers8 [ibuffer], nullptr) != remainder10) {
-			sprintf (buffers8 [ibuffer], "%.16g", remainder10);
+			snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.16g", remainder10);
 			if (strtod (buffers8 [ibuffer], nullptr) != remainder10)
-				sprintf (buffers8 [ibuffer], "%.17g", remainder10);
+				snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%.17g", remainder10);
 		}
 		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%td", ceiling);
 	} else {
@@ -420,7 +420,7 @@ conststring32 Melder_naturalLogarithm (double lnNumber) {
 const char * Melder8_pointer (const void *pointer) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
 		ibuffer = 0;
-	sprintf (buffers8 [ibuffer], "%p", pointer);
+	snprintf (buffers8 [ibuffer],MAXIMUM_NUMERIC_STRING_LENGTH+1, "%p", pointer);
 	return buffers8 [ibuffer];
 }
 conststring32 Melder_pointer (const void *pointer) {
@@ -557,7 +557,7 @@ conststring32 Melder_pad (conststring32 string, int64 width) {
 conststring32 Melder_truncate (int64 width, conststring32 string) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS)
 		iPadBuffer = 0;
-	const int64 length = Melder_length (string);
+	const int64 length = Melder_length (string);   // BUG: this can be slow, e.g. if 10'000'000 -> 1000
 	const int64 tooLong = length - width;
 	if (tooLong <= 0)
 		return string;

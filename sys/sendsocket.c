@@ -1,6 +1,6 @@
 /* sendsocket.c
  *
- * Copyright (C) 1999-2006,2016 Paul Boersma
+ * Copyright (C) 1999-2006,2016,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ char * sendsocket (const char *hostNameAndPort, const char *command) {
 
 	if (isdigit (hostName [0])) {
 		if ((his_addr. sin_addr.s_addr = inet_addr ((char *) hostName)) == 0xFFFFFFFF) {
-			sprintf (result, "Cannot send to socket because the hostname \"%s\" is invalid.", hostName);
+			snprintf (result,200, "Cannot send to socket because the hostname \"%s\" is invalid.", hostName);
 			return result;
 		}
 		his_addr. sin_family = AF_INET;
@@ -88,7 +88,7 @@ char * sendsocket (const char *hostNameAndPort, const char *command) {
 		his_addr. sin_family = host -> h_addrtype;
 		memcpy (& his_addr. sin_addr, host -> h_addr, host -> h_length);
 	} else {
-		sprintf (result, "Cannot send to socket because the host \"%s\" is unknown.", hostName);
+		snprintf (result,200, "Cannot send to socket because the host \"%s\" is unknown.", hostName);
 		return result;
 	}
 	his_addr. sin_port = htons (port);

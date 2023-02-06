@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
+ * Copyright (C) 1992-2023 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -438,11 +438,11 @@ static void charSize (Graphics anyGraphics, _Graphics_widechar *lc) {
 					style == Graphics_ITALIC ? "Arial-Italic" :
 					style == Graphics_BOLD_ITALIC ? "Arial-BoldItalic" : "Arial";
 			}
-			my fontInfos [font] [style] = Melder_malloc_f (char, 100);
+			my fontInfos [font] [style] = Melder_malloc_f (char, 200);
 			if (font == kGraphics_font_IPATIMES || font == kGraphics_font_SYMBOL || font == kGraphics_font_DINGBATS) {
 				strcpy (my fontInfos [font] [style], fontInfo);
 			} else {
-				sprintf (my fontInfos [font] [style], "%s-Praat", fontInfo);
+				snprintf (my fontInfos [font] [style],200, "%s-Praat", fontInfo);
 				if (thePrinter. fontChoiceStrategy == kGraphicsPostscript_fontChoiceStrategy::LINOTYPE) {
 					my d_printf (my d_file, "/%s /%s-Praat PraatEncode\n", fontInfo, fontInfo);
 				} else if (thePrinter. fontChoiceStrategy == kGraphicsPostscript_fontChoiceStrategy::MONOTYPE) {

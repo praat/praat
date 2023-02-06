@@ -2,7 +2,7 @@
 #define _Preferences_h_
 /* Preferences.h
  *
- * Copyright (C) 1996-2008,2011,2013,2015-2018,2022 Paul Boersma
+ * Copyright (C) 1996-2008,2011,2013,2015-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ void Preferences_exit_optimizeByLeaking ();
 #define Pref_copyPlain(from,to) \
 	to = from
 inline void Pref_copyString (conststring32 from, mutablestring32 to) {
-	str32ncpy (to, from, Preferences_STRING_BUFFER_SIZE); \
+	str32ncpy (to, from, Preferences_STRING_BUFFER_SIZE - 1); \
 	to [Preferences_STRING_BUFFER_SIZE - 1] = U'\0';
 }
 

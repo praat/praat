@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2017,2021 Paul Boersma
+ * Copyright (C) 1998-2017,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,7 +219,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				draw (boss, graphics.get());
 			}
 			char command [500];
-			sprintf (command, Melder_peek32to8 (Site_getPrintCommand ()), tempPath_utf8);
+			snprintf (command,500, Melder_peek32to8 (Site_getPrintCommand ()), tempPath_utf8);
 			system (command);
 			MelderFile_delete (& tempFile);
 		#elif cocoa

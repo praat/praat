@@ -202,27 +202,32 @@ void * _Melder_calloc_f (int64 nelem, int64 elsize) {
 autostring32 Melder_dup (conststring32 string /* cattable */) {
 	if (! string)
 		return autostring32();
-	const int64 size = (int64) Melder_length (string) + 1;   // guaranteed to be positive
-	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
-		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" characters. Use a 64-bit edition of Praat instead?");
-	autostring32 result (size, false);   // guarded conversion
+	const integer numberOfCharactersToCopy = Melder_length (string);
+	const int64 requestedBufferSize = (int64) numberOfCharactersToCopy + 1;
+	if (sizeof (size_t) < 8 && requestedBufferSize > SIZE_MAX / sizeof (char32))
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (requestedBufferSize),
+				U" characters. Use a 64-bit edition of Praat instead?");
+	autostring32 result (numberOfCharactersToCopy, false);   // guarded conversion
 	str32cpy (result.get(), string);
 	if (Melder_debug == 34)
-		Melder_casual (U"Melder_dup\t", Melder_pointer (result.get()), U"\t", Melder_bigInteger (size), U"\t", sizeof (char32));
+		Melder_casual (U"Melder_dup\t", Melder_pointer (result.get()), U"\t",
+				Melder_bigInteger (requestedBufferSize), U"\t", sizeof (char32));
 	return result;
 }
 
-autostring32 Melder_ndup (conststring32 string /* cattable */, integer n) {
+autostring32 Melder_ndup (conststring32 string /* cattable */, const integer numberOfCharactersToCopy) {
 	if (! string)
 		return autostring32();
-	const int64 size = (int64) n + 1;   // guaranteed to be positive
-	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
-		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" characters. Use a 64-bit edition of Praat instead?");
-	autostring32 result (size, false);   // guarded conversion
-	str32ncpy (result.get(), string, n);
-	result [n] = U'\0';
+	const int64 requestedBufferSize = (int64) numberOfCharactersToCopy + 1;
+	if (sizeof (size_t) < 8 && requestedBufferSize > SIZE_MAX / sizeof (char32))
+		Melder_throw (U"Can never allocate ", Melder_bigInteger (requestedBufferSize),
+				U" characters. Use a 64-bit edition of Praat instead?");
+	autostring32 result (numberOfCharactersToCopy, false);   // guarded conversion
+	str32ncpy (result.get(), string, numberOfCharactersToCopy);
+	result [numberOfCharactersToCopy] = U'\0';
 	if (Melder_debug == 34)
-		Melder_casual (U"Melder_ndup\t", Melder_pointer (result.get()), U"\t", Melder_bigInteger (size), U"\t", sizeof (char32));
+		Melder_casual (U"Melder_ndup\t", Melder_pointer (result.get()), U"\t",
+				Melder_bigInteger (requestedBufferSize), U"\t", sizeof (char32));
 	return result;
 }
 
