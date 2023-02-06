@@ -3040,7 +3040,7 @@ void praat_uvafon_init () {
 			nullptr, 0, HELP_Editors);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- version help --",
 			nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?",
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What’s new?",
 			nullptr, 0, HELP_WhatsNew);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Acknowledgments",
 			nullptr, 0, HELP_Acknowledgments);
