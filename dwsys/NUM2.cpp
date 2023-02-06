@@ -452,7 +452,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 	const double normSquared_y = NUMsum2 (y);
 	integer iter = 1;
 	bool farFromConvergence = true;
-	double difsq, difsq_previous = 1e100; // large enough
+	double difsq = undefined, difsq_previous = 1e100; // large enough
 	while (iter <= maximumNumberOfIterations && farFromConvergence) {
 		/*
 			Alternating Least Squares: Fixate all except x [icol]
