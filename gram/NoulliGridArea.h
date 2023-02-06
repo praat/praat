@@ -2,7 +2,7 @@
 #define _NoulliGridArea_h_
 /* NoulliGridArea.h
  *
- * Copyright (C) 2018,2020-2022 Paul Boersma
+ * Copyright (C) 2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@ Thing_define (NoulliGridArea, FunctionArea) {
 	NoulliGrid noulliGrid () { return static_cast <NoulliGrid> (our function()); }
 
 	void v_drawInside ()
+		override;
+	void v_createMenus ()
 		override;
 };
 DEFINE_FunctionArea_create (NoulliGridArea, NoulliGrid)

@@ -105,7 +105,7 @@ void MelderString_ncopy (MelderString *me, conststring32 sourceOrNull, int64 n) 
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	const conststring32 source = ( sourceOrNull ? sourceOrNull : U"" );
-	const int64 numberOfCharactersToCopy = Melder_clippedRight (n, (int64) Melder_length (source));
+	const int64 numberOfCharactersToCopy = n; //Melder_clippedRight (n, (int64) Melder_length (source));
 	const int64 sizeNeeded = numberOfCharactersToCopy + 1;
 	Melder_assert (sizeNeeded > 0);
 	if (sizeNeeded > my bufferSize)
@@ -117,7 +117,7 @@ void MelderString_ncopy (MelderString *me, conststring32 sourceOrNull, int64 n) 
 
 void MelderString_nappend (MelderString *me, conststring32 sourceOrNull, integer n) {
 	const conststring32 source = ( sourceOrNull ? sourceOrNull : U"" );
-	const integer numberOfCharactersToAppend = Melder_clippedRight (n, Melder_length (source));
+	const integer numberOfCharactersToAppend = n; //Melder_clippedRight (n, Melder_length (source));
 	const int64 sizeNeeded = my length + numberOfCharactersToAppend + 1;
 	Melder_assert (sizeNeeded > 0);
 	if (sizeNeeded > my bufferSize)

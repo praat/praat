@@ -1,6 +1,6 @@
 /* melder_atof.cpp
  *
- * Copyright (C) 2003-2008,2011,2015-2019,2021 Paul Boersma
+ * Copyright (C) 2003-2008,2011,2015-2019,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ double Melder_a8tof (conststring8 string) {
 	if (! string)
 		return undefined;
 	const char *p = findEndOfNumericString (string);
-	bool weFoundANumber = !! p;
+	const bool weFoundANumber = !! p;
 	if (! weFoundANumber)
 		return undefined;
 	Melder_assert (p - & string [0] > 0);
@@ -117,7 +117,21 @@ double Melder_a8tof (conststring8 string) {
 }
 
 double Melder_atof (conststring32 string) {
-	return Melder_a8tof (Melder_peek32to8 (string));
+	if (! string)
+		return undefined;
+	const char32 *endOfNumericString = findEndOfNumericString (string);
+	const bool weFoundANumber = !! endOfNumericString;
+	if (! weFoundANumber)
+		return undefined;
+	const integer numberOfCharacters = endOfNumericString - & string [0];
+	Melder_assert (numberOfCharacters > 0);
+	static MelderString buffer;
+	MelderString_ncopy (& buffer, string, numberOfCharacters);
+	const char *string8 = Melder_peek32to8 (buffer.string);
+	const integer string8length = Melder8_length (string8);
+	if (string8length < 1)
+		return undefined;
+	return string8 [string8length - 1] == '%' ? 0.01 * strtod (string8, nullptr) : strtod (string8, nullptr);
 }
 
 int64 Melder_atoi (conststring32 string) {

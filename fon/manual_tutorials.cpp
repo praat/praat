@@ -495,7 +495,7 @@ LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a so
 LIST_ITEM (U"• Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.")
 LIST_ITEM (U"• Improvements in the manual and in texts.")
 NORMAL (U"##6.0.22# (15 November 2016)")
-LIST_ITEM (U"• Scripting: correct error messages for expressions like: 5 + \"hello\"")
+LIST_ITEM (U"• Scripting: correct error messages for expressions like: $$5 + “hello”$")
 LIST_ITEM (U"• Command line: the --open option works correctly in the GUI if you open multiple files.")
 //LIST_ITEM (U"• Sound window: option for showing time in minutes instead of just seconds.")   // too confusing in UI
 NORMAL (U"##6.0.21# (25 September 2016)")
@@ -514,7 +514,7 @@ LIST_ITEM (U"• TextGrid window: again better automatic alignment.")
 NORMAL (U"##6.0.17# (21 April 2016)")
 LIST_ITEM (U"• TextGrid window: better automatic alignment.")
 NORMAL (U"##6.0.16# (5 April 2016)")
-LIST_ITEM (U"• Scripting: \"hashes\": variables can now be indexed with strings rather than only with numbers.")
+LIST_ITEM (U"• Scripting: “hashes”: variables can now be indexed with strings rather than only with numbers.")
 LIST_ITEM (U"• TextGrid window: fewer out-of-order messages in automatic alignment.")
 NORMAL (U"##6.0.15# (21 March 2016)")
 LIST_ITEM (U"• TextGrid window: removed a bug whereby Praat could do automatic alignment only on sounds sampled at 44.1 kHz.")
@@ -601,7 +601,7 @@ NORMAL (U"##5.4.17# (20 August 2015)")
 LIST_ITEM (U"• Scripting: removed a bug that could cause Praat to crash when calling $$writeFile()$ with an empty text.")
 NORMAL (U"##5.4.16# (16 August 2015)")
 LIST_ITEM (U"• Mac 64-bit: removed a bug by which graphical text passed over the right edge in TextGrid intervals.")
-LIST_ITEM (U"• Mac 64-bit: removed a bug that allowed the general \"Zoom\" and \"Close\" commands to be accessible from a script.")
+LIST_ITEM (U"• Mac 64-bit: removed a bug that allowed the general #Zoom and #Close commands to be accessible from a script.")
 NORMAL (U"##5.4.15# (1 August 2015)")
 LIST_ITEM (U"• Introduced several command line options that make it easier to call Praat from a web server.")
 LIST_ITEM (U"• 64-bit Mac: removed a bug introduced in 5.4.11 that caused incorrect spacing of vertical text in picture files.")
@@ -628,7 +628,7 @@ LIST_ITEM (U"• Windows: TextGrid files with non-BMP characters are now read co
 LIST_ITEM (U"• Windows: files with names that contain non-BMP characters are now saved correctly.")
 LIST_ITEM (U"• Updated manual.")
 NORMAL (U"##5.4.08# (24 March 2015)")
-LIST_ITEM (U"• Sound window: removed a bug that caused a crash in \"Editor info\".")
+LIST_ITEM (U"• Sound window: removed a bug that caused a crash in ##Editor info#.")
 NORMAL (U"##5.4.07# (22 March 2015)")
 LIST_ITEM (U"• TextGrid window: ##Add interval# now does the same thing as ##Add boundary# if a time stretch is selected.")
 LIST_ITEM (U"• Linux: better redrawing in TextGrid window.")
@@ -686,7 +686,7 @@ LIST_ITEM (U"• Multithreading can now speed up pitch analysis by a factor of 4
 	"depending on the number of cores in your processor.")
 LIST_ITEM (U"• Linux: can now open and save Photo objects (from PNG files) "
 	"and use @@Insert picture from file...@.")
-LIST_ITEM (U"• Open WAV files that are in the \"extensible\" format (previously \"unsupported format -2\").")
+LIST_ITEM (U"• Open WAV files that are in the “extensible” format (previously “unsupported format -2”).")
 LIST_ITEM (U"• Windows: support for dropping more than one file on the Praat icon.")
 LIST_ITEM (U"• Scripting: can now use the #editor command with an object's ID instead of only with its name.")
 LIST_ITEM (U"• Windows: removed a bug that sometimes disallowed saving more than one JPEG file.")
@@ -695,7 +695,7 @@ LIST_ITEM (U"• Linux audio: created a workaround that reduces the chances of a
 NORMAL (U"##5.3.77# (18 May 2014)")
 LIST_ITEM (U"• EEG: more facilities for EDF+ files.")
 NORMAL (U"##5.3.76# (8 May 2014)")
-LIST_ITEM (U"• One can determine the size of \"speckles\" (filled circles) with ##Speckle size...# in the #Pen menu. "
+LIST_ITEM (U"• One can determine the size of “speckles” (filled circles) with ##Speckle size...# in the #Pen menu. "
 	"Speckles are used in drawing Formant, PitchTier, and several other kinds of objects.")
 NORMAL (U"##5.3.75# (30 April 2014)")
 LIST_ITEM (U"• Linux Matrix graphics bug fix: corrected working of ##Draw cells...#.")
@@ -736,11 +736,11 @@ LIST_ITEM (U"• Scripting language: writeInfo, procedure, exitScript, runScript
 LIST_ITEM (U"• 64-bit Mac graphics: better highlighting and unhighlighting of selection.")
 LIST_ITEM (U"• 64-bit Mac graphics: full screen.")
 NORMAL (U"##5.3.63# (24 January 2014)")
-LIST_ITEM (U"• Scripting language: easier menu command invocation using the colon \":\".")
+LIST_ITEM (U"• Scripting language: easier menu command invocation using the colon “:”.")
 LIST_ITEM (U"• 64-bit Mac graphics: better handling of any absence of Doulos SIL or Charis SIL.")
-LIST_ITEM (U"• Windows scripting: can now use \"~\" in file names to refer to home directory, as on Mac and Linux.")
+LIST_ITEM (U"• Windows scripting: can now use “~” in file names to refer to the home directory, as on Mac and Linux.")
 NORMAL (U"##5.3.62# (2 January 2014)")
-LIST_ITEM (U"• 64-bit Mac: removed a bug introduced in 5.3.61 that could cause text containing \"ff\" to become invisible.")
+LIST_ITEM (U"• 64-bit Mac: removed a bug introduced in 5.3.61 that could cause text containing “ff” to become invisible.")
 NORMAL (U"##5.3.61# (1 January 2014)")
 LIST_ITEM (U"• EEG: understand status registers that contain text.")
 LIST_ITEM (U"• KlattGrid: removed a bug introduced in May 2009 that could make Praat crash after editing an oral formant grid.")
@@ -764,7 +764,7 @@ NORMAL (U"##5.3.55# (2 September 2013)")
 LIST_ITEM (U"• Corrected a bug introduced in 5.3.54 by which you couldn't select a file for saving.")
 NORMAL (U"##5.3.54# (1 September 2013)")
 LIST_ITEM (U"• Sound window: removed a bug introduced in 5.3.42 by which you couldn't ask for an odd number of poles in Formant Settings "
-	"(by e.g. specifying \"5.5\" for the number of formants).")
+	"(by e.g. specifying “5.5” for the number of formants).")
 LIST_ITEM (U" Linux: improved dragging of selections in the Picture window and the Sound window.")
 NORMAL (U"##5.3.53# (9 July 2013)")
 LIST_ITEM (U"• Table: more drawing commands.")
@@ -820,7 +820,7 @@ LIST_ITEM (U"• ##Sound: Combine to stereo# can now combine any number of Sound
 	"is the sum of the numbers of channels of the original Sounds.")
 LIST_ITEM (U"• ERP: Down to Sound.")
 NORMAL (U"##5.3.32# (17 October 2012)")
-LIST_ITEM (U"• Sound window: corrected the working of the \"by window\" scaling option.")
+LIST_ITEM (U"• Sound window: corrected the working of the ##by window# scaling option.")
 NORMAL (U"##5.3.31# (10 October 2012)")
 LIST_ITEM (U"• ERP: Down to Table...")
 LIST_ITEM (U"• Linux: corrected a bug that could cause Praat to crash after closing a file selector window for saving.")
@@ -926,7 +926,7 @@ NORMAL (U"##5.2.40# (11 September 2011)")
 LIST_ITEM (U"• Corrected a bug in the 64-bit Windows edition that led to an incorrect location for the preferences files.")
 NORMAL (U"##5.2.39# (10 September 2011)")
 LIST_ITEM (U"• 64-bit edition for Windows.")
-LIST_ITEM (U"• Corrected a bug that caused Praat to crash instead of saying \"undefined\" when reporting the shimmer of a sound with fewer than 3 pulses.")
+LIST_ITEM (U"• Corrected a bug that caused Praat to crash instead of saying “undefined” when reporting the shimmer of a sound with fewer than 3 pulses.")
 NORMAL (U"##5.2.38# (6 September 2011)")
 LIST_ITEM (U"• Corrected several bugs that were introduced in 5.2.36 in the Inspect window.")
 NORMAL (U"##5.2.37# (2 September 2011)")
@@ -991,7 +991,7 @@ LIST_ITEM (U"• Better names for Table opening and saving commands.")
 LIST_ITEM (U"• @ExperimentMFC: reaction times for mouse clicks.")
 LIST_ITEM (U"• Linux/GTK: corrected triple clicks in ExperimentMFC.")
 NORMAL (U"##5.2.16# (20 February 2011)")
-LIST_ITEM (U"• Better support for WAV files with special \"chunks\" in them.")
+LIST_ITEM (U"• Better support for WAV files with special “chunks” in them.")
 LIST_ITEM (U"• Manual: documentation of explicit formulas for @@Voice 2. Jitter|jitter measurements@.")
 NORMAL (U"##5.2.15# (11 February 2011)")
 LIST_ITEM (U"• @@Sounds: Concatenate with overlap...@.")
@@ -1016,7 +1016,8 @@ LIST_ITEM (U"• EPS files can now be many miles wide instead of just 55 inches.
 NORMAL (U"##5.2.08# (1 January 2011)")
 LIST_ITEM (U"• Improved manual.")
 LIST_ITEM (U"• Improved memory allocation on 32-bit platforms: "
-	"less probability of crashes when you approach the 2 GB memory limit gradually, and a new \"low on memory; save your work now\" warning.")
+	"less probability of crashes when you approach the 2 GB memory limit gradually, "
+	"and a new “low on memory; save your work now” warning.")
 LIST_ITEM (U"• Removed IntervalTier and TextTier datatypes from Praat (old scripts that use them will continue to work).")
 NORMAL (U"##5.2.07# (24 December 2010)")
 LIST_ITEM (U"• Support for reading and writing multi-channel sound files (i.e. above two-channel stereo).")
@@ -1081,7 +1082,8 @@ LIST_ITEM (U"• GTK: working Buttons editor.")
 LIST_ITEM (U"• GTK: correctly laid out settings windows.")
 NORMAL (U"##5.1.38# (2 July 2010)")
 LIST_ITEM (U"• Linux: made ##Sound: Record fixed time...# work correctly (the sampling frequency was wrong).")
-LIST_ITEM (U"• Mac: repaired a bug introduced in 5.1.35 that could cause Praat to crash if neither Doulos SIL nor Charis SIL were installed.")
+LIST_ITEM (U"• Mac: repaired a bug introduced in 5.1.35 that could cause Praat to crash "
+	"if neither Doulos SIL nor Charis SIL were installed.")
 LIST_ITEM (U"• Mac: correct live scrolling in Picture window and DataEditor.")
 NORMAL (U"##5.1.37# (23 June 2010)")
 LIST_ITEM (U"• PitchTier window and similar windows: can drag multiple points simultaneously.")
@@ -1094,9 +1096,10 @@ LIST_ITEM (U"• Demo window: the Demo window can now run from the command line.
 LIST_ITEM (U"• Motif: corrected a bug introduced in 5.1.33 whereby things in the Picture window could be placed incorrectly.")
 LIST_ITEM (U"• GTK: script window accepts Unicode again.")
 NORMAL (U"##5.1.35# (10 June 2010)")
-LIST_ITEM (U"• TextGrid window: removed a very old bug that could lead to reversed intervals and to crashes when you inserted a boundary after using Shift-arrow and Command-arrow.")
-LIST_ITEM (U"• Graphics: Praat now uses Doulos SIL instead of Charis SIL if your font setting is \"Times\" and the font is nonbold and nonitalic, "
-	"because Doulos SIL matches Times New Roman better.")
+LIST_ITEM (U"• TextGrid window: removed a very old bug that could lead to reversed intervals "
+	"and to crashes when you inserted a boundary after using Shift-arrow and Command-arrow.")
+LIST_ITEM (U"• Graphics: Praat now uses Doulos SIL instead of Charis SIL if your font setting is “Times” "
+	"and the font is nonbold and nonitalic, because Doulos SIL matches Times New Roman better.")
 LIST_ITEM (U"• kNN: made Ola Söder's k-nearest-neighbours classification compatible with Windows.")
 NORMAL (U"##5.1.34# (31 May 2010)")
 LIST_ITEM (U"• Sound window: corrected a bug that caused Praat to crash if the analysis window was shorter than 2 samples.")
@@ -1124,7 +1127,8 @@ LIST_ITEM (U"• GTK: Info window is fronted automatically.")
 LIST_ITEM (U"• GTK: support sendpraat.")
 NORMAL (U"##5.1.32# (30 April 2010)")
 LIST_ITEM (U"• Scripting: command ##Expand include files#.")
-LIST_ITEM (U"• Scripting: accept lines that start with non-breaking spaces (as may occur in scripts copied from the web manual).")
+LIST_ITEM (U"• Scripting: accept lines that start with non-breaking spaces "
+	"(as may occur in scripts copied from the web manual).")
 LIST_ITEM (U"• Sound files: accept MP3 files with extension written in capitals.")
 LIST_ITEM (U"• Linux audio recording: corrected input choice (microphone, line).")
 NORMAL (U"##5.1.31# (4 April 2010)")
@@ -1145,7 +1149,8 @@ LIST_ITEM (U"• Experimental GTK version with the help of Franz Brauße.")
 LIST_ITEM (U"• Corrected a bug that could cause Praat to crash if sound playing failed twice.")
 NORMAL (U"##5.1.25# (20 January 2010)")
 LIST_ITEM (U"• Script window: the new command ##Reopen from disk# allows you to edit the script with an external editor.")
-LIST_ITEM (U"• Script window: removed a bug that could cause Praat to crash of you did ##Find again# before having done any #Find.")
+LIST_ITEM (U"• Script window: removed a bug that could cause Praat to crash "
+	"if you did ##Find again# before having done any #Find.")
 NORMAL (U"##5.1.24# (15 January 2010)")
 LIST_ITEM (U"• Formulas run 10 to 20 percent faster.")
 LIST_ITEM (U"• Macintosh: support for forward delete key and Command-`.")
@@ -1193,7 +1198,7 @@ LIST_ITEM (U"• Macintosh: the Picture window can save to PDF file (you need Ma
 LIST_ITEM (U"• Macintosh: corrected a bug that caused Praat to crash at start-up on MacOS 10.3.")
 NORMAL (U"##5.1.11# (19 July 2009)")
 NORMAL (U"##5.1.10# (8 July 2009)")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash if the Demo window was closed after an \"execute\".")
+LIST_ITEM (U"• Corrected a bug that could cause Praat to crash if the Demo window was closed after an #execute.")
 LIST_ITEM (U"• OTGrammar & PairDistribution: added ##Get minimum number correct...#.")
 NORMAL (U"##5.1.09# (28 June 2009)")
 LIST_ITEM (U"• Made East-European Roman characters available in EPS files.")
@@ -1211,16 +1216,16 @@ NORMAL (U"##5.1.04# (4 April 2009)")
 LIST_ITEM (U"• Corrected a bug that could cause a missing text character in EPS files produced by a version of Praat running in batch.")
 LIST_ITEM (U"• Corrected a bug that could cause high values in a Matrix computed from a Pitch.")
 NORMAL (U"##5.1.03# (21 March 2009)")
-//LIST_ITEM (U"• OT learning: the \"Random up, highest down\" update rule.")
+//LIST_ITEM (U"• OT learning: the ##Random up, highest down# update rule.")
 LIST_ITEM (U"• ExperimentMFC: corrected a bug introduced in 5.0.36 that caused Praat to crash if a sound file did not exist.")
 LIST_ITEM (U"• Articulatory synthesis: corrected a bug that could cause Praat to crash when copying Artwords.")
 LIST_ITEM (U"• Macintosh: corrected a bug that could cause poor text alignment in picture.")
 NORMAL (U"##5.1.02# (9 March 2009)")
 LIST_ITEM (U"• Allow pause forms without fields.")
-LIST_ITEM (U"• The value \"undefined\" is disallowed from all fields in command windows "
+LIST_ITEM (U"• The value “undefined” is disallowed from all fields in command windows "
 	"except ##Table: Set numeric value...# and ##TableOfReal: Set value...#.")
 LIST_ITEM (U"• TextGrid: ##List...# and ##Down to Table...#.")
-LIST_ITEM (U"• OT learning: Giorgio Magri's \"Weighted all up, highest down\" update rule.")
+LIST_ITEM (U"• OT learning: Giorgio Magri’s ##Weighted all up, highest down# update rule.")
 NORMAL (U"##5.1.01# (26 February 2009)")
 LIST_ITEM (U"• Corrected several bugs in Klatt synthesis.")
 MAN_END
@@ -1247,7 +1252,7 @@ LIST_ITEM (U"• Removed a bug that could cause Praat to crash when drawing pict
 LIST_ITEM (U"• Removed a bug that could cause Praat to crash when drawing multi-line text.")
 NORMAL (U"##5.0.41# (23 November 2008)")
 LIST_ITEM (U"• ExperimentMFC: allow multiple lines in all texts.")
-LIST_ITEM (U"• Regular expressions: removed a bug that could cause Praat to hang when using \".*\".")
+LIST_ITEM (U"• Regular expressions: removed a bug that could cause Praat to hang when using “.*”.")
 LIST_ITEM (U"• Table: Draw ellipses: removed a bug that could cause Praat to crash if some cells were undefined.")
 NORMAL (U"##5.0.40# (10 November 2008)")
 LIST_ITEM (U"• Improved reading and writing of text files (faster, bigger).")
@@ -1263,7 +1268,7 @@ NORMAL (U"##5.0.34# (22 September 2008)")
 LIST_ITEM (U"• ##Shift times by...# and ##Shift times to...# (Modify menu).")
 LIST_ITEM (U"• Sound: @@Combine to stereo@ works even if the two mono sounds have different durations or time domains.")
 NORMAL (U"##5.0.33# (9 September 2008)")
-LIST_ITEM (U"• Windows: prevented warning messages about \"Widget type\".")
+LIST_ITEM (U"• Windows: prevented warning messages about “Widget type”.")
 NORMAL (U"##5.0.32# (12 August 2008)")
 LIST_ITEM (U"• Contributed by Ola Söder: kNN classifiers and k-means clustering.")
 LIST_ITEM (U"• Made UTF-16-encoded chronological TextGrid files readable.")
@@ -1335,7 +1340,7 @@ LIST_ITEM (U"• Windows: corrected a bug by which Praat would not open files th
 	"if the names of these files or their directory paths contained non-ASCII characters.")
 LIST_ITEM (U"• Linux: ignore the Mod2 key, because of its unpredictable assignment.")
 NORMAL (U"##5.0.08# (10 February 2008)")
-LIST_ITEM (U"• Corrected the minus sign (\\bs-m = \"\\-m\").")
+LIST_ITEM (U"• Corrected the minus sign (\\bs-m = “\\-m”).")
 NORMAL (U"##5.0.07# (8 February 2008)")
 LIST_ITEM (U"• Object IDs are visible in editor windows.")
 NORMAL (U"##5.0.06# (31 January 2008)")
@@ -1343,7 +1348,7 @@ LIST_ITEM (U"• Corrected a bug that caused ##Find again# in the TextGrid windo
 LIST_ITEM (U"• Macintosh: made Praat work correctly on 10.3 computers with missing fonts.")
 NORMAL (U"##5.0.05# (19 January 2008)")
 LIST_ITEM (U"• All Matrix, Sound, Spectrogram, Pitch, Ltas, and Spectrum objects (and more) are now in 52-bit relative precision (instead of the earlier 23 bits).")
-LIST_ITEM (U"• Corrected a bug that could lead to \"Unknown opcode (0)\" messages when drawing large sounds (more than 16 million samples) in the Picture window.")
+LIST_ITEM (U"• Corrected a bug that could lead to “Unknown opcode (0)” messages when drawing large sounds (more than 16 million samples) in the Picture window.")
 LIST_ITEM (U"• Macintosh: solved around a bug in the C library that could cause incorrect representation of non-ASCII characters (in the OTGrammar window).")
 NORMAL (U"##5.0.04# (12 January 2008)")
 LIST_ITEM (U"• Windows: corrected a bug introduced in 5.0.03 that caused Praat to crash if you pressed a key in the Sound window.")
@@ -1407,7 +1412,7 @@ LIST_ITEM (U"• Support for saving Table, TableOfReal, Strings, OTGrammar and O
 NORMAL (U"##4.6.28# (1 October 2007)")
 LIST_ITEM (U"• OT learning: positive constraint satisfactions in OTMulti tableaus.")
 LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when reading a non-UTF-8 text file "
-	"when the \"Text reading preference\" had been set to UTF-8.")
+	"when the ##Text reading preference# had been set to UTF-8.")
 NORMAL (U"##4.6.27# (29 September 2007)")
 LIST_ITEM (U"• Corrected redrawing of text with non-ASCII characters.")
 NORMAL (U"##4.6.26# (29 September 2007)")
@@ -1443,7 +1448,7 @@ NORMAL (U"##4.6.16# (22 August 2007)")
 LIST_ITEM (U"• Macintosh: corrected a bug introduced in 4.6.13 that could cause Praat to crash when drawing a spectrogram in MacOS X 10.3 or earlier.")
 NORMAL (U"##4.6.15# (21 August 2007)")
 LIST_ITEM (U"• Corrected a bug introduced in 4.6.14 that prevented the use of Helvetica in the Picture window.")
-LIST_ITEM (U"• Corrected a bug in \"Read Table from table file...\", introduced in 4.6.13.")
+LIST_ITEM (U"• Corrected a bug in ##Read Table from table file...#, introduced in 4.6.13.")
 NORMAL (U"##4.6.14# (20 August 2007)")
 LIST_ITEM (U"• Corrected a bug introduced in 4.6.13 that prevented any other font than Palatino in the Picture window.")
 LIST_ITEM (U"• Macintosh: corrected height of subscripts and superscripts (broken in 4.6.13).")
@@ -1514,7 +1519,7 @@ NORMAL (U"##4.5.20# (19 April 2007)")
 LIST_ITEM (U"• Scripting: allow assignments like $$pitch = To Pitch... 0 75 600$.")
 LIST_ITEM (U"• PitchTier Formula: guard against undefined values.")
 NORMAL (U"##4.5.19# (2 April 2007)")
-LIST_ITEM (U"• Scripting: allow comments with \"\\# \" and \";\" in forms.")
+LIST_ITEM (U"• Scripting: allow comments with “\\# ” and “;” in forms.")
 LIST_ITEM (U"• Windows audio playing: attempt at more compatibility with Vista.")
 NORMAL (U"##4.5.18# (30 March 2007)")
 LIST_ITEM (U"• Macintosh: better image drawing (more grey values).")
@@ -1594,7 +1599,7 @@ LIST_ITEM (U"• Split between @@Create Strings as file list...@ and @@Create St
 NORMAL (U"##4.4.30# (28 August 2006)")
 LIST_ITEM (U"• Table: Draw ellipse (standard deviation)...")
 NORMAL (U"##4.4.29# (21 August 2006)")
-LIST_ITEM (U"• Allowed \"European\" symbols in file names and object names.")
+LIST_ITEM (U"• Allowed “European” symbols in file names and object names.")
 NORMAL (U"##4.4.28# (10 August 2006)")
 LIST_ITEM (U"• Windows XP: Praat files can finally again be opened by double-clicking and by dragging them onto the Praat icon.")
 LIST_ITEM (U"• Scripting (Windows): removed a bug that caused Praat to crash if the script window was closed when a file selector window was open.")
@@ -1669,13 +1674,13 @@ LIST_ITEM (U"• TextGrid: an IntervalTier can be written to an Xwaves label fil
 NORMAL (U"##4.4.04# (6 January 2006)")
 LIST_ITEM (U"• Windows: Quicktime support (see at 4.4.03).")
 NORMAL (U"##4.4.03# (6 January 2006)")
-LIST_ITEM (U"• Macintosh: Quicktime support, i.e., \"Read from file\" can now read the audio from several kinds of movie files (.mov, .avi).")
+LIST_ITEM (U"• Macintosh: Quicktime support, i.e., ##Read from file...# can now read the audio from several kinds of movie files (.mov, .avi).")
 NORMAL (U"##4.4.02# (5 January 2006)")
 LIST_ITEM (U"• OT learning: allow the decision strategies of Harmonic Grammar and Linear OT.")
 NORMAL (U"##4.4.01# (2 January 2006)")
-LIST_ITEM (U"• Picture window: \"Logarithmic marks\" allows reversed axes.")
-LIST_ITEM (U"• Manipulation window: removed a bug from \"Shift frequencies\" that caused much too small shifts in semitones.")
-LIST_ITEM (U"• TextGrid: \"Remove point...\".")
+LIST_ITEM (U"• Picture window: ##Logarithmic marks...# allows reversed axes.")
+LIST_ITEM (U"• Manipulation window: removed a bug from ##Shift frequencies...# that caused much too small shifts in semitones.")
+LIST_ITEM (U"• ##TextGrid: Remove point...#.")
 MAN_END
 
 MAN_BEGIN (U"What was new in 4.4?", U"ppgb", 20051219)
@@ -1690,7 +1695,7 @@ NORMAL (U"##4.3.35# (8 December 2005)")
 LIST_ITEM (U"• @ExperimentMFC: switched off warnings for stereo files.")
 NORMAL (U"##4.3.34# (8 December 2005)")
 LIST_ITEM (U"• Sound window: the arrow scroll step is settable.")
-LIST_ITEM (U"• You can now run multiple listening experiments (@ExperimentMFC) in one \"Run\".")
+LIST_ITEM (U"• You can now run multiple listening experiments (@ExperimentMFC) in one #Run.")
 LIST_ITEM (U"• Formant: Get quantile of bandwidth...")
 NORMAL (U"##4.3.33# (6 December 2005)")
 LIST_ITEM (U"• Removed three bugs introduced in 4.3.32 in @ExperimentMFC.")
@@ -1723,7 +1728,7 @@ NORMAL (U"##4.3.22# (8 September 2005)")
 LIST_ITEM (U"• Macintosh: variable scroll bar size (finally, 7 years since System 8.5).")
 NORMAL (U"##4.3.21# (1 September 2005)")
 LIST_ITEM (U"• Macintosh: error message if any of the fonts Times, Helvetica, Courier and Symbol are unavailable at start-up.")
-LIST_ITEM (U"• Renamed \"Control\" menu to \"Praat\" on all platforms (as on the Mac), "
+LIST_ITEM (U"• Renamed Control menu to “Praat” on all platforms (as on the Mac), "
 	"to reflect the fact that no other programs than Praat have used the Praat shell for five years.")
 LIST_ITEM (U"• Script editor: Undo and Redo buttons (only on the Mac for now).")
 LIST_ITEM (U"• Manual: corrected a bug that sometimes caused Praat to crash when trying to print.")
@@ -1731,7 +1736,7 @@ NORMAL (U"##4.3.20# (18 August 2005)")
 LIST_ITEM (U"• Log files: include name of editor window.")
 NORMAL (U"##4.3.19# (20 July 2005)")
 LIST_ITEM (U"• Improved buttons in manual.")
-LIST_ITEM (U"• TableOfReal: Read from headerless spreadsheet file: allow row and column labels to be 30,000 rather than 100 characters.")
+LIST_ITEM (U"• ##TableOfReal: Read from headerless spreadsheet file#: allow row and column labels to be 30,000 rather than 100 characters.")
 NORMAL (U"##4.3.18# (12 July 2005)")
 LIST_ITEM (U"• Glottal source for sound synthesis, corrected and documented.")
 NORMAL (U"##4.3.17# (7 July 2005)")
@@ -1755,7 +1760,7 @@ LIST_ITEM (U"• TextGrid editor: show number of intervals.")
 NORMAL (U"##4.3.10# (25 April 2005)")
 LIST_ITEM (U"• Table: Get logistic regression.")
 NORMAL (U"##4.3.08# (19 April 2005)")
-LIST_ITEM (U"• OT learning: store history with \"OTGrammar & Strings: Learn from partial outputs...\".")
+LIST_ITEM (U"• OT learning: store history with ##OTGrammar & Strings: Learn from partial outputs...#.")
 NORMAL (U"##4.3.07# (31 March 2005)")
 LIST_ITEM (U"• Linux: removed a bug that could cause a sound to stop playing.")
 NORMAL (U"##4.3.04# (9 March 2005)")
@@ -1825,7 +1830,7 @@ ENTRY (U"Praat 4.2, 4 March 2004")
 	LIST_ITEM (U"• More precision in numeric libraries.")
 	LIST_ITEM (U"• PitchTier: Interpolate quadratically.")
 	LIST_ITEM (U"• TextGrids can be saved chronologically (and Praat can read that file again).")
-	LIST_ITEM (U"• Sound editor window @@Time step settings...@: \"Automatic\", \"Fixed\", and \"View-dependent\".")
+	LIST_ITEM (U"• Sound editor window @@Time step settings...@: #Automatic, #Fixed, and ##View-dependent#.")
 	LIST_ITEM (U"• Sound window: distinguish basic from advanced spectrogram and pitch settings.")
 	LIST_ITEM (U"• Read TableOfReal from headerless spreadsheet file...: cells with strings are considered zero.")
 	LIST_ITEM (U"• Sound window: introduced time step as advanced setting.")
@@ -1841,7 +1846,7 @@ ENTRY (U"Praat 4.2, 4 March 2004")
 	LIST_ITEM (U"• Polygon: can now also paint in colour instead of only in grey values.")
 	LIST_ITEM (U"• Unlimited number of points for polygons in PostScript (may not work on very old printers).")
 	LIST_ITEM (U"• Picture window: line widths on all printers and clipboards are now equal to line widths used on PostScript printers: "
-		"a line with a line width of \"1\" will be drawn with a width 3/8 points. This improves the looks of pictures printed "
+		"a line with a line width of “1” will be drawn with a width 3/8 points. This improves the looks of pictures printed "
 		"on non-PostScript printers, improves the looks of pictures copied to your wordprocessor when printed, "
 		"and changes the looks of pictures copied to your presentation program.")
 	NORMAL (U"OT learning:")
@@ -1903,7 +1908,7 @@ ENTRY (U"Praat 4.1, 5 June 2003")
 	LIST_ITEM (U"• @Formulas: can use variables without quotes.")
 	LIST_ITEM (U"• Formulas for PitchTier, IntensityTier, AmplitudeTier, DurationTier.")
 	LIST_ITEM (U"• Refer to any matrices and tables in formulas, e.g. Sound_hello (x) or Table_everything [row, col] "
-		"or Table_tokens [i, \"F1\"].")
+		"or Table_tokens [i, “F1”].")
 	LIST_ITEM (U"• Assignment by modification, as with += -= *= /=.")
 	LIST_ITEM (U"• New functions: date\\$ (), extractNumber, extractWord\\$ , extractLine\\$ . See @@Formulas 6. String functions@.")
 	LIST_ITEM (U"• @@Scripting 5.8. Including other scripts@.")
@@ -1969,7 +1974,7 @@ ENTRY (U"Praat 3.9, 18 October 2000")
 		"shift-click near boundary adds interval to selection.")
 	LIST_ITEM (U"• Stereo display in LongSound and TextGrid editors.")
 	LIST_ITEM (U"• LongSoundEditor and TextGridEditor: write selection to audio file.")
-	LIST_ITEM (U"• SoundEditor: added command \"Extract selection (preserve times)\".")
+	LIST_ITEM (U"• SoundEditor: added command ##Extract selection (preserve times)#.")
 	LIST_ITEM (U"• IntervalTierEditor, DurationTierEditor.")
 	LIST_ITEM (U"• Added many query commands in editors.")
 	NORMAL (U"Phonetics library:")
@@ -2005,12 +2010,12 @@ ENTRY (U"Praat 3.9, 18 October 2000")
 	LIST_ITEM (U"• Linux: support for 24-bits screens.")
 	NORMAL (U"Audio:")
 	LIST_ITEM (U"• Asynchronous sound play.")
-	LIST_ITEM (U"• Linux: solved problems with /dev/mixer (\"Cannot read MIC gain.\") on many computers.")
+	LIST_ITEM (U"• Linux: solved problems with /dev/mixer (“Cannot read MIC gain.”) on many computers.")
 	LIST_ITEM (U"• Added possibility of zero padding for sound playing, "
 		"in order to reduce clicks on some Linux and Sun computers.")
 	LIST_ITEM (U"• LongSound supports mono and stereo, 8-bit and 16-bit, %\\mu-law and A-law, "
 		"big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.")
-	LIST_ITEM (U"• \"Read two Sounds from stereo file...\" supports 8-bit and 16-bit, %\\mu-law and A-law, "
+	LIST_ITEM (U"• ##Read two Sounds from stereo file...# supports 8-bit and 16-bit, %\\mu-law and A-law, "
 		"big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.")
 	LIST_ITEM (U"• SoundRecorder writes to 16-bit AIFC, WAV, NeXT/Sun, and NIST mono and stereo files.")
 	LIST_ITEM (U"• Sound & LongSound: write part or whole to mono or stereo audio file.")
@@ -2024,7 +2029,7 @@ ENTRY (U"Praat 3.9, 18 October 2000")
 	LIST_ITEM (U"• Unix & Windows: can use <stdout> as a file name (supports pipes for binary data).")
 	LIST_ITEM (U"• @sendpraat now also for Macintosh.")
 	LIST_ITEM (U"• @@Scripting 6.7. Sending a message to another program|sendsocket@.")
-	LIST_ITEM (U"• @@Read from file...@ recognizes script files if they begin with \"\\# !\".")
+	LIST_ITEM (U"• @@Read from file...@ recognizes script files if they begin with “\\# !”.")
 	LIST_ITEM (U"• Script links in @ManPages.")
 	NORMAL (U"Documentation")
 	LIST_ITEM (U"• Tutorials on all subjects available through @Intro.")
@@ -2040,9 +2045,9 @@ ENTRY (U"Praat 3.8, 12 January 1999")
 	LIST_ITEM (U"• @SoundRecorder: allows multiple recordings without close; Play button; Write buttons; buffer size can be set.")
 	LIST_ITEM (U"• Reverse a Sound or a selection of a Sound.")
 	LIST_ITEM (U"• @@Sound: Get nearest zero crossing...@.")
-	LIST_ITEM (U"• Formant: \"Scatter plot (reversed axes)...\".")
-	LIST_ITEM (U"• TextGrid & Pitch: \"Speckle separately...\".")
-	LIST_ITEM (U"• \"Extract Sound selection (preserve times)\" in TextGridEditor.")
+	LIST_ITEM (U"• ##Formant: Scatter plot (reversed axes)...#.")
+	LIST_ITEM (U"• ##TextGrid & Pitch: Speckle separately...#.")
+	LIST_ITEM (U"• ##Extract Sound selection (preserve times)# in TextGridEditor.")
 	LIST_ITEM (U"• More query commands for Matrix, TableOfReal, Spectrum, PointProcess.")
 	NORMAL (U"Phonology library")
 	LIST_ITEM (U"• 25-page OT learning tutorial.")
@@ -2052,12 +2057,12 @@ ENTRY (U"Praat 3.8, 12 January 1999")
 	LIST_ITEM (U"• April 24: Windows alpha version.")
 	NORMAL (U"Files")
 	LIST_ITEM (U"• Read more Kay, Sun (.au), and WAV sound files.")
-	LIST_ITEM (U"• \"Read Strings from raw text file...\"")
+	LIST_ITEM (U"• ##Read Strings from raw text file...#")
 	LIST_ITEM (U"• @@Create Strings as file list...@.")
-	LIST_ITEM (U"• \"Read IntervalTier from Xwaves...\"")
-	LIST_ITEM (U"• hidden \"Read from old Windows Praat picture file...\"")
+	LIST_ITEM (U"• ##Read IntervalTier from Xwaves...#")
+	LIST_ITEM (U"• hidden ##Read from old Windows Praat picture file...#")
 	NORMAL (U"Graphics")
-	LIST_ITEM (U"• Use colours (instead of only greys) in \"Paint ellipse...\" etc.")
+	LIST_ITEM (U"• Use colours (instead of only greys) in ##Paint ellipse...# etc.")
 	LIST_ITEM (U"• More true colours (maroon, lime, navy, teal, purple, olive).")
 	LIST_ITEM (U"• Direct printing from Macintosh to PostScript printers.")
 	LIST_ITEM (U"• Hyperpage printing to PostScript printers and PostScript files.")
@@ -2117,7 +2122,7 @@ ENTRY (U"Praat 3.6, 27 October 1997")
 	LIST_ITEM (U"• @SpectrumEditor: copy band-filtered spectrum or sound to list of objects.")
 	LIST_ITEM (U"• @ManipulationEditor: LPC-based pitch manipulation.")
 	NORMAL (U"Objects:")
-	LIST_ITEM (U"• Use '-', and '+' in object names.")
+	LIST_ITEM (U"• Use “-” and “+” in object names.")
 	NORMAL (U"Phonetics library")
 	LIST_ITEM (U"• LPC-based resynthesis in @ManipulationEditor.")
 	LIST_ITEM (U"• @Sound: direct modification without formulas (addition, multiplication, windowing)")
@@ -2626,35 +2631,35 @@ CODE (U"                       TERMS AND CONDITIONS")
 CODE (U"")
 CODE (U"0. Definitions.")
 CODE (U"")
-CODE (U"\"This License\" refers to version 3 of the GNU General Public License.")
+CODE (U"“This License” refers to version 3 of the GNU General Public License.")
 CODE (U"")
-CODE (U"\"Copyright\" also means copyright-like laws that apply to other kinds of "
+CODE (U"“Copyright” also means copyright-like laws that apply to other kinds of "
 	"works, such as semiconductor masks.")
 CODE (U"")
-CODE (U"\"The Program\" refers to any copyrightable work licensed under this "
-	"License.  Each licensee is addressed as \"you\".  \"Licensees\" and "
-	"\"recipients\" may be individuals or organizations.")
+CODE (U"“The Program” refers to any copyrightable work licensed under this "
+	"License.  Each licensee is addressed as “you”.  “Licensees” and "
+	"“recipients” may be individuals or organizations.")
 CODE (U"")
-CODE (U"To \"modify\" a work means to copy from or adapt all or part of the work "
+CODE (U"To “modify” a work means to copy from or adapt all or part of the work "
 	"in a fashion requiring copyright permission, other than the making of an "
-	"exact copy.  The resulting work is called a \"modified version\" of the "
-	"earlier work or a work \"based on\" the earlier work.")
+	"exact copy.  The resulting work is called a “modified version” of the "
+	"earlier work or a work “based on” the earlier work.")
 CODE (U"")
-CODE (U"A \"covered work\" means either the unmodified Program or a work based "
+CODE (U"A “covered work” means either the unmodified Program or a work based "
 	"on the Program.")
 CODE (U"")
-CODE (U"To \"propagate\" a work means to do anything with it that, without "
+CODE (U"To “propagate” a work means to do anything with it that, without "
 	"permission, would make you directly or secondarily liable for "
 	"infringement under applicable copyright law, except executing it on a "
 	"computer or modifying a private copy.  Propagation includes copying, "
 	"distribution (with or without modification), making available to the "
 	"public, and in some countries other activities as well.")
 CODE (U"")
-CODE (U"To \"convey\" a work means any kind of propagation that enables other "
+CODE (U"To “convey” a work means any kind of propagation that enables other "
 	"parties to make or receive copies.  Mere interaction with a user through "
 	"a computer network, with no transfer of a copy, is not conveying.")
 CODE (U"")
-CODE (U"An interactive user interface displays \"Appropriate Legal Notices\" "
+CODE (U"An interactive user interface displays “Appropriate Legal Notices” "
 	"to the extent that it includes a convenient and prominently visible "
 	"feature that (1) displays an appropriate copyright notice, and (2) "
 	"tells the user that there is no warranty for the work (except to the "
@@ -2665,27 +2670,27 @@ CODE (U"An interactive user interface displays \"Appropriate Legal Notices\" "
 CODE (U"")
 CODE (U"1. Source Code.")
 CODE (U"")
-CODE (U"The \"source code\" for a work means the preferred form of the work "
-	"for making modifications to it.  \"Object code\" means any non-source "
+CODE (U"The “source code” for a work means the preferred form of the work "
+	"for making modifications to it.  “Object code” means any non-source "
 	"form of a work.")
 CODE (U"")
-CODE (U"A \"Standard Interface\" means an interface that either is an official "
+CODE (U"A “Standard Interface” means an interface that either is an official "
 	"standard defined by a recognized standards body, or, in the case of "
 	"interfaces specified for a particular programming language, one that "
 	"is widely used among developers working in that language.")
 CODE (U"")
-CODE (U"The \"System Libraries\" of an executable work include anything, other "
+CODE (U"The “System Libraries” of an executable work include anything, other "
 	"than the work as a whole, that (a) is included in the normal form of "
 	"packaging a Major Component, but which is not part of that Major "
 	"Component, and (b) serves only to enable use of the work with that "
 	"Major Component, or to implement a Standard Interface for which an "
 	"implementation is available to the public in source code form.  A "
-	"\"Major Component\", in this context, means a major essential component "
+	"“Major Component”, in this context, means a major essential component "
 	"(kernel, window system, and so on) of the specific operating system "
 	"(if any) on which the executable work runs, or a compiler used to "
 	"produce the work, or an object code interpreter used to run it.")
 CODE (U"")
-CODE (U"The \"Corresponding Source\" for a work in object code form means all "
+CODE (U"The “Corresponding Source” for a work in object code form means all "
 	"the source code needed to generate, install, and (for an executable "
 	"work) run the object code and to modify the work, including scripts to "
 	"control those activities.  However, it does not include the work's "
@@ -2730,7 +2735,7 @@ CODE (U"Conveying under any other circumstances is permitted solely under "
 	"the conditions stated below.  Sublicensing is not allowed; section 10 "
 	"makes it unnecessary.")
 CODE (U"")
-CODE (U"3. Protecting Users' Legal Rights From Anti-Circumvention Law.")
+CODE (U"3. Protecting Users’ Legal Rights From Anti-Circumvention Law.")
 CODE (U"")
 CODE (U"No covered work shall be deemed part of an effective technological "
 	"measure under any applicable law fulfilling obligations under article "
@@ -2765,32 +2770,32 @@ CODE (U"You may convey a work based on the Program, or the modifications to "
 	"produce it from the Program, in the form of source code under the "
 	"terms of section 4, provided that you also meet all of these conditions:")
 CODE (U"")
-CODE1 (U"a) The work must carry prominent notices stating that you modified "
-	"it, and giving a relevant date.")
-CODE (U"")
-CODE1 (U"b) The work must carry prominent notices stating that it is "
-	"released under this License and any conditions added under section "
-	"7.  This requirement modifies the requirement in section 4 to "
-	"\"keep intact all notices\".")
-CODE (U"")
-CODE1 (U"c) You must license the entire work, as a whole, under this "
-	"License to anyone who comes into possession of a copy.  This "
-	"License will therefore apply, along with any applicable section 7 "
-	"additional terms, to the whole of the work, and all its parts, "
-	"regardless of how they are packaged.  This License gives no "
-	"permission to license the work in any other way, but it does not "
-	"invalidate such permission if you have separately received it.")
-CODE (U"")
-CODE1 (U"d) If the work has interactive user interfaces, each must display "
-	"Appropriate Legal Notices; however, if the Program has interactive "
-	"interfaces that do not display Appropriate Legal Notices, your "
-	"work need not make them do so.")
+	CODE1 (U"a) The work must carry prominent notices stating that you modified "
+		"it, and giving a relevant date.")
+	CODE1 (U"")
+	CODE1 (U"b) The work must carry prominent notices stating that it is "
+		"released under this License and any conditions added under section "
+		"7.  This requirement modifies the requirement in section 4 to "
+		"“keep intact all notices”.")
+	CODE1 (U"")
+	CODE1 (U"c) You must license the entire work, as a whole, under this "
+		"License to anyone who comes into possession of a copy.  This "
+		"License will therefore apply, along with any applicable section 7 "
+		"additional terms, to the whole of the work, and all its parts, "
+		"regardless of how they are packaged.  This License gives no "
+		"permission to license the work in any other way, but it does not "
+		"invalidate such permission if you have separately received it.")
+	CODE1 (U"")
+	CODE1 (U"d) If the work has interactive user interfaces, each must display "
+		"Appropriate Legal Notices; however, if the Program has interactive "
+		"interfaces that do not display Appropriate Legal Notices, your "
+		"work need not make them do so.")
 CODE (U"")
 CODE (U"A compilation of a covered work with other separate and independent "
 	"works, which are not by their nature extensions of the covered work, "
 	"and which are not combined with it such as to form a larger program, "
 	"in or on a volume of a storage or distribution medium, is called an "
-	"\"aggregate\" if the compilation and its resulting copyright are not "
+	"“aggregate” if the compilation and its resulting copyright are not "
 	"used to limit the access or legal rights of the compilation's users "
 	"beyond what the individual works permit.  Inclusion of a covered work "
 	"in an aggregate does not cause this License to apply to the other "
@@ -2803,57 +2808,57 @@ CODE (U"You may convey a covered work in object code form under the terms "
 	"machine-readable Corresponding Source under the terms of this License, "
 	"in one of these ways:")
 CODE (U"")
-CODE1 (U"a) Convey the object code in, or embodied in, a physical product "
-	"(including a physical distribution medium), accompanied by the "
-	"Corresponding Source fixed on a durable physical medium "
-	"customarily used for software interchange.")
-CODE (U"")
-CODE1 (U"b) Convey the object code in, or embodied in, a physical product "
-	"(including a physical distribution medium), accompanied by a "
-	"written offer, valid for at least three years and valid for as "
-	"long as you offer spare parts or customer support for that product "
-	"model, to give anyone who possesses the object code either (1) a "
-	"copy of the Corresponding Source for all the software in the "
-	"product that is covered by this License, on a durable physical "
-	"medium customarily used for software interchange, for a price no "
-	"more than your reasonable cost of physically performing this "
-	"conveying of source, or (2) access to copy the "
-	"Corresponding Source from a network server at no charge.")
-CODE (U"")
-CODE1 (U"c) Convey individual copies of the object code with a copy of the "
-	"written offer to provide the Corresponding Source.  This "
-	"alternative is allowed only occasionally and noncommercially, and "
-	"only if you received the object code with such an offer, in accord "
-	"with subsection 6b.")
-CODE (U"")
-CODE1 (U"d) Convey the object code by offering access from a designated "
-	"place (gratis or for a charge), and offer equivalent access to the "
-	"Corresponding Source in the same way through the same place at no "
-	"further charge.  You need not require recipients to copy the "
-	"Corresponding Source along with the object code.  If the place to "
-	"copy the object code is a network server, the Corresponding Source "
-	"may be on a different server (operated by you or a third party) "
-	"that supports equivalent copying facilities, provided you maintain "
-	"clear directions next to the object code saying where to find the "
-	"Corresponding Source.  Regardless of what server hosts the "
-	"Corresponding Source, you remain obligated to ensure that it is "
-	"available for as long as needed to satisfy these requirements.")
-CODE (U"")
-CODE1 (U"e) Convey the object code using peer-to-peer transmission, provided "
-	"you inform other peers where the object code and Corresponding "
-	"Source of the work are being offered to the general public at no "
-	"charge under subsection 6d.")
+	CODE1 (U"a) Convey the object code in, or embodied in, a physical product "
+		"(including a physical distribution medium), accompanied by the "
+		"Corresponding Source fixed on a durable physical medium "
+		"customarily used for software interchange.")
+	CODE1 (U"")
+	CODE1 (U"b) Convey the object code in, or embodied in, a physical product "
+		"(including a physical distribution medium), accompanied by a "
+		"written offer, valid for at least three years and valid for as "
+		"long as you offer spare parts or customer support for that product "
+		"model, to give anyone who possesses the object code either (1) a "
+		"copy of the Corresponding Source for all the software in the "
+		"product that is covered by this License, on a durable physical "
+		"medium customarily used for software interchange, for a price no "
+		"more than your reasonable cost of physically performing this "
+		"conveying of source, or (2) access to copy the "
+		"Corresponding Source from a network server at no charge.")
+	CODE1 (U"")
+	CODE1 (U"c) Convey individual copies of the object code with a copy of the "
+		"written offer to provide the Corresponding Source.  This "
+		"alternative is allowed only occasionally and noncommercially, and "
+		"only if you received the object code with such an offer, in accord "
+		"with subsection 6b.")
+	CODE1 (U"")
+	CODE1 (U"d) Convey the object code by offering access from a designated "
+		"place (gratis or for a charge), and offer equivalent access to the "
+		"Corresponding Source in the same way through the same place at no "
+		"further charge.  You need not require recipients to copy the "
+		"Corresponding Source along with the object code.  If the place to "
+		"copy the object code is a network server, the Corresponding Source "
+		"may be on a different server (operated by you or a third party) "
+		"that supports equivalent copying facilities, provided you maintain "
+		"clear directions next to the object code saying where to find the "
+		"Corresponding Source.  Regardless of what server hosts the "
+		"Corresponding Source, you remain obligated to ensure that it is "
+		"available for as long as needed to satisfy these requirements.")
+	CODE1 (U"")
+	CODE1 (U"e) Convey the object code using peer-to-peer transmission, provided "
+		"you inform other peers where the object code and Corresponding "
+		"Source of the work are being offered to the general public at no "
+		"charge under subsection 6d.")
 CODE (U"")
 CODE (U"A separable portion of the object code, whose source code is excluded "
 	"from the Corresponding Source as a System Library, need not be "
 	"included in conveying the object code work.")
 CODE (U"")
-CODE (U"A \"User Product\" is either (1) a \"consumer product\", which means any "
+CODE (U"A “User Product” is either (1) a “consumer product”, which means any "
 	"tangible personal property which is normally used for personal, family, "
 	"or household purposes, or (2) anything designed or sold for incorporation "
 	"into a dwelling.  In determining whether a product is a consumer product, "
 	"doubtful cases shall be resolved in favor of coverage.  For a particular "
-	"product received by a particular user, \"normally used\" refers to a "
+	"product received by a particular user, “normally used” refers to a "
 	"typical or common use of that class of product, regardless of the status "
 	"of the particular user or of the way in which the particular user "
 	"actually uses, or expects or is expected to use, the product.  A product "
@@ -2861,7 +2866,7 @@ CODE (U"A \"User Product\" is either (1) a \"consumer product\", which means any
 	"commercial, industrial or non-consumer uses, unless such uses represent "
 	"the only significant mode of use of the product.")
 CODE (U"")
-CODE (U"\"Installation Information\" for a User Product means any methods, "
+CODE (U"“Installation Information” for a User Product means any methods, "
 	"procedures, authorization keys, or other information required to install "
 	"and execute modified versions of a covered work in that User Product from "
 	"a modified version of its Corresponding Source.  The information must "
@@ -2896,7 +2901,7 @@ CODE (U"Corresponding Source conveyed, and Installation Information provided, "
 CODE (U"")
 CODE (U"7. Additional Terms.")
 CODE (U"")
-CODE (U"\"Additional permissions\" are terms that supplement the terms of this "
+CODE (U"“Additional permissions” are terms that supplement the terms of this "
 	"License by making exceptions from one or more of its conditions. "
 	"Additional permissions that are applicable to the entire Program shall "
 	"be treated as though they were included in this License, to the extent "
@@ -2916,31 +2921,31 @@ CODE (U"Notwithstanding any other provision of this License, for material you "
 	"add to a covered work, you may (if authorized by the copyright holders of "
 	"that material) supplement the terms of this License with terms:")
 CODE (U"")
-CODE1 (U"a) Disclaiming warranty or limiting liability differently from the "
-	"terms of sections 15 and 16 of this License; or")
+	CODE1 (U"a) Disclaiming warranty or limiting liability differently from the "
+		"terms of sections 15 and 16 of this License; or")
+	CODE1 (U"")
+	CODE1 (U"b) Requiring preservation of specified reasonable legal notices or "
+		"author attributions in that material or in the Appropriate Legal "
+		"Notices displayed by works containing it; or")
+	CODE1 (U"")
+	CODE1 (U"c) Prohibiting misrepresentation of the origin of that material, or "
+		"requiring that modified versions of such material be marked in "
+		"reasonable ways as different from the original version; or")
+	CODE1 (U"")
+	CODE1 (U"d) Limiting the use for publicity purposes of names of licensors or "
+		"authors of the material; or")
+	CODE1 (U"")
+	CODE1 (U"e) Declining to grant rights under trademark law for use of some "
+		"trade names, trademarks, or service marks; or")
+	CODE1 (U"")
+	CODE1 (U"f) Requiring indemnification of licensors and authors of that "
+		"material by anyone who conveys the material (or modified versions of "
+		"it) with contractual assumptions of liability to the recipient, for "
+		"any liability that these contractual assumptions directly impose on "
+		"those licensors and authors.")
 CODE (U"")
-CODE1 (U"b) Requiring preservation of specified reasonable legal notices or "
-	"author attributions in that material or in the Appropriate Legal "
-	"Notices displayed by works containing it; or")
-CODE (U"")
-CODE1 (U"c) Prohibiting misrepresentation of the origin of that material, or "
-	"requiring that modified versions of such material be marked in "
-	"reasonable ways as different from the original version; or")
-CODE (U"")
-CODE1 (U"d) Limiting the use for publicity purposes of names of licensors or "
-	"authors of the material; or")
-CODE (U"")
-CODE1 (U"e) Declining to grant rights under trademark law for use of some "
-	"trade names, trademarks, or service marks; or")
-CODE (U"")
-CODE1 (U"f) Requiring indemnification of licensors and authors of that "
-	"material by anyone who conveys the material (or modified versions of "
-	"it) with contractual assumptions of liability to the recipient, for "
-	"any liability that these contractual assumptions directly impose on "
-	"those licensors and authors.")
-CODE (U"")
-CODE (U"All other non-permissive additional terms are considered \"further "
-	"restrictions\" within the meaning of section 10.  If the Program as you "
+CODE (U"All other non-permissive additional terms are considered “further "
+	"restrictions” within the meaning of section 10.  If the Program as you "
 	"received it, or any part of it, contains a notice stating that it is "
 	"governed by this License along with a term that is a further "
 	"restriction, you may remove that term.  If a license document contains "
@@ -3004,12 +3009,12 @@ CODE (U"Each time you convey a covered work, the recipient automatically "
 	"propagate that work, subject to this License.  You are not responsible "
 	"for enforcing compliance by third parties with this License.")
 CODE (U"")
-CODE (U"An \"entity transaction\" is a transaction transferring control of an "
+CODE (U"An “entity transaction” is a transaction transferring control of an "
 	"organization, or substantially all assets of one, or subdividing an "
 	"organization, or merging organizations.  If propagation of a covered "
 	"work results from an entity transaction, each party to that "
 	"transaction who receives a copy of the work also receives whatever "
-	"licenses to the work the party's predecessor in interest had or could "
+	"licenses to the work the party’s predecessor in interest had or could "
 	"give under the previous paragraph, plus a right to possession of the "
 	"Corresponding Source of the work from the predecessor in interest, if "
 	"the predecessor has it or can get it with reasonable efforts.")
@@ -3024,17 +3029,17 @@ CODE (U"You may not impose any further restrictions on the exercise of the "
 CODE (U"")
 CODE (U"11. Patents.")
 CODE (U"")
-CODE (U"A \"contributor\" is a copyright holder who authorizes use under this "
+CODE (U"A “contributor” is a copyright holder who authorizes use under this "
 	"License of the Program or a work on which the Program is based.  The "
-	"work thus licensed is called the contributor's \"contributor version\".")
+	"work thus licensed is called the contributor’s “contributor version”.")
 CODE (U"")
-CODE (U"A contributor's \"essential patent claims\" are all patent claims "
+CODE (U"A contributor’s “essential patent claims” are all patent claims "
 	"owned or controlled by the contributor, whether already acquired or "
 	"hereafter acquired, that would be infringed by some manner, permitted "
 	"by this License, of making, using, or selling its contributor version, "
 	"but do not include claims that would be infringed only as a "
 	"consequence of further modification of the contributor version.  For "
-	"purposes of this definition, \"control\" includes the right to grant "
+	"purposes of this definition, “control” includes the right to grant "
 	"patent sublicenses in a manner consistent with the requirements of "
 	"this License.")
 CODE (U"")
@@ -3043,10 +3048,10 @@ CODE (U"Each contributor grants you a non-exclusive, worldwide, royalty-free "
 	"make, use, sell, offer for sale, import and otherwise run, modify and "
 	"propagate the contents of its contributor version.")
 CODE (U"")
-CODE (U"In the following three paragraphs, a \"patent license\" is any express "
+CODE (U"In the following three paragraphs, a “patent license” is any express "
 	"agreement or commitment, however denominated, not to enforce a patent "
 	"(such as an express permission to practice a patent or covenant not to "
-	"sue for patent infringement).  To \"grant\" such a patent license to a "
+	"sue for patent infringement).  To “grant” such a patent license to a "
 	"party means to make such an agreement or commitment not to enforce a "
 	"patent against the party.")
 CODE (U"")
@@ -3058,9 +3063,9 @@ CODE (U"If you convey a covered work, knowingly relying on a patent license, "
 	"available, or (2) arrange to deprive yourself of the benefit of the "
 	"patent license for this particular work, or (3) arrange, in a manner "
 	"consistent with the requirements of this License, to extend the patent "
-	"license to downstream recipients.  \"Knowingly relying\" means you have "
+	"license to downstream recipients.  “Knowingly relying” means you have "
 	"actual knowledge that, but for the patent license, your conveying the "
-	"covered work in a country, or your recipient's use of the covered work "
+	"covered work in a country, or your recipient’s use of the covered work "
 	"in a country, would infringe one or more identifiable patents in that "
 	"country that you have reason to believe are valid.")
 CODE (U"")
@@ -3072,7 +3077,7 @@ CODE (U"If, pursuant to or in connection with a single transaction or "
 	"you grant is automatically extended to all recipients of the covered "
 	"work and works based on it.")
 CODE (U"")
-CODE (U"A patent license is \"discriminatory\" if it does not include within "
+CODE (U"A patent license is “discriminatory” if it does not include within "
 	"the scope of its coverage, prohibits the exercise of, or is "
 	"conditioned on the non-exercise of one or more of the rights that are "
 	"specifically granted under this License.  You may not convey a covered "
@@ -3123,7 +3128,7 @@ CODE (U"The Free Software Foundation may publish revised and/or new versions of 
 CODE (U"")
 CODE (U"Each version is given a distinguishing version number.  If the "
 	"Program specifies that a certain numbered version of the GNU General "
-	"Public License \"or any later version\" applies to it, you have the "
+	"Public License “or any later version” applies to it, you have the "
 	"option of following the terms and conditions either of that numbered "
 	"version or of any later version published by the Free Software "
 	"Foundation.  If the Program does not specify a version number of the "
@@ -3144,7 +3149,7 @@ CODE (U"15. Disclaimer of Warranty.")
 CODE (U"")
 CODE (U"THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY "
 	"APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT "
-	"HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY "
+	"HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY "
 	"OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, "
 	"THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR "
 	"PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM "
@@ -3183,40 +3188,40 @@ CODE (U"")
 CODE (U"To do so, attach the following notices to the program.  It is safest "
 	"to attach them to the start of each source file to most effectively "
 	"state the exclusion of warranty; and each file should have at least "
-	"the \"copyright\" line and a pointer to where the full notice is found.")
+	"the “copyright” line and a pointer to where the full notice is found.")
 CODE (U"")
-CODE1 (U"##<one line to give the program's name and a brief idea of what it does.>")
-CODE1 (U"##Copyright (C) <year>  <name of author>")
-CODE (U"")
-CODE1 (U"##This program is free software: you can redistribute it and/or modify "
-	"it under the terms of the GNU General Public License as published by "
-	"the Free Software Foundation, either version 3 of the License, or "
-	"(at your option) any later version.")
-CODE (U"")
-CODE1 (U"##This program is distributed in the hope that it will be useful, "
-	"but WITHOUT ANY WARRANTY; without even the implied warranty of "
-	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
-	"GNU General Public License for more details.")
-CODE (U"")
-CODE1 (U"##You should have received a copy of the GNU General Public License "
-	"along with this program.  If not, see <https://www.gnu.org/licenses/>.")
-CODE (U"")
-CODE1 (U"Also add information on how to contact you by electronic and paper mail.")
+	CODE1 (U"##<one line to give the program’s name and a brief idea of what it does.>")
+	CODE1 (U"##Copyright (C) <year>  <name of author>")
+	CODE1 (U"")
+	CODE1 (U"##This program is free software: you can redistribute it and/or modify "
+		"it under the terms of the GNU General Public License as published by "
+		"the Free Software Foundation, either version 3 of the License, or "
+		"(at your option) any later version.")
+	CODE1 (U"")
+	CODE1 (U"##This program is distributed in the hope that it will be useful, "
+		"but WITHOUT ANY WARRANTY; without even the implied warranty of "
+		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+		"GNU General Public License for more details.")
+	CODE1 (U"")
+	CODE1 (U"##You should have received a copy of the GNU General Public License "
+		"along with this program.  If not, see <https://www.gnu.org/licenses/>.")
+	CODE1 (U"")
+	CODE1 (U"Also add information on how to contact you by electronic and paper mail.")
 CODE (U"")
 CODE (U"If the program does terminal interaction, make it output a short "
 	"notice like this when it starts in an interactive mode:")
 CODE (U"")
-CODE1 (U"##<program>  Copyright (C) <year>  <name of author>")
-CODE1 (U"##This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.")
-CODE1 (U"##This is free software, and you are welcome to redistribute it")
-CODE1 (U"##under certain conditions; type `show c' for details.")
-CODE (U"")
-CODE1 (U"The hypothetical commands `show w' and `show c' should show the appropriate "
-	"parts of the General Public License.  Of course, your program's commands "
-	"might be different; for a GUI interface, you would use an \"about box\".")
+	CODE1 (U"##<program>  Copyright (C) <year>  <name of author>")
+	CODE1 (U"##This program comes with ABSOLUTELY NO WARRANTY; for details type ‘show w’.")
+	CODE1 (U"##This is free software, and you are welcome to redistribute it")
+	CODE1 (U"##under certain conditions; type ‘show c’ for details.")
+	CODE1 (U"")
+	CODE1 (U"The hypothetical commands ‘show w’ and ‘show c’ should show the appropriate "
+		"parts of the General Public License.  Of course, your program’s commands "
+		"might be different; for a GUI interface, you would use an “about box”.")
 CODE (U"")
 CODE (U"You should also get your employer (if you work as a programmer) or school, "
-	"if any, to sign a \"copyright disclaimer\" for the program, if necessary. "
+	"if any, to sign a “copyright disclaimer” for the program, if necessary. "
 	"For more information on this, and how to apply and follow the GNU GPL, see "
 	"<https://www.gnu.org/licenses/>.")
 CODE (U"")
@@ -3229,7 +3234,7 @@ CODE (U"The GNU General Public License does not permit incorporating your progra
 MAN_END
 
 MAN_BEGIN (U"Privacy and security", U"ppgb", 20221109)
-INTRO (U"Praat is an \"isolated\" app. You download it from praat.org, "
+INTRO (U"Praat is an “isolated” app. You download it from praat.org, "
 	"then record sounds into Praat (all in RAM) or open a sound file, "
 	"then analyse or manipulate that sound. The only way in which your results "
 	"are saved to disk (as e.g. a Pitch file, a TextGrid file, or a sound file), "
@@ -3270,14 +3275,14 @@ NORMAL (U"Companies that use telemetry tend to justify that by arguing that gath
 	"is useful for improving the quality of their app (by collecting error messages), "
 	"or to know which features are rarely used, so that those features can be removed.")
 NORMAL (U"We are skeptical. If we, as Praat developers, have made a programming error, "
-	"then we hope that an \"assertion\" will help solve the issue. "
+	"then we hope that an “assertion” will help solve the issue. "
 	"An assertion is a place in our code where Praat will crash if a certain assumption "
 	"is not met. A message window will pop up in Praat that says that Praat will crash, together "
 	"with the request to send some relevant information by email to us, the developers of Praat. "
 	"If you do send this crash information on to us (you can read it, as it is normal English without secrets), "
 	"we will then virtually always find out (sometimes with some more help from you, "
 	"such as the sound file or script that caused the crash) "
-	"what was wrong, and correct the mistake, so that our programming error (\"bug\") no longer occurs "
+	"what was wrong, and correct the mistake, so that our programming error (“bug”) no longer occurs "
 	"in the next version of Praat. We will also build an automatable test that checks, for all future "
 	"versions of Praat, that the bug does not reappear. In this way, every Praat version tends to be more stable and correct "
 	"than the previous version. We believe that this practice minimizes the problems with Praat sufficiently, "
@@ -3285,7 +3290,7 @@ NORMAL (U"We are skeptical. If we, as Praat developers, have made a programming 
 NORMAL (U"As for the removal of obsolete features, we are just very conservative. "
 	"Typically, file types from the 1980s and 1990s can typically still be opened in the 2020s, "
 	"and old Praat scripts should continue to run for at least 15 years after we marked a language feature "
-	"as \"deprecated\" or \"obsolete\" (and removed it from the manual). "
+	"as “deprecated” or “obsolete” (and removed it from the manual). "
 	"This has not prevented us from also being able to open file types invented in the 2020s "
 	"or to have a modern scripting language that supports vectors, matrices and string arrays, "
 	"and backward compatibility hardly hampers the continual modernization of Praat.")
@@ -3318,7 +3323,7 @@ NORMAL (U"Many apps automatically check for updates when you start them up. "
 MAN_END
 
 MAN_BEGIN (U"Reporting a problem", U"ppgb", 20220116)
-INTRO (U"Anything that you consider incorrect behaviour of Praat (a \"bug\") can be reported "
+INTRO (U"Anything that you consider incorrect behaviour of Praat (a “bug”) can be reported "
 	"to the authors by email ($$paul.boersma\\@ uva.nl$). "
 	"This includes any crashes.")
 NORMAL (U"Questions about how to use Praat for your specific cases "
@@ -3343,9 +3348,9 @@ ENTRY (U"Behaviour")
 NORMAL (U"The Objects window copies the selected object, and all the data it contains, "
 	"to a new object, which will appear at the bottom of the List of Objects.")
 ENTRY (U"Example")
-NORMAL (U"If you select \"Sound hallo\" and click `Copy...', "
+NORMAL (U"If you select “Sound hallo” and click ##Copy...#, "
 	"a command window will appear, which prompts you for a name; "
-	"after you click OK, a new object will appear in the list, bearing that name.")
+	"after you click #OK, a new object will appear in the list, bearing that name.")
 MAN_END
 
 MAN_BEGIN (U"Draw menu", U"ppgb", 20010417)
@@ -3367,7 +3372,7 @@ NORMAL (U"Record a Sound, select it, and click on ##To Pitch...#. "
 	"This will create a new Pitch object and put it in the list of objects. "
 	"You can then edit, write, and draw this Pitch object.")
 ENTRY (U"Example of synthesis:")
-NORMAL (U"Create a #Speaker, create and edit an #Artword, and click on ##To Sound...#.")
+NORMAL (U"Create a Speaker, create and edit an Artword, and click on ##To Sound...#.")
 MAN_END
 
 MAN_BEGIN (U"View & Edit", U"ppgb", 20110128)
@@ -3410,7 +3415,7 @@ MAN_END
 MAN_BEGIN (U"FAQ: Formant analysis", U"ppgb", 20030916)
 NORMAL (U"#Problem: I get different formant values if I choose to analyse 3 formants "
 	"than if I choose to analyse 4 formants.")
-NORMAL (U"Solution: the \"number of formants\" in formant analysis determines the "
+NORMAL (U"Solution: the “number of formants” in formant analysis determines the "
 	"number of peaks with which the %entire spectrum is modelled. For an average "
 	"female voice, you should choose to analyse 5 formants in the region up to 5500 Hz, "
 	"even if you are interested only in the first three formants.")
@@ -3418,8 +3423,8 @@ NORMAL (U"")
 NORMAL (U"#Problem: I often get only 1 formant in a region where I see clearly 2 formants "
 	"in the spectrogram.")
 NORMAL (U"This occurs mainly in back vowels (F1 and F2 close together) for male voices, "
-	"if the \"maximum formant\" is set to the standard of 5500 Hz, which is appropriate "
-	"for female voices. Set the \"maximum formant\" down to 5000 Hz. "
+	"if the “maximum formant” is set to the standard of 5500 Hz, which is appropriate "
+	"for female voices. Set the “maximum formant” down to 5000 Hz. "
 	"No, Praat comes without a guarantee: the formant analysis is based on LPC, "
 	"and this comes with several assumptions as to what a speech spectrum is like.")
 NORMAL (U"")
@@ -3454,21 +3459,21 @@ NORMAL (U"The first possibility is that the pitch has fallen below the @@pitch f
 	"If this happens, it may help to lower the pitch floor to e.g. 40 Hz (@@Pitch settings...@), "
 	"although that may also smooth the pitch curve too much in other places.")
 NORMAL (U"The second possibility is that the pitch has moved too fast. This could happen at the end of a Chinese fourth tone, "
-	"which drops very fast. If this happens, it may help to use the \"optimize for voice analysis\" setting, "
+	"which drops very fast. If this happens, it may help to use the ##optimize for voice analysis# setting, "
 	"(@@Pitch settings...@), although Praat may then hallucinate pitches in other places that you would prefer to consider voiceless.")
 NORMAL (U"The third possibility is that the periods are very irregular, as in some pathological voices. "
-	"If you want to see a pitch in those cases, it may help to use the \"optimize for voice analysis\" setting "
-	"(@@Pitch settings...@). Or it may help to lower the \"voicing threshold\" setting (@@Advanced pitch settings...@) "
+	"If you want to see a pitch in those cases, it may help to use the ##optimize for voice analysis# setting "
+	"(@@Pitch settings...@). Or it may help to lower the ##voicing threshold# setting (@@Advanced pitch settings...@) "
 	"to 0.25 (instead of the standard 0.45) or so.")
 NORMAL (U"The fourth possibility is that there is a lot of background noise, as in a recording on a busy street. "
-	"In such a case, it may help to lower the \"voicing threshold\" setting (@@Advanced pitch settings...@) "
+	"In such a case, it may help to lower the ##voicing threshold# setting (@@Advanced pitch settings...@) "
 	"to 0.25 (instead of the standard 0.45) or so. The disadvantage of lowering this setting is that for non-noisy "
 	"recordings, Praat will become too eager to find voicing in some places that you would prefer to consider voiceless; "
 	"so make sure to set it back to 0.45 once you have finished analysing the noisy recordings.")
 NORMAL (U"The fifth possibility is that the part analysed as voiceless is much less loud than the rest of the sound, "
 	"or that the sound contains a loud noise elsewhere. This can be checked by zooming in on the part analysed as voiceless: "
 	"if Praat suddenly considers it as voiced, this is a sign that this part is much quieter than the rest. "
-	"To make Praat analyse this part as voiced, you can lower the \"silence threshold\" setting to 0.01 "
+	"To make Praat analyse this part as voiced, you can lower the ##silence threshold# setting to 0.01 "
 	"(instead of the standard 0.03) or so. The disadvantage of lowering this setting is that Praat may start to consider "
 	"some distant background sounds (and quiet echos, for instance) as voiced.")
 NORMAL (U"#Question: why do I get different results for the maximum pitch if...?")
@@ -3486,48 +3491,49 @@ NORMAL (U"If you choose ##Move cursor to maximum pitch#, then choose ##Get pitch
 	"lower values.")
 MAN_END
 
-MAN_BEGIN (U"FAQ: Scripts", U"ppgb", 20140120)
+MAN_BEGIN (U"FAQ: Scripts", U"ppgb", 20230201)
 NORMAL (U"#Question: how do I do something to all the files in a directory?")
-NORMAL (U"Answer: look at @@Create Strings as file list...@.")
+NORMAL (U"Answer: look at $$fileNames\\$ \\# ()$ or @@Create Strings as file list...@.")
 NORMAL (U"")
 NORMAL (U"#Question: why doesn't the editor window react to my commands?")
 NORMAL (U"Your commands are probably something like:")
-CODE (U"Read from file: \"hello.wav\"")
+CODE (U"Read from file: “hello.wav”")
 CODE (U"View & Edit")
 CODE (U"Zoom: 0.3, 0.5")
-NORMAL (U"Answer: Praat doesn't know it has to send the #Zoom command to the editor "
+NORMAL (U"Answer: Praat doesn’t know it has to send the #Zoom command to the editor "
 	"window called ##14. Sound hello#. There could be several Sound editor windows on your "
 	"screen. According to @@Scripting 7.1. Scripting an editor from a shell script@, "
 	"you will have to say this explicitly:")
-CODE (U"Read from file: \"hello.wav\"")
+CODE (U"Read from file: “hello.wav”")
 CODE (U"View & Edit")
-CODE (U"editor: \"Sound hello\"")
+CODE (U"editor: “Sound hello”")
 CODE (U"Zoom: 0.3, 0.5")
 NORMAL (U"")
-NORMAL (U"#Problem: a line like \"Number = 1\" does not work.")
+NORMAL (U"#Problem: a line like “$$%Number = 1%$ does not work.")
 NORMAL (U"Solution: names of variables should start with a lower-case letter.")
 NORMAL (U"")
 NORMAL (U"#Question: why do names of variables have to start with a lower-case letter? "
-	"I would like to do things like \"F0 = Get mean pitch\".")
-NORMAL (U"Answer (using the shorthand script syntax): Praat scripts combine button commands with things that only occur "
-	"in scripts. Button commands always start with a capital letter, e.g. \"Play\". "
-	"Script commands always start with lower case, e.g. \"echo Hello\". "
-	"A minimal pair is \"select\", which simulates a mouse click in the object list, "
-	"versus \"Select...\", which sets the selection in editor windows. Variable names "
-	"that start with a capital letter would be rather ambiguous in assignments, "
-	"as in \"x = Get\", where \"Get\" would be a variable, versus \"x = Get mean\", "
-	"where \"Get mean\" is a button command. To prevent this, Praat enforces "
+	"I would like to do things like “$$F0 = Get mean pitch$”.")
+NORMAL (U"Answer: Praat scripts combine button commands with things that only occur "
+	"in scripts. Button commands always start with a capital letter, e.g. $Play (there is a button #Play). "
+	"Script commands always start with lower case, e.g. $$writeInfoLine: “Hello”$ "
+	"($writeInfoLine is a built-in function). "
+	"A minimal pair is “$select”, which simulates a mouse click in the object list, "
+	"versus “$$Select...$”, which sets the selection in editor windows. If we allowed initial capitals, "
+	"variable names would become rather ambiguous in assignments, "
+	"as in “$$%x = %Get$”, where “$%Get” would be a variable, versus “$$%x = Get mean$”, "
+	"where ##Get mean# is a button command. To prevent this confusion, Praat enforces "
 	"a rigorous lower-case/upper-case distinction.")
 NORMAL (U"")
 NORMAL (U"#Question: how do I convert a number into a string?")
-NORMAL (U"Answer: a\\$  = string\\$  (a)")
+NORMAL (U"Answer: $$%%a\\$ % = string\\$  (%a)")
 NORMAL (U"#Question: how do I convert a string into a number?")
-NORMAL (U"Answer: a = number (a\\$ )")
+NORMAL (U"Answer: $$%a = number (%%a\\$ %)")
 MAN_END
 
 MAN_BEGIN (U"FAQ: Spectrograms", U"ppgb", 20030916)
 NORMAL (U"#Problem: the background is grey instead of white (too little contrast)")
-NORMAL (U"Solution: reduce the \"dynamic range\" in the spectrogram settings. The standard value is 50 dB, "
+NORMAL (U"Solution: reduce the ##Dynamic range# in the spectrogram settings. The standard value is 50 dB, "
 	"which is fine for detecting small things like plosive voicing in well recorded speech. "
 	"For gross features like vowel formants, or for noisy speech, you may want to change the dynamic range "
 	"to 40 or even 30 dB.")
@@ -3647,7 +3653,7 @@ INTRO (U"This is an introductory tutorial to Praat, a computer program "
 	"with which you can analyse, synthesize, and manipulate speech, "
 	"and create high-quality pictures for your articles and thesis. "
 	"You are advised to work through all of this tutorial.")
-NORMAL (U"You can read this tutorial sequentially with the help of the \"1 >\" and \"< 1\" buttons, "
+NORMAL (U"You can read this tutorial sequentially with the help of the “##1 >#” and “##< 1#” buttons, "
 	"or go to the desired information by clicking on the blue links.")
 LIST_ITEM (U"@@Intro 1. How to get a sound@: "
 	"@@Intro 1.1. Recording a sound|record@, "
@@ -3733,7 +3739,7 @@ LIST_ITEM (U"3. Use the #Record and #Stop buttons to record a few seconds of you
 LIST_ITEM (U"4. Use the #Play button to hear what you have recorded.")
 LIST_ITEM (U"5. Repeat steps 3 and 4 until you are satisfied with your recording.")
 LIST_ITEM (U"6. Click the ##Save to list# button. Your recording will now appear in the Objects window, "
-	"where it will be called \"Sound sound\".")
+	"where it will be called “Sound sound”.")
 LIST_ITEM (U"7. You can now close the SoundRecorder window.")
 LIST_ITEM (U"8. When you saved your sound to the Objects window, some buttons appeared in that window. "
 	"These buttons show you what you can do with the sound. Try the #Play and @@View & Edit@ buttons.")
@@ -3745,7 +3751,7 @@ INTRO (U"Apart from recording a new sound from a microphone, you could read an e
 NORMAL (U"With @@Read from file...@ from the @@Open menu@, "
 	"Praat will be able to read most standard types of sound files, e.g. WAV files. "
 	"They will appear as @Sound objects in the Objects window. For instance, if you open the file ##hello.wav#, "
-	"an object called \"Sound hello\" will appear in the list.")
+	"an object called “Sound hello” will appear in the list.")
 NORMAL (U"If you do not have a sound file on your disk, you can download a WAV file (or so) from the Internet, "
 	"then read that file into Praat with ##Read from file...#.")
 MAN_END
@@ -3776,14 +3782,14 @@ NORMAL (U"Then, once you have a @Sound object in the @@List of Objects@, "
 NORMAL (U"For more information, see the @@Sound files@ tutorial.")
 MAN_END
 
-MAN_BEGIN (U"Intro 2.2. Viewing and editing a sound", U"ppgb", 20110212)
+MAN_BEGIN (U"Intro 2.2. Viewing and editing a sound", U"ppgb", 20230202)
 NORMAL (U"To see the wave form of a @Sound that is in the list of objects, "
 	"select that Sound and click @@View & Edit@. A @SoundEditor window will appear on your screen. "
-	"You see a waveform (or two waveforms, if you have a stereo sound) and probably some \"analyses\" below it. "
+	"You see a waveform (or two waveforms, if you have a stereo sound) and probably some “analyses” below it. "
 	"You can zoom in and scroll to see the various parts of the sound in detail. "
 	"You can select a part of the sound by dragging with the mouse. "
 	"To play a part of the sound, click on any of the rectangles below it. "
-	"To move a selected part of the sound to another location, use #Cut and #Paste from the #Edit menu. "
+	"To move a selected part of the sound to another location, use #Cut and #Paste from the Edit menu. "
 	"You can open sound windows for more than one sound, and then cut, copy, and paste between the sounds, "
 	"just as you are used to do with text and pictures in word processing programs.")
 NORMAL (U"If your sound file is longer than a couple of minutes, "
@@ -3791,7 +3797,8 @@ NORMAL (U"If your sound file is longer than a couple of minutes, "
 	"you may prefer to open it with @@Open long sound file...@. "
 	"This puts a @LongSound object into the list. In this way, most of the sound will stay in the file on disk, "
 	"and at most 60 seconds will be read into memory each time you play or view a part of it. "
-	"To change these 60 seconds to something else, e.g. 500 seconds, choose ##LongSound prefs...# from the #Preferences submenu.")
+	"To change these 60 seconds to something else, e.g. 500 seconds, "
+	"choose ##LongSound settings...# from the #Settings submenu of the Praat menu.")
 MAN_END
 
 MAN_BEGIN (U"Intro 3. Spectral analysis", U"ppgb", 20070905)
@@ -3812,7 +3819,7 @@ INTRO (U"To see the spectral content of a sound as a function of time, "
 	"select a @Sound or @LongSound object and choose @@View & Edit@. "
 	"A @SoundEditor or @LongSoundEditor window will appear on your screen. "
 	"In the entire bottom half of this window you will see a greyish image, which is called a %spectrogram. "
-	"If you do not see it, choose @@Show spectrogram@ from the #Spectrogram menu.")
+	"If you do not see it, choose @@Show spectrogram@ from the Spectrogram menu.")
 NORMAL (U"The spectrogram is a @@spectro-temporal representation@ of the sound. "
 	"The horizontal direction of the spectrogram represents @time, the vertical direction represents @frequency. "
 	"The time scale of the spectrogram is the same as that of the waveform, so the spectrogram reacts "
@@ -4820,20 +4827,20 @@ INTRO (U"Creating a glottal source signal for speech synthesis involves creating
 NORMAL (U"You may want to start with creating a well-defined pitch contour. "
 	"Suppose you want to create a sound with a duration of half a second with a pitch that falls from 300 to 200 Hz "
 	"during that time. You first create an empty @PitchTier by choosing @@Create PitchTier...@ from the #New menu "
-	"(I call this PitchTier \"empty\" because it does not contain any pitch information yet); "
-	"you may want to name the PitchTier \"source\" and have it start at 0 seconds and end at 0.5 seconds. "
+	"(I call this PitchTier “empty” because it does not contain any pitch information yet); "
+	"you may want to name the PitchTier “source” and have it start at 0 seconds and end at 0.5 seconds. "
 	"Once the PitchTier exists and is selected, you can ##View & Edit# it to add pitch points (pitch targets) to it at certain times "
 	"(or you choose @@PitchTier: Add point...@ from the #Modify menu repeatedly). "
 	"You could add a pitch point of 150 Hz at time 0.0 and a pitch point of 100 Hz at time 0.5. "
 	"In the PitchTier window, you can see that the pitch curve falls linearly "
 	"from 150 to 100 Hz during its time domain:")
 SCRIPT (4.5, 2.5,
-	U"Create PitchTier... source 0 0.5\n"
-	"Add point... 0.0 150\n"
-	"Add point... 0.5 100\n"
-	"Draw... 0 0 0 200 yes lines and speckles\n"
-	"Text top... no %%An F0 linearly falling between two points\n"
-	"One mark left... 100 yes yes no\n"
+	U"Create PitchTier: “source”, 0, 0.5\n"
+	"Add point: 0.0, 150\n"
+	"Add point: 0.5, 100\n"
+	"Draw: 0, 0, 0, 200, “yes”, “lines and speckles”\n"
+	"Text top: “no”, ~%%An F0 linearly falling between two points\n"
+	"One mark left: 100, “yes”, “yes”, “no”\n"
 	"Remove\n"
 )
 NORMAL (U"You can hear the falling pitch by clicking on the rectangles in the PitchTier window "
@@ -4846,19 +4853,18 @@ NORMAL (U"From this PitchTier, you can create a @PointProcess with @@PitchTier: 
 	"and a stretch of 70 ms in the middle "
 	"is made voiceless as well, perhaps because you want to simulate a voiceless plosive there:")
 SCRIPT (4.5, 2.5,
-	U"pitchTier = Create PitchTier... source 0 0.5\n"
-	"Add point... 0.0 150\n"
-	"Add point... 0.5 100\n"
+	U"pitchTier = Create PitchTier: “source”, 0, 0.5\n"
+	"Add point: 0.0. 150\n"
+	"Add point: 0.5, 100\n"
 	"pulses = To PointProcess\n"
-	"Remove points between... 0 0.02\n"
-	"Remove points between... 0.24 0.31\n"
-	"Remove points between... 0.48 0.5\n"
-	"Draw... 0 0 yes\n"
-	"Text top... no %%The times of the glottal pulses\n"
-	"One mark bottom... 0.24 yes yes no\n"
-	"One mark bottom... 0.31 yes yes no\n"
-	"plus pitchTier\n"
-	"Remove\n"
+	"Remove points between: 0, 0.02\n"
+	"Remove points between: 0.24, 0.31\n"
+	"Remove points between: 0.48, 0.5\n"
+	"Draw: 0, 0, “yes”\n"
+	"Text top: “no”, ~%%The times of the glottal pulses\n"
+	"One mark bottom: 0.24, “yes”, “yes”, “no”\n"
+	"One mark bottom: 0.31, “yes”, “yes”, “no”\n"
+	"removeObject: pitchTier, pulses\n"
 )
 NORMAL (U"Now that we have a glottal point process (a glottal pulse train), the only thing left "
 	"is to turn it into a sound by choosing @@PointProcess: To Sound (phonation)...@. "
@@ -4866,21 +4872,19 @@ NORMAL (U"Now that we have a glottal point process (a glottal pulse train), the 
 	"reasonable glottal flow derivatives centred around each of the original pulses in the point process. "
 	"You can check this by selecting the Sound and choosing ##View & Edit#:")
 SCRIPT (4.5, 2.5,
-	U"pitchTier = Create PitchTier... source 0 0.5\n"
-	"Add point... 0.0 150\n"
-	"Add point... 0.5 100\n"
+	U"pitchTier = Create PitchTier: “source”, 0, 0.5\n"
+	"Add point: 0.0, 150\n"
+	"Add point: 0.5, 100\n"
 	"pulses = To PointProcess\n"
-	"Remove points between... 0 0.02\n"
-	"Remove points between... 0.24 0.31\n"
-	"Remove points between... 0.48 0.5\n"
-	"source = To Sound (phonation)... 44100 0.6 0.05 0.7 0.03 3.0 4.0\n"
-	"Draw... 0 0 0 0 yes curve\n"
-	"Text top... no %%The source waveform\n"
-	"One mark bottom... 0.24 yes yes no\n"
-	"One mark bottom... 0.31 yes yes no\n"
-	"plus pitchTier\n"
-	"plus pulses\n"
-	"Remove\n"
+	"Remove points between: 0, 0.02\n"
+	"Remove points between: 0.24, 0.31\n"
+	"Remove points between: 0.48, 0.5\n"
+	"source = To Sound (phonation): 44100, 0.6, 0.05, 0.7, 0.03, 3.0, 4.0\n"
+	"Draw: 0, 0, 0, 0, “yes”, “curve”\n"
+	"Text top: “no”, ~%%The source waveform\n"
+	"One mark bottom: 0.24, “yes”, “yes”, “no”\n"
+	"One mark bottom: 0.31, “yes”, “yes”, “no”\n"
+	"removeObject: pitchTier, pulses, source\n"
 )
 NORMAL (U"You will also see that the amplitude of the first two glottal wave shapes of every voiced stretch "
 	"is (realistically) somewhat smaller than the amplitudes of the following wave shapes; "
@@ -4892,7 +4896,7 @@ NORMAL (U"The glottal source signal sounds as a voice without a vocal tract. "
 	"The following section describes how you add vocal-tract resonances, i.e. the %filter.")
 ENTRY (U"Automation")
 NORMAL (U"In a clean Praat script, the procedure described above will look as follows:")
-CODE (U"pitchTier = Create PitchTier: \"source\", 0, 0.5")
+CODE (U"pitchTier = Create PitchTier: “source”, 0, 0.5")
 CODE (U"Add point: 0.0, 150")
 CODE (U"Add point: 0.5, 100")
 CODE (U"pulses = To PointProcess")
@@ -4914,7 +4918,7 @@ NORMAL (U"For a vowel spoken by an average (i.e. adult female) human voice, trad
 	"which, with a sound velocity of 352 m/s, means a resonance frequency of 352/0.64 = 550 hertz. "
 	"The other resonances will be at 1650, 2750, 3850, and 4950 hertz.")
 NORMAL (U"You can create a @FormantGrid object with @@Create FormantGrid...@ from the #New menu (submenu #Tiers):")
-CODE (U"Create FormantGrid: \"filter\", 0, 0.5, 10, 550, 1100, 60, 50")
+CODE (U"Create FormantGrid: “filter”, 0, 0.5, 10, 550, 1100, 60, 50")
 NORMAL (U"This creates a FormantGrid with 10 formants and a single frequency value for each formant: %F__1_ is 550 Hz "
 	"and the higher formants are spaced 1100 Hz apart, i.e., they are "
 	"1650, 2750, 3850, 4950, 6050, 7150, 8250, 9350, and 10450 hertz; "
@@ -4942,7 +4946,7 @@ MAN_BEGIN (U"Source-filter synthesis 3. The ba-da continuum", U"ppgb", 20140421)
 INTRO (U"As an example, we are going to create a male [ba]-[da] continuum in six steps. The acoustic difference "
 	"between [ba] and [da] is the initial %F__2_, which is 500 Hz for [ba], and 2500 Hz for [da].")
 NORMAL (U"We use the same @PitchTier throughout, to model a falling intonation contour:")
-CODE (U"Create PitchTier: \"f0\", 0.00, 0.50")
+CODE (U"Create PitchTier: “f0”, 0.00, 0.50")
 CODE (U"Add point: 0.00, 150")
 CODE (U"Add point: 0.50, 100")
 NORMAL (U"The first and last 50 milliseconds are voiceless:")
@@ -4953,30 +4957,30 @@ NORMAL (U"Generate the glottal source signal:")
 CODE (U"To Sound (phonation): 44100, 0.6, 0.05, 0.7, 0.03, 3.0, 4.0")
 NORMAL (U"During the labial or coronal closure, the sound is almost silent, so we use an @IntensityTier "
 	"that models this:")
-CODE (U"Create IntensityTier: \"intens\", 0.00, 0.50")
+CODE (U"Create IntensityTier: “intens”, 0.00, 0.50")
 CODE (U"Add point: 0.05, 60")
 CODE (U"Add point: 0.10, 80")
 NORMAL (U"Generate the source signal:")
-CODE (U"#plusObject: \"Sound f0\"")
+CODE (U"#plusObject: “Sound f0”")
 CODE (U"Multiply")
-CODE (U"Rename: \"source\"")
+CODE (U"Rename: “source”")
 NORMAL (U"The ten sounds are generated in a loop:")
 CODE (U"#for i #from 1 #to 10")
 	CODE1 (U"f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!")
-	CODE1 (U"Create FormantGrid: \"filter\", 0.0, 0.5, 9, 800, 1000, 60, 80")
+	CODE1 (U"Create FormantGrid: “filter”, 0.0, 0.5, 9, 800, 1000, 60, 80")
 	CODE1 (U"Remove formant points between: 1, 0.0, 0.5")
 	CODE1 (U"Add formant point: 1, 0.05, 100")
 	CODE1 (U"Add bandwidth point: 1, 0.05, 50")
 	CODE1 (U"Add formant point: 2, 0.05, f2_locus")
 	CODE1 (U"Add bandwidth point: 2, 0.05, 100")
-	CODE1 (U"#plusObject: \"Sound source\"")
+	CODE1 (U"#plusObject: “Sound source”")
 	CODE1 (U"Filter (no scale)")
-	CODE1 (U"Rename: \"bada\" + string\\$  (i)")
-	CODE1 (U"#removeObject: \"FormantGrid filter\"")
+	CODE1 (U"Rename: “bada” + string\\$  (i)")
+	CODE1 (U"#removeObject: “FormantGrid filter”")
 CODE (U"#endfor")
 NORMAL (U"Clean up:")
-CODE (U"#removeObject: \"Sound source\", \"Sound f0\", \"IntensityTier intens\",")
-CODE (U"... \"PointProcess f0\", \"PitchTier f0\"")
+CODE (U"#removeObject: “Sound source”, “Sound f0”, “IntensityTier intens”,")
+CODE (U"... “PointProcess f0”, “PitchTier f0”")
 NORMAL (U"In this example, filtering was done without automatic scaling, so that "
 	"the resulting signals have equal intensities in the areas where they have "
 	"equal formants. You will probably want to multiply all these signals with "
@@ -5004,32 +5008,32 @@ NORMAL (U"To perform the resampling, you use @@Sound: Resample...@: "
 	"you select a @Sound object, and click ##Resample...#. "
 	"In the rest of this tutorial, I will use the syntax that you would use in a script, "
 	"though you will usually do these things by clicking on objects and buttons. Thus:")
-CODE (U"#selectObject: \"Sound hallo\"")
+CODE (U"#selectObject: “Sound hallo”")
 CODE (U"Resample: 11000, 50")
 NORMAL (U"You can then perform a linear-prediction analysis on the resampled sound "
 	"with @@Sound: To LPC (burg)...@:")
-CODE (U"#selectObject: \"Sound hallo_11000\"")
+CODE (U"#selectObject: “Sound hallo_11000”")
 CODE (U"To LPC (burg): 10, 0.025, 0.005, 50")
 NORMAL (U"This says that your analysis is done with 10 linear-prediction parameters "
 	"(which will yield at most five formant-bandwidth pairs), with an analysis window "
 	"effectively 25 milliseconds long, with time steps of 5 milliseconds (so that the windows "
 	"will appreciably overlap), and with a pre-emphasis frequency of 50 Hz (which is the point "
 	"above which the sound will be amplified by 6 dB/octave prior to the analysis proper).")
-NORMAL (U"As a result, an object called \"LPC hallo\" will appear in the list of objects. "
+NORMAL (U"As a result, an object called “LPC hallo” will appear in the list of objects. "
 	"This @LPC object is a time function with 10 %%linear-prediction coefficients% in each %%time frame%. "
 	"These coefficients are rather opaque even to the expert (try to view them with @Inspect), "
 	"but they are the raw material from which formant and bandwidth values can be computed. "
 	"To see the smoothed @Spectrogram associated with the LPC object, choose @@LPC: To Spectrogram...@:")
-CODE (U"#selectObject: \"LPC hallo_11000\"")
+CODE (U"#selectObject: “LPC hallo_11000”")
 CODE (U"To Spectrogram: 20, 0, 50")
-CODE (U"Paint: 0, 0, 0, 0, 50, 0, 0, \"yes\"")
+CODE (U"Paint: 0, 0, 0, 0, 50, 0, 0, “yes”")
 NORMAL (U"Note that when drawing this Spectrogram, you will want to set the pre-emphasis to zero "
 	"(the fifth 0 in the last line), because pre-emphasis has already been applied in the analysis.")
 NORMAL (U"You can get and draw the formant-bandwidth pairs from the LPC object, "
 	"with @@LPC: To Formant@ and @@Formant: Speckle...@:")
-CODE (U"#selectObject: \"LPC hallo_11000\"")
+CODE (U"#selectObject: “LPC hallo_11000”")
 CODE (U"To Formant")
-CODE (U"Speckle: 0, 0, 5500, 30, \"yes\"")
+CODE (U"Speckle: 0, 0, 5500, 30, “yes”")
 NORMAL (U"Note that in converting the @LPC into a @Formant object, you may have lost some "
 	"information about spectral peaks at very low frequencies (below 50 Hz) or at very high "
 	"frequencies (near the @@Nyquist frequency@ of 5500 Hz. Such peaks usually try to fit "
@@ -5038,7 +5042,7 @@ NORMAL (U"Note that in converting the @LPC into a @Formant object, you may have 
 	"For resynthesis purposes, they might still be important.")
 NORMAL (U"Instead of using the intermediate LPC object, you could have done a formant analysis "
 	"directly on the original Sound, with @@Sound: To Formant (burg)...@:")
-CODE (U"#selectObject: \"Sound hallo\"")
+CODE (U"#selectObject: “Sound hallo”")
 CODE (U"To Formant (burg): 0.005, 5, 5500, 0.025, 50")
 NORMAL (U"A @Formant object has a fixed sampling (time step, frame length), and for every "
 	"%%formant frame%, it contains a number of formant-bandwidth pairs.")
@@ -5050,16 +5054,16 @@ ENTRY (U"2. How to extract the %source from an existing speech sound")
 NORMAL (U"If you are only interested in the %filter characteristics, you can get by with @Formant objects. "
 	"To get at the %source signal, however, you need the raw @LPC object: "
 	"you select it together with the resampled @Sound, and apply %%inverse filtering%:")
-CODE (U"#selectObject: \"Sound hallo_11000\", \"LPC hallo_11000\"")
+CODE (U"#selectObject: “Sound hallo_11000”, “LPC hallo_11000”")
 CODE (U"Filter (inverse)")
-NORMAL (U"A new Sound named \"hallo_11000\" will appear in the list of objects "
-	"(you could rename it to \"source\"). "
+NORMAL (U"A new Sound named “hallo_11000” will appear in the list of objects "
+	"(you could rename it to “source”). "
 	"This is the estimated source signal. Since the LPC analysis was designed to yield a spectrally "
 	"flat filter (through the use of pre-emphasis), this source signal represents everything in the "
-	"speech signal that cannot be attributed to the resonating cavities. Thus, the \"source signal\" "
+	"speech signal that cannot be attributed to the resonating cavities. Thus, the “source signal” "
 	"will consist of the glottal volume-velocity source (with an expected spectral slope of "
 	"-12 dB/octave for vowels) and the radiation characteristics at the lips, which cause a "
-	"6 dB/octave spectral rise, so that the resulting spectrum of the \"source signal\" "
+	"6 dB/octave spectral rise, so that the resulting spectrum of the “source signal” "
 	"is actually the %derivative of the glottal flow, with an expected spectral slope of -6 dB/octave.")
 NORMAL (U"Note that with inverse filtering you cannot measure the actual spectral slope of the source signal. "
 	"Even if the actual slope is very different from -6 dB/octave, formant extraction will try to "
@@ -5068,24 +5072,24 @@ NORMAL (U"Note that with inverse filtering you cannot measure the actual spectra
 ENTRY (U"3. How to do the synthesis")
 NORMAL (U"You can create a new Sound from a source Sound and a filter, in at least four ways.")
 NORMAL (U"If your filter is an @LPC object, you select it and the source, and choose @@LPC & Sound: Filter...@:")
-CODE (U"#selectObject: \"Sound source\", \"LPC filter\"")
-CODE (U"Filter: \"no\"")
+CODE (U"#selectObject: “Sound source”, “LPC filter”")
+CODE (U"Filter: “no”")
 NORMAL (U"If you had computed the source and filter from an LPC analysis, this procedure should give "
 	"you back the original Sound, except that windowing has caused 25 milliseconds at the beginning "
 	"and end of the signal to be set to zero.")
 NORMAL (U"If your filter is a @Formant object, you select it and the source, and choose @@Sound & Formant: Filter@:")
-CODE (U"#selectObject: \"Sound source\", \"Formant filter\"")
+CODE (U"#selectObject: “Sound source”, “Formant filter”")
 CODE (U"Filter")
 NORMAL (U"If you had computed the source and filter from an LPC analysis, this procedure will not generally give "
 	"you back the original Sound, because some linear-prediction coefficients will have been ignored "
 	"in the conversion to formant-bandwidth pairs.")
 NORMAL (U"If your filter is a @FormantGrid object, you select it and the source, and choose @@Sound & FormantGrid: Filter@:")
-CODE (U"#selectObject: \"Sound source\", \"FormantGrid filter\"")
+CODE (U"#selectObject: “Sound source”, “FormantGrid filter”")
 CODE (U"Filter")
 NORMAL (U"Finally, you could just know the %%impulse response% of your filter (in a @Sound object). "
 	"You then select both Sound objects, and choose @@Sounds: Convolve...@:")
-CODE (U"#selectObject: \"Sound source\", \"Sound filter\"")
-CODE (U"Convolve: \"integral\", \"zero\"")
+CODE (U"#selectObject: “Sound source”, “Sound filter”")
+CODE (U"Convolve: “integral”, “zero”")
 NORMAL (U"As a last step, you may want to bring the resulting sound within the [-1; +1] range:")
 CODE (U"Scale peak: 0.99")
 ENTRY (U"4. How to manipulate the filter")
@@ -5094,8 +5098,8 @@ NORMAL (U"You can hardly change the values in an @LPC object in a meaningful way
 NORMAL (U"A @Formant object can be changed in a friendlier way, with @@Formant: Formula (frequencies)...@ "
 	"and @@Formant: Formula (bandwidths)...@. For instance, to multiply all formant frequencies by 0.9, "
 	"you do")
-CODE (U"#selectObject: \"Formant filter\"")
-CODE (U"Formula (frequencies): \"self * 0.9\"")
+CODE (U"#selectObject: “Formant filter”")
+CODE (U"Formula (frequencies): “self * 0.9”")
 NORMAL (U"To add 200 hertz to all values of %F__2_, you do")
 CODE (U"Formula (frequencies): ~ if row = 2 then self + 200 else self fi")
 NORMAL (U"A @FormantGrid object can be changed by adding or removing points:")
@@ -5234,8 +5238,8 @@ NORMAL (U"What you can do is go to ##Text writing settings...# in the #Settings 
 NORMAL (U"If you can get by with West-European characters (on Windows), "
 	"then you may choose ##try ISO Latin-1, then UTF-16# for the output encoding. "
 	"It is possible (but not guaranteed) that programs like SPSS then display your West-European text correctly. "
-	"This trick is of limited use, because it will not work if your operating system is set to a \"codepage\" "
-	"differently from ISO Latin-1 (or \"ANSI\"), or if you need East-European or Hebrew characters, or if you want "
+	"This trick is of limited use, because it will not work if your operating system is set to a “codepage” "
+	"differently from ISO Latin-1 (or “ANSI”), or if you need East-European or Hebrew characters, or if you want "
 	"to share your text files with Macintosh users.")
 NORMAL (U"If you already have some UTF-16 text files and you want to convert them to UTF-8 or ISO Latin-1 (the latter only if "
 	"they do not contain non-West-European characters), then you can read them into Praat and save them again "

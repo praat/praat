@@ -1,6 +1,6 @@
 /* melder_error.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ void Melder_assert_ (const char *pathName, int lineNumber, const char *condition
 	const conststring32 fileName = ( p_lastFolderSeparator ? p_lastFolderSeparator + 1 : pathNameBuffer );
 	Melder_8to32_inplace (condition, conditionBuffer, kMelder_textInputEncoding::UTF8);
 	static char lineNumberBuffer8 [40];
-	sprintf (lineNumberBuffer8, "%d", lineNumber);
+	snprintf (lineNumberBuffer8,40, "%d", lineNumber);
 	Melder_8to32_inplace (lineNumberBuffer8, lineNumberBuffer, kMelder_textInputEncoding::UTF8);
 	MelderError::_append (crashMessage ());
 	MelderError::_append (U"Assertion failed in file \"");

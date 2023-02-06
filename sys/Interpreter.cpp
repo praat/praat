@@ -1987,7 +1987,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						Melder_throw (U"Duplicate label \"", command + 6, U"\".");
 				if (my numberOfLabels >= Interpreter_MAXNUM_LABELS)
 					Melder_throw (U"Too many labels.");
-				str32ncpy (my labelNames [++ my numberOfLabels], command + 6, 1+Interpreter_MAX_LABEL_LENGTH);
+				str32ncpy (my labelNames [++ my numberOfLabels], command + 6, Interpreter_MAX_LABEL_LENGTH);
 				my labelNames [my numberOfLabels] [Interpreter_MAX_LABEL_LENGTH] = U'\0';
 				my labelLines [my numberOfLabels] = lineNumber;
 			}
@@ -2434,7 +2434,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					case U'g':
 						if (str32nequ (command2.string, U"goto ", 5)) {
 							char32 labelName [1+Interpreter_MAX_LABEL_LENGTH];
-							str32ncpy (labelName, command2.string + 5, 1+Interpreter_MAX_LABEL_LENGTH);
+							str32ncpy (labelName, command2.string + 5, Interpreter_MAX_LABEL_LENGTH);
 							labelName [Interpreter_MAX_LABEL_LENGTH] = U'\0';
 							char32 *space = str32chr (labelName, U' ');
 							if (space == labelName)

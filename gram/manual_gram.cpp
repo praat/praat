@@ -1,6 +1,6 @@
 /* manual_gram.cpp
  *
- * Copyright (C) 1997-2011,2013-2017,2019-2021 Paul Boersma
+ * Copyright (C) 1997-2011,2013-2017,2019-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ void manual_gram_init (ManPages me);
 void manual_gram_init (ManPages me) {
 
 MAN_BEGIN (U"constraints", U"ppgb", 20021105)
-INTRO (U"In @@Optimality Theory@, the `rules' that an output form has to satisfy. Since there can be many constraints "
+INTRO (U"In @@Optimality Theory@, the “rules” that an output form has to satisfy. Since there can be many constraints "
 	"and these constraints can conflict with each other, the constraints are %violable and the highest-ranked constraints "
 	"have the largest say in determining the optimal output.")
 NORMAL (U"See the @@OT learning@ tutorial for many examples.")
@@ -421,7 +421,7 @@ NORMAL (U"To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lo
 	"go to the OTGrammar window and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
 	"(a spade symbol ♠︎ will mark the selected constraint), "
 	"and choose ##Edit ranking...# from the Edit menu, or use the keyboard shortcut @@Keyboard shortcuts|Command-E.")
-NORMAL (U"In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click OK. "
+NORMAL (U"In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click #OK. "
 	"This is what you will then see in the OTGrammar window:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t♠︎ ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429\t       1.000")
@@ -534,7 +534,7 @@ NORMAL (U"To ask the grammar to produce %many outputs for a specified input form
 NORMAL (U"For example, select the object “OTGrammar assimilation” from our place assimilation example "
 	"(@@OT learning 2.6. Variable output|§2.6@), and click ##Input to outputs...#. "
 	"In the resulting command window, you specify 1000 trials, a noise strength of 2.0, and “an+pa” for the input form.")
-NORMAL (U"After you click OK, a @Strings object will appear in the list. "
+NORMAL (U"After you click #OK, a @Strings object will appear in the list. "
 	"If you click Info, you will see that it contains 1000 strings. "
 	"If you click Inspect, you will see that most of the strings are “ampa”, "
 	"but some of them are “anpa”. These are the output forms computed from 1000 evaluations "
@@ -614,7 +614,7 @@ NORMAL (U"We can create this pair distribution with ##Create place assimilation 
 	"(in which case you should remember to click Change after any change).")
 NORMAL (U"To generate input-output pairs from the above distribution, select the @PairDistribution and click "
 	"@@PairDistribution: To Stringses...|To Stringses...@. "
-	"If you then just click OK, there will appear two @Strings objects in the list, called “input” "
+	"If you then just click #OK, there will appear two @Strings objects in the list, called “input” "
 	"(underlying forms) and “output” (surface forms). Both contain 1000 strings. If you Inspect them both, "
 	"you can see that e.g. the 377th string in “input” corresponds to the 377th string in “output”, "
 	"i.e., the two series of strings are aligned. See also the example at @@PairDistribution: To Stringses...@.")
@@ -673,7 +673,7 @@ NORMAL (U"According to @@Prince & Smolensky (1993)@, the input to an OT grammar 
 	"(see @@Create tongue-root grammar...@).")
 NORMAL (U"A set of inputs can be generated from an @OTGrammar object by inspecting the list of tableaus. "
 	"So select the Wolof tongue-root grammar and choose @@OTGrammar: Generate inputs...|Generate inputs...@. "
-	"Set %%Number of trials% to 100, and click OK. A @Strings object named \"Wolof_in\" "
+	"Set %%Number of trials% to 100, and click #OK. A @Strings object named \"Wolof_in\" "
 	"will appear in the list. Click Inspect and examine the 100 input strings. "
 	"You will see that they have been randomly chosen from the 36 possible V__1_tV__2_ sequences "
 	"as described at @@Create tongue-root grammar...@:")
@@ -749,7 +749,7 @@ NORMAL (U"We are now going to simulate the infant who learns simplified Wolof. T
 	"and generate 1000 input strings and the corresponding 1000 output strings "
 	"following the procedure described in @@OT learning 3.2. Data from another grammar|§3.2@. "
 	"Now select the infant @OTGrammar and both @Strings objects, and choose @@OTGrammar & 2 Strings: Learn...|Learn...@. "
-	"After you click OK, the learner processes each of the 1000 input-output pairs in succession, "
+	"After you click #OK, the learner processes each of the 1000 input-output pairs in succession, "
 	"gradually changing the constraint ranking in case of a mismatch. The resulting grammar may look like:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t##*[rtr / hi]#\t      100.800\t      98.644\t       1.000")
@@ -879,7 +879,7 @@ MAN_BEGIN (U"OT learning 6. Shortcut to grammar learning", U"ppgb", 20070523)
 INTRO (U"Once you have mastered the tedious procedures of making Praat learn stochastic grammars, "
 	"as described in the previous chapters of this tutorial, you can try a faster procedure, "
 	"which simply involves selecting an @OTGrammar object together with a @PairDistribution object, "
-	"and clicking ##Learn...#. Once you click OK, Praat will feed the selected grammar with input/output "
+	"and clicking ##Learn...#. Once you click #OK, Praat will feed the selected grammar with input/output "
 	"pairs drawn from the selected distribution, and the grammar will be modified every time its output "
 	"is different from the given output. Here is the meaning of the arguments:")
 TAG (U"%%Evaluation noise% (standard value: 2.0)")
@@ -1012,7 +1012,7 @@ CODE (U"\"[H H1 L H]\" 1")
 CODE (U"\"[H L H1 H]\" 1")
 CODE (U"\"[H H H1 H]\" 1")
 NORMAL (U"Read this file into Praat with @@Read from file...@. A @Distributions object then appears in the object list. "
-	"Click @@Distributions: To Strings...|To Strings...@, then OK. A @Strings object containing 1000 strings, drawn randomly "
+	"Click @@Distributions: To Strings...|To Strings...@, then #OK. A @Strings object containing 1000 strings, drawn randomly "
 	"from the distribution, with relative frequencies as in the text file, will appear in the list. Click @Inspect to check the contents.")
 NORMAL (U"You can now select the @OTGrammar together with the @Strings and choose ##Learn from partial outputs...#. "
 	"A thousand times, Praat will construct a surface form from the overt form by interpretive parsing, "

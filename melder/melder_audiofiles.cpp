@@ -1,6 +1,6 @@
 /* melder_audiofiles.cpp
  *
- * Copyright (C) 1992-2008,2010-2019,2021 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2008,2010-2019,2021,2023 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, intege
 				try {
 					char header [1024];
 					memset (header, 0, 1024);
-					sprintf (header, "NIST_1A\n   1024\n"
+					snprintf (header,1024, "NIST_1A\n   1024\n"
 						"channel_count -i %s\n"
 						"sample_count -i %s\n"
 						"sample_n_bytes -i %s\n"

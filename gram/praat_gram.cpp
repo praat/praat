@@ -1625,7 +1625,7 @@ DIRECT (EDITOR_ONE_WITH_ONE__NoulliGrid_viewAndEdit) {
 FORM (QUERY_ONE_FOR_REAL_VECTOR__NoulliGrid_getAverageProbabilities, U"NoulliGrid: Get average probabilities", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	REAL (fromTime, U"From time (s)", U"0")
-	REAL (toTime, U"To time (s)", U"0 (= all)")
+	REAL (toTime, U"To time (s)", U"10.0")
 	OK
 DO
 	QUERY_ONE_FOR_REAL_VECTOR (NoulliGrid)
