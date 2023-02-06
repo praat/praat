@@ -4299,7 +4299,7 @@ static void do_min () {
 			assert min ({ 5, 6, 1, undefined }) = 1
 			assert min ({ undefined, undefined }) = undefined
 			assert min ({ undefined }) = undefined
-			assert min ({ }) = undefined
+			assert min (zero# (0)) = undefined
 		@*/
 		Melder_require (n->number == 1,
 			U"The function “min” requires exactly one vector argument.");

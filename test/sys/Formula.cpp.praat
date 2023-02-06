@@ -217,6 +217,15 @@ assert invSigmoid (0.0) = undefined   ; minus infinity
 assert invSigmoid (1.0) = undefined   ; plus infinity
 assert invSigmoid (2.0) = undefined   ; not a number
 
+assert min ({ 5, 6, 1, 7 }) = 1
+assert min ({ undefined, 6, 1, 7 }) = 1
+assert min ({ 5, undefined, 1, 7 }) = 1
+assert min ({ 5, 6, undefined, 7 }) = 5
+assert min ({ 5, 6, 1, undefined }) = 1
+assert min ({ undefined, undefined }) = undefined
+assert min ({ undefined }) = undefined
+assert min (zero# (0)) = undefined
+
 #
 # A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence
 # should be 9981545732273789042.

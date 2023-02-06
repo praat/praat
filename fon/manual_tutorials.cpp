@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20230131)
+MAN_BEGIN (U"What's new?", U"ppgb", 20230206)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.07# (6 February 2023)")
+LIST_ITEM (U"• Corrected an old bug that caused ##Matrix: Draw as squares# to crash on a 1\\xx1 matrix.")
+LIST_ITEM (U"• NoulliGrid window: “NoulliGrid” menu.")
+LIST_ITEM (U"• Scripting: faster vectors in arguments to $$runScript()$.")
 NORMAL (U"##6.3.06# (31 January 2023)")
 LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $optionmenu would not work in new-style script forms.")
 LIST_ITEM (U"• Scripting: $$min()$, $$max()$, $$imin()$ and $$imax()$ for vectors.")
@@ -4840,7 +4844,7 @@ SCRIPT (4.5, 2.5,
 	"Add point: 0.5, 100\n"
 	"Draw: 0, 0, 0, 200, “yes”, “lines and speckles”\n"
 	"Text top: “no”, ~%%An F0 linearly falling between two points\n"
-	"One mark left: 100, “yes”, “yes”, “no”\n"
+	"One mark left: 100, “yes”, “yes”, “no”, “”\n"
 	"Remove\n"
 )
 NORMAL (U"You can hear the falling pitch by clicking on the rectangles in the PitchTier window "
@@ -4854,7 +4858,7 @@ NORMAL (U"From this PitchTier, you can create a @PointProcess with @@PitchTier: 
 	"is made voiceless as well, perhaps because you want to simulate a voiceless plosive there:")
 SCRIPT (4.5, 2.5,
 	U"pitchTier = Create PitchTier: “source”, 0, 0.5\n"
-	"Add point: 0.0. 150\n"
+	"Add point: 0.0, 150\n"
 	"Add point: 0.5, 100\n"
 	"pulses = To PointProcess\n"
 	"Remove points between: 0, 0.02\n"
@@ -4862,8 +4866,8 @@ SCRIPT (4.5, 2.5,
 	"Remove points between: 0.48, 0.5\n"
 	"Draw: 0, 0, “yes”\n"
 	"Text top: “no”, ~%%The times of the glottal pulses\n"
-	"One mark bottom: 0.24, “yes”, “yes”, “no”\n"
-	"One mark bottom: 0.31, “yes”, “yes”, “no”\n"
+	"One mark bottom: 0.24, “yes”, “yes”, “no”, “”\n"
+	"One mark bottom: 0.31, “yes”, “yes”, “no”, “”\n"
 	"removeObject: pitchTier, pulses\n"
 )
 NORMAL (U"Now that we have a glottal point process (a glottal pulse train), the only thing left "
@@ -4882,8 +4886,8 @@ SCRIPT (4.5, 2.5,
 	"source = To Sound (phonation): 44100, 0.6, 0.05, 0.7, 0.03, 3.0, 4.0\n"
 	"Draw: 0, 0, 0, 0, “yes”, “curve”\n"
 	"Text top: “no”, ~%%The source waveform\n"
-	"One mark bottom: 0.24, “yes”, “yes”, “no”\n"
-	"One mark bottom: 0.31, “yes”, “yes”, “no”\n"
+	"One mark bottom: 0.24, “yes”, “yes”, “no”, “”\n"
+	"One mark bottom: 0.31, “yes”, “yes”, “no”, “”\n"
 	"removeObject: pitchTier, pulses, source\n"
 )
 NORMAL (U"You will also see that the amplitude of the first two glottal wave shapes of every voiced stretch "
