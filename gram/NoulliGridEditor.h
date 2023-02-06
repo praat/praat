@@ -2,7 +2,7 @@
 #define _NoulliGridEditor_h_
 /* NoulliGridEditor.h
  *
- * Copyright (C) 2018,2020-2022 Paul Boersma
+ * Copyright (C) 2018,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,17 @@ Thing_define (NoulliGridEditor, FunctionEditor) {
 	void v_play (double startTime, double endTime) override {
 		if (our soundArea())
 			Sound_playPart (our soundArea() -> sound(), startTime, endTime, theFunctionEditor_playCallback, this);
+	}
+	void v_drawLegends () override {
+		FunctionArea_drawLegend (our noulliGridArea().get(),
+			U" NoulliGrid",
+			DataGui_defaultForegroundColour (our noulliGridArea().get(), false)
+		);
+		if (our soundArea())
+			FunctionArea_drawLegend (our soundArea().get(),
+				FunctionArea_legend_WAVEFORM U" %%non-modifiable copy of sound",
+				DataGui_defaultForegroundColour (our soundArea().get(), false)
+			);
 	}
 	void v_prefs_addFields (EditorCommand cmd)
 		override;
