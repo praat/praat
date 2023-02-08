@@ -134,7 +134,9 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, integer iFrom, integer iTo
 	Melder_clipLeft (1_integer, & itmin);
 	Melder_clipRight (& itmax, my iteration);
 	if (hmax <= hmin)
-		NUMextrema (my history.part (itmin, itmax), & hmin, & hmax);
+		NUMextrema_u (my history.part (itmin, itmax), & hmin, & hmax);
+	if (isundef (hmin) || isundef (hmax))
+		return;
 	if (hmax <= hmin) {
 		hmin -= 0.5 * fabs (hmin);
 		hmax += 0.5 * fabs (hmax);

@@ -73,9 +73,11 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double mi
 		y [i] = my v_getValueAtSample (imin + i - 1, 1, (power ? 1 : 0));
 
 	if (minimum >= maximum) // autoscaling
-		NUMextrema (y.get(), & minimum, & maximum);
+		NUMextrema_u (y.get(), & minimum, & maximum);
 	else
 		VECclip_inplace (minimum, y.get(), maximum);
+	if (isundef (minimum) || isundef (maximum))
+		return;
 	if (maximum == minimum) {
 		maximum += 1.0;
 		minimum -= 1.0;

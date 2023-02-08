@@ -1386,9 +1386,11 @@ void DataModeler_drawModel_inside (DataModeler me, Graphics g, double xmin, doub
 		y [ipoint] = my f_evaluate (me, x [ipoint], my parameters.get());
 	}
 	if (ymin == 0.0 && ymax == 0.0) {
-		ymin = NUMmin (y.get());
-		ymax = NUMmax (y.get());
+		ymin = NUMmin_u (y.get());
+		ymax = NUMmax_u (y.get());
 	}
+	if (isundef (ymin) || isundef (ymax))
+		return;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	for (integer ipoint = 2; ipoint <= numberOfPoints; ipoint ++) {
 		double segment_x1, segment_y1, segment_x2, segment_y2;
@@ -1630,7 +1632,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 			}
 		}
 		if (xmax <= xmin)
-			NUMextrema (x.part (1, numberOfData), & xmin, & xmax);
+			NUMextrema_e (x.part (1, numberOfData), & xmin, & xmax);
 		Melder_require (xmin < xmax,
 			U"The range of the x-values is too small.");
 		

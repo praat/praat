@@ -38,10 +38,6 @@ autoDistance Distance_create (integer numberOfPoints) {
 	}
 }
 
-double Distance_getMaximumDistance (Distance me) {
-	return NUMmax (my data.get());
-}
-
 static void VECpow (VECVU const& v, double power) {
 	for (integer i = 1; i <= v.size; i++)
 		v [i] = pow (v [i], power);
@@ -56,7 +52,7 @@ autoDistance Configuration_to_Distance (Configuration me) {
 			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
 				dist.all()  <<=  my data.row (i)  -  my data.row (j);
 				VECabs_inplace (dist.get());
-				const double dmax = NUMmax (dist.get());
+				const double dmax = NUMmax_e (dist.get());
 				double d = 0.0;
 				if (dmax > 0.0) {
 					dist.all()  /=  dmax;   // prevent overflow

@@ -304,21 +304,23 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		y [irow] = ( my numberOfColumns > 1 ? my data [irow] [yCoordinate] * my w [yCoordinate] : 0.0 );
 	}
 	if (xmax <= xmin) {
-		xmin = NUMmin (x.get());
-		xmax = NUMmax (x.get());
+		xmin = NUMmin_u (x.get());
+		xmax = NUMmax_u (x.get());
 	}
 	if (xmax <= xmin) {
 		xmax += 1.0;
 		xmin -= 1.0;
 	}
 	if (ymax <= ymin) {
-		ymin = NUMmin (y.get());
-		ymax = NUMmax (y.get());
+		ymin = NUMmin_u (y.get());
+		ymax = NUMmax_u (y.get());
 	}
 	if (ymax <= ymin) {
 		ymax += 1.0;
 		ymin -= 1.0;
 	}
+	if (isundef (xmin) || isundef (xmax) || isundef (ymin) || isundef (ymax))
+		return;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
 	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);

@@ -31,8 +31,6 @@ autoDistance Configuration_to_Distance (Configuration me);
 
 void Distance_drawDendogram (Distance me, Graphics g, int method);
 
-double Distance_getMaximumDistance (Distance me);
-
 Collection_define (DistanceList, OrderedOf, Distance) {
 	ProximityList asProximityList () {
 		return reinterpret_cast<ProximityList> (this);

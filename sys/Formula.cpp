@@ -147,7 +147,11 @@ enum { NO_SYMBOL_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
 		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_,
-		MIN_, MAX_, IMIN_, IMAX_, NORM_,
+		MIN_, MIN_E_, MIN_IGNORE_UNDEFINED_,
+		MAX_, MAX_E_, MAX_IGNORE_UNDEFINED_,
+		IMIN_, IMIN_E_, IMIN_IGNORE_UNDEFINED_,
+		IMAX_, IMAX_E_, IMAX_IGNORE_UNDEFINED_,
+		NORM_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
 		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
@@ -288,7 +292,11 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"writeInfo", U"writeInfoLine", U"appendInfo", U"appendInfoLine",
 	U"writeFile", U"writeFileLine", U"appendFile", U"appendFileLine",
 	U"pauseScript", U"exitScript", U"runScript", U"runSystem", U"runSystem_nocheck", U"runSubprocess",
-	U"min", U"max", U"imin", U"imax", U"norm",
+	U"min", U"min_e", U"min_ignoreUndefined",
+	U"max", U"max_e", U"max_ignoreUndefined",
+	U"imin", U"imin_e", U"imin_ignoreUndefined",
+	U"imax", U"imax_e", U"imax_ignoreUndefined",
+	U"norm",
 	U"left$", U"right$", U"mid$",
 	U"selected", U"selected$", U"numberOfSelected", U"selected#",
 	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
@@ -4281,32 +4289,145 @@ static void do_min () {
 		U"The function “min” requires at least one argument.");
 	const Stackel last = pop;
 	if (last->which == Stackel_NUMBER) {
-		double result = last->number;
-		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
-			const Stackel previous = pop;
-			Melder_require (previous->which == Stackel_NUMBER,
-				U"The function “min” cannot mix a numeric argument with ", previous->whichText(), U".");
-			result = isundef (result) || isundef (previous->number) ? undefined :
-					result < previous->number ? result : previous->number;
+		/*@praat
+			assert min (5, 6, 1, 7) = 1
+			assert min (undefined, 6, 1, 7) = undefined
+			assert min (5, undefined, 1, 7) = undefined
+			assert min (5, 6, undefined, 7) = undefined
+			assert min (5, 6, 1, undefined) = undefined
+			assert min (undefined, undefined) = undefined
+			assert min (undefined) = undefined
+			assert min (5) = 5
+		@*/
+		integer size = Melder_iround (n->number);
+		autoVEC numericVector = raw_VEC (size);
+		numericVector [size] = last->number;
+		for (integer i = size - 1; i > 0; i --) {
+			const Stackel element = pop;
+			Melder_require (element->which == Stackel_NUMBER,
+				U"The function “min” cannot mix a numeric argument with ", element->whichText(), U".");
+			numericVector [i] = element->number;
 		}
-		pushNumber (result);
+		pushNumber (NUMmin_u (numericVector.get()));
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		/*@praat
 			assert min ({ 5, 6, 1, 7 }) = 1
-			assert min ({ undefined, 6, 1, 7 }) = 1
-			assert min ({ 5, undefined, 1, 7 }) = 1
-			assert min ({ 5, 6, undefined, 7 }) = 5
-			assert min ({ 5, 6, 1, undefined }) = 1
+			assert min ({ undefined, 6, 1, 7 }) = undefined
+			assert min ({ 5, undefined, 1, 7 }) = undefined
+			assert min ({ 5, 6, undefined, 7 }) = undefined
+			assert min ({ 5, 6, 1, undefined }) = undefined
 			assert min ({ undefined, undefined }) = undefined
 			assert min ({ undefined }) = undefined
 			assert min (zero# (0)) = undefined
 		@*/
 		Melder_require (n->number == 1,
 			U"The function “min” requires exactly one vector argument.");
-		pushNumber (NUMmin (last->numericVector));
+		pushNumber (NUMmin_u (last->numericVector));
 	} else {
-		const Stackel nn = pop;
-		Melder_throw (U"Cannot compute the minimum of ", nn->whichText(), U".");
+		Melder_throw (U"Cannot compute the minimum of ", last->whichText(), U".");
+	}
+}
+static void do_min_e () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number >= 1,
+		U"The function “min_e” requires at least one argument.");
+	const Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		/*@praat
+			assert min_e (5, 6, 1, 7) = 1
+			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			pos = min_e (undefined, 6, 1, 7)
+			asserterror Cannot determine the minimum of a vector: element 2 is undefined.
+			pos = min_e (5, undefined, 1, 7)
+			asserterror Cannot determine the minimum of a vector: element 3 is undefined.
+			pos = min_e (5, 6, undefined, 7)
+			asserterror Cannot determine the minimum of a vector: element 4 is undefined.
+			pos = min_e (5, 6, 1, undefined)
+			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			pos = min_e (undefined, undefined)
+			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			pos = min_e (undefined)
+			assert min_e (5) = 5
+		@*/
+		integer size = Melder_iround (n->number);
+		autoVEC numericVector = raw_VEC (size);
+		numericVector [size] = last->number;
+		for (integer i = size - 1; i > 0; i --) {
+			const Stackel element = pop;
+			Melder_require (element->which == Stackel_NUMBER,
+				U"The function “min_e” cannot mix a numeric argument with ", element->whichText(), U".");
+			numericVector [i] = element->number;
+		}
+		pushNumber (NUMmin_e (numericVector.get()));
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		/*@praat
+			assert min_e ({ 5, 6, 1, 7 }) = 1
+			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			pos = min_e ({ undefined, 6, 1, 7 })
+			asserterror Cannot determine the minimum of a vector: element 2 is undefined.
+			pos = min_e ({ 5, undefined, 1, 7 })
+			asserterror Cannot determine the minimum of a vector: element 3 is undefined.
+			pos = min_e ({ 5, 6, undefined, 7 })
+			asserterror Cannot determine the minimum of a vector: element 4 is undefined.
+			pos = min_e ({ 5, 6, 1, undefined })
+			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			pos = min_e ({ undefined, undefined })
+			asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+			pos = min_e ({ undefined })
+			asserterror Cannot determine the minimum of an empty vector.
+			pos = min_e (zero# (0))
+		@*/
+		Melder_require (n->number == 1,
+			U"The function “min_e” requires exactly one vector argument.");
+		pushNumber (NUMmin_e (last->numericVector));
+	} else {
+		Melder_throw (U"Cannot compute the minimum of ", last->whichText(), U".");
+	}
+}
+static void do_min_ignoreUndefined () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number >= 1,
+		U"The function “min_ignoreUndefined” requires at least one argument.");
+	const Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		/*@praat
+			assert min_ignoreUndefined (5, 6, 1, 7) = 1
+			assert min_ignoreUndefined (undefined, 6, 1, 7) = 1
+			assert min_ignoreUndefined (5, undefined, 1, 7) = 1
+			assert min_ignoreUndefined (5, 6, undefined, 7) = 5
+			assert min_ignoreUndefined (5, 6, 1, undefined) = 1
+			assert min_ignoreUndefined (undefined, undefined) = undefined
+			assert min_ignoreUndefined (undefined) = undefined
+			assert min_ignoreUndefined (5) = 5
+		@*/
+		integer size = Melder_iround (n->number);
+		autoVEC numericVector = raw_VEC (size);
+		numericVector [size] = last->number;
+		for (integer i = size - 1; i > 0; i --) {
+			const Stackel element = pop;
+			Melder_require (element->which == Stackel_NUMBER,
+				U"The function “min_ignoreUndefined” cannot mix a numeric argument with ", element->whichText(), U".");
+			numericVector [i] = element->number;
+		}
+		pushNumber (NUMmin_ignoreUndefined_u (numericVector.get()));
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		/*@praat
+			assert min_ignoreUndefined ({ 5, 6, 1, 7 }) = 1
+			assert min_ignoreUndefined ({ undefined, 6, 1, 7 }) = 1
+			assert min_ignoreUndefined ({ 5, undefined, 1, 7 }) = 1
+			assert min_ignoreUndefined ({ 5, 6, undefined, 7 }) = 5
+			assert min_ignoreUndefined ({ 5, 6, 1, undefined }) = 1
+			assert min_ignoreUndefined ({ undefined, undefined }) = undefined
+			assert min_ignoreUndefined ({ undefined }) = undefined
+			assert min_ignoreUndefined (zero# (0)) = undefined
+		@*/
+		Melder_require (n->number == 1,
+			U"The function “min_ignoreUndefined” requires exactly one vector argument.");
+		pushNumber (NUMmin_ignoreUndefined_u (last->numericVector));
+	} else {
+		Melder_throw (U"Cannot compute the minimum of ", last->whichText(), U".");
 	}
 }
 static void do_max () {
@@ -4316,22 +4437,72 @@ static void do_max () {
 		U"The function “max” requires at least one argument.");
 	const Stackel last = pop;
 	if (last->which == Stackel_NUMBER) {
-		double result = last->number;
-		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
-			Stackel previous = pop;
-			Melder_require (previous->which == Stackel_NUMBER,
-				U"The function “max” cannot mix a numeric argument with ", previous->whichText(), U".");
-			result = isundef (result) || isundef (previous->number) ? undefined :
-				result > previous->number ? result : previous->number;
+		integer size = Melder_iround (n->number);
+		autoVEC numericVector = raw_VEC (size);
+		numericVector [size] = last->number;
+		for (integer i = size - 1; i > 0; i --) {
+			const Stackel element = pop;
+			Melder_require (element->which == Stackel_NUMBER,
+				U"The function “min_ignoreUndefined” cannot mix a numeric argument with ", element->whichText(), U".");
+			numericVector [i] = element->number;
 		}
-		pushNumber (result);
+		pushNumber (NUMmax_u (numericVector.get()));
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		Melder_require (n->number == 1,
 			U"The function “max” requires exactly one vector argument.");
-		pushNumber (NUMmax (last->numericVector));
+		pushNumber (NUMmax_u (last->numericVector));
 	} else {
-		const Stackel nn = pop;
-		Melder_throw (U"Cannot compute the maximum of ", nn->whichText(), U".");
+		Melder_throw (U"Cannot compute the maximum of ", last->whichText(), U".");
+	}
+}
+static void do_max_e () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number >= 1,
+		U"The function “max_e” requires at least one argument.");
+	const Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		integer size = Melder_iround (n->number);
+		autoVEC numericVector = raw_VEC (size);
+		numericVector [size] = last->number;
+		for (integer i = size - 1; i > 0; i --) {
+			const Stackel element = pop;
+			Melder_require (element->which == Stackel_NUMBER,
+				U"The function “max_e” cannot mix a numeric argument with ", element->whichText(), U".");
+			numericVector [i] = element->number;
+		}
+		pushNumber (NUMmax_e (numericVector.get()));
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (n->number == 1,
+			U"The function “max_e” requires exactly one vector argument.");
+		pushNumber (NUMmax_e (last->numericVector));
+	} else {
+		Melder_throw (U"Cannot compute the maximum of ", last->whichText(), U".");
+	}
+}
+static void do_max_ignoreUndefined () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number >= 1,
+		U"The function “max_ignoreUndefined” requires at least one argument.");
+	const Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		integer size = Melder_iround (n->number);
+		autoVEC numericVector = raw_VEC (size);
+		numericVector [size] = last->number;
+		for (integer i = size - 1; i > 0; i --) {
+			const Stackel element = pop;
+			Melder_require (element->which == Stackel_NUMBER,
+				U"The function “max_ignoreUndefined” cannot mix a numeric argument with ", element->whichText(), U".");
+			numericVector [i] = element->number;
+		}
+		pushNumber (NUMmax_ignoreUndefined_u (numericVector.get()));
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (n->number == 1,
+			U"The function “max_ignoreUndefined” requires exactly one vector argument.");
+		pushNumber (NUMmax_ignoreUndefined_u (last->numericVector));
+	} else {
+		Melder_throw (U"Cannot compute the maximum of ", last->whichText(), U".");
 	}
 }
 static void do_imin () {
@@ -4370,8 +4541,85 @@ static void do_imin () {
 		}
 		pushNumber (result);
 	} else {
-		const Stackel nn = pop;
-		Melder_throw (U"Cannot compute the imin of ", nn->whichText(), U".");
+		Melder_throw (U"Cannot compute the imin of ", last->whichText(), U".");
+	}
+}
+static void do_imin_e () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number >= 1,
+		U"The function “imin_e” requires at least one argument.");
+	const Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		double minimum = last->number;
+		double result = n->number;
+		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
+			Stackel previous = pop;
+			Melder_require (previous->which == Stackel_NUMBER,
+				U"The function “imin_e” cannot mix a numeric argument with ", previous->whichText(), U".");
+			if (isundef (minimum) || isundef (previous->number)) {
+				minimum = undefined;
+				result = undefined;
+			} else if (previous->number < minimum) {
+				minimum = previous->number;
+				result = j;
+			}
+		}
+		pushNumber (result);
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (n->number == 1,
+			U"The function “imin_e” requires exactly one vector argument.");
+		const integer numberOfElements = last->numericVector.size;
+		integer result = 1;
+		double minimum = last->numericVector [1];
+		for (integer i = 2; i <= numberOfElements; i ++) {
+			if (last->numericVector [i] < minimum) {
+				result = i;
+				minimum = last->numericVector [i];
+			}
+		}
+		pushNumber (result);
+	} else {
+		Melder_throw (U"Cannot compute the imin of ", last->whichText(), U".");
+	}
+}
+static void do_imin_ignoreUndefined () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number >= 1,
+		U"The function “imin_ignoreUndefined” requires at least one argument.");
+	const Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		double minimum = last->number;
+		double result = n->number;
+		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
+			Stackel previous = pop;
+			Melder_require (previous->which == Stackel_NUMBER,
+				U"The function “imin_ignoreUndefined” cannot mix a numeric argument with ", previous->whichText(), U".");
+			if (isundef (minimum) || isundef (previous->number)) {
+				minimum = undefined;
+				result = undefined;
+			} else if (previous->number < minimum) {
+				minimum = previous->number;
+				result = j;
+			}
+		}
+		pushNumber (result);
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (n->number == 1,
+			U"The function “imin_ignoreUndefined” requires exactly one vector argument.");
+		const integer numberOfElements = last->numericVector.size;
+		integer result = 1;
+		double minimum = last->numericVector [1];
+		for (integer i = 2; i <= numberOfElements; i ++) {
+			if (last->numericVector [i] < minimum) {
+				result = i;
+				minimum = last->numericVector [i];
+			}
+		}
+		pushNumber (result);
+	} else {
+		Melder_throw (U"Cannot compute the imin of ", last->whichText(), U".");
 	}
 }
 static void do_imax () {
@@ -4410,8 +4658,85 @@ static void do_imax () {
 		}
 		pushNumber (result);
 	} else {
-		const Stackel nn = pop;
-		Melder_throw (U"Cannot compute the imax of ", nn->whichText(), U".");
+		Melder_throw (U"Cannot compute the imax of ", last->whichText(), U".");
+	}
+}
+static void do_imax_e () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number >= 1,
+		U"The function “imax_e” requires at least one argument.");
+	const Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		double maximum = last->number;
+		double result = n->number;
+		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
+			const Stackel previous = pop;
+			Melder_require (previous->which == Stackel_NUMBER,
+				U"The function “imax_e” cannot mix a numeric argument with ", previous->whichText(), U".");
+			if (isundef (maximum) || isundef (previous->number)) {
+				maximum = undefined;
+				result = undefined;
+			} else if (previous->number > maximum) {
+				maximum = previous->number;
+				result = j;
+			}
+		}
+		pushNumber (result);
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (n->number == 1,
+			U"The function “imax_e” requires exactly one vector argument.");
+		const integer numberOfElements = last->numericVector.size;
+		integer result = 1;
+		double maximum = last->numericVector [1];
+		for (integer i = 2; i <= numberOfElements; i ++) {
+			if (last->numericVector [i] > maximum) {
+				result = i;
+				maximum = last->numericVector [i];
+			}
+		}
+		pushNumber (result);
+	} else {
+		Melder_throw (U"Cannot compute the imax of ", last->whichText(), U".");
+	}
+}
+static void do_imax_ignoreUndefined () {
+	const Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	Melder_require (n->number >= 1,
+		U"The function “imax_ignoreUndefined” requires at least one argument.");
+	const Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		double maximum = last->number;
+		double result = n->number;
+		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
+			const Stackel previous = pop;
+			Melder_require (previous->which == Stackel_NUMBER,
+				U"The function “imax_ignoreUndefined” cannot mix a numeric argument with ", previous->whichText(), U".");
+			if (isundef (maximum) || isundef (previous->number)) {
+				maximum = undefined;
+				result = undefined;
+			} else if (previous->number > maximum) {
+				maximum = previous->number;
+				result = j;
+			}
+		}
+		pushNumber (result);
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		Melder_require (n->number == 1,
+			U"The function “imax_ignoreUndefined” requires exactly one vector argument.");
+		const integer numberOfElements = last->numericVector.size;
+		integer result = 1;
+		double maximum = last->numericVector [1];
+		for (integer i = 2; i <= numberOfElements; i ++) {
+			if (last->numericVector [i] > maximum) {
+				result = i;
+				maximum = last->numericVector [i];
+			}
+		}
+		pushNumber (result);
+	} else {
+		Melder_throw (U"Cannot compute the imax of ", last->whichText(), U".");
 	}
 }
 static void do_norm () {
@@ -4791,7 +5116,7 @@ static void do_random_initializeWithSeedUnsafelyButPredictably () {
 	/*@praat
 		#
 		# A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence
-		# should be 9981545732273789042.
+		# should be 9'981'545'732'273'789'042.
 		#
 		random_initializeWithSeedUnsafelyButPredictably (5489)
 		for i to 10000
@@ -7695,9 +8020,17 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case RUN_SYSTEM_NOCHECK_: { do_runSystem_nocheck ();
 } break; case RUN_SUBPROCESS_: { do_runSubprocess ();
 } break; case MIN_: { do_min ();
+} break; case MIN_E_: { do_min_e ();
+} break; case MIN_IGNORE_UNDEFINED_: { do_min_ignoreUndefined ();
 } break; case MAX_: { do_max ();
+} break; case MAX_E_: { do_max_e ();
+} break; case MAX_IGNORE_UNDEFINED_: { do_max_ignoreUndefined ();
 } break; case IMIN_: { do_imin ();
+} break; case IMIN_E_: { do_imin_e ();
+} break; case IMIN_IGNORE_UNDEFINED_: { do_imin_ignoreUndefined ();
 } break; case IMAX_: { do_imax ();
+} break; case IMAX_E_: { do_imax_e ();
+} break; case IMAX_IGNORE_UNDEFINED_: { do_imax_ignoreUndefined ();
 } break; case NORM_: { do_norm ();
 } break; case ZERO_VEC_: { do_zero_VEC ();
 } break; case ZERO_MAT_: { do_zero_MAT ();

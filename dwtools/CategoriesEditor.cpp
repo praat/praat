@@ -54,7 +54,7 @@ static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS) {
 static void Ordered_moveItems (Ordered me, constINTVEC position, integer newpos) {
 	if (position.size < 1)
 		return;
-	const integer min = NUMmin (position), max = NUMmax (position);
+	const integer min = NUMmin_e (position), max = NUMmax_e (position);
 
 	Melder_assert (min >= 1 && max <= my size && (newpos <= min || newpos >= max));
 

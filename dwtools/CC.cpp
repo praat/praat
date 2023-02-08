@@ -133,7 +133,9 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 		c [i] = cf -> c0;
 	}
 	if (ymin >= ymax) {
-		NUMextrema (c.get(), & ymin, & ymax);
+		NUMextrema_u (c.get(), & ymin, & ymax);
+		if (isundef (ymin) || isundef (ymax))
+			return;
 		if (ymax <= ymin) {
 			ymin -= 1.0;
 			ymax += 1.0;

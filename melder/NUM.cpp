@@ -325,16 +325,16 @@ double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
 	}
 }
 
-double NUMmean (constVECVU const& vec) {
-	if (vec.size <= 0)
+double NUMmean (constVECVU const& vec) noexcept {
+	if (NUMisEmpty (vec))
 		return undefined;
-	longdouble sum = NUMsum_longdouble (vec);
+	const longdouble sum = NUMsum_longdouble (vec);
 	return double (sum / vec.size);
 }
 double NUMmean (constMATVU const& mat) noexcept {
-	if (mat.nrow * mat.ncol <= 0)
+	if (NUMisEmpty (mat))
 		return undefined;
-	longdouble sum = NUMsum_longdouble (mat);
+	const longdouble sum = NUMsum_longdouble (mat);
 	return double (sum / (mat.nrow * mat.ncol));
 }
 
@@ -356,7 +356,227 @@ MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept {
 	return result;
 }
 
-double NUMminimumLength (constSTRVEC const& x) {
+double NUMmin_e (constVECVU const& vec) {   // propagate NaNs (including -inf and +inf)
+	if (NUMisEmpty (vec))
+		Melder_throw (U"Cannot determine the minimum of an empty vector.");
+	/*
+		The following procedure is the simplest, and possibly the best.
+
+		We also tried a "smart" version, which had fewer `isundef` calls,
+		namely by rewriting the test as `if (! (value >= minimum)`.
+		This captured cases where `minimum` is NaN, so that the condition
+		`if (isundef (value))` could be moved into the then-part of `if (! (value >= minimum))`.
+		This saved a lot of `isundef`s and handled NaN and -inf;
+		however, it didn't handle +inf.
+		The version below does handle all infinities, and guess what?: the procedure is
+		not more than 2 percent slower than without the `isundef` test!
+		(last checked 2023-02-07 for the Mac)
+		Hence: DON'T OPTIMIZE.
+	 */
+	double minimum = + std::numeric_limits<double>::infinity();
+	for (integer i = 1; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (isundef (value))
+			Melder_throw (U"Cannot determine the minimum of a vector: element ", i, U" is undefined.");
+		if (value < minimum)
+			minimum = value;
+	}
+	return minimum;
+}
+double NUMmin_u (constVECVU const& vec) noexcept {   // propagate NaNs (including -inf and +inf)
+	if (NUMisEmpty (vec))
+		return undefined;
+	double minimum = + std::numeric_limits<double>::infinity();
+	for (integer i = 1; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (isundef (value))
+			return undefined;
+		if (value < minimum)
+			minimum = value;
+	}
+	return minimum;
+}
+double NUMmin_ignoreUndefined_u (constVECVU const& vec) noexcept {
+	double minimum = + std::numeric_limits<double>::infinity();
+	for (integer i = 1; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (value < minimum)   // NaN-safe, because false if value is undefined
+			minimum = value;
+	}
+	if (isundef (minimum))   // including the original infinity
+		return undefined;
+	return minimum;
+}
+integer NUMmin_e (constINTVECVU const& vec) {
+	if (NUMisEmpty (vec))
+		Melder_throw (U"Cannot determine the minimum of an empty vector.");
+	integer minimum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value < minimum)
+			minimum = value;
+	}
+	return minimum;
+}
+integer NUMmin_u (constINTVECVU const& vec) noexcept {
+	if (NUMisEmpty (vec))
+		return INTEGER_MAX;
+	integer minimum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value < minimum)
+			minimum = value;
+	}
+	return minimum;
+}
+double NUMmin_e (constMATVU const& mat) {   // propagate NaNs (including -inf and +inf)
+	if (NUMisEmpty (mat))
+		return undefined;
+	double minimum = + std::numeric_limits<double>::infinity();
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
+		for (integer icol = 1; icol <= mat.ncol; icol ++) {
+			const double value = mat [irow] [icol];
+			if (isundef (value))
+				Melder_throw (U"Cannot determine the minimum of a matrix: element [", irow, U", ", icol, U"] is undefined.");
+			if (value < minimum)
+				minimum = value;
+		}
+	}
+	return minimum;
+}
+double NUMmin_u (constMATVU const& mat) noexcept {   // propagate NaNs (including -inf and +inf)
+	if (NUMisEmpty (mat))
+		return undefined;
+	double minimum = + std::numeric_limits<double>::infinity();
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
+		for (integer icol = 1; icol <= mat.ncol; icol ++) {
+			const double value = mat [irow] [icol];
+			if (isundef (value))
+				return undefined;
+			if (value < minimum)
+				minimum = value;
+		}
+	}
+	return minimum;
+}
+double NUMmin_ignoreUndefined_u (constMATVU const& mat) noexcept {
+	double minimum = + std::numeric_limits<double>::infinity();
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
+		for (integer icol = 1; icol <= mat.ncol; icol ++) {
+			const double value = mat [irow] [icol];
+			if (value < minimum)   // NaN-correct, because false if value is undefined
+				minimum = value;
+		}
+	}
+	if (isundef (minimum))   // including the original infinity
+		return undefined;
+	return minimum;
+}
+
+double NUMmax_e (constVECVU const& vec) {   // propagate NaNs (including -inf and +inf)
+	if (NUMisEmpty (vec))
+		Melder_throw (U"Cannot determine the maximum of an empty vector.");
+	double maximum = - std::numeric_limits<double>::infinity();
+	for (integer i = 1; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (isundef (value))
+			Melder_throw (U"Cannot determine the maximum of a vector: element ", i, U" is undefined.");
+		if (value > maximum)
+			maximum = value;
+	}
+	return maximum;
+}
+double NUMmax_u (constVECVU const& vec) noexcept {   // propagate NaNs (including -inf and +inf)
+	if (NUMisEmpty (vec))
+		return undefined;
+	double maximum = - std::numeric_limits<double>::infinity();
+	for (integer i = 1; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (isundef (value))
+			return undefined;
+		if (value > maximum)
+			maximum = value;
+	}
+	return maximum;
+}
+double NUMmax_ignoreUndefined_u (constVECVU const& vec) noexcept {
+	double maximum = - std::numeric_limits<double>::infinity();
+	for (integer i = 1; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (value > maximum)   // NaN-safe, because false if value is undefined
+			maximum = value;
+	}
+	if (isundef (maximum))   // including the original -infinity
+		return undefined;
+	return maximum;
+}
+integer NUMmax_e (constINTVECVU const& vec) {
+	if (NUMisEmpty (vec))
+		Melder_throw (U"Cannot determine the maximum of an empty vector.");
+	integer maximum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value > maximum)
+			maximum = value;
+	}
+	return maximum;
+}
+integer NUMmax_u (constINTVECVU const& vec) noexcept {
+	if (NUMisEmpty (vec))
+		return INTEGER_MIN;
+	integer maximum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const integer value = vec [i];
+		if (value > maximum)
+			maximum = value;
+	}
+	return maximum;
+}
+double NUMmax_e (constMATVU const& mat) {   // propagate NaNs (including -inf and +inf)
+	if (NUMisEmpty (mat))
+		Melder_throw (U"Cannot determine the maximum of an empty matrix.");
+	double maximum = - std::numeric_limits<double>::infinity();
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
+		for (integer icol = 1; icol <= mat.ncol; icol ++) {
+			const double value = mat [irow] [icol];
+			if (isundef (value))
+				Melder_throw (U"Cannot determine the maximum of a matrix: element [", irow, U", ", icol, U"] is undefined.");
+			if (value > maximum)
+				maximum = value;
+		}
+	}
+	return maximum;
+}
+double NUMmax_u (constMATVU const& mat) noexcept {   // propagate NaNs (including -inf and +inf)
+	if (NUMisEmpty (mat))
+		return undefined;
+	double maximum = - std::numeric_limits<double>::infinity();
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
+		for (integer icol = 1; icol <= mat.ncol; icol ++) {
+			const double value = mat [irow] [icol];
+			if (isundef (value))
+				return undefined;
+			if (value > maximum)
+				maximum = value;
+		}
+	}
+	return maximum;
+}
+double NUMmax_ignoreUndefined_u (constMATVU const& mat) noexcept {
+	double maximum = - std::numeric_limits<double>::infinity();
+	for (integer irow = 1; irow <= mat.nrow; irow ++) {
+		for (integer icol = 1; icol <= mat.ncol; icol ++) {
+			const double value = mat [irow] [icol];
+			if (value > maximum)   // NaN-safe, because false if value is undefined
+				maximum = value;
+		}
+	}
+	if (isundef (maximum))   // including the original -infinity
+		return undefined;
+	return maximum;
+}
+
+double NUMminimumLength (constSTRVEC const& x) noexcept {
 	if (NUMisEmpty (x))
 		return undefined;
 	double result = NUMlength (x [1]);
@@ -367,7 +587,7 @@ double NUMminimumLength (constSTRVEC const& x) {
 	}
 	return result;
 }
-double NUMmaximumLength (constSTRVEC const& x) {
+double NUMmaximumLength (constSTRVEC const& x) noexcept {
 	if (NUMisEmpty (x))
 		return undefined;
 	double result = NUMlength (x [1]);

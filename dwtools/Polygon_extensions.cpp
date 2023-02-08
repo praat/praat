@@ -38,14 +38,14 @@ static double Polygon_area (Polygon me) {
 		j = i;
 	}
 	area *= 0.5;
-	return fabs (area); // area my have negative sign in counter clockwise evaluation of area
+	return fabs (double (area));   // area may have negative sign in counter-clockwise evaluation of area
 }
 
 void Polygon_getExtrema (Polygon me, double *out_xmin, double *out_xmax, double *out_ymin, double *out_ymax) {
-    const double xmin = NUMmin (my x.get());
-	const double xmax = NUMmax (my x.get());
-    const double ymin = NUMmin (my y.get());
-	const double ymax = NUMmax (my y.get());
+    const double xmin = NUMmin_e (my x.get());
+	const double xmax = NUMmax_e (my x.get());
+    const double ymin = NUMmin_e (my y.get());
+	const double ymax = NUMmax_e (my y.get());
     if (out_xmin)
 		*out_xmin = xmin;
     if (out_xmax)
@@ -157,31 +157,27 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 	}
 }
 
-static void setWindow (Polygon me, Graphics graphics, double xmin, double xmax, double ymin, double ymax) {
-	Melder_assert (me);
-
+void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark) {
+	Graphics_setInner (g);
 	if (xmax <= xmin) { /* Autoscaling along x axis. */
-		xmax = NUMmax (my x.get());
-		xmin = NUMmin (my x.get());
+		xmax = NUMmax_u (my x.get());
+		xmin = NUMmin_u (my x.get());
 		if (xmin == xmax) {
 			xmin -= 1.0;
 			xmax += 1.0;
 		}
 	}
 	if (ymax <= ymin) { /* Autoscaling along y axis. */
-		ymax = NUMmax (my y.get());
-		ymin = NUMmin (my y.get());
+		ymax = NUMmax_u (my y.get());
+		ymin = NUMmin_u (my y.get());
 		if (ymin == ymax) {
 			ymin -= 1.0;
 			ymax += 1.0;
 		}
 	}
-	Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
-}
-
-void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark) {
-	Graphics_setInner (g);
-	setWindow (me, g, xmin, xmax, ymin, ymax);
+	if (isundef (xmin) || isundef (xmax) || isundef (ymin) || isundef (ymax))
+		return;
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	for (integer i = 1; i <= my numberOfPoints; i ++)
 		Graphics_mark (g, my x [i], my y [i], size_mm, mark);
 	Graphics_unsetInner (g);

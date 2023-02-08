@@ -217,18 +217,52 @@ assert invSigmoid (0.0) = undefined   ; minus infinity
 assert invSigmoid (1.0) = undefined   ; plus infinity
 assert invSigmoid (2.0) = undefined   ; not a number
 
+assert min (5, 6, 1, 7) = 1
+assert min (undefined, 6, 1, 7) = undefined
+assert min (5, undefined, 1, 7) = undefined
+assert min (5, 6, undefined, 7) = undefined
+assert min (5, 6, 1, undefined) = undefined
+assert min (undefined, undefined) = undefined
+assert min (undefined) = undefined
+assert min (5) = 5
+
 assert min ({ 5, 6, 1, 7 }) = 1
-assert min ({ undefined, 6, 1, 7 }) = 1
-assert min ({ 5, undefined, 1, 7 }) = 1
-assert min ({ 5, 6, undefined, 7 }) = 5
-assert min ({ 5, 6, 1, undefined }) = 1
+assert min ({ undefined, 6, 1, 7 }) = undefined
+assert min ({ 5, undefined, 1, 7 }) = undefined
+assert min ({ 5, 6, undefined, 7 }) = undefined
+assert min ({ 5, 6, 1, undefined }) = undefined
 assert min ({ undefined, undefined }) = undefined
 assert min ({ undefined }) = undefined
 assert min (zero# (0)) = undefined
 
+assert min_e ({ 5, 6, 1, 7 }) = 1
+asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+pos = min_e ({ undefined, 6, 1, 7 })
+asserterror Cannot determine the minimum of a vector: element 2 is undefined.
+pos = min_e ({ 5, undefined, 1, 7 })
+asserterror Cannot determine the minimum of a vector: element 3 is undefined.
+pos = min_e ({ 5, 6, undefined, 7 })
+asserterror Cannot determine the minimum of a vector: element 4 is undefined.
+pos = min_e ({ 5, 6, 1, undefined })
+asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+pos = min_e ({ undefined, undefined })
+asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+pos = min_e ({ undefined })
+asserterror Cannot determine the minimum of an empty vector.
+pos = min_e (zero# (0))
+
+assert min_ignoreUndefined ({ 5, 6, 1, 7 }) = 1
+assert min_ignoreUndefined ({ undefined, 6, 1, 7 }) = 1
+assert min_ignoreUndefined ({ 5, undefined, 1, 7 }) = 1
+assert min_ignoreUndefined ({ 5, 6, undefined, 7 }) = 5
+assert min_ignoreUndefined ({ 5, 6, 1, undefined }) = 1
+assert min_ignoreUndefined ({ undefined, undefined }) = undefined
+assert min_ignoreUndefined ({ undefined }) = undefined
+assert min_ignoreUndefined (zero# (0)) = undefined
+
 #
 # A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence
-# should be 9981545732273789042.
+# should be 9'981'545'732'273'789'042.
 #
 random_initializeWithSeedUnsafelyButPredictably (5489)
 for i to 10000

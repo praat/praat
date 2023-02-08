@@ -142,8 +142,9 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	autoVEC spec = column_VEC (enhanced ? my s.get() : my y.get(), icol);
 
 	if (maximum <= minimum)
-		NUMextrema (spec.part (ifmin, ifmax), & minimum, & maximum);
-
+		NUMextrema_u (spec.part (ifmin, ifmax), & minimum, & maximum);
+	if (isundef (minimum) || isundef (maximum))
+		return;
 	if (maximum <= minimum) {
 		minimum -= 1;
 		maximum += 1;

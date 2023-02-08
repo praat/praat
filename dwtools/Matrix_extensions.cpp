@@ -251,7 +251,9 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 			freqMin = 0.0;
 			freqMax = 1.0;
 		} else {
-			NUMextrema (freq.get(), & freqMin, & freqMax);
+			NUMextrema_u (freq.get(), & freqMin, & freqMax);
+			if (isundef (freqMin) || isundef (freqMax))
+				return;
 			if (freqMax <= freqMin) {
 				freqMin = ( freqMin > 1.0 ? freqMin - 1.0 : 0.0 );
 				freqMax += 1.0;
