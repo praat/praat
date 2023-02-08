@@ -245,94 +245,40 @@ inline bool NUMisSymmetric (constMATVU const& x) noexcept {
 	return true;
 }
 
-inline double NUMlength (conststring32 str) {
+inline double NUMlength (conststring32 str) noexcept {
 	return double (Melder_length (str));
 }
 
-inline double NUMlog2 (double x) {
+inline double NUMlog2 (double x) noexcept {
 	return log (x) * NUMlog2e;
 }
 
-inline double NUMmax (   // ignore NaNs
-	constVECVU const& vec
-) {
-	double maximum = - std::numeric_limits<double>::infinity();
-	for (integer i = 1; i <= vec.size; i ++) {
-		const double value = vec [i];
-		if (value > maximum)   // NaN-safe
-			maximum = value;
-	}
-	return maximum;
-}
-inline integer NUMmax (
-	const constINTVECVU& vec
-) {
-	if (NUMisEmpty (vec))
-		return INTEGER_MIN;
-	integer maximum = vec [1];
-	for (integer i = 2; i <= vec.size; i ++) {
-		const integer value = vec [i];
-		if (value > maximum)
-			maximum = value;
-	}
-	return maximum;
-}
-inline double NUMmax (   // ignore NaNs
-	constMATVU const& mat
-) {
-	double maximum = - std::numeric_limits<double>::infinity();
-	for (integer irow = 1; irow <= mat.nrow; irow ++) {
-		const double value = NUMmax (mat [irow]);
-		if (value > maximum)   // NaN-safe
-			maximum = value;
-	}
-	return maximum;
-}
+extern double  NUMmin                 (constVECVU    const& vec) noexcept;   // undef  if empty or undefined element
+extern double  NUMmin_e               (constVECVU    const& vec);            // throw  if empty or undefined element
+extern double  NUMmin_ignoreUndefined (constVECVU    const& vec) noexcept;   // undef  if no defined elements
+extern integer NUMmin                 (constINTVECVU const& vec) noexcept;   // intmax if empty
+extern integer NUMmin_e               (constINTVECVU const& vec);            // throw  if empty
+extern double  NUMmin                 (constMATVU    const& mat) noexcept;   // undef  if empty or undefined element
+extern double  NUMmin_e               (constMATVU    const& mat);            // throw  if empty or undefined element
+extern double  NUMmin_ignoreUndefined (constMATVU    const& mat) noexcept;   // undef  if no defined elements
 
-extern double NUMminimumLength (constSTRVEC const& x);
-extern double NUMmaximumLength (constSTRVEC const& x);
+extern double  NUMmax                 (constVECVU    const& vec) noexcept;   // undef  if empty or undefined element
+extern double  NUMmax_e               (constVECVU    const& vec);            // throw  if empty or undefined element
+extern double  NUMmax_ignoreUndefined (constVECVU    const& vec) noexcept;   // undef  if no defined elements
+extern integer NUMmax                 (constINTVECVU const& vec) noexcept;   // intmin if empty
+extern integer NUMmax_e               (constINTVECVU const& vec);            // throw  if empty
+extern double  NUMmax                 (constMATVU    const& mat) noexcept;   // undef  if empty or undefined element
+extern double  NUMmax_e               (constMATVU    const& mat);            // throw  if empty or undefined element
+extern double  NUMmax_ignoreUndefined (constMATVU    const& mat) noexcept;   // undef  if no defined elements
 
-extern double NUMmean (constVECVU const& vec);
+extern double NUMminimumLength (constSTRVEC const& x) noexcept;
+extern double NUMmaximumLength (constSTRVEC const& x) noexcept;
+
+extern double NUMmean (constVECVU const& vec) noexcept;
 extern double NUMmean (constMATVU const& mat) noexcept;
 
 extern MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept;
 extern MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept;
-
-inline double NUMmin (   // ignore NaNs
-	constVECVU const& vec
-) {
-	double minimum = + std::numeric_limits<double>::infinity();
-	for (integer i = 1; i <= vec.size; i ++) {
-		const double value = vec [i];
-		if (value < minimum)   // NaN-safe
-			minimum = value;
-	}
-	return minimum;
-}
-inline integer NUMmin (
-	const constINTVECVU& vec
-) {
-	if (NUMisEmpty (vec))
-		return INTEGER_MAX;
-	integer minimum = vec [1];
-	for (integer i = 2; i <= vec.size; i ++) {
-		const integer value = vec [i];
-		if (value < minimum)
-			minimum = value;
-	}
-	return minimum;
-}
-inline double NUMmin (   // ignore NaNs
-	constMATVU const& mat
-) {
-	double minimum = + std::numeric_limits<double>::infinity();
-	for (integer irow = 1; irow <= mat.nrow; irow ++) {
-		const double value = NUMmin (mat [irow]);
-		if (value < minimum)   // NaN-safe
-			minimum = value;
-	}
-	return minimum;
-}
 
 double NUMnorm (constVECVU const& x, double power) noexcept;
 double NUMnorm (constMATVU const& x, double power) noexcept;

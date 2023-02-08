@@ -1,6 +1,6 @@
 /* Praat_tests.cpp
  *
- * Copyright (C) 2001-2007,2009,2011-2022 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -654,6 +654,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 					//aa = aac;
 					aa = bb;
 					aac = bbc;
+					//aac = aa;
 					bbc.cells = bb.cells;
 				}
 			}
