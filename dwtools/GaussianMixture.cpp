@@ -472,7 +472,9 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 		Melder_assert (thy eigenvectors.ncol == thy dimension);
 		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, thy eigenvectors.row (d), x);
 	}
-	const double pmax = NUMmax (p.get());
+	const double pmax = NUMmax_u (p.get());
+	if (isundef (pmax))
+		return;
 	if (ymin >= ymax) {
 		ymin = 0.0;
 		ymax = pmax;
@@ -512,7 +514,9 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 		const double x = xmin + (i - 1) * dx;
 		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, pos.get(), x);
 	}
-	const double pmax = NUMmax (p.get());
+	const double pmax = NUMmax_u (p.get());
+	if (isundef (pmax))
+		return;
 	if (ymin >= ymax) {
 		ymin = 0;
 		ymax = pmax;
@@ -583,8 +587,8 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee) {
 	try {
 		autoCovariance cov_t = TableOfReal_to_Covariance (thee);
 		for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-			const double min = NUMmin (thy data.column (icol));
-			const double max = NUMmax (thy data.column (icol));
+			const double min = NUMmin_e (thy data.column (icol));
+			const double max = NUMmax_e (thy data.column (icol));
 			for (integer component = 1; component <= my numberOfComponents; component ++) {
 				const Covariance covi = my covariances->at [component];
 				covi -> centroid [icol] = NUMrandomUniform (min, max);

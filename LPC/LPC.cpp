@@ -104,8 +104,9 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 		gain [iframe - itmin + 1] = my d_frames [iframe]. gain;
 
 	if (gmax <= gmin)
-		NUMextrema (gain.get(), & gmin, & gmax);
-
+		NUMextrema_u (gain.get(), & gmin, & gmax);
+	if (isundef (gmin) || isundef (gmax))
+		return;
 	if (gmax == gmin) {
 		gmin = 0.0;
 		gmax += 0.5;

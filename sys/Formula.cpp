@@ -4308,7 +4308,7 @@ static void do_min () {
 				U"The function “min” cannot mix a numeric argument with ", element->whichText(), U".");
 			numericVector [i] = element->number;
 		}
-		pushNumber (NUMmin (numericVector.get()));
+		pushNumber (NUMmin_u (numericVector.get()));
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		/*@praat
 			assert min ({ 5, 6, 1, 7 }) = 1
@@ -4322,7 +4322,7 @@ static void do_min () {
 		@*/
 		Melder_require (n->number == 1,
 			U"The function “min” requires exactly one vector argument.");
-		pushNumber (NUMmin (last->numericVector));
+		pushNumber (NUMmin_u (last->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the minimum of ", last->whichText(), U".");
 	}
@@ -4411,7 +4411,7 @@ static void do_min_ignoreUndefined () {
 				U"The function “min_ignoreUndefined” cannot mix a numeric argument with ", element->whichText(), U".");
 			numericVector [i] = element->number;
 		}
-		pushNumber (NUMmin_ignoreUndefined (numericVector.get()));
+		pushNumber (NUMmin_ignoreUndefined_u (numericVector.get()));
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		/*@praat
 			assert min_ignoreUndefined ({ 5, 6, 1, 7 }) = 1
@@ -4425,7 +4425,7 @@ static void do_min_ignoreUndefined () {
 		@*/
 		Melder_require (n->number == 1,
 			U"The function “min_ignoreUndefined” requires exactly one vector argument.");
-		pushNumber (NUMmin_ignoreUndefined (last->numericVector));
+		pushNumber (NUMmin_ignoreUndefined_u (last->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the minimum of ", last->whichText(), U".");
 	}
@@ -4446,11 +4446,11 @@ static void do_max () {
 				U"The function “min_ignoreUndefined” cannot mix a numeric argument with ", element->whichText(), U".");
 			numericVector [i] = element->number;
 		}
-		pushNumber (NUMmax (numericVector.get()));
+		pushNumber (NUMmax_u (numericVector.get()));
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		Melder_require (n->number == 1,
 			U"The function “max” requires exactly one vector argument.");
-		pushNumber (NUMmax (last->numericVector));
+		pushNumber (NUMmax_u (last->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the maximum of ", last->whichText(), U".");
 	}
@@ -4496,11 +4496,11 @@ static void do_max_ignoreUndefined () {
 				U"The function “max_ignoreUndefined” cannot mix a numeric argument with ", element->whichText(), U".");
 			numericVector [i] = element->number;
 		}
-		pushNumber (NUMmax_ignoreUndefined (numericVector.get()));
+		pushNumber (NUMmax_ignoreUndefined_u (numericVector.get()));
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		Melder_require (n->number == 1,
 			U"The function “max_ignoreUndefined” requires exactly one vector argument.");
-		pushNumber (NUMmax_ignoreUndefined (last->numericVector));
+		pushNumber (NUMmax_ignoreUndefined_u (last->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the maximum of ", last->whichText(), U".");
 	}

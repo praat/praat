@@ -888,19 +888,21 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		xdata. resize (xnumberOfData);
 		ydata. resize (ynumberOfData);
 		if (xmin == xmax) {
-			NUMextrema (xdata.part (1, xnumberOfData), & xmin, & xmax);
+			NUMextrema_u (xdata.part (1, xnumberOfData), & xmin, & xmax);
 			if (xmin == xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
 			}
 		}
 		if (ymin == ymax) {
-			NUMextrema (ydata.part (1, ynumberOfData), & ymin, & ymax);
+			NUMextrema_u (ydata.part (1, ynumberOfData), & ymin, & ymax);
 			if (ymin == ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
 			}
 		}
+		if (isundef (xmin) || isundef (xmax) || isundef (ymin) || isundef (ymax))
+			return;
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.get(), ydata.get(),
@@ -936,19 +938,21 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 			ydata [irow] = my rows.at [irow] -> cells [ycolumn]. number;
 		}
 		if (xmin == xmax) {
-			NUMextrema (xdata.get(), & xmin, & xmax);
+			NUMextrema_u (xdata.get(), & xmin, & xmax);
 			if (xmin == xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
 			}
 		}
 		if (ymin == ymax) {
-			NUMextrema (ydata.get(), & ymin, & ymax);
+			NUMextrema_u (ydata.get(), & ymin, & ymax);
 			if (ymin == ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
 			}
 		}
+		if (isundef (xmin) || isundef (xmax) || isundef (ymin) || isundef (ymax))
+			return;
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.get(), ydata.get(),

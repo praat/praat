@@ -74,7 +74,9 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	}
 
 	for (integer icol = 1; icol <= my nx; icol ++) {
-		const double lmax = NUMmax (thy z.column (icol));
+		const double lmax = NUMmax_u (thy z.column (icol));
+		if (isundef (lmax))
+			return;
 		const double factor = dynamicCompression * (extrema.max - lmax);
 		thy z.column (icol) += factor;
 	}

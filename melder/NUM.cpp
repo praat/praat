@@ -383,7 +383,7 @@ double NUMmin_e (constVECVU const& vec) {   // propagate NaNs (including -inf an
 	}
 	return minimum;
 }
-double NUMmin (constVECVU const& vec) noexcept {   // propagate NaNs (including -inf and +inf)
+double NUMmin_u (constVECVU const& vec) noexcept {   // propagate NaNs (including -inf and +inf)
 	if (NUMisEmpty (vec))
 		return undefined;
 	double minimum = + std::numeric_limits<double>::infinity();
@@ -396,7 +396,7 @@ double NUMmin (constVECVU const& vec) noexcept {   // propagate NaNs (including 
 	}
 	return minimum;
 }
-double NUMmin_ignoreUndefined (constVECVU const& vec) noexcept {
+double NUMmin_ignoreUndefined_u (constVECVU const& vec) noexcept {
 	double minimum = + std::numeric_limits<double>::infinity();
 	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
@@ -418,7 +418,7 @@ integer NUMmin_e (constINTVECVU const& vec) {
 	}
 	return minimum;
 }
-integer NUMmin (constINTVECVU const& vec) noexcept {
+integer NUMmin_u (constINTVECVU const& vec) noexcept {
 	if (NUMisEmpty (vec))
 		return INTEGER_MAX;
 	integer minimum = vec [1];
@@ -444,7 +444,7 @@ double NUMmin_e (constMATVU const& mat) {   // propagate NaNs (including -inf an
 	}
 	return minimum;
 }
-double NUMmin (constMATVU const& mat) noexcept {   // propagate NaNs (including -inf and +inf)
+double NUMmin_u (constMATVU const& mat) noexcept {   // propagate NaNs (including -inf and +inf)
 	if (NUMisEmpty (mat))
 		return undefined;
 	double minimum = + std::numeric_limits<double>::infinity();
@@ -459,7 +459,7 @@ double NUMmin (constMATVU const& mat) noexcept {   // propagate NaNs (including 
 	}
 	return minimum;
 }
-double NUMmin_ignoreUndefined (constMATVU const& mat) noexcept {
+double NUMmin_ignoreUndefined_u (constMATVU const& mat) noexcept {
 	double minimum = + std::numeric_limits<double>::infinity();
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {
@@ -486,7 +486,7 @@ double NUMmax_e (constVECVU const& vec) {   // propagate NaNs (including -inf an
 	}
 	return maximum;
 }
-double NUMmax (constVECVU const& vec) noexcept {   // propagate NaNs (including -inf and +inf)
+double NUMmax_u (constVECVU const& vec) noexcept {   // propagate NaNs (including -inf and +inf)
 	if (NUMisEmpty (vec))
 		return undefined;
 	double maximum = - std::numeric_limits<double>::infinity();
@@ -499,7 +499,7 @@ double NUMmax (constVECVU const& vec) noexcept {   // propagate NaNs (including 
 	}
 	return maximum;
 }
-double NUMmax_ignoreUndefined (constVECVU const& vec) noexcept {
+double NUMmax_ignoreUndefined_u (constVECVU const& vec) noexcept {
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
@@ -521,7 +521,7 @@ integer NUMmax_e (constINTVECVU const& vec) {
 	}
 	return maximum;
 }
-integer NUMmax (constINTVECVU const& vec) noexcept {
+integer NUMmax_u (constINTVECVU const& vec) noexcept {
 	if (NUMisEmpty (vec))
 		return INTEGER_MIN;
 	integer maximum = vec [1];
@@ -547,7 +547,7 @@ double NUMmax_e (constMATVU const& mat) {   // propagate NaNs (including -inf an
 	}
 	return maximum;
 }
-double NUMmax (constMATVU const& mat) noexcept {   // propagate NaNs (including -inf and +inf)
+double NUMmax_u (constMATVU const& mat) noexcept {   // propagate NaNs (including -inf and +inf)
 	if (NUMisEmpty (mat))
 		return undefined;
 	double maximum = - std::numeric_limits<double>::infinity();
@@ -562,7 +562,7 @@ double NUMmax (constMATVU const& mat) noexcept {   // propagate NaNs (including 
 	}
 	return maximum;
 }
-double NUMmax_ignoreUndefined (constMATVU const& mat) noexcept {
+double NUMmax_ignoreUndefined_u (constMATVU const& mat) noexcept {
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {

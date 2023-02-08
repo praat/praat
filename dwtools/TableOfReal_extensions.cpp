@@ -254,15 +254,6 @@ void TableOfReal_to_PatternList_and_Categories (TableOfReal me, integer fromrow,
 	}
 }
 
-void TableOfReal_getColumnExtrema (TableOfReal me, integer col, double *out_min, double *out_max) {
-	Melder_require (col > 0 && col <= my numberOfColumns,
-		U"Invalid column number.");
-	if (out_min)
-		*out_min = NUMmin (my data.column (col));
-	if (out_max)
-		*out_max = NUMmax (my data.column (col));
-}
-
 void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, constINTVECVU const& rowNumbers, integer colb, integer cole, double ymin,
 	double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, constVECVU const& greys, bool garnish)
 {
@@ -280,7 +271,9 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, constINTVECVU 
 			U"Invalid row (", rowNumber, U").");
 		if (ymin >= ymax) {
 			double min, max;
-			NUMextrema (my data.row (rowNumber).part (colb, cole), & min, & max);
+			NUMextrema_u (my data.row (rowNumber).part (colb, cole), & min, & max);
+			if (isundef (min) || isundef (max))
+				return;
 			if (i > 1) {
 				if (min < ymin)
 					ymin = min;
@@ -365,18 +358,19 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	y.part (nr + 1, nPoints)  <<=  svd -> v.column (2)  *  lambda4;
 	
 	if (xmax <= xmin)
-		NUMextrema (x.get(), & xmin, & xmax);
-
+		NUMextrema_u (x.get(), & xmin, & xmax);
 	if (xmax <= xmin) {
 		xmax += 1.0;
 		xmin -= 1.0;
 	}
 	if (ymax <= ymin)
-		NUMextrema (y.get(), & ymin, & ymax);
+		NUMextrema_u (y.get(), & ymin, & ymax);
 	if (ymax <= ymin) {
 		ymax += 1.0;
 		ymin -= 1.0;
 	}
+	if (isundef (xmin) || isundef (xmax) || isundef (ymin) || isundef (ymax))
+		return;
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
@@ -636,8 +630,10 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb
 	autoVEC colmax = raw_VEC (numberOfColumns);
 
 	for (integer j = 1; j <= numberOfColumns; j ++) {
-		colmin [j] = NUMmin (my data.column (colb + j - 1));
-		colmax [j] = NUMmax (my data.column (colb + j - 1));
+		colmin [j] = NUMmin_u (my data.column (colb + j - 1));
+		colmax [j] = NUMmax_u (my data.column (colb + j - 1));
+		if (isundef (colmin [j]) || isundef (colmax [j]))
+			return;
 	}
 
 	for (integer j = 1; j <= numberOfColumns; j ++) {

@@ -253,23 +253,23 @@ inline double NUMlog2 (double x) noexcept {
 	return log (x) * NUMlog2e;
 }
 
-extern double  NUMmin                 (constVECVU    const& vec) noexcept;   // undef  if empty or undefined element
-extern double  NUMmin_e               (constVECVU    const& vec);            // throw  if empty or undefined element
-extern double  NUMmin_ignoreUndefined (constVECVU    const& vec) noexcept;   // undef  if no defined elements
-extern integer NUMmin                 (constINTVECVU const& vec) noexcept;   // intmax if empty
-extern integer NUMmin_e               (constINTVECVU const& vec);            // throw  if empty
-extern double  NUMmin                 (constMATVU    const& mat) noexcept;   // undef  if empty or undefined element
-extern double  NUMmin_e               (constMATVU    const& mat);            // throw  if empty or undefined element
-extern double  NUMmin_ignoreUndefined (constMATVU    const& mat) noexcept;   // undef  if no defined elements
+extern double  NUMmin_u                 (constVECVU    const& vec) noexcept;   // undef  if empty or undefined element
+extern double  NUMmin_e                 (constVECVU    const& vec);            // throw  if empty or undefined element
+extern double  NUMmin_ignoreUndefined_u (constVECVU    const& vec) noexcept;   // undef  if no defined elements
+extern integer NUMmin_u                 (constINTVECVU const& vec) noexcept;   // intmax if empty
+extern integer NUMmin_e                 (constINTVECVU const& vec);            // throw  if empty
+extern double  NUMmin_u                 (constMATVU    const& mat) noexcept;   // undef  if empty or undefined element
+extern double  NUMmin_e                 (constMATVU    const& mat);            // throw  if empty or undefined element
+extern double  NUMmin_ignoreUndefined_u (constMATVU    const& mat) noexcept;   // undef  if no defined elements
 
-extern double  NUMmax                 (constVECVU    const& vec) noexcept;   // undef  if empty or undefined element
-extern double  NUMmax_e               (constVECVU    const& vec);            // throw  if empty or undefined element
-extern double  NUMmax_ignoreUndefined (constVECVU    const& vec) noexcept;   // undef  if no defined elements
-extern integer NUMmax                 (constINTVECVU const& vec) noexcept;   // intmin if empty
-extern integer NUMmax_e               (constINTVECVU const& vec);            // throw  if empty
-extern double  NUMmax                 (constMATVU    const& mat) noexcept;   // undef  if empty or undefined element
-extern double  NUMmax_e               (constMATVU    const& mat);            // throw  if empty or undefined element
-extern double  NUMmax_ignoreUndefined (constMATVU    const& mat) noexcept;   // undef  if no defined elements
+extern double  NUMmax_u                 (constVECVU    const& vec) noexcept;   // undef  if empty or undefined element
+extern double  NUMmax_e                 (constVECVU    const& vec);            // throw  if empty or undefined element
+extern double  NUMmax_ignoreUndefined_u (constVECVU    const& vec) noexcept;   // undef  if no defined elements
+extern integer NUMmax_u                 (constINTVECVU const& vec) noexcept;   // intmin if empty
+extern integer NUMmax_e                 (constINTVECVU const& vec);            // throw  if empty
+extern double  NUMmax_u                 (constMATVU    const& mat) noexcept;   // undef  if empty or undefined element
+extern double  NUMmax_e                 (constMATVU    const& mat);            // throw  if empty or undefined element
+extern double  NUMmax_ignoreUndefined_u (constMATVU    const& mat) noexcept;   // undef  if no defined elements
 
 extern double NUMminimumLength (constSTRVEC const& x) noexcept;
 extern double NUMmaximumLength (constSTRVEC const& x) noexcept;

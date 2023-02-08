@@ -55,8 +55,6 @@ autoTableOfReal TableOfReal_create_weenink1983 (int option); /* M W C */
 /* The data for Fig. 2 in Sandwell (1987) */
 autoTableOfReal TableOfReal_create_sandwell1987 ();
 
-void TableOfReal_getColumnExtrema (TableOfReal me, integer col, double *min, double *max);
-
 integer TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, integer rowNumber);
 
 conststring32 TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, integer rowNumber);

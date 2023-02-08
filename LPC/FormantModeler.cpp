@@ -310,7 +310,9 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 				var [ipoint] -= varShifted [ipoint];
 		}
 		if (ymax <= ymin)
-			NUMextrema (var.part (ixmin, ixmax), & ymin, & ymax);
+			NUMextrema_u (var.part (ixmin, ixmax), & ymin, & ymax);
+		if (isundef (ymin) || isundef (ymax))
+			return;
 		if (ymin == ymax) {
 			ymin -= 0.5;
 			ymax += 0.5;
@@ -349,7 +351,9 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 		autoVEC chisq = zero_VEC (numberOfDataPoints);
 		FormantModeler_getCumulativeChiScores (me, chisq.get());
 		if (ymax <= ymin)
-			NUMextrema (chisq.part (ixmin, ixmax), & ymin, & ymax);
+			NUMextrema_u (chisq.part (ixmin, ixmax), & ymin, & ymax);
+		if (isundef (ymin) || isundef (ymax))
+			return;
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		DataModeler thee = my trackmodelers.at [1];

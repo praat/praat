@@ -94,8 +94,8 @@ Thing_implement (SSCPList, TableOfRealList, 0);
 
 void structSSCP :: v1_info () {
 	structTableOfReal :: v1_info ();
-	const double zmin = NUMmin (our data.all());
-	const double zmax = NUMmax (our data.all());
+	const double zmin = NUMmin_u (our data.all());
+	const double zmax = NUMmax_u (our data.all());
 	MelderInfo_writeLine (U"Minimum value: ", zmin);
 	MelderInfo_writeLine (U"Maximum value: ", zmax);
 }

@@ -77,16 +77,16 @@ void NMF_paintFeatures (NMF me, Graphics g, integer fromFeature, integer toFeatu
 	autoMAT part = copy_MAT (my features.part (fromRow, toRow, fromFeature, toFeature));
 	
 	if (minimum == 0.0 && maximum == 0.0) {
-		minimum = NUMmin (part.get());
-		maximum = NUMmax (part.get());
+		minimum = NUMmin_u (part.get());
+		maximum = NUMmax_u (part.get());
 	}
+	if (isundef (minimum) || isundef (maximum))
+		return;
 	
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fromFeature, toFeature, fromRow, toRow);
-	
-
 	Graphics_cellArray (g, my features.part (fromRow, toRow, fromFeature, toFeature), 
-	fromFeature, toFeature, fromRow, toRow, minimum, maximum);
+			fromFeature, toFeature, fromRow, toRow, minimum, maximum);
 	Graphics_unsetInner (g);
 	if (garnish)
 		Graphics_drawInnerBox (g);
@@ -99,16 +99,18 @@ void NMF_paintWeights (NMF me, Graphics g, integer fromWeight, integer toWeight,
 	autoMAT part = copy_MAT (my weights.part (fromRow, toRow, fromWeight, toWeight));
 	
 	if (minimum == 0.0 && maximum == 0.0) {
-		minimum = NUMmin (part.get());
-		maximum = NUMmax (part.get());
+		minimum = NUMmin_u (part.get());
+		maximum = NUMmax_u (part.get());
 	}
-	
+	if (isundef (minimum) || isundef (maximum))
+		return;
+
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fromWeight, toWeight, fromRow, toRow);
 	
 
 	Graphics_cellArray (g, my weights.part (fromRow, toRow, fromWeight, toWeight), 
-	fromWeight, toWeight, fromRow, toRow, minimum, maximum);
+			fromWeight, toWeight, fromRow, toRow, minimum, maximum);
 	Graphics_unsetInner (g);
 	if (garnish)
 		Graphics_drawInnerBox (g);
@@ -188,12 +190,12 @@ double NMF_getItakuraSaitoDivergence (NMF me, constMATVU const& data) {
 }
 
 static double getMaximumChange (constMATVU const& m, MATVU const& m0, const double sqrteps) {
-	double min = NUMmin (m0);
-	double max = NUMmax (m0);
+	double min = NUMmin_e (m0);
+	double max = NUMmax_e (m0);
 	const double extremum1 = std::max (fabs (min), fabs (max));
 	m0  -=  m;
-	min = NUMmin (m0);
-	max = NUMmax (m0);
+	min = NUMmin_e (m0);
+	max = NUMmax_e (m0);
 	const double extremum2 = std::max (fabs (min), fabs (max));
 	const double dmat = extremum2 / (sqrteps + extremum1);
 	return dmat;
@@ -261,7 +263,7 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		
 		const double eps = NUMfpp -> eps;
 		const double sqrteps = sqrt (eps);
-		const double maximum = NUMmax (data);
+		const double maximum = NUMmax_e (data);
 		double dnorm0 = 0.0;
 		integer iter = 1;
 		bool convergence = false;	

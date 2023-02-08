@@ -90,9 +90,11 @@ void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphi
 			f2 [iframe - itmin + 1] = my d_frames [iframe]. frequencies [my d_frames [iframe] . numberOfFrequencies];
 		}
 		double f1max, f2min;
-		NUMextrema (f1.get(), & fmin, & f1max);
-		NUMextrema (f2.get(), & f2min, & fmax);
+		NUMextrema_u (f1.get(), & fmin, & f1max);
+		NUMextrema_u (f2.get(), & f2min, & fmax);
 	}
+	if (isundef (fmin) || isundef (fmax))
+		return;
 	if (fmax == fmin) {
 		fmin = 0.0;
 		fmax += 0.5;

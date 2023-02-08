@@ -169,7 +169,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	/*
 		Deselect the eigenvalues < eps * max_eigenvalue by making them undefined
 	*/
-	const double maxEigenvalue = NUMmax (alpha.part (k + 1, k + ll));
+	const double maxEigenvalue = NUMmax_e (alpha.part (k + 1, k + ll));
 	integer numberOfDeselected = 0;
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		if (alpha [i] < NUMfpp -> eps * maxEigenvalue) {
@@ -357,7 +357,9 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, integer ivec, integer first, i
 	// If ymax < ymin the eigenvector will automatically be drawn inverted.
 
 	if (ymax == ymin) {
-		NUMextrema (vec.part (first, last), & ymin, & ymax);
+		NUMextrema_u (vec.part (first, last), & ymin, & ymax);
+		if (isundef (ymin) || isundef (ymax))
+			return;
 		ymax *= w;
 		ymin *= w;
 	}

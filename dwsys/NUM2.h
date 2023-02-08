@@ -153,11 +153,17 @@ inline integer NUMminPos (constINTVECVU const& v) {
 	return index;	
 }
 
-inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_maximum) {
+inline void NUMextrema_e (constVECVU const& x, double *out_minimum, double *out_maximum) {
 	if (out_minimum)
-		*out_minimum = NUMmin (x);
+		*out_minimum = NUMmin_e (x);
 	if (out_maximum)
-		*out_maximum = NUMmax (x);
+		*out_maximum = NUMmax_e (x);
+}
+inline void NUMextrema_u (constVECVU const& x, double *out_minimum, double *out_maximum) {
+	if (out_minimum)
+		*out_minimum = NUMmin_u (x);
+	if (out_maximum)
+		*out_maximum = NUMmax_u (x);
 }
 
 /*

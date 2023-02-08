@@ -747,9 +747,11 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 	for (integer i = ixmin; i <= ixmax; i ++)
 		d [i - ixmin + 1] = my z [my path [i]. y] [i];
 
-	if (dmin >= dmax)
-		NUMextrema (d.get(), & dmin, & dmax);
-	else
+	if (dmin >= dmax) {
+		NUMextrema_u (d.get(), & dmin, & dmax);
+		if (isundef (dmin) || isundef (dmax))
+			return;
+	} else
 		VECclip_inplace (dmin, d.get(), dmax);
 
 	Graphics_setInner (g);
