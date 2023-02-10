@@ -30,6 +30,7 @@ appendInfoLine: "Output file: <<", output_file$, ">>"
 appendInfoLine: "Folder file: <<", folder$, ">>"
 appendInfoLine: "fmin: <<", left_Pitch_range, ">>"
 appendInfoLine: "fmax: <<", right_Pitch_range, ">>"
+appendInfoLine: "word: <<", any_word$, ">>"
 appendInfoLine: "ttt: <<", ttt$, ">>"
 appendInfoLine: "Tekstje: <<", tekstje$, ">>"
 appendInfoLine: "Tekst: <<", tekst$, ">>"
@@ -47,5 +48,6 @@ assert endsWith (input_file$, "test/script/2345")   ; should not be possible
 assert endsWith (output_file$, "test/script/../abc.txt")
 assert endsWith (folder$, "test/script/subfolder/wav2vec")
 assert texture$ = "With holes"
+assert any_word$ = "there you are"
 
 appendInfoLine: "OK manually/Form2"
