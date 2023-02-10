@@ -289,9 +289,11 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			auto isEndOfInkOrColon = [] (const char32 kar) { return kar == U':' || Melder_isEndOfInk (kar); };
 			if (str32nequ (startOfLine, U"word", 4) && isEndOfInkOrColon (startOfLine [4])) {
 				type = Interpreter_WORD;
+				hasColon = ( startOfLine [4] == U':' );
 				p = startOfLine + 4 + hasColon;
 			} else if (str32nequ (startOfLine, U"sentence", 8) && isEndOfInkOrColon (startOfLine [8])) {
 				type = Interpreter_SENTENCE;
+				hasColon = ( startOfLine [8] == U':' );
 				p = startOfLine + 8 + hasColon;
 			} else if (str32nequ (startOfLine, U"infile", 6) && isEndOfInkOrColon (startOfLine [6])) {
 				type = Interpreter_INFILE;
