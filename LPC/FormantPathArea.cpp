@@ -68,6 +68,38 @@ void structFormantPathArea :: v_draw_analysis_formants () {
 	}
 }
 
+static void menu_cb_FormantSettings (FormantPathArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Formant settings", nullptr)
+		REAL (timeStep, U"Time step (s)", my default_formant_path_timeStep ())
+		POSITIVE (maximumNumberOfFormants, U"Max. number of formants", my default_formant_path_maximumNumberOfFormants ())
+		REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", my default_formant_path_middleFormantCeiling ())
+		POSITIVE (windowLength, U"Window length (s)", my default_formant_path_windowLength ())
+		POSITIVE (preEmphasisFrom, U"Pre-emphasis from (Hz)", my default_formant_path_preEmpasisFrom ())
+		LABEL (U"The maximum and minimum ceilings are determined as:")
+		LABEL (U" middleFormantCeiling * exp(+/- ceilingStepSize * numberOfStepsToACeiling).")
+		POSITIVE (ceilingStepSize, U"Ceiling step size", my default_formant_path_ceilingStepSize ())
+		NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", my default_formant_path_numberOfStepsToACeiling ())
+	EDITOR_OK
+		SET_REAL (timeStep, my instancePref_formant_path_timeStep ())
+		SET_REAL (maximumNumberOfFormants, my instancePref_formant_path_maximumNumberOfFormants ())
+		SET_REAL (middleFormantCeiling, my instancePref_formant_path_middleFormantCeiling ())
+		SET_REAL (windowLength, my instancePref_formant_path_windowLength ())
+		SET_REAL (preEmphasisFrom, my instancePref_formant_path_preEmpasisFrom ())
+		SET_REAL (ceilingStepSize, my instancePref_formant_path_ceilingStepSize ())
+		SET_INTEGER (numberOfStepsToACeiling, my instancePref_formant_path_numberOfStepsToACeiling ())
+	EDITOR_DO
+		my setInstancePref_formant_path_timeStep (timeStep);
+		my setInstancePref_formant_path_maximumNumberOfFormants (maximumNumberOfFormants);
+		my setInstancePref_formant_path_middleFormantCeiling (middleFormantCeiling);
+		my setInstancePref_formant_path_windowLength (windowLength);
+		my setInstancePref_formant_path_preEmpasisFrom (preEmphasisFrom);
+		my setInstancePref_formant_path_ceilingStepSize (ceilingStepSize);
+		my setInstancePref_formant_path_numberOfStepsToACeiling (numberOfStepsToACeiling);
+		autoFormantPath result = Sound_to_FormantPath_burg (my sound (), timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, 
+			preEmphasisFrom, ceilingStepSize, numberOfStepsToACeiling
+		);
+	EDITOR_END
+}
 
 static void menu_cb_FormantColourSettings (FormantPathArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
@@ -151,6 +183,8 @@ void structFormantPathArea :: v_createMenuItems_formant (EditorMenu menu) {
 		GuiMenu_CHECKBUTTON | ( our instancePref_formant_show() ? GuiMenu_TOGGLE_ON : 0 ),
 		menu_cb_showFormants, this
 	);
+	FunctionAreaMenu_addCommand (menu, U"Formant settings...", 0,
+			menu_cb_FormantSettings, this);
 	FunctionAreaMenu_addCommand (menu, U"Formant colour settings...", 0,
 			menu_cb_FormantColourSettings, this);
 	FunctionAreaMenu_addCommand (menu, U"Draw visible formant contour...", 0,
