@@ -417,7 +417,7 @@ void Vector_multiplyByScalar (Vector me, double scalar) {
 }
 
 void Vector_scale (Vector me, double scale) {
-	double extremum = NUMextremum (my z.get());
+	const double extremum = NUMextremum_e (my z.get());
 	if (extremum != 0.0)
 		Vector_multiplyByScalar (me, scale / extremum);
 }

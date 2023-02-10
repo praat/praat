@@ -6,6 +6,7 @@ form: "manually/Form2"
 	folder: "Folder", "mapje"
 	real: "left Pitch range (Hz)", "0.01 (= auto)"
 	positive: "right Pitch range (Hz)", "500.0"
+	word: "Any word", "here"
 	text ttt Paul
 	text: "Tekstje", "abc"
 	text: 2, "Tekst", "abcdef"

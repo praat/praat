@@ -425,7 +425,9 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 		colmax = my numberOfColumns;
 
 	if (ymax <= ymin) {
-		MelderRealRange yrange = NUMextrema (my data.part (rowmin, rowmax, colmin, colmax));
+		const MelderRealRange yrange = NUMextrema_u (my data.part (rowmin, rowmax, colmin, colmax));
+		if (isundef (yrange))
+			return;
 		ymin = yrange.min;
 		ymax = yrange.max;
 	}
@@ -714,13 +716,17 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integ
 		rowe = my numberOfRows;
 	}
 	if (xmax == xmin) {
-		MelderRealRange xrange = NUMextrema (my data.part (rowb, rowe, icx, icx));
+		const MelderRealRange xrange = NUMextrema_u (my data.part (rowb, rowe, icx, icx));
+		if (isundef (xrange))
+			return;
 		const double tmp = ( xrange.max == xrange.min ? 0.5 : 0.0 );
 		xmin = xrange.min - tmp;
 		xmax = xrange.max + tmp;
 	}
 	if (ymax == ymin) {
-		MelderRealRange yrange = NUMextrema (my data.part (rowb, rowe, icy, icy));
+		const MelderRealRange yrange = NUMextrema_u (my data.part (rowb, rowe, icy, icy));
+		if (isundef (yrange))
+			return;
 		const double tmp = ( yrange.max == yrange.min ? 0.5 : 0.0 );
 		ymin = yrange.min - tmp;
 		ymax = yrange.max + tmp;
@@ -1007,19 +1013,24 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer
 		U"The index in the \"To\" column(s) should be in range [1, ", nx, U"].");
 
 	if (xmin >= xmax) {
-		MelderRealRange x1 = NUMextrema (my data.column (colx1));
-		MelderRealRange x2 = NUMextrema (my data.column (colx2));
+		const MelderRealRange x1 = NUMextrema_u (my data.column (colx1));
+		const MelderRealRange x2 = NUMextrema_u (my data.column (colx2));
+		if (isundef (x1) || isundef (x2))
+			return;
 		xmin = std::min (x1.min, x2.min);
 		xmax = std::max (x1.max, x2.max);
 	}
 	if (ymin >= ymax) {
-		MelderRealRange y1 = NUMextrema (my data.column (coly1));
-		MelderRealRange y2 = NUMextrema (my data.column (coly2));
+		const MelderRealRange y1 = NUMextrema_u (my data.column (coly1));
+		const MelderRealRange y2 = NUMextrema_u (my data.column (coly2));
+		if (isundef (y1) || isundef (y2))
+			return;
 		ymin = std::min (y1.min, y2.min);
 		ymax = std::max (y1.max, y2.max);
 	}
 	if (xmin == xmax) {
-		if (ymin == ymax) return;
+		if (ymin == ymax)
+			return;
 		xmin -= 0.5;
 		xmax += 0.5;
 	}
@@ -1075,7 +1086,7 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, 
 	try {
 		Melder_require (my rowLabels,
 			U"No labels to sort");
-		MelderIntegerRange range = NUMextrema (index);
+		const MelderIntegerRange range = NUMextrema_e (index);
 		Melder_require (range.first > 0 && range.first <= my numberOfRows && range.last > 0 && range.last <= my numberOfRows,
 			U"One or more indices out of range [1, ", my numberOfRows, U"].");
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);

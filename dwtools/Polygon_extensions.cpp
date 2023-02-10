@@ -125,13 +125,17 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 	if (my numberOfPoints != thy size)
 		return;
 	if (xmax == xmin) {
-		const MelderRealRange xrange = NUMextrema (my x.get());
+		const MelderRealRange xrange = NUMextrema_u (my x.get());
+		if (isundef (xrange))
+			return;
 		const double tmp = 0.5 * xrange.isEmpty();
 		xmin = xrange.min - tmp;
 		xmax = xrange.max + tmp;
 	}
 	if (ymax == ymin) {
-		const MelderRealRange yrange = NUMextrema (my y.get());
+		const MelderRealRange yrange = NUMextrema_u (my y.get());
+		if (isundef (yrange))
+			return;
 		const double tmp = 0.5 * yrange.isEmpty();
 		ymin = yrange.min - tmp;
 		ymax = yrange.max + tmp;
