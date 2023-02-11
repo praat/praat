@@ -236,19 +236,19 @@ assert min ({ undefined }) = undefined
 assert min (zero# (0)) = undefined
 
 assert min_e ({ 5, 6, 1, 7 }) = 1
-asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+asserterror min_e: cannot determine the minimum of a vector: element 1 is undefined.
 pos = min_e ({ undefined, 6, 1, 7 })
-asserterror Cannot determine the minimum of a vector: element 2 is undefined.
+asserterror min_e: cannot determine the minimum of a vector: element 2 is undefined.
 pos = min_e ({ 5, undefined, 1, 7 })
-asserterror Cannot determine the minimum of a vector: element 3 is undefined.
+asserterror min_e: cannot determine the minimum of a vector: element 3 is undefined.
 pos = min_e ({ 5, 6, undefined, 7 })
-asserterror Cannot determine the minimum of a vector: element 4 is undefined.
+asserterror min_e: cannot determine the minimum of a vector: element 4 is undefined.
 pos = min_e ({ 5, 6, 1, undefined })
-asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+asserterror min_e: cannot determine the minimum of a vector: element 1 is undefined.
 pos = min_e ({ undefined, undefined })
-asserterror Cannot determine the minimum of a vector: element 1 is undefined.
+asserterror min_e: cannot determine the minimum of a vector: element 1 is undefined.
 pos = min_e ({ undefined })
-asserterror Cannot determine the minimum of an empty vector.
+asserterror min_e: cannot determine the minimum of an empty vector.
 pos = min_e (zero# (0))
 
 assert min_ignoreUndefined ({ 5, 6, 1, 7 }) = 1
