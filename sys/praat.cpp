@@ -333,7 +333,7 @@ void praat_cleanUpName (char32 *name) {
 	Replaces spaces and special characters by underscores.
 */
 	for (; *name; name ++)
-		if (str32chr (U" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name))
+		if (str32chr (U",:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name))
 			*name = U'_';
 }
 
