@@ -104,7 +104,9 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 		Permutation_tableJump_inline (p.get(), numberOfColumns, 1);
 	}
 	
-	const double extremum = fabs (NUMextremum (my z.get()));
+	const double extremum = NUMextremum_u (my z.get());
+	if (isundef (extremum))
+		return;
 	const MelderColour colour = Graphics_inqColour (g);
 	const double scaleFactor = sqrt (cellAreaScaleFactor);
 	for (integer i = 1; i <= numberOfCells; i++) {

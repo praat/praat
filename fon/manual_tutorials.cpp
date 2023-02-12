@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20230206)
+MAN_BEGIN (U"What's new?", U"ppgb", 20230210)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.08# (10 February 2023)")
+LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $word and $sentence would not work in new-style script forms.")
 NORMAL (U"##6.3.07# (6 February 2023)")
 LIST_ITEM (U"• Corrected an old bug that caused ##Matrix: Draw as squares# to crash on a 1\\xx1 matrix.")
 LIST_ITEM (U"• NoulliGrid window: “NoulliGrid” menu.")

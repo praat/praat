@@ -1,6 +1,6 @@
 /* ParamCurve.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2018,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ void structParamCurve :: v1_info () {
 	MelderInfo_writeLine (U"   t step in x: ", our x -> dx, U" (sampling rate ", 1.0 / our x -> dx, U")");
 	MelderInfo_writeLine (U"   First t in x: ", our x -> x1);
 	MelderInfo_writeLine (U"x values:");
-	const MelderRealRange xextrema = NUMextrema (our x -> z.row (1));
+	const MelderRealRange xextrema = NUMextrema_u (our x -> z.row (1));
 	MelderInfo_writeLine (U"   Minimum x: ", xextrema.min);
 	MelderInfo_writeLine (U"   Maximum x: ", xextrema.max);
 	MelderInfo_writeLine (U"y sampling:");
@@ -49,7 +49,7 @@ void structParamCurve :: v1_info () {
 	MelderInfo_writeLine (U"   t step in y: ", our y -> dx, U" (sampling rate ", 1.0 / our y -> dx, U")");
 	MelderInfo_writeLine (U"   First t in y: ", our y -> x1);
 	MelderInfo_writeLine (U"y values:");
-	const MelderRealRange yextrema = NUMextrema (our y -> z.row (1));
+	const MelderRealRange yextrema = NUMextrema_u (our y -> z.row (1));
 	MelderInfo_writeLine (U"   Minimum y: ", yextrema.min);
 	MelderInfo_writeLine (U"   Maximum y: ", yextrema.max);
 }

@@ -64,47 +64,12 @@ inline bool NUMisEmpty (constSTRVEC const& x) noexcept {
 	return x.size == 0;
 }
 
-inline MelderRealRange NUMextrema (constVECVU const& vec) noexcept {
-	if (NUMisEmpty (vec))
-		return { undefined, undefined };
-	double minimum = vec [1], maximum = minimum;
-	for (integer i = 2; i <= vec.size; i ++) {
-		const double value = vec [i];
-		if (value < minimum)
-			minimum = value;
-		if (value > maximum)
-			maximum = value;
-	}
-	return { minimum, maximum };
-}
-inline MelderRealRange NUMextrema (constMATVU const& mat) noexcept {
-	if (NUMisEmpty (mat))
-		return { undefined, undefined };
-	double minimum = mat [1] [1], maximum = minimum;
-	for (integer irow = 1; irow <= mat.nrow; irow ++) {
-		for (integer icol = 1; icol <= mat.ncol; icol ++) {
-			const double value = mat [irow] [icol];
-			if (value < minimum)
-				minimum = value;
-			if (value > maximum)
-				maximum = value;
-		}
-	}
-	return { minimum, maximum };
-}
-inline MelderIntegerRange NUMextrema (constINTVECVU const& vec) noexcept {
-	if (NUMisEmpty (vec))
-		return { INTEGER_MIN, INTEGER_MAX };
-	integer minimum = vec [1], maximum = minimum;
-	for (integer i = 2; i <= vec.size; i ++) {
-		const integer value = vec [i];
-		if (value < minimum)
-			minimum = value;
-		if (value > maximum)
-			maximum = value;
-	}
-	return { minimum, maximum };
-}
+extern MelderRealRange NUMextrema_e (constVECVU const& vec);
+extern MelderRealRange NUMextrema_u (constVECVU const& vec) noexcept;
+extern MelderRealRange NUMextrema_e (constMATVU const& mat);
+extern MelderRealRange NUMextrema_u (constMATVU const& mat) noexcept;
+extern MelderIntegerRange NUMextrema_e (constINTVECVU const& vec);
+extern MelderIntegerRange NUMextrema_u (constINTVECVU const& vec) noexcept;
 
 /*
 	From here on, the functions appear in alphabetical order.
@@ -203,15 +168,40 @@ inline bool NUMequal (constSTRVEC x, constSTRVEC y) noexcept {
 	return true;
 }
 
-inline double NUMextremum (constVECVU const& vec) noexcept {
+inline double NUMextremum_e (constVECVU const& vec) {
+	if (NUMisEmpty (vec))
+		Melder_throw (U"Cannot determine the extremum of an empty vector.");
 	double extremum = 0.0;
-	for (integer i = 1; i <= vec.size; i ++)
-		if (fabs (vec [i]) > extremum)
-			extremum = fabs (vec [i]);
+	for (integer i = 1; i <= vec.size; i ++) {
+		const double value = fabs (vec [i]);
+		if (isundef (value))
+			Melder_throw (U"Cannot determine the extremum of a vector: element ", i, U" is undefined.");
+		if (value > extremum)
+			extremum = value;
+	}
 	return extremum;
 }
-inline double NUMextremum (constMATVU const& mat) {
-	MelderRealRange range = NUMextrema (mat);
+inline double NUMextremum_u (constVECVU const& vec) noexcept {
+	if (NUMisEmpty (vec))
+		return undefined;
+	double extremum = 0.0;
+	for (integer i = 1; i <= vec.size; i ++) {
+		const double value = fabs (vec [i]);
+		if (isundef (value))
+			return undefined;
+		if (value > extremum)
+			extremum = value;
+	}
+	return extremum;
+}
+inline double NUMextremum_e (constMATVU const& mat) {
+	const MelderRealRange range = NUMextrema_e (mat);
+	return std::max (fabs (range.min), fabs (range.max));
+}
+inline double NUMextremum_u (constMATVU const& mat) {
+	const MelderRealRange range = NUMextrema_u (mat);
+	if (isundef (range))
+		return undefined;
 	return std::max (fabs (range.min), fabs (range.max));
 }
 
