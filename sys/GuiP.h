@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2013,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1993-2013,2015-2018,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ class GuiControlBlockValueChangedCallbacks {
 
 		union {
 			struct { GuiObject horizontalBar, verticalBar, clipWindow, workWindow; } scrolledWindow;
-			struct { XtCallbackList moveCallbacks; } drawingArea;
 			struct { bool active, isDialog, canFullScreen;
 				uinteger lowAccelerators [8]; XtCallbackProc goAwayCallback; XtPointer goAwayClosure; } shell;
 			struct { unsigned char acceleratorChar; int acceleratorModifiers; } pushButton;
@@ -151,6 +150,7 @@ class GuiControlBlockValueChangedCallbacks {
 	void _GuiWinDrawingArea_handleMouse (GuiObject widget, structGuiDrawingArea_MouseEvent::Phase phase, int x, int y);
 	void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar);
 	void _GuiWinDrawingArea_shellResize (GuiObject widget);
+	void _GuiWinDrawingArea_handleZoom (GuiObject widget, double delta);
 
 	/********** GuiLabel.cpp **********/
 	void _GuiWinLabel_destroy (GuiObject widget);

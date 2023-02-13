@@ -1,6 +1,6 @@
 /* motifEmulator_resources.h
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2026,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,6 @@ motif_RESOURCE (XmNleftPosition)   /* XmForm Constraint */
 motif_RESOURCE (XmNmaximum)   /* XmScrollBar, XmScale */
 motif_RESOURCE (XmNmenuHelpWidget)   /* XmRowColumn */
 motif_RESOURCE (XmNminimum)   /* XmScrollBar, XmScale */
-motif_RESOURCE (XmNmoveCallback)   /* XmDrawingArea */   /* MACINTOSH ONLY */
 motif_RESOURCE (XmNorientation)   /* XmRowColumn, XmScale, XmScrollBar */
 motif_RESOURCE (XmNpageIncrement)   /* XmScrollBar */
 motif_RESOURCE (XmNradioBehavior)   /* XmRowColumn */
