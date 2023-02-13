@@ -1,6 +1,6 @@
 /* FormantPathEditor_prefs.h
  *
- * Copyright (C) 2020 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,15 @@ Prefs_begin (FormantPathEditor)
 	ClassPrefs_overrideInt        (FormantPathEditor, shellHeight,                       1, U"600")
 	InstancePrefs_overrideBool    (FormantPathEditor, showSelectionViewer,               1, true)
 
-	InstancePrefs_addInteger (FormantPathEditor, modeler_numberOfTracks,             1, U"3")
-	InstancePrefs_addString  (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"3 3 3")
-	InstancePrefs_addDouble  (FormantPathEditor, modeler_varianceExponent,           1, U"1.25")
-	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_showAllModels,         1, true)
-	InstancePrefs_addDouble  (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"6200.0")
-	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_estimatedModels,       1, false)
-	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_showBandwidths,        1, true)
-	InstancePrefs_addDouble  (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
+	InstancePrefs_addInteger (FormantPathEditor, modeler_numberOfTracks,              1, U"3")
+	InstancePrefs_addString  (FormantPathEditor, modeler_numberOfParametersPerTrack,  1, U"3 3 3")
+	InstancePrefs_addDouble  (FormantPathEditor, modeler_varianceExponent,            1, U"1.25")
+	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_showAllModels,          1, true)
+	InstancePrefs_addDouble  (FormantPathEditor, modeler_draw_maximumFrequency,       1, U"6200.0")
+	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_alsoSetSpectrogramView, 1, true)
+	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_estimatedModels,        1, false)
+	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_showBandwidths,         1, true)
+	InstancePrefs_addDouble  (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,      1, U"1000.0") // Hz
 	
 Prefs_end (FormantPathEditor)
 	
