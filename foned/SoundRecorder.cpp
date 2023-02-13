@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -883,7 +883,7 @@ void structSoundRecorder :: v_createChildren ()
 	y += Gui_LABEL_HEIGHT;
 	our meter = GuiDrawingArea_createShown (our windowForm, 170, -170, y, -150,
 		gui_drawingarea_cb_expose, nullptr,
-		nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER
+		nullptr, gui_drawingarea_cb_resize, nullptr, this, GuiDrawingArea_BORDER
 	);
 
 	/*

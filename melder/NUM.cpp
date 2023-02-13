@@ -608,7 +608,7 @@ double NUMmax_u (constMATVU const& mat) noexcept {   // propagate NaNs (includin
 }
 
 template <bool canError>
-double NUMmax_ignoreUndefined (constMATVU const& mat) noexcept {
+double NUMmax_ignoreUndefined (constMATVU const& mat) {
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {

@@ -1924,7 +1924,7 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 		width = height = resolution * 12;
 		scrollWindow = GuiScrolledWindow_createShown (thePictureWindow, margin, 0, Machine_getMenuBarBottom () + margin, 0, 1, 1, 0);
 		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height,
-				nullptr, nullptr, nullptr, nullptr, nullptr, 0);
+				nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (thePictureWindow);
 	}
 

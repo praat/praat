@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2022 Paul Boersma
+ * Copyright (C) 1993-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,8 +91,9 @@ int HeightOfScreen (int screen) {
 /********** X Toolkit **********/
 
 void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call) {
-	int i; for (i = 0; i < MAXNUM_CALLBACKS; i ++)
-		if (callbacks -> pairs [i]. proc) callbacks -> pairs [i]. proc (w, callbacks -> pairs [i]. closure, call);
+	for (int i = 0; i < MAXNUM_CALLBACKS; i ++)
+		if (callbacks -> pairs [i]. proc)
+			callbacks -> pairs [i]. proc (w, callbacks -> pairs [i]. closure, call);
 }
 
 #define MAXIMUM_NUMBER_OF_MENUS  4000
@@ -1307,10 +1308,6 @@ void XtAddCallback (GuiObject me, int kind, XtCallbackProc proc, XtPointer closu
 		case XmNdragCallback:
 			Melder_assert (my widgetClass == xmScrollBarWidgetClass);
 			xt_addCallback (& my motiff.scrollBar.dragCallbacks, proc, closure);
-		break;
-		case XmNmoveCallback:
-			Melder_assert (my widgetClass == xmDrawingAreaWidgetClass);
-			xt_addCallback (& my motiff.drawingArea.moveCallbacks, proc, closure);
 		break;
 		case XmNvalueChangedCallback:
 			if (my widgetClass == xmScrollBarWidgetClass)
@@ -2626,7 +2623,10 @@ static void on_verticalWheel (HWND window, int xPos, int yPos, int zDelta, int f
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me) {
 		if (my widgetClass == xmDrawingAreaWidgetClass) {
-			if (my parent -> widgetClass == xmScrolledWindowWidgetClass)
+			const bool controlKeyPressed = ( fwKeys & MK_CONTROL );
+			if (controlKeyPressed)
+				_GuiWinDrawingArea_handleZoom (me, double (zDelta) / 120.0);
+			else if (my parent -> widgetClass == xmScrolledWindowWidgetClass)
 				on_scroll (my parent -> motiff.scrolledWindow.verticalBar, zDelta < 0 ? SB_LINEDOWN : SB_LINEUP, 0);
 			else
 				for (GuiObject child = my parent -> firstChild; child; child = child -> nextSibling)
@@ -2638,9 +2638,9 @@ static void on_verticalWheel (HWND window, int xPos, int yPos, int zDelta, int f
 static void on_size (HWND window, UINT state, int cx, int cy) {
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me && MEMBER (me, Shell) && (state == SIZE_RESTORED || state == SIZE_MAXIMIZED)) {
-		int oldWidth = my width, oldHeight = my height;
-		int newWidth = cx;
-		int newHeight = cy;
+		const int oldWidth = my width, oldHeight = my height;
+		const int newWidth = cx;
+		const int newHeight = cy;
 		my width = newWidth;
 		my height = newHeight;
 		FORWARD_WM_SIZE (window, state, cx, cy, DefWindowProc);

@@ -495,10 +495,16 @@ typedef struct structGuiDrawingArea_ResizeEvent {
 	int width, height;
 } *GuiDrawingArea_ResizeEvent;
 
+typedef struct structGuiDrawingArea_ZoomEvent {
+	GuiDrawingArea widget;
+	double delta;   // positive means enlarge (zoom in), negative means shrink (zoom out)
+} *GuiDrawingArea_ZoomEvent;
+
 using GuiDrawingArea_ExposeCallback = MelderCallback <void, structThing /* boss */, GuiDrawingArea_ExposeEvent>;
 using GuiDrawingArea_MouseCallback  = MelderCallback <void, structThing /* boss */, GuiDrawingArea_MouseEvent >;
 using GuiDrawingArea_KeyCallback    = MelderCallback <void, structThing /* boss */, GuiDrawingArea_KeyEvent   >;
 using GuiDrawingArea_ResizeCallback = MelderCallback <void, structThing /* boss */, GuiDrawingArea_ResizeEvent>;
+using GuiDrawingArea_ZoomCallback   = MelderCallback <void, structThing /* boss */, GuiDrawingArea_ZoomEvent  >;
 
 Thing_define (GuiDrawingArea, GuiControl) {
 	GuiScrollBar d_horizontalScrollBar, d_verticalScrollBar;   // for swiping
@@ -510,6 +516,8 @@ Thing_define (GuiDrawingArea, GuiControl) {
 	Thing d_keyBoss;
 	GuiDrawingArea_ResizeCallback d_resizeCallback;
 	Thing d_resizeBoss;
+	GuiDrawingArea_ZoomCallback d_zoomCallback;
+	Thing d_zoomBoss;
 	integer numberOfGraphicses;
 	constexpr static integer MAXIMUM_NUMBER_OF_GRAPHICSES = 10;
 	Graphics graphicses [1+MAXIMUM_NUMBER_OF_GRAPHICSES];
@@ -524,31 +532,36 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
-	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
+	GuiDrawingArea_ResizeCallback resizeCallback,
+	GuiDrawingArea_ZoomCallback zoomCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
-	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
+	GuiDrawingArea_ResizeCallback resizeCallback,
+	GuiDrawingArea_ZoomCallback zoomCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int height,
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
-	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
+	GuiDrawingArea_ResizeCallback resizeCallback,
+	GuiDrawingArea_ZoomCallback zoomCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
-	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
+	GuiDrawingArea_ResizeCallback resizeCallback,
+	GuiDrawingArea_ZoomCallback zoomCallback, Thing boss,
 	uint32 flags);
 
 void GuiDrawingArea_setSwipable (GuiDrawingArea me, GuiScrollBar horizontalScrollBar, GuiScrollBar verticalScrollBar);
 void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, GuiDrawingArea_ExposeCallback callback, Thing boss);
 void GuiDrawingArea_setMouseCallback (GuiDrawingArea me, GuiDrawingArea_MouseCallback callback, Thing boss);
 void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeCallback callback, Thing boss);
+void GuiDrawingArea_setZoomCallback (GuiDrawingArea me, GuiDrawingArea_ZoomCallback callback, Thing boss);
 
 /********** GuiFileSelect **********/
 

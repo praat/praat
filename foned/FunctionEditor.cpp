@@ -428,6 +428,37 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	my setClassPref_shellHeight (GuiShell_getShellHeight (my windowForm));
 }
 
+static void zoomBy (FunctionEditor me, double factor) {
+	const double currentSize = my endWindow - my startWindow;
+	const double newSize = currentSize * factor;
+	const double increase = newSize - currentSize;
+	const double shift = 0.5 * increase;
+	my startWindow -= shift;
+	if (my startWindow < my tmin + 1e-12)
+		my startWindow = my tmin;
+	my endWindow += shift;
+	if (my endWindow > my tmax - 1e-12)
+		my endWindow = my tmax;
+	if (my endWindow <= my startWindow) {   // floating-point underflow
+		my startWindow = my tmin;
+		my endWindow = my tmax;
+	}
+	my v_windowChanged ();
+	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
+	my v_updateText ();
+	updateScrollBar (me);
+	FunctionEditor_redraw (me);
+	if (my classPref_synchronizedZoomAndScroll())
+		updateGroup (me);
+}
+
+static void gui_drawingarea_cb_zoom (FunctionEditor me, GuiDrawingArea_ZoomEvent event) {
+	if (! my graphics)
+		return;   // could be the case in the very beginning
+	const double enlargement = exp (-0.02 * (event -> delta>0.0?+1:-1) * sqrt (fabs (event -> delta)));   // 2 percent per step
+	zoomBy (me, enlargement);
+}
+
 void structFunctionEditor :: v_prefs_addFields (EditorCommand cmd) {
 	for (integer iarea = 1; iarea <= FunctionEditor_MAXIMUM_NUMBER_OF_FUNCTION_AREAS; iarea ++) {
 		FunctionArea area = static_cast <FunctionArea> (our functionAreas [iarea].get());
@@ -825,37 +856,16 @@ static void do_showAll (FunctionEditor me) {
 static void gui_button_cb_showAll (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_showAll (me);
 }
+
 static void do_zoomIn (FunctionEditor me) {
-	const double shift = (my endWindow - my startWindow) / 4.0;
-	my startWindow += shift;
-	my endWindow -= shift;
-	my v_windowChanged ();
-	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
-	my v_updateText ();
-	updateScrollBar (me);
-	FunctionEditor_redraw (me);
-	if (my classPref_synchronizedZoomAndScroll())
-		updateGroup (me);
+	zoomBy (me, 0.5);
 }
 static void gui_button_cb_zoomIn (FunctionEditor me, GuiButtonEvent /* event */) {
 	do_zoomIn (me);
 }
 static void do_zoomOut (FunctionEditor me) {
-	const double shift = (my endWindow - my startWindow) / 2.0;
 	//MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // quickly, before window changes; ppgb 2022-06-25: why was this here?
-	my startWindow -= shift;
-	if (my startWindow < my tmin + 1e-12)
-		my startWindow = my tmin;
-	my endWindow += shift;
-	if (my endWindow > my tmax - 1e-12)
-		my endWindow = my tmax;
-	my v_windowChanged ();
-	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
-	my v_updateText ();
-	updateScrollBar (me);
-	FunctionEditor_redraw (me);
-	if (my classPref_synchronizedZoomAndScroll())
-		updateGroup (me);
+	zoomBy (me, 2.0);
 }
 
 static void gui_button_cb_zoomOut (FunctionEditor me, GuiButtonEvent /*event*/) {
@@ -1569,7 +1579,7 @@ void structFunctionEditor :: v_createChildren () {
 		0, 0,
 		Machine_getMenuBarBottom () + ( our v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
-		nullptr, gui_drawingarea_cb_resize, this, 0
+		nullptr, gui_drawingarea_cb_resize, gui_drawingarea_cb_zoom, this, 0
 	);
 	GuiDrawingArea_setSwipable (our drawingArea, our scrollBar, nullptr);
 }
