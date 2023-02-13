@@ -1307,7 +1307,7 @@ void structVowelEditor :: v_createChildren ()
 	*/
 	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarBottom (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,   // TODO: mouse-dragged and mouse-up events
-		nullptr, gui_drawingarea_cb_resize, this, 0
+		nullptr, gui_drawingarea_cb_resize, nullptr, this, 0
 	);
 	our width  = GuiControl_getWidth  (drawingArea);
 	our height = GuiControl_getHeight (drawingArea);

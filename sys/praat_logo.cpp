@@ -1,6 +1,6 @@
 /* praat_logo.cpp
  *
- * Copyright (C) 1996-2022 Paul Boersma
+ * Copyright (C) 1996-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ void praat_showLogo () {
 				U"About", gui_cb_goAway, nullptr, 0);
 		theLogo.form = theLogo.dia;
 		theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
-				gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse, nullptr, nullptr, nullptr, 0);
+				gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse, nullptr, nullptr, nullptr, nullptr, 0);
 		/*
 			Note about ordering the following three statements (2021-01-20).
 			On some platforms (e.g. on macOS 10.10, but not 10.15), showing entails immediate drawing.

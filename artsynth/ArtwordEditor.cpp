@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2013,2015-2022 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ void structArtwordEditor :: v_createChildren () {
 
 	our drawingArea = GuiDrawingArea_createShown (our windowForm, 170, 470, dy + 10, dy + 310,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
-		nullptr, nullptr, this, 0
+		nullptr, nullptr, nullptr, this, 0
 	);
 
 	GuiLabel_createShown (our windowForm, 220, 270, dy + 340, dy + 340 + Gui_LABEL_HEIGHT, U"Time:", 0);

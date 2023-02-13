@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2022 Paul Boersma
+ * Copyright (C) 2001-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -489,7 +489,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 void structRunnerMFC :: v_createChildren () {
 	our d_drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarBottom (), 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
-		gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0
+		gui_drawingarea_cb_key, gui_drawingarea_cb_resize, nullptr, this, 0
 	);
 }
 

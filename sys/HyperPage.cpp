@@ -907,7 +907,7 @@ void structHyperPage :: v_createChildren () {
 		0, - Machine_getScrollBarWidth (),
 		y + ( our d_hasExtraRowOfTools ? 2 * height + 16 : height + 9 ), - Machine_getScrollBarWidth (),
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
-		nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER
+		nullptr, gui_drawingarea_cb_resize, nullptr, this, GuiDrawingArea_BORDER
 	);
 	GuiDrawingArea_setSwipable (drawingArea, nullptr, our verticalScrollBar);
 }

@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2013,2015-2022 Paul Boersma
+ * Copyright (C) 2006-2013,2015-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ void structTableEditor :: v_createChildren () {
 
 	our drawingArea = GuiDrawingArea_createShown (our windowForm, 0, - scrollWidth, y, - scrollWidth,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
-		nullptr, gui_drawingarea_cb_resize, this, 0
+		nullptr, gui_drawingarea_cb_resize, nullptr, this, 0
 	);
 
 	our verticalScrollBar = GuiScrollBar_createShown (our windowForm, - scrollWidth, 0, y, - scrollWidth,

@@ -288,10 +288,10 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			structGuiDrawingArea_KeyEvent event { me, 0 };
 			event. key = kar;
 			if (event. key == VK_RETURN) event. key = 10;
-			if (event. key == VK_LEFT)  event. key = 0x2190;
-			if (event. key == VK_RIGHT) event. key = 0x2192;
-			if (event. key == VK_UP)    event. key = 0x2191;
-			if (event. key == VK_DOWN)  event. key = 0x2193;
+			if (event. key == VK_LEFT)   event. key = 0x2190;
+			if (event. key == VK_RIGHT)  event. key = 0x2192;
+			if (event. key == VK_UP)     event. key = 0x2191;
+			if (event. key == VK_DOWN)   event. key = 0x2193;
 			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
 			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
 			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
@@ -312,6 +312,20 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				my d_resizeCallback (my d_resizeBoss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Window resizing not completely handled.");
+			}
+		}
+	}
+	void _GuiWinDrawingArea_handleZoom (GuiObject widget, double delta) {
+		iam_drawingarea;
+		//TRACE
+		trace (delta);
+		if (my d_zoomCallback) {
+			struct structGuiDrawingArea_ZoomEvent event { me };
+			event. delta = delta;
+			try {
+				my d_zoomCallback (my d_zoomBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Zoom not completely handled.");
 			}
 		}
 	}
@@ -545,7 +559,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
-	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
+	GuiDrawingArea_ResizeCallback resizeCallback,
+	GuiDrawingArea_ZoomCallback zoomCallback, Thing boss,
 	uint32 /* flags */)
 {
 	autoGuiDrawingArea me = Thing_new (GuiDrawingArea);
@@ -562,6 +577,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 	my d_keyBoss = boss;
 	my d_resizeCallback = resizeCallback;
 	my d_resizeBoss = boss;
+	my d_zoomCallback = zoomCallback;
+	my d_zoomBoss = boss;
 	#if gtk
 		my d_widget = gtk_drawing_area_new ();
 		GdkEventMask mask = (GdkEventMask) (GDK_EXPOSURE_MASK   // receive exposure events
@@ -611,12 +628,13 @@ GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, 
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
-	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
+	GuiDrawingArea_ResizeCallback resizeCallback,
+	GuiDrawingArea_ZoomCallback zoomCallback, Thing boss,
 	uint32 flags)
 {
 	GuiDrawingArea me = GuiDrawingArea_create (parent, left, right, top, bottom,
 		exposeCallback, mouseCallback,
-		keyCallback, resizeCallback, boss, flags
+		keyCallback, resizeCallback, zoomCallback, boss, flags
 	);
 	GuiThing_show (me);
 	return me;
@@ -626,7 +644,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
-	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
+	GuiDrawingArea_ResizeCallback resizeCallback,
+	GuiDrawingArea_ZoomCallback zoomCallback, Thing boss,
 	uint32 /* flags */)
 {
 	autoGuiDrawingArea me = Thing_new (GuiDrawingArea);
@@ -641,6 +660,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 	my d_keyBoss = boss;
 	my d_resizeCallback = resizeCallback;
 	my d_resizeBoss = boss;
+	my d_zoomCallback = zoomCallback;
+	my d_zoomBoss = boss;
 	#if gtk
 		my d_widget = gtk_drawing_area_new ();
 		GdkEventMask mask = (GdkEventMask) (GDK_EXPOSURE_MASK   // receive exposure events
@@ -682,12 +703,13 @@ GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, 
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
-	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
+	GuiDrawingArea_ResizeCallback resizeCallback,
+	GuiDrawingArea_ZoomCallback zoomCallback, Thing boss,
 	uint32 flags)
 {
 	GuiDrawingArea me = GuiDrawingArea_create (parent, width, height,
 		exposeCallback, mouseCallback,
-		keyCallback, resizeCallback, boss, flags
+		keyCallback, resizeCallback, zoomCallback, boss, flags
 	);
 	GuiThing_show (me);
 	return me;
@@ -715,6 +737,11 @@ void GuiDrawingArea_setMouseCallback (GuiDrawingArea me, GuiDrawingArea_MouseCal
 void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeCallback callback, Thing boss) {
 	my d_resizeCallback = callback;
 	my d_resizeBoss = boss;
+}
+
+void GuiDrawingArea_setZoomCallback (GuiDrawingArea me, GuiDrawingArea_ZoomCallback callback, Thing boss) {
+	my d_zoomCallback = callback;
+	my d_zoomBoss = boss;
 }
 
 /* End of file GuiDrawingArea.cpp */
