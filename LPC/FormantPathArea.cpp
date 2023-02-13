@@ -1,6 +1,6 @@
 /* FormantPathArea.cpp
  *
- * Copyright (C) 2020-2021 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,51 @@ Thing_implement (FormantPathArea, SoundAnalysisArea, 0);
 #include "FormantPathArea_prefs.h"
 #include "Prefs_copyToInstance.h"
 #include "FormantPathArea_prefs.h"
+
+static MelderIntegerRange getRangeOfEqualsAroundIndex (INTVEC const& vec, integer index) {
+	Melder_assert (index > 0 && index <= vec.size);
+	MelderIntegerRange range = { index, index };
+	const integer value = vec [index];
+	while (range.first > 1) {
+		if (vec [-- range.first] != value) {
+			++ range.first;
+			break;
+		}
+	}
+	while (range.last < vec.size) {
+		if (vec [++ range.last] != value) {
+			-- range.last;
+			break;
+		}
+	}
+	return range;
+}
+
+/*
+	Fast selection of an interval:
+	If the mouse click was near a ceiling line in the SoundAnalysisArea we select the whole interval
+	at that ceiling frequency.
+*/
+bool structFormantPathArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction) {
+	const double fmin = our instancePref_spectrogram_viewFrom ();
+	const double fmax = our instancePref_spectrogram_viewTo ();
+	const double frequencyAtClickPoint = fmin + localY_fraction * (fmax - fmin);
+	integer frameIndex = Sampled_xToNearestIndex (our d_formant.get(), x_world);
+	if (frameIndex > 0 && frameIndex <= our d_formant -> nx) {
+		const integer ceilingIndex = our formantPath() -> path [frameIndex];
+		const double ceilingFrequency = our formantPath() -> ceilings [ceilingIndex];
+		if (fabs ((ceilingFrequency - frequencyAtClickPoint) / (fmax - fmin)) < 0.02) {
+			MelderIntegerRange frameRange = getRangeOfEqualsAroundIndex (our formantPath() -> path.get(), frameIndex);
+			double startTime = Sampled_indexToX (our d_formant.get(), frameRange.first) - 0.5 * our d_formant -> dx;
+			double endTime = Sampled_indexToX (our d_formant.get(), frameRange.last) + 0.5 * our d_formant -> dx;
+			Melder_clipLeft (our startWindow(), & startTime);
+			Melder_clipRight (& endTime, our endWindow());
+			setSelection (startTime, endTime);
+			return true;
+		}
+	}
+	return FunctionEditor_defaultMouseInWideDataView (our functionEditor(), event, x_world);
+}
 
 static void FormantPathArea_drawCeilings (FormantPathArea me, double tmin, double tmax, double fmin, double fmax) {
 	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (my formantPath(), tmin, tmax);
@@ -68,8 +113,9 @@ void structFormantPathArea :: v_draw_analysis_formants () {
 	}
 }
 
+
 static void menu_cb_FormantSettings (FormantPathArea me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Formant settings", nullptr)
+	EDITOR_FORM (U"Formant analysis settings...", U"Sound: To FormantPath (burg)...")
 		REAL (timeStep, U"Time step (s)", my default_formant_path_timeStep ())
 		POSITIVE (maximumNumberOfFormants, U"Max. number of formants", my default_formant_path_maximumNumberOfFormants ())
 		REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", my default_formant_path_middleFormantCeiling ())
@@ -88,6 +134,8 @@ static void menu_cb_FormantSettings (FormantPathArea me, EDITOR_ARGS) {
 		SET_REAL (ceilingStepSize, my instancePref_formant_path_ceilingStepSize ())
 		SET_INTEGER (numberOfStepsToACeiling, my instancePref_formant_path_numberOfStepsToACeiling ())
 	EDITOR_DO
+		Melder_require (my sound (),
+			U"There is no sound to analyze.");
 		my setInstancePref_formant_path_timeStep (timeStep);
 		my setInstancePref_formant_path_maximumNumberOfFormants (maximumNumberOfFormants);
 		my setInstancePref_formant_path_middleFormantCeiling (middleFormantCeiling);
@@ -98,6 +146,14 @@ static void menu_cb_FormantSettings (FormantPathArea me, EDITOR_ARGS) {
 		autoFormantPath result = Sound_to_FormantPath_burg (my sound (), timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, 
 			preEmphasisFrom, ceilingStepSize, numberOfStepsToACeiling
 		);
+		my formantPath() -> nx = result -> nx;
+		my formantPath() -> dx = result -> dx;
+		my formantPath() -> x1 = result -> x1;
+		my formantPath() -> formantCandidates = result -> formantCandidates.move();
+		my formantPath() -> ceilings = result -> ceilings.move();
+		my formantPath() -> path = result -> path.move();
+		my d_formant = FormantPath_extractFormant (my  formantPath());
+		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -183,7 +239,9 @@ void structFormantPathArea :: v_createMenuItems_formant (EditorMenu menu) {
 		GuiMenu_CHECKBUTTON | ( our instancePref_formant_show() ? GuiMenu_TOGGLE_ON : 0 ),
 		menu_cb_showFormants, this
 	);
-	FunctionAreaMenu_addCommand (menu, U"Formant settings...", 0,
+	// The following menu item should not be visible if there is no sound
+	// djmw: 20230211 I don't know how to test whether a sound is available here
+	FunctionAreaMenu_addCommand (menu, U"Formant analysis settings...", 0,
 			menu_cb_FormantSettings, this);
 	FunctionAreaMenu_addCommand (menu, U"Formant colour settings...", 0,
 			menu_cb_FormantColourSettings, this);
