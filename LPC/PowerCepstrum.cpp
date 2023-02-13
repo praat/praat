@@ -100,8 +100,8 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 	Melder_clipLeft (my xmin, & qstart);
 	Melder_clipRight (& qend, my xmax);
 
-	double a, intercept;
-	PowerCepstrum_fitTrendLine (me, qstart, qend, & a, & intercept, lineType, method);
+	double slope, intercept;
+	PowerCepstrum_fitTrendLine (me, qstart, qend, & slope, & intercept, lineType, method);
 	/*
 		Don't draw part outside window
 	*/
@@ -119,19 +119,19 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 		
 		for (integer i = 1; i <= n; i ++) {
 			const double q = q1 + (i - 1) * dq;
-			y [i] = a * log (q) + intercept;
+			y [i] = slope * log (q) + intercept;
 		}
 		Graphics_function (g, y.asArgumentToFunctionThatExpectsOneBasedArray(), 1, n, qstart, qend);
 	} else {
-		const double y1 = a * qstart + intercept;
-		const double y2 = a * qend + intercept;
+		const double y1 = slope * qstart + intercept;
+		const double y2 = slope * qend + intercept;
 		if (y1 >= dBminimum && y2 >= dBminimum) {
 			Graphics_line (g, qstart, y1, qend, y2);
 		} else if (y1 < dBminimum) {
-			qstart = (dBminimum - intercept) / a;
+			qstart = (dBminimum - intercept) / slope;
 			Graphics_line (g, qstart, dBminimum, qend, y2);
 		} else if (y2 < dBminimum) {
-			qend = (dBminimum - intercept) / a;
+			qend = (dBminimum - intercept) / slope;
 			Graphics_line (g, qstart, y1, qend, dBminimum);
 		} else {
 			// don't draw anything below lower limit?
@@ -143,18 +143,17 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 
 /*
 	Fit line y = aq+b or y = a log(q) + b  on interval [qmin,qmax]
- */
-void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, kCepstrum_trendType lineType, kCepstrum_trendFit method) {
+*/
+void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_slope, double *out_intercept, kCepstrum_trendType lineType, kCepstrum_trendFit method) {
 	try {
 		Function_unidirectionalAutowindow (me, & qmin, & qmax);
 		
-		double a = undefined, intercept;
 		integer imin, imax;
 		Melder_require (qmin >= my xmin && qmax <= my xmax,
 			U"Your quefrency range is outside the domain.");
 		Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax);
 		Melder_clipLeft (2_integer, & imin); // never use q=0 in fitting
-		integer numberOfPoints = imax - imin + 1;
+		const integer numberOfPoints = imax - imin + 1;
 		Melder_require (numberOfPoints > 1,
 			U"Not enough points for fit.");
 
@@ -167,19 +166,19 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 				x [i] = log (x [i]);
 			y [i] = my v_getValueAtSample (isamp, 1, 1);
 		}
+		double slope, intercept;
 		if (method == kCepstrum_trendFit::LEAST_SQUARES)
-			NUMfitLine_LS (x.get(), y.get(), & a, & intercept);
+			NUMfitLine_LS (x.get(), y.get(), & slope, & intercept);
 		else if (method == kCepstrum_trendFit::ROBUST_FAST)
-			NUMfitLine_theil (x.get(), y.get(), & a, & intercept, false);
+			NUMfitLine_theil (x.get(), y.get(), & slope, & intercept, false);
 		else if (method == kCepstrum_trendFit::ROBUST_SLOW)
-			NUMfitLine_theil (x.get(), y.get(), & a, & intercept, true);
-		else {
+			NUMfitLine_theil (x.get(), y.get(), & slope, & intercept, true);
+		else
 			Melder_throw (U"Invalid method.");
-		}
 		if (out_intercept)
 			*out_intercept = intercept;
-		if (out_a)
-			*out_a = a;
+		if (out_slope)
+			*out_slope = slope;
 	} catch (MelderError) {
 		Melder_throw (me, U": couldn't fit a line.");
 	}
