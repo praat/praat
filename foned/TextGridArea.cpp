@@ -1,6 +1,6 @@
 /* TextGridArea.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -914,11 +914,11 @@ static void findInTier (TextGridArea me) {
 				const char32 *position = str32str (text, my findString.get());
 				if (position) {
 					my setSelection (interval -> xmin, interval -> xmax);
-					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
-					FunctionEditor_scrollToView (my functionEditor(), my startSelection());
+					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToNewSelection()
+					FunctionEditor_scrollToNewSelection (my functionEditor(), my startSelection());
 					if (my editable ())
 						GuiText_setSelection (my functionEditor() -> textArea,
-							position - text, position - text + Melder_length (my findString.get()));
+								position - text, position - text + Melder_length (my findString.get()));
 					return;
 				}
 			}
@@ -936,11 +936,11 @@ static void findInTier (TextGridArea me) {
 				const char32 * const position = str32str (text, my findString.get());
 				if (position) {
 					my setSelection (point -> number, point -> number);
-					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
-					FunctionEditor_scrollToView (my functionEditor(), point -> number);
+					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToNewSelection()
+					FunctionEditor_scrollToNewSelection (my functionEditor(), point -> number);
 					if (my editable ())
 						GuiText_setSelection (my functionEditor() -> textArea,
-							position - text, position - text + Melder_length (my findString.get()));
+								position - text, position - text + Melder_length (my findString.get()));
 					return;
 				}
 			}
@@ -958,7 +958,7 @@ static void do_find (TextGridArea me) {
 			const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
 			if (position)
 				GuiText_setSelection (my functionEditor() -> textArea,
-					position - label.get(), position - label.get() + Melder_length (my findString.get()));
+						position - label.get(), position - label.get() + Melder_length (my findString.get()));
 			else
 				findInTier (me);
 		} else
@@ -1131,8 +1131,8 @@ static void do_selectAdjacentTier (TextGridArea me, bool previous) {
 		double startInterval, endInterval;
 		timeToInterval (me, my startSelection(), my selectedTier, & startInterval, & endInterval);
 		my setSelection (startInterval, endInterval);
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (my functionEditor(), true);
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_selectionMarksChanged()
+		FunctionEditor_selectionMarksChanged (my functionEditor());
 	}
 }
 static void menu_cb_SelectPreviousTier (TextGridArea me, EDITOR_ARGS) {
@@ -1187,8 +1187,8 @@ static void do_selectAdjacentInterval (TextGridArea me, bool previous, bool shif
 				const TextInterval interval = intervalTier -> intervals.at [iinterval];
 				my setSelection (interval -> xmin, interval -> xmax);
 			}
-			Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
-			FunctionEditor_scrollToView (my functionEditor(), iinterval == n ? my startSelection() : iinterval == 1 ? my endSelection() : 0.5 * (my startSelection() + my endSelection()));
+			Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToNewSelection()
+			FunctionEditor_scrollToNewSelection (my functionEditor(), iinterval == n ? my startSelection() : iinterval == 1 ? my endSelection() : 0.5 * (my startSelection() + my endSelection()));
 		}
 	} else {
 		const integer n = textTier -> points.size;
@@ -1199,8 +1199,8 @@ static void do_selectAdjacentInterval (TextGridArea me, bool previous, bool shif
 					ipoint < n ? ipoint + 1 : 1 );
 			const TextPoint point = textTier -> points.at [ipoint];
 			my setSelection (point -> number, point -> number);
-			Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
-			FunctionEditor_scrollToView (my functionEditor(), my startSelection());
+			Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToNewSelection()
+			FunctionEditor_scrollToNewSelection (my functionEditor(), my startSelection());
 		}
 	}
 }
@@ -1652,8 +1652,8 @@ static void checkSpellingInTier (TextGridArea me) {
 				conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my setSelection (interval -> xmin, interval -> xmax);
-					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
-					FunctionEditor_scrollToView (my functionEditor(), my startSelection());
+					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToNewSelection()
+					FunctionEditor_scrollToNewSelection (my functionEditor(), my startSelection());
 					GuiText_setSelection (my functionEditor() -> textArea,
 							position, position + Melder_length (notAllowed));
 					return;
@@ -1674,8 +1674,8 @@ static void checkSpellingInTier (TextGridArea me) {
 				conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my setSelection (point -> number, point -> number);
-					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToView()
-					FunctionEditor_scrollToView (my functionEditor(), point -> number);
+					Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_scrollToNewSelection()
+					FunctionEditor_scrollToNewSelection (my functionEditor(), point -> number);
 					GuiText_setSelection (my functionEditor() -> textArea, position, position + Melder_length (notAllowed));
 					return;
 				}
@@ -1879,6 +1879,7 @@ void structTextGridArea :: v_updateMenuItems () {
 }
 
 void structTextGridArea :: v_updateText () {
+TRACE
 	if (! our textGrid())
 		return;   // BUG: should not be needed
 	if (our suppressTextCursorJump)

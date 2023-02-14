@@ -1,6 +1,6 @@
 /* SpectrumArea.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,8 @@ static void menu_cb_moveCursorToPeak (SpectrumArea me, EDITOR_ARGS) {
 	MelderPoint peak = Spectrum_getNearestMaximum (my spectrum(), 0.5 * (my startSelection() + my endSelection()));
 	my setSelection (peak. x, peak. x);
 	my cursorHeight = peak. y;
-	FunctionEditor_marksChanged (my functionEditor(), true);
+	Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_selectionMarksChanged()
+	FunctionEditor_selectionMarksChanged (my functionEditor());
 }
 
 

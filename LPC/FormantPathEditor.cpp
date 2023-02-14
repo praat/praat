@@ -460,12 +460,6 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 			my formantPathArea() -> setInstancePref_formant_path_evenColour (my formantPathArea() -> default_formant_path_evenColour ());
 		if (my formantPathArea() -> instancePref_formant_selected_colour() [0] == U'\0')
 			my formantPathArea() -> setInstancePref_formant_selected_colour (my formantPathArea() -> default_formant_selected_colour ());
-		if (my endWindow - my startWindow > 5.0) {
-			my endWindow = my startWindow + 5.0;
-			if (my startWindow == my tmin)
-				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-			FunctionEditor_marksChanged (me.get(), false);
-		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantPathEditor window not created.");

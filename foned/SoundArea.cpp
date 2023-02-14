@@ -1,6 +1,6 @@
 /* SoundArea.cpp
  *
- * Copyright (C) 2022 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 2022,2023 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -576,7 +576,7 @@ static void menu_cb_Cut (SoundArea me, EDITOR_ARGS) {
 				Force FunctionEditor to show changes.
 			*/
 			FunctionEditor_ungroup (my sound());
-			//FunctionEditor_marksChanged (my functionEditor(), false);
+			//FunctionEditor_windowMarksChanged (my functionEditor(), true);
 			FunctionArea_broadcastDataChanged (me);
 		} else {
 			Melder_warning (U"No samples selected.");
@@ -642,7 +642,7 @@ static void menu_cb_Paste (SoundArea me, EDITOR_ARGS) {
 		Force FunctionEditor to show changes.
 	*/
 	FunctionEditor_ungroup (my sound());
-	FunctionEditor_marksChanged (my functionEditor(), false);
+	FunctionEditor_windowMarksChanged (my functionEditor(), true);
 	FunctionArea_broadcastDataChanged (me);
 }
 void structSoundArea :: v_createMenuItems_edit (EditorMenu menu) {
@@ -790,24 +790,24 @@ static void menu_cb_MoveStartOfSelectionToNearestZeroCrossing (SoundArea me, EDI
 	const double zero = Sound_getNearestZeroCrossing (my sound(), my startSelection(), 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my setSelection (zero, my endSelection());
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (my functionEditor(), true);
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_selectionMarksChanged()
+		FunctionEditor_selectionMarksChanged (my functionEditor());
 	}
 }
 static void menu_cb_MoveCursorToNearestZeroCrossing (SoundArea me, EDITOR_ARGS) {
 	const double zero = Sound_getNearestZeroCrossing (my sound(), 0.5 * (my startSelection() + my endSelection()), 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my setSelection (zero, zero);
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (my functionEditor(), true);
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_selectionMarksChanged()
+		FunctionEditor_selectionMarksChanged (my functionEditor());
 	}
 }
 static void menu_cb_MoveEndOfSelectionToNearestZeroCrossing (SoundArea me, EDITOR_ARGS) {
 	const double zero = Sound_getNearestZeroCrossing (my sound(), my endSelection(), 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my setSelection (my startSelection(), zero);
-		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_marksChanged()
-		FunctionEditor_marksChanged (my functionEditor(), true);
+		Melder_assert (isdefined (my startSelection()));   // precondition of FunctionEditor_selectionMarksChanged()
+		FunctionEditor_selectionMarksChanged (my functionEditor());
 	}
 }
 
