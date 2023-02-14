@@ -1,6 +1,6 @@
 /* FormantPath_to_IntervalTier.cpp
  *
- * Copyright (C) 2020-2022 David Weenink
+ * Copyright (C) 2020-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ autoIntervalTier FormantPath_to_IntervalTier (FormantPath me, double tmin, doubl
 	integer ifmin, ifmax;
 	Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 	/*
-		If the interval [tmin, tmax] did not overlap any samples and falls 
-		inbetween two successive samples that have index i1 and i1+1, 
+		If the interval [tmin, tmax] did not overlap any samples and falls
+		inbetween two successive samples that have index i1 and i1+1,
 		itmin == i1+1 && itmax == i1;
 	*/
 	integer startIndex = Sampled_xToNearestIndex (me, tmin);
@@ -42,7 +42,7 @@ autoIntervalTier FormantPath_to_IntervalTier (FormantPath me, double tmin, doubl
 	for (integer iframe = ifmin; iframe <= ifmax; iframe ++) {
 		if (my path [iframe] != candidate) {
 			const double endTime = Sampled_indexToX (me, iframe) - 0.5 * my dx;
-			IntervalTier_addCandidate (thee.get(), endTime, candidate); 
+			IntervalTier_addCandidate (thee.get(), endTime, candidate);
 			candidate = my path [iframe];
 		}
 	}
@@ -51,7 +51,7 @@ autoIntervalTier FormantPath_to_IntervalTier (FormantPath me, double tmin, doubl
 	integer endCandidate = my path [endIndex];
 	if (endCandidate != candidate) {
 		const double endTime = Sampled_indexToX (me, ifmax) + 0.5 * my dx;
-		IntervalTier_addCandidate (thee.get(), endTime, candidate); 
+		IntervalTier_addCandidate (thee.get(), endTime, candidate);
 		candidate = endCandidate;
 	}
 	/*

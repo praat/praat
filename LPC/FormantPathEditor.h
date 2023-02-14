@@ -2,7 +2,7 @@
 #define _FormantPathEditor_h_
 /* FormantPathEditor.h
  *
- * Copyright (C) 2020-2022 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 
 	autoFormant previousFormant;
 	Graphics_Viewport selectionViewer_viewport;
-	integer selectedCandidate;
+	integer selectedCandidate = 0;
 	GuiMenuItem navigateSettingsButton, navigateNextButton, navigatePreviousButton;
 
 	void v1_info ()

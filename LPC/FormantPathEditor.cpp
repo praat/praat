@@ -1,6 +1,6 @@
 /* FormantPathEditor.cpp
  *
- * Copyright (C) 2020-2022 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	TODO: make width of selection viewer variable?
-*/
 #include "FormantPathEditor.h"
+#include "FormantPath_to_IntervalTier.h"
 #include "Graphics_extensions.h"
 #include "EditorM.h"
 #include "Formant_extensions.h"
@@ -29,6 +27,7 @@
 #include "PitchTier_to_PointProcess.h"
 #include "Sound_and_LPC.h"
 #include "Sound_extensions.h"
+#include "TextGrid.h"
 
 Thing_implement (FormantPathEditor, FunctionEditor, 0);
 
@@ -198,18 +197,24 @@ static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDIT
 		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_modeler_draw_estimatedModels())
 		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz())
 		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency())
+		BOOLEAN  (alsoSetSpectrogramView, U"Also set spectrogram view", my default_modeler_draw_alsoSetSpectrogramView());
 		BOOLEAN (drawErrorBars, U"Draw bandwidths", my default_modeler_draw_showBandwidths())
 	EDITOR_OK
 		SET_BOOLEAN (drawEstimatedModels, my instancePref_modeler_draw_estimatedModels())
 		SET_REAL (yGridLineEvery_Hz, my instancePref_modeler_draw_yGridLineEvery_Hz())
 		SET_REAL (maximumFrequency, my instancePref_modeler_draw_maximumFrequency())
+		SET_BOOLEAN (drawErrorBars, my instancePref_modeler_draw_alsoSetSpectrogramView())
 		SET_BOOLEAN (drawErrorBars, my instancePref_modeler_draw_showBandwidths())
 	EDITOR_DO
 		my setInstancePref_modeler_draw_estimatedModels (drawEstimatedModels);
 		my setInstancePref_modeler_draw_maximumFrequency (maximumFrequency);
 		my setInstancePref_modeler_draw_yGridLineEvery_Hz (yGridLineEvery_Hz);
+		my setInstancePref_modeler_draw_alsoSetSpectrogramView (alsoSetSpectrogramView);
+		if (alsoSetSpectrogramView)
+			my formantPathArea() -> setInstancePref_spectrogram_viewTo (maximumFrequency);
 		my setInstancePref_modeler_draw_showBandwidths (drawErrorBars);
 		FunctionEditor_redraw (me);
+		Editor_broadcastDataChanged (me);
 	EDITOR_END
 }
 
@@ -308,6 +313,15 @@ static void menu_cb_extract_resynthesis (FormantPathEditor me, EDITOR_ARGS) {
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
+static void INFO_DATA__ceilingOfCandidate (FormantPathEditor me, EDITOR_ARGS) {
+	INFO_DATA
+		if (my selectedCandidate > 0 && my selectedCandidate <= my formantPath() -> ceilings.size)
+			Melder_information (Melder_double (my formantPath() -> ceilings [my selectedCandidate]));
+		else
+			Melder_information (U"--undefined--");
+	INFO_DATA_END
+}
+
 static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS) {
 	INFO_DATA
 		double startTime = my startSelection, endTime = my endSelection;
@@ -325,10 +339,21 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS) {
 
 /***** HELP MENU *****/
 
-static void menu_cb_FormantPathEditorHelp (FormantPathEditor, EDITOR_ARGS) { Melder_help (U"FormantPathEditor"); }
-static void menu_cb_AboutSpecialSymbols (FormantPathEditor, EDITOR_ARGS) { Melder_help (U"Special symbols"); }
-static void menu_cb_PhoneticSymbols (FormantPathEditor, EDITOR_ARGS) { Melder_help (U"Phonetic symbols"); }
-static void menu_cb_AboutTextStyles (FormantPathEditor, EDITOR_ARGS) { Melder_help (U"Text styles"); }
+static void menu_cb_FormantPathEditorHelp (FormantPathEditor, EDITOR_ARGS) {
+	Melder_help (U"FormantPathEditor");
+}
+
+static void menu_cb_AboutSpecialSymbols (FormantPathEditor, EDITOR_ARGS) {
+	Melder_help (U"Special symbols");
+}
+
+static void menu_cb_PhoneticSymbols (FormantPathEditor, EDITOR_ARGS) {
+	Melder_help (U"Phonetic symbols");
+}
+
+static void menu_cb_AboutTextStyles (FormantPathEditor, EDITOR_ARGS) {
+	Melder_help (U"Text styles");
+}
 
 void structFormantPathEditor :: v_createMenus () {
 	FormantPathEditor_Parent :: v_createMenus ();
@@ -340,8 +365,9 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"- Select candidates:", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Select candidate with lowest stress", 1, menu_cb_selectCandidateWithlowestStress);
 	EditorMenu_addCommand (menu, U"Find path...", 1, menu_cb_candidates_FindPath);
-	EditorMenu_addCommand (menu, U"-- candidate queries --", 0, 0);
-	EditorMenu_addCommand (menu, U"Stress of fits listing", 0, INFO_DATA__stressOfFitsListing);
+	EditorMenu_addCommand (menu, U"- Query candidates:", 0, nullptr);
+		EditorMenu_addCommand (menu, U"Get ceiling of candidate", 1, INFO_DATA__ceilingOfCandidate);
+		EditorMenu_addCommand (menu, U"Stress of fits listing", 1, INFO_DATA__stressOfFitsListing);
 	if (soundArea()) {
 		EditorMenu_addCommand (menu, U"- Candidate resynthesis:", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Play resynthesis", 1, menu_cb_play_resynthesis);
@@ -392,6 +418,17 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_modeler_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
 		parameters.get(), true, true, our instancePref_modeler_varianceExponent(), our instancePref_modeler_draw_estimatedModels(), true
 	);
+	/*
+		If we don't have clicked on a candidate, one or more have been implicitely coloured / selected.
+		Find out which one so we can set the 'selectedCandidate'
+	*/
+	if (selectedCandidate == 0) {
+		autoIntervalTier intervalTier = FormantPath_to_IntervalTier (our formantPath(), startTime, endTime);
+		if (intervalTier -> intervals .size == 1) {
+			TextInterval textInterval = intervalTier -> intervals.at [1];
+			selectedCandidate = ( textInterval -> text.get() ? Melder_atoi (textInterval -> text.get()) : 0);
+		}
+	}
 	Graphics_unsetInner (our graphics.get());
 	previousStartTime = startTime;
 	previousEndTime = endTime;

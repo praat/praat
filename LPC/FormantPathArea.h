@@ -2,7 +2,7 @@
 #define _FormantPathArea_h_
 /* FormantPathEditor.h
  *
- * Copyright (C) 2020-2022 David Weenink, 2022,2023 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ Thing_define (FormantPathArea, SoundAnalysisArea) {
 		override;
 	void v_createMenuItems_formant (EditorMenu menu)
 		override;
+	bool v_mouse (GuiDrawingArea_MouseEvent event, double x_world, double localY_fraction)
+		override;
 	void v_reset_analysis () override {
 		our d_spectrogram. reset();
 		our d_pitch. reset();
@@ -55,6 +57,7 @@ Thing_define (FormantPathArea, SoundAnalysisArea) {
 
 	#include "FormantPathArea_prefs.h"
 };
+
 DEFINE_FunctionArea_create (FormantPathArea, Sound)
 
 /* End of file FormantPathArea.h */
