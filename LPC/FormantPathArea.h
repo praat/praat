@@ -2,7 +2,7 @@
 #define _FormantPathArea_h_
 /* FormantPathEditor.h
  *
- * Copyright (C) 2020-2023 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@ Thing_define (FormantPathArea, SoundAnalysisArea) {
 	FormantPath _formantPath;
 	FormantPath formantPath() const { return our _formantPath; }
 
+	double maximumInitialLengthOfWindow() override {
+		return 5.0;
+	}
 	void v_draw_analysis_formants ()
 		override;
 	void v_createMenuItems_formant (EditorMenu menu)

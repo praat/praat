@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ Thing_define (FunctionEditor, Editor) {
 	/*
 		Subclasses may change the following attributes,
 		but have to respect the invariants,
-		and have to call FunctionEditor_marksChanged ()
+		and have to call FunctionEditor_windowMarksChanged() or FunctionEditor_selectionMarksChanged()
 		immediately after making those changes.
 		Invariants:
 			tmin <= startWindow < endWindow <= tmax;
@@ -225,26 +225,34 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data)
 		my scrollBar only to the bottom, left and right sides.
 */ 
 
-void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup);
+void FunctionEditor_windowMarksChanged (FunctionEditor me, const bool selectionChanged);
 /*
 	Function:
-		update optional text field, the scroll bar, the drawing area and the buttons,
-		from the current total time, window, cursor, and selection,
+		update the scroll bar, the drawing area and the buttons
+		(and if `selectionChanged` is true also the optional text field),
+		from the current total time and window
+		(and if `selectionChanged` is true also the current cursor and selection),
 		and redraw the contents.
-		If needsUpdateGroup is true, this will be done for all the editors in the group.
 	Usage:
-		call this after a change in any of the markers or in the duration of the data.
+		call this after a change in window marks.
+		(Upon a change in the domain, ungroup before calling this.)
+*/
+void FunctionEditor_selectionMarksChanged (FunctionEditor me);
+/*
+	Function:
+		update optional text field, the drawing area and the buttons,
+		from the current cursor and selection, and redraw the contents.
+	Usage:
+		call this after a change in cursor or selection marks.
 */
 
-void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGroup);
+void FunctionEditor_scrollToNewSelection (FunctionEditor me, double t);
 /*
 	Function:
-		shift (scroll) the window through time, keeping the window length constant.
+		shift (scroll) the window through time, to the new selection, keeping the window length constant.
 	Usage:
 		call this after a search.
 */
-
-void FunctionEditor_scrollToView (FunctionEditor me, double t);
 
 void FunctionEditor_updateText (FunctionEditor me);
 /*
