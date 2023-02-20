@@ -1879,7 +1879,6 @@ void structTextGridArea :: v_updateMenuItems () {
 }
 
 void structTextGridArea :: v_updateText () {
-TRACE
 	if (! our textGrid())
 		return;   // BUG: should not be needed
 	if (our suppressTextCursorJump)
