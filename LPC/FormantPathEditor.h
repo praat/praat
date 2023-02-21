@@ -28,7 +28,6 @@ Thing_define (FormantPathEditor, FunctionEditor) {
 	DEFINE_FunctionArea (3, TextGridArea, textGridArea)
 
 	FormantPath formantPath() { return static_cast <FormantPath> (our data()); }
-
 	autoFormant previousFormant;
 	Graphics_Viewport selectionViewer_viewport;
 	integer selectedCandidate = 0;

@@ -20,6 +20,7 @@
 
 #include "FormantPath.h"
 #include "SoundAnalysisArea.h"
+#include "TextGrid.h"
 
 /*
 	The explanation following is for analyses with different maximum formant frequencies (i.e. different ceilings).
@@ -37,6 +38,7 @@
 Thing_define (FormantPathArea, SoundAnalysisArea) {
 	FormantPath _formantPath;
 	FormantPath formantPath() const { return our _formantPath; }
+	autoIntervalTier ceilings;
 
 	double maximumInitialLengthOfWindow() override {
 		return 5.0;
