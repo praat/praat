@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 1993-2018, 2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +81,8 @@ void TextGrid_setTierName (TextGrid me, integer itier, conststring32 newName);
 void TextTier_changeLabels (TextTier me, integer from, integer to, conststring32 search, conststring32 replace, bool use_regexp, integer *nmatches, integer *nstringmatches);
 
 void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, conststring32 search, conststring32 replace, bool use_regexp, integer *nmatches, integer *nstringmatches);
+
+void IntervalTier_addInterval_force (IntervalTier me, double tmin, double tmax, conststring32 newLabel);
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, conststring32 label);
 

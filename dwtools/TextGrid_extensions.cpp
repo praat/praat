@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, Paul Boersma 2019
+ * Copyright (C) 1993-2019, 2023 David Weenink, Paul Boersma 2019
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -665,6 +665,44 @@ void TextTier_changeLabels (TextTier me, integer from, integer to,
 	} catch (MelderError) {
 		Melder_throw (me, U": no labels changed.");
 	}
+}
+
+void IntervalTier_addInterval_force (IntervalTier me, double tmin, double tmax, conststring32 newLabel) {
+	Melder_require (tmin >= my xmin && tmax <= my xmax,
+		U"The interval should not be outside the domain.");
+	Melder_require (tmin < tmax,
+		U"The start time of the interval should be smaller than the end time.");
+	const integer oldSize = my intervals.size;
+	integer ileft = IntervalTier_timeToIndex (me, tmin);
+	TextInterval leftInterval = my intervals .at [ileft];
+	conststring32 leftText = leftInterval -> text.get();
+	const double leftxmin = leftInterval -> xmin, leftxmax = leftInterval -> xmax;
+	if (Melder_cmp (leftText, newLabel) != 0) {
+		if (tmin > leftxmin) {
+			autoTextInterval newInterval = TextInterval_create (tmin, leftxmax, leftText);
+			leftInterval -> xmax = tmin;
+			my intervals.addItem_move (newInterval.move());
+			Melder_assert (my intervals.size == oldSize +1);
+			ileft ++;
+		} else if (tmax == leftxmax) { // tmin == xmin
+			TextInterval_setText (leftInterval, newLabel);
+			return;
+		}
+	}
+	const integer iright = IntervalTier_timeToHighIndex (me, tmax);
+	TextInterval rightInterval = my intervals .at [iright];
+	conststring32 rightText = rightInterval -> text.get();
+	const double rightxmin = rightInterval -> xmin, rightxmax = rightInterval -> xmax;
+	if (Melder_cmp (rightText , newLabel) != 0) {
+		if (tmax < rightxmax) {
+			autoTextInterval newInterval = TextInterval_create (rightxmin, tmax, rightText);
+			rightInterval -> xmin = tmax;
+			my intervals.addItem_move (newInterval.move());
+		}
+	}
+	for (integer ipos = ileft; ipos <= iright; ipos ++)
+		TextInterval_setText (my intervals .at [ipos], newLabel);
+	IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (me, newLabel);
 }
 
 void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to,

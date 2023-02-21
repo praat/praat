@@ -27,7 +27,7 @@
 #include "PitchTier_to_PointProcess.h"
 #include "Sound_and_LPC.h"
 #include "Sound_extensions.h"
-#include "TextGrid.h"
+#include "TextGrid_extensions.h"
 
 Thing_implement (FormantPathEditor, FunctionEditor, 0);
 
@@ -454,6 +454,8 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		Sampled_getWindowSamples (our formantPath(), tmin_, tmax_, & ifmin, & ifmax);
 		for (integer iframe = ifmin; iframe <= ifmax; iframe ++)
 			our formantPath() -> path [iframe] = our selectedCandidate;
+		const IntervalTier ceilings = formantPathArea() -> ceilings.get();
+		IntervalTier_addInterval_force (ceilings, tmin_, tmax_, Melder_integer (candidate));
 		Formant source = our formantPath() -> formantCandidates.at [our selectedCandidate];
 		Formant_replaceFrames (our formantPathArea() -> d_formant.get(), ifmin, ifmax, source);
 	}
@@ -473,6 +475,24 @@ void structFormantPathEditor :: v_play (double startingTime, double endTime) {
 	}
 }
 
+static autoIntervalTier path_as_IntervalTier (FormantPathEditor me) {
+	autoIntervalTier ceilings = IntervalTier_create (my tmin, my tmax);
+	INTVEC path =  my formantPath () -> path.get();
+	integer previousPathIndex = path [1];
+	double tmin = my tmin, dt = my formantPath () -> dx;
+	for (integer ip = 2; ip <= path.size; ip ++) {
+		if (path [ip] != previousPathIndex) {
+			const double tmax = Sampled_indexToX (my formantPath (), ip) - 0.5 * dt;
+			autoTextInterval interval = TextInterval_create (tmin, tmax, Melder_integer (previousPathIndex));
+			ceilings -> intervals .addItem_move (interval.move());
+			previousPathIndex = path [ip];
+			tmin = tmax;
+		}
+	}
+	TextInterval_setText (ceilings -> intervals.at [ceilings -> intervals.size], Melder_integer (previousPathIndex));
+	return ceilings;
+}
+
 /********** EXPORTED **********/
 
 autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound soundToCopy, TextGrid textGridToCopy) {
@@ -485,7 +505,7 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 		if (textGridToCopy)
 			my textGridArea() = TextGridArea_create (false, textGridToCopy, me.get());
 		FunctionEditor_init (me.get(), title, formantPath);
-
+		my formantPathArea() ->  ceilings = path_as_IntervalTier (me.get());
 		my formantPathArea() -> d_formant = FormantPath_extractFormant (formantPath);   // BUG: should be in other places
 		if (my instancePref_modeler_numberOfParametersPerTrack() [0] == U'\0')
 			my setInstancePref_modeler_numberOfParametersPerTrack (my default_modeler_numberOfParametersPerTrack());

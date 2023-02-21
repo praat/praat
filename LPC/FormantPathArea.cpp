@@ -62,12 +62,14 @@ bool structFormantPathArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x
 		const integer ceilingIndex = our formantPath() -> path [frameIndex];
 		const double ceilingFrequency = our formantPath() -> ceilings [ceilingIndex];
 		if (fabs ((ceilingFrequency - frequencyAtClickPoint) / (fmax - fmin)) < 0.02) {
-			MelderIntegerRange frameRange = getRangeOfEqualsAroundIndex (our formantPath() -> path.get(), frameIndex);
+			const integer index = IntervalTier_timeToLowIndex (ceilings.get(), x_world);
+			
+			/*MelderIntegerRange frameRange = getRangeOfEqualsAroundIndex (our formantPath() -> path.get(), frameIndex);
 			double startTime = Sampled_indexToX (our d_formant.get(), frameRange.first) - 0.5 * our d_formant -> dx;
 			double endTime = Sampled_indexToX (our d_formant.get(), frameRange.last) + 0.5 * our d_formant -> dx;
 			Melder_clipLeft (our startWindow(), & startTime);
-			Melder_clipRight (& endTime, our endWindow());
-			setSelection (startTime, endTime);
+			Melder_clipRight (& endTime, our endWindow());*/
+			setSelection (ceilings -> intervals.at[index] -> xmin, ceilings -> intervals.at[index] -> xmax);
 			return true;
 		}
 	}
