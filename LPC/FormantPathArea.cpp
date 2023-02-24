@@ -18,7 +18,6 @@
 
 #include "FormantPathArea.h"
 #include "EditorM.h"
-#include "FormantPath_to_IntervalTier.h"
 
 Thing_implement (FormantPathArea, SoundAnalysisArea, 0);
 
@@ -29,25 +28,6 @@ Thing_implement (FormantPathArea, SoundAnalysisArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "FormantPathArea_prefs.h"
 
-static MelderIntegerRange getRangeOfEqualsAroundIndex (INTVEC const& vec, integer index) {
-	Melder_assert (index > 0 && index <= vec.size);
-	MelderIntegerRange range = { index, index };
-	const integer value = vec [index];
-	while (range.first > 1) {
-		if (vec [-- range.first] != value) {
-			++ range.first;
-			break;
-		}
-	}
-	while (range.last < vec.size) {
-		if (vec [++ range.last] != value) {
-			-- range.last;
-			break;
-		}
-	}
-	return range;
-}
-
 /*
 	Fast selection of an interval:
 	If the mouse click was near a ceiling line in the SoundAnalysisArea we select the whole interval
@@ -57,19 +37,13 @@ bool structFormantPathArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x
 	const double fmin = our instancePref_spectrogram_viewFrom ();
 	const double fmax = our instancePref_spectrogram_viewTo ();
 	const double frequencyAtClickPoint = fmin + localY_fraction * (fmax - fmin);
-	integer frameIndex = Sampled_xToNearestIndex (our d_formant.get(), x_world);
-	if (frameIndex > 0 && frameIndex <= our d_formant -> nx) {
-		const integer ceilingIndex = our formantPath() -> path [frameIndex];
-		const double ceilingFrequency = our formantPath() -> ceilings [ceilingIndex];
+	integer candidate;
+	double tmin, tmax;
+	FormantPath_getCandidateAtTime (our formantPath(), x_world, & tmin, & tmax, & candidate);
+	if (candidate > 0 ) {
+		const double ceilingFrequency = our formantPath() -> ceilings [candidate];
 		if (fabs ((ceilingFrequency - frequencyAtClickPoint) / (fmax - fmin)) < 0.02) {
-			const integer index = IntervalTier_timeToLowIndex (ceilings.get(), x_world);
-			
-			/*MelderIntegerRange frameRange = getRangeOfEqualsAroundIndex (our formantPath() -> path.get(), frameIndex);
-			double startTime = Sampled_indexToX (our d_formant.get(), frameRange.first) - 0.5 * our d_formant -> dx;
-			double endTime = Sampled_indexToX (our d_formant.get(), frameRange.last) + 0.5 * our d_formant -> dx;
-			Melder_clipLeft (our startWindow(), & startTime);
-			Melder_clipRight (& endTime, our endWindow());*/
-			setSelection (ceilings -> intervals.at[index] -> xmin, ceilings -> intervals.at[index] -> xmax);
+			setSelection (tmin, tmax);
 			return true;
 		}
 	}
@@ -77,12 +51,16 @@ bool structFormantPathArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x
 }
 
 static void FormantPathArea_drawCeilings (FormantPathArea me, double tmin, double tmax, double fmin, double fmax) {
-	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (my formantPath(), tmin, tmax);
+	TextGrid path = my formantPath() -> path.get();
+	IntervalTier intervalTier = static_cast<IntervalTier> (path -> tiers ->at [1]);
+	const integer intmin = IntervalTier_timeToLowIndex (intervalTier, tmin);
+	const integer intmax = IntervalTier_timeToHighIndex (intervalTier, tmax);
+	Melder_assert (intmin > 0 && intmax > 0);
 	Graphics_setWindow (my graphics(), tmin, tmax, fmin, fmax);
 	Graphics_setTextAlignment (my graphics(), kGraphics_horizontalAlignment::CENTRE, Graphics_BASELINE);
 	Graphics_setColour (my graphics(), Melder_RED);
 	Graphics_setLineWidth (my graphics(), 3.0);
-	for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
+	for (integer interval = intmin; interval <= intmax; interval ++) {
 		TextInterval textInterval = intervalTier -> intervals.at [interval];
 		conststring32 label = textInterval -> text.get();
 		if (label) {

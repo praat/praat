@@ -1,6 +1,6 @@
 /* FormantPath.cpp
  *
- * Copyright (C) 2020-2022 David Weenink
+ * Copyright (C) 2020-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "FormantPath.h"
-#include "FormantPath_to_IntervalTier.h"
 #include "FormantModeler.h"
 #include "Formant_extensions.h"
 #include "Graphics_extensions.h"
@@ -27,6 +26,7 @@
 #include "Sound_and_LPC.h"
 #include "Sound.h"
 #include "Sound_and_LPC_robust.h"
+#include "TextGrid_extensions.h"
 
 #include "oo_DESTROY.h"
 #include "FormantPath_def.h"
@@ -47,6 +47,64 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantPath_def.h"
 
+/*
+void structFormantPath :: v1_readText (MelderReadText text, int formatVersion) {
+	structSampled :: v1_readText (text, formatVersion);
+	our formantCandidates.v1_readText (text, formatVersion);
+	const integer _size = texgeti32 (text);
+	our ceilings = vector_readText_r64 (_size, text, "ceilings");
+	if (formatVersion < 1) {
+		const integer pathSize = texgeti32 (text);
+		autoINTVEC oldPath = vector_readText_i32 (pathSize, text, "old path");
+		our path = FormantPath_to_TextGrid_version0 (this, oldPath.get());
+	} else
+		our path -> v1_readText (text, formatVersion);
+}
+void structFormantPath :: v1_readBinary (FILE * file, int formatVersion ) {
+	structSampled :: v1_readBinary (file, formatVersion);
+	our formantCandidates.v1_readBinary (file, formatVersion);
+	const integer _size = bingetinteger32BE (file);
+	our ceilings = vector_readBinary_r64 (_size, file);
+	if (formatVersion < 1) {
+		const integer pathSize = bingetinteger32BE (file);
+		autoINTVEC oldPath = vector_readBinary_integer32BE  (pathSize, file);
+	} else
+		our path -> v1_readBinary (file, formatVersion);	
+}
+*/
+void FormantPath_getCandidateAtTime (FormantPath me, double time, double *out_tmin, double *out_tmax, integer *out_candidate) {
+	IntervalTier intervalTier = static_cast <IntervalTier> (my path -> tiers -> at [1]);
+	const integer index = IntervalTier_timeToIndex (intervalTier, time);	
+	TextInterval textInterval = ( index > 0 ? intervalTier -> intervals.at [index] : nullptr );
+	if (out_tmin)
+		*out_tmin = ( index > 0 ? textInterval -> xmin : undefined );
+	if (out_tmax)
+		*out_tmax = ( index > 0 ? textInterval -> xmax : undefined );
+	if (out_candidate)
+		*out_candidate = ( index > 0 ? (textInterval -> text.get() ? Melder_atoi (textInterval -> text.get()) : 0) : 0 );
+}
+
+integer FormantPath_getCandidateInFrame (FormantPath me, integer iframe) {
+	Melder_assert (iframe > 0 && iframe <= my nx);
+	const double time = Sampled_indexToX (me, iframe);
+	integer candidate;
+	FormantPath_getCandidateAtTime (me, time, nullptr, nullptr, & candidate);
+	return candidate;
+}
+
+integer FormantPath_getUniqueCandidateInInterval (FormantPath me, double tmin, double tmax) {
+	Melder_assert (tmin <= tmax);
+	IntervalTier intervalTier = static_cast <IntervalTier> (my path -> tiers -> at [1]);
+	const integer index = IntervalTier_timeToLowIndex (intervalTier, tmin);
+	integer candidate = 0;
+	if (index > 0) {
+		TextInterval textInterval = intervalTier -> intervals.at [index];
+		if (tmin >= textInterval -> xmin && tmax <= textInterval -> xmax)
+			candidate = (textInterval -> text.get() ? Melder_atoi (textInterval -> text.get()) : 0);
+	}
+	return candidate;
+}
+
 void structFormantPath :: v1_info () {
 	structDaata :: v1_info ();
 	MelderInfo_writeLine (U"Number of Formant candidates: ", formantCandidates . size);
@@ -55,7 +113,10 @@ void structFormantPath :: v1_info () {
 }
 
 double structFormantPath :: v_getValueAtSample (integer iframe, integer which, int units) const {
-	const Formant formant = reinterpret_cast<Formant> (our formantCandidates.at [our path [iframe]]);
+	const double time = x1 + (iframe - 1) * dx;
+	IntervalTier intervalTier = static_cast <IntervalTier> (path -> tiers -> at [1]);
+	const integer index = IntervalTier_timeToIndex (intervalTier, time);
+	const Formant formant = reinterpret_cast<Formant> (our formantCandidates.at [index]);
 	return formant -> v_getValueAtSample (iframe, which, units);
 }
 
@@ -63,13 +124,43 @@ conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*
 	return U"Frequency (Hz)";
 };
 
-Thing_implement (FormantPath, Sampled, 0);
+Thing_implement (FormantPath, Sampled, 1); // 0: INTVEC path 1: TextGrid path
+
+
+MelderIntegerRange FormantPath_getPathTierIndicesRange (FormantPath me, double tmin, double tmax) {
+	Melder_assert (tmin < tmax);
+	MelderIntegerRange range = {1, 1};
+	IntervalTier intervalTier = static_cast <IntervalTier> (my path -> tiers -> at [1]);
+	range.first = IntervalTier_timeToLowIndex (intervalTier, tmin);
+	range.last = IntervalTier_timeToHighIndex (intervalTier, tmax);
+	return range;
+}
+
+autoTextGrid FormantPath_to_TextGrid_version0 (FormantPath me, INTVEC const& path) {
+	autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"path", U"");
+	IntervalTier tier = static_cast <IntervalTier> (thy tiers -> at [1]);
+	integer previousPathIndex = path [1];
+	TextInterval_setText (tier ->intervals.at [1], Melder_integer (previousPathIndex));
+	TextGrid_setIntervalText (thee.get(), 1, 1, Melder_integer (previousPathIndex));
+	for (integer ip = 2; ip <= path.size; ip ++) {
+		if (path [ip] != previousPathIndex) {
+			const double t = Sampled_indexToX (me, ip) - 0.5 * my dx;
+			const integer currentIndex = IntervalTier_timeToLowIndex (tier, t);
+			TextInterval currentInterval = tier -> intervals . at [currentIndex];
+			autoTextInterval newInterval = TextInterval_create (t, my xmax, Melder_integer (path [ip]));
+			currentInterval -> xmax = t;
+			tier -> intervals.addItem_move (newInterval.move());
+			previousPathIndex = path [ip];
+		}
+	}
+	return thee;
+}
 
 autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCandidates) {
 	autoFormantPath me = Thing_new (FormantPath);
 	Sampled_init (me.get (), xmin, xmax, nx, dx, x1);
 	my ceilings = zero_VEC (numberOfCandidates);
-	my path = zero_INTVEC (nx);
+	my path = TextGrid_create (xmin, xmax, U"path", U"");
 	return me;
 }
 
@@ -77,7 +168,7 @@ void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyCha
 	double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf)
 {
 	autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf, nullptr);
-	my path = path.move();
+	my path = FormantPath_to_TextGrid_version0 (me, path.get());
 }
 
 autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta) {
@@ -208,8 +299,9 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 autoFormant FormantPath_extractFormant (FormantPath me) {
 	Formant formant = my formantCandidates. at [1];
 	autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, formant -> maxnFormants);
-	for (integer iframe = 1; iframe <= my path.size; iframe ++) {
-		Formant source = reinterpret_cast <Formant> (my formantCandidates. at [my path [iframe]]);
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
+		const integer candidate = FormantPath_getCandidateInFrame (me, iframe);
+		Formant source = reinterpret_cast <Formant> (my formantCandidates. at [candidate]);
 		Formant_Frame targetFrame = & thy frames [iframe];
 		Formant_Frame sourceFrame = & source -> frames [iframe];
 		sourceFrame -> copy (targetFrame);
@@ -282,9 +374,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			Maintain invariants
 		*/
 		Melder_assert (thy formantCandidates.size == numberOfCandidates);
-		thy path = raw_INTVEC (thy nx);
-		for (integer i = 1; i <= thy path.size; i++)
-			thy path [i] = numberOfStepsToACeiling + 1;
+		TextGrid_setIntervalText (thy path.get(), 1, 1, Melder_integer (numberOfStepsToACeiling + 1));
 		if (out_sourcesMultiChannel)
 			*out_sourcesMultiChannel = multiChannelSound.move();
 		return thee;
@@ -427,10 +517,7 @@ void FormantPath_setPath (FormantPath me, double tmin, double tmax, integer sele
 		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	Function_intersectRangeWithDomain (me, & tmin, & tmax);
-	integer ifmin, ifmax;
-	if (Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax) > 0)
-		for (integer iframe = ifmin; iframe <= ifmax; iframe ++)
-			my path [iframe] = selectedCandidate;
+	TextGrid_addInterval_force (my path.get(), tmin, tmax, 1, Melder_integer (selectedCandidate));
 }
 
 void FormantPath_setOptimalPath (FormantPath me, double tmin, double tmax, constINTVEC const& parameters, double powerf) {
@@ -582,7 +669,8 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
-	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (me, tmin, tmax);
+	MelderIntegerRange intervalRange = FormantPath_getPathTierIndicesRange (me, tmin, tmax);
+	IntervalTier intervalTier = static_cast<IntervalTier> (my path -> tiers-> at[1]);
 	integer ifmin, ifmax;
 	const integer numberOfSamples = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 	
@@ -604,13 +692,16 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 			Graphics_setFontSize (g, newFontSize);
 		}
 		if (garnish && markCandidatesWithinPath) {
-			for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
+			for (integer interval = intervalRange.first; interval <= intervalRange.last; interval ++) {
 				TextInterval textInterval = intervalTier -> intervals.at [interval];
 				const integer icandidate = ( textInterval -> text.get() ? Melder_atoi (textInterval -> text.get()) : 0);
 				if (icandidate == candidate) {
 					MelderColour colourCopy = Graphics_inqColour (g);
 					Graphics_setColour (g, selectedCeilingsColour);
-					Graphics_fillRectangle (g, textInterval -> xmin, textInterval -> xmax, 0, fmax);
+					double x1 = textInterval -> xmin, x2 = textInterval -> xmax;
+					Melder_clipLeft (tmin, & x1);
+					Melder_clipRight (& x2, tmax);
+					Graphics_fillRectangle (g, x1, x2, 0, fmax);
 					Graphics_setColour (g, colourCopy);
 				}
 			}
@@ -719,6 +810,6 @@ void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tma
 		markCandidatesWithinPath, showStress, powerf, showEstimatedModels, garnish
 	);
 	Graphics_unsetInner (g);
-}	
+}
 
 /* End of file FormantPath.cpp */

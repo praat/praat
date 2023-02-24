@@ -2,7 +2,7 @@
 #define _FormantPath_h_
 /* FormantPath.h
  *
- * Copyright (C) 2020-2022 David Weenink
+ * Copyright (C) 2020-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "LPC.h"
 #include "Sound.h"
 #include "Table.h"
+#include "TextGrid.h"
 
 #include "FormantPath_def.h"
 
@@ -103,5 +104,16 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
 	double xCursor, double yCursor, MelderColour selected, constINTVEC const& parameters,
 	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish);
+
+void FormantPath_getCandidateAtTime (FormantPath me, double time, double *out_tmin, double *out_tmax, integer *out_candidate);
+
+integer FormantPath_getCandidateInFrame (FormantPath me, integer iframe);
+
+integer FormantPath_getUniqueCandidateInInterval (FormantPath me, double tmin, double tmax);
+
+/*
+	Only needed to convert from version 0 
+*/
+autoTextGrid FormantPath_to_TextGrid_version0 (FormantPath me, INTVEC const& path);
 
 #endif /* _FormantPath_h_ */
