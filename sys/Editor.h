@@ -25,7 +25,7 @@
 #include "Graphics.h"
 
 Thing_declare (Editor);
-Thing_declare (ScriptEditorList);
+Thing_declare (ScriptEditor);
 
 Thing_define (EditorMenu, Thing) {
 	Editor d_editor;
@@ -57,7 +57,7 @@ Thing_define (Editor, DataGui) {
 	GuiWindow windowForm;
 	GuiMenuItem undoButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
-	autoScriptEditorList scriptEditors;
+	OrderedOf<structScriptEditor> scriptEditors;
 	autoDaata previousData;   // the data that can be displayed and edited
 	char32 undoText [100];
 	Editor_DataChangedCallback d_dataChangedCallback;
