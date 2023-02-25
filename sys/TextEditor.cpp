@@ -1,6 +1,6 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2022 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2023 Paul Boersma, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TextEditor.h"
+#include "ScriptEditor.h"
 #include "machine.h"
 #include "../kar/longchar.h"
 #include "EditorM.h"

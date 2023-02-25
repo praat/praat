@@ -2,7 +2,7 @@
 #define _VowelEditor_h_
 /* VowelEditor.h
  *
- * Copyright (C) 2008-2017 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2008-2017 David Weenink, 2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "RealTier.h"
 #include "Table.h"
-#include "Editor.h"
+#include "ScriptEditor.h"
 
 Thing_define (TrajectoryPoint, AnyPoint) {
 	double f1, f2;

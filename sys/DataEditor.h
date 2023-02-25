@@ -2,7 +2,7 @@
 #define _DataEditor_h_
 /* DataEditor.h
  *
- * Copyright (C) 1995-2012,2014-2018,2022 Paul Boersma
+ * Copyright (C) 1995-2012,2014-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Editor.h"
+#include "ScriptEditor.h"
 
 Thing_declare (DataSubEditor);
 Thing_declare (VectorEditor);
