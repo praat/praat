@@ -73,7 +73,7 @@ enum class kInterpreter_ReturnType {
 conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType returnType, conststring32 command);
 
 Thing_define (Interpreter, Thing) {
-	Editor optionalEditor;
+	Editor optionalInterpreterOwningEditor, optionalDynamicEditorEnvironment;
 	autostring32 environmentName;
 	ClassInfo editorClass;
 	int numberOfParameters, numberOfLabels, callDepth;
@@ -99,7 +99,7 @@ Thing_define (Interpreter, Thing) {
 };
 
 autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo editorClass);
-autoInterpreter Interpreter_createFromEnvironment (Editor optionalEditor);
+autoInterpreter Interpreter_createFromEnvironment (Editor optionalInterpreterOwningEditor);
 
 void Melder_includeIncludeFiles (autostring32 *text);
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text);

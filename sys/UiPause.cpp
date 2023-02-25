@@ -42,10 +42,10 @@ static void thePauseFormCancelCallback (UiForm /* dia */, void * /* closure */) 
 		thePauseForm_clicked = -1;   // STOP button
 	}
 }
-void UiPause_begin (GuiWindow topShell, Editor optionalEditor, conststring32 title, Interpreter interpreter) {
+void UiPause_begin (GuiWindow topShell, Editor optionalPauseWindowOwningEditor, conststring32 title, Interpreter interpreter) {
 	if (theEventLoopDepth > 0)
 		Melder_throw (U"Praat cannot have more than one pause form at a time.");
-	thePauseForm = UiForm_create (topShell, optionalEditor, Melder_cat (U"Pause: ", title),
+	thePauseForm = UiForm_create (topShell, optionalPauseWindowOwningEditor, Melder_cat (U"Pause: ", title),
 		thePauseFormOkCallback, interpreter,   // pass interpreter as closure!
 		nullptr, nullptr);
 }

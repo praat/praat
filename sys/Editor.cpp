@@ -369,8 +369,10 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 
 static void menu_cb_close (Editor me, EDITOR_ARGS) {
 	my v_goAway ();
-	if (optionalInterpreter && optionalInterpreter -> optionalEditor == me)
-		optionalInterpreter -> optionalEditor = nullptr;
+	if (optionalInterpreter && optionalInterpreter -> optionalInterpreterOwningEditor == me) {
+		optionalInterpreter -> optionalInterpreterOwningEditor = nullptr;   // undangle  TODO: remove interpreter wholesale?
+		optionalInterpreter -> optionalDynamicEditorEnvironment = nullptr;   // undangle
+	}
 }
 
 static void menu_cb_undo (Editor me, EDITOR_ARGS) {

@@ -112,11 +112,11 @@ autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo edi
 	}
 }
 
-autoInterpreter Interpreter_createFromEnvironment (Editor optionalEditor) {
-	if (! optionalEditor)
+autoInterpreter Interpreter_createFromEnvironment (Editor optionalInterpreterOwningEditor) {
+	if (! optionalInterpreterOwningEditor)
 		return Interpreter_create (nullptr, nullptr);
-	autoInterpreter interpreter = Interpreter_create (optionalEditor -> name.get(), optionalEditor -> classInfo);
-	interpreter -> optionalEditor = optionalEditor;
+	autoInterpreter interpreter = Interpreter_create (optionalInterpreterOwningEditor -> name.get(), optionalInterpreterOwningEditor -> classInfo);
+	interpreter -> optionalInterpreterOwningEditor = optionalInterpreterOwningEditor;
 	return interpreter;   // BUG: collapse
 }
 
@@ -2065,12 +2065,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		/*
 			Execute commands.
 		*/
+		my optionalDynamicEditorEnvironment = my optionalInterpreterOwningEditor;
 		trace (U"going to handle ", numberOfLines, U" lines");
 		//for (lineNumber = 1; lineNumber <= numberOfLines; lineNumber ++) {
 			//trace (U"line ", lineNumber, U": ", lines [lineNumber]);
 		//}
 		for (lineNumber = 1; lineNumber <= numberOfLines; lineNumber ++) {
-			if (my stopped) break;
+			if (my stopped)
+				break;
 			//trace (U"now at line ", lineNumber, U": ", lines [lineNumber]);
 			//for (int lineNumber2 = 1; lineNumber2 <= numberOfLines; lineNumber2 ++) {
 				//trace (U"  line ", lineNumber2, U": ", lines [lineNumber2]);
