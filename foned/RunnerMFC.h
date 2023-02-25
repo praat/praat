@@ -2,7 +2,7 @@
 #define _RunnerMFC_h_
 /* RunnerMFC.h
  *
- * Copyright (C) 2001-2011,2012,2015-2018,2022 Paul Boersma
+ * Copyright (C) 2001-2011,2012,2015-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Editor.h"
+#include "ScriptEditor.h"
 #include "ExperimentMFC.h"
 
 Thing_define (RunnerMFC, Editor) {

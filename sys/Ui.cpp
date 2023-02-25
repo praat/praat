@@ -21,7 +21,7 @@
 #include "GuiP.h"
 #include "Collection.h"
 #include "UiP.h"
-#include "Editor.h"
+#include "ScriptEditor.h"
 #include "Graphics.h"   // colours
 #include "NUM2.h"   // get elements of ranges
 

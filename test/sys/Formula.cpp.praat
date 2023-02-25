@@ -251,14 +251,14 @@ pos = min_e ({ undefined })
 asserterror min_e: cannot determine the minimum of an empty vector.
 pos = min_e (zero# (0))
 
-assert min_ignoreUndefined ({ 5, 6, 1, 7 }) = 1
-assert min_ignoreUndefined ({ undefined, 6, 1, 7 }) = 1
-assert min_ignoreUndefined ({ 5, undefined, 1, 7 }) = 1
-assert min_ignoreUndefined ({ 5, 6, undefined, 7 }) = 5
-assert min_ignoreUndefined ({ 5, 6, 1, undefined }) = 1
-assert min_ignoreUndefined ({ undefined, undefined }) = undefined
-assert min_ignoreUndefined ({ undefined }) = undefined
-assert min_ignoreUndefined (zero# (0)) = undefined
+assert min_removeUndefined ({ 5, 6, 1, 7 }) = 1
+assert min_removeUndefined ({ undefined, 6, 1, 7 }) = 1
+assert min_removeUndefined ({ 5, undefined, 1, 7 }) = 1
+assert min_removeUndefined ({ 5, 6, undefined, 7 }) = 5
+assert min_removeUndefined ({ 5, 6, 1, undefined }) = 1
+assert min_removeUndefined ({ undefined, undefined }) = undefined
+assert min_removeUndefined ({ undefined }) = undefined
+assert min_removeUndefined (zero# (0)) = undefined
 
 #
 # A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence

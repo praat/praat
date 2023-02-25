@@ -398,7 +398,7 @@ double NUMmin_u (constVECVU const& vec) noexcept {
 }
 
 template <bool canError>
-double NUMmin_ignoreUndefined (constVECVU const& vec) {
+double NUMmin_removeUndefined (constVECVU const& vec) {
 	double minimum = + std::numeric_limits<double>::infinity();
 	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
@@ -419,11 +419,11 @@ double NUMmin_ignoreUndefined (constVECVU const& vec) {
 			return undefined;
 	return minimum;
 }
-double NUMmin_ignoreUndefined_e (constVECVU const& vec) {
-	return NUMmin_ignoreUndefined <true> (vec);
+double NUMmin_removeUndefined_e (constVECVU const& vec) {
+	return NUMmin_removeUndefined <true> (vec);
 }
-double NUMmin_ignoreUndefined_u (constVECVU const& vec) noexcept {
-	return NUMmin_ignoreUndefined <false> (vec);
+double NUMmin_removeUndefined_u (constVECVU const& vec) noexcept {
+	return NUMmin_removeUndefined <false> (vec);
 }
 
 template <bool canError>
@@ -478,7 +478,7 @@ double NUMmin_u (constMATVU const& mat) noexcept {
 }
 
 template <bool canError>
-double NUMmin_ignoreUndefined (constMATVU const& mat) {
+double NUMmin_removeUndefined (constMATVU const& mat) {
 	double minimum = + std::numeric_limits<double>::infinity();
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {
@@ -490,18 +490,18 @@ double NUMmin_ignoreUndefined (constMATVU const& mat) {
 	if (isundef (minimum))   // including the original infinity
 		if constexpr (canError)
 			if (NUMisEmpty (mat))
-				Melder_throw (U"min_ignoreUndefined_e: cannot determine the minimum of an empty matrix.");
+				Melder_throw (U"min_removeUndefined_e: cannot determine the minimum of an empty matrix.");
 			else
-				Melder_throw (U"min_ignoreUndefined_e: cannot determine the minimum of a matrix with only undefined cells.");
+				Melder_throw (U"min_removeUndefined_e: cannot determine the minimum of a matrix with only undefined cells.");
 		else
 			return undefined;
 	return minimum;
 }
-double NUMmin_ignoreUndefined_e (constMATVU const& mat) {
-	return NUMmin_ignoreUndefined <true> (mat);
+double NUMmin_removeUndefined_e (constMATVU const& mat) {
+	return NUMmin_removeUndefined <true> (mat);
 }
-double NUMmin_ignoreUndefined_u (constMATVU const& mat) noexcept {
-	return NUMmin_ignoreUndefined <false> (mat);
+double NUMmin_removeUndefined_u (constMATVU const& mat) noexcept {
+	return NUMmin_removeUndefined <false> (mat);
 }
 
 template <bool canError>
@@ -532,7 +532,7 @@ double NUMmax_u (constVECVU const& vec) noexcept {
 }
 
 template <bool canError>
-double NUMmax_ignoreUndefined (constVECVU const& vec) {
+double NUMmax_removeUndefined (constVECVU const& vec) {
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
@@ -542,18 +542,18 @@ double NUMmax_ignoreUndefined (constVECVU const& vec) {
 	if (isundef (maximum))   // including the original -infinity
 		if constexpr (canError)
 			if (NUMisEmpty (vec))
-				Melder_throw (U"max_ignoreUndefined_e: cannot determine the maximum of an empty vector.");
+				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of an empty vector.");
 			else
-				Melder_throw (U"max_ignoreUndefined_e: cannot determine the maximum of a vector with only undefined elements.");
+				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of a vector with only undefined elements.");
 		else
 			return undefined;
 	return maximum;
 }
-double NUMmax_ignoreUndefined_e (constVECVU const& vec) {
-	return NUMmax_ignoreUndefined <true> (vec);
+double NUMmax_removeUndefined_e (constVECVU const& vec) {
+	return NUMmax_removeUndefined <true> (vec);
 }
-double NUMmax_ignoreUndefined_u (constVECVU const& vec) noexcept {
-	return NUMmax_ignoreUndefined <false> (vec);
+double NUMmax_removeUndefined_u (constVECVU const& vec) noexcept {
+	return NUMmax_removeUndefined <false> (vec);
 }
 
 template <bool canError>
@@ -608,7 +608,7 @@ double NUMmax_u (constMATVU const& mat) noexcept {   // propagate NaNs (includin
 }
 
 template <bool canError>
-double NUMmax_ignoreUndefined (constMATVU const& mat) {
+double NUMmax_removeUndefined (constMATVU const& mat) {
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {
@@ -620,18 +620,18 @@ double NUMmax_ignoreUndefined (constMATVU const& mat) {
 	if (isundef (maximum))   // including the original -infinity
 		if constexpr (canError)
 			if (NUMisEmpty (mat))
-				Melder_throw (U"max_ignoreUndefined_e: cannot determine the maximum of an empty matrix.");
+				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of an empty matrix.");
 			else
-				Melder_throw (U"max_ignoreUndefined_e: cannot determine the maximum of a matrix with only undefined cells.");
+				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of a matrix with only undefined cells.");
 		else
 			return undefined;
 	return maximum;
 }
-double NUMmax_ignoreUndefined_e (constMATVU const& mat) {
-	return NUMmax_ignoreUndefined <true> (mat);
+double NUMmax_removeUndefined_e (constMATVU const& mat) {
+	return NUMmax_removeUndefined <true> (mat);
 }
-double NUMmax_ignoreUndefined_u (constMATVU const& mat) noexcept {
-	return NUMmax_ignoreUndefined <false> (mat);
+double NUMmax_removeUndefined_u (constMATVU const& mat) noexcept {
+	return NUMmax_removeUndefined <false> (mat);
 }
 
 template <bool canError>

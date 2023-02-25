@@ -19,7 +19,7 @@
  */
 
 #include "Command.h"
-#include "Editor.h"
+#include "ScriptEditor.h"
 #include "Categories.h"
 
 Thing_define (CategoriesEditor, Editor) {

@@ -1,1 +1,1 @@
-runScript: "~/Desktop/play.praat", "src/test/fon/examples/example.wav"
+runScript: "../manually/play.praat", "../fon/examples/example.wav"
