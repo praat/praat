@@ -1,6 +1,6 @@
 /* Thing.cpp
  *
- * Copyright (C) 1992-2012,2014-2022 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ ClassInfo Thing_classFromClassName (conststring32 klas, int *out_formatVersion) 
 		}
 	}
 
-	Melder_throw (U"Class \"", buffer, U"\" not recognized.");
+	Melder_throw (U"Class “", buffer, U"” not recognized.");
 }
 
 autoThing Thing_newFromClassName (conststring32 className, int *out_formatVersion) {
@@ -213,7 +213,7 @@ conststring32 Thing_messageName (constThing me) {
 	if (++ ibuffer == 19)
 		ibuffer = 0;
 	if (my name)
-		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U" \"", my name.get(), U"\"");
+		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U" “", my name.get(), U"”");
 	else
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className);
 	return buffers [ibuffer]. string;
@@ -226,7 +226,7 @@ conststring32 Thing_messageNameAndAddress (Thing me) {
 		ibuffer = 0;
 	if (my name)
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U"-",
-			Melder_pointer (me), U"-\"", my name.get(), U"\"");
+			Melder_pointer (me), U"-“", my name.get(), U"”");
 	else
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U"-",
 			Melder_pointer (me));
