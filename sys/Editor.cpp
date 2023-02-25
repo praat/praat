@@ -294,7 +294,7 @@ void structEditor :: v9_destroy () noexcept {
 		ScriptEditor scriptEditor = our scriptEditors.at [i];
 		if (scriptEditor -> dirty) {
 			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
-			ScriptEditor_setOwningEditorName (scriptEditor, nullptr);
+			Thing_setName (scriptEditor, nullptr);
 			our scriptEditors.at [i] = nullptr;   // prevent automatic destruction
 		}
 	}
@@ -342,7 +342,7 @@ void structEditor :: v_nameChanged () {
 	if (our name) {
 		GuiShell_setTitle (our windowForm, our name.get());
 		for (integer i = 1; i <= our scriptEditors.size; i ++)
-			ScriptEditor_setOwningEditorName (our scriptEditors.at [i], our name.get());
+			Thing_setName (our scriptEditors.at [i], nullptr);
 	}
 }
 

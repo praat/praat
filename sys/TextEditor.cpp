@@ -106,7 +106,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 	*/
 	my dirty = false;
 	MelderFile_copy (file, & my file);   // not until the file has been safely read
-	Thing_setName (me, Melder_fileToPath (file));
+	Thing_setName (me, nullptr);
 }
 
 static void newDocument (TextEditor me) {
@@ -114,7 +114,7 @@ static void newDocument (TextEditor me) {
 	my dirty = false;
 	MelderFile_setToNull (& my file);
 	if (my v_fileBased ())
-		Thing_setName (me, U"");
+		Thing_setName (me, nullptr);
 }
 
 static void saveDocument (TextEditor me, MelderFile file) {
@@ -123,7 +123,7 @@ static void saveDocument (TextEditor me, MelderFile file) {
 	my dirty = false;
 	MelderFile_copy (file, & my file);   // not until the file has been safely written
 	if (my v_fileBased ())
-		Thing_setName (me, Melder_fileToPath (file));
+		Thing_setName (me, nullptr);
 }
 
 static void closeDocument (TextEditor me) {
@@ -875,7 +875,8 @@ void TextEditor_init (TextEditor me, conststring32 initialText) {
 	if (initialText) {
 		GuiText_setString (my textWidget, initialText);
 		my dirty = false;   // was set to true in valueChanged callback
-		Thing_setName (me, U"");
+		if (my v_fileBased ())
+			Thing_setName (me, nullptr);
 	}
 	theReferencesToAllOpenTextEditors. addItem_ref (me);
 }

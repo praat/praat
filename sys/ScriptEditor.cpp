@@ -45,8 +45,8 @@ void structScriptEditor :: v_nameChanged () {
 	static MelderString buffer;
 	MelderString_copy (& buffer, MelderFile_isNull (& our file) ? U"untitled script" : U"Script");
 	if (our wasCreatedInAnEditor())
-		if (our optionalOwningEditorName)
-			MelderString_append (& buffer, U" [editor “", our optionalOwningEditorName.get(), U"”]");
+		if (our optionalReferenceToOwningEditor)
+			MelderString_append (& buffer, U" [editor “", our optionalReferenceToOwningEditor -> name.get(), U"”]");
 		else
 			MelderString_append (& buffer, U" [closed ", our optionalOwningEditorClassName.get(), U"]");
 	if (! MelderFile_isNull (& our file))
@@ -321,7 +321,6 @@ void structScriptEditor :: v_createMenuItems_help (EditorMenu menu) {
 void ScriptEditor_init (ScriptEditor me, Editor optionalOwningEditor, conststring32 initialText) {
 	if (optionalOwningEditor) {
 		my optionalOwningEditorClassName = Melder_dup (Thing_className (optionalOwningEditor));
-		my optionalOwningEditorName = Melder_dup (optionalOwningEditor -> name.get());
 		my optionalReferenceToOwningEditor = optionalOwningEditor;
 	}
 	TextEditor_init (me, initialText);
@@ -355,16 +354,11 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalOwningE
 		autostring32 text = MelderFile_readText (& script -> file);
 		autoScriptEditor me = ScriptEditor_createFromText (optionalOwningEditor, text.get());
 		MelderFile_copy (& script -> file, & my file);
-		Thing_setName (me.get(), Melder_fileToPath (& script -> file));
+		Thing_setName (me.get(), nullptr);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");
 	}
-}
-
-void ScriptEditor_setOwningEditorName (ScriptEditor me, conststring32 newOwningEditorName) {
-	my optionalOwningEditorName = Melder_dup (newOwningEditorName);
-	Thing_setName (me, Melder_fileToPath (& my file));
 }
 
 void ScriptEditor_debug_printAllOpenScriptEditors () {
