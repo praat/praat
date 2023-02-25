@@ -112,6 +112,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 static void newDocument (TextEditor me) {
 	GuiText_setString (my textWidget, U"");   // implicitly sets my dirty to `true`
 	my dirty = false;
+	MelderFile_setToNull (& my file);
 	if (my v_fileBased ())
 		Thing_setName (me, U"");
 }
