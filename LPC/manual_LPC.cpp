@@ -158,12 +158,12 @@ NORMAL (U"HTK parameter files do not contain timing information and therefore we
 	"The value in these files for the samplePeriod is 10000 which is a factor 10 off from the correct value of 1000 in units of 100 ns.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath", U"djmw", 20210813)
+MAN_BEGIN (U"FormantPath", U"djmw", 20230225)
 INTRO (U"One of the @@types of objects@ in Praat. A ##FormantPath# object maintains a path through a collection of "
 	"Formant objects, each the result of a formant frequency analysis of the same sound but with a different setting "
 	"of the analysis parameters.")
-NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that indicates which of these formants is preferred "
-	"in each time frame of its time domain. ")
+NORMAL (U"A FormantPath combines a collection of @@Formant@s with a TextGrid that indicates which of these formants is preferred "
+	"in a certain time interval. ")
 NORMAL (U"As an example we consider a FormantPath that has nine Formant objects in its collection. "
 	"Suppose these formant objects were the result of nine @@Sound: To Formant (burg)...@ analyses of the ##same# sound, "
 	"however, with a difference only in the \"Formant ceiling (Hz)\" parameter setting which was 4093.7, 4303.5, 4524.2, 4756.1, "
@@ -183,13 +183,13 @@ MAN_BEGIN (U"FormantPath: Down to Table (optimal interval)...", U"djmw", 2021081
 INTRO (U"A command that creates a @Table with formant frequency values for the chosen interval of the selected @@FormantPath@. The values in the table are from the segment that has the lowest stress value for the fit of its formant tracks.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath: Down to Table (stresses)...", U"djmw", 20210817)
+MAN_BEGIN (U"FormantPath: Down to Table (stresses)...", U"djmw", 20230235)
 INTRO (U"A command that creates a @Table with stress of fit values for the selected @@FormantPath@.")
-NORMAL (U"The resulting Table has one row for each of the ceilings. The number of columns will depend on the number of "
-	"formant tracks  that are modelled. ")
+NORMAL (U"The resulting Table has one row for each of the ceiling frequencies. The number of columns will depend on the number of "
+	"formant tracks that are modelled. ")
 MAN_END
 
-MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20210813)
+MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20230225)
 INTRO (U"A command that creates a @@FormantPath@ object from each selected @@Sound@ . ")
 ENTRY (U"##Settings")
 NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Window length (s)# and ##Pre-emphasis from (Hz)# "
@@ -205,17 +205,17 @@ TAG (U"##Ceiling step size#")
 DEFINITION (U"defines the increase or decrease in the formant ceiling between two successive analyses as exp(%ceilingStepSize) "
 	"when we step up, or as exp(-%ceilingStepSize) when we step down.")
 TAG (U"##Number of steps up / down")
-DEFINITION (U"determines the number steps we go up as well as the number of steps we go down with respect to the %middle formant ceiling%. "
+DEFINITION (U"determines the number of steps we go up as well as the number of steps we go down with respect to the %middle formant ceiling%. "
 	"The ceiling frequency for the %i^^th^ step down is %middleFormantCeiling\\.cexp (-%i\\.c%ceilingStepSize) and for the %i^^th^ step up "
-	"is %middleFormantCeiling\\.cexp (+%i\\.c%ceilingStepSize). The total number of analyses is always 2\\.c%numberOfStepsUpOrDown+1.")
+	"is %middleFormantCeiling\\.cexp (+%i\\.c%ceilingStepSize). The total number of analyses is always 2\\.c%numberOfStepsUpDown+1.")
 ENTRY (U"Algorithm")
 NORMAL (U"The following algorithm describes what is going on. ")
-CODE (U"ceiling [numberOfStepsUpOrDown + 1] = middleCeiling")
-CODE (U"for istep from 1 to 2 * numberOfStepsUpOrDown + 1")
-CODE (U"    if istep <= numberOfStepsUpOrDown")
-CODE (U"        ceiling [istep] = middleFormantCeiling * exp (-(numberOfStepsUpOrDown - istep + 1) * ceilingStepSize)")
+CODE (U"ceiling [numberOfStepsUpDown + 1] = middleCeiling")
+CODE (U"for istep from 1 to 2 * numberOfStepsUpDown + 1")
+CODE (U"    if istep <= numberOfStepsUpDown")
+CODE (U"        ceiling [istep] = middleFormantCeiling * exp (-(numberOfStepsUpDown - istep + 1) * ceilingStepSize)")
 CODE (U"    elsif istep > numberOfStepsUpOrDown + 1")
-CODE (U"        ceiling [istep] = middleFormantCeiling * exp ((istep - numberOfStepsUpOrDown - 1) * ceilingStepSize)")
+CODE (U"        ceiling [istep] = middleFormantCeiling * exp ((istep - numberOfStepsUpDown - 1) * ceilingStepSize)")
 CODE (U"    selectObject: sound")
 CODE (U"    formant [istep] = To Formant (burg): timeStep, maxNumberOfFormants, ceiling [istep], windowLength, preEmphasis")
 CODE (U"endfor")
@@ -243,11 +243,13 @@ NORMAL (U"When you start to edit a new FormantPath object, the formants in the p
 	"If you click in one of the rectangles in the selection viewer the values of the formant frequencies (and bandwidths) "
 	"in the selected part on the left are replaced by the values present in the rectangle and the fat red line will indicate "
 	"the new ceiling. The colour of the clicked rectangle on the right will also change.")
+NORMAL (U"This also works the other way around: if you click near a red line in the spectrogram the corresponding selection viewer "
+	"will be shown.")
 ENTRY (U"Details")
 NORMAL (U"The stress numbers that are displayed above the rectangles in the selection viewer "
 	"are explained in @@Weenink (2015)@. Basically each number is a combined stress score of the individual formant tracks "
 	"within the rectangle. Each track's stress score quantifies how well the track has been modelled. "
-	"The lower this number is, the better the track is modelled by a polynomial of a certain order. "
+	"The lower this number is, the better the track is modelled by a polynomial of the chosen order. "
 	"The higher the order, the more flexible the curve is and the better it can adapt to the data. "
 	"The higher the order of the polynomial, the more parameters are needed in the model. "
 	"You may change the number of parameters that model each track with the ##Candidate modelling settings...# option in the Candidates menu.")

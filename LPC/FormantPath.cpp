@@ -47,31 +47,6 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantPath_def.h"
 
-/*
-void structFormantPath :: v1_readText (MelderReadText text, int formatVersion) {
-	structSampled :: v1_readText (text, formatVersion);
-	our formantCandidates.v1_readText (text, formatVersion);
-	const integer _size = texgeti32 (text);
-	our ceilings = vector_readText_r64 (_size, text, "ceilings");
-	if (formatVersion < 1) {
-		const integer pathSize = texgeti32 (text);
-		autoINTVEC oldPath = vector_readText_i32 (pathSize, text, "old path");
-		our path = FormantPath_to_TextGrid_version0 (this, oldPath.get());
-	} else
-		our path -> v1_readText (text, formatVersion);
-}
-void structFormantPath :: v1_readBinary (FILE * file, int formatVersion ) {
-	structSampled :: v1_readBinary (file, formatVersion);
-	our formantCandidates.v1_readBinary (file, formatVersion);
-	const integer _size = bingetinteger32BE (file);
-	our ceilings = vector_readBinary_r64 (_size, file);
-	if (formatVersion < 1) {
-		const integer pathSize = bingetinteger32BE (file);
-		autoINTVEC oldPath = vector_readBinary_integer32BE  (pathSize, file);
-	} else
-		our path -> v1_readBinary (file, formatVersion);	
-}
-*/
 void FormantPath_getCandidateAtTime (FormantPath me, double time, double *out_tmin, double *out_tmax, integer *out_candidate) {
 	IntervalTier intervalTier = static_cast <IntervalTier> (my path -> tiers -> at [1]);
 	const integer index = IntervalTier_timeToIndex (intervalTier, time);	
@@ -311,7 +286,7 @@ autoFormant FormantPath_extractFormant (FormantPath me) {
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
 	double middleCeiling, double analysisWidth, double preemphasisFrequency, double ceilingStepSize, 
-	integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
+	integer numberOfStepsUpDown, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
 	integer huber_maximumNumberOfIterations, autoSound *out_sourcesMultiChannel)
 {
 	try {
@@ -320,8 +295,8 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		Melder_require (ceilingStepSize > 0.0,
 			U"The ceiling step size should larger than 0.0.");
 		const double nyquistFrequency = 0.5 / my dx;
-		const integer numberOfCandidates = 2 * numberOfStepsToACeiling + 1;
-		const double maximumCeiling = middleCeiling *  exp (ceilingStepSize * numberOfStepsToACeiling);
+		const integer numberOfCandidates = 2 * numberOfStepsUpDown + 1;
+		const double maximumCeiling = middleCeiling *  exp (ceilingStepSize * numberOfStepsUpDown);
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step size' or the 'number of steps' or both.");
@@ -342,15 +317,15 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		if (out_sourcesMultiChannel)
 			multiChannelSound = Sound_create (numberOfCandidates, midCeiling -> xmin, midCeiling -> xmax, midCeiling -> nx, midCeiling -> dx, midCeiling -> x1);
 		const double formantSafetyMargin = 50.0;
-		thy ceilings [numberOfStepsToACeiling + 1] = middleCeiling;
+		thy ceilings [numberOfStepsUpDown + 1] = middleCeiling;
 		for (integer candidate  = 1; candidate <= numberOfCandidates; candidate ++) {
 			autoFormant formant;
-			if (candidate <= numberOfStepsToACeiling)
-				thy ceilings [candidate] = middleCeiling * exp (-ceilingStepSize * (numberOfStepsToACeiling - candidate + 1));
-			else if (candidate > numberOfStepsToACeiling + 1)
-				thy ceilings [candidate] = middleCeiling * exp ( ceilingStepSize * (candidate - numberOfStepsToACeiling - 1));
+			if (candidate <= numberOfStepsUpDown)
+				thy ceilings [candidate] = middleCeiling * exp (-ceilingStepSize * (numberOfStepsUpDown - candidate + 1));
+			else if (candidate > numberOfStepsUpDown + 1)
+				thy ceilings [candidate] = middleCeiling * exp ( ceilingStepSize * (candidate - numberOfStepsUpDown - 1));
 			autoSound resampled;
-			if (candidate != numberOfStepsToACeiling + 1)
+			if (candidate != numberOfStepsUpDown + 1)
 				resampled = Sound_resample (me, 2.0 * thy ceilings [candidate], 50);
 			else 
 				resampled = midCeiling.move();
@@ -374,7 +349,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			Maintain invariants
 		*/
 		Melder_assert (thy formantCandidates.size == numberOfCandidates);
-		TextGrid_setIntervalText (thy path.get(), 1, 1, Melder_integer (numberOfStepsToACeiling + 1));
+		TextGrid_setIntervalText (thy path.get(), 1, 1, Melder_integer (numberOfStepsUpDown + 1));
 		if (out_sourcesMultiChannel)
 			*out_sourcesMultiChannel = multiChannelSound.move();
 		return thee;
@@ -517,7 +492,8 @@ void FormantPath_setPath (FormantPath me, double tmin, double tmax, integer sele
 		U"The candidate number should be between 1 and ", my formantCandidates. size, U".");
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	Function_intersectRangeWithDomain (me, & tmin, & tmax);
-	TextGrid_addInterval_force (my path.get(), tmin, tmax, 1, Melder_integer (selectedCandidate));
+	const double ceilingFrequency = my ceilings [selectedCandidate];
+	TextGrid_addInterval_force (my path.get(), tmin, tmax, 1, Melder_double (ceilingFrequency));
 }
 
 void FormantPath_setOptimalPath (FormantPath me, double tmin, double tmax, constINTVEC const& parameters, double powerf) {
