@@ -27,6 +27,7 @@ static void IntervalTier_addCandidate (IntervalTier me, double splitTime, intege
 	my intervals.addItem_move (interval.move());
 }
 
+#if 0
 autoIntervalTier FormantPath_to_IntervalTier (FormantPath me, double tmin, double tmax) {
 	autoIntervalTier thee = IntervalTier_create (tmin, tmax);
 	integer ifmin, ifmax;
@@ -61,5 +62,5 @@ autoIntervalTier FormantPath_to_IntervalTier (FormantPath me, double tmin, doubl
 	TextInterval_setText (textInterval, Melder_integer (candidate));
 	return thee;
 }
-
+#endif
 /* End of file FormantPath_to_IntervalTier.cpp */

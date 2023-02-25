@@ -2,7 +2,7 @@
 #define _FormantPath_h_
 /* FormantPath.h
  *
- * Copyright (C) 2020-2022 David Weenink
+ * Copyright (C) 2020-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,20 @@
 #include "LPC.h"
 #include "Sound.h"
 #include "Table.h"
+#include "TextGrid.h"
 
 #include "FormantPath_def.h"
 
 /*
-	A FormantPath inherits from Sampled and contains an ordered collection of Formant objects.
-	All Formant objects have the same domain and sampling as the Formant path.
-	The ceilings [1:size of Formant collection] vector contains the formant ceiling used for the corresponding Formant in the collection.
-	The path vector [1:numberOfFrames], selects a frame from one of the Formant objects.
+	A FormantPath inherits from Sampled and contains:
+	
+	1. An ordered collection of N Formant objects.
+	2. A vector of size N with ceiling frequencies in hertz. Ceiling [i] contains the formant ceiling frequency
+	   that was used to calculate the corresponding Formant from the sound.
+	3. A TextGrid in which an intervalTier determines a path.
+	   Each interval is labeled with an integer number that	refers to one of the Formant objects (an integer number 
+	   was chosen instead of the ceiling frequency wich is a real number, because integers can be more easily compared 
+	   for equivalence than real numbers.)
 */
 
 autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCandidates);
@@ -73,23 +79,23 @@ void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyCha
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
 	double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingExtensionFraction,
-	integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev,
+	integer numberOfStepsUpDown, double marple_tol1, double marple_tol2, double huber_numberOfStdDev,
 	double huber_tol, integer huber_maximumNumberOfIterations, autoSound *out_sourcesMultiChannel
 );
 
 static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeStep, double maximumNumberOfFormants,
-	double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingExtensionFraction, integer numberOfStepsToACeiling)
+	double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingExtensionFraction, integer numberOfStepsUpDown)
 {
 	return Sound_to_FormantPath_any (me, kLPC_Analysis::BURG, timeStep, maximumNumberOfFormants,
-			formantCeiling, analysisWidth, preemphasisFrequency, ceilingExtensionFraction, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
+			formantCeiling, analysisWidth, preemphasisFrequency, ceilingExtensionFraction, numberOfStepsUpDown, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
 }
 
 static inline autoFormantPath Sound_to_FormantPath_robust (Sound me, double timeStep, double maximumNumberOfFormants,
 	double formantCeiling, double analysisWidth, double preemphasisFrequency, double numberOfStandardDeviations, 
-	integer maximumNumberOfIterations, double tolerance, double ceilingExtensionFraction, integer numberOfStepsToACeiling)
+	integer maximumNumberOfIterations, double tolerance, double ceilingExtensionFraction, integer numberOfStepsUpDown)
 {
 	return Sound_to_FormantPath_any (me, kLPC_Analysis::ROBUST, timeStep, maximumNumberOfFormants,
-			formantCeiling, analysisWidth, preemphasisFrequency, ceilingExtensionFraction, numberOfStepsToACeiling, 1e-6, 1e-6, numberOfStandardDeviations, tolerance, maximumNumberOfIterations, nullptr);
+			formantCeiling, analysisWidth, preemphasisFrequency, ceilingExtensionFraction, numberOfStepsUpDown, 1e-6, 1e-6, numberOfStandardDeviations, tolerance, maximumNumberOfIterations, nullptr);
 }
 
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, 
@@ -103,5 +109,22 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
 	double xCursor, double yCursor, MelderColour selected, constINTVEC const& parameters,
 	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish);
+
+void FormantPath_getCandidateAtTime (FormantPath me, double time, double *out_tmin, double *out_tmax, integer *out_candidate);
+
+integer FormantPath_getCandidateInFrame (FormantPath me, integer iframe);
+
+integer FormantPath_getUniqueCandidateInInterval (FormantPath me, double tmin, double tmax);
+
+inline conststring32 FormantPath_getCeilingFrequency_string (FormantPath me, integer candidate) {
+	Melder_assert (candidate > 0 && candidate <= my ceilings.size);
+	const double ceilingFrequency = my ceilings [candidate];
+	return Melder_double (ceilingFrequency);
+}
+
+/*
+	Only needed to convert from version 0 
+*/
+autoTextGrid FormantPath_to_TextGrid_version0 (FormantPath me, INTVEC const& path);
 
 #endif /* _FormantPath_h_ */

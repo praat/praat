@@ -667,7 +667,7 @@ void TextTier_changeLabels (TextTier me, integer from, integer to,
 	}
 }
 
-void IntervalTier_addInterval_force (IntervalTier me, double tmin, double tmax, conststring32 newLabel) {
+static void IntervalTier_addInterval_force (IntervalTier me, double tmin, double tmax, conststring32 newLabel) {
 	Melder_require (tmin >= my xmin && tmax <= my xmax,
 		U"The interval should not be outside the domain.");
 	Melder_require (tmin < tmax,
@@ -703,6 +703,11 @@ void IntervalTier_addInterval_force (IntervalTier me, double tmin, double tmax, 
 	for (integer ipos = ileft; ipos <= iright; ipos ++)
 		TextInterval_setText (my intervals .at [ipos], newLabel);
 	IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (me, newLabel);
+}
+
+void TextGrid_addInterval_force (TextGrid me, double tmin, double tmax, integer tierNumber, conststring32 newLabel) {
+	IntervalTier intervalTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
+	IntervalTier_addInterval_force (intervalTier, tmin, tmax, newLabel);
 }
 
 void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to,

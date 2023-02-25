@@ -82,7 +82,7 @@ void TextTier_changeLabels (TextTier me, integer from, integer to, conststring32
 
 void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, conststring32 search, conststring32 replace, bool use_regexp, integer *nmatches, integer *nstringmatches);
 
-void IntervalTier_addInterval_force (IntervalTier me, double tmin, double tmax, conststring32 newLabel);
+void TextGrid_addInterval_force (TextGrid me, double tmin, double tmax, integer tierNumber, conststring32 newLabel);
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, conststring32 label);
 
