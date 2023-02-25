@@ -2,7 +2,7 @@
 #define _praat_h_
 /* praat.h
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Editor.h"
+#include "ScriptEditor.h"
 #include "Manual.h"
 #include "Preferences.h"
 

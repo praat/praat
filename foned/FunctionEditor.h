@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Editor.h"
+#include "ScriptEditor.h"
 #include "Graphics.h"
 #include "Function.h"
 

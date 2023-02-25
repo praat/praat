@@ -1634,7 +1634,7 @@ FORM (REAL_RealTier_getValueAtIndex, U"Get RealTier value", U"RealTier: Get valu
 	INTEGER (pointNumber, U"Point number", U"10")
 	OK
 DO
-	QUERY_ONE_FOR_REAL (IntensityTier)
+	QUERY_ONE_FOR_REAL (RealTier)
 		const double result = RealTier_getValueAtIndex (me, pointNumber);
 	QUERY_ONE_FOR_REAL_END (U"")
 }

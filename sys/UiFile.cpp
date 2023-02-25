@@ -1,6 +1,6 @@
 /* UiFile.cpp
  *
- * Copyright (C) 1992-2018,2022 Paul Boersma
+ * Copyright (C) 1992-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 #include "UiP.h"
-#include "Editor.h"
+#include "ScriptEditor.h"
 
 static void UiFile_init (UiForm me, GuiWindow parent, conststring32 title) {
 	my d_dialogParent = parent;
@@ -112,7 +112,7 @@ void UiOutfile_do (UiForm me, conststring32 defaultName) {
 	if (! outfileName)
 		return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
-		Melder_flushError (U"Dialog \"", my name.get(), U"\" cancelled.");
+		Melder_flushError (U"Dialog “", my name.get(), U"” cancelled.");
 		return;
 	}
 	Melder_pathToFile (outfileName.get(), & my file);

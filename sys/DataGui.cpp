@@ -1,6 +1,6 @@
 /* DataGui.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2023 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 #include "DataGui.h"
-#include "Editor.h"
+#include "ScriptEditor.h"
 #include "EditorM.h"
 
 #include "enums_getText.h"
