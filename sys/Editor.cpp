@@ -389,13 +389,13 @@ static void menu_cb_searchManual (Editor /* me */, EDITOR_ARGS) {
 
 static void menu_cb_newScript (Editor me, EDITOR_ARGS) {
 	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
-	scriptEditor.releaseToUser();
+	my scriptEditors. addItem_move (scriptEditor.move());
 }
 
 static void menu_cb_openScript (Editor me, EDITOR_ARGS) {
 	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
 	TextEditor_showOpen (scriptEditor.get());
-	scriptEditor.releaseToUser();
+	my scriptEditors. addItem_move (scriptEditor.move());
 }
 
 void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
