@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2023 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 		my commandCallback (my sender, me, nullptr, 0, nullptr, nullptr, nullptr);
 	} catch (MelderError) {
 		if (! Melder_hasError (U"Script exited."))
-			Melder_appendError (U"Menu command \"", my itemTitle.get(), U"\" not completed.");
+			Melder_appendError (U"Menu command “", my itemTitle.get(), U"” not completed.");
 		Melder_flushError ();
 	}
 }
@@ -154,9 +154,9 @@ GuiMenuItem Editor_addCommand (Editor me, conststring32 menuTitle, conststring32
 			if (str32equ (menuTitle, menu -> menuTitle.get()))
 				return EditorMenu_addCommand (menu, itemTitle, flags, commandCallback);
 		}
-		Melder_throw (U"Menu \"", menuTitle, U"\" does not exist.");
+		Melder_throw (U"Menu “", menuTitle, U"” does not exist.");
 	} catch (MelderError) {
-		Melder_throw (U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U".");
+		Melder_throw (U"Command “", itemTitle, U"” not inserted in menu “", menuTitle, U"”.");
 	}
 }
 
@@ -217,9 +217,9 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 			static bool warningGiven = false;
 			if (! warningGiven) {
 				warningGiven = true;
-				Melder_warning (U"The menu \"", menuTitle, U"\" no longer exists. The command \"", itemTitle,
-					U"\" has been installed in the menu \"", alternativeMenuTitle, U"\" instead. "
-					U"You could consider updating the script that installed \"", script, U"\", "
+				Melder_warning (U"The menu “", menuTitle, U"” no longer exists. The command “", itemTitle,
+					U"” has been installed in the menu “", alternativeMenuTitle, U"” instead. "
+					U"You could consider updating the script that installed “", script, U"”, "
 					U"which is either the buttons file or a plug-in."
 				);
 			}
@@ -227,8 +227,8 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 		} // else issue the original warning
 	}
 	Melder_warning (
-		U"Menu \"", menuTitle, U"\" does not exist.\n"
-		U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U"\".\n"
+		U"Menu “", menuTitle, U"” does not exist.\n"
+		U"Command “", itemTitle, U"” not inserted in menu “", menuTitle, U"”.\n"
 		U"To fix this, go to Praat->Preferences->Buttons->Editors, and remove the script from this menu.\n"
 		U"You may then want to install the script in a different menu."
 	);
@@ -259,10 +259,11 @@ EditorCommand Editor_getMenuCommand (Editor me, conststring32 menuTitle, constst
 			}
 		}
 	}
-	Melder_throw (U"Command \"", itemTitle, U"\" not found in menu \"", menuTitle, U"\".");
+	Melder_throw (U"Command “", itemTitle, U"” not found in menu “", menuTitle, U"”.");
 }
 
 void Editor_doMenuCommand (Editor me, conststring32 commandTitle, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter) {
+	Melder_assert (me);
 	integer numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
@@ -275,6 +276,7 @@ void Editor_doMenuCommand (Editor me, conststring32 commandTitle, integer narg, 
 			}
 		}
 	}
+	Melder_assert (my classInfo);
 	Melder_throw (U"Command not available in ", my classInfo -> className, U".");
 }
 
