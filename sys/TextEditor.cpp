@@ -49,7 +49,7 @@ void structTextEditor :: v_nameChanged () {
 			Instead, we compose the window title from three ingredients:
 
 			(1) whether we are already associated with a file or not;
-			(2) if so, the file path;
+			(2) if so, the full file path;
 			(3) whether our text has been modified (i.e. whether we are "dirty").
 
 			(last checked 2023-02-25)
