@@ -44,21 +44,35 @@ void structTextEditor :: v9_destroy () noexcept {
 
 void structTextEditor :: v_nameChanged () {
 	if (v_fileBased ()) {
-		bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);
+		/*
+			We totally ignore the name that our boss wants to give us.
+			Instead, we compose the window title from three ingredients:
+
+			(1) whether we are already associated with a file or not;
+			(2) if so, the file path;
+			(3) whether our text has been modified (i.e. whether we are "dirty").
+
+			(last checked 2023-02-25)
+		*/
+		const bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);
 		static MelderString windowTitle;
-		if (our name [0] == U'\0') {
+		if (MelderFile_isNull (& our file)) {
 			MelderString_copy (& windowTitle, U"(untitled");
-			if (dirty && ! dirtinessAlreadyShown)
+			if (our dirty && ! dirtinessAlreadyShown)
 				MelderString_append (& windowTitle, U", modified");
 			MelderString_append (& windowTitle, U")");
 		} else {
 			MelderString_copy (& windowTitle, U"File ", MelderFile_messageName (& our file));
-			if (dirty && ! dirtinessAlreadyShown)
+			if (our dirty && ! dirtinessAlreadyShown)
 				MelderString_append (& windowTitle, U" (modified)");
 		}
 		GuiShell_setTitle (our windowForm, windowTitle.string);
-		//MelderString_copy (& windowTitle, our dirty && ! dirtinessAlreadyShown ? U"*" : U"", our name [0] == U'\0' ? U"(untitled)" : MelderFile_name (& our file));
 	} else {
+		/*
+			We will set our window title to the name that our boss wants.
+			This occurs e.g. in the Info window.
+			(last checked 2023-02-25)
+		*/
 		TextEditor_Parent :: v_nameChanged ();
 	}
 }
@@ -91,13 +105,14 @@ static void openDocument (TextEditor me, MelderFile file) {
 		which has set `my dirty` to `true`. Fix this.
 	*/
 	my dirty = false;
-	MelderFile_copy (file, & my file);
+	MelderFile_copy (file, & my file);   // not until the file has been safely read
 	Thing_setName (me, Melder_fileToPath (file));
 }
 
 static void newDocument (TextEditor me) {
 	GuiText_setString (my textWidget, U"");   // implicitly sets my dirty to `true`
 	my dirty = false;
+	MelderFile_setToNull (& my file);
 	if (my v_fileBased ())
 		Thing_setName (me, U"");
 }
@@ -106,7 +121,7 @@ static void saveDocument (TextEditor me, MelderFile file) {
 	autostring32 text = GuiText_getString (my textWidget);
 	MelderFile_writeText (file, text.get(), Melder_getOutputEncoding ());
 	my dirty = false;
-	MelderFile_copy (file, & my file);
+	MelderFile_copy (file, & my file);   // not until the file has been safely written
 	if (my v_fileBased ())
 		Thing_setName (me, Melder_fileToPath (file));
 }
@@ -142,14 +157,24 @@ static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS) {
 	if (! my saveDialog)
 		my saveDialog = UiOutfile_create (my windowForm, nullptr, U"Save", cb_saveAs_ok, me, nullptr, nullptr);
 	char32 defaultName [300];
-	Melder_sprint (defaultName,300, ! my v_fileBased () ? U"info.txt" : my name [0] ? MelderFile_name (& my file) : U"");
+	Melder_sprint (defaultName,300,
+		my v_fileBased () ?
+			MelderFile_isNull (& my file) ?
+				U""
+			:
+				MelderFile_name (& my file)
+		:
+			U"info.txt"
+	);
 	UiOutfile_do (my saveDialog.get(), defaultName);
 }
 
 static void gui_button_cb_saveAndOpen (EditorCommand cmd, GuiButtonEvent /* event */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyOpenDialog);
-	if (my name [0]) {
+	if (MelderFile_isNull (& my file)) {
+		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
+	} else {
 		try {
 			saveDocument (me, & my file);
 		} catch (MelderError) {
@@ -157,8 +182,6 @@ static void gui_button_cb_saveAndOpen (EditorCommand cmd, GuiButtonEvent /* even
 			return;
 		}
 		cb_showOpen (cmd);
-	} else {
-		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
 	}
 }
 
@@ -208,7 +231,9 @@ static void menu_cb_open (TextEditor me, EDITOR_ARGS) {
 static void gui_button_cb_saveAndNew (EditorCommand cmd, GuiButtonEvent /* event */) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiThing_hide (my dirtyNewDialog);
-	if (my name [0]) {
+	if (MelderFile_isNull (& my file)) {
+		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
+	} else {
 		try {
 			saveDocument (me, & my file);
 		} catch (MelderError) {
@@ -216,8 +241,6 @@ static void gui_button_cb_saveAndNew (EditorCommand cmd, GuiButtonEvent /* event
 			return;
 		}
 		newDocument (me);
-	} else {
-		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
 	}
 }
 
@@ -276,9 +299,8 @@ static void gui_button_cb_discardAndReopen (EditorCommand cmd, GuiButtonEvent /*
 
 static void menu_cb_reopen (TextEditor me, EDITOR_ARGS) {
 	Melder_assert (my v_fileBased());
-	if (my name [0] == U'\0') {
+	if (MelderFile_isNull (& my file))
 		Melder_throw (U"Cannot reopen from disk, because the text has never been saved yet.");
-	}
 	if (my dirty) {
 		if (! my dirtyReopenDialog) {
 			int buttonWidth = 250, buttonSpacing = 20;
@@ -315,21 +337,23 @@ static void menu_cb_clear (TextEditor me, EDITOR_ARGS) {
 }
 
 static void menu_cb_save (TextEditor me, EDITOR_ARGS) {
-	if (my name [0]) {
+	if (MelderFile_isNull (& my file)) {
+		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
+	} else {
 		try {
 			saveDocument (me, & my file);
 		} catch (MelderError) {
 			Melder_flushError ();
 			return;
 		}
-	} else {
-		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
 	}
 }
 
 static void gui_button_cb_saveAndClose (TextEditor me, GuiButtonEvent /* event */) {
 	GuiThing_hide (my dirtyCloseDialog);
-	if (my name [0]) {
+	if (MelderFile_isNull (& my file)) {
+		menu_cb_saveAs (me, Editor_getMenuCommand (me, U"File", U"Save as..."), nullptr, 0, nullptr, nullptr, nullptr);
+	} else {
 		try {
 			saveDocument (me, & my file);
 		} catch (MelderError) {
@@ -337,8 +361,6 @@ static void gui_button_cb_saveAndClose (TextEditor me, GuiButtonEvent /* event *
 			return;
 		}
 		closeDocument (me);
-	} else {
-		menu_cb_saveAs (me, Editor_getMenuCommand (me, U"File", U"Save as..."), nullptr, 0, nullptr, nullptr, nullptr);
 	}
 }
 
