@@ -44,21 +44,23 @@ void structScriptEditor :: v_nameChanged () {
 	const bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);
 	static MelderString buffer;
 	MelderString_copy (& buffer, our name [0] != U'\0' ? U"Script" : U"untitled script");
-	if (our editorClass)
-		MelderString_append (& buffer, U" [", environmentName.get(), U"]");
+	if (our wasCreatedInAnEditor())
+		if (our optionalOwningEditorName)
+			MelderString_append (& buffer, U" [editor ", our optionalOwningEditorName.get(), U"]");
+		else
+			MelderString_append (& buffer, U" [closed ", our optionalOwningEditorClassName.get(), U"]");
 	if (our name [0] != U'\0')
-		MelderString_append (& buffer, U" ", MelderFile_messageName (& file));
+		MelderString_append (& buffer, U" ", MelderFile_messageName (& our file));
 	if (our dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, U" (modified)");
 	GuiShell_setTitle (windowForm, buffer.string);
 }
 
 void structScriptEditor :: v_goAway () {
-	if (interpreter -> running) {
+	if (our interpreter -> running)
 		Melder_flushError (U"Cannot close the script window while the script is running or paused. Please close or continue the pause or demo window.");
-	} else {
+	else
 		ScriptEditor_Parent :: v_goAway ();
-	}
 }
 
 static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
@@ -144,7 +146,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
 		/*
 			Pop up a dialog box for querying the arguments.
 		*/
-		my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, my optionalEditor, nullptr, args_ok, me, false);
+		my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, my optionalReferenceToOwningEditor, nullptr, args_ok, me, false);
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
@@ -172,7 +174,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 		/*
 			Pop up a dialog box for querying the arguments.
 		*/
-		my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, my optionalEditor, nullptr, args_ok_selectionOnly, me, true);
+		my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, my optionalReferenceToOwningEditor, nullptr, args_ok_selectionOnly, me, true);
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
@@ -191,9 +193,9 @@ static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS) {
 		INTEGER (depth, U"Depth", U"0")
 		INFILE (scriptFile, U"Script file", U"")
 	EDITOR_OK
-		if (my editorClass)
-			SET_STRING (window, my editorClass -> className)
-		if (my name [0])
+		if (my wasCreatedInAnEditor())
+			SET_STRING (window, my optionalOwningEditorClassName.get())
+		if (my name [0] != U'\0')
 			SET_STRING (scriptFile, my name.get())
 		else
 			SET_STRING (scriptFile, U"(please save your script first)")
@@ -297,7 +299,7 @@ static void menu_cb_AddingToADynamicMenu (ScriptEditor, EDITOR_ARGS) { Melder_he
 
 void structScriptEditor :: v_createMenus () {
 	ScriptEditor_Parent :: v_createMenus ();
-	if (editorClass) {
+	if (our wasCreatedInAnEditor()) {
 		Editor_addCommand (this, U"File", U"Add to menu...", 0, menu_cb_addToMenu);
 	} else {
 		Editor_addCommand (this, U"File", U"Add to fixed menu...", 0, menu_cb_addToFixedMenu);
@@ -331,28 +333,28 @@ void structScriptEditor :: v_createMenuItems_help (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Adding to a dynamic menu", 0, menu_cb_AddingToADynamicMenu);
 }
 
-void ScriptEditor_init (ScriptEditor me, Editor optionalEditor, conststring32 initialText) {
-	if (optionalEditor) {
-		my optionalEditor = optionalEditor;
-		my environmentName = Melder_dup (optionalEditor -> name.get());
-		my editorClass = optionalEditor -> classInfo;
+void ScriptEditor_init (ScriptEditor me, Editor optionalOwningEditor, conststring32 initialText) {
+	if (optionalOwningEditor) {
+		my optionalOwningEditorClassName = Melder_dup (Thing_className (optionalOwningEditor));
+		my optionalOwningEditorName = Melder_dup (optionalOwningEditor -> name.get());
+		my optionalReferenceToOwningEditor = optionalOwningEditor;
 	}
 	TextEditor_init (me, initialText);
-	my interpreter = Interpreter_createFromEnvironment (optionalEditor);
+	my interpreter = Interpreter_createFromEnvironment (optionalOwningEditor);
 	theReferencesToAllOpenScriptEditors. addItem_ref (me);
 }
 
-autoScriptEditor ScriptEditor_createFromText (Editor optionalEditor, conststring32 initialText) {
+autoScriptEditor ScriptEditor_createFromText (Editor optionalOwningEditor, conststring32 initialText) {
 	try {
 		autoScriptEditor me = Thing_new (ScriptEditor);
-		ScriptEditor_init (me.get(), optionalEditor, initialText);
+		ScriptEditor_init (me.get(), optionalOwningEditor, initialText);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");
 	}
 }
 
-autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalEditor, Script script) {
+autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalOwningEditor, Script script) {
 	try {
 		for (integer ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
 			ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
@@ -366,13 +368,18 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor optionalEditor,
 			}
 		}
 		autostring32 text = MelderFile_readText (& script -> file);
-		autoScriptEditor me = ScriptEditor_createFromText (optionalEditor, text.get());
+		autoScriptEditor me = ScriptEditor_createFromText (optionalOwningEditor, text.get());
 		MelderFile_copy (& script -> file, & my file);
 		Thing_setName (me.get(), Melder_fileToPath (& script -> file));
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");
 	}
+}
+
+void ScriptEditor_setOwningEditorName (ScriptEditor me, conststring32 newOwningEditorName) {
+	my optionalOwningEditorName = Melder_dup (newOwningEditorName);
+	Thing_setName (me, Melder_fileToPath (& my file));
 }
 
 void ScriptEditor_debug_printAllOpenScriptEditors () {

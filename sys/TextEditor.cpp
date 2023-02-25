@@ -91,7 +91,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 		which has set `my dirty` to `true`. Fix this.
 	*/
 	my dirty = false;
-	MelderFile_copy (file, & my file);
+	MelderFile_copy (file, & my file);   // not until the file has been safely read
 	Thing_setName (me, Melder_fileToPath (file));
 }
 
@@ -106,7 +106,7 @@ static void saveDocument (TextEditor me, MelderFile file) {
 	autostring32 text = GuiText_getString (my textWidget);
 	MelderFile_writeText (file, text.get(), Melder_getOutputEncoding ());
 	my dirty = false;
-	MelderFile_copy (file, & my file);
+	MelderFile_copy (file, & my file);   // not until the file has been safely written
 	if (my v_fileBased ())
 		Thing_setName (me, Melder_fileToPath (file));
 }

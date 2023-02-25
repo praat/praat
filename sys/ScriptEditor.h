@@ -2,7 +2,7 @@
 #define _ScriptEditor_h_
 /* ScriptEditor.h
  *
- * Copyright (C) 1997-2011,2012,2015,2016,2018,2022 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2015,2016,2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,16 @@
 #include "Interpreter.h"
 
 Thing_define (ScriptEditor, TextEditor) {
-	Editor optionalEditor;
-	autostring32 environmentName;
-	ClassInfo editorClass;
+	/*
+		Who owns me?
+	*/
+	autostring32 optionalOwningEditorClassName;   // set at creation, and never changed after that (last checked 2023-02-25)
+	autostring32 optionalOwningEditorName;   // will change whenever the name of the owning editor changes (i.e. when the name of the object changes)
+	Editor optionalReferenceToOwningEditor;   // set at creation, and may be set to null later on
+	bool wasCreatedInAnEditor () const noexcept {
+		return !! our optionalOwningEditorClassName;
+	}
+
 	autoInterpreter interpreter;
 	autoUiForm argsDialog;
 
@@ -58,6 +65,8 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (
 );
 
 bool ScriptEditors_dirty ();   // are there any modified and unsaved scripts? Ask before quitting the program.
+
+void ScriptEditor_setOwningEditorName (ScriptEditor me, conststring32 newOwningEditorName);
 
 void ScriptEditor_debug_printAllOpenScriptEditors ();
 

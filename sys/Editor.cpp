@@ -290,6 +290,14 @@ void structEditor :: v9_destroy () noexcept {
 		Otherwise, we would be forgetting dangling command dialogs here.
 	*/
 	our menus.removeAllItems();
+	for (integer i = 1; i <= our scriptEditors.size; i ++) {
+		ScriptEditor scriptEditor = our scriptEditors.at [i];
+		if (scriptEditor -> dirty) {
+			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
+			ScriptEditor_setOwningEditorName (scriptEditor, nullptr);
+			our scriptEditors.at [i] = nullptr;   // prevent automatic destruction
+		}
+	}
 
 	Editor_broadcastDestruction (this);
 	if (our windowForm) {
@@ -331,8 +339,11 @@ void structEditor :: v1_info () {
 }
 
 void structEditor :: v_nameChanged () {
-	if (our name)
+	if (our name) {
 		GuiShell_setTitle (our windowForm, our name.get());
+		for (integer i = 1; i <= our scriptEditors.size; i ++)
+			ScriptEditor_setOwningEditorName (our scriptEditors.at [i], our name.get());
+	}
 }
 
 void structEditor :: v_saveData () {
