@@ -37,22 +37,43 @@ bool ScriptEditors_dirty () {
 void structScriptEditor :: v9_destroy () noexcept {
 	our argsDialog.reset();   // don't delay till delete
 	theReferencesToAllOpenScriptEditors. undangleItem (this);
+	if (our optionalReferenceToOwningEditor) {
+		/*
+			The usual pattern would be to handle this via a destroyCallback.
+			However, ScriptEditor happens to know very well how its boss
+			(Editor) is organized (because it inherits from Editor),
+			so we handle this directly:
+		*/
+		our optionalReferenceToOwningEditor -> scriptEditors. undangleItem (this);
+	}
 	ScriptEditor_Parent :: v9_destroy ();
 }
 
 void structScriptEditor :: v_nameChanged () {
-	const bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);
+	/*
+		As TextEditor does, we totally ignore the name that our boss wants to give us.
+		Instead, we compose the window title from five ingredients, i.e. two more than TextEditor:
+
+		(1) whether we are already associated with a file or not;
+		(2) if so, the full file path;
+		(3) whether our text has been modified (i.e. whether we are "dirty");
+		(4) whether we have a boss, i.e. whether or not we were created from a data editor;
+		(5) if so, the name of our boss, i.e. of the data editor that we were created from.
+
+		(last checked 2023-02-25)
+	*/
+	const bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);   // (3) on the Mac (last checked 2023-02-25)
 	static MelderString buffer;
-	MelderString_copy (& buffer, MelderFile_isNull (& our file) ? U"untitled script" : U"Script");
+	MelderString_copy (& buffer, MelderFile_isNull (& our file) ? U"untitled script" : U"Script");   // (1)
 	if (our wasCreatedInAnEditor())
 		if (our optionalReferenceToOwningEditor)
-			MelderString_append (& buffer, U" [editor “", our optionalReferenceToOwningEditor -> name.get(), U"”]");
+			MelderString_append (& buffer, U" [editor “", Thing_getName (our optionalReferenceToOwningEditor), U"”]");   // (4), (5)
 		else
-			MelderString_append (& buffer, U" [closed ", our optionalOwningEditorClassName.get(), U"]");
+			MelderString_append (& buffer, U" [closed ", our optionalOwningEditorClassName.get(), U"]");   // (4)
 	if (! MelderFile_isNull (& our file))
-		MelderString_append (& buffer, U" ", MelderFile_messageName (& our file));
+		MelderString_append (& buffer, U" ", MelderFile_messageName (& our file));   // (2)
 	if (our dirty && ! dirtinessAlreadyShown)
-		MelderString_append (& buffer, U" (modified)");
+		MelderString_append (& buffer, U" (modified)");   // (3) on Windows and Linux (last checked 2023-02-25)
 	GuiShell_setTitle (windowForm, buffer.string);
 }
 
