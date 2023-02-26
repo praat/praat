@@ -295,6 +295,7 @@ void structEditor :: v9_destroy () noexcept {
 		if (scriptEditor -> dirty) {
 			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
 			Thing_setName (scriptEditor, nullptr);
+			Editor_setMenuSensitive (scriptEditor, U"Run", false);
 			our scriptEditors.at [i] = nullptr;   // prevent automatic destruction
 		}
 	}

@@ -99,7 +99,7 @@ conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*
 	return U"Frequency (Hz)";
 };
 
-Thing_implement (FormantPath, Sampled, 1); // 0: INTVEC path 1: TextGrid path
+Thing_implement (FormantPath, Sampled, 1);   // version 0: INTVEC path; version 1: TextGrid path
 
 
 MelderIntegerRange FormantPath_getPathTierIndicesRange (FormantPath me, double tmin, double tmax) {
