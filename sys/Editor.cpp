@@ -294,6 +294,10 @@ void structEditor :: v9_destroy () noexcept {
 		ScriptEditor scriptEditor = our scriptEditors.at [i];
 		if (scriptEditor -> dirty) {
 			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
+			if (scriptEditor -> interpreter) {
+				scriptEditor -> interpreter -> optionalInterpreterOwningEditor = nullptr;
+				scriptEditor -> interpreter -> optionalDynamicEditorEnvironment = nullptr;   // BUG: this is not very precise (check with pausing)
+			}
 			Thing_setName (scriptEditor, nullptr);
 			Editor_setMenuSensitive (scriptEditor, U"Run", false);
 			our scriptEditors.at [i] = nullptr;   // prevent automatic destruction

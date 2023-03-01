@@ -1639,6 +1639,7 @@ void XtManageChildren (GuiObjectList children, Cardinal num_children) {
 }
 
 void XtSetSensitive (GuiObject me, Boolean value) {
+	//TRACE
 	if (my insensitive != value)
 		return;
 	my insensitive = ! value;
@@ -1655,8 +1656,12 @@ void XtSetSensitive (GuiObject me, Boolean value) {
 		case xmScrollBarWidgetClass: _GuiNativeControl_setSensitive (me); break;
 		case xmLabelWidgetClass: _GuiNativeControl_setSensitive (me); break;
 		case xmCascadeButtonWidgetClass: {
+			trace (U"setting the sensitivity of a cascade button to ", value);
 			if (my inMenu || my motiff.cascadeButton.inBar) {
+				trace (U"in the menu bar");
 				if (my subMenuId) {
+					trace (U"submenu ID ", Melder_pointer (my subMenuId));
+					my subMenuId -> insensitive = my insensitive;
 					if (value)
 						NativeMenuItem_setSensitive (my subMenuId);
 					else
@@ -1664,10 +1669,12 @@ void XtSetSensitive (GuiObject me, Boolean value) {
 					DrawMenuBar (my shell -> window);
 				}
 			} else {
+				trace (U"outside the menu bar");
 				_GuiNativeControl_setSensitive (me);
 			}
 		} break;
 		case xmPulldownMenuWidgetClass: {
+			trace (U"setting the sensitivity of a menu title to ", value);
 			if (my popUpButton)
 				XtSetSensitive (my popUpButton, value);
 		} break;

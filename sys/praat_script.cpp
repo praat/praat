@@ -307,6 +307,11 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 				interpreter -> optionalDynamicEditorEnvironment = praat_findEditorFromString (command + 7);
 			} else if (command [6] == U'\0') {
 				if (interpreter && interpreter -> editorClass)
+					/*
+						The script directive
+							editor
+						(without arguments) should set the interpreter's environment back to the editor that started the script.
+					*/
 					interpreter -> optionalDynamicEditorEnvironment = interpreter -> optionalInterpreterOwningEditor;
 				else
 					Melder_throw (U"The script command “editor” requires an argument when called from outside an editor.");
@@ -428,7 +433,10 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			colon [0] = colon [1] = colon [2] = U'.';
 			colon [3] = U'\0';
 		}
-		if (theCurrentPraatObjects == & theForegroundPraatObjects && interpreter && interpreter -> optionalDynamicEditorEnvironment) {
+		if (theCurrentPraatObjects == & theForegroundPraatObjects && interpreter && interpreter -> editorClass) {
+			if (! interpreter -> optionalDynamicEditorEnvironment)
+				Melder_throw (U"The ", interpreter -> editorClass -> className, U" in which this script was created no longer exists.\n"
+						"You may like to close this script window, perhaps after saving it.");
 			if (hasColon)
 				Editor_doMenuCommand (interpreter -> optionalDynamicEditorEnvironment, command2, narg, args, nullptr, interpreter);
 			else

@@ -276,7 +276,23 @@ void structGuiMenu :: v_setSensitive (bool sensitive) {
 	#if gtk
 		gtk_widget_set_sensitive (GTK_WIDGET (our d_gtkMenuTitle), sensitive);
 	#elif motif
-		XtSetSensitive (our d_xmMenuTitle, sensitive);
+		//TRACE
+		trace (U"entry");
+		trace (U"widget ", Melder_pointer (our d_widget));
+		trace (U"widget class ", our d_widget -> widgetClass, U", name ", our d_widget -> name.get());
+		trace (U"parent widget class ", our d_widget -> parent -> widgetClass, U", name ", our d_widget -> parent -> name.get());
+		trace (U"title ", Melder_pointer (our d_xmMenuTitle));
+		trace (U"title widget class ", our d_xmMenuTitle -> widgetClass, U", name ", our d_xmMenuTitle -> name.get(), U", ", sensitive);
+		trace (U"title parent ", Melder_pointer (our d_xmMenuTitle -> parent));
+		trace (U"title parent widget class ", our d_xmMenuTitle -> parent -> widgetClass, U", name ", our d_xmMenuTitle -> parent -> name.get());
+		if (our d_widget -> parent -> widgetClass == xmMenuBarWidgetClass && 0) {
+			trace (U"in menu bar");
+			EnableMenuItem (our d_widget -> parent -> nat.menu.handle, our d_widget -> nat.menu.id, MF_BYCOMMAND | ( sensitive ? MF_ENABLED : MF_GRAYED ));
+			DrawMenuBar (our d_widget -> shell -> window);
+		} else {
+			trace (U"not in menu bar?");
+			XtSetSensitive (our d_xmMenuTitle, sensitive);
+		}
 	#elif cocoa
 		[our d_cocoaMenuButton   setEnabled: sensitive];
 	#endif
@@ -382,10 +398,10 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, conststring32 title, uint32 fl
 		if (str32equ (title, U"Help"))
 			XtVaSetValues (window -> d_xmMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, nullptr);
 		my d_widget = XmCreatePulldownMenu (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
-		if (flags & GuiMenu_INSENSITIVE)
-			XtSetSensitive (my d_xmMenuTitle, False);
 		XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);
 		XtManageChild (my d_xmMenuTitle);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_xmMenuTitle, False);
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		if (! theMenuBar) {
@@ -498,10 +514,10 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, conststring32 title, uint32 fla
 	#elif motif
 		my d_menuItem -> d_widget = XmCreateCascadeButton (supermenu -> d_widget, Melder_peek32to8 (title), nullptr, 0);
 		my d_widget = XmCreatePulldownMenu (supermenu -> d_widget, Melder_peek32to8 (title), nullptr, 0);
-		if (flags & GuiMenu_INSENSITIVE)
-			XtSetSensitive (my d_menuItem -> d_widget, False);
 		XtVaSetValues (my d_menuItem -> d_widget, XmNsubMenuId, my d_widget, nullptr);
 		XtManageChild (my d_menuItem -> d_widget);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_menuItem -> d_widget, False);
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		trace (U"creating menu item ", title);
@@ -581,11 +597,11 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		my d_cascadeButton -> d_widget = XmCreateCascadeButton (my d_xmMenuBar, Melder_peek32to8 (neatTitle. string), nullptr, 0);
 		form -> v_positionInForm (my d_cascadeButton -> d_widget, 0, right - left - 4, 0, bottom - top, form);
 		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, Melder_peek32to8 (neatTitle. string), nullptr, 0);
-		if (flags & GuiMenu_INSENSITIVE)
-			XtSetSensitive (my d_cascadeButton -> d_widget, False);
 		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, nullptr);
 		XtManageChild (my d_cascadeButton -> d_widget);
 		XtManageChild (my d_xmMenuBar);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_cascadeButton -> d_widget, False);
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		my d_cascadeButton -> d_widget = my d_cocoaMenuButton = [[GuiCocoaMenuButton alloc] init];
