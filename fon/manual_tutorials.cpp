@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20230210)
+MAN_BEGIN (U"What's new?", U"ppgb", 20230301)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.09# (2 March 2023)")
+LIST_ITEM (U"• Corrected an at least 23-year-old bug by which menu titles could not be greyed out on Windows.")
 NORMAL (U"##6.3.08# (10 February 2023)")
 LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $word and $sentence would not work in new-style script forms.")
 NORMAL (U"##6.3.07# (6 February 2023)")
