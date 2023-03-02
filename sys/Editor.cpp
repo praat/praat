@@ -292,7 +292,7 @@ void structEditor :: v9_destroy () noexcept {
 	our menus.removeAllItems();
 	for (integer i = 1; i <= our scriptEditors.size; i ++) {
 		ScriptEditor scriptEditor = our scriptEditors.at [i];
-		if (scriptEditor -> dirty) {
+		if (scriptEditor -> dirty || scriptEditor -> interpreter && scriptEditor -> interpreter -> running) {
 			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
 			if (scriptEditor -> interpreter) {
 				scriptEditor -> interpreter -> optionalInterpreterOwningEditor = nullptr;

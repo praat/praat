@@ -433,10 +433,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			colon [0] = colon [1] = colon [2] = U'.';
 			colon [3] = U'\0';
 		}
-		if (theCurrentPraatObjects == & theForegroundPraatObjects && interpreter && interpreter -> editorClass) {
-			if (! interpreter -> optionalDynamicEditorEnvironment)
-				Melder_throw (U"The ", interpreter -> editorClass -> className, U" in which this script was created no longer exists.\n"
-						"You may like to close this script window, perhaps after saving it.");
+		if (theCurrentPraatObjects == & theForegroundPraatObjects && interpreter && interpreter -> optionalDynamicEditorEnvironment) {
 			if (hasColon)
 				Editor_doMenuCommand (interpreter -> optionalDynamicEditorEnvironment, command2, narg, args, nullptr, interpreter);
 			else
@@ -500,8 +497,16 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 					else if (str32nequ (command, U"\"ooTextFile\"", 12))
 						Melder_throw (U"Command “", command, U"” not available for current selection. "
 							U"It is possible that this file is not a Praat script but a Praat data file that you can open with “Read from file...”.");
-					else
-						Melder_throw (U"Command “", command, U"” not available for current selection.");
+					else {
+						if (interpreter -> editorClass)
+							if (interpreter -> optionalDynamicEditorEnvironment)
+								Melder_throw (U"Command “", command, U"” not available in ", interpreter -> editorClass -> className, U".");
+							else
+								Melder_throw (U"Command “", command, U"” not available for current selection.\n"
+										U"Perhaps this is a ", interpreter -> editorClass -> className, U" command?");
+						else
+							Melder_throw (U"Command “", command, U"” not available for current selection.");
+					}
 				}
 			}
 		}
