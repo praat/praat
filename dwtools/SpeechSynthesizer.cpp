@@ -194,17 +194,21 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	char phoneme_name [9];
 	if (wav == 0) return 1;
 	
-	// It is essential that the SpeechSynthesizer is identified here by the user_data,
-	// because the espeakEVENT_LIST_TERMINATED event may still be accompanied by
-	// a piece of audio data!!
+	/*
+		It is essential that the SpeechSynthesizer is identified here by the user_data,
+		because the espeakEVENT_LIST_TERMINATED event may still be accompanied by
+		a piece of audio data!!
+	*/
 	
 	SpeechSynthesizer me = (SpeechSynthesizer) (events -> user_data);
 	while (events -> type != espeakEVENT_LIST_TERMINATED) {
 		if (events -> type == espeakEVENT_SAMPLERATE) {
 			my d_internalSamplingFrequency = events -> id.number;
 		} else {
-			//my events = Table "time type type-t t-pos length a-pos sample id uniq";
-			//                    1    2     3      4     5     6     7      8   9
+			/*
+				my events = Table "time type type-t t-pos length a-pos sample id uniq";
+									1    2    3      4      5     6     7     8   9
+			*/
 			Table_appendRow (my d_events.get());
 			const integer irow = my d_events -> rows.size;
 			const double time = events -> audio_position * 0.001;
@@ -584,23 +588,7 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 	}
 }
 
-#if 0   // BUG unused (ppgb 20210307)
-
-static void espeakdata_SetVoiceByName (conststring32 languageName, conststring32 voiceName) {
-	espeak_VOICE voice_selector;
-
-	memset (& voice_selector, 0, sizeof voice_selector);
-	voice_selector.name = Melder_peek32to8 (Melder_cat (languageName, U"+", voiceName));  // include variant name in voice stack ??
-
-	if (LoadVoice (Melder_peek32to8 (languageName), 1)) {
-		LoadVoice (Melder_peek32to8 (voiceName), 2);
-		DoVoiceChange (voice);
-		SetVoiceStack (& voice_selector, Melder_peek32to8 (voiceName));
-	}
-}
-#endif
-
-autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, autoTextGrid *tg, autoTable *events) {
+static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, conststring32 text) {
 	try {
 		espeak_ng_InitializePath (nullptr); // PATH_ESPEAK_DATA
 		espeak_ng_ERROR_CONTEXT context = { 0 };
@@ -659,6 +647,46 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		#endif
 				
 		espeak_ng_Terminate ();
+	} catch (MelderError) {
+		espeak_Terminate ();
+		Melder_throw (U"SpeechSynthesizer: synthesis data not generated.");
+	}	
+}
+
+conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text) {
+	try {
+		SpeechSynthesizer_generateSynthesisData (me, text);
+		const double dt = 1.0 / my d_internalSamplingFrequency;
+		const double tmin = 0.0, tmax = my d_wav.size * dt;
+		double xmin = Table_getNumericValue_Assert (my d_events.get(), 1, 1);
+		Melder_clipLeft (tmin, & xmin);
+		double xmax = Table_getNumericValue_Assert (my d_events.get(), my d_events -> rows.size, 1);
+		Melder_clipRight (& xmax, tmax);
+		autoTextGrid tg = Table_to_TextGrid (my d_events.get(), text, xmin, xmax);
+		/*
+			Get phonemes from the phoneme tier
+		*/
+		Melder_assert (tg -> tiers -> size == 4);
+		IntervalTier phonemeTier = static_cast<IntervalTier> (tg -> tiers -> at [4]);
+		const integer numberOfIntervals = phonemeTier -> intervals.size;
+		Melder_require (numberOfIntervals > 0,
+			U"Not enough phonemes.");
+		MelderString phonemes;
+		for (integer iint = 1; iint <= numberOfIntervals; iint ++) {
+			TextInterval interval = phonemeTier -> intervals .at [iint];
+			conststring32 phonemeLabel = interval -> text.get();
+			conststring32 text = ( Melder_cmp (phonemeLabel, U"") == 0 ? (iint > 1 ? U" " : U"") : phonemeLabel );
+			MelderString_append (& phonemes, text);
+		}
+		return phonemes . string;
+	} catch (MelderError) {
+		Melder_throw (U"Phonemes not generated.");
+	}
+}
+
+autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, autoTextGrid *tg, autoTable *events) {
+	try {
+		SpeechSynthesizer_generateSynthesisData (me, text);
 		autoSound thee = buffer_to_Sound (my d_wav.get(), my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency)
