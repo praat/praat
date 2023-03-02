@@ -465,8 +465,12 @@ static void NativeMenuItem_check (GuiObject me, Boolean value) {
 static void NativeMenuItem_setSensitive (GuiObject me) {
 	//if (! my managed)
 	//	return;
-	//switch (my widgetClass)
-	EnableMenuItem (/*my nat.entry.handle*/ my parent -> nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | ( my insensitive ? MF_GRAYED : MF_ENABLED ));
+	if (my widgetClass == xmPulldownMenuWidgetClass) {
+		Melder_assert (MEMBER (my parent, MenuBar));
+		EnableMenuItem (my parent -> nat.menu.handle, my nat.menu.id, MF_BYCOMMAND | ( my insensitive ? MF_GRAYED : MF_ENABLED ));
+	} else {
+		EnableMenuItem (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | ( my insensitive ? MF_GRAYED : MF_ENABLED ));
+	}
 	//DrawMenuBar (my shell -> window);
 }
 
@@ -589,7 +593,9 @@ static void _GuiNativizeWidget (GuiObject me) {
 		} break;
 		case xmLabelWidgetClass: Melder_fatal (U"Should be implemented in GuiLabel."); break;
 		case xmCascadeButtonWidgetClass: {
-			if (! my motiff.cascadeButton.inBar) {
+			if (my motiff.cascadeButton.inBar) {
+				my nat.entry.handle = my parent -> nat.menu.handle;   // TODO: superfluous?
+			} else {
 				my window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (my name.get())),
 					WS_CHILD | BS_PUSHBUTTON | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
@@ -1663,10 +1669,8 @@ void XtSetSensitive (GuiObject me, Boolean value) {
 				if (my subMenuId) {
 					trace (U"submenu ID ", Melder_pointer (my subMenuId));
 					my subMenuId -> insensitive = my insensitive;
-					if (value)
-						NativeMenuItem_setSensitive (my subMenuId);
-					else
-						NativeMenuItem_setSensitive (my subMenuId);
+					NativeMenuItem_setSensitive (my subMenuId);
+					//NativeMenuItem_setSensitive (me);
 					DrawMenuBar (my shell -> window);
 				}
 			} else {
