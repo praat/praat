@@ -463,9 +463,10 @@ static void NativeMenuItem_check (GuiObject me, Boolean value) {
 }
 
 static void NativeMenuItem_setSensitive (GuiObject me) {
-	if (! my managed)
-		return;
-	EnableMenuItem (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | ( my insensitive ? MF_GRAYED : MF_ENABLED ));
+	//if (! my managed)
+	//	return;
+	//switch (my widgetClass)
+	EnableMenuItem (/*my nat.entry.handle*/ my parent -> nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | ( my insensitive ? MF_GRAYED : MF_ENABLED ));
 	//DrawMenuBar (my shell -> window);
 }
 

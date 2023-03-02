@@ -285,7 +285,7 @@ void structGuiMenu :: v_setSensitive (bool sensitive) {
 		trace (U"title widget class ", our d_xmMenuTitle -> widgetClass, U", name ", our d_xmMenuTitle -> name.get(), U", ", sensitive);
 		trace (U"title parent ", Melder_pointer (our d_xmMenuTitle -> parent));
 		trace (U"title parent widget class ", our d_xmMenuTitle -> parent -> widgetClass, U", name ", our d_xmMenuTitle -> parent -> name.get());
-		if (our d_widget -> parent -> widgetClass == xmMenuBarWidgetClass && 0) {
+		if (our d_widget -> parent -> widgetClass == xmMenuBarWidgetClass) {
 			trace (U"in menu bar");
 			EnableMenuItem (our d_widget -> parent -> nat.menu.handle, our d_widget -> nat.menu.id, MF_BYCOMMAND | ( sensitive ? MF_ENABLED : MF_GRAYED ));
 			DrawMenuBar (our d_widget -> shell -> window);
