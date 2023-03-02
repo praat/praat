@@ -374,7 +374,7 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 
 static void menu_cb_close (Editor me, EDITOR_ARGS) {
 	my v_goAway ();
-	if (optionalInterpreter && optionalInterpreter -> optionalInterpreterOwningEditor == me) {
+	if (optionalInterpreter && (optionalInterpreter -> optionalInterpreterOwningEditor == me || optionalInterpreter -> optionalDynamicEditorEnvironment == me)) {
 		optionalInterpreter -> optionalInterpreterOwningEditor = nullptr;   // undangle  TODO: remove interpreter wholesale?
 		optionalInterpreter -> optionalDynamicEditorEnvironment = nullptr;   // undangle
 	}
