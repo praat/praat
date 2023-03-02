@@ -292,7 +292,7 @@ void structEditor :: v9_destroy () noexcept {
 	our menus.removeAllItems();
 	for (integer i = 1; i <= our scriptEditors.size; i ++) {
 		ScriptEditor scriptEditor = our scriptEditors.at [i];
-		if (scriptEditor -> dirty) {
+		if (scriptEditor -> dirty || scriptEditor -> interpreter && scriptEditor -> interpreter -> running) {
 			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
 			if (scriptEditor -> interpreter) {
 				scriptEditor -> interpreter -> optionalInterpreterOwningEditor = nullptr;
@@ -374,7 +374,7 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 
 static void menu_cb_close (Editor me, EDITOR_ARGS) {
 	my v_goAway ();
-	if (optionalInterpreter && optionalInterpreter -> optionalInterpreterOwningEditor == me) {
+	if (optionalInterpreter && (optionalInterpreter -> optionalInterpreterOwningEditor == me || optionalInterpreter -> optionalDynamicEditorEnvironment == me)) {
 		optionalInterpreter -> optionalInterpreterOwningEditor = nullptr;   // undangle  TODO: remove interpreter wholesale?
 		optionalInterpreter -> optionalDynamicEditorEnvironment = nullptr;   // undangle
 	}
