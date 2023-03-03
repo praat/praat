@@ -647,7 +647,7 @@ void praat_executeScriptFromFileNameWithArguments (conststring32 nameAndArgument
 
 extern "C" void praatlib_executeScript (const char *text8) {
 	try {
-		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
+		autoInterpreter interpreter = Interpreter_create ();
 		autostring32 string = Melder_8to32 (text8);
 		Interpreter_run (interpreter.get(), string.get());
 	} catch (MelderError) {
@@ -657,7 +657,7 @@ extern "C" void praatlib_executeScript (const char *text8) {
 
 void praat_executeScriptFromText (conststring32 text) {
 	try {
-		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
+		autoInterpreter interpreter = Interpreter_create ();
 		autostring32 string = Melder_dup (text);   // copy, because Interpreter will change it (UGLY)
 		Interpreter_run (interpreter.get(), string.get());
 	} catch (MelderError) {
