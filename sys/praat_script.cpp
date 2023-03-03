@@ -293,7 +293,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"pause ", 6) || str32equ (command, U"pause")) {
 			if (theCurrentPraatApplication -> batch)
 				return true;   // in batch we ignore pause statements
-			const Editor optionalPauseWindowOwningEditor = interpreter -> optionalDynamicEditorEnvironment;
+			const Editor optionalPauseWindowOwningEditor = interpreter -> dynamicEditorEnvironment. optionalInstance;
 			const GuiWindow parentShell = ( optionalPauseWindowOwningEditor ? optionalPauseWindowOwningEditor -> windowForm : theCurrentPraatApplication -> topShell );
 			UiPause_begin (parentShell, optionalPauseWindowOwningEditor, U"stop or continue", interpreter);
 			UiPause_comment (str32equ (command, U"pause") ? U"..." : command + 6);
@@ -304,15 +304,15 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command “editor” is not available inside manuals.");
 			if (command [6] == U' ' && Melder_isLetter (command [7])) {
-				interpreter -> optionalDynamicEditorEnvironment = praat_findEditorFromString (command + 7);
+				interpreter -> dynamicEditorEnvironment. optionalInstance = praat_findEditorFromString (command + 7);
 			} else if (command [6] == U'\0') {
-				if (interpreter && interpreter -> editorClass)
+				if (interpreter && interpreter -> owningEditorEnvironment. optionalClass)
 					/*
 						The script directive
 							editor
 						(without arguments) should set the interpreter's environment back to the editor that started the script.
 					*/
-					interpreter -> optionalDynamicEditorEnvironment = interpreter -> optionalInterpreterOwningEditor;
+					interpreter -> dynamicEditorEnvironment. optionalInstance = interpreter -> owningEditorEnvironment. optionalInstance;
 				else
 					Melder_throw (U"The script command “editor” requires an argument when called from outside an editor.");
 			} else {
@@ -321,7 +321,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"endeditor", 9)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command “endeditor” is not available inside manuals.");
-			interpreter -> optionalDynamicEditorEnvironment = nullptr;
+			interpreter -> dynamicEditorEnvironment. optionalInstance = nullptr;
 		} else if (str32nequ (command, U"sendsocket ", 11)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command “sendsocket” is not available inside manuals.");
@@ -433,11 +433,11 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			colon [0] = colon [1] = colon [2] = U'.';
 			colon [3] = U'\0';
 		}
-		if (theCurrentPraatObjects == & theForegroundPraatObjects && interpreter && interpreter -> optionalDynamicEditorEnvironment) {
+		if (theCurrentPraatObjects == & theForegroundPraatObjects && interpreter && interpreter -> dynamicEditorEnvironment. optionalInstance) {
 			if (hasColon)
-				Editor_doMenuCommand (interpreter -> optionalDynamicEditorEnvironment, command2, narg, args, nullptr, interpreter);
+				Editor_doMenuCommand (interpreter -> dynamicEditorEnvironment. optionalInstance, command2, narg, args, nullptr, interpreter);
 			else
-				Editor_doMenuCommand (interpreter -> optionalDynamicEditorEnvironment, command, 0, nullptr, arguments, interpreter);
+				Editor_doMenuCommand (interpreter -> dynamicEditorEnvironment. optionalInstance, command, 0, nullptr, arguments, interpreter);
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (str32nequ (command, U"Save ", 5) ||
 			 str32nequ (command, U"Write ", 6) ||
@@ -498,12 +498,12 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 						Melder_throw (U"Command “", command, U"” not available for current selection. "
 							U"It is possible that this file is not a Praat script but a Praat data file that you can open with “Read from file...”.");
 					else {
-						if (interpreter -> editorClass)
-							if (interpreter -> optionalDynamicEditorEnvironment)
-								Melder_throw (U"Command “", command, U"” not available in ", interpreter -> editorClass -> className, U".");
+						if (interpreter -> owningEditorEnvironment. optionalClass)
+							if (interpreter -> dynamicEditorEnvironment. optionalInstance)
+								Melder_throw (U"Command “", command, U"” not available in ", interpreter -> owningEditorEnvironment. optionalClass -> className, U".");
 							else
 								Melder_throw (U"Command “", command, U"” not available for current selection.\n"
-										U"Perhaps this is a ", interpreter -> editorClass -> className, U" command?");
+										U"Perhaps this is a ", interpreter -> owningEditorEnvironment. optionalClass -> className, U" command?");
 						else
 							Melder_throw (U"Command “", command, U"” not available for current selection.");
 					}

@@ -73,8 +73,11 @@ enum class kInterpreter_ReturnType {
 conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType returnType, conststring32 command);
 
 Thing_define (Interpreter, Thing) {
-	Editor optionalInterpreterOwningEditor, optionalDynamicEditorEnvironment;
-	ClassInfo editorClass;
+	struct {
+		ClassInfo optionalClass;
+		Editor optionalInstance;
+	} owningEditorEnvironment, dynamicEditorEnvironment;
+
 	int numberOfParameters, numberOfLabels, callDepth;
 	int types [1+Interpreter_MAXNUM_PARAMETERS], numbersOfLines [1+Interpreter_MAXNUM_PARAMETERS];
 	char32 parameters [1+Interpreter_MAXNUM_PARAMETERS] [1+Interpreter_MAX_PARAMETER_LENGTH];

@@ -295,8 +295,8 @@ void structEditor :: v9_destroy () noexcept {
 		if (scriptEditor -> dirty || scriptEditor -> interpreter && scriptEditor -> interpreter -> running) {
 			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
 			if (scriptEditor -> interpreter) {
-				scriptEditor -> interpreter -> optionalInterpreterOwningEditor = nullptr;
-				scriptEditor -> interpreter -> optionalDynamicEditorEnvironment = nullptr;   // BUG: this is not very precise (check with pausing)
+				scriptEditor -> interpreter -> owningEditorEnvironment. optionalInstance = nullptr;
+				scriptEditor -> interpreter -> dynamicEditorEnvironment. optionalInstance = nullptr;   // BUG: this is not very precise (check with pausing)
 			}
 			Thing_setName (scriptEditor, nullptr);
 			Editor_setMenuSensitive (scriptEditor, U"Run", false);
@@ -374,9 +374,9 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 
 static void menu_cb_close (Editor me, EDITOR_ARGS) {
 	my v_goAway ();
-	if (optionalInterpreter && (optionalInterpreter -> optionalInterpreterOwningEditor == me || optionalInterpreter -> optionalDynamicEditorEnvironment == me)) {
-		optionalInterpreter -> optionalInterpreterOwningEditor = nullptr;   // undangle  TODO: remove interpreter wholesale?
-		optionalInterpreter -> optionalDynamicEditorEnvironment = nullptr;   // undangle
+	if (optionalInterpreter && (optionalInterpreter -> owningEditorEnvironment. optionalInstance == me || optionalInterpreter -> dynamicEditorEnvironment. optionalInstance == me)) {
+		optionalInterpreter -> owningEditorEnvironment. optionalInstance = nullptr;   // undangle  TODO: remove interpreter wholesale?
+		optionalInterpreter -> dynamicEditorEnvironment. optionalInstance = nullptr;   // undangle
 	}
 }
 
