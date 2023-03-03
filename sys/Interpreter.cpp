@@ -113,8 +113,8 @@ autoInterpreter Interpreter_create () {
 autoInterpreter Interpreter_createFromEnvironment (Editor optionalInterpreterOwningEditor) {
 	autoInterpreter interpreter = Interpreter_create ();
 	if (optionalInterpreterOwningEditor) {
-		interpreter -> editorClass = optionalInterpreterOwningEditor -> classInfo;
-		interpreter -> optionalInterpreterOwningEditor = optionalInterpreterOwningEditor;
+		interpreter -> owningEditorEnvironment. optionalClass = optionalInterpreterOwningEditor -> classInfo;
+		interpreter -> owningEditorEnvironment. optionalInstance = optionalInterpreterOwningEditor;
 	}
 	return interpreter;
 }
@@ -2064,7 +2064,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		/*
 			Execute commands.
 		*/
-		my optionalDynamicEditorEnvironment = my optionalInterpreterOwningEditor;
+		my dynamicEditorEnvironment = my owningEditorEnvironment;
 		trace (U"going to handle ", numberOfLines, U" lines");
 		//for (lineNumber = 1; lineNumber <= numberOfLines; lineNumber ++) {
 			//trace (U"line ", lineNumber, U": ", lines [lineNumber]);
