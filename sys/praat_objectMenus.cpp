@@ -302,7 +302,7 @@ DO
 	INFO_NONE
 		Formula_Result result;
 		if (! interpreter) {
-			autoInterpreter tempInterpreter = Interpreter_create (nullptr, nullptr);
+			autoInterpreter tempInterpreter = Interpreter_create ();
 			Interpreter_anyExpression (tempInterpreter.get(), expression, & result);
 		} else {
 			Interpreter_anyExpression (interpreter, expression, & result);

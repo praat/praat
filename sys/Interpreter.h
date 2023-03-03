@@ -74,7 +74,6 @@ conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType retu
 
 Thing_define (Interpreter, Thing) {
 	Editor optionalInterpreterOwningEditor, optionalDynamicEditorEnvironment;
-	autostring32 environmentName;
 	ClassInfo editorClass;
 	int numberOfParameters, numberOfLabels, callDepth;
 	int types [1+Interpreter_MAXNUM_PARAMETERS], numbersOfLines [1+Interpreter_MAXNUM_PARAMETERS];
@@ -98,7 +97,7 @@ Thing_define (Interpreter, Thing) {
 	autoSTRVEC returnedStringArray;
 };
 
-autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo editorClass);
+autoInterpreter Interpreter_create ();
 autoInterpreter Interpreter_createFromEnvironment (Editor optionalInterpreterOwningEditor);
 
 void Melder_includeIncludeFiles (autostring32 *text);

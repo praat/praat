@@ -100,12 +100,10 @@ conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType retu
 
 Thing_implement (Interpreter, Thing, 0);
 
-autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo editorClass) {
+autoInterpreter Interpreter_create () {
 	try {
 		autoInterpreter me = Thing_new (Interpreter);
 		my variablesMap. max_load_factor (0.65f);
-		my environmentName = Melder_dup (environmentName);
-		my editorClass = editorClass;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Interpreter not created.");
@@ -113,11 +111,12 @@ autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo edi
 }
 
 autoInterpreter Interpreter_createFromEnvironment (Editor optionalInterpreterOwningEditor) {
-	if (! optionalInterpreterOwningEditor)
-		return Interpreter_create (nullptr, nullptr);
-	autoInterpreter interpreter = Interpreter_create (optionalInterpreterOwningEditor -> name.get(), optionalInterpreterOwningEditor -> classInfo);
-	interpreter -> optionalInterpreterOwningEditor = optionalInterpreterOwningEditor;
-	return interpreter;   // BUG: collapse
+	autoInterpreter interpreter = Interpreter_create ();
+	if (optionalInterpreterOwningEditor) {
+		interpreter -> editorClass = optionalInterpreterOwningEditor -> classInfo;
+		interpreter -> optionalInterpreterOwningEditor = optionalInterpreterOwningEditor;
+	}
+	return interpreter;
 }
 
 void Melder_includeIncludeFiles (autostring32 *inout_text) {

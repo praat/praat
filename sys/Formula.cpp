@@ -2255,7 +2255,7 @@ void Formula_compile (Interpreter interpreter, Daata data, conststring32 express
 	theInterpreter = interpreter;
 	if (! theInterpreter) {
 		if (! theLocalInterpreter)
-			theLocalInterpreter = Interpreter_create (nullptr, nullptr);
+			theLocalInterpreter = Interpreter_create ();
 		theInterpreter = theLocalInterpreter.get();
 		theInterpreter -> variablesMap. clear ();
 	}
