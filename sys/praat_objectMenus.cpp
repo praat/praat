@@ -145,16 +145,16 @@ DIRECT (PRAAT__About) {
 
 DIRECT (PRAAT__newScript) {
 	PRAAT
-		autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
-		editor.releaseToUser();
+		autoScriptEditor scriptEditor = ScriptEditor_createFromText (nullptr, nullptr);
+		scriptEditor.releaseToUser();
 	PRAAT_END
 }
 
 DIRECT (PRAAT__openScript) {
 	PRAAT
-		autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
-		TextEditor_showOpen (editor.get());
-		editor.releaseToUser();
+		autoScriptEditor scriptEditor = ScriptEditor_createFromText (nullptr, nullptr);
+		TextEditor_showOpen (scriptEditor.get());
+		scriptEditor.releaseToUser();
 	PRAAT_END
 }
 

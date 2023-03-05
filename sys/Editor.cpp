@@ -283,23 +283,24 @@ void Editor_doMenuCommand (Editor me, conststring32 commandTitle, integer narg, 
 /********** class Editor **********/
 
 void structEditor :: v9_destroy () noexcept {
-	trace (U"enter");
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	/*
 		The following command must be performed before the shell is destroyed.
 		Otherwise, we would be forgetting dangling command dialogs here.
 	*/
 	our menus.removeAllItems();
-	for (integer i = 1; i <= our scriptEditors.size; i ++) {
-		ScriptEditor scriptEditor = our scriptEditors.at [i];
+	for (integer i = 1; i <= theReferencesToAllOpenScriptEditors.size; i ++) {
+		ScriptEditor scriptEditor = theReferencesToAllOpenScriptEditors.at [i];
+		if (scriptEditor -> optionalReferenceToOwningEditor != this)
+			continue;
 		if (scriptEditor -> dirty || scriptEditor -> interpreter && scriptEditor -> interpreter -> running) {
 			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
 			if (scriptEditor -> interpreter)
 				scriptEditor -> interpreter -> undangleEditorEnvironments();
 			Thing_setName (scriptEditor, nullptr);
 			Editor_setMenuSensitive (scriptEditor, U"Run", false);
-			our scriptEditors.at [i] = nullptr;   // prevent automatic destruction
-		}
+		} else
+			forget (scriptEditor);
 	}
 	Interpreters_undangleEnvironment (this);
 
@@ -345,8 +346,11 @@ void structEditor :: v1_info () {
 void structEditor :: v_nameChanged () {
 	if (our name) {
 		GuiShell_setTitle (our windowForm, our name.get());
-		for (integer i = 1; i <= our scriptEditors.size; i ++)
-			Thing_setName (our scriptEditors.at [i], nullptr);
+		for (integer i = 1; i <= theReferencesToAllOpenScriptEditors.size; i ++) {
+			ScriptEditor scriptEditor = theReferencesToAllOpenScriptEditors.at [i];
+			if (scriptEditor -> optionalReferenceToOwningEditor == this)
+				Thing_setName (theReferencesToAllOpenScriptEditors.at [i], nullptr);
+		}
 	}
 }
 
@@ -404,13 +408,13 @@ static void menu_cb_searchManual (Editor /* me */, EDITOR_ARGS) {
 
 static void menu_cb_newScript (Editor me, EDITOR_ARGS) {
 	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
-	my scriptEditors. addItem_move (scriptEditor.move());
+	scriptEditor.releaseToUser();
 }
 
 static void menu_cb_openScript (Editor me, EDITOR_ARGS) {
 	autoScriptEditor scriptEditor = ScriptEditor_createFromText (me, nullptr);
 	TextEditor_showOpen (scriptEditor.get());
-	my scriptEditors. addItem_move (scriptEditor.move());
+	scriptEditor.releaseToUser();
 }
 
 void structEditor :: v_createMenuItems_edit (EditorMenu menu) {

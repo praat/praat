@@ -137,6 +137,18 @@ editor: textGrid
 # 4. Type something: check change in title
 # 5. Close the editor: title changes, and Run menu becomes insensitive
 
+# Entirely by hand:
+
+# 1. Create a Sound
+# 2. Choose View & Edit
+# 3. Choose Open editor script: check title
+# 4. Type something to make the script window dirty: fdsffg
+# 5. Remove the Sound: editor closes, title changes, and Run menu becomes insensitive
+# 6. Create a Sound
+# 7. Choose View & Edit
+# 8. Choose Open editor script: message "Text file XXX is already open."
+# 9. Remove the Sound: editor closes, title changes, and Run menu becomes insensitive
+
 # Within editor (open this script in an editor window).
 #
 # Try to run the following twice.
