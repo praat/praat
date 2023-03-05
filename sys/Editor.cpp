@@ -289,7 +289,7 @@ void structEditor :: v9_destroy () noexcept {
 		Otherwise, we would be forgetting dangling command dialogs here.
 	*/
 	our menus.removeAllItems();
-	for (integer i = 1; i <= theReferencesToAllOpenScriptEditors.size; i ++) {
+	for (integer i = theReferencesToAllOpenScriptEditors.size; i >= 1; i --) {
 		ScriptEditor scriptEditor = theReferencesToAllOpenScriptEditors.at [i];
 		if (scriptEditor -> optionalReferenceToOwningEditor != this)
 			continue;
