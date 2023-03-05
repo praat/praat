@@ -3829,12 +3829,12 @@ static void do_do () {
 	if (stack [0]. which != Stackel_STRING)
 		Melder_throw (U"The first argument of the function “do” should be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
 	conststring32 command = stack [0]. getString();
-	if (theCurrentPraatObjects == & theForegroundPraatObjects && theInterpreter -> dynamicEditorEnvironment. optionalInstance) {
+	if (theCurrentPraatObjects == & theForegroundPraatObjects && theInterpreter -> hasDynamicEnvironmentEditor()) {
 		autoMelderString valueString;
 		MelderString_appendCharacter (& valueString, 1);   // TODO: check whether this is needed at all, or is just MelderString_empty enough?
 		autoMelderDivertInfo divert (& valueString);
 		autostring32 command2 = Melder_dup (command);   // allow the menu command to reuse the stack (?)
-		Editor_doMenuCommand (theInterpreter -> dynamicEditorEnvironment. optionalInstance, command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
+		Editor_doMenuCommand (theInterpreter -> optionalDynamicEnvironmentEditor(), command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
 		pushNumber (Melder_atof (valueString.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
@@ -3925,12 +3925,12 @@ static void do_do_STR () {
 	if (stack [0]. which != Stackel_STRING)
 		Melder_throw (U"The first argument of the function “do$” should be a string, namely a menu command, and not ", stack [0]. whichText(), U".");
 	conststring32 command = stack [0]. getString();
-	if (theCurrentPraatObjects == & theForegroundPraatObjects && theInterpreter -> dynamicEditorEnvironment. optionalInstance) {
+	if (theCurrentPraatObjects == & theForegroundPraatObjects && theInterpreter -> hasDynamicEnvironmentEditor()) {
 		static MelderString info;
 		MelderString_empty (& info);
 		autoMelderDivertInfo divert (& info);
 		autostring32 command2 = Melder_dup (command);
-		Editor_doMenuCommand (theInterpreter -> dynamicEditorEnvironment. optionalInstance, command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
+		Editor_doMenuCommand (theInterpreter -> optionalDynamicEnvironmentEditor(), command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
 		pushString (Melder_dup (info.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
@@ -4146,11 +4146,21 @@ static void do_pauseScript () {
 							i == arg->stringArray.size ? U"" : U" ");
 			}
 		}
-		const Editor optionalPauseWindowOwningEditor = theInterpreter -> dynamicEditorEnvironment. optionalInstance;
+		const Editor optionalPauseWindowOwningEditor = theInterpreter -> optionalDynamicEnvironmentEditor();
 		const GuiWindow parentShell = ( optionalPauseWindowOwningEditor ? optionalPauseWindowOwningEditor -> windowForm : theCurrentPraatApplication -> topShell );
 		UiPause_begin (parentShell, optionalPauseWindowOwningEditor, U"stop or continue", theInterpreter);
 		UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
 		UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, theInterpreter);
+		//
+		//	Waiting in a modal pause window.......... (last checked 2023-03-05)
+		//
+		TRACE
+		trace (Melder_pointer (optionalPauseWindowOwningEditor), Melder_pointer (theInterpreter -> optionalDynamicEnvironmentEditor()));
+		if (theInterpreter -> optionalDynamicEnvironmentEditor() != optionalPauseWindowOwningEditor) {
+			Melder_assert (!! theInterpreter -> optionalDynamicEditorEnvironmentClassName());
+					// testing the assumption that the environment can be lost but never added during pause
+			Melder_throw (U"Cannot continue after pause, because the ", theInterpreter -> optionalDynamicEditorEnvironmentClassName(), U" has been closed.");
+		}
 	}
 	pushNumber (1);
 }
@@ -4204,7 +4214,7 @@ static void do_runScript () {
 		Melder_throw (U"Cannot call runScript() more than ", MAXIMUM_NUMBER_OF_LEVELS, U" levels deep.");
 	}
 	try {
-		const Editor optionalNewInterpreterOwningWindow = theInterpreter -> dynamicEditorEnvironment. optionalInstance;
+		const Editor optionalNewInterpreterOwningWindow = theInterpreter -> optionalDynamicEnvironmentEditor();
 		praat_runScript (fileName->getString(), numberOfArguments - 1, & theStack [w + 1], optionalNewInterpreterOwningWindow);
 		theLevel -= 1;
 	} catch (MelderError) {
@@ -5094,17 +5104,16 @@ static void do_editor () {
 		/*
 			No editor mentioned, so switch back to the already existing editor.
 		*/
-		if (theInterpreter && theInterpreter -> owningEditorEnvironment. optionalClass) {
-			theInterpreter -> dynamicEditorEnvironment. optionalInstance = theInterpreter -> owningEditorEnvironment. optionalInstance;
-		} else {
+		if (theInterpreter && theInterpreter -> wasStartedFromEditorEnvironment())
+			theInterpreter -> setDynamicFromOwningEditorEnvironment ();
+		else
 			Melder_throw (U"The function “editor” requires an argument when called from outside an editor.");
-		}
 	} else if (narg->number == 1) {
 		const Stackel editor = pop;
 		if (editor->which == Stackel_STRING) {
-			theInterpreter -> dynamicEditorEnvironment. optionalInstance = praat_findEditorFromString (editor->getString());
+			theInterpreter -> setDynamicEditorEnvironmentFromEditor (praat_findEditorFromString (editor->getString()));
 		} else if (editor->which == Stackel_NUMBER) {
-			theInterpreter -> dynamicEditorEnvironment. optionalInstance = praat_findEditorById (Melder_iround (editor->number));
+			theInterpreter -> setDynamicEditorEnvironmentFromEditor (praat_findEditorById (Melder_iround (editor->number)));
 		} else {
 			Melder_throw (U"The function “editor” requires a numeric or string argument, not ", editor->whichText(), U".");
 		}
@@ -6682,7 +6691,7 @@ static void do_beginPauseForm () {
 	if (n->number == 1) {
 		const Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			const Editor optionalPauseWindowOwningEditor = theInterpreter -> owningEditorEnvironment. optionalInstance;
+			const Editor optionalPauseWindowOwningEditor = theInterpreter -> optionalDynamicEnvironmentEditor();
 			const GuiWindow parentShell = ( optionalPauseWindowOwningEditor ? optionalPauseWindowOwningEditor -> windowForm : theCurrentPraatApplication -> topShell );
 			UiPause_begin (parentShell, optionalPauseWindowOwningEditor, title->getString(), theInterpreter);
 		} else {

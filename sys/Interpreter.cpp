@@ -100,10 +100,18 @@ conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType retu
 
 Thing_implement (Interpreter, Thing, 0);
 
+static CollectionOf <structInterpreter> theReferencesToAllLivingInterpreters;
+
+void structInterpreter :: v9_destroy () noexcept {
+	theReferencesToAllLivingInterpreters. undangleItem (this);
+	our Interpreter_Parent :: v9_destroy ();
+}
+
 autoInterpreter Interpreter_create () {
 	try {
 		autoInterpreter me = Thing_new (Interpreter);
 		my variablesMap. max_load_factor (0.65f);
+		theReferencesToAllLivingInterpreters. addItem_ref (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Interpreter not created.");
@@ -112,11 +120,18 @@ autoInterpreter Interpreter_create () {
 
 autoInterpreter Interpreter_createFromEnvironment (Editor optionalInterpreterOwningEditor) {
 	autoInterpreter interpreter = Interpreter_create ();
-	if (optionalInterpreterOwningEditor) {
-		interpreter -> owningEditorEnvironment. optionalClass = optionalInterpreterOwningEditor -> classInfo;
-		interpreter -> owningEditorEnvironment. optionalInstance = optionalInterpreterOwningEditor;
-	}
+	interpreter -> setOwningEditorEnvironmentFromOptionalEditor (optionalInterpreterOwningEditor);
 	return interpreter;
+}
+
+void Interpreters_undangleEnvironment (Editor environment) noexcept {
+	for (integer i = 1; i <= theReferencesToAllLivingInterpreters.size; i ++) {
+		const Interpreter interpreter = theReferencesToAllLivingInterpreters.at [i];
+		if (interpreter -> optionalOwningEnvironmentEditor() == environment)
+			interpreter -> undangleOwningEditor();
+		if (interpreter -> optionalDynamicEnvironmentEditor() == environment)
+			interpreter -> undangleDynamicEditor();
+	}
 }
 
 void Melder_includeIncludeFiles (autostring32 *inout_text) {
@@ -2064,7 +2079,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		/*
 			Execute commands.
 		*/
-		my dynamicEditorEnvironment = my owningEditorEnvironment;
+		my setDynamicFromOwningEditorEnvironment ();
 		trace (U"going to handle ", numberOfLines, U" lines");
 		//for (lineNumber = 1; lineNumber <= numberOfLines; lineNumber ++) {
 			//trace (U"line ", lineNumber, U": ", lines [lineNumber]);

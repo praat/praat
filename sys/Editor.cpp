@@ -294,15 +294,14 @@ void structEditor :: v9_destroy () noexcept {
 		ScriptEditor scriptEditor = our scriptEditors.at [i];
 		if (scriptEditor -> dirty || scriptEditor -> interpreter && scriptEditor -> interpreter -> running) {
 			scriptEditor -> optionalReferenceToOwningEditor = nullptr;   // undangle
-			if (scriptEditor -> interpreter) {
-				scriptEditor -> interpreter -> owningEditorEnvironment. optionalInstance = nullptr;
-				scriptEditor -> interpreter -> dynamicEditorEnvironment. optionalInstance = nullptr;   // BUG: this is not very precise (check with pausing)
-			}
+			if (scriptEditor -> interpreter)
+				scriptEditor -> interpreter -> undangleEditorEnvironments();
 			Thing_setName (scriptEditor, nullptr);
 			Editor_setMenuSensitive (scriptEditor, U"Run", false);
 			our scriptEditors.at [i] = nullptr;   // prevent automatic destruction
 		}
 	}
+	Interpreters_undangleEnvironment (this);
 
 	Editor_broadcastDestruction (this);
 	if (our windowForm) {
@@ -374,10 +373,8 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 
 static void menu_cb_close (Editor me, EDITOR_ARGS) {
 	my v_goAway ();
-	if (optionalInterpreter && (optionalInterpreter -> owningEditorEnvironment. optionalInstance == me || optionalInterpreter -> dynamicEditorEnvironment. optionalInstance == me)) {
-		optionalInterpreter -> owningEditorEnvironment. optionalInstance = nullptr;   // undangle  TODO: remove interpreter wholesale?
-		optionalInterpreter -> dynamicEditorEnvironment. optionalInstance = nullptr;   // undangle
-	}
+	if (optionalInterpreter && (optionalInterpreter -> optionalOwningEnvironmentEditor() == me || optionalInterpreter -> optionalDynamicEnvironmentEditor() == me))
+		optionalInterpreter -> undangleEditorEnvironments();
 }
 
 static void menu_cb_undo (Editor me, EDITOR_ARGS) {
