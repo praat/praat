@@ -57,7 +57,6 @@ Thing_define (Editor, DataGui) {
 	GuiWindow windowForm;
 	GuiMenuItem undoButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
-	OrderedOf<structScriptEditor> scriptEditors;
 	autoDaata previousData;   // the data that can be displayed and edited
 	char32 undoText [100];
 	Editor_DataChangedCallback d_dataChangedCallback;

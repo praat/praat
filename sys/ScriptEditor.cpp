@@ -23,7 +23,7 @@
 
 Thing_implement (ScriptEditor, TextEditor, 0);
 
-static CollectionOf <structScriptEditor> theReferencesToAllOpenScriptEditors;
+CollectionOf <structScriptEditor> theReferencesToAllOpenScriptEditors;
 
 bool ScriptEditors_dirty () {
 	for (integer i = 1; i <= theReferencesToAllOpenScriptEditors.size; i ++) {
@@ -37,15 +37,6 @@ bool ScriptEditors_dirty () {
 void structScriptEditor :: v9_destroy () noexcept {
 	our argsDialog.reset();   // don't delay till delete
 	theReferencesToAllOpenScriptEditors. undangleItem (this);
-	if (our optionalReferenceToOwningEditor) {
-		/*
-			The usual pattern would be to handle this via a destroyCallback.
-			However, ScriptEditor happens to know very well how its boss
-			(Editor) is organized (because it inherits from Editor),
-			so we handle this directly:
-		*/
-		our optionalReferenceToOwningEditor -> scriptEditors. undangleItem (this);
-	}
 	ScriptEditor_Parent :: v9_destroy ();
 }
 
@@ -341,7 +332,7 @@ void structScriptEditor :: v_createMenuItems_help (EditorMenu menu) {
 
 void ScriptEditor_init (ScriptEditor me, Editor optionalOwningEditor, conststring32 initialText) {
 	if (optionalOwningEditor) {
-		my optionalOwningEditorClassName = Melder_dup (Thing_className (optionalOwningEditor));
+		my optionalOwningEditorClassName = Melder_dup (Thing_className (optionalOwningEditor));   // BUG: no copying needed
 		my optionalReferenceToOwningEditor = optionalOwningEditor;
 	}
 	TextEditor_init (me, initialText);

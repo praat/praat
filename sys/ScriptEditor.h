@@ -67,5 +67,7 @@ bool ScriptEditors_dirty ();   // are there any modified and unsaved scripts? As
 
 void ScriptEditor_debug_printAllOpenScriptEditors ();
 
+extern CollectionOf <structScriptEditor> theReferencesToAllOpenScriptEditors;
+
 /* End of file ScriptEditor.h */
 #endif
