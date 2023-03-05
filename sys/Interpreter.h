@@ -73,10 +73,80 @@ enum class kInterpreter_ReturnType {
 conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType returnType, conststring32 command);
 
 Thing_define (Interpreter, Thing) {
-	struct {
-		ClassInfo optionalClass;
-		Editor optionalInstance;
-	} owningEditorEnvironment, dynamicEditorEnvironment;
+	struct EditorEnvironment {
+		ClassInfo _optionalClass;
+		Editor _optionalInstance;
+		void _setFromOptionalEditor (Editor optionalEditor) noexcept {
+			our _optionalClass = ( optionalEditor ? ((Thing) optionalEditor) -> classInfo : nullptr );
+					// class Editor hasn't been defined yet, but assuming it's a Thing seems to be safe...
+			our _optionalInstance = optionalEditor;
+		}
+		conststring32 _optionalClassName () noexcept {
+			return _optionalClass ? our _optionalClass -> className : nullptr;
+		}
+	} _owningEditorEnvironment, _dynamicEditorEnvironment;
+	/*
+		Each entire editor environment (but not its parts separately) can be set from an Editor;
+		in case of an owning editor, the editor is optional; in case of a dynamic editor, it's obligatory.
+		The parts of an editor environment (class name and instance) can be separately gotten.
+	*/
+	void setOwningEditorEnvironmentFromOptionalEditor (Editor optionalEditor) noexcept {
+		our _owningEditorEnvironment. _setFromOptionalEditor (optionalEditor);
+	}
+	conststring32 optionalOwningEditorEnvironmentClassName () noexcept {
+		return our _owningEditorEnvironment. _optionalClassName();
+	}
+	Editor optionalOwningEnvironmentEditor () noexcept {
+		return our _owningEditorEnvironment. _optionalInstance;
+	}
+	void setDynamicEditorEnvironmentFromEditor (Editor editor) noexcept {
+		Melder_assert (editor);
+		our _dynamicEditorEnvironment. _setFromOptionalEditor (editor);
+	}
+	conststring32 optionalDynamicEditorEnvironmentClassName () noexcept {
+		return our _dynamicEditorEnvironment. _optionalClassName();
+	}
+	Editor optionalDynamicEnvironmentEditor () noexcept {
+		return our _dynamicEditorEnvironment. _optionalInstance;
+	}
+	/*
+		An owning editor environment can be copied to a dynamic one, but not the other way round.
+	*/
+	void setDynamicFromOwningEditorEnvironment () noexcept {
+		our _dynamicEditorEnvironment = our _owningEditorEnvironment;   // TODO: what if the owner has been orphaned?
+	}
+	/*
+		Memory of the past.
+	*/
+	bool wasStartedFromEditorEnvironment () noexcept {
+		return !! our _owningEditorEnvironment. _optionalClass;
+	}
+	/*
+		Awareness of the present.
+	*/
+	bool hasDynamicEnvironmentEditor () noexcept {
+		return !! our _dynamicEditorEnvironment. _optionalInstance;
+	}
+	/*
+		Forgetting. The owning editor's class will always be remembered, though. That's our identity, so to say.
+
+		The dynamic editor's class will also be remembered,
+		on behalf of an error message by a continuing pause script. (last checked 5 March 2023)
+	*/
+	void undangleOwningEditor () noexcept {
+		our _owningEditorEnvironment. _optionalInstance = nullptr;
+	}
+	void undangleDynamicEditor () noexcept {
+		our _dynamicEditorEnvironment. _optionalInstance = nullptr;
+	}
+	void undangleEditorEnvironments () noexcept {
+		our _owningEditorEnvironment. _optionalInstance = nullptr;
+		our _dynamicEditorEnvironment. _optionalInstance = nullptr;
+	}
+	void nullifyDynamicEditorEnvironment () noexcept {
+		our _dynamicEditorEnvironment. _optionalClass = nullptr;
+		our _dynamicEditorEnvironment. _optionalInstance = nullptr;
+	}
 
 	int numberOfParameters, numberOfLabels, callDepth;
 	int types [1+Interpreter_MAXNUM_PARAMETERS], numbersOfLines [1+Interpreter_MAXNUM_PARAMETERS];
@@ -98,10 +168,15 @@ Thing_define (Interpreter, Thing) {
 	autoINTVEC returnedIntegerVector;
 	autoMAT returnedRealMatrix;
 	autoSTRVEC returnedStringArray;
+
+	void v9_destroy () noexcept
+		override;
 };
 
 autoInterpreter Interpreter_create ();
 autoInterpreter Interpreter_createFromEnvironment (Editor optionalInterpreterOwningEditor);
+
+void Interpreters_undangleEnvironment (Editor environment) noexcept;
 
 void Melder_includeIncludeFiles (autostring32 *text);
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text);

@@ -162,18 +162,18 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 		thePauseFormCancelCallback);
 	theCancelContinueButton = cancelContinueButton;
 	UiForm_finish (thePauseForm.get());
-	bool wasBackgrounding = Melder_backgrounding;
+	const bool wasBackgrounding = Melder_backgrounding;
 	//if (theCurrentPraatApplication -> batch) goto end;
 	if (wasBackgrounding)
 		praat_foreground ();
 	/*
-	 * Put the pause form on the screen.
-	 */
+		Put the pause form on the screen.
+	*/
 	UiForm_destroyWhenUnmanaged (thePauseForm.get());
 	UiForm_do (thePauseForm.get(), false);
 	/*
-	 * Wait for the user to click Stop or Continue.
-	 */
+		Wait for the user to click Stop or Continue.
+	*/
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
 		thePauseForm_clicked = 0;
