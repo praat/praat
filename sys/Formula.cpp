@@ -4151,16 +4151,6 @@ static void do_pauseScript () {
 		UiPause_begin (parentShell, optionalPauseWindowOwningEditor, U"stop or continue", theInterpreter);
 		UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
 		UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, theInterpreter);
-		//
-		//	Waiting in a modal pause window.......... (last checked 2023-03-05)
-		//
-		TRACE
-		trace (Melder_pointer (optionalPauseWindowOwningEditor), Melder_pointer (theInterpreter -> optionalDynamicEnvironmentEditor()));
-		if (theInterpreter -> optionalDynamicEnvironmentEditor() != optionalPauseWindowOwningEditor) {
-			Melder_assert (!! theInterpreter -> optionalDynamicEditorEnvironmentClassName());
-					// testing the assumption that the environment can be lost but never added during pause
-			Melder_throw (U"Cannot continue after pause, because the ", theInterpreter -> optionalDynamicEditorEnvironmentClassName(), U" has been closed.");
-		}
 	}
 	pushNumber (1);
 }
