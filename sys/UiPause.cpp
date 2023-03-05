@@ -156,6 +156,8 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 {
 	if (! thePauseForm)
 		Melder_throw (U"Found the function “endPause” without a preceding “beginPause”.");
+	Melder_assert (interpreter);
+	Editor savedEditor = interpreter -> optionalDynamicEnvironmentEditor();
 	UiForm_setPauseForm (thePauseForm.get(), numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
 		continueText1, continueText2, continueText3, continueText4, continueText5,
 		continueText6, continueText7, continueText8, continueText9, continueText10,
@@ -213,7 +215,6 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	}
 	if (wasBackgrounding)
 		praat_background ();
-	/* BUG: should also restore praatP. editor. */
 	thePauseForm. releaseToUser();   // undangle
 	if (thePauseForm_clicked == -1) {
 		Interpreter_stop (interpreter);
@@ -222,6 +223,13 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 		//Melder_clearError ();
 	} else {
 		//Melder_casual (U"Clicked ", thePauseForm_clicked);
+	}
+	if (interpreter -> optionalDynamicEnvironmentEditor() != savedEditor) {
+		Melder_assert (savedEditor);
+		Melder_assert (! interpreter -> optionalDynamicEnvironmentEditor());
+		Melder_assert (interpreter -> optionalDynamicEditorEnvironmentClassName());
+				// testing the assumption that the environment can be lost but never added during pause
+		Melder_throw (U"Cannot continue after pause, because the ", interpreter -> optionalDynamicEditorEnvironmentClassName(), U" has been closed.");
 	}
 	return thePauseForm_clicked;
 }

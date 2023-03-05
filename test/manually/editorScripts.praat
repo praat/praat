@@ -111,6 +111,16 @@ editor: textGrid
 	pauseScript: "Close the editor window, then continue."
 	Zoom: 0.3, 0.7
 
+sound = Create Sound from formula: "sineWithNoise", 1, 0, 1, 44100, "1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)"
+textGrid = To TextGrid: "Mary John Bell", "bell"
+selectObject: sound, textGrid
+View & Edit
+editor: textGrid
+	Select: 0.3, 0.7
+	asserterror Cannot continue after pause, because the TextGridEditor has been closed.
+	pause Close the editor window, then continue.
+	Zoom: 0.3, 0.7
+
 # Entirely by hand:
 
 # 1. Create a Sound
@@ -188,4 +198,9 @@ Select: 0.5, 0.6
 Select: 0.3, 0.7
 asserterror Cannot continue after pause, because the SoundEditor has been closed.
 pauseScript: "Close the editor window, then continue."
+Zoom: 0.5, 0.6
+
+Select: 0.3, 0.7
+asserterror Cannot continue after pause, because the SoundEditor has been closed.
+pause Close the editor window, then continue.
 Zoom: 0.5, 0.6
