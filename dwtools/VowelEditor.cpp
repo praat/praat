@@ -76,11 +76,11 @@ Thing_implement (VowelEditor, Editor, 0);
 #include "Prefs_copyToInstance.h"
 #include "VowelEditor_prefs.h"
 
-#define STATUS_INFO (3*Gui_LABEL_HEIGHT/2)
+#define STATUS_INFO (3*Gui_LABEL_HEIGHT)
 #define MARGIN_RIGHT 10
 #define MARGIN_LEFT 50
 #define MARGIN_TOP 50
-#define MARGIN_BOTTOM (60+STATUS_INFO)
+#define MARGIN_BOTTOM (100+STATUS_INFO)
 
 #pragma mark - class TrajectoryPointTier
 
@@ -1235,11 +1235,12 @@ void structVowelEditor :: v_createChildren ()
 {
 	const int button_width = 90, text_width = 110, status_info_width = 400;
 	int top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
-
-	// Three buttons on a row: Play, Reverse, Publish
+	/*
+		Three buttons on a row: Play, Reverse, Publish
+	*/
 	int left = 10, right = left + button_width;
 	bottom_widgets_top = top = -MARGIN_BOTTOM + 10;
-	bottom_widgets_bottom = bottom = -STATUS_INFO;
+	bottom_widgets_bottom = bottom = -STATUS_INFO - Gui_LABEL_HEIGHT;
 	playButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Play", gui_button_cb_play, this, 0);
 	left = right + 10;
 	right = left + button_width;

@@ -25,6 +25,7 @@
 #include "speak_lib.h"
 #include "synthdata.h"
 #include "encoding.h"
+#include "dictionary.h"
 #include "string.h"
 #include "translate.h"
 
@@ -192,14 +193,13 @@ void structSpeechSynthesizer :: v1_info () {
 static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 {
 	char phoneme_name [9];
-	if (wav == 0) return 1;
-	
+	if (wav == nullptr)
+		return 1;	
 	/*
 		It is essential that the SpeechSynthesizer is identified here by the user_data,
 		because the espeakEVENT_LIST_TERMINATED event may still be accompanied by
 		a piece of audio data!!
 	*/
-	
 	SpeechSynthesizer me = (SpeechSynthesizer) (events -> user_data);
 	while (events -> type != espeakEVENT_LIST_TERMINATED) {
 		if (events -> type == espeakEVENT_SAMPLERATE) {
