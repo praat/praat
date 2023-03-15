@@ -215,7 +215,7 @@ enum { NO_SYMBOL_,
 	LABEL_,
 	DECREMENT_AND_ASSIGN_, ADD_3DOWN_, POP_2_,
 	VEC_CELL_, MAT_CELL_, STRVEC_CELL_, VARIABLE_REFERENCE_,
-	TENSOR_LITERAL_,
+	TENSOR_LITERAL_, TENSOR_LITERAL_CELL_,
 	SELF0_, SELFSTR0_, TO_OBJECT_,
 	OBJECT_XMIN_, OBJECT_XMAX_, OBJECT_YMIN_, OBJECT_YMAX_, OBJECT_NX_, OBJECT_NY_,
 	OBJECT_DX_, OBJECT_DY_, OBJECT_NROW_, OBJECT_NCOL_, OBJECT_ROW_STR_, OBJECT_COL_STR_,
@@ -338,7 +338,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"_label",
 	U"_decrementAndAssign", U"_add3Down", U"_pop2",
 	U"_numericVectorElement", U"_numericMatrixElement", U"_stringVectorElement", U"_variableReference",
-	U"_numericVectorLiteral",
+	U"_tensorLiteral", U"_tensorLiteralCell",
 	U"_self0", U"_self0$", U"_toObject",
 	U"_object_xmin", U"_object_xmax", U"_object_ymin", U"_object_ymax", U"_object_nx", U"_object_ny",
 	U"_object_dx", U"_object_dy", U"_object_nrow", U"_object_ncol", U"_object_row$", U"_object_col$",
@@ -394,12 +394,10 @@ static void Formula_lexan () {
 /*
 	Purpose:
 		translate the formula text into a series of symbols.
-	Return:
-		0 in case of error, otherwise 1.
 	Postcondition:
-		if result != 0, then the last symbol is L"END_".
+		if not thrown, then the last symbol is END_.
 	Example:
-		the text L"x*7" yields 5 symbols:
+		the text "x*7" yields 5 symbols:
 			lexan [0] is empty;
 			lexan [1]. symbol = X_;
 			lexan [2]. symbol = MUL_;
@@ -407,12 +405,12 @@ static void Formula_lexan () {
 			lexan [3]. number = 7.00000000e+00;
 			lexan [4]. symbol = END_;
 */
-	char32 kar;   /* The character most recently read from theExpression. */
-	integer ikar = -1;   /* The position of that character in theExpression. */
+	char32 kar;   // the character most recently read from theExpression
+	integer ikar = -1;   // the position of that character in theExpression
 #define newchar kar = theExpression [++ ikar]
 #define oldchar -- ikar
 
-	integer itok = 0;   /* Position of most recent symbol in "lexan". */
+	integer itok = 0;   // position of most recent symbol in "lexan"
 #define newtok(s)  { lexan [++ itok]. symbol = s; lexan [itok]. position = ikar; }
 #define toknumber(g)  lexan [itok]. content.number = (g)
 #define tokmatrix(m)  lexan [itok]. content.object = (m)
@@ -737,8 +735,8 @@ static void Formula_lexan () {
 			stringtokoff;
 			oldchar;
 			/*
-			 * 'token' now contains a word that could be an object name.
-			 */
+				`token` now contains a word that could be an object name.
+			*/
 			char32 *underscore = str32chr (token.string, '_');
 			if (str32equ (token.string, U"Self")) {
 				if (! theSource)
@@ -1590,7 +1588,16 @@ static void parsePowerFactor () {
 		fit (CLOSING_BRACE_);
 		newparse (NUMBER_);
 		parsenumber (n);
-		newparse (TENSOR_LITERAL_);
+		if (newread == OPENING_BRACKET_) {
+			parseExpression ();
+			//fit (COMMA_);   // this would be for matrices
+			//parseExpression ();
+			fit (CLOSING_BRACKET_);
+			newparse (TENSOR_LITERAL_CELL_);
+		} else {
+			oldread;
+			newparse (TENSOR_LITERAL_);
+		}
 		return;
 	}
 
@@ -6243,6 +6250,45 @@ static void do_tensorLiteral () {
 		Melder_throw (U"Cannot (yet?) create a tensor containing ", last->whichText(), U".");
 	}
 }
+static void do_tensorLiteralCell () {
+	const Stackel index_ = pop, numberOfElements_ = pop;
+	Melder_assert (numberOfElements_->which == Stackel_NUMBER);
+	const integer numberOfElements = Melder_iround (numberOfElements_->number);
+	Melder_assert (numberOfElements > 0);
+	const Stackel last_ = pop;
+	Melder_require (last_->which == Stackel_NUMBER || last_->which == Stackel_STRING,
+		U"Cannot index matrix literals.");
+	Melder_require (index_->which == Stackel_NUMBER,
+		U"In vector indexing, the element index should be a number, not ", index_->whichText(), U".");
+	Melder_require (isdefined (index_->number),
+		U"The element index is undefined.");
+	const integer index = Melder_iround (index_->number);
+	Melder_require (index >= 1,
+		U"Element index out of bounds. Your index is ", index, U", but the index can range only from 1 to ", numberOfElements, U".");
+	Melder_require (index >= 1 && index <= numberOfElements,
+		U"Element index out of bounds. Your index is ", index, U", but there are only ", numberOfElements, U" elements.");
+	if (last_->which == Stackel_NUMBER) {
+		double result = last_->number;
+		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
+			const Stackel element_ = pop;
+			if (element_->which != Stackel_NUMBER)
+				Melder_throw (U"The tensor elements have to be of the same type, not ", element_->whichText(), U" and a number.");
+			if (ielement == index)
+				result = element_->number;
+		}
+		pushNumber (result);
+	} else if (last_->which == Stackel_STRING) {
+		autostring32 result = last_->_string.move();   // we can move it, because it's been popped off the stack, so we never return there
+		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
+			const Stackel element_ = pop;
+			if (element_->which != Stackel_STRING)
+				Melder_throw (U"The tensor elements have to be of the same type, not ", element_->whichText(), U" and a string.");
+			if (ielement == index)
+				result = element_->_string.move();   // we can move it, because it's been popped off the stack, so we never return there
+		}
+		pushString (result.move());
+	}
+}
 static void do_row_VEC () {
 	/*
 		result# = row# (mat##, rowNumber)
@@ -8296,6 +8342,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 	autostring32 string = Melder_dup (f [programPointer]. content.string);
 	pushString (string.move());
 } break; case TENSOR_LITERAL_: { do_tensorLiteral ();
+} break; case TENSOR_LITERAL_CELL_: { do_tensorLiteralCell ();
 } break; case NUMERIC_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushNumber (var -> numericValue);
