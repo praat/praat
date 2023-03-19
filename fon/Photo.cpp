@@ -171,12 +171,12 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, nullptr);
 			CFRelease (imageSource);
 			if (image) {
-				integer width = CGImageGetWidth (image);
-				integer height = CGImageGetHeight (image);
+				const integer width = uinteger_to_integer (CGImageGetWidth (image));
+				const integer height = uinteger_to_integer (CGImageGetHeight (image));
 				me = Photo_createSimple (height, width);
-				integer bitsPerPixel = CGImageGetBitsPerPixel (image);
-				integer bitsPerComponent = CGImageGetBitsPerComponent (image);
-				integer bytesPerRow = CGImageGetBytesPerRow (image);
+				const integer bitsPerPixel = uinteger_to_integer (CGImageGetBitsPerPixel (image));
+				const integer bitsPerComponent = uinteger_to_integer (CGImageGetBitsPerComponent (image));
+				const integer bytesPerRow = uinteger_to_integer (CGImageGetBytesPerRow (image));
 				trace (
 					bitsPerPixel, U" bits per pixel, ",
 					bitsPerComponent, U" bits per component, ",
@@ -290,9 +290,9 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 
 #ifdef macintosh
 	static void _mac_saveAsImageFile (Photo me, MelderFile file, const void *which) {
-		integer bytesPerRow = my nx * 4;
-		integer numberOfRows = my ny;
-		unsigned char *imageData = Melder_malloc_f (unsigned char, bytesPerRow * numberOfRows);
+		const integer bytesPerRow = my nx * 4;
+		const integer numberOfRows = my ny;
+		unsigned char * const imageData = Melder_malloc_f (unsigned char, bytesPerRow * numberOfRows);
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			uint8 *rowAddress = imageData + bytesPerRow * (my ny - irow);
 			for (integer icol = 1; icol <= my nx; icol ++) {
@@ -309,12 +309,12 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		}
 		CGDataProviderRef dataProvider = CGDataProviderCreateWithData (nullptr,
 			imageData,
-			bytesPerRow * numberOfRows,
+			integer_to_uinteger (bytesPerRow * numberOfRows),
 			_mac_releaseDataCallback   // needed?
 		);
 		Melder_assert (dataProvider);
-		CGImageRef image = CGImageCreate (my nx, numberOfRows,
-			8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, nullptr, false, kCGRenderingIntentDefault);
+		CGImageRef image = CGImageCreate (integer_to_uinteger (my nx), integer_to_uinteger (numberOfRows),
+			8, 32, integer_to_uinteger (bytesPerRow), colourSpace, kCGImageAlphaNone, dataProvider, nullptr, false, kCGRenderingIntentDefault);
 		CGDataProviderRelease (dataProvider);
 		Melder_assert (image);
 		NSString *path = (NSString *) Melder_peek32toCfstring (Melder_fileToPath (file));

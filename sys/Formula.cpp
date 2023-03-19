@@ -2331,9 +2331,9 @@ conststring32 structStackel :: whichText () {
 static integer programPointer;
 
 static Stackel theStack;
-static integer w, wmax;   /* w = stack pointer; */
-#define pop  & theStack [w --]
-#define topOfStack  & theStack [w]
+static integer stackPointer, stackPointerMax;
+#define pop  & theStack [stackPointer --]
+#define topOfStack  & theStack [stackPointer]
 inline static void pushNumber (const double x) {
 	/* inline runs 10 to 20 percent faster; here's the test script:
 		stopwatch
@@ -2342,10 +2342,10 @@ inline static void pushNumber (const double x) {
 		Remove
 	 * Mac: 3.76 -> 3.20 seconds
 	 */
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_NUMBER;
 	stackel -> number = ( isdefined (x) ? x : undefined );
@@ -2353,89 +2353,89 @@ inline static void pushNumber (const double x) {
 	//stackel -> owned = true;   // superfluous, because never checked (2020-12-20)
 }
 static void pushNumericVector (autoVEC x) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_NUMERIC_VECTOR;
 	stackel -> numericVector = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
 static void pushNumericVectorReference (VEC x) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_NUMERIC_VECTOR;
 	stackel -> numericVector = x;
 	stackel -> owned = false;
 }
 static void pushNumericMatrix (autoMAT x) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_NUMERIC_MATRIX;
 	stackel -> numericMatrix = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
 static void pushNumericMatrixReference (MAT x) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_NUMERIC_MATRIX;
 	stackel -> numericMatrix = x;
 	stackel -> owned = false;
 }
 static void pushString (autostring32 x) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	//stackel -> reset();   // incorporated in next statement
 	stackel -> setString (x.move());
 	//stackel -> owned = true;   // superfluous, because never checked (2020-12-20)
 }
 static void pushStringVector (autoSTRVEC x) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_STRING_ARRAY;
 	stackel -> stringArray = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
 static void pushStringVectorReference (STRVEC x) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_STRING_ARRAY;
 	stackel -> stringArray = x;
 	stackel -> owned = false;
 }
 static void pushObject (Daata object) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_OBJECT;
 	stackel -> object = object;
 	//stackel -> owned = false;   // superfluous, because never checked (2020-12-20)
 }
 static void pushVariable (InterpreterVariable var) {
-	if (++ w > wmax)
-		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ stackPointer > stackPointerMax)
+		if (++ stackPointerMax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	const Stackel stackel = & theStack [w];
+	const Stackel stackel = & theStack [stackPointer];
 	stackel -> reset();
 	stackel -> which = Stackel_VARIABLE;
 	stackel -> variable = var;
@@ -3272,12 +3272,12 @@ static void do_rdiv () {
 			*/
 			const integer xn = x->numericVector.size;
 			autoVEC result = raw_VEC (xn);
-			double yvalue = y->number;
+			const double yvalue = y->number;
 			if (yvalue == 0.0) {
 				Melder_throw (U"Cannot divide (/) ", x->whichText(), U" by zero.");
 			} else {
 				for (integer i = 1; i <= xn; i ++) {
-					double xvalue = x->numericVector [i];
+					const double xvalue = x->numericVector [i];
 					result [i] = xvalue / yvalue;
 				}
 			}
@@ -3383,20 +3383,20 @@ static void do_softmax_VEC () {
 			x->numericVector = copy_VEC (x->numericVector). releaseToAmbiguousOwner();   // TODO: no need to copy
 			x->owned = true;
 		}
-		const integer nelm = x->numericVector.size;
+		const integer numberOfElements = x->numericVector.size;
 		double maximum = -1e308;
-		for (integer i = 1; i <= nelm; i ++) {
+		for (integer i = 1; i <= numberOfElements; i ++) {
 			if (x->numericVector [i] > maximum)
 				maximum = x->numericVector [i];
 		}
-		for (integer i = 1; i <= nelm; i ++)
+		for (integer i = 1; i <= numberOfElements; i ++)
 			x->numericVector [i] -= maximum;
 		longdouble sum = 0.0;
-		for (integer i = 1; i <= nelm; i ++) {
+		for (integer i = 1; i <= numberOfElements; i ++) {
 			x->numericVector [i] = exp (x->numericVector [i]);
 			sum += x->numericVector [i];
 		}
-		for (integer i = 1; i <= nelm; i ++)
+		for (integer i = 1; i <= numberOfElements; i ++)
 			x->numericVector [i] /= (double) sum;
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -3963,7 +3963,7 @@ static void do_do_STR () {
 }
 static void shared_do_writeInfo (integer numberOfArguments) {
 	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
-		const Stackel arg = & theStack [w + iarg];
+		const Stackel arg = & theStack [stackPointer + iarg];
 		if (arg->which == Stackel_NUMBER) {
 			MelderInfo_write (arg->number);
 		} else if (arg->which == Stackel_STRING) {
@@ -3990,7 +3990,7 @@ static void do_writeInfo () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	MelderInfo_open ();
 	shared_do_writeInfo (numberOfArguments);
 	MelderInfo_drain ();
@@ -4000,7 +4000,7 @@ static void do_writeInfoLine () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	MelderInfo_open ();
 	shared_do_writeInfo (numberOfArguments);
 	MelderInfo_write (U"\n");
@@ -4011,7 +4011,7 @@ static void do_appendInfo () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	shared_do_writeInfo (numberOfArguments);
 	MelderInfo_drain ();
 	pushNumber (1);
@@ -4020,7 +4020,7 @@ static void do_appendInfoLine () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	shared_do_writeInfo (numberOfArguments);
 	MelderInfo_write (U"\n");
 	MelderInfo_drain ();
@@ -4028,7 +4028,7 @@ static void do_appendInfoLine () {
 }
 static void shared_do_writeFile (autoMelderString *text, integer numberOfArguments) {
 	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
-		const Stackel arg = & theStack [w + iarg];
+		const Stackel arg = & theStack [stackPointer + iarg];
 		if (arg->which == Stackel_NUMBER) {
 			MelderString_append (text, arg->number);
 		} else if (arg->which == Stackel_STRING) {
@@ -4057,8 +4057,8 @@ static void do_writeFile () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
-	const Stackel fileName = & theStack [w + 1];
+	stackPointer -= numberOfArguments;
+	const Stackel fileName = & theStack [stackPointer + 1];
 	Melder_require (fileName->which == Stackel_STRING,
 		U"The first argument of “writeFile” should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
@@ -4074,8 +4074,8 @@ static void do_writeFileLine () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
-	const Stackel fileName = & theStack [w + 1];
+	stackPointer -= numberOfArguments;
+	const Stackel fileName = & theStack [stackPointer + 1];
 	Melder_require (fileName->which == Stackel_STRING,
 		U"The first argument of “writeFileLine” should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
@@ -4089,17 +4089,17 @@ static void do_writeFileLine () {
 static void do_appendFile () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “appendFile” is not available inside manuals.");
-	const Stackel narg = pop;
-	Melder_assert (narg->which == Stackel_NUMBER);
-	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
-	const Stackel fileName = & theStack [w + 1];
-	Melder_require (fileName->which == Stackel_STRING,
-		U"The first argument of “appendFile” should be a string (a file name), not ", fileName->whichText(), U".");
+	const Stackel elNumberOfArguments = pop;
+	Melder_assert (elNumberOfArguments->which == Stackel_NUMBER);
+	const integer numberOfArguments = Melder_iround (elNumberOfArguments->number);
+	stackPointer -= numberOfArguments;
+	const Stackel elFileName = & theStack [stackPointer + 1];
+	Melder_require (elFileName->which == Stackel_STRING,
+		U"The first argument of “appendFile” should be a string (a file name), not ", elFileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	structMelderFile file { };
-	Melder_relativePathToFile (fileName->getString(), & file);
+	Melder_relativePathToFile (elFileName->getString(), & file);
 	MelderFile_appendText (& file, text.string);
 	pushNumber (1);
 }
@@ -4109,8 +4109,8 @@ static void do_appendFileLine () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
-	const Stackel fileName = & theStack [w + 1];
+	stackPointer -= numberOfArguments;
+	const Stackel fileName = & theStack [stackPointer + 1];
 	Melder_require (fileName->which == Stackel_STRING,
 		U"The first argument of “appendFileLine” should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
@@ -4127,11 +4127,11 @@ static void do_pauseScript () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	if (! theCurrentPraatApplication -> batch) {   // in batch we ignore pause statements
 		autoMelderString buffer;
 		for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
-			const Stackel arg = & theStack [w + iarg];
+			const Stackel arg = & theStack [stackPointer + iarg];
 			if (arg->which == Stackel_NUMBER) {
 				MelderString_append (& buffer, arg->number);
 			} else if (arg->which == Stackel_STRING) {
@@ -4165,9 +4165,9 @@ static void do_exitScript () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
-		const Stackel arg = & theStack [w + iarg];
+		const Stackel arg = & theStack [stackPointer + iarg];
 		if (arg->which == Stackel_NUMBER) {
 			Melder_appendError_noLine (arg->number);
 		} else if (arg->which == Stackel_STRING) {
@@ -4201,8 +4201,8 @@ static void do_runScript () {
 	const integer numberOfArguments = Melder_iround (narg->number);
 	if (numberOfArguments < 1)
 		Melder_throw (U"The function “runScript” requires at least one argument, namely the file name.");
-	w -= numberOfArguments;
-	const Stackel fileName = & theStack [w + 1];
+	stackPointer -= numberOfArguments;
+	const Stackel fileName = & theStack [stackPointer + 1];
 	Melder_require (fileName->which == Stackel_STRING,
 		U"The first argument to “runScript” should be a string (the file name), not ", fileName->whichText());
 	theLevel += 1;
@@ -4212,7 +4212,7 @@ static void do_runScript () {
 	}
 	try {
 		const Editor optionalNewInterpreterOwningWindow = theInterpreter -> optionalDynamicEnvironmentEditor();
-		praat_runScript (fileName->getString(), numberOfArguments - 1, & theStack [w + 1], optionalNewInterpreterOwningWindow);
+		praat_runScript (fileName->getString(), numberOfArguments - 1, & theStack [stackPointer + 1], optionalNewInterpreterOwningWindow);
 		theLevel -= 1;
 	} catch (MelderError) {
 		theLevel -= 1;
@@ -4226,10 +4226,10 @@ static void do_runSystem () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	autoMelderString text;
 	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
-		const Stackel arg = & theStack [w + iarg];
+		const Stackel arg = & theStack [stackPointer + iarg];
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
 		else if (arg->which == Stackel_STRING)
@@ -4249,10 +4249,10 @@ static void do_runSystem_nocheck () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	autoMelderString text;
 	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
-		const Stackel arg = & theStack [w + iarg];
+		const Stackel arg = & theStack [stackPointer + iarg];
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
 		else if (arg->which == Stackel_STRING)
@@ -4271,13 +4271,13 @@ static void do_runSubprocess () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
-	const Stackel commandFile = & theStack [w + 1];
+	stackPointer -= numberOfArguments;
+	const Stackel commandFile = & theStack [stackPointer + 1];
 	Melder_require (commandFile->which == Stackel_STRING,
 		U"The first argument to “runSubprocess” should be a command name.");
 	autoSTRVEC arguments (numberOfArguments - 1);
 	for (int iarg = 1; iarg < numberOfArguments; iarg ++) {
-		const Stackel arg = & theStack [w + 1 + iarg];
+		const Stackel arg = & theStack [stackPointer + 1 + iarg];
 		if (arg->which == Stackel_NUMBER)
 			arguments [iarg] = Melder_dup (Melder_double (arg->number));
 		else if (arg->which == Stackel_STRING)
@@ -5060,10 +5060,10 @@ static void do_combine_VEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
-	w -= numberOfArguments;
+	stackPointer -= numberOfArguments;
 	integer elementCounter = 0;
 	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
-		const Stackel arg = & theStack [w + iarg];
+		const Stackel arg = & theStack [stackPointer + iarg];
 		if (arg->which == Stackel_NUMBER) {
 			elementCounter += 1;
 		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
@@ -5078,7 +5078,7 @@ static void do_combine_VEC () {
 	autoVEC result = raw_VEC (elementCounter);
 	integer elementIterator = 0;
 	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
-		const Stackel arg = & theStack [w + iarg];
+		const Stackel arg = & theStack [stackPointer + iarg];
 		if (arg->which == Stackel_NUMBER) {
 			result [++ elementIterator] = arg->number;
 		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
@@ -5281,7 +5281,7 @@ static void do_splitBy_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg -> which == Stackel_NUMBER);
 	Melder_require (narg->number == 2,
-		U"The function “splitBy$#” requires two arguments, namely the the string to split and the separator.");
+		U"The function “splitBy$#” requires two arguments, namely the string to split and the separator.");
 	const Stackel separator = pop, string = pop;
 	Melder_require (string->which == Stackel_STRING,
 		U"The first argument of the function “splitBy$#” should be a string, not ", string->whichText(), U".");
@@ -5292,58 +5292,55 @@ static void do_splitBy_STRVEC () {
 }
 static void do_numericVectorElement () {
 	InterpreterVariable vector = parse [programPointer]. content.variable;
-	integer element = 1;   // default
-	const Stackel r = pop;
-	Melder_require (r->which == Stackel_NUMBER,
-		U"In vector indexing, the index should be a number, not ", r->whichText(), U".");
-	Melder_require (isdefined (r->number),
+	const Stackel element = pop;
+	Melder_require (element->which == Stackel_NUMBER,
+		U"In vector indexing, the index should be a number, not ", element->whichText(), U".");
+	Melder_require (isdefined (element->number),
 		U"The element index is undefined.");
-	element = Melder_iround (r->number);
-	Melder_require (element > 0,
+	const integer ielement = Melder_iround (element->number);
+	Melder_require (ielement > 0,
 		U"In vector indexing, the element index should be positive.");
-	Melder_require (element <= vector->numericVectorValue.size,
+	Melder_require (ielement <= vector->numericVectorValue.size,
 		U"Element index out of bounds.");
-	pushNumber (vector->numericVectorValue [element]);
+	pushNumber (vector->numericVectorValue [ielement]);
 }
 static void do_numericMatrixElement () {
 	InterpreterVariable matrix = parse [programPointer]. content.variable;
-	integer row = 1, column = 1;   // default
-	const Stackel c = pop;
-	Melder_require (c->which == Stackel_NUMBER,
-		U"In matrix indexing, the column index should be a number, not ", c->whichText(), U".");
-	Melder_require (isdefined (c->number),
+	const Stackel column = pop;
+	Melder_require (column->which == Stackel_NUMBER,
+		U"In matrix indexing, the column index should be a number, not ", column->whichText(), U".");
+	Melder_require (isdefined (column->number),
 		U"The column index is undefined.");
-	column = Melder_iround (c->number);
-	Melder_require (column > 0,
+	const integer icolumn = Melder_iround (column->number);
+	Melder_require (icolumn > 0,
 		U"In matrix indexing, the column index should be positive.");
-	Melder_require (column <= matrix->numericMatrixValue. ncol,
+	Melder_require (icolumn <= matrix->numericMatrixValue. ncol,
 		U"Column index out of bounds.");
-	const Stackel r = pop;
-	Melder_require (r->which == Stackel_NUMBER,
-		U"In matrix indexing, the row index should be a number, not ", r->whichText(), U".");
-	Melder_require (isdefined (r->number),
+	const Stackel row = pop;
+	Melder_require (row->which == Stackel_NUMBER,
+		U"In matrix indexing, the row index should be a number, not ", row->whichText(), U".");
+	Melder_require (isdefined (row->number),
 		U"The row index is undefined.");
-	row = Melder_iround (r->number);
-	Melder_require (row > 0,
+	const integer irow = Melder_iround (row->number);
+	Melder_require (irow > 0,
 		U"In matrix indexing, the row index should be positive.");
-	Melder_require (row <= matrix->numericMatrixValue. nrow,
+	Melder_require (irow <= matrix->numericMatrixValue. nrow,
 		U"Row index out of bounds.");
-	pushNumber (matrix->numericMatrixValue [row] [column]);
+	pushNumber (matrix->numericMatrixValue [irow] [icolumn]);
 }
 static void do_stringVectorElement () {
 	InterpreterVariable vector = parse [programPointer]. content.variable;
-	integer element = 1;   // default
-	const Stackel r = pop;
-	Melder_require (r->which == Stackel_NUMBER,
-		U"In vector indexing, the index should be a number, not ", r->whichText(), U".");
-	Melder_require (isdefined (r->number),
+	const Stackel element = pop;
+	Melder_require (element->which == Stackel_NUMBER,
+		U"In vector indexing, the index should be a number, not ", element->whichText(), U".");
+	Melder_require (isdefined (element->number),
 		U"The element index is undefined.");
-	element = Melder_iround (r->number);
-	Melder_require (element > 0,
+	const integer ielement = Melder_iround (element->number);
+	Melder_require (ielement > 0,
 		U"In vector indexing, the element index should be positive.");
-	Melder_require (element <= vector->stringArrayValue.size,
+	Melder_require (ielement <= vector->stringArrayValue.size,
 		U"Element index out of bounds.");
-	pushString (Melder_dup (vector->stringArrayValue [element].get()));
+	pushString (Melder_dup (vector->stringArrayValue [ielement].get()));
 }
 static void do_indexedNumericVariable () {
 	const Stackel narg = pop;
@@ -5354,9 +5351,9 @@ static void do_indexedNumericVariable () {
 	char32 *indexedVariableName = parse [programPointer]. content.string;
 	static MelderString totalVariableName;
 	MelderString_copy (& totalVariableName, indexedVariableName, U"[");
-	w -= nindex;
+	stackPointer -= nindex;
 	for (int iindex = 1; iindex <= nindex; iindex ++) {
-		const Stackel index = & theStack [w + iindex];
+		const Stackel index = & theStack [stackPointer + iindex];
 		if (index->which == Stackel_NUMBER) {
 			MelderString_append (& totalVariableName, index->number, iindex == nindex ? U"]" : U",");
 		} else if (index -> which == Stackel_STRING) {
@@ -5379,9 +5376,9 @@ static void do_indexedStringVariable () {
 	char32 *indexedVariableName = parse [programPointer]. content.string;
 	static MelderString totalVariableName;
 	MelderString_copy (& totalVariableName, indexedVariableName, U"[");
-	w -= nindex;
+	stackPointer -= nindex;
 	for (int iindex = 1; iindex <= nindex; iindex ++) {
-		const Stackel index = & theStack [w + iindex];
+		const Stackel index = & theStack [stackPointer + iindex];
 		if (index->which == Stackel_NUMBER) {
 			MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
 		} else if (index -> which == Stackel_STRING) {
@@ -6251,40 +6248,40 @@ static void do_tensorLiteral () {
 	}
 }
 static void do_tensorLiteralCell () {
-	const Stackel index_ = pop, numberOfElements_ = pop;
-	Melder_assert (numberOfElements_->which == Stackel_NUMBER);
-	const integer numberOfElements = Melder_iround (numberOfElements_->number);
+	const Stackel index = pop, nelem = pop;
+	Melder_assert (nelem->which == Stackel_NUMBER);
+	const integer numberOfElements = Melder_iround (nelem->number);
 	Melder_assert (numberOfElements > 0);
-	const Stackel last_ = pop;
-	Melder_require (last_->which == Stackel_NUMBER || last_->which == Stackel_STRING,
+	const Stackel last = pop;
+	Melder_require (last->which == Stackel_NUMBER || last->which == Stackel_STRING,
 		U"Cannot index matrix literals.");
-	Melder_require (index_->which == Stackel_NUMBER,
-		U"In vector indexing, the element index should be a number, not ", index_->whichText(), U".");
-	Melder_require (isdefined (index_->number),
+	Melder_require (index->which == Stackel_NUMBER,
+		U"In vector indexing, the element index should be a number, not ", index->whichText(), U".");
+	Melder_require (isdefined (index->number),
 		U"The element index is undefined.");
-	const integer index = Melder_iround (index_->number);
-	Melder_require (index >= 1,
-		U"Element index out of bounds. Your index is ", index, U", but the index can range only from 1 to ", numberOfElements, U".");
-	Melder_require (index >= 1 && index <= numberOfElements,
-		U"Element index out of bounds. Your index is ", index, U", but there are only ", numberOfElements, U" elements.");
-	if (last_->which == Stackel_NUMBER) {
-		double result = last_->number;
+	const integer iindex = Melder_iround (index->number);
+	Melder_require (iindex >= 1,
+		U"Element index out of bounds. Your index is ", iindex, U", but the index can range only from 1 to ", numberOfElements, U".");
+	Melder_require (iindex <= numberOfElements,
+		U"Element index out of bounds. Your index is ", iindex, U", but there are only ", numberOfElements, U" elements.");
+	if (last->which == Stackel_NUMBER) {
+		double result = last->number;
 		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
-			const Stackel element_ = pop;
-			if (element_->which != Stackel_NUMBER)
-				Melder_throw (U"The tensor elements have to be of the same type, not ", element_->whichText(), U" and a number.");
-			if (ielement == index)
-				result = element_->number;
+			const Stackel element = pop;
+			if (element->which != Stackel_NUMBER)
+				Melder_throw (U"The tensor elements have to be of the same type, not ", element->whichText(), U" and a number.");
+			if (ielement == iindex)
+				result = element->number;
 		}
 		pushNumber (result);
-	} else if (last_->which == Stackel_STRING) {
-		autostring32 result = last_->_string.move();   // we can move it, because it's been popped off the stack, so we never return there
+	} else if (last->which == Stackel_STRING) {
+		autostring32 result = last->_string.move();   // we can move it, because it's been popped off the stack, so we never return there
 		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
-			const Stackel element_ = pop;
-			if (element_->which != Stackel_STRING)
-				Melder_throw (U"The tensor elements have to be of the same type, not ", element_->whichText(), U" and a string.");
-			if (ielement == index)
-				result = element_->_string.move();   // we can move it, because it's been popped off the stack, so we never return there
+			const Stackel element = pop;
+			if (element->which != Stackel_STRING)
+				Melder_throw (U"The tensor elements have to be of the same type, not ", element->whichText(), U" and a string.");
+			if (ielement == iindex)
+				result = element->_string.move();   // we can move it, because it's been popped off the stack, so we never return there
 		}
 		pushString (result.move());
 	}
@@ -7917,8 +7914,8 @@ void Formula_run (integer row, integer col, Formula_Result *result) {
 		if (! theStack)
 			Melder_throw (U"Out of memory during formula computation.");
 	}
-	w = 0;   // start new stack
-	wmax = 0;   // start new stack
+	stackPointer = 0;   // start new stack
+	stackPointerMax = 0;   // start new stack
 	try {
 		while (programPointer <= numberOfInstructions) {
 			integer symbol;
@@ -8279,8 +8276,8 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 	//Melder_casual (U"starting value ", var -> numericValue);
 	pushVariable (var);
 } break; case INCREMENT_GREATER_GOTO_: {
-	//Melder_casual (U"top of loop, stack depth ", w);
-	Stackel e = & theStack [w], v = & theStack [w - 1];
+	//Melder_casual (U"top of loop, stack depth ", stackPointer);
+	Stackel e = & theStack [stackPointer], v = & theStack [stackPointer - 1];
 	Melder_assert (e->which == Stackel_NUMBER);
 	Melder_assert (v->which == Stackel_VARIABLE);
 	InterpreterVariable var = v->variable;
@@ -8292,15 +8289,15 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 		programPointer = f [programPointer]. content.label - theOptimize;
 	}
 } break; case ADD_3DOWN_: {
-	Stackel x = pop, s = & theStack [w - 2];
+	Stackel x = pop, s = & theStack [stackPointer - 2];
 	Melder_assert (x->which == Stackel_NUMBER);
 	Melder_assert (s->which == Stackel_NUMBER);
 	//Melder_casual (U"to add ", x->number);
 	s->number += x->number;
 	//Melder_casual (U"sum ", s->number);
 } break; case POP_2_: {
-	w -= 2;
-	//Melder_casual (U"total ", theStack[w].number);
+	stackPointer -= 2;
+	//Melder_casual (U"total ", theStack [stackPointer]. number);
 } break; case VEC_CELL_: { do_numericVectorElement ();
 } break; case MAT_CELL_: { do_numericMatrixElement ();
 } break; case STRVEC_CELL_: { do_stringVectorElement ();
@@ -8363,8 +8360,8 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 			} // endswitch
 			programPointer ++;
 		} // endwhile
-		if (w != 1)
-			Melder_fatal (U"Formula: stackpointer ends at ", w, U" instead of 1.");
+		if (stackPointer != 1)
+			Melder_fatal (U"Formula: stackpointer ends at ", stackPointer, U" instead of 1.");
 		/*
 			Move the result from the stack to `result`.
 		*/
@@ -8471,14 +8468,14 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 		/*
 			Clean up the stack (theStack [1] has probably been disowned).
 		*/
-		for (w = wmax; w > 0; w --)
-			theStack [w]. reset();
+		for (stackPointer = stackPointerMax; stackPointer > 0; stackPointer --)
+			theStack [stackPointer]. reset();
 	} catch (MelderError) {
 		/*
 			Clean up the stack (theStack [1] has probably not been disowned).
 		*/
-		for (w = wmax; w > 0; w --)
-			theStack [w]. reset();
+		for (stackPointer = stackPointerMax; stackPointer > 0; stackPointer --)
+			theStack [stackPointer]. reset();
 		if (Melder_hasError (U"Script exited.")) {
 			throw;
 		} else {
