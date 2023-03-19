@@ -90,7 +90,7 @@ static autoPointProcess PointProcess_extractPart (PointProcess me, double startT
 		autoPointProcess thee = PointProcess_create (startTime, endTime, nt);
 		thy nt = nt;
 		thy t.size = nt;
-		thy t.get()  <<= my t.part (i1, i2);
+		thy t.get()  <<=  my t.part (i1, i2);
 		return thee;
 	} catch (MelderError) {
 			Melder_throw (me, U": could not extract part.");

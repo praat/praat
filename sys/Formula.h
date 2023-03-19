@@ -2,7 +2,7 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2005,2007,2008,2011-2020 Paul Boersma
+ * Copyright (C) 1990-2005,2007,2008,2011-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,9 @@ Thing_declare (InterpreterVariable);
 */
 #define Formula_MAXIMUM_STACK_SIZE  1'000'000
 
+/*
+	`Stackel` is short for 'stack element'.
+*/
 typedef struct structStackel {
 	#define Stackel_NUMBER  0
 	#define Stackel_STRING  1

@@ -697,7 +697,7 @@ NORMAL (U"The energy is defined as")
 EQUATION (U"\\in__%%t%1_^^%%t%2^ %x^2(%t) %dt")
 NORMAL (U"where %x(%t) is the amplitude of the sound. For stereo sounds, it is")
 EQUATION (U"\\in__%%t%1_^^%%t%2^ (%x^2(%t) + %y^2(%t))/2 %dt")
-NORMAL (U"where %x(%t) and %y(%t) are the two channels; this definition, which averages (rathaer than sums) over the channels, ensures that "
+NORMAL (U"where %x(%t) and %y(%t) are the two channels; this definition, which averages (rather than sums) over the channels, ensures that "
 	"if you convert a mono sound to a stereo sound, the energy will stay the same.")
 ENTRY (U"Related commands")
 NORMAL (U"For an interpretation of the energy as the sound energy in air, see @@Sound: Get energy in air@. "
