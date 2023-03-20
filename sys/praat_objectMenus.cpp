@@ -380,13 +380,11 @@ FORM_SAVE (GRAPHICS_saveDemoWindowAsPdfFile, U"Save Demo window as PDF file", nu
 FORM (SETTINGS__debug, U"Set debugging options", nullptr) {
 	LABEL (U"If you switch Tracing on, Praat will write lots of detailed ")
 	LABEL (U"information about what goes on in Praat")
-	structMelderDir dir;
-	Melder_getPrefDir (& dir);
 	structMelderFile file;
 	#ifdef UNIX
-		MelderDir_getFile (& dir, U"tracing", & file);
+		MelderDir_getFile (& Melder_preferencesFolder, U"tracing", & file);
 	#else
-		MelderDir_getFile (& dir, U"Tracing.txt", & file);
+		MelderDir_getFile (& Melder_preferencesFolder, U"Tracing.txt", & file);
 	#endif
 	LABEL (Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
 	BOOLEAN (tracing, U"Tracing", false)

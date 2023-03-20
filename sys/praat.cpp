@@ -1416,27 +1416,27 @@ void praat_init (conststring32 title, int argc, char **argv)
 		Also create names for message and tracing files.
 	*/
 	if (MelderDir_isNull (& Melder_preferencesFolder)) {   // not yet set by the --pref-dir option?
-		structMelderDir prefParentDir { };   // folder under which to store our preferences folder
-		Melder_getPrefDir (& prefParentDir);
+		structMelderDir parentPreferencesFolder { };   // folder under which to store our preferences folder
+		Melder_getParentPreferencesFolder (& parentPreferencesFolder);
 
 		/*
 			Make sure that the program's preferences folder exists.
 		*/
-		char32 name [256];
+		char32 subfolderName [256];
 		#if defined (UNIX)
-			Melder_sprint (name,256, U".", programName, U"-dir");   // for example .praat-dir
+			Melder_sprint (subfolderName,256, U".", programName, U"-dir");   // for example .praat-dir
 		#elif defined (macintosh)
-			Melder_sprint (name,256, praatP.title.get(), U" Prefs");   // for example Praat Prefs
+			Melder_sprint (subfolderName,256, praatP.title.get(), U" Prefs");   // for example Praat Prefs
 		#elif defined (_WIN32)
-			Melder_sprint (name,256, praatP.title.get());   // for example Praat
+			Melder_sprint (subfolderName,256, praatP.title.get());   // for example Praat
 		#endif
 		try {
 			#if defined (UNIX) || defined (macintosh)
-				Melder_createDirectory (& prefParentDir, name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+				Melder_createDirectory (& parentPreferencesFolder, subfolderName, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 			#else
-				Melder_createDirectory (& prefParentDir, name, 0);
+				Melder_createDirectory (& parentPreferencesFolder, subfolderName, 0);
 			#endif
-			MelderDir_getSubdir (& prefParentDir, name, & Melder_preferencesFolder);
+			MelderDir_getSubdir (& parentPreferencesFolder, subfolderName, & Melder_preferencesFolder);
 		} catch (MelderError) {
 			/*
 				If we arrive here, the directory could not be created,
@@ -2387,7 +2387,7 @@ void praat_run () {
 				praat --new-open [OPTION]... FILE-NAME...
 			*/
 			for (; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
-				autostring32 text = Melder_dup (Melder_cat (U"Read from file... ",
+				autostring32 text = Melder_dup (Melder_cat (U"Read from file... ",   // TODO: ~
 															Melder_peek8to32 (praatP.argv [praatP.argumentNumber])));
 				trace (U"Argument ", praatP.argumentNumber, U": <<", text.get(), U">>");
 				try {

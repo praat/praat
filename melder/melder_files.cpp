@@ -456,7 +456,7 @@ void Melder_getHomeDir (MelderDir homeDir) {
 	#endif
 }
 
-void Melder_getPrefDir (MelderDir prefDir) {
+void Melder_getParentPreferencesFolder (MelderDir prefDir) {
 	#if defined (macintosh)
 		structMelderDir homeDir { };
 		Melder_getHomeDir (& homeDir);
@@ -468,7 +468,7 @@ void Melder_getPrefDir (MelderDir prefDir) {
 		Melder_getHomeDir (prefDir);
 	#elif defined (_WIN32)
 		/*
-		 * On Windows 95, preferences files went in the Windows directory.
+		 * On Windows 95, preferences files went into the Windows directory.
 		 * On shared systems (NT, 2000, XP), preferences files go into the home directory.
 		 * TODO: at some point, these files should be moved to HOME\AppData\Roaming\Praat.
 		 */
