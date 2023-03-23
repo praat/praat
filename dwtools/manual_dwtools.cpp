@@ -2397,11 +2397,11 @@ DEFINITION (U"defines the width of the transition area between fully suppressed 
 	"than %%fromFrequency%+%%smoothing% will be fully passed.")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: First central difference...", U"djmw", 20190827)
+MAN_BEGIN (U"Electroglottogram: First central difference...", U"djmw", 20230323)
 INTRO (U"Calculates an approximation of the derivative of the @@Electroglottogram@.")
 ENTRY (U"Settings")
-TAG (U"##Scale absolute peak at 0.99")
-DEFINITION (U"defines whether the \"derivative\" should be scaled or not.")
+TAG (U"##New absolute peak")
+DEFINITION (U"defines the absolute peak of the approximate derivative. A value of 0.0 prevents scaling.")
 ENTRY (U"Algorithm")
 NORMAL (U"We take the first central difference, "
 	"(d%%x%(%%t%)/d%%t%)[%%i%] = (%%x%[%%i%+1] - %%x%[%%i%-1])/(2\\De%%t%).")
@@ -2434,26 +2434,9 @@ NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%g
 	"respectively, occur. ")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20210201)
+MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20230323)
 INTRO (U"Calculates the derivative of the @@Electroglottogram@.")
-ENTRY (U"Settings")
-TAG (U"##Low-pass frequency (Hz)")
-DEFINITION (U"defines the highest frequency to keep in the derivative.")
-TAG (U"##Smoothing (Hz)")
-DEFINITION (U"defines the width of the transition area between fully passed and fully suppressed "
-	"frequencies. Frequencies below %%lowpassFrequency% will be fully passed, frequencies larger "
-	"than %%lowpassFrequency%+%%smoothing% will be fully suppressed.")
-TAG (U"##Scale absolute peak at 0.99")
-DEFINITION (U"defines whether the derivative should be scaled or not.")
-ENTRY (U"Algorithm")
-NORMAL (U"The derivative of a wave form %%x%(%%t%) is most easily calculated in the spectral domain. According to "
-	"Fourier theory, if %%x%(%%t%) = \\in%%X%(%%f%)exp(2\\pi%%ift%) %%dt%, then"
-	" d%%x%(%%t%)/d%%t% = \\in%%X(%%f%)2\\pi%%if% exp(2\\pi%%ift%)d%%t%, where %%X%(%%f%) is the spectrum "
-	"of the %%x%(%%t).")
-NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and "
-	"imaginary components and then transform back to the time domain we get the derivative.")
-NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new "
-	"%%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%)) and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
+NORMAL (U"The settings and the algorithm are explained in @@Sound: To Sound (derivative)...@")
 ENTRY (U"About dEGG")
 NORMAL (U"The derivative of the Electroglottogram is often indicated as dEGG or DEGG. @@Henrich et al. (2004)@ used the peaks in the derivative to find the %%glottal closure instants% and sometimes also the %%glottal opening instants%. "
 	"However, in their paper and also in other papers like, for example,  @@Herbst et al. (2014)@, the derivative they use is not the exact derivative as calculated in the way explained above. "
@@ -4558,6 +4541,32 @@ NORMAL (U"The algorithm for constructing the invertable constant-Q transform is 
 NORMAL (U"First the sound is transformed to the frequency domain with an FFT. The filtering is then performed in the frequency "
 	"domain. For the %k^^th^ frequency bin the frequencies between %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPerOctave%)^ and  %%lowestFrequency%\\.c2^^(%k+1)/%%numberOfFrequencyBinsPerOctave%)^ are transformed back with an inverse @FFT. The resulting coefficients are copied to the frames of the frequency bin. Because of the logarithmic frequency scale, the number of coefficients in a frequency bin will increase with bin number. ")
 NORMAL (U"")
+MAN_END
+
+MAN_BEGIN (U"Sound: To Sound (derivative)...", U"djmw", 20230323)
+INTRO (U"Calculates the derivative of a @@Sound@.")
+ENTRY (U"Settings")
+TAG (U"##Low-pass frequency (Hz)")
+DEFINITION (U"defines the highest frequency to keep in the derivative.")
+TAG (U"##Smoothing (Hz)")
+DEFINITION (U"defines the width of the transition area between fully passed and fully suppressed "
+	"frequencies. Frequencies below %%lowpassFrequency% will be fully passed, frequencies larger "
+	"than %%lowpassFrequency%+%%smoothing% will be fully suppressed.")
+TAG (U"##New absolute peak")
+DEFINITION (U"the new absolute peak of the derivative. By specifying a value smaller than 1.0 the derivative can be made audible "
+	"without distortion. If you want to listen to the derivative without distortion, it is absolutely necessary to scale the "
+	"peak to a value somewhat smaller than 1.0, like 0.99. For example, for a pure sine tone with a frequency of 300 Hz "
+	"and an amplitude of 1.0 whose formula is %%s(t) = sin(2\\pi300t)% the derivative with respect to time %t% is %%2\\pi300 cos(2\\pi300t)% ."
+	"The result is a cosine of 300 Hz with a huge amplitude of %%2\\pi300%. You can prevent any scaling by suppling a value of 0.0.")
+ENTRY (U"Algorithm")
+NORMAL (U"The derivative of a wave form %%x%(%%t%) is most easily calculated in the spectral domain. According to "
+	"Fourier theory, if %%x%(%%t%) = \\in%%X%(%%f%)exp(2\\pi%%ift%) %%dt%, then"
+	" d%%x%(%%t%)/d%%t% = \\in%%X(%%f%)2\\pi%%if% exp(2\\pi%%ift%)d%%t%, where %%X%(%%f%) is the spectrum "
+	"of the %%x%(%%t).")
+NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and "
+	"imaginary components and then transform back to the time domain we get the derivative.")
+NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new "
+	"%%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%)) and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
 MAN_END
 
 MAN_BEGIN (U"Spectrum: To Sound (resampled)...", U"djmw", 20220105)
