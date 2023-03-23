@@ -2436,6 +2436,7 @@ MAN_END
 
 MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20230323)
 INTRO (U"Calculates the derivative of the @@Electroglottogram@.")
+ENTRY (U"Algorithm")
 NORMAL (U"The settings and the algorithm are explained in @@Sound: To Sound (derivative)...@")
 ENTRY (U"About dEGG")
 NORMAL (U"The derivative of the Electroglottogram is often indicated as dEGG or DEGG. @@Henrich et al. (2004)@ used the peaks in the derivative to find the %%glottal closure instants% and sometimes also the %%glottal opening instants%. "
@@ -4547,7 +4548,10 @@ MAN_BEGIN (U"Sound: To Sound (derivative)...", U"djmw", 20230323)
 INTRO (U"Calculates the derivative of a @@Sound@.")
 ENTRY (U"Settings")
 TAG (U"##Low-pass frequency (Hz)")
-DEFINITION (U"defines the highest frequency to keep in the derivative.")
+DEFINITION (U"defines the highest frequency to keep in the derivative. Because taking a derivative is comparable to "
+	"multiplying the strength of each frequency component by its frequency value it has the effect of high-pass filtering. "
+	"E.g. a 10000 Hz component is amplified 100 times stronger than a 100 Hz component. "
+	"Low-pass filtering then becomes essential for removing high-frequency noise.  ")
 TAG (U"##Smoothing (Hz)")
 DEFINITION (U"defines the width of the transition area between fully passed and fully suppressed "
 	"frequencies. Frequencies below %%lowpassFrequency% will be fully passed, frequencies larger "

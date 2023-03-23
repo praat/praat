@@ -767,6 +767,26 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 	Transforming back to the time domain gives the desired result.
 */
 autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing, double peakAmplitude) {
+	try {
+		autoSpectrum thee = Sound_to_Spectrum (me, false);
+		for (integer ifreq = 1; ifreq <= thy nx - 1; ifreq ++) {
+			const double frequency = Sampled_indexToX (thee.get(), ifreq);
+			const double im = thy z [2] [ifreq];
+			thy z [2] [ifreq] = NUM2pi * frequency * thy z [1] [ifreq]; // forget about scale factor 2*pi
+			thy z [1] [ifreq] = - NUM2pi * frequency * im;
+		}
+		thy z [2] [thy nx] = thy z [1] [thy nx] = 0.0;
+		Spectrum_passHannBand (thee.get(), 0.0, lowPassFrequency, smoothing);
+		autoSound him = Spectrum_to_Sound (thee.get());
+		if (peakAmplitude != 0.0)
+			Vector_scale (him.get(), peakAmplitude);
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot create the derivative of the Sound.");
+	}
+}
+
+static autoSound Sound_derivative2 (Sound me, double lowPassFrequency, double smoothing, double peakAmplitude) {
 		try {
 			autoSpectrum thee = Sound_to_Spectrum (me, false);
 			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
@@ -786,6 +806,7 @@ autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing,
 			Melder_throw (me, U": cannot create the derivative of the Sound.");
 		}
 }
+
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
