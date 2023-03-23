@@ -2413,11 +2413,11 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Electroglottogram_derivative, U"Electroglottogram: Derivative", U"Electroglottogram: Derivative...") {
 	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
-	REAL (scalePeak, U"New absolute peak", U"0.0 (=do not scale)")
+	REAL (newAbsolutePeak, U"New absolute peak", U"0.0 (=do not scale)")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, scalePeak);
+		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, newAbsolutePeak);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_derivative")
 }
 
@@ -6108,15 +6108,14 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Sound_derivative, U"Sound: To Sound (derivative)", U"Sound: To Sound (derivative)...") {
-	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"8000.0")
-	POSITIVE (smoothing, U"Smoothing (Hz)", U"50.0")
-	REAL (scalePeak, U"New absolute peak", U"0 (=do not scale)")
+	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
+	REAL (newAbsolutePeak, U"New absolute peak", U"0 (=do not scale)")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, scalePeak);
+		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, newAbsolutePeak);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_derivative")
-	
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") {
