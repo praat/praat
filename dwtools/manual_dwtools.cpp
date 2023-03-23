@@ -4436,10 +4436,11 @@ NORMAL (U"First a copy of the sound is @@Sound: Filter (pass Hann band)...|bandp
 	"Finally the silent and sounding intervals are determined @@Intensity: To TextGrid (silences)...|from the intensity curve@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To TextGrid (voice activity)...", U"djmw", 20210317)
-INTRO (U"A command that creates a @@TextGrid@ for the selected @@Sound@ in which the silent intervals and the "
-	"intervals with voice activity are marked. The discrimination between the two is based on a spectral flatnes measure.")
-NORMAL (U"Voice activity detection (VAD) is a method to discriminate speech segments from input noisy speech. "
+MAN_BEGIN (U"Sound: To TextGrid (speech activity)...", U"djmw", 20230323)
+INTRO (U"A command that creates a @@TextGrid@ for the selected @@Sound@ in which the non-speech intervals and the "
+	"intervals with speech activity are marked. The discrimination between the two is based on a spectral flatnes measure.")
+NORMAL (U"Speech activity detection, in the technical literature often referred to as voice activity detection, "
+	"is a method to discriminate speech segments from input noisy speech. "
 	"According to the article of @@Ma & Nishihara (2013)@, spectral flatness is a measure of the width, uniformity, "
 	"and noisiness of the power spectrum. A high spectral flatness indicates that the spectrum has a similar amount "
 	"of power in all spectral bands, and the graph of the spectrum would appear relatively flat and smooth; "
@@ -4465,26 +4466,26 @@ DEFINITION (U"determines the frequency range used in the calculation of the spec
 	"Ma & Nishihara (2013) used a range from 400 to 4000 Hz. Because fricatives tend to have strong components "
 	"above 4000 Hz we increased the default value to 6000 Hz. In this way the fricative's intensity, which is "
 	"calculated from this range, becomes higher and because of this a fricative is less likely to be skipped "
-	"by a selection on the silence threshold. We also decreased the lower value from 400 to 70 Hz. "
+	"by a selection on the non-speech threshold. We also decreased the lower value from 400 to 70 Hz. "
 	"In this way we increase chances that sounds at start or end positions with mainly low frequency components, "
 	"like nasals, are detected.")
 TAG (U"##Flatness threshold#")
-DEFINITION (U"determines whether a frame is considered %%sounding% or not based on a spectral flatness measure. Values of the flatness below the threshold are "
-	"considered sounding.")
-TAG (U"##Silence threshold (dB)#")
-DEFINITION (U"also determines whether a frame is considered %%sounding% or not, but based on intensity. "
-	"Intervals with an intensity smaller this value below the sound's maximum intensity value "
-	"are considered as %%silent% intervals. The intensity is calculated from the frequency range defined above. ")
-TAG (U"##Minimum silence interval duration (s)#")
-DEFINITION (U"determines the minimum duration for an interval to be considered as silent. "
-	"If you don't want the closure for a plosive to count as silent then use a large enough value.")
-TAG (U"##Minimum sounding interval (s)") \
-DEFINITION (U"determines the minimum duration for an interval to be ##not# considered as silent. "
+DEFINITION (U"determines whether a frame is considered %%speech% or not based on a spectral flatness measure. Values of the flatness below the threshold are "
+	"considered speech.")
+TAG (U"##Non-speech threshold (dB)#")
+DEFINITION (U"also determines whether a frame is considered %%speech% or not, but based on intensity. "
+	"Intervals with an intensity smaller than this value below the sound's maximum intensity value "
+	"are considered as %%non-speech% intervals. The intensity is calculated from the frequency range defined above. ")
+TAG (U"##Minimum non-speech interval duration (s)#")
+DEFINITION (U"determines the minimum duration for an interval to be considered as non-speech. "
+	"If you don't want the closure for a plosive to count as non-speech then use a large enough value.")
+TAG (U"##Minimum speech interval (s)") \
+DEFINITION (U"determines the minimum duration for an interval to be considered as speech. "
 	"This offers the possibility to filter out small intense bursts of relatively short duration.")
-TAG (U"##Silent / Sounding interval label#")
-DEFINITION (U"detemine the labels for the corresponding intervals in the newly created TextGrid.")
+TAG (U"##Speech / Non-speech interval label#")
+DEFINITION (U"determine the labels for the corresponding intervals in the newly created TextGrid.")
 ENTRY (U"Algorithm")
-NORMAL (U"The VAD algorithm is described in @@Ma & Nishihara (2013)@.")
+NORMAL (U"The speech activity algorithm is described in @@Ma & Nishihara (2013)@.")
 MAN_END
 
 MAN_BEGIN (U"Intensity: To TextGrid (silences)...", U"djmw", 20061201)
