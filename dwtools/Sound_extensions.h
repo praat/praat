@@ -63,7 +63,7 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 	starting at t3 in thee.
 */
 
-autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing, bool peak99);
+autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing, double peakAmplitude);
 /*
 	The real derivative
 */

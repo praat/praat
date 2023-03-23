@@ -765,26 +765,25 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 			= (2*pi*f) * integral (i*S(f) * exp (2*pi*f*t) * df)
 			= (2*pi*f) * integral (-Im(S), Re (s)) * exp (2*pi*f*t) * df)
 	Transforming back to the time domain gives the desired result.
-	We leave out the scale factor of 2pi.
 */
-autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing, bool peak99) {
+autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing, double peakAmplitude) {
 		try {
 			autoSpectrum thee = Sound_to_Spectrum (me, false);
 			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 				const double frequency = Sampled_indexToX (thee.get(), ifreq);
 				const double im = thy z [2] [ifreq];
-				thy z [2] [ifreq] = frequency * thy z [1] [ifreq]; // forget about scale factor 2*pi
-				thy z [1] [ifreq] = - frequency * im;
+				thy z [2] [ifreq] = NUM2pi * frequency * thy z [1] [ifreq]; // forget about scale factor 2*pi
+				thy z [1] [ifreq] = - NUM2pi * frequency * im;
 			}
 			const double nyquistFrequency = 0.5 / my dx;
 			if (lowPassFrequency < nyquistFrequency)
 				Spectrum_passHannBand (thee.get(), 0.0, lowPassFrequency, smoothing);
 			autoSound him = Spectrum_to_Sound (thee.get());
-			if (peak99)
-				Vector_scale (him.get(), 0.99);
+			if (peakAmplitude != 0.0)
+				Vector_scale (him.get(), peakAmplitude);
 			return him;
 		} catch (MelderError) {
-			Melder_throw (me, U": cannot create the derivative of the Electroglottogram.");
+			Melder_throw (me, U": cannot create the derivative of the Sound.");
 		}
 }
 

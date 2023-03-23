@@ -2,7 +2,7 @@
 #define _Electroglottogram_h_
 /* Electroglottogram.h
  *
- * Copyright (C) 2019-2022 David Weenink
+ * Copyright (C) 2019-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,10 +51,10 @@ autoAmplitudeTier Electroglottogram_to_AmplitudeTier_levels (Electroglottogram m
 
 autoTextGrid Electroglottogram_to_TextGrid_closedGlottis (Electroglottogram me, double pitchFloor, double pitchCeiling, double closingThreshold, double peakThresholdFraction);
 
-autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing, bool peak99);
+autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFrequency, double smoothing, double peakAmplitude);
 /* The real derivative */
 
-autoSound Electroglottogram_firstCentralDifference (Electroglottogram me, bool peak99);
+autoSound Electroglottogram_firstCentralDifference (Electroglottogram me, double peakAmplitude);
 /* d(EEG)/dt [col] = z [col+1] - z [col-1] */
 
 autoElectroglottogram Electroglottogram_highPassFilter (Electroglottogram me, double fromFrequency, double smoothing);
