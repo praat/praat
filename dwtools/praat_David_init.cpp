@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2022 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2023 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5761,24 +5761,24 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_TextGrid_voiceActivity, U"Sound_to_TextGrid_voiceActivity", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_TextGrid_speechActivity, U"Sound: To TextGrid (speech activity)", U"Sound: To TextGrid (speech activity)...") {
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (longtermWindow, U"Long term window (s)", U"0.3")
 	POSITIVE (shorttermWindow, U"Short term window (s)", U"0.1")
 	POSITIVE (fmin, U"left Frequency range (Hz)", U"70.0")
 	POSITIVE (fmax,  U"right Frequency range (Hz)", U"6000.0")
 	REAL (flatnessThreshold, U"Flatness threshold", U"-10.0")
-	REAL (silenceThreshold_dB, U"Silence threshold (dB)", U"-35.0")
-	POSITIVE (minimumSilenceDuration, U"Minimum silent interval (s)", U"0.1")
-	POSITIVE (minimumSpeechDuration, U"Minimum speech interval (s)", U"0.1")
-	WORD (silenceLabel, U"Silent interval label", U"silent")
-	WORD (speechLabel, U"Sounding interval label", U"sounding")
+	REAL (nonspeechThreshold_dB, U"Non-speech threshold (dB)", U"-35.0")
+	POSITIVE (minimumNonspeechDuration, U"Min. non-speech interval (s)", U"0.1")
+	POSITIVE (minimumSpeechDuration, U"Min. speech interval (s)", U"0.1")
+	WORD (nonspeechLabel, U"Non-speech interval label", U"non-speech")
+	WORD (speechLabel, U"Speech interval label", U"speech")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoTextGrid result = Sound_to_TextGrid_detectVoiceActivity_lsfm (me, timeStep, longtermWindow, shorttermWindow,
-			fmin, fmax, flatnessThreshold, silenceThreshold_dB, minimumSilenceDuration, minimumSpeechDuration, 
-			silenceLabel, speechLabel
+		autoTextGrid result = Sound_to_TextGrid_speechActivity_lsfm (me, timeStep, longtermWindow, shorttermWindow,
+			fmin, fmax, flatnessThreshold, nonspeechThreshold_dB, minimumNonspeechDuration, minimumSpeechDuration, 
+			nonspeechLabel, speechLabel
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -8607,7 +8607,7 @@ static void cb_publish (Editor /*editor*/, autoDaata publish) {
 }
 
 DIRECT (CREATION_WINDOW__VowelEditor_create) {
-	CREATION_WINDOW (a,Sound)
+	CREATION_WINDOW (a, VowelEditor)
 		autoVowelEditor creationWindow = VowelEditor_create (U"VowelEditor");
 		Editor_setPublicationCallback (creationWindow.get(), cb_publish);
 	CREATION_WINDOW_END
@@ -10171,8 +10171,8 @@ void praat_David_init () {
 
 	praat_addAction1 (classSound, 0, U"To TextGrid (silences)...", U"To IntervalTier", 1, 
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_detectSilences);
-	praat_addAction1 (classSound, 0, U"To TextGrid (voice activity)...", U"To IntervalTier", 1,
-			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_voiceActivity);
+	praat_addAction1 (classSound, 0, U"To TextGrid (speech activity)... || To TextGrid (voice activity)...", U"To IntervalTier", 1,
+			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_speechActivity);
 	praat_addAction1 (classSound, 0, U"To TextGrid (high, mid, low)...", U"To IntervalTier", GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_highMidLowIntervals);
     praat_addAction1 (classSound, 0, U"Play one channel...", U"Play", GuiMenu_HIDDEN,
