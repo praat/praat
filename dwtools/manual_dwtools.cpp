@@ -3083,29 +3083,29 @@ DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calcu
 	"the start and end time of the interval and %%r%__i_ is the %%i%^^th^ relative time, the times %t__%i_ are calculated according "
 	"to the options as:")
 TAG1 (U"%%fractions%")
-DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are fractions of the interval duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
+DEFINITION1 (U"%%t%__%i_ = %t__min_ + %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are fractions of the interval duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%percentages%")
-DEFINITION (U"%%t%__%i_ = %t__min_+ 0.01 %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are percentages of the interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
+DEFINITION1 (U"%%t%__%i_ = %t__min_+ 0.01 %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are percentages of the interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%independent%")
-DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_. The relative time values specify an offset in seconds here. ")
+DEFINITION1 (U"%%t%__%i_ = %t__min_ + %r__%i_. The relative time values specify an offset in seconds here. ")
 TAG (U"##The \"pitch\" values")
 DEFINITION (U"determine, together with the next two options, the frequency value of the new pitch points. Each value here must link to the corresponding time value.")
 TAG (U"##...are...")
 DEFINITION (U"determines the interpretation of the \"pitch\" value. Possible choices are")
 TAG1 (U"%%frequencies%")
-DEFINITION (U"the values are frequencies in hertz.")
+DEFINITION1 (U"the values are frequencies in hertz.")
 TAG1 (U"%%fractions%")
-DEFINITION (U"the values are fractions of a pitch value that is specified by the next option. Normally fractions are numbers in "
+DEFINITION1 (U"the values are fractions of a pitch value that is specified by the next option. Normally fractions are numbers in "
 	"the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%percentages%")
-DEFINITION (U"the values are percentages of a pitch value that is specified by the next option. Normally percentages are numbers "
+DEFINITION1 (U"the values are percentages of a pitch value that is specified by the next option. Normally percentages are numbers "
 	"in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%start and slopes%")
-DEFINITION (U"the values are a start frequency followed by slopes in Herz per second.")
+DEFINITION1 (U"the values are a start frequency followed by slopes in Herz per second.")
 TAG1 (U"%%slopes and end%")
-DEFINITION (U"the values are slopes in herz per second followed by an end frequency in herz.")
+DEFINITION1 (U"the values are slopes in herz per second followed by an end frequency in herz.")
 TAG1 (U"%%music notes%")
-DEFINITION (U"the values are music notes specified on the twelve tone scale as a0, a\\# 0, b0, c0, c\\# 0, d0, d\\# 0, e0, f0, "
+DEFINITION1 (U"the values are music notes specified on the twelve tone scale as a0, a\\# 0, b0, c0, c\\# 0, d0, d\\# 0, e0, f0, "
 	"f\\# 0, g0, g\\# 0, a1, a\\# 1, ... a4, ..., or g\\# 9. Here the octave is indicated by the number, 0 being the lowest octave "
 	"and 9 the highest. The a4 is choosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below "
 	"the a4 and corresponds to a frequency of 27.5 Hz. As a scale of reference we give a0 = 27.5 Hz, a1 = 55 Hz, a2 = 110 Hz, "
@@ -3113,22 +3113,22 @@ DEFINITION (U"the values are music notes specified on the twelve tone scale as a
 TAG (U"##...which is the...")
 DEFINITION (U"the anchor point value, if used. The following options may be given for the anchor point frequency value:")
 TAG1 (U"%%not used%")
-DEFINITION (U"no anchor point frequency value is necessary. The previous two options are sufficient to determine the new pitch "
+DEFINITION1 (U"no anchor point frequency value is necessary. The previous two options are sufficient to determine the new pitch "
 	"frequencies. This means that the \"pitch\" values given cannot be %%fractions% or %%percentages%.")
 TAG1 (U"%%current%")
-DEFINITION (U"the current pitch frequency at the corresponding time.")
+DEFINITION1 (U"the current pitch frequency at the corresponding time.")
 TAG1 (U"%%start%")
-DEFINITION (U"the pitch frequency at the start of the interval.")
+DEFINITION1 (U"the pitch frequency at the start of the interval.")
 TAG1 (U"%%end%")
-DEFINITION (U"the pitch frequency at the end of the interval.")
+DEFINITION1 (U"the pitch frequency at the end of the interval.")
 TAG1 (U"%%mean of the curve%")
-DEFINITION (U"the @@PitchTier: Get mean (curve)...|mean of the curve@ within the interval.")
+DEFINITION1 (U"the @@PitchTier: Get mean (curve)...|mean of the curve@ within the interval.")
 TAG1 (U" %%mean of the points%")
-DEFINITION (U"the @@PitchTier: Get mean (points)...|mean of the points@ within the interval.")
+DEFINITION1 (U"the @@PitchTier: Get mean (points)...|mean of the points@ within the interval.")
 TAG1 (U"%%maximum%")
-DEFINITION (U"the maximum pitch frequency in the interval.")
+DEFINITION1 (U"the maximum pitch frequency in the interval.")
 TAG1 (U"%%minimum%")
-DEFINITION (U"the minimum pitch frequency in the interval.")
+DEFINITION1 (U"the minimum pitch frequency in the interval.")
 TAG (U"##Pitch frequency unit")
 DEFINITION (U"Hertz")
 MAN_END

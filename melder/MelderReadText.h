@@ -2,7 +2,7 @@
 #define _melder_readtext_h_
 /* melder_readtext.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2019,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,7 @@ struct autoMelderReadText {
 #endif
 
 autoMelderReadText MelderReadText_createFromFile (MelderFile file);
+autoMelderReadText MelderReadText_createFromText (autostring32 text);
 char32 MelderReadText_getChar (MelderReadText text);
 mutablestring32 MelderReadText_readLine (MelderReadText text);
 int64 MelderReadText_getNumberOfLines (MelderReadText me);
