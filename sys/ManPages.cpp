@@ -291,6 +291,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 	do {
 		line = MelderReadText_readLine (text);
 	} while (line && ! stringHasInk (line));
+	ManPage_Paragraph previousParagraph = nullptr;
 	for (;;) {
 		if (! line)
 			return;
@@ -300,7 +301,102 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				return;
 		}
 		kManPage_type type;
-		if (line [0] == U'<') {
+		if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"===", true)) {
+			if (previousParagraph)
+				previousParagraph -> type = kManPage_type::ENTRY;
+			line = MelderReadText_readLine (text);
+			if (! line)
+				return;
+			continue;
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                        ", true)) {
+			type = kManPage_type::CODE5;
+			line += 24;
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                    ", true)) {
+			type = kManPage_type::CODE4;
+			line += 20;
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                ", true)) {
+			type = kManPage_type::CODE3;
+			line += 16;
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"            ", true)) {
+			if (line [12] == U'-') {
+				type = kManPage_type::LIST_ITEM3;
+				line += 13;
+			} else if (line [12] == U'*') {
+				type = kManPage_type::TAG3;
+				line += 13;
+			} else if (line [12] == U':') {
+				type = kManPage_type::DEFINITION3;
+				line += 13;
+			} else {
+				type = kManPage_type::CODE2;
+				line += 12;
+			}
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"        ", true)) {
+			if (line [8] == U'-') {
+				type = kManPage_type::LIST_ITEM2;
+				line += 9;
+			} else if (line [8] == U'*') {
+				type = kManPage_type::TAG2;
+				line += 9;
+			} else if (line [8] == U':') {
+				type = kManPage_type::DEFINITION2;
+				line += 9;
+			} else {
+				type = kManPage_type::CODE1;
+				line += 8;
+			}
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"    ", true)) {
+			if (line [4] == U'-') {
+				type = kManPage_type::LIST_ITEM1;
+				line += 5;
+			} else if (line [4] == U'*') {
+				type = kManPage_type::TAG1;
+				line += 5;
+			} else if (line [4] == U':') {
+				type = kManPage_type::DEFINITION1;
+				line += 5;
+			} else {
+				type = kManPage_type::CODE;
+				line += 4;
+			}
+		} else if (line [0] == U'-') {
+			type = kManPage_type::LIST_ITEM;
+			line += 1;
+		} else if (line [0] == U'*') {
+			type = kManPage_type::TAG;
+			line += 1;
+		} else if (line [0] == U':') {
+			type = kManPage_type::DEFINITION;
+			line += 1;
+		} else if (line [0] == U'\t') {
+			if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t", true)) {
+				if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t", true)) {
+					if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t", true)) {
+						if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t\t", true)) {
+							if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t\t\t", true)) {
+								type = kManPage_type::CODE5;
+								line += 6;
+							} else {
+								type = kManPage_type::CODE4;
+								line += 5;
+							}
+						} else {
+							type = kManPage_type::CODE3;
+							line += 4;
+						}
+					} else {
+						type = kManPage_type::CODE2;
+						line += 3;
+					}
+				} else {
+					type = kManPage_type::CODE1;
+					line += 2;
+				}
+			} else {
+				type = kManPage_type::CODE;
+				line += 1;
+			}
+		} else if (line [0] == U'<') {
 			char32 *closingBracket = str32chr (line, U'>');
 			if (! closingBracket)
 				Melder_throw (U"Missing “>” in “", line, U"”.");
@@ -328,11 +424,20 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				line = nullptr;   // signals end of text
 				break;
 			}
-			if (continuationLine [0] == U'<' || ! stringHasInk (continuationLine)) {
+			if (continuationLine [0] == U'<' ||
+				continuationLine [0] == U':' ||
+				continuationLine [0] == U'*' ||
+				continuationLine [0] == U'-' ||
+				continuationLine [0] == U'\t' ||
+				Melder_stringMatchesCriterion (continuationLine, kMelder_string::STARTS_WITH, U"===", true) ||
+				Melder_stringMatchesCriterion (continuationLine, kMelder_string::STARTS_WITH, U"    ", true) ||
+				! stringHasInk (continuationLine)
+			) {
 				line = continuationLine;   // not really a continuation line, but a new paragraph
 				break;
 			}
-			conststring32 separator = ( par -> text [0] == U'\0' ? U"" : par -> type == kManPage_type::SCRIPT ? U"\n" : U" " );
+			conststring32 separator = ( par -> text [0] == U'\0' ? U"" :
+				par -> type == kManPage_type::SCRIPT ? U"\n" : U" " );
 			par -> text = Melder_dup (Melder_cat (par -> text, separator, continuationLine)).transfer();
 		} while (1);
 		if (par -> type == kManPage_type::SCRIPT) {
@@ -340,6 +445,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			par -> height = 3.0;
 		}
 		resolveLinks (me, par);
+		previousParagraph = par;
 	}
 }
 static void readOnePage (ManPages me, MelderReadText text) {
