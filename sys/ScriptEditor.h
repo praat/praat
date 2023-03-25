@@ -47,6 +47,8 @@ Thing_define (ScriptEditor, TextEditor) {
 		override;
 	void v_createMenuItems_help (EditorMenu menu)
 		override;
+	conststring32 v_extension () const
+		override { return U".praat"; }
 };
 
 void ScriptEditor_init (ScriptEditor me,

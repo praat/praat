@@ -615,6 +615,8 @@
 			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<integer>0</integer>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>NSBinaryStoreType</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -631,6 +633,8 @@
 			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<integer>0</integer>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>NSBinaryStoreType</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -647,6 +651,8 @@
 			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<integer>0</integer>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>NSBinaryStoreType</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -661,6 +667,24 @@
 			<string>Editor</string>
 			<key>LSHandlerRank</key>
 			<string>Default</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>praatnb</string>
+			</array>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
+			<key>CFBundleTypeName</key>
+			<string>Praat notebook</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>

@@ -1614,11 +1614,23 @@ INTRO (U"A command in the @@Praat menu@ for creating a new Praat script. "
 	"It creates a @ScriptEditor with an empty script that you can edit, run, and save.") 
 MAN_END
 
+MAN_BEGIN (U"New Praat notebook", U"ppgb", 20230325)
+INTRO (U"A command in the @@Praat menu@ for creating a new Praat notebook. "
+	"It creates a @NotebookEditor with an empty notebook that you can edit, run, and save.")
+MAN_END
+
 MAN_BEGIN (U"Open Praat script...", U"ppgb", 20050822)
 INTRO (U"A command in the @@Praat menu@ for editing an existing @@Praat script@. "
 	"It creates a @ScriptEditor and asks "
 	"you to select a file. If you click #%OK, the file is read into the ScriptEditor window, "
-	"and you can run and edit it; if you click #%Cancel, you get an empty script, as with @@New Praat script@.") 
+	"and you can run and edit it; if you click #%Cancel, you get an empty script, as with @@New Praat script@.")
+MAN_END
+
+MAN_BEGIN (U"Open Praat notebook...", U"ppgb", 20230325)
+INTRO (U"A command in the @@Praat menu@ for editing an existing @@Praat notebook@. "
+	"It creates a @NotebookEditor and asks "
+	"you to select a file. If you click #%OK, the file is read into the NotebookEditor window, "
+	"and you can run and edit it; if you click #%Cancel, you get an empty notebook, as with @@New Praat notebook@.")
 MAN_END
 
 MAN_BEGIN (U"Paste history", U"ppgb", 20050822)
@@ -1714,9 +1726,14 @@ MAN_BEGIN (U"plugins", U"ppgb", 20060920)
 INTRO (U"See @@plug-ins@.")
 MAN_END
 
-MAN_BEGIN (U"Praat script", U"ppgb", 19980824)
-INTRO (U"An executable text that consists of menu commands and action commands.")
+MAN_BEGIN (U"Praat script", U"ppgb", 20230325)
+INTRO (U"An executable program text in the Praat scripting language, which consists of menu commands, action commands, computations and control flow.")
 NORMAL (U"See the @Scripting tutorial.")
+MAN_END
+
+MAN_BEGIN (U"Praat notebook", U"ppgb", 20230325)
+INTRO (U" A text document with which you can create things that look like Praat’s manual pages, "
+	"with capabilities of graphics and @scripting.")
 MAN_END
 
 MAN_BEGIN (U"preferences folder", U"ppgb", 20201229)
@@ -4158,7 +4175,7 @@ NORMAL (U"After #editor you can either give the unique id of the object, as abov
 CODE (U"#editor: \"Sound \" + sound\\$ ")
 MAN_END
 
-MAN_BEGIN (U"Scripting 7.2. Scripting an editor from within", U"ppgb", 20140113)
+MAN_BEGIN (U"Scripting 7.2. Scripting an editor from within", U"ppgb", 20230325)
 NORMAL (U"This section will show how you can permanently extend the functionality of an editor.")
 NORMAL (U"As an example, consider the following problem: you want to see a graphic representation "
 	"of the spectrum of the sound around the cursor position in the SoundEditor. To achieve this, "
@@ -4189,7 +4206,7 @@ NORMAL (U"The command will be visible in every SoundEditor that you create from 
 	"You can now view the spectrum around the cursor just by choosing this menu command.")
 NORMAL (U"After you leave Praat and start it again, the command will continue to appear in the SoundEditor. "
 	"If you don't like the command any longer, you can remove it with the @ButtonEditor, which you can start "
-	"by choosing #Buttons from the #Preferences submenu of the @@Praat menu@.")
+	"by choosing #Buttons from the #Settings submenu of the @@Praat menu@.")
 ENTRY (U"Improving your script")
 NORMAL (U"The above spectrum-viewing example has a number of disadvantages. It clutters the object list with a number "
 	"of indiscriminable Sounds and Spectra called \"slice\", and the spectrum is shown up to the Nyquist frequency "
@@ -4474,6 +4491,10 @@ LIST_ITEM (U"2. Choose @@Add to dynamic menu...@ from the #File menu. Supply \"S
 LIST_ITEM (U"3. Click #OK and ensure that the button is clickable if you select one or more Sound objects. "
 	"This button will still be available after you leave the program and enter it again; "
 	"to remove it from the dynamic menus, use the @ButtonEditor.")
+MAN_END
+
+MAN_BEGIN (U"NotebookEditor", U"ppgb", 20230325)
+INTRO (U"An aid to documented @@scripting@ as well as to creating manual pages.")
 MAN_END
 
 MAN_BEGIN (U"undefined", U"ppgb", 20170910)
