@@ -160,7 +160,7 @@ static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS) {
 	Melder_sprint (defaultName,300,
 		my v_fileBased () ?
 			MelderFile_isNull (& my file) ?
-				U""
+				Melder_cat (U"untitled", my v_extension ())
 			:
 				MelderFile_name (& my file)
 		:

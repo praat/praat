@@ -4545,7 +4545,7 @@ NORMAL (U"To create new objects from files on disk, use the @@Open menu@ instead
 	"Objects can also often be create from other objects, with commands that start with ##To#.")
 MAN_END
 
-MAN_BEGIN (U"Objects window", U"ppgb", 20140212)
+MAN_BEGIN (U"Objects window", U"ppgb", 20230325)
 INTRO (U"One of the two main windows in the Praat program.")
 ENTRY (U"Subdivision")
 LIST_ITEM (U"To the left: the @@List of Objects@.")
@@ -4564,10 +4564,12 @@ LIST_ITEM (U"The Objects window contains several fixed menus: "
 	"and must, therefore, be considered part of the dynamic menu.")
 ENTRY (U"The Praat menu")
 LIST_ITEM (U"• @@New Praat script@: creates an empty @@ScriptEditor@")
+LIST_ITEM (U"• @@New Praat notebook@: creates an empty @@NotebookEditor@")
 LIST_ITEM (U"• @@Open Praat script...@: creates a @@ScriptEditor@ with a script from disk")
+LIST_ITEM (U"• @@Open Praat notebook...@: creates a @@NotebookEditor@ with a notebook from disk")
 LIST_ITEM (U"• The ##Goodies submenu#: for doing things (like using the Calculator) "
 	"that do not create new objects and do not depend on the kinds of selected objects.")
-LIST_ITEM (U"• The ##Preferences submenu#: for program-wide preferences, "
+LIST_ITEM (U"• The ##Settings submenu#: for program-wide preferences, "
 	"like audio input and output settings.")
 LIST_ITEM (U"• ##Buttons...#: raises a @@ButtonEditor@")
 LIST_ITEM (U"• (@@Add menu command...@)")

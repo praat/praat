@@ -41,7 +41,8 @@ Thing_define (TextEditor, Editor) {
 	bool v_canReportSettings ()
 		override { return false; }
 
-	virtual bool v_fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
+	virtual bool v_fileBased () const { return true; };   // if true, have New, Open..., Save; if false, have Clear
+	virtual conststring32 v_extension () const { return U".txt"; }
 	virtual void v_clear () { }
 
 	#include "TextEditor_prefs.h"

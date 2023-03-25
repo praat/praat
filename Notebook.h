@@ -1,8 +1,8 @@
-#ifndef _InfoEditor_h_
-#define _InfoEditor_h_
-/* InfoEditor.h
+#ifndef _Notebook_h_
+#define _Notebook_h_
+/* Notebook.h
  *
- * Copyright (C) 2004-2005,2011,2015,2016,2018,2022,2023 Paul Boersma
+ * Copyright (C) 2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ScriptEditor.h"
+#include "Data.h"
 
-Thing_define (InfoEditor, TextEditor) {
-	void v9_destroy () noexcept
-		override;
-	bool v_scriptable ()
-		override { return false; }
-	bool v_fileBased () const
-		override { return false; }
-	void v_clear ()
-		override;
+Thing_define (Notebook, Daata) {
+	structMelderFile file;
 };
 
-InfoEditor InfoEditor_getTheReferenceToTheOnlyInstance ();
+autoNotebook Notebook_createFromFile (MelderFile file);
 
-void InfoEditor_injectInformationProc ();
-
-/* End of file InfoEditor.h */
+/* End of file Notebook.h */
 #endif

@@ -20,6 +20,7 @@
 #include "praatM.h"
 #include "praat_script.h"
 #include "ScriptEditor.h"
+#include "NotebookEditor.h"
 #include "ButtonEditor.h"
 #include "DataEditor.h"
 #include "site.h"
@@ -150,11 +151,26 @@ DIRECT (PRAAT__newScript) {
 	PRAAT_END
 }
 
+DIRECT (PRAAT__newNotebook) {
+	PRAAT
+		autoNotebookEditor notebookEditor = NotebookEditor_createFromText (nullptr);
+		notebookEditor.releaseToUser();
+	PRAAT_END
+}
+
 DIRECT (PRAAT__openScript) {
 	PRAAT
 		autoScriptEditor scriptEditor = ScriptEditor_createFromText (nullptr, nullptr);
 		TextEditor_showOpen (scriptEditor.get());
 		scriptEditor.releaseToUser();
+	PRAAT_END
+}
+
+DIRECT (PRAAT__openNotebook) {
+	PRAAT
+		autoNotebookEditor notebookEditor = NotebookEditor_createFromText (nullptr);
+		TextEditor_showOpen (notebookEditor.get());
+		notebookEditor.releaseToUser();
 	PRAAT_END
 }
 
@@ -664,6 +680,15 @@ static autoDaata scriptRecognizer (integer nread, const char *header, MelderFile
 	return autoDaata ();
 }
 
+static autoDaata notebookRecognizer (integer nread, const char * /* header */, MelderFile file) {
+	conststring32 name = MelderFile_name (file);
+	if (nread < 2)
+		return autoDaata ();
+	if (Melder_stringMatchesCriterion (name, kMelder_string::ENDS_WITH, U".praatnb", false))
+		return Script_createFromFile (file);
+	return autoDaata ();
+}
+
 static void cb_openDocument (MelderFile file) {
 	try {
 		readFromFile (file);   // read a single file without calling praat_updateSelection()
@@ -726,6 +751,7 @@ void praat_addMenus (GuiWindow window) {
 	Melder_setSearchProc (searchProc);
 
 	Data_recognizeFileType (scriptRecognizer);
+	Data_recognizeFileType (notebookRecognizer);
 
 	/*
 		Create the menu titles in the bar.
@@ -776,8 +802,12 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Praat", U"-- script --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Praat", U"New Praat script", nullptr, GuiMenu_NO_API,
 			PRAAT__newScript);
+	praat_addMenuCommand (U"Objects", U"Praat", U"New Praat notebook", nullptr, GuiMenu_NO_API,
+			PRAAT__newNotebook);
 	praat_addMenuCommand (U"Objects", U"Praat", U"Open Praat script...", nullptr, GuiMenu_NO_API,
 			PRAAT__openScript);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Open Praat notebook...", nullptr, GuiMenu_NO_API,
+			PRAAT__openNotebook);
 	praat_addMenuCommand (U"Objects", U"Praat", U"-- buttons --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Praat", U"Add menu command...", nullptr, GuiMenu_HIDDEN | GuiMenu_NO_API,
 			PRAAT__addMenuCommand);

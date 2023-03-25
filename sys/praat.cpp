@@ -41,6 +41,7 @@
 #include "machine.h"
 #include "Printer.h"
 #include "ScriptEditor.h"
+#include "NotebookEditor.h"
 #include "Strings_.h"
 #include "../kar/UnicodeData.h"
 #include "InfoEditor.h"
@@ -849,11 +850,11 @@ FORM (DO_Quit, U"Confirm Quit", U"Quit") {
 	OK
 {
 	char32 prompt [300];
-	if (ScriptEditors_dirty ()) {
+	if (ScriptEditors_dirty () || NotebookEditors_dirty ()) {
 		if (theCurrentPraatObjects -> n)
-			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", praatP.title.get(), U"?");
+			Melder_sprint (prompt,300, U"You have objects and unsaved scripts or notebooks! Do you still want to quit ", praatP.title.get(), U"?");
 		else
-			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", praatP.title.get(), U"?");
+			Melder_sprint (prompt,300, U"You have unsaved scripts or notebooks! Do you still want to quit ", praatP.title.get(), U"?");
 		SET_STRING (label, prompt)
 	} else if (theCurrentPraatObjects -> n) {
 		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", praatP.title.get(), U"?");
