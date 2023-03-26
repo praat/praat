@@ -67,60 +67,29 @@ void structNotebookEditor :: v_goAway () {
 		NotebookEditor_Parent :: v_goAway ();
 }
 
-static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
-	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me, Editor optionalEditor)
-{
-	iam (NotebookEditor);
-	autostring32 text = GuiText_getString (my textWidget);
-	if (! MelderFile_isNull (& my file))
-		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);
-
-	//Interpreter_getArgumentsFromDialog (my interpreter.get(), sendingForm);
-
-	autoPraatBackground background;
-	if (! MelderFile_isNull (& my file))
-		MelderFile_setDefaultDir (& my file);
-	Interpreter_run (my interpreter.get(), text.get());
-}
-
-static void args_ok_chunkOnly (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
-	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me, Editor optionalEditor)
-{
-	iam (NotebookEditor);
-	autostring32 text = GuiText_getSelection (my textWidget);
-	if (! text)
-		Melder_throw (U"No text is selected any longer.\nPlease reselect or click Cancel.");
-	if (! MelderFile_isNull (& my file))
-		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);
-
-	//Interpreter_getArgumentsFromDialog (my interpreter.get(), sendingForm);
-
-	autoPraatBackground background;
-	if (! MelderFile_isNull (& my file))
-		MelderFile_setDefaultDir (& my file);
-	Interpreter_run (my interpreter.get(), text.get());
-}
-
 static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
-		Melder_throw (U"The manual page is already running (paused). Please close or continue the pause or demo window.");
+		Melder_throw (U"The notebook is already running (paused). Please close or continue the pause or demo window.");
 	autostring32 text = GuiText_getString (my textWidget);
-	trace (U"Running the following script (1):\n", text.get());
+	if (! Melder_stringMatchesCriterion (text.get(), kMelder_string::STARTS_WITH, U"PraatNotebook", true))
+		Melder_throw (U"A Praat notebook should start with the text “PraatNotebook”.");
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);
+	Melder_includeIncludeFiles (& text);   // BUG: should do only inside code chunks
 	autoPraatBackground background;
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	trace (U"Running the following script (2):\n", text.get());
-	Interpreter_run (my interpreter.get(), text.get());
+
+	autoMelderReadText readText = MelderReadText_createFromText (text.move());
+	autoManPages manPages = ManPages_createFromText (readText.get());   // readText can release, because manPages duplicates (last checked 2023-03-25)
+	ManPage firstPage = manPages -> pages.at [1];
+	autoManual manual = Manual_create (firstPage -> title.get(), manPages.releaseToAmbiguousOwner(), true);
+	manual.releaseToUser ();
 }
 
 static void menu_cb_runChunk (NotebookEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
-		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
+		Melder_throw (U"The notebook is already running (paused). Please close or continue the pause or demo window.");
 	autostring32 text = GuiText_getSelection (my textWidget);   // TODO: replace with chunk
 	if (! text)
 		Melder_throw (U"No text selected.");
@@ -137,7 +106,7 @@ static void menu_cb_expandIncludeFiles (NotebookEditor me, EDITOR_ARGS) {
 	autostring32 text = GuiText_getString (my textWidget);
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);
+	Melder_includeIncludeFiles (& text);   // BUG: should do only inside code chunks
 	GuiText_setString (my textWidget, text.get());
 }
 
