@@ -67,8 +67,13 @@ static void FormantPathArea_drawCeilings (FormantPathArea me, double tmin, doubl
 			const integer index = Melder_atoi (label);
 			if (index > 0 && index <= my formantPath() -> ceilings.size) {
 				const double ceiling = my formantPath() -> ceilings [index];
-				Graphics_line (my graphics(), textInterval -> xmin, ceiling, textInterval -> xmax, ceiling);
-				Graphics_text (my graphics(), 0.5 * (textInterval -> xmin + textInterval -> xmax), ceiling + 50.0, Melder_fixed (ceiling, 0));
+				const double xfrom = std::max (textInterval -> xmin, tmin);
+				const double xto = std:: min (textInterval -> xmax, tmax);
+				if (ceiling < fmax) {
+					Graphics_line (my graphics(), xfrom, ceiling, xto, ceiling);
+					Graphics_text (my graphics(), 0.5 * (xfrom + xto), ceiling + 50.0, Melder_fixed (ceiling, 0));
+				} else
+					Graphics_line (my graphics(), xfrom, fmax, xto, fmax);
 			}
 		}
 	}
