@@ -167,6 +167,23 @@ static void Formant_replaceFrames (Formant target, integer beginFrame, integer e
 	}
 }
 
+static void FormantPathEditor_effectuateCandidateSelection (FormantPathEditor me, integer candidate) {
+	if (candidate > 0 && candidate <= my formantPath() -> formantCandidates.size) {
+		double tmin_ = my startWindow, tmax_ = my endWindow;
+		if (my startSelection < my endSelection) {
+			tmin_ = my startSelection;
+			tmax_ = my endSelection;
+		}
+		my selectedCandidate = candidate;
+		Editor_save (me, U"Change ceiling");
+		integer ifmin, ifmax;
+		Sampled_getWindowSamples (my formantPath(), tmin_, tmax_, & ifmin, & ifmax);
+		TextGrid_addInterval_force (my formantPath() -> path.get(), tmin_, tmax_, 1_integer, Melder_integer (candidate));
+		Formant source = my formantPath() -> formantCandidates.at [my selectedCandidate];
+		Formant_replaceFrames (my formantPathArea() -> d_formant.get(), ifmin, ifmax, source);
+	}
+}
+
 /********** METHODS **********/
 
 /***** TIER MENU *****/
@@ -193,26 +210,26 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 }
 
 static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Formant modeler advanced drawing settings", nullptr)
-		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_modeler_draw_estimatedModels())
-		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz())
-		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency())
-		BOOLEAN  (alsoSetSpectrogramView, U"Also set spectrogram view", my default_modeler_draw_alsoSetSpectrogramView());
-		BOOLEAN (drawErrorBars, U"Draw bandwidths", my default_modeler_draw_showBandwidths())
+	EDITOR_FORM (U"Candidate drawing settings", nullptr)
+		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_candidate_draw_estimatedModels())
+		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_candidate_draw_yGridLineEvery_Hz())
+		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_candidate_draw_maximumFrequency())
+		BOOLEAN  (conformSpectrogramView, U"Also set spectrogram view", my default_candidate_draw_conformSpectrogramView());
+		BOOLEAN (drawErrorBars, U"Draw bandwidths", my default_candidate_draw_showBandwidths())
 	EDITOR_OK
-		SET_BOOLEAN (drawEstimatedModels, my instancePref_modeler_draw_estimatedModels())
-		SET_REAL (yGridLineEvery_Hz, my instancePref_modeler_draw_yGridLineEvery_Hz())
-		SET_REAL (maximumFrequency, my instancePref_modeler_draw_maximumFrequency())
-		SET_BOOLEAN (drawErrorBars, my instancePref_modeler_draw_alsoSetSpectrogramView())
-		SET_BOOLEAN (drawErrorBars, my instancePref_modeler_draw_showBandwidths())
+		SET_BOOLEAN (drawEstimatedModels, my instancePref_candidate_draw_estimatedModels())
+		SET_REAL (yGridLineEvery_Hz, my instancePref_candidate_draw_yGridLineEvery_Hz())
+		SET_REAL (maximumFrequency, my instancePref_candidate_draw_maximumFrequency())
+		SET_BOOLEAN (conformSpectrogramView, my instancePref_candidate_draw_conformSpectrogramView())
+		SET_BOOLEAN (drawErrorBars, my instancePref_candidate_draw_showBandwidths())
 	EDITOR_DO
-		my setInstancePref_modeler_draw_estimatedModels (drawEstimatedModels);
-		my setInstancePref_modeler_draw_maximumFrequency (maximumFrequency);
-		my setInstancePref_modeler_draw_yGridLineEvery_Hz (yGridLineEvery_Hz);
-		my setInstancePref_modeler_draw_alsoSetSpectrogramView (alsoSetSpectrogramView);
-		if (alsoSetSpectrogramView)
+		my setInstancePref_candidate_draw_estimatedModels (drawEstimatedModels);
+		my setInstancePref_candidate_draw_maximumFrequency (maximumFrequency);
+		my setInstancePref_candidate_draw_yGridLineEvery_Hz (yGridLineEvery_Hz);
+		my setInstancePref_candidate_draw_conformSpectrogramView (conformSpectrogramView);
+		if (conformSpectrogramView)
 			my formantPathArea() -> setInstancePref_spectrogram_viewTo (maximumFrequency);
-		my setInstancePref_modeler_draw_showBandwidths (drawErrorBars);
+		my setInstancePref_candidate_draw_showBandwidths (drawErrorBars);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -250,12 +267,8 @@ static void menu_cb_selectCandidateWithlowestStress (FormantPathEditor me, EDITO
 	autoVEC stresses = FormantPath_getStressOfCandidates (my formantPath(), startTime, endTime, 0, 0, parameters.get(), 
 		my instancePref_modeler_varianceExponent());
 	const integer minPos = NUMminPos (stresses.get());
-	my selectedCandidate = minPos;
 	Editor_save (me, U"Change ceiling");
-	integer ifmin, ifmax;
-	Sampled_getWindowSamples (my formantPath(), startTime, endTime, & ifmin, & ifmax);
-	Formant source = my formantPath() -> formantCandidates.at [my selectedCandidate];
-	Formant_replaceFrames (my formantPathArea() -> d_formant.get(), ifmin, ifmax, source);
+	FormantPathEditor_effectuateCandidateSelection (me, minPos);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -281,11 +294,11 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS) {
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my instancePref_modeler_numberOfParametersPerTrack());
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.2;
 		FormantPath_drawAsGrid_inside (my formantPath(), my pictureGraphics(), startTime, endTime,
-			my instancePref_modeler_draw_maximumFrequency(), 1, 5,
-			my instancePref_modeler_draw_showBandwidths(), Melder_RED, Melder_PURPLE, 0, 0,
-			xSpace_fraction, ySpace_fraction, my instancePref_modeler_draw_yGridLineEvery_Hz(),
+			my instancePref_candidate_draw_maximumFrequency(), 1, 5,
+			my instancePref_candidate_draw_showBandwidths(), Melder_RED, Melder_PURPLE, 0, 0,
+			xSpace_fraction, ySpace_fraction, my instancePref_candidate_draw_yGridLineEvery_Hz(),
 			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true,
-			my instancePref_modeler_varianceExponent(), my instancePref_modeler_draw_estimatedModels(), true
+			my instancePref_modeler_varianceExponent(), my instancePref_candidate_draw_estimatedModels(), true
 		);
 		Graphics_unsetInner (my pictureGraphics());
 		DataGui_closePraatPicture (me);
@@ -412,9 +425,9 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	*/
 	Graphics_setInner (our graphics.get());
 	FormantPath_drawAsGrid_inside (our formantPath(), our graphics.get(), startTime, endTime,
-		our instancePref_modeler_draw_maximumFrequency(), 1, 5, our instancePref_modeler_draw_showBandwidths(), oddColour, evenColour,
-		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_modeler_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
-		parameters.get(), true, true, our instancePref_modeler_varianceExponent(), our instancePref_modeler_draw_estimatedModels(), true
+		our instancePref_candidate_draw_maximumFrequency(), 1, 5, our instancePref_candidate_draw_showBandwidths(), oddColour, evenColour,
+		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_candidate_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
+		parameters.get(), true, true, our instancePref_modeler_varianceExponent(), our instancePref_candidate_draw_estimatedModels(), true
 	);
 	/*
 		If we don't have clicked on a candidate, one or more have been implicitely coloured / selected.
@@ -435,20 +448,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	const integer numberOfCandidates = our formantPath() -> formantCandidates.size;
 	getGridLayout (numberOfCandidates, & numberOfRows, & numberOfColumns);
 	integer candidate = getGridCellIndex (xWC, yWC, numberOfRows, numberOfColumns);
-	if (candidate > 0 && candidate <= our formantPath() -> formantCandidates.size) {
-		double tmin_ = our startWindow, tmax_ = our endWindow;
-		if (our startSelection < our endSelection) {
-			tmin_ = our startSelection;
-			tmax_ = our endSelection;
-		}
-		our selectedCandidate = candidate;
-		Editor_save (this, U"Change ceiling");
-		integer ifmin, ifmax;
-		Sampled_getWindowSamples (our formantPath(), tmin_, tmax_, & ifmin, & ifmax);
-		TextGrid_addInterval_force (our formantPath() -> path.get(), tmin_, tmax_, 1, Melder_integer (candidate));
-		Formant source = our formantPath() -> formantCandidates.at [our selectedCandidate];
-		Formant_replaceFrames (our formantPathArea() -> d_formant.get(), ifmin, ifmax, source);
-	}
+	FormantPathEditor_effectuateCandidateSelection (this, candidate);
 	FunctionEditor_redraw (this);
 	Editor_broadcastDataChanged (this);
 }

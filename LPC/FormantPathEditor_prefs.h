@@ -25,12 +25,11 @@ Prefs_begin (FormantPathEditor)
 	InstancePrefs_addInteger (FormantPathEditor, modeler_numberOfTracks,              1, U"3")
 	InstancePrefs_addString  (FormantPathEditor, modeler_numberOfParametersPerTrack,  1, U"3 3 3")
 	InstancePrefs_addDouble  (FormantPathEditor, modeler_varianceExponent,            1, U"1.25")
-	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_showAllModels,          1, true)
-	InstancePrefs_addDouble  (FormantPathEditor, modeler_draw_maximumFrequency,       1, U"6200.0")
-	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_alsoSetSpectrogramView, 1, true)
-	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_estimatedModels,        1, false)
-	InstancePrefs_addBool    (FormantPathEditor, modeler_draw_showBandwidths,         1, true)
-	InstancePrefs_addDouble  (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,      1, U"1000.0") // Hz
+	InstancePrefs_addDouble  (FormantPathEditor, candidate_draw_maximumFrequency,       1, U"6200.0")
+	InstancePrefs_addBool    (FormantPathEditor, candidate_draw_conformSpectrogramView, 1, true)
+	InstancePrefs_addBool    (FormantPathEditor, candidate_draw_estimatedModels,        1, false)
+	InstancePrefs_addBool    (FormantPathEditor, candidate_draw_showBandwidths,         1, true)
+	InstancePrefs_addDouble  (FormantPathEditor, candidate_draw_yGridLineEvery_Hz,      1, U"1000.0") // Hz
 	
 Prefs_end (FormantPathEditor)
 	
