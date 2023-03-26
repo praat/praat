@@ -369,7 +369,8 @@ static void gui_button_cb_search (Manual me, GuiButtonEvent /* event */) {
 }
 
 void structManual :: v_createChildren () {
-	our d_hasExtraRowOfTools = our manPages() -> dynamic;
+	const bool hasRecordingButtons = ( our manPages() -> dynamic && our manPages() -> pages.at [1] -> recordingTime > 0.0 );
+	our d_hasExtraRowOfTools = hasRecordingButtons;
 	Manual_Parent :: v_createChildren ();
 	#if defined (macintosh)
 		#define STRING_SPACING 8
@@ -379,7 +380,7 @@ void structManual :: v_createChildren () {
 	const int height = Machine_getTextHeight (), y = Machine_getMenuBarBottom () + 4;
 	our homeButton = GuiButton_createShown (our windowForm, 104, 168, y, y + height,
 		U"Home", gui_button_cb_home, this, 0);
-	if (our manPages() -> dynamic) {
+	if (hasRecordingButtons) {
 		our recordButton = GuiButton_createShown (our windowForm, 4, 79, y+height+8, y+height+8 + height,
 			U"Record", gui_button_cb_record, this, 0);
 		our playButton = GuiButton_createShown (our windowForm, 85, 160, y+height+8, y+height+8 + height,

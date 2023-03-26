@@ -89,7 +89,80 @@ static conststring32 extractLink (conststring32 text, const char32 *p, char32 *l
 	return p;
 }
 
-static void readOnePage (ManPages me, MelderReadText text) {
+static void readOnePage (ManPages me, MelderReadText text);   // forward
+
+static void resolveLinks (ManPages me, ManPage_Paragraph par) {
+	char32 link [501], fileName [256];
+	for (const char32 *plink = extractLink (par -> text, nullptr, link); plink != nullptr; plink = extractLink (par -> text, plink, link)) {
+		/*
+			Now, `link' contains the link text, with spaces and all.
+			Transform it into a file name.
+		*/
+		structMelderFile file2 { };
+		if (link [0] == U'\\' && link [1] == U'F' && link [2] == U'I') {
+			/*
+				A link to a sound file: see if it exists.
+			*/
+			MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file2);
+			if (! MelderFile_exists (& file2))
+				Melder_warning (U"Cannot find sound file ", MelderFile_messageName (& file2), U".");
+		} else if (link [0] == U'\\' && link [1] == U'S' && link [2] == U'C') {
+			/*
+				A link to a script: see if it exists.
+			s*/
+			char32 *p = link + 3;
+			if (*p == U'\"') {
+				char32 *q = fileName;
+				p ++;
+				while (*p != U'\"' && *p != U'\0')
+					* q ++ = * p ++;
+				*q = U'\0';
+			} else {
+				char32 *q = fileName;
+				while (*p != U' ' && *p != U'\0') * q ++ = * p ++;   // one word, up to the next space
+				*q = U'\0';
+			}
+			MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
+			if (! MelderFile_exists (& file2))
+				Melder_warning (U"Cannot find script ", MelderFile_messageName (& file2), U".");
+			my executable = true;
+		} else {
+			char32 *q;
+			/*
+				A link to another page: follow it.
+			*/
+			for (q = link; *q; q ++)
+				if (! isAllowedFileNameCharacter (*q))
+					*q = U'_';
+			Melder_sprint (fileName,256, link, U".man");
+			MelderDir_getFile (& my rootDirectory, fileName, & file2);
+			try {
+				autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
+				try {
+					readOnePage (me, text2.get());
+				} catch (MelderError) {
+					Melder_throw (U"File ", & file2, U".");
+				}
+			} catch (MelderError) {
+				/*
+					Second try: with upper case.
+				*/
+				Melder_clearError ();
+				link [0] = Melder_toUpperCase (link [0]);
+				Melder_sprint (fileName,256, link, U".man");
+				MelderDir_getFile (& my rootDirectory, fileName, & file2);
+				autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
+				try {
+					readOnePage (me, text2.get());
+				} catch (MelderError) {
+					Melder_throw (U"File ", & file2, U".");
+				}
+			}
+		}
+	}
+}
+
+static void readOnePage_man (ManPages me, MelderReadText text) {
 	autostring32 title;
 	try {
 		title = texgetw16 (text);
@@ -129,7 +202,6 @@ static void readOnePage (ManPages me, MelderReadText text) {
 
 	for (;;) {
 		enum kManPage_type type;
-		char32 link [501], fileName [256];
 		try {
 			type = (kManPage_type) texgete8 (text, (enum_generic_getValue) kManPage_type_getValue);
 		} catch (MelderError) {
@@ -151,74 +223,242 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		} catch (MelderError) {
 			Melder_throw (U"Cannot find text.");
 		}
-		for (const char32 *plink = extractLink (par -> text, nullptr, link); plink != nullptr; plink = extractLink (par -> text, plink, link)) {
-			/*
-				Now, `link' contains the link text, with spaces and all.
-				Transform it into a file name.
-			*/
-			structMelderFile file2 { };
-			if (link [0] == U'\\' && link [1] == U'F' && link [2] == U'I') {
-				/*
-					A link to a sound file: see if it exists.
-				*/
-				MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file2);
-				if (! MelderFile_exists (& file2))
-					Melder_warning (U"Cannot find sound file ", MelderFile_messageName (& file2), U".");
-			} else if (link [0] == U'\\' && link [1] == U'S' && link [2] == U'C') {
-				/*
-					A link to a script: see if it exists.
-				s*/
-				char32 *p = link + 3;
-				if (*p == U'\"') {
-					char32 *q = fileName;
-					p ++;
-					while (*p != U'\"' && *p != U'\0')
-						* q ++ = * p ++;
-					*q = U'\0';
-				} else {
-					char32 *q = fileName;
-					while (*p != U' ' && *p != U'\0') * q ++ = * p ++;   // one word, up to the next space
-					*q = U'\0';
-				}
-				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
-				if (! MelderFile_exists (& file2))
-					Melder_warning (U"Cannot find script ", MelderFile_messageName (& file2), U".");
-				my executable = true;
-			} else {
-				char32 *q;
-				/*
-					A link to another page: follow it.
-				*/
-				for (q = link; *q; q ++)
-					if (! isAllowedFileNameCharacter (*q))
-						*q = U'_';
-				Melder_sprint (fileName,256, link, U".man");
-				MelderDir_getFile (& my rootDirectory, fileName, & file2);
-				try {
-					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
-					try {
-						readOnePage (me, text2.get());
-					} catch (MelderError) {
-						Melder_throw (U"File ", & file2, U".");
-					}
-				} catch (MelderError) {
-					/*
-						Second try: with upper case.
-					*/
-					Melder_clearError ();
-					link [0] = Melder_toUpperCase (link [0]);
-					Melder_sprint (fileName,256, link, U".man");
-					MelderDir_getFile (& my rootDirectory, fileName, & file2);
-					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
-					try {
-						readOnePage (me, text2.get());
-					} catch (MelderError) {
-						Melder_throw (U"File ", & file2, U".");
-					}
-				}
-			}
+		resolveLinks (me, par);
+	}
+}
+static bool stringHasInk (conststring32 line) {
+	const char32 *endOfSpace = Melder_findEndOfHorizontalSpace (line);
+	return *endOfSpace != U'\0';
+}
+static void readOnePage_notebook (ManPages me, MelderReadText text) {
+	mutablestring32 firstLine = MelderReadText_readLine (text);
+	Melder_assert (Melder_stringMatchesCriterion (firstLine, kMelder_string::STARTS_WITH, U"PraatNotebook:", true));
+	Melder_skipHorizontalSpace (& (firstLine += 14));
+	autostring32 title = Melder_dup (firstLine);
+	if (title [0] == U'\0')
+		Melder_throw (U"There should be a page title after “PraatNodeBook:” on the first line.");
+
+	/*
+		Check whether a page with this title is already present.
+	*/
+	if (lookUp_unsorted (me, title.get()))
+		return;
+
+	autoManPage autopage = Thing_new (ManPage);
+	autopage -> title = title.move();
+
+	/*
+		Add the page early, so that lookUp can find it.
+	*/
+	ManPage page = my pages. addItem_move (autopage.move());
+
+	/*
+		Find all the notebook attributes.
+		All of them are optional, except author and date.
+		The order is not fixed.
+		We allow for new attributes in the future.
+	*/
+	for (;;) {
+		mutablestring32 line = MelderReadText_readLine (text);
+		if (! line)
+			break;   // end of file
+		char32 *colon = str32chr (line, U':');
+		if (! colon)
+			break;   // end of header
+		const integer lengthOfAttributeName = colon - line;
+		if (Melder_nequ (line, U"author", 6)) {
+			Melder_skipHorizontalSpace (& (colon += 1));
+			page -> author = Melder_dup (colon);
+			if (page -> author [0] == U'\0')
+				Melder_throw (U"Empty author.");
+		} else if (Melder_nequ (line, U"date", 4)) {
+			Melder_skipHorizontalSpace (& (colon += 1));
+			page -> date = Melder_atoi (colon);
+			if (page -> date <= 0)
+				Melder_throw (U"The date has to be positive.");
+		} else if (Melder_nequ (line, U"recording time", 14)) {
+			Melder_skipHorizontalSpace (& (colon += 1));
+			page -> recordingTime = Melder_atof (colon);
+			Melder_casual (U"recordingTime", page -> recordingTime);
 		}
 	}
+	if (! page -> author)
+		Melder_throw (U"Cannot find author.");
+	if (! page -> date)
+		Melder_throw (U"Cannot find date.");
+
+	mutablestring32 line = nullptr;
+	do {
+		line = MelderReadText_readLine (text);
+	} while (line && ! stringHasInk (line));
+	ManPage_Paragraph previousParagraph = nullptr;
+	for (;;) {
+		if (! line)
+			return;
+		while (! stringHasInk (line)) {
+			line = MelderReadText_readLine (text);
+			if (! line)
+				return;
+		}
+		kManPage_type type;
+		if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"===", true)) {
+			if (previousParagraph)
+				previousParagraph -> type = kManPage_type::ENTRY;
+			line = MelderReadText_readLine (text);
+			if (! line)
+				return;
+			continue;
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                        ", true)) {
+			type = kManPage_type::CODE5;
+			line += 24;
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                    ", true)) {
+			type = kManPage_type::CODE4;
+			line += 20;
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                ", true)) {
+			type = kManPage_type::CODE3;
+			line += 16;
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"            ", true)) {
+			if (line [12] == U'-') {
+				type = kManPage_type::LIST_ITEM3;
+				line += 13;
+			} else if (line [12] == U'*') {
+				type = kManPage_type::TAG3;
+				line += 13;
+			} else if (line [12] == U':') {
+				type = kManPage_type::DEFINITION3;
+				line += 13;
+			} else {
+				type = kManPage_type::CODE2;
+				line += 12;
+			}
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"        ", true)) {
+			if (line [8] == U'-') {
+				type = kManPage_type::LIST_ITEM2;
+				line += 9;
+			} else if (line [8] == U'*') {
+				type = kManPage_type::TAG2;
+				line += 9;
+			} else if (line [8] == U':') {
+				type = kManPage_type::DEFINITION2;
+				line += 9;
+			} else {
+				type = kManPage_type::CODE1;
+				line += 8;
+			}
+		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"    ", true)) {
+			if (line [4] == U'-') {
+				type = kManPage_type::LIST_ITEM1;
+				line += 5;
+			} else if (line [4] == U'*') {
+				type = kManPage_type::TAG1;
+				line += 5;
+			} else if (line [4] == U':') {
+				type = kManPage_type::DEFINITION1;
+				line += 5;
+			} else {
+				type = kManPage_type::CODE;
+				line += 4;
+			}
+		} else if (line [0] == U'-') {
+			type = kManPage_type::LIST_ITEM;
+			line += 1;
+		} else if (line [0] == U'*') {
+			type = kManPage_type::TAG;
+			line += 1;
+		} else if (line [0] == U':') {
+			type = kManPage_type::DEFINITION;
+			line += 1;
+		} else if (line [0] == U'\t') {
+			if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t", true)) {
+				if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t", true)) {
+					if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t", true)) {
+						if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t\t", true)) {
+							if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t\t\t", true)) {
+								type = kManPage_type::CODE5;
+								line += 6;
+							} else {
+								type = kManPage_type::CODE4;
+								line += 5;
+							}
+						} else {
+							type = kManPage_type::CODE3;
+							line += 4;
+						}
+					} else {
+						type = kManPage_type::CODE2;
+						line += 3;
+					}
+				} else {
+					type = kManPage_type::CODE1;
+					line += 2;
+				}
+			} else {
+				type = kManPage_type::CODE;
+				line += 1;
+			}
+		} else if (line [0] == U'<') {
+			char32 *closingBracket = str32chr (line, U'>');
+			if (! closingBracket)
+				Melder_throw (U"Missing “>” in “", line, U"”.");
+			*closingBracket = U'\0';
+			if (line [1] == U'\0') {
+				type = kManPage_type::NORMAL;
+				line = closingBracket + 1;
+				continue;
+			} else {
+				type = kManPage_type_getValue (line + 1);
+				if (type == kManPage_type::UNDEFINED)
+					Melder_throw (U"Unknown paragraph type “", line + 1, U"”.");
+			}
+			line = closingBracket + 1;
+			Melder_skipHorizontalSpace (& line);
+		} else {
+			type = kManPage_type::NORMAL;
+		}
+		ManPage_Paragraph par = page -> paragraphs. append ();
+		par -> type = type;
+		par -> text = Melder_dup (line).transfer();
+		do {
+			mutablestring32 continuationLine = MelderReadText_readLine (text);
+			if (! continuationLine) {
+				line = nullptr;   // signals end of text
+				break;
+			}
+			if (continuationLine [0] == U'<' ||
+				continuationLine [0] == U':' ||
+				continuationLine [0] == U'*' ||
+				continuationLine [0] == U'-' ||
+				continuationLine [0] == U'\t' ||
+				Melder_stringMatchesCriterion (continuationLine, kMelder_string::STARTS_WITH, U"===", true) ||
+				Melder_stringMatchesCriterion (continuationLine, kMelder_string::STARTS_WITH, U"    ", true) ||
+				! stringHasInk (continuationLine)
+			) {
+				line = continuationLine;   // not really a continuation line, but a new paragraph
+				break;
+			}
+			conststring32 separator = ( par -> text [0] == U'\0' ? U"" :
+				par -> type == kManPage_type::SCRIPT ? U"\n" : U" " );
+			par -> text = Melder_dup (Melder_cat (par -> text, separator, continuationLine)).transfer();
+		} while (1);
+		if (par -> type == kManPage_type::SCRIPT) {
+			par -> width = 6.0;
+			par -> height = 3.0;
+		}
+		resolveLinks (me, par);
+		previousParagraph = par;
+	}
+}
+static void readOnePage (ManPages me, MelderReadText text) {
+	const bool isNotebook = (
+		text -> string32 ?
+			Melder_stringMatchesCriterion (text -> string32.get(), kMelder_string::STARTS_WITH, U"PraatNotebook:", true)
+		:
+			strnequ (text -> string8.get(), "PraatNotebook:", 14)
+	);
+	if (isNotebook)
+		readOnePage_notebook (me, text);
+	else
+		readOnePage_man (me, text);
 }
 void structManPages :: v1_readText (MelderReadText text, int /*formatVersion*/) {
 	our dynamic = true;
@@ -228,6 +468,14 @@ void structManPages :: v1_readText (MelderReadText text, int /*formatVersion*/) 
 
 autoManPages ManPages_create () {
 	autoManPages me = Thing_new (ManPages);
+	return me;
+}
+
+autoManPages ManPages_createFromText (MelderReadText text) {
+	autoManPages me = Thing_new (ManPages);
+	my dynamic = true;
+	MelderDir_copy (& Data_directoryBeingRead, & my rootDirectory);
+	readOnePage (me.get(), text);
 	return me;
 }
 

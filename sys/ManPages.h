@@ -2,7 +2,7 @@
 #define _ManPages_h_
 /* ManPages.h
  *
- * Copyright (C) 1996-2005,2007,2011,2012,2015-2020 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2011,2012,2015-2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ Thing_define (ManPages, Daata) {
 };
 
 autoManPages ManPages_create ();
+autoManPages ManPages_createFromText (MelderReadText text);
 
 void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, integer date,
 	structManPage_Paragraph paragraphs []);
