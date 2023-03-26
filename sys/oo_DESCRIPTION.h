@@ -1,6 +1,6 @@
 /* oo_DESCRIPTION.h
  *
- * Copyright (C) 1994-2013,2015-2020 Paul Boersma
+ * Copyright (C) 1994-2013,2015-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,10 @@
 #define oo_MAT(x,nrow,ncol)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
 #undef oo_INTMAT
 #define oo_INTMAT(x,nrow,ncol)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
+#undef oo_BOOLMAT
+#define oo_BOOLMAT(x,nrow,ncol)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
+#undef oo_COMPMAT
+#define oo_COMPMAT(x,nrow,ncol)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
 #undef oo_BYTEMAT
 #define oo_BYTEMAT(x,nrow,ncol)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (byte), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
 
