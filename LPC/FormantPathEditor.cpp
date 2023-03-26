@@ -209,25 +209,37 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 	EDITOR_END
 }
 
+double FormantPath_getRoundedMaximumCeiling (FormantPath me) {
+	const integer ceiling = 100 * Melder_iroundDown ((my ceilings [my ceilings.size] + 100.1) / 100.0);
+	return (double) ceiling;
+}
+
 static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Candidate drawing settings", nullptr)
 		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_candidate_draw_estimatedModels())
 		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_candidate_draw_yGridLineEvery_Hz())
+		LABEL (U"Set the maximum frequency for the display of the candidates...")
 		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_candidate_draw_maximumFrequency())
-		BOOLEAN  (conformSpectrogramView, U"Also set spectrogram view", my default_candidate_draw_conformSpectrogramView());
+		LABEL (U"...or, overrule this setting by using the maximum ceiling instead...")
+		BOOLEAN (useMaximumCeiling, U"Use maximum ceiling", my default_candidate_draw_useMaximumCeiling())
+		LABEL (U"If you want the Spectrogram and the candidates to have the same maximum frequency.")
+		BOOLEAN  (adjustSpectrogramView, U"Adjust spectrogram view", my default_candidate_draw_adjustSpectrogramView());
 		BOOLEAN (drawErrorBars, U"Draw bandwidths", my default_candidate_draw_showBandwidths())
 	EDITOR_OK
 		SET_BOOLEAN (drawEstimatedModels, my instancePref_candidate_draw_estimatedModels())
 		SET_REAL (yGridLineEvery_Hz, my instancePref_candidate_draw_yGridLineEvery_Hz())
 		SET_REAL (maximumFrequency, my instancePref_candidate_draw_maximumFrequency())
-		SET_BOOLEAN (conformSpectrogramView, my instancePref_candidate_draw_conformSpectrogramView())
+		SET_BOOLEAN (useMaximumCeiling, my instancePref_candidate_draw_useMaximumCeiling()) 
+		SET_BOOLEAN (adjustSpectrogramView, my instancePref_candidate_draw_adjustSpectrogramView())
 		SET_BOOLEAN (drawErrorBars, my instancePref_candidate_draw_showBandwidths())
 	EDITOR_DO
 		my setInstancePref_candidate_draw_estimatedModels (drawEstimatedModels);
+		if (useMaximumCeiling) 
+			maximumFrequency = FormantPath_getRoundedMaximumCeiling (my formantPath());
 		my setInstancePref_candidate_draw_maximumFrequency (maximumFrequency);
 		my setInstancePref_candidate_draw_yGridLineEvery_Hz (yGridLineEvery_Hz);
-		my setInstancePref_candidate_draw_conformSpectrogramView (conformSpectrogramView);
-		if (conformSpectrogramView)
+		my setInstancePref_candidate_draw_adjustSpectrogramView (adjustSpectrogramView);
+		if (adjustSpectrogramView)
 			my formantPathArea() -> setInstancePref_spectrogram_viewTo (maximumFrequency);
 		my setInstancePref_candidate_draw_showBandwidths (drawErrorBars);
 		FunctionEditor_redraw (me);
