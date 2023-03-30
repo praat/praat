@@ -1304,11 +1304,11 @@ INTRO (U"One of the @@types of objects@ in Praat. A "
 ENTRY (U"Class description")
 TERM (U"##struct-list# pairs")
 DEFINITION (U"a list of relative string-pair probabilities. Each element consists of:")
-TAG1 (U"#string %string1")
+TERM1 (U"#string %string1")
 DEFINITION1 (U"the first string.")
-TAG1 (U"#string %string2")
+TERM1 (U"#string %string2")
 DEFINITION1 (U"the second string.")
-TAG1 (U"#real %weight")
+TERM1 (U"#real %weight")
 DEFINITION1 (U"the relative probability associated with the string pair. This value cannot be negative.")
 MAN_END
 

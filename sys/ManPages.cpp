@@ -321,7 +321,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				type = kManPage_type::LIST_ITEM3;
 				line += 13;
 			} else if (line [12] == U'*') {
-				type = kManPage_type::TAG3;
+				type = kManPage_type::TERM3;
 				line += 13;
 			} else if (line [12] == U':') {
 				type = kManPage_type::DEFINITION3;
@@ -335,7 +335,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				type = kManPage_type::LIST_ITEM2;
 				line += 9;
 			} else if (line [8] == U'*') {
-				type = kManPage_type::TAG2;
+				type = kManPage_type::TERM2;
 				line += 9;
 			} else if (line [8] == U':') {
 				type = kManPage_type::DEFINITION2;
@@ -349,7 +349,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				type = kManPage_type::LIST_ITEM1;
 				line += 5;
 			} else if (line [4] == U'*') {
-				type = kManPage_type::TAG1;
+				type = kManPage_type::TERM1;
 				line += 5;
 			} else if (line [4] == U':') {
 				type = kManPage_type::DEFINITION1;
@@ -656,9 +656,9 @@ static const struct stylesInfo {
 /* LIST_ITEM1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },
 /* LIST_ITEM2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
 /* LIST_ITEM3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
-/* TAG1: */ { U"<dt>&nbsp;&nbsp;&nbsp;", U"" },
-/* TAG2: */ { U"<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
-/* TAG3: */ { U"<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
+/* TERM1: */ { U"<dt>&nbsp;&nbsp;&nbsp;", U"" },
+/* TERM2: */ { U"<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
+/* TERM3: */ { U"<dt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION2: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
 /* DEFINITION3: */ { U"<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"" },
@@ -680,7 +680,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 		const bool isListItem = paragraph -> type == kManPage_type::LIST_ITEM ||
 			(paragraph -> type >= kManPage_type::LIST_ITEM1 && paragraph -> type <= kManPage_type::LIST_ITEM3);
 		const bool isTag = paragraph -> type == kManPage_type::TERM ||
-			(paragraph -> type >= kManPage_type::TAG1 && paragraph -> type <= kManPage_type::TAG3);
+			(paragraph -> type >= kManPage_type::TERM1 && paragraph -> type <= kManPage_type::TERM3);
 		const bool isDefinition = paragraph -> type == kManPage_type::DEFINITION ||
 			(paragraph -> type >= kManPage_type::DEFINITION1 && paragraph -> type <= kManPage_type::DEFINITION3);
 		/*const bool isCode = paragraph -> type == kManPage_type::CODE ||
