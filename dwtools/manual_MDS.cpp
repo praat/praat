@@ -166,24 +166,24 @@ LIST_ITEM (U"\\bu @@Configuration: Invert dimension...")
 LIST_ITEM (U"\\bu @@Configuration: Normalize...")
 ENTRY (U"Inside a Configuration")
 NORMAL (U"With @Inspect you will see the following attributes:")
-TAG (U"%numberOfRows")
+TERM (U"%numberOfRows")
 DEFINITION (U"the number of points (%numberOfPoints\\>_1).")
-TAG (U"%numberOfColumns")
+TERM (U"%numberOfColumns")
 DEFINITION (U"the dimension of the space (%numberOfDimensions\\>_1).")
-TAG (U"%rowLabels")
+TERM (U"%rowLabels")
 DEFINITION (U"the names associated with the points.")
-TAG (U"%columnLabels")
+TERM (U"%columnLabels")
 DEFINITION (U"the names for the dimensions.")
-TAG (U"%data [1..%numberOfPoints] [1..%numberOfDimensions]")
+TERM (U"%data [1..%numberOfPoints] [1..%numberOfDimensions]")
 DEFINITION (U"the coordinates of the points.")
-TAG (U"%metric")
+TERM (U"%metric")
 DEFINITION (U"determines the way distances between points are measured. In general "
 	"the distance between points #x__%i_ and #x__%j_ is:")
 EQUATION (U"%d__%ij_ = "
 	"(\\su__%k=1..%numberOfDimensions_ %w__%k_ |%x__%ik_ \\-- "
 	"%x__%jk_|^^%metric^)^^1/%metric^")
 DEFINITION (U"For Euclidean distances %metric is 2.")
-TAG (U"%w [1..%numberOfDimensions]")
+TERM (U"%w [1..%numberOfDimensions]")
 DEFINITION (U"weight given to each dimension in the distance calculation.")
 MAN_END
 
@@ -195,18 +195,18 @@ MAN_END
 MAN_BEGIN (U"Configuration: Draw...", U"djmw", 20040407)
 INTRO (U"Draws a projection of the selected @Configuration on a coordinate plane.")
 ENTRY (U"Settings")
-TAG (U"##X-coordinate#, ##Y-coordinate#")
+TERM (U"##X-coordinate#, ##Y-coordinate#")
 DEFINITION (U"control the dimensions that will show in the plot.")
-TAG (U"##xmin#, ##xmax#; ##ymin#, ##ymax#")
+TERM (U"##xmin#, ##xmax#; ##ymin#, ##ymax#")
 DEFINITION (U"range for horizontal and vertical axes, respectively.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"when on, draws a bounding box with decoration.")
 MAN_END
 
 MAN_BEGIN (U"Configuration: Invert dimension...", U"djmw", 20040407)
 INTRO (U"Inverts one dimension of a @Configuration.")
 NORMAL (U"Setting")
-TAG (U"##Dimension")
+TERM (U"##Dimension")
 DEFINITION (U"the dimension that has to be inverted.")
 ENTRY (U"Behaviour")
 NORMAL (U"For all points %i=1..%numberOfPoints: if %j == %dimension then %x__%ij_ "
@@ -216,9 +216,9 @@ MAN_END
 MAN_BEGIN (U"Configuration: Normalize...", U"djmw", 20040407)
 INTRO (U"Normalizes the selected @Configuration.")
 ENTRY (U"Settings")
-TAG (U"##Sum of squares# (standard value: 0.0)")
+TERM (U"##Sum of squares# (standard value: 0.0)")
 DEFINITION (U"The desired value for the variance.")
-TAG (U"##Each dimension separately")
+TERM (U"##Each dimension separately")
 DEFINITION (U"When on, the sum of squares in each dimension (column) will be scaled to %sumOfSquares "
 	"When off, the sum of squares of all the matrix elements will equal %sumOfSquares.")
 NORMAL (U"With the default value (0.0) for %sumOfSquares, and %eachDimensionSeparately chosen, "
@@ -239,10 +239,10 @@ MAN_END
 MAN_BEGIN (U"Configuration: Rotate...", U"djmw", 20100303)
 INTRO (U"Rotates the @Configuration in a plane around the origin.")
 NORMAL (U"Settings")
-TAG (U"##Dimension 1#, ##Dimension 2#")
+TERM (U"##Dimension 1#, ##Dimension 2#")
 DEFINITION (U"the dimensions that span the plane. The order of dimension 1 and dimension 2 is not important: "
 	"the lowest number always determines the first dimension.")
-TAG (U"##Angle")
+TERM (U"##Angle")
 DEFINITION (U"the counter-clockwise rotation angle in degrees.")
 MAN_END
 
@@ -265,19 +265,19 @@ MAN_BEGIN (U"Configuration: To Configuration (varimax)...", U"djmw", 20040407)
 INTRO (U"A command that rotates the selected @Configuration object to a new "
 	"Configuration object whose coordinates have maximum %squared variance. ")
 ENTRY (U"Settings")
-TAG (U"##Normalize rows")
+TERM (U"##Normalize rows")
 DEFINITION (U"when selected, the distances of all points to the origin will "
 	"be made equal before iteration starts. We remember these scale factors "
 	"and restore the original distances after the iteration process has "
 	"stopped.")
-TAG (U"##Quartimax")
+TERM (U"##Quartimax")
 DEFINITION (U"when selected, the sum of fourth powers, normalized or raw, "
 	"will be maximized. ")
-TAG (U"##Maximum number of iterations")
+TERM (U"##Maximum number of iterations")
 DEFINITION (U"sets a limit to the number of iterations. One iteration consists "
 	"of %numberOfDimensions\\.c (%numberOfDimensions\\--1)/2 planar rotations "
 	"of all pairs of dimensions.")
-TAG (U"##Tolerance")
+TERM (U"##Tolerance")
 DEFINITION (U"also determines when the iteration stops. This happens if "
 	"|%v__%i_\\--%v__%i+1_| < %tolerance \\.c %v__%i_, where %v__%i_ is the "
 	"squared variance for the %i^^th^ iteration.")
@@ -339,9 +339,9 @@ NORMAL (U"We calculate the affine transform that transforms the second "
 	"The degree of proportionality is the congruence between corresponding "
 	"dimensions.")
 ENTRY (U"Settings")
-TAG (U"##Maximum number of iterations")
+TERM (U"##Maximum number of iterations")
 DEFINITION (U"sets a limit to the number of iterations.")
-TAG (U"##Tolerance")
+TERM (U"##Tolerance")
 DEFINITION (U"also determines when the iteration stops. This happens if "
 	"|%f(#T__%i_)\\--%f(#T__%i+1_)| < %tolerance \\.c %f(#T__%i_), where "
 	"%f(#T__%i_) is the sum of the congruences for the %i^^th^ "
@@ -369,7 +369,7 @@ MAN_BEGIN (U"Configuration & Configuration: To Procrustes...", U"djmw", 20011008
 INTRO (U"A command that creates a @Procrustes object from two selected "
 	"@Configuration objects.")
 ENTRY (U"Setting")
-TAG (U"##Orthogonal transform")
+TERM (U"##Orthogonal transform")
 DEFINITION (U"determines whether or not a translation and a scaling are allowed in the transform.")
 NORMAL (U"We calculate the @@Procrustes transform@ that transforms the second "
 	"selected Configuration object to match the first selected Configuration "
@@ -380,13 +380,13 @@ MAN_BEGIN (U"Confusion: To Dissimilarity...", U"djmw", 20040407)
 INTRO (U"A command that creates a @Dissimilarity from every selected "
 	"@Confusion.")
 ENTRY (U"Settings")
-TAG (U"##Normalize")
+TERM (U"##Normalize")
 DEFINITION (U"when on, normalize rows by dividing each row element by the row "
 	"sum. In this way you correct for unequal stimulus numbers.")
-TAG (U"##No symmetrization#, #Average, #Houtgast")
+TERM (U"##No symmetrization#, #Average, #Houtgast")
 DEFINITION (U"determine the symmetrization procedure. See "
 	"@@Confusion: To Similarity...")
-TAG (U"##Maximum dissimilarity")
+TERM (U"##Maximum dissimilarity")
 DEFINITION (U"determines the maximum dissimilarity possible. When the default "
 	"value, 0.0, is chosen, %maximumDissimilarity "
 	"is calculated as the maximum element in the Similarity object.")
@@ -402,16 +402,16 @@ MAN_BEGIN (U"Confusion: To Dissimilarity (pdf)...", U"djmw", 20040407)
 INTRO (U"A command that creates a @Dissimilarity from every selected "
 	"@Confusion.")
 ENTRY (U"Settings")
-TAG (U"##Symmetrize first")
+TERM (U"##Symmetrize first")
 DEFINITION (U"when on, the confusion matrix is symmetrized before we calculate "
 	"dissimilarities.")
-TAG (U"##Maximum dissimilarity (units of sigma)")
+TERM (U"##Maximum dissimilarity (units of sigma)")
 DEFINITION (U"specifies the dissimilarity from confusion matrix elements that "
 	"are zero.")
 ENTRY (U"Algorithm")
-TAG (U"1. Normalize rows by dividing each row element by the row sum (optional).")
-TAG (U"2. Symmetrize the matrix by averaging %f__%ij_ and %f__%ji_.")
-TAG (U"3. Transformation of the confusion measure which is a sort of "
+TERM (U"1. Normalize rows by dividing each row element by the row sum (optional).")
+TERM (U"2. Symmetrize the matrix by averaging %f__%ij_ and %f__%ji_.")
+TERM (U"3. Transformation of the confusion measure which is a sort of "
 	"%similarity measure to the %dissimilarity measure.")
 NORMAL (U"Similarity and dissimilarity have an inverse relationship: the "
 	"greater the similarity, the smaller the dissimilarity and vice versa. "
@@ -446,10 +446,10 @@ MAN_END
 MAN_BEGIN (U"Confusion: To Similarity...", U"djmw", 20040407)
 INTRO (U"A command that creates a @Similarity from every selected @Confusion.")
 ENTRY (U"Settings")
-TAG (U"##Normalize")
+TERM (U"##Normalize")
 DEFINITION (U"when on, normalize rows by dividing each row element by the row "
 	"sum. In this way you correct for unequal stimulus numbers.")
-TAG (U"##No symmetrization#, #Average, #Houtgast")
+TERM (U"##No symmetrization#, #Average, #Houtgast")
 DEFINITION (U"determine the symmetrization procedure.")
 ENTRY (U"Algorithm")
 NORMAL (U"The %Average procedure averages:")
@@ -522,9 +522,9 @@ MAN_BEGIN (U"ContingencyTable: To Configuration (ca)...", U"djmw", 20040407)
 INTRO (U"A command that creates a @Configuration object from the selected "
 	"@ContingencyTable object by means of @@Correspondence analysis@.")
 ENTRY (U"Settings")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"The dimensionality of the Configuration.")
-TAG (U"##Scaling of the final configuration")
+TERM (U"##Scaling of the final configuration")
 DEFINITION (U"determines whether row points are in the centre of gravity of "
 	"column points, or, column points are in the centre of gravity of row "
 	"points, or, whether roes and columns are treated symmetrically.")
@@ -547,13 +547,13 @@ NORMAL (U"where #K\\'p#K = #I, #L\\'p#L = #I, and #\\La is a diagonal matrix "
 	"with singular values.")
 NORMAL (U"3. Now the row (#X) and column points (#Y) can be determined. "
 	"Three normalizations are possible:")
-TAG (U"\\bu Scale row points in the centre of gravity of column points")
+TERM (U"\\bu Scale row points in the centre of gravity of column points")
 DEFINITION (U"#X = \\Vr%N #R^^\\--1/2^#K#\\La")
 DEFINITION (U"#Y = \\Vr%N #C^^\\--1/2^#U")
-TAG (U"\\bu Scale column points in the centre of gravity of row points")
+TERM (U"\\bu Scale column points in the centre of gravity of row points")
 DEFINITION (U"#X = \\Vr%N #R^^\\--1/2^#K")
 DEFINITION (U"#Y = \\Vr%N #C^^\\--1/2^#L#\\La")
-TAG (U"\\bu Treat row points and column points symmetrically")
+TERM (U"\\bu Treat row points and column points symmetrically")
 DEFINITION (U"#X = \\Vr%N #R^^\\--1/2^#K#\\La^^\\--1/2^")
 DEFINITION (U"#Y = \\Vr%N #C^^\\--1/2^#L\\La^^\\--1/2^")
 NORMAL (U"For more details see @@Gifi (1990)@, chapter 8.")
@@ -599,10 +599,10 @@ NORMAL (U"For each source, the distances were subjected to the transformation: "
 EQUATION (U"%dissimilarity__%ij_ = %distance__%ij_ + %noiseRange \\.c #u, ")
 NORMAL (U"where #u is a uniform random variable between 0 and 1.")
 NORMAL (U"Now you can do the following for example:")
-TAG (U"Select all the Dissimilarity objects and choose @@Dissimilarity: To Distance...|"
+TERM (U"Select all the Dissimilarity objects and choose @@Dissimilarity: To Distance...|"
 	"To Distance...@.")
 DEFINITION (U"Uncheck scale (add \"additive constant\").")
-TAG (U"Select all the Distance objects and choose @@Distance: To Configuration (indscal)...|"
+TERM (U"Select all the Distance objects and choose @@Distance: To Configuration (indscal)...|"
 	"To Configuration (indscal)...@.")
 DEFINITION (U"and an @@INDSCAL analysis@ will be performed. In order to reproduce the saliences, "
 	"you have to uncheck the \"Normalize scalar products\" option.")
@@ -717,22 +717,22 @@ EQUATION (U"%d\\'p__%ij_ = \\su__%k=1..(%%numberOfInteriorKnots%+%order)_ spline
 NORMAL (U"where spline__%k_ (\\.c) is the value of the %k^^th^ I-spline of order %order and knot sequence "
 	"%knot evaluated at %\\de__%ij_.")
 ENTRY (U"Settings")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"determines the dimensionality of the configuration.")
-TAG (U"##Number of interior knots")
+TERM (U"##Number of interior knots")
 DEFINITION (U"determines the number of segment boundaries. Each interior knot "
 	"is the boundary between two segments. The splines in each segment will "
 	"be joined as continuously as possible.")
-TAG (U"##Order of I-spline")
+TERM (U"##Order of I-spline")
 DEFINITION (U"The order of the polynomial basis of the I-spline.")
 NORMAL (U"Finding the optimal Configuration involves a minimization process:")
-TAG (U"##Tolerance")
+TERM (U"##Tolerance")
 DEFINITION (U"When successive values for the stress differ by less than "
 	"#Tolerance, the minimization process stops.")
-TAG (U"##Maximum number of iterations")
+TERM (U"##Maximum number of iterations")
 DEFINITION (U"Minimization stops after this number of iterations has been "
 	"reached.")
-TAG (U"##Number of repetitions")
+TERM (U"##Number of repetitions")
 DEFINITION (U"If chosen larger than 1, the minimization process will be "
 	"repeated, each time with another random start configuration. "
 	"The configuration that results in minimum stress, will be saved.")
@@ -749,14 +749,14 @@ MAN_BEGIN (U"Dissimilarity: To Configuration (kruskal)...", U"djmw", 20190510)
 INTRO (U"A command that creates a @Configuration object from a @Dissimilarity "
 	"object.")
 ENTRY (U"Settings")
-TAG (U"##Number of dimensions# (standard value: 2)")
+TERM (U"##Number of dimensions# (standard value: 2)")
 DEFINITION (U"The dimensionality of the Configuration.")
-TAG (U"##Distance metric% (standard value: 2, i.e. Euclidean)")
+TERM (U"##Distance metric% (standard value: 2, i.e. Euclidean)")
 DEFINITION (U"the general distance between points #x__%i_ and #x__%j_ (%i,%j "
 	"= 1..%numberOfPoints) is:")
 DEFINITION (U"(\\su__%k=1..%numberOfDimensions_ |%x__%ik_ \\--%x__%jk_|"
 	"^^%metric^)^^1/%metric^")
-TAG (U"##Handling of ties")
+TERM (U"##Handling of ties")
 DEFINITION (U"determines the handling of ties in the data. In the %%primary approach%, whenever "
 	"two or more dissimilarities are equal we do not care whether the fitted "
 	"distances are equal or not. "
@@ -764,22 +764,22 @@ DEFINITION (U"determines the handling of ties in the data. In the %%primary appr
 	"For the %%secondary approach%, however, we impose the constaint that the fitted distances be "
 	"equal whenever the dissimilarities are equal.")
 NORMAL (U"For the calculation of stress:")
-TAG (U"##Kruskal's stress-1 (Formula1, the default)")   // ??
+TERM (U"##Kruskal's stress-1 (Formula1, the default)")   // ??
 EQUATION (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
 	"\\su %distance__%k_^2)")
-TAG (U"##Kruskal's stress-2 (Formula2)")
+TERM (U"##Kruskal's stress-2 (Formula2)")
 EQUATION (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
 	"\\su (%distance__%k_ \\-- %averageDistance)^2)")
 DEFINITION (U"Note that values of stress-2 are generally more than double those "
 	"of stress-1 for the same degree of fit.")
 NORMAL (U"Finding the optimal Configuration involves a minimization process:")
-TAG (U"##Tolerance")
+TERM (U"##Tolerance")
 DEFINITION (U"When successive values for the stress differ less than %Tolerance "
 	"the minimization process stops.")
-TAG (U"##Maximum number of iterations")
+TERM (U"##Maximum number of iterations")
 DEFINITION (U"Minimization stops after this number of iterations has been "
 	"reached.")
-TAG (U"##Number of repetitions")
+TERM (U"##Number of repetitions")
 DEFINITION (U"When chosen larger than 1, the minimalization process will be "
 	"repeated, each time with another random start configuration. "
 	"The configuration that results in minimum stress will be saved.")
@@ -832,20 +832,20 @@ NORMAL (U"Dissimilarities %\\de__%ij_ and @disparities %d\\'p__%ij_ are "
 	"related by:")
 EQUATION (U"%d\\'p__%ij_ \\<_ %d\\'p__%kl_ if %\\de__%ij_ \\<_ %\\de__%kl_")
 ENTRY (U"Settings")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"determines the number of dimensions of the configuration.")
-TAG (U"##Handling of ties")
+TERM (U"##Handling of ties")
 DEFINITION (U"When dissimilarities are equal, i.e., %\\de__%ij_ = %\\de__%kl_, "
 	"the primary approach imposes no conditions on the corresponding "
 	"@disparities %d\\'p__%ij_ and %d\\'p__%kl_, while the %secondary "
 	"approach demands that also %d\\'p__%ij_ = %d\\'p__%kl_.")
 NORMAL (U"Finding the optimal Configuration involves a minimization process:")
-TAG (U"##Tolerance")
+TERM (U"##Tolerance")
 DEFINITION (U"When successive values for the stress differ less than %Tolerance "
 	"the minimization process stops.")
-TAG (U"##Maximum number of iterations")
+TERM (U"##Maximum number of iterations")
 DEFINITION (U"Minimization stops after this number of iterations has been reached.")
-TAG (U"##Number of repetitions")
+TERM (U"##Number of repetitions")
 DEFINITION (U"When chosen larger than 1, the minimalization process will be "
 	"repeated, each time with another random start configuration. "
 	"The configuration that results in minimum stress will be saved.")
@@ -863,7 +863,7 @@ MAN_BEGIN (U"Dissimilarity: To Distance...", U"djmw", 20040407)
 INTRO (U"A command that creates a @Distance object from a selected "
 	"@Dissimilarity object.")
 ENTRY (U"Settings")
-TAG (U"##Scale")
+TERM (U"##Scale")
 DEFINITION (U"when on, the @@Dissimilarity: Get additive constant|"
 	"additiveConstant@ is determined, when off the %additiveConstant = 0.")
 NORMAL (U"dissimilarities are transformed to distances according to:")
@@ -886,13 +886,13 @@ INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"from @Configuration on the dissimilarities %\\de__%ij_.")
 EQUATION (U"%d\\'p__%ij_ = %\\de__%ij_")
 ENTRY (U"Settings")
-TAG (U"##Minimum proximity#, ##Maximum proximity#")
+TERM (U"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (U"minimum and maximum values for the proximities (horizontal axis).")
-TAG (U"##Minimum distance#, ##Maximum distance#")
+TERM (U"##Minimum distance#, ##Maximum distance#")
 DEFINITION (U"minimum and maximum values for the distances (vertical axis).")
-TAG (U"##Mark size (mm)#, ##Mark string#")
+TERM (U"##Mark size (mm)#, ##Mark string#")
 DEFINITION (U"size and kind of the marks in the plot.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -905,13 +905,13 @@ INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 EQUATION (U"%d\\'p__%ij_ = %a + %b \\.c %\\de__%ij_,")
 NORMAL (U"where the values of %a and %b are determined by regression.")
 ENTRY (U"Settings")
-TAG (U"##Minimum proximity#, ##Maximum proximity#")
+TERM (U"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (U"minimum and maximum values for the proximities (horizontal axis).")
-TAG (U"##Minimum distance#, ##Maximum distance#")
+TERM (U"##Minimum distance#, ##Maximum distance#")
 DEFINITION (U"minimum and maximum values for the distances (vertical axis).")
-TAG (U"##Mark size (mm)#, ##Mark string#")
+TERM (U"##Mark size (mm)#, ##Mark string#")
 DEFINITION (U"size and kind of the marks in the plot.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -921,17 +921,17 @@ INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"from the regression of distances %d__%ij_ from @Configuration on the "
 	"@spline transformed dissimilarities %\\de__%ij_.")
 ENTRY (U"Settings")
-TAG (U"##Number of interior knots")
+TERM (U"##Number of interior knots")
 DEFINITION (U"determines the number of segments.")
-TAG (U"##Order of I-spline")
+TERM (U"##Order of I-spline")
 DEFINITION (U"The order of the polynomial basis of the I-spline.")
-TAG (U"##Minimum proximity#, ##Maximum proximity#")
+TERM (U"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (U"minimum and maximum values for the proximities (horizontal axis).")
-TAG (U"##Minimum distance#, ##Maximum distance#")
+TERM (U"##Minimum distance#, ##Maximum distance#")
 DEFINITION (U"minimum and maximum values for the distances (vertical axis).")
-TAG (U"##Mark size (mm)#, ##Mark string#")
+TERM (U"##Mark size (mm)#, ##Mark string#")
 DEFINITION (U"size and kind of the marks in the plot.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -941,18 +941,18 @@ INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"from the monotone regression of distances %d__%ij_ "
 	"from @Configuration on the dissimilarities %\\de__%ij_.")
 ENTRY (U"Settings")
-TAG (U"##Handling of ties")
+TERM (U"##Handling of ties")
 DEFINITION (U"When dissimilarities are equal, i.e., %\\de__%ij_ = %\\de__%kl_ "
 	"the primary approach imposes no conditions on the corresponding distances "
 	"%d__%ij_ and %d__%kl_, while the %secondary approach demands that also "
 	"%d__%ij_ = %d__%kl_.")
-TAG (U"##Minimum proximity#, ##Maximum proximity#")
+TERM (U"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (U"minimum and maximum values for the proximities (horizontal axis).")
-TAG (U"##Minimum distance#, ##Maximum distance#")
+TERM (U"##Minimum distance#, ##Maximum distance#")
 DEFINITION (U"minimum and maximum values for the distances (vertical axis).")
-TAG (U"##Mark size (mm)#, ##Mark string#")
+TERM (U"##Mark size (mm)#, ##Mark string#")
 DEFINITION (U"size and kind of the marks in the plot.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -964,13 +964,13 @@ INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 EQUATION (U"%d\\'p__%ij_ = %b \\.c %\\de__%ij_,")
 NORMAL (U"where the value of %b is determined by regression.")
 ENTRY (U"Settings")
-TAG (U"##Minimum proximity#, ##Maximum proximity#")
+TERM (U"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (U"minimum and maximum values for the proximities (horizontal axis).")
-TAG (U"##Minimum distance#, ##Maximum distance#")
+TERM (U"##Minimum distance#, ##Maximum distance#")
 DEFINITION (U"minimum and maximum values for the distances (vertical axis).")
-TAG (U"##Mark size (mm)#, ##Mark string#")
+TERM (U"##Mark size (mm)#, ##Mark string#")
 DEFINITION (U"size and kind of the marks in the plot.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -979,13 +979,13 @@ INTRO (U"Draws the Shepard diagram. This is a scatterplot of the "
 	"dissimilarities from the @Dissimilarity object versus distances (as "
 	"calculated from the @Configuration).")
 ENTRY (U"Settings")
-TAG (U"##Minimum proximity#, ##Maximum proximity#")
+TERM (U"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (U"minimum and maximum values for the proximities (horizontal axis).")
-TAG (U"##Minimum distance#, ##Maximum distance#")
+TERM (U"##Minimum distance#, ##Maximum distance#")
 DEFINITION (U"minimum and maximum values for the distances (vertical axis).")
-TAG (U"##Mark size (mm)#, ##Mark string#")
+TERM (U"##Mark size (mm)#, ##Mark string#")
 DEFINITION (U"size and kind of the marks in the plot.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -1165,7 +1165,7 @@ MAN_END
 MAN_BEGIN (U"Distance: To ScalarProduct...", U"djmw", 20040407)
 INTRO (U"A command that creates a @ScalarProduct for each selected @Distance.")
 ENTRY (U"Setting")
-TAG (U"##Make sum of squares equal 1.0")
+TERM (U"##Make sum of squares equal 1.0")
 DEFINITION (U"when selected, the elements in the resulting matrix part will be scaled such that "
 	"the sum of all the squared elements in the matrix equals 1.0.")
 ENTRY (U"Algorithm")
@@ -1523,13 +1523,13 @@ INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type #Proximity represents proximities between objects.")
 ENTRY (U"Inside a Proximity")
 NORMAL (U"With @Inspect you will see the following attributes:")
-TAG (U"%numberOfRows, %numberOfColumns")
+TERM (U"%numberOfRows, %numberOfColumns")
 DEFINITION (U"the number of objects (%numberOfRows and %numberOfColumns are "
 	"equal and \\>_1).")
-TAG (U"%rowLabels, %columnLabels")
+TERM (U"%rowLabels, %columnLabels")
 DEFINITION (U"the names associated with the objects (%rowLabels and "
 	"%columnLabels are equal.")
-TAG (U"%data [1..%numberOfRows] [1..%numberOfColumns]")
+TERM (U"%data [1..%numberOfRows] [1..%numberOfColumns]")
 DEFINITION (U"the proximities between the objects.")
 MAN_END
 
@@ -1588,7 +1588,7 @@ MAN_BEGIN (U"Similarity: To Dissimilarity...", U"djmw", 20040407)
 INTRO (U"A command that creates a @Dissimilarity from every selected "
 	"@Similarity.")
 ENTRY (U"Setting")
-TAG (U"##Maximum dissimilarity")
+TERM (U"##Maximum dissimilarity")
 DEFINITION (U"determines the maximum dissimilarity possible. When the default "
 	"value, 0.0, is chchosen%maximumDissimilarity "
 	"is calculated as the maximum element in the Similarity object.")
@@ -1768,7 +1768,7 @@ MAN_BEGIN (U"TableOfReal: Normalize columns...", U"djmw", 19980422)
 INTRO (U"A command that normalizes the columns in the selected @TableOfReal "
 	"objects.")
 ENTRY (U"Setting")
-TAG (U"##Norm")
+TERM (U"##Norm")
 DEFINITION (U"determines the sum of the squared elements in each column after "
 	"normalization.")
 ENTRY (U"Algorithm")
@@ -1780,7 +1780,7 @@ MAN_BEGIN (U"TableOfReal: Normalize rows...", U"djmw", 19980422)
 INTRO (U"A command that normalizes the rows in the selected @TableOfReal "
 	"objects.")
 ENTRY (U"Setting")
-TAG (U"##Norm")
+TERM (U"##Norm")
 DEFINITION (U"determines the sum of the squared elements in each row after "
 	"normalization.")
 ENTRY (U"Algorithm")
@@ -1792,7 +1792,7 @@ MAN_BEGIN (U"TableOfReal: Normalize table...", U"djmw", 19980422)
 INTRO (U"A command that normalizes the elements in the selected @TableOfReal "
 	"objects.")
 ENTRY (U"Setting")
-TAG (U"##Norm")
+TERM (U"##Norm")
 DEFINITION (U"determines the sum of the squared elements after normalization.")
 ENTRY (U"Algorithm")
 NORMAL (U"All elements %x__%ij_ will be multiplied by "

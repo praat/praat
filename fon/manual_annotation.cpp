@@ -1,6 +1,6 @@
 /* manual_annotation.cpp
  *
- * Copyright (C) 1992-2011,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2011,2014-2017,2019,2021-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ void manual_annotation_init (ManPages me) {
 MAN_BEGIN (U"Create TextGrid...", U"ppgb", 20101228)
 INTRO (U"A command to create a @TextGrid from scratch.")
 ENTRY (U"Settings")
-TAG (U"##Start time (s)")
+TERM (U"##Start time (s)")
 DEFINITION (U"the start time, usually 0 seconds.")
-TAG (U"##End time (s)")
+TERM (U"##End time (s)")
 DEFINITION (U"the end time in seconds, usually the duration.")
-TAG (U"##Tier names")
+TERM (U"##Tier names")
 DEFINITION (U"a list of the names of the tiers that you want to create, separated by spaces.")
-TAG (U"##Point tiers")
+TERM (U"##Point tiers")
 DEFINITION (U"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
 MAN_END
@@ -39,9 +39,9 @@ MAN_BEGIN (U"PointProcess: To TextGrid...", U"ppgb", 19980113)
 INTRO (U"A command to create an empty @TextGrid from every selected @PointProcess.")
 NORMAL (U"The only information in the PointProcess that is used, is its starting and finishing times.")
 ENTRY (U"Settings")
-TAG (U"##Tier names")
+TERM (U"##Tier names")
 DEFINITION (U"a list of the names of the tiers that you want to create, separated by spaces.")
-TAG (U"##Point tiers")
+TERM (U"##Point tiers")
 DEFINITION (U"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
 ENTRY (U"Example")
@@ -54,9 +54,9 @@ MAN_BEGIN (U"PointProcess: To TextGrid (vuv)...", U"ppgb", 19980210)
 INTRO (U"A command to create a @TextGrid with voiced/unvoiced information "
 	"from every selected @PointProcess.")
 ENTRY (U"Settings")
-TAG (U"##Maximum period (s)")
+TERM (U"##Maximum period (s)")
 DEFINITION (U"the maximum interval that will be consider part of a larger voiced interval.")
-TAG (U"##Mean period (s)")
+TERM (U"##Mean period (s)")
 DEFINITION (U"half of this value will be taken to be the amount to which a voiced interval "
 	"will extend beyond its initial and final points. ##Mean period# should be less than "
 	"##Maximum period#, or you may get intervals with negative durations.")
@@ -71,7 +71,7 @@ MAN_END
 MAN_BEGIN (U"PointProcess: Up to TextGrid...", U"ppgb", 20101230)
 INTRO (U"A command to promote every selected @PointProcess to a @TextGrid with a single text tier in it.")
 ENTRY (U"Setting")
-TAG (U"##Text")
+TERM (U"##Text")
 DEFINITION (U"the text that will be placed in every point.")
 ENTRY (U"Behaviour")
 NORMAL (U"The times of all the points are trivially copied, and so is the time domain. "
@@ -81,9 +81,9 @@ MAN_END
 MAN_BEGIN (U"Sound: To TextGrid...", U"ppgb", 19980730)
 INTRO (U"A command to create a @TextGrid without any labels, copying the time domain from the selected @Sound.")
 ENTRY (U"Settings")
-TAG (U"%%Tier names")
+TERM (U"%%Tier names")
 DEFINITION (U"a list of the names of the tiers that you want to create, separated by spaces.")
-TAG (U"%%Point tiers")
+TERM (U"%%Point tiers")
 DEFINITION (U"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
 ENTRY (U"Example")
@@ -110,32 +110,32 @@ NORMAL (U"If you are the maintainer of a word list for spelling checking, you wi
 NORMAL (U"The first step is to create a @WordList object from your text file, as described on the @WordList man page. "
 	"Then you simply click ##To SpellingChecker#. A button labelled ##View & Edit...# appears. "
 	"This command allows you to set the following attributes of the SpellingChecker object:")
-/*TAG (U"##Check matching parentheses")
+/*TERM (U"##Check matching parentheses")
 DEFINITION (U"determines whether it is considered a spelling error if parentheses do not match, as in the string \"Hi) there\".")*/
-TAG (U"##Allow all parenthesized")
+TERM (U"##Allow all parenthesized")
 DEFINITION (U"this flag determines whether text between parentheses is ignored in spelling checking. "
 	"This would allow the transcriber to mark utterances in foreign languages, which cannot be found in the lexicon.")
-TAG (U"##Separating characters")
+TERM (U"##Separating characters")
 DEFINITION (U"determines the set of characters (apart from the space character) that separate words. "
 	"The standard is \".,;:()\". If a string like \"error-prone\" should be considered two separate words, "
 	"you will like to change this to \".,;:()-\". "
 	"For the Corpus of Spoken Dutch (CGN), the hyphen is not a separator, since words like \"mee-eter\" should be checked as a whole. "
 	"If a string like \"Mary's\" should be considered two separate words, include the apostrophe.")
-/*TAG (U"##Forbidden strings")
+/*TERM (U"##Forbidden strings")
 DEFINITION (U"this will mainly contain characters that are not allowed in your corpus. For the CGN, this is \": ; \\\" \".")*/
-TAG (U"##Allow all names")
+TERM (U"##Allow all names")
 DEFINITION (U"determines whether all words that start with a capital are allowed. For the CGN, this is on, "
 	"since the lexicon does not contain many names.")
-TAG (U"##Name prefixes")
+TERM (U"##Name prefixes")
 DEFINITION (U"a space-separated list that determines what small groups of characters can precede names. For the CGN, "
 	"this is \"'s- d' l'\", since names like %%'s-Gravenhage%, %%d'Ancona%, and %%l'H\\o^pital% should be ignored by the spelling checker.")
-TAG (U"##Allow all words containing")
+TERM (U"##Allow all words containing")
 DEFINITION (U"a space-separated list of strings that make a word correct even if not in the lexicon. "
 	"For the CGN, this is \"* xxx\", since words like %%keuje*d% and %%verxxxing% should be ignored by the spelling checker.")
-TAG (U"##Allow all words starting with")
+TERM (U"##Allow all words starting with")
 DEFINITION (U"a space-separated list of prefixes that make a word correct even if not in the lexicon. "
 	"For the CGN, this is empty.")
-TAG (U"##Allow all words ending in")
+TERM (U"##Allow all words ending in")
 DEFINITION (U"a space-separated list of suffixes that make a word correct even if not in the lexicon. "
 	"For the CGN, this is \"-\", since the first word in %%verzekerings- en bankwezen% should be ignored by the spelling checker.")
 MAN_END
@@ -148,20 +148,20 @@ NORMAL (U"A #TextGrid object consists of a number of %tiers. There are two kinds
 	"an %%interval tier% is a connected sequence of labelled intervals, with %boundaries in between. "
 	"A %%point tier% is a sequence of labelled points.")
 ENTRY (U"How to create a TextGrid")
-TAG (U"From scratch:")
+TERM (U"From scratch:")
 LIST_ITEM (U"@@Sound: To TextGrid...@ (takes the time domain from the Sound)")
 LIST_ITEM (U"@@LongSound: To TextGrid...@ (takes the time domain from the LongSound)")
 LIST_ITEM (U"@@PointProcess: To TextGrid...@ (takes the time domain from the PointProcess)")
 LIST_ITEM (U"@@PointProcess: To TextGrid (vuv)...@ (labels voiced and unvoiced intervals)")
 LIST_ITEM (U"@@Create TextGrid...@")
-TAG (U"From merging existing TextGrids with each other:")
+TERM (U"From merging existing TextGrids with each other:")
 LIST_ITEM (U"@@TextGrids: Merge@")
 ENTRY (U"How to edit a TextGrid")
 NORMAL (U"You select a TextGrid alone or together with a @Sound or @LongSound, and click ##View & Edit#. "
 	"A @TextGridEditor will appear on your screen, containing the TextGrid "
 	"and an optional copy of the Sound or LongSound.")
 ENTRY (U"How to draw a TextGrid")
-TAG (U"You can draw a TextGrid to the @@Picture window@ with:")
+TERM (U"You can draw a TextGrid to the @@Picture window@ with:")
 LIST_ITEM (U"##TextGrid: Draw...")
 LIST_ITEM (U"##TextGrid & Sound: Draw...")
 LIST_ITEM (U"##TextGrid & Pitch: Draw...")
@@ -172,9 +172,9 @@ MAN_BEGIN (U"TextGrid: Count labels...", U"ppgb", 20140421)
 INTRO (U"A command to ask the selected @TextGrid object how many of the specified labels "
 	"it contains in the specified tier.")
 ENTRY (U"Settings")
-TAG (U"##Tier number")
+TERM (U"##Tier number")
 DEFINITION (U"the number (1, 2, 3...) of the tier whose labels you want to investigate.")
-TAG (U"##Label text")
+TERM (U"##Label text")
 DEFINITION (U"the text on the labels that you want to count.")
 ENTRY (U"Behaviour")
 NORMAL (U"The number of intervals or points with label %%Label text% in tier %%Tier number% "

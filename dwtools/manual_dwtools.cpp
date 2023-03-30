@@ -380,9 +380,9 @@ LIST_ITEM (U"\\bu ##Categories: Permute...#")
 LIST_ITEM (U"\\bu ##Categories: To unique Categories#")
 ENTRY (U"Inside a Categories")
 NORMAL (U"With @Inspect you will see the following attributes:")
-TAG (U"%size")
+TERM (U"%size")
 DEFINITION (U"the number of simple categories.")
-TAG (U"%item[]")
+TERM (U"%item[]")
 DEFINITION (U"the categories. Each category is an object of type #SimpleString.")
 MAN_END
 
@@ -452,7 +452,7 @@ MAN_BEGIN (U"CCA: Get zero correlation probability...", U"djmw", 20040407)
 INTRO (U"Get the probability that for the selected @CCA object the chosen "
 	"canonical correlation coefficient is different from zero.")
 ENTRY (U"Setting")
-TAG (U"##Index")
+TERM (U"##Index")
 DEFINITION (U"is the index of the canonical correlation coefficient that "
 	"you want to test.")
 ENTRY (U"Algorithm")
@@ -482,9 +482,9 @@ MAN_BEGIN (U"CCA & Correlation: Get variance fraction...", U"djmw", 20181112)
 INTRO (U"Determine from the selected @CCA and @Correlation objects the fraction of the variance "
 	"explained by the selected @@canonical variate@ range.")
 ENTRY (U"Settings")
-TAG (U"##X or Y#")
+TERM (U"##X or Y#")
 DEFINITION (U"determines whether you select the dependent (y) or the independent (x) set.")
-TAG (U"##Canonical variate range")
+TERM (U"##Canonical variate range")
 DEFINITION (U"determines the canonical variates (or canonical variables).")
 ENTRY (U"Remarks")
 NORMAL (U"1. In general the variance fractions for a particular canonical variate in the "
@@ -505,9 +505,9 @@ NORMAL (U"The Stewart-Love redundancy for a single @@canonical variate@ is the f
 	"canonical variate in a set times the fraction of shared variance between the corresponding canonical variates in the two sets.")
 NORMAL (U"The Stewart-Love redundancy for a canonical variate range is the sum of the individual redundancies.")
 ENTRY (U"Settings")
-TAG (U"##X or Y#")
+TERM (U"##X or Y#")
 DEFINITION (U"determines whether you select the dependent (y) or the independent (x) set.")
-TAG (U"##Canonical variate range#")
+TERM (U"##Canonical variate range#")
 DEFINITION (U"determines the canonical variates (or canonical variables).")
 ENTRY (U"Algorithm")
 NORMAL (U"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
@@ -535,7 +535,7 @@ MAN_BEGIN (U"CCA & TableOfReal: To TableOfReal (scores)...", U"djmw", 20040407)
 INTRO (U"Determines the scores on the dependent and the independent canonical "
 	"variates from the selected @CCA and @TableOfReal objects.")
 ENTRY (U"Settings")
-TAG (U"##Number of canonical correlations#")
+TERM (U"##Number of canonical correlations#")
 DEFINITION (U"determines the dimension, i.e., the number of elements of the resulting "
 	"canonical score vectors. The newly created table will have twice this number of "
 	"columns because we have calculated score vectors for the dependent and the "
@@ -693,7 +693,7 @@ MAN_END
 MAN_BEGIN (U"ClassificationTable: To Confusion...", U"djmw", 20141030)
 INTRO (U"A command to create a @Confusion object from the selected @ClassificationTable object.")
 ENTRY (U"Settings")
-TAG (U"##Only class labels#")
+TERM (U"##Only class labels#")
 DEFINITION (U"defines whether the class labels from the ClassificationTable object will be used not only as response labels but also as stimulus labels. If checked the resulting Confusion will always have equal stimulus and response labels. If not checked the stimulus labels will be determined from the row labels of the ClassificationTable object. ")
 ENTRY (U"Behaviour")
 NORMAL (U"In obtaining a Confusion object from a ClassificationTable we explicitly use its row labels as stimulus labels.")
@@ -791,13 +791,13 @@ LIST_ITEM (U"\\bu @@Confusion: To Similarity...@")
 LIST_ITEM (U"\\bu @@Confusion: To Dissimilarity (pdf)...@")
 ENTRY (U"Inside a Confusion")
 NORMAL (U"With @Inspect you will see the following attributes:")
-TAG (U"%numberOfRows")
+TERM (U"%numberOfRows")
 DEFINITION (U"the number of stimuli.")
-TAG (U"%numberOfColumns")
+TERM (U"%numberOfColumns")
 DEFINITION (U"the number of responses.")
-TAG (U"%rowLabels")
+TERM (U"%rowLabels")
 DEFINITION (U"the names of the stimuli.")
-TAG (U"columnLabels")
+TERM (U"columnLabels")
 DEFINITION (U"the names of the responses.")
 MAN_END
 
@@ -814,7 +814,7 @@ MAN_END
 MAN_BEGIN (U"Confusion: Increase...", U"djmw", 20140117)
 INTRO (U"Increases the contents of the corresponding cell in the selected @@Confusion@ by one.")
 ENTRY (U"Settings")
-TAG (U"##Stimulus# and ##Response#")
+TERM (U"##Stimulus# and ##Response#")
 DEFINITION (U"define the cell whose value will be increased by one.")
 ENTRY (U"Example")
 NORMAL (U"Given the following Confusion:")
@@ -832,11 +832,11 @@ MAN_END
 MAN_BEGIN (U"Confusion: Group...", U"djmw", 20140117)
 INTRO (U"Groups a number of stimuli and responses into one new category.")
 ENTRY (U"Settings")
-TAG (U"##Stimuli & Responses")
+TERM (U"##Stimuli & Responses")
 DEFINITION (U"defines the labels that will be grouped.")
-TAG (U"##New label")
+TERM (U"##New label")
 DEFINITION (U"defines the new label for the grouped labels.")
-TAG (U"##New label position")
+TERM (U"##New label position")
 DEFINITION (U"the row/column number for the new group label.")
 ENTRY (U"Example")
 NORMAL (U"Given the following selected Confusion:")
@@ -857,11 +857,11 @@ MAN_END
 MAN_BEGIN (U"Confusion: Group stimuli...", U"djmw", 20140117)
 INTRO (U"Groups a number of stimuli into one new category.")
 ENTRY (U"Settings")
-TAG (U"##Stimuli")
+TERM (U"##Stimuli")
 DEFINITION (U"defines the stimuli that will be grouped.")
-TAG (U"##New label")
+TERM (U"##New label")
 DEFINITION (U"defines the new label for the grouped stimuli.")
-TAG (U"##New label position")
+TERM (U"##New label position")
 DEFINITION (U"the row number for the new group label.")
 ENTRY (U"Example")
 NORMAL (U"Given the following selected Confusion:")
@@ -878,11 +878,11 @@ MAN_END
 MAN_BEGIN (U"Confusion: Group responses...", U"djmw", 20140117)
 INTRO (U"Groups a number of responses into one new category.")
 ENTRY (U"Settings")
-TAG (U"##Responses")
+TERM (U"##Responses")
 DEFINITION (U"defines the responses that will be grouped.")
-TAG (U"##New label")
+TERM (U"##New label")
 DEFINITION (U"defines the new label for the grouped responses.")
-TAG (U"##New label position")
+TERM (U"##New label position")
 DEFINITION (U"the column number for the new group label.")
 ENTRY (U"Example")
 NORMAL (U"Given the following selected Confusion:")
@@ -923,14 +923,14 @@ MAN_BEGIN (U"Confusion: Condense...", U"djmw", 20130410)
 INTRO (U"Groups row and column labels of the selected @Confusion object in "
 	"order to reduce its dimension. ")
 ENTRY (U"Settings")
-TAG (U"##Search")
+TERM (U"##Search")
 DEFINITION (U"the pattern to match.")
-TAG (U"##Replace")
+TERM (U"##Replace")
 DEFINITION (U"the pattern that replaces the match(es).")
-TAG (U"##Replace limit")
+TERM (U"##Replace limit")
 DEFINITION (U"limits the maximum number of times that a match/replace cycle "
 	"may occur within each label.")
-TAG (U"##Search and replace are")
+TERM (U"##Search and replace are")
 DEFINITION (U"defines whether the search and replace strings are taken "
 	"literally or as a @@Regular expressions|regular expression@.")
 ENTRY (U"Behaviour")
@@ -978,14 +978,14 @@ INTRO (U"Calculates @@confidence interval@s for the correlation coefficients "
 	"from the selected @Correlation object(s) and saves these intervals in a "
 	"new @TableOfReal object.")
 ENTRY (U"Settings")
-TAG (U"##Confidence level")
+TERM (U"##Confidence level")
 DEFINITION (U"the @@confidence level@ you want for the confidence intervals.")
-TAG (U"##Number of tests")
+TERM (U"##Number of tests")
 DEFINITION (U"determines the @@Bonferroni correction@ for the significance "
 	"level. If the default value (zero) is chosen, it will be set equal "
 	"to the number of correlations involved (a matrix of dimension %n "
 	"has %n\\.c(%n-1)/2 correlations).")
-TAG (U"##Approximation")
+TERM (U"##Approximation")
 DEFINITION (U"defines the approximation that will be used to calculate the "
 	"confidence intervals. It is either Fisher's z transformation or Ruben's "
 	"transformation. According to @@Boomsma (1977)@, Ruben's approximation is "
@@ -1033,38 +1033,38 @@ MAN_END
 MAN_BEGIN (U"Create simple Correlation...", U"djmw", 20151230)
 INTRO (U"Create a @@Correlation@ matrix with its centroid.")
 ENTRY (U"Settings")
-TAG (U"##Correlations")
+TERM (U"##Correlations")
 DEFINITION (U"define the correlations. Because a correlation matrix is a symmetric matrix, only the upper triangular "
 	"part of the matrix needs to be input (row-wise). If your correlation matrix is "
 	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
 	"row of the correaltion matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
-TAG (U"##Centroid")
+TERM (U"##Centroid")
 DEFINITION (U"defines the centroid. ")
-TAG (U"##Number of observations")
+TERM (U"##Number of observations")
 DEFINITION (U"defines the number of observations.")
 MAN_END
 
 MAN_BEGIN (U"Create simple Covariance...", U"djmw", 20101125)
 INTRO (U"Create a @@Covariance@ matrix with its centroid.")
 ENTRY (U"Settings")
-TAG (U"##Covariances")
+TERM (U"##Covariances")
 DEFINITION (U"define the covariances. Because a covariance matrix is a symmetric matrix, only the upper triangular "
 	"part of the matrix needs to be input (row-wise). If your covariance matrix is "
 	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
 	"row of the covariance matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
-TAG (U"##Centroid")
+TERM (U"##Centroid")
 DEFINITION (U"defines the centroid. ")
-TAG (U"##Number of observations")
+TERM (U"##Number of observations")
 DEFINITION (U"defines the number of observations. ")
 MAN_END
 
 MAN_BEGIN (U"Covariance: Set value...", U"djmw", 20101124)
 INTRO (U"Input @@Covariance@ matrix cell values.")
 ENTRY (U"Constraints on input values")
-TAG (U"A covariance matrix is a %%symmetric% matrix: values input at cell [%i,%j] will be automatically input at "
+TERM (U"A covariance matrix is a %%symmetric% matrix: values input at cell [%i,%j] will be automatically input at "
 	"cell [%j,%i] too.")
-TAG (U"All values on the diagonal should be positive numbers.")
-TAG (U"The absolute value of an off-diagonal element at cell [%i,%j] should be smaller than the corresponding diagonal "
+TERM (U"All values on the diagonal should be positive numbers.")
+TERM (U"The absolute value of an off-diagonal element at cell [%i,%j] should be smaller than the corresponding diagonal "
 	"elements at cells [%i,%i] and [%j,%j].")
 MAN_END
 
@@ -1087,10 +1087,10 @@ MAN_BEGIN (U"Covariance: Get significance of one mean...", U"djmw", 20040407)
 INTRO (U"Gets the level of significance for one mean from the selected "
 	"@Covariance object being different from a hypothesized mean.")
 ENTRY (U"Settings")
-TAG (U"##Index")
+TERM (U"##Index")
 DEFINITION (U"the position of the element in the means vector (centroid) that "
 	"you want to test. ")
-TAG (U"##Value")
+TERM (U"##Value")
 DEFINITION (U"the hypothesized mean %\\mu (see below).")
 ENTRY (U"Behaviour")
 NORMAL (U"This is the standard test on means when the variance is unknown. "
@@ -1110,7 +1110,7 @@ MAN_BEGIN (U"Covariance: Get fraction variance...", U"djmw", 20040407)
 INTRO (U"A command to ask the selected @Covariance object for the fraction "
 	"of the total variance that is accounted for by the selected dimension(s).")
 ENTRY (U"Settings")
-TAG (U"##From dimension#, ##To dimension#")
+TERM (U"##From dimension#, ##To dimension#")
 DEFINITION (U"define the range of components. By choosing both numbers equal, "
 	"you get the fraction of the variance \"explained\" by that dimension.")
 ENTRY (U"Details")
@@ -1125,14 +1125,14 @@ INTRO (U"Gets the level of significance for the %difference of two means "
 	"from the selected @Covariance object being different from a hypothesized "
 	"value.")
 ENTRY (U"Settings")
-TAG (U"##Index1#, ##Index2#")
+TERM (U"##Index1#, ##Index2#")
 DEFINITION (U"the positions of the two elements of the means vector whose "
 	"difference is compared to the hypothesized difference.")
-TAG (U"##Value")
+TERM (U"##Value")
 DEFINITION (U"the hypothesized difference (%\\mu).")
-TAG (U"##Paired")
+TERM (U"##Paired")
 DEFINITION (U"determines whether we treat the two means as being dependent. ")
-TAG (U"##Equal variances")
+TERM (U"##Equal variances")
 DEFINITION (U"determines whether the distribution of the difference of the means "
 	"is a Student t-distribution (see below).")
 ENTRY (U"Behaviour")
@@ -1167,9 +1167,9 @@ MAN_BEGIN (U"Covariance: Get significance of one variance...", U"djmw", 20160102
 INTRO (U"Gets the probability for one variance from the selected "
 	"@Covariance object being different from a hypothesized variance.")
 ENTRY (U"Settings")
-TAG (U"##Index")
+TERM (U"##Index")
 DEFINITION (U"the position of the variance element %s^2.")
-TAG (U"##Value")
+TERM (U"##Value")
 DEFINITION (U"the hypothesized variance %\\si^2")
 ENTRY (U"Behaviour")
 NORMAL (U"The test statistic")
@@ -1184,9 +1184,9 @@ INTRO (U"Gets the probability for the ratio of two variances "
 	"from the selected @Covariance object being different from a hypothesized "
 	"ratio.")
 ENTRY (U"Settings")
-TAG (U"##Index1#, ##Index2#")
+TERM (U"##Index1#, ##Index2#")
 DEFINITION (U"determine the variances.")
-TAG (U"##Hypothesized ratio")
+TERM (U"##Hypothesized ratio")
 DEFINITION (U"the hypothesized ratio %F.")
 ENTRY (U"Behaviour")
 NORMAL (U"The test statistic")
@@ -1202,7 +1202,7 @@ MAN_END
 MAN_BEGIN (U"Covariances: Report multivariate mean difference...", U"djmw", 20090627)
 INTRO (U"Reports the probability that the two multivariate means of the selected @@Covariance@s are equal.")
 ENTRY (U"Settings")
-TAG (U"##Covariances are equal")
+TERM (U"##Covariances are equal")
 DEFINITION (U"determines whether the test is performed as if the two covariance matrices are equal or not.")
 ENTRY (U"Algorithm")
 NORMAL (U"For equal covariance matrices the test is via Hotelling's T^^2^ as described in @@Morrison (1990)|Morrison (1990,@ page 141). "
@@ -1223,7 +1223,7 @@ MAN_BEGIN (U"Covariance: To TableOfReal (random sampling)...", U"djmw", 20101101
 INTRO (U"Generate a @TableOfReal object by random sampling from a multi-variate "
 	"normal distribution whose @Covariance matrix is the selected object.")
 ENTRY (U"Setting")
-TAG (U"##Number of data points")
+TERM (U"##Number of data points")
 DEFINITION (U"determines the number of data points that will be generated. Each "
 	"data point occupies one row in the generated table.")
 ENTRY (U"Algorithm")
@@ -1259,7 +1259,7 @@ MAN_BEGIN (U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw"
 INTRO (U"Calculate @@Mahalanobis distance@ for the selected @TableOfReal with respect to the "
 	"selected @Covariance object.")
 ENTRY (U"Setting")
-TAG (U"##Use table centroid")
+TERM (U"##Use table centroid")
 DEFINITION (U"Use the mean vector calculated from the columns in the selected TableOfReal instead of the means in the selected Covariance.")
 ENTRY (U"Example")
 NORMAL (U"Count the number of items that are within 1, 2, 3, 4 and 5 standard deviations from the mean.")
@@ -1287,9 +1287,9 @@ MAN_END
 MAN_BEGIN (U"Create ChebyshevSeries...", U"djmw", 20040407)
 INTRO (U"A command to create a @ChebyshevSeries from a list of coefficients.")
 ENTRY (U"Settings")
-TAG (U"##Xmin# and ##Xmax#")
+TERM (U"##Xmin# and ##Xmax#")
 DEFINITION (U"define the domain of the polynomials.")
-TAG (U"%Coefficients")
+TERM (U"%Coefficients")
 DEFINITION (U"define the coefficients of each @@Chebyshev polynomials|Chebyshev polynomial@. "
 	"The coefficient of the polynomial with the highest degree comes last.")
 MAN_END
@@ -1297,13 +1297,13 @@ MAN_END
 MAN_BEGIN (U"Create ISpline...", U"djmw", 20181224)
 INTRO (U"A command to create an @ISpline from a list of coefficients.")
 ENTRY (U"Settings")
-TAG (U"##Xmin# and ##Xmax#")
+TERM (U"##Xmin# and ##Xmax#")
 DEFINITION (U"define the domain of the polynomial @spline.")
-TAG (U"##Degree")
+TERM (U"##Degree")
 DEFINITION (U"defines the degree of the polynomial @spline.")
-TAG (U"##Coefficients")
+TERM (U"##Coefficients")
 DEFINITION (U"define the coefficients of the basis polynomials.")
-TAG (U"##Interior knots")
+TERM (U"##Interior knots")
 DEFINITION (U"define the positions in the domain where continuity conditions are defined.")
 ENTRY (U"Behaviour")
 NORMAL (U"The number of coefficients and the number of interior knots must satisfy "
@@ -1315,13 +1315,13 @@ MAN_END
 MAN_BEGIN (U"Create MSpline...", U"djmw", 20040407)
 INTRO (U"A command to create an @MSpline from a list of coefficients.")
 ENTRY (U"Settings")
-TAG (U"##Xmin# and ##Xmax#")
+TERM (U"##Xmin# and ##Xmax#")
 DEFINITION (U"define the domain of the polynomial @spline.")
-TAG (U"##Degree")
+TERM (U"##Degree")
 DEFINITION (U"defines the degree of the polynomial @spline.")
-TAG (U"##Coefficients")
+TERM (U"##Coefficients")
 DEFINITION (U"define the coefficients of the basis polynomials.")
-TAG (U"##Interior knots")
+TERM (U"##Interior knots")
 DEFINITION (U"define the positions in the domain where continuity conditions are defined.")
 ENTRY (U"Behaviour")
 NORMAL (U"The number of coefficients and the number of interior knots must satisfy "
@@ -1333,11 +1333,11 @@ MAN_END
 MAN_BEGIN (U"Create Polynomial...", U"djmw", 20040407)
 INTRO (U"A command to create an @Polynomial from a list of coefficients.")
 ENTRY (U"Settings")
-TAG (U"##Xmin# and ##Xmax#")
+TERM (U"##Xmin# and ##Xmax#")
 DEFINITION (U"define the domain of the polynomial.")
-TAG (U"##Degree")
+TERM (U"##Degree")
 DEFINITION (U"defines the degree of the basis polynomials.")
-TAG (U"##Coefficients")
+TERM (U"##Coefficients")
 DEFINITION (U"define the coefficients of the polynomial. The coefficient of the "
 	"highest power of %x comes last.")
 MAN_END
@@ -1345,9 +1345,9 @@ MAN_END
 MAN_BEGIN (U"Create LegendreSeries...", U"djmw", 20040407)
 INTRO (U"A command to create a @LegendreSeries from a list of coefficients.")
 ENTRY (U"Settings")
-TAG (U"##Xmin# and ##Xmax#")
+TERM (U"##Xmin# and ##Xmax#")
 DEFINITION (U"define the domain of the polynomials.")
-TAG (U"##Coefficients")
+TERM (U"##Coefficients")
 DEFINITION (U"define the coefficients of each @@Legendre polynomials|Legendre polynomial@. "
 	"The coefficient of the polynomial with the highest degree comes last.")
 MAN_END
@@ -1355,25 +1355,25 @@ MAN_END
 MAN_BEGIN (U"Create Sound as gammatone...", U"djmw", 20161013)
 INTRO (U"A command to create a @Sound as a @@gammatone@.")
 ENTRY (U"Settings")
-TAG (U"##Name")
+TERM (U"##Name")
 DEFINITION (U"the name of the resulting Sound object.")
-TAG (U"##Minimum time (s)# and ##Maximum time (s)#")
+TERM (U"##Minimum time (s)# and ##Maximum time (s)#")
 DEFINITION (U"the start and end time of the resulting Sound.")
-TAG (U"##Sampling frequency (Hz)")
+TERM (U"##Sampling frequency (Hz)")
 DEFINITION (U"the @@sampling frequency@ of the resulting Sound.")
-TAG (U"##Gamma")
+TERM (U"##Gamma")
 DEFINITION (U"determines the exponent of the polynomial.")
-TAG (U"##Frequency (Hz)# and ##Bandwidth (Hz)#")
+TERM (U"##Frequency (Hz)# and ##Bandwidth (Hz)#")
 DEFINITION (U"determine the frequency and damping of the cosine wave in the gammatone.")
-TAG (U"##Initial phase (radians)")
+TERM (U"##Initial phase (radians)")
 DEFINITION (U"the initial phase of the cosine wave.")
-TAG (U"##Addition factor# (standard value: 0)")
+TERM (U"##Addition factor# (standard value: 0)")
 DEFINITION (U"determines the degree of asymmetry in the spectrum of the gammatone. "
 	"The zero default value gives a gammatone. A value unequal to zero results in a "
 	"so called %gammachirp. A negative value is used in auditory filter modelling to "
 	"guarantee the usual direction of filter asymmetry, which corresponds to an upward "
 	"glide in instantaneous frequency.")
-TAG (U"##Scale amplitudes")
+TERM (U"##Scale amplitudes")
 DEFINITION (U"determines whether the amplitudes will be scaled to fit in the range (-1, 1).")
 ENTRY (U"Purpose")
 NORMAL (U"to create a Sound according to the following formula:")
@@ -1397,23 +1397,23 @@ MAN_END
 MAN_BEGIN (U"Create Sound as Shepard tone...", U"djmw", 20161013)
 INTRO (U"One of the commands that create a @Sound.")
 ENTRY (U"Settings")
-TAG (U"##Name")
+TERM (U"##Name")
 DEFINITION (U"the name of the resulting Sound object.")
-TAG (U"##Minimum time (s)# and ##Maximum time (s)")
+TERM (U"##Minimum time (s)# and ##Maximum time (s)")
 DEFINITION (U"the start and end time of the resulting Sound.")
-TAG (U"##Sampling frequency (Hz)")
+TERM (U"##Sampling frequency (Hz)")
 DEFINITION (U"the @@sampling frequency@ of the resulting Sound.")
-TAG (U"##Lowest frequency (Hz)")
+TERM (U"##Lowest frequency (Hz)")
 DEFINITION (U"the frequency of the lowest component in the tone complex.")
-TAG (U"##Number of components")
+TERM (U"##Number of components")
 DEFINITION (U"the number of frequency components in the tone complex.")
-TAG (U"##Frequency change (semitones/s)")
+TERM (U"##Frequency change (semitones/s)")
 DEFINITION (U"determines how many semitones the frequency of each component will change in one second. "
 	"The number of seconds needed to change one octave will then be 12 divided by ##Frequency change#. "
 	"You can make rising, falling and monotonous tone complexes by chosing a positive, negative or zero value.")
-TAG (U"##Amplitude range% (dB)")
+TERM (U"##Amplitude range% (dB)")
 DEFINITION (U"determines the relative size in decibels of the maximum and the minimum amplitude of the components in a tone complex. These relative amplitudes will then be 10^^\\--%amplitudeRange/20^. ")
-TAG (U"##Octave shift fraction (0-1)")
+TERM (U"##Octave shift fraction (0-1)")
 DEFINITION (U"shifts all frequency components by this fraction at the start. You will probably only need this "
 	"if you want to generate static tone complexes as the example script below shows.")
 ENTRY (U"Purpose")
@@ -1459,22 +1459,22 @@ INTRO (U"A command to create a @Table object filled with the "
 	"1520 recorded vowels in total.")
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 9 columns:")
-TAG (U"Column 1, labelled as %Type")
+TERM (U"Column 1, labelled as %Type")
 DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %woman or %child).")
-TAG (U"Column 2, labelled as %Sex")
+TERM (U"Column 2, labelled as %Sex")
 DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
-TAG (U"Column 3, labelled as %Speaker")
+TERM (U"Column 3, labelled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 76.")
-TAG (U"Column 4, labelled as %Vowel")
+TERM (U"Column 4, labelled as %Vowel")
 DEFINITION (U"the vowel name. The following list gives the vowel in a %h_d context word "
 	"together with its representation in this column: (%heed, iy), (%hid, ih), "
 	"(%head, eh), (%had, ae), (%hod, aa), (%hawed, ao), (%hood, uh), (%%who'd%, uw), "
 	"(%hud, ah), (%heard, er).")
-TAG (U"Column 5, labelled as %IPA")
+TERM (U"Column 5, labelled as %IPA")
 DEFINITION (U"the IPA notation for the vowels as defined in @@Peterson & Barney (1952)@. ")
-TAG (U"Column 6, labelled as %F0")
+TERM (U"Column 6, labelled as %F0")
 DEFINITION (U"the fundamental frequency in Hertz.")
-TAG (U"Column 7, 8 and 9, labelled as %F1, %F2 and %F3")
+TERM (U"Column 7, 8 and 9, labelled as %F1, %F2 and %F3")
 DEFINITION (U"the frequencies in Hertz of the first three formants.")
 ENTRY (U"Remarks")
 NORMAL (U"We originally downloaded the data from the University of Pennsylvania FTP site, "
@@ -1491,20 +1491,20 @@ INTRO (U"A command to create a @Table object filled with the frequencies and the
 	"vowels as spoken in /h_t/ context by 50 male and 25 female speakers.")
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 10 columns")
-TAG (U"Column 1, labeled as %Sex")
+TERM (U"Column 1, labeled as %Sex")
 DEFINITION (U"speaker sex: Either \"m\" or \"f\" (for %male or %female).")
-TAG (U"Column 2, labeled as %Speaker")
+TERM (U"Column 2, labeled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 75.")
-TAG (U"Column 3, labeled as %Vowel")
+TERM (U"Column 3, labeled as %Vowel")
 DEFINITION (U"the vowel name. The following list gives the vowel in p_t context word "
 	"together with its representation in this column: (%poet, oe), (%paat, aa), "
 	"(%poot, oo), (%pat, a), (%peut, eu), (%piet, ie), (%puut, uu), (%peet, ee), "
 	"(%put, u), (%pet, e), (%pot, o), (%pit, i).")
-TAG (U"Column 4, labeled as %IPA")
+TERM (U"Column 4, labeled as %IPA")
 DEFINITION (U"the IPA-notation for the vowels")
-TAG (U"Column 5, 6 and 7, labeled as %F1, %F2 and %F3")
+TERM (U"Column 5, 6 and 7, labeled as %F1, %F2 and %F3")
 DEFINITION (U"the frequencies in Hertz of the first three formants.")
-TAG (U"Column 8, 9 and 10, labeled as %L1, %L2 and %L3")
+TERM (U"Column 8, 9 and 10, labeled as %L1, %L2 and %L3")
 DEFINITION (U"the levels in decibel below overall SPL of the first three formants.")
 NORMAL (U"More details about these data and how they were measured can be found "
 	"in @@Pols et al. (1973)@ and @@Van Nierop et al. (1973)@.")
@@ -1519,22 +1519,22 @@ INTRO (U"A command to create a @Table object filled with the "
 	"as a @@Create TableOfReal (Weenink 1985)...|TableOfReal@.")
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 9 columns:")
-TAG (U"Column 1, labelled as %Type")
+TERM (U"Column 1, labelled as %Type")
 DEFINITION (U"speaker type: \"m\", \"w\" or \"c\" (for %man, %woman or %child).")
-TAG (U"Column 2, labelled as %Sex")
+TERM (U"Column 2, labelled as %Sex")
 DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
-TAG (U"Column 3, labelled as %Speaker")
+TERM (U"Column 3, labelled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 76.")
-TAG (U"Column 4, labelled as %Vowel")
+TERM (U"Column 4, labelled as %Vowel")
 DEFINITION (U"the vowel name. The following list gives the vowel in Dutch p_t context words "
 	"together with its representation in this column: (%poet, oe), (%paat, aa), "
 	"(%poot, oo), (%pat, a), (%peut, eu), (%piet, ie), (%puut, uu), (%peet, ee), "
 	"(%put, u), (%pet, e), (%pot, o), (%pit, i).")
-TAG (U"Column 5, labelled as %IPA")
+TERM (U"Column 5, labelled as %IPA")
 DEFINITION (U"the IPA notation for the vowels.")
-TAG (U"Column 6, labelled as %F0")
+TERM (U"Column 6, labelled as %F0")
 DEFINITION (U"the fundamental frequency in Hertz.")
-TAG (U"Column 7, 8 and 9, labelled as %F1, %F2 and %F3")
+TERM (U"Column 7, 8 and 9, labelled as %F1, %F2 and %F3")
 DEFINITION (U"the frequencies in Hertz of the first three formants. ")
 NORMAL (U"The formant frequency values have been determined by means of LPC analysis with a "
 	"varying prediction order. See @@Weenink (1985)@.")
@@ -1749,16 +1749,16 @@ MAN_BEGIN (U"Discriminant: Draw sigma ellipses...", U"djmw", 20040407)
 INTRO (U"A command to draw for each group from the selected @Discriminant an ellipse "
 	"that covers part of the multivariate data.")
 ENTRY (U"Settings")
-TAG (U"##Number of sigmas")
+TERM (U"##Number of sigmas")
 DEFINITION (U"determines the @@concentration ellipse|data coverage@.")
-TAG (U"##Discriminant plane")
+TERM (U"##Discriminant plane")
 DEFINITION (U"When on, the selected %X and %Y-dimension will refer to the eigenvectors "
 	"of the discriminant space, and, consequently, the projection of the hyper ellipsoid "
 	"onto the space spanned by these eigenvectors will be drawn. When off, the selected "
 	"%X and Y-dimension will refer to the original dimensions.")
-TAG (U"##Xmin#, ##Xmax#, ##Ymin#, ##Ymax#")
+TERM (U"##Xmin#, ##Xmax#, ##Ymin#, ##Ymax#")
 DEFINITION (U"determine the limits of the drawing area.")
-TAG (U"##Label size")
+TERM (U"##Label size")
 DEFINITION (U"determines the size of the labels at the centre of the ellipse. No "
 	"labels will be drawn when a value less than or equal to zero is chosen.")
 MAN_END
@@ -1796,7 +1796,7 @@ MAN_BEGIN (U"Discriminant: Get Wilks' lambda...", U"djmw", 20040407)
 INTRO (U"A command to ask the selected @Discriminant for the value of Wilks' lamda (a "
 	"multivariate measure of group differences over several variables).")
 ENTRY (U"Settings")
-TAG (U"##From")
+TERM (U"##From")
 DEFINITION (U"the first eigenvalue number from which the value for lambda has to be calculated.")
 ENTRY (U"Details")
 NORMAL (U"Wilks' lambda is defined as:")
@@ -1809,9 +1809,9 @@ MAN_BEGIN (U"Discriminant: Get concentration ellipse area...", U"djmw", 20040407
 INTRO (U"A command to query the @Discriminant object for the area of the concentration "
 	"ellipse of one of its groups.")
 ENTRY (U"Settings")
-TAG (U"##Number of sigmas")
+TERM (U"##Number of sigmas")
 DEFINITION (U"determines the @@concentration ellipse|data coverage@.")
-TAG (U"##Discriminant plane")
+TERM (U"##Discriminant plane")
 DEFINITION (U"When on, the selected %X and %Y-dimension will refer to the eigenvectors "
 	"of the discriminant space, and, consequently, the area of the projection of the hyper ellipsoid "
 	"onto the space spanned by these eigenvectors will be calculated. When off, the selected "
@@ -1824,7 +1824,7 @@ MAN_BEGIN (U"Discriminant: Get confidence ellipse area...", U"djmw", 20040407)
 INTRO (U"A command to query the @Discriminant object for the area of the confidence "
 	"ellipse of one of its groups.")
 ENTRY (U"Settings")
-TAG (U"##Discriminant plane")
+TERM (U"##Discriminant plane")
 DEFINITION (U"When on, the selected %X and %Y-dimension will refer to the eigenvectors "
 	"of the discriminant space, and, consequently, the area of the projection of the hyper ellipsoid "
 	"onto the space spanned by these eigenvectors will be calculated. When off, the selected "
@@ -1850,7 +1850,7 @@ INTRO (U"A command to use the selected @Discriminant to classify each row from t
 	"selected @TableOfReal. The newly created @ClassificationTable will then contain the posterior "
 	"probabilities of group membership.")
 ENTRY (U"Settings")
-TAG (U"##Pool covariance matrices")
+TERM (U"##Pool covariance matrices")
 DEFINITION (U"when on, all group covariance matrices are pooled and distances will be determined "
 	"on the basis of only this pooled covariance matrix (see below).")
 ENTRY (U"Details")
@@ -1875,7 +1875,7 @@ MAN_BEGIN (U"Discriminant & TableOfReal: To Configuration...", U"djmw", 20160119
 INTRO (U"A command to project each row in the selected @TableOfReal onto "
 	"a subspace spanned by the eigenvectors of the selected @Discriminant. ")
 ENTRY (U"Settings")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"specifies the dimension of the resulting @Configuration. This dimension cannot exceed a maximum dimension that is implicitly determined by the selected Discriminant. When the default value (0) is "
 	"given the resulting Configuration will have the maximum dimension as allowed by Discrimininant. "
 	"(Technically speaking: the number of eigenvectors (or eigenvalues) in the selected Discriminant is equal to the maximum allowed dimension.)")
@@ -1888,9 +1888,9 @@ MAN_BEGIN (U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...", U"djm
 INTRO (U"Calculate @@Mahalanobis distance@s for the selected @TableOfReal with respect to one group in the "
 	"selected @Discriminant object.")
 ENTRY (U"Settings")
-TAG (U"##Group label")
+TERM (U"##Group label")
 DEFINITION (U"defines which group mean to use for the distance calculation.")
-TAG (U"##Pool covariance matrices")
+TERM (U"##Pool covariance matrices")
 DEFINITION (U"when on, use a pooled covariance matrix instead of the group covariance matrix.")
 ENTRY (U"Algorithm")
 NORMAL (U"See @@Covariance & TableOfReal: To TableOfReal (mahalanobis)...@.")
@@ -1932,9 +1932,9 @@ MAN_END
 MAN_BEGIN (U"DTW: Find path (band & slope)...", U"djmw", 20120223)
 INTRO (U"Finds the optimal path for the selected @DTW that lies within the union of the sakoe-chiba band and local slope limits.")
 ENTRY (U"Settings")
-TAG (U"##Sakoe-Chiba band (s)#,")
+TERM (U"##Sakoe-Chiba band (s)#,")
 DEFINITION (U"The maximum distance from the start/end of the sound where a path may start/finish.")
-TAG (U"##Slope constraint#,")
+TERM (U"##Slope constraint#,")
 DEFINITION (U"determines the maximum and minimum local slopes in the optimal path. For example, the constraint "
     "1/3 < slope < 3 forces the path locally after having taken three steps in the same direction direction to take the next step in the other direction, or after having taken two steps in the same direction to take the next step in the diagonal direction. At the same time the global consequences of the \"1/3 < slope < 3\" constraint mandates that the durations of the two domains do not differ by more than a factor of three. ")
 NORMAL (U"For more information see the article of @@Sakoe & Chiba (1978)@.")
@@ -1956,7 +1956,7 @@ INTRO (U"Queries the selected @DTW object for the time along the minimal path "
 	"given the time along the \"%x-direction\". This command is deprecated, the new commands for querying are "
 	"@@DTW: Get y time from x time...@ and @@DTW: Get x time from y time...@.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time along the %x-direction.")
 ENTRY (U"Behaviour")
 NORMAL (U"When the %input time is in the interval [%xmin, %xmax], the %returned "
@@ -1978,7 +1978,7 @@ MAN_BEGIN (U"DTW: Get y time from x time...", U"djmw", 20110603)
 INTRO (U"Queries the selected @DTW object for the time along the %y-direction "
 	"given the time along the \"%x-direction\". ")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time along the %x-direction.")
 ENTRY (U"Behaviour")
 NORMAL (U"When the %input time is in the interval [%xmin, %xmax], the %returned "
@@ -2005,7 +2005,7 @@ MAN_BEGIN (U"DTW: Get x time from y time...", U"djmw", 20110603)
 INTRO (U"Queries the selected @DTW object for the time along the %x-direction "
 	"given the time along the \"%y-direction\". ")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time along the %y-direction.")
 ENTRY (U"Behaviour")
 NORMAL (U"The behaviour is like @@DTW: Get y time from x time...@")
@@ -2041,13 +2041,13 @@ MAN_END
 MAN_BEGIN (U"Create empty EditCostsTable...", U"djmw", 20120524)
 INTRO (U"Creates an empty @@EditCostsTable@.")
 ENTRY (U"Settings")
-TAG (U"##Name#")
+TERM (U"##Name#")
 DEFINITION (U"the name of the resulting EditCostsTable object.")
-TAG (U"##Number of target symbols#")
+TERM (U"##Number of target symbols#")
 DEFINITION (U"the number of different symbols in the target symbol set that you want to give special edit cost values in the EditCostTable. "
 	"The number you specify may be smaller than the actual target symbol set size because the EditCostTable has an entry for target symbols "
 	"that fall in a %%rest% category. If you don't want to treat any target symbol is a special way you may set this value to 0.")
-TAG (U"##Number of source symbols#")
+TERM (U"##Number of source symbols#")
 DEFINITION (U"the number of different symbols in the source symbol set that you want to give special edit cost values in the EditCostTable. "
 	"The number you specify may be smaller than the actual source symbol set size because the EditCostTable has an entry for source symbols "
 	"that fall in a %rest% category. If you don't want to treat any source symbol is a special way you may set this value 0.")
@@ -2077,13 +2077,13 @@ CODE (U"edt = To EditDistanceTable")
 CODE (U"Draw edit operations")
 NORMAL (U"The default EditCostsTable which is in every new EditDistanceTable object has only two rows and two columns, "
 	"where the cells in this EditCostsTable have the following interpretation:\n")
-TAG (U"Cell [1] [2]:")
+TERM (U"Cell [1] [2]:")
 DEFINITION (U"defines the cost for the insertion of a target symbol in the source string. The default insertion cost is 1.0.")
-TAG (U"Cell [2] [1]:")
+TERM (U"Cell [2] [1]:")
 DEFINITION (U"defines the cost of the deletion of a source symbol. The default value is 1.0.")
-TAG (U"Cell [1] [1]:")
+TERM (U"Cell [1] [1]:")
 DEFINITION (U"defines the cost of substituting a target symbol for a source symbol where the target and source symbols don't match. The default substitution cost is 2.0.")
-TAG (U"Cell [2] [2]:")
+TERM (U"Cell [2] [2]:")
 DEFINITION (U"defines the cost of substituting a target symbol for a source symbol where the target and source symbols do match. The deault value is 0.0.")
 ENTRY (U"How to create a non-default EditCostsTable")
 NORMAL (U"In general we can define a table for %%numberOfTargets% target symbols and %%numberOfSources% source symbols. These numbers "
@@ -2193,24 +2193,24 @@ NORMAL (U"An object of type Eigen represents the eigen structure of "
 	"a matrix whose eigenvalues and eigenvectors are real.")
 ENTRY (U"Inside an Eigen")
 NORMAL (U"With @Inspect you will see the following attributes:")
-TAG (U"%numberOfEigenvalues")
+TERM (U"%numberOfEigenvalues")
 DEFINITION (U"the number of eigenvalues and eigenvectors")
-TAG (U"%dimension")
+TERM (U"%dimension")
 DEFINITION (U"the dimension of an eigenvector.")
-TAG (U"%eigenvalues[1..%numberOfEigenvalues]")
+TERM (U"%eigenvalues[1..%numberOfEigenvalues]")
 DEFINITION (U"the real eigenvalues.")
-TAG (U"%eigenvectors[1..%numberOfEigenvalues] [1..%dimension]")
+TERM (U"%eigenvectors[1..%numberOfEigenvalues] [1..%dimension]")
 DEFINITION (U"the real eigenvectors, stored by row.")
 MAN_END
 
 MAN_BEGIN (U"Eigen: Draw eigenvalues...", U"djmw", 20040407)
 INTRO (U"A command to draw the eigenvalues of the selected @Eigen object(s).")
 ENTRY (U"Settings")
-TAG (U"##Fraction of eigenvalues summed")
+TERM (U"##Fraction of eigenvalues summed")
 DEFINITION (U"defines whether or not fractions are plotted. Fractions %f__%i_ "
 	"will be calculated for each number %e__%i_ by dividing this number by the sum of all "
 	"numbers %e__%j_: %f__%i_ = %e__%i_ / \\su__%j=1..%numberOfEigenvalues_ %e__%j_.")
-TAG (U"##Cumulative")
+TERM (U"##Cumulative")
 DEFINITION (U"defines whether or not cumulative values are plotted. Cumulative "
 	"values %c__%i_ will be calculated for each number %e__%i_ by summing the first %i "
 	"numbers %e__%j_: %c__%i_ = \\su__%j=1..%i_ %e__%j_).")
@@ -2221,23 +2221,23 @@ MAN_END
 MAN_BEGIN (U"Eigen: Draw eigenvector...", U"djmw", 20160223)
 INTRO (U"A command to draw an eigenvector from the selected @Eigen.")
 ENTRY (U"Settings")
-TAG (U"##Eigenvector number")
+TERM (U"##Eigenvector number")
 DEFINITION (U"determines the eigenvector to be drawn.")
-TAG (U"%Component %loadings")
+TERM (U"%Component %loadings")
 DEFINITION (U"when on, the eigenvector is multiplied with the square root of the corresponding "
 	"eigenvalue. (For @@PCA@-analysis this means that you will draw the so called "
 	"%%component loading vector%. You will be able to compare "
 	"quantitatively the elements in different component loading vectors because "
 	"the %i-th element in the %j-th component loading vector gives the covariance between the %i-th "
 	"original variable and the %j-th principal component.)")
-TAG (U"##Element range#")
+TERM (U"##Element range#")
 DEFINITION (U"determine the first and last element of the vector that should be drawn.")
-TAG (U"##Minimum# and ##Maximum#")
+TERM (U"##Minimum# and ##Maximum#")
 DEFINITION (U"determine the lower and upper bounds of the plot (choosing #Maximum smaller than #Minimum "
 	"will draw the %%inverted% eigenvector). ")
-TAG (U"##Mark size#, ##Mark string#")
+TERM (U"##Mark size#, ##Mark string#")
 DEFINITION (U"determine size and type of the marks that will be drawn.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"determines whether a bounding box and margins will be drawn.")
 MAN_END
 
@@ -2270,11 +2270,11 @@ MAN_END
 MAN_BEGIN (U"Eigen: Extract eigenvector...", U"djmw", 20160617)
 INTRO (U"Extract a specified eigenvector from the @Eigen as a @Matrix.")
 ENTRY (U"Settings")
-TAG (U"##Eigenvector number")
+TERM (U"##Eigenvector number")
 DEFINITION (U"determines the eigenvector.")
-TAG (U"##Number of rows")
+TERM (U"##Number of rows")
 DEFINITION (U"determines the number of rows of the newly created Matrix. If left 0, the number of rows is determined from the dimension, i.e. the number of elements, of the eigenvector and the #numberOfColumns argument as the %dimension / %numberOfColumns, rounded to the next larger integer.")
-TAG (U"##Number of columns")
+TERM (U"##Number of columns")
 DEFINITION (U"determines the number of columns of the newly created Matrix. If left 0, the number of columns is determined by from the dimension, i.e. the number of elements, of the eigenvector and the #numberOfRows argument as  %dimension / %numberOfRows, rounded to the next larger integer.\nIf both ##Number of rows# and ##Number of columns# are zero, a Matrix with only one row and %dimension columns will be created.")
 ENTRY (U"Examples")
 NORMAL (U"Suppose we have an eigenvector of dimension 3 with elements {0.705, 0.424, 0.566}, then the newly created Matrix will depend on the ##Number of rows# and ##Number of columns# argument as follows:")
@@ -2298,7 +2298,7 @@ MAN_BEGIN (U"Eigen & Matrix: To Matrix (project columns)...", U"djmw", 20160223)
 INTRO (U"A command to project the columns of the @Matrix object onto the "
 	"eigenspace of the @Eigen object.")
 ENTRY (U"Setting")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"defines the dimension, i.e., the number of rows, of the "
 	"resulting Matrix object.")
 ENTRY (U"Algorithm")
@@ -2316,7 +2316,7 @@ MAN_BEGIN (U"Eigen & Matrix: To Matrix (project rows)...", U"djmw", 20160223)
 INTRO (U"A command to project the rows of the @Matrix object onto the "
 	"eigenspace of the @Eigen object.")
 ENTRY (U"Setting")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"defines the dimension, i.e., the number of columns, of the "
 	"resulting Matrix object.")
 ENTRY (U"Algorithm")
@@ -2348,7 +2348,7 @@ MAN_BEGIN (U"Eigen & TableOfReal: Project...", U"djmw", 20040407)
 INTRO (U"A command to project the rows of the @TableOfReal object onto the "
 	"eigenspace of the @Eigen object.")
 ENTRY (U"Setting")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"defines the number of dimensions, i.e., the number of columns, of the "
 	"resulting object.")
 ENTRY (U"Algorithm")
@@ -2389,9 +2389,9 @@ MAN_END
 MAN_BEGIN (U"Electroglottogram: High-pass filter...", U"djmw", 20190827)
 INTRO (U"Applies a high-pass filter to the Electroglottogram to filter away signal artifacts like baseline and amplitude drifts.")
 ENTRY (U"Settings")
-TAG (U"##From frequency (Hz)#")
+TERM (U"##From frequency (Hz)#")
 DEFINITION (U"Frequencies lower than this frequency are suppressed.")
-TAG (U"##Smoothing (Hz)")
+TERM (U"##Smoothing (Hz)")
 DEFINITION (U"defines the width of the transition area between fully suppressed and fully passed "
 	"frequencies. Frequencies below %%fromFrequency% will be fully suppressed, frequencies larger "
 	"than %%fromFrequency%+%%smoothing% will be fully passed.")
@@ -2400,7 +2400,7 @@ MAN_END
 MAN_BEGIN (U"Electroglottogram: First central difference...", U"djmw", 20230323)
 INTRO (U"Calculates an approximation of the derivative of the @@Electroglottogram@.")
 ENTRY (U"Settings")
-TAG (U"##New absolute peak")
+TERM (U"##New absolute peak")
 DEFINITION (U"defines the absolute peak of the approximate derivative. A value of 0.0 prevents scaling.")
 ENTRY (U"Algorithm")
 NORMAL (U"We take the first central difference, "
@@ -2411,15 +2411,15 @@ MAN_END
 MAN_BEGIN (U"Electroglottogram: To TextGrid (closed glottis)...", U"djmw", 20221115)
 INTRO (U"Calculates the intervals where the glottis is closed from the selected @@Electroglottogram@.")
 ENTRY (U"Settings")
-TAG (U"##Pitch floor (Hz)#")
+TERM (U"##Pitch floor (Hz)#")
 DEFINITION (U"intervals with a lower pitch will not be considered. ")
-TAG (U"##Pitch ceiling (Hz)#")
+TERM (U"##Pitch ceiling (Hz)#")
 DEFINITION (U"intervals with a higher pitch will not be considered.")
-TAG (U"##Closing threshold#")
+TERM (U"##Closing threshold#")
 DEFINITION (U"the moment of closing of the vocal folds will be taken at a fixed point between a cycle's peak and valley amplitude level.")
 PICTURE (4.0, 3.0, Electroglottogram_drawStylizedLevels)
 DEFINITION (U"The picture shows, for a %%closingThreshold% value of 0.3, the Closed Glottis Interval that starts at time %t__1_ and ends at time %t__2_. These times were found by calculating the two level crossings at amplitude %%valley+closingThreshold(peak\\--valley)%.")
-TAG (U"##Peak threshold#")
+TERM (U"##Peak threshold#")
 DEFINITION (U"cycles with peaks whose relative amplitudes with respect to the maximum peak are lower than this value are not considered.")
 ENTRY (U"Algorithm")
 NORMAL (U"The algorithm first tries to find peaks and valleys, guided by the settings for the pitch floor and ceiling. From the level crossings before and after a peak the times of glottal closing and opening are determined.")
@@ -2449,11 +2449,11 @@ MAN_END
 MAN_BEGIN (U"Electroglottogram: To AmplitudeTier (levels)...", U"djmw", 20190831)
 INTRO (U"For the selected @@Electroglottogram@, according to the chosen value of the %%closing threshold%, the amplitude at the moment of glottal closure in each glottal cycle is calculated as a proportion of the difference between the values at the peak and the valley of each cycle.")
 ENTRY (U"Settings")
-TAG (U"##Pitch floor (Hz)#")
+TERM (U"##Pitch floor (Hz)#")
 DEFINITION (U"defines the lowest pitch we want to consider.")
-TAG (U"##Pitch ceiling (Hz)#")
+TERM (U"##Pitch ceiling (Hz)#")
 DEFINITION (U"defines the highest pitch we want to consider.")
-TAG (U"##Closing threshold (0-1)#")
+TERM (U"##Closing threshold (0-1)#")
 DEFINITION (U"defines the relative amplitude in each glottal cycle where the moment of glottal closure will be chosen. ")
 MAN_END
 
@@ -2491,7 +2491,7 @@ MAN_END
 MAN_BEGIN (U"Excitations: To PatternList...", U"djmw", 19960918)
 INTRO (U"A command to convert every selected @Excitations to a @PatternList object.")
 ENTRY (U"Setting")
-TAG (U"##Join")
+TERM (U"##Join")
 DEFINITION (U"the number of subsequent @Excitation objects to combine into one row of @PatternList. "
 	"E.g. if an #Excitation has length 26 and %join = 2 then each row of #PatternList "
 	"contains 52 elements. The number of rows in #PatternList will be %%my size% / 2. "
@@ -2550,14 +2550,14 @@ INTRO (U"For %m > %n, the %%generalized singular value decomposition% (gsvd) of 
 	"a %p \\xx %n matrix #%B is given by the pair of factorizations")
 EQUATION (U"#%A = #%U #%D__1_ [#%0, #%R] #%Q\\'p and #%B = #%V #%D__2_ [#%0, #%R] #%Q\\'p")
 NORMAL (U"The matrices in these factorizations have the following properties:")
-TAG (U"\\bu #%U [%m \\xx %m], #%V [%p \\xx %p] and #%Q [%n \\xx %n]")
+TERM (U"\\bu #%U [%m \\xx %m], #%V [%p \\xx %p] and #%Q [%n \\xx %n]")
 DEFINITION (U" are orthogonal matrices. In the reconstruction formula's above we maximally need "
 	"only the first %n columns of matrices #%U and #%V (when %m and/or %p are greater than %n).")
-TAG (U"\\bu #%R [%r \\xx %r],")
+TERM (U"\\bu #%R [%r \\xx %r],")
 DEFINITION (U"is an upper triangular nonsingular matrix. %r is the rank of [#%A\\'p, #%B\\'p]\\'p "
 	"and %r \\<_ %n. The matrix [#%0, #%R] is %r \\xx %n and its first %n \\xx (%n \\-- %r) part "
 	"is a zero matrix.")
-TAG (U"\\bu #%D__1_ [%m \\xx %r] and #%D__2_ [%p \\xx %r]")
+TERM (U"\\bu #%D__1_ [%m \\xx %r] and #%D__2_ [%p \\xx %r]")
 DEFINITION (U"are real, nonnegative and \"diagonal\".")
 NORMAL (U"In practice, the matrices #%D__1_ and #%D__2_ are never used. Instead a shorter "
 	"representation with numbers %\\al__%i_ and %\\be__%i_ is used. These numbers obey "
@@ -2716,15 +2716,15 @@ MAN_END
 MAN_BEGIN (U"Matrix: Draw distribution...", U"djmw", 20041110)
 INTRO (U"A command to draw the distribution histogram of the values in the selected part of a @Matrix.")
 ENTRY (U"Settings")
-TAG (U"##Horizontal range#, ##Vertical range#")
+TERM (U"##Horizontal range#, ##Vertical range#")
 DEFINITION (U"determine the part of the matrix whose distribution will be drawn.")
-TAG (U"##Minimum value#, ##Maximum value#")
+TERM (U"##Minimum value#, ##Maximum value#")
 DEFINITION (U"determine the range of values that will be considered in the distribution. "
 	"To treat all bin widths equally, the range will include the %%Minimum value% and exclude the "
 	"%%Maximum value% (see below).")
-TAG (U"##Number of bins")
+TERM (U"##Number of bins")
 DEFINITION (U"determines the number of bars in the distribution histogram.")
-TAG (U"##Minimum frequency#, ##Maximum frequency#")
+TERM (U"##Minimum frequency#, ##Maximum frequency#")
 DEFINITION (U"determine the limits of the vertical axis.")
 ENTRY (U"Algorithm")
 NORMAL (U"For a particular matrix element %z, the histogram bin number %%i% that will be incremented obeys the following relation:")
@@ -2835,9 +2835,9 @@ INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization 
 ENTRY (U"Algorithms for computing NMF")
 NORMAL (U"More backgroud on the algorithms used can be found in @@Berry et al. (2007)@")
 NORMAL (U"The algorithms fall into three general classes:")
-TAG (U"##1. Multiplicative updates#,")
-TAG (U"##2. Alternating Least squares#,")
-TAG (U"##3. Projected Gradient.#")
+TERM (U"##1. Multiplicative updates#,")
+TERM (U"##2. Alternating Least squares#,")
+TERM (U"##3. Projected Gradient.#")
 ENTRY (U"Multiplicative Updates")
 CODE (U"initialize F and W")
 CODE (U"while iter < maxinter and not convergence")
@@ -2896,12 +2896,12 @@ LIST_ITEM (U"\\bu @@TableOfReal: To PCA@")
 ENTRY (U"Inside a PCA")
 NORMAL (U"With @Inspect you will see that this type contains the same "
 	"attributes as an @Eigen with the following extras:")
-TAG (U"%numberOfObservations")
+TERM (U"%numberOfObservations")
 DEFINITION (U"the number of observations in the multivariate dataset that originated the PCA, "
 	"usually equal to the dataset's number of rows.")
-TAG (U"%labels[1..%dimension]")
+TERM (U"%labels[1..%dimension]")
 DEFINITION (U"the label that corresponds to each dimension.")
-TAG (U"%centroid")
+TERM (U"%centroid")
 DEFINITION (U"the centroids of the originating multivariate data set.")
 MAN_END
 
@@ -2909,7 +2909,7 @@ MAN_BEGIN (U"PCA: Get fraction variance accounted for...", U"djmw", 19990106)
 INTRO (U"A command to query the selected @PCA for the fraction %%variance "
 	"accounted for% by the selected components.")
 ENTRY (U"Setting")
-TAG (U"##Principal component range")
+TERM (U"##Principal component range")
 DEFINITION (U"defines the range of the principal components. If you choose both numbers equal, "
 	"you get the fraction of the \"variance\" explained by that one component.")
 ENTRY (U"Details")
@@ -2937,9 +2937,9 @@ NORMAL (U"We test the hypothesis %H__0_: %\\la__%from_ = ... = %\\la__%to_ "
 	"values and multiplicities. The alternative hypothesis to %H__0_ is that "
 	"some of the eigenvalues in the set are distinct.")
 ENTRY (U"Settings")
-TAG (U"##Eigenvalue range")
+TERM (U"##Eigenvalue range")
 DEFINITION (U"define the range of eigenvalues to be tested for equality.")
-TAG (U"##Conservative test")
+TERM (U"##Conservative test")
 DEFINITION (U"when on, a more conservative estimate for %n is chosen (see below).")
 ENTRY (U"Details")
 NORMAL (U"The test statistic is:")
@@ -2956,7 +2956,7 @@ INTRO (U"A command to ask the selected @PCA for the minimum number of "
 	"components that are necessary "
 	"to explain the given fraction %%variance accounted for%.")
 ENTRY (U"Setting")
-TAG (U"##Variance accounted for (fraction)")
+TERM (U"##Variance accounted for (fraction)")
 DEFINITION (U"the fraction variance accounted for that should be explained.")
 MAN_END
 
@@ -2964,7 +2964,7 @@ MAN_BEGIN (U"PCA: To TableOfReal (reconstruct 1)...", U"djmw", 20030108)
 INTRO (U"A command to reconstruct a single data item. The result is stored as "
 	"a @TableOfReal with only one row.")
 ENTRY (U"Settings")
-TAG (U"##Coefficients")
+TERM (U"##Coefficients")
 DEFINITION (U"the weight for the eigenvectors.")
 NORMAL (U"The algorithm is explained in @@PCA & Configuration: To TableOfReal "
 	"(reconstruct)@.")
@@ -3008,7 +3008,7 @@ MAN_BEGIN (U"PCA & TableOfReal: To Configuration...", U"djmw", 19990111)
 INTRO (U"A command to construct a @Configuration from the selected @TableOfReal"
 	" and @PCA.")
 ENTRY (U"Setting")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"determines the number of dimensions of the resulting Configuration.")
 ENTRY (U"Algorithm")
 NORMAL (U"The TableOfReal is projected on the eigenspace of the PCA, i.e., "
@@ -3024,7 +3024,7 @@ MAN_BEGIN (U"PCA & TableOfReal: To TableOfReal (z-scores)...", U"djmw", 20211129
 INTRO (U"A command to construct a @TableOfReal with z-scores from the selected @TableOfReal"
 	" and @PCA.")
 ENTRY (U"Setting")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"determines how many eigenvectors to use in the calculation of the z-scores and therefore the number "
 	"of columns of the resulting TableOfReal.")
 ENTRY (U"Algorithm")
@@ -3073,11 +3073,11 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (11), U""
 	"y += 40\n" \
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Pitch frequency unit",U"Hertz")
 )
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the start and end time of the interval where the changes will be applied.")
-TAG (U"##Relative times")
+TERM (U"##Relative times")
 DEFINITION (U"determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.")
-TAG (U"##...are...")
+TERM (U"##...are...")
 DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calculated. The time of each new pitch point is determined "
 	"by adding to the start time of the interval a time calculated from the relative time value. If %%t%__min_ and %%t%__max_ are "
 	"the start and end time of the interval and %%r%__i_ is the %%i%^^th^ relative time, the times %t__%i_ are calculated according "
@@ -3088,9 +3088,9 @@ TAG1 (U"%%percentages%")
 DEFINITION1 (U"%%t%__%i_ = %t__min_+ 0.01 %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are percentages of the interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%independent%")
 DEFINITION1 (U"%%t%__%i_ = %t__min_ + %r__%i_. The relative time values specify an offset in seconds here. ")
-TAG (U"##The \"pitch\" values")
+TERM (U"##The \"pitch\" values")
 DEFINITION (U"determine, together with the next two options, the frequency value of the new pitch points. Each value here must link to the corresponding time value.")
-TAG (U"##...are...")
+TERM (U"##...are...")
 DEFINITION (U"determines the interpretation of the \"pitch\" value. Possible choices are")
 TAG1 (U"%%frequencies%")
 DEFINITION1 (U"the values are frequencies in hertz.")
@@ -3110,7 +3110,7 @@ DEFINITION1 (U"the values are music notes specified on the twelve tone scale as 
 	"and 9 the highest. The a4 is choosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below "
 	"the a4 and corresponds to a frequency of 27.5 Hz. As a scale of reference we give a0 = 27.5 Hz, a1 = 55 Hz, a2 = 110 Hz, "
 	"a3 = 220 Hz, a4 = 440 Hz, a5 = 880 Hz, a6 = 1760 Hz, a7 = 3520 Hz, a8 = 7040 Hz and a9 = 14080 Hz.")
-TAG (U"##...which is the...")
+TERM (U"##...which is the...")
 DEFINITION (U"the anchor point value, if used. The following options may be given for the anchor point frequency value:")
 TAG1 (U"%%not used%")
 DEFINITION1 (U"no anchor point frequency value is necessary. The previous two options are sufficient to determine the new pitch "
@@ -3129,7 +3129,7 @@ TAG1 (U"%%maximum%")
 DEFINITION1 (U"the maximum pitch frequency in the interval.")
 TAG1 (U"%%minimum%")
 DEFINITION1 (U"the minimum pitch frequency in the interval.")
-TAG (U"##Pitch frequency unit")
+TERM (U"##Pitch frequency unit")
 DEFINITION (U"Hertz")
 MAN_END
 
@@ -3157,13 +3157,13 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (8), U""
 	"y += 40\n" \
 	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Tone levels", U"2.1 2.1 5.0")
 )
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the start and end time of the interval where the changes will be applied.")
-TAG (U"##Pitch range (Hz)")
+TERM (U"##Pitch range (Hz)")
 DEFINITION (U"The minimum and maximum frequency to which the tone levels refer.")
-TAG (U"##Number of tone levels")
+TERM (U"##Number of tone levels")
 DEFINITION (U"The number of levels into which the pitch range is divided.")
-TAG (U"##Relative times")
+TERM (U"##Relative times")
 DEFINITION (U"determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.")
 DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calculated. The time of each new pitch point is "
 	"determined by adding to the start time of the interval a time calculated from the relative time value. If %%t%__min_ and "
@@ -3178,7 +3178,7 @@ DEFINITION (U"%%t%__%i_ = %t__min_+ 0.01 %r__%i_ (%t__max_ \\-- %t__min_). The r
 TAG1 (U"%%independent%")
 DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_. The relative time values specify an offset in seconds here. ")
 
-TAG (U"##Tone levels")
+TERM (U"##Tone levels")
 DEFINITION (U"specify the frequencies at the corresponding time points as tone levels.")
 ENTRY (U"Algorithm")
 NORMAL (U"1. The real times are calculated from the relative times.")
@@ -3260,7 +3260,7 @@ MAN_END
 MAN_BEGIN (U"Polynomial: Get area...", U"djmw", 19990610)
 INTRO (U"A command to compute the area below the selected @Polynomial object.")
 ENTRY (U"Settings")
-TAG (U"##Xmin#, ##Xmax#")
+TERM (U"##Xmin#, ##Xmax#")
 DEFINITION (U"define the interval.")
 NORMAL (U"The area is defined as __%xmin_\\in^^xmax^ %p(%x) %dx.")
 MAN_END
@@ -3305,7 +3305,7 @@ MAN_END
 
 MAN_BEGIN (U"Polynomial: Scale x...", U"djmw", 19990610)
 INTRO (U"A command to transform the selected @Polynomial object to a new domain.")
-TAG (U"##Xmin# and ##Xmax#")
+TERM (U"##Xmin# and ##Xmax#")
 DEFINITION (U"define the new domain.")
 ENTRY (U"Behaviour")
 NORMAL (U"The polynomial is transformed from domain [%x__min_, %x__max_] to "
@@ -3328,10 +3328,10 @@ MAN_END
 MAN_BEGIN (U"Polynomial: To Spectrum...", U"djmw", 19990616)
 INTRO (U"A command to compute the @@Spectrum|spectrum@ of the selected @Polynomial objects.")
 ENTRY (U"Settings")
-TAG (U"##Nyquist frequency (Hz)")
+TERM (U"##Nyquist frequency (Hz)")
 DEFINITION (U"defines the highest frequency in the spectrum. The lowest frequency of the spectrum "
 	"will be 0 Hz.")
-TAG (U"##Number of frequencies")
+TERM (U"##Number of frequencies")
 DEFINITION (U"defines the number of frequencies in the spectrum.")
 ENTRY (U"Algorithm")
 NORMAL (U"We calculate the spectrum by evaluating the polynomial at regularly spaced points %z__%k_ "
@@ -3478,7 +3478,7 @@ MAN_END
 MAN_BEGIN (U"Regular expressions 1. Special characters", U"djmw", 20010718)
 INTRO (U"The following characters are the %meta characters that give special "
 	"meaning to the regular expression search syntax:")
-TAG (U"#\\bs#   the backslash %escape character.")
+TERM (U"#\\bs#   the backslash %escape character.")
 DEFINITION (U"The backslash gives special meaning to the character "
 	"following it. For example, the combination \"\\bsn\" stands for the "
 	"%newline, one of the @@Regular expressions 5. Special control characters"
@@ -3492,18 +3492,18 @@ LIST_ITEM1 (U"Example: The regex \"aa\\bsn\" tries to match two consecutive "
 	"\"a\"s at the end of a line, inclusive the newline character itself.")
 LIST_ITEM1 (U"Example: \"a\\bs+\" matches \"a+\" and not a series of one or "
 	"\"a\"s.")
-TAG (U"##\\^ #    the caret is the @@Regular expressions 3. "
+TERM (U"##\\^ #    the caret is the @@Regular expressions 3. "
 	"Anchors|anchor@ for the start of the string, or the negation symbol.")
 LIST_ITEM1 (U"Example: \"\\^ a\" matches \"a\" at the start of the string.")
 LIST_ITEM1 (U"Example: \"[\\^ 0-9]\" matches any non digit.")
-TAG (U"##\\$ #    the dollar sign is the @@Regular expressions 3. "
+TERM (U"##\\$ #    the dollar sign is the @@Regular expressions 3. "
 	"Anchors|anchor@ for the end of the string.")
 LIST_ITEM1 (U"Example: \"b\\$ \" matches a \"b\" at the end of a line.")
 LIST_ITEM1 (U"Example: \"\\^ \\$ \" matches the empty string.")
-TAG (U"##{ }#    the opening and closing curly brackets are used as range @@Regular "
+TERM (U"##{ }#    the opening and closing curly brackets are used as range @@Regular "
 	"expressions 2. Quantifiers|quantifiers@.")
 LIST_ITEM1 (U"Example: \"a{2,3}\" matches \"aa\" or \"aaa\".")
-TAG (U"##[ ]#    the opening and closing square brackets define a character class to "
+TERM (U"##[ ]#    the opening and closing square brackets define a character class to "
 	"match a %single character.")
 DEFINITION (U"The \"\\^ \" as the first character following the \"[\" negates, "
 	"and the match is for the characters %not listed. "
@@ -3520,7 +3520,7 @@ LIST_ITEM1 (U"Example: A search for \"[][()?<>\\$ \\^ .*?\\^ ]\" in the string "
 	"\"rrrrrrrrrrrrr\". Here the search string is %one character class and "
 	"all the meta characters are interpreted as ordinary characters without "
 	"the need to escape them.")
-TAG (U"##( )#    the opening and closing parenthes3s are used for grouping "
+TERM (U"##( )#    the opening and closing parenthes3s are used for grouping "
 	"characters (or other regexes).")
 DEFINITION (U"The groups can be referenced in "
 	"both the search and the @@Regular expressions 8. Substitution special "
@@ -3528,43 +3528,43 @@ DEFINITION (U"The groups can be referenced in "
 	"expressions 4. Special constructs with parentheses|special constructs "
 	"with parentheses@.")
 LIST_ITEM1 (U"Example: \"(ab)\\bs1\" matches \"abab\".")
-TAG (U"##.#    the dot matches any character except the newline symbol.")
+TERM (U"##.#    the dot matches any character except the newline symbol.")
 LIST_ITEM1 (U"Example: \".a\" matches two consecutive characters where "
 	"the last one is \"a\".")
 LIST_ITEM1 (U"Example: \".*\\bs.txt\\$ \" matches all strings that end in "
 	"\".txt\".")
-TAG (U"##*#    the asterisk is the match-zero-or-more @@Regular expressions 2. "
+TERM (U"##*#    the asterisk is the match-zero-or-more @@Regular expressions 2. "
 	"Quantifiers|quantifier@.")
 LIST_ITEM1 (U"Example: \"\\^ .*\\$ \" matches an entire line. ")
-TAG (U"##+#    the plus sign is the match-one-or-more quantifier.")
-TAG (U"##?#    the question mark is the match-zero-or-one "
+TERM (U"##+#    the plus sign is the match-one-or-more quantifier.")
+TERM (U"##?#    the question mark is the match-zero-or-one "
 	"quantifier. The question mark is also used in  "
 	"@@Regular expressions 4. Special constructs with parentheses|special "
 	"constructs with parentheses@ and in @@Regular expressions 2. "
 	"Quantifiers|changing match behaviour@.")
-TAG (U"##\\| #    the vertical pipe separates a series of alternatives.")
+TERM (U"##\\| #    the vertical pipe separates a series of alternatives.")
 LIST_ITEM1 (U"Example: \"(a|b|c)a\" matches \"aa\" or \"ba\" or \"ca\".")
-TAG (U"##< >#    the smaller and greater signs are @@Regular expressions 3. "
+TERM (U"##< >#    the smaller and greater signs are @@Regular expressions 3. "
 	"Anchors|anchors@ that specify a left or right word boundary.")
-TAG (U"##-#    the minus sign indicates a range in a character class (when it is "
+TERM (U"##-#    the minus sign indicates a range in a character class (when it is "
 	"not at the first position after the \"[\" opening bracket or the last "
 	"position before the \"]\" closing bracket.")
 LIST_ITEM1 (U"Example: \"[A-Z]\" matches any uppercase character.")
 LIST_ITEM1 (U"Example: \"[A-Z-]\" or \"[-A-Z]\" match any uppercase character "
 	"or \"-\".")
-TAG (U"##&#    the ampersand is the \"substitute complete match\" symbol.")
+TERM (U"##&#    the ampersand is the \"substitute complete match\" symbol.")
 MAN_END
 
 MAN_BEGIN (U"Regular expressions 2. Quantifiers", U"djmw", 20010708)
 INTRO (U"Quantifiers specify how often the preceding @@Regular expressions|"
 	"regular expression@ should match.")
-TAG (U"##*#   Try to match the preceding regular expression zero or more times.")
+TERM (U"##*#   Try to match the preceding regular expression zero or more times.")
 LIST_ITEM1 (U"Example: \"(ab)c*\" matches \"ab\" followed by zero or more "
 	"\"c\"s, i.e., \"ab\", \"abc\", \"abcc\", \"abccc\" ...")
-TAG (U"##+#   Try to match the preceding regular expression one or more times.")
+TERM (U"##+#   Try to match the preceding regular expression one or more times.")
 LIST_ITEM1 (U"Example: \"(ab)c+\" matches \"ab\" followed by one or more "
 	"\"c\"s, i.e., \"abc\", \"abcc\", \"abccc\" ...")
-TAG (U"##{%m, %n}#   Try to match the preceding regular expression between %m "
+TERM (U"##{%m, %n}#   Try to match the preceding regular expression between %m "
 	"and %n times.")
 DEFINITION (U"If you leave %m out, it is assumed to be zero. If you leave "
 	"%n out it is assumed to be infinity. I.e., \"{,%n}\" matches from %zero "
@@ -3572,7 +3572,7 @@ DEFINITION (U"If you leave %m out, it is assumed to be zero. If you leave "
 	"the same as \"*\" and \"{n}\" is shorthand for \"{n, n\"} and matches "
 	"exactly %n times.")
 LIST_ITEM1 (U"Example: \"(ab){1,2}\" matches \"ab\" and \"abab\".")
-TAG (U"##?#   Try to match zero or one time.")
+TERM (U"##?#   Try to match zero or one time.")
 ENTRY (U"Changing match behaviour")
 NORMAL (U"Default the quantifiers above try to match as much as possible, they "
 	"are %greedy. "
@@ -3587,39 +3587,39 @@ MAN_END
 MAN_BEGIN (U"Regular expressions 3. Anchors", U"DAvid Weenink & Paul Boersma", 20180401)
 INTRO (U"Anchors let you specify a very specific position within the search "
 	"text.")
-TAG (U"##\\^ #   Try to match the (following) regex at the beginning of the string.")
+TERM (U"##\\^ #   Try to match the (following) regex at the beginning of the string.")
 LIST_ITEM1 (U"Example: \"\\^ ab\" matches \"ab\" only at the beginning of a "
 	"line and not, for example, in the line \"cab\".")
-TAG (U"##\\$ #   Try to match the (following) regex at the end of the string.")
-TAG (U"##<#    Try to match the regex at the %start of a word.")
+TERM (U"##\\$ #   Try to match the (following) regex at the end of the string.")
+TERM (U"##<#    Try to match the regex at the %start of a word.")
 DEFINITION (U"The character class that defines a %word can be found at the "
 	"@@Regular expressions 6. Convenience escape sequences|convenience escape "
 	"sequences@ page.")
-TAG (U"##>#    Try to match the regex at the %end of a word.")
-TAG (U"##\\bsB#   Not a word boundary")
+TERM (U"##>#    Try to match the regex at the %end of a word.")
+TERM (U"##\\bsB#   Not a word boundary")
 MAN_END
 
 MAN_BEGIN (U"Regular expressions 4. Special constructs with parentheses", U"djmw",
 	20010710)
 INTRO (U"Some special constructs exist with parentheses. ")
-TAG (U"##(?:#%regex#)#   is a grouping-only construct.")
+TERM (U"##(?:#%regex#)#   is a grouping-only construct.")
 DEFINITION (U"They exist merely for efficiency reasons and facilitate grouping.")
-TAG (U"##(?=#%regex#)#   is a positive look-ahead.")
+TERM (U"##(?=#%regex#)#   is a positive look-ahead.")
 DEFINITION (U"A match of the regular expression contained in the positive "
 	"look-ahead construct is attempted. If the match succeeds, control is "
 	"passed to the regex following this construct and the text consumed by "
 	"this look-ahead construct is first unmatched. ")
-TAG (U"##(?!#%regex#)#   is a negative look-ahead.")
+TERM (U"##(?!#%regex#)#   is a negative look-ahead.")
 DEFINITION (U"Functions like a positive look-ahead, only the "
 	"%regex must %not match.")
 LIST_ITEM (U"Example: \"abc(?!.*abc.*)\" searches for the %last "
 	"occurrence of \"abc\" in a string.")
-TAG (U"##(?i#%regex#)#   is a case insensitive regex.")
-TAG (U"##(?I#%regex#)#   is a case sensitive regex.")
+TERM (U"##(?i#%regex#)#   is a case insensitive regex.")
+TERM (U"##(?I#%regex#)#   is a case sensitive regex.")
 DEFINITION (U"Default a regex is case sensitive. ")
 LIST_ITEM1 (U"Example: \"(?iaa)\" matches \"aa\", \"aA\", \"Aa\" and \"AA\".")
-TAG (U"##(?n#%regex#)#   matches newlines.")
-TAG (U"##(?N#%regex#)#   doesn't match newlines.")
+TERM (U"##(?n#%regex#)#   matches newlines.")
+TERM (U"##(?N#%regex#)#   doesn't match newlines.")
 NORMAL (U"All the constructs above do not capture text and cannot be "
 	"referenced, i.e., the parentheses are not counted. However, you "
 	"can make them capture text by surrounding them with %ordinary "
@@ -3629,37 +3629,37 @@ MAN_END
 MAN_BEGIN (U"Regular expressions 5. Special control characters", U"djmw", 20010708)
 INTRO (U"Special control characters in a @@Regular expressions|regular "
 	"expression@ specify characters that are difficult to type.")
-TAG (U"#\\bsa  alert (bell).")
-TAG (U"#\\bsb  backspace.")
-TAG (U"#\\bse  ASCII escape character.")
-TAG (U"#\\bsf  form feed (new page).")
-TAG (U"#\\bsn  newline.")
-TAG (U"#\\bsr  carriage return.")
+TERM (U"#\\bsa  alert (bell).")
+TERM (U"#\\bsb  backspace.")
+TERM (U"#\\bse  ASCII escape character.")
+TERM (U"#\\bsf  form feed (new page).")
+TERM (U"#\\bsn  newline.")
+TERM (U"#\\bsr  carriage return.")
 LIST_ITEM1 (U"Example : a search for \"\\bsr\\bsn\" followed by a replace "
 	"\"\\bsr\" changes Windows text files to Macintosh text files.")
 LIST_ITEM1 (U"Example : a search for \"\\bsr\" followed by a replace "
 	"\"\\bsn\" changes Macintosh text files to Unix text files.")
 LIST_ITEM1 (U"Example : a search for \"\\bsr\\bsn\" followed by a replace "
 	"\"\\bsn\" changes Windows text files to Unix text files.")
-TAG (U"#\\bst  horizontal tab.")
-TAG (U"#\\bsv  vertical tab.")
+TERM (U"#\\bst  horizontal tab.")
+TERM (U"#\\bsv  vertical tab.")
 MAN_END
 
 MAN_BEGIN (U"Regular expressions 6. Convenience escape sequences", U"djmw", 20010708)
 INTRO (U"Convenience escape sequences in a @@Regular expressions|regular "
 	"expression@ present a shorthand for some character classes.")
-TAG (U"#\\bsd  matches a digit: [0-9].")
+TERM (U"#\\bsd  matches a digit: [0-9].")
 LIST_ITEM1 (U"Example: \"-?\\bsd+\" matches any integer.")
-TAG (U"#\\bsD  %not a digit: [\\^ 0-9].")
-TAG (U"#\\bsl  a letter: [a-zA-Z].")
-TAG (U"#\\bsL  %not a letter: [\\^ a-zA-Z].")
-TAG (U"#\\bss  whitespace: [ \\bst\\bsn\\bsr\\bsf\\bsv].")
-TAG (U"#\\bsS  %not whitespace: [\\^  \\bst\\bsn\\bsr\\bsf\\bsv].")
-TAG (U"#\\bsw  \"word\" character: [a-zA-Z0-9\\_ ].")
+TERM (U"#\\bsD  %not a digit: [\\^ 0-9].")
+TERM (U"#\\bsl  a letter: [a-zA-Z].")
+TERM (U"#\\bsL  %not a letter: [\\^ a-zA-Z].")
+TERM (U"#\\bss  whitespace: [ \\bst\\bsn\\bsr\\bsf\\bsv].")
+TERM (U"#\\bsS  %not whitespace: [\\^  \\bst\\bsn\\bsr\\bsf\\bsv].")
+TERM (U"#\\bsw  \"word\" character: [a-zA-Z0-9\\_ ].")
 LIST_ITEM1 (U"Example: \"\\bsw+\" matches a \"word\", i.e., a string of one "
 	"or more characters that may consist of letters, digits and underscores.")
-TAG (U"#\\bsW  %not a \"word\" character: [\\^ a-zA-Z0-9\\_ ].")
-TAG (U"#\\bsB  any character that is %not a word-delimiter.")
+TERM (U"#\\bsW  %not a \"word\" character: [\\^ a-zA-Z0-9\\_ ].")
+TERM (U"#\\bsB  any character that is %not a word-delimiter.")
 MAN_END
 
 MAN_BEGIN (U"Regular expressions 7. Octal and hexadecimal escapes", U"djmw", 20010709)
@@ -3678,7 +3678,7 @@ INTRO (U"The substitution string is mostly interpreted as ordinary text except "
 	"special control characters@, the @@Regular expressions 7. Octal and "
 	"hexadecimal escapes|octal and hexadecimal escapes@ and the following "
 	"character combinations:")
-TAG (U"#\\bs1 ... #\\bs9    are backreferences at sub-expressions 1 ... 9 in the match.")
+TERM (U"#\\bs1 ... #\\bs9    are backreferences at sub-expressions 1 ... 9 in the match.")
 DEFINITION (U"Any of the first nine sub-expressions of the match string can "
 	"be inserted into the replacement string by inserting a `\\bs' followed "
 	"by a digit from 1 to 9 that represents the string matched by a "
@@ -3686,19 +3686,19 @@ DEFINITION (U"Any of the first nine sub-expressions of the match string can "
 	"is left to right.")
 LIST_ITEM1 (U"Example: A search for \"(a)(b)\" in the string \"abc\", "
 	"followed by a replace \"\\bs2\\bs1\" results in \"bac\".")
-TAG (U"#&    reference at entire match.")
+TERM (U"#&    reference at entire match.")
 DEFINITION (U"The entire string that was matched by the search operation will "
 	"be substituted.")
 LIST_ITEM1 (U"Example: a search for \".\" in the string \"abcd\" followed by "
 	"the replace \"&&\" doubles every character in the result "
 	"\"aabbccdd\".")
-TAG (U"#\\bsU #\\bsu    to uppercase.")
+TERM (U"#\\bsU #\\bsu    to uppercase.")
 DEFINITION (U"The text inserted by \"&\" or \"\\bs1\" ... \"\\bs9\" is "
 	"converted to %uppercase (\"\\bsu\" only changes the %first character to "
 	"uppercase).")
 LIST_ITEM1 (U"Example: A search for \"(aa)\" in the string \"aabb\", "
 	"followed by a replace \"\\bsU\\bs1bc\" results in the string \"AAbcbb\".")
-TAG (U"#\\bsL #\\bsl    to lowercase.")
+TERM (U"#\\bsL #\\bsl    to lowercase.")
 DEFINITION (U"The text inserted by \"&\" or \"\\bs1\" ... \"\\bs9\" is "
 	"converted to %lowercase (\"\\bsl\" only changes the %first character to "
 	"lowercase).")
@@ -3732,11 +3732,11 @@ NORMAL (U"For %m >= %n, the singular value decomposition of a real %m \\xx %n ma
 	"factorization")
 EQUATION (U"#A = #U #D #V\\'p,")
 NORMAL (U"The matrices in this factorization have the following properties:")
-TAG (U"#U [%m \\xx %n] and #V [%n \\xx %n]")
+TERM (U"#U [%m \\xx %n] and #V [%n \\xx %n]")
 DEFINITION (U"are orthogonal matrices. The columns #u__%i_ of #U =[#u__1_, ..., #u__%n_] "
 	"are the %%left singular vectors%, and the columns #v__%i_ of #V [#v__1_, ..., #v__%n_] "
 	"are the %%right singular vectors%.")
-TAG (U"#D [%n \\xx %n] = diag (%\\si__1_, ..., %\\si__%n_)")
+TERM (U"#D [%n \\xx %n] = diag (%\\si__1_, ..., %\\si__%n_)")
 DEFINITION (U"is a real, nonnegative, and diagonal matrix. Its diagonal contains the so called "
 	"%%singular values% %\\si__%i_, where %\\si__1_ \\>_ ... \\>_ %\\si__%n_ \\>_ 0.")
 MAN_END
@@ -3838,18 +3838,18 @@ NORMAL (U"Here we constrain the elements of the solution to be nonnegative. The 
 NORMAL (U"This problem can be solved by an iterative alternating least squares method as described by @@Borg & Groenen (1997)@. "
 	"The function to use is ##solveNonnegative\\#  (a\\# \\# , y\\#  [,x\\# ], %maximumNumberOfIterations, %tolerance, %infoLevel)#")
 NORMAL (U"The parameters have the following meaning:")
-TAG (U"##a\\# \\# , y\\# #")
+TERM (U"##a\\# \\# , y\\# #")
 DEFINITION (U"the #A matrix and the #y vector.")
-TAG (U"##[,x\\# ]#")
+TERM (U"##[,x\\# ]#")
 DEFINITION (U"the optional vector to start the iterations. If not given the procedure starts with the zero vector.")
-TAG (U"##maximumNumberOfIterations")
+TERM (U"##maximumNumberOfIterations")
 DEFINITION (U"the maximum number of iterations that should be run if the tolerance criterion is not met.")
-TAG (U"##tolerance")
+TERM (U"##tolerance")
 DEFINITION (U"is a criterion value that is needed to decide when to stop the iterations. If %d(%n) is the squared approximation error "
 	"in the %n-th step of the iteration, i.e. %d(%n) = ||#y - ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, "
 	"then the iteration stops if either d(n) == 0 or")
 DEFINITION (U"|%d(%n) - %d(%n-1)| / ||#y||^2 < %tolerance.")
-TAG (U"##infoLevel")
+TERM (U"##infoLevel")
 DEFINITION (U"determines the amount of information that is written to the info window during iterations. No info is written if the value is zero.")
 NORMAL (U"As an example consider:")
 CODE (U"a\\# \\#  = {{-4, 2, 2}, ")
@@ -3888,20 +3888,20 @@ NORMAL (U"In general an iterative procedure is needed for the minimization. We h
 	"thresholding% which is described by @@Blumensath & Davies (2010)@. ")
 NORMAL (U"##solveSparse\\#  (a\\# \\# , y\\#  [,x\\# ], %%maximumNumberOfNonzeros%, %%maximumNumberOfIterations%, %%tolerance%, %%info%)#")
 NORMAL (U"The parameters have the following meaning:")
-TAG (U"##a\\# \\# , y\\# #")
+TERM (U"##a\\# \\# , y\\# #")
 DEFINITION (U"the #A matrix and the #y vector.")
-TAG (U"##[,x\\# ]#")
+TERM (U"##[,x\\# ]#")
 DEFINITION (U"the optional vector to start the iterations. If not given the procedure starts with the zero vector.")
-TAG (U"##maximumNumberOfNonzeros")
+TERM (U"##maximumNumberOfNonzeros")
 DEFINITION (U"the maximum number of nonzero elements in the solution vector, i.e. the sparsity.")
-TAG (U"##maximumNumberOfIterations")
+TERM (U"##maximumNumberOfIterations")
 DEFINITION (U"the maximum number of iterations that should be run if the tolerance criterion is not met.")
-TAG (U"##tolerance")
+TERM (U"##tolerance")
 DEFINITION (U"is a criterion value that is needed to decide when to stop the iterations. If %d(%n) is the squared approximation error "
 	"in the %n-th step of the iteration, i.e. %d(%n) = ||#y - ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, "
 	"then the iteration stops if")
 DEFINITION (U"|%d(%n) - %d(%n-1)|/||#y||^2 < %tolerance.")
-TAG (U"##infoLevel")
+TERM (U"##infoLevel")
 DEFINITION (U"determines the amount of information that is written to the info window during iterations. No info is written if the value is zero.")
 NORMAL (U"In the following example we first construct a sparse vector #x, with random numbers between 0.1 and 10, and a random "
 	"Gaussian matrix #A. From these two we construct our #y. We then solve the sparse system and compare its solution #xs to "
@@ -3987,30 +3987,30 @@ NORMAL (U"A command to create a new @Sound with manipulated characteristics.")
 ENTRY (U"Settings")
 NORMAL (U"The quality of the @@overlap-add|manipulation@ depends on the pitch measurement.")
 NORMAL (U"The arguments that control the pitch measurement are:")
-TAG (U"##Minimum pitch (Hz)# (standard value: 75 Hz)")
+TERM (U"##Minimum pitch (Hz)# (standard value: 75 Hz)")
 DEFINITION (U"pitch candidates below this frequency will not be considered.")
-TAG (U"##Maximum pitch (Hz)# (standard value: 600 Hz)")
+TERM (U"##Maximum pitch (Hz)# (standard value: 600 Hz)")
 DEFINITION (U"pitch candidates above this frequency will be ignored.")
 NORMAL (U"The arguments that control the manipulation are:")
-TAG (U"##Formant shift ratio")
+TERM (U"##Formant shift ratio")
 DEFINITION (U"determines the frequencies of the formants in the newly created "
 	"Sound. If this ratio equals 1 no frequency shift will occur and "
 	"the formant frequencies will not change. A ratio of 1.1 will change "
 	"a male voice to a voice with approximate female formant characteristics. "
 	"A ratio of 1/1.1 will change a female voice to a voice with approximate male formant "
 	"characteristics.")
-TAG (U"##New pitch median (Hz)# (standard value: 0.0 Hz, i.e. same as original)")
+TERM (U"##New pitch median (Hz)# (standard value: 0.0 Hz, i.e. same as original)")
 DEFINITION (U"determines what the median pitch of the new Sound will be. "
 	"The pitch values in the newly created Sound will be calculated from the pitch "
 	"values in the selected Sound by multiplying them by a factor "
 	"%%newPitchMedian / oldPitchMedian%. This factor equals 1.0 if the default "
 	"value for the new pitch median (0.0) is chosen. ")
-TAG (U"##Pitch range factor# (standard value: 1.0)")
+TERM (U"##Pitch range factor# (standard value: 1.0)")
 DEFINITION (U"determines an %extra% scaling of the new pitch values around the %new% "
 	"pitch median. A factor of 1.0 means that no additional pitch modification will occur "
 	"(except the obvious one described above). A factor of 0.0 monotonizes the new "
 	"sound to the new pitch median.")
-TAG (U"##Duration factor# (standard value: 1.0)")
+TERM (U"##Duration factor# (standard value: 1.0)")
 DEFINITION (U"The factor with which the sound will be lengthened. The default is 1.0. "
 	"If you take a value less than 1.0, the resulting sound will be shorter than "
 	"the original. A value larger than 3.0 will not work.")
@@ -4036,27 +4036,27 @@ INTRO (U"A command to create a new @Sound with manipulated characteristics.")
 ENTRY (U"Settings")
 NORMAL (U"The quality of the @@overlap-add|manipulation@ depends on the pitch measurement.")
 NORMAL (U"The arguments that control the pitch measurement are:")
-TAG (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
+TERM (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
 DEFINITION (U"pitch candidates below this frequency will not be considered.")
-TAG (U"##Pitch ceiling (Hz)# (standard value: 600 Hz)")
+TERM (U"##Pitch ceiling (Hz)# (standard value: 600 Hz)")
 DEFINITION (U"pitch candidates above this frequency will be ignored.")
 NORMAL (U"The arguments that control the manipulation are:")
-TAG (U"##Multiply formants by")
+TERM (U"##Multiply formants by")
 DEFINITION (U"determines the formant frequencies of the newly created sound. "
 	"The formant frequency of the new sound will equal the formant frequencies of the selected sound multiplied by this number. "
 	"If this number equals 1, formant frequencies will not change. A number of 1.1 will change "
 	"a male voice to a voice with approximate female formant characteristics. "
 	"A ratio of 1/1.1 will change a female voice to a voice with approximate male formant "
 	"characteristics.")
-TAG (U"##Multiply pitch by")
+TERM (U"##Multiply pitch by")
 DEFINITION (U"determines what the pitch of the new Sound will be. "
 	"The pitch values of the new sound will equal the pitch values of the selected sound multiplied by this number. A value of 1.8 will  approximately change a male's pitch to a female's pitch.")
-TAG (U"##Multiply pitch range by# (standard value: 1.0)")
+TERM (U"##Multiply pitch range by# (standard value: 1.0)")
 DEFINITION (U"determines the pitch range of the newly created sound. "
 	"A factor of 1.0 means that no additional pitch modification will occur "
 	"(except the obvious one described above). A factor of 0.0 monotonizes the new "
 	"sound to the new pitch median. A negative number inverses the pitch range with respect to the median.")
-TAG (U"##Multiply duration by# (standard value: 1.0)")
+TERM (U"##Multiply duration by# (standard value: 1.0)")
 DEFINITION (U"determines how to modify the duration of the newly created sound. "
 	"A value of 1.0 means that the new sound will have the same duration as the selected sound. "
 	"A value less than 1.0 will result in a shortened new sound. A value larger than 2.5 will not work.")
@@ -4084,16 +4084,16 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD(U"Smoothing (Hz)", U"40.0")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Noise reduction method", U"Spectral subtraction")
 )
-TAG (U"##Noise time range (s)")
+TERM (U"##Noise time range (s)")
 DEFINITION (U"the start and end time of a noise part in the sound whose characteristics will be used in the denoising. "
 	"If the end time is chosen before the start time, the noise fragment will be chosen automatically around a position "
 	"where the intensity is minimal. For good noise suppression it is important that the noise fragment's duration is chosen "
 	"several times the length of the window.")
-TAG (U"##Window length (s)")
+TERM (U"##Window length (s)")
 DEFINITION (U"denoising takes place in (overlapping) windows of this length.")
-TAG (U"##Filter frequency range (Hz)")
+TERM (U"##Filter frequency range (Hz)")
 DEFINITION (U"before denoising the sound will be @@Sound: Filter (pass Hann band)...|band-pass filtered@. ")
-TAG (U"##Noise reduction method")
+TERM (U"##Noise reduction method")
 DEFINITION (U"The method of %%spectral subtraction% was defined in @@Boll (1979)@. The variant implemented is modelled "
 	"after a script by Ton Wempe.")
 MAN_END
@@ -4110,11 +4110,11 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Draw only those parts where the following condition holds",
 		"x < xmin + (xmax - xmin) / 2; first half")
 )
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"selects the time domain for the drawing.")
-TAG (U"##Vertical range")
+TERM (U"##Vertical range")
 DEFINITION (U"defines the vertical limits; larger amplitudes will be clipped.")
-TAG (U"##Draw only those parts where the following condition holds#")
+TERM (U"##Draw only those parts where the following condition holds#")
 DEFINITION (U"determines the part of the sound that will be drawn. All parts where the formula evaluates to true will be drawn. "
 	"This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
 ENTRY (U"Example 1")
@@ -4153,17 +4153,17 @@ MAN_END
 MAN_BEGIN (U"Sound: Fade in...", U"djmw", 20170829)
 INTRO (U"A command to gradually increase the amplitude of a selected @Sound.")
 ENTRY (U"Settings")
-TAG (U"##Channel")
+TERM (U"##Channel")
 DEFINITION (U"determines whether you want to fade all channels or only a selected channel.")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"determines where the fade-in will take place. If %time is earlier than the start time of the sound, "
 	"the start time of the sound wil be used.")
-TAG (U"##Fade time (s)")
+TERM (U"##Fade time (s)")
 DEFINITION (U"determines the start point and the endpoint of the fade-in with respect to the %time argument. "
 	"Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-in. If %%fadeTime% "
 	"is positive, fade-in will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, "
 	"fade-in wil take place between %%time+fadeTime% and %time.")
-TAG (U"##Silent from start")
+TERM (U"##Silent from start")
 DEFINITION (U"when on, makes the sound silent before the fade-in starts. "
 	"When off, the sound before the fade-in starts will not be changed. ")
 ENTRY (U"Algorithm")
@@ -4182,17 +4182,17 @@ MAN_END
 MAN_BEGIN (U"Sound: Fade out...", U"djmw", 20121010)
 INTRO (U"A command to gradually decrease the amplitude of a selected @Sound.")
 ENTRY (U"Settings")
-TAG (U"##Channel")
+TERM (U"##Channel")
 DEFINITION (U"determines whether you want to fade all channels or only a selected channel.")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"determines where the fade-out will take place. If %time is later than the end time of the sound, "
 	"the end time of the sound wil be used.")
-TAG (U"##Fade time (s)")
+TERM (U"##Fade time (s)")
 DEFINITION (U"determines the start point and the endpoint of the fade-out with respect to the %time argument. "
 	"Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-out. If %%fadeTime% "
 	"is positive, fade-out will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, "
 	"fade-out wil take place between %%time+fadeTime% and %time.")
-TAG (U"##Silent to end")
+TERM (U"##Silent to end")
 DEFINITION (U"Make the sound silent after the fade-out finishes. ")
 ENTRY (U"Algorithm")
 NORMAL (U"Multiplication with the first half period of a (1+cos(%%x%))/2 function.")
@@ -4201,7 +4201,7 @@ MAN_END
 MAN_BEGIN (U"Sound: Filter (gammatone)...", U"djmw", 20170829)
 INTRO (U"A command to filter a Sound by a fourth-order gammatone bandpass filter.")
 ENTRY (U"Settings")
-TAG (U"##Centre frequency (Hz)#, ##Bandwidth (Hz)#")
+TERM (U"##Centre frequency (Hz)#, ##Bandwidth (Hz)#")
 DEFINITION (U"determine the passband of the filter.")
 ENTRY (U"Algorithm")
 NORMAL (U"The impulse response of the filter is a 4-th order @@gammatone@. The "
@@ -4217,7 +4217,7 @@ MAN_BEGIN (U"Sound: Play as frequency shifted...", U"djmw", 20140106)
 INTRO (U"Plays the selected @Sound with all frequencies shifted by the same amount. This trick can be used to make "
 	"audible those sounds that are normally not audible at all by human beings, like for example ultrasounds or infrasounds.")
 ENTRY (U"Settings")
-TAG (U"##Shift by (Hz)")
+TERM (U"##Shift by (Hz)")
 DEFINITION (U"the amount by which frequencies are shifted. A positive number shifts frequencies up, a negative number "
 	"shifts frequencies down. ")
 ENTRY (U"##Example")
@@ -4273,15 +4273,15 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Paint only those parts where the following condition holds",
 		"1; always")
 )
-TAG (U"##Colour")
+TERM (U"##Colour")
 DEFINITION (U"defines the @@Colour|colour@ of the paint.")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"selects the time domain for the drawing.")
-TAG (U"##Vertical range")
+TERM (U"##Vertical range")
 DEFINITION (U"defines the vertical limits; larger amplitudes will be clipped.")
-TAG (U"##Fill from level")
+TERM (U"##Fill from level")
 DEFINITION (U"defines the level of the horizontal line. ")
-TAG (U"##Formula")
+TERM (U"##Formula")
 DEFINITION (U"determines the part of the sound that will be painted. All parts where the formula evaluates to true will be painted. "
 	"This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
 ENTRY (U"Example 1")
@@ -4338,11 +4338,11 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= all)")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
 )
-TAG (U"##Colour")
+TERM (U"##Colour")
 DEFINITION (U"defines the @@Colour|colour@ of the paint.")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"selects the time domain for the drawing.")
-TAG (U"##Vertical range")
+TERM (U"##Vertical range")
 DEFINITION (U"defines the vertical limits, larger amplitudes will be clipped.")
 ENTRY (U"Example")
 NORMAL (U"The following script paints the area enclosed between a sine tone of 5 Hz and the straight line %y = %x/2.")
@@ -4362,13 +4362,13 @@ MAN_BEGIN (U"Sound: To Polygon...", U"djmw", 20170829)
 INTRO (U"A command that creates a @@Polygon@ from a selected @@Sound@, where the Polygon's "
 	" points are defined by the (%time, %amplitude) pairs of the sound. ")
 ENTRY (U"Settings")
-TAG (U"##Channel")
+TERM (U"##Channel")
 DEFINITION (U"defines which channel of the sound is used.")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"defines the part of the sound whose (%time, %amplitude) pairs have to be included.")
-TAG (U"##Vertical range")
+TERM (U"##Vertical range")
 DEFINITION (U"defines the vertical limits, larger amplitudes will be clipped.")
-TAG (U"##Connection y-value")
+TERM (U"##Connection y-value")
 DEFINITION (U"defines the y-value of the first and last point of the Polygon. This gives the opportunity to "
 	" draw a closed Polygon with the horizontal connection line at any position you like. ")
 ENTRY (U"Example")
@@ -4393,20 +4393,20 @@ SCRIPT (4.5, 2,
 MAN_END
 
 #define xxx_to_TextGrid_detectSilences_COMMON_PARAMETERS_HELP \
-TAG (U"##Silence threshold (dB)") \
+TERM (U"##Silence threshold (dB)") \
 DEFINITION (U"determines the maximum silence intensity value in dB with respect to the maximum " \
 	"intensity. For example, if %imax is the maximum intensity in dB then the maximum silence " \
 	"intensity is calculated as %%imax - silenceThreshold%; intervals with an intensity smaller " \
 	"than this value are considered as silent intervals.") \
-TAG (U"##Minimum silent interval (s)") \
+TERM (U"##Minimum silent interval (s)") \
 DEFINITION (U"determines the minimum duration for an interval to be considered as silent. " \
 	"If you don't want the closure for a plosive to count as silent then use a large enough value.") \
-TAG (U"##Minimum sounding interval (s)") \
+TERM (U"##Minimum sounding interval (s)") \
 DEFINITION (U"determines the minimum duration for an interval to be ##not# considered as silent. " \
 	"This offers the possibility to filter out small intense bursts of relatively short duration.") \
-TAG (U"##Silent interval label") \
+TERM (U"##Silent interval label") \
 DEFINITION (U"determines the label for a silent interval in the TextGrid.") \
-TAG (U"##Sounding interval label") \
+TERM (U"##Sounding interval label") \
 DEFINITION (U"determines the label for a sounding interval in the TextGrid.")
 
 MAN_BEGIN (U"Sound: To TextGrid (silences)...", U"djmw", 20160406)
@@ -4435,17 +4435,17 @@ NORMAL (U"Because the spectral flatness measure is completely "
 	"independent of the overall intensity of the sound we have added the possibility to also discriminate on "
 	"intensity.")
 ENTRY (U"Settings")
-TAG (U"##Time step (s)#")
+TERM (U"##Time step (s)#")
 DEFINITION (U"determines the time interval between consecutive measurements of the spectral flatness measure. ")
-TAG (U"##Long term window (s)#")
+TERM (U"##Long term window (s)#")
 DEFINITION (U"determines the window duration for the calculation of the long term spectral flatness measure. "
 	"According to ##Ma & Nishihara (2013)# a value of approximately 0.3 s performed best on average for a "
 	"number of different noise conditions.")
-TAG (U"##Short term window (s)#")
+TERM (U"##Short term window (s)#")
 DEFINITION (U"determines the interval for averaging spectral estimates. "
 	"According to ##Ma & Nishihara (2013)# a value of approximately 0.1 s performed best on average for a "
 	"number of different noise conditions.")
-TAG (U"##Frequency range (Hz)#")
+TERM (U"##Frequency range (Hz)#")
 DEFINITION (U"determines the frequency range used in the calculation of the spectral flatness measure. "
 	"Ma & Nishihara (2013) used a range from 400 to 4000 Hz. Because fricatives tend to have strong components "
 	"above 4000 Hz we increased the default value to 6000 Hz. In this way the fricative's intensity, which is "
@@ -4453,20 +4453,20 @@ DEFINITION (U"determines the frequency range used in the calculation of the spec
 	"by a selection on the non-speech threshold. We also decreased the lower value from 400 to 70 Hz. "
 	"In this way we increase chances that sounds at start or end positions with mainly low frequency components, "
 	"like nasals, are detected.")
-TAG (U"##Flatness threshold#")
+TERM (U"##Flatness threshold#")
 DEFINITION (U"determines whether a frame is considered %%speech% or not based on a spectral flatness measure. Values of the flatness below the threshold are "
 	"considered speech.")
-TAG (U"##Non-speech threshold (dB)#")
+TERM (U"##Non-speech threshold (dB)#")
 DEFINITION (U"also determines whether a frame is considered %%speech% or not, but based on intensity. "
 	"Intervals with an intensity smaller than this value below the sound's maximum intensity value "
 	"are considered as %%non-speech% intervals. The intensity is calculated from the frequency range defined above. ")
-TAG (U"##Minimum non-speech interval duration (s)#")
+TERM (U"##Minimum non-speech interval duration (s)#")
 DEFINITION (U"determines the minimum duration for an interval to be considered as non-speech. "
 	"If you don't want the closure for a plosive to count as non-speech then use a large enough value.")
-TAG (U"##Minimum speech interval (s)") \
+TERM (U"##Minimum speech interval (s)") \
 DEFINITION (U"determines the minimum duration for an interval to be considered as speech. "
 	"This offers the possibility to filter out small intense bursts of relatively short duration.")
-TAG (U"##Speech / Non-speech interval label#")
+TERM (U"##Speech / Non-speech interval label#")
 DEFINITION (U"determine the labels for the corresponding intervals in the newly created TextGrid.")
 ENTRY (U"Algorithm")
 NORMAL (U"The speech activity algorithm is described in @@Ma & Nishihara (2013)@.")
@@ -4514,16 +4514,16 @@ MAN_END
 MAN_BEGIN (U"Sound: To ConstantQLogFSpectrogram...", U"djmw", 20211111)
 INTRO (U"A command that creates a @@ConstantQLogFSpectrogram@ from a selected @@Sound@.")
 ENTRY (U"Settings")
-TAG (U"##Lowest frequency (Hz)")
+TERM (U"##Lowest frequency (Hz)")
 DEFINITION (U"defines the lowest frequency about which information will be obtained. This frequency has to be chosen well above "
 	"zero hertz (because of the logarithmic frequency scale there are an infinite number of octaves between any lowest frequency "
 	"and zero hertz). ")
-TAG (U"##Maximum frequency (Hz)")
+TERM (U"##Maximum frequency (Hz)")
 DEFINITION (U"The maximum frequency you are interested in. The default will be the Nyquist frequency of the sound. ")
-TAG (U"##Number of frequecy bins / octave")
+TERM (U"##Number of frequecy bins / octave")
 DEFINITION (U"determines the frequency division as the number of frequency bins that will be used for each octave. "
 	"For the analysis of music generally a multiple of 12 will be used.")
-TAG (U"##Frequency resolution (bins)")
+TERM (U"##Frequency resolution (bins)")
 DEFINITION (U"determines, together with the number of frequency bins per octave, the %%quality factor% used in the analysis."
 	"The quality factor Q of a filter is defined as its "
 	"central frequency divided by its bandwidth. The bandwith of a filter, i.e its domain, will be be set as twice the "
@@ -4535,7 +4535,7 @@ DEFINITION (U"For a frequency resolution of 1 bin and a frequency division of 24
 	"the longer their analysis window has to be. (Strictly speaking, the bandwidth of a filter is defined as the "
 	"width of the filter at "
 	"an intensity -3 dB below its top. The actual bandwidth depends on the form of the used filter function.)")
-TAG (U"##Time oversampling factor")
+TERM (U"##Time oversampling factor")
 DEFINITION (U"determines the number of frames in each frequency bin. Any number larger than 1 will increase the number of frames in a bin by approximately this factor.  ")
 ENTRY (U"Algorithm")
 NORMAL (U"The algorithm for constructing the invertable constant-Q transform is described in @@Velasco et al. (2011)@ and in @@Holighaus et al. (2013)@. ")
@@ -4547,16 +4547,16 @@ MAN_END
 MAN_BEGIN (U"Sound: To Sound (derivative)...", U"djmw", 20230323)
 INTRO (U"Calculates the derivative of a @@Sound@.")
 ENTRY (U"Settings")
-TAG (U"##Low-pass frequency (Hz)")
+TERM (U"##Low-pass frequency (Hz)")
 DEFINITION (U"defines the highest frequency to keep in the derivative. Because taking a derivative is comparable to "
 	"multiplying the strength of each frequency component by its frequency value it has the effect of high-pass filtering. "
 	"E.g. a 10000 Hz component is amplified 100 times stronger than a 100 Hz component. "
 	"Low-pass filtering then becomes essential for removing high-frequency noise.  ")
-TAG (U"##Smoothing (Hz)")
+TERM (U"##Smoothing (Hz)")
 DEFINITION (U"defines the width of the transition area between fully passed and fully suppressed "
 	"frequencies. Frequencies below %%lowpassFrequency% will be fully passed, frequencies larger "
 	"than %%lowpassFrequency%+%%smoothing% will be fully suppressed.")
-TAG (U"##New absolute peak")
+TERM (U"##New absolute peak")
 DEFINITION (U"the new absolute peak of the derivative. By specifying a value smaller than 1.0 the derivative can be made audible "
 	"without distortion. If you want to listen to the derivative without distortion, it is absolutely necessary to scale the "
 	"peak to a value somewhat smaller than 1.0, like 0.99. For example, for a pure sine tone with a frequency of 300 Hz "
@@ -4597,7 +4597,7 @@ NORMAL (U"However, there is another option to get a sound with a number of sampl
 	"contains higher frequency components than the spectrum of the original sound we have to process the just calculated spectrum by leaving out these higher frequency components to obtain the desired spectrum.")
 NORMAL (U"This resampled approximation generally performs better than the approximation by adding zero values.")
 ENTRY (U"Settings")
-TAG (U"##Precision#,")
+TERM (U"##Precision#,")
 DEFINITION (U"the depth of the interpolation in samples. This determines the quality of the interpolation used "
 	"in resampling.")
 ENTRY (U"Example")
@@ -4627,15 +4627,15 @@ MAN_END
 MAN_BEGIN (U"Sound: Trim silences...", U"djmw", 20190914)
 INTRO (U"A command that creates from the selected @Sound a new sound with silence durations not longer than a specified value.")
 ENTRY (U"Settings")
-TAG (U"##Trim duration (s)#")
+TERM (U"##Trim duration (s)#")
 DEFINITION (U"specifies the maximum allowed silence duration.")
-TAG (U"##Minimum pitch (Hz)#, and, ##Time step (s)#")
+TERM (U"##Minimum pitch (Hz)#, and, ##Time step (s)#")
 DEFINITION (U"determine how we measure the intensities on which the determination of silent intervals is based. See @@Sound: To Intensity...@ for more info.")
-TAG (U"##Silence threshold (dB)#, ##Minimum silent interval duration (s)#, and ##Minimum sounding interval duration#")
+TERM (U"##Silence threshold (dB)#, ##Minimum silent interval duration (s)#, and ##Minimum sounding interval duration#")
 DEFINITION (U"determine how the silent intervals will be determined. See @@Intensity: To TextGrid (silences)...@ for more info.")
-TAG (U"##Save trimming info as TextGrid#")
+TERM (U"##Save trimming info as TextGrid#")
 DEFINITION (U"determines if a TextGrid with trimming information will also be created. The TextGrid will have one tier where intervals of the %%originating% sound that were trimmed have been labeled. ")
-TAG (U"##Trim label#")
+TERM (U"##Trim label#")
 DEFINITION (U"determines the label that the trimmed intervals in the TextGrid will get.")
 MAN_END
 
@@ -4691,22 +4691,22 @@ NORMAL (U"The spectral compression consists of the summation of a sequence of "
 	"estimate of the pitch. Details of the algorithm can be "
 	"found in @@Hermes (1988)@")
 ENTRY (U"Settings")
-TAG (U"##Time step (s)# (standard value: 0.01 s)")
+TERM (U"##Time step (s)# (standard value: 0.01 s)")
 DEFINITION (U"the measurement interval (frame duration), in seconds.")
-TAG (U"##Minimum pitch (Hz)# (standard value: 50 Hz)")
+TERM (U"##Minimum pitch (Hz)# (standard value: 50 Hz)")
 DEFINITION (U"candidates below this frequency will not be recruited. This parameter "
 	"determines the length of the analysis window.")
-TAG (U"##Max. number of candidates# (standard value: 15)")
+TERM (U"##Max. number of candidates# (standard value: 15)")
 DEFINITION (U"The maximum number of candidates that will be recruited.")
-TAG (U"##Maximum frequency (Hz)# (standard value: 1250 Hz)")
+TERM (U"##Maximum frequency (Hz)# (standard value: 1250 Hz)")
 DEFINITION (U"higher frequencies will not be considered.")
-TAG (U"##Max. number of subharmonics# (standard value: 15)")
+TERM (U"##Max. number of subharmonics# (standard value: 15)")
 DEFINITION (U"the maximum number of harmonics that add up to the pitch.")
-TAG (U"##Compression factor# (standard value: 0.84)")
+TERM (U"##Compression factor# (standard value: 0.84)")
 DEFINITION (U"the factor by which successive compressed spectra are multiplied before the summation.")
-TAG (U"##Number of points per octave# (standard value: 48)")
+TERM (U"##Number of points per octave# (standard value: 48)")
 DEFINITION (U"determines the sampling of the logarithmic frequency scale.")
-TAG (U"##Ceiling (Hz)# (standard value: 500 Hz)")
+TERM (U"##Ceiling (Hz)# (standard value: 500 Hz)")
 DEFINITION (U"candidates above this frequency will be ignored.")
 MAN_END
 
@@ -4723,12 +4723,12 @@ MAN_END
 MAN_BEGIN (U"Spectrum: Shift frequencies...", U"djmw", 20121028)
 INTRO (U"Creates a new @Spectrum by shifting all frequencies of the selected Spectrum upwards or downwards.")
 ENTRY (U"Settings")
-TAG (U"##Shift by (Hz)")
+TERM (U"##Shift by (Hz)")
 DEFINITION (U"a positive value shifts the spectrum towards higher frequencies, a negative value shifts the spectrum "
 	"towards lower frequencies.")
-TAG (U"##New maximum frequency (Hz)")
+TERM (U"##New maximum frequency (Hz)")
 DEFINITION (U"the maximum frequency in the new Spectrum.")
-TAG (U"##Precision")
+TERM (U"##Precision")
 DEFINITION (U"the number of neighbouring frequency points that are used in the calculation of the new frequency points. "
 	"The precision relates linearly to the amount of computing time needed to get the new shifted spectrum.")
 MAN_END
@@ -4749,58 +4749,58 @@ MAN_END
 MAN_BEGIN (U"Create SpeechSynthesizer...", U"djmw", 20171101)
 INTRO (U"Creates the @@Espeak|eSpeak NG@ speech synthesizer.")
 ENTRY (U"Settings")
-TAG (U"##Language#")
+TERM (U"##Language#")
 DEFINITION (U"determines the language of the synthesizer.")
-TAG (U"##Voice variant#")
+TERM (U"##Voice variant#")
 DEFINITION (U"determines which voice type the synthesizer uses (male, female or whispered voices).")
 MAN_END
 
 MAN_BEGIN (U"SpeechSynthesizer: Play text...", U"djmw", 20171101)
 INTRO (U"The selected @@SpeechSynthesizer@ plays a text.")
 ENTRY (U"Settings")
-TAG (U"##Text#")
+TERM (U"##Text#")
 DEFINITION (U"is the text to be played. Text within [[ ]] is treated as phonemes codes in @@Kirshenbaum phonetic encoding@. For example, besides a text like \"This is text\", you might also input \"This [[Iz]] text\".")
 MAN_END
 
 MAN_BEGIN (U"SpeechSynthesizer: To Sound...", U"djmw", 20171101)
 INTRO (U"The selected @@SpeechSynthesizer@ converts a text to the corresponding speech sound.")
 ENTRY (U"Settings")
-TAG (U"##Text#")
+TERM (U"##Text#")
 DEFINITION (U"is the text to be played. Text within [[ ]] is treated as phonemes codes in @@Kirshenbaum phonetic encoding@. For example, besides a text like \"This is text\", you might also input \"This [[Iz]] text\".")
-TAG (U"##Create TextGrid with annotations#")
+TERM (U"##Create TextGrid with annotations#")
 DEFINITION (U"determines whether, besides the sound, a @@TextGrid@ with multiple-tier annotations will appear.")
 MAN_END
 
 MAN_BEGIN (U"SpeechSynthesizer: Set text input settings...", U"djmw", 20171101)
 INTRO (U"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
 ENTRY (U"Settings")
-TAG (U"##Input text format is#")
+TERM (U"##Input text format is#")
 DEFINITION (U"determines how the input text will be synthesized.")
-TAG (U"##Input phoneme codes are#")
+TERM (U"##Input phoneme codes are#")
 DEFINITION (U"currently only @@Kirshenbaum phonetic encoding@ is available.")
 MAN_END
 
 MAN_BEGIN (U"SpeechSynthesizer: Speech output settings...", U"djmw", 20190811)
 INTRO (U"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
 ENTRY (U"Settings")
-TAG (U"##Sampling frequency#")
+TERM (U"##Sampling frequency#")
 DEFINITION (U"determines how the sampling frequency of the sound.")
-TAG (U"##Gap between words#")
+TERM (U"##Gap between words#")
 DEFINITION (U"determines the amount of silence between words.")
-TAG (U"##Pitch multiplier (0.5-2.0)#")
+TERM (U"##Pitch multiplier (0.5-2.0)#")
 DEFINITION (U"determines how much the pitch will be changed. The extremes 0.5 and 2.0 represent, respectively, one octave "
 	"below and one octave above the default pitch. ")
-TAG (U"##Pitch range multiplier (0.0-2.0)#")
+TERM (U"##Pitch range multiplier (0.0-2.0)#")
 DEFINITION (U"determines how much the pitch range will be scaled. A value of 0.0 means monotonous pitch while a value of 2.0 means twice the default range.")
-TAG (U"##Words per minute#")
+TERM (U"##Words per minute#")
 DEFINITION (U"determines the speaking rate in words per minute.")
-TAG (U"##Output phoneme codes are#")
+TERM (U"##Output phoneme codes are#")
 MAN_END
 
 MAN_BEGIN (U"SpeechSynthesizer: Set speech rate from speech...", U"djmw", 20171102)
 INTRO (U"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
 ENTRY (U"Settings")
-TAG (U"##Estimate speech rate from speech#")
+TERM (U"##Estimate speech rate from speech#")
 DEFINITION (U"determines how speech rate is chosen. This is only used for the alignment of speech with text. If on, the speech rate is estimated from the part of speech that has to be aligned. ")
 MAN_END
 
@@ -4813,16 +4813,16 @@ NORMAL (U"Besides the matrix part, an object of type SSCP also contains a "
 ENTRY (U"Inside a SSCP")
 NORMAL (U"With @Inspect you will see that this type contains the same "
 	"attributes as a @TableOfReal with the following extras:")
-TAG (U"%numberOfObservations")
-TAG (U"%centroid")
+TERM (U"%numberOfObservations")
+TERM (U"%centroid")
 MAN_END
 
 MAN_BEGIN (U"Sound: Extract Electroglottogram...", U"djmw", 20190929)
 INTRO (U"Extract one of the channels of a @@Sound@ as an @@Electroglottogram@.")
 ENTRY (U"Settings")
-TAG (U"##Channel number#")
+TERM (U"##Channel number#")
 DEFINITION (U"defines the Electroglottogram channel in the sound.")
-TAG (U"##Invert#")
+TERM (U"##Invert#")
 DEFINITION (U"defines whether the wave in the Elecletroglottogram channel has to be inverted or not. "
 	"The convention is that a positive direction in the Electroglottogram wave corresponds to "
 	"an increase in contact area between the vocal folds which occurs if the vocal folds are closing. "
@@ -4835,7 +4835,7 @@ MAN_BEGIN (U"SSCP: Draw sigma ellipse...", U"djmw", 19990222)
 INTRO (U"A command to draw for the selected @SSCP an ellipse that "
 	"covers a part of the multivariate data.")
 ENTRY (U"Setting")
-TAG (U"##Number of sigmas")
+TERM (U"##Number of sigmas")
 DEFINITION (U"determines the @@concentration ellipse|data coverage@.")
 MAN_END
 
@@ -4876,7 +4876,7 @@ MAN_BEGIN (U"SSCP: Get diagonality (bartlett)...", U"djmw", 20011111)
 INTRO (U"Tests the hypothesis that the selected @SSCP matrix object is "
 	"diagonal.")
 ENTRY (U"Setting")
-TAG (U"##Number of constraints")
+TERM (U"##Number of constraints")
 DEFINITION (U"modifies the number of independent observations. "
 	"The default value is 1.")
 ENTRY (U"Algorithm")
@@ -4906,7 +4906,7 @@ MAN_BEGIN (U"SSCP: To CCA...", U"djmw", 20031103)
 INTRO (U"A command that creates a @@CCA|canonical correlation@ object from the "
 	"selected @SSCP object.")
 ENTRY (U"Setting")
-TAG (U"##Dimension of dependent variate (ny)")
+TERM (U"##Dimension of dependent variate (ny)")
 DEFINITION (U"defines a partition of the square %n x %n SSCP matrix S into the parts S__yy_ of "
 	"dimension %ny x %ny, S__xx_ of dimension %nx x %nx, and the parts "
 	"S__xy_ and S__yx_ of dimensions %nx x %ny and %ny x %nx, respectively.")
@@ -4953,7 +4953,7 @@ MAN_END
 MAN_BEGIN (U"SSCP: To Covariance...", U"djmw", 20090624)
 INTRO (U"A command that creates a @Covariance object from each selected @SSCP object.")
 ENTRY (U"Setting")
-TAG (U"##Number of constraints")
+TERM (U"##Number of constraints")
 DEFINITION (U"determines the factor by which each entry in the "
 	"SSCP-matrix is scaled to obtain the Covariance matrix.")
 ENTRY (U"Details")
@@ -4974,41 +4974,41 @@ MAN_END
 MAN_BEGIN (U"Create Strings as tokens...", U"djmw", 20170417)
 INTRO (U"Create a new @@Strings@ object as a list of tokens.")
 ENTRY (U"Settings")
-TAG (U"##Text#")
+TERM (U"##Text#")
 DEFINITION (U"the text to be tokenized.")
-TAG (U"##Separators#")
+TERM (U"##Separators#")
 DEFINITION (U"determines the separator characters. If left empty a space will be used as a separator")
 ENTRY (U"Behaviour")
 NORMAL (U"Multiple consecutive separators in the text will be treated as one.")
 ENTRY (U"Examples")
-TAG (U"Example 1")
+TERM (U"Example 1")
 CODE (U"Create Strings as tokens: \"a b c\", \" \"")
 DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TAG (U"Example 2")
+TERM (U"Example 2")
 CODE (U"Create Strings as tokens: \"a   b   c \", \" \"")
 DEFINITION (U"will also produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TAG (U"Example 3")
+TERM (U"Example 3")
 CODE (U"Create Strings as tokens: \"a,b,c\", \",\"")
 DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TAG (U"Example 4")
+TERM (U"Example 4")
 CODE (U"Create Strings as tokens: \"a, b, c\", \",\"")
 DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \" b\" and \" c\".")
-TAG (U"Example 5")
+TERM (U"Example 5")
 CODE (U"Create Strings as tokens: \"a, b, c\", \" ,\"")
 DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TAG (U"Example 6")
+TERM (U"Example 6")
 CODE (U"Create Strings as tokens: \"a,,b,c\", \" ,\"")
 DEFINITION (U"will also produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TAG (U"Example 7")
+TERM (U"Example 7")
 CODE (U"Create Strings as tokens: \"a, ,b,c\", \",\"")
 DEFINITION (U"will produce a Strings with 4 strings in it: \"a\",\" \", \"b\" and \"c\".")
-TAG (U"Example 8")
+TERM (U"Example 8")
 CODE (U"Create Strings as tokens: \"a,b,c,\", \",\"")
 DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TAG (U"Example 9")
+TERM (U"Example 9")
 CODE (U"Create Strings as tokens: \"a,b,c, \", \",\"")
 DEFINITION (U"will produce a Strings object with 4 strings in it: \"a\", \"b\", \"c\" and \" \".")
-TAG (U"Example 10")
+TERM (U"Example 10")
 CODE (U"Create Strings as tokens: \"A string\" + tab\\$ + \"of ..tokens\" + newline\\$ + \"and some  more tokens\", \" .,\" + tab\\$ + newline\\$ ")
 DEFINITION (U"will produce a Strings object with 8 strings in it: \"A\", \"string\", \"of\", \"tokens\", \"and\", \"some\", \"more\" and \"tokens\".")
 
@@ -5049,12 +5049,12 @@ NORMAL (U"In a normal probability plot, the data in the selected column of the @
 	"against a normal distribution in such a way that the points should form approximately a straight line. "
 	"Departures from a straight line indicate departures from normality.")
 ENTRY (U"Settings")
-TAG (U"##Number of quantiles#")
+TERM (U"##Number of quantiles#")
 DEFINITION (U"the number of quantile points, %n, in the plot. From this number %n, the quantile points are "
 	"determined as follows: the last quantile point is %q__%n_ = 0.5^^1/%n^ and the first quantile point is "
 	"%q__1_=1\\--%q__%n_. The intermediate quantile points %q__%i_ are determined according to "
 	"%q__%i_=(%i \\-- 0.3175)/(%n + 0.365), where %i runs from 2 to %n\\--1.")
-TAG (U"##Number of sigmas#")
+TERM (U"##Number of sigmas#")
 DEFINITION (U"determines the horizontal and vertical drawing ranges in units of standard deviations. ")
 MAN_END
 
@@ -5080,23 +5080,23 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (10.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", 1)
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Formula:", "row>1 and row < 10")
 )
-TAG (U"##Vertical column(s)")
+TERM (U"##Vertical column(s)")
 DEFINITION (U"you list the table columns that you want to represent in the bar plot. The number of selected columns is the group size.")
-TAG (U"##Vertical range")
+TERM (U"##Vertical range")
 DEFINITION (U"determine the lower and upper limit of the display.")
-TAG (U"##Column with labels")
+TERM (U"##Column with labels")
 DEFINITION (U"determines the column whose labels will be put at the bottom of the plot.")
-TAG (U"##Distance of first bar from border")
+TERM (U"##Distance of first bar from border")
 DEFINITION (U"determines how far the first (and last) bar wil be positioned from the borders (in units of the width of one bar).")
-TAG (U"##Distance between bar groups")
+TERM (U"##Distance between bar groups")
 DEFINITION (U"determines how far groups of bars are from each other. ")
-TAG (U"##Distance between bars within group")
+TERM (U"##Distance between bars within group")
 DEFINITION (U"determines the distance between the bars within each group.")
-TAG (U"##Colours")
+TERM (U"##Colours")
 DEFINITION (U"determines the colours of the bars in a group.")
-TAG (U"##Label text angle (degrees)")
+TERM (U"##Label text angle (degrees)")
 DEFINITION (U"determines the angle of the labels written below the plot. If you have very long label texts you can prevent the label texts from overlapping.")
-TAG (U"##Formula:")
+TERM (U"##Formula:")
 DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression evaluates to %%true%. A 1 value always evaluates to %%true%.")
 ENTRY (U"Examples")
 NORMAL (U"@@Keating & Esposito (2006)@ present a bar plot in their fig. 3 from which we estimate the following data table")
@@ -5176,25 +5176,25 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (8.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
 	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula:", "1; (= everything)")
 )
-TAG (U"##Vertical column")
+TERM (U"##Vertical column")
 DEFINITION (U"The column whose data points you want to plot.")
-TAG (U"##Vertical range")
+TERM (U"##Vertical range")
 DEFINITION (U"determine the lower and upper limits of the plot.")
-TAG (U"##Horizontal column")
+TERM (U"##Horizontal column")
 DEFINITION (U"determines the horizontal scale. If you leave it empty, or if the (selected part of the) selected column "
 	"contains nominal values, i.e. the values are not numeric but text, the horizontal "
 	"distance between the data points will be constant (i.e. 1) and the nominal values (texts) will be put as labels at "
 	"the bottom of the horizontal axis. On the other hand, if this column contains only numerical values, the horizontal "
 	"position of the data points will be determined by the values in this column.")
-TAG (U"##Horizontal range")
+TERM (U"##Horizontal range")
 DEFINITION (U"determines the left and right limit of the plot.")
-TAG (U"##Text")
+TERM (U"##Text")
 DEFINITION (U"The text to put at the position of the data point in the plot.")
-TAG (U"##Label text angle (degrees)")
+TERM (U"##Label text angle (degrees)")
 DEFINITION (U"determines the angle of the labels written %%below% the plot. If you have very long label texts in the "
 	"\"Horizontal column\", you can prevent the label texts from overlapping. This only has effect for a horizontal "
 	"column with nominal values.")
-TAG (U"##Formula")
+TERM (U"##Formula")
 DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression "
 	"evaluates to %%true%. A 1 value always evaluates to %%true%.")
 ENTRY (U"Examples")
@@ -5287,15 +5287,15 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
 	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula", "1; (= everything)")
 )
-TAG (U"##Horizontal column#")
+TERM (U"##Horizontal column#")
 DEFINITION (U"determines the data along the horizontal axis.")
-TAG (U"##Horizontal range#")
+TERM (U"##Horizontal range#")
 DEFINITION (U"determines the lower and upper limits of the plot.")
-TAG (U"##Vertical column#")
+TERM (U"##Vertical column#")
 DEFINITION (U"determines the data along the horizontal axis.")
-TAG (U"##Vertical range#")
+TERM (U"##Vertical range#")
 DEFINITION (U"determines the lower and upper limits of the plot.")
-TAG (U"##Lower error value column#, ##Upper error value column#")
+TERM (U"##Lower error value column#, ##Upper error value column#")
 DEFINITION (U"determine the size of the vertical lines that will be drawn. These lines are drawn between the points "
 	"(%x,%y-%low) and (%x, %y+%up), where %x and %y are the values from the %%horizontal column% and the %%vertical "
 	"column%, respectively, and, %low and %up are the corresponding values "
@@ -5303,11 +5303,11 @@ DEFINITION (U"determine the size of the vertical lines that will be drawn. These
 	"names is not given the corresponding values (%low and/or %up) will taken as zero. This makes it possible to draw "
 	"one-sided and two-sided error bars. If your errors are symmetric around the y-position, your table only needs "
 	"one column and you can supply the name of this column in both fields.")
-TAG (U"##Bar size (mm)#")
+TERM (U"##Bar size (mm)#")
 DEFINITION (U"determines the width of the horizontal bars or whishers at the lower an postion of the drawn line. ")
-TAG (U"##Garnish#")
+TERM (U"##Garnish#")
 DEFINITION (U"determines whether or not some decoration is drawn.")
-TAG (U"##Formula")
+TERM (U"##Formula")
 DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression "
 	"evaluates to %%true%. A 1 value always evaluates to %%true%.")
 MAN_END
@@ -5326,15 +5326,15 @@ MAN_END
 MAN_BEGIN (U"Table: Report one-way anova...", U"djmw", 20120617)
 INTRO (U"Performs a one-way analysis of variance on the data in one column of a selected @@Table@ and reports the fixed-effects anova table results in the info window.")
 ENTRY (U"Settings")
-TAG (U"##Column with data#")
+TERM (U"##Column with data#")
 DEFINITION (U"the label of the column who's data will be analyzed.")
-TAG (U"##Factor#")
+TERM (U"##Factor#")
 DEFINITION (U"the label of the column with the names of the levels.")
-TAG (U"##Table with means#")
+TERM (U"##Table with means#")
 DEFINITION (U"if checked, a Table with the mean values of the levels will be created.")
-TAG (U"##Table with differences between means#")
+TERM (U"##Table with differences between means#")
 DEFINITION (U"if checked, a Table with the differences between the mean values of the levels will be created.")
-TAG (U"##Table with Tukey's post-hoc test#")
+TERM (U"##Table with Tukey's post-hoc test#")
 DEFINITION (U"if checked, a Table with Tukey's HSD tests will be created. Each value in this Table measures "
 	"the probability that the corresponding difference between the level means happened by chance. The test "
 	"compares all possible level means and is based on the studentized range distribution.")
@@ -5344,13 +5344,13 @@ MAN_BEGIN (U"Table: Report two-way anova...", U"djmw", 20140117)
 INTRO (U"Performs a two-way analysis of variance on the data in one column of a selected %%fully factorial% "
 	"@@Table@ and reports the fixed-effects anova table in the info window. ")
 ENTRY (U"Settings")
-TAG (U"##Column with data#")
+TERM (U"##Column with data#")
 DEFINITION (U"the label of the column who's data will be analyzed.")
-TAG (U"##First factor")
+TERM (U"##First factor")
 DEFINITION (U"the label of the column with the names of the levels for the first factor.")
-TAG (U"##Second factor")
+TERM (U"##Second factor")
 DEFINITION (U"the label of the column with the names of the levels for the second factor.")
-TAG (U"##Table with means")
+TERM (U"##Table with means")
 DEFINITION (U"if checked, a Table with the mean values of all the levels will be created.")
 ENTRY (U"Example")
 NORMAL (U"Suppose you want to check if fundamental frequency depends on the type of vowel and speaker type. We will use the "
@@ -5392,9 +5392,9 @@ MAN_END
 MAN_BEGIN (U"Table: Report one-way Kruskal-Wallis...", U"djmw", 20120617)
 INTRO (U"Performs a one-way Kruskal-Wallis analysis on the data in one column of a selected @@Table@ and reports the results in the info window. This test is sometimes refered to as a one-way analysis of variance for %%non-normally distributed% data.")
 ENTRY (U"Settings")
-TAG (U"##Column with data#")
+TERM (U"##Column with data#")
 DEFINITION (U"the label of the column whose data will be analyzed.")
-TAG (U"##Factor#")
+TERM (U"##Factor#")
 DEFINITION (U"the label of the column with the names of the levels.")
 ENTRY (U"Algorithm")
 NORMAL (U"The analysis is done on the ranked data and consists of the following steps:")
@@ -5409,7 +5409,7 @@ MAN_END
 MAN_BEGIN (U"TableOfReal: Report multivariate normality (BHEP)...", U"djmw", 20090701)
 INTRO (U"Report about multivariate normality according to the @@BHEP multivariate normality test@.")
 ENTRY (U"Settings")
-TAG (U"##Smoothing parameter#")
+TERM (U"##Smoothing parameter#")
 DEFINITION (U"determines the smoothing parameter %h.")
 MAN_END
 
@@ -5433,9 +5433,9 @@ MAN_BEGIN (U"TableOfReal: Draw biplot...", U"djmw", 20020603)
 INTRO (U"A command to draw a biplot for each column in the selected "
 	"@TableOfReal object.")
 ENTRY (U"Settings")
-TAG (U"##Xmin#, ##Xmax#, ##Ymin#, ##Ymax#")
+TERM (U"##Xmin#, ##Xmax#, ##Ymin#, ##Ymax#")
 DEFINITION (U"determine the drawing boundaries.")
-TAG (U"##Split factor#")
+TERM (U"##Split factor#")
 DEFINITION (U"determines the weighing of the row and column structure "
 	"(see below).")
 ENTRY (U"Behaviour")
@@ -5461,28 +5461,28 @@ MAN_BEGIN (U"TableOfReal: Draw box plots...", U"djmw", 20000523)
 INTRO (U"A command to draw a @@box plot@ for each column in the selected "
 	"@TableOfReal object.")
 ENTRY (U"Settings")
-TAG (U"##From row#, ##To row#, ##From column#, ##To column#")
+TERM (U"##From row#, ##To row#, ##From column#, ##To column#")
 DEFINITION (U"determine the part of the table that you want to analyse.")
-TAG (U"%Ymin and %Ymax")
+TERM (U"%Ymin and %Ymax")
 DEFINITION (U"determine the drawing boundaries.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: Draw as scalable squares...", U"djmw", 20180304)
 INTRO (U"A command to draw the cells of the table as squares whose areas conform to the cell's value. ")
 ENTRY (U"Settings")
-TAG (U"##From row#, ##To row#")
+TERM (U"##From row#, ##To row#")
 DEFINITION (U"determine the rows to be drawn.")
-TAG (U"##From column#, ##To column#")
+TERM (U"##From column#, ##To column#")
 DEFINITION (U"determine the columns to be drawn.")
-TAG (U"##Origin#")
+TERM (U"##Origin#")
 DEFINITION (U"determines the drawing orientation. For a table with %%nrow% rows and %%ncol% columns:")
 TAG1 (U"%%top-left%: cel [1] [1] will be at the top left position in the drawing, cell [%%nrow%] [%%ncol%] will be at bottom right position.")
 TAG1 (U"%%top-right%: cel [1] [1] will be at the top right position in the drawing, cell [%%nrow%] [%%ncol%] will be at bottom left position.")
 TAG1 (U"%%bottom-left%: cel [1] [1] will be at the bottom left position in the drawing, cell [%%nrow%] [%%ncol%] will be at top right position.")
 TAG1 (U"%%bottom-right%: cel [1] [1] will be at the bottom right position in the drawing, cell [%%nrow%] [%%ncol%] will be at top left position.")
-TAG (U"##Cell area scale factor#")
+TERM (U"##Cell area scale factor#")
 DEFINITION (U"multiplies the area of each cell's square. If this factor is larger than 1.0 some of the squares might overlap.")
-TAG (U"##Filling order#")
+TERM (U"##Filling order#")
 DEFINITION (U"determines in what order the squares will be drawn. The order is only important if some of the squares overlap, "
 	"i.e. if the cell area scale factor is larger than 1.0.")
 TAG1 (U"%%rows%: start with the first row, cell [1] [1] to cell [1] [%%ncol%], next the second row, etc...")
@@ -5500,23 +5500,23 @@ NORMAL (U"The histogram will consist of %groups of bars. The number of groups wi
 	"number of bars within each group will be determined from the number of "
 	"selected rows.")
 ENTRY (U"Settings")
-TAG (U"##Row numbers# and ##Column range#")
+TERM (U"##Row numbers# and ##Column range#")
 DEFINITION (U"determine the part of the table that you want to draw. "
 	"The column range determines the number of bars that you want to draw for "
 	"each row selected by the %%Row numbers% argument.")
-TAG (U"##Ymin# and ##Ymax#")
+TERM (U"##Ymin# and ##Ymax#")
 DEFINITION (U"the drawing boundaries.")
 NORMAL (U"The following arguments are all relative to the width of a bar "
 	"in the histogram. ")
-TAG (U"##Horizontal offset")
+TERM (U"##Horizontal offset")
 DEFINITION (U"the offset from the left and right margin.")
-TAG (U"##Distance between bar groups")
+TERM (U"##Distance between bar groups")
 DEFINITION (U"the distance between each group, i.e., the distance "
 	"between the right side of the last bar in a group to the left side of "
 	"the first bar in the next group.")
-TAG (U"##Distance between bars")
+TERM (U"##Distance between bars")
 DEFINITION (U"the distance between the bars in a group.")
-TAG (U"##Grey values")
+TERM (U"##Grey values")
 DEFINITION (U"the grey values of the bars in a group.")
 ENTRY (U"Bar positioning")
 NORMAL (U"If you want to put the labels yourself you will need the following information.")
@@ -5537,11 +5537,11 @@ MAN_BEGIN (U"TableOfReal: Select columns where row...", U"djmw", 20140117)
 INTRO (U"Copy columns from the selected @TableOfReal object to a new "
 	"TableOfReal object.")
 ENTRY (U"Settings")
-TAG (U"##Columns#")
+TERM (U"##Columns#")
 DEFINITION (U"defines the indices of the columns to be selected. Ranges can be "
 	"defined with a colon \":\". Columns will be selected in the specified "
 	"order.")
-TAG (U"##Row condition#")
+TERM (U"##Row condition#")
 DEFINITION (U"specifies a condition for the selection of rows. If the "
 	"condition evaluates as %true for a particular row, the selected elements "
 	"in this row will be copied. See @@Matrix: Formula...@ for the kind of "
@@ -5575,7 +5575,7 @@ MAN_BEGIN (U"TableOfReal: To Configuration (lda)...", U"djmw", 19981103)
 INTRO (U"Calculates a @Configuration based on the @Discriminant scores obtained "
 	"from the selected @TableOfReal. Row labels in the table indicate group membership.")
 ENTRY (U"Setting")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"determines the number of dimensions of the resulting Configuration.")
 ENTRY (U"Algorithm")
 NORMAL (U"First we calculate the Discriminant from the data in the TableOfReal. "
@@ -5588,7 +5588,7 @@ MAN_BEGIN (U"TableOfReal: To Configuration (pca)...", U"djmw", 20220111)
 INTRO (U"Calculates a @Configuration based on the principal components from the "
 	"selected @TableOfReal.")
 ENTRY (U"Setting")
-TAG (U"##Number of dimensions")
+TERM (U"##Number of dimensions")
 DEFINITION (U"determines the number of dimensions of the resulting Configuration.")
 ENTRY (U"Algorithm")
 NORMAL (U"We form principal components without explicitly calculating the covariance matrix "
@@ -5695,7 +5695,7 @@ MAN_BEGIN (U"TableOfReal: To CCA...", U"djmw", 20020424)
 INTRO (U"A command that creates a @CCA object from the selected "
 	"@TableOfReal object.")
 ENTRY (U"Settings")
-TAG (U"##Dimension of dependent variate (ny)#")
+TERM (U"##Dimension of dependent variate (ny)#")
 DEFINITION (U"defines the partition of the table into the two parts whose "
 	"correlations will be determined. The first %ny columns should be the "
 	"dependent part, the rest of the columns will be interpreted as the "
@@ -5757,7 +5757,7 @@ MAN_BEGIN (U"TableOfReal: To TableOfReal (means by row labels)...", U"djmw", 201
 INTRO (U"A command that appears in the ##Multivariate statistics# menu if you select a @@TableOfReal@. "
 	"It calculates the multivariate means for the different row labels from the selected TableOfReal.")
 ENTRY (U"Setting")
-TAG (U"##Expand#")
+TERM (U"##Expand#")
 DEFINITION (U"when %off, then for a table with %n rows and %m different labels (%m\\<_%n), the resulting table will have %m rows. "
 	"When %on, the dimensions of the resulting table will be the same as the originating, and corresponding means substituded "
 	"in each row.")
@@ -5776,9 +5776,9 @@ MAN_END
 MAN_BEGIN (U"TextGrid: Extend time...", U"djmw", 20020702)
 INTRO (U"Extends the domain of the selected @TextGrid object.")
 ENTRY (U"Settings")
-TAG (U"##Extend domain by#")
+TERM (U"##Extend domain by#")
 DEFINITION (U"defines the amount of time by which the domain will be extended.")
-TAG (U"##At")
+TERM (U"##At")
 DEFINITION (U"defines whether starting times or finishing times will be modified.")
 ENTRY (U"Behaviour")
 NORMAL (U"We add an extra (empty) interval into each %%interval tier%. "
@@ -5804,19 +5804,19 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Scale intervals whose labels", "starts with")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("...the text", "hi")
 )
-TAG (U"##Tier number#")
+TERM (U"##Tier number#")
 DEFINITION (U"specifies the tier with the intervals.")
-TAG (U"##Time scale factor#")
+TERM (U"##Time scale factor#")
 DEFINITION (U"specifies the scale factor by which the duration of a selected interval has to be multiplied.")
-TAG (U"##Left transition duration#")
+TERM (U"##Left transition duration#")
 DEFINITION (U"specifies how long it takes to go from a time scale factor of 1.0 to the specified one. "
 	"Default a very small duration is used. ")
-TAG (U"##Right transition duration#")
+TERM (U"##Right transition duration#")
 DEFINITION (U"specifies the time it takes to go from the specified time scale factor to 1.0. "
 	"Default a very small duration is used.")
-TAG (U"##Scale intervals whose labels")
+TERM (U"##Scale intervals whose labels")
 DEFINITION (U"specifies the interval selection criterion.")
-TAG (U"##...the text")
+TERM (U"##...the text")
 DEFINITION (U"specifies the text used in the selection criterion.")
 ENTRY (U"Algorithm")
 SCRIPT (5, 3, U"ymin = 0.9\n"
@@ -5879,16 +5879,16 @@ MAN_BEGIN (U"NavigationContext", U"djmw", 20210723)
 INTRO (U"One of the @@types of objects@ in Praat. The ##NavigationContext# contains the information that the "
 	"@@TextGridNavigator@ needs to search for a match on one tier of a @@TextGrid@.")
 ENTRY (U"What is inside a NavigationContext?")
-TAG (U"##Topic label set#")
+TERM (U"##Topic label set#")
 DEFINITION (U"defines the labels that we want to find. As an example consider the following "
 	"set of vowel labels { \"u\", \"o\", \"a\", \"i\", \"e\" }. Our intention is to find only those intervals in "
 	"the specified tier of the TextGrid that match with one of these labels. ")
-TAG (U"##Topic match criterion#")
+TERM (U"##Topic match criterion#")
 DEFINITION (U"defines the type of match you want. To name just a few of the possible options: "
 	"##is equal to# or ##is not equal to# or ##contains# or ##does not contain# or "
 	"##starts with# or ##does not start with#. Many more match criteria can be chosen and these criteria "
 	"come in pairs where the second one of the pair is the negation of the first.")
-TAG (U"##Combine topic matches with#")
+TERM (U"##Combine topic matches with#")
 DEFINITION (U"defines whether the match criteria of the labels in the topic set have to be combined by "
 	"##OR# or by  ##AND#. Consider the topic set defined above. If the topic match criterion "
 	"chosen was ##is equal to# then we would want the match for the current interval label in the tier to succeeed "
@@ -5901,32 +5901,32 @@ DEFINITION (U"defines whether the match criteria of the labels in the topic set 
 	"Therefore, in general, for labels that are single words, a positive match criterion, like ##is equal to#, "
 	"we would choose ##OR# while for a negative match criterion, like ##is not equal to# we would choose ##AND#. "
 	"However, for labels that are multi-word both ##AND# as well as ##OR# combinations can be useful.")
-TAG (U"##Before label set#")
+TERM (U"##Before label set#")
 DEFINITION (U"defines the labels that the label of the preceding interval has to match if the current interval label "
 	"matches the topic label set. This makes the search context-sensitive because it is not enough that the current "
 	"interval label matches (in a specified way) the topic set but also the label of the preceding interval has to "
 	"match the before set. If, for example, the before set contains "
 	"\"p\", \"t\" and \"k\" then in combination with the topic labels defined above this would limit the search to only "
 	"those vowels that are preceded by a plosive.")
-TAG (U"##Combine before matches with#")
+TERM (U"##Combine before matches with#")
 
 DEFINITION (U"defines, just like for the topic match criterion, the kind of match you are looking for only now for "
 	"the labels of the %%before set%.")
-TAG (U"##Before match boolean#")
+TERM (U"##Before match boolean#")
 DEFINITION (U"defines, also in analogy with the description of the topic match boolean, the relation between the matches "
 	"of the labels in the %%before set%.")
-TAG (U"##After label set#")
+TERM (U"##After label set#")
 DEFINITION (U"defines the labels that the label of the following interval has to match if the current interval label "
 	"matches the topic label set. An example set could consist of "
 	"\"m\" and \"n\". In combination with the topic set we would search for vowels followed by a nasal.")
-TAG (U"##After match criterion# and ##Combine after matches with#")
+TERM (U"##After match criterion# and ##Combine after matches with#")
 DEFINITION (U"have the same meaning as defined above for the topic and before sets.")
-TAG (U"##Context combination criterion#")
+TERM (U"##Context combination criterion#")
 DEFINITION (U"defines how the before and after sets have to be combined in the matching. The possible options are ##before#, or "
 	"##after# or ##before and after# or ##before or after, not both# or ##before or after, or both# or finally "
 	"##no before and no after#. Given the topic, before and after labels examples defined above, chosing ##before and after# "
 	"would limit the search to vowels preceded by a plosive and followed by a nasal.")
-TAG (U"##Exclude topic labels boolean#")
+TERM (U"##Exclude topic labels boolean#")
 DEFINITION (U"when on, only the before and / or the after label set will be used in matching. Of course this effect "
 	"could also be reached by leaving the topic set empty.")
 MAN_END
@@ -6072,13 +6072,13 @@ MAN_END
 MAN_BEGIN (U"TextGrid: To TextGridNavigator...", U"djmw", 20210723)
 INTRO (U"A command to create a new @@TextGridNavigator@ object for the selected @@TextGrid@.")
 ENTRY (U"Settings")
-TAG (U"##Tier number#")
+TERM (U"##Tier number#")
 DEFINITION (U"defines the tier of the TextGrid that will be used for the navigation. This tier will be copied "
 	"into the TextGridNavigator. This tier will be called the %%topic tier%.")
-TAG (U"Next follow the settings for the @@NavigationContext|navigation context@. You can define a full "
+TERM (U"Next follow the settings for the @@NavigationContext|navigation context@. You can define a full "
 	"context-sensitive search on the selected tier. This means that whether a label in an interval matches may depend "
 	"on whether the label of the preceeding interval matches a certain condition and / or whether the label in the succeeding interval matches a possibly different condition. ")
-TAG (U"##Match domain#")
+TERM (U"##Match domain#")
 DEFINITION (U"defines the start and end times of the match domain on this tier. Various options exist, the default, "
 	"##Topic start to Topic end# takes the start time and end time of the interval that matches the topic. "
 	"As is explained in the @@TextGridNavigator@ matching in multi-tier search is based on time intervals,  "
@@ -6088,13 +6088,13 @@ MAN_END
 MAN_BEGIN (U"TextGridNavigator & TextGrid: Add search tier...", U"djmw", 20220117)
 INTRO (U"A command to extend the search of the selected @@TextGridNavigator@ with another tier of the selected @@TextGrid@. ")
 ENTRY (U"Settings")
-TAG (U"##Tier number#")
+TERM (U"##Tier number#")
 DEFINITION (U"defines the tier of the TextGrid that will also be used to limit make the searches more specific. This tier has to be different from the tiers that are already in use.")
-TAG (U"The @@NavigationContext|navigation context@ for this tier has to be defined.")
-TAG (U"##Match domain#")
+TERM (U"The @@NavigationContext|navigation context@ for this tier has to be defined.")
+TERM (U"##Match domain#")
 DEFINITION (U"defines the start and end times of the match domain on this tier. Various options exist, the default, "
 	"##Topic start to Topic end# takes the start time and end time of the interval that matches the topic on this tier. ")
-TAG (U"##Match domain alignment#")
+TERM (U"##Match domain alignment#")
 DEFINITION (U"defines the alignment between the match domain in this tier to the match domain in the topic tier. "
 	"For example, if the option ##overlaps before and after# were chosen and the match domain in the selected tier "
 	"is [%%tmin2%, %%tmax2%] while on the topic tier it is [%%tmin1%, %%tmax1%] then a match would only succeed "
@@ -6132,56 +6132,56 @@ NORMAL (U"With the mouse button down, you can move the mouse cursor around in th
 	"default settings, time markers are at 50 milliseconds apart and they may give you an indication of the speed by which you traversed the trajectory.)")
 ENTRY (U"The interface")
 NORMAL (U"In the lower part of the editor a number of buttons and fields are displayed.")
-TAG (U"##Play")
+TERM (U"##Play")
 DEFINITION (U"will play the trajectory.")
-TAG (U"##Reverse")
+TERM (U"##Reverse")
 DEFINITION (U"will reverse the trajectory and play it.")
-TAG (U"##Publish")
+TERM (U"##Publish")
 DEFINITION (U"will publish the sound in the list of objects.")
-TAG (U"##Duration (s)")
+TERM (U"##Duration (s)")
 DEFINITION (U"allows to modify the duration of the current trajectory. ")
-TAG (U"##Extend (s)")
+TERM (U"##Extend (s)")
 DEFINITION (U"determines the duration of the straight line trajectory that connects the endpoint of the current trajectory with the startpoint of a new trajectory. You may extend the current trajectory by starting a new trajectory with the shift button pressed. After you finished the new trajectory, three trajectories will be appended: the current one, the straight line one and the new one.")
-TAG (U"##Start F0 (Hz)")
+TERM (U"##Start F0 (Hz)")
 DEFINITION (U"determines the fundamental frequency at the start of the trajectory.")
-TAG (U"##F0 slope (oct/s)")
+TERM (U"##F0 slope (oct/s)")
 DEFINITION (U"determines how many octaves the pitch will changes during the course of the trajectory.")
 NORMAL (U"The bottom line in the Editor displays the first and second formant frequency and the fundamental frequency at the start point and the endpoint of the trajectory.")
 ENTRY (U"Edit menu")
-TAG (U"##Set F0...")
+TERM (U"##Set F0...")
 DEFINITION (U"Set pitch and slope.")
-TAG (U"##Reverse trajectory")
+TERM (U"##Reverse trajectory")
 DEFINITION (U"Reverses the trajectory (like editor button).")   // ??
-TAG (U"##Modify trajectory duration...")
+TERM (U"##Modify trajectory duration...")
 DEFINITION (U"Modifies trajectory duration (like editor field).")   // ??
-TAG (U"##New trajectory...")
+TERM (U"##New trajectory...")
 DEFINITION (U"Set startpoint, endpoint and duration of a new trajectory.")
-TAG (U"##Extend trajectory...")
+TERM (U"##Extend trajectory...")
 DEFINITION (U"Extend current trajectory to...")
-TAG (U"##Shift trajectory...")
+TERM (U"##Shift trajectory...")
 DEFINITION (U"Shift current trajectory.")
 ENTRY (U"View menu")
-TAG (U"##F1 & F2 range...#")
+TERM (U"##F1 & F2 range...#")
 DEFINITION (U"Modify the horizontal and vertical scales.")
-TAG (U"##Show vowel marks from fixed set...#")
+TERM (U"##Show vowel marks from fixed set...#")
 DEFINITION (U"Show the vowel marks in the editor from a fixed set of vowel inventories.")
-TAG (U"##Show vowel marks from Table file...#")
+TERM (U"##Show vowel marks from Table file...#")
 DEFINITION (U"Put your own marks in the editor. The Table needs to have at least three mandatory columns "
 	"labeled \"Vowel\", \"F1\" and  \"F2\" and "
 	" two optional column labeled \"Size\" and \"Colour\". The Vowel column contains the vowel marker labels, the F1 and "
 	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
 	"the font size of the vowel markers, while the Colour column contains the @@Colour|colour@ specification of each vowel.")
-TAG (U"##Show trajectory time markers every...")
+TERM (U"##Show trajectory time markers every...")
 DEFINITION (U"Shows time markers as small bars orthogonal to the trajectory. ")
 ENTRY (U"File menu")
-TAG (U"##Preferences...#")
+TERM (U"##Preferences...#")
 DEFINITION (U"Here you can modify the sharpness of the F1 and F2 peaks and also add a number of higher formants.")
-TAG (U"##Publish Sound")
+TERM (U"##Publish Sound")
 DEFINITION (U"Make the synthesized sound available in the object menu.")
-TAG (U"##Extract FormantTier")
-TAG (U"##Extract PitchTier")
+TERM (U"##Extract FormantTier")
+TERM (U"##Extract PitchTier")
 DEFINITION (U"Publish the Sound, the PitchTier and the FormantTier from the trajectory.")
-TAG (U"##Draw trajectory...")
+TERM (U"##Draw trajectory...")
 DEFINITION (U"Draws the trajectory in the picture window.")
 MAN_END
 
@@ -6196,7 +6196,7 @@ MAN_END
 
 /********************** GSL ********************************************/
 MAN_BEGIN (U"incompleteBeta", U"djmw", 20071024)
-TAG (U"##incompleteBeta (%a, %b, %x)")
+TERM (U"##incompleteBeta (%a, %b, %x)")
 DEFINITION (U"I__x_(%a,%b) = 1/beta(%a,%b)\\in__0_^%x %t^^%a-1^(1-%t)^^%b-1^ dt,")
 NORMAL (U"for 0 \\<_ %x \\<_ 1 and %a and %b and %a+%b not equal to a negative integer.")
 //double incompleteBeta (double a, double b, double x);
@@ -6207,13 +6207,13 @@ NORMAL (U"for 0 \\<_ %x \\<_ 1 and %a and %b and %a+%b not equal to a negative i
 MAN_END
 
 MAN_BEGIN (U"incompleteGammaP", U"djmw", 20170531)
-TAG (U"##incompleteGammaP (%a, %x)")
+TERM (U"##incompleteGammaP (%a, %x)")
 DEFINITION (U"incompleteGammaP = 1/\\Ga(%a)\\in__0_^%x e^^-%t^%t^^%a-1^ dt,")
 NORMAL (U"where %x and %a are real numbers that satisfy %x\\>_ 0 and %a not being a negative integer.")
 MAN_END
 
 MAN_BEGIN (U"lnBeta", U"djmw", 20071024)
-TAG (U"##lnBeta (%a, %b)")
+TERM (U"##lnBeta (%a, %b)")
 DEFINITION (U"Computes the logarithm of the #beta function, subject to %a and %b and %a+%b not being negative integers.")
 MAN_END
 

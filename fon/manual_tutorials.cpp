@@ -3886,13 +3886,13 @@ NORMAL (U"With @@Spectrogram settings...@ from the #Spectrogram menu, "
 	"These settings will be remembered across Praat sessions. "
 	"All these settings have standard values (\"factory settings\"), which appear "
 	"when you click ##Standards#.")
-TAG (U"%%View range% (Hz)")
+TERM (U"%%View range% (Hz)")
 DEFINITION (U"the range of frequencies to display. The standard is 0 Hz at the bottom and 5000 Hz at the top. "
 	"If this maximum frequency is higher than the Nyquist frequency of the Sound "
 	"(which is half its sampling frequency), some values in the spectrogram will be zero, and the higher "
 	"frequencies will be drawn in white. You can see this if you record a Sound at 44100 Hz and set the "
 	"view range from 0 Hz to 25000 Hz.")
-TAG (U"%%Window length")
+TERM (U"%%Window length")
 DEFINITION (U"the duration of the analysis window. If this is 0.005 seconds (the standard), "
 	"Praat uses for each frame the part of the sound that lies between 0.0025 seconds before "
 	"and 0.0025 seconds after the centre of that frame "
@@ -3904,7 +3904,7 @@ DEFINITION (U"the duration of the analysis window. If this is 0.005 seconds (the
 	"To get a `broad-band' spectrogram (bandwidth 260 Hz), keep the standard window length of 5 ms; "
 	"to get a `narrow-band' spectrogram (bandwidth 43 Hz), set it to 30 ms (0.03 seconds). "
 	"The other window shapes give slightly different values.")
-TAG (U"%%Dynamic range% (dB)")
+TERM (U"%%Dynamic range% (dB)")
 DEFINITION (U"All values that are more than %%Dynamic range% dB below the maximum (perhaps after dynamic compression, "
 	"see @@Advanced spectrogram settings...@) "
 	"will be drawn in white. Values in-between have appropriate shades of grey. Thus, if the highest "
@@ -3937,12 +3937,12 @@ MAN_END
 
 MAN_BEGIN (U"Advanced spectrogram settings...", U"ppgb", 20120531)
 ENTRY (U"Optimization")
-TAG (U"%%Number of time steps%")
+TERM (U"%%Number of time steps%")
 DEFINITION (U"the maximum number of points along the time window for which Praat has to compute "
 	"the spectrum. If your screen is not wider than 1200 pixels, then the standard of 1000 is "
 	"appropriate, since there is no point in computing more than one spectrum per one-pixel-wide vertical line. "
 	"If you have a really wide screen, you may see improvement if you raise this number to 1500.")
-TAG (U"%%Number of frequency steps%")
+TERM (U"%%Number of frequency steps%")
 DEFINITION (U"the maximum number of points along the frequency axis for which Praat has to compute "
 	"the spectrum. If your screen is not taller than 768 pixels, then the standard of 250 is "
 	"appropriate, since there is no point in computing more than one spectrum per one-pixel-height horizontal line. "
@@ -3954,10 +3954,10 @@ NORMAL (U"For purposes of computation speed, Praat may decide to change the time
 	"the actual time step will never be less than 5/(8\\Vr\\pi) = 0.353 ms, "
 	"and the actual frequency step will never be less than (\\Vr\\pi)/8/0.005 = 44.31 Hz.")
 ENTRY (U"Spectrogram analysis settings")
-TAG (U"%%Method")
+TERM (U"%%Method")
 DEFINITION (U"there is currently only one method available in this window for computing a spectrum from "
 	"a sound: the Fourier transform.")
-TAG (U"%%Window shape")
+TERM (U"%%Window shape")
 DEFINITION (U"the shape of the analysis window. To compute the spectrum at, say, 3.850 seconds, "
 	"samples that lie close to 3.850 seconds are given more weight than samples further away. "
 	"The relative extent to which each sample contributes to the spectrum is given by the window shape. "
@@ -3983,21 +3983,21 @@ NORMAL (U"We include these other window shapes only for pedagogical purposes "
 	"with Hanning or Hamming windows than with a Gaussian window. An example of the reverse is easy "
 	"to find; we have just seen one.")
 ENTRY (U"Spectrogram blackness settings")
-TAG (U"%%Autoscaling%")
-TAG (U"%%Maximum% (dB/Hz)")
+TERM (U"%%Autoscaling%")
+TERM (U"%%Maximum% (dB/Hz)")
 DEFINITION (U"all parts of the spectrogram that have a power above %maximum (after preemphasis) "
 	"will be drawn in black. The standard maximum is 100 dB/Hz, but if %autoscaling is on (which is the standard), "
 	"Praat will use the maximum of the visible part of the spectrogram instead; "
 	"this ensures that the window will always look well, but it also means that the blackness "
 	"of a certain part of the spectrogram will change as you scroll.")
-TAG (U"%%Preemphasis% (dB/octave)")
+TERM (U"%%Preemphasis% (dB/octave)")
 DEFINITION (U"determines the steepness of a high-pass filter, "
 	"i.e., how much the power of higher frequencies will be raised before drawing, as compared to lower frequencies. "
 	"Since the spectral slope of human vowels is approximately -6 dB per octave, "
 	"the standard value for this setting is +6 dB per octave, "
 	"so that the spectrum is flattened and the higher formants look as strong as the lower ones. "
 	"When you raise the preemphasis, frequency bands above 1000 Hz will become darker, those below 1000 Hz will become lighter.")
-TAG (U"%%Dynamic compression")
+TERM (U"%%Dynamic compression")
 DEFINITION (U"determines how much stronger weak spectra should be made before drawing. "
 	"Normally, this parameter is between 0 and 1. If it is 0 (the standard value), there is no dynamic compression. "
 	"If it is 1, all spectra will be drawn equally strong, "

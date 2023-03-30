@@ -33,7 +33,7 @@
 #define LIST_ITEM1(text)  { kManPage_type::LIST_ITEM1, text, 0.0, 0.0, nullptr },
 #define LIST_ITEM2(text)  { kManPage_type::LIST_ITEM2, text, 0.0, 0.0, nullptr },
 #define LIST_ITEM3(text)  { kManPage_type::LIST_ITEM3, text, 0.0, 0.0, nullptr },
-#define TAG(text)  { kManPage_type::TAG, text, 0.0, 0.0, nullptr },
+#define TERM(text)  { kManPage_type::TERM, text, 0.0, 0.0, nullptr },
 #define TAG1(text)  { kManPage_type::TAG1, text, 0.0, 0.0, nullptr },
 #define TAG2(text)  { kManPage_type::TAG2, text, 0.0, 0.0, nullptr },
 #define TAG3(text)  { kManPage_type::TAG3, text, 0.0, 0.0, nullptr },

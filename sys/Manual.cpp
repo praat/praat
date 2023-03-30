@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2022 Paul Boersma
+ * Copyright (C) 1996-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ void structManual :: v_draw () {
 			case kManPage_type::ENTRY: HyperPage_entry (this, paragraph -> text); break;
 			case kManPage_type::NORMAL: HyperPage_paragraph (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM: HyperPage_listItem (this, paragraph -> text); break;
-			case kManPage_type::TAG: HyperPage_listTag (this, paragraph -> text); break;
+			case kManPage_type::TERM: HyperPage_listTag (this, paragraph -> text); break;
 			case kManPage_type::DEFINITION: HyperPage_definition (this, paragraph -> text); break;
 			case kManPage_type::CODE: HyperPage_code (this, paragraph -> text); break;
 			case kManPage_type::PROTOTYPE: HyperPage_prototype (this, paragraph -> text); break;

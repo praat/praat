@@ -1,6 +1,6 @@
 /* manual_Sampling.cpp
  *
- * Copyright (C) 1992-2005,2007,2011,2014-2017,2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2014-2017,2021-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ MAN_BEGIN (U"Get time from sample number...", U"ppgb", 20221202)
 INTRO (U"A command that becomes available in the @@Query submenu@ if you select a @Sound or @LongSound object.")
 NORMAL (U"The Info window will tell you the time (in seconds) associated with the sample number that you specify.")
 ENTRY (U"Setting")
-TAG (U"##Sample number")
+TERM (U"##Sample number")
 DEFINITION (U"the sample number whose time is sought.")
 ENTRY (U"Algorithm")
 NORMAL (U"the result is")
@@ -71,7 +71,7 @@ INTRO (U"A command that becomes available in the @@Query submenu@ if you select 
 NORMAL (U"The Info window will tell you the sample number belonging to the time that you specify. "
 	"The result is presented as a real number.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time (in seconds) for which you want to know the sample number.")
 ENTRY (U"Example")
 NORMAL (U"If the sound has a sampling frequency of 10 kHz, the sample number associated with a time of 0.1 seconds "
@@ -110,7 +110,7 @@ INTRO (U"A command that becomes available in the @@Query submenu@ if you select 
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
 NORMAL (U"The Info window will tell you the time associated with the frame number that you specify.")
 ENTRY (U"Setting")
-TAG (U"##Frame number")
+TERM (U"##Frame number")
 DEFINITION (U"the frame number whose time is sought.")
 ENTRY (U"Algorithm")
 NORMAL (U"the result is")
@@ -128,7 +128,7 @@ INTRO (U"A command that becomes available in the @@Query submenu@ if you select 
 NORMAL (U"The Info window will tell you the frame number belonging to the time that you specify. "
 	"The result is presented as a real number.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time (in seconds) for which you want to know the frame number.")
 ENTRY (U"Example")
 NORMAL (U"If the Pitch object has a time step of 10 ms, and the first frame is centred around 18 ms, "
