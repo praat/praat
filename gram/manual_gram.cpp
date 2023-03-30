@@ -114,15 +114,15 @@ LIST_ITEM (U"\tmid\te\tɛ")
 LIST_ITEM (U"\tlow\tə\ta")
 ENTRY (U"Constraints")
 NORMAL (U"The resulting OTGrammar will usually contain at least the following five constraints:")
-TAG (U"*[rtr / hi]")
+TERM (U"*[rtr / hi]")
 DEFINITION (U"“do not implement [retracted tongue root] if the vowel is high.”")
-TAG (U"*[atr / lo]")
+TERM (U"*[atr / lo]")
 DEFINITION (U"“do not implement [advanced tongue root] if the vowel is low.”")
-TAG (U"P\\s{ARSE} (rtr)")
+TERM (U"P\\s{ARSE} (rtr)")
 DEFINITION (U"“make an underlying [retracted tongue root] specification surface.”")
-TAG (U"P\\s{ARSE} (atr)")
+TERM (U"P\\s{ARSE} (atr)")
 DEFINITION (U"“make an underlying [advanced tongue root] specification surface.”")
-TAG (U"*G\\s{ESTURE} (contour)")
+TERM (U"*G\\s{ESTURE} (contour)")
 DEFINITION (U"“do not go from advanced to retracted tongue root, nor the other way around, within a word.”")
 NORMAL (U"This set of constraints thus comprises: ")
 LIST_ITEM (U"• two %%##grounding conditions#% (@@Archangeli & Pulleyblank (1994)@), "
@@ -132,16 +132,16 @@ LIST_ITEM (U"• two %%##faithfulness constraints#%, which favour the similarity
 LIST_ITEM (U"• a %%##harmony constraint#%, which, if crucially ranked higher than at least one faithfulness constraint, "
 	"forces %%##tongue-root harmony#%.")
 NORMAL (U"In addition, there may be the following four constraints:")
-TAG (U"*[rtr / mid]")
+TERM (U"*[rtr / mid]")
 DEFINITION (U"“do not implement [retracted tongue root] if the vowel is mid; universally ranked lower "
 	"than *[rtr / hi].”")
-TAG (U"*[rtr / lo]")
+TERM (U"*[rtr / lo]")
 DEFINITION (U"“do not implement [retracted tongue root] if the vowel is low; universally ranked lower "
 	"than *[rtr / mid].”")
-TAG (U"*[atr / mid]")
+TERM (U"*[atr / mid]")
 DEFINITION (U"“do not implement [advanced tongue root] if the vowel is mid; universally ranked lower "
 	"than *[atr / lo].”")
-TAG (U"*[atr / hi]")
+TERM (U"*[atr / hi]")
 DEFINITION (U"“do not implement [advanced tongue root] if the vowel is high; universally ranked lower "
 	"than *[atr / mid].”")
 NORMAL (U"The universal rankings referred to are due to the %%##local-ranking principle#% (@@Boersma (1998)@). "
@@ -882,9 +882,9 @@ INTRO (U"Once you have mastered the tedious procedures of making Praat learn sto
 	"and clicking ##Learn...#. Once you click #OK, Praat will feed the selected grammar with input/output "
 	"pairs drawn from the selected distribution, and the grammar will be modified every time its output "
 	"is different from the given output. Here is the meaning of the arguments:")
-TAG (U"%%Evaluation noise% (standard value: 2.0)")
+TERM (U"%%Evaluation noise% (standard value: 2.0)")
 DEFINITION (U"the standard deviation of the noise added to the ranking of each constraint at evaluation time.")
-TAG (U"%%Strategy% (standard value: Symmetric all)")
+TERM (U"%%Strategy% (standard value: Symmetric all)")
 DEFINITION (U"what to do when the learner's output is different from the given output. Possibilities:")
 LIST_ITEM1 (U"Demotion only: lower the ranking of every constraint that is violated more in the correct output "
 	"than in the learner's output. This algorithm crashes if there is variation in the data, i.e. if some inputs "
@@ -905,10 +905,10 @@ LIST_ITEM1 (U"Weighted all: the \"Symmetric all\" strategy can reworded as follo
 LIST_ITEM1 (U"EDCD: Error-Driven Constraint Demotion, the algorithm described by @@Tesar & Smolensky (1998)@. "
 	"All constraints that prefer the adult form and are ranked above the highest-ranked constraint that prefers the learner's form, "
 	"are demoted to the ranking of that last constraint minus 1.0.")
-TAG (U"%%Initial plasticity% (standard value: 1.0)")
-TAG (U"%%Replications per plasticity% (standard value: 100000)")
-TAG (U"%%Plasticity decrement% (standard value: 0.1)")
-TAG (U"%%Number of plasticities% (standard value: 4)")
+TERM (U"%%Initial plasticity% (standard value: 1.0)")
+TERM (U"%%Replications per plasticity% (standard value: 100000)")
+TERM (U"%%Plasticity decrement% (standard value: 0.1)")
+TERM (U"%%Number of plasticities% (standard value: 4)")
 DEFINITION (U"these four arguments determine the %%learning scheme%, i.e. the number of times the grammar will "
 	"receive data at a certain plasticity. With the standard values, there will be 100000 data while the plasticity is 1.0 "
 	"(the initial plasticity), 100000 data while the plasticity is 0.1, 100000 data while the plasticity is 0.01, "
@@ -916,15 +916,15 @@ DEFINITION (U"these four arguments determine the %%learning scheme%, i.e. the nu
 	"%%number of plasticities% to 1. Note that for the decision strategies of HarmonicGrammar, LinearOT, PositiveHG or MaximumEntropy "
 	"the learning step for a constraint equals the plasticity multiplied by the difference between the "
 	"numbers of violations of this constraint in the adult output and in the learner's output.")
-TAG (U"%%Rel. plasticity spreading% (standard value: 0.1)")
+TERM (U"%%Rel. plasticity spreading% (standard value: 0.1)")
 DEFINITION (U"if this is not 0, the size of the learning step will vary randomly. For instance, if the plasticity is set to 0.01, "
 	"and the relative plasticity spreading is 0.1, you will get actual learning steps that could be anywhere between 0.007 "
 	"and 0.013, according to a Gaussian distribution with mean 0.01 and standard deviation 0.001.")
-TAG (U"%%Honour local rankings% (standard value: on)")
+TERM (U"%%Honour local rankings% (standard value: on)")
 DEFINITION (U"if this is on, the fixed rankings that you supplied in the grammar will be maintained during learning: "
 	"if a constraint falls below a constraint that is supposed to be universally lower-ranked, this second constraint "
 	"will be demoted as well.")
-TAG (U"%%Number of chews% (standard value: 1)")
+TERM (U"%%Number of chews% (standard value: 1)")
 DEFINITION (U"the number of times that each input-output pair is fed to the grammar. Setting this number to 20 "
 	"will give a slightly different (perhaps more accurate) result than simply raising the plasticity by a factor of 20.")
 MAN_END
@@ -1120,7 +1120,7 @@ MAN_BEGIN (U"OTGrammar", U"ppgb", 20141001)
 INTRO (U"One of the @@types of objects@ in Praat. See the @@OT learning@ tutorial.")
 ENTRY (U"Inside an OTGrammar")
 NORMAL (U"With @Inspect, you will see the following attributes:")
-TAG (U"%constraints")
+TERM (U"%constraints")
 DEFINITION (U"a list of constraints. Each constraint contains the following attributes:")
 TAG1 (U"%name")
 DEFINITION1 (U"the fixed name of the constraint, for instance \"P\\s{ARSE}\".")
@@ -1129,7 +1129,7 @@ DEFINITION1 (U"the continuous ranking value; will change during learning.")
 TAG1 (U"%disharmony")
 DEFINITION1 (U"the effective ranking value during stochastic evaluation; with a non-zero evaluation noise, "
 	"this will be different from %ranking.")
-TAG (U"%fixedRankings")
+TERM (U"%fixedRankings")
 DEFINITION (U"an often empty list of locally ranked pairs of constraints. "
 	"Each local-ranking pair contains the following attributes:")
 TAG1 (U"%higher")
@@ -1137,7 +1137,7 @@ DEFINITION1 (U"the index of the universally higher-ranked of the two constraints
 	"a number between 1 and the number of constraints.")
 TAG1 (U"%lower")
 DEFINITION1 (U"the index of the universally lower-ranked of the two constraints.")
-TAG (U"%tableaus")
+TERM (U"%tableaus")
 DEFINITION (U"a list of tableaus. Each tableau contains the following attributes:")
 TAG1 (U"%input")
 DEFINITION1 (U"the input string of the tableau. For production grammaras, the underlying form of the utterance, for example "
@@ -1174,7 +1174,7 @@ NORMAL (U"A practical grammar-specific implementation of the %%richness of the b
 	"the inputs are drawn at random with equal probabilities from the inputs associated with the tableaus. "
 	"For an example, see @@OT learning 3.2. Data from another grammar@.")
 ENTRY (U"Setting")
-TAG (U"##Number of trials")
+TERM (U"##Number of trials")
 DEFINITION (U"the number of times a string will be drawn from the possible inputs to the grammar.")
 MAN_END
 
@@ -1182,10 +1182,10 @@ MAN_BEGIN (U"OTGrammar: Input to output...", U"ppgb", 20030916)
 INTRO (U"A command to ask the selected @OTGrammar object to evaluate the candidates associated with a specified input form.")
 NORMAL (U"See @@OT learning 2.8. Asking for one output@ for tutorial information.")
 ENTRY (U"Settings")
-TAG (U"##Input form")
+TERM (U"##Input form")
 DEFINITION (U"the input form whose surface form you want to know. If this string is not in the list "
 	"of the possible inputs of the selected OTGrammar, you will get an error message.")
-TAG (U"##Noise# (standard value: 2.0)")
+TERM (U"##Noise# (standard value: 2.0)")
 DEFINITION (U"the standard deviation of the noise added to the ranking value of every constraint during evaluation. "
 	"See @@OT learning 2.4. Evaluation@.")
 MAN_END
@@ -1195,12 +1195,12 @@ INTRO (U"A command to ask the selected @OTGrammar object to evaluate a number of
 	"with a specified input form. The result is a @Distributions object.")
 NORMAL (U"See @@OT learning 2.9. Output distributions@ for tutorial information and examples.")
 ENTRY (U"Settings")
-TAG (U"##Trials# (standard value: 1000)")
+TERM (U"##Trials# (standard value: 1000)")
 DEFINITION (U"the number of evaluations that you want to perform.")
-TAG (U"##Noise# (standard value: 2.0)")
+TERM (U"##Noise# (standard value: 2.0)")
 DEFINITION (U"the standard deviation of the noise added to the ranking value of every constraint during the evaluations. "
 	"See @@OT learning 2.4. Evaluation@.")
-TAG (U"##Input form")
+TERM (U"##Input form")
 DEFINITION (U"the input form whose surface forms you want to measure. If this string is not in the list "
 	"of the possible inputs of the selected OTGrammar, you will get an error message.")
 MAN_END
@@ -1227,9 +1227,9 @@ NORMAL (U"The procedure follows the linear programming method by @@Pater, Potts 
 	"This method tries to find a special correct weighting of the constraints, "
 	"namely one that minimizes the sum of the constraint weights.")
 ENTRY (U"Settings")
-TAG (U"##Weight floor# (standard value: 1.0)")
+TERM (U"##Weight floor# (standard value: 1.0)")
 DEFINITION (U"After the command finishes, every weight will have at least this value.")
-TAG (U"##Margin of separation# (standard value: 1.0)")
+TERM (U"##Margin of separation# (standard value: 1.0)")
 DEFINITION (U"After the command finishes, the harmony of every optimal (and correct) output candidate "
 	"will be at least this much greater than the harmony of any competitor in the same tableau.")
 MAN_END
@@ -1238,7 +1238,7 @@ MAN_BEGIN (U"OTGrammar & Strings: Inputs to outputs...", U"ppgb", 19981230)
 INTRO (U"An action that creates a @Strings object from a selected @OTGrammar and a selected @Strings.")
 NORMAL (U"The selected Strings object is considered as a list of inputs to the OTGrammar grammar.")
 ENTRY (U"Settings")
-TAG (U"##Noise")
+TERM (U"##Noise")
 DEFINITION (U"the standard deviation of the noise that will be temporarily added to the ranking value at each evaluation.")
 NORMAL (U"The resulting Strings object will contain the output string of the grammar for each of the input strings.")
 NORMAL (U"See @@OT learning 3.2. Data from another grammar@.")

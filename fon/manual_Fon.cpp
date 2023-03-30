@@ -55,7 +55,7 @@ INTRO (U"A @@Query submenu|query@ to ask the selected tier object "
 	"(@DurationTier, @IntensityTier, @PitchTier) "
 	"which point is nearest to, but no earlier than, the specified time.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time from which you want to get the point index.")
 ENTRY (U"Return value")
 NORMAL (U"This query returns the index of the point with the lowest time greater than or equal to #Time. "
@@ -68,7 +68,7 @@ INTRO (U"A @@Query submenu|query@ to ask the selected tier object "
 	"(@DurationTier, @IntensityTier, @PitchTier) "
 	"which point is nearest to, but no later than, the specified time.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time from which you want to get the point index.")
 ENTRY (U"Return value")
 NORMAL (U"This query returns the index of the point with the highest time less than or equal to #Time. "
@@ -81,7 +81,7 @@ INTRO (U"A @@Query submenu|query@ to ask the selected tier object "
 	"(@DurationTier, @IntensityTier, @PitchTier) "
 	"which point is nearest to the specified time.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time near which you want to get the point index.")
 ENTRY (U"Return value")
 NORMAL (U"This query returns the index of the point with the highest time less than or equal to #Time. "
@@ -92,7 +92,7 @@ MAN_BEGIN (U"Remove point...", U"ppgb", 20101230)
 INTRO (U"A command to remove one point from every selected time-based tier object "
 	"(@DurationTier, @IntensityTier, @PitchTier).")
 ENTRY (U"Setting")
-TAG (U"##Point number")
+TERM (U"##Point number")
 DEFINITION (U"the index of the point you want to remove.")
 ENTRY (U"Behaviour")
 NORMAL (U"If ##Point number# is 3, the third point counted from the start of the tier (if it exists) "
@@ -103,7 +103,7 @@ MAN_BEGIN (U"Remove point near...", U"ppgb", 20101230)
 INTRO (U"A command to remove one point from every selected time-based tier object "
 	"(@DurationTier, @IntensityTier, @PitchTier).")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time near which you want to remove a point.")
 ENTRY (U"Behaviour")
 NORMAL (U"The point nearest to #Time (if there is any point) is removed from the tier.")
@@ -113,8 +113,8 @@ MAN_BEGIN (U"Remove points between...", U"ppgb", 20101230)
 INTRO (U"A command to remove some points from every selected time-based tier object "
 	"(@DurationTier, @IntensityTier, @PitchTier).")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (s)")
+TERM (U"##From time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the times between which you want to remove all points.")
 ENTRY (U"Behaviour")
 NORMAL (U"Any points between ##Frome time# and ##To Time# (inclusive) are removed from the tier.")
@@ -175,11 +175,11 @@ INTRO (U"A command to create a @PointProcess object that represents a Poisson pr
 NORMAL (U"A Poisson process is a stationary point process with a fixed density %λ, "
 	"which means that there are, on the average, %λ events per second.")
 ENTRY (U"Settings")
-TAG (U"##Start time (s)")
+TERM (U"##Start time (s)")
 DEFINITION (U"%t__%min_, the beginning of the time domain, in seconds.")
-TAG (U"##End time (s)")
+TERM (U"##End time (s)")
 DEFINITION (U"%t__%max_, the end of the time domain, in seconds.")
-TAG (U"##Density (Hz)")
+TERM (U"##Density (Hz)")
 DEFINITION (U"the average number of points per second.")
 ENTRY (U"Algorithm")
 NORMAL (U"First, the number of points %N in the time domain is determined. Its expectation value is")
@@ -209,9 +209,9 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Name", "fileList")
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("File path", "/Users/miep/Sounds/*.wav")
 )
-TAG (U"##Name")
+TERM (U"##Name")
 DEFINITION (U"the name of the resulting Strings object.")
-TAG (U"##File path")
+TERM (U"##File path")
 DEFINITION (U"the folder name, with an optional %wildcard (see below) for selecting files.")
 ENTRY (U"Behaviour")
 NORMAL (U"The resulting Strings object will contain an alphabetical list of file names, "
@@ -262,12 +262,12 @@ MAN_END
 MAN_BEGIN (U"Distributions: To Strings...", U"ppgb", 19971022)
 INTRO (U"A command to create a @Strings object from every selected @Distributions object.")
 ENTRY (U"Settings")
-TAG (U"##Column number")
+TERM (U"##Column number")
 DEFINITION (U"the column (in the #Distributions object) that contains the distribution that you are "
 	"interested in. Often the #Distributions object will only contain a single distribution, "
 	"so this argument will often be 1. If the #Distributions object contains nine distributions, "
 	"specify any number between 1 and 9.")
-TAG (U"##Number of strings")
+TERM (U"##Number of strings")
 DEFINITION (U"the number of times a string will be drawn from the chosen distribution. "
 	"This is the number of strings that the resulting @Strings object is going to contain.")
 ENTRY (U"Behaviour")
@@ -309,9 +309,9 @@ MAN_BEGIN (U"DurationTier: Add point...", U"ppgb", 20030216)
 INTRO (U"A command to add a point to each selected @DurationTier. "
 	"For an example, see @@Create DurationTier...@.")
 ENTRY (U"Settings")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time at which a point is to be added.")
-TAG (U"##Relative duration")
+TERM (U"##Relative duration")
 DEFINITION (U"the relative duration value of the requested new point.")
 ENTRY (U"Behaviour")
 NORMAL (U"The tier is modified so that it contains the new point. "
@@ -321,8 +321,8 @@ MAN_END
 MAN_BEGIN (U"DurationTier: Get target duration...", U"ppgb", 20101228)
 INTRO (U"A @@Query submenu|query@ to the selected @DurationTier for the target duration of a specified time range.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (s)")
+TERM (U"##From time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the start and end of the (original) time range.")
 ENTRY (U"Return value")
 NORMAL (U"the target duration in seconds.")
@@ -379,19 +379,19 @@ INTRO (U"One of the @@types of objects@ in Praat. It represents the excitation p
 	"of the basilar membrane in the inner ear.")
 ENTRY (U"Inside an Excitation object")
 NORMAL (U"With @Inspect, you will see the following attributes.")
-TAG (U"%xmin = 0")
+TERM (U"%xmin = 0")
 DEFINITION (U"minimum place or frequency (Bark).")
-TAG (U"%xmax = 25.6 Bark")
+TERM (U"%xmax = 25.6 Bark")
 DEFINITION (U"maximum place or frequency (Bark).")
-TAG (U"%nx")
+TERM (U"%nx")
 DEFINITION (U"number of places or frequencies.")
-TAG (U"%dx = 25.6 / %nx")
+TERM (U"%dx = 25.6 / %nx")
 DEFINITION (U"Place or frequency step (Bark).")
-TAG (U"%x1 = %dx / 2")
+TERM (U"%x1 = %dx / 2")
 DEFINITION (U"centre of first place or frequency band (Bark).")
-TAG (U"%ymin = %ymax = %dy = %y__1_ = 1; %ny = 1")
+TERM (U"%ymin = %ymax = %dy = %y__1_ = 1; %ny = 1")
 DEFINITION (U"dummies.")
-TAG (U"%z [1]")
+TERM (U"%z [1]")
 DEFINITION (U"intensity (sensation level) in phon.")
 MAN_END
 
@@ -491,8 +491,8 @@ INTRO (U"A @@Query submenu|query@ to the selected tier object (@PitchTier, @Inte
 ENTRY (U"Return value")
 NORMAL (U"the area under the curve.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (s)")
+TERM (U"##From time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the selected time domain. Values outside this domain are ignored. "
 	"If ##To time# is not greater than ##From time#, the entire time domain of the tier is considered.")
 ENTRY (U"Algorithm")
@@ -513,10 +513,10 @@ INTRO (U"A @@Query submenu|query@ to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the maximum value within the specified time domain, expressed in dB.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
-TAG (U"%%Interpolation")
+TERM (U"%%Interpolation")
 DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -527,10 +527,10 @@ INTRO (U"A @@Query submenu|query@ to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean (in dB) of the intensity values of the frames within a specified time domain.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
-TAG (U"##Averaging method")
+TERM (U"##Averaging method")
 DEFINITION (U"the units in which the averaging is performed. If the method is #energy, "
 	"the returned dB value is based on the mean power (in Pa^2/s) between %t__1_ and %t__2_. "
 	"If the method is #dB, the returned value is the mean of the intensity curve in dB. "
@@ -554,10 +554,10 @@ INTRO (U"A @@Query submenu|query@ to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the minimum value within a specified time domain, expressed in dB.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
-TAG (U"##Interpolation")
+TERM (U"##Interpolation")
 DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -568,7 +568,7 @@ INTRO (U"A @@Query submenu|query@ to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation (in dB) of the intensity values of the frames within a specified time domain.")
 ENTRY (U"Settings")
-TAG (U"%%Time range (s)")
+TERM (U"%%Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 ENTRY (U"Algorithm")
@@ -585,10 +585,10 @@ INTRO (U"A @@Query submenu|query@ to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the maximum intensity within a specified time domain.")
 ENTRY (U"Settings")
-TAG (U"%%Time range (s)")
+TERM (U"%%Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
-TAG (U"%%Interpolation")
+TERM (U"%%Interpolation")
 DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -599,10 +599,10 @@ INTRO (U"A @@Query submenu|query@ to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the minimum intensity within a specified time domain.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
-TAG (U"##Interpolation")
+TERM (U"##Interpolation")
 DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -613,9 +613,9 @@ INTRO (U"A @@Query submenu|query@ to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the intensity (in dB) at a specified time. If %time is outside the frames of the Intensity, the result is 0.")
 ENTRY (U"Settings")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time at which the value is to be evaluated.")
-TAG (U"##Interpolation")
+TERM (U"##Interpolation")
 DEFINITION (U"the interpolation method, see @@vector value interpolation@. "
 	"The standard is “cubic” because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -624,7 +624,7 @@ MAN_END
 MAN_BEGIN (U"Intensity: Get value in frame...", U"ppgb", 19991016)
 INTRO (U"A @@Query submenu|query@ to the selected @Intensity object.")
 ENTRY (U"Setting")
-TAG (U"##Frame number")
+TERM (U"##Frame number")
 DEFINITION (U"the frame whose value is to be looked up.")
 ENTRY (U"Return value")
 NORMAL (U"the intensity value (in dB) in the specified frame. "
@@ -691,9 +691,9 @@ MAN_END
 MAN_BEGIN (U"IntensityTier: Add point...", U"ppgb", 20010410)
 INTRO (U"A command to add a point to each selected @IntensityTier.")
 ENTRY (U"Settings")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time at which a point is to be added.")
-TAG (U"##Intensity (dB)")
+TERM (U"##Intensity (dB)")
 DEFINITION (U"the intensity value of the requested new point.")
 ENTRY (U"Behaviour")
 NORMAL (U"The tier is modified so that it contains the new point. "
@@ -812,12 +812,12 @@ NORMAL (U"Every time you press @@Keyboard shortcuts|F12@ (or choose ##Log 1# fro
 	"If you press @@Keyboard shortcuts|Shift-F12@ (or choose ##Log 2# from the Analysis menu), "
 	"Praat will write a line to the Info window and/or to log file 2.")
 NORMAL (U"With the ##log settings# command window, you determine the following:")
-TAG (U"##Write log 1 to")
+TERM (U"##Write log 1 to")
 DEFINITION (U"this determines whether your log line will be written to log file 1 only, to the Info window only, or to both.")
-TAG (U"##Log file 1")
+TERM (U"##Log file 1")
 DEFINITION (U"the name of the log file. Click Browse to select a file to write to. "
 	"On most platforms you can also use a home-relative name such as $$~/Desktop/pitchLog.txt$.")
-TAG (U"##Log 1 format")
+TERM (U"##Log 1 format")
 DEFINITION (U"the format of the line that Praat will write. See below.")
 NORMAL (U"The same goes for log file 2.")
 ENTRY (U"Usage")
@@ -902,11 +902,11 @@ MAN_BEGIN (U"Manipulation", U"ppgb", 20030316)
 INTRO (U"One of the @@types of objects@ in Praat, for changing the pitch and duration contours of a sound.")
 ENTRY (U"Inside a manipulation object")
 NORMAL (U"With @Inspect, you will see the following attributes:")
-TAG (U"##timeStep")
+TERM (U"##timeStep")
 DEFINITION (U"the time step (or %%frame length%) used in the pitch analysis. A common value is 0.010 seconds.")
-TAG (U"##minimumPitch")
+TERM (U"##minimumPitch")
 DEFINITION (U"the minimum pitch frequency considered in the pitch analysis. A common value is 75 hertz.")
-TAG (U"##maximumPitch")
+TERM (U"##maximumPitch")
 DEFINITION (U"the maximum pitch frequency considered in the pitch analysis. A common value is 600 hertz.")
 NORMAL (U"A Manipulation object also contains the following smaller objects:")
 LIST_ITEM (U"1. The original @Sound.")
@@ -924,7 +924,7 @@ LIST_ITEM (U"3. The pitch contour is converted to a pitch tier with many points 
 	"with the method of @@Pitch: To PitchTier@.")
 LIST_ITEM (U"4. An empty @DurationTier is created.")
 ENTRY (U"Resynthesis")
-TAG (U"A Manipulation object can produce Sound input. This Sound can be computed in several ways:")
+TERM (U"A Manipulation object can produce Sound input. This Sound can be computed in several ways:")
 LIST_ITEM (U"• @@overlap-add@: from original sound + pulses + pitch tier + duration tier;")
 LIST_ITEM (U"• #LPC: from LPC (from original sound) + pulses + pitch tier;")
 LIST_ITEM (U"• from the pulses only, as a pulse train or hummed;")
@@ -997,27 +997,27 @@ ENTRY (U"Playing")
 		"or use the commands from the Play menu.")
 	NORMAL (U"To play the %original sound instead, use ##Shift-click#.")
 ENTRY (U"Pulses")
-	TAG (U"To add:")
+	TERM (U"To add:")
 	DEFINITION (U"#click at the desired time location, and choose ##Add pulse at cursor# or type @@Keyboard shortcuts|Command-P@.")
-	TAG (U"To remove:")
+	TERM (U"To remove:")
 	DEFINITION (U"make a @@time selection@, and choose ##Remove pulse(s)# or type @@Keyboard shortcuts|Option-Command-P@. "
 		"If there is no selection, the pulse nearest to the cursor is removed.")
 ENTRY (U"Pitch points")
-	TAG (U"To add one at a specified %%time and frequency%:")
+	TERM (U"To add one at a specified %%time and frequency%:")
 	DEFINITION (U"#click at the desired time-frequency location, and choose ##Add pitch point at cursor# or type @@Keyboard shortcuts|Command-t@.")
-	TAG (U"To add one at a specified %time only:")
+	TERM (U"To add one at a specified %time only:")
 	DEFINITION (U"#click at the desired time, and choose ##Add pitch point at time slice#. ManipulationEditor tries to compute the frequency from the "
 		"intervals between the pulses, basically by a median-of-three method.")
-	TAG (U"To remove:")
+	TERM (U"To remove:")
 	DEFINITION (U"make a @@time selection@, and choose ##Remove pitch point(s)# or type @@Keyboard shortcuts|Option-Command-t@. "
 		"If there is no selection, the pitch point nearest to the cursor is removed.")
-	TAG (U"To move %some:")
+	TERM (U"To move %some:")
 	DEFINITION (U"make a @@time selection@ (the points become red) and ##Shift-drag# the points across the window. "
 		"You cannot drag them across adjacent points, or below 50 Hz, or above the maximum frequency. "
 		"You can only drag them horizontally if the %%dragging strategy% is ##All# or ##Only horizontal#, "
 		"and you can drag them vertically if the dragging strategy is not ##Only horizontal#. "
 		"You can change the dragging strategy with ##Set pitch dragging strategy...# from the #Pitch menu.")
-	TAG (U"To move %one:")
+	TERM (U"To move %one:")
 	DEFINITION (U"@drag that point across the window. "
 		"You can only drag it horizontally if the dragging strategy is not ##Only vertical#, "
 		"and you can drag it vertically if the dragging strategy is not ##Only horizontal#.")
@@ -1057,23 +1057,23 @@ LIST_ITEM (U"• @@Matrix: Formula...")
 LIST_ITEM (U"• ##Matrix: Scale...")
 ENTRY (U"Inside a Matrix object")
 NORMAL (U"With @Inspect, you will see the following attributes.")
-TAG (U"%xmin, %xmax ≥ %xmin")
+TERM (U"%xmin, %xmax ≥ %xmin")
 DEFINITION (U"%x domain.")
-TAG (U"%nx ≥ 1")
+TERM (U"%nx ≥ 1")
 DEFINITION (U"number of columns.")
-TAG (U"%dx > 0.0")
+TERM (U"%dx > 0.0")
 DEFINITION (U"distance between columns.")
-TAG (U"%x1")
+TERM (U"%x1")
 DEFINITION (U"%x value associated with first column.")
-TAG (U"%ymin, %ymax ≥ %ymin")
+TERM (U"%ymin, %ymax ≥ %ymin")
 DEFINITION (U"%y domain.")
-TAG (U"%ny ≥ 1")
+TERM (U"%ny ≥ 1")
 DEFINITION (U"number of rows.")
-TAG (U"%dy > 0.0")
+TERM (U"%dy > 0.0")
 DEFINITION (U"distance between rows.")
-TAG (U"%y1")
+TERM (U"%y1")
 DEFINITION (U"%y value associated with first row.")
-TAG (U"%z [1..%ny] [1..%nx]")
+TERM (U"%z [1..%ny] [1..%nx]")
 DEFINITION (U"The sample values.")
 NORMAL (U"After creation of the #Matrix, %xmin, %xmax, %ymin, %ymax, "
 	"%nx, %ny, %dx, %dy, %x1, and %y1 "
@@ -1102,15 +1102,15 @@ MAN_END
 MAN_BEGIN (U"Matrix: Draw as squares...", U"ppgb", 19980319)
 INTRO (U"A command to draw a @Matrix object into the @@Picture window@.")
 ENTRY (U"Settings")
-TAG (U"##Xmin")
-TAG (U"##Xmax")
+TERM (U"##Xmin")
+TERM (U"##Xmax")
 DEFINITION (U"the windowing domain in the %x direction. Elements outside will not be drawn. "
 	"%Autowindowing: if (%Xmin ≥ %Xmax), the entire %x domain [%x__%min_, %x__%max_] of the Matrix is used.")
-TAG (U"##Ymin")
-TAG (U"##Ymax")
+TERM (U"##Ymin")
+TERM (U"##Ymax")
 DEFINITION (U"the windowing domain in the %y direction. Elements outside will not be drawn. "
 	"%Autowindowing: if (%Ymin ≥ %Ymax), the entire %y domain [%y__%min_, %y__%max_] of the Matrix is used.")
-TAG (U"##Garnish")
+TERM (U"##Garnish")
 DEFINITION (U"determines whether axes are drawn around the picture. "
 	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
 ENTRY (U"Behaviour")
@@ -1137,11 +1137,11 @@ MAN_END
 MAN_BEGIN (U"Matrix: Set value...", U"ppgb", 19980319)
 INTRO (U"A command to change the value of one cell in each selected @Matrix object.")
 ENTRY (U"Settings")
-TAG (U"##Row number")
+TERM (U"##Row number")
 DEFINITION (U"the number of the row of the cell whose value you want to change.")
-TAG (U"##Column number")
+TERM (U"##Column number")
 DEFINITION (U"the number of the column of the cell whose value you want to change.")
-TAG (U"##New value")
+TERM (U"##New value")
 DEFINITION (U"the value that you want the specified cell to have.")
 MAN_END
 
@@ -1302,7 +1302,7 @@ INTRO (U"One of the @@types of objects@ in Praat. A "
 	"PairDistribution object represents the relative probabilities with which "
 	"the specified pairs of strings occur.")
 ENTRY (U"Class description")
-TAG (U"##struct-list# pairs")
+TERM (U"##struct-list# pairs")
 DEFINITION (U"a list of relative string-pair probabilities. Each element consists of:")
 TAG1 (U"#string %string1")
 DEFINITION1 (U"the first string.")
@@ -1316,11 +1316,11 @@ MAN_BEGIN (U"PairDistribution: To Stringses...", U"ppgb", 20030916)
 INTRO (U"A command to generate a number of string pairs from the selected @PairDistribution object. "
 	"This command will create two aligned @Strings objects of equal size.")
 ENTRY (U"Settings")
-TAG (U"##Number# (standard: 1000)")
+TERM (U"##Number# (standard: 1000)")
 DEFINITION (U"the number of the strings in either resulting Strings object.")
-TAG (U"##Name of first Strings# (standard: \"input\")")
+TERM (U"##Name of first Strings# (standard: \"input\")")
 DEFINITION (U"the name of the resulting Strings object associated with the first string of each pair.")
-TAG (U"##Name of second Strings# (standard: \"output\")")
+TERM (U"##Name of second Strings# (standard: \"output\")")
 DEFINITION (U"the name of the resulting Strings object associated with the second string of each pair.")
 ENTRY (U"Example")
 NORMAL (U"Suppose the PairDistribution contains the following:")
@@ -1426,7 +1426,7 @@ MAN_END
 MAN_BEGIN (U"PointProcess: Add point...", U"ppgb", 20010410)
 INTRO (U"A command to add a point to each selected @PointProcess.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time at which a point is to be added.")
 ENTRY (U"Behaviour")
 NORMAL (U"The point process is modified so that it contains the new point. "
@@ -1452,7 +1452,7 @@ NORMAL (U"the index of the nearest point at or after the specified time, "
 	"0 if the point process contains no points, "
 	"or a number higher than the number of points if the specified time is after the last point.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time from which a point is looked for, in seconds.")
 MAN_END
 
@@ -1466,7 +1466,7 @@ NORMAL (U"the duration of the interval around a specified time. "
 	"If the point process happens to contain a point at exactly the specified time, "
 	"the duration of the interval following this point is returned.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time around which a point is looked for, in seconds.")
 MAN_END
 
@@ -1487,21 +1487,21 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
 )
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the start time and end time of the part of the PointProcess that will be measured. "
 	"Points outside this range will be ignored.")
-TAG (U"##Period floor (s)")
+TERM (U"##Period floor (s)")
 DEFINITION (U"the shortest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is shorter than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"This setting will normally be very small, say 0.1 ms.")
-TAG (U"##Period ceiling (s)")
+TERM (U"##Period ceiling (s)")
 DEFINITION (U"the longest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is longer than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"For example, if the minimum frequency of periodicity is 50 Hz, set this setting to 0.02 seconds; "
 	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
-TAG (U"##Maximum period factor")
+TERM (U"##Maximum period factor")
 DEFINITION (U"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
 	"If the ratio of the durations of two consecutive intervals is greater than this, "
 	"this pair of intervals will be ignored in the computation of jitter "
@@ -1553,21 +1553,21 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
 )
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the start time and end time of the part of the PointProcess that will be measured. "
 	"Points outside this range will be ignored.")
-TAG (U"##Period floor (s)")
+TERM (U"##Period floor (s)")
 DEFINITION (U"the shortest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is shorter than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"This setting will normally be very small, say 0.1 ms.")
-TAG (U"##Period ceiling (s)")
+TERM (U"##Period ceiling (s)")
 DEFINITION (U"the longest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is longer than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; "
 	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
-TAG (U"##Maximum period factor")
+TERM (U"##Maximum period factor")
 DEFINITION (U"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
 	"If the ratio of the durations of two consecutive intervals is greater than this, "
 	"this pair of intervals will be ignored in the computation of jitter "
@@ -1604,21 +1604,21 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
 )
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the start time and end time of the part of the PointProcess that will be measured. "
 	"Points outside this range will be ignored.")
-TAG (U"##Period floor (s)")
+TERM (U"##Period floor (s)")
 DEFINITION (U"the shortest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is shorter than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"This setting will normally be very small, say 0.1 ms.")
-TAG (U"##Period ceiling (s)")
+TERM (U"##Period ceiling (s)")
 DEFINITION (U"the longest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is longer than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; "
 	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
-TAG (U"##Maximum period factor")
+TERM (U"##Maximum period factor")
 DEFINITION (U"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
 	"If the ratio of the durations of two consecutive intervals is greater than this, "
 	"this pair of intervals will be ignored in the computation of jitter "
@@ -1666,21 +1666,21 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
 )
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the start time and end time of the part of the PointProcess that will be measured. "
 	"Points outside this range will be ignored.")
-TAG (U"##Period floor (s)")
+TERM (U"##Period floor (s)")
 DEFINITION (U"the shortest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is shorter than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"This setting will normally be very small, say 0.1 ms.")
-TAG (U"##Period ceiling (s)")
+TERM (U"##Period ceiling (s)")
 DEFINITION (U"the longest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is longer than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; "
 	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
-TAG (U"##Maximum period factor")
+TERM (U"##Maximum period factor")
 DEFINITION (U"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
 	"If the ratio of the durations of two consecutive intervals is greater than this, "
 	"this pair of intervals will be ignored in the computation of jitter "
@@ -1727,21 +1727,21 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
 )
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the start time and end time of the part of the PointProcess that will be measured. "
 	"Points outside this range will be ignored.")
-TAG (U"##Period floor (s)")
+TERM (U"##Period floor (s)")
 DEFINITION (U"the shortest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is shorter than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"This setting will normally be very small, say 0.1 ms.")
-TAG (U"##Period ceiling (s)")
+TERM (U"##Period ceiling (s)")
 DEFINITION (U"the longest possible interval that will be used in the computation of jitter, in seconds. "
 	"If an interval is longer than this, it will be ignored in the computation of jitter "
 	"(and the previous and next intervals will not be regarded as consecutive). "
 	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; "
 	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
-TAG (U"##Maximum period factor")
+TERM (U"##Maximum period factor")
 DEFINITION (U"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
 	"If the ratio of the durations of two consecutive intervals is greater than this, "
 	"this pair of intervals will be ignored in the computation of jitter "
@@ -1782,7 +1782,7 @@ ENTRY (U"Return value")
 NORMAL (U"the index of the nearest point before or at the specified time, "
 	"or 0 if the point process contains no points or the specified time is before the first point.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time from which a point is looked for, in seconds.")
 MAN_END
 
@@ -1792,7 +1792,7 @@ ENTRY (U"Return value")
 NORMAL (U"the index of the point nearest to the specified time, "
 	"or 0 if the point process contains no points.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time around which a point is looked for, in seconds.")
 /*
 form Get nearest raising zero
@@ -1834,7 +1834,7 @@ MAN_END
 MAN_BEGIN (U"PointProcess: Remove point...", U"ppgb", 20021212)
 INTRO (U"A command to remove a point from every selected @PointProcess.")
 ENTRY (U"Setting")
-TAG (U"##Index")
+TERM (U"##Index")
 DEFINITION (U"the index of the point that is to be removed.")
 ENTRY (U"Behaviour")
 NORMAL (U"Does nothing if %index is less than 1 or greater than the number of points %nt in the point process. "
@@ -1844,7 +1844,7 @@ MAN_END
 MAN_BEGIN (U"PointProcess: Remove point near...", U"ppgb", 20021212)
 INTRO (U"A command to remove a point from every selected @PointProcess.")
 ENTRY (U"Setting")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time (in seconds) around which a point is to be removed.")
 ENTRY (U"Behaviour")
 NORMAL (U"Does nothing if there are no points in the point process. "
@@ -1854,9 +1854,9 @@ MAN_END
 MAN_BEGIN (U"PointProcess: Remove points...", U"ppgb", 20021212)
 INTRO (U"A command to remove a range of points from every selected @PointProcess.")
 ENTRY (U"Settings")
-TAG (U"##From index (≥ 1)")
+TERM (U"##From index (≥ 1)")
 DEFINITION (U"the first index of the range of points that are to be removed.")
-TAG (U"##To index")
+TERM (U"##To index")
 DEFINITION (U"the last index of the range of points that are to be removed.")
 ENTRY (U"Behaviour")
 NORMAL (U"All points that originally fell in the range [%fromIndex, %toIndex] are removed, and the other points stay the same.")
@@ -1865,9 +1865,9 @@ MAN_END
 MAN_BEGIN (U"PointProcess: Remove points between...", U"ppgb", 20021212)
 INTRO (U"A command to remove a range of points from every selected @PointProcess.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
+TERM (U"##From time (s)")
 DEFINITION (U"the start of the domain from which all points are to be removed.")
-TAG (U"##To time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the end of the domain from which all points are to be removed.")
 ENTRY (U"Behaviour")
 NORMAL (U"All points that originally fell in the domain [%fromTime, %toTime], including the edges, are removed, "
@@ -2014,14 +2014,14 @@ NORMAL (U"These curves have moved 2.646 percent of a period to the right. At tim
 	"the glottal flow curve turns from a convex polynomial into a concave exponential, "
 	"and the derivative still has its minimum there.")
 ENTRY (U"Settings")
-TAG (U"##Sampling frequency (Hz)")
+TERM (U"##Sampling frequency (Hz)")
 DEFINITION (U"the sampling frequency of the resulting Sound object, e.g. 44100 hertz.")
-TAG (U"##Adaptation factor")
+TERM (U"##Adaptation factor")
 DEFINITION (U"the factor by which a pulse height will be multiplied if the pulse time is not within "
 	"##Maximum period# from the previous pulse, and by which a pulse height will again be multiplied "
 	"if the previous pulse time is not within ##Maximum period# from the pre-previous pulse. This factor is against "
 	"abrupt starts of the pulse train after silences, and is 1.0 if you do want abrupt starts after silences.")
-TAG (U"##Maximum period (s)")
+TERM (U"##Maximum period (s)")
 DEFINITION (U"the minimal period that will be considered a silence, e.g. 0.05 seconds. "
 	"Example: if ##Adaptation factor# is 0.6, and ##Adaptation time# is 0.02 s, "
 	"then the heights of the first two pulses after silences of at least 20 ms "
@@ -2034,16 +2034,16 @@ ENTRY (U"Algorithm")
 NORMAL (U"A pulse is generated at every point in the point process. This pulse is filtered at the Nyquist frequency "
 	"of the resulting #Sound by converting it into a sampled #sinc function.")
 ENTRY (U"Settings")
-TAG (U"##Sampling frequency (Hz)")
+TERM (U"##Sampling frequency (Hz)")
 DEFINITION (U"the sampling frequency of the resulting Sound object, e.g. 44100 hertz.")
-TAG (U"##Adaptation factor")
+TERM (U"##Adaptation factor")
 DEFINITION (U"the factor by which a pulse height will be multiplied if the pulse time is not within "
 	"##Adaptation time# from the pre-previous pulse, and by which a pulse height will again be multiplied "
 	"if the pulse time is not within ##Adaptation time# from the previous pulse. This factor is against "
 	"abrupt starts of the pulse train after silences, and is 1.0 if you do want abrupt starts after silences.")
-TAG (U"##Adaptation time (s)")
+TERM (U"##Adaptation time (s)")
 DEFINITION (U"the minimal period that will be considered a silence, e.g. 0.05 seconds.")
-TAG (U"##Interpolation depth")
+TERM (U"##Interpolation depth")
 DEFINITION (U"the extent of the sinc function to the left and to the right of the peak, e.g. 2000 samples.")
 NORMAL (U"Example: if ##Adaptation factor# is 0.6, and ##Adaptation time# is 0.02 s, "
 	"then the heights of the first two pulses after silences of at least 20 ms "
@@ -2061,7 +2061,7 @@ MAN_END
 MAN_BEGIN (U"PointProcess: Up to IntensityTier...", U"ppgb", 19970329)
 INTRO (U"A command to promote every selected @PointProcess to an @IntensityTier.")
 ENTRY (U"Setting")
-TAG (U"##Intensity (dB)")
+TERM (U"##Intensity (dB)")
 DEFINITION (U"the intensity that will be associated with every point.")
 ENTRY (U"Behaviour")
 NORMAL (U"The times of all the points are trivially copied, and so is the time domain. "
@@ -2071,7 +2071,7 @@ MAN_END
 MAN_BEGIN (U"PointProcess: Up to PitchTier...", U"ppgb", 19970329)
 INTRO (U"A command to promote every selected @PointProcess to a @PitchTier.")
 ENTRY (U"Setting")
-TAG (U"##Frequency (Hz)")
+TERM (U"##Frequency (Hz)")
 DEFINITION (U"the pitch frequency that will be associated with every point.")
 ENTRY (U"Behaviour")
 NORMAL (U"The times of all the points are trivially copied, and so is the time domain. "
@@ -2086,11 +2086,11 @@ MAN_END
 MAN_BEGIN (U"Create Polygon from values...", U"David Weenink & Paul Boersma", 20230116)
 INTRO (U"Creates a @@Polygon@ from user-supplied x\\--y pairs (“points” or “vertices”).")
 ENTRY (U"Settings")
-TAG (U"##Name")
+TERM (U"##Name")
 DEFINITION (U"defines the name of the resulting Polygon.")
-TAG (U"##X values")
+TERM (U"##X values")
 DEFINITION (U"the X-coordinates of the vertices of the Polygon.")
-TAG (U"##Y values")
+TERM (U"##Y values")
 DEFINITION (U"the Y-coordinates of the vertices of the Polygon.")
 ENTRY (U"Example")
 NORMAL (U"The command ##Create Polygon from values: \"triangle\", \"0 50 20\", \"0 10 80\"# "
@@ -2158,15 +2158,15 @@ MAN_END
 MAN_BEGIN (U"Sound: To Intensity...", U"ppgb", 20100605)
 INTRO (U"A command to create an @Intensity object from every selected @Sound.")
 ENTRY (U"Settings")
-TAG (U"##Minimum pitch (Hz)")
+TERM (U"##Minimum pitch (Hz)")
 DEFINITION (U"the minimum periodicity frequency in your signal. If you set it too high, "
 	"you will end up with a pitch-synchronous intensity modulation. If you set it too low, "
 	"your intensity contour may appear smeared, so you should set it as high as allowed by the signal "
 	"if you want a sharp contour.")
-TAG (U"##Time step (s)")
+TERM (U"##Time step (s)")
 DEFINITION (U"the time step of the resulting intensity contour. If you set it to zero, the time step is computed as "
 	"one quarter of the effective window length, i.e. as 0.8 / (%minimum_pitch).")
-TAG (U"##Subtract mean")
+TERM (U"##Subtract mean")
 DEFINITION (U"See @@Intro 6.2. Configuring the intensity contour@.")
 ENTRY (U"Algorithm")
 NORMAL (U"The values in the sound are first squared, then convolved with a Gaussian analysis window (Kaiser-20; sidelobes below -190 dB). "
@@ -2270,11 +2270,11 @@ MAN_END
 MAN_BEGIN (U"TableOfReal: Set value...", U"ppgb", 19980105)
 INTRO (U"A command to change the value of one table cell in each selected @TableOfReal object.")
 ENTRY (U"Settings")
-TAG (U"##Row number")
+TERM (U"##Row number")
 DEFINITION (U"the number of the row of the cell whose value you want to change.")
-TAG (U"##Column number")
+TERM (U"##Column number")
 DEFINITION (U"the number of the column of the cell whose value you want to change.")
-TAG (U"##New value")
+TERM (U"##New value")
 DEFINITION (U"the value that you want the specified cell to have.")
 MAN_END
 

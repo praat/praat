@@ -38,30 +38,30 @@ SCRIPT (7.0, 6.5,
 NORMAL (U"All parameters in the synthesizer are represented by separate tiers.")
 ENTRY (U"The source")
 NORMAL (U"The source is modelled by the following tiers:")
-TAG (U"##Pitch")
+TERM (U"##Pitch")
 DEFINITION (U"models fundamental frequency (in Hertz).")
-TAG (U"##Flutter")
+TERM (U"##Flutter")
 DEFINITION (U"models a kind of \"random\" variation of the pitch (with a number between zero and one). ")
-TAG (U"##Voicing amplitude")
+TERM (U"##Voicing amplitude")
 DEFINITION (U"models the maximum amplitude of the glottal flow (in dB SPL).")
-TAG (U"##Open phase")
+TERM (U"##Open phase")
 DEFINITION (U"models the open phase of the glottis (with a number between zero and one). If the tier is empty a default of 0.7 "
 	"will be used.")
-TAG (U"##Power1#, ##Power2#")
+TERM (U"##Power1#, ##Power2#")
 DEFINITION (U"model the form of the glottal flow function flow(%t)=%t^^%%power1%^-%t^^%%power2%^ for 0\\<_ t \\<_ 1. "
 	"To make glottal closure possible, %power2 has to be larger than %power1. If the power1 tier is empty, a default "
 	"value of 3 will be used. If the power2 tier is empty, a default of 4 will be used.")
-TAG (U"##Collision phase")
+TERM (U"##Collision phase")
 DEFINITION (U"models the last part of the flow function with an exponential decay function instead of a polynomial one. "
 	"More information about #Power1, #Power2, ##Open phase# and ##Collision phase# can be found in the @@PointProcess: To Sound (phonation)...@ manual.")
-TAG (U"##Spectral tilt")
+TERM (U"##Spectral tilt")
 DEFINITION (U"models the extra number of dB the voicing spectrum should be down at 3000 Hertz.")
-TAG (U"##Aspiration amplitude")
+TERM (U"##Aspiration amplitude")
 DEFINITION (U"models the (maximum) amplitude of the noise generated at the glottis (in dB SPL). ")
-TAG (U"##Breathiness amplitude")
+TERM (U"##Breathiness amplitude")
 DEFINITION (U"models the maximum breathiness noise amplitude during the open phase of the glottis (in dB SPL). "
 	"The amplitude of the breathiness noise is modulated by the glottal flow.")
-TAG (U"##Double pulsing")
+TERM (U"##Double pulsing")
 DEFINITION (U"models diplophonia (by a fraction between zero and one). Whenever this parameter is greater than zero, "
 	"alternate pulses are modified. A pulse is modified with this %%single% parameter in %%two% ways: it is %%delayed "
 	"in time% and its amplitude is %%attenuated%.  If the double pulsing value is a maximum and equals one, the time of "
@@ -69,21 +69,21 @@ DEFINITION (U"models diplophonia (by a fraction between zero and one). Whenever 
 ENTRY (U"The vocal tract filter")
 NORMAL (U"The filter is modelled by a number of @@FormantGrid@'s. For parallel synthesis the formant grids that normally "
 	"only contain formant frequency and formant bandwidth tiers, have been extended with amplitude tiers. Amplitudes values are in dB. The following formant grids can be used:")
-TAG (U"##Oral formants")
+TERM (U"##Oral formants")
 DEFINITION (U"represent the \"standard\" oral resonances of the vocal tract. ")
-TAG (U"##Nasal formants")
+TERM (U"##Nasal formants")
 DEFINITION (U"model resonances in the nasal tract. Because the form of the nasal tract does not vary much during the course of an utterance, nasal formants tend to be constant. ")
-TAG (U"##Nasal antiformants")
+TERM (U"##Nasal antiformants")
 DEFINITION (U"model dips in the spectrum caused by leakage to the nasal tract.")
 ENTRY (U"Interaction between source and filter")
 NORMAL (U"The interaction between source and filter is modelled by two formant grids.")
-TAG (U"##Tracheal formants")
+TERM (U"##Tracheal formants")
 DEFINITION (U"model one aspect of the coupling of the trachea with the vocal tract transfer function, namely, by the "
 	"introduction of extra formants (and antiformants) that sometimes distort vowel spectra to a varying degrees. "
 	"According to @@Klatt & Klatt (1990)@, the other effect being increased losses at glottal termination which primarily affect first-formant bandwidths.")
-TAG (U"##Tracheal antiformants")
+TERM (U"##Tracheal antiformants")
 DEFINITION (U"model dips in the spectrum caused by the trachea.")
-TAG (U"##Delta formants")
+TERM (U"##Delta formants")
 DEFINITION (U"The values in this grid model the number of hertz that the oral formants and/or bandwidths change during the open phase "
 	"of the glottis. @@Klatt & Klatt (1990)@ distinguish four types of source-filter interactions: an F1 ripple in the "
 	"source waveform, a non-linear interaction between the first formant and the fundamental frequency, a truncation of "
@@ -122,22 +122,22 @@ MAN_END
 MAN_BEGIN (U"Create KlattGrid from vowel...", U"djmw", 20191007)
 INTRO (U"Create a new @@KlattGrid@ from the specifications for a vowel.")
 ENTRY (U"Settings")
-TAG (U"##Name#")
+TERM (U"##Name#")
 DEFINITION (U"defines the name that the newly created KlattGrid will get in the list of objects.")
-TAG (U"##Duration (s)#")
+TERM (U"##Duration (s)#")
 DEFINITION (U"defines the duration of the KlattGrid. The created KlattGrid will have a start time of 0 seconds "
 	"and an end time of %%duration% seconds. ")
-TAG (U"##Pitch (Hz)#")
+TERM (U"##Pitch (Hz)#")
 DEFINITION (U"defines the value of the pitch point that will be added at the start of the Klattgrid.")
-TAG (U"##F1 (Hz)#, ##F2 (Hz)#, ##F3 (Hz), F4 (Hz)##")
+TERM (U"##F1 (Hz)#, ##F2 (Hz)#, ##F3 (Hz), F4 (Hz)##")
 DEFINITION (U"define the frequencies in hertz of the first four formants. If a frequency is not positive the formant is not used.")
-TAG (U"##B1 (Hz)#, ##B2 (Hz)#, ##B3 (Hz)#")
+TERM (U"##B1 (Hz)#, ##B2 (Hz)#, ##B3 (Hz)#")
 DEFINITION (U"define the bandwidths in hertz of the first three formants")
-TAG (U"##Bandwidth fraction#")
+TERM (U"##Bandwidth fraction#")
 DEFINITION (U"defines the bandwidths of the fourth and higher formants as a fraction of the formant's frequency (i.e. it is the inverse of the formant's %%quality factor%). "
 	"For example if F4 equals 2800 Hz and the \"Bandwidth fraction\" was chosen as 0.05 then its "
 	"bandwidth will be 0.05*2800 = 140 Hz. The quality factor of this fourth formant is 20.")
-TAG (U"##Formant frequency interval (Hz)#")
+TERM (U"##Formant frequency interval (Hz)#")
 DEFINITION (U"defines the distances between the following formants in hertz. For example, if this values is chosen "
 	"as 1100 Hz and if F4 happens to be 3000 Hz then F5 will be 4100 Hz, F6 will be 5200 Hz, F7 will be 6300 Hz, etc."
 	"If the value is not positive these formants will not be created at all. You would typically choose this value "
@@ -179,26 +179,26 @@ NORMAL (U"Formant frequencies and bandwidths for 16 Swedish vowels are presented
 MAN_END
 
 #define PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP \
-TAG (U"##Sampling frequency (Hz)") \
+TERM (U"##Sampling frequency (Hz)") \
 DEFINITION (U"the @@sampling frequency@ of the resulting sound.") \
-TAG (U"##Voicing") \
+TERM (U"##Voicing") \
 DEFINITION (U"switches voicing on or off.") \
-TAG (U"##Flutter") \
+TERM (U"##Flutter") \
 DEFINITION (U"switches the flutter tier on or off. This will, of course, only have effect if at least one flutter point has been defined in the flutter tier.") \
-TAG (U"##Double pulsing") \
+TERM (U"##Double pulsing") \
 DEFINITION (U"switches the double pulsing tier on or off.") \
-TAG (U"##Collision phase") \
+TERM (U"##Collision phase") \
 DEFINITION (U"switches the collision phase tier on or off.") \
-TAG (U"##Spectral tilt") \
+TERM (U"##Spectral tilt") \
 DEFINITION (U"switches the spectral tilt tier on or off.") \
-TAG (U"##Flow function") \
+TERM (U"##Flow function") \
 DEFINITION (U"determines which flow function will be used. The flow function is determined by two parameters, %%power1% and %%power2% as %%flow(t)=x^^power1^-x^^power2^%. " \
 	"If the option \"Powers in tier\" is chosen the power1 and power2 tiers will be used for the values of %%power1% and %%power2%. The other choices switch the two tiers off and instead fixed values will be used for %%power1% and %%power2%.") \
-TAG (U"##Flow derivative") \
+TERM (U"##Flow derivative") \
 DEFINITION (U"determines whether the flow or the flow derivative is used for phonation. ") \
-TAG (U"##Aspiration") \
+TERM (U"##Aspiration") \
 DEFINITION (U"determines whether aspiration is included in the synthesis.") \
-TAG (U"##Breathiness") \
+TERM (U"##Breathiness") \
 DEFINITION (U"determines whether breathiness is included in the synthesis.")
 
 MAN_BEGIN (U"KlattGrid: To Sound (phonation)...", U"djmw", 20090122)
@@ -210,18 +210,18 @@ MAN_END
 MAN_BEGIN (U"KlattGrid: Play special...", U"djmw", 20090421)
 INTRO (U"A command to play part of a @@KlattGrid@.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"determines the part of the sound's domain that you want to hear. If both argument equal zero the complete sound is played. ")
-TAG (U"##Sampling frequency (Hz)")
+TERM (U"##Sampling frequency (Hz)")
 DEFINITION (U"determines the @@sampling frequency@ of the resulting sound.")
-TAG (U"##Scale peak")
+TERM (U"##Scale peak")
 DEFINITION (U"determines whether the peak value of the sound will be set to 0.99. In this way the sound will always play well.")
 PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP
-TAG (U"##Model")
+TERM (U"##Model")
 DEFINITION (U"switches on either the cascade or the parallel section of the synthesizer.")
-TAG (U"##Oral formant range#, ##Nasal formant range# ...")
+TERM (U"##Oral formant range#, ##Nasal formant range# ...")
 DEFINITION (U"selects the formants to use in the synthesis. Choosing the end of a range smaller than the start of the range switches off the formants. ")
-TAG (U"##Frication bypass")
+TERM (U"##Frication bypass")
 DEFINITION (U"switches the frication bypass of the frication section on or off. "
 	"The complete frication section can be turned off by also switching off the frication formants.")
 MAN_END
@@ -229,18 +229,18 @@ MAN_END
 MAN_BEGIN (U"KlattGrid: To Sound (special)...", U"djmw", 20090415)
 INTRO (U"A command to synthesize a Sound from the selected @@KlattGrid@.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"determines the part of the domain that you want to save as a sound. If both argument equal zero the complete sound is created. ")
-TAG (U"##Sampling frequency (Hz)")
+TERM (U"##Sampling frequency (Hz)")
 DEFINITION (U"determines the @@sampling frequency@ of the resulting sound.")
-TAG (U"##Scale peak")
+TERM (U"##Scale peak")
 DEFINITION (U"determines whether the peak value of the sound will be set to 0.99. In this way the sound will always play well and can be saved to a file with minimal loss of resolution.")
 PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP
-TAG (U"##Model")
+TERM (U"##Model")
 DEFINITION (U"switches on either the cascade or the parallel section of the synthesizer.")
-TAG (U"##Oral formant range#, ##Nasal formant range# ...")
+TERM (U"##Oral formant range#, ##Nasal formant range# ...")
 DEFINITION (U"selects the formants to use in the synthesis. Choosing the end of a range smaller than the start of the range switches off the formants. ")
-TAG (U"##Frication bypass")
+TERM (U"##Frication bypass")
 DEFINITION (U"switches the frication bypass of the frication section on or off. "
 	"The complete frication section can be turned off by also switching off the frication formants.")
 MAN_END

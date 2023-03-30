@@ -1,6 +1,6 @@
 /* manual_pitch.cpp
  *
- * Copyright (C) 1992-2007,2010,2011,2015-2017,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2007,2010,2011,2015-2017,2020-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,11 +61,11 @@ INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the maximum value, expressed in dB.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (s)")
+TERM (U"##From time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the selected time domain. Values outside this domain are ignored. "
 	"If ##To time# is not greater than ##From time#, the entire time domain of the Harmonicity object is considered.")
-TAG (U"##Interpolation")
+TERM (U"##Interpolation")
 DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -76,7 +76,7 @@ INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean value, expressed in dB.")
 ENTRY (U"Setting")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
 ENTRY (U"Algorithm")
@@ -92,10 +92,10 @@ INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the minimum value, expressed in dB.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
-TAG (U"##Interpolation")
+TERM (U"##Interpolation")
 DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -106,7 +106,7 @@ INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation, expressed in dB.")
 ENTRY (U"Setting")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
 ENTRY (U"Algorithm")
@@ -123,10 +123,10 @@ INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object for the ti
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the maximum HNR value.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
-TAG (U"##Interpolation")
+TERM (U"##Interpolation")
 DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -137,10 +137,10 @@ INTRO (U"A @@Query submenu|query@ to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the minimum HNR value.")
 ENTRY (U"Settings")
-TAG (U"##Time range (s)")
+TERM (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
-TAG (U"##Interpolation")
+TERM (U"##Interpolation")
 DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -152,9 +152,9 @@ ENTRY (U"Return value")
 NORMAL (U"an estimate (in dB) of the value at a specified time. "
 	"If this time is outside the time domain or outside the samples of the Harmonicity, the result is @undefined.")
 ENTRY (U"Settings")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time at which the value is to be evaluated.")
-TAG (U"##Interpolation")
+TERM (U"##Interpolation")
 DEFINITION (U"the interpolation method, see @@vector value interpolation@. "
 	"The standard is “cubic” because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -166,7 +166,7 @@ ENTRY (U"Return value")
 NORMAL (U"the value in a specified frame, expressed in dB. "
 	"If the index is less than 1 or greater than the number of frames, the result is @undefined.")
 ENTRY (U"Setting")
-TAG (U"##Frame number")
+TERM (U"##Frame number")
 DEFINITION (U"the frame whose value is to be looked up.")
 MAN_END
 
@@ -194,34 +194,34 @@ LIST_ITEM (U"\\bu @@Pitch: To PitchTier@: time-stamp voiced intervals.")
 LIST_ITEM (U"\\bu @@Pitch & PointProcess: To PitchTier...@: interpolate values at specified times.")
 ENTRY (U"Inside a Pitch object")
 NORMAL (U"With @Inspect, you will see the following attributes:")
-TAG (U"%x__%min_")
+TERM (U"%x__%min_")
 DEFINITION (U"start time, in seconds.")
-TAG (U"%x__%max_")
+TERM (U"%x__%max_")
 DEFINITION (U"end time, in seconds.")
-TAG (U"%n__%x_")
+TERM (U"%n__%x_")
 DEFINITION (U"the number of frames (\\>_ 1).")
-TAG (U"%dx")
+TERM (U"%dx")
 DEFINITION (U"time step = frame length = frame duration, in seconds.")
-TAG (U"%x__1_")
+TERM (U"%x__1_")
 DEFINITION (U"the time associated with the first frame, in seconds. "
 	"This will usually be in the range [%xmin, %xmax]. "
 	"The time associated with the last frame (i.e., %x__1_ + (%n__%x_ \\-- 1) %dx)) "
 	"will also usually be in that range.")
-TAG (U"%ceiling")
+TERM (U"%ceiling")
 DEFINITION (U"a frequency above which a candidate is considered voiceless.")
-TAG (U"%frame__%i_, %i = 1 ... %n__%x_")
+TERM (U"%frame__%i_, %i = 1 ... %n__%x_")
 DEFINITION (U"the frames (see below).")
 ENTRY (U"Attributes of a pitch frame")
 NORMAL (U"Each frame contains the following attributes:")
-TAG (U"%nCandidates")
+TERM (U"%nCandidates")
 DEFINITION (U"the number of candidates in this frame (at least one: the `unvoiced' candidate).")
-TAG (U"%candidate__%j_, %j = 1 ... %nCandidates")
+TERM (U"%candidate__%j_, %j = 1 ... %nCandidates")
 DEFINITION (U"the information about each candidate (see below).")
 ENTRY (U"Attributes of each candidate")
 NORMAL (U"Each candidate contains the following attributes:")
-TAG (U"%frequency")
+TERM (U"%frequency")
 DEFINITION (U"the candidate's frequency in Hz (for a voiced candidate), or 0 (for an unvoiced candidate).")
-TAG (U"%strength")
+TERM (U"%strength")
 DEFINITION (U"the degree of periodicity of this candidate (between 0 and 1).")
 ENTRY (U"Interpretation")
 NORMAL (U"The current pitch contour is determined by the path through all first candidates. "
@@ -232,12 +232,12 @@ MAN_END
 MAN_BEGIN (U"Pitch: Draw...", U"ppgb", 19960910)
 INTRO (U"A command for drawing the selected @Pitch objects into the @@Picture window@.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (seconds)")
+TERM (U"##From time (s)")
+TERM (U"##To time (seconds)")
 DEFINITION (U"the time domain along the horizontal axis. "
 	"If these are both zero, the time domain of the #Pitch itself is taken (autowindowing).")
-TAG (U"##Minimum frequency (Hz)")
-TAG (U"##Maximum frequency (Hz)")
+TERM (U"##Minimum frequency (Hz)")
+TERM (U"##Maximum frequency (Hz)")
 DEFINITION (U"the frequency range along the vertical axis. "
 	"##Maximum frequency# must be greater than ##Minimum frequency#.")
 ENTRY (U"Behaviour")
@@ -347,7 +347,7 @@ INTRO (U"A command that creates a @PitchTier object from one selected @Pitch and
 ENTRY (U"Purpose")
 NORMAL (U"to return the frequencies in the Pitch contour at the times specified by the PointProcess.")
 ENTRY (U"Setting")
-TAG (U"##Check voicing# (standard: on)")
+TERM (U"##Check voicing# (standard: on)")
 DEFINITION (U"determines whether, if the time of a mark is not within a voiced frame, you will get a message like "
 	"\"No periodicity at time %xxx.\", and no PitchTier is created. If this button is off, "
 	"the resulting pitch frequency will be 0.0 Hz.")
@@ -457,9 +457,9 @@ MAN_END
 MAN_BEGIN (U"PitchTier: Add point...", U"ppgb", 20010410)
 INTRO (U"A command to add a point to each selected @PitchTier.")
 ENTRY (U"Settings")
-TAG (U"##Time (s)")
+TERM (U"##Time (s)")
 DEFINITION (U"the time at which a point is to be added.")
-TAG (U"##Pitch (Hz)")
+TERM (U"##Pitch (Hz)")
 DEFINITION (U"the pitch value of the requested new point.")
 ENTRY (U"Behaviour")
 NORMAL (U"The tier is modified so that it contains the new point. "
@@ -477,8 +477,8 @@ INTRO (U"A @@Query submenu|query@ to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean of the curve within a specified time window.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (s)")
+TERM (U"##From time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the time window, in seconds. Values outside this window are ignored. "
 	"If ##To time# is not greater than ##From time#, the entire time domain of the tier is considered.")
 ENTRY (U"Algorithm")
@@ -498,8 +498,8 @@ INTRO (U"A @@Query submenu|query@ to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean of the points within a specified time window.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (s)")
+TERM (U"##From time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the time window, in seconds. Values outside this window are ignored. "
 	"If ##To time# is not greater than ##From time#, the entire time domain of the tier is considered.")
 NORMAL (U"To get the mean in the entire curve, i.e. weighted by the durations of the line pieces, "
@@ -511,8 +511,8 @@ INTRO (U"A @@Query submenu|query@ to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation in the curve within a specified time window.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (s)")
+TERM (U"##From time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the selected time domain. Values outside this domain are ignored. "
 	"If ##To time# is not greater than ##From time#, the entire time domain of the tier is considered.")
 ENTRY (U"Algorithm")
@@ -529,8 +529,8 @@ INTRO (U"A @@Query submenu|query@ to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the standard deviation in the points within a specified time window.")
 ENTRY (U"Settings")
-TAG (U"##From time (s)")
-TAG (U"##To time (s)")
+TERM (U"##From time (s)")
+TERM (U"##To time (s)")
 DEFINITION (U"the selected time domain. Values outside this domain are ignored. "
 	"If ##To time# is not greater than ##From time#, the entire time domain of the tier is considered.")
 NORMAL (U"For a PitchTier that was created from a @Pitch object, this command gives the same result as "
@@ -546,7 +546,7 @@ INTRO (U"A command that modifies the selected @PitchTier object "
 ENTRY (U"Purpose")
 NORMAL (U"to end up with a much simplified pitch curve.")
 ENTRY (U"Settings")
-TAG (U"##Frequency resolution# (standard: 2.0 semitones)")
+TERM (U"##Frequency resolution# (standard: 2.0 semitones)")
 DEFINITION (U"the minimum amount by which every remaining pitch point will lie "
 	"above or below the line that connects its two neigbours.")
 ENTRY (U"Algorithm")
@@ -592,7 +592,7 @@ MAN_END
 MAN_BEGIN (U"PointProcess: To PitchTier...", U"ppgb", 19970402)
 INTRO (U"A command to compute a @PitchTier from a @PointProcess.")
 ENTRY (U"Setting")
-TAG (U"##Maximum interval (s)")
+TERM (U"##Maximum interval (s)")
 DEFINITION (U"the maximum duration of a period; intervals longer than this are considered voiceless.")
 ENTRY (U"Algorithm")
 NORMAL (U"A pitch point is constructed between each consecutive pair of points in the #PointProcess, "
@@ -608,14 +608,14 @@ ENTRY (U"Algorithm")
 NORMAL (U"The algorithm performs an acoustic periodicity detection on the basis of an "
 	"accurate autocorrelation method, as described in @@Boersma (1993)@.")
 ENTRY (U"Settings")
-TAG (U"%%Time step% (standard value: 0.01 s)")
+TERM (U"%%Time step% (standard value: 0.01 s)")
 DEFINITION (U"the measurement interval (frame duration), in seconds.")
-TAG (U"%%Minimum pitch% (standard value: 75 Hz)")
+TERM (U"%%Minimum pitch% (standard value: 75 Hz)")
 DEFINITION (U"determines the length of the analysis window.")
-TAG (U"%%Silence threshold% (standard value: 0.1)")
+TERM (U"%%Silence threshold% (standard value: 0.1)")
 DEFINITION (U"frames that do not contain amplitudes above this threshold (relative to the global maximum amplitude), "
 	"are considered silent.")
-TAG (U"%%Number of periods per window% (standard value: 4.5)")
+TERM (U"%%Number of periods per window% (standard value: 4.5)")
 DEFINITION (U"4.5 is best for speech: "
 	"HNR values up to 37 dB are guaranteed to be detected reliably; "
 	"6 periods per window raises this figure to more than 60 dB, "
@@ -641,11 +641,11 @@ ENTRY (U"Purpose")
 NORMAL (U"to perform a pitch analysis, optimized for speech.")
 ENTRY (U"Settings")
 NORMAL (U"The settings that control the recruitment of the candidates are:")
-TAG (U"##Time step (s)# (standard value: 0.0)")
+TERM (U"##Time step (s)# (standard value: 0.0)")
 DEFINITION (U"the measurement interval (frame duration), in seconds. If you supply 0, "
 	"Praat will use a time step of 0.75 / (%%pitch floor%), e.g. 0.01 seconds if the pitch floor is 75 Hz; "
 	"in this example, Praat computes 100 pitch values per second.")
-TAG (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
+TERM (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
 DEFINITION (U"candidates below this frequency will not be recruited. "
 	"This parameter determines the length of the analysis window: it will be 3 longest periods long, "
 	"i.e., if the pitch floor is 75 Hz, the window will be 3/75 = 0.04 seconds long.")
@@ -654,7 +654,7 @@ NORMAL (U"Note that if you set the time step to zero, the analysis windows for c
 	"within one window length, i.e., the degree of %oversampling is 4.")
 NORMAL (U"A post-processing algorithm seeks the cheapest path through the candidates. "
 	"The argument that determines the cheapest path is:")
-TAG (U"##Pitch ceiling (Hz)# (standard value: 600 Hz)")
+TERM (U"##Pitch ceiling (Hz)# (standard value: 600 Hz)")
 DEFINITION (U"candidates above this frequency will be ignored.")
 ENTRY (U"Algorithm")
 NORMAL (U"This is the algorithm described at @@Sound: To Pitch (ac)...@, "
@@ -681,44 +681,44 @@ NORMAL (U"The algorithm performs an acoustic periodicity detection on the basis 
 NORMAL (U"%r__%x_ (%\\ta) \\~~ %r__%xw_ (%\\ta) / %r__%w_ (%\\ta)")
 ENTRY (U"Settings")
 NORMAL (U"The settings that control the recruitment of the candidates are:")
-TAG (U"##Time step (s)# (standard value: 0.0)")
+TERM (U"##Time step (s)# (standard value: 0.0)")
 DEFINITION (U"the measurement interval (frame duration), in seconds. If you supply 0, "
 	"Praat will use a time step of 0.75 / (%%pitch floor%), e.g. 0.01 seconds if the pitch floor is 75 Hz; "
 	"in this example, Praat computes 100 pitch values per second.")
-TAG (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
+TERM (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
 DEFINITION (U"candidates below this frequency will not be recruited. "
 	"This parameter determines the effective length of the analysis window: it will be 3 longest periods long, "
 	"i.e., if the pitch floor is 75 Hz, the window will be effectively 3/75 = 0.04 seconds long.")
 NORMAL (U"Note that if you set the time step to zero, the analysis windows for consecutive measurements "
 	"will overlap appreciably: Praat will always compute 4 pitch values "
 	"within one window length, i.e., the degree of %oversampling is 4.")
-TAG (U"##Very accurate# (standard value: %off)")
+TERM (U"##Very accurate# (standard value: %off)")
 DEFINITION (U"if %off, the window is a Hanning window with a physical length of  3 / (%%pitch floor%). "
 	"If %on, the window is a Gaussian window with a physical length of  6 / (%%pitch floor%), "
 	"i.e. twice the effective length.")
 NORMAL (U"A post-processing algorithm seeks the cheapest path through the candidates. "
 	"The settings that determine the cheapest path are:")
-TAG (U"##Pitch ceiling (Hz)# (standard value: 600 Hz)")
+TERM (U"##Pitch ceiling (Hz)# (standard value: 600 Hz)")
 DEFINITION (U"candidates above this frequency will be ignored.")
-TAG (U"##Silence threshold# (standard value: 0.03)")
+TERM (U"##Silence threshold# (standard value: 0.03)")
 DEFINITION (U"frames that do not contain amplitudes above this threshold (relative to the global maximum amplitude), "
 	"are probably silent.")
-TAG (U"##Voicing threshold# (standard value: 0.45)")
+TERM (U"##Voicing threshold# (standard value: 0.45)")
 DEFINITION (U"the strength of the unvoiced candidate, relative to the maximum possible autocorrelation. "
 	"If the amount of periodic energy in a frame is more than this fraction of the total energy (the remainder being noise), "
 	"then Praat will prefer to regard this frame as voiced; otherwise as unvoiced. "
 	"To increase the number of unvoiced decisions, increase the voicing threshold.")
-TAG (U"##Octave cost# (standard value: 0.01 per octave)")
+TERM (U"##Octave cost# (standard value: 0.01 per octave)")
 DEFINITION (U"degree of favouring of high-frequency candidates, relative to the maximum possible autocorrelation. "
 	"This is necessary because even (or: especially) in the case of a perfectly periodic signal, "
 	"all undertones of %F__0_ are equally strong candidates as %F__0_ itself. "
 	"To more strongly favour recruitment of high-frequency candidates, increase this value.")
-TAG (U"##Octave-jump cost# (standard value: 0.35)")
+TERM (U"##Octave-jump cost# (standard value: 0.35)")
 DEFINITION (U"degree of disfavouring of pitch changes, relative to the maximum possible autocorrelation. "
 	"To decrease the number of large frequency jumps, increase this value. In contrast with what is described "
 	"in the article, this value will be corrected for the time step: multiply by 0.01 s / %TimeStep to get "
 	"the value in the way it is used in the formulas in the article.")
-TAG (U"##Voiced / unvoiced cost# (standard value: 0.14)")
+TERM (U"##Voiced / unvoiced cost# (standard value: 0.14)")
 DEFINITION (U"degree of disfavouring of voiced/unvoiced transitions, relative to the maximum possible autocorrelation. "
 	"To decrease the number of voiced/unvoiced transitions, increase this value. In contrast with what is described "
 	"in the article, this value will be corrected for the time step: multiply by 0.01 s / %TimeStep to get "
@@ -733,11 +733,11 @@ ENTRY (U"Algorithm")
 NORMAL (U"The algorithm performs an acoustic periodicity detection on the basis of a "
 	"forward cross-correlation analysis.")
 ENTRY (U"Settings")
-TAG (U"##Time step (s)# (standard value: 0.0)")
+TERM (U"##Time step (s)# (standard value: 0.0)")
 DEFINITION (U"the measurement interval (frame duration), in seconds. If you supply 0, "
 	"Praat will use a time step of 0.25 / (%%pitch floor%), e.g. 0.00333333 seconds if the pitch floor is 75 Hz; "
 	"in this example, Praat computes 300 pitch values per second.")
-TAG (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
+TERM (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
 DEFINITION (U"candidates below this frequency will not be recruited. "
 	"This parameter determines the length of the analysis window: it will be 1 longest period long, "
 	"i.e., if the pitch floor is 75 Hz, the window will be 1/75 = 0.01333333 seconds long.")

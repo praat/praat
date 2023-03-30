@@ -1,6 +1,6 @@
 /* manual_Picture.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -492,15 +492,15 @@ ENTRY (U"Purpose")
 NORMAL (U"To draw a specified number of marks per decade "
 	"into the @margins around the drawing area, along a logarithmic axis.")
 ENTRY (U"Settings")
-TAG (U"%%Marks per decade")
+TERM (U"%%Marks per decade")
 DEFINITION (U"the number of marks that will be drawn for every decade.")
-TAG (U"%%Write numbers")
+TERM (U"%%Write numbers")
 DEFINITION (U"if on, real numbers will be written in the margin, "
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG (U"%%Draw ticks")
+TERM (U"%%Draw ticks")
 DEFINITION (U"if on, short line pieces will be drawn in the margin.")
-TAG (U"%%Draw dotted lines")
+TERM (U"%%Draw dotted lines")
 DEFINITION (U"if on, dotted lines will be drawn through your drawing.")
 ENTRY (U"Behaviour")
 LIST_ITEM (U"If your vertical logarithmic axis runs from 10 to 100, "
@@ -547,16 +547,16 @@ INTRO (U"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (U"Purpose")
 NORMAL (U"To draw any number of equally spaced marks into the @margins around the drawing area.")
 ENTRY (U"Settings")
-TAG (U"##Number of marks")
+TERM (U"##Number of marks")
 DEFINITION (U"the number of equally spaced marks (2 or more) that will be drawn; "
 	"there will always be marks at the beginning and end of the domain or range.")
-TAG (U"##Write numbers")
+TERM (U"##Write numbers")
 DEFINITION (U"if on, real numbers will be written in the margin, "
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG (U"##Draw ticks")
+TERM (U"##Draw ticks")
 DEFINITION (U"if on, short line pieces will be drawn in the margin.")
-TAG (U"##Draw dotted lines")
+TERM (U"##Draw dotted lines")
 DEFINITION (U"if on, dotted lines will be drawn through your drawing.")
 ENTRY (U"Example")
 NORMAL (U"If you draw a Sound with a domain between 0 and 1 seconds "
@@ -572,22 +572,22 @@ INTRO (U"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (U"Purpose")
 NORMAL (U"To draw a number of equally spaced marks into the @margins around the drawing area.")
 ENTRY (U"Settings")
-TAG (U"##Units")
+TERM (U"##Units")
 DEFINITION (U"the units, relative to the standard units, "
 	"for writing the numbers; for example, if you want time in milliseconds "
 	"instead of seconds (which is always the standard), "
 	"#Units should be 0.001.")
-TAG (U"##Distance")
+TERM (U"##Distance")
 DEFINITION (U"the distance between the equally spaced marks that will be drawn, "
 	"expressed in #Units; for example, if you want marks every 20 milliseconds, "
 	"and %Units is 0.001, this argument should be 20.")
-TAG (U"##Write numbers")
+TERM (U"##Write numbers")
 DEFINITION (U"if on, real numbers will be written in the margin, "
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG (U"##Draw ticks")
+TERM (U"##Draw ticks")
 DEFINITION (U"if on, short line pieces will be drawn in the margin.")
-TAG (U"##Draw dotted lines")
+TERM (U"##Draw dotted lines")
 DEFINITION (U"if on, dotted lines will be drawn through your drawing.")
 MAN_END
 
@@ -597,20 +597,20 @@ ENTRY (U"Purpose")
 NORMAL (U"To draw one mark into one of the four @margins "
 	"around the drawing area, along a logarithmic axis.")
 ENTRY (U"Settings")
-TAG (U"##Position")
+TERM (U"##Position")
 DEFINITION (U"the %x (for top or bottom) or %y (for left or right) position of the mark, "
 	"expressed in the logarithmic domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG (U"##Write number")
+TERM (U"##Write number")
 DEFINITION (U"if on, a real number equal to #Position will be written in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
-TAG (U"##Draw tick")
+TERM (U"##Draw tick")
 DEFINITION (U"if on, a short line piece will be drawn in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
-TAG (U"##Draw dotted line")
+TERM (U"##Draw dotted line")
 DEFINITION (U"if on, a dotted line will be drawn through your drawing, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
-TAG (U"##Draw text")
+TERM (U"##Draw text")
 DEFINITION (U"if not empty, this text will be drawn in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
 ENTRY (U"Example")
@@ -625,20 +625,20 @@ INTRO (U"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (U"Purpose")
 NORMAL (U"To draw one mark into one of the four @margins around the drawing area.")
 ENTRY (U"Settings")
-TAG (U"##Position")
+TERM (U"##Position")
 DEFINITION (U"the %x (for top or bottom) or %y (for left or right) position of the mark, "
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
-TAG (U"##Write number")
+TERM (U"##Write number")
 DEFINITION (U"if on, a real number equal to `Position' will be written in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
-TAG (U"##Draw tick")
+TERM (U"##Draw tick")
 DEFINITION (U"if on, a short line piece will be drawn in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
-TAG (U"##Draw dotted line")
+TERM (U"##Draw dotted line")
 DEFINITION (U"if on, a dotted line will be drawn through your drawing, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
-TAG (U"##Draw text")
+TERM (U"##Draw text")
 DEFINITION (U"if not empty, this text will be drawn in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
 ENTRY (U"Example")
@@ -664,20 +664,20 @@ INTRO (U"In windows that pop up when you choose ##Colour...# from the @@Pen menu
 	"or any of the #Paint commands in the ##World menu#, you can see the following field:")
 CODE (U"Colour (0-1, name, or {r,g,b})")
 NORMAL (U"This means that you can specify here a colour in any of three ways:")
-TAG (U"\\bu a grey value between 0 and 1:")
+TERM (U"\\bu a grey value between 0 and 1:")
 DEFINITION (U"a value of 0 means black, 1 means white, 0.5 means grey, 0.75 means silver, and so on.")
-TAG (U"\\bu a colour name:")
+TERM (U"\\bu a colour name:")
 DEFINITION (U"you can choose from Black, White, Red, Green, Blue, Yellow, Cyan, Magenta, Maroon, Lime, Navy, Teal, "
 	"Purple, Olive, Pink, Silver, Grey, i.e. from any of the colours in the Pen menu. "
 	"You can write these either with a capital (Red) or in lowercase (red).")
-TAG (U"\\bu an RGB colour:")
+TERM (U"\\bu an RGB colour:")
 DEFINITION (U"you can specify a red-green-blue value as three values between 0 and 1, enclosed within braces "
 	"and separated by commas, e.g. {0.8,0.1,0.2} is something reddish.")
 MAN_END
 
 MAN_BEGIN (U"Picture window", U"ppgb", 20140325)
 INTRO (U"One of the two main windows in Praat.")
-TAG (U"File menu")
+TERM (U"File menu")
 LIST_ITEM (U"\\bu @@Save as PDF file...")
 LIST_ITEM (U"\\bu @@Save as PNG file...")
 LIST_ITEM (U"\\bu @@Save as EPS file...")
@@ -685,11 +685,11 @@ LIST_ITEM (U"\\bu @@Save as Windows metafile...@")
 LIST_ITEM (U"\\bu @@Read from Praat picture file...@, @@Save as Praat picture file...")
 LIST_ITEM (U"\\bu @@PostScript settings...")
 LIST_ITEM (U"\\bu @@Print...")
-TAG (U"Edit menu")
+TERM (U"Edit menu")
 LIST_ITEM (U"\\bu @@Undo@")
 LIST_ITEM (U"\\bu @@Copy to clipboard@")
 LIST_ITEM (U"\\bu @@Erase all@")
-TAG (U"@Margins menu")
+TERM (U"@Margins menu")
 LIST_ITEM (U"\\bu @@Draw inner box")
 LIST_ITEM (U"\\bu @@Text left/right/top/bottom...")
 LIST_ITEM (U"\\bu @@Marks left/right/top/bottom every...")
@@ -698,20 +698,20 @@ LIST_ITEM (U"\\bu @@Marks left/right/top/bottom...")
 LIST_ITEM (U"\\bu @@Logarithmic marks left/right/top/bottom...")
 LIST_ITEM (U"\\bu @@One logarithmic mark left/right/top/bottom...")
 LIST_ITEM (U"\\bu @@Axes...")
-TAG (U"World menu")
+TERM (U"World menu")
 LIST_ITEM (U"\\bu @@Text...")
 LIST_ITEM (U"\\bu @@Axes...")
-TAG (U"Select menu")
+TERM (U"Select menu")
 LIST_ITEM (U"\\bu @@Select inner viewport...@, @@Select outer viewport...@, @@Viewport text...")
-TAG (U"@@Pen menu")
-TAG (U"@@Font menu")
+TERM (U"@@Pen menu")
+TERM (U"@@Font menu")
 MAN_END
 
 MAN_BEGIN (U"PostScript settings...", U"ppgb", 20201229)
 INTRO (U"One of the commands in the File menus of many windows. "
 	"The PostScript settings influence @Printing and saving to @@Encapsulated PostScript@ files.")
 ENTRY (U"Settings")
-TAG (U"##Allow direct PostScript printing# (Windows only)")
+TERM (U"##Allow direct PostScript printing# (Windows only)")
 DEFINITION (U"this determines whether Praat prints explicit PostScript commands to your printer "
 	"if it is a PostScript printer. This is what you will usually want. However, if you find "
 	"that some of the options that you choose in the #Print window seem not to be supported "
@@ -720,7 +720,7 @@ DEFINITION (U"this determines whether Praat prints explicit PostScript commands 
 	"to PostScript. If your printer does not support PostScript, this switch is ignored. "
 	"On Macintosh, this switch is ignored, because all printing is done in PDF. "
 	"On Unix, this switch is superfluous, because all printing is done directly in PostScript.")
-TAG (U"##Grey resolution")
+TERM (U"##Grey resolution")
 DEFINITION (U"you can choose from two image qualities:")
 LIST_ITEM1 (U"\\bu the %finest quality for grey plots (106 spots per inch), "
 	"which gives the best results directly from the printer;")
@@ -728,20 +728,20 @@ LIST_ITEM1 (U"\\bu a %photocopyable quality, which has fewer spots per inch (85)
 	"gives the best results after photocopying.")
 DEFINITION (U"Your choice of the grey resolution influences direct PostScript printing "
 	"and saving to @@Encapsulated PostScript@ files.")
-TAG (U"##Paper size# (Unix only)")
+TERM (U"##Paper size# (Unix only)")
 DEFINITION (U"you can choose from A4 (210 \\xx 297 mm), A3 (297 \\xx 420 mm) or US Letter (8.5 \\xx 11\\\"p). "
 	"This choice applies to Unix only; on Windows, you choose the paper size in the ##Print...# window; "
 	"on Macintosh, you choose the paper size in the ##Page setup...# window.")
-TAG (U"##Orientation# (Unix only)")
+TERM (U"##Orientation# (Unix only)")
 DEFINITION (U"you can choose between %portrait (e.g., 297 mm high and 210 mm wide) "
 	"and %landscape (e.g., 210 mm high and 297 mm wide). "
 	"This choice applies to Unix only; on Windows, you choose the orientation in the ##Print...# window; "
 	"on Macintosh, you choose the orientation in the ##Page setup...# window.")
-TAG (U"##Magnification# (Unix only)")
+TERM (U"##Magnification# (Unix only)")
 DEFINITION (U"the relative size with which your picture will be printed; normally 1.0. "
 	"This choice applies to Unix only; on Windows, you choose the scaling in the ##Print...# window; "
 	"on Macintosh, you choose the scaling in the ##Page setup...# window.")
-TAG (U"##Print command# (Unix only)")
+TERM (U"##Print command# (Unix only)")
 DEFINITION (U"When printing on Unix, a temporary PostScript^\\re file is created in the “/tmp” folder; "
 	"it will have a name like “picXXXXXX”, and is automatically removed after printing. "
 	"This file is sent to the printer with the print command, which will often look like $$lp -c \\% s$, "
@@ -810,15 +810,15 @@ NORMAL (U"To write text inside the drawing area.")
 ENTRY (U"Scope")
 NORMAL (U"This works with all the drawings that leave @margins around themselves.")
 ENTRY (U"Settings")
-TAG (U"%x")
+TERM (U"%x")
 DEFINITION (U"horizontal position, expressed in the horizontal domain of your latest drawing.")
-TAG (U"%y")
+TERM (U"%y")
 DEFINITION (U"vertical position, expressed in the vertical range or domain of your latest drawing.")
-TAG (U"%%Horizontal alignment")
+TERM (U"%%Horizontal alignment")
 DEFINITION (U"determines the horizontal alignment of the text relative to %x.")
-TAG (U"%%Vertical alignment")
+TERM (U"%%Vertical alignment")
 DEFINITION (U"determines the vertical alignment of the text relative to %y.")
-TAG (U"%%Text")
+TERM (U"%%Text")
 DEFINITION (U"will be drawn in the current font and font size "
 	"that you set with the @@Font menu@.")
 ENTRY (U"Usage")
@@ -831,17 +831,17 @@ ENTRY (U"Purpose")
 NORMAL (U"To draw a picture file (PNG; on Mac and Windows also JPEG or TIFF; "
 	"other picture formats may also work) into the Picture window (or into the Demo window).")
 ENTRY (U"Settings")
-TAG (U"##File name")
+TERM (U"##File name")
 DEFINITION (U"the name of the picture file. If you use this command in a script, "
 	"you can use a relative path name such as $$pictures/myface.png$ or $$~/Desktop/hello.png$.")
-TAG (U"##From x")
-TAG (U"##To x")
+TERM (U"##From x")
+TERM (U"##To x")
 DEFINITION (U"The horizontal location (in world coordinates) where the picture will appear. "
 	"Use the @@Axes...@ command to set world coordinates if they have not been set implicitly by an earlier #Draw or #Paint command. "
 	"If you set ##From x# and ##To x# to the same value, the picture will be horizontally centred around this %x value "
 	"and obtain a width that preserves the aspect ratio (width-to-height ratio) of the original picture.")
-TAG (U"##From y")
-TAG (U"##To y")
+TERM (U"##From y")
+TERM (U"##To y")
 DEFINITION (U"The vertical location (in world coordinates) where the picture will appear. "
 	"Use the @@Axes...@ command to set world coordinates if they have not been set implicitly by an earlier #Draw or #Paint command. "
 	"If you set ##From y# and ##To y# to the same value, the picture will be vertically centred around this %y value "
@@ -911,17 +911,17 @@ ENTRY (U"Purpose")
 NORMAL (U"To write text inside the viewport, at nine different places, "
 	"with a rotation between 0 to 360 degrees.")
 ENTRY (U"Settings:")
-TAG (U"##Horizontal alignment")
+TERM (U"##Horizontal alignment")
 DEFINITION (U"determines the horizontal alignment of the text:")
 LIST_ITEM (U"    \\bu #Left means pushed against the left edge of the viewport;")
 LIST_ITEM (U"    \\bu #Right means pushed against the right edge of the viewport;")
 LIST_ITEM (U"    \\bu #Centre means horizontally centred in the viewport.")
-TAG (U"##Vertical alignment")
+TERM (U"##Vertical alignment")
 DEFINITION (U"determines the vertical alignment of the text:")
 LIST_ITEM (U"    \\bu #Top means pushed against the top of the viewport;")
 LIST_ITEM (U"    \\bu #Bottom means pushed against the bottom of the viewport;")
 LIST_ITEM (U"    \\bu #Half means vertically centred in the viewport.")
-TAG (U"##Text")
+TERM (U"##Text")
 DEFINITION (U"will be drawn in the current font and font size "
 	"that you set with the @@Font menu@.")
 ENTRY (U"Behaviour")

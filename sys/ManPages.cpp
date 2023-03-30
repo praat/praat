@@ -279,7 +279,6 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		} else if (Melder_nequ (line, U"recording time", 14)) {
 			Melder_skipHorizontalSpace (& (colon += 1));
 			page -> recordingTime = Melder_atof (colon);
-			Melder_casual (U"recordingTime", page -> recordingTime);
 		}
 	}
 	if (! page -> author)
@@ -363,7 +362,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			type = kManPage_type::LIST_ITEM;
 			line += 1;
 		} else if (line [0] == U'*') {
-			type = kManPage_type::TAG;
+			type = kManPage_type::TERM;
 			line += 1;
 		} else if (line [0] == U':') {
 			type = kManPage_type::DEFINITION;
@@ -647,7 +646,7 @@ static const struct stylesInfo {
 /* ENTRY: */ { U"<h3>", U"</h3>" },
 /* NORMAL: */ { U"<p>", U"</p>" },
 /* LIST_ITEM: */ { U"<dd>", U"" },
-/* TAG: */ { U"<dt>", U"" },
+/* TERM: */ { U"<dt>", U"" },
 /* DEFINITION: */ { U"<dd>", U"" },
 /* CODE: */ { U"<code>&nbsp;&nbsp;&nbsp;", U"<br></code>" },
 /* PROTOTYPE: */ { U"<p>", U"</p>" },
@@ -680,7 +679,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 		const char32 *p = & paragraph -> text [0];
 		const bool isListItem = paragraph -> type == kManPage_type::LIST_ITEM ||
 			(paragraph -> type >= kManPage_type::LIST_ITEM1 && paragraph -> type <= kManPage_type::LIST_ITEM3);
-		const bool isTag = paragraph -> type == kManPage_type::TAG ||
+		const bool isTag = paragraph -> type == kManPage_type::TERM ||
 			(paragraph -> type >= kManPage_type::TAG1 && paragraph -> type <= kManPage_type::TAG3);
 		const bool isDefinition = paragraph -> type == kManPage_type::DEFINITION ||
 			(paragraph -> type >= kManPage_type::DEFINITION1 && paragraph -> type <= kManPage_type::DEFINITION3);

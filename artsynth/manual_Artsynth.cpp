@@ -67,24 +67,24 @@ INTRO (U"A command to synthesize a @Sound object from the selected @Speaker and 
 NORMAL (U"This is the command that performs the actual articulatory synthesis. "
 	"See @@Articulatory synthesis@.")
 ENTRY (U"Settings")
-TAG (U"##Sampling frequency (Hz)")
+TERM (U"##Sampling frequency (Hz)")
 DEFINITION (U"the number of times per second that the equilibrium widths and lengths and the tensions of the muscles "
 	"are recomputed from the Artword. This will also be the sampling frequency of the resulting sound and "
 	"of the optional resulting tube widths, air pressures, and air velocities. The standard value is 22050 Hz.")
-TAG (U"##Oversampling")
+TERM (U"##Oversampling")
 DEFINITION (U"the number of times that the aerodynamic quantities and the state of the tube walls "
 	"will be recomputed during each sample period. The standard value is 25.")
-TAG (U"##Width 1#, ##Width 2#, ##Width 3#")
+TERM (U"##Width 1#, ##Width 2#, ##Width 3#")
 DEFINITION (U"the numbers (see below) of the tubes whose widths you want to monitor. "
 	"E.g., if ##Width 1# is 36, the synthesizer will create a Sound object named $$width36$, "
 	"which contains the width of tube 36 (the lower glottis) as a function of time, expressed in metres. "
 	"To prevent the creation of a $$width$ object, specify $$0$ (the standard value).")
-TAG (U"##Pressure 1#, ##Pressure 2#, ##Pressure 3#")
+TERM (U"##Pressure 1#, ##Pressure 2#, ##Pressure 3#")
 DEFINITION (U"the numbers (see below) of the tubes whose air pressures you want to monitor. "
 	"E.g., if ##Pressure 3# is 37, the synthesizer will create a Sound object named $$pressure37$, "
 	"which contains the air pressure of tube 37 (the upper glottis) as a function of time, expressed in Pascal. "
 	"To prevent the creation of a $$pressure$ object, specify $$0$ (the standard value).")
-TAG (U"##Velocity 1#, ##Velocity 2#, ##Velocity 3")
+TERM (U"##Velocity 1#, ##Velocity 2#, ##Velocity 3")
 DEFINITION (U"the numbers (see below) of the tubes whose air velocities you want to monitor. "
 	"E.g., if ##Velocity 1# is 60, the synthesizer will create a Sound object named $velocity60, "
 	"which contains the air velocity of tube 60 (in the mouth) as a function of time, expressed in metres per second. "
@@ -129,11 +129,11 @@ MAN_BEGIN (U"Create Artword...", U"ppgb", 20101212)
 INTRO (U"A command to create an @Artword object with all muscle activities set to zero. "
 	"See @@Articulatory synthesis@.")
 ENTRY (U"Settings")
-TAG (U"##Name")
+TERM (U"##Name")
 DEFINITION (U"the name that you give to the created object. The standard name is $$hallo$, "
 	"but you should give it a more sensible name, possibly something that represents the utterance "
 	"that it is supposed to generate.")
-TAG (U"##Duration (seconds)")
+TERM (U"##Duration (seconds)")
 DEFINITION (U"the duration of the resulting Artword. Should be as long as the utterance that "
 	"you want to generate with it. The standard value is 1 second.")
 MAN_END
@@ -141,12 +141,12 @@ MAN_END
 MAN_BEGIN (U"Create Speaker...", U"ppgb", 20101212)
 INTRO (U"A command to create a @Speaker object. See @@Articulatory synthesis@.")
 ENTRY (U"Settings")
-TAG (U"##Name")
+TERM (U"##Name")
 DEFINITION (U"the name that you give to the created object. The standard name is “speaker”, "
 	"but if you work with multiple Speaker objects, give them sensible names to reduce confusion.")
-TAG (U"##Kind of speaker")
+TERM (U"##Kind of speaker")
 DEFINITION (U"Choose from #Female, #Male, or #Child. The only difference is a relative size.")
-TAG (U"##Number of tubes in glottis")
+TERM (U"##Number of tubes in glottis")
 DEFINITION (U"Choose from #1, #2, or #10. See @@Artword & Speaker: To Sound...@ for details.")
 MAN_END
 
