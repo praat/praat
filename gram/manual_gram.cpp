@@ -1122,34 +1122,34 @@ ENTRY (U"Inside an OTGrammar")
 NORMAL (U"With @Inspect, you will see the following attributes:")
 TERM (U"%constraints")
 DEFINITION (U"a list of constraints. Each constraint contains the following attributes:")
-TAG1 (U"%name")
+TERM1 (U"%name")
 DEFINITION1 (U"the fixed name of the constraint, for instance \"P\\s{ARSE}\".")
-TAG1 (U"%ranking")
+TERM1 (U"%ranking")
 DEFINITION1 (U"the continuous ranking value; will change during learning.")
-TAG1 (U"%disharmony")
+TERM1 (U"%disharmony")
 DEFINITION1 (U"the effective ranking value during stochastic evaluation; with a non-zero evaluation noise, "
 	"this will be different from %ranking.")
 TERM (U"%fixedRankings")
 DEFINITION (U"an often empty list of locally ranked pairs of constraints. "
 	"Each local-ranking pair contains the following attributes:")
-TAG1 (U"%higher")
+TERM1 (U"%higher")
 DEFINITION1 (U"the index of the universally higher-ranked of the two constraints, "
 	"a number between 1 and the number of constraints.")
-TAG1 (U"%lower")
+TERM1 (U"%lower")
 DEFINITION1 (U"the index of the universally lower-ranked of the two constraints.")
 TERM (U"%tableaus")
 DEFINITION (U"a list of tableaus. Each tableau contains the following attributes:")
-TAG1 (U"%input")
+TERM1 (U"%input")
 DEFINITION1 (U"the input string of the tableau. For production grammaras, the underlying form of the utterance, for example "
 	"|an+pa| or |bɹɪŋ + \\s{PAST}|.")
-TAG1 (U"%candidates")
+TERM1 (U"%candidates")
 DEFINITION1 (U"a list of output candidates. Each output candidate consists of:")
-TAG2 (U"%output")
+TERM2 (U"%output")
 DEFINITION2 (U"the output string of the tableau. In two-level phonology: the surface form of the utterance, for example "
 	"[anpa] or [ampa] or [bɹɔːt] or [bɹæŋ]. In multi-level phonology: the combination of phonological surface "
 	"and phonetic results, for example /anpa/[anpa] or /ampa/[ampa] or /bɹɔːt/[bɹɔːt] or "
 	"/bɹæŋ/[bɹæŋ].")
-TAG2 (U"%marks")
+TERM2 (U"%marks")
 DEFINITION2 (U"a list of the number of violations of each constraint for this output form. If there are 13 constraints, "
 	"this list will contain 13 integer numbers for each candidate.")
 ENTRY (U"OTGrammar creation")

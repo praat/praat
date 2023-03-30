@@ -52,7 +52,7 @@ ENTRY (U"Your own manual pages")
 NORMAL (U"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (U"ManPages", U"ppgb", 20220514)
+MAN_BEGIN (U"ManPages", U"ppgb", 20230330)
 INTRO (U"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -134,8 +134,7 @@ CODE (U"<list_item> \"\\bsbu \\@ Green.\"")
 CODE (U"<list_item> \"\\bsbu \\@ Blue.\"")
 NORMAL (U"For text that should appear with a fixed character width, you use the type <code>.")
 NORMAL (U"For a paragraph that should be connected with the following paragraph "
-	"without leaving a blank space "
-	"(probably a list item or a definition), you use the type <tag>.")
+	"without leaving a blank space (probably a definition), you use the type <term>.")
 NORMAL (U"For a paragraph with a blank left margin, you use the type <definition>.")
 NORMAL (U"For a paragraph with an embedded script (a picture), you use the type <script> (see below).")
 ENTRY (U"Special symbols and styles")

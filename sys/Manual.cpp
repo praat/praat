@@ -113,9 +113,9 @@ void structManual :: v_draw () {
 			case kManPage_type::LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
-			case kManPage_type::TAG1: HyperPage_listTag1 (this, paragraph -> text); break;
-			case kManPage_type::TAG2: HyperPage_listTag2 (this, paragraph -> text); break;
-			case kManPage_type::TAG3: HyperPage_listTag3 (this, paragraph -> text); break;
+			case kManPage_type::TERM1: HyperPage_listTag1 (this, paragraph -> text); break;
+			case kManPage_type::TERM2: HyperPage_listTag2 (this, paragraph -> text); break;
+			case kManPage_type::TERM3: HyperPage_listTag3 (this, paragraph -> text); break;
 			case kManPage_type::DEFINITION1: HyperPage_definition1 (this, paragraph -> text); break;
 			case kManPage_type::DEFINITION2: HyperPage_definition2 (this, paragraph -> text); break;
 			case kManPage_type::DEFINITION3: HyperPage_definition3 (this, paragraph -> text); break;
