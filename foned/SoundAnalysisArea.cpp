@@ -287,79 +287,89 @@ bool SoundAnalysisArea_mouse (SoundAnalysisArea me, GuiDrawingArea_MouseEvent ev
 
 #pragma mark - SoundAnalysisArea info
 
+void structSoundAnalysisArea :: v_spectrogramInfo () const {
+	/* Spectrogram flag: */
+	MelderInfo_writeLine (U"Spectrogram show: ", our instancePref_spectrogram_show());
+	/* Spectrogram settings: */
+	MelderInfo_writeLine (U"Spectrogram view from: ", our instancePref_spectrogram_viewFrom(), U" Hz");
+	MelderInfo_writeLine (U"Spectrogram view to: ", our instancePref_spectrogram_viewTo(), U" Hz");
+	MelderInfo_writeLine (U"Spectrogram window length: ", our instancePref_spectrogram_windowLength(), U" seconds");
+	MelderInfo_writeLine (U"Spectrogram dynamic range: ", our instancePref_spectrogram_dynamicRange(), U" dB");
+	/* Advanced spectrogram settings: */
+	MelderInfo_writeLine (U"Spectrogram number of time steps: ", our instancePref_spectrogram_timeSteps());
+	MelderInfo_writeLine (U"Spectrogram number of frequency steps: ", our instancePref_spectrogram_frequencySteps());
+	MelderInfo_writeLine (U"Spectrogram method: ", U"Fourier");
+	MelderInfo_writeLine (U"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (our instancePref_spectrogram_windowShape()));
+	MelderInfo_writeLine (U"Spectrogram autoscaling: ", our instancePref_spectrogram_autoscaling());
+	MelderInfo_writeLine (U"Spectrogram maximum: ", our instancePref_spectrogram_maximum(), U" dB/Hz");
+	MelderInfo_writeLine (U"Spectrogram pre-emphasis: ", our instancePref_spectrogram_preemphasis(), U" dB/octave");
+	MelderInfo_writeLine (U"Spectrogram dynamicCompression: ", our instancePref_spectrogram_dynamicCompression());
+	/* Dynamic information: */
+	MelderInfo_writeLine (U"Spectrogram cursor frequency: ", our d_spectrogram_cursor, U" Hz");
+}
+void structSoundAnalysisArea :: v_pitchInfo () const {
+	/* Pitch flag: */
+	MelderInfo_writeLine (U"Pitch show: ", our instancePref_pitch_show());
+	/* Pitch settings: */
+	MelderInfo_writeLine (U"Pitch floor: ", our instancePref_pitch_floor(), U" Hz");
+	MelderInfo_writeLine (U"Pitch ceiling: ", our instancePref_pitch_ceiling(), U" Hz");
+	MelderInfo_writeLine (U"Pitch unit: ",
+			Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine (U"Pitch drawing method: ", kSoundAnalysisArea_pitch_drawingMethod_getText (instancePref_pitch_drawingMethod()));
+	/* Advanced pitch settings: */
+	MelderInfo_writeLine (U"Pitch view from: ", our instancePref_pitch_viewFrom(), U" ",
+			Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine (U"Pitch view to: ", our instancePref_pitch_viewTo(), U" ",
+			Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine (U"Pitch method: ", kSoundAnalysisArea_pitch_analysisMethod_getText (our instancePref_pitch_method()));
+	MelderInfo_writeLine (U"Pitch very accurate: ", our instancePref_pitch_veryAccurate());
+	MelderInfo_writeLine (U"Pitch max. number of candidates: ", our instancePref_pitch_maximumNumberOfCandidates());
+	MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_silenceThreshold(), U" of global peak");
+	MelderInfo_writeLine (U"Pitch voicing threshold: ", our instancePref_pitch_voicingThreshold(), U" (periodic power / total power)");
+	MelderInfo_writeLine (U"Pitch octave cost: ", our instancePref_pitch_octaveCost(), U" per octave");
+	MelderInfo_writeLine (U"Pitch octave jump cost: ", our instancePref_pitch_octaveJumpCost(), U" per octave");
+	MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", our instancePref_pitch_voicedUnvoicedCost());
+}
+void structSoundAnalysisArea :: v_intensityInfo () const {
+	/* Intensity flag: */
+	MelderInfo_writeLine (U"Intensity show: ", our instancePref_intensity_show());
+	/* Intensity settings: */
+	MelderInfo_writeLine (U"Intensity view from: ", our instancePref_intensity_viewFrom(), U" dB");
+	MelderInfo_writeLine (U"Intensity view to: ", our instancePref_intensity_viewTo(), U" dB");
+	MelderInfo_writeLine (U"Intensity averaging method: ", kSoundAnalysisArea_intensity_averagingMethod_getText (our instancePref_intensity_averagingMethod()));
+	MelderInfo_writeLine (U"Intensity subtract mean pressure: ", our instancePref_intensity_subtractMeanPressure());
+}
+void structSoundAnalysisArea :: v_formantsInfo () const {
+	/* Formants flag: */
+	MelderInfo_writeLine (U"Formant show: ", our instancePref_formant_show());
+	/* Formant settings: */
+	MelderInfo_writeLine (U"Formant ceiling: ", our instancePref_formant_ceiling(), U" Hz");
+	MelderInfo_writeLine (U"Formant number of poles: ", Melder_iround (2.0 * our instancePref_formant_numberOfFormants()));   // should be a whole number
+	MelderInfo_writeLine (U"Formant window length: ", our instancePref_formant_windowLength(), U" seconds");
+	MelderInfo_writeLine (U"Formant dynamic range: ", our instancePref_formant_dynamicRange(), U" dB");
+	MelderInfo_writeLine (U"Formant dot size: ", our instancePref_formant_dotSize(), U" mm");
+	/* Advanced formant settings: */
+	MelderInfo_writeLine (U"Formant method: ", kSoundAnalysisArea_formant_analysisMethod_getText (our instancePref_formant_method()));
+	MelderInfo_writeLine (U"Formant pre-emphasis from: ", our instancePref_formant_preemphasisFrom(), U" Hz");
+}
+void structSoundAnalysisArea :: v_pulsesInfo () const {
+	/* Pulses flag: */
+	MelderInfo_writeLine (U"Pulses show: ", our instancePref_pulses_show());
+	MelderInfo_writeLine (U"Pulses maximum period factor: ", our instancePref_pulses_maximumPeriodFactor());
+	MelderInfo_writeLine (U"Pulses maximum amplitude factor: ", our instancePref_pulses_maximumAmplitudeFactor());
+}
 void structSoundAnalysisArea :: v1_info () {
 	MelderInfo_writeLine (U"Longest analysis: ", our instancePref_longestAnalysis(), U" seconds");
-	if (v_hasSpectrogram ()) {
-		/* Spectrogram flag: */
-		MelderInfo_writeLine (U"Spectrogram show: ", our instancePref_spectrogram_show());
-		/* Spectrogram settings: */
-		MelderInfo_writeLine (U"Spectrogram view from: ", our instancePref_spectrogram_viewFrom(), U" Hz");
-		MelderInfo_writeLine (U"Spectrogram view to: ", our instancePref_spectrogram_viewTo(), U" Hz");
-		MelderInfo_writeLine (U"Spectrogram window length: ", our instancePref_spectrogram_windowLength(), U" seconds");
-		MelderInfo_writeLine (U"Spectrogram dynamic range: ", our instancePref_spectrogram_dynamicRange(), U" dB");
-		/* Advanced spectrogram settings: */
-		MelderInfo_writeLine (U"Spectrogram number of time steps: ", our instancePref_spectrogram_timeSteps());
-		MelderInfo_writeLine (U"Spectrogram number of frequency steps: ", our instancePref_spectrogram_frequencySteps());
-		MelderInfo_writeLine (U"Spectrogram method: ", U"Fourier");
-		MelderInfo_writeLine (U"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (our instancePref_spectrogram_windowShape()));
-		MelderInfo_writeLine (U"Spectrogram autoscaling: ", our instancePref_spectrogram_autoscaling());
-		MelderInfo_writeLine (U"Spectrogram maximum: ", our instancePref_spectrogram_maximum(), U" dB/Hz");
-		MelderInfo_writeLine (U"Spectrogram pre-emphasis: ", our instancePref_spectrogram_preemphasis(), U" dB/octave");
-		MelderInfo_writeLine (U"Spectrogram dynamicCompression: ", our instancePref_spectrogram_dynamicCompression());
-		/* Dynamic information: */
-		MelderInfo_writeLine (U"Spectrogram cursor frequency: ", our d_spectrogram_cursor, U" Hz");
-	}
-	if (v_hasPitch ()) {
-		/* Pitch flag: */
-		MelderInfo_writeLine (U"Pitch show: ", our instancePref_pitch_show());
-		/* Pitch settings: */
-		MelderInfo_writeLine (U"Pitch floor: ", our instancePref_pitch_floor(), U" Hz");
-		MelderInfo_writeLine (U"Pitch ceiling: ", our instancePref_pitch_ceiling(), U" Hz");
-		MelderInfo_writeLine (U"Pitch unit: ",
-				Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch drawing method: ", kSoundAnalysisArea_pitch_drawingMethod_getText (instancePref_pitch_drawingMethod()));
-		/* Advanced pitch settings: */
-		MelderInfo_writeLine (U"Pitch view from: ", our instancePref_pitch_viewFrom(), U" ",
-				Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch view to: ", our instancePref_pitch_viewTo(), U" ",
-				Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch method: ", kSoundAnalysisArea_pitch_analysisMethod_getText (our instancePref_pitch_method()));
-		MelderInfo_writeLine (U"Pitch very accurate: ", our instancePref_pitch_veryAccurate());
-		MelderInfo_writeLine (U"Pitch max. number of candidates: ", our instancePref_pitch_maximumNumberOfCandidates());
-		MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_silenceThreshold(), U" of global peak");
-		MelderInfo_writeLine (U"Pitch voicing threshold: ", our instancePref_pitch_voicingThreshold(), U" (periodic power / total power)");
-		MelderInfo_writeLine (U"Pitch octave cost: ", our instancePref_pitch_octaveCost(), U" per octave");
-		MelderInfo_writeLine (U"Pitch octave jump cost: ", our instancePref_pitch_octaveJumpCost(), U" per octave");
-		MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", our instancePref_pitch_voicedUnvoicedCost());
-	}
-	if (v_hasIntensity ()) {
-		/* Intensity flag: */
-		MelderInfo_writeLine (U"Intensity show: ", our instancePref_intensity_show());
-		/* Intensity settings: */
-		MelderInfo_writeLine (U"Intensity view from: ", our instancePref_intensity_viewFrom(), U" dB");
-		MelderInfo_writeLine (U"Intensity view to: ", our instancePref_intensity_viewTo(), U" dB");
-		MelderInfo_writeLine (U"Intensity averaging method: ", kSoundAnalysisArea_intensity_averagingMethod_getText (our instancePref_intensity_averagingMethod()));
-		MelderInfo_writeLine (U"Intensity subtract mean pressure: ", our instancePref_intensity_subtractMeanPressure());
-	}
-	if (v_hasFormants ()) {
-		/* Formant flag: */
-		MelderInfo_writeLine (U"Formant show: ", our instancePref_formant_show());
-		/* Formant settings: */
-		MelderInfo_writeLine (U"Formant ceiling: ", our instancePref_formant_ceiling(), U" Hz");
-		MelderInfo_writeLine (U"Formant number of poles: ", Melder_iround (2.0 * our instancePref_formant_numberOfFormants()));   // should be a whole number
-		MelderInfo_writeLine (U"Formant window length: ", our instancePref_formant_windowLength(), U" seconds");
-		MelderInfo_writeLine (U"Formant dynamic range: ", our instancePref_formant_dynamicRange(), U" dB");
-		MelderInfo_writeLine (U"Formant dot size: ", our instancePref_formant_dotSize(), U" mm");
-		/* Advanced formant settings: */
-		MelderInfo_writeLine (U"Formant method: ", kSoundAnalysisArea_formant_analysisMethod_getText (our instancePref_formant_method()));
-		MelderInfo_writeLine (U"Formant pre-emphasis from: ", our instancePref_formant_preemphasisFrom(), U" Hz");
-	}
-	if (v_hasPulses ()) {
-		/* Pulses flag: */
-		MelderInfo_writeLine (U"Pulses show: ", our instancePref_pulses_show());
-		MelderInfo_writeLine (U"Pulses maximum period factor: ", our instancePref_pulses_maximumPeriodFactor());
-		MelderInfo_writeLine (U"Pulses maximum amplitude factor: ", our instancePref_pulses_maximumAmplitudeFactor());
-	}
+	if (our v_hasSpectrogram ())
+		our v_spectrogramInfo ();
+	if (v_hasPitch ())
+		our v_pitchInfo ();
+	if (v_hasIntensity ())
+		our v_intensityInfo ();
+	if (v_hasFormants ())
+		our v_formantsInfo ();
+	if (v_hasPulses ())
+		our v_pulsesInfo ();
 	const conststring32 logTargetTexts [3] = { U"log file only", U"Info window only", U"log file and Info window" };
 	const conststring32 log1TargetText = logTargetTexts [our instancePref_log1_toLogFile() + 2 * our instancePref_log1_toInfoWindow() - 1];
 	MelderInfo_writeLine (U"Log 1 target: ", log1TargetText);

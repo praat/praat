@@ -2,7 +2,7 @@
 #define _SoundAnalysisArea_h_
 /* SoundAnalysisArea.h
  *
- * Copyright (C) 1992-2005,2007-2022 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,12 @@ Thing_define (SoundAnalysisArea, FunctionArea) {
 	virtual bool v_hasFormants    () { return true; }
 	virtual bool v_hasPulses      () { return true; }
 	virtual void v_reset_analysis ();
+
+	virtual void v_spectrogramInfo () const;
+	virtual void v_pitchInfo       () const;
+	virtual void v_intensityInfo   () const;
+	virtual void v_formantsInfo    () const;
+	virtual void v_pulsesInfo      () const;
 
 protected:
 	void v_computeAuxiliaryData () override {
