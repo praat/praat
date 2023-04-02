@@ -38,11 +38,13 @@
 Thing_define (FormantPathArea, SoundAnalysisArea) {
 	FormantPath _formantPath;
 	FormantPath formantPath() const { return our _formantPath; }
-	//autoIntervalTier ceilings;
+	bool formantPathAnalysisParametersKnown = false;
 
 	double maximumInitialLengthOfWindow() override {
 		return 5.0;
 	}
+	void v_formantsInfo () const
+		override;
 	void v_draw_analysis_formants ()
 		override;
 	void v_createMenuItems_formant (EditorMenu menu)

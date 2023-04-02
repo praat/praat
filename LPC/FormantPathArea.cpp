@@ -28,6 +28,44 @@ Thing_implement (FormantPathArea, SoundAnalysisArea, 0);
 #include "Prefs_copyToInstance.h"
 #include "FormantPathArea_prefs.h"
 
+void structFormantPathArea :: v_formantsInfo () const {
+	/* Formants flag: */
+	MelderInfo_writeLine (U"Formant show: ", our instancePref_formant_show());
+	/* Formant settings: */
+	if (formantPathAnalysisParametersKnown) {
+		MelderInfo_writeLine (U"Formant analysis parameters are known");
+		MelderInfo_writeLine (U"Formant time step: ", our instancePref_formant_path_timeStep());
+		MelderInfo_writeLine (U"Formant number of poles: ", Melder_iround (2.0 * our instancePref_formant_path_maximumNumberOfFormants()));
+		MelderInfo_writeLine (U"Formant middle ceiling: ", our instancePref_formant_path_middleFormantCeiling(), U" Hz");
+		MelderInfo_writeLine (U"Formant ceiling step size: ", our instancePref_formant_path_ceilingStepSize());
+		MelderInfo_writeLine (U"Formant number of steps up / down: ", our instancePref_formant_path_numberOfStepsUpDown());
+		MelderInfo_writeLine (U"Formant dynamic range: ", our instancePref_formant_dynamicRange(), U" dB");
+		MelderInfo_writeLine (U"Formant dot size: ", our instancePref_formant_dotSize(), U" mm");
+		/* Advanced formant settings: */
+		MelderInfo_writeLine (U"Formant method: ", kSoundAnalysisArea_formant_analysisMethod_getText (our instancePref_formant_path_method()));
+		MelderInfo_writeLine (U"Formant pre-emphasis from: ", our instancePref_formant_path_preEmpasisFrom(), U" Hz");
+	} else {
+		FormantPath formantPath = our formantPath();
+		VEC ceilings = formantPath -> ceilings.get();
+		Formant formant = formantPath -> formantCandidates . at [1];
+		MelderInfo_writeLine (U"Formant analysis parameters deduced from the FormantPath)");
+		MelderInfo_writeLine (U"Formant time step: ", formantPath -> dx);
+		const integer numberOfPoles = 2 * formant -> maxnFormants;
+		MelderInfo_writeLine (U"Formant number of poles: ", numberOfPoles, U" or ", numberOfPoles + 1);
+		const integer middleCeilingIndex = (ceilings.size + 1) / 2;
+		const double middleCeiling = ceilings [middleCeilingIndex];
+		MelderInfo_writeLine (U"Formant middle ceiling: ", middleCeiling, U" Hz");
+		const double stepSize = log (ceilings [middleCeilingIndex + 1] / middleCeiling);
+		MelderInfo_writeLine (U"Formant ceiling step size: ", stepSize);
+		MelderInfo_writeLine (U"Formant number of steps up / down: ", middleCeilingIndex - 1);
+		MelderInfo_writeLine (U"Formant dynamic range: ", our instancePref_formant_dynamicRange(), U" dB");
+		MelderInfo_writeLine (U"Formant dot size: ", our instancePref_formant_dotSize(), U" mm");
+		/* Advanced formant settings: */
+		MelderInfo_writeLine (U"Formant method: unknown");
+		MelderInfo_writeLine (U"Formant pre-emphasis from: unknown");		
+	}
+}
+
 /*
 	Fast selection of an interval:
 	If the mouse click was near a ceiling line in the SoundAnalysisArea we select the whole interval
@@ -137,6 +175,7 @@ static void menu_cb_FormantSettings (FormantPathArea me, EDITOR_ARGS) {
 		my formantPath() -> formantCandidates = result -> formantCandidates.move();
 		my formantPath() -> ceilings = result -> ceilings.move();
 		my formantPath() -> path = result -> path.move();
+		my formantPathAnalysisParametersKnown = true;
 		my d_formant = FormantPath_extractFormant (my  formantPath());
 		FunctionArea_broadcastDataChanged (me);
 	EDITOR_END
