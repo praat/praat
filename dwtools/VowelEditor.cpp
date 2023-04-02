@@ -1363,7 +1363,7 @@ autoVowelEditor VowelEditor_create (conststring32 title) {
 #endif
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 		Melder_assert (my graphics);
-		Graphics_setFontSize (my graphics.get(), 12);
+		Graphics_setFontSize (my graphics.get(), 12.0);
 
 		VowelEditor_getMarks (me.get());
 		if (my instancePref_synthesis_numberOfFormants() <= 0)
