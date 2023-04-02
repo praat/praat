@@ -58,6 +58,10 @@ char32 *strstr_regexp (conststring32 string, conststring32 search_regexp);
 	no match is found.
 */
 
+inline integer isqrt_roundUp (double number) {
+	return ceil (sqrt (number));
+}
+
 autoSTRVEC string32vector_searchAndReplace (constSTRVEC me,
 	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp);
