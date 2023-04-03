@@ -1188,6 +1188,9 @@ struct autotensor3 : public tensor3<T> {
 			our ndim1 = other.ndim1;
 			our ndim2 = other.ndim2;
 			our ndim3 = other.ndim3;
+			our stride1 = other.stride1;
+			our stride2 = other.stride2;
+			our stride3 = other.stride3;
 			other.cells = nullptr;   // disown source
 			other.ndim1 = 0;   // to keep the source in a valid state
 			other.ndim2 = 0;   // to keep the source in a valid state
