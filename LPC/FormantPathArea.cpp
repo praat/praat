@@ -33,10 +33,11 @@ void structFormantPathArea :: v_formantsInfo () const {
 	MelderInfo_writeLine (U"Formant show: ", our instancePref_formant_show());
 	/* Formant settings: */
 	if (formantPathAnalysisParametersKnown) {
-		MelderInfo_writeLine (U"Formant analysis parameters are known");
-		MelderInfo_writeLine (U"Formant time step: ", our instancePref_formant_path_timeStep());
+		MelderInfo_writeLine (U"Formant analysis parameters are known from the last analysis within the editor");
+		MelderInfo_writeLine (U"Formant time step: ", our instancePref_formant_path_timeStep(), U" seconds");
+		MelderInfo_writeLine (U"Formant window length: ", our instancePref_formant_path_windowLength(), U" seconds");
 		MelderInfo_writeLine (U"Formant number of poles: ", Melder_iround (2.0 * our instancePref_formant_path_maximumNumberOfFormants()));
-		MelderInfo_writeLine (U"Formant middle ceiling: ", our instancePref_formant_path_middleFormantCeiling(), U" Hz");
+		MelderInfo_writeLine (U"Formant middle ceiling: ", our instancePref_formant_path_middleFormantCeiling(), U" Hertz");
 		MelderInfo_writeLine (U"Formant ceiling step size: ", our instancePref_formant_path_ceilingStepSize());
 		MelderInfo_writeLine (U"Formant number of steps up / down: ", our instancePref_formant_path_numberOfStepsUpDown());
 		MelderInfo_writeLine (U"Formant dynamic range: ", our instancePref_formant_dynamicRange(), U" dB");
@@ -48,13 +49,16 @@ void structFormantPathArea :: v_formantsInfo () const {
 		FormantPath formantPath = our formantPath();
 		VEC ceilings = formantPath -> ceilings.get();
 		Formant formant = formantPath -> formantCandidates . at [1];
-		MelderInfo_writeLine (U"Formant analysis parameters deduced from the FormantPath)");
-		MelderInfo_writeLine (U"Formant time step: ", formantPath -> dx);
+		MelderInfo_writeLine (U"Formant analysis parameters could only be approximated from the FormantPath");
+		MelderInfo_writeLine (U"Formant time step: ", formantPath -> dx, U" seconds");
+		const double duration = formantPath -> xmax - formantPath-> xmin;
+		const double approximateWindowDuration = 0.5 * (duration - formantPath -> nx * formantPath -> dx); // a little bit too small
+		MelderInfo_writeLine (U"Formant window length: > ", approximateWindowDuration, U" seconds");
 		const integer numberOfPoles = 2 * formant -> maxnFormants;
 		MelderInfo_writeLine (U"Formant number of poles: ", numberOfPoles, U" or ", numberOfPoles + 1);
 		const integer middleCeilingIndex = (ceilings.size + 1) / 2;
 		const double middleCeiling = ceilings [middleCeilingIndex];
-		MelderInfo_writeLine (U"Formant middle ceiling: ", middleCeiling, U" Hz");
+		MelderInfo_writeLine (U"Formant middle ceiling: ", middleCeiling, U" Hertz");
 		const double stepSize = log (ceilings [middleCeilingIndex + 1] / middleCeiling);
 		MelderInfo_writeLine (U"Formant ceiling step size: ", stepSize);
 		MelderInfo_writeLine (U"Formant number of steps up / down: ", middleCeilingIndex - 1);
