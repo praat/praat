@@ -2027,7 +2027,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		*/
 		my variablesMap. clear ();
 		for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-			char32 parameter [200];
+			char32 parameter [1+Interpreter_MAX_PARAMETER_LENGTH];
 			/*
 				Create variable names as-are and variable names without capitals.
 			*/
