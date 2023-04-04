@@ -550,7 +550,7 @@ void praat_executeScriptFromFile (MelderFile file, conststring32 arguments, Edit
 			Interpreter_getArgumentsFromString (interpreter.get(), arguments);   // interpret caller-relative paths for infile/outfile/folder arguments
 		}
 		autoMelderFileSetDefaultDir dir (file);   // so that script-relative file names can be used inside the script
-		Interpreter_run (interpreter.get(), text.get());
+		Interpreter_run (interpreter.get(), text.get(), false);
 	} catch (MelderError) {
 		Melder_throw (U"Script ", file, U" not completed.");
 	}
@@ -585,7 +585,7 @@ void praat_runScript (conststring32 fileName, integer narg, Stackel args, Editor
 		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromArgs (interpreter.get(), narg, args);   // interpret caller-relative paths for infile/outfile/folder arguments
 		autoMelderFileSetDefaultDir dir (& file);   // so that callee-relative file names can be used inside the script
-		Interpreter_run (interpreter.get(), text.get());
+		Interpreter_run (interpreter.get(), text.get(), false);
 	} catch (MelderError) {
 		Melder_throw (U"Script ", & file, U" not completed.");   // don't refer to 'fileName', because its contents may have changed
 	}
@@ -605,7 +605,7 @@ void praat_executeScriptFromCommandLine (conststring32 fileName, integer argc, c
 		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromCommandLine (interpreter.get(), argc, argv);   // interpret caller-relative paths for infile/outfile/folder arguments
 		autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used inside the script
-		Interpreter_run (interpreter.get(), text.get());
+		Interpreter_run (interpreter.get(), text.get(), false);
 	} catch (MelderError) {
 		Melder_throw (U"Script ", & file, U" not completed.");   // don't refer to 'fileName', because its contents may have changed
 	}
@@ -649,7 +649,7 @@ extern "C" void praatlib_executeScript (const char *text8) {
 	try {
 		autoInterpreter interpreter = Interpreter_create ();
 		autostring32 string = Melder_8to32 (text8);
-		Interpreter_run (interpreter.get(), string.get());
+		Interpreter_run (interpreter.get(), string.get(), false);
 	} catch (MelderError) {
 		Melder_throw (U"Script not completed.");
 	}
@@ -659,7 +659,7 @@ void praat_executeScriptFromText (conststring32 text) {
 	try {
 		autoInterpreter interpreter = Interpreter_create ();
 		autostring32 string = Melder_dup (text);   // copy, because Interpreter will change it (UGLY)
-		Interpreter_run (interpreter.get(), string.get());
+		Interpreter_run (interpreter.get(), string.get(), false);
 	} catch (MelderError) {
 		Melder_throw (U"Script not completed.");
 	}
@@ -678,7 +678,7 @@ static void secondPassThroughScript (UiForm sendingForm, integer /* narg */, Sta
 	Interpreter_readParameters (interpreter.get(), text.get());
 	Interpreter_getArgumentsFromDialog (interpreter.get(), sendingForm);
 	autoPraatBackground background;
-	Interpreter_run (interpreter.get(), text.get());
+	Interpreter_run (interpreter.get(), text.get(), false);
 }
 
 static void firstPassThroughScript (MelderFile file, Editor optionalInterpreterOwningEditor, EditorCommand optionalCommand) {

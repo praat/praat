@@ -1,6 +1,6 @@
 /* melder_help.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "melder.h"
 
 static void defaultHelp (conststring32 query) {
-	Melder_flushError (U"Don't know how to find help on \"", query, U"\".");
+	Melder_flushError (U"Don’t know how to find help on “", query, U"”.");
 }
 
 static void defaultSearch () {

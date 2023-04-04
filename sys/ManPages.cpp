@@ -92,6 +92,8 @@ static conststring32 extractLink (conststring32 text, const char32 *p, char32 *l
 static void readOnePage (ManPages me, MelderReadText text);   // forward
 
 static void resolveLinks (ManPages me, ManPage_Paragraph par) {
+	if (par -> type == kManPage_type::SCRIPT)
+		return;   // links would be invisible
 	char32 link [501], fileName [256];
 	for (const char32 *plink = extractLink (par -> text, nullptr, link); plink != nullptr; plink = extractLink (par -> text, plink, link)) {
 		/*
@@ -134,29 +136,41 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par) {
 			for (q = link; *q; q ++)
 				if (! isAllowedFileNameCharacter (*q))
 					*q = U'_';
-			Melder_sprint (fileName,256, link, U".man");
-			MelderDir_getFile (& my rootDirectory, fileName, & file2);
 			try {
-				autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
-				try {
-					readOnePage (me, text2.get());
-				} catch (MelderError) {
-					Melder_throw (U"File ", & file2, U".");
-				}
-			} catch (MelderError) {
-				/*
-					Second try: with upper case.
-				*/
-				Melder_clearError ();
-				link [0] = Melder_toUpperCase (link [0]);
 				Melder_sprint (fileName,256, link, U".man");
 				MelderDir_getFile (& my rootDirectory, fileName, & file2);
-				autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
-				try {
+				if (MelderFile_exists (& file2)) {
+					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 					readOnePage (me, text2.get());
-				} catch (MelderError) {
-					Melder_throw (U"File ", & file2, U".");
+				} else {
+					/*
+						Second try: with upper case.
+					*/
+					link [0] = Melder_toUpperCase (link [0]);
+					Melder_sprint (fileName,256, link, U".man");
+					MelderDir_getFile (& my rootDirectory, fileName, & file2);
+					if (MelderFile_exists (& file2)) {
+						autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
+						readOnePage (me, text2.get());
+					} else {
+						Melder_sprint (fileName,256, link, U".praatnb");
+						MelderDir_getFile (& my rootDirectory, fileName, & file2);
+						if (MelderFile_exists (& file2)) {
+							autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
+							readOnePage (me, text2.get());
+						} else {
+							link [0] = Melder_toLowerCase (link [0]);
+							Melder_sprint (fileName,256, link, U".praatnb");
+							MelderDir_getFile (& my rootDirectory, fileName, & file2);
+							if (MelderFile_exists (& file2)) {
+								autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
+								readOnePage (me, text2.get());
+							}
+						}
+					}
 				}
+			} catch (MelderError) {
+				Melder_throw (U"File ", & file2, U".");
 			}
 		}
 	}
@@ -230,6 +244,10 @@ static bool stringHasInk (conststring32 line) {
 	const char32 *endOfSpace = Melder_findEndOfHorizontalSpace (line);
 	return *endOfSpace != U'\0';
 }
+static bool isTerm (kManPage_type type) {
+	return type == kManPage_type::TERM || type >= kManPage_type::TERM1 && type <= kManPage_type::TERM3;
+}
+
 static void readOnePage_notebook (ManPages me, MelderReadText text) {
 	mutablestring32 firstLine = MelderReadText_readLine (text);
 	Melder_assert (Melder_stringMatchesCriterion (firstLine, kMelder_string::STARTS_WITH, U"PraatNotebook:", true));
@@ -291,6 +309,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		line = MelderReadText_readLine (text);
 	} while (line && ! stringHasInk (line));
 	ManPage_Paragraph previousParagraph = nullptr;
+	autoMelderString buffer_graphical, buffer_graphical2;
 	for (;;) {
 		if (! line)
 			return;
@@ -299,146 +318,138 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			if (! line)
 				return;
 		}
+		integer numberOfLeadingSpaces = 0;
+		while (Melder_isHorizontalSpace (*line))
+			numberOfLeadingSpaces += ( *(line ++) == U'\t' ? 4 - ( numberOfLeadingSpaces & 0b11_integer ) : 1 );
+		MelderString_empty (& buffer_graphical);
 		kManPage_type type;
-		if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"===", true)) {
+		if (numberOfLeadingSpaces == 0 && Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"===", true)) {
 			if (previousParagraph)
 				previousParagraph -> type = kManPage_type::ENTRY;
 			line = MelderReadText_readLine (text);
 			if (! line)
 				return;
 			continue;
-		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                        ", true)) {
-			type = kManPage_type::CODE5;
-			line += 24;
-		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                    ", true)) {
-			type = kManPage_type::CODE4;
-			line += 20;
-		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"                ", true)) {
-			type = kManPage_type::CODE3;
-			line += 16;
-		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"            ", true)) {
-			if (line [12] == U'-') {
-				type = kManPage_type::LIST_ITEM3;
-				line += 13;
-			} else if (line [12] == U'*') {
-				type = kManPage_type::TERM3;
-				line += 13;
-			} else if (line [12] == U':') {
-				type = kManPage_type::DEFINITION3;
-				line += 13;
-			} else {
-				type = kManPage_type::CODE2;
-				line += 12;
-			}
-		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"        ", true)) {
-			if (line [8] == U'-') {
-				type = kManPage_type::LIST_ITEM2;
-				line += 9;
-			} else if (line [8] == U'*') {
-				type = kManPage_type::TERM2;
-				line += 9;
-			} else if (line [8] == U':') {
-				type = kManPage_type::DEFINITION2;
-				line += 9;
-			} else {
-				type = kManPage_type::CODE1;
-				line += 8;
-			}
-		} else if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"    ", true)) {
-			if (line [4] == U'-') {
-				type = kManPage_type::LIST_ITEM1;
-				line += 5;
-			} else if (line [4] == U'*') {
-				type = kManPage_type::TERM1;
-				line += 5;
-			} else if (line [4] == U':') {
-				type = kManPage_type::DEFINITION1;
-				line += 5;
-			} else {
-				type = kManPage_type::CODE;
-				line += 4;
-			}
-		} else if (line [0] == U'-') {
-			type = kManPage_type::LIST_ITEM;
-			line += 1;
-		} else if (line [0] == U'*') {
-			type = kManPage_type::TERM;
-			line += 1;
-		} else if (line [0] == U':') {
-			type = kManPage_type::DEFINITION;
-			line += 1;
-		} else if (line [0] == U'\t') {
-			if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t", true)) {
-				if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t", true)) {
-					if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t", true)) {
-						if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t\t", true)) {
-							if (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"\t\t\t\t\t\t", true)) {
-								type = kManPage_type::CODE5;
-								line += 6;
-							} else {
-								type = kManPage_type::CODE4;
-								line += 5;
-							}
-						} else {
-							type = kManPage_type::CODE3;
-							line += 4;
-						}
-					} else {
-						type = kManPage_type::CODE2;
-						line += 3;
-					}
-				} else {
-					type = kManPage_type::CODE1;
-					line += 2;
-				}
-			} else {
-				type = kManPage_type::CODE;
-				line += 1;
-			}
-		} else if (line [0] == U'<') {
-			char32 *closingBracket = str32chr (line, U'>');
-			if (! closingBracket)
-				Melder_throw (U"Missing “>” in “", line, U"”.");
-			*closingBracket = U'\0';
-			if (line [1] == U'\0') {
-				type = kManPage_type::NORMAL;
-				line = closingBracket + 1;
-				continue;
-			} else {
-				type = kManPage_type_getValue (line + 1);
-				if (type == kManPage_type::UNDEFINED)
-					Melder_throw (U"Unknown paragraph type “", line + 1, U"”.");
-			}
-			line = closingBracket + 1;
+		} else if (line [0] == U'-' && Melder_isHorizontalSpace (line [1])) {
+			type = (
+				numberOfLeadingSpaces <  3 ? kManPage_type::LIST_ITEM :
+				numberOfLeadingSpaces <  7 ? kManPage_type::LIST_ITEM1 :
+				numberOfLeadingSpaces < 11 ? kManPage_type::LIST_ITEM2 :
+				kManPage_type::LIST_ITEM3
+			);
+			MelderString_append (& buffer_graphical, U"• ");
+			line += 2;
 			Melder_skipHorizontalSpace (& line);
+			MelderString_append (& buffer_graphical, line);
+		} else if (line [0] == U':' && Melder_isHorizontalSpace (line [1])) {
+			type = (
+				numberOfLeadingSpaces <  3 ? kManPage_type::DEFINITION :
+				numberOfLeadingSpaces <  7 ? kManPage_type::DEFINITION1 :
+				numberOfLeadingSpaces < 11 ? kManPage_type::DEFINITION2 :
+				kManPage_type::DEFINITION3
+			);
+			if (previousParagraph) {
+				if (previousParagraph -> type == kManPage_type::NORMAL)
+					previousParagraph -> type = kManPage_type::TERM;
+			}
+			line += 2;
+			Melder_skipHorizontalSpace (& line);
+			MelderString_append (& buffer_graphical, line);
+		} else if (numberOfLeadingSpaces == 0 && line [0] == U'~' && Melder_isHorizontalSpace (line [1])) {
+			type = kManPage_type::EQUATION;
+			line += 2;
+			Melder_skipHorizontalSpace (& line);
+			MelderString_append (& buffer_graphical, line);
+		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
+			type = kManPage_type::SCRIPT;
+			do {
+				line = MelderReadText_readLine (text);
+				if (! line)
+					Melder_throw (U"Script chunk not closed.");
+				if (line [0] == U'}') {
+					line = MelderReadText_readLine (text);
+					break;
+				}
+				const bool shouldShow = true;   // TODO: or hide...
+				if (shouldShow) {
+					/*
+						Convert to graphical.
+					*/
+					MelderString_empty (& buffer_graphical2);
+					const char32 *p = line;
+					while (*p) {
+						if (*p == U'\t')
+							MelderString_append (& buffer_graphical2, p == line ? nullptr : U"    ");
+						else if (*p == U'#')
+							MelderString_append (& buffer_graphical2, U"\\# ");
+						else if (*p == U'$')
+							MelderString_append (& buffer_graphical2, U"\\$ ");
+						else if (*p == U'@')
+							MelderString_append (& buffer_graphical2, U"\\@ ");
+						else if (*p == U'%')
+							MelderString_append (& buffer_graphical2, U"\\% ");
+						else if (*p == U'^')
+							MelderString_append (& buffer_graphical2, U"\\^ ");
+						else
+							MelderString_appendCharacter (& buffer_graphical2, *p);
+						p ++;
+					}
+					ManPage_Paragraph par = page -> paragraphs. append ();
+					par -> type = kManPage_type::CODE;
+					par -> text = Melder_dup (buffer_graphical2. string).transfer();
+				}
+				const bool shouldEvaluate = true;   // TODO: or not...
+				if (shouldEvaluate) {
+					MelderString_append (& buffer_graphical, line);
+					MelderString_appendCharacter (& buffer_graphical, U'\n');
+				}
+			} while (1);
+		} else if (numberOfLeadingSpaces >= 3) {
+			type = (
+				numberOfLeadingSpaces <  7 ? kManPage_type::CODE  :
+				numberOfLeadingSpaces < 11 ? kManPage_type::CODE1 :
+				numberOfLeadingSpaces < 15 ? kManPage_type::CODE2 :
+				numberOfLeadingSpaces < 19 ? kManPage_type::CODE3 :
+				numberOfLeadingSpaces < 23 ? kManPage_type::CODE4 :
+				kManPage_type::CODE5
+			);
+			MelderString_append (& buffer_graphical, line);
 		} else {
 			type = kManPage_type::NORMAL;
+			MelderString_append (& buffer_graphical, line);
 		}
 		ManPage_Paragraph par = page -> paragraphs. append ();
 		par -> type = type;
-		par -> text = Melder_dup (line).transfer();
-		do {
-			mutablestring32 continuationLine = MelderReadText_readLine (text);
-			if (! continuationLine) {
-				line = nullptr;   // signals end of text
-				break;
-			}
-			if (continuationLine [0] == U'<' ||
-				continuationLine [0] == U':' ||
-				continuationLine [0] == U'*' ||
-				continuationLine [0] == U'-' ||
-				continuationLine [0] == U'\t' ||
-				Melder_stringMatchesCriterion (continuationLine, kMelder_string::STARTS_WITH, U"===", true) ||
-				Melder_stringMatchesCriterion (continuationLine, kMelder_string::STARTS_WITH, U"    ", true) ||
-				! stringHasInk (continuationLine)
-			) {
-				line = continuationLine;   // not really a continuation line, but a new paragraph
-				break;
-			}
-			conststring32 separator = ( par -> text [0] == U'\0' ? U"" :
-				par -> type == kManPage_type::SCRIPT ? U"\n" : U" " );
-			par -> text = Melder_dup (Melder_cat (par -> text, separator, continuationLine)).transfer();
-		} while (1);
+		par -> text = Melder_dup (buffer_graphical. string). transfer();
+		/*
+			Do continuation lines, except for code.
+		*/
+		const bool isCode = ( type == kManPage_type::CODE || type >= kManPage_type::CODE1 && type <= kManPage_type::CODE5 );
+		if (isCode) {
+			line = MelderReadText_readLine (text);
+		} else if (type == kManPage_type::SCRIPT) {
+		} else {
+			do {
+				mutablestring32 continuationLine = MelderReadText_readLine (text);
+				if (! continuationLine) {
+					line = nullptr;   // signals end of text
+					break;
+				}
+				char32 *firstNonSpace = Melder_findEndOfHorizontalSpace (continuationLine);
+				if (*firstNonSpace == U':' ||
+					*firstNonSpace == U'-' ||
+					firstNonSpace == continuationLine && *firstNonSpace == U'{' ||
+					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
+					Melder_stringMatchesCriterion (firstNonSpace, kMelder_string::STARTS_WITH, U"===", true) ||
+					*firstNonSpace == U'\0'
+				) {
+					line = continuationLine;   // not really a continuation line, but a new paragraph
+					break;
+				}
+				conststring32 separator = ( par -> text [0] == U'\0' ? U"" : U" " );
+				par -> text = Melder_dup (Melder_cat (par -> text, separator, continuationLine)).transfer();
+			} while (1);
+		}
 		if (par -> type == kManPage_type::SCRIPT) {
 			par -> width = 6.0;
 			par -> height = 3.0;
@@ -470,10 +481,10 @@ autoManPages ManPages_create () {
 	return me;
 }
 
-autoManPages ManPages_createFromText (MelderReadText text) {
+autoManPages ManPages_createFromText (MelderReadText text, MelderFile file) {
 	autoManPages me = Thing_new (ManPages);
 	my dynamic = true;
-	MelderDir_copy (& Data_directoryBeingRead, & my rootDirectory);
+	MelderFile_getParentDir (file, & my rootDirectory);
 	readOnePage (me.get(), text);
 	return me;
 }
@@ -556,7 +567,10 @@ static void grind (ManPages me) {
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
 		for (int ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
-			conststring32 text = page -> paragraphs [ipar]. text;
+			ManPage_Paragraph par = & page -> paragraphs [ipar];
+			if (par -> type == kManPage_type::SCRIPT)
+				continue;
+			conststring32 text = par -> text;
 			const char32 *p;
 			char32 link [301];
 			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
@@ -769,7 +783,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 						Melder_setDefaultDir (& my rootDirectory);
 					try {
 						autostring32 text = Melder_dup (p);
-						Interpreter_run (interpreter.get(), text.get());
+						Interpreter_run (interpreter.get(), text.get(), false);
 					} catch (MelderError) {
 						trace (U"interpreter fails on ", pngFile. path);
 						Melder_flushError ();

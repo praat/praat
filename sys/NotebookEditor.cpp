@@ -81,7 +81,7 @@ static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 		MelderFile_setDefaultDir (& my file);
 
 	autoMelderReadText readText = MelderReadText_createFromText (text.move());
-	autoManPages manPages = ManPages_createFromText (readText.get());   // readText can release, because manPages duplicates (last checked 2023-03-25)
+	autoManPages manPages = ManPages_createFromText (readText.get(), & my file);   // readText can release, because manPages duplicates (last checked 2023-03-25)
 	ManPage firstPage = manPages -> pages.at [1];
 	autoManual manual = Manual_create (firstPage -> title.get(), manPages.releaseToAmbiguousOwner(), true);
 	manual.releaseToUser ();
@@ -99,7 +99,7 @@ static void menu_cb_runChunk (NotebookEditor me, EDITOR_ARGS) {
 	autoPraatBackground background;
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Interpreter_run (my interpreter.get(), text.get());
+	Interpreter_run (my interpreter.get(), text.get(), true);
 }
 
 static void menu_cb_expandIncludeFiles (NotebookEditor me, EDITOR_ARGS) {

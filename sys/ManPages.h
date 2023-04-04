@@ -34,7 +34,7 @@ Thing_define (ManPages, Daata) {
 };
 
 autoManPages ManPages_create ();
-autoManPages ManPages_createFromText (MelderReadText text);
+autoManPages ManPages_createFromText (MelderReadText text, MelderFile file);
 
 void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, integer date,
 	structManPage_Paragraph paragraphs []);

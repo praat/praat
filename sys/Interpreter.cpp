@@ -1944,7 +1944,7 @@ static void assignToStringArrayElement (Interpreter me, char32 *& p, const char3
 	var -> stringArrayValue [indexValue] = value. move();
 }
 
-void Interpreter_run (Interpreter me, char32 *text) {
+void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables) {
 	autovector <mutablestring32> lines;   // not autostringvector, because the elements are reference copies
 	integer lineNumber = 0;
 	bool assertionFailed = false;
@@ -2025,57 +2025,59 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		/*
 			Copy the parameter names and argument values into the array of variables.
 		*/
-		my variablesMap. clear ();
-		for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-			char32 parameter [200];
-			/*
-				Create variable names as-are and variable names without capitals.
-			*/
-			str32cpy (parameter, my parameters [ipar]);
-			parameterToVariable (me, my types [ipar], parameter, ipar);
-			if (parameter [0] >= U'A' && parameter [0] <= U'Z') {
-				parameter [0] = Melder_toLowerCase (parameter [0]);
+		if (! reuseVariables) {
+			my variablesMap. clear ();
+			for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
+				char32 parameter [1+Interpreter_MAX_PARAMETER_LENGTH];
+				/*
+					Create variable names as-are and variable names without capitals.
+				*/
+				str32cpy (parameter, my parameters [ipar]);
 				parameterToVariable (me, my types [ipar], parameter, ipar);
+				if (parameter [0] >= U'A' && parameter [0] <= U'Z') {
+					parameter [0] = Melder_toLowerCase (parameter [0]);
+					parameterToVariable (me, my types [ipar], parameter, ipar);
+				}
 			}
+			/*
+				Initialize some variables.
+			*/
+			Interpreter_addStringVariable (me, U"newline$", U"\n");
+			Interpreter_addStringVariable (me, U"tab$", U"\t");
+			Interpreter_addStringVariable (me, U"shellDirectory$", Melder_getShellDirectory ());
+			structMelderDir dir { }; Melder_getDefaultDir (& dir);
+			Interpreter_addStringVariable (me, U"defaultDirectory$", Melder_dirToPath (& dir));
+			Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_dirToPath (& Melder_preferencesFolder));
+			Melder_getHomeDir (& dir);
+			Interpreter_addStringVariable (me, U"homeDirectory$", Melder_dirToPath (& dir));
+			Melder_getTempDir (& dir);
+			Interpreter_addStringVariable (me, U"temporaryDirectory$", Melder_dirToPath (& dir));
+			#if defined (macintosh)
+				Interpreter_addNumericVariable (me, U"macintosh", 1);
+				Interpreter_addNumericVariable (me, U"windows", 0);
+				Interpreter_addNumericVariable (me, U"unix", 0);
+			#elif defined (_WIN32)
+				Interpreter_addNumericVariable (me, U"macintosh", 0);
+				Interpreter_addNumericVariable (me, U"windows", 1);
+				Interpreter_addNumericVariable (me, U"unix", 0);
+			#elif defined (UNIX)
+				Interpreter_addNumericVariable (me, U"macintosh", 0);
+				Interpreter_addNumericVariable (me, U"windows", 0);
+				Interpreter_addNumericVariable (me, U"unix", 1);
+			#else
+				Interpreter_addNumericVariable (me, U"macintosh", 0);
+				Interpreter_addNumericVariable (me, U"windows", 0);
+				Interpreter_addNumericVariable (me, U"unix", 0);
+			#endif
+			Interpreter_addNumericVariable (me, U"left", 1);   // deprecated 2010 (Praat 5.2.06)
+			Interpreter_addNumericVariable (me, U"right", 2);   // deprecated 2010 (Praat 5.2.06)
+			Interpreter_addNumericVariable (me, U"mono", 1);   // deprecated 2010 (Praat 5.2.06)
+			Interpreter_addNumericVariable (me, U"stereo", 2);   // deprecated 2010 (Praat 5.2.06)
+			Interpreter_addNumericVariable (me, U"all", 0);   // deprecated 2010 (Praat 5.2.06)
+			Interpreter_addNumericVariable (me, U"average", 0);   // deprecated 2010 (Praat 5.2.06)
+			Interpreter_addStringVariable (me, U"praatVersion$", U"" stringize(PRAAT_VERSION_STR));
+			Interpreter_addNumericVariable (me, U"praatVersion", PRAAT_VERSION_NUM);
 		}
-		/*
-			Initialize some variables.
-		*/
-		Interpreter_addStringVariable (me, U"newline$", U"\n");
-		Interpreter_addStringVariable (me, U"tab$", U"\t");
-		Interpreter_addStringVariable (me, U"shellDirectory$", Melder_getShellDirectory ());
-		structMelderDir dir { }; Melder_getDefaultDir (& dir);
-		Interpreter_addStringVariable (me, U"defaultDirectory$", Melder_dirToPath (& dir));
-		Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_dirToPath (& Melder_preferencesFolder));
-		Melder_getHomeDir (& dir);
-		Interpreter_addStringVariable (me, U"homeDirectory$", Melder_dirToPath (& dir));
-		Melder_getTempDir (& dir);
-		Interpreter_addStringVariable (me, U"temporaryDirectory$", Melder_dirToPath (& dir));
-		#if defined (macintosh)
-			Interpreter_addNumericVariable (me, U"macintosh", 1);
-			Interpreter_addNumericVariable (me, U"windows", 0);
-			Interpreter_addNumericVariable (me, U"unix", 0);
-		#elif defined (_WIN32)
-			Interpreter_addNumericVariable (me, U"macintosh", 0);
-			Interpreter_addNumericVariable (me, U"windows", 1);
-			Interpreter_addNumericVariable (me, U"unix", 0);
-		#elif defined (UNIX)
-			Interpreter_addNumericVariable (me, U"macintosh", 0);
-			Interpreter_addNumericVariable (me, U"windows", 0);
-			Interpreter_addNumericVariable (me, U"unix", 1);
-		#else
-			Interpreter_addNumericVariable (me, U"macintosh", 0);
-			Interpreter_addNumericVariable (me, U"windows", 0);
-			Interpreter_addNumericVariable (me, U"unix", 0);
-		#endif
-		Interpreter_addNumericVariable (me, U"left", 1);   // deprecated 2010 (Praat 5.2.06)
-		Interpreter_addNumericVariable (me, U"right", 2);   // deprecated 2010 (Praat 5.2.06)
-		Interpreter_addNumericVariable (me, U"mono", 1);   // deprecated 2010 (Praat 5.2.06)
-		Interpreter_addNumericVariable (me, U"stereo", 2);   // deprecated 2010 (Praat 5.2.06)
-		Interpreter_addNumericVariable (me, U"all", 0);   // deprecated 2010 (Praat 5.2.06)
-		Interpreter_addNumericVariable (me, U"average", 0);   // deprecated 2010 (Praat 5.2.06)
-		Interpreter_addStringVariable (me, U"praatVersion$", U"" stringize(PRAAT_VERSION_STR));
-		Interpreter_addNumericVariable (me, U"praatVersion", PRAAT_VERSION_NUM);
 		/*
 			Execute commands.
 		*/

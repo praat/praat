@@ -78,6 +78,14 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS) {
 	EDITOR_END
 }
 
+// BUG: copied from HyperPage.cpp; should go to HyperPage.h
+#define PAGE_HEIGHT  320.0
+#define SCREEN_HEIGHT  15.0
+#define PAPER_TOP  12.0
+#define TOP_MARGIN  0.8
+#define PAPER_BOTTOM  (13.0 - (double) thePrinter. paperHeight / thePrinter. resolution)
+#define BOTTOM_MARGIN  0.5
+
 void structManual :: v_draw () {
 	if (our visiblePageNumber == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");
@@ -91,9 +99,109 @@ void structManual :: v_draw () {
 		return;
 	}
 	const ManPage page = manPages() -> pages.at [our visiblePageNumber];
-	//if (! our paragraphs____)
-	//	return;
 	HyperPage_pageTitle (this, page -> title.get());
+	/*
+		When this page is drawn for the first time,
+		all the script parts have to be run,
+		so that the outputs of drawing and info can be cached.
+	*/
+	autoInterpreter interpreter;
+	bool reuseVariables = false;
+	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
+		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
+		if (paragraph -> type != kManPage_type::SCRIPT)
+			continue;
+		if (paragraph -> cacheGraphics)
+			break;   // don't run the chunks again
+		if (! interpreter)
+			interpreter = Interpreter_create ();
+		const kGraphics_font font = our instancePref_font();
+		const double size = our instancePref_fontSize();
+		paragraph -> cacheGraphics = Graphics_create (300);
+		Graphics_startRecording (paragraph -> cacheGraphics.get());
+		Graphics_setFont (paragraph -> cacheGraphics.get(), font);
+		Graphics_setFontStyle (paragraph -> cacheGraphics.get(), 0);
+		Graphics_setFontSize (paragraph -> cacheGraphics.get(), size);
+		const double true_width_inches  = paragraph -> width  * ( paragraph -> width  < 0.0 ? -1.0 : size / 12.0 );
+		const double true_height_inches = paragraph -> height * ( paragraph -> height < 0.0 ? -1.0 : size / 12.0 );
+		Graphics_setWrapWidth (paragraph -> cacheGraphics.get(), 0.0);
+		integer x1DCold, x2DCold, y1DCold, y2DCold;
+		Graphics_inqWsViewport (paragraph -> cacheGraphics.get(), & x1DCold, & x2DCold, & y1DCold, & y2DCold);
+		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
+		Graphics_inqWsWindow (paragraph -> cacheGraphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
+		{
+			if (! our praatApplication)
+				our praatApplication = Melder_calloc_f (structPraatApplication, 1);
+			if (! our praatObjects)
+				our praatObjects = Melder_calloc_f (structPraatObjects, 1);
+			if (! our praatPicture)
+				our praatPicture = Melder_calloc_f (structPraatPicture, 1);
+			theCurrentPraatApplication = (PraatApplication) our praatApplication;
+			theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
+			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
+			theCurrentPraatObjects = (PraatObjects) our praatObjects;
+			theCurrentPraatPicture = (PraatPicture) our praatPicture;
+			theCurrentPraatPicture -> graphics = paragraph -> cacheGraphics.get();   // has to draw into HyperPage rather than Picture window
+			theCurrentPraatPicture -> font = font;
+			theCurrentPraatPicture -> fontSize = size;
+			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+			theCurrentPraatPicture -> colour = Melder_BLACK;
+			theCurrentPraatPicture -> lineWidth = 1.0;
+			theCurrentPraatPicture -> arrowSize = 1.0;
+			theCurrentPraatPicture -> speckleSize = 1.0;
+			theCurrentPraatPicture -> x1NDC = our d_x;
+			theCurrentPraatPicture -> x2NDC = our d_x + true_width_inches;
+			theCurrentPraatPicture -> y1NDC = our d_y;
+			theCurrentPraatPicture -> y2NDC = our d_y + true_height_inches;
+
+			Graphics_setViewport (paragraph -> cacheGraphics.get(),
+					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+			Graphics_setWindow (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
+			integer x1DC, y1DC, x2DC, y2DC;
+			Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 0.0, 0.0, & x1DC, & y2DC);
+			Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 1.0, 1.0, & x2DC, & y1DC);
+			Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DC, x2DC, y1DC, y2DC);
+			Graphics_setWsWindow (paragraph -> cacheGraphics.get(), 0, paragraph -> width, 0, paragraph -> height);
+			theCurrentPraatPicture -> x1NDC = 0.0;
+			theCurrentPraatPicture -> x2NDC = paragraph -> width;
+			theCurrentPraatPicture -> y1NDC = 0.0;
+			theCurrentPraatPicture -> y2NDC = paragraph -> height;
+			Graphics_setViewport (paragraph -> cacheGraphics.get(),
+					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+			{// scope
+				autoMelderProgressOff progress;
+				autoMelderWarningOff warning;
+				autoMelderSaveDefaultDir saveDir;
+				if (! MelderDir_isNull (& our rootDirectory))
+					Melder_setDefaultDir (& our rootDirectory);
+				try {
+					autostring32 text = Melder_dup (paragraph -> text);
+					Interpreter_run (interpreter.get(), text.get(), reuseVariables);
+					reuseVariables = true;
+				} catch (MelderError) {
+					if (our scriptErrorHasBeenNotified) {
+						Melder_clearError ();
+					} else {
+						Melder_flushError ();
+						our scriptErrorHasBeenNotified = true;
+					}
+				}
+			}
+			Graphics_setLineType (paragraph -> cacheGraphics.get(), Graphics_DRAWN);
+			Graphics_setLineWidth (paragraph -> cacheGraphics.get(), 1.0);
+			Graphics_setArrowSize (paragraph -> cacheGraphics.get(), 1.0);
+			Graphics_setSpeckleSize (paragraph -> cacheGraphics.get(), 1.0);
+			Graphics_setColour (paragraph -> cacheGraphics.get(), Melder_BLACK);
+			theCurrentPraatApplication = & theForegroundPraatApplication;
+			theCurrentPraatObjects = & theForegroundPraatObjects;
+			theCurrentPraatPicture = & theForegroundPraatPicture;
+		}
+		Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DCold, x2DCold, y1DCold, y2DCold);
+		Graphics_setWsWindow (paragraph -> cacheGraphics.get(), x1NDCold, x2NDCold, y1NDCold, y2NDCold);
+		Graphics_setViewport (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setTextAlignment (paragraph -> cacheGraphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+	}
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
 		switch (paragraph -> type) {
@@ -109,7 +217,7 @@ void structManual :: v_draw () {
 			case kManPage_type::PICTURE: HyperPage_picture (this, paragraph -> width,
 					paragraph -> height, paragraph -> draw); break;
 			case kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width,
-					paragraph -> height, paragraph -> text); break;
+					paragraph -> height, paragraph -> text, paragraph -> cacheGraphics.get(), interpreter.get()); break;
 			case kManPage_type::LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
