@@ -369,9 +369,10 @@ void HyperPage_picture (HyperPage me, double width_inches, double height_inches,
 	my previousBottomSpacing = bottomSpacing;
 }
 
-void HyperPage_script (HyperPage me, double width_inches, double height_inches, conststring32 script) {
+void HyperPage_script (HyperPage me, double width_inches, double height_inches, conststring32 script,
+	Graphics cacheGraphics, Interpreter interpreter)
+{
 	autostring32 text = Melder_dup (script);
-	autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 	constexpr double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	const kGraphics_font font = my instancePref_font();
 	const double size = my instancePref_fontSize();
@@ -437,7 +438,8 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
 					try {
-						Interpreter_run (interpreter.get(), text.get());
+						Melder_assert (cacheGraphics);
+						Graphics_play (cacheGraphics, my graphics.get());
 					} catch (MelderError) {
 						if (my scriptErrorHasBeenNotified) {
 							Melder_clearError ();
@@ -452,14 +454,6 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 				Graphics_setArrowSize (my graphics.get(), 1.0);
 				Graphics_setSpeckleSize (my graphics.get(), 1.0);
 				Graphics_setColour (my graphics.get(), Melder_BLACK);
-				/*Graphics_Link *paragraphLinks;
-				integer numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
-				if (my links) for (integer ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
-					autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
-						paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
-						paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
-					my links -> addItem_move (link.move());
-				}*/
 				theCurrentPraatApplication = & theForegroundPraatApplication;
 				theCurrentPraatObjects = & theForegroundPraatObjects;
 				theCurrentPraatPicture = & theForegroundPraatPicture;
@@ -539,7 +533,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 				if (! MelderDir_isNull (& my rootDirectory))
 					Melder_setDefaultDir (& my rootDirectory);
 				try {
-					Interpreter_run (interpreter.get(), text.get());
+					Interpreter_run (interpreter, text.get(), false);
 				} catch (MelderError) {
 					Melder_clearError ();
 				}

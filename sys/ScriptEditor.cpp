@@ -89,7 +89,7 @@ static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 	autoPraatBackground background;
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Interpreter_run (my interpreter.get(), text.get());
+	Interpreter_run (my interpreter.get(), text.get(), false);
 }
 
 static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
@@ -108,7 +108,7 @@ static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stack
 	autoPraatBackground background;
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Interpreter_run (my interpreter.get(), text.get());
+	Interpreter_run (my interpreter.get(), text.get(), false);
 }
 
 static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
@@ -156,7 +156,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
 		if (! MelderFile_isNull (& my file))
 			MelderFile_setDefaultDir (& my file);
 		trace (U"Running the following script (2):\n", text.get());
-		Interpreter_run (my interpreter.get(), text.get());
+		Interpreter_run (my interpreter.get(), text.get(), false);
 	}
 }
 
@@ -180,7 +180,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS) {
 		autoPraatBackground background;
 		if (! MelderFile_isNull (& my file))
 			MelderFile_setDefaultDir (& my file);
-		Interpreter_run (my interpreter.get(), text.get());
+		Interpreter_run (my interpreter.get(), text.get(), false);
 	}
 }
 

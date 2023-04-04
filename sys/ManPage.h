@@ -2,7 +2,7 @@
 #define _ManPage_h_
 /* ManPage.h
  *
- * Copyright (C) 1996-2008,2011,2012,2014-2020 Paul Boersma
+ * Copyright (C) 1996-2008,2011,2012,2014-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,9 @@
 typedef struct structManPage_Paragraph {
 	enum kManPage_type type;
 	conststring32 text;   // not an autostring32, because it could be a string literal (if not dynamic)
-	double width, height;
-	void (*draw) (Graphics g);
+	double width, height;   // for machine-code pictures and script pictures
+	void (*draw) (Graphics g);   // for machine-code pictures
+	autoGraphics cacheGraphics;   // for script pictures
 } *ManPage_Paragraph;
 
 Thing_define (ManPage, Thing) {

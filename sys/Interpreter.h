@@ -190,7 +190,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog);
 void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments);
 void Interpreter_getArgumentsFromArgs (Interpreter me, integer nargs, Stackel args);
 void Interpreter_getArgumentsFromCommandLine (Interpreter me, integer argc, char **argv);
-void Interpreter_run (Interpreter me, char32 *text);   // destroys 'text'
+void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables);   // destroys 'text'
 void Interpreter_stop (Interpreter me);   // can be called from any procedure called deep-down by the interpreter; will stop before next line
 
 void Interpreter_voidExpression (Interpreter me, conststring32 expression);

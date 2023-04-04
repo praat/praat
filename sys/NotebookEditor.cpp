@@ -99,7 +99,7 @@ static void menu_cb_runChunk (NotebookEditor me, EDITOR_ARGS) {
 	autoPraatBackground background;
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Interpreter_run (my interpreter.get(), text.get());
+	Interpreter_run (my interpreter.get(), text.get(), true);
 }
 
 static void menu_cb_expandIncludeFiles (NotebookEditor me, EDITOR_ARGS) {

@@ -360,13 +360,13 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			line += 2;
 			Melder_skipHorizontalSpace (& line);
 			MelderString_append (& buffer_graphical, line);
-		} else if (numberOfLeadingSpaces == 0 && line [0] == U'`' && line [1] == U'`' && line [2] == U'`') {
+		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
 			type = kManPage_type::SCRIPT;
 			do {
 				line = MelderReadText_readLine (text);
 				if (! line)
 					Melder_throw (U"Script chunk not closed.");
-				if (line [0] == U'`' && line [1] == U'`' && line [2] == U'`') {
+				if (line [0] == U'}') {
 					line = MelderReadText_readLine (text);
 					break;
 				}
@@ -378,7 +378,9 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					MelderString_empty (& buffer_graphical2);
 					const char32 *p = line;
 					while (*p) {
-						if (*p == U'#')
+						if (*p == U'\t')
+							MelderString_append (& buffer_graphical2, p == line ? nullptr : U"    ");
+						else if (*p == U'#')
 							MelderString_append (& buffer_graphical2, U"\\# ");
 						else if (*p == U'$')
 							MelderString_append (& buffer_graphical2, U"\\$ ");
@@ -434,10 +436,10 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					break;
 				}
 				char32 *firstNonSpace = Melder_findEndOfHorizontalSpace (continuationLine);
-				if (*firstNonSpace == U'<' ||
-					*firstNonSpace == U':' ||
+				if (*firstNonSpace == U':' ||
 					*firstNonSpace == U'-' ||
-					*firstNonSpace == U'`' ||
+					firstNonSpace == continuationLine && *firstNonSpace == U'{' ||
+					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
 					Melder_stringMatchesCriterion (firstNonSpace, kMelder_string::STARTS_WITH, U"===", true) ||
 					*firstNonSpace == U'\0'
 				) {
@@ -781,7 +783,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 						Melder_setDefaultDir (& my rootDirectory);
 					try {
 						autostring32 text = Melder_dup (p);
-						Interpreter_run (interpreter.get(), text.get());
+						Interpreter_run (interpreter.get(), text.get(), false);
 					} catch (MelderError) {
 						trace (U"interpreter fails on ", pngFile. path);
 						Melder_flushError ();
