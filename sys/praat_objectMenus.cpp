@@ -513,6 +513,15 @@ static void readFromFile (MelderFile file) {
 		}
 		return;
 	}
+	if (Thing_isa (object.get(), classNotebook) && ! Melder_batch) {
+		autoNotebookEditor editor = NotebookEditor_createFromNotebook_canBeNull ((Notebook) object.get());
+		if (! editor) {
+			(void) 0;   // the script was already open, and the user has been notified of that
+		} else {
+			editor.releaseToUser();
+		}
+		return;
+	}
 	praat_newWithFile (object.move(), file, MelderFile_name (file));
 }
 
@@ -685,7 +694,7 @@ static autoDaata notebookRecognizer (integer nread, const char * /* header */, M
 	if (nread < 2)
 		return autoDaata ();
 	if (Melder_stringMatchesCriterion (name, kMelder_string::ENDS_WITH, U".praatnb", false))
-		return Script_createFromFile (file);
+		return Notebook_createFromFile (file);
 	return autoDaata ();
 }
 
