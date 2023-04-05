@@ -106,24 +106,25 @@ void structManual :: v_draw () {
 		so that the outputs of drawing and info can be cached.
 	*/
 	autoInterpreter interpreter;
-	bool reuseVariables = false;
+	integer chunkNumber = 0;
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
 		if (paragraph -> type != kManPage_type::SCRIPT)
 			continue;
+		chunkNumber += 1;
 		if (paragraph -> cacheGraphics)
 			break;   // don't run the chunks again
 		if (! interpreter)
 			interpreter = Interpreter_create ();
 		const kGraphics_font font = our instancePref_font();
-		const double size = our instancePref_fontSize();
-		paragraph -> cacheGraphics = Graphics_create (300);
+		const double fontSize = our instancePref_fontSize();
+		paragraph -> cacheGraphics = Graphics_create_screen (nullptr, nullptr, 100);
 		Graphics_startRecording (paragraph -> cacheGraphics.get());
 		Graphics_setFont (paragraph -> cacheGraphics.get(), font);
 		Graphics_setFontStyle (paragraph -> cacheGraphics.get(), 0);
-		Graphics_setFontSize (paragraph -> cacheGraphics.get(), size);
-		const double true_width_inches  = paragraph -> width  * ( paragraph -> width  < 0.0 ? -1.0 : size / 12.0 );
-		const double true_height_inches = paragraph -> height * ( paragraph -> height < 0.0 ? -1.0 : size / 12.0 );
+		Graphics_setFontSize (paragraph -> cacheGraphics.get(), fontSize);
+		const double true_width_inches  = paragraph -> width  * ( paragraph -> width  < 0.0 ? -1.0 : fontSize / 12.0 );
+		const double true_height_inches = paragraph -> height * ( paragraph -> height < 0.0 ? -1.0 : fontSize / 12.0 );
 		Graphics_setWrapWidth (paragraph -> cacheGraphics.get(), 0.0);
 		integer x1DCold, x2DCold, y1DCold, y2DCold;
 		Graphics_inqWsViewport (paragraph -> cacheGraphics.get(), & x1DCold, & x2DCold, & y1DCold, & y2DCold);
@@ -143,7 +144,7 @@ void structManual :: v_draw () {
 			theCurrentPraatPicture = (PraatPicture) our praatPicture;
 			theCurrentPraatPicture -> graphics = paragraph -> cacheGraphics.get();   // has to draw into HyperPage rather than Picture window
 			theCurrentPraatPicture -> font = font;
-			theCurrentPraatPicture -> fontSize = size;
+			theCurrentPraatPicture -> fontSize = fontSize;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 			theCurrentPraatPicture -> colour = Melder_BLACK;
 			theCurrentPraatPicture -> lineWidth = 1.0;
@@ -176,8 +177,7 @@ void structManual :: v_draw () {
 					Melder_setDefaultDir (& our rootDirectory);
 				try {
 					autostring32 text = Melder_dup (paragraph -> text);
-					Interpreter_run (interpreter.get(), text.get(), reuseVariables);
-					reuseVariables = true;
+					Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
 				} catch (MelderError) {
 					if (our scriptErrorHasBeenNotified) {
 						Melder_clearError ();
