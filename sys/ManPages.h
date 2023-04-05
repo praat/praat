@@ -23,6 +23,11 @@
 
 Thing_define (ManPages, Daata) {
 	OrderedOf <structManPage> pages;
+	void invalidateCache () noexcept {
+		for (integer i = 1; i <= our pages.size; i ++)
+			our pages.at [i] -> invalidateCache ();
+	}
+
 	autoSTRVEC titles;
 	bool ground, dynamic, executable;
 	structMelderDir rootDirectory;
