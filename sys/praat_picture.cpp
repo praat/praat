@@ -1613,12 +1613,15 @@ void praat_picture_open () {
 			GuiThing_show (thePictureWindow);
 		#endif
 	}
-	/* Foregoing drawing routines may have changed some of the output attributes */
-	/* that can be set by the user. */
-	/* Make sure that they have the right values before every drawing. */
-	/* This is especially necessary after an 'erase picture': */
-	/* the output attributes that were set by the user before the 'erase' */
-	/* must be recorded before copying to a PostScript file. */
+	/*
+		Obsolete comment (noticed 2023-04-05):
+		Foregoing drawing routines may have changed some of the output attributes
+		that can be set by the user.
+		Make sure that they have the right values before every drawing.
+		This is especially necessary after an 'erase picture':
+		the output attributes that were set by the user before the 'erase'
+		must be recorded before copying to a PostScript file.
+	*/
 	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType);

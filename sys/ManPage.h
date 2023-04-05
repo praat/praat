@@ -28,6 +28,9 @@ typedef struct structManPage_Paragraph {
 	double width, height;   // for machine-code pictures and script pictures
 	void (*draw) (Graphics g);   // for machine-code pictures
 	autoGraphics cacheGraphics;   // for script pictures
+	void invalidateCache () noexcept {
+		our cacheGraphics. reset();
+	}
 } *ManPage_Paragraph;
 
 Thing_define (ManPage, Thing) {
@@ -36,6 +39,10 @@ Thing_define (ManPage, Thing) {
 	autovector <structManPage_Paragraph> paragraphs;
 	autoINTVEC linksHither, linksThither;
 	double recordingTime;
+	void invalidateCache () noexcept {
+		for (integer i = 1; i <= our paragraphs. size; i ++)
+			our paragraphs [i]. invalidateCache ();
+	}
 };
 
 /* End of file ManPage.h */

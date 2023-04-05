@@ -375,18 +375,18 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 	autostring32 text = Melder_dup (script);
 	constexpr double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	const kGraphics_font font = my instancePref_font();
-	const double size = my instancePref_fontSize();
-	double true_width_inches = width_inches * ( width_inches < 0.0 ? -1.0 : size / 12.0 );
-	double true_height_inches = height_inches * ( height_inches < 0.0 ? -1.0 : size / 12.0 );
+	const double fontSize = my instancePref_fontSize();
+	const double true_width_inches = width_inches * ( width_inches < 0.0 ? -1.0 : fontSize / 12.0 );
+	const double true_height_inches = height_inches * ( height_inches < 0.0 ? -1.0 : fontSize / 12.0 );
 	if (! my printing) {
-		my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+		my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * fontSize / 12.0;
 		if (my d_y > PAGE_HEIGHT + true_height_inches || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 			my d_y -= true_height_inches;
 		} else {
 			my d_y -= true_height_inches;
 			Graphics_setFont (my graphics.get(), font);
 			Graphics_setFontStyle (my graphics.get(), 0);
-			Graphics_setFontSize (my graphics.get(), size);
+			Graphics_setFontSize (my graphics.get(), fontSize);
 			my d_x = ( true_width_inches > my rightMargin ? 0.0 : 0.5 * (my rightMargin - true_width_inches) );
 			Graphics_setWrapWidth (my graphics.get(), 0.0);
 			integer x1DCold, x2DCold, y1DCold, y2DCold;
@@ -407,7 +407,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 				theCurrentPraatPicture = (PraatPicture) my praatPicture;
 				theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
 				theCurrentPraatPicture -> font = font;
-				theCurrentPraatPicture -> fontSize = size;
+				theCurrentPraatPicture -> fontSize = fontSize;
 				theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 				theCurrentPraatPicture -> colour = Melder_BLACK;
 				theCurrentPraatPicture -> lineWidth = 1.0;
@@ -467,15 +467,15 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 	} else {
 		Graphics_setFont (my ps, font);
 		Graphics_setFontStyle (my ps, 0);
-		Graphics_setFontSize (my ps, size);
-		my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0.0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
+		Graphics_setFontSize (my ps, fontSize);
+		my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0.0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * fontSize / 12.0 );
 		my d_y -= true_height_inches;
 		if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
 			Graphics_nextSheetOfPaper (my ps);
 			if (my d_printingPageNumber) my d_printingPageNumber ++;
 			HyperPage_initSheetOfPaper (me);
 			Graphics_setFont (my ps, font);
-			Graphics_setFontSize (my ps, size);
+			Graphics_setFontSize (my ps, fontSize);
 			my d_y -= true_height_inches;
 		}
 		my d_x = Melder_clippedLeft (0.0, 3.7 - 0.5 * true_width_inches);
@@ -498,7 +498,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 			theCurrentPraatPicture = (PraatPicture) my praatPicture;
 			theCurrentPraatPicture -> graphics = my ps;
 			theCurrentPraatPicture -> font = font;
-			theCurrentPraatPicture -> fontSize = size;
+			theCurrentPraatPicture -> fontSize = fontSize;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 			theCurrentPraatPicture -> colour = Melder_BLACK;
 			theCurrentPraatPicture -> lineWidth = 1.0;
@@ -665,6 +665,7 @@ static void menu_cb_font (HyperPage me, EDITOR_ARGS) {
 				my instancePref_font() == kGraphics_font::HELVETICA ? 2 : my instancePref_font() == kGraphics_font::PALATINO ? 3 : 1);
 	EDITOR_DO
 		my setInstancePref_font ( font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA );
+		my v_fontHasChanged ();
 		if (my graphics)
 			Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -679,6 +680,7 @@ static void updateSizeMenu (HyperPage me) {
 }
 static void setFontSize (HyperPage me, double fontSize) {
 	my setInstancePref_fontSize (fontSize);
+	my v_fontSizeHasChanged ();
 	updateSizeMenu (me);
 	if (my graphics)
 		Graphics_updateWs (my graphics.get());

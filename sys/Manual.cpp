@@ -201,6 +201,7 @@ void structManual :: v_draw () {
 		Graphics_setViewport (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setWindow (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setTextAlignment (paragraph -> cacheGraphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_stopRecording (paragraph -> cacheGraphics.get());
 	}
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
