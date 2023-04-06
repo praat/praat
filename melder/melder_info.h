@@ -2,7 +2,7 @@
 #define _melder_info_h_
 /* melder_info.h
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /*
-	Give information to stdout (batch), or to an "Info" window (interactive), or to a diverted string.
+	Give information to stdout (batch), or to an "Info" window (interactive), or to a diverted string, or to a notebook.
 */
 
 namespace MelderInfo {
@@ -81,6 +81,19 @@ void Melder_clearInfo ();   // clear the Info window
 conststring32 Melder_getInfo ();
 
 void Melder_setInformationProc (MelderInfo::Proc proc);
+
+class autoMelderSetInformationProc {
+	public:
+		autoMelderSetInformationProc (MelderInfo::Proc temporaryNewProc) {
+			our saveProc = MelderInfo::_p_currentProc;
+			Melder_setInformationProc (temporaryNewProc);
+		}
+		~autoMelderSetInformationProc () {
+			Melder_setInformationProc (our saveProc);
+		}
+	private:
+		MelderInfo::Proc saveProc;
+};
 
 /* End of file melder_info.h */
 #endif

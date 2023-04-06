@@ -25,9 +25,10 @@
 typedef struct structManPage_Paragraph {
 	enum kManPage_type type;
 	conststring32 text;   // not an autostring32, because it could be a string literal (if not dynamic)
-	double width, height;   // for machine-code pictures and script pictures
+	double width, height;   // for machine-code pictures and script chunks with pictures
 	void (*draw) (Graphics g);   // for machine-code pictures
-	autoGraphics cacheGraphics;   // for script pictures
+	autoGraphics cacheGraphics;   // for script chunks with pictures
+	autoMelderString cacheInfo;   // for script chunks with info text
 	void invalidateCache () noexcept {
 		our cacheGraphics. reset();
 	}

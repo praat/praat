@@ -86,6 +86,11 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS) {
 #define PAPER_BOTTOM  (13.0 - (double) thePrinter. paperHeight / thePrinter. resolution)
 #define BOTTOM_MARGIN  0.5
 
+static autoMelderString *manualInfoProc_string;
+static void manualInfoProc (conststring32 infoText) {
+	MelderString_append (manualInfoProc_string, infoText);
+}
+
 void structManual :: v_draw () {
 	if (our visiblePageNumber == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");
@@ -116,6 +121,15 @@ void structManual :: v_draw () {
 			break;   // don't run the chunks again
 		if (! interpreter)
 			interpreter = Interpreter_create ();
+		/*
+			Divert info text from Info window to Manual window.
+		*/
+		autoMelderSetInformationProc divert (manualInfoProc);
+		manualInfoProc_string = & paragraph -> cacheInfo;
+		MelderInfo_open ();
+		/*
+			Divert graphics from Picture window to Manual window.
+		*/
 		const kGraphics_font font = our instancePref_font();
 		const double fontSize = our instancePref_fontSize();
 		paragraph -> cacheGraphics = Graphics_create_screen (nullptr, nullptr, 100);
@@ -217,8 +231,8 @@ void structManual :: v_draw () {
 			case kManPage_type::EQUATION: HyperPage_formula (this, paragraph -> text); break;
 			case kManPage_type::PICTURE: HyperPage_picture (this, paragraph -> width,
 					paragraph -> height, paragraph -> draw); break;
-			case kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width,
-					paragraph -> height, paragraph -> text, paragraph -> cacheGraphics.get(), interpreter.get()); break;
+			case kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width, paragraph -> height,
+					paragraph -> text, paragraph -> cacheGraphics.get(), paragraph -> cacheInfo.string, interpreter.get()); break;
 			case kManPage_type::LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;

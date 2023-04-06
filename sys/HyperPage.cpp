@@ -370,8 +370,18 @@ void HyperPage_picture (HyperPage me, double width_inches, double height_inches,
 }
 
 void HyperPage_script (HyperPage me, double width_inches, double height_inches, conststring32 script,
-	Graphics cacheGraphics, Interpreter interpreter)
+	Graphics cacheGraphics, conststring32 cacheInfo, Interpreter interpreter)
 {
+	if (cacheInfo && cacheInfo [0] != U'\0') {
+		static MelderString buffer;
+		MelderString_empty (& buffer);
+		MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
+		MelderString_append (& buffer, cacheInfo);   // this is the output
+		const double fontSize = my instancePref_fontSize() * 0.86;   // as in CODE
+		my d_y -= fontSize * (1.0/72);   // some empty space between the code and the output
+		const double x = 0.0;   // instead of 0.3 as in CODE
+		HyperPage_any (me, buffer.string, kGraphics_font::COURIER, fontSize, 0, 0.0, x, 0.5, 0.0, 0.0, 0);
+	}
 	autostring32 text = Melder_dup (script);
 	constexpr double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	const kGraphics_font font = my instancePref_font();
