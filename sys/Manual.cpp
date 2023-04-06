@@ -88,7 +88,7 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS) {
 
 static autoMelderString *manualInfoProc_string;
 static void manualInfoProc (conststring32 infoText) {
-	MelderString_append (manualInfoProc_string, infoText);
+	MelderString_copy (manualInfoProc_string, infoText);
 }
 
 void structManual :: v_draw () {
