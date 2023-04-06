@@ -323,6 +323,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			numberOfLeadingSpaces += ( *(line ++) == U'\t' ? 4 - ( numberOfLeadingSpaces & 0b11_integer ) : 1 );
 		MelderString_empty (& buffer_graphical);
 		kManPage_type type;
+		double width = 0.0, height = 0.001;
 		if (numberOfLeadingSpaces == 0 && Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"===", true)) {
 			if (previousParagraph)
 				previousParagraph -> type = kManPage_type::ENTRY;
@@ -348,10 +349,8 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				numberOfLeadingSpaces < 11 ? kManPage_type::DEFINITION2 :
 				kManPage_type::DEFINITION3
 			);
-			if (previousParagraph) {
-				if (previousParagraph -> type == kManPage_type::NORMAL)
-					previousParagraph -> type = kManPage_type::TERM;
-			}
+			if (previousParagraph && previousParagraph -> type == kManPage_type::NORMAL)
+				previousParagraph -> type = kManPage_type::TERM;
 			line += 2;
 			Melder_skipHorizontalSpace (& line);
 			MelderString_append (& buffer_graphical, line);
@@ -362,6 +361,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			MelderString_append (& buffer_graphical, line);
 		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
 			type = kManPage_type::SCRIPT;
+			width = 6.0;
 			do {
 				line = MelderReadText_readLine (text);
 				if (! line)
@@ -397,6 +397,15 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					ManPage_Paragraph par = page -> paragraphs. append ();
 					par -> type = kManPage_type::CODE;
 					par -> text = Melder_dup (buffer_graphical2. string).transfer();
+					if (par -> text) {
+						const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (par -> text);
+						if (
+							Melder_stringMatchesCriterion (firstNonspace, kMelder_string::STARTS_WITH, U"Draw", true) ||
+							Melder_stringMatchesCriterion (firstNonspace, kMelder_string::STARTS_WITH, U"Paint", true) ||
+							Melder_stringMatchesCriterion (firstNonspace, kMelder_string::STARTS_WITH, U"Text ", true)
+						)
+							height = 3.0;
+					}
 				}
 				const bool shouldEvaluate = true;   // TODO: or not...
 				if (shouldEvaluate) {
@@ -421,6 +430,9 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		ManPage_Paragraph par = page -> paragraphs. append ();
 		par -> type = type;
 		par -> text = Melder_dup (buffer_graphical. string). transfer();
+		par -> width = width;
+		par -> height = height;
+
 		/*
 			Do continuation lines, except for code.
 		*/
@@ -449,10 +461,6 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				conststring32 separator = ( par -> text [0] == U'\0' ? U"" : U" " );
 				par -> text = Melder_dup (Melder_cat (par -> text, separator, continuationLine)).transfer();
 			} while (1);
-		}
-		if (par -> type == kManPage_type::SCRIPT) {
-			par -> width = 6.0;
-			par -> height = 3.0;
 		}
 		resolveLinks (me, par);
 		previousParagraph = par;

@@ -109,7 +109,7 @@ void HyperPage_prototype (HyperPage me, conststring32 text);
 void HyperPage_formula (HyperPage me, conststring32 formula);
 void HyperPage_picture (HyperPage me, double width_inches, double height_inches, void (*draw) (Graphics g));
 void HyperPage_script (HyperPage me, double width_inches, double height_inches, conststring32 script,
-		Graphics cacheGraphics, Interpreter interpreter);
+		Graphics cacheGraphics, conststring32 cacheInfo, Interpreter interpreter);
 
 int HyperPage_goToPage (HyperPage me, conststring32 title);
 void HyperPage_goToPage_number (HyperPage me, integer goToPageNumber);
