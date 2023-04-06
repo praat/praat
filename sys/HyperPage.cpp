@@ -261,6 +261,9 @@ void HyperPage_definition2 (HyperPage me, conststring32 text) {
 void HyperPage_definition3 (HyperPage me, conststring32 text) {
 	HyperPage_any (me, text, my instancePref_font(), my instancePref_fontSize(), 0, 0.0, 1.93, 0.0, 0.03, 0.03, 0);
 }
+void HyperPage_code0 (HyperPage me, conststring32 text) {
+	HyperPage_any (me, text, kGraphics_font::COURIER, my instancePref_fontSize() * 0.86, 0, 0.0, 0.0, 0.5, 0.0, 0.0, 0);
+}
 void HyperPage_code (HyperPage me, conststring32 text) {
 	HyperPage_any (me, text, kGraphics_font::COURIER, my instancePref_fontSize() * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
 }
@@ -374,16 +377,16 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 {
 	if (cacheInfo && cacheInfo [0] != U'\0') {
 		const double fontSize = my instancePref_fontSize() * 0.86;   // as in CODE
-		my d_y -= fontSize * (1.0/72);   // some empty space between the code and the output
+		HyperPage_code0 (me, U"->");
+		//my d_y -= fontSize * (1.0/72);   // some empty space between the code and the output
 		static MelderString buffer;
 		MelderString_empty (& buffer);
-		MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
+		//MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
 		for (const char32 *p = & cacheInfo [0]; *p != U'\0'; p ++) {
 			if (Melder_isEndOfLine (*p)) {
-				const double x = 0.0;   // instead of 0.3 as in CODE
-				HyperPage_any (me, buffer.string, kGraphics_font::COURIER, fontSize, 0, 0.0, x, 0.5, 0.0, 0.0, 0);
+				HyperPage_code (me, buffer.string);
 				MelderString_empty (& buffer);
-				MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
+				//MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
 			} else {
 				MelderString_appendCharacter (& buffer, *p);
 			}

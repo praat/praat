@@ -99,6 +99,7 @@ void HyperPage_definition (HyperPage me, conststring32 text);
 void HyperPage_definition1 (HyperPage me, conststring32 text);
 void HyperPage_definition2 (HyperPage me, conststring32 text);
 void HyperPage_definition3 (HyperPage me, conststring32 text);
+void HyperPage_code0 (HyperPage me, conststring32 text);
 void HyperPage_code (HyperPage me, conststring32 text);
 void HyperPage_code1 (HyperPage me, conststring32 text);
 void HyperPage_code2 (HyperPage me, conststring32 text);

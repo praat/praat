@@ -78,17 +78,10 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS) {
 	EDITOR_END
 }
 
-// BUG: copied from HyperPage.cpp; should go to HyperPage.h
-#define PAGE_HEIGHT  320.0
-#define SCREEN_HEIGHT  15.0
-#define PAPER_TOP  12.0
-#define TOP_MARGIN  0.8
-#define PAPER_BOTTOM  (13.0 - (double) thePrinter. paperHeight / thePrinter. resolution)
-#define BOTTOM_MARGIN  0.5
-
 static autoMelderString *manualInfoProc_string;
 static void manualInfoProc (conststring32 infoText) {
 	MelderString_copy (manualInfoProc_string, infoText);
+			// FIXME: this overrides a growing info buffer, which is an O(N^2) algorithm if in a loop
 }
 
 void structManual :: v_draw () {
