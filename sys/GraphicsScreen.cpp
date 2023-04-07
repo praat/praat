@@ -1,6 +1,6 @@
 /* GraphicsScreen.cpp
  *
- * Copyright (C) 1992-2022 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2023 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ void structGraphicsScreen :: v9_destroy () noexcept {
 		*/
 		d_gdiGraphicsContext = nullptr;
 	#elif quartz
-		if (! d_macView && ! d_isPng) {
+		if (! d_macView && ! d_isPng && d_macGraphicsContext) {
 			CGContextEndPage (d_macGraphicsContext);
 			CGContextRelease (d_macGraphicsContext);
 		}
