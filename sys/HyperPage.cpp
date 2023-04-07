@@ -373,7 +373,7 @@ void HyperPage_picture (HyperPage me, double width_inches, double height_inches,
 }
 
 void HyperPage_script (HyperPage me, double width_inches, double height_inches, conststring32 script,
-	Graphics cacheGraphics, conststring32 cacheInfo, Interpreter interpreter)
+	Graphics cacheGraphics, conststring32 cacheInfo)
 {
 	if (cacheInfo && cacheInfo [0] != U'\0') {
 		const double fontSize = my instancePref_fontSize() * 0.86;   // as in CODE
@@ -457,17 +457,8 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 					autoMelderSaveDefaultDir saveDir;
 					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
-					try {
-						Melder_assert (cacheGraphics);
-						Graphics_play (cacheGraphics, my graphics.get());
-					} catch (MelderError) {
-						if (my scriptErrorHasBeenNotified) {
-							Melder_clearError ();
-						} else {
-							Melder_flushError ();
-							my scriptErrorHasBeenNotified = true;
-						}
-					}
+					Melder_assert (cacheGraphics);
+					Graphics_play (cacheGraphics, my graphics.get());
 				}
 				Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 				Graphics_setLineWidth (my graphics.get(), 1.0);
@@ -553,7 +544,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 				if (! MelderDir_isNull (& my rootDirectory))
 					Melder_setDefaultDir (& my rootDirectory);
 				try {
-					Interpreter_run (interpreter, text.get(), false);
+					//Interpreter_run (interpreter, text.get(), false);   // BUG: implement
 				} catch (MelderError) {
 					Melder_clearError ();
 				}
@@ -630,7 +621,7 @@ static void gui_drawingarea_cb_mouse (HyperPage me, GuiDrawingArea_MouseEvent ev
 		if (! link)
 			Melder_fatal (U"gui_drawingarea_cb_click: empty link ", ilink, U"/", my links.size, U".");
 		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {
-			saveHistory (me, my currentPageTitle.get());
+			saveHistory (me, my optionalCurrentPageTitle.get());
 			try {
 				HyperPage_goToPage (me, link -> name.get());
 			} catch (MelderError) {
@@ -685,7 +676,7 @@ static void menu_cb_font (HyperPage me, EDITOR_ARGS) {
 				my instancePref_font() == kGraphics_font::HELVETICA ? 2 : my instancePref_font() == kGraphics_font::PALATINO ? 3 : 1);
 	EDITOR_DO
 		my setInstancePref_font ( font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA );
-		my v_fontHasChanged ();
+		Editor_dataChanged (me, me);
 		if (my graphics)
 			Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -700,7 +691,7 @@ static void updateSizeMenu (HyperPage me) {
 }
 static void setFontSize (HyperPage me, double fontSize) {
 	my setInstancePref_fontSize (fontSize);
-	my v_fontSizeHasChanged ();
+	Editor_dataChanged (me, me);
 	updateSizeMenu (me);
 	if (my graphics)
 		Graphics_updateWs (my graphics.get());
@@ -803,9 +794,10 @@ static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS) {
 static void do_back (HyperPage me) {
 	if (my historyPointer <= 0)
 		return;
-	autostring32 page = Melder_dup_f (my history [-- my historyPointer]. page.get());   // temporary, because pointer will be moved
+	autostring32 pageTitle = Melder_dup_f (my history [-- my historyPointer]. page.get());   // temporary, because pointer will be moved
+	Melder_assert (pageTitle);
 	const double top = my history [my historyPointer]. top;
-	if (my v_goToPage (page.get())) {
+	if (my v_goToPage (pageTitle.get())) {
 		my top = top;
 		updateVerticalScrollBar (me);
 		HyperPage_clear (me);
@@ -823,9 +815,10 @@ static void gui_button_cb_back (HyperPage me, GuiButtonEvent /* event */) {
 static void do_forth (HyperPage me) {
 	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page)
 		return;
-	autostring32 page = Melder_dup_f (my history [++ my historyPointer]. page.get());
+	autostring32 pageTitle = Melder_dup_f (my history [++ my historyPointer]. page.get());
+	Melder_assert (pageTitle);
 	const double top = my history [my historyPointer]. top;
-	if (my v_goToPage (page.get())) {
+	if (my v_goToPage (pageTitle.get())) {
 		my top = top;
 		updateVerticalScrollBar (me);
 		HyperPage_clear (me);
@@ -940,7 +933,11 @@ void HyperPage_init (HyperPage me, conststring32 title, Daata data) {
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	if (my instancePref_font() != kGraphics_font::TIMES && my instancePref_font() != kGraphics_font::HELVETICA)
 		my setInstancePref_font (kGraphics_font::TIMES);   // ensure Unicode compatibility
-	setFontSize (me, my instancePref_fontSize());
+	/*
+		Relevant parts from the dataChanged message:
+	*/
+	updateSizeMenu (me);
+	Graphics_updateWs (my graphics.get());
 
 struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0, 0 };
 event. width  = GuiControl_getWidth  (my drawingArea);
@@ -957,28 +954,31 @@ void HyperPage_clear (HyperPage me) {
 
 void structHyperPage :: v1_dataChanged (Editor /* sender */) {
 	const bool oldError = Melder_hasError ();   // this method can be called during error time
-	(void) our v_goToPage (our currentPageTitle.get());
+	(void) our v_goToPage (our optionalCurrentPageTitle.get());
 	if (Melder_hasError () && ! oldError)
 		Melder_flushError ();
 	updateVerticalScrollBar (this);
 	HyperPage_clear (this);
 }
 
-int HyperPage_goToPage (HyperPage me, conststring32 title) {
-	switch (my v_goToPage (title)) {
+int HyperPage_goToPage (HyperPage me, conststring32 pageTitle) {
+	Melder_assert (pageTitle);
+	switch (my v_goToPage (pageTitle)) {
 		case -1: return 0;
 		case 0: HyperPage_clear (me); return 0;
 	}
-	saveHistory (me, title);   // last chance: HyperPage_clear will destroy "title" !!!
-	my currentPageTitle = Melder_dup_f (title);
+	saveHistory (me, pageTitle);   // last chance: HyperPage_clear will destroy "title" !!!
+	my optionalCurrentPageTitle = Melder_dup_f (pageTitle);
+	Melder_assert (my optionalCurrentPageTitle);
 	my top = 0.0;
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
 	HyperPage_clear (me);
 	return 1;
 }
 
-void HyperPage_goToPage_number (HyperPage me, integer i) {
-	my v_goToPage_number (i);   // catch -> HyperPage_clear (me); ?
+void HyperPage_goToPage_number (HyperPage me, integer optionalPageNumber) {
+	my v_goToPage_number (optionalPageNumber);   // catch -> HyperPage_clear (me); ?
+	Melder_assert (! optionalPageNumber || my optionalCurrentPageTitle);   // only page 0 has no title
 	my top = 0.0;
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0.0)
 	HyperPage_clear (me);
