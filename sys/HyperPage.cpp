@@ -836,21 +836,22 @@ static void gui_button_cb_forth (HyperPage me, GuiButtonEvent /* event */) {
 void structHyperPage :: v_createMenus () {
 	HyperPage_Parent :: v_createMenus ();
 
-	Editor_addCommand (this, U"File", U"PostScript settings...", 0, menu_cb_postScriptSettings);
+	Editor_addCommand (this, U"File", U"PostScript settings...", GuiMenu_HIDDEN, menu_cb_postScriptSettings);
 	#ifdef macintosh
-		Editor_addCommand (this, U"File", U"Page setup...", 0, menu_cb_pageSetup);
+		Editor_addCommand (this, U"File", U"Page setup...", GuiMenu_HIDDEN, menu_cb_pageSetup);
 	#endif
-	Editor_addCommand (this, U"File", U"Print page...", 'P', menu_cb_print);
-	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
+	Editor_addCommand (this, U"File", U"Print page...", GuiMenu_HIDDEN, menu_cb_print);
+	Editor_addCommand (this, U"File", U"-- close --", GuiMenu_HIDDEN, nullptr);
 
 	if (our v_hasHistory ()) {
 		Editor_addMenu (this, U"Go to", 0);
-		Editor_addCommand (this, U"Go to", U"Search for page...", 0, menu_cb_searchForPage);
 		Editor_addCommand (this, U"Go to", U"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_back);
 		Editor_addCommand (this, U"Go to", U"Forward", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_forth);
 		Editor_addCommand (this, U"Go to", U"-- page --", 0, nullptr);
 		Editor_addCommand (this, U"Go to", U"Page up", GuiMenu_PAGE_UP, menu_cb_pageUp);
 		Editor_addCommand (this, U"Go to", U"Page down", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
+		Editor_addCommand (this, U"Go to", U"-- page --", 0, nullptr);
+		Editor_addCommand (this, U"Go to", U"Search for page...", 0, menu_cb_searchForPage);
 	}
 
 	Editor_addMenu (this, U"Font", 0);
