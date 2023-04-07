@@ -2,7 +2,7 @@
 #define _Manual_h_
 /* Manual.h
  *
- * Copyright (C) 1996-2005,2007,2009-2012,2015-2018,2020,2022 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2009-2012,2015-2018,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ Thing_define (Manual, HyperPage) {
 	}
 };
 
-autoManual Manual_create (conststring32 title, ManPages manPages, bool ownManPages);
+autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, bool ownManPages);
 
 void Manual_search (Manual me, conststring32 query);
 

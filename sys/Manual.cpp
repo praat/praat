@@ -78,33 +78,13 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS) {
 	EDITOR_END
 }
 
-// BUG: copied from HyperPage.cpp; should go to HyperPage.h
-#define PAGE_HEIGHT  320.0
-#define SCREEN_HEIGHT  15.0
-#define PAPER_TOP  12.0
-#define TOP_MARGIN  0.8
-#define PAPER_BOTTOM  (13.0 - (double) thePrinter. paperHeight / thePrinter. resolution)
-#define BOTTOM_MARGIN  0.5
-
 static autoMelderString *manualInfoProc_string;
 static void manualInfoProc (conststring32 infoText) {
 	MelderString_copy (manualInfoProc_string, infoText);
+			// FIXME: this overrides a growing info buffer, which is an O(N^2) algorithm if in a loop
 }
 
-void structManual :: v_draw () {
-	if (our visiblePageNumber == SEARCH_PAGE) {
-		HyperPage_pageTitle (this, U"Best matches");
-		HyperPage_intro (this, U"The best matches to your query seem to be:");
-		for (int i = 1; i <= our numberOfMatches; i ++) {
-			char32 link [300];
-			const ManPage page = our manPages() -> pages.at [matches [i]];
-			Melder_sprint (link,300, U"• @@", page -> title.get());
-			HyperPage_listItem (this, link);
-		}
-		return;
-	}
-	const ManPage page = manPages() -> pages.at [our visiblePageNumber];
-	HyperPage_pageTitle (this, page -> title.get());
+static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 	/*
 		When this page is drawn for the first time,
 		all the script parts have to be run,
@@ -130,8 +110,8 @@ void structManual :: v_draw () {
 		/*
 			Divert graphics from Picture window to Manual window.
 		*/
-		const kGraphics_font font = our instancePref_font();
-		const double fontSize = our instancePref_fontSize();
+		const kGraphics_font font = my instancePref_font();
+		const double fontSize = my instancePref_fontSize();
 		paragraph -> cacheGraphics = Graphics_create_screen (nullptr, nullptr, 100);
 		Graphics_startRecording (paragraph -> cacheGraphics.get());
 		Graphics_setFont (paragraph -> cacheGraphics.get(), font);
@@ -145,17 +125,17 @@ void structManual :: v_draw () {
 		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
 		Graphics_inqWsWindow (paragraph -> cacheGraphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
 		{
-			if (! our praatApplication)
-				our praatApplication = Melder_calloc_f (structPraatApplication, 1);
-			if (! our praatObjects)
-				our praatObjects = Melder_calloc_f (structPraatObjects, 1);
-			if (! our praatPicture)
-				our praatPicture = Melder_calloc_f (structPraatPicture, 1);
-			theCurrentPraatApplication = (PraatApplication) our praatApplication;
+			if (! my praatApplication)
+				my praatApplication = Melder_calloc_f (structPraatApplication, 1);
+			if (! my praatObjects)
+				my praatObjects = Melder_calloc_f (structPraatObjects, 1);
+			if (! my praatPicture)
+				my praatPicture = Melder_calloc_f (structPraatPicture, 1);
+			theCurrentPraatApplication = (PraatApplication) my praatApplication;
 			theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
 			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-			theCurrentPraatObjects = (PraatObjects) our praatObjects;
-			theCurrentPraatPicture = (PraatPicture) our praatPicture;
+			theCurrentPraatObjects = (PraatObjects) my praatObjects;
+			theCurrentPraatPicture = (PraatPicture) my praatPicture;
 			theCurrentPraatPicture -> graphics = paragraph -> cacheGraphics.get();   // has to draw into HyperPage rather than Picture window
 			theCurrentPraatPicture -> font = font;
 			theCurrentPraatPicture -> fontSize = fontSize;
@@ -164,10 +144,10 @@ void structManual :: v_draw () {
 			theCurrentPraatPicture -> lineWidth = 1.0;
 			theCurrentPraatPicture -> arrowSize = 1.0;
 			theCurrentPraatPicture -> speckleSize = 1.0;
-			theCurrentPraatPicture -> x1NDC = our d_x;
-			theCurrentPraatPicture -> x2NDC = our d_x + true_width_inches;
-			theCurrentPraatPicture -> y1NDC = our d_y;
-			theCurrentPraatPicture -> y2NDC = our d_y + true_height_inches;
+			theCurrentPraatPicture -> x1NDC = my d_x;
+			theCurrentPraatPicture -> x2NDC = my d_x + true_width_inches;
+			theCurrentPraatPicture -> y1NDC = my d_y;
+			theCurrentPraatPicture -> y2NDC = my d_y + true_height_inches;
 
 			Graphics_setViewport (paragraph -> cacheGraphics.get(),
 					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
@@ -187,18 +167,13 @@ void structManual :: v_draw () {
 				autoMelderProgressOff progress;
 				autoMelderWarningOff warning;
 				autoMelderSaveDefaultDir saveDir;
-				if (! MelderDir_isNull (& our rootDirectory))
-					Melder_setDefaultDir (& our rootDirectory);
+				if (! MelderDir_isNull (& my rootDirectory))
+					Melder_setDefaultDir (& my rootDirectory);
 				try {
 					autostring32 text = Melder_dup (paragraph -> text);
 					Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
 				} catch (MelderError) {
-					if (our scriptErrorHasBeenNotified) {
-						Melder_clearError ();
-					} else {
-						Melder_flushError ();
-						our scriptErrorHasBeenNotified = true;
-					}
+					Melder_flushError ();
 				}
 			}
 			Graphics_setLineType (paragraph -> cacheGraphics.get(), Graphics_DRAWN);
@@ -217,6 +192,23 @@ void structManual :: v_draw () {
 		Graphics_setTextAlignment (paragraph -> cacheGraphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 		Graphics_stopRecording (paragraph -> cacheGraphics.get());
 	}
+}
+
+void structManual :: v_draw () {
+	if (our visiblePageNumber == SEARCH_PAGE) {
+		HyperPage_pageTitle (this, U"Best matches");
+		HyperPage_intro (this, U"The best matches to your query seem to be:");
+		for (int i = 1; i <= our numberOfMatches; i ++) {
+			char32 link [300];
+			const ManPage page = our manPages() -> pages.at [matches [i]];
+			Melder_sprint (link,300, U"• @@", page -> title.get());
+			HyperPage_listItem (this, link);
+		}
+		return;
+	}
+	const ManPage page = our manPages() -> pages.at [our visiblePageNumber];
+	HyperPage_pageTitle (this, page -> title.get());   // TODO: check appropriateness of file name
+	//Manual_runAllChunksToCache (page, this);
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
 		switch (paragraph -> type) {
@@ -232,7 +224,7 @@ void structManual :: v_draw () {
 			case kManPage_type::PICTURE: HyperPage_picture (this, paragraph -> width,
 					paragraph -> height, paragraph -> draw); break;
 			case kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width, paragraph -> height,
-					paragraph -> text, paragraph -> cacheGraphics.get(), paragraph -> cacheInfo.string, interpreter.get()); break;
+					paragraph -> text, paragraph -> cacheGraphics.get(), paragraph -> cacheInfo.string); break;
 			case kManPage_type::LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
@@ -309,7 +301,7 @@ static void print (void *void_me, Graphics graphics) {
 		    Melder_stringMatchesCriterion (page -> title.get(), kMelder_string::STARTS_WITH, my printPagesStartingWith, true))
 		{
 			my visiblePageNumber = ipage;
-			my currentPageTitle = Melder_dup_f (page -> title.get());
+			my optionalCurrentPageTitle = Melder_dup_f (page -> title.get());
 			my v_goToPage_number (ipage);
 			my v_draw ();
 			my v_goToPage_number (saveVisiblePageNumber);
@@ -452,14 +444,15 @@ static void gui_button_cb_home (Manual me, GuiButtonEvent /* event */) {
 }
  
 static void gui_button_cb_record (Manual me, GuiButtonEvent /* event */) {
-	ManPage manPage = ( my visiblePageNumber < 1 ? nullptr : my manPages() -> pages.at [my visiblePageNumber] );
+	ManPage optionalManPage = ( my visiblePageNumber < 1 ? nullptr : my manPages() -> pages.at [my visiblePageNumber] );
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
 	#if defined (_WIN32)
 		GdiFlush ();
 	#endif
-	if (! Melder_record (manPage == nullptr ? 1.0 : manPage -> recordingTime)) Melder_flushError ();
+	if (! Melder_record (optionalManPage ? optionalManPage -> recordingTime : 1.0))
+		Melder_flushError ();
 	GuiThing_setSensitive (my recordButton,  true);
 	GuiThing_setSensitive (my playButton,    true);
 	GuiThing_setSensitive (my publishButton, true);
@@ -564,16 +557,24 @@ void structManual :: v_goToPage_number (integer goToPageNumber) {
 	if (goToPageNumber < 1 || goToPageNumber > our manPages() -> pages.size) {
 		if (goToPageNumber == SEARCH_PAGE) {
 			our visiblePageNumber = SEARCH_PAGE;
-			our currentPageTitle. reset();
+			our optionalCurrentPageTitle. reset();
 			return;
 		} else Melder_throw (U"Page ", goToPageNumber, U" not found.");
 	}
 	our visiblePageNumber = goToPageNumber;
 	ManPage page = our manPages() -> pages.at [our visiblePageNumber];
-	our currentPageTitle = Melder_dup_f (page -> title.get());
+	our optionalCurrentPageTitle = Melder_dup_f (page -> title.get());
+	Melder_assert (our optionalCurrentPageTitle);
+	our manPages() -> invalidateCache ();
+	Manual_runAllChunksToCache (page, this);
 }
 
 int structManual :: v_goToPage (conststring32 title) {
+	if (! title) {
+		our v_goToPage_number (SEARCH_PAGE);
+		return 1;
+	}
+	Melder_assert (title);
 	if (title [0] == U'\\' && title [1] == U'F' && title [2] == U'I') {
 		structMelderFile file { };
 		MelderDir_relativePathToFile (& our manPages() -> rootDirectory, title + 3, & file);
@@ -592,21 +593,21 @@ int structManual :: v_goToPage (conststring32 title) {
 	} else {
 		const integer i = ManPages_lookUp (our manPages(), title);
 		if (i == 0)
-			Melder_throw (U"Page \"", title, U"\" not found.");
+			Melder_throw (U"Page “", title, U"” not found.");
 		our v_goToPage_number (i);
 		return 1;
 	}
 }
 
-autoManual Manual_create (conststring32 title, ManPages manPages, bool ownManPages) {
+autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, bool ownManPages) {
+	Melder_assert (openingPageTitle);
 	try {
 		autoManual me = Thing_new (Manual);
-		const integer lookUpPageNumber = ManPages_lookUp (manPages, title);
+		const integer lookUpPageNumber = ManPages_lookUp (manPages, openingPageTitle);
 		if (lookUpPageNumber == 0)
-			Melder_throw (U"Page \"", title, U"\" not found.");
+			Melder_throw (U"Page “", openingPageTitle, U"” not found.");
 		my visiblePageNumber = lookUpPageNumber;
-		ManPage page = manPages -> pages.at [lookUpPageNumber];
-
+		my optionalCurrentPageTitle = Melder_dup_f (openingPageTitle);
 		/*
 			The title of the window is the title of the whole manual, not the title of the page.
 			If the first page has a title that starts with "-", then that is the title;
@@ -623,7 +624,12 @@ autoManual Manual_create (conststring32 title, ManPages manPages, bool ownManPag
 		my ownManPages = ownManPages;
 		HyperPage_init (me.get(), windowTitle, manPages);
 		MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
-		my history [0]. page = Melder_dup_f (title);   // BAD
+		my history [0]. page = Melder_dup_f (openingPageTitle);   // BAD
+		/*
+			Cache the output of the opening page.
+		*/
+		ManPage openingPage = manPages -> pages.at [my visiblePageNumber];
+		Manual_runAllChunksToCache (openingPage, me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Manual window not created.");

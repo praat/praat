@@ -44,10 +44,9 @@ Thing_define (HyperPage, Editor) {
 	autostring32 entryHint; double entryPosition;
 	struct { autostring32 page; double top; } history [20];
 	int historyPointer;
-	autostring32 currentPageTitle;
+	autostring32 optionalCurrentPageTitle;
 	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 	void *praatApplication, *praatObjects, *praatPicture;
-	bool scriptErrorHasBeenNotified;
 	structMelderDir rootDirectory;
 
 	void v9_destroy () noexcept
@@ -99,6 +98,7 @@ void HyperPage_definition (HyperPage me, conststring32 text);
 void HyperPage_definition1 (HyperPage me, conststring32 text);
 void HyperPage_definition2 (HyperPage me, conststring32 text);
 void HyperPage_definition3 (HyperPage me, conststring32 text);
+void HyperPage_code0 (HyperPage me, conststring32 text);
 void HyperPage_code (HyperPage me, conststring32 text);
 void HyperPage_code1 (HyperPage me, conststring32 text);
 void HyperPage_code2 (HyperPage me, conststring32 text);
@@ -109,7 +109,7 @@ void HyperPage_prototype (HyperPage me, conststring32 text);
 void HyperPage_formula (HyperPage me, conststring32 formula);
 void HyperPage_picture (HyperPage me, double width_inches, double height_inches, void (*draw) (Graphics g));
 void HyperPage_script (HyperPage me, double width_inches, double height_inches, conststring32 script,
-		Graphics cacheGraphics, conststring32 cacheInfo, Interpreter interpreter);
+		Graphics cacheGraphics, conststring32 cacheInfo);
 
 int HyperPage_goToPage (HyperPage me, conststring32 title);
 void HyperPage_goToPage_number (HyperPage me, integer goToPageNumber);
