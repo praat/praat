@@ -92,6 +92,8 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 	*/
 	autoInterpreter interpreter;
 	integer chunkNumber = 0;
+	bool anErrorHasOccurred = false;
+	autostring32 theErrorThatOccurred;
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
 		if (paragraph -> type != kManPage_type::SCRIPT)
@@ -112,6 +114,8 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 		*/
 		const kGraphics_font font = my instancePref_font();
 		const double fontSize = my instancePref_fontSize();
+		TRACE
+		trace (U"Creating a cache graphics for chunk ", chunkNumber);
 		paragraph -> cacheGraphics = Graphics_create_screen (nullptr, nullptr, 100);
 		Graphics_startRecording (paragraph -> cacheGraphics.get());
 		Graphics_setFont (paragraph -> cacheGraphics.get(), font);
@@ -144,26 +148,35 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 			theCurrentPraatPicture -> lineWidth = 1.0;
 			theCurrentPraatPicture -> arrowSize = 1.0;
 			theCurrentPraatPicture -> speckleSize = 1.0;
-			theCurrentPraatPicture -> x1NDC = my d_x;
-			theCurrentPraatPicture -> x2NDC = my d_x + true_width_inches;
-			theCurrentPraatPicture -> y1NDC = my d_y;
-			theCurrentPraatPicture -> y2NDC = my d_y + true_height_inches;
+			#if 1
+			theCurrentPraatPicture -> x1NDC = 0.0;
+			theCurrentPraatPicture -> x2NDC = true_width_inches;
+			theCurrentPraatPicture -> y1NDC = 0.0;
+			theCurrentPraatPicture -> y2NDC = true_height_inches;
 
 			Graphics_setViewport (paragraph -> cacheGraphics.get(),
 					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+			#endif
 			Graphics_setWindow (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
+			#if 1
 			integer x1DC, y1DC, x2DC, y2DC;
 			Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 0.0, 0.0, & x1DC, & y2DC);
 			Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 1.0, 1.0, & x2DC, & y1DC);
 			Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DC, x2DC, y1DC, y2DC);
 			Graphics_setWsWindow (paragraph -> cacheGraphics.get(), 0, paragraph -> width, 0, paragraph -> height);
+			#endif
 			theCurrentPraatPicture -> x1NDC = 0.0;
 			theCurrentPraatPicture -> x2NDC = paragraph -> width;
 			theCurrentPraatPicture -> y1NDC = 0.0;
 			theCurrentPraatPicture -> y2NDC = paragraph -> height;
 			Graphics_setViewport (paragraph -> cacheGraphics.get(),
 					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-			{// scope
+			if (anErrorHasOccurred) {
+				trace (U"Chunk ", chunkNumber, U" not run, because of an earlier error.");
+				Graphics_setColour (paragraph -> cacheGraphics.get(), Melder_RED);
+				MelderInfo_writeLine (U"**ERROR** This chunk was not run, because an error occurred in an earlier chunk.");
+				MelderInfo_close ();
+			} else {
 				autoMelderProgressOff progress;
 				autoMelderWarningOff warning;
 				autoMelderSaveDefaultDir saveDir;
@@ -173,7 +186,13 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 					autostring32 text = Melder_dup (paragraph -> text);
 					Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
 				} catch (MelderError) {
-					Melder_flushError ();
+					anErrorHasOccurred = true;
+					theErrorThatOccurred = Melder_dup (Melder_getError ());
+					trace (U"Error in chunk ", chunkNumber, U".");
+					Melder_clearError ();
+					Graphics_setColour (paragraph -> cacheGraphics.get(), Melder_RED);
+					MelderInfo_writeLine (U"**ERROR IN THIS CHUNK:**\n", theErrorThatOccurred.get());
+					MelderInfo_close ();
 				}
 			}
 			Graphics_setLineType (paragraph -> cacheGraphics.get(), Graphics_DRAWN);
@@ -192,9 +211,12 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 		Graphics_setTextAlignment (paragraph -> cacheGraphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 		Graphics_stopRecording (paragraph -> cacheGraphics.get());
 	}
+	if (anErrorHasOccurred)
+		Melder_flushError (theErrorThatOccurred.get());
 }
 
 void structManual :: v_draw () {
+	TRACE
 	if (our visiblePageNumber == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");
 		HyperPage_intro (this, U"The best matches to your query seem to be:");
@@ -208,7 +230,7 @@ void structManual :: v_draw () {
 	}
 	const ManPage page = our manPages() -> pages.at [our visiblePageNumber];
 	HyperPage_pageTitle (this, page -> title.get());   // TODO: check appropriateness of file name
-	//Manual_runAllChunksToCache (page, this);
+	integer chunkNumber = 0;
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
 		switch (paragraph -> type) {
@@ -223,8 +245,11 @@ void structManual :: v_draw () {
 			case kManPage_type::EQUATION: HyperPage_formula (this, paragraph -> text); break;
 			case kManPage_type::PICTURE: HyperPage_picture (this, paragraph -> width,
 					paragraph -> height, paragraph -> draw); break;
-			case kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width, paragraph -> height,
-					paragraph -> text, paragraph -> cacheGraphics.get(), paragraph -> cacheInfo.string); break;
+			case kManPage_type::SCRIPT:
+				++ chunkNumber;
+				trace (U"Drawing chunk ", chunkNumber);
+				HyperPage_script (this, paragraph -> width, paragraph -> height,
+						paragraph -> text, paragraph -> cacheGraphics.get(), paragraph -> cacheInfo.string); break;
 			case kManPage_type::LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
 			case kManPage_type::LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
@@ -622,7 +647,7 @@ autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, boo
 			Melder_sprint (windowTitle,101, U"Praat Manual");
 		}
 		my ownManPages = ownManPages;
-		HyperPage_init (me.get(), windowTitle, manPages);
+		HyperPage_init1 (me.get(), windowTitle, manPages);
 		MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 		my history [0]. page = Melder_dup_f (openingPageTitle);   // BAD
 		/*
@@ -630,6 +655,8 @@ autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, boo
 		*/
 		ManPage openingPage = manPages -> pages.at [my visiblePageNumber];
 		Manual_runAllChunksToCache (openingPage, me.get());
+
+		HyperPage_init2 (me.get(), windowTitle, manPages);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Manual window not created.");
