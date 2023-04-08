@@ -377,13 +377,20 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 {
 	if (cacheInfo && cacheInfo [0] != U'\0') {
 		const double fontSize = my instancePref_fontSize() * 0.86;   // as in CODE
-		HyperPage_code0 (me, U"->");
+		Graphics_setColour (my graphics.get(), Melder_MAGENTA);
+		HyperPage_code0 (me, U"##->");
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		//my d_y -= fontSize * (1.0/72);   // some empty space between the code and the output
 		static MelderString buffer;
 		MelderString_empty (& buffer);
 		//MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
 		for (const char32 *p = & cacheInfo [0]; *p != U'\0'; p ++) {
 			if (Melder_isEndOfLine (*p)) {
+				if (
+					str32str (buffer.string, U"**AN ERROR OCCURRED IN THIS CODE CHUNK:**") ||
+					str32str (buffer.string, U"**ERROR** This code chunk was not run,")
+				)
+					Graphics_setColour (my graphics.get(), Melder_RED);
 				HyperPage_code (me, buffer.string);
 				MelderString_empty (& buffer);
 				//MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
@@ -391,6 +398,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 				MelderString_appendCharacter (& buffer, *p);
 			}
 		}
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 	}
 	autostring32 text = Melder_dup (script);
 	constexpr double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
