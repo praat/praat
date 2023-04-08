@@ -922,7 +922,7 @@ void structHyperPage :: v_createChildren () {
 	GuiDrawingArea_setSwipable (drawingArea, nullptr, our verticalScrollBar);
 }
 
-void HyperPage_init (HyperPage me, conststring32 title, Daata data) {
+void HyperPage_init1 (HyperPage me, conststring32 title, Daata data) {
 	resolution = Gui_getResolution (nullptr);
 	Editor_init (me, 0, 0, (int) floor (6 * resolution + 30), 800, title, data);
 	#if motif
@@ -934,6 +934,8 @@ void HyperPage_init (HyperPage me, conststring32 title, Daata data) {
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	if (my instancePref_font() != kGraphics_font::TIMES && my instancePref_font() != kGraphics_font::HELVETICA)
 		my setInstancePref_font (kGraphics_font::TIMES);   // ensure Unicode compatibility
+}
+void HyperPage_init2 (HyperPage me, conststring32 /* title */, Daata /* data */) {
 	/*
 		Relevant parts from the dataChanged message:
 	*/
@@ -946,6 +948,10 @@ event. height = GuiControl_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
+}
+void HyperPage_init (HyperPage me, conststring32 title, Daata data) {
+	HyperPage_init1 (me, title, data);
+	HyperPage_init2 (me, title, data);
 }
 
 void HyperPage_clear (HyperPage me) {

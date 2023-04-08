@@ -115,6 +115,8 @@ int HyperPage_goToPage (HyperPage me, conststring32 title);
 void HyperPage_goToPage_number (HyperPage me, integer goToPageNumber);
 
 void HyperPage_init (HyperPage me, conststring32 title, Daata data);
+void HyperPage_init1 (HyperPage me, conststring32 title, Daata data);
+void HyperPage_init2 (HyperPage me, conststring32 title, Daata data);
 
 void HyperPage_setEntryHint (HyperPage me, conststring32 entry);
 void HyperPage_initSheetOfPaper (HyperPage me);
