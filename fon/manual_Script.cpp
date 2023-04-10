@@ -1990,7 +1990,9 @@ NORMAL (U"According to section 4 above, and according to @@Formulas 2.2. Represe
 CODE (UR"~~~(Formula: "correct", "self\$  [""response""] = self\$  [""stimulus""]")~~~")
 NORMAL (U"The required doubling of string-internal double quotes is awkward. "
 	"Therefore, there exists a special way for typing formula arguments, namely with the tilde (\"~\"):")
-CODE (UR"~~~(Formula: "correct", ~ self\$  ["response"] = self\$  ["stimulus"]")~~~")
+CODE (UR"~~~(
+Formula: "correct", ~ self\$  ["response"] = self\$  ["stimulus"]
+)~~~")
 NORMAL (U"This means that you can write the example of section 4 in an analogous way:")
 CODE (U"Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 1/2 * sin(2*pi*377*x)")
 NORMAL (U"The tilde is probably the preferred way to write formula arguments. "

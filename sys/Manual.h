@@ -61,12 +61,6 @@ Thing_define (Manual, HyperPage) {
 		override { return true; }
 	bool v_isOrdered ()
 		override { return true; }
-	void v_fontHasChanged () override {
-		our manPages() -> invalidateCache ();
-	}
-	void v_fontSizeHasChanged () override {
-		our manPages() -> invalidateCache ();
-	}
 };
 
 autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, bool ownManPages);

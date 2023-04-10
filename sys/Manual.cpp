@@ -84,7 +84,18 @@ static void manualInfoProc (conststring32 infoText) {
 			// FIXME: this overrides a growing info buffer, which is an O(N^2) algorithm if in a loop
 }
 
-static void Manual_runAllChunksToCache (ManPage page, Manual me) {
+static void PraatObjects_reset (PraatObjects me) {
+	for (integer iobject = my n; iobject >= 1; iobject --) {
+		my list [iobject]. name. reset();
+		forget (my list [iobject]. object);
+	}
+	my n = 0;
+}
+
+static void ManPage_runAllChunksToCache (ManPage me, const kGraphics_font font, const double fontSize,
+	PraatApplication praatApplication, PraatObjects praatObjects, PraatPicture praatPicture,
+	MelderDir rootDirectory
+) {
 	/*
 		When this page is drawn for the first time,
 		all the script parts have to be run,
@@ -94,8 +105,9 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 	integer chunkNumber = 0;
 	bool anErrorHasOccurred = false;
 	autostring32 theErrorThatOccurred;
-	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
-		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
+	integer errorChunk = 0;
+	for (integer ipar = 1; ipar <= my paragraphs.size; ipar ++) {
+		ManPage_Paragraph paragraph = & my paragraphs [ipar];
 		if (paragraph -> type != kManPage_type::SCRIPT)
 			continue;
 		chunkNumber += 1;
@@ -112,10 +124,6 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 		/*
 			Divert graphics from Picture window to Manual window.
 		*/
-		const kGraphics_font font = my instancePref_font();
-		const double fontSize = my instancePref_fontSize();
-		TRACE
-		trace (U"Creating a cache graphics for chunk ", chunkNumber);
 		paragraph -> cacheGraphics = Graphics_create_screen (nullptr, nullptr, 100);
 		Graphics_startRecording (paragraph -> cacheGraphics.get());
 		Graphics_setFont (paragraph -> cacheGraphics.get(), font);
@@ -128,80 +136,75 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 		Graphics_inqWsViewport (paragraph -> cacheGraphics.get(), & x1DCold, & x2DCold, & y1DCold, & y2DCold);
 		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
 		Graphics_inqWsWindow (paragraph -> cacheGraphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
-		{
-			if (! my praatApplication)
-				my praatApplication = Melder_calloc_f (structPraatApplication, 1);
-			if (! my praatObjects)
-				my praatObjects = Melder_calloc_f (structPraatObjects, 1);
-			if (! my praatPicture)
-				my praatPicture = Melder_calloc_f (structPraatPicture, 1);
-			theCurrentPraatApplication = (PraatApplication) my praatApplication;
-			theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
-			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-			theCurrentPraatObjects = (PraatObjects) my praatObjects;
-			theCurrentPraatPicture = (PraatPicture) my praatPicture;
-			theCurrentPraatPicture -> graphics = paragraph -> cacheGraphics.get();   // has to draw into HyperPage rather than Picture window
-			theCurrentPraatPicture -> font = font;
-			theCurrentPraatPicture -> fontSize = fontSize;
-			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-			theCurrentPraatPicture -> colour = Melder_BLACK;
-			theCurrentPraatPicture -> lineWidth = 1.0;
-			theCurrentPraatPicture -> arrowSize = 1.0;
-			theCurrentPraatPicture -> speckleSize = 1.0;
-			#if 1
-			theCurrentPraatPicture -> x1NDC = 0.0;
-			theCurrentPraatPicture -> x2NDC = true_width_inches;
-			theCurrentPraatPicture -> y1NDC = 0.0;
-			theCurrentPraatPicture -> y2NDC = true_height_inches;
 
-			Graphics_setViewport (paragraph -> cacheGraphics.get(),
-					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-			#endif
-			Graphics_setWindow (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
-			#if 1
-			integer x1DC, y1DC, x2DC, y2DC;
-			Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 0.0, 0.0, & x1DC, & y2DC);
-			Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 1.0, 1.0, & x2DC, & y1DC);
-			Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DC, x2DC, y1DC, y2DC);
-			Graphics_setWsWindow (paragraph -> cacheGraphics.get(), 0, paragraph -> width, 0, paragraph -> height);
-			#endif
-			theCurrentPraatPicture -> x1NDC = 0.0;
-			theCurrentPraatPicture -> x2NDC = paragraph -> width;
-			theCurrentPraatPicture -> y1NDC = 0.0;
-			theCurrentPraatPicture -> y2NDC = paragraph -> height;
-			Graphics_setViewport (paragraph -> cacheGraphics.get(),
-					theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-			if (anErrorHasOccurred) {
-				trace (U"Chunk ", chunkNumber, U" not run, because of an earlier error.");
-				MelderInfo_writeLine (U"**ERROR** This code chunk was not run,\n    because an error occurred in an earlier chunk.");
+		theCurrentPraatApplication = praatApplication;
+		theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
+		theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
+		theCurrentPraatObjects = praatObjects;
+		theCurrentPraatPicture = praatPicture;
+		theCurrentPraatPicture -> graphics = paragraph -> cacheGraphics.get();   // has to draw into HyperPage rather than Picture window
+		theCurrentPraatPicture -> font = font;
+		theCurrentPraatPicture -> fontSize = fontSize;
+		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+		theCurrentPraatPicture -> colour = Melder_BLACK;
+		theCurrentPraatPicture -> lineWidth = 1.0;
+		theCurrentPraatPicture -> arrowSize = 1.0;
+		theCurrentPraatPicture -> speckleSize = 1.0;
+		#if 1
+		theCurrentPraatPicture -> x1NDC = 0.0;
+		theCurrentPraatPicture -> x2NDC = true_width_inches;
+		theCurrentPraatPicture -> y1NDC = 0.0;
+		theCurrentPraatPicture -> y2NDC = true_height_inches;
+
+		Graphics_setViewport (paragraph -> cacheGraphics.get(),
+				theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		#endif
+		Graphics_setWindow (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
+		#if 1
+		integer x1DC, y1DC, x2DC, y2DC;
+		Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 0.0, 0.0, & x1DC, & y2DC);
+		Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 1.0, 1.0, & x2DC, & y1DC);
+		Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DC, x2DC, y1DC, y2DC);
+		Graphics_setWsWindow (paragraph -> cacheGraphics.get(), 0, paragraph -> width, 0, paragraph -> height);
+		#endif
+		theCurrentPraatPicture -> x1NDC = 0.0;
+		theCurrentPraatPicture -> x2NDC = paragraph -> width;
+		theCurrentPraatPicture -> y1NDC = 0.0;
+		theCurrentPraatPicture -> y2NDC = paragraph -> height;
+		Graphics_setViewport (paragraph -> cacheGraphics.get(),
+				theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		if (anErrorHasOccurred) {
+			trace (U"Chunk ", chunkNumber, U" not run, because of an earlier error.");
+			MelderInfo_writeLine (U"##**ERROR** This code chunk was not run,\n    because an error occurred in an earlier chunk.");
+			MelderInfo_close ();
+		} else {
+			autoMelderProgressOff progress;
+			autoMelderWarningOff warning;
+			autoMelderSaveDefaultDir saveDir;
+			if (! MelderDir_isNull (rootDirectory))
+				Melder_setDefaultDir (rootDirectory);
+			try {
+				autostring32 text = Melder_dup (paragraph -> text);
+				Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
+			} catch (MelderError) {
+				anErrorHasOccurred = true;
+				errorChunk = chunkNumber;
+				theErrorThatOccurred = Melder_dup (Melder_getError ());
+				trace (U"Error in chunk ", chunkNumber, U".");
+				Melder_clearError ();
+				MelderInfo_writeLine (U"##**AN ERROR OCCURRED IN THIS CODE CHUNK:**\n", theErrorThatOccurred.get());
 				MelderInfo_close ();
-			} else {
-				autoMelderProgressOff progress;
-				autoMelderWarningOff warning;
-				autoMelderSaveDefaultDir saveDir;
-				if (! MelderDir_isNull (& my rootDirectory))
-					Melder_setDefaultDir (& my rootDirectory);
-				try {
-					autostring32 text = Melder_dup (paragraph -> text);
-					Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
-				} catch (MelderError) {
-					anErrorHasOccurred = true;
-					theErrorThatOccurred = Melder_dup (Melder_getError ());
-					trace (U"Error in chunk ", chunkNumber, U".");
-					Melder_clearError ();
-					MelderInfo_writeLine (U"**AN ERROR OCCURRED IN THIS CODE CHUNK:**\n\n", theErrorThatOccurred.get());
-					MelderInfo_close ();
-				}
 			}
-			Graphics_setLineType (paragraph -> cacheGraphics.get(), Graphics_DRAWN);
-			Graphics_setLineWidth (paragraph -> cacheGraphics.get(), 1.0);
-			Graphics_setArrowSize (paragraph -> cacheGraphics.get(), 1.0);
-			Graphics_setSpeckleSize (paragraph -> cacheGraphics.get(), 1.0);
-			Graphics_setColour (paragraph -> cacheGraphics.get(), Melder_BLACK);
-			theCurrentPraatApplication = & theForegroundPraatApplication;
-			theCurrentPraatObjects = & theForegroundPraatObjects;
-			theCurrentPraatPicture = & theForegroundPraatPicture;
 		}
+		Graphics_setLineType (paragraph -> cacheGraphics.get(), Graphics_DRAWN);
+		Graphics_setLineWidth (paragraph -> cacheGraphics.get(), 1.0);
+		Graphics_setArrowSize (paragraph -> cacheGraphics.get(), 1.0);
+		Graphics_setSpeckleSize (paragraph -> cacheGraphics.get(), 1.0);
+		Graphics_setColour (paragraph -> cacheGraphics.get(), Melder_BLACK);
+		theCurrentPraatApplication = & theForegroundPraatApplication;
+		theCurrentPraatObjects = & theForegroundPraatObjects;
+		theCurrentPraatPicture = & theForegroundPraatPicture;
+
 		Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DCold, x2DCold, y1DCold, y2DCold);
 		Graphics_setWsWindow (paragraph -> cacheGraphics.get(), x1NDCold, x2NDCold, y1NDCold, y2NDCold);
 		Graphics_setViewport (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -210,7 +213,23 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 		Graphics_stopRecording (paragraph -> cacheGraphics.get());
 	}
 	if (anErrorHasOccurred)
-		Melder_flushError (theErrorThatOccurred.get());
+		Melder_flushError (U"Error in code chunk ", errorChunk, U".\n", theErrorThatOccurred.get());
+	PraatObjects_reset (praatObjects);
+}
+
+static void Manual_runAllChunksToCache (ManPage page, Manual me) {
+	if (! my praatApplication)
+		my praatApplication = Melder_calloc_f (structPraatApplication, 1);
+	if (! my praatObjects)
+		my praatObjects = Melder_calloc_f (structPraatObjects, 1);
+	if (! my praatPicture)
+		my praatPicture = Melder_calloc_f (structPraatPicture, 1);
+	ManPage_runAllChunksToCache (page, my instancePref_font(), my instancePref_fontSize(),
+		(PraatApplication) my praatApplication,
+		(PraatObjects) my praatObjects,
+		(PraatPicture) my praatPicture,
+		& my rootDirectory
+	);
 }
 
 void structManual :: v_draw () {
