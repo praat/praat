@@ -68,8 +68,6 @@ Thing_define (HyperPage, Editor) {
 	virtual void v_defaultHeaders (EditorCommand /* cmd */) { }
 	virtual bool v_hasHistory () { return false; }
 	virtual bool v_isOrdered () { return false; }
-	virtual void v_fontHasChanged () { }
-	virtual void v_fontSizeHasChanged () { }
 
 	#include "HyperPage_prefs.h"
 };

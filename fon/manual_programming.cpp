@@ -1,6 +1,6 @@
 /* manual_programming.cpp
  *
- * Copyright (C) 1992-2010,2011,2013,2015-2022 Paul Boersma
+ * Copyright (C) 1992-2010,2011,2013,2015-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,7 +388,7 @@ NORMAL (U"Besides the TextGrid text file format described above, TextGrid object
 	"and save the resulting TextGrid object as a text file with @@Save as text file...@.")
 MAN_END
 
-MAN_BEGIN (U"Programming with Praat", U"ppgb", 20211015)
+MAN_BEGIN (U"Programming with Praat", U"ppgb", 20230409)
 INTRO (U"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -400,7 +400,7 @@ NORMAL (U"Before trying the task of learning how to write Praat extensions in C 
 	"If you have a set of scripts, you can distribute them as a @@plug-ins|plug-in@.")
 ENTRY (U"2. Getting the existing source code")
 NORMAL (U"You obtain the Praat source code from GitHub (https://github.com/praat), in a file with a name like "
-	"##praat6199_sources.zip# or ##praat6199_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
+	"##praat6399_sources.zip# or ##praat6399_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
 	"The result will be a set of directories "
 	"called #kar, #melder, #external (with #clapack, #gsl, #glpk, #flac, #mp3, #portaudio, #espeak, #vorbis and #opusfile in it), "
 	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #main, #makefiles, #test, #dwtest, and #generate, "
