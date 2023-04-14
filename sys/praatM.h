@@ -627,7 +627,7 @@
 */
 
 #define GRAPHICS_BEGIN__  \
-	autoPraatPicture picture;
+	autoPraatPictureOpen picture;
 #define GRAPHICS_END__  \
 	END_NO_NEW_DATA
 

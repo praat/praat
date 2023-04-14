@@ -34,10 +34,6 @@ void structManual :: v9_destroy () noexcept {
 
 #define SEARCH_PAGE  0
 
-static const conststring32 month [] =
-	{ U"", U"January", U"February", U"March", U"April", U"May", U"June",
-	  U"July", U"August", U"September", U"October", U"November", U"December" };
-
 static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS) {
 	EDITOR_FORM_SAVE (U"Save as HTML file", nullptr)
 		autoMelderString buffer;
@@ -78,146 +74,7 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static autoMelderString *manualInfoProc_string;
-static void manualInfoProc (conststring32 infoText) {
-	MelderString_copy (manualInfoProc_string, infoText);
-			// FIXME: this overrides a growing info buffer, which is an O(N^2) algorithm if in a loop
-}
-
-static void PraatObjects_reset (PraatObjects me) {
-	for (integer iobject = my n; iobject >= 1; iobject --) {
-		my list [iobject]. name. reset();
-		forget (my list [iobject]. object);
-	}
-	my n = 0;
-}
-
-static void ManPage_runAllChunksToCache (ManPage me, const kGraphics_font font, const double fontSize,
-	PraatApplication praatApplication, PraatObjects praatObjects, PraatPicture praatPicture,
-	MelderDir rootDirectory
-) {
-	/*
-		When this page is drawn for the first time,
-		all the script parts have to be run,
-		so that the outputs of drawing and info can be cached.
-	*/
-	autoInterpreter interpreter;
-	integer chunkNumber = 0;
-	bool anErrorHasOccurred = false;
-	autostring32 theErrorThatOccurred;
-	integer errorChunk = 0;
-	for (integer ipar = 1; ipar <= my paragraphs.size; ipar ++) {
-		ManPage_Paragraph paragraph = & my paragraphs [ipar];
-		if (paragraph -> type != kManPage_type::SCRIPT)
-			continue;
-		chunkNumber += 1;
-		if (paragraph -> cacheGraphics)
-			break;   // don't run the chunks again
-		if (! interpreter)
-			interpreter = Interpreter_create ();
-		/*
-			Divert info text from Info window to Manual window.
-		*/
-		autoMelderSetInformationProc divert (manualInfoProc);
-		manualInfoProc_string = & paragraph -> cacheInfo;
-		MelderInfo_open ();
-		/*
-			Divert graphics from Picture window to Manual window.
-		*/
-		paragraph -> cacheGraphics = Graphics_create_screen (nullptr, nullptr, 100);
-		Graphics_startRecording (paragraph -> cacheGraphics.get());
-		Graphics_setFont (paragraph -> cacheGraphics.get(), font);
-		Graphics_setFontStyle (paragraph -> cacheGraphics.get(), 0);
-		Graphics_setFontSize (paragraph -> cacheGraphics.get(), fontSize);
-		const double true_width_inches  = paragraph -> width  * ( paragraph -> width  < 0.0 ? -1.0 : fontSize / 12.0 );
-		const double true_height_inches = paragraph -> height * ( paragraph -> height < 0.0 ? -1.0 : fontSize / 12.0 );
-		Graphics_setWrapWidth (paragraph -> cacheGraphics.get(), 0.0);
-		integer x1DCold, x2DCold, y1DCold, y2DCold;
-		Graphics_inqWsViewport (paragraph -> cacheGraphics.get(), & x1DCold, & x2DCold, & y1DCold, & y2DCold);
-		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
-		Graphics_inqWsWindow (paragraph -> cacheGraphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
-
-		theCurrentPraatApplication = praatApplication;
-		theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
-		theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-		theCurrentPraatObjects = praatObjects;
-		theCurrentPraatPicture = praatPicture;
-		theCurrentPraatPicture -> graphics = paragraph -> cacheGraphics.get();   // has to draw into HyperPage rather than Picture window
-		theCurrentPraatPicture -> font = font;
-		theCurrentPraatPicture -> fontSize = fontSize;
-		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-		theCurrentPraatPicture -> colour = Melder_BLACK;
-		theCurrentPraatPicture -> lineWidth = 1.0;
-		theCurrentPraatPicture -> arrowSize = 1.0;
-		theCurrentPraatPicture -> speckleSize = 1.0;
-		#if 1
-		theCurrentPraatPicture -> x1NDC = 0.0;
-		theCurrentPraatPicture -> x2NDC = true_width_inches;
-		theCurrentPraatPicture -> y1NDC = 0.0;
-		theCurrentPraatPicture -> y2NDC = true_height_inches;
-
-		Graphics_setViewport (paragraph -> cacheGraphics.get(),
-				theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-		#endif
-		Graphics_setWindow (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
-		#if 1
-		integer x1DC, y1DC, x2DC, y2DC;
-		Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 0.0, 0.0, & x1DC, & y2DC);
-		Graphics_WCtoDC (paragraph -> cacheGraphics.get(), 1.0, 1.0, & x2DC, & y1DC);
-		Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DC, x2DC, y1DC, y2DC);
-		Graphics_setWsWindow (paragraph -> cacheGraphics.get(), 0, paragraph -> width, 0, paragraph -> height);
-		#endif
-		theCurrentPraatPicture -> x1NDC = 0.0;
-		theCurrentPraatPicture -> x2NDC = paragraph -> width;
-		theCurrentPraatPicture -> y1NDC = 0.0;
-		theCurrentPraatPicture -> y2NDC = paragraph -> height;
-		Graphics_setViewport (paragraph -> cacheGraphics.get(),
-				theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-		if (anErrorHasOccurred) {
-			trace (U"Chunk ", chunkNumber, U" not run, because of an earlier error.");
-			MelderInfo_writeLine (U"##**ERROR** This code chunk was not run,\n    because an error occurred in an earlier chunk.");
-			MelderInfo_close ();
-		} else {
-			autoMelderProgressOff progress;
-			autoMelderWarningOff warning;
-			autoMelderSaveDefaultDir saveDir;
-			if (! MelderDir_isNull (rootDirectory))
-				Melder_setDefaultDir (rootDirectory);
-			try {
-				autostring32 text = Melder_dup (paragraph -> text);
-				Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
-			} catch (MelderError) {
-				anErrorHasOccurred = true;
-				errorChunk = chunkNumber;
-				theErrorThatOccurred = Melder_dup (Melder_getError ());
-				trace (U"Error in chunk ", chunkNumber, U".");
-				Melder_clearError ();
-				MelderInfo_writeLine (U"##**AN ERROR OCCURRED IN THIS CODE CHUNK:**\n", theErrorThatOccurred.get());
-				MelderInfo_close ();
-			}
-		}
-		Graphics_setLineType (paragraph -> cacheGraphics.get(), Graphics_DRAWN);
-		Graphics_setLineWidth (paragraph -> cacheGraphics.get(), 1.0);
-		Graphics_setArrowSize (paragraph -> cacheGraphics.get(), 1.0);
-		Graphics_setSpeckleSize (paragraph -> cacheGraphics.get(), 1.0);
-		Graphics_setColour (paragraph -> cacheGraphics.get(), Melder_BLACK);
-		theCurrentPraatApplication = & theForegroundPraatApplication;
-		theCurrentPraatObjects = & theForegroundPraatObjects;
-		theCurrentPraatPicture = & theForegroundPraatPicture;
-
-		Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DCold, x2DCold, y1DCold, y2DCold);
-		Graphics_setWsWindow (paragraph -> cacheGraphics.get(), x1NDCold, x2NDCold, y1NDCold, y2NDCold);
-		Graphics_setViewport (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setWindow (paragraph -> cacheGraphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (paragraph -> cacheGraphics.get(), Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_stopRecording (paragraph -> cacheGraphics.get());
-	}
-	if (anErrorHasOccurred)
-		Melder_flushError (U"Error in code chunk ", errorChunk, U".\n", theErrorThatOccurred.get());
-	PraatObjects_reset (praatObjects);
-}
-
-static void Manual_runAllChunksToCache (ManPage page, Manual me) {
+static void Manual_runAllChunksToCache (Manual me, ManPage page) {
 	if (! my praatApplication)
 		my praatApplication = Melder_calloc_f (structPraatApplication, 1);
 	if (! my praatObjects)
@@ -225,9 +82,9 @@ static void Manual_runAllChunksToCache (ManPage page, Manual me) {
 	if (! my praatPicture)
 		my praatPicture = Melder_calloc_f (structPraatPicture, 1);
 	ManPage_runAllChunksToCache (page, my instancePref_font(), my instancePref_fontSize(),
-		(PraatApplication) my praatApplication,
-		(PraatObjects) my praatObjects,
-		(PraatPicture) my praatPicture,
+		my praatApplication,
+		my praatObjects,
+		my praatPicture,
 		& my rootDirectory
 	);
 }
@@ -310,19 +167,10 @@ void structManual :: v_draw () {
 			}
 		}
 	}
-	if (! our printing && page -> date) {
-		char32 signature [100];
-		const integer date = page -> date;
-		const integer imonth = Melder_clipped (0_integer, date % 10000 / 100, 12_integer);
-		Melder_sprint (signature,100,
-			U"© ", str32equ (page -> author.get(), U"ppgb") ? U"Paul Boersma" :
-			       str32equ (page -> author.get(), U"djmw") ? U"David Weenink" : page -> author.get(),
-			U", ", date % 100,
-			U" ", month [imonth],
-			U" ", date / 10000);
+	if (! our printing && page -> copyright) {
 		HyperPage_any (this, U"", our instancePref_font(), our instancePref_fontSize(), 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
-		HyperPage_any (this, signature, our instancePref_font(), our instancePref_fontSize(), Graphics_ITALIC, 0.0,
+		HyperPage_any (this, Melder_cat (U"© ", page -> copyright.get()), our instancePref_font(), our instancePref_fontSize(), 0, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
 	}
 }
@@ -573,17 +421,9 @@ void structManual :: v_createMenuItems_help (EditorMenu menu) {
 void structManual :: v_defaultHeaders (EditorCommand cmd) {
 	Manual me = (Manual) cmd -> d_editor;
 	if (my visiblePageNumber > 0) {
-		char32 string [400];
-		static const conststring32 shortMonth [] =
-			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
 		const ManPage page = our manPages() -> pages.at [my visiblePageNumber];
-		const integer date = page -> date;
 		SET_STRING (my outsideHeader, page -> title.get())
-		SET_STRING (my insideFooter, page -> author.get())
-		if (date) {
-			Melder_sprint (string,400, shortMonth [date % 10000 / 100 - 1], U" ", date % 100, U", ", date / 10000);
-			SET_STRING (my insideHeader, string)
-		}
+		SET_STRING (my insideFooter, Melder_cat (U"© ", page -> copyright.get()))
 	}
 }
 
@@ -608,7 +448,7 @@ void structManual :: v_goToPage_number (integer goToPageNumber) {
 	our optionalCurrentPageTitle = Melder_dup_f (page -> title.get());
 	Melder_assert (our optionalCurrentPageTitle);
 	our manPages() -> invalidateCache ();
-	Manual_runAllChunksToCache (page, this);
+	Manual_runAllChunksToCache (this, page);
 }
 
 int structManual :: v_goToPage (conststring32 title) {
@@ -671,7 +511,7 @@ autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, boo
 			Cache the output of the opening page.
 		*/
 		ManPage openingPage = manPages -> pages.at [my visiblePageNumber];
-		Manual_runAllChunksToCache (openingPage, me.get());
+		Manual_runAllChunksToCache (me.get(), openingPage);
 
 		HyperPage_init2 (me.get(), windowTitle, manPages);
 		return me;

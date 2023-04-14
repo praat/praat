@@ -156,7 +156,7 @@ DO
 	y1NDC -= ymargin;
 	y2NDC += ymargin;
 	{
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_setFontSize (GRAPHICS, praat_size = fontSize);
 	}
 	Picture_setSelection (praat_picture, x1NDC, x2NDC, y1NDC, y2NDC);
@@ -178,7 +178,7 @@ DIRECT (GRAPHICS_MouseSelectsInnerViewport) {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Melder_throw (U"Mouse commands are not available inside pictures.");
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport = true);
 	}
 	updateViewportMenu ();
@@ -189,7 +189,7 @@ DIRECT (GRAPHICS_MouseSelectsOuterViewport) {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Melder_throw (U"Mouse commands are not available inside pictures.");
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport = false);
 	}
 	updateViewportMenu ();
@@ -330,7 +330,7 @@ FORM (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...
 OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
-	autoPraatPicture picture;
+	autoPraatPictureOpen picture;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	Graphics_setWindow (GRAPHICS, 0, 1, 0, 1);
 	Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
@@ -436,7 +436,7 @@ DO
 
 static void setColour (MelderColour colour) {
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_setColour (GRAPHICS, colour);
 	}
 	theCurrentPraatPicture -> colour = colour;
@@ -499,7 +499,7 @@ FORM_SAVE (GRAPHICS_Picture_writeToPdfFile, U"Save as PDF file", nullptr, U"praa
 		Picture_writeToPdfFile (praat_picture.get(), file);
 	} else {
 		try {
-			//autoPraatPicture picture;
+			//autoPraatPictureOpen picture;
 			autoGraphics graphics = Graphics_create_pdffile (file, 300, undefined, 10.24, undefined, 7.68);
 			Graphics_play (GRAPHICS, graphics.get());
 		} catch (MelderError) {
@@ -1196,7 +1196,7 @@ FORM (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/rig
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
@@ -1218,7 +1218,7 @@ FORM (GRAPHICS_OneMarkRight, U"Praat picture: One mark right", U"One mark left/r
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
@@ -1240,7 +1240,7 @@ FORM (GRAPHICS_OneMarkTop, U"Praat picture: One mark top", U"One mark left/right
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
-		autoPraatPicture picture;   // WHY?
+		autoPraatPictureOpen picture;   // WHY?
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
@@ -1262,7 +1262,7 @@ FORM (GRAPHICS_OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
@@ -1284,7 +1284,7 @@ FORM (GRAPHICS_OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark lef
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
@@ -1306,7 +1306,7 @@ FORM (GRAPHICS_OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark ri
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
@@ -1328,7 +1328,7 @@ FORM (GRAPHICS_OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top"
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
@@ -1350,7 +1350,7 @@ FORM (GRAPHICS_OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark b
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	{// scope
-		autoPraatPicture picture;
+		autoPraatPictureOpen picture;
 		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
@@ -1379,7 +1379,7 @@ FORM (GRAPHICS_HorizontalWorldCoordinatesToMm, U"Compute horizontal distance in 
 	REAL (distance, U"Distance (wc)", U"0.1")
 	OK
 DO
-	QUERY_GRAPHICS_FOR_REAL   // TODO: do we need autoPraatPicture for any of these?
+	QUERY_GRAPHICS_FOR_REAL   // TODO: do we need autoPraatPictureOpen for any of these?
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
