@@ -80,7 +80,7 @@ static conststring32 extractLink (conststring32 text, const char32 *p, char32 *l
 		const char32 *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
 			if (to >= max)
-				Melder_throw (U"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
+				Melder_throw (U"(ManPages::grind:) Link starting with “@@” is too long:\n", text);
 			*to ++ = *from ++;
 		}
 		p = from;
@@ -198,16 +198,19 @@ static void readOnePage_man (ManPages me, MelderReadText text) {
 	*/
 	ManPage page = my pages. addItem_move (autopage.move());
 
+	autostring32 author;
 	try {
-		page -> author = texgetw16 (text);
+		author = texgetw16 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find author.");
 	}
+	uinteger date;
 	try {
-		page -> date = texgetu32 (text);
+		date = texgetu32 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find date.");
 	}
+	page -> copyright = Melder_dup (Melder_cat (author.get(), U" ", date));
 	try {
 		page -> recordingTime = texgetr64 (text);
 	} catch (MelderError) {
@@ -249,21 +252,29 @@ static bool isTerm (kManPage_type type) {
 }
 
 static void readOnePage_notebook (ManPages me, MelderReadText text) {
-	mutablestring32 firstLine = MelderReadText_readLine (text);
-	Melder_assert (Melder_stringMatchesCriterion (firstLine, kMelder_string::STARTS_WITH, U"PraatNotebook:", true));
-	Melder_skipHorizontalSpace (& (firstLine += 14));
-	autostring32 title = Melder_dup (firstLine);
-	if (title [0] == U'\0')
-		Melder_throw (U"There should be a page title after “PraatNodeBook:” on the first line.");
+	/*
+		Handle the title line.
+	*/
+	mutablestring32 line = MelderReadText_readLine (text);
+	Melder_assert (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"Praat notebook ", true));
+	Melder_skipHorizontalSpace (& (line += 15));
+	Melder_require (*line == U'"',
+		U"There should be a page title (starting with an opening quote) after “Praat nodeBook ” on the first line.");
+	autoMelderString titleBuffer;
+	while (* ++ line != U'\0')
+		if (*line == U'"')
+			break;
+		else
+			MelderString_append (& titleBuffer, *line);
 
 	/*
 		Check whether a page with this title is already present.
 	*/
-	if (lookUp_unsorted (me, title.get()))
+	if (lookUp_unsorted (me, titleBuffer.string))
 		return;
 
 	autoManPage autopage = Thing_new (ManPage);
-	autopage -> title = title.move();
+	autopage -> title = Melder_dup (titleBuffer.string);
 
 	/*
 		Add the page early, so that lookUp can find it.
@@ -271,40 +282,36 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 	ManPage page = my pages. addItem_move (autopage.move());
 
 	/*
+		Handle the copyright line.
+	*/
+	line = MelderReadText_readLine (text);
+	if (Melder_nequ (line, U"(c) ", 4)) {
+		line += 4;
+		page -> copyright = Melder_dup (line);
+	} else
+		Melder_throw (U"Missing copyright line (typically author and date) that should start with “(c)”.");
+
+	/*
 		Find all the notebook attributes.
-		All of them are optional, except author and date.
+		All of them are optional.
 		The order is not fixed.
 		We allow for new attributes in the future.
 	*/
 	for (;;) {
-		mutablestring32 line = MelderReadText_readLine (text);
+		line = MelderReadText_readLine (text);
 		if (! line)
 			break;   // end of file
 		char32 *colon = str32chr (line, U':');
 		if (! colon)
 			break;   // end of header
 		const integer lengthOfAttributeName = colon - line;
-		if (Melder_nequ (line, U"author", 6)) {
-			Melder_skipHorizontalSpace (& (colon += 1));
-			page -> author = Melder_dup (colon);
-			if (page -> author [0] == U'\0')
-				Melder_throw (U"Empty author.");
-		} else if (Melder_nequ (line, U"date", 4)) {
-			Melder_skipHorizontalSpace (& (colon += 1));
-			page -> date = Melder_atoi (colon);
-			if (page -> date <= 0)
-				Melder_throw (U"The date has to be positive.");
-		} else if (Melder_nequ (line, U"recording time", 14)) {
+		if (Melder_nequ (line, U"recording time", 14)) {
 			Melder_skipHorizontalSpace (& (colon += 1));
 			page -> recordingTime = Melder_atof (colon);
 		}
 	}
-	if (! page -> author)
-		Melder_throw (U"Cannot find author.");
-	if (! page -> date)
-		Melder_throw (U"Cannot find date.");
 
-	mutablestring32 line = nullptr;
+	line = nullptr;
 	do {
 		line = MelderReadText_readLine (text);
 	} while (line && ! stringHasInk (line));
@@ -469,9 +476,9 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 static void readOnePage (ManPages me, MelderReadText text) {
 	const bool isNotebook = (
 		text -> string32 ?
-			Melder_stringMatchesCriterion (text -> string32.get(), kMelder_string::STARTS_WITH, U"PraatNotebook:", true)
+			Melder_stringMatchesCriterion (text -> string32.get(), kMelder_string::STARTS_WITH, U"Praat notebook ", true)
 		:
-			strnequ (text -> string8.get(), "PraatNotebook:", 14)
+			strnequ (text -> string8.get(), "Praat notebook ", 15)
 	);
 	if (isNotebook)
 		readOnePage_notebook (me, text);
@@ -497,7 +504,17 @@ autoManPages ManPages_createFromText (MelderReadText text, MelderFile file) {
 	return me;
 }
 
-void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, integer date,
+/*
+	Praat-internal version without references to external files.
+*/
+autoManPages ManPages_createFromText (MelderReadText text) {
+	autoManPages me = Thing_new (ManPages);
+	my dynamic = false;
+	readOnePage (me.get(), text);
+	return me;
+}
+
+void ManPages_addPage (ManPages me, conststring32 title, conststring32 copyright,
 	structManPage_Paragraph paragraphs [])
 {
 	autoManPage page = Thing_new (ManPage);
@@ -510,9 +527,13 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, i
 		targetParagraph -> height = par -> height;
 		targetParagraph -> draw = par -> draw;
 	}
-	page -> author = Melder_dup (author);
-	page -> date = date;
+	page -> copyright = Melder_dup (copyright);
 	my pages. addItem_move (page.move());
+}
+void ManPages_addPageFromNotebook (ManPages me, conststring8 text)
+{
+	autoMelderReadText readText = MelderReadText_createFromText (Melder_8to32 (text));
+	readOnePage_notebook (me, readText.get());
 }
 
 static bool pageCompare (ManPage me, ManPage thee) {
@@ -691,13 +712,32 @@ static const struct stylesInfo {
 /* CODE5: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" }
 };
 
-static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <structManPage_Paragraph> const& paragraphs, MelderString *buffer) {
+static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage page, MelderString *buffer) {
+	/*
+		We are going to write directly to the PNG files,
+		because for republishing the whole Praat manual that takes approximately 4 seconds (on 2023-04-11),
+		whereas republishing the Praat manual via the cached graphics takes approximately 7 seconds.
+	*/
+	constexpr bool USE_CACHED_GRAPHICS = false;
+	static structPraatApplication praatApplication;
+	static structPraatObjects praatObjects;
+	static structPraatPicture praatPicture;
+
+	if ((USE_CACHED_GRAPHICS))
+		ManPage_runAllChunksToCache (page, kGraphics_font::TIMES, 12.0,
+				& praatApplication, & praatObjects, & praatPicture, & my rootDirectory);
+	autoInterpreter interpreter;
+	integer chunkNumber = 0;
+	bool anErrorHasOccurred = false;
+	autostring32 theErrorThatOccurred;
+	integer errorChunk = 0;
+
 	integer numberOfPictures = 0;
 	bool inList = false, inItalic = false, inBold = false;
 	bool inSub = false, inCode = false, inSuper = false, ul = false, inSmall = false;
 	bool wordItalic = false, wordBold = false, wordCode = false, letterSuper = false;
-	for (integer ipar = 1; ipar <= paragraphs.size; ipar ++) {
-		const structManPage_Paragraph *paragraph = & paragraphs [ipar];
+	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
+		const structManPage_Paragraph *paragraph = & page -> paragraphs [ipar];
 		const char32 *p = & paragraph -> text [0];
 		const bool isListItem = paragraph -> type == kManPage_type::LIST_ITEM ||
 			(paragraph -> type >= kManPage_type::LIST_ITEM1 && paragraph -> type <= kManPage_type::LIST_ITEM3);
@@ -733,7 +773,10 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 			continue;
 		}
 		if (paragraph -> type == kManPage_type::SCRIPT) {
-			autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
+			chunkNumber += 1;
+			if (! (USE_CACHED_GRAPHICS) && ! interpreter)
+				interpreter = Interpreter_create ();
+
 			numberOfPictures ++;
 			structMelderFile pngFile;
 			MelderFile_copy (file, & pngFile);
@@ -745,14 +788,11 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 				Graphics_setFontStyle (graphics.get(), 0);
 				Graphics_setFontSize (graphics.get(), 12.0);
 				Graphics_setWrapWidth (graphics.get(), 0);
-				static structPraatApplication praatApplication;
-				static structPraatObjects praatObjects;
-				static structPraatPicture praatPicture;
 				theCurrentPraatApplication = & praatApplication;
 				theCurrentPraatApplication -> batch = true;
 				theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-				theCurrentPraatObjects = (PraatObjects) & praatObjects;
-				theCurrentPraatPicture = (PraatPicture) & praatPicture;
+				theCurrentPraatObjects = & praatObjects;
+				theCurrentPraatPicture = & praatPicture;
 				theCurrentPraatPicture -> graphics = graphics.get();   // FIXME: should be move()?
 				theCurrentPraatPicture -> font = kGraphics_font::TIMES;
 				theCurrentPraatPicture -> fontSize = 12.0;
@@ -790,8 +830,12 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
 					try {
-						autostring32 text = Melder_dup (p);
-						Interpreter_run (interpreter.get(), text.get(), false);
+						if ((USE_CACHED_GRAPHICS)) {
+							Graphics_play (paragraph -> cacheGraphics.get(), graphics.get());
+						} else {
+							autostring32 text = Melder_dup (p);
+							Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
+						}
 					} catch (MelderError) {
 						trace (U"interpreter fails on ", pngFile. path);
 						Melder_flushError ();
@@ -1159,6 +1203,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 		MelderString_append (buffer, ul ? U"</ul>\n" : U"</dl>\n");
 		inList = false;
 	}
+	praatObjects.reset();
 }
 
 static const conststring32 month [] =
@@ -1178,7 +1223,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		U"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
 		page -> title.get(), U"\n</b></font></table></table>\n"
 	);
-	writeParagraphsAsHtml (me, file, page -> paragraphs.get(), buffer);
+	writeParagraphsAsHtml (me, file, page, buffer);
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		integer ilink, jlink;
 		if (page -> paragraphs.size > 0) {
@@ -1213,15 +1258,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		}
 		MelderString_append (buffer, U"</ul>\n");
 	}
-	MelderString_append (buffer, U"<hr>\n<address>\n\t<p>&copy; ", page -> author.get());
-	if (page -> date) {
-		integer date = page -> date;
-		int imonth = date % 10000 / 100;
-		if (imonth < 0 || imonth > 12)
-			imonth = 0;
-		MelderString_append (buffer, U", ", month [imonth], U" ", date % 100);
-		MelderString_append (buffer, U", ", date / 10000);
-	}
+	MelderString_append (buffer, U"<hr>\n<address>\n\t<p>&copy; ", page -> copyright.get());
 	MelderString_append (buffer, U"</p>\n</address>\n</body>\n</html>\n");
 }
 

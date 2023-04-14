@@ -40,13 +40,16 @@ Thing_define (ManPages, Daata) {
 
 autoManPages ManPages_create ();
 autoManPages ManPages_createFromText (MelderReadText text, MelderFile file);
+autoManPages ManPages_createFromText (MelderReadText text);
 
-void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, integer date,
+void ManPages_addPage (ManPages me, conststring32 title, conststring32 copyright,
 	structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
 	and not change after adding them to the ManPages.
 */
+
+void ManPages_addPageFromNotebook (ManPages me, conststring8 text);
 
 integer ManPages_lookUp (ManPages me, conststring32 title);
 

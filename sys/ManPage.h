@@ -35,8 +35,7 @@ typedef struct structManPage_Paragraph {
 } *ManPage_Paragraph;
 
 Thing_define (ManPage, Thing) {
-	autostring32 title, author;
-	integer date;
+	autostring32 title, copyright;
 	autovector <structManPage_Paragraph> paragraphs;
 	autoINTVEC linksHither, linksThither;
 	double recordingTime;
@@ -45,6 +44,20 @@ Thing_define (ManPage, Thing) {
 			our paragraphs [i]. invalidateCache ();
 	}
 };
+
+Thing_declare (PraatApplication);
+Thing_declare (PraatObjects);
+Thing_declare (PraatPicture);
+
+void ManPage_runAllChunksToCache (
+	ManPage me,
+	const kGraphics_font font,
+	const double fontSize,
+	PraatApplication praatApplication,
+	PraatObjects praatObjects,
+	PraatPicture praatPicture,
+	MelderDir rootDirectory
+);
 
 /* End of file ManPage.h */
 #endif

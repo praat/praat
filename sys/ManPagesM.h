@@ -24,7 +24,7 @@
 	#include "ManPages.h"
 #endif
 
-#define MAN_BEGIN(t,a,d)  { conststring32 title = t, author = a; integer date = d; \
+#define MAN_BEGIN(t,a,d)  { conststring32 title = t, copyright = a " " #d; \
 	static struct structManPage_Paragraph page [] = {
 #define INTRO(text)  { kManPage_type::INTRO, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
 #define ENTRY(text)  { kManPage_type::ENTRY, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
@@ -51,7 +51,7 @@
 #define EQUATION(text)  { kManPage_type::EQUATION, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
 #define PICTURE(width,height,draw)  { kManPage_type::PICTURE, nullptr, width, height, draw, autoGraphics(), autoMelderString() },
 #define SCRIPT(width,height,text)  { kManPage_type::SCRIPT, text, width, height, nullptr, autoGraphics(), autoMelderString() },
-#define MAN_END  { } }; ManPages_addPage (me, title, author, date, page); }
+#define MAN_END  { } }; ManPages_addPage (me, title, copyright, page); }
 
 #define Manual_DRAW_WINDOW(height,title,menu) \
 	"Select inner viewport... 0.2 5.8 0.2 " #height "-0.2\n" \

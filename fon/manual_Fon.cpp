@@ -50,43 +50,68 @@ manual_spectrum_init (me);
 manual_formant_init (me);
 manual_annotation_init (me);
 
-MAN_BEGIN (U"Get high index from time...", U"ppgb", 20101230)
-INTRO (U"A @@Query submenu|query@ to ask the selected tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier) "
-	"which point is nearest to, but no earlier than, the specified time.")
-ENTRY (U"Setting")
-TERM (U"##Time (s)")
-DEFINITION (U"the time from which you want to get the point index.")
-ENTRY (U"Return value")
-NORMAL (U"This query returns the index of the point with the lowest time greater than or equal to #Time. "
-	"It is @undefined if there are no points. "
-	"It is the number of points plus 1 (offright) if the specified time is greater than the time of the last point.")
-MAN_END
 
-MAN_BEGIN (U"Get low index from time...", U"ppgb", 20101230)
-INTRO (U"A @@Query submenu|query@ to ask the selected tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier) "
-	"which point is nearest to, but no later than, the specified time.")
-ENTRY (U"Setting")
-TERM (U"##Time (s)")
-DEFINITION (U"the time from which you want to get the point index.")
-ENTRY (U"Return value")
-NORMAL (U"This query returns the index of the point with the highest time less than or equal to #Time. "
-	"It is @undefined if there are no points. "
-	"It is 0 (offleft) if the specified time is less than the time of the first point.")
-MAN_END
+#define MAN_PAGE_BEGIN  { conststring8 text = &
+#define MAN_PAGE_END  [1]; ManPages_addPageFromNotebook (me, text); }
 
-MAN_BEGIN (U"Get nearest index from time...", U"ppgb", 20101230)
-INTRO (U"A @@Query submenu|query@ to ask the selected tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier) "
-	"which point is nearest to the specified time.")
-ENTRY (U"Setting")
-TERM (U"##Time (s)")
-DEFINITION (U"the time near which you want to get the point index.")
-ENTRY (U"Return value")
-NORMAL (U"This query returns the index of the point with the highest time less than or equal to #Time. "
-	"It is @undefined if there are no points.")
-MAN_END
+MAN_PAGE_BEGIN R"################(
+Praat notebook "Get high index from time..."
+(c) ppgb 2010-12-30
+
+A @@Query submenu|query@ to ask the selected tier object
+(@DurationTier, @IntensityTier, @PitchTier)
+which point is nearest to, but no earlier than, the specified time.
+
+Setting
+=======
+##Time (s)
+:	the time from which you want to get the point index.
+
+Return value
+============
+This query returns the index of the point with the lowest time greater than or equal to #Time.
+It is @undefined if there are no points.
+It is the number of points plus 1 (offright) if the specified time is greater than the time of the last point.
+
+)################" MAN_PAGE_END MAN_PAGE_BEGIN R"################(
+Praat notebook "Get low index from time..."
+(c) ppgb 2010-12-30
+
+A @@Query submenu|query@ to ask the selected tier object
+(@DurationTier, @IntensityTier, @PitchTier)
+which point is nearest to, but no later than, the specified time.
+
+Setting
+=======
+##Time (s)
+:	the time from which you want to get the point index.
+
+Return value
+============
+This query returns the index of the point with the highest time less than or equal to #Time.
+It is @undefined if there are no points.
+It is 0 (offleft) if the specified time is less than the time of the first point.
+
+)################" MAN_PAGE_END MAN_PAGE_BEGIN R"################(
+Praat notebook "Get high index from time..."
+(c) ppgb 2010,2023-04-14")
+
+A @@Query submenu|query@ to ask the selected tier object
+(@DurationTier, @IntensityTier, @PitchTier)
+which point is nearest to the specified time.
+
+Setting
+=======
+##Time (s)
+:	the time near which you want to get the point index.
+
+Return value
+============
+This query returns the index of the point whose time is closest to #Time.
+It is @undefined if there are no points.
+
+)################" MAN_PAGE_END
+
 
 MAN_BEGIN (U"Remove point...", U"ppgb", 20101230)
 INTRO (U"A command to remove one point from every selected time-based tier object "
@@ -145,7 +170,7 @@ NORMAL (U"The resulting object will have the specified name and time domain, but
 	"To add some points to it, use @@DurationTier: Add point...@.")
 ENTRY (U"Scripting example")
 NORMAL (U"To create a tier 0.9 seconds long, with an deceleration around 0.6 seconds, you do:")
-CODE (U"Create DurationTier: \"dur\", 0, 0.9")
+CODE (U"Create DurationTier: “dur”, 0, 0.9")
 CODE (U"Add point: 0.3, 1")
 CODE (U"Add point: 0.6, 2.3")
 CODE (U"Add point: 0.7, 1")
@@ -2078,6 +2103,8 @@ NORMAL (U"The times of all the points are trivially copied, and so is the time d
 	"The pitch information will be the same for every point.")
 MAN_END
 
+#if 0
+
 MAN_BEGIN (U"Polygon", U"ppgb", 20030316)
 INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"A Polygon object represents a sequence of points (%%x__i_, %%y__i_) in a two-dimensional space.")
@@ -2103,6 +2130,52 @@ NORMAL (U"The command ##Create Polygon from values: \"triangle\", \"0 50 20\", \
 	Remove
 )~~~", 4, 4, nullptr },
 MAN_END
+
+#else
+
+
+MAN_PAGE_BEGIN R"~~~(
+Praat notebook "Polygon"
+(c) ppgb 2003-03-16
+
+One of the @@types of objects@ in Praat.
+
+A Polygon object represents a sequence of points (%%x__i_, %%y__i_) in a two-dimensional space.
+)~~~" MAN_PAGE_END
+
+
+MAN_PAGE_BEGIN R"~~~(
+Praat notebook "Create Polygon from values..."
+(c) David Weenink & Paul Boersma 2023-01-16
+
+Creates a @@Polygon@ from user-supplied x\--y pairs (“points” or “vertices”).
+
+Settings
+===
+
+##Name
+: defines the name of the resulting Polygon.
+
+##X values
+: the X-coordinates of the vertices of the Polygon.
+
+##Y values
+: the Y-coordinates of the vertices of the Polygon.
+
+Example
+===
+The command ##Create Polygon from values: "triangle", "0 50 20", "0 10 80"#
+defines a Polygon with the three points (0, 0), (50, 10), and (20, 80).
+In the figure the three points are indicated with open circles while the Polygon is drawn as a closed figure.
+{+ 4x4
+	Create Polygon from values: "triangle", "0 50 20", "0 10 80"
+	Draw circles: 0, 0, 0, 0, 3
+	Draw closed: 0, 0, 0, 0
+}
+)~~~" MAN_PAGE_END
+
+#endif
+
 
 MAN_BEGIN (U"Read Matrix from raw text file...", U"ppgb", 19980322)
 INTRO (U"A command to read a @Matrix object from a file on disk.")

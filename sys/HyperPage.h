@@ -21,6 +21,9 @@
 #include "ScriptEditor.h"
 #include "Collection.h"
 #include "Graphics.h"
+Thing_declare (PraatApplication);
+Thing_declare (PraatObjects);
+Thing_declare (PraatPicture);
 
 Thing_define (HyperLink, Daata) {
 	double x1DC, x2DC, y1DC, y2DC;
@@ -46,7 +49,9 @@ Thing_define (HyperPage, Editor) {
 	int historyPointer;
 	autostring32 optionalCurrentPageTitle;
 	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
-	void *praatApplication, *praatObjects, *praatPicture;
+	PraatApplication praatApplication;
+	PraatObjects praatObjects;
+	PraatPicture praatPicture;
 	structMelderDir rootDirectory;
 
 	void v9_destroy () noexcept

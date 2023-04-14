@@ -266,7 +266,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			MelderInfo_writeLine (buffer);
 		} break;
 		case kPraatTests::TIME_GRAPHICS_TEXT_TOP: {
-			autoPraatPicture picture;
+			autoPraatPictureOpen picture;
 			for (int64 i = 1; i <= n; i ++) {
 				Graphics_textTop (GRAPHICS, false, U"hello world");
 			}

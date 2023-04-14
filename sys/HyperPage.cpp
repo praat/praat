@@ -428,11 +428,11 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 					my praatObjects = Melder_calloc_f (structPraatObjects, 1);
 				if (! my praatPicture)
 					my praatPicture = Melder_calloc_f (structPraatPicture, 1);
-				theCurrentPraatApplication = (PraatApplication) my praatApplication;
+				theCurrentPraatApplication = my praatApplication;
 				theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
 				theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-				theCurrentPraatObjects = (PraatObjects) my praatObjects;
-				theCurrentPraatPicture = (PraatPicture) my praatPicture;
+				theCurrentPraatObjects = my praatObjects;
+				theCurrentPraatPicture = my praatPicture;
 				theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
 				theCurrentPraatPicture -> font = font;
 				theCurrentPraatPicture -> fontSize = fontSize;
@@ -510,11 +510,11 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 				my praatObjects = Melder_calloc_f (structPraatObjects, 1);
 			if (! my praatPicture)
 				my praatPicture = Melder_calloc_f (structPraatPicture, 1);
-			theCurrentPraatApplication = (PraatApplication) my praatApplication;
+			theCurrentPraatApplication = my praatApplication;
 			theCurrentPraatApplication -> batch = true;
 			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-			theCurrentPraatObjects = (PraatObjects) my praatObjects;
-			theCurrentPraatPicture = (PraatPicture) my praatPicture;
+			theCurrentPraatObjects = my praatObjects;
+			theCurrentPraatPicture = my praatPicture;
 			theCurrentPraatPicture -> graphics = my ps;
 			theCurrentPraatPicture -> font = font;
 			theCurrentPraatPicture -> fontSize = fontSize;

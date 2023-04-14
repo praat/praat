@@ -22,7 +22,8 @@
 #include "Manual.h"
 #include "Preferences.h"
 
-/* The explanations in this header file assume
+/*
+	The explanations in this header file assume
 	that you put your extra commands in praat_Sybil.cpp
 	and the main() function in main_Sybil.cpp,
 	but these files may have different names if you are not Sybil.
@@ -113,7 +114,7 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 
 #define praat_MAXNUM_EDITORS 5
 #include "Ui.h"
-typedef struct {
+typedef struct structPraat_Object {
 	ClassInfo klas;   // the class
 	Daata object;   // the instance
 	autostring32 name;   // the name of the object as it appears in the List
@@ -122,31 +123,46 @@ typedef struct {
 	bool isSelected;   // is the name of the object inverted in the list?
 	Editor editors [praat_MAXNUM_EDITORS];   // are there editors open with this Object in it?
 	bool isBeingCreated;
-} structPraat_Object, *praat_Object;
+} *praat_Object;
 
 #define praat_MAXNUM_OBJECTS 10000   /* Maximum number of objects in the list. */
-typedef struct {   /* Readonly */
-	MelderString batchName;   /* The name of the command file when called from batch. */
-	int batch;   /* Was the program called from the command line? */
-	GuiWindow topShell;   /* The application shell: parent of standard dialogs. */
+typedef struct structPraatApplication {   // read-only (for interface files)
+	MelderString batchName;   // the name of the command file when called from batch
+	bool batch;   // was the program called from the command line?
+	GuiWindow topShell;   // the application shell: parent of standard dialogs
 	ManPages manPages;
-} structPraatApplication, *PraatApplication;
-typedef struct {   /* Readonly */
-	integer n;	 /* The current number of objects in the list. */
-	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */
-	integer totalSelection;   /* The total number of selected objects, <= n. */
-	integer numberOfSelected [1 + 1000];   /* For each (readable) class. */
+} *PraatApplication;
+typedef struct structPraatObjects {   // read-only (for interface files)
+	integer n;   // the current number of objects in the list
+	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   // the list of objects: list [1..n]
+	integer totalSelection;   // the total number of selected objects, <= n
+	static constexpr integer MAXNUM_DATA_CLASSES = 1000;
+	integer numberOfSelected [1 + MAXNUM_DATA_CLASSES];   // for each (readable) class
 	integer totalBeingCreated;
 	integer uniqueId;
-} structPraatObjects, *PraatObjects;
-typedef struct {   // read-only
+	void reset () {
+		for (integer iobject = our n; iobject >= 1; iobject --) {
+			our list [iobject]. name. reset();
+			forget (our list [iobject]. object);
+		}
+		#if 0
+		memset (this, 0, sizeof (structPraatObjects));
+		#else
+		our n = 0;
+		our totalSelection = 0;
+		for (integer i = 1; i <= MAXNUM_DATA_CLASSES; i ++)
+			our numberOfSelected [i] = 0;
+		#endif
+	}
+} *PraatObjects;
+typedef struct structPraatPicture {   // read-only (for interface files)
 	Graphics graphics;   // the Graphics associated with the Picture window
 	kGraphics_font font;
 	int lineType;
 	double fontSize;
 	MelderColour colour;
 	double lineWidth, arrowSize, speckleSize, x1NDC, x2NDC, y1NDC, y2NDC;
-} structPraatPicture, *PraatPicture;
+} *PraatPicture;
 /*
 	The following six cannot be "inline",
 	because that would cost 42 MB (per architecture)
@@ -207,7 +223,7 @@ void praat_dataChanged (Daata object);
 void praat_picture_open ();
 void praat_picture_close ();
 /* These two routines should bracket drawing commands. */
-/* However, they usually do so RAII-wise by being packed into autoPraatPicture (see GRAPHICS_EACH). */
+/* However, they usually do so RAII-wise by being packed into autoPraatPictureOpen (see GRAPHICS_EACH). */
 
 /* For main.cpp */
 
@@ -241,9 +257,9 @@ void praat_addCommandsToEditor (Editor me);
 
 autoCollection praat_getSelectedObjects ();
 
-struct autoPraatPicture {
-	autoPraatPicture () { praat_picture_open (); }
-	~autoPraatPicture () { praat_picture_close (); }
+struct autoPraatPictureOpen {
+	autoPraatPictureOpen () { praat_picture_open (); }
+	~autoPraatPictureOpen () { praat_picture_close (); }
 };
 
 #if defined (_WIN32)

@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2007,2009-2020 Paul Boersma
+ * Copyright (C) 1994-2007,2009-2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +24,17 @@
 
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
-		our x. reset (); \
+		our x. reset(); \
 	}
 
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
-		our x. reset (); \
+		our x. reset(); \
 	}
 
 #define oo_ANYTEN3(type, storage, x, ndim1Expression, ndim2Expression, ndim3Expression)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
-		our x. reset (); \
+		our x. reset(); \
 	}
 
 #define oo_ENUMx(kType, storage, x)
@@ -43,19 +43,19 @@
 
 #define oo_STRINGx(storage, x)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
-		our x. reset (); \
+		our x. reset(); \
 	}
 
 #define oo_STRINGx_SET(storage, x, setType)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		for (int _i = 0; _i <= setType::MAX; _i ++) { \
-			our x [_i]. reset (); \
+			our x [_i]. reset(); \
 		} \
 	}
 
 #define oo_STRINGx_VECTOR(storage, x, n)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
-		our x. reset (); \
+		our x. reset(); \
 	}
 
 #define oo_STRUCT(Type, x)  \
@@ -72,13 +72,13 @@
 		our x [_i]. destroy (); \
 	} \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
-		our x. reset (); \
+		our x. reset(); \
 	} \
 }
 
 #define oo_OBJECT(Class, version, x)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
-		our x. reset (); \
+		our x. reset(); \
 	}
 
 #define oo_COLLECTION_OF(Class, x, ItemClass, version)
