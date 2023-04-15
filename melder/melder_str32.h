@@ -18,12 +18,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-integer Melder8_length (conststring8 string);   // can except on 32-bit platforms if the string is longer than 2^31-1 characters
+integer Melder8_length (conststring8 stringOrNull);   // can assert on 32-bit platforms if the string is longer than 2^31-1 characters
 
-integer Melder16_length (conststring16 string) noexcept;
+integer Melder16_length (conststring16 stringOrNull) noexcept;
 mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept;
 
-integer Melder_length (conststring32 string) noexcept;
+integer Melder_length (conststring32 stringOrNull) noexcept;
 mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept;
 mutablestring32 str32cat (mutablestring32 target, conststring32 source) noexcept;
 char32 * stp32cpy (mutablestring32 target, conststring32 source) noexcept;
@@ -101,15 +101,15 @@ int Melder_coll (conststring32 string1orNull, conststring32 string2orNull) noexc
 	Basically, str32coll_numberAware() simply regards dots as non-digits.
 */
 int str32coll_numberAware (conststring32 string1, conststring32 string2, bool caseAware = false) noexcept;
-int Melder_coll_numberAware (conststring32 string1, conststring32 string2) noexcept;
+int Melder_coll_numberAware (conststring32 string1orNull, conststring32 string2orNull) noexcept;
 int str32cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept;
-int Melder_cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept;
+int Melder_cmp_caseInsensitive (conststring32 string1orNull, conststring32 string2orNull) noexcept;
 int str32cmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, bool caseSensitive) noexcept;
 
 int str32ncmp (conststring32 string1, conststring32 string2, integer n) noexcept;
-int Melder_ncmp (conststring32 string1, conststring32 string2, integer n) noexcept;
+int Melder_ncmp (conststring32 string1orNull, conststring32 string2orNull, integer n) noexcept;
 int str32ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) noexcept;
-int Melder_ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) noexcept;
+int Melder_ncmp_caseInsensitive (conststring32 string1orNull, conststring32 string2orNull, integer n) noexcept;
 int str32ncmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, integer n, bool caseSensitive) noexcept;
 
 #define str32equ  ! str32cmp
@@ -120,7 +120,7 @@ int str32ncmp_optionallyCaseSensitive (conststring32 string1, conststring32 stri
 #define Melder_equ_caseInsensitive  ! Melder_cmp_caseInsensitive
 #define str32equ_optionallyCaseSensitive  ! str32cmp_optionallyCaseSensitive
 #define str32nequ_optionallyCaseSensitive  ! str32ncmp_optionallyCaseSensitive
-bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststring32 string2) noexcept;
+bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1orNull, conststring32 string2orNull) noexcept;
 #define Melder_nequ  ! Melder_ncmp
 #define Melder_nequ_caseInsensitive  ! Melder_ncmp_caseInsensitive
 

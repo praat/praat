@@ -71,7 +71,7 @@ static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
 		Melder_throw (U"The notebook is already running (paused). Please close or continue the pause or demo window.");
 	autostring32 text = GuiText_getString (my textWidget);
-	if (! Melder_stringMatchesCriterion (text.get(), kMelder_string::STARTS_WITH, U"Praat notebook ", true))
+	if (! Melder_startsWith (text.get(), U"Praat notebook "))
 		Melder_throw (U"A Praat notebook should start with the text “Praat notebook ”.");
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);

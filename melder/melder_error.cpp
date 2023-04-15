@@ -77,7 +77,7 @@ bool Melder_hasCrash () {
 	const char32 *firstSpace = str32chr (theErrorBuffer, U' ');
 	if (! firstSpace)
 		return false;
-	return Melder_stringMatchesCriterion (firstSpace, kMelder_string::STARTS_WITH, CRASH_SEMAPHORE, false);
+	return Melder_startsWith (firstSpace, CRASH_SEMAPHORE);
 }
 
 void Melder_clearError () {

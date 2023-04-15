@@ -187,9 +187,7 @@ static void print (void *void_me, Graphics graphics) {
 	HyperPage_initSheetOfPaper ((HyperPage) me);
 	for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = my manPages() -> pages.at [ipage];
-		if (my printPagesStartingWith == nullptr ||
-		    Melder_stringMatchesCriterion (page -> title.get(), kMelder_string::STARTS_WITH, my printPagesStartingWith, true))
-		{
+		if (! my printPagesStartingWith || Melder_startsWith (page -> title.get(), my printPagesStartingWith)) {
 			my visiblePageNumber = ipage;
 			my optionalCurrentPageTitle = Melder_dup_f (page -> title.get());
 			my v_goToPage_number (ipage);

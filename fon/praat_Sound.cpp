@@ -2015,7 +2015,7 @@ static autoDaata soundFileRecognizer (integer nread, const char *header, MelderF
 		return Sound_readFromSoundFile (file);
 	if (strnequ (header, "fLaC", 4))
 		return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
-	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string::ENDS_WITH, U".mp3", false))
+	if ((Melder_endsWith_caseAware (MelderFile_name (file), U".mp3"))
 			&& mp3_recognize (nread, header))
 		return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
 	return autoDaata ();
@@ -2023,8 +2023,8 @@ static autoDaata soundFileRecognizer (integer nread, const char *header, MelderF
 
 static autoDaata movieFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	conststring32 fileName = MelderFile_name (file);
-	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".mov", false) &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".avi", false)))
+	if (nread < 512 || (! Melder_endsWith_caseAware (fileName, U".mov") &&
+	                    ! Melder_endsWith_caseAware (fileName, U".avi")))
 		return autoDaata ();
 	Melder_throw (U"This Praat version cannot open movie files.");
 	return autoDaata ();
@@ -2032,7 +2032,7 @@ static autoDaata movieFileRecognizer (integer nread, const char * /* header */, 
 
 static autoDaata sesamFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	conststring32 fileName = MelderFile_name (file);
-	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".sdf", false)))
+	if (nread < 512 || (! Melder_endsWith_caseAware (fileName, U".sdf")))
 		return autoDaata ();
 	return Sound_readFromSesamFile (file);
 }

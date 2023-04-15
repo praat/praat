@@ -815,11 +815,11 @@ DIRECT (EDITOR_ONE_Movie_viewAndEdit) {
 
 static autoDaata imageFileRecognizer (integer /* nread */, const char * /* header */, MelderFile file) {
 	conststring32 fileName = MelderFile_name (file);
-	if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpg", false) ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpeg", false) ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".png", false) ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tiff", false) ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tif", false))
+	if (Melder_endsWith_caseAware (fileName, U".jpg") ||
+	    Melder_endsWith_caseAware (fileName, U".jpeg") ||
+	    Melder_endsWith_caseAware (fileName, U".png") ||
+	    Melder_endsWith_caseAware (fileName, U".tiff") ||
+		Melder_endsWith_caseAware (fileName, U".tif"))
 	{
 		return Photo_readFromImageFile (file);
 	}

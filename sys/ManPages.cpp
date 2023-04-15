@@ -256,7 +256,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		Handle the title line.
 	*/
 	mutablestring32 line = MelderReadText_readLine (text);
-	Melder_assert (Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"Praat notebook ", true));
+	Melder_assert (Melder_startsWith (line, U"Praat notebook "));
 	Melder_skipHorizontalSpace (& (line += 15));
 	Melder_require (*line == U'"',
 		U"There should be a page title (starting with an opening quote) after “Praat nodeBook ” on the first line.");
@@ -331,7 +331,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		MelderString_empty (& buffer_graphical);
 		kManPage_type type;
 		double width = 0.0, height = 0.001;
-		if (numberOfLeadingSpaces == 0 && Melder_stringMatchesCriterion (line, kMelder_string::STARTS_WITH, U"===", true)) {
+		if (numberOfLeadingSpaces == 0 && Melder_startsWith (line, U"===")) {
 			if (previousParagraph)
 				previousParagraph -> type = kManPage_type::ENTRY;
 			line = MelderReadText_readLine (text);
@@ -407,9 +407,9 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					if (par -> text) {
 						const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (par -> text);
 						if (
-							Melder_stringMatchesCriterion (firstNonspace, kMelder_string::STARTS_WITH, U"Draw", true) ||
-							Melder_stringMatchesCriterion (firstNonspace, kMelder_string::STARTS_WITH, U"Paint", true) ||
-							Melder_stringMatchesCriterion (firstNonspace, kMelder_string::STARTS_WITH, U"Text ", true)
+							Melder_startsWith (firstNonspace, U"Draw") ||
+							Melder_startsWith (firstNonspace, U"Paint") ||
+							Melder_startsWith (firstNonspace, U"Text ")
 						)
 							height = 3.0;
 					}
@@ -459,7 +459,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					*firstNonSpace == U'-' ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'{' ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
-					Melder_stringMatchesCriterion (firstNonSpace, kMelder_string::STARTS_WITH, U"===", true) ||
+					Melder_startsWith (firstNonSpace, U"===") ||
 					*firstNonSpace == U'\0'
 				) {
 					line = continuationLine;   // not really a continuation line, but a new paragraph
@@ -476,7 +476,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 static void readOnePage (ManPages me, MelderReadText text) {
 	const bool isNotebook = (
 		text -> string32 ?
-			Melder_stringMatchesCriterion (text -> string32.get(), kMelder_string::STARTS_WITH, U"Praat notebook ", true)
+			Melder_startsWith (text -> string32.get(), U"Praat notebook ")
 		:
 			strnequ (text -> string8.get(), "Praat notebook ", 15)
 	);
@@ -530,8 +530,7 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 copyright
 	page -> copyright = Melder_dup (copyright);
 	my pages. addItem_move (page.move());
 }
-void ManPages_addPageFromNotebook (ManPages me, conststring8 text)
-{
+void ManPages_addPageFromNotebook (ManPages me, conststring8 text) {
 	autoMelderReadText readText = MelderReadText_createFromText (Melder_8to32 (text));
 	readOnePage_notebook (me, readText.get());
 }

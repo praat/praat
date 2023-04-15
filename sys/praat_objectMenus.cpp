@@ -681,8 +681,8 @@ static autoDaata scriptRecognizer (integer nread, const char *header, MelderFile
 	if (nread < 2)
 		return autoDaata ();
 	if ((header [0] == '#' && header [1] == '!')
-		|| Melder_stringMatchesCriterion (name, kMelder_string::ENDS_WITH, U".praat", false)
-	    || Melder_stringMatchesCriterion (name, kMelder_string::ENDS_WITH, U".html", false)
+		|| Melder_endsWith_caseAware (name, U".praat")
+	    || Melder_endsWith_caseAware (name, U".html")
 	) {
 		return Script_createFromFile (file);
 	}
@@ -693,7 +693,7 @@ static autoDaata notebookRecognizer (integer nread, const char * /* header */, M
 	conststring32 name = MelderFile_name (file);
 	if (nread < 2)
 		return autoDaata ();
-	if (Melder_stringMatchesCriterion (name, kMelder_string::ENDS_WITH, U".praatnb", false))
+	if (Melder_endsWith_caseAware (name, U".praatnb"))
 		return Notebook_createFromFile (file);
 	return autoDaata ();
 }
