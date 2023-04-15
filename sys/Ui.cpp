@@ -1676,8 +1676,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			next -> type == _kUiField_type::FOLDER_ ||
 			next -> type == _kUiField_type::REALMATRIX_ ||
 			next -> type == _kUiField_type::STRINGARRAY_);
-		const bool weEndInAColon =
-				Melder_stringMatchesCriterion (my stringValue.get(), kMelder_string::ENDS_WITH, U":", true);
+		const bool weEndInAColon = Melder_endsWith (my stringValue.get(), U":");
 		if (weEndInAColon)
 			Melder_casual (U"Label with colon: ", my stringValue.get());
 		const bool weLabelTheFollowingField = weAreFollowedByAWideField && weEndInAColon;

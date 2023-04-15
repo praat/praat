@@ -63,7 +63,7 @@ static GuiMenuItem DataGuiMenu_addCommand_ (EditorMenu me, conststring32 itemTit
 	thy d_editor = my d_editor;
 	thy sender = ( optionalSender ? optionalSender : thy d_editor );
 	thy menu = me;
-	const bool titleIsHeader = Melder_stringMatchesCriterion (itemTitle, kMelder_string::ENDS_WITH, U":", true);
+	const bool titleIsHeader = Melder_endsWith (itemTitle, U":");
 	if (titleIsHeader) {
 		flags |= GuiMenu_UNDERLINED;
 		if (itemTitle [0] == U'-' && itemTitle [1] == U' ') {

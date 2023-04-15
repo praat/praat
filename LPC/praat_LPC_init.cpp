@@ -1522,7 +1522,7 @@ static autoDaata HTKParameterFileRecognizer (integer nread, const char *header, 
 			we have come here by chance alone are very small.
 		*/
 		conststring32 fileName = MelderFile_name (file);
-		if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".fb", false) && 
+		if (Melder_endsWith_caseAware (fileName, U".fb") && 
 			htkType == 9 && frameSize % 8 == 0) // test user type and if it stores (F + B) as r32
 		{
 			return Formant_readFromHTKParameterFile (file);

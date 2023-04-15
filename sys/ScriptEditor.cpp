@@ -120,7 +120,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS) {
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
 	const conststring32 obscuredLabel = U"#!praatObscured";
-	if (Melder_stringMatchesCriterion (text.get(), kMelder_string::STARTS_WITH, obscuredLabel, true)) {
+	if (Melder_startsWith (text.get(), obscuredLabel)) {
 		const integer obscuredLabelLength = Melder_length (obscuredLabel);
 		const double fileKey_real = Melder_atof (MelderFile_name (& my file));
 		const uint64 fileKey = ( isdefined (fileKey_real) ? uint64 (fileKey_real) : 0 );

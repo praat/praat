@@ -54,7 +54,7 @@ manual_annotation_init (me);
 #define MAN_PAGE_BEGIN  { conststring8 text = &
 #define MAN_PAGE_END  [1]; ManPages_addPageFromNotebook (me, text); }
 
-MAN_PAGE_BEGIN R"################(
+MAN_PAGE_BEGIN R"#############(
 Praat notebook "Get high index from time..."
 (c) ppgb 2010-12-30
 
@@ -73,7 +73,7 @@ This query returns the index of the point with the lowest time greater than or e
 It is @undefined if there are no points.
 It is the number of points plus 1 (offright) if the specified time is greater than the time of the last point.
 
-)################" MAN_PAGE_END MAN_PAGE_BEGIN R"################(
+)#############" MAN_PAGE_END MAN_PAGE_BEGIN R"#############(
 Praat notebook "Get low index from time..."
 (c) ppgb 2010-12-30
 
@@ -92,9 +92,9 @@ This query returns the index of the point with the highest time less than or equ
 It is @undefined if there are no points.
 It is 0 (offleft) if the specified time is less than the time of the first point.
 
-)################" MAN_PAGE_END MAN_PAGE_BEGIN R"################(
-Praat notebook "Get high index from time..."
-(c) ppgb 2010,2023-04-14")
+)#############" MAN_PAGE_END MAN_PAGE_BEGIN R"#############(
+Praat notebook "Get nearest index from time..."
+(c) ppgb 2010,2023-04-14
 
 A @@Query submenu|query@ to ask the selected tier object
 (@DurationTier, @IntensityTier, @PitchTier)
@@ -110,7 +110,7 @@ Return value
 This query returns the index of the point whose time is closest to #Time.
 It is @undefined if there are no points.
 
-)################" MAN_PAGE_END
+)#############" MAN_PAGE_END
 
 
 MAN_BEGIN (U"Remove point...", U"ppgb", 20101230)
