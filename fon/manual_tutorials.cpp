@@ -4456,7 +4456,7 @@ NORMAL (U"If you know exactly the times and relative durations, it is advisable 
 	"and the remaining 270 ms to 200 ms.")
 NORMAL (U"In your first 85 ms, your relative duration should be 70/85, "
 	"and during the last 270 ms, it should be 200/270. "
-	"The DurationTier does linear interpolation, so it can only be approximate these precise times, "
+	"The DurationTier does linear interpolation, so it can only approximate these precise times, "
 	"but fortunately to any precision you like:")
 CODE (U"Create DurationTier: \"shorten\", 0, 0.085 + 0.270")
 CODE (U"Add point: 0.000, 70/85")

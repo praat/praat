@@ -24,11 +24,11 @@
 extern const char * ipaSerifRegularPS [];
 
 /*
- * When computing the width of a text by adding the widths of the separate characters,
- * we will make a correction for systems that make slanted characters overlap the character box to their right.
- * The effect is especially strong on Mac (older versions).
- * The slant correction is taken relative to the font size.
- */
+	When computing the width of a text by adding the widths of the separate characters,
+	we will make a correction for systems that make slanted characters overlap the character box to their right.
+	The effect is especially strong on Mac (older versions).
+	The slant correction is taken relative to the font size.
+*/
 #define POSTSCRIPT_SLANT_CORRECTION  0.1
 #define SCREEN_SLANT_CORRECTION  0.05
 
@@ -1310,30 +1310,30 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 		{
 			char32 *to, *max;
 			/*
-			 * We will distinguish:
-			 * 1. The link text: the text shown to the user, drawn in blue.
-			 * 2. The link info: the information saved in the Graphics object when the user clicks the link;
-			 *    this may be a page title in a manual or any other information.
-			 * The link info is equal to the link text in the following cases:
-			 * 1. A single-word link: "this is a @Link that consists of one word".
-			 * 2. Longer links without '|' in them: "@@Link with spaces@".
-			 * The link info is unequal to the link text in the following case:
-			 * 3. Longer links with '|' in them: "@@Page linked to|Text shown in blue@"
-			 */
+				We will distinguish:
+				1. The link text: the text shown to the user, drawn in blue.
+				2. The link info: the information saved in the Graphics object when the user clicks the link;
+				   this may be a page title in a manual or any other information.
+				The link info is equal to the link text in the following cases:
+				1. A single-word link: "this is a @Link that consists of one word".
+				2. Longer links without "|" in them: "@@Link with spaces@".
+				The link info is unequal to the link text in the following case:
+				3. Longer links with "|" in them: "@@Page linked to|Text shown in blue@"
+			*/
 			if (globalLink) {
 				/*
-				 * Detected the third '@' in strings like "@@Link with spaces@".
-				 * This closes the link text (which will be shown in blue).
-				 */
+					Detected the third "@" in strings like "@@Link with spaces@".
+					This closes the link text (which will be shown in blue).
+				*/
 				globalLink = false;   // close the drawn link text (the normal colour will take over)
-				continue;   // the '@' must not be drawn
+				continue;   // the "@" must not be drawn
 			} else if (in [0] == U'@') {
 				/*
-				 * Detected the second '@' in strings like "@@Link with spaces@".
-				 * A format like "@@Page linked to|Text shown in blue@" is permitted.
-				 * First step: collect the page text (the link information);
-				 * it is everything between "@@" and "|" or "@" or end of string.
-				 */
+					Detected the second "@" in strings like "@@Link with spaces@".
+					A format like "@@Page linked to|Text shown in blue@" is permitted.
+					First step: collect the page text (the link information);
+					it is everything between "@@" and "|" or "@" or end of string.
+				*/
 				const char32 *from = in + 1;   // start with first character after "@@"
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
@@ -1342,27 +1342,27 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					* to ++ = * from ++;   // ... copy one character
 				*to = U'\0';   // close saved link info
 				/*
-				 * Second step: collect the link text that is to be drawn.
-				 * Its characters will be collected during the normal cycles of the loop.
-				 * If the link info is equal to the link text, no action is needed.
-				 * If, on the other hand, there is a separate link info, this will have to be skipped.
-				 */
+					Second step: collect the link text that is to be drawn.
+					Its characters will be collected during the normal cycles of the loop.
+					If the link info is equal to the link text, no action is needed.
+					If, on the other hand, there is a separate link info, this will have to be skipped.
+				*/
 				if (*from == U'|')
-					in += to - links [numberOfLinks]. name + 1;   // skip link info + '|'
+					in += to - links [numberOfLinks]. name + 1;   // skip link info + "|"
 				/*
-				 * We are entering the link-text-collection mode.
-				 */
+					We are entering the link-text-collection mode.
+				*/
 				globalLink = true;
 				/*
-				 * Both '@' must be skipped and must not be drawn.
-				 */
+					Both "@" must be skipped and must not be drawn.
+				*/
 				in ++;   // skip second '@'
 				continue;   // do not draw
 			} else {
 				/*
-				 * Detected a single-word link, like in "this is a @Link that consists of one word".
-				 * First step: collect the page text: letters, digits, and underscores.
-				 */
+					Detected a single-word link, like in "this is a @Link that consists of one word".
+					First step: collect the page text: letters, digits, and underscores.
+				*/
 				const char32 *from = in;   // start with first character after "@"
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
@@ -1372,21 +1372,21 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					*to ++ = *from++;   // ... copy one character
 				*to = U'\0';   // close saved link info
 				/*
-				 * Second step: collect the link text that is to be drawn.
-				 * Its characters will be collected during the normal cycles of the loop.
-				 * The link info is equal to the link text, so no skipping is needed.
-				 */
+					Second step: collect the link text that is to be drawn.
+					Its characters will be collected during the normal cycles of the loop.
+					The link info is equal to the link text, so no skipping is needed.
+				*/
 				wordLink = true;   // enter the single-word link-text-collection mode
 			}
 			continue;
 		} else if (kar == U'\\') {
 			/*
-			 * Detected backslash sequence: backslash + kar1 + kar2...
-			 */
+				Detected backslash sequence: backslash + kar1 + kar2...
+			*/
 			char32 kar1, kar2;
 			/*
-			 * ... except if kar1 or kar2 is null: in that case, draw the backslash.
-			 */
+				... except if kar1 or kar2 is null: in that case, draw the backslash.
+			*/
 			if (! (kar1 = in [0]) || ! (kar2 = in [1])) {
 				;   // normal backslash symbol
 			/*
@@ -1398,8 +1398,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				in += 2;
 				continue;
 			/*
-			 * Default action: translate the backslash sequence into the long character 'kar1,kar2'.
-			 */
+				Default action: translate the backslash sequence into the long character 'kar1,kar2'.
+			*/
 			} else {
 				kar = Longchar_getInfo (kar1, kar2) -> unicode;
 				in += 2;

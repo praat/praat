@@ -24,6 +24,9 @@
 Thing_implement (ManPages, Daata, 0);
 
 #define LONGEST_FILE_NAME  55
+#define MAXIMUM_LINK_LENGTH  500
+#define FILENAME_BUFFER_SIZE  256
+#define PNG_RESOLUTION  300 /* dpi */
 
 static bool isAllowedFileNameCharacter (char32 c) {
 	return Melder_isWordCharacter (c) || c == U'_' || c == U'-' || c == U'+';
@@ -48,7 +51,7 @@ void structManPages :: v9_destroy () noexcept {
 }
 
 static conststring32 extractLink (conststring32 text, const char32 *p, char32 *link) {
-	char32 *to = link, *max = link + 300;
+	char32 *to = & link [0];
 	if (! p)
 		p = text;
 	/*
@@ -66,10 +69,13 @@ static conststring32 extractLink (conststring32 text, const char32 *p, char32 *l
 	if (p [1] == U'@') {
 		const char32 *from = p + 2;
 		while (*from != U'@' && *from != U'|' && *from != U'\0') {
-			if (to >= max)
+			if (to - link >= MAXIMUM_LINK_LENGTH)
 				Melder_throw (U"(ManPages::grind:) Link starting with “@@” is too long:\n", text);
 			*to ++ = *from ++;
 		}
+		/*
+			Ignore the "|...@" part.
+		*/
 		if (*from == U'|') {
 			from ++;
 			while (*from != U'@' && *from != U'\0')
@@ -79,12 +85,13 @@ static conststring32 extractLink (conststring32 text, const char32 *p, char32 *l
 	} else {
 		const char32 *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
-			if (to >= max)
+			if (to - link >= MAXIMUM_LINK_LENGTH)
 				Melder_throw (U"(ManPages::grind:) Link starting with “@@” is too long:\n", text);
 			*to ++ = *from ++;
 		}
 		p = from;
 	}
+	Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
 	*to = U'\0';
 	return p;
 }
@@ -94,7 +101,7 @@ static void readOnePage (ManPages me, MelderReadText text);   // forward
 static void resolveLinks (ManPages me, ManPage_Paragraph par) {
 	if (par -> type == kManPage_type::SCRIPT)
 		return;   // links would be invisible
-	char32 link [501], fileName [256];
+	char32 link [MAXIMUM_LINK_LENGTH + 1], fileName [FILENAME_BUFFER_SIZE];
 	for (const char32 *plink = extractLink (par -> text, nullptr, link); plink != nullptr; plink = extractLink (par -> text, plink, link)) {
 		/*
 			Now, `link' contains the link text, with spaces and all.
@@ -113,15 +120,16 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par) {
 				A link to a script: see if it exists.
 			s*/
 			char32 *p = link + 3;
-			if (*p == U'\"') {
+			if (*p == U'"') {
 				char32 *q = fileName;
 				p ++;
-				while (*p != U'\"' && *p != U'\0')
+				while (*p != U'"' && *p != U'\0')
 					* q ++ = * p ++;
 				*q = U'\0';
 			} else {
 				char32 *q = fileName;
-				while (*p != U' ' && *p != U'\0') * q ++ = * p ++;   // one word, up to the next space
+				while (*p != U' ' && *p != U'\0')
+					* q ++ = * p ++;   // one word, up to the next space
 				*q = U'\0';
 			}
 			MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
@@ -137,7 +145,7 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par) {
 				if (! isAllowedFileNameCharacter (*q))
 					*q = U'_';
 			try {
-				Melder_sprint (fileName,256, link, U".man");
+				Melder_sprint (fileName,FILENAME_BUFFER_SIZE, link, U".man");
 				MelderDir_getFile (& my rootDirectory, fileName, & file2);
 				if (MelderFile_exists (& file2)) {
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
@@ -147,20 +155,20 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par) {
 						Second try: with upper case.
 					*/
 					link [0] = Melder_toUpperCase (link [0]);
-					Melder_sprint (fileName,256, link, U".man");
+					Melder_sprint (fileName,FILENAME_BUFFER_SIZE, link, U".man");
 					MelderDir_getFile (& my rootDirectory, fileName, & file2);
 					if (MelderFile_exists (& file2)) {
 						autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 						readOnePage (me, text2.get());
 					} else {
-						Melder_sprint (fileName,256, link, U".praatnb");
+						Melder_sprint (fileName,FILENAME_BUFFER_SIZE, link, U".praatnb");
 						MelderDir_getFile (& my rootDirectory, fileName, & file2);
 						if (MelderFile_exists (& file2)) {
 							autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 							readOnePage (me, text2.get());
 						} else {
 							link [0] = Melder_toLowerCase (link [0]);
-							Melder_sprint (fileName,256, link, U".praatnb");
+							Melder_sprint (fileName,FILENAME_BUFFER_SIZE, link, U".praatnb");
 							MelderDir_getFile (& my rootDirectory, fileName, & file2);
 							if (MelderFile_exists (& file2)) {
 								autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
@@ -237,6 +245,10 @@ static void readOnePage_man (ManPages me, MelderReadText text) {
 		}
 		try {
 			par -> text = texgetw16 (text).transfer();
+			//if (str32str (par -> text, U":|"))
+			//	par -> text = replace_STR (par -> text, U":|", U"...|", 0).transfer();
+			//if (str32str (par -> text, U":@"))
+			//	par -> text = replace_STR (par -> text, U":@", U"...@", 0).transfer();
 		} catch (MelderError) {
 			Melder_throw (U"Cannot find text.");
 		}
@@ -302,10 +314,16 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		if (! colon)
 			break;   // end of header
 		const integer lengthOfAttributeName = colon - line;
-		if (Melder_nequ (line, U"recording time", 14)) {
+		if (Melder_nequ (line, U"Recording time", lengthOfAttributeName)) {
 			Melder_skipHorizontalSpace (& (colon += 1));
 			page -> recordingTime = Melder_atof (colon);
 		}
+		/*
+			TODO: add:
+				Keywords:   ; lower case, separate by comma
+				Code chunk visibility: +   ; + (the default) or -
+				Text style language: praat   ; praat (the default), i.e. % # $ @ _ ^, or markdown, i.e. * ` ** [] <sub> <sup>
+		*/
 	}
 
 	line = nullptr;
@@ -432,6 +450,10 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		ManPage_Paragraph par = page -> paragraphs. append ();
 		par -> type = type;
 		par -> text = Melder_dup (buffer_graphical. string). transfer();
+		if (str32str (par -> text, U":|"))
+			par -> text = replace_STR (par -> text, U":|", U"...|", 0).transfer();
+		//if (str32str (par -> text, U":@"))
+		//	par -> text = replace_STR (par -> text, U":@", U"...@", 0).transfer();
 		par -> width = width;
 		par -> height = height;
 
@@ -613,7 +635,7 @@ static void grind (ManPages me) {
 			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
 				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
 					continue;   // ignore "FILE" links
-				integer jpage = lookUp_sorted (me, link);
+				const integer jpage = lookUp_sorted (me, link);
 				if (jpage == 0) {
 					MelderInfo_writeLine (U"Page “", page -> title.get(), U"” contains a dangling link to “", link, U"”.");
 					ndangle ++;
@@ -721,24 +743,15 @@ static const struct stylesInfo {
 };
 
 static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage page, MelderString *buffer) {
-	/*
-		We are going to write directly to the PNG files,
-		because for republishing the whole Praat manual that takes approximately 4 seconds (on 2023-04-11),
-		whereas republishing the Praat manual via the cached graphics takes approximately 7 seconds.
-	*/
-	constexpr bool USE_CACHED_GRAPHICS = false;
 	static structPraatApplication praatApplication;
 	static structPraatObjects praatObjects;
 	static structPraatPicture praatPicture;
 
-	if ((USE_CACHED_GRAPHICS))
-		ManPage_runAllChunksToCache (page, kGraphics_font::TIMES, 12.0,
-				& praatApplication, & praatObjects, & praatPicture, & my rootDirectory);
+	ManPage_runAllChunksToCache (page, kGraphics_font::TIMES, 12.0,
+			& praatApplication, & praatObjects, & praatPicture, & my rootDirectory);
 	autoInterpreter interpreter;
 	integer chunkNumber = 0;
-	bool anErrorHasOccurred = false;
 	autostring32 theErrorThatOccurred;
-	integer errorChunk = 0;
 
 	integer numberOfPictures = 0;
 	bool inList = false, inItalic = false, inBold = false;
@@ -782,16 +795,38 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage page, M
 		}
 		if (paragraph -> type == kManPage_type::SCRIPT) {
 			chunkNumber += 1;
-			if (! (USE_CACHED_GRAPHICS) && ! interpreter)
-				interpreter = Interpreter_create ();
-
+			if (paragraph -> cacheInfo.string && paragraph -> cacheInfo.string [0] != U'\0') {
+				trace (U"text output");
+				MelderString_append (buffer, U"<code style=\"color:red\">&rarr;</code><br>\n");
+				static MelderString lineBuffer;
+				MelderString_empty (& lineBuffer);
+				bool hasError = false;
+				for (const char32 *paragraphPointer = & paragraph -> cacheInfo.string [0]; *paragraphPointer != U'\0'; paragraphPointer ++) {
+					if (Melder_isEndOfLine (*paragraphPointer)) {
+						hasError |=
+							str32str (lineBuffer.string, U"**AN ERROR OCCURRED IN THIS CODE CHUNK:**") ||
+							str32str (lineBuffer.string, U"**ERROR** This code chunk was not run,");
+						if (hasError)
+							MelderString_append (buffer, U"<code style=\"color:red\">&nbsp;&nbsp;&nbsp;\n");
+						else
+							MelderString_append (buffer, U"<code>&nbsp;&nbsp;&nbsp;\n");
+						MelderString_append (buffer, lineBuffer.string, U"<br></code>\n");
+						MelderString_empty (& lineBuffer);
+					} else {
+						MelderString_appendCharacter (& lineBuffer, *paragraphPointer);
+					}
+				}
+				continue;
+			}
+			if (paragraph -> height == 0.001)
+				continue;
 			numberOfPictures ++;
 			structMelderFile pngFile;
 			MelderFile_copy (file, & pngFile);
 			pngFile. path [Melder_length (pngFile. path) - 5] = U'\0';   // delete extension ".html"
 			str32cat (pngFile. path, Melder_cat (U"_", numberOfPictures, U".png"));
 			{// scope
-				autoGraphics graphics = Graphics_create_pngfile (& pngFile, 300, 0.0, paragraph -> width, 0.0, paragraph -> height);
+				autoGraphics graphics = Graphics_create_pngfile (& pngFile, PNG_RESOLUTION, 0.0, paragraph -> width, 0.0, paragraph -> height);
 				Graphics_setFont (graphics.get(), kGraphics_font::TIMES);
 				Graphics_setFontStyle (graphics.get(), 0);
 				Graphics_setFontSize (graphics.get(), 12.0);
@@ -837,17 +872,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage page, M
 					autoMelderSaveDefaultDir saveDir;
 					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
-					try {
-						if ((USE_CACHED_GRAPHICS)) {
-							Graphics_play (paragraph -> cacheGraphics.get(), graphics.get());
-						} else {
-							autostring32 text = Melder_dup (p);
-							Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
-						}
-					} catch (MelderError) {
-						trace (U"interpreter fails on ", pngFile. path);
-						Melder_flushError ();
-					}
+					Graphics_play (paragraph -> cacheGraphics.get(), graphics.get());
 				}
 				Graphics_setViewport (graphics.get(), 0.0, 1.0, 0.0, 1.0);
 				Graphics_setWindow (graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -1214,10 +1239,6 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage page, M
 	praatObjects.reset();
 }
 
-static const conststring32 month [] =
-	{ U"", U"January", U"February", U"March", U"April", U"May", U"June",
-	  U"July", U"August", U"September", U"October", U"November", U"December" };
-
 static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, MelderString *buffer) {
 	ManPage page = my pages.at [ipage];
 	MelderString_append (buffer,
@@ -1266,7 +1287,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		}
 		MelderString_append (buffer, U"</ul>\n");
 	}
-	MelderString_append (buffer, U"<hr>\n<address>\n\t<p>&copy; ", page -> signature.get());
+	MelderString_append (buffer, U"<hr>\n<address>\n\t<p>", page -> signature.get());
 	MelderString_append (buffer, U"</p>\n</address>\n</body>\n</html>\n");
 }
 
@@ -1282,10 +1303,10 @@ void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath) {
 	Melder_pathToDir (dirPath, & dir);
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
-		char32 fileName [256];
-		Melder_assert (Melder_length (page -> title.get()) < 256 - 100);
+		char32 fileName [FILENAME_BUFFER_SIZE];
+		Melder_assert (Melder_length (page -> title.get()) < FILENAME_BUFFER_SIZE - 100);
 		trace (U"page ", ipage, U": ", page -> title.get());
-		Melder_sprint (fileName,256,  page -> title.get());
+		Melder_sprint (fileName,FILENAME_BUFFER_SIZE,  page -> title.get());
 		for (char32 *p = fileName; *p; p ++)
 			if (! isAllowedFileNameCharacter (*p))
 				*p = U'_';

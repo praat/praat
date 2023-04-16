@@ -170,7 +170,7 @@ void structManual :: v_draw () {
 	if (! our printing && page -> signature) {
 		HyperPage_any (this, U"", our instancePref_font(), our instancePref_fontSize(), 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
-		HyperPage_any (this, page -> signature.get(), our instancePref_font(), our instancePref_fontSize(), 0, 0.0,
+		HyperPage_any (this, page -> signature.get(), our instancePref_font(), our instancePref_fontSize(), Graphics_ITALIC, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
 	}
 }

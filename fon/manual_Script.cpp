@@ -2683,7 +2683,7 @@ LIST_ITEM (U"@@Scripting 5.8. Including other scripts@")
 LIST_ITEM (U"@@Scripting 5.9. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.1. Variables", U"ppgb", 20201229)
+MAN_BEGIN (U"Scripting 5.1. Variables", U"ppgb", 20201229;20230416)
 INTRO (U"A %variable is a location in your computer’s memory that has a name and where you can store something, "
 	"as explained in @@Scripting 3.2. Numeric variables|\\SS3.2@ and @@Scripting 3.4. String variables|\\SS3.4@. "
 	"In a Praat script, you can store numbers and texts, i.e. you can use %%numeric variables% and %%string variables%.")
@@ -2702,7 +2702,7 @@ ENTRY (U"String variables")
 NORMAL (U"You use string variables, which contain text, as follows:")
 CODE (U"%%##title\\$ #% = “Dutch nasal place assimilation”")
 CODE (U"Text top: “yes”, ##%%title\\$ %#")
-NORMAL (U"This writes the text \"Dutch nasal place assimilation\"")
+NORMAL (U"This writes the text \"Dutch nasal place assimilation\" above your drawing.")
 NORMAL (U"As in the programming language Basic, the names of string variables end in a dollar sign.")
 ENTRY (U"Making numeric variables visible")
 NORMAL (U"You can write the content of numeric variables directly to the info window:")
@@ -3260,7 +3260,7 @@ NORMAL (U"A ##numeric matrix# is a two-indexed array of numbers, regarded as a s
 	"In a Praat script, you can put a matrix into a variable whose name ends in two number signs (\"\\# \\# \"):")
 CODE (U"confusion\\# \\#  = {{ 3, 6, 2 }, { 8, 2, 1 }}")
 NORMAL (U"After this, the variable %%confusion\\# \\# % contains the value {{ 3, 6, 2 }, { 8, 2, 1 }}. "
-	"We say that the matrix %%confusion\\# % has two %rows and three %columns, i.e. it contains six numbers.")
+	"We say that the matrix %%confusion\\# \\# % has two %rows and three %columns, i.e. it contains six numbers.")
 NORMAL (U"Whereas a numeric vector with five dimensions could be seen (see above) as a street that contains five houses, "
 	"the matrix %%confusion\\# \\# % can be seen as a city district with two avenues crossed by three streets, "
 	"where everybody lives on an intersection (the analogies start to get less realistic).")
