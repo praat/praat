@@ -872,17 +872,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage page, M
 					autoMelderSaveDefaultDir saveDir;
 					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
-					try {
-						if ((USE_CACHED_GRAPHICS)) {
-							Graphics_play (paragraph -> cacheGraphics.get(), graphics.get());
-						} else {
-							autostring32 text = Melder_dup (p);
-							Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
-						}
-					} catch (MelderError) {
-						trace (U"interpreter fails on ", pngFile. path);
-						Melder_flushError ();
-					}
+					Graphics_play (paragraph -> cacheGraphics.get(), graphics.get());
 				}
 				Graphics_setViewport (graphics.get(), 0.0, 1.0, 0.0, 1.0);
 				Graphics_setWindow (graphics.get(), 0.0, 1.0, 0.0, 1.0);
