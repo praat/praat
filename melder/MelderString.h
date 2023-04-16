@@ -27,6 +27,11 @@
 		- automatically convert numbers, objects, file names, vectors, and matrices to strings
 */
 
+struct MelderString8 {
+	int64 length = 0;
+	int64 bufferSize = 0;
+	char8 *string = nullptr;   // a growing buffer, rarely shrunk (can only be freed by MelderString8_free)
+};
 struct MelderString16 {
 	int64 length = 0;
 	int64 bufferSize = 0;
@@ -38,8 +43,10 @@ struct MelderString {
 	char32 *string = nullptr;   // a growing buffer, rarely shrunk (can only be freed by MelderString_free)
 };
 
+void MelderString8_free (MelderString16 *me);   // frees the buffer (and sets other attributes to zero)
 void MelderString16_free (MelderString16 *me);   // frees the buffer (and sets other attributes to zero)
 void MelderString_free (MelderString *me);   // frees the buffer (and sets other attributes to zero)
+void MelderString8_empty (MelderString16 *me);   // sets to empty string (buffer shrunk if very large)
 void MelderString16_empty (MelderString16 *me);   // sets to empty string (buffer shrunk if very large)
 void MelderString_empty (MelderString *me);   // sets to empty string (buffer shrunk if very large)
 void _private_MelderString_expand (MelderString *me, int64 sizeNeeded);   // increases the buffer size; there's normally no need to call this

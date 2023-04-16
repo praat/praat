@@ -49,7 +49,7 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 copyright
 	and not change after adding them to the ManPages.
 */
 
-void ManPages_addPageFromNotebook (ManPages me, conststring8 text);
+void ManPages_addPagesFromNotebook (ManPages me, conststring8 text);
 
 integer ManPages_lookUp (ManPages me, conststring32 title);
 

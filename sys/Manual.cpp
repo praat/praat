@@ -90,7 +90,7 @@ static void Manual_runAllChunksToCache (Manual me, ManPage page) {
 }
 
 void structManual :: v_draw () {
-	TRACE
+	//TRACE
 	if (our visiblePageNumber == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");
 		HyperPage_intro (this, U"The best matches to your query seem to be:");
@@ -167,10 +167,10 @@ void structManual :: v_draw () {
 			}
 		}
 	}
-	if (! our printing && page -> copyright) {
+	if (! our printing && page -> signature) {
 		HyperPage_any (this, U"", our instancePref_font(), our instancePref_fontSize(), 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
-		HyperPage_any (this, Melder_cat (U"© ", page -> copyright.get()), our instancePref_font(), our instancePref_fontSize(), 0, 0.0,
+		HyperPage_any (this, page -> signature.get(), our instancePref_font(), our instancePref_fontSize(), 0, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
 	}
 }
@@ -421,7 +421,7 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 	if (my visiblePageNumber > 0) {
 		const ManPage page = our manPages() -> pages.at [my visiblePageNumber];
 		SET_STRING (my outsideHeader, page -> title.get())
-		SET_STRING (my insideFooter, Melder_cat (U"© ", page -> copyright.get()))
+		SET_STRING (my insideFooter, page -> signature.get())
 	}
 }
 
