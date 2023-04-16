@@ -383,7 +383,6 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 		//my d_y -= fontSize * (1.0/72);   // some empty space between the code and the output
 		static MelderString buffer;
 		MelderString_empty (& buffer);
-		//MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
 		for (const char32 *p = & cacheInfo [0]; *p != U'\0'; p ++) {
 			if (Melder_isEndOfLine (*p)) {
 				if (
@@ -393,7 +392,6 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 					Graphics_setColour (my graphics.get(), Melder_RED);
 				HyperPage_code (me, buffer.string);
 				MelderString_empty (& buffer);
-				//MelderString_append (& buffer, U"->  ");   // this is prepended to every line of output
 			} else {
 				MelderString_appendCharacter (& buffer, *p);
 			}
