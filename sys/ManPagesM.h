@@ -24,7 +24,7 @@
 	#include "ManPages.h"
 #endif
 
-#define MAN_BEGIN(t,a,d)  { conststring32 title = t, copyright = a " " #d; \
+#define MAN_BEGIN(t,a,d)  { conststring32 title = t, copyright = U"© " a " " #d; \
 	static struct structManPage_Paragraph page [] = {
 #define INTRO(text)  { kManPage_type::INTRO, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
 #define ENTRY(text)  { kManPage_type::ENTRY, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },

@@ -18,21 +18,6 @@
 
 #include "ManPagesM.h"
 
-static void draw_CreateDurationTier (Graphics g) {
-	static double x [] = { 0.0, 0.3, 0.6, 0.7, 0.9 }, y [] = { 1.0, 1.0, 2.3, 1.0, 1.0 };
-	Graphics_setWindow (g, 0.0, 0.9, 0.0, 2.5);
-	Graphics_drawInnerBox (g);
-	Graphics_marksLeftEvery (g, 1.0, 1.0, true, true, false);
-	Graphics_marksBottomEvery (g, 1.0, 0.1, true, true, false);
-	Graphics_setInner (g);
-	Graphics_setColour (g, Melder_RED);
-	Graphics_polyline (g, 5, x, y);
-	Graphics_setColour (g, Melder_BLACK);
-	Graphics_unsetInner (g);
-	Graphics_textBottom (g, true, U"Time (s)");
-	Graphics_textLeft (g, true, U"Relative duration");
-}
-
 void manual_Sampling_init (ManPages me);
 void manual_sound_init (ManPages me);
 void manual_pitch_init (ManPages me);
@@ -51,12 +36,14 @@ manual_formant_init (me);
 manual_annotation_init (me);
 
 
-#define MAN_PAGE_BEGIN  { conststring8 text = &
-#define MAN_PAGE_END  [1]; ManPages_addPageFromNotebook (me, text); }
+#define MAN_PAGES_BEGIN  { conststring8 text = &
+#define MAN_PAGES_END  [1]; ManPages_addPagesFromNotebook (me, text); }
 
-MAN_PAGE_BEGIN R"#############(
-Praat notebook "Get high index from time..."
-(c) ppgb 2010-12-30
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Get high index from time..."
+© Paul Boersma 2010-12-30
 
 A @@Query submenu|query@ to ask the selected tier object
 (@DurationTier, @IntensityTier, @PitchTier)
@@ -73,9 +60,9 @@ This query returns the index of the point with the lowest time greater than or e
 It is @undefined if there are no points.
 It is the number of points plus 1 (offright) if the specified time is greater than the time of the last point.
 
-)#############" MAN_PAGE_END MAN_PAGE_BEGIN R"#############(
-Praat notebook "Get low index from time..."
-(c) ppgb 2010-12-30
+################################################################################
+"Get low index from time..."
+© Paul Boersma 2010-12-30
 
 A @@Query submenu|query@ to ask the selected tier object
 (@DurationTier, @IntensityTier, @PitchTier)
@@ -92,9 +79,9 @@ This query returns the index of the point with the highest time less than or equ
 It is @undefined if there are no points.
 It is 0 (offleft) if the specified time is less than the time of the first point.
 
-)#############" MAN_PAGE_END MAN_PAGE_BEGIN R"#############(
-Praat notebook "Get nearest index from time..."
-(c) ppgb 2010,2023-04-14
+################################################################################
+"Get nearest index from time..."
+© Paul Boersma 2010, 2023-04-14
 
 A @@Query submenu|query@ to ask the selected tier object
 (@DurationTier, @IntensityTier, @PitchTier)
@@ -110,74 +97,126 @@ Return value
 This query returns the index of the point whose time is closest to #Time.
 It is @undefined if there are no points.
 
-)#############" MAN_PAGE_END
+################################################################################
+"Remove point..."
+© Paul Boersma 2010-12-30
 
+A command to remove one point from every selected time-based tier object
+(@DurationTier, @IntensityTier, @PitchTier).
 
-MAN_BEGIN (U"Remove point...", U"ppgb", 20101230)
-INTRO (U"A command to remove one point from every selected time-based tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier).")
-ENTRY (U"Setting")
-TERM (U"##Point number")
-DEFINITION (U"the index of the point you want to remove.")
-ENTRY (U"Behaviour")
-NORMAL (U"If ##Point number# is 3, the third point counted from the start of the tier (if it exists) "
-	"is removed from the tier.")
-MAN_END
+Setting
+=======
+##Point number
+:	the index of the point you want to remove.
 
-MAN_BEGIN (U"Remove point near...", U"ppgb", 20101230)
-INTRO (U"A command to remove one point from every selected time-based tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier).")
-ENTRY (U"Setting")
-TERM (U"##Time (s)")
-DEFINITION (U"the time near which you want to remove a point.")
-ENTRY (U"Behaviour")
-NORMAL (U"The point nearest to #Time (if there is any point) is removed from the tier.")
-MAN_END
+Behaviour
+=========
+If ##Point number# is 3, the third point counted from the start of the tier (if it exists)
+is removed from the tier.
 
-MAN_BEGIN (U"Remove points between...", U"ppgb", 20101230)
-INTRO (U"A command to remove some points from every selected time-based tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier).")
-ENTRY (U"Settings")
-TERM (U"##From time (s)")
-TERM (U"##To time (s)")
-DEFINITION (U"the times between which you want to remove all points.")
-ENTRY (U"Behaviour")
-NORMAL (U"Any points between ##Frome time# and ##To Time# (inclusive) are removed from the tier.")
-MAN_END
+################################################################################
+"Remove point near..."
+© Paul Boersma 2010-12-30
 
-MAN_BEGIN (U"AmplitudeTier", U"ppgb", 20070825)
-INTRO (U"One of the @@types of objects@ in Praat. "
-	"An AmplitudeTier object represents a time-stamped amplitude contour, i.e., it contains a series of (%time, %amplitude) points. "
-	"The amplitude values are in Pascal. To see some applications, consult the @IntensityTier information; "
-	"the difference between an AmplitudeTier and an IntensityTier is that the former has values in Pascal "
-	"which multiply linearly with a Sound (for instance), and the latter has values in dB, "
-	"which multiply logarithmically with a Sound.")
-MAN_END
+A command to remove one point from every selected time-based tier object
+(@DurationTier, @IntensityTier, @PitchTier).
 
-MAN_BEGIN (U"Cochleagram", U"ppgb", 20030316)
-INTRO (U"One of the @@types of objects@ in Praat. It represents the excitation pattern "
-	"of the basilar membrane in the inner ear (see @Excitation) as a function of time.")
-MAN_END
+=== Setting ===
 
-MAN_BEGIN (U"Cochleagram: Formula...", U"ppgb", 20021206)
-INTRO (U"A command for changing the data in all selected @Cochleagram objects.")
-NORMAL (U"See the @Formulas tutorial for examples and explanations.")
-MAN_END
+##Time (s)
+:	the time near which you want to remove a point.
 
-MAN_BEGIN (U"Create DurationTier...", U"ppgb", 20140421)
-INTRO (U"A command in the @@New menu@ to create an empty @DurationTier object.")
-NORMAL (U"The resulting object will have the specified name and time domain, but contain no duration points. "
-	"To add some points to it, use @@DurationTier: Add point...@.")
-ENTRY (U"Scripting example")
-NORMAL (U"To create a tier 0.9 seconds long, with an deceleration around 0.6 seconds, you do:")
-CODE (U"Create DurationTier: “dur”, 0, 0.9")
-CODE (U"Add point: 0.3, 1")
-CODE (U"Add point: 0.6, 2.3")
-CODE (U"Add point: 0.7, 1")
-NORMAL (U"The result will look like")
-PICTURE (5, 2.5, draw_CreateDurationTier)
-NORMAL (U"The target duration will be the area under this curve, which is 0.9 + 1/2 · 1.3 · 0.4 = 1.16 seconds.")
-MAN_END
+=== Behaviour ===
+
+The point nearest to #Time (if there is any point) is removed from the tier.
+
+################################################################################
+"Remove points between..."
+© Paul Boersma 2010-12-30
+
+A command to remove some points from every selected time-based tier object
+(@DurationTier, @IntensityTier, @PitchTier).
+
+=== Settings ===
+
+##From time (s)
+##To time (s)
+:	the times between which you want to remove all points.
+
+=== Behaviour ===
+
+Any points between ##Frome time# and ##To Time# (inclusive) are removed from the tier.
+
+################################################################################
+"AmplitudeTier"
+© Paul Boersma 2007-08-25
+
+One of the @@types of objects@ in Praat.
+An AmplitudeTier object represents a time-stamped amplitude contour, i.e., it contains a series of (%time, %amplitude) points.
+The amplitude values are in Pascal. To see some applications, consult the @IntensityTier information;
+the difference between an AmplitudeTier and an IntensityTier is that the former has values in Pascal
+which multiply linearly with a Sound (for instance), and the latter has values in dB,
+which multiply logarithmically with a Sound.
+
+################################################################################
+"Cochleagram"
+© Paul Boersma 2003-03-16
+
+One of the @@types of objects@ in Praat. It represents the excitation pattern
+of the basilar membrane in the inner ear (see @Excitation) as a function of time.
+
+################################################################################
+"Cochleagram: Formula..."
+© Paul Boersma 2002-12-06
+
+A command for changing the data in all selected @Cochleagram objects.
+See the @Formulas tutorial for examples and explanations.
+
+################################################################################
+"Create DurationTier..."
+© Paul Boersma 2014-04-21,2023-04-15
+Keywords: Praat, duration manipulation
+
+A command in the @@New menu@ to create an empty @DurationTier object.
+The resulting object will have the specified name and time domain, but contain no duration points.
+To add some points to it, use @@DurationTier: Add point...@.
+
+Example
+=======
+To create a tier 0.9 seconds long, with an deceleration around 0.6 seconds,
+you do (either in a script or by choosing these 4 commands by hand):
+
+	##Create DurationTier:# “dur”, 0, 0.9
+	@@DurationTier: Add point:@ 0.3, 1
+	Add point: 0.6, 2.3
+	Add point: 0.7, 1
+
+{
+	Create DurationTier: “dur”, 0, 0.9
+	Add point: 0.3, 1
+	Add point: 0.6, 2.3
+	Add point: 0.7, 1
+}
+The result will look like
+{- 5x2.5
+	x# = { 0.0, 0.3, 0.6, 0.7, 0.9 }
+	y# = { 1.0, 1.0, 2.3, 1.0, 1.0 }
+	Red
+	Create Polygon from values: "durationTier", x#, y#
+	Draw: 0.0, 0.9, 0.0, 2.5
+	Black
+	Draw inner box
+	Marks left every: 1.0, 1.0, "yes", "yes", "no"
+	Marks bottom every: 1.0, 0.1, "yes", "yes", "no"
+	Text bottom: "yes", "Time (s)"
+	Text left: "yes", "Relative duration"
+}
+The target duration will be the area under this curve, which is 0.9 + 1/2 · 1.3 · 0.4 = 1.16 seconds.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
+
 
 MAN_BEGIN (U"Create empty PointProcess...", U"ppgb", 20021204)
 INTRO (U"A command in the @@New menu@ to create an empty @PointProcess. The newly created object is put in the list of objects.")
@@ -2134,19 +2173,19 @@ MAN_END
 #else
 
 
-MAN_PAGE_BEGIN R"~~~(
-Praat notebook "Polygon"
-(c) ppgb 2003-03-16
+MAN_PAGES_BEGIN R"~~~(
+"Polygon"
+© ppgb 2003-03-16
 
 One of the @@types of objects@ in Praat.
 
 A Polygon object represents a sequence of points (%%x__i_, %%y__i_) in a two-dimensional space.
-)~~~" MAN_PAGE_END
+)~~~" MAN_PAGES_END
 
 
-MAN_PAGE_BEGIN R"~~~(
-Praat notebook "Create Polygon from values..."
-(c) David Weenink & Paul Boersma 2023-01-16
+MAN_PAGES_BEGIN R"~~~(
+"Create Polygon from values..."
+© David Weenink & Paul Boersma 2023-01-16
 
 Creates a @@Polygon@ from user-supplied x\--y pairs (“points” or “vertices”).
 
@@ -2172,7 +2211,7 @@ In the figure the three points are indicated with open circles while the Polygon
 	Draw circles: 0, 0, 0, 0, 3
 	Draw closed: 0, 0, 0, 0
 }
-)~~~" MAN_PAGE_END
+)~~~" MAN_PAGES_END
 
 #endif
 

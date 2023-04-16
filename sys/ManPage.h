@@ -35,7 +35,7 @@ typedef struct structManPage_Paragraph {
 } *ManPage_Paragraph;
 
 Thing_define (ManPage, Thing) {
-	autostring32 title, copyright;
+	autostring32 title, signature;
 	autovector <structManPage_Paragraph> paragraphs;
 	autoINTVEC linksHither, linksThither;
 	double recordingTime;

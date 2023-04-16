@@ -210,7 +210,7 @@ static void readOnePage_man (ManPages me, MelderReadText text) {
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find date.");
 	}
-	page -> copyright = Melder_dup (Melder_cat (author.get(), U" ", date));
+	page -> signature = Melder_dup (Melder_cat (U"© ", author.get(), U" ", date));
 	try {
 		page -> recordingTime = texgetr64 (text);
 	} catch (MelderError) {
@@ -255,26 +255,25 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 	/*
 		Handle the title line.
 	*/
-	mutablestring32 line = MelderReadText_readLine (text);
-	Melder_assert (Melder_startsWith (line, U"Praat notebook "));
-	Melder_skipHorizontalSpace (& (line += 15));
-	Melder_require (*line == U'"',
-		U"There should be a page title (starting with an opening quote) after “Praat nodeBook ” on the first line.");
-	autoMelderString titleBuffer;
-	while (* ++ line != U'\0')
-		if (*line == U'"')
-			break;
-		else
-			MelderString_append (& titleBuffer, *line);
+	mutablestring32 firstLine = MelderReadText_readLine (text);
+	Melder_require (!! firstLine,
+		U"Empty notebook.");
+	Melder_require (*firstLine == U'"',
+		U"There should be a page title (starting with an opening quote) on the first line, at or around “", firstLine, U"”.");
+	++ firstLine;   // jump over opening quote
+	char32 *p_closingQuote = str32rchr (firstLine, U'"');
+	Melder_require (p_closingQuote - firstLine > 0,
+		U"There should be a page title (starting with an closing quote) on the first line.");
+	*p_closingQuote = U'\0';
 
 	/*
 		Check whether a page with this title is already present.
 	*/
-	if (lookUp_unsorted (me, titleBuffer.string))
+	if (lookUp_unsorted (me, firstLine))
 		return;
 
 	autoManPage autopage = Thing_new (ManPage);
-	autopage -> title = Melder_dup (titleBuffer.string);
+	autopage -> title = Melder_dup (firstLine);
 
 	/*
 		Add the page early, so that lookUp can find it.
@@ -282,14 +281,12 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 	ManPage page = my pages. addItem_move (autopage.move());
 
 	/*
-		Handle the copyright line.
+		Handle the signature line.
 	*/
-	line = MelderReadText_readLine (text);
-	if (Melder_nequ (line, U"(c) ", 4)) {
-		line += 4;
-		page -> copyright = Melder_dup (line);
-	} else
-		Melder_throw (U"Missing copyright line (typically author and date) that should start with “(c)”.");
+	mutablestring32 line = MelderReadText_readLine (text);
+	Melder_require (!! line,
+		U"Missing signature line (typically author and date) in page “", firstLine, U"”.");
+	page -> signature = Melder_dup (line);
 
 	/*
 		Find all the notebook attributes.
@@ -316,7 +313,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		line = MelderReadText_readLine (text);
 	} while (line && ! stringHasInk (line));
 	ManPage_Paragraph previousParagraph = nullptr;
-	autoMelderString buffer_graphical, buffer_graphical2;
+	autoMelderString buffer_graphical, buffer_graphicalCode;
 	for (;;) {
 		if (! line)
 			return;
@@ -367,6 +364,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			Melder_skipHorizontalSpace (& line);
 			MelderString_append (& buffer_graphical, line);
 		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
+			const bool shouldShowCode = ! str32chr (line, U'-');
 			type = kManPage_type::SCRIPT;
 			width = 6.0;
 			do {
@@ -377,45 +375,42 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					line = MelderReadText_readLine (text);
 					break;
 				}
-				const bool shouldShow = true;   // TODO: or hide...
-				if (shouldShow) {
+				if (shouldShowCode) {
 					/*
-						Convert to graphical.
+						Convert to graphical code.
 					*/
-					MelderString_empty (& buffer_graphical2);
+					MelderString_empty (& buffer_graphicalCode);
 					const char32 *p = line;
 					while (*p) {
 						if (*p == U'\t')
-							MelderString_append (& buffer_graphical2, p == line ? nullptr : U"    ");
+							MelderString_append (& buffer_graphicalCode, p == line ? nullptr : U"    ");
 						else if (*p == U'#')
-							MelderString_append (& buffer_graphical2, U"\\# ");
+							MelderString_append (& buffer_graphicalCode, U"\\# ");
 						else if (*p == U'$')
-							MelderString_append (& buffer_graphical2, U"\\$ ");
+							MelderString_append (& buffer_graphicalCode, U"\\$ ");
 						else if (*p == U'@')
-							MelderString_append (& buffer_graphical2, U"\\@ ");
+							MelderString_append (& buffer_graphicalCode, U"\\@ ");
 						else if (*p == U'%')
-							MelderString_append (& buffer_graphical2, U"\\% ");
+							MelderString_append (& buffer_graphicalCode, U"\\% ");
 						else if (*p == U'^')
-							MelderString_append (& buffer_graphical2, U"\\^ ");
+							MelderString_append (& buffer_graphicalCode, U"\\^ ");
 						else
-							MelderString_appendCharacter (& buffer_graphical2, *p);
+							MelderString_appendCharacter (& buffer_graphicalCode, *p);
 						p ++;
 					}
 					ManPage_Paragraph par = page -> paragraphs. append ();
 					par -> type = kManPage_type::CODE;
-					par -> text = Melder_dup (buffer_graphical2. string).transfer();
-					if (par -> text) {
-						const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (par -> text);
-						if (
-							Melder_startsWith (firstNonspace, U"Draw") ||
-							Melder_startsWith (firstNonspace, U"Paint") ||
-							Melder_startsWith (firstNonspace, U"Text ")
-						)
-							height = 3.0;
-					}
+					par -> text = Melder_dup (buffer_graphicalCode. string).transfer();
 				}
-				const bool shouldEvaluate = true;   // TODO: or not...
-				if (shouldEvaluate) {
+				const bool shouldShowOutput = true;   // TODO: or not...
+				if (shouldShowOutput) {
+					const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
+					if (
+						Melder_startsWith (firstNonspace, U"Draw") ||
+						Melder_startsWith (firstNonspace, U"Paint") ||
+						Melder_startsWith (firstNonspace, U"Text ")
+					)
+						height = 3.0;
 					MelderString_append (& buffer_graphical, line);
 					MelderString_appendCharacter (& buffer_graphical, U'\n');
 				}
@@ -476,9 +471,9 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 static void readOnePage (ManPages me, MelderReadText text) {
 	const bool isNotebook = (
 		text -> string32 ?
-			Melder_startsWith (text -> string32.get(), U"Praat notebook ")
+			text -> string32 [0] == U'"'
 		:
-			strnequ (text -> string8.get(), "Praat notebook ", 15)
+			text -> string8 [0] == '"'
 	);
 	if (isNotebook)
 		readOnePage_notebook (me, text);
@@ -514,7 +509,7 @@ autoManPages ManPages_createFromText (MelderReadText text) {
 	return me;
 }
 
-void ManPages_addPage (ManPages me, conststring32 title, conststring32 copyright,
+void ManPages_addPage (ManPages me, conststring32 title, conststring32 signature,
 	structManPage_Paragraph paragraphs [])
 {
 	autoManPage page = Thing_new (ManPage);
@@ -527,12 +522,26 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 copyright
 		targetParagraph -> height = par -> height;
 		targetParagraph -> draw = par -> draw;
 	}
-	page -> copyright = Melder_dup (copyright);
+	page -> signature = Melder_dup (signature);
 	my pages. addItem_move (page.move());
 }
-void ManPages_addPageFromNotebook (ManPages me, conststring8 text) {
-	autoMelderReadText readText = MelderReadText_createFromText (Melder_8to32 (text));
-	readOnePage_notebook (me, readText.get());
+void ManPages_addPagesFromNotebook (ManPages me, conststring8 multiplePagesText) {
+	autoMelderReadText multiplePagesReader = MelderReadText_createFromText (Melder_8to32 (multiplePagesText));
+	autoMelderString pageText;
+	for (;;) {
+		mutablestring32 line = MelderReadText_readLine (multiplePagesReader.get());
+		const bool atEndOfPage = ( ! line || Melder_startsWith (line, U"#####") );
+		if (atEndOfPage) {
+			if (pageText.length > 0) {
+				autoMelderReadText pageReader = MelderReadText_createFromText (Melder_dup (pageText.string));
+				readOnePage_notebook (me, pageReader.get());
+			}
+			if (! line)
+				return;
+			MelderString_empty (& pageText);
+		} else
+			MelderString_append (& pageText, line, U"\n");
+	}
 }
 
 static bool pageCompare (ManPage me, ManPage thee) {
@@ -1257,7 +1266,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		}
 		MelderString_append (buffer, U"</ul>\n");
 	}
-	MelderString_append (buffer, U"<hr>\n<address>\n\t<p>&copy; ", page -> copyright.get());
+	MelderString_append (buffer, U"<hr>\n<address>\n\t<p>&copy; ", page -> signature.get());
 	MelderString_append (buffer, U"</p>\n</address>\n</body>\n</html>\n");
 }
 
