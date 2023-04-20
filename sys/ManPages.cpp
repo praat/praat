@@ -398,7 +398,8 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 						Convert to graphical code.
 					*/
 					MelderString_empty (& buffer_graphicalCode);
-					const char32 *p = line;
+					const char32 *p = & line [0];
+					bool inBold = false;
 					while (*p) {
 						if (*p == U'\t')
 							MelderString_append (& buffer_graphicalCode, p == line ? nullptr : U"    ");
@@ -406,13 +407,61 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 							MelderString_append (& buffer_graphicalCode, U"\\# ");
 						else if (*p == U'$')
 							MelderString_append (& buffer_graphicalCode, U"\\$ ");
-						else if (*p == U'@')
+						else if (*p == U'@') {
 							MelderString_append (& buffer_graphicalCode, U"\\@ ");
-						else if (*p == U'%')
+						} else if (*p == U'%')
 							MelderString_append (& buffer_graphicalCode, U"\\% ");
 						else if (*p == U'^')
 							MelderString_append (& buffer_graphicalCode, U"\\^ ");
-						else
+						else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
+							MelderString_append (& buffer_graphicalCode, U"@@");
+							p += 3;
+							static MelderString linkTarget, linkText;
+							MelderString_empty (& linkTarget);
+							MelderString_empty (& linkText);
+							bool hasSeparateLinkTarget = false;
+							bool includeLinkTextInLinkTarget = true;
+							while (*p != U'\0') {
+								if (*p == U'|') {
+									hasSeparateLinkTarget = true;
+									MelderString_empty (& linkText);
+									includeLinkTextInLinkTarget = false;
+								} else if (*p == U':' && p [1] == U' ') {
+									MelderString_append (& linkTarget, U": ");
+									hasSeparateLinkTarget = true;
+									MelderString_empty (& linkText);
+									p += 1;   // skip space
+									includeLinkTextInLinkTarget = true;
+								} else if (*p == U':' && (p [1] == U'\0' || p [1] == U'}')) {
+									MelderString_append (& linkTarget, U"...");
+									hasSeparateLinkTarget = true;
+									MelderString_appendCharacter (& linkText, U':');
+								} else if (*p == U'}') {
+									break;   // but a missing closing brace at the end of a line is also fine
+								} else {
+									if (includeLinkTextInLinkTarget)
+										MelderString_appendCharacter (& linkTarget, *p);
+									MelderString_appendCharacter (& linkText, *p);
+								}
+								p ++;
+							}
+							if (hasSeparateLinkTarget) {
+								MelderString_append (& buffer_graphicalCode, linkTarget.string);
+								MelderString_appendCharacter (& buffer_graphicalCode, U'|');
+							}
+							MelderString_append (& buffer_graphicalCode, linkText.string, U'@');
+						} else if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
+							MelderString_append (& buffer_graphicalCode, U"##");
+							inBold = true;
+							p += 2;
+						} else if (*p == U'}') {
+							if (inBold) {
+								MelderString_appendCharacter (& buffer_graphicalCode, U'#');
+								inBold = false;
+							} else {
+								MelderString_appendCharacter (& buffer_graphicalCode, U'}');
+							}
+						} else
 							MelderString_appendCharacter (& buffer_graphicalCode, *p);
 						p ++;
 					}
@@ -429,7 +478,40 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 						Melder_startsWith (firstNonspace, U"Text ")
 					)
 						height = 3.0;
-					MelderString_append (& buffer_graphical, line);
+					const char32 *p = & line [0];
+					bool inBold = false;
+					while (*p) {
+						if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
+							p += 3;
+							static MelderString linkText;
+							MelderString_empty (& linkText);
+							while (*p != U'\0') {
+								if (*p == U'|') {
+									MelderString_empty (& linkText);   // ignore link target as well as "|"
+								} else if (*p == U':' && p [1] == U' ') {
+									MelderString_empty (& linkText);   // ignore link target
+									p += 1;
+								} else if (*p == U'}') {
+									break;   // but a missing closing brace at the end of a line is also fine
+								} else {
+									MelderString_appendCharacter (& linkText, *p);
+								}
+								p ++;
+							}
+							MelderString_append (& buffer_graphical, linkText.string);
+						} else if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
+							inBold = true;
+							p += 2;
+						} else if (*p == U'}') {
+							if (inBold) {
+								inBold = false;
+							} else {
+								MelderString_appendCharacter (& buffer_graphical, U'}');
+							}
+						} else
+							MelderString_appendCharacter (& buffer_graphical, *p);
+						p ++;
+					}
 					MelderString_appendCharacter (& buffer_graphical, U'\n');
 				}
 			} while (1);
