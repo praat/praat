@@ -1990,7 +1990,7 @@ NORMAL (U"According to section 4 above, and according to @@Formulas 2.2. Represe
 CODE (UR"~~~(Formula: "correct", "self\$  [""response""] = self\$  [""stimulus""]")~~~")
 NORMAL (U"The required doubling of string-internal double quotes is awkward. "
 	"Therefore, there exists a special way for typing formula arguments, namely with the tilde (\"~\"):")
-CODE (UR"~~~(
+CODE (1+UR"~~~(
 Formula: "correct", ~ self\$  ["response"] = self\$  ["stimulus"]
 )~~~")
 NORMAL (U"This means that you can write the example of section 4 in an analogous way:")
@@ -2501,7 +2501,7 @@ NORMAL (U"There is normally one line per statement, and one statement per line. 
 CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “ is ”, %duration, “ seconds long and contains the text: ”, %%text\\$ %")
 NORMAL (U"By making the current window wider, you can see that I really put this whole statement on a single line. "
 	"I could have distributed it over two lines in the following way, by using three dots (an %ellipsis):")
-CODE (U"appendInfoLine: “Interval ”, %intervalNumber, ” is ”, %duration, ” seconds long")
+CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “ is ”, %duration, “ seconds long")
 CODE (U"... and contains the text: ”, %%text\\$ %")
 NORMAL (U"Here is another common type of example:")
 CODE (U"Create Sound from formula: “windowedSine”, 1, 0, 1, 44100,")
