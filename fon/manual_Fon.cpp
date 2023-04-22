@@ -121,13 +121,14 @@ is removed from the tier.
 A command to remove one point from every selected time-based tier object
 (@DurationTier, @IntensityTier, @PitchTier).
 
-=== Setting ===
+Setting
+=======
 
 ##Time (s)
 :	the time near which you want to remove a point.
 
-=== Behaviour ===
-
+Behaviour
+=========
 The point nearest to #Time (if there is any point) is removed from the tier.
 
 ################################################################################
@@ -137,22 +138,22 @@ The point nearest to #Time (if there is any point) is removed from the tier.
 A command to remove some points from every selected time-based tier object
 (@DurationTier, @IntensityTier, @PitchTier).
 
-=== Settings ===
-
-##From time (s)
-##To time (s)
+Settings
+========
+##From time (s), To time (s)
 :	the times between which you want to remove all points.
 
-=== Behaviour ===
-
-Any points between ##Frome time# and ##To Time# (inclusive) are removed from the tier.
+Behaviour
+=========
+Any points between ##From time# and ##To Time# (inclusive) are removed from the tier.
 
 ################################################################################
 "AmplitudeTier"
 © Paul Boersma 2007-08-25
 
 One of the @@types of objects@ in Praat.
-An AmplitudeTier object represents a time-stamped amplitude contour, i.e., it contains a series of (%time, %amplitude) points.
+An AmplitudeTier object represents a time-stamped amplitude contour,
+i.e., it contains a series of (%time, %amplitude) points.
 The amplitude values are in Pascal. To see some applications, consult the @IntensityTier information;
 the difference between an AmplitudeTier and an IntensityTier is that the former has values in Pascal
 which multiply linearly with a Sound (for instance), and the latter has values in dB,
@@ -186,8 +187,8 @@ Example
 To create a tier 0.9 seconds long, with an deceleration around 0.6 seconds,
 you do (either in a script or by choosing these 4 commands by hand):
 {
-	\#{Create DurationTier:} “dur”, 0, 0.9
-	\@{DurationTier: Add point:} 0.3, 1
+	#{Create DurationTier:} “dur”, 0, 0.9
+	@{DurationTier: Add point:} 0.3, 1
 	Add point: 0.6, 2.3
 	Add point: 0.7, 1
 }
@@ -208,56 +209,96 @@ The result will look like
 The target duration will be the area under this curve, which is 0.9 + 1/2 · 1.3 · 0.4 = 1.16 seconds.
 
 ################################################################################
+"Create empty PointProcess..."
+© Paul Boersma 2002-12-04
+
+A command in the @@New menu@ to create an empty @PointProcess. The newly created object is put in the list of objects.
+
+################################################################################
+"Create IntensityTier..."
+© Paul Boersma 2002-12-04
+
+A command in the @@New menu@ to create an empty @IntensityTier object.
+The resulting object will have the specified name and time domain, but contain no formant points.
+To add some points to it, use @@IntensityTier: Add point...@.
+For an example, see @@Source-filter synthesis@.
+
+################################################################################
+"Create Matrix..."
+© Paul Boersma 2002-12-12
+
+A command in the @@New menu@ to create a @Matrix with the specified sampling attributes,
+filled with values from a formula (see @@Matrix: Formula...@).
+
+################################################################################
+"Create Poisson process..."
+© Paul Boersma 2004-10-05
+
+A command to create a @PointProcess object that represents a Poisson process.
+A Poisson process is a stationary point process with a fixed density %λ,
+which means that there are, on the average, %λ events per second.
+
+Settings
+========
+
+##Start time (s)
+:	%t__%min_, the beginning of the time domain, in seconds.
+
+##End time (s)
+:	%t__%max_, the end of the time domain, in seconds.
+
+##Density (Hz)
+:	the average number of points per second.
+
+Algorithm
+=========
+
+First, the number of points %N in the time domain is determined. Its expectation value is
+~	%λ = (%t__%max_ – %t__%min_) · %density
+
+but its actual value is taken from the Poisson distribution:
+~	%p(%n) = (%%λ^n% / %n!) %e^^–%λ
+
+Then, %N points are computed throughout the time domain, according to a uniform distribution:
+~	%p(%t) = 1 / (%t__%max_ – %t__%min_)   for %t ∈ [%t__%min_, %t__%max_]
+~	%p(%t) = 0   outside [%t__%min_, %t__%max_]
+
+################################################################################
+"Create simple Matrix..."
+© Paul Boersma 2002-12-04
+
+A command in the @@New menu@ to create a @Matrix with the specified number of rows and columns,
+filled with values from a formula (see @@Matrix: Formula...@).
+
+################################################################################
+"Create Strings as folder list..."
+© Paul Boersma 2020-12-26
+
+A command in the @@New menu@ to create a @Strings object containing a list of directories in a given parent directory.
+It works completely analogously to @@Create Strings as file list...@.
+
+################################################################################
+"Create Strings as file list..."
+© Paul Boersma 2020-12-29
+
+A command in the @@New menu@ to create a @Strings object containing a list of files in a given folder.
+
+Settings
+========
+{-)~~~"
+	Manual_DRAW_SETTINGS_WINDOW ("Create Strings as file list", 2.6)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Name", "fileList")
+	Manual_DRAW_SETTINGS_WINDOW_TEXT ("File path", "/Users/miep/Sounds/*.wav")
+R"~~~(}
+
+##Name
+:	the name of the resulting Strings object.
+
+
+################################################################################
 )~~~"
 MAN_PAGES_END
 
-
-MAN_BEGIN (U"Create empty PointProcess...", U"ppgb", 20021204)
-INTRO (U"A command in the @@New menu@ to create an empty @PointProcess. The newly created object is put in the list of objects.")
-MAN_END
-
-MAN_BEGIN (U"Create IntensityTier...", U"ppgb", 20021204)
-INTRO (U"A command in the @@New menu@ to create an empty @IntensityTier object.")
-NORMAL (U"The resulting object will have the specified name and time domain, but contain no formant points. "
-	"To add some points to it, use @@IntensityTier: Add point...@.")
-NORMAL (U"For an example, see @@Source-filter synthesis@.")
-MAN_END
-
-MAN_BEGIN (U"Create Matrix...", U"ppgb", 20021212)
-INTRO (U"A command in the @@New menu@ to create a @Matrix with the specified sampling attributes, "
-	"filled with values from a formula (see @@Matrix: Formula...@).")
-MAN_END
-
-MAN_BEGIN (U"Create Poisson process...", U"ppgb", 20041005)
-INTRO (U"A command to create a @PointProcess object that represents a Poisson process.")
-NORMAL (U"A Poisson process is a stationary point process with a fixed density %λ, "
-	"which means that there are, on the average, %λ events per second.")
-ENTRY (U"Settings")
-TERM (U"##Start time (s)")
-DEFINITION (U"%t__%min_, the beginning of the time domain, in seconds.")
-TERM (U"##End time (s)")
-DEFINITION (U"%t__%max_, the end of the time domain, in seconds.")
-TERM (U"##Density (Hz)")
-DEFINITION (U"the average number of points per second.")
-ENTRY (U"Algorithm")
-NORMAL (U"First, the number of points %N in the time domain is determined. Its expectation value is")
-EQUATION (U"%λ = (%t__%max_ – %t__%min_) · %density")
-NORMAL (U"but its actual value is taken from the Poisson distribution:")
-EQUATION (U"%p(%n) = (%%λ^n% / %n!) %e^^–%λ")
-NORMAL (U"Then, %N points are computed throughout the time domain, according to a uniform distribution:")
-EQUATION (U"%p(%t) = 1 / (%t__%max_ – %t__%min_)   for %t ∈ [%t__%min_, %t__%max_]")
-EQUATION (U"%p(%t) = 0   outside [%t__%min_, %t__%max_]")
-MAN_END
-
-MAN_BEGIN (U"Create simple Matrix...", U"ppgb", 20021204)
-INTRO (U"A command in the @@New menu@ to create a @Matrix with the specified number of rows and columns, "
-	"filled with values from a formula (see @@Matrix: Formula...@).")
-MAN_END
-
-MAN_BEGIN (U"Create Strings as folder list...", U"ppgb", 20201226)
-INTRO (U"A command in the @@New menu@ to create a @Strings object containing a list of directories in a given parent directory. "
-	"It works completely analogously to @@Create Strings as file list...@.")
-MAN_END
 
 MAN_BEGIN (U"Create Strings as file list...", U"ppgb", 20201229)
 INTRO (U"A command in the @@New menu@ to create a @Strings object containing a list of files in a given folder.")
