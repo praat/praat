@@ -175,8 +175,7 @@ See the @Formulas tutorial for examples and explanations.
 
 ################################################################################
 "Create DurationTier..."
-© Paul Boersma 2014-04-21, 2023-04-19
-Keywords: Praat, duration manipulation
+© Paul Boersma 2014-04-21, 2023-04-30
 
 A command in the @@New menu@ to create an empty @DurationTier object.
 The resulting object will have the specified name and time domain, but contain no duration points.
@@ -187,8 +186,8 @@ Example
 To create a tier 0.9 seconds long, with an deceleration around 0.6 seconds,
 you do (either in a script or by choosing these 4 commands by hand):
 {
-	#{Create DurationTier:} “dur”, 0, 0.9
-	@{DurationTier: Add point:} 0.3, 1
+	\#{Create DurationTier:} “dur”, 0, 0.9
+	\@{DurationTier: Add point:} 0.3, 1
 	Add point: 0.6, 2.3
 	Add point: 0.7, 1
 }

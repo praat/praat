@@ -4849,7 +4849,7 @@ NORMAL (U"In the above examples, things will often get drawn to the screen with 
 	"This means that #demoWaitForInput is the place where your drawings will typically be painted on the screen. "
 	"If you want painting to happen earlier (e.g. in animations), you can use")
 CODE (U"demoShow ( )")
-NORMAL (U"Also in animations, you will often want to regulate the time span between two consecutive drawing. "
+NORMAL (U"Also in animations, you will often want to regulate the time span between two consecutive drawings. "
 	"If you want 0.05 seconds between drawings, you can put Praat to sleep temporarily with")
 CODE (U"sleep (0.05)")
 NORMAL (U"If you need user input during the animation, you can replace #demoWaitForInput or #demoShow with")

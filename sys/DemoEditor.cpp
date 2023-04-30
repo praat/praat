@@ -230,7 +230,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
-		bool wasBackgrounding = Melder_backgrounding;
+		const bool wasBackgrounding = Melder_backgrounding;
 		if (wasBackgrounding)
 			praat_foreground ();
 		try {
