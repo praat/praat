@@ -610,6 +610,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		if (! my d_widget -> shell -> textFocus)
+			my d_widget -> shell -> textFocus = my d_widget;   // even if not-yet-managed. But in that case it will not receive global focus
 	#elif cocoa
 		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
 		if (Melder_debug == 55)
@@ -690,6 +692,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 			0, 0, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
+		if (! my d_widget -> shell -> textFocus)
+			my d_widget -> shell -> textFocus = my d_widget;   // even if not-yet-managed. But in that case it will not receive global focus
 	#elif cocoa
 		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
 		my d_widget = (GuiObject) drawingArea;

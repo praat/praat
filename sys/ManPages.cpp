@@ -383,8 +383,16 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			MelderString_append (& buffer_graphical, line);
 		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
 			const bool shouldShowCode = ! str32chr (line, U'-');
+			const char32 *sizeLocation = str32chr (line, U'x');
+			if (sizeLocation) {
+				const char32 *widthLocation = sizeLocation - 1;
+				while (Melder_isDecimalNumber (*widthLocation) || *widthLocation == U'.')
+					widthLocation --;
+				width = Melder_atof (widthLocation);
+				height = Melder_atof (sizeLocation + 1);
+			} else
+				width = 6.0;
 			type = kManPage_type::SCRIPT;
-			width = 6.0;
 			do {
 				line = MelderReadText_readLine (text);
 				if (! line)
@@ -401,26 +409,26 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					const char32 *p = & line [0];
 					bool inBold = false;
 					while (*p) {
-						if (*p == U'\t')
+						if (*p == U'\t') {
 							MelderString_append (& buffer_graphicalCode, p == line ? nullptr : U"    ");
-						else if (*p == U'#')
+						} else if (*p == U'#') {
 							MelderString_append (& buffer_graphicalCode, U"\\# ");
-						else if (*p == U'$')
+						} else if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
+							MelderString_append (& buffer_graphicalCode, U"##");
+							inBold = true;
+							p += 2;
+						} else if (*p == U'$') {
 							MelderString_append (& buffer_graphicalCode, U"\\$ ");
-						else if (*p == U'@') {
+						} else if (*p == U'@') {
 							MelderString_append (& buffer_graphicalCode, U"\\@ ");
-						} else if (*p == U'%')
-							MelderString_append (& buffer_graphicalCode, U"\\% ");
-						else if (*p == U'^')
-							MelderString_append (& buffer_graphicalCode, U"\\^ ");
-						else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
+						} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
 							MelderString_append (& buffer_graphicalCode, U"@@");
-							p += 3;
 							static MelderString linkTarget, linkText;
 							MelderString_empty (& linkTarget);
 							MelderString_empty (& linkText);
 							bool hasSeparateLinkTarget = false;
 							bool includeLinkTextInLinkTarget = true;
+							p += 3;
 							while (*p != U'\0') {
 								if (*p == U'|') {
 									hasSeparateLinkTarget = true;
@@ -450,10 +458,10 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 								MelderString_appendCharacter (& buffer_graphicalCode, U'|');
 							}
 							MelderString_append (& buffer_graphicalCode, linkText.string, U'@');
-						} else if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
-							MelderString_append (& buffer_graphicalCode, U"##");
-							inBold = true;
-							p += 2;
+						} else if (*p == U'%') {
+							MelderString_append (& buffer_graphicalCode, U"\\% ");
+						} else if (*p == U'^') {
+							MelderString_append (& buffer_graphicalCode, U"\\^ ");
 						} else if (*p == U'}') {
 							if (inBold) {
 								MelderString_appendCharacter (& buffer_graphicalCode, U'#');
@@ -473,9 +481,10 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				if (shouldShowOutput) {
 					const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
 					if (
-						Melder_startsWith (firstNonspace, U"Draw") ||
+						(Melder_startsWith (firstNonspace, U"Draw") ||
 						Melder_startsWith (firstNonspace, U"Paint") ||
-						Melder_startsWith (firstNonspace, U"Text ")
+						Melder_startsWith (firstNonspace, U"Text "))
+						&& height == 0.001
 					)
 						height = 3.0;
 					const char32 *p = & line [0];
