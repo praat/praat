@@ -52,7 +52,7 @@ ENTRY (U"Your own manual pages")
 NORMAL (U"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (U"ManPages", U"ppgb", 20230330)
+MAN_BEGIN (U"ManPages", U"ppgb", 20230420)
 INTRO (U"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -188,7 +188,7 @@ CODE (U"<script> 6 3 \"")
 	CODE1 (U"plusObject: \"Sound sineWithNoise\"")
 	CODE1 (U"Remove")
 CODE (U"\\\"r")
-NORMAL (U"Note that unlike the previous script, this script does not set the font and font size. "
+NORMAL (U"Note that this script does not set the font and font size. "
 	"This means that the drawing will use the font and font size of the manual page, "
 	"which is usually what you want.")
 NORMAL (U"For obvious safety reasons, embedded scripts cannot contain commands that change the contents of any disk "
@@ -197,7 +197,7 @@ NORMAL (U"For obvious safety reasons, embedded scripts cannot contain commands t
 	"are irrelevant inside pictures and are therefore forbidden as well. "
 	"Note that commands like #writeInfoLine, ##Read from file...#, and #runScript are still available "
 	"(with the last two, you can use relative paths; "
-	"with #runScript, you can only run scripts that do not contain any of the forbidden commands).")
+	"with #runScript, you can only run scripts that do not call any of the forbidden commands directly or indirectly).")
 NORMAL (U"The commands ##Set outer viewport...# and ##Set inner viewport...# are available; "
 	"they count in inches (if the font size of the manual is 12). The (0, 0) point is in the upper left corner, "
 	"as in the Picture window, so that you can test your picture with a normal Praat script; "

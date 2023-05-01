@@ -3845,7 +3845,7 @@ static void do_do () {
 		pushNumber (Melder_atof (valueString.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
-		(str32nequ (command, U"Save ", 5) || str32nequ (command, U"Write ", 6) || str32nequ (command, U"Append ", 7) || str32equ (command, U"Quit")))
+		(str32nequ (command, U"Save ", 5) || str32nequ (command, U"Write ", 6) || str32nequ (command, U"Append to ", 10) || str32equ (command, U"Quit")))
 	{
 		Melder_throw (U"Commands that write files (including Quit) are not available inside manuals.");
 	} else {
@@ -3941,7 +3941,7 @@ static void do_do_STR () {
 		pushString (Melder_dup (info.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
-		(str32nequ (command, U"Save ", 5) || str32nequ (command, U"Write ", 6) || str32nequ (command, U"Append ", 7) || str32equ (command, U"Quit")))
+		(str32nequ (command, U"Save ", 5) || str32nequ (command, U"Write ", 6) || str32nequ (command, U"Append to ", 10) || str32equ (command, U"Quit")))
 	{
 		Melder_throw (U"Commands that write files (including Quit) are not available inside manuals.");
 	} else {

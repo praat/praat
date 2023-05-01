@@ -22,13 +22,16 @@
 
 #include "ManPage_enums.h"
 
+Thing_declare (SoundList);
+
 typedef struct structManPage_Paragraph {
 	enum kManPage_type type;
 	conststring32 text;   // not an autostring32, because it could be a string literal (if not dynamic)
 	double width, height;   // for machine-code pictures and script chunks with pictures
 	void (*draw) (Graphics g);   // for machine-code pictures
-	autoGraphics cacheGraphics;   // for script chunks with pictures
-	autoMelderString cacheInfo;   // for script chunks with info text
+	autoGraphics cacheGraphics;   // for script chunks that output a picture
+	autoMelderString cacheInfo;   // for script chunks that output info text
+	SoundList cacheAudio;   // for script chunks with playable output
 	void invalidateCache () noexcept {
 		our cacheGraphics. reset();
 	}

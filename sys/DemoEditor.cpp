@@ -224,13 +224,13 @@ void Demo_waitForInput (Interpreter interpreter) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	//GuiObject_show (theReferenceToTheOnlyDemoEditor -> windowForm);
+	//GuiThing_show (theReferenceToTheOnlyDemoEditor -> windowForm);
 	theReferenceToTheOnlyDemoEditor -> clicked = false;
 	theReferenceToTheOnlyDemoEditor -> keyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
-		bool wasBackgrounding = Melder_backgrounding;
+		const bool wasBackgrounding = Melder_backgrounding;
 		if (wasBackgrounding)
 			praat_foreground ();
 		try {
@@ -260,6 +260,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#elif defined (_WIN32)
 				do {
+					//Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());   // make sure that even texts will be drawn
 					XEvent event;
 					GuiNextEvent (& event);
 					XtDispatchEvent (& event);

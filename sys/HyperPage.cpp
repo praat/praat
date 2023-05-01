@@ -378,7 +378,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 	if (cacheInfo && cacheInfo [0] != U'\0') {
 		const double fontSize = my instancePref_fontSize() * 0.86;   // as in CODE
 		Graphics_setColour (my graphics.get(), Melder_MAGENTA);
-		HyperPage_code0 (me, U"##->");
+		HyperPage_code0 (me, U"##=>");
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		//my d_y -= fontSize * (1.0/72);   // some empty space between the code and the output
 		static MelderString buffer;
