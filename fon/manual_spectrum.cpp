@@ -107,27 +107,60 @@ static void draw_SpectrumStopHann_decompose (Graphics g) {
 void manual_spectrum_init (ManPages me);
 void manual_spectrum_init (ManPages me) {
 
-MAN_BEGIN (U"Ltas", U"ppgb", 20070320)
-INTRO (U"One of the @@types of objects@ in Praat. "
-	"#Ltas is short for Long-Term Average Spectrum.")
-NORMAL (U"An object of class Ltas represents the logarithmic @@power spectral density@ as a function of frequency, "
-	"expressed in dB/Hz relative to 2·10^^-5^ Pa. ")
-ENTRY (U"Inside an Ltas object")
-NORMAL (U"With @Inspect, you will see the following attributes:")
-TERM (U"%x__%min_")
-DEFINITION (U"the bottom of the frequency domain, in hertz. Usually 0.")
-TERM (U"%x__%max_")
-DEFINITION (U"the top of the frequency domain, in hertz.")
-TERM (U"%n__%x_")
-DEFINITION (U"the number of frequency bins (≥ 1).")
-TERM (U"%dx")
-DEFINITION (U"the frequency step, or %%bin width%, in hertz.")
-TERM (U"%x__1_")
-DEFINITION (U"the frequency associated with the first bin, in hertz. "
-	"Usually equals %dx / 2, because the first bin tends to start at 0 hertz.")
-TERM (U"%z__1%i_, %i = 1 ... %n__%x_")
-DEFINITION (U"the power spectral density, expressed in dB. ")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Ltas"
+© Paul Boersma 2007-03-20
+
+One of the @@types of objects@ in Praat.
+#Ltas is short for Long-Term Average Spectrum.
+
+An object of class Ltas represents the logarithmic @@power spectral density@ as a function of frequency,
+expressed in dB/Hz relative to 2·10^^-5^ Pa.
+
+Inside an Ltas object
+=====================
+
+With @Inspect, you will see the following attributes:
+
+%x__%min_
+:	the bottom of the frequency domain, in hertz. Usually 0.
+
+%x__%max_
+:	the top of the frequency domain, in hertz.
+
+%n__%x_
+:	the number of frequency bins (≥ 1).
+
+%dx
+:	the frequency step, or %%bin width%, in hertz.
+
+%x__1_
+:	the frequency associated with the first bin, in hertz.
+Usually equals %dx / 2, because the first bin tends to start at 0 hertz.
+
+%z__1%i_, %i = 1 ... %n__%x_
+:	the power spectral density, expressed in dB.
+
+################################################################################
+"Ltas: Average"
+© Paul Boersma 2023-05-03
+
+The command ##Average# becomes available under Combine when you select one or more Ltas objects.
+
+When you choose ##Average#, a new @Ltas called “averaged” will appear in the list of objects.
+This new Ltas will contain the average of the Ltases that you had selected.
+
+Algorithm
+=========
+The averaging takes place in the energy domain. For instance, if you select three Ltases,
+the values in the three Ltases will be converted from dB to Pa^2,
+then added up, then divided by 3, then converted from Pa^2 to dB.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Ltas: Get bin number from frequency...", U"ppgb", 20140421)
 INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
