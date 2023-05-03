@@ -107,27 +107,60 @@ static void draw_SpectrumStopHann_decompose (Graphics g) {
 void manual_spectrum_init (ManPages me);
 void manual_spectrum_init (ManPages me) {
 
-MAN_BEGIN (U"Ltas", U"ppgb", 20070320)
-INTRO (U"One of the @@types of objects@ in Praat. "
-	"#Ltas is short for Long-Term Average Spectrum.")
-NORMAL (U"An object of class Ltas represents the logarithmic @@power spectral density@ as a function of frequency, "
-	"expressed in dB/Hz relative to 2·10^^-5^ Pa. ")
-ENTRY (U"Inside an Ltas object")
-NORMAL (U"With @Inspect, you will see the following attributes:")
-TERM (U"%x__%min_")
-DEFINITION (U"the bottom of the frequency domain, in hertz. Usually 0.")
-TERM (U"%x__%max_")
-DEFINITION (U"the top of the frequency domain, in hertz.")
-TERM (U"%n__%x_")
-DEFINITION (U"the number of frequency bins (≥ 1).")
-TERM (U"%dx")
-DEFINITION (U"the frequency step, or %%bin width%, in hertz.")
-TERM (U"%x__1_")
-DEFINITION (U"the frequency associated with the first bin, in hertz. "
-	"Usually equals %dx / 2, because the first bin tends to start at 0 hertz.")
-TERM (U"%z__1%i_, %i = 1 ... %n__%x_")
-DEFINITION (U"the power spectral density, expressed in dB. ")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Ltas"
+© Paul Boersma 2007-03-20
+
+One of the @@types of objects@ in Praat.
+#Ltas is short for Long-Term Average Spectrum.
+
+An object of class Ltas represents the logarithmic @@power spectral density@ as a function of frequency,
+expressed in dB/Hz relative to 2·10^^-5^ Pa.
+
+Inside an Ltas object
+=====================
+
+With @Inspect, you will see the following attributes:
+
+%x__%min_
+:	the bottom of the frequency domain, in hertz. Usually 0.
+
+%x__%max_
+:	the top of the frequency domain, in hertz.
+
+%n__%x_
+:	the number of frequency bins (≥ 1).
+
+%dx
+:	the frequency step, or %%bin width%, in hertz.
+
+%x__1_
+:	the frequency associated with the first bin, in hertz.
+Usually equals %dx / 2, because the first bin tends to start at 0 hertz.
+
+%z__1%i_, %i = 1 ... %n__%x_
+:	the power spectral density, expressed in dB.
+
+################################################################################
+"Ltas: Average"
+© Paul Boersma 2023-05-03
+
+The command ##Average# becomes available under Combine when you select one or more Ltas objects.
+
+When you choose ##Average#, a new @Ltas called “averaged” will appear in the list of objects.
+This new Ltas will contain the average of the Ltases that you had selected.
+
+Algorithm
+=========
+The averaging takes place in the energy domain. For instance, if you select three Ltases,
+the values in the three Ltases will be converted from dB to Pa^2,
+then added up, then divided by 3, then converted from Pa^2 to dB.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Ltas: Get bin number from frequency...", U"ppgb", 20140421)
 INTRO (U"A @@Query submenu|query@ to the selected @Ltas object.")
@@ -777,6 +810,79 @@ LIST_ITEM (U"• @@Spectrum: Get central moment...")
 LIST_ITEM (U"• @@Spectrum: Get skewness...")
 LIST_ITEM (U"• @@Spectrum: Get kurtosis...")
 MAN_END
+
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Spectrum: Tabulate (verbose)"
+© Paul Boersma 2023-05-03
+
+The command ##Tabulate (verbose)# becomes available under Tabulate
+when you select exactly one @Spectrum object.
+
+When you choose ##Tabulate (verbose)#, a new @Table (with the same name as the Spectrum)
+will appear in the list of objects. When you ##View & Edit# this Table,
+you will see:
+
+A column called #bin.
+:	This contains the bin number, running from 1 to the number of frequency bins in the Spectrum.
+
+A column called ##frequency (Hz)#.
+:	This is the frequency that is associated with the bin.
+In a Spectrum that you created from a @Sound, the frequency that is associated with bin 1
+is 0 Hz, and the frequency that is associated with the last bin is the @@Nyquist frequency@
+of that Sound (i.e. half the sampling frequency). The frequency step between consecutive
+bins is always the same, and we call this step the %%bin step%, abbreviated as %df.
+Thus, bin 2 is centred at %df, bin 3 at 2%df, bin 4 at 3%df, and so on.
+
+A column called ##re (Pa/Hz)#.
+:	This is the real part of the complex value of the spectrum in the bin.
+
+A column called ##im (Pa/Hz)#.
+:	This is the imaginary part of the complex value of the spectrum in the bin.
+
+A column called ##energy spectral density (Pa^2s/Hz)#.
+:	For most bins this is computed as the square of the real part plus the square of the imaginary part.
+For bin 1 (where the imaginary part is zero) this is computed as 2 times the square of the real part.
+If the number of the last bin is odd, the imaginary part will be zero, and the energy spectral density
+is computed as 2 times the square of the real part. For an explanation of the factor of 2, see below.
+
+A column called ##startOfBinWithinDomain (Hz)#.
+:	The first bin starts at 0 Hz and ends at 0.5%df, i.e. in the middle of the centres of bin 1 and bin 2.
+The second bin starts at 0.5%df and ends at 1.5%df, the third starts at 1.5%df and ends at 2.5%df.
+This column lists the beginnings of the bins. The part “within domain” refers to the fact
+that all bins represent both positive and negative frequencies,
+but we count only the frequencies in the domain of the Spectrum,
+which runs from 0 Hz to the Nyquist frequency.
+
+A column called ##endOfBinWithinDomain (Hz)#.
+:	This column is explained just above.
+
+A column called ##binWidthWithinDomain (Hz)#.
+:	Bin 1 runs from 0 Hz to 0.5%df, so it has a width of 0.5%df.
+Bin 2 runs from 0.5%df to 1.5%df, so it has a width of %df; the same goes for almost all remaining bins.
+As for the last bin: if there are an odd number %N of bins,
+then bin %N runs from (%N \-m 1.5)\.c%df to (%N \-m 1.0)\.c%df (which is the Nyquist frequency),
+so its width is 0.5%df.
+
+A column called ##binEnergy (Pa^2s)#.
+:	This is the bin’s energy spectral density times the width of the bin.
+Thus, you get this mostly from multiplying the energy spectral density column by %df,
+except for bin 1 and (if %N is odd) bin %N, where the energy spectral density
+is multiplied by 0.5%df instead. The sum of all the values in this column is the
+total energy of the signal, i.e. it should be equal to the average of the squares
+of the samples of an original Sound, times the duration of that Sound.
+
+A column called ##power spectral density (Pa^2/Hz)#.
+:	This is the @@power spectral density@ in the bin. It is computed as
+the energy spectral density divided by the duration of the original sound,
+which is the same as multiplication by %df. This column is almost the same
+as the bin energy column, except for bin 1 and (if %N is odd) bin %N,
+where it is twice as large.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Spectrum: To Ltas (1-to-1)", U"ppgb", 20141001)
 INTRO (U"A command for converting each selected @Spectrum object into an @Ltas object without loss of frequency resolution.")

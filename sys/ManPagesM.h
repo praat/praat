@@ -24,33 +24,39 @@
 	#include "ManPages.h"
 #endif
 
+#define MAN_PAGES_BEGIN  { conststring8 text = &
+#define MAN_PAGES_END  [1]; ManPages_addPagesFromNotebook (me, text); }
+
+
+#define MAN_EXCESS_INITIALIZERS_  autoGraphics(), autoMelderString(), nullptr
+
 #define MAN_BEGIN(t,a,d)  { conststring32 title = t, copyright = U"© " a " " #d; \
 	static struct structManPage_Paragraph page [] = {
-#define INTRO(text)  { kManPage_type::INTRO, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define ENTRY(text)  { kManPage_type::ENTRY, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define NORMAL(text)  { kManPage_type::NORMAL, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define LIST_ITEM(text)  { kManPage_type::LIST_ITEM, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define LIST_ITEM1(text)  { kManPage_type::LIST_ITEM1, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define LIST_ITEM2(text)  { kManPage_type::LIST_ITEM2, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define LIST_ITEM3(text)  { kManPage_type::LIST_ITEM3, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define TERM(text)  { kManPage_type::TERM, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define TERM1(text)  { kManPage_type::TERM1, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define TERM2(text)  { kManPage_type::TERM2, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define TERM3(text)  { kManPage_type::TERM3, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define DEFINITION(text)  { kManPage_type::DEFINITION, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define DEFINITION1(text)  { kManPage_type::DEFINITION1, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define DEFINITION2(text)  { kManPage_type::DEFINITION2, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define DEFINITION3(text)  { kManPage_type::DEFINITION3, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define CODE(text)  { kManPage_type::CODE, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define CODE1(text)  { kManPage_type::CODE1, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define CODE2(text)  { kManPage_type::CODE2, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define CODE3(text)  { kManPage_type::CODE3, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define CODE4(text)  { kManPage_type::CODE4, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define CODE5(text)  { kManPage_type::CODE5, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define PROTOTYPE(text)  { kManPage_type::PROTOTYPE, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define EQUATION(text)  { kManPage_type::EQUATION, text, 0.0, 0.0, nullptr, autoGraphics(), autoMelderString() },
-#define PICTURE(width,height,draw)  { kManPage_type::PICTURE, nullptr, width, height, draw, autoGraphics(), autoMelderString() },
-#define SCRIPT(width,height,text)  { kManPage_type::SCRIPT, text, width, height, nullptr, autoGraphics(), autoMelderString() },
+#define INTRO(text)  { kManPage_type::INTRO, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define ENTRY(text)  { kManPage_type::ENTRY, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define NORMAL(text)  { kManPage_type::NORMAL, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define LIST_ITEM(text)  { kManPage_type::LIST_ITEM, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define LIST_ITEM1(text)  { kManPage_type::LIST_ITEM1, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define LIST_ITEM2(text)  { kManPage_type::LIST_ITEM2, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define LIST_ITEM3(text)  { kManPage_type::LIST_ITEM3, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define TERM(text)  { kManPage_type::TERM, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define TERM1(text)  { kManPage_type::TERM1, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define TERM2(text)  { kManPage_type::TERM2, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define TERM3(text)  { kManPage_type::TERM3, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define DEFINITION(text)  { kManPage_type::DEFINITION, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define DEFINITION1(text)  { kManPage_type::DEFINITION1, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define DEFINITION2(text)  { kManPage_type::DEFINITION2, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define DEFINITION3(text)  { kManPage_type::DEFINITION3, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define CODE(text)  { kManPage_type::CODE, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define CODE1(text)  { kManPage_type::CODE1, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define CODE2(text)  { kManPage_type::CODE2, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define CODE3(text)  { kManPage_type::CODE3, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define CODE4(text)  { kManPage_type::CODE4, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define CODE5(text)  { kManPage_type::CODE5, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define PROTOTYPE(text)  { kManPage_type::PROTOTYPE, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define EQUATION(text)  { kManPage_type::EQUATION, text, 0.0, 0.0, nullptr, MAN_EXCESS_INITIALIZERS_ },
+#define PICTURE(width,height,draw)  { kManPage_type::PICTURE, nullptr, width, height, draw, MAN_EXCESS_INITIALIZERS_ },
+#define SCRIPT(width,height,text)  { kManPage_type::SCRIPT, text, width, height, nullptr, MAN_EXCESS_INITIALIZERS_ },
 #define MAN_END  { } }; ManPages_addPage (me, title, copyright, page); }
 
 #define Manual_DRAW_WINDOW(height,title,menu) \

@@ -730,7 +730,7 @@ static void menu_cb_settings (VowelEditor me, EDITOR_ARGS) {
 		POSITIVE (q2, U"F2 sharpness", my default_synthesis_q2 ())
 		LABEL (U"You can define extra fixed formants for the synthesis by supplying")
 		LABEL (U"formant frequency bandwidth pairs.")
-		TEXTFIELD (extraFrequencyBandwidthPairs_string, U"Frequency bandwidth pairs", my default_synthesis_extraFBPairs(), 3)
+		TEXTFIELD (extraFrequencyBandwidthPairs_string, U"Frequency–bandwidth pairs", my default_synthesis_extraFBPairs(), 3)
 		LABEL (U"The total number of formants used for synthesis")
 		NATURAL (numberOfFormants, U"Number of formants for synthesis", my default_synthesis_numberOfFormants ())
 	EDITOR_OK
@@ -746,14 +746,14 @@ static void menu_cb_settings (VowelEditor me, EDITOR_ARGS) {
 		autoVEC extraFrequencyBandwidthPairs = splitByWhitespace_VEC (extraFrequencyBandwidthPairs_string);
 
 		Melder_require (extraFrequencyBandwidthPairs.size % 2 == 0,
-			U"There should be an even number of values in the \"Frequencies and bandwidths pairs\" list.");
+			U"There should be an even number of values in the “Frequencies and bandwidths pairs” list.");
 		/*
 			All items should be positive numbers and frequencies should be lower than the Nyquist.
 			Bandwidths should be greater than zero.
 		*/
 		for (integer item = 1; item <= extraFrequencyBandwidthPairs.size; item ++) {
-			Melder_require (extraFrequencyBandwidthPairs [item] > 0,
-				U"All values frequency bandwidth values should be positive.");
+			Melder_require (extraFrequencyBandwidthPairs [item] > 0.0,
+				U"All frequency values and bandwidth values should be positive.");
 			if (item % 2 == 1)
 				Melder_require (extraFrequencyBandwidthPairs [item] < 0.5 * my instancePref_synthesis_samplingFrequency(),
 					U"All formant frequencies should be below the Nyquist frequency (",
@@ -761,9 +761,9 @@ static void menu_cb_settings (VowelEditor me, EDITOR_ARGS) {
 		}
 		const integer numberOfPairs = extraFrequencyBandwidthPairs.size / 2;
 		Melder_require (numberOfFormants <= numberOfPairs + 2,
-			U"The \"Number of formants for synthesis\" should not exceed the number of formants specified (",
-			numberOfPairs + 2, U"). Either lower the number of formants for synthesis or specify more "
-			"frequency bandwidth pairs.");
+			U"The “Number of formants for synthesis” should not exceed 2 plus the number of extra frequency–bandwidth pairs (i.e. 2+",
+			numberOfPairs, U"). Either lower the number of formants for synthesis or specify more "
+			"frequency–bandwidth pairs.");
 		/*
 			Formants and bandwidths are valid. It is safe to copy them.
 		*/
@@ -1372,9 +1372,18 @@ autoVowelEditor VowelEditor_create (conststring32 title) {
 			my setInstancePref_synthesis_q1 (Melder_atof (my default_synthesis_q1()));
 			my setInstancePref_synthesis_q2 (Melder_atof (my default_synthesis_q2()));
 		}
-		if (Melder_length (my instancePref_synthesis_extraFBPairs()) == 0)
-			my setInstancePref_synthesis_extraFBPairs (my default_synthesis_extraFBPairs ());
 		my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my instancePref_synthesis_extraFBPairs());
+		if (my extraFrequencyBandwidthPairs.size < 2) {
+			my setInstancePref_synthesis_extraFBPairs (my default_synthesis_extraFBPairs ());
+			my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my instancePref_synthesis_extraFBPairs());
+		} else if (my extraFrequencyBandwidthPairs.size < 4) {
+			const double f3 = my extraFrequencyBandwidthPairs [1];
+			const double b3 = my extraFrequencyBandwidthPairs [2];
+			const double f4 = f3 + 1000.0;
+			const double b4 = b3 + 100.0;
+			my setInstancePref_synthesis_extraFBPairs (Melder_cat (f3, U" ", b3, U" ", f4, U" ", b4));
+			my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my instancePref_synthesis_extraFBPairs());
+		}
 		Melder_assert (my extraFrequencyBandwidthPairs.size >= 4);   // for deprecated Set F3 & F4
 		//my p_soundFollowsMouse = true;   // no real preference yet  // ppgb 20220504: what does this mean?
 		VowelEditor_create_twoFormantSchwa (me.get());

@@ -22,8 +22,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20230302)
+MAN_BEGIN (U"What's new?", U"ppgb", 20230503)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.3.10# (3 May 2023)")
+LIST_ITEM (U"• Windows: repaired a bug by which key strokes would no longer go to the Demo window after a puase window with no text fields was closed.")
+LIST_ITEM (U"• Repaired a bug in the VowelEditor by which it would crash when starting up after fewer than 4 numbers were set in the “Extra formant–bandwidth pairs” field.")
+LIST_ITEM (U"• FormantPathEditor improvements.")
+LIST_ITEM (U"• Undocumented alpha support for Praat notebooks.")
+LIST_ITEM (U"• Scripting: vector literals can be indexed.")
+LIST_ITEM (U"• Better interactions between editor scripts and pause windows.")
 NORMAL (U"##6.3.09# (2 March 2023)")
 LIST_ITEM (U"• SpeechSynthesizer can do eSpeak’s grapheme-to-phoneme conversion in 130 languages.")
 LIST_ITEM (U"• FormantPath can now have time stretches that are not aligned to frame boundaries.")
