@@ -36,9 +36,6 @@ manual_formant_init (me);
 manual_annotation_init (me);
 
 
-#define MAN_PAGES_BEGIN  { conststring8 text = &
-#define MAN_PAGES_END  [1]; ManPages_addPagesFromNotebook (me, text); }
-
 MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
