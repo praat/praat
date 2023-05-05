@@ -496,7 +496,7 @@ static void readFromFile (MelderFile file) {
 	if (Thing_isa (object.get(), classManPages) && ! Melder_batch) {
 		ManPages manPages = (ManPages) object.get();
 		ManPage firstPage = manPages -> pages.at [1];
-		autoManual manual = Manual_create (firstPage -> title.get(),
+		autoManual manual = Manual_create (firstPage -> title.get(), nullptr,
 				(ManPages) object.releaseToAmbiguousOwner(), true);
 		if (manPages -> executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
@@ -583,7 +583,7 @@ OK
 DO
 	LOOP {
 		iam_LOOP (ManPages);
-		ManPages_writeAllToHtmlDir (me, folder);
+		ManPages_writeAllToHtmlDir (me, nullptr, folder);
 	}
 	END_NO_NEW_DATA
 }
@@ -592,7 +592,7 @@ DIRECT (WINDOW_ManPages_view) {
 	LOOP {
 		iam_LOOP (ManPages);
 		ManPage firstPage = my pages.at [1];
-		autoManual manual = Manual_create (firstPage -> title.get(), me, false);
+		autoManual manual = Manual_create (firstPage -> title.get(), nullptr, me, false);
 		if (my executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
@@ -611,7 +611,7 @@ DO
 	PRAAT
 		if (theCurrentPraatApplication -> batch)
 			Melder_throw (U"Cannot view a manual from batch.");
-		autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
+		autoManual manual = Manual_create (U"Intro", nullptr, theCurrentPraatApplication -> manPages, false);
 		Manual_search (manual.get(), query);
 		manual.releaseToUser();
 	PRAAT_END
@@ -626,7 +626,7 @@ DO
 	PRAAT
 		if (theCurrentPraatApplication -> batch)
 			Melder_throw (U"Cannot view a manual from batch.");
-		autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
+		autoManual manual = Manual_create (U"Intro", nullptr, theCurrentPraatApplication -> manPages, false);
 		HyperPage_goToPage_number (manual.get(), goToPageNumber);
 		manual.releaseToUser();
 	PRAAT_END
@@ -639,7 +639,7 @@ OK
 	Melder_getDefaultDir (& currentDirectory);
 	SET_STRING (folder, Melder_dirToPath (& currentDirectory))
 DO
-	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, folder);
+	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, nullptr, folder);
 	END_NO_NEW_DATA
 }
 

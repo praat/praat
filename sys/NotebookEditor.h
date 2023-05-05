@@ -25,6 +25,7 @@
 
 Thing_define (NotebookEditor, TextEditor) {
 	autoInterpreter interpreter;
+	autoUiForm argsDialog;
 
 	void v9_destroy () noexcept
 		override;

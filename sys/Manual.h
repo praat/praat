@@ -23,6 +23,7 @@
 
 Thing_define (Manual, HyperPage) {
 	ManPages manPages() { return static_cast <ManPages> (our data()); }
+	Interpreter optionalInterpreterReference;
 
 	bool ownManPages;
 	integer visiblePageNumber;
@@ -63,7 +64,7 @@ Thing_define (Manual, HyperPage) {
 		override { return true; }
 };
 
-autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, bool ownManPages);
+autoManual Manual_create (conststring32 openingPageTitle, Interpreter optionalInterpreterReference, ManPages manPages, bool ownManPages);
 
 void Manual_search (Manual me, conststring32 query);
 

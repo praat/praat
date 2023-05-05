@@ -47,7 +47,7 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS) {
 		MelderString_append (& buffer, U".html");
 		Melder_sprint (defaultName,300, buffer.string);
 	EDITOR_DO_SAVE
-		ManPages_writeOneToHtmlFile (my manPages(), my visiblePageNumber, file);
+		ManPages_writeOneToHtmlFile (my manPages(), nullptr, my visiblePageNumber, file);
 	EDITOR_END
 }
 
@@ -57,7 +57,7 @@ static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS) {
 	EDITOR_OK
 		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
 	EDITOR_DO
-		ManPages_writeAllToHtmlDir (my manPages(), folder);
+		ManPages_writeAllToHtmlDir (my manPages(), nullptr, folder);
 	EDITOR_END
 }
 
@@ -81,7 +81,7 @@ static void Manual_runAllChunksToCache (Manual me, ManPage page) {
 		my praatObjects = Melder_calloc_f (structPraatObjects, 1);
 	if (! my praatPicture)
 		my praatPicture = Melder_calloc_f (structPraatPicture, 1);
-	ManPage_runAllChunksToCache (page, my instancePref_font(), my instancePref_fontSize(),
+	ManPage_runAllChunksToCache (page, my optionalInterpreterReference, my instancePref_font(), my instancePref_fontSize(),
 		my praatApplication,
 		my praatObjects,
 		my praatPicture,
@@ -479,7 +479,7 @@ int structManual :: v_goToPage (conststring32 title) {
 	}
 }
 
-autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, bool ownManPages) {
+autoManual Manual_create (conststring32 openingPageTitle, Interpreter optionalInterpreterReference, ManPages manPages, bool ownManPages) {
 	Melder_assert (openingPageTitle);
 	try {
 		autoManual me = Thing_new (Manual);
@@ -496,8 +496,9 @@ autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, boo
 		char32 windowTitle [101];
 		if (manPages -> pages.at [1] -> title [0] == U'-') {
 			Melder_sprint (windowTitle,101, & manPages -> pages.at [1] -> title [1]);
-			if (windowTitle [Melder_length (windowTitle) - 1] == U'-')
-				windowTitle [Melder_length (windowTitle) - 1] = U'\0';
+			const integer windowTitleLength = Melder_length (windowTitle);
+			if (windowTitleLength > 0 && windowTitle [windowTitleLength - 1] == U'-')
+				windowTitle [windowTitleLength - 1] = U'\0';
 		} else {
 			Melder_sprint (windowTitle,101, U"Praat Manual");
 		}
@@ -509,6 +510,7 @@ autoManual Manual_create (conststring32 openingPageTitle, ManPages manPages, boo
 			Cache the output of the opening page.
 		*/
 		ManPage openingPage = manPages -> pages.at [my visiblePageNumber];
+		my optionalInterpreterReference = optionalInterpreterReference;
 		Manual_runAllChunksToCache (me.get(), openingPage);
 
 		HyperPage_init2 (me.get(), windowTitle, manPages);
