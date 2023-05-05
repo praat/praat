@@ -48,12 +48,14 @@ Thing_define (ManPage, Thing) {
 	}
 };
 
+Thing_declare (Interpreter);
 Thing_declare (PraatApplication);
 Thing_declare (PraatObjects);
 Thing_declare (PraatPicture);
 
 void ManPage_runAllChunksToCache (
 	ManPage me,
+	Interpreter optionalInterpreterReference,
 	const kGraphics_font font,
 	const double fontSize,
 	PraatApplication praatApplication,
