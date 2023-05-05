@@ -134,6 +134,17 @@ void Interpreters_undangleEnvironment (Editor environment) noexcept {
 	}
 }
 
+static bool Melder_scriptTextIsNotebookText (conststring32 text) {
+	/*
+		Notebooks start with a opening double quote.
+		Alternatively, notebooks tend to contain opening and closing braces
+		in the first position of some line,
+		but that cue is not reliable,
+		because some notebooks contain no code chunks at all.
+	*/
+	return text [0] == U'"';
+}
+
 void Melder_includeIncludeFiles (autostring32 *inout_text, bool onlyInCodeChunks) {
 	for (int depth = 0; ; depth ++) {
 		char32 *head = inout_text->get();
@@ -240,6 +251,7 @@ static bool parameterMatchesLabel (conststring32 parameter, conststring32 label)
 }
 
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
+	const bool scriptTextIsNotebookText = Melder_scriptTextIsNotebookText (text);
 	char32 *formLocation = nullptr;
 	integer npar = 0;
 	my dialogTitle.reset();
@@ -248,15 +260,29 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 		Look for a "form" line.
 	*/
 	{// scope
+		integer braceDepth = 0;
 		char32 *p = & text [0];
 		for (;;) {
 			/*
-				Invariant here: we are at the beginning of a line.
+				Check invariant here: we are at the beginning of a line.
 			*/
-			Melder_skipHorizontalSpace (& p);
-			if (str32nequ (p, U"form", 4) && (p [4] == U':' || Melder_isEndOfInk (p [4]))) {
-				formLocation = p;
-				break;
+			Melder_assert (p == text || p [-1] == '\n');
+
+			if (*p == U'{') {
+				if (braceDepth > 0)
+					Melder_throw (U"Opening brace within a code chunk. Don't know how to look for a `form`.");
+				braceDepth += 1;
+			} else if (*p == U'}') {
+				if (braceDepth <= 0)
+					Melder_throw (U"Closing brace outside a code chunk. Don't know how to look for a `form`.");
+				braceDepth -= 1;
+			}
+			if (braceDepth > 0) {
+				Melder_skipHorizontalSpace (& p);
+				if (str32nequ (p, U"form", 4) && (p [4] == U':' || Melder_isEndOfInk (p [4]))) {
+					formLocation = p;
+					break;
+				}
 			}
 			Melder_skipToEndOfLine (& p);
 			if (*p == U'\0')
