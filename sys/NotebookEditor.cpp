@@ -75,7 +75,7 @@ static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 		Melder_throw (U"A Praat notebook should start with a title between quotes (\"\").");
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);   // BUG: should do only inside code chunks
+	Melder_includeIncludeFiles (& text, true);
 	autoPraatBackground background;
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
@@ -106,7 +106,7 @@ static void menu_cb_expandIncludeFiles (NotebookEditor me, EDITOR_ARGS) {
 	autostring32 text = GuiText_getString (my textWidget);
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);   // BUG: should do only inside code chunks
+	Melder_includeIncludeFiles (& text, true);
 	GuiText_setString (my textWidget, text.get());
 }
 
