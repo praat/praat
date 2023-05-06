@@ -64,6 +64,14 @@ PraatObjects theCurrentPraatObjects = & theForegroundPraatObjects;
 structPraatPicture theForegroundPraatPicture;
 PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
 
+bool praat_commandsWithExternalSideEffectsAreAllowed () {
+	return
+		theCurrentPraatObjects == & theForegroundPraatObjects ||
+		! theCurrentPraatApplication -> manPages ||
+		theCurrentPraatApplication -> manPages -> commandsWithExternalSideEffectsAreAllowed
+	;
+};
+
 static char32 programName [64];
 static structMelderDir homeDir { };
 

@@ -322,7 +322,7 @@ MAN_END
 	"By chosing a value of zero, you can prevent any smoothing in the time dimension. "
 		
 MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. "
+INTRO (U"One of the @@types of objects@ in Praat. A cepstrogram represents a time-quefrency representation of a sound. "
 	"Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
 MAN_END
 
@@ -426,7 +426,7 @@ CODE (U"Smooth: 0.02, 0.001")
 MAN_END
 
 MAN_BEGIN (U"Cepstrum", U"djmw", 20130616)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 ENTRY (U"Description")
 NORMAL (U"A Cepstrum is the log spectrum of the log power spectrum.")
 MAN_END
@@ -699,7 +699,7 @@ NORMAL (U"The transformation from cepstral coefficients to %a-coefficients "
 MAN_END
 
 MAN_BEGIN (U"LPC", U"djmw", 19990610)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type LPC represents filter coefficients as a function of time. "
 	"The coefficients are represented in frames with constant sampling period.")
 ENTRY (U"LPC commands")
@@ -927,7 +927,7 @@ DEFINITION (U"determines which LPC frame will be chosen to inverse filter the so
 MAN_END
 
 MAN_BEGIN (U"MFCC", U"djmw", 20160225)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type MFCC represents mel frequency cepstral coefficients "
 	"as a function of time. The coefficients are represented in a number of frames centred at equally spaced times. "
 	"at constant sampling period.")

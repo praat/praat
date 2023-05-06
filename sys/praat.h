@@ -177,6 +177,7 @@ extern PraatObjects theCurrentPraatObjects;
 extern structPraatPicture theForegroundPraatPicture;
 extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
+bool praat_commandsWithExternalSideEffectsAreAllowed ();
 
 char32 *praat_name (integer iobject);
 void praat_write_do (UiForm dia, conststring32 extension);

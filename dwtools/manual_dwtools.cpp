@@ -195,7 +195,7 @@ void manual_dwtools_init (ManPages me);
 void manual_dwtools_init (ManPages me) {
 
 MAN_BEGIN (U"AffineTransform", U"djmw", 20010927)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An affine transform is a combination of a linear transformation #%A "
 	"and a translation #%t that transforms a vector #%x to a new vector #%y "
 	"in the following way:")
@@ -305,7 +305,7 @@ MAN_END
 
 
 MAN_BEGIN (U"BarkSpectrogram", U"djmw", 20141023)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type BarkSpectrogram represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%z, %t). "
 	"It is sampled into a number of points around equally spaced times %t__%i_ "
@@ -362,7 +362,7 @@ NORMAL (U"In general additional constraints should be satisfied by the weights t
 MAN_END
 
 MAN_BEGIN (U"Categories", U"djmw", 19960918)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Categories represents an ordered collection of categories. Each "
 	"category is a simple text string.")
 ENTRY (U"Categories commands")
@@ -440,7 +440,7 @@ INTRO (U"Get the zeroth cepstral coefficient value in the specified frame. For a
 MAN_END
 
 MAN_BEGIN (U"CCA", U"djmw", 20020323)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. ")
+INTRO (U"One of the @@types of objects@ in Praat. ")
 NORMAL (U"An object of type CCA represents the @@Canonical correlation "
 	"analysis@ of two multivariate datasets.")
 ENTRY (U"Commands")
@@ -558,7 +558,7 @@ INTRO (U"This tutorial will show you how to perform canonical correlation "
 ENTRY (U"1. Objective of canonical correlation analysis")
 NORMAL (U"In canonical correlation analysis we try to find the correlations between "
 	"two data sets. One data set is called the %dependent set, the other the "
-	"%independent set. In P\\s{RAAT} these two sets must reside into one "
+	"%independent set. In Praat these two sets must reside into one "
 	"@TableOfReal object. The lower numbered columns of this table will then be "
 	"interpreted as the dependent part, the rest of the columns as the "
 	"independent part. "
@@ -676,7 +676,7 @@ EQUATION (U"%T__1_(%x) = %x")
 MAN_END
 
 MAN_BEGIN (U"ChebyshevSeries", U"djmw", 19990620)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type ChebyshevSeries represents a linear combination of @@Chebyshev polynomials@ "
 	"%T__%k_(%x).")
 EQUATION (U"ChebyshevSeries (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %T__%k_(%x)")
@@ -968,7 +968,7 @@ NORMAL (U"The first element of the extra row will contain the sum of the "
 MAN_END
 
 MAN_BEGIN (U"Correlation", U"djmw", 19990105)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Correlation represents the correlation coefficients "
 	"of a multivariate data set.")
 MAN_END
@@ -1019,7 +1019,7 @@ EQUATION (U"%r\\'p = %r__%ij_ / \\Vr(1 - %r__%ij_^2),")
 MAN_END
 
 MAN_BEGIN (U"Covariance", U"djmw", 19990105)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Covariance represents the sums of squares and cross "
 	"products of a multivariate data set divided by the number of observations.")
 NORMAL (U"An object of type Covariance contains the same attributes as an object of "
@@ -1585,7 +1585,7 @@ NORMAL (U"More details about these data and how they were measured can be found 
 MAN_END
 
 MAN_BEGIN (U"Discriminant", U"djmw", 20160128)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Discriminant represents the discriminant structure of a multivariate "
 	"data set, i.e. a %%numberOfObservations%\\xx%%dimension% matrix. Each row in this data set belongs to one of %%numberOfGroups% groups (or %%classes% or %categories%, whatever terminology you prefer). " 
 	"A Discriminant can be used as a classifier to discriminate between these %%numberOfGroups% groups.")
@@ -1913,7 +1913,7 @@ CODE (U"no = Get number of rows\"")
 MAN_END
 
 MAN_BEGIN (U"DTW", U"djmw", 20110603)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type DTW represents the dynamic time warp structure of "
 	"two objects.")
 ENTRY (U"Commands")
@@ -2636,7 +2636,7 @@ NORMAL (U"Reading the uncompressed file %%train-labels-idx1-ubyte% with 60000 la
 MAN_END
 
 MAN_BEGIN (U"ISpline", U"djmw", 19990627)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. ")
+INTRO (U"One of the @@types of objects@ in Praat. ")
 NORMAL (U"An object of type ISpline represents a linear combination of basis "
 	"i@spline functions. Each basis %ispline is a monotonically increasing "
 	"polynomial function of degree %p.")
@@ -2688,7 +2688,7 @@ NORMAL (U"We subsequently use %P__%k_(%x\\'p) instead of %P__%k_(%x).")
 MAN_END
 
 MAN_BEGIN (U"LegendreSeries", U"djmw", 19990620)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type LegendreSeries represents a linear combination of @@Legendre polynomials@ "
 	"%P__%k_(%x).")
 EQUATION (U"LegendreSeries (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %P__%k_(%x)")
@@ -2782,7 +2782,7 @@ EQUATION (U"hertz = 700 * (10.0^^mel / 2595.0^ - 1).")
 MAN_END
 
 MAN_BEGIN (U"MelSpectrogram", U"djmw", 20141209)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type MelSpectrogram represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%f, %t)."
 	"It is sampled into a number of points around equally spaced times %t__%i_ "
@@ -2819,7 +2819,7 @@ INTRO (U"Convert the selected @@MFCC@ object to a @@TableOfReal@ object. Each MF
 MAN_END
 
 MAN_BEGIN (U"MSpline", U"djmw", 19990627)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. ")
+INTRO (U"One of the @@types of objects@ in Praat. ")
 NORMAL (U"An object of type MSpline represents a linear combination of basis "
 	"m@spline functions. Each basis %mspline is a positive polynomial function "
 	"of degree %p.")
@@ -2869,7 +2869,7 @@ INTRO (U"An algorithm to compute the mean and the variance of an array of number
 MAN_END
 
 MAN_BEGIN (U"PatternList", U"djmw", 20160524)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 INTRO (U"An object of type PatternList is a list of patterns that can serve as "
 	"inputs for a neural net. All elements in a PatternList have to be in the interval [0,1].")
 ENTRY (U"PatternList commands")
@@ -2885,7 +2885,7 @@ NORMAL (U"With @Inspect you will see that this type contains the same "
 MAN_END
 
 MAN_BEGIN (U"PCA", U"djmw", 19990323)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. "
+INTRO (U"One of the @@types of objects@ in Praat. "
 	"See the @@Principal component analysis@ tutorial.")
 NORMAL (U"An object of type PCA represents the principal components analysis "
 	"of a multivariate dataset.")
@@ -3225,7 +3225,7 @@ EQUATION (U"y__i_\\'p = y__i_ + y__t_")
 MAN_END
 
 MAN_BEGIN (U"Polynomial", U"djmw", 19990608)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type "
 	"Polynomial represents a polynomial function on a domain.")
 NORMAL (U"A polynomial of degree %n is defined as:")
@@ -3345,7 +3345,7 @@ MAN_END
 
 MAN_BEGIN (U"Principal component analysis", U"djmw", 20160222)
 INTRO (U"This tutorial describes how you can perform principal component "
-       "analysis with P\\s{RAAT}.")
+       "analysis with Praat.")
 NORMAL (U"Principal component analysis (PCA) involves a mathematical procedure "
 	"that transforms a number of (possibly) correlated variables into a "
 	"(smaller) number of uncorrelated variables called %%principal "
@@ -3707,7 +3707,7 @@ LIST_ITEM1 (U"Example: A search for \"(AA)\" with a replace \"\\bsl\\bs1bc\" "
 MAN_END
 
 MAN_BEGIN (U"Roots", U"djmw", 19990608)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Roots "
 	"represents the (complex) roots of a @@Polynomial|polynomial@ function.")
 ENTRY (U"Commands")
@@ -4805,7 +4805,7 @@ DEFINITION (U"determines how speech rate is chosen. This is only used for the al
 MAN_END
 
 MAN_BEGIN (U"SSCP", U"djmw", 19981103)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type SSCP represents the sums of squares and cross products of "
 	"a multivariate data set.")
 NORMAL (U"Besides the matrix part, an object of type SSCP also contains a "

@@ -113,7 +113,7 @@ enum { NO_SYMBOL_,
 		ERB_, HERTZ_TO_ERB_, ERB_TO_HERTZ_,
 		SUM_, MEAN_, STDEV_, CENTER_,
 		EVALUATE_, EVALUATE_NOCHECK_, EVALUATE_STR_, EVALUATE_NOCHECK_STR_,
-		STRING_STR_, NUMBERS_VEC_, SLEEP_, UNICODE_, UNICODE_STR_,
+		STRING_STR_, VERTICAL_STR_, NUMBERS_VEC_, SLEEP_, UNICODE_, UNICODE_STR_,
 	#define HIGH_FUNCTION_1  UNICODE_STR_
 
 	/* Functions of 2 variables; if you add, update the #defines. */
@@ -155,13 +155,13 @@ enum { NO_SYMBOL_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
 		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
-		BEGIN_PAUSE_FORM_,
+		BEGIN_PAUSE_,
 		REAL_, POSITIVE_, INTEGER_, NATURAL_,
 		WORD_, SENTENCE_, TEXT_, BOOLEAN_,
 		CHOICE_, OPTIONMENU_, OPTION_MENU_, OPTION_,
 		INFILE_, OUTFILE_, FOLDER_,
 		REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_,
-		COMMENT_, END_PAUSE_FORM_,
+		COMMENT_, END_PAUSE_,
 		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
@@ -187,7 +187,8 @@ enum { NO_SYMBOL_,
 	#define LOW_FUNCTION_STR1  LENGTH_
 		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_,
 		CREATE_FOLDER_, CREATE_DIRECTORY_, SET_WORKING_DIRECTORY_, VARIABLE_EXISTS_,
-		READ_FILE_, READ_FILE_STR_, UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
+		READ_FILE_, READ_FILE_STR_, READ_FILE_VEC_, READ_FILE_MAT_,
+		UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
 	#define HIGH_FUNCTION_STR1  ENVIRONMENT_STR_
 		DATE_STR_, DATE_UTC_STR_, DATE_ISO_STR_, DATE_UTC_ISO_STR_, DATE_VEC_, DATE_UTC_VEC_, INFO_STR_,   // TODO: two of those aren't really string functions
 		INDEX_, RINDEX_,
@@ -276,7 +277,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"erb", U"hertzToErb", U"erbToHertz",
 	U"sum", U"mean", U"stdev", U"center",
 	U"evaluate", U"evaluate_nocheck", U"evaluate$", U"evaluate_nocheck$",
-	U"string$", U"numbers#", U"sleep", U"unicode", U"unicode$",
+	U"string$", U"vertical$", U"numbers#", U"sleep", U"unicode", U"unicode$",
 	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial", U"randomGamma",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
@@ -325,7 +326,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 
 	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
 	U"createFolder", U"createDirectory", U"setWorkingDirectory", U"variableExists",
-	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
+	U"readFile", U"readFile$", U"readFile#", U"readFile##",
+	U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
 	U"date$", U"date_utc$", U"date_iso$", U"date_utc_iso$", U"date#", U"date_utc#", U"info$",
 	U"index", U"rindex",
 	U"startsWith", U"endsWith", U"replace$", U"index_regex", U"rindex_regex", U"replace_regex$",
@@ -3844,7 +3846,7 @@ static void do_do () {
 		Editor_doMenuCommand (theInterpreter -> optionalDynamicEnvironmentEditor(), command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
 		pushNumber (Melder_atof (valueString.string));
 		return;
-	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
+	} else if (! praat_commandsWithExternalSideEffectsAreAllowed () &&
 		(str32nequ (command, U"Save ", 5) || str32nequ (command, U"Write ", 6) || str32nequ (command, U"Append to ", 10) || str32equ (command, U"Quit")))
 	{
 		Melder_throw (U"Commands that write files (including Quit) are not available inside manuals.");
@@ -3940,7 +3942,7 @@ static void do_do_STR () {
 		Editor_doMenuCommand (theInterpreter -> optionalDynamicEnvironmentEditor(), command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
 		pushString (Melder_dup (info.string));
 		return;
-	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
+	} else if (! praat_commandsWithExternalSideEffectsAreAllowed () &&
 		(str32nequ (command, U"Save ", 5) || str32nequ (command, U"Write ", 6) || str32nequ (command, U"Append to ", 10) || str32equ (command, U"Quit")))
 	{
 		Melder_throw (U"Commands that write files (including Quit) are not available inside manuals.");
@@ -4052,7 +4054,7 @@ static void shared_do_writeFile (autoMelderString *text, integer numberOfArgumen
 	}
 }
 static void do_writeFile () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “writeFile” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -4069,7 +4071,7 @@ static void do_writeFile () {
 	pushNumber (1);
 }
 static void do_writeFileLine () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “writeFileLine” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -4087,7 +4089,7 @@ static void do_writeFileLine () {
 	pushNumber (1);
 }
 static void do_appendFile () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “appendFile” is not available inside manuals.");
 	const Stackel elNumberOfArguments = pop;
 	Melder_assert (elNumberOfArguments->which == Stackel_NUMBER);
@@ -4104,7 +4106,7 @@ static void do_appendFile () {
 	pushNumber (1);
 }
 static void do_appendFileLine () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “appendFileLine” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -4122,8 +4124,8 @@ static void do_appendFileLine () {
 	pushNumber (1);
 }
 static void do_pauseScript () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function “pause” is not available inside manuals.");
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “pauseScript” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
@@ -4221,7 +4223,7 @@ static void do_runScript () {
 	pushNumber (1);
 }
 static void do_runSystem () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “runSystem” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -4244,7 +4246,7 @@ static void do_runSystem () {
 	pushNumber (1);
 }
 static void do_runSystem_nocheck () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “runSystem” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -4266,7 +4268,7 @@ static void do_runSystem_nocheck () {
 	pushNumber (1);
 }
 static void do_runSubprocess () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “runSubprocess” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -5235,10 +5237,10 @@ static void do_readLinesFromFile_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function “readFile$#” requires one argument, namely the file pattern.");
+		U"The function “readLinesFromFile$#” requires one argument, namely the file pattern.");
 	const Stackel fileName = pop;
 	if (fileName->which != Stackel_STRING)
-		Melder_throw (U"The argument of the function “readFile$#” should be a string (namely the file pattern), not ", fileName->whichText(), U".");
+		Melder_throw (U"The argument of the function “readLinesFromFile$#” should be a string (namely the file pattern), not ", fileName->whichText(), U".");
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName->getString(), & file);
 	autoSTRVEC result = readLinesFromFile_STRVEC (& file);
@@ -5422,8 +5424,8 @@ static void do_fileReadable () {
 	}
 }
 static void do_tryToWriteFile () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function “tryToWriteFile” is not available inside manuals.");
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “tryToWriteFile” is not available inside manuals.");
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
@@ -5434,8 +5436,8 @@ static void do_tryToWriteFile () {
 	}
 }
 static void do_tryToAppendFile () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function “tryToAppendFile” is not available inside manuals.");
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “tryToAppendFile” is not available inside manuals.");
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
@@ -6032,6 +6034,14 @@ static void do_string_STR () {
 		Melder_throw (U"The function “string$” requires a number, not ", value->whichText(), U".");
 	}
 }
+static void do_vertical_STR () {
+	const Stackel array = pop;
+	if (array->which == Stackel_STRING_ARRAY) {
+		pushString (Melder_dup (Melder_STRVEC (array->stringArray)));
+	} else {
+		Melder_throw (U"The function “vertical$” requires a string array.");
+	}
+}
 static void do_numbers_VEC () {
 	/*
 		result# = numbers# (strings$#)
@@ -6106,7 +6116,7 @@ static void do_hexadecimal_STR () {
 	}
 }
 static void do_deleteFile () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “deleteFile” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
@@ -6119,7 +6129,7 @@ static void do_deleteFile () {
 	}
 }
 static void do_createFolder () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “createFolder” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
@@ -6136,7 +6146,7 @@ static void do_createFolder () {
 	}
 }
 static void do_createDirectory () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “createDirectory” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
@@ -6192,6 +6202,28 @@ static void do_readFile_STR () {
 		pushString (text.move());
 	} else {
 		Melder_throw (U"The function “readFile$” requires a string (a file name), not ", f->whichText(), U".");
+	}
+}
+static void do_readFile_VEC () {
+	const Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderFile file { };
+		Melder_relativePathToFile (f->getString(), & file);
+		autostring32 text = MelderFile_readText (& file);
+		pushNumericVector (splitByWhitespace_VEC (text.get()));
+	} else {
+		Melder_throw (U"The function “readFile#” requires a string (a file name), not ", f->whichText(), U".");
+	}
+}
+static void do_readFile_MAT () {
+	const Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderFile file { };
+		Melder_relativePathToFile (f->getString(), & file);
+		autostring32 text = MelderFile_readText (& file);
+		pushNumericMatrix (splitByLinesAndWhitespace_MAT (text.get()));
+	} else {
+		Melder_throw (U"The function “readFile##” requires a string (a file name), not ", f->whichText(), U".");
 	}
 }
 static void do_tensorLiteral () {
@@ -6717,9 +6749,9 @@ static void do_solveNonnegative_VEC () {
 	}
 }
 
-static void do_beginPauseForm () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function “beginPauseForm” is not available inside manuals.");
+static void do_beginPause () {
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “beginPause” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 1) {
 		const Stackel title = pop;
@@ -6728,15 +6760,15 @@ static void do_beginPauseForm () {
 			const GuiWindow parentShell = ( optionalPauseWindowOwningEditor ? optionalPauseWindowOwningEditor -> windowForm : theCurrentPraatApplication -> topShell );
 			UiPause_begin (parentShell, optionalPauseWindowOwningEditor, title->getString(), theInterpreter);
 		} else {
-			Melder_throw (U"The function “beginPauseForm” requires a string (the title), not ", title->whichText(), U".");
+			Melder_throw (U"The function “beginPause” requires a string (the title), not ", title->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function “beginPauseForm” requires 1 argument (a title), not ", n->number, U".");
+		Melder_throw (U"The function “beginPause” requires 1 argument (a title), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
 static void do_real () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “real” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -6756,7 +6788,7 @@ static void do_real () {
 	pushNumber (1);
 }
 static void do_positive () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “positive” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -6777,7 +6809,7 @@ static void do_positive () {
 	pushNumber (1);
 }
 static void do_integer () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “integer” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -6798,7 +6830,7 @@ static void do_integer () {
 	pushNumber (1);
 }
 static void do_natural () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “natural” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -6819,7 +6851,7 @@ static void do_natural () {
 	pushNumber (1);
 }
 static void do_word () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “word” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -6834,7 +6866,7 @@ static void do_word () {
 	pushNumber (1);
 }
 static void do_sentence () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “sentence” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -6849,7 +6881,7 @@ static void do_sentence () {
 	pushNumber (1);
 }
 static void do_text () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “text” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
@@ -6889,7 +6921,7 @@ static void do_text () {
 	pushNumber (1);
 }
 static void do_infile () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “infile” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
@@ -6911,7 +6943,7 @@ static void do_infile () {
 	pushNumber (1);
 }
 static void do_outfile () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “outfile” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
@@ -6933,7 +6965,7 @@ static void do_outfile () {
 	pushNumber (1);
 }
 static void do_folder () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “folder” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
@@ -6955,7 +6987,7 @@ static void do_folder () {
 	pushNumber (1);
 }
 static void do_realvector () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “realvector” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 3 && n->number <= 4,
@@ -6983,7 +7015,7 @@ static void do_realvector () {
 	pushNumber (1);
 }
 static void do_positivevector () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “positivevector” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 3 && n->number <= 4,
@@ -7011,7 +7043,7 @@ static void do_positivevector () {
 	pushNumber (1);
 }
 static void do_integervector () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “integervector” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 3 && n->number <= 4,
@@ -7039,7 +7071,7 @@ static void do_integervector () {
 	pushNumber (1);
 }
 static void do_naturalvector () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “naturalvector” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number >= 3 && n->number <= 4,
@@ -7067,7 +7099,7 @@ static void do_naturalvector () {
 	pushNumber (1);
 }
 static void do_boolean () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “boolean” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -7082,7 +7114,7 @@ static void do_boolean () {
 	pushNumber (1);
 }
 static void do_choice () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “choice” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -7097,7 +7129,7 @@ static void do_choice () {
 	pushNumber (1);
 }
 static void do_optionmenu () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “optionmenu” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -7112,7 +7144,7 @@ static void do_optionmenu () {
 	pushNumber (1);
 }
 static void do_option () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “option” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 1,
@@ -7124,7 +7156,7 @@ static void do_option () {
 	pushNumber (1);
 }
 static void do_comment () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “comment” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 1,
@@ -7135,8 +7167,8 @@ static void do_comment () {
 	UiPause_comment (text->getString());
 	pushNumber (1);
 }
-static void do_endPauseForm () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+static void do_endPause () {
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “endPause” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number < 2 || n->number > 12)
@@ -7175,7 +7207,7 @@ static void do_endPauseForm () {
 	pushNumber (buttonClicked);
 }
 static void do_chooseReadFileStr () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “chooseReadFile$” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 1,
@@ -7190,7 +7222,7 @@ static void do_chooseReadFileStr () {
 	pushString (Melder_dup (fileName -> string.get()));
 }
 static void do_chooseWriteFileStr () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “chooseWriteFile$” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 2,
@@ -7204,7 +7236,7 @@ static void do_chooseWriteFileStr () {
 	pushString (result.move());
 }
 static void do_chooseFolder_STR () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “chooseFolder$” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 1,
@@ -7218,7 +7250,7 @@ static void do_chooseFolder_STR () {
 	pushString (result.move());
 }
 static void do_chooseDirectory_STR () {
-	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “chooseDirectory$” is not available inside manuals.");
 	const Stackel n = pop;
 	Melder_require (n->number == 1,
@@ -8167,6 +8199,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case OBJECT_ROW_STR_: { do_object_row_STR ();
 } break; case OBJECT_COL_STR_: { do_object_col_STR ();
 } break; case STRING_STR_: { do_string_STR ();
+} break; case VERTICAL_STR_: { do_vertical_STR ();
 } break; case NUMBERS_VEC_: { do_numbers_VEC ();
 } break; case SLEEP_: { do_sleep ();
 } break; case UNICODE_: { do_unicode ();
@@ -8181,6 +8214,8 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case VARIABLE_EXISTS_: { do_variableExists ();
 } break; case READ_FILE_: { do_readFile ();
 } break; case READ_FILE_STR_: { do_readFile_STR ();
+} break; case READ_FILE_VEC_: { do_readFile_VEC ();
+} break; case READ_FILE_MAT_: { do_readFile_MAT ();
 /********** Matrix functions: **********/
 } break; case ROW_VEC_: { do_row_VEC ();
 } break; case COL_VEC_: { do_col_VEC ();
@@ -8199,7 +8234,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case SOLVE_MAT_: { do_solve_MAT ();
 } break; case SOLVE_WEAKLYCONSTRAINED_VEC_: { do_solveWeaklyConstrained_VEC ();
 /********** Pause window functions: **********/
-} break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
+} break; case BEGIN_PAUSE_: { do_beginPause ();
 } break; case REAL_: { do_real ();
 } break; case POSITIVE_: { do_positive ();
 } break; case INTEGER_: { do_integer ();
@@ -8220,7 +8255,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case INTEGERVECTOR_: { do_integervector ();
 } break; case NATURALVECTOR_: { do_naturalvector ();
 } break; case COMMENT_: { do_comment ();
-} break; case END_PAUSE_FORM_: { do_endPauseForm ();
+} break; case END_PAUSE_: { do_endPause ();
 } break; case CHOOSE_READ_FILE_STR_: { do_chooseReadFileStr ();
 } break; case CHOOSE_WRITE_FILE_STR_: { do_chooseWriteFileStr ();
 } break; case CHOOSE_FOLDER_STR_: { do_chooseFolder_STR ();

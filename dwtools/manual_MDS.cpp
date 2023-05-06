@@ -120,7 +120,7 @@ LIST_ITEM (U"The sum of squared coordinates in the configuration space is one fo
 MAN_END
 
 MAN_BEGIN (U"Configuration", U"djmw", 20101102)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Configuration represents the positions of a number "
 	"of labelled points in a multidimensional space.")
 ENTRY (U"How to create a Configuration")
@@ -503,7 +503,7 @@ NORMAL (U"For further information on how well one number can assess the "
 MAN_END
 
 MAN_BEGIN (U"ContingencyTable", U"djmw", 19971216)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"In a two-way contingency table, cell %f__%ij_ contains the frequency "
 	"with which row category %i co-occurs with column category %j. "
 	"Necessarily, all %f__%ij_ \\>_ 0.")
@@ -631,7 +631,7 @@ INTRO (U"The numbers %d\\'p__%ij_ that result from applying an admissible "
 MAN_END
 
 MAN_BEGIN (U"Dissimilarity", U"djmw", 20010327)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"It represents a one-way table with "
 	"dissimilarities between \"objects\".")
 ENTRY (U"Creating a Dissimilarity from data in a text file")
@@ -1142,7 +1142,7 @@ LIST_ITEM (U"\\bu @@Dissimilarity: To Configuration (absolute mds)...")
 MAN_END
 
 MAN_BEGIN (U"Distance", U"djmw", 19971124)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Distance represents distances between objects in a metrical space.")
 NORMAL (U"Creation")
 LIST_ITEM (U"\\bu @@Confusion: To Dissimilarity (pdf)...")
@@ -1250,7 +1250,7 @@ NORMAL (U"")
 MAN_END
 
 MAN_BEGIN (U"INDSCAL analysis", U"djmw", 20120306)
-INTRO (U"A method for @@individual difference scaling@ analysis in P\\s{RAAT}.")
+INTRO (U"A method for @@individual difference scaling@ analysis in Praat.")
 NORMAL (U"An INDSCAL analysis can be performed on objects of type Distance.")
 NORMAL (U"If you start with @Dissimilarity objects you first have to transform "
 	"them to Distance objects.")
@@ -1313,7 +1313,7 @@ NORMAL (U"In an alternating least squares procedure we may update columns of "
 MAN_END
 
 MAN_BEGIN (U"Kruskal analysis", U"djmw", 19971201)
-INTRO (U"One of the @@MDS models@ in P\\s{RAAT}.")
+INTRO (U"One of the @@MDS models@ in Praat.")
 NORMAL (U"You can perform a Kruskal-type multidimensional scaling only on "
 	"objects of type @Dissimilarity. Objects of other types first have to "
 	"be converted to objects of Dissimilarity type.")
@@ -1388,12 +1388,12 @@ INTRO (U"According to the measurement theory of @@Stevens (1951)@, there are fou
 MAN_END
 
 MAN_BEGIN (U"Multidimensional scaling", U"djmw", 20140117)
-INTRO (U"This tutorial describes how you can use P\\s{RAAT} to "
+INTRO (U"This tutorial describes how you can use Praat to "
 	"perform ##M#ulti ##D#imensional ##S#caling (MDS) analysis.")
 NORMAL (U"MDS helps us to represent %dissimilarities between objects as "
 	"%distances in a %%Euclidean space%. In effect, the more dissimilar two "
 	"objects are, the larger the distance between the objects in the Euclidean "
-	"space should be. The data types in P\\s{RAAT} that "
+	"space should be. The data types in Praat that "
 	"incorporate these notions are @Dissimilarity, @Distance and "
 	"@Configuration.")
 NORMAL (U"In essence, an MDS-analysis is performed when you select a "
@@ -1495,7 +1495,7 @@ NORMAL (U"This type of analysis on multiple objects results in two new objects: 
 MAN_END
 
 MAN_BEGIN (U"Procrustes", U"djmw", 20010927)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Procrustes represents the special @@AffineTransform|"
 	"affine transform@ that consists of a "
 	"combination of a translation, a shape preserving transformation and a scaling (this scaling is often called %dilation). "
@@ -1519,7 +1519,7 @@ NORMAL (U"For more information about the Procrustes transform and its algorithm 
 MAN_END
 
 MAN_BEGIN (U"Proximity", U"djmw", 19961008)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type #Proximity represents proximities between objects.")
 ENTRY (U"Inside a Proximity")
 NORMAL (U"With @Inspect you will see the following attributes:")
@@ -1534,7 +1534,7 @@ DEFINITION (U"the proximities between the objects.")
 MAN_END
 
 MAN_BEGIN (U"Salience", U"djmw", 19980112)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"Elements %s__%ij_ in the "
 	"Salience matrix represent the importance of dimension %j (in the "
 	"@Configuration) for data source %i.")
@@ -1545,7 +1545,7 @@ LIST_ITEM (U"\\bu @@Distance: To Configuration (ytl)...")
 MAN_END
 
 MAN_BEGIN (U"ScalarProduct", U"djmw", 19980125)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type ScalarProduct represents scalar products %b__%ij_ "
 	"between objects %i and %j in a metrical space.")
 EQUATION (U"%b__%ij_ = \\su__%k=1..%numberOfDimensions_ %x__%ik_%x__%jk_,")
@@ -1558,7 +1558,7 @@ LIST_ITEM (U"\\bu @@Distance: To ScalarProduct...@")
 MAN_END
 
 MAN_BEGIN (U"Similarity", U"djmw", 19961008)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Similarity represent a one-way "
 	"table of similarities between \"objects\".")
 ENTRY (U"Commands")
@@ -1801,7 +1801,7 @@ NORMAL (U"All elements %x__%ij_ will be multiplied by "
 MAN_END
 
 MAN_BEGIN (U"Weight", U"djmw", 19980108)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Weight represents a matrix "
 	"with weights %w__%ij_.")
 NORMAL (U"An object of type Weight selected together with an onject of type"
