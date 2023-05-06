@@ -238,8 +238,8 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			Melder_relativePathToFile (command + 12, & file);
 			MelderFile_appendText (& file, Melder_getInfo ());
 		} else if (str32nequ (command, U"unix ", 5)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “unix” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “unix” is not available inside manuals.");
 			try {
 				Melder_system (command + 5);
 			} catch (MelderError) {
@@ -247,16 +247,16 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 					U"if you want to ignore this, use `unix_nocheck' instead of `unix'.");
 			}
 		} else if (str32nequ (command, U"unix_nocheck ", 13)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “unix_nocheck” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “unix_nocheck” is not available inside manuals.");
 			try {
 				Melder_system (command + 13);
 			} catch (MelderError) {
 				Melder_clearError ();
 			}
 		} else if (str32nequ (command, U"system ", 7)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “system” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “system” is not available inside manuals.");
 			try {
 				Melder_system (command + 7);
 			} catch (MelderError) {
@@ -264,8 +264,8 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 					U"if you want to ignore this, use “system_nocheck” instead of “system”.");
 			}
 		} else if (str32nequ (command, U"system_nocheck ", 15)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “system_nocheck” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “system_nocheck” is not available inside manuals.");
 			try {
 				Melder_system (command + 15);
 			} catch (MelderError) {
@@ -301,8 +301,8 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
 		} else if (str32nequ (command, U"editor", 6)) {   // deprecated
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “editor” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “editor” is not available inside manuals.");
 			if (command [6] == U' ' && Melder_isLetter (command [7])) {
 				interpreter -> setDynamicEditorEnvironmentFromEditor (praat_findEditorFromString (command + 7));
 			} else if (command [6] == U'\0') {
@@ -319,12 +319,12 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 				Interpreter_voidExpression (interpreter, command);
 			}
 		} else if (str32nequ (command, U"endeditor", 9)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “endeditor” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “endeditor” is not available inside manuals.");
 			interpreter -> nullifyDynamicEditorEnvironment();
 		} else if (str32nequ (command, U"sendsocket ", 11)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “sendsocket” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “sendsocket” is not available inside manuals.");
 			char32 hostName [61], *q = & hostName [0];
 			const char32 *p = command + 11;
 			while (*p == U' ' || *p == U'\t')
@@ -341,8 +341,8 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			if (result)
 				Melder_throw (Melder_peek8to32 (result), U"\nMessage to ", hostName, U" not completed.");
 		} else if (str32nequ (command, U"filedelete ", 11)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “filedelete” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “filedelete” is not available inside manuals.");
 			const char32 *p = command + 11;
 			structMelderFile file { };
 			while (*p == U' ' || *p == U'\t') p ++;
@@ -351,8 +351,8 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			Melder_relativePathToFile (p, & file);
 			MelderFile_delete (& file);
 		} else if (str32nequ (command, U"fileappend ", 11)) {
-			if (theCurrentPraatObjects != & theForegroundPraatObjects)
-				Melder_throw (U"The script command “fileappend” is not available inside manuals.");
+			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+				U"The script command “fileappend” is not available inside manuals.");
 			const char32 *p = command + 11;
 			char32 path [kMelder_MAXPATH+1], *q = & path [0];
 			while (*p == U' ' || *p == U'\t') p ++;
@@ -438,7 +438,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 				Editor_doMenuCommand (interpreter -> optionalDynamicEnvironmentEditor(), command2, narg, args, nullptr, interpreter);
 			else
 				Editor_doMenuCommand (interpreter -> optionalDynamicEnvironmentEditor(), command, 0, nullptr, arguments, interpreter);
-		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
+		} else if (! praat_commandsWithExternalSideEffectsAreAllowed () &&
 		    (str32nequ (command, U"Save ", 5) ||
 			 str32nequ (command, U"Write ", 6) ||
 			 str32nequ (command, U"Append to ", 10) ||

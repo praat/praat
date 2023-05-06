@@ -29,7 +29,7 @@ Thing_define (ManPages, Daata) {
 	}
 
 	autoSTRVEC titles;
-	bool ground, dynamic, executable;
+	bool ground, dynamic, executable, commandsWithExternalSideEffectsAreAllowed = true;
 	structMelderDir rootDirectory;
 
 	void v9_destroy () noexcept

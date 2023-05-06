@@ -495,6 +495,7 @@ static void readFromFile (MelderFile file) {
 		return;   // this can happen with Picture_readFromPraatPictureFile (file recognized, but no data)
 	if (Thing_isa (object.get(), classManPages) && ! Melder_batch) {
 		ManPages manPages = (ManPages) object.get();
+		manPages -> commandsWithExternalSideEffectsAreAllowed = false;
 		ManPage firstPage = manPages -> pages.at [1];
 		autoManual manual = Manual_create (firstPage -> title.get(), nullptr,
 				(ManPages) object.releaseToAmbiguousOwner(), true);

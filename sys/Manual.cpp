@@ -81,6 +81,7 @@ static void Manual_runAllChunksToCache (Manual me, ManPage page) {
 		my praatObjects = Melder_calloc_f (structPraatObjects, 1);
 	if (! my praatPicture)
 		my praatPicture = Melder_calloc_f (structPraatPicture, 1);
+	my praatApplication -> manPages = my manPages();
 	ManPage_runAllChunksToCache (page, my optionalInterpreterReference, my instancePref_font(), my instancePref_fontSize(),
 		my praatApplication,
 		my praatObjects,

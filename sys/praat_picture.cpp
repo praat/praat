@@ -214,7 +214,7 @@ OK
 	SET_REAL (top, 12.0 - theCurrentPraatPicture -> y2NDC + ymargin)
 	SET_REAL (bottom, 12.0 - theCurrentPraatPicture -> y1NDC - ymargin)
 DO
-	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
+	//Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (), U"Viewport commands are not available inside manuals.");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	trace (U"1: xmargin ", xmargin, U" ymargin ", ymargin);
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
@@ -283,7 +283,7 @@ OK
 	SET_REAL (top, 12.0 - theCurrentPraatPicture -> y2NDC)
 	SET_REAL (bottom, 12.0 - theCurrentPraatPicture -> y1NDC)
 DO
-	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
+	//Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (), U"Viewport commands are not available inside manuals.");
 	if (left == right)
 		Melder_throw (U"The left and right edges of the viewport cannot be equal.\nPlease change the horizontal range.");
 	Melder_sort (& left, & right);
