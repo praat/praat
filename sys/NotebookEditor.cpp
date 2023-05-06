@@ -35,6 +35,7 @@ bool NotebookEditors_dirty () {
 }
 
 void structNotebookEditor :: v9_destroy () noexcept {
+	our argsDialog.reset();   // don't delay till delete
 	theReferencesToAllOpenNotebookEditors. undangleItem (this);
 	NotebookEditor_Parent :: v9_destroy ();
 }
@@ -67,6 +68,28 @@ void structNotebookEditor :: v_goAway () {
 		NotebookEditor_Parent :: v_goAway ();
 }
 
+static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
+	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me, Editor optionalEditor)
+{
+	iam (NotebookEditor);
+	autostring32 text = GuiText_getString (my textWidget);
+	if (! MelderFile_isNull (& my file))
+		MelderFile_setDefaultDir (& my file);
+	Melder_includeIncludeFiles (& text, true);
+
+	Interpreter_getArgumentsFromDialog (my interpreter.get(), sendingForm);
+
+	autoPraatBackground background;
+	if (! MelderFile_isNull (& my file))
+		MelderFile_setDefaultDir (& my file);
+
+	autoMelderReadText readText = MelderReadText_createFromText (text.move());
+	autoManPages manPages = ManPages_createFromText (readText.get(), & my file);   // readText can release, because manPages duplicates (last checked 2023-03-25)
+	ManPage firstPage = manPages -> pages.at [1];
+	autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), manPages.releaseToAmbiguousOwner(), true);
+	manual.releaseToUser ();
+}
+
 static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 	if (my interpreter -> running)
 		Melder_throw (U"The notebook is already running (paused). Please close or continue the pause or demo window.");
@@ -75,16 +98,25 @@ static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 		Melder_throw (U"A Praat notebook should start with a title between quotes (\"\").");
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);   // BUG: should do only inside code chunks
-	autoPraatBackground background;
-	if (! MelderFile_isNull (& my file))
-		MelderFile_setDefaultDir (& my file);
+	Melder_includeIncludeFiles (& text, true);
+	const integer npar = Interpreter_readParameters (my interpreter.get(), text.get());
+	if (npar != 0) {
+		/*
+			Pop up a dialog box for querying the arguments.
+		*/
+		my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, nullptr, args_ok, me, false);
+		UiForm_do (my argsDialog.get(), false);
+	} else {
+		autoPraatBackground background;
+		if (! MelderFile_isNull (& my file))
+			MelderFile_setDefaultDir (& my file);
 
-	autoMelderReadText readText = MelderReadText_createFromText (text.move());
-	autoManPages manPages = ManPages_createFromText (readText.get(), & my file);   // readText can release, because manPages duplicates (last checked 2023-03-25)
-	ManPage firstPage = manPages -> pages.at [1];
-	autoManual manual = Manual_create (firstPage -> title.get(), manPages.releaseToAmbiguousOwner(), true);
-	manual.releaseToUser ();
+		autoMelderReadText readText = MelderReadText_createFromText (text.move());
+		autoManPages manPages = ManPages_createFromText (readText.get(), & my file);   // readText can release, because manPages duplicates (last checked 2023-03-25)
+		ManPage firstPage = manPages -> pages.at [1];
+		autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), manPages.releaseToAmbiguousOwner(), true);
+		manual.releaseToUser ();
+	}
 }
 
 static void menu_cb_runChunk (NotebookEditor me, EDITOR_ARGS) {
@@ -106,7 +138,7 @@ static void menu_cb_expandIncludeFiles (NotebookEditor me, EDITOR_ARGS) {
 	autostring32 text = GuiText_getString (my textWidget);
 	if (! MelderFile_isNull (& my file))
 		MelderFile_setDefaultDir (& my file);
-	Melder_includeIncludeFiles (& text);   // BUG: should do only inside code chunks
+	Melder_includeIncludeFiles (& text, true);
 	GuiText_setString (my textWidget, text.get());
 }
 

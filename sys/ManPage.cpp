@@ -39,17 +39,24 @@ static void ManPageParagraph_runChunkToCache (ManPage_Paragraph me, Interpreter 
 ) {
 }
 
-void ManPage_runAllChunksToCache (ManPage me,
+void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterReference,
 	const kGraphics_font font, const double fontSize,
 	PraatApplication praatApplication, PraatObjects praatObjects, PraatPicture praatPicture,
 	MelderDir rootDirectory
 ) {
+	Interpreter interpreterReference;
+	autoInterpreter interpreter;
+	if (optionalInterpreterReference) {
+		interpreterReference = optionalInterpreterReference;
+	} else {
+		interpreter = Interpreter_create ();
+		interpreterReference = interpreter.get();
+	}
 	/*
 		When this page is drawn for the first time,
 		all the script parts have to be run,
 		so that the outputs of drawing and info can be cached.
 	*/
-	autoInterpreter interpreter;
 	integer chunkNumber = 0;
 	bool anErrorHasOccurred = false;
 	autostring32 theErrorThatOccurred;
@@ -61,8 +68,6 @@ void ManPage_runAllChunksToCache (ManPage me,
 		chunkNumber += 1;
 		if (paragraph -> cacheGraphics)
 			break;   // don't run the chunks again
-		if (! interpreter)
-			interpreter = Interpreter_create ();
 		/*
 			Divert info text from Info window to Manual window.
 		*/
@@ -133,7 +138,7 @@ void ManPage_runAllChunksToCache (ManPage me,
 				Melder_setDefaultDir (rootDirectory);
 			try {
 				autostring32 text = Melder_dup (paragraph -> text);
-				Interpreter_run (interpreter.get(), text.get(), chunkNumber > 1);
+				Interpreter_run (interpreterReference, text.get(), chunkNumber > 1);
 			} catch (MelderError) {
 				anErrorHasOccurred = true;
 				errorChunk = chunkNumber;

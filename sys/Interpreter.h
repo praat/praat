@@ -178,7 +178,7 @@ autoInterpreter Interpreter_createFromEnvironment (Editor optionalInterpreterOwn
 
 void Interpreters_undangleEnvironment (Editor environment) noexcept;
 
-void Melder_includeIncludeFiles (autostring32 *text);
+void Melder_includeIncludeFiles (autostring32 *text, bool onlyInCodeChunks = false);
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text);
 Thing_declare (UiForm);
 autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, Editor optionalEditor, conststring32 fileName,

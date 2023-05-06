@@ -833,14 +833,13 @@ static const struct stylesInfo {
 /* CODE5: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" }
 };
 
-static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage page, MelderString *buffer) {
+static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterReference, MelderFile file, ManPage page, MelderString *buffer) {
 	static structPraatApplication praatApplication;
 	static structPraatObjects praatObjects;
 	static structPraatPicture praatPicture;
 
-	ManPage_runAllChunksToCache (page, kGraphics_font::TIMES, 12.0,
+	ManPage_runAllChunksToCache (page, optionalInterpreterReference, kGraphics_font::TIMES, 12.0,
 			& praatApplication, & praatObjects, & praatPicture, & my rootDirectory);
-	autoInterpreter interpreter;
 	integer chunkNumber = 0;
 	autostring32 theErrorThatOccurred;
 
@@ -1330,7 +1329,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage page, M
 	praatObjects.reset();
 }
 
-static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, MelderString *buffer) {
+static void writePageAsHtml (ManPages me, Interpreter optionalInterpreterReference, MelderFile file, integer ipage, MelderString *buffer) {
 	ManPage page = my pages.at [ipage];
 	MelderString_append (buffer,
 		U"<html><head><meta name=\"robots\" content=\"index,follow\">"
@@ -1343,7 +1342,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		U"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
 		page -> title.get(), U"\n</b></font></table></table>\n"
 	);
-	writeParagraphsAsHtml (me, file, page, buffer);
+	writeParagraphsAsHtml (me, optionalInterpreterReference, file, page, buffer);
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		integer ilink, jlink;
 		if (page -> paragraphs.size > 0) {
@@ -1382,14 +1381,14 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 	MelderString_append (buffer, U"</p>\n</address>\n</body>\n</html>\n");
 }
 
-void ManPages_writeOneToHtmlFile (ManPages me, integer ipage, MelderFile file) {
+void ManPages_writeOneToHtmlFile (ManPages me, Interpreter optionalInterpreterReference, integer ipage, MelderFile file) {
 	static MelderString buffer;
 	MelderString_empty (& buffer);
-	writePageAsHtml (me, file, ipage, & buffer);
+	writePageAsHtml (me, optionalInterpreterReference, file, ipage, & buffer);
 	MelderFile_writeText (file, buffer.string, kMelder_textOutputEncoding::UTF8);
 }
 
-void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath) {
+void ManPages_writeAllToHtmlDir (ManPages me, Interpreter optionalInterpreterReference, conststring32 dirPath) {
 	structMelderDir dir { };
 	Melder_pathToDir (dirPath, & dir);
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
@@ -1409,7 +1408,7 @@ void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath) {
 		MelderString_empty (& buffer);
 		structMelderFile file { };
 		MelderDir_getFile (& dir, fileName, & file);
-		writePageAsHtml (me, & file, ipage, & buffer);
+		writePageAsHtml (me, optionalInterpreterReference, & file, ipage, & buffer);
 		/*
 			An optimization because reading is much faster than writing:
 			we write the file only if the old file is different or doesn't exist.

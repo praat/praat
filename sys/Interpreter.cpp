@@ -134,7 +134,18 @@ void Interpreters_undangleEnvironment (Editor environment) noexcept {
 	}
 }
 
-void Melder_includeIncludeFiles (autostring32 *inout_text) {
+static bool Melder_scriptTextIsNotebookText (conststring32 text) {
+	/*
+		Notebooks start with a opening double quote.
+		Alternatively, notebooks tend to contain opening and closing braces
+		in the first position of some line,
+		but that cue is not reliable,
+		because some notebooks contain no code chunks at all.
+	*/
+	return text [0] == U'"';
+}
+
+void Melder_includeIncludeFiles (autostring32 *inout_text, bool onlyInCodeChunks) {
 	for (int depth = 0; ; depth ++) {
 		char32 *head = inout_text->get();
 		integer numberOfIncludes = 0;
@@ -142,34 +153,55 @@ void Melder_includeIncludeFiles (autostring32 *inout_text) {
 			Melder_throw (U"Include files nested too deep. Probably cyclic.");
 		for (;;) {
 			char32 *includeLocation, *includeFileName, *tail;
-			integer headLength, includeTextLength, newLength;
 			/*
 				Look for an include statement. If not found, we have finished.
-			 */
+			*/
 			includeLocation = ( str32nequ (head, U"include ", 8) ? head : str32str (head, U"\ninclude ") );
 			if (! includeLocation)
 				break;
 			if (includeLocation != head)
 				includeLocation += 1;
+			if (onlyInCodeChunks) {
+				if (includeLocation == head)
+					continue;   // if the text starts with "include", it cannot be within a code chunk
+				integer braceDepth = 0;
+				for (const char32 *p = head; p != includeLocation; p ++)
+					if (*p == U'\n')
+						if (p [1] == U'{') {
+							if (braceDepth > 0)
+								Melder_throw (U"Opening brace within a code chunk. Don't know whether or not to include an include file.");
+							braceDepth += 1;
+						} else if (p [1] == U'}') {
+							if (braceDepth <= 0)
+								Melder_throw (U"Closing brace outside a code chunk. Don't know whether or not to include an include file.");
+							braceDepth -= 1;
+						}
+				if (braceDepth == 0) {
+					head = includeLocation + 8;
+					continue;
+				}
+			}
 			numberOfIncludes += 1;
 			/*
 				Separate out the head.
-			 */
+			*/
 			*includeLocation = U'\0';
 			/*
 				Separate out the name of the include file.
-			 */
+			*/
 			includeFileName = includeLocation + 8;
-			while (Melder_isHorizontalSpace (*includeFileName)) includeFileName ++;
+			while (Melder_isHorizontalSpace (*includeFileName))
+				includeFileName ++;
 			tail = includeFileName;
-			while (Melder_staysWithinLine (*tail)) tail ++;
+			while (Melder_staysWithinLine (*tail))
+				tail ++;
 			if (*tail != U'\0') {
 				*tail = U'\0';
 				tail += 1;
 			}
 			/*
 				Get the contents of the include file.
-			 */
+			*/
 			structMelderFile includeFile { };
 			Melder_relativePathToFile (includeFileName, & includeFile);
 			autostring32 includeText;
@@ -180,10 +212,10 @@ void Melder_includeIncludeFiles (autostring32 *inout_text) {
 			}
 			/*
 				Construct the new text.
-			 */
-			headLength = (head - inout_text->get()) + Melder_length (head);
-			includeTextLength = Melder_length (includeText.get());
-			newLength = headLength + includeTextLength + 1 + Melder_length (tail);
+			*/
+			const integer headLength = (head - inout_text->get()) + Melder_length (head);
+			const integer includeTextLength = Melder_length (includeText.get());
+			const integer newLength = headLength + includeTextLength + 1 + Melder_length (tail);
 			autostring32 newText (newLength);
 			str32cpy (newText.get(), inout_text->get());
 			str32cpy (newText.get() + headLength, includeText.get());
@@ -191,14 +223,15 @@ void Melder_includeIncludeFiles (autostring32 *inout_text) {
 			str32cpy (newText.get() + headLength + includeTextLength + 1, tail);
 			/*
 				Replace the old text with the new. This will work even within an autostring.
-			 */
+			*/
 			*inout_text = newText.move();
 			/*
 				Cycle.
-			 */
+			*/
 			head = inout_text->get() + headLength + includeTextLength + 1;
 		}
-		if (numberOfIncludes == 0) break;
+		if (numberOfIncludes == 0)
+			break;
 	}
 }
 
@@ -218,6 +251,7 @@ static bool parameterMatchesLabel (conststring32 parameter, conststring32 label)
 }
 
 integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
+	const bool scriptTextIsNotebookText = Melder_scriptTextIsNotebookText (text);
 	char32 *formLocation = nullptr;
 	integer npar = 0;
 	my dialogTitle.reset();
@@ -226,15 +260,29 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 		Look for a "form" line.
 	*/
 	{// scope
+		integer braceDepth = 0;
 		char32 *p = & text [0];
 		for (;;) {
 			/*
-				Invariant here: we are at the beginning of a line.
+				Check invariant here: we are at the beginning of a line.
 			*/
-			Melder_skipHorizontalSpace (& p);
-			if (str32nequ (p, U"form", 4) && (p [4] == U':' || Melder_isEndOfInk (p [4]))) {
-				formLocation = p;
-				break;
+			Melder_assert (p == text || p [-1] == '\n');
+
+			if (*p == U'{') {
+				if (braceDepth > 0)
+					Melder_throw (U"Opening brace within a code chunk. Don't know how to look for a `form`.");
+				braceDepth += 1;
+			} else if (*p == U'}') {
+				if (braceDepth <= 0)
+					Melder_throw (U"Closing brace outside a code chunk. Don't know how to look for a `form`.");
+				braceDepth -= 1;
+			}
+			if (braceDepth > 0) {
+				Melder_skipHorizontalSpace (& p);
+				if (str32nequ (p, U"form", 4) && (p [4] == U':' || Melder_isEndOfInk (p [4]))) {
+					formLocation = p;
+					break;
+				}
 			}
 			Melder_skipToEndOfLine (& p);
 			if (*p == U'\0')
