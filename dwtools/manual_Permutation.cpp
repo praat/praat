@@ -367,7 +367,7 @@ NORMAL (U"If \"Sort\" is %on, and the selected Strings contains 4 strings ordere
 MAN_END
 
 MAN_BEGIN (U"Index", U"djmw", 20050725)
-INTRO (U"One of the @@Types of objects|types of objects@ in the P\\s{RAAT} program.")
+INTRO (U"One of the @@Types of objects|types of objects@ in the Praat program.")
 MAN_END
 
 MAN_BEGIN (U"Strings: To Index", U"djmw", 20050721)

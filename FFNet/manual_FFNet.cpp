@@ -44,7 +44,7 @@ NORMAL (U"A @@Discriminant|discriminant classifier@ is also a learning machine. 
 MAN_END
 
 MAN_BEGIN (U"Feedforward neural networks", U"djmw", 20040511)
-INTRO (U"This tutorial describes the use of @FFNet feedforward neural networks in P\\s{RAAT}. ")
+INTRO (U"This tutorial describes the use of @FFNet feedforward neural networks in Praat. ")
 NORMAL (U"@@Feedforward neural networks 1. What is a feedforward neural network?|1. What is a feedforward neural network?@")
 LIST_ITEM (U"  @@Feedforward neural networks 1.1. The learning phase|1.1 The learning phase")
 LIST_ITEM (U"  @@Feedforward neural networks 1.2. The classification phase|1.2 The classification phase")
@@ -211,7 +211,7 @@ LIST_ITEM (U"\\bu ##FFNet: Select all weights#")
 MAN_END
 
 MAN_BEGIN (U"FFNet", U"djmw", 19961015)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"A #FFNet models a feedforward neural net. A feedforward "
 	"neural net can %learn associations between its %input and its %output. "
 	"The @@Feedforward neural networks@ tutorial gives you an introduction to feedforward neural nets.")
