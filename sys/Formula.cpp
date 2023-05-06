@@ -187,7 +187,8 @@ enum { NO_SYMBOL_,
 	#define LOW_FUNCTION_STR1  LENGTH_
 		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_,
 		CREATE_FOLDER_, CREATE_DIRECTORY_, SET_WORKING_DIRECTORY_, VARIABLE_EXISTS_,
-		READ_FILE_, READ_FILE_STR_, UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
+		READ_FILE_, READ_FILE_STR_, READ_FILE_VEC_, READ_FILE_MAT_,
+		UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
 	#define HIGH_FUNCTION_STR1  ENVIRONMENT_STR_
 		DATE_STR_, DATE_UTC_STR_, DATE_ISO_STR_, DATE_UTC_ISO_STR_, DATE_VEC_, DATE_UTC_VEC_, INFO_STR_,   // TODO: two of those aren't really string functions
 		INDEX_, RINDEX_,
@@ -325,7 +326,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 
 	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
 	U"createFolder", U"createDirectory", U"setWorkingDirectory", U"variableExists",
-	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
+	U"readFile", U"readFile$", U"readFile#", U"readFile##",
+	U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
 	U"date$", U"date_utc$", U"date_iso$", U"date_utc_iso$", U"date#", U"date_utc#", U"info$",
 	U"index", U"rindex",
 	U"startsWith", U"endsWith", U"replace$", U"index_regex", U"rindex_regex", U"replace_regex$",
@@ -5235,10 +5237,10 @@ static void do_readLinesFromFile_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	Melder_require (narg->number == 1,
-		U"The function “readFile$#” requires one argument, namely the file pattern.");
+		U"The function “readLinesFromFile$#” requires one argument, namely the file pattern.");
 	const Stackel fileName = pop;
 	if (fileName->which != Stackel_STRING)
-		Melder_throw (U"The argument of the function “readFile$#” should be a string (namely the file pattern), not ", fileName->whichText(), U".");
+		Melder_throw (U"The argument of the function “readLinesFromFile$#” should be a string (namely the file pattern), not ", fileName->whichText(), U".");
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName->getString(), & file);
 	autoSTRVEC result = readLinesFromFile_STRVEC (& file);
@@ -6200,6 +6202,28 @@ static void do_readFile_STR () {
 		pushString (text.move());
 	} else {
 		Melder_throw (U"The function “readFile$” requires a string (a file name), not ", f->whichText(), U".");
+	}
+}
+static void do_readFile_VEC () {
+	const Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderFile file { };
+		Melder_relativePathToFile (f->getString(), & file);
+		autostring32 text = MelderFile_readText (& file);
+		pushNumericVector (splitByWhitespace_VEC (text.get()));
+	} else {
+		Melder_throw (U"The function “readFile#” requires a string (a file name), not ", f->whichText(), U".");
+	}
+}
+static void do_readFile_MAT () {
+	const Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderFile file { };
+		Melder_relativePathToFile (f->getString(), & file);
+		autostring32 text = MelderFile_readText (& file);
+		pushNumericMatrix (splitByLinesAndWhitespace_MAT (text.get()));
+	} else {
+		Melder_throw (U"The function “readFile##” requires a string (a file name), not ", f->whichText(), U".");
 	}
 }
 static void do_tensorLiteral () {
@@ -8190,6 +8214,8 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case VARIABLE_EXISTS_: { do_variableExists ();
 } break; case READ_FILE_: { do_readFile ();
 } break; case READ_FILE_STR_: { do_readFile_STR ();
+} break; case READ_FILE_VEC_: { do_readFile_VEC ();
+} break; case READ_FILE_MAT_: { do_readFile_MAT ();
 /********** Matrix functions: **********/
 } break; case ROW_VEC_: { do_row_VEC ();
 } break; case COL_VEC_: { do_col_VEC ();
