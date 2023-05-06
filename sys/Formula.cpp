@@ -155,13 +155,13 @@ enum { NO_SYMBOL_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
 		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
-		BEGIN_PAUSE_FORM_,
+		BEGIN_PAUSE_,
 		REAL_, POSITIVE_, INTEGER_, NATURAL_,
 		WORD_, SENTENCE_, TEXT_, BOOLEAN_,
 		CHOICE_, OPTIONMENU_, OPTION_MENU_, OPTION_,
 		INFILE_, OUTFILE_, FOLDER_,
 		REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_,
-		COMMENT_, END_PAUSE_FORM_,
+		COMMENT_, END_PAUSE_,
 		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
@@ -4125,7 +4125,7 @@ static void do_appendFileLine () {
 }
 static void do_pauseScript () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function “pause” is not available inside manuals.");
+		U"The function “pauseScript” is not available inside manuals.");
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	const integer numberOfArguments = Melder_iround (narg->number);
@@ -6749,9 +6749,9 @@ static void do_solveNonnegative_VEC () {
 	}
 }
 
-static void do_beginPauseForm () {
+static void do_beginPause () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
-		U"The function “beginPauseForm” is not available inside manuals.");
+		U"The function “beginPause” is not available inside manuals.");
 	const Stackel n = pop;
 	if (n->number == 1) {
 		const Stackel title = pop;
@@ -6760,10 +6760,10 @@ static void do_beginPauseForm () {
 			const GuiWindow parentShell = ( optionalPauseWindowOwningEditor ? optionalPauseWindowOwningEditor -> windowForm : theCurrentPraatApplication -> topShell );
 			UiPause_begin (parentShell, optionalPauseWindowOwningEditor, title->getString(), theInterpreter);
 		} else {
-			Melder_throw (U"The function “beginPauseForm” requires a string (the title), not ", title->whichText(), U".");
+			Melder_throw (U"The function “beginPause” requires a string (the title), not ", title->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function “beginPauseForm” requires 1 argument (a title), not ", n->number, U".");
+		Melder_throw (U"The function “beginPause” requires 1 argument (a title), not ", n->number, U".");
 	}
 	pushNumber (1);
 }
@@ -7167,7 +7167,7 @@ static void do_comment () {
 	UiPause_comment (text->getString());
 	pushNumber (1);
 }
-static void do_endPauseForm () {
+static void do_endPause () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function “endPause” is not available inside manuals.");
 	const Stackel n = pop;
@@ -8234,7 +8234,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case SOLVE_MAT_: { do_solve_MAT ();
 } break; case SOLVE_WEAKLYCONSTRAINED_VEC_: { do_solveWeaklyConstrained_VEC ();
 /********** Pause window functions: **********/
-} break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
+} break; case BEGIN_PAUSE_: { do_beginPause ();
 } break; case REAL_: { do_real ();
 } break; case POSITIVE_: { do_positive ();
 } break; case INTEGER_: { do_integer ();
@@ -8255,7 +8255,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case INTEGERVECTOR_: { do_integervector ();
 } break; case NATURALVECTOR_: { do_naturalvector ();
 } break; case COMMENT_: { do_comment ();
-} break; case END_PAUSE_FORM_: { do_endPauseForm ();
+} break; case END_PAUSE_: { do_endPause ();
 } break; case CHOOSE_READ_FILE_STR_: { do_chooseReadFileStr ();
 } break; case CHOOSE_WRITE_FILE_STR_: { do_chooseWriteFileStr ();
 } break; case CHOOSE_FOLDER_STR_: { do_chooseFolder_STR ();
