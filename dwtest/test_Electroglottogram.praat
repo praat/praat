@@ -11,7 +11,7 @@ sound = Read from file: "s_egg_test.wav"
 egg = Extract Electroglottogram: 1, "no"
 textgrid = To TextGrid (closed glottis): pitchFloor, pitchCeiling, closingThreshold, silenceThreshold
 selectObject: egg
-degg = Derivative: 5000, 50, "yes"
+degg = Derivative: 5000, 50, 0.99
 selectObject: egg
 To AmplitudeTier (levels): pitchFloor, pitchCeiling, closingThreshold, "yes", "yes"
 peaks = selected ("AmplitudeTier", 1)
