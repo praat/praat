@@ -304,9 +304,13 @@ static void setWindow (Polygon me, Graphics graphics,
 
 void Polygon_draw (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax) {
 	Graphics_setInner (g);
+	Polygon_draw_inside (me, g, xmin, xmax, ymin, ymax);
+	Graphics_unsetInner (g);
+}
+
+void Polygon_draw_inside (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax) {
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	Graphics_polyline (g, my numberOfPoints, & my x [1], & my y [1]);
-	Graphics_unsetInner (g);
 }
 
 void Polygon_drawClosed (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax) {
@@ -318,10 +322,14 @@ void Polygon_drawClosed (Polygon me, Graphics g, double xmin, double xmax, doubl
 
 void Polygon_paint (Polygon me, Graphics g, MelderColour colour, double xmin, double xmax, double ymin, double ymax) {
 	Graphics_setInner (g);
+	Polygon_paint_inside (me, g, colour, xmin, xmax, ymin, ymax);
+	Graphics_unsetInner (g);
+}
+
+void Polygon_paint_inside (Polygon me, Graphics g, MelderColour colour, double xmin, double xmax, double ymin, double ymax) {
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	Graphics_setColour (g, colour);
 	Graphics_fillArea (g, my numberOfPoints, & my x [1], & my y [1]);
-	Graphics_unsetInner (g);
 }
 
 void Polygon_drawCircles (Polygon me, Graphics g,

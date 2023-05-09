@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2022 David Weenink
+ * Copyright (C) 1997-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,14 @@
 	2         -> 2
 */
 char32 * NUMnumber_as_stringWithDotReplacedByUnderscore (double time);
+
+
+inline integer index_STRVEC (constSTRVEC const& strvec, conststring32 cmp) {
+	for (integer i = 1; i <= strvec.size; i ++)
+		if (Melder_equ (strvec [i], cmp))
+			return i;
+	return 0;
+}
 
 regexp *NUMregexp_compile (conststring32 regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
