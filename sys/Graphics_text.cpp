@@ -1233,16 +1233,14 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 	}
 }
 
-static struct { double width; kGraphics_horizontalAlignment alignment; } tabs [1 + 20] = { { 0, Graphics_CENTRE },
-	{ 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE },
-	{ 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE } };
-
 /*
- * The routine 'drawCells' handles table and layout.
- */
+	The function `drawCells` handles table and layout.
+*/
 static void drawCells (Graphics me, double xWC, double yWC, _Graphics_widechar lc []) {
 	_Graphics_widechar *plc;
-	int itab = 0, saveTextAlignment = my horizontalTextAlignment;
+	int tabWidth = 0;   // only for first tab
+	kGraphics_horizontalAlignment tabAlignment = Graphics_CENTRE;
+	int saveTextAlignment = my horizontalTextAlignment;
 	double saveWrapWidth = my wrapWidth;
 	numberOfLinks = 0;
 	for (plc = lc; /* No stop condition. */ ; plc ++) {
@@ -1252,13 +1250,14 @@ static void drawCells (Graphics me, double xWC, double yWC, _Graphics_widechar l
 		if (plc -> kar == U'\0')   // end of text?
 			break;
 		if (plc -> kar == U'\t') {   // go to next cell
-			xWC += ( tabs [itab]. alignment == Graphics_LEFT ? tabs [itab]. width :
-				tabs [itab]. alignment == Graphics_CENTRE ? 0.5 * tabs [itab]. width : 0 ) * my fontSize / 12.0;
-			itab ++;
-			xWC += ( tabs [itab]. alignment == Graphics_LEFT ? 0 :
-				tabs [itab]. alignment == Graphics_CENTRE ? 0.5 * tabs [itab]. width : tabs [itab]. width ) * my fontSize / 12.0;
-			my horizontalTextAlignment = (int) tabs [itab]. alignment;
-			my wrapWidth = tabs [itab]. width * my fontSize / 12.0;
+			xWC += ( tabAlignment == Graphics_LEFT ? tabWidth :
+				tabAlignment == Graphics_CENTRE ? 0.5 * tabWidth : 0.0 ) * my fontSize / 12.0;
+			tabWidth = 1;
+			tabAlignment = Graphics_CENTRE;
+			xWC += ( tabAlignment == Graphics_LEFT ? 0 :
+				tabAlignment == Graphics_CENTRE ? 0.5 * tabWidth : tabWidth ) * my fontSize / 12.0;
+			my horizontalTextAlignment = (int) tabAlignment;
+			my wrapWidth = tabWidth * my fontSize / 12.0;
 		}
 	}
 	my horizontalTextAlignment = saveTextAlignment;
