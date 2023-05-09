@@ -58,9 +58,11 @@ void Polygon_salesperson (Polygon me, integer numberOfIterations);
 /*** Drawing routines. ***/
 
 void Polygon_draw (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax);
+void Polygon_draw_inside (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax);
 void Polygon_drawClosed (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax);
 
 void Polygon_paint (Polygon me, Graphics g, MelderColour colour, double xmin, double xmax, double ymin, double ymax);
+void Polygon_paint_inside (Polygon me, Graphics g, MelderColour colour, double xmin, double xmax, double ymin, double ymax);
 
 void Polygon_drawCircles (Polygon me, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double diameter_mm);
