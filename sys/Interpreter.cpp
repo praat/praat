@@ -268,16 +268,24 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			*/
 			Melder_assert (p == text || p [-1] == '\n');
 
-			if (*p == U'{') {
-				if (braceDepth > 0)
-					Melder_throw (U"Opening brace within a code chunk. Don't know how to look for a `form`.");
-				braceDepth += 1;
-			} else if (*p == U'}') {
-				if (braceDepth <= 0)
-					Melder_throw (U"Closing brace outside a code chunk. Don't know how to look for a `form`.");
-				braceDepth -= 1;
-			}
-			if (braceDepth > 0) {
+			if (scriptTextIsNotebookText) {
+				if (*p == U'{') {
+					if (braceDepth > 0)
+						Melder_throw (U"Opening brace within a code chunk. Don't know how to look for a `form`.");
+					braceDepth += 1;
+				} else if (*p == U'}') {
+					if (braceDepth <= 0)
+						Melder_throw (U"Closing brace outside a code chunk. Don't know how to look for a `form`.");
+					braceDepth -= 1;
+				}
+				if (braceDepth > 0) {
+					Melder_skipHorizontalSpace (& p);
+					if (str32nequ (p, U"form", 4) && (p [4] == U':' || Melder_isEndOfInk (p [4]))) {
+						formLocation = p;
+						break;
+					}
+				}
+			} else {
 				Melder_skipHorizontalSpace (& p);
 				if (str32nequ (p, U"form", 4) && (p [4] == U':' || Melder_isEndOfInk (p [4]))) {
 					formLocation = p;
