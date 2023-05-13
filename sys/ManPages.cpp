@@ -574,6 +574,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					break;
 				}
 				conststring32 separator = ( par -> text [0] == U'\0' ? U"" : U" " );
+				Melder_skipHorizontalSpace (& continuationLine);
 				par -> text = Melder_dup (Melder_cat (par -> text, separator, continuationLine)).transfer();
 			} while (1);
 		}
