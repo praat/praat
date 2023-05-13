@@ -262,6 +262,20 @@ static bool stringHasInk (conststring32 line) {
 static bool isTerm (kManPage_type type) {
 	return type == kManPage_type::TERM || type >= kManPage_type::TERM1 && type <= kManPage_type::TERM3;
 }
+static bool stringStartsWithParenthesizedNumber (conststring32 string) {
+	const char32 *p = & string [0];
+	if (*p != U'(')
+		return false;
+	p ++;   // skip opening parenthesis
+	if (*p < U'0' || *p > U'9')
+		return false;
+	p ++;   // skip first digit
+	while (*p >= U'0' && *p <= U'9')
+		p ++;
+	if (*p != U')')
+		return false;
+	return true;
+}
 
 static void readOnePage_notebook (ManPages me, MelderReadText text) {
 	/*
@@ -363,6 +377,14 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			MelderString_append (& buffer_graphical, U"• ");
 			line += 2;
 			Melder_skipHorizontalSpace (& line);
+			MelderString_append (& buffer_graphical, line);
+		} else if (stringStartsWithParenthesizedNumber (line)) {
+			type = (
+				numberOfLeadingSpaces <  3 ? kManPage_type::LIST_ITEM :
+				numberOfLeadingSpaces <  7 ? kManPage_type::LIST_ITEM1 :
+				numberOfLeadingSpaces < 11 ? kManPage_type::LIST_ITEM2 :
+				kManPage_type::LIST_ITEM3
+			);
 			MelderString_append (& buffer_graphical, line);
 		} else if (line [0] == U':' && Melder_isHorizontalSpace (line [1])) {
 			type = (
@@ -565,6 +587,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				char32 *firstNonSpace = Melder_findEndOfHorizontalSpace (continuationLine);
 				if (*firstNonSpace == U':' ||
 					*firstNonSpace == U'-' ||
+					stringStartsWithParenthesizedNumber (firstNonSpace) ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'{' ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
 					Melder_startsWith (firstNonSpace, U"===") ||
