@@ -67,6 +67,8 @@ void Table_setNumericValue (Table me, integer row, integer column, double value)
 /* For optimizations only (e.g. conversion to Matrix or TableOfReal). */
 void Table_numericize_Assert (Table me, integer columnNumber);
 
+autoVEC Table_getAllNumbersInColumn (Table me, integer columnNumber);
+
 double Table_getQuantile (Table me, integer column, double quantile);
 double Table_getSum (Table me, integer column);
 double Table_getMean (Table me, integer column);

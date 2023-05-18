@@ -500,6 +500,21 @@ double Table_getNumericValue_Assert (Table me, integer rowNumber, integer column
 	#endif
 }
 
+autoVEC Table_getAllNumbersInColumn (Table me, integer columnNumber) {
+	try {
+		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
+		Table_numericize_checkDefined (me, columnNumber);
+		autoVEC result = raw_VEC (my rows.size);
+		for (integer irow = 1; irow <= my rows.size; irow ++) {
+			const constTableRow row = my rows.at [irow];
+			result [irow] = row -> cells [columnNumber]. number;
+		}
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot get numbers of column ", columnNumber, U".");
+	}
+}
+
 static double getSum (Table me, integer columnNumber) {
 	/* mutable sum */ longdouble sum = 0.0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
