@@ -325,6 +325,44 @@ double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
 	}
 }
 
+static longdouble NUMinnerMinusMean_longdouble (constVECVU const& x, longdouble meanX, constVECVU const& y, longdouble meanY) noexcept {
+	if (x.stride == 1) {
+		if (y.stride == 1) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.size,
+				const double *px = x. firstCell;
+				const double *py = y. firstCell,
+				(longdouble (*px) - meanX) * (longdouble (*py) - meanY),
+				(px += 1, py += 1)
+			)
+			return sum;
+		} else {
+			PAIRWISE_SUM (longdouble, sum, integer, x.size,
+				const double *px = x. firstCell;
+				const double *py = y. firstCell,
+				(longdouble (*px) - meanX) * (longdouble (*py) - meanY),
+				(px += 1, py += y.stride)
+			)
+			return sum;
+		}
+	} else if (y.stride == 1) {
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *px = x. firstCell;
+			const double *py = y. firstCell,
+			(longdouble (*px) - meanX) * (longdouble (*py) - meanY),
+			(px += x.stride, py += 1)
+		)
+		return sum;
+	} else {
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *px = x. firstCell;
+			const double *py = y. firstCell,
+			(longdouble (*px) - meanX) * (longdouble (*py) - meanY),
+			(px += x.stride, py += y.stride)
+		)
+		return sum;
+	}
+}
+
 double NUMmean (constVECVU const& vec) noexcept {
 	if (NUMisEmpty (vec))
 		return undefined;
@@ -823,6 +861,17 @@ double NUMsum2 (constMATVU const& mat) {
 
 double NUMsumOfSquaredDifferences (constVECVU const& vec, double mean) {
 	return double (NUMsumOfSquaredDifferences_longdouble (vec, mean));
+}
+
+double NUMcorrelation (constVECVU const& vec1, constVECVU const& vec2) {
+	if (vec1.size != vec2.size)
+		return undefined;
+	if (vec1.size < 2)
+		return undefined;
+	const MelderMeanSumsq_longdouble meanSumsq1 = NUMmeanSumsq (vec1);
+	const MelderMeanSumsq_longdouble meanSumsq2 = NUMmeanSumsq (vec2);
+	const longdouble inner = NUMinnerMinusMean_longdouble (vec1, meanSumsq1.mean, vec2, meanSumsq2.mean);
+	return double (inner) / sqrt (double (meanSumsq1.sumsq * meanSumsq2.sumsq));
 }
 
 double NUMtotalLength (constSTRVEC const& x) {

@@ -1,7 +1,7 @@
 #pragma once
 /* NUM.h
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -303,6 +303,7 @@ extern double NUMsum2 (constVECVU const& vec);
 extern double NUMsum2 (constMATVU const& mat);
 
 extern double NUMsumOfSquaredDifferences (constVECVU const& vec, double mean);
+extern double NUMcorrelation (constVECVU const& vec1, constVECVU const& vec2);
 
 extern double NUMtotalLength (constSTRVEC const& x);
 

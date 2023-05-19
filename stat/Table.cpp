@@ -1418,8 +1418,8 @@ double Table_getCorrelation_pearsonR (
 			if (out_upperLimit)
 				*out_upperLimit = correlation;
 		} else {
-			double z = 0.5 * log ((1.0 + correlation) / (1.0 - correlation));
-			double dz = NUMinvGaussQ (significanceLevel) / sqrt (n - 3);
+			const double z = 0.5 * log ((1.0 + correlation) / (1.0 - correlation));
+			const double dz = NUMinvGaussQ (significanceLevel) / sqrt (n - 3);
 			if (out_lowerLimit)
 				*out_lowerLimit = tanh (z - dz);
 			if (out_upperLimit)
