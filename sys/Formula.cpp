@@ -125,7 +125,7 @@ enum { NO_SYMBOL_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
 		ROW_VEC_, COL_VEC_,
-		INNER_, OUTER_MAT_, MUL_VEC_, MUL_MAT_, MUL_FAST_MAT_, MUL_METAL_MAT_,
+		INNER_, CORRELATION_, OUTER_MAT_, MUL_VEC_, MUL_MAT_, MUL_FAST_MAT_, MUL_METAL_MAT_,
 		MUL_TN_MAT_, MUL_NT_MAT_, MUL_TT_MAT_, REPEAT_VEC_,
 		ROW_INNERS_VEC_, SOLVE_VEC_, SOLVE_MAT_,
 	#define HIGH_FUNCTION_2  SOLVE_MAT_
@@ -283,7 +283,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
 	U"row#", U"col#",
-	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##", U"mul_metal##",
+	U"inner", U"correlation", U"outer##", U"mul#", U"mul##", U"mul_fast##", U"mul_metal##",
 	U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
 	U"rowInners#", U"solve#", U"solve##",
 	U"fisherP", U"fisherQ", U"invFisherQ",
@@ -6361,6 +6361,17 @@ static void do_inner () {
 		Melder_throw (U"The function “inner” requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
+static void do_correlation () {
+	/*
+		result = correlation (x#, y#)
+	*/
+	const Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
+		pushNumber (NUMcorrelation (x->numericVector, y->numericVector));
+	} else {
+		Melder_throw (U"The function “correlation” requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
 static void do_outer_MAT () {
 	/*
 		result## = outer## (x#, y#)
@@ -8220,6 +8231,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case ROW_VEC_: { do_row_VEC ();
 } break; case COL_VEC_: { do_col_VEC ();
 } break; case INNER_: { do_inner ();
+} break; case CORRELATION_: { do_correlation ();
 } break; case OUTER_MAT_: { do_outer_MAT ();
 } break; case MUL_VEC_: { do_mul_VEC ();
 } break; case MUL_MAT_: { do_mul_MAT ();

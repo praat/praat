@@ -911,7 +911,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			chunkNumber += 1;
 			if (paragraph -> cacheInfo.string && paragraph -> cacheInfo.string [0] != U'\0') {
 				trace (U"text output");
-				MelderString_append (buffer, U"<code style=\"color:red\">&rarr;</code><br>\n");
+				MelderString_append (buffer, U"<code style=\"color:red\">=&gt;</code><br>\n");
 				static MelderString lineBuffer;
 				MelderString_empty (& lineBuffer);
 				bool hasError = false;
