@@ -870,7 +870,35 @@ void structTextEditor :: v_createMenus () {
 }
 
 void TextEditor_init (TextEditor me, conststring32 initialText) {
-	Editor_init (me, 0, 0, 600, 400, U"", nullptr);
+	/*
+		The width of a text window should be at least one tab plus 84 single-width characters,
+		if the font size is 12.
+	*/
+	constexpr double characterWidth =
+		#if defined (macintosh)
+			0.625 * 12;
+		#elif defined (_WIN32)
+			0.689 * 12;
+		#else
+			0.584 * 12;
+		#endif
+	constexpr double tabWidth =
+		#if defined (_WIN32)
+			8.0 * characterWidth;
+		#elif defined (macintosh)
+			4.0 * characterWidth;
+		#else
+			4.0 * characterWidth;
+		#endif
+	constexpr double numberOfFittingCharacters = 84.0;
+	constexpr double overlapWithNextCharacter =
+		#ifdef macintosh
+			0.5 * characterWidth - 1;
+		#else
+			0.5 * characterWidth;
+		#endif
+	constexpr int width = int (tabWidth + numberOfFittingCharacters * characterWidth + overlapWithNextCharacter);
+	Editor_init (me, 0, 0, width, 400, U"", nullptr);
 	setFontSize (me, my instancePref_fontSize());
 	if (initialText) {
 		GuiText_setString (my textWidget, initialText);

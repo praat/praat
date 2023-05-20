@@ -670,6 +670,61 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			GuiObject scrolled = gtk_scrolled_window_new (nullptr, nullptr);
 			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 			my d_widget = gtk_text_view_new ();
+			gtk_text_view_set_monospace (GTK_TEXT_VIEW (my d_widget), true);
+			constexpr int spacing = 28;
+			PangoTabArray *tabs = pango_tab_array_new_with_positions (50, true,
+				PANGO_TAB_LEFT, 1 * spacing,
+				PANGO_TAB_LEFT, 2 * spacing,
+				PANGO_TAB_LEFT, 3 * spacing,
+				PANGO_TAB_LEFT, 4 * spacing,
+				PANGO_TAB_LEFT, 5 * spacing,
+				PANGO_TAB_LEFT, 6 * spacing,
+				PANGO_TAB_LEFT, 7 * spacing,
+				PANGO_TAB_LEFT, 8 * spacing,
+				PANGO_TAB_LEFT, 9 * spacing,
+				PANGO_TAB_LEFT, 10 * spacing,
+				PANGO_TAB_LEFT, 11 * spacing,
+				PANGO_TAB_LEFT, 12 * spacing,
+				PANGO_TAB_LEFT, 13 * spacing,
+				PANGO_TAB_LEFT, 14 * spacing,
+				PANGO_TAB_LEFT, 15 * spacing,
+				PANGO_TAB_LEFT, 16 * spacing,
+				PANGO_TAB_LEFT, 17 * spacing,
+				PANGO_TAB_LEFT, 18 * spacing,
+				PANGO_TAB_LEFT, 19 * spacing,
+				PANGO_TAB_LEFT, 20 * spacing,
+				PANGO_TAB_LEFT, 21 * spacing,
+				PANGO_TAB_LEFT, 22 * spacing,
+				PANGO_TAB_LEFT, 23 * spacing,
+				PANGO_TAB_LEFT, 24 * spacing,
+				PANGO_TAB_LEFT, 25 * spacing,
+				PANGO_TAB_LEFT, 26 * spacing,
+				PANGO_TAB_LEFT, 27 * spacing,
+				PANGO_TAB_LEFT, 28 * spacing,
+				PANGO_TAB_LEFT, 29 * spacing,
+				PANGO_TAB_LEFT, 30 * spacing,
+				PANGO_TAB_LEFT, 31 * spacing,
+				PANGO_TAB_LEFT, 32 * spacing,
+				PANGO_TAB_LEFT, 33 * spacing,
+				PANGO_TAB_LEFT, 34 * spacing,
+				PANGO_TAB_LEFT, 35 * spacing,
+				PANGO_TAB_LEFT, 36 * spacing,
+				PANGO_TAB_LEFT, 37 * spacing,
+				PANGO_TAB_LEFT, 38 * spacing,
+				PANGO_TAB_LEFT, 39 * spacing,
+				PANGO_TAB_LEFT, 40 * spacing,
+				PANGO_TAB_LEFT, 41 * spacing,
+				PANGO_TAB_LEFT, 42 * spacing,
+				PANGO_TAB_LEFT, 43 * spacing,
+				PANGO_TAB_LEFT, 44 * spacing,
+				PANGO_TAB_LEFT, 45 * spacing,
+				PANGO_TAB_LEFT, 46 * spacing,
+				PANGO_TAB_LEFT, 47 * spacing,
+				PANGO_TAB_LEFT, 48 * spacing,
+				PANGO_TAB_LEFT, 49 * spacing,
+				PANGO_TAB_LEFT, 50 * spacing
+			);
+			gtk_text_view_set_tabs (GTK_TEXT_VIEW (my d_widget), tabs);
 			gtk_container_add (GTK_CONTAINER (scrolled), GTK_WIDGET (my d_widget));
 			gtk_widget_show (GTK_WIDGET (scrolled));
 			gtk_text_view_set_editable (GTK_TEXT_VIEW (my d_widget), ! (flags & GuiText_NONEDITABLE));
@@ -758,12 +813,14 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 					(2) The default value of defaultTabInterval ("Tabs after the last specified in tabStops are
 						placed at integer multiples of this distance (if positive).") is 0.0,
 						probably meaning that the next tab stop has to be sought on the next line.
-					We therefore try to prevent the unwanted line break by setting defaultTabInterval to 28.0.
+					We therefore try to prevent the unwanted line break by setting defaultTabInterval to 30.0,
+					which is four 62.5%-wide fixed-width 12-point Menlo characters.
 				*/
 				//NSMutableParagraphStyle *paragraphStyle = [[my d_cocoaTextView defaultParagraphStyle] mutableCopy];   // this one doesn't work (in 10.14.6)
 				NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 				[paragraphStyle setParagraphStyle: [my d_cocoaTextView defaultParagraphStyle]];   // should be superfluous
-				[paragraphStyle setDefaultTabInterval: 28.0];
+				[paragraphStyle setDefaultTabInterval: 30.0];   // this already sets the number of tab stops to infinite...
+				[paragraphStyle setTabStops: [NSArray array]];   // ... and this empties the current tab stops, effectively setting all to 30 points from the leftmost on
 				if (!! (flags & GuiText_CHARWRAP))
 					[paragraphStyle setLineBreakMode: NSLineBreakByCharWrapping];
 				else if (!! (flags & GuiText_INKWRAP))
