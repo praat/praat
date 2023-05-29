@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2022 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2023 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -813,14 +813,14 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 					(2) The default value of defaultTabInterval ("Tabs after the last specified in tabStops are
 						placed at integer multiples of this distance (if positive).") is 0.0,
 						probably meaning that the next tab stop has to be sought on the next line.
-					We therefore try to prevent the unwanted line break by setting defaultTabInterval to 30.0,
-					which is four 62.5%-wide fixed-width 12-point Menlo characters.
+					We therefore try to prevent the unwanted line break by setting defaultTabInterval to 29.2,
+					which seems to correspond to four 62.5%-wide fixed-width 12-point Menlo characters (but actually 60.8%-wide; last checked 2023-05-20).
 				*/
 				//NSMutableParagraphStyle *paragraphStyle = [[my d_cocoaTextView defaultParagraphStyle] mutableCopy];   // this one doesn't work (in 10.14.6)
 				NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 				[paragraphStyle setParagraphStyle: [my d_cocoaTextView defaultParagraphStyle]];   // should be superfluous
-				[paragraphStyle setDefaultTabInterval: 30.0];   // this already sets the number of tab stops to infinite...
-				[paragraphStyle setTabStops: [NSArray array]];   // ... and this empties the current tab stops, effectively setting all to 30 points from the leftmost on
+				[paragraphStyle setDefaultTabInterval: 29.2];   // this already sets the number of tab stops to infinite...
+				[paragraphStyle setTabStops: [NSArray array]];   // ... and this empties the current tab stops, effectively setting all to 29.2 points from the leftmost on
 				if (!! (flags & GuiText_CHARWRAP))
 					[paragraphStyle setLineBreakMode: NSLineBreakByCharWrapping];
 				else if (!! (flags & GuiText_INKWRAP))

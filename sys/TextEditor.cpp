@@ -876,11 +876,11 @@ void TextEditor_init (TextEditor me, conststring32 initialText) {
 	*/
 	constexpr double characterWidth =
 		#if defined (macintosh)
-			0.625 * 12;
+			0.625 * 12;   // TODO: make a bit bigger
 		#elif defined (_WIN32)
 			0.689 * 12;
 		#else
-			0.584 * 12;
+			0.584 * 12;   // TODO: make much bigger (e.g. as size 14 is now, as in what Terminal calls size 12)
 		#endif
 	constexpr double tabWidth =
 		#if defined (_WIN32)
