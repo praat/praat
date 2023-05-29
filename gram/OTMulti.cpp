@@ -1017,21 +1017,21 @@ static integer OTMulti_crucialCell (OTMulti me, integer icand, integer iwinner, 
 
 static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, bool showDisharmony) {
 	char32 text [100], *newLine;
-	double maximumWidth = ( showDisharmony ? 0.8 * Graphics_textWidth_ps (g, Melder_fixed (constraint -> disharmony, 1), true) : 0.0 ),
+	double maximumWidth = ( showDisharmony ? 0.8 * Graphics_textWidth (g, Melder_fixed (constraint -> disharmony, 1)) : 0.0 ),
 		firstWidth, secondWidth;
-	str32cpy (text, constraint -> name.get());
+	Melder_sprint (text,100, constraint -> name.get());
 	newLine = str32chr (text, U'\n');
 	if (newLine) {
 		*newLine = U'\0';
-		firstWidth = Graphics_textWidth_ps (g, text, true);
+		firstWidth = Graphics_textWidth (g, text);
 		if (firstWidth > maximumWidth)
 			maximumWidth = firstWidth;
-		secondWidth = Graphics_textWidth_ps (g, newLine + 1, true);
+		secondWidth = Graphics_textWidth (g, newLine + 1);
 		if (secondWidth > maximumWidth)
 			maximumWidth = secondWidth;
 		return maximumWidth;
 	}
-	firstWidth = Graphics_textWidth_ps (g, text, true);
+	firstWidth = Graphics_textWidth (g, text);
 	if (firstWidth > maximumWidth)
 		maximumWidth = firstWidth;
 	return maximumWidth;
@@ -1067,8 +1067,8 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 	const double descent = rowHeight * 0.5;
 	const double worldAspectRatio = Graphics_dyMMtoWC (g, 1.0) / Graphics_dxMMtoWC (g, 1.0);   // because Graphics_textWidth measures in the x direction only
 	/*
-	 * Compute height of header row.
-	 */
+		Compute the height of the header row.
+	*/
 	double headerHeight;
 	if (vertical) {
 		headerHeight = 0.0;
@@ -1155,7 +1155,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		const OTConstraint constraint = & my constraints [my index [icons]];
 		const double width = ( vertical ? rowHeight / worldAspectRatio : OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2 );
-		if (str32chr (constraint -> name.get(), U'\n')) {
+		if (str32chr (constraint -> name.get(), U'\n') && ! vertical) {
 			char32 *newLine;
 			Melder_sprint (text,200, constraint -> name.get());
 			newLine = str32chr (text, U'\n');
@@ -1172,8 +1172,11 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 			Graphics_text (g, x + 0.5 * width, y + 0.5 * headerHeight, constraint -> name.get());
 		}
 		if (showDisharmonies) {
-			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 			Graphics_setFontSize (g, 0.8 * fontSize);
+			if (vertical)
+				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+			else
+				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 			Graphics_text (g, x + 0.5 * width, y + headerHeight, Melder_fixed (constraint -> disharmony, 1));
 			Graphics_setFontSize (g, fontSize);
 		}
