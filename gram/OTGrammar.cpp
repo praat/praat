@@ -745,7 +745,7 @@ static integer OTGrammar_crucialCell (OTGrammar me, integer itab, integer icand,
 
 static double OTGrammar_constraintWidth (Graphics g, conststring32 name) {
 	char32 text [100];
-	str32cpy (text, name);
+	Melder_sprint (text,100, name);
 	char32 *newLine = str32chr (text, U'\n');
 	if (newLine) {
 		double firstWidth, secondWidth;
@@ -848,8 +848,8 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 		if (vertical)
 			Graphics_setTextRotation (g, 90.0);
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			OTGrammarConstraint constraint = & my constraints [my index [icons]];
-			double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name.get()) + margin * 2;
+			const OTGrammarConstraint constraint = & my constraints [my index [icons]];
+			const double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name.get()) + margin * 2;
 			if (str32chr (constraint -> name.get(), U'\n') && ! vertical) {
 				autoMelderString text;
 				MelderString_copy (& text, constraint -> name.get());
@@ -873,7 +873,8 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 			Graphics_line (g, x, y, x + width, y);
 			x += width;
 		}
-		if (vertical) Graphics_setTextRotation (g, 0.0);
+		if (vertical)
+			Graphics_setTextRotation (g, 0.0);
 		/*
 			Draw candidates.
 		*/
