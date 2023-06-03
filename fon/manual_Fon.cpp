@@ -228,7 +228,7 @@ filled with values from a formula (see @@Matrix: Formula...@).
 
 ################################################################################
 "Create Poisson process..."
-© Paul Boersma 2004-10-05
+© Paul Boersma 2004-10-05, 2023-05-31
 
 A command to create a @PointProcess object that represents a Poisson process.
 A Poisson process is a stationary point process with a fixed density %λ,
@@ -244,20 +244,118 @@ Settings
 :	%t__%max_, the end of the time domain, in seconds.
 
 ##Density (Hz)
-:	the average number of points per second.
+:	the average number of points per second (%\la).
 
 Algorithm
 =========
 
 First, the number of points %N in the time domain is determined. Its expectation value is
-~	%λ = (%t__%max_ – %t__%min_) · %density
+~	%\La = (%t__%max_ – %t__%min_) · %density
 
 but its actual value is taken from the Poisson distribution:
-~	%p(%n) = (%%λ^n% / %n!) %e^^–%λ
+~	%P(\# points=%N) = (%\La^%N / %N!) %e^^–%\La
 
 Then, %N points are computed throughout the time domain, according to a uniform distribution:
 ~	%p(%t) = 1 / (%t__%max_ – %t__%min_)   for %t ∈ [%t__%min_, %t__%max_]
 ~	%p(%t) = 0   outside [%t__%min_, %t__%max_]
+
+Example
+=======
+
+Suppose that it rains between %t__%min_ = 2.0 seconds and %t__%max_ = 5.0 seconds,
+with an average of 4.0 drops per second expected to fall on my head.
+To simulate this process, you can click (or script) the following commands:
+{
+	\#{Create Poisson process:} "rain", 2.0, 5.0, 4.0
+	\@{PointProcess: Draw:} 0.0, 6.0, "no"
+	Draw inner box
+	Marks bottom every: 1, 1, "yes", "yes", "no"
+	Text bottom: "yes", "Time (s)"
+	Text top: "no", "##Three seconds of rain"
+}
+When you refresh this picture, e.g. by clicking on the “> 1” button and then on the “1 <” button,
+you will see that the points lie at different time points each time.
+This variation is due to the %stochasticity of the Poisson process:
+the points occur at random places.
+
+Also, the %number of points varies: on average, there will be 12 points,
+but there can just as easily be 10 or 15 points.
+As the rain shower lasts 3.0 seconds, the expected total number of drops on my head
+is %λ = 3.0 seconds · 4.0 drops/second = 12.0 drops, but the actual number
+of points is just as stochastic as their locations in time are.
+
+Fast implementation
+===================
+
+One can simulate the number of points and their times as follows.
+To show that our fast implementation does exactly the same as ##Create Poisson process...# does,
+we first make sure that the points lie at reproducible time points:
+{
+	random_initializeWithSeedUnsafelyButPredictably (1234567654321)
+	\#{Create Poisson process:} "rain", 2.0, 5.0, 4.0
+	\@{PointProcess: Draw:} 0.0, 6.0, "yes"
+	Text top: "no", "##Three reproducible seconds of rain"
+	random_initializeSafelyAndUnpredictably ()
+}
+These are only 8 points, and their times will not change when you click “> 1” followed by “1 <”,
+because Praat’s random generator is initialized to a fixed state,
+determined by the arbitrary number 1234567654321 (you can use any number you like,
+with different results depending on that number) in the first line of the script.
+
+To replicate how these 8 numbers were created, we first replicate their count:
+{
+	random_initializeWithSeedUnsafelyButPredictably (1234567654321)
+	n = randomPoisson (12.0)
+	writeInfoLine: n
+}
+We then replicate the actual times according to the algorithm above:
+{
+	times# = randomUniform# (n, 2.0, 5.0)
+	writeInfoLine: times#
+}
+In a PointProcess, these 8 points will be in sorted order:
+{
+	times# = sort# (times#)
+	writeInfoLine: times#
+}
+Here you can see, as in the picture, that the interval between the 4th and 5th point
+is the largest, and the interval between the 5th and 6th point is the smallest.
+
+We can add these eight points at one stroke to an empty PointProcess:
+{
+	\@{Create empty PointProcess:} "rain3", 2.0, 5.0
+	\@{PointProcess: Add points:} times#
+	\@{PointProcess: Draw:} 0.0, 6.0, "yes"
+	Text top: "no", "##Three reproducible seconds of rain,
+	... fast implementation"
+}
+
+Slow implementation
+===================
+
+We could also have generated the eight points one by one,
+and added them immediately to an empty PointProcess:
+{
+	random_initializeWithSeedUnsafelyButPredictably (1234567654321)
+	n = randomPoisson (12.0)
+	\@{Create empty PointProcess:} "rain4", 2.0, 5.0
+	for i to n
+		time = randomUniform (2.0, 5.0)
+		\@{PointProcess: Add point:} time
+	endfor
+	random_initializeSafelyAndUnpredictably ()
+	\@{PointProcess: Draw:} 0.0, 6.0, "yes"
+	Text top: "no", "##Three reproducible seconds of rain,
+	... slow implementation"
+}
+This is slower than the fast implementation, because of two causes:
+(1) the for-loop shown in the Praat script above
+is slower than the for-loop in the C++ implementation of ##Add points...#.
+(2) every call to ##Add point...# causes the new point to be inserted
+into an existing array of points, so the complexity of the whole procedure
+is %O(%N^2) (as the complexity of insertion is %O(%N)), while ##Add points...#
+adds all new points to the end of the existing array (%O(%N · log %N)),
+then sorts the new array just once, which is again %O(%N · log %N).
 
 ################################################################################
 "Create simple Matrix..."
@@ -1456,7 +1554,7 @@ NORMAL (U"To remove one or more points, "
 	"If there is no selection, the point nearest to the cursor is removed.")
 MAN_END
 
-MAN_BEGIN (U"PointProcess", U"ppgb", 20110128)
+MAN_BEGIN (U"PointProcess", U"ppgb", 20110128)   // 20230531
 INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"A PointProcess object represents a %%point process%, "
 	"which is a sequence of %points %t__%i_ in time, defined on a domain [%t__%min_, %t__%max_]. "
@@ -1501,6 +1599,7 @@ LIST_ITEM (U"• @@PointProcesses: Intersection@: the intersection of two point 
 LIST_ITEM (U"• @@PointProcesses: Difference@: the difference of two point processes.")
 NORMAL (U"Modification:")
 LIST_ITEM (U"• @@PointProcess: Add point...@: at a specified time.")
+LIST_ITEM (U"• @@PointProcess: Add points...@: at specified times.")
 LIST_ITEM (U"• @@PointProcess: Remove point...@: at specified index.")
 LIST_ITEM (U"• @@PointProcess: Remove point near...@: near specified time.")
 LIST_ITEM (U"• @@PointProcess: Remove points...@: between specified indices.")
@@ -1526,6 +1625,16 @@ DEFINITION (U"the time at which a point is to be added.")
 ENTRY (U"Behaviour")
 NORMAL (U"The point process is modified so that it contains the new point. "
 	"If a point at the specified time was already present in the point process, nothing happens.")
+MAN_END
+
+MAN_BEGIN (U"PointProcess: Add points...", U"ppgb", 20230531)
+INTRO (U"A command to add multiple points to each selected @PointProcess.")
+ENTRY (U"Setting")
+TERM (U"##Times (s)")
+DEFINITION (U"the times at which points are to be added.")
+ENTRY (U"Behaviour")
+NORMAL (U"The point process is modified so that it contains the new points. "
+	"If a point at any specified time was already present in the point process, that point is still added.")
 MAN_END
 
 MAN_BEGIN (U"PointProcesses: Difference", U"ppgb", 20021212)
