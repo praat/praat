@@ -255,6 +255,8 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 			) :
 		alphabet == Longchar_DINGBATS ?
 			kGraphics_font_DINGBATS :
+		lc -> kar >= 0x13A0 && lc -> kar <= 0x13FF ?
+			kGraphics_font_CHEROKEE :
 		my font == kGraphics_font::TIMES ?
 			( hasDoulos ?
 				( lc -> style == 0 ?
@@ -602,6 +604,8 @@ static conststring32 quartz_getFontName (int font, int style) {
 				: style == Graphics_BOLD ? U"Charis SIL Bold"
 				: style == Graphics_ITALIC ? U"Charis SIL Italic"
 				: U"Charis SIL Bold Italic";
+		case kGraphics_font_CHEROKEE:
+			return U"Plantagenet Cherokee";
 		case kGraphics_font_DINGBATS:
 			return U"Zapf Dingbats";
 		default:
@@ -642,10 +646,11 @@ static CTFontRef quartz_getFontRef (int font, int size, int style) {
 										   else
 												[attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
 										 } break;
-		case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"          forKey: (id) kCTFontNameAttribute]; } break;
-		case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"      forKey: (id) kCTFontNameAttribute]; } break;
-		case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"      forKey: (id) kCTFontNameAttribute]; } break;
-		case kGraphics_font_DINGBATS:    { [attributes   setObject: @"Zapf Dingbats"   forKey: (id) kCTFontNameAttribute]; } break;
+		case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"                 forKey: (id) kCTFontNameAttribute]; } break;
+		case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"             forKey: (id) kCTFontNameAttribute]; } break;
+		case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"             forKey: (id) kCTFontNameAttribute]; } break;
+		case kGraphics_font_CHEROKEE:    { [attributes   setObject: @"Plantagenet Cherokee"   forKey: (id) kCTFontNameAttribute]; } break;
+		case kGraphics_font_DINGBATS:    { [attributes   setObject: @"Zapf Dingbats"          forKey: (id) kCTFontNameAttribute]; } break;
 	}
 	CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes ((CFMutableDictionaryRef) attributes);
 	[styleDict release];

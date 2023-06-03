@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2020,2022,2023 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,10 @@ void Graphics_init (Graphics me, int resolution);
 #define kGraphics_font_SYMBOL  ((int) kGraphics_font::MAX + 1)
 #define kGraphics_font_IPATIMES  ((int) kGraphics_font::MAX + 2)
 #define kGraphics_font_IPAPALATINO  ((int) kGraphics_font::MAX + 3)
-#define kGraphics_font_DINGBATS  ((int) kGraphics_font::MAX + 4)
-#define kGraphics_font_CHINESE  ((int) kGraphics_font::MAX + 5)
-#define kGraphics_font_JAPANESE  ((int) kGraphics_font::MAX + 6)
+#define kGraphics_font_CHEROKEE  ((int) kGraphics_font::MAX + 4)
+#define kGraphics_font_DINGBATS  ((int) kGraphics_font::MAX + 5)
+#define kGraphics_font_CHINESE  ((int) kGraphics_font::MAX + 6)
+#define kGraphics_font_JAPANESE  ((int) kGraphics_font::MAX + 7)
 
 /*
 	Honour the NO_GRAPHICS compiler switch.
