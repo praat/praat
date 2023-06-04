@@ -50,6 +50,7 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 copyright
 */
 
 void ManPages_addPagesFromNotebook (ManPages me, conststring8 text);
+integer ManPages_addPagesFromNotebook (ManPages me, MelderReadText multiplePagesReader, integer startOfSelection, integer endOfSelection);
 
 integer ManPages_lookUp (ManPages me, conststring32 title);
 

@@ -667,7 +667,7 @@ void ManPages_addPagesFromNotebook (ManPages me, conststring8 multiplePagesText)
 	autoMelderString pageText;
 	for (;;) {
 		mutablestring32 line = MelderReadText_readLine (multiplePagesReader.get());
-		const bool atEndOfPage = ( ! line || Melder_startsWith (line, U"#####") );
+		const bool atEndOfPage = ( ! line || Melder_startsWith (line, U"####################") );
 		if (atEndOfPage) {
 			if (pageText.length > 0) {
 				autoMelderReadText pageReader = MelderReadText_createFromText (Melder_dup (pageText.string));
@@ -679,6 +679,46 @@ void ManPages_addPagesFromNotebook (ManPages me, conststring8 multiplePagesText)
 		} else
 			MelderString_append (& pageText, line, U"\n");
 	}
+}
+integer ManPages_addPagesFromNotebook (ManPages me, MelderReadText multiplePagesReader, integer startOfSelection, integer endOfSelection) {
+	bool foundFirstPage = false;
+	integer numberOfCharactersRead = 0;
+	integer startingPage = -1, numberOfPages = 0;
+	autoMelderString pageText;
+	for (;;) {
+		mutablestring32 line = MelderReadText_readLine (multiplePagesReader);
+		if (startingPage == -1) {
+			numberOfCharactersRead += Melder_length (line) + 1;
+			if (numberOfCharactersRead >= startOfSelection)
+				startingPage = numberOfPages;
+		}
+		const bool atEndOfPage = ( ! line || Melder_startsWith (line, U"####################") );
+		if (atEndOfPage) {
+			if (! foundFirstPage) {
+				if (! line)
+					Melder_throw (U"Empty notebook (no line starting with “####################”.");
+				/*
+					When we are here, the line starts with "####################".
+				*/
+				foundFirstPage = true;
+			}
+			if (pageText.length > 0) {
+				autoMelderReadText pageReader = MelderReadText_createFromText (Melder_dup (pageText.string));
+				readOnePage_notebook (me, pageReader.get());
+			}
+			if (! line)
+				break;
+			MelderString_empty (& pageText);
+			numberOfPages += 1;
+		} else if (Melder_startsWith (line, U")~~~\"")) {
+			break;
+		} else if (foundFirstPage) {
+			MelderString_append (& pageText, line, U"\n");
+		} else {
+			// ignore all the lines before the first line that starts with "####################".
+		}
+	}
+	return startingPage;
 }
 
 static bool pageCompare (ManPage me, ManPage thee) {

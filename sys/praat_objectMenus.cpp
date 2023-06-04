@@ -694,7 +694,7 @@ static autoDaata notebookRecognizer (integer nread, const char * /* header */, M
 	conststring32 name = MelderFile_name (file);
 	if (nread < 2)
 		return autoDaata ();
-	if (Melder_endsWith_caseAware (name, U".praatnb"))
+	if (Melder_endsWith_caseAware (name, U".praatnb") || Melder_endsWith_caseAware (name, U".cpp"))
 		return Notebook_createFromFile (file);
 	return autoDaata ();
 }
