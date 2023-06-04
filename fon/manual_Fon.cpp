@@ -250,10 +250,10 @@ Algorithm
 =========
 
 First, the number of points %N in the time domain is determined. Its expectation value is
-~	%\La = (%t__%max_ – %t__%min_) · %density
+~	%Λ = (%t__%max_ – %t__%min_) · %density
 
 but its actual value is taken from the Poisson distribution:
-~	%P(\# points=%N) = (%\La^%N / %N!) %e^^–%\La
+~	%P(\# points=%N) = (%Λ^%N / %N!) %e^^–%Λ
 
 Then, %N points are computed throughout the time domain, according to a uniform distribution:
 ~	%p(%t) = 1 / (%t__%max_ – %t__%min_)   for %t ∈ [%t__%min_, %t__%max_]
@@ -379,7 +379,8 @@ A command in the @@New menu@ to create a @Strings object containing a list of fi
 
 Settings
 ========
-{-)~~~"
+{- 5.4x2.44)~~~"
+	"Font size: 12\n"
 	Manual_DRAW_SETTINGS_WINDOW ("Create Strings as file list", 2.6)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Name", "fileList")
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("File path", "/Users/miep/Sounds/*.wav")
