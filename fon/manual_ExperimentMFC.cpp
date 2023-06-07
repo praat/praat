@@ -54,7 +54,7 @@ MAN_END
 
 MAN_BEGIN (U"ExperimentMFC 1. When to use Praat", U"ppgb", 20160925)
 NORMAL (U"With Praat's ExperimentMFC, you can do simple experiments on identification and discrimination. "
-	"`Simple' means that for identification, the subject hears a sound and has to click on one of a set of "
+	"“Simple” means that for identification, the subject hears a sound and has to click on one of a set of "
 	"labelled rectangles (optionally, you can have the subject give a goodness-of-fit judgment). "
 	"For discrimination, you can have simple same-different choices, or more intricate things like AXB, 4I-oddity, and so on.")
 NORMAL (U"The advantage of using Praat's ExperimentMFC for this is that it is free, it works on Windows, Unix, and Macintosh, "
@@ -572,7 +572,7 @@ CODE (U"numberOfDifferentStimuli = 4")
 CODE (U"...")
 CODE (U"...")
 CODE (U"runText = \"Choose the vowel that you heard.\"")
-NORMAL (U"For every stimulus, the same `run text' was written at the top of the screen. "
+NORMAL (U"For every stimulus, the same “run text” was written at the top of the screen. "
 	"But suppose you want to make that text dependent on the stimulus. You would do:")
 	CODE1 (U"\"heed\"  \"Choose the vowel you heard.\"")
 	CODE1 (U"\"hid\"   \"Click the vowel you heard.\"")

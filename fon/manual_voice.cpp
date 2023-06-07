@@ -39,7 +39,7 @@ NORMAL (U"The results of the voice measurements will depend on your @@Pitch sett
 	"In general, you will want to be careful about the pitch range. The standard range is 75\\--600 Hertz, "
 	"but take a range of e.g. 50\\--200 Hertz for pathological male voices if that is the typical range. "
 	"You may also want to choose ##Optimize for voice analysis#; otherwise, the voice report will complain about possible inaccuracies. "
-	"The `advanced' pitch settings like ##Silence threshold# and ##Octave jump cost# can stay at their standard values.")
+	"The “advanced” pitch settings like ##Silence threshold# and ##Octave jump cost# can stay at their standard values.")
 LIST_ITEM (U"@@Voice 1. Voice breaks@")
 LIST_ITEM (U"@@Voice 2. Jitter@")
 LIST_ITEM (U"@@Voice 3. Shimmer@")

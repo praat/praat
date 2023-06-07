@@ -3197,7 +3197,7 @@ INTRO (U"Determines whether a given point is on the ##I#nside, the ##O#utside, o
 ENTRY (U"Algorithm")
 NORMAL (U"We determine how often a horizontal line extending from the point crosses the polygon. If the number of crossings is even, "
 	"the point is on the outside, else on the inside. Special care is taken to be able to detect if a point is on the boundary of "
-	"the polygon. The used algorithm is from @@Hormann & Agathos (2001)@")
+	"the polygon. The used algorithm is from @@Hormann & Agathos (2001)@.")
 MAN_END
 
 MAN_BEGIN (U"Polygon: Simplify", U"djmw", 20140509)
@@ -3219,9 +3219,9 @@ MAN_END
 
 MAN_BEGIN (U"Polygon: Translate...", U"djmw", 20100418)
 INTRO (U"Translates the selected @@Polygon@ over the given vector.")
-NORMAL (U"Given the old coordinates (x__i_, y__i_) and the translation (x__t_,y__t_), the new coordinates are:")
-EQUATION (U"x__i_\\'p = x__i_ + x__t_")
-EQUATION (U"y__i_\\'p = y__i_ + y__t_")
+NORMAL (U"Given the old coordinates (%x__%i_, %y__%i_) and the translation (%x__%t_, %y__%t_), the new coordinates are:")
+EQUATION (U"%x__%i_\\'p = %x__%i_ + %x__%t_")
+EQUATION (U"%y__%i_\\'p = %y__%i_ + %y__%t_")
 MAN_END
 
 MAN_BEGIN (U"Polynomial", U"djmw", 19990608)
@@ -3680,7 +3680,7 @@ INTRO (U"The substitution string is mostly interpreted as ordinary text except "
 	"character combinations:")
 TERM (U"#\\bs1 ... #\\bs9    are backreferences at sub-expressions 1 ... 9 in the match.")
 DEFINITION (U"Any of the first nine sub-expressions of the match string can "
-	"be inserted into the replacement string by inserting a `\\bs' followed "
+	"be inserted into the replacement string by inserting a “\\bs” followed "
 	"by a digit from 1 to 9 that represents the string matched by a "
 	"parenthesized expression within the regular expression. The numbering "
 	"is left to right.")

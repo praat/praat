@@ -357,8 +357,8 @@ DEFINITION (U"the duration of the analysis window, in seconds. If this is 0.005 
 	"in the spectrogram of a pure sine wave. "
 	"For a Gaussian window, the -3 dB bandwidth is 2*sqrt(6*ln(2))/(%π*%%Window length%), "
 	"or 1.2982804 / %%Window length%. "
-	"To get a `broad-band' spectrogram (bandwidth 260 Hz), set %%Window length% to 5 milliseconds; "
-	"to get a `narrow-band' spectrogram (bandwidth 43 Hz), set it to 30 milliseconds. "
+	"To get a “broad-band” spectrogram (bandwidth 260 Hz), set %%Window length% to 5 milliseconds; "
+	"to get a “narrow-band” spectrogram (bandwidth 43 Hz), set it to 30 milliseconds. "
 	"The other window shapes give slightly different values.")
 TERM (U"##Maximum frequency (Hz)")
 DEFINITION (U"the maximum frequency subject to analysis, e.g. 5000 hertz. "

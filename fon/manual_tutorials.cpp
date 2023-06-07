@@ -25,8 +25,8 @@ void manual_tutorials_init (ManPages me) {
 MAN_BEGIN (U"What's new?", U"ppgb", 20230503)
 INTRO (U"Latest changes in Praat.")
 NORMAL (U"##6.3.10# (3 May 2023)")
-LIST_ITEM (U"• Windows: repaired a bug by which key strokes would no longer go to the Demo window after a puase window with no text fields was closed.")
-LIST_ITEM (U"• Repaired a bug in the VowelEditor by which it would crash when starting up after fewer than 4 numbers were set in the “Extra formant–bandwidth pairs” field.")
+LIST_ITEM (U"• Windows: repaired a bug by which key strokes would no longer go to the Demo window after a pause window with no text fields was closed.")
+LIST_ITEM (U"• Repaired a bug in the VowelEditor by which it would crash when starting up if fewer than 4 numbers had been set in the “Extra formant–bandwidth pairs” field.")
 LIST_ITEM (U"• FormantPathEditor improvements.")
 LIST_ITEM (U"• Undocumented alpha support for Praat notebooks.")
 LIST_ITEM (U"• Scripting: vector literals can be indexed.")
@@ -51,7 +51,7 @@ LIST_ITEM (U"• Repaired an old bug by which $$chooseReadString\\$ ()$ could cr
 NORMAL (U"##6.3.04# (24 January 2023)")
 LIST_ITEM (U"• Playing multiple sounds with #Play now concatenates them without breaks, "
 	"and is interruptable by the Escape key.")
-LIST_ITEM (U"• Renamed the remaining occurrences of #Preferences with #Settings "
+LIST_ITEM (U"• Renamed the remaining occurrences of #Preferences to #Settings "
 	"(old scripts will continue to work).")
 LIST_ITEM (U"• ##Create Polygon from values...")
 LIST_ITEM (U"• ##Sound: To Sound (derivative)...")
@@ -1171,7 +1171,7 @@ LIST_ITEM (U"• Script window: removed a bug that could cause Praat to crash "
 	"if you did ##Find again# before having done any #Find.")
 NORMAL (U"##5.1.24# (15 January 2010)")
 LIST_ITEM (U"• Formulas run 10 to 20 percent faster.")
-LIST_ITEM (U"• Macintosh: support for forward delete key and Command-`.")
+LIST_ITEM (U"• Macintosh: support for forward delete key and Command-\\` .")
 NORMAL (U"##5.1.23# (1 January 2010)")
 LIST_ITEM (U"• Allowed multiple files to be selected with e.g. @@Read from file...@.")
 LIST_ITEM (U"• Demo window: guarded against handling the Demo window from two scripts at a time.")
@@ -1479,7 +1479,7 @@ LIST_ITEM (U"• OTGrammar bug fix: leak and constraint plasticity correctly wri
 NORMAL (U"##4.6.11# (25 July 2007)")
 LIST_ITEM (U"• OTGrammar: introduced %%constraint plasticity% for slowing down or halting the speed with which constraints are reranked.")
 LIST_ITEM (U"• OTGrammar: introduced %%leak% for implementing forgetful learning of correlations.")
-LIST_ITEM (U"• OTGrammar: positive constraint satisfactions are drawn as `+' in tableaus.")
+LIST_ITEM (U"• OTGrammar: positive constraint satisfactions are drawn as “+” in tableaus.")
 NORMAL (U"##4.6.10# (22 July 2007)")
 LIST_ITEM (U"• Improved reading of UTF-16 data files.")
 LIST_ITEM (U"• Improved error messages when reading text files (line numbers are mentioned).")
@@ -1489,7 +1489,7 @@ LIST_ITEM (U"• Corrected a bug introduced in 4.6.07 that caused a crash when r
 LIST_ITEM (U"• Corrected a bug introduced in 4.6.07 that caused incorrect Open buttons in Inspect.")
 LIST_ITEM (U"• How come 4.6.07 introduced those bugs? Because of large changes in the Praat source code as a result of the transition to Unicode.")
 NORMAL (U"##4.6.08# (22 June 2007)")
-LIST_ITEM (U"• Windows: worked around a `feature' of the C library that caused 3-byte line-breaks in the buttons file.")
+LIST_ITEM (U"• Windows: worked around a “feature” of the C library that caused 3-byte line-breaks in the buttons file.")
 LIST_ITEM (U"• Windows: returned to smaller font in script window.")
 LIST_ITEM (U"• OT learning: corrected a bug in PositiveHG.")
 NORMAL (U"##4.6.07# (20 June 2007)")
@@ -1802,7 +1802,7 @@ MAN_END
 MAN_BEGIN (U"What was new in 4.3?", U"ppgb", 20050126)
 ENTRY (U"Praat 4.3, 26 January 2005")
 	NORMAL (U"General:")
-	LIST_ITEM (U"• `Apply' button in settings windows for menu commands and in script forms.")
+	LIST_ITEM (U"• #Apply button in settings windows for menu commands and in script forms.")
 	LIST_ITEM (U"• Info window can be saved.")
 	LIST_ITEM (U"• Removed 30,000-character limit in Info window.")
 	NORMAL (U"Phonetics:")
@@ -1868,7 +1868,7 @@ ENTRY (U"Praat 4.2, 4 March 2004")
 		"on non-PostScript printers, improves the looks of pictures copied to your wordprocessor when printed, "
 		"and changes the looks of pictures copied to your presentation program.")
 	NORMAL (U"OT learning:")
-	LIST_ITEM (U"• Metrics grammar supports `impoverished overt forms', "
+	LIST_ITEM (U"• Metrics grammar supports “impoverished overt forms”, "
 		"i.e. without secondary stress even if surface structures do have secondary stress.")
 	LIST_ITEM (U"• Support for crucially tied constraints and tied candidates.")
 	LIST_ITEM (U"• Support for backtracking in EDCD.")
@@ -3908,8 +3908,8 @@ DEFINITION (U"the duration of the analysis window. If this is 0.005 seconds (the
 	"i.e. the width of the horizontal line in the spectrogram of a pure sine wave (see below). "
 	"For a Gaussian window, the -3 dB bandwidth is 2*sqrt(6*ln(2))/(\\pi*%%Window length%), "
 	"or 1.2982804 / %%Window length%. "
-	"To get a `broad-band' spectrogram (bandwidth 260 Hz), keep the standard window length of 5 ms; "
-	"to get a `narrow-band' spectrogram (bandwidth 43 Hz), set it to 30 ms (0.03 seconds). "
+	"To get a “broad-band” spectrogram (bandwidth 260 Hz), keep the standard window length of 5 ms; "
+	"to get a “narrow-band” spectrogram (bandwidth 43 Hz), set it to 30 ms (0.03 seconds). "
 	"The other window shapes give slightly different values.")
 TERM (U"%%Dynamic range% (dB)")
 DEFINITION (U"All values that are more than %%Dynamic range% dB below the maximum (perhaps after dynamic compression, "
@@ -4075,7 +4075,7 @@ NORMAL (U"What Praat does precisely, depends on your Spectrogram settings. "
 	"with the method of @@Sound: To Spectrum...@, which is put into the Objects window and opened in an editor window. "
 	"If the window shape is Gaussian, Praat will extract a part of the sound "
 	"that runs from 5 milliseconds before the cursor to 5 ms after the cursor. The spectrum will then be based "
-	"on a `physical' window length of 10 ms, although the `effective' window length is still 5 ms "
+	"on a “physical” window length of 10 ms, although the “effective” window length is still 5 ms "
 	"(see @@Intro 3.2. Configuring the spectrogram@ for details).")
 ENTRY (U"Spectral slice from a selection")
 NORMAL (U"What Praat does precisely, again depends on the %%window shape% of your Spectrogram settings. "
@@ -4335,7 +4335,7 @@ ENTRY (U"Pitch floor")
 NORMAL (U"The intensity curve is %smoothed, since you usually do not want the intensity curve to go up and down with "
 	"the intensity variations within a pitch period. To avoid such pitch-synchronous variations, "
 	"the intensity at every time point is a weighted average over many neighbouring time points. "
-	"The weighting is performed by a Gaussian (`double Kaiser') window that has a duration that is determined by the "
+	"The weighting is performed by a Gaussian (“double Kaiser”) window that has a duration that is determined by the "
 	"##Minimum pitch# setting (see @@Intro 4.2. Configuring the pitch contour@). "
 	"To see more detail than usual, raise the minimum pitch; to get more smoothing than usual, lower it. "
 	"For more information, see @@Sound: To Intensity...@.")
@@ -4768,7 +4768,7 @@ NORMAL (U"If you selected a single object, e.g., of type Pitch, "
 CODE (U"File type = \"ooTextFile\"")
 CODE (U"Object class = \"Pitch\"")
 NORMAL (U"After this, the pitch data will follow.")
-LIST_ITEM (U"If you selected more than one object, e.g., `Pitch hallo' and `Polygon kromme', "
+LIST_ITEM (U"If you selected more than one object, e.g., “Pitch hallo” and “Polygon kromme”, "
 	"the file will look like:")
 CODE (U"File type = \"ooTextFile\"")
 CODE (U"Object class = \"Collection\"")
@@ -4790,7 +4790,7 @@ CODE (U"\"Collection\"  2")
 CODE (U"\"Pitch\"  \"hallo\"  (pitch data...)")
 CODE (U"\"Polygon\"  \"kromme\"  (polygon data...)")
 NORMAL (U"Thus, all text that is not a free-standing number and is not enclosed in double quotes or < >, "
-	"is considered a comment, as is all text following an exclamation mark (`!') on the same line.")
+	"is considered a comment, as is all text following an exclamation mark (“!”) on the same line.")
 MAN_END
 
 MAN_BEGIN (U"Segmentation", U"ppgb", 20010408)
@@ -5233,7 +5233,7 @@ INTRO (U"Praat aims at being a fully international program: "
 ENTRY (U"ASCII text files")
 NORMAL (U"If your TextGrid (or Table, or script, or Info window...) contains only characters that can be encoded as ASCII, "
 	"namely the characters !\\\" \\# \\$ \\% &\\' ()*+,-./0123456789:;<=>?\\@  "
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\bs]\\^ \\_ ` abcdefghijklmnopqrstuvwxyz{|}~, "
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\bs]\\^ \\_ \\`  abcdefghijklmnopqrstuvwxyz{|}~, "
 	"then when you say @@Save as text file...@ or #Save, Praat will write an ASCII text file, "
 	"which is a text file in which every character is encoded in a single byte (8 bits). "
 	"All programs that can read plain text files can read such files produced by Praat.")

@@ -1032,7 +1032,7 @@ NORMAL (U"If the %%ranking spreading% were zero, the demotions in the GLA would 
 	"a constraint has fallen below its competitors. If the data contain an error, the grammar "
 	"will change to an incorrect state, and the learner has to make an error to correct it. "
 	"Though the error ratio is now one (because of the constant demotion step), "
-	"the learner's behaviour can still be described as a `tit-for-tat' strategy, "
+	"the learner's behaviour can still be described as a “tit-for-tat” strategy, "
 	"which is an unknown phenomenon in human speech variation.")
 NORMAL (U"The solution is to have a finite ranking spreading: in this way, the learner will continue making "
 	"errors (though less than 50\\% ) after the constraint has fallen below its competitors. "
