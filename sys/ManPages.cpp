@@ -104,7 +104,7 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par) {
 	char32 link [MAXIMUM_LINK_LENGTH + 1], fileName [FILENAME_BUFFER_SIZE];
 	for (const char32 *plink = extractLink (par -> text, nullptr, link); plink != nullptr; plink = extractLink (par -> text, plink, link)) {
 		/*
-			Now, `link' contains the link text, with spaces and all.
+			Now, `link` contains the link text, with spaces and all.
 			Transform it into a file name.
 		*/
 		structMelderFile file2 { };
@@ -502,10 +502,13 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				const bool shouldShowOutput = true;   // TODO: or not...
 				if (shouldShowOutput) {
 					const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
+					if (Melder_startsWith (firstNonspace, U"\\@{") || Melder_startsWith (firstNonspace, U"\\#{"))
+						firstNonspace += 3;
 					if (
-						(Melder_startsWith (firstNonspace, U"Draw") ||
-						Melder_startsWith (firstNonspace, U"Paint") ||
-						Melder_startsWith (firstNonspace, U"Text "))
+						(Melder_startsWith (firstNonspace, U"Draw")  ||
+						 Melder_startsWith (firstNonspace, U"Paint")  ||
+						 Melder_startsWith (firstNonspace, U"Text ")  ||
+						 Melder_startsWith (firstNonspace, U"Marks "))
 						&& height == 0.001
 					)
 						height = 3.0;
