@@ -602,7 +602,7 @@ NORMAL (U"to perform a short-term spectral analysis, approximating the spectrum 
 ENTRY (U"Settings")
 NORMAL (U"The same as with @@Sound: To Formant (burg)...@.")
 ENTRY (U"Algorithm")
-NORMAL (U"The algorithm is based on the implementation of the `Split Levinson' algorithm by @@Willems (1986)@. "
+NORMAL (U"The algorithm is based on the implementation of the “Split Levinson” algorithm by @@Willems (1986)@. "
 	"This algorithm will always find the requested number of formants in every frame, even if they do not exist. "
 	"The standard routine (@@Sound: To Formant (burg)...@) yields much more reliable formant values, though it is more sensitive "
 	"to the %%Formant ceiling% argument.")

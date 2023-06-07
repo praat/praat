@@ -533,8 +533,8 @@ Excitation Matrix_to_Excitation (Matrix me);
 "is convertible to and from a Matrix.\n"
 "This allows extra hacking and drawing possibilities.\n"
 "For example, to square the y values of a Polygon, do the following:\n"
-"   select a Polygon, click on `To Matrix', click on `Formula...',\n"
-"   type \"self * if row=1 then 1 else self fi\", click on `To Polygon'."*/
+"   select a Polygon, choose ##To Matrix#, choose ##Formula...#,\n"
+"   type \"self * if row=1 then 1 else self fi\", choose ##To Polygon#."*/
 
 MAN_BEGIN (U"Formula...", U"ppgb", 19980319)
 NORMAL (U"See @@Matrix: Formula...@")

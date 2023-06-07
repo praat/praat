@@ -280,7 +280,7 @@ LIST_ITEM (U"\\bss{...}: small:")
 LIST_ITEM (U"    $$W\\bss{ARP}$   gives:   W\\s{ARP}")
 NORMAL (U"To draw a \\% , \\# , \\^ , or \\_  symbol, you type \"$$\\bs\\%  $\", "
 	"\"$$\\bs\\#  $\", \"$$\\bs\\^  $\", or \"$$\\bs\\_  $\": a backslash, the symbol, and a space.")
-NORMAL (U"On Xwindows machines, the font `Symbol' will never look bold or italic, "
+NORMAL (U"On Xwindows machines, the font Symbol will never look bold or italic, "
 	"but it will be printed correctly.")
 ENTRY (U"See also")
 NORMAL (U"@@Special symbols@")
@@ -630,7 +630,7 @@ DEFINITION (U"the %x (for top or bottom) or %y (for left or right) position of t
 	"expressed in the domain or range of your latest drawing "
 	"in the horizontal or vertical direction.")
 TERM (U"##Write number")
-DEFINITION (U"if on, a real number equal to `Position' will be written in the margin, "
+DEFINITION (U"if on, a real number equal to #Position will be written in the margin, "
 	"at an %x (for top or bottom) or %y (for left or right) position equal to #Position.")
 TERM (U"##Draw tick")
 DEFINITION (U"if on, a short line piece will be drawn in the margin, "

@@ -157,7 +157,7 @@ CODE (U"Create Sound as tone complex: \"train\", 0.3, 1, 44100, \"Sine\", 100, 1
 NORMAL (U"whichever you prefer.")
 NORMAL (U"Some of these experiments are described in @@Plomp (1967)@ and @@Patterson & Wightman (1976)@.")
 ENTRY (U"Algorithm")
-NORMAL (U"For the `sine' phase, the resulting Sound is given by the following formula:")
+NORMAL (U"For the “sine” phase, the resulting Sound is given by the following formula:")
 NORMAL (U"%x(%t) = \\su__%i=1..%numberOfComponents_ sin (2%\\pi\\.c(%firstFrequency + "
 	"(%i\\--1)\\.c%frequencyStep)\\.c%t)")
 ENTRY (U"More flexibility?")
@@ -1225,8 +1225,8 @@ INTRO (U"A command available in the #Combine menu when you select two @Sound obj
 	"this new Sound is the %convolution of the two original Sounds.")
 ENTRY (U"Settings")
 TERM (U"##Amplitude scaling")
-DEFINITION (U"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
-	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
+DEFINITION (U"Here you can choose between the “principled” options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
+	"There is also a “pragmatic” option, namely ##peak 0.99#, which scales the resulting sound in such a way "
 	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
 	"(see @@Sound: Scale peak...@).")
 TERM (U"##Signal outside time domain is...")
@@ -1257,7 +1257,7 @@ SCRIPT (5, 3,
 	"Remove"
 )
 NORMAL (U"(made with ##@@Create Sound from formula...@ peaks mono 0 0.6 1000 x*(col mod 100 = 0)#), "
-	"convolved with the `leaky integrator' filter")
+	"convolved with the “leaky integrator” filter")
 SCRIPT (5, 3,
 	U"Create Sound from formula... leak mono 0 1 1000 exp(-x/0.1)\n"
 	"Draw... 0 0 0 1 yes curve\n"
@@ -1368,8 +1368,8 @@ INTRO (U"A command available in the #Combine menu when you select two @Sound obj
 	"this new Sound is the %cross-correlation of the two original Sounds.")
 ENTRY (U"Settings")
 TERM (U"##Amplitude scaling")
-DEFINITION (U"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
-	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
+DEFINITION (U"Here you can choose between the “principled” options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
+	"There is also a “pragmatic” option, namely ##peak 0.99#, which scales the resulting sound in such a way "
 	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
 	"(see @@Sound: Scale peak...@).")
 TERM (U"##Signal outside time domain is...")
@@ -1488,8 +1488,8 @@ INTRO (U"A command available in the #Periodicity menu when you select one or mor
 	"this new Sound is the %autocorrelation of the original Sound.")
 ENTRY (U"Settings")
 TERM (U"##Amplitude scaling")
-DEFINITION (U"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
-	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
+DEFINITION (U"Here you can choose between the “principled” options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
+	"There is also a “pragmatic” option, namely ##peak 0.99#, which scales the resulting sound in such a way "
 	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
 	"(see @@Sound: Scale peak...@).")
 TERM (U"##Signal outside time domain is...")

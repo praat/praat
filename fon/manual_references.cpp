@@ -184,7 +184,7 @@ MAN_END
 MAN_BEGIN (U"Ladefoged & Maddieson (1996)", U"ppgb", 20030316)
 NORMAL (U"Peter Ladefoged & Ian Maddieson (1996). %%The sounds of the world's languages%. "
 	"Oxford: Blackwell.")
-NORMAL (U"An extensive reference source for the articulation and acoustics of `all' vowels and consonants "
+NORMAL (U"An extensive reference source for the articulation and acoustics of “all” vowels and consonants "
 	"that occur in the world's languages. If you don't find the answer in this book, you will find the "
 	"answer in the articles referred to in this book. "
 	"The book uses lots of spectrograms, palatograms, and other techniques.")

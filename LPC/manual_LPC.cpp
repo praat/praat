@@ -911,8 +911,8 @@ NORMAL (U"Given a filter (the selected LPC) and its output (the selected Sound),
 	"its input is reconstructed (the new Sound that will appear in the List of objects).")
 NORMAL (U"In Z-domain notation: #E(%z) = #O(%z) / #H(%z), where "
 	"#O(%z) is the filter output Sound, #H(%z) the LPC filter, and, #E(%z) the filter "
-	"input Sound. (Selecting this newly generated Sound and the LPC, choosing the option "
-	"`Filter...' generates a Sound that is identical to the Sound that originated "
+	"input Sound. (Selecting this newly generated Sound and the LPC, choosing the command "
+	"##Filter...# generates a Sound that is identical to the Sound that originated "
 	"the LPC.)")
 MAN_END
 

@@ -252,7 +252,7 @@ ENTRY (U"The logarithmic power spectral density")
 NORMAL (U"It is often useful to express the power spectral density in dB relative to %%P__ref_% = 2·10^^-5^ Pa:")
 EQUATION (U"PSD__dB_(%f) = 10 log__10_ { PSD(%f) / %%P__ref_%^2 }")
 NORMAL (U"Since the argument of the logarithm is in units of Hz^^-1^, this spectral measure can loosely be said "
-	"to be in units of `dB/Hz'. In Praat, this logarithmic power spectral density is the quantity stored in an @Ltas; "
+	"to be in units of “dB/Hz”. In Praat, this logarithmic power spectral density is the quantity stored in an @Ltas; "
 	"it is also the quantity shown in pictures of a @Spectrum and a @Spectrogram.")
 MAN_END
 

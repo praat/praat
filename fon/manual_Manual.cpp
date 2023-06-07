@@ -99,24 +99,24 @@ CODE (U"from the languages of the world,")
 CODE (U"pronounced by a single speaker (me):\\\"r")
 CODE (U"<list_item> \"\\@ Vowels, quite problematic for Dutch students!\"")
 CODE (U"<list_item> \"\\@ \\@ Dorsal fricatives\\@ , equally problematic!\"")
-NORMAL (U"With the symbol `\\@ ', you create a %link to another ManPages text file. "
+NORMAL (U"With the symbol “\\@ ”, you create a %link to another ManPages text file. "
 	"A link will be drawn in blue on your screen. "
 	"In this example, you have created links to the files ##Vowels.man# "
 	"and ##Dorsal_fricatives.man# in the same folder as the current file "
 	"(all ##.man# files have to be in the same folder; this makes it likely "
 	"that their names are unique). "
 	"If the link contains spaces or other non-alphanumeric symbols, "
-	"you have to use three `\\@ ' symbols, as shown; "
-	"with a single word, you may use a single `\\@ '.")
+	"you have to use three “\\@ ” symbols, as shown; "
+	"with a single word, you may use a single “\\@ ”.")
 NORMAL (U"In resolving the file name, the ManPages system replaces spaces "
 	"and other special symbols with underscores, "
 	"and converts any initial lower-case character by its upper-case variant. "
-	"For instance, if your link is \"\\@ \\@ back vowels\\@ \", "
+	"For instance, if your link is “\\@ \\@ back vowels\\@ ”, "
 	"the file name will be ##Back_vowels.man#.")
 NORMAL (U"The title in the second line of ##Back_vowels.man# must be equal to the link name, "
 	"though capitalization of the first letter is allowed. "
-	"Thus, the title of ##Back_vowels.man# will probably be \"Back vowels\". "
-	"Likewise, the starting file with the title \"Welcome\" should have the name ##Welcome.man# "
+	"Thus, the title of ##Back_vowels.man# will probably be “Back vowels”. "
+	"Likewise, the starting file with the title “Welcome” should have the name ##Welcome.man# "
 	"if any other files refer to it.")
 ENTRY (U"Paragraph types")
 NORMAL (U"A normal paragraph will have type <normal>. The hypertext system will "
@@ -124,7 +124,7 @@ NORMAL (U"A normal paragraph will have type <normal>. The hypertext system will 
 	"The first paragraph of a manual page will normally have the type <intro>. "
 	"Though this may look the same as <normal>, the search system of the @Manual "
 	"may take account of the distinction.")
-NORMAL (U"Headings (like the title \"Paragraph types\" of this subsection) "
+NORMAL (U"Headings (like the title “Paragraph types” of this subsection) "
 	"have type <entry>. This will be drawn in a larger character size.")
 NORMAL (U"For lists, you use the type <list_item>. You will often combine this with %button symbols, "
 	"like in the following:")
