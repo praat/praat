@@ -14,7 +14,7 @@ View & Edit
 #
 # If:
 #    you put the text cursor between "ab" and "cd" in the text field,
-#    then click on the boundary insertion circle on tier 1
+#    then click in the boundary insertion circle on tier 1
 # Then:
 #    a boundary should appear on tier 1,
 #    with "ab" in the interval on its left,
@@ -25,7 +25,7 @@ View & Edit
 # If:
 #    you select the cd interval,
 #    then put the time cursor somewhere in the "cd" interval,
-#    then click on the boundary insertion circle on tier 2
+#    then click in the boundary insertion circle on tier 2
 # Then:
 #    a boundary should appear on tier 2,
 #    with nothing in the interval on its left,
@@ -37,7 +37,7 @@ View & Edit
 #    you put "hallo" in the first interval on tier 2,
 #    then you select the "ab" interval on tier 1,
 #    then put the time cursor somewhere in the "ab" interval,
-#    then click on the boundary insertion circle on tier 2
+#    then click in the boundary insertion circle on tier 2
 # Then:
 #    a boundary should appear on tier 2,
 #    with "hallo" in the interval on its left,

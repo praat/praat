@@ -151,7 +151,7 @@ LIST_ITEM (U"• Restored horizontal and vertical dragging in tier areas (had be
 LIST_ITEM (U"• Removed several small bugs (and probably introduced a couple of new ones) in editor windows.")
 LIST_ITEM (U"• Restored the original Praat icon.")
 NORMAL (U"##6.2.14# (24 May 2022)")
-LIST_ITEM (U"• TextGrid window: repaired a bug introduced in 6.2.10 by which a click on the boundary insertion circle "
+LIST_ITEM (U"• TextGrid window: repaired a bug introduced in 6.2.10 by which a click in the boundary insertion circle "
 	"would copy the contents of a new interval from another tier (if that other tier stood selected).")
 NORMAL (U"##6.2.13# (18 May 2022)")
 LIST_ITEM (U"• Playing a sound on the Mac: prevented an audible click at the end of audio output (appending a silence at the end is no longer needed).")
@@ -3377,7 +3377,7 @@ NORMAL (U"This menu contains commands for drawing the object to the @@Picture wi
 	"which will allow you to print the drawing or to copy it to your word processor.")
 MAN_END
 
-MAN_BEGIN (U"Dynamic menu", U"ppgb", 20110131)
+MAN_BEGIN (U"Dynamic menu", U"ppgb", 20110131)  // 2023-06-08
 INTRO (U"A column of buttons in the right-hand part of the @@Objects window@, "
 	"plus the @@Save menu@ in the Objects window.")
 NORMAL (U"If you select one or more @objects in the list, "
@@ -3386,11 +3386,11 @@ NORMAL (U"If you select one or more @objects in the list, "
 	"These actions can include viewing & editing, saving, drawing, "
 	"conversions to other types (including analysis and synthesis), and more.")
 ENTRY (U"Example of analysis:")
-NORMAL (U"Record a Sound, select it, and click on ##To Pitch...#. "
+NORMAL (U"Record a Sound, select it, and click ##To Pitch...#. "
 	"This will create a new Pitch object and put it in the list of objects. "
 	"You can then edit, write, and draw this Pitch object.")
 ENTRY (U"Example of synthesis:")
-NORMAL (U"Create a Speaker, create and edit an Artword, and click on ##To Sound...#.")
+NORMAL (U"Create a Speaker, create and edit an Artword, and click ##To Sound...#.")
 MAN_END
 
 MAN_BEGIN (U"View & Edit", U"ppgb", 20110128)
@@ -3800,13 +3800,13 @@ NORMAL (U"Then, once you have a @Sound object in the @@List of Objects@, "
 NORMAL (U"For more information, see the @@Sound files@ tutorial.")
 MAN_END
 
-MAN_BEGIN (U"Intro 2.2. Viewing and editing a sound", U"ppgb", 20230202)
+MAN_BEGIN (U"Intro 2.2. Viewing and editing a sound", U"ppgb", 20230202)   // 2023-06-08
 NORMAL (U"To see the wave form of a @Sound that is in the list of objects, "
 	"select that Sound and click @@View & Edit@. A @SoundEditor window will appear on your screen. "
 	"You see a waveform (or two waveforms, if you have a stereo sound) and probably some “analyses” below it. "
 	"You can zoom in and scroll to see the various parts of the sound in detail. "
 	"You can select a part of the sound by dragging with the mouse. "
-	"To play a part of the sound, click on any of the rectangles below it. "
+	"To play a part of the sound, click in any of the rectangles below it. "
 	"To move a selected part of the sound to another location, use #Cut and #Paste from the Edit menu. "
 	"You can open sound windows for more than one sound, and then cut, copy, and paste between the sounds, "
 	"just as you are used to do with text and pictures in word processing programs.")
@@ -3832,7 +3832,7 @@ LIST_ITEM (U"@@Intro 3.7. Configuring the spectral slice")
 LIST_ITEM (U"@@Intro 3.8. The Spectrum object")
 MAN_END
 
-MAN_BEGIN (U"Intro 3.1. Viewing a spectrogram", U"ppgb", 20110128)
+MAN_BEGIN (U"Intro 3.1. Viewing a spectrogram", U"ppgb", 20110128)  // 2023-06-08
 INTRO (U"To see the spectral content of a sound as a function of time, "
 	"select a @Sound or @LongSound object and choose @@View & Edit@. "
 	"A @SoundEditor or @LongSoundEditor window will appear on your screen. "
@@ -3850,7 +3850,7 @@ NORMAL (U"Darker parts of the spectrogram mean higher energy densities, lighter 
 	"For many examples of spectrograms of speech sounds, see the textbook by @@Ladefoged (2001)@ and "
 	"the reference work by @@Ladefoged & Maddieson (1996)@.")
 NORMAL (U"To see what time and frequency a certain part of the spectrogram is associated with, "
-	"just click on the spectrogram and you will see the vertical time cursor showing the time above "
+	"just click in the spectrogram and you will see the vertical time cursor showing the time above "
 	"the waveform and the horizontal frequency cursor showing the frequency to the left of the spectrogram. "
 	"This is one of the ways to find the %formant frequencies for vowels, or the main spectral peaks "
 	"for fricatives.")

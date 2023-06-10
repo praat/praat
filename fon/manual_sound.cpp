@@ -1042,7 +1042,7 @@ CODE (U"Set value at sample number: 100, 1/2")
 NORMAL (U"This sets the value of the 100th sample to 0.5.")
 MAN_END
 
-MAN_BEGIN (U"SoundEditor", U"ppgb", 20220814)
+MAN_BEGIN (U"SoundEditor", U"ppgb", /*20220814*/ 20230608)
 INTRO (U"An @@Editors|Editor@ for viewing and editing a @Sound object. "
 	"Most of the functions of this editor are described in the @Intro.")
 ENTRY (U"The markers")
@@ -1052,7 +1052,7 @@ NORMAL (U"To set the cursor, use the left mouse button. A short horizontal line 
 	"value that you would expect when looking at the linearly interpolated version of the sampled sound.")
 NORMAL (U"To select a part of the time domain, use the @@time selection@ mechanism.")
 ENTRY (U"Playing")
-NORMAL (U"To play any part of the sound, click on one of the rectangles "
+NORMAL (U"To play any part of the sound, click in one of the rectangles "
 	"below or above the sound window (there can be 1 to 8 of these rectangles), "
 	"or choose a command from the Play menu.")
 NORMAL (U"To mute one or more channels (of a multi-channel sound), @@Command-click@ "

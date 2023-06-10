@@ -3475,7 +3475,7 @@ CODE (U"#form: \"Fill attributes\"")
 CODE (U"#endform")
 CODE (U"#writeInfoLine: \"You chose the colour \", colour\\$ , \" and the texture \", texture\\$ , \".\"")
 NORMAL (U"This shows two multiple-choice boxes. In the Colour box, the fifth button (Black) is the standard value here. "
-	"If you click on “Navy blue” and then #%OK, the variable %colour will have the value 3, "
+	"If you click “Navy blue” and then #%OK, the variable %colour will have the value 3, "
 	"and the variable %%colour\\$ % will have the value “Navy blue”. "
 	"So you can test the value of the Colour box in either of the following ways:")
 CODE (U"if colour = 4")

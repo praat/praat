@@ -52,9 +52,9 @@ LIST_ITEM (U"@@ExperimentMFC 7. Blanking the screen")
 LIST_ITEM (U"@@ExperimentMFC 8. Running multiple experiments")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 1. When to use Praat", U"ppgb", 20160925)
+MAN_BEGIN (U"ExperimentMFC 1. When to use Praat", U"ppgb", 20160925)  // 2023-06-08
 NORMAL (U"With Praat's ExperimentMFC, you can do simple experiments on identification and discrimination. "
-	"“Simple” means that for identification, the subject hears a sound and has to click on one of a set of "
+	"“Simple” means that for identification, the subject hears a sound and has to click in one of a set of "
 	"labelled rectangles (optionally, you can have the subject give a goodness-of-fit judgment). "
 	"For discrimination, you can have simple same-different choices, or more intricate things like AXB, 4I-oddity, and so on.")
 NORMAL (U"The advantage of using Praat's ExperimentMFC for this is that it is free, it works on Windows, Unix, and Macintosh, "

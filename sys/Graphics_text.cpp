@@ -1281,9 +1281,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 	numberOfLinks = 0;
 	while ((kar = *in++) != U'\0') {
 		if (kar == U'^' && my circumflexIsSuperscript) {
-			if (globalSuperscript) globalSuperscript = 0;
-			else if (in [0] == U'^') { globalSuperscript = 1; in ++; }
-			else charSuperscript = 1;
+			if (globalSuperscript) globalSuperscript = false;
+			else if (in [0] == U'^') { globalSuperscript = true; in ++; }
+			else charSuperscript = true;
 			wordItalic = wordBold = wordCode = false;
 			continue;
 		} else if (kar == U'_' && my underscoreIsSubscript) {
