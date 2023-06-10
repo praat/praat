@@ -400,15 +400,15 @@ NORMAL (U"Before trying the task of learning how to write Praat extensions in C 
 	"If you have a set of scripts, you can distribute them as a @@plug-ins|plug-in@.")
 ENTRY (U"2. Getting the existing source code")
 NORMAL (U"You obtain the Praat source code from GitHub (https://github.com/praat), in a file with a name like "
-	"##praat6399_sources.zip# or ##praat6399_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
+	"`praat6399_sources.zip` or `praat6399_sources.tar.gz` (depending on the Praat version), and unpack this by double-clicking. "
 	"The result will be a set of directories "
-	"called #kar, #melder, #external (with #clapack, #gsl, #glpk, #flac, #mp3, #portaudio, #espeak, #vorbis and #opusfile in it), "
-	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #main, #makefiles, #test, #dwtest, and #generate, "
+	"called `kar`, `melder`, `external` (with `clapack`, `gsl`, `glpk`, `flac`, `mp3`, `portaudio`, `espeak`, `vorbis` and `opusfile` in it), "
+	"`sys`, `dwsys`, `stat`, `fon`, `dwtools`, `LPC`, `FFNet`, `gram`, `artsynth`, `EEG`, `main`, `makefiles`, `test`, `dwtest`, and `generate`, "
 	"plus a makefile and Xcode project for macOS and a README.md file.")
 ENTRY (U"3. Building Praat")
 NORMAL (U"Consult the README file on GitHub for directions to compile and link Praat for your platform.")
 ENTRY (U"4. Extending Praat")
-NORMAL (U"To start extending Praat’s functionality, you can edit ##main/main_Praat.cpp#. "
+NORMAL (U"To start extending Praat’s functionality, you can edit `main/main_Praat.cpp`. "
 	"This example shows you how to create a very simple program with all the functionality "
 	"of the Praat program, and a single bit more (namely an additional command in the New menu):")
 CODE (U"\\# include \"praatM.h\"")
@@ -425,14 +425,14 @@ CODE (U"int main (int argc, char **argv) {")
 	CODE1 (U"return 0;")
 CODE (U"}")
 ENTRY (U"5. Learning how to program")
-NORMAL (U"To see how objects are defined, take a look at ##sys/Thing.h#, ##sys/Daata.h#, "
-	"##sys/oo.h#, the ##XXX_def.h# files in the #fon folder, and the corresponding "
-	"##XXX.cpp# files in the #fon folder. To see how commands show up on the buttons "
+NORMAL (U"To see how objects are defined, take a look at `sys/Thing.h`, `sys/Daata.h`, "
+	"`sys/oo.h`, the `XXX_def.h` files in the `fon` folder, and the corresponding "
+	"`XXX.cpp` files in the `fon` folder. To see how commands show up on the buttons "
 	"in the fixed and dynamic menus, take a look at the large interface description file "
-	"##fon/praat_Fon.cpp#.")
+	"`fon/praat_Fon.cpp`.")
 ENTRY (U"6. Using the Praat shell only")
 NORMAL (U"For building the Praat shell (the Objects and Picture windows) only, you need only the code in the nine directories "
-	"#kar, #melder, ##external/{clapack,gsl,flac,mp3,portaudio}#, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
+	"`kar`, `melder`, `external/{clapack,gsl,flac,mp3,portaudio}`, `sys`, and `dwsys`. You delete the inclusion of `praat_uvafon_init` from `main`. "
 	"You will be able to build a Praat shell, i.e. an Objects and a Picture window, "
 	"which has no knowledge of the world, i.e., which does not know any objects "
 	"that can be included in the list of objects. You could use this Praat shell "

@@ -566,7 +566,7 @@ NORMAL (U"In canonical correlation analysis we try to find the correlations betw
 	"exceed the dimension of the independent part.")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
-	"Dutch monophthongal vowels as spoken in /h_t/ context by 50 male speakers. "
+	"Dutch monophthongal vowels as spoken in /h\_ t/ context by 50 male speakers. "
 	"We will try to find the canonical correlation between formant frequencies "
 	"(the %dependent part) and levels (the %independent part). "
 	"The dimension of both groups of variates is 3. "
@@ -1430,7 +1430,7 @@ NORMAL (U"The tone consists of many sinusoidal components whose frequencies "
 NORMAL (U"For a rising tone complex, the Sound is generated according to the following specification:")
 EQUATION (U"%s(%t) = \\su__%i=1..%numberOfComponents_ %A__%i_(%t) sin (arg__%i_(%t)), where")
 EQUATION (U"arg__%i_(%t) = \\in 2%\\pi f__%i_(%\\ta) %d\\ta , and")
-EQUATION (U"f__%i_(%t) = %lowestFrequency \\.c 2^^(%i \\-- 1 + octaveShiftFraction + %t/(12/%frequencyChange_st)^, with")
+EQUATION (U"f__%i_(%t) = %lowestFrequency \\.c 2^^(%i \\-- 1 + octaveShiftFraction + %t/(12/%frequencyChange\_ st)^, with")
 EQUATION (U"%A__%i_(%t) = 10^^((%L__min_ + (%L__max_ \\-- %L__min_) (1 \\-- cos 2%\\pi%\\te__%i_(%t)) / 2) / 20)^, where,")
 EQUATION (U"%L__max_ = 0, %L__min_ = 10^^\\--%amplitudeRange/20^, and,")
 EQUATION (U"%\\te__%i_(%t) = 2\\pi log2 (%f(%t) / %lowestFrequency) / %numberOfComponents.")
@@ -1454,7 +1454,7 @@ MAN_END
 MAN_BEGIN (U"Create formant table (Peterson & Barney 1952)", U"djmw", 20080509)
 INTRO (U"A command to create a @Table object filled with the "
 	"fundamental frequency and the first three formant frequency values from 10 "
-	"American-English monophthongal vowels as spoken in a /h_d/ context by 76 speakers "
+	"American-English monophthongal vowels as spoken in a /h\_ d/ context by 76 speakers "
 	"(33 men, 28 women and 15 children). Every vowel was pronounced twice, so that there are "
 	"1520 recorded vowels in total.")
 ENTRY (U"Table layout")
@@ -1466,7 +1466,7 @@ DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
 TERM (U"Column 3, labelled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 76.")
 TERM (U"Column 4, labelled as %Vowel")
-DEFINITION (U"the vowel name. The following list gives the vowel in a %h_d context word "
+DEFINITION (U"the vowel name. The following list gives the vowel in a %%h\_ d% context word "
 	"together with its representation in this column: (%heed, iy), (%hid, ih), "
 	"(%head, eh), (%had, ae), (%hod, aa), (%hawed, ao), (%hood, uh), (%%who'd%, uw), "
 	"(%hud, ah), (%heard, er).")
@@ -1488,7 +1488,7 @@ MAN_END
 MAN_BEGIN (U"Create formant table (Pols & Van Nierop 1973)", U"djmw", 20020620)
 INTRO (U"A command to create a @Table object filled with the frequencies and the levels "
 	"of the first three formants from the 12 Dutch monophthong "
-	"vowels as spoken in /h_t/ context by 50 male and 25 female speakers.")
+	"vowels as spoken in /h\_ t/ context by 50 male and 25 female speakers.")
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 10 columns")
 TERM (U"Column 1, labeled as %Sex")
@@ -1496,7 +1496,7 @@ DEFINITION (U"speaker sex: Either \"m\" or \"f\" (for %male or %female).")
 TERM (U"Column 2, labeled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 75.")
 TERM (U"Column 3, labeled as %Vowel")
-DEFINITION (U"the vowel name. The following list gives the vowel in p_t context word "
+DEFINITION (U"the vowel name. The following list gives the vowel in [p\_ t] context words "
 	"together with its representation in this column: (%poet, oe), (%paat, aa), "
 	"(%poot, oo), (%pat, a), (%peut, eu), (%piet, ie), (%puut, uu), (%peet, ee), "
 	"(%put, u), (%pet, e), (%pot, o), (%pit, i).")
@@ -1526,7 +1526,7 @@ DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
 TERM (U"Column 3, labelled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 76.")
 TERM (U"Column 4, labelled as %Vowel")
-DEFINITION (U"the vowel name. The following list gives the vowel in Dutch p_t context words "
+DEFINITION (U"the vowel name. The following list gives the vowel in Dutch [p\_ t] context words "
 	"together with its representation in this column: (%poet, oe), (%paat, aa), "
 	"(%poot, oo), (%pat, a), (%peut, eu), (%piet, ie), (%puut, uu), (%peet, ee), "
 	"(%put, u), (%pet, e), (%pot, o), (%pit, i).")
@@ -1543,7 +1543,7 @@ MAN_END
 MAN_BEGIN (U"Create TableOfReal (Pols 1973)...", U"djmw", 19990426)
 INTRO (U"A command to create a @TableOfReal filled with the first three formant "
 	"frequency values and (optionally) the levels from the 12 Dutch monophthongal "
-	"vowels as spoken in /h_t/ context by 50 male speakers.")
+	"vowels as spoken in /h\_ t/ context by 50 male speakers.")
 NORMAL (U"The first three columns will contain the frequencies in Hz, the next three columns "
 	"the levels in decibels below the overall SPL of the measured vowel segment. Each row will "
 	"be labelled with its corresponding vowel symbol.")
@@ -1566,7 +1566,7 @@ MAN_END
 MAN_BEGIN (U"Create TableOfReal (Van Nierop 1973)...", U"djmw", 20041217)
 INTRO (U"A command to create a @TableOfReal filled with the first three formant "
 	"frequency values and (optionally) the levels from the 12 Dutch monophthongal "
-	"vowels as spoken in /h_t/ context by 25 female speakers.")
+	"vowels as spoken in /h\_ t/ context by 25 female speakers.")
 NORMAL (U"The first three columns will contain the frequencies in Hz, the next three columns "
 	"the levels in decibels below the overall SPL of the measured vowel segment. Each row will "
 	"be labelled with its corresponding vowel symbol.")
@@ -1613,7 +1613,7 @@ MAN_BEGIN (U"Discriminant analysis", U"djmw", 20170829)
 INTRO (U"This tutorial will show you how to perform discriminant analysis with Praat.")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
-	"Dutch monophthongal vowels as spoken in /h_t/ context by 50 male speakers. "
+	"Dutch monophthongal vowels as spoken in /h\_ t/ context by 50 male speakers. "
 	"This data set has been incorporated into "
 	"Praat and can be called into play with the @@Create TableOfReal "
 	"(Pols 1973)...@ command that can be found in the \"New / "
@@ -2750,8 +2750,8 @@ NORMAL (U"When the number of equations (%m) is %greater than the number of unkno
 ENTRY (U"Method")
 NORMAL (U"Singular value decomposition with backsubstitution. "
 	"Zero will be substituted for eigenvalues smaller than %tolerance \\.c "
-	"%%maximum_eigenvalue% (when the user-supplied %tolerance equals 0.0 a "
-	"value of 2.2 \\.c 10^^-16^ \\.c %%number_of_unknowns% "
+	"%%maximumEigenvalue% (when the user-supplied %tolerance equals 0.0 a "
+	"value of 2.2 \\.c 10^^-16^ \\.c %%numberOfUnknowns% "
 	"will be used as %tolerance).")
 NORMAL (U"See for more details: @@Golub & van Loan (1996)@ chapters 2 and 3.")
 MAN_END
@@ -4612,13 +4612,13 @@ CODE (U"time_resampled = stopwatch")
 CODE (U"selectObject: sound")
 CODE (U"spectrum_fft = To Spectrum: \"yes\"")
 CODE (U"time_fft = stopwatch")
-NORMAL (U"On my computer from 2019 the calculation of %%spectrum_dft% happens to be very slow because of its naive %O(%N^2) algorithm. "
+NORMAL (U"On my computer from 2019 the calculation of `spectrum_dft` happens to be very slow because of its naive %O(%N^2) algorithm. "
 	"It takes 2.258 s while the resampled approximation only takes 0.031s and the approximation by adding zero values takes "
 	"approximately 0.003 s. If the duration of the sound had been 10.0069 s, the number of samples again would be a prime number and "
 	"the computing times are 14.127 s, 0.059 s and 0.005 s, respectively. This again shows that the naive implementation is "
 	"very slow compared to the other two. It is also clear that resampling takes some extra time as compared to adding zero sample values. ")
-NORMAL (U"The following picture shows the %%spectrum_dft% in black colour, the %%spectrum_fft% in silver/grey and the "
-	"%%spectrum_resampled% in red. "
+NORMAL (U"The following picture shows the `spectrum_dft` in black colour, the `spectrum_fft` in silver/grey and the "
+	"`spectrum_resampled` in red. "
 	"From the two alternative approximations of the spectrum, the resampled one looks a better approximation to the DFT than the one with zeros added.")
 PICTURE (5,3, drawSpectra)
 NORMAL (U"This method was inspired by a script by Ton Wempe.")

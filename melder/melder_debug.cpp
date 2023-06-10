@@ -1,6 +1,6 @@
 /* melder_debug.cpp
  *
- * Copyright (C) 2000-2022 Paul Boersma
+ * Copyright (C) 2000-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ the behaviour of Praat will temporarily change in the following ways:
 53: trace running cursor
 54: ignore gdk_cairo_reset_clip
 55: trace Gui init, draw, destroy
+56: trace text styles
 181: read and write native-endian real64
 900: use DG Meta Serif Science instead of Palatino
 1264: Mac: Sound_record_fixedTime uses microphone "FW Solo (1264)"

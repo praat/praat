@@ -1535,12 +1535,12 @@ DEFINITION (U"the minimum periodicity frequency in your signal. If you set it to
 	"if you want a sharp contour.")
 TERM (U"##Time step (s)")
 DEFINITION (U"the time step of the resulting intensity contour. If you set it to zero, the time step is computed as "
-	"one quarter of the effective window length, i.e. as 0.8 / (%minimum_pitch).")
+	"one quarter of the effective window length, i.e. as 0.8 / %minimumPitch.")
 TERM (U"##Subtract mean")
 DEFINITION (U"See @@Intro 6.2. Configuring the intensity contour@.")
 ENTRY (U"Algorithm")
 NORMAL (U"The values in the sound are first squared, then convolved with a Gaussian analysis window (Kaiser-20; sidelobes below -190 dB). "
-	"The effective duration of this analysis window is 3.2 / (%minimum_pitch), which will guarantee that a periodic signal is analysed as having a "
+	"The effective duration of this analysis window is 3.2 / %minimumPitch, which will guarantee that a periodic signal is analysed as having a "
 	"pitch-synchronous intensity ripple not greater than 0.00001 dB.")
 MAN_END
 

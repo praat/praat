@@ -1276,39 +1276,156 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 	_Graphics_widechar *out = & a_widechar [0];
 	bool charSuperscript = false, charSubscript = false, charItalic = false, charBold = false;
 	bool wordItalic = false, wordBold = false, wordCode = false, wordLink = false;
-	bool globalSuperscript = false, globalSubscript = false, globalItalic = false, globalBold = false, globalCode = false, globalLink = false;
+	bool globalSuperscript = false, globalSubscript = false, globalItalic = false, globalBold = false;
+	bool globalCode = false, globalVerbatim = false, globalLink = false;
 	bool globalSmall = 0;
 	numberOfLinks = 0;
+	const bool weAreInManual = ( my dollarSignIsCode );
+	const bool weAreInNotebook = ( my backquoteIsVerbatim );
 	while ((kar = *in++) != U'\0') {
+		TRACE
 		if (kar == U'^' && my circumflexIsSuperscript) {
-			if (globalSuperscript) globalSuperscript = false;
-			else if (in [0] == U'^') { globalSuperscript = true; in ++; }
-			else charSuperscript = true;
-			wordItalic = wordBold = wordCode = false;
-			continue;
+			if (globalVerbatim) {
+				/*
+					Output the caret verbatim, by falling through.
+				*/
+			} else if (globalSuperscript) {
+				globalSuperscript = false;
+				wordItalic = wordBold = wordCode = false;
+				continue;
+			} else if (in [0] == U'^') {
+				static integer countGlobalSuperscript;
+				trace (U"Global superscript: ", ++ countGlobalSuperscript, U" ", txt);
+				globalSuperscript = true;
+				in ++;
+				wordItalic = wordBold = wordCode = false;
+				continue;
+			} else {
+				static integer countCharacterSuperscript;
+				trace (U"Character superscript: ", ++ countCharacterSuperscript, U" ", txt);
+				charSuperscript = true;
+				wordItalic = wordBold = wordCode = false;
+				continue;
+			}
 		} else if (kar == U'_' && my underscoreIsSubscript) {
-			if (globalSubscript) { globalSubscript = false; wordItalic = wordBold = wordCode = false; continue; }
-			else if (in [0] == U'_') { globalSubscript = true; in ++; wordItalic = wordBold = wordCode = false; continue; }
-			else if (! my dollarSignIsCode) { charSubscript = true; wordItalic = wordBold = wordCode = false; continue; }   // not in manuals
-			else
-				;   // a normal underscore in manuals
+			if (globalVerbatim) {
+				/*
+					Output the underscore verbatim, by falling through.
+				*/
+			} else if (globalSubscript) {
+				globalSubscript = false;
+				wordItalic = wordBold = wordCode = false;
+				continue;
+			} else if (in [0] == U'_') {
+				static integer countGlobalSubscript;
+				trace (U"Global subscript: ", ++ countGlobalSubscript, U" ", txt);
+				globalSubscript = true;
+				in ++;
+				wordItalic = wordBold = wordCode = false;
+				continue;
+			} else if (! weAreInManual) {
+				static integer countCharacterSubscript;
+				trace (U"Character subscript: ", ++ countCharacterSubscript, U" ", txt);
+				charSubscript = true;
+				wordItalic = wordBold = wordCode = false;
+				continue;
+			} else {
+				// a normal underscore in manuals
+				static integer countVerbatimSubscript;
+				trace (U"Verbatim subscript: ", ++ countVerbatimSubscript, U" ", txt);
+			}
 		} else if (kar == U'%' && my percentSignIsItalic) {
-			if (globalItalic) globalItalic = false;
-			else if (in [0] == U'%') { globalItalic = true; in ++; }
-			else if (my dollarSignIsCode) wordItalic = true;   // in manuals
-			else charItalic = true;
-			continue;
+			if (globalVerbatim) {
+				/*
+					Output the percent sign verbatim, by falling through.
+				*/
+			} else if (globalItalic) {
+				globalItalic = false;
+				continue;
+			} else if (in [0] == U'%') {
+				static integer countGlobalItalic;
+				trace (U"Global italic: ", ++ countGlobalItalic, U" ", txt);
+				globalItalic = true;
+				in ++;
+				continue;
+			} else if (weAreInManual) {
+				static integer countWordItalic, countCharacterItalic;
+				if (Melder_isWordCharacter (in [0]) && Melder_isWordCharacter (in [1]) && in [1] != U'_')
+					trace (U"Word-italic: ", ++ countWordItalic, U" ", txt);
+				else
+					trace (U"Character-italic: ", ++ countCharacterItalic, U" ", txt);
+				if (in [0] == U'`' && my backquoteIsVerbatim)
+					globalItalic = true;
+				else
+					wordItalic = true;
+				continue;
+			} else if (weAreInNotebook) {
+				charItalic = true;
+				continue;
+			} else {
+				charItalic = true;
+				continue;
+			}
 		} else if (kar == U'#' && my numberSignIsBold) {
-			if (globalBold) globalBold = false;
-			else if (in [0] == U'#') { globalBold = true; in ++; }
-			else if (my dollarSignIsCode) wordBold = true;   // in manuals
-			else charBold = true;
-			continue;
+			if (globalVerbatim) {
+				/*
+					Output the hash sign verbatim, by falling through.
+				*/
+			} else if (globalBold) {
+				globalBold = false;
+				continue;
+			} else if (in [0] == U'#') {
+				static integer countGlobalBold;
+				trace (U"Global bold: ", ++ countGlobalBold, U" ", txt);
+				globalBold = true;
+				in ++;
+				continue;
+			} else if (weAreInManual) {
+				static integer countWordBold, countCharacterBold;
+				if (Melder_isWordCharacter (in [0]) && Melder_isWordCharacter (in [1]) && in [1] != U'_')
+					trace (U"Word-bold: ", ++ countWordBold, U" ", txt);
+				else
+					trace (U"Character-bold: ", ++ countCharacterBold, U" ", txt);
+				if (in [0] == U'`' && my backquoteIsVerbatim)
+					globalBold = true;
+				else
+					wordBold = true;
+				continue;
+			} else {
+				charBold = true;
+				continue;
+			}
+		} else if (kar == U'`' && my backquoteIsVerbatim) {
+			if (globalVerbatim) {
+				if (in [0] == U'`')   // a double backquote means a backquote
+					in ++;
+				else {
+					globalVerbatim = false;
+					globalItalic = false;
+					globalBold = false;
+					globalLink = false;
+					continue;
+				}
+			} else {
+				globalVerbatim = true;
+				continue;
+			}
 		} else if (kar == U'$' && my dollarSignIsCode) {
-			if (globalCode) globalCode = false;
-			else if (in [0] == U'$') { globalCode = true; in ++; }
-			else wordCode = true;
-			continue;
+			if (globalVerbatim) {
+				/*
+					Output the dollar sign verbatim, by falling through.
+				*/
+			} else if (globalCode) {
+				globalCode = false;
+				continue;
+			} else if (in [0] == U'$') {
+				globalCode = true;
+				in ++;
+				continue;
+			} else {
+				wordCode = true;
+				continue;
+			}
 		} else if (kar == U'@' && my atSignIsLink   // recognize links
 		           && my textRotation == 0.0)   // no links allowed in rotated text, because links are identified by 2-point rectangles
 		{
@@ -1324,7 +1441,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				The link info is unequal to the link text in the following case:
 				3. Longer links with "|" in them: "@@Page linked to|Text shown in blue@"
 			*/
-			if (globalLink) {
+			if (globalVerbatim) {
+				/*
+					Output the at sign verbatim, by falling through.
+				*/
+			} else if (globalLink) {
 				/*
 					Detected the third "@" in strings like "@@Link with spaces@".
 					This closes the link text (which will be shown in blue).
@@ -1381,8 +1502,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					The link info is equal to the link text, so no skipping is needed.
 				*/
 				wordLink = true;   // enter the single-word link-text-collection mode
+				continue;
 			}
-			continue;
 		} else if (kar == U'\\') {
 			/*
 				Detected backslash sequence: backslash + kar1 + kar2...
@@ -1391,11 +1512,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			/*
 				... except if kar1 or kar2 is null: in that case, draw the backslash.
 			*/
-			if (! (kar1 = in [0]) || ! (kar2 = in [1])) {
+			if (globalVerbatim || ! (kar1 = in [0]) || ! (kar2 = in [1])) {
 				;   // normal backslash symbol
 			/*
-			 * Catch "\s{", which means: small characters until corresponding '}'.
-			 */
+				Catch "\s{", which means: small characters until corresponding '}'.
+			*/
 			} else if (kar2 == U'{') {
 				if (kar1 == U's')
 					globalSmall = true;
@@ -1447,7 +1568,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			((my fontStyle & Graphics_ITALIC) | charItalic | wordItalic | globalItalic ? Graphics_ITALIC : 0) +
 			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
 		out -> font.string = nullptr;
-		out -> font.integer_ = my fontStyle == Graphics_CODE || wordCode || globalCode ||
+		out -> font.integer_ = my fontStyle == Graphics_CODE || wordCode || globalCode || globalVerbatim ||
 			(kar == U'/' || kar == U'|') && my font != kGraphics_font::PALATINO ? (int) kGraphics_font::COURIER : (int) my font;
 		out -> link = wordLink | globalLink;
 		out -> baseline = charSuperscript | globalSuperscript ? 34 : charSubscript | globalSubscript ? -25 : 0;
@@ -1995,6 +2116,11 @@ void Graphics_setUnderscoreIsSubscript (Graphics me, bool isSubscript) {
 void Graphics_setDollarSignIsCode (Graphics me, bool isCode) {
 	my dollarSignIsCode = isCode;
 	if (my recording) { op (SET_DOLLAR_SIGN_IS_CODE, 1); put (isCode); }
+}
+
+void Graphics_setBackquoteIsVerbatim (Graphics me, bool isVerbatim) {
+	my backquoteIsVerbatim = isVerbatim;
+	if (my recording) { op (SET_BACKQUOTE_IS_VERBATIM, 1); put (isVerbatim); }
 }
 
 void Graphics_setAtSignIsLink (Graphics me, bool isLink) {

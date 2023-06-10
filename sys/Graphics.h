@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2005,2007-2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ Thing_define (Graphics, Thing) {
 	double fontSize;
 	int fontStyle;
 	bool percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
-	bool dollarSignIsCode, atSignIsLink;
+	bool dollarSignIsCode, backquoteIsVerbatim, atSignIsLink;
 	bool recording, duringXor;
 	integer irecord, nrecord;
 	double *record;
@@ -268,6 +268,7 @@ void Graphics_setPercentSignIsItalic (Graphics me, bool isItalic);
 void Graphics_setCircumflexIsSuperscript (Graphics me, bool isSuperscript);
 void Graphics_setUnderscoreIsSubscript (Graphics me, bool isSubscript);
 void Graphics_setDollarSignIsCode (Graphics me, bool isCode);
+void Graphics_setBackquoteIsVerbatim (Graphics me, bool isVerbatim);
 void Graphics_setAtSignIsLink (Graphics me, bool isLink);
 
 #define Graphics_DRAWN  0

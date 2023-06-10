@@ -193,7 +193,7 @@ INTRO (U"To extract the left channel of an existing stereo @Sound as a new mono 
 	"A new mono Sound will appear in the list. For the right channel, set #Channel to 2.")
 ENTRY (U"Details")
 NORMAL (U"The name of the new mono Sound will be based on the name of the original stereo Sound. "
-	"For instance, if the original Sound is called #hello and you extract channel 2, the new Sound will be called #hello_ch2.")
+	"For instance, if the original Sound is called `hello` and you extract channel 2, the new Sound will be called `hello_ch2`.")
 NORMAL (U"This command also works if you select more than one stereo Sound. "
 	"For each of them, Praat creates a new mono Sound.")
 MAN_END
@@ -202,7 +202,7 @@ MAN_BEGIN (U"Read separate channels from sound file...", U"ppgb", 20111010)
 INTRO (U"A command in the @@Open menu@ of the #Objects window. "
 	"You use this if you want to get the channels of a @stereo (or multi-channel) sound file "
 	"as two (or more) separate @Sound objects in the list. "
-	"If the file name is hello.wav, Praat will name the channels hello_ch1, hello_ch2, and so on.")
+	"If the file name is `hello.wav`, Praat will name the channels `hello_ch1`, `hello_ch2`, and so on.")
 MAN_END
 
 MAN_BEGIN (U"Record mono Sound...", U"ppgb", 20201120)

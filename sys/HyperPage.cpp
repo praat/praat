@@ -464,7 +464,19 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
 					Melder_assert (cacheGraphics);
+					const bool dollarSignWasCode = my graphics -> dollarSignIsCode;
+					const bool backquoteWasVerbatim = my graphics -> backquoteIsVerbatim;
+					const bool atSignWasLink = my graphics -> atSignIsLink;
+					Graphics_setDollarSignIsCode (my graphics.get(), false);
+					Graphics_setBackquoteIsVerbatim (my graphics.get(), false);
+					Graphics_setAtSignIsLink (my graphics.get(), false);
 					Graphics_play (cacheGraphics, my graphics.get());
+					if (dollarSignWasCode)
+						Graphics_setDollarSignIsCode (my graphics.get(), true);
+					if (backquoteWasVerbatim)
+						Graphics_setBackquoteIsVerbatim (my graphics.get(), true);
+					if (atSignWasLink)
+						Graphics_setAtSignIsLink (my graphics.get(), true);
 				}
 				Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 				Graphics_setLineWidth (my graphics.get(), 1.0);
@@ -576,7 +588,8 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 static void print (void *void_me, Graphics graphics) {
 	iam (HyperPage);
 	my ps = graphics;
-	Graphics_setDollarSignIsCode (graphics, true);
+	Graphics_setDollarSignIsCode (graphics, true);   // for manuals
+	Graphics_setBackquoteIsVerbatim (graphics, true);   // for notebooks
 	Graphics_setAtSignIsLink (graphics, true);
 	my printing = true;
 	HyperPage_initSheetOfPaper (me);
@@ -935,8 +948,9 @@ void HyperPage_init1 (HyperPage me, conststring32 title, Daata data) {
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+	Graphics_setDollarSignIsCode (my graphics.get(), true);   // for manuals
+	Graphics_setBackquoteIsVerbatim (my graphics.get(), true);   // for notebooks
 	Graphics_setAtSignIsLink (my graphics.get(), true);
-	Graphics_setDollarSignIsCode (my graphics.get(), true);
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	if (my instancePref_font() != kGraphics_font::TIMES && my instancePref_font() != kGraphics_font::HELVETICA)
 		my setInstancePref_font (kGraphics_font::TIMES);   // ensure Unicode compatibility

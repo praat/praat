@@ -534,7 +534,7 @@ TERM (U"##To time (s)")
 DEFINITION (U"the selected time domain. Values outside this domain are ignored. "
 	"If ##To time# is not greater than ##From time#, the entire time domain of the tier is considered.")
 NORMAL (U"For a PitchTier that was created from a @Pitch object, this command gives the same result as "
-	"##Get standard deviation....# for the original Pitch object (but remember that variation measures "
+	"##Get standard deviation...# for the original Pitch object (but remember that variation measures "
 	"based on quantiles, as available for Pitch objects, are more robust).")
 NORMAL (U"To get the standard deviation in the entire curve, i.e. weighted by the durations of the line pieces, "
 	"Use @@PitchTier: Get standard deviation (curve)...@ instead.")
