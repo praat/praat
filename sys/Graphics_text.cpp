@@ -1277,13 +1277,13 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 	bool charSuperscript = false, charSubscript = false, charItalic = false, charBold = false;
 	bool wordItalic = false, wordBold = false, wordCode = false, wordLink = false;
 	bool globalSuperscript = false, globalSubscript = false, globalItalic = false, globalBold = false;
-	bool globalCode = false, globalVerbatim = false, globalLink = false;
+	bool globalCode = false, globalVerbatim = false, globalLink = false, verbatimLink = false;
 	bool globalSmall = 0;
 	numberOfLinks = 0;
 	const bool weAreInManual = ( my dollarSignIsCode );
 	const bool weAreInNotebook = ( my backquoteIsVerbatim );
 	while ((kar = *in++) != U'\0') {
-		TRACE
+		//TRACE
 		if (kar == U'^' && my circumflexIsSuperscript) {
 			if (globalVerbatim) {
 				/*
@@ -1396,7 +1396,10 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				continue;
 			}
 		} else if (kar == U'`' && my backquoteIsVerbatim) {
-			if (globalVerbatim) {
+			if (verbatimLink) {
+				verbatimLink = false;
+				continue;
+			} else if (globalVerbatim) {
 				if (in [0] == U'`')   // a double backquote means a backquote
 					in ++;
 				else {
@@ -1483,6 +1486,26 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				*/
 				in ++;   // skip second '@'
 				continue;   // do not draw
+			} else if (in [0] == U'`' && my backquoteIsVerbatim) {
+				const char32 *from = in;   // start with the opening backquote
+				if (! links [++ numberOfLinks]. name)   // make room for saving link info
+					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
+				to = links [numberOfLinks]. name;
+				max = to + MAX_LINK_LENGTH;
+				*to ++ = *from++;   // copy the backquote
+				while (*from && *from != U'`' && to < max)   // until end-of-verbatim...
+					*to ++ = *from++;   // ... copy one character
+				*to ++ = U'`';
+				*to = U'\0';   // close saved link info
+				trace (U"Verbatim link to: ", links [numberOfLinks]. name);
+				/*
+					Second step: collect the link text that is to be drawn.
+					Its characters will be collected during the normal cycles of the loop.
+					The link info is equal to the link text, so no skipping is needed.
+				*/
+				in ++;   // skip the opening backquote
+				verbatimLink = true;   // enter the link-text-collection mode
+				continue;
 			} else {
 				/*
 					Detected a single-word link, like in "this is a @Link that consists of one word".
@@ -1532,9 +1555,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 		} else if (kar == U'\"') {
 			if (! (my font == kGraphics_font::COURIER || my fontStyle == Graphics_CODE || wordCode || globalCode))
 				kar = ++nquote & 1 ? UNICODE_LEFT_DOUBLE_QUOTATION_MARK : UNICODE_RIGHT_DOUBLE_QUOTATION_MARK;
-		} else if (kar == U'\'') {
+		} else if (kar == U'\'' && ! my backquoteIsVerbatim) {
 			kar = UNICODE_RIGHT_SINGLE_QUOTATION_MARK;
-		} else if (kar == U'`') {
+		} else if (kar == U'`' && ! my backquoteIsVerbatim) {
 			kar = UNICODE_LEFT_SINGLE_QUOTATION_MARK;
 		} else if (kar >= 32 && kar <= 126) {
 			if (kar == U'f') {
@@ -1552,7 +1575,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			out -> kar = U'\t';
 			out -> rightToLeft = false;
 			wordItalic = wordBold = wordCode = wordLink = false;
-			globalSubscript = globalSuperscript = globalItalic = globalBold = globalCode = globalLink = globalSmall = false;
+			globalSubscript = globalSuperscript = globalItalic = globalBold = globalCode = globalLink = verbatimLink = globalSmall = false;
 			charItalic = charBold = charSuperscript = charSubscript = false;
 			out ++;
 			continue;   // do not draw
@@ -1564,13 +1587,13 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				wordItalic = wordBold = wordCode = wordLink = false;
 		}
 		out -> style =
-			(wordLink | globalLink) && my fontStyle != Graphics_CODE ? Graphics_BOLD :
+			(wordLink | globalLink | verbatimLink) && my fontStyle != Graphics_CODE ? Graphics_BOLD :
 			((my fontStyle & Graphics_ITALIC) | charItalic | wordItalic | globalItalic ? Graphics_ITALIC : 0) +
 			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
 		out -> font.string = nullptr;
-		out -> font.integer_ = my fontStyle == Graphics_CODE || wordCode || globalCode || globalVerbatim ||
+		out -> font.integer_ = my fontStyle == Graphics_CODE || wordCode || globalCode || globalVerbatim || verbatimLink ||
 			(kar == U'/' || kar == U'|') && my font != kGraphics_font::PALATINO ? (int) kGraphics_font::COURIER : (int) my font;
-		out -> link = wordLink | globalLink;
+		out -> link = wordLink | globalLink | verbatimLink;
 		out -> baseline = charSuperscript | globalSuperscript ? 34 : charSubscript | globalSubscript ? -25 : 0;
 		out -> size = globalSmall || out -> baseline != 0 ? 80 : 100;
 		if (kar == U'/' && my font != kGraphics_font::PALATINO) {

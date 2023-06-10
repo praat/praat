@@ -2595,15 +2595,19 @@ EQUATION (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al\\-m1^e^^-%t^dt = \\Ga(\\al)
 
 MAN_END
 
-MAN_BEGIN (U"invFisherQ", U"djmw", 20000525)
-INTRO (U"$$invFisherQ$ (%q, %df1, %df2) returns the value %f for which "
-	"$$@fisherQ (%f, %df1, %df2) = %q.")
-MAN_END
+MAN_PAGES_BEGIN R"~~~(
+"`invFisherQ`"
+© djmw 2000-05-25
 
-MAN_BEGIN (U"fisherQ", U"djmw", 20000525)
-INTRO (U"$$fisherQ$ (%f, %df1, %df2) returns the area under Fisher's F-distribution "
-	"from %f to +\\oo.")
-MAN_END
+The function #`invFisherQ` (%q, %df_1, %df_2) returns the value %f for which @`fisherQ` (%f, %df_1, %df_2) = %q.
+)~~~" MAN_PAGES_END
+
+MAN_PAGES_BEGIN R"~~~(
+"`fisherQ`"
+© djmw 2000-05-25
+
+The function #`fisherQ` (%f, %df1, %df2) returns the area under Fisher’s F-distribution from %f to +\oo.
+)~~~" MAN_PAGES_END
 
 MAN_BEGIN (U"IDX file format", U"djmw", 20160220)
 INTRO (U"The IDX file format is a simple format for vectors and multidimensional matrices of various numerical types. ")
@@ -4867,7 +4871,7 @@ LIST_ITEM (U"3. The lengths %l__1_ and %l__2_ of the two axes of the ellipse can
 EQUATION (U"    %l__%i_ = %scaleFactor \\.c \\Vr (%s__%i_ ),")
 LIST_ITEM (U"     where")
 EQUATION (U"%scaleFactor = \\Vr (%f \\.c %p \\.c (%n \\-- 1) / (%n \\.c (%n \\-- %p))),")
-LIST_ITEM (U"     in which %f = $$@@invFisherQ@$ (1 \\-- %confidenceLevel, %p, %n \\-- %p), "
+LIST_ITEM (U"     in which %f = @`invFisherQ` (1 \\-- %confidenceLevel, %p, %n \\-- %p), "
 	"where %p is the numberOfRows from the SSCP object and %n the %numberOfObservations.")
 LIST_ITEM (U"4. The area of the ellipse will be %\\pi\\.c%l__1_\\.c%l__2_.")
 MAN_END

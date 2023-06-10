@@ -305,7 +305,7 @@ CODE (U"input [1]: \"pat\" 2")
 CODE (U"input [2]: \"pa\" 1")
 	CODE1 (U"candidate [1]: \"pa\" 0 0")
 NORMAL (U"To understand more about this data structure, consult the @OTGrammar class description "
-	"or click #Inspect after selecting the OTGrammar object. The “$$\\bss{...}$” braces ensure that "
+	"or click #Inspect after selecting the OTGrammar object. The “`\\s{...}`” braces ensure that "
 	"the constraint names show up with their traditional small capitals (see @@Text styles@).")
 NORMAL (U"You can read this text file into Praat again with @@Read from file...@ from the #Open menu in the Objects window.")
 MAN_END
@@ -350,15 +350,15 @@ CODE (U"\"pa\" 1")
 CODE (U"\"pat\" 2")
 	CODE1 (U"\"pat\" 0 1")
 	CODE1 (U"\"pa\"  1 0")
-NORMAL (U"The $$<OptimalityTheory>$ thing in the above refers to the %%decision strategy%. "
+NORMAL (U"The `<OptimalityTheory>` thing in the above refers to the %%decision strategy%. "
 	"In this tutorial I mostly assume OT’s strict ranking, "
-	"but you can experiment with Smolensky’s $$<HarmonicGrammar>$ (where the constraint disharmonies represent addable, "
-	"possibly negative weights), or with Frank Keller’s $$<LinearOT>$ (like Harmonic Grammar, but with the restriction "
-	"that negative disharmonies do not count), or with $$<PositiveHG>$ (like Harmonic Grammar, but with the restriction "
-	"that disharmonies below 1.0 have weight 1.0), or with $$<ExponentialHG>$ (where the weights are exp(disharmony), somewhere "
-	"between Harmonic Grammar and Linear OT), or with a $$<MaximumEntropy>$ grammar "
+	"but you can experiment with Smolensky’s `<HarmonicGrammar>` (where the constraint disharmonies represent addable, "
+	"possibly negative weights), or with Frank Keller’s `<LinearOT>` (like Harmonic Grammar, but with the restriction "
+	"that negative disharmonies do not count), or with `<PositiveHG>` (like Harmonic Grammar, but with the restriction "
+	"that disharmonies below 1.0 have weight 1.0), or with `<ExponentialHG>` (where the weights are exp(disharmony), somewhere "
+	"between Harmonic Grammar and Linear OT), or with a `<MaximumEntropy>` grammar "
 	"(where the probability that a candidate is chosen is proportional to exp(-disharmony)).")
-NORMAL (U"The $$leak$ thing in the above refers to the amount to which constraint weights (especially in Harmonic Grammar) "
+NORMAL (U"The `leak` thing in the above refers to the amount to which constraint weights (especially in Harmonic Grammar) "
 	"can leak while learning.")
 MAN_END
 
@@ -562,7 +562,7 @@ NORMAL (U"We compute (e.g. with @@Calculator...@) a %χ^2 of 30080^2/800000 + 30
 	"the numbers become something like")
 LIST_ITEM (U"\tampa\t801974")
 LIST_ITEM (U"\tanpa\t198026")
-NORMAL (U"which gives a %χ^2 of 24.35. By using the Calculator with the formula $$chiSquareQ (24.35, 1)$, "
+NORMAL (U"which gives a %χ^2 of 24.35. By using the Calculator with the formula `chiSquareQ (24.35, 1)`, "
 	"we find that values larger than this have a probability of 8·10^^-7^ "
 	"under the 80\\%  - 20\\%  distribution hypothesis, which must therefore be rejected again.")
 NORMAL (U"Rather than continuing this iterative procedure to find the correct ranking values for an "
