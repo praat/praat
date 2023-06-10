@@ -140,13 +140,13 @@ NORMAL (U"For a paragraph with an embedded script (a picture), you use the type 
 ENTRY (U"Special symbols and styles")
 NORMAL (U"You can use all of Praat's @@special symbols@ and @@text styles@, "
 	"except that some %single text-style symbols have different meanings:")
-LIST_ITEM (U"\\bu A single percent sign introduces a word in italic: $$\\% pot$ gives %pot.")
-LIST_ITEM (U"\\bu A single number sign introduces a word in bold: $$\\# pot$ gives #pot.")
-LIST_ITEM (U"\\bu A single dollar sign introduces a word in monospace: $$\\$ pot$ gives $pot.")
-LIST_ITEM (U"\\bu A single underscore is rendered as an underscore: $$a_b$ gives a_b.")
+LIST_ITEM (U"\\bu A single percent sign introduces a word in italic: `%pot` gives %pot.")
+LIST_ITEM (U"\\bu A single number sign introduces a word in bold: `#pot` gives #pot.")
+LIST_ITEM (U"\\bu A single dollar sign introduces a word in monospace: `$pot` gives `pot`.")
+LIST_ITEM (U"\\bu A single underscore is rendered as an underscore: `a_b` gives a_b.")
 NORMAL (U"To create a single italic, bold, or subscripted letter, "
 	"you revert to the usual technique for stretches of italic, bold, or subscripted text. "
-	"So, to get %F__1_, you type $$\\% F_\\_ 1_.")
+	"So, to get %F__1_, you type `%F__1_`.")
 ENTRY (U"Sound links")
 NORMAL (U"Your text may contain links to sound files. They are drawn in blue. "
 	"The format is:")

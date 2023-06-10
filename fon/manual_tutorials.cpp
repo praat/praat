@@ -41,13 +41,13 @@ LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $word and $senten
 NORMAL (U"##6.3.07# (6 February 2023)")
 LIST_ITEM (U"• Corrected an old bug that caused ##Matrix: Draw as squares# to crash on a 1\\xx1 matrix.")
 LIST_ITEM (U"• NoulliGrid window: “NoulliGrid” menu.")
-LIST_ITEM (U"• Scripting: faster vectors in arguments to $$runScript()$.")
+LIST_ITEM (U"• Scripting: faster vectors in arguments to `runScript()`.")
 NORMAL (U"##6.3.06# (31 January 2023)")
 LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $optionmenu would not work in new-style script forms.")
-LIST_ITEM (U"• Scripting: $$min()$, $$max()$, $$imin()$ and $$imax()$ for vectors.")
+LIST_ITEM (U"• Scripting: `min()`, `max()`, `imin()` and `imax()` for vectors.")
 NORMAL (U"##6.3.05# (27 January 2023)")
 LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which some old-style forms could not be read.")
-LIST_ITEM (U"• Repaired an old bug by which $$chooseReadString\\$ ()$ could crash on Linux.")
+LIST_ITEM (U"• Repaired an old bug by which `chooseReadString$()` could crash on Linux.")
 NORMAL (U"##6.3.04# (24 January 2023)")
 LIST_ITEM (U"• Playing multiple sounds with #Play now concatenates them without breaks, "
 	"and is interruptable by the Escape key.")
@@ -56,14 +56,14 @@ LIST_ITEM (U"• Renamed the remaining occurrences of #Preferences to #Settings 
 LIST_ITEM (U"• ##Create Polygon from values...")
 LIST_ITEM (U"• ##Sound: To Sound (derivative)...")
 LIST_ITEM (U"• Scripting: forms now look more like other commands.")
-LIST_ITEM (U"• Scripting: forms can contain $infile, $outfile, $folder, $realvector, "
-	"$positivevector, $integervector and $naturalvector fields.")
+LIST_ITEM (U"• Scripting: forms can contain `infile`, `outfile`, `folder`, `realvector`, "
+	"`positivevector`, `integervector` and `naturalvector` fields.")
 LIST_ITEM (U"• Scripting: in forms and pause forms, you can now set the number of lines in "
-	"$text, $infile, $outfile, $folder, and vector fields.")
+	"`text`, `infile`, `outfile`, `folder`, and vector fields.")
 NORMAL (U"##6.3.03# (17 December 2022)")
 LIST_ITEM (U"• Sound files: read Kay\\re Nasometer\\tm files (as separate channels).")
 LIST_ITEM (U"• Script window: indent and exdent.")
-LIST_ITEM (U"• Scripting: conserve editor environment in $runScript.")
+LIST_ITEM (U"• Scripting: conserve editor environment in `runScript`.")
 NORMAL (U"##6.3.02# (29 November 2022)")
 LIST_ITEM (U"• Linux: corrected a bug introduced in 6.2.20 by which typing Tab would not start a Sound.")
 LIST_ITEM (U"• Sound window: corrected a bug introduced in 6.2.19 by which drawing selection hairs could not be switched off "
@@ -100,9 +100,9 @@ MAN_END
 MAN_BEGIN (U"What was new in 6.3?", U"ppgb", 20221115)
 NORMAL (U"##6.3# (15 November 2022)")
 LIST_ITEM (U"• Number-aware sorting for labels when drawing tables.")
-LIST_ITEM (U"• Scripting: $$sort\\$ \\# ()$, $$shuffle\\$ \\# ()$, $$sort\\_ numberAware\\$ \\# ()$.")
+LIST_ITEM (U"• Scripting: `sort$#` (), `shuffle$#` (), `sort_numberAware$#` ().")
 LIST_ITEM (U"• Fixed a crash when saving (or copying) a DTW object.")
-LIST_ITEM (U"• Scripting: fixed a crash when using $Close after $editor.")
+LIST_ITEM (U"• Scripting: fixed a crash when using `Close` after `editor`.")
 NORMAL (U"##6.2.23# (8 October 2022)")
 LIST_ITEM (U"• Fix a crash introduced in August 2020 when in the Sound window you would select a part, then click #sel, "
 	"then select a part, then do #Cut, then click #bak.")
@@ -123,7 +123,7 @@ LIST_ITEM (U"• Corrected a bug introduced in 6.2.15 whereby a sub-window in #I
 NORMAL (U"##6.2.20# (24 September 2022)")
 LIST_ITEM (U"• More balanced colours.")
 LIST_ITEM (U"• Hierarchical menus in editor windows.")
-LIST_ITEM (U"• Sound window scripting: understand $$editor\\$ $ again in log format (bug since 6.2.15).")
+LIST_ITEM (U"• Sound window scripting: understand `editor$` again in log format (bug since 6.2.15).")
 NORMAL (U"##6.2.19# (12 September 2022)")
 LIST_ITEM (U"• Visible window queries in #Time menu.")
 LIST_ITEM (U"• Correct execution of added Objects window script after running a failing editor script (decades-old bug).")
@@ -138,7 +138,7 @@ LIST_ITEM (U"• Windows audio: compatible with speakers that do not support mon
 LIST_ITEM (U"• Editor scripts: made two old commands available again (removed in 6.2.15).")
 NORMAL (U"##6.2.16# (18 August 2022)")
 LIST_ITEM (U"• FormantPath window: non-editable TextGrid.")
-LIST_ITEM (U"• Scripting the Demo window on the Mac: better guarantees that $$demoShow()$ actually drains on current systems.")
+LIST_ITEM (U"• Scripting the Demo window on the Mac: better guarantees that `demoShow` () actually drains on current systems.")
 LIST_ITEM (U"• TextGrid works again with LongSound (bug introduced in 6.2.15).")
 LIST_ITEM (U"• Editor scripts work again from menus (bug introduced in 6.2.15).")
 NORMAL (U"##6.2.15# (14 August 2022)")
@@ -177,13 +177,13 @@ LIST_ITEM (U"• Windows: corrected a bug introduced in 6.2.04 by which some fil
 NORMAL (U"##6.2.06# (20 January 2022)")
 LIST_ITEM (U"• Mac: prevent Demo window from hanging on copy or paste.")
 NORMAL (U"##6.2.05# (5 January 2022)")
-LIST_ITEM (U"• Calling Praat from the command line: the switch $$--send$ sends a script "
+LIST_ITEM (U"• Calling Praat from the command line: the switch `--send` sends a script "
 	"to a different already running GUI instance of Praat; this is more flexible than using %sendpraat, "
-	"because $$--send$ will start a new instance of Praat if Praat is not yet running.")
+	"because `--send` will start a new instance of Praat if Praat is not yet running.")
 NORMAL (U"##6.2.04# (18 December 2021)")
 LIST_ITEM (U"• Praat now includes eSpeak 1.51, raising the number of supported languages from 100 to 130.")
-LIST_ITEM (U"• Scripting: support for $infile, $outfile and $folder fields in forms.")
-LIST_ITEM (U"• Calling Praat from the command line: the switch $$--open$ now adds files to an already running instance of Praat; "
+LIST_ITEM (U"• Scripting: support for `infile`, `outfile` and `folder` fields in forms.")
+LIST_ITEM (U"• Calling Praat from the command line: the switch `--open` now adds files to an already running instance of Praat; "
 	"this was already the case on Windows, but it now works in the same way on the Mac and on Linux.")
 LIST_ITEM (U"• Scripting on Mac: multiline text fields in forms have scroll bars and behave like other fields.")
 NORMAL (U"##6.2.03# (3 December 2021)")
@@ -223,7 +223,7 @@ LIST_ITEM (U"• Corrected a crash when reading Vorbis files on some 32-bit plat
 NORMAL (U"##6.1.51# (22 July 2021)")
 LIST_ITEM (U"• ##Spectrum: Tabulate (verbose)# with:  power spectral density, bin width within domain, bin energy, and much more.")
 LIST_ITEM (U"• Sound window: ##Get amplitude(s)#.")
-LIST_ITEM (U"• Scripting: $$date_utc\\$ ()$, $$date\\# ()$, $$date_utc\\# ()$.")
+LIST_ITEM (U"• Scripting: `date_utc$` (), `date#` (), `date_utc#` ().")
 NORMAL (U"##6.1.50# (20 June 2021)")
 LIST_ITEM (U"• RealTier: editing, Formula, conversion from and to Matrix and Table and other tiers such as PitchTier, "
 	"DurationTier, IntensityTier and AmplitudeTier.")
@@ -421,7 +421,7 @@ LIST_ITEM (U"• Script window: Use Selection for Find.")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.41 that could cause Praat to crash after removing an element from a Strings or a row from a TableOfReal.")
 NORMAL (U"##6.0.50# (31 March 2019)")
 LIST_ITEM (U"• Manual updates, speed, more tests.")
-LIST_ITEM (U"• Scripting: $$rowSums\\# ()$, $$columnSums\\# ()$; $$randomGauss\\# \\# ()$ finally with four arguments.")
+LIST_ITEM (U"• Scripting: `rowSums#` (), `columnSums#` (); `randomGauss##` () finally with four arguments.")
 NORMAL (U"##6.0.49# (2 March 2019)")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.")
 LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby an MFCC's maximum frequency could be ignored.")
@@ -473,7 +473,7 @@ LIST_ITEM (U"• Scripting: arrays in menu commands in scripts.")
 LIST_ITEM (U"• #Inspect: made a button visible that had disappeared in 6.0.33.")
 NORMAL (U"##6.0.33# (26 September 2017)")
 LIST_ITEM (U"• ##Pitch: Subtract linear fit...#: correct a bug that prevented computation in the ERB domain.")
-LIST_ITEM (U"• Scripting: made $$object[xx].xmin$ work again.")
+LIST_ITEM (U"• Scripting: made `object[xx].xmin` work again.")
 LIST_ITEM (U"• Removed a bug in ##Polynomial: Evaluate...# introduced in 6.0.32.")
 NORMAL (U"##6.0.32# (16 September 2017)")
 LIST_ITEM (U"• Table: allow spaces in column names.")
@@ -488,22 +488,22 @@ LIST_ITEM (U"• Numerics: faster and more precise sums, means, standard deviati
 NORMAL (U"##6.0.30# (22 July 2017)")
 LIST_ITEM (U"• Removed a bug that caused an incorrect title for a PitchTier or PointProcess window.")
 LIST_ITEM (U"• Removed a bug that caused Praat to crash when doing a linear regression on a Table with no rows.")
-LIST_ITEM (U"• Scripting: $$object[]$, @@Scripting 5.7. Vectors and matrices|vectors@.")
+LIST_ITEM (U"• Scripting: `object[]`, @@Scripting 5.7. Vectors and matrices|vectors@.")
 LIST_ITEM (U"• Graphics: better text drawing details.")
 LIST_ITEM (U"• Linux: possibility to compile Praat without a GUI but with graphics file output.")
 NORMAL (U"##6.0.29# (24 May 2017)")
 LIST_ITEM (U"• Sound window: channel muting.")
 LIST_ITEM (U"• Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.")
 NORMAL (U"##6.0.28# (23 March 2017)")
-LIST_ITEM (U"• Scripting: $$demoPeekInput()$ for animations in combination with $$sleep()$.")
+LIST_ITEM (U"• Scripting: `demoPeekInput` () for animations in combination with `sleep` ().")
 NORMAL (U"##6.0.27# (18 March 2017)")
 LIST_ITEM (U"• TextGrid: fewer error messages in concatenation of multiple TextGrids.")
-LIST_ITEM (U"• Scripting: $$sleep()$ to pause Praat temporarily: useful for animations in combination with $$demoShow()$.")
+LIST_ITEM (U"• Scripting: `sleep` () to pause Praat temporarily: useful for animations in combination with `demoShow` ().")
 NORMAL (U"##6.0.26# (2 March 2017)")
-LIST_ITEM (U"• Mac: more corrections in $$demoShow()$ and $$blankWhilePlaying$.")
+LIST_ITEM (U"• Mac: more corrections in `demoShow` () and `blankWhilePlaying`.")
 LIST_ITEM (U"• PraatBarren: better error message when an attempt is made to run PraatBarren interactively.")
 NORMAL (U"##6.0.25# (11 February 2017)")
-LIST_ITEM (U"• Mac: made $$demoShow()$ and $$blankWhilePlaying$ compatible with MacOS 10.12 Sierra.")
+LIST_ITEM (U"• Mac: made `demoShow` () and `blankWhilePlaying` compatible with MacOS 10.12 Sierra.")
 LIST_ITEM (U"• Mac SoundRecorder: more sampling frequencies, on behalf of external USB microphones.")
 NORMAL (U"##6.0.24# (23 January 2017)")
 LIST_ITEM (U"• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would choose the wrong tier.")
@@ -513,7 +513,7 @@ LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a so
 LIST_ITEM (U"• Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.")
 LIST_ITEM (U"• Improvements in the manual and in texts.")
 NORMAL (U"##6.0.22# (15 November 2016)")
-LIST_ITEM (U"• Scripting: correct error messages for expressions like: $$5 + “hello”$")
+LIST_ITEM (U"• Scripting: correct error messages for expressions like: `5 + “hello”`")
 LIST_ITEM (U"• Command line: the --open option works correctly in the GUI if you open multiple files.")
 //LIST_ITEM (U"• Sound window: option for showing time in minutes instead of just seconds.")   // too confusing in UI
 NORMAL (U"##6.0.21# (25 September 2016)")
@@ -546,25 +546,25 @@ LIST_ITEM (U"• Windows: corrected a bug that could cause Praat to crash when c
 LIST_ITEM (U"• Mac 64-bit: progress bars with movies.")
 NORMAL (U"##6.0.12# (24 January 2016)")
 LIST_ITEM (U"• Windows 32-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
-LIST_ITEM (U"• Mac 64-bit: better $$demoShow()$.")
+LIST_ITEM (U"• Mac 64-bit: better `demoShow` ().")
 LIST_ITEM (U"• Mac 64-bit: working Matrix movies and articulatory synthesizer movies.")
 NORMAL (U"##6.0.11# (18 January 2016)")
 LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when drawing a Spectrum with undefined values.")
 LIST_ITEM (U"• Mac 64-bit: corrected a bug by which some text in the Sound window would sometimes not be drawn.")
-LIST_ITEM (U"• Mac 64-bit demo window: improved the working of $$demoShow()$.")
+LIST_ITEM (U"• Mac 64-bit demo window: improved the working of `demoShow` ().")
 NORMAL (U"##6.0.10# (8 January 2016)")
 LIST_ITEM (U"• Corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.")
 LIST_ITEM (U"• Mac 64-bit: corrected a bug that would cause black selections in the Sound window.")
 NORMAL (U"##6.0.09# (1 January 2016)")
 LIST_ITEM (U"• Windows 64-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
 NORMAL (U"##6.0.08# (5 December 2015)")
-LIST_ITEM (U"• Windows command line: the $$--a$ option can be used when redirecting the output to pipes and files.")
-LIST_ITEM (U"• Linux command line: the $$--run$ option is not needed in the Terminal when redirecting output "
+LIST_ITEM (U"• Windows command line: the `--a` option can be used when redirecting the output to pipes and files.")
+LIST_ITEM (U"• Linux command line: the `--run` option is not needed in the Terminal when redirecting output "
 	"(unless you redirect standard output, standard input %and standard error).")
 NORMAL (U"##6.0.07# (30 November 2015)")
 LIST_ITEM (U"• Mac 64-bit: repaired dragging selections (which got broken in the El Capitan fix in 6.0.06).")
 NORMAL (U"##6.0.06# (29 November 2015)")
-LIST_ITEM (U"• Mac 64-bit: correct early Info window updates and $$demoShow()$ in El Capitan.")
+LIST_ITEM (U"• Mac 64-bit: correct early Info window updates and `demoShow` () in El Capitan.")
 LIST_ITEM (U"• Manual updates.")
 LIST_ITEM (U"• Corrected some small memory leaks.")
 NORMAL (U"##6.0.05# (8 November 2015)")
@@ -576,7 +576,7 @@ LIST_ITEM (U"• Corrected a bug that caused an incorrect number in FFNet files;
 	"unreadable FFNet files can be sent to the Praat authors for repair.")
 NORMAL (U"##6.0.03# (31 October 2015)")
 LIST_ITEM (U"• Corrected a bug that caused Praat to crash when the Soundrecorder window was closed.")
-LIST_ITEM (U"• Scripting: when calling Praat from the command line, added the $$--run$ option to force script execution.")
+LIST_ITEM (U"• Scripting: when calling Praat from the command line, added the `--run` option to force script execution.")
 NORMAL (U"##6.0.02# (30 October 2015)")
 LIST_ITEM (U"• Corrected the redrawing of analyses in the Sound window after a change in the sound.")
 NORMAL (U"##6.0.01# (29 October 2015)")
@@ -606,7 +606,7 @@ LIST_ITEM (U"• Corrected a bug introduced in 5.4.20 that could cause the Sound
 LIST_ITEM (U"• Repaired a very old hang with pulses in the Sound window.")
 NORMAL (U"##5.4.20# (26 September 2015)")
 LIST_ITEM (U"• Corrected the graphical representation of numbers with exponents (wrong since 5.4.10).")
-LIST_ITEM (U"• Windows: prevented flashing console window in $$runScript()$.")
+LIST_ITEM (U"• Windows: prevented flashing console window in `runScript` ().")
 NORMAL (U"##5.4.19# (16 September 2015)")
 LIST_ITEM (U"• LongSound: corrected saving of 8-bit files as 16-bit.")
 NORMAL (U"##5.4.18# (7 September 2015)")
@@ -616,7 +616,7 @@ LIST_ITEM (U"• LongSound: removed a bug introduced in 1999 that could play lon
 LIST_ITEM (U"• Guard better against sound files that contain 0 samples.")
 LIST_ITEM (U"• Scripting: faster look-up of variables.")
 NORMAL (U"##5.4.17# (20 August 2015)")
-LIST_ITEM (U"• Scripting: removed a bug that could cause Praat to crash when calling $$writeFile()$ with an empty text.")
+LIST_ITEM (U"• Scripting: removed a bug that could cause Praat to crash when calling `writeFile` () with an empty text.")
 NORMAL (U"##5.4.16# (16 August 2015)")
 LIST_ITEM (U"• Mac 64-bit: removed a bug by which graphical text passed over the right edge in TextGrid intervals.")
 LIST_ITEM (U"• Mac 64-bit: removed a bug that allowed the general #Zoom and #Close commands to be accessible from a script.")
@@ -1153,7 +1153,7 @@ NORMAL (U"##5.1.31# (4 April 2010)")
 LIST_ITEM (U"• @@Sounds: Convolve...@, @@Sounds: Cross-correlate...@, @@Sound: Autocorrelate...@, with full documentation.")
 LIST_ITEM (U"• More query commands for IntensityTier.")
 NORMAL (U"##5.1.30# (25 March 2010)")
-LIST_ITEM (U"• Scripting: $$createFolder()$ can now work with absolute paths.")
+LIST_ITEM (U"• Scripting: `createFolder` () can now work with absolute paths.")
 LIST_ITEM (U"• PointProcess: made it impossible to add a point where there is already a point.")
 NORMAL (U"##5.1.29# (11 March 2010)")
 LIST_ITEM (U"• Full support for unicode values above 0xFFFF on Macintosh.")
@@ -1209,7 +1209,7 @@ LIST_ITEM (U"• Script window: #Find and #Replace.")
 LIST_ITEM (U"• Picture window (and therefore Demo window!): @@Insert picture from file...@ (MacOS 10.4 and up).")
 LIST_ITEM (U"• @@Demo window@: full screen (on the Mac).")
 LIST_ITEM (U"• Scripting: faster object selection (scripts no longer slow down when there are many objects in the list).")
-LIST_ITEM (U"• Scripting: $$variableExists$.")
+LIST_ITEM (U"• Scripting: `variableExists` ().")
 LIST_ITEM (U"• Macintosh: PDF clipboard (MacOS 10.4 and up).")
 NORMAL (U"##5.1.12# (4 August 2009)")
 LIST_ITEM (U"• Macintosh: the Picture window can save to PDF file (you need MacOS 10.4 or up).")
@@ -1534,7 +1534,7 @@ LIST_ITEM (U"• OT learning: corrected HarmonicGrammar (and LinearOT) learning 
 	"to the stochastic gradient ascent method applied by @@Jäger (2003)@ to MaxEnt grammars.")
 LIST_ITEM (U"• Scripting: removed a bug that could make selection checking (in command windows) unreliable after a script was run.")
 NORMAL (U"##4.5.20# (19 April 2007)")
-LIST_ITEM (U"• Scripting: allow assignments like $$pitch = To Pitch... 0 75 600$.")
+LIST_ITEM (U"• Scripting: allow assignments like `pitch = To Pitch... 0 75 600`.")
 LIST_ITEM (U"• PitchTier Formula: guard against undefined values.")
 NORMAL (U"##4.5.19# (2 April 2007)")
 LIST_ITEM (U"• Scripting: allow comments with “\\# ” and “;” in forms.")
@@ -3320,11 +3320,11 @@ NORMAL (U"As with R scripts, Python scripts, and quite generally any kinds of sc
 MAN_END
 
 MAN_BEGIN (U"Checking for updates", U"ppgb", 20220217)
-INTRO (U"Updates for Praat are available from $$www.praat.org$.")
+INTRO (U"Updates for Praat are available from `www.praat.org`.")
 NORMAL (U"Your current version (if you are reading this from the manual inside the Praat program, rather than from the website) is " stringize(PRAAT_VERSION_STR)
 	", from " stringize(PRAAT_MONTH) " " stringize(PRAAT_DAY) ", " stringize(PRAAT_YEAR) ". "
 	"Given that we tend to release new Praat versions once or twice a month, "
-	"you can probably guess whether it would be worth your while to have a look at $$www.praat.org$ "
+	"you can probably guess whether it would be worth your while to have a look at `www.praat.org` "
 	"to see what is new, and perhaps download a new version.")
 NORMAL (U"Praat improves continually, and old features will almost always continue to work, "
 	"so there should never be a reason to continue to work with older versions.")
@@ -3342,10 +3342,10 @@ MAN_END
 
 MAN_BEGIN (U"Reporting a problem", U"ppgb", 20220116)
 INTRO (U"Anything that you consider incorrect behaviour of Praat (a “bug”) can be reported "
-	"to the authors by email ($$paul.boersma\\@ uva.nl$). "
+	"to the authors by email (`paul.boersma@uva.nl`). "
 	"This includes any crashes.")
 NORMAL (U"Questions about how to use Praat for your specific cases "
-	"can be posed to the Praat User List ($$https://groups.io/g/Praat-Users-List$). "
+	"can be posed to the Praat User List (`https://groups.io/g/Praat-Users-List`). "
 	"This includes any questions on why your self-written Praat script does something unexpected.")
 MAN_END
 
@@ -3511,7 +3511,7 @@ MAN_END
 
 MAN_BEGIN (U"FAQ: Scripts", U"ppgb", 20230201)
 NORMAL (U"#Question: how do I do something to all the files in a directory?")
-NORMAL (U"Answer: look at $$fileNames\\$ \\# ()$ or @@Create Strings as file list...@.")
+NORMAL (U"Answer: look at `fileNames$#` () or @@Create Strings as file list...@.")
 NORMAL (U"")
 NORMAL (U"#Question: why doesn't the editor window react to my commands?")
 NORMAL (U"Your commands are probably something like:")
@@ -3527,26 +3527,26 @@ CODE (U"View & Edit")
 CODE (U"editor: “Sound hello”")
 CODE (U"Zoom: 0.3, 0.5")
 NORMAL (U"")
-NORMAL (U"#Problem: a line like “$$%Number = 1%$ does not work.")
+NORMAL (U"#Problem: a line like “%`Number = 1`” does not work.")
 NORMAL (U"Solution: names of variables should start with a lower-case letter.")
 NORMAL (U"")
 NORMAL (U"#Question: why do names of variables have to start with a lower-case letter? "
-	"I would like to do things like “$$F0 = Get mean pitch$”.")
+	"I would like to do things like “`F0 = Get mean pitch`”.")
 NORMAL (U"Answer: Praat scripts combine button commands with things that only occur "
-	"in scripts. Button commands always start with a capital letter, e.g. $Play (there is a button #Play). "
-	"Script commands always start with lower case, e.g. $$writeInfoLine: “Hello”$ "
+	"in scripts. Button commands always start with a capital letter, e.g. `Play` (there is a button #Play). "
+	"Script commands always start with lower case, e.g. `writeInfoLine: “Hello”` "
 	"($writeInfoLine is a built-in function). "
 	"A minimal pair is “$select”, which simulates a mouse click in the object list, "
-	"versus “$$Select...$”, which sets the selection in editor windows. If we allowed initial capitals, "
+	"versus “`Select...`”, which sets the selection in editor windows. If we allowed initial capitals, "
 	"variable names would become rather ambiguous in assignments, "
-	"as in “$$%x = %Get$”, where “$%Get” would be a variable, versus “$$%x = Get mean$”, "
+	"as in “`x = Get`”, where “%`Get`” would be a variable, versus “`x = Get mean`”, "
 	"where ##Get mean# is a button command. To prevent this confusion, Praat enforces "
 	"a rigorous lower-case/upper-case distinction.")
 NORMAL (U"")
 NORMAL (U"#Question: how do I convert a number into a string?")
-NORMAL (U"Answer: $$%%a\\$ % = string\\$  (%a)")
+NORMAL (U"Answer: `a$ = string$ (a)`")
 NORMAL (U"#Question: how do I convert a string into a number?")
-NORMAL (U"Answer: $$%a = number (%%a\\$ %)")
+NORMAL (U"Answer: `a = number (a$)`")
 MAN_END
 
 MAN_BEGIN (U"FAQ: Spectrograms", U"ppgb", 20030916)
@@ -3921,19 +3921,19 @@ DEFINITION (U"All values that are more than %%Dynamic range% dB below the maximu
 ENTRY (U"The bandwidth")
 NORMAL (U"To see how the window length influences the bandwidth, "
 	"first create a 1000-Hz sine wave with @@Create Sound from formula...@ "
-	"by typing $$1/2 * sin (2*pi*1000*x)$ as the formula, then click ##View & Edit#. "
+	"by typing `1/2 * sin (2*pi*1000*x)` as the formula, then click ##View & Edit#. "
 	"The spectrogram will show a horizontal black line. "
 	"You can now vary the window length in the spectrogram settings and see how the thickness "
 	"of the lines varies. The line gets thinner if you raise the window length. "
 	"Apparently, if the analysis window comprises more periods of the wave, "
 	"the spectrogram can tell us the frequency of the wave with greater precision.")
 NORMAL (U"To see this more precisely, create a sum of two sine waves, with frequencies of 1000 and 1200 Hz. "
-	"the formula is $$1/4 * sin (2*pi*1000*x) + 1/4 * sin (2*pi*1200*x)$. In the editor, you will see "
+	"the formula is `1/4 * sin (2*pi*1000*x) + 1/4 * sin (2*pi*1200*x)`. In the editor, you will see "
 	"a single thick band if the analysis window is short (5 ms), and two separate bands if the analysis "
 	"window is long (30 ms). Apparently, the frequency resolution gets better with longer analysis windows.")
 NORMAL (U"So why don't we always use long analysis windows? The answer is that their time resolution is poor. "
 	"To see this, create a sound that consists of two sine waves and two short clicks. The formula is "
-	"$$0.02*(sin(2*pi*1000*x)+sin(2*pi*1200*x)) + (col=10000)+(col=10200)$. "
+	"`0.02*(sin(2*pi*1000*x)+sin(2*pi*1200*x)) + (col=10000)+(col=10200)`. "
 	"If you view this sound, you can see that the two clicks will overlap "
 	"in time if the analysis window is long, and that the sine waves overlap in frequency if the "
 	"analysis window is short. Apparently, there is a trade-off between time resolution and "
@@ -3976,7 +3976,7 @@ DEFINITION (U"the shape of the analysis window. To compute the spectrum at, say,
 ENTRY (U"Sidelobes; anybody wants to win a cake?")
 NORMAL (U"The Gaussian window is the only shape that we can consider seriously as a candidate for "
 	"the analysis window. To see this, create a 1000-Hz sine wave with @@Create Sound from formula...@ "
-	"by typing $$1/2 * sin (2*pi*1000*x)$ as the formula, then click ##View & Edit#. "
+	"by typing `1/2 * sin (2*pi*1000*x)` as the formula, then click ##View & Edit#. "
 	"If the window shape is Gaussian, the spectrogram will show a horizontal black line. "
 	"If the window shape is anything else, the spectrogram will show many horizontal grey lines (%sidelobes), "
 	"which do not represent anything that is available in the signal. They are artifacts of the "

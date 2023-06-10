@@ -875,7 +875,7 @@ TERM (U"##Write log 1 to")
 DEFINITION (U"this determines whether your log line will be written to log file 1 only, to the Info window only, or to both.")
 TERM (U"##Log file 1")
 DEFINITION (U"the name of the log file. Click Browse to select a file to write to. "
-	"On most platforms you can also use a home-relative name such as $$~/Desktop/pitchLog.txt$.")
+	"On most platforms you can also use a home-relative name such as `~/Desktop/pitchLog.txt`.")
 TERM (U"##Log 1 format")
 DEFINITION (U"the format of the line that Praat will write. See below.")
 NORMAL (U"The same goes for log file 2.")
@@ -1179,7 +1179,7 @@ NORMAL (U"For every element of the Matrix inside the specified windowing domain,
 	"The %area of the rectangle is proportional to the value of the element.")
 ENTRY (U"Trick")
 NORMAL (U"If you prefer the %sides of the rectangle (instead of the area) to be proportional "
-	"to the value of the element, you can use the formula \"$$self\\^ 2$\" before drawing (see @@Matrix: Formula...@).") 
+	"to the value of the element, you can use the formula \"`self^2`\" before drawing (see @@Matrix: Formula...@).") 
 MAN_END
 
 MAN_BEGIN (U"Matrix: Formula...", U"ppgb", 20021206)

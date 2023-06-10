@@ -120,15 +120,15 @@ NORMAL (U"• The integer number 0, which is the number of points in the third t
 	"A newly created point tier contains no points yet.")
 NORMAL (U"You will have noticed that the file contains a lot of stuff that was not mentioned in this list. "
 	"All of that stuff are %comments that are present only to help the human reader understand the contents "
-	"of the file: labels for all tiers (such as $$item [2]$), labels for the starting times of the TextGrid or "
-	"a tier or an interval ($xmin), labels for end times ($xmax); labels for the number of tiers or "
-	"intervals or points ($size), and little numbers enclosed in square brackets to tell the reader where they are ($$[2]$).")
+	"of the file: labels for all tiers (such as `item [2]`), labels for the starting times of the TextGrid or "
+	"a tier or an interval ($xmin), labels for end times (`xmax`); labels for the number of tiers or "
+	"intervals or points ($size), and little numbers enclosed in square brackets to tell the reader where they are (`[2]`).")
 NORMAL (U"When reading a text file containing a TextGrid (or any other object), Praat totally ignores these comments, "
-	"so if you e.g. replace $$[2]$ with $$[4]$ somewhere, Praat will not notice. Praat will consider as data only the following "
+	"so if you e.g. replace `[2]` with `[4]` somewhere, Praat will not notice. Praat will consider as data only the following "
 	"types of information in the file:")
-LIST_ITEM (U"• free-standing numbers, such as $$0$ and $$2.3$ above, but not $$[1]$ or $$[3]$;")
-LIST_ITEM (U"• free-standing text enclosed within double quotes, such as $$\"TextGrid\"$ and $$\"\"$ above;")
-LIST_ITEM (U"• free-standing flags, such as $$<exists>$ above (this is the only flag that appears in TextGrid files; "
+LIST_ITEM (U"• free-standing numbers, such as `0` and `2.3` above, but not `[1]` or `[3]`;")
+LIST_ITEM (U"• free-standing text enclosed within double quotes, such as `\"TextGrid\"` and `\"\"` above;")
+LIST_ITEM (U"• free-standing flags, such as `<exists>` above (this is the only flag that appears in TextGrid files; "
 	"see @ExperimentMFC for a much broader use of flags).")
 NORMAL (U"In this list, \"free-standing\" means that the number, text or flag is preceded by the beginning of the file, "
 	"the beginning of a line, or a space, and that it is followed by the end of the file, the end of a line, or a space.")
@@ -304,7 +304,7 @@ NORMAL (U"Existing TextGrid text files come in various encodings. When creating 
 NORMAL (U"When writing a TextGrid text file, you can use UTF-8 encoding (without Byte Order Mark), or UTF-16 encoding "
 	"(either Big-Endian or Little-Endian, with Byte Order Mark). "
 	"Please never write a limited encoding such as Latin-1 or MacRoman, which do not support international characters "
-	"or phonetic characters as in $$\"ʔaɦɔj\"$.")
+	"or phonetic characters as in “`ʔaɦɔj`”.")
 NORMAL (U"The lines in the file are typically separated by a newline symbol (Linux or modern Mac), "
 	"or by a Return symbol (old Mac), or by a Return symbol followed by a newline symbol (Windows). "
 	"When reading a TextGrid text file, you should be prepared for each of these line separators. "
@@ -313,7 +313,7 @@ NORMAL (U"The lines in the file are typically separated by a newline symbol (Lin
 ENTRY (U"8. Interpreting trigraphs")
 NORMAL (U"The example above contains several phonetic symbols, and it is not always easy to type those into a text field. "
 	"For this reason, Praat provides %trigraphs for most phonetic characters, as well as for many non-ASCII characters "
-	"used in the languages of the world. For instance, the vowel \"ɔ\" (a \"turned c\") can be typed as \"\\bsct\" into "
+	"used in the languages of the world. For instance, the vowel “ɔ” (a “turned c”) can be typed as `\\ct` into "
 	"the TextGrid window as well as anywhere else in Praat where you want to draw graphical text "
 	"(see @@Special symbols@ for all trigraphs). Thus, the file above could have looked as follows:")
 CODE (U"File type = \"ooTextFile\"")
