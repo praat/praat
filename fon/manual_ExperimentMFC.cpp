@@ -364,7 +364,7 @@ NORMAL (U"The experimenter does not have to create the stimulus pairs as sound f
 	"Praat will play the files ##320.wav# and ##300.wav#. These two substimuli will be separated here by a silence "
 	"of 0.8 seconds, called the %%inter-stimulus interval% (or %stimulusMedialSilenceDuration).")
 NORMAL (U"Note that the text in this file is rather different from the previous example. "
-	"It does not matter whether you write $%numberOfDifferentStimuli, or $$%%different stimuli%$, or anything else; "
+	"It does not matter whether you write %`numberOfDifferentStimuli`, or %`different stimuli`, or anything else; "
 	"Praat ignores these texts as long as they do not contain numbers, quoted strings, or things between <>.")
 MAN_END
 
@@ -709,10 +709,10 @@ NORMAL (U"The participant will see 16 squares on the screen. First she will have
 MAN_END
 
 MAN_BEGIN (U"ExperimentMFC 7. Blanking the screen", U"ppgb", 20130102)
-INTRO (U"In all the earlier examples, the flag $%blankWhilePlaying was set to $$<no>$. This means that in all those cases "
+INTRO (U"In all the earlier examples, the flag $%blankWhilePlaying was set to `<no>`. This means that in all those cases "
 	"the participant will immediately see the response categories when the sound starts playing "
 	"(or even earlier, if there is an initial silence).")
-NORMAL (U"This can be changed by setting $%blankWhilePlaying to $$<yes>$. When you do that, the participant will see a blank screen "
+NORMAL (U"This can be changed by setting $%blankWhilePlaying to `<yes>`. When you do that, the participant will see a blank screen "
 	"while the stimulus is playing, and the response buttons will come up only after the sound has finished. "
 	"This is useful if you want to prevent the participant from clicking before the sound has finished, "
 	"or for priming experiments. Reaction times are measured from when the response buttons appear.")
@@ -725,7 +725,7 @@ INTRO (U"In all the earlier examples, either the set of stimulus sounds or the s
 	"the same throughout the experiment. If you want more than one set of stimuli, or more than one set of responses, "
 	"you can run several experiments after each other, simply by selecting more than one experiment, then clicking #Run.")
 NORMAL (U"You can put all these ExperimentMFC objects in one text file. The following example contains two experiments. "
-	"The second line has to contain the text $$\"Collection\"$, followed by the number of experiments:")
+	"The second line has to contain the text `\"Collection\"`, followed by the number of experiments:")
 CODE (U"\"ooTextFile\"")
 CODE (U"\"Collection\" 2")
 CODE (U"")

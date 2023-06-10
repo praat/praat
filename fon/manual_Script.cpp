@@ -625,8 +625,8 @@ CODE (U"%x = 99")
 CODE (U"%x2 = %x * %x")
 CODE (U"writeInfoLine: “The square of ”, %x, “ is ”, %x2, “.”")
 NORMAL (U"This is an example of a simple @@Praat script@; "
-	"it assigns the results of the numeric formulas $$99$ and $$%x * %x$ "
-	"to the numeric variables $%x and $%x2. Note that the formula $$%x * %x$ itself refers to the variable $%x. "
+	"it assigns the results of the numeric formulas `99` and `x * x` "
+	"to the numeric variables %`x` and %`x2`. Note that the formula `x * x` itself refers to the variable %`x`. "
 	"To run (execute) this script, type @@Keyboard shortcuts|Command-R@ or choose #Run from the Run menu. "
 	"Praat will then write the following text into the Info window:")
 CODE (U"The square of 99 is 9801.")
@@ -638,9 +638,9 @@ CODE (U"%%previous\\$ % = “Clinton”")
 CODE (U"%%famous\\$ % = “Lincoln”")
 CODE (U"%%newCapital\\$ % = %%current\\$ % + mid\\$  (%%famous\\$ %, 2, 3) + right\\$  (%%previous\\$ %, 3)")
 CODE (U"writeInfoLine: “The new capital will be ”, %%newCapital\\$ %, “.”")
-NORMAL (U"This script assigns the results of four string expressions to the four string variables $$%%current\\$ %$, "
-	"$$%%previous\\$ %$, $$%%famous\\$ %$, and $$%%newCapital\\$ %$. The dollar sign is the notation for a string variable or "
-	"for a function whose result is a string (like $$left\\$ $). Note that the formula in the fourth line refers to three existing "
+NORMAL (U"This script assigns the results of four string expressions to the four string variables `current$`, "
+	"`previous$`, `famous$`, and `newCapital$`. The dollar sign is the notation for a string variable or "
+	"for a function whose result is a string (like `left$`). Note that the formula in the fourth line refers to three existing "
 	"variables.")
 NORMAL (U"To see what the new name of the capital will be, choose #Run.")
 ENTRY (U"Example: report five squares")
@@ -662,8 +662,8 @@ ENTRY (U"Example: numeric expressions in creation in scripts")
 NORMAL (U"Suppose you want to generate a sine wave whose frequency is held in a variable. This is the way:")
 CODE (U"%frequency = 377")
 CODE (U"Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 0.9 * sin (2*pi*%frequency*x)")
-NORMAL (U"In this example, Praat will protest if $x is a variable as well ($%x), because that would be ambiguous "
-	"with the $x that refers to the time in the sound (see @@Formulas 1.7. Formulas for modification@).")
+NORMAL (U"In this example, Praat will protest if `x` is a variable as well (%`x`), because that would be ambiguous "
+	"with the `x` that refers to the time in the sound (see @@Formulas 1.7. Formulas for modification@).")
 MAN_END
 
 MAN_BEGIN (U"Formulas 2. Representations", U"ppgb", 20170916)
@@ -822,7 +822,7 @@ CODE (U"3 + - (2 \\^  4) \\-> -13   (exponentiation, negation, addition)")      
 CODE (U"3 + 5 / 2 + 3 \\-> 8.5")                                                     //@praat assert 3 + 5 / 2 + 3 = 8.5
 CODE (U"(3 + 5) / (2 + 3) \\-> 1.6")                                                 //@praat assert (3 + 5) / (2 + 3) = 1.6
 NORMAL (U"The operators with the next highest precedence are the #comparison operators "
-	"($$=, <>, <, >, <=, >=$). These operators always yield 0 (%false) or 1 (%true):")
+	"(`=, <>, <, >, <=, >=`). These operators always yield 0 (%false) or 1 (%true):")
 CODE (U"5 + 6 = 10 \\-> 0      (equal)")                                             //@praat assert ( 5 + 6 = 10 ) = 0
 CODE (U"5 + 6 = 11 \\-> 1")                                                          //@praat assert ( 5 + 6 = 11 ) = 1
 CODE (U"5 + 6 <> 10 \\-> 1     (unequal)")                                           //@praat assert ( 5 + 6 <> 10 ) = 1
@@ -1148,18 +1148,18 @@ DEFINITION (U"the variable %%s\\$ % contains the string \"hheelllloo\". If there
 DEFINITION (U"the variable %%s\\$ % contains the string \"hhello\". The number %n determines the maximum number of text pieces "
 	"that can be replaced. If %n is 0, all matching text pieces are replaced.")
 TERM (U"##string\\$  (number)")
-DEFINITION (U"formats a number as a string. Thus, $$string\\$  (5e6)$ "
-	"becomes the string $$5000000$, and $$string\\$  (56\\% )$ becomes the string $$0.56$.")
+DEFINITION (U"formats a number as a string. Thus, `string$ (5e6)` "
+	"becomes the string `5000000`, and `string$ (56%)` becomes the string `0.56`.")
 TERM (U"##fixed\\$  (number, precision)")
-DEFINITION (U"formats a number as a string with %precision digits after the decimal point. Thus, $$fixed\\$  (72.65687, 3)$ "
-	"becomes the string $$72.657$, and $$fixed\\$  (72.65001, 3)$ becomes the string $$72.650$. "
+DEFINITION (U"formats a number as a string with %precision digits after the decimal point. Thus, `fixed$ (72.65687, 3)` "
+	"becomes the string `72.657`, and `fixed$ (72.65001, 3)` becomes the string `72.650`. "
 	"In these examples, we see that the result can be rounded up and that trailing zeroes are kept. "
-	"At least one digit of precision is always given, e.g. $$fixed\\$  (0.0000157, 3)$ becomes the string $$0.00002$. "
-	"The number 0 always becomes the string $0.")
+	"At least one digit of precision is always given, e.g. `fixed$ (0.0000157, 3)` becomes the string `0.00002`. "
+	"The number 0 always becomes the string `0`.")
 TERM (U"##percent\\$  (number, precision)")
-DEFINITION (U"the same as ##fixed\\$ #, but with a percent sign. For instance, $$percent\\$ (0.157, 3)$ becomes $$15.700\\% $, "
-	"$$percent\\$ (0.000157, 3)$ becomes $$0.016\\% $, and $$percent\\$  (0.000000157, 3)$ becomes $$0.00002\\% $. "
-	"The number 0 always becomes the string $0.")
+DEFINITION (U"the same as `fixed$` (), but with a percent sign. For instance, `percent$ (0.157, 3)` becomes `15.700%`, "
+	"`percent$ (0.000157, 3)` becomes `0.016%`, and `percent$ (0.000000157, 3)` becomes `0.00002%`. "
+	"The number 0 always becomes the string `0`.")
 /*@praat
 	string$ = "5e6"
 	assert 3 + number (string$) = 5000003
@@ -1212,15 +1212,15 @@ MAN_END
 MAN_BEGIN (U"Formulas 8. Attributes of objects", U"ppgb", 20221202)
 NORMAL (U"You can refer to several attributes of objects that are visible in the @@List of Objects@. "
 	"To do so, use either the unique ID of the object, or the type and the name of the object. "
-	"Thus, $$object[113]$ refers to the object that has the number 113 in the list, "
-	"and $$object[\"Sound hallo\"]$ refers to an existing Sound object whose name is “hallo” "
+	"Thus, `object[113]` refers to the object that has the number 113 in the list, "
+	"and `object[\"Sound hallo\"]` refers to an existing Sound object whose name is “hallo” "
 	"(if there is more than one such object, it refers to the one that was created last).")
 NORMAL (U"To refer to an attribute, you use the period (\".\"). "
-	"Thus, $$object[\"Sound hallo\"].nx$ is the number of samples of the Sound called %hallo, and "
-	"$$1/object[\"Sound hallo\"].dx$ is its sampling frequency.")
+	"Thus, `object[\"Sound hallo\"].nx` is the number of samples of the Sound called `hallo`, and "
+	"`1/object[\"Sound hallo\"].dx` is its sampling frequency.")
 ENTRY (U"Attributes in the calculator")
 NORMAL (U"Record a Sound (read the @Intro if you do not know how to do that), "
-	"and name it \"mysound\" (or anything else). An object with a name like \"3. Sound mysound\" "
+	"and name it `mysound` (or anything else). An object with a name like `3. Sound mysound` "
 	"will appear in the list. Then type into the @calculator the formula")
 CODE (U"object[3].nx")
 NORMAL (U"or")
@@ -1955,12 +1955,12 @@ NORMAL (U"First, try to run the script when a Sound is not selected "
 	"Indeed, if you select a Pitch or if you select nothing, then no command #Play appears in the dynamic menu, "
 	"so the script cannot execute it. Note that the commands ##Erase all# and ##Draw inner box# are still available, "
 	"because they continue to be present in the menus of the Picture window; "
-	"therefore, the script will execute the first two lines ($$Erase all$ and $$Draw inner box$) "
-	"and stop running at the third line, i.e. at your first $$Play$. "
+	"therefore, the script will execute the first two lines (`Erase all` and `Draw inner box`) "
+	"and stop running at the third line, i.e. at your first `Play`. "
 	"The result is that the “box” will stay visible in the Picture window, because the fifth line of the script, "
 	"which should erase the box, is never executed.")
 NORMAL (U"Second, try to mistype a command (there’s a good chance you already did it by accident), "
-	"e.g. write $$PLay$ instead of $$Play$, or $$Draw inner bocks$ or whatever. "
+	"e.g. write `PLay` instead of `Play`, or `Draw inner bocks` or whatever. "
 	"Again, you are likely to get a message saying that that command is not available. "
 	"Such messages are the most common messages that you’ll see when writing scripts; "
 	"now you know that they mean either that you mistyped something or that you made the wrong selection.")
@@ -2026,10 +2026,10 @@ NORMAL (U"The first four arguments in the above examples are %%numeric arguments
 	"You just write them in the script as you would write them into the settings window.")
 ENTRY (U"2. Boolean (yes/no) arguments")
 NORMAL (U"The fifth argument in the above examples (#Garnish) is a %%boolean argument% (yes/no choice) and is represented by a %%check button%. "
-	"In the script you write it as $$\"yes\"$ (including the quotes) or $$\"no\"$ (or as 1 or 0).")
+	"In the script you write it as `\"yes\"` (including the quotes) or `\"no\"` (or as 1 or 0).")
 ENTRY (U"3. Multiple-choice arguments")
 NORMAL (U"The sixth argument in the above examples (##Drawing method#) is a %%multiple-choice argument% and is represented by an %%option menu%. "
-	"In the script you write the text of the choice, i.e. $$\"Curve\"$ or $$\"Poles\"$ in the examples.")
+	"In the script you write the text of the choice, i.e. `\"Curve\"` or `\"Poles\"` in the examples.")
 NORMAL (U"A multiple-choice argument is sometimes represented by a %%choice box% instead of by an option menu. "
 	"For instance, the last example above could equally well have looked like")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6.1), U""   // 7 - 3 * 0.3 (three is the number of additional radio buttons)
@@ -2203,7 +2203,7 @@ NORMAL (U"The simplest answer is that you open the ScriptEditor window with ##Ne
 	"then type the following line into the ScriptEditor window:")
 CODE (U"writeInfoLine: “Hello world”")
 NORMAL (U"and finally choose #Run from the #Run menu.")
-NORMAL (U"When you try this, the result should be that the Info window comes to the front, and that it shows the text $$Hello world$:")
+NORMAL (U"When you try this, the result should be that the Info window comes to the front, and that it shows the text `Hello world`:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
@@ -2299,47 +2299,47 @@ NORMAL (U"To see what value a variable contains (what’s in the box, or who liv
 	"you can use the $#writeInfoLine function:")
 CODE (U"%b = 3.1")
 CODE (U"writeInfoLine: “The value is ”, %b, “.”")
-NORMAL (U"This will put the text “$$The value is 3.1.$” into the Info window, as you are invited to verify.")
+NORMAL (U"This will put the text “`The value is 3.1.`” into the Info window, as you are invited to verify.")
 NORMAL (U"A variable is called a variable because it is %variable, i.e. its value can change. Try the script")
 CODE (U"%b = 3.1")
 CODE (U"%b = 5.8")
 CODE (U"writeInfoLine: “The value is ”, %b, “.”")
-NORMAL (U"You will see that $%b ends up having the value 5.8. The first line puts the value 3.1 there, but the second line "
+NORMAL (U"You will see that `b` ends up having the value 5.8. The first line puts the value 3.1 there, but the second line "
 	"replaces it with 5.8. It’s like taking the 3.1 out of the box and putting the 5.8 in its stead. "
 	"Or the family 3.1 moves from the house, and the family called 5.8 moves in.")
 NORMAL (U"In an assignment, the part to the right of the “becomes” sign (the “=” sign) doesn’t have to be a number; "
 	"it can be any %formula that %evaluates to a number. For instance, the script")
 CODE (U"%b = 3.1 * 2")
 CODE (U"writeInfoLine: “The value is ”, b, “.”")
-NORMAL (U"puts the text “$$The value is 6.2.$” into the Info window. This works because Praat handles the first line "
+NORMAL (U"puts the text “`The value is 6.2.`” into the Info window. This works because Praat handles the first line "
 	"in the following way:")
-LIST_ITEM (U"1. the formula $$3.1 * 2$ is %evaluated (i.e. its value is computed), and the result is 6.2.")
-LIST_ITEM (U"2. the value 6.2 is subsequently stored in the variable $%b.")
-NORMAL (U"After line 1 has been executed, the variable $%b just contains the value 6.2, nothing more; "
-	"the variable $%b doesn’t remember that that value has been computed by multiplying 3.1 with 2.")
+LIST_ITEM (U"1. the formula `3.1 * 2` is %evaluated (i.e. its value is computed), and the result is 6.2.")
+LIST_ITEM (U"2. the value 6.2 is subsequently stored in the variable `b`.")
+NORMAL (U"After line 1 has been executed, the variable %`b` just contains the value 6.2, nothing more; "
+	"the variable %`b` doesn’t remember that that value has been computed by multiplying 3.1 with 2.")
 NORMAL (U"Formulas can contain more things than numbers: they can also contain other variables:")
 CODE (U"%b = 3.1")
 CODE (U"%c = %b * 2")
 CODE (U"writeInfoLine: “The value of b is ”, %b, “, and the value of c is ”, %c, “.”")
-NORMAL (U"In the first line, $%b gets the value 3.1. In the second line, the formula $$%b * 2$ first has to be evaluated. "
-	"Praat looks up the value of $%b (which is 3.1), so that it knows that the formula actually means $$3.1 * 2$. "
+NORMAL (U"In the first line, %`b` gets the value 3.1. In the second line, the formula `b * 2` first has to be evaluated. "
+	"Praat looks up the value of %`b` (which is 3.1), so that it knows that the formula actually means `3.1 * 2`. "
 	"Praat evaluates this formula and stores the result (namely the value 6.2) "
-	"into the variable $%c, which will then contain nothing else than the value 6.2. "
-	"The Info window thus reports “$$The value of b is 3.1, and the value of c is 6.2.$”.")
+	"into the variable %`c`, which will then contain nothing else than the value 6.2. "
+	"The Info window thus reports “`The value of b is 3.1, and the value of c is 6.2.`”.")
 NORMAL (U"After these explanations, consider the following script:")
 CODE (U"%b = 3.1")
 CODE (U"%c = %b * 2")
 CODE (U"%b = 5.8")
 CODE (U"writeInfoLine: “The value of c is ”, %c, “.”")
 NORMAL (U"Can you figure out what the Info will report? If you think it will report "
-	"“$$The value of c is 6.2.$”, then you are correct: after the first line, $%b contains the value 3.1; "
+	"“`The value of c is 6.2.`”, then you are correct: after the first line, %`b` contains the value 3.1; "
 	"after the second line, the value of $%c is therefore 6.2, and nothing more; "
-	"after line 3, the value of $%b has changed to 5.8, but the value of $%c hasn’t changed and is still 6.2.")
-NORMAL (U"If you thought that $%c would end up having the value 11.6, then you’re thinking in terms "
-	"of a non-procedural language such as Prolog; you may have thought that the thing assigned to $%c in the second line "
-	"is the whole %formula $$%b * 2$, so that $%c changes when $%b changes. But this is not the case: "
-	"the thing stored in $%c is just the %value of the formula $$%b * 2$ at that moment, which is 6.2, "
-	"and $%c doesn’t remember how it got that value. If you have trouble understanding this, "
+	"after line 3, the value of %`b` has changed to 5.8, but the value of %`c` hasn’t changed and is still 6.2.")
+NORMAL (U"If you thought that %`c` would end up having the value 11.6, then you’re thinking in terms "
+	"of a non-procedural language such as Prolog; you may have thought that the thing assigned to %`c` in the second line "
+	"is the whole %formula `b * 2`, so that %`c` changes when %`b` changes. But this is not the case: "
+	"the thing stored in %`c` is just the %value of the formula `b * 2` at that moment, which is 6.2, "
+	"and %`c` doesn’t remember how it got that value. If you have trouble understanding this, "
 	"consult anybody who writes programs.")
 MAN_END
 

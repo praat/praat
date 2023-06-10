@@ -375,7 +375,7 @@ NORMAL (U"For example, suppose that you record some speech on a CD recorder or w
 NORMAL (U"In this example, you can make Praat's sound window show the true sound pressures in Pascal "
 	"and true sound pressure levels in dB, if you multiply the sound with a factor of 10^^(7.9/20)^, "
 	"which you can do by selecting the Sound and choosing ##Multiply...# from the #Modify menu, "
-	"then supplying $$10\\^ (7.9/20)$ as the multiplication factor.")
+	"then supplying `10^(7.9/20)` as the multiplication factor.")
 MAN_END
 
 MAN_BEGIN (U"sound pressure level", U"ppgb", 20041124)

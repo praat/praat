@@ -263,7 +263,7 @@ ENTRY (U"See also")
 NORMAL (U"@@Text styles@")
 MAN_END
 
-MAN_BEGIN (U"Text styles", U"ppgb", 19961012)
+MAN_BEGIN (U"Text styles", U"ppgb", 19961012 /*20230611*/)
 INTRO (U"When drawing text into the @@Picture window@ or into an editor, "
 	"you can use text styles other than regular Roman.")
 ENTRY (U"Italic, bold, superscript, subscript")
@@ -271,17 +271,15 @@ NORMAL (U"With the following symbols, you introduce stretches of text drawn in s
 LIST_ITEM (U"\\% : the following letter will be italic.")
 LIST_ITEM (U"\\# : the following letter will be bold.")
 LIST_ITEM (U"\\# \\% : the following letter will be bold-italic.")
-LIST_ITEM (U"\\^ : the following letter will be superscript: \\% m\\% c\\^ 2 gives %mc^2.")
-LIST_ITEM (U"\\_ : the following letter will be subscript. Example: %F__0_ is typed as \\% F_0.")
+LIST_ITEM (U"\\^ : the following letter will be superscript: `%m%c^2` gives %m%c^2.")
+LIST_ITEM (U"\\_ : the following letter will be subscript. Example: %F__0_ is typed as `%F_0`.")
 LIST_ITEM (U"\\% \\% : the following letters will be italic, until the following \\% :")
-LIST_ITEM (U"    $$Now \\% \\% you\\%  try$   gives:   Now %%you% try.")
+LIST_ITEM (U"    `Now %%you% try`   gives:   Now %%you% try.")
 LIST_ITEM (U"The same goes for \\# \\# , \\^ \\^ , and \\_ \\_ .")
 LIST_ITEM (U"\\bss{...}: small:")
-LIST_ITEM (U"    $$W\\bss{ARP}$   gives:   W\\s{ARP}")
-NORMAL (U"To draw a \\% , \\# , \\^ , or \\_  symbol, you type \"$$\\bs\\%  $\", "
-	"\"$$\\bs\\#  $\", \"$$\\bs\\^  $\", or \"$$\\bs\\_  $\": a backslash, the symbol, and a space.")
-NORMAL (U"On Xwindows machines, the font Symbol will never look bold or italic, "
-	"but it will be printed correctly.")
+LIST_ITEM (U"    `W\\s{ARP}`   gives:   W\\s{ARP}")
+NORMAL (U"To draw a \\% , \\# , \\^ , or \\_  symbol, you type “`\\% `”, "
+	"“`\\# `”, “`\\^ `”, or “`\\_ `”: a backslash, the symbol, and a space.")
 ENTRY (U"See also")
 NORMAL (U"@@Special symbols@")
 MAN_END
@@ -744,8 +742,8 @@ DEFINITION (U"the relative size with which your picture will be printed; normall
 TERM (U"##Print command# (Unix only)")
 DEFINITION (U"When printing on Unix, a temporary PostScript^\\re file is created in the “/tmp” folder; "
 	"it will have a name like “picXXXXXX”, and is automatically removed after printing. "
-	"This file is sent to the printer with the print command, which will often look like $$lp -c \\% s$, "
-	"where $$\\% s$ stands for the file name.")
+	"This file is sent to the printer with the print command, which will often look like `lp -c %s`, "
+	"where `%s` stands for the file name.")
 MAN_END
 
 MAN_BEGIN (U"Print...", U"ppgb", 20001010)
@@ -764,7 +762,7 @@ NORMAL (U"On Windows, the best results will be obtained on PostScript printers, 
 NORMAL (U"If you don't have a PostScript printer, and you still want PostScript quality, "
 	"you can save the picture to an EPS file (@@Save as EPS file...@). "
 	"You can then view this file with the freely available "
-	"GhostView^\\tm program, which you can download from ##http://pages.cs.wisc.edu/~ghost/#, "
+	"GhostView^\\tm program, which you can download from `http://pages.cs.wisc.edu/~ghost/`, "
 	"or convert it to PDF with either GhostView or Adobe^\\re Acrobat^\\tm Distiller^\\tm, which is more reliable than GhostView "
 	"but is also expensive.")
 ENTRY (U"1b. Printing on Macintosh")
@@ -775,19 +773,19 @@ NORMAL (U"On Linux, when you tell Praat to print a picture or manual page, Praat
 	"with @@PostScript settings...@. You do not need a PostScript printer to print PostScript directly, "
 	"because the #lpr program sends PostScript files through the GhostScript program, "
 	"which is a part of all modern Linux distributions. The print command is typically "
-	"$$lpr \\% s$. By changing the print command (with @@PostScript settings...@), "
+	"`lpr %s`. By changing the print command (with @@PostScript settings...@), "
 	"you can change it to something fancier. For instance, if you want to save the woods "
-	"and print two pages on one sheet of paper, you change it to $$cat \\% s | mpage -2 -o -f -m0 | lpr$.")
+	"and print two pages on one sheet of paper, you change it to `cat %s | mpage -2 -o -f -m0 | lpr`.")
 ENTRY (U"2. Indirect printing with your word processor")
 NORMAL (U"If you save your picture to an EPS file, you will be able to include it as a picture in your favourite "
 	"word processor (Microsoft^\\re Word^\\tm, LaTeX...). See @@Save as EPS file...@.")
-NORMAL (U"On the Mac it is better to save your picture to a PDF file, which both Microsoft^\\re Word^\\tm (when using the ##.docx# format) and LaTeX can process. "
+NORMAL (U"On the Mac it is better to save your picture to a PDF file, which both Microsoft^\\re Word^\\tm (when using the `.docx` format) and LaTeX can process. "
 	"See @@Save as PDF file...@.")
 ENTRY (U"3. Indirect printing through the clipboard")
 NORMAL (U"On Windows, pictures included in your word processor via @@Copy to clipboard@ or @@Save as Windows metafile...@ "
 	"will print fine, though not as nicely as EPS files.")
 NORMAL (U"On the Mac, pictures included in your word processor (post-2006 versions) via @@Copy to clipboard@ "
-	"will print just as nicely as PDF files (use the ##.docx# format in Microsoft Word).")
+	"will print just as nicely as PDF files (use the `.docx` format in Microsoft Word).")
 MAN_END
 
 MAN_BEGIN (U"Read from Praat picture file...", U"ppgb", 20110129)
@@ -833,7 +831,7 @@ NORMAL (U"To draw a picture file (PNG; on Mac and Windows also JPEG or TIFF; "
 ENTRY (U"Settings")
 TERM (U"##File name")
 DEFINITION (U"the name of the picture file. If you use this command in a script, "
-	"you can use a relative path name such as $$pictures/myface.png$ or $$~/Desktop/hello.png$.")
+	"you can use a relative path name such as `pictures/myface.png` or `~/Desktop/hello.png`.")
 TERM (U"##From x")
 TERM (U"##To x")
 DEFINITION (U"The horizontal location (in world coordinates) where the picture will appear. "
