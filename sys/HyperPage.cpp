@@ -464,7 +464,11 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
 					Melder_assert (cacheGraphics);
+					Graphics_setAtSignIsLink (my graphics.get(), false);
+					Graphics_setDollarSignIsCode (my graphics.get(), false);
 					Graphics_play (cacheGraphics, my graphics.get());
+					Graphics_setAtSignIsLink (my graphics.get(), true);
+					Graphics_setDollarSignIsCode (my graphics.get(), true);
 				}
 				Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 				Graphics_setLineWidth (my graphics.get(), 1.0);
