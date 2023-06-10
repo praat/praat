@@ -22,6 +22,22 @@
 void manual_Script_init (ManPages me);
 void manual_Script_init (ManPages me) {
 
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"$$writeInfoLine()$"
+© Paul Boersma 2023-06-07
+
+A function that writes its arguments to the Info window,
+overwriting what was previously present in the Info window,
+and moving the output cursor to the next line.
+
+Examples of use:
+================
+################################################################################
+)~~~"
+MAN_PAGES_END
+
 MAN_BEGIN (U"Action commands", U"ppgb", 20230130)
 INTRO (U"The commands in the @@Dynamic menu@ of the @@Objects window@.")
 NORMAL (U"These commands are available only if the right kinds of objects are selected. "
@@ -1827,7 +1843,7 @@ NORMAL (U"Suppose that you want to create a script that allows you to play a sel
 	"You first create an empty script, by choosing @@New Praat script@ from the Praat menu in the Objects window. "
 	"A @ScriptEditor window will appear on your screen:")
 SCRIPT (6, 4, U""
-	Manual_DRAW_WINDOW (4, "untitled script", "File   Edit   Search   Convert   Font   Run   Help")
+	Manual_DRAW_WINDOW (4, "untitled script", "File   Edit   @Search   Convert   Font   %Run   Help")
 	"Draw rectangle: 0, 560, 0, 360\n"
 	"info$ = Picture info\n"
 	"fontSize = extractNumber (info$, \"Font size: \")\n"
