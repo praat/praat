@@ -444,6 +444,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 						} else if (*p == U'@') {
 							MelderString_append (& buffer_graphicalCode, U"\\@ ");
 						} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
+							const bool startsWithLowerCase = Melder_isLowerCaseLetter (p [3]);
 							MelderString_append (& buffer_graphicalCode, U"@@");
 							static MelderString linkTarget, linkText;
 							MelderString_empty (& linkTarget);
@@ -475,8 +476,20 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 								}
 								p ++;
 							}
+							const bool isLinkToFunction =
+									startsWithLowerCase && *p && (p [1] == U':' || p [1] == U' ' && p [2] == U'(');
+							if (isLinkToFunction) {
+								if (! hasSeparateLinkTarget) {
+									MelderString_copy (& linkTarget, linkText.string);
+									hasSeparateLinkTarget = true;
+								}
+								MelderString_append (& linkTarget, U"()");
+							}
 							if (hasSeparateLinkTarget) {
-								MelderString_append (& buffer_graphicalCode, linkTarget.string);
+								if (isLinkToFunction)
+									MelderString_append (& buffer_graphicalCode, U"$$", linkTarget.string, U'$');
+								else
+									MelderString_append (& buffer_graphicalCode, linkTarget.string);
 								MelderString_appendCharacter (& buffer_graphicalCode, U'|');
 							}
 							MelderString_append (& buffer_graphicalCode, linkText.string, U'@');
