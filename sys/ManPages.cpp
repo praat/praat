@@ -82,11 +82,22 @@ static conststring32 extractLink (conststring32 text, const char32 *p, char32 *l
 				from ++;
 		}
 		p = from + ( *from == U'@' );   // add bool to pointer: skip '@' but not '\0'
+	} else if (p [1] == U'`') {
+		const char32 *from = p + 1;
+		*to ++ = *from ++;   // copy opening backquote
+		while (*from != U'`' && *from != U'\0') {
+			if (to - link >= MAXIMUM_LINK_LENGTH)
+				Melder_throw (U"(ManPages::grind:) Link starting with “@`” is too long:\n", text);
+			*to ++ = *from ++;
+		}
+		if (*from == U'`')
+			*to ++ = *from ++;   // copy closing backquote
+		p = from;
 	} else {
 		const char32 *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
 			if (to - link >= MAXIMUM_LINK_LENGTH)
-				Melder_throw (U"(ManPages::grind:) Link starting with “@@” is too long:\n", text);
+				Melder_throw (U"(ManPages::grind:) Link starting with “@” is too long:\n", text);
 			*to ++ = *from ++;
 		}
 		p = from;
@@ -483,7 +494,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 									MelderString_copy (& linkTarget, linkText.string);
 									hasSeparateLinkTarget = true;
 								}
-								MelderString_append (& linkTarget, U"()");
+								//MelderString_append (& linkTarget, U"()");
 							}
 							if (hasSeparateLinkTarget) {
 								if (isLinkToFunction)

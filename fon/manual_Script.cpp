@@ -25,7 +25,7 @@ void manual_Script_init (ManPages me) {
 MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
-"`writeInfoLine()`"
+"`writeInfoLine`"
 © Paul Boersma 2023-06-07
 
 A function that writes its arguments to the Info window,
@@ -35,7 +35,7 @@ and moving the output cursor to the next line.
 Examples of use:
 ================
 ################################################################################
-"`random_initializeWithSeedUnsafelyButPredictably()`"
+"`random_initializeWithSeedUnsafelyButPredictably`"
 © Paul Boersma 2023-06-10
 
 A function xx.
@@ -43,7 +43,7 @@ A function xx.
 Examples of use:
 ================
 ################################################################################
-"`random_initializeSafelyAndUnpredictably()`"
+"`random_initializeSafelyAndUnpredictably`"
 © Paul Boersma 2023-06-10
 
 A function xx.
@@ -51,7 +51,7 @@ A function xx.
 Examples of use:
 ================
 ################################################################################
-"`randomPoisson()`"
+"`randomPoisson`"
 © Paul Boersma 2023-06-10
 
 A function xx.
@@ -59,7 +59,7 @@ A function xx.
 Examples of use:
 ================
 ################################################################################
-"`randomUniform()`"
+"`randomUniform`"
 © Paul Boersma 2023-06-10
 
 A function xx.
@@ -67,7 +67,7 @@ A function xx.
 Examples of use:
 ================
 ################################################################################
-"`randomUniform#()`"
+"`randomUniform#`"
 © Paul Boersma 2023-06-10
 
 A function xx.
@@ -75,7 +75,7 @@ A function xx.
 Examples of use:
 ================
 ################################################################################
-"`sort#()`"
+"`sort#`"
 © Paul Boersma 2023-06-10
 
 A function xx.
