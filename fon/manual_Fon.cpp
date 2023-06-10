@@ -1036,7 +1036,7 @@ MAN_BEGIN (U"Manipulation: Replace original sound", U"ppgb", 20010330)
 INTRO (U"A command to replace the original sound in the selected @Manipulation object with the selected @Sound object.")
 MAN_END
 
-MAN_BEGIN (U"ManipulationEditor", U"ppgb", 20030316)
+MAN_BEGIN (U"ManipulationEditor", U"ppgb", 20030316)  // 2023-06-08
 	INTRO (U"One of the @Editors in Praat, for viewing and manipulating a @Manipulation object.")
 ENTRY (U"Objects")
 	NORMAL (U"The editor shows:")
@@ -1052,7 +1052,7 @@ ENTRY (U"Objects")
 	LIST_ITEM (U"• A @DurationTier for manipulating the relative durations of the voiced parts of the sound.")
 ENTRY (U"Playing")
 	NORMAL (U"To play (a part of) the %resynthesized sound (by any of the methods shown in the #Synth menu, "
-		"like @@overlap-add@ and #LPC), @click on any of the 1 to 8 buttons below and above the drawing area "
+		"like @@overlap-add@ and #LPC), @click any of the 1 to 8 buttons below and above the drawing area "
 		"or use the commands from the Play menu.")
 	NORMAL (U"To play the %original sound instead, use ##Shift-click#.")
 ENTRY (U"Pulses")

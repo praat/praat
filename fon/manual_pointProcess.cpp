@@ -164,7 +164,7 @@ then sorts the new array just once, which is again %O(%N · log %N).
 )~~~"
 MAN_PAGES_END
 
-MAN_BEGIN (U"PointEditor", U"ppgb", /*20110128*/ 20220814)
+MAN_BEGIN (U"PointEditor", U"ppgb", /*20110128 20220814*/ 20230608)
 INTRO (U"One of the @Editors in Praat, for viewing and manipulating a @PointProcess object, "
 	"which is optionally shown together with a @Sound object.")
 ENTRY (U"Objects")
@@ -174,7 +174,7 @@ LIST_ITEM (U"• The @Sound, if you selected a Sound object together with the Po
 LIST_ITEM (U"• The @PointProcess; vertical blue lines represent the points.")
 ENTRY (U"Playing")
 NORMAL (U"To play (a part of) the %resynthesized sound (pulse train): "
-	"@click on any of the 8 buttons below and above the drawing area, or choose a command from the Play menu.")
+	"@click any of the 8 buttons below and above the drawing area, or choose a command from the Play menu.")
 NORMAL (U"To play the %original sound instead, use @@Shift-click@.")
 ENTRY (U"Adding a point")
 NORMAL (U"@Click at the desired time location, and choose \"Add point at cursor\" or type @@Keyboard shortcuts|Command-P@.")

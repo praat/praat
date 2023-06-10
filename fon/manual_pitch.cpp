@@ -359,7 +359,7 @@ NORMAL (U"The time domain of the resulting PitchTier is a union of the domains o
 	"and PointProcess functions.")
 MAN_END
 
-MAN_BEGIN (U"PitchEditor", U"ppgb", /*20110808*/ 20220814)
+MAN_BEGIN (U"PitchEditor", U"ppgb", /*20110808 20220814*/ 20230608)
 INTRO (U"One of the @Editors in Praat, for viewing and modifying a @Pitch object.")
 ENTRY (U"What the Pitch editor shows")
 NORMAL (U"In the window of the PitchEditor, you will see the following features:")
@@ -387,12 +387,12 @@ NORMAL (U"To move the cursor hair or the beginning or end of the selection, "
 ENTRY (U"Changing the path")
 NORMAL (U"To change the path through the candidates manually, click on the candidates of your choice. "
 	"The changes will immediately affect the Pitch object that you are editing. To make a voiced frame "
-	"voiceless, click on the voicelessness bar.")
+	"voiceless, click in the voicelessness bar.")
 NORMAL (U"To change the path automatically, choose ##Path finder...# from the #Edit menu; "
 	"this will have the same effect as filling in different values in the @@Sound: To Pitch (ac)...@ command window, "
 	"but is much faster because the candidates do not have to be determined again.")
 ENTRY (U"Resynthesis")
-NORMAL (U"To hum any part of the pitch contour, click on one of the buttons "
+NORMAL (U"To hum any part of the pitch contour, click one of the buttons "
 	"below or above the data area (there can be 1 to 8 of these buttons), or use a command from the #Play menu.")
 ENTRY (U"Changing the ceiling")
 NORMAL (U"To change the ceiling, but not the path, choose ##Change ceiling...# from the #Edit menu; "
@@ -569,7 +569,7 @@ NORMAL (U"Points are generated along the entire time domain of the #PitchTier, "
 	"under the linearly interpolated pitch contour, is always 1.")
 MAN_END
 
-MAN_BEGIN (U"PitchTierEditor", U"ppgb", /*20110128*/ 20220814)
+MAN_BEGIN (U"PitchTierEditor", U"ppgb", /*20110128 20220814*/ 20230608)
 INTRO (U"One of the @Editors in Praat, for viewing and manipulating a @PitchTier object, "
 	"which is optionally shown together with a @Sound object.")
 ENTRY (U"Objects")
@@ -579,7 +579,7 @@ LIST_ITEM (U"\\bu The @Sound, if you selected a Sound object together with the P
 LIST_ITEM (U"\\bu The @PitchTier: blue points connected with blue lines.")
 ENTRY (U"Playing")
 NORMAL (U"To play (a part of) the %resynthesized sound: "
-	"@click on any of the 8 buttons below and above the drawing area, or choose a command from the Play menu.")
+	"@click any of the 8 buttons below and above the drawing area, or choose a command from the Play menu.")
 NORMAL (U"To play the %original sound instead, use @@Shift-click@.")
 ENTRY (U"Adding a point")
 NORMAL (U"@Click at the desired time location, and choose ##Add point at cursor# or type @@Keyboard shortcuts|Command-P@.")
