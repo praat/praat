@@ -763,14 +763,14 @@ MAN_END
 MAN_BEGIN (U"LPC: To Formant", U"djmw", 19970123)
 INTRO (U"You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY (U"Behaviour")
-NORMAL (U"For each LPC_Frame, the zeros of the linear prediction polynomial are extracted. "
+NORMAL (U"For each LPC frame, the zeros of the linear prediction polynomial are extracted. "
 	"Zeros that are outside the unit circle are reflected into it. "
 	"Next, formant frequencies and bandwidths are calculated from all the roots that have the "
 	"imaginary part positive, i.e., that lie in the upper half of the unit circle. "
-	"Formant frequencies smaller than 50 Hz or larger than (%Nyquist_frequency - 50) are discarded. "
+	"Formant frequencies smaller than 50 Hz or larger than (%nyquistFrequency - 50) are discarded. "
 	"The remaining frequencies and bandwidths are sorted "
-	"and copied to the Formant_Frame. Finally, the %gain field of the LPC is copied to the %intensity "
-	"field of the Formant_Frame.")
+	"and copied to the Formant frame. Finally, the %gain field of the LPC is copied to the %intensity "
+	"field of the Formant frame.")
 ENTRY (U"Algorithm")
 NORMAL (U"The root finder is Laguerre's method followed by root polishing, see @@Press "
 	"et al. (1992)@.")
@@ -812,7 +812,7 @@ DEFINITION (U"formants with small bandwidths show up very well as peaks in the s
 TERM (U"##De-emphasis frequency (Hz)")
 DEFINITION (U"Performs de-emphasis when frequency is in the interval (0, @@Nyquist frequency@)")
 ENTRY (U"Algorithm")
-NORMAL (U"The Spectrum at time %t will be calculated from the %nearest LPC_Frame according to:")
+NORMAL (U"The Spectrum at time %t will be calculated from the %nearest LPC frame according to:")
 EQUATION (U"Spectrum (%f) = \\Vr(%gain\\.c%T/%df) / (1 + \\su__%k=1..%numberOfCoefficients_ %a__%k_%z^^\\--%k^),")
 NORMAL (U"where %T is the sampling period and %z = exp (\\--2 %\\pi %i %f %T) and %df is the distance in Hz "
 	"between two successive components in the Spectrum.")
@@ -850,7 +850,7 @@ DEFINITION (U"formants with small bandwidths show up very well as darker regions
 TERM (U"##De-emphasis frequency (Hz)")
 DEFINITION (U"Performs de-emphasis when value is in the interval (0, @@Nyquist frequency@)")
 ENTRY (U"Algorithm")
-NORMAL (U"For each LPC_Frame the corresponding Spectrum will be calculated according to the algorithm "
+NORMAL (U"For each LPC frame the corresponding Spectrum will be calculated according to the algorithm "
 	"explained in @@LPC: To Spectrum (slice)...@. "
 	"For each frequency the power, i.e., the square of the complex values, will be stored in the "
 	"corresponding area in the Spectrogram.")

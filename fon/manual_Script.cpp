@@ -25,12 +25,84 @@ void manual_Script_init (ManPages me) {
 MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
-"$$writeInfoLine()$"
+"`writeInfoLine()`"
 © Paul Boersma 2023-06-07
 
 A function that writes its arguments to the Info window,
 overwriting what was previously present in the Info window,
 and moving the output cursor to the next line.
+
+Examples of use:
+================
+################################################################################
+"`random_initializeWithSeedUnsafelyButPredictably()`"
+© Paul Boersma 2023-06-10
+
+A function xx.
+
+Examples of use:
+================
+################################################################################
+"`random_initializeSafelyAndUnpredictably()`"
+© Paul Boersma 2023-06-10
+
+A function xx.
+
+Examples of use:
+================
+################################################################################
+"`randomPoisson()`"
+© Paul Boersma 2023-06-10
+
+A function xx.
+
+Examples of use:
+================
+################################################################################
+"`randomUniform()`"
+© Paul Boersma 2023-06-10
+
+A function xx.
+
+Examples of use:
+================
+################################################################################
+"`randomUniform#()`"
+© Paul Boersma 2023-06-10
+
+A function xx.
+
+Examples of use:
+================
+################################################################################
+"`sort#()`"
+© Paul Boersma 2023-06-10
+
+A function xx.
+
+Examples of use:
+================
+################################################################################
+"Text top..."
+© Paul Boersma 2023-06-10
+
+See @@Text left/right/top/bottom...@.
+
+Examples of use:
+================
+################################################################################
+"Text bottom..."
+© Paul Boersma 2023-06-10
+
+See @@Text left/right/top/bottom...@.
+
+Examples of use:
+================
+################################################################################
+"Marks bottom every..."
+© Paul Boersma 2023-06-10
+
+See @@Marks left/right/top/bottom every...@.
 
 Examples of use:
 ================
@@ -1281,8 +1353,8 @@ DEFINITION (U"gives the pitch (in Hertz) at a time of 0.7 seconds in the PitchTi
 NORMAL (U"In the interpolation, times outside the time domain of the objects are considered to contain zeroes (this does not apply to PitchTiers and the like, "
 	"which undergo @@constant extrapolation@).")
 ENTRY (U"Object contents in a modification formula")
-NORMAL (U"Suppose you want to do the difficult way of reversing the contents of a Sound called %hello (the easy way is to choose #Reverse "
-	"from the @Modify menu). You select this sound, then choose @@Copy...@ to duplicate it to a new Sound, which you name %%hello_reverse%. "
+NORMAL (U"Suppose you want to do the difficult way of reversing the contents of a Sound called `hello` (the easy way is to choose #Reverse "
+	"from the @Modify menu). You select this sound, then choose @@Copy...@ to duplicate it to a new Sound, which you name `hello_reverse`. "
 	"You select this new Sound and choose ##Formula...# from the @Modify menu. The formula will be")
 CODE (U"object [\"Sound hello\", row, ncol + 1 - col]")
 NORMAL (U"From this example, you see that the indices between [ ] may be formulas themselves, and that you can use implicit attributes like %ncol "
@@ -1684,44 +1756,44 @@ MAN_END
 MAN_BEGIN (U"plug-ins", U"ppgb", 20201229)
 INTRO (U"Experienced Praat script writers can distribute their product as a plug-in to Praat.")
 ENTRY (U"The Praat plug-in mechanism")
-NORMAL (U"When Praat starts up, it will execute all Praat scripts called ##setup.praat# "
-	"that reside in directories whose name starts with ##plugin_# and that themselves reside in "
+NORMAL (U"When Praat starts up, it will execute all Praat scripts called #`setup.praat` "
+	"that reside in directories whose name starts with #`plugin_` and that themselves reside in "
 	"your Praat @@preferences folder@.")
 ENTRY (U"How to write a Praat plug-in")
 NORMAL (U"Suppose that you have a set of Praat scripts specialized in the analysis and synthesis of vocalizations of guinea pigs, "
-	"and that these scripts are called ##analyseQueak.praat# and ##createQueak.praat# (“queak” is what guinea pigs tend to say). "
-	"With the @ScriptEditor, you have put the script ##analyseQueak.praat# in the dynamic menu that "
-	"appears if the user selects a Sound object, and you have put the script ##createQueak.praat# in the @@New menu@. "
+	"and that these scripts are called `analyseQueak.praat` and `createQueak.praat` (“queak” is what guinea pigs tend to say). "
+	"With the @ScriptEditor, you have put the script `analyseQueak.praat` in the dynamic menu that "
+	"appears if the user selects a Sound object, and you have put the script `createQueak.praat` in the @@New menu@. "
 	"Only the latter script requires the user to supply some settings in a form, so the two menu commands "
 	"are ##Analyse queak# (without dots) and ##Create queak...# (with three dots), respectively. "
 	"Suppose now that you want to distribute those two commands to other guinea pig vocalization researchers.")
-NORMAL (U"What you do is that you create a Praat script called ##setup.praat# (in the same folder as the two other scripts), "
+NORMAL (U"What you do is that you create a Praat script called `setup.praat` (in the same folder as the two other scripts), "
 	"that contains the following two lines:")
 CODE (U"@@Add action command...|Add action command:@ \"Sound\", 1, \"\", 0, \"\", 0, \"Analyse queak\", \"\", 0, \"analyseQueak.praat\"")
 CODE (U"@@Add menu command...|Add menu command:@ \"Objects\", \"New\", \"Create queak...\", \"\", 0, \"createQueak.praat\"")
 NORMAL (U"(If you ran this script, Praat would install those two commands in the correct menus, and remember them in the @@buttons file@; "
 	"but you are now going to install them in a different way.)")
-NORMAL (U"You now put the three scripts in a new folder called ##plugin_Queak#, "
+NORMAL (U"You now put the three scripts in a new folder called %`plugin_Queak`, "
 	"and put this folder in your Praat preferences folder. If you are on Windows, "
-	"you will now have a folder called something like ##C:\\bsUsers\\bsYour Name\\bsPraat\\bsplugin_Queak#.")
+	"you will now have a folder called something like `C:\\Users\\Your Name\\Praat\\plugin_Queak`.")
 NORMAL (U"If you now start up Praat, Praat will automatically execute the script "
-	"##C:\\bsUsers\\bsYour Name\\bsPraat\\bsplugin_Queak\\bssetup.praat# "
+	"`C:\\Users\\Your Name\\Praat\\plugin_Queak\\setup.praat` "
 	"and thereby install the two buttons. The two buttons will %not be remembered in the buttons file, "
-	"but they will be installed at every Praat start-up. De-installation involves removing (or renaming) the ##plugin_Queak# folder.")
+	"but they will be installed at every Praat start-up. De-installation involves removing (or renaming) the `plugin_Queak` folder.")
 NORMAL (U"To distribute the Queak plug-in among your colleague guinea pig researchers, you can use any installer program to put "
-	"the ##plugin_Queak# folder into the user's Praat preferences folder; or you could ask those colleagues to move "
-	"the ##plugin_Queak# folder there by hand.")
+	"the `plugin_Queak` folder into the user’s Praat preferences folder; or you could ask those colleagues to move "
+	"the `plugin_Queak` folder there by hand.")
 ENTRY (U"The structure of your plug-in folder")
-NORMAL (U"In the example ##setup.praat# file above, the names of the scripts ##analyseQueak.praat# and ##createQueak.praat# "
+NORMAL (U"In the example `setup.praat` file above, the names of the scripts `analyseQueak.praat` and `createQueak.praat` "
 	"occur without any folder information. This works because Praat regards these file names as being relative to the folder "
-	"where ##setup.praat# is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into "
-	"the folder ##plugin_Queak#. For instance, if you put ##analyseQueak.praat# into the subfolder ##analysis#, "
-	"your line in the ##setup.praat# script would look as follows:")
+	"where `setup.praat` is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into "
+	"the folder `plugin_Queak`. For instance, if you put `analyseQueak.praat` into the subfolder `analysis`, "
+	"your line in the `setup.praat` script would look as follows:")
 CODE (U"@@Add action command...|Add action command:@ \"Sound\", 1, \"\", 0, \"\", 0, \"Analyse queak\", \"\", 0, \"analysis/analyseQueak.praat\"")
 NORMAL (U"The forward slash (“/”) in this example makes your plug-in platform-independent: it will work unchanged "
 	"on Windows, Macintosh, and Unix.")
-NORMAL (U"Nothing prevents you from adding data files to your plug-in. For instance, your ##plugin_Queak# folder "
-	"could contain a subfolder #sounds full of guinea pig recordings, and you could make them available in the New or Open menu.")
+NORMAL (U"Nothing prevents you from adding data files to your plug-in. For instance, your `plugin_Queak` folder "
+	"could contain a subfolder `sounds` full of guinea pig recordings, and you could make them available in the New or Open menu.")
 ENTRY (U"Using a plug-in for site-wide customization")
 NORMAL (U"If your local guinea pig research group shares a number of Praat scripts, these can be made available to everybody "
 	"in the following way:")
@@ -1729,10 +1801,10 @@ LIST_ITEM (U"1. Create a script that adds buttons to the fixed and dynamic menus
 	"@@Add menu command...@ and @@Add action command...@. This script could be a slightly edited copy of someone's "
 	"@@buttons file@.")
 LIST_ITEM (U"2. Put this script where everybody can see it, "
-	"for instance in ##U:\\bsMaldenGuineaPigResearchButtons.praat#, where U is your shared computer.")
-LIST_ITEM (U"3. Create a file ##setup.praat# that contains only the following line:")
+	"for instance in `U:\\MaldenGuineaPigResearchButtons.praat`, where `U` is your shared computer.")
+LIST_ITEM (U"3. Create a file `setup.praat` that contains only the following line:")
 CODE1 (U"runScript: \"U:\\bsMaldenGuineaPigResearchButtons.praat\"")
-LIST_ITEM (U"4. Put the ##setup.praat# file in a new folder called ##plugin_MaldenGuineaPigResearch#, "
+LIST_ITEM (U"4. Put the `setup.praat` file in a new folder called `plugin_MaldenGuineaPigResearch`, "
 	"and distribute this folder among your local colleagues.")
 NORMAL (U"This procedure allows all members of the group to automatically enjoy all the later changes in your "
 	"custom command set.")
@@ -3472,8 +3544,8 @@ CODE (U"#form: \"Sink it\"")
 	CODE1 (U"#natural: \"Number of people\", \"1800\"")
 	CODE1 (U"#natural: \"Number of boats\", \"10\"")
 CODE (U"#endform")
-NORMAL (U"In the script following this form, the variables will be known as %%name_of_the_ship\\$ %, %distance_to_the_iceberg, "
-	"%number_of_people, and %number_of_boats.")
+NORMAL (U"In the script following this form, the variables will be known as `name_of_the_ship$`, `distance_to_the_iceberg`, "
+	"`number_of_people`, and `number_of_boats`.")
 NORMAL (U"The variable associated with a radio box will get a numeric as well as a string value:")
 CODE (U"#form: \"Fill attributes\"")
 	CODE1 (U"#comment: \"Choose any colour and texture for your paintings\"")
@@ -3784,7 +3856,7 @@ CODE (U"for %i to 5")
 	CODE1 (U"appendInfoLine: \"Input file: \", %%input_file\\$ %")
 	CODE1 (U"appendInfoLine: \"Array: \", %%array_of_reals\\# %")
 CODE (U"endfor")
-NORMAL (U"This example uses several tricks. A useful one is seen with %number_of_channels: "
+NORMAL (U"This example uses several tricks. A useful one is seen with `number_of_channels`: "
 	"this is at the same time the value that is passed to #optionmenu (and therefore determines the setting of "
 	"the ##Number of channels# menu when the window appears) and the name of the variable in which the user’s "
 	"chosen value of ##Number of channels# is stored (because “number_of_channels” is what you get "

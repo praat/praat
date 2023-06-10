@@ -1925,8 +1925,8 @@ ENTRY (U"Praat 4.1, 5 June 2003")
 	LIST_ITEM (U"• New @Formulas tutorial.")
 	LIST_ITEM (U"• @Formulas: can use variables without quotes.")
 	LIST_ITEM (U"• Formulas for PitchTier, IntensityTier, AmplitudeTier, DurationTier.")
-	LIST_ITEM (U"• Refer to any matrices and tables in formulas, e.g. Sound_hello (x) or Table_everything [row, col] "
-		"or Table_tokens [i, “F1”].")
+	LIST_ITEM (U"• Refer to any matrices and tables in formulas, e.g. `Sound_hello (x)` or `Table_everything [row, col]` "
+		"or `Table_tokens [i, “F1”]`.")
 	LIST_ITEM (U"• Assignment by modification, as with += -= *= /=.")
 	LIST_ITEM (U"• New functions: date\\$ (), extractNumber, extractWord\\$ , extractLine\\$ . See @@Formulas 6. String functions@.")
 	LIST_ITEM (U"• @@Scripting 5.8. Including other scripts@.")
@@ -5076,8 +5076,8 @@ NORMAL (U"If you are only interested in the %filter characteristics, you can get
 	"you select it together with the resampled @Sound, and apply %%inverse filtering%:")
 CODE (U"#selectObject: “Sound hallo_11000”, “LPC hallo_11000”")
 CODE (U"Filter (inverse)")
-NORMAL (U"A new Sound named “hallo_11000” will appear in the list of objects "
-	"(you could rename it to “source”). "
+NORMAL (U"A new Sound named `hallo_11000` will appear in the list of objects "
+	"(you could rename it to `source`). "
 	"This is the estimated source signal. Since the LPC analysis was designed to yield a spectrally "
 	"flat filter (through the use of pre-emphasis), this source signal represents everything in the "
 	"speech signal that cannot be attributed to the resonating cavities. Thus, the “source signal” "

@@ -673,7 +673,7 @@ NORMAL (U"According to @@Prince & Smolensky (1993)@, the input to an OT grammar 
 	"(see @@Create tongue-root grammar...@).")
 NORMAL (U"A set of inputs can be generated from an @OTGrammar object by inspecting the list of tableaus. "
 	"So select the Wolof tongue-root grammar and choose @@OTGrammar: Generate inputs...|Generate inputs...@. "
-	"Set %%Number of trials% to 100, and click #OK. A @Strings object named \"Wolof_in\" "
+	"Set %%Number of trials% to 100, and click #OK. A @Strings object named `Wolof_in` "
 	"will appear in the list. Click Inspect and examine the 100 input strings. "
 	"You will see that they have been randomly chosen from the 36 possible V__1_tV__2_ sequences "
 	"as described at @@Create tongue-root grammar...@:")
@@ -684,7 +684,7 @@ ENTRY (U"Generating outputs from the grammar")
 NORMAL (U"To compute the outputs for the above set of input forms, select %both the @OTGrammar object "
 	"%and the input @Strings object, and choose @@OTGrammar & Strings: Inputs to outputs...|Inputs to outputs...@, "
 	"perhaps specifying zero evaluation noise. "
-	"A new Strings objects called “Wolof_out” will appear in the list. "
+	"A new Strings objects called `Wolof_out` will appear in the list. "
 	"If you Inspect it, you will see that it contains a string sequence aligned with the original input strings:")
 EQUATION (U"ɛta, ɛtɛ, ɛti, itɛ, ɛtɛ, iti, ɛti, iti, iti, ɛtɛ, ...")
 NORMAL (U"In this way, we have created two Strings objects, which together form a series of input-output pairs "

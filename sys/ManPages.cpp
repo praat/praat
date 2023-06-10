@@ -487,7 +487,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 							}
 							if (hasSeparateLinkTarget) {
 								if (isLinkToFunction)
-									MelderString_append (& buffer_graphicalCode, U"$$", linkTarget.string, U'$');
+									MelderString_append (& buffer_graphicalCode, U"`", linkTarget.string, U'`');
 								else
 									MelderString_append (& buffer_graphicalCode, linkTarget.string);
 								MelderString_appendCharacter (& buffer_graphicalCode, U'|');
@@ -1042,7 +1042,19 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 					autoMelderSaveDefaultDir saveDir;
 					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
+					const bool dollarSignWasCode = graphics -> dollarSignIsCode;
+					const bool backquoteWasVerbatim = graphics -> backquoteIsVerbatim;
+					const bool atSignWasLink = graphics -> atSignIsLink;
+					Graphics_setDollarSignIsCode (graphics.get(), false);
+					Graphics_setBackquoteIsVerbatim (graphics.get(), false);
+					Graphics_setAtSignIsLink (graphics.get(), false);
 					Graphics_play (paragraph -> cacheGraphics.get(), graphics.get());
+					if (dollarSignWasCode)
+						Graphics_setDollarSignIsCode (graphics.get(), true);
+					if (backquoteWasVerbatim)
+						Graphics_setBackquoteIsVerbatim (graphics.get(), true);
+					if (atSignWasLink)
+						Graphics_setAtSignIsLink (graphics.get(), true);
 				}
 				Graphics_setViewport (graphics.get(), 0.0, 1.0, 0.0, 1.0);
 				Graphics_setWindow (graphics.get(), 0.0, 1.0, 0.0, 1.0);

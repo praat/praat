@@ -182,7 +182,8 @@ static void print (void *void_me, Graphics graphics) {
 	iam (Manual);
 	const integer numberOfPages = my manPages() -> pages.size, saveVisiblePageNumber = my visiblePageNumber;
 	my ps = graphics;
-	Graphics_setDollarSignIsCode (my ps, true);
+	Graphics_setDollarSignIsCode (my ps, true);   // for manuals
+	Graphics_setBackquoteIsVerbatim (my ps, true);   // for notebooks
 	Graphics_setAtSignIsLink (my ps, true);
 	my printing = true;
 	HyperPage_initSheetOfPaper ((HyperPage) me);

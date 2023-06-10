@@ -1,6 +1,6 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2005,2007-2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -426,6 +426,9 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case CLEAR_WS: {
 				Graphics_clearWs (thee);
+			} break;
+			case SET_BACKQUOTE_IS_VERBATIM: {
+				Graphics_setBackquoteIsVerbatim (thee, (bool) get);
 			} break;
 			default:
 				my recording = wasRecording;

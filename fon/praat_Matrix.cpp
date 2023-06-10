@@ -127,7 +127,8 @@ DIRECT (HELP_Matrix_help) {
 static autoGraphics theMovieGraphics;
 
 static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! theMovieGraphics) return;
+	if (! theMovieGraphics)
+		return;
 	Graphics_play (theMovieGraphics.get(), theMovieGraphics.get());
 }
 

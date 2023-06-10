@@ -150,7 +150,7 @@ NORMAL (U"The first thing you probably might want to do is to let the #FFNet lea
 ENTRY (U"Classification")
 NORMAL (U"Now, if you are curious how well the FFNet has learned the iris data, you may select the "
 	"#FFNet and the #PatternList together and choose @@FFNet & PatternList: To Categories...|To Categories...@. "
-	"A new #Categories appears in the ##List of Objects# with the name %%4-3_iris% (if %%4-3% was the name of the FFNet and %iris% the name of the PatternList). "
+	"A new #Categories appears in the ##List of Objects# with the name `4-3_iris` (if `4-3` was the name of the FFNet and `iris` the name of the PatternList). "
 	"We have two different Categories in the list of objects, the topmost one has the original categories, the other "
 	"the categories as were assigned by the FFNet classifier. The obvious thing to do now is to compare the "
 	"original categories with the assigned categories by making a @@Confusion|confusion table@. "

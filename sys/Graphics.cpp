@@ -124,6 +124,7 @@ void Graphics_init (Graphics me, int resolution) {
 	my circumflexIsSuperscript = true;
 	my underscoreIsSubscript = true;
 	my dollarSignIsCode = false;
+	my backquoteIsVerbatim = false;
 	my atSignIsLink = false;
 }
 
