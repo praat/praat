@@ -4867,11 +4867,11 @@ LIST_ITEM (U"1. The four array elements in the SSCP-matrix that correspond to th
 	"are copied into a two-dimensional matrix #%S (symmetric of course).")
 LIST_ITEM (U"2. The eigenvalues of #%S are determined, call them %s__1_ and %s__2_.")
 LIST_ITEM (U"3. The lengths %l__1_ and %l__2_ of the two axes of the ellipse can be obtained as "
-	"(see for example @@Johnson (1998)@, page 410): ")
+	"(see for example @@Johnson (1998)@, page 410: ")
 EQUATION (U"    %l__%i_ = %scaleFactor \\.c \\Vr (%s__%i_ ),")
-LIST_ITEM (U"     where")
+LIST_ITEM (U"    where")
 EQUATION (U"%scaleFactor = \\Vr (%f \\.c %p \\.c (%n \\-- 1) / (%n \\.c (%n \\-- %p))),")
-LIST_ITEM (U"     in which %f = @`invFisherQ` (1 \\-- %confidenceLevel, %p, %n \\-- %p), "
+LIST_ITEM (U"    in which %f = @`invFisherQ` (1 \\-- %confidenceLevel, %p, %n \\-- %p), "
 	"where %p is the numberOfRows from the SSCP object and %n the %numberOfObservations.")
 LIST_ITEM (U"4. The area of the ellipse will be %\\pi\\.c%l__1_\\.c%l__2_.")
 MAN_END

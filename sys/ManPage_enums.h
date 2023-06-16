@@ -47,8 +47,7 @@ enums_begin (kManPage_type, 1)
 	enums_add (kManPage_type, 24, CODE4, U"code4")
 	enums_add (kManPage_type, 25, CODE5, U"code5")
 	enums_add (kManPage_type, 26, PAGE_TITLE, U"page_title")
-	enums_add (kManPage_type, 27, CODE0, U"code0")
-enums_end (kManPage_type, 27, NORMAL)
+enums_end (kManPage_type, 26, NORMAL)
 
 /* End of file ManPage_enums.h */
 

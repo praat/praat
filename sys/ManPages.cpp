@@ -50,100 +50,245 @@ void structManPages :: v9_destroy () noexcept {
 	ManPages_Parent :: v9_destroy ();
 }
 
-static conststring32 extractLink (conststring32 text, const char32 *p, char32 *link) {
+static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const char32 *p, char32 *link, bool verbatimAware) {
+	const bool paragraphIsVerbatim = ( verbatimAware && par -> couldVerbatim () );
+	conststring32 text = par -> text;
+	Melder_assert (text);
 	char32 *to = & link [0];
 	if (! p)
 		p = text;
 	/*
-		Search for next '@' that is not in a backslash sequence.
+		Search for the next link.
 	*/
-	for (;;) {
-		p = str32chr (p, U'@');
-		if (! p)
-			return nullptr;   // no more '@'
-		if (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\')))
-			break;
-		p ++;
+	for (;; p ++) {
+		if (*p == U'\0')
+			return nullptr;   // no link found
+		if (*p == U'@' && ! paragraphIsVerbatim) {
+			/*
+				Found a "@" in running text.
+				Ignore it if it is inside a backslash trigraph.
+			*/
+			if (! (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\'))))
+				continue;
+			if (p [1] == U'@') {
+				/*
+					We found "@@", starting a link in running text.
+				*/
+				const char32 *from = p + 2;
+				while (*from != U'@' && *from != U'|' && *from != U'\0') {
+					if (to - link >= MAXIMUM_LINK_LENGTH)
+						Melder_throw (U"(ManPages::grind:) Link starting with “@@” is too long:\n", text);
+					*to ++ = *from ++;
+				}
+				/*
+					Ignore the "|...@" part.
+				*/
+				if (*from == U'|') {
+					from ++;
+					while (*from != U'@' && *from != U'\0')
+						from ++;
+				}
+				Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+				*to = U'\0';
+				p = from + ( *from == U'@' );   // add bool to pointer: skip '@' but not '\0'
+				return p;
+			} else if (p [1] == U'`' /*&& verbatimAware*/) {
+				/*
+					We found "@`", starting a verbatim link in running text.
+				*/
+				const char32 *from = p + 1;
+				*to ++ = *from ++;   // copy opening backquote
+				while (*from != U'`' && *from != U'\0') {
+					if (to - link >= MAXIMUM_LINK_LENGTH)
+						Melder_throw (U"(ManPages::grind:) Link starting with “@`” is too long:\n", text);
+					*to ++ = *from ++;
+				}
+				if (*from == U'`')
+					*to ++ = *from ++;   // copy closing backquote
+				Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+				*to = U'\0';
+				p = from;
+				return p;
+			} else {
+				const char32 *from = p + 1;
+				while (isSingleWordCharacter (*from)) {
+					if (to - link >= MAXIMUM_LINK_LENGTH)
+						Melder_throw (U"(ManPages::grind:) Link starting with “@” is too long:\n", text);
+					*to ++ = *from ++;
+				}
+				Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+				*to = U'\0';
+				p = from;
+				return p;
+			}
+		} else if (*p == U'`' && verbatimAware) {
+			/*
+				We found "`", starting a verbatim stretch in which '@' is to be ignored. BUG: but should "\@{" be honoured?
+			*/
+			if (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\'))) {
+				/*
+					Jump to the matching closing backquote.
+				*/
+				p ++;   // step over opening backquote
+				for (;;) {
+					if (*p == U'\0')
+						return nullptr;   // no more '@'
+					if (*p == U'`')
+						if (p [1] == U'`')
+							p ++;   // jump over the first member of a double backquote
+						else
+							break;   // found the closing backquote
+					p ++;
+				}
+			}
+		} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
+			/*
+				We found "\@{", starting a link in running text or in verbatim code.
+			*/
+			const char32 *from = p + 3;
+			while (*from != U'}' && *from != U'|' && *from != U'\0') {
+				if (to - link >= MAXIMUM_LINK_LENGTH)
+					Melder_throw (U"(ManPages::grind:) Link starting with “\\@{” is too long:\n", text);
+				*to ++ = *from ++;
+			}
+			/*
+				Ignore the "|...}" part, unless it is "||...}"
+			*/
+			if (*from == U'|') {
+				if (from [1] == U'|') {
+					/*
+						Found a "||xxx}" part. Append the xxx part.
+					*/
+					from += 2;   // skip "||"
+					while (*from != U'}' && *from != U'\0') {
+						if (*from == U'\0')
+							break;
+						if (to - link >= MAXIMUM_LINK_LENGTH)
+							Melder_throw (U"(ManPages::grind:) Link starting with “\\@{” and containing “||” is too long:\n", text);
+						*to ++ = *from ++;
+					}
+					Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+					*to = U'\0';
+				} else {
+					/*
+						Found a "|xxx}" part. Ignore all of it.
+					*/
+					from ++;
+					while (*from != U'}' && *from != U'\0')
+						from ++;
+				}
+			}
+
+			/*
+				Replace final colon with three dots.
+				For example, the code
+					\@{Create Poisson process:}
+				should yield a link to
+					Create Poisson process...
+			*/
+			if (to - link > 0 && to [-1] == U':') {
+				to --;
+				for (integer idot = 1; idot <= 3; idot ++) {
+					if (to - link >= MAXIMUM_LINK_LENGTH)
+						Melder_throw (U"(ManPages::grind:) Link starting with “\\@{” is too long:\n", text);
+					*to ++ = U'.';
+				}
+			}
+			Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+			*to = U'\0';
+
+			p = from + ( *from == U'}' );   // add bool to pointer: skip '}' but not '\0'
+			return p;
+		} else if (*p == U'\\' && p [1] == U'`' && p [2] == U'{') {
+			/*
+				We found "\`{", starting a verbatim link in verbatim text.
+			*/
+			const char32 *from = p + 3;
+			if (to - link >= MAXIMUM_LINK_LENGTH)
+				Melder_throw (U"(ManPages::grind:) Link starting with “\\`{” is too long:\n", text);
+			*to ++ = U'`';
+			while (*from != U'}' && *from != U'|' && *from != U'\0') {
+				if (to - link >= MAXIMUM_LINK_LENGTH)
+					Melder_throw (U"(ManPages::grind:) Link starting with “\\`{” is too long:\n", text);
+				*to ++ = *from ++;
+			}
+			/*
+				Ignore the "|...}" part. TODO: not if it is "||...}"
+			*/
+			if (*from == U'|') {
+				if (from [1] == U'|') {
+					/*
+						Found a "||xxx}" part. Append the xxx part.
+					*/
+					from += 2;   // skip "||"
+					while (*from != U'}' && *from != U'\0') {
+						if (*from == U'\0')
+							break;
+						if (to - link >= MAXIMUM_LINK_LENGTH)
+							Melder_throw (U"(ManPages::grind:) Link starting with “\\`{” and containing “||” is too long:\n", text);
+						*to ++ = *from ++;
+					}
+					Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+					*to = U'\0';
+				} else {
+					/*
+						Found a "|xxx}" part. Ignore all of it.
+					*/
+					from ++;
+					while (*from != U'}' && *from != U'\0')
+						from ++;
+				}
+			}
+			Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+			*to ++ = U'`';
+			Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+			*to = U'\0';
+			p = from + ( *from == U'}' );   // add bool to pointer: skip '}' but not '\0'
+			return p;
+		}
 	}
-	Melder_assert (*p == U'@');
-	if (p [1] == U'@') {
-		const char32 *from = p + 2;
-		while (*from != U'@' && *from != U'|' && *from != U'\0') {
-			if (to - link >= MAXIMUM_LINK_LENGTH)
-				Melder_throw (U"(ManPages::grind:) Link starting with “@@” is too long:\n", text);
-			*to ++ = *from ++;
-		}
-		/*
-			Ignore the "|...@" part.
-		*/
-		if (*from == U'|') {
-			from ++;
-			while (*from != U'@' && *from != U'\0')
-				from ++;
-		}
-		p = from + ( *from == U'@' );   // add bool to pointer: skip '@' but not '\0'
-	} else if (p [1] == U'`') {
-		const char32 *from = p + 1;
-		*to ++ = *from ++;   // copy opening backquote
-		while (*from != U'`' && *from != U'\0') {
-			if (to - link >= MAXIMUM_LINK_LENGTH)
-				Melder_throw (U"(ManPages::grind:) Link starting with “@`” is too long:\n", text);
-			*to ++ = *from ++;
-		}
-		if (*from == U'`')
-			*to ++ = *from ++;   // copy closing backquote
-		p = from;
-	} else {
-		const char32 *from = p + 1;
-		while (isSingleWordCharacter (*from)) {
-			if (to - link >= MAXIMUM_LINK_LENGTH)
-				Melder_throw (U"(ManPages::grind:) Link starting with “@” is too long:\n", text);
-			*to ++ = *from ++;
-		}
-		p = from;
-	}
-	Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
-	*to = U'\0';
-	return p;
 }
 
 static void readOnePage (ManPages me, MelderReadText text);   // forward
 
-static void resolveLinks (ManPages me, ManPage_Paragraph par) {
-	if (par -> type == kManPage_type::SCRIPT)
-		return;   // links would be invisible
-	char32 link [MAXIMUM_LINK_LENGTH + 1], fileName [FILENAME_BUFFER_SIZE];
-	for (const char32 *plink = extractLink (par -> text, nullptr, link); plink != nullptr; plink = extractLink (par -> text, plink, link)) {
+static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware) {
+	//if (par -> type == kManPage_type::SCRIPT)
+	//	return;   // links would be invisible
+	char32 linkBuffer [MAXIMUM_LINK_LENGTH + 1], fileNameBuffer [FILENAME_BUFFER_SIZE];
+	for (const char32 *plink = ManPage_Paragraph_extractLink (par, nullptr, linkBuffer, verbatimAware);
+		 plink != nullptr;
+		 plink = ManPage_Paragraph_extractLink (par, plink, linkBuffer, verbatimAware)
+	) {
 		/*
-			Now, `link` contains the link text, with spaces and all.
+			Now, `linkBuffer` contains the link text, with spaces and all.
 			Transform it into a file name.
 		*/
 		structMelderFile file2 { };
-		if (link [0] == U'\\' && link [1] == U'F' && link [2] == U'I') {
+		if (linkBuffer [0] == U'\\' && linkBuffer [1] == U'F' && linkBuffer [2] == U'I') {
 			/*
 				A link to a sound file: see if it exists.
 			*/
-			MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file2);
+			MelderDir_relativePathToFile (& my rootDirectory, linkBuffer + 3, & file2);
 			if (! MelderFile_exists (& file2))
 				Melder_warning (U"Cannot find sound file ", MelderFile_messageName (& file2), U".");
-		} else if (link [0] == U'\\' && link [1] == U'S' && link [2] == U'C') {
+		} else if (linkBuffer [0] == U'\\' && linkBuffer [1] == U'S' && linkBuffer [2] == U'C') {
 			/*
 				A link to a script: see if it exists.
 			s*/
-			char32 *p = link + 3;
+			char32 *p = linkBuffer + 3;
 			if (*p == U'"') {
-				char32 *q = fileName;
+				char32 *q = fileNameBuffer;
 				p ++;
 				while (*p != U'"' && *p != U'\0')
 					* q ++ = * p ++;
 				*q = U'\0';
 			} else {
-				char32 *q = fileName;
+				char32 *q = fileNameBuffer;
 				while (*p != U' ' && *p != U'\0')
 					* q ++ = * p ++;   // one word, up to the next space
 				*q = U'\0';
 			}
-			MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
+			MelderDir_relativePathToFile (& my rootDirectory, fileNameBuffer, & file2);
 			if (! MelderFile_exists (& file2))
 				Melder_warning (U"Cannot find script ", MelderFile_messageName (& file2), U".");
 			my executable = true;
@@ -152,12 +297,12 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par) {
 			/*
 				A link to another page: follow it.
 			*/
-			for (q = link; *q; q ++)
+			for (q = linkBuffer; *q; q ++)
 				if (! isAllowedFileNameCharacter (*q))
 					*q = U'_';
 			try {
-				Melder_sprint (fileName,FILENAME_BUFFER_SIZE, link, U".man");
-				MelderDir_getFile (& my rootDirectory, fileName, & file2);
+				Melder_sprint (fileNameBuffer,FILENAME_BUFFER_SIZE, linkBuffer, U".man");
+				MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
 				if (MelderFile_exists (& file2)) {
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 					readOnePage (me, text2.get());
@@ -165,22 +310,22 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par) {
 					/*
 						Second try: with upper case.
 					*/
-					link [0] = Melder_toUpperCase (link [0]);
-					Melder_sprint (fileName,FILENAME_BUFFER_SIZE, link, U".man");
-					MelderDir_getFile (& my rootDirectory, fileName, & file2);
+					linkBuffer [0] = Melder_toUpperCase (linkBuffer [0]);
+					Melder_sprint (fileNameBuffer,FILENAME_BUFFER_SIZE, linkBuffer, U".man");
+					MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
 					if (MelderFile_exists (& file2)) {
 						autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 						readOnePage (me, text2.get());
 					} else {
-						Melder_sprint (fileName,FILENAME_BUFFER_SIZE, link, U".praatnb");
-						MelderDir_getFile (& my rootDirectory, fileName, & file2);
+						Melder_sprint (fileNameBuffer,FILENAME_BUFFER_SIZE, linkBuffer, U".praatnb");
+						MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
 						if (MelderFile_exists (& file2)) {
 							autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 							readOnePage (me, text2.get());
 						} else {
-							link [0] = Melder_toLowerCase (link [0]);
-							Melder_sprint (fileName,FILENAME_BUFFER_SIZE, link, U".praatnb");
-							MelderDir_getFile (& my rootDirectory, fileName, & file2);
+							linkBuffer [0] = Melder_toLowerCase (linkBuffer [0]);
+							Melder_sprint (fileNameBuffer,FILENAME_BUFFER_SIZE, linkBuffer, U".praatnb");
+							MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
 							if (MelderFile_exists (& file2)) {
 								autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 								readOnePage (me, text2.get());
@@ -216,6 +361,7 @@ static void readOnePage_man (ManPages me, MelderReadText text) {
 		Add the page early, so that lookUp can find it.
 	*/
 	ManPage page = my pages. addItem_move (autopage.move());
+	page -> verbatimAware = false;
 
 	autostring32 author;
 	try {
@@ -263,7 +409,7 @@ static void readOnePage_man (ManPages me, MelderReadText text) {
 		} catch (MelderError) {
 			Melder_throw (U"Cannot find text.");
 		}
-		resolveLinks (me, par);
+		resolveLinks (me, par, page -> verbatimAware);
 	}
 }
 static bool stringHasInk (conststring32 line) {
@@ -316,6 +462,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		Add the page early, so that lookUp can find it.
 	*/
 	ManPage page = my pages. addItem_move (autopage.move());
+	page -> verbatimAware = true;
 
 	/*
 		Handle the signature line.
@@ -444,17 +591,17 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					while (*p) {
 						if (*p == U'\t') {
 							MelderString_append (& buffer_graphicalCode, p == line ? nullptr : U"    ");
-						} else if (*p == U'#') {
-							MelderString_append (& buffer_graphicalCode, U"\\# ");
-						} else if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
-							MelderString_append (& buffer_graphicalCode, U"##");
-							inBold = true;
-							p += 2;
-						} else if (*p == U'$') {
-							MelderString_append (& buffer_graphicalCode, U"\\$ ");
-						} else if (*p == U'@') {
-							MelderString_append (& buffer_graphicalCode, U"\\@ ");
-						} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
+						//} else if (*p == U'#') {
+						//	MelderString_append (& buffer_graphicalCode, U"\\# ");
+						//} else if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
+						//	MelderString_append (& buffer_graphicalCode, U"##");
+						//	inBold = true;
+						//	p += 2;
+						//} else if (*p == U'$') {
+						//	MelderString_append (& buffer_graphicalCode, U"\\$ ");
+						//} else if (*p == U'@') {
+						//	MelderString_append (& buffer_graphicalCode, U"\\@ ");
+						} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{'   &&FALSE  ) {
 							const bool startsWithLowerCase = Melder_isLowerCaseLetter (p [3]);
 							MelderString_append (& buffer_graphicalCode, U"@@");
 							static MelderString linkTarget, linkText;
@@ -504,17 +651,17 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 								MelderString_appendCharacter (& buffer_graphicalCode, U'|');
 							}
 							MelderString_append (& buffer_graphicalCode, linkText.string, U'@');
-						} else if (*p == U'%') {
-							MelderString_append (& buffer_graphicalCode, U"\\% ");
-						} else if (*p == U'^') {
-							MelderString_append (& buffer_graphicalCode, U"\\^ ");
-						} else if (*p == U'}') {
-							if (inBold) {
-								MelderString_appendCharacter (& buffer_graphicalCode, U'#');
-								inBold = false;
-							} else {
-								MelderString_appendCharacter (& buffer_graphicalCode, U'}');
-							}
+						//} else if (*p == U'%') {
+						//	MelderString_append (& buffer_graphicalCode, U"\\% ");
+						//} else if (*p == U'^') {
+						//	MelderString_append (& buffer_graphicalCode, U"\\^ ");
+						//} else if (*p == U'}') {
+						//	if (inBold) {
+						//		MelderString_appendCharacter (& buffer_graphicalCode, U'#');
+						//		inBold = false;
+						//	} else {
+						//		MelderString_appendCharacter (& buffer_graphicalCode, U'}');
+						//	}
 						} else
 							MelderString_appendCharacter (& buffer_graphicalCode, *p);
 						p ++;
@@ -628,7 +775,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				par -> text = Melder_dup (Melder_cat (par -> text, separator, continuationLine)).transfer();
 			} while (1);
 		}
-		resolveLinks (me, par);
+		resolveLinks (me, par, page -> verbatimAware);
 		previousParagraph = par;
 	}
 }
@@ -807,19 +954,20 @@ static void grind (ManPages me) {
 	integer ndangle = 0;
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
+		const bool verbatimAware = page -> verbatimAware;
 		for (int ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 			ManPage_Paragraph par = & page -> paragraphs [ipar];
-			if (par -> type == kManPage_type::SCRIPT)
-				continue;
-			conststring32 text = par -> text;
 			const char32 *p;
-			char32 link [301];
-			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
-				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
-					continue;   // ignore "FILE" links
-				const integer jpage = lookUp_sorted (me, link);
+			char32 linkBuffer [MAXIMUM_LINK_LENGTH + 1];
+			if (par -> text) for (p = ManPage_Paragraph_extractLink (par, nullptr, linkBuffer, verbatimAware);
+				 p != nullptr;
+				 p = ManPage_Paragraph_extractLink (par, p, linkBuffer, verbatimAware)
+			) {
+				if (linkBuffer [0] == U'\\' && ((linkBuffer [1] == U'F' && linkBuffer [2] == U'I') || (linkBuffer [1] == U'S' && linkBuffer [2] == U'C')))
+					continue;   // ignore "FILE" and "SCRIPT" links
+				const integer jpage = lookUp_sorted (me, linkBuffer);
 				if (jpage == 0) {
-					MelderInfo_writeLine (U"Page “", page -> title.get(), U"” contains a dangling link to “", link, U"”.");
+					MelderInfo_writeLine (U"Page “", page -> title.get(), U"” contains a dangling link to “", linkBuffer, U"”.");
 					ndangle ++;
 				} else {
 					bool alreadyPresent = false;

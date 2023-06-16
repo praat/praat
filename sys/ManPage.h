@@ -35,6 +35,10 @@ typedef struct structManPage_Paragraph {
 	void invalidateCache () noexcept {
 		our cacheGraphics. reset();
 	}
+	bool couldVerbatim () const noexcept {
+		return our type == kManPage_type::SCRIPT || our type == kManPage_type::CODE ||
+				our type >= kManPage_type::CODE1 && our type <= kManPage_type::CODE5;
+	}
 } *ManPage_Paragraph;
 
 Thing_define (ManPage, Thing) {
@@ -42,6 +46,7 @@ Thing_define (ManPage, Thing) {
 	autovector <structManPage_Paragraph> paragraphs;
 	autoINTVEC linksHither, linksThither;
 	double recordingTime;
+	bool verbatimAware;
 	void invalidateCache () noexcept {
 		for (integer i = 1; i <= our paragraphs. size; i ++)
 			our paragraphs [i]. invalidateCache ();

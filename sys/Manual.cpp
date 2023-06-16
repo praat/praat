@@ -481,7 +481,9 @@ int structManual :: v_goToPage (conststring32 title) {
 	}
 }
 
-autoManual Manual_create (conststring32 openingPageTitle, Interpreter optionalInterpreterReference, ManPages manPages, bool ownManPages) {
+autoManual Manual_create (conststring32 openingPageTitle, Interpreter optionalInterpreterReference,
+	ManPages manPages, bool ownManPages, bool backquoteIsVerbatim)
+{
 	Melder_assert (openingPageTitle);
 	try {
 		autoManual me = Thing_new (Manual);
@@ -505,7 +507,7 @@ autoManual Manual_create (conststring32 openingPageTitle, Interpreter optionalIn
 			Melder_sprint (windowTitle,101, U"Praat Manual");
 		}
 		my ownManPages = ownManPages;
-		HyperPage_init1 (me.get(), windowTitle, manPages);
+		HyperPage_init1 (me.get(), windowTitle, manPages, backquoteIsVerbatim);
 		MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 		my history [0]. page = Melder_dup_f (openingPageTitle);   // BAD
 		/*

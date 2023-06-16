@@ -834,7 +834,7 @@ static void helpProc (conststring32 query) {
 		return;
 	}
 	try {
-		autoManual manual = Manual_create (query, nullptr, theCurrentPraatApplication -> manPages, false);
+		autoManual manual = Manual_create (query, nullptr, theCurrentPraatApplication -> manPages, false, true);
 		manual.releaseToUser();
 	} catch (MelderError) {
 		Melder_flushError (U"help: no help on \"", query, U"\".");
