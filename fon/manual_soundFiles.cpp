@@ -431,7 +431,7 @@ NORMAL (U"The 12-bit sample values are divided by 2048 so that the amplitude "
 NORMAL (U"The resulting #Sound will appear in the List of Objects; "
 	"its name will be equal to the file name, without extension.")
 NORMAL (U"If the sound was encoded in 16 bits per sample, you should divide by 16 after reading "
-	"(with $$Formula: ~ self / 16$)")
+	"(with `Formula: ~ self / 16`)")
 ENTRY (U"Saving")
 NORMAL (U"With ##Save as Sesam file...#. Praat then asks you for a file name. "
 	"After you click OK, the samples of the Sound are multiplied by 2048 "
@@ -441,7 +441,7 @@ NORMAL (U"To avoid clipping, keep the absolute amplitude below 1.000. "
 	"If the maximum sound pressure level is 91 dB (top = 2047), "
 	"the quantization threshold is (top = 1/2) 19 dB.")
 NORMAL (U"If you prefer 16-bit encoding, you should multiply by 16 before saving "
-	"(with $$Formula: ~ self * 16$)")
+	"(with `Formula: ~ self * 16`)")
 MAN_END
 
 }

@@ -498,7 +498,7 @@ static void readFromFile (MelderFile file) {
 		manPages -> commandsWithExternalSideEffectsAreAllowed = false;
 		ManPage firstPage = manPages -> pages.at [1];
 		autoManual manual = Manual_create (firstPage -> title.get(), nullptr,
-				(ManPages) object.releaseToAmbiguousOwner(), true);
+				(ManPages) object.releaseToAmbiguousOwner(), true, false);
 		if (manPages -> executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
@@ -593,7 +593,7 @@ DIRECT (WINDOW_ManPages_view) {
 	LOOP {
 		iam_LOOP (ManPages);
 		ManPage firstPage = my pages.at [1];
-		autoManual manual = Manual_create (firstPage -> title.get(), nullptr, me, false);
+		autoManual manual = Manual_create (firstPage -> title.get(), nullptr, me, false, false);
 		if (my executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
@@ -612,7 +612,7 @@ DO
 	PRAAT
 		if (theCurrentPraatApplication -> batch)
 			Melder_throw (U"Cannot view a manual from batch.");
-		autoManual manual = Manual_create (U"Intro", nullptr, theCurrentPraatApplication -> manPages, false);
+		autoManual manual = Manual_create (U"Intro", nullptr, theCurrentPraatApplication -> manPages, false, true);
 		Manual_search (manual.get(), query);
 		manual.releaseToUser();
 	PRAAT_END
@@ -627,7 +627,7 @@ DO
 	PRAAT
 		if (theCurrentPraatApplication -> batch)
 			Melder_throw (U"Cannot view a manual from batch.");
-		autoManual manual = Manual_create (U"Intro", nullptr, theCurrentPraatApplication -> manPages, false);
+		autoManual manual = Manual_create (U"Intro", nullptr, theCurrentPraatApplication -> manPages, false, true);
 		HyperPage_goToPage_number (manual.get(), goToPageNumber);
 		manual.releaseToUser();
 	PRAAT_END

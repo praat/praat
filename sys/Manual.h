@@ -64,7 +64,8 @@ Thing_define (Manual, HyperPage) {
 		override { return true; }
 };
 
-autoManual Manual_create (conststring32 openingPageTitle, Interpreter optionalInterpreterReference, ManPages manPages, bool ownManPages);
+autoManual Manual_create (conststring32 openingPageTitle, Interpreter optionalInterpreterReference,
+	ManPages manPages, bool ownManPages, bool backquoteIsVerbatim);
 
 void Manual_search (Manual me, conststring32 query);
 

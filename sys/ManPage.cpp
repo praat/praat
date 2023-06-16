@@ -128,7 +128,7 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 				theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		if (anErrorHasOccurred) {
 			trace (U"Chunk ", chunkNumber, U" not run, because of an earlier error.");
-			MelderInfo_writeLine (U"##**ERROR** This code chunk was not run,\n    because an error occurred in an earlier chunk.");
+			MelderInfo_writeLine (U"\\#{**ERROR** This code chunk was not run,\n    because an error occurred in an earlier chunk.}");
 			MelderInfo_close ();
 		} else {
 			autoMelderProgressOff progress;
@@ -145,7 +145,7 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 				theErrorThatOccurred = Melder_dup (Melder_getError ());
 				trace (U"Error in chunk ", chunkNumber, U".");
 				Melder_clearError ();
-				MelderInfo_writeLine (U"##**AN ERROR OCCURRED IN THIS CODE CHUNK:**\n", theErrorThatOccurred.get());
+				MelderInfo_writeLine (U"\\#{**AN ERROR OCCURRED IN THIS CODE CHUNK:**\n", theErrorThatOccurred.get());
 				MelderInfo_close ();
 			}
 		}

@@ -378,7 +378,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 	if (cacheInfo && cacheInfo [0] != U'\0') {
 		const double fontSize = my instancePref_fontSize() * 0.86;   // as in CODE
 		Graphics_setColour (my graphics.get(), Melder_MAGENTA);
-		HyperPage_code0 (me, U"##=>");
+		HyperPage_code0 (me, U"\\#{=>}");
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		//my d_y -= fontSize * (1.0/72);   // some empty space between the code and the output
 		static MelderString buffer;
@@ -941,7 +941,7 @@ void structHyperPage :: v_createChildren () {
 	GuiDrawingArea_setSwipable (drawingArea, nullptr, our verticalScrollBar);
 }
 
-void HyperPage_init1 (HyperPage me, conststring32 title, Daata data) {
+void HyperPage_init1 (HyperPage me, conststring32 title, Daata data, bool backquoteIsVerbatim) {
 	resolution = Gui_getResolution (nullptr);
 	Editor_init (me, 0, 0, (int) floor (6 * resolution + 30), 800, title, data);
 	#if motif
@@ -949,7 +949,8 @@ void HyperPage_init1 (HyperPage me, conststring32 title, Daata data) {
 	#endif
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setDollarSignIsCode (my graphics.get(), true);   // for manuals
-	Graphics_setBackquoteIsVerbatim (my graphics.get(), true);   // for notebooks
+	if (backquoteIsVerbatim)
+		Graphics_setBackquoteIsVerbatim (my graphics.get(), true);   // for notebooks
 	Graphics_setAtSignIsLink (my graphics.get(), true);
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	if (my instancePref_font() != kGraphics_font::TIMES && my instancePref_font() != kGraphics_font::HELVETICA)
@@ -970,7 +971,7 @@ gui_drawingarea_cb_resize (me, & event);
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
 }
 void HyperPage_init (HyperPage me, conststring32 title, Daata data) {
-	HyperPage_init1 (me, title, data);
+	HyperPage_init1 (me, title, data, false);
 	HyperPage_init2 (me, title, data);
 }
 

@@ -1286,13 +1286,13 @@ NORMAL (U"The first way is to use the name of the object, as above. Choose @@Cre
 CODE (U"(x - object[\"Sound hello\"].xmin) / (object[\"Sound hello\"].xmax - object[\"Sound hello\"].xmin)")
 NORMAL (U"When you edit this sound, you can see that it creates a straight line that rises from 0 to 1 within the time domain.")
 NORMAL (U"The formula above will also work if the Sound under creation is called %goodbye, and a Sound called %hello already exists; "
-	"of course, in such a case $$object[\"Sound hello\"].xmax$ refers to a property of the already existing sound.")
+	"of course, in such a case `object[\"Sound hello\"].xmax` refers to a property of the already existing sound.")
 NORMAL (U"If a formula refers to an object under creation, there is a shorter way: you do not have to supply the name of the object at all, "
 	"so you can simply write")
 CODE (U"(x - xmin) / (xmax - xmin)")
 NORMAL (U"The attributes that you can use in this implicit way are %xmin, %xmax, %ncol, %nrow, %nx, %dx, %ny, and %dy. "
 	"To disambiguate in case there exists a script variable %xmin as well "
-	"(Praat will complain if this is the case), you can write $$Self.xmin$.")
+	"(Praat will complain if this is the case), you can write `Self.xmin`.")
 ENTRY (U"Attributes in a modification formula")
 NORMAL (U"In formulas for modifying an existing object, you refer to attributes in the same way as in creation formulas, "
 	"i.e., you do not have to specify the name of the object that is being modified. The formula")
@@ -2385,19 +2385,19 @@ CODE (U"%%word1\\$ % = “Hello”")
 CODE (U"%%word2\\$ % = “world”")
 CODE (U"%%sentence\\$ % = %%word1\\$ % + “ ” + %%word2\\$ %")
 CODE (U"writeInfoLine: “The whole sentence is: ”, %%sentence\\$ %")
-NORMAL (U"Yes, this is another way to get the sentence $$Hello world$ into the Info window. "
+NORMAL (U"Yes, this is another way to get the sentence `Hello world` into the Info window. "
 	"It's a more linguistically valid way to do it, and here is how it works:")
 LIST_ITEM (U"1. In line 1, the value “Hello”, which is a text (as we can see by its use of quotes), "
-	"is stored into the variable $$word1\\$ $, which is a string variable (as we can see because its name ends in a dollar sign).")
-LIST_ITEM (U"2. In line 2, the text value “world” is stored into the string variable $$word2\\$ $.")
-LIST_ITEM (U"3. In line 3, we have the formula $$%%word1\\$ % + “ ” + %%word2\\$ %$, which contains two variables, "
-	"namely $$%%word1\\$ %$ and $$%%word2\\$ %$.")
+	"is stored into the variable %`word1$`, which is a string variable (as we can see because its name ends in a dollar sign).")
+LIST_ITEM (U"2. In line 2, the text value “world” is stored into the string variable %`word2$`.")
+LIST_ITEM (U"3. In line 3, we have the formula `word1$ + “ ” + word2$`, which contains two variables, "
+	"namely %`word1$` and %`word2$`.")
 LIST_ITEM (U"4. The values of the two variables are “Hello” and “world”, respectively, "
 	"so what the formula actually says is “Hello” + “ ” + “world”.")
 LIST_ITEM (U"5. The pluses in the formula mean “concatenate”, so we concatenate the three strings "
 	"“Hello”, “ ”, and “world”, giving the longer string “Hello world”.")
-LIST_ITEM (U"6. Still in line 3, the string value “Hello world” is assigned to the string variable $$%%sentence\\$ %$.")
-LIST_ITEM (U"7. Line 4 reports in the Info window: $$The whole sentence is: Hello world$")
+LIST_ITEM (U"6. Still in line 3, the string value “Hello world” is assigned to the string variable %`sentence$`.")
+LIST_ITEM (U"7. Line 4 reports in the Info window: `The whole sentence is: Hello world`")
 MAN_END
 
 MAN_BEGIN (U"Scripting 3.5. String queries", U"ppgb", 20221202)
@@ -2410,7 +2410,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Tier number", "1")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Interval number", "3")
 )
-NORMAL (U"When you click OK, and interval 3 of tier 1 happens to contain the text $$hello$, the following appears in the Info window:")
+NORMAL (U"When you click OK, and interval 3 of tier 1 happens to contain the text `hello`, the following appears in the Info window:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
 	"Courier\n"
@@ -2421,7 +2421,7 @@ NORMAL (U"In a script, you will want to put the result of the query in a string 
 	"because you want to manipulate it further:")
 CODE (U"%%text\\$ % = Get label of interval: 1, 3")
 CODE (U"writeInfoLine: “The text in interval 3 of tier 1 is: ”, %%text\\$ %")
-NORMAL (U"The script first stores the text of the interval, i.e. $$hello$, into the variable %%text\\$ %, "
+NORMAL (U"The script first stores the text of the interval, i.e. `hello`, into the variable %`text$`, "
 	"then writes it, preceded by some informative text, into the Info window:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
@@ -2484,8 +2484,8 @@ SCRIPT (6, 3, U""
 	"Text: 0, “left”, 150, “half”, “\\s{Interval 5: you}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
-NORMAL (U"This can be done more nicely. The first step is to realize that the sentences starting with $$text\\$ $ are similar to each other, "
-	"and the sentence starting with $appendInfoLine are also similar to each other. They only differ in the interval number, "
+NORMAL (U"This can be done more nicely. The first step is to realize that the sentences starting with `text$` are similar to each other, "
+	"and the sentence starting with `appendInfoLine` are also similar to each other. They only differ in the interval number, "
 	"and can therefore be made %identical by using a variable for the interval number, like this:")
 CODE (U"writeInfoLine: “The texts in the first five intervals:”")
 CODE (U"%intervalNumber = 1")
@@ -2514,7 +2514,7 @@ CODE (U"for %intervalNumber from 1 to 5")
 	CODE1 (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
 CODE (U"endfor")
 NORMAL (U"The two lines that were repeated five times in the previous version now show up with indentation "
-	"between a $for line and its corresponding $endfor. Those two lines (the $$text\\$ $ and the $appendInfoLine line) "
+	"between a $for line and its corresponding $endfor. Those two lines (the `text$` and the `appendInfoLine` line) "
 	"are executed five times: for $%intervalNumber equal to 1, for $%intervalNumber equal to 2, for $%intervalNumber equal to 3, "
 	"for $%intervalNumber equal to 4, and for $%intervalNumber equal to 5, in that order.")
 NORMAL (U"In the above example, using a loop does not do much more than save eight lines, at the cost of adding two new lines. "
@@ -2692,7 +2692,7 @@ CODE (U"#removeObject: %sound   ; we no longer need the Sound, so we remove it")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is still selected, so it is drawn")
 CODE (U"#removeObject: %spectrum   ; remove the last object created by the script")
 ENTRY (U"Selecting and removing all objects from the list (don't)")
-NORMAL (U"A very strange command, which you should not normally use, is $$select all$:")
+NORMAL (U"A very strange command, which you should not normally use, is `select all`:")
 	CODE1 (U"##select all")
 	CODE1 (U"Remove")
 NORMAL (U"This selects all objects in the list and then removes them. "
@@ -2707,7 +2707,7 @@ NORMAL (U"You can get the name of a selected object into a string variable. "
 	"For instance, the following reads the name of the second selected Sound "
 	"(as counted from the top of the list of objects) into the variable %name\\$ :")
 CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”, 2)")
-NORMAL (U"If the Sound was called “Sound hallo”, the variable $$%%name\\$ %$ will contain the string “hallo”. "
+NORMAL (U"If the Sound was called “Sound hallo”, the variable %`name$` will contain the string “hallo”. "
 	"To get the name of the topmost selected Sound object, you can leave out the number:")
 CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”)")
 NORMAL (U"To get the full name (type + name) of the third selected object, you do:")
@@ -2720,7 +2720,7 @@ CODE (U"%%name\\$ % = extractLine\\$  (%%fullName\\$ %, “ ”)")
 NORMAL (U"Negative numbers count from the bottom. Thus, to get the name of the bottom-most selected Sound "
 	"object, you say")
 CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”, -1)")
-NORMAL (U"You would use $$selected\\$ ()$$ for drawing the object name in a picture:")
+NORMAL (U"You would use `selected$` () for drawing the object name in a picture:")
 CODE (U"Draw: 0, 0, 0, 0, \"yes\"")
 CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”)")
 CODE (U"Text top: “no”, “This is sound ” + %%name\\$ %")
@@ -2846,18 +2846,18 @@ CODE (U"The jitter is 0.00002\\% .")
 ENTRY (U"Predefined variables")
 NORMAL (U"All of the variables you saw earlier in this tutorial were defined at the first moment a value was assigned to them. "
 	"Some variables, however, are already defined implicitly at the start of your script.")
-NORMAL (U"Some predefined ##numeric variables# are $macintosh, $windows, and $unix, which are 1 if the script "
+NORMAL (U"Some predefined ##numeric variables# are `macintosh`, `windows`, and `unix`, which are 1 if the script "
 	"is running on a Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. "
-	"Another one is $praatVersion, which is e.g. " stringize(PRAAT_VERSION_NUM) " for the current version of Praat.")
-NORMAL (U"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, and $$shellDirectory\\$ $. "
+	"Another one is `praatVersion`, which is e.g. " stringize(PRAAT_VERSION_NUM) " for the current version of Praat.")
+NORMAL (U"Some ##predefined string variables# are `newline$`, `tab$`, and `shellDirectory$`. "
 	"The last one specifies the folder that was the default folder when Praat started up; "
 	"you can use it in scripts that run from the Unix or Windows command line. "
-	"Likewise, there exist the predefined string variables $$homeDirectory\\$ $, "
-	"$$preferencesDirectory\\$ $, and $$temporaryDirectory\\$ $. These three refer to your home folder "
+	"Likewise, there exist the predefined string variables `homeDirectory$`, "
+	"`preferencesDirectory$`, and `temporaryDirectory$`. These three refer to your home folder "
 	"(which is where you log in), the Praat @@preferences folder@, and a folder for saving temporary files; "
 	"if you want to know what they are on your computer, try to write them into a script window. "
-	"The variable $$defaultDirectory\\$ $ is available for formulas in scripts; it is the folder that contains the script file. "
-	"Finally, we have $$praatVersion\\$ $, which is “" stringize(PRAAT_VERSION_STR) "” for the current version of Praat.")
+	"The variable `defaultDirectory$` is available for formulas in scripts; it is the folder that contains the script file. "
+	"Finally, we have `praatVersion$`, which is “" stringize(PRAAT_VERSION_STR) "” for the current version of Praat.")
 ENTRY (U"Functions that handle variables")
 NORMAL (U"To check whether a variable exists, you can use the function")
 CODE (U"#variableExists (%%variableName\\$ %)")
@@ -3195,7 +3195,7 @@ CODE (U"\\@ texts: \\\" \\\" \\\" hello\\\" \\\"  at the top\\\" , \\\" \\\" \\\
 ENTRY (U"Functions")
 NORMAL (U"The Praat scripting language does not have the concept of a “function” like some other scripting languages do. "
 	"A function is a procedure that returns a number, a string, a vector, a matrix, or a string array. "
-	"For instance, you can imagine the function $$squareNumber$, "
+	"For instance, you can imagine the function `squareNumber` (), "
 	"which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25). "
 	"Here is an example of how you can do that, using the global availability of local variables:")
 CODE (U"\\@ squareNumber: 5")
@@ -3218,8 +3218,8 @@ CODE (U"#for i #from 1 #to 5")
 	CODE1 (U"square [i] = i * i")
 	CODE1 (U"text\\$  [i] = mid\\$  (\"hello\", i)")
 CODE (U"#endfor")
-NORMAL (U"After this, the variables $$square[1]$, $$square[2]$, $$square[3]$, $$square[4]$, $$square[5]$, "
-	"$$text\\$ [1]$, $$text\\$ [2]$, $$text\\$ [3]$, $$text\\$ [4]$, and $$text\\$ [5]$ contain "
+NORMAL (U"After this, the variables `square[1]`, `square[2]`, `square[3]`, `square[4]`, `square[5]`, "
+	"`text$[1]`, `text$[2]`, `text$[3]`, `text$[4]`, and `text$[5]` contain "
 	"the values 1, 4, 9, 16, 25, \"h\", \"e\", \"l\", \"l\", and \"o\", respectively:")
 CODE (U"#writeInfoLine: \"Some squares:\"")
 CODE (U"#for i #from 1 #to 5")
@@ -3267,7 +3267,7 @@ NORMAL (U"After this, %%squares\\# % is the vector { 0, 0, 0, 0, 0 }, i.e., the 
 CODE (U"#for i #from 1 #to size (squares\\# )")
 	CODE1 (U"squares\\#  [i] = i * i")
 CODE (U"#endfor")
-NORMAL (U"After this, the variable $$squares\\# $ has the value { 1, 4, 9, 16, 25 }, as before, "
+NORMAL (U"After this, the variable %`squares#` has the value { 1, 4, 9, 16, 25 }, as before, "
 	"but now we had the computer compute the squares.")
 ENTRY (U"2. Creating a vector")
 NORMAL (U"You can create a vector in many ways. The first way we saw was with a ##vector literal#, "
@@ -3405,11 +3405,11 @@ NORMAL (U"where %M is the number of rows of %m, which has to be equal to the dim
 ENTRY (U"8. String vectors")
 NORMAL (U"You can create string vectors in the following ways:")
 CODE (U"a\\$ \\#  = { \"hello\", \"goodbye\" }")
-NORMAL (U"creates a vector with two strings, which you can access as $$a\\$ \\#  [1]$, which is “hello”, and $$a\\$ \\#  [2]$, which is “goodbye”.")
+NORMAL (U"creates a vector with two strings, which you can access as `a$# [1]`, which is “hello”, and `a$# [2]`, which is “goodbye”.")
 CODE (U"a\\$ \\#  = empty\\$ \\#  (10)")
-NORMAL (U"creates a vector with 10 empty strings, which you can access as $$a\\$ \\#  [1]$ through $$a\\$ \\#  [10]$.")
+NORMAL (U"creates a vector with 10 empty strings, which you can access as `a$# [1]` through `a$# [10]`.")
 CODE (U"text\\$ \\#  = readLinesFromFile\\$ \\#  (\"hello.txt\")")
-NORMAL (U"creates a vector with 100 strings if the file $$hello.text$ contains 100 lines of text.")
+NORMAL (U"creates a vector with 100 strings if the file `hello.text` contains 100 lines of text.")
 CODE (U"fileNames\\$ \\#  = fileNames\\$ \\#  (\"sound/*.wav\")")
 NORMAL (U"creates a vector containing the names of all WAV files in the folder $sound.")
 CODE (U"folderNames\\$ \\#  = folderNames\\$ \\#  (\".\")")
@@ -3466,7 +3466,7 @@ LIST_ITEM (U"@@Scripting 6.9. Calling from the command line")
 MAN_END
 
 MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20230129)
-NORMAL (U"You can cause a Praat script to prompt for arguments. The file $$playSine.praat$ may contain the following:")
+NORMAL (U"You can cause a Praat script to prompt for arguments. The file `playSine.praat` may contain the following:")
 CODE (U"#form: \"Play a sine wave\"")
 	CODE1 (U"#positive: \"Sine frequency (Hz)\", \"377.0\"")
 	CODE1 (U"#positive: \"Gain (0..1)\", \"0.3 (= not too loud)\"")
@@ -3509,8 +3509,8 @@ TERM (U"#boolean: %%variable\\$ %, %initialValue")
 DEFINITION (U"a check box will be shown; the initial value is 1 (on) or 0 (off).")
 TERM (U"#boolean: %%variable\\$ %, %%initialValue\\$ %")
 DEFINITION (U"a check box will be shown; to switch it on, "
-	"set the initial value to $$\"on\"$, $$\"yes\"$, $$\"ON\"$, $$\"YES\"$, $$\"On\"$ or $$\"Yes\"$; "
-	"to switch it off, set it to $$\"off\"$, $$\"no\"$, $$\"OFF\"$, $$\"NO\"$, $$\"Off\"$ or $$\"No\"$.")
+	"set the initial value to `\"on\"`, `\"yes\"`, `\"ON\"`, `\"YES\"`, `\"On\"` or `\"Yes\"`; "
+	"to switch it off, set it to `\"off\"`, `\"no\"`, `\"OFF\"`, `\"NO\"`, `\"Off\"` or `\"No\"`.")
 TERM (U"#choice: %%variable\\$ %, %initialValue")
 DEFINITION (U"a multiple-choice box (or “radio box”) will be shown; the value is 1 or higher. This is followed by a series of:")
 TERM (U"#option: %%text\\$ %")
@@ -3524,8 +3524,8 @@ DEFINITION (U"for a full path to a new file, usually for saving.")
 TERM (U"#folder: %%variable\\$ %, %%initialValue\\$ %")
 DEFINITION (U"for a full path to a folder.")
 TERM (U"#realvector: %%variable\\$ %, %%format\\$ %, %%initialValue\\$ %")
-DEFINITION (U"for a vector with real values. The format can be $$\"(whitespace-separated)\"$ or $$\"(formula)\"$; "
-	"the initial value should then be probably be something like $$\"10 -9 80\"$ or $$\"{ 10, -9, 80 }\"$, respectively.")
+DEFINITION (U"for a vector with real values. The format can be `\"(whitespace-separated)\"` or `\"(formula)\"`; "
+	"the initial value should then be probably be something like `\"10 -9 80\"` or `\"{ 10, -9, 80 }\"`, respectively.")
 TERM (U"#realvector: %numberOfLines, %%variable\\$ %, %%format\\$ %, %%initialValue\\$ %")
 DEFINITION (U"use this if you want a field with less or more than the standard 7 lines.")
 TERM (U"#positivevector: %%variable\\$ %, %%format\\$ %, %%initialValue\\$ %")
@@ -3599,7 +3599,7 @@ NORMAL (U"Clicking OK without editing the two fields may print")
 CODE (U"Your fixed times are 0.5 1.7 2.8 and your random times are 0.754675 0.121393653 0.39856 0.8376572 0.387537.")
 
 NORMAL (U"The field types #infile, #outfile and #folder always yield a full path. "
-	"Consider the script $$playFile.praat$, which contains the following:")
+	"Consider the script `playFile.praat`, which contains the following:")
 CODE (U"#form: \"Play file\"")
 	CODE1 (U"#infile: \"File to play\", \"hello.wav\"")
 CODE (U"#endform")
@@ -3607,7 +3607,7 @@ CODE (U"#writeInfoLine: \"You chose the file \", file_to_play\\$ , \".\"")
 CODE (U"Read from file: file_to_play\\$ ")
 CODE (U"Play")
 CODE (U"Remove")
-NORMAL (U"If you just click OK and $$playFile.praat$ is in the folder $$/Users/miep/research/usefulScripts$, "
+NORMAL (U"If you just click OK and `playFile.praat` is in the folder `/Users/miep/research/usefulScripts`, "
 	"then this will print")
 CODE (U"You chose the file /Users/miep/research/usefulScripts/hello.wav.")
 NORMAL (U"into the Info window, and play the sound in that file.")
@@ -3635,20 +3635,20 @@ CODE (U"#runScript: \"interesting times.praat\", { 0.3, 0.5, 0.7, 2.0 }, \"18000
 NORMAL (U"You can pass values for #boolean either as the quoted strings “yes” and “no” (or their variants) or as the unquoted numbers 1 and 0.")
 NORMAL (U"In #runScript, the path to the external script, as well as the paths to #infile, #outfile and #folder parameters "
 	"are taken relative to the folder of the current script. For instance, suppose that the current script is "
-	"$$/Users/miep/research/project19/analyse.praat$ and contains:")
+	"`/Users/miep/research/project19/analyse.praat` and contains:")
 CODE (U"#runScript: \"../usefulScripts/playFile.praat\", \"sounds/sound3.wav\"")
-NORMAL (U"then running the current script will run the above-mentioned script $$/Users/miep/research/usefulScripts/playFile.praat$, "
-	"which will play the file $$/Users/miep/research/project19/sounds/sound3.wav$.")
+NORMAL (U"then running the current script will run the above-mentioned script `/Users/miep/research/usefulScripts/playFile.praat`, "
+	"which will play the file `/Users/miep/research/project19/sounds/sound3.wav`.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 6.2. Writing to the Info window", U"ppgb", 20221202)
 NORMAL (U"With the @Info button and several commands in the @@Query submenu@ (or with query commands in menus in the editors), "
 	"you write to the @@Info window@ (if your program is run from the command line, "
 	"the text goes to the console window or to %stdout instead; see @@Scripting 6.9. Calling from the command line|\\SS6.9).")
-NORMAL (U"The commands #writeInfo, #writeInfoLine, #appendInfo and #appendInfoLine "
-	"allow you to write to the Info window from a script. Those with #write in their name clear the Info window "
+NORMAL (U"The commands #`writeInfo`, #`writeInfoLine`, #`appendInfo` and #`appendInfoLine` "
+	"allow you to write to the Info window from a script. Those with #`write` in their name clear the Info window "
 	"before they write to it, those with #append in their name do not. Those with #Line in their name make sure "
-	"that a following #appendInfo or #appendInfoLine will write on the next line.")
+	"that a following #`appendInfo` or #`appendInfoLine` will write on the next line.")
 NORMAL (U"These four functions take a variable number of numeric and/or string arguments, separated by commas. "
 	"The following script builds a table with statistics about a pitch contour:")
 CODE (U"#writeInfoLine: \"  Minimum   Maximum\"")
@@ -3665,7 +3665,7 @@ CODE (U"#appendInfoLine: minimum, tab\\$ , maximum")
 NORMAL (U"which is the same as:")
 CODE (U"#appendInfo: minimum, tab\\$ , maximum, newline\\$ ")
 NORMAL (U"The little string ##tab\\$ # is a %tab character; it allows you to create "
-	"table files that can be read by some spreadsheet programs. The little string ##newline\\$ # is a %newline character; "
+	"table files that can be read by some spreadsheet programs. The little string `newline$` is a %newline character; "
 	"it moves the following text to the next line.")
 NORMAL (U"To clear the Info window, you can do")
 CODE (U"#writeInfo: \"\"")
@@ -3693,22 +3693,22 @@ NORMAL (U"You can check the availability of a file for reading with the function
 CODE (U"#fileReadable (%%fileName\\$ %)")
 NORMAL (U"which returns 1 (true) if the file exists and can be read, and 0 (false) otherwise. "
 	"Note that %%fileName\\$ % is taken relatively to the folder where the script is saved; "
-	"for instance, if your script is in the folder ##Paolo/project1#, then the file name "
-	"“hello.wav” refers to ##Paolo/project1/hello.wav#, the file name “yesterday/hello.wav” "
-	"refers to ##Paolo/project1/yesterday/hello.wav#, and the file name “../project2/hello.wav” "
-	"refers to ##Paolo/project2/hello.wav# (“..” goes one folder up). "
-	"You can also use full path names such as “C:/Users/Paolo/project1/hello.wav” "
-	"on Windows and “/Users/Paolo/project1/hello.wav” on the Mac.")
+	"for instance, if your script is in the folder `Paolo/project1`, then the file name "
+	"“hello.wav” refers to `Paolo/project1/hello.wav`, the file name “yesterday/hello.wav” "
+	"refers to `Paolo/project1/yesterday/hello.wav`, and the file name “../project2/hello.wav” "
+	"refers to `Paolo/project2/hello.wav` (“..” goes one folder up). "
+	"You can also use full path names such as `C:/Users/Paolo/project1/hello.wav` "
+	"on Windows and `/Users/Paolo/project1/hello.wav` on the Mac.")
 NORMAL (U"To read the contents of an existing text file into a string variable or into a numeric variable, you use")
 CODE (U"text\\$  = readFile\\$  (\"myFile.txt\")")
 NORMAL (U"or")
 CODE (U"number = readFile (\"myFile.txt\")")
 NORMAL (U"If the file does not exist, the script terminates with an error message.")
 ENTRY (U"Example: reading a settings file")
-NORMAL (U"Suppose that the file ##height.inf# may contain an appropriate value for a numeric variable "
-	"called $height, which we need to use in our script. We would like to read it with")
+NORMAL (U"Suppose that the file `height.inf` may contain an appropriate value for a numeric variable "
+	"called `height`, which we need to use in our script. We would like to read it with")
 CODE (U"height = readFile (\"height.inf\")")
-NORMAL (U"However, this script will fail if the file ##height.inf# does not exist. To guard "
+NORMAL (U"However, this script will fail if the file `height.inf` does not exist. To guard "
 	"against this situation, we could check the existence of the file, and supply a default "
 	"value in case the file does not exist:")
 CODE (U"fileName\\$  = \"height.inf\"")
@@ -3720,17 +3720,17 @@ CODE (U"endif")
 ENTRY (U"Writing a file")
 NORMAL (U"You write into a new text file just as you write into the Info window:")
 CODE (U"writeFileLine: \"myFile.txt\", \"The present year is \", 2000 + 13, \".\"")
-NORMAL (U"and likewise you use %writeFile if you don't want a newline symbol at the end of the file. "
+NORMAL (U"and likewise you use #`writeFile` if you don't want a newline symbol at the end of the file. "
 	"If the file cannot be created, the script terminates with an error message.")
 NORMAL (U"To append text at the end of an existing file, you use")
 CODE (U"appendFileLine: \"myFile.txt\", \"Next year it will be \", 2000 + 14, \".\"")
-NORMAL (U"With %appendFileLine (and %appendFile, which does not add the newline), "
+NORMAL (U"With #`appendFileLine` (and #`appendFile`, which does not add the newline), "
 	"we follow the rule that if the file does not yet exist, it is created first.")
 NORMAL (U"You can create a folder (directory) with")
 CODE (U"#createFolder: %%folderPath\\$ %")
 NORMAL (U"where, as with file names, %%folderPath\\$ % can be relative to the folder of the script "
-	"(e.g. “data”, or “yesterday/data”, or “../project2/yesterday/data”) "
-	"or an absolute path (e.g. “C:/Users/Paolo/project1/yesterday/data” on Windows "
+	"(e.g. “`data`”, or “`yesterday/data`”, or “`../project2/yesterday/data`”) "
+	"or an absolute path (e.g. `C:/Users/Paolo/project1/yesterday/data` on Windows "
 	"or “/Users/Paolo/project1/yesterday/data” on the Mac). "
 	"If the folder already exists, this command does nothing.")
 NORMAL (U"You can delete an existing file with the function")
@@ -3913,8 +3913,8 @@ CODE (U"if %%fileName\\$ % <> \"\"")
 	CODE1 (U"%table = Read Table from tab-separated file: %%fileName\\$ %")
 CODE (U"endif")
 NORMAL (U"A file selector window will appear, with (in this example) ##Open a table file# as the title. "
-	"If the user clicks #OK, the variable %%fileName\\$ % will contain the name of the file that the user selected; "
-	"if the user clicks #Cancel, the variable %%fileName\\$ % will contain the empty string (\\\" \\\" ).")
+	"If the user clicks #OK, the variable %`fileName$` will contain the name of the file that the user selected; "
+	"if the user clicks #Cancel, the variable %`fileName$` will contain the empty string (\\\" \\\" ).")
 NORMAL (U"If you want the user to choose a file name for writing (saving), do")
 CODE (U"selectObject: %mySound")
 CODE (U"%%fileName\\$ % = ##chooseWriteFile\\$ #: \"Save as a WAV file\", \"mySound.wav\"")
@@ -3925,8 +3925,8 @@ NORMAL (U"A file selector window will appear, with (in this example) ##Save as a
 	"and “mySound.wav” as the suggested file name (which the user can change). "
 	"If the user clicks #OK, the form will ask for confirmation if the file name that the user typed already exists. "
 	"If the user clicks #OK with a new file name, or clicks #OK in the confirmation window, "
-	"the variable $$fileName\\$ $ will contain the file name that the user typed; "
-	"if the user clicks #Cancel at any point, the variable %%fileName\\$ % will contain the empty string (\\\" \\\" ).")
+	"the variable %`fileName$` will contain the file name that the user typed; "
+	"if the user clicks #Cancel at any point, the variable %`fileName$` will contain the empty string (\\\" \\\" ).")
 NORMAL (U"If you want the user to choose a folder (directory) name, do")
 CODE (U"%%folderName\\$ % = ##chooseFolder\\$ #: \"Choose a folder to save all the new files in\"")
 CODE (U"if %%folderName\\$ % <> \"\"")
@@ -3936,8 +3936,8 @@ CODE (U"if %%folderName\\$ % <> \"\"")
 	CODE1 (U"endfor")
 CODE (U"endif")
 NORMAL (U"A folder selector window will appear, with (in this example) ##Choose a folder to save all the new files in# as the title. "
-	"If the user clicks #OK, the variable %%folderName\\$ % will contain the name of the folder that the user selected; "
-	"if the user clicks #Cancel, the variable %%folderName\\$ % will contain the empty string (\\\" \\\" ).")
+	"If the user clicks #OK, the variable %`folderName$` will contain the name of the folder that the user selected; "
+	"if the user clicks #Cancel, the variable %`folderName$` will contain the empty string (\\\" \\\" ).")
 ENTRY (U"A non-pausing pause window without a #Stop button")
 NORMAL (U"Especially if you use the pause window within the @@Demo window@, you may not want to give the user the capability of "
 	"ending the script by hitting #Stop or closing the pause window. "
@@ -3957,8 +3957,8 @@ CODE1 (U"%includeBackward = ( %directions = 2 or %directions = 3 )")
 CODE (U"endif")
 NORMAL (U"In this example, the default button is 2 (i.e. #OK), and the cancel button is 1 (i.e. #Cancel). "
 	"The form will now contain no #Stop button, and if the user closes the window, "
-	"this will be the same as clicking #Cancel, namely that %clicked will be 1 (because the #Cancel button is the first button) "
-	"and the variables %learning_rate, %directions and %%directions\\$ % will not be changed (i.e. they might remain undefined).")
+	"this will be the same as clicking #Cancel, namely that %`clicked` will be 1 (because the #Cancel button is the first button) "
+	"and the variables %`learning_rate`, %`directions` and %%`directions$` will not be changed (i.e. they might remain undefined).")
 ENTRY (U"Pausing for a fixed time without a window")
 NORMAL (U"You can pause Praat for 1.3 seconds by saying")
 CODE (U"#sleep (1.3)")
@@ -3977,7 +3977,7 @@ NORMAL (U"Suppose we are in the Praat-shell program #Praat, which is a system fo
 	"which does know how to display a sound file:")
 CODE (U"Save as file: \"hallo.wav\"")
 CODE (U"sendsocket fonsg19.hum.uva.nl:6667 display hallo.wav")
-NORMAL (U"In this example, $$fonsg19.hum.uva.nl$ is the computer on which MovieEdit is running; "
+NORMAL (U"In this example, `fonsg19.hum.uva.nl` is the computer on which MovieEdit is running; "
 	"you can specify any valid Internet address instead, as long as that computer allows you to send messages to it. "
 	"If MovieEdit is running on the same computer as Praat, you can specify $localhost instead of the full Internet address.")
 NORMAL (U"The number 6667 is the port number on which MovieEdit is listening. Other programs will use different port numbers.")
@@ -4032,8 +4032,8 @@ NORMAL (U"Before seeing how a Praat script can be called from the command line, 
 	"with its usual GUI (Graphical User Interface), i.e. with its two windows. "
 	"For instance, on Windows you can start the Command Prompt window (the “Console”), and type")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\"")
-NORMAL (U"(including the quotes) if Praat.exe is indeed in the folder $$C:\\bsProgram Files$.")
-NORMAL (U"On the Mac, the executable is hidden inside the $$app$ file, so you open a Terminal window "
+NORMAL (U"(including the quotes) if Praat.exe is indeed in the folder `C:\\Program Files`.")
+NORMAL (U"On the Mac, the executable is hidden inside the `app` file, so you open a Terminal window "
 	"and type something like")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat")
 NORMAL (U"On Linux, you type into the Terminal something like")
@@ -4044,8 +4044,8 @@ NORMAL (U"On Windows, you can open Praat with a sound file and a TextGrid file b
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open data\\bshello.wav data\\bshello.TextGrid")
 NORMAL (U"or")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open data/hello.wav data/hello.TextGrid")
-NORMAL (U"at least if your current folder (see the Console's $$cd$ and $$dir$ commands) "
-	"contains the folder $$data$ and that folder contains those two files. "
+NORMAL (U"at least if your current folder (see the Console's `cd` and `dir` commands) "
+	"contains the folder `data` and that folder contains those two files. "
 	"Praat will start up, and shows the two files as a Sound and a TextGrid object in the list. "
 	"If Praat was already running when you typed the command, "
 	"the two files are added as objects to the existing list in Praat.")
@@ -4056,14 +4056,14 @@ CODE (U"/usr/bin/praat --open data/hello.wav data/hello.TextGrid")
 NORMAL (U"Again, if Praat was already running when you typed the command, "
 	"the two files are added as objects to the existing list in Praat.")
 NORMAL (U"Note that if you want to send messages or files to a running Praat, "
-	"the best way (on all platforms) is to use $$praat --send$ (see below) "
+	"the best way (on all platforms) is to use `praat --send` (see below) "
 	"or %sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
-NORMAL (U"To always start up a new instance of Praat, use $$--new-open$ instead of $$--open$.")
+NORMAL (U"To always start up a new instance of Praat, use #`--new-open` instead of `--open`.")
 
 ENTRY (U"3. Calling Praat to open a script")
 NORMAL (U"On Windows, when you type")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open \"my script.praat\"")
-NORMAL (U"Praat will start up, opening the script $$my script.praat$$ in a script window. "
+NORMAL (U"Praat will start up, opening the script `my script.praat` in a script window. "
 	"If Praat was already running when you typed the command, "
 	"the script window will appear within the already running instantiation of Praat.")
 NORMAL (U"On the Mac, you do")
@@ -4071,15 +4071,15 @@ CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --open \"my script.praat\""
 NORMAL (U"and on Linux")
 CODE (U"/usr/bin/praat --open \"my script.praat\"")
 NORMAL (U"Note that on all three platforms, you have to supply quotes around the file name "
-	"if that file name contains one or more spaces, as here between $$my$ and $$script$ "
-	"or above between $$Program$ and $$Files$. This is because the script languages of "
+	"if that file name contains one or more spaces, as here between `my` and `script` "
+	"or above between `Program` and `Files`. This is because the script languages of "
 	"the Console or Terminal use spaces for separating commands and arguments.")
 
 ENTRY (U"4. Calling Praat to run a script in the background")
 NORMAL (U"Now we are ready to discuss how to run Praat without a GUI.")
 NORMAL (U"On Windows, when you type")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run \"my script.praat\"")
-NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praat's GUI, "
+NORMAL (U"Praat will execute the script `my script.praat` without showing Praat's GUI, "
 	"i.e. without showing its usual two windows. "
 	"In fact, any output that would normally go to the Info window, "
 	"will now go directly to the Console window in which you typed the command. "
@@ -4126,11 +4126,11 @@ NORMAL (U"Note that each argument that contains one or more spaces has to be put
 	"but simply run the script with the arguments given on the command line "
 	"(see @@Scripting 6.1. Arguments to the script@). What then happens on all three platforms is that a console instantiation of Praat writes "
 	"the two lines to the Console window and plays the three sounds.")
-NORMAL (U"The path to the script file as well as to #infile, #outfile and #folder "
+NORMAL (U"The path to the script file as well as to `infile`, `outfile` and `folder` "
 	"arguments will be taken relative to the current working directory of the terminal window. For instance, "
 	"the following example from @@Scripting 6.1. Arguments to the script@ will run the script "
-	"$$/Users/miep/research/usefulScripts/playFile.praat$, which will play the sound file "
-	"$$/Users/miep/research/project19/sounds/sound3.wav$:")
+	"`/Users/miep/research/usefulScripts/playFile.praat`, which will play the sound file "
+	"`/Users/miep/research/project19/sounds/sound3.wav`:")
 CODE (U"cd /Users/miep/research/project19")
 CODE (U"/usr/bin/praat --run ../usefulScripts/playFile.praat sounds/sound3.wav")
 
@@ -4139,10 +4139,10 @@ NORMAL (U"You can send a script to a running Praat. Praat will then execute it:"
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 CODE (U"/usr/bin/praat --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
-NORMAL (U"This works the same way as $$--run$, except that $$--send$ runs in Praat’s Graphical User Interface. "
+NORMAL (U"This works the same way as `--run`, except that `--send` runs in Praat’s Graphical User Interface. "
 	"If Praat is already running, then that instance of Praat will execute your script. "
 	"If Praat is not running yet, then a new GUI instance of Praat will start up and execute your script. "
-	"To always start up a new instance of Praat, use $$--new-send$ instead of $$--send$.")
+	"To always start up a new instance of Praat, use `--new-send` instead of `--send`.")
 NORMAL (U"See also %sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
 
 ENTRY (U"7. Calling Praat from other programs such as Python")
@@ -4151,7 +4151,7 @@ NORMAL (U"You can run the above script from several programming languages, not j
 CODE (U"import os")
 CODE (U"os.system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
 NORMAL (U"Note that you have to double the backslashes!")
-NORMAL (U"A disadvantage of the $$os.system$ method is that you have to use quotes within quotes. "
+NORMAL (U"A disadvantage of the `os.system` method is that you have to use quotes within quotes. "
 	"A somewhat cleaner approach is:")
 CODE (U"import subprocess")
 CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])")
@@ -4161,16 +4161,16 @@ NORMAL (U"This way you specify the arguments directly, with quotes only because 
 CODE (U"first_line = 'I love you'")
 CODE (U"second_line = 'me too'")
 CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', first_line, '0.4', second_line])")
-NORMAL (U"Many other programs beside Python have a $$system$-like command, so that you can run a command like")
+NORMAL (U"Many other programs beside Python have a `system`-like command, so that you can run a command like")
 CODE (U"system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
 
 ENTRY (U"8. What happens if I specify neither --open nor --run nor --send?")
-NORMAL (U"If you specify neither $$--open$ nor $$--run$ nor $$--send$, Praat's behaviour is not guaranteed. "
+NORMAL (U"If you specify neither `--open` nor `--run` nor `--send`, Praat's behaviour is not guaranteed. "
 	"If you type something like")
 CODE (U"praat testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 NORMAL (U"into a Console or Terminal window by hand, Praat will typically run the script. "
-	"Also, the $$--run$ option can probably be left out from the Python call above. "
-	"However, if you redirect the output of Praat to a file or pipe, you cannot typically leave out the $$--run$ option; "
+	"Also, the `--run` option can probably be left out from the Python call above. "
+	"However, if you redirect the output of Praat to a file or pipe, you cannot typically leave out the `--run` option; "
 	"if you do, Praat may start its GUI and %open the file rather than run it.")
 
 ENTRY (U"9. Running Praat interactively from the command line")
@@ -4182,9 +4182,9 @@ CODE (U"> echo \"Report memory use\" | /usr/bin/praat -")
 
 ENTRY (U"10. Calling Praat from a web server")
 NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
-	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
+	"To achieve this, you use the #`--no-pref-files` command line option before the script name:")
 CODE (U"system ('/users/apache/praat --run --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla')")
-NORMAL (U"On Windows, you will often want to specify ##--utf8# as well, because otherwise "
+NORMAL (U"On Windows, you will often want to specify #`--utf8` as well, because otherwise "
 	"Praat will write its output to BOM-less UTF-16 files, which many programs do not understand.")
 
 ENTRY (U"11. All command line switches and options")
@@ -4209,22 +4209,22 @@ DEFINITION (U"Ignore the preferences file and the buttons file at start-up, and 
 TERM (U"##--no-plugins#")
 DEFINITION (U"Don't activate the plugins at start-up.")
 TERM (U"##--pref-dir=#/var/www/praat_plugins")
-DEFINITION (U"Set the preferences folder to /var/www/praat_plugins (for instance). "
+DEFINITION (U"Set the preferences folder to `/var/www/praat_plugins` (for instance). "
 	"This can come in handy if you require access to preference files and/or plugins that are not in your home folder.")
 TERM (U"##-8#, ##--utf8#")
 DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-8 encoding. This is the default encoding on MacOS and Linux, "
 	"but on Windows the default is the Console's native UTF-16 Little Endian (i.e. the Console understands UTF-16 always, "
-	"whereas it understands UTF-8 only if you type $$chcp 65001$ first). "
+	"whereas it understands UTF-8 only if you type `chcp 65001` first). "
 	"If you pipe to Windows programs that understand UTF-8 rather than UTF-16, "
 	"or if you want to redirect the output to a UTF-8 file, use this option.")
 TERM (U"##-a#, ##--ansi#")
-DEFINITION (U"Write the output (e.g. of $writeInfo$) in ISO-Latin 1 (\"ANSI\") encoding. "
+DEFINITION (U"Write the output (e.g. of `writeInfo`) in ISO-Latin 1 (\"ANSI\") encoding. "
 	"This is not recommended, because it potentially loses information (characters above U+00FF will show up as \"?\"), "
 	"but it might be necessary if you want to use Praat in a pipe with programs "
 	"that do understand ANSI but do not understand UTF-8 or UTF-16, "
 	"or if you want to redirect the output to an ANSI-encoded file.")
 TERM (U"##-u#, ##--utf16#")
-DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-16 Little Endian encoding, without Byte Order Mark. "
+DEFINITION (U"Write the output (e.g. of `writeInfo`) in UTF-16 Little Endian encoding, without Byte Order Mark. "
 	"This format is the default on Windows, "
 	"but you can use it to write the output to a UTF-16LE-encoded file on any platform.")
 TERM (U"##--trace#")
@@ -4312,7 +4312,7 @@ CODE (U"#endeditor")
 CODE (U"#removeObject: \"Sound slice\"")
 NORMAL (U"Note that #$endeditor is needed to change from the environment of a SpectrumEditor to the environment of the object & picture windows.")
 NORMAL (U"If you now choose the ##Show spectrum at cursor# button for several cursor positions, you will notice that all those editors have the same name. "
-	"To remedy the ambiguity of the line $$#editor Spectrum slice$, we give each slice a better name. For example, if the cursor was at "
+	"To remedy the ambiguity of the line `editor Spectrum slice`, we give each slice a better name. For example, if the cursor was at "
 	"635 milliseconds, the slice could be named “635ms”. We can achieve this by changing the extraction in the following way:")
 CODE (U"milliseconds = round (cursor*1000)")
 CODE (U"Extract selection sound (windowed): string\\$  (milliseconds) + \"ms\", \"Kaiser2\", 2, \"no\"")
@@ -4354,7 +4354,7 @@ MAN_BEGIN (U"Scripting 8. Controlling Praat from another program", U"ppgb", 2022
 INTRO (U"Sendpraat is a function for sending messages to a %running Praat. "
 	"It is also a Windows, MacOS, or Linux console program with the same purpose.")
 NORMAL (U"As sendpraat cannot start up a new instance of Praat, you may often want to use "
-	"$$praat --send$ instead (see @@Scripting 6.9. Calling from the command line@).")
+	"`praat --send` instead (see @@Scripting 6.9. Calling from the command line@).")
 LIST_ITEM (U"@@Scripting 8.1. The sendpraat subroutine")
 LIST_ITEM (U"@@Scripting 8.2. The sendpraat program")
 MAN_END
@@ -4411,8 +4411,8 @@ ENTRY (U"Instead")
 NORMAL (U"Instead of using sendpraat, you can also just take the following simple steps in your program:")
 LIST_ITEM (U"1. on Linux, write the Praat script that you want to run, and save it as ##~/.praat-dir/message#;")
 LIST_ITEM (U"2. get Praat's process id from ##~/.praat-dir/pid#;")
-LIST_ITEM (U"3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: $$kill -USR1 1178")
-NORMAL (U"If the first line of your script is the comment \"\\#  999\", where 999 stands for the process id of your program, "
+LIST_ITEM (U"3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: `kill -USR1 1178`")
+NORMAL (U"If the first line of your script is the comment “`# 999`”, where 999 stands for the process id of your program, "
 	"Praat will send your program a SIGUSR2 signal back when it finishes handling the script. "
 	"If you do not want to receive such a message (if your program has no handler for it, the SIGUSR2 signal will kill your program), "
 	"then do not include such a line.")

@@ -86,7 +86,7 @@ static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 	autoMelderReadText readText = MelderReadText_createFromText (text.move());
 	autoManPages manPages = ManPages_createFromText (readText.get(), & my file);   // readText can release, because manPages duplicates (last checked 2023-03-25)
 	ManPage firstPage = manPages -> pages.at [1];
-	autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), manPages.releaseToAmbiguousOwner(), true);
+	autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), manPages.releaseToAmbiguousOwner(), true, true);
 	manual.releaseToUser ();
 }
 
@@ -114,7 +114,7 @@ static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 			autoMelderReadText readText = MelderReadText_createFromText (text.move());
 			autoManPages manPages = ManPages_createFromText (readText.get(), & my file);   // readText can release, because manPages duplicates (last checked 2023-03-25)
 			ManPage firstPage = manPages -> pages.at [1];
-			autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), manPages.releaseToAmbiguousOwner(), true);
+			autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), manPages.releaseToAmbiguousOwner(), true, true);
 			manual.releaseToUser ();
 		}
 	} else if (str32str (text.get(), U"\n####################")) {
@@ -124,7 +124,7 @@ static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 		integer startingPage = ManPages_addPagesFromNotebook (you.get(), readText.get(), startOfSelection, endOfSelection);
 		Melder_clip (1_integer, & startingPage, your pages.size);
 		ManPage firstPage = your pages.at [startingPage];
-		autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), you.releaseToAmbiguousOwner(), true);
+		autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), you.releaseToAmbiguousOwner(), true, true);
 		manual.releaseToUser ();
 	} else
 		Melder_throw (U"A Praat notebook should either start with a title between straight double quotes (\"\"), "

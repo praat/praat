@@ -3340,14 +3340,17 @@ NORMAL (U"Many apps automatically check for updates when you start them up. "
 	"will never attempt to access the Internet by itself. For more information, see @@Privacy and security@.")
 MAN_END
 
-MAN_BEGIN (U"Reporting a problem", U"ppgb", 20220116)
-INTRO (U"Anything that you consider incorrect behaviour of Praat (a “bug”) can be reported "
-	"to the authors by email (`paul.boersma@uva.nl`). "
-	"This includes any crashes.")
-NORMAL (U"Questions about how to use Praat for your specific cases "
-	"can be posed to the Praat User List (`https://groups.io/g/Praat-Users-List`). "
-	"This includes any questions on why your self-written Praat script does something unexpected.")
-MAN_END
+MAN_PAGES_BEGIN R"~~~(
+"Reporting a problem"
+© Paul Boersma 2022-01-16
+
+Anything that you consider incorrect behaviour of Praat (a “bug”) can be reported
+to the authors by email (`paul.boersma@uva.nl`). This includes any crashes.
+
+Questions about how to use Praat for your specific cases
+can be posed to the Praat User List (`https://groups.io/g/Praat-Users-List`).
+This includes any questions on why your self-written Praat script does something unexpected.
+)~~~" MAN_PAGES_END
 
 MAN_BEGIN (U"Praat menu", U"ppgb", 20161227)
 INTRO (U"The first menu in the @@Objects window@. "

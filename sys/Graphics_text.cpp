@@ -1277,11 +1277,13 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 	bool charSuperscript = false, charSubscript = false, charItalic = false, charBold = false;
 	bool wordItalic = false, wordBold = false, wordCode = false, wordLink = false;
 	bool globalSuperscript = false, globalSubscript = false, globalItalic = false, globalBold = false;
-	bool globalCode = false, globalVerbatim = false, globalLink = false, verbatimLink = false;
+	bool globalCode = false, globalLink = false, verbatimLink = false;
 	bool globalSmall = 0;
 	numberOfLinks = 0;
 	const bool weAreInManual = ( my dollarSignIsCode );
 	const bool weAreInNotebook = ( my backquoteIsVerbatim );
+	const bool topDownVerbatim = ( my font == kGraphics_font::COURIER && weAreInNotebook );
+	bool globalVerbatim = topDownVerbatim;
 	while ((kar = *in++) != U'\0') {
 		//TRACE
 		if (kar == U'^' && my circumflexIsSuperscript) {
@@ -1326,6 +1328,10 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			} else if (! weAreInManual) {
 				static integer countCharacterSubscript;
 				trace (U"Character subscript: ", ++ countCharacterSubscript, U" ", txt);
+				charSubscript = true;
+				wordItalic = wordBold = wordCode = false;
+				continue;
+			} else if (weAreInNotebook) {
 				charSubscript = true;
 				wordItalic = wordBold = wordCode = false;
 				continue;
@@ -1395,7 +1401,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				charBold = true;
 				continue;
 			}
-		} else if (kar == U'`' && my backquoteIsVerbatim) {
+		} else if (kar == U'`' && my backquoteIsVerbatim && ! topDownVerbatim) {
 			if (verbatimLink) {
 				verbatimLink = false;
 				continue;
