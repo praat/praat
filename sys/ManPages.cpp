@@ -612,8 +612,12 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 						TODO: make less brittle.
 					*/
 					const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
-					if (Melder_startsWith (firstNonspace, U"\\@{") || Melder_startsWith (firstNonspace, U"\\#{"))
-						firstNonspace += 3;
+					if (firstNonspace [0] == U'\\' &&
+						(firstNonspace [1] == U'@' && firstNonspace [2] == U'{' ||
+						 firstNonspace [1] == U'#' && firstNonspace [2] == U'{' ||
+						 firstNonspace [1] == U'#' && firstNonspace [2] == U'@' && firstNonspace [3] == U'{')
+					)
+						firstNonspace += 3 + ( firstNonspace [2] == U'@' );
 					if (
 						(Melder_startsWith (firstNonspace, U"Draw")  ||
 						 Melder_startsWith (firstNonspace, U"Paint")  ||
@@ -626,8 +630,14 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					const char32 *p = & line [0];
 					bool inBold = false;
 					while (*p) {
-						if (*p == U'\\' && (p [1] == U'@' || p [1] == U'`') && p [2] == U'{') {
-							p += 3;   // "\@{" should not be included in the code
+						if (*p == U'\\' &&
+							(p [1] == U'@' && p [2] == U'{' ||
+							 p [1] == U'`' && p [2] == U'{' ||
+							 p [1] == U'#' && p [2] == U'@' && p [3] == U'{' ||
+							 p [1] == U'#' && p [2] == U'`' && p [3] == U'{'))
+						{
+							const bool thinLink = ( p [1] != U'#' );
+							p += 4 - thinLink;   // "\@{" should not be included in the code
 							/*
 								We collect the link text separately,
 								because we cannot collect it into buffer_graphical directly,
