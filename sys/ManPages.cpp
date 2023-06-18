@@ -591,77 +591,6 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					while (*p) {
 						if (*p == U'\t') {
 							MelderString_append (& buffer_graphicalCode, p == line ? nullptr : U"    ");
-						//} else if (*p == U'#') {
-						//	MelderString_append (& buffer_graphicalCode, U"\\# ");
-						//} else if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
-						//	MelderString_append (& buffer_graphicalCode, U"##");
-						//	inBold = true;
-						//	p += 2;
-						//} else if (*p == U'$') {
-						//	MelderString_append (& buffer_graphicalCode, U"\\$ ");
-						//} else if (*p == U'@') {
-						//	MelderString_append (& buffer_graphicalCode, U"\\@ ");
-						} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{'   &&FALSE  ) {
-							const bool startsWithLowerCase = Melder_isLowerCaseLetter (p [3]);
-							MelderString_append (& buffer_graphicalCode, U"@@");
-							static MelderString linkTarget, linkText;
-							MelderString_empty (& linkTarget);
-							MelderString_empty (& linkText);
-							bool hasSeparateLinkTarget = false;
-							bool includeLinkTextInLinkTarget = true;
-							p += 3;
-							while (*p != U'\0') {
-								if (*p == U'|') {
-									hasSeparateLinkTarget = true;
-									MelderString_empty (& linkText);
-									includeLinkTextInLinkTarget = false;
-								} else if (*p == U':' && p [1] == U' ') {
-									MelderString_append (& linkTarget, U": ");
-									hasSeparateLinkTarget = true;
-									MelderString_empty (& linkText);
-									p += 1;   // skip space
-									includeLinkTextInLinkTarget = true;
-								} else if (*p == U':' && (p [1] == U'\0' || p [1] == U'}')) {
-									MelderString_append (& linkTarget, U"...");
-									hasSeparateLinkTarget = true;
-									MelderString_appendCharacter (& linkText, U':');
-								} else if (*p == U'}') {
-									break;   // but a missing closing brace at the end of a line is also fine
-								} else {
-									if (includeLinkTextInLinkTarget)
-										MelderString_appendCharacter (& linkTarget, *p);
-									MelderString_appendCharacter (& linkText, *p);
-								}
-								p ++;
-							}
-							const bool isLinkToFunction =
-									startsWithLowerCase && *p && (p [1] == U':' || p [1] == U' ' && p [2] == U'(');
-							if (isLinkToFunction) {
-								if (! hasSeparateLinkTarget) {
-									MelderString_copy (& linkTarget, linkText.string);
-									hasSeparateLinkTarget = true;
-								}
-								//MelderString_append (& linkTarget, U"()");
-							}
-							if (hasSeparateLinkTarget) {
-								if (isLinkToFunction)
-									MelderString_append (& buffer_graphicalCode, U"`", linkTarget.string, U'`');
-								else
-									MelderString_append (& buffer_graphicalCode, linkTarget.string);
-								MelderString_appendCharacter (& buffer_graphicalCode, U'|');
-							}
-							MelderString_append (& buffer_graphicalCode, linkText.string, U'@');
-						//} else if (*p == U'%') {
-						//	MelderString_append (& buffer_graphicalCode, U"\\% ");
-						//} else if (*p == U'^') {
-						//	MelderString_append (& buffer_graphicalCode, U"\\^ ");
-						//} else if (*p == U'}') {
-						//	if (inBold) {
-						//		MelderString_appendCharacter (& buffer_graphicalCode, U'#');
-						//		inBold = false;
-						//	} else {
-						//		MelderString_appendCharacter (& buffer_graphicalCode, U'}');
-						//	}
 						} else
 							MelderString_appendCharacter (& buffer_graphicalCode, *p);
 						p ++;
@@ -672,6 +601,16 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				}
 				const bool shouldShowOutput = true;   // TODO: or not...
 				if (shouldShowOutput) {
+					/*
+						Collect the code, for later execution when the output is drawn.
+					*/
+
+					/*
+						Look for drawing commmands. They could either stand on their own,
+						or be within "\@{xxx}" or within "\#{xxx}" (note: not within "\`{xxx}").
+
+						TODO: make less brittle.
+					*/
 					const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
 					if (Melder_startsWith (firstNonspace, U"\\@{") || Melder_startsWith (firstNonspace, U"\\#{"))
 						firstNonspace += 3;
@@ -683,19 +622,24 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 						&& height == 0.001
 					)
 						height = 3.0;
+
 					const char32 *p = & line [0];
 					bool inBold = false;
 					while (*p) {
-						if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
-							p += 3;
+						if (*p == U'\\' && (p [1] == U'@' || p [1] == U'`') && p [2] == U'{') {
+							p += 3;   // "\@{" should not be included in the code
+							/*
+								We collect the link text separately,
+								because we cannot collect it into buffer_graphical directly,
+								because in case of a "|" the link buffer has to be cleared.
+							*/
 							static MelderString linkText;
 							MelderString_empty (& linkText);
 							while (*p != U'\0') {
 								if (*p == U'|') {
-									MelderString_empty (& linkText);   // ignore link target as well as "|"
-								} else if (*p == U':' && p [1] == U' ') {
-									MelderString_empty (& linkText);   // ignore link target
-									p += 1;
+									MelderString_empty (& linkText);   // ignore link target as well as "|" and "||"
+									if (p [1] == U'|')
+										p += 1;
 								} else if (*p == U'}') {
 									break;   // but a missing closing brace at the end of a line is also fine
 								} else {
