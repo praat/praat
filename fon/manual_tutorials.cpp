@@ -4984,11 +4984,11 @@ CODE (U"Create IntensityTier: “intens”, 0.00, 0.50")
 CODE (U"Add point: 0.05, 60")
 CODE (U"Add point: 0.10, 80")
 NORMAL (U"Generate the source signal:")
-CODE (U"#plusObject: “Sound f0”")
+CODE (U"plusObject: “Sound f0”")
 CODE (U"Multiply")
 CODE (U"Rename: “source”")
 NORMAL (U"The ten sounds are generated in a loop:")
-CODE (U"#for i #from 1 #to 10")
+CODE (U"for i from 1 to 10")
 	CODE1 (U"f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!")
 	CODE1 (U"Create FormantGrid: “filter”, 0.0, 0.5, 9, 800, 1000, 60, 80")
 	CODE1 (U"Remove formant points between: 1, 0.0, 0.5")
@@ -4996,13 +4996,13 @@ CODE (U"#for i #from 1 #to 10")
 	CODE1 (U"Add bandwidth point: 1, 0.05, 50")
 	CODE1 (U"Add formant point: 2, 0.05, f2_locus")
 	CODE1 (U"Add bandwidth point: 2, 0.05, 100")
-	CODE1 (U"#plusObject: “Sound source”")
+	CODE1 (U"plusObject: “Sound source”")
 	CODE1 (U"Filter (no scale)")
 	CODE1 (U"Rename: “bada” + string\\$  (i)")
-	CODE1 (U"#removeObject: “FormantGrid filter”")
-CODE (U"#endfor")
+	CODE1 (U"removeObject: “FormantGrid filter”")
+CODE (U"endfor")
 NORMAL (U"Clean up:")
-CODE (U"#removeObject: “Sound source”, “Sound f0”, “IntensityTier intens”,")
+CODE (U"removeObject: “Sound source”, “Sound f0”, “IntensityTier intens”,")
 CODE (U"... “PointProcess f0”, “PitchTier f0”")
 NORMAL (U"In this example, filtering was done without automatic scaling, so that "
 	"the resulting signals have equal intensities in the areas where they have "
@@ -5031,11 +5031,11 @@ NORMAL (U"To perform the resampling, you use @@Sound: Resample...@: "
 	"you select a @Sound object, and click ##Resample...#. "
 	"In the rest of this tutorial, I will use the syntax that you would use in a script, "
 	"though you will usually do these things by clicking on objects and buttons. Thus:")
-CODE (U"#selectObject: “Sound hallo”")
+CODE (U"selectObject: “Sound hallo”")
 CODE (U"Resample: 11000, 50")
 NORMAL (U"You can then perform a linear-prediction analysis on the resampled sound "
 	"with @@Sound: To LPC (burg)...@:")
-CODE (U"#selectObject: “Sound hallo_11000”")
+CODE (U"selectObject: “Sound hallo_11000”")
 CODE (U"To LPC (burg): 10, 0.025, 0.005, 50")
 NORMAL (U"This says that your analysis is done with 10 linear-prediction parameters "
 	"(which will yield at most five formant-bandwidth pairs), with an analysis window "
@@ -5047,14 +5047,14 @@ NORMAL (U"As a result, an object called “LPC hallo” will appear in the list 
 	"These coefficients are rather opaque even to the expert (try to view them with @Inspect), "
 	"but they are the raw material from which formant and bandwidth values can be computed. "
 	"To see the smoothed @Spectrogram associated with the LPC object, choose @@LPC: To Spectrogram...@:")
-CODE (U"#selectObject: “LPC hallo_11000”")
+CODE (U"selectObject: “LPC hallo_11000”")
 CODE (U"To Spectrogram: 20, 0, 50")
 CODE (U"Paint: 0, 0, 0, 0, 50, 0, 0, “yes”")
 NORMAL (U"Note that when drawing this Spectrogram, you will want to set the pre-emphasis to zero "
 	"(the fifth 0 in the last line), because pre-emphasis has already been applied in the analysis.")
 NORMAL (U"You can get and draw the formant-bandwidth pairs from the LPC object, "
 	"with @@LPC: To Formant@ and @@Formant: Speckle...@:")
-CODE (U"#selectObject: “LPC hallo_11000”")
+CODE (U"selectObject: “LPC hallo_11000”")
 CODE (U"To Formant")
 CODE (U"Speckle: 0, 0, 5500, 30, “yes”")
 NORMAL (U"Note that in converting the @LPC into a @Formant object, you may have lost some "
@@ -5065,7 +5065,7 @@ NORMAL (U"Note that in converting the @LPC into a @Formant object, you may have 
 	"For resynthesis purposes, they might still be important.")
 NORMAL (U"Instead of using the intermediate LPC object, you could have done a formant analysis "
 	"directly on the original Sound, with @@Sound: To Formant (burg)...@:")
-CODE (U"#selectObject: “Sound hallo”")
+CODE (U"selectObject: “Sound hallo”")
 CODE (U"To Formant (burg): 0.005, 5, 5500, 0.025, 50")
 NORMAL (U"A @Formant object has a fixed sampling (time step, frame length), and for every "
 	"%%formant frame%, it contains a number of formant-bandwidth pairs.")
@@ -5077,7 +5077,7 @@ ENTRY (U"2. How to extract the %source from an existing speech sound")
 NORMAL (U"If you are only interested in the %filter characteristics, you can get by with @Formant objects. "
 	"To get at the %source signal, however, you need the raw @LPC object: "
 	"you select it together with the resampled @Sound, and apply %%inverse filtering%:")
-CODE (U"#selectObject: “Sound hallo_11000”, “LPC hallo_11000”")
+CODE (U"selectObject: “Sound hallo_11000”, “LPC hallo_11000”")
 CODE (U"Filter (inverse)")
 NORMAL (U"A new Sound named `hallo_11000` will appear in the list of objects "
 	"(you could rename it to `source`). "
@@ -5095,23 +5095,23 @@ NORMAL (U"Note that with inverse filtering you cannot measure the actual spectra
 ENTRY (U"3. How to do the synthesis")
 NORMAL (U"You can create a new Sound from a source Sound and a filter, in at least four ways.")
 NORMAL (U"If your filter is an @LPC object, you select it and the source, and choose @@LPC & Sound: Filter...@:")
-CODE (U"#selectObject: “Sound source”, “LPC filter”")
+CODE (U"selectObject: “Sound source”, “LPC filter”")
 CODE (U"Filter: “no”")
 NORMAL (U"If you had computed the source and filter from an LPC analysis, this procedure should give "
 	"you back the original Sound, except that windowing has caused 25 milliseconds at the beginning "
 	"and end of the signal to be set to zero.")
 NORMAL (U"If your filter is a @Formant object, you select it and the source, and choose @@Sound & Formant: Filter@:")
-CODE (U"#selectObject: “Sound source”, “Formant filter”")
+CODE (U"selectObject: “Sound source”, “Formant filter”")
 CODE (U"Filter")
 NORMAL (U"If you had computed the source and filter from an LPC analysis, this procedure will not generally give "
 	"you back the original Sound, because some linear-prediction coefficients will have been ignored "
 	"in the conversion to formant-bandwidth pairs.")
 NORMAL (U"If your filter is a @FormantGrid object, you select it and the source, and choose @@Sound & FormantGrid: Filter@:")
-CODE (U"#selectObject: “Sound source”, “FormantGrid filter”")
+CODE (U"selectObject: “Sound source”, “FormantGrid filter”")
 CODE (U"Filter")
 NORMAL (U"Finally, you could just know the %%impulse response% of your filter (in a @Sound object). "
 	"You then select both Sound objects, and choose @@Sounds: Convolve...@:")
-CODE (U"#selectObject: “Sound source”, “Sound filter”")
+CODE (U"selectObject: “Sound source”, “Sound filter”")
 CODE (U"Convolve: “integral”, “zero”")
 NORMAL (U"As a last step, you may want to bring the resulting sound within the [-1; +1] range:")
 CODE (U"Scale peak: 0.99")
@@ -5121,7 +5121,7 @@ NORMAL (U"You can hardly change the values in an @LPC object in a meaningful way
 NORMAL (U"A @Formant object can be changed in a friendlier way, with @@Formant: Formula (frequencies)...@ "
 	"and @@Formant: Formula (bandwidths)...@. For instance, to multiply all formant frequencies by 0.9, "
 	"you do")
-CODE (U"#selectObject: “Formant filter”")
+CODE (U"selectObject: “Formant filter”")
 CODE (U"Formula (frequencies): “self * 0.9”")
 NORMAL (U"To add 200 hertz to all values of %F__2_, you do")
 CODE (U"Formula (frequencies): ~ if row = 2 then self + 200 else self fi")
