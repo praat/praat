@@ -1284,6 +1284,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 	const bool weAreInNotebook = ( my backquoteIsVerbatim );
 	const bool topDownVerbatim = ( my font == kGraphics_font::COURIER && weAreInNotebook );
 	bool globalVerbatim = topDownVerbatim;
+	bool thinLink = false;
 	while ((kar = *in++) != U'\0') {
 		//TRACE
 		if (kar == U'^' && my circumflexIsSuperscript) {
@@ -1479,7 +1480,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				char32 *to = links [numberOfLinks]. name;
 				char32 *max = to + MAX_LINK_LENGTH;
 				while (*from && *from != U'@' && *from != U'|' && to < max)   // until end-of-string or '@' or '|'...
-					* to ++ = * from ++;   // ... copy one character
+					*to ++ = *from ++;   // ... copy one character
 				*to = U'\0';   // close saved link info
 				/*
 					Second step: collect the link text that is to be drawn.
@@ -1549,17 +1550,27 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			*/
 			if ((kar1 = in [0]) == U'\0' || (kar2 = in [1]) == U'\0') {
 				;   // normal backslash symbol
-			} else if (topDownVerbatim && kar1 == U'@' && kar2 == U'{') {
+			} else if (topDownVerbatim &&
+				(kar1 == U'@' && kar2 == U'{') ||
+				(kar1 == U'`' && kar2 == U'{') ||
+				(kar1 == U'#' && kar2 == U'@' && in [2] == U'{') ||
+				(kar1 == U'#' && kar2 == U'`' && in [2] == U'{'))
+			{
 				/*
-					Detected "\@{" in strings like "\@{Link with spaces}".
+					Detected "\@{" or "\`{" or "\#@{" or "\#`{"
+					in strings like "\@{Link with spaces}" or "\`{writeInfoLine}".
 					A format like "\@{Page linked to|Text shown in blue}" is permitted,
 					as is \@{PointProcess: ||Draw}.
 				*/
-				const char32 *from = in + 2;   // start with first character after "\@{"
+				const bool isVerbatimLink = ( kar1 == U'`' || kar2 == U'`' );
+				thinLink = ( kar1 != U'#' );
+				const char32 *from = in + 3 - thinLink;   // start with first character after "\@{"
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
 				char32 *to = links [numberOfLinks]. name;
 				char32 *max = to + MAX_LINK_LENGTH;
+				if (isVerbatimLink)
+					*to ++ = U'`';
 				while (*from && *from != U'}') {   // until end-of-string or '}' or...
 					if (*from == U'|') {
 						if (from [1] == U'|' && from [2] != U'\0' && from [2] != U'}') {
@@ -1595,61 +1606,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 						*to ++ = U'.';
 					*to = U'\0';   // close saved link info again
 				}
-				/*
-					We are entering the link-text-collection mode.
-				*/
-				globalLink = true;
-				/*
-					The closing "}" must be skipped and must not be drawn.
-				*/
-				in += 2;   // skip '}'
-				continue;   // do not draw
-			} else if (topDownVerbatim && kar1 == U'`' && kar2 == U'{') {
-				/*
-					Detected "\`{" in strings like "\`{writeInfoLine}".
-				*/
-				const char32 *from = in + 2;   // start with first character after "\`{"
-				if (! links [++ numberOfLinks]. name)   // make room for saving link info
-					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
-				char32 *to = links [numberOfLinks]. name;
-				char32 *max = to + MAX_LINK_LENGTH;
-				*to ++ = U'`';
-				while (*from && *from != U'}') {   // until end-of-string or '}' or...
-					if (*from == U'|') {
-						if (from [1] == U'|' && from [2] != U'\0' && from [2] != U'}') {
-							/*
-								Include the stuff after "||" into the link info.
-							*/
-							from += 2;
-							in += to - links [numberOfLinks]. name + 2;   // skip head of link info as well as "||"
-						} else {
-							/*
-								Second step: collect the link text that is to be drawn.
-								Its characters will be collected during the normal cycles of the loop.
-								If the link info is equal to the link text, no action is needed.
-								If, on the other hand, there is a separate link info, this will have to be skipped.
-							*/
-							in += to - links [numberOfLinks]. name + 1;   // skip link info as well as "|"
-							break;   // ...or until single '|'...
-						}
-					}
-					if (to < max)
-						* to ++ = * from ++;   // ... copy one character
-				}
-				*to = U'\0';   // close saved link info
-				/*
-					Replace final colon with three dots.
-					This has to be done *after* the above increments of `in`.
-				*/
-				if (to - links [numberOfLinks]. name > 0 && to [-1] == U':') {
-					to [-1] = U'.';
-					if (to < max)
-						*to ++ = U'.';
-					if (to < max)
-						*to ++ = U'.';
-					*to = U'\0';   // close saved link info again
-				}
-				if (to < max) {
+				if (isVerbatimLink && to < max) {
 					*to ++ = U'`';
 					*to = U'\0';   // close saved link info again
 				}
@@ -1660,7 +1617,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				/*
 					The closing "}" must be skipped and must not be drawn.
 				*/
-				in += 2;   // skip '}'
+				in += 3 - thinLink;   // skip '}'
 				continue;   // do not draw
 			} else if (topDownVerbatim && kar1 == U'#' && kar2 == U'{') {
 				globalBold = true;
@@ -1726,7 +1683,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				wordItalic = wordBold = wordCode = wordLink = false;
 		}
 		out -> style =
-			(wordLink | globalLink | verbatimLink) && my fontStyle != Graphics_CODE ? Graphics_BOLD :
+			(wordLink | globalLink | verbatimLink) && my fontStyle != Graphics_CODE ? (thinLink ? 0 : Graphics_BOLD) :
 			((my fontStyle & Graphics_ITALIC) | charItalic | wordItalic | globalItalic ? Graphics_ITALIC : 0) +
 			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
 		out -> font.string = nullptr;

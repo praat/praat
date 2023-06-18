@@ -94,11 +94,11 @@ One can simulate the number of points and their times as follows.
 To show that our fast implementation does exactly the same as ##Create Poisson process...# does,
 we first make sure that the points lie at reproducible time points:
 {
-	\`{random_initializeWithSeedUnsafelyButPredictably} (1234567654321)
+	\#`{random_initializeWithSeedUnsafelyButPredictably} (1234567654321)
 	\#{Create Poisson process:} "rain", 2.0, 5.0, 4.0
 	\@{PointProcess: ||Draw:} 0.0, 6.0, "yes"
 	\@{Text top:} "no", "##Three reproducible seconds of rain"
-	\`{random_initializeSafelyAndUnpredictably} ()
+	\#`{random_initializeSafelyAndUnpredictably} ()
 }
 These are only 8 points, and their times will not change when you click “> 1” followed by “1 <”,
 because Praat’s random generator is initialized to a fixed state,
@@ -108,17 +108,17 @@ with different results depending on that number) in the first line of the script
 To replicate how these 8 numbers were created, we first replicate their count:
 {
 	\`{random_initializeWithSeedUnsafelyButPredictably} (1234567654321)
-	n = \`{randomPoisson} (12.0)
+	n = \#`{randomPoisson} (12.0)
 	\`{writeInfoLine}: n
 }
 We then replicate the actual times according to the algorithm above:
 {
-	times# = \`{randomUniform#} (n, 2.0, 5.0)
+	times# = \#`{randomUniform#} (n, 2.0, 5.0)
 	\`{writeInfoLine}: times#
 }
 In a PointProcess, these 8 points will be in sorted order:
 {
-	times# = \`{sort#} (times#)
+	times# = \#`{sort#} (times#)
 	\`{writeInfoLine}: times#
 }
 Here you can see, as in the picture, that the interval between the 4th and 5th point
@@ -126,8 +126,8 @@ is the largest, and the interval between the 5th and 6th point is the smallest.
 
 We can add these eight points at one stroke to an empty PointProcess:
 {
-	\@{Create empty PointProcess:} "rain3", 2.0, 5.0
-	\@{PointProcess: ||Add points:} times#
+	\#@{Create empty PointProcess:} "rain3", 2.0, 5.0
+	\#@{PointProcess: ||Add points:} times#
 	\@{PointProcess: ||Draw:} 0.0, 6.0, "yes"
 	\@{Text top:} "no", "##Three reproducible seconds of rain,
 	... fast implementation"
@@ -143,8 +143,8 @@ and added them immediately to an empty PointProcess:
 	n = \`{randomPoisson} (12.0)
 	\@{Create empty PointProcess:} "rain4", 2.0, 5.0
 	for i to n
-		time = \`{randomUniform} (2.0, 5.0)
-		\@{PointProcess: ||Add point:} time
+		time = \#`{randomUniform} (2.0, 5.0)
+		\#@{PointProcess: ||Add point:} time
 	endfor
 	\`{random_initializeSafelyAndUnpredictably} ()
 	\@{PointProcess: ||Draw:} 0.0, 6.0, "yes"
