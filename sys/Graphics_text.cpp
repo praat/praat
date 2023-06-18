@@ -1604,6 +1604,64 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				*/
 				in += 2;   // skip '}'
 				continue;   // do not draw
+			} else if (topDownVerbatim && kar1 == U'`' && kar2 == U'{') {
+				/*
+					Detected "\`{" in strings like "\`{writeInfoLine}".
+				*/
+				const char32 *from = in + 2;   // start with first character after "\`{"
+				if (! links [++ numberOfLinks]. name)   // make room for saving link info
+					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
+				char32 *to = links [numberOfLinks]. name;
+				char32 *max = to + MAX_LINK_LENGTH;
+				*to ++ = U'`';
+				while (*from && *from != U'}') {   // until end-of-string or '}' or...
+					if (*from == U'|') {
+						if (from [1] == U'|' && from [2] != U'\0' && from [2] != U'}') {
+							/*
+								Include the stuff after "||" into the link info.
+							*/
+							from += 2;
+							in += to - links [numberOfLinks]. name + 2;   // skip head of link info as well as "||"
+						} else {
+							/*
+								Second step: collect the link text that is to be drawn.
+								Its characters will be collected during the normal cycles of the loop.
+								If the link info is equal to the link text, no action is needed.
+								If, on the other hand, there is a separate link info, this will have to be skipped.
+							*/
+							in += to - links [numberOfLinks]. name + 1;   // skip link info as well as "|"
+							break;   // ...or until single '|'...
+						}
+					}
+					if (to < max)
+						* to ++ = * from ++;   // ... copy one character
+				}
+				*to = U'\0';   // close saved link info
+				/*
+					Replace final colon with three dots.
+					This has to be done *after* the above increments of `in`.
+				*/
+				if (to - links [numberOfLinks]. name > 0 && to [-1] == U':') {
+					to [-1] = U'.';
+					if (to < max)
+						*to ++ = U'.';
+					if (to < max)
+						*to ++ = U'.';
+					*to = U'\0';   // close saved link info again
+				}
+				if (to < max) {
+					*to ++ = U'`';
+					*to = U'\0';   // close saved link info again
+				}
+				/*
+					We are entering the link-text-collection mode.
+				*/
+				globalLink = true;
+				/*
+					The closing "}" must be skipped and must not be drawn.
+				*/
+				in += 2;   // skip '}'
+				continue;   // do not draw
 			} else if (topDownVerbatim && kar1 == U'#' && kar2 == U'{') {
 				globalBold = true;
 				in += 2;
