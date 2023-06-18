@@ -1438,7 +1438,6 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 		} else if (kar == U'@' && my atSignIsLink   // recognize links
 		           && my textRotation == 0.0)   // no links allowed in rotated text, because links are identified by 2-point rectangles
 		{
-			char32 *to, *max;
 			/*
 				We will distinguish:
 				1. The link text: the text shown to the user, drawn in blue.
@@ -1455,12 +1454,18 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					Output the at sign verbatim, by falling through.
 				*/
 			} else if (globalLink) {
-				/*
-					Detected the third "@" in strings like "@@Link with spaces@".
-					This closes the link text (which will be shown in blue).
-				*/
-				globalLink = false;   // close the drawn link text (the normal colour will take over)
-				continue;   // the "@" must not be drawn
+				if (topDownVerbatim) {
+					/*
+						Output the at sign verbatim, by falling through.
+					*/
+				} else {
+					/*
+						Detected the third "@" in strings like "@@Link with spaces@".
+						This closes the link text (which will be shown in blue).
+					*/
+					globalLink = false;   // close the drawn link text (the normal colour will take over)
+					continue;   // the "@" must not be drawn
+				}
 			} else if (in [0] == U'@') {
 				/*
 					Detected the second "@" in strings like "@@Link with spaces@".
@@ -1471,7 +1476,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				const char32 *from = in + 1;   // start with first character after "@@"
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
-				to = links [numberOfLinks]. name, max = to + MAX_LINK_LENGTH;
+				char32 *to = links [numberOfLinks]. name;
+				char32 *max = to + MAX_LINK_LENGTH;
 				while (*from && *from != U'@' && *from != U'|' && to < max)   // until end-of-string or '@' or '|'...
 					* to ++ = * from ++;   // ... copy one character
 				*to = U'\0';   // close saved link info
@@ -1496,8 +1502,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				const char32 *from = in;   // start with the opening backquote
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
-				to = links [numberOfLinks]. name;
-				max = to + MAX_LINK_LENGTH;
+				char32 *to = links [numberOfLinks]. name;
+				char32 *max = to + MAX_LINK_LENGTH;
 				*to ++ = *from++;   // copy the backquote
 				while (*from && *from != U'`' && to < max)   // until end-of-verbatim...
 					*to ++ = *from++;   // ... copy one character
@@ -1520,8 +1526,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				const char32 *from = in;   // start with first character after "@"
 				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
-				to = links [numberOfLinks]. name;
-				max = to + MAX_LINK_LENGTH;
+				char32 *to = links [numberOfLinks]. name;
+				char32 *max = to + MAX_LINK_LENGTH;
 				while (*from && (Melder_isWordCharacter (*from) || *from == U'_') && to < max)   // until end-of-word...
 					*to ++ = *from++;   // ... copy one character
 				*to = U'\0';   // close saved link info
@@ -1541,20 +1547,80 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			/*
 				... except if kar1 or kar2 is null: in that case, draw the backslash.
 			*/
-			if (globalVerbatim || ! (kar1 = in [0]) || ! (kar2 = in [1])) {
+			if ((kar1 = in [0]) == U'\0' || (kar2 = in [1]) == U'\0') {
 				;   // normal backslash symbol
-			/*
-				Catch "\s{", which means: small characters until corresponding '}'.
-			*/
-			} else if (kar2 == U'{') {
-				if (kar1 == U's')
-					globalSmall = true;
+			} else if (topDownVerbatim && kar1 == U'@' && kar2 == U'{') {
+				/*
+					Detected "\@{" in strings like "\@{Link with spaces}".
+					A format like "\@{Page linked to|Text shown in blue}" is permitted,
+					as is \@{PointProcess: ||Draw}.
+				*/
+				const char32 *from = in + 2;   // start with first character after "\@{"
+				if (! links [++ numberOfLinks]. name)   // make room for saving link info
+					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
+				char32 *to = links [numberOfLinks]. name;
+				char32 *max = to + MAX_LINK_LENGTH;
+				while (*from && *from != U'}') {   // until end-of-string or '}' or...
+					if (*from == U'|') {
+						if (from [1] == U'|' && from [2] != U'\0' && from [2] != U'}') {
+							/*
+								Include the stuff after "||" into the link info.
+							*/
+							from += 2;
+							in += to - links [numberOfLinks]. name + 2;   // skip head of link info as well as "||"
+						} else {
+							/*
+								Second step: collect the link text that is to be drawn.
+								Its characters will be collected during the normal cycles of the loop.
+								If the link info is equal to the link text, no action is needed.
+								If, on the other hand, there is a separate link info, this will have to be skipped.
+							*/
+							in += to - links [numberOfLinks]. name + 1;   // skip link info as well as "|"
+							break;   // ...or until single '|'...
+						}
+					}
+					if (to < max)
+						* to ++ = * from ++;   // ... copy one character
+				}
+				*to = U'\0';   // close saved link info
+				/*
+					Replace final colon with three dots.
+					This has to be done *after* the above increments of `in`.
+				*/
+				if (to - links [numberOfLinks]. name > 0 && to [-1] == U':') {
+					to [-1] = U'.';
+					if (to < max)
+						*to ++ = U'.';
+					if (to < max)
+						*to ++ = U'.';
+					*to = U'\0';   // close saved link info again
+				}
+				/*
+					We are entering the link-text-collection mode.
+				*/
+				globalLink = true;
+				/*
+					The closing "}" must be skipped and must not be drawn.
+				*/
+				in += 2;   // skip '}'
+				continue;   // do not draw
+			} else if (topDownVerbatim && kar1 == U'#' && kar2 == U'{') {
+				globalBold = true;
 				in += 2;
 				continue;
-			/*
-				Default action: translate the backslash sequence into the long character 'kar1,kar2'.
-			*/
+			} else if (globalVerbatim) {
+				;   // normal backslash symbol
+			} else if (kar1 == U's' && kar2 == U'{') {
+				/*
+					Catch "\s{", which means: small characters until corresponding '}'.
+				*/
+				globalSmall = true;
+				in += 2;
+				continue;
 			} else {
+				/*
+					Default action: translate the backslash sequence into the long character 'kar1,kar2'.
+				*/
 				kar = Longchar_getInfo (kar1, kar2) -> unicode;
 				in += 2;
 			}
@@ -1575,7 +1641,16 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					in ++;
 				}
 			} else if (kar == U'}') {
-				if (globalSmall) { globalSmall = 0; continue; }
+				if (globalSmall) {
+					globalSmall = false;
+					continue;
+				} else if (globalBold && topDownVerbatim) {
+					globalBold = false;
+					continue;
+				} else if (globalLink && topDownVerbatim) {
+					globalLink = false;
+					continue;
+				}
 			}
 		} else if (kar == U'\t') {
 			out -> kar = U'\t';
