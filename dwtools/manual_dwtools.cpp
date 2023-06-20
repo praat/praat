@@ -717,7 +717,8 @@ EQUATION (U"(%x/%\\si__x_)^2 + (%y/%\\si__y_)^2 = %numberOfSigmas^2.")
 NORMAL (U"The %numberOfSigmas=1 ellipse covers 39.3\\%  of the data, "
 	"the %numberOfSigmas=2 ellipse 86.5\\% , and "
 	"the %numberOfSigmas=3 ellipse 98.9\\% .")
-NORMAL (U"From the formula above we can show that if we want to cover %p percent of the data, we have to "		"chose %numberOfSigmas as:")
+NORMAL (U"From the formula above we can show that if we want to cover %p percent of the data, we have to "
+	"choose %numberOfSigmas as:")
 EQUATION (U"%numberOfSigmas = \\Vr(-2 ln(1-%p/100)).")
 NORMAL (U"For covering 95\\%  of the data we calculate %numberOfSigmas = 2.45.")
 MAN_END
@@ -3441,7 +3442,7 @@ MAN_END
 MAN_BEGIN (U"Regular expressions", U"David Weenink & Paul Boersma", 20180401)
 INTRO (U"This tutorial describes the syntax of regular expressions in Praat. ")
 ENTRY (U"Introduction")
-NORMAL (U"A %%regular expression% (regex) is a text string that describes a %set "
+NORMAL (U"A %%regular expression% (%regex) is a text string that describes a %set "
 	"of strings. Regular expressions are useful as a way to search "
 	"for patterns in text strings and, optionally, replace them by another "
 	"pattern.")
@@ -3474,9 +3475,8 @@ LIST_ITEM (U"7. @@Regular expressions 7. Octal and hexadecimal escapes|"
 	"Octal and hexadecimal escapes@ (things like \\bs053 or \\bsX2B)")
 LIST_ITEM (U"8. @@Regular expressions 8. Substitution special characters|"
 	"Substitution special characters@ (\\bs1..\\bs9 \\bsU \\bsu \\bsL \\bsl &)")
-NORMAL (U"More in depth coverage of regular expressions can be found in "
+NORMAL (U"More in-depth coverage of regular expressions can be found in "
 	"@@Friedl (1997)@.")
-
 MAN_END
 
 MAN_BEGIN (U"Regular expressions 1. Special characters", U"djmw", 20010718)
@@ -3913,7 +3913,7 @@ NORMAL (U"In the following example we first construct a sparse vector #x, with r
 CODE (U"nrow = 100")
 CODE (U"ncol = 1000")
 CODE (U"x# = zero# (ncol)")
-CODE (U"for i to size (x\\# )")
+CODE (U"for i to size (x#)")
 	CODE1 (U"x# [i] = if randomUniform (0,1) < 0.005 then randomUniform (0.1, 10) else 0.0 fi")
 CODE (U"endfor")
 CODE (U"# On average in x# 5 out of 1000 will be unequal zero.")
@@ -4378,11 +4378,11 @@ DEFINITION (U"defines the y-value of the first and last point of the Polygon. Th
 ENTRY (U"Example")
 NORMAL (U"The following script paints the area under a sound curve in red and the area above in green.")
 CODE (U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)")
-CODE (U"\\# Connection y-value is at amplitude -1: area under the curve.")
+CODE (U"# Connection y-value is at amplitude -1: area under the curve.")
 CODE (U"p1 = To Polygon: 1, 0, 0, -1, 1, -1")
 CODE (U"Paint: \"{1,0,0}\", 0, 0, -1, 1")
 CODE (U"selectObject: s")
-CODE (U"\\# Connection y-value is now at amplitude 1: area above the curve.")
+CODE (U"# Connection y-value is now at amplitude 1: area above the curve.")
 CODE (U"p2 = To Polygon: 1, 0, 0, -1, 1, 1")
 CODE (U"Paint: \"{0,1,0}\", 0, 0, -1, 1")
 SCRIPT (4.5, 2,

@@ -61,7 +61,7 @@ NORMAL (U"The usual pitch analysis contains a %%path finder% that searches for a
 	"A frame is regarded as %locally unvoiced if it has a voicing strength below the %%voicing threshold% (whose standard value is 0.45), "
 	"or a local peak below the %%silence threshold% (whose standard value is 0.03).")
 NORMAL (U"In the voice report, the fraction of unvoiced frames will be reported as follows:")
-CODE (U"Fraction of locally unvoiced frames: 14.000\\%  (14/100)")
+CODE (U"Fraction of locally unvoiced frames: 14.000% (14/100)")
 NORMAL (U"The numbers between parentheses are the number of unvoiced frames and the total number of frames, "
 	"respectively (in MDVP, these are called NUV and SEG, respectively).")
 NORMAL (U"The normative value for the fraction of unvoiced frames is 0, i.e., normal healthy voices should "
@@ -77,7 +77,7 @@ NORMAL (U"This is the total duration of the breaks between the voiced parts of t
 	"and the end of the signal are not considered breaks, you will probably not want to select these silences "
 	"when measuring this parameter.")
 NORMAL (U"In the voice report, the degree of voice breaks will be reported like this:")
-CODE (U"Degree of voice breaks: 29.529\\%  (1.163061 s / 3.938685 s)")
+CODE (U"Degree of voice breaks: 29.529% (1.163061 s / 3.938685 s)")
 NORMAL (U"The numbers between parentheses are the total duration of the voice breaks and the duration of the analysed part of the signal, "
 	"respectively.")
 MAN_END

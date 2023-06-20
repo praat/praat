@@ -390,7 +390,7 @@ NORMAL (U"For purposes of computation speed, Praat may decide to change the time
 ENTRY (U"Tests of the bandwidth")
 NORMAL (U"You can check the bandwidth formula with the following procedure:")
 CODE (U"! create a 1000-Hz sine wave, windowed by a 0.2-seconds Gaussian window.")
-CODE (U"Create Sound from formula: \"gauss\", 1, 0.0, 1.0, 44100, \"sin(2*pi*1000*x) * exp(-3*((x-0.5)/0.1)\\^ 2)\"")
+CODE (U"Create Sound from formula: \"gauss\", 1, 0.0, 1.0, 44100, \"sin(2*pi*1000*x) * exp(-3*((x-0.5)/0.1)^2)\"")
 CODE (U"! compute its spectrum and look at its bandwidth")
 CODE (U"To Spectrum: \"yes\"")
 CODE (U"Draw: 980, 1020, 20, 80, \"yes\"")
