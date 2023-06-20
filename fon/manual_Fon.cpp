@@ -291,13 +291,13 @@ ENTRY (U"Script usage")
 NORMAL (U"In a script, you can use this command to cycle through the files in a folder. "
 	"For instance, to read in all the sound files in a specified folder, "
 	"you could use the following script:")
-CODE (U"folder\\$  = \"/usr/people/miep/sounds\"")
-CODE (U"strings = Create Strings as file list: \"list\", folder\\$  + \"/*.wav\"")
+CODE (U"folder$ = \"/usr/people/miep/sounds\"")
+CODE (U"strings = Create Strings as file list: \"list\", folder$ + \"/*.wav\"")
 CODE (U"numberOfFiles = Get number of strings")
 CODE (U"for ifile to numberOfFiles")
 	CODE1 (U"selectObject: strings")
-	CODE1 (U"fileName\\$  = Get string: ifile")
-	CODE1 (U"Read from file: folder\\$  + \"/\" + fileName\\$ ")
+	CODE1 (U"fileName$ = Get string: ifile")
+	CODE1 (U"Read from file: folder$ + \"/\" + fileName$")
 CODE (U"endfor")
 NORMAL (U"If the script has been saved to a script file, you can use file paths that are relative to the folder "
 	"where you saved the script. Thus, with")
@@ -908,26 +908,26 @@ ENTRY (U"Example 2: formant logging")
 NORMAL (U"Suppose you want to log the start and finish of the selection, its duration, and the mean values "
 	"of the first three formants, all separated by tab stops for easy importation into Microsoft® Excel™. "
 	"You could use the following log format:")
-CODE (U"\'t1:4\'\'tab\\$ \'\'t2:4\'\'tab\\$ \'\'f1:0\'\'tab\\$ \'\'f2:0\'\'tab\\$ \'\'f3:0\'")
+CODE (U"\'t1:4\'\'tab$\'\'t2:4\'\'tab$\'\'f1:0\'\'tab$\'\'f2:0\'\'tab$\'\'f3:0\'")
 NORMAL (U"You see that \'t1\' and \'t2\' are the start and finish of the selection, respectively, "
 	"and that they are written with 4 digits after the decimal point. By using \":0\", the three formant values "
-	"are rounded to whole numbers in hertz. The word \'tab\\$ \' is the tab stop.")
+	"are rounded to whole numbers in hertz. The word `tab$` is the tab stop.")
 ENTRY (U"Loggable values")
 NORMAL (U"The following values can be logged:")
-LIST_ITEM (U"\'time\': the time of the cursor, or the centre of the selection.")
-LIST_ITEM (U"\'t1\': the start of the selection (\"B\").")
-LIST_ITEM (U"\'t2\': the end of the selection (\"E\").")
-LIST_ITEM (U"\'dur\': the duration of the selection.")
-LIST_ITEM (U"\'freq\': the frequency at the frequency cursor.")
-LIST_ITEM (U"\'f0\': the pitch at the cursor time, or the mean pitch in the selection.")
-LIST_ITEM (U"\'f1\', \'f2\', \'f3\', \'f4\', \'f5\': the first/second/third/fourth/fifth formant at the cursor time, "
+LIST_ITEM (U"`time`: the time of the cursor, or the centre of the selection.")
+LIST_ITEM (U"`t1`: the start of the selection (\"B\").")
+LIST_ITEM (U"`t2`: the end of the selection (\"E\").")
+LIST_ITEM (U"`dur`: the duration of the selection.")
+LIST_ITEM (U"`freq`: the frequency at the frequency cursor.")
+LIST_ITEM (U"`f0`: the pitch at the cursor time, or the mean pitch in the selection.")
+LIST_ITEM (U"`f1`, `f2`, `f3`, `f4`, `f5`: the first/second/third/fourth/fifth formant at the cursor time, "
 	"or the mean first/second/third/fourth/fifth formant in the selection.")
-LIST_ITEM (U"\'b1\', \'b2\', \'b3\', \'b4\', \'b5\': the bandwidth of the first/second/third/fourth/fifth formant "
+LIST_ITEM (U"`b1`, `b2`, `b3`, `b4`, `b5`: the bandwidth of the first/second/third/fourth/fifth formant "
 	"at the cursor time or at the centre of the selection.")
-LIST_ITEM (U"\'intensity\': the intensity at the cursor time, or the mean intensity in the selection, in dB.")
-LIST_ITEM (U"\'power\': the spectral power at the cursor cross, in Pa^2/Hz.")
-LIST_ITEM (U"\'tab\\$ \': the tab stop.")
-LIST_ITEM (U"\'editor\\$ \': the title of the editor window (i.e. the name of the visible Sound or TextGrid).")
+LIST_ITEM (U"`intensity`: the intensity at the cursor time, or the mean intensity in the selection, in dB.")
+LIST_ITEM (U"`power`: the spectral power at the cursor cross, in Pa^2/Hz.")
+LIST_ITEM (U"`tab$`: the tab stop.")
+LIST_ITEM (U"`editor$`: the title of the editor window (i.e. the name of the visible Sound or TextGrid).")
 ENTRY (U"More flexibility in logging")
 NORMAL (U"You may sometimes require information in your log file that cannot be generated directly "
 	"by the loggable values above. Suppose, for instance, that you want to log the values for F1 and F2-F1 "
@@ -935,8 +935,8 @@ NORMAL (U"You may sometimes require information in your log file that cannot be 
 CODE (U"f1 = Get first formant")
 CODE (U"f2 = Get second formant")
 CODE (U"f21 = f2 - f1")
-CODE (U"appendInfoLine: fixed\\$  (f1, 0), \" \", fixed\\$  (f21, 0)")
-CODE (U"appendFileLine: \"D:\\bsPraat logs\\bsFormant log.txt\", fixed\\$  (f1, 0), tab\\$ , fixed\\$  (f21, 0)")
+CODE (U"appendInfoLine: fixed$ (f1, 0), \" \", fixed$ (f21, 0)")
+CODE (U"appendFileLine: \"D:\\Praat logs\\Formant log.txt\", fixed$ (f1, 0), tab$, fixed$ (f21, 0)")
 NORMAL (U"With this script, the information would be appended both to the Info window and to the "
 	"file \"Formant log.txt\" on your desktop.")
 NORMAL (U"You can make this script accessible with @@Keyboard shortcuts|Option-F12@ (or @@Keyboard shortcuts|Command-F12@) "
@@ -945,13 +945,13 @@ NORMAL (U"You can make this script accessible with @@Keyboard shortcuts|Option-F
 NORMAL (U"These scripts may take arguments. Suppose, for instance, that you want to specify a vowel symbol "
 	"as you press @@Keyboard shortcuts|Option-F12@. The following script will take care of that:")
 CODE (U"form: \"Save vowel and formants\"")
-CODE1 (U"word: \"Vowel\", \"a\"")
+	CODE1 (U"word: \"Vowel\", \"a\"")
 CODE (U"endform")
 CODE (U"f1 = Get first formant")
 CODE (U"f2 = Get second formant")
 CODE (U"f21 = f2 - f1")
-CODE (U"appendInfoLine: vowel\\$ , \" \", fixed\\$  (f1, 0), \" \", fixed\\$  (f21, 0)")
-CODE (U"appendFileLine: \"~/Praat logs/Vowels and formants log\", vowel\\$ , tab\\$ , fixed\\$  (f1, 0), tab\\$ , fixed\\$  (f21, 0)")
+CODE (U"appendInfoLine: vowel$, \" \", fixed$ (f1, 0), \" \", fixed$ (f21, 0)")
+CODE (U"appendFileLine: \"~/Praat logs/Vowels and formants log\", vowel$, tab$, fixed$ (f1, 0), tab$, fixed$ (f21, 0)")
 NORMAL (U"Beware of the following pitfall: because of the nature of scripts, you should not try to do this "
 	"when you have two editor windows with the same name. We cannot predict which of the two windows "
 	"will answer the #Get queries...")

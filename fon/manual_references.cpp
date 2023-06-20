@@ -46,7 +46,7 @@ NORMAL (U"Paul Boersma (1998): %%Functional Phonology% [%%LOT International Seri
 	"The Hague: Holland Academic Graphics. Pages i-ix, 1-493. [Doctoral thesis, University of Amsterdam]")
 NORMAL (U"This book can be downloaded as a PDF file from ##http://www.fon.hum.uva.nl/paul/#, "
 	"where you can also find many Praat scripts for the simulations and pictures in this book. "
-	"A paperback version is also available from the author (paul.boersma\\@ uva.nl).")
+	"A paperback version is also available from the author (`paul.boersma@uva.nl`).")
 MAN_END
 
 MAN_BEGIN (U"Boersma (2000)", U"ppgb", 20001027)

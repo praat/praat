@@ -239,13 +239,13 @@ MAN_END
 MAN_BEGIN (U"binomialQ", U"ppgb", 20140223)
 INTRO (U"A function that can be used in @@Formulas@. The complement of the cumulative binomial distribution.")
 ENTRY (U"Syntax")
-TERM (U"$$#binomialQ (%p, %k, %n)")
-DEFINITION (U"the probability that in $%n trials an event with probability $%p will occur at least $%k times.")
+TERM (U"#`binomialQ` (%`p`, %`k`, %`n`)")
+DEFINITION (U"the probability that in %`n` trials an event with probability %`p` will occur at least %`k` times.")
 ENTRY (U"Calculator example")
 NORMAL (U"A die is suspected to yield more sixes than a perfect die would do. In order to test this suspicion, "
 	"you throw it 1,000 times. The result is 211 sixes.")
 NORMAL (U"The probability that a perfect die yields at least 211 sixes is, according to @@Calculator...@, "
-	"$$binomialQ (1/6, 211, 1000)$ = 0.000152.")
+	"\\`{binomialQ} (1/6, 211, 1000)$ = 0.000152.")
 ENTRY (U"Script example")
 NORMAL (U"You convert 1000 values of pitch targets in Hz to the nearest note on the piano keyboard. "
 	"597 of those values turn out to be in the A, B, C, D, E, F, or G regions (the white keys), and 403 values turn out "
@@ -253,16 +253,16 @@ NORMAL (U"You convert 1000 values of pitch targets in Hz to the nearest note on 
 	"Do our subjects have a preference for the white keys? "
 	"The following script computes the probability that in the case of no preference the subjects "
 	"would target the white keys at least 597 times. This is compared with a %\\ci^2 test.")
-CODE (U"%a = 597")
-CODE (U"%b = 403")
-CODE (U"%p = 7/12   ; no preference")
-CODE (U"writeInfoLine: \"*** Binomial test \", %a, \", \", %b, \", p = \", fixed\\$  (%p, 6), \" ***\"")
-CODE (U"%pbin = binomialQ (%p, %a, %a+%b)")
-CODE (U"appendInfoLine: \"P (binomial) = \", fixed\\$  (%pbin, 6)")
-CODE (U"\\#  Chi-square test with Yates correction:")
-CODE (U"%x2 = (%a - 1/2 - %p * (%a+%b))\\^ 2/(%p*(%a+%b)) + (%b + 1/2 - (1-%p) * (%a+%b))\\^ 2/((1-%p)*(%a+%b))")
-CODE (U"%px2 = chiSquareQ (%x2, 1)")
-CODE (U"appendInfoLine: \"P (chi-square) = \", fixed\\$  (%px2, 6)")
+CODE (U"a = 597")
+CODE (U"b = 403")
+CODE (U"p = 7/12   ; no preference")
+CODE (U"writeInfoLine: \"*** Binomial test \", a, \", \", b, \", p = \", fixed$ (p, 6), \" ***\"")
+CODE (U"pbin = binomialQ (p, a, a+b)")
+CODE (U"appendInfoLine: \"P (binomial) = \", fixed$ (pbin, 6)")
+CODE (U"# Chi-square test with Yates correction:")
+CODE (U"x2 = (a - 1/2 - p * (a+b))^2/(p*(a+b)) + (b + 1/2 - (1-p) * (a+b))^2/((1-p)*(a+b))")
+CODE (U"px2 = chiSquareQ (x2, 1)")
+CODE (U"appendInfoLine: \"P (chi-square) = \", fixed$ (px2, 6)")
 NORMAL (U"The result is:")
 CODE (U"*** Binomial test 597, 403, p = 0.583333 ***")
 CODE (U"P (binomial) = 0.199330")
@@ -553,13 +553,13 @@ INTRO (U"Analogously to the formulas that you can use for creating new objects (
 	"can find in the @Modify menu when you select an object.")
 ENTRY (U"Modifying a Sound with a formula")
 NORMAL (U"Record a sound with your microphone and talk very lowly. If you don't know how to record a sound in Praat, "
-	"consult the @Intro. Once the Sound object is in the list, click #%Play. The result will sound very soft. "
-	"Then choose ##Formula...# from the #Modify menu and type")
+	"consult the @Intro. Once the Sound object is in the list, click #Play. The result will sound very soft. "
+	"Then choose ##Formula...# from the Modify menu and type")
 CODE (U"self * 3")
 NORMAL (U"Click OK, then click #Play again. The sound is much louder now. You have multiplied the amplitude of every sample "
 	"in the sound with a factor of 3.")
 ENTRY (U"Replacing the contents of a Sound with a formula")
-NORMAL (U"If you don’t use $self in your formula, the formula does not refer to the existing contents of the Sound. Hence, the formula ")
+NORMAL (U"If you don’t use `self` in your formula, the formula does not refer to the existing contents of the Sound. Hence, the formula ")
 CODE (U"1/2 * sin (2 * pi * 377 * x)")
 NORMAL (U"will simply replace your recorded speech with a 377-Hz sine wave.")
 ENTRY (U"Modifying a Matrix with a formula")
@@ -572,45 +572,45 @@ LIST_ITEM (U"@Spectrogram, @Cochleagram: rows represent frequencies; columns rep
 LIST_ITEM (U"@Excitation: one row; columns represent frequency bands.")
 LIST_ITEM (U"@Harmonicity: one row; columns represent time frames.")
 NORMAL (U"The formula is performed on every column of every row. The formula")
-CODE (U"self\\^ 2$")
+CODE (U"self^2")
 NORMAL (U"will square all matrix elements.")
 NORMAL (U"The formula first works on the first row, and in that row from the first column on; "
 	"this can work recursively. The formula")
 CODE (U"self + self [row, col - 1]")
 NORMAL (U"integrates each row.")
 ENTRY (U"Referring to the current position in the object")
-NORMAL (U"You can refer to the current position in a Matrix (or Sound, etc.) by index or by $x and $y values:")
-TERM (U"#row")
+NORMAL (U"You can refer to the current position in a Matrix (or Sound, etc.) by index or by %x and %y values:")
+TERM (U"#`row`")
 DEFINITION (U"the current row")
-TERM (U"#col")
+TERM (U"#`col`")
 DEFINITION (U"the current column")
-TERM (U"#x")
+TERM (U"#`x`")
 DEFINITION (U"the %x value associated with the current column:")
 	LIST_ITEM2 (U"for a Sound, Spectrogram, Cochleagram, or Harmonicity: time, as in the 377-Hz sine wave example above")
 	LIST_ITEM2 (U"for a Spectrum: frequency (Hz)")
 	LIST_ITEM2 (U"for an Excitation: frequency (Bark)")
-TERM (U"#y")
+TERM (U"#`y`")
 DEFINITION (U"the %y value associated with the current row:")
 	LIST_ITEM2 (U"for a Spectrogram: frequency (Hz)")
 	LIST_ITEM2 (U"for a Cochleagram: frequency (Bark)")
 ENTRY (U"Referring to the contents of the object itself")
 NORMAL (U"You can refer to values in the current Matrix (or Sound, etc.) by index.")
-TERM (U"##self")
+TERM (U"#`self`")
 DEFINITION (U"refers to the value in the current Matrix at the current row and column, or to the value in the current Sound at the current sample.")
-TERM (U"##self [%%column-expression%]")
+TERM (U"#`self` [%`column-expression`]")
 DEFINITION (U"refers to the value in the current Sound (or Intensity etc.) at the current sample (or frame). "
-	"The %%column-expression% is rounded to the nearest integer. "
+	"The %`column-expression` is rounded to the nearest integer. "
 	"If the index is out of range (less than 1 or greater than %n__%x_), the expression evaluates as 0.")
 NORMAL (U"#Example. An integrator is")
 CODE (U"   self [col - 1] + self * dx")
-TERM (U"##self [%%row-expression%, %%column-expression%]")
+TERM (U"#`self` [%`row-expression`, %`column-expression`]")
 DEFINITION (U"refers to the value in the current Matrix (or Spectrogram etc.) at the specified row and column. "
 	"The expressions are rounded to the nearest integers.")
 NORMAL (U"You can refer to values in the current Matrix (or Spectrogram, etc.) by %x and %y position:")
-TERM (U"##self (%%x-expression%, %%y-expression%)")
+TERM (U"#`self` (%`x-expression`, %`y-expression`)")
 DEFINITION (U"the expressions are linearly interpolated between the four nearest matrix points.")
 NORMAL (U"You can refer to values in the current Sound (or Intensity etc.) by %x position:")
-TERM (U"##self (%%x-expression%)")
+TERM (U"#`self` (%`x-expression`)")
 DEFINITION (U"the expression is linearly interpolated between the two nearest samples (or frames).")
 MAN_END
 
@@ -621,9 +621,9 @@ INTRO (U"In scripts, you can assign numeric expressions to numeric variables, "
 ENTRY (U"Example: report a square")
 NORMAL (U"Choose @@New Praat script@ from the @@Praat menu@. A script editor window will become visible. "
 	"Type the following lines into that window:")
-CODE (U"%x = 99")
-CODE (U"%x2 = %x * %x")
-CODE (U"writeInfoLine: “The square of ”, %x, “ is ”, %x2, “.”")
+CODE (U"x = 99")
+CODE (U"x2 = x * x")
+CODE (U"writeInfoLine: “The square of ”, x, “ is ”, x2, “.”")
 NORMAL (U"This is an example of a simple @@Praat script@; "
 	"it assigns the results of the numeric formulas `99` and `x * x` "
 	"to the numeric variables %`x` and %`x2`. Note that the formula `x * x` itself refers to the variable %`x`. "
@@ -633,11 +633,11 @@ CODE (U"The square of 99 is 9801.")
 NORMAL (U"For more information on scripts, see the @Scripting tutorial.")
 ENTRY (U"Example: rename the city of Washington")
 NORMAL (U"Type the following text into the script editor window:")
-CODE (U"%%current\\$ % = “Bush”")
-CODE (U"%%previous\\$ % = “Clinton”")
-CODE (U"%%famous\\$ % = “Lincoln”")
-CODE (U"%%newCapital\\$ % = %%current\\$ % + mid\\$  (%%famous\\$ %, 2, 3) + right\\$  (%%previous\\$ %, 3)")
-CODE (U"writeInfoLine: “The new capital will be ”, %%newCapital\\$ %, “.”")
+CODE (U"current$ = “Bush”")
+CODE (U"previous$ = “Clinton”")
+CODE (U"famous$ = “Lincoln”")
+CODE (U"newCapital$ = current$ + mid$ (famous$, 2, 3) + right$ (previous$, 3)")
+CODE (U"writeInfoLine: “The new capital will be ”, newCapital$, “.”")
 NORMAL (U"This script assigns the results of four string expressions to the four string variables `current$`, "
 	"`previous$`, `famous$`, and `newCapital$`. The dollar sign is the notation for a string variable or "
 	"for a function whose result is a string (like `left$`). Note that the formula in the fourth line refers to three existing "
@@ -645,9 +645,9 @@ NORMAL (U"This script assigns the results of four string expressions to the four
 NORMAL (U"To see what the new name of the capital will be, choose #Run.")
 ENTRY (U"Example: report five squares")
 NORMAL (U"Type the following script:")
-CODE (U"%%x\\# % = { 1, 2, 3, 4, 5 }")
-CODE (U"%%x2\\# % = %%x\\# % * %%x\\# %")
-CODE (U"writeInfoLine: “The squares of ”, %%x\\# %, “ are ”, %%x2\\# %, “.”")
+CODE (U"x# = { 1, 2, 3, 4, 5 }")
+CODE (U"x2# = x# * x#")
+CODE (U"writeInfoLine: “The squares of ”, x#, “ are ”, x2#, “.”")
 NORMAL (U"Praat will then write the following text into the Info window:")
 CODE (U"The squares of 1 2 3 4 5 are 1 4 9 16 25.")
 ENTRY (U"Example: numeric expressions in settings in scripts")
@@ -656,12 +656,12 @@ NORMAL (U"As in real settings windows, you can use numeric expressions in all nu
 CODE (U"Create Sound from formula: “sine”, 1, 0, 10000 / 44100, 44100, ~ 0.9 * sin (2*pi*377*x)")
 ENTRY (U"Example: string expressions in settings in scripts")
 NORMAL (U"As in real settings windows, you can use string expressions in all text fields:")
-CODE (U"%%soundName\\$ % = “hello”")
-CODE (U"Read from file: %%soundName\\$ % + “.wav”")
+CODE (U"soundName$ = “hello”")
+CODE (U"Read from file: soundName$ + “.wav”")
 ENTRY (U"Example: numeric expressions in creation in scripts")
 NORMAL (U"Suppose you want to generate a sine wave whose frequency is held in a variable. This is the way:")
-CODE (U"%frequency = 377")
-CODE (U"Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 0.9 * sin (2*pi*%frequency*x)")
+CODE (U"frequency = 377")
+CODE (U"Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 0.9 * sin (2*pi*frequency*x)")
 NORMAL (U"In this example, Praat will protest if `x` is a variable as well (%`x`), because that would be ambiguous "
 	"with the `x` that refers to the time in the sound (see @@Formulas 1.7. Formulas for modification@).")
 MAN_END
@@ -676,9 +676,9 @@ MAN_BEGIN (U"Formulas 2.1. Representation of numbers", U"ppgb", 20170916)
 INTRO (U"Formulas can work with integer numbers as well as with real numbers.")
 ENTRY (U"Real numbers")
 NORMAL (U"You can type many real numbers by using a decimal notation, for instance 3.14159, 299792.5, or -0.000123456789. "
-	"For very large or small numbers, you can use the %e-notation: 6.022\\.c10^^23^ is typed as 6.022e23 or 6.022e+23, "
-	"and -1.6021917\\.c10^^-19^ is typed as -1.6021917e-19. You can use also use the percent notation: 0.157 "
-	"can be typed as 15.7\\% .")
+	"For very large or small numbers, you can use the %e-notation: 6.022\\.c10^^23^ is typed as `6.022e23` or `6.022e+23`, "
+	"and -1.6021917\\.c10^^-19^ is typed as `-1.6021917e-19`. You can use also use the percent notation: 0.157 "
+	"can be typed as `15.7%`.")
 NORMAL (U"There are some limitations as to the values that real numbers can have in Praat. "
 	"The numbers must lie between -10^^308^ and +10^^308^. If you type")
 CODE (U"1e200 * 1e100")
@@ -735,7 +735,7 @@ INTRO (U"Formulas can work with strings that are put between two double quotes, 
 	"as in “goodbye” or “how are you doing?”.")
 NORMAL (U"If a string has to contain a double quote, "
 	"you have to type it twice. For instance, if you type")
-CODE (U"\"I asked: \\\" \\\" how are you doing?\\\" \\\" \"")
+CODE (U"\"I asked: \"\"how are you doing?\"\"\"")
 NORMAL (U"into the calculator, the outcome will be")
 CODE (U"I asked: \"how are you doing?\"")
 MAN_END
@@ -754,7 +754,7 @@ NORMAL (U"In formulas you can use the numerical and logical operators that are d
 	"To force a different order, you use parentheses.")
 NORMAL (U"The operators with the highest precedence are #negation (-) and #exponentation (\\^ ):")
 CODE (U"--6 \\-> 6")
-CODE (U"2\\^ 6 \\-> 64")
+CODE (U"2^6 \\-> 64")
 /*@praat
 	# Tests for the manual page "Operators".
 
@@ -762,20 +762,20 @@ CODE (U"2\\^ 6 \\-> 64")
 	assert 2^6 = 64
 @*/
 NORMAL (U"Sequences of negation and exponentiation are evaluated from right to left:")
-CODE (U"2\\^ -6 \\-> 0.015625")                       //@praat assert 2^-6 = 0.015625
-CODE (U"-(1+1)\\^ 6 \\-> -64")                        //@praat assert -(1+1)^6 = -64
-CODE (U"4\\^ 3\\^ 2 \\-> 4\\^ 9 \\-> 262144")         //@praat assert 4^3^2 = 262144
+CODE (U"2^-6 \\-> 0.015625")                       //@praat assert 2^-6 = 0.015625
+CODE (U"-(1+1)^6 \\-> -64")                        //@praat assert -(1+1)^6 = -64
+CODE (U"4^3^2 \\-> 4^9 \\-> 262144")               //@praat assert 4^3^2 = 262144
 NORMAL (U"Note that changing the spacing does not change the meaning:")
-CODE (U"4\\^ 3 \\^  2 \\-> 262144")                   //@praat assert 4^3 ^ 2 = 262144
+CODE (U"4^3 ^ 2 \\-> 262144")                      //@praat assert 4^3 ^ 2 = 262144
 NORMAL (U"To change the order of evaluation, you have to use parentheses:")
-CODE (U"(4 \\^  3) \\^  2 \\-> 4096")                 //@praat assert (4 ^ 3) ^ 2 = 4096
+CODE (U"(4 ^ 3) ^ 2 \\-> 4096")                    //@praat assert (4 ^ 3) ^ 2 = 4096
 NORMAL (U"The following construction is not allowed because of an ambiguity between a negative number "
 	"and negation of a positive number:")
-CODE (U"-2\\^ 6 \\-> ?")
+CODE (U"-2^6 \\-> ?")
 NORMAL (U"Instead, you use any of the following:")
-CODE (U"(-2)\\^ 6 \\-> 64")                           //@praat assert (-2)^6 = 64
-CODE (U"-(2\\^ 6) \\-> -64")                          //@praat assert -(2^6) = -64
-CODE (U"-(2)\\^ 6 \\-> -64")                          //@praat assert -(2)^6 = -64
+CODE (U"(-2)^6 \\-> 64")                           //@praat assert (-2)^6 = 64
+CODE (U"-(2^6) \\-> -64")                          //@praat assert -(2^6) = -64
+CODE (U"-(2)^6 \\-> -64")                          //@praat assert -(2)^6 = -64
 NORMAL (U"The operators with the next highest precedence are #multiplication (*) and #division (/). They are evaluated "
 	"from left to right:")
 CODE (U"1/4*5 \\-> 1.25        (from left to right)")
@@ -786,9 +786,9 @@ CODE (U"1 / (4*5) \\-> 0.05    (use parentheses to change the order)")
 	assert 1 / 4*5 = 1.25
 	assert 1 / (4*5) = 0.05
 @*/
-CODE (U"3 * 2 \\^  4 \\-> 48      (exponentiation before multiplication)")
-CODE (U"3*2 \\^  4 \\-> 48        (this spacing does not matter and is misleading)")
-CODE (U"(3 * 2) \\^  4 \\-> 1296  (use parentheses to change the order)")
+CODE (U"3 * 2 ^ 4 \\-> 48      (exponentiation before multiplication)")
+CODE (U"3*2 ^ 4 \\-> 48        (this spacing does not matter and is misleading)")
+CODE (U"(3 * 2) ^ 4 \\-> 1296  (use parentheses to change the order)")
 /*@praat
 	assert 3 * 2 ^ 4 = 48
 	assert 3*2 ^ 4 = 48
@@ -861,32 +861,32 @@ CODE (U"not (x <= 5 or x >= 10)        (again means the same, except if x is und
 	assert ( not (x <= 5 or x >= 10) ) = 1
 @*/
 ENTRY (U"String comparison")
-TERM (U"##a\\$  = b\\$ ")
+TERM (U"#`a$ = b$`")
 DEFINITION (U"gives the value %true (= 1) if the strings are equal, and %false (= 0) otherwise.")
-TERM (U"##a\\$  <> b\\$ ")
+TERM (U"#`a$ <> b$`")
 DEFINITION (U"gives the value %true if the strings are unequal, and %false otherwise.")
-TERM (U"##a\\$  < b\\$ ")
-DEFINITION (U"gives %true if the string %%a\\$ % precedes the string %%b\\$ % in Unicode sorting order. "
+TERM (U"#`a$ < b$`")
+DEFINITION (U"gives %true if the string %`a$` precedes the string %`b$` in Unicode sorting order. "
 	"Thus, \"ha\" < \"hal\" and \"ha\" < \"ja\" are true, but \"ha\" < \"JA\" is false, "
 	"because all capitals precede all lower-case characters in the Unicode sorting order.")
-TERM (U"##a\\$  > b\\$ ")
-DEFINITION (U"%true if %%a\\$ % comes after %%b\\$ % in Unicode sorting order. ")
-TERM (U"##a\\$  <= b\\$ ")
-DEFINITION (U"gives the value %true if the string %%a\\$ % precedes the string %%b\\$ % in Unicode sorting order, "
+TERM (U"#`a$ > b$`")
+DEFINITION (U"%true if %`a$` comes after %`b$` in Unicode sorting order. ")
+TERM (U"#`a$ <= b$`")
+DEFINITION (U"gives the value %true if the string %`a$` precedes the string %`b$` in Unicode sorting order, "
 	"or if the strings are equal.")
-TERM (U"##a\\$  >= b\\$ ")
-DEFINITION (U"%true if %%a\\$ % comes after %%b\\$ % or the two are equal.")
+TERM (U"#`a$ >= b$`")
+DEFINITION (U"%true if %`a$` comes after %`b$` or the two are equal.")
 ENTRY (U"String concatenation and truncation")
-TERM (U"##a\\$  + b\\$ ")
+TERM (U"#`a$ + b$`")
 DEFINITION (U"concatenates the two strings. After")
-CODE1 (U"text\\$  = \"hallo\" + \"dag\"")
-DEFINITION (U"The variable %%text\\$ % contains the string “hallodag”.")
-TERM (U"##a\\$  - b\\$ ")
+	CODE1 (U"text$ = \"hallo\" + \"dag\"")
+DEFINITION (U"the variable %`text$` contains the string “hallodag”.")
+TERM (U"#`a$ - b$`")
 DEFINITION (U"subtracts the second string from the end of the first. After")
-CODE2 (U"soundFileName\\$  = \"hallo.aifc\"")
-CODE2 (U"textgridFileName\\$  = soundFileName\\$  - \".aifc\" + \".TextGrid\"")
-DEFINITION (U"the variable %%textgridFileName\\$ % contains the string \"hallo.TextGrid\". "
-	"If the first string %%a\\$ % does not end in the string %%b\\$ %, the result of the subtraction is the string %%a\\$ %.")
+CODE2 (U"soundFileName$ = \"hallo.aifc\"")
+CODE2 (U"textgridFileName$ = soundFileName$ - \".aifc\" + \".TextGrid\"")
+DEFINITION (U"the variable %`textgridFileName$` contains the string \"hallo.TextGrid\". "
+	"If the first string %`a$` does not end in the string %`b$`, the result of the subtraction is the string %`a$`.")
 MAN_END
 
 MAN_BEGIN (U"Formulas 4. Constants", U"ppgb", 20080318)
@@ -1060,103 +1060,103 @@ INTRO (U"String functions are functions that either return a text string or have
 	length = length (string$ + "dag")
 	assert length = 8
 @*/
-TERM (U"##length (a\\$ )")
+TERM (U"#`length (a$)")
 DEFINITION (U"gives the length of the string. After")
-		CODE2 (U"string\\$  = \"hallo\"")
-		CODE2 (U"length = length (string\\$  + \"dag\")")
-DEFINITION (U"the variable %length contains the number 8 (by the way, from this example "
+		CODE2 (U"string$ = \"hallo\"")
+		CODE2 (U"length = length (string$ + \"dag\")")
+DEFINITION (U"the variable %`length` contains the number 8 (by the way, from this example "
 	"you see that variables can have the same names as functions, without any danger of confusing the interpreter).")
 /*@praat
 	head$ = left$ ("hallo", 3)
 	assert head$ = "hal"
 @*/
-TERM (U"##left\\$  (a\\$ , n)")
-DEFINITION (U"gives a string consisting of the first %n characters of %%a\\$ %. After")
-		CODE2 (U"head\\$  = left\\$  (\"hallo\", 3)")
-DEFINITION (U"the variable %%head\\$ % contains the string \"hal\".")
+TERM (U"#`left$ (a$, n)")
+DEFINITION (U"gives a string consisting of the first %n characters of %`a$`. After")
+		CODE2 (U"head$ = left$ (\"hallo\", 3)")
+DEFINITION (U"the variable %`head$` contains the string \"hal\".")
 /*@praat
 	english$ = "he" + right$ ("hallo", 3)
 	assert english$ = "hello"
 @*/
-TERM (U"##right\\$  (a\\$ , n)")
-DEFINITION (U"gives a string consisting of the last %n characters of %%a\\$ %. After")
-		CODE2 (U"english\\$  = \"he\" + right\\$  (\"hallo\", 3)")
-DEFINITION (U"the variable %%english\\$ % contains the string \"hello\".")
+TERM (U"#`right$ (a$, n)")
+DEFINITION (U"gives a string consisting of the last %n characters of %`a$`. After")
+		CODE2 (U"english$ = \"he\" + right$ (\"hallo\", 3)")
+DEFINITION (U"the variable %`english$` contains the string \"hello\".")
 /*@praat
 	assert mid$ ("hello", 3, 2) = "ll"
 @*/
-TERM (U"##mid\\$  (\"hello\" , 3, 2)")
+TERM (U"#`mid$ (\"hello\" , 3, 2)")
 DEFINITION (U"gives a string consisting of 2 characters from “hello”, starting at the third character. Outcome: ll.")
 /*@praat
 	where = index ("hallo allemaal", "al")
 	assert where = 2
 	assert index ("hallo allemaal", "fhjgfhj") = 0
 @*/
-TERM (U"##index (a\\$ , b\\$ )")
-DEFINITION (U"gives the index of the first occurrence of the string %%b\\$ % in the string %%a\\$ %. After")
+TERM (U"#`index (a$, b$)")
+DEFINITION (U"gives the index of the first occurrence of the string %`b$` in the string %`a$`. After")
 		CODE2 (U"where = index (\"hallo allemaal\", \"al\")")
-DEFINITION (U"the variable %where contains the number 2, because the first “al” starts at the second character of the longer string. "
-	"If the first string does not contain the second string, %index returns 0.")
+DEFINITION (U"the variable %`where` contains the number 2, because the first “al” starts at the second character of the longer string. "
+	"If the first string does not contain the second string, %`index` returns 0.")
 /*@praat
 	where = rindex ("hallo allemaal", "al")
 	assert where = 13
 	assert rindex ("hallo allemaal", "fhjgfhj") = 0
 @*/
-TERM (U"##rindex (a\\$ , b\\$ )")
-DEFINITION (U"gives the index of the last occurrence of the string %%b\\$ % in the string %%a\\$ %. After")
+TERM (U"#`rindex (a$, b$)")
+DEFINITION (U"gives the index of the last occurrence of the string %`b$` in the string %`a$`. After")
 		CODE2 (U"where = rindex (\"hallo allemaal\", \"al\")")
-DEFINITION (U"the variable %where contains the number 13, because the last “al” starts at the 13th character. "
-	"If the first string does not contain the second string, %rindex returns 0.")
+DEFINITION (U"the variable %`where` contains the number 13, because the last “al” starts at the 13th character. "
+	"If the first string does not contain the second string, %`rindex` returns 0.")
 /*@praat
 	where = startsWith ("internationalization", "int")
 	assert where = 1
 @*/
-TERM (U"##startsWith (a\\$ , b\\$ )")
-DEFINITION (U"determines whether the string %%a\\$ % starts with the string %%b\\$ %. After")
+TERM (U"#`startsWith (a$, b$)")
+DEFINITION (U"determines whether the string %`a$` starts with the string %`b$`. After")
 		CODE2 (U"where = startsWith (\"internationalization\", \"int\")")
-DEFINITION (U"the variable %where contains the number 1 (true).")
+DEFINITION (U"the variable %`where` contains the number 1 (true).")
 /*@praat
 	where = endsWith ("internationalization", "nation")
 	assert where = 0
 @*/
-TERM (U"##endsWith (a\\$ , b\\$ )")
-DEFINITION (U"determines whether the string %%a\\$ % ends with the string %%b\\$ %. After")
+TERM (U"#`endsWith (a$, b$)")
+DEFINITION (U"determines whether the string %`a$` ends with the string %`b$`. After")
 		CODE2 (U"where = endsWith (\"internationalization\", \"nation\")")
 DEFINITION (U"the variable %where contains the number 0 (false).")
-TERM (U"##replace\\$  (a\\$ , b\\$ , c\\$ , n)")
-DEFINITION (U"gives a string that is like %%a\\$ %, but where (at most %n) occurrences of %%b\\$ % are replaced with the string %%c\\$ %. After")
-		CODE2 (U"s\\$  = replace\\$  (\"hello\", \"l\", \"m\", 0)")
-DEFINITION (U"the variable %%s\\$ % contains the string \"hemmo\". After")
-		CODE2 (U"s\\$  = replace\\$  (\"hello\", \"l\", \"m\", 1)")
-DEFINITION (U"the variable %%s\\$ % contains the string \"hemlo\". The number %n determines the maximum number of occurrences of %%b\\$ % "
+TERM (U"#`replace$ (a$, b$, c$, n)")
+DEFINITION (U"gives a string that is like %`a$`, but where (at most %n) occurrences of %`b$` are replaced with the string %`c$`. After")
+		CODE2 (U"s$ = replace$ (\"hello\", \"l\", \"m\", 0)")
+DEFINITION (U"the variable %`s$` contains the string \"hemmo\". After")
+		CODE2 (U"s$ = replace$ (\"hello\", \"l\", \"m\", 1)")
+DEFINITION (U"the variable %`s$` contains the string \"hemlo\". The number %n determines the maximum number of occurrences of %`b$` "
 	"that can be replaced. If %n is 0, all occurrences are replaced.")
-TERM (U"##index_regex (a\\$ , b\\$ )")
-DEFINITION (U"determines where the string %%a\\$ % first matches the @@regular expressions|regular expression@ %%b\\$ %. After")
+TERM (U"#`index_regex (a$, b$)")
+DEFINITION (U"determines where the string %`a$` first matches the @@regular expressions|regular expression@ %`b$`. After")
 		CODE2 (U"where = index_regex (\"internationalization\", \"a.*n\")")
-DEFINITION (U"the variable %where contains the number 7. If there is no match, the outcome is 0.")
-TERM (U"##rindex_regex (a\\$ , b\\$ )")
-DEFINITION (U"determines where the string %%a\\$ % last matches the @@regular expressions|regular expression@ %%b\\$ %. After")
+DEFINITION (U"the variable %`where` contains the number 7. If there is no match, the outcome is 0.")
+TERM (U"#`rindex_regex (a$, b$)")
+DEFINITION (U"determines where the string %`a$` last matches the @@regular expressions|regular expression@ %`b$`. After")
 		CODE2 (U"where = rindex_regex (\"internationalization\", \"a.*n\")")
-DEFINITION (U"the variable %where contains the number 16. If there is no match, the outcome is 0.")
-TERM (U"##replace_regex\\$  (a\\$ , b\\$ , c\\$ , n)")
-DEFINITION (U"gives a string that is like %%a\\$ %, but where (at most %n) substrings that match the @@regular expressions|regular expression@ %%b\\$ % "
-	"are replaced with the expression %%c\\$ %. After")
-		CODE2 (U"s\\$  = replace_regex\\$  (\"hello\", \".\", \"&&\", 0)")
-DEFINITION (U"the variable %%s\\$ % contains the string \"hheelllloo\". If there is no match, "
-	"the outcome is the original string a\\$ . After")
-		CODE2 (U"s\\$  = replace_regex\\$  (\"hello\", \".\", \"&&\", 1)")
-DEFINITION (U"the variable %%s\\$ % contains the string \"hhello\". The number %n determines the maximum number of text pieces "
+DEFINITION (U"the variable %`where` contains the number 16. If there is no match, the outcome is 0.")
+TERM (U"#`replace_regex$ (a$, b$, c$, n)")
+DEFINITION (U"gives a string that is like %`a$`, but where (at most %n) substrings that match the @@regular expressions|regular expression@ %`b$` "
+	"are replaced with the expression %`c$`. After")
+		CODE2 (U"s$ = replace_regex$ (\"hello\", \".\", \"&&\", 0)")
+DEFINITION (U"the variable %`s$` contains the string \"hheelllloo\". If there is no match, "
+	"the outcome is the original string %`a$`. After")
+		CODE2 (U"s$ = replace_regex$ (\"hello\", \".\", \"&&\", 1)")
+DEFINITION (U"the variable %`s$` contains the string \"hhello\". The number %n determines the maximum number of text pieces "
 	"that can be replaced. If %n is 0, all matching text pieces are replaced.")
-TERM (U"##string\\$  (number)")
+TERM (U"#`string$ (number)")
 DEFINITION (U"formats a number as a string. Thus, `string$ (5e6)` "
 	"becomes the string `5000000`, and `string$ (56%)` becomes the string `0.56`.")
-TERM (U"##fixed\\$  (number, precision)")
+TERM (U"#`fixed$ (number, precision)")
 DEFINITION (U"formats a number as a string with %precision digits after the decimal point. Thus, `fixed$ (72.65687, 3)` "
 	"becomes the string `72.657`, and `fixed$ (72.65001, 3)` becomes the string `72.650`. "
 	"In these examples, we see that the result can be rounded up and that trailing zeroes are kept. "
 	"At least one digit of precision is always given, e.g. `fixed$ (0.0000157, 3)` becomes the string `0.00002`. "
 	"The number 0 always becomes the string `0`.")
-TERM (U"##percent\\$  (number, precision)")
+TERM (U"#`percent$ (number, precision)")
 DEFINITION (U"the same as `fixed$` (), but with a percent sign. For instance, `percent$ (0.157, 3)` becomes `15.700%`, "
 	"`percent$ (0.000157, 3)` becomes `0.016%`, and `percent$ (0.000000157, 3)` becomes `0.00002%`. "
 	"The number 0 always becomes the string `0`.")
@@ -1164,48 +1164,48 @@ DEFINITION (U"the same as `fixed$` (), but with a percent sign. For instance, `p
 	string$ = "5e6"
 	assert 3 + number (string$) = 5000003
 @*/
-TERM (U"##number (a\\$ )")
+TERM (U"#`number (a$)")
 DEFINITION (U"interprets a string as a number. After")
-		CODE2 (U"string\\$  = \"5e6\"")
-		CODE2 (U"writeInfoLine: 3 + number (string\\$ )")
+		CODE2 (U"string$ = \"5e6\"")
+		CODE2 (U"writeInfoLine: 3 + number (string$)")
 DEFINITION (U"the Info window contains the number 5000003.")
-TERM (U"##date\\$  ( )")
+TERM (U"#`date$ ( )")
 DEFINITION (U"gives the date and time in the following format:")
 		CODE2 (U"Mon Jun 24 17:11:21 2002")
 DEFINITION (U"To write the day of the month into the Info window, you type:")
-		CODE2 (U"date\\$  = date\\$  ()")
-		CODE2 (U"day\\$  = mid\\$  (date\\$ , 9, 2)")
-		CODE2 (U"writeInfoLine: \"The month day is \", day\\$ , \".\"")
-TERM (U"##unicode\\$  (228)")
+		CODE2 (U"date$ = date$ ()")
+		CODE2 (U"day$ = mid$ (date$, 9, 2)")
+		CODE2 (U"writeInfoLine: \"The month day is \", day$, \".\"")
+TERM (U"#`unicode$ (228)")
 DEFINITION (U"gives the 228th Unicode codepoint, i.e. \"ä\".")
-TERM (U"##unicode (\"ä\")")
+TERM (U"#`unicode (\"ä\")")
 DEFINITION (U"gives the Unicode codepoint number of \"ä\", i.e. 228.")
-TERM (U"##extractNumber (\"Type: Sound\" + newline\\$  + \"Name: hello there\" + newline\\$  + \"Size: 44007\", \"Size:\")")
+TERM (U"#`extractNumber (\"Type: Sound\" + newline$ + \"Name: hello there\" + newline$ + \"Size: 44007\", \"Size:\")")
 DEFINITION (U"looks for a number after the first occurrence of “Size:” in the long string. Outcome: 44007. "
 	"This is useful in scripts that try to get information from long reports, as the following script that "
 	"runs in the Sound editor window:")
-		CODE2 (U"report\\$  = Editor info")
-		CODE2 (U"maximumFrequency = extractNumber (report\\$ , \"Spectrogram window length:\")")
-TERM (U"##extractWord\\$  (\"Type: Sound\" + newline\\$  + \"Name: hello there\" + newline\\$  + \"Size: 44007\", \"Type:\")")
+		CODE2 (U"report$ = Editor info")
+		CODE2 (U"maximumFrequency = extractNumber (report$, \"Spectrogram window length:\")")
+TERM (U"#`extractWord$ (\"Type: Sound\" + newline$ + \"Name: hello there\" + newline$ + \"Size: 44007\", \"Type:\")")
 DEFINITION (U"looks for a word without spaces after the first occurrence of \"Type:\" in the long string. Outcome: Sound.")
-TERM (U"##extractLine\\$  (\"Type: Sound\" + newline\\$  + \"Name: hello there\" + newline\\$  + \"Size: 44007\", \"Name: \")")
+TERM (U"#`extractLine$ (\"Type: Sound\" + newline$ + \"Name: hello there\" + newline$ + \"Size: 44007\", \"Name: \")")
 DEFINITION (U"looks for the rest of the line (including spaces) after the first occurrence of “Name: ” in the long string. "
 	"Outcome: hello there. Note how “Name: ” includes a space, so that the “rest of the line” starts with the %h.")
-TERM (U"##backslashTrigraphsToUnicode\\$  (x\\$ ), unicodeToBackslashTrigraphs\\$  (x\\$ )")
+TERM (U"#`backslashTrigraphsToUnicode$ (x$), unicodeToBackslashTrigraphs$ (x$)")
 DEFINITION (U"converts e.g. \\bsct to \\ct or the reverse. See @@Special symbols@.")
 MAN_END
 
 MAN_BEGIN (U"Formulas 7. Control structures", U"ppgb", 20030519)
 ENTRY (U"if ... then ... else ... fi")
 NORMAL (U"You can use conditional expressions in all formulas. For example, ")
-CODE (U"3 * if 52\\%  * 3809 > 2000 then 5 else 6 fi")
-NORMAL (U"evaluates to 15. Instead of %fi, you can also use %endif.")
+CODE (U"3 * if 52% * 3809 > 2000 then 5 else 6 fi")
+NORMAL (U"evaluates to 15. Instead of #`fi`, you can also use #`endif`.")
 NORMAL (U"Another example: you can clip the absolute amplitude of a Sound to 0.5 by supplying the following formula:")
 CODE (U"if abs(self)>0.5 then if self>0 then 0.5 else -0.5 fi else self fi")
 ENTRY (U"The semicolon")
 NORMAL (U"The semicolon ends the evaluation of the formula. This can be convenient "
 	"if you do not want to overwrite a long formula in your text field: the formula")
-CODE (U"800;sqrt(2)*sin(2*pi*103*0.5)+10\\^ (-40/20)*randomGauss(0,1)")
+CODE (U"800;sqrt(2)*sin(2*pi*103*0.5)+10^(-40/20)*randomGauss(0,1)")
 NORMAL (U"evaluates to 800.")
 MAN_END
 
@@ -1226,55 +1226,55 @@ CODE (U"object[3].nx")
 NORMAL (U"or")
 CODE (U"object[\"Sound mysound\"].nx")
 NORMAL (U"After you click OK, the Info window will show the number of samples. Since you could have got this result "
-	"by simply selecting the object and choosing ##%%Get number of samples#% from the @@Query submenu@, "
+	"by simply selecting the object and choosing ##Get number of samples# from the @@Query submenu@, "
 	"these attribute tricks are not very useful in the calculator. "
 	"We will see that they are much more useful in creation and modification formulas and in scripts.")
 ENTRY (U"List of possible attributes")
 NORMAL (U"The following attributes are available:")
-TERM (U"#xmin")
+TERM (U"#`xmin`")
 DEFINITION (U"the start of the time domain (usually 0) for a @Sound, @Pitch, @Formant, "
 	"@Spectrogram, @Intensity, @Cochleagram, @PointProcess, or @Harmonicity object, in seconds; "
 	"the lowest frequency (always 0) for a @Spectrum object, in hertz; "
 	"the lowest frequency (usually 0) for an @Excitation object, in Bark; "
 	"the left edge of the %x domain for a @Matrix object.")
-TERM (U"#xmax")
+TERM (U"#`xmax`")
 DEFINITION (U"the end of the time domain (usually the duration, if %xmin is zero) for a Sound, Pitch, Formant, "
 	"Spectrogram, Intensity, Cochleagram, PointProcess, or Harmonicity object, in seconds; "
 	"the highest frequency (@@Nyquist frequency@) for a Spectrum object, e.g. 11025 hertz; "
 	"the highest frequency for an Excitation object, often 25.6 Bark; "
 	"the right edge of the %x domain for a Matrix object.")
-TERM (U"#ncol")
+TERM (U"#`ncol`")
 DEFINITION (U"the number of columns in a @Matrix, @TableOfReal, or @Table object.")
-TERM (U"#nrow")
+TERM (U"#`nrow`")
 DEFINITION (U"the number of rows in a @Matrix, @TableOfReal, or @Table object.")
-TERM (U"##col\\$ # [%i]")
-DEFINITION (U"the name of column %i in a @TableOfReal or @Table object.")
-TERM (U"##row\\$ # [%i]")
-DEFINITION (U"the name of row %i in a @TableOfReal object.")
-TERM (U"#nx")
+TERM (U"#`col$` [%`i`]")
+DEFINITION (U"the name of column %`i` in a @TableOfReal or @Table object.")
+TERM (U"#`row$` [%`i`]")
+DEFINITION (U"the name of row %`i` in a @TableOfReal object.")
+TERM (U"#`nx`")
 DEFINITION (U"the number of samples in a Sound object; "
 	"the number of analysis frames in a Pitch, Formant, Spectrogram, Intensity, Cochleagram, or Harmonicity object; "
 	"the number of frequency bins in a Spectrum or Excitation object; "
-	"the number of divisions of the %x domain for a Matrix object (= %ncol).")
-TERM (U"#dx")
+	"the number of divisions of the %x domain for a Matrix object (= %`ncol`).")
+TERM (U"#`dx`")
 DEFINITION (U"the sample period (time distance between consecutive samples) in a Sound object (the inverse of the sampling frequency), in seconds; "
 	"the time step between consecutive frames in a Pitch, Formant, Spectrogram, Intensity, Cochleagram, or Harmonicity object, in seconds; "
 	"the width of a frequency bin in a Spectrum object, in hertz; "
 	"the width of a frequency bin in an Excitation object, in Bark; "
 	"the horizontal distance between cells in a Matrix object.")
-TERM (U"#ymin")
+TERM (U"#`ymin`")
 DEFINITION (U"the lowest frequency (usually 0) for a Spectrogram object, in hertz; "
 	"the lowest frequency (usually 0) for a Cochleagram object, in Bark; "
 	"the bottom of the %y domain for a Matrix object.")
-TERM (U"#ymax")
+TERM (U"#`ymax`")
 DEFINITION (U"the highest frequency for a Spectrogram object, e.g. 5000 hertz; "
 	"the highest frequency for a Cochleagram object, often 25.6 Bark; "
 	"the top of the %y domain for a Matrix object.")
-TERM (U"#ny")
+TERM (U"#`ny`")
 DEFINITION (U"the number of frequency bands in a Spectrogram or Cochleagram object; "
 	"for a Spectrum object: always 2 (first row is real part, second row is imaginary part) "
-	"the number of divisions of the %y domain for a Matrix object (= %nrow).")
-TERM (U"#dy")
+	"the number of divisions of the %y domain for a Matrix object (= %`nrow`).")
+TERM (U"#`dy`")
 DEFINITION (U"the distance between adjacent frequency bands in a Spectrogram object, in hertz; "
 	"the distance between adjacent frequency bands in a Cochleagram object, in Bark; "
 	"the vertical distance between cells in a Matrix object.")
@@ -1296,7 +1296,7 @@ NORMAL (U"The attributes that you can use in this implicit way are %xmin, %xmax,
 ENTRY (U"Attributes in a modification formula")
 NORMAL (U"In formulas for modifying an existing object, you refer to attributes in the same way as in creation formulas, "
 	"i.e., you do not have to specify the name of the object that is being modified. The formula")
-CODE (U"self * 20 \\^  (- (x - xmin) / (xmax - xmin))")
+CODE (U"self * 20 ^ (- (x - xmin) / (xmax - xmin))")
 NORMAL (U"causes the sound to decay exponentially in such a way that it has only 5 percent of its initial amplitude at the end. "
 	"If you apply this formula to multiple Sound objects at the same time, $xmax will refer to the finishing time of each Sound separately "
 	"as that Sound is modified.")
@@ -1385,235 +1385,244 @@ CODE (U"writeInfoLine: \"The sum of the cells along the diagonal is \", sumDiago
 NORMAL (U"The first version, which accesses the contents directly, is not only two lines shorter, but also three times faster.")
 MAN_END
 
-MAN_BEGIN (U"Functions", U"ppgb", 20220527)
-NORMAL (U"A growing list of functions that you can use in @formulas and @scripting...")
-LIST_ITEM (U"##abs (%x)#  \\-- absolute value")
-LIST_ITEM (U"##abs\\#  (%%vector\\# %)#  \\-- absolute value of each element of %%vector\\# %")
-LIST_ITEM (U"##abs\\# \\#  (%%matrix\\# \\# %)#  \\-- absolute value of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##appendFile (%%filePath\\$ %, ...)# \\-- write texts, numbers, vectors and so on at the end of an existing file (create such a file if it does not exist yet)")
-LIST_ITEM (U"##appendFileLine (%%filePath\\$ %, ...)# \\-- write texts, numbers, vectors and so on, followed by a newline, at the end of an existing file (create such a file if it does not exist yet)")
-LIST_ITEM (U"##arccos (%x)# \\-- inverse cosine")
-LIST_ITEM (U"##arccos\\#  (%%vector\\# %)#  \\-- inverse cosine of each element of %%vector\\# %")
-LIST_ITEM (U"##arccos\\# \\#  (%%matrix\\# \\# %)#  \\-- inverse cosine of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##arccosh (%x)# \\-- inverse hyperbolic cosine")
-LIST_ITEM (U"##arccosh\\#  (%%vector\\# %)#  \\-- inverse hyperbolic cosine of each element of %%vector\\# %")
-LIST_ITEM (U"##arccosh\\# \\#  (%%matrix\\# \\# %)#  \\-- inverse hyperbolic cosine of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##arcsin (%x)# \\-- inverse sine")
-LIST_ITEM (U"##arcsin\\#  (%%vector\\# %)#  \\-- inverse sine of each element of %%vector\\# %")
-LIST_ITEM (U"##arcsin\\# \\#  (%%matrix\\# \\# %)#  \\-- inverse sine of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##arcsinh (%x)# \\-- inverse hyperbolic sine")
-LIST_ITEM (U"##arcsinh\\#  (%%vector\\# %)#  \\-- inverse hyperbolic sine of each element of %%vector\\# %")
-LIST_ITEM (U"##arcsinh\\# \\#  (%%matrix\\# \\# %)#  \\-- inverse hyperbolic sine of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##arctan (%x)# \\-- inverse tangent")
-LIST_ITEM (U"##arctan\\#  (%%vector\\# %)#  \\-- inverse tangent of each element of %%vector\\# %")
-LIST_ITEM (U"##arctan\\# \\#  (%%matrix\\# \\# %)#  \\-- inverse tangent of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##arctanh (%x)# \\-- inverse hyperbolic tangent")
-LIST_ITEM (U"##arctanh\\#  (%%vector\\# %)#  \\-- inverse hyperbolic tangent of each element of %%vector\\# %")
-LIST_ITEM (U"##arctanh\\# \\#  (%%matrix\\# \\# %)#  \\-- inverse hyperbolic tangent of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##backslashTrigraphsToUnicode\\$  (%%string\\$ %)# \\-- convert e.g. \\bsct to \\ct")
-LIST_ITEM (U"##barkToHertz (%x)# \\-- from Bark-rate to acoustic frequency")
-LIST_ITEM (U"##besselI (%n, %x)# \\-- modified Bessel function of the first kind, %I__%n_")
-LIST_ITEM (U"##besselK (%n, %x)# \\-- modified Bessel function of the second kind, %K__%n_")
-LIST_ITEM (U"##beta (%x, %y)# \\-- \\be function")
-LIST_ITEM (U"##between_by\\#  (%low, %high, %step)# \\-- symmetrically dispersed numbers between %low and %high, in steps of %step")
-LIST_ITEM (U"##between_count\\#  (%low, %high, %n)# \\-- %n symmetrically dispersed numbers between %low and %high (bin centres)")
-LIST_ITEM (U"##binomialP (%p, %k, %n)# \\-- probability of Bernoulli event occurring at most %k in %n times")
-LIST_ITEM (U"##binomialQ (%p, %k, %n)# \\-- probability of Bernoulli event occurring at least %k in %n times")
-LIST_ITEM (U"##ceiling (%x)# \\-- round up to integer")
-LIST_ITEM (U"##ceiling\\#  (%%vector\\# %)#  \\-- round up each element of %%vector\\# %")
-LIST_ITEM (U"##ceiling\\# \\#  (%%matrix\\# \\# %)#  \\-- round up each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##center (%%v\\# %)# \\-- center (or centre) of gravity")
-LIST_ITEM (U"##chiSquareP (%chiSquare, %df)# \\-- area under the %\\ci^2 curve up to %chiSquare")
-LIST_ITEM (U"##chiSquareQ (%chiSquare, %df)# \\-- area under the %\\ci^2 curve after %chiSquare")
-LIST_ITEM (U"##chooseFolder\\$  (%%title\\$ %)# \\-- pops up a folder selection window")
-LIST_ITEM (U"##chooseReadFile\\$  (%%title\\$ %)# \\-- pops up a file selection window for opening (or appending to) an existing file")
-LIST_ITEM (U"##chooseWriteFile\\$  (%%title\\$ %, %%defaultFilename\\$ %)# \\-- pops up a file selection window for saving to a new file")
-LIST_ITEM (U"##columnSums\\#  (%%matrix\\# \\# %)#")
-LIST_ITEM (U"##cos (%x)# \\-- cosine")
-LIST_ITEM (U"##cos\\#  (%%vector\\# %)#  \\-- cosine of each element of %%vector\\# %")
-LIST_ITEM (U"##cos\\# \\#  (%%matrix\\# \\# %)#  \\-- cosine of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##cosh (%x)# \\-- hyperbolic cosine")
-LIST_ITEM (U"##cosh\\#  (%%vector\\# %)#  \\-- hyperbolic cosine of each element of %%vector\\# %")
-LIST_ITEM (U"##cosh\\# \\#  (%%matrix\\# \\# %)#  \\-- hyperbolic cosine of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##createFolder (%%folderPath\\$ %)# \\-- create a new folder, or do nothing if it already exists")
-LIST_ITEM (U"##date\\$  ( )# \\-- current local date and time in the form \"Mon Nov  8 16:32:42 2021\"")
-LIST_ITEM (U"##date\\#  ( )# \\-- current local date and time in the form { 2021, 11, 8, 16, 32, 42 }")
-LIST_ITEM (U"##date_utc\\$  ( )# \\-- current standard date and time in the form \"Mon Nov  8 15:32:42 2021\"")
-LIST_ITEM (U"##date_utc\\#  ( )# \\-- current standard date and time in the form { 2021, 11, 8, 15, 32, 42 }")
-LIST_ITEM (U"##deleteFile (%%filePath\\$ %)# \\-- delete a file, or do nothing if it does not exist")
-LIST_ITEM (U"##differenceLimensToPhon (%x)# \\-- from jnd-scale to perceptual loudness")
-LIST_ITEM (U"##endsWith (%%string\\$ %, %%part\\$ %)# \\-- determine whether %%string\\$ % ends in %%part\\$ %")
-LIST_ITEM (U"##erb (%f)# \\-- equivalent rectangular bandwidth for frequency %f")
-LIST_ITEM (U"##erbToHertz (%x)# \\-- from ERB-rate to acoustic frequency")
-LIST_ITEM (U"##erf (%x)# \\-- error function, the integral of the Gaussian")
-LIST_ITEM (U"##erfc (%x)# \\-- complement of the error function, i.e. 1 - erf (%x); "
-	"this is a separate function because erf (%x) can be close to 1")
-LIST_ITEM (U"##exp (%x)# \\-- exponentiation, i.e. %e^%x")
-LIST_ITEM (U"##exp\\#  (%%vector\\# %)#  \\-- exponentiate each element of %%vector\\# %")
-LIST_ITEM (U"##exp\\# \\#  (%%matrix\\# \\# %)#  \\-- exponentiate each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##extractLine\\$  (%%string\\$ %, %%part\\$ %)# \\-- everything that comes after the first occurrence of %%part\\$ % in %%string\\$ %")
-LIST_ITEM (U"##extractNumber (%%string\\$ %, %%part\\$ %)# \\-- the first number after the first occurrence of %%part\\$ % in %%string\\$ %")
-LIST_ITEM (U"##extractWord\\$  (%%string\\$ %, %%part\\$ %)# \\-- the first \"word\" after the first occurrence of %%part\\$ % in %%string\\$ %")
-LIST_ITEM (U"##fileNames\\$ \\#  (%%folderNameOrPattern\\$ %)# \\-- get the names (not the whole paths) of the files in a folder or that match a pattern with an asterisk")
-LIST_ITEM (U"##fileReadable (%%filePath\\$ %)# \\-- 1 if the file exists and can be read, 0 otherwise")
-LIST_ITEM (U"##fisherP (%f, %df1, %df2)# \\-- area under the Fisher %F curve up to %f")
-LIST_ITEM (U"##fisherQ (%f, %df1, %df2)# \\-- area under the Fisher %F curve after %f")
-LIST_ITEM (U"##fixed\\$  (%number, %precision)# \\-- format a number as a string, with %precision digits after the decimal point")
-LIST_ITEM (U"##floor (%x)# \\-- round down to integer")
-LIST_ITEM (U"##floor\\#  (%%vector\\# %)#  \\-- round down each element of %%vector\\# %")
-LIST_ITEM (U"##floor\\# \\#  (%%matrix\\# \\# %)#  \\-- round down each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##folderNames\\$ \\#  (%%folderNameOrPattern\\$ %)# \\-- get the names (not the whole paths) of the subfolders in a folder or that match a pattern with an asterisk")
-LIST_ITEM (U"##from_to\\#  (%m, %n)# \\-- the integers from %m through %n")
-LIST_ITEM (U"##from_to_by\\#  (%m, %n, %step)# \\-- numbers from %m through %n, in steps of %step")
-LIST_ITEM (U"##from_to_count\\#  (%start, %end, %n)# \\-- %n numbers from %start through %end")
-LIST_ITEM (U"##gaussP (%z)# \\-- area under the normal curve up to %z")
-LIST_ITEM (U"##gaussQ (%z)# \\-- area under the normal curve after %z")
-LIST_ITEM (U"##hertzToBark (%x)# \\-- from acoustic frequency to Bark-rate")
-LIST_ITEM (U"##hertzToErb (%x)# \\-- from acoustic frequency to ERB-rate")
-LIST_ITEM (U"##hertzToMel (%x)# \\-- from acoustic frequency to mel")
-LIST_ITEM (U"##hertzToSemitones (%x)# \\-- from acoustic frequency to logarithmic scale %re 100 Hz")
-LIST_ITEM (U"##imax (%x, ...)# \\-- location of the maximum")
-LIST_ITEM (U"##imin (%x, ...)# \\-- location of the minimum")
-LIST_ITEM (U"##index (%%string\\$ %, %%part\\$ %)# \\-- look up a substring, or 0 if not found")
-LIST_ITEM (U"##index (%%strings\\$ \\# %, %%s\\$ %)# \\-- look up whether and where %%s\\$ % first occurs in %%strings\\$ \\# %")
-LIST_ITEM (U"##index_regex (%%string\\$ %, %%regex\\$ %)# \\-- determine whether and where %%string\\$ % first matches %%regex\\$ %")
-LIST_ITEM (U"##inner (%%a\\# , %%b\\# )# \\-- inner product")
-LIST_ITEM (U"##invBinomialP (%P, %k, %n)# \\-- inverse of binomialP")
-LIST_ITEM (U"##invBinomialQ (%Q, %k, %n)# \\-- inverse of binomialQ")
-LIST_ITEM (U"##invChiSquareQ (%q, %df)# \\-- inverse of chiSquareQ")
-LIST_ITEM (U"##invFisherQ (%q, %df1, %df2)# \\-- inverse of fisherQ")
-LIST_ITEM (U"##invGaussQ (%z)# \\-- inverse of gaussQ")
-LIST_ITEM (U"##invSigmoid (%x)# \\-- inverse sigmoid")
-LIST_ITEM (U"##invSigmoid\\#  (%%vector\\# %)# \\-- inverse sigmoid of each element of %%vector\\# %")
-LIST_ITEM (U"##invSigmoid\\# \\#  (%%matrix\\# \\# %)# \\-- inverse sigmoid of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##invStudentQ (%q, %df)# \\-- inverse studentQ")
-LIST_ITEM (U"##left\\$  (%%string\\$ %, %n)# \\-- the %n first characters in %%string\\$ %")
-LIST_ITEM (U"##length (%%string\\$ %)# \\-- number of Unicode characters in %%string\\$ %")
-LIST_ITEM (U"##ln (%x)# \\-- natural logarithm, base %e")
-LIST_ITEM (U"##ln\\#  (%%vector\\# %)#  \\-- natural logarithm of each element of %%vector\\# %")
-LIST_ITEM (U"##ln\\# \\#  (%%matrix\\# \\# %)#  \\-- natural logarithm of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##lnGamma (%x)# \\-- logarithm of the \\Ga function")
-LIST_ITEM (U"##log2 (%x)# \\-- logarithm, base 2")
-LIST_ITEM (U"##log2\\#  (%%vector\\# %)#  \\-- base-2 logarithm of each element of %%vector\\# %")
-LIST_ITEM (U"##log2\\# \\#  (%%matrix\\# \\# %)#  \\-- base-2 logarithm of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##log10 (%x)# \\-- logarithm, base 10")
-LIST_ITEM (U"##log10\\#  (%%vector\\# %)#  \\-- base-10 logarithm of each element of %%vector\\# %")
-LIST_ITEM (U"##log10\\# \\#  (%%matrix\\# \\# %)#  \\-- base-10 logarithm of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##max (%x, ...)# \\-- maximum")
-LIST_ITEM (U"##mean (%%v\\# %)# \\-- average of the elements of a vector")
-LIST_ITEM (U"##melToHertz (%x)# \\-- from mel to acoustic frequency")
-LIST_ITEM (U"##mid\\$  (%%string\\$ %, %from, %n)# \\-- the %n characters in %%string\\$ % starting at position %from")
-LIST_ITEM (U"##min (%x, ...)# \\-- minimum")
-LIST_ITEM (U"##mul\\# \\#  (%%a\\# \\# %, %%b\\# \\# %)# \\-- matrix multiplication")
-LIST_ITEM (U"##number (%%a\\$ %)# \\-- interpret a string as a number")
-LIST_ITEM (U"##number\\#  (%%a\\$ \\# %)# \\-- interpret strings as numbers")
-LIST_ITEM (U"##numberOfColumns (%%matrix\\# \\# %)#")
-LIST_ITEM (U"##numberOfRows (%%matrix\\# \\# %)#")
-LIST_ITEM (U"##outer\\# \\#  (%%a\\# %, %%b\\# %)# \\-- outer product, i.e. %%result__ij_% = %%a__i_%%%b__j_%")
-LIST_ITEM (U"##percent\\$  (%number, %precision)# \\-- format a number as a string, "
-	"with a trailing percent sign and %precision digits after the decimal point")
-LIST_ITEM (U"##phonToDifferenceLimens (%x)# \\-- from perceptual loudness to jnd-scale")
-LIST_ITEM (U"##randomBernoulli (%p)# \\-- Bernoulli-distributed random deviate (0 or 1)")
-LIST_ITEM (U"##randomBernoulli\\#  (%n, %p)# \\-- %n independent Bernoulli-distributed zeroes and ones")
-LIST_ITEM (U"##randomGamma (%shape, %rate)# \\-- gamma-distributed random deviate")
-LIST_ITEM (U"##randomGamma\\#  (%n, %shape, %rate)# \\-- %n independent gamma-distributed random numbers")
-LIST_ITEM (U"##randomGamma\\#  (%%vector\\# %, %shape, %rate)# \\-- duplicate %%vector\\# %, "
-	"and replace all elements with independent gamma-distributed random numbers")
-LIST_ITEM (U"##randomGamma\\# \\#  (%nrow, %ncol, %shape, %rate)# \\-- %nrow \\xx %ncol independent gamma-distributed random numbers")
-LIST_ITEM (U"##randomGamma\\#  (%%matrix\\# \\# %, %shape, %rate)# \\-- duplicate %%matrix\\# %, "
-	"and replace all cells with independent gamma-distributed random numbers")
-LIST_ITEM (U"##randomGauss (%\\mu, %\\si)# \\-- normally distributed random deviate")
-LIST_ITEM (U"##randomGauss\\#  (%n, %\\mu, %\\si)# \\-- %n independent normally distributed random numbers")
-LIST_ITEM (U"##randomGauss\\#  (%%vector\\# %, %\\mu, %\\si)# \\-- duplicate %%vector\\# %, "
-	"and replace all elements with independent normally distributed random numbers")
-LIST_ITEM (U"##randomGauss\\# \\#  (%nrow, %ncol, %\\mu, %\\si)# \\-- %nrow \\xx %ncol independent normally distributed random numbers")
-LIST_ITEM (U"##randomGauss\\#  (%%matrix\\# \\# %, %\\mu, %\\si)# \\-- duplicate %%matrix\\# %, "
-	"and replace all cells with independent normally distributed random numbers")
-LIST_ITEM (U"##randomInteger (%min, %max)# \\-- uniformly distributed integer random deviate")
-LIST_ITEM (U"##randomInteger\\#  (%n, %min, %max)# \\-- %n independent uniformly distributed random integers")
-LIST_ITEM (U"##randomInteger\\#  (%%vector\\# %, %min, %max)# \\-- duplicate %%vector\\# %, "
-	"and replace all elements with independent uniformly distributed random integers")
-LIST_ITEM (U"##randomInteger\\# \\#  (%nrow, %ncol, %min, %max)# \\-- %nrow \\xx %ncol independent uniformly distributed random integers")
-//LIST_ITEM (U"##randomInteger\\#  (%%matrix\\# \\# %, %min, %max)# \\-- duplicate %%matrix\\# %, "
-//	"and replace all cells with independent uniformly distributed random integers")
-LIST_ITEM (U"##randomPoisson (%mean)# \\-- Poisson-distributed random deviate")
-LIST_ITEM (U"##randomPoisson\\#  (%n, %mean)# \\-- %n independent Poisson-distributed random numbers")
-LIST_ITEM (U"##randomPoisson\\#  (%%vector\\# %, %mean)# \\-- duplicate %%vector\\# %, "
-	"and replace all elements with independent Poisson-distributed random numbers")
-LIST_ITEM (U"##randomPoisson\\# \\#  (%nrow, %ncol, %mean)# \\-- %nrow \\xx %ncol independent Poisson-distributed random numbers")
-LIST_ITEM (U"##randomPoisson\\#  (%%matrix\\# \\# %, %mean)# \\-- duplicate %%matrix\\# %, "
-	"and replace all cells with independent Poisson-distributed random numbers")
-LIST_ITEM (U"##randomUniform (%min, %max)# \\-- uniformly distributed random deviate")
-LIST_ITEM (U"##randomUniform\\#  (%n, %min, %max)# \\-- %n independent uniformly distributed random numbers")
-LIST_ITEM (U"##randomUniform\\#  (%%vector\\# %, %min, %max)# \\-- duplicate %%vector\\# %, "
-	"and replace all elements with independent uniformly distributed random numbers")
-LIST_ITEM (U"##randomUniform\\# \\#  (%nrow, %ncol, %min, %max)# \\-- %nrow \\xx %ncol independent uniformly distributed random numbers")
-LIST_ITEM (U"##randomUniform\\#  (%%matrix\\# \\# %, %min, %max)# \\-- duplicate %%matrix\\# %, "
-	"and replace all cells with independent uniformly distributed random numbers")
-LIST_ITEM (U"##random_initializeSafelyAndUnpredictably ( )# \\-- undoes the effects of the following function")
-LIST_ITEM (U"##random_initializeWithSeedUnsafelyButPredictably (%seed)# \\-- reproducible sequence of random numbers")
-LIST_ITEM (U"##readFile (%%filePath\\$ %)# \\-- read a number from a text file")
-LIST_ITEM (U"##readFile\\$  (%%filePath\\$ %)# \\-- read a whole text file into a string")
-LIST_ITEM (U"##readLinesFromFile\\$ \\#  (%%filePath\\$ %)# \\-- read all lines from a text file")
-LIST_ITEM (U"##rectify (%x)# \\-- set to zero if negative (no change if positive)")
-LIST_ITEM (U"##rectify\\#  (%%vector\\# %)#  \\-- rectify each element of %%vector\\# %")
-LIST_ITEM (U"##rectify\\# \\#  (%%matrix\\# \\# %)#  \\-- rectify each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##repeat\\#  (%%v\\# %, %n)# \\-- repeat the whole sequence of elements of %%v\\# % %n times")
-LIST_ITEM (U"##replace\\$  (%%a\\$ %, %%b\\$ %, %%c\\$ %, %n)# \\-- within %%a\\$ %, replace the first %n occurrences of %%b\\$ % with %%c\\$ %, or all if %n = 0")
-LIST_ITEM (U"##replace_regex\\$  (%%a\\$ %, %%b\\$ %, %%c\\$ %, %n)# \\-- within %%a\\$ %, "
-	"replace the first %n matches of regular expression %%b\\$ % with the regular expression %%c\\$ %, or all if %n = 0")
-LIST_ITEM (U"##right\\$  (%%string\\$ %, %n)# \\-- the %n last characters in %%string\\$ %")
-LIST_ITEM (U"##rindex (%%string\\$ %, %%part\\$ %)# \\-- look up a substring from the end, or 0 if not found")
-//LIST_ITEM (U"##rindex (%%strings\\$ \\# %, %%s\\$ %)# \\-- look up whether and where %%s\\$ % last occurs in %%strings\\$ \\# %")
-LIST_ITEM (U"##rindex_regex (%%string\\$ %, %%regex\\$ %)# \\-- determine whether and where %%string\\$ % last matches %%regex\\$ %")
-LIST_ITEM (U"##round (%x)# \\-- nearest integer")
-LIST_ITEM (U"##round\\#  (%%vector\\# %)#  \\-- nearest integer of each element of %%vector\\# %")
-LIST_ITEM (U"##round\\# \\#  (%%matrix\\# \\# %)#  \\-- nearest integer of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##rowSums\\#  (%%matrix\\# \\# %)#")
-LIST_ITEM (U"##semitonesToHertz (%x)# \\-- from logarithmic scale %re 100 Hz to acoustic frequency")
-LIST_ITEM (U"##sigmoid (%x)# \\-- 1 / (1 + %e^^-%x^)")
-LIST_ITEM (U"##sigmoid\\#  (%%vector\\# %)# \\-- sigmoid of each element of %%vector\\# %")
-LIST_ITEM (U"##sigmoid\\# \\#  (%%matrix\\# \\# %)# \\-- sigmoid of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##sin (%x)# \\-- sine")
-LIST_ITEM (U"##sin\\#  (%%vector\\# %)#  \\-- sine of each element of %%vector\\# %")
-LIST_ITEM (U"##sin\\# \\#  (%%matrix\\# \\# %)#  \\-- sine of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##sinc (%x)# \\-- sinus cardinalis: sin (%x) / %x")
-LIST_ITEM (U"##sincpi (%x)# \\-- sin (%\\pi%x) / (%\\pi%x)")
-LIST_ITEM (U"##sinh (%x)# \\-- hyperbolic sine")
-LIST_ITEM (U"##sinh\\#  (%%vector\\# %)#  \\-- hyperbolic sine of each element of %%vector\\# %")
-LIST_ITEM (U"##sinh\\# \\#  (%%matrix\\# \\# %)#  \\-- hyperbolic sine of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##size (%%v\\# %)# \\-- number of elements")
-LIST_ITEM (U"##shuffle\\#  (%%vector\\# %)# \\-- randomize order")
-LIST_ITEM (U"##softmax\\#  (%%vector\\# %)#")
-LIST_ITEM (U"##softmaxPerRow\\# \\#  (%%matrix\\# \\# %)#")
-LIST_ITEM (U"##sort\\#  (%%vector\\# %)# \\-- reshuffle in increasing order")
-LIST_ITEM (U"##splitByWhitespace\\$ \\#  (%%string\\$ %)# \\-- split a string into inks")
-LIST_ITEM (U"##sqrt (%x)# \\-- square root")
-LIST_ITEM (U"##sqrt\\#  (%%vector\\# %)#  \\-- square root of each element of %%vector\\# %")
-LIST_ITEM (U"##sqrt\\# \\#  (%%matrix\\# \\# %)#  \\-- square root of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##startsWith (%%string\\$ %, %%part\\$ %)# \\-- determine whether %%string\\$ % starts with %%part\\$ %")
-LIST_ITEM (U"##stdev (%%v\\# %)# \\-- standard deviation of the elements of a vector")
-LIST_ITEM (U"#stopwatch \\-- give the current value of the timer, which is then immediately reset to zero (note: no parentheses)")
-LIST_ITEM (U"##string\\$  (%number)# \\-- format a number as a string")
-LIST_ITEM (U"##studentP (%t, %df)# \\-- area under the Student %T curve up to %t")
-LIST_ITEM (U"##studentQ (%t, %df)# \\-- area under the Student %T curve after %t")
-LIST_ITEM (U"##sum (%%v\\# %)# \\-- sum the elements")
-LIST_ITEM (U"##sumOver (%loopVariable to %n, %numericExpressionOptionallyUsingLoopVariable)# \\-- \\Si")
-LIST_ITEM (U"##tan (%x)# \\-- tangent")
-LIST_ITEM (U"##tan\\#  (%%vector\\# %)#  \\-- tangent of each element of %%vector\\# %")
-LIST_ITEM (U"##tan\\# \\#  (%%matrix\\# \\# %)#  \\-- tangent of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##tanh (%x)# \\-- hyperbolic tangent")
-LIST_ITEM (U"##tanh\\#  (%%vector\\# %)#  \\-- hyperbolic tangent of each element of %%vector\\# %")
-LIST_ITEM (U"##tanh\\# \\#  (%%matrix\\# \\# %)#  \\-- hyperbolic tangent of each cell of %%matrix\\# \\# %")
-LIST_ITEM (U"##to\\#  (%n)# \\-- the integers 1 through %n")
-LIST_ITEM (U"##transpose\\# \\#  (%%matrix\\# \\# %)#")
-LIST_ITEM (U"##unicode (%%c\\$ %)# \\-- the Unicode codepoint number that corresponds to character %%c\\$ %")
-LIST_ITEM (U"##unicode\\$  (%n)# \\-- the character that corresponds to Unicode codepoint %n")
-LIST_ITEM (U"##unicodeToBackslashTrigraphs\\$  (%%string\\$ %)# \\-- convert e.g. \\ct to \\bsct")
-LIST_ITEM (U"##writeFile (%%filePath\\$ %, ...)# \\-- create a new text file, and write texts, numbers, vectors and so on into it")
-LIST_ITEM (U"##writeFileLine (%%filePath\\$ %, ...)# \\-- create a new text file, write texts, numbers, vectors and so on into it, followed by a newline")
-LIST_ITEM (U"##zero\\#  (%n)# \\-- vector with %n elements that are all 0")
-MAN_END
+MAN_PAGES_BEGIN R"~~~(
+"Functions"
+© Paul Boersma, 2022-05-27
+
+A growing list of functions that you can use in @formulas and @scripting...
+
+- @`abs` (%`x`) \-- absolute value
+- @`abs#` (%`vector#`) \-- absolute value of each element of %`vector#`
+- @`abs##` (%`matrix##`) \-- absolute value of each cell of %`matrix##`
+- @`appendFile` (%`filePath$`, `...`) \-- write texts, numbers, vectors and so on
+  at the end of an existing file (create such a file if it does not exist yet)
+- @`appendFileLine` (%`filePath$`, `...`) \-- write texts, numbers, vectors and so on,
+  followed by a newline, at the end of an existing file (create such a file if it does not exist yet)
+- @`arccos` (%`x`) \-- inverse cosine")
+- @`arccos#` (%`vector#`) \-- inverse cosine of each element of %`vector#`
+- @`arccos##` (%`matrix##`) \-- inverse cosine of each cell of %`matrix##`
+- @`arccosh` (%`x`) \-- inverse hyperbolic cosine
+- @`arccosh#` (%`vector#`)  \-- inverse hyperbolic cosine of each element of %`vector#`
+- @`arccosh##` (%`matrix##`)  \-- inverse hyperbolic cosine of each cell of %`matrix##`
+- @`arcsin` (%`x`) \-- inverse sine
+- @`arcsin#` (%`vector#`)  \-- inverse sine of each element of %`vector#`
+- @`arcsin##` (%`matrix##`)  \-- inverse sine of each cell of %`matrix##`
+- @`arcsinh` (%`x`) \-- inverse hyperbolic sine
+- @`arcsinh#` (%`vector#`)  \-- inverse hyperbolic sine of each element of %`vector#`
+- @`arcsinh##` (%`matrix##`)  \-- inverse hyperbolic sine of each cell of %`matrix##`
+- @`arctan` (%`x`) \-- inverse tangent
+- @`arctan#` (%`vector#`)  \-- inverse tangent of each element of %`vector#`
+- @`arctan##` (%`matrix##`)  \-- inverse tangent of each cell of %`matrix##`
+- @`arctanh` (%`x`) \-- inverse hyperbolic tangent
+- @`arctanh#` (%`vector#`)  \-- inverse hyperbolic tangent of each element of %`vector#`
+- @`arctanh##` (%`matrix##`)  \-- inverse hyperbolic tangent of each cell of %`matrix##`
+- @`backslashTrigraphsToUnicode$` (%`string$`) \-- convert e.g. \bsct to \ct
+- @`barkToHertz` (%`x`) \-- from Bark-rate to acoustic frequency
+- @`besselI` (%`n`, %`x`) \-- modified Bessel function of the first kind, %I__%n_
+- @`besselK` (%`n`, %`x`) \-- modified Bessel function of the second kind, %K__%n_
+- @`beta` (%`x`, %`y`) \-- \be function
+- @`between_by#` (%`low`, %`high`, %`step`) \-- symmetrically dispersed numbers between %`low` and %`high`, in steps of %`step`
+- @`between_count#` (%`low`, %`high`, %`n`) \-- %`n` symmetrically dispersed numbers between %`low` and %`high` (bin centres)
+- @`binomialP` (%`p`, %`k`, %`n`) \-- probability of Bernoulli event occurring at most %`k` in %`n` times
+- @`binomialQ` (%`p`, %`k`, %`n`) \-- probability of Bernoulli event occurring at least %`k` in %`n` times
+- @`ceiling` (%x) \-- round up to integer
+- @`ceiling#` (%`vector#`) \-- round up each element of %`vector#`
+- @`ceiling##` (%`matrix##`) \-- round up each cell of %`matrix##`
+- @`center` (%`v#`) \-- center (or centre) of gravity
+- @`chiSquareP` (%`chiSquare`, %`df`) \-- area under the %\ci^2 curve up to %`chiSquare`
+- @`chiSquareQ` (%`chiSquare`, %`df`) \-- area under the %\ci^2 curve after %`chiSquare`
+- @`chooseFolder$` (%`title$`) \-- pops up a folder selection window
+- @`chooseReadFile$` (%`title$`) \-- pops up a file selection window for opening (or appending to) an existing file
+- @`chooseWriteFile$` (%`title$`, %`defaultFilename$`) \-- pops up a file selection window for saving to a new file
+- @`columnSums#` (%`matrix##`)
+- @`cos` (%`x`) \-- cosine
+- @`cos#` (%`vector#`)  \-- cosine of each element of %`vector#`
+- @`cos##` (%`matrix##`)  \-- cosine of each cell of %`matrix##`
+- @`cosh` (%x) \-- hyperbolic cosine
+- @`cosh#` (%`vector#`)  \-- hyperbolic cosine of each element of %`vector#`
+- @`cosh##` (%`matrix##`)  \-- hyperbolic cosine of each cell of %`matrix##`
+- @`createFolder` (%`folderPath$`) \-- create a new folder, or do nothing if it already exists
+- @`date$` ( ) \-- current local date and time in the form "Mon Nov  8 16:32:42 2021"
+- @`date#` ( ) \-- current local date and time in the form { 2021, 11, 8, 16, 32, 42 }
+- @`date_utc$` ( ) \-- current standard date and time in the form "Mon Nov  8 15:32:42 2021"
+- @`date_utc#` ( ) \-- current standard date and time in the form { 2021, 11, 8, 15, 32, 42 }
+- @`deleteFile` (%`filePath$`) \-- delete a file, or do nothing if it does not exist
+- @`differenceLimensToPhon` (%`x`) \-- from jnd-scale to perceptual loudness
+- @`endsWith` (%`string$`, %`part$`) \-- determine whether %`string$` ends in %`part$`
+- @`erb` (%`f`) \-- equivalent rectangular bandwidth for frequency %`f`
+- @`erbToHertz` (%`x`) \-- from ERB-rate to acoustic frequency
+- @`erf` (%`x`) \-- error function, the integral of the Gaussian
+- @`erfc` (%`x`) \-- complement of the error function, i.e. 1 - erf (%`x`);
+  this is a separate function because erf (%`x`) can be close to 1
+- @`exp` (%`x`) \-- exponentiation, i.e. %e^%`x`
+- @`exp#` (%`vector#`) \-- exponentiate each element of %`vector#`
+- @`exp##` (%`matrix##`) \-- exponentiate each cell of %`matrix##`
+- @`extractLine$` (%`string$`, %`part$`) \-- everything that comes after the first occurrence of %`part$` in %`string$`
+- @`extractNumber` (%`string$`, %`part$`) \-- the first number after the first occurrence of %`part$% in %`string$`
+- @`extractWord$` (%`string$`, %`part$`) \-- the first “word” after the first occurrence of %`part$% in %`string$`
+- @`fileNames$#` (%`folderNameOrPattern$`) \-- get the names (not the whole paths) of the files in a folder
+  or that match a pattern with an asterisk
+- @`fileReadable` (%`filePath$`) \-- 1 if the file exists and can be read, 0 otherwise
+- @`fisherP` (%`f`, %`df1`, %`df2`) \-- area under the Fisher %F curve up to %`f`
+- @`fisherQ` (%`f`, %`df1`, %`df2`) \-- area under the Fisher %F curve after %`f`
+- @`fixed$` (%`number`, %`precision`) \-- format a number as a string, with %`precision` digits after the decimal point
+- @`floor` (%x) \-- round down to integer
+- @`floor#` (%`vector#`) \-- round down each element of %`vector#`
+- @`floor##` (%`matrix##`) \-- round down each cell of %`matrix##`
+- @`folderNames$#` (%%folderNameOrPattern$%) \-- get the names (not the whole paths) of the subfolders in a folder
+  or that match a pattern with an asterisk
+- @`from_to#` (%`m`, %`n`) \-- the integers from %`m` through %`n`
+- @`from_to_by#` (%`m`, %`n`, %`step`) \-- numbers from %`m` through %`n`, in steps of %`step`
+- @`from_to_count#` (%`start`, %`end`, %`n`) \-- %`n` numbers from %`start` through %`end`
+- @`gaussP` (%`z`) \-- area under the normal curve up to %z
+- @`gaussQ` (%`z`) \-- area under the normal curve after %z
+- @`hertzToBark` (%`x`) \-- from acoustic frequency to Bark-rate
+- @`hertzToErb` (%`x`) \-- from acoustic frequency to ERB-rate
+- @`hertzToMel` (%`x`) \-- from acoustic frequency to mel
+- @`hertzToSemitones` (%`x`) \-- from acoustic frequency to logarithmic scale %re 100 Hz
+- @`imax` (%`x`, `...`) \-- location of the maximum
+- @`imin` (%`x`, `...`) \-- location of the minimum
+- @`index` (%`string$`, %`part$`) \-- look up a substring, or 0 if not found
+- @`index` (%`strings$#`, %`s$`) \-- look up whether and where %%s$% first occurs in %%strings$#%
+- @`index_regex` (%`string$`, %`regex$`) \-- determine whether and where %%string$% first matches %%regex$%
+- @`inner` (%`a#`, %`b#`) \-- inner product
+- @`invBinomialP` (%`P`, %`k`, %`n`) \-- inverse of `binomialP`
+- @`invBinomialQ` (%`Q`, %`k`, %`n`) \-- inverse of `binomialQ`
+- @`invChiSquareQ` (%`q`, %`df`) \-- inverse of `chiSquareQ`
+- @`invFisherQ` (%`q`, %`df1`, %`df2`) \-- inverse of `fisherQ`
+- @`invGaussQ` (%`z`) \-- inverse of `gaussQ`
+- @`invSigmoid` (%`x`) \-- inverse `sigmoid`
+- @`invSigmoid#` (%`vector#`) \-- inverse sigmoid of each element of %`vector#`
+- @`invSigmoid##` (%`matrix##`) \-- inverse sigmoid of each cell of %`matrix##`
+- @`invStudentQ` (%`q`, %`df`) \-- inverse studentQ
+- @`left$` (%`string$`, %`n`) \-- the %n first characters in %`string$`
+- @`length` (%`string$`) \-- number of Unicode characters in %`string$`
+- @`ln` (%`x`) \-- natural logarithm, base %e
+- @`ln#` (%`vector#`) \-- natural logarithm of each element of %`vector#`
+- @`ln##` (%`matrix##`) \-- natural logarithm of each cell of %`matrix##`
+- @`lnGamma` (%`x`) \-- logarithm of the \Ga function
+- @`log2` (%`x`) \-- logarithm, base 2
+- @`log2#` (%`vector#`) \-- base-2 logarithm of each element of %`vector#`
+- @`log2##` (%`matrix##`) \-- base-2 logarithm of each cell of %`matrix##`
+- @`log10` (%x) \-- logarithm, base 10
+- @`log10#` (%`vector#`) \-- base-10 logarithm of each element of %`vector#`
+- @`log10##` (%`matrix##`) \-- base-10 logarithm of each cell of %`matrix##`
+- @`max` (%`x`, `...`) \-- maximum
+- @`mean` (%`v#`) \-- average of the elements of a vector
+- @`melToHertz` (%`x`) \-- from mel to acoustic frequency
+- @`mid$` (%`string$`, %`from`, %`n`) \-- the %`n` characters in %`string$` starting at position %`from`
+- @`min` (%`x`, `...`) \-- minimum
+- @`mul##` (%`a##`, %`b##`) \-- matrix multiplication
+- @`number` (%`a$`) \-- interpret a string as a number
+- @`number#` (%`a$#`) \-- interpret strings as numbers
+- @`numberOfColumns` (%`matrix##`)#
+- @`numberOfRows` (%`matrix##`)#
+- @`outer##` (%`a#`, %`b#`) \-- outer product, i.e. %%result__ij_% = %%a__i_%%%b__j_%
+- @`percent$` (%`number`, %`precision`) \-- format a number as a string,
+  with a trailing percent sign and %`precision` digits after the decimal point
+- @`phonToDifferenceLimens` (%`x`) \-- from perceptual loudness to jnd-scale
+- @`randomBernoulli` (%`p`) \-- Bernoulli-distributed random deviate (0 or 1)
+- @`randomBernoulli#` (%`n`, %`p`) \-- %`n` independent Bernoulli-distributed zeroes and ones
+- @`randomGamma` (%`shape`, %`rate`) \-- gamma-distributed random deviate
+- @`randomGamma#` (%`n`, %`shape`, %`rate`) \-- %n independent gamma-distributed random numbers
+- @`randomGamma#` (%`vector#`, %`shape`, %`rate`) \-- duplicate %`vector#`,
+  and replace all elements with independent gamma-distributed random numbers
+- @`randomGamma##` (%`nrow`, %`ncol`, %`shape`, %`rate`) \-- %nrow \xx %ncol independent gamma-distributed random numbers
+- @`randomGamma##` (%`matrix##`, %`shape`, %`rate`) \-- duplicate %`matrix##`,
+  and replace all cells with independent gamma-distributed random numbers
+- @`randomGauss` (%\mu, %\si) \-- normally distributed random deviate
+- @`randomGauss#` (%n, %\mu, %\si) \-- %n independent normally distributed random numbers
+- @`randomGauss#` (%`vector#`, %\mu, %\si) \-- duplicate %`vector#`,
+  and replace all elements with independent normally distributed random numbers
+- @`randomGauss##` (%`nrow`, %`ncol`, %\mu, %\si) \-- %`nrow` \xx %`ncol` independent normally distributed random numbers
+- @`randomGauss##` (%`matrix##`, %\mu, %\si) \-- duplicate %`matrix##`,
+  and replace all cells with independent normally distributed random numbers
+- @`randomInteger` (%`min`, %`max`) \-- uniformly distributed integer random deviate
+- @`randomInteger#` (%`n`, %`min`, %`max`) \-- %`n` independent uniformly distributed random integers
+- @`randomInteger#` (%`vector#`, %`min`, %`max`) \-- duplicate %`vector#`,
+  and replace all elements with independent uniformly distributed random integers
+- @`randomInteger##` (%`nrow`, %`ncol`, %`min`, %`max`) \-- %`nrow` \xx %`ncol` independent uniformly distributed random integers
+- @`randomInteger##` (%`matrix##`, %`min`, %`max`) \-- duplicate %`matrix##`,
+  and replace all cells with independent uniformly distributed random integers
+- @`randomPoisson` (%`mean`) \-- Poisson-distributed random deviate
+- @`randomPoisson#` (%`n`, %`mean`) \-- %`n` independent Poisson-distributed random numbers
+- @`randomPoisson#` (%`vector#`, %`mean`) \-- duplicate %`vector#`,
+  and replace all elements with independent Poisson-distributed random numbers
+- @`randomPoisson##` (%nrow, %ncol, %`mean`) \-- %`nrow` \xx %`ncol` independent Poisson-distributed random numbers
+- @`randomPoisson##` (%`matrix##`, %`mean`) \-- duplicate %`matrix##`,
+  and replace all cells with independent Poisson-distributed random numbers
+- @`randomUniform` (%`min`, %`max`) \-- uniformly distributed random deviate
+- @`randomUniform#` (%`n`, %`min`, %`max`) \-- %n independent uniformly distributed random numbers
+- @`randomUniform#` (%`vector#`, %min, %max) \-- duplicate %`vector#`,
+  and replace all elements with independent uniformly distributed random numbers
+- @`randomUniform##` (%`nrow`, %`ncol`, %`min`, %`max`) \-- %`nrow` \xx %`ncol` independent uniformly distributed random numbers
+- @`randomUniform##` (%`matrix##`, %`min`, %`max`) \-- duplicate %`matrix##`,
+  and replace all cells with independent uniformly distributed random numbers
+- @`random_initializeSafelyAndUnpredictably` ( ) \-- undoes the effects of the following function
+- @`random_initializeWithSeedUnsafelyButPredictably` (%`seed`) \-- reproducible sequence of random numbers
+- @`readFile` (%`filePath$`) \-- read a number from a text file
+- @`readFile$` (%`filePath$`) \-- read a whole text file into a string
+- @`readLinesFromFile$#` (%`filePath$`) \-- read all lines from a text file
+- @`rectify` (%`x`) \-- set to zero if negative (no change if positive)
+- @`rectify#` (%`vector#`) \-- rectify each element of %`vector#`
+- @`rectify##` (%`matrix##`) \-- rectify each cell of %`matrix##`
+- @`repeat#` (%`v#`, %`n`) \-- repeat the whole sequence of elements of %`v#` %`n` times
+- @`replace$` (%`a$`, %`b$`, %`c$`, %`n`) \-- within %`a$`, replace the first %`n` occurrences of %`b$` with %`c$`, or all if %`n` = 0
+- @`replace_regex$` (%`a$`, %`b$`, %`c$`, %`n`) \-- within %`a$`,
+  replace the first %`n` matches of regular expression %`b$` with the regular expression %`c$`, or all if %`n` = 0
+- @`right$` (%`string$`, %`n`) \-- the %n last characters in %`string$`
+- @`rindex` (%`string$`, %`part$`) \-- look up a substring from the end, or 0 if not found
+- @`rindex` (%`strings$#`, %`s$`) \-- look up whether and where %`s$` last occurs in %`strings$#`
+- @`rindex_regex` (%`string$`, %`regex$`) \-- determine whether and where %`string$` last matches %`regex$`
+- @`round` (%`x`) \-- nearest integer
+- @`round#` (%`vector#`) \-- nearest integer of each element of %`vector#`
+- @`round##` (%`matrix##`) \-- nearest integer of each cell of %`matrix##`
+- @`rowSums#` (%`matrix##`)
+- @`semitonesToHertz` (%`x`) \-- from logarithmic scale %re 100 Hz to acoustic frequency
+- @`sigmoid` (%`x`) \-- 1 / (1 + %e^^-%`x`^)
+- @`sigmoid#` (%`vector#`) \-- sigmoid of each element of %`vector#`
+- @`sigmoid##` (%`matrix##`) \-- sigmoid of each cell of %`matrix##`
+- @`sin` (%`x`) \-- sine
+- @`sin#` (%`vector#`) \-- sine of each element of %`vector#`
+- @`sin##` (%`matrix##`) \-- sine of each cell of %`matrix##`
+- @`sinc` (%`x`) \-- sinus cardinalis: sin (%`x`) / %`x`
+- @`sincpi` (%`x`) \-- sin (%\pi%x) / (%\pi%x)
+- @`sinh` (%`x`) \-- hyperbolic sine
+- @`sinh#` (%`vector#`) \-- hyperbolic sine of each element of %`vector#`
+- @`sinh##` (%`matrix##`) \-- hyperbolic sine of each cell of %`matrix##`
+- @`size` (%`v#`) \-- number of elements
+- @`shuffle#` (%`vector#`) \-- randomize order
+- @`softmax#` (%`vector#`)
+- @`softmaxPerRow##` (%`matrix##`)
+- @`sort#` (%`vector#`) \-- reshuffle in increasing order
+- @`splitByWhitespace$` (%%string$%) \-- split a string into inks
+- @`sqrt` (%`x`) \-- square root
+- @`sqrt#` (%`vector#`) \-- square root of each element of %`vector#`
+- @`sqrt##` (%`matrix##`) \-- square root of each cell of %`matrix##`
+- @`startsWith` (%`string$`, %`part$`) \-- determine whether %`string$` starts with %`part$`
+- @`stdev` (%`v#`) \-- standard deviation of the elements of a vector
+- @`stopwatch` \-- give the current value of the timer, which is then immediately reset to zero (note: no parentheses)
+- @`string$` (%`number`) \-- format a number as a string
+- @`studentP` (%`t`, %`df`) \-- area under the Student %T curve up to %`t`
+- @`studentQ` (%`t`, %`df`) \-- area under the Student %T curve after %`t`
+- @`sum` (%`v#`) \-- sum the elements
+- @`sumOver` (%`loopVariable` `to` %`n`, %`numericExpressionOptionallyUsingLoopVariable`) \-- \Si
+- @`tan` (%`x`) \-- tangent
+- @`tan#` (%`vector#`) \-- tangent of each element of %`vector#`
+- @`tan##` (%`matrix##`) \-- tangent of each cell of %`matrix##`
+- @`tanh` (%`x`) \-- hyperbolic tangent
+- @`tanh#` (%`vector#`) \-- hyperbolic tangent of each element of %`vector#`
+- @`tanh##` (%`matrix##`) \-- hyperbolic tangent of each cell of %`matrix##`
+- @`to#` (%`n`) \-- the integers 1 through %`n`
+- @`transpose##` (%`matrix##`) \-- flip matrix along its diagonal
+- @`unicode` (%`c$`) \-- the Unicode codepoint number that corresponds to character %`c$`
+- @`unicode$` (%`n`) \-- the character that corresponds to Unicode codepoint %`n`
+- @`unicodeToBackslashTrigraphs$` (%`string$`) \-- convert e.g. \ct to \bsct
+- @`writeFile` (%`filePath$`, `...`) \-- create a new text file, and write texts, numbers, vectors and so on into it
+- @`writeFileLine` (%`filePath$`, `...`) \-- create a new text file, write texts, numbers, vectors and so on into it, followed by a newline
+- @`zero#` (%`n`) \-- vector with %`n` elements that are all 0
+- @`zero##` (%`nrow`, %`ncol`) \-- matrix with %`nrow` \xx %`ncol` elements that are all 0
+)~~~" MAN_PAGES_END
 
 MAN_BEGIN (U"Hidden commands", U"ppgb", 20110129)
 NORMAL (U"Some commands in Praat's fixed and dynamic menus are hidden by default. "
@@ -1862,12 +1871,12 @@ NORMAL (U"You can read this tutorial sequentially with the help of the “##< 1#
 LIST_ITEM (U"@@Scripting 1. Your first scripts@ (how to create, how to run, how to save)")
 LIST_ITEM (U"@@Scripting 2. How to script settings windows@ (numeric, boolean, multiple-choice, text, file)")
 LIST_ITEM (U"@@Scripting 3. Simple language elements")
-LIST_ITEM1 (U"@@Scripting 3.1. Hello world@ (writeInfoLine, appendInfoLine)")
+LIST_ITEM1 (U"@@Scripting 3.1. Hello world@ (`writeInfoLine`, `appendInfoLine`)")
 LIST_ITEM1 (U"@@Scripting 3.2. Numeric variables@ (assignments)")
 LIST_ITEM1 (U"@@Scripting 3.3. Numeric queries")
 LIST_ITEM1 (U"@@Scripting 3.4. String variables@ (assignments)")
 LIST_ITEM1 (U"@@Scripting 3.5. String queries")
-LIST_ITEM1 (U"@@Scripting 3.6. “For” loops@ (for, endfor)")
+LIST_ITEM1 (U"@@Scripting 3.6. “For” loops@ (`for`, `endfor`)")
 LIST_ITEM1 (U"@@Scripting 3.7. Layout@ (white space, comments, continuation lines)")
 LIST_ITEM (U"@@Scripting 4. Object selection@")
 LIST_ITEM1 (U"@@Scripting 4.1. Selecting objects")
@@ -1876,25 +1885,25 @@ LIST_ITEM1 (U"@@Scripting 4.3. Querying objects")
 LIST_ITEM (U"@@Scripting 5. Language elements reference@")
 LIST_ITEM1 (U"@@Scripting 5.1. Variables@ (numeric, string)")
 LIST_ITEM1 (U"@@Scripting 5.2. Expressions@ (numeric, string)")
-LIST_ITEM1 (U"@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)")
-LIST_ITEM1 (U"@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)")
-LIST_ITEM1 (U"@@Scripting 5.5. Procedures@ (\\@ , procedure)")
+LIST_ITEM1 (U"@@Scripting 5.3. Jumps@ (`if`, `then`, `elsif`, `else`, `endif`)")
+LIST_ITEM1 (U"@@Scripting 5.4. Loops@ (`for`/`endfor`, `while`/`endwhile`, `repeat`/`until`)")
+LIST_ITEM1 (U"@@Scripting 5.5. Procedures@ (`@`, `procedure`)")
 LIST_ITEM1 (U"@@Scripting 5.6. Arrays and dictionaries")
 LIST_ITEM1 (U"@@Scripting 5.7. Vectors and matrices")
 LIST_ITEM1 (U"@@Scripting 5.8. Including other scripts")
-LIST_ITEM1 (U"@@Scripting 5.9. Quitting@ (exitScript)")
+LIST_ITEM1 (U"@@Scripting 5.9. Quitting@ (`exitScript`)")
 LIST_ITEM (U"@@Scripting 6. Communication outside the script")
-LIST_ITEM1 (U"@@Scripting 6.1. Arguments to the script@ (form/endform, runScript)")
-LIST_ITEM1 (U"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
-LIST_ITEM1 (U"@@Scripting 6.3. Query commands@ (Get, Count)")
-LIST_ITEM1 (U"@@Scripting 6.4. Files@ (fileReadable, readFile, writeFile, deleteFile, createFolder)")
-LIST_ITEM1 (U"@@Scripting 6.5. Calling system commands@ (runSystem, environment\\$ , stopwatch)")
-LIST_ITEM1 (U"@@Scripting 6.6. Controlling the user@ (pause, beginPause/endPause, chooseReadFile\\$ )")
-LIST_ITEM1 (U"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
-LIST_ITEM1 (U"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn, nocheck)")
+LIST_ITEM1 (U"@@Scripting 6.1. Arguments to the script@ (`form`/`endform`, `runScript`)")
+LIST_ITEM1 (U"@@Scripting 6.2. Writing to the Info window@ (`writeInfoLine`, `appendInfoLine`, `appendInfo`, `tab$`)")
+LIST_ITEM1 (U"@@Scripting 6.3. Query commands@ (#Get, #Count)")
+LIST_ITEM1 (U"@@Scripting 6.4. Files@ (`fileReadable`, `readFile`, `writeFile`, `deleteFile`, `createFolder`)")
+LIST_ITEM1 (U"@@Scripting 6.5. Calling system commands@ (`runSystem`, `environment$`, `stopwatch`)")
+LIST_ITEM1 (U"@@Scripting 6.6. Controlling the user@ (`pause`, `beginPause`/`endPause`, `chooseReadFile$`)")
+LIST_ITEM1 (U"@@Scripting 6.7. Sending a message to another program@ (`sendsocket`)")
+LIST_ITEM1 (U"@@Scripting 6.8. Messages to the user@ (`exitScript`, `assert`, `nowarn`, `nocheck`)")
 LIST_ITEM1 (U"@@Scripting 6.9. Calling from the command line")
 LIST_ITEM (U"@@Scripting 7. Scripting the editors")
-LIST_ITEM1 (U"@@Scripting 7.1. Scripting an editor from a shell script@ (editor/endeditor)")
+LIST_ITEM1 (U"@@Scripting 7.1. Scripting an editor from a shell script@ (`editor`/`endeditor`)")
 LIST_ITEM1 (U"@@Scripting 7.2. Scripting an editor from within")
 LIST_ITEM (U"@@Scripting 8. Controlling Praat from another program")
 LIST_ITEM1 (U"@@Scripting 8.1. The sendpraat subroutine")
@@ -2075,11 +2084,11 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
 )
 NORMAL (U"According to section 4 above, and according to @@Formulas 2.2. Representation of strings@, "
 	"you would have to write this in the following way in a script:")
-CODE (UR"~~~(Formula: "correct", "self\$  [""response""] = self\$  [""stimulus""]")~~~")
+CODE (UR"~~~(Formula: "correct", "self$ [""response""] = self$ [""stimulus""]")~~~")
 NORMAL (U"The required doubling of string-internal double quotes is awkward. "
 	"Therefore, there exists a special way for typing formula arguments, namely with the tilde (\"~\"):")
 CODE (1+UR"~~~(
-Formula: "correct", ~ self\$  ["response"] = self\$  ["stimulus"]
+Formula: "correct", ~ self$ ["response"] = self$ ["stimulus"]
 )~~~")
 NORMAL (U"This means that you can write the example of section 4 in an analogous way:")
 CODE (U"Create Sound from formula: “sine”, 1, 0.0, 1.0, 44100, ~ 1/2 * sin(2*pi*377*x)")
@@ -2094,8 +2103,8 @@ NORMAL (U"In a script you can either supply the %%complete path% to the file, or
 NORMAL (U"A complete path includes both the folder (directory) hierarchy and the name of the file. "
 	"This goes slightly differently on the Windows platform on the one hand, "
 	"and on the Mac and Linux platforms on the other. If your user name is Miep, "
-	"and your home folder contains a folder #Sounds, "
-	"and this folder contains a folder #Animals, and this contains the file ##miauw.wav#, "
+	"and your home folder contains a folder `Sounds`, "
+	"and this folder contains a folder `Animals`, and this contains the file `miauw.wav`, "
 	"you can open that file as follows:")
 CODE (U"Read from file: “C:/Users/Miep/Sounds/Animals/miauw.wav”   ; Windows")
 CODE (U"Read from file: “/Users/Miep/Sounds/Animals/miauw.wav”   ; Mac")
@@ -2103,11 +2112,11 @@ CODE (U"Read from file: “/home/miep/Sounds/Animals/miauw.wav”   ; Linux")
 NORMAL (U"(the part before your user name may be slightly different on your computer; "
 	"use your command or terminal window to find out)")
 NORMAL (U"In these examples, “C” is the Windows %%drive letter% and "
-	"##/Users/Miep# or ##/home/Miep# is your %%home folder%. Both the home folder and the drive letter "
+	"`/Users/Miep` or `/home/Miep` is your %%home folder%. Both the home folder and the drive letter "
 	"can be abbreviated away by using the tilde (“~”) in the path "
 	"(this tilde has nothing to do with the tilde used in formula arguments):")
 CODE (U"Read from file: “~/Sounds/Animals/miauw.wav”")
-NORMAL (U"If your #Sounds folder is not in your home folder but on your desktop, you do")
+NORMAL (U"If your `Sounds` folder is not in your home folder but on your desktop, you do")
 CODE (U"Read from file: “~/Desktop/Sounds/Animals/miauw.wav”")
 NORMAL (U"(this works because on all three platforms, the desktop folder is a subfolder of your home folder)")
 NORMAL (U"If your Sounds folder is on a USB drive called PORCH, it would be something like:")
@@ -2117,14 +2126,14 @@ CODE (U"Read from file: “/media/PORCH/Sounds/Animals/miauw.wav”   ; Linux")
 NORMAL (U"Instead of all these complete path names, you can use %relative path names. "
 	"These are taken as relative to the folder in which your script resides, "
 	"and help to make your script portable if you move the script along with your data.")
-NORMAL (U"Thus, if your script (after you have saved it!) is in the #Animals folder mentioned above, "
-	"i.e. in the same folder as ##miauw.wav#, you would simply open the file with")
+NORMAL (U"Thus, if your script (after you have saved it!) is in the `Animals` folder mentioned above, "
+	"i.e. in the same folder as `miauw.wav`, you would simply open the file with")
 CODE (U"Read from file: “miauw.wav”")
-NORMAL (U"If your script is in the #Sounds folder mentioned above, "
-	"i.e. in the same folder as where the #Animals folder is, you would open the file with")
+NORMAL (U"If your script is in the `Sounds` folder mentioned above, "
+	"i.e. in the same folder as where the `Animals` folder is, you would open the file with")
 CODE (U"Read from file: “Animals/miauw.aifc”")
-NORMAL (U"If your script is in the folder #Scripts that is inside the #Sounds folder, "
-	"i.e. if your script is a sister folder of the #Animals folder, you would open the file with")
+NORMAL (U"If your script is in the folder `Scripts` that is inside the `Sounds` folder, "
+	"i.e. if your script is a sister folder of the `Animals` folder, you would open the file with")
 CODE (U"Read from file: “../Animals/miauw.aifc”")
 NORMAL (U"where “..” is the general way on all platforms to go one folder up in the hierarchy.")
 NORMAL (U"Note that on Windows you could use the backslash (“\\bs”) instead of the forward slash (“/”), "
@@ -2152,7 +2161,7 @@ NORMAL (U"Now you know all the ways to write the arguments of commands in a scri
 	"If you dislike manually copying arguments from settings windows into your script, "
 	"or if you are not sure whether something is a numeric or a string argument, "
 	"you can use the @@history mechanism@: "
-	"choose @@Clear history@ from the #Edit menu in your @ScriptEditor, "
+	"choose @@Clear history@ from the Edit menu in your @ScriptEditor, "
 	"click your command button, edit the arguments, and click #OK. The command will be executed. "
 	"Then choose @@Paste history@, and the command line, including the arguments, "
 	"will appear in the ScriptEditor at the position of the text cursor. You can build whole new scripts on the basis of this mechanism.")
@@ -2381,10 +2390,10 @@ MAN_END
 MAN_BEGIN (U"Scripting 3.4. String variables", U"ppgb", 20130411)
 INTRO (U"Just as you can store @@Scripting 3.2. Numeric variables|numeric variables@, "
 	"you can store %%string variables%, which contain text instead of numbers. Here is an example:")
-CODE (U"%%word1\\$ % = “Hello”")
-CODE (U"%%word2\\$ % = “world”")
-CODE (U"%%sentence\\$ % = %%word1\\$ % + “ ” + %%word2\\$ %")
-CODE (U"writeInfoLine: “The whole sentence is: ”, %%sentence\\$ %")
+CODE (U"word1$ = “Hello”")
+CODE (U"word2$ = “world”")
+CODE (U"sentence$ = word1$ + “ ” + word2$")
+CODE (U"writeInfoLine: “The whole sentence is: ”, sentence$")
 NORMAL (U"Yes, this is another way to get the sentence `Hello world` into the Info window. "
 	"It's a more linguistically valid way to do it, and here is how it works:")
 LIST_ITEM (U"1. In line 1, the value “Hello”, which is a text (as we can see by its use of quotes), "
@@ -2419,8 +2428,8 @@ SCRIPT (6, 3, U""
 )
 NORMAL (U"In a script, you will want to put the result of the query in a string variable instead of in the Info window, "
 	"because you want to manipulate it further:")
-CODE (U"%%text\\$ % = Get label of interval: 1, 3")
-CODE (U"writeInfoLine: “The text in interval 3 of tier 1 is: ”, %%text\\$ %")
+CODE (U"text$ = Get label of interval: 1, 3")
+CODE (U"writeInfoLine: “The text in interval 3 of tier 1 is: ”, text$")
 NORMAL (U"The script first stores the text of the interval, i.e. `hello`, into the variable %`text$`, "
 	"then writes it, preceded by some informative text, into the Info window:")
 SCRIPT (6, 3, U""
@@ -2433,8 +2442,8 @@ NORMAL (U"Hey, yet another way to implement “Hello world” with the Praat scr
 ENTRY (U"The difference between numeric queries and string queries")
 NORMAL (U"A string query stores in a string variable the whole text that would appear in the Info window. "
 	"For instance, the script")
-CODE (U"%%power\\$ % = Get power: 0.0, 0.0")
-CODE (U"writeInfoLine: %%power\\$ %")
+CODE (U"power$ = Get power: 0.0, 0.0")
+CODE (U"writeInfoLine: power$")
 NORMAL (U"could give you the following result:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
@@ -2462,16 +2471,16 @@ NORMAL (U"Take the example of the @@Scripting 3.5. String queries|previous page@
 	"It’s easy to imagine that you actually want the texts of %%all the first five% intervals. "
 	"With knowledge from the previous sections, you could write it like this:")
 CODE (U"writeInfoLine: “The texts in the first five intervals:”")
-CODE (U"%%text\\$ % = Get label of interval: 1, 1")
-CODE (U"appendInfoLine: “Interval 1: ”, %%text\\$ %")
-CODE (U"%%text\\$ % = Get label of interval: 1, 2")
-CODE (U"appendInfoLine: “Interval 2: ”, %%text\\$ %")
-CODE (U"%%text\\$ % = Get label of interval: 1, 3")
-CODE (U"appendInfoLine: “Interval 3: ”, %%text\\$ %")
-CODE (U"%%text\\$ % = Get label of interval: 1, 4")
-CODE (U"appendInfoLine: “Interval 4: ”, %%text\\$ %")
-CODE (U"%%text\\$ % = Get label of interval: 1, 5")
-CODE (U"appendInfoLine: “Interval 5: ”, %%text\\$ %")
+CODE (U"text$ = Get label of interval: 1, 1")
+CODE (U"appendInfoLine: “Interval 1: ”, text$")
+CODE (U"text$ = Get label of interval: 1, 2")
+CODE (U"appendInfoLine: “Interval 2: ”, text$")
+CODE (U"text$ = Get label of interval: 1, 3")
+CODE (U"appendInfoLine: “Interval 3: ”, text$")
+CODE (U"text$ = Get label of interval: 1, 4")
+CODE (U"appendInfoLine: “Interval 4: ”, text$")
+CODE (U"text$ = Get label of interval: 1, 5")
+CODE (U"appendInfoLine: “Interval 5: ”, text$")
 NORMAL (U"The result will be something like")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
@@ -2488,45 +2497,45 @@ NORMAL (U"This can be done more nicely. The first step is to realize that the se
 	"and the sentence starting with `appendInfoLine` are also similar to each other. They only differ in the interval number, "
 	"and can therefore be made %identical by using a variable for the interval number, like this:")
 CODE (U"writeInfoLine: “The texts in the first five intervals:”")
-CODE (U"%intervalNumber = 1")
-CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
-CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
-CODE (U"%intervalNumber = 2")
-CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
-CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
+CODE (U"intervalNumber = 1")
+CODE (U"text$ = Get label of interval: 1, intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, intervalNumber, “: ”, text$")
+CODE (U"intervalNumber = 2")
+CODE (U"text$ = Get label of interval: 1, intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, intervalNumber, “: ”, text$")
 CODE (U"intervalNumber = 3")
-CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
-CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
+CODE (U"text$ = Get label of interval: 1, intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, intervalNumber, “: ”, text$")
 CODE (U"intervalNumber = 4")
-CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
-CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
+CODE (U"text$ = Get label of interval: 1, intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, intervalNumber, “: ”, text$")
 CODE (U"intervalNumber = 5")
-CODE (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
-CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
+CODE (U"text$ = Get label of interval: 1, intervalNumber")
+CODE (U"appendInfoLine: “Interval ”, intervalNumber, “: ”, text$")
 NORMAL (U"A new trick that you see here is that as a numeric argument (##Interval number#, "
 	"the second argument to ##Get label of interval...#), you can use not only a number "
-	"(as in all previous examples), but also a variable ($%intervalNumber). "
+	"(as in all previous examples), but also a variable (%`intervalNumber`). "
 	"The rest of the script should be known stuff by now.")
 NORMAL (U"The script above is long, but it can be made much shorter with the use of a %%for-loop%:")
 CODE (U"writeInfoLine: “The texts in the first five intervals:”")
-CODE (U"for %intervalNumber from 1 to 5")
-	CODE1 (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
-	CODE1 (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
+CODE (U"for intervalNumber from 1 to 5")
+	CODE1 (U"text$ = Get label of interval: 1, intervalNumber")
+	CODE1 (U"appendInfoLine: “Interval ”, intervalNumber, “: ”, text$")
 CODE (U"endfor")
 NORMAL (U"The two lines that were repeated five times in the previous version now show up with indentation "
-	"between a $for line and its corresponding $endfor. Those two lines (the `text$` and the `appendInfoLine` line) "
-	"are executed five times: for $%intervalNumber equal to 1, for $%intervalNumber equal to 2, for $%intervalNumber equal to 3, "
-	"for $%intervalNumber equal to 4, and for $%intervalNumber equal to 5, in that order.")
+	"between a `for` line and its corresponding `endfor`. Those two lines (the `text$` and the `appendInfoLine` line) "
+	"are executed five times: for %`intervalNumber` equal to 1, for %`intervalNumber` equal to 2, for %`intervalNumber` equal to 3, "
+	"for %`intervalNumber` equal to 4, and for %`intervalNumber` equal to 5, in that order.")
 NORMAL (U"In the above example, using a loop does not do much more than save eight lines, at the cost of adding two new lines. "
 	"But imagine the case in which you want to list %all the texts in the intervals: "
 	"the version without the loop is no longer possible. By contrast, the version %with the loop is still possible, "
 	"because we have the command ##Get number of intervals...#, which gives us the number of intervals in the specified tier "
 	"(here, tier 1). So you do:")
-CODE (U"%numberOfIntervals = Get number of intervals: 1")
-CODE (U"writeInfoLine: “The texts in all ”, %numberOfIntervals, “ intervals:”")
-CODE (U"for %intervalNumber from 1 to %numberOfIntervals")
-	CODE1 (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
-	CODE1 (U"appendInfoLine: “Interval ”, %intervalNumber, “: ”, %%text\\$ %")
+CODE (U"numberOfIntervals = Get number of intervals: 1")
+CODE (U"writeInfoLine: “The texts in all ”, numberOfIntervals, “ intervals:”")
+CODE (U"for intervalNumber from 1 to numberOfIntervals")
+	CODE1 (U"text$ = Get label of interval: 1, intervalNumber")
+	CODE1 (U"appendInfoLine: “Interval ”, intervalNumber, “: ”, text$")
 CODE (U"endfor")
 NORMAL (U"This may yield something like")
 SCRIPT (6, 3, U""
@@ -2545,15 +2554,15 @@ SCRIPT (6, 3, U""
 NORMAL (U"This is the first script in this tutorial that is useful in itself. On the basis of it "
 	"you can create all kinds of ways to list the texts in intervals. Here is how you would also list the durations "
 	"of those intervals:")
-CODE (U"%numberOfIntervals = Get number of intervals: 1")
-CODE (U"writeInfoLine: “The durations and texts in all ”, %numberOfIntervals, “ intervals:”")
-CODE (U"for %intervalNumber from 1 to %numberOfIntervals")
-	CODE1 (U"%startTime = Get start point: 1, %intervalNumber")
-	CODE1 (U"%endTime = Get end point: 1, %intervalNumber")
-	CODE1 (U"%duration = %endTime - %startTime")
-	CODE1 (U"%%text\\$ % = Get label of interval: 1, %intervalNumber")
-	CODE1 (U"appendInfoLine: “Interval ”, %intervalNumber, “ is ”, "
-			"%duration, “ seconds long and contains the text: ”, %%text\\$ %")
+CODE (U"numberOfIntervals = Get number of intervals: 1")
+CODE (U"writeInfoLine: “The durations and texts in all ”, numberOfIntervals, “ intervals:”")
+CODE (U"for intervalNumber from 1 to numberOfIntervals")
+	CODE1 (U"startTime = Get start point: 1, intervalNumber")
+	CODE1 (U"endTime = Get end point: 1, intervalNumber")
+	CODE1 (U"duration = endTime - startTime")
+	CODE1 (U"text$ = Get label of interval: 1, intervalNumber")
+	CODE1 (U"appendInfoLine: “Interval ”, intervalNumber, “ is ”, "
+			"duration, “ seconds long and contains the text: ”, text$")
 CODE (U"endfor")
 MAN_END
 
@@ -2565,20 +2574,20 @@ NORMAL (U"Praat ignores all white space (spaces and tabs) that you put at the be
 	"You are advised to use indenting, though, with three or four spaces for each level, "
 	"as in the following example, which loops over all tiers and intervals of a TextGrid:")
 CODE (U"writeInfoLine: “The texts in all tiers and intervals:”")
-CODE (U"%numberOfTiers = Get number of tiers")
-CODE (U"for %tierNumber from 1 to %numberOfTiers")
-	CODE1 (U"%numberOfIntervals = Get number of intervals: %tierNumber")
-	CODE1 (U"for %intervalNumber from 1 to %numberOfIntervals")
-		CODE2 (U"%%text\\$ % = Get label of interval: %tierNumber, %intervalNumber")
-		CODE2 (U"appendInfoLine: “Tier ”, %tierNumber, “, interval ”, %intervalNumber, “: ”, %%text\\$ %")
+CODE (U"numberOfTiers = Get number of tiers")
+CODE (U"for tierNumber from 1 to numberOfTiers")
+	CODE1 (U"numberOfIntervals = Get number of intervals: tierNumber")
+	CODE1 (U"for intervalNumber from 1 to numberOfIntervals")
+		CODE2 (U"text$ = Get label of interval: tierNumber, intervalNumber")
+		CODE2 (U"appendInfoLine: “Tier ”, tierNumber, “, interval ”, intervalNumber, “: ”, text$")
 	CODE1 (U"endfor")
 CODE (U"endfor")
 NORMAL (U"Praat also ignores lines that are empty or consist solely of white space, "
 	"so you use those to structure your script visually.")
 ENTRY (U"Comments")
 NORMAL (U"Comments are lines that start with “\\# ” or “;”. Praat ignores these lines when your script is running:")
-CODE (U"\\#  Create 1 second of a sine wave with a frequency of 100 Hertz,")
-CODE (U"\\#  sampled at 44100 Hz:")
+CODE (U"# Create 1 second of a sine wave with a frequency of 100 Hertz,")
+CODE (U"# sampled at 44100 Hz:")
 CODE (U"Create Sound from formula: “sine”, 1, 0, 1, 44100, ~ sin (2*pi*100*x)")
 NORMAL (U"Because of its visibility, you are advised to use “\\# ” for comments that structure your script, "
 	"and “;” perhaps only for “commenting out” a statement, i.e. to temporarily put it before a line "
@@ -2586,14 +2595,14 @@ NORMAL (U"Because of its visibility, you are advised to use “\\# ” for comme
 ENTRY (U"Continuation lines")
 NORMAL (U"There is normally one line per statement, and one statement per line. But some statements are very long, "
 	"such as this one on a previous page:")
-CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “ is ”, %duration, “ seconds long and contains the text: ”, %%text\\$ %")
+CODE (U"appendInfoLine: “Interval ”, intervalNumber, “ is ”, duration, “ seconds long and contains the text: ”, text$")
 NORMAL (U"By making the current window wider, you can see that I really put this whole statement on a single line. "
 	"I could have distributed it over two lines in the following way, by using three dots (an %ellipsis):")
-CODE (U"appendInfoLine: “Interval ”, %intervalNumber, “ is ”, %duration, “ seconds long")
-CODE (U"... and contains the text: ”, %%text\\$ %")
+CODE (U"appendInfoLine: “Interval ”, intervalNumber, “ is ”, duration, “ seconds long")
+CODE (U"... and contains the text: ”, text$")
 NORMAL (U"Here is another common type of example:")
 CODE (U"Create Sound from formula: “windowedSine”, 1, 0, 1, 44100,")
-CODE (U"... ~ 0.5 * sin(2*pi*1000*x) * exp(-0.5*((x-0.5)/0.1)\\^ 2)")
+CODE (U"... ~ 0.5 * sin(2*pi*1000*x) * exp(-0.5*((x-0.5)/0.1)^2)")
 NORMAL (U"You will normally want to follow such an ellipsis with a space, unless you want to concatenate "
 	"the parts of a long word:")
 CODE (U"Select outer viewport: 0, 10, 0, 4")
@@ -2612,50 +2621,50 @@ MAN_END
 
 MAN_BEGIN (U"Scripting 4.1. Selecting objects", U"ppgb", 20180428)
 NORMAL (U"To simulate the mouse-clicked and dragged selection in the list of objects, "
-	"you have the commands #selectObject, #plusObject and #minusObject.")
+	"you have the functions #`selectObject`, #`plusObject` and #`minusObject`.")
 NORMAL (U"Suppose you start Praat and use ##Create Sound as tone...# to create a Sound called %tone. "
 	"In the object list it looks like “1. Sound tone”. "
 	"Suppose you then do ##To Spectrum...# from the ##Analyse Spectrum# menu. "
 	"A second object, called “2. Spectrum tone” appears in the list and is selected. "
 	"To select and play the Sound, you can do either")
-CODE (U"#selectObject: 1")
+CODE (U"selectObject: 1")
 CODE (U"Play")
 NORMAL (U"or")
-CODE (U"#selectObject: “Sound tone”")
+CODE (U"selectObject: “Sound tone”")
 CODE (U"Play")
 NORMAL (U"So you can select an object either by its unique ID (identifier: the unique number by which it appears in the list) "
 	"or by name.")
 NORMAL (U"The function #selectObject works by first deselecting all objects, and then selecting the one you mention. "
 	"If you don’t want to deselect the existing selection, you can use #plusObject or #minusObject. "
 	"When the Sound is selected, you can select the Spectrum as well by doing")
-CODE (U"#plusObject: 2")
+CODE (U"plusObject: 2")
 NORMAL (U"or")
-CODE (U"#plusObject: “Spectrum tone”")
+CODE (U"plusObject: “Spectrum tone”")
 NORMAL (U"If you then want to deselect the Sound, and keep the Spectrum selected, you can do")
-CODE (U"#minusObject: 1")
+CODE (U"\\#`{minusObject}: 1")
 NORMAL (U"or")
-CODE (U"#minusObject: “Sound tone”")
+CODE (U"minusObject: “Sound tone”")
 NORMAL (U"All these functions can take more than one argument. To select the Sound and the Spectrum together, you can do")
-CODE (U"#selectObject: 1, 2")
+CODE (U"\\#`{selectObject}: 1, 2")
 NORMAL (U"or")
-CODE (U"#selectObject: “Sound tone”, “Spectrum tone”")
+CODE (U"selectObject: “Sound tone”, “Spectrum tone”")
 NORMAL (U"or even")
-CODE (U"#selectObject: 1, “Spectrum tone”")
+CODE (U"selectObject: 1, “Spectrum tone”")
 NORMAL (U"or, using a numeric vector:")
-CODE (U"%%myObjects\\# % = { 1, 2 }")
-CODE (U"#selectObject: %%myObjects\\# %")
+CODE (U"myObjects# = { 1, 2 }")
+CODE (U"selectObject: myObjects#")
 ENTRY (U"How to refer to objects created in your script")
 NORMAL (U"In a script, you typically don't know whether the IDs of the objects are 1 and 2, or much higher numbers. "
 	"Fortunately, commands that create a new object give you the ID of the object that is created, "
 	"so that you can refer to the object later on. For instance, suppose you want to generate a sine wave, play it, "
 	"draw its spectrum, and then throw away both the Sound and the Spectrum. Here is how you do it:")
-CODE (U"%sound = Create Sound as pure tone: “sine377”,")
+CODE (U"sound = Create Sound as pure tone: “sine377”,")
 CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
 CODE (U"Play   ; the Sound is selected, so it plays")
 CODE (U"To Spectrum: “yes”")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
-CODE (U"\\#  Remove the created Spectrum and Sound:")
-CODE (U"#plusObject: sound   ; the Spectrum was already selected")
+CODE (U"# Remove the created Spectrum and Sound:")
+CODE (U"plusObject: sound   ; the Spectrum was already selected")
 CODE (U"Remove")
 NORMAL (U"You could also select the objects by name:")
 CODE (U"Create Sound as pure tone: “sine377”,")
@@ -2663,8 +2672,8 @@ CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; no need to remember the ID 
 CODE (U"Play   ; the Sound is selected, so it plays")
 CODE (U"To Spectrum: “yes”")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
-CODE (U"\\#  Remove the created Spectrum and Sound:")
-CODE (U"#plusObject: “Sound sine377”   ; the Spectrum was already selected")
+CODE (U"# Remove the created Spectrum and Sound:")
+CODE (U"plusObject: “Sound sine377”   ; the Spectrum was already selected")
 CODE (U"Remove")
 NORMAL (U"This works even if there are multiple objects called “Sound sine377”, "
 	"because if there are more objects with the same name, #selectObject and #plusObject select the most recently created one, "
@@ -2674,26 +2683,26 @@ MAN_END
 MAN_BEGIN (U"Scripting 4.2. Removing objects", U"ppgb", 20140111)
 NORMAL (U"In @@Scripting 4.1. Selecting objects|\\SS4.1@ we saw that objects could be removed by selecting them first and then calling the #Remove command. "
 	"A faster way is the #removeObject function, which can also remove unselected objects:")
-CODE (U"%sound = Create Sound as pure tone: “sine377”,")
+CODE (U"sound = Create Sound as pure tone: “sine377”,")
 CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
 CODE (U"Play   ; the Sound is selected, so it plays")
-CODE (U"%spectrum = To Spectrum: “yes”   ; remember the ID of the Spectrum")
+CODE (U"spectrum = To Spectrum: “yes”   ; remember the ID of the Spectrum")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
-CODE (U"\\#  Remove the created Spectrum and Sound:")
-CODE (U"#removeObject: %sound, %spectrum   ; remove one selected and one unselected object")
+CODE (U"# Remove the created Spectrum and Sound:")
+CODE (U"\\#{removeObject}: sound, spectrum   ; remove one selected and one unselected object")
 NORMAL (U"The #removeObject function keeps the objects selected that were selected before "
 	"(except of course the ones it throws away). "
 	"This allows you to easily throw away objects as soon as you no longer need them:")
-CODE (U"%sound = Create Sound as pure tone: “sine377”,")
+CODE (U"sound = Create Sound as pure tone: “sine377”,")
 CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
 CODE (U"Play   ; the Sound is selected, so it plays")
-CODE (U"%spectrum = To Spectrum: “yes”")
-CODE (U"#removeObject: %sound   ; we no longer need the Sound, so we remove it")
+CODE (U"spectrum = To Spectrum: “yes”")
+CODE (U"\\#{removeObject}: sound   ; we no longer need the Sound, so we remove it")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is still selected, so it is drawn")
-CODE (U"#removeObject: %spectrum   ; remove the last object created by the script")
+CODE (U"\\#{removeObject}: spectrum   ; remove the last object created by the script")
 ENTRY (U"Selecting and removing all objects from the list (don't)")
 NORMAL (U"A very strange command, which you should not normally use, is `select all`:")
-	CODE1 (U"##select all")
+	CODE1 (U"\\#{select all}")
 	CODE1 (U"Remove")
 NORMAL (U"This selects all objects in the list and then removes them. "
 	"Please try not to use this, because it will remove even the objects that your script did not create! "
@@ -2705,55 +2714,55 @@ MAN_END
 MAN_BEGIN (U"Scripting 4.3. Querying objects", U"ppgb", 20180427)
 NORMAL (U"You can get the name of a selected object into a string variable. "
 	"For instance, the following reads the name of the second selected Sound "
-	"(as counted from the top of the list of objects) into the variable %name\\$ :")
-CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”, 2)")
+	"(as counted from the top of the list of objects) into the variable %`name$`:")
+CODE (U"name$ = selected$ (“Sound”, 2)")
 NORMAL (U"If the Sound was called “Sound hallo”, the variable %`name$` will contain the string “hallo”. "
 	"To get the name of the topmost selected Sound object, you can leave out the number:")
-CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”)")
+CODE (U"name$ = selected$ (“Sound”)")
 NORMAL (U"To get the full name (type + name) of the third selected object, you do:")
-CODE (U"%%fullName\\$ % = ##selected\\$ # (3)")
+CODE (U"fullName$ = selected$ (3)")
 NORMAL (U"To get the full name of the topmost selected object, you do:")
-CODE (U"%%fullName\\$ % = ##selected\\$ # ()")
+CODE (U"fullName$ = selected$ ()")
 NORMAL (U"To get the type and name out of the full name, you do:")
-CODE (U"%%type\\$ % = extractWord\\$  (%%fullName\\$ %, “”)")
-CODE (U"%%name\\$ % = extractLine\\$  (%%fullName\\$ %, “ ”)")
+CODE (U"type$ = extractWord$ (fullName$, “”)")
+CODE (U"name$ = extractLine$ (fullName$, “ ”)")
 NORMAL (U"Negative numbers count from the bottom. Thus, to get the name of the bottom-most selected Sound "
 	"object, you say")
-CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”, -1)")
+CODE (U"name$ = selected$ (“Sound”, -1)")
 NORMAL (U"You would use `selected$` () for drawing the object name in a picture:")
 CODE (U"Draw: 0, 0, 0, 0, \"yes\"")
-CODE (U"%%name\\$ % = ##selected\\$ # (“Sound”)")
-CODE (U"Text top: “no”, “This is sound ” + %%name\\$ %")
+CODE (U"name$ = selected$ (“Sound”)")
+CODE (U"Text top: “no”, “This is sound ” + name$")
 NORMAL (U"For identifying previously selected objects, this method is not very suitable, since "
 	"there may be multiple objects with the same name:")
-CODE (U"\\#  The following two lines are OK:")
-CODE (U"%%soundName\\$ % = ##selected\\$ # (“Sound”, -1)")
-CODE (U"%%pitchName\\$ % = ##selected\\$ # (“Pitch”)")
-CODE (U"\\#  But the following line is questionable, since it doesn't")
-CODE (U"\\#  necessarily select the previously selected Pitch again:")
-CODE (U"#selectObject: “Pitch ” + %%pitchName\\$ %")
+CODE (U"# The following two lines are OK:")
+CODE (U"soundName$ = selected$ (“Sound”, -1)")
+CODE (U"pitchName$ = selected$ (“Pitch”)")
+CODE (U"# But the following line is questionable, since it doesn't")
+CODE (U"# necessarily select the previously selected Pitch again:")
+CODE (U"selectObject: “Pitch ” + pitchName$")
 NORMAL (U"Instead of this error-prone approach, you should get the object’s unique ID. "
 	"The correct version of our example becomes:")
-CODE (U"%sound = #selected (“Sound”, -1)")
-CODE (U"%pitch = #selected (“Pitch”)")
-CODE (U"\\#  Correct:")
-CODE (U"#selectObject: %pitch")
+CODE (U"sound = selected (“Sound”, -1)")
+CODE (U"pitch = selected (“Pitch”)")
+CODE (U"# Correct:")
+CODE (U"selectObject: pitch")
 NORMAL (U"To get the number of selected Sound objects into a variable, use")
-CODE (U"%numberOfSelectedSounds = #numberOfSelected (“Sound”)")
+CODE (U"numberOfSelectedSounds = numberOfSelected (“Sound”)")
 NORMAL (U"To get the number of selected objects into a variable, use")
-CODE (U"%numberOfSelectedObjects = #numberOfSelected ()")
+CODE (U"numberOfSelectedObjects = numberOfSelected ()")
 ENTRY (U"Example: doing something to every selected Sound")
-CODE (U"%%sounds\\# % = ##selected\\# # (“Sound”)")
-CODE (U"\\#  Median pitches of all selected sounds:")
-CODE (U"#for %i to size (%%sounds\\# %)")
-	CODE1 (U"#selectObject: %%sounds\\# % [%i]")
+CODE (U"sounds# = selected## (“Sound”)")
+CODE (U"# Median pitches of all selected sounds:")
+CODE (U"for i to size (sounds#)")
+	CODE1 (U"selectObject: sounds# [i]")
 	CODE1 (U"To Pitch: 0.0, 75, 600")
-	CODE1 (U"%f0 = Get quantile: 0, 0, 0.50, “Hertz”")
-	CODE1 (U"appendInfoLine: %f0")
+	CODE1 (U"f0 = Get quantile: 0, 0, 0.50, “Hertz”")
+	CODE1 (U"appendInfoLine: f0")
 	CODE1 (U"Remove")
-CODE (U"#endfor")
-CODE (U"\\#  Restore selection:")
-CODE (U"#selectObject (%%sounds\\# %)")
+CODE (U"endfor")
+CODE (U"# Restore selection:")
+CODE (U"selectObject (sounds#)")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20170718)
@@ -2779,8 +2788,8 @@ ENTRY (U"Numeric variables")
 NORMAL (U"Numeric variables can hold integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
 	"or real numbers between -10^^308^ and +10^^308^. The smallest numbers lie near -10^^-308^ and +10^^-308^.")
 NORMAL (U"You use numeric variables in your script like this:")
-CODE (U"#%length = 10")
-CODE (U"Draw line: 0, #%length, 1, 1")
+CODE (U"length = 10")
+CODE (U"Draw line: 0, length, 1, 1")
 NORMAL (U"This draws a line in the Picture window from position (0, 10) to position (1, 1). "
 	"In the first line, you assign the value 10 to the variable called $%length, "
 	"and in the second line you use the value of $%length as the second argument to the command ##Draw line...#.")
@@ -2788,24 +2797,24 @@ NORMAL (U"Names of numeric variables must start with a lower-case letter, option
 	"of letters, digits, and underscores.")
 ENTRY (U"String variables")
 NORMAL (U"You use string variables, which contain text, as follows:")
-CODE (U"%%##title\\$ #% = “Dutch nasal place assimilation”")
-CODE (U"Text top: “yes”, ##%%title\\$ %#")
+CODE (U"title$ = “Dutch nasal place assimilation”")
+CODE (U"Text top: “yes”, title$")
 NORMAL (U"This writes the text \"Dutch nasal place assimilation\" above your drawing.")
 NORMAL (U"As in the programming language Basic, the names of string variables end in a dollar sign.")
 ENTRY (U"Making numeric variables visible")
 NORMAL (U"You can write the content of numeric variables directly to the info window:")
 CODE (U"x = 2.0")
 CODE (U"root = sqrt (x)")
-CODE (U"#writeInfoLine: \"The square root of \", x, \" is \", root, \".\"")
+CODE (U"\\#`{writeInfoLine}: \"The square root of \", x, \" is \", root, \".\"")
 NORMAL (U"This will write the following text to the Info window:")
 CODE (U"The square root of 2 is 1.4142135623730951.")
 /*@praat
 	assert string$ (sqrt (2)) = "1.4142135623730951"
 @*/
-NORMAL (U"You can fix the number of digits after the decimal point by use of the ##fixed\\$ # function:")
+NORMAL (U"You can fix the number of digits after the decimal point by use of the #`fixed$` function:")
 CODE (U"x = 2.0")
 CODE (U"root = sqrt (x)")
-CODE (U"writeInfoLine: \"The square root of \", ##fixed\\$ # (x, 3), \" is approximately \", ##fixed\\$ # (root, 3), \".\"")
+CODE (U"writeInfoLine: \"The square root of \", \\#`{fixed$} (x, 3), \" is approximately \", \\#`{fixed$} (root, 3), \".\"")
 NORMAL (U"This will write the following text to the Info window:")
 CODE (U"The square root of 2.000 is approximately 1.414.")
 /*@praat
@@ -2813,17 +2822,17 @@ CODE (U"The square root of 2.000 is approximately 1.414.")
 @*/
 NORMAL (U"By using 0 decimal digits, you round to whole values:")
 CODE (U"root = sqrt (2)")
-CODE (U"writeInfoLine: \"The square root of 2 is very approximately \", ##fixed\\$ # (root, #0), \".\"")
+CODE (U"writeInfoLine: \"The square root of 2 is very approximately \", fixed$ (root, 0), \".\"")
 NORMAL (U"This will write the following text to the Info window:")
 CODE (U"The square root of 2 is very approximately 1.")
 /*@praat
 	assert fixed$ (sqrt (2), 0) = "1"
 @*/
-NORMAL (U"By using the ##percent\\$ # function, you give the result in a percent format:")
+NORMAL (U"By using the `percent$` function, you give the result in a percent format:")
 CODE (U"jitter = 0.0156789")
-CODE (U"writeInfoLine: \"The jitter is \", ##percent\\$ # (jitter, 3), \".\"")
+CODE (U"writeInfoLine: \"The jitter is \", \\#`{percent$} (jitter, 3), \".\"")
 NORMAL (U"This will write the following text to the Info window:")
-CODE (U"The jitter is 1.568\\% .")
+CODE (U"The jitter is 1.568%.")
 /*@praat
 	jitter = 0.0156789
 	assert percent$ (jitter, 3) = "1.568%"
@@ -2833,9 +2842,9 @@ CODE (U"The jitter is 1.568\\% .")
 NORMAL (U"The number 0, however, will always be written as 0, and for small numbers the number of "
 	"significant digits will never be less than 1:")
 CODE (U"jitter = 0.000000156789")
-CODE (U"writeInfoLine: \"The jitter is \", percent\\$  (jitter, 3), \".\"")
+CODE (U"writeInfoLine: \"The jitter is \", percent$ (jitter, 3), \".\"")
 NORMAL (U"This will write the following text to the Info window:")
-CODE (U"The jitter is 0.00002\\% .")
+CODE (U"The jitter is 0.00002%.")
 /*@praat
 	assert percent$ (0, 3) = "0"
 	jitter = 0.000000156789
@@ -2860,7 +2869,7 @@ NORMAL (U"Some ##predefined string variables# are `newline$`, `tab$`, and `shell
 	"Finally, we have `praatVersion$`, which is “" stringize(PRAAT_VERSION_STR) "” for the current version of Praat.")
 ENTRY (U"Functions that handle variables")
 NORMAL (U"To check whether a variable exists, you can use the function")
-CODE (U"#variableExists (%%variableName\\$ %)")
+CODE (U"variableExists (variableName$)")
 /*@praat
 	fgh = 567
 	assert variableExists ("fgh")
@@ -2891,18 +2900,18 @@ CODE (U"writeInfoLine: \"The area is \", area, \".\"")
 NORMAL (U"You can use numeric variables and formulas in numeric arguments to commands:")
 CODE (U"Draw line: 0, 0, length / 2, 2 * height")
 NORMAL (U"You can use numeric expressions in assignments (as above), or after "
-	"#if, #elsif, #while, #until, and twice after #for.")
+	"#`if`, #`elsif`, #`while`, #`until`, and twice after #`for`.")
 ENTRY (U"String expressions")
 NORMAL (U"You can use a large variety of @@Formulas@ in your script:")
-CODE (U"addressee\\$  = \"Silke\"")
-CODE (U"greeting\\$  = \"Hi \" + addressee\\$  + \"!\"")
-CODE (U"writeInfoLine: \"The greeting is: \", greeting\\$ ")
+CODE (U"addressee$ = \"Silke\"")
+CODE (U"greeting$ = \"Hi \" + addressee$ + \"!\"")
+CODE (U"writeInfoLine: \"The greeting is: \", greeting$")
 NORMAL (U"You can use string variables and formulas in numeric arguments to commands:")
-CODE (U"Draw line: 0, length (greeting\\$ ), 0, 100")
-CODE (U"Draw line: 0, if answer\\$  = \"yes\" then 20 else 30 fi, 0, 100")
+CODE (U"Draw line: 0, length (greeting$), 0, 100")
+CODE (U"Draw line: 0, if answer$ = \"yes\" then 20 else 30 fi, 0, 100")
 NORMAL (U"You can use numeric and string variables and formulas in string arguments to commands:")
 CODE (U"Text top: \"yes\", \"Hi \" + addressee\\$  + \"!\"")
-CODE (U"Text top: \"yes\", left\\$  (fileName\\$ , index (fileName\\$ , \".\") - 1)")
+CODE (U"Text top: \"yes\", left$ (fileName$, index (fileName$, \".\") - 1)")
 ENTRY (U"Assignments from query commands")
 NORMAL (U"On how to get information from commands that normally write to the Info window, "
 	"see @@Scripting 6.3. Query commands@.")
@@ -2913,16 +2922,16 @@ NORMAL (U"You can use conditional jumps in your script:")
 TERM (U"#if %expression")
 TERM (U"#elsif %expression")
 DEFINITION (U"if the expression evaluates to zero or %false, the execution of the script jumps to the next "
-	"#elsif or after the next #else or #endif at the same depth.")
-NORMAL (U"The following script computes the preferred length of a bed for a person 'age' years of age:")
-CODE (U"#if age <= 3")
-CODE1 (U"length = 1.20")
-CODE (U"#elsif age <= 8")
-CODE1 (U"length = 1.60")
-CODE (U"#else")
-CODE1 (U"length = 2.00")
-CODE (U"#endif")
-NORMAL (U"A variant spelling for #elsif is #elif.")
+	"#`elsif` or after the next #`else` or #`endif` at the same depth.")
+NORMAL (U"The following script computes the preferred length of a bed for a person `age` years of age:")
+CODE (U"if age <= 3")
+	CODE1 (U"length = 1.20")
+CODE (U"elsif age <= 8")
+	CODE1 (U"length = 1.60")
+CODE (U"else")
+	CODE1 (U"length = 2.00")
+CODE (U"endif")
+NORMAL (U"A variant spelling for #`elsif` is #`elif`.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5.4. Loops", U"ppgb", 20140111)
@@ -2933,11 +2942,11 @@ DEFINITION (U"the statements between the #for line and the matching #endfor will
 	"while a variable takes on values between two expressions, with an increment (raise) of 1 "
 	"on each turn of the loop. If there is no #from, the loop variable starts at 1.")
 NORMAL (U"The following script plays nine sine waves, with frequencies of 200, 300, ..., 1000 Hz:")
-CODE (U"#for i #from 2 #to 10")
-CODE1 (U"Create Sound as pure tone: \"tone\", 1, 0, 0.3, 44100, i * 100, 0.2, 0.01, 0.01")
-CODE1 (U"Play")
-CODE1 (U"Remove")
-CODE (U"#endfor")
+CODE (U"\\#{for} i \\#{from} 2 \\#{to} 10")
+	CODE1 (U"Create Sound as pure tone: \"tone\", 1, 0, 0.3, 44100, i * 100, 0.2, 0.01, 0.01")
+	CODE1 (U"Play")
+	CODE1 (U"Remove")
+CODE (U"\\#{endfor}")
 NORMAL (U"The stop value of the #for loop is evaluated on each turn. If the second expression "
 	"is already less than the first expression to begin with, the statements between #for and #endfor "
 	"are not executed even once.")
@@ -2947,11 +2956,11 @@ DEFINITION (U"the statements between the matching preceding #repeat and the #unt
 	"will be executed again if the expression evaluates to zero or %false.")
 NORMAL (U"The following script measures the number of trials it takes me to throw 12 with two dice:")
 CODE (U"throws = 0")
-CODE (U"#repeat")
+CODE (U"\\#{repeat}")
 	CODE1 (U"eyes = randomInteger (1, 6) + randomInteger (1, 6)")
 	CODE1 (U"throws = throws + 1")
-CODE (U"#until eyes = 12")
-CODE (U"#writeInfoLine: \"It took me \", throws, \" trials to throw 12 with two dice.\"")
+CODE (U"\\#{until} eyes = 12")
+CODE (U"writeInfoLine: \"It took me \", throws, \" trials to throw 12 with two dice.\"")
 NORMAL (U"The statements in the #repeat/#until loop are executed at least once.")
 ENTRY (U"\"While\" loops")
 TERM (U"#while %expression")
@@ -2960,12 +2969,12 @@ DEFINITION (U"if the expression evaluates to zero or %false, the execution of th
 TERM (U"#endwhile")
 DEFINITION (U"execution jumps back to the matching preceding #while line, which is then evaluated again.")
 NORMAL (U"The following script forces the number %x into the range [0; 2\\pi):")
-CODE (U"#while x < 0")
+CODE (U"\\#{while} x < 0")
 	CODE1 (U"x = x + 2 * pi")
-CODE (U"#endwhile")
-CODE (U"#while x >= 2 * pi")
+CODE (U"\\#{endwhile}")
+CODE (U"\\#{while} x >= 2 * pi")
 	CODE1 (U"x = x - 2 * pi")
-CODE (U"#endwhile")
+CODE (U"\\#{endwhile}")
 NORMAL (U"If the expression evaluates to zero or %false to begin with, the statements between #while and #endwhile "
 	"are not executed even once.")
 MAN_END
@@ -3037,7 +3046,7 @@ CODE (U"Play")
 CODE (U"Remove")
 NORMAL (U"You can now see that seven lines of the script appear identically three times. "
 	"I'll put those seven lines into a %procedure that I name \"playOctave\":")
-CODE (U"#procedure playOctave")
+CODE (U"\\#{procedure} playOctave")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
@@ -3045,7 +3054,7 @@ CODE (U"#procedure playOctave")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
-CODE (U"#endproc")
+CODE (U"\\#{endproc}")
 NORMAL (U"As you see, a %%procedure definition% in Praat consists of three parts:")
 LIST_ITEM (U"1. a line with the word #procedure, followed by the name of the procedure, followed by a pair of parentheses;")
 LIST_ITEM (U"2. the %body of the procedure (here: seven lines);")
@@ -3055,12 +3064,12 @@ NORMAL (U"You can put a procedure definition anywhere in your script; "
 NORMAL (U"The bodies of procedures are executed only if you %call the procedure explicitly, "
 	"which you can do anywhere in the rest of your script:")
 CODE (U"frequency = 440")
-CODE (U"\\@ playOctave")
+CODE (U"@playOctave")
 CODE (U"frequency = 400")
-CODE (U"\\@ playOctave")
+CODE (U"@playOctave")
 CODE (U"frequency = 500")
-CODE (U"\\@ playOctave")
-CODE (U"#procedure playOctave")
+CODE (U"@playOctave")
+CODE (U"\\#{procedure} playOctave")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
@@ -3068,7 +3077,7 @@ CODE (U"#procedure playOctave")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
-CODE (U"#endproc")
+CODE (U"\\#{endproc}")
 NORMAL (U"This script works as follows. First, the number 440 is assigned to the variable %frequency in line 1. "
 	"Then, execution of the script arrives at the ##\\@ # (\"call\") statement of line 2. "
 	"Praat then knows that it has to jump to the procedure called %playOctave, "
@@ -3087,10 +3096,10 @@ NORMAL (U"The above example contains something awkward. The procedure %playOctav
 	"is set to an appropriate value, so before calling %playOctave you always have to insert a line like")
 CODE (U"frequency = 440")
 NORMAL (U"This can be improved upon. In the following version of the script, the procedure %playOctave requires an explicit %argument:")
-CODE (U"\\@ playOctave: 440")
-CODE (U"\\@ playOctave: 400")
-CODE (U"\\@ playOctave: 500")
-CODE (U"#procedure playOctave: frequency")
+CODE (U"@playOctave: 440")
+CODE (U"@playOctave: 400")
+CODE (U"@playOctave: 500")
+CODE (U"\\#{procedure} playOctave: frequency")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
@@ -3098,7 +3107,7 @@ CODE (U"#procedure playOctave: frequency")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
-CODE (U"#endproc")
+CODE (U"\\#{endproc}")
 NORMAL (U"This works as follows. The first line of the procedure now not only contains the name (%playOctave), "
 	"but also a list of variables (here only one: %frequency). In the first line of the script, "
 	"the procedure %playOctave is called with the %%argument% 440. "
@@ -3108,11 +3117,11 @@ ENTRY (U"Encapsulation and local variables")
 NORMAL (U"Although the size of the script has now been reduced to 12 lines, which cannot be further improved upon, "
 	"there is still something wrong with it. Imagine the following script:")
 CODE (U"frequency = 300")
-CODE (U"\\@ playOctave: 440")
-CODE (U"\\@ playOctave: 400")
-CODE (U"\\@ playOctave: 500")
-CODE (U"#writeInfoLine: frequency")
-CODE (U"#procedure playOctave: frequency")
+CODE (U"@playOctave: 440")
+CODE (U"@playOctave: 400")
+CODE (U"@playOctave: 500")
+CODE (U"\\`{writeInfoLine}: frequency")
+CODE (U"\\#{procedure} playOctave: frequency")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
@@ -3120,7 +3129,7 @@ CODE (U"#procedure playOctave: frequency")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
-CODE (U"#endproc")
+CODE (U"\\#{endproc")
 NORMAL (U"You might have thought that this script will write “300” to the Info window, "
 	"because that is what you expect if you look at the first five lines. "
 	"However, the procedure will assign the values 440, 400, and 500 to the variable %frequency, "
@@ -3130,11 +3139,11 @@ NORMAL (U"What you would want is that variables that are used inside procedures,
 	"could somehow be made not to “clash” with variable names used outside the procedure. "
 	"A trick that works would be to include the procedure name into the names of these variables:")
 CODE (U"frequency = 300")
-CODE (U"\\@ playOctave: 440")
-CODE (U"\\@ playOctave: 400")
-CODE (U"\\@ playOctave: 500")
-CODE (U"#writeInfoLine: frequency")
-CODE (U"#procedure playOctave: playOctave.frequency")
+CODE (U"@playOctave: 440")
+CODE (U"@playOctave: 400")
+CODE (U"@playOctave: 500")
+CODE (U"\\`{writeInfoLine}: frequency")
+CODE (U"\\#{procedure} playOctave: playOctave.frequency")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, playOctave.frequency, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
@@ -3142,17 +3151,17 @@ CODE (U"#procedure playOctave: playOctave.frequency")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, playOctave.octaveHigher, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
-CODE (U"#endproc")
+CODE (U"\\#{endproc")
 NORMAL (U"This works. The six tones will be played, and \"300\" will be written to the Info window. "
 	"But the formulation is a bit wordy, isn't it?")
 NORMAL (U"Fortunately, Praat allows an abbreviated version of these long names: "
 	"just leave “playOctave” off from the names of the variables, but keep the period (.):")
 CODE (U"frequency = 300")
-CODE (U"\\@ playOctave: 440")
-CODE (U"\\@ playOctave: 400")
-CODE (U"\\@ playOctave: 500")
-CODE (U"#writeInfoLine: frequency")
-CODE (U"#procedure playOctave: .frequency")
+CODE (U"@playOctave: 440")
+CODE (U"@playOctave: 400")
+CODE (U"@playOctave: 500")
+CODE (U"\\`{writeInfoLine}: frequency")
+CODE (U"\\#{procedure} playOctave: .frequency")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, .frequency, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
@@ -3160,7 +3169,7 @@ CODE (U"#procedure playOctave: .frequency")
 	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, .octaveHigher, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
-CODE (U"#endproc")
+CODE (U"\\#{endproc")
 NORMAL (U"This is the final version of the script. It works because Praat knows that "
 	"you are using the variable names %%.frequency% and %%.octaveHigher% in the context of the procedure %playOctave, "
 	"so that Praat knows that by these variable names you actually mean to refer to %%playOctave.frequency% and %%playOctave.octaveHigher%.")
@@ -3171,44 +3180,44 @@ NORMAL (U"It is advisable that you use such “local” variable names for all %
 	"and thereby perhaps inadvertently change the value of a variable that you expect to be constant across a procedure call.")
 ENTRY (U"A list of numeric and string arguments")
 NORMAL (U"You can use multiple arguments, separated by commas, and string arguments (with a dollar sign in the variable name):")
-CODE (U"\\@ listSpeaker: \"Bart\", 38")
-CODE (U"\\@ listSpeaker: \"Katja\", 24")
-CODE (U"#procedure listSpeaker: .name\\$ , .age")
-	CODE1 (U"#appendInfoLine: \"Speaker \", .name\\$ , \" is \", .age, \" years old.\"")
-CODE (U"#endproc")
+CODE (U"@listSpeaker: \"Bart\", 38")
+CODE (U"@listSpeaker: \"Katja\", 24")
+CODE (U"\\#{procedure} listSpeaker: .name$, .age")
+	CODE1 (U"appendInfoLine: \"Speaker \", .name$, \" is \", .age, \" years old.\"")
+CODE (U"\\#{endproc")
 NORMAL (U"or")
-CODE (U"\\@ conjugateVerb: \"be\", \"I am\", \"you are\", \"she is\"")
-CODE (U"#procedure conjugateVerb: .verb\\$ , .first\\$ , .second\\$ , .third\\$ ")
-	CODE1 (U"#writeInfoLine: \"Conjugation of 'to \", .verb\\$ , \"':\"")
-	CODE1 (U"#appendInfoLine: \"1sg \", .first\\$ ")
-	CODE1 (U"#appendInfoLine: \"2sg \", .second\\$ ")
-	CODE1 (U"#appendInfoLine: \"3sg \", .third\\$ ")
-CODE (U"#endproc")
+CODE (U"@conjugateVerb: \"be\", \"I am\", \"you are\", \"she is\"")
+CODE (U"\\#{procedure} conjugateVerb: .verb$, .first$, .second$, .third$")
+	CODE1 (U"writeInfoLine: \"Conjugation of 'to \", .verb$, \"':\"")
+	CODE1 (U"appendInfoLine: \"1sg \", .first$")
+	CODE1 (U"appendInfoLine: \"2sg \", .second$")
+	CODE1 (U"appendInfoLine: \"3sg \", .third$")
+CODE (U"\\#{endproc}")
 NORMAL (U"For the arguments you can use expressions:")
-CODE (U"\\@ playOctave: 400 + 100")
+CODE (U"@playOctave: 400 + 100")
 NORMAL (U"As with all string literals, the double quotes in literal string arguments should be doubled:")
-CODE (U"#procedure texts: .top\\$ , .bottom\\$ ")
-	CODE1 (U"Text top: \"yes\", .top\\$ ")
-	CODE1 (U"Text bottom: \"yes\", .bottom\\$ ")
-CODE (U"#endproc")
-CODE (U"\\@ texts: \\\" \\\" \\\" hello\\\" \\\"  at the top\\\" , \\\" \\\" \\\" goodbye\\\" \\\"  at the bottom\\\" ")
+CODE (U"\\#{procedure} texts: .top$, .bottom$")
+	CODE1 (U"Text top: \"yes\", .top$")
+	CODE1 (U"Text bottom: \"yes\", .bottom$")
+CODE (U"\\#{endproc")
+CODE (U"@texts: \"\"\" hello\"\" at the top\", \"\"\"goodbye\"\" at the bottom\"")
 ENTRY (U"Functions")
 NORMAL (U"The Praat scripting language does not have the concept of a “function” like some other scripting languages do. "
 	"A function is a procedure that returns a number, a string, a vector, a matrix, or a string array. "
 	"For instance, you can imagine the function `squareNumber` (), "
 	"which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25). "
 	"Here is an example of how you can do that, using the global availability of local variables:")
-CODE (U"\\@ squareNumber: 5")
-CODE (U"#writeInfoLine: \"The square of 5 is \", squareNumber.result, \".\"")
-CODE (U"#procedure squareNumber: .number")
-	CODE1 (U".result = .number \\^  2")
-CODE (U"#endproc")
+CODE (U"@squareNumber: 5")
+CODE (U"writeInfoLine: \"The square of 5 is \", squareNumber.result, \".\"")
+CODE (U"\\#{procedure} squareNumber: .number")
+	CODE1 (U".result = .number ^ 2")
+CODE (U"\\#{endproc")
 NORMAL (U"Another way to emulate functions is to use a variable name as an argument:")
-CODE (U"\\@ squareNumber: 5, \"square5\"")
-CODE (U"#writeInfoLine: \"The square of 5 is \", square5, \".\"")
-CODE (U"#procedure squareNumber: .number, .squareVariableName\\$ ")
-	CODE1 (U"'.squareVariableName\\$ ' = .number \\^  2")
-CODE (U"#endproc")
+CODE (U"@squareNumber: 5, \"square5\"")
+CODE (U"writeInfoLine: \"The square of 5 is \", square5, \".\"")
+CODE (U"\\#{procedure} squareNumber: .number, .squareVariableName$")
+	CODE1 (U"'.squareVariableName$' = .number ^ 2")
+CODE (U"\\#{endproc")
 NORMAL (U"However, this uses variable substitution, a trick better avoided.")
 MAN_END
 
@@ -3241,180 +3250,180 @@ MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20230130)
 ENTRY (U"1. What is a vector?")
 NORMAL (U"A ##numeric vector# is an array of numbers, regarded as a single object. "
 	"For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. "
-	"In a Praat script, you can put a vector into a variable whose name ends in a number sign (“\\# ”):")
-CODE (U"squares\\#  = { 1, 4, 9, 16, 25 }")
-NORMAL (U"After this, the variable %%squares\\# % contains the value { 1, 4, 9, 16, 25 }. "
-	"We say that the vector %%squares\\# % has five %dimensions, i.e. it contains five numbers.")
+	"In a Praat script, you can put a vector into a variable whose name ends in a number sign (“`#`”):")
+CODE (U"squares# = { 1, 4, 9, 16, 25 }")
+NORMAL (U"After this, the variable %`squares#` contains the value { 1, 4, 9, 16, 25 }. "
+	"We say that the vector %`squares#` has five %dimensions, i.e. it contains five numbers.")
 NORMAL (U"Whereas in @@Scripting 3.2. Numeric variables@ we talked about a numeric variable as being analogous to a house "
 	"where somebody (the numeric %value) could live, a numeric vector with five dimensions "
 	"can be seen as a %street that contains five houses, which are numbered with the indexes 1, 2, 3, 4 and 5, "
-	"each house containing a numeric value. Thus, the street %%squares\\# % contains the following five houses: "
-	"%%squares\\# % [1], %%squares\\# % [2], %%squares\\# % [3], %%squares\\# % [4] and %%squares\\# % [5]. "
+	"each house containing a numeric value. Thus, the street %`squares#` contains the following five houses: "
+	"%`squares#` [1], %`squares#` [2], %`squares#` [3], %`squares#` [4] and %`squares#` [5]. "
 	"Their values (the numbers that currently live in these houses) are 1, 4, 9, 16 and 25, respectively.")
 NORMAL (U"To list the five values with a loop, you could do:")
-CODE (U"#writeInfoLine: \"Some squares:\"")
-CODE (U"#for i #from 1 #to size (squares\\# )")
-	CODE1 (U"#appendInfoLine: \"The square of \", i, \" is \", squares\\#  [i]")
-CODE (U"#endfor")
-NORMAL (U"Instead of the above procedure to get the vector %%squares\\# %, with a pre-computed list of five squares, "
+CODE (U"writeInfoLine: \"Some squares:\"")
+CODE (U"for i from 1 to size (squares#)")
+	CODE1 (U"appendInfoLine: \"The square of \", i, \" is \", squares# [i]")
+CODE (U"endfor")
+NORMAL (U"Instead of the above procedure to get the vector %`squares#`, with a pre-computed list of five squares, "
 	"you could compute the five values with a formula, as in the example of @@Scripting 5.6. Arrays and dictionaries@. "
 	"However, in order to put a value into an element of the vector, you have to create the vector first "
 	"(i.e., you have to build the whole street before you can put something in a house), "
 	"so we start by creating a vector with five zeroes in it:")
-CODE (U"squares\\#  = zero\\#  (5)")
-NORMAL (U"After this, %%squares\\# % is the vector { 0, 0, 0, 0, 0 }, i.e., the value of each element is zero. "
+CODE (U"squares# = zero# (5)")
+NORMAL (U"After this, %`squares#` is the vector { 0, 0, 0, 0, 0 }, i.e., the value of each element is zero. "
 	"Now that the vector (street) exists, we can put values into (populate) the five elements (houses):")
-CODE (U"#for i #from 1 #to size (squares\\# )")
-	CODE1 (U"squares\\#  [i] = i * i")
+CODE (U"for i from 1 to size (squares#)")
+	CODE1 (U"squares# [i] = i * i")
 CODE (U"#endfor")
 NORMAL (U"After this, the variable %`squares#` has the value { 1, 4, 9, 16, 25 }, as before, "
 	"but now we had the computer compute the squares.")
 ENTRY (U"2. Creating a vector")
 NORMAL (U"You can create a vector in many ways. The first way we saw was with a ##vector literal#, "
 	"i.e. a series of numbers (or numeric formulas) between braces:")
-CODE (U"lengths\\#  = { 1.83, 1.795, 1.76 }")
+CODE (U"lengths# = { 1.83, 1.795, 1.76 }")
 NORMAL (U"The second way we saw was to create a series of #zeroes. To create a vector consisting of 10,000 zeroes, you do")
-CODE (U"zero\\#  (10000)")
+CODE (U"zero# (10000)")
 NORMAL (U"Another important type of vector is a series of random numbers. "
 	"To create a vector consisting of 10,000 values drawn from a ##Gaussian distribution# "
 	"with true mean 0.0 and true standard deviation 1.0, you could do")
-CODE (U"noise\\#  = randomGauss\\#  (10000, 0.0, 1.0)")
+CODE (U"noise# = randomGauss# (10000, 0.0, 1.0)")
 NORMAL (U"To create a vector consisting of 10,000 values drawn from a ##uniform distribution of real numbers# "
 	"with true minimum 0.0 and true maximum 1.0, you use")
-CODE (U"randomUniform\\#  (10000, 0.0, 1.0)")
+CODE (U"randomUniform# (10000, 0.0, 1.0)")
 NORMAL (U"To create a vector consisting of 10,000 values drawn from a ##uniform distribution of integer numbers# "
 	"with true minimum 1 and true maximum 10, you use")
-CODE (U"randomInteger\\#  (10000, 1, 10)")
+CODE (U"randomInteger# (10000, 1, 10)")
 NORMAL (U"To create a vector containing the integer numbers 1 through 64, you use")
-CODE (U"to\\#  (64)")
+CODE (U"to# (64)")
 NORMAL (U"To create a vector containing the integer numbers 10 through 20, you use")
-CODE (U"from_to\\#  (10, 20)")
+CODE (U"from_to# (10, 20)")
 NORMAL (U"To create a vector containing linearly increasing (not necessarily integer) numbers from 10 through 20 in steps of 2, you use")
-CODE (U"from_to_by\\#  (10, 20, 2)")
+CODE (U"from_to_by# (10, 20, 2)")
 NORMAL (U"To create five linearly increasing numbers between 0 and 10 (i.e. { 0, 2.5, 5, 7.5, 10 }), you use")
-CODE (U"from_to_count\\#  (0, 10, 5)")
+CODE (U"from_to_count# (0, 10, 5)")
 NORMAL (U"To divide the range between 0 and 12 symmetrically with step 5 (i.e. { 1, 6, 11 }), you use")
-CODE (U"between_by\\#  (0, 12, 5)")
+CODE (U"between_by# (0, 12, 5)")
 NORMAL (U"To divide the range between 0 and 10 into five equal parts and list their centres (i.e. { 1, 3, 5, 7, 9 }), you use")
-CODE (U"between_count\\#  (0, 10, 5)")
+CODE (U"between_count# (0, 10, 5)")
 NORMAL (U"To sort the numbers in a vector (e.g. { 7.4, 1.3, 3.6 }), you use")
-CODE (U"sort\\#  ({ 7.4, 1.3, 3.6 })")
+CODE (U"sort# ({ 7.4, 1.3, 3.6 })")
 NORMAL (U"which yields { 1.3, 3.6, 7.4 }.")
 NORMAL (U"To randomly shuffle the numbers in a vector (e.g. { 7.4, 1.3, 3.6 }), you use")
-CODE (U"shuffle\\#  ({ 7.4, 1.3, 3.6 })")
+CODE (U"shuffle# ({ 7.4, 1.3, 3.6 })")
 NORMAL (U"which can yield { 1.3, 7.4, 3.6 } or any of the five other orders of the elements.")
 NORMAL (U"Vectors can also be created by some menu commands. For instance, to get vectors representing "
 	"the times and pitch frequencies of the frames in a Pitch object, you can do")
 CODE (U"selectObject: myPitch")
-CODE (U"times\\#  = List all frame times")
-CODE (U"pitches\\#  = List values in all frames: \"Hertz\"")
+CODE (U"times# = List all frame times")
+CODE (U"pitches# = List values in all frames: \"Hertz\"")
 ENTRY (U"3. Turning a vector into a number")
 NORMAL (U"For the vector defined above, you can compute the #sum of the five values as")
-CODE (U"sum (squares\\# )")
+CODE (U"sum (squares#)")
 NORMAL (U"which gives 55. You compute the #average of the five values as")
-CODE (U"mean (squares\\# )")
+CODE (U"mean (squares#)")
 NORMAL (U"which gives 11. You compute the ##standard deviation# of the values as ")
-CODE (U"stdev (squares\\# )")
+CODE (U"stdev (squares#)")
 NORMAL (U"which gives 9.669539802906858 (the standard deviation is undefined for vectors with fewer than 2 elements). "
 	"The ##center of gravity# of the distribution defined by regarding "
 	"the five values as relative frequencies as a function of the index from 1 to 5 is computed by")
-CODE (U"center (squares\\# )")
+CODE (U"center (squares#)")
 NORMAL (U"which gives 4.090909090909091 (for a vector with five elements, the result will always be "
 	"a number between 1.0 and 5.0). You compute the ##inner product# of two equally long vectors as follows:")
-CODE (U"other\\#  = { 2, 1.5, 1, 0.5, 0 }")
-CODE (U"result = inner (squares\\# , other\\# )")
+CODE (U"other# = { 2, 1.5, 1, 0.5, 0 }")
+CODE (U"result = inner (squares#, other#)")
 NORMAL (U"which gives 1*2 + 4*1.5 + 9*1 + 16*0.5 + 25*0 = 25. "
 	"The formula for this is \\su__%i=1_^5 %squares[%i] * %other[%i], so that an alternative piece of code could be")
-CODE (U"result = sumOver (i to 5, squares\\#  [i] * other\\#  [i])")
+CODE (U"result = sumOver (i to 5, squares# [i] * other# [i])")
 ENTRY (U"4. Converting vectors to vectors")
-CODE (U"a\\#  = squares\\#  + 5   ; adding a number to each element of a vector")
-NORMAL (U"causes a\\#  to become the vector { 6, 9, 14, 21, 30 }.")
-CODE (U"b\\#  = a\\#  + { 3.14, 2.72, 3.16, -1, 7.5 }   ; adding two vectors of the same length")
-NORMAL (U"causes b\\#  to become the vector { 9.14, 11.72, 17.16, 20, 37.5 }.")
-CODE (U"c\\#  = b\\#  / 2   ; dividing each element of a vector")
-NORMAL (U"causes c\\#  to become the vector { 4.57, 5.86, 8.58, 10, 18.75 }.")
-CODE (U"d\\#  = b\\#  * c\\#    ; elementwise multiplication")
-NORMAL (U"causes d\\#  to become the vector { 41.7698, 68.6792, 147.2328, 200, 703.125 }.")
+CODE (U"a# = squares# + 5   ; adding a number to each element of a vector")
+NORMAL (U"causes %`a#` to become the vector { 6, 9, 14, 21, 30 }.")
+CODE (U"b# = a# + { 3.14, 2.72, 3.16, -1, 7.5 }   ; adding two vectors of the same length")
+NORMAL (U"causes %`b#` to become the vector { 9.14, 11.72, 17.16, 20, 37.5 }.")
+CODE (U"c# = b# / 2   ; dividing each element of a vector")
+NORMAL (U"causes %`c#` to become the vector { 4.57, 5.86, 8.58, 10, 18.75 }.")
+CODE (U"d# = b# * c#   ; elementwise multiplication")
+NORMAL (U"causes %`d#` to become the vector { 41.7698, 68.6792, 147.2328, 200, 703.125 }.")
 NORMAL (U"A vector can also be given to a ##menu command# that returns another vector. "
 	"For instance, to get a vector representing the pitch frequencies at 0.01-second intervals in a Pitch object, "
 	"you can do")
 CODE (U"selectObject: myPitch")
 CODE (U"tmin = Get start time")
 CODE (U"tmax = Get end time")
-CODE (U"times\\#  = between_by\\#  (tmin, tmax, 0.01)")
-CODE (U"pitches\\#  = List values at times: times\\# , \"hertz\", \"linear\"")
+CODE (U"times# = between_by# (tmin, tmax, 0.01)")
+CODE (U"pitches# = List values at times: times#, \"hertz\", \"linear\"")
 ENTRY (U"5. What is a matrix?")
 NORMAL (U"A ##numeric matrix# is a two-indexed array of numbers, regarded as a single object. "
-	"In a Praat script, you can put a matrix into a variable whose name ends in two number signs (\"\\# \\# \"):")
-CODE (U"confusion\\# \\#  = {{ 3, 6, 2 }, { 8, 2, 1 }}")
-NORMAL (U"After this, the variable %%confusion\\# \\# % contains the value {{ 3, 6, 2 }, { 8, 2, 1 }}. "
-	"We say that the matrix %%confusion\\# \\# % has two %rows and three %columns, i.e. it contains six numbers.")
+	"In a Praat script, you can put a matrix into a variable whose name ends in two number signs (“`##`”):")
+CODE (U"confusion## = {{ 3, 6, 2 }, { 8, 2, 1 }}")
+NORMAL (U"After this, the variable %`confusion##` contains the value {{ 3, 6, 2 }, { 8, 2, 1 }}. "
+	"We say that the matrix %`confusion##` has two %rows and three %columns, i.e. it contains six numbers.")
 NORMAL (U"Whereas a numeric vector with five dimensions could be seen (see above) as a street that contains five houses, "
-	"the matrix %%confusion\\# \\# % can be seen as a city district with two avenues crossed by three streets, "
+	"the matrix %`confusion##` can be seen as a city district with two avenues crossed by three streets, "
 	"where everybody lives on an intersection (the analogies start to get less realistic).")
 ENTRY (U"6. Creating a matrix")
 NORMAL (U"You can create a matrix in many ways. The first way we saw was with a ##matrix literal#, "
 	"i.e. a series of series of numbers (or numeric formulas) between nested braces.")
 NORMAL (U"The second way is as a matrix of #zeroes. To create a matrix consisting of 100 rows of 10,000 zeroes, you do")
-CODE (U"a\\# \\#  = zero\\# \\#  (100, 10000)")
+CODE (U"a## = zero## (100, 10000)")
 NORMAL (U"After this,")
-CODE (U"numberOfRows (a\\# \\# )")
+CODE (U"numberOfRows (a##)")
 NORMAL (U"is 100, and")
-CODE (U"numberOfColumns (a\\# \\# )")
+CODE (U"numberOfColumns (a##)")
 NORMAL (U"is 10000.")
 NORMAL (U"Another important type of matrix is one filled with random numbers. "
 	"To create a matrix consisting of 100 rows of 10,000 values drawn from a ##Gaussian distribution# "
 	"with true mean 0.0 and true standard deviation 1.0, you can do")
-CODE (U"noise\\# \\#  = randomGauss\\# \\#  (100, 10000, 0.0, 1.0)")
+CODE (U"noise## = randomGauss## (100, 10000, 0.0, 1.0)")
 NORMAL (U"You can create a matrix as the outer product of two vectors:")
-CODE (U"m\\# \\#  = outer\\# \\#  (u\\# , v\\# )")
+CODE (U"m## = outer## (u#, v#)")
 NORMAL (U"which is the same as")
-CODE (U"m\\# \\#  = zeros\\# \\#  (size (u\\# ), size (v\\# ))")
-CODE (U"#for irow #to size (u\\# )")
-	CODE1 (U"#for icol #to size (v\\# )")
-		CODE2 (U"m\\# \\#  [irow, icol] = u\\#  [irow] * v\\#  [icol]")
-	CODE1 (U"#endfor")
-CODE (U"#endfor")
+CODE (U"m## = zeros## (size (u#), size (v#))")
+CODE (U"for irow to size (u#)")
+	CODE1 (U"for icol to size (v#)")
+		CODE2 (U"m## [irow, icol] = u# [irow] * v# [icol]")
+	CODE1 (U"endfor")
+CODE (U"endfor")
 NORMAL (U"or in mathematical notation")
 EQUATION (U"%m__%ij_ = %u__%i_ %v__%j_   (%i = 1..%M, %j = 1..%N)")
 NORMAL (U"where %M is the number of rows and %N is the number of columns.")
 ENTRY (U"7. Computations with matrices")
 NORMAL (U"You can add matrices:")
-CODE (U"c\\# \\#  = a\\# \\#  + b\\# \\# ")
+CODE (U"c## = a## + b##")
 NORMAL (U"Elementwise multiplication:")
-CODE (U"c\\# \\#  = a\\# \\#  * b\\# \\# ")
+CODE (U"c## = a## * b##")
 NORMAL (U"which does")
 EQUATION (U"%c__%ij_ = %a__%ij_ %b__%ij_   (%i = 1..%M, %j = 1..%N)")
 NORMAL (U"Matrix multiplication:")
-CODE (U"c\\# \\#  = mul\\# \\#  (a\\# \\# , b\\# \\# )")
+CODE (U"c## = mul## (a##, b##)")
 NORMAL (U"which does")
 EQUATION (U"%m__%ij_ = \\su__%k=1_^K  %a__%ik_ %b__%kj_   (%i = 1..%M, %j = 1..%N)")
 NORMAL (U"where %M is the number of rows of %a, %N is the number of columns of %b, "
 	"and %K is the number of columns of %a, which has to be equal to the number if rows of %b.")
 NORMAL (U"Matrix-by-vector multiplication:")
-CODE (U"v\\#  = mul\\#  (m\\# \\# , u\\# )")
+CODE (U"v# = mul# (m##, u#)")
 NORMAL (U"which does")
 EQUATION (U"%v__%i_ = \\su__%j=1_^N  %m__%ij_ %u__%j_   (%i = 1..%M)")
 NORMAL (U"where %M is the number of rows of %m, and %N is the number of columns of %m, "
 	"which has to be equal to the dimension of %u. Also")
-CODE (U"v\\#  = mul\\#  (u\\# , m\\# \\# )")
+CODE (U"v# = mul# (u#, m##)")
 NORMAL (U"which does")
 EQUATION (U"%v__%j_ = \\su__%i=1_^M  %u__%i_ %m__%ij_   (%j = 1..%N)")
 NORMAL (U"where %M is the number of rows of %m, which has to be equal to the dimension of %u, "
 	"and %N is the number of columns of %m.")
 ENTRY (U"8. String vectors")
 NORMAL (U"You can create string vectors in the following ways:")
-CODE (U"a\\$ \\#  = { \"hello\", \"goodbye\" }")
+CODE (U"a$# = { \"hello\", \"goodbye\" }")
 NORMAL (U"creates a vector with two strings, which you can access as `a$# [1]`, which is “hello”, and `a$# [2]`, which is “goodbye”.")
-CODE (U"a\\$ \\#  = empty\\$ \\#  (10)")
+CODE (U"a$# = empty$# (10)")
 NORMAL (U"creates a vector with 10 empty strings, which you can access as `a$# [1]` through `a$# [10]`.")
-CODE (U"text\\$ \\#  = readLinesFromFile\\$ \\#  (\"hello.txt\")")
+CODE (U"text$# = readLinesFromFile$# (\"hello.txt\")")
 NORMAL (U"creates a vector with 100 strings if the file `hello.text` contains 100 lines of text.")
-CODE (U"fileNames\\$ \\#  = fileNames\\$ \\#  (\"sound/*.wav\")")
-NORMAL (U"creates a vector containing the names of all WAV files in the folder $sound.")
-CODE (U"folderNames\\$ \\#  = folderNames\\$ \\#  (\".\")")
+CODE (U"fileNames$# = fileNames$# (\"sound/*.wav\")")
+NORMAL (U"creates a vector containing the names of all WAV files in the folder `sound`.")
+CODE (U"folderNames$# = folderNames$# (\".\")")
 NORMAL (U"creates a vector containing the names of all folders in the folder where the script resides.")
-CODE (U"inks\\$ \\#  = splitByWhitespace\\$ \\#  (\"Hello, how are you?\")")
+CODE (U"inks$# = splitByWhitespace$# (\"Hello, how are you?\")")
 NORMAL (U"creates a vector containing the strings “Hello,” (including the comma), “how”, “are”, and “you?”.")
 MAN_END
 
@@ -3467,11 +3476,11 @@ MAN_END
 
 MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20230129)
 NORMAL (U"You can cause a Praat script to prompt for arguments. The file `playSine.praat` may contain the following:")
-CODE (U"#form: \"Play a sine wave\"")
-	CODE1 (U"#positive: \"Sine frequency (Hz)\", \"377.0\"")
-	CODE1 (U"#positive: \"Gain (0..1)\", \"0.3 (= not too loud)\"")
-CODE (U"#endform")
-CODE (U"Create Sound as pure tone: \"sine\" + string\\$  (sine_frequency), 1, 0, 1, 44100, sine_frequency, gain, 0.01, 0.01")
+CODE (U"\\#{form}: \"Play a sine wave\"")
+	CODE1 (U"\\#{positive}: \"Sine frequency (Hz)\", \"377.0\"")
+	CODE1 (U"\\#{positive}: \"Gain (0..1)\", \"0.3 (= not too loud)\"")
+CODE (U"\\#{endform}")
+CODE (U"Create Sound as pure tone: \"sine\" + string$ (sine_frequency), 1, 0, 1, 44100, sine_frequency, gain, 0.01, 0.01")
 CODE (U"Play")
 CODE (U"Remove")
 NORMAL (U"When running this script, the interpreter puts a settings window (%form) on your screen, "
@@ -3547,96 +3556,96 @@ CODE (U"#endform")
 NORMAL (U"In the script following this form, the variables will be known as `name_of_the_ship$`, `distance_to_the_iceberg`, "
 	"`number_of_people`, and `number_of_boats`.")
 NORMAL (U"The variable associated with a radio box will get a numeric as well as a string value:")
-CODE (U"#form: \"Fill attributes\"")
-	CODE1 (U"#comment: \"Choose any colour and texture for your paintings\"")
-	CODE1 (U"#choice: \"Colour\", 5")
-		CODE2 (U"#option: \"Dark red\"")
-		CODE2 (U"#option: \"Sea green\"")
-		CODE2 (U"#option: \"Navy blue\"")
-		CODE2 (U"#option: \"Canary yellow\"")
-		CODE2 (U"#option: \"Black\"")
-		CODE2 (U"#option: \"White\"")
-	CODE1 (U"#choice: \"Texture\", 1")
-		CODE2 (U"#option: \"Smooth\"")
-		CODE2 (U"#option: \"Rough\"")
-		CODE2 (U"#option: \"With holes\"")
-CODE (U"#endform")
-CODE (U"#writeInfoLine: \"You chose the colour \", colour\\$ , \" and the texture \", texture\\$ , \".\"")
+CODE (U"\\#{form}: \"Fill attributes\"")
+	CODE1 (U"\\#{comment}: \"Choose any colour and texture for your paintings\"")
+	CODE1 (U"\\#{choice}: \"Colour\", 5")
+		CODE2 (U"\\#{option}: \"Dark red\"")
+		CODE2 (U"\\#{option}: \"Sea green\"")
+		CODE2 (U"\\#{option}: \"Navy blue\"")
+		CODE2 (U"\\#{option}: \"Canary yellow\"")
+		CODE2 (U"\\#{option}: \"Black\"")
+		CODE2 (U"\\#{option}: \"White\"")
+	CODE1 (U"\\#{choice}: \"Texture\", 1")
+		CODE2 (U"\\#{option}: \"Smooth\"")
+		CODE2 (U"\\#{option}: \"Rough\"")
+		CODE2 (U"\\#{option}: \"With holes\"")
+CODE (U"\\#{endform}")
+CODE (U"\\`{writeInfoLine}: \"You chose the colour \", colour$, \" and the texture \", texture$, \".\"")
 NORMAL (U"This shows two multiple-choice boxes. In the Colour box, the fifth button (Black) is the standard value here. "
 	"If you click “Navy blue” and then #%OK, the variable %colour will have the value 3, "
-	"and the variable %%colour\\$ % will have the value “Navy blue”. "
+	"and the variable %`colour$` will have the value “Navy blue”. "
 	"So you can test the value of the Colour box in either of the following ways:")
 CODE (U"if colour = 4")
 NORMAL (U"or")
-CODE (U"if colour\\$  = \"Canary yellow\"")
-NORMAL (U"The field type #optionmenu is completely analogous to #choice, "
+CODE (U"if colour$ = \"Canary yellow\"")
+NORMAL (U"The field type #`optionmenu` is completely analogous to #`choice`, "
 	"but uses up much less space on the screen:")
-CODE (U"#form: \"Fill attributes\"")
-	CODE1 (U"#comment: \"Choose any colour and texture for your paintings\"")
-	CODE1 (U"#optionmenu: \"Colour\", 5")
-		CODE2 (U"#option: \"Dark red\"")
-		CODE2 (U"#option: \"Sea green\"")
-		CODE2 (U"#option: \"Navy blue\"")
-		CODE2 (U"#option: \"Canary yellow\"")
-		CODE2 (U"#option: \"Black\"")
-		CODE2 (U"#option: \"White\"")
-	CODE1 (U"#optionmenu: \"Texture\", 1")
-		CODE2 (U"#option: \"Smooth\"")
-		CODE2 (U"#option: \"Rough\"")
-		CODE2 (U"#option: \"With holes\"")
-CODE (U"#endform")
-CODE (U"#writeInfoLine: \"You chose the colour \", colour\\$ , \" and the texture \", texture\\$ , \".\"")
+CODE (U"\\#{form}: \"Fill attributes\"")
+	CODE1 (U"\\#{comment}: \"Choose any colour and texture for your paintings\"")
+	CODE1 (U"\\#{optionmenu}: \"Colour\", 5")
+		CODE2 (U"\\#{option}: \"Dark red\"")
+		CODE2 (U"\\#{option}: \"Sea green\"")
+		CODE2 (U"\\#{option}: \"Navy blue\"")
+		CODE2 (U"\\#{option}: \"Canary yellow\"")
+		CODE2 (U"\\#{option}: \"Black\"")
+		CODE2 (U"\\#{option}: \"White\"")
+	CODE1 (U"\\#{optionmenu}: \"Texture\", 1")
+		CODE2 (U"\\#{option}: \"Smooth\"")
+		CODE2 (U"\\#{option}: \"Rough\"")
+		CODE2 (U"\\#{option}: \"With holes\"")
+CODE (U"\\#{endform}")
+CODE (U"\\`{writeInfoLine}: \"You chose the colour \", colour$, \" and the texture \", texture$, \".\"")
 
-NORMAL (U"For the vector types #realvector, #positivevector, #integervector and #naturalvector "
+NORMAL (U"For the vector types #`realvector`, #`positivevector`, #`integervector` and #`naturalvector` "
 	"you have to specify an initial format, which will be shown to the user:")
-CODE (U"#form: \"Interesting times\"")
+CODE (U"\\#{form}: \"Interesting times\"")
 	CODE1 (U"#comment: \"List the times that you are interested in\"")
 	CODE1 (U"#realvector: \"Fixed times (s)\", \"(whitespace-separated)\", \"0.5 1.7 2.8\"")
-	CODE1 (U"#realvector: \"Random times (s)\", \"(formula)\", \"randomUniform\\#  (5, 0.0, 1.0)\"")
-CODE (U"#endform")
-CODE (U"#writeInfoLine: \"Your fixed times are \", fixed_times\\# , \" and your random times are \", random_times\\# , \".\"")
+	CODE1 (U"#realvector: \"Random times (s)\", \"(formula)\", \"randomUniform# (5, 0.0, 1.0)\"")
+CODE (U"\\#{endform}")
+CODE (U"\\`{writeInfoLine}: \"Your fixed times are \", fixed_times#, \" and your random times are \", random_times#, \".\"")
 NORMAL (U"Clicking OK without editing the two fields may print")
 CODE (U"Your fixed times are 0.5 1.7 2.8 and your random times are 0.754675 0.121393653 0.39856 0.8376572 0.387537.")
 
 NORMAL (U"The field types #infile, #outfile and #folder always yield a full path. "
 	"Consider the script `playFile.praat`, which contains the following:")
-CODE (U"#form: \"Play file\"")
-	CODE1 (U"#infile: \"File to play\", \"hello.wav\"")
-CODE (U"#endform")
-CODE (U"#writeInfoLine: \"You chose the file \", file_to_play\\$ , \".\"")
-CODE (U"Read from file: file_to_play\\$ ")
+CODE (U"\\#{form}: \"Play file\"")
+	CODE1 (U"\\#{infile}: \"File to play\", \"hello.wav\"")
+CODE (U"\\#{endform}")
+CODE (U"\\`{writeInfoLine}: \"You chose the file \", file_to_play$, \".\"")
+CODE (U"Read from file: file_to_play$")
 CODE (U"Play")
 CODE (U"Remove")
 NORMAL (U"If you just click OK and `playFile.praat` is in the folder `/Users/miep/research/usefulScripts`, "
 	"then this will print")
 CODE (U"You chose the file /Users/miep/research/usefulScripts/hello.wav.")
 NORMAL (U"into the Info window, and play the sound in that file.")
-NORMAL (U"You can combine two short fields into one by using %left and %right:")
-CODE (U"#form: \"Get duration\"")
-	CODE1 (U"#natural: \"left Year range\", \"1940\"")
-	CODE1 (U"#natural: \"right Year range\", \"1945\"")
-CODE (U"#endform")
+NORMAL (U"You can combine two short fields into one by using #`left` and #`right`:")
+CODE (U"\\#{form}: \"Get duration\"")
+	CODE1 (U"\\#{natural}: \"left Year range\", \"1940\"")
+	CODE1 (U"\\#{natural}: \"right Year range\", \"1945\"")
+CODE (U"\\#{endform}")
 CODE (U"duration = right_Year_range - left_Year_range")
-CODE (U"#writeInfoLine: \"The duration is \", duration, \" years.\"")
+CODE (U"\\`{writeInfoLine}: \"The duration is \", duration, \" years.\"")
 NORMAL (U"The interpreter will only show the single text “Year range”, followed by two small text fields.")
 ENTRY (U"Calling a script from another script")
-NORMAL (U"Scripts can be nested: the file %%doremi.praat% may contain the following:")
-CODE (U"#runScript: \"playSine.praat\", 550, 0.9")
-CODE (U"#runScript: \"playSine.praat\", 615, 0.9")
-CODE (U"#runScript: \"playSine.praat\", 687, 0.9")
+NORMAL (U"Scripts can be nested: the file `doremi.praat` may contain the following:")
+CODE (U"\\#{runScript}: \"playSine.praat\", 550, 0.9")
+CODE (U"\\#{runScript}: \"playSine.praat\", 615, 0.9")
+CODE (U"\\#{runScript}: \"playSine.praat\", 687, 0.9")
 
-NORMAL (U"With #runScript, Praat will not display a form window, but simply execute the script "
+NORMAL (U"With #`runScript`, Praat will not display a form window, but simply execute the script "
 	"with the two arguments that you supply on the same line (e.g. 550 and 0.9).")
-NORMAL (U"Values for #choice must be passed as strings:")
-CODE (U"#runScript: \"fill attributes.praat\", \"Navy blue\", \"With holes\"")
+NORMAL (U"Values for #`choice` must be passed as strings:")
+CODE (U"\\#{runScript}: \"fill attributes.praat\", \"Navy blue\", \"With holes\"")
 NORMAL (U"Values for vectors can be passed either as a vector expression or as a white-space separated string, "
 	"independently of the initial format:")
-CODE (U"#runScript: \"interesting times.praat\", { 0.3, 0.5, 0.7, 2.0 }, \"18000 0.3\"")
+CODE (U"\\#{runScript}: \"interesting times.praat\", { 0.3, 0.5, 0.7, 2.0 }, \"18000 0.3\"")
 NORMAL (U"You can pass values for #boolean either as the quoted strings “yes” and “no” (or their variants) or as the unquoted numbers 1 and 0.")
-NORMAL (U"In #runScript, the path to the external script, as well as the paths to #infile, #outfile and #folder parameters "
+NORMAL (U"In #`runScript`, the path to the external script, as well as the paths to #`infile`, #`outfile` and #`folder` parameters "
 	"are taken relative to the folder of the current script. For instance, suppose that the current script is "
 	"`/Users/miep/research/project19/analyse.praat` and contains:")
-CODE (U"#runScript: \"../usefulScripts/playFile.praat\", \"sounds/sound3.wav\"")
+CODE (U"\\#{runScript}: \"../usefulScripts/playFile.praat\", \"sounds/sound3.wav\"")
 NORMAL (U"then running the current script will run the above-mentioned script `/Users/miep/research/usefulScripts/playFile.praat`, "
 	"which will play the file `/Users/miep/research/project19/sounds/sound3.wav`.")
 MAN_END
@@ -3681,8 +3690,8 @@ CODE (U"mean = Get mean: 0, 0, \"Hertz\", \"Parabolic\"")
 NORMAL (U"The numeric variable %mean now contains the number 150. When assigning to a numeric variable, "
 	"the interpreter converts the part of the text before the first space into a number.")
 NORMAL (U"You can also assign to string variables:")
-CODE (U"mean\\$  = Get mean: 0, 0, \"Hertz\", \"Parabolic\"")
-NORMAL (U"The string variable %%mean\\$ % now contains the entire string “150 Hz”.")
+CODE (U"mean$ = Get mean: 0, 0, \"Hertz\", \"Parabolic\"")
+NORMAL (U"The string variable %`mean$` now contains the entire string “150 Hz”.")
 NORMAL (U"This works for every command that would otherwise write into the Info window.")
 MAN_END
 
@@ -3690,9 +3699,9 @@ MAN_BEGIN (U"Scripting 6.4. Files", U"ppgb", 20201229)
 INTRO (U"You can read from and write to text files from a Praat script.")
 ENTRY (U"Reading a file")
 NORMAL (U"You can check the availability of a file for reading with the function")
-CODE (U"#fileReadable (%%fileName\\$ %)")
+CODE (U"\\#{fileReadable} (\\%{fileName$})")
 NORMAL (U"which returns 1 (true) if the file exists and can be read, and 0 (false) otherwise. "
-	"Note that %%fileName\\$ % is taken relatively to the folder where the script is saved; "
+	"Note that %`fileName$` is taken relatively to the folder where the script is saved; "
 	"for instance, if your script is in the folder `Paolo/project1`, then the file name "
 	"“hello.wav” refers to `Paolo/project1/hello.wav`, the file name “yesterday/hello.wav” "
 	"refers to `Paolo/project1/yesterday/hello.wav`, and the file name “../project2/hello.wav” "
@@ -3700,9 +3709,9 @@ NORMAL (U"which returns 1 (true) if the file exists and can be read, and 0 (fals
 	"You can also use full path names such as `C:/Users/Paolo/project1/hello.wav` "
 	"on Windows and `/Users/Paolo/project1/hello.wav` on the Mac.")
 NORMAL (U"To read the contents of an existing text file into a string variable or into a numeric variable, you use")
-CODE (U"text\\$  = readFile\\$  (\"myFile.txt\")")
+CODE (U"text$ = \\`{readFile$} (\"myFile.txt\")")
 NORMAL (U"or")
-CODE (U"number = readFile (\"myFile.txt\")")
+CODE (U"number = \\`{readFile} (\"myFile.txt\")")
 NORMAL (U"If the file does not exist, the script terminates with an error message.")
 ENTRY (U"Example: reading a settings file")
 NORMAL (U"Suppose that the file `height.inf` may contain an appropriate value for a numeric variable "
@@ -3711,9 +3720,9 @@ CODE (U"height = readFile (\"height.inf\")")
 NORMAL (U"However, this script will fail if the file `height.inf` does not exist. To guard "
 	"against this situation, we could check the existence of the file, and supply a default "
 	"value in case the file does not exist:")
-CODE (U"fileName\\$  = \"height.inf\"")
-CODE (U"if fileReadable (fileName\\$ )")
-	CODE1 (U"height = readFile (fileName\\$ )")
+CODE (U"fileName$ = \"height.inf\"")
+CODE (U"if fileReadable (fileName$)")
+	CODE1 (U"height = readFile (fileName$)")
 CODE (U"else")
 	CODE1 (U"height = 180")
 CODE (U"endif")
@@ -3727,14 +3736,14 @@ CODE (U"appendFileLine: \"myFile.txt\", \"Next year it will be \", 2000 + 14, \"
 NORMAL (U"With #`appendFileLine` (and #`appendFile`, which does not add the newline), "
 	"we follow the rule that if the file does not yet exist, it is created first.")
 NORMAL (U"You can create a folder (directory) with")
-CODE (U"#createFolder: %%folderPath\\$ %")
-NORMAL (U"where, as with file names, %%folderPath\\$ % can be relative to the folder of the script "
+CODE (U"\\#{createFolder}: \\%{folderPath$}")
+NORMAL (U"where, as with file names, %`folderPath$` can be relative to the folder of the script "
 	"(e.g. “`data`”, or “`yesterday/data`”, or “`../project2/yesterday/data`”) "
 	"or an absolute path (e.g. `C:/Users/Paolo/project1/yesterday/data` on Windows "
 	"or “/Users/Paolo/project1/yesterday/data” on the Mac). "
 	"If the folder already exists, this command does nothing.")
 NORMAL (U"You can delete an existing file with the function")
-CODE (U"#deleteFile: %%fileName\\$ %")
+CODE (U"\\#{deleteFile}: \\%{fileName$}")
 NORMAL (U"If the file does not exist, this command does nothing.")
 ENTRY (U"Example: writing a table of squares")
 NORMAL (U"Suppose that we want to create a file with the following text:")
@@ -3751,28 +3760,28 @@ CODE (U"endfor")
 NORMAL (U"Note that we delete the file before appending to it, "
 	"in order that we do not append to an already existing file.")
 NORMAL (U"You can append the contents of the Info window to a file with")
-CODE (U"appendFile: \"out.txt\", info\\$  ( )")
+CODE (U"appendFile: \"out.txt\", info$ ( )")
 ENTRY (U"Folder listings")
 NORMAL (U"To get the names of the files if a certain type in a certain folder, use")
-CODE (U"fileNames\\$ \\#  = ##fileNames\\$ \\# #: %%path\\$ %")
+CODE (U"fileNames$# = \\#{fileNames$#}: \\%{path$}")
 NORMAL (U"For instance, to read in all the sound files in a specified folder, "
 	"you could use the following script:")
-CODE (U"folder\\$  = \"/usr/people/miep/sounds\"")
-CODE (U"fileNames\\$ \\#  = fileNames\\$ \\#  (folder\\$  + \"/*.wav\")")
-CODE (U"for ifile to size (fileNames\\$ \\# )")
-	CODE1 (U"Read from file: folder\\$  + \"/\" + fileNames\\$ \\#  [ifile]")
+CODE (U"folder$ = \"/usr/people/miep/sounds\"")
+CODE (U"fileNames$# = fileNames$# (folder$ + \"/*.wav\")")
+CODE (U"for ifile to size (fileNames$#)")
+	CODE1 (U"Read from file: folder$ + \"/\" + fileNames$# [ifile]")
 CODE (U"endfor")
 ENTRY (U"Alternative syntax")
 NORMAL (U"If, on the basis of the syntax of commands and functions in earlier sections you expected that")
-CODE (U"text\\$  = readFile\\$  (\"myFile.txt\")")
+CODE (U"text$ = readFile$ (\"myFile.txt\")")
 CODE (U"number = readFile (\"myFile.txt\")")
 NORMAL (U"could be written as")
-CODE (U"text\\$  = readFile\\$ : \"myFile.txt\"")
+CODE (U"text$ = readFile$: \"myFile.txt\"")
 CODE (U"number = readFile: \"myFile.txt\"")
 NORMAL (U"then you are right. The syntax with the colon is equivalent to the syntax with the two parentheses. Conversely, instead of")
-CODE (U"#deleteFile: %%fileName\\$ %")
+CODE (U"\\#{deleteFile}: \\%{fileName$}")
 NORMAL (U"you can also write")
-CODE (U"#deleteFile (%%fileName\\$ %)")
+CODE (U"\\#{deleteFile} (\\%{fileName$})")
 MAN_END
 
 MAN_BEGIN (U"Scripting 6.5. Calling system commands", U"ppgb", 20201229)
@@ -3810,158 +3819,158 @@ MAN_END
 
 MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20230130)
 INTRO (U"You can temporarily halt a Praat script:")
-TERM (U"#pauseScript: %message")
+TERM (U"\\#{pauseScript}: %message")
 DEFINITION (U"suspends execution of the script, and allows the user to interrupt it. "
-	"A message window will appear with the %message (you can use the same argument list as with #writeInfoLine) and the buttons #Stop and #Continue:")
-CODE (U"#pauseScript: \"The next file will be \", fileName\\$ ")
-NORMAL (U"The #pauseScript function is useful if you want to send a simple message to the user, "
+	"A message window will appear with the %message (you can use the same argument list as with @`writeInfoLine`) and the buttons #Stop and #Continue:")
+CODE (U"\\#{pauseScript}: “The next file will be ”, fileName$")
+NORMAL (U"The #`pauseScript` function is useful if you want to send a simple message to the user, "
 	"and you only want to ask the user whether she wants to proceed or not. "
 	"More interesting interactions between your script and the user are possible with the ##%%pause window%#. "
 	"In a pause window you can include the same kinds of arguments as in a @@Scripting 6.1. Arguments to the script|form@. "
 	"Here is an extensive example:")
-CODE (U"writeInfoLine: \"script\"")
-CODE (U"%compression = 1")
-CODE (U"%number_of_channels = 2")
-CODE (U"%worth = 3")
-CODE (U"for %i to 5")
-	CODE1 (U"#beginPause: \"Hi\"")
-		CODE2 (U"#comment: \"Type a lot of nonsense below.\"")
-		CODE2 (U"#natural: \"Number of people\", 10")
-		CODE2 (U"#real: \"Worth\", %worth + 1")
-		CODE2 (U"#positive: \"Sampling frequency (Hz)\", \"44100.0 (= CD quality)\"")
-		CODE2 (U"#word: \"hi\", \"hhh\"")
-		CODE2 (U"#sentence: \"lo\", \"two words\"")
-		CODE2 (U"#text: \"shortText\", \"some one-line text here\"")
-		CODE2 (U"#text: 2, \"longText\", \"some scrollable text here, within a height of 2 lines\"")
-		CODE2 (U"#boolean: \"You like it?\", 1")
-		CODE2 (U"#infile: \"Input file\", \"hello.wav\"")
-		CODE2 (U"#outfile: 2, \"Output file\", \"../out.txt\"")
-		CODE2 (U"#realvector: 2, \"Array of reals\", \"(whitespace-separated)\", \"20 80 60\"")
+CODE (U"writeInfoLine: “script”")
+CODE (U"compression = 1")
+CODE (U"number_of_channels = 2")
+CODE (U"worth = 3")
+CODE (U"for i to 5")
+	CODE1 (U"\\#{beginPause}: “Hi”")
+		CODE2 (U"\\#{comment}: “Type a lot of nonsense below.”")
+		CODE2 (U"\\#{natural}: “Number of people”, 10")
+		CODE2 (U"\\#{real}: “Worth”, worth + 1")
+		CODE2 (U"\\#{positive}: “Sampling frequency (Hz)”, “44100.0 (= CD quality)”")
+		CODE2 (U"\\#{word}: “hi”, “hhh”")
+		CODE2 (U"\\#{sentence}: “lo”, “two words”")
+		CODE2 (U"\\#{text}: “shortText”, “some one-line text here”")
+		CODE2 (U"\\#{text}: 2, “longText”, “some scrollable text here, within a height of 2 lines”")
+		CODE2 (U"\\#{boolean}: “You like it?”, 1")
+		CODE2 (U"\\#{infile}: “Input file”, “hello.wav”")
+		CODE2 (U"\\#{outfile}: 2, “Output file”, “../out.txt”")
+		CODE2 (U"\\#{realvector}: 2, “Array of reals”, “(whitespace-separated)”, “20 80 60”")
 		CODE2 (U"if worth < 6")
-			CODE3 (U"#choice: \"Compression\", %compression")
-				CODE4 (U"#option: \"lossless (FLAC)\"")
-				CODE4 (U"#option: \"MP3\"")
-				CODE4 (U"#option: \"Ogg\"")
+			CODE3 (U"\\#{choice}: “Compression”, compression")
+				CODE4 (U"\\#{option}: “lossless (FLAC)”")
+				CODE4 (U"\\#{option}: “MP3”")
+				CODE4 (U"\\#{option}: “Ogg”")
 		CODE2 (U"endif")
-		CODE2 (U"#optionmenu: \"Number of channels\", %number_of_channels")
-			CODE3 (U"#option: \"mono\"")
-			CODE3 (U"#option: \"stereo\"")
-			CODE3 (U"#option: \"quadro\"")
-		CODE2 (U"#comment: \"Then click Stop or one of the continuation buttons.\"")
-	CODE1 (U"%clicked = #endPause: \"Continue\", \"Next\", \"Proceed\", 2")
-	CODE1 (U"appendInfoLine: %number_of_people, \" \", %worth, \" \", %sampling_frequency, \" \", %clicked")
-	CODE1 (U"appendInfoLine: \"Compression: \", %compression, \" (\", %%compression\\$ %, \")\"")
-	CODE1 (U"appendInfoLine: \"Number of channels: \", %%number_of_channels\\$ %")
-	CODE1 (U"appendInfoLine: \"Short text: \", %%shortText\\$ %")
-	CODE1 (U"appendInfoLine: \"Input file: \", %%input_file\\$ %")
-	CODE1 (U"appendInfoLine: \"Array: \", %%array_of_reals\\# %")
+		CODE2 (U"\\#{optionmenu}: “Number of channels”, number_of_channels")
+			CODE3 (U"\\#{option}: “mono”")
+			CODE3 (U"\\#{option}: “stereo”")
+			CODE3 (U"\\#{option}: “quadro”")
+		CODE2 (U"\\#{comment}: “Then click Stop or one of the continuation buttons.”")
+	CODE1 (U"clicked = \\#{endPause}: “Continue”, “Next”, “Proceed”, 2")
+	CODE1 (U"appendInfoLine: number_of_people, “ ”, worth, “ ”, sampling_frequency, “ ”, clicked")
+	CODE1 (U"appendInfoLine: “Compression: ”, compression, “ (”, compression$, “)”")
+	CODE1 (U"appendInfoLine: “Number of channels: ”, number_of_channels$")
+	CODE1 (U"appendInfoLine: “Short text: ”, shortText$")
+	CODE1 (U"appendInfoLine: “Input file: ”, input_file$")
+	CODE1 (U"appendInfoLine: “Array: ”, array_of_reals#")
 CODE (U"endfor")
 NORMAL (U"This example uses several tricks. A useful one is seen with `number_of_channels`: "
-	"this is at the same time the value that is passed to #optionmenu (and therefore determines the setting of "
+	"this is at the same time the value that is passed to #`optionmenu` (and therefore determines the setting of "
 	"the ##Number of channels# menu when the window appears) and the name of the variable in which the user’s "
-	"chosen value of ##Number of channels# is stored (because “number_of_channels” is what you get "
+	"chosen value of ##Number of channels# is stored (because the text “number\\_ of \\_ channels” is what you get "
 	"by replacing the spaces in “Number of channels” with underscores and turning its first letter to lower case).")
 NORMAL (U"Your own pause windows are not likely to be as rich as the above example. "
 	"For instance, the example has three continuation buttons (the second of these is the default button, "
 	"i.e. the button that you can “click” by pressing the Enter or Return key). "
 	"You will often use only one continuation button, for instance")
-CODE (U"#endPause: \"Continue\", 1")
+CODE (U"\\#{endPause}: “Continue”, 1")
 NORMAL (U"or")
-CODE (U"#endPause: \"Finish\", 1")
+CODE (U"\\#{endPause}: “Finish”, 1")
 NORMAL (U"or")
-CODE (U"#endPause: \"OK\", 1")
+CODE (U"\\#{endPause}: “OK”, 1")
 NORMAL (U"If your script shows multiple different pause windows, then it is in fact a %wizard, "
 	"and it becomes useful to have")
-CODE (U"#endPause: \"Next\", 1")
+CODE (U"\\#{endPause}: “Next”, 1")
 NORMAL (U"for most of them, and")
-CODE (U"#endPause: \"Finish\", 1")
+CODE (U"\\#{endPause}: “Finish”, 1")
 NORMAL (U"for the last one.")
 NORMAL (U"The possibility of multiple continuation buttons can save the user a mouse click. "
 	"The following script, for instance, requires two mouse clicks per sound:")
 CODE (U"for %i to 20")
-	CODE1 (U"Read from file: \"sound\" + string\\$  (%i) + \".wav\"")
+	CODE1 (U"Read from file: “sound“ + string$ (i) + “.wav”")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
-	CODE1 (U"#beginPause: \"Rate the quality\"")
-		CODE2 (U"#comment: \"How good is the sound on a scale from 1 to 7?\"")
-		CODE2 (U"#choice: \"Quality\", 4")
-			CODE3 (U"#option: \"1\"")
-			CODE3 (U"#option: \"2\"")
-			CODE3 (U"#option: \"3\"")
-			CODE3 (U"#option: \"4\"")
-			CODE3 (U"#option: \"5\"")
-			CODE3 (U"#option: \"6\"")
-			CODE3 (U"#option: \"7\"")
-	CODE1 (U"#endPause: if %i = 20 then \"Finish\" else \"Next\" fi, 1")
+	CODE1 (U"#beginPause: “Rate the quality”")
+		CODE2 (U"#comment: “How good is the sound on a scale from 1 to 7?”")
+		CODE2 (U"#choice: “Quality”, 4")
+			CODE3 (U"#option: “1”")
+			CODE3 (U"#option: “2”")
+			CODE3 (U"#option: “3”")
+			CODE3 (U"#option: “4”")
+			CODE3 (U"#option: “5”")
+			CODE3 (U"#option: “6”")
+			CODE3 (U"#option: “7”")
+	CODE1 (U"\\#{endPause}: if i = 20 then “Finish” else “Next” fi, 1")
 	CODE1 (U"appendInfoLine: quality")
 CODE (U"endfor")
 NORMAL (U"The following script works faster:")
-CODE (U"for %i to 20")
-	CODE1 (U"Read from file: \"sound\" + string\\$  (%i) + \".wav\"")
+CODE (U"for i to 20")
+	CODE1 (U"Read from file: “sound” + string$ (i) + “.wav”")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
-	CODE1 (U"#beginPause: \"Rate the quality\"")
-		CODE2 (U"#comment: \"How good is the sound on a scale from 1 to 7?\"")
-	CODE1 (U"quality = #endPause: \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", 0")
+	CODE1 (U"#beginPause: “Rate the quality\"")
+		CODE2 (U"#comment: “How good is the sound on a scale from 1 to 7?”")
+	CODE1 (U"quality = \\#{endPause}: “1”, “2”, “3”, “4”, “5”, “6”, “7”, 0")
 	CODE1 (U"appendInfoLine: quality")
 CODE (U"endfor")
 NORMAL (U"In this example, the 0 at the end of #endPause means that there is no default button.")
 ENTRY (U"File selection")
 NORMAL (U"If you want the user to choose a file name for reading (opening), do")
-CODE (U"%%fileName\\$ % = ##chooseReadFile\\$ #: \"Open a table file\"")
-CODE (U"if %%fileName\\$ % <> \"\"")
-	CODE1 (U"%table = Read Table from tab-separated file: %%fileName\\$ %")
+CODE (U"fileName$ = \\#{chooseReadFile$}: “Open a table file\"")
+CODE (U"if fileName$ <> “”")
+	CODE1 (U"table = Read Table from tab-separated file: fileName$")
 CODE (U"endif")
 NORMAL (U"A file selector window will appear, with (in this example) ##Open a table file# as the title. "
 	"If the user clicks #OK, the variable %`fileName$` will contain the name of the file that the user selected; "
-	"if the user clicks #Cancel, the variable %`fileName$` will contain the empty string (\\\" \\\" ).")
+	"if the user clicks #Cancel, the variable %`fileName$` will contain the empty string (“”).")
 NORMAL (U"If you want the user to choose a file name for writing (saving), do")
-CODE (U"selectObject: %mySound")
-CODE (U"%%fileName\\$ % = ##chooseWriteFile\\$ #: \"Save as a WAV file\", \"mySound.wav\"")
-CODE (U"if %%fileName\\$ % <> \"\"")
-	CODE1 (U"Save as WAV file: %%fileName\\$ %")
+CODE (U"selectObject: mySound")
+CODE (U"fileName$ = \\#{chooseWriteFile$}: “Save as a WAV file”, “mySound.wav”")
+CODE (U"if fileName$ <> “”")
+	CODE1 (U"Save as WAV file: fileName$")
 CODE (U"endif")
 NORMAL (U"A file selector window will appear, with (in this example) ##Save as a WAV file# as the title "
 	"and “mySound.wav” as the suggested file name (which the user can change). "
 	"If the user clicks #OK, the form will ask for confirmation if the file name that the user typed already exists. "
 	"If the user clicks #OK with a new file name, or clicks #OK in the confirmation window, "
 	"the variable %`fileName$` will contain the file name that the user typed; "
-	"if the user clicks #Cancel at any point, the variable %`fileName$` will contain the empty string (\\\" \\\" ).")
+	"if the user clicks #Cancel at any point, the variable %`fileName$` will contain the empty string (“”).")
 NORMAL (U"If you want the user to choose a folder (directory) name, do")
-CODE (U"%%folderName\\$ % = ##chooseFolder\\$ #: \"Choose a folder to save all the new files in\"")
-CODE (U"if %%folderName\\$ % <> \"\"")
-	CODE1 (U"for %i to %numberOfSelectedSounds")
-		CODE2 (U"selectObject: %sound [%i]")
-		CODE2 (U"Save as WAV file: %%folderName\\$ % + \"/sound\" + string\\$  (%i) + \".wav\"")
+CODE (U"folderName$ = \\#{chooseFolder$}: “Choose a folder to save all the new files in”")
+CODE (U"if folderName$ <> “”")
+	CODE1 (U"for i to numberOfSelectedSounds")
+		CODE2 (U"selectObject: sound [i]")
+		CODE2 (U"Save as WAV file: folderName$ + “/sound” + string$ (i) + “.wav”")
 	CODE1 (U"endfor")
 CODE (U"endif")
 NORMAL (U"A folder selector window will appear, with (in this example) ##Choose a folder to save all the new files in# as the title. "
 	"If the user clicks #OK, the variable %`folderName$` will contain the name of the folder that the user selected; "
-	"if the user clicks #Cancel, the variable %`folderName$` will contain the empty string (\\\" \\\" ).")
+	"if the user clicks #Cancel, the variable %`folderName$` will contain the empty string (“”).")
 ENTRY (U"A non-pausing pause window without a #Stop button")
 NORMAL (U"Especially if you use the pause window within the @@Demo window@, you may not want to give the user the capability of "
 	"ending the script by hitting #Stop or closing the pause window. "
-	"In that case, you can add an extra numeric argument to #endPause (at the end) "
+	"In that case, you can add an extra numeric argument to #`endPause` (at the end) "
 	"that denotes the cancel button:")
-CODE (U"#beginPause: \"Learning settings\"")
-	CODE1 (U"#positive: \"Learning rate\", \"0.01\"")
-	CODE1 (U"#choice: \"Directions\", 3")
-		CODE2 (U"#option: \"Forward\"")
-		CODE2 (U"#option: \"Backward\"")
-		CODE2 (U"#option: \"Bidirectional\"")
-CODE (U"%clicked = #endPause: \"Cancel\", \"OK\", 2, 1")
-CODE (U"if %clicked = 2")
-CODE1 (U"%learningRate = %learning_rate")
-CODE1 (U"%includeForward = ( %directions = 1 or %directions = 3 )")
-CODE1 (U"%includeBackward = ( %directions = 2 or %directions = 3 )")
+CODE (U"\\#{beginPause}: “Learning settings”")
+	CODE1 (U"\\#{positive}: “Learning rate”, “0.01”")
+	CODE1 (U"\\#{choice}: “Directions”, 3")
+		CODE2 (U"\\#{option}: “Forward”")
+		CODE2 (U"\\#{option}: “Backward”")
+		CODE2 (U"\\#{option}: “Bidirectional”")
+CODE (U"clicked = \\#{endPause}: “Cancel”, “OK”, 2, 1")
+CODE (U"if clicked = 2")
+	CODE1 (U"learningRate = learning_rate")
+	CODE1 (U"includeForward = ( directions = 1 or directions = 3 )")
+	CODE1 (U"includeBackward = ( directions = 2 or directions = 3 )")
 CODE (U"endif")
 NORMAL (U"In this example, the default button is 2 (i.e. #OK), and the cancel button is 1 (i.e. #Cancel). "
 	"The form will now contain no #Stop button, and if the user closes the window, "
 	"this will be the same as clicking #Cancel, namely that %`clicked` will be 1 (because the #Cancel button is the first button) "
-	"and the variables %`learning_rate`, %`directions` and %%`directions$` will not be changed (i.e. they might remain undefined).")
+	"and the variables %`learning_rate`, %`directions` and %`directions$` will not be changed (i.e. they might remain undefined).")
 ENTRY (U"Pausing for a fixed time without a window")
 NORMAL (U"You can pause Praat for 1.3 seconds by saying")
-CODE (U"#sleep (1.3)")
+CODE (U"\\#{sleep} (1.3)")
 NORMAL (U"This is of course not about controlling the user, "
 	"but it is mentioned here because this section is about pausing.")
 MAN_END
@@ -3975,7 +3984,7 @@ ENTRY (U"Example")
 NORMAL (U"Suppose we are in the Praat-shell program #Praat, which is a system for doing phonetics by computer. "
 	"From this program, we can send a message to the %%non%-Praat-shell program #MovieEdit, "
 	"which does know how to display a sound file:")
-CODE (U"Save as file: \"hallo.wav\"")
+CODE (U"Save as file: “hallo.wav”")
 CODE (U"sendsocket fonsg19.hum.uva.nl:6667 display hallo.wav")
 NORMAL (U"In this example, `fonsg19.hum.uva.nl` is the computer on which MovieEdit is running; "
 	"you can specify any valid Internet address instead, as long as that computer allows you to send messages to it. "
@@ -3987,25 +3996,25 @@ MAN_BEGIN (U"Scripting 6.8. Messages to the user", U"ppgb", 20230122)
 NORMAL (U"If the user makes a mistake (e.g. types conflicting settings into your form window), "
 	"you can use the #exitScript function (@@Scripting 5.9. Quitting|\\SS5.8@) "
 	"to stop the execution of the script with an error message:")
-CODE (U"form: \"My analysis\"")
-	CODE1 (U"real: \"Starting time (s)\", \"0.0\"")
-	CODE1 (U"real: \"Finishing time (s)\", \"1.0\"")
+CODE (U"form: “My analysis”")
+	CODE1 (U"real: “Starting time (s)”, “0.0”")
+	CODE1 (U"real: “Finishing time (s)”, “1.0”")
 CODE (U"endform")
 CODE (U"if finishing_time <= starting_time")
-	CODE1 (U"#exitScript: \"The finishing time should exceed \", starting_time, \" seconds.\"")
+	CODE1 (U"\\#{exitScript}: “The finishing time should exceed ”, starting_time, “ seconds.”")
 CODE (U"endif")
-CODE (U"\\#  Proceed with the analysis...")
-NORMAL (U"For things that should not normally go wrong, you can use the #assert directive:")
+CODE (U"# Proceed with the analysis...")
+NORMAL (U"For things that should not normally go wrong, you can use the #`assert` directive:")
 CODE (U"power = Get power")
 CODE (U"assert power > 0")
 NORMAL (U"This is the same as:")
 CODE (U"if (power > 0) = undefined")
-	CODE1 (U"exitScript: \"Assertion failed in line \", lineNumber, \" (undefined): power > 0\"")
+	CODE1 (U"exitScript: “Assertion failed in line ”, lineNumber, “ (undefined): power > 0”")
 CODE (U"elsif not (power > 0)")
-	CODE1 (U"exitScript: \"Assertion failed in line \", lineNumber, \" (false): power > 0\"")
+	CODE1 (U"exitScript: “Assertion failed in line ”, lineNumber, “ (false): power > 0”")
 CODE (U"endif")
 NORMAL (U"You can prevent Praat from issuing warning messages:")
-CODE (U"nowarn Save as WAV file: \"hello.wav\"")
+CODE (U"nowarn Save as WAV file: “hello.wav”")
 NORMAL (U"This prevents warning messages about clipped samples, for instance.")
 NORMAL (U"You can also prevent Praat from showing a progress window:")
 CODE (U"pitch = noprogress To Pitch: 0, 75, 500")
@@ -4031,7 +4040,7 @@ NORMAL (U"Before seeing how a Praat script can be called from the command line, 
 	"you should first know that just calling Praat from the command line just starts up Praat "
 	"with its usual GUI (Graphical User Interface), i.e. with its two windows. "
 	"For instance, on Windows you can start the Command Prompt window (the “Console”), and type")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\"")
+CODE (U"\"C:\\Program Files\\Praat.exe\"")
 NORMAL (U"(including the quotes) if Praat.exe is indeed in the folder `C:\\Program Files`.")
 NORMAL (U"On the Mac, the executable is hidden inside the `app` file, so you open a Terminal window "
 	"and type something like")
@@ -4041,9 +4050,9 @@ CODE (U"/usr/bin/praat")
 
 ENTRY (U"2. Calling Praat to open data files")
 NORMAL (U"On Windows, you can open Praat with a sound file and a TextGrid file by typing")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open data\\bshello.wav data\\bshello.TextGrid")
+CODE (U"\"C:\\Program Files\\Praat.exe\" --open data\\hello.wav data\\hello.TextGrid")
 NORMAL (U"or")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open data/hello.wav data/hello.TextGrid")
+CODE (U"\"C:\\Program Files\\Praat.exe\" --open data/hello.wav data/hello.TextGrid")
 NORMAL (U"at least if your current folder (see the Console's `cd` and `dir` commands) "
 	"contains the folder `data` and that folder contains those two files. "
 	"Praat will start up, and shows the two files as a Sound and a TextGrid object in the list. "
@@ -4062,7 +4071,7 @@ NORMAL (U"To always start up a new instance of Praat, use #`--new-open` instead 
 
 ENTRY (U"3. Calling Praat to open a script")
 NORMAL (U"On Windows, when you type")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --open \"my script.praat\"")
+CODE (U"\"C:\\Program Files\\Praat.exe\" --open \"my script.praat\"")
 NORMAL (U"Praat will start up, opening the script `my script.praat` in a script window. "
 	"If Praat was already running when you typed the command, "
 	"the script window will appear within the already running instantiation of Praat.")
@@ -4078,7 +4087,7 @@ NORMAL (U"Note that on all three platforms, you have to supply quotes around the
 ENTRY (U"4. Calling Praat to run a script in the background")
 NORMAL (U"Now we are ready to discuss how to run Praat without a GUI.")
 NORMAL (U"On Windows, when you type")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run \"my script.praat\"")
+CODE (U"\"C:\\Program Files\\Praat.exe\" --run \"my script.praat\"")
 NORMAL (U"Praat will execute the script `my script.praat` without showing Praat's GUI, "
 	"i.e. without showing its usual two windows. "
 	"In fact, any output that would normally go to the Info window, "
@@ -4102,21 +4111,21 @@ CODE1 (U"real: \"Beep duration\", \"0.4\"")
 CODE1 (U"sentence: \"Second text\", \"Me too\"")
 CODE (U"endform")
 CODE (U"")
-CODE (U"writeInfoLine: \"She: \"\"\", first_text\\$ , \"\"\"\"")
-CODE (U"appendInfoLine: \"He: \"\"\", second_text\\$ , \"\"\"\"")
+CODE (U"writeInfoLine: \"She: \"\"\", first_text$, \"\"\"\"")
+CODE (U"appendInfoLine: \"He: \"\"\", second_text$, \"\"\"\"")
 CODE (U"")
 CODE (U"synth1 = Create SpeechSynthesizer: \"English (Great Britain)\", \"Female1\"")
-CODE (U"Play text: first_text\\$ ")
+CODE (U"Play text: first_text$")
 CODE (U"Create Sound as pure tone: \"beep\", 1, 0.0, beep_duration,")
 CODE (U"... 44100, 440, 0.2, 0.01, 0.01")
 CODE (U"Play")
 CODE (U"Remove")
 CODE (U"synth2 = Create SpeechSynthesizer: \"English (America)\", \"Male1\"")
-CODE (U"Play text: second_text\\$ ")
+CODE (U"Play text: second_text$")
 NORMAL (U"When you run this script from within Praat, it writes two lines to the Info window "
 	"and plays first a female voice speaking the first sentence, then a beep, and then a male voice "
 	"speaking the second sentence. To make this happen from the Windows command line instead, you type")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
+CODE (U"\"C:\\Program Files\\Praat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 NORMAL (U"In the Mac terminal, you type")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 NORMAL (U"and in the Linux terminal, you do")
@@ -4136,7 +4145,7 @@ CODE (U"/usr/bin/praat --run ../usefulScripts/playFile.praat sounds/sound3.wav")
 
 ENTRY (U"6. Calling Praat to run a script in the GUI")
 NORMAL (U"You can send a script to a running Praat. Praat will then execute it:")
-CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
+CODE (U"\"C:\\Program Files\\Praat.exe\" --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 CODE (U"/usr/bin/praat --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 NORMAL (U"This works the same way as `--run`, except that `--send` runs in Praat’s Graphical User Interface. "
@@ -4149,20 +4158,20 @@ ENTRY (U"7. Calling Praat from other programs such as Python")
 NORMAL (U"You can run the above script from several programming languages, not just from a Console or Terminal. "
 	"In Python, for instance, you can do it using the same syntax as you would use in the Console or Terminal:")
 CODE (U"import os")
-CODE (U"os.system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
+CODE (U"os.system ('\"C:\\\\Program Files\\\\Praat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
 NORMAL (U"Note that you have to double the backslashes!")
 NORMAL (U"A disadvantage of the `os.system` method is that you have to use quotes within quotes. "
 	"A somewhat cleaner approach is:")
 CODE (U"import subprocess")
-CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])")
+CODE (U"subprocess.call(['C:\\\\Program Files\\\\Praat.exe', '--run', 'testCommandLineCalls.praat', 'I love you', '0.4', 'Me too'])")
 NORMAL (U"This way you specify the arguments directly, with quotes only because they are all strings, "
 	"but without having to worry about spaces. And perhaps even more importantly, this syntax "
 	"makes it easy to use variables as arguments, as in:")
 CODE (U"first_line = 'I love you'")
 CODE (U"second_line = 'me too'")
-CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 'testCommandLineCalls.praat', first_line, '0.4', second_line])")
+CODE (U"subprocess.call(['C:\\\\Program Files\\\\Praat.exe', '--run', 'testCommandLineCalls.praat', first_line, '0.4', second_line])")
 NORMAL (U"Many other programs beside Python have a `system`-like command, so that you can run a command like")
-CODE (U"system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
+CODE (U"system ('\"C:\\\\Program Files\\\\Praat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
 
 ENTRY (U"8. What happens if I specify neither --open nor --run nor --send?")
 NORMAL (U"If you specify neither `--open` nor `--run` nor `--send`, Praat's behaviour is not guaranteed. "
@@ -4380,8 +4389,8 @@ DEFINITION (U"the script text to be sent. Sendpraat may alter this text!")
 ENTRY (U"Example 1: killing a program")
 CODE (U"char message [100], *errorMessage;")
 CODE (U"strcpy (message, \"Quit\");")
-CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
-CODE (U"if (errorMessage) fprintf (stderr, \"\\% s\", errorMessage);")
+CODE (U"errorMessage = \\#{sendpraat} (NULL, \"praat\", 0, message);")
+CODE (U"if (errorMessage) fprintf (stderr, \"%s\", errorMessage);")
 NORMAL (U"This causes the program #Praat to quit (gracefully), because #Quit is a fixed "
 	"command in one of the menus of that program. "
 	"On MacOS and Linux, sendpraat returns immediately; on Windows, the %timeOut argument is ignored. "
@@ -4392,8 +4401,8 @@ NORMAL (U"Suppose you have a sound file whose name is in the variable $fileName,
 	"and you want the program #Praat, which can play sounds, "
 	"to play this sound backwards.")
 CODE (U"char message [1000], *errorMessage;")
-CODE (U"snprintf (message,1000, \"Read from file: ~\\% s\\bsnPlay reverse\\bsnRemove\", fileName);")
-CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 3000, message);")
+CODE (U"snprintf (message,1000, \"Read from file: ~%s\\nPlay reverse\\nRemove\", fileName);")
+CODE (U"errorMessage = \\#{sendpraat} (NULL, \"praat\", 3000, message);")
 NORMAL (U"This will work because ##Play reverse# is an action command "
 	"that becomes available in the dynamic menu when a Sound is selected. "
 	"On Linux, sendpraat will allow #Praat at most 3000 seconds to perform this.")
@@ -4402,7 +4411,7 @@ NORMAL (U"Sometimes, it may be unpractical to send a large script directly to #s
 	"Fortunately, the receiving program knows #runScript:")
 CODE (U"char message [100], *errorMessage;")
 CODE (U"strcpy (message, \"runScript: \\bs\"doAll.praat\\bs\", 20\");")
-CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
+CODE (U"errorMessage = \\#{sendpraat} (NULL, \"praat\", 0, message);")
 NORMAL (U"This causes the program #Praat to run the script ##doAll.praat# with an argument of \"20\".")
 ENTRY (U"How to download")
 NORMAL (U"You can download the source code of the sendpraat subroutine "
@@ -4410,7 +4419,7 @@ NORMAL (U"You can download the source code of the sendpraat subroutine "
 ENTRY (U"Instead")
 NORMAL (U"Instead of using sendpraat, you can also just take the following simple steps in your program:")
 LIST_ITEM (U"1. on Linux, write the Praat script that you want to run, and save it as ##~/.praat-dir/message#;")
-LIST_ITEM (U"2. get Praat's process id from ##~/.praat-dir/pid#;")
+LIST_ITEM (U"2. get Praat's process id from `~/.praat-dir/pid`;")
 LIST_ITEM (U"3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: `kill -USR1 1178`")
 NORMAL (U"If the first line of your script is the comment “`# 999`”, where 999 stands for the process id of your program, "
 	"Praat will send your program a SIGUSR2 signal back when it finishes handling the script. "
