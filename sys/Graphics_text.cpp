@@ -1288,7 +1288,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 	while ((kar = *in++) != U'\0') {
 		//TRACE
 		if (kar == U'^' && my circumflexIsSuperscript) {
-			if (globalVerbatim) {
+			if (globalVerbatim || verbatimLink) {
 				/*
 					Output the caret verbatim, by falling through.
 				*/
@@ -1311,7 +1311,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				continue;
 			}
 		} else if (kar == U'_' && my underscoreIsSubscript) {
-			if (globalVerbatim) {
+			if (globalVerbatim || verbatimLink) {
 				/*
 					Output the underscore verbatim, by falling through.
 				*/
@@ -1342,7 +1342,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				trace (U"Verbatim subscript: ", ++ countVerbatimSubscript, U" ", txt);
 			}
 		} else if (kar == U'%' && my percentSignIsItalic) {
-			if (globalVerbatim) {
+			if (globalVerbatim || verbatimLink) {
 				/*
 					Output the percent sign verbatim, by falling through.
 				*/
@@ -1374,7 +1374,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				continue;
 			}
 		} else if (kar == U'#' && my numberSignIsBold) {
-			if (globalVerbatim) {
+			if (globalVerbatim || verbatimLink) {
 				/*
 					Output the hash sign verbatim, by falling through.
 				*/
@@ -1421,7 +1421,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				continue;
 			}
 		} else if (kar == U'$' && my dollarSignIsCode) {
-			if (globalVerbatim) {
+			if (globalVerbatim || verbatimLink) {
 				/*
 					Output the dollar sign verbatim, by falling through.
 				*/
