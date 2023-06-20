@@ -1446,7 +1446,7 @@ NORMAL (U"The following script generates 12 static Shepard tone complexes, 1 sem
 CODE (U"fadeTime = 0.010")
 CODE (U"for i to 12")
 	CODE1 (U"fraction = (i-1)/12")
-	CODE1 (U"Create Sound as Shepard tone: \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
+	CODE1 (U"Create Sound as Shepard tone: \"s\" + string$ (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
 	CODE1 (U"Fade in: 0, 0, fadeTime, \"no\"")
 	CODE1 (U"Fade out: 0, 0.1, -fadeTime, \"no\"")
 CODE (U"endfor")

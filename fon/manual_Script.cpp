@@ -25,6 +25,64 @@ void manual_Script_init (ManPages me) {
 MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
+"`binomialQ`"
+© Paul Boersma 2014-02-23, 2023
+
+A function that can be used in @@Formulas@. The complement of the cumulative binomial distribution.
+
+Syntax
+======
+
+#`binomialQ` (%`p`, %`k`, %`n`)
+:	the probability that in %`n` trials an event with probability %`p` will occur at least %`k` times.
+
+Calculator example
+==================
+
+A die is suspected to yield more sixes than a perfect die would do. In order to test this suspicion,
+you throw it 1,000 times. The result is 211 sixes.
+
+The probability that a perfect die yields at least 211 sixes is, according to @@Calculator...@,
+{
+	appendInfoLine: \#{binomialQ} (1/6, 211, 1000)
+}
+which should be 0.000152.
+
+Script example
+==============
+
+You convert 1000 values of pitch targets in Hz to the nearest note on the piano keyboard.
+597 of those values turn out to be in the A, B, C, D, E, F, or G regions (the white keys), and 403 values turn out
+to be in the A\# , C\# , D\# , F\# , or G\#  regions (the black keys).
+Do our subjects have a preference for the white keys?
+The following script computes the probability that in the case of no preference the subjects
+would target the white keys at least 597 times. This is compared with a %\ci^2 test.
+{
+	a = 597
+	b = 403
+	p = 7/12   ; no preference")
+	writeInfoLine: “*** Binomial test ”, a, “, ”, b, “, p = ”, fixed$ (p, 6), “ ***”
+	pbin = \#{binomialQ} (p, a, a+b)
+	appendInfoLine: “P (binomial) = ”, fixed$ (pbin, 6)
+	# Chi-square test with Yates correction:
+	x2 = (a - 1/2 -   p   * (a+b)) ^ 2 / (  p   * (a+b)) +
+	...  (b + 1/2 - (1-p) * (a+b)) ^ 2 / ((1-p) * (a+b))
+	px2 = chiSquareQ (x2, 1)
+	appendInfoLine: “P (chi-square) = ”, fixed$ (px2, 6)
+}
+The result is:
+
+	*** Binomial test 597, 403, p = 0.583333 ***
+	P (binomial) = 0.199330
+	P (chi-square) = 0.398365
+
+The %\ci^2 test is two-sided (it signals a preference for the white or for the black keys),
+so it has twice the probability of the binomial test.
+
+We cannot conclude from this test that people have a preference for the white keys.
+Of course, we cannot conclude either that people %%don’t% have such a preference.
+
+################################################################################
 "`writeInfoLine`"
 © Paul Boersma 2023-06-07
 
@@ -236,43 +294,6 @@ NORMAL (U"To add a fixed button from a script (perhaps your @@initialization scr
 	"use the hidden shell command @@Add menu command...@ instead.")
 MAN_END
 
-MAN_BEGIN (U"binomialQ", U"ppgb", 20140223)
-INTRO (U"A function that can be used in @@Formulas@. The complement of the cumulative binomial distribution.")
-ENTRY (U"Syntax")
-TERM (U"#`binomialQ` (%`p`, %`k`, %`n`)")
-DEFINITION (U"the probability that in %`n` trials an event with probability %`p` will occur at least %`k` times.")
-ENTRY (U"Calculator example")
-NORMAL (U"A die is suspected to yield more sixes than a perfect die would do. In order to test this suspicion, "
-	"you throw it 1,000 times. The result is 211 sixes.")
-NORMAL (U"The probability that a perfect die yields at least 211 sixes is, according to @@Calculator...@, "
-	"\\`{binomialQ} (1/6, 211, 1000)$ = 0.000152.")
-ENTRY (U"Script example")
-NORMAL (U"You convert 1000 values of pitch targets in Hz to the nearest note on the piano keyboard. "
-	"597 of those values turn out to be in the A, B, C, D, E, F, or G regions (the white keys), and 403 values turn out "
-	"to be in the A\\# , C\\# , D\\# , F\\# , or G\\#  regions (the black keys). "
-	"Do our subjects have a preference for the white keys? "
-	"The following script computes the probability that in the case of no preference the subjects "
-	"would target the white keys at least 597 times. This is compared with a %\\ci^2 test.")
-CODE (U"a = 597")
-CODE (U"b = 403")
-CODE (U"p = 7/12   ; no preference")
-CODE (U"writeInfoLine: \"*** Binomial test \", a, \", \", b, \", p = \", fixed$ (p, 6), \" ***\"")
-CODE (U"pbin = binomialQ (p, a, a+b)")
-CODE (U"appendInfoLine: \"P (binomial) = \", fixed$ (pbin, 6)")
-CODE (U"# Chi-square test with Yates correction:")
-CODE (U"x2 = (a - 1/2 - p * (a+b))^2/(p*(a+b)) + (b + 1/2 - (1-p) * (a+b))^2/((1-p)*(a+b))")
-CODE (U"px2 = chiSquareQ (x2, 1)")
-CODE (U"appendInfoLine: \"P (chi-square) = \", fixed$ (px2, 6)")
-NORMAL (U"The result is:")
-CODE (U"*** Binomial test 597, 403, p = 0.583333 ***")
-CODE (U"P (binomial) = 0.199330")
-CODE (U"P (chi-square) = 0.398365")
-NORMAL (U"The %\\ci^2 test is two-sided (it signals a preference for the white or for the black keys), "
-	"so it has twice the probability of the binomial test.")
-NORMAL (U"We cannot conclude from this test that people have a preference for the white keys. "
-	"Of course, we cannot conclude either that people do not have such a preference.")
-MAN_END
-
 MAN_BEGIN (U"ButtonEditor", U"ppgb", 20060920)
 INTRO (U"An editor for viewing, hiding, showing, removing, and executing the commands "
 	"in the fixed and dynamic menus of the Praat program. To open it, choose ##Buttons...# "
@@ -392,11 +413,11 @@ LIST_ITEM (U"2. @@Formulas 2. Representations|Representations@")
 LIST_ITEM1 (U"2.1. @@Formulas 2.1. Representation of numbers|Representation of numbers@")
 LIST_ITEM1 (U"2.2. @@Formulas 2.2. Representation of strings|Representation of strings@")
 LIST_ITEM1 (U"2.3. @@Formulas 2.3. Representation of arrays|Representation of arrays@")
-LIST_ITEM (U"3. @@Formulas 3. Operators|Operators@ (+, -, *, /, \\^ )")
-LIST_ITEM (U"4. @@Formulas 4. Constants|Constants@ (pi, e, undefined)")
+LIST_ITEM (U"3. @@Formulas 3. Operators|Operators@ (`+`, `-`, `*`, `/`, `^`)")
+LIST_ITEM (U"4. @@Formulas 4. Constants|Constants@ (`pi`, `e`, `undefined`)")
 LIST_ITEM (U"5. @@Formulas 5. Mathematical functions|Mathematical functions@")
 LIST_ITEM (U"6. @@Formulas 6. String functions|String functions@")
-LIST_ITEM (U"7. @@Formulas 7. Control structures|Control structures@ (if then else fi, semicolon)")
+LIST_ITEM (U"7. @@Formulas 7. Control structures|Control structures@ (`if then else fi`, semicolon)")
 LIST_ITEM (U"8. @@Formulas 8. Attributes of objects|Attributes of objects@")
 LIST_ITEM (U"9. @@Formulas 9. Data in objects|Data in objects@")
 MAN_END
@@ -1013,11 +1034,11 @@ TERM (U"##invFisherQ (%q, %df1, %df2)")
 DEFINITION (U"the value of %f for which $fisherQ (%f, %df1, %df2) = %q")
 TERM (U"##binomialP (%p, %k, %n)")
 DEFINITION (U"the probability that in %n experiments, an event with probability %p will occur at most %k times")
-TERM (U"@binomialQ (%p, %k, %n)")
+TERM (U"@`binomialQ` (%p, %k, %n)")
 DEFINITION (U"the probability that in %n experiments, an event with probability %p will occur at least %k times; equals 1 - $binomialP (%p, %k - 1, %n)")
 TERM (U"##invBinomialP (%P, %k, %n)")
 DEFINITION (U"the value of %p for which $binomialP (%p, %k, %n) = %P")
-TERM (U"##invBinomialQ (%Q, %k, %n)")
+TERM (U"@`invBinomialQ` (%Q, %k, %n)")
 DEFINITION (U"the value of %p for which $binomialQ (%p, %k, %n) = %Q")
 TERM (U"##hertzToBark (%x)")
 DEFINITION (U"from acoustic frequency to Bark-rate (perceptual spectral frequency; place on basilar membrane): "
@@ -1466,16 +1487,16 @@ A growing list of functions that you can use in @formulas and @scripting...
 - @`fisherP` (%`f`, %`df1`, %`df2`) \-- area under the Fisher %F curve up to %`f`
 - @`fisherQ` (%`f`, %`df1`, %`df2`) \-- area under the Fisher %F curve after %`f`
 - @`fixed$` (%`number`, %`precision`) \-- format a number as a string, with %`precision` digits after the decimal point
-- @`floor` (%x) \-- round down to integer
+- @`floor` (%`x`) \-- round down to integer
 - @`floor#` (%`vector#`) \-- round down each element of %`vector#`
 - @`floor##` (%`matrix##`) \-- round down each cell of %`matrix##`
-- @`folderNames$#` (%%folderNameOrPattern$%) \-- get the names (not the whole paths) of the subfolders in a folder
+- @`folderNames$#` (%`folderNameOrPattern$`) \-- get the names (not the whole paths) of the subfolders in a folder
   or that match a pattern with an asterisk
 - @`from_to#` (%`m`, %`n`) \-- the integers from %`m` through %`n`
 - @`from_to_by#` (%`m`, %`n`, %`step`) \-- numbers from %`m` through %`n`, in steps of %`step`
 - @`from_to_count#` (%`start`, %`end`, %`n`) \-- %`n` numbers from %`start` through %`end`
-- @`gaussP` (%`z`) \-- area under the normal curve up to %z
-- @`gaussQ` (%`z`) \-- area under the normal curve after %z
+- @`gaussP` (%`z`) \-- area under the normal curve up to %`z`
+- @`gaussQ` (%`z`) \-- area under the normal curve after %`z`
 - @`hertzToBark` (%`x`) \-- from acoustic frequency to Bark-rate
 - @`hertzToErb` (%`x`) \-- from acoustic frequency to ERB-rate
 - @`hertzToMel` (%`x`) \-- from acoustic frequency to mel
@@ -1483,8 +1504,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 - @`imax` (%`x`, `...`) \-- location of the maximum
 - @`imin` (%`x`, `...`) \-- location of the minimum
 - @`index` (%`string$`, %`part$`) \-- look up a substring, or 0 if not found
-- @`index` (%`strings$#`, %`s$`) \-- look up whether and where %%s$% first occurs in %%strings$#%
-- @`index_regex` (%`string$`, %`regex$`) \-- determine whether and where %%string$% first matches %%regex$%
+- @`index` (%`strings$#`, %`s$`) \-- look up whether and where %`s$` first occurs in %`strings$`
+- @`index_regex` (%`string$`, %`regex$`) \-- determine whether and where %`string$` first matches %`regex$`
 - @`inner` (%`a#`, %`b#`) \-- inner product
 - @`invBinomialP` (%`P`, %`k`, %`n`) \-- inverse of `binomialP`
 - @`invBinomialQ` (%`Q`, %`k`, %`n`) \-- inverse of `binomialQ`
@@ -1530,12 +1551,12 @@ A growing list of functions that you can use in @formulas and @scripting...
 - @`randomGamma##` (%`nrow`, %`ncol`, %`shape`, %`rate`) \-- %nrow \xx %ncol independent gamma-distributed random numbers
 - @`randomGamma##` (%`matrix##`, %`shape`, %`rate`) \-- duplicate %`matrix##`,
   and replace all cells with independent gamma-distributed random numbers
-- @`randomGauss` (%\mu, %\si) \-- normally distributed random deviate
-- @`randomGauss#` (%n, %\mu, %\si) \-- %n independent normally distributed random numbers
-- @`randomGauss#` (%`vector#`, %\mu, %\si) \-- duplicate %`vector#`,
+- @`randomGauss` (%`mu`, %`sigma`) \-- normally distributed random deviate
+- @`randomGauss#` (%`n`, %`mu`, %`sigma`) \-- %n independent normally distributed random numbers
+- @`randomGauss#` (%`vector#`, %`mu`, %`sigma`) \-- duplicate %`vector#`,
   and replace all elements with independent normally distributed random numbers
-- @`randomGauss##` (%`nrow`, %`ncol`, %\mu, %\si) \-- %`nrow` \xx %`ncol` independent normally distributed random numbers
-- @`randomGauss##` (%`matrix##`, %\mu, %\si) \-- duplicate %`matrix##`,
+- @`randomGauss##` (%`nrow`, %`ncol`, %`mu`, %`sigma`) \-- %`nrow` \xx %`ncol` independent normally distributed random numbers
+- @`randomGauss##` (%`matrix##`, %`mu`, %`sigma`) \-- duplicate %`matrix##`,
   and replace all cells with independent normally distributed random numbers
 - @`randomInteger` (%`min`, %`max`) \-- uniformly distributed integer random deviate
 - @`randomInteger#` (%`n`, %`min`, %`max`) \-- %`n` independent uniformly distributed random integers
@@ -2896,22 +2917,22 @@ NORMAL (U"You can use a large variety of @@Formulas@ in your script:")
 CODE (U"length = 10")
 CODE (U"height = length/2")
 CODE (U"area = length * height")
-CODE (U"writeInfoLine: \"The area is \", area, \".\"")
+CODE (U"writeInfoLine: “The area is ”, area, “.”")
 NORMAL (U"You can use numeric variables and formulas in numeric arguments to commands:")
 CODE (U"Draw line: 0, 0, length / 2, 2 * height")
 NORMAL (U"You can use numeric expressions in assignments (as above), or after "
 	"#`if`, #`elsif`, #`while`, #`until`, and twice after #`for`.")
 ENTRY (U"String expressions")
 NORMAL (U"You can use a large variety of @@Formulas@ in your script:")
-CODE (U"addressee$ = \"Silke\"")
-CODE (U"greeting$ = \"Hi \" + addressee$ + \"!\"")
-CODE (U"writeInfoLine: \"The greeting is: \", greeting$")
+CODE (U"addressee$ = “Silke”")
+CODE (U"greeting$ = “Hi ” + addressee$ + “!”")
+CODE (U"writeInfoLine: “The greeting is: ”, greeting$")
 NORMAL (U"You can use string variables and formulas in numeric arguments to commands:")
 CODE (U"Draw line: 0, length (greeting$), 0, 100")
-CODE (U"Draw line: 0, if answer$ = \"yes\" then 20 else 30 fi, 0, 100")
+CODE (U"Draw line: 0, if answer$ = “yes” then 20 else 30 fi, 0, 100")
 NORMAL (U"You can use numeric and string variables and formulas in string arguments to commands:")
-CODE (U"Text top: \"yes\", \"Hi \" + addressee\\$  + \"!\"")
-CODE (U"Text top: \"yes\", left$ (fileName$, index (fileName$, \".\") - 1)")
+CODE (U"Text top: “yes”, “Hi ” + addressee$ + “!”")
+CODE (U"Text top: “yes”, left$ (fileName$, index (fileName$, “.”) - 1)")
 ENTRY (U"Assignments from query commands")
 NORMAL (U"On how to get information from commands that normally write to the Info window, "
 	"see @@Scripting 6.3. Query commands@.")
@@ -2979,266 +3000,334 @@ NORMAL (U"If the expression evaluates to zero or %false to begin with, the state
 	"are not executed even once.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.5. Procedures", U"ppgb", 20170904)
-NORMAL (U"Sometimes in a Praat script, you will want to perform the same thing more than once. "
-	"In @@Scripting 5.4. Loops|\\SS5.4@ we saw how %loops can help there. "
-	"In this section we will see how %procedures (also called %subroutines) can help us.")
-NORMAL (U"Imagine that you want to play a musical note with a frequency of 440 Hz (an \"A\") "
-	"followed by a note that is one ocatve higher, i.e. has a frequency of 880 Hz (an \"a\"). "
-	"You could achieve this with the following script:")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, 880, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-NORMAL (U"This script creates a sound with a sine wave with an amplitude of 0.4 and a frequency of 440 Hz, "
-	"then plays this sound, then changes the sound into a sine wave with a frequency of 880 Hz, "
-	"then plays this changed sound, and then removes the Sound object from the object list.")
-NORMAL (U"This script is perfect if all you want to do is to play those two notes and nothing more. "
-	"But now imagine that you want to play such an octave jump not only for a note of 440 Hz, "
-	"but also for a note of 400 Hz and for a note of 500 Hz. You could use the following script:")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, 880, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, 400, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, 800, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, 500, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, 1000, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-NORMAL (U"This script works but is no longer perfect. It contains many similar lines, and is difficult to read.")
-NORMAL (U"Here is where %procedures come in handy. With procedures, you can re-use similar pieces of code. "
-	"To make the three parts of the above script more similar, I’ll rewrite it using two variables "
-	"(%frequency and %octaveHigher):")
-CODE (U"frequency = 440")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"octaveHigher = 2 * frequency")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"frequency = 400")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"octaveHigher = 2 * frequency")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"frequency = 500")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-CODE (U"octaveHigher = 2 * frequency")
-CODE (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
-CODE (U"Play")
-CODE (U"Remove")
-NORMAL (U"You can now see that seven lines of the script appear identically three times. "
-	"I'll put those seven lines into a %procedure that I name \"playOctave\":")
-CODE (U"\\#{procedure} playOctave")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-	CODE1 (U"octaveHigher = 2 * frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-CODE (U"\\#{endproc}")
-NORMAL (U"As you see, a %%procedure definition% in Praat consists of three parts:")
-LIST_ITEM (U"1. a line with the word #procedure, followed by the name of the procedure, followed by a pair of parentheses;")
-LIST_ITEM (U"2. the %body of the procedure (here: seven lines);")
-LIST_ITEM (U"3. a line with the word #endproc.")
-NORMAL (U"You can put a procedure definition anywhere in your script; "
-	"the beginning or end of the script are common places.")
-NORMAL (U"The bodies of procedures are executed only if you %call the procedure explicitly, "
-	"which you can do anywhere in the rest of your script:")
-CODE (U"frequency = 440")
-CODE (U"@playOctave")
-CODE (U"frequency = 400")
-CODE (U"@playOctave")
-CODE (U"frequency = 500")
-CODE (U"@playOctave")
-CODE (U"\\#{procedure} playOctave")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-	CODE1 (U"octaveHigher = 2 * frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-CODE (U"\\#{endproc}")
-NORMAL (U"This script works as follows. First, the number 440 is assigned to the variable %frequency in line 1. "
-	"Then, execution of the script arrives at the ##\\@ # (\"call\") statement of line 2. "
-	"Praat then knows that it has to jump to the procedure called %playOctave, "
-	"which is found on line 7. The execution of the script then proceeds with the first line of the procedure body, "
-	"where a Sound is created. Then, the other lines of the procedure body are also executed, ending with the removal of the Sound. "
-	"Then, the execution of the script arrives at the #endproc statement. Here, Praat knows that it has to jump back "
-	"to the line after the line that the procedure was called from; since the procedure was called from line 2, "
-	"the execution proceeds at line 3 of the script. There, the number 400 is assigned to the variable %frequency. "
-	"In line 4, execution will jump to the procedure again, and with the next #endproc the execution will jump back to line 5. "
-	"There, 500 is assigned to %frequency, followed by the third jump to the procedure. "
-	"the third #endproc jumps back to the line after the third #\\@ , i.e. to line 7. "
-	"Here the execution of the script will stop, because there are no more executable commands "
-	"(the procedure definition at the end is not executed again).")
-ENTRY (U"Arguments")
-NORMAL (U"The above example contains something awkward. The procedure %playOctave requires that the variable %frequency "
-	"is set to an appropriate value, so before calling %playOctave you always have to insert a line like")
-CODE (U"frequency = 440")
-NORMAL (U"This can be improved upon. In the following version of the script, the procedure %playOctave requires an explicit %argument:")
-CODE (U"@playOctave: 440")
-CODE (U"@playOctave: 400")
-CODE (U"@playOctave: 500")
-CODE (U"\\#{procedure} playOctave: frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-	CODE1 (U"octaveHigher = 2 * frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-CODE (U"\\#{endproc}")
-NORMAL (U"This works as follows. The first line of the procedure now not only contains the name (%playOctave), "
-	"but also a list of variables (here only one: %frequency). In the first line of the script, "
-	"the procedure %playOctave is called with the %%argument% 440. "
-	"Execution then jumps to the procedure, where the argument 440 is assigned to the variable %frequency, "
-	"which is then used in the body of the procedure.")
-ENTRY (U"Encapsulation and local variables")
-NORMAL (U"Although the size of the script has now been reduced to 12 lines, which cannot be further improved upon, "
-	"there is still something wrong with it. Imagine the following script:")
-CODE (U"frequency = 300")
-CODE (U"@playOctave: 440")
-CODE (U"@playOctave: 400")
-CODE (U"@playOctave: 500")
-CODE (U"\\`{writeInfoLine}: frequency")
-CODE (U"\\#{procedure} playOctave: frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-	CODE1 (U"octaveHigher = 2 * frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-CODE (U"\\#{endproc")
-NORMAL (U"You might have thought that this script will write “300” to the Info window, "
-	"because that is what you expect if you look at the first five lines. "
-	"However, the procedure will assign the values 440, 400, and 500 to the variable %frequency, "
-	"so that the script will actually write “500” to the Info window, because 500 "
-	"is the last (fourth!) value that was assigned to the variable %frequency.")
-NORMAL (U"What you would want is that variables that are used inside procedures, such as %frequency and %octaveHigher here, "
-	"could somehow be made not to “clash” with variable names used outside the procedure. "
-	"A trick that works would be to include the procedure name into the names of these variables:")
-CODE (U"frequency = 300")
-CODE (U"@playOctave: 440")
-CODE (U"@playOctave: 400")
-CODE (U"@playOctave: 500")
-CODE (U"\\`{writeInfoLine}: frequency")
-CODE (U"\\#{procedure} playOctave: playOctave.frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, playOctave.frequency, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-	CODE1 (U"playOctave.octaveHigher = 2 * playOctave.frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, playOctave.octaveHigher, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-CODE (U"\\#{endproc")
-NORMAL (U"This works. The six tones will be played, and \"300\" will be written to the Info window. "
-	"But the formulation is a bit wordy, isn't it?")
-NORMAL (U"Fortunately, Praat allows an abbreviated version of these long names: "
-	"just leave “playOctave” off from the names of the variables, but keep the period (.):")
-CODE (U"frequency = 300")
-CODE (U"@playOctave: 440")
-CODE (U"@playOctave: 400")
-CODE (U"@playOctave: 500")
-CODE (U"\\`{writeInfoLine}: frequency")
-CODE (U"\\#{procedure} playOctave: .frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, .frequency, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-	CODE1 (U".octaveHigher = 2 * .frequency")
-	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, .octaveHigher, 0.2, 0.01, 0.01")
-	CODE1 (U"Play")
-	CODE1 (U"Remove")
-CODE (U"\\#{endproc")
-NORMAL (U"This is the final version of the script. It works because Praat knows that "
-	"you are using the variable names %%.frequency% and %%.octaveHigher% in the context of the procedure %playOctave, "
-	"so that Praat knows that by these variable names you actually mean to refer to %%playOctave.frequency% and %%playOctave.octaveHigher%.")
-NORMAL (U"It is advisable that you use such “local” variable names for all %parameters of a procedure, "
-	"i.e. for the variables listed after the #procedure word (e.g. %%.frequency%), "
-	"as well as for all variables that you create in the procedure body (e.g. %%.octaveHigher%). "
-	"In this way, you make sure that you don't inadvertently use a variable name that is also used outside the procedure "
-	"and thereby perhaps inadvertently change the value of a variable that you expect to be constant across a procedure call.")
-ENTRY (U"A list of numeric and string arguments")
-NORMAL (U"You can use multiple arguments, separated by commas, and string arguments (with a dollar sign in the variable name):")
-CODE (U"@listSpeaker: \"Bart\", 38")
-CODE (U"@listSpeaker: \"Katja\", 24")
-CODE (U"\\#{procedure} listSpeaker: .name$, .age")
-	CODE1 (U"appendInfoLine: \"Speaker \", .name$, \" is \", .age, \" years old.\"")
-CODE (U"\\#{endproc")
-NORMAL (U"or")
-CODE (U"@conjugateVerb: \"be\", \"I am\", \"you are\", \"she is\"")
-CODE (U"\\#{procedure} conjugateVerb: .verb$, .first$, .second$, .third$")
-	CODE1 (U"writeInfoLine: \"Conjugation of 'to \", .verb$, \"':\"")
-	CODE1 (U"appendInfoLine: \"1sg \", .first$")
-	CODE1 (U"appendInfoLine: \"2sg \", .second$")
-	CODE1 (U"appendInfoLine: \"3sg \", .third$")
-CODE (U"\\#{endproc}")
-NORMAL (U"For the arguments you can use expressions:")
-CODE (U"@playOctave: 400 + 100")
-NORMAL (U"As with all string literals, the double quotes in literal string arguments should be doubled:")
-CODE (U"\\#{procedure} texts: .top$, .bottom$")
-	CODE1 (U"Text top: \"yes\", .top$")
-	CODE1 (U"Text bottom: \"yes\", .bottom$")
-CODE (U"\\#{endproc")
-CODE (U"@texts: \"\"\" hello\"\" at the top\", \"\"\"goodbye\"\" at the bottom\"")
-ENTRY (U"Functions")
-NORMAL (U"The Praat scripting language does not have the concept of a “function” like some other scripting languages do. "
-	"A function is a procedure that returns a number, a string, a vector, a matrix, or a string array. "
-	"For instance, you can imagine the function `squareNumber` (), "
-	"which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25). "
-	"Here is an example of how you can do that, using the global availability of local variables:")
-CODE (U"@squareNumber: 5")
-CODE (U"writeInfoLine: \"The square of 5 is \", squareNumber.result, \".\"")
-CODE (U"\\#{procedure} squareNumber: .number")
-	CODE1 (U".result = .number ^ 2")
-CODE (U"\\#{endproc")
-NORMAL (U"Another way to emulate functions is to use a variable name as an argument:")
-CODE (U"@squareNumber: 5, \"square5\"")
-CODE (U"writeInfoLine: \"The square of 5 is \", square5, \".\"")
-CODE (U"\\#{procedure} squareNumber: .number, .squareVariableName$")
-	CODE1 (U"'.squareVariableName$' = .number ^ 2")
-CODE (U"\\#{endproc")
-NORMAL (U"However, this uses variable substitution, a trick better avoided.")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Scripting 5.5. Procedures"
+© Paul Boersma 2017-09-04
+
+Sometimes in a Praat script, you will want to perform the same thing more than once.
+In @@Scripting 5.4. Loops|\SS5.4@ we saw how %loops can help there.
+In this section we will see how %procedures (also called %subroutines) can help us.
+
+Imagine that you want to play a musical note with a frequency of 440 Hz (an “A”)
+followed by a note that is one ocatve higher, i.e. has a frequency of 880 Hz (an “a”).
+You could achieve this with the following script:
+
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01
+	Play
+	Remove
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 880, 0.2, 0.01, 0.01
+	Play
+	Remove
+
+This script creates a sound with a sine wave with an amplitude of 0.4 and a frequency of 440 Hz,
+then plays this sound, then changes the sound into a sine wave with a frequency of 880 Hz,
+then plays this changed sound, and then removes the Sound object from the object list.
+
+This script is perfect if all you want to do is to play those two notes and nothing more.
+But now imagine that you want to play such an octave jump not only for a note of 440 Hz,
+but also for a note of 400 Hz and for a note of 500 Hz. You could use the following script:
+
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01
+	Play
+	Remove
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 880, 0.2, 0.01, 0.01
+	Play
+	Remove
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 400, 0.2, 0.01, 0.01
+	Play
+	Remove
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 800, 0.2, 0.01, 0.01
+	Play
+	Remove
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 500, 0.2, 0.01, 0.01
+	Play
+	Remove
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 1000, 0.2, 0.01, 0.01
+	Play
+	Remove
+
+This script works but is no longer perfect. It contains many similar lines, and is difficult to read.
+
+Here is where %procedures come in handy. With procedures, you can re-use similar pieces of code.
+To make the three parts of the above script more similar, I’ll rewrite it using two variables
+(%`frequency` and %`octaveHigher`):
+
+	frequency = 440
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
+	Play
+	Remove
+	octaveHigher = 2 * frequency
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01
+	Play
+	Remove
+	frequency = 400
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
+	Play
+	Remove
+	octaveHigher = 2 * frequency
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01
+	Play
+	Remove
+	frequency = 500
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
+	Play
+	Remove
+	octaveHigher = 2 * frequency
+	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01
+	Play
+	Remove
+
+You can now see that seven lines of the script appear identically three times.
+I'll put those seven lines into a %procedure that I name #`playOctave`:
+
+	\#{procedure} playOctave
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
+		Play
+		Remove
+		octaveHigher = 2 * frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01
+		Play
+		Remove
+	\#{endproc}
+
+As you see, a %%procedure definition% in Praat consists of three parts:
+
+1. a line with the word #`procedure`, followed by the name of the procedure, followed by a pair of parentheses;
+2. the %body of the procedure (here: seven lines);
+3. a line with the word #`endproc`.
+
+You can put a procedure definition anywhere in your script;
+the beginning or end of the script are common places.
+
+The bodies of procedures are executed only if you %call the procedure explicitly,
+which you can do anywhere in the rest of your script:
+
+	frequency = 440
+	@playOctave
+	frequency = 400
+	@playOctave
+	frequency = 500
+	@playOctave
+	\#{procedure} playOctave
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
+		Play
+		Remove
+		octaveHigher = 2 * frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01
+		Play
+		Remove
+	\#{endproc}
+
+This script works as follows. First, the number 440 is assigned to the variable %`frequency` in line 1.
+Then, execution of the script arrives at the #`@` (“call”) statement of line 2.
+Praat then knows that it has to jump to the procedure called %`playOctave`,
+which is found on line 7. The execution of the script then proceeds with the first line of the procedure body,
+where a Sound is created. Then, the other lines of the procedure body are also executed, ending with the removal of the Sound.
+Then, the execution of the script arrives at the #`endproc` statement. Here, Praat knows that it has to jump back
+to the line after the line that the procedure was called from; since the procedure was called from line 2,
+the execution proceeds at line 3 of the script. There, the number 400 is assigned to the variable %`frequency`.
+In line 4, execution will jump to the procedure again, and with the next #`endproc` the execution will jump back to line 5.
+There, 500 is assigned to %`frequency`, followed by the third jump to the procedure.
+the third #`endproc` jumps back to the line after the third #`@`, i.e. to line 7.
+Here the execution of the script will stop, because there are no more executable commands
+(the procedure definition at the end is not executed again).
+
+Arguments
+=========
+
+The above example contains something awkward. The procedure %`playOctave` requires that the variable %`frequency`
+is set to an appropriate value, so before calling %`playOctave` you always have to insert a line like
+
+	frequency = 440
+
+This can be improved upon. In the following version of the script, the procedure %`playOctave` requires an explicit %argument:
+
+	@playOctave: 440
+	@playOctave: 400
+	@playOctave: 500
+	\#{procedure} playOctave: frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
+		Play
+		Remove
+		octaveHigher = 2 * frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01
+		Play
+		Remove
+	\#{endproc}
+
+This works as follows. The first line of the procedure now not only contains the name (%`playOctave`),
+but also a list of variables (here only one: %`frequency`). In the first line of the script,
+the procedure %`playOctave` is called with the %%argument% 440.
+Execution then jumps to the procedure, where the argument 440 is assigned to the variable %`frequency`,
+which is then used in the body of the procedure.
+
+Encapsulation and local variables
+=================================
+
+Although the size of the script has now been reduced to 12 lines, which cannot be further improved upon,
+there is still something wrong with it. Imagine the following script:
+
+	frequency = 300
+	@playOctave: 440
+	@playOctave: 400
+	@playOctave: 500
+	\`{writeInfoLine}: frequency
+	\#{procedure} playOctave: frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
+		Play
+		Remove
+		octaveHigher = 2 * frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01
+		Play
+		Remove
+	\#{endproc
+
+You might have thought that this script will write “300” to the Info window,
+because that is what you expect if you look at the first five lines.
+However, the procedure will assign the values 440, 400, and 500 to the variable %`frequency`,
+so that the script will actually write “500” to the Info window, because 500
+is the last (fourth!) value that was assigned to the variable %`frequency`.
+
+What you would want is that variables that are used inside procedures, such as %`frequency` and %`octaveHigher` here,
+could somehow be made not to “clash” with variable names used outside the procedure.
+A trick that works would be to include the procedure name into the names of these variables:
+
+	frequency = 300
+	@playOctave: 440
+	@playOctave: 400
+	@playOctave: 500
+	\`{writeInfoLine}: frequency
+	\#{procedure} playOctave: playOctave.frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, playOctave.frequency, 0.2, 0.01, 0.01
+		Play
+		Remove
+		playOctave.octaveHigher = 2 * playOctave.frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, playOctave.octaveHigher, 0.2, 0.01, 0.01
+		Play
+		Remove
+	\#{endproc
+
+This works. The six tones will be played, and \"300\" will be written to the Info window.
+But the formulation is a bit wordy, isn't it?
+
+Fortunately, Praat allows an abbreviated version of these long names:
+just leave “playOctave” off from the names of the variables, but keep the period (`.`):
+
+	frequency = 300
+	@playOctave: 440
+	@playOctave: 400
+	@playOctave: 500
+	\`{writeInfoLine}: frequency
+	\#{procedure} playOctave: .frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, .frequency, 0.2, 0.01, 0.01
+		Play
+		Remove
+		.octaveHigher = 2 * .frequency
+		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, .octaveHigher, 0.2, 0.01, 0.01
+		Play
+		Remove
+	\#{endproc
+
+This is the final version of the script. It works because Praat knows that
+you are using the variable names %`.frequency` and %`.octaveHigher` in the context of the procedure %`playOctave`,
+so that Praat knows that by these variable names you actually mean to refer to %`playOctave.frequency` and %`playOctave.octaveHigher`.
+
+It is advisable that you use such “local” variable names for all %parameters of a procedure,
+i.e. for the variables listed after the #`procedure` word (e.g. %`.frequency`),
+as well as for all variables that you create in the procedure body (e.g. %`.octaveHigher`).
+In this way, you make sure that you don't inadvertently use a variable name that is also used outside the procedure
+and thereby perhaps inadvertently change the value of a variable that you expect to be constant across a procedure call.
+
+A list of numeric and string arguments
+======================================
+
+You can use multiple arguments, separated by commas, and string arguments (with a dollar sign in the variable name):
+
+	@listSpeaker: “Bart”, 38
+	@listSpeaker: “Katja“, 24
+	\#{procedure} listSpeaker: .name$, .age
+		appendInfoLine: “Speaker ”, .name$, “ is ”, .age, “ years old.”
+	\#{endproc
+
+or
+
+	@conjugateVerb: “be”, “I am”, “you are”, “she is”
+	\#{procedure} conjugateVerb: .verb$, .first$, .second$, .third$
+		writeInfoLine: “Conjugation of 'to ”, .verb$, “':”
+		appendInfoLine: “1sg ”, .first$
+		appendInfoLine: “2sg ”, .second$
+		appendInfoLine: “3sg ”, .third$
+	\#{endproc}
+
+For the arguments you can use expressions:
+
+	@playOctave: 400 + 100
+
+As with all string literals, the double quotes in literal string arguments should be doubled:
+
+	\#{procedure} texts: .top$, .bottom$
+		Text top: “yes”, .top$
+		Text bottom: “yes”, .bottom$
+	\#{endproc")
+	@texts: """ hello"" at the top", """goodbye"" at the bottom"
+
+unless you use curly quotes:
+
+	@texts: “" hello" at the top”, “"goodbye" at the bottom”
+
+or even
+
+	@texts: ““ hello” at the top”, ““goodbye” at the bottom”
+
+Functions
+=========
+
+The Praat scripting language does not have the concept of a “function” like some other scripting languages do.
+A function is a procedure that returns a number, a string, a vector, a matrix, or a string array.
+For instance, you can imagine the function `squareNumber` (),
+which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25).
+Here is an example of how you can do that, using the global availability of local variables:
+
+	@squareNumber: 5
+	writeInfoLine: “The square of 5 is ”, squareNumber.result, “.”
+	\#{procedure} squareNumber: .number
+		.result = .number ^ 2
+	\#{endproc
+
+Another way to emulate functions is to use a variable name as an argument:
+
+	@squareNumber: 5, “square5”
+	writeInfoLine: “The square of 5 is ”, square5, “.”
+	\#{procedure} squareNumber: .number, .squareVariableName$
+		'.squareVariableName$' = .number ^ 2
+	\#{endproc
+
+However, this uses variable substitution, a trick better avoided.
+################################################################################
+)~~~"
+MAN_PAGES_END
+
 
 MAN_BEGIN (U"Scripting 5.6. Arrays and dictionaries", U"ppgb", 20170718)
 NORMAL (U"You can use arrays of numeric and string variables:")
 CODE (U"#for i #from 1 #to 5")
 	CODE1 (U"square [i] = i * i")
-	CODE1 (U"text\\$  [i] = mid\\$  (\"hello\", i)")
+	CODE1 (U"text$ [i] = mid$ (\"hello\", i)")
 CODE (U"#endfor")
 NORMAL (U"After this, the variables `square[1]`, `square[2]`, `square[3]`, `square[4]`, `square[5]`, "
 	"`text$[1]`, `text$[2]`, `text$[3]`, `text$[4]`, and `text$[5]` contain "
 	"the values 1, 4, 9, 16, 25, \"h\", \"e\", \"l\", \"l\", and \"o\", respectively:")
-CODE (U"#writeInfoLine: \"Some squares:\"")
-CODE (U"#for i #from 1 #to 5")
-	CODE1 (U"#appendInfoLine: \"The square of \", i, \" is \", square [i]")
-CODE (U"#endfor")
+CODE (U"\\`{writeInfoLine}: \"Some squares:\"")
+CODE (U"\\#{for} i \\#{from} 1 \\#{to} 5")
+	CODE1 (U"\\#{appendInfoLine}: “The square of ”, i, “ is ”, square [i]")
+CODE (U"\\#{endfor}")
 NORMAL (U"In the examples above, the %index into the array was always a number. "
 	" A %hash or %dictionary is an array variable where the index is a string:")
-CODE (U"age [\"John\"] = 36")
-CODE (U"age [\"Babs\"] = 39")
-CODE (U"#writeInfoLine: \"John is \", age [\"John\"], \" years old.\"")
+CODE (U"age [“John”] = 36")
+CODE (U"age [“Babs”] = 39")
+CODE (U"\\`{writeInfoLine}: “John is ”, age [“John”], “ years old.”")
 ENTRY (U"See also")
 NORMAL (U"You can use any number of array and dictionary variables in a script, "
 	"but for many applications, namely whenever it were useful to look at a numeric array as a single object, "
@@ -3261,9 +3350,9 @@ NORMAL (U"Whereas in @@Scripting 3.2. Numeric variables@ we talked about a numer
 	"%`squares#` [1], %`squares#` [2], %`squares#` [3], %`squares#` [4] and %`squares#` [5]. "
 	"Their values (the numbers that currently live in these houses) are 1, 4, 9, 16 and 25, respectively.")
 NORMAL (U"To list the five values with a loop, you could do:")
-CODE (U"writeInfoLine: \"Some squares:\"")
+CODE (U"writeInfoLine: “Some squares:”")
 CODE (U"for i from 1 to size (squares#)")
-	CODE1 (U"appendInfoLine: \"The square of \", i, \" is \", squares# [i]")
+	CODE1 (U"appendInfoLine: “The square of ”, i, “ is ”, squares# [i]")
 CODE (U"endfor")
 NORMAL (U"Instead of the above procedure to get the vector %`squares#`, with a pre-computed list of five squares, "
 	"you could compute the five values with a formula, as in the example of @@Scripting 5.6. Arrays and dictionaries@. "
@@ -3316,7 +3405,7 @@ NORMAL (U"Vectors can also be created by some menu commands. For instance, to ge
 	"the times and pitch frequencies of the frames in a Pitch object, you can do")
 CODE (U"selectObject: myPitch")
 CODE (U"times# = List all frame times")
-CODE (U"pitches# = List values in all frames: \"Hertz\"")
+CODE (U"pitches# = List values in all frames: “Hertz”")
 ENTRY (U"3. Turning a vector into a number")
 NORMAL (U"For the vector defined above, you can compute the #sum of the five values as")
 CODE (U"sum (squares#)")
@@ -4287,7 +4376,7 @@ LIST_ITEM (U"4. Type the following lines into the ScriptEditor:")
 CODE2 (U"cursor = Get cursor")
 CODE2 (U"Select: cursor - 0.02, cursor + 0.02")
 CODE2 (U"Extract selected sound (windowed): \"slice\", \"Kaiser2\", 2, \"no\"")
-CODE1 (U"#endeditor")
+CODE1 (U"\\#{endeditor")
 CODE1 (U"To Spectrum: \"yes\"")
 CODE1 (U"View & Edit")
 NORMAL (U"If you choose #Run from the #Run menu in the ScriptEditor, a region of 40 milliseconds around the "
@@ -4314,41 +4403,41 @@ NORMAL (U"To improve the script, we open it again with ##Open editor script...# 
 	"we can run it with #Run from the #Run menu again; alternatively, we could save it (with #Save from the #File menu) and choose our new "
 	"##Show spectrum at cursor# button (this button will always run the version on disk, never the one viewed in a ScriptEditor).")
 NORMAL (U"To zoom in on the first 5000 Hz, we add the following code at the end of our script:")
-CODE (U"#editor: \"Spectrum slice\"")
+CODE (U"\\#{editor}: \"Spectrum slice\"")
 	CODE1 (U"Zoom: 0, 5000")
 NORMAL (U"To get rid of the “Sound slice”, we can add:")
-CODE (U"#endeditor")
-CODE (U"#removeObject: \"Sound slice\"")
-NORMAL (U"Note that #$endeditor is needed to change from the environment of a SpectrumEditor to the environment of the object & picture windows.")
+CODE (U"\\#{endeditor")
+CODE (U"\\#{removeObject}: \"Sound slice\"")
+NORMAL (U"Note that #`endeditor` is needed to change from the environment of a SpectrumEditor to the environment of the object & picture windows.")
 NORMAL (U"If you now choose the ##Show spectrum at cursor# button for several cursor positions, you will notice that all those editors have the same name. "
 	"To remedy the ambiguity of the line `editor Spectrum slice`, we give each slice a better name. For example, if the cursor was at "
 	"635 milliseconds, the slice could be named “635ms”. We can achieve this by changing the extraction in the following way:")
 CODE (U"milliseconds = round (cursor*1000)")
-CODE (U"Extract selection sound (windowed): string\\$  (milliseconds) + \"ms\", \"Kaiser2\", 2, \"no\"")
+CODE (U"Extract selection sound (windowed): string$ (milliseconds) + \"ms\", \"Kaiser2\", 2, \"no\"")
 NORMAL (U"The names of the Sound and Spectrum objects will now have more chance of being unique. Two lines will have to be edited trivially.")
 NORMAL (U"Finally, we will reset the selection to the original. At the top of the script, we add two lines to remember the positions of the selection markers:")
 CODE (U"start = Get start of selection")
 CODE (U"end = Get end of selection")
 NORMAL (U"At the bottom, we reset the selection:")
-CODE (U"#editor")
+CODE (U"\\#{editor")
 CODE1 (U"Select: start, end")
-NORMAL (U"Note that the #$editor directive if not followed by the name of an editor, returns the script to the original environment.")
+NORMAL (U"Note that the #`editor` directive if not followed by the name of an editor, returns the script to the original environment.")
 NORMAL (U"The complete script is:")
 	CODE1 (U"start = Get start of selection")
 	CODE1 (U"end = Get end of selection")
 	CODE1 (U"cursor = Get cursor")
 	CODE1 (U"Select: cursor - 0.02, cursor + 0.02")
-	CODE1 (U"\\#  Create a name. E.g. \"670ms\" means at 670 milliseconds.")
+	CODE1 (U"# Create a name. E.g. \"670ms\" means at 670 milliseconds.")
 	CODE1 (U"milliseconds = round (cursor*1000)")
 	CODE1 (U"Extract windowed selection: string\\$  (milliseconds) + \"ms\", \"Kaiser2\", 2, \"no\"")
 CODE (U"#endeditor")
 CODE (U"To Spectrum: \"yes\"")
 CODE (U"View & Edit")
-CODE (U"#editor: \"Spectrum \" + string\\$  (milliseconds) + \"ms\"")
+CODE (U"\\#{editor}: \"Spectrum \" + string$ (milliseconds) + \"ms\"")
 	CODE1 (U"Zoom: 0, 5000")
-CODE (U"#endeditor")
-CODE (U"#removeObject: \"Sound \" + string\\$  (milliseconds) + \"ms\"")
-CODE (U"#editor")
+CODE (U"\\#{endeditor")
+CODE (U"\\#{removeObject}: \"Sound \" + string$ (milliseconds) + \"ms\"")
+CODE (U"\\#{editor")
 	CODE1 (U"Select: start, end")
 NORMAL (U"This script is useful as it stands. It is good enough for safe use. For instance, if the created Sound object has the same name "
 	"as an already existing Sound object, it will be the newly created Sound object that will be removed by #removeObject, "
@@ -4470,11 +4559,11 @@ INTRO (U"You can turn your script into a double-clickable stand-alone program by
 	"If you want to try this, you should already know how to compile and link the Praat program on your computer.")
 NORMAL (U"These stand-alone programs do not show the Objects window and the Picture window; "
 	"therefore, you will usually want to use @@Demo window@ commands in your script. Here is an example:")
-CODE (U"\\# include \"praat.h\"")
+CODE (U"#include \"praat.h\"")
 CODE (U"")
 CODE (U"const char32 myScript [ ] = U\"\"")
-	CODE1 (U"\"demo Text: 0.5, \\bs\"centre\\bs\", 0.5, \\bs\"half\\bs\", \\bs\"Hello world\\bs\"\\bsn\"")
-	CODE1 (U"\"demoWaitForInput ( )\\bsn\"")
+	CODE1 (U"\"demo Text: 0.5, \\\"centre\\\", 0.5, \\\"half\\\", \\\"Hello world\\\"\\n\"")
+	CODE1 (U"\"demoWaitForInput ( )\\n\"")
 CODE (U";")
 CODE (U"")
 CODE (U"int main (int argc, char *argv [ ]) {")
@@ -4484,35 +4573,35 @@ CODE (U"int main (int argc, char *argv [ ]) {")
 	CODE1 (U"praat_run ();")
 	CODE1 (U"return 0;")
 CODE (U"}")
-NORMAL (U"The script in this example raises the Demo window, writes \"Hello world\" in the middle of the window, "
+NORMAL (U"The script in this example raises the Demo window, writes “Hello world” in the middle of the window, "
 	"waits until the user clicks the mouse or presses a key, and then closes.")
 NORMAL (U"Note that Praat is distributed under the General Public License (GPL). This means that if you distribute "
-	"a Praat-based stand-alone program, you have to make it open source under the GPL as well.")
+	"a Praat-based stand-alone program, you have to make it open source under the GPL as well (version 3.0 or later).")
 NORMAL (U"See also @@Programming with Praat@.")
 ENTRY (U"Details")
 NORMAL (U"Your program can save its preferences in a folder of its choice, "
-	"e.g. in ##'preferencesDirectory\\$ '/../GuineaPigAnalyzer# if your program is called GuineaPigAnalyzer. "
+	"e.g. in #`preferencesDirectory$ + “/../GuineaPigAnalyzer”` if your program is called GuineaPigAnalyzer. "
 	"If you want to be less conspicuous and like to use the Praat preferences folder instead, "
-	"please use the ##apps# subfolder, in this way:")
-CODE (U"createFolder: preferencesDirectory\\$  + \"/apps\"")
-CODE (U"createFolder: preferencesDirectory\\$  + \"/apps/GuineaPigAnalyzer\"")
+	"please use the #`apps` subfolder, in this way:")
+CODE (U"createFolder: preferencesDirectory$ + “/apps”")
+CODE (U"createFolder: preferencesDirectory$ + “/apps/GuineaPigAnalyzer”")
 MAN_END
 
 MAN_BEGIN (U"Scripting 10. Old functions", U"ppgb", 20140112)
 INTRO (U"The Praat scripting language improves and changes, but old scripts should continue to work correctly. "
 	"Here are some examples of what you can see in old scripts, and what they mean:")
 NORMAL (U"The meaning of")
-CODE (U"echo Hello, my name is 'name\\$ ' and I am 'age' years old.")
+CODE (U"echo Hello, my name is 'name$' and I am 'age' years old.")
 NORMAL (U"is")
-CODE (U"writeInfoLine: \"Hello, my name is \", name\\$ , \" and I am \", age, \" years old.\"")
+CODE (U"writeInfoLine: \"Hello, my name is \", name$, \" and I am \", age, \" years old.\"")
 NORMAL (U"The meaning of")
 CODE (U"Draw... 0 0 0 0 yes Curve")
 NORMAL (U"is")
 CODE (U"Draw: 0, 0, 0, 0, \"yes\", \"Curve\"")
 NORMAL (U"The meaning of")
-CODE (U"Read from file... 'fileName\\$ '")
+CODE (U"Read from file... 'fileName$'")
 NORMAL (U"is")
-CODE (U"Read from file: fileName\\$ ")
+CODE (U"Read from file: fileName$")
 MAN_END
 
 MAN_BEGIN (U"ScriptEditor", U"ppgb", 20140107)
