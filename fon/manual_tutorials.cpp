@@ -3724,19 +3724,19 @@ or go to the desired information by clicking on the blue links.
 
 There are also more specialized tutorials:
 - Phonetics:
-	- Voice analysis (jitter, shimmer, noise): @Voice
-	- Listening experiments: @@ExperimentMFC@
-	- @@Sound files@
-	- @@Filtering@
-	- @@Source-filter synthesis@
-	- @@Articulatory synthesis@
+	• Voice analysis (jitter, shimmer, noise): @Voice
+	• Listening experiments: @@ExperimentMFC@
+	• @@Sound files@
+	• @@Filtering@
+	• @@Source-filter synthesis@
+	• @@Articulatory synthesis@
 - Learning:
-	+ @@Feedforward neural networks@
-	+ @@OT learning@
+	• @@Feedforward neural networks@
+	• @@OT learning@
 - Statistics:
-	* @@Principal component analysis@
-	* @@Multidimensional scaling@
-	* @@Discriminant analysis@
+	• @@Principal component analysis@
+	• @@Multidimensional scaling@
+	• @@Discriminant analysis@
 - General:
 	• @@Scripting@
 	• @@Demo window@
