@@ -1623,6 +1623,10 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				globalBold = true;
 				in += 2;
 				continue;
+			} else if (topDownVerbatim && kar1 == U'%' && kar2 == U'{') {
+				globalItalic = true;
+				in += 2;
+				continue;
 			} else if (globalVerbatim) {
 				;   // normal backslash symbol
 			} else if (kar1 == U's' && kar2 == U'{') {
@@ -1661,6 +1665,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					continue;
 				} else if (globalBold && topDownVerbatim) {
 					globalBold = false;
+					continue;
+				} else if (globalItalic && topDownVerbatim) {
+					globalItalic = false;
 					continue;
 				} else if (globalLink && topDownVerbatim) {
 					globalLink = false;

@@ -92,7 +92,7 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 				*to = U'\0';
 				p = from + ( *from == U'@' );   // add bool to pointer: skip '@' but not '\0'
 				return p;
-			} else if (p [1] == U'`' /*&& verbatimAware*/) {
+			} else if (p [1] == U'`' /*&& verbatimAware*/) {   // TODO: remove once manuals have been converted to notebooks
 				/*
 					We found "@`", starting a verbatim link in running text.
 				*/

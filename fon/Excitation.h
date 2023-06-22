@@ -30,8 +30,6 @@ Thing_define (Excitation, Vector) {
 
 double Excitation_hertzToBark (double hertz);
 double Excitation_barkToHertz (double bark);
-double Excitation_phonToDifferenceLimens (double phon);
-double Excitation_differenceLimensToPhon (double ndli);
 double Excitation_soundPressureToPhon (double soundPressure, double bark);
 
 autoExcitation Excitation_create (double frequencyStep, integer numberOfFrequencies);

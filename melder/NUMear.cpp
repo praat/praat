@@ -1,6 +1,6 @@
 /* NUMear.cpp
  *
- * Copyright (C) 1992-2011,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2016-2018,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "melder.h"
 
 double NUMhertzToBark (double hertz) {
-	double r = hertz / 650.0;
+	const double r = hertz / 650.0;
 	return hertz < 0.0 ? undefined : 7.0 * log (r + sqrt (1.0 + r * r));
 }
 double NUMbarkToHertz (double bark) {
