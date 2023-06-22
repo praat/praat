@@ -525,24 +525,27 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			if (! line)
 				return;
 			continue;
-		} else if (line [0] == U'-' && Melder_isHorizontalSpace (line [1])) {
+		/*
+			Now we try several kinds of list items.
+			To not prepend a character, use "-".
+			To prepend a bullet, use "*" or "•".
+		 */
+		} else if (
+			(line [0] == U'-' || line [0] == U'*' || line [0] == U'•') && Melder_isHorizontalSpace (line [1]) ||
+			stringStartsWithParenthesizedNumber (line)
+		) {
 			type = (
 				numberOfLeadingSpaces <  3 ? kManPage_type::LIST_ITEM :
 				numberOfLeadingSpaces <  7 ? kManPage_type::LIST_ITEM1 :
 				numberOfLeadingSpaces < 11 ? kManPage_type::LIST_ITEM2 :
 				kManPage_type::LIST_ITEM3
 			);
-			MelderString_append (& buffer_graphical, U"• ");
-			line += 2;
-			Melder_skipHorizontalSpace (& line);
-			MelderString_append (& buffer_graphical, line);
-		} else if (stringStartsWithParenthesizedNumber (line)) {
-			type = (
-				numberOfLeadingSpaces <  3 ? kManPage_type::LIST_ITEM :
-				numberOfLeadingSpaces <  7 ? kManPage_type::LIST_ITEM1 :
-				numberOfLeadingSpaces < 11 ? kManPage_type::LIST_ITEM2 :
-				kManPage_type::LIST_ITEM3
-			);
+			if (line [0] == U'*' || line [0] == U'•')
+				MelderString_append (& buffer_graphical, U"• ");
+			if (line [0] == U'-' || line [0] == U'*' || line [0] == U'•') {
+				line += 2;
+				Melder_skipHorizontalSpace (& line);
+			}
 			MelderString_append (& buffer_graphical, line);
 		} else if (line [0] == U':' && Melder_isHorizontalSpace (line [1])) {
 			type = (
@@ -715,6 +718,8 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				char32 *firstNonSpace = Melder_findEndOfHorizontalSpace (continuationLine);
 				if (*firstNonSpace == U':' ||
 					*firstNonSpace == U'-' ||
+					*firstNonSpace == U'*' ||
+					*firstNonSpace == U'•' ||
 					stringStartsWithParenthesizedNumber (firstNonSpace) ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'{' ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
