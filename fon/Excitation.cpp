@@ -1,6 +1,6 @@
 /* Excitation.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2015-2018,2022 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,6 @@ double Excitation_hertzToBark (double hertz) {
 
 double Excitation_barkToHertz (double bark) {
 	return 650.0 * sinh (bark / 7.0);
-}
-
-double Excitation_phonToDifferenceLimens (double phon) {
-	return 30.0 * (pow (61.0 / 60.0, phon) - 1);
-}
-
-double Excitation_differenceLimensToPhon (double ndli) {
-	return log (1 + ndli / 30.0) / log (61.0 / 60.0);
 }
 
 double Excitation_soundPressureToPhon (double soundPressure, double bark) {

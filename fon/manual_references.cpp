@@ -21,80 +21,118 @@
 void manual_references_init (ManPages me);
 void manual_references_init (ManPages me) {
 
-MAN_BEGIN (U"Archangeli & Pulleyblank (1994)", U"ppgb", 19971021)
-NORMAL (U"Diana Archangeli & Douglas Pulleyblank (1994): %%Grounded phonology%. "
-	"Cambridge, MA: MIT Press.")
-MAN_END
+MAN_PAGES_BEGIN R"~~~(
+################################################################################
+"Archangeli & Pulleyblank (1994)"
+© Paul Boersma 1997-10-21
 
-MAN_BEGIN (U"Boersma (1993)", U"ppgb", 20190331)
-NORMAL (U"Paul Boersma (1993): \"Accurate short-term analysis of the fundamental frequency "
-	"and the harmonics-to-noise ratio of a sampled sound.\" "
-	"%%Proceedings of the Institute of Phonetic Sciences% #17: 97\\--110. University of Amsterdam.")
-NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
-MAN_END
+Diana Archangeli & Douglas Pulleyblank (1994): %%Grounded phonology%.
+Cambridge, MA: MIT Press.
 
-MAN_BEGIN (U"Boersma (1997)", U"ppgb", 19981219)
-NORMAL (U"Paul Boersma (1997): \"How we learn variation, optionality, and probability.\" "
-	"%%Proceedings of the Institute of Phonetic Sciences% #21: 43\\--58. University of Amsterdam.")
-NORMAL (U"Available from http://www.fon.hum.uva.nl/paul/. Equals chapter 15 of @@Boersma (1998)@.")
-NORMAL (U"A less correct version (demoting and promoting a single pair of constraints, instead of them all) "
-	"is available as Rutgers Optimality Archive #221, http://ruccs.rutgers.edu/roa.html")
-MAN_END
+################################################################################
+"Boersma (1993)"
+© Paul Boersma 2019-03-31, 2023
 
-MAN_BEGIN (U"Boersma (1998)", U"ppgb", 20041020)
-NORMAL (U"Paul Boersma (1998): %%Functional Phonology% [%%LOT International Series% ##11#]. "
-	"The Hague: Holland Academic Graphics. Pages i-ix, 1-493. [Doctoral thesis, University of Amsterdam]")
-NORMAL (U"This book can be downloaded as a PDF file from ##http://www.fon.hum.uva.nl/paul/#, "
-	"where you can also find many Praat scripts for the simulations and pictures in this book. "
-	"A paperback version is also available from the author (`paul.boersma@uva.nl`).")
-MAN_END
+Paul Boersma (1993): “Accurate short-term analysis of the fundamental frequency
+and the harmonics-to-noise ratio of a sampled sound.”
+%%Proceedings of the Institute of Phonetic Sciences% #17: 97–110. University of Amsterdam.
 
-MAN_BEGIN (U"Boersma (2000)", U"ppgb", 20001027)
-NORMAL (U"Paul Boersma (2000): \"Learning a grammar in Functional Phonology.\" "
-	"In Joost Dekkers, Frank van der Leeuw, & Jeroen van de Weijer (eds.): "
-	"%%Phonology, Syntax, and Acquisition in Optimality Theory%. Oxford University Press.")
-NORMAL (U"An extended version is chapter 14 of @@Boersma (1998)@.")
-MAN_END
+Available on `https://www.fon.hum.uva.nl/paul/`
 
-MAN_BEGIN (U"Boersma (2009a)", U"ppgb", 20190331)
-NORMAL (U"Paul Boersma (2009): \"Should jitter be measured by peak picking or by waveform matching?\" "
-	"%%Folia Phoniatrica et Logopaedica% #61: 305\\--308.")
-NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
-MAN_END
+################################################################################
+"Boersma (1997)"
+© Paul Boersma 1998-12-19, 2023
 
-MAN_BEGIN (U"Boersma (2009b)", U"ppgb", 20190331)
-NORMAL (U"Paul Boersma (2009b): \"Some correct error-driven versions of the Constraint Demotion algorithm.\" "
-	"%%Linguistic Inquiry% #40: 667\\--686.")
-NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
-MAN_END
+Paul Boersma (1997): “How we learn variation, optionality, and probability.”
+%%Proceedings of the Institute of Phonetic Sciences% #21: 43–58. University of Amsterdam.
 
-MAN_BEGIN (U"Boersma & Escudero (2008)", U"ppgb", 20190331)
-NORMAL (U"Paul Boersma & Paola Escudero (2008): \"Learning to perceive a smaller L2 vowel inventory: "
-	"an Optimality Theory account.\" In: Peter Avery, Elan Dresher & Keren Rice (eds.), "
-	"%%Contrast in phonology: theory, perception, acquisition%. Berlin: Mouton De Gruyter. 271\\--301.")
-NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
-MAN_END
+Available on `https://www.fon.hum.uva.nl/paul/`. Equals chapter 15 of @@Boersma (1998)@.
 
-MAN_BEGIN (U"Boersma & Hayes (2001)", U"ppgb", 20190331)
-NORMAL (U"Paul Boersma & Bruce Hayes (2001): \"Empirical tests of the Gradual Learning Algorithm.\" "
-	"%%Linguistic Inquiry% #32: 45\\--86.")
-NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
-MAN_END
+A less correct version (demoting and promoting a single pair of constraints, instead of them all)
+is available as Rutgers Optimality Archive #221, `https://ruccs.rutgers.edu/roa.html`
 
-MAN_BEGIN (U"Boersma & Kovacic (2006)", U"ppgb", 20190331)
-NORMAL (U"Paul Boersma & Gordana Kovacic (2006): "
-	"\"Spectral characteristics of three styles of Croatian folk singing.\" "
-	"%%Journal of the Acoustical Society of America% #119: 1805\\--1816.")
-NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
-MAN_END
+################################################################################
+"Boersma (1998)"
+© Paul Boersma 2004-10-20, 2023
 
-MAN_BEGIN (U"Boersma & Pater (2016)", U"ppgb", 20190331)
-NORMAL (U"Paul Boersma & Joe Pater (2016): "
-	"\"Convergence properties of a gradual learning algorithm for Harmonic Grammar.\" "
-	"In John J. McCarthy & Joe Pater (eds.), "
-	"%%Harmonic Serialism and Harmonic Grammar%. Sheffield: Equinox. 389\\--434.")
-NORMAL (U"Available on http://www.fon.hum.uva.nl/paul/")
-MAN_END
+Paul Boersma (1998): %%Functional Phonology% [%%LOT International Series% #11].
+The Hague: Holland Academic Graphics. Pages i–ix, 1–493. [Doctoral thesis, University of Amsterdam]
+
+This book can be downloaded as a PDF file from `https://www.fon.hum.uva.nl/paul/`,
+where you can also find many Praat scripts for the simulations and pictures in this book.
+A paperback version is also available from the author (`paul.boersma@uva.nl`).
+
+################################################################################
+"Boersma (2000)"
+© Paul Boersma 2000-10-27
+
+Paul Boersma (2000): “Learning a grammar in Functional Phonology.”
+In Joost Dekkers, Frank van der Leeuw, & Jeroen van de Weijer (eds.):
+%%Phonology, Syntax, and Acquisition in Optimality Theory%. Oxford University Press.
+
+An extended version is chapter 14 of @@Boersma (1998)@.
+
+################################################################################
+"Boersma (2009a)"
+© Paul Boersma 2019-03-31
+
+Paul Boersma (2009): “Should jitter be measured by peak picking or by waveform matching?”
+%%Folia Phoniatrica et Logopaedica% #61: 305–308.
+
+Available on http://www.fon.hum.uva.nl/paul/
+
+################################################################################
+"Boersma (2009b)"
+© Paul Boersma 2019-03-31, 2023
+
+Paul Boersma (2009b): “Some correct error-driven versions of the Constraint Demotion algorithm.”
+%%Linguistic Inquiry% #40: 667–686.
+
+Available on `https://www.fon.hum.uva.nl/paul/`
+
+################################################################################
+"Boersma & Escudero (2008)"
+© Paul Boersma 2019-03-31, 2023
+
+Paul Boersma & Paola Escudero (2008): “Learning to perceive a smaller L2 vowel inventory:
+an Optimality Theory account.” In: Peter Avery, Elan Dresher & Keren Rice (eds.),
+%%Contrast in phonology: theory, perception, acquisition%. Berlin: Mouton De Gruyter. 271–301.
+
+Available on `https://www.fon.hum.uva.nl/paul/`
+
+################################################################################
+"Boersma & Hayes (2001)"
+© Paul Boersma 2019-03-31, 2023
+
+Paul Boersma & Bruce Hayes (2001): “Empirical tests of the Gradual Learning Algorithm.”
+%%Linguistic Inquiry% #32: 45–86.
+
+Available on `https://www.fon.hum.uva.nl/paul/`
+
+################################################################################
+"Boersma & Kovacic (2006)"
+© Paul Boersma 2019-03-31, 2023
+
+Paul Boersma & Gordana Kovacic (2006):
+“Spectral characteristics of three styles of Croatian folk singing.”
+%%Journal of the Acoustical Society of America% #119: 1805–1816.
+
+Available on `https://www.fon.hum.uva.nl/paul/`
+
+################################################################################
+"Boersma & Pater (2016)"
+© Paul Boersma 2019-03-31, 2023
+
+Paul Boersma & Joe Pater (2016):
+“Convergence properties of a gradual learning algorithm for Harmonic Grammar.”
+In John J. McCarthy & Joe Pater (eds.),
+%%Harmonic Serialism and Harmonic Grammar%. Sheffield: Equinox. 389–434.
+
+Available on `https://www.fon.hum.uva.nl/paul/`
+
+################################################################################
+)~~~" MAN_PAGES_END
+
 
 MAN_BEGIN (U"Childers (1978)", U"ppgb", 20030515)
 NORMAL (U"%%Modern spectrum analysis%. IEEE Press.")

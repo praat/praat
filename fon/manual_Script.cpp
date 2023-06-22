@@ -83,17 +83,58 @@ We cannot conclude from this test that people have a preference for the white ke
 Of course, we cannot conclude either that people %%don’t% have such a preference.
 
 ################################################################################
-"`writeInfoLine`"
-© Paul Boersma 2023-06-07
+"`differenceLimensToPhon`"
+© Paul Boersma 2002-12-15, 2023
 
-A function that writes its arguments to the Info window,
-overwriting what was previously present in the Info window,
-and moving the output cursor to the next line.
+A function for converting intensity difference limens into sensation level,
+the inverse of @`phonToDifferenceLimens`.
 
-Examples of use:
-================
+Formula
+=======
+~	differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)
+
 ################################################################################
-"`random_initializeWithSeedUnsafelyButPredictably`"
+"`phonToDifferenceLimens`"
+© Paul Boersma 2002-12-15, 2023
+
+A function for converting sensation level in phons into intensity difference limen level,
+the inverse of @`differenceLimensToPhon`.
+
+Formula
+=======
+~	phonToDifferenceLimens (%phon) = 30 · ((61/60)^^ %phon^ \-m 1)
+
+Derivation
+==========
+
+In first approximation, humans can detect an intensity difference of 1 phon, i.e.
+if two sounds that differ only in intensity are played a short time after each other,
+people can generally detect their intensity difference if it is greater than 1 phon.
+
+But the sensitivity is somewhat better for louder sounds.
+According to @@Jesteadt, Wier & Green (1977)@, the relative difference limen
+of intensity is given by
+~	DLI = \De%I / %I = 0.463 · (%I / %I_0)^^\-m0.072^
+
+In this formula, %I is the intensity of the sound in Watt/m^2, %I_0 is the intensity of
+the auditory threshold (i.e. 10^^\-m12^ Watt/m^2 at 1000 Hz),
+and \De%I is the just noticeable difference.
+
+@@Boersma (1998)|Boersma (1998: 109)@ calculates a difference-limen scale from this.
+Given an intensity %I, the number of difference limens above threshold is
+~	\in__%%I%0_^%I %dx \De%I(%x)
+= (1 / 0.463) \in__%%I%0_^%I %dx %I_0^^\-m0.072^ %x^^0.072\-m1^
+~	= (1 / (0.463 · 0.072)) ((%I / %I_0)^^0.072^ \-m 1)
+
+The sensation level in phon is defined as
+~	SL = 10 log__10_ (%I / %I_0)
+
+so that the number of difference limens above threshold is
+~	(1 / (0.463 · 0.072)) (10^^(0.072 / 10) (10 log (%I / %I_0))^ \-m 1)
+= 30 · (1.0167^^SL^ \-m 1)
+
+################################################################################
+"`random_initializeSafelyAndUnpredictably`"
 © Paul Boersma 2023-06-10
 
 A function xx.
@@ -101,7 +142,7 @@ A function xx.
 Examples of use:
 ================
 ################################################################################
-"`random_initializeSafelyAndUnpredictably`"
+"`random_initializeWithSeedUnsafelyButPredictably`"
 © Paul Boersma 2023-06-10
 
 A function xx.
@@ -141,10 +182,20 @@ A function xx.
 Examples of use:
 ================
 ################################################################################
-"Text top..."
+"`writeInfoLine`"
+© Paul Boersma 2023-06-07
+
+A function that writes its arguments to the Info window,
+overwriting what was previously present in the Info window,
+and moving the output cursor to the next line.
+
+Examples of use:
+================
+################################################################################
+"Marks bottom every..."
 © Paul Boersma 2023-06-10
 
-See @@Text left/right/top/bottom...@.
+See @@Marks left/right/top/bottom every...@.
 
 Examples of use:
 ================
@@ -157,10 +208,10 @@ See @@Text left/right/top/bottom...@.
 Examples of use:
 ================
 ################################################################################
-"Marks bottom every..."
+"Text top..."
 © Paul Boersma 2023-06-10
 
-See @@Marks left/right/top/bottom every...@.
+See @@Text left/right/top/bottom...@.
 
 Examples of use:
 ================
@@ -376,13 +427,6 @@ MAN_END
 MAN_BEGIN (U"Clear history", U"ppgb", 20000927)
 INTRO (U"A command in the Edit menu of the @ScriptEditor for clearing the remembered history. "
 	"See @@History mechanism@.")
-MAN_END
-
-MAN_BEGIN (U"differenceLimensToPhon", U"ppgb", 20021215)
-INTRO (U"A routine for converting intensity difference limens into sensation level, "
-	"the inverse of @phonToDifferenceLimens.")
-ENTRY (U"Formula")
-EQUATION (U"differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)")
 MAN_END
 
 MAN_BEGIN (U"Fixed menu commands", U"ppgb", 20120915)
@@ -1060,10 +1104,10 @@ TERM (U"##hertzToErb (%x)")
 DEFINITION (U"from acoustic frequency to ERB-rate: 11.17 ln ((%x + 312) / (%x + 14680)) + 43")
 TERM (U"##erbToHertz (%x)")
 DEFINITION (U"(14680 %d - 312) / (1 - %d) where %d = exp ((%x - 43) / 11.17)")
-TERM (U"@phonToDifferenceLimens (%x)")
+TERM (U"@`phonToDifferenceLimens` (%x)")
 DEFINITION (U"from perceptual loudness (intensity sensation) level in phon, to the number of intensity "
 	"difference limens above threshold: 30 \\.c ((61/60)^^ %x^ \\-- 1).")
-TERM (U"@differenceLimensToPhon (%x)")
+TERM (U"@`differenceLimensToPhon` (%x)")
 DEFINITION (U"the inverse of the previous: ln (1 + %x / 30) / ln (61 / 60).")
 TERM (U"##beta (%x, %y)")
 TERM (U"##besselI (%n, %x)")
@@ -1754,33 +1798,6 @@ MAN_END
 MAN_BEGIN (U"Paste history", U"ppgb", 20050822)
 INTRO (U"A command in the #Edit menu of a @ScriptEditor, for inserting the history of commands. "
 	"See @@History mechanism@.")
-MAN_END
-
-MAN_BEGIN (U"phonToDifferenceLimens", U"ppgb", 20021215)
-INTRO (U"A routine for converting sensation level in phons into intensity difference limen level, "
-	"the inverse of @differenceLimensToPhon.")
-ENTRY (U"Formula")
-EQUATION (U"phonToDifferenceLimens (%phon) = 30 \\.c ((61/60)^^ %phon^ \\-- 1)")
-ENTRY (U"Derivation")
-NORMAL (U"In first approximation, humans can detect an intensity difference of 1 phon, i.e. "
-	"if two sounds that differ only in intensity are played a short time after each other, "
-	"people can generally detect their intensity difference if it is greater than 1 phon.")
-NORMAL (U"But the sensitivity is somewhat better for louder sounds. "
-	"According to @@Jesteadt, Wier & Green (1977)@, the relative difference limen "
-	"of intensity is given by")
-EQUATION (U"DLI = \\De%I / %I = 0.463 \\.c (%I / %I__0_)^^ \\--0.072^")
-NORMAL (U"In this formula, %I is the intensity of the sound in Watt/m^2, %I__0_ is the intensity of "
-	"the auditory threshold (i.e. 10^^\\--12^ Watt/m^2 at 1000 Hz), and \\De%I is the just noticeable difference.")
-NORMAL (U"@@Boersma (1998)|Boersma (1998: 109)@ calculates a difference-limen scale from this. "
-	"Given an intensity %I, the number of difference limens above threshold is ")
-EQUATION (U"\\in__%I0_^%I %dx \\De%I(%x) "
-	"= (1 / 0.463) \\in__%I0_^%I %dx %I__0_^^\\--0.072^ %x^^0.072\\--1^")
-EQUATION (U"= (1 / (0.463\\.c0.072)) ((%I/%I__0_)^^0.072^ \\-- 1)")
-NORMAL (U"The sensation level in phon is defined as")
-EQUATION (U"SL = 10 log__10_ (%I/%I__0_)")
-NORMAL (U"so that the number of difference limens above threshold is")
-EQUATION (U"(1 / (0.463\\.c0.072)) (10^^(0.072/10)(10log(%I/%I__0_))^ \\-- 1) "
-	"= 30 \\.c (1.0167^^SL^ \\-- 1)")
 MAN_END
 
 MAN_BEGIN (U"plug-ins", U"ppgb", 20201229)
@@ -3011,7 +3028,7 @@ In @@Scripting 5.4. Loops|\SS5.4@ we saw how %loops can help there.
 In this section we will see how %procedures (also called %subroutines) can help us.
 
 Imagine that you want to play a musical note with a frequency of 440 Hz (an “A”)
-followed by a note that is one ocatve higher, i.e. has a frequency of 880 Hz (an “a”).
+followed by a note that is one octave higher, i.e. has a frequency of 880 Hz (an “a”).
 You could achieve this with the following script:
 
 	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01
