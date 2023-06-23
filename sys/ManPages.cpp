@@ -527,11 +527,11 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			continue;
 		/*
 			Now we try several kinds of list items.
-			To not prepend a character, use "-".
-			To prepend a bullet, use "*" or "•".
+			To not prepend a character, use ",".
+			To prepend a bullet, use "-" or "*" or "•".
 		 */
 		} else if (
-			(line [0] == U'-' || line [0] == U'*' || line [0] == U'•') && Melder_isHorizontalSpace (line [1]) ||
+			(line [0] == U',' || line [0] == U'-' || line [0] == U'*' || line [0] == U'•') && Melder_isHorizontalSpace (line [1]) ||
 			stringStartsWithParenthesizedNumber (line)
 		) {
 			type = (
@@ -540,9 +540,9 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				numberOfLeadingSpaces < 11 ? kManPage_type::LIST_ITEM2 :
 				kManPage_type::LIST_ITEM3
 			);
-			if (line [0] == U'*' || line [0] == U'•')
+			if (line [0] == U'-' || line [0] == U'*' || line [0] == U'•')
 				MelderString_append (& buffer_graphical, U"• ");
-			if (line [0] == U'-' || line [0] == U'*' || line [0] == U'•') {
+			if (line [0] == U',' || line [0] == U'-' || line [0] == U'*' || line [0] == U'•') {
 				line += 2;
 				Melder_skipHorizontalSpace (& line);
 			}
@@ -717,6 +717,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				}
 				char32 *firstNonSpace = Melder_findEndOfHorizontalSpace (continuationLine);
 				if (*firstNonSpace == U':' ||
+					*firstNonSpace == U',' ||
 					*firstNonSpace == U'-' ||
 					*firstNonSpace == U'*' ||
 					*firstNonSpace == U'•' ||

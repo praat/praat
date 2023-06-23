@@ -2589,10 +2589,10 @@ MAN_END
 
 MAN_BEGIN (U"incomplete gamma function", U"djmw", 20170531)
 INTRO (U"The incomplete gamma function is defined as:")
-EQUATION (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al\\-m1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0),")
+EQUATION (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al−1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0),")
 NORMAL (U"where \\al and %x are complex numbers and Re(\\al) > 0.")
 NORMAL (U"The complementary incomplete gamma function is defined as:")
-EQUATION (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al\\-m1^e^^-%t^dt = \\Ga(\\al)\\-m\\Ga(\\al, %x).")
+EQUATION (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al−1^e^^-%t^dt = \\Ga(\\al)−\\Ga(\\al, %x).")
 
 MAN_END
 

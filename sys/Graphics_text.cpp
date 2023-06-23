@@ -900,7 +900,8 @@ static int initBuffer (conststring32 txt) {
 }
 
 static int numberOfLinks = 0;
-static Graphics_Link links [100];    // a maximum of 100 links per string
+#define MAXIMUM_NUMBER_OF_LINKS_PER_STRING  1000
+static Graphics_Link links [MAXIMUM_NUMBER_OF_LINKS_PER_STRING];
 
 static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEachCharacterSeparately) {
 	/*
@@ -1159,7 +1160,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 			/*
 				Replace some spaces with new-line symbols.
 			*/
-			int xmax = xDC + my wrapWidth * my scaleX;
+			const int xmax = xDC + my wrapWidth * my scaleX;
 			for (plc = lc; plc -> kar >= U' '; plc ++) {
 				x += plc -> width;
 				if (x > xmax) {   // wrap (if wrapWidth is too small, each word will be on a separate line)
@@ -1201,7 +1202,9 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 			if (plc -> link) {
 				if (! inLink) {
 					const double descent = ( my yIsZeroAtTheTop ? -(0.3/72) : (0.3/72) ) * my fontSize * my resolution;
-					links [++ numberOfLinks]. x1 = x;
+					++ numberOfLinks;
+					Melder_assert (numberOfLinks < MAXIMUM_NUMBER_OF_LINKS_PER_STRING);
+					links [numberOfLinks]. x1 = x;
 					links [numberOfLinks]. y1 = y - descent;
 					links [numberOfLinks]. y2 = y + 3 * descent;
 					inLink = true;
@@ -1475,7 +1478,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					it is everything between "@@" and "|" or "@" or end of string.
 				*/
 				const char32 *from = in + 1;   // start with first character after "@@"
-				if (! links [++ numberOfLinks]. name)   // make room for saving link info
+				++ numberOfLinks;
+				Melder_assert (numberOfLinks < MAXIMUM_NUMBER_OF_LINKS_PER_STRING);
+				if (! links [numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
 				char32 *to = links [numberOfLinks]. name;
 				char32 *max = to + MAX_LINK_LENGTH;
@@ -1501,7 +1506,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				continue;   // do not draw
 			} else if (in [0] == U'`' && my backquoteIsVerbatim) {
 				const char32 *from = in;   // start with the opening backquote
-				if (! links [++ numberOfLinks]. name)   // make room for saving link info
+				++ numberOfLinks;
+				Melder_assert (numberOfLinks < MAXIMUM_NUMBER_OF_LINKS_PER_STRING);
+				if (! links [numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
 				char32 *to = links [numberOfLinks]. name;
 				char32 *max = to + MAX_LINK_LENGTH;
@@ -1525,7 +1532,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					First step: collect the page text: letters, digits, and underscores.
 				*/
 				const char32 *from = in;   // start with first character after "@"
-				if (! links [++ numberOfLinks]. name)   // make room for saving link info
+				++ numberOfLinks;
+				Melder_assert (numberOfLinks < MAXIMUM_NUMBER_OF_LINKS_PER_STRING);
+				if (! links [numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
 				char32 *to = links [numberOfLinks]. name;
 				char32 *max = to + MAX_LINK_LENGTH;
@@ -1565,7 +1574,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 				const bool isVerbatimLink = ( kar1 == U'`' || kar2 == U'`' );
 				thinLink = ( kar1 != U'#' );
 				const char32 *from = in + 3 - thinLink;   // start with first character after "\@{"
-				if (! links [++ numberOfLinks]. name)   // make room for saving link info
+				++ numberOfLinks;
+				Melder_assert (numberOfLinks < MAXIMUM_NUMBER_OF_LINKS_PER_STRING);
+				if (! links [numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
 				char32 *to = links [numberOfLinks]. name;
 				char32 *max = to + MAX_LINK_LENGTH;

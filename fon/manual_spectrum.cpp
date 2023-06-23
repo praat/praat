@@ -862,7 +862,7 @@ A column called ##binWidthWithinDomain (Hz)#.
 :	Bin 1 runs from 0 Hz to 0.5%df, so it has a width of 0.5%df.
 Bin 2 runs from 0.5%df to 1.5%df, so it has a width of %df; the same goes for almost all remaining bins.
 As for the last bin: if there are an odd number %N of bins,
-then bin %N runs from (%N \-m 1.5)\.c%df to (%N \-m 1.0)\.c%df (which is the Nyquist frequency),
+then bin %N runs from (%N − 1.5)·%df to (%N − 1.0)·%df (which is the Nyquist frequency),
 so its width is 0.5%df.
 
 A column called ##binEnergy (Pa^2s)#.
