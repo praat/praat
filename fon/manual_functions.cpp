@@ -332,6 +332,18 @@ Formula
 ~	differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)
 
 ################################################################################
+"`fisherQ`"
+© David Weenink 2000-05-25
+
+The function #`fisherQ` (%f, %df1, %df2) returns the area under Fisher’s F-distribution from %f to +\oo.
+
+################################################################################
+"`invFisherQ`"
+© David Weenink 2000-05-25
+
+The function #`invFisherQ` (%q, %df_1, %df_2) returns the value %f for which @`fisherQ` (%f, %df_1, %df_2) = %q.
+
+################################################################################
 "`phonToDifferenceLimens`"
 © Paul Boersma 2002-12-15, 2023
 

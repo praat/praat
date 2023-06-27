@@ -2596,20 +2596,6 @@ EQUATION (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al−1^e^^-%t^dt = \\Ga(\\al)�
 
 MAN_END
 
-MAN_PAGES_BEGIN R"~~~(
-"`invFisherQ`"
-© djmw 2000-05-25
-
-The function #`invFisherQ` (%q, %df_1, %df_2) returns the value %f for which @`fisherQ` (%f, %df_1, %df_2) = %q.
-)~~~" MAN_PAGES_END
-
-MAN_PAGES_BEGIN R"~~~(
-"`fisherQ`"
-© djmw 2000-05-25
-
-The function #`fisherQ` (%f, %df1, %df2) returns the area under Fisher’s F-distribution from %f to +\oo.
-)~~~" MAN_PAGES_END
-
 MAN_BEGIN (U"IDX file format", U"djmw", 20160220)
 INTRO (U"The IDX file format is a simple format for vectors and multidimensional matrices of various numerical types. ")
 NORMAL (U"The basic format according to %%http://yann.lecun.com/exdb/mnist/% is:")

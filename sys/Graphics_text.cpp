@@ -1560,11 +1560,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			if ((kar1 = in [0]) == U'\0' || (kar2 = in [1]) == U'\0') {
 				;   // normal backslash symbol
 			} else if (topDownVerbatim &&
-				(kar1 == U'@' && kar2 == U'{') ||
-				(kar1 == U'`' && kar2 == U'{') ||
-				(kar1 == U'#' && kar2 == U'@' && in [2] == U'{') ||
-				(kar1 == U'#' && kar2 == U'`' && in [2] == U'{'))
-			{
+				(kar1 == U'@' && kar2 == U'{' ||
+				 kar1 == U'`' && kar2 == U'{' ||
+				 kar1 == U'#' && kar2 == U'@' && in [2] == U'{' ||
+				 kar1 == U'#' && kar2 == U'`' && in [2] == U'{')
+			) {
 				/*
 					Detected "\@{" or "\`{" or "\#@{" or "\#`{"
 					in strings like "\@{Link with spaces}" or "\`{writeInfoLine}".
