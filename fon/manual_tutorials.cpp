@@ -1358,7 +1358,7 @@ LIST_ITEM (U"• Windows: corrected a bug by which Praat would not open files th
 	"if the names of these files or their directory paths contained non-ASCII characters.")
 LIST_ITEM (U"• Linux: ignore the Mod2 key, because of its unpredictable assignment.")
 NORMAL (U"##5.0.08# (10 February 2008)")
-LIST_ITEM (U"• Corrected the minus sign (\\bs-m = “\\-m”).")
+LIST_ITEM (U"• Corrected the minus sign (\\bs-m = “−”).")
 NORMAL (U"##5.0.07# (8 February 2008)")
 LIST_ITEM (U"• Object IDs are visible in editor windows.")
 NORMAL (U"##5.0.06# (31 January 2008)")
@@ -3683,61 +3683,61 @@ You are advised to work through all of this tutorial.
 You can read this tutorial sequentially with the help of the “##1 >#” and “##< 1#” buttons,
 or go to the desired information by clicking on the blue links.
 
-- @@Intro 1. How to get a sound@:
+, @@Intro 1. How to get a sound@:
 	@@Intro 1.1. Recording a sound|record@,
 	@@Intro 1.2. Reading a sound from disk|read@,
 	@@Intro 1.3. Creating a sound from a formula|formula@.
-- @@Intro 2. What to do with a sound@:
+, @@Intro 2. What to do with a sound@:
 	@@Intro 2.1. Saving a sound to disk|write@,
 	@@Intro 2.2. Viewing and editing a sound|view@.
-- @@Intro 3. Spectral analysis
-	- spectrograms: @@Intro 3.1. Viewing a spectrogram|view@,
+, @@Intro 3. Spectral analysis
+	, spectrograms: @@Intro 3.1. Viewing a spectrogram|view@,
 		@@Intro 3.2. Configuring the spectrogram|configure@,
 		@@Intro 3.3. Querying the spectrogram|query@,
 		@@Intro 3.4. Printing the spectrogram|print@,
 		@@Intro 3.5. The Spectrogram object|the Spectrogram object@.
-	- spectral slices: @@Intro 3.6. Viewing a spectral slice|view@,
+	, spectral slices: @@Intro 3.6. Viewing a spectral slice|view@,
 		@@Intro 3.7. Configuring the spectral slice|configure@,
 		@@Intro 3.8. The Spectrum object|the Spectrum object@.
-- @@Intro 4. Pitch analysis
-	- pitch contours: @@Intro 4.1. Viewing a pitch contour|view@,
+, @@Intro 4. Pitch analysis
+	, pitch contours: @@Intro 4.1. Viewing a pitch contour|view@,
 		@@Intro 4.2. Configuring the pitch contour|configure@,
 		@@Intro 4.3. Querying the pitch contour|query@,
 		@@Intro 4.4. Printing the pitch contour|print@,
 		@@Intro 4.5. The Pitch object|the Pitch object@.
-- @@Intro 5. Formant analysis
-	- formant contours: @@Intro 5.1. Viewing formant contours|view@,
+, @@Intro 5. Formant analysis
+	, formant contours: @@Intro 5.1. Viewing formant contours|view@,
 		@@Intro 5.2. Configuring the formant contours|configure@,
 		@@Intro 5.3. Querying the formant contours|query@,
 		@@Intro 5.4. The Formant object|the Formant object@.
-- @@Intro 6. Intensity analysis
-	- intensity contours: @@Intro 6.1. Viewing an intensity contour|view@,
+, @@Intro 6. Intensity analysis
+	, intensity contours: @@Intro 6.1. Viewing an intensity contour|view@,
 		@@Intro 6.2. Configuring the intensity contour|configure@,
 		@@Intro 6.3. Querying the intensity contour|query@,
 		@@Intro 6.4. The Intensity object|the Intensity object@.
-- @@Intro 7. Annotation
-- @@Intro 8. Manipulation@: of
+, @@Intro 7. Annotation
+, @@Intro 8. Manipulation@: of
 	@@Intro 8.1. Manipulation of pitch|pitch@,
 	@@Intro 8.2. Manipulation of duration|duration@,
 	@@Intro 8.3. Manipulation of intensity|intensity@,
 	@@Intro 8.4. Manipulation of formants|formants@.
 
 There are also more specialized tutorials:
-- Phonetics:
+, Phonetics:
 	• Voice analysis (jitter, shimmer, noise): @Voice
 	• Listening experiments: @@ExperimentMFC@
 	• @@Sound files@
 	• @@Filtering@
 	• @@Source-filter synthesis@
 	• @@Articulatory synthesis@
-- Learning:
+, Learning:
 	• @@Feedforward neural networks@
 	• @@OT learning@
-- Statistics:
+, Statistics:
 	• @@Principal component analysis@
 	• @@Multidimensional scaling@
 	• @@Discriminant analysis@
-- General:
+, General:
 	• @@Scripting@
 	• @@Demo window@
 	• @@Printing@
@@ -3827,7 +3827,7 @@ NORMAL (U"To see the wave form of a @Sound that is in the list of objects, "
 	"To play a part of the sound, click in any of the rectangles below it. "
 	"To move a selected part of the sound to another location, use #Cut and #Paste from the Edit menu. "
 	"You can open sound windows for more than one sound, and then cut, copy, and paste between the sounds, "
-	"just as you are used to do with text and pictures in word processing programs.")
+	"just as you are used to doing with text and pictures in word processing programs.")
 NORMAL (U"If your sound file is longer than a couple of minutes, "
 	"or if you want to see and listen to both channels of a stereo sound, "
 	"you may prefer to open it with @@Open long sound file...@. "

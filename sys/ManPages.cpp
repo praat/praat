@@ -527,11 +527,11 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			continue;
 		/*
 			Now we try several kinds of list items.
-			To not prepend a character, use "-".
-			To prepend a bullet, use "*" or "•".
+			To not prepend a character, use ",".
+			To prepend a bullet, use "-" or "*" or "•".
 		 */
 		} else if (
-			(line [0] == U'-' || line [0] == U'*' || line [0] == U'•') && Melder_isHorizontalSpace (line [1]) ||
+			(line [0] == U',' || line [0] == U'-' || line [0] == U'*' || line [0] == U'•') && Melder_isHorizontalSpace (line [1]) ||
 			stringStartsWithParenthesizedNumber (line)
 		) {
 			type = (
@@ -540,9 +540,11 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				numberOfLeadingSpaces < 11 ? kManPage_type::LIST_ITEM2 :
 				kManPage_type::LIST_ITEM3
 			);
-			if (line [0] == U'*' || line [0] == U'•')
+			if (line [0] == U'-' || line [0] == U'*' || line [0] == U'•')
 				MelderString_append (& buffer_graphical, U"• ");
-			if (line [0] == U'-' || line [0] == U'*' || line [0] == U'•') {
+			if (line [0] == U',')
+				MelderString_append (& buffer_graphical, U" ");
+			if (line [0] == U',' || line [0] == U'-' || line [0] == U'*' || line [0] == U'•') {
 				line += 2;
 				Melder_skipHorizontalSpace (& line);
 			}
@@ -567,6 +569,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
 			const bool shouldShowCode = ! str32chr (line, U'-');
 			const char32 *sizeLocation = str32chr (line, U'x');
+			const bool shouldShowOutput = ! str32chr (line, U';');
 			if (sizeLocation) {
 				const char32 *widthLocation = sizeLocation - 1;
 				while (Melder_isDecimalNumber (*widthLocation) || *widthLocation == U'.')
@@ -580,6 +583,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				line = MelderReadText_readLine (text);
 				if (! line)
 					Melder_throw (U"Script chunk not closed.");
+				const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
 				if (line [0] == U'}') {
 					line = MelderReadText_readLine (text);
 					break;
@@ -590,7 +594,6 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					*/
 					MelderString_empty (& buffer_graphicalCode);
 					const char32 *p = & line [0];
-					bool inBold = false;
 					while (*p) {
 						if (*p == U'\t') {
 							MelderString_append (& buffer_graphicalCode, p == line ? nullptr : U"    ");
@@ -602,7 +605,6 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					par -> type = kManPage_type::CODE;
 					par -> text = Melder_dup (buffer_graphicalCode. string).transfer();
 				}
-				const bool shouldShowOutput = true;   // TODO: or not...
 				if (shouldShowOutput) {
 					/*
 						Collect the code, for later execution when the output is drawn.
@@ -614,7 +616,6 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 
 						TODO: make less brittle.
 					*/
-					const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
 					if (firstNonspace [0] == U'\\' &&
 						(firstNonspace [1] == U'@' && firstNonspace [2] == U'{' ||
 						 firstNonspace [1] == U'#' && firstNonspace [2] == U'{' ||
@@ -624,14 +625,18 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					if (
 						(Melder_startsWith (firstNonspace, U"Draw")  ||
 						 Melder_startsWith (firstNonspace, U"Paint")  ||
+						 Melder_startsWith (firstNonspace, U"Axes:")  ||
+						 Melder_startsWith (firstNonspace, U"Axes}:")  ||
 						 Melder_startsWith (firstNonspace, U"Text ")  ||
+						 Melder_startsWith (firstNonspace, U"Text:")  ||
+						 Melder_startsWith (firstNonspace, U"Text}:")  ||
 						 Melder_startsWith (firstNonspace, U"Marks "))
 						&& height == 0.001
 					)
 						height = 3.0;
 
 					const char32 *p = & line [0];
-					bool inBold = false;
+					bool inBold = false, inItalic = false;
 					while (*p) {
 						if (*p == U'\\' &&
 							(p [1] == U'@' && p [2] == U'{' ||
@@ -664,12 +669,16 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 						} else if (*p == U'\\' && p [1] == U'#' && p [2] == U'{') {
 							inBold = true;
 							p += 2;
+						} else if (*p == U'\\' && p [1] == U'%' && p [2] == U'{') {
+							inItalic = true;
+							p += 2;
 						} else if (*p == U'}') {
-							if (inBold) {
+							if (inBold)
 								inBold = false;
-							} else {
+							else if (inItalic)
+								inItalic = false;
+							else
 								MelderString_appendCharacter (& buffer_graphical, U'}');
-							}
 						} else
 							MelderString_appendCharacter (& buffer_graphical, *p);
 						p ++;
@@ -677,6 +686,8 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					MelderString_appendCharacter (& buffer_graphical, U'\n');
 				}
 			} while (1);
+			if (! shouldShowCode)
+				MelderString_empty (& buffer_graphical);
 		} else if (numberOfLeadingSpaces >= 3) {
 			type = (
 				numberOfLeadingSpaces <  7 ? kManPage_type::CODE  :
@@ -691,15 +702,14 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			type = kManPage_type::NORMAL;
 			MelderString_append (& buffer_graphical, line);
 		}
-		ManPage_Paragraph par = page -> paragraphs. append ();
-		par -> type = type;
-		par -> text = Melder_dup (buffer_graphical. string). transfer();
-		if (str32str (par -> text, U":|"))
-			par -> text = replace_STR (par -> text, U":|", U"...|", 0).transfer();
-		//if (str32str (par -> text, U":@"))
-		//	par -> text = replace_STR (par -> text, U":@", U"...@", 0).transfer();
-		par -> width = width;
-		par -> height = height;
+		ManPage_Paragraph par = nullptr;
+		if (buffer_graphical. string [0] != U'\0') {
+			par = page -> paragraphs. append ();
+			par -> type = type;
+			par -> text = Melder_dup (buffer_graphical. string). transfer();
+			par -> width = width;
+			par -> height = height;
+		}
 
 		/*
 			Do continuation lines, except for code.
@@ -708,7 +718,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 		if (isCode) {
 			line = MelderReadText_readLine (text);
 		} else if (type == kManPage_type::SCRIPT) {
-		} else {
+		} else if (par) {
 			do {
 				mutablestring32 continuationLine = MelderReadText_readLine (text);
 				if (! continuationLine) {
@@ -717,6 +727,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				}
 				char32 *firstNonSpace = Melder_findEndOfHorizontalSpace (continuationLine);
 				if (*firstNonSpace == U':' ||
+					*firstNonSpace == U',' ||
 					*firstNonSpace == U'-' ||
 					*firstNonSpace == U'*' ||
 					*firstNonSpace == U'•' ||
@@ -734,8 +745,10 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				par -> text = Melder_dup (Melder_cat (par -> text, separator, continuationLine)).transfer();
 			} while (1);
 		}
-		resolveLinks (me, par, page -> verbatimAware);
-		previousParagraph = par;
+		if (par) {
+			resolveLinks (me, par, page -> verbatimAware);
+			previousParagraph = par;
+		}
 	}
 }
 static void readOnePage (ManPages me, MelderReadText text) {

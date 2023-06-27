@@ -2589,26 +2589,12 @@ MAN_END
 
 MAN_BEGIN (U"incomplete gamma function", U"djmw", 20170531)
 INTRO (U"The incomplete gamma function is defined as:")
-EQUATION (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al\\-m1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0),")
+EQUATION (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al−1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0),")
 NORMAL (U"where \\al and %x are complex numbers and Re(\\al) > 0.")
 NORMAL (U"The complementary incomplete gamma function is defined as:")
-EQUATION (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al\\-m1^e^^-%t^dt = \\Ga(\\al)\\-m\\Ga(\\al, %x).")
+EQUATION (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al−1^e^^-%t^dt = \\Ga(\\al)−\\Ga(\\al, %x).")
 
 MAN_END
-
-MAN_PAGES_BEGIN R"~~~(
-"`invFisherQ`"
-© djmw 2000-05-25
-
-The function #`invFisherQ` (%q, %df_1, %df_2) returns the value %f for which @`fisherQ` (%f, %df_1, %df_2) = %q.
-)~~~" MAN_PAGES_END
-
-MAN_PAGES_BEGIN R"~~~(
-"`fisherQ`"
-© djmw 2000-05-25
-
-The function #`fisherQ` (%f, %df1, %df2) returns the area under Fisher’s F-distribution from %f to +\oo.
-)~~~" MAN_PAGES_END
 
 MAN_BEGIN (U"IDX file format", U"djmw", 20160220)
 INTRO (U"The IDX file format is a simple format for vectors and multidimensional matrices of various numerical types. ")
