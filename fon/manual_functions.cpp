@@ -263,6 +263,331 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`zero##` (%`nrow`, %`ncol`) – matrix with %`nrow` \xx %`ncol` elements that are all 0
 
 ################################################################################
+"`abs`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@. The absolute value.
+
+Examples
+========
+{
+	writeInfoLine: \#{abs} (3.14), " ", \#{abs} (0), " ", \#{abs} (-789e-300)
+}
+
+################################################################################
+"`abs#`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`abs#` (%`v#`) computes the absolute value (@`abs`) of each element of the vector %`v#`.
+
+Examples
+========
+{
+	a# = \#{abs#} ({ -1, 5.5, 0, -456.789 })
+	writeInfoLine: a#
+}
+
+################################################################################
+"`abs##`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`abs##` (%`m##`) computes the absolute value (@`abs`) of each cell of the matrix %`m##`.
+
+Examples
+========
+{
+	a## = \#{abs##} ({{ -1, 5.5, 0, -456.789 }, { 34, -45, 18.0, 0 },
+	... { 1e-89, -3.2e-307, 6e200, -2345e-2 }})
+	writeInfoLine: a##
+}
+
+################################################################################
+"`arccos`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@. The inverse cosine.
+
+Domain
+======
+#`arccos` (%x) is defined for -1 \\<_ %x \\<_ 1.
+
+Tests
+=====
+{
+	\`{assert} \#{arccos} (-1.1) = undefined
+	\`{assert} abs (\#{arccos} (-1.0) - pi) < 1e-17
+	\`{assert} abs (\#{arccos} (0.0) - pi/2) < 1e-17
+	\`{assert} \#{arccos} (1.0) = 0
+	\`{assert} \#{arccos} (1.1) = undefined
+	\`{assert} \#{arccos} (undefined) = undefined
+}
+
+################################################################################
+"`arccos#`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arccos#` (%`v#`) computes the inverse cosine (@`arccos`) of each element of the vector %`v#`.
+
+Examples
+========
+{
+	writeInfoLine: \#{arccos#} ({ -1.1, -1.0, 0.0, 1.0, 1.1, undefined })
+}
+
+################################################################################
+"`arccos##`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arccos##` (%`m##`) computes the inverse cosine (@`arccos`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`arccosh`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@. The inverse hyperbolic cosine, i.e.
+~	#`arccosh` (%x) = ln (%x + \Vr(%x^2−1))
+
+Tests
+=====
+{
+	\`{assert} \#{arccosh} (1.0) = 0
+	\`{assert} \#{arccosh} (0.9) = undefined
+	\`{assert} \#{arccosh} (0.0) = undefined
+	\`{assert} \#{arccosh} (-10.0) = undefined
+	\`{assert} \#{arccosh} (undefined) = undefined
+}
+
+################################################################################
+"`arccosh#`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arccosh#` (%`v#`) computes the inverse hyperbolic cosine (@`arccosh`) of each element of the vector %`v#`.
+
+################################################################################
+"`arccosh##`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arccosh##` (%`m##`) computes the inverse hyperbolic cosine (@`arccosh`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`arcsin`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@. The inverse sine.
+
+Domain
+======
+#`arcsin` (%x) is defined for -1 \\<_ %x \\<_ 1.
+
+Tests
+=====
+{
+	\`{assert} \#{arcsin} (-1.1) = undefined
+	\`{assert} abs (\#{arcsin} (-1.0) - -pi/2) < 1e-17
+	\`{assert} \#{arcsin} (0.0) = 0
+	\`{assert} abs (\#{arcsin} (1.0) - pi/2) < 1e-17
+	\`{assert} \#{arcsin} (1.1) = undefined
+	\`{assert} \#{arcsin} (undefined) = undefined
+}
+
+################################################################################
+"`arcsin#`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arcsin#` (%`v#`) computes the inverse sine (@`arcsin`) of each element of the vector %`v#`.
+
+Examples
+========
+{
+}
+
+################################################################################
+"`arcsin##`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arcsin##` (%`m##`) computes the inverse sine (@`arcsin`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`arcsinh`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@. The inverse hyperbolic sine:
+~	#`arcsinh` (%x) = ln (%x + \Vr(1+%x^2))
+
+Tests
+=====
+{
+	\`{assert} \#{arcsinh} (-1.0) < 0
+	\`{assert} \#{arcsinh} (0.0) = 0
+	\`{assert} \#{arcsinh} (1.0) > 0
+	\`{assert} \#{arcsinh} (undefined) = undefined
+}
+
+################################################################################
+"`arcsinh#`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arcsinh#` (%`v#`) computes the inverse hyperbolic sine (@`arcsinh`) of each element of the vector %`v#`.
+
+Examples
+========
+{
+}
+
+################################################################################
+"`arcsinh##`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arcsin##` (%`m##`) computes the inverse hyperbolic sine (@`arcsinh`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`arctan`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@. The inverse tangent.
+
+Tests
+=====
+{
+	\`{assert} \#{arctan} (0.0) = 0
+}
+
+################################################################################
+"`arctan#`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arctan#` (%`v#`) computes the inverse tangent (@`arctan`) of each element of the vector %`v#`.
+
+Examples
+========
+{
+}
+
+################################################################################
+"`arctan##`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arctan##` (%`m##`) computes the inverse tangent (@`arctan`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`arctan2`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@. The argument angle.
+
+Syntax and semantics
+====================
+#`arctan2` (%`y`, %`x`)
+:	the angle (in radians) from the %X axis to the point (%x, %y) in two-dimensional space;
+	positive (i.e. measured counterclockwise) for %y > 0,
+	and negative (and measured clockwise) for %y < 0.
+	For %y = 0, it’s 0 if %x > 0, and %\pi if %x < 0.
+	In the point (0, 0), `arctan2` is undefined.
+
+Tests
+=====
+{
+	\`{assert} \#{arctan2} (0.0, 3.0) = 0
+	\`{assert} abs (\#{arctan2} (3.0, 3.0) - pi/4) < 1e-17
+	\`{assert} abs (\#{arctan2} (3.0, 0.0) - pi/2) < 1e-17
+	\`{assert} abs (\#{arctan2} (3.0, -3.0) - 3*pi/4) < 1e-17
+	\`{assert} abs (\#{arctan2} (0.0, -3.0) - pi) < 1e-17
+	\`{assert} abs (\#{arctan2} (-3.0, -3.0) + 3*pi/4) < 1e-17
+	\`{assert} abs (\#{arctan2} (-3.0, 0.0) + pi/2) < 1e-17
+	\`{assert} abs (\#{arctan2} (-3.0, 3.0) + pi/4) < 1e-17
+	;\`{assert} \#{arctan2} (0.0, 0.0) = undefined
+}
+Edge cases
+==========
+In C, and therefore in Numpy, `arctan2` has arbitrary values
+where it cannot be defined. Thus `numpy.arctan2 (0.0, +0.0)` is 0,
+`numpy.arctan2 (+0.0, -0.0)` is +%\pi,
+and `numpy.arctan2 (-0.0, -0.0)` is \-m%\pi.
+The function is then even defined for e.g. %x = \-m∞ and %y = +∞,
+where it is 3%\pi/4. In all these cases, `arctan` returns `undefined` in Praat.
+This doesn’t mean that the function is very sane in Praat, as
+it is still discontinuous for small %`y`:
+{
+	writeInfoLine: \#{arctan2} (1e-308, -1.0), " ", \#{arctan2} (-1e-308, -1.0)
+}
+which are indistinguishable from +%\pi and \-m%\pi, respectively.
+
+################################################################################
+"`arctanh`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@. The inverse hyperbolic tangent.
+
+Tests
+=====
+{
+	\`{assert} \#{arctanh} (-1.0) = undefined
+	\`{assert} \#{arctanh} (0.0) = 0
+	\`{assert} \#{arctanh} (1.0) = undefined
+	\`{assert} \#{arctanh} (1000) = undefined
+	\`{assert} \#{arctanh} (undefined) = undefined
+}
+
+################################################################################
+"`arctanh#`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arctanh#` (%`v#`) computes the inverse hyperbolic tangent (@`arctanh`) of each element of the vector %`v#`.
+
+Examples
+========
+{
+}
+
+################################################################################
+"`arctanh##`"
+© Paul Boersma 2023-06-29
+
+A function that can be used in @@Formulas@.
+`arctanh##` (%`m##`) computes the inverse hyperbolic tangent (@`arctanh`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`assert`"
+© Paul Boersma 2023-06-29
+
+A keyword that can be used in @Scripting, to test whether an expected condition holds.
+
+Examples
+========
+
+This is an assertion that is satisfied:
+{
+	a = 5*6
+	\#{assert} a = 30
+	writeInfoLine: a
+}
+This is an assertion that is violated:
+{;
+	a = 5*6
+	\#{assert} a < 10
+	writeInfoLine: a
+}
+This three-line script stops at the second line with the error message
+“`Assertion violated in line 2: a < 10`”.
+
+That is, because %`a` is not less than 10 (it’s 30),
+the assertion is false, and the script stops, mentioning the line number
+as well as the text of the assertion (i.e. “`a < 10`”).
+
+################################################################################
 "`binomialQ`"
 © Paul Boersma 2014-02-23, 2023
 
@@ -298,7 +623,7 @@ would target the white keys at least 597 times. This is compared with a %\ci^2 t
 {
 	a = 597
 	b = 403
-	p = 7/12   ; no preference")
+	p = 7/12   ; no preference
 	writeInfoLine: “*** Binomial test ”, a, “, ”, b, “, p = ”, fixed$ (p, 6), “ ***”
 	pbin = \#{binomialQ} (p, a, a+b)
 	appendInfoLine: “P (binomial) = ”, fixed$ (pbin, 6)
@@ -319,6 +644,79 @@ so it has twice the probability of the binomial test.
 
 We cannot conclude from this test that people have a preference for the white keys.
 Of course, we cannot conclude either that people %%don’t% have such a preference.
+
+################################################################################
+"`cos`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+#`cos` (%`x`) computes the cosine of %`x`.
+{
+	Axes: -5, 5, -1.1, 1.1
+	Draw inner box
+	Draw function: -5, 5, 1000, ~ \#{cos} (x)
+	One mark bottom: -3*pi/2, "no", "yes", "yes", "\-m3%\pi/2"
+	One mark bottom: -pi, "no", "yes", "yes", "\-m%\pi"
+	One mark bottom: -pi/2, "no", "yes", "yes", "\-m%\pi/2"
+	One mark bottom: 0, "no", "yes", "yes", "0"
+	One mark bottom: pi/2, "no", "yes", "yes", "+%\pi/2"
+	One mark bottom: pi, "no", "yes", "yes", "+%\pi"
+	One mark bottom: 3*pi/2, "no", "yes", "yes", "+3%\pi/2"
+	One mark left: -1, "no", "yes", "yes", "\-m1"
+	One mark left: 0, "no", "yes", "yes", "0"
+	One mark left: 1, "no", "yes", "yes", "+1"
+	Text bottom: "yes", "%x \->"
+	Text left: "yes", "##\#{cos}# (%x)"
+	Text top: "no", "##just over one and a half periods of a (co)sine wave"
+}
+This picture illustrates the following properties of the cosine function:
+
+- #`cos` (%x) is zero for all values of %x that are odd multiples of %\pi/2.
+- The extrema of #`cos` (%x) are \-m1 and +1.
+- #`cos` (%x) is \-m1 or +1 wherever %x is an integer multiple of %\pi.
+- The cosine function is %periodic with period 2%\pi, i.e., #`cos` (%x+2%\pi) = #`cos` (%x).
+- The cosine function is %symmetric around 0, i.e. #`cos` (\-m%x) = #`cos` (%x).
+- The cosine function is %antisymmetric around %\pi/2, i.e. #`cos` (%\pi/2\-m%x) = \-m #`cos` (%x);
+  in other words, if you take the cosine curve and rotate it by 180 degrees
+  around the point (%\pi/2, 0), then you get the same curve again.
+
+A cosine wave is a special case of the more general %%sine wave% that is given by
+%y = @`sin` (%x + %\fi), where %\fi (an additive constant called the %%initial phase%) is %\pi/2.
+
+################################################################################
+"`cos#`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`cos#` (%`v#`) computes the cosine (@`cos`) of each element of the vector %`v#`.
+
+################################################################################
+"`cos##`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`cos##` (%`m#`) computes the cosine (@`cos`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`cosh`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+#`cosh` (%`x`) computes the hyperbolic cosine of %`x`, i.e. (%e^%x + %e^^-%x^) / 2.
+
+################################################################################
+"`cosh#`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`cosh#` (%`v#`) computes the hyperbolic cosine (@`cosh`) of each element of the vector %`v#`.
+
+################################################################################
+"`cosh##`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`cosh##` (%`m#`) computes the hyperbolic cosine (@`cosh`) of each cell of the matrix %`m#`.
 
 ################################################################################
 "`differenceLimensToPhon`"
@@ -391,6 +789,7 @@ A function xx.
 
 Examples of use:
 ================
+
 ################################################################################
 "`random_initializeWithSeedUnsafelyButPredictably`"
 © Paul Boersma 2023-06-10
@@ -399,6 +798,7 @@ A function xx.
 
 Examples of use:
 ================
+
 ################################################################################
 "`randomPoisson`"
 © Paul Boersma 2023-06-10
@@ -407,6 +807,7 @@ A function xx.
 
 Examples of use:
 ================
+
 ################################################################################
 "`randomUniform`"
 © Paul Boersma 2023-06-10
@@ -415,6 +816,7 @@ A function xx.
 
 Examples of use:
 ================
+
 ################################################################################
 "`randomUniform#`"
 © Paul Boersma 2023-06-10
@@ -423,6 +825,77 @@ A function xx.
 
 Examples of use:
 ================
+
+################################################################################
+"`sin`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+#`sin` (%`x`) computes the sine of %`x`.
+{
+	Axes: -5, 5, -1.1, 1.1
+	Draw inner box
+	Draw function: -5, 5, 1000, ~ \#{sin} (x)
+	One mark bottom: -3*pi/2, "no", "yes", "yes", "\-m3%\pi/2"
+	One mark bottom: -pi, "no", "yes", "yes", "\-m%\pi"
+	One mark bottom: -pi/2, "no", "yes", "yes", "\-m%\pi/2"
+	One mark bottom: 0, "no", "yes", "yes", "0"
+	One mark bottom: pi/2, "no", "yes", "yes", "+%\pi/2"
+	One mark bottom: pi, "no", "yes", "yes", "+%\pi"
+	One mark bottom: 3*pi/2, "no", "yes", "yes", "+3%\pi/2"
+	One mark left: -1, "no", "yes", "yes", "\-m1"
+	One mark left: 0, "no", "yes", "yes", "0"
+	One mark left: 1, "no", "yes", "yes", "+1"
+	Text bottom: "yes", "%x \->"
+	Text left: "yes", "##\#{sin}# (%x)"
+	Text top: "no", "##just over one and a half periods of a sine wave"
+}
+This picture illustrates the following properties of the sine function:
+
+- #`sin` (%x) is zero for all values of %x that are integer multiples of %\pi.
+- The extrema of #`sin` (%x) are \-m1 and +1.
+- #`sin` (%x) is \-m1 or +1 wherever %x is an odd multiple of %\pi/2.
+- The function is %periodic with period 2%\pi, i.e., #`sin` (%x+2%\pi) = #`sin` (%x).
+- The function is %symmetric around %\pi/2, i.e. #`sin` (%\pi/2\-m%x) = #`sin` (%x).
+- The function is %antisymmetric around 0, i.e. #`sin` (\-m%x) = \-m #`sin` (%x);
+  in other words, if you take the sine curve and rotate it by 180 degrees
+  around the origin (i.e. the point (0, 0)), then you get the same curve again.
+
+################################################################################
+"`sin#`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`sin#` (%`v#`) computes the sine (@`sin`) of each element of the vector %`v#`.
+
+################################################################################
+"`sin##`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`sin##` (%`m#`) computes the sine (@`sin`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`sinh`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+#`sinh` (%`x`) computes the hyperbolic sine of %`x`, i.e. (%e^%x - %e^^-%x^) / 2.
+
+################################################################################
+"`sinh#`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`sinh#` (%`v#`) computes the hyperbolic sine (@`sinh`) of each element of the vector %`v#`.
+
+################################################################################
+"`sinh##`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`sinh##` (%`m#`) computes the hyperbolic sine (@`sinh`) of each cell of the matrix %`m#`.
+
 ################################################################################
 "`sort#`"
 © Paul Boersma 2023-06-10
@@ -431,6 +904,48 @@ A function xx.
 
 Examples of use:
 ================
+
+################################################################################
+"`tan`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+#`tan` (%`x`) computes the tangent of %`x`, i.e. sin (%x) / cos (%x).
+
+################################################################################
+"`tan#`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`tan#` (%`v#`) computes the tangent (@`tan`) of each element of the vector %`v#`.
+
+################################################################################
+"`tan##`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`tan##` (%`m#`) computes the tangent (@`tan`) of each cell of the matrix %`m#`.
+
+################################################################################
+"`tanh`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+#`tanh` (%`x`) computes the hyperbolic tangent of %`x`, i.e. sinh (%x) / cosh (%x).
+
+################################################################################
+"`tanh#`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`tanh#` (%`v#`) computes the hyperbolic tangent (@`tanh`) of each element of the vector %`v#`.
+
+################################################################################
+"`tanh##`"
+© Paul Boersma 2023-06-30
+
+A function that can be used in @@Formulas@.
+`tanh##` (%`m#`) computes the hyperbolic tangent (@`tanh`) of each cell of the matrix %`m#`.
 
 ################################################################################
 "`writeInfoLine`"
