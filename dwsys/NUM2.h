@@ -48,14 +48,6 @@
 */
 char32 * NUMnumber_as_stringWithDotReplacedByUnderscore (double time);
 
-
-inline integer index_STRVEC (constSTRVEC const& strvec, conststring32 cmp) {
-	for (integer i = 1; i <= strvec.size; i ++)
-		if (Melder_equ (strvec [i], cmp))
-			return i;
-	return 0;
-}
-
 regexp *NUMregexp_compile (conststring32 regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
 
