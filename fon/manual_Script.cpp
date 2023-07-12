@@ -889,10 +889,10 @@ DEFINITION (U"the area under the Gaussian distribution between %z and +\\oo: "
 	"away from the mean of a Gaussian distribution")
 TERM (U"##invGaussQ (%q)")
 DEFINITION (U"the value of %z for which $gaussQ (%z) = %q")
-TERM (U"##chiSquareP (%chiSquare, %df)")
-DEFINITION (U"the area under the %\\ci^2 distribution between 0 and %chiSquare, for %df degrees of freedom")
-TERM (U"##chiSquareQ (%chiSquare, %df)")
-DEFINITION (U"the area under the %\\ci^2 distribution between %chiSquare and +\\oo, "
+TERM (U"##chiSquareP (%`chiSquare`, %`df`)")
+DEFINITION (U"the area under the %\\ci^2 distribution between 0 and %chiSquare, for %`df` degrees of freedom")
+TERM (U"##chiSquareQ (%`chiSquare`, %`df`)")
+DEFINITION (U"the area under the %\\ci^2 distribution between %`chiSquare` and +\\oo, "
 	"for %df degrees of freedom: the \"statistical significance %p\" "
 	"of the %\\ci^2 difference between two distributions in %df+1 dimensions")
 TERM (U"##invChiSquareQ (%q, %df)")
