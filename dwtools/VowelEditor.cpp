@@ -210,6 +210,25 @@ static void Trajectory_setColour (Trajectory me, double startTime, double endTim
 
 #pragma mark - class Vowel
 
+static bool isValidVowelMarksTableFile (MelderFile file, autoTable *out_marks) {
+	if (! MelderFile_exists (file))
+		return false;
+	autoDaata data = Data_readFromFile (file);
+	if (! Thing_isa (data.get(), classTable))
+		return false;
+	autoTable marks = data.static_cast_move <structTable> ();
+	/*
+		Require columns Vowel F1 and F2 to be present in the Table
+	*/
+	if (! (Table_getColumnIndexFromColumnLabel (marks.get(), U"Vowel") 
+		&& Table_getColumnIndexFromColumnLabel (marks.get(), U"F1")
+		&& Table_getColumnIndexFromColumnLabel (marks.get(), U"F2")))
+		return false;
+	if (out_marks)
+		*out_marks = marks.move();
+	return true;
+}
+
 static void VowelEditor_create_twoFormantSchwa (VowelEditor me) {
 	try {
 		my trajectory = Trajectory_create (my instancePref_trajectory_minimumDuration());
@@ -510,27 +529,13 @@ static void Table_addColumnIfNotExists_colour (Table me, conststring32 colour) {
 }
 
 static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
-	try {
-		Melder_require (Melder_length (my instancePref_marks_fileName()) > 0,
-			U"No file with vowel marks has been defined.");
-		structMelderFile file { };
-		Melder_pathToFile (my instancePref_marks_fileName(), & file);
-		autoDaata data = Data_readFromFile (& file);
-		Melder_require (Thing_isa (data.get(), classTable),
-			U"\"", MelderFile_name (& file), U"\" is not a Table file");
-
-		autoTable newMarks = data.static_cast_move <structTable> ();
-		/*
-			Require columns Vowel F1 and F2 to be present.
-		*/
-		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"Vowel");
-		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F1");
-		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F2");
-		Table_addColumnIfNotExists_size (newMarks.get(), my instancePref_marks_fontSize());
-		my marks = newMarks.move();
-	} catch (MelderError) {
-		Melder_throw (U"Vowel marks from file cannot be shown.");
-	}
+	autoTable marks;
+	structMelderFile file = {};
+	Melder_pathToFile (my instancePref_marks_fileName(), & file);
+	if (! isValidVowelMarksTableFile (& file, & marks))
+		return;
+	Table_addColumnIfNotExists_size (marks.get(), my instancePref_marks_fontSize());
+	my marks = marks.move();
 }
 
 static void VowelEditor_getMarks (VowelEditor me) {
@@ -908,6 +913,8 @@ static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS) {
 static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS) {
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
+		Melder_require (isValidVowelMarksTableFile (file, nullptr), 
+			U"File '", Melder_fileToPath (file), U"' does not contain valid Table data.");
 		my setInstancePref_marks_fileName (Melder_fileToPath (file));
 		my setInstancePref_marks_speakerType (kVowelEditor_speakerType::UNKNOWN);
 		my setInstancePref_marks_dataSet (kVowelEditor_marksDataSet::OTHER);
@@ -1325,9 +1332,23 @@ void structVowelEditor :: v9_repairPreferences () {
 	}
 	if (! (our instancePref_marks_fontSize() > 0.0))   // NaN-safe test
 		our setInstancePref_marks_fontSize (Melder_atof (our default_marks_fontSize()));
-	if (Melder_equ (our instancePref_marks_fileName(), U"") && our instancePref_marks_dataSet() < kVowelEditor_marksDataSet::MIN) {
-		our setInstancePref_marks_dataSet (our default_marks_dataSet());
-		our setInstancePref_marks_speakerType (our default_marks_speakerType());
+	if (our instancePref_marks_dataSet() == kVowelEditor_marksDataSet::OTHER) {
+		if (Melder_equ (our instancePref_marks_fileName(), U"")) {
+			Melder_warning (U"Although your prederences indicate that you want to read marks from a file, no file was "
+				"specified. Default marks will be used instead.");
+			our setInstancePref_marks_dataSet (our default_marks_dataSet());
+			our setInstancePref_marks_speakerType (our default_marks_speakerType());
+		} else {
+			structMelderFile file = {};
+			Melder_pathToFile (our instancePref_marks_fileName(), & file);
+			if (! isValidVowelMarksTableFile (& file, nullptr)) {
+				Melder_warning (U"The file '", our instancePref_marks_fileName(), U"' which was specified in your preferences "
+					"is not a valid Table file. Default marks will be used instead.");
+				our setInstancePref_marks_dataSet (our default_marks_dataSet());
+				our setInstancePref_marks_speakerType (our default_marks_speakerType());
+				our setInstancePref_marks_fileName (U"");
+			}
+		}
 	}
 	if (! (our instancePref_synthesis_samplingFrequency() > 0.0))   // NaN-safe test
 		our setInstancePref_synthesis_samplingFrequency (Melder_atof (our default_synthesis_samplingFrequency()));
