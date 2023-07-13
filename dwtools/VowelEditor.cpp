@@ -563,6 +563,7 @@ static void VowelEditor_getMarks (VowelEditor me) {
 		VowelEditor_getVowelMarksFromFile (me);
 		return;
 	}
+	
 	/* mutable move */ autoTable newMarks = Table_collapseRows (te.get(),
 		autoSTRVEC ({ U"IPA" }).get(),
 		autoSTRVEC ({}).get(),
