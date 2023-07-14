@@ -1494,59 +1494,66 @@ NORMAL (U"On Linux the file is called #prefs5, "
 	"for instance ##/home/miep/.praat-dir/prefs5#.")
 MAN_END
 
-MAN_BEGIN (U"Scripting", U"ppgb", 20201229)
-INTRO (U"This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.")
-NORMAL (U"A %script is a text that consists of menu commands and action commands. "
-	"If you %run the script (perhaps from a @ScriptEditor), "
-	"the commands are executed as if you clicked on them.")
-NORMAL (U"You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.")
-LIST_ITEM (U"@@Scripting 1. Your first scripts@ (how to create, how to run, how to save)")
-LIST_ITEM (U"@@Scripting 2. How to script settings windows@ (numeric, boolean, multiple-choice, text, file)")
-LIST_ITEM (U"@@Scripting 3. Simple language elements")
-LIST_ITEM1 (U"@@Scripting 3.1. Hello world@ (`writeInfoLine`, `appendInfoLine`)")
-LIST_ITEM1 (U"@@Scripting 3.2. Numeric variables@ (assignments)")
-LIST_ITEM1 (U"@@Scripting 3.3. Numeric queries")
-LIST_ITEM1 (U"@@Scripting 3.4. String variables@ (assignments)")
-LIST_ITEM1 (U"@@Scripting 3.5. String queries")
-LIST_ITEM1 (U"@@Scripting 3.6. “For” loops@ (`for`, `endfor`)")
-LIST_ITEM1 (U"@@Scripting 3.7. Layout@ (white space, comments, continuation lines)")
-LIST_ITEM (U"@@Scripting 4. Object selection@")
-LIST_ITEM1 (U"@@Scripting 4.1. Selecting objects")
-LIST_ITEM1 (U"@@Scripting 4.2. Removing objects")
-LIST_ITEM1 (U"@@Scripting 4.3. Querying objects")
-LIST_ITEM (U"@@Scripting 5. Language elements reference@")
-LIST_ITEM1 (U"@@Scripting 5.1. Variables@ (numeric, string)")
-LIST_ITEM1 (U"@@Scripting 5.2. Expressions@ (numeric, string)")
-LIST_ITEM1 (U"@@Scripting 5.3. Jumps@ (`if`, `then`, `elsif`, `else`, `endif`)")
-LIST_ITEM1 (U"@@Scripting 5.4. Loops@ (`for`/`endfor`, `while`/`endwhile`, `repeat`/`until`)")
-LIST_ITEM1 (U"@@Scripting 5.5. Procedures@ (`@`, `procedure`)")
-LIST_ITEM1 (U"@@Scripting 5.6. Arrays and dictionaries")
-LIST_ITEM1 (U"@@Scripting 5.7. Vectors and matrices")
-LIST_ITEM1 (U"@@Scripting 5.8. Including other scripts")
-LIST_ITEM1 (U"@@Scripting 5.9. Quitting@ (`exitScript`)")
-LIST_ITEM (U"@@Scripting 6. Communication outside the script")
-LIST_ITEM1 (U"@@Scripting 6.1. Arguments to the script@ (`form`/`endform`, `runScript`)")
-LIST_ITEM1 (U"@@Scripting 6.2. Writing to the Info window@ (`writeInfoLine`, `appendInfoLine`, `appendInfo`, `tab$`)")
-LIST_ITEM1 (U"@@Scripting 6.3. Query commands@ (#Get, #Count)")
-LIST_ITEM1 (U"@@Scripting 6.4. Files@ (`fileReadable`, `readFile`, `writeFile`, `deleteFile`, `createFolder`)")
-LIST_ITEM1 (U"@@Scripting 6.5. Calling system commands@ (`runSystem`, `environment$`, `stopwatch`)")
-LIST_ITEM1 (U"@@Scripting 6.6. Controlling the user@ (`pause`, `beginPause`/`endPause`, `chooseReadFile$`)")
-LIST_ITEM1 (U"@@Scripting 6.7. Sending a message to another program@ (`sendsocket`)")
-LIST_ITEM1 (U"@@Scripting 6.8. Messages to the user@ (`exitScript`, `assert`, `nowarn`, `nocheck`)")
-LIST_ITEM1 (U"@@Scripting 6.9. Calling from the command line")
-LIST_ITEM (U"@@Scripting 7. Scripting the editors")
-LIST_ITEM1 (U"@@Scripting 7.1. Scripting an editor from a shell script@ (`editor`/`endeditor`)")
-LIST_ITEM1 (U"@@Scripting 7.2. Scripting an editor from within")
-LIST_ITEM (U"@@Scripting 8. Controlling Praat from another program")
-LIST_ITEM1 (U"@@Scripting 8.1. The sendpraat subroutine")
-LIST_ITEM1 (U"@@Scripting 8.2. The sendpraat program")
-// 9. Hiding your script
-// 9.1 Incorporating your script into Praat
-// 9.2 Incorporating many scripts into Praat (plug-ins)
-LIST_ITEM (U"@@Scripting 9. Turning a script into a stand-alone program")
-LIST_ITEM (U"@@Scripting 10. Old functions")
-NORMAL (U"Also see the @@scripting examples@.")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Scripting"
+© Paul Boersma 2020
+
+This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.
+
+A %script is a text that consists of menu commands and action commands. "
+If you %run the script (perhaps from a @ScriptEditor),
+the commands are executed as if you clicked on them.
+You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.
+
+, @@Scripting 1. Your first scripts@ (how to create, how to run, how to save)
+, @@Scripting 2. How to script settings windows@ (numeric, boolean, multiple-choice, text, file)
+, @@Scripting 3. Simple language elements
+	, @@Scripting 3.1. Hello world@ (`writeInfoLine`, `appendInfoLine`)
+	, @@Scripting 3.2. Numeric variables@ (assignments)
+	, @@Scripting 3.3. Numeric queries
+	, @@Scripting 3.4. String variables@ (assignments)
+	, @@Scripting 3.5. String queries
+	, @@Scripting 3.6. “For” loops@ (`for`, `endfor`)
+	, @@Scripting 3.7. Layout@ (white space, comments, continuation lines)
+, @@Scripting 4. Object selection@
+	, @@Scripting 4.1. Selecting objects
+	, @@Scripting 4.2. Removing objects
+	, @@Scripting 4.3. Querying objects
+, @@Scripting 5. Language elements reference@
+	, @@Scripting 5.1. Variables@ (numeric, string)
+	, @@Scripting 5.2. Expressions@ (numeric, string)
+	, @@Scripting 5.3. Jumps@ (`if`, `then`, `elsif`, `else`, `endif`)
+	, @@Scripting 5.4. Loops@ (`for`/`endfor`, `while`/`endwhile`, `repeat`/`until`)
+	, @@Scripting 5.5. Procedures@ (`@`, `procedure`)
+	, @@Scripting 5.6. Arrays and dictionaries
+	, @@Scripting 5.7. Vectors and matrices
+	, @@Scripting 5.8. Including other scripts
+	, @@Scripting 5.9. Quitting@ (`exitScript`)
+, @@Scripting 6. Communication outside the script
+	, @@Scripting 6.1. Arguments to the script@ (`form`/`endform`, `runScript`)
+	, @@Scripting 6.2. Writing to the Info window@ (`writeInfoLine`, `appendInfoLine`, `appendInfo`, `tab$`)
+	, @@Scripting 6.3. Query commands@ (#Get, #Count)
+	, @@Scripting 6.4. Files@ (`fileReadable`, `readFile`, `writeFile`, `deleteFile`, `createFolder`)
+	, @@Scripting 6.5. Calling system commands@ (`runSystem`, `environment$`, `stopwatch`)
+	, @@Scripting 6.6. Controlling the user@ (`pause`, `beginPause`/`endPause`, `chooseReadFile$`)
+	, @@Scripting 6.7. Sending a message to another program@ (`sendsocket`)
+	, @@Scripting 6.8. Messages to the user@ (`exitScript`, `assert`, `nowarn`, `nocheck`)
+	, @@Scripting 6.9. Calling from the command line
+, @@Scripting 7. Scripting the editors
+	, @@Scripting 7.1. Scripting an editor from a shell script@ (`editor`/`endeditor`)
+	, @@Scripting 7.2. Scripting an editor from within
+, @@Scripting 8. Controlling Praat from another program
+	, @@Scripting 8.1. The sendpraat subroutine
+	, @@Scripting 8.2. The sendpraat program
+, @@Scripting 9. Turning a script into a stand-alone program
+, @@Scripting 10. Old functions
+
+Also see the @@scripting examples@.
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Scripting 1. Your first scripts", U"ppgb", 20230201)
 INTRO (U"This page tells you how to create, run and save a script. "
