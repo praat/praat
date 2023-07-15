@@ -2930,10 +2930,10 @@ MAN_PAGES_END
 
 MAN_BEGIN (U"Scripting 5.6. Arrays and dictionaries", U"ppgb", 20170718)
 NORMAL (U"You can use arrays of numeric and string variables:")
-CODE (U"#for i #from 1 #to 5")
+CODE (U"\\#{for} i \\#{from} 1 \\#{to} 5")
 	CODE1 (U"square [i] = i * i")
 	CODE1 (U"text$ [i] = mid$ (\"hello\", i)")
-CODE (U"#endfor")
+CODE (U"\\#{endfor}")
 NORMAL (U"After this, the variables `square[1]`, `square[2]`, `square[3]`, `square[4]`, `square[5]`, "
 	"`text$[1]`, `text$[2]`, `text$[3]`, `text$[4]`, and `text$[5]` contain "
 	"the values 1, 4, 9, 16, 25, \"h\", \"e\", \"l\", \"l\", and \"o\", respectively:")
