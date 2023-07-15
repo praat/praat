@@ -213,20 +213,25 @@ static void Trajectory_setColour (Trajectory me, double startTime, double endTim
 static bool isValidVowelMarksTableFile (MelderFile file, autoTable *out_marks) {
 	if (! MelderFile_exists (file))
 		return false;
-	autoDaata data = Data_readFromFile (file);
-	if (! Thing_isa (data.get(), classTable))
+	try {
+		autoDaata data = Data_readFromFile (file);
+		if (! Thing_isa (data.get(), classTable))
+			return false;
+		autoTable marks = data.static_cast_move <structTable> ();
+		/*
+			Require columns Vowel F1 and F2 to be present in the Table
+		*/
+		if (! (Table_getColumnIndexFromColumnLabel (marks.get(), U"Vowel") 
+			&& Table_getColumnIndexFromColumnLabel (marks.get(), U"F1")
+			&& Table_getColumnIndexFromColumnLabel (marks.get(), U"F2")))
+			return false;
+		if (out_marks)
+			*out_marks = marks.move();
+		return true;
+	} catch (MelderError) {
+		Melder_clearError ();
 		return false;
-	autoTable marks = data.static_cast_move <structTable> ();
-	/*
-		Require columns Vowel F1 and F2 to be present in the Table
-	*/
-	if (! (Table_getColumnIndexFromColumnLabel (marks.get(), U"Vowel") 
-		&& Table_getColumnIndexFromColumnLabel (marks.get(), U"F1")
-		&& Table_getColumnIndexFromColumnLabel (marks.get(), U"F2")))
-		return false;
-	if (out_marks)
-		*out_marks = marks.move();
-	return true;
+	}
 }
 
 static void VowelEditor_create_twoFormantSchwa (VowelEditor me) {
