@@ -22,80 +22,100 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20230503)
-INTRO (U"Latest changes in Praat.")
-NORMAL (U"##6.3.10# (3 May 2023)")
-LIST_ITEM (U"• Windows: repaired a bug by which key strokes would no longer go to the Demo window after a pause window with no text fields was closed.")
-LIST_ITEM (U"• Repaired a bug in the VowelEditor by which it would crash when starting up if fewer than 4 numbers had been set in the “Extra formant–bandwidth pairs” field.")
-LIST_ITEM (U"• FormantPathEditor improvements.")
-LIST_ITEM (U"• Undocumented alpha support for Praat notebooks.")
-LIST_ITEM (U"• Scripting: vector literals can be indexed.")
-LIST_ITEM (U"• Better interactions between editor scripts and pause windows.")
-NORMAL (U"##6.3.09# (2 March 2023)")
-LIST_ITEM (U"• SpeechSynthesizer can do eSpeak’s grapheme-to-phoneme conversion in 130 languages.")
-LIST_ITEM (U"• FormantPath can now have time stretches that are not aligned to frame boundaries.")
-LIST_ITEM (U"• Stabler handling of edge cases in editor scripting.")
-LIST_ITEM (U"• Corrected an at least 23-year-old bug by which menu titles could not be greyed out on Windows.")
-NORMAL (U"##6.3.08# (10 February 2023)")
-LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $word and $sentence would not work in new-style script forms.")
-NORMAL (U"##6.3.07# (6 February 2023)")
-LIST_ITEM (U"• Corrected an old bug that caused ##Matrix: Draw as squares# to crash on a 1\\xx1 matrix.")
-LIST_ITEM (U"• NoulliGrid window: “NoulliGrid” menu.")
-LIST_ITEM (U"• Scripting: faster vectors in arguments to `runScript()`.")
-NORMAL (U"##6.3.06# (31 January 2023)")
-LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which $optionmenu would not work in new-style script forms.")
-LIST_ITEM (U"• Scripting: `min()`, `max()`, `imin()` and `imax()` for vectors.")
-NORMAL (U"##6.3.05# (27 January 2023)")
-LIST_ITEM (U"• Corrected a bug introduced in 6.3.04 by which some old-style forms could not be read.")
-LIST_ITEM (U"• Repaired an old bug by which `chooseReadString$()` could crash on Linux.")
-NORMAL (U"##6.3.04# (24 January 2023)")
-LIST_ITEM (U"• Playing multiple sounds with #Play now concatenates them without breaks, "
-	"and is interruptable by the Escape key.")
-LIST_ITEM (U"• Renamed the remaining occurrences of #Preferences to #Settings "
-	"(old scripts will continue to work).")
-LIST_ITEM (U"• ##Create Polygon from values...")
-LIST_ITEM (U"• ##Sound: To Sound (derivative)...")
-LIST_ITEM (U"• Scripting: forms now look more like other commands.")
-LIST_ITEM (U"• Scripting: forms can contain `infile`, `outfile`, `folder`, `realvector`, "
-	"`positivevector`, `integervector` and `naturalvector` fields.")
-LIST_ITEM (U"• Scripting: in forms and pause forms, you can now set the number of lines in "
-	"`text`, `infile`, `outfile`, `folder`, and vector fields.")
-NORMAL (U"##6.3.03# (17 December 2022)")
-LIST_ITEM (U"• Sound files: read Kay\\re Nasometer\\tm files (as separate channels).")
-LIST_ITEM (U"• Script window: indent and exdent.")
-LIST_ITEM (U"• Scripting: conserve editor environment in `runScript`.")
-NORMAL (U"##6.3.02# (29 November 2022)")
-LIST_ITEM (U"• Linux: corrected a bug introduced in 6.2.20 by which typing Tab would not start a Sound.")
-LIST_ITEM (U"• Sound window: corrected a bug introduced in 6.2.19 by which drawing selection hairs could not be switched off "
-	"(or on) when painting a spectrogram to the Picture window.")
-NORMAL (U"##6.3.01# (21 November 2022)")
-LIST_ITEM (U"• Fixed a crash introduced in 6.3 when closing an editor window by choosing #Close (or by typing Command-W).")
-ENTRY (U"What used to be new?")
-LIST_ITEM (U"• @@What was new in 6.3?")
-LIST_ITEM (U"• @@What was new in 6.2?")
-LIST_ITEM (U"• @@What was new in 6.1?")
-LIST_ITEM (U"• @@What was new in 6.0?")
-LIST_ITEM (U"• @@What was new in 5.4?")
-LIST_ITEM (U"• @@What was new in 5.3?")
-LIST_ITEM (U"• @@What was new in 5.2?")
-LIST_ITEM (U"• @@What was new in 5.1?")
-LIST_ITEM (U"• @@What was new in 5.0?")
-LIST_ITEM (U"• @@What was new in 4.6?")
-LIST_ITEM (U"• @@What was new in 4.5?")
-LIST_ITEM (U"• @@What was new in 4.4?")
-LIST_ITEM (U"• @@What was new in 4.3?")
-LIST_ITEM (U"• @@What was new in 4.2?")
-LIST_ITEM (U"• @@What was new in 4.1?")
-LIST_ITEM (U"• @@What was new in 4.0?")
-LIST_ITEM (U"• @@What was new in 3.9?")
-LIST_ITEM (U"• @@What was new in 3.8?")
-LIST_ITEM (U"• @@What was new in 3.7?")
-LIST_ITEM (U"• @@What was new in 3.6?")
-LIST_ITEM (U"• @@What was new in 3.5?")
-LIST_ITEM (U"• @@What was new in 3.3?")
-LIST_ITEM (U"• @@What was new in 3.2?")
-LIST_ITEM (U"• @@What was new in 3.1?")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"What's new?"
+© Paul Boersma 2023
+
+Latest changes in Praat.
+
+##6.3.10# (3 May 2023)
+• Windows: repaired a bug by which key strokes would no longer go to the Demo window after a pause window with no text fields was closed.
+• Repaired a bug in the VowelEditor by which it would crash when starting up if fewer than 4 numbers had been set in the “Extra formant–bandwidth pairs” field.
+• FormantPathEditor improvements.
+• Undocumented alpha support for Praat notebooks.
+• Scripting: vector literals can be indexed.
+• Better interactions between editor scripts and pause windows.
+
+##6.3.09# (2 March 2023)
+• SpeechSynthesizer can do eSpeak’s grapheme-to-phoneme conversion in 130 languages.
+• FormantPath can now have time stretches that are not aligned to frame boundaries.
+• Stabler handling of edge cases in editor scripting.
+• Corrected an at least 23-year-old bug by which menu titles could not be greyed out on Windows.
+
+##6.3.08# (10 February 2023)
+• Corrected a bug introduced in 6.3.04 by which `word` and `sentence` would not work in new-style script forms.
+
+##6.3.07# (6 February 2023)
+• Corrected an old bug that caused ##Matrix: Draw as squares# to crash on a 1\xx1 matrix.
+• NoulliGrid window: “NoulliGrid” menu.
+• Scripting: faster vectors in arguments to `runScript()`.
+
+##6.3.06# (31 January 2023)
+• Corrected a bug introduced in 6.3.04 by which `optionmenu` would not work in new-style script forms.
+• Scripting: `min()`, `max()`, `imin()` and `imax()` for vectors.
+
+##6.3.05# (27 January 2023)
+• Corrected a bug introduced in 6.3.04 by which some old-style forms could not be read.
+• Repaired an old bug by which `chooseReadString$()` could crash on Linux.
+
+##6.3.04# (24 January 2023)
+• Playing multiple sounds with #Play now concatenates them without breaks,
+and is interruptable by the Escape key.
+• Renamed the remaining occurrences of #Preferences to #Settings
+	(old scripts will continue to work).
+• ##Create Polygon from values...
+• ##Sound: To Sound (derivative)...
+• Scripting: forms now look more like other commands.
+• Scripting: forms can contain `infile`, `outfile`, `folder`, `realvector`,
+	`positivevector`, `integervector` and `naturalvector` fields.
+• Scripting: in forms and pause forms, you can now set the number of lines in
+	`text`, `infile`, `outfile`, `folder`, and vector fields.
+
+##6.3.03# (17 December 2022)
+• Sound files: read Kay\re Nasometer\tm files (as separate channels).
+• Script window: indent and exdent.
+• Scripting: conserve editor environment in `runScript`.
+
+##6.3.02# (29 November 2022)
+• Linux: corrected a bug introduced in 6.2.20 by which typing Tab would not start a Sound.
+• Sound window: corrected a bug introduced in 6.2.19 by which drawing selection hairs could not be switched off
+	(or on) when painting a spectrogram to the Picture window.
+
+##6.3.01# (21 November 2022)
+• Fixed a crash introduced in 6.3 when closing an editor window by choosing #Close (or by typing Command-W).
+
+What used to be new?
+====================
+• @@What was new in 6.3?
+• @@What was new in 6.2?
+• @@What was new in 6.1?
+• @@What was new in 6.0?
+• @@What was new in 5.4?
+• @@What was new in 5.3?
+• @@What was new in 5.2?
+• @@What was new in 5.1?
+• @@What was new in 5.0?
+• @@What was new in 4.6?
+• @@What was new in 4.5?
+• @@What was new in 4.4?
+• @@What was new in 4.3?
+• @@What was new in 4.2?
+• @@What was new in 4.1?
+• @@What was new in 4.0?
+• @@What was new in 3.9?
+• @@What was new in 3.8?
+• @@What was new in 3.7?
+• @@What was new in 3.6?
+• @@What was new in 3.5?
+• @@What was new in 3.3?
+• @@What was new in 3.2?
+• @@What was new in 3.1?
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"What was new in 6.3?", U"ppgb", 20221115)
 NORMAL (U"##6.3# (15 November 2022)")
