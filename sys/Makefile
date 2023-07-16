@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma 2023-03-26
+# Paul Boersma 2023-07-16
 
 include ../makefile.defs
 
@@ -11,7 +11,7 @@ OBJECTS = Thing.o Data.o Simple.o Collection.o Strings.o \
    Graphics_image.o Graphics_record.o \
    Graphics_utils.o Graphics_grey.o Graphics_altitude.o \
    GraphicsPostscript.o Graphics_surface.o \
-   ManPage.o ManPages.o Script.o Notebook.o machine.o \
+   ManPage.o ManPages.o ManPages_toHtml.o Script.o Notebook.o machine.o \
    GraphicsScreen.o Printer.o \
    Preferences.o site.o \
    Picture.o Ui.o UiFile.o UiPause.o DataGui.o Editor.o DataEditor.o HyperPage.o Manual.o TextEditor.o \

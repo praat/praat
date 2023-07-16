@@ -264,7 +264,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 
 ################################################################################
 "`abs`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@. The absolute value.
 
@@ -276,9 +276,10 @@ Examples
 
 ################################################################################
 "`abs#`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
+
 `abs#` (%`v#`) computes the absolute value (@`abs`) of each element of the vector %`v#`.
 
 Examples
@@ -290,9 +291,10 @@ Examples
 
 ################################################################################
 "`abs##`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
+
 `abs##` (%`m##`) computes the absolute value (@`abs`) of each cell of the matrix %`m##`.
 
 Examples
@@ -649,17 +651,18 @@ e.g. from “\bsct” to “\ct”.
 
 ################################################################################
 "`barkToHertz`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
-#`barkToHertz` (%`x`) converts from an auditory Bark-rate value %`x` to an acoustic frequency in Hz.
+#`barkToHertz` (%`x`) converts from an auditory Bark-rate value %`x` to an acoustic frequency in Hz,
+using the formula 650 sinh (%`x` / 7).
 
 ################################################################################
 "`besselI`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
@@ -670,7 +673,7 @@ Syntax and semantics
 
 ################################################################################
 "`besselK`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
@@ -681,7 +684,7 @@ Syntax and semantics
 
 ################################################################################
 "`beta`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
@@ -692,7 +695,7 @@ Syntax and semantics
 
 ################################################################################
 "`between_by#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
@@ -703,7 +706,7 @@ Syntax and semantics
 
 ################################################################################
 "`between_count#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
@@ -714,7 +717,7 @@ Syntax and semantics
 
 ################################################################################
 "`binomialP`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@. The cumulative binomial distribution.
 
@@ -810,14 +813,16 @@ A function that can be used in @@Formulas@.
 © Paul Boersma 2023-07-01
 
 A function that can be used in @@Formulas@.
-`center` (%`v#`) commputes the center (or centre) of gravity of the vector %`v#`.
+
+`center` (%`v#`) computes the center (or centre) of gravity of the vector %`v#`.
 
 ################################################################################
 "`chiSquareP`"
 © Paul Boersma 2023-07-01
 
 A function that can be used in @@Formulas@.
-`chiSquareP` (%`chiSquare`, %`df`) commputes the area under the %\\ci^2 distribution between 0 and %`chiSquare`,
+
+`chiSquareP` (%`chiSquare`, %`df`) computes the area under the %\ci^2 distribution between 0 and %`chiSquare`,
 for %`df` degrees of freedom.
 
 ################################################################################
@@ -825,9 +830,10 @@ for %`df` degrees of freedom.
 © Paul Boersma 2023-07-01
 
 A function that can be used in @@Formulas@.
-`chiSquareQ` (%`chiSquare`, %`df`) commputes the area under the %\ci^2 curve between %`chiSquare` and +\\oo,
+
+`chiSquareQ` (%`chiSquare`, %`df`) computes the area under the %\ci^2 curve between %`chiSquare` and +\\oo,
 for %`df` degrees of freedom: the “statistical significance %p”
-of the %\\ci^2 difference between two distributions in %`df`+1 dimensions.
+of the %\ci^2 difference between two distributions in %`df`+1 dimensions.
 
 ################################################################################
 "`chooseFolder$`"
@@ -975,7 +981,7 @@ A function that can be used in @Formulas.
 
 ################################################################################
 "`deleteFile`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
 
@@ -1016,7 +1022,9 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`erb` (%`f`) computes the auditory equivalent rectangular bandwidth (in ERBs) for frequency %f (in Hz).
+#`erb` (%`f`) computes the auditory %%equivalent rectangular bandwidth% (ERB) in hertz,
+for a specified acoustic frequency %f (also in hertz),
+using the formula 6.23\.c10^^\-m6^ %f^2 + 0.09339 %f + 28.52.
 
 ################################################################################
 "`erbToHertz`"
@@ -1026,7 +1034,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`erbToHertz` (%`x`) converts from an auditory ERB-rate %x to an acoustic frequency in Hz.
+#`erbToHertz` (%`x`) converts from an auditory ERB-rate %x to an acoustic frequency in Hz,
+using the formula (14680 %d - 312) / (1 - %d) where %d = exp ((%`x` - 43) / 11.17).
 
 ################################################################################
 "`erf`"
@@ -1036,7 +1045,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`erf` (%`x`) computes the “error function”, the integral of the Gaussian.
+#`erf` (%`x`) computes the “error function”, the integral of the Gaussian,
+i.e. 2/\Vr%\pi _0\in^%`x` exp(-%t^2) %dt.
 
 The complement of #`erf` is @`erfc`.
 
@@ -1302,7 +1312,9 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`hertzToBark` (%`x`) converts from an acoustic frequency %x in Hz to an auditory Bark-rate.
+#`hertzToBark` (%`x`) converts from an acoustic frequency %x in Hz to an auditory Bark-rate
+(auditory spectral frequency; place on basilar membrane),
+using the formula 7 ln (%`x`/650 + \Vr(1 + (%`x`/650)^2)).
 
 ################################################################################
 "`hertzToErb`"
@@ -1312,7 +1324,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`hertzToErb` (%`x`) converts from an acoustic frequency %x in Hz to an auditory ERB-rate.
+#`hertzToErb` (%`x`) converts from an acoustic frequency %`x` in Hz to an auditory ERB-rate,
+using the formula 11.17 ln ((%`x` + 312) / (%`x` + 14680)) + 43.
 
 ################################################################################
 "`hertzToMel`"
@@ -1322,7 +1335,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`hertzToMel` (%`x`) converts from an acoustic frequency %x in Hz to an auditory mel value.
+#`hertzToMel` (%`x`) converts from an acoustic frequency %`x` in Hz to an auditory pitch in mel,
+using the formula 550 ln (1 + %`x` / 550).
 
 ################################################################################
 "`hertzToSemitones`"
@@ -1332,7 +1346,9 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`hertzToSemitones` (%`x`) converts from an acoustic frequency %x in Hz to a logarithmic scale %re 100 Hz.
+#`hertzToSemitones` (%`x`) converts from an acoustic frequency %x in Hz
+to a logarithmic musical scale relative to 100 Hz,
+using the formula 12 ln (%`x` / 100) / ln 2.
 
 ################################################################################
 "`imax`"
@@ -1344,6 +1360,12 @@ Syntax and semantics
 ====================
 #`imax` (%`x`, ...) computes the location of the maximum of a sequence of numbers.
 
+Tests
+=====
+{
+	assert imax (7.2, -5, 3) = 1
+}
+
 ################################################################################
 "`imin`"
 © Paul Boersma 2023
@@ -1353,6 +1375,12 @@ A function that can be used in @@Formulas@.
 Syntax and semantics
 ====================
 #`imin` (%`x`, ...) computes the location of the minimum of a sequence of numbers.
+
+Tests
+=====
+{
+	assert imin (7.2, -5, 3) = 2
+}
 
 ################################################################################
 "`index`"
@@ -1449,7 +1477,9 @@ A function that can be used in @@Formulas@.
 
 Synopsis
 ========
-#`invSigmoid` (%`x`) returns the inverse @`sigmoid`.
+#`invSigmoid` (%`x`) is defined for 0 < %`x` < 1
+and computes the inverse @`sigmoid`, i.e. ln (%`x` / (1 − %`x`)).
+The possible results are all real numbers.
 
 ################################################################################
 "`invSigmoid#`"
@@ -1612,6 +1642,12 @@ Syntax and semantics
 ====================
 #`max` (%`x`, ...) computes the maximum of a list of numbers.
 
+Tests
+=====
+{
+	assert max (7.2, -5, 3) = 7.2
+}
+
 ################################################################################
 "`mean`"
 © Paul Boersma 2023
@@ -1630,7 +1666,8 @@ A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
-#`melToHertz` (%`x`) converts from an auditory mel value %`x` to an acoustic frequency in Hz.
+#`melToHertz` (%`x`) converts from an auditory pitch %`x` in mel to an acoustic frequency in Hz,
+using the formula 550 (exp (%`x` / 550) - 1).
 
 ################################################################################
 "`mid$`"
@@ -1651,6 +1688,12 @@ A function that can be used in @@Formulas@.
 Syntax and semantics
 ====================
 #`min` (%`x`, ...) computes the minimum of a list of numbers.
+
+Tests
+=====
+{
+	assert min (7.2, -5, 3) = -5
+}
 
 ################################################################################
 "`mul##`"
@@ -1791,7 +1834,7 @@ independent Bernoulli-distributed (@`randomBernoulli`) zeroes and ones.
 as %`model#`, and fills all elements with independent Bernoulli-distributed zeroes and ones.
 This is shorthand for doing
 
-	\#{randomBernoulli#} (\`{size} (model#), %`p`)
+	\#{randomBernoulli#} (\`{size} (model#), \%{p})
 
 ################################################################################
 "`randomBernoulli##`"
@@ -1808,17 +1851,22 @@ independent Bernoulli-distributed (@`randomBernoulli`) zeroes and ones.
 as %`model#`, and fills all cells with independent Bernoulli-distributed zeroes and ones.
 This is shorthand for doing
 
-	\#{randomBernoulli##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`p`)
+	\#{randomBernoulli##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), \%{p})
 
 ################################################################################
 "`randomGamma`"
-© Paul Boersma 2023
+© David Weenink 2019, Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
 Synopsis
 ========
-#`randomGamma` (%`shape`, %`rate`) generates a \Ga-distributed random deviate.
+#`randomGamma` (%`shape`, %`rate`) generates a random number from a Gamma distribution
+with shape parameter %`shape` and rate parameter %`rate`, which is defined as
+the probability density function %f(%x; %`shape`, %`rate`) =
+(1 / \Ga (%`shape`)) %`rate`^^%`shape`^ %x^^%`shape`−1^ %e^^−%`rate` %`x`^, "
+for %`x` > 0, %`shape` > 0 and %`rate` > 0,
+according to the method by @@Marsaglia & Tsang (2000)@.
 
 ################################################################################
 "`randomGamma#`"
@@ -1998,7 +2046,7 @@ A function that can be used in @@Formulas@.
 Synopsis
 ========
 #`randomUniform` (%`min`, %`max`) generates a uniformly distributed random deviate,
-with true minimum %`min` and true maximum %`max`.
+with true minimum %`min` (included) and true maximum %`max` (excluded).
 
 ################################################################################
 "`randomUniform#`"
@@ -2189,6 +2237,22 @@ Synopsis
 ========
 #`round` (%`x`) rounds %`x` the nearest integer number.
 
+{
+	assert round (1.3) = 1
+	assert round (1.7) = 2
+	assert round (-1.3) = -1
+	assert round (-1.7) = -2
+}
+Halves are rounded up:
+{
+	assert round (-2.5) = -2
+	assert round (-1.5) = -1
+	assert round (-0.5) = 0
+	assert round (0.5) = 1
+	assert round (1.5) = 2
+	assert round (2.5) = 3
+}
+
 ################################################################################
 "`round#`"
 © Paul Boersma 2023-06-30
@@ -2227,8 +2291,9 @@ A function that can be used in @@Formulas@.
 
 Synopsis
 ========
-#`semitonesToHertz` (%`x`) converts a value %`x` along a logarithmic acoustive scale
-in semitones %re 100 Hz) to an acoustic frequency in Hz.
+#`semitonesToHertz` (%`x`) converts a value %`x` along a logarithmic acoustic scale
+in semitones (relative to 100 Hz) to an acoustic frequency in Hz,
+using the formula 100 exp (%`x` ln 2 / 12).
 
 ################################################################################
 "`sigmoid`"
@@ -2238,7 +2303,9 @@ A function that can be used in @@Formulas@.
 
 Synopsis
 ========
-#`sigmoid` (%`x`) computes 1 / (1 + %e^^-%`x`^).
+#`sigmoid` (%`x`) is defined for all real numbers %`x`
+and computes 1 / (1 + %e^^-%`x`^) or 1 − 1 / (1 + %e^%`x`).
+The range are real values between 0 (not included) and 1 (not included).
 
 ################################################################################
 "`sigmoid#`"
@@ -2326,7 +2393,7 @@ A function that can be used in @@Formulas@.
 
 Synopsis
 ========
-#`sinc` (%`x`) commputes the sinus cardinalis: sin (%`x`) / %`x`.
+#`sinc` (%`x`) computes the sinus cardinalis: sin (%`x`) / %`x`.
 
 ################################################################################
 "`sincpi`"
@@ -2336,7 +2403,7 @@ A function that can be used in @@Formulas@.
 
 Synopsis
 ========
-#`sinc` (%`x`) commputes the sinus cardinalis (@`sinc`) of %\pi%x: sin (%\pi%x) / (%\pi%x).
+#`sinc` (%`x`) computes the sinus cardinalis (@`sinc`) of %\pi%x: sin (%\pi%x) / (%\pi%x).
 
 ################################################################################
 "`sinh`"
@@ -2438,6 +2505,14 @@ A function that can be used in @@Formulas@.
 Synopsis
 ========
 #`sqrt` (%`x`) takes the square root of %`x`.
+
+{
+	assert sqrt (0) = 0
+	assert sqrt (1) = 1
+	assert sqrt (4) = 2
+	assert sqrt (9) = 3
+	assert (sqrt (2) - 1.41421356237309504880168872420969807856967187537694807317667973799) < 1e-17
+}
 
 ################################################################################
 "`sqrt#`"

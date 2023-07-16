@@ -1502,7 +1502,7 @@ R"~~~(
 
 This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.
 
-A %script is a text that consists of menu commands and action commands. "
+A %script is a text that consists of menu commands and action commands.
 If you %run the script (perhaps from a @ScriptEditor),
 the commands are executed as if you clicked on them.
 You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.
