@@ -994,7 +994,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (absolute mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"Stress formula's are #dependent of the scale of the Configuration: "
+NORMAL (U"Stress formulas are #dependent of the scale of the Configuration: "
 	"you will get #another stress value if you had pre-multiplied the "
 	"selected Configuration with any number greater than zero.")
 MAN_END
@@ -1004,7 +1004,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (interval mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"We use stress formula's that are independent of the scale of the "
+NORMAL (U"We use stress formulas that are independent of the scale of the "
 	"Configuration: you would have got the same stress value if you had "
 	"pre-multiplied the selected Configuration with any number greater "
 	"than zero.")
@@ -1015,7 +1015,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (i-spline mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"We use stress formula's that are independent of the scale "
+NORMAL (U"We use stress formulas that are independent of the scale "
 	"of the Configuration: you would have got the same stress value if "
 	"you had pre-multiplied the selected Configuration with any number "
 	"greater than zero.")
@@ -1026,7 +1026,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (monotone mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"We use stress formula's that are independent of the scale "
+NORMAL (U"We use stress formulas that are independent of the scale "
 	"of the Configuration: you would have got the same stress value if "
 	"you had pre-multiplied the selected Configuration with any number "
 	"greater than zero.")
@@ -1037,7 +1037,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (ratio mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"We use stress formula's that are independent of the scale "
+NORMAL (U"We use stress formulas that are independent of the scale "
 	"of the Configuration: you would have got the same stress value if "
 	"you had pre-multiplied the selected Configuration with any number "
 	"greater than zero.")
@@ -1095,7 +1095,7 @@ ENTRY (U"Settings")
 LIST_ITEM (U"%%Normalized stress%, %%Kruskal's stress-1%, %%Kruskal's "
 	"stress-2% or %Raw stress%")
 ENTRY (U"Behaviour")
-NORMAL (U"Except for %absolute %mds, we use stress formula's that are "
+NORMAL (U"Except for %absolute %mds, we use stress formulas that are "
 	"independent of the scale of the Configuration (see @stress): you would "
 	"have got the same stress value if you had pre-multiplied the selected "
 	"Configuration with any number greater than zero.")
@@ -1646,7 +1646,7 @@ EQUATION (U"%n = %numberOfInteriorKnots + %order.")
 NORMAL (U"With suitable basis functions, for example, the M-spline family "
 	"%M__%i_(%x|%k, %t), %i=1..%n, we can write any spline %f in the form:")
 EQUATION (U"%f = \\su__%i=1..%n_ %a__%i_%M__%i_,")
-NORMAL (U"where the %M__%i_ are defined by the following recursive formula's:")
+NORMAL (U"where the %M__%i_ are defined by the following recursive formulas:")
 EQUATION (U"%M__%i_(%x|1,%t) = 1 / (%t__%i+1_ \\-- %t__%i_),           %t__%i_ "
 	"\\<_ %x < %t__%i+1_, 0 otherwise")
 EQUATION (U"%M__%i_(%x|%k,%t) = %k [(%x\\--%t__%i_)%M__%i_(%x|%k\\--1,%t) + "
@@ -1675,7 +1675,7 @@ EQUATION (U"%I__%i_(%x|%k,%t) = 1,     %i < %j\\--%k")
 NORMAL (U"The following figure shows the I-splines that were derived from "
 	"the M-splines above.")
 PICTURE (5.0, 5.0, drawIsplineExample)
-NORMAL (U"These spline formula's were taken from @@Ramsay (1988)@ and the "
+NORMAL (U"These spline formulas were taken from @@Ramsay (1988)@ and the "
 	"errors in his I-spline formulas were corrected.")
 MAN_END
 

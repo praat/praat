@@ -491,7 +491,7 @@ NORMAL (U"1. In general the variance fractions for a particular canonical variat
 	"dependent and in the independent set are not the same.")
 NORMAL (U"2. In general, the variance fractions for all canonical variates do not sum to 1. \n(The technical reason is that for canonical correlation analysis in general the eigenvectors are not orthogonal, i.e. they overlap and therefore, necessarily, also the variance fractions overlap.) ")
 ENTRY (U"Algorithm")
-NORMAL (U"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
+NORMAL (U"The formulas can be found on page 170 of @@Cooley & Lohnes (1971)@.")
 NORMAL (U"For example, the fraction of the variance explained by the %i^^th^ canonical "
 	"variable in the dependent set is:")
 EQUATION (U"%%fractionVariance% = ((#y__i_\\'p #R__yy_\\'p #R__yy_ #y__i_) / (#y__i_\\'p #R__yy_ #y__i_)) / %n__%y_,")
@@ -510,7 +510,7 @@ DEFINITION (U"determines whether you select the dependent (y) or the independent
 TERM (U"##Canonical variate range#")
 DEFINITION (U"determines the canonical variates (or canonical variables).")
 ENTRY (U"Algorithm")
-NORMAL (U"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
+NORMAL (U"The formulas can be found on page 170 of @@Cooley & Lohnes (1971)@.")
 NORMAL (U"For example, the redundancy of the dependent set (y) given the independent set (x) for the %i^^%%th%^ canonical "
 	"variate can be expressed as:")
 EQUATION (U"%R__%i_(y) = %%varianceFraction%__%i_(y) * \\ro__%i_^2, ")
@@ -2552,7 +2552,7 @@ INTRO (U"For %m > %n, the %%generalized singular value decomposition% (gsvd) of 
 EQUATION (U"#%A = #%U #%D__1_ [#%0, #%R] #%Q\\'p and #%B = #%V #%D__2_ [#%0, #%R] #%Q\\'p")
 NORMAL (U"The matrices in these factorizations have the following properties:")
 TERM (U"\\bu #%U [%m \\xx %m], #%V [%p \\xx %p] and #%Q [%n \\xx %n]")
-DEFINITION (U" are orthogonal matrices. In the reconstruction formula's above we maximally need "
+DEFINITION (U" are orthogonal matrices. In the reconstruction formulas above we maximally need "
 	"only the first %n columns of matrices #%U and #%V (when %m and/or %p are greater than %n).")
 TERM (U"\\bu #%R [%r \\xx %r],")
 DEFINITION (U"is an upper triangular nonsingular matrix. %r is the rank of [#%A\\'p, #%B\\'p]\\'p "
@@ -4874,7 +4874,7 @@ NORMAL (U"The test statistic is |#R|^^N/2^, the N/2-th power of the determinant"
 	" of the correlation matrix. @@Bartlett (1954)@ developed the following "
 	"approximation to the limiting distribution:")
 EQUATION (U"\\ci^2 = -(%N - %numberOfConstraints - (2%p + 5) /6) ln |#R|")
-NORMAL (U"In the formula's above, %p is the dimension of the correlation "
+NORMAL (U"In the formulas above, %p is the dimension of the correlation "
 	"matrix, %N-%numberOfConstraints is the number of independent "
 	"observations. Normally %numberOfConstraints would "
 	"equal 1, however, if the matrix has been computed in some other way, "
@@ -5376,7 +5376,7 @@ NORMAL (U"The first column of this table shows the vowel codes while the first r
 	"The last row and the last column of the table shows the averages for the factors Type and Vowel, respectively. The actual "
 	"data are unbalanced because we have 300, 660 and 560 replications per column respectively (for each speaker we have two replcations of the data).")
 ENTRY (U"Algorithm")
-NORMAL (U"The formula's to handle unbalanced designs come from @@Khuri (1998)@.")
+NORMAL (U"The formulas to handle unbalanced designs come from @@Khuri (1998)@.")
 MAN_END
 
 MAN_BEGIN (U"Table: Report one-way Kruskal-Wallis...", U"djmw", 20120617)
