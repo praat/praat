@@ -53,12 +53,22 @@ void ManPages_addPagesFromNotebook (ManPages me, conststring8 text);
 integer ManPages_addPagesFromNotebook (ManPages me, MelderReadText multiplePagesReader, integer startOfSelection, integer endOfSelection);
 
 integer ManPages_lookUp (ManPages me, conststring32 title);
+integer ManPages_lookUp_caseSensitive (ManPages me, conststring32 title);
 
 void ManPages_writeOneToHtmlFile (ManPages me, Interpreter optionalInterpreterReference, integer ipage, MelderFile file);
 void ManPages_writeAllToHtmlDir (ManPages me, Interpreter optionalInterpreterReference, conststring32 dirPath);
 
 integer ManPages_uniqueLinksHither (ManPages me, integer ipage);
 constSTRVEC ManPages_getTitles (ManPages me);
+
+#define ManPages_FILENAME_BUFFER_SIZE  256
+
+inline static bool isAllowedFileNameCharacter (char32 c) {
+	return Melder_isWordCharacter (c) || c == U'_' || c == U'-' || c == U'+';
+}
+inline static bool isSingleWordCharacter (char32 c) {
+	return Melder_isWordCharacter (c) || c == U'_';
+}
 
 /* End of file ManPages.h */
 #endif

@@ -264,9 +264,14 @@ A growing list of functions that you can use in @formulas and @scripting...
 
 ################################################################################
 "`abs`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@. The absolute value.
+
+Syntax and semantics
+====================
+#`abs` (%`x`)
+: compute the absolute value of %`x`.
 
 Examples
 ========
@@ -276,10 +281,14 @@ Examples
 
 ################################################################################
 "`abs#`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`abs#` (%`v#`) computes the absolute value (@`abs`) of each element of the vector %`v#`.
+
+Syntax and semantics
+====================
+#`abs#` (%`v#`)
+: compute the absolute value (@`abs`) of each element of the vector %`v#`.
 
 Examples
 ========
@@ -290,10 +299,14 @@ Examples
 
 ################################################################################
 "`abs##`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`abs##` (%`m##`) computes the absolute value (@`abs`) of each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`abs##` (%`m##`)
+: compute the absolute value (@`abs`) of each cell of the matrix %`m##`.
 
 Examples
 ========
@@ -305,7 +318,7 @@ Examples
 
 ################################################################################
 "`appendFile`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
 
@@ -317,7 +330,7 @@ Syntax and semantics
 
 ################################################################################
 "`appendFileLine`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
 
@@ -329,7 +342,7 @@ Syntax and semantics
 
 ################################################################################
 "`appendInfo`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
 
@@ -341,7 +354,7 @@ Syntax and semantics
 
 ################################################################################
 "`appendInfoLine`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
 
@@ -353,9 +366,14 @@ Syntax and semantics
 
 ################################################################################
 "`arccos`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@. The inverse cosine.
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`arccos` (%`x`)
+: compute the inverse cosine of %`x`.
 
 Domain
 ======
@@ -374,10 +392,14 @@ Tests
 
 ################################################################################
 "`arccos#`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arccos#` (%`v#`) computes the inverse cosine (@`arccos`) of each element of the vector %`v#`.
+
+Syntax and semantics
+====================
+#`arccos#` (%`v#`)
+: compute the inverse cosine (@`arccos`) of each element of the vector %`v#`.
 
 Examples
 ========
@@ -387,16 +409,28 @@ Examples
 
 ################################################################################
 "`arccos##`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arccos##` (%`m##`) computes the inverse cosine (@`arccos`) of each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`arccos##` (%`m##`)
+: compute the inverse cosine (@`arccos`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`arccosh`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@. The inverse hyperbolic cosine, i.e.
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`arccosh` (%`x`)
+: compute the inverse hyperbolic cosine of %`x`.
+
+Definition
+==========
 ~	#`arccosh` (%x) = ln (%x + \Vr(%x^2−1))
 
 Tests
@@ -411,23 +445,36 @@ Tests
 
 ################################################################################
 "`arccosh#`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arccosh#` (%`v#`) computes the inverse hyperbolic cosine (@`arccosh`) of each element of the vector %`v#`.
+
+Syntax and semantics
+====================
+#`arccosh#` (%`v#`)
+: compute the inverse hyperbolic cosine (@`arccosh`) of each element of the vector %`v#`.
 
 ################################################################################
 "`arccosh##`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arccosh##` (%`m##`) computes the inverse hyperbolic cosine (@`arccosh`) of each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`arccosh##` (%`m##`)
+: compute the inverse hyperbolic cosine (@`arccosh`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`arcsin`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@. The inverse sine.
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`arcsin` (%`x`)
+: compute the inverse sine of %`x`.
 
 Domain
 ======
@@ -446,28 +493,39 @@ Tests
 
 ################################################################################
 "`arcsin#`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arcsin#` (%`v#`) computes the inverse sine (@`arcsin`) of each element of the vector %`v#`.
 
-Examples
-========
-{
-}
+Syntax and semantics
+====================
+#`arcsin#` (%`v#`)
+: compute the inverse sine (@`arcsin`) of each element of the vector %`v#`.
 
 ################################################################################
 "`arcsin##`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arcsin##` (%`m##`) computes the inverse sine (@`arcsin`) of each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`arcsin##` (%`m##`)
+: compute the inverse sine (@`arcsin`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`arcsinh`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@. The inverse hyperbolic sine:
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`arcsinh` (%`x`)
+: compute the inverse hyperbolic sine of %`x`.
+
+Definition
+==========
 ~	#`arcsinh` (%x) = ln (%x + \Vr(1+%x^2))
 
 Tests
@@ -481,28 +539,36 @@ Tests
 
 ################################################################################
 "`arcsinh#`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arcsinh#` (%`v#`) computes the inverse hyperbolic sine (@`arcsinh`) of each element of the vector %`v#`.
 
-Examples
-========
-{
-}
+Syntax and semantics
+====================
+#`arcsinh#` (%`v#`)
+: compute the inverse hyperbolic sine (@`arcsinh`) of each element of the vector %`v#`.
 
 ################################################################################
 "`arcsinh##`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arcsin##` (%`m##`) computes the inverse hyperbolic sine (@`arcsinh`) of each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`arcsin##` (%`m##`)
+: compute the inverse hyperbolic sine (@`arcsinh`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`arctan`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@. The inverse tangent.
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`arctan` (%`x`)
+: compute the inverse tangent of (%`x`).
 
 Tests
 =====
@@ -512,26 +578,29 @@ Tests
 
 ################################################################################
 "`arctan#`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arctan#` (%`v#`) computes the inverse tangent (@`arctan`) of each element of the vector %`v#`.
 
-Examples
-========
-{
-}
+Syntax and semantics
+====================
+#`arctan#` (%`v#`)
+: compute the inverse tangent (@`arctan`) of each element of the vector %`v#`.
 
 ################################################################################
 "`arctan##`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arctan##` (%`m##`) computes the inverse tangent (@`arctan`) of each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`arctan##` (%`m##`)
+: compute the inverse tangent (@`arctan`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`arctan2`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@. The argument angle.
 
@@ -574,9 +643,14 @@ which are indistinguishable from +%\pi and \-m%\pi, respectively.
 
 ################################################################################
 "`arctanh`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@. The inverse hyperbolic tangent.
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`arctanh` (%`x`)
+: compute the inverse hyperbolic tangent of %`x`.
 
 Tests
 =====
@@ -590,26 +664,27 @@ Tests
 
 ################################################################################
 "`arctanh#`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arctanh#` (%`v#`) computes the inverse hyperbolic tangent (@`arctanh`) of each element of the vector %`v#`.
 
-Examples
-========
-{
-}
+#`arctanh#` (%`v#`)
+: compute the inverse hyperbolic tangent (@`arctanh`) of each element of the vector %`v#`.
 
 ################################################################################
 "`arctanh##`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`arctanh##` (%`m##`) computes the inverse hyperbolic tangent (@`arctanh`) of each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`arctanh##` (%`m##`)
+: compute the inverse hyperbolic tangent (@`arctanh`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`assert`"
-© Paul Boersma 2023-06-29
+© Paul Boersma 2023
 
 A keyword that can be used in @Scripting, to test whether an expected condition holds.
 
@@ -637,91 +712,96 @@ as well as the text of the assertion (i.e. “`a < 10`”).
 
 ################################################################################
 "`backslashTrigraphsToUnicode$`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
 #`backslashTrigraphsToUnicode$` (%`string$`)
-converts from backslash trigraphs to unicode characters
+: convert from backslash trigraphs to unicode characters,
 e.g. from “\bsct” to “\ct”.
 
 ################################################################################
 "`barkToHertz`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
-#`barkToHertz` (%`x`) converts from an auditory Bark-rate value %`x` to an acoustic frequency in Hz.
+#`barkToHertz` (%`x`)
+: convert from an auditory Bark-rate value %`x` to an acoustic frequency in Hz.
+
+Definition
+==========
+#`barkToHertz (%x) = 650 sinh (%x / 7).
 
 ################################################################################
 "`besselI`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
 #`besselI` (%`n`, %`x`)
-: modified Bessel function of the first kind, %I__%`n`_
+: compute the %`n`th modified Bessel function of the first kind (%I_%`n`) of %`x`.
 
 ################################################################################
 "`besselK`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
 #`besselK` (%`n`, %`x`)
-: modified Bessel function of the second kind, %K__%`n`_
+: compute the %`n`th modified Bessel function of the second kind (%K_%`n`) of %`x`.
 
 ################################################################################
 "`beta`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
 #`beta` (%`x`, %`y`)
-: %\be function
+: compute the %\be function.
 
 ################################################################################
 "`between_by#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
 #`between_by#` (%`low`, %`high`, %`step`)
-: symmetrically dispersed numbers between %`low` and %`high`, in steps of %`step`
+: compute symmetrically dispersed numbers between %`low` and %`high`, in steps of %`step`.
 
 ################################################################################
 "`between_count#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
 #`between_count#` (%`low`, %`high`, %`n`)
-: %`n` symmetrically dispersed numbers between %`low` and %`high` (bin centres)
+: compute %`n` symmetrically dispersed numbers between %`low` and %`high` (bin centres).
 
 ################################################################################
 "`binomialP`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@. The cumulative binomial distribution.
 
 Syntax and semantics
 ====================
 #`binomialP` (%`p`, %`k`, %`n`)
-:	the probability that in %`n` trials an event with probability %`p` will occur at most %`k` times.
+: compute the probability that in %`n` trials an event with probability %`p` will occur at most %`k` times.
 
 Related function
 ================
@@ -729,14 +809,14 @@ It is probably more common to use the complement of this function, namely @`bino
 
 ################################################################################
 "`binomialQ`"
-© Paul Boersma 2014-02-23, 2023
+© Paul Boersma 2014, 2023
 
 A function that can be used in @@Formulas@. The complement of the cumulative binomial distribution.
 
 Syntax and semantics
 ====================
 #`binomialQ` (%`p`, %`k`, %`n`)
-:	the probability that in %`n` trials an event with probability %`p` will occur at least %`k` times.
+: compute the probability that in %`n` trials an event with probability %`p` will occur at least %`k` times.
 
 Calculator example
 ==================
@@ -786,79 +866,127 @@ Of course, we cannot conclude either that people %%don’t% have such a preferen
 
 ################################################################################
 "`ceiling`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-#`ceiling` (%`x`) rounds %`x` up to the nearest integer number.
+
+Syntax and semantics
+====================
+#`ceiling` (%`x`)
+: round %`x` up to the nearest integer number.
 
 ################################################################################
 "`ceiling#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`ceiling#` (%`v#`) rounds up (@`ceiling`) each element of the vector %`v#`.
+
+Syntax and semantics
+====================
+#`ceiling#` (%`v#`)
+: round up (@`ceiling`) each element of the vector %`v#`.
 
 ################################################################################
 "`ceiling##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`ceiling##` (%`m##`) rounds up (@`ceiling`) each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`ceiling##` (%`m##`)
+: round up (@`ceiling`) each cell of the matrix %`m##`.
 
 ################################################################################
 "`center`"
-© Paul Boersma 2023-07-01
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`center` (%`v#`) commputes the center (or centre) of gravity of the vector %`v#`.
+
+Syntax and semantics
+====================
+#`center` (%`v#`)
+: compute the center (or centre) of gravity of the vector %`v#`.
 
 ################################################################################
 "`chiSquareP`"
-© Paul Boersma 2023-07-01
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`chiSquareP` (%`chiSquare`, %`df`) commputes the area under the %\\ci^2 distribution between 0 and %`chiSquare`,
+
+Syntax and semantics
+====================
+#`chiSquareP` (%`chiSquare`, %`df`)
+: compute the area under the %\ci^2 distribution between 0 and %`chiSquare`,
 for %`df` degrees of freedom.
 
 ################################################################################
 "`chiSquareQ`"
-© Paul Boersma 2023-07-01
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`chiSquareQ` (%`chiSquare`, %`df`) commputes the area under the %\ci^2 curve between %`chiSquare` and +\\oo,
-for %`df` degrees of freedom: the “statistical significance %p”
-of the %\\ci^2 difference between two distributions in %`df`+1 dimensions.
+
+Syntax and semantics
+====================
+#`chiSquareQ` (%`chiSquare`, %`df`)
+: compute the area under the %\ci^2 curve between %`chiSquare` and +\\oo,
+for %`df` degrees of freedom, i.e. the “statistical significance %p”
+of the %\ci^2 difference between two distributions in %`df`+1 dimensions.
 
 ################################################################################
 "`chooseFolder$`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`chooseFolder$` (%`title$`)
+: pop up a folder selection window.
 
 ################################################################################
 "`chooseReadFile$`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`chooseReadFile$` (%`title$`)
+: pop up a file selection window for opening (or appending to) an existing file.
 
 ################################################################################
 "`chooseWriteFile$`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
 
+Syntax and semantics
+====================
+#`chooseWriteFile$` (%`title$`, %`defaultFilename$`)
+: pop up a file selection window for saving to a new file.
+
 ################################################################################
 "`columnSums#`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
+Syntax and semantics
+====================
+#`columnSums#` (%`m##`)
+: compute the sum of the elements of each row of the matrix %`m##`.
+
 ################################################################################
 "`cos`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-#`cos` (%`x`) computes the cosine of %`x`.
+
+Syntax and semantics
+====================
+#`cos` (%`x`)
+: compute the cosine of %`x`.
 {
 	Axes: -5, 5, -1.1, 1.1
 	Draw inner box
@@ -893,102 +1021,149 @@ A cosine wave is a special case of the more general %%sine wave% that is given b
 
 ################################################################################
 "`cos#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`cos#` (%`v#`) computes the cosine (@`cos`) of each element of the vector %`v#`.
+
+Syntax and semantics
+====================
+#`cos#` (%`v#`)
+: compute the cosine (@`cos`) of each element of the vector %`v#`.
 
 ################################################################################
 "`cos##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`cos##` (%`m##`) computes the cosine (@`cos`) of each cell of the matrix %`m##`.
+
+Syntax and semantics
+====================
+#`cos##` (%`m##`)
+: compute the cosine (@`cos`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`cosh`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-#`cosh` (%`x`) computes the hyperbolic cosine of %`x`, i.e. (%e^%x + %e^^-%x^) / 2.
+
+Syntax and semantics
+====================
+#`cosh` (%`x`)
+: compute the hyperbolic cosine of %`x`, i.e. (%e^%x + %e^^-%x^) / 2.
 
 ################################################################################
 "`cosh#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
-`cosh#` (%`v#`) computes the hyperbolic cosine (@`cosh`) of each element of the vector %`v#`.
+
+Syntax and semantics
+====================
+#`cosh#` (%`v#`)
+: compute the hyperbolic cosine (@`cosh`) of each element of the vector %`v#`.
 
 ################################################################################
 "`cosh##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-`cosh##` (%`m##`) computes the hyperbolic cosine (@`cosh`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`cosh##` (%`m##`)
+: compute the hyperbolic cosine (@`cosh`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`createFolder`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
 
+Syntax and semantics
+====================
+#`createFolder` (%`folderPath$`)
+: create a new folder, or do nothing if the folder already exists.
+
 ################################################################################
 "`date$`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
+Syntax and semantics
+====================
+#`date$` ( )
+: format the current local date and time in a human-readable format.
 {
 	writeInfoLine: date$ ()
 }
 
 ################################################################################
 "`date#`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
+Syntax and semantics
+====================
+#`date#` ( )
+: format the current local date and time as a 6-element vector containing
+the year, the month number, the day, the hours, the minutes, and the seconds.
 {
 	writeInfoLine: date# ()
 }
 
 ################################################################################
 "`date_utc$`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
+Syntax and semantics
+====================
+#`date_utc$` ( )
+: format the current Coordinated Universal Time in a human-readable format.
 {
 	writeInfoLine: date_utc$ ()
 }
 
 ################################################################################
 "`date_utc#`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Formulas.
 
+Syntax and semantics
+====================
+#`date#` ( )
+: format the current Coordinated Universal Time as a 6-element vector containing
+the year, the month number, the day, the hours, the minutes, and the seconds.
 {
 	writeInfoLine: date_utc# ()
 }
 
 ################################################################################
 "`deleteFile`"
-© Paul Boersma 2023-07-02
+© Paul Boersma 2023
 
 A function that can be used in @Scripting.
 
+Syntax and semantics
+====================
+#`deleteFile` (%`filePath$`)
+: delete a file, or do nothing if the file does not exist.
+
 ################################################################################
 "`differenceLimensToPhon`"
-© Paul Boersma 2002-12-15, 2023
+© Paul Boersma 2002, 2023
 
 A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`differenceLimensToPhon` (%`ndli`) converts auditory intensity difference limens
-into a sensation level in phon units.
+#`differenceLimensToPhon` (%`ndli`)
+: convert auditory intensity difference limens into a sensation level in phon units.
 
 Definition
 ==========
@@ -1006,7 +1181,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`endsWith` (%`string$`, %`part$`) determines whether %`string$` ends in %`part$`.
+#`endsWith` (%`string$`, %`part$`)
+: determine whether %`string$` ends in %`part$`.
 
 ################################################################################
 "`erb`"
@@ -1016,7 +1192,13 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`erb` (%`f`) computes the auditory equivalent rectangular bandwidth (in ERBs) for frequency %f (in Hz).
+#`erb` (%`f`)
+: compute the auditory %%equivalent rectangular bandwidth% (ERB) in hertz,
+for a specified acoustic frequency %f (also in hertz).
+
+Definition
+==========
+~	#`erb` (%f) = 6.23\.c10^^\-m6^ %f^2 + 0.09339 %f + 28.52
 
 ################################################################################
 "`erbToHertz`"
@@ -1026,7 +1208,12 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`erbToHertz` (%`x`) converts from an auditory ERB-rate %x to an acoustic frequency in Hz.
+#`erbToHertz` (%`x`)
+: convert from an auditory ERB-rate %`x` to an acoustic frequency in Hz.
+
+Definition
+==========
+~	#`erbToHertz` (%x) (14680 %d - 312) / (1 - %d), where %d = exp ((%x - 43) / 11.17)
 
 ################################################################################
 "`erf`"
@@ -1036,8 +1223,15 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`erf` (%`x`) computes the “error function”, the integral of the Gaussian.
+#`erf` (%`x`)
+: compute the “error function”, the integral of the Gaussian, i.e.
 
+Definition
+==========
+~	#`erf` (%x) = 2/\Vr%\pi _0\in^%x exp(-%t^2) %dt
+
+Related function
+================
 The complement of #`erf` is @`erfc`.
 
 ################################################################################
@@ -1048,12 +1242,17 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`erfc` (%`x`) computes the complement of the error function, i.e. 1 − @`erf` (%`x`)
+#`erfc` (%`x`)
+: compute the complement of the error function
+
+Definition
+==========
+#`erfc` (%x) = 1 − @`erf` (%x)
 
 Why isn’t this function superfluous?
 ====================================
 Because of floating-point rounding errors:
-although one might think that @`erf` ic sufficiebt,
+although one might think that @`erf` ic sufficient,
 #`erfc` is a separate function because @`erf` (%`x`) can be close to 1.
 
 ################################################################################
@@ -1064,8 +1263,11 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`exp` (%`x`) exponentiates %x, i.e. it computes %e^%`x`.
+#`exp` (%`x`)
+: exponentiate %x, i.e. compute %e^%`x`.
 
+Related function
+================
 The inverse of #`exp` is @`ln`.
 
 ################################################################################
@@ -1076,7 +1278,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`exp#` (%`v#`) exponentiates (@`exp`) each element of the vector %`v#`.
+#`exp#` (%`v#`)
+: exponentiate (@`exp`) each element of the vector %`v#`.
 
 ################################################################################
 "`exp##`"
@@ -1086,7 +1289,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`exp##` (%`m##`) exponentiates (@`exp`) each cell of the matrix %`m##`.
+#`exp##` (%`m##`)
+: exponentiate (@`exp`) each cell of the matrix %`m##`.
 
 ################################################################################
 "`extractLine$`"
@@ -1096,7 +1300,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`extractLine$` (%`string$`, %`part$`) returns everything that comes after the first occurrence of %`part$` in %`string$`.
+#`extractLine$` (%`string$`, %`part$`)
+: return everything that comes after the first occurrence of %`part$` in %`string$`.
 
 ################################################################################
 "`extractNumber`"
@@ -1106,7 +1311,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`extractNumber` (%`string$`, %`part$`) returns the first number after the first occurrence of %`part$% in %`string$`.
+#`extractNumber` (%`string$`, %`part$`)
+: return the first number after the first occurrence of %`part$% in %`string$`.
 
 ################################################################################
 "`extractWord$`"
@@ -1116,7 +1322,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`extractWord$` (%`string$`, %`part$`) return the first “word” after the first occurrence of %`part$% in %`string$`.
+#`extractWord$` (%`string$`, %`part$`)
+: return the first “word” after the first occurrence of %`part$% in %`string$`.
 
 ################################################################################
 "`fileNames$#`"
@@ -1126,7 +1333,8 @@ A function that can be used in @@Formulas@, especially in @Scripting.
 
 Syntax and semantics
 ====================
-#`fileNames$#` (%`folderNameOrPattern$`) returns the names (not the whole paths) of the files in a folder
+#`fileNames$#` (%`folderNameOrPattern$`)
+: return the names (not the whole paths) of the files in a folder
 	or that match a pattern with an asterisk.
 
 ################################################################################
@@ -1137,7 +1345,8 @@ A function that can be used in @@Formulas@, especially in @Scripting.
 
 Syntax and semantics
 ====================
-#`fileReadable` (%`filePath$`) returns 1 if the file exists and can be read, or 0 otherwise.
+#`fileReadable` (%`filePath$`)
+: return 1 if the file exists and can be read, or 0 otherwise.
 
 ################################################################################
 "`fisherP`"
@@ -1147,18 +1356,20 @@ A function that can be used in @@Formulas@: the cumulative Fisher’s F-distribu
 
 Syntax and semantics
 ====================
-#`fisherP` (%`f`, %`df1`, %`df2`) computes the area under Fisher’s F-distribution \-m\oo to %f,
+#`fisherP` (%`f`, %`df1`, %`df2`)
+: compute the area under Fisher’s F-distribution \-m\oo to %f,
 for %`df1` numerator degrees of freedom and %`df2` denominator degrees of freedom.
 
 ################################################################################
 "`fisherQ`"
-© David Weenink 2000-05-25, Paul Boersma 2023
+© David Weenink 2000, Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`fisherQ` (%`f`, %`df1`, %`df2`) computes the area under Fisher’s F-distribution from %f to +\oo,
+#`fisherQ` (%`f`, %`df1`, %`df2`)
+: compute the area under Fisher’s F-distribution from %f to +\oo,
 for %`df1` numerator degrees of freedom and %`df2` denominator degrees of freedom.
 
 Related functions
@@ -1177,44 +1388,47 @@ Related functions
 
 ################################################################################
 "`fixed$`"
-© Paul Boersma 2023-07-11
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`fixed$` (%`number`, %`precision`) formats a number as a string,
-with %`precision` digits after the decimal point.
+#`fixed$` (%`number`, %`precision`)
+: format a number as a string, with %`precision` digits after the decimal point.
 
 ################################################################################
 "`floor`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`floor` (%`x`) rounds %`x` down to the nearest integer number.
+Syntax and semantics
+====================
+#`floor` (%`x`)
+: round %`x` down to the nearest integer number.
 
 ################################################################################
 "`floor#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-`floor#` (%`v#`) rounds down (@`floor`) each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`floor#` (%`v#`)
+: round down (@`floor`) each element of the vector %`v#`.
 
 ################################################################################
 "`floor##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-`floor##` (%`m##`) rounds down (@`floor`) each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`floor##` (%`m##`)
+: round down (@`floor`) each cell of the matrix %`m##`.
 
 ################################################################################
 "`folderNames$#`"
@@ -1222,30 +1436,33 @@ Synopsis
 
 A function that can be used in @@Formulas@, especially in @Scripting.
 
-Synopsis
-========
-#`folderNames$#` (%`folderNameOrPattern$`) returns the names (not the whole paths) of the subfolders in a folder
+Syntax and semantics
+====================
+#`folderNames$#` (%`folderNameOrPattern$`)
+: return the names (not the whole paths) of the subfolders in a folder
 	or that match a pattern with an asterisk.
 
 ################################################################################
 "`from_to#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`from_to#` (%`m`, %`n`) returns the integers from %`m` through %`n`.
+Syntax and semantics
+====================
+#`from_to#` (%`m`, %`n`)
+: return the integers from %`m` through %`n`.
 
 ################################################################################
 "`from_to_by#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`from_to_by#` (%`m`, %`n`, %`step`) returns the numbers from %`m` through %`n`, in steps of %`step`.
+Syntax and semantics
+====================
+#`from_to_by#` (%`m`, %`n`, %`step`)
+: return the numbers from %`m` through %`n`, in steps of %`step`.
 
 ################################################################################
 "`from_to_count#`"
@@ -1253,9 +1470,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`from_to_count#` (%`start`, %`end`, %`n`) returns %`n` equally-spaced numbers
+Syntax and semantics
+====================
+#`from_to_count#` (%`start`, %`end`, %`n`)
+: return %`n` equally-spaced numbers
 starting with %`start` and ending with %`end`.
 
 ################################################################################
@@ -1266,7 +1484,8 @@ A function that can be used in @@Formulas@: the cumulative normal (Gauss) distri
 
 Syntax and semantics
 ====================
-#``gaussP` (%`z`) computes the area under the normal distribution
+#``gaussP` (%`z`)
+: compute the area under the normal distribution
 (with mean 0 and standard deviation 1) from \-m\oo to %`z`.
 
 ################################################################################
@@ -1277,7 +1496,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`gaussQ` (%`z`) computes the area under the normal distribution
+#`gaussQ` (%`z`)
+: compute the area under the normal distribution
 (with mean 0 and standard deviation 1) from %z to +\oo.
 
 Related functions
@@ -1302,7 +1522,13 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`hertzToBark` (%`x`) converts from an acoustic frequency %x in Hz to an auditory Bark-rate.
+#`hertzToBark` (%`x`)
+: convert from an acoustic frequency %x in Hz to an auditory Bark-rate
+(auditory spectral frequency; place on basilar membrane).
+
+Definition
+==========
+~	#`hertzToBark` (%x) = 7 ln (%x/650 + \Vr(1 + (%x/650)^2))
 
 ################################################################################
 "`hertzToErb`"
@@ -1312,7 +1538,12 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`hertzToErb` (%`x`) converts from an acoustic frequency %x in Hz to an auditory ERB-rate.
+#`hertzToErb` (%`x`)
+: convert from an acoustic frequency %`x` in Hz to an auditory ERB-rate.
+
+Definition
+==========
+~	#`hertzToErb` (%x) = 11.17 ln ((%x + 312) / (%x + 14680)) + 43
 
 ################################################################################
 "`hertzToMel`"
@@ -1322,7 +1553,12 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`hertzToMel` (%`x`) converts from an acoustic frequency %x in Hz to an auditory mel value.
+#`hertzToMel` (%`x`)
+: convert from an acoustic frequency %`x` in Hz to an auditory pitch in mel.
+
+Definition
+==========
+~	#`hertzToMel` (%x) 550 ln (1 + %x / 550).
 
 ################################################################################
 "`hertzToSemitones`"
@@ -1332,7 +1568,13 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`hertzToSemitones` (%`x`) converts from an acoustic frequency %x in Hz to a logarithmic scale %re 100 Hz.
+#`hertzToSemitones` (%`x`)
+: convert from an acoustic frequency %x in Hz
+to a logarithmic musical scale relative to 100 Hz.
+
+Definition
+==========
+~	#`hertzToSemitones` (%x) = 12 ln (%x / 100) / ln 2
 
 ################################################################################
 "`imax`"
@@ -1342,7 +1584,14 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`imax` (%`x`, ...) computes the location of the maximum of a sequence of numbers.
+#`imax` (%`x`, ...)
+: determine the location of the maximum of a sequence of numbers.
+
+Tests
+=====
+{
+	assert imax (7.2, -5, 3) = 1
+}
 
 ################################################################################
 "`imin`"
@@ -1352,7 +1601,14 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`imin` (%`x`, ...) computes the location of the minimum of a sequence of numbers.
+#`imin` (%`x`, ...)
+: determine the location of the minimum of a sequence of numbers.
+
+Tests
+=====
+{
+	assert imin (7.2, -5, 3) = 2
+}
 
 ################################################################################
 "`index`"
@@ -1362,9 +1618,11 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`index` (%`string$`, %`part$`) returns the first location of the substring %`part$` inside %`string$`, or 0 if not found.
+#`index` (%`string$`, %`part$`)
+: return the first location of the substring %`part$` inside %`string$`, or 0 if not found.
 
-#`index` (%`strings$#`, %`s$`) looks up whether and where %`s$` first occurs in %`strings$`.
+#`index` (%`strings$#`, %`s$`)
+: look up whether and where %`s$` first occurs in %`strings$`.
 
 ################################################################################
 "`index_regex`"
@@ -1374,7 +1632,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`index_regex` (%`string$`, %`regex$`) determines whether and where %`string$` first matches %`regex$`.
+#`index_regex` (%`string$`, %`regex$`)
+: determine whether and where %`string$` first matches %`regex$`.
 
 ################################################################################
 "`inner`"
@@ -1384,7 +1643,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`inner` (%`a#`, %`b#`) computes the inner product of the vectors %`a#` and %`b#`.
+#`inner` (%`a#`, %`b#`)
+: compute the inner product of the vectors %`a#` and %`b#`.
 
 ################################################################################
 "`invBinomialP`"
@@ -1392,9 +1652,10 @@ Syntax and semantics
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invBinomialP` (%`p`, %`k`, %`n`) returns the inverse cumulative binomial distribution,
+Syntax and semantics
+====================
+#`invBinomialP` (%`p`, %`k`, %`n`)
+: return the inverse cumulative binomial distribution,
 i.e. the value %prob for which @`binomialP` (%`prob`, %`k`, %`n`) = %`p`.
 
 ################################################################################
@@ -1403,9 +1664,10 @@ i.e. the value %prob for which @`binomialP` (%`prob`, %`k`, %`n`) = %`p`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invBinomialQ` (%`q`, %`k`, %`n`) returns the inverse cumulative binomial distribution,
+Syntax and semantics
+====================
+#`invBinomialQ` (%`q`, %`k`, %`n`)
+: return the inverse cumulative binomial distribution,
 i.e. the value %prob for which @`binomialQ` (%`prob`, %`k`, %`n`) = %`q`.
 
 ################################################################################
@@ -1414,10 +1676,11 @@ i.e. the value %prob for which @`binomialQ` (%`prob`, %`k`, %`n`) = %`q`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invChiSquareQ` (%`q`, %`df`) returns the inverse %\ci^2 (chi-square) distribution,
-i.e. the value %chisq for which @`chiSquareQ` (%`chisq`, %`df`) = %`chisq`.
+Syntax and semantics
+====================
+#`invChiSquareQ` (%`q`, %`df`)
+: return the inverse %\ci^2 (chi-square) distribution,
+i.e. the value %chisq for which @`chiSquareQ` (%`chisq`, %`df`) = %`q`.
 
 ################################################################################
 "`invFisherQ`"
@@ -1425,9 +1688,10 @@ i.e. the value %chisq for which @`chiSquareQ` (%`chisq`, %`df`) = %`chisq`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invFisherQ` (%`q`, %`df1`, %`df2`) returns the inverse cumulative Fisher F-distribution,
+Syntax and semantics
+====================
+#`invFisherQ` (%`q`, %`df1`, %`df2`)
+: return the inverse cumulative Fisher F-distribution,
 i.e. the value %f for which @`fisherQ` (%`f`, %`df1`, %`df2`) = %`q`.
 
 ################################################################################
@@ -1436,9 +1700,10 @@ i.e. the value %f for which @`fisherQ` (%`f`, %`df1`, %`df2`) = %`q`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invGaussQ` (%`q`) returns the inverse cumulative normal (Gauss) distribution,
+Syntax and semantics
+====================
+#`invGaussQ` (%`q`)
+: return the inverse cumulative normal (Gauss) distribution,
 i.e. the value %z for which @`gaussQ` (%`z`) = %`q`.
 
 ################################################################################
@@ -1447,9 +1712,19 @@ i.e. the value %z for which @`gaussQ` (%`z`) = %`q`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invSigmoid` (%`x`) returns the inverse @`sigmoid`.
+Syntax and semantics
+====================
+#`invSigmoid` (%`x`)
+: compute the inverse @`sigmoid`.
+
+Definition
+==========
+~	#`invSigmoid` (%x) = ln (%x / (1 − %x)).
+
+Domain and range
+================
+#`invSigmoid` (%x) is defined for 0 < %`x` < 1.
+The possible results are all real numbers.
 
 ################################################################################
 "`invSigmoid#`"
@@ -1457,9 +1732,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invSigmoid#` (%`v#`) computes the inverse sigmoid of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`invSigmoid#` (%`v#`)
+: compute the inverse sigmoid (@`invSigmoid`) of each element of the vector %`v#`.
 
 ################################################################################
 "`invSigmoid##`"
@@ -1467,9 +1743,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invSigmoid##` (%`m##`) computes the inverse sigmoid of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`invSigmoid##` (%`m##`)
+: compute the inverse sigmoid (@`invSigmoid`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`invStudentQ`"
@@ -1477,9 +1754,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`invStudentQ` (%`q`, %`df`) returns the inverse cumulative Student %t distribution,
+Syntax and semantics
+====================
+#`invStudentQ` (%`q`, %`df`)
+: return the inverse cumulative Student %t distribution,
 i.e. the value %t for which @`studentQ` (%`t`, %`df`) = %`q`.
 
 ################################################################################
@@ -1488,9 +1766,10 @@ i.e. the value %t for which @`studentQ` (%`t`, %`df`) = %`q`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`left$` (%`string$`, %`n`) returns the %`n` first characters in %`string$`.
+Syntax and semantics
+====================
+#`left$` (%`string$`, %`n`)
+: return the %`n` first characters in %`string$`.
 
 ################################################################################
 "`length`"
@@ -1498,9 +1777,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`length` (%`string$`) returns the number of Unicode characters in %`string$`.
+Syntax and semantics
+====================
+#`length` (%`string$`)
+: return the number of Unicode characters in %`string$`.
 
 ################################################################################
 "`ln`"
@@ -1508,9 +1788,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`ln` (%`x`) returns the natural logarithm of %`x`, i.e. the logarithm with base %e.
+Syntax and semantics
+====================
+#`ln` (%`x`)
+: return the natural logarithm of %`x`, i.e. the logarithm with base %e.
 
 ################################################################################
 "`ln#`"
@@ -1518,9 +1799,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`ln#` (%`v#`) computes the natural logarithm (@`ln`) of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`ln#` (%`v#`)
+: compute the natural logarithm (@`ln`) of each element of the vector %`v#`.
 
 ################################################################################
 "`ln##`"
@@ -1528,9 +1810,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`ln##` (%`m##`) computes the natural logarithm (@`ln`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`ln##` (%`m##`)
+: compute the natural logarithm (@`ln`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`lnGamma`"
@@ -1538,9 +1821,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`lnGamma` (%`x`) returns the natural logarithm of the \Ga function of %`x`.
+Syntax and semantics
+====================
+#`lnGamma` (%`x`)
+: return the natural logarithm of the \Ga function of %`x`.
 
 ################################################################################
 "`log2`"
@@ -1548,9 +1832,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`log2` (%`x`) returns the base-2 logarithm of %`x`.
+Syntax and semantics
+====================
+#`log2` (%`x`)
+: return the base-2 logarithm of %`x`.
 
 ################################################################################
 "`log2#`"
@@ -1558,9 +1843,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`log2#` (%`v#`) computes the base-2 logarithm (@`log2`) of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`log2#` (%`v#`)
+: compute the base-2 logarithm (@`log2`) of each element of the vector %`v#`.
 
 ################################################################################
 "`log2##`"
@@ -1568,9 +1854,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`log2##` (%`m##`) computes the base-2 logarithm (@`log2`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`log2##` (%`m##`)
+: compute the base-2 logarithm (@`log2`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`log10`"
@@ -1578,9 +1865,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`log10` (%`x`) returns the base-10 logarithm of %`x`.
+Syntax and semantics
+====================
+#`log10` (%`x`)
+: return the base-10 logarithm of %`x`.
 
 ################################################################################
 "`log10#`"
@@ -1588,9 +1876,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`log10#` (%`v#`) computes the base-10 logarithm (@`log10`) of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`log10#` (%`v#`)
+: compute the base-10 logarithm (@`log10`) of each element of the vector %`v#`.
 
 ################################################################################
 "`log10##`"
@@ -1598,9 +1887,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`log10##` (%`m##`) computes the base-10 logarithm (@`log10`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`log10##` (%`m##`)
+: compute the base-10 logarithm (@`log10`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`max`"
@@ -1610,7 +1900,14 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`max` (%`x`, ...) computes the maximum of a list of numbers.
+#`max` (%`x`, ...)
+: determine the maximum of a list of numbers.
+
+Tests
+=====
+{
+	assert max (7.2, -5, 3) = 7.2
+}
 
 ################################################################################
 "`mean`"
@@ -1620,7 +1917,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`mean` (%`v#`) computes the average of the elements of the vector `v#`.
+#`mean` (%`v#`)
+: compute the average of the elements of the vector `v#`.
 
 ################################################################################
 "`melToHertz`"
@@ -1630,7 +1928,12 @@ A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
-#`melToHertz` (%`x`) converts from an auditory mel value %`x` to an acoustic frequency in Hz.
+#`melToHertz` (%`x`)
+: convert from an auditory pitch %`x` in mel to an acoustic frequency in Hz.
+
+Definition
+==========
+~	#`melToHertz` (%x) 550 (exp (%x / 550) - 1).
 
 ################################################################################
 "`mid$`"
@@ -1640,7 +1943,8 @@ A function that can be used in @@Formulas@.
 
 Synopsis
 ========
-#`mid$` (%`string$`, %`from`, %`n`) returns the %`n` characters in %`string$` starting at position %`from`.
+#`mid$` (%`string$`, %`from`, %`n`)
+: return the %`n` characters in %`string$` starting at position %`from`.
 
 ################################################################################
 "`min`"
@@ -1650,7 +1954,14 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`min` (%`x`, ...) computes the minimum of a list of numbers.
+#`min` (%`x`, ...)
+: determine the minimum of a list of numbers.
+
+Tests
+=====
+{
+	assert min (7.2, -5, 3) = -5
+}
 
 ################################################################################
 "`mul##`"
@@ -1660,7 +1971,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`mul##` (%`a##`, %`b##`) performs a matrix multiplication of the matrices %`a##` and %`b##`.
+#`mul##` (%`a##`, %`b##`)
+: perform a matrix multiplication of the matrices %`a##` and %`b##`.
 
 ################################################################################
 "`number`"
@@ -1670,7 +1982,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`number` (%`a$`) interprets a string as a number.
+#`number` (%`a$`)
+: interpret a string as a number.
 
 ################################################################################
 "`number#`"
@@ -1680,7 +1993,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`number#` (%`a$#`) interprets strings as numbers.
+#`number#` (%`a$#`)
+: interpret strings as numbers.
 
 ################################################################################
 "`numberOfColumns`"
@@ -1690,7 +2004,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`numberOfColumns` (%`m##`) returns the number of columns of the matrix %`m##`.
+#`numberOfColumns` (%`m##`)
+: return the number of columns of the matrix %`m##`.
 
 ################################################################################
 "`numberOfRows`"
@@ -1700,7 +2015,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`numberOfRows` (%`m##`) returns the number of rows of the matrix %`m##`.
+#`numberOfRows` (%`m##`)
+: return the number of rows of the matrix %`m##`.
 
 ################################################################################
 "`outer##`"
@@ -1710,31 +2026,43 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`outer##` (%`a#`, %`b#`) computes the outer product of the vectors %`a#` and %`b#`, i.e.
+#`outer##` (%`a#`, %`b#`)
+: compute the outer product of the vectors %`a#` and %`b#`.
 
+Definition
+==========
 ~	%result__%i%j_ = %a_%i %b_%j
 
 ################################################################################
 "`percent$`"
-© Paul Boersma 2023-07-11
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`percent$` (%`number`, %`precision`) formats a number as a string,
+#`percent$` (%`number`, %`precision`)
+: format a number as a string,
 with a trailing percent sign and %`precision` digits after the decimal point.
 
 ################################################################################
 "`phonToDifferenceLimens`"
-© Paul Boersma 2002-12-15, 2023
+© Paul Boersma 2002, 2023
 
-A function for converting sensation level in phons into intensity difference limen level,
-the inverse of @`differenceLimensToPhon`.
+A function that can be used in @@Formulas@.
 
-Formula
-=======
-~	phonToDifferenceLimens (%phon) = 30 · ((61/60)^^ %phon^ − 1)
+Syntax and semantics
+====================
+#`phonToDifferenceLimens` (%`x`)
+: convert a sensation level %`x` in phon units into an intensity difference limen level.
+
+Definition
+==========
+~	`phonToDifferenceLimens` (%phon) = 30 · ((61/60)^^ %phon^ − 1)
+
+Related function
+================
+#`phonToDifferenceLimens` is the inverse of @`differenceLimensToPhon`.
 
 Derivation
 ==========
@@ -1771,9 +2099,10 @@ so that the number of difference limens above threshold is
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomBernoulli` (%`p`) generates a Bernoulli-distributed random deviate,
+Syntax and semantics
+====================
+#`randomBernoulli` (%`p`)
+: generate a Bernoulli-distributed random deviate,
 which is 1 with probability %`p`, and 0 with probability 1 \-m %`p`.
 
 ################################################################################
@@ -1782,16 +2111,17 @@ which is 1 with probability %`p`, and 0 with probability 1 \-m %`p`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomBernoulli#` (%`n`, %`p`) generates %`n`
-independent Bernoulli-distributed (@`randomBernoulli`) zeroes and ones.
+Syntax and semantics
+====================
+#`randomBernoulli#` (%`n`, %`p`)
+: generate %`n` independent Bernoulli-distributed (@`randomBernoulli`) zeroes and ones.
 
-#`randomBernoulli#` (%`model#`, %`p`) creates a vector with the same number of elements
-as %`model#`, and fills all elements with independent Bernoulli-distributed zeroes and ones.
+#`randomBernoulli#` (%`model#`, %`p`)
+: create a vector with the same number of elements as %`model#`,
+and fill all elements with independent Bernoulli-distributed zeroes and ones.
 This is shorthand for doing
 
-	\#{randomBernoulli#} (\`{size} (model#), %`p`)
+	\#{randomBernoulli#} (\`{size} (model#), \%{p})
 
 ################################################################################
 "`randomBernoulli##`"
@@ -1799,26 +2129,33 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomBernoulli##` (%`nrow`, %`ncol`, %`p`) generates %`nrow` \xx %`ncol`
-independent Bernoulli-distributed (@`randomBernoulli`) zeroes and ones.
+Syntax and semantics
+====================
+#`randomBernoulli##` (%`nrow`, %`ncol`, %`p`)
+: generate %`nrow` \xx %`ncol` independent Bernoulli-distributed (@`randomBernoulli`) zeroes and ones.
 
-#`randomBernoulli##` (%`model#`, %`p`) creates a matrix with the same number of rows and columns
-as %`model#`, and fills all cells with independent Bernoulli-distributed zeroes and ones.
+#`randomBernoulli##` (%`model#`, %`p`)
+: create a matrix with the same number of rows and columns as %`model#`,
+and fill all cells with independent Bernoulli-distributed zeroes and ones.
 This is shorthand for doing
 
-	\#{randomBernoulli##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`p`)
+	\#{randomBernoulli##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), \%{p})
 
 ################################################################################
 "`randomGamma`"
-© Paul Boersma 2023
+© David Weenink 2019, Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomGamma` (%`shape`, %`rate`) generates a \Ga-distributed random deviate.
+Syntax and semantics
+====================
+#`randomGamma` (%`shape`, %`rate`)
+: generate a random number from a Gamma distribution
+with shape parameter %`shape` and rate parameter %`rate`, which is defined as
+the probability density function %f(%x; %`shape`, %`rate`) =
+(1 / \Ga (%`shape`)) %`rate`^^%`shape`^ %x^^%`shape`−1^ %e^^−%`rate` %`x`^, "
+for %`x` > 0, %`shape` > 0 and %`rate` > 0,
+according to the method by @@Marsaglia & Tsang (2000)@.
 
 ################################################################################
 "`randomGamma#`"
@@ -1826,13 +2163,14 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomGamma#` (%`n`, %`shape`, %`rate`) generates %`n`
-independent \Ga-distributed (@`randomGamma`) numbers.
+Syntax and semantics
+====================
+#`randomGamma#` (%`n`, %`shape`, %`rate`)
+: generate %`n` independent \Ga-distributed (@`randomGamma`) numbers.
 
-#`randomGamma#` (%`model#`, %`shape`, %`rate`) creates a vector with the same number of elements
-as %`model#`, and fills all elements with independent \Ga-distributed numbers.
+#`randomGamma#` (%`model#`, %`shape`, %`rate`)
+: create a vector with the same number of elements as %`model#`,
+and fill all elements with independent \Ga-distributed numbers.
 This is shorthand for doing
 
 	\#{randomGamma#} (\`{size} (model#), %`shape`, %`rate`)
@@ -1843,13 +2181,14 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomGamma##` (%`nrow`, %`ncol`, %`shape`, %`rate`) generates %`nrow` \xx %`ncol`
-independent \Ga-distributed (@`randomGamma`) numbers.
+Syntax and semantics
+====================
+#`randomGamma##` (%`nrow`, %`ncol`, %`shape`, %`rate`)
+: generate %`nrow` \xx %`ncol` independent \Ga-distributed (@`randomGamma`) numbers.
 
-#`randomGamma##` (%`model#`, %`shape`, %`rate`) creates a matrix with the same number of rows and columns
-as %`model#`, and fills all cells with independent \Ga-distributed numbers.
+#`randomGamma##` (%`model#`, %`shape`, %`rate`)
+: create a matrix with the same number of rows and columns as %`model#`,
+and fill all cells with independent \Ga-distributed numbers.
 This is shorthand for doing
 
 	\#{randomGammma##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`shape`, %`rate`)
@@ -1860,9 +2199,10 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomGauss` (%`mu`, %`sigma`) generates a normally distributed random deviate,
+Syntax and semantics
+====================
+#`randomGauss` (%`mu`, %`sigma`)
+: generate a normally distributed random deviate,
 with true population mean %`mu` and true population standard deviation %`sigma`.
 
 ################################################################################
@@ -1871,13 +2211,14 @@ with true population mean %`mu` and true population standard deviation %`sigma`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomGauss#` (%`n`, %`mu`, %`sigma`) generates %`n`
-independent normally distributed (@`randomGauss`) numbers.
+Syntax and semantics
+====================
+#`randomGauss#` (%`n`, %`mu`, %`sigma`)
+: generate %`n` independent normally distributed (@`randomGauss`) numbers.
 
-#`randomGauss#` (%`model#`, %`mu`, %`sigma`) creates a vector with the same number of elements
-as %`model#`, and fills all elements with independent normally distributed numbers.
+#`randomGauss#` (%`model#`, %`mu`, %`sigma`)
+: create a vector with the same number of elements as %`model#`,
+and fill all elements with independent normally distributed numbers.
 This is shorthand for doing
 
 	\#{randomGauss#} (\`{size} (model#), %`mu`, %`sigma`)
@@ -1888,13 +2229,14 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomGauss##` (%`nrow`, %`ncol`, %`mu`, %`sigma`) generates %`nrow` \xx %`ncol`
-independent normally distributed (@`randomGauss`) numbers.
+Syntax and semantics
+====================
+#`randomGauss##` (%`nrow`, %`ncol`, %`mu`, %`sigma`)
+: generate %`nrow` \xx %`ncol` independent normally distributed (@`randomGauss`) numbers.
 
-#`randomGauss##` (%`model#`, %`mu`, %`sigma`) creates a matrix with the same number of rows and columns
-as %`model#`, and fills all cells with independent normally distributed numbers.
+#`randomGauss##` (%`model#`, %`mu`, %`sigma`)
+: create a matrix with the same number of rows and columns as %`model#`,
+and fill all cells with independent normally distributed numbers.
 This is shorthand for doing
 
 	\#{randomGauss##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`mu`, %`sigma`)
@@ -1905,9 +2247,10 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomInteger` (%`min`, %`max`) generates a uniformly distributed integer random deviate,
+Syntax and semantics
+====================
+#`randomInteger` (%`min`, %`max`)
+: generate a uniformly distributed integer random deviate,
 with minimum %`min` and maximum %`max`.
 
 ################################################################################
@@ -1916,13 +2259,14 @@ with minimum %`min` and maximum %`max`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomInteger#` (%`n`, %`min`, %`max`) generates %`n`
-independent uniformly distributed (@`randomInteger`) integer numbers.
+Syntax and semantics
+====================
+#`randomInteger#` (%`n`, %`min`, %`max`)
+: generates %`n` independent uniformly distributed (@`randomInteger`) integer numbers.
 
-#`randomInteger#` (%`model#`, %`min`, %`max`) creates a vector with the same number of elements
-as %`model#`, and fills all elements with independent uniformly distributed integer numbers.
+#`randomInteger#` (%`model#`, %`min`, %`max`):
+: create a vector with the same number of elements as %`model#`,
+and fill all elements with independent uniformly distributed integer numbers.
 This is shorthand for doing
 
 	\#{randomInteger#} (\`{size} (model#), %`min`, %`max`)
@@ -1933,13 +2277,14 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomInteger##` (%`nrow`, %`ncol`, %`min`, %`max`) generates %`nrow` \xx %`ncol`
-independent normally distributed (@`randomInteger`) numbers.
+Syntax and semantics
+====================
+#`randomInteger##` (%`nrow`, %`ncol`, %`min`, %`max`)
+: generate %`nrow` \xx %`ncol` independent normally distributed (@`randomInteger`) numbers.
 
-#`randomInteger##` (%`model#`, %`min`, %`max`) creates a matrix with the same number of rows and columns
-as %`model#`, and fills all cells with independent uniformly distributed integer numbers.
+#`randomInteger##` (%`model#`, %`min`, %`max`)
+: create a matrix with the same number of rows and columns as %`model#`,
+and fill all cells with independent uniformly distributed integer numbers.
 This is shorthand for doing
 
 	\#{randomInteger##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`min`, %`max`)
@@ -1950,10 +2295,10 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomPoisson` (%`mean`) generates a Poisson-distributed random deviate,
-with true mean %`mean`.
+Syntax and semantics
+====================
+#`randomPoisson` (%`mean`)
+: generate a Poisson-distributed random deviate, with true mean %`mean`.
 
 ################################################################################
 "`randomPoisson#`"
@@ -1961,13 +2306,14 @@ with true mean %`mean`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomPoisson#` (%`n`, %`mean`) generates %`n`
-independent Poisson-distributed (@`randomPoisson`) numbers.
+Syntax and semantics
+====================
+#`randomPoisson#` (%`n`, %`mean`)
+: generate %`n` independent Poisson-distributed (@`randomPoisson`) numbers.
 
-#`randomPoisson#` (%`model#`, %`mean`) creates a vector with the same number of elements
-as %`model#`, and fills all elements with independent Poisson-distributed numbers.
+#`randomPoisson#` (%`model#`, %`mean`)
+: create a vector with the same number of elements as %`model#`,
+and fill all elements with independent Poisson-distributed numbers.
 This is shorthand for doing
 
 	\#{randomPoisson#} (\`{size} (model#), %`mean`)
@@ -1978,13 +2324,14 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomPoisson##` (%`nrow`, %`ncol`, %`mean`) generates %`nrow` \xx %`ncol`
-independent Poisson-distributed (@`randomPoisson`) numbers.
+Syntax and semantics
+====================
+#`randomPoisson##` (%`nrow`, %`ncol`, %`mean`)
+: generate %`nrow` \xx %`ncol` independent Poisson-distributed (@`randomPoisson`) numbers.
 
-#`randomPoisson##` (%`model#`, %`mean`) creates a matrix with the same number of rows and columns
-as %`model#`, and fills all cells with independent Poisson-distributed numbers.
+#`randomPoisson##` (%`model#`, %`mean`)
+: create a matrix with the same number of rows and columns as %`model#`,
+and fill all cells with independent Poisson-distributed numbers.
 This is shorthand for doing
 
 	\#{randomPoisson##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`mean`)
@@ -1995,10 +2342,11 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomUniform` (%`min`, %`max`) generates a uniformly distributed random deviate,
-with true minimum %`min` and true maximum %`max`.
+Syntax and semantics
+====================
+#`randomUniform` (%`min`, %`max`)
+: generate a uniformly distributed random deviate,
+with true minimum %`min` (included) and true maximum %`max` (excluded).
 
 ################################################################################
 "`randomUniform#`"
@@ -2006,13 +2354,14 @@ with true minimum %`min` and true maximum %`max`.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomUniform#` (%`n`, %`min`, %`max`) generates %`n`
-independent uniformly distributed (@`randomUniform`) numbers.
+Syntax and semantics
+====================
+#`randomUniform#` (%`n`, %`min`, %`max`)
+: generate %`n` independent uniformly distributed (@`randomUniform`) numbers.
 
-#`randomUniform#` (%`model#`, %`min`, %`max`) creates a vector with the same number of elements
-as %`model#`, and fills all elements with independent uniformly distributed numbers.
+#`randomUniform#` (%`model#`, %`min`, %`max`)
+: create a vector with the same number of elements as %`model#`,
+and fill all elements with independent uniformly distributed numbers.
 This is shorthand for doing
 
 	\#{randomUniform#} (\`{size} (model#), %`min`, %`max`)
@@ -2023,13 +2372,14 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`randomUniform##` (%`nrow`, %`ncol`, %`min`, %`max`) generates %`nrow` \xx %`ncol`
-independent uniformly distributed (@`randomUniform`) numbers.
+Syntax and semantics
+====================
+#`randomUniform##` (%`nrow`, %`ncol`, %`min`, %`max`)
+: generate %`nrow` \xx %`ncol` independent uniformly distributed (@`randomUniform`) numbers.
 
-#`randomUniform##` (%`model#`, %`min`, %`max`) creates a matrix with the same number of rows and columns
-as %`model#`, and fills all cells with independent uniformly distributed numbers.
+#`randomUniform##` (%`model#`, %`min`, %`max`)
+: create a matrix with the same number of rows and columns as %`model#`,
+and fill all cells with independent uniformly distributed numbers.
 This is shorthand for doing
 
 	\#{randomUniform##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`min`, %`max`)
@@ -2040,9 +2390,10 @@ This is shorthand for doing
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`random_initializeSafelyAndUnpredictably` ( ) undoes the effects of @`random_initializeWithSeedUnsafelyButPredictably`.
+Syntax and semantics
+====================
+#`random_initializeSafelyAndUnpredictably` ( )
+: undo the effects of @`random_initializeWithSeedUnsafelyButPredictably`.
 
 ################################################################################
 "`random_initializeWithSeedUnsafelyButPredictably`"
@@ -2050,9 +2401,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`random_initializeWithSeedUnsafelyButPredictably` (%`seed`) produces a reproducible sequence of random numbers.
+Syntax and semantics
+====================
+#`random_initializeWithSeedUnsafelyButPredictably` (%`seed`)
+: produce (from now on) a reproducible sequence of random numbers.
 
 ################################################################################
 "`readFile`"
@@ -2060,9 +2412,10 @@ Synopsis
 
 A function that can be used in @Scripting.
 
-Synopsis
-========
-#`readFile` (%`filePath$`) reads a number from a text file.
+Syntax and semantics
+====================
+#`readFile` (%`filePath$`)
+: read a number from a text file.
 
 ################################################################################
 "`readFile$`"
@@ -2070,9 +2423,10 @@ Synopsis
 
 A function that can be used in @Scripting.
 
-Synopsis
-========
-#`readFile$` (%`filePath$`) reads a whole text file into a string.
+Syntax and semantics
+====================
+#`readFile$` (%`filePath$`)
+: read a whole text file into a string.
 
 ################################################################################
 "`readLinesFromFile$#`"
@@ -2080,9 +2434,10 @@ Synopsis
 
 A function that can be used in @Scripting.
 
-Synopsis
-========
-#`readLinesFromFile$#` (%`filePath$`) reads all lines from a text file.
+Syntax and semantics
+====================
+#`readLinesFromFile$#` (%`filePath$`)
+: read all lines from a text file.
 
 ################################################################################
 "`rectify`"
@@ -2090,9 +2445,10 @@ Synopsis
 
 A function that can be used in @Formulas.
 
-Synopsis
-========
-#`rectify` (%`x`) returns zero if %`x` is negative, and %`x` if %`x` is positive.
+Syntax and semantics
+====================
+#`rectify` (%`x`)
+: return zero if %`x` is negative, and %`x` if %`x` is positive.
 
 ################################################################################
 "`rectify#`"
@@ -2100,9 +2456,10 @@ Synopsis
 
 A function that can be used in @Formulas.
 
-Synopsis
-========
-#`rectify#` (%`v#`) rectifies (@`rectify`) each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`rectify#` (%`v#`)
+: rectifies (@`rectify`) each element of the vector %`v#`.
 
 ################################################################################
 "`rectify##`"
@@ -2110,9 +2467,10 @@ Synopsis
 
 A function that can be used in @Formulas.
 
-Synopsis
-========
-#`rectify##` (%`m##`) rectifies (@`rectify`) each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`rectify##` (%`m##`)
+: rectifies (@`rectify`) each cell of the matrix %`m##`.
 
 ################################################################################
 "`repeat#`"
@@ -2120,9 +2478,10 @@ Synopsis
 
 A function that can be used in @Formulas.
 
-Synopsis
-========
-#`repeat#` (%`v#`, %`n`) repeats the whole sequence of elements of %`v#` %`n` times.
+Syntax and semantics
+====================
+#`repeat#` (%`v#`, %`n`)
+: repeats the whole sequence of elements of %`v#` %`n` times.
 
 ################################################################################
 "`replace$`"
@@ -2130,10 +2489,11 @@ Synopsis
 
 A function that can be used in @Formulas.
 
-Synopsis
-========
-within %`a$`, #`replace$` (%`a$`, %`b$`, %`c$`, %`n`) replaces
-the first %`n` occurrences of %`b$` with %`c$`, or all if %`n` = 0.
+Syntax and semantics
+====================
+#`replace$` (%`a$`, %`b$`, %`c$`, %`n`)
+: within %`a$`, replace the first %`n` occurrences of %`b$`
+with %`c$`, or all if %`n` = 0.
 
 ################################################################################
 "`replace_regex$`"
@@ -2141,10 +2501,10 @@ the first %`n` occurrences of %`b$` with %`c$`, or all if %`n` = 0.
 
 A function that can be used in @Formulas.
 
-Synopsis
-========
-within %`a$`, #`replace_regex$` (%`a$`, %`b$`, %`c$`, %`n`) replaces
-the first %`n` matches of regular expression %`b$`
+Syntax and semantics
+====================
+#`replace_regex$` (%`a$`, %`b$`, %`c$`, %`n`)
+: within %`a$`, replaces the first %`n` matches of regular expression %`b$`
 with the regular expression %`c$`, or all if %`n` = 0.
 
 ################################################################################
@@ -2153,9 +2513,10 @@ with the regular expression %`c$`, or all if %`n` = 0.
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`right$` (%`string$`, %`n`) returns the %`n` last characters in %`string$`.
+Syntax and semantics
+====================
+#`right$` (%`string$`, %`n`)
+: return the %`n` last characters in %`string$`.
 
 ################################################################################
 "`rindex`"
@@ -2165,9 +2526,11 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`rindex` (%`string$`, %`part$`) returns the last location of the substring %`part$` inside %`string$`, or 0 if not found.
+#`rindex` (%`string$`, %`part$`)
+: return the last location of the substring %`part$` inside %`string$`, or 0 if not found.
 
-#`rindex` (%`strings$#`, %`s$`) looks up whether and where %`s$` last occurs in %`strings$`.
+#`rindex` (%`strings$#`, %`s$`)
+: look up whether and where %`s$` last occurs in %`strings$`.
 
 ################################################################################
 "`rindex_regex`"
@@ -2177,7 +2540,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`rindex_regex` (%`string$`, %`regex$`) returns the last match of the regular expression %`regex$` inside %`string$`, or 0 if not found.
+#`rindex_regex` (%`string$`, %`regex$`)
+: return the last match of the regular expression %`regex$` inside %`string$`, or 0 if not found.
 
 ################################################################################
 "`round`"
@@ -2185,9 +2549,26 @@ Syntax and semantics
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`round` (%`x`) rounds %`x` the nearest integer number.
+Syntax and semantics
+====================
+#`round` (%`x`)
+: round %`x` to the nearest integer number.
+
+{
+	assert round (1.3) = 1
+	assert round (1.7) = 2
+	assert round (-1.3) = -1
+	assert round (-1.7) = -2
+}
+Halves are rounded up:
+{
+	assert round (-2.5) = -2
+	assert round (-1.5) = -1
+	assert round (-0.5) = 0
+	assert round (0.5) = 1
+	assert round (1.5) = 2
+	assert round (2.5) = 3
+}
 
 ################################################################################
 "`round#`"
@@ -2195,9 +2576,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`round#` (%`v#`) rounds (@`round`) each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`round#` (%`v#`)
+: round (@`round`) each element of the vector %`v#`.
 
 ################################################################################
 "`round##`"
@@ -2205,9 +2587,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`round##` (%`m##`) rounds (@`round`) each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`round##` (%`m##`)
+: round (@`round`) each cell of the matrix %`m##`.
 
 ################################################################################
 "`rowSums#`"
@@ -2215,9 +2598,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`rowSums#` (%`m##`) computes the sum of the elements of each row of the matrix %`m##`.
+Syntax and semantics
+====================
+#`rowSums#` (%`m##`)
+: compute the sum of the elements of each row of the matrix %`m##`.
 
 ################################################################################
 "`semitonesToHertz`"
@@ -2225,50 +2609,64 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`semitonesToHertz` (%`x`) converts a value %`x` along a logarithmic acoustive scale
-in semitones %re 100 Hz) to an acoustic frequency in Hz.
+Syntax and semantics
+====================
+#`semitonesToHertz` (%`x`)
+: convert a value %`x` along a logarithmic acoustic scale
+in semitones (relative to 100 Hz) to an acoustic frequency in Hz.
+
+Definition
+==========
+~ #`semitonesToHertz` (%x) = 100 exp (%x ln 2 / 12).
 
 ################################################################################
 "`sigmoid`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sigmoid` (%`x`) computes 1 / (1 + %e^^-%`x`^).
+Syntax and semantics
+====================
+#`sigmoid` (%`x`)
+: compute 1 / (1 + %e^^-%`x`^) or 1 − 1 / (1 + %e^%`x`)
+
+Domain and range
+================
+#`sigmoid` (%x) is defined for all real numbers %x.
+The range are real values between 0 (not included) and 1 (not included).
 
 ################################################################################
 "`sigmoid#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sigmoid#` (%`v#`) computes the @`sigmoid` of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`sigmoid#` (%`v#`):
+: compute the @`sigmoid` of each element of the vector %`v#`.
 
 ################################################################################
 "`sigmoid##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sigmoid##` (%`m##`) computes the @`sigmoid` of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`sigmoid##` (%`m##`)
+: compute the @`sigmoid` of each cell of the matrix %`m##`.
 
 ################################################################################
 "`sin`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sin` (%`x`) computes the sine of %`x`.
+Syntax and semantics
+====================
+#`sin` (%`x`)
+: compute the sine of %`x`.
 {
 	Axes: -5, 5, -1.1, 1.1
 	Draw inner box
@@ -2300,73 +2698,92 @@ This picture illustrates the following properties of the sine function:
 
 ################################################################################
 "`sin#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-`sin#` (%`v#`) computes the sine (@`sin`) of each element of the vector %`v#`.
+Syntax and semantics
+====================
+`sin#` (%`v#`)
+: compute the sine (@`sin`) of each element of the vector %`v#`.
 
 ################################################################################
 "`sin##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-`sin##` (%`m##`) computes the sine (@`sin`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+`sin##` (%`m##`)
+: compute the sine (@`sin`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`sinc`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sinc` (%`x`) commputes the sinus cardinalis: sin (%`x`) / %`x`.
+Syntax and semantics
+====================
+#`sinc` (%`x`)
+: compute the sinus cardinalis of %`x`.
+
+Definition
+==========
+~	#`sinc` (%x) = sin (%x) / %x
 
 ################################################################################
 "`sincpi`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sinc` (%`x`) commputes the sinus cardinalis (@`sinc`) of %\pi%x: sin (%\pi%x) / (%\pi%x).
+Syntax and semantics
+====================
+#`sinc` (%`x`)
+: compute the sinus cardinalis (@`sinc`) of %\pi%`x`.
+
+Definition
+==========
+~	#`sincpi` (%x) = sin (%\pi%x) / (%\pi%x)
 
 ################################################################################
 "`sinh`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sinh` (%`x`) computes the hyperbolic sine of %`x`, i.e. (%e^%x - %e^^-%x^) / 2.
+Syntax and semantics
+====================
+#`sinh` (%`x`)
+: compute the hyperbolic sine of %`x`.
+
+Definition
+==========
+~	#`sinh` (%x) = (%e^%x - %e^^-%x^) / 2
 
 ################################################################################
 "`sinh#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sinh#` (%`v#`) computes the hyperbolic sine (@`sinh`) of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`sinh#` (%`v#`)
+: compute the hyperbolic sine (@`sinh`) of each element of the vector %`v#`.
 
 ################################################################################
 "`sinh##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sinh##` (%`m##`) computes the hyperbolic sine (@`sinh`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`sinh##` (%`m##`)
+: compute the hyperbolic sine (@`sinh`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`size`"
@@ -2374,9 +2791,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`size` (%`v#`) returns the number of elements of the vector %`v`.
+Syntax and semantics
+====================
+#`size` (%`v#`)
+: return the number of elements of the vector %`v`.
 
 ################################################################################
 "`shuffle#`"
@@ -2384,9 +2802,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`shuffle#` (%`v#`) returns a vector with the same elements as %`v`, but in randomized order.
+Syntax and semantics
+====================
+#`shuffle#` (%`v#`)
+: return a vector with the same elements as %`v`, but in randomized order.
 
 ################################################################################
 "`softmax#`"
@@ -2394,9 +2813,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`softmax#` (%`v#`) converts the elements of the vector %`v` into their softmax values.
+Syntax and semantics
+====================
+#`softmax#` (%`v#`)
+: convert the elements of the vector %`v` into their softmax values.
 
 ################################################################################
 "`softmaxPerRow##`"
@@ -2404,9 +2824,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`softmaxPerRow##` (%`m##`) converts the elements of each row of the matrix %`m`
+Syntax and semantics
+====================
+#`softmaxPerRow##` (%`m##`)
+: convert the elements of each row of the matrix %`m`
 into their softmax (@`softmax#`) values (within that row).
 
 ################################################################################
@@ -2415,9 +2836,10 @@ into their softmax (@`softmax#`) values (within that row).
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sort#` (%`v#`) returns a vector with the same elements as %`v`, but in sorted order (from low to high).
+Syntax and semantics
+====================
+#`sort#` (%`v#`)
+: return a vector with the same elements as %`v`, but in sorted order (from low to high).
 
 ################################################################################
 "`splitByWhitespace$#`"
@@ -2425,8 +2847,8 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
+Syntax and semantics
+====================
 #`splitByWhitespace$#` (%`string$`) splits a string into inks.
 
 ################################################################################
@@ -2435,9 +2857,18 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`sqrt` (%`x`) takes the square root of %`x`.
+Syntax and semantics
+====================
+#`sqrt` (%`x`)
+: take the square root of %`x`.
+
+{
+	assert sqrt (0) = 0
+	assert sqrt (1) = 1
+	assert sqrt (4) = 2
+	assert sqrt (9) = 3
+	assert (sqrt (2) - 1.41421356237309504880168872420969807856967187537694807317667973799) < 1e-17
+}
 
 ################################################################################
 "`sqrt#`"
@@ -2445,9 +2876,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#sqrt#` (%`v#`) takes the square root (@`sqrt`) of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#sqrt#` (%`v#`)
+: take the square root (@`sqrt`) of each element of the vector %`v#`.
 
 ################################################################################
 "`sqrt##`"
@@ -2455,9 +2887,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#sqrt##` (%`m##`) takes the square root (@`sqrt`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#sqrt##` (%`m##`)
+: take the square root (@`sqrt`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`startsWith`"
@@ -2467,7 +2900,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`startsWith` (%`string$`, %`part$`) determines whether %`string$` starts with %`part$`.
+#`startsWith` (%`string$`, %`part$`)
+: determine whether %`string$` starts with %`part$`.
 
 ################################################################################
 "`stdev`"
@@ -2477,7 +2911,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`stdev` (%`v#`) returns the standard deviation of the elements of the vector %`v#`.
+#`stdev` (%`v#`)
+: compute the standard deviation of the elements of the vector %`v#`.
 
 ################################################################################
 "`stopwatch`"
@@ -2487,7 +2922,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`stopwatch` gives the current value of the timer, which is then immediately reset to zero (note: no parentheses).
+#`stopwatch`
+: give the current value of the timer, which is then immediately reset to zero (note: no parentheses).
 
 ################################################################################
 "`string$`"
@@ -2497,7 +2933,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`string$` (%`number`) formats a number as a string.
+#`string$` (%`number`)
+: format a number as a string.
 
 ################################################################################
 "`studentP`"
@@ -2507,7 +2944,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`studentP` (%`t`, %`df`) computes the area under Student’s %T distribution from \-m\oo to %`t`.
+#`studentP` (%`t`, %`df`)
+: compute the area under Student’s %T distribution from \-m\oo to %`t`.
 
 ################################################################################
 "`studentQ`"
@@ -2517,7 +2955,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`studentQ` (%`t`, %`df`) computes the area under Student’s %T distribution from %`t` to +\oo.
+#`studentQ` (%`t`, %`df`)
+: compute the area under Student’s %T distribution from %`t` to +\oo.
 
 ################################################################################
 "`sum`"
@@ -2527,7 +2966,8 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`sum` (%`v#`) returns the sum of the elements of the vector %`v`.
+#`sum` (%`v#`)
+: compute the sum of the elements of the vector %`v`.
 
 ################################################################################
 "`sumOver`"
@@ -2538,68 +2978,81 @@ A function that can be used in @@Formulas@.
 Syntax and semantics
 ====================
 #`sumOver` (%`loopVariable` `to` %`n`, %`numericExpressionOptionallyUsingLoopVariable`)
-computes \Si_1^%`n` %`numericExpressionOptionallyUsingLoopVariable`.
+: compute \Si_1^%`n` %`numericExpressionOptionallyUsingLoopVariable`.
 
 ################################################################################
 "`tan`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`tan` (%`x`) computes the tangent of %`x`, i.e. sin (%x) / cos (%x).
+Syntax and semantics
+====================
+#`tan` (%`x`)
+: compute the tangent of %`x`.
+
+Definition
+==========
+~	#`tan` (%x) = sin (%x) / cos (%x)
 
 ################################################################################
 "`tan#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`tan#` (%`v#`) computes the tangent (@`tan`) of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`tan#` (%`v#`)
+: compute the tangent (@`tan`) of each element of the vector %`v#`.
 
 ################################################################################
 "`tan##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`tan##` (%`m##`) computes the tangent (@`tan`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`tan##` (%`m##`)
+: compute the tangent (@`tan`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`tanh`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`tanh` (%`x`) computes the hyperbolic tangent of %`x`, i.e. @`sinh` (%x) / @`cosh` (%x).
+Syntax and semantics
+====================
+#`tanh` (%`x`)
+: compute the hyperbolic tangent of %`x`.
+
+Definition
+==========
+~	#`tanh` (%x) = @`sinh` (%x) / @`cosh` (%x)
 
 ################################################################################
 "`tanh#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`tanh#` (%`v#`) computes the hyperbolic tangent (@`tanh`) of each element of the vector %`v#`.
+Syntax and semantics
+====================
+#`tanh#` (%`v#`)
+: compute the hyperbolic tangent (@`tanh`) of each element of the vector %`v#`.
 
 ################################################################################
 "`tanh##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`tanh##` (%`m##`) computes the hyperbolic tangent (@`tanh`) of each cell of the matrix %`m##`.
-#`tanh##` (%`m##`) computes the hyperbolic tangent (@`tanh`) of each cell of the matrix %`m##`.
+Syntax and semantics
+====================
+#`tanh##` (%`m##`)
+: compute the hyperbolic tangent (@`tanh`) of each cell of the matrix %`m##`.
 
 ################################################################################
 "`to#`"
@@ -2607,9 +3060,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`to#` (%`n`) lists the integers 1 through %`n`.
+Syntax and semantics
+====================
+#`to#` (%`n`)
+: lists the integers 1 through %`n`.
 
 ################################################################################
 "`transpose##`"
@@ -2617,9 +3071,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`transpose##` (%`m##`) flips the matrix %`m##` along its diagonal.
+Syntax and semantics
+====================
+#`transpose##` (%`m##`)
+: flip the matrix %`m##` along its diagonal.
 
 ################################################################################
 "`unicode`"
@@ -2627,9 +3082,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`unicode` (%`c$`) returns the Unicode codepoint number that corresponds to the character %`c$`.
+Syntax and semantics
+====================
+#`unicode` (%`c$`)
+: return the Unicode codepoint number that corresponds to the character %`c$`.
 
 ################################################################################
 "`unicode$`"
@@ -2637,9 +3093,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`unicode$` (%`n`) returns the character that corresponds to the Unicode codepoint %`n`.
+Syntax and semantics
+====================
+#`unicode$` (%`n`)
+: return the character that corresponds to the Unicode codepoint %`n`.
 
 ################################################################################
 "`unicodeToBackslashTrigraphs$`"
@@ -2647,9 +3104,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`unicodeToBackslashTrigraphs$` (%`string$`) converts from unicode characters to backslash trigraphs,
+Syntax and semantics
+====================
+#`unicodeToBackslashTrigraphs$` (%`string$`)
+: convert from unicode characters to backslash trigraphs,
 e.g. from “\ct” to “\bsct”.
 
 ################################################################################
@@ -2657,7 +3115,7 @@ e.g. from “\ct” to “\bsct”.
 © Paul Boersma 2023
 
 A function that writes its arguments (texts, numbers, vectors and so on) to a new file.
-If the file alreasdy existed, anything that was previously present in the file is overwritten.
+If the file already existed, anything that was previously present in the file is overwritten.
 
 Examples of use:
 ================
@@ -2699,9 +3157,10 @@ Examples of use:
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`zero#` (%`n`) returns a vector with %`n` elements that are all 0.0.
+Syntax and semantics
+====================
+#`zero#` (%`n`)
+: return a vector with %`n` elements that are all 0.0.
 
 ################################################################################
 "`zero##`"
@@ -2709,9 +3168,10 @@ Synopsis
 
 A function that can be used in @@Formulas@.
 
-Synopsis
-========
-#`zero##` (%`nrow`, %`ncol`) returns a matrix with %`nrow` \xx %`ncol` cells that are all 0.0.
+Syntax and semantics
+====================
+#`zero##` (%`nrow`, %`ncol`)
+: return a matrix with %`nrow` \xx %`ncol` cells that are all 0.0.
 
 ################################################################################
 )~~~"
