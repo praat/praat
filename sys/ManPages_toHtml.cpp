@@ -707,7 +707,7 @@ static void writePageAsHtml (ManPages me, Interpreter optionalInterpreterReferen
 					alreadyShown = true;
 			if (! alreadyShown) {
 				ManPage linkingPage = my pages.at [page -> linksHither [ilink]];
-				mutablestring32 title = linkingPage -> title.get();
+				conststring32 title = linkingPage -> title.get();
 				const char32 *p;
 				MelderString_append (buffer, U"<li><a href=\"");
 				for (p = & title [0]; *p; p ++) {
@@ -720,11 +720,12 @@ static void writePageAsHtml (ManPages me, Interpreter optionalInterpreterReferen
 				}
 				if (title [0] == U'\0')
 					MelderString_append (buffer, U"_");
-				if (title [0] == U'`' && 0) {
-					const integer length = Melder_length (title);
-					if (title [length - 1] == U'`')
-						title [length - 1] = U'\0';
-					MelderString_append (buffer, U".html\"><code><font size=+1>", & title [1], U"</font></code></a>\n");
+				if (title [0] == U'`') {
+					static MelderString visibleTitle;
+					MelderString_copy (& visibleTitle, title);
+					if (visibleTitle.string [visibleTitle.length - 1] == U'`')
+						visibleTitle.string [visibleTitle.length - 1] = U'\0';
+					MelderString_append (buffer, U".html\"><code><font size=+1>", & visibleTitle.string [1], U"</font></code></a>\n");
 				} else
 					MelderString_append (buffer, U".html\">", title, U"</a>\n");
 			}
