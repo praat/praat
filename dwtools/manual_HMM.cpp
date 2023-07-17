@@ -42,13 +42,13 @@ MAN_END
 MAN_BEGIN (U"GaussianMixture", U"djmw", 20101026)
 INTRO (U"A Gaussian mixture is a probability density function (p.d.f.). It is a combination of several Gaussian densities.")
 NORMAL (U"The GaussianMixture's p.d.f. is defined as the weighted sum of %K multivariate Gaussian p.d.f's:")
-EQUATION (U"pdf(x) = \\Si__%%i%=1_^^%K^ p__%i_ %N(%x;\\mu__%i_,\\Si__%i_),")
-NORMAL (U"where each %N(%x;\\mu__%i_,\\Si__%i_) is a multivariate p.d.f. with mean \\mu__%i_ and covariance matrix \\Si__%i_. The coefficients %p__%i_ sum to 1.")
-NORMAL (U"For an introduction to Gaussian mixtures see for example  @@Bishop (2006)@.")
+EQUATION (U"pdf(x) = \\Si__%%i%=1_^^%K^ %p_%i %N(%x;\\mu_%i,\\Si_%i)")
+NORMAL (U"where each %N(%x;\\mu_%i,\\Si_%i) is a multivariate p.d.f. with mean %\\mu__%i_ and covariance matrix %\\Si__%i_. The coefficients %p_%i sum to 1.")
+NORMAL (U"For an introduction to Gaussian mixtures see for example @@Bishop (2006)@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture: Draw concentration ellipses...", U"djmw", 20101101)
-INTRO (U"Draws the concentration ellipse for each component in the @@GaussianMixture@. ")
+INTRO (U"Draws the concentration ellipse for each component in the @@GaussianMixture@.")
 NORMAL (U"The principal component plane will be determined from @@GaussianMixture: To PCA@.")
 NORMAL (U"You might also use another @PCA and to combine it with a GaussianMixture for drawing (@@GaussianMixture & PCA: Draw concentration ellipses...@).")
 ENTRY (U"Settings")
@@ -78,20 +78,20 @@ MAN_END
 MAN_BEGIN (U"GaussianMixture: Split component...", U"djmw", 20101122)
 INTRO (U"Splits one component of the selected  @GaussianMixture into two components.")
 NORMAL (U"The selected component is split on the basis of a @PCA analysis of its covariance matrix. The new means are situated "
-	"around the old components mean, 1\\si apart in the first principal components direction, and the new covariances are "
+	"around the old components mean, 1%\\si apart in the first principal components direction, and the new covariances are "
 	"constructed with information from the old covariance matrix. ")
 NORMAL (U"The details of the algorith are described in @@Zhang et al. (2003)@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture: To PCA", U"djmw", 20101030)
-INTRO (U"Creates a  @PCA from the selected  @GaussianMixture.")
+INTRO (U"Creates a @PCA from the selected  @GaussianMixture.")
 NORMAL (U"The PCA is calculated from the @@GaussianMixture: To Covariance (total)|total covariance matrix@ of the GaussianMixture.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & PCA: To Matrix (density)...", U"djmw", 20101101)
 INTRO (U"Represent the @@GaussianMixture@ p.d.f. on the plane spanned by @@PCA@. This makes it possible to draw "
 	"the p.d.f. as grey values with one of the special @@Matrix@ image drawing methods.")
-NORMAL (U"For each cell in the matrix of dimension  %%numberOfRows% \\xx %%numberOfColumns%, the p.d.f. will be evaluated.")
+NORMAL (U"For each cell in the matrix of dimension %%numberOfRows% \\xx %%numberOfColumns%, the p.d.f. will be evaluated.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture: To Covariance (between)", U"djmw", 20101030)
@@ -127,7 +127,7 @@ TERM (U"##Number of components")
 DEFINITION (U"defines the number of Gaussians in the mixture.")
 TERM (U"##Tolerance of minimizer")
 DEFINITION (U"defines when to stop optimizing. If the relative difference between the likelihoods at two successive "
-	"iteration steps differs by less then the tolerance we stop, i.e. when |(%L(%i-1)-%L(%i))/%L(%i)| < %%tolerance%. ")
+	"iteration steps differs by less then the tolerance we stop, i.e. when |(%L(%i-1)-%L(%i))/%L(%i)| < %tolerance.")
 TERM (U"##Maximum number of iterations")
 DEFINITION (U"defines another stopping criterion. The EM iteration will stop when either the tolerance "
 	"is reached or the maximum number of iterations. If zero is chosen, no iteration will be performed and the "
@@ -155,7 +155,7 @@ NORMAL (U"The EM iteration has to start with a sensible initial guess for all th
 	"where the scaling factor depends on the number of components and the quotient of the between and within variance. "
 	"Initially all mixing probabilities will be chosen equal.")
 NORMAL (U"How to proceed from the initial guess with the EM to find the optimal values for all the parameters "
-	"in the Gaussian mixture is explained in great detail by  @@Bishop (2006)@.")
+	"in the Gaussian mixture is explained in great detail by @@Bishop (2006)@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & TableOfReal: Get likelihood value...", U"djmw", 20190711)

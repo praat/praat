@@ -1964,6 +1964,17 @@ Tests
 }
 
 ################################################################################
+"`minusObject`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`minusObject` (...)
+: deselect the objects given by IDs and/or names.
+
+################################################################################
 "`mul##`"
 © Paul Boersma 2023
 
@@ -2092,6 +2103,18 @@ The sensation level in phon is defined as
 so that the number of difference limens above threshold is
 ~	(1 / (0.463 · 0.072)) (10^^(0.072 / 10) (10 log (%I / %I_0))^ − 1)
 			= 30 · (1.0167^^SL^ − 1)
+
+################################################################################
+"`plusObject`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`plusObject` (...)
+: select the objects given by IDs and/or names,
+without deselecting any objects that are currently selected.
 
 ################################################################################
 "`randomBernoulli`"
@@ -2473,6 +2496,18 @@ Syntax and semantics
 : rectifies (@`rectify`) each cell of the matrix %`m##`.
 
 ################################################################################
+"`removeObject`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`removeObject` (...)
+: remove the objects given by IDs and/or names,
+without (further) changing the selection.
+
+################################################################################
 "`repeat#`"
 © Paul Boersma 2023
 
@@ -2602,6 +2637,18 @@ Syntax and semantics
 ====================
 #`rowSums#` (%`m##`)
 : compute the sum of the elements of each row of the matrix %`m##`.
+
+################################################################################
+"`selectObject`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`selectObject` (...)
+: select the objects given by IDs and/or names,
+after deselecting any objects that are currently selected.
 
 ################################################################################
 "`semitonesToHertz`"

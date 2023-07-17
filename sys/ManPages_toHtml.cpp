@@ -106,11 +106,11 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 	integer numberOfPictures = 0;
 	bool inList = false, inItalic = false, inBold = false;
 	bool inSub = false, inCode = false, inSuper = false, ul = false, inSmall = false;
-	bool wordItalic = false, wordBold = false, wordCode = false, letterSuper = false;
+	bool wordItalic = false, wordBold = false, wordCode = false, letterSub = false, letterSuper = false;
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
-		const bool verbatimAware = page -> verbatimAware;
+		const bool verbatimAware = true;   //page -> verbatimAware;
 		const structManPage_Paragraph *paragraph = & page -> paragraphs [ipar];
-		const bool paragraphIsVerbatim = ( verbatimAware && paragraph -> couldVerbatim () );
+		const bool paragraphIsVerbatim = ( paragraph -> couldVerbatim () );
 		const char32 *p = & paragraph -> text [0];
 		const bool isListItem = paragraph -> type == kManPage_type::LIST_ITEM ||
 			(paragraph -> type >= kManPage_type::LIST_ITEM1 && paragraph -> type <= kManPage_type::LIST_ITEM3);
@@ -469,25 +469,25 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				}
 			} else if (*p == U'_') {
 				if (inSub) {
-					/*if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
-					if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }*/
+					if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+					if (wordBold)   { MelderString_append (buffer, U"</b>"); wordBold   = false; }
 					MelderString_append (buffer, U"</sub>");
 					inSub = false;
 					p ++;
 				} else if (p [1] == U'_') {
-					if (wordItalic) {
-						MelderString_append (buffer, U"</i>");
-						wordItalic = false;
-					}
-					if (wordBold) {
-						MelderString_append (buffer, U"</b>");
-						wordBold = false;
-					}
+					if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+					if (wordBold)   { MelderString_append (buffer, U"</b>"); wordBold   = false; }
 					MelderString_append (buffer, U"<sub>");
 					inSub = true;
 					p += 2;
 				} else {
-					MelderString_append (buffer, U"_");
+					if (verbatimAware) {
+						if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+						if (wordBold)   { MelderString_append (buffer, U"</b>"); wordBold   = false; }
+						MelderString_append (buffer, U"<sub>");
+						letterSub = true;
+					} else
+						MelderString_append (buffer, U"_");
 					p ++;
 				}
 			} else if (*p == U'#') {
@@ -618,6 +618,18 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 						MelderString_append (buffer, U"&#", (int) *p, U";");
 					p ++;
 				}
+				if (letterSub) {
+					if (wordItalic) {
+						MelderString_append (buffer, U"</i>");
+						wordItalic = false;
+					}
+					if (wordBold) {
+						MelderString_append (buffer, U"</b>");
+						wordBold = false;
+					}
+					MelderString_append (buffer, U"</sub>");
+					letterSub = false;
+				}
 				if (letterSuper) {
 					if (wordItalic) {
 						MelderString_append (buffer, U"</i>");
@@ -644,9 +656,9 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 			MelderString_append (buffer, U"</font></code>");
 			inCode = wordCode = false;
 		}
-		if (inSub) {
+		if (inSub || letterSub) {
 			MelderString_append (buffer, U"</sub>");
-			inSub = false;
+			inSub = letterSub = false;
 		}
 		if (inSuper || letterSuper) {
 			MelderString_append (buffer, U"</sup>");
