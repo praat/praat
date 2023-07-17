@@ -30,6 +30,16 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.3.11# (17 July 2023)
+• VowelEditor: repaired a bug by which the VowelEditor wouldn’t start up if an incorrect marks file had previously been specified.
+• Mac: use a Cherokee font that distinguishes "ka" and "wo" well.
+• OTMulti: vertical constraint names support newlines and disharmonies.
+• Text windows are one tab plus 84.5 characters wide.
+• Table: ##Get all values in column...#.
+• Undocumented alpha support for Praat notebooks.
+• Formulas: @`correlation` (%`vec1#`, %`vec2#`), @`vertical$` (for formatting string arrays).
+• Scripting: @`readFile#`, @`readFile##`.
+
 ##6.3.10# (3 May 2023)
 • Windows: repaired a bug by which key strokes would no longer go to the Demo window after a pause window with no text fields was closed.
 • Repaired a bug in the VowelEditor by which it would crash when starting up if fewer than 4 numbers had been set in the “Extra formant–bandwidth pairs” field.
