@@ -41,9 +41,10 @@ MAN_END
 
 MAN_BEGIN (U"GaussianMixture", U"djmw", 20230718)
 INTRO (U"A Gaussian mixture is a probability density function (p.d.f.). It is a combination of several Gaussian densities.")
-NORMAL (U"The GaussianMixture's p.d.f. is defined as the weighted sum of %K multivariate Gaussian p.d.f's:")
-EQUATION (U"pdf(##%x#) = \\Si__%i= 1_^^%K^ %p_%i %N(##%x#; ##\\mu#_%i_, ##\\Si#__%i_)")
-NORMAL (U"where each %N(##%x#; ##\\mu#__%i_, ##\\Si#__%i_) is a multivariate p.d.f. with mean ##%\\mu#__%i_ and covariance matrix ##%\\Si#__%i_. The coefficients %p_%i sum to 1.")
+NORMAL (U"The GaussianMixture’s p.d.f. is defined as the weighted sum of %K multivariate Gaussian p.d.f.s:")
+EQUATION (U"pdf(#x) = \\Si__%i=1_^%K %p_%i %N(#x; #\\mu_%i, #\\Si_%i)")
+NORMAL (U"where each %N(#x; #\\mu_%i, #\\Si_%i) is a multivariate p.d.f. with mean vector #\\mu_%i and covariance matrix #\\Si_%i. "
+	"The coefficients %p_%i sum to 1.")
 NORMAL (U"For an introduction to Gaussian mixtures see for example @@Bishop (2006)@.")
 MAN_END
 
