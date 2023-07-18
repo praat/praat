@@ -250,10 +250,10 @@ NORMAL (U"If you select the Sound, the Pitch, and the PointProcess together (all
 	"will be written to the Info window. This is identical to the voice report in the Sound window, "
 	"although you will have to specify the time range by manually typing it.")
 NORMAL (U"In a script, you can get the jitter and shimmer from the voice report by doing something like:")
-CODE (U"voiceReport\\$  = Voice report: 0, 0, 75, 500, 1.3, 1.6, 0.03, 0.45")
-CODE (U"jitter = extractNumber (voiceReport\\$ , \"Jitter (local): \")")
-CODE (U"shimmer = extractNumber (voiceReport\\$ , \"Shimmer (local): \")")
-CODE (U"writeInfoLine: \"Jitter = \", percent\\$  (jitter, 3), \", shimmer = \", percent\\$  (shimmer, 3)")
+CODE (U"voiceReport$  = Voice report: 0, 0, 75, 500, 1.3, 1.6, 0.03, 0.45")
+CODE (U"jitter = extractNumber (voiceReport$ , \"Jitter (local): \")")
+CODE (U"shimmer = extractNumber (voiceReport$ , \"Shimmer (local): \")")
+CODE (U"writeInfoLine: \"Jitter = \", percent$  (jitter, 3), \", shimmer = \", percent$  (shimmer, 3)")
 ENTRY (U"5. Disadvantage of automating voice analysis")
 NORMAL (U"In all the commands mentioned above, you have to guess the time range, "
 	"and you would usually supply \"0.0\" and \"0.0\", in which case "
