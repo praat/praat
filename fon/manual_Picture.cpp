@@ -401,24 +401,24 @@ NORMAL (U"The axes are normally changed by every drawing operation in the dynami
 NORMAL (U"You would use the ##Axes...# command if your data are not in an object.")
 ENTRY (U"Example")
 NORMAL (U"The following script would draw a person's vowel triangle:")
-CODE (U"\\#  Put F1 (between 300 and 800 Hz) along the horizontal axis,")
-CODE (U"\\#  and F2 (between 600 and 3600 Hz) along the vertical axis.")
-CODE (U"##Axes:# 300, 800, 600, 3600")
-CODE (U"\\#  Draw a rectangle inside the current viewport (selected area),")
-CODE (U"\\#  with text in the margins, and tick marks in steps of 100 Hz along the F1 axis,")
-CODE (U"\\#  and in steps of 200 Hz along the F2 axis.")
+CODE (U"# Put F1 (between 300 and 800 Hz) along the horizontal axis,")
+CODE (U"# and F2 (between 600 and 3600 Hz) along the vertical axis.")
+CODE (U"\\#{Axes:} 300, 800, 600, 3600")
+CODE (U"# Draw a rectangle inside the current viewport (selected area),")
+CODE (U"# with text in the margins, and tick marks in steps of 100 Hz along the F1 axis,")
+CODE (U"# and in steps of 200 Hz along the F2 axis.")
 CODE (U"Draw inner box")
 CODE (U"Text top: \"no\", \"Daniël's Dutch vowel triangle\"")
 CODE (U"Text bottom: \"yes\", \"%F_1 (Hz)\"")
 CODE (U"Text left: \"yes\", \"%F_2 (Hz)\"")
 CODE (U"Marks bottom every: 1, 100, \"yes\", \"yes\", \"yes\", \"\"")
 CODE (U"Marks left every: 1, 200, \"yes\", \"yes\", \"yes\", \"\"")
-CODE (U"\\#  Draw large phonetic symbols at the vowel points.")
+CODE (U"# Draw large phonetic symbols at the vowel points.")
 CODE (U"Text special: 340, \"Centre\", 688, \"Half\", \"Times\", 24, \"0\", \"u\"")
 CODE (U"Text special: 481, \"Centre\", 1195, \"Half\", \"Times\", 24, \"0\", \"ø\"")
-CODE (U"\\#  Etcetera")
+CODE (U"# Etcetera")
 NORMAL (U"This example would draw the texts \"Daniël's Dutch vowel triangle\", "
-	"\"%F__1_ (Hz)\", and \"%F__2_ (Hz)\" in the margins, "
+	"\"%F_1 (Hz)\", and \"%F_2 (Hz)\" in the margins, "
 	"and the texts \"u\" and \"ø\" at the appropriate positions inside the drawing area.")
 MAN_END
 

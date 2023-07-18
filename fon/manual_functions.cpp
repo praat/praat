@@ -2217,7 +2217,7 @@ Syntax and semantics
 : generate a random number from a Gamma distribution
 with shape parameter %`shape` and rate parameter %`rate`, which is defined as
 the probability density function %f(%x; %`shape`, %`rate`) =
-(1 / \Ga (%`shape`)) %`rate`^^%`shape`^ %x^^%`shape`−1^ %e^^−%`rate` %`x`^, "
+(1 / \Ga (%`shape`)) %`rate`^^%`shape`^ %x^^%`shape`−1^ %e^^−%`rate` %`x`^,
 for %`x` > 0, %`shape` > 0 and %`rate` > 0,
 according to the method by @@Marsaglia & Tsang (2000)@.
 
