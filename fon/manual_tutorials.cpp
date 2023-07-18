@@ -124,2178 +124,2824 @@ What used to be new?
 • @@What was new in 3.1?
 
 ################################################################################
+"What was new in 6.3?"
+© Paul Boersma 2022
+
+##6.3# (15 November 2022)
+• Number-aware sorting for labels when drawing tables.
+• Scripting: @`sort$#` (), @`shuffle$#` (), @`sort_numberAware$#` ().
+• Fixed a crash when saving (or copying) a DTW object.
+• Scripting: fixed a crash when using `Close` after @`editor`.
+
+##6.2.23# (8 October 2022)
+• Fix a crash introduced in August 2020 when in the Sound window you would select a part, then click #sel,
+  then select a part, then do #Cut, then click #bak.
+• #Rename should leave an object’s ID in the title of the editor window.
+• Windows graphics should support a resolution of 690 dots per inch.
+• Editor scripting: corrected a bug introduced in 6.2.15 whereby an added editor script would lose
+  the editor context if it contained a form, after #Apply was clicked.
+• Editor windows (such as the Sound window): showing a dialog window that calls a script
+  (e.g. ##Log script 3#, ##Log script 4# or an added command) should remove the previous version of that window.
+• Mac editor windows: dialog windows that call scripts should disappear
+  when the editor goes away (as on Windows and Linux).
+
+##6.2.22# (6 October 2022)
+• Playing cursor in Pitch, PitchTier, KlattGrid and PointProcess windows.
+• Corrected a bug introduced in 6.2.15 whereby an added editor script would lose
+  the editor context if it contained a form, after #OK was clicked.
+
+##6.2.21# (1 October 2022)
+• Corrected a bug introduced in 6.2.15 whereby a sub-window in #Inspect would crash upon clicking #Change.
+
+##6.2.20# (24 September 2022)
+• More balanced colours.
+• Hierarchical menus in editor windows.
+• Sound window scripting: understand `editor$` again in log format (bug since 6.2.15).
+
+##6.2.19# (12 September 2022)
+• Visible window queries in #Time menu.
+• Correct execution of added Objects window script after running a failing editor script (decades-old bug).
+• Made ##Erase first# work again (bug introduced in 6.2.15).
+
+##6.2.18# (2 September 2022)
+• SoundRecorder: support for up to 20 (instead of 8) input devices.
+• FormantPath window: can now be viewed even without a Sound.
+• Windows audio: SoundRecorder prevents high CPU usage when not recording.
+
+##6.2.17# (23 August 2022)
+• FormantPath window: more information shown.
+• Windows audio: compatible with speakers that do not support mono.
+• Editor scripts: made two old commands available again (removed in 6.2.15).
+
+##6.2.16# (18 August 2022)
+• FormantPath window: non-editable TextGrid.
+• Scripting the Demo window on the Mac: better guarantees that `demoShow` () actually drains on current systems.
+• TextGrid works again with LongSound (bug introduced in 6.2.15).
+• Editor scripts work again from menus (bug introduced in 6.2.15).
+
+##6.2.15# (14 August 2022)
+• Legends in editor windows.
+• The menus #Time and #Play are new in editor windows, and the menus #Spectrum and #Formant were renamed to #Spectrogram and #Formants.
+• More menu commands in editor windows.
+• Rid frames around areas in editor window, except if editable.
+• The FormantPath window can include a copy of a TextGrid.
+• Restored horizontal and vertical dragging in tier areas (had been absent for two years).
+• Removed several small bugs (and probably introduced a couple of new ones) in editor windows.
+• Restored the original Praat icon.
+
+##6.2.14# (24 May 2022)
+• TextGrid window: repaired a bug introduced in 6.2.10 by which a click in the boundary insertion circle
+  would copy the contents of a new interval from another tier (if that other tier stood selected).
+
+##6.2.13# (18 May 2022)
+• Playing a sound on the Mac: prevented an audible click at the end of audio output (appending a silence at the end is no longer needed).
+• FormantPath window: more flexible visualization.
+• New versions of PortAudio and Unicode.
+• Removed the sendpraat directive.
+• Removed several small interface bugs, and improved manual.
+
+##6.2.12# (17 April 2022)
+• @@Table: Get sum...@
+• Scripting an editor window can now query analyses that are not visible (e.g. after zooming).
+
+##6.2.11# (8 April 2022)
+• Windows: Demo window could hang with use of Chinese keyboard (after #Play).
+
+##6.2.10# (17 March 2022)
+• TextGrid window: restored the splitting of labels.
+• @@Save Demo Window as PDF file...@ (#Goodies menu).
+
+##6.2.09# (15 February 2022)
+• Windows: support for a screen resolution of 204 dpi.
+
+##6.2.08# (5 February 2022)
+• Mac: more checks on audio devices when playing sounds.
+
+##6.2.07# (28 January 2022)
+• Prevented a rare crash in the TextGrid window.
+• Windows: corrected a bug introduced in 6.2.04 by which some file names were unreadable.
+
+##6.2.06# (20 January 2022)
+• Mac: prevent Demo window from hanging on copy or paste.
+
+##6.2.05# (5 January 2022)
+• Calling Praat from the command line: the switch `--send` sends a script
+  to a different already running GUI instance of Praat; this is more flexible than using %sendpraat,
+  because `--send` will start a new instance of Praat if Praat is not yet running.
+
+##6.2.04# (18 December 2021)
+• Praat now includes eSpeak 1.51, raising the number of supported languages from 100 to 130.
+• Scripting: support for `infile`, `outfile` and `folder` fields in forms.
+• Calling Praat from the command line: the switch `--open` now adds files to an already running instance of Praat;
+  this was already the case on Windows, but it now works in the same way on the Mac and on Linux.
+• Scripting on Mac: multiline text fields in forms have scroll bars and behave like other fields.
+
+##6.2.03# (3 December 2021)
+• Mac: made Enter key work as expected (i.e. character selection) on Japanese keyboards in multi-line text fields in dialogs and TextGrid window.
+
+##6.2.02# (2 December 2021)
+• Fixed a hang if there were negative pitch values in @@Sound: Change gender...@.
+• Fixed a crash if the size of a PCA did not match the size of a TableOfReal.
+
+##6.2.01# (17 November 2021)
+• Sound window: corrected a bug that caused a thick waveform during or after playing.
+
+################################################################################
+"What was new in 6.2?"
+© Paul Boersma 2021
+
+##6.2# (15 November 2021)
+• TextGrid window: closing box and opening triangle for IPA chart.
+• Linux: compatibility with Wayland (rather than just X11).
+• Chromebook: surrogate window title replaces the one that Chromebooks won’t show.
+• Much longer list of functions in manual.
+
+##6.1.56# (3 November 2021)
+• Scripting: @@Record Sound (fixed time)...@ should return an object ID.
+• More phonetic symbols in EPS files.
+
+##6.1.55# (25 October 2021)
+• TextGrid window: guard against a rare crash on Windows.
+• TextGrid: Extract part: guard against producing an empty interval tier.
+• Plug-ins: settings windows should not show the file name of the script.
+• Scripting: clicking Cancel when browsing an Infile field should not crash.
+• Phonetic symbols: a new backslash trigraph for a mid-centralized diacritic (as in [e\x^]), namely `\x^`.
+
+##6.1.54# (9 October 2021)
+• PowerCepstrogram: can tabulate cepstral peak prominence values.
+• Mac: repaired global Escape key menu shortcut (stops sounds that play from the Objects window).
+
+##6.1.53# (8 September 2021)
+• Linux: corrected a bug that caused PDF files to be misaligned
+  if the origin was not in the top left corner.
+
+##6.1.52# (25 August 2021)
+• FormantPath window: more formant listings and stress listings.
+• Sound window: on #Cut or #Paste, all windows that contain that Sound now get ungrouped.
+• Corrected a crash when reading Vorbis files on some 32-bit platforms.
+
+##6.1.51# (22 July 2021)
+• @@Spectrum: Tabulate (verbose)@ with:  power spectral density, bin width within domain, bin energy, and much more.
+• Sound window: ##Get amplitude(s)#.
+• Scripting: `date_utc$` (), `date#` (), `date_utc#` ().
+
+##6.1.50# (20 June 2021)
+• RealTier: editing, Formula, conversion from and to Matrix and Table and other tiers such as PitchTier,
+  DurationTier, IntensityTier and AmplitudeTier.
+• Scripting: can now assign multiple objects to a vector.
+• Fix crashes in ##Create letter R example# and ##Create KlattTable example# introduced in 6.1.49.
+
+##6.1.49# (12 June 2021)
+• @PitchTier, @IntensityTier, @DurationTier and @AmplitudeTier windows: save preferences.
+• @Manipulation window: removed unused semitone options.
+• @RealTier object: editing; conversions from and to other tiers and from Table and Matrix.
+
+##6.1.48# (2 June 2021)
+• TextGrid window: Shift-drag drags multiple boundaries again even if the Shift key is not released.
+• Scripting: publishing (#Extract) an object from an editor window returns its ID again.
+• Scripting: ##Select...# in an editor window is now prevented from selecting outside the time domain.
+
+##6.1.47# (21 May 2021)
+• The Escape key now means Cancel also in a non-pausing pause window.
+
+##6.1.46# (20 May 2021)
+• Fixed a bug with line types in the Picture window.
+• TextGrid window: shift-click on a boundary again extends the selection.
+
+##6.1.45# (20 May 2021)
+• Praat picture files can be drawn with ##Read from file# again.
+
+##6.1.44# (17 May 2021)
+• Scripting: queries in editor windows are scriptable again.
+
+##6.1.43# (13 May 2021)
+• TextGrid window: characters in the IPA chart grow with the window.
+• TextGrid window: seeing the maroon shadow now always means that the boundary will be moved when the mouse is released (problem since 6.1.20 or so).
+• Scripting: pause window on the Mac: the Enter key works as designed (bug in 6.1.42).
+
+##6.1.42# (15 April 2021)
+• Settings windows: taller text fields for formulas and vectors.
+• Mac TextGrid window: cursor moves to end of text after selecting an interval (as on Windows and Linux).
+
+##6.1.41# (25 March 2021)
+• TextGrid window: unselected boundaries can again be drawn to the cursor.
+• Windows: faster running cursor.
+• Multi-line formula fields.
+• Scripting: guard against too deep recursive calls to runScript (depth 20).
+• EEG: repaired a bug that could cause Praat to crash when computing an ERPTier.
+
+##6.1.40# (27 February 2021)
+• Inspect window: corrected a bug that could cause Praat to crash when opening a string vector.
+• Sound window: made channel scrolling work again when there are more than 8 channels.
+• Sound window: made channel muting by clicking on the loudspeaker symbols work again.
+
+##6.1.39# (8 February 2021)
+• Scripting: made string vectors visible in writeFile (), pauseScript () and exitScript ().
+• Mac: corrected a bug that could cause About Praat to crash on macOS 10.10.
+
+##6.1.38# (2 January 2021)
+• Scripting: string vectors, @`empty$#` (), @`readLinesFromFile$#` (), @`fileNames$#` (), @`folderNames$#` (), @`splitByWhitespace$#` ().
+• Sound files: open Ogg Vorbis files and Opus files.
+
+##6.1.37# (16 December 2020)
+• TextGrid window: removed a bug that caused Praat to crash when option-clicking or command-clicking a boundary when another boundary was selected on a point tier.
+• Record Sound (fixed time): removed a bug that caused Praat to crash with certain combinations of duration and sampling frequency on Windows.
+• PowerCepstrogram: more precise integration, so that the cepstral peak prominence is now a continuous function of time.
+• TextGrid: Get points (preceded): removed a bug that caused Praat to crash under some edge conditions.
+• Scripting: @`tryToWriteFile` () and @`tryToAppendFile` () should not be available in manuals.
+
+##6.1.36# (6 December 2020)
+• Scripting: @`tryToWriteFile` (), @`tryToAppendFile` (); formulas can have a size of 1 million.
+• Obscured scripts: error messages always disclosed.
+• IPA chart: sacrifice laminality symbol for breathiness symbol.
+
+##6.1.35# (29 November 2020)
+• Scripting: @`sort#` (), @`shuffle#` (), @`to#` (), @`from_to#` (), @`from_to_by#` (), @`from_to_count#` (), @`between_by#` (), @`between_count#` ().
+• Mac: repaired a bug existing since 6.1.04 that caused incorrect line counts in text files with high Unicode characters.
+
+##6.1.34# (25 November 2020)
+• Mac: got bold and italic to work on Praat versions compiled with the BigSur API.
+• SoundRecorder always a white background, instead of a different background on each platform.
+
+##6.1.33# (19 November 2020)
+• Mac: got audio to work on Praat versions compiled with the BigSur API (6.1.32 did not have audio on BigSur).
+
+##6.1.32# (16 November 2020)
+• First version for Macs with Apple Silicon chip.
+• Mac: corrected a bug that could cause Praat to crash when a Sound window was closed from a script.
+• Windows and Linux: made ##Text width...# work correctly from batch.
+• Linux: reinstalled Tab shortcut in Sound window.
+
+##6.1.31# (10 November 2020)
+• Linux: first GTK-3 version.
+
+##6.1.30# (3 November 2020)
+• Windows: prevented a crash that could occur in the Sound window when clicking with the touchpad while dragging with the mouse (or the reverse).
+
+##6.1.29# (27 October 2020)
+• Mac: corrected a bug revealed by Xcode 12 since 6.1.22 that could cause Praat to crash when using empty vectors,
+  such as when querying a Harmonicity for its mean in regions without frames.
+
+##6.1.28# (20 October 2020)
+• Pause forms: text fields can be multi-line.
+• Removed a bug that caused Praat to crash when editing a PitchTier.
+• Script window: got rid of too many history entries after dragging in the Picture window.
+
+##6.1.27# (13 October 2020)
+• Demo window: make sure that the contents of the window become visible
+  more often without calling demoShow() or demoWaitForInput().
+
+##6.1.26# (5 October 2020)
+• Windows: removed a bug that caused Praat to crash if you clicked in the Sound window,
+then dragged the mouse out of that window, then released the mouse button, and then clicked in the Sound window again.
+• Linux: removed a bug that caused Praat to crash when clicking Change in the Inspect window.
+
+##6.1.25# (4 October 2020)
+• @FormantPath and @FormantPathEditor.
+• Windows: implemented vertical scrolling with the mouse wheel in the manual and in the Picture window.
+• Linux: removed a bug that caused Praat to crash when double-clicking in the Sound window.
+• Linux: removed a bug that caused Praat to crash when raising the About window twice.
+• Removed a bug that caused Praat to crash when zooming in
+  to a region in the Sound window without samples, when a pitch curve was visible.
+• Removed a bug that caused Praat to crash when pasting in
+  a region in the Sound window without samples.
+
+##6.1.24# (29 September 2020)
+• Linux: got rid of flashing during a running cursor or
+  when making a selection in the Sound window or the Picture window.
+
+##6.1.23# (28 September 2020)
+• Windows: got rid of flashing during a running cursor or
+  when making a selection in the Sound window or the Picture window.
+• Linux: corrected a bug that caused the buttons at the top of a manual window
+  to be overwritten with text when scrolling.
+
+##6.1.22# (24 September 2020)
+• Windows: made the running cursor visible again.
+• Corrected a bug introduced in 6.1.17alpha that could cause incorrect line spacing in the Picture window,
+  such as in @@TableOfReal: Draw as numbers@.
+
+##6.1.21# (20 September 2020)
+• First fully functional version for BigSur.
+• Removed a decades-old bug by which an extremum allegedly computed by cubic interpolation
+  would actually have been computed by sinc700.
+
+##6.1.20beta# (10 September 2020)
+• Second beta version for macOS Big Sur.
+
+##6.1.19beta# (7 September 2020)
+• First beta version for macOS Big Sur.
+
+##6.1.18alpha# (1 September 2020)
+• Second alpha version for macOS Big Sur.
+
+##6.1.17alpha# (16 August 2020)
+• Alpha version for macOS Big Sur.
+
+##6.1.16# (6 June 2020)
+• @@Record Sound (fixed time)...@: more reliable choice of input device.
+• Mac: notice plugging and unplugging of headphones.
+
+##6.1.15# (20 May 2020)
+• Repaired a bug introduced in 6.0.44 that could cause an incorrect (namely, totally constant) ClassificationTable.
+
+##6.1.14# (2 May 2020)
+• Repaired a bug in drawing ranges introduced in 6.1.06.
+
+##6.1.13# (19 April 2020)
+• Repaired discriminant analysis on i386 processors.
+• Scripting: enabled predictability by setting random seeds.
+• Automated batch testing on x86_64, i386 and ARMv7 processors.
+
+##6.1.12# (13 April 2020)
+• All non-GUI tests can be automated from batch.
+• Repaired a bug introduced in 6.0 whereby a KlattGrid-generated Sound would always be peak-scaled.
+
+##6.1.11# (6 April 2020)
+• Better messages.
+• Overhauled VowelEditor.
+• Repaired crashes after creating a Formant from a Spectrum or an Excitation.
+
+##6.1.10# (23 March 2020)
+• Faster formant computation.
+• More LPC queries.
+
+##6.1.09# (26 January 2020)
+• Accept some more kinds of broken WAV files.
+• Improved box plot drawing.
+• More Network commands.
+
+##6.1.08# (5 December 2019)
+• Repaired a bug with automatic alignment for TextGrids (introduced in 6.1.07).
+
+##6.1.07# (26 November 2019)
+• Raspberry Pi edition.
+
+##6.1.06# (8 November 2019)
+• Chromebook edition.
+• Scripting: colour fields now take name, grey value or RGB vector.
+
+##6.1.05# (16 October 2019)
+• Repaired a bug introduced in 6.0.44 that could cause rubbish LPC smoothing.
+• Repaired a rare crash when dragging a selection on the Mac.
+
+##6.1.04# (28 September 2019)
+• @Electroglottography.
+• Sound and other windows: ##Widen or shrink selection...#.
+• @@KlattGrid: Create from vowel...@.
+• Fix rectangle playing bug when selection viewer is on.
+• Selection viewer separately visible for Sound window and TextGrid window.
+• Scripting: allow comments after parameter list.
+• Scripting: fix CR/LF pasting from Microsoft Word.
+
+##6.1.03# (1 September 2019)
+• Sound window: ##Widen or shrink selection...#.
+
+##6.1.02# (25 August 2019)
+• Repaired @@Sound: Concatenate with overlap...@.
+• Mac: Info and script windows: prevent line breaks caused by tab stops.
+
+##6.1.01# (14 August 2019)
+• Repaired @@TextGrid: Replace interval texts...@.
+
+################################################################################
+"What was new in 6.1?"
+© Paul Boersma 2019
+
+##6.1# (13 July 2019)
+
+##6.0.57# (1 July 2019)
+• Repaired a crash when an editor window zoomed in to a zero time range.
+• Repaired a crash when playing a matrix movie with one row or a constant value.
+• Repaired a crash when reconstructing a TableOfReal from a PCA.
+• Scripting: allow comments after `else`, `endif`, `endfor`...
+
+##6.0.56# (20 June 2019)
+• Windows: file dropping on the Praat icon works for higher-Unicode file names.
+• SpellingChecker: Unicode support.
+
+##6.0.55# (13 June 2019)
+• Unicode normalization in file names.
+
+##6.0.54# (6 June 2019)
+• Removed a bug introduced in 6.0.51 that could cause incorrect axes in Demo window.
+
+##6.0.53# (26 May 2019)
+• Much faster playing of short parts of long sounds that need resampling.
+• Better handling of broken CSV files.
+• 64-bit floating-point WAV files.
+
+##6.0.52# (2 May 2019)
+• Removed a bug introduced in 6.0.51 that could cause turning a Discriminant into a Configuration to crash.
+• Removed a bug introduced in contour grey drawing in August 2017.
+
+##6.0.51# (29 April 2019)
+• Script window: Use Selection for Find.
+• Removed a bug introduced in 6.0.41 that could cause Praat to crash after removing an element from a Strings or a row from a TableOfReal.
+
+##6.0.50# (31 March 2019)
+• Manual updates, speed, more tests.
+• Scripting: @`rowSums#` (), @`columnSums#` (); @`randomGauss##` () finally with four arguments.
+
+##6.0.49# (2 March 2019)
+• Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.
+• Removed a bug introduced in 6.0.44 whereby an MFCC's maximum frequency could be ignored.
+• Pitch: Tabulate candidates.
+• SoundSet.
+
+##6.0.48# (17 February 2019)
+• Removed a bug introduced in 6.0.44 whereby Praat could crash when drawing a function without any points.
+• Removed a bug whereby Praat would not start up on macOS 10.10 (because of required GPU libraries).
+
+##6.0.47# (8 February 2019)
+• Removed a bug introduced in 6.0.44 whereby a cepstral peak prominence would be computed incorrectly.
+
+##6.0.46# (3 January 2019)
+• Removed a crashing bug in the LongSound window introduced in 6.0.44.
+• Removed a bug causing incorrect conversion from Formant to LPC introduced in 6.0.44.
+• More space for actions in buttons window.
+
+##6.0.45# (1 January 2019)
+• Removed a crashing bug in EditDistanceTable introduced in 6.0.44.
+• Removed a crashing bug in KlattGrid drawing introduced in 6.0.44.
+• Removed a bug introduced in 6.0.44 whereby old HMM files were read incorrectly.
+
+##6.0.44# (31 December 2018)
+• Bug fixes and speed.
+
+##6.0.43# (8 September 2018)
+• Removed a very old bug that could create invalid TextGrids during forced alignment.
+• Windows: repaired a bug introduced in 6.0.41
+  that caused a crash in several places (such as when changing the sample rate in the SoundRecorder)
+  when Praat had been started with a double click.
+• Windows: repaired a bug introduced in 6.0.41 that caused Praat to crash when exiting.
+
+##6.0.42# (15 August 2018)
+• Repaired a bug introduced in 6.0.41 that caused a crash in pause windows.
+
+##6.0.41# (6 August 2018)
+• Interoperability: the Windows edition can now communicate with other software in UTF-8.
+
+##6.0.40# (11 May 2018)
+• Scripting: $$@@Scripting 4.3. Querying objects|`selected#`@$.
+• Table window: cell selection.
+• Unicode-savvy regular expressions.
+
+##6.0.39# (3 April 2018)
+• More string matching (case-insensitive, word-level).
+
+##6.0.38# (29 March 2018)
+• Concordance: @@TextGrid: Tabulate occurrences...@.
+• Some @@Independent Component Analysis on EEG@.
+• Removed many small bugs.
+
+##6.0.37# (3 February 2018)
+• Graphics: fixed crashing bug with \\bsun trigraph.
+
+##6.0.36# (11 November 2017)
+• Many more languages for SpeechSynthesizer and automatic alignment (new eSpeak).
+
+##6.0.35# (16 October 2017)
+• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would sometimes incorrectly refuse.
+
+##6.0.34# (10 October 2017)
+• Scripting: arrays in menu commands in scripts.
+• #Inspect: made a button visible that had disappeared in 6.0.33.
+
+##6.0.33# (26 September 2017)
+• @@Pitch: Subtract linear fit...@: correct a bug that prevented computation in the ERB domain.
+• Scripting: made `object[xx].xmin` work again.
+• Removed a bug in @@Polynomial: Evaluate...@ introduced in 6.0.32.
+
+##6.0.32# (16 September 2017)
+• Table: allow spaces in column names.
+• Settings windows no longer replace your visible expressions with their resulting values.
+• Scripting: formulas using the tilde.
+• Optimality Theory learning: corrected a bug introduced in 6.0.30 that could cause the editor to crash on the Mac.
+• EEG: corrected a bug that could cause an infinite loop when doing principal component analysis.
+• Scripting: faster interpreter.
+
+##6.0.31# (21 August 2017)
+• Scripting: more vectors and matrices.
+• Numerics: faster and more precise sums, means, standard deviations.
+
+##6.0.30# (22 July 2017)
+• Removed a bug that caused an incorrect title for a PitchTier or PointProcess window.
+• Removed a bug that caused Praat to crash when doing a linear regression on a Table with no rows.
+• Scripting: `object[]`, @@Scripting 5.7. Vectors and matrices|vectors@.
+• Graphics: better text drawing details.
+• Linux: possibility to compile Praat without a GUI but with graphics file output.
+
+##6.0.29# (24 May 2017)
+• Sound window: channel muting.
+• Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.
+
+##6.0.28# (23 March 2017)
+• Scripting: @`demoPeekInput` () for animations in combination with `sleep` ().
+
+##6.0.27# (18 March 2017)
+• TextGrid: fewer error messages in concatenation of multiple TextGrids.
+• Scripting: @`sleep` () to pause Praat temporarily: useful for animations in combination with @`demoShow` ().
+
+##6.0.26# (2 March 2017)
+• Mac: more corrections in @`demoShow` () and `blankWhilePlaying`.
+• PraatBarren: better error message when an attempt is made to run PraatBarren interactively.
+
+##6.0.25# (11 February 2017)
+• Mac: made @`demoShow` () and `blankWhilePlaying` compatible with MacOS 10.12 Sierra.
+• Mac SoundRecorder: more sampling frequencies, on behalf of external USB microphones.
+
+##6.0.24# (23 January 2017)
+• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would choose the wrong tier.
+• TextGrid window: click to insert a phonetic symbol from an IPA chart.
+
+##6.0.23# (12 December 2016)
+• Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.
+• Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.
+• Improvements in the manual and in texts.
+
+##6.0.22# (15 November 2016)
+• Scripting: correct error messages for expressions like: `5 + “hello”`
+• Command line: the --open option works correctly in the GUI if you open multiple files.
+
+##6.0.21# (25 September 2016)
+• ExperimentMFC: you can now specify font sizes and response keys for goodness judgments.
+• Table: when drawing ellipses, a font size of 0 can now be used to prevent drawing the labels.
+• Mac: dragging selections repaired for System 10.11.6 (but we advise to upgrade to 10.12).
+• Mac: re-enabled Return key for confirming some dialog boxes.
+
+##6.0.20# (3 September 2016)
+• Can open UTF-8 text files with Byte Order Mark.
+• Scripting improvement: function names can now be used as names of indexed variables.
+
+##6.0.19# (13 June 2016)
+• Mac: dragging selections repaired for System 10.11.5.
+
+##6.0.18# (23 May 2016)
+• Windows: better dotted lines.
+• TextGrid window: again better automatic alignment.
+
+##6.0.17# (21 April 2016)
+• TextGrid window: better automatic alignment.
+
+##6.0.16# (5 April 2016)
+• Scripting: “hashes”: variables can now be indexed with strings rather than only with numbers.
+• TextGrid window: fewer out-of-order messages in automatic alignment.
+
+##6.0.15# (21 March 2016)
+• TextGrid window: removed a bug whereby Praat could do automatic alignment only on sounds sampled at 44.1 kHz.
+• TextGrid window: improved the location of the final boundary in automatic alignment.
+• Table window: added a preference for the interpretation of graphical style symbols (`%#^_@`).
+
+##6.0.14# (11 February 2016)
+• Linux: corrected a bug by which the Tab short-cut for playing a sound would not work if the NumLock key was on.
+• Mac 64-bit: corrected a bug that could cause Praat to crash if the Tab key was pressed in a dialog window.
+
+##6.0.13# (31 January 2016)
+• Windows: corrected a bug that could cause Praat to crash when closing a script window.
+• Mac 64-bit: progress bars with movies.
+
+##6.0.12# (24 January 2016)
+• Windows 32-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.
+• Mac 64-bit: better `demoShow` ().
+• Mac 64-bit: working Matrix movies and articulatory synthesizer movies.
+
+##6.0.11# (18 January 2016)
+• Corrected a bug that could cause Praat to crash when drawing a Spectrum with undefined values.
+• Mac 64-bit: corrected a bug by which some text in the Sound window would sometimes not be drawn.
+• Mac 64-bit demo window: improved the working of `demoShow` ().
+
+##6.0.10# (8 January 2016)
+• Corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.
+• Mac 64-bit: corrected a bug that would cause black selections in the Sound window.
+
+##6.0.09# (1 January 2016)
+• Windows 64-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.
+
+##6.0.08# (5 December 2015)
+• Windows command line: the `--a` option can be used when redirecting the output to pipes and files.
+• Linux command line: the `--run` option is not needed in the Terminal when redirecting output
+  (unless you redirect standard output, standard input %and standard error).
+
+##6.0.07# (30 November 2015)
+• Mac 64-bit: repaired dragging selections (which got broken in the El Capitan fix in 6.0.06).
+
+##6.0.06# (29 November 2015)
+• Mac 64-bit: correct early Info window updates and @`demoShow` () in El Capitan.
+• Manual updates.
+• Corrected some small memory leaks.
+
+##6.0.05# (8 November 2015)
+• A manual page that describes @@TextGrid file formats@.
+• Corrected a bug that prevented some KlattGrid tiers from being edited.
+• 32-bit Linux: correct use of PulseAudio (note: 6.0.04 on Debian already had this correct).
+
+##6.0.04# (1 November 2015)
+• Corrected a bug that caused an incorrect number in FFNet files;
+  unreadable FFNet files can be sent to the Praat authors for repair.
+
+##6.0.03# (31 October 2015)
+• Corrected a bug that caused Praat to crash when the Soundrecorder window was closed.
+• Scripting: when calling Praat from the command line, added the `--run` option to force script execution.
+
+##6.0.02# (30 October 2015)
+• Corrected the redrawing of analyses in the Sound window after a change in the sound.
+
+##6.0.01# (29 October 2015)
+• Windows: fixed a bug that caused Praat to crash at start-up in some Windows versions.
+
+################################################################################
+"What was new in 6.0?"
+© Paul Boersma 2015
+
+##6.0# (28 October 2015)
+• Linux: use PulseAudio as the server for playing sound.
+• Windows: removed `Praatcon.exe`, because Praat.exe can now be used from the command line.
+• Praat can now open files from the command line on all platforms.
+• The API change that requires raising the major Praat version to 6:
+  no longer any need for `Praatcon.exe`, because Praat itself can now run a script from the command line on all platforms.
+• See @@Scripting 6.9. Calling from the command line@ for all command line options.
+• SpeechSynthesizer: corrected a potentially crashing bug.
+• Mac Retina graphics: made function drawing (e.g. in the TextGrid window) twice as fast.
+• LongSound: corrected playing of more than 2 channels.
+
+##5.4.22# (8 October 2015)
+• Sound files: added support for MP3 files with ID3 version 2 headers.
+• @@Table: Line graph where...@: removed a bug that caused nothing to be drawn if the number of columns was larger than the number of rows and
+the column index was larger than the number of rows.
+• Mac: corrected horizontal spacing in graphical text on El Capitán.
+• Mac: corrected a bug that would cause Praat to crash if a PNG file could not be saved (from a script).
+• Windows: enabled PNG saving from Praatcon.
+
+##5.4.21# (29 September 2015)
+• Corrected a bug introduced in 5.4.20 that could cause the Sound window to crash.
+• Repaired a very old hang with pulses in the Sound window.
+
+##5.4.20# (26 September 2015)
+• Corrected the graphical representation of numbers with exponents (wrong since 5.4.10).
+• Windows: prevented flashing console window in @`runScript` ().
+
+##5.4.19# (16 September 2015)
+• LongSound: corrected saving of 8-bit files as 16-bit.
+
+##5.4.18# (7 September 2015)
+• Regular expressions: if the pattern is illegal, you'll now get an error message instead of an empty string.
+• LongSound: removed a bug introduced in 1999 that could play long stereo sounds much too fast if they had unusual sampling frequencies.
+  This bug has become more noticeable on the Mac since January 2015.
+• Guard better against sound files that contain 0 samples.
+• Scripting: faster look-up of variables.
+
+##5.4.17# (20 August 2015)
+• Scripting: removed a bug that could cause Praat to crash when calling `writeFile` () with an empty text.
+
+##5.4.16# (16 August 2015)
+• Mac 64-bit: removed a bug by which graphical text passed over the right edge in TextGrid intervals.
+• Mac 64-bit: removed a bug that allowed the general #Zoom and #Close commands to be accessible from a script.
+
+##5.4.15# (1 August 2015)
+• Introduced several command line options that make it easier to call Praat from a web server.
+• 64-bit Mac: removed a bug introduced in 5.4.11 that caused incorrect spacing of vertical text in picture files.
+
+##5.4.14# (24 July 2015)
+• Windows and 32-bit Mac: removed a bug introduced in 5.4.12 that could cause weird behavior (even crashing) when
+  pressing the Tab key in the script window or in the manual.
+
+##5.4.13# (22 July 2015)
+• The Demo window can now save itself to a PNG or PDF file.
+• Windows: removed a bug introduced in 5.4.10 whereby Praatcon would write garbled text to the console.
+
+##5.4.12# (10 July 2015)
+• Windows: removed a bug introduced in 5.4.10 whereby SpeechSynthesizer would only pronounce the first letter of the text.
+
+##5.4.11# (8 July 2015)
+• Windows: removed a bug introduced in 5.4.10 whereby the file selection window could try to open a file with a garbled name.
+• Removed a bug whereby the PointProcess window would crash when showing a perfectly silent sound.
+
+##5.4.10# (27 June 2015)
+• Removed a bug introduced in version 4.5.09 (January 2007) that caused incorrect
+  upsampling of stereo sounds when the upsampling factor was exactly 2. This bug has caused
+  incorrect playing of stereo sounds with a sampling frequency of 22050 Hz on the Mac since January 2015.
+• Removed a bug introduced in 2011 that could cause Praat to crash when you scrolled the LongSound window.
+• @@TextGrid: Count intervals where...@ and @@TextGrid: Count points where...@.
+
+##5.4.09# (1 June 2015)
+• Linux: the tab key can be used to play sounds on more computers.
+• Windows: TextGrid files with non-BMP characters are now read correctly.
+• Windows: files with names that contain non-BMP characters are now saved correctly.
+• Updated manual.
+
+##5.4.08# (24 March 2015)
+• Sound window: removed a bug that caused a crash in ##Editor info#.
+
+##5.4.07# (22 March 2015)
+• TextGrid window: ##Add interval# now does the same thing as ##Add boundary# if a time stretch is selected.
+• Linux: better redrawing in TextGrid window.
+
+##5.4.06# (21 February 2015)
+• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 200 dpi.
+
+##5.4.05# (13 February 2015)
+• Better support for big integer numbers on Windows XP.
+• Sound window: guarded against empty view ranges for the intensity curve.
+
+##5.4.04# (28 December 2014)
+• Windows audio playback: if the sound has more channels than the audio hardware, distribute them evenly.
+
+##5.4.03# (18 December 2014)
+• TextGrid reading: Praat now corrects some incomplete TextGrid files created by others.
+• Better support for text files larger than 2 GB.
+
+##5.4.02# (26 November 2014)
+• Mac: repaired a bug by which quote characters typed into the script window could become curly instead of straight.
+
+##5.4.01# (9 November 2014)
+• @MelSpectrogram, @BarkSpectrogram.
+• Linux: removed a bug that could cause too many flashes when scrolling a Sound window.
+• Mac: repaired a bug that could cause a crash in the @VowelEditor window.
+
+################################################################################
+"What was new in 5.4?"
+© Paul Boersma 2014
+
+##5.4# (4 October 2014)
+
+##5.3.87# (3 October 2014)
+• Windows scripting: prevented incorrect handling of relative paths after the use of @`chooseReadFile$`.
+• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 180 or 1200 dpi.
+
+##5.3.86# (28 September 2014)
+• Linux audio: reverted to old version of PortAudio because of race problems in the Alsa–PulseAudio cooperation.
+
+##5.3.85# (19 September 2014)
+• Mac audio: circumvented a bug in PortAudio by which playback of sounds with sampling frequencies
+  below 44100 Hz could be distorted on some USB headsets.
+
+##5.3.84# (26 August 2014)
+• Manipulation: repaired a bug that could cause Praat to crash when playing a manipulation of a Sound created by the @SpeechSynthesizer.
+
+##5.3.83# (16 August 2014)
+• TextGrid window: repaired a bug with automatic alignment that could cause an analysis tier to go out of order.
+• Linux audio: created a second workaround that reduces even more the chances of a freeze that is due to a potential deadlock
+  in the collaboration between Alsa and PulseAudio that can occur when the playback of a sound is cancelled.
+• Smoother communication with Phon.
+• Windows: repaired a memory leak when saving PNG files.
+
+##5.3.82# (26 July 2014)
+• Linux and Mac audio playback: if the sound has more channels than the audio hardware, distribute them evenly.
+• Pause forms: more consistent appearance of the Revert button.
+• Scripting: @`pauseScript` () function.
+
+##5.3.81# (2 July 2014)
+• EEG: can work with status %numbers instead of only with status %bits.
+• Windows: repaired a bug that could cause Praat to crash if there was a 96-dpi printer.
+
+##5.3.80# (29 June 2014)
+• Praat preferences: choice between Chinese and Japanese style for Han characters.
+
+##5.3.79# (21 June 2014)
+• Can now play sounds over more than two channels.
+• Asynchronous play in scripts (see @@Demo window@).
+• EEG: blue-to-red colour scale for scalp distributions.
+
+##5.3.78# (12 June 2014)
+• Multithreading can now speed up pitch analysis by a factor of 4 or so,
+  depending on the number of cores in your processor.
+• Linux: can now open and save Photo objects (from PNG files)
+  and use @@Insert picture from file...@.
+• Open WAV files that are in the “extensible” format (previously “unsupported format -2”).
+• Windows: support for dropping more than one file on the Praat icon.
+• Scripting: can now use the #editor command with an object’s ID instead of only with its name.
+• Windows: removed a bug that sometimes disallowed saving more than one JPEG file.
+• Linux audio: created a workaround that reduces the chances of a freeze that is due to a potential deadlock
+  in the collaboration between Alsa and PulseAudio that can occur when the playback of a sound is cancelled.
+
+##5.3.77# (18 May 2014)
+• EEG: more facilities for EDF+ files.
+
+##5.3.76# (8 May 2014)
+• One can determine the size of “speckles” (filled circles) with ##Speckle size...# in the #Pen menu.
+  Speckles are used in drawing Formant, PitchTier, and several other kinds of objects.
+
+##5.3.75# (30 April 2014)
+• Linux Matrix graphics bug fix: corrected working of @@Matrix: Draw cells...@.
+• Scripting bug fix: ability to use x and y as indexed variables.
+• PowerCepstrogram bug fix: made old version of Paint command available again for scripts.
+
+##5.3.74# (24 April 2014)
+• EEG: more interpretation of triggers in EDF+ files.
+
+##5.3.73# (21 April 2014)
+• EEG: understand more EGI/NetStation files.
+
+##5.3.72# (17 April 2014)
+• Windows: repaired a bug that caused two black edges in PNG files.
+• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 360 dpi.
+• Linux: repaired a bug that caused Praat to crash when cutting or pasting a sound in the Sound window.
+
+##5.3.71# (9 April 2014)
+• Windows: brought more unity in the style of Chinese characters.
+
+##5.3.70# (2 April 2014)
+• Added some query commands for DurationTier objects.
+• Repaired a bug that caused Praat not to run as a console app.
+
+##5.3.69# (28 March 2014)
+• Picture window: can save to 300-dpi and 600-dpi PNG files.
+• Graphics: sub-pixel precision line drawing on Mac and Linux.
+• Repaired a bug that could show spurious buttons in the Objects window if a plug-in created objects.
+
+##5.3.68# (20 March 2014)
+• Mac: corrected a bug introduced in 5.3.67 that could cause crashes when drawing a spectrogram.
+• Mac and Linux: @@Create Strings as file list...@ handles broken symbolic links more leniently.
+
+##5.3.67# (19 March 2014)
+• Corrected a bug that would create strange PNG files if the selection did not touch the upper left corner of the Picture window.
+• Mac: can save the Picture window to PNG file.
+• EEG: understand trigger letters in BDF/EDF files.
+
+##5.3.66# (9 March 2014)
+• Windows and Linux: can save the Picture window to PNG file.
+• Windows: opening, modifying and saving PNG, TIFF or JPEG files (the Photo object, as on the Mac).
+
+##5.3.65# (27 February 2014)
+• Scripting language: removed some bugs from @`runScript`.
+• Linux: can save the Picture window to PDF file.
+
+##5.3.64# (12 February 2014)
+• Scripting language: @`writeInfo`, @`procedure`, @`exitScript`, @`runScript`: all with colons.
+• 64-bit Mac graphics: better highlighting and unhighlighting of selection.
+• 64-bit Mac graphics: full screen.
+
+##5.3.63# (24 January 2014)
+• Scripting language: easier menu command invocation using the colon “`:`”.
+• 64-bit Mac graphics: better handling of any absence of Doulos SIL or Charis SIL.
+• Windows scripting: can now use “`~`” in file names to refer to the home directory, as on Mac and Linux.
+
+##5.3.62# (2 January 2014)
+• 64-bit Mac: removed a bug introduced in 5.3.61 that could cause text containing “ff” to become invisible.
+
+##5.3.61# (1 January 2014)
+• EEG: understand status registers that contain text.
+• KlattGrid: removed a bug introduced in May 2009 that could make Praat crash after editing an oral formant grid.
+
+##5.3.60# (8 December 2013)
+• Mac 64-bit: implemented swiping (to scroll with the trackpad) and pinching (to zoom with the trackpad).
+• Scripting: @`backslashTrigraphsToUnicode` () and @`unicodeToBackslashTrigraphs` ().
+
+##5.3.59# (20 November 2013)
+• EEG: faster reading of BDF and EDF files.
+• Batch scripting: made @`appendInfo` () write to the console in the same way as #`print`.
+• Removed a bug introduced in 5.3.57 whereby some Praat text files could not be read.
+
+##5.3.58# (17 November 2013)
+• EEG: support for 16-bit (next to 24-bit) BDF files and for 16-bit (next to 8-bit) statuses.
+• Mac: 64-bit beta version.
+
+##5.3.57# (27 October 2013)
+• Mac: opening, modifying and saving image files (the Photo object).
+• Mac 64-bit: some small improvements in the user interface.
+
+##5.3.56# (15 September 2013)
+• Mac: 64-bit alpha version.
+• Linux: improved selecting in the Picture window.
+
+##5.3.55# (2 September 2013)
+• Corrected a bug introduced in 5.3.54 by which you couldn't select a file for saving.
+
+##5.3.54# (1 September 2013)
+• Sound window: removed a bug introduced in 5.3.42 by which you couldn't ask for an odd number of poles in Formant Settings
+  (by e.g. specifying “5.5” for the number of formants).
+• Linux: improved dragging of selections in the Picture window and the Sound window.
+
+##5.3.53# (9 July 2013)
+• Table: more drawing commands.
+
+##5.3.52# (12 June 2013)
+• Scripting: editor windows understand #`do` and #`do$`.
+
+##5.3.51# (30 May 2013)
+• Sound window: ##Extract selected sound for overlap...#.
+
+##5.3.49# (13 May 2013)
+• TextGrid window: alignment of the sound and the annotation in an interval, via Espeak.
+• Scripting: repaired a bug introduced in 5.3.32 that could cause very slow running of scripts.
+
+##5.3.48# (1 May 2013)
+• Scripting: variable-substitution-free object selection and file writing.
+• Scripting: @`selectObject` and @`removeObject` can select or remove multiple objects at a time.
+
+##5.3.47# (23 April 2013)
+• OTGrammar: included Giorgio Magri's (2012) update rule (weighted all up, high down).
+
+##5.3.46# (21 April 2013)
+• Scripting: variable-substitution-free procedure calls.
+• Linux: made the Save menu compatible with Ubuntu 12.04.
+
+##5.3.45# (15 April 2013)
+• More parts of the manual reflect variable-substitution-free scripting.
+
+##5.3.44# (7 April 2013)
+• @@Create Sound as pure tone...@.
+• First steps towards variable-substitution-free scripting: the #`do`, #`do$`, @`writeInfo` and @`appendInfo` functions.
+
+##5.3.43# (27 March 2013)
+• Read and write stereo Kay sound files.
+• Phonetic symbols \\ts, \\tS and \\ap.
+• Network: ##Normalize weights...#, ##List weights...#, ##Weights down to Table...#.
+
+##5.3.42# (2 March 2013)
+• Repaired some minor bugs regarding synchronization between multiple windows.
+
+##5.3.41# (9 February 2013)
+• Linux: repaired a bug that could cause Praat to crash when closing the Info window or a script window.
+
+##5.3.40# (2 February 2013)
+• Windows: better handling (in the LongSound window) of sounds that are too long to play.
+• Mac: corrected a bug that caused Praat to crash when closing the Strings window.
+• Linux: made audio output work again on 32-bit Linux.
+
+##5.3.39# (6 January 2013)
+• @@Formant & Spectrogram: To IntensityTier...@.
+
+##5.3.38# (4 January 2013)
+• ExperimentMFC: repaired a bug introduced in 5.3.36 that caused sound to fail to play completely if the screen did not blank.
+
+##5.3.37# (2 January 2013)
+• ExperimentMFC: after screen blanking, reaction times count from when the response buttons appear.
+
+##5.3.36# (1 January 2013)
+• ExperimentMFC: made it possible to blank the screen while the sound is playing.
+
+##5.3.35# (8 December 2012)
+• SpeechSynthesizer: made it possible to have more than one at a time.
+• Linux: corrected a bug that caused incorrect alignment of the buttons in the Objects window.
+
+##5.3.34# (21 November 2012)
+• Windows: corrected a bug that caused incorrect alignment of the buttons in the Objects window.
+• The new @@Sound: Combine to stereo@ can now work with Sounds of different durations, as the old could.
+• Corrected a bug that caused Praat to crash when creating a SpeechSynthesizer.
+
+##5.3.33# (20 November 2012)
+• ##Sound: Combine to stereo# can now combine any number of Sounds into a new Sound whose number of channels
+  is the sum of the numbers of channels of the original Sounds.
+• ERP: Down to Sound.
+
+##5.3.32# (17 October 2012)
+• Sound window: corrected the working of the ##by window# scaling option.
+
+##5.3.31# (10 October 2012)
+• ERP: Down to Table...
+• Linux: corrected a bug that could cause Praat to crash after closing a file selector window for saving.
+
+##5.3.30# (6 October 2012)
+• Circumvented a rare Windows bug that could cause Praat to start to write 1.5 as 1,5 in some countries
+  after opening a strange directory.
+• Windows: corrected a bug introduced in 5.3.24 that could cause Praat to crash when quitting.
+• Windows: corrected a bug introduced in 5.3.24 that could cause the Objects window to look weird after resizing.
+
+##5.3.29# (30 September 2012)
+• @EEG: Draw scalp..., including gray legend.
+• Made the new Sound scaling options available for LongSounds.
+
+##5.3.28# (28 September 2012)
+• Corrected a bug introduced in 5.3.24 that made Praat crash on OSX 10.5.
+
+##5.3.27# (27 September 2012)
+• Corrected a couple of small bugs.
+
+##5.3.26# (26 September 2012)
+• Corrected a bug introduced in 5.3.24 that prevented Praat from running in batch mode.
+
+##5.3.25# (26 September 2012)
+• EEG: view of scalp distribution takes scaling options into account.
+• Linux: swipable Sound window and manual.
+• Linux: corrected a bug introduced in 5.3.24 whereby TextGrids could not be edited.
+
+##5.3.24# (24 September 2012)
+• More kinds of vertical scaling in e.g. Sound and EEG windows.
+• Rewritten user interface (may contain some bugs).
+
+##5.3.23# (7 August 2012)
+• Mac: removed a bug introduced in September 2011 that could cause incorrect behaviour of regular expressions since July 2012.
+
+##5.3.22# (21 July 2012)
+• Linux: removed a bug introduced in 5.3.21 that could cause Praat to crash when opening files.
+• Neural networks: correct writing and reading of learning settings.
+
+##5.3.21# (10 July 2012)
+• Linux: better folder choice in file selector window for opening files.
+• Repaired a bug that caused Praat to crash when opening a ManPages file on some platforms.
+
+##5.3.20# (5 July 2012)
+• @EEG: ##Replace TextGrid#.
+
+##5.3.19# (24 June 2012)
+
+##5.3.18# (15 June 2012)
+• Corrected a bug in @@Sound: Change gender...@ that caused a part of the sound not to be changed.
+
+##5.3.17# (12 June 2012)
+• @EEG window: extent autoscaling by window.
+• ERPTier: Remove events between...
+
+##5.3.16# (23 May 2012)
+
+##5.3.15# (10 May 2012)
+• Improvements in clipboards, PDF and EPS files.
+
+##5.3.14# (28 April 2012)
+• Linux: Tab shortcut for playing the selection.
+• EPS files: higher minimum image resolution for spectrograms (300 instead of 106 dpi).
+
+##5.3.13# (11 April 2012)
+• @EEG: Extract part...
+
+##5.3.12# (5 April 2012)
+• Praat picture file: allow larger function drawings (up to 10^9 instead of 10^6 points).
+• Linux: better audio compatibility with Ubuntu 11.10 (support for unusual sampling frequencies when playing LongSounds).
+
+##5.3.11# (27 March 2012)
+• @EEG: a selected ERPTier can extract events on the basis of a column of a selected Table.
+
+##5.3.10# (12 March 2012)
+• @EEG: Concatenate.
+
+##5.3.09# (10 March 2012)
+• Better text-to-speech.
+
+##5.3.08# (5 March 2012)
+• Removed a bug introduced in 5.3.07 that could cause Praat to crash when viewing a LongSound.
+
+##5.3.07# (4 March 2012)
+• Praat can now save Sounds as 24-bit and 32-bit WAV files.
+
+##5.3.06# (28 February 2012)
+
+##5.3.05# (19 February 2012)
+• SpeechSynthesizer (#New menu \\-> #Sound): text-to-speech.
+• @EEG: better scalp distribution drawing for both 32-channel and 64-channel recordings.
+
+##5.3.04# (12 January 2012)
+• EEG: draw scalp distribution.
+• Linux: better audio compatibility with Ubuntu 11.10 (support for unusual sampling frequencies when playing Sounds).
+
+##5.3.03# (21 November 2011)
+• EEG: filtering, editing, more viewing.
+
+##5.3.02# (7 November 2011)
+• Corrected a bug introduced in 5.3.01 that could cause the PitchTier or PointProcess window to crash.
+• Corrected a bug that could cause the Info window to freeze after an error message in a script window.
+
+##5.3.01# (1 November 2011)
+• Macintosh and Windows: better window positioning if the Dock or Task Bar is on the left or right.
+• IPA symbol: you can now use \\bs.f for the half-length sign (\\.f).
+• EEG window.
+
+################################################################################
+"What was new in 5.3?"
+© Paul Boersma 2011
+
+##5.3# (15 October 2011)
+
+##5.2.46# (7 October 2011)
+• Corrected the same very old bug as in 5.2.44, but now also for opening and saving files.
+• Many better messages.
+
+##5.2.45# (29 September 2011)
+• Spectrum window: ##Move cursor to nearest peak#.
+• @@Table: Save as comma-separated file...@.
+• Windows: you can now change the font size of the script window.
+• Windows scripting: the Info window now updates while you are writing to it.
+• Windows: error messages now stay at the front so that you never have to click away
+  an invisible message window anymore.
+
+##5.2.44# (23 September 2011)
+• Corrected a very old bug in the history mechanism (the button title wouldn't always show up).
+
+##5.2.43# (21 September 2011)
+• Linux: you can now change the font size of the script window.
+• Corrected a bug that could cause Praat to crash when opening an already open file in the script window.
+
+##5.2.42# (18 September 2011)
+• Corrected a bug introduced in 5.2.36 that prevented formulas from working on FormantGrid objects.
+
+##5.2.41# (17 September 2011)
+• Improved dashed-dotted lines in EPS files.
+• Corrected a bug introduced in 5.2.36 that caused Praat to crash when running an ExperimentMFC.
+
+##5.2.40# (11 September 2011)
+• Corrected a bug in the 64-bit Windows edition that led to an incorrect location for the preferences files.
+
+##5.2.39# (10 September 2011)
+• 64-bit edition for Windows.
+• Corrected a bug that caused Praat to crash instead of saying “undefined” when reporting the shimmer of a sound with fewer than 3 pulses.
+
+##5.2.38# (6 September 2011)
+• Corrected several bugs that were introduced in 5.2.36 in the Inspect window.
+
+##5.2.37# (2 September 2011)
+• Graphics: added the Chinese phonetic symbols \\id and \\ir. See @@Phonetic symbols: vowels@.
+• Corrected a bug introduced in 5.2.36 that caused Praat to crash when querying formant quantiles.
+
+##5.2.36# (30 August 2011)
+• Graphics: added superscript diacritics as single symbols: \\^h (\\bs\\^ h), \\^j (\\bs\\^ j),
+and many more; also \\_u (\\bs\\_ u). See @@Phonetic symbols: diacritics@.
+• Praat fully converted to C++ (this may initially cause some bugs, but will be more reliable in the end).
+
+##5.2.35# (5 August 2011)
+• Corrected the menus of the Sound and TextGrid windows.
+
+##5.2.34# (3 August 2011)
+• @@Insert picture from file...@ now works on Windows (as well as on the Mac).
+• Corrected a bug that could cause Praat to crash when playing a LongSound.
+
+##5.2.33# (29 July 2011)
+• Improved the reliability of sound playing and several other things.
+• Improved several error messages.
+
+##5.2.32# (22 July 2011)
+• Corrected several problems with error messages.
+• Corrected a bug that could cause slow execution of scripts with forms.
+
+##5.2.31# (21 July 2011)
+• Corrected a bug that caused an incorrect window size in the VowelEditor.
+• Corrected a bug that caused incorrect error messages when opening a FLAC file as a LongSound.
+• Sound window: corrected a bug that could cause Praat to crash when zooming in on the left or right edge.
+
+##5.2.30# (18 July 2011)
+• Corrected a bug introduced in 5.2.29 whereby the list of object actions could stay empty after an error message in a script.
+• Corrected a bug in Klatt synthesis whereby the generation of a sound could be refused.
+
+##5.2.29# (12 July 2011)
+• More accurate error checking, due to Praat's conversion to C++ (last C-only version was 5.2.17).
+
+##5.2.28# (28 June 2011)
+• Corrected some Polygon bugs.
+
+##5.2.27# (19 June 2011)
+• @Polygon: ##Draw (closed)...#.
+• @@PointProcess: To Sound (phonation)...@:
+corrected a bug that could cause Praat to crash if pulses lay outside the time domain.
+
+##5.2.26# (24 May 2011)
+• Corrected a bug that could cause Praat to crash on some platforms when reading a Praat binary file.
+• @ExperimentMFC: corrected a bug that caused Praat to crash if an experiment contained zero trials.
+• Corrected a bug that caused Praat to crash when merging multiple IntervalTiers.
+
+##5.2.25# (11 May 2011)
+• OT learning: corrected a crashing bug from ##Get candidate...#.
+
+##5.2.24# (10 May 2011)
+• Ability to open WAV files that contain incorrect information about the number of samples.
+• Removed an old bug that could cause Praat to fail to read a chronological TextGrid text file.
+
+##5.2.23# (1 May 2011)
+• Removed a bug introduced recently that could cause Praat to crash when working with derivatives of TableOfReal (such as Distributions).
+
+##5.2.22# (14 April 2011)
+• @ExperimentMFC: reaction times for key presses.
+• Linux: more reliable start-up on German systems.
+
+##5.2.21# (29 March 2011)
+• Scripting: removed a crashing bug introduced for colour names in 5.2.20.
+
+##5.2.20# (25 March 2011)
+• Scripting: removed a large memory leak for indexed variables.
+• Scripting: removed a small memory leak for colour names.
+• Support for very long file paths on the Mac.
+
+##5.2.19# (16 March 2011)
+• @ExperimentMFC: corrected a bug introduced in 5.2.18 that could cause Praat to crash when extracting results from an incomplete experiment.
+
+##5.2.18# (9 March 2011)
+• @ExperimentMFC: incomplete experiments can nevertheless output their incomplete results.
+
+##5.2.17# (2 March 2011)
+• Better names for Table opening and saving commands.
+• @ExperimentMFC: reaction times for mouse clicks.
+• Linux/GTK: corrected triple clicks in ExperimentMFC.
+
+##5.2.16# (20 February 2011)
+• Better support for WAV files with special “chunks” in them.
+• Manual: documentation of explicit formulas for @@Voice 2. Jitter|jitter measurements@.
+
+##5.2.15# (11 February 2011)
+• @@Sounds: Concatenate with overlap...@.
+
+##5.2.14# (8 February 2011)
+• Repaired crashing bug in Manipulation window introduced in 5.2.13.
+
+##5.2.13# (7 February 2011)
+• Renamed #Write commands to #Save commands.
+• Scripting: allow pause forms without #Stop button (see @@Scripting 6.6. Controlling the user@).
+• GTK: correct behaviour of default buttons.
+
+##5.2.12# (28 January 2011)
+• Renamed #Edit buttons to ##View & Edit#.
+• Better visibility of dragged things on Linux.
+
+##5.2.11# (18 January 2011)
+• Better visibility of dragged things (sound selection, tier points, TextGrid boundaries) on Windows and Linux.
+
+##5.2.10# (11 January 2011)
+• Renamed #Read and #Write menus to #Open and #Save.
+• Sound: use of ##Formula (part)...# can speed up formulas appreciably.
+
+##5.2.09# (9 January 2011)
+• Much improved scripting tutorial.
+• Listening experiments can now show pictures instead of just texts (on the Mac).
+• EPS files can now be many miles wide instead of just 55 inches.
+
+##5.2.08# (1 January 2011)
+• Improved manual.
+• Improved memory allocation on 32-bit platforms:
+less probability of crashes when you approach the 2 GB memory limit gradually,
+and a new “low on memory; save your work now” warning.
+• Removed IntervalTier and TextTier datatypes from Praat (old scripts that use them will continue to work).
+
+##5.2.07# (24 December 2010)
+• Support for reading and writing multi-channel sound files (i.e. above two-channel stereo).
+
+##5.2.06# (18 December 2010)
+• Picture window: a new (the fourth) line type, namely dashed-dotted.
+• Support for analysing and drawing multi-channel sounds (i.e. above two-channel stereo).
+• Can read some EEG files (BioSemi 24-bit BDF) as a Sound and a TextGrid object.
+• Linux: compatibility with computers without English language support.
+• Macintosh: support for high-plane (i.e. very uncommon) Unicode characters in file names (as already existed on Unix and Windows).
+
+##5.2.05# (4 December 2010)
+• Regular expressions: better Unicode support.
+• Scripting window: command ##Convert to C string#.
+
+##5.2.04# (27 November 2010)
+• Scripting: allow directory (folder) selector windows; see @@Scripting 6.6. Controlling the user@.
+
+##5.2.03# (19 November 2010)
+• Scripting: support for string arrays.
+
+##5.2.02# (17 November 2010)
+• TextGrid window: corrected a bug that caused Praat to crash (instead of doing nothing) when you tried to add boundaries
+if the selection ran from the penultimate interval to the end of the TextGrid.
+• Scripting: support for arrays with multiple indexes.
+• Linux: made spectrogram drawing compatible with Ubuntu 10.10.
+• Linux: made sound more easily available on Ubuntu 10.10.
+
+##5.2.01# (4 November 2010)
+• Scripting: support for numeric @@Scripting 5.6. Arrays and dictionaries|arrays@.
+
+################################################################################
+"What was new in 5.2?"
+© Paul Boersma 2010
+
+##5.2# (29 October 2010)
+
+##5.1.45# (26 October 2010)
+• Linux/GTK: allow Praat to run without an X display.
+• Sounds are played synchronously in scripts run from ManPages with \\bsSC.
+
+##5.1.44# (4 October 2010)
+• Linux/GTK: visibility of ExperimentMFC window.
+• Linux/GTK: keyboard shortcuts.
+
+##5.1.43# (4 August 2010)
+• Scripting: support for stand-alone programs; see @@Scripting 9. Turning a script into a stand-alone program@.
+• Table: allow drawing of ellipses even if irrelevant columns contain undefined data.
+• Linux/GTK: correct resizing of Table window.
+• Linux/GTK: prevented multiple storing of Picture window selection in scripting history.
+
+##5.1.42# (26 July 2010)
+• Scripting: allow file selector windows; see @@Scripting 6.6. Controlling the user@.
+• Linux: multiple file selection.
+
+##5.1.41# (15 July 2010)
+• OTGrammar: ##Compare candidates...#
+• GTK: support for the Doulos SIL and Charis SIL fonts.
+• GTK: working vowel editor.
+• Vowel editor: repaired memory leak.
+//• GTK: Picture window: front when drawing.
+//• GTK: correct scrolling in manuals.
+
+##5.1.40# (13 July 2010)
+• GTK: working Demo window (drawing, clicks, keys).
+• GTK: pause forms.
+• GTK: manual pages: receive a white background, for compatibility with dark-background themes.
+• GTK: in settings windows, better alignment of labels to radio groups.
+• GTK: rotated text.
+
+##5.1.39# (10 July 2010)
+• GTK beta version.
+• Linux: made @@Sound: Record (fixed time)...@ work correctly (the sampling frequency was wrong).
+• GTK: list of objects: multiple selection, working Rename button.
+• GTK: running a script no longer deselects all objects at the start.
+• GTK: working Buttons editor.
+• GTK: correctly laid out settings windows.
+
+##5.1.38# (2 July 2010)
+• Linux: made @@Sound: Record fixed time...@ work correctly (the sampling frequency was wrong).
+• Mac: repaired a bug introduced in 5.1.35 that could cause Praat to crash
+  if neither Doulos SIL nor Charis SIL were installed.
+• Mac: correct live scrolling in Picture window and DataEditor.
+
+##5.1.37# (23 June 2010)
+• PitchTier window and similar windows: can drag multiple points simultaneously.
+• Table: %t-tests report the number of degrees of freedom.
+• GTK: correct progress bar again.
+• GTK: correct behaviour of Synth menu in manipulation window.
+
+##5.1.36# (18 June 2010)
+• Mac: live scrolling.
+• Demo window: the Demo window can now run from the command line.
+• Motif: corrected a bug introduced in 5.1.33 whereby things in the Picture window could be placed incorrectly.
+• GTK: script window accepts Unicode again.
+
+##5.1.35# (10 June 2010)
+• TextGrid window: removed a very old bug that could lead to reversed intervals
+  and to crashes when you inserted a boundary after using Shift-arrow and Command-arrow.
+• Graphics: Praat now uses Doulos SIL instead of Charis SIL if your font setting is “Times”
+  and the font is nonbold and nonitalic, because Doulos SIL matches Times New Roman better.
+• kNN: made Ola Söder's k-nearest-neighbours classification compatible with Windows.
+
+##5.1.34# (31 May 2010)
+• Sound window: corrected a bug that caused Praat to crash if the analysis window was shorter than 2 samples.
+• GTK: scrolling in the Info window and script window.
+• GTK: script editor: implemented searching, replacing, and change dialogs.
+
+##5.1.33# (24 May 2010)
+• GTK alpha version.
+• Abolished resolution independence: the Sound window now looks the same on all platforms,
+  and the Demo window has the same relative font size on your screen and on the video projector.
+• GTK: support for asynchronous audio output.
+• GTK: sound plays once rather than three times in Sound and other windows.
+• GTK: can click more than once in the manual.
+• GTK: correct pink selections in Sound and other windows.
+• GTK: correct dragging in TextGrid, Manipulation, and tier windows.
+• GTK: a working TextGrid window.
+• GTK: no automatic triple click in the manual (and many other windows).
+• GTK: moving cursor while sound is playing in Sound and other windows.
+• GTK: correct colours of the rectangles in Sound and other windows.
+• GTK: a working Group button.
+• GTK: correct font menus, font size menus, colour menus, line type menus.
+• GTK: scrolling in the manual (and many other windows).
+• GTK: erase old texts in manual windows.
+• GTK: made Picture window come back when drawing.
+• GTK: Info window is fronted automatically.
+• GTK: support sendpraat.
+
+##5.1.32# (30 April 2010)
+• Scripting: command ##Expand include files#.
+• Scripting: accept lines that start with non-breaking spaces
+  (as may occur in scripts copied from the web manual).
+• Sound files: accept MP3 files with extension written in capitals.
+• Linux audio recording: corrected input choice (microphone, line).
+
+##5.1.31# (4 April 2010)
+• @@Sounds: Convolve...@, @@Sounds: Cross-correlate...@, @@Sound: Autocorrelate...@, with full documentation.
+• More query commands for IntensityTier.
+
+##5.1.30# (25 March 2010)
+• Scripting: `createFolder` () can now work with absolute paths.
+• PointProcess: made it impossible to add a point where there is already a point.
+
+##5.1.29# (11 March 2010)
+• Full support for unicode values above 0xFFFF on Macintosh.
+
+##5.1.28# (10 March 2010)
+• TextGrid window: removed a recently introduced bug that could cause Praat to crash when inserting a boundary.
+
+##5.1.27# (7 March 2010)
+• Table: Wilcoxon rank sum test.
+• Logistic regression: corrected a bug by which a boundary would sometimes not be drawn.
+
+##5.1.26# (25 February 2010)
+• Experimental GTK version with the help of Franz Brauße.
+• Corrected a bug that could cause Praat to crash if sound playing failed twice.
+
+##5.1.25# (20 January 2010)
+• Script window: the new command ##Reopen from disk# allows you to edit the script with an external editor.
+• Script window: removed a bug that could cause Praat to crash
+  if you did ##Find again# before having done any #Find.
+
+##5.1.24# (15 January 2010)
+• Formulas run 10 to 20 percent faster.
+• Macintosh: support for forward delete key and Command-\\` .
+
+##5.1.23# (1 January 2010)
+• Allowed multiple files to be selected with e.g. @@Read from file...@.
+• Demo window: guarded against handling the Demo window from two scripts at a time.
+
+##5.1.22# (15 December 2009)
+• Picture window: millions of @@colour|colours@ instead of just twelve.
+• Sound window: ##Move frequency cursor to...#
+
+##5.1.21# (30 November 2009)
+• @@Sound: Draw where...@
+• @@Matrix: Draw contours...@ and @@LogisticRegression: Draw boundary...@ support reversed axes.
+• Sound window: ##Move frequency cursor to...#.
+
+##5.1.20# (26 October 2009)
+• Editor windows: repaired the Synchronized Zoom And Scroll preference.
+
+##5.1.19# (21 October 2009)
+• Table: Randomize rows
+• Tables: Append (vertically)
+• Scripting: corrected a bug that could cause Praat to crash if the name of a field in a form contained a colon.
+• Windows: corrected arc drawing.
+
+##5.1.18# (9 October 2009)
+• The @@Demo window@ is less often automatically moved to the front
+  (in order to allow it to pop up other editor windows).
+• @@DTW & TextGrid: To TextGrid (warp times)@: corrected a bug that could
+  lead to an incorrect end time of the last interval in new IntervalTiers.
+
+##5.1.17# (22 September 2009)
+• Made more stereo movies readable.
+• Editor windows now have a ##Zoom Back# button.
+
+##5.1.16# (17 September 2009)
+• Macintosh: corrected a bug that caused incorrect phonetic symbols if Charis SIL was available but SIL Doulos IPA93 was not.
+
+##5.1.15# (30 August 2009)
+• Corrected a bug in @@Sound: Change gender...@ introduced in 5.1.14.
+
+##5.1.14# (27 August 2009)
+• Windows: corrected a bug introduced in 5.1.13 that caused Praat to crash during tab navigation.
+• Made @@Sound: Change gender...@ compatible with elephant calls (i.e. very low F0).
+
+##5.1.13# (21 August 2009)
+• Script window: #Find and #Replace.
+• Picture window (and therefore Demo window!): @@Insert picture from file...@ (MacOS 10.4 and up).
+• @@Demo window@: full screen (on the Mac).
+• Scripting: faster object selection (scripts no longer slow down when there are many objects in the list).
+• Scripting: @`variableExists` ().
+• Macintosh: PDF clipboard (MacOS 10.4 and up).
+
+##5.1.12# (4 August 2009)
+• Macintosh: the Picture window can save to PDF file (you need MacOS 10.4 or up).
+• Macintosh: corrected a bug that caused Praat to crash at start-up on MacOS 10.3.
+
+##5.1.11# (19 July 2009)
+
+##5.1.10# (8 July 2009)
+• Corrected a bug that could cause Praat to crash if the Demo window was closed after an #execute.
+• OTGrammar & PairDistribution: added ##Get minimum number correct...#.
+
+##5.1.09# (28 June 2009)
+• Made East-European Roman characters available in EPS files.
+
+##5.1.08# (21 June 2009)
+• Removed a bug introduced in 5.1.07 that could cause strange pictures in manual.
+• Macintosh: execute @sendpraat messages immediately instead of waiting for the user to click the jumping Praat icon.
+
+##5.1.07# (12 May 2009)
+• Demo window: navigation by arrow keys also on Windows.
+• Demo window: no longer crashes on Linux.
+
+##5.1.06# (11 May 2009)
+• Demo window.
+
+##5.1.05# (7 May 2009)
+• KlattGrid update.
+
+##5.1.04# (4 April 2009)
+• Corrected a bug that could cause a missing text character in EPS files produced by a version of Praat running in batch.
+• Corrected a bug that could cause high values in a Matrix computed from a Pitch.
+
+##5.1.03# (21 March 2009)
+//• OT learning: the ##Random up, highest down# update rule.
+• ExperimentMFC: corrected a bug introduced in 5.0.36 that caused Praat to crash if a sound file did not exist.
+• Articulatory synthesis: corrected a bug that could cause Praat to crash when copying Artwords.
+• Macintosh: corrected a bug that could cause poor text alignment in picture.
+
+##5.1.02# (9 March 2009)
+• Allow pause forms without fields.
+• The value “undefined” is disallowed from all fields in command windows
+  except @@Table: Set numeric value...@ and @@TableOfReal: Set value...@.
+• @@TextGrid: List...@ and @@TextGrid: Down to Table...@.
+• OT learning: Giorgio Magri’s ##Weighted all up, highest down# update rule.
+
+##5.1.01# (26 February 2009)
+• Corrected several bugs in Klatt synthesis.
+
+################################################################################
+"What was new in 5.1?"
+© Paul Boersma 2009-01-31
+
+##5.1# (31 January 2009)
+• Editors for Klatt synthesis.
+• Corrected many bugs.
+
+##5.0.47# (21 January 2009)
+• Extensive pause windows: @@Scripting 6.6. Controlling the user@.
+
+##5.0.46# (7 January 2009)
+• More Klatt synthesizer.
+• First pause form support.
+• Renewed CategoriesEditor.
+• Repaired several memory leaks.
+
+##5.0.45# (29 December 2008)
+• Bug fixes in Klatt synthesizer.
+
+##5.0.44# (24 December 2008)
+• David's Klatt synthesizer: @KlattGrid.
+
+##5.0.43# (9 December 2008)
+• Scripting tutorial: local variables in procedures.
+
+##5.0.42# (26 November 2008)
+• Removed a bug that could cause Praat to crash when drawing pictures in the manual window.
+• Removed a bug that could cause Praat to crash when drawing multi-line text.
+
+##5.0.41# (23 November 2008)
+• ExperimentMFC: allow multiple lines in all texts.
+• Regular expressions: removed a bug that could cause Praat to hang when using “`.*`”.
+• Table: Draw ellipses: removed a bug that could cause Praat to crash if some cells were undefined.
+
+##5.0.40# (10 November 2008)
+• Improved reading and writing of text files (faster, bigger).
+
+##5.0.39# (1 November 2008)
+• praatcon -a (for sending ANSI encoding when redirected)
+
+##5.0.38# (28 October 2008)
+• @FormantGrid: To Formant...
+
+##5.0.36# (20 October 2008)
+• @ExperimentMFC: accepts nonstandard sound files.
+
+##5.0.35# (5 October 2008)
+• ##Scale times by...# and ##Scale times to...# (Modify menu).
+
+##5.0.34# (22 September 2008)
+• ##Shift times by...# and ##Shift times to...# (Modify menu).
+• Sound: @@Combine to stereo@ works even if the two mono sounds have different durations or time domains.
+
+##5.0.33# (9 September 2008)
+• Windows: prevented warning messages about “Widget type”.
+
+##5.0.32# (12 August 2008)
+• Contributed by Ola Söder: kNN classifiers and k-means clustering.
+• Made UTF-16-encoded chronological TextGrid files readable.
+
+##5.0.31# (6 August 2008)
+• Macintosh: corrected a bug introduced in 5.0.30 that caused Praat to crash when you pressed the Tab key
+in a window without text fields.
+
+##5.0.30# (22 July 2008)
+• Macintosh and Windows: tab navigation.
+
+##5.0.29# (8 July 2008)
+• OTMulti: can record history.
+• Picture window: corrected text in Praat picture files.
+
+##5.0.28# (3 July 2008)
+• Windows: audio output uses DirectX (next to Multi-Media Extensions).
+
+##5.0.27# (28 June 2008)
+• @@Phonetic symbols@: breve (a\\N^).
+• Annotation: improved some SpellingChecker commands.
+• Table: can now set string values that contain spaces.
+
+##5.0.26# (15 June 2008)
+• Windows: sound recording no longer makes your laptop's fan spin.
+• Windows: no longer any 64 MB limit on recorded sounds.
+• Linux: audio input and output uses Alsa (next to OSS).
+
+##5.0.25# (31 May 2008)
+• OT learning: added decision strategy ExponentialMaximumEntropy.
+
+##5.0.24# (14 May 2008)
+• Linux: corrected a bug at start-up.
+
+##5.0.23# (9 May 2008)
+• Corrected a bug that could cause Praat to crash when you edited an Artword that you had read from a file.
+
+##5.0.22# (26 April 2008)
+• Editing formant contours: @FormantGrid.
+
+##5.0.21# (22 April 2008)
+• Annotating with Cyrillic, Arabic, Chinese, Korean characters, and many more (on Macintosh and Windows).
+
+##5.0.20# (8 April 2008)
+• @ExperimentMFC: prevented the OK key from working if no response (and goodness choice) had been made.
+• OT learning: sped up learning from partial outputs by a factor of five or more.
+
+##5.0.19# (4 April 2008)
+• TextGrid window: corrected a bug introduced in 5.0.17 that could cause Praat to crash when handling point tiers.
+
+##5.0.18# (31 March 2008)
+• Manipulation window: corrected a bug introduced in 5.0.17 that caused Praat to crash when adding the first duration point.
+• Sound: added ##Extract all channels#.
+• OT learning: added @@OTGrammar & PairDistribution: Find positive weights...@.
+• ExperimentMFC: corrected a bug that caused Praat to crash when the second of multiple experiments
+  referred to non-existing sound files.
+
+##5.0.17# (29 March 2008)
+• Sped up vowel editor by a large factor.
+• OT learning: corrected Exponential HG update rule from OT-GLA to HG-GLA.
+• OT learning: shift Exponential HG average constraint weight to zero after every learning step.
+
+##5.0.16# (25 March 2008)
+• Macintosh: returned to old compiler because of incompatibility with MacOS X 10.4.
+
+##5.0.15# (21 March 2008)
+• Windows: more reliable dropping of files on the Praat icon when Praat is already running.
+
+##5.0.14# (20 March 2008)
+• David's vowel editor (New \\-> Sound).
+• Formulas: corrected scaling of sinc function.
+
+##5.0.13# (18 March 2008)
+• Corrected drawing of histograms.
+• TextGrid window: selected part of the TextGrid can be extracted and saved.
+• TextGrid: more complete conversion between backslash trigraphs and Unicode.
+• Windows: more reliable dropping of files on the Praat icon when Praat is not running yet.
+• Formulas: sinc function.
+
+##5.0.12# (12 March 2008)
+• Bigger ligature symbol (k\\lip).
+
+##5.0.11# (7 March 2008)
+• Corrected saving of new binary Manipulation files (you can send any unreadable Manipulation files to Paul Boersma for correction).
+
+##5.0.10# (27 February 2008)
+• Added the characters \\d- and \\D-.
+• Windows: made ##praatcon.exe# compatible with Unicode command lines.
+
+##5.0.09# (16 February 2008)
+• Windows: corrected a bug by which Praat would not open files that were dragged on the Praat icon
+if the names of these files or their directory paths contained non-ASCII characters.
+• Linux: ignore the Mod2 key, because of its unpredictable assignment.
+
+##5.0.08# (10 February 2008)
+• Corrected the minus sign (\bs-m = “−”).
+
+##5.0.07# (8 February 2008)
+• Object IDs are visible in editor windows.
+
+##5.0.06# (31 January 2008)
+• Corrected a bug that caused ##Find again# in the TextGrid window not to work.
+• Macintosh: made Praat work correctly on 10.3 computers with missing fonts.
+
+##5.0.05# (19 January 2008)
+• All Matrix, Sound, Spectrogram, Pitch, Ltas, and Spectrum objects (and more) are now in 52-bit relative precision (instead of the earlier 23 bits).
+• Corrected a bug that could lead to “Unknown opcode (0)” messages when drawing large sounds (more than 16 million samples) in the Picture window.
+• Macintosh: solved around a bug in the C library that could cause incorrect representation of non-ASCII characters (in the OTGrammar window).
+
+##5.0.04# (12 January 2008)
+• Windows: corrected a bug introduced in 5.0.03 that caused Praat to crash if you pressed a key in the Sound window.
+• Macintosh: some cosmetic corrections.
+
+##5.0.03# (9 January 2008)
+• Scripting: guard against opening the same file more than once.
+• Table: possibility of regarding a column as a distribution (#Generate menu).
+• Macintosh: corrected line colours.
+
+##5.0.02# (27 December 2007)
+• TextGrid window: corrected the drawing of numbers to the right of the tiers.
+• Corrected a bug that caused Praat to crash when doing ##SpectrumTier: List#.
+
+##5.0.01# (18 December 2007)
+• Corrected a bug that could cause Praat to crash when redrawing the sound or TextGrid window.
+
+################################################################################
+"What was new in 5.0?"
+© Paul Boersma 2007-12-10
+
+##5.0# (10 December 2007)
+• Corrected many bugs.
+• Display font sizes in points rather than pixels.
+
+##4.6.41# (9 December 2007)
+• Windows: corrected a bug that could cause listening experiments not to run when the directory path included non-ASCII characters;
+  the same bug could (under comparable circumstances) cause scripted menu commands not to work.
+• Corrected a bug that could cause null bytes in data files when the text output encoding preference was ##try ISO Latin-1, then UTF-16#.
+
+##4.6.40# (3 December 2007)
+• Corrected some minor bugs.
+
+##4.6.39# (1 December 2007)
+• Manual: corrected a bug that could cause Praat to crash when viewing certain manual pages with pictures.
+• Scripting: corrected a bug that could cause Praat to crash when a long string was used as an argument to a procedure.
+
+##4.6.38# (19 November 2007)
+• More extensive @@logistic regression@.
+
+##4.6.37# (15 November 2007)
+• Object list shows numbers.
+• Macintosh: corrected saving of non-ASCII text settings.
+
+##4.6.36# (2 November 2007)
+• Sound and TextGrid windows: direct drawing of intensity, formants, pulses, and TextGrid.
+• Regular expressions: corrected handling of newlines on Windows.
+• Scripting: improved positioning of settings windows for script commands in editors on Windows.
+
+##4.6.35# (22 October 2007)
+• Windows and Linux: better positioning of form windows of editor scripts.
+• Macintosh: OTMulti learning window more compatible with non-ASCII characters.
+
+##4.6.34# (18 October 2007)
+• Corrected a bug introduced in September that could cause Praat to crash when starting up
+  if the user had explicitly made action commands visible or invisible in an earlier session.
+
+##4.6.33# (16 October 2007)
+• Corrected a bug introduced in September that caused Praat to crash when a PointProcess window was opened without a Sound.
+• Macintosh: objects with non-ASCII names show up correctly in the list.
+
+##4.6.32# (14 October 2007)
+• Unicode support for names of objects.
+• Linux: first Unicode support (in window titles).
+• Windows scripting: corrected a bug that caused weird characters in Paste History.
+
+##4.6.31# (8 October 2007)
+• TextGrid window: made Save command available again for TextGrid windows without a sound.
+• Corrected a bug that caused binary Collection files with objects with names with non-ASCII characters to be unreadable.
+
+##4.6.30# (3 October 2007)
+• OTMulti: added an evaluate command in the Objects window, so that paced learning becomes scriptable.
+• Macintosh: worked around a feature of a system library that could cause Praat to crash when reading a Collection text file
+  that contained objects with non-ASCII names.
+
+##4.6.29# (1 October 2007)
+• OT learning: leak and constraint in OTMulti.
+• Support for saving Table, TableOfReal, Strings, OTGrammar and OTMulti in Unicode.
+
+##4.6.28# (1 October 2007)
+• OT learning: positive constraint satisfactions in OTMulti tableaus.
+• Corrected a bug that could cause Praat to crash when reading a non-UTF-8 text file
+  when the ##Text reading preference# had been set to UTF-8.
+
+##4.6.27# (29 September 2007)
+• Corrected redrawing of text with non-ASCII characters.
+
+##4.6.26# (29 September 2007)
+• Corrected reading of high UTF-8 codes.
+
+##4.6.25# (26 September 2007)
+• @ExperimentMFC: can set font size for response buttons.
+
+##4.6.24# (24 September 2007)
+• Czech, Polish, Croatian, and Hungarian characters such as \c< \uo \t< \e; \s' \l/ \c\' \o: (see @@Special symbols@).
+• Some support for Hebrew characters such as \?+ \B+ \sU (see @@Special symbols@).
+
+##4.6.23# (22 September 2007)
+• Corrected a bug introduced in 4.6.13 that caused crashes in text handling (mainly on Linux).
+• Info commands in editors.
+
+##4.6.22# (17 September 2007)
+• Phonetic symbols: added the nonsyllabicity diacritic (a\\nv).
+• Macintosh: worked around a feature of a system library that could cause strange behaviour of forms in scripts with non-ASCII characters.
+
+##4.6.21# (5 September 2007)
+• Sound and TextGrid windows: direct drawing of selected sound to the picture window.
+
+##4.6.20# (2 September 2007)
+• Introduced direct drawing of spectrogram and pitch to the Praat picture window from Sound windows and TextGrid windows.
+• Corrected a bug introduced in 4.6.13 by which Inspect did not show all data in a TextGrid.
+
+##4.6.19# (31 August 2007)
+• Macintosh: worked around a bug in a system library that caused Praat to crash (since version 4.6.13)
+  when removing a boundary from a TextGrid interval in MacOS X 10.3 or earlier.
+
+##4.6.18# (28 August 2007)
+• Sound: Filter (formula): now works in the same way as the other filter commands
+  (without adding an empty space at the end), and on stereo sounds.
+
+##4.6.17# (25 August 2007)
+• Windows: improved rotated text, also for copy-paste and printing.
+• Windows: phonetic characters on the screen now require the Charis SIL or Doulos SIL font.
+• Picture settings report (mainly for script writers).
+• Corrected a bug that could cause Praat to crash when closing a manual page that had been read from a file.
+
+##4.6.16# (22 August 2007)
+• Macintosh: corrected a bug introduced in 4.6.13 that could cause Praat to crash when drawing a spectrogram in MacOS X 10.3 or earlier.
+
+##4.6.15# (21 August 2007)
+• Corrected a bug introduced in 4.6.14 that prevented the use of Helvetica in the Picture window.
+• Corrected a bug in ##Read Table from table file...#, introduced in 4.6.13.
+
+##4.6.14# (20 August 2007)
+• Corrected a bug introduced in 4.6.13 that prevented any other font than Palatino in the Picture window.
+• Macintosh: corrected height of subscripts and superscripts (broken in 4.6.13).
+
+##4.6.13# (16 August 2007)
+• TextGrid: corrected reading of chronological files.
+• Macintosh: text looks better (and rotated text is now readable on Intel Macs).
+• Macintosh: phonetic characters on the screen now require the Charis SIL or Doulos SIL font.
+
+##4.6.12# (27 July 2007)
+• OTGrammar bug fix: leak and constraint plasticity correctly written into OTGrammar text files.
+
+##4.6.11# (25 July 2007)
+• OTGrammar: introduced %%constraint plasticity% for slowing down or halting the speed with which constraints are reranked.
+• OTGrammar: introduced %leak for implementing forgetful learning of correlations.
+• OTGrammar: positive constraint satisfactions are drawn as “+” in tableaus.
+
+##4.6.10# (22 July 2007)
+• Improved reading of UTF-16 data files.
+• Improved error messages when reading text files (line numbers are mentioned).
+• @@Table: Get group mean (Student t)...@.
+
+##4.6.09# (24 June 2007)
+• Corrected a bug introduced in 4.6.07 that caused a crash when reading Collections.
+• Corrected a bug introduced in 4.6.07 that caused incorrect Open buttons in Inspect.
+• How come 4.6.07 introduced those bugs? Because of large changes in the Praat source code as a result of the transition to Unicode.
+
+##4.6.08# (22 June 2007)
+• Windows: worked around a “feature” of the C library that caused 3-byte line-breaks in the buttons file.
+• Windows: returned to smaller font in script window.
+• OT learning: corrected a bug in PositiveHG.
+
+##4.6.07# (20 June 2007)
+• Sound files: MP3 as LongSound (implemented by Erez Volk).
+• Scripting: Unicode support for strings and script window (Mac and Windows only).
+
+##4.6.06# (4 June 2007)
+• Script window: corrected a bug introduced in 4.6.05 that could cause incorrect symbols in saved files.
+
+##4.6.05# (2 June 2007)
+• Sound files: reading MP3 audio files (implemented by Erez Volk).
+
+##4.6.04# (29 May 2007)
+• OT learning: added decision strategy PositiveHG.
+
+##4.6.03# (24 May 2007)
+• Spectral slices have better names.
+
+##4.6.02# (17 May 2007)
+• Sound files: saving FLAC audio files (implemented by Erez Volk).
+
+##4.6.01# (16 May 2007)
+• Removed a bug that caused downsampling (and therefore formant measurements)
+  to be incorrect for stereo sounds.
+
+################################################################################
+"What was new in 4.6?"
+© Paul Boersma 2007
+
+##4.6# (12 May 2007)
+
+##4.5.26# (8 May 2007)
+• Sound files: reading FLAC audio files (implemented by Erez Volk).
+
+##4.5.25# (7 May 2007)
+• @@Table: Rows to columns...@
+• @@Table: Collapse rows...@ (renamed from #Pool).
+• @@Table: Formula (column range)...@
+• OT learning: OTGrammar window shows harmonies.
+
+##4.5.24# (27 April 2007)
+• OT learning: added decision strategy MaximumEntropy;
+  this has the same harmony determination method as Harmonic Grammar (include the additive constraint noise),
+  but there is some more variability, in that every candidate gets a relative probability of exp(harmony).
+
+##4.5.23# (26 April 2007)
+• Macintosh: much smaller sizes (in kilobytes) of spectrograms for printing and clipboard;
+  this improves the compatibility with other programs such as Microsoft Word for large spectrograms.
+
+##4.5.22# (25 April 2007)
+• Macintosh: improved drawing of spectrograms for printing and clipboard
+  (this was crippled in 4.5.18, but now it is better than before 4.5.18).
+
+##4.5.21# (24 April 2007)
+• OT learning: corrected HarmonicGrammar (and LinearOT) learning procedure
+  to the stochastic gradient ascent method applied by @@Jäger (2003)@ to MaxEnt grammars.
+• Scripting: removed a bug that could make selection checking (in command windows) unreliable after a script was run.
+
+##4.5.20# (19 April 2007)
+• Scripting: allow assignments like `pitch = To Pitch... 0 75 600`.
+• PitchTier Formula: guard against undefined values.
+
+##4.5.19# (2 April 2007)
+• Scripting: allow comments with “`#`” and “`;`” in forms.
+• Windows audio playing: attempt at more compatibility with Vista.
+
+##4.5.18# (30 March 2007)
+• Macintosh: better image drawing (more grey values).
+• More tabulation commands.
+• More SpectrumTier commands.
+• Picture window: keyboard shortcut for @@Erase all@.
+
+##4.5.17# (19 March 2007)
+• Picture window: can change arrow size.
+• Several #List commands.
+• @@Spectrum: To SpectrumTier (peaks)@.
+
+##4.5.16# (22 February 2007)
+• Sound-to-Intensity: made resistant against undefined settings.
+• Windows: made Ctrl-. available as a shortcut.
+• Linux: made it more likely to find the correct fonts.
+
+##4.5.15# (12 February 2007)
+• Windows XP: worked around a bug in Windows XP that could cause Praat to crash
+  when the user moved the mouse pointer over a file in the Desktop in the file selector.
+  The workaround is to temporarily disable file info tips when the file selector window is on the screen.
+
+##4.5.14# (5 February 2007)
+• Scripting: some new predefined string variables like `preferencesDirectory$`.
+
+##4.5.13# (3 February 2007)
+• For stereo sounds, pitch analysis is based on correlations pooled over channels
+  (rather than on correlations of the channel average).
+• For stereo sounds, spectrogram analysis is based on power density averaged across channels
+  (rather than on the power density of the channel average).
+• Scripting: removed a bug introduced in 4.5.06 that caused some variables not to be substituted.
+
+##4.5.12# (30 January 2007)
+• Made cross-correlation pitch analysis as fast as it used to be before 4.5.11.
+
+##4.5.11# (29 January 2007)
+• Sound objects can be stereo, for better playback quality
+  (most analyses will work on the averaged mono signal).
+• Macintosh: recording a sound now uses CoreAudio instead of SoundManager, "
+  for more compatibility with modern recording devices,
+  and the possibility to record with a sampling frequency of 96 kHz.
+• @ManPages allow picture scripts with separate object lists.
+• Linux: better scroll bars in object list for Lesstif (Debian).
+• Linux: made @@Create Strings as file list...@ work on Reiser.
+• @sendpraat scripts correctly wait until sounds have played.
+
+##4.5.08# (20 December 2006)
+• ExperimentMFC: can use stereo sounds.
+
+##4.5.07# (16 December 2006)
+• Macintosh: playing a sound now uses CoreAudio instead of SoundManager.
+• Phonetic symbols: \'1primary stress and \'1secon\'2dary stress.
+
+##4.5.06# (13 December 2006)
+• Support for 32-bit floating-point WAV files.
+• Scripting: removed several kinds of restrictions on string length.
+• SSCP: Draw confidence ellipse: corrected a bug that would sometimes not draw the ellipse when %N was very large.
+
+##4.5.05# (5 December 2006)
+• Macintosh scripting: European symbols such as ö and é and ç are now allowed in file names in scripts
+  and in MacRoman-encoded file names sent by other programs through the sendpraat subroutine.
+
+##4.5.04# (1 December 2006)
+• @@Sound: Change gender...@: corrected a bug that often caused a female-to-male conversion to sound monotonous.
+
+##4.5.03# (29 November 2006)
+• Table: added independent-samples t-test.
+• Linux: corrected a bug introduced in 4.5.02 that prevented sounds from playing and other weird things.
+
+##4.5.02# (16 November 2006)
+• Corrected yet another bug in the new @@Sound: To TextGrid (silences)...@.
+
+##4.5.01# (28 October 2006)
+• Sound window: the pitch drawing method is #Curves, #Speckles, or #Automatic.
+• Corrected another bug in the new @@Sound: To TextGrid (silences)...@.
+
+################################################################################
+"What was new in 4.5?"
+© Paul Boersma 2006
+
+##4.5# (26 October 2006)
+
+##4.4.35# (20 October 2006)
+• In @ManPages you can now draw pictures.
+
+##4.4.34# (19 October 2006)
+• Corrected a bug in the new @@Sound: To TextGrid (silences)...@.
+
+##4.4.33# (4 October 2006)
+• Windows: corrected a bug introduced in 4.4.31 that caused Praat to skip the first line of the Buttons file.
+
+##4.4.32# (30 September 2006)
+• Scripting: more techniques for @@Scripting 4. Object selection|object selection@.
+• Scripting: more support for putting the results of the #Info command into a string variable.
+
+##4.4.31# (23 September 2006)
+• Support for @@plug-ins@.
+• Split between @@Create Strings as file list...@ and @@Create Strings as folder list...@.
+
+##4.4.30# (28 August 2006)
+• Table: Draw ellipse (standard deviation)...
+
+##4.4.29# (21 August 2006)
+• Allowed “European” symbols in file names and object names.
+
+##4.4.28# (10 August 2006)
+• Windows XP: Praat files can finally again be opened by double-clicking and by dragging them onto the Praat icon.
+• Scripting (Windows): removed a bug that caused Praat to crash if the script window was closed when a file selector window was open.
+
+##4.4.27# (4 August 2006)
+• Table window: corrected vertical scroll bar (on Windows).
+• Formulas: invSigmoid.
+• Logging: added `'power'` (and documented the `'freq'` command).
+• Removed a bug that caused @@Read two Sounds from stereo file...@ not to work in scripts.
+
+##4.4.26# (24 July 2006)
+• @@Sound & FormantTier: Filter@: much more accurate.
+
+##4.4.25# (16 July 2006)
+• TextGrid reading: don't set first boundary to zero for .wrd label files.
+
+##4.4.24# (19 June 2006)
+• Scripting: regular expressions allow replacement with empty string.
+
+##4.4.23# (1 June 2006)
+• Table: ignore more white space.
+
+##4.4.22# (30 May 2006)
+• Scripting: replacing with regular expression. See @@Formulas 6. String functions@.
+
+##4.4.21# (29 May 2006)
+• Made Manipulation objects readable again.
+
+##4.4.20# (3 May 2006)
+• Removed limit on number of menus (Praat could crash if the number of open windows was high).
+
+##4.4.19# (28 April 2006)
+• @@Table: Get mean...@, @@Table: Get standard deviation...@, @@Table: Get quantile...@.
+
+##4.4.18# (24 April 2006)
+• Table: ##View & Edit#: view the contents of a table.
+• @@Table: Scatter plot...@.
+• Scripting: more warnings against missing or extra spaces.
+
+##4.4.17# (19 April 2006)
+• @@Table: Collapse rows...|Table: Pool...@: computing averages and medians of dependent variables
+for a selected combination of independent variables.
+• @@Table: Formula...@ accepts string expressions as well as numeric expressions.
+• @@Table: Sort...@ can sort by any number of columns.
+• @@Table: Create with column names...@.
+• @@Table: Report mean...@.
+• Formulas: @@Formulas 8. Attributes of objects|`row$` and `col$` attributes@.
+• Warning when trying to read data files whose format is newer than the Praat version.
+
+##4.4.16# (1 April 2006)
+• Spectrum window: dynamic range setting.
+• SoundRecorder: corrected a bug in the Intel Mac edition.
+
+##4.4.15# (30 March 2006)
+• Source code even more compatible with 64-bit compilers.
+
+##4.4.14# (29 March 2006)
+• Source code more compatible with 64-bit compilers.
+
+##4.4.13# (8 March 2006)
+• @@Table: To TableOfReal...@: better handling of --undefined-- values (are now numeric).
+• MacOS X: TextGrid files can be double-clicked to open.
+• @@Create Strings as file list...@: now handles up to 1,000,000 files per directory.
+
+##4.4.12# (24 February 2006)
+• TextGrid: removed a bug introduced in 4.4.10 that caused Praat to crash when converting an IntervalTier into a TextGrid.
+
+##4.4.11# (23 February 2006)
+• Listening experiments: removed a bug that could cause Praat to crash when an ExperimentMFC object was removed.
+
+##4.4.10# (20 February 2006)
+• Intel computers: corrected reading and writing of 24-bit sound files (error introduced in 4.4.09).
+• Create TextGrid: guard against zero tiers.
+• MacOS X: correct visibility of Praat icon.
+• MacOS X: correct dropping of Praat files on Praat icon.
+
+##4.4.09# (19 February 2006)
+• Macintosh: first Intel Macintosh version.
+• Windows: @@Create Strings from folder list...@.
+
+##4.4.08# (6 February 2006)
+• Much improved cepstral smoothing.
+
+##4.4.07# (2 February 2006)
+• More scripting facilities (local variables in procedures, e.g. `.x` and `.text$`).
+• Faster formulas.
+
+##4.4.06# (30 January 2006)
+• More scripting facilities (`Object_xxx [ ]`, `Self.nx`, `Table_xxx$ [ ]`, better messages).
+• Better reading and writing of Xwaves label files.
+
+##4.4.05# (26 January 2006)
+• @ExperimentMFC: removed a bug that caused Praat to crash when the Oops button was pressed after the experiment finished.
+• TextGrid: an IntervalTier can be written to an Xwaves label file.
+
+##4.4.04# (6 January 2006)
+• Windows: Quicktime support (see at 4.4.03).
+
+##4.4.03# (6 January 2006)
+• Macintosh: Quicktime support, i.e., @@Read from file...@ can now read the audio from several kinds of movie files (.mov, .avi).
+
+##4.4.02# (5 January 2006)
+• OT learning: allow the decision strategies of Harmonic Grammar and Linear OT.
+
+##4.4.01# (2 January 2006)
+• Picture window: @@Logarithmic marks...@ allows reversed axes.
+• Manipulation window: removed a bug from ##Shift frequencies...# that caused much too small shifts in semitones.
+• @@TextGrid: Remove point...@.
+
+################################################################################
+"What was new in 4.4?"
+© Paul Boersma 2005
+
+##4.4# (19 December 2005)
+
+##4.3.37# (15 December 2005)
+• @@Principal component analysis@: now accepts tables with more variables (columns) than cases (rows).
+• TIMIT label files: removed a bug that caused Praat to crash for files whose first part was not labelled.
+
+##4.3.36# (11 December 2005)
+• Ltas: Average.
+• Optimality Theory: compute crucial rankings (select OTGrammar + PairDistribution).
+
+##4.3.35# (8 December 2005)
+• @ExperimentMFC: switched off warnings for stereo files.
+
+##4.3.34# (8 December 2005)
+• Sound window: the arrow scroll step is settable.
+• You can now run multiple listening experiments (@ExperimentMFC) in one #Run.
+• @@Formant: Get quantile of bandwidth...@.
+
+##4.3.33# (6 December 2005)
+• Removed three bugs introduced in 4.3.32 in @ExperimentMFC.
+
+##4.3.32# (5 December 2005)
+• Many more possibilities in @ExperimentMFC.
+
+##4.3.31# (27 November 2005)
+• @@Sound: To Ltas (pitch-corrected)...@
+
+##4.3.30# (18 November 2005)
+• TableOfReal: Scatter plot: allows reversed axes.
+
+##4.3.29# (11 November 2005)
+• Windows: many more font sizes.
+
+##4.3.28# (7 November 2005)
+• Fontless EPS files: corrected character width for Symbol font (depended on SILIPA setting).
+• Windows: more reliable detection of home directory.
+
+##4.3.27# (7 October 2005)
+• TextGrid & Pitch: draw with text alignment.
+
+##4.3.26# (29 September 2005)
+• Macintosh: corrected error introduced in 4.3.25.
+
+##4.3.25# (28 September 2005)
+• Macintosh: allowed recording with sampling frequencies of 12 and 64 kHz.
+
+##4.3.24# (26 September 2005)
+• @@Table: Down to TableOfReal...@: one column of the Table can be used as the row labels for the TableOfReal,
+  and the strings in the remaining columns of the Table are replaced with whole numbers assigned in alphabetical order.
+
+##4.3.23# (24 September 2005)
+• @@Read Table from comma-separated file...@
+• @@Read Table from tab-separated file...@
+• Write picture as fontless EPS file: choice between XIPA and SILIPA93.
+• Bold IPA symbols in EPS files (fontless SILIPA93 only).
+
+##4.3.22# (8 September 2005)
+• Macintosh: variable scroll bar size (finally, 7 years since System 8.5).
+
+##4.3.21# (1 September 2005)
+• Macintosh: error message if any of the fonts Times, Helvetica, Courier and Symbol are unavailable at start-up.
+• Renamed Control menu to “Praat” on all platforms (as on the Mac),
+to reflect the fact that no other programs than Praat have used the Praat shell for five years.
+• Script editor: Undo and Redo buttons (only on the Mac for now).
+• Manual: corrected a bug that sometimes caused Praat to crash when trying to print.
+
+##4.3.20# (18 August 2005)
+• Log files: include name of editor window.
+
+##4.3.19# (20 July 2005)
+• Improved buttons in manual.
+• @@Read TableOfReal from headerless spreadsheet file...@: allow row and column labels to be 30,000 rather than 100 characters.
+
+##4.3.18# (12 July 2005)
+• Glottal source for sound synthesis, corrected and documented.
+
+##4.3.17# (7 July 2005)
+• Glottal source for sound synthesis.
+• Multi-level Optimality Theory: parallel evaluation and bidirectional learning.
+
+##4.3.16# (22 June 2005)
+• Pitch drawing: corrected logarithmic scales.
+
+##4.3.15# (22 June 2005)
+• Graphics: better dotted lines in pitch contours; clipped pitch curves in editor windows.
+• Pitch analysis: more different units (semitones %re 1 Hz).
+
+##4.3.14# (14 June 2005)
+• Scripting: regular expressions.
+• Removed a bug that caused Praat to crash if a proposed object name was longer than 200 characters.
+
+##4.3.13# (19 May 2005)
+• Macintosh: an option to switch off screen previews in EPS files.
+• Sources: compatibility of makefiles with MinGW (Minimalist GNU for Windows).
+
+##4.3.12# (10 May 2005)
+• Some more manual tricks.
+
+##4.3.11# (6 May 2005)
+• TextGrid editor: show number of intervals.
+
+##4.3.10# (25 April 2005)
+• @@Table: Get logistic regression...@.
+
+##4.3.08# (19 April 2005)
+• OT learning: store history with @@OTGrammar & Strings: Learn from partial outputs...@.
+
+##4.3.07# (31 March 2005)
+• Linux: removed a bug that could cause a sound to stop playing.
+
+##4.3.04# (9 March 2005)
+• Use SIL Doulos IPA 1993/1996 instead of 1989.
+
+##4.3.03# (2 March 2005)
+• TextGrid window: green colouring of matching text.
+• Regular expressions can be used in many places.
+• Pitch analysis: switched off formant-pulling.
+
+##4.3.02# (16 February 2005)
+• @@TextGrid: Remove boundary at time...@
+• Scripting: corrected %nowarn.
+• Linux: guard against blocking audio device.
+• Macintosh: guard against out-of-range audio level meter.
+
+##4.3.01# (9 February 2005)
+• Replaced PostScript font SILDoulosIPA with XIPA (adapted for Praat by Rafael Laboissière).
+• @@Sound: Set part to zero...@
+• @@Pitch: To Sound (sine)...@
+• @@Sound & TextGrid: Clone time domain@.
+
+################################################################################
+"What was new in 4.3?"
+© Paul Boersma 2005
+
+Praat 4.3, 26 January 2005
+==========================
+
+General:
+• #Apply button in settings windows for menu commands and in script forms.
+• Info window can be saved.
+• Removed 30,000-character limit in Info window.
+
+Phonetics:
+• Speeded up intensity analysis by a factor of 10
+  (by making its time resolution 0.01 ms rather than 0.0001 ms at a sampling frequency of 44 kHz).
+• Speeded up pitch analysis and spectrogram analysis by a factor of two.
+• Sound: To Spectrum... now has a reasonably fast non-FFT version.
+• Calibrated long-term average spectrum (Sound: To Ltas...).
+• Pitch-corrected LTAS analysis.
+• Sound: Scale intensity.
+• PitchTier: To Sound (sine).
+• Better warnings against use of the LPC object.
+
+Voice:
+• July 9, 2004 (4.2.08): Shimmer measurements: more accurate and less sensitive to additive noise.
+• More extensive voice report: pitch statistics; harmonicity.
+
+Audio:
+• Reading and opening 24-bit and 32-bit sound files (saving still goes in 16 bits).
+• LongSound: save separate channels.
+• Macintosh: much faster reading of WAV files.
+
+Listening experiments:
+• Subjects can now respond with keyboard presses.
+
+Graphics:
+• One can now drag the inner viewport in the Picture window, excluding the margins.
+  This is nice e.g. for creating square viewports or for drawing a waveform and a spectrogram in close contact.
+• Unix: picture highlighting as on Mac and Windows.
+• More drawing methods for Sound and Ltas (curve, bars, poles, speckles).
+
+OT learning:
+• Monitor rankings when learning.
+• OTGrammar: Remove harmonically bounded candidates...
+• OTGrammar: Save as headerless spreadsheet file...
+• Metrics grammar: added *Clash, *Lapse, WeightByPosition and *MoraicConsonant.
+
+Scripting:
+• nowarn, noprogress, nocheck.
+• Line numbers.
+
+################################################################################
+"What was new in 4.2?"
+© Paul Boersma 2004
+
+Praat 4.2, 4 March 2004
+=======================
+
+General:
+• July 10, 2003: Open source code (@@General Public Licence@).
+
+Phonetics:
+• Faster computation of spectrum, spectrogram, and pitch.
+• More precision in numeric libraries.
+• PitchTier: Interpolate quadratically.
+• TextGrids can be saved chronologically (and Praat can read that file again).
+• Sound editor window @@Time step settings...@: #Automatic, #Fixed, and ##View-dependent#.
+• Sound window: distinguish basic from advanced spectrogram and pitch settings.
+• Read TableOfReal from headerless spreadsheet file...: cells with strings are considered zero.
+• Sound window: introduced time step as advanced setting.
+• Sound window: reintroduced view range as advanced setting.
+• Ltas: Compute trend line, Subtract trend line.
+
+Audio:
+• Sun workstations: support audio servers.
+
+Graphics:
+• Better selections in Picture window and editor windows.
+• Picture window: better handling of rectangles and ellipses for reversed axes.
+• Windows: corrected positioning of pictures on clipboard and in metafiles.
+• Windows: EPS files check availability of Times and TimesNewRomanPSMT.
+• Polygon: can now also paint in colour instead of only in grey values.
+• Unlimited number of points for polygons in PostScript (may not work on very old printers).
+• Picture window: line widths on all printers and clipboards are now equal to line widths used on PostScript printers:
+  a line with a line width of “1” will be drawn with a width 3/8 points. This improves the looks of pictures printed
+  on non-PostScript printers, improves the looks of pictures copied to your wordprocessor when printed,
+  and changes the looks of pictures copied to your presentation program.
+
+OT learning:
+• Metrics grammar supports “impoverished overt forms”,
+  i.e. without secondary stress even if surface structures do have secondary stress.
+• Support for crucially tied constraints and tied candidates.
+• Support for backtracking in EDCD.
+• Queries for testing grammaticality.
+
+Scripting:
+• ManPages: script links can receive arguments.
+• ManPages: variable duration of recording.
+• Support for unlimited size of script files in editor window on Windows XP and MacOS X (the Unix editions already had this).
+• Improved the reception of %sendpraat commands on Windows XP.
+
+################################################################################
+"What was new in 4.1?"
+© Paul Boersma 2003
+
+Praat 4.1, 5 June 2003
+======================
+
+General:
+• MacOS X edition.
+• Removed licensing.
+• More than 99 percent of the source code distributed under the @@General Public Licence@.
+• Windows 2000 and XP: put preferences files in home directory.
+
+Phonetics:
+• Spectrum: the sign of the Fourier transform has changed, to comply with common use
+  in technology and physics. Old Spectrum files are converted when read.
+• Spectral moments.
+• Many jitter and shimmer measures, also in the Sound editor window.
+• PitchTier: shift or multiply frequencies (also in ManipulationEditor).
+• TextGrid: shift times, scale times.
+• Overlap-add synthesis: reduced buzz in voiceless parts.
+• @@Sound: Change gender...
+• Editors: @@Intro 3.6. Viewing a spectral slice@.
+• Editors: ##Get spectral power at cursor cross#.
+• @@Sound: To PointProcess (periodic, peaks)...@
+• Ltas: merge.
+
+Listening experiments:
+• Goodness judgments.
+• Multiple @@ResultsMFC: To Table@, so that the whole experiment can go into a single statistics file.
+• Stimulus file path can be relative to directory of experiment file.
+• @ExperimentMFC: multiple substimuli for discrimination tests.
+
+Statistics:
+• New @Table object for column @statistics: Pearson's %r, Kendall's %\\ta-%b, %t-test.
+• Table: scatter plot.
+• Table: column names as variables.
+• @@T-test@.
+• TableOfReal: Extract rows where column...
+• TableOfReal: Get correlation....
+• @@Correlation: Confidence intervals...
+• @@SSCP: Get diagonality (bartlett)...
+
+OT learning:
+• Tutorial for bidirectional learning.
+• Random choice between equally violating candidates.
+• More constraints in metrics grammar.
+• Learning in editor.
+
+Graphics:
+• Printing: hard-coded image interpolation for EPS files and PostScript printers.
+
+Scripting:
+• New @Formulas tutorial.
+• @Formulas: can use variables without quotes.
+• Formulas for PitchTier, IntensityTier, AmplitudeTier, DurationTier.
+• Refer to any matrices and tables in formulas, e.g. `Sound_hello (x)` or `Table_everything [row, col]`
+  or `Table_tokens [i, “F1”]`.
+• Assignment by modification, as with += -= *= /=.
+• New functions: @`date$` (), @`extractNumber`, @`extractWord$`, @`extractLine$`. See @@Formulas 6. String functions@.
+• @@Scripting 5.8. Including other scripts@.
+• String formulas in the calculator.
+• Stopped support of things that had been undocumented for the last four years:
+  #let, #getnumber, #getstring, #ARGS, #copy, #proc, variables with capitals, and strings in numeric variables;
+  there are messages about how to modify your old scripts.
+• Disallowed ambiguous expressions like -3\\^ 2.
+
+################################################################################
+"What was new in 4.0?"
+© Paul Boersma 2001
+
+Praat 4.0, 15 October 2001
+==========================
+
+Editors:
+• Simplified selection and cursor in editor windows.
+• Spectrogram, pitch contour, formant contour, and intensity available in the
+  Sound, LongSound, and TextGrid editors.
+• TextGrid editor: additions and improvements.
+• @@Log files@.
+
+Phonetics library:
+• @ExperimentMFC: multiple-forced-choice listening experiments.
+• @@Sound: To Pitch (ac)...@: pitch contour less dependent on time resolution.
+  This improves the constancy of the contours in the editors when zooming.
+• TextGrid: additions and improvements.
+• Sounds: Concatenate recoverably. Creates a TextGrid whose interval labels are the original
+  names of the sounds.
+• Sound & TextGrid: Extract all intervals. The reverse of the previous command.
+• Filterbank analyses, @MelFilter, @BarkFilter and
+  @FormantFilter, by @@band filtering in the frequency domain@." )
+• Cepstrum by David Weenink: @MFCC, @LFCC.
+  @Cepstrum object is a representation of the %%complex cepstrum%.
+• Intensity: To IntensityTier (peaks, valleys).
+• Replaced Analysis and AnalysisEditor with @Manipulation and @ManipulationEditor.
+
+Phonology library:
+• PairDistribution: Get percentage correct (maximum likelihood, probability matching).
+• OTGrammar & PairDistribution: Get percentage correct...
+
+Graphics:
+• Improved spectrogram drawing.
+• @@Special symbols@: háček.
+• Macintosh: improved screen rendition of rotated text.
+
+Audio:
+• Macintosh: support for multiple audio input devices (sound cards).
+
+Statistics and numerics library:
+• More statistics by David Weenink.
+• Improved random numbers and other numerical stuff.
+• @@Regular expressions@.
+
+Scripting:
+• Formatting in variable substitution, e.g. 'pitch:2' gives two digits after the decimal point.
+• Added @`fixed$` () to scripting language for formatting of numbers.
+
+Documentation:
+• @@Multidimensional scaling@ tutorial.
+• Enabled debugging-at-a-distance.
+
+################################################################################
+"What was new in 3.9?"
+© Paul Boersma 2000
+
+Praat 3.9, 18 October 2000
+==========================
+
+Editors:
+• Shift-click and shift-drag extend or shrink selection in editor windows.
+• Grouped editors can have separate zooming and scrolling (FunctionEditor preferences).
+• Cursor follows playing sound in editors; interruption by Escape key moves the cursor.
+• TextGridEditor: optimized for transcribing large corpora: text field, directly movable boundaries,
+  more visible text in tiers, @SpellingChecker,
+  type while the sound is playing, complete keyboard navigation, control font size, control text alignment,
+  shift-click near boundary adds interval to selection.
+• Stereo display in LongSound and TextGrid editors.
+• LongSoundEditor and TextGridEditor: write selection to audio file.
+• SoundEditor: added command ##Extract selection (preserve times)#.
+• IntervalTierEditor, DurationTierEditor.
+• Added many query commands in editors.
+
+Phonetics library:
+• @@Sound: To Formant...@: sample-rate-independent formant analysis.
+• @@Sound: To Harmonicity...@ (glottal-to-noise excitation ratio).
+• Pitch: support for ERB units, draw all combinations of line/speckle and linear/logarithmic/semitones/mels/erbs,
+  optionally with TextGrid, Subtract linear fit.
+• Spectrum: Draw along logarithmic frequency axis.
+• TextGrid:  modification commands, Extract part, Shift to zero, Scale times (with Sound or LongSound).
+• @@Matrix: To TableOfReal@, @@Matrix: Draw contour...@.
+• Concatenate Sound and LongSound objects.
+• File formats: save PitchTier in spreadsheet format, read CGN syntax files (XML version),
+  text files now completely file-server-safe (independent from Windows/Macintosh/Unix line separators).
+
+Statistics and numerics library:
+• @@Principal component analysis@.
+• @@Discriminant analysis@.
+• @Polynomial: drawing, @@Roots|root@ finding etc.
+• @@TableOfReal: Draw box plots...@.
+• @@Covariance: To TableOfReal (random sampling)...@.
+• @@SSCP: Get sigma ellipse area...@.
+• Query @DTW for “weighted distance” of time warp.
+• @@Distributions: To Strings (exact)...@
+• @@Strings: Randomize@.
+
+Phonology library:
+• @@OTGrammar: To PairDistribution@.
+
+Graphics:
+• Full support for colour inkjet printers on Windows and Macintosh.
+• Full support for high-resolution colour clipboards and metafiles for
+  Windows and Macintosh programs that support them (this include MS Word
+  for Windows, but unfortunately not MS Word for Macintosh).
+• Colour in EPS files.
+• Interpolating grey images, i.e. better zoomed spectrograms.
+• Linux: support for 24-bits screens.
+
+Audio:
+• Asynchronous sound play.
+• Linux: solved problems with /dev/mixer (“Cannot read MIC gain.”) on many computers.
+• Added possibility of zero padding for sound playing,
+  in order to reduce clicks on some Linux and Sun computers.
+• LongSound supports mono and stereo, 8-bit and 16-bit, %\\mu-law and A-law,
+  big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.
+• @@Read two Sounds from stereo file...@ supports 8-bit and 16-bit, %\\mu-law and A-law,
+  big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.
+• SoundRecorder writes to 16-bit AIFC, WAV, NeXT/Sun, and NIST mono and stereo files.
+• Sound & LongSound: write part or whole to mono or stereo audio file.
+• Read Sound from raw Alaw file.
+• Artword & Speaker (& Sound) movie: real time on all platforms.
+
+Scripting:
+• @@Formulas 5. Mathematical functions@: added statistical functions: %\\ci^2, Student T, Fisher F, binomial,
+  and their inverse functions.
+• Windows: program #`praatcon` for use as a Unix-style console application.
+• Windows and Unix: Praat can be run with a command-line interface without quitting on errors.
+• Unix & Windows: can use <stdout> as a file name (supports pipes for binary data).
+• @sendpraat now also for Macintosh.
+• @@Scripting 6.7. Sending a message to another program|sendsocket@.
+• @@Read from file...@ recognizes script files if they begin with “`#!`”.
+• Script links in @ManPages.
+
+Documentation
+• Tutorials on all subjects available through @Intro.
+
+################################################################################
+"What was new in 3.8?"
+© Paul Boersma 1999
+
+Praat 3.8, 12 January 1999
+==========================
+
+Phonetics library
+• New objects: @LongSound (view and label long sound files), with editor; PairDistribution.
+• @@Overlap-add@ manipulation of voiceless intervals, version 2: quality much better now;
+target duration is exactly as expected from Duration tier or specified lengthening in @@Sound: Lengthen (overlap-add)...@.
+• Audio: Escape key stops audio playing (on Mac also Command-period).
+• @SoundRecorder: allows multiple recordings without close; Play button; Write buttons; buffer size can be set.
+• Reverse a Sound or a selection of a Sound.
+• @@Sound: Get nearest zero crossing...@.
+• @@Formant: Scatter plot (reversed axes)...@.
+• @@TextGrid & Pitch: Speckle separately...@.
+• ##Extract Sound selection (preserve times)# in TextGridEditor.
+• More query commands for Matrix, TableOfReal, Spectrum, PointProcess.
+
+Phonology library
+• 25-page OT learning tutorial.
+• Made the OT learner 14 times as fast.
+
+Platforms
+• May 23: Windows beta version.
+• April 24: Windows alpha version.
+
+Files
+• Read more Kay, Sun (.au), and WAV sound files.
+• @@Read Strings from raw text file...@
+• @@Create Strings as file list...@.
+• @@Read IntervalTier from Xwaves...@
+• hidden ##Read from old Windows Praat picture file...#
+
+Graphics
+• Use colours (instead of only greys) in ##Paint ellipse...# etc.
+• More true colours (maroon, lime, navy, teal, purple, olive).
+• Direct printing from Macintosh to PostScript printers.
+• Hyperpage printing to PostScript printers and PostScript files.
+• Phonetic symbols: raising sign, lowering sign, script g, corner, ligature, pointing finger.
+
+Shell
+• November 4: all dialogs are modeless (which is new for Unix and Mac).
+• September 27: @sendpraat for Windows.
+
+Scripting
+• January 7: scriptable editors.
+• October 7: file I/O in scripts.
+• August 23: script language includes all the important functions for string handling.
+• June 24: string variables in scripts.
+• June 22: faster look-up of script variables.
+• June 22: unlimited number of script variables.
+• April 5: suspended chopping of trailing spaces.
+• March 29: enabled formulas as arguments to dialogs (also interactive).
+
+################################################################################
+"What was new in 3.7?"
+© Paul Boersma 1998
+
+Praat 3.7, 24 March 1998
+========================
+
+Editors:
+• In all FunctionEditors: drag to get a selection.
+
+Phonetics library:
+• Many new query (#Get) commands for @Sound, @Intensity, @Harmonicity, @Pitch,
+@Formant, @Ltas, @PitchTier, @IntensityTier, @DurationTier, #FormantTier.
+• Many new modification commands.
+• Many new interpolations.
+• Sound enhancements: @@Sound: Lengthen (overlap-add)...@, @@Sound: Deepen band modulation...@
+• @@Source-filter synthesis@ tutorial, @@Sound & IntensityTier: Multiply@,
+  @@Sound & FormantTier: Filter@, @@Formant: Formula (frequencies)...@, @@Sound: Pre-emphasize (in-place)...@.
+
+Labelling
+• TextGrid queries (#Get times and labels in a script).
+• @@TextGrid: Count labels...@.
+• @@PointProcess: To TextGrid (vuv)...@: get voiced/unvoiced information from a point process.
+• @@IntervalTier: To TableOfReal...@: labels become row labels.
+• @@TextTier: To TableOfReal@.
+
+Numerics and statistics library
+• Multidimensional scaling (Kruskal, INDSCAL, etc).
+• @TableOfReal: @@TableOfReal: ||Set value...@, @@TableOfReal: ||Formula...@,
+  @@TableOfReal: ||Remove column...@, @@TableOfReal: ||Insert column...@,
+  @@TableOfReal: ||Draw as squares...@, @@TableOfReal: ||To Matrix@.
+
+Phonology library
+• OT learning: new strategies: weighted symmetric plasticity (uncancelled or all).
+
+Praat shell
+• First Linux version.
+• Eight new functions like e.g. @`hertzToBark` in @@Formulas 5. Mathematical functions@.
+• @@Praat script@: procedure arguments; object names.
+
+Documentation:
+• 230 more man pages (now 630).
+• Hypertext: increased readability of formulas, navigation with keyboard.
+
+################################################################################
+"What was new in 3.6?"
+© Paul Boersma 1997
+
+Praat 3.6, 27 October 1997
+==========================
+
+Editors:
+• Intuitive position of B and E buttons on left-handed mice.
+• @SoundEditor: copy %windowed selection to list of objects.
+• @SoundEditor: undo Cut, Paste, Zero.
+• @SpectrumEditor: copy band-filtered spectrum or sound to list of objects.
+• @ManipulationEditor: LPC-based pitch manipulation.
+
+Objects:
+• Use “-” and “+” in object names.
+
+Phonetics library
+• LPC-based resynthesis in @ManipulationEditor.
+• @Sound: direct modification without formulas (addition, multiplication, windowing)
+• @Sound: filtering in spectral domain by formula.
+• Create a simple @Pitch object from a @PitchTier (for %F__0_) and a @Pitch (for V/U).
+• Semitones in @PitchTier tables.
+• @PointProcess: transplant time domain from @Sound.
+• Much more...
+
+Phonology library
+• Computational Optimality Theory. See @@OT learning@.
+
+Hypertext
+• You can use @ManPages files for creating your own tutorials.
+  These contains buttons for playing and recording sounds, so you can use this for creating
+  an interactive IPA sound training course.
+
+Scripting:
+• Programmable @@Praat script@ language: variables, expressions, control structures,
+  procedures, complete dialog box, exchange of information with Info window, continuation lines.
+• Use platform-independent relative file paths in @@Praat script@.
+• @ScriptEditor: Run selection.
+
+Graphics:
+• Rotation and scaling while printing the @@Picture window@.
+• Apart from bold and italic, now also bold-italic (see @@Text styles@).
+• Rounded rectangles.
+• Conversion of millimetres and world coordinates.
+• Measurement of text widths (screen and PostScript).
+
+Unix:
+• Use the @sendpraat program for sending messages to running Praat programs.
+
+Mac:
+• Praat looks best with the new and beautiful System 8.
+
+################################################################################
+"What was new in 3.5?"
+© Paul Boersma 1997
+
+Praat 3.5, 27 May 1997
+======================
+
+New editors:
+• @TextGridEditor replaces and extends LabelEditor: edit points as well as intervals.
+• @@ManipulationEditor|AnalysisEditor@ replaces and extends PsolaEditor: view pitch, spectrum, formant, and intensity
+analyses in a single window, and allow pitch and duration resynthesis by overlap-add and more (would be undone in 3.9.19).
+• @SpectrumEditor allows you to view and edit spectra.
+
+Praat shell:
+• @@History mechanism@ remembers all the commands that you have chosen,
+and allows you to put them into a script.
+• @ScriptEditor allows you to edit and run any Praat script, and to put it under a button.
+• All added and removed buttons are remembered across sessions.
+• #ButtonEditor allows you to make buttons visible or invisible.
+
+Evaluations:
+• In his 1996 doctoral thesis, Henning Reetz
+compared five pitch analysis routines; @@Sound: To Pitch (ac)...@ appeared to make the fewest errors.
+H. Reetz (1996): %%Pitch Perception in Speech: a Time Domain Approach%, Studies in Language and Language Use #26,
+IFOTT, Amsterdam (ICG Printing, Dordrecht).
+
+Documentation:
+• 140 more man pages (now 330).
+• Tables and pictures in manual.
+• Printing the entire manual.
+• Logo.
+
+New types:
+• Labelling & segmentation: @TextGrid, @IntervalTier, @TextTier.
+• Analysis & manipulation: @@Manipulation|Analysis@.
+• Statistics: @TableOfReal, @Distributions, @Transition
+
+File formats:
+• Read and write rational numbers in text files.
+• Read 8-bit .au sound files.
+• Read and write raw 8-bit two\'s-complement and offset-binary sound files.
+
+Audio:
+• 16-bit interactive Sound I/O on Mac.
+• Record sounds at 9.8 kHz on SGI.
+
+New commands:
+• Two more pitch-analysis routines.
+• Sound to PointProcess: collect all maxima, minima, zero crossings.
+• PointProcess: set calculus.
+• TextGrid: extract time-point information.
+• Compute pitch or formants at given time points.
+• Put pitch, formants etc. in tables en get statistics.
+• Many more...
+
+Macintosh:
+• 16-bit interactive sound I/O.
+• Fast and interpolating spectrogram drawing.
+• Phonetic Mac screen font included in source code (as a fallback to using SIL Doulos IPA).
+• Keyboard shortcuts, text editor, help under question mark, etc.
+
+################################################################################
+"What was new in 3.3?"
+© Paul Boersma 1996
+
+Praat 3.3, 6 October 1996
+=========================
+• Documentation: hypertext help browser, including the first 190 man pages.
+• New editors: type #TextTier for labelling times instead of intervals.
+• New actions: #Formant: Viterbi tracker, Statistics menu, Scatter plot.
+• Evaluation: For HNR analysis of speech, the cross-correlation method,
+  which has a sensitivity of 60 dB and a typical time resolution of 12 milliseconds,
+  must be considered better than the autocorrelation method,
+  which has a better sensitivity (80 dB), but a much worse time resolution (30 ms).
+  For pitch analysis, the autocorrelation method still beats the cross-correlation method
+  because of its better resistance against noise and echos,
+  and despite its marginally poorer resolution (15 vs. 12 ms).
+• User preferences are saved across sessions.
+• The phonetic X screen font included in the source code.
+• Xwindows resources included in the source code
+• Graphics: eight colours, small caps, text rotation.
+• File formats: Sun/NexT mu-law files, raw matrix text files, Xwaves mark files.
+• Accelerations: keyboard shortcuts, faster dynamic menu, Shift-OK keeps file selector on screen.
+• Object type changes: #StylPitch and #MarkTier are now called @PitchTier and @TextTier, respectively.
+  Old files can still be read.
+• Script warning: all times in dialogs are in seconds now: milliseconds have gone.
+
+################################################################################
+"What was new in 3.2?"
+© Paul Boersma 1996
+
+Praat 3.2, 29 April 1996
+========================
+• Sound I/O for HPUX, Sun Sparc 5, and Sun Sparc LX.
+• Cross-correlation pitch and HNR analysis.
+• Facilities for generating tables from scripts.
+• Editing and playing stylized pitch contours and point processes.
+• Overlap-add pitch manipulation.
+• Spectral smoothing techniques: cepstrum and LPC.
+• Time-domain pitch analysis with jitter measurement.
+• Read and write Bell-Labs sound files and Kay CSL audio files.
+• Replaced IpaTimes font by free SILDoulos-IPA font, and embedded phonetic font in PostScript picture.
+• Completed main phonetic characters.
+
+################################################################################
+"What was new in 3.1?"
+© Paul Boersma 1995
+
+Praat 3.1, 5 December 1995
+==========================
+• Add and remove buttons dynamically.
+• DataEditor (Inspect button).
+• Initialization scripts.
+• Logarithmic axes.
+• Call remote ADDA server directly.
+
+################################################################################
 )~~~"
 MAN_PAGES_END
 
-MAN_BEGIN (U"What was new in 6.3?", U"ppgb", 20221115)
-NORMAL (U"##6.3# (15 November 2022)")
-LIST_ITEM (U"• Number-aware sorting for labels when drawing tables.")
-LIST_ITEM (U"• Scripting: `sort$#` (), `shuffle$#` (), `sort_numberAware$#` ().")
-LIST_ITEM (U"• Fixed a crash when saving (or copying) a DTW object.")
-LIST_ITEM (U"• Scripting: fixed a crash when using `Close` after `editor`.")
-NORMAL (U"##6.2.23# (8 October 2022)")
-LIST_ITEM (U"• Fix a crash introduced in August 2020 when in the Sound window you would select a part, then click #sel, "
-	"then select a part, then do #Cut, then click #bak.")
-LIST_ITEM (U"• #Rename should leave an object’s ID in the title of the editor window.")
-LIST_ITEM (U"• Windows graphics should support a resolution of 690 dots per inch.")
-LIST_ITEM (U"• Editor scripting: corrected a bug introduced in 6.2.15 whereby an added editor script would lose "
-	"the editor context if it contained a form, after #Apply was clicked.")
-LIST_ITEM (U"• Editor windows (such as the Sound window): showing a dialog window that calls a script "
-	"(e.g. ##Log script 3#, ##Log script 4# or an added command) should remove the previous version of that window.")
-LIST_ITEM (U"• Mac editor windows: dialog windows that call scripts should disappear "
-	"when the editor goes away (as on Windows and Linux).")
-NORMAL (U"##6.2.22# (6 October 2022)")
-LIST_ITEM (U"• Playing cursor in Pitch, PitchTier, KlattGrid and PointProcess windows.")
-LIST_ITEM (U"• Corrected a bug introduced in 6.2.15 whereby an added editor script would lose "
-	"the editor context if it contained a form, after #OK was clicked.")
-NORMAL (U"##6.2.21# (1 October 2022)")
-LIST_ITEM (U"• Corrected a bug introduced in 6.2.15 whereby a sub-window in #Inspect would crash upon clicking #Change.")
-NORMAL (U"##6.2.20# (24 September 2022)")
-LIST_ITEM (U"• More balanced colours.")
-LIST_ITEM (U"• Hierarchical menus in editor windows.")
-LIST_ITEM (U"• Sound window scripting: understand `editor$` again in log format (bug since 6.2.15).")
-NORMAL (U"##6.2.19# (12 September 2022)")
-LIST_ITEM (U"• Visible window queries in #Time menu.")
-LIST_ITEM (U"• Correct execution of added Objects window script after running a failing editor script (decades-old bug).")
-LIST_ITEM (U"• Made ##Erase first# work again (bug introduced in 6.2.15).")
-NORMAL (U"##6.2.18# (2 September 2022)")
-LIST_ITEM (U"• SoundRecorder: support for up to 20 (instead of 8) input devices.")
-LIST_ITEM (U"• FormantPath window: can now be viewed even without a Sound.")
-LIST_ITEM (U"• Windows audio: SoundRecorder prevents high CPU usage when not recording.")
-NORMAL (U"##6.2.17# (23 August 2022)")
-LIST_ITEM (U"• FormantPath window: more information shown.")
-LIST_ITEM (U"• Windows audio: compatible with speakers that do not support mono.")
-LIST_ITEM (U"• Editor scripts: made two old commands available again (removed in 6.2.15).")
-NORMAL (U"##6.2.16# (18 August 2022)")
-LIST_ITEM (U"• FormantPath window: non-editable TextGrid.")
-LIST_ITEM (U"• Scripting the Demo window on the Mac: better guarantees that `demoShow` () actually drains on current systems.")
-LIST_ITEM (U"• TextGrid works again with LongSound (bug introduced in 6.2.15).")
-LIST_ITEM (U"• Editor scripts work again from menus (bug introduced in 6.2.15).")
-NORMAL (U"##6.2.15# (14 August 2022)")
-LIST_ITEM (U"• Legends in editor windows.")
-LIST_ITEM (U"• The menus #Time and #Play are new in editor windows, and the menus #Spectrum and #Formant were renamed to #Spectrogram and #Formants.")
-LIST_ITEM (U"• More menu commands in editor windows.")
-LIST_ITEM (U"• Rid frames around areas in editor window, except if editable.")
-LIST_ITEM (U"• The FormantPath window can include a copy of a TextGrid.")
-LIST_ITEM (U"• Restored horizontal and vertical dragging in tier areas (had been absent for two years).")
-LIST_ITEM (U"• Removed several small bugs (and probably introduced a couple of new ones) in editor windows.")
-LIST_ITEM (U"• Restored the original Praat icon.")
-NORMAL (U"##6.2.14# (24 May 2022)")
-LIST_ITEM (U"• TextGrid window: repaired a bug introduced in 6.2.10 by which a click in the boundary insertion circle "
-	"would copy the contents of a new interval from another tier (if that other tier stood selected).")
-NORMAL (U"##6.2.13# (18 May 2022)")
-LIST_ITEM (U"• Playing a sound on the Mac: prevented an audible click at the end of audio output (appending a silence at the end is no longer needed).")
-LIST_ITEM (U"• FormantPath window: more flexible visualization.")
-LIST_ITEM (U"• New versions of PortAudio and Unicode.")
-LIST_ITEM (U"• Removed the sendpraat directive.")
-LIST_ITEM (U"• Removed several small interface bugs, and improved manual.")
-NORMAL (U"##6.2.12# (17 April 2022)")
-LIST_ITEM (U"• Table: Get sum...")
-LIST_ITEM (U"• Scripting an editor window can now query analyses that are not visible (e.g. after zooming).")
-NORMAL (U"##6.2.11# (8 April 2022)")
-LIST_ITEM (U"• Windows: Demo window could hang with use of Chinese keyboard (after #Play).")
-NORMAL (U"##6.2.10# (17 March 2022)")
-LIST_ITEM (U"• TextGrid window: restored the splitting of labels.")
-LIST_ITEM (U"• ##Save Demo Window as PDF file...# (#Goodies menu).")
-NORMAL (U"##6.2.09# (15 February 2022)")
-LIST_ITEM (U"• Windows: support for a screen resolution of 204 dpi.")
-NORMAL (U"##6.2.08# (5 February 2022)")
-LIST_ITEM (U"• Mac: more checks on audio devices when playing sounds.")
-NORMAL (U"##6.2.07# (28 January 2022)")
-LIST_ITEM (U"• Prevented a rare crash in the TextGrid window.")
-LIST_ITEM (U"• Windows: corrected a bug introduced in 6.2.04 by which some file names were unreadable.")
-NORMAL (U"##6.2.06# (20 January 2022)")
-LIST_ITEM (U"• Mac: prevent Demo window from hanging on copy or paste.")
-NORMAL (U"##6.2.05# (5 January 2022)")
-LIST_ITEM (U"• Calling Praat from the command line: the switch `--send` sends a script "
-	"to a different already running GUI instance of Praat; this is more flexible than using %sendpraat, "
-	"because `--send` will start a new instance of Praat if Praat is not yet running.")
-NORMAL (U"##6.2.04# (18 December 2021)")
-LIST_ITEM (U"• Praat now includes eSpeak 1.51, raising the number of supported languages from 100 to 130.")
-LIST_ITEM (U"• Scripting: support for `infile`, `outfile` and `folder` fields in forms.")
-LIST_ITEM (U"• Calling Praat from the command line: the switch `--open` now adds files to an already running instance of Praat; "
-	"this was already the case on Windows, but it now works in the same way on the Mac and on Linux.")
-LIST_ITEM (U"• Scripting on Mac: multiline text fields in forms have scroll bars and behave like other fields.")
-NORMAL (U"##6.2.03# (3 December 2021)")
-LIST_ITEM (U"• Mac: made Enter key work as expected (i.e. character selection) on Japanese keyboards in multi-line text fields in dialogs and TextGrid window.")
-NORMAL (U"##6.2.02# (2 December 2021)")
-LIST_ITEM (U"• Fixed a hang if there were negative pitch values in ##Sound: Change gender#.")
-LIST_ITEM (U"• Fixed a crash if the size of a PCA did not match the size of a TableOfReal.")
-NORMAL (U"##6.2.01# (17 November 2021)")
-LIST_ITEM (U"• Sound window: corrected a bug that caused a thick waveform during or after playing.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 6.2?", U"ppgb", 20211115)
-NORMAL (U"##6.2# (15 November 2021)")
-LIST_ITEM (U"• TextGrid window: closing box and opening triangle for IPA chart.")
-LIST_ITEM (U"• Linux: compatibility with Wayland (rather than just X11).")
-LIST_ITEM (U"• Chromebook: surrogate window title replaces the one that Chromebooks won’t show.")
-LIST_ITEM (U"• Much longer list of functions in manual.")
-NORMAL (U"##6.1.56# (3 November 2021)")
-LIST_ITEM (U"• Scripting: ##Record Sound (fixed time)...# should return an object ID.")
-LIST_ITEM (U"• More phonetic symbols in EPS files.")
-NORMAL (U"##6.1.55# (25 October 2021)")
-LIST_ITEM (U"• TextGrid window: guard against a rare crash on Windows.")
-LIST_ITEM (U"• TextGrid: Extract part: guard against producing an empty interval tier.")
-LIST_ITEM (U"• Plug-ins: settings windows should not show the file name of the script.")
-LIST_ITEM (U"• Scripting: clicking Cancel when browsing an Infile field should not crash.")
-LIST_ITEM (U"• Phonetic symbols: a new backslash trigraph for a mid-centralized diacritic (as in [e\\x^]), namely \\bsx\\^ .")
-NORMAL (U"##6.1.54# (9 October 2021)")
-LIST_ITEM (U"• PowerCepstrogram: can tabulate cepstral peak prominence values.")
-LIST_ITEM (U"• Mac: repaired global Escape key menu shortcut (stops sounds that play from the Objects window).")
-NORMAL (U"##6.1.53# (8 September 2021)")
-LIST_ITEM (U"• Linux: corrected a bug that caused PDF files to be misaligned "
-	"if the origin was not in the top left corner.")
-NORMAL (U"##6.1.52# (25 August 2021)")
-LIST_ITEM (U"• FormantPath window: more formant listings and stress listings.")
-LIST_ITEM (U"• Sound window: on #Cut or #Paste, all windows that contain that Sound now get ungrouped.")
-LIST_ITEM (U"• Corrected a crash when reading Vorbis files on some 32-bit platforms.")
-NORMAL (U"##6.1.51# (22 July 2021)")
-LIST_ITEM (U"• ##Spectrum: Tabulate (verbose)# with:  power spectral density, bin width within domain, bin energy, and much more.")
-LIST_ITEM (U"• Sound window: ##Get amplitude(s)#.")
-LIST_ITEM (U"• Scripting: `date_utc$` (), `date#` (), `date_utc#` ().")
-NORMAL (U"##6.1.50# (20 June 2021)")
-LIST_ITEM (U"• RealTier: editing, Formula, conversion from and to Matrix and Table and other tiers such as PitchTier, "
-	"DurationTier, IntensityTier and AmplitudeTier.")
-LIST_ITEM (U"• Scripting: can now assign multiple objects to a vector.")
-LIST_ITEM (U"• Fix crashes in ##Create letter R example# and ##Create KlattTable example# introduced in 6.1.49.")
-NORMAL (U"##6.1.49# (12 June 2021)")
-LIST_ITEM (U"• @PitchTier, @IntensityTier, @DurationTier and @AmplitudeTier windows: save preferences.")
-LIST_ITEM (U"• @Manipulation window: removed unused semitone options.")
-LIST_ITEM (U"• @RealTier object: editing; conversions from and to other tiers and from Table and Matrix.")
-NORMAL (U"##6.1.48# (2 June 2021)")
-LIST_ITEM (U"• TextGrid window: Shift-drag drags multiple boundaries again even if the Shift key is not released.")
-LIST_ITEM (U"• Scripting: publishing (#Extract) an object from an editor window returns its ID again.")
-LIST_ITEM (U"• Scripting: ##Select...# in an editor window is now prevented from selecting outside the time domain.")
-NORMAL (U"##6.1.47# (21 May 2021)")
-LIST_ITEM (U"• The Escape key now means Cancel also in a non-pausing pause window.")
-NORMAL (U"##6.1.46# (20 May 2021)")
-LIST_ITEM (U"• Fixed a bug with line types in the Picture window.")
-LIST_ITEM (U"• TextGrid window: shift-click on a boundary again extends the selection.")
-NORMAL (U"##6.1.45# (20 May 2021)")
-LIST_ITEM (U"• Praat picture files can be drawn with ##Read from file# again.")
-NORMAL (U"##6.1.44# (17 May 2021)")
-LIST_ITEM (U"• Scripting: queries in editor windows are scriptable again.")
-NORMAL (U"##6.1.43# (13 May 2021)")
-LIST_ITEM (U"• TextGrid window: characters in the IPA chart grow with the window.")
-LIST_ITEM (U"• TextGrid window: seeing the maroon shadow now always means that the boundary will be moved when the mouse is released (problem since 6.1.20 or so).")
-LIST_ITEM (U"• Scripting: pause window on the Mac: the Enter key works as designed (bug in 6.1.42).")
-NORMAL (U"##6.1.42# (15 April 2021)")
-LIST_ITEM (U"• Settings windows: taller text fields for formulas and vectors.")
-LIST_ITEM (U"• Mac TextGrid window: cursor moves to end of text after selecting an interval (as on Windows and Linux).")
-NORMAL (U"##6.1.41# (25 March 2021)")
-LIST_ITEM (U"• TextGrid window: unselected boundaries can again be drawn to the cursor.")
-LIST_ITEM (U"• Windows: faster running cursor.")
-LIST_ITEM (U"• Multi-line formula fields.")
-LIST_ITEM (U"• Scripting: guard against too deep recursive calls to runScript (depth 20).")
-LIST_ITEM (U"• EEG: repaired a bug that could cause Praat to crash when computing an ERPTier.")
-NORMAL (U"##6.1.40# (27 February 2021)")
-LIST_ITEM (U"• Inspect window: corrected a bug that could cause Praat to crash when opening a string vector.")
-LIST_ITEM (U"• Sound window: made channel scrolling work again when there are more than 8 channels.")
-LIST_ITEM (U"• Sound window: made channel muting by clicking on the loudspeaker symbols work again.")
-NORMAL (U"##6.1.39# (8 February 2021)")
-LIST_ITEM (U"• Scripting: made string vectors visible in writeFile (), pauseScript () and exitScript ().")
-LIST_ITEM (U"• Mac: corrected a bug that could cause About Praat to crash on macOS 10.10.")
-NORMAL (U"##6.1.38# (2 January 2021)")
-LIST_ITEM (U"• Scripting: string vectors, `empty$#` (), `readLinesFromFile$#` (), `fileNames$#` (), `folderNames$#` (), `splitByWhitespace$#` ().")
-LIST_ITEM (U"• Sound files: open Ogg Vorbis files and Opus files.")
-NORMAL (U"##6.1.37# (16 December 2020)")
-LIST_ITEM (U"• TextGrid window: removed a bug that caused Praat to crash when option-clicking or command-clicking a boundary when another boundary was selected on a point tier.")
-LIST_ITEM (U"• Record Sound (fixed time): removed a bug that caused Praat to crash with certain combinations of duration and sampling frequency on Windows.")
-LIST_ITEM (U"• PowerCepstrogram: more precise integration, so that the cepstral peak prominence is now a continuous function of time.")
-LIST_ITEM (U"• TextGrid: Get points (preceded): removed a bug that caused Praat to crash under some edge conditions.")
-LIST_ITEM (U"• Scripting: tryToWriteFile () and tryToAppendFile () should not be available in manuals.")
-NORMAL (U"##6.1.36# (6 December 2020)")
-LIST_ITEM (U"• Scripting: tryToWriteFile (), tryToAppendFile (); formulas can have a size of 1 million.")
-LIST_ITEM (U"• Obscured scripts: error messages always disclosed.")
-LIST_ITEM (U"• IPA chart: sacrifice laminality symbol for breathiness symbol.")
-NORMAL (U"##6.1.35# (29 November 2020)")
-LIST_ITEM (U"• Scripting: `sort#` (), `shuffle#` (), `to#` (), `from_to#` (), `from_to_by#` (), `from_to_count#` (), `between_by#` (), `between_count#` ().")
-LIST_ITEM (U"• Mac: repaired a bug existing since 6.1.04 that caused incorrect line counts in text files with high Unicode characters.")
-NORMAL (U"##6.1.34# (25 November 2020)")
-LIST_ITEM (U"• Mac: got bold and italic to work on Praat versions compiled with the BigSur API.")
-LIST_ITEM (U"• SoundRecorder always a white background, instead of a different background on each platform.")
-NORMAL (U"##6.1.33# (19 November 2020)")
-LIST_ITEM (U"• Mac: got audio to work on Praat versions compiled with the BigSur API (6.1.32 did not have audio on BigSur).")
-NORMAL (U"##6.1.32# (16 November 2020)")
-LIST_ITEM (U"• First version for Macs with Apple Silicon chip.")
-LIST_ITEM (U"• Mac: corrected a bug that could cause Praat to crash when a Sound window was closed from a script.")
-LIST_ITEM (U"• Windows and Linux: made ##Text width...# work correctly from batch.")
-LIST_ITEM (U"• Linux: reinstalled Tab shortcut in Sound window.")
-NORMAL (U"##6.1.31# (10 November 2020)")
-LIST_ITEM (U"• Linux: first GTK-3 version.")
-NORMAL (U"##6.1.30# (3 November 2020)")
-LIST_ITEM (U"• Windows: prevented a crash that could occur in the Sound window when clicking with the touchpad while dragging with the mouse (or the reverse).")
-NORMAL (U"##6.1.29# (27 October 2020)")
-LIST_ITEM (U"• Mac: corrected a bug revealed by Xcode 12 since 6.1.22 that could cause Praat to crash when using empty vectors, "
-	"such as when querying a Harmonicity for its mean in regions without frames.")
-NORMAL (U"##6.1.28# (20 October 2020)")
-LIST_ITEM (U"• Pause forms: text fields can be multi-line.")
-LIST_ITEM (U"• Removed a bug that caused Praat to crash when editing a PitchTier.")
-LIST_ITEM (U"• Script window: got rid of too many history entries after dragging in the Picture window.")
-NORMAL (U"##6.1.27# (13 October 2020)")
-LIST_ITEM (U"• Demo window: make sure that the contents of the window become visible "
-	"more often without calling demoShow() or demoWaitForInput().")
-NORMAL (U"##6.1.26# (5 October 2020)")
-LIST_ITEM (U"• Windows: removed a bug that caused Praat to crash if you clicked in the Sound window, "
-	"then dragged the mouse out of that window, then released the mouse button, and then clicked in the Sound window again.")
-LIST_ITEM (U"• Linux: removed a bug that caused Praat to crash when clicking Change in the Inspect window.")
-NORMAL (U"##6.1.25# (4 October 2020)")
-LIST_ITEM (U"• @FormantPath and @FormantPathEditor.")
-LIST_ITEM (U"• Windows: implemented vertical scrolling with the mouse wheel in the manual and in the Picture window.")
-LIST_ITEM (U"• Linux: removed a bug that caused Praat to crash when double-clicking in the Sound window.")
-LIST_ITEM (U"• Linux: removed a bug that caused Praat to crash when raising the About window twice.")
-LIST_ITEM (U"• Removed a bug that caused Praat to crash when zooming in "
-	"to a region in the Sound window without samples, when a pitch curve was visible.")
-LIST_ITEM (U"• Removed a bug that caused Praat to crash when pasting in "
-	"a region in the Sound window without samples.")
-NORMAL (U"##6.1.24# (29 September 2020)")
-LIST_ITEM (U"• Linux: got rid of flashing during a running cursor or "
-	"when making a selection in the Sound window or the Picture window.")
-NORMAL (U"##6.1.23# (28 September 2020)")
-LIST_ITEM (U"• Windows: got rid of flashing during a running cursor or "
-	"when making a selection in the Sound window or the Picture window.")
-LIST_ITEM (U"• Linux: corrected a bug that caused the buttons at the top of a manual window "
-	"to be overwritten with text when scrolling.")
-NORMAL (U"##6.1.22# (24 September 2020)")
-LIST_ITEM (U"• Windows: made the running cursor visible again.")
-LIST_ITEM (U"• Corrected a bug introduced in 6.1.17alpha that could cause incorrect line spacing in the Picture window, "
-	"such as in ##TableOfReal: Draw as numbers#.")
-NORMAL (U"##6.1.21# (20 September 2020)")
-LIST_ITEM (U"• First fully functional version for BigSur.")
-LIST_ITEM (U"• Removed a decades-old bug by which an extremum allegedly computed by cubic interpolation "
-	"would actually have been computed by sinc700.")
-NORMAL (U"##6.1.20beta# (10 September 2020)")
-LIST_ITEM (U"• Second beta version for macOS Big Sur.")
-NORMAL (U"##6.1.19beta# (7 September 2020)")
-LIST_ITEM (U"• First beta version for macOS Big Sur.")
-NORMAL (U"##6.1.18alpha# (1 September 2020)")
-LIST_ITEM (U"• Second alpha version for macOS Big Sur.")
-NORMAL (U"##6.1.17alpha# (16 August 2020)")
-LIST_ITEM (U"• Alpha version for macOS Big Sur.")
-NORMAL (U"##6.1.16# (6 June 2020)")
-LIST_ITEM (U"• ##Record fixed time...#: more reliable choice of input device.")
-LIST_ITEM (U"• Mac: notice plugging and unplugging of headphones.")
-NORMAL (U"##6.1.15# (20 May 2020)")
-LIST_ITEM (U"• Repaired a bug introduced in 6.0.44 that could cause an incorrect (namely, totally constant) ClassificationTable.")
-NORMAL (U"##6.1.14# (2 May 2020)")
-LIST_ITEM (U"• Repaired a bug in drawing ranges introduced in 6.1.06.")
-NORMAL (U"##6.1.13# (19 April 2020)")
-LIST_ITEM (U"• Repaired discriminant analysis on i386 processors.")
-LIST_ITEM (U"• Scripting: enabled predictability by setting random seeds.")
-LIST_ITEM (U"• Automated batch testing on x86_64, i386 and ARMv7 processors.")
-NORMAL (U"##6.1.12# (13 April 2020)")
-LIST_ITEM (U"• All non-GUI tests can be automated from batch.")
-LIST_ITEM (U"• Repaired a bug introduced in 6.0 whereby a KlattGrid-generated Sound would always be peak-scaled.")
-NORMAL (U"##6.1.11# (6 April 2020)")
-LIST_ITEM (U"• Better messages.")
-LIST_ITEM (U"• Overhauled VowelEditor.")
-LIST_ITEM (U"• Repaired crashes after creating a Formant from a Spectrum or an Excitation.")
-NORMAL (U"##6.1.10# (23 March 2020)")
-LIST_ITEM (U"• Faster formant computation.")
-LIST_ITEM (U"• More LPC queries.")
-NORMAL (U"##6.1.09# (26 January 2020)")
-LIST_ITEM (U"• Accept some more kinds of broken WAV files.")
-LIST_ITEM (U"• Improved box plot drawing.")
-LIST_ITEM (U"• More Network commands.")
-NORMAL (U"##6.1.08# (5 December 2019)")
-LIST_ITEM (U"• Repaired a bug with automatic alignment for TextGrids (introduced in 6.1.07).")
-NORMAL (U"##6.1.07# (26 November 2019)")
-LIST_ITEM (U"• Raspberry Pi edition.")
-NORMAL (U"##6.1.06# (8 November 2019)")
-LIST_ITEM (U"• Chromebook edition.")
-LIST_ITEM (U"• Scripting: colour fields now take name, grey value or RGB vector.")
-NORMAL (U"##6.1.05# (16 October 2019)")
-LIST_ITEM (U"• Repaired a bug introduced in 6.0.44 that could cause rubbish LPC smoothing.")
-LIST_ITEM (U"• Repaired a rare crash when dragging a selection on the Mac.")
-NORMAL (U"##6.1.04# (28 September 2019)")
-LIST_ITEM (U"• @Electroglottography.")
-LIST_ITEM (U"• Sound and other windows: ##Widen or shrink selection...#.")
-LIST_ITEM (U"• ##KlattGrid: Create from vowel...#.")
-LIST_ITEM (U"• Fix rectangle playing bug when selection viewer is on.")
-LIST_ITEM (U"• Selection viewer separately visible for Sound window and TextGrid window.")
-LIST_ITEM (U"• Scripting: allow comments after parameter list.")
-LIST_ITEM (U"• Scripting: fix CR/LF pasting from Microsoft Word.")
-NORMAL (U"##6.1.03# (1 September 2019)")
-LIST_ITEM (U"• Sound window: ##Widen or shrink selection...#.")
-NORMAL (U"##6.1.02# (25 August 2019)")
-LIST_ITEM (U"• Repaired ##Sound: Concatenate with overlap...#.")
-LIST_ITEM (U"• Mac: Info and script windows: prevent line breaks caused by tab stops.")
-NORMAL (U"##6.1.01# (14 August 2019)")
-LIST_ITEM (U"• Repaired ##TextGrid: Replace interval texts...#.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 6.1?", U"ppgb", 20190713)
-NORMAL (U"##6.1# (13 July 2019)")
-NORMAL (U"##6.0.57# (1 July 2019)")
-LIST_ITEM (U"• Repaired a crash when an editor window zoomed in to a zero time range.")
-LIST_ITEM (U"• Repaired a crash when playing a matrix movie with one row or a constant value.")
-LIST_ITEM (U"• Repaired a crash when reconstructing a TableOfReal from a PCA.")
-LIST_ITEM (U"• Scripting: allow comments after $else, $endif, $endfor...")
-NORMAL (U"##6.0.56# (20 June 2019)")
-LIST_ITEM (U"• Windows: file dropping on the Praat icon works for higher-Unicode file names.")
-LIST_ITEM (U"• SpellingChecker: Unicode support.")
-NORMAL (U"##6.0.55# (13 June 2019)")
-LIST_ITEM (U"• Unicode normalization in file names.")
-NORMAL (U"##6.0.54# (6 June 2019)")
-LIST_ITEM (U"• Removed a bug introduced in 6.0.51 that could cause incorrect axes in Demo window.")
-NORMAL (U"##6.0.53# (26 May 2019)")
-LIST_ITEM (U"• Much faster playing of short parts of long sounds that need resampling.")
-LIST_ITEM (U"• Better handling of broken CSV files.")
-LIST_ITEM (U"• 64-bit floating-point WAV files.")
-NORMAL (U"##6.0.52# (2 May 2019)")
-LIST_ITEM (U"• Removed a bug introduced in 6.0.51 that could cause turning a Discriminant into a Configuration to crash.")
-LIST_ITEM (U"• Removed a bug introduced in contour grey drawing in August 2017.")
-NORMAL (U"##6.0.51# (29 April 2019)")
-LIST_ITEM (U"• Script window: Use Selection for Find.")
-LIST_ITEM (U"• Removed a bug introduced in 6.0.41 that could cause Praat to crash after removing an element from a Strings or a row from a TableOfReal.")
-NORMAL (U"##6.0.50# (31 March 2019)")
-LIST_ITEM (U"• Manual updates, speed, more tests.")
-LIST_ITEM (U"• Scripting: `rowSums#` (), `columnSums#` (); `randomGauss##` () finally with four arguments.")
-NORMAL (U"##6.0.49# (2 March 2019)")
-LIST_ITEM (U"• Removed a bug introduced in 6.0.41 whereby a script could misreport an undefined table value.")
-LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby an MFCC's maximum frequency could be ignored.")
-LIST_ITEM (U"• Pitch: Tabulate candidates.")
-LIST_ITEM (U"• SoundSet.")
-NORMAL (U"##6.0.48# (17 February 2019)")
-LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby Praat could crash when drawing a function without any points.")
-LIST_ITEM (U"• Removed a bug whereby Praat would not start up on macOS 10.10 (because of required GPU libraries).")
-NORMAL (U"##6.0.47# (8 February 2019)")
-LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby a cepstral peak prominence would be computed incorrectly.")
-NORMAL (U"##6.0.46# (3 January 2019)")
-LIST_ITEM (U"• Removed a crashing bug in the LongSound window introduced in 6.0.44.")
-LIST_ITEM (U"• Removed a bug causing incorrect conversion from Formant to LPC introduced in 6.0.44.")
-LIST_ITEM (U"• More space for actions in buttons window.")
-NORMAL (U"##6.0.45# (1 January 2019)")
-LIST_ITEM (U"• Removed a crashing bug in EditDistanceTable introduced in 6.0.44.")
-LIST_ITEM (U"• Removed a crashing bug in KlattGrid drawing introduced in 6.0.44.")
-LIST_ITEM (U"• Removed a bug introduced in 6.0.44 whereby old HMM files were read incorrectly.")
-NORMAL (U"##6.0.44# (31 December 2018)")
-LIST_ITEM (U"• Bug fixes and speed.")
-NORMAL (U"##6.0.43# (8 September 2018)")
-LIST_ITEM (U"• Removed a very old bug that could create invalid TextGrids during forced alignment.")
-LIST_ITEM (U"• Windows: repaired a bug introduced in 6.0.41 "
-	"that caused a crash in several places (such as when changing the sample rate in the SoundRecorder) "
-	"when Praat had been started with a double click.")
-LIST_ITEM (U"• Windows: repaired a bug introduced in 6.0.41 that caused Praat to crash when exiting.")
-NORMAL (U"##6.0.42# (15 August 2018)")
-LIST_ITEM (U"• Repaired a bug introduced in 6.0.41 that caused a crash in pause windows.")
-NORMAL (U"##6.0.41# (6 August 2018)")
-LIST_ITEM (U"• Interoperability: the Windows edition can now communicate with other software in UTF-8.")
-NORMAL (U"##6.0.40# (11 May 2018)")
-LIST_ITEM (U"• Scripting: $$@@Scripting 4.3. Querying objects|selected\\#  ()@$.")
-LIST_ITEM (U"• Table window: cell selection.")
-LIST_ITEM (U"• Unicode-savvy regular expressions.")
-NORMAL (U"##6.0.39# (3 April 2018)")
-LIST_ITEM (U"• More string matching (case-insensitive, word-level).")
-NORMAL (U"##6.0.38# (29 March 2018)")
-LIST_ITEM (U"• Concordance: ##TextGrid: Tabulate occurrences...#.")
-LIST_ITEM (U"• Some @@Independent Component Analysis on EEG@.")
-LIST_ITEM (U"• Removed many small bugs.")
-NORMAL (U"##6.0.37# (3 February 2018)")
-LIST_ITEM (U"• Graphics: fixed crashing bug with \\bsun trigraph.")
-NORMAL (U"##6.0.36# (11 November 2017)")
-LIST_ITEM (U"• Many more languages for SpeechSynthesizer and automatic alignment (new eSpeak).")
-NORMAL (U"##6.0.35# (16 October 2017)")
-LIST_ITEM (U"• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would sometimes incorrectly refuse.")
-NORMAL (U"##6.0.34# (10 October 2017)")
-LIST_ITEM (U"• Scripting: arrays in menu commands in scripts.")
-LIST_ITEM (U"• #Inspect: made a button visible that had disappeared in 6.0.33.")
-NORMAL (U"##6.0.33# (26 September 2017)")
-LIST_ITEM (U"• ##Pitch: Subtract linear fit...#: correct a bug that prevented computation in the ERB domain.")
-LIST_ITEM (U"• Scripting: made `object[xx].xmin` work again.")
-LIST_ITEM (U"• Removed a bug in ##Polynomial: Evaluate...# introduced in 6.0.32.")
-NORMAL (U"##6.0.32# (16 September 2017)")
-LIST_ITEM (U"• Table: allow spaces in column names.")
-LIST_ITEM (U"• Settings windows no longer replace your visible expressions with their resulting values.")
-LIST_ITEM (U"• Scripting: formulas using the tilde.")
-LIST_ITEM (U"• Optimality Theory learning: corrected a bug introduced in 6.0.30 that could cause the editor to crash on the Mac.")
-LIST_ITEM (U"• EEG: corrected a bug that could cause an infinite loop when doing principal component analysis.")
-LIST_ITEM (U"• Scripting: faster interpreter.")
-NORMAL (U"##6.0.31# (21 August 2017)")
-LIST_ITEM (U"• Scripting: more vectors and matrices.")
-LIST_ITEM (U"• Numerics: faster and more precise sums, means, standard deviations.")
-NORMAL (U"##6.0.30# (22 July 2017)")
-LIST_ITEM (U"• Removed a bug that caused an incorrect title for a PitchTier or PointProcess window.")
-LIST_ITEM (U"• Removed a bug that caused Praat to crash when doing a linear regression on a Table with no rows.")
-LIST_ITEM (U"• Scripting: `object[]`, @@Scripting 5.7. Vectors and matrices|vectors@.")
-LIST_ITEM (U"• Graphics: better text drawing details.")
-LIST_ITEM (U"• Linux: possibility to compile Praat without a GUI but with graphics file output.")
-NORMAL (U"##6.0.29# (24 May 2017)")
-LIST_ITEM (U"• Sound window: channel muting.")
-LIST_ITEM (U"• Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.")
-NORMAL (U"##6.0.28# (23 March 2017)")
-LIST_ITEM (U"• Scripting: `demoPeekInput` () for animations in combination with `sleep` ().")
-NORMAL (U"##6.0.27# (18 March 2017)")
-LIST_ITEM (U"• TextGrid: fewer error messages in concatenation of multiple TextGrids.")
-LIST_ITEM (U"• Scripting: `sleep` () to pause Praat temporarily: useful for animations in combination with `demoShow` ().")
-NORMAL (U"##6.0.26# (2 March 2017)")
-LIST_ITEM (U"• Mac: more corrections in `demoShow` () and `blankWhilePlaying`.")
-LIST_ITEM (U"• PraatBarren: better error message when an attempt is made to run PraatBarren interactively.")
-NORMAL (U"##6.0.25# (11 February 2017)")
-LIST_ITEM (U"• Mac: made `demoShow` () and `blankWhilePlaying` compatible with MacOS 10.12 Sierra.")
-LIST_ITEM (U"• Mac SoundRecorder: more sampling frequencies, on behalf of external USB microphones.")
-NORMAL (U"##6.0.24# (23 January 2017)")
-LIST_ITEM (U"• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would choose the wrong tier.")
-LIST_ITEM (U"• TextGrid window: click to insert a phonetic symbol from an IPA chart.")
-NORMAL (U"##6.0.23# (12 December 2016)")
-LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.")
-LIST_ITEM (U"• Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.")
-LIST_ITEM (U"• Improvements in the manual and in texts.")
-NORMAL (U"##6.0.22# (15 November 2016)")
-LIST_ITEM (U"• Scripting: correct error messages for expressions like: `5 + “hello”`")
-LIST_ITEM (U"• Command line: the --open option works correctly in the GUI if you open multiple files.")
-//LIST_ITEM (U"• Sound window: option for showing time in minutes instead of just seconds.")   // too confusing in UI
-NORMAL (U"##6.0.21# (25 September 2016)")
-LIST_ITEM (U"• ExperimentMFC: you can now specify font sizes and response keys for goodness judgments.")
-LIST_ITEM (U"• Table: when drawing ellipses, a font size of 0 can now be used to prevent drawing the labels.")
-LIST_ITEM (U"• Mac: dragging selections repaired for System 10.11.6 (but we advise to upgrade to 10.12).")
-LIST_ITEM (U"• Mac: re-enabled Return key for confirming some dialog boxes.")
-NORMAL (U"##6.0.20# (3 September 2016)")
-LIST_ITEM (U"• Can open UTF-8 text files with Byte Order Mark.")
-LIST_ITEM (U"• Scripting improvement: function names can now be used as names of indexed variables.")
-NORMAL (U"##6.0.19# (13 June 2016)")
-LIST_ITEM (U"• Mac: dragging selections repaired for System 10.11.5.")
-NORMAL (U"##6.0.18# (23 May 2016)")
-LIST_ITEM (U"• Windows: better dotted lines.")
-LIST_ITEM (U"• TextGrid window: again better automatic alignment.")
-NORMAL (U"##6.0.17# (21 April 2016)")
-LIST_ITEM (U"• TextGrid window: better automatic alignment.")
-NORMAL (U"##6.0.16# (5 April 2016)")
-LIST_ITEM (U"• Scripting: “hashes”: variables can now be indexed with strings rather than only with numbers.")
-LIST_ITEM (U"• TextGrid window: fewer out-of-order messages in automatic alignment.")
-NORMAL (U"##6.0.15# (21 March 2016)")
-LIST_ITEM (U"• TextGrid window: removed a bug whereby Praat could do automatic alignment only on sounds sampled at 44.1 kHz.")
-LIST_ITEM (U"• TextGrid window: improved the location of the final boundary in automatic alignment.")
-LIST_ITEM (U"• Table window: added a preference for the interpretation of graphical style symbols (\\% \\# \\^ \\_ \\@ ).")
-NORMAL (U"##6.0.14# (11 February 2016)")
-LIST_ITEM (U"• Linux: corrected a bug by which the Tab short-cut for playing a sound would not work if the NumLock key was on.")
-LIST_ITEM (U"• Mac 64-bit: corrected a bug that could cause Praat to crash if the Tab key was pressed in a dialog window.")
-NORMAL (U"##6.0.13# (31 January 2016)")
-LIST_ITEM (U"• Windows: corrected a bug that could cause Praat to crash when closing a script window.")
-LIST_ITEM (U"• Mac 64-bit: progress bars with movies.")
-NORMAL (U"##6.0.12# (24 January 2016)")
-LIST_ITEM (U"• Windows 32-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
-LIST_ITEM (U"• Mac 64-bit: better `demoShow` ().")
-LIST_ITEM (U"• Mac 64-bit: working Matrix movies and articulatory synthesizer movies.")
-NORMAL (U"##6.0.11# (18 January 2016)")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when drawing a Spectrum with undefined values.")
-LIST_ITEM (U"• Mac 64-bit: corrected a bug by which some text in the Sound window would sometimes not be drawn.")
-LIST_ITEM (U"• Mac 64-bit demo window: improved the working of `demoShow` ().")
-NORMAL (U"##6.0.10# (8 January 2016)")
-LIST_ITEM (U"• Corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.")
-LIST_ITEM (U"• Mac 64-bit: corrected a bug that would cause black selections in the Sound window.")
-NORMAL (U"##6.0.09# (1 January 2016)")
-LIST_ITEM (U"• Windows 64-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
-NORMAL (U"##6.0.08# (5 December 2015)")
-LIST_ITEM (U"• Windows command line: the `--a` option can be used when redirecting the output to pipes and files.")
-LIST_ITEM (U"• Linux command line: the `--run` option is not needed in the Terminal when redirecting output "
-	"(unless you redirect standard output, standard input %and standard error).")
-NORMAL (U"##6.0.07# (30 November 2015)")
-LIST_ITEM (U"• Mac 64-bit: repaired dragging selections (which got broken in the El Capitan fix in 6.0.06).")
-NORMAL (U"##6.0.06# (29 November 2015)")
-LIST_ITEM (U"• Mac 64-bit: correct early Info window updates and `demoShow` () in El Capitan.")
-LIST_ITEM (U"• Manual updates.")
-LIST_ITEM (U"• Corrected some small memory leaks.")
-NORMAL (U"##6.0.05# (8 November 2015)")
-LIST_ITEM (U"• A manual page that describes @@TextGrid file formats@.")
-LIST_ITEM (U"• Corrected a bug that prevented some KlattGrid tiers from being edited.")
-LIST_ITEM (U"• 32-bit Linux: correct use of PulseAudio (note: 6.0.04 on Debian already had this correct).")
-NORMAL (U"##6.0.04# (1 November 2015)")
-LIST_ITEM (U"• Corrected a bug that caused an incorrect number in FFNet files; "
-	"unreadable FFNet files can be sent to the Praat authors for repair.")
-NORMAL (U"##6.0.03# (31 October 2015)")
-LIST_ITEM (U"• Corrected a bug that caused Praat to crash when the Soundrecorder window was closed.")
-LIST_ITEM (U"• Scripting: when calling Praat from the command line, added the `--run` option to force script execution.")
-NORMAL (U"##6.0.02# (30 October 2015)")
-LIST_ITEM (U"• Corrected the redrawing of analyses in the Sound window after a change in the sound.")
-NORMAL (U"##6.0.01# (29 October 2015)")
-LIST_ITEM (U"• Windows: fixed a bug that caused Praat to crash at start-up in some Windows versions.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 6.0?", U"ppgb", 20151028)
-NORMAL (U"##6.0# (28 October 2015)")
-LIST_ITEM (U"• Linux: use PulseAudio as the server for playing sound.")
-LIST_ITEM (U"• Windows: removed Praatcon.exe, because Praat.exe can now be used from the command line.")
-LIST_ITEM (U"• Praat can now open files from the command line on all platforms.")
-LIST_ITEM (U"• The API change that requires raising the major Praat version to 6: "
-	"no longer any need for Praatcon.exe, because Praat itself can now run a script from the command line on all platforms.")
-LIST_ITEM (U"• See @@Scripting 6.9. Calling from the command line@ for all command line options.")
-LIST_ITEM (U"• SpeechSynthesizer: corrected a potentially crashing bug.")
-LIST_ITEM (U"• Mac Retina graphics: made function drawing (e.g. in the TextGrid window) twice as fast.")
-LIST_ITEM (U"• LongSound: corrected playing of more than 2 channels.")
-NORMAL (U"##5.4.22# (8 October 2015)")
-LIST_ITEM (U"• Sound files: added support for MP3 files with ID3 version 2 headers.")
-LIST_ITEM (U"• Table: Line graph where: removed a bug that caused nothing to be drawn if the number of columns was larger than the number of rows and "
-	"the column index was larger than the number of rows.")
-LIST_ITEM (U"• Mac: corrected horizontal spacing in graphical text on El Capitán.")
-LIST_ITEM (U"• Mac: corrected a bug that would cause Praat to crash if a PNG file could not be saved (from a script).")
-LIST_ITEM (U"• Windows: enabled PNG saving from Praatcon.")
-NORMAL (U"##5.4.21# (29 September 2015)")
-LIST_ITEM (U"• Corrected a bug introduced in 5.4.20 that could cause the Sound window to crash.")
-LIST_ITEM (U"• Repaired a very old hang with pulses in the Sound window.")
-NORMAL (U"##5.4.20# (26 September 2015)")
-LIST_ITEM (U"• Corrected the graphical representation of numbers with exponents (wrong since 5.4.10).")
-LIST_ITEM (U"• Windows: prevented flashing console window in `runScript` ().")
-NORMAL (U"##5.4.19# (16 September 2015)")
-LIST_ITEM (U"• LongSound: corrected saving of 8-bit files as 16-bit.")
-NORMAL (U"##5.4.18# (7 September 2015)")
-LIST_ITEM (U"• Regular expressions: if the pattern is illegal, you'll now get an error message instead of an empty string.")
-LIST_ITEM (U"• LongSound: removed a bug introduced in 1999 that could play long stereo sounds much too fast if they had unusual sampling frequencies. "
-	"This bug has become more noticeable on the Mac since January 2015.")
-LIST_ITEM (U"• Guard better against sound files that contain 0 samples.")
-LIST_ITEM (U"• Scripting: faster look-up of variables.")
-NORMAL (U"##5.4.17# (20 August 2015)")
-LIST_ITEM (U"• Scripting: removed a bug that could cause Praat to crash when calling `writeFile` () with an empty text.")
-NORMAL (U"##5.4.16# (16 August 2015)")
-LIST_ITEM (U"• Mac 64-bit: removed a bug by which graphical text passed over the right edge in TextGrid intervals.")
-LIST_ITEM (U"• Mac 64-bit: removed a bug that allowed the general #Zoom and #Close commands to be accessible from a script.")
-NORMAL (U"##5.4.15# (1 August 2015)")
-LIST_ITEM (U"• Introduced several command line options that make it easier to call Praat from a web server.")
-LIST_ITEM (U"• 64-bit Mac: removed a bug introduced in 5.4.11 that caused incorrect spacing of vertical text in picture files.")
-NORMAL (U"##5.4.14# (24 July 2015)")
-LIST_ITEM (U"• Windows and 32-bit Mac: removed a bug introduced in 5.4.12 that could cause weird behavior (even crashing) when "
-	"pressing the Tab key in the script window or in the manual.")
-NORMAL (U"##5.4.13# (22 July 2015)")
-LIST_ITEM (U"• The Demo window can now save itself to a PNG or PDF file.")
-LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby Praatcon would write garbled text to the console.")
-NORMAL (U"##5.4.12# (10 July 2015)")
-LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby SpeechSynthesizer would only pronounce the first letter of the text.")
-NORMAL (U"##5.4.11# (8 July 2015)")
-LIST_ITEM (U"• Windows: removed a bug introduced in 5.4.10 whereby the file selection window could try to open a file with a garbled name.")
-LIST_ITEM (U"• Removed a bug whereby the PointProcess window would crash when showing a perfectly silent sound.")
-NORMAL (U"##5.4.10# (27 June 2015)")
-LIST_ITEM (U"• Removed a bug introduced in version 4.5.09 (January 2007) that caused incorrect "
-	"upsampling of stereo sounds when the upsampling factor was exactly 2. This bug has caused "
-	"incorrect playing of stereo sounds with a sampling frequency of 22050 Hz on the Mac since January 2015.")
-LIST_ITEM (U"• Removed a bug introduced in 2011 that could cause Praat to crash when you scrolled the LongSound window.")
-LIST_ITEM (U"• TextGrid: ##Count intervals where...# and ##Count points where...#.")
-NORMAL (U"##5.4.09# (1 June 2015)")
-LIST_ITEM (U"• Linux: the tab key can be used to play sounds on more computers.")
-LIST_ITEM (U"• Windows: TextGrid files with non-BMP characters are now read correctly.")
-LIST_ITEM (U"• Windows: files with names that contain non-BMP characters are now saved correctly.")
-LIST_ITEM (U"• Updated manual.")
-NORMAL (U"##5.4.08# (24 March 2015)")
-LIST_ITEM (U"• Sound window: removed a bug that caused a crash in ##Editor info#.")
-NORMAL (U"##5.4.07# (22 March 2015)")
-LIST_ITEM (U"• TextGrid window: ##Add interval# now does the same thing as ##Add boundary# if a time stretch is selected.")
-LIST_ITEM (U"• Linux: better redrawing in TextGrid window.")
-NORMAL (U"##5.4.06# (21 February 2015)")
-LIST_ITEM (U"• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 200 dpi.")
-NORMAL (U"##5.4.05# (13 February 2015)")
-LIST_ITEM (U"• Better support for big integer numbers on Windows XP.")
-LIST_ITEM (U"• Sound window: guarded against empty view ranges for the intensity curve.")
-NORMAL (U"##5.4.04# (28 December 2014)")
-LIST_ITEM (U"• Windows audio playback: if the sound has more channels than the audio hardware, distribute them evenly.")
-NORMAL (U"##5.4.03# (18 December 2014)")
-LIST_ITEM (U"• TextGrid reading: Praat now corrects some incomplete TextGrid files created by others.")
-LIST_ITEM (U"• Better support for text files larger than 2 GB.")
-NORMAL (U"##5.4.02# (26 November 2014)")
-LIST_ITEM (U"• Mac: repaired a bug by which quote characters typed into the script window could become curly instead of straight.")
-NORMAL (U"##5.4.01# (9 November 2014)")
-LIST_ITEM (U"• @MelSpectrogram, @BarkSpectrogram.")
-LIST_ITEM (U"• Linux: removed a bug that could cause too many flashes when scrolling a Sound window.")
-LIST_ITEM (U"• Mac: repaired a bug that could cause a crash in the VowelEditor window.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 5.4?", U"ppgb", 20141004)
-NORMAL (U"##5.4# (4 October 2014)")
-NORMAL (U"##5.3.87# (3 October 2014)")
-LIST_ITEM (U"• Windows scripting: prevented incorrect handling of relative paths after the use of `chooseReadFile$`.")
-LIST_ITEM (U"• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 180 or 1200 dpi.")
-NORMAL (U"##5.3.86# (28 September 2014)")
-LIST_ITEM (U"• Linux audio: reverted to old version of PortAudio because of race problems in the Alsa–PulseAudio cooperation.")
-NORMAL (U"##5.3.85# (19 September 2014)")
-LIST_ITEM (U"• Mac audio: circumvented a bug in PortAudio by which playback of sounds with sampling frequencies "
-	"below 44100 Hz could be distorted on some USB headsets.")
-NORMAL (U"##5.3.84# (26 August 2014)")
-LIST_ITEM (U"• Manipulation: repaired a bug that could cause Praat to crash when playing a manipulation of a Sound created by the SpeechSynthesizer.")
-NORMAL (U"##5.3.83# (16 August 2014)")
-LIST_ITEM (U"• TextGrid window: repaired a bug with automatic alignment that could cause an analysis tier to go out of order.")
-LIST_ITEM (U"• Linux audio: created a second workaround that reduces even more the chances of a freeze that is due to a potential deadlock "
-	"in the collaboration between Alsa and PulseAudio that can occur when the playback of a sound is cancelled.")
-LIST_ITEM (U"• Smoother communication with Phon.")
-LIST_ITEM (U"• Windows: repaired a memory leak when saving PNG files.")
-NORMAL (U"##5.3.82# (26 July 2014)")
-LIST_ITEM (U"• Linux and Mac audio playback: if the sound has more channels than the audio hardware, distribute them evenly.")
-LIST_ITEM (U"• Pause forms: more consistent appearance of the Revert button.")
-LIST_ITEM (U"• Scripting: pauseScript ( ) function.")
-NORMAL (U"##5.3.81# (2 July 2014)")
-LIST_ITEM (U"• EEG: can work with status %numbers instead of only with status %bits.")
-LIST_ITEM (U"• Windows: repaired a bug that could cause Praat to crash if there was a 96-dpi printer.")
-NORMAL (U"##5.3.80# (29 June 2014)")
-LIST_ITEM (U"• Praat preferences: choice between Chinese and Japanese style for Han characters.")
-NORMAL (U"##5.3.79# (21 June 2014)")
-LIST_ITEM (U"• Can now play sounds over more than two channels.")
-LIST_ITEM (U"• Asynchronous play in scripts (see @@Demo window@).")
-LIST_ITEM (U"• EEG: blue-to-red colour scale for scalp distributions.")
-NORMAL (U"##5.3.78# (12 June 2014)")
-LIST_ITEM (U"• Multithreading can now speed up pitch analysis by a factor of 4 or so, "
-	"depending on the number of cores in your processor.")
-LIST_ITEM (U"• Linux: can now open and save Photo objects (from PNG files) "
-	"and use @@Insert picture from file...@.")
-LIST_ITEM (U"• Open WAV files that are in the “extensible” format (previously “unsupported format -2”).")
-LIST_ITEM (U"• Windows: support for dropping more than one file on the Praat icon.")
-LIST_ITEM (U"• Scripting: can now use the #editor command with an object's ID instead of only with its name.")
-LIST_ITEM (U"• Windows: removed a bug that sometimes disallowed saving more than one JPEG file.")
-LIST_ITEM (U"• Linux audio: created a workaround that reduces the chances of a freeze that is due to a potential deadlock "
-	"in the collaboration between Alsa and PulseAudio that can occur when the playback of a sound is cancelled.")
-NORMAL (U"##5.3.77# (18 May 2014)")
-LIST_ITEM (U"• EEG: more facilities for EDF+ files.")
-NORMAL (U"##5.3.76# (8 May 2014)")
-LIST_ITEM (U"• One can determine the size of “speckles” (filled circles) with ##Speckle size...# in the #Pen menu. "
-	"Speckles are used in drawing Formant, PitchTier, and several other kinds of objects.")
-NORMAL (U"##5.3.75# (30 April 2014)")
-LIST_ITEM (U"• Linux Matrix graphics bug fix: corrected working of ##Draw cells...#.")
-LIST_ITEM (U"• Scripting bug fix: ability to use x and y as indexed variables.")
-LIST_ITEM (U"• PowerCepstrogram bug fix: made old version of Paint command available again for scripts.")
-NORMAL (U"##5.3.74# (24 April 2014)")
-LIST_ITEM (U"• EEG: more interpretation of triggers in EDF+ files.")
-NORMAL (U"##5.3.73# (21 April 2014)")
-LIST_ITEM (U"• EEG: understand more EGI/NetStation files.")
-NORMAL (U"##5.3.72# (17 April 2014)")
-LIST_ITEM (U"• Windows: repaired a bug that caused two black edges in PNG files.")
-LIST_ITEM (U"• Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 360 dpi.")
-LIST_ITEM (U"• Linux: repaired a bug that caused Praat to crash when cutting or pasting a sound in the Sound window.")
-NORMAL (U"##5.3.71# (9 April 2014)")
-LIST_ITEM (U"• Windows: brought more unity in the style of Chinese characters.")
-NORMAL (U"##5.3.70# (2 April 2014)")
-LIST_ITEM (U"• Added some query commands for DurationTier objects.")
-LIST_ITEM (U"• Repaired a bug that caused Praat not to run as a console app.")
-NORMAL (U"##5.3.69# (28 March 2014)")
-LIST_ITEM (U"• Picture window: can save to 300-dpi and 600-dpi PNG files.")
-LIST_ITEM (U"• Graphics: sub-pixel precision line drawing on Mac and Linux.")
-LIST_ITEM (U"• Repaired a bug that could show spurious buttons in the Objects window if a plug-in created objects.")
-NORMAL (U"##5.3.68# (20 March 2014)")
-LIST_ITEM (U"• Mac: corrected a bug introduced in 5.3.67 that could cause crashes when drawing a spectrogram.")
-LIST_ITEM (U"• Mac and Linux: @@Create Strings as file list...@ handles broken symbolic links more leniently.")
-NORMAL (U"##5.3.67# (19 March 2014)")
-LIST_ITEM (U"• Corrected a bug that would create strange PNG files if the selection did not touch the upper left corner of the Picture window.")
-LIST_ITEM (U"• Mac: can save the Picture window to PNG file.")
-LIST_ITEM (U"• EEG: understand trigger letters in BDF/EDF files.")
-NORMAL (U"##5.3.66# (9 March 2014)")
-LIST_ITEM (U"• Windows and Linux: can save the Picture window to PNG file.")
-LIST_ITEM (U"• Windows: opening, modifying and saving PNG, TIFF or JPEG files (the Photo object, as on the Mac).")
-NORMAL (U"##5.3.65# (27 February 2014)")
-LIST_ITEM (U"• Scripting language: removed some bugs from runScript.")
-LIST_ITEM (U"• Linux: can save the Picture window to PDF file.")
-NORMAL (U"##5.3.64# (12 February 2014)")
-LIST_ITEM (U"• Scripting language: writeInfo, procedure, exitScript, runScript: all with colons.")
-LIST_ITEM (U"• 64-bit Mac graphics: better highlighting and unhighlighting of selection.")
-LIST_ITEM (U"• 64-bit Mac graphics: full screen.")
-NORMAL (U"##5.3.63# (24 January 2014)")
-LIST_ITEM (U"• Scripting language: easier menu command invocation using the colon “:”.")
-LIST_ITEM (U"• 64-bit Mac graphics: better handling of any absence of Doulos SIL or Charis SIL.")
-LIST_ITEM (U"• Windows scripting: can now use “~” in file names to refer to the home directory, as on Mac and Linux.")
-NORMAL (U"##5.3.62# (2 January 2014)")
-LIST_ITEM (U"• 64-bit Mac: removed a bug introduced in 5.3.61 that could cause text containing “ff” to become invisible.")
-NORMAL (U"##5.3.61# (1 January 2014)")
-LIST_ITEM (U"• EEG: understand status registers that contain text.")
-LIST_ITEM (U"• KlattGrid: removed a bug introduced in May 2009 that could make Praat crash after editing an oral formant grid.")
-NORMAL (U"##5.3.60# (8 December 2013)")
-LIST_ITEM (U"• Mac 64-bit: implemented swiping (to scroll with the trackpad) and pinching (to zoom with the trackpad).")
-LIST_ITEM (U"• Scripting: backslashTrigraphsToUnicode () and unicodeToBackslashTrigraphs ().")
-NORMAL (U"##5.3.59# (20 November 2013)")
-LIST_ITEM (U"• EEG: faster reading of BDF and EDF files.")
-LIST_ITEM (U"• Batch scripting: made ##appendInfo()# write to the console in the same way as #print.")
-LIST_ITEM (U"• Removed a bug introduced in 5.3.57 whereby some Praat text files could not be read.")
-NORMAL (U"##5.3.58# (17 November 2013)")
-LIST_ITEM (U"• EEG: support for 16-bit (next to 24-bit) BDF files and for 16-bit (next to 8-bit) statuses.")
-LIST_ITEM (U"• Mac: 64-bit beta version.")
-NORMAL (U"##5.3.57# (27 October 2013)")
-LIST_ITEM (U"• Mac: opening, modifying and saving image files (the Photo object).")
-LIST_ITEM (U"• Mac 64-bit: some small improvements in the user interface.")
-NORMAL (U"##5.3.56# (15 September 2013)")
-LIST_ITEM (U"• Mac: 64-bit alpha version.")
-LIST_ITEM (U"• Linux: improved selecting in the Picture window.")
-NORMAL (U"##5.3.55# (2 September 2013)")
-LIST_ITEM (U"• Corrected a bug introduced in 5.3.54 by which you couldn't select a file for saving.")
-NORMAL (U"##5.3.54# (1 September 2013)")
-LIST_ITEM (U"• Sound window: removed a bug introduced in 5.3.42 by which you couldn't ask for an odd number of poles in Formant Settings "
-	"(by e.g. specifying “5.5” for the number of formants).")
-LIST_ITEM (U" Linux: improved dragging of selections in the Picture window and the Sound window.")
-NORMAL (U"##5.3.53# (9 July 2013)")
-LIST_ITEM (U"• Table: more drawing commands.")
-NORMAL (U"##5.3.52# (12 June 2013)")
-LIST_ITEM (U"• Scripting: editor windows understand `do` and `do$`.")
-NORMAL (U"##5.3.51# (30 May 2013)")
-LIST_ITEM (U"• Sound window: ##Extract selected sound for overlap...#.")
-NORMAL (U"##5.3.49# (13 May 2013)")
-LIST_ITEM (U"• TextGrid window: alignment of the sound and the annotation in an interval, via Espeak.")
-LIST_ITEM (U"• Scripting: repaired a bug introduced in 5.3.32 that could cause very slow running of scripts.")
-NORMAL (U"##5.3.48# (1 May 2013)")
-LIST_ITEM (U"• Scripting: variable-substitution-free object selection and file writing.")
-LIST_ITEM (U"• Scripting: `selectObject` and `removeObject` can select or remove multiple objects at a time.")
-NORMAL (U"##5.3.47# (23 April 2013)")
-LIST_ITEM (U"• OTGrammar: included Giorgio Magri's (2012) update rule (weighted all up, high down).")
-NORMAL (U"##5.3.46# (21 April 2013)")
-LIST_ITEM (U"• Scripting: variable-substitution-free procedure calls.")
-LIST_ITEM (U"• Linux: made the Save menu compatible with Ubuntu 12.04.")
-NORMAL (U"##5.3.45# (15 April 2013)")
-LIST_ITEM (U"• More parts of the manual reflect variable-substitution-free scripting.")
-NORMAL (U"##5.3.44# (7 April 2013)")
-LIST_ITEM (U"• ##Create Sound as pure tone...#.")
-LIST_ITEM (U"• First steps towards variable-substitution-free scripting: the `do`, `do$`, `writeInfo` and `appendInfo` functions.")
-NORMAL (U"##5.3.43# (27 March 2013)")
-LIST_ITEM (U"• Read and write stereo Kay sound files.")
-LIST_ITEM (U"• Phonetic symbols \\ts, \\tS and \\ap.")
-LIST_ITEM (U"• Network: ##Normalize weights...#, ##List weights...#, ##Weights down to Table...#.")
-NORMAL (U"##5.3.42# (2 March 2013)")
-LIST_ITEM (U"• Repaired some minor bugs regarding synchronization between multiple windows.")
-NORMAL (U"##5.3.41# (9 February 2013)")
-LIST_ITEM (U"• Linux: repaired a bug that could cause Praat to crash when closing the Info window or a script window.")
-NORMAL (U"##5.3.40# (2 February 2013)")
-LIST_ITEM (U"• Windows: better handling (in the LongSound window) of sounds that are too long to play.")
-LIST_ITEM (U"• Mac: corrected a bug that caused Praat to crash when closing the Strings window.")
-LIST_ITEM (U"• Linux: made audio output work again on 32-bit Linux.")
-NORMAL (U"##5.3.39# (6 January 2013)")
-LIST_ITEM (U"• Formant & Spectrogram: To IntensityTier...")
-NORMAL (U"##5.3.38# (4 January 2013)")
-LIST_ITEM (U"• ExperimentMFC: repaired a bug introduced in 5.3.36 that caused sound to fail to play completely if the screen did not blank.")
-NORMAL (U"##5.3.37# (2 January 2013)")
-LIST_ITEM (U"• ExperimentMFC: after screen blanking, reaction times count from when the response buttons appear.")
-NORMAL (U"##5.3.36# (1 January 2013)")
-LIST_ITEM (U"• ExperimentMFC: made it possible to blank the screen while the sound is playing.")
-NORMAL (U"##5.3.35# (8 December 2012)")
-LIST_ITEM (U"• SpeechSynthesizer: made it possible to have more than one at a time.")
-LIST_ITEM (U"• Linux: corrected a bug that caused incorrect alignment of the buttons in the Objects window.")
-NORMAL (U"##5.3.34# (21 November 2012)")
-LIST_ITEM (U"• Windows: corrected a bug that caused incorrect alignment of the buttons in the Objects window.")
-LIST_ITEM (U"• The new ##Sound: Combine to stereo# can now work with Sounds of different durations, as the old could.")
-LIST_ITEM (U"• Corrected a bug that caused Praat to crash when creating a SpeechSynthesizer.")
-NORMAL (U"##5.3.33# (20 November 2012)")
-LIST_ITEM (U"• ##Sound: Combine to stereo# can now combine any number of Sounds into a new Sound whose number of channels "
-	"is the sum of the numbers of channels of the original Sounds.")
-LIST_ITEM (U"• ERP: Down to Sound.")
-NORMAL (U"##5.3.32# (17 October 2012)")
-LIST_ITEM (U"• Sound window: corrected the working of the ##by window# scaling option.")
-NORMAL (U"##5.3.31# (10 October 2012)")
-LIST_ITEM (U"• ERP: Down to Table...")
-LIST_ITEM (U"• Linux: corrected a bug that could cause Praat to crash after closing a file selector window for saving.")
-NORMAL (U"##5.3.30# (6 October 2012)")
-LIST_ITEM (U"• Circumvented a rare Windows bug that could cause Praat to start to write 1.5 as 1,5 in some countries "
-	"after opening a strange directory.")
-LIST_ITEM (U"• Windows: corrected a bug introduced in 5.3.24 that could cause Praat to crash when quitting.")
-LIST_ITEM (U"• Windows: corrected a bug introduced in 5.3.24 that could cause the Objects window to look weird after resizing.")
-NORMAL (U"##5.3.29# (30 September 2012)")
-LIST_ITEM (U"• @EEG: Draw scalp..., including gray legend.")
-LIST_ITEM (U"• Made the new Sound scaling options available for LongSounds.")
-NORMAL (U"##5.3.28# (28 September 2012)")
-LIST_ITEM (U"• Corrected a bug introduced in 5.3.24 that made Praat crash on OSX 10.5.")
-NORMAL (U"##5.3.27# (27 September 2012)")
-LIST_ITEM (U"• Corrected a couple of small bugs.")
-NORMAL (U"##5.3.26# (26 September 2012)")
-LIST_ITEM (U"• Corrected a bug introduced in 5.3.24 that prevented Praat from running in batch mode.")
-NORMAL (U"##5.3.25# (26 September 2012)")
-LIST_ITEM (U"• EEG: view of scalp distribution takes scaling options into account.")
-LIST_ITEM (U"• Linux: swipable Sound window and manual.")
-LIST_ITEM (U"• Linux: corrected a bug introduced in 5.3.24 whereby TextGrids could not be edited.")
-NORMAL (U"##5.3.24# (24 September 2012)")
-LIST_ITEM (U"• More kinds of vertical scaling in e.g. Sound and EEG windows.")
-LIST_ITEM (U"• Rewritten user interface (may contain some bugs).")
-NORMAL (U"##5.3.23# (7 August 2012)")
-LIST_ITEM (U"• Mac: removed a bug introduced in September 2011 that could cause incorrect behaviour of regular expressions since July 2012.")
-NORMAL (U"##5.3.22# (21 July 2012)")
-LIST_ITEM (U"• Linux: removed a bug introduced in 5.3.21 that could cause Praat to crash when opening files.")
-LIST_ITEM (U"• Neural networks: correct writing and reading of learning settings.")
-NORMAL (U"##5.3.21# (10 July 2012)")
-LIST_ITEM (U"• Linux: better folder choice in file selector window for opening files.")
-LIST_ITEM (U"• Repaired a bug that caused Praat to crash when opening a ManPages file on some platforms.")
-NORMAL (U"##5.3.20# (5 July 2012)")
-LIST_ITEM (U"• @EEG: ##Replace TextGrid#.")
-NORMAL (U"##5.3.19# (24 June 2012)")
-NORMAL (U"##5.3.18# (15 June 2012)")
-LIST_ITEM (U"• Corrected a bug in @@Sound: Change gender...@ that caused a part of the sound not to be changed.")
-NORMAL (U"##5.3.17# (12 June 2012)")
-LIST_ITEM (U"• @EEG window: extent autoscaling by window.")
-LIST_ITEM (U"• ERPTier: Remove events between...")
-NORMAL (U"##5.3.16# (23 May 2012)")
-NORMAL (U"##5.3.15# (10 May 2012)")
-LIST_ITEM (U"• Improvements in clipboards, PDF and EPS files.")
-NORMAL (U"##5.3.14# (28 April 2012)")
-LIST_ITEM (U"• Linux: Tab shortcut for playing the selection.")
-LIST_ITEM (U"• EPS files: higher minimum image resolution for spectrograms (300 instead of 106 dpi).")
-NORMAL (U"##5.3.13# (11 April 2012)")
-LIST_ITEM (U"• @EEG: Extract part...")
-NORMAL (U"##5.3.12# (5 April 2012)")
-LIST_ITEM (U"• Praat picture file: allow larger function drawings (up to 10^9 instead of 10^6 points).")
-LIST_ITEM (U"• Linux: better audio compatibility with Ubuntu 11.10 (support for unusual sampling frequencies when playing LongSounds).")
-NORMAL (U"##5.3.11# (27 March 2012)")
-LIST_ITEM (U"• @EEG: a selected ERPTier can extract events on the basis of a column of a selected Table.")
-NORMAL (U"##5.3.10# (12 March 2012)")
-LIST_ITEM (U"• @EEG: Concatenate.")
-NORMAL (U"##5.3.09# (10 March 2012)")
-LIST_ITEM (U"• Better text-to-speech.")
-NORMAL (U"##5.3.08# (5 March 2012)")
-LIST_ITEM (U"• Removed a bug introduced in 5.3.07 that could cause Praat to crash when viewing a LongSound.")
-NORMAL (U"##5.3.07# (4 March 2012)")
-LIST_ITEM (U"• Praat can now save Sounds as 24-bit and 32-bit WAV files.")
-NORMAL (U"##5.3.06# (28 February 2012)")
-NORMAL (U"##5.3.05# (19 February 2012)")
-LIST_ITEM (U"• SpeechSynthesizer (#New menu \\-> #Sound): text-to-speech.")
-LIST_ITEM (U"• @EEG: better scalp distribution drawing for both 32-channel and 64-channel recordings.")
-NORMAL (U"##5.3.04# (12 January 2012)")
-LIST_ITEM (U"• EEG: draw scalp distribution.")
-LIST_ITEM (U"• Linux: better audio compatibility with Ubuntu 11.10 (support for unusual sampling frequencies when playing Sounds).")
-NORMAL (U"##5.3.03# (21 November 2011)")
-LIST_ITEM (U"• EEG: filtering, editing, more viewing.")
-NORMAL (U"##5.3.02# (7 November 2011)")
-LIST_ITEM (U"• Corrected a bug introduced in 5.3.01 that could cause the PitchTier or PointProcess window to crash.")
-LIST_ITEM (U"• Corrected a bug that could cause the Info window to freeze after an error message in a script window.")
-NORMAL (U"##5.3.01# (1 November 2011)")
-LIST_ITEM (U"• Macintosh and Windows: better window positioning if the Dock or Task Bar is on the left or right.")
-LIST_ITEM (U"• IPA symbol: you can now use \\bs.f for the half-length sign (\\.f).")
-LIST_ITEM (U"• EEG window.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 5.3?", U"ppgb", 20111015)
-NORMAL (U"##5.3# (15 October 2011)")
-NORMAL (U"##5.2.46# (7 October 2011)")
-LIST_ITEM (U"• Corrected the same very old bug as in 5.2.44, but now also for opening and saving files.")
-LIST_ITEM (U"• Many better messages.")
-NORMAL (U"##5.2.45# (29 September 2011)")
-LIST_ITEM (U"• Spectrum window: ##Move cursor to nearest peak#.")
-LIST_ITEM (U"• Table: ##Save as comma-separated file...#.")
-LIST_ITEM (U"• Windows: you can now change the font size of the script window.")
-LIST_ITEM (U"• Windows scripting: the Info window now updates while you are writing to it.")
-LIST_ITEM (U"• Windows: error messages now stay at the front so that you never have to click away "
-	"an invisible message window anymore.")
-NORMAL (U"##5.2.44# (23 September 2011)")
-LIST_ITEM (U"• Corrected a very old bug in the history mechanism (the button title wouldn't always show up).")
-NORMAL (U"##5.2.43# (21 September 2011)")
-LIST_ITEM (U"• Linux: you can now change the font size of the script window.")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when opening an already open file in the script window.")
-NORMAL (U"##5.2.42# (18 September 2011)")
-LIST_ITEM (U"• Corrected a bug introduced in 5.2.36 that prevented formulas from working on FormantGrid objects.")
-NORMAL (U"##5.2.41# (17 September 2011)")
-LIST_ITEM (U"• Improved dashed-dotted lines in EPS files.")
-LIST_ITEM (U"• Corrected a bug introduced in 5.2.36 that caused Praat to crash when running an ExperimentMFC.")
-NORMAL (U"##5.2.40# (11 September 2011)")
-LIST_ITEM (U"• Corrected a bug in the 64-bit Windows edition that led to an incorrect location for the preferences files.")
-NORMAL (U"##5.2.39# (10 September 2011)")
-LIST_ITEM (U"• 64-bit edition for Windows.")
-LIST_ITEM (U"• Corrected a bug that caused Praat to crash instead of saying “undefined” when reporting the shimmer of a sound with fewer than 3 pulses.")
-NORMAL (U"##5.2.38# (6 September 2011)")
-LIST_ITEM (U"• Corrected several bugs that were introduced in 5.2.36 in the Inspect window.")
-NORMAL (U"##5.2.37# (2 September 2011)")
-LIST_ITEM (U"• Graphics: added the Chinese phonetic symbols \\id and \\ir. See @@Phonetic symbols: vowels@.")
-LIST_ITEM (U"• Corrected a bug introduced in 5.2.36 that caused Praat to crash when querying formant quantiles.")
-NORMAL (U"##5.2.36# (30 August 2011)")
-LIST_ITEM (U"• Graphics: added superscript diacritics as single symbols: \\^h (\\bs\\^ h), \\^j (\\bs\\^ j), "
-	"and many more; also \\_u (\\bs\\_ u). See @@Phonetic symbols: diacritics@.")
-LIST_ITEM (U"• Praat fully converted to C++ (this may initially cause some bugs, but will be more reliable in the end).")
-NORMAL (U"##5.2.35# (5 August 2011)")
-LIST_ITEM (U"• Corrected the menus of the Sound and TextGrid windows.")
-NORMAL (U"##5.2.34# (3 August 2011)")
-LIST_ITEM (U"• @@Insert picture from file...@ now works on Windows (as well as on the Mac).")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when playing a LongSound.")
-NORMAL (U"##5.2.33# (29 July 2011)")
-LIST_ITEM (U"• Improved the reliability of sound playing and several other things.")
-LIST_ITEM (U"• Improved several error messages.")
-NORMAL (U"##5.2.32# (22 July 2011)")
-LIST_ITEM (U"• Corrected several problems with error messages.")
-LIST_ITEM (U"• Corrected a bug that could cause slow execution of scripts with forms.")
-NORMAL (U"##5.2.31# (21 July 2011)")
-LIST_ITEM (U"• Corrected a bug that caused an incorrect window size in the VowelEditor.")
-LIST_ITEM (U"• Corrected a bug that caused incorrect error messages when opening a FLAC file as a LongSound.")
-LIST_ITEM (U"• Sound window: corrected a bug that could cause Praat to crash when zooming in on the left or right edge.")
-NORMAL (U"##5.2.30# (18 July 2011)")
-LIST_ITEM (U"• Corrected a bug introduced in 5.2.29 whereby the list of object actions could stay empty after an error message in a script.")
-LIST_ITEM (U"• Corrected a bug in Klatt synthesis whereby the generation of a sound could be refused.")
-NORMAL (U"##5.2.29# (12 July 2011)")
-LIST_ITEM (U"• More accurate error checking, due to Praat's conversion to C++ (last C-only version was 5.2.17).")
-NORMAL (U"##5.2.28# (28 June 2011)")
-LIST_ITEM (U"• Corrected some Polygon bugs.")
-NORMAL (U"##5.2.27# (19 June 2011)")
-LIST_ITEM (U"• @Polygon: ##Draw (closed)...#.")
-LIST_ITEM (U"• @@PointProcess: To Sound (phonation)...@: "
-	"corrected a bug that could cause Praat to crash if pulses lay outside the time domain.")
-NORMAL (U"##5.2.26# (24 May 2011)")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash on some platforms when reading a Praat binary file.")
-LIST_ITEM (U"• @ExperimentMFC: corrected a bug that caused Praat to crash if an experiment contained zero trials.")
-LIST_ITEM (U"• Corrected a bug that caused Praat to crash when merging multiple IntervalTiers.")
-NORMAL (U"##5.2.25# (11 May 2011)")
-LIST_ITEM (U"• OT learning: corrected a crashing bug from ##Get candidate...#.")
-NORMAL (U"##5.2.24# (10 May 2011)")
-LIST_ITEM (U"• Ability to open WAV files that contain incorrect information about the number of samples.")
-LIST_ITEM (U"• Removed an old bug that could cause Praat to fail to read a chronological TextGrid text file.")
-NORMAL (U"##5.2.23# (1 May 2011)")
-LIST_ITEM (U"• Removed a bug introduced recently that could cause Praat to crash when working with derivatives of TableOfReal (such as Distributions).")
-NORMAL (U"##5.2.22# (14 April 2011)")
-LIST_ITEM (U"• @ExperimentMFC: reaction times for key presses.")
-LIST_ITEM (U"• Linux: more reliable start-up on German systems.")
-NORMAL (U"##5.2.21# (29 March 2011)")
-LIST_ITEM (U"• Scripting: removed a crashing bug introduced for colour names in 5.2.20.")
-NORMAL (U"##5.2.20# (25 March 2011)")
-LIST_ITEM (U"• Scripting: removed a large memory leak for indexed variables.")
-LIST_ITEM (U"• Scripting: removed a small memory leak for colour names.")
-LIST_ITEM (U"• Support for very long file paths on the Mac.")
-NORMAL (U"##5.2.19# (16 March 2011)")
-LIST_ITEM (U"• @ExperimentMFC: corrected a bug introduced in 5.2.18 that could cause Praat to crash when extracting results from an incomplete experiment.")
-NORMAL (U"##5.2.18# (9 March 2011)")
-LIST_ITEM (U"• @ExperimentMFC: incomplete experiments can nevertheless output their incomplete results.")
-NORMAL (U"##5.2.17# (2 March 2011)")
-LIST_ITEM (U"• Better names for Table opening and saving commands.")
-LIST_ITEM (U"• @ExperimentMFC: reaction times for mouse clicks.")
-LIST_ITEM (U"• Linux/GTK: corrected triple clicks in ExperimentMFC.")
-NORMAL (U"##5.2.16# (20 February 2011)")
-LIST_ITEM (U"• Better support for WAV files with special “chunks” in them.")
-LIST_ITEM (U"• Manual: documentation of explicit formulas for @@Voice 2. Jitter|jitter measurements@.")
-NORMAL (U"##5.2.15# (11 February 2011)")
-LIST_ITEM (U"• @@Sounds: Concatenate with overlap...@.")
-NORMAL (U"##5.2.14# (8 February 2011)")
-LIST_ITEM (U"• Repaired crashing bug in Manipulation window introduced in 5.2.13.")
-NORMAL (U"##5.2.13# (7 February 2011)")
-LIST_ITEM (U"• Renamed #Write commands to #Save commands.")
-LIST_ITEM (U"• Scripting: allow pause forms without #Stop button (see @@Scripting 6.6. Controlling the user@).")
-LIST_ITEM (U"• GTK: correct behaviour of default buttons.")
-NORMAL (U"##5.2.12# (28 January 2011)")
-LIST_ITEM (U"• Renamed #Edit buttons to ##View & Edit#.")
-LIST_ITEM (U"• Better visibility of dragged things on Linux.")
-NORMAL (U"##5.2.11# (18 January 2011)")
-LIST_ITEM (U"• Better visibility of dragged things (sound selection, tier points, TextGrid boundaries) on Windows and Linux.")
-NORMAL (U"##5.2.10# (11 January 2011)")
-LIST_ITEM (U"• Renamed #Read and #Write menus to #Open and #Save.")
-LIST_ITEM (U"• Sound: use of ##Formula (part)...# can speed up formulas appreciably.")
-NORMAL (U"##5.2.09# (9 January 2011)")
-LIST_ITEM (U"• Much improved scripting tutorial.")
-LIST_ITEM (U"• Listening experiments can now show pictures instead of just texts (on the Mac).")
-LIST_ITEM (U"• EPS files can now be many miles wide instead of just 55 inches.")
-NORMAL (U"##5.2.08# (1 January 2011)")
-LIST_ITEM (U"• Improved manual.")
-LIST_ITEM (U"• Improved memory allocation on 32-bit platforms: "
-	"less probability of crashes when you approach the 2 GB memory limit gradually, "
-	"and a new “low on memory; save your work now” warning.")
-LIST_ITEM (U"• Removed IntervalTier and TextTier datatypes from Praat (old scripts that use them will continue to work).")
-NORMAL (U"##5.2.07# (24 December 2010)")
-LIST_ITEM (U"• Support for reading and writing multi-channel sound files (i.e. above two-channel stereo).")
-NORMAL (U"##5.2.06# (18 December 2010)")
-LIST_ITEM (U"• Picture window: a new (the fourth) line type, namely dashed-dotted.")
-LIST_ITEM (U"• Support for analysing and drawing multi-channel sounds (i.e. above two-channel stereo).")
-LIST_ITEM (U"• Can read some EEG files (BioSemi 24-bit BDF) as a Sound and a TextGrid object.")
-LIST_ITEM (U"• Linux: compatibility with computers without English language support.")
-LIST_ITEM (U"• Macintosh: support for high-plane (i.e. very uncommon) Unicode characters in file names (as already existed on Unix and Windows).")
-NORMAL (U"##5.2.05# (4 December 2010)")
-LIST_ITEM (U"• Regular expressions: better Unicode support.")
-LIST_ITEM (U"• Scripting window: command ##Convert to C string#.")
-NORMAL (U"##5.2.04# (27 November 2010)")
-LIST_ITEM (U"• Scripting: allow directory (folder) selector windows; see @@Scripting 6.6. Controlling the user@.")
-NORMAL (U"##5.2.03# (19 November 2010)")
-LIST_ITEM (U"• Scripting: support for string arrays.")
-NORMAL (U"##5.2.02# (17 November 2010)")
-LIST_ITEM (U"• TextGrid window: corrected a bug that caused Praat to crash (instead of doing nothing) when you tried to add boundaries "
-	"if the selection ran from the penultimate interval to the end of the TextGrid.")
-LIST_ITEM (U"• Scripting: support for arrays with multiple indexes.")
-LIST_ITEM (U"• Linux: made spectrogram drawing compatible with Ubuntu 10.10.")
-LIST_ITEM (U"• Linux: made sound more easily available on Ubuntu 10.10.")
-NORMAL (U"##5.2.01# (4 November 2010)")
-LIST_ITEM (U"• Scripting: support for numeric @@Scripting 5.6. Arrays and dictionaries|arrays@.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 5.2?", U"ppgb", 20101029)
-NORMAL (U"##5.2# (29 October 2010)")
-NORMAL (U"##5.1.45# (26 October 2010)")
-LIST_ITEM (U"• Linux/GTK: allow Praat to run without an X display.")
-LIST_ITEM (U"• Sounds are played synchronously in scripts run from ManPages with \\bsSC.")
-NORMAL (U"##5.1.44# (4 October 2010)")
-LIST_ITEM (U"• Linux/GTK: visibility of ExperimentMFC window.")
-LIST_ITEM (U"• Linux/GTK: keyboard shortcuts.")
-NORMAL (U"##5.1.43# (4 August 2010)")
-LIST_ITEM (U"• Scripting: support for stand-alone programs; see @@Scripting 9. Turning a script into a stand-alone program@.")
-LIST_ITEM (U"• Table: allow drawing of ellipses even if irrelevant columns contain undefined data.")
-LIST_ITEM (U"• Linux/GTK: correct resizing of Table window.")
-LIST_ITEM (U"• Linux/GTK: prevented multiple storing of Picture window selection in scripting history.")
-NORMAL (U"##5.1.42# (26 July 2010)")
-LIST_ITEM (U"• Scripting: allow file selector windows; see @@Scripting 6.6. Controlling the user@.")
-LIST_ITEM (U"• Linux: multiple file selection.")
-NORMAL (U"##5.1.41# (15 July 2010)")
-LIST_ITEM (U"• OTGrammar: ##Compare candidates...#")
-LIST_ITEM (U"• GTK: support for the Doulos SIL and Charis SIL fonts.")
-LIST_ITEM (U"• GTK: working vowel editor.")
-LIST_ITEM (U"• Vowel editor: repaired memory leak.")
-//LIST_ITEM (U"• GTK: Picture window: front when drawing.")
-//LIST_ITEM (U"• GTK: correct scrolling in manuals.")
-NORMAL (U"##5.1.40# (13 July 2010)")
-LIST_ITEM (U"• GTK: working Demo window (drawing, clicks, keys).")
-LIST_ITEM (U"• GTK: pause forms.")
-LIST_ITEM (U"• GTK: manual pages: receive a white background, for compatibility with dark-background themes.")
-LIST_ITEM (U"• GTK: in settings windows, better alignment of labels to radio groups.")
-LIST_ITEM (U"• GTK: rotated text.")
-NORMAL (U"##5.1.39# (10 July 2010)")
-LIST_ITEM (U"• GTK beta version.")
-LIST_ITEM (U"• Linux: made ##Sound: Record fixed time...# work correctly (the sampling frequency was wrong).")
-LIST_ITEM (U"• GTK: list of objects: multiple selection, working Rename button.")
-LIST_ITEM (U"• GTK: running a script no longer deselects all objects at the start.")
-LIST_ITEM (U"• GTK: working Buttons editor.")
-LIST_ITEM (U"• GTK: correctly laid out settings windows.")
-NORMAL (U"##5.1.38# (2 July 2010)")
-LIST_ITEM (U"• Linux: made ##Sound: Record fixed time...# work correctly (the sampling frequency was wrong).")
-LIST_ITEM (U"• Mac: repaired a bug introduced in 5.1.35 that could cause Praat to crash "
-	"if neither Doulos SIL nor Charis SIL were installed.")
-LIST_ITEM (U"• Mac: correct live scrolling in Picture window and DataEditor.")
-NORMAL (U"##5.1.37# (23 June 2010)")
-LIST_ITEM (U"• PitchTier window and similar windows: can drag multiple points simultaneously.")
-LIST_ITEM (U"• Table: %t-tests report the number of degrees of freedom.")
-LIST_ITEM (U"• GTK: correct progress bar again.")
-LIST_ITEM (U"• GTK: correct behaviour of Synth menu in manipulation window.")
-NORMAL (U"##5.1.36# (18 June 2010)")
-LIST_ITEM (U"• Mac: live scrolling.")
-LIST_ITEM (U"• Demo window: the Demo window can now run from the command line.")
-LIST_ITEM (U"• Motif: corrected a bug introduced in 5.1.33 whereby things in the Picture window could be placed incorrectly.")
-LIST_ITEM (U"• GTK: script window accepts Unicode again.")
-NORMAL (U"##5.1.35# (10 June 2010)")
-LIST_ITEM (U"• TextGrid window: removed a very old bug that could lead to reversed intervals "
-	"and to crashes when you inserted a boundary after using Shift-arrow and Command-arrow.")
-LIST_ITEM (U"• Graphics: Praat now uses Doulos SIL instead of Charis SIL if your font setting is “Times” "
-	"and the font is nonbold and nonitalic, because Doulos SIL matches Times New Roman better.")
-LIST_ITEM (U"• kNN: made Ola Söder's k-nearest-neighbours classification compatible with Windows.")
-NORMAL (U"##5.1.34# (31 May 2010)")
-LIST_ITEM (U"• Sound window: corrected a bug that caused Praat to crash if the analysis window was shorter than 2 samples.")
-LIST_ITEM (U"• GTK: scrolling in the Info window and script window.")
-LIST_ITEM (U"• GTK: script editor: implemented searching, replacing, and change dialogs.")
-NORMAL (U"##5.1.33# (24 May 2010)")
-LIST_ITEM (U"• GTK alpha version.")
-LIST_ITEM (U"• Abolished resolution independence: the Sound window now looks the same on all platforms, "
-	"and the Demo window has the same relative font size on your screen and on the video projector.")
-LIST_ITEM (U"• GTK: support for asynchronous audio output.")
-LIST_ITEM (U"• GTK: sound plays once rather than three times in Sound and other windows.")
-LIST_ITEM (U"• GTK: can click more than once in the manual.")
-LIST_ITEM (U"• GTK: correct pink selections in Sound and other windows.")
-LIST_ITEM (U"• GTK: correct dragging in TextGrid, Manipulation, and tier windows.")
-LIST_ITEM (U"• GTK: a working TextGrid window.")
-LIST_ITEM (U"• GTK: no automatic triple click in the manual (and many other windows).")
-LIST_ITEM (U"• GTK: moving cursor while sound is playing in Sound and other windows.")
-LIST_ITEM (U"• GTK: correct colours of the rectangles in Sound and other windows.")
-LIST_ITEM (U"• GTK: a working Group button.")
-LIST_ITEM (U"• GTK: correct font menus, font size menus, colour menus, line type menus.")
-LIST_ITEM (U"• GTK: scrolling in the manual (and many other windows).")
-LIST_ITEM (U"• GTK: erase old texts in manual windows.")
-LIST_ITEM (U"• GTK: made Picture window come back when drawing.")
-LIST_ITEM (U"• GTK: Info window is fronted automatically.")
-LIST_ITEM (U"• GTK: support sendpraat.")
-NORMAL (U"##5.1.32# (30 April 2010)")
-LIST_ITEM (U"• Scripting: command ##Expand include files#.")
-LIST_ITEM (U"• Scripting: accept lines that start with non-breaking spaces "
-	"(as may occur in scripts copied from the web manual).")
-LIST_ITEM (U"• Sound files: accept MP3 files with extension written in capitals.")
-LIST_ITEM (U"• Linux audio recording: corrected input choice (microphone, line).")
-NORMAL (U"##5.1.31# (4 April 2010)")
-LIST_ITEM (U"• @@Sounds: Convolve...@, @@Sounds: Cross-correlate...@, @@Sound: Autocorrelate...@, with full documentation.")
-LIST_ITEM (U"• More query commands for IntensityTier.")
-NORMAL (U"##5.1.30# (25 March 2010)")
-LIST_ITEM (U"• Scripting: `createFolder` () can now work with absolute paths.")
-LIST_ITEM (U"• PointProcess: made it impossible to add a point where there is already a point.")
-NORMAL (U"##5.1.29# (11 March 2010)")
-LIST_ITEM (U"• Full support for unicode values above 0xFFFF on Macintosh.")
-NORMAL (U"##5.1.28# (10 March 2010)")
-LIST_ITEM (U"• TextGrid window: removed a recently introduced bug that could cause Praat to crash when inserting a boundary.")
-NORMAL (U"##5.1.27# (7 March 2010)")
-LIST_ITEM (U"• Table: Wilcoxon rank sum test.")
-LIST_ITEM (U"• Logistic regression: corrected a bug by which a boundary would sometimes not be drawn.")
-NORMAL (U"##5.1.26# (25 February 2010)")
-LIST_ITEM (U"• Experimental GTK version with the help of Franz Brauße.")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash if sound playing failed twice.")
-NORMAL (U"##5.1.25# (20 January 2010)")
-LIST_ITEM (U"• Script window: the new command ##Reopen from disk# allows you to edit the script with an external editor.")
-LIST_ITEM (U"• Script window: removed a bug that could cause Praat to crash "
-	"if you did ##Find again# before having done any #Find.")
-NORMAL (U"##5.1.24# (15 January 2010)")
-LIST_ITEM (U"• Formulas run 10 to 20 percent faster.")
-LIST_ITEM (U"• Macintosh: support for forward delete key and Command-\\` .")
-NORMAL (U"##5.1.23# (1 January 2010)")
-LIST_ITEM (U"• Allowed multiple files to be selected with e.g. @@Read from file...@.")
-LIST_ITEM (U"• Demo window: guarded against handling the Demo window from two scripts at a time.")
-NORMAL (U"##5.1.22# (15 December 2009)")
-LIST_ITEM (U"• Picture window: millions of @@colour|colours@ instead of just twelve.")
-LIST_ITEM (U"• Sound window: ##Move frequency cursor to...#")
-NORMAL (U"##5.1.21# (30 November 2009)")
-LIST_ITEM (U"• @@Sound: Draw where...@")
-LIST_ITEM (U"• ##Matrix: Draw contours...# and ##LogisticRegression: Draw boundary...# support reversed axes.")
-LIST_ITEM (U"• Sound window: ##Move frequency cursor to...#.")
-NORMAL (U"##5.1.20# (26 October 2009)")
-LIST_ITEM (U"• Editor windows: repaired the Synchronized Zoom And Scroll preference.")
-NORMAL (U"##5.1.19# (21 October 2009)")
-LIST_ITEM (U"• Table: Randomize rows")
-LIST_ITEM (U"• Tables: Append (vertically)")
-LIST_ITEM (U"• Scripting: corrected a bug that could cause Praat to crash if the name of a field in a form contained a colon.")
-LIST_ITEM (U"• Windows: corrected arc drawing.")
-NORMAL (U"##5.1.18# (9 October 2009)")
-LIST_ITEM (U"• The @@Demo window@ is less often automatically moved to the front "
-	"(in order to allow it to pop up other editor windows).")
-LIST_ITEM (U"• @@DTW & TextGrid: To TextGrid (warp times)@: corrected a bug that could "
-	"lead to an incorrect end time of the last interval in new IntervalTiers.")
-NORMAL (U"##5.1.17# (22 September 2009)")
-LIST_ITEM (U"• Made more stereo movies readable.")
-LIST_ITEM (U"• Editor windows now have a ##Zoom Back# button.")
-NORMAL (U"##5.1.16# (17 September 2009)")
-LIST_ITEM (U"• Macintosh: corrected a bug that caused incorrect phonetic symbols if Charis SIL was available but SIL Doulos IPA93 was not.")
-NORMAL (U"##5.1.15# (30 August 2009)")
-LIST_ITEM (U"• Corrected a bug in @@Sound: Change gender...@ introduced in 5.1.14.")
-NORMAL (U"##5.1.14# (27 August 2009)")
-LIST_ITEM (U"• Windows: corrected a bug introduced in 5.1.13 that caused Praat to crash during tab navigation.")
-LIST_ITEM (U"• Made @@Sound: Change gender...@ compatible with elephant calls (i.e. very low F0).")
-NORMAL (U"##5.1.13# (21 August 2009)")
-LIST_ITEM (U"• Script window: #Find and #Replace.")
-LIST_ITEM (U"• Picture window (and therefore Demo window!): @@Insert picture from file...@ (MacOS 10.4 and up).")
-LIST_ITEM (U"• @@Demo window@: full screen (on the Mac).")
-LIST_ITEM (U"• Scripting: faster object selection (scripts no longer slow down when there are many objects in the list).")
-LIST_ITEM (U"• Scripting: `variableExists` ().")
-LIST_ITEM (U"• Macintosh: PDF clipboard (MacOS 10.4 and up).")
-NORMAL (U"##5.1.12# (4 August 2009)")
-LIST_ITEM (U"• Macintosh: the Picture window can save to PDF file (you need MacOS 10.4 or up).")
-LIST_ITEM (U"• Macintosh: corrected a bug that caused Praat to crash at start-up on MacOS 10.3.")
-NORMAL (U"##5.1.11# (19 July 2009)")
-NORMAL (U"##5.1.10# (8 July 2009)")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash if the Demo window was closed after an #execute.")
-LIST_ITEM (U"• OTGrammar & PairDistribution: added ##Get minimum number correct...#.")
-NORMAL (U"##5.1.09# (28 June 2009)")
-LIST_ITEM (U"• Made East-European Roman characters available in EPS files.")
-NORMAL (U"##5.1.08# (21 June 2009)")
-LIST_ITEM (U"• Removed a bug introduced in 5.1.07 that could cause strange pictures in manual.")
-LIST_ITEM (U"• Macintosh: execute @sendpraat messages immediately instead of waiting for the user to click the jumping Praat icon.")
-NORMAL (U"##5.1.07# (12 May 2009)")
-LIST_ITEM (U"• Demo window: navigation by arrow keys also on Windows.")
-LIST_ITEM (U"• Demo window: no longer crashes on Linux.")
-NORMAL (U"##5.1.06# (11 May 2009)")
-LIST_ITEM (U"• Demo window.")
-NORMAL (U"##5.1.05# (7 May 2009)")
-LIST_ITEM (U"• KlattGrid update.")
-NORMAL (U"##5.1.04# (4 April 2009)")
-LIST_ITEM (U"• Corrected a bug that could cause a missing text character in EPS files produced by a version of Praat running in batch.")
-LIST_ITEM (U"• Corrected a bug that could cause high values in a Matrix computed from a Pitch.")
-NORMAL (U"##5.1.03# (21 March 2009)")
-//LIST_ITEM (U"• OT learning: the ##Random up, highest down# update rule.")
-LIST_ITEM (U"• ExperimentMFC: corrected a bug introduced in 5.0.36 that caused Praat to crash if a sound file did not exist.")
-LIST_ITEM (U"• Articulatory synthesis: corrected a bug that could cause Praat to crash when copying Artwords.")
-LIST_ITEM (U"• Macintosh: corrected a bug that could cause poor text alignment in picture.")
-NORMAL (U"##5.1.02# (9 March 2009)")
-LIST_ITEM (U"• Allow pause forms without fields.")
-LIST_ITEM (U"• The value “undefined” is disallowed from all fields in command windows "
-	"except ##Table: Set numeric value...# and ##TableOfReal: Set value...#.")
-LIST_ITEM (U"• TextGrid: ##List...# and ##Down to Table...#.")
-LIST_ITEM (U"• OT learning: Giorgio Magri’s ##Weighted all up, highest down# update rule.")
-NORMAL (U"##5.1.01# (26 February 2009)")
-LIST_ITEM (U"• Corrected several bugs in Klatt synthesis.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 5.1?", U"ppgb", 20090131)
-NORMAL (U"##5.1# (31 January 2009)")
-LIST_ITEM (U"• Editors for Klatt synthesis.")
-LIST_ITEM (U"• Corrected many bugs.")
-NORMAL (U"##5.0.47# (21 January 2009)")
-LIST_ITEM (U"• Extensive pause windows: @@Scripting 6.6. Controlling the user@.")
-NORMAL (U"##5.0.46# (7 January 2009)")
-LIST_ITEM (U"• More Klatt synthesizer.")
-LIST_ITEM (U"• First pause form support.")
-LIST_ITEM (U"• Renewed CategoriesEditor.")
-LIST_ITEM (U"• Repaired several memory leaks.")
-NORMAL (U"##5.0.45# (29 December 2008)")
-LIST_ITEM (U"• Bug fixes in Klatt synthesizer.")
-NORMAL (U"##5.0.44# (24 December 2008)")
-LIST_ITEM (U"• David's Klatt synthesizer: @KlattGrid.")
-NORMAL (U"##5.0.43# (9 December 2008)")
-LIST_ITEM (U"• Scripting tutorial: local variables in procedures.")
-NORMAL (U"##5.0.42# (26 November 2008)")
-LIST_ITEM (U"• Removed a bug that could cause Praat to crash when drawing pictures in the manual window.")
-LIST_ITEM (U"• Removed a bug that could cause Praat to crash when drawing multi-line text.")
-NORMAL (U"##5.0.41# (23 November 2008)")
-LIST_ITEM (U"• ExperimentMFC: allow multiple lines in all texts.")
-LIST_ITEM (U"• Regular expressions: removed a bug that could cause Praat to hang when using “.*”.")
-LIST_ITEM (U"• Table: Draw ellipses: removed a bug that could cause Praat to crash if some cells were undefined.")
-NORMAL (U"##5.0.40# (10 November 2008)")
-LIST_ITEM (U"• Improved reading and writing of text files (faster, bigger).")
-NORMAL (U"##5.0.39# (1 November 2008)")
-LIST_ITEM (U"• praatcon -a (for sending ANSI encoding when redirected)")
-NORMAL (U"##5.0.38# (28 October 2008)")
-LIST_ITEM (U"• @FormantGrid: To Formant...")
-NORMAL (U"##5.0.36# (20 October 2008)")
-LIST_ITEM (U"• @ExperimentMFC: accepts nonstandard sound files.")
-NORMAL (U"##5.0.35# (5 October 2008)")
-LIST_ITEM (U"• ##Scale times by...# and ##Scale times to...# (Modify menu).")
-NORMAL (U"##5.0.34# (22 September 2008)")
-LIST_ITEM (U"• ##Shift times by...# and ##Shift times to...# (Modify menu).")
-LIST_ITEM (U"• Sound: @@Combine to stereo@ works even if the two mono sounds have different durations or time domains.")
-NORMAL (U"##5.0.33# (9 September 2008)")
-LIST_ITEM (U"• Windows: prevented warning messages about “Widget type”.")
-NORMAL (U"##5.0.32# (12 August 2008)")
-LIST_ITEM (U"• Contributed by Ola Söder: kNN classifiers and k-means clustering.")
-LIST_ITEM (U"• Made UTF-16-encoded chronological TextGrid files readable.")
-NORMAL (U"##5.0.31# (6 August 2008)")
-LIST_ITEM (U"• Macintosh: corrected a bug introduced in 5.0.30 that caused Praat to crash when you pressed the Tab key "
-	"in a window without text fields.")
-NORMAL (U"##5.0.30# (22 July 2008)")
-LIST_ITEM (U"• Macintosh and Windows: tab navigation.")
-NORMAL (U"##5.0.29# (8 July 2008)")
-LIST_ITEM (U"• OTMulti: can record history.")
-LIST_ITEM (U"• Picture window: corrected text in Praat picture files.")
-NORMAL (U"##5.0.28# (3 July 2008)")
-LIST_ITEM (U"• Windows: audio output uses DirectX (next to Multi-Media Extensions).")
-NORMAL (U"##5.0.27# (28 June 2008)")
-LIST_ITEM (U"• @@Phonetic symbols@: breve (a\\N^).")
-LIST_ITEM (U"• Annotation: improved some SpellingChecker commands.")
-LIST_ITEM (U"• Table: can now set string values that contain spaces.")
-NORMAL (U"##5.0.26# (15 June 2008)")
-LIST_ITEM (U"• Windows: sound recording no longer makes your laptop's fan spin.")
-LIST_ITEM (U"• Windows: no longer any 64 MB limit on recorded sounds.")
-LIST_ITEM (U"• Linux: audio input and output uses Alsa (next to OSS).")
-NORMAL (U"##5.0.25# (31 May 2008)")
-LIST_ITEM (U"• OT learning: added decision strategy ExponentialMaximumEntropy.")
-NORMAL (U"##5.0.24# (14 May 2008)")
-LIST_ITEM (U"• Linux: corrected a bug at start-up.")
-NORMAL (U"##5.0.23# (9 May 2008)")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when you edited an Artword that you had read from a file.")
-NORMAL (U"##5.0.22# (26 April 2008)")
-LIST_ITEM (U"• Editing formant contours: @FormantGrid.")
-NORMAL (U"##5.0.21# (22 April 2008)")
-LIST_ITEM (U"• Annotating with Cyrillic, Arabic, Chinese, Korean characters, and many more (on Macintosh and Windows).")
-NORMAL (U"##5.0.20# (8 April 2008)")
-LIST_ITEM (U"• @ExperimentMFC: prevented the OK key from working if no response (and goodness choice) had been made.")
-LIST_ITEM (U"• OT learning: sped up learning from partial outputs by a factor of five or more.")
-NORMAL (U"##5.0.19# (4 April 2008)")
-LIST_ITEM (U"• TextGrid window: corrected a bug introduced in 5.0.17 that could cause Praat to crash when handling point tiers.")
-NORMAL (U"##5.0.18# (31 March 2008)")
-LIST_ITEM (U"• Manipulation window: corrected a bug introduced in 5.0.17 that caused Praat to crash when adding the first duration point.")
-LIST_ITEM (U"• Sound: added ##Extract all channels#.")
-LIST_ITEM (U"• OT learning: added @@OTGrammar & PairDistribution: Find positive weights...@.")
-LIST_ITEM (U"• ExperimentMFC: corrected a bug that caused Praat to crash when the second of multiple experiments "
-	"referred to non-existing sound files.")
-NORMAL (U"##5.0.17# (29 March 2008)")
-LIST_ITEM (U"• Sped up vowel editor by a large factor.")
-LIST_ITEM (U"• OT learning: corrected Exponential HG update rule from OT-GLA to HG-GLA.")
-LIST_ITEM (U"• OT learning: shift Exponential HG average constraint weight to zero after every learning step.")
-NORMAL (U"##5.0.16# (25 March 2008)")
-LIST_ITEM (U"• Macintosh: returned to old compiler because of incompatibility with MacOS X 10.4.")
-NORMAL (U"##5.0.15# (21 March 2008)")
-LIST_ITEM (U"• Windows: more reliable dropping of files on the Praat icon when Praat is already running.")
-NORMAL (U"##5.0.14# (20 March 2008)")
-LIST_ITEM (U"• David's vowel editor (New \\-> Sound).")
-LIST_ITEM (U"• Formulas: corrected scaling of sinc function.")
-NORMAL (U"##5.0.13# (18 March 2008)")
-LIST_ITEM (U"• Corrected drawing of histograms.")
-LIST_ITEM (U"• TextGrid window: selected part of the TextGrid can be extracted and saved.")
-LIST_ITEM (U"• TextGrid: more complete conversion between backslash trigraphs and Unicode.")
-LIST_ITEM (U"• Windows: more reliable dropping of files on the Praat icon when Praat is not running yet.")
-LIST_ITEM (U"• Formulas: sinc function.")
-NORMAL (U"##5.0.12# (12 March 2008)")
-LIST_ITEM (U"• Bigger ligature symbol (k\\lip).")
-NORMAL (U"##5.0.11# (7 March 2008)")
-LIST_ITEM (U"• Corrected saving of new binary Manipulation files (you can send any unreadable Manipulation files to Paul Boersma for correction).")
-NORMAL (U"##5.0.10# (27 February 2008)")
-LIST_ITEM (U"• Added the characters \\d- and \\D-.")
-LIST_ITEM (U"• Windows: made ##praatcon.exe# compatible with Unicode command lines.")
-NORMAL (U"##5.0.09# (16 February 2008)")
-LIST_ITEM (U"• Windows: corrected a bug by which Praat would not open files that were dragged on the Praat icon "
-	"if the names of these files or their directory paths contained non-ASCII characters.")
-LIST_ITEM (U"• Linux: ignore the Mod2 key, because of its unpredictable assignment.")
-NORMAL (U"##5.0.08# (10 February 2008)")
-LIST_ITEM (U"• Corrected the minus sign (\\bs-m = “−”).")
-NORMAL (U"##5.0.07# (8 February 2008)")
-LIST_ITEM (U"• Object IDs are visible in editor windows.")
-NORMAL (U"##5.0.06# (31 January 2008)")
-LIST_ITEM (U"• Corrected a bug that caused ##Find again# in the TextGrid window not to work.")
-LIST_ITEM (U"• Macintosh: made Praat work correctly on 10.3 computers with missing fonts.")
-NORMAL (U"##5.0.05# (19 January 2008)")
-LIST_ITEM (U"• All Matrix, Sound, Spectrogram, Pitch, Ltas, and Spectrum objects (and more) are now in 52-bit relative precision (instead of the earlier 23 bits).")
-LIST_ITEM (U"• Corrected a bug that could lead to “Unknown opcode (0)” messages when drawing large sounds (more than 16 million samples) in the Picture window.")
-LIST_ITEM (U"• Macintosh: solved around a bug in the C library that could cause incorrect representation of non-ASCII characters (in the OTGrammar window).")
-NORMAL (U"##5.0.04# (12 January 2008)")
-LIST_ITEM (U"• Windows: corrected a bug introduced in 5.0.03 that caused Praat to crash if you pressed a key in the Sound window.")
-LIST_ITEM (U"• Macintosh: some cosmetic corrections.")
-NORMAL (U"##5.0.03# (9 January 2008)")
-LIST_ITEM (U"• Scripting: guard against opening the same file more than once.")
-LIST_ITEM (U"• Table: possibility of regarding a column as a distribution (#Generate menu).")
-LIST_ITEM (U"• Macintosh: corrected line colours.")
-NORMAL (U"##5.0.02# (27 December 2007)")
-LIST_ITEM (U"• TextGrid window: corrected the drawing of numbers to the right of the tiers.")
-LIST_ITEM (U"• Corrected a bug that caused Praat to crash when doing ##SpectrumTier: List#.")
-NORMAL (U"##5.0.01# (18 December 2007)")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when redrawing the sound or TextGrid window.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 5.0?", U"ppgb", 20071210)
-NORMAL (U"##5.0# (10 December 2007)")
-LIST_ITEM (U"• Corrected many bugs.")
-LIST_ITEM (U"• Display font sizes in points rather than pixels.")
-NORMAL (U"##4.6.41# (9 December 2007)")
-LIST_ITEM (U"• Windows: corrected a bug that could cause listening experiments not to run when the directory path included non-ASCII characters; "
-	"the same bug could (under comparable circumstances) cause scripted menu commands not to work.")
-LIST_ITEM (U"• Corrected a bug that could cause null bytes in data files when the text output encoding preference was ##try ISO Latin-1, then UTF-16#.")
-NORMAL (U"##4.6.40# (3 December 2007)")
-LIST_ITEM (U"• Corrected some minor bugs.")
-NORMAL (U"##4.6.39# (1 December 2007)")
-LIST_ITEM (U"• Manual: corrected a bug that could cause Praat to crash when viewing certain manual pages with pictures.")
-LIST_ITEM (U"• Scripting: corrected a bug that could cause Praat to crash when a long string was used as an argument to a procedure.")
-NORMAL (U"##4.6.38# (19 November 2007)")
-LIST_ITEM (U"• More extensive @@logistic regression@.")
-NORMAL (U"##4.6.37# (15 November 2007)")
-LIST_ITEM (U"• Object list shows numbers.")
-LIST_ITEM (U"• Macintosh: corrected saving of non-ASCII text settings.")
-NORMAL (U"##4.6.36# (2 November 2007)")
-LIST_ITEM (U"• Sound and TextGrid windows: direct drawing of intensity, formants, pulses, and TextGrid.")
-LIST_ITEM (U"• Regular expressions: corrected handling of newlines on Windows.")
-LIST_ITEM (U"• Scripting: improved positioning of settings windows for script commands in editors on Windows.")
-NORMAL (U"##4.6.35# (22 October 2007)")
-LIST_ITEM (U"• Windows and Linux: better positioning of form windows of editor scripts.")
-LIST_ITEM (U"• Macintosh: OTMulti learning window more compatible with non-ASCII characters.")
-NORMAL (U"##4.6.34# (18 October 2007)")
-LIST_ITEM (U"• Corrected a bug introduced in September that could cause Praat to crash when starting up "
-	"if the user had explicitly made action commands visible or invisible in an earlier session.")
-NORMAL (U"##4.6.33# (16 October 2007)")
-LIST_ITEM (U"• Corrected a bug introduced in September that caused Praat to crash when a PointProcess window was opened without a Sound.")
-LIST_ITEM (U"• Macintosh: objects with non-ASCII names show up correctly in the list.")
-NORMAL (U"##4.6.32# (14 October 2007)")
-LIST_ITEM (U"• Unicode support for names of objects.")
-LIST_ITEM (U"• Linux: first Unicode support (in window titles).")
-LIST_ITEM (U"• Windows scripting: corrected a bug that caused weird characters in Paste History.")
-NORMAL (U"##4.6.31# (8 October 2007)")
-LIST_ITEM (U"• TextGrid window: made Save command available again for TextGrid windows without a sound.")
-LIST_ITEM (U"• Corrected a bug that caused binary Collection files with objects with names with non-ASCII characters to be unreadable.")
-NORMAL (U"##4.6.30# (3 October 2007)")
-LIST_ITEM (U"• OTMulti: added an evaluate command in the Objects window, so that paced learning becomes scriptable.")
-LIST_ITEM (U"• Macintosh: worked around a feature of a system library that could cause Praat to crash when reading a Collection text file "
-	"that contained objects with non-ASCII names.")
-NORMAL (U"##4.6.29# (1 October 2007)")
-LIST_ITEM (U"• OT learning: leak and constraint in OTMulti.")
-LIST_ITEM (U"• Support for saving Table, TableOfReal, Strings, OTGrammar and OTMulti in Unicode.")
-NORMAL (U"##4.6.28# (1 October 2007)")
-LIST_ITEM (U"• OT learning: positive constraint satisfactions in OTMulti tableaus.")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when reading a non-UTF-8 text file "
-	"when the ##Text reading preference# had been set to UTF-8.")
-NORMAL (U"##4.6.27# (29 September 2007)")
-LIST_ITEM (U"• Corrected redrawing of text with non-ASCII characters.")
-NORMAL (U"##4.6.26# (29 September 2007)")
-LIST_ITEM (U"• Corrected reading of high UTF-8 codes.")
-NORMAL (U"##4.6.25# (26 September 2007)")
-LIST_ITEM (U"• @ExperimentMFC: can set font size for response buttons.")
-NORMAL (U"##4.6.24# (24 September 2007)")
-LIST_ITEM (U"• Czech, Polish, Croatian, and Hungarian characters such as \\c< \\uo \\t< \\e; \\s' \\l/ \\c\' \\o: (see @@Special symbols@).")
-LIST_ITEM (U"• Some support for Hebrew characters such as \\?+ \\B+ \\sU (see @@Special symbols@).")
-NORMAL (U"##4.6.23# (22 September 2007)")
-LIST_ITEM (U"• Corrected a bug introduced in 4.6.13 that caused crashes in text handling (mainly on Linux).")
-LIST_ITEM (U"• Info commands in editors.")
-NORMAL (U"##4.6.22# (17 September 2007)")
-LIST_ITEM (U"• Phonetic symbols: added the nonsyllabicity diacritic (a\\nv).")
-LIST_ITEM (U"• Macintosh: worked around a feature of a system library that could cause strange behaviour of forms in scripts with non-ASCII characters.")
-NORMAL (U"##4.6.21# (5 September 2007)")
-LIST_ITEM (U"• Sound and TextGrid windows: direct drawing of selected sound to the picture window.")
-NORMAL (U"##4.6.20# (2 September 2007)")
-LIST_ITEM (U"• Introduced direct drawing of spectrogram and pitch to the Praat picture window from Sound windows and TextGrid windows.")
-LIST_ITEM (U"• Corrected a bug introduced in 4.6.13 by which Inspect did not show all data in a TextGrid.")
-NORMAL (U"##4.6.19# (31 August 2007)")
-LIST_ITEM (U"• Macintosh: worked around a bug in a system library that caused Praat to crash (since version 4.6.13) "
-	"when removing a boundary from a TextGrid interval in MacOS X 10.3 or earlier.")
-NORMAL (U"##4.6.18# (28 August 2007)")
-LIST_ITEM (U"• Sound: Filter (formula): now works in the same way as the other filter commands "
-	"(without adding an empty space at the end), and on stereo sounds.")
-NORMAL (U"##4.6.17# (25 August 2007)")
-LIST_ITEM (U"• Windows: improved rotated text, also for copy-paste and printing.")
-LIST_ITEM (U"• Windows: phonetic characters on the screen now require the Charis SIL or Doulos SIL font.")
-LIST_ITEM (U"• Picture settings report (mainly for script writers).")
-LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when closing a manual page that had been read from a file.")
-NORMAL (U"##4.6.16# (22 August 2007)")
-LIST_ITEM (U"• Macintosh: corrected a bug introduced in 4.6.13 that could cause Praat to crash when drawing a spectrogram in MacOS X 10.3 or earlier.")
-NORMAL (U"##4.6.15# (21 August 2007)")
-LIST_ITEM (U"• Corrected a bug introduced in 4.6.14 that prevented the use of Helvetica in the Picture window.")
-LIST_ITEM (U"• Corrected a bug in ##Read Table from table file...#, introduced in 4.6.13.")
-NORMAL (U"##4.6.14# (20 August 2007)")
-LIST_ITEM (U"• Corrected a bug introduced in 4.6.13 that prevented any other font than Palatino in the Picture window.")
-LIST_ITEM (U"• Macintosh: corrected height of subscripts and superscripts (broken in 4.6.13).")
-NORMAL (U"##4.6.13# (16 August 2007)")
-LIST_ITEM (U"• TextGrid: corrected reading of chronological files.")
-LIST_ITEM (U"• Macintosh: text looks better (and rotated text is now readable on Intel Macs).")
-LIST_ITEM (U"• Macintosh: phonetic characters on the screen now require the Charis SIL or Doulos SIL font.")
-NORMAL (U"##4.6.12# (27 July 2007)")
-LIST_ITEM (U"• OTGrammar bug fix: leak and constraint plasticity correctly written into OTGrammar text files.")
-NORMAL (U"##4.6.11# (25 July 2007)")
-LIST_ITEM (U"• OTGrammar: introduced %%constraint plasticity% for slowing down or halting the speed with which constraints are reranked.")
-LIST_ITEM (U"• OTGrammar: introduced %%leak% for implementing forgetful learning of correlations.")
-LIST_ITEM (U"• OTGrammar: positive constraint satisfactions are drawn as “+” in tableaus.")
-NORMAL (U"##4.6.10# (22 July 2007)")
-LIST_ITEM (U"• Improved reading of UTF-16 data files.")
-LIST_ITEM (U"• Improved error messages when reading text files (line numbers are mentioned).")
-LIST_ITEM (U"• Table: Get group mean (Student t)...")
-NORMAL (U"##4.6.09# (24 June 2007)")
-LIST_ITEM (U"• Corrected a bug introduced in 4.6.07 that caused a crash when reading Collections.")
-LIST_ITEM (U"• Corrected a bug introduced in 4.6.07 that caused incorrect Open buttons in Inspect.")
-LIST_ITEM (U"• How come 4.6.07 introduced those bugs? Because of large changes in the Praat source code as a result of the transition to Unicode.")
-NORMAL (U"##4.6.08# (22 June 2007)")
-LIST_ITEM (U"• Windows: worked around a “feature” of the C library that caused 3-byte line-breaks in the buttons file.")
-LIST_ITEM (U"• Windows: returned to smaller font in script window.")
-LIST_ITEM (U"• OT learning: corrected a bug in PositiveHG.")
-NORMAL (U"##4.6.07# (20 June 2007)")
-LIST_ITEM (U"• Sound files: MP3 as LongSound (implemented by Erez Volk).")
-LIST_ITEM (U"• Scripting: Unicode support for strings and script window (Mac and Windows only).")
-NORMAL (U"##4.6.06# (4 June 2007)")
-LIST_ITEM (U"• Script window: corrected a bug introduced in 4.6.05 that could cause incorrect symbols in saved files.")
-NORMAL (U"##4.6.05# (2 June 2007)")
-LIST_ITEM (U"• Sound files: reading MP3 audio files (implemented by Erez Volk).")
-NORMAL (U"##4.6.04# (29 May 2007)")
-LIST_ITEM (U"• OT learning: added decision strategy PositiveHG.")
-NORMAL (U"##4.6.03# (24 May 2007)")
-LIST_ITEM (U"• Spectral slices have better names.")
-NORMAL (U"##4.6.02# (17 May 2007)")
-LIST_ITEM (U"• Sound files: saving FLAC audio files (implemented by Erez Volk).")
-NORMAL (U"##4.6.01# (16 May 2007)")
-LIST_ITEM (U"• Removed a bug that caused downsampling (and therefore formant measurements) "
-	"to be incorrect for stereo sounds.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 4.6?", U"ppgb", 20070512)
-NORMAL (U"##4.6# (12 May 2007)")
-NORMAL (U"##4.5.26# (8 May 2007)")
-LIST_ITEM (U"• Sound files: reading FLAC audio files (implemented by Erez Volk).")
-NORMAL (U"##4.5.25# (7 May 2007)")
-LIST_ITEM (U"• Table: Rows to columns...")
-LIST_ITEM (U"• Table: Collapse rows... (renamed from Pool).")
-LIST_ITEM (U"• Table: Formula (column range)...")
-LIST_ITEM (U"• OT learning: OTGrammar window shows harmonies.")
-NORMAL (U"##4.5.24# (27 April 2007)")
-LIST_ITEM (U"• OT learning: added decision strategy MaximumEntropy; "
-	"this has the same harmony determination method as Harmonic Grammar (include the additive constraint noise), "
-	"but there is some more variability, in that every candidate gets a relative probability of exp(harmony).")
-NORMAL (U"##4.5.23# (26 April 2007)")
-LIST_ITEM (U"• Macintosh: much smaller sizes (in kilobytes) of spectrograms for printing and clipboard; "
-	"this improves the compatibility with other programs such as Microsoft Word for large spectrograms.")
-NORMAL (U"##4.5.22# (25 April 2007)")
-LIST_ITEM (U"• Macintosh: improved drawing of spectrograms for printing and clipboard "
-	"(this was crippled in 4.5.18, but now it is better than before 4.5.18).")
-NORMAL (U"##4.5.21# (24 April 2007)")
-LIST_ITEM (U"• OT learning: corrected HarmonicGrammar (and LinearOT) learning procedure "
-	"to the stochastic gradient ascent method applied by @@Jäger (2003)@ to MaxEnt grammars.")
-LIST_ITEM (U"• Scripting: removed a bug that could make selection checking (in command windows) unreliable after a script was run.")
-NORMAL (U"##4.5.20# (19 April 2007)")
-LIST_ITEM (U"• Scripting: allow assignments like `pitch = To Pitch... 0 75 600`.")
-LIST_ITEM (U"• PitchTier Formula: guard against undefined values.")
-NORMAL (U"##4.5.19# (2 April 2007)")
-LIST_ITEM (U"• Scripting: allow comments with “\\# ” and “;” in forms.")
-LIST_ITEM (U"• Windows audio playing: attempt at more compatibility with Vista.")
-NORMAL (U"##4.5.18# (30 March 2007)")
-LIST_ITEM (U"• Macintosh: better image drawing (more grey values).")
-LIST_ITEM (U"• More tabulation commands.")
-LIST_ITEM (U"• More SpectrumTier commands.")
-LIST_ITEM (U"• Picture window: keyboard shortcut for ##Erase all#.")
-NORMAL (U"##4.5.17# (19 March 2007)")
-LIST_ITEM (U"• Picture window: can change arrow size.")
-LIST_ITEM (U"• Several #List commands.")
-LIST_ITEM (U"• Spectrum: To SpectrumTier (peaks).")
-NORMAL (U"##4.5.16# (22 February 2007)")
-LIST_ITEM (U"• Sound-to-Intensity: made resistant against undefined settings.")
-LIST_ITEM (U"• Windows: made Ctrl-. available as a shortcut.")
-LIST_ITEM (U"• Linux: made it more likely to find the correct fonts.")
-NORMAL (U"##4.5.15# (12 February 2007)")
-LIST_ITEM (U"• Windows XP: worked around a bug in Windows XP that could cause Praat to crash "
-	"when the user moved the mouse pointer over a file in the Desktop in the file selector. "
-	"The workaround is to temporarily disable file info tips when the file selector window is on the screen.")
-NORMAL (U"##4.5.14# (5 February 2007)")
-LIST_ITEM (U"• Scripting: some new predefined string variables like `preferencesDirectory$`.")
-NORMAL (U"##4.5.13# (3 February 2007)")
-LIST_ITEM (U"• For stereo sounds, pitch analysis is based on correlations pooled over channels "
-	"(rather than on correlations of the channel average).")
-LIST_ITEM (U"• For stereo sounds, spectrogram analysis is based on power density averaged across channels "
-	"(rather than on the power density of the channel average).")
-LIST_ITEM (U"• Scripting: removed a bug introduced in 4.5.06 that caused some variables not to be substituted.")
-NORMAL (U"##4.5.12# (30 January 2007)")
-LIST_ITEM (U"• Made cross-correlation pitch analysis as fast as it used to be before 4.5.11.")
-NORMAL (U"##4.5.11# (29 January 2007)")
-LIST_ITEM (U"• Sound objects can be stereo, for better playback quality "
-	"(most analyses will work on the averaged mono signal).")
-LIST_ITEM (U"• Macintosh: recording a sound now uses CoreAudio instead of SoundManager, "	
-	"for more compatibility with modern recording devices, "
-	"and the possibility to record with a sampling frequency of 96 kHz.")
-LIST_ITEM (U"• @ManPages allow picture scripts with separate object lists.")
-LIST_ITEM (U"• Linux: better scroll bars in object list for Lesstif (Debian).")
-LIST_ITEM (U"• Linux: made @@Create Strings as file list...@ work on Reiser.")
-LIST_ITEM (U"• @sendpraat scripts correctly wait until sounds have played.")
-NORMAL (U"##4.5.08# (20 December 2006)")
-LIST_ITEM (U"• ExperimentMFC: can use stereo sounds.")
-NORMAL (U"##4.5.07# (16 December 2006)")
-LIST_ITEM (U"• Macintosh: playing a sound now uses CoreAudio instead of SoundManager.")
-LIST_ITEM (U"• Phonetic symbols: \\\'1primary stress and \\\'1secon\\\'2dary stress.")
-NORMAL (U"##4.5.06# (13 December 2006)")
-LIST_ITEM (U"• Support for 32-bit floating-point WAV files.")
-LIST_ITEM (U"• Scripting: removed several kinds of restrictions on string length.")
-LIST_ITEM (U"• SSCP: Draw confidence ellipse: corrected a bug that would sometimes not draw the ellipse when %N was very large.")
-NORMAL (U"##4.5.05# (5 December 2006)")
-LIST_ITEM (U"• Macintosh scripting: European symbols such as ö and é and ç are now allowed in file names in scripts "
-	"and in MacRoman-encoded file names sent by other programs through the sendpraat subroutine.")
-NORMAL (U"##4.5.04# (1 December 2006)")
-LIST_ITEM (U"• @@Sound: Change gender...@: corrected a bug that often caused a female-to-male conversion to sound monotonous.")
-NORMAL (U"##4.5.03# (29 November 2006)")
-LIST_ITEM (U"• Table: added independent-samples t-test.")
-LIST_ITEM (U"• Linux: corrected a bug introduced in 4.5.02 that prevented sounds from playing and other weird things.")
-NORMAL (U"##4.5.02# (16 November 2006)")
-LIST_ITEM (U"• Corrected yet another bug in the new @@Sound: To TextGrid (silences)...@.")
-NORMAL (U"##4.5.01# (28 October 2006)")
-LIST_ITEM (U"• Sound window: the pitch drawing method is #Curves, #Speckles, or #Automatic.")
-LIST_ITEM (U"• Corrected another bug in the new @@Sound: To TextGrid (silences)...@.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 4.5?", U"ppgb", 20061026)
-NORMAL (U"##4.5# (26 October 2006)")
-NORMAL (U"##4.4.35# (20 October 2006)")
-LIST_ITEM (U"• In @ManPages you can now draw pictures.")
-NORMAL (U"##4.4.34# (19 October 2006)")
-LIST_ITEM (U"• Corrected a bug in the new @@Sound: To TextGrid (silences)...@.")
-NORMAL (U"##4.4.33# (4 October 2006)")
-LIST_ITEM (U"• Windows: corrected a bug introduced in 4.4.31 that caused Praat to skip the first line of the Buttons file.")
-NORMAL (U"##4.4.32# (30 September 2006)")
-LIST_ITEM (U"• Scripting: more techniques for @@Scripting 4. Object selection|object selection@.")
-LIST_ITEM (U"• Scripting: more support for putting the results of the #Info command into a string variable.")
-NORMAL (U"##4.4.31# (23 September 2006)")
-LIST_ITEM (U"• Support for @@plug-ins@.")
-LIST_ITEM (U"• Split between @@Create Strings as file list...@ and @@Create Strings as folder list...@.")
-NORMAL (U"##4.4.30# (28 August 2006)")
-LIST_ITEM (U"• Table: Draw ellipse (standard deviation)...")
-NORMAL (U"##4.4.29# (21 August 2006)")
-LIST_ITEM (U"• Allowed “European” symbols in file names and object names.")
-NORMAL (U"##4.4.28# (10 August 2006)")
-LIST_ITEM (U"• Windows XP: Praat files can finally again be opened by double-clicking and by dragging them onto the Praat icon.")
-LIST_ITEM (U"• Scripting (Windows): removed a bug that caused Praat to crash if the script window was closed when a file selector window was open.")
-NORMAL (U"##4.4.27# (4 August 2006)")
-LIST_ITEM (U"• Table window: corrected vertical scroll bar (on Windows).")
-LIST_ITEM (U"• Formulas: invSigmoid.")
-LIST_ITEM (U"• Logging: added 'power' (and documented the 'freq' command).")
-LIST_ITEM (U"• Removed a bug that caused ##Read two Sounds from stereo file...# not to work in scripts.")
-NORMAL (U"##4.4.26# (24 July 2006)")
-LIST_ITEM (U"• ##Sound & FormantTier: Filter#: much more accurate.")
-NORMAL (U"##4.4.25# (16 July 2006)")
-LIST_ITEM (U"• TextGrid reading: don't set first boundary to zero for .wrd label files.")
-NORMAL (U"##4.4.24# (19 June 2006)")
-LIST_ITEM (U"• Scripting: regular expressions allow replacement with empty string.")
-NORMAL (U"##4.4.23# (1 June 2006)")
-LIST_ITEM (U"• Table: ignore more white space.")
-NORMAL (U"##4.4.22# (30 May 2006)")
-LIST_ITEM (U"• Scripting: replacing with regular expression. See @@Formulas 6. String functions@.")
-NORMAL (U"##4.4.21# (29 May 2006)")
-LIST_ITEM (U"• Made Manipulation objects readable again.")
-NORMAL (U"##4.4.20# (3 May 2006)")
-LIST_ITEM (U"• Removed limit on number of menus (Praat could crash if the number of open windows was high).")
-NORMAL (U"##4.4.19# (28 April 2006)")
-LIST_ITEM (U"• Table: ##Get mean#, ##Get standard deviation#, ##Get quantile#.")
-NORMAL (U"##4.4.18# (24 April 2006)")
-LIST_ITEM (U"• Table: ##View & Edit#: view the contents of a table.")
-LIST_ITEM (U"• Table: ##Scatter plot#.")
-LIST_ITEM (U"• Scripting: more warnings against missing or extra spaces.")
-NORMAL (U"##4.4.17# (19 April 2006)")
-LIST_ITEM (U"• Table: #Pool: computing averages and medians of dependent variables "
-	"for a selected combination of independent variables.")
-LIST_ITEM (U"• Table: #Formula accepts string expressions as well as numeric expressions.")
-LIST_ITEM (U"• Table: #Sort can sort by any number of columns.")
-LIST_ITEM (U"• Table: ##Create with column names#.")
-LIST_ITEM (U"• Table: ##Report mean#.")
-LIST_ITEM (U"• Formulas: @@Formulas 8. Attributes of objects|`row$` and `col$` attributes@.")
-LIST_ITEM (U"• Warning when trying to read data files whose format is newer than the Praat version.")
-NORMAL (U"##4.4.16# (1 April 2006)")
-LIST_ITEM (U"• Spectrum window: dynamic range setting.")
-LIST_ITEM (U"• SoundRecorder: corrected a bug in the Intel Mac edition.")
-NORMAL (U"##4.4.15# (30 March 2006)")
-LIST_ITEM (U"• Source code even more compatible with 64-bit compilers.")
-NORMAL (U"##4.4.14# (29 March 2006)")
-LIST_ITEM (U"• Source code more compatible with 64-bit compilers.")
-NORMAL (U"##4.4.13# (8 March 2006)")
-LIST_ITEM (U"• Table To TableOfReal: better handling of --undefined-- values (are now numeric).")
-LIST_ITEM (U"• MacOS X: TextGrid files can be double-clicked to open.")
-LIST_ITEM (U"• @@Create Strings as file list...@: now handles up to 1,000,000 files per directory.")
-NORMAL (U"##4.4.12# (24 February 2006)")
-LIST_ITEM (U"• TextGrid: removed a bug introduced in 4.4.10 that caused Praat to crash when converting an IntervalTier into a TextGrid.")
-NORMAL (U"##4.4.11# (23 February 2006)")
-LIST_ITEM (U"• Listening experiments: removed a bug that could cause Praat to crash when an ExperimentMFC object was removed.")
-NORMAL (U"##4.4.10# (20 February 2006)")
-LIST_ITEM (U"• Intel computers: corrected reading and writing of 24-bit sound files (error introduced in 4.4.09).")
-LIST_ITEM (U"• Create TextGrid: guard against zero tiers.")
-LIST_ITEM (U"• MacOS X: correct visibility of Praat icon.")
-LIST_ITEM (U"• MacOS X: correct dropping of Praat files on Praat icon.")
-NORMAL (U"##4.4.09# (19 February 2006)")
-LIST_ITEM (U"• Macintosh: first Intel Macintosh version.")
-LIST_ITEM (U"• Windows: Create Strings from folder list...")
-NORMAL (U"##4.4.08# (6 February 2006)")
-LIST_ITEM (U"• Much improved cepstral smoothing.")
-NORMAL (U"##4.4.07# (2 February 2006)")
-LIST_ITEM (U"• More scripting facilities (local variables in procedures, e.g. `.x` and `.text$`).")
-LIST_ITEM (U"• Faster formulas.")
-NORMAL (U"##4.4.06# (30 January 2006)")
-LIST_ITEM (U"• More scripting facilities (`Object_xxx [ ]`, `Self.nx`, `Table_xxx$ [ ]`, better messages).")
-LIST_ITEM (U"• Better reading and writing of Xwaves label files.")
-NORMAL (U"##4.4.05# (26 January 2006)")
-LIST_ITEM (U"• @ExperimentMFC: removed a bug that caused Praat to crash when the Oops button was pressed after the experiment finished.")
-LIST_ITEM (U"• TextGrid: an IntervalTier can be written to an Xwaves label file.")
-NORMAL (U"##4.4.04# (6 January 2006)")
-LIST_ITEM (U"• Windows: Quicktime support (see at 4.4.03).")
-NORMAL (U"##4.4.03# (6 January 2006)")
-LIST_ITEM (U"• Macintosh: Quicktime support, i.e., ##Read from file...# can now read the audio from several kinds of movie files (.mov, .avi).")
-NORMAL (U"##4.4.02# (5 January 2006)")
-LIST_ITEM (U"• OT learning: allow the decision strategies of Harmonic Grammar and Linear OT.")
-NORMAL (U"##4.4.01# (2 January 2006)")
-LIST_ITEM (U"• Picture window: ##Logarithmic marks...# allows reversed axes.")
-LIST_ITEM (U"• Manipulation window: removed a bug from ##Shift frequencies...# that caused much too small shifts in semitones.")
-LIST_ITEM (U"• ##TextGrid: Remove point...#.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 4.4?", U"ppgb", 20051219)
-NORMAL (U"##4.4# (19 December 2005)")
-NORMAL (U"##4.3.37# (15 December 2005)")
-LIST_ITEM (U"• @@Principal component analysis@: now accepts tables with more variables (columns) than cases (rows).")
-LIST_ITEM (U"• TIMIT label files: removed a bug that caused Praat to crash for files whose first part was not labelled.")
-NORMAL (U"##4.3.36# (11 December 2005)")
-LIST_ITEM (U"• Ltas: Average.")
-LIST_ITEM (U"• Optimality Theory: compute crucial rankings (select OTGrammar + PairDistribution).")
-NORMAL (U"##4.3.35# (8 December 2005)")
-LIST_ITEM (U"• @ExperimentMFC: switched off warnings for stereo files.")
-NORMAL (U"##4.3.34# (8 December 2005)")
-LIST_ITEM (U"• Sound window: the arrow scroll step is settable.")
-LIST_ITEM (U"• You can now run multiple listening experiments (@ExperimentMFC) in one #Run.")
-LIST_ITEM (U"• Formant: Get quantile of bandwidth...")
-NORMAL (U"##4.3.33# (6 December 2005)")
-LIST_ITEM (U"• Removed three bugs introduced in 4.3.32 in @ExperimentMFC.")
-NORMAL (U"##4.3.32# (5 December 2005)")
-LIST_ITEM (U"• Many more possibilities in @ExperimentMFC.")
-NORMAL (U"##4.3.31# (27 November 2005)")
-LIST_ITEM (U"• @@Sound: To Ltas (pitch-corrected)...@")
-NORMAL (U"##4.3.30# (18 November 2005)")
-LIST_ITEM (U"• TableOfReal: Scatter plot: allows reversed axes.")
-NORMAL (U"##4.3.29# (11 November 2005)")
-LIST_ITEM (U"• Windows: many more font sizes.")
-NORMAL (U"##4.3.28# (7 November 2005)")
-LIST_ITEM (U"• Fontless EPS files: corrected character width for Symbol font (depended on SILIPA setting).")
-LIST_ITEM (U"• Windows: more reliable detection of home directory.")
-NORMAL (U"##4.3.27# (7 October 2005)")
-LIST_ITEM (U"• TextGrid & Pitch: draw with text alignment.")
-NORMAL (U"##4.3.26# (29 September 2005)")
-LIST_ITEM (U"• Macintosh: corrected error introduced in 4.3.25.")
-NORMAL (U"##4.3.25# (28 September 2005)")
-LIST_ITEM (U"• Macintosh: allowed recording with sampling frequencies of 12 and 64 kHz.")
-NORMAL (U"##4.3.24# (26 September 2005)")
-LIST_ITEM (U"• Table: Down to TableOfReal...: one column of the Table can be used as the row labels for the TableOfReal, "
-	"and the strings in the remaining columns of the Table are replaced with whole numbers assigned in alphabetical order.")
-NORMAL (U"##4.3.23# (24 September 2005)")
-LIST_ITEM (U"• Read Table from comma-separated file...")
-LIST_ITEM (U"• Read Table from tab-separated file...")
-LIST_ITEM (U"• Write picture as fontless EPS file: choice between XIPA and SILIPA93.")
-LIST_ITEM (U"• Bold IPA symbols in EPS files (fontless SILIPA93 only).")
-NORMAL (U"##4.3.22# (8 September 2005)")
-LIST_ITEM (U"• Macintosh: variable scroll bar size (finally, 7 years since System 8.5).")
-NORMAL (U"##4.3.21# (1 September 2005)")
-LIST_ITEM (U"• Macintosh: error message if any of the fonts Times, Helvetica, Courier and Symbol are unavailable at start-up.")
-LIST_ITEM (U"• Renamed Control menu to “Praat” on all platforms (as on the Mac), "
-	"to reflect the fact that no other programs than Praat have used the Praat shell for five years.")
-LIST_ITEM (U"• Script editor: Undo and Redo buttons (only on the Mac for now).")
-LIST_ITEM (U"• Manual: corrected a bug that sometimes caused Praat to crash when trying to print.")
-NORMAL (U"##4.3.20# (18 August 2005)")
-LIST_ITEM (U"• Log files: include name of editor window.")
-NORMAL (U"##4.3.19# (20 July 2005)")
-LIST_ITEM (U"• Improved buttons in manual.")
-LIST_ITEM (U"• ##TableOfReal: Read from headerless spreadsheet file#: allow row and column labels to be 30,000 rather than 100 characters.")
-NORMAL (U"##4.3.18# (12 July 2005)")
-LIST_ITEM (U"• Glottal source for sound synthesis, corrected and documented.")
-NORMAL (U"##4.3.17# (7 July 2005)")
-LIST_ITEM (U"• Glottal source for sound synthesis.")
-LIST_ITEM (U"• Multi-level Optimality Theory: parallel evaluation and bidirectional learning.")
-NORMAL (U"##4.3.16# (22 June 2005)")
-LIST_ITEM (U"• Pitch drawing: corrected logarithmic scales.")
-NORMAL (U"##4.3.15# (22 June 2005)")
-LIST_ITEM (U"• Graphics: better dotted lines in pitch contours; clipped pitch curves in editor windows.")
-LIST_ITEM (U"• Pitch analysis: more different units (semitones %re 1 Hz).")
-NORMAL (U"##4.3.14# (14 June 2005)")
-LIST_ITEM (U"• Scripting: regular expressions.")
-LIST_ITEM (U"• Removed a bug that caused Praat to crash if a proposed object name was longer than 200 characters.")
-NORMAL (U"##4.3.13# (19 May 2005)")
-LIST_ITEM (U"• Macintosh: an option to switch off screen previews in EPS files.")
-LIST_ITEM (U"• Sources: compatibility of makefiles with MinGW (Minimalist GNU for Windows).")
-NORMAL (U"##4.3.12# (10 May 2005)")
-LIST_ITEM (U"• Some more manual tricks.")
-NORMAL (U"##4.3.11# (6 May 2005)")
-LIST_ITEM (U"• TextGrid editor: show number of intervals.")
-NORMAL (U"##4.3.10# (25 April 2005)")
-LIST_ITEM (U"• Table: Get logistic regression.")
-NORMAL (U"##4.3.08# (19 April 2005)")
-LIST_ITEM (U"• OT learning: store history with ##OTGrammar & Strings: Learn from partial outputs...#.")
-NORMAL (U"##4.3.07# (31 March 2005)")
-LIST_ITEM (U"• Linux: removed a bug that could cause a sound to stop playing.")
-NORMAL (U"##4.3.04# (9 March 2005)")
-LIST_ITEM (U"• Use SIL Doulos IPA 1993/1996 instead of 1989.")
-NORMAL (U"##4.3.03# (2 March 2005)")
-LIST_ITEM (U"• TextGrid window: green colouring of matching text.")
-LIST_ITEM (U"• Regular expressions can be used in many places.")
-LIST_ITEM (U"• Pitch analysis: switched off formant-pulling.")
-NORMAL (U"##4.3.02# (16 February 2005)")
-LIST_ITEM (U"• TextGrid: Remove boundary at time...")
-LIST_ITEM (U"• Scripting: corrected %nowarn.")
-LIST_ITEM (U"• Linux: guard against blocking audio device.")
-LIST_ITEM (U"• Macintosh: guard against out-of-range audio level meter.")
-NORMAL (U"##4.3.01# (9 February 2005)")
-LIST_ITEM (U"• Replaced PostScript font SILDoulosIPA with XIPA (adapted for Praat by Rafael Laboissière).")
-LIST_ITEM (U"• Sound: Set part to zero...")
-LIST_ITEM (U"• Pitch: To Sound (sine)...")
-LIST_ITEM (U"• Sound & TextGrid: Clone time domain.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 4.3?", U"ppgb", 20050126)
-ENTRY (U"Praat 4.3, 26 January 2005")
-	NORMAL (U"General:")
-	LIST_ITEM (U"• #Apply button in settings windows for menu commands and in script forms.")
-	LIST_ITEM (U"• Info window can be saved.")
-	LIST_ITEM (U"• Removed 30,000-character limit in Info window.")
-	NORMAL (U"Phonetics:")
-	LIST_ITEM (U"• Speeded up intensity analysis by a factor of 10 "
-		"(by making its time resolution 0.01 ms rather than 0.0001 ms at a sampling frequency of 44 kHz).")
-	LIST_ITEM (U"• Speeded up pitch analysis and spectrogram analysis by a factor of two.")
-	LIST_ITEM (U"• Sound: To Spectrum... now has a reasonably fast non-FFT version.")
-	LIST_ITEM (U"• Calibrated long-term average spectrum (Sound: To Ltas...).")
-	LIST_ITEM (U"• Pitch-corrected LTAS analysis.")
-	LIST_ITEM (U"• Sound: Scale intensity.")
-	LIST_ITEM (U"• PitchTier: To Sound (sine).")
-	LIST_ITEM (U"• Better warnings against use of the LPC object.")
-	NORMAL (U"Voice:")
-	LIST_ITEM (U"• July 9, 2004 (4.2.08): Shimmer measurements: more accurate and less sensitive to additive noise.")
-	LIST_ITEM (U"• More extensive voice report: pitch statistics; harmonicity.")
-	NORMAL (U"Audio:")
-	LIST_ITEM (U"• Reading and opening 24-bit and 32-bit sound files (saving still goes in 16 bits).")
-	LIST_ITEM (U"• LongSound: save separate channels.")
-	LIST_ITEM (U"• Macintosh: much faster reading of WAV files.")
-	NORMAL (U"Listening experiments:")
-	LIST_ITEM (U"• Subjects can now respond with keyboard presses.")
-	NORMAL (U"Graphics:")
-	LIST_ITEM (U"• One can now drag the inner viewport in the Picture window, excluding the margins. "
-		"This is nice e.g. for creating square viewports or for drawing a waveform and a spectrogram in close contact.")
-	LIST_ITEM (U"• Unix: picture highlighting as on Mac and Windows.")
-	LIST_ITEM (U"• More drawing methods for Sound and Ltas (curve, bars, poles, speckles).")
-	NORMAL (U"OT learning:")
-	LIST_ITEM (U"• Monitor rankings when learning.")
-	LIST_ITEM (U"• OTGrammar: Remove harmonically bounded candidates...")
-	LIST_ITEM (U"• OTGrammar: Save as headerless spreadsheet file...")
-	LIST_ITEM (U"• Metrics grammar: added *Clash, *Lapse, WeightByPosition and *MoraicConsonant.")
-	NORMAL (U"Scripting:")
-	LIST_ITEM (U"• nowarn, noprogress, nocheck.")
-	LIST_ITEM (U"• Line numbers.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 4.2?", U"ppgb", 20040304)
-ENTRY (U"Praat 4.2, 4 March 2004")
-	NORMAL (U"General:")
-	LIST_ITEM (U"• July 10, 2003: Open source code (General Public Licence).")
-	NORMAL (U"Phonetics:")
-	LIST_ITEM (U"• Faster computation of spectrum, spectrogram, and pitch.")
-	LIST_ITEM (U"• More precision in numeric libraries.")
-	LIST_ITEM (U"• PitchTier: Interpolate quadratically.")
-	LIST_ITEM (U"• TextGrids can be saved chronologically (and Praat can read that file again).")
-	LIST_ITEM (U"• Sound editor window @@Time step settings...@: #Automatic, #Fixed, and ##View-dependent#.")
-	LIST_ITEM (U"• Sound window: distinguish basic from advanced spectrogram and pitch settings.")
-	LIST_ITEM (U"• Read TableOfReal from headerless spreadsheet file...: cells with strings are considered zero.")
-	LIST_ITEM (U"• Sound window: introduced time step as advanced setting.")
-	LIST_ITEM (U"• Sound window: reintroduced view range as advanced setting.")
-	LIST_ITEM (U"• Ltas: Compute trend line, Subtract trend line.")
-	NORMAL (U"Audio:")
-	LIST_ITEM (U"• Sun workstations: support audio servers.")
-	NORMAL (U"Graphics:")
-	LIST_ITEM (U"• Better selections in Picture window and editor windows.")
-	LIST_ITEM (U"• Picture window: better handling of rectangles and ellipses for reversed axes.")
-	LIST_ITEM (U"• Windows: corrected positioning of pictures on clipboard and in metafiles.")
-	LIST_ITEM (U"• Windows: EPS files check availability of Times and TimesNewRomanPSMT.")
-	LIST_ITEM (U"• Polygon: can now also paint in colour instead of only in grey values.")
-	LIST_ITEM (U"• Unlimited number of points for polygons in PostScript (may not work on very old printers).")
-	LIST_ITEM (U"• Picture window: line widths on all printers and clipboards are now equal to line widths used on PostScript printers: "
-		"a line with a line width of “1” will be drawn with a width 3/8 points. This improves the looks of pictures printed "
-		"on non-PostScript printers, improves the looks of pictures copied to your wordprocessor when printed, "
-		"and changes the looks of pictures copied to your presentation program.")
-	NORMAL (U"OT learning:")
-	LIST_ITEM (U"• Metrics grammar supports “impoverished overt forms”, "
-		"i.e. without secondary stress even if surface structures do have secondary stress.")
-	LIST_ITEM (U"• Support for crucially tied constraints and tied candidates.")
-	LIST_ITEM (U"• Support for backtracking in EDCD.")
-	LIST_ITEM (U"• Queries for testing grammaticality.")
-	NORMAL (U"Scripting:")
-	LIST_ITEM (U"• ManPages: script links can receive arguments.")
-	LIST_ITEM (U"• ManPages: variable duration of recording.")
-	LIST_ITEM (U"• Support for unlimited size of script files in editor window on Windows XP and MacOS X (the Unix editions already had this).")
-	LIST_ITEM (U"• Improved the reception of %sendpraat commands on Windows XP.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 4.1?", U"ppgb", 20030605)
-ENTRY (U"Praat 4.1, 5 June 2003")
-	NORMAL (U"General:")
-	LIST_ITEM (U"• MacOS X edition.")
-	LIST_ITEM (U"• Removed licensing.")
-	LIST_ITEM (U"• More than 99 percent of the source code distributed under the General Public Licence.")
-	LIST_ITEM (U"• Windows 2000 and XP: put preferences files in home directory.")
-	NORMAL (U"Phonetics:")
-	LIST_ITEM (U"• Spectrum: the sign of the Fourier transform has changed, to comply with common use "
-		"in technology and physics. Old Spectrum files are converted when read.")
-	LIST_ITEM (U"• Spectral moments.")
-	LIST_ITEM (U"• Many jitter and shimmer measures, also in the Sound editor window.")
-	LIST_ITEM (U"• PitchTier: shift or multiply frequencies (also in ManipulationEditor).")
-	LIST_ITEM (U"• TextGrid: shift times, scale times.")
-	LIST_ITEM (U"• Overlap-add synthesis: reduced buzz in voiceless parts.")
-	LIST_ITEM (U"• @@Sound: Change gender...")
-	LIST_ITEM (U"• Editors: @@Intro 3.6. Viewing a spectral slice@.")
-	LIST_ITEM (U"• Editors: Get spectral power at cursor cross.")
-	LIST_ITEM (U"• @@Sound: To PointProcess (periodic, peaks)...@")
-	LIST_ITEM (U"• Ltas: merge.")
-	NORMAL (U"Listening experiments:")
-	LIST_ITEM (U"• Goodness judgments.")
-	LIST_ITEM (U"• Multiple ResultsMFC: ##To Table#, so that the whole experiment can go into a single statistics file.")
-	LIST_ITEM (U"• Stimulus file path can be relative to directory of experiment file.")
-	LIST_ITEM (U"• @ExperimentMFC: multiple substimuli for discrimination tests.")
-	NORMAL (U"Statistics:")
-	LIST_ITEM (U"• New @Table object for column @statistics: Pearson's %r, Kendall's %\\ta-%b, %t-test.")
-	LIST_ITEM (U"• Table: scatter plot.")
-	LIST_ITEM (U"• Table: column names as variables.")
-	LIST_ITEM (U"• @@T-test@.")
-	LIST_ITEM (U"• TableOfReal: Extract rows where column...")
-	LIST_ITEM (U"• TableOfReal: Get correlation....")
-	LIST_ITEM (U"• @@Correlation: Confidence intervals...")
-	LIST_ITEM (U"• @@SSCP: Get diagonality (bartlett)...")
-	NORMAL (U"OT learning:")
-	LIST_ITEM (U"• Tutorial for bidirectional learning.")
-	LIST_ITEM (U"• Random choice between equally violating candidates.")
-	LIST_ITEM (U"• More constraints in metrics grammar.")
-	LIST_ITEM (U"• Learning in editor.")
-	NORMAL (U"Graphics:")
-	LIST_ITEM (U"• Printing: hard-coded image interpolation for EPS files and PostScript printers.")
-	NORMAL (U"Scripting:")
-	LIST_ITEM (U"• New @Formulas tutorial.")
-	LIST_ITEM (U"• @Formulas: can use variables without quotes.")
-	LIST_ITEM (U"• Formulas for PitchTier, IntensityTier, AmplitudeTier, DurationTier.")
-	LIST_ITEM (U"• Refer to any matrices and tables in formulas, e.g. `Sound_hello (x)` or `Table_everything [row, col]` "
-		"or `Table_tokens [i, “F1”]`.")
-	LIST_ITEM (U"• Assignment by modification, as with += -= *= /=.")
-	LIST_ITEM (U"• New functions: `date$` (), `extractNumber`, `extractWord$`, `extractLine$`. See @@Formulas 6. String functions@.")
-	LIST_ITEM (U"• @@Scripting 5.8. Including other scripts@.")
-	LIST_ITEM (U"• String formulas in the calculator.")
-	LIST_ITEM (U"• Stopped support of things that had been undocumented for the last four years: "
-		"#let, #getnumber, #getstring, #ARGS, #copy, #proc, variables with capitals, and strings in numeric variables; "
-		"there are messages about how to modify your old scripts.")
-	LIST_ITEM (U"• Disallowed ambiguous expressions like -3\\^ 2.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 4.0?", U"ppgb", 20011015)
-ENTRY (U"Praat 4.0, 15 October 2001")
-	NORMAL (U"Editors:")
-	LIST_ITEM (U"• Simplified selection and cursor in editor windows.")
-	LIST_ITEM (U"• Spectrogram, pitch contour, formant contour, and intensity available in the "
-		"Sound, LongSound, and TextGrid editors.")
-	LIST_ITEM (U"• TextGrid editor: additions and improvements.")
-	LIST_ITEM (U"• @@Log files@.")
-	NORMAL (U"Phonetics library:")
-	LIST_ITEM (U"• @ExperimentMFC: multiple-forced-choice listening experiments.")
-	LIST_ITEM (U"• @@Sound: To Pitch (ac)...@: pitch contour less dependent on time resolution. "
-		"This improves the constancy of the contours in the editors when zooming.")
-	LIST_ITEM (U"• TextGrid: additions and improvements.")
-	LIST_ITEM (U"• Sounds: Concatenate recoverably. Creates a TextGrid whose interval labels are the original "
-		"names of the sounds.")
-	LIST_ITEM (U"• Sound & TextGrid: Extract all intervals. The reverse of the previous command.")
-	LIST_ITEM (U"• Filterbank analyses, @MelFilter, @BarkFilter and "
-		"@FormantFilter, by @@band filtering in the frequency domain@." )
-	LIST_ITEM (U"• Cepstrum by David Weenink: @MFCC, @LFCC. "
-		"@Cepstrum object is a representation of the %%complex cepstrum%.")
-	LIST_ITEM (U"• Intensity: To IntensityTier (peaks, valleys).")
-	LIST_ITEM (U"• Replaced Analysis and AnalysisEditor with @Manipulation and @ManipulationEditor.")
-	NORMAL (U"Phonology library:")
-	LIST_ITEM (U"• PairDistribution: Get percentage correct (maximum likelihood, probability matching).")
-	LIST_ITEM (U"• OTGrammar & PairDistribution: Get percentage correct...")
-	NORMAL (U"Graphics:")
-	LIST_ITEM (U"• Improved spectrogram drawing.")
-	LIST_ITEM (U"• @@Special symbols@: háček.")
-	LIST_ITEM (U"• Macintosh: improved screen rendition of rotated text.")
-	NORMAL (U"Audio:")
-	LIST_ITEM (U"• Macintosh: support for multiple audio input devices (sound cards).")
-	NORMAL (U"Statistics and numerics library:")
-	LIST_ITEM (U"• More statistics by David Weenink.")
-	LIST_ITEM (U"• Improved random numbers and other numerical stuff.")
-	LIST_ITEM (U"• @@Regular expressions@.")
-	NORMAL (U"Scripting:")
-	LIST_ITEM (U"• Formatting in variable substitution, e.g. 'pitch:2' gives two digits after the decimal point.")
-	LIST_ITEM (U"• Added `fixed$` () to scripting language for formatting of numbers.")
-	NORMAL (U"Documentation:")
-	LIST_ITEM (U"• @@Multidimensional scaling@ tutorial.")
-	LIST_ITEM (U"• Enabled debugging-at-a-distance.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 3.9?", U"ppgb", 20001018)
-ENTRY (U"Praat 3.9, 18 October 2000")
-	NORMAL (U"Editors:")
-	LIST_ITEM (U"• Shift-click and shift-drag extend or shrink selection in editor windows.")
-	LIST_ITEM (U"• Grouped editors can have separate zooming and scrolling (FunctionEditor preferences).")
-	LIST_ITEM (U"• Cursor follows playing sound in editors; interruption by Escape key moves the cursor.")
-	LIST_ITEM (U"• TextGridEditor: optimized for transcribing large corpora: text field, directly movable boundaries, "
-		"more visible text in tiers, @SpellingChecker, "
-		"type while the sound is playing, complete keyboard navigation, control font size, control text alignment, "
-		"shift-click near boundary adds interval to selection.")
-	LIST_ITEM (U"• Stereo display in LongSound and TextGrid editors.")
-	LIST_ITEM (U"• LongSoundEditor and TextGridEditor: write selection to audio file.")
-	LIST_ITEM (U"• SoundEditor: added command ##Extract selection (preserve times)#.")
-	LIST_ITEM (U"• IntervalTierEditor, DurationTierEditor.")
-	LIST_ITEM (U"• Added many query commands in editors.")
-	NORMAL (U"Phonetics library:")
-	LIST_ITEM (U"• Sound: To Formant...: sample-rate-independent formant analysis.")
-	LIST_ITEM (U"• Sound: To Harmonicity (glottal-to-noise excitation ratio).")
-	LIST_ITEM (U"• Pitch: support for ERB units, draw all combinations of line/speckle and linear/logarithmic/semitones/mels/erbs, "
-		"optionally with TextGrid, Subtract linear fit.")
-	LIST_ITEM (U"• Spectrum: Draw along logarithmic frequency axis.")
-	LIST_ITEM (U"• TextGrid:  modification commands, Extract part, Shift to zero, Scale times (with Sound or LongSound).")
-	LIST_ITEM (U"• @@Matrix: To TableOfReal@, Draw contour...")
-	LIST_ITEM (U"• Concatenate Sound and LongSound objects.")
-	LIST_ITEM (U"• File formats: save PitchTier in spreadsheet format, read CGN syntax files (XML version), "
-		"text files now completely file-server-safe (independent from Windows/Macintosh/Unix line separators).")
-	NORMAL (U"Statistics and numerics library:")
-	LIST_ITEM (U"• @@Principal component analysis@.")
-	LIST_ITEM (U"• @@Discriminant analysis@.")
-	LIST_ITEM (U"• @Polynomial: drawing, @@Roots|root@ finding etc.")
-	LIST_ITEM (U"• @@TableOfReal: Draw box plots...@.")
-	LIST_ITEM (U"• @@Covariance: To TableOfReal (random sampling)...@.")
-	LIST_ITEM (U"• @@SSCP: Get sigma ellipse area...@.")
-	LIST_ITEM (U"• Query @DTW for 'weighted distance' of time warp.")
-	LIST_ITEM (U"• Distributions: To Strings (exact)...")
-	LIST_ITEM (U"• Strings: Randomize.")
-	NORMAL (U"Phonology library:")
-	LIST_ITEM (U"• OTGrammar: To PairDistribution.")
-	NORMAL (U"Graphics:")
-	LIST_ITEM (U"• Full support for colour inkjet printers on Windows and Macintosh.")
-	LIST_ITEM (U"• Full support for high-resolution colour clipboards and metafiles for "
-		"Windows and Macintosh programs that support them (this include MS Word "
-		"for Windows, but unfortunately not MS Word for Macintosh).")
-	LIST_ITEM (U"• Colour in EPS files.")
-	LIST_ITEM (U"• Interpolating grey images, i.e. better zoomed spectrograms.")
-	LIST_ITEM (U"• Linux: support for 24-bits screens.")
-	NORMAL (U"Audio:")
-	LIST_ITEM (U"• Asynchronous sound play.")
-	LIST_ITEM (U"• Linux: solved problems with /dev/mixer (“Cannot read MIC gain.”) on many computers.")
-	LIST_ITEM (U"• Added possibility of zero padding for sound playing, "
-		"in order to reduce clicks on some Linux and Sun computers.")
-	LIST_ITEM (U"• LongSound supports mono and stereo, 8-bit and 16-bit, %\\mu-law and A-law, "
-		"big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.")
-	LIST_ITEM (U"• ##Read two Sounds from stereo file...# supports 8-bit and 16-bit, %\\mu-law and A-law, "
-		"big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.")
-	LIST_ITEM (U"• SoundRecorder writes to 16-bit AIFC, WAV, NeXT/Sun, and NIST mono and stereo files.")
-	LIST_ITEM (U"• Sound & LongSound: write part or whole to mono or stereo audio file.")
-	LIST_ITEM (U"• Read Sound from raw Alaw file.")
-	LIST_ITEM (U"• Artword & Speaker (& Sound) movie: real time on all platforms.")
-	NORMAL (U"Scripting:")
-	LIST_ITEM (U"• @@Formulas 5. Mathematical functions@: added statistical functions: %\\ci^2, Student T, Fisher F, binomial, "
-		"and their inverse functions.")
-	LIST_ITEM (U"• Windows: program #praatcon for use as a Unix-style console application.")
-	LIST_ITEM (U"• Windows and Unix: Praat can be run with a command-line interface without quitting on errors.")
-	LIST_ITEM (U"• Unix & Windows: can use <stdout> as a file name (supports pipes for binary data).")
-	LIST_ITEM (U"• @sendpraat now also for Macintosh.")
-	LIST_ITEM (U"• @@Scripting 6.7. Sending a message to another program|sendsocket@.")
-	LIST_ITEM (U"• @@Read from file...@ recognizes script files if they begin with “\\# !”.")
-	LIST_ITEM (U"• Script links in @ManPages.")
-	NORMAL (U"Documentation")
-	LIST_ITEM (U"• Tutorials on all subjects available through @Intro.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 3.8?", U"ppgb", 19990112)
-ENTRY (U"Praat 3.8, 12 January 1999")
-	NORMAL (U"Phonetics library")
-	LIST_ITEM (U"• New objects: @LongSound (view and label long sound files), with editor; PairDistribution.")
-	LIST_ITEM (U"• @@Overlap-add@ manipulation of voiceless intervals, version 2: quality much better now; "
-		"target duration is exactly as expected from Duration tier or specified lengthening in @@Sound: Lengthen (overlap-add)...@.")
-	LIST_ITEM (U"• Audio: Escape key stops audio playing (on Mac also Command-period).")
-	LIST_ITEM (U"• @SoundRecorder: allows multiple recordings without close; Play button; Write buttons; buffer size can be set.")
-	LIST_ITEM (U"• Reverse a Sound or a selection of a Sound.")
-	LIST_ITEM (U"• @@Sound: Get nearest zero crossing...@.")
-	LIST_ITEM (U"• ##Formant: Scatter plot (reversed axes)...#.")
-	LIST_ITEM (U"• ##TextGrid & Pitch: Speckle separately...#.")
-	LIST_ITEM (U"• ##Extract Sound selection (preserve times)# in TextGridEditor.")
-	LIST_ITEM (U"• More query commands for Matrix, TableOfReal, Spectrum, PointProcess.")
-	NORMAL (U"Phonology library")
-	LIST_ITEM (U"• 25-page OT learning tutorial.")
-	LIST_ITEM (U"• Made the OT learner 14 times as fast.")
-	NORMAL (U"Platforms")
-	LIST_ITEM (U"• May 23: Windows beta version.")
-	LIST_ITEM (U"• April 24: Windows alpha version.")
-	NORMAL (U"Files")
-	LIST_ITEM (U"• Read more Kay, Sun (.au), and WAV sound files.")
-	LIST_ITEM (U"• ##Read Strings from raw text file...#")
-	LIST_ITEM (U"• @@Create Strings as file list...@.")
-	LIST_ITEM (U"• ##Read IntervalTier from Xwaves...#")
-	LIST_ITEM (U"• hidden ##Read from old Windows Praat picture file...#")
-	NORMAL (U"Graphics")
-	LIST_ITEM (U"• Use colours (instead of only greys) in ##Paint ellipse...# etc.")
-	LIST_ITEM (U"• More true colours (maroon, lime, navy, teal, purple, olive).")
-	LIST_ITEM (U"• Direct printing from Macintosh to PostScript printers.")
-	LIST_ITEM (U"• Hyperpage printing to PostScript printers and PostScript files.")
-	LIST_ITEM (U"• Phonetic symbols: raising sign, lowering sign, script g, corner, ligature, pointing finger.")
-	NORMAL (U"Shell")
-	LIST_ITEM (U"• November 4: all dialogs are modeless (which is new for Unix and Mac).")
-	LIST_ITEM (U"• September 27: @sendpraat for Windows.")
-	NORMAL (U"Scripting")
-	LIST_ITEM (U"• January 7: scriptable editors.")
-	LIST_ITEM (U"• October 7: file I/O in scripts.")
-	LIST_ITEM (U"• August 23: script language includes all the important functions for string handling.")
-	LIST_ITEM (U"• June 24: string variables in scripts.")
-	LIST_ITEM (U"• June 22: faster look-up of script variables.")
-	LIST_ITEM (U"• June 22: unlimited number of script variables.")
-	LIST_ITEM (U"• April 5: suspended chopping of trailing spaces.")
-	LIST_ITEM (U"• March 29: enabled formulas as arguments to dialogs (also interactive).")
-MAN_END
-
-MAN_BEGIN (U"What was new in 3.7?", U"ppgb", 19980324)
-ENTRY (U"Praat 3.7, 24 March 1998")
-	NORMAL (U"Editors:")
-	LIST_ITEM (U"• In all FunctionEditors: drag to get a selection.")
-	NORMAL (U"Phonetics library:")
-	LIST_ITEM (U"• Many new query (#Get) commands for @Sound, @Intensity, @Harmonicity, @Pitch, "
-		"@Formant, @Ltas, @PitchTier, @IntensityTier, @DurationTier, #FormantTier.")
-	LIST_ITEM (U"• Many new modification commands.")
-	LIST_ITEM (U"• Many new interpolations.")
-	LIST_ITEM (U"• Sound enhancements: @@Sound: Lengthen (overlap-add)...@, @@Sound: Deepen band modulation...@")
-	LIST_ITEM (U"• @@Source-filter synthesis@ tutorial, @@Sound & IntensityTier: Multiply@, "
-		"##Sound & FormantTier: Filter#, @@Formant: Formula (frequencies)...@, @@Sound: Pre-emphasize (in-place)...@.")
-	NORMAL (U"Labelling")
-	LIST_ITEM (U"• TextGrid queries (#Get times and labels in a script).")
-	LIST_ITEM (U"• @@TextGrid: Count labels...@.")
-	LIST_ITEM (U"• @@PointProcess: To TextGrid (vuv)...@: get voiced/unvoiced information from a point process.")
-	LIST_ITEM (U"• IntervalTier to TableOfReal: labels become row labels.")
-	LIST_ITEM (U"• TextTier to TableOfReal.")
-	NORMAL (U"Numerics and statistics library")
-	LIST_ITEM (U"• Multidimensional scaling (Kruskal, INDSCAL, etc).")
-	LIST_ITEM (U"• @TableOfReal: Set value, Formula, Remove column, Insert column, Draw as squares, To Matrix.")
-	NORMAL (U"Phonology library")
-	LIST_ITEM (U"• OT learning: new strategies: weighted symmetric plasticity (uncancelled or all).")
-	NORMAL (U"Praat shell")
-	LIST_ITEM (U"• First Linux version.")
-	LIST_ITEM (U"• Eight new functions like e.g. %hertzToBark in @@Formulas 5. Mathematical functions@.")
-	LIST_ITEM (U"• @@Praat script@: procedure arguments; object names.")
-	NORMAL (U"Documentation:")
-	LIST_ITEM (U"• 230 more man pages (now 630).")
-	LIST_ITEM (U"• Hypertext: increased readability of formulas, navigation with keyboard.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 3.6?", U"ppgb", 19971027)
-ENTRY (U"Praat 3.6, 27 October 1997")
-	NORMAL (U"Editors:")
-	LIST_ITEM (U"• Intuitive position of B and E buttons on left-handed mice.")
-	LIST_ITEM (U"• @SoundEditor: copy %windowed selection to list of objects.")
-	LIST_ITEM (U"• @SoundEditor: undo Cut, Paste, Zero.")
-	LIST_ITEM (U"• @SpectrumEditor: copy band-filtered spectrum or sound to list of objects.")
-	LIST_ITEM (U"• @ManipulationEditor: LPC-based pitch manipulation.")
-	NORMAL (U"Objects:")
-	LIST_ITEM (U"• Use “-” and “+” in object names.")
-	NORMAL (U"Phonetics library")
-	LIST_ITEM (U"• LPC-based resynthesis in @ManipulationEditor.")
-	LIST_ITEM (U"• @Sound: direct modification without formulas (addition, multiplication, windowing)")
-	LIST_ITEM (U"• @Sound: filtering in spectral domain by formula.")
-	LIST_ITEM (U"• Create a simple @Pitch object from a @PitchTier (for %F__0_) and a @Pitch (for V/U).")
-	LIST_ITEM (U"• Semitones in @PitchTier tables.")
-	LIST_ITEM (U"• @PointProcess: transplant time domain from @Sound.")
-	LIST_ITEM (U"• Much more...")
-	NORMAL (U"Phonology library")
-	LIST_ITEM (U"• Computational Optimality Theory. See @@OT learning@.")
-	NORMAL (U"Hypertext")
-	LIST_ITEM (U"• You can use @ManPages files for creating your own tutorials. "
-		"These contains buttons for playing and recording sounds, so you can use this for creating "
-		"an interactive IPA sound training course.")
-	NORMAL (U"Scripting:")
-	LIST_ITEM (U"• Programmable @@Praat script@ language: variables, expressions, control structures, "
-		"procedures, complete dialog box, exchange of information with Info window, continuation lines.")
-	LIST_ITEM (U"• Use platform-independent relative file paths in @@Praat script@.")
-	LIST_ITEM (U"• @ScriptEditor: Run selection.")
-	NORMAL (U"Graphics:")
-	LIST_ITEM (U"• Rotation and scaling while printing the @@Picture window@.")
-	LIST_ITEM (U"• Apart from bold and italic, now also bold-italic (see @@Text styles@).")
-	LIST_ITEM (U"• Rounded rectangles.")
-	LIST_ITEM (U"• Conversion of millimetres and world coordinates.")
-	LIST_ITEM (U"• Measurement of text widths (screen and PostScript).")
-	NORMAL (U"Unix:")
-	LIST_ITEM (U"• Use the @sendpraat program for sending messages to running Praat programs.")
-	NORMAL (U"Mac:")
-	LIST_ITEM (U"• Praat looks best with the new and beautiful System 8.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 3.5?", U"ppgb", 19970527)
-ENTRY (U"Praat 3.5, 27 May 1997")
-	NORMAL (U"New editors:")
-	LIST_ITEM (U"• #TextGridEditor replaces and extends LabelEditor: edit points as well as intervals.")
-	LIST_ITEM (U"• #AnalysisEditor replaces and extends PsolaEditor: view pitch, spectrum, formant, and intensity "
-		"analyses in a single window, and allow pitch and duration resynthesis by overlap-add and more (would be undone in 3.9.19).")
-	LIST_ITEM (U"• #SpectrumEditor allows you to view and edit spectra.")
-	NORMAL (U"Praat shell:")
-	LIST_ITEM (U"• ##History mechanism# remembers all the commands that you have chosen, "
-		"and allows you to put them into a script.")
-	LIST_ITEM (U"• #ScriptEditor allows you to edit and run any Praat script, and to put it under a button.")
-	LIST_ITEM (U"• All added and removed buttons are remembered across sessions.")
-	LIST_ITEM (U"• #ButtonEditor allows you to make buttons visible or invisible.")
-	NORMAL (U"Evaluations:")
-	LIST_ITEM (U"• In his 1996 doctoral thesis, Henning Reetz "
-		"compared five pitch analysis routines; @@Sound: To Pitch (ac)...@ appeared to make the fewest errors. "
-		"H. Reetz (1996): %%Pitch Perception in Speech: a Time Domain Approach%, Studies in Language and Language Use #26, "
-		"IFOTT, Amsterdam (ICG Printing, Dordrecht).")
-	NORMAL (U"Documentation:")
-	LIST_ITEM (U"• 140 more man pages (now 330).")
-	LIST_ITEM (U"• Tables and pictures in manual.")
-	LIST_ITEM (U"• Printing the entire manual.")
-	LIST_ITEM (U"• Logo.")
-	NORMAL (U"New types:")
-	LIST_ITEM (U"• Labelling & segmentation: #TextGrid, #IntervalTier, #TextTier.")
-	LIST_ITEM (U"• Analysis & manipulation: #Analysis.")
-	LIST_ITEM (U"• Statistics: #TableOfReal, #Distributions, #Transition")
-	NORMAL (U"File formats:")
-	LIST_ITEM (U"• Read and write rational numbers in text files.")
-	LIST_ITEM (U"• Read 8-bit .au sound files.")
-	LIST_ITEM (U"• Read and write raw 8-bit two\'s-complement and offset-binary sound files.")
-	NORMAL (U"Audio:")
-	LIST_ITEM (U"• 16-bit interactive Sound I/O on Mac.")
-	LIST_ITEM (U"• Record sounds at 9.8 kHz on SGI.")
-	NORMAL (U"New commands:")
-	LIST_ITEM (U"• Two more pitch-analysis routines.")
-	LIST_ITEM (U"• Sound to PointProcess: collect all maxima, minima, zero crossings.")
-	LIST_ITEM (U"• PointProcess: set calculus.")
-	LIST_ITEM (U"• TextGrid: extract time-point information.")
-	LIST_ITEM (U"• Compute pitch or formants at given time points.")
-	LIST_ITEM (U"• Put pitch, formants etc. in tables en get statistics.")
-	LIST_ITEM (U"• Many more...")
-	NORMAL (U"Macintosh:")
-	LIST_ITEM (U"• 16-bit interactive sound I/O.")
-	LIST_ITEM (U"• Fast and interpolating spectrogram drawing.")
-	LIST_ITEM (U"• Phonetic Mac screen font included in source code (as a fallback to using SIL Doulos IPA).")
-	LIST_ITEM (U"• Keyboard shortcuts, text editor, help under question mark, etc.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 3.3?", U"ppgb", 19961006)
-ENTRY (U"Praat 3.3, 6 October 1996")
-	LIST_ITEM (U"• Documentation: hypertext help browser, including the first 190 man pages.")
-	LIST_ITEM (U"• New editors: type #TextTier for labelling times instead of intervals.")
-	LIST_ITEM (U"• New actions: #Formant: Viterbi tracker, Statistics menu, Scatter plot.")
-	LIST_ITEM (U"• Evaluation: For HNR analysis of speech, the cross-correlation method, "
-		"which has a sensitivity of 60 dB and a typical time resolution of 12 milliseconds, "
-		"must be considered better than the autocorrelation method, "
-		"which has a better sensitivity (80 dB), but a much worse time resolution (30 ms). "
-		"For pitch analysis, the autocorrelation method still beats the cross-correlation method "
-		"because of its better resistance against noise and echos, "
-		"and despite its marginally poorer resolution (15 vs. 12 ms).")
-	LIST_ITEM (U"• User preferences are saved across sessions.")
-	LIST_ITEM (U"• The phonetic X screen font included in the source code.")
-	LIST_ITEM (U"• Xwindows resources included in the source code")
-	LIST_ITEM (U"• Graphics: eight colours, small caps, text rotation.")
-	LIST_ITEM (U"• File formats: Sun/NexT mu-law files, raw matrix text files, Xwaves mark files.")
-	LIST_ITEM (U"• Accelerations: keyboard shortcuts, faster dynamic menu, Shift-OK keeps file selector on screen.")
-	LIST_ITEM (U"• Object type changes: #StylPitch and #MarkTier are now called #PitchTier and #TextTier, respectively. "
-		"Old files can still be read.")
-	LIST_ITEM (U"• Script warning: all times in dialogs are in seconds now: milliseconds have gone.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 3.2?", U"ppgb", 19960429)
-ENTRY (U"Praat 3.2, 29 April 1996")
-	LIST_ITEM (U"• Sound I/O for HPUX, Sun Sparc 5, and Sun Sparc LX.")
-	LIST_ITEM (U"• Cross-correlation pitch and HNR analysis.")
-	LIST_ITEM (U"• Facilities for generating tables from scripts.")
-	LIST_ITEM (U"• Editing and playing stylized pitch contours and point processes.")
-	LIST_ITEM (U"• Overlap-add pitch manipulation.")
-	LIST_ITEM (U"• Spectral smoothing techniques: cepstrum and LPC.")
-	LIST_ITEM (U"• Time-domain pitch analysis with jitter measurement.")
-	LIST_ITEM (U"• Read and write Bell-Labs sound files and Kay CSL audio files.")
-	LIST_ITEM (U"• Replaced IpaTimes font by free SILDoulos-IPA font, and embedded phonetic font in PostScript picture.")
-	LIST_ITEM (U"• Completed main phonetic characters.")
-MAN_END
-
-MAN_BEGIN (U"What was new in 3.1?", U"ppgb", 19951205)
-ENTRY (U"Praat 3.1, 5 December 1995")
-	LIST_ITEM (U"• Add and remove buttons dynamically.")
-	LIST_ITEM (U"• DataEditor (Inspect button).")
-	LIST_ITEM (U"• Initialization scripts.")
-	LIST_ITEM (U"• Logarithmic axes.")
-	LIST_ITEM (U"• Call remote ADDA server directly.")
-MAN_END
 /*
    BUGBASE
 
@@ -2310,20 +2956,20 @@ MAN_END
 >lines (and is WAY too wide).
 
 ENTRY (U"To do")
-	LIST_ITEM (U"• TextGrid & Sound: Extract intervals with margins.")
-	LIST_ITEM (U"• Spectrum: draw power, re, im, phase.")
-	LIST_ITEM (U"• Formant: To Spectrum (slice)... (combines Formant-to-LPC and LPC-to-Spectrum-slice)")
-	LIST_ITEM (U"• Read and/or write Matlab files, MBROLA files, Xwaves files, CHAT files.") // Aix
-	LIST_ITEM (U"• Matrix: draw numbers.")
-	LIST_ITEM (U"• Fractions with \\bsf{a|b}.")
-	LIST_ITEM (U"• Move objects up and down list.")
-	LIST_ITEM (U"• Spectrogram cross-correlation.")
-	LIST_ITEM (U"• Labels in AIFC file.") // Theo Veenker 19980323
-	LIST_ITEM (U"• Improve scrolling and add selection in hyperpages.")
-	LIST_ITEM (U"• Segment spectrograph?") // Ton Wempe, Jul 16 1996
-	LIST_ITEM (U"• Phoneme-to-articulation conversion??") // Mirjam Ernestus, Jul 1 1996
+	• TextGrid & Sound: Extract intervals with margins.")
+	• Spectrum: draw power, re, im, phase.")
+	• Formant: To Spectrum (slice)... (combines Formant-to-LPC and LPC-to-Spectrum-slice)")
+	• Read and/or write Matlab files, MBROLA files, Xwaves files, CHAT files.") // Aix
+	• Matrix: draw numbers.")
+	• Fractions with \\bsf{a|b}.")
+	• Move objects up and down list.")
+	• Spectrogram cross-correlation.")
+	• Labels in AIFC file.") // Theo Veenker 19980323
+	• Improve scrolling and add selection in hyperpages.")
+	• Segment spectrograph?") // Ton Wempe, Jul 16 1996
+	• Phoneme-to-articulation conversion??") // Mirjam Ernestus, Jul 1 1996
 ENTRY (U"Known bugs in the Windows version")
-	LIST_ITEM (U"• Cannot stand infinitesimal zooming in SpectrogramEditor.")
+	• Cannot stand infinitesimal zooming in SpectrogramEditor.")
 */
 
 MAN_BEGIN (U"FLAC BSD 3-clause license", U"ppgb", 20210823)
@@ -5273,53 +5919,75 @@ NORMAL (U"Bureaucracy")
 LIST_ITEM (U"• @WordList, @SpellingChecker")
 MAN_END
 
-MAN_BEGIN (U"Unicode", U"ppgb", 20230115)
-INTRO (U"Praat aims at being a fully international program: "
-	"the texts in Praat's TextGrids, Tables, scripts, or Info window (and elsewhere) can contain many types of characters "
-	"(see @@special symbols@). "
-	"For this reason, Praat saves its text files in one of two possible formats: UTF-8 (including ASCII) or UTF-16.")
-ENTRY (U"ASCII text files")
-NORMAL (U"If your TextGrid (or Table, or script, or Info window...) contains only characters that can be encoded as ASCII, "
-	"namely the characters !\\\" \\# \\$ \\% &\\' ()*+,-./0123456789:;<=>?\\@  "
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\bs]\\^ \\_ \\`  abcdefghijklmnopqrstuvwxyz{|}~, "
-	"then when you say @@Save as text file...@ or #Save, Praat will write an ASCII text file, "
-	"which is a text file in which every character is encoded in a single byte (8 bits). "
-	"All programs that can read plain text files can read such files produced by Praat.")
-ENTRY (U"UTF-16 text files")
-NORMAL (U"If your TextGrid (or Table, or script, or Info window...) contains one or more characters that cannot be encoded as ASCII, "
-	"for instance West-European characters such as \\ao\\c,\\e'\\o\"\\ss\\?d, East-European characters such as \\c<\\l/\\o:\\s<\\uo\\z', "
-	"or Hebrew characters such as \\?+\\B+\\G+\\M%\\vO\\sU, "
-	"then when you say @@Save as text file...@ or #Save, Praat will write an UTF-16 text file, "
-	"which is a text file in which every character is encoded in two bytes (and some very rare characters in four bytes). "
-	"Many programs can read such text files, for instance NotePad, WordPad, Microsoft Word, and TextWrangler.")
-ENTRY (U"What if my other programs cannot read UTF-16 text files?")
-NORMAL (U"If you want to export your Table to Microsoft Excel or to SPSS, or if you want your TextGrid file to be read "
-	"by somebody else's Perl script, then there will be no problem if your Table contains only ASCII characters (see above). "
-	"But if your Table contains any other (i.e. non-ASCII) characters, you may be in trouble, because Praat will write the Table "
-	"as an UTF-16 text file, and not all of the programs just mentioned can read such files yet.")
-NORMAL (U"What you can do is go to ##Text writing settings...# in the #Settings submenu of the #Praat menu, "
-	"and there set the output encoding to ##UTF-8#. Praat will from then on save your text files in the UTF-8 format, "
-	"which means one byte for every ASCII character and 2 to 4 bytes for every non-ASCII character. "
-	"Especially on Linux, many programs understand UTF-8 text and will display the correct characters. "
-	"Programs such as SPSS do not understand UTF-8 but will still display ASCII characters correctly; "
-	"for instance, the names München and Wałęsa may appear as M\\A~\\:-nchen and Wa\\Ao,\\A\"\\TMsa or so.")
-NORMAL (U"If you can get by with West-European characters (on Windows), "
-	"then you may choose ##try ISO Latin-1, then UTF-16# for the output encoding. "
-	"It is possible (but not guaranteed) that programs like SPSS then display your West-European text correctly. "
-	"This trick is of limited use, because it will not work if your operating system is set to a “codepage” "
-	"differently from ISO Latin-1 (or “ANSI”), or if you need East-European or Hebrew characters, or if you want "
-	"to share your text files with Macintosh users.")
-NORMAL (U"If you already have some UTF-16 text files and you want to convert them to UTF-8 or ISO Latin-1 (the latter only if "
-	"they do not contain non-West-European characters), then you can read them into Praat and save them again "
-	"(with the appropriate output encoding setting). "
-	"Other programs, such a NotePad and TextWrangler, can also do this conversion.")
-NORMAL (U"Finally, it is still possible to make sure that all texts are ASCII, e.g. you type the characters ß and ő "
-	"as \\bsss and \\bso: respectively. See @@special symbols@.")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Unicode"
+© Paul Boersma 2023
 
-MAN_BEGIN (U"Play", U"ppgb", 20220814)
-INTRO (U"One of the menus in several @editors and in the @manual.")
-MAN_END
+Praat aims at being a fully international program:
+the texts in Praat’s TextGrids, Tables, scripts, or Info window (and elsewhere) can contain many types of characters
+(see @@special symbols@).
+For this reason, Praat saves its text files in one of two possible formats: UTF-8 (including ASCII) or UTF-16.
+
+ASCII text files
+================
+
+If your TextGrid (or Table, or script, or Info window...) contains only characters that can be encoded as ASCII,
+namely the characters `!\"#$%&'()*+,-./0123456789:;<=>?@
+ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`` abcdefghijklmnopqrstuvwxyz{|}~`,
+then when you say @@Save as text file...@ or #Save, Praat will write an ASCII text file,
+which is a text file in which every character is encoded in a single byte (8 bits).
+All programs that can read plain text files can read such files produced by Praat.
+
+UTF-16 text files
+=================
+
+If your TextGrid (or Table, or script, or Info window...) contains one or more characters that cannot be encoded as ASCII,
+for instance West-European characters such as \ao\c,\e'\o"\ss\?d, East-European characters such as \c<\l/\o:\s<\uo\z',
+or Hebrew characters such as \?+\B+\G+\M%\vO\sU,
+then when you say @@Save as text file...@ or #Save, Praat will write an UTF-16 text file,
+which is a text file in which every character is encoded in two bytes (and some very rare characters in four bytes).
+Many programs can read such text files, for instance NotePad, WordPad, Microsoft Word, and TextWrangler.
+
+What if my other programs cannot read UTF-16 text files?
+========================================================
+
+If you want to export your Table to Microsoft Excel or to SPSS, or if you want your TextGrid file to be read
+by somebody else's Perl script, then there will be no problem if your Table contains only ASCII characters (see above).
+But if your Table contains any other (i.e. non-ASCII) characters, you may be in trouble, because Praat will write the Table
+as an UTF-16 text file, and not all of the programs just mentioned can read such files yet.
+
+What you can do is go to ##Text writing settings...# in the #Settings submenu of the #Praat menu,
+and there set the output encoding to ##UTF-8#. Praat will from then on save your text files in the UTF-8 format,
+which means one byte for every ASCII character and 2 to 4 bytes for every non-ASCII character.
+Especially on Linux, many programs understand UTF-8 text and will display the correct characters.
+Programs such as SPSS do not understand UTF-8 but will still display ASCII characters correctly;
+for instance, the names München and Wałęsa may appear as M\A~\:-nchen and Wa\Ao,\A"\TMsa or so.
+
+If you can get by with West-European characters (on Windows),
+then you may choose ##try ISO Latin-1, then UTF-16# for the output encoding.
+It is possible (but not guaranteed) that programs like SPSS then display your West-European text correctly.
+This trick is of limited use, because it will not work if your operating system is set to a “codepage”
+differently from ISO Latin-1 (or “ANSI”), or if you need East-European or Hebrew characters, or if you want
+to share your text files with Macintosh users.
+
+If you already have some UTF-16 text files and you want to convert them to UTF-8 or ISO Latin-1 (the latter only if
+they do not contain non-West-European characters), then you can read them into Praat and save them again
+(with the appropriate output encoding setting).
+Other programs, such a NotePad and TextWrangler, can also do this conversion.
+
+Finally, it is still possible to make sure that all texts are ASCII, e.g. you type the characters ß and ő
+as “`\ss`” and “`\o:`” respectively. See @@special symbols@.
+
+################################################################################
+"Play"
+© Paul Boersma 2022
+
+One of the menus in several @editors and in the @manual.
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 }
 

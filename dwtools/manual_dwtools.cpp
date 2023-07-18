@@ -566,7 +566,7 @@ NORMAL (U"In canonical correlation analysis we try to find the correlations betw
 	"exceed the dimension of the independent part.")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
-	"Dutch monophthongal vowels as spoken in /h\_ t/ context by 50 male speakers. "
+	"Dutch monophthongal vowels as spoken in /h\\_ t/ context by 50 male speakers. "
 	"We will try to find the canonical correlation between formant frequencies "
 	"(the %dependent part) and levels (the %independent part). "
 	"The dimension of both groups of variates is 3. "
@@ -1431,8 +1431,8 @@ NORMAL (U"The tone consists of many sinusoidal components whose frequencies "
 NORMAL (U"For a rising tone complex, the Sound is generated according to the following specification:")
 EQUATION (U"%s(%t) = \\su__%i=1..%numberOfComponents_ %A__%i_(%t) sin (arg__%i_(%t)), where")
 EQUATION (U"arg__%i_(%t) = \\in 2%\\pi f__%i_(%\\ta) %d\\ta , and")
-EQUATION (U"f__%i_(%t) = %lowestFrequency \\.c 2^^(%i \\-- 1 + octaveShiftFraction + %t/(12/%frequencyChange\_ st)^, with")
-EQUATION (U"%A__%i_(%t) = 10^^((%L__min_ + (%L__max_ \\-- %L__min_) (1 \\-- cos 2%\\pi%\\te__%i_(%t)) / 2) / 20)^, where,")
+EQUATION (U"f__%i_(%t) = %lowestFrequency \\.c 2^^(%i \\-m 1 + octaveShiftFraction + %t/(12/%frequencyChange\\_ st)^, with")
+EQUATION (U"%A__%i_(%t) = 10^^((%L__min_ + (%L__max_ \\-m %L__min_) (1 \\-- cos 2%\\pi%\\te__%i_(%t)) / 2) / 20)^, where,")
 EQUATION (U"%L__max_ = 0, %L__min_ = 10^^\\--%amplitudeRange/20^, and,")
 EQUATION (U"%\\te__%i_(%t) = 2\\pi log2 (%f(%t) / %lowestFrequency) / %numberOfComponents.")
 NORMAL (U"The maximum frequency that can be reached during a sweep by any single tone is:")
@@ -1455,7 +1455,7 @@ MAN_END
 MAN_BEGIN (U"Create formant table (Peterson & Barney 1952)", U"djmw", 20080509)
 INTRO (U"A command to create a @Table object filled with the "
 	"fundamental frequency and the first three formant frequency values from 10 "
-	"American-English monophthongal vowels as spoken in a /h\_ d/ context by 76 speakers "
+	"American-English monophthongal vowels as spoken in a /h\\_ d/ context by 76 speakers "
 	"(33 men, 28 women and 15 children). Every vowel was pronounced twice, so that there are "
 	"1520 recorded vowels in total.")
 ENTRY (U"Table layout")
@@ -1467,7 +1467,7 @@ DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
 TERM (U"Column 3, labelled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 76.")
 TERM (U"Column 4, labelled as %Vowel")
-DEFINITION (U"the vowel name. The following list gives the vowel in a %%h\_ d% context word "
+DEFINITION (U"the vowel name. The following list gives the vowel in a %%h\\_ d% context word "
 	"together with its representation in this column: (%heed, iy), (%hid, ih), "
 	"(%head, eh), (%had, ae), (%hod, aa), (%hawed, ao), (%hood, uh), (%%who'd%, uw), "
 	"(%hud, ah), (%heard, er).")
@@ -1489,7 +1489,7 @@ MAN_END
 MAN_BEGIN (U"Create formant table (Pols & Van Nierop 1973)", U"djmw", 20020620)
 INTRO (U"A command to create a @Table object filled with the frequencies and the levels "
 	"of the first three formants from the 12 Dutch monophthong "
-	"vowels as spoken in /h\_ t/ context by 50 male and 25 female speakers.")
+	"vowels as spoken in /h\\_ t/ context by 50 male and 25 female speakers.")
 ENTRY (U"Table layout")
 NORMAL (U"The created table will contain 10 columns")
 TERM (U"Column 1, labeled as %Sex")
@@ -1497,7 +1497,7 @@ DEFINITION (U"speaker sex: Either \"m\" or \"f\" (for %male or %female).")
 TERM (U"Column 2, labeled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 75.")
 TERM (U"Column 3, labeled as %Vowel")
-DEFINITION (U"the vowel name. The following list gives the vowel in [p\_ t] context words "
+DEFINITION (U"the vowel name. The following list gives the vowel in [p\\_ t] context words "
 	"together with its representation in this column: (%poet, oe), (%paat, aa), "
 	"(%poot, oo), (%pat, a), (%peut, eu), (%piet, ie), (%puut, uu), (%peet, ee), "
 	"(%put, u), (%pet, e), (%pot, o), (%pit, i).")
@@ -1527,7 +1527,7 @@ DEFINITION (U"speaker sex: either \"m\" or \"f\" (for %male or %female).")
 TERM (U"Column 3, labelled as %Speaker")
 DEFINITION (U"speaker id: a number from 1 to 76.")
 TERM (U"Column 4, labelled as %Vowel")
-DEFINITION (U"the vowel name. The following list gives the vowel in Dutch [p\_ t] context words "
+DEFINITION (U"the vowel name. The following list gives the vowel in Dutch [p\\_ t] context words "
 	"together with its representation in this column: (%poet, oe), (%paat, aa), "
 	"(%poot, oo), (%pat, a), (%peut, eu), (%piet, ie), (%puut, uu), (%peet, ee), "
 	"(%put, u), (%pet, e), (%pot, o), (%pit, i).")
@@ -1544,7 +1544,7 @@ MAN_END
 MAN_BEGIN (U"Create TableOfReal (Pols 1973)...", U"djmw", 19990426)
 INTRO (U"A command to create a @TableOfReal filled with the first three formant "
 	"frequency values and (optionally) the levels from the 12 Dutch monophthongal "
-	"vowels as spoken in /h\_ t/ context by 50 male speakers.")
+	"vowels as spoken in /h\\_ t/ context by 50 male speakers.")
 NORMAL (U"The first three columns will contain the frequencies in Hz, the next three columns "
 	"the levels in decibels below the overall SPL of the measured vowel segment. Each row will "
 	"be labelled with its corresponding vowel symbol.")
@@ -1567,7 +1567,7 @@ MAN_END
 MAN_BEGIN (U"Create TableOfReal (Van Nierop 1973)...", U"djmw", 20041217)
 INTRO (U"A command to create a @TableOfReal filled with the first three formant "
 	"frequency values and (optionally) the levels from the 12 Dutch monophthongal "
-	"vowels as spoken in /h\_ t/ context by 25 female speakers.")
+	"vowels as spoken in /h\\_ t/ context by 25 female speakers.")
 NORMAL (U"The first three columns will contain the frequencies in Hz, the next three columns "
 	"the levels in decibels below the overall SPL of the measured vowel segment. Each row will "
 	"be labelled with its corresponding vowel symbol.")
@@ -1614,7 +1614,7 @@ MAN_BEGIN (U"Discriminant analysis", U"djmw", 20170829)
 INTRO (U"This tutorial will show you how to perform discriminant analysis with Praat.")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
-	"Dutch monophthongal vowels as spoken in /h\_ t/ context by 50 male speakers. "
+	"Dutch monophthongal vowels as spoken in /h\\_ t/ context by 50 male speakers. "
 	"This data set has been incorporated into "
 	"Praat and can be called into play with the @@Create TableOfReal "
 	"(Pols 1973)...@ command that can be found in the \"New / "
@@ -3733,7 +3733,7 @@ MAN_END
 
 MAN_BEGIN (U"solving matrix equations", U"djmw", 20220111)
 INTRO (U"In this manual you will learn how to solve different kinds of equations involving matrices and vectors.")
-NORMAL (U"Given a matrix #A and a vector #y, the types of equations we like to solve are of the form ##y#=##A\\.cx#, where #A "
+NORMAL (U"Given a matrix #A and a vector #y, the types of equations we like to solve are of the form #y=#A\\.c#x, where #A "
 	"and #y are given. The task is to find the vector #x. The first two subsections show how to deal with this equation with "
 	"no constraints on the solution vector #x. Section 4 will show how to deal with the situation when the solution vector #x is constrained.")
 NORMAL (U"In the equation above, the matrix and the vectors have to conform. This means that the number of rows of #A should "
@@ -3741,7 +3741,7 @@ NORMAL (U"In the equation above, the matrix and the vectors have to conform. Thi
 NORMAL (U"Note: In Praat scripting we don't distinguish in notation between a vector and its transpose.")
 ENTRY (U"1. Matrix A is square")
 NORMAL (U"In this case an exact solution for #x is possible because if #A is \"well behaved\" we can calculate its inverse and "
-	"the solution will be #x = ##A^^-1^\\.cy#. The function ##solve\\#  (a\\# \\# , y\\# )# is for this type of problem.")
+	"the solution will be #x = #A^^\\-m1^\\.c#y. The function #`solve#` (%`a##`, %`y#`)# is for this type of problem.")
 NORMAL (U"The following example shows an exactly solvable system because #A is a square matrix and \"well behaved\":")
 CODE (U"a## = {{0, 2, 0, 1},")
 CODE (U"...    {2, 2, 3, 2},")
@@ -3752,15 +3752,15 @@ CODE (U"x# = solve# (a##, y#)")
 CODE (U"writeInfoLine: x#")
 NORMAL (U"My info window shows:")
 NORMAL (U"-0.49999999999999967 1.000000000000001 0.3333333333333344 -2.0000000000000027")
-NORMAL (U"As a check we can calculate the norm of the difference between #y and ##A\\.cx# which should be zero for a perfect solution.")
+NORMAL (U"As a check we can calculate the norm of the difference between #y and ##A\\.cx#, which should be zero for a perfect solution.")
 CODE (U"appendInfoLine: norm (y# - mul# (a##, x#))")
 NORMAL (U"My info window shows 1.0777744118960794e-14, which is almost zero (it is not exactly zero due to rounding errors because "
 	"real numbers cannot be represented exactly in a computer.")
 
 ENTRY (U"2. Matrix A has more rows than columns")
 NORMAL (U"If the matrix has more rows than colums an exact solution is generally not possible and the best thing we can do is to "
-	"find a solution vector #x that %%minimizes% the squared distance between the vectors #y and ##A\\.cx#. The problem now can be "
-	"posed as: find the vector #x that minimizes ||#y - ##A\\.cx#||^2. This is a regression problem which can be solved using "
+	"find a solution vector #x that %%minimizes% the squared distance between the vectors #y and #A\\.c#x. The problem now can be "
+	"posed as: find the vector #x that minimizes ||#y \\-m #A\\.c#x||^2. This is a regression problem which can be solved using "
 	"@@singular value decomposition@.")
 NORMAL (U"The following example shows a 5\\xx2 matrix #A. The solution therefore is a vector with two elements.")
 CODE (U"a## = {{-0.84,-0.184},")
@@ -3777,21 +3777,24 @@ NORMAL (U"We can calculate the norm of the difference:")
 CODE (U"appendInfoLine: norm (y# - mul# (a##, x#))")
 NORMAL (U"My info window shows:")
 NORMAL (U"2.556992185298919")
-NORMAL (U"This means that no other vector #x can be found that has ||#y - ##A\\.cx#|| < 2.556992185298919!")
+NORMAL (U"This means that no other vector #x can be found that has ||#y \\-m #A\\.c#x|| < 2.556992185298919!")
 
 ENTRY (U"3. Matrix A has more columns than rows")
 NORMAL (U"If the number of colums is larger than the number of rows the system in general is underdetermined, i.e. we can not "
 	"determine a complete solution vector.")
+
 ENTRY (U"4. The x# vector is constrained")
 NORMAL (U"If there are additional constraints on the vector #x we can handle three different cases:")
+
 ENTRY (U"4.1 Constraints on the squared norm of the solution #x")
-NORMAL (U"These can be expressed in the following form: %%minimize% ||#y - ##A\\.cx#||^2 + \\al(##x\\'px# - \\de) for some "
-	"\\al > 0 and \\de \\>_ 0. Here the constraint on the squared norm ##x\\'px# of #x is enforced by adding a penalty function "
-	"with weighing factor \\al.")
-NORMAL (U"The function to use is ##solveWeaklyConstrained\\# # (#a\\# \\# , #y\\# , %%#alpha%, %%#delta%)")
+NORMAL (U"These can be expressed in the following form: %minimize ||#y \\-m #A\\.c#x||^2 + %\\al(#x\\'p#x \\-m %\\de) for some "
+	"%\\al > 0 and %\\de \\>_ 0. Here the constraint on the squared norm #x\\'p#x of #x is enforced by adding a penalty function "
+	"with weighing factor %\\al.")
+NORMAL (U"The function to use is #`solveWeaklyConstrained#` (%`a##`, %`y#`, %`alpha`, %`delta`)")
 NORMAL (U"The function is called \"weakly constrained\" because the penalty function prohibits a relatively large departure of "
-	"##x\\'px# from \\de. If we let \\al go to infinity we have a constrained least squares regression problem of minimizing "
-	"||#y - ##A\\.cx#||^^2^ subject to ##x\\'px# = \\de. The algorithm we have implemented is described by @@Ten Berge (1991)@.")
+	"#x\\'p#x from %\\de. If we let \\al go to infinity we have a constrained least squares regression problem of minimizing "
+	"||#y \\-m #A\\.c#x||^^2^ subject to #x\\'p#x = %\\de. The algorithm we have implemented is described by @@Ten Berge (1991)@.")
+
 ENTRY (U"4.1.1 An example from the cited paper with an 6\\xx2 matrix #A")
 CODE (U"a## = {{ 4, 1, 0.5},")
 CODE (U"...    { 4,-1,-0.5},")
@@ -3806,8 +3809,9 @@ CODE (U"x# = solveWeaklyConstrained# (a##, y#, alpha, delta)")
 CODE (U"writeInfoLine: x#")
 NORMAL (U"My info window shows:")
 NORMAL (U"-0.0563380281690141 -3.341667830688472e-17 0.7616819283108669")
+
 ENTRY (U"4.1.2 The solution of the regression without the constraint")
-NORMAL (U"No constraints are involed if we set \\al = 0")
+NORMAL (U"No constraints are involed if we set %\\al = 0")
 CODE (U"x# = solveWeaklyConstrained# (a##, y#, 0.0, delta)")
 CODE (U"writeInfoLine: x#")
 NORMAL (U"My info window shows:")
@@ -3816,30 +3820,30 @@ NORMAL (U"The same solution would have appeared if we had used the following cod
 CODE (U"x# = solve# (a##, y#)")
 CODE (U"writeInfoLine: x#")
 ENTRY (U"4.1.3. To enforce a solution where the norm of the solution equals one")
-NORMAL (U"We choose a very large value for \\al and set \\de to 1.0.")
+NORMAL (U"We choose a very large value for %\\al and set %\\de to 1.0.")
 CODE (U"x# = solveWeaklyConstrained# (a##, y#, 1e100, 1.0)")
 CODE (U"writeInfoLine: x#")
 NORMAL (U"My info window shows: ")
 NORMAL (U"-0.05633802816901411 -3.341667830688472e-17 0.9984117520251988")
 
 ENTRY (U"4.2. Constraint of nonnegativity of the solution")
-NORMAL (U"Here we constrain the elements of the solution to be nonnegative. The problem is stated as %minimize ||#y - #A\\.c#x||^2 "
+NORMAL (U"Here we constrain the elements of the solution to be nonnegative. The problem is stated as %minimize ||#y \\-m #A\\.c#x||^2 "
 	"where all %x__%i_ \\>_ 0.")
 NORMAL (U"This problem can be solved by an iterative alternating least squares method as described by @@Borg & Groenen (1997)@. "
-	"The function to use is ##solveNonnegative\\#  (a\\# \\# , y\\#  [,x\\# ], %maximumNumberOfIterations, %tolerance, %infoLevel)#")
+	"The function to use is #`solveNonnegative#` (%`a##`, %`y#` [, %`x#`], %`maximumNumberOfIterations`, %`tolerance`, %`infoLevel`)")
 NORMAL (U"The parameters have the following meaning:")
-TERM (U"##a\\# \\# , y\\# #")
+TERM (U"%`a##`, %`y#`")
 DEFINITION (U"the #A matrix and the #y vector.")
-TERM (U"##[,x\\# ]#")
+TERM (U"[, %`x#`]")
 DEFINITION (U"the optional vector to start the iterations. If not given the procedure starts with the zero vector.")
-TERM (U"##maximumNumberOfIterations")
+TERM (U"%`maximumNumberOfIterations`")
 DEFINITION (U"the maximum number of iterations that should be run if the tolerance criterion is not met.")
-TERM (U"##tolerance")
+TERM (U"%`tolerance`")
 DEFINITION (U"is a criterion value that is needed to decide when to stop the iterations. If %d(%n) is the squared approximation error "
-	"in the %n-th step of the iteration, i.e. %d(%n) = ||#y - ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, "
+	"in the %n-th step of the iteration, i.e. %d(%n) = ||#y \\-m #A\\.c#x(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, "
 	"then the iteration stops if either d(n) == 0 or")
 DEFINITION (U"|%d(%n) - %d(%n-1)| / ||#y||^2 < %tolerance.")
-TERM (U"##infoLevel")
+TERM (U"%`infoLevel`")
 DEFINITION (U"determines the amount of information that is written to the info window during iterations. No info is written if the value is zero.")
 NORMAL (U"As an example consider:")
 CODE (U"a## = {{-4, 2, 2}, ")
@@ -3852,7 +3856,7 @@ CODE (U"writeInfoLine: result#")
 NORMAL (U"My info window shows:")
 NORMAL (U"0.17687074830212887 0 0.8594104308385341")
 NORMAL (U"")
-NORMAL (U"The same ##a\\# \\# # and ##y\\# # with extra output and only three iterations:")
+NORMAL (U"The same %`a##` and %`y#` with extra output and only three iterations:")
 CODE (U"result# = solveNonnegative# (a##, y#, 3, 1e-17, 2)")
 CODE (U"writeInfoLine: result#")
 NORMAL (U"Now my info window shows:")
@@ -3872,26 +3876,26 @@ NORMAL (U"The final solution has been reached after 6 extra iterations.")
 ENTRY (U"4.3 Constraints on the sparseness of the solution")
 NORMAL (U"As we have seen above, if the number of columns is larger than the number of rows then a unique solution does not exist "
 	"in general because the number of unknowns is larger than the number of equations. However, there is an exception:")
-NORMAL (U"If the matrix #A has some special properties #and the solution vector has to be sparse, i.e. most of its values are zero, "
-	"then we can find the #x that minimizes ||#y - ##A\\.cx#||^2.")
+NORMAL (U"If the matrix #A has some special properties %and the solution vector has to be sparse, i.e. most of its values are zero, "
+	"then we can find the #x that minimizes ||#y \\-m #A\\.c#x||^2.")
 NORMAL (U"In general an iterative procedure is needed for the minimization. We have implemented one based on %%iterative hard "
 	"thresholding% which is described by @@Blumensath & Davies (2010)@. ")
-NORMAL (U"##solveSparse\\#  (a\\# \\# , y\\#  [,x\\# ], %%maximumNumberOfNonzeros%, %%maximumNumberOfIterations%, %%tolerance%, %%info%)#")
+NORMAL (U"#`solveSparse#` (%`a##`, %`y#` [, %`x#`], %`maximumNumberOfNonzeros`, %`maximumNumberOfIterations`, %`tolerance`, %`infoLevel`)")
 NORMAL (U"The parameters have the following meaning:")
-TERM (U"##a\\# \\# , y\\# #")
+TERM (U"%`a##`, %`y#`")
 DEFINITION (U"the #A matrix and the #y vector.")
-TERM (U"##[,x\\# ]#")
+TERM (U"[, %`x#`]")
 DEFINITION (U"the optional vector to start the iterations. If not given the procedure starts with the zero vector.")
-TERM (U"##maximumNumberOfNonzeros")
+TERM (U"%`maximumNumberOfNonzeros`")
 DEFINITION (U"the maximum number of nonzero elements in the solution vector, i.e. the sparsity.")
-TERM (U"##maximumNumberOfIterations")
+TERM (U"%`maximumNumberOfIterations`")
 DEFINITION (U"the maximum number of iterations that should be run if the tolerance criterion is not met.")
-TERM (U"##tolerance")
+TERM (U"%`tolerance`")
 DEFINITION (U"is a criterion value that is needed to decide when to stop the iterations. If %d(%n) is the squared approximation error "
-	"in the %n-th step of the iteration, i.e. %d(%n) = ||#y - ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, "
+	"in the %n-th step of the iteration, i.e. %d(%n) = ||#y \\-m ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, "
 	"then the iteration stops if")
-DEFINITION (U"|%d(%n) - %d(%n-1)|/||#y||^2 < %tolerance.")
-TERM (U"##infoLevel")
+DEFINITION (U"|%d(%n) \\-m %d(%n\\-m1)| / ||#y||^2 < %tolerance.")
+TERM (U"%`infoLevel`")
 DEFINITION (U"determines the amount of information that is written to the info window during iterations. No info is written if the value is zero.")
 NORMAL (U"In the following example we first construct a sparse vector #x, with random numbers between 0.1 and 10, and a random "
 	"Gaussian matrix #A. From these two we construct our #y. We then solve the sparse system and compare its solution #xs to "
@@ -3908,7 +3912,7 @@ CODE (U"y# = mul# (a##, x#)")
 CODE (U"maximumNumberOfNonzeros = 10")
 CODE (U"maximumNumberOfIterations = 200")
 CODE (U"tolerance = 1e-17")
-CODE (U"info = 0; no info")
+CODE (U"info = 0   ; no info")
 CODE (U"xs# = solveSparse# (a##, y#, maximumNumberOfNonzeros, maximumNumberOfIterations, tolerance, info)")
 CODE (U"# We have found the solution now check")
 CODE (U"dif# = x# - xs#")
