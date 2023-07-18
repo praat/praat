@@ -133,6 +133,36 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 void manual_Picture_init (ManPages me);
 void manual_Picture_init (ManPages me) {
 
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Marks bottom every..."
+© Paul Boersma 2023-06-10
+
+See @@Marks left/right/top/bottom every...@.
+
+Examples of use:
+================
+################################################################################
+"Text bottom..."
+© Paul Boersma 2023-06-10
+
+See @@Text left/right/top/bottom...@.
+
+Examples of use:
+================
+################################################################################
+"Text top..."
+© Paul Boersma 2023-06-10
+
+See @@Text left/right/top/bottom...@.
+
+Examples of use:
+================
+################################################################################
+)~~~"
+MAN_PAGES_END
+
 MAN_BEGIN (U"Special symbols", U"ppgb", 20080227)
 INTRO (U"When drawing text into the @@Picture window@ or into the @@TextGridEditor@, "
 	"you can use %%backslash sequences% to display various kinds of special symbols. "
