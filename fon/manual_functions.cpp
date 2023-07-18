@@ -25,7 +25,7 @@ void manual_functions_init (ManPages me) {
 MAN_PAGES_BEGIN R"~~~(
 ################################################################################
 "Functions"
-© Paul Boersma, 2022-05-27
+© Paul Boersma 2022,2023
 
 A growing list of functions that you can use in @formulas and @scripting...
 
@@ -37,6 +37,10 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`appendFileLine` (%`filePath$`, `...`) – write texts, numbers, vectors and so on,
 	followed by a newline, at the end of an existing file
 	(create such a file if it does not exist yet)
+, @`appendInfo` (`...`) – write texts, numbers, vectors and so on,
+	to the Info window
+, @`appendInfoLine` (`...`) – write texts, numbers, vectors and so on,
+	followed by a newline, to the Info window
 , @`arccos` (%`x`) – inverse cosine
 , @`arccos#` (%`vector#`) – inverse cosine of each element of %`vector#`
 , @`arccos##` (%`matrix##`) – inverse cosine of each cell of %`matrix##`
@@ -52,9 +56,11 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`arctan` (%`x`) – inverse tangent
 , @`arctan#` (%`vector#`) – inverse tangent of each element of %`vector#`
 , @`arctan##` (%`matrix##`) – inverse tangent of each cell of %`matrix##`
+, @`arctan2` (%`y`, %`x`) – argument angle
 , @`arctanh` (%`x`) – inverse hyperbolic tangent
 , @`arctanh#` (%`vector#`) – inverse hyperbolic tangent of each element of %`vector#`
 , @`arctanh##` (%`matrix##`) – inverse hyperbolic tangent of each cell of %`matrix##`
+, @`assert` – condition checking
 , @`backslashTrigraphsToUnicode$` (%`string$`) – convert e.g. \bsct to \ct
 , @`barkToHertz` (%`x`) – from Bark-rate to acoustic frequency
 , @`besselI` (%`n`, %`x`) – modified Bessel function of the first kind, %I__%n_
@@ -74,6 +80,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`chooseReadFile$` (%`title$`) – pops up a file selection window for opening (or appending to) an existing file
 , @`chooseWriteFile$` (%`title$`, %`defaultFilename$`) – pops up a file selection window for saving to a new file
 , @`columnSums#` (%`matrix##`)
+, @`correlation` (%`u#`, %`v#`) – correlation (between \-m1 and +1) of two vectors
 , @`cos` (%`x`) – cosine
 , @`cos#` (%`vector#`) – cosine of each element of %`vector#`
 , @`cos##` (%`matrix##`) – cosine of each cell of %`matrix##`
@@ -151,6 +158,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`melToHertz` (%`x`) – from mel to acoustic frequency
 , @`mid$` (%`string$`, %`from`, %`n`) – the %`n` characters in %`string$` starting at position %`from`
 , @`min` (%`x`, `...`) – minimum
+, @`minusObject` (...) – shrink the selection of objects in the list
 , @`mul##` (%`a##`, %`b##`) – matrix multiplication
 , @`number` (%`a$`) – interpret a string as a number
 , @`number#` (%`a$#`) – interpret strings as numbers
@@ -160,6 +168,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`percent$` (%`number`, %`precision`) – format a number as a string,
 	with a trailing percent sign and %`precision` digits after the decimal point
 , @`phonToDifferenceLimens` (%`x`) – from perceptual loudness to jnd-scale
+, @`plusObject` (...) – extend the selection of objects in the list
 , @`randomBernoulli` (%`p`) – Bernoulli-distributed random deviate (0 or 1)
 , @`randomBernoulli#` (%`n`, %`p`) – %`n` independent Bernoulli-distributed zeroes and ones
 , @`randomGamma` (%`shape`, %`rate`) – gamma-distributed random deviate
@@ -201,10 +210,13 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`random_initializeWithSeedUnsafelyButPredictably` (%`seed`) – reproducible sequence of random numbers
 , @`readFile` (%`filePath$`) – read a number from a text file
 , @`readFile$` (%`filePath$`) – read a whole text file into a string
+, @`readFile#` (%`filePath$`) – read a vector from a text file
+, @`readFile##` (%`filePath$`) – read a matrix from a text file
 , @`readLinesFromFile$#` (%`filePath$`) – read all lines from a text file
 , @`rectify` (%`x`) – set to zero if negative (no change if positive)
 , @`rectify#` (%`vector#`) – rectify each element of %`vector#`
 , @`rectify##` (%`matrix##`) – rectify each cell of %`matrix##`
+, @`removeObject` (...) – remove objects from the list, by ID and/or name
 , @`repeat#` (%`v#`, %`n`) – repeat the whole sequence of elements of %`v#` %`n` times
 , @`replace$` (%`a$`, %`b$`, %`c$`, %`n`) – within %`a$`, replace the first %`n` occurrences of %`b$` with %`c$`, or all if %`n` = 0
 , @`replace_regex$` (%`a$`, %`b$`, %`c$`, %`n`) – within %`a$`,
@@ -217,6 +229,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`round#` (%`vector#`) – nearest integer of each element of %`vector#`
 , @`round##` (%`matrix##`) – nearest integer of each cell of %`matrix##`
 , @`rowSums#` (%`matrix##`)
+, @`selectObject` (...) – select objects in the list by ID and/or name
 , @`semitonesToHertz` (%`x`) – from logarithmic scale %re 100 Hz to acoustic frequency
 , @`sigmoid` (%`x`) – 1 / (1 + %e^^-%`x`^)
 , @`sigmoid#` (%`vector#`) – sigmoid of each element of %`vector#`
@@ -257,8 +270,11 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`unicode` (%`c$`) – the Unicode codepoint number that corresponds to character %`c$`
 , @`unicode$` (%`n`) – the character that corresponds to Unicode codepoint %`n`
 , @`unicodeToBackslashTrigraphs$` (%`string$`) – convert e.g. \ct to \bsct
+, @`vertical$` (%`stringArray$#`) – format a string array vertically
 , @`writeFile` (%`filePath$`, `...`) – create a new text file, and write texts, numbers, vectors and so on into it
 , @`writeFileLine` (%`filePath$`, `...`) – create a new text file, write texts, numbers, vectors and so on into it, followed by a newline
+, @`writeInfo` (`...`) – write texts, numbers, vectors and so on, to a clear Info window
+, @`writeInfoLine` (`...`) – write texts, numbers, vectors and so on, followed by a newline, to a clear Info window
 , @`zero#` (%`n`) – vector with %`n` elements that are all 0
 , @`zero##` (%`nrow`, %`ncol`) – matrix with %`nrow` \xx %`ncol` elements that are all 0
 
@@ -976,6 +992,31 @@ Syntax and semantics
 ====================
 #`columnSums#` (%`m##`)
 : compute the sum of the elements of each row of the matrix %`m##`.
+
+################################################################################
+"`correlation`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`correlation` (%`u#`, %`v#`)
+: compute the correlation between the vectors %`u#` and %`v#`.
+
+Precondition
+============
+The vectors %`u#` and %`v#` have to have equal numbers of elements.
+
+Definition
+==========
+If %N is the number of elements of both #u and #v,
+~	%m_%u = (1/%N) \su__%i=1_^%N %u_%i
+~	%m_%v = (1/%N) \su__%i=1_^%N %v_%i
+~	%ssq_%u = \su__%i=1_^%N (%u_%i \-m %m_%u)^2
+~	%ssq_%v = \su__%i=1_^%N (%v_%i \-m %m_%v)^2
+~	`correlation` (#u, #v) = \su__%i=1_^%N (%u_%i \-m %m_%u) · (%v_%i \-m %m_%v) /
+	\Vr(%ssq_%u · %ssq_%v)
 
 ################################################################################
 "`cos`"
@@ -1964,6 +2005,17 @@ Tests
 }
 
 ################################################################################
+"`minusObject`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`minusObject` (...)
+: deselect the objects given by IDs and/or names.
+
+################################################################################
 "`mul##`"
 © Paul Boersma 2023
 
@@ -2092,6 +2144,18 @@ The sensation level in phon is defined as
 so that the number of difference limens above threshold is
 ~	(1 / (0.463 · 0.072)) (10^^(0.072 / 10) (10 log (%I / %I_0))^ − 1)
 			= 30 · (1.0167^^SL^ − 1)
+
+################################################################################
+"`plusObject`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`plusObject` (...)
+: select the objects given by IDs and/or names,
+without deselecting any objects that are currently selected.
 
 ################################################################################
 "`randomBernoulli`"
@@ -2429,6 +2493,39 @@ Syntax and semantics
 : read a whole text file into a string.
 
 ################################################################################
+"`readFile#`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`readFile#` (%`filePath$`)
+: read the elements of a vector from a text file.
+
+The elements can be separated by horizontal and/or vertical space.
+
+################################################################################
+"`readFile##`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`readFile##` (%`filePath$`)
+: read the cells of a matrix from a text file.
+
+Each line of the text file is read as a row of the matrix;
+the elements of the row are separated by horizontal space (i.e. spaces and/or tabs).
+
+The matrix obtains as many rows as there are lines in the text file.
+
+Precondition
+============
+Each line of the text file should contain the same number of elements.
+
+################################################################################
 "`readLinesFromFile$#`"
 © Paul Boersma 2023
 
@@ -2471,6 +2568,18 @@ Syntax and semantics
 ====================
 #`rectify##` (%`m##`)
 : rectifies (@`rectify`) each cell of the matrix %`m##`.
+
+################################################################################
+"`removeObject`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`removeObject` (...)
+: remove the objects given by IDs and/or names,
+without (further) changing the selection.
 
 ################################################################################
 "`repeat#`"
@@ -2602,6 +2711,18 @@ Syntax and semantics
 ====================
 #`rowSums#` (%`m##`)
 : compute the sum of the elements of each row of the matrix %`m##`.
+
+################################################################################
+"`selectObject`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`selectObject` (...)
+: select the objects given by IDs and/or names,
+after deselecting any objects that are currently selected.
 
 ################################################################################
 "`semitonesToHertz`"
@@ -2761,7 +2882,7 @@ Syntax and semantics
 
 Definition
 ==========
-~	#`sinh` (%x) = (%e^%x - %e^^-%x^) / 2
+~	#`sinh` (%x) = (%e^%x \-m %e^^\-m%x^) / 2
 
 ################################################################################
 "`sinh#`"
@@ -3109,6 +3230,18 @@ Syntax and semantics
 #`unicodeToBackslashTrigraphs$` (%`string$`)
 : convert from unicode characters to backslash trigraphs,
 e.g. from “\ct” to “\bsct”.
+
+################################################################################
+"`vertical$`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`vertical$` (%`stringArray$#`)
+: format a string array as a vertical column of strings,
+by concatenating the elements while separating them by newlines.
 
 ################################################################################
 "`writeFile`"

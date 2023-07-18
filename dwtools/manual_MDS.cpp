@@ -994,7 +994,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (absolute mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"Stress formula's are #dependent of the scale of the Configuration: "
+NORMAL (U"Stress formulas are #dependent of the scale of the Configuration: "
 	"you will get #another stress value if you had pre-multiplied the "
 	"selected Configuration with any number greater than zero.")
 MAN_END
@@ -1004,7 +1004,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (interval mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"We use stress formula's that are independent of the scale of the "
+NORMAL (U"We use stress formulas that are independent of the scale of the "
 	"Configuration: you would have got the same stress value if you had "
 	"pre-multiplied the selected Configuration with any number greater "
 	"than zero.")
@@ -1015,7 +1015,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (i-spline mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"We use stress formula's that are independent of the scale "
+NORMAL (U"We use stress formulas that are independent of the scale "
 	"of the Configuration: you would have got the same stress value if "
 	"you had pre-multiplied the selected Configuration with any number "
 	"greater than zero.")
@@ -1026,7 +1026,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (monotone mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"We use stress formula's that are independent of the scale "
+NORMAL (U"We use stress formulas that are independent of the scale "
 	"of the Configuration: you would have got the same stress value if "
 	"you had pre-multiplied the selected Configuration with any number "
 	"greater than zero.")
@@ -1037,7 +1037,7 @@ MAN_BEGIN (U"Dissimilarity & Configuration: Get stress (ratio mds)...",
 INTRO (U"A command to obtain the @stress value for the selected @Dissimilarity "
 	"and @Configuration object.")
 ENTRY (U"Behaviour")
-NORMAL (U"We use stress formula's that are independent of the scale "
+NORMAL (U"We use stress formulas that are independent of the scale "
 	"of the Configuration: you would have got the same stress value if "
 	"you had pre-multiplied the selected Configuration with any number "
 	"greater than zero.")
@@ -1095,7 +1095,7 @@ ENTRY (U"Settings")
 LIST_ITEM (U"%%Normalized stress%, %%Kruskal's stress-1%, %%Kruskal's "
 	"stress-2% or %Raw stress%")
 ENTRY (U"Behaviour")
-NORMAL (U"Except for %absolute %mds, we use stress formula's that are "
+NORMAL (U"Except for %absolute %mds, we use stress formulas that are "
 	"independent of the scale of the Configuration (see @stress): you would "
 	"have got the same stress value if you had pre-multiplied the selected "
 	"Configuration with any number greater than zero.")
@@ -1625,57 +1625,57 @@ MAN_BEGIN (U"spline", U"djmw", 20121101)
 INTRO (U"A spline function %f is a piecewise polynomial function defined on "
 	"an interval [%x__%min_, %x__%max_] "
 	"with specified continuity constraints, i.e., when the interval [%x__%min_,"
-	" %x__%max_] is subdivided by points %\\xi__%i_ such that %x__%min_ = "
-	"%\\xi__%1_ < ... < %\\xi__%q_ = %%x__%max_, then within each subinterval "
-	"[%\\xi__%j_, %\\xi__%j+1_) the function is a polynomial %P__%j_ of "
+	" %x__%max_] is subdivided by points %\\xi_%i such that %x__%min_ = "
+	"%\\xi_1 < ... < %\\xi__%q_ = %x__%max_, then within each subinterval "
+	"[%\\xi_%j, %\\xi__%j+1_) the function is a polynomial %P_%j of "
 	"specified degree %k.")
-NORMAL (U"A %%knot sequence% %t = {%t__1_, ..., %t__%n+%k_}, where %n is the "
+NORMAL (U"A %%knot sequence% %t = {%t_1, ..., %t__%n+%k_}, where %n is the "
 	"number of free parameters that specify the spline function, is derived "
-	"from the %\\xi__%i_ by placing knots at the boundary values %\\xi__%i_ "
+	"from the %\\xi__%i_ by placing knots at the boundary values %\\xi_%i "
 	"according to the order of continuity at that boundary. The most common "
 	"continuity characteristics imposed on %f request that for adjacent "
-	"polynomials the derivatives up to order %k\\--2 match. For example, "
-	"the knot sequence of a spline of order %k for a partition of [%x__%min_,"
-	" %%x__%max_] into three intervals (%q = 4) will be %t__1_ = ... = "
-	"%t__%k_ = %x__%min_ (=%\\xi__1_), %t__%k+1_ = %\\xi__2_, %t__%k+2_ = "
-	"%\\xi__3_ , %t__%k+3_ = ... = %t__%k+%k+2_ = %x__%max_ (= %\\xi__4_). "
+	"polynomials the derivatives up to order %k\\-m2 match. For example, "
+	"the knot sequence of a spline of order %k for a partition of [%x__%min_, "
+	"%x__%max_] into three intervals (%q = 4) will be %t_1 = ... = "
+	"%t_%k = %x__%min_ (=%\\xi_1), %t__%k+1_ = %\\xi_2, %t__%k+2_ = "
+	"%\\xi_3 , %t__%k+3_ = ... = %t__%k+%k+2_ = %x__%max_ (= %\\xi_4). "
 	"This is called a %simple knot sequence, because all interior knots are "
 	"simple. The number of free parameters %n for this case obeys a simple "
 	"formula:")
 EQUATION (U"%n = %numberOfInteriorKnots + %order.")
 NORMAL (U"With suitable basis functions, for example, the M-spline family "
-	"%M__%i_(%x|%k, %t), %i=1..%n, we can write any spline %f in the form:")
-EQUATION (U"%f = \\su__%i=1..%n_ %a__%i_%M__%i_,")
-NORMAL (U"where the %M__%i_ are defined by the following recursive formula's:")
-EQUATION (U"%M__%i_(%x|1,%t) = 1 / (%t__%i+1_ \\-- %t__%i_),           %t__%i_ "
+	"%M_%i(%x|%k, %t), %i=1..%n, we can write any spline %f in the form:")
+EQUATION (U"%f = \\su__%i=1..%n_ %a_%i%M_%i,")
+NORMAL (U"where the %M_%i are defined by the following recursive formulas:")
+EQUATION (U"%M_%i(%x|1,%t) = 1 / (%t__%i+1_ \\-m %t_%i),           %t_%i "
 	"\\<_ %x < %t__%i+1_, 0 otherwise")
-EQUATION (U"%M__%i_(%x|%k,%t) = %k [(%x\\--%t__%i_)%M__%i_(%x|%k\\--1,%t) + "
-	"(%t__%i+%k_\\--%x)%M__%i+1_(%x|%k\\--1,%t)] / "
-	"((%k\\--1)(%t__%i+%k_\\--%t__%i_))")
+EQUATION (U"%M_%i(%x|%k,%t) = %k [(%x\\-m%t_%i)%M_%i(%x|%k\\-m1,%t) + "
+	"(%t__%i+%k_\\-m%x)%M__%i+1_(%x|%k\\-m1,%t)] / "
+	"((%k\\-m1)(%t__%i+%k_\\-m%t_%i))")
 NORMAL (U"These %M__%i_ are localized because %M__%i_(%x|%k,%t) > 0 only when "
-	"%t__%i_ \\<_ %x < %t__%i+%k_ and zero otherwise. Also, we have \\in"
-	" M__%i_(%x)%dx = 1. Because of this localization a change in coefficient "
-	"%a__%i_ will only effect %f within this interval.")
+	"%t_%i \\<_ %x < %t__%i+%k_ and zero otherwise. Also, we have \\in"
+	" %M_%i(%x)%dx = 1. Because of this localization a change in coefficient "
+	"%a_%i will only effect %f within this interval.")
 NORMAL (U"The following picture shows an M-spline of order 3 on the interval "
 	"[0, 1], with three interior knots at 0.3, 0.5 and 0.6.")
 PICTURE (5.0, 5.0, drawMsplineExample)
 NORMAL (U"Because the M-splines are nonnegative, %monotone splines% can be "
 	"derived from them by %integration:")
-EQUATION (U"%I__%i_(%x|%k,%t) = \\in__%xmin_^%x %M__%i_(%u|%k,%t) %du")
+EQUATION (U"%I_%i(%x|%k,%t) = \\in__%xmin_^%x %M_%i(%u|%k,%t) %du")
 NORMAL (U"Because each %M__%i_(%x|%k, %t) is a piecewise polynomial of degree"
-	" %k\\--1, each %I__%i_ will be of degree %k. Now we can write:")
-EQUATION (U"%f = \\su__%i=1..%n_ %b__%i_%I__%i_(%x|%k,%t)")
+	" %k\\-m1, each %I_%i will be of degree %k. Now we can write:")
+EQUATION (U"%f = \\su__%i=1..%n_ %b_%i %I_%i(%x|%k,%t)")
 NORMAL (U"We can use an M-spline of order %k+1 with a simple knot sequence %t, "
-	"for which %t__%j_ \\<_ x < %t__%j+1_, to put "
+	"for which %t_%j \\<_ x < %t__%j+1_, to put "
 	"the I-spline of order %k into a more convenient form:")
-EQUATION (U"%I__%i_(%x|%k,%t) = 0,     %i > %j")
-EQUATION (U"%I__%i_(%x|%k,%t) = \\su__%m=%i+1..%j_ (%t__%m+%k+1_\\--"
-	"%t__%m_)%M__%m_(%x|%k+1,%t)/(%k+1),     %j\\--%k \\<_ %i \\<_ %j")
-EQUATION (U"%I__%i_(%x|%k,%t) = 1,     %i < %j\\--%k")
+EQUATION (U"%I_%i(%x|%k,%t) = 0,     %i > %j")
+EQUATION (U"%I_%i(%x|%k,%t) = \\su__%m=%i+1..%j_ (%t__%m+%k+1_\\-m"
+	"%t_%m)%M_%m(%x|%k+1,%t)/(%k+1),     %j\\-m%k \\<_ %i \\<_ %j")
+EQUATION (U"%I_%i(%x|%k,%t) = 1,     %i < %j\\-m%k")
 NORMAL (U"The following figure shows the I-splines that were derived from "
 	"the M-splines above.")
 PICTURE (5.0, 5.0, drawIsplineExample)
-NORMAL (U"These spline formula's were taken from @@Ramsay (1988)@ and the "
+NORMAL (U"These spline formulas were taken from @@Ramsay (1988)@ and the "
 	"errors in his I-spline formulas were corrected.")
 MAN_END
 
