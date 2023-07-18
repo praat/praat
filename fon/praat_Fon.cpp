@@ -3769,11 +3769,13 @@ praat_addAction2 (classIntensity, 1, classPitch, 1, U"Query", nullptr, 0, nullpt
 			nullptr, 0, NEW1_Sound_Point_Pitch_Duration_to_Sound);
 
 	INCLUDE_MANPAGES (manual_Manual_init)
-	INCLUDE_MANPAGES (manual_Script_init)
+	INCLUDE_MANPAGES (manual_scripting_init)
+	INCLUDE_MANPAGES (manual_demoWindow_init)
 	INCLUDE_MANPAGES (manual_functions_init)
 	INCLUDE_MANPAGES (manual_Picture_init)
 
 	INCLUDE_MANPAGES (manual_Fon_init)
+	INCLUDE_MANPAGES (manual_whatsnew_init)
 	INCLUDE_MANPAGES (manual_tutorials_init)
 	INCLUDE_MANPAGES (manual_glossary_init)
 	INCLUDE_MANPAGES (manual_references_init)

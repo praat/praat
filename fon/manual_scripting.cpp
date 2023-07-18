@@ -1,4 +1,4 @@
-/* manual_Script.cpp
+/* manual_scripting.cpp
  *
  * Copyright (C) 1992-2023 Paul Boersma
  *
@@ -19,38 +19,8 @@
 #include "ManPagesM.h"
 #include "praat_version.h"
 
-void manual_Script_init (ManPages me);
-void manual_Script_init (ManPages me) {
-
-MAN_PAGES_BEGIN
-R"~~~(
-################################################################################
-"Marks bottom every..."
-© Paul Boersma 2023-06-10
-
-See @@Marks left/right/top/bottom every...@.
-
-Examples of use:
-================
-################################################################################
-"Text bottom..."
-© Paul Boersma 2023-06-10
-
-See @@Text left/right/top/bottom...@.
-
-Examples of use:
-================
-################################################################################
-"Text top..."
-© Paul Boersma 2023-06-10
-
-See @@Text left/right/top/bottom...@.
-
-Examples of use:
-================
-################################################################################
-)~~~"
-MAN_PAGES_END
+void manual_scripting_init (ManPages me);
+void manual_scripting_init (ManPages me) {
 
 MAN_BEGIN (U"Action commands", U"ppgb", 20230130)
 INTRO (U"The commands in the @@Dynamic menu@ of the @@Objects window@.")
@@ -237,12 +207,12 @@ NORMAL (U"To hide a built-in command from a fixed or dynamic menu, or to make a 
 	"you typically use the @ButtonEditor.")
 ENTRY (U"Where is the buttons file?")
 NORMAL (U"The buttons file is in your Praat @@preferences folder@.")
-NORMAL (UR"(On Windows the file is called “Buttons5.ini”,
-for instance “C:\bsUsers\bsMiep\bsPraat\bsButtons5.ini”.)")
-NORMAL (U"On MacOS it is called “Buttons5”, "
-	"for instance “/Users/miep/Library/Preferences/Praat Prefs/Buttons5”.")
-NORMAL (U"On Linux it is called “buttons5”, "
-	"for instance “/home/miep/.praat-dir/buttons5”.")
+NORMAL (U"On Windows the file is called #`Buttons5.ini`, "
+	"for instance `C:\\Users\\Miep\\Praat\\Buttons5.ini`.")
+NORMAL (U"On MacOS it is called #`Buttons5`, "
+	"for instance `/Users/miep/Library/Preferences/Praat Prefs/Buttons5`.")
+NORMAL (U"On Linux it is called #`buttons5`, "
+	"for instance `/home/miep/.praat-dir/buttons5`.")
 MAN_END
 
 MAN_BEGIN (U"Calculator", U"ppgb", 20210228)
@@ -1470,11 +1440,11 @@ INTRO (U"The Praat preferences folder is the folder where Praat saves the @@pref
 	"and where you can install @@plug-ins@ and save the preferences of your scripts (in your subfolder of the #apps subfolder). "
 	"If the preferences folder does not exist, it will automatically be created when you start Praat.")
 ENTRY (U"Windows")
-NORMAL (U"If you are user #Miep, your Praat preferences folder will be ##C:\\bsUsers\\bsMiep\\bsPraat\\bs#.")
+NORMAL (U"If you are user #Miep, your Praat preferences folder will be `C:\\Users\\Miep\\Praat\\`.")
 ENTRY (U"Macintosh")
-NORMAL (U"If you are user #miep, your Praat preferences folder will be ##/Users/miep/Library/Preferences/Praat Prefs/#.")
+NORMAL (U"If you are user #miep, your Praat preferences folder will be `/Users/miep/Library/Preferences/Praat Prefs/`.")
 ENTRY (U"Linux")
-NORMAL (U"If your home folder is ##/home/miep/#, your Praat preferences folder will be ##/home/miep/.praat-dir/#.")
+NORMAL (U"If your home folder is #`/home/miep/`, your Praat preferences folder will be `/home/miep/.praat-dir/`.")
 MAN_END
 
 MAN_BEGIN (U"preferences file", U"ppgb", 20201229)
@@ -1486,12 +1456,12 @@ NORMAL (U"The preferences file is written to disk when you quit Praat, "
 	"(but should not edit) with any text editor.")
 ENTRY (U"Where is the preferences file?")
 NORMAL (U"The preferences file is in your Praat @@preferences folder@.")
-NORMAL (U"On Windows it is called ##Preferences5.ini#, "
-	"for instance ##C:\\bsUsers\\bsMiep\\bsPraat\\bsPreferences5.ini#.")
-NORMAL (U"On Macintosh it is called #Prefs5, "
-	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Prefs5#.")
-NORMAL (U"On Linux the file is called #prefs5, "
-	"for instance ##/home/miep/.praat-dir/prefs5#.")
+NORMAL (U"On Windows it is called #`Preferences5.ini`, "
+	"for instance `C:\\Users\\Miep\\Praat\\Preferences5.ini`.")
+NORMAL (U"On Macintosh it is called #`Prefs5`, "
+	"for instance `/Users/miep/Library/Preferences/Praat Prefs/Prefs5`.")
+NORMAL (U"On Linux the file is called #`prefs5`, "
+	"for instance `/home/miep/.praat-dir/prefs5`.")
 MAN_END
 
 MAN_PAGES_BEGIN
@@ -4485,206 +4455,6 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20201229)
-INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
-	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
-	"and stand-alone programs (see @@Scripting 9. Turning a script into a stand-alone program@).")
-NORMAL (U"The Demo window is Praat's least visible window: you can create it only through a script. "
-	"Try the following script after selecting a Sound object:")
-CODE (U"demo Draw: 0, 3, -1, 1, \"yes\", \"curve\"")
-NORMAL (U"You see the Demo window turning up on the screen, with the Sound painted into it. "
-	"It works because the ##Draw...# command is available in the Objects window when you select a Sound. Then try:")
-CODE (U"demo Draw line: 0, -1, 3, 1")
-NORMAL (U"You see a line drawn from (0 seconds, -1 Pa) to (3 seconds, +1 Pascal) in the waveform. "
-	"It works because the ##Draw line...# command is available in the Picture window. Then try:")
-CODE (U"demo Erase all")
-CODE (U"demo Red")
-CODE (U"demo Axes: 0, 100, 0, 100")
-CODE (U"demo Text: 50, \"centre\", 50, \"half\", \"Hello\"")
-NORMAL (U"You see a text appearing in red, in the centre of the window. "
-	"This works because you are using commands from the Picture window, including the @@Axes...@ command, "
-	"which sets the world coordinates to something else than before (before, the world coordinates were determined by the Sound).")
-NORMAL (U"Now suppose you want the Sound to appear in the top half of the window, "
-	"and some texts in the bottom left and bottom right corners of the window. "
-	"You can use @@Select outer viewport...@ and @@Select inner viewport...@, "
-	"if you know that the size of the Demo window is \"100\" horizontally and \"100\" vertically (rather than 12\\xx12, as the Picture window), "
-	"and that the point (0, 0) lies in the bottom left (rather than the top left, as in the Picture window):")
-CODE (U"demo Erase all")
-CODE (U"demo Black")
-CODE (U"demo Times")
-CODE (U"demo 24")
-CODE (U"demo Select outer viewport: 0, 100, 50, 100")
-CODE (U"demo Draw: 0, 0, 0, 0, \"yes\", \"curve\"")
-CODE (U"demo Select inner viewport: 0, 100, 0, 100")
-CODE (U"demo Axes: 0, 10, 0, 10")
-CODE (U"demo Text: 0, \"left\", 0, \"bottom\", \"Left bottom corner\"")
-CODE (U"demo Text: 10, \"right\", 0, \"bottom\", \"Right bottom corner\"")
-NORMAL (U"As the title page of a presentation, you could do:")
-CODE (U"demo Erase all")
-CODE (U"demo Select inner viewport: 0, 100, 0, 100")
-CODE (U"demo Axes: 0, 100, 0, 100")
-CODE (U"demo Paint rectangle: \"purple\", 0, 100, 0, 100")
-CODE (U"demo Pink")
-CODE (U"demo Text: 50, \"centre\", 50, \"half\", \"This is my title\"")
-ENTRY (U"Getting user input")
-NORMAL (U"For almost all applications, you will want the user (or the participant in an experiment) to be able to click on things in the Demo window, "
-	"or to control the Demo window by pressing keys. Here is a presentation with two screens:")
-CODE (U"demo Erase all")
-CODE (U"demo Select inner viewport: 0, 100, 0, 100")
-CODE (U"demo Axes: 0, 100, 0, 100")
-CODE (U"demo Paint rectangle: \"purple\", 0, 100, 0, 100")
-CODE (U"demo Pink")
-CODE (U"demo Text: 50, \"centre\", 50, \"half\", \"This is the first page\"")
-CODE (U"#demoWaitForInput ( )")
-CODE (U"demo Erase all")
-CODE (U"demo Paint rectangle: \"purple\", 0, 100, 0, 100")
-CODE (U"demo Text: 50, \"centre\", 50, \"half\", \"This is the second page\"")
-NORMAL (U"In this example, you go from the first to the second screen either by clicking with the mouse or by pressing any key. "
-	"You will usually want to be more selective in your choice of user actions to respond to. "
-	"The function #demoWaitForInput always returns 1, so that you can use it nicely in a loop, in which you can react selectively:")
-CODE (U"label FIRST_SCREEN")
-CODE (U"demo Erase all")
-CODE (U"demo Black")
-CODE (U"demo Times")
-CODE (U"demo 24")
-CODE (U"demo Select inner viewport: 0, 100, 0, 100")
-CODE (U"demo Axes: 0, 100, 0, 100")
-CODE (U"demo Paint rectangle: \"purple\", 0, 100, 0, 100")
-CODE (U"demo Pink")
-CODE (U"demo Text: 50, \"centre\", 50, \"half\", \"This is the first page\"")
-CODE (U"while demoWaitForInput ( )")
-	CODE1 (U"if #demoClicked ( )")
-		CODE2 (U"goto SECOND_SCREEN")
-	CODE1 (U"elsif #demoKeyPressed ( )")
-		CODE2 (U"if ##demoKey\\$ # ( ) = \"\\->\" or demoKey\\$  ( ) = \" \"")
-			CODE3 (U"goto SECOND_SCREEN")
-		CODE2 (U"endif")
-	CODE1 (U"endif")
-CODE (U"endwhile")
-CODE (U"label SECOND_SCREEN")
-CODE (U"demo Erase all")
-CODE (U"demo Paint rectangle: \"purple\", 0, 100, 0, 100")
-CODE (U"demo Text: 50, \"centre\", 50, \"half\", \"This is the second page\"")
-CODE (U"while demoWaitForInput ( )")
-	CODE1 (U"if demoClicked ( )")
-		CODE2 (U"goto END")
-	CODE1 (U"elsif demoKeyPressed ( )")
-		CODE2 (U"if demoKey\\$  ( ) = \"\\<-\"")
-			CODE3 (U"goto FIRST_SCREEN")
-		CODE2 (U"elsif demoKey\\$  ( ) = \"\\->\" or demoKey\\$  ( ) = \" \"")
-			CODE3 (U"goto END")
-		CODE2 (U"endif")
-	CODE1 (U"endif")
-CODE (U"endwhile")
-CODE (U"label END")
-NORMAL (U"This script allows you to use the arrow keys and the space bar to navigate between the two screens. A shorter version is:")
-CODE (U"label FIRST_SCREEN")
-CODE (U"demo Erase all")
-CODE (U"demo Black")
-CODE (U"demo Times")
-CODE (U"demo 24")
-CODE (U"demo Select inner viewport: 0, 100, 0, 100")
-CODE (U"demo Axes: 0, 100, 0, 100")
-CODE (U"demo Paint rectangle: \"purple\", 0, 100, 0, 100")
-CODE (U"demo Pink")
-CODE (U"demo Text: 50, \"centre\", 50, \"half\", \"This is the first page\"")
-CODE (U"while demoWaitForInput ( )")
-	CODE1 (U"goto SECOND_SCREEN #demoInput (\"\\bu\\-> \")")
-CODE (U"endwhile")
-CODE (U"label SECOND_SCREEN")
-CODE (U"demo Erase all")
-CODE (U"demo Paint rectangle: \"purple\", 0, 100, 0, 100")
-CODE (U"demo Text: 50, \"centre\", 50, \"half\", \"This is the second page\"")
-CODE (U"while demoWaitForInput ( )")
-	CODE1 (U"goto END demoInput (\"\\bu\\-> \")")
-	CODE1 (U"goto FIRST_SCREEN demoInput (\"\\<-\")")
-CODE (U"endwhile")
-CODE (U"label END")
-NORMAL (U"This uses two tricks, namely the possibility of following the #goto statement by a condition "
-	"and using #demoInput to quickly test for multiple possible inputs (the bullet represents a mouse click).")
-ENTRY (U"Getting click locations")
-NORMAL (U"You can use the functions #demoX and #demoY to see where the user has clicked. "
-	"These functions respond in world coordinates. To see whether the user has clicked in the sound that occupies the "
-	"upper half of the screen in the above example, you do for instance")
-CODE (U"while demoWaitForInput ( )")
-	CODE1 (U"if demoClicked ( )")
-		CODE2 (U"demo Select outer viewport: 0, 100, 50, 100")
-		CODE2 (U"demo Axes: 0, 3, -1, 1")
-		CODE2 (U"if #demoX ( ) >= 0 and demoX ( ) < 3 and #demoY ( ) >= -1 and demoY ( ) < 1")
-NORMAL (U"The last line can be shortened to:")
-		CODE2 (U"if #demoClickedIn (0, 3, -1, 1)")
-NORMAL (U"Another example of when you want to know the click location is when you test for a click on a button "
-	"that you drew on the screen:")
-CODE (U"demo Paint rounded rectangle: \"pink\", 30, 70, 16, 24")
-CODE (U"demo Text: 50, \"centre\", 20, \"half\", \"Analyse\"")
-CODE (U"while demoWaitForInput ( )")
-	CODE1 (U"goto ANALYSE demoClickedIn (30, 70, 16, 24)")
-ENTRY (U"Full-screen viewing")
-NORMAL (U"When you click in the \"zoom box\" (the green button in the title bar of the Demo window on the Mac), "
-	"the Demo window will zoom out very strongly: it will fill up the whole screen. The menu bar becomes invisible, "
-	"although you can still make it temporarily visible and accessible by moving the mouse to the upper edge of the screen. "
-	"The Dock also becomes invisible, although you can make it temporarily visible and accessible by moving the mouse to the edge "
-	"of the screen (the left, bottom, or right edge, depending on where your Dock normally is). "
-	"When you click the zoom box again, the Demo window is restored to its original size. See also Tips and Tricks below.")
-ENTRY (U"Asynchronous play")
-NORMAL (U"If you select a Sound and execute the command")
-CODE (U"Play")
-NORMAL (U"Praat will play the whole sound before proceeding to the next line of your script. "
-	"You will often instead want Praat to continue running your script while the sound is playing. "
-	"To accomplish that, use the \"asynchronous\" directive:")
-CODE (U"Create Sound as pure tone: \"tone\", 1, 0, 0.2, 44100, 440, 0.2, 0.01, 0.01")
-CODE (U"#asynchronous Play")
-CODE (U"Remove")
-NORMAL (U"The sound will continue to play, even after the Sound object has been removed.")
-NORMAL (U"Please note that a following Play command will interrupt the playing of the first:")
-CODE (U"while demoWaitForInput ( )")
-	CODE1 (U"if demoClicked ( )")
-		CODE2 (U"Create Sound as pure tone: \"tone\", 1, 0, 3.0, 44100,")
-		CODE2 (U"... randomGauss (440, 100), 0.2, 0.01, 0.01")
-		CODE2 (U"asynchronous Play")
-		CODE2 (U"Remove")
-	CODE1 (U"endif")
-CODE (U"endwhile")
-NORMAL (U"The first sound will stop playing soon after the user clicks for the second time.")
-ENTRY (U"Animation")
-NORMAL (U"In the above examples, things will often get drawn to the screen with some delay, "
-	"i.e., you may not see the erasures and paintings happen. This is because several operating systems "
-	"use %buffering of graphics. These systems will draw the graphics only just before getting user input. "
-	"This means that #demoWaitForInput is the place where your drawings will typically be painted on the screen. "
-	"If you want painting to happen earlier (e.g. in animations), you can use")
-CODE (U"demoShow ( )")
-NORMAL (U"Also in animations, you will often want to regulate the time span between two consecutive drawings. "
-	"If you want 0.05 seconds between drawings, you can put Praat to sleep temporarily with")
-CODE (U"sleep (0.05)")
-NORMAL (U"If you need user input during the animation, you can replace #demoWaitForInput or #demoShow with")
-CODE (U"demoPeekInput()")
-NORMAL (U"which returns immediately without waiting and will tell you (via e.g. #demoClicked or ##demoKey\\$ #) "
-	"whether a mouse or key event happened during drawing or sleeping.")
-ENTRY (U"Miscellaneous")
-NORMAL (U"To see whether any function keys are pressed (during a mouse click or key press), "
-	"you can use ##demoShiftKeyPressed ( )#, ##demoCommandKeyPressed ( )#, and ##demoOptionKeyPressed ( )#.")
-NORMAL (U"To put some text in the title bar of the Demo window, try")
-CODE (U"#demoWindowTitle: \"This is the title of my presentation\"")
-ENTRY (U"Tips and Tricks")
-NORMAL (U"The initial size of the Demo window when you start it up is 1344\\xx756 pixels, "
-	"which is 70 percent of a standard wide screen (1920\\xx1080 pixels). "
-	"This means that if a font looks good at a size of 35 in the initial Demo window, "
-	"the font will look equally good at a size of 50 when you use a 1920\\xx1080 video projector full-screen.")
-NORMAL (U"If you resize the Demo window with the handle in the bottom left, or if you zoom the window out to the full screen, "
-	"you may see that the relative positions of the contents of the window will change. Also, clicking on buttons and in parts "
-	"of the window may yield unexpected %x and %y values. It is therefore advisable to resize the window only if you are on a page "
-	"that you can get out of by pressing a key, or by clicking anywhere in the window without using #demoX, #demoY or #demoClickedIn.")
-NORMAL (U"If you click away the Demo window while it is waiting for input, you get a message saying \"You interrupted the script...\". "
-	"If you do not want to see this message, you should make sure that the user can reach the end of the script, for instance by "
-	"pressing the \\-> key on the last page. To make sure the user sees that the script has ended, you could end it with ##demo Erase all#.")
-NORMAL (U"Your demo can save its preferences in a folder of its choice, "
-	"e.g. in ##'preferencesDirectory\\$ '/../GuineaPigAnalyzer# if your demo is called GuineaPigAnalyzer. "
-	"If you want to be less conspicuous and like to use the Praat preferences folder instead, "
-	"please use the ##apps# subfolder, in this way:")
-CODE (U"createFolder: preferencesDirectory\\$  + \"/apps\"")
-CODE (U"createFolder: preferencesDirectory\\$  + \"/apps/GuineaPigAnalyzer\"")
-MAN_END
-
 }
 
-/* End of file manual_Script.cpp */
+/* End of file manual_scripting.cpp */
