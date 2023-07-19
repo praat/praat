@@ -137,7 +137,7 @@ MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
 "Marks bottom every..."
-© Paul Boersma 2023-06-10
+© Paul Boersma 2023
 
 See @@Marks left/right/top/bottom every...@.
 
@@ -145,7 +145,7 @@ Examples of use:
 ================
 ################################################################################
 "Text bottom..."
-© Paul Boersma 2023-06-10
+© Paul Boersma 2023
 
 See @@Text left/right/top/bottom...@.
 
@@ -153,12 +153,279 @@ Examples of use:
 ================
 ################################################################################
 "Text top..."
-© Paul Boersma 2023-06-10
+© Paul Boersma 2023
 
 See @@Text left/right/top/bottom...@.
 
 Examples of use:
 ================
+
+################################################################################
+"World menu"
+© Paul Boersma 2023
+
+One of the menus of the @@Picture window@.
+
+Purpose
+=======
+To draw text, lines, curves or shapes.
+
+The coordinates for commands in the ##World menu# are to be specified as world coordinates,
+i.e. in the same coordinates as the latest drawing (e.g. seconds horizontally
+and pascals vertically) or as specified by the latest @@Axes...@ command.
+
+################################################################################
+"Draw rectangle..."
+© Paul Boersma 2023
+
+A command in the @@World menu@ of the @@Picture window@,
+to draw a rectangle bounded by the %x and %y points given,
+in the current colour and with the current line width and line type.
+
+The coordinates %x and %y are to be specified as world coordinates,
+i.e. in the same coordinates as the latest drawing (e.g. seconds horizontally
+and pascals vertically) or as specified by the latest @@Axes...@ command.
+
+################################################################################
+"Paint rectangle..."
+© Paul Boersma 2023
+
+A command in the @@World menu@ of the @@Picture window@,
+to fill a rectangle bounded by the given %x and %y points,
+with the given colour.
+
+The coordinates %x and %y are to be specified as world coordinates,
+i.e. in the same coordinates as the latest drawing (e.g. seconds horizontally
+and pascals vertically) or as specified by the latest @@Axes...@ command.
+
+################################################################################
+"Draw rounded rectangle..."
+© Paul Boersma 2023
+
+A command in the @@World menu@ of the @@Picture window@,
+to draw a rectangle bounded by the %x and %y points given,
+and with the given radius for rounding the corners (in millimetres),
+in the current colour and with the current line width and line type.
+
+The coordinates %x and %y are to be specified as world coordinates,
+i.e. in the same coordinates as the latest drawing (e.g. seconds horizontally
+and pascals vertically) or as specified by the latest @@Axes...@ command.
+
+################################################################################
+"Paint rounded rectangle..."
+© Paul Boersma 2023
+
+A command in the @@World menu@ of the @@Picture window@,
+to fill a rectangle bounded by the given %x and %y points,
+and with the given radius for rounding the corners (in millimetres),
+with the given colour.
+
+The coordinates %x and %y are to be specified as world coordinates,
+i.e. in the same coordinates as the latest drawing (e.g. seconds horizontally
+and pascals vertically) or as specified by the latest @@Axes...@ command.
+
+################################################################################
+"Black"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to black.
+
+################################################################################
+"Blue"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to blue.
+
+################################################################################
+"Colour..."
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings.
+
+You can specify the colour as one of the colour names in the Pen menu,
+or as a grey number betwene 0.0 (black) and 1.0 (white), or as a RGB sequence.
+
+In an RGB sequence you specify
+a red value between 0.0 (no red) and 1.0 (brightest red),
+a green value between 0.0 (no green) and 1.0 (brightest green),
+and a blue value between 0.0 (no blue) and 1.0 (brightest blue).
+For instance, {0,1,0} is green, {1,1,1} is white, or { 1, 0.5, 0.5 } is pink.
+
+################################################################################
+"Cyan"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to cyan.
+
+################################################################################
+"Pink"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to pink.
+
+################################################################################
+"Green"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to green.
+
+################################################################################
+"Grey"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to grey.
+
+################################################################################
+"Lime"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to lime.
+
+################################################################################
+"Magenta"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to magenta.
+
+################################################################################
+"Maroon"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to maroon.
+
+################################################################################
+"Navy"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to navy blue.
+
+################################################################################
+"Olive"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to olive green.
+
+################################################################################
+"Purple"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to purple.
+
+################################################################################
+"Red"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to red.
+
+################################################################################
+"Silver"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to silver (light grey).
+
+################################################################################
+"Teal"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to teal.
+
+################################################################################
+"Yellow"
+© Paul Boersma 2023
+
+A command in the @@Pen menu@ of the @@Picture window@,
+to set the colour of subsequent drawings to yellow.
+
+################################################################################
+"Helvetica"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font of subsequent drawings to Helvetica,
+or to s similar sans-serif font.
+
+################################################################################
+"Palatino"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font of subsequent drawings to Palatino,
+or to a similar serif font.
+
+################################################################################
+"Times"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font of subsequent drawings to Times,
+or to a similar serif font.
+
+################################################################################
+"Courier"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font of subsequent drawings to Courier,
+or to a similar fixed-width font.
+
+################################################################################
+"10"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font size of subsequent drawings to 10 points.
+
+################################################################################
+"12"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font size of subsequent drawings to 12 points.
+
+################################################################################
+"14"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font size of subsequent drawings to 14 points.
+
+################################################################################
+"18"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font size of subsequent drawings to 18 points.
+
+################################################################################
+"24"
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font size of subsequent drawings to 24 points.
+
+################################################################################
+"Font size..."
+© Paul Boersma 2023
+
+A command in the @@Font menu@ of the @@Picture window@,
+to set the font size of subsequent drawings to a specific number of points.
+
 ################################################################################
 )~~~"
 MAN_PAGES_END

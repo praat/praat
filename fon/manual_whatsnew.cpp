@@ -987,7 +987,7 @@ the column index was larger than the number of rows.
 
 ##5.3.60# (8 December 2013)
 • Mac 64-bit: implemented swiping (to scroll with the trackpad) and pinching (to zoom with the trackpad).
-• Scripting: @`backslashTrigraphsToUnicode` () and @`unicodeToBackslashTrigraphs` ().
+• Scripting: @`backslashTrigraphsToUnicode$` () and @`unicodeToBackslashTrigraphs$` ().
 
 ##5.3.59# (20 November 2013)
 • EEG: faster reading of BDF and EDF files.

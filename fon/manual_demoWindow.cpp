@@ -140,7 +140,7 @@ The function @`demoWaitForInput` always returns 1, so that you can use it nicely
 	while \#`{demoWaitForInput} ()
 		if \`{demoClicked} ()
 			goto END
-		elsif \`{demoKeyPressed ()
+		elsif \`{demoKeyPressed} ()
 			if \`{demoKey$} () = “←”
 				goto FIRST_SCREEN
 			elsif \`{demoKey$} () = “→” or \`{demoKey$} () = “ ”
@@ -305,8 +305,8 @@ e.g. in #`'preferencesDirectory$'/../GuineaPigAnalyzer` if your demo is called G
 If you want to be less conspicuous and like to use the Praat preferences folder instead,
 please use the #`apps` subfolder, in this way:
 
-	\`{createFolder:} preferencesDirectory$ + “/apps”
-	\`{createFolder:} preferencesDirectory$ + “/apps/GuineaPigAnalyzer”
+	\`{createFolder}: preferencesDirectory$ + “/apps”
+	\`{createFolder}: preferencesDirectory$ + “/apps/GuineaPigAnalyzer”
 
 ################################################################################
 )~~~"
