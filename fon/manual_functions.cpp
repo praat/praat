@@ -1402,9 +1402,9 @@ Once the function finally returns, it returns the value 1 (true).
 This makes it possible to use this function in a `while` loop:
 {;
 	while \#`{demoWaitForInput} ()
-		if \@`{demoClicked} ())
+		if \`{demoClicked} ())
 			# handle the mouse click
-		elsif \@`{demoKeyPressed} ())
+		elsif \`{demoKeyPressed} ())
 			# handle the key press
 		endif
 	endwhile

@@ -128,17 +128,30 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 					p ++;
 				}
 			}
-		} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{' ||
-			*p == U'\\' && p [1] == U'#' && p [2] == U'@' && p [3] == U'{'
+		} else if (
+			*p == U'\\' && p [1] == U'@' && p [2] == U'{' ||
+			*p == U'\\' && p [1] == U'#' && p [2] == U'@' && p [3] == U'{' ||
+			*p == U'\\' && p [1] == U'`' && p [2] == U'{' ||
+			*p == U'\\' && p [1] == U'#' && p [2] == U'`' && p [3] == U'{'
 		) {
 			/*
-				We found "\@{" or "\#@{", starting a link in running text or in verbatim code.
+				We found "\@{" or "\#@{" or "\`{" or "\#`{",
+				starting a link in running text or in verbatim code.
+				TODO: should not occur in running text.
 			*/
-			const bool thinLink = ( p [1] != U'#' );
-			const char32 *from = p + 4 - thinLink;
+			const bool boldLink = ( p [1] == U'#' );
+			const char32 *from = p + 3 + boldLink;
+			const bool verbatimLink = ( from [-2] == U'`' );
+			const conststring32 startMessage =
+				boldLink ? verbatimLink ? U"\\#`{" : U"\\#@{" : verbatimLink ? U"\\`{" : U"\\@{";
+			if (verbatimLink) {
+				if (to - link >= MAXIMUM_LINK_LENGTH)
+					Melder_throw (U"(ManPages::grind:) Link starting with “", startMessage, U"” is too long:\n", text);
+				*to ++ = U'`';
+			}
 			while (*from != U'}' && *from != U'|' && *from != U'\0') {
 				if (to - link >= MAXIMUM_LINK_LENGTH)
-					Melder_throw (U"(ManPages::grind:) Link starting with “\\@{” is too long:\n", text);
+					Melder_throw (U"(ManPages::grind:) Link starting with “", startMessage, U"” is too long:\n", text);
 				*to ++ = *from ++;
 			}
 			/*
@@ -154,7 +167,7 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 						if (*from == U'\0')
 							break;
 						if (to - link >= MAXIMUM_LINK_LENGTH)
-							Melder_throw (U"(ManPages::grind:) Link starting with “\\@{” and containing “||” is too long:\n", text);
+							Melder_throw (U"(ManPages::grind:) Link starting with “", startMessage, U"” and containing “||” is too long:\n", text);
 						*to ++ = *from ++;
 					}
 					Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
@@ -184,58 +197,13 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 					*to ++ = U'.';
 				}
 			}
+			if (verbatimLink) {
+				Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+				*to ++ = U'`';
+			}
 			Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
 			*to = U'\0';
 
-			p = from + ( *from == U'}' );   // add bool to pointer: skip '}' but not '\0'
-			return p;
-		} else if (*p == U'\\' && p [1] == U'`' && p [2] == U'{' ||
-			*p == U'\\' && p [1] == U'#' && p [2] == U'`' && p [3] == U'{'
-		) {
-			/*
-				We found "\`{" or "\#`{", starting a verbatim link in verbatim text.
-			*/
-			const bool thinLink = ( p [1] != U'#' );
-			const char32 *from = p + 4 - thinLink;
-			if (to - link >= MAXIMUM_LINK_LENGTH)
-				Melder_throw (U"(ManPages::grind:) Link starting with “\\`{” is too long:\n", text);
-			*to ++ = U'`';
-			while (*from != U'}' && *from != U'|' && *from != U'\0') {
-				if (to - link >= MAXIMUM_LINK_LENGTH)
-					Melder_throw (U"(ManPages::grind:) Link starting with “\\`{” is too long:\n", text);
-				*to ++ = *from ++;
-			}
-			/*
-				Ignore the "|...}" part. TODO: not if it is "||...}"
-			*/
-			if (*from == U'|') {
-				if (from [1] == U'|') {
-					/*
-						Found a "||xxx}" part. Append the xxx part.
-					*/
-					from += 2;   // skip "||"
-					while (*from != U'}' && *from != U'\0') {
-						if (*from == U'\0')
-							break;
-						if (to - link >= MAXIMUM_LINK_LENGTH)
-							Melder_throw (U"(ManPages::grind:) Link starting with “\\`{” and containing “||” is too long:\n", text);
-						*to ++ = *from ++;
-					}
-					Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
-					*to = U'\0';
-				} else {
-					/*
-						Found a "|xxx}" part. Ignore all of it.
-					*/
-					from ++;
-					while (*from != U'}' && *from != U'\0')
-						from ++;
-				}
-			}
-			Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
-			*to ++ = U'`';
-			Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
-			*to = U'\0';
 			p = from + ( *from == U'}' );   // add bool to pointer: skip '}' but not '\0'
 			return p;
 		}
