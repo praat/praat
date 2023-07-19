@@ -61,6 +61,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`arctanh#` (%`vector#`) – inverse hyperbolic tangent of each element of %`vector#`
 , @`arctanh##` (%`matrix##`) – inverse hyperbolic tangent of each cell of %`matrix##`
 , @`assert` – condition checking
+, @`asynchronous` – let the script continue while the sound is playing
 , @`backslashTrigraphsToUnicode$` (%`string$`) – convert e.g. \bsct to \ct
 , @`barkToHertz` (%`x`) – from Bark-rate to acoustic frequency
 , @`besselI` (%`n`, %`x`) – modified Bessel function of the first kind, %I__%n_
@@ -137,6 +138,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`from_to_count#` (%`start`, %`end`, %`n`) – %`n` numbers from %`start` through %`end`
 , @`gaussP` (%`z`) – area under the normal curve up to %`z`
 , @`gaussQ` (%`z`) – area under the normal curve after %`z`
+, @`goto` – place in a script to jump from
 , @`hertzToBark` (%`x`) – from acoustic frequency to Bark-rate
 , @`hertzToErb` (%`x`) – from acoustic frequency to ERB-rate
 , @`hertzToMel` (%`x`) – from acoustic frequency to mel
@@ -156,6 +158,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`invSigmoid#` (%`vector#`) – inverse sigmoid of each element of %`vector#`
 , @`invSigmoid##` (%`matrix##`) – inverse sigmoid of each cell of %`matrix##`
 , @`invStudentQ` (%`q`, %`df`) – inverse studentQ
+, @`label` – place in a script to jump to
 , @`left$` (%`string$`, %`n`) – the %n first characters in %`string$`
 , @`length` (%`string$`) – number of Unicode characters in %`string$`
 , @`ln` (%`x`) – natural logarithm, base %e
@@ -173,7 +176,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`melToHertz` (%`x`) – from mel to acoustic frequency
 , @`mid$` (%`string$`, %`from`, %`n`) – the %`n` characters in %`string$` starting at position %`from`
 , @`min` (%`x`, `...`) – minimum
-, @`minusObject` (...) – shrink the selection of objects in the list
+, @`minusObject` (`...`) – shrink the selection of objects in the list
 , @`mul##` (%`a##`, %`b##`) – matrix multiplication
 , @`number` (%`a$`) – interpret a string as a number
 , @`number#` (%`a$#`) – interpret strings as numbers
@@ -183,7 +186,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`percent$` (%`number`, %`precision`) – format a number as a string,
 	with a trailing percent sign and %`precision` digits after the decimal point
 , @`phonToDifferenceLimens` (%`x`) – from perceptual loudness to jnd-scale
-, @`plusObject` (...) – extend the selection of objects in the list
+, @`plusObject` (`...`) – extend the selection of objects in the list
 , @`randomBernoulli` (%`p`) – Bernoulli-distributed random deviate (0 or 1)
 , @`randomBernoulli#` (%`n`, %`p`) – %`n` independent Bernoulli-distributed zeroes and ones
 , @`randomGamma` (%`shape`, %`rate`) – gamma-distributed random deviate
@@ -231,7 +234,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`rectify` (%`x`) – set to zero if negative (no change if positive)
 , @`rectify#` (%`vector#`) – rectify each element of %`vector#`
 , @`rectify##` (%`matrix##`) – rectify each cell of %`matrix##`
-, @`removeObject` (...) – remove objects from the list, by ID and/or name
+, @`removeObject` (`...`) – remove objects from the list, by ID and/or name
 , @`repeat#` (%`v#`, %`n`) – repeat the whole sequence of elements of %`v#` %`n` times
 , @`replace$` (%`a$`, %`b$`, %`c$`, %`n`) – within %`a$`, replace the first %`n` occurrences of %`b$` with %`c$`, or all if %`n` = 0
 , @`replace_regex$` (%`a$`, %`b$`, %`c$`, %`n`) – within %`a$`,
@@ -244,7 +247,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`round#` (%`vector#`) – nearest integer of each element of %`vector#`
 , @`round##` (%`matrix##`) – nearest integer of each cell of %`matrix##`
 , @`rowSums#` (%`matrix##`)
-, @`selectObject` (...) – select objects in the list by ID and/or name
+, @`selectObject` (`...`) – select objects in the list by ID and/or name
 , @`semitonesToHertz` (%`x`) – from logarithmic scale %re 100 Hz to acoustic frequency
 , @`sigmoid` (%`x`) – 1 / (1 + %e^^-%`x`^)
 , @`sigmoid#` (%`vector#`) – sigmoid of each element of %`vector#`
@@ -259,9 +262,13 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`sinh##` (%`matrix##`) – hyperbolic sine of each cell of %`matrix##`
 , @`size` (%`v#`) – number of elements
 , @`shuffle#` (%`vector#`) – randomize order
+, @`shuffle$#` (%`stringVector$#`) – randomize order
+, @`sleep` (%`duration`) – pause script for %`duration` seconds
 , @`softmax#` (%`vector#`)
 , @`softmaxPerRow##` (%`matrix##`)
 , @`sort#` (%`vector#`) – reshuffle in increasing order
+, @`sort$#` (%`stringVector$#`) – reshuffle in Unicode-alphabetical order
+, @`sort_numberAware$#` (%`stringVector$#`) – reshuffle in Unicode-alphabetical order, with special attention to numbers
 , @`splitByWhitespace$#` (%`string$`) – split a string into inks
 , @`sqrt` (%`x`) – square root
 , @`sqrt#` (%`vector#`) – square root of each element of %`vector#`
@@ -355,7 +362,7 @@ A function that can be used in @Scripting.
 
 Syntax and semantics
 ====================
-#`appendFile` (%`filePath$`, ...)
+#`appendFile` (%`filePath$`, `...`)
 : write texts, numbers, vectors and so on
 	at the end of an existing file (create such a file if it does not exist yet)
 
@@ -367,7 +374,7 @@ A function that can be used in @Scripting.
 
 Syntax and semantics
 ====================
-#`appendFileLine` (%`filePath$`, ...)
+#`appendFileLine` (%`filePath$`, `...`)
 : write texts, numbers, vectors and so on, followed by a newline,
 	at the end of an existing file (create such a file if it does not exist yet)
 
@@ -379,7 +386,7 @@ A function that can be used in @Scripting.
 
 Syntax and semantics
 ====================
-#`appendInfo` (%`filePath$`, ...)
+#`appendInfo` (%`filePath$`, `...`)
 : write texts, numbers, vectors and so on
 	to the end of the Info window
 
@@ -391,7 +398,7 @@ A function that can be used in @Scripting.
 
 Syntax and semantics
 ====================
-#`appendInfoLine` (%`filePath$`, ...)
+#`appendInfoLine` (%`filePath$`, `...`)
 : write texts, numbers, vectors and so on, followed by a newline,
 	to the end of the Info window
 
@@ -740,6 +747,15 @@ This three-line script stops at the second line with the error message
 That is, because %`a` is not less than 10 (it’s 30),
 the assertion is false, and the script stops, mentioning the line number
 as well as the text of the assertion (i.e. “`a < 10`”).
+
+################################################################################
+"`asynchronous`"
+© Paul Boersma 2023
+
+A keyword that can be used in @Scripting, to let a script continue while a sound is playing:
+{;
+	\#{asynchronous} \@{Sound: ||Play}
+}
 
 ################################################################################
 "`backslashTrigraphsToUnicode$`"
@@ -1804,6 +1820,20 @@ Related functions
 ~	gaussP (%z) = 1 \-m gaussQ (%z)
 
 ################################################################################
+"`goto`"
+© Paul Boersma 2023
+
+A keyword that can be used in @Scripting, for control flow.
+
+Syntax and semantics
+====================
+#`goto` %`LABEL`
+: jump from here to the line that contains `label \%{LABEL}`,
+where %`LABEL` can be any sequence of letters (usually upper case), underscores and digits.
+
+See also @`label`.
+
+################################################################################
 "`hertzToBark`"
 © Paul Boersma 2023
 
@@ -1873,7 +1903,7 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`imax` (%`x`, ...)
+#`imax` (%`x`, `...`)
 : determine the location of the maximum of a sequence of numbers.
 
 Tests
@@ -1890,7 +1920,7 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`imin` (%`x`, ...)
+#`imin` (%`x`, `...`)
 : determine the location of the minimum of a sequence of numbers.
 
 Tests
@@ -2050,6 +2080,20 @@ Syntax and semantics
 i.e. the value %t for which @`studentQ` (%`t`, %`df`) = %`q`.
 
 ################################################################################
+"`label`"
+© Paul Boersma 2023
+
+A keyword that can be used in @Scripting, for control flow.
+
+Syntax and semantics
+====================
+#`label` %`LABEL`
+: proceed from here, perhaps after jumping from a line that contains `goto \%{LABEL}`,
+where %`LABEL` can be any sequence of letters (usually upper case), underscores and digits.
+
+See also @`goto`.
+
+################################################################################
 "`left$`"
 © Paul Boersma 2023
 
@@ -2189,7 +2233,7 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`max` (%`x`, ...)
+#`max` (%`x`, `...`)
 : determine the maximum of a list of numbers.
 
 Tests
@@ -2243,7 +2287,7 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`min` (%`x`, ...)
+#`min` (%`x`, `...`)
 : determine the minimum of a list of numbers.
 
 Tests
@@ -2260,7 +2304,7 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`minusObject` (...)
+#`minusObject` (`...`)
 : deselect the objects given by IDs and/or names.
 
 ################################################################################
@@ -2401,7 +2445,7 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`plusObject` (...)
+#`plusObject` (`...`)
 : select the objects given by IDs and/or names,
 without deselecting any objects that are currently selected.
 
@@ -2825,7 +2869,7 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`removeObject` (...)
+#`removeObject` (`...`)
 : remove the objects given by IDs and/or names,
 without (further) changing the selection.
 
@@ -2968,7 +3012,7 @@ A function that can be used in @@Formulas@.
 
 Syntax and semantics
 ====================
-#`selectObject` (...)
+#`selectObject` (`...`)
 : select the objects given by IDs and/or names,
 after deselecting any objects that are currently selected.
 
@@ -3163,7 +3207,7 @@ A function that can be used in @@Formulas@.
 Syntax and semantics
 ====================
 #`size` (%`v#`)
-: return the number of elements of the vector %`v`.
+: return the number of elements of the vector %`v#`.
 
 ################################################################################
 "`shuffle#`"
@@ -3174,7 +3218,31 @@ A function that can be used in @@Formulas@.
 Syntax and semantics
 ====================
 #`shuffle#` (%`v#`)
-: return a vector with the same elements as %`v`, but in randomized order.
+: return a vector with the same elements as %`v#`, but in randomized order.
+
+################################################################################
+"`shuffle$#`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`shuffle$#` (%`stringVector$#`)
+: return a vector with the same elements as %`stringVector$#`, but in randomized order.
+
+################################################################################
+"`sleep`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`sleep` (%`duration`)
+: pause the script for %`duration` seconds.
+
+This can be used in animations, e.g. in the @@Demo window@.
 
 ################################################################################
 "`softmax#`"
@@ -3209,6 +3277,30 @@ Syntax and semantics
 ====================
 #`sort#` (%`v#`)
 : return a vector with the same elements as %`v`, but in sorted order (from low to high).
+
+################################################################################
+"`sort$#`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`sort$#` (%`stringVector$#`)
+: return a string array with the same elements as %`stringVector$#`,
+but in sorted (Unicode-alphabetical) order.
+
+################################################################################
+"`sort_numberAware$#`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`sort_numberAware$#` (%`stringVector$#`)
+: return a string array with the same elements as %`stringVector$#`,
+but in sorted (Unicode-alphabetical) order, with special attention to numbers.
 
 ################################################################################
 "`splitByWhitespace$#`"

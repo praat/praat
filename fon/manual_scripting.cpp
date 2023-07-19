@@ -4171,8 +4171,8 @@ NORMAL (U"Your program can save its preferences in a folder of its choice, "
 	"e.g. in #`preferencesDirectory$ + “/../GuineaPigAnalyzer”` if your program is called GuineaPigAnalyzer. "
 	"If you want to be less conspicuous and like to use the Praat preferences folder instead, "
 	"please use the #`apps` subfolder, in this way:")
-CODE (U"createFolder: preferencesDirectory$ + “/apps”")
-CODE (U"createFolder: preferencesDirectory$ + “/apps/GuineaPigAnalyzer”")
+CODE (U"\\`{createFolder}: preferencesDirectory$ + “/apps”")
+CODE (U"\\`{createFolder}: preferencesDirectory$ + “/apps/GuineaPigAnalyzer”")
 MAN_END
 
 MAN_BEGIN (U"Scripting 10. Old functions", U"ppgb", 20140112)
