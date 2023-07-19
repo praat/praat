@@ -93,6 +93,21 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`date_utc$` ( ) – current standard date and time in the form "Mon Nov  8 15:32:42 2021"
 , @`date_utc#` ( ) – current standard date and time in the form { 2021, 11, 8, 15, 32, 42 }
 , @`deleteFile` (%`filePath$`) – delete a file, or do nothing if it does not exist
+, @`demo` – execute a graphics command in the Demo window (instead of in the Picture window)
+, @`demoClicked` ( ) – determine whether the user clicked in the Demo window
+, @`demoClickedIn` (%`xmin`, %`xmax`, %`ymmin`, %`ymax`) – determine whether the user clicked in a rectangular region in the Demo window
+, @`demoCommandKeyPressed` ( ) – determine whether the user pressed the Command key when they typed into the Demo window
+, @`demoInput` (%`characters$`) – determine whether the user typed (or clicked) the specified characters into the Demo window
+, @`demoKey$` ( ) – determine the key that the user typed into the Demo window
+, @`demoKeyPressed` ( ) – determine whether the user typed anything into the Demo window
+, @`demoOptionKeyPressed` ( ) – determine whether the user pressed the Option key when they typed into the Demo window
+, @`demoPeekInput` ( ) – see whether a user event (click or key press) is available in the Demo window
+, @`demoShiftKeyPressed` ( ) – determine whether the user pressed the Shift key when they typed into the Demo window
+, @`demoShow` ( ) – make all deferred drawing commands immediately visible
+, @`demoWaitForInput` ( ) – wait for a user event (click or key press) in the Demo window
+, @`demoWindowTitle` (%`newTitle$`) – change the title of the Demo window
+, @`demoX` ( ) – the horizontal position of a mouse click in the Demo window
+, @`demoY` ( ) – the vertical position of a mouse click in the Demo window
 , @`differenceLimensToPhon` (%`x`) – from jnd-scale to perceptual loudness
 , @`endsWith` (%`string$`, %`part$`) – determine whether %`string$` ends in %`part$`
 , @`erb` (%`f`) – equivalent rectangular bandwidth for frequency %`f`
@@ -1194,6 +1209,239 @@ Syntax and semantics
 ====================
 #`deleteFile` (%`filePath$`)
 : delete a file, or do nothing if the file does not exist.
+
+################################################################################
+"`demo`"
+© Paul Boersma 2023
+
+A keyword that can be used in @Scripting,
+for executing a graphics command in the Demo window (instead of in the Picture window).
+
+Example
+=======
+The following code draws a box into the Picture window:
+{
+	\@{Erase all}
+	\@{Draw inner box}
+}
+The following code draws a box into the Demo window instead:
+{;
+	\#{demo} \@{Erase all}
+	\#{demo} \@{Draw inner box}
+}
+
+More examples
+=============
+
+################################################################################
+"`demoClicked`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoClicked` ( )
+: determine whether the user clicked in the Demo window.
+
+Usage
+=====
+This function is usually called after a user event has been detected (with @`demoWaitForInput`),
+and is typically followed by determing the location of the click
+(with @`demoX`) and @`demoY`, or with @`demoClickedIn`).
+
+################################################################################
+"`demoClickedIn`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoClickedIn` (%`xmin`, %`xmax`, %`ymmin`, %`ymax`)
+: determine whether the user clicked in a rectangular region in the Demo window.
+
+Usage
+=====
+This function is usually called after it has been determined that the user clicked into the Demo window,
+i.e. after @`demoClicked` has returned 1.
+
+################################################################################
+"`demoCommandKeyPressed`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoCommandKeyPressed` ( )
+: determine whether the user pressed the Command key when they typed into the Demo window.
+
+Usage
+=====
+This function is usually called after it has been determined that the user pressed a key,
+i.e. after @`demoKeyPressed` has returned 1.
+
+################################################################################
+"`demoInput`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoInput` (%`characters$`)
+: determine whether the user typed (or clicked) the specified characters into the Demo window.
+
+################################################################################
+"`demoKey$`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoKey$` ( )
+: determine the key that the user typed into the Demo window.
+
+################################################################################
+"`demoKeyPressed`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoKeyPressed` ( )
+: determine whether the user typed anything into the Demo window.
+
+Usage
+=====
+This function is usually called after a user event has been detected (with @`demoWaitForInput`),
+and is typically followed by determing the key that was pressed
+(with @`demoKey$`), perhaps while determining which modifier keys were pressed
+(with @`demoShiftKeyPressed`, @`demoOptionKeyPressed`, and/or @`demoCommandKeyPressed`).
+
+################################################################################
+"`demoShow`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoShow` ( )
+: make all deferred drawing commands immediately visible.
+
+Usage
+=====
+This function is used in animation, where you cannot wait until @`demoWaitForInput`
+causes the drawings to become visible.
+
+################################################################################
+"`demoOptionKeyPressed`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoOptionKeyPressed` ( )
+: determine whether the user pressed the Option key when they typed into the Demo window.
+
+Usage
+=====
+This function is usually called after it has been determined that the user pressed a key,
+i.e. after @`demoKeyPressed` has returned 1.
+
+################################################################################
+"`demoPeekInput`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoPeekInput` ( )
+: see whether a user event (click or key press) is available in the Demo window.
+
+################################################################################
+"`demoShiftKeyPressed`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoShiftKeyPressed` ( )
+: determine whether the user pressed the Shift key when they typed into the Demo window.
+
+Usage
+=====
+This function is usually called after it has been determined that the user pressed a key,
+i.e. after @`demoKeyPressed` has returned 1.
+
+################################################################################
+"`demoWaitForInput`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoWaitForInput` ( )
+: wait for a user event (click or key press) in the Demo window.
+
+Behaviour
+=========
+This function blocks until the user clicks in the Demo window or types a key into the Demo window.
+
+Return value
+============
+Once the function finally returns, it returns the value 1 (true).
+This makes it possible to use this function in a `while` loop:
+{;
+	while \#`{demoWaitForInput} ()
+		if \`{demoClicked} ())
+			# handle the mouse click
+		elsif \`{demoKeyPressed} ())
+			# handle the key press
+		endif
+	endwhile
+}
+
+################################################################################
+"`demoWindowTitle`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoWindowTitle` (%`newTitle$`)
+: change the title of the Demo window to %`newTitle$`.
+
+################################################################################
+"`demoX`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoX` ( )
+: the horizontal position of a mouse click in the Demo window.
+
+################################################################################
+"`demoY`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`demoY` ( )
+: the vertical position of a mouse click in the Demo window.
 
 ################################################################################
 "`differenceLimensToPhon`"

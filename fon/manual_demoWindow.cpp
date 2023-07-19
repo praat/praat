@@ -69,7 +69,7 @@ which sets the world coordinates to something else than before (before, the worl
 Now suppose you want the Sound to appear in the top half of the window,
 and some texts in the bottom left and bottom right corners of the window.
 You can use @@Select outer viewport...@ and @@Select inner viewport...@,
-if you know that the size of the Demo window is “100” horizontally and “100” vertically (rather than 12\\xx12, as the @@Picture window@),
+if you know that the size of the Demo window is “100” horizontally and “100” vertically (rather than 12\xx12, as the @@Picture window@),
 and that the point (0, 0) lies in the bottom left (rather than the top left, as in the Picture window):
 
 	\#`{demo} \@{Erase all}
@@ -162,8 +162,8 @@ This script allows you to use the arrow keys and the space bar to navigate betwe
 	\#`{demo} \@{Paint rectangle:} \"purple\", 0, 100, 0, 100
 	\#`{demo} \@{Pink}
 	\#`{demo} \@{Text:} 50, \"centre\", 50, \"half\", \"This is the first page\"
-	while \\#`{demoWaitForInput} ()
-		goto SECOND_SCREEN \\#`{demoInput} (“•→ ”)
+	while \#`{demoWaitForInput} ()
+		goto SECOND_SCREEN \#`{demoInput} (“•→ ”)
 	endwhile
 	\`{label} SECOND_SCREEN
 	\#`{demo} \@{Erase all}
@@ -186,7 +186,7 @@ You can use the functions @`demoX` and @`demoY` to see where the user has clicke
 These functions respond in world coordinates. To see whether the user has clicked in the sound that occupies the
 upper half of the screen in the above example, you do for instance
 
-	while \`{demoWaitForInput} ()")
+	while \`{demoWaitForInput} ()
 		if \`{demoClicked} ()
 			\`{demo} Select outer viewport: 0, 100, 50, 100
 			\`{demo} Axes: 0, 3, -1, 1
@@ -201,8 +201,8 @@ that you drew on the screen:
 
 	\#`{demo} Paint rounded rectangle: “pink”, 30, 70, 16, 24
 	\#`{demo} Text: 50, “centre”, 20, “half”, “Analyse”
-	while \\#`{demoWaitForInput} ()
-		goto ANALYSE \\#`{demoClickedIn} (30, 70, 16, 24)
+	while \#`{demoWaitForInput} ()
+		goto ANALYSE \#`{demoClickedIn} (30, 70, 16, 24)
 
 ################################################################################
 "Demo window 4. Full-screen viewing"
@@ -286,10 +286,10 @@ To put some text in the title bar of the Demo window, try
 "Demo window 8. Tips and Tricks"
 © Paul Boersma 2009–2023
 
-The initial size of the Demo window when you start it up is 1344\\xx756 pixels,
-which is 70 percent of a standard wide screen (1920\\xx1080 pixels).
+The initial size of the Demo window when you start it up is 1344\xx756 pixels,
+which is 70 percent of a standard wide screen (1920\xx1080 pixels).
 This means that if a font looks good at a size of 35 in the initial Demo window,
-the font will look equally good at a size of 50 when you use a 1920\\xx1080 video projector full-screen.
+the font will look equally good at a size of 50 when you use a 1920\xx1080 video projector full-screen.
 
 If you resize the Demo window with the handle in the bottom left, or if you zoom the window out to the full screen,
 you may see that the relative positions of the contents of the window will change. Also, clicking on buttons and in parts
