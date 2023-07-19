@@ -109,6 +109,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 	bool wordItalic = false, wordBold = false, wordCode = false, letterSub = false, letterSuper = false;
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 		const bool verbatimAware = true;   //page -> verbatimAware;
+			// we ignore saving old-fashioned man pages to HTML (was undocumented anyway) 2023-07-19
 		const structManPage_Paragraph *paragraph = & page -> paragraphs [ipar];
 		const bool paragraphIsVerbatim = ( paragraph -> couldVerbatim () );
 		const char32 *p = & paragraph -> text [0];

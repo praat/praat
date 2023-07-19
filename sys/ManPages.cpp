@@ -128,11 +128,14 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 					p ++;
 				}
 			}
-		} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{') {
+		} else if (*p == U'\\' && p [1] == U'@' && p [2] == U'{' ||
+			*p == U'\\' && p [1] == U'#' && p [2] == U'@' && p [3] == U'{'
+		) {
 			/*
-				We found "\@{", starting a link in running text or in verbatim code.
+				We found "\@{" or "\#@{", starting a link in running text or in verbatim code.
 			*/
-			const char32 *from = p + 3;
+			const bool thinLink = ( p [1] != U'#' );
+			const char32 *from = p + 4 - thinLink;
 			while (*from != U'}' && *from != U'|' && *from != U'\0') {
 				if (to - link >= MAXIMUM_LINK_LENGTH)
 					Melder_throw (U"(ManPages::grind:) Link starting with “\\@{” is too long:\n", text);
@@ -186,11 +189,14 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 
 			p = from + ( *from == U'}' );   // add bool to pointer: skip '}' but not '\0'
 			return p;
-		} else if (*p == U'\\' && p [1] == U'`' && p [2] == U'{') {
+		} else if (*p == U'\\' && p [1] == U'`' && p [2] == U'{' ||
+			*p == U'\\' && p [1] == U'#' && p [2] == U'`' && p [3] == U'{'
+		) {
 			/*
-				We found "\`{", starting a verbatim link in verbatim text.
+				We found "\`{" or "\#`{", starting a verbatim link in verbatim text.
 			*/
-			const char32 *from = p + 3;
+			const bool thinLink = ( p [1] != U'#' );
+			const char32 *from = p + 4 - thinLink;
 			if (to - link >= MAXIMUM_LINK_LENGTH)
 				Melder_throw (U"(ManPages::grind:) Link starting with “\\`{” is too long:\n", text);
 			*to ++ = U'`';
