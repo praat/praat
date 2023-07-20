@@ -6803,7 +6803,7 @@ DO
 	CREATE_ONE_END (U"tokens")
 }
 
-FORM (CREATE_ONE__Strings_createFromTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
+FORM (CREATE_ONE__Strings_createFromTokens, U"Create Strings from tokens", U"Create Strings from tokens...") {
 	WORD (name, U"Name", U"tokens")
 	TEXTFIELD (text, U"Text", U"There are seven tokens in this text", 10)
 	SENTENCE (separators, U"Separators", U" ,")
