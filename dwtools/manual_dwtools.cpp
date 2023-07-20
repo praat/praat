@@ -4965,48 +4965,71 @@ INTRO (U"Extract those rows from the selected @TableOfReal object whose @@Mahala
 	"quantile range.")
 MAN_END
 
-MAN_BEGIN (U"Create Strings as tokens...", U"djmw", 20170417)
-INTRO (U"Create a new @@Strings@ object as a list of tokens.")
-ENTRY (U"Settings")
-TERM (U"##Text#")
-DEFINITION (U"the text to be tokenized.")
-TERM (U"##Separators#")
-DEFINITION (U"determines the separator characters. If left empty a space will be used as a separator")
-ENTRY (U"Behaviour")
-NORMAL (U"Multiple consecutive separators in the text will be treated as one.")
-ENTRY (U"Examples")
-TERM (U"Example 1")
-CODE (U"Create Strings as tokens: \"a b c\", \" \"")
-DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TERM (U"Example 2")
-CODE (U"Create Strings as tokens: \"a   b   c \", \" \"")
-DEFINITION (U"will also produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TERM (U"Example 3")
-CODE (U"Create Strings as tokens: \"a,b,c\", \",\"")
-DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TERM (U"Example 4")
-CODE (U"Create Strings as tokens: \"a, b, c\", \",\"")
-DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \" b\" and \" c\".")
-TERM (U"Example 5")
-CODE (U"Create Strings as tokens: \"a, b, c\", \" ,\"")
-DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TERM (U"Example 6")
-CODE (U"Create Strings as tokens: \"a,,b,c\", \" ,\"")
-DEFINITION (U"will also produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TERM (U"Example 7")
-CODE (U"Create Strings as tokens: \"a, ,b,c\", \",\"")
-DEFINITION (U"will produce a Strings with 4 strings in it: \"a\",\" \", \"b\" and \"c\".")
-TERM (U"Example 8")
-CODE (U"Create Strings as tokens: \"a,b,c,\", \",\"")
-DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" and \"c\".")
-TERM (U"Example 9")
-CODE (U"Create Strings as tokens: \"a,b,c, \", \",\"")
-DEFINITION (U"will produce a Strings object with 4 strings in it: \"a\", \"b\", \"c\" and \" \".")
-TERM (U"Example 10")
-CODE (U"Create Strings as tokens: \"A string\" + tab$ + \"of ..tokens\" + newline$ + \"and some  more tokens\", \" .,\" + tab$ + newline$")
-DEFINITION (U"will produce a Strings object with 8 strings in it: \"A\", \"string\", \"of\", \"tokens\", \"and\", \"some\", \"more\" and \"tokens\".")
+MAN_PAGES_BEGIN
+R"~~~(
+"Create Strings from tokens..."
+© David Weenink 2017, Paul Boersma 2023
 
-MAN_END
+Create a new @Strings object as a list of tokens.
+
+Settings
+========
+##Name
+: the name of the new Strings object.
+
+##Text
+: the text to be tokenized.
+
+##Separators
+: determines the separator characters. If left empty, a space will be used as a separator.
+
+Behaviour
+=========
+Multiple consecutive separators in the text will be treated as one.
+
+Examples
+========
+Example 1
+	\#{Create Strings from tokens:} "test", "a b c", " "
+: will produce a Strings object with 3 strings in it: "a", "b" and "c".
+
+Example 2
+	\#{Create Strings from tokens:} "test", "a   b   c ", " "
+: will also produce a Strings object with 3 strings in it: "a", "b" and "c".
+
+Example 3
+	\#{Create Strings from tokens:} "test", "a,b,c", ","
+: will produce a Strings object with 3 strings in it: "a", "b" and "c".
+
+Example 4
+	\#{Create Strings from tokens:} "test", "a, b, c", ","
+: will produce a Strings object with 3 strings in it: "a", " b" and " c" (note the spaces).
+
+Example 5
+	\#{Create Strings from tokens:} "test", "a, b, c", " ,"
+: will produce a Strings object with 3 strings in it: "a", "b" and "c".
+
+Example 6
+	\#{Create Strings from tokens:} "test", "a,,b,c", " ,"
+: will also produce a Strings object with 3 strings in it: "a", "b" and "c".
+
+Example 7
+	\#{Create Strings from tokens:} "test", "a, ,b,c", ","
+: will produce a Strings with 4 strings in it: "a", " ", "b" and "c".
+
+Example 8
+	\#{Create Strings from tokens:} "test", "a,b,c,", ","
+: will produce a Strings object with 3 strings in it: "a", "b" and "c".
+
+Example 9
+	\#{Create Strings from tokens:} "test", "a,b,c, ", ","
+: will produce a Strings object with 4 strings in it: "a", "b", "c" and " ".
+
+Example 10
+	\#{Create Strings from tokens:} "test", "A string" + tab$ + "of ..tokens" + newline$ + "and some  more tokens", " .," + tab$ + newline$
+: will produce a Strings object with 8 strings in it: "A", "string", "of", "tokens", "and", "some", "more" and "tokens".
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"T-test", U"djmw", 20020117)
 INTRO (U"A test on the mean of a normal variate when the variance is unknown.")

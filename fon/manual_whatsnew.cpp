@@ -2423,7 +2423,7 @@ Praat 4.2, 4 March 2004
 =======================
 
 General:
-• July 10, 2003: Open source code (@@General Public Licence@).
+• July 10, 2003: Open source code (@@General Public License, version 3|General Public License@).
 
 Phonetics:
 • Faster computation of spectrum, spectrogram, and pitch.
@@ -2475,7 +2475,7 @@ Praat 4.1, 5 June 2003
 General:
 • MacOS X edition.
 • Removed licensing.
-• More than 99 percent of the source code distributed under the @@General Public Licence@.
+• More than 99 percent of the source code distributed under the @@General Public License, version 3|General Public License@.
 • Windows 2000 and XP: put preferences files in home directory.
 
 Phonetics:
