@@ -23,10 +23,6 @@ static void draw_NoCoda_pat (Graphics g) {
 	autoOTGrammar ot = OTGrammar_create_NoCoda_grammar ();
 	OTGrammar_drawTableau (ot.get(), g, false, U"pat");
 }
-static void draw_NoCoda_pa (Graphics g) {
-	autoOTGrammar ot = OTGrammar_create_NoCoda_grammar ();
-	OTGrammar_drawTableau (ot.get(), g, false, U"pa");
-}
 static void draw_NoCoda_reverse (Graphics g) {
 	autoOTGrammar ot = OTGrammar_create_NoCoda_grammar ();
 	ot -> index [1] = 2;
@@ -96,194 +92,265 @@ static void draw_Infant_swtI (Graphics g) {
 void manual_gram_init (ManPages me);
 void manual_gram_init (ManPages me) {
 
-MAN_BEGIN (U"constraints", U"ppgb", 20021105)
-INTRO (U"In @@Optimality Theory@, the “rules” that an output form has to satisfy. Since there can be many constraints "
-	"and these constraints can conflict with each other, the constraints are %violable and the highest-ranked constraints "
-	"have the largest say in determining the optimal output.")
-NORMAL (U"See the @@OT learning@ tutorial for many examples.")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"constraints"
+© Paul Boersma 20021105
 
-MAN_BEGIN (U"Create tongue-root grammar...", U"ppgb", 20141001)
-INTRO (U"A command in the @@New menu@ for creating an @OTGrammar object with a tongue-root-harmony grammar.")
-NORMAL (U"These OTGrammar grammars only accept inputs of the form V__1_tV__2_, where V__1_ and V__2_ are "
-	"chosen from the six front vowels i, ɪ, e, ɛ, ə, and a.")
-NORMAL (U"The following phonological features are relevant:")
-LIST_ITEM (U"\t\tATR\tRTR")
-LIST_ITEM (U"\thigh\ti\tɪ")
-LIST_ITEM (U"\tmid\te\tɛ")
-LIST_ITEM (U"\tlow\tə\ta")
-ENTRY (U"Constraints")
-NORMAL (U"The resulting OTGrammar will usually contain at least the following five constraints:")
-TERM (U"*[rtr / hi]")
-DEFINITION (U"“do not implement [retracted tongue root] if the vowel is high.”")
-TERM (U"*[atr / lo]")
-DEFINITION (U"“do not implement [advanced tongue root] if the vowel is low.”")
-TERM (U"P\\s{ARSE} (rtr)")
-DEFINITION (U"“make an underlying [retracted tongue root] specification surface.”")
-TERM (U"P\\s{ARSE} (atr)")
-DEFINITION (U"“make an underlying [advanced tongue root] specification surface.”")
-TERM (U"*G\\s{ESTURE} (contour)")
-DEFINITION (U"“do not go from advanced to retracted tongue root, nor the other way around, within a word.”")
-NORMAL (U"This set of constraints thus comprises: ")
-LIST_ITEM (U"• two %%##grounding conditions#% (@@Archangeli & Pulleyblank (1994)@), "
-	"which we can see as gestural constraints;")
-LIST_ITEM (U"• two %%##faithfulness constraints#%, which favour the similarity between input and output, "
-	"and can be seen as implementing the principle of maximization of perceptual contrast;")
-LIST_ITEM (U"• a %%##harmony constraint#%, which, if crucially ranked higher than at least one faithfulness constraint, "
-	"forces %%##tongue-root harmony#%.")
-NORMAL (U"In addition, there may be the following four constraints:")
-TERM (U"*[rtr / mid]")
-DEFINITION (U"“do not implement [retracted tongue root] if the vowel is mid; universally ranked lower "
-	"than *[rtr / hi].”")
-TERM (U"*[rtr / lo]")
-DEFINITION (U"“do not implement [retracted tongue root] if the vowel is low; universally ranked lower "
-	"than *[rtr / mid].”")
-TERM (U"*[atr / mid]")
-DEFINITION (U"“do not implement [advanced tongue root] if the vowel is mid; universally ranked lower "
-	"than *[atr / lo].”")
-TERM (U"*[atr / hi]")
-DEFINITION (U"“do not implement [advanced tongue root] if the vowel is high; universally ranked lower "
-	"than *[atr / mid].”")
-NORMAL (U"The universal rankings referred to are due to the %%##local-ranking principle#% (@@Boersma (1998)@). "
-	"A learning algorithm may enforce this principle, e.g., if *[rtr / hi] falls down the ranking scale, "
-	"*[rtr / mid] may be pushed along.")
-NORMAL (U"For information on learning these tongue-root grammars, see @@OT learning@ "
-	"and @@Boersma (2000)@.")
-MAN_END
+In @@Optimality Theory@, the “rules” that an output form has to satisfy. Since there can be many constraints
+and these constraints can conflict with each other, the constraints are %violable and the highest-ranked constraints
+have the largest say in determining the optimal output.
 
-MAN_BEGIN (U"Optimality Theory", U"ppgb", 20021105)
-INTRO (U"A framework for transferring one linguistic representation into another, "
-	"e.g. transferring an underlying form into a surface form. Before @@Prince & Smolensky (1993)@, "
-	"phonologists tended to this with a sequentially ordered set of rules, each of which transferred a representation "
-	"into another. With @OT (that's the abbreviation), there are no intermediate steps in the derivation, but a set of ranked "
-	"@constraints chooses the optimal output form from a set of candidates.")
-NORMAL (U"In Praat, you can draw Optimality-Theoretic tableaus and simulate Optimality-Theoretic learning. "
-	"See the @@OT learning@ tutorial.")
-MAN_END
+See the @@OT learning@ tutorial for many examples.
 
-MAN_BEGIN (U"OT", U"ppgb", 20021105)
-INTRO (U"An abbreviation for @@Optimality Theory@.")
-MAN_END
+################################################################################
+"Create tongue-root grammar..."
+© Paul Boersma 2014,2023
 
-MAN_BEGIN (U"OT learning", U"ppgb", 20070423)
-INTRO (U"This tutorial describes how you can draw Optimality-Theoretic and Harmonic-Grammar tableaus and "
-	"simulate Optimality-Theoretic and Harmonic-Grammar learning with Praat.")
-NORMAL (U"You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.")
-LIST_ITEM (U"1. @@OT learning 1. Kinds of grammars|Kinds of grammars@ (ordinal and stochastic, @OTGrammar)")
-LIST_ITEM (U"2. @@OT learning 2. The grammar|The grammar@")
-LIST_ITEM1 (U"2.1. @@OT learning 2.1. Viewing a grammar|Viewing a grammar@ (N\\s{O}C\\s{ODA} example, @OTGrammarEditor)")
-LIST_ITEM1 (U"2.2. @@OT learning 2.2. Inside the grammar|Inside the grammar@ (saving, inspecting)")
-LIST_ITEM1 (U"2.3. @@OT learning 2.3. Defining your own grammar|Defining your own grammar@")
-LIST_ITEM1 (U"2.4. @@OT learning 2.4. Evaluation|Evaluation@ (noise)")
-LIST_ITEM1 (U"2.5. @@OT learning 2.5. Editing a grammar|Editing a grammar@")
-LIST_ITEM1 (U"2.6. @@OT learning 2.6. Variable output|Variable output@ (place assimilation example)")
-LIST_ITEM1 (U"2.7. @@OT learning 2.7. Tableau pictures|Tableau pictures@ (printing, EPS)")
-LIST_ITEM1 (U"2.8. @@OT learning 2.8. Asking for one output|Asking for one output@")
-LIST_ITEM1 (U"2.9. @@OT learning 2.9. Output distributions|Output distributions@")
-LIST_ITEM (U"3. @@OT learning 3. Generating language data|Generating language data@")
-LIST_ITEM1 (U"3.1. @@OT learning 3.1. Data from a pair distribution|Data from a pair distribution@")
-LIST_ITEM1 (U"3.2. @@OT learning 3.2. Data from another grammar|Data from another grammar@ (tongue-root-harmony example)")
-LIST_ITEM (U"4. @@OT learning 4. Learning an ordinal grammar|Learning an ordinal grammar@")
-LIST_ITEM (U"5. @@OT learning 5. Learning a stochastic grammar|Learning a stochastic grammar@")
-LIST_ITEM (U"6. @@OT learning 6. Shortcut to grammar learning|Shortcut to grammar learning@")
-LIST_ITEM (U"7. @@OT learning 7. Learning from overt forms|Learning from overt forms@")
-MAN_END
+A command in the @@New menu@ for creating an @OTGrammar object with a tongue-root-harmony grammar.
 
-MAN_BEGIN (U"OT learning 1. Kinds of grammars", U"ppgb", 20190331)
-INTRO (U"This is chapter 1 of the @@OT learning@ tutorial.")
-NORMAL (U"According to @@Prince & Smolensky (1993)@, an @@Optimality Theory|Optimality-Theoretic@ (@OT) grammar "
-	"consists of a number of ranked @constraints. "
-	"For every possible input (usually an underlying form), GEN (the generator) generates a (possibly very large) number of "
-	"%%output candidates%, and the ranking order of the constraints determines the winning candidate, "
-	"which becomes the single optimal output.")
-NORMAL (U"According to @@Prince & Smolensky (1993)@ and @@Smolensky & Legendre (2006)@, a Harmonic Grammar (HG) "
-	"consists of a number of weighted @constraints. "
-	"The winning candidate, which becomes the single optimal output, is the one with the greatest %harmony, which "
-	"is a measure of goodness determined by the weights of the constraints violated by each candidate.")
-NORMAL (U"In OT, ranking is %strict, i.e., if a constraint %A is ranked higher than the constraints %B, %C, and %D, "
-	"a candidate that violates only constraint %A will always be beaten by any candidate that respects %A "
-	"(and any higher constraints), even if it violates %B, %C, and %D.")
-NORMAL (U"In HG, weighting is %additive, i.e., a candidate that only violates a constraint %A with a weight of 100 "
-	"has a harmony of -100 and will therefore beat a candidate that violates both a constraint %B with a weight of 70 "
-	"and a constraint %C with a weight of 40 and therefore has a harmony of only -110. Also, two violations of constraint %B "
-	"(harmony 2 * -70 = -140) are worse than one violation of constraint %A (harmony -100).")
-ENTRY (U"1. Ordinal OT grammars")
-NORMAL (U"Because only the ranking order of the constraints plays a role in evaluating the output candidates, "
-	"Prince & Smolensky took an OT grammar to contain no absolute ranking values, i.e., they accepted only an ordinal relation "
-	"between the constraint rankings. For such a grammar, @@Tesar & Smolensky (1998)@ devised an on-line learning algorithm "
-	"(Error-Driven Constraint Demotion, EDCD) that changes the ranking order "
-	"whenever the form produced by the learner is different from the adult form "
-	"(a corrected version of the algorithm can be found in @@Boersma (2009b)@). Such a learning step "
-	"can sometimes lead to a large change in the behaviour of the grammar.")
-ENTRY (U"2. Stochastic OT grammars")
-NORMAL (U"The EDCD algorithm is fast and convergent. As a model of language acquisition, however, its drawbacks are that it "
-	"is extremely sensitive to errors in the learning data and that it does not show realistic gradual learning curves. "
-	"For these reasons, @@Boersma (1997)@ "
-	"proposed stochastic OT grammars in which every constraint has a %%ranking value% along a continuous ranking scale, "
-	"and a small amount of %noise is added to this ranking value at evaluation time. "
-	"The associated error-driven on-line learning algorithm (Gradual Learning Algorithm, GLA) effects small changes in the "
-	"ranking values of the constraints with every learning step. An added virtue of the GLA is that it can learn "
-	"languages with optionality and variation, which was something that EDCD could not do. "
-	"For how this algorithm works on some traditional phonological problems, see @@Boersma & Hayes (2001)@.")
-NORMAL (U"Ordinal OT grammars can be seen as a special case of the more general stochastic OT grammars: "
-	"they have integer ranking values (%strata) and zero evaluation noise. "
-	"In Praat, therefore, every constraint is taken to have a ranking value, "
-	"so that you can do stochastic as well as ordinal OT.")
-ENTRY (U"3. Categorical Harmonic Grammars")
-NORMAL (U"@@Jäger (2003)@ and @@Soderstrom, Mathis & Smolensky (2006)@ devised an on-line learning algorithm "
-	"for Harmonic Grammars (stochastic gradient ascent). As proven by @@Fischer (2005)@, "
-	"this algorithm is guaranteed to converge upon a correct grammar, if there exists one that handles the data.")
-ENTRY (U"4. Stochastic Harmonic Grammars")
-NORMAL (U"There are two kinds of stochastic models of HG, namely MaxEnt (= Maximum Entropy) grammars "
-	"(@@Smolensky (1986)@, @@Jäger (2003)@), in which the probablity of a candidate winning depends on its harmony, "
-	"and Noisy HG (@@Boersma & Escudero (2008)@, @@Boersma & Pater (2016)@), in which noise is added to constraint weights "
-	"at evaluation time, as in Stochastic OT.")
-NORMAL (U"The algorithm by @@Jäger (2003)@ and @@Soderstrom, Mathis & Smolensky (2006)@ "
-	"can learn languages with optionality and variation (@@Boersma & Pater (2016)@).")
-ENTRY (U"The OTGrammar object")
-NORMAL (U"An OT grammar is implemented as an @OTGrammar object. "
-	"In an OTGrammar object, you specify all the constraints, all the possible inputs and all their possible outputs.")
-MAN_END
+These OTGrammar grammars only accept inputs of the form V_1tV_2, where V_1 and V_2 are
+chosen from the six front vowels i, ɪ, e, ɛ, ə, and a.
 
-MAN_BEGIN (U"OT learning 2. The grammar", U"ppgb", 20000122)
-INTRO (U"This is chapter 2 of the @@OT learning@ tutorial.")
-NORMAL (U"We can ask the grammar to produce an output form for any input form that is in its list of tableaus.")
-LIST_ITEM (U"2.1. @@OT learning 2.1. Viewing a grammar|Viewing a grammar@ (N\\s{O}C\\s{ODA} example, @OTGrammarEditor)")
-LIST_ITEM (U"2.2. @@OT learning 2.2. Inside the grammar|Inside the grammar@ (saving, inspecting)")
-LIST_ITEM (U"2.3. @@OT learning 2.3. Defining your own grammar|Defining your own grammar@")
-LIST_ITEM (U"2.4. @@OT learning 2.4. Evaluation|Evaluation@ (noise)")
-LIST_ITEM (U"2.5. @@OT learning 2.5. Editing a grammar|Editing a grammar@")
-LIST_ITEM (U"2.6. @@OT learning 2.6. Variable output|Variable output@ (place assimilation example)")
-LIST_ITEM (U"2.7. @@OT learning 2.7. Tableau pictures|Tableau pictures@ (printing, EPS files)")
-LIST_ITEM (U"2.8. @@OT learning 2.8. Asking for one output|Asking for one output@")
-LIST_ITEM (U"2.9. @@OT learning 2.9. Output distributions|Output distributions@")
-MAN_END
+The following phonological features are relevant:
 
-MAN_BEGIN (U"OT learning 2.1. Viewing a grammar", U"ppgb", 20070725)
-NORMAL (U"Consider a language where the underlying form /pat/ leads to the surface form [pa], "
-	"presumably because the structural constraint N\\s{O}C\\s{ODA} outranks the faithfulness constraint P\\s{ARSE}.")
-NORMAL (U"To create such a grammar in Praat, choose ##Create NoCoda grammar# from the Optimality Theory submenu of the @@New menu@. "
-	"An @OTGrammar object will then appear in the list of objects. "
-	"If you click ##View & Edit#, an @OTGrammarEditor will show up, containing:")
-LIST_ITEM (U"1. the constraint list, sorted by %#disharmony (= ranking value + noise):")
-LIST_ITEM1 (U" ")
-LIST_ITEM1 (U"\t\t      %%ranking value%\t      %disharmony\t      %plasticity")
-LIST_ITEM1 (U"\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.000\t       1.000")
-LIST_ITEM1 (U"\t##P\\s{ARSE}#\t      90.000\t      90.000\t       1.000")
-LIST_ITEM1 (U" ")
-LIST_ITEM (U"2. the tableaus for the two possible inputs /pat/ and /pa/:")
-PICTURE (3.0, 1.0, draw_NoCoda_pat)
-PICTURE (3.0, 0.7, draw_NoCoda_pa)
-NORMAL (U"From the first tableau, we see that the underlying form /pat/ will surface as [pa], "
-	"because the alternative [pat] violates a constraint (namely, N\\s{O}C\\s{ODA}) with a higher disharmony than does [pa], "
-	"which only violates P\\s{ARSE}, which has a lower disharmony.")
-NORMAL (U"Note the standard OT tableau layout: asterisks (*) showing violations, exclamation marks (!) showing crucial violations, "
-	"greying of cells that do not contribute to determining the winning candidate, and a finger (☞) pointing to the winner "
-	"(this may look like a plus sign (+) if you don't have the Zapf Dingbats font installed on your computer or printer). "
-	"An HG tableau contains asterisks and a pointing finger, but no exclamation marks or grey cells.")
-NORMAL (U"The second tableau shows that /pa/ always surfaces as [pa], which is no wonder since this is "
-	"the only candidate. All cells are grey because none of them contributes to the determination of the winner.")
-MAN_END
+|      | ATR | RTR
+| high |  i  |  ɪ
+| mid  |  e  |  ɛ
+| low  |  ə  |  a
+
+Constraints
+===========
+The resulting OTGrammar will usually contain at least the following five constraints:
+
+*[rtr / hi]
+: “do not implement [retracted tongue root] if the vowel is high.”
+
+*[atr / lo]
+: “do not implement [advanced tongue root] if the vowel is low.”
+
+P\s{ARSE} (rtr)
+: “make an underlying [retracted tongue root] specification surface.”
+
+P\s{ARSE} (atr)
+: “make an underlying [advanced tongue root] specification surface.”
+
+*G\s{ESTURE} (contour)
+: “do not go from advanced to retracted tongue root, nor the other way around, within a word.”
+
+This set of constraints thus comprises:
+• two %%##grounding conditions#% (@@Archangeli & Pulleyblank (1994)@),
+	which we can see as gestural constraints;
+• two %%##faithfulness constraints#%, which favour the similarity between input and output,
+	and can be seen as implementing the principle of maximization of perceptual contrast;
+• a %%##harmony constraint#%, which, if crucially ranked higher than at least one faithfulness constraint,
+	forces %%##tongue-root harmony#%.
+
+In addition, there may be the following four constraints:
+
+*[rtr / mid]
+: “do not implement [retracted tongue root] if the vowel is mid”; universally ranked lower
+	than *[rtr / hi].
+
+*[rtr / lo]
+: “do not implement [retracted tongue root] if the vowel is low”; universally ranked lower
+	than *[rtr / mid].
+
+*[atr / mid]
+: “do not implement [advanced tongue root] if the vowel is mid”; universally ranked lower
+	than *[atr / lo].
+
+*[atr / hi]
+: “do not implement [advanced tongue root] if the vowel is high”; universally ranked lower
+	than *[atr / mid].
+
+The universal rankings referred to are due to the %%##local-ranking principle#% (@@Boersma (1998)@).
+	A learning algorithm may enforce this principle, e.g., if *[rtr / hi] falls down the ranking scale,
+	*[rtr / mid] may be pushed along.
+
+For information on learning these tongue-root grammars, see @@OT learning@
+	and @@Boersma (2000)@.
+
+################################################################################
+"Optimality Theory"
+© Paul Boersma 20021105
+
+A framework for transferring one linguistic representation into another,
+e.g. transferring an underlying form into a surface form. Before @@Prince & Smolensky (1993)@,
+phonologists tended to this with a sequentially ordered set of rules, each of which transferred a representation
+into another. With @OT (that’s the abbreviation), there are no intermediate steps in the derivation, but a set of ranked
+@constraints chooses the optimal output form from a set of candidates.
+
+In Praat, you can draw Optimality-Theoretic tableaus and simulate Optimality-Theoretic learning.
+See the @@OT learning@ tutorial.
+
+################################################################################
+"OT"
+© Paul Boersma 20021105
+
+An abbreviation for @@Optimality Theory@.
+
+################################################################################
+"OT learning"
+© Paul Boersma 20070423
+
+This tutorial describes how you can draw Optimality-Theoretic and Harmonic-Grammar tableaus and
+simulate Optimality-Theoretic and Harmonic-Grammar learning with Praat.
+
+You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.
+
+1. @@OT learning 1. Kinds of grammars|Kinds of grammars@ (ordinal and stochastic, @OTGrammar)
+2. @@OT learning 2. The grammar|The grammar@
+	2.1. @@OT learning 2.1. Viewing a grammar|Viewing a grammar@ (N\s{O}C\s{ODA} example, @OTGrammarEditor)
+	2.2. @@OT learning 2.2. Inside the grammar|Inside the grammar@ (saving, inspecting)
+	2.3. @@OT learning 2.3. Defining your own grammar|Defining your own grammar@
+	2.4. @@OT learning 2.4. Evaluation|Evaluation@ (noise)
+	2.5. @@OT learning 2.5. Editing a grammar|Editing a grammar@
+	2.6. @@OT learning 2.6. Variable output|Variable output@ (place assimilation example)
+	2.7. @@OT learning 2.7. Tableau pictures|Tableau pictures@ (printing, EPS)
+	2.8. @@OT learning 2.8. Asking for one output|Asking for one output@
+	2.9. @@OT learning 2.9. Output distributions|Output distributions@
+3. @@OT learning 3. Generating language data|Generating language data@
+	3.1. @@OT learning 3.1. Data from a pair distribution|Data from a pair distribution@
+	3.2. @@OT learning 3.2. Data from another grammar|Data from another grammar@ (tongue-root-harmony example)
+4. @@OT learning 4. Learning an ordinal grammar|Learning an ordinal grammar@
+5. @@OT learning 5. Learning a stochastic grammar|Learning a stochastic grammar@
+6. @@OT learning 6. Shortcut to grammar learning|Shortcut to grammar learning@
+7. @@OT learning 7. Learning from overt forms|Learning from overt forms@
+
+################################################################################
+"OT learning 1. Kinds of grammars"
+© Paul Boersma 20190331
+
+This is chapter 1 of the @@OT learning@ tutorial.
+
+According to @@Prince & Smolensky (1993)@, an @@Optimality Theory|Optimality-Theoretic@ (@OT) grammar
+consists of a number of ranked @constraints.
+For every possible input (usually an underlying form), GEN (the generator) generates a (possibly very large) number of
+%%output candidates%, and the ranking order of the constraints determines the winning candidate,
+which becomes the single optimal output.
+
+According to @@Prince & Smolensky (1993)@ and @@Smolensky & Legendre (2006)@, a Harmonic Grammar (HG)
+consists of a number of weighted @constraints.
+The winning candidate, which becomes the single optimal output, is the one with the greatest %harmony, which
+is a measure of goodness determined by the weights of the constraints violated by each candidate.
+
+In OT, ranking is %strict, i.e., if a constraint %A is ranked higher than the constraints %B, %C, and %D,
+a candidate that violates only constraint %A will always be beaten by any candidate that respects %A
+(and any higher constraints), even if it violates %B, %C, and %D.
+
+In HG, weighting is %additive, i.e., a candidate that only violates a constraint %A with a weight of 100
+has a harmony of -100 and will therefore beat a candidate that violates both a constraint %B with a weight of 70
+and a constraint %C with a weight of 40 and therefore has a harmony of only -110. Also, two violations of constraint %B
+(harmony 2 * -70 = -140) are worse than one violation of constraint %A (harmony -100).
+
+1. Ordinal OT grammars
+======================
+Because only the ranking order of the constraints plays a role in evaluating the output candidates,
+Prince & Smolensky took an OT grammar to contain no absolute ranking values, i.e., they accepted only an ordinal relation
+between the constraint rankings. For such a grammar, @@Tesar & Smolensky (1998)@ devised an on-line learning algorithm
+(Error-Driven Constraint Demotion, EDCD) that changes the ranking order
+whenever the form produced by the learner is different from the adult form
+(a corrected version of the algorithm can be found in @@Boersma (2009b)@). Such a learning step
+can sometimes lead to a large change in the behaviour of the grammar.
+
+2. Stochastic OT grammars
+=========================
+The EDCD algorithm is fast and convergent. As a model of language acquisition, however, its drawbacks are that it
+is extremely sensitive to errors in the learning data and that it does not show realistic gradual learning curves.
+For these reasons, @@Boersma (1997)@
+proposed stochastic OT grammars in which every constraint has a %%ranking value% along a continuous ranking scale,
+and a small amount of %noise is added to this ranking value at evaluation time.
+The associated error-driven on-line learning algorithm (Gradual Learning Algorithm, GLA) effects small changes in the
+ranking values of the constraints with every learning step. An added virtue of the GLA is that it can learn
+languages with optionality and variation, which was something that EDCD could not do.
+For how this algorithm works on some traditional phonological problems, see @@Boersma & Hayes (2001)@.
+
+Ordinal OT grammars can be seen as a special case of the more general stochastic OT grammars:
+they have integer ranking values (%strata) and zero evaluation noise.
+In Praat, therefore, every constraint is taken to have a ranking value,
+so that you can do stochastic as well as ordinal OT.
+
+3. Categorical Harmonic Grammars
+================================
+@@Jäger (2003)@ and @@Soderstrom, Mathis & Smolensky (2006)@ devised an on-line learning algorithm
+for Harmonic Grammars (stochastic gradient ascent). As proven by @@Fischer (2005)@,
+this algorithm is guaranteed to converge upon a correct grammar, if there exists one that handles the data.
+
+4. Stochastic Harmonic Grammars
+===============================
+There are two kinds of stochastic models of HG, namely MaxEnt (= Maximum Entropy) grammars
+(@@Smolensky (1986)@, @@Jäger (2003)@), in which the probablity of a candidate winning depends on its harmony,
+and Noisy HG (@@Boersma & Escudero (2008)@, @@Boersma & Pater (2016)@), in which noise is added to constraint weights
+at evaluation time, as in Stochastic OT.
+
+The algorithm by @@Jäger (2003)@ and @@Soderstrom, Mathis & Smolensky (2006)@
+can learn languages with optionality and variation (@@Boersma & Pater (2016)@).
+
+The OTGrammar object
+====================
+An OT grammar is implemented as an @OTGrammar object.
+In an OTGrammar object, you specify all the constraints, all the possible inputs and all their possible outputs.
+
+################################################################################
+"OT learning 2. The grammar"
+© Paul Boersma 20000122
+
+This is chapter 2 of the @@OT learning@ tutorial.
+
+We can ask the grammar to produce an output form for any input form that is in its list of tableaus.
+2.1. @@OT learning 2.1. Viewing a grammar|Viewing a grammar@ (N\s{O}C\s{ODA} example, @OTGrammarEditor)
+2.2. @@OT learning 2.2. Inside the grammar|Inside the grammar@ (saving, inspecting)
+2.3. @@OT learning 2.3. Defining your own grammar|Defining your own grammar@
+2.4. @@OT learning 2.4. Evaluation|Evaluation@ (noise)
+2.5. @@OT learning 2.5. Editing a grammar|Editing a grammar@
+2.6. @@OT learning 2.6. Variable output|Variable output@ (place assimilation example)
+2.7. @@OT learning 2.7. Tableau pictures|Tableau pictures@ (printing, EPS files)
+2.8. @@OT learning 2.8. Asking for one output|Asking for one output@
+2.9. @@OT learning 2.9. Output distributions|Output distributions@
+
+################################################################################
+"OT learning 2.1. Viewing a grammar"
+© Paul Boersma 20070725
+
+Consider a language where the underlying form /pat/ leads to the surface form [pa],
+	presumably because the structural constraint N\s{O}C\s{ODA} outranks the faithfulness constraint P\s{ARSE}.
+
+To create such a grammar in Praat, choose @@Create NoCoda grammar@ from the ##Constraint grammmars# submenu of the @@New menu@.
+	An @OTGrammar object will then appear in the list of objects.
+	If you click ##View & Edit#, an @OTGrammarEditor will show up, containing:
+
+1. the constraint list, sorted by %#disharmony (= ranking value + noise):
+,
+|                   | %%ranking value% | %disharmony | %plasticity
+| ##N\s{O}C\s{ODA}# |      100.000     |   100.000   |   1.000
+|   ##P\s{ARSE}#    |       90.000     |    90.000   |   1.000
+,
+2. the tableaus for the two possible inputs /pat/ and /pa/:
+{- 3x1
+	Create NoCoda grammar
+	Draw tableau: “pat”
+}
+{- 3x0.7
+	Create NoCoda grammar
+	Draw tableau: “pa”
+}
+From the first tableau, we see that the underlying form /pat/ will surface as [pa],
+	because the alternative [pat] violates a constraint (namely, N\s{O}C\s{ODA}) with a higher disharmony than does [pa],
+	which only violates P\s{ARSE}, which has a lower disharmony.
+
+Note the standard OT tableau layout: asterisks (*) showing violations, exclamation marks (!) showing crucial violations,
+	greying of cells that do not contribute to determining the winning candidate, and a finger (☞) pointing to the winner
+	(this may look like a plus sign (+) if you don’t have the Zapf Dingbats font installed on your computer or printer).
+	An HG tableau contains asterisks and a pointing finger, but no exclamation marks or grey cells.
+
+The second tableau shows that /pa/ always surfaces as [pa], which is no wonder since this is
+	the only candidate. All cells are grey because none of them contributes to the determination of the winner.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"OT learning 2.2. Inside the grammar", U"ppgb", 20110129)
 NORMAL (U"You can save an @OTGrammar grammar as a text file by choosing @@Save as text file...@ from the @@Save menu@ "

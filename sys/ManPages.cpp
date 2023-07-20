@@ -394,6 +394,21 @@ static bool stringStartsWithParenthesizedNumber (conststring32 string) {
 		return false;
 	return true;
 }
+static bool stringStartsWithNumberAndDot (conststring32 string) {
+	const char32 *p = & string [0];
+	for (;;) {
+		if (*p < U'0' || *p > U'9')
+			return false;
+		p ++;   // skip first digit
+		while (*p >= U'0' && *p <= U'9')
+			p ++;
+		if (*p != U'.')
+			return false;
+		p ++;
+		if (Melder_isHorizontalSpace (*p))
+			return true;
+	}
+}
 
 static void readOnePage_notebook (ManPages me, MelderReadText text) {
 	/*
@@ -486,14 +501,24 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			if (! line)
 				return;
 			continue;
+		} else if (line [0] == U'/' && line [1] == U'/') {
+			line = MelderReadText_readLine (text);
+			if (! line)
+				return;
+			continue;
 		/*
 			Now we try several kinds of list items.
 			To not prepend a character, use ",".
 			To prepend a bullet, use "-" or "*" or "•".
 		 */
 		} else if (
-			(line [0] == U',' || line [0] == U'-' || line [0] == U'*' || line [0] == U'•') && Melder_isHorizontalSpace (line [1]) ||
-			stringStartsWithParenthesizedNumber (line)
+			line [0] == U',' && (Melder_isHorizontalSpace (line [1]) || line [1] == U'\0') ||
+			line [0] == U'-' && Melder_isHorizontalSpace (line [1]) ||
+			line [0] == U'*' && Melder_isHorizontalSpace (line [1]) ||
+			line [0] == U'•' && Melder_isHorizontalSpace (line [1]) ||
+			stringStartsWithParenthesizedNumber (line) ||
+			stringStartsWithNumberAndDot (line) ||
+			line [0] == U'|' && Melder_isHorizontalSpace (line [1])
 		) {
 			type = (
 				numberOfLeadingSpaces <  3 ? kManPage_type::LIST_ITEM :
@@ -501,15 +526,34 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				numberOfLeadingSpaces < 11 ? kManPage_type::LIST_ITEM2 :
 				kManPage_type::LIST_ITEM3
 			);
-			if (line [0] == U'-' || line [0] == U'*' || line [0] == U'•')
+			if (line [0] == U',') {
+				if (line [1] == U'\0') {
+					MelderString_append (& buffer_graphical, U" ");   // a dummmy to make sure that the line is drawn at all
+					line += 1;
+				} else {
+					MelderString_append (& buffer_graphical, U" ");
+					line += 2;
+					//Melder_skipHorizontalSpace (& line);
+				}
+				MelderString_append (& buffer_graphical, line);
+			} else if (line [0] == U'-' || line [0] == U'*' || line [0] == U'•') {
 				MelderString_append (& buffer_graphical, U"• ");
-			if (line [0] == U',')
-				MelderString_append (& buffer_graphical, U" ");
-			if (line [0] == U',' || line [0] == U'-' || line [0] == U'*' || line [0] == U'•') {
 				line += 2;
-				Melder_skipHorizontalSpace (& line);
+				//Melder_skipHorizontalSpace (& line);
+				MelderString_append (& buffer_graphical, line);
+			} else if (line [0] == U'|') {
+				MelderString_append (& buffer_graphical, U"\t");
+				line += 2;
+				while (*line != U'\0') {
+					if (*line == U'|')
+						MelderString_appendCharacter (& buffer_graphical, U'\t');
+					else
+						MelderString_appendCharacter (& buffer_graphical, *line);
+					line ++;
+				}
+			} else {
+				MelderString_append (& buffer_graphical, line);
 			}
-			MelderString_append (& buffer_graphical, line);
 		} else if (line [0] == U':' && Melder_isHorizontalSpace (line [1])) {
 			type = (
 				numberOfLeadingSpaces <  3 ? kManPage_type::DEFINITION :
@@ -688,14 +732,17 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				}
 				char32 *firstNonSpace = Melder_findEndOfHorizontalSpace (continuationLine);
 				if (*firstNonSpace == U':' ||
-					*firstNonSpace == U',' ||
-					*firstNonSpace == U'-' ||
-					*firstNonSpace == U'*' ||
-					*firstNonSpace == U'•' ||
+					*firstNonSpace == U',' && (Melder_isHorizontalSpace (firstNonSpace [1]) || firstNonSpace [1] == U'\0') ||
+					*firstNonSpace == U'-' && Melder_isHorizontalSpace (firstNonSpace [1]) ||
+					*firstNonSpace == U'*' && Melder_isHorizontalSpace (firstNonSpace [1]) ||
+					*firstNonSpace == U'•' && Melder_isHorizontalSpace (firstNonSpace [1]) ||
 					stringStartsWithParenthesizedNumber (firstNonSpace) ||
+					stringStartsWithNumberAndDot (firstNonSpace) ||
+					*firstNonSpace == U'|' && Melder_isHorizontalSpace (firstNonSpace [1]) ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'{' ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
 					Melder_startsWith (firstNonSpace, U"===") ||
+					*firstNonSpace == U'/' && firstNonSpace [1] == U'/' ||
 					*firstNonSpace == U'\0'
 				) {
 					line = continuationLine;   // not really a continuation line, but a new paragraph
