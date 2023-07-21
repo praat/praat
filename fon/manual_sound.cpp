@@ -79,13 +79,37 @@ static void draw_SoundDeepen_impulse (Graphics g) {
 void manual_sound_init (ManPages me);
 void manual_sound_init (ManPages me) {
 
-MAN_BEGIN (U"Combine to stereo", U"ppgb", 20070129)
-INTRO (U"To combine two mono @Sound objects into one single stereo Sound, "
-	"select the two Sounds in the list and choose ##Combine to stereo# from the ##Combine sounds# menu. "
-	"A new stereo Sound will appear in the list.")
-NORMAL (U"Of the two original mono Sounds, the one that is higher in the list will become the left channel "
-	"of the new stereo Sound, and the one that is lower in the list will become the right channel of the new Sound.")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Sounds: Combine to stereo"
+© Paul Boersma 2007,2008,2012,2023
+
+To combine two (or more) mono @Sound objects into one single stereo (i.e. multi-channel) Sound,
+select those Sounds in the list and choose ##Combine to stereo# from the #Combine menu.
+A new stereo Sound will appear in the list.
+
+Of the two original mono Sounds, the one that is higher in the list will become the left channel
+of the new stereo Sound, and the one that is lower in the list will become the right channel of the new Sound.
+
+You can also create Sounds with e.g. 3 or 5 or 100 channels in this way. The topmost selected mono Sound
+will become channel 1, and the bottommost selected mono Sound will become the last channel.
+
+################################################################################
+"Create Sound as pure tone..."
+© Paul Boersma 2023
+
+A command in the #Sound submenu of the @@New menu@, to create a sine wave.
+
+A new Sound object will appear in the list,
+with the specified sine frequency and the specified amplitude.
+You can also specify the number of channels, the start and end times, and the sampling frequency.
+In order to prevent hearing clicks at the beginning and end,
+you can specify a fade-in duration and a fade-out duration.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Create Sound from formula...", U"ppgb", 20070225)
 INTRO (U"A command in the @@New menu@ to create a @Sound with a specified duration and sampling frequency, "
@@ -211,6 +235,10 @@ MAN_END
 
 MAN_BEGIN (U"Record stereo Sound...", U"ppgb", 20021212)
 INTRO (U"A command in the @@New menu@ to record a @Sound. Creates a @SoundRecorder window.")
+MAN_END
+
+MAN_BEGIN (U"Record Sound (fixed time)...", U"ppgb", 20021212)
+INTRO (U"A usually hidden command in the @@New menu@ to record a @Sound.")
 MAN_END
 
 MAN_BEGIN (U"Sound", U"ppgb", 20161013)

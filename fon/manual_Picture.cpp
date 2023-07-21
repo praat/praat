@@ -187,6 +187,18 @@ i.e. in the same coordinates as the latest drawing (e.g. seconds horizontally
 and pascals vertically) or as specified by the latest @@Axes...@ command.
 
 ################################################################################
+"Draw line..."
+© Paul Boersma 2023
+
+A command in the @@World menu@ of the @@Picture window@,
+to draw a line between the given %x and %y points,
+in the current colour and with the current line width and line type.
+
+The coordinates %x and %y are to be specified as world coordinates,
+i.e. in the same coordinates as the latest drawing (e.g. seconds horizontally
+and pascals vertically) or as specified by the latest @@Axes...@ command.
+
+################################################################################
 "Paint rectangle..."
 © Paul Boersma 2023
 

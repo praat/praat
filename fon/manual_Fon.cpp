@@ -254,7 +254,6 @@ R"~~~(}
 ##Name
 :	the name of the resulting Strings object.
 
-
 ################################################################################
 )~~~"
 MAN_PAGES_END
@@ -1598,54 +1597,6 @@ CODE (U"1 (number of columns) \"\" (no column name)")
 CODE (U"\"hallo\"         3")
 CODE (U"\"dag allemaal\"  1")
 CODE (U"\"tot morgen\"    2")
-MAN_END
-
-MAN_BEGIN (U"Table", U"ppgb", 20030316)
-INTRO (U"One of the @@types of objects@ in Praat. See the @Statistics tutorial.")
-MAN_END
-
-MAN_BEGIN (U"TableOfReal", U"ppgb", 20030316)
-INTRO (U"One of the @@types of objects@ in Praat.")
-NORMAL (U"A TableOfReal object contains a number of %cells. Each cell belongs to a %row and a %column. "
-	"For instance, a TableOfReal with 10 rows and 3 columns has 30 cells.")
-NORMAL (U"Each row and each column may be labeled with a %title.")
-ENTRY (U"Creating a TableOfReal from data in a text file")
-NORMAL (U"Suppose you have F1 and F2 data for vowels. "
-	"You can create a simple text file like the following:")
-CODE (U"\"ooTextFile\"  ! The line by which Praat can recognize your file")
-CODE (U"\"TableOfReal\" ! The line that tells Praat about the contents")
-CODE (U"2   \"F1\"  \"F2\"      ! Number of columns, and column labels")
-CODE (U"3                   ! Number of rows")
-CODE (U"\"a\" 800 1100         ! Row label (vowel), F1 value, F2 value")
-CODE (U"\"i\" 280 2800         ! Row label (vowel), F1 value, F2 value")
-CODE (U"\"u\" 260  560         ! Row label (vowel), F1 value, F2 value")
-NORMAL (U"Praat is rather forgiving about the use of spaces, tabs, and newlines. "
-	"See @@Save as text file...@ for general information.")
-NORMAL (U"You will often have your data in a file with a self-describing format, "
-	"i.e. in which the number of values on a line equals the number of columns "
-	"of the table:")
-CODE (U"800 1100")
-CODE (U"280 2800")
-CODE (U"260 560")
-NORMAL (U"Such a file can be read with @@Read Matrix from raw text file...@. "
-	"This creates a Matrix object, which can be cast to a TableOfReal object "
-	"by @@Matrix: To TableOfReal@. The resulting TableOfReal does not have "
-	"any row or column labels yet. You could add column labels with:")
-CODE (U"Set column label (index)... 1 F1")
-CODE (U"Set column label (index)... 2 F2")
-NORMAL (U"Of course, if the row labels contain crucial information, "
-	"and the number of rows is large, this is not a feasible method.")
-MAN_END
-
-MAN_BEGIN (U"TableOfReal: Set value...", U"ppgb", 19980105)
-INTRO (U"A command to change the value of one table cell in each selected @TableOfReal object.")
-ENTRY (U"Settings")
-TERM (U"##Row number")
-DEFINITION (U"the number of the row of the cell whose value you want to change.")
-TERM (U"##Column number")
-DEFINITION (U"the number of the column of the cell whose value you want to change.")
-TERM (U"##New value")
-DEFINITION (U"the value that you want the specified cell to have.")
 MAN_END
 
 }

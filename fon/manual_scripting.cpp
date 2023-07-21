@@ -1364,62 +1364,90 @@ INTRO (U"A command in the #Edit menu of a @ScriptEditor, for inserting the histo
 	"See @@History mechanism@.")
 MAN_END
 
-MAN_BEGIN (U"plug-ins", U"ppgb", 20201229)
-INTRO (U"Experienced Praat script writers can distribute their product as a plug-in to Praat.")
-ENTRY (U"The Praat plug-in mechanism")
-NORMAL (U"When Praat starts up, it will execute all Praat scripts called #`setup.praat` "
-	"that reside in directories whose name starts with #`plugin_` and that themselves reside in "
-	"your Praat @@preferences folder@.")
-ENTRY (U"How to write a Praat plug-in")
-NORMAL (U"Suppose that you have a set of Praat scripts specialized in the analysis and synthesis of vocalizations of guinea pigs, "
-	"and that these scripts are called `analyseQueak.praat` and `createQueak.praat` (“queak” is what guinea pigs tend to say). "
-	"With the @ScriptEditor, you have put the script `analyseQueak.praat` in the dynamic menu that "
-	"appears if the user selects a Sound object, and you have put the script `createQueak.praat` in the @@New menu@. "
-	"Only the latter script requires the user to supply some settings in a form, so the two menu commands "
-	"are ##Analyse queak# (without dots) and ##Create queak...# (with three dots), respectively. "
-	"Suppose now that you want to distribute those two commands to other guinea pig vocalization researchers.")
-NORMAL (U"What you do is that you create a Praat script called `setup.praat` (in the same folder as the two other scripts), "
-	"that contains the following two lines:")
-CODE (U"@@Add action command...|Add action command:@ \"Sound\", 1, \"\", 0, \"\", 0, \"Analyse queak\", \"\", 0, \"analyseQueak.praat\"")
-CODE (U"@@Add menu command...|Add menu command:@ \"Objects\", \"New\", \"Create queak...\", \"\", 0, \"createQueak.praat\"")
-NORMAL (U"(If you ran this script, Praat would install those two commands in the correct menus, and remember them in the @@buttons file@; "
-	"but you are now going to install them in a different way.)")
-NORMAL (U"You now put the three scripts in a new folder called %`plugin_Queak`, "
-	"and put this folder in your Praat preferences folder. If you are on Windows, "
-	"you will now have a folder called something like `C:\\Users\\Your Name\\Praat\\plugin_Queak`.")
-NORMAL (U"If you now start up Praat, Praat will automatically execute the script "
-	"`C:\\Users\\Your Name\\Praat\\plugin_Queak\\setup.praat` "
-	"and thereby install the two buttons. The two buttons will %not be remembered in the buttons file, "
-	"but they will be installed at every Praat start-up. De-installation involves removing (or renaming) the `plugin_Queak` folder.")
-NORMAL (U"To distribute the Queak plug-in among your colleague guinea pig researchers, you can use any installer program to put "
-	"the `plugin_Queak` folder into the user’s Praat preferences folder; or you could ask those colleagues to move "
-	"the `plugin_Queak` folder there by hand.")
-ENTRY (U"The structure of your plug-in folder")
-NORMAL (U"In the example `setup.praat` file above, the names of the scripts `analyseQueak.praat` and `createQueak.praat` "
-	"occur without any folder information. This works because Praat regards these file names as being relative to the folder "
-	"where `setup.praat` is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into "
-	"the folder `plugin_Queak`. For instance, if you put `analyseQueak.praat` into the subfolder `analysis`, "
-	"your line in the `setup.praat` script would look as follows:")
-CODE (U"@@Add action command...|Add action command:@ \"Sound\", 1, \"\", 0, \"\", 0, \"Analyse queak\", \"\", 0, \"analysis/analyseQueak.praat\"")
-NORMAL (U"The forward slash (“/”) in this example makes your plug-in platform-independent: it will work unchanged "
-	"on Windows, Macintosh, and Unix.")
-NORMAL (U"Nothing prevents you from adding data files to your plug-in. For instance, your `plugin_Queak` folder "
-	"could contain a subfolder `sounds` full of guinea pig recordings, and you could make them available in the New or Open menu.")
-ENTRY (U"Using a plug-in for site-wide customization")
-NORMAL (U"If your local guinea pig research group shares a number of Praat scripts, these can be made available to everybody "
-	"in the following way:")
-LIST_ITEM (U"1. Create a script that adds buttons to the fixed and dynamic menus, using the commands "
-	"@@Add menu command...@ and @@Add action command...@. This script could be a slightly edited copy of someone's "
-	"@@buttons file@.")
-LIST_ITEM (U"2. Put this script where everybody can see it, "
-	"for instance in `U:\\MaldenGuineaPigResearchButtons.praat`, where `U` is your shared computer.")
-LIST_ITEM (U"3. Create a file `setup.praat` that contains only the following line:")
-CODE1 (U"runScript: \"U:\\bsMaldenGuineaPigResearchButtons.praat\"")
-LIST_ITEM (U"4. Put the `setup.praat` file in a new folder called `plugin_MaldenGuineaPigResearch`, "
-	"and distribute this folder among your local colleagues.")
-NORMAL (U"This procedure allows all members of the group to automatically enjoy all the later changes in your "
-	"custom command set.")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"plug-ins"
+© Paul Boersma 20201229, 2023
+
+Experienced Praat script writers can distribute their product as a plug-in to Praat.
+
+The Praat plug-in mechanism
+===========================
+When Praat starts up, it will execute all Praat scripts called #`setup.praat`
+that reside in folders whose name starts with #`plugin_` and that themselves reside in
+your Praat @@preferences folder@.
+
+How to write a Praat plug-in
+============================
+Suppose that you have a set of Praat scripts specialized in the analysis and synthesis of vocalizations of guinea pigs,
+and that these scripts are called `analyseQueak.praat` and `createQueak.praat` (“queak” is what guinea pigs tend to say).
+With the @ScriptEditor, you have put the script `analyseQueak.praat` in the dynamic menu that
+appears if the user selects a Sound object, and you have put the script `createQueak.praat` in the @@New menu@.
+Only the latter script requires the user to supply some settings in a form, so the two menu commands
+are ##Analyse queak# (without dots) and ##Create queak...# (with three dots), respectively.
+Suppose now that you want to distribute those two commands to other guinea pig vocalization researchers.
+
+What you do is that you create a Praat script called `setup.praat` (in the same folder as the two other scripts),
+that contains the following two lines:
+
+	\@{Add action command:} "Sound", 1, "", 0, "", 0, "Analyse queak", "", 0, "analyseQueak.praat"
+	\@{Add menu command:} "Objects", "New", "Create queak...", "", 0, "createQueak.praat"
+
+(If you ran this script, Praat would install those two commands in the correct menus, and remember them in the @@buttons file@;
+but you are now going to install them in a different way.)
+
+You now put the three scripts in a new folder called %`plugin_Queak`,
+and put this folder in your Praat preferences folder. If you are on Windows,
+you will now have a folder called something like `C:\Users\Your Name\Praat\plugin_Queak`.
+
+If you now start up Praat, Praat will automatically execute the script
+`C:\Users\Your Name\Praat\plugin_Queak\setup.praat`
+and thereby install the two buttons. The two buttons will %not be remembered in the buttons file,
+but they will be installed at every Praat start-up. De-installation involves removing (or renaming) the `plugin_Queak` folder.
+
+To distribute the Queak plug-in among your colleague guinea pig researchers, you can use any installer program to put
+the `plugin_Queak` folder into the user’s Praat preferences folder; or you could ask those colleagues to move
+the `plugin_Queak` folder there by hand.
+
+The structure of your plug-in folder
+====================================
+In the example `setup.praat` file above, the names of the scripts `analyseQueak.praat` and `createQueak.praat`
+occur without any folder information. This works because Praat regards these file names as being relative to the folder
+where `setup.praat` is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into
+the folder `plugin_Queak`. For instance, if you put `analyseQueak.praat` into the subfolder `analysis`,
+your line in the `setup.praat` script would look as follows:
+
+	\@{Add action command:} "Sound", 1, "", 0, "", 0, "Analyse queak", "", 0, "analysis/analyseQueak.praat"
+
+The forward slash (“/”) in this example makes your plug-in platform-independent: it will work unchanged
+on Windows, Macintosh, and Unix.
+
+Nothing prevents you from adding data files to your plug-in. For instance, your `plugin_Queak` folder
+could contain a subfolder `sounds` full of guinea pig recordings, and you could make them available in the New or Open menu.
+
+Using a plug-in for site-wide customization
+===========================================
+If your local guinea pig research group shares a number of Praat scripts, these can be made available to everybody
+in the following way:
+1. Create a script that adds buttons to the fixed and dynamic menus, using the commands
+	@@Add menu command...@ and @@Add action command...@. This script could be a slightly edited copy of someone’s
+	@@buttons file@.
+2. Put this script where everybody can see it,
+	for instance in `U:\\MaldenGuineaPigResearchButtons.praat`, where `U` is your shared computer.
+3. Create a file `setup.praat` that contains only the following line:
+
+		runScript: "U:\MaldenGuineaPigResearchButtons.praat"
+
+4. Put the `setup.praat` file in a new folder called `plugin_MaldenGuineaPigResearch`,
+	and distribute this folder among your local colleagues.
+
+This procedure allows all members of the group to automatically enjoy all the later changes in your
+custom command set.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"plugins", U"ppgb", 20060920)
 INTRO (U"See @@plug-ins@.")
