@@ -345,7 +345,7 @@ What used to be new?
 
 ##6.1.37# (16 December 2020)
 • TextGrid window: removed a bug that caused Praat to crash when option-clicking or command-clicking a boundary when another boundary was selected on a point tier.
-• Record Sound (fixed time): removed a bug that caused Praat to crash with certain combinations of duration and sampling frequency on Windows.
+• @@Record Sound (fixed time)...@: removed a bug that caused Praat to crash with certain combinations of duration and sampling frequency on Windows.
 • PowerCepstrogram: more precise integration, so that the cepstral peak prominence is now a continuous function of time.
 • TextGrid: Get points (preceded): removed a bug that caused Praat to crash under some edge conditions.
 • Scripting: @`tryToWriteFile` () and @`tryToAppendFile` () should not be available in manuals.
@@ -1079,11 +1079,11 @@ the column index was larger than the number of rows.
 
 ##5.3.34# (21 November 2012)
 • Windows: corrected a bug that caused incorrect alignment of the buttons in the Objects window.
-• The new @@Sound: Combine to stereo@ can now work with Sounds of different durations, as the old could.
+• The new @@Sounds: Combine to stereo@ can now work with Sounds of different durations, as the old could.
 • Corrected a bug that caused Praat to crash when creating a SpeechSynthesizer.
 
 ##5.3.33# (20 November 2012)
-• ##Sound: Combine to stereo# can now combine any number of Sounds into a new Sound whose number of channels
+• @@Sounds: Combine to stereo@ can now combine any number of Sounds into a new Sound whose number of channels
   is the sum of the numbers of channels of the original Sounds.
 • ERP: Down to Sound.
 
@@ -1431,14 +1431,14 @@ if the selection ran from the penultimate interval to the end of the TextGrid.
 
 ##5.1.39# (10 July 2010)
 • GTK beta version.
-• Linux: made @@Sound: Record (fixed time)...@ work correctly (the sampling frequency was wrong).
+• Linux: made @@Record Sound (fixed time)...|Sound: Record (fixed time)...@ work correctly (the sampling frequency was wrong).
 • GTK: list of objects: multiple selection, working Rename button.
 • GTK: running a script no longer deselects all objects at the start.
 • GTK: working Buttons editor.
 • GTK: correctly laid out settings windows.
 
 ##5.1.38# (2 July 2010)
-• Linux: made @@Sound: Record fixed time...@ work correctly (the sampling frequency was wrong).
+• Linux: made @@Record Sound (fixed time)...|Sound: Record fixed time...@ work correctly (the sampling frequency was wrong).
 • Mac: repaired a bug introduced in 5.1.35 that could cause Praat to crash
   if neither Doulos SIL nor Charis SIL were installed.
 • Mac: correct live scrolling in Picture window and DataEditor.
@@ -1675,7 +1675,7 @@ if the selection ran from the penultimate interval to the end of the TextGrid.
 
 ##5.0.34# (22 September 2008)
 • ##Shift times by...# and ##Shift times to...# (Modify menu).
-• Sound: @@Combine to stereo@ works even if the two mono sounds have different durations or time domains.
+• @@Sounds: Combine to stereo@ works even if the two mono sounds have different durations or time domains.
 
 ##5.0.33# (9 September 2008)
 • Windows: prevented warning messages about “Widget type”.
@@ -1941,7 +1941,7 @@ if the names of these files or their directory paths contained non-ASCII charact
 ##4.6.10# (22 July 2007)
 • Improved reading of UTF-16 data files.
 • Improved error messages when reading text files (line numbers are mentioned).
-• @@Table: Get group mean (Student t)...@.
+• @@Table: Report group mean (Student t)...|Table: Get group mean (Student t)...@.
 
 ##4.6.09# (24 June 2007)
 • Corrected a bug introduced in 4.6.07 that caused a crash when reading Collections.
@@ -2164,8 +2164,8 @@ if the names of these files or their directory paths contained non-ASCII charact
 • @@Table: Collapse rows...|Table: Pool...@: computing averages and medians of dependent variables
 for a selected combination of independent variables.
 • @@Table: Formula...@ accepts string expressions as well as numeric expressions.
-• @@Table: Sort...@ can sort by any number of columns.
-• @@Table: Create with column names...@.
+• @@Table: Sort rows...|Table: Sort...@ can sort by any number of columns.
+• @@Create Table with column names...|Table: Create with column names...@.
 • @@Table: Report mean...@.
 • Formulas: @@Formulas 8. Attributes of objects|`row$` and `col$` attributes@.
 • Warning when trying to read data files whose format is newer than the Praat version.
@@ -2608,12 +2608,12 @@ Editors:
 • Added many query commands in editors.
 
 Phonetics library:
-• @@Sound: To Formant...@: sample-rate-independent formant analysis.
-• @@Sound: To Harmonicity...@ (glottal-to-noise excitation ratio).
+• @@Sound: To Formant (burg)...|Sound: To Formant...@: sample-rate-independent formant analysis.
+• @@Sound: To Harmonicity (ac)...|Sound: To Harmonicity...@ (glottal-to-noise excitation ratio).
 • Pitch: support for ERB units, draw all combinations of line/speckle and linear/logarithmic/semitones/mels/erbs,
   optionally with TextGrid, Subtract linear fit.
 • Spectrum: Draw along logarithmic frequency axis.
-• TextGrid:  modification commands, Extract part, Shift to zero, Scale times (with Sound or LongSound).
+• TextGrid: modification commands, Extract part, Shift to zero, Scale times (with Sound or LongSound).
 • @@Matrix: To TableOfReal@, @@Matrix: Draw contour...@.
 • Concatenate Sound and LongSound objects.
 • File formats: save PitchTier in spreadsheet format, read CGN syntax files (XML version),

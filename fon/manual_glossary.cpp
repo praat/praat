@@ -409,7 +409,7 @@ MAN_BEGIN (U"start time", U"ppgb", 20060714)
 INTRO (U"- the beginning of the @@time domain@ (see there).")
 MAN_END
 
-MAN_BEGIN (U"stereo", U"ppgb", 20110131)
+MAN_BEGIN (U"stereo", U"ppgb", 20110131) // 2023
 INTRO (U"A stereo sound is a sound consisting of a left and a right channel. "
 	"Praat can read and write both mono and stereo sounds.")
 ENTRY (U"Reading a stereo sound from disk")
@@ -420,8 +420,8 @@ NORMAL (U"If you want to look at the left or right channel separately, "
 ENTRY (U"Saving a stereo sound to disk")
 NORMAL (U"If you choose @@Save as WAV file...@, and the sound is a stereo sound, "
 	"then the sound file will be a stereo file. "
-	"If you have two mono sounds and you want to combine them into one stereo sound, "
-	"you can use @@Combine to stereo@.")
+	"If you have two or more mono sounds and you want to combine them into one stereo sound, "
+	"you can use @@Sounds: Combine to stereo@.")
 MAN_END
 
 MAN_BEGIN (U"time", U"ppgb", 20110128)

@@ -1396,7 +1396,7 @@ void praat_MDS_new_init () {
 	Thing_recognizeClassByOtherName (classProcrustes, U"Procrustus");
 
 	praat_addMenuCommand (U"Objects", U"New", U"Multidimensional scaling", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, GuiMenu_DEPTH_2 | GuiMenu_NO_API,
+	praat_addMenuCommand (U"Objects", U"New", U"Multidimensional scaling tutorial", nullptr, GuiMenu_DEPTH_2 | GuiMenu_NO_API,
 			HELP__MDS_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- MDS --", nullptr, 2, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create letter R example...", nullptr, 2,
