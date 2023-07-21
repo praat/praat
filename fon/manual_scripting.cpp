@@ -3524,7 +3524,7 @@ MAN_END
 
 MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20230130)
 INTRO (U"You can temporarily halt a Praat script:")
-TERM (U"\\#{pauseScript}: %message")
+TERM (U"#`pauseScript`: %message")
 DEFINITION (U"suspends execution of the script, and allows the user to interrupt it. "
 	"A message window will appear with the %message (you can use the same argument list as with @`writeInfoLine`) and the buttons #Stop and #Continue:")
 CODE (U"\\#{pauseScript}: “The next file will be ”, fileName$")

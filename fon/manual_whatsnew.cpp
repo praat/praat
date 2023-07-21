@@ -283,7 +283,7 @@ What used to be new?
 ##6.1.51# (22 July 2021)
 • @@Spectrum: Tabulate (verbose)@ with:  power spectral density, bin width within domain, bin energy, and much more.
 • Sound window: ##Get amplitude(s)#.
-• Scripting: `date_utc$` (), `date#` (), `date_utc#` ().
+• Scripting: @`date_utc$` (), @`date#` (), @`date_utc#` ().
 
 ##6.1.50# (20 June 2021)
 • RealTier: editing, Formula, conversion from and to Matrix and Table and other tiers such as PitchTier,
@@ -336,7 +336,7 @@ What used to be new?
 • Sound window: made channel muting by clicking on the loudspeaker symbols work again.
 
 ##6.1.39# (8 February 2021)
-• Scripting: made string vectors visible in writeFile (), pauseScript () and exitScript ().
+• Scripting: made string vectors visible in @`writeFile` (), @`pauseScript` () and @`exitScript` ().
 • Mac: corrected a bug that could cause About Praat to crash on macOS 10.10.
 
 ##6.1.38# (2 January 2021)
@@ -638,7 +638,7 @@ then dragged the mouse out of that window, then released the mouse button, and t
 • Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.
 
 ##6.0.28# (23 March 2017)
-• Scripting: @`demoPeekInput` () for animations in combination with `sleep` ().
+• Scripting: @`demoPeekInput` () for animations in combination with @`sleep` ().
 
 ##6.0.27# (18 March 2017)
 • TextGrid: fewer error messages in concatenation of multiple TextGrids.
@@ -704,13 +704,13 @@ then dragged the mouse out of that window, then released the mouse button, and t
 
 ##6.0.12# (24 January 2016)
 • Windows 32-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.
-• Mac 64-bit: better `demoShow` ().
+• Mac 64-bit: better @`demoShow` ().
 • Mac 64-bit: working Matrix movies and articulatory synthesizer movies.
 
 ##6.0.11# (18 January 2016)
 • Corrected a bug that could cause Praat to crash when drawing a Spectrum with undefined values.
 • Mac 64-bit: corrected a bug by which some text in the Sound window would sometimes not be drawn.
-• Mac 64-bit demo window: improved the working of `demoShow` ().
+• Mac 64-bit demo window: improved the working of @`demoShow` ().
 
 ##6.0.10# (8 January 2016)
 • Corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.

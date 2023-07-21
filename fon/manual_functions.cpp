@@ -90,8 +90,10 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`cosh##` (%`matrix##`) – hyperbolic cosine of each cell of %`matrix##`
 , @`createFolder` (%`folderPath$`) – create a new folder, or do nothing if it already exists
 , @`date$` ( ) – current local date and time in the form "Mon Nov  8 16:32:42 2021"
+, @`date_iso$` ( ) – current local date and time in the form "2021-11-08T16:32:42+01:00"
 , @`date#` ( ) – current local date and time in the form { 2021, 11, 8, 16, 32, 42 }
 , @`date_utc$` ( ) – current standard date and time in the form "Mon Nov  8 15:32:42 2021"
+, @`date_utc_iso$` ( ) – current standard date and time in the form "2021-11-08T15:32:42Z"
 , @`date_utc#` ( ) – current standard date and time in the form { 2021, 11, 8, 15, 32, 42 }
 , @`deleteFile` (%`filePath$`) – delete a file, or do nothing if it does not exist
 , @`demo` – execute a graphics command in the Demo window (instead of in the Picture window)
@@ -116,6 +118,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`erf` (%`x`) – error function, the integral of the Gaussian
 , @`erfc` (%`x`) – complement of the error function, i.e. 1 − erf (%`x`);
 	this is a separate function because erf (%`x`) can be close to 1
+, @`exitScript` (`...`) – show a message that tells the user why the script will be interrupted
 , @`exp` (%`x`) – exponentiation, i.e. %e^%`x`
 , @`exp#` (%`vector#`) – exponentiate each element of %`vector#`
 , @`exp##` (%`matrix##`) – exponentiate each cell of %`matrix##`
@@ -183,6 +186,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`numberOfColumns` (%`matrix##`)
 , @`numberOfRows` (%`matrix##`)
 , @`outer##` (%`a#`, %`b#`) – outer product, i.e. %%result__ij_% = %%a__i_%%%b__j_%
+, @`pauseScript` (`...`) – show a message in a simple @@pause window@
 , @`percent$` (%`number`, %`precision`) – format a number as a string,
 	with a trailing percent sign and %`precision` digits after the decimal point
 , @`phonToDifferenceLimens` (%`x`) – from perceptual loudness to jnd-scale
@@ -247,6 +251,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`round#` (%`vector#`) – nearest integer of each element of %`vector#`
 , @`round##` (%`matrix##`) – nearest integer of each cell of %`matrix##`
 , @`rowSums#` (%`matrix##`)
+, @`runScript` (%`filePath$`, `...`) – run a script with the given arguments
 , @`selectObject` (`...`) – select objects in the list by ID and/or name
 , @`semitonesToHertz` (%`x`) – from logarithmic scale %re 100 Hz to acoustic frequency
 , @`sigmoid` (%`x`) – 1 / (1 + %e^^-%`x`^)
@@ -289,6 +294,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`tanh##` (%`matrix##`) – hyperbolic tangent of each cell of %`matrix##`
 , @`to#` (%`n`) – the integers 1 through %`n`
 , @`transpose##` (%`matrix##`) – flip matrix along its diagonal
+, @`tryToAppendFile` (%`filePath$`) – check whether a file can be appended to
+, @`tryToWriteFile` (%`filePath$`) – check whether a file can be written (destructive!)
 , @`unicode` (%`c$`) – the Unicode codepoint number that corresponds to character %`c$`
 , @`unicode$` (%`n`) – the character that corresponds to Unicode codepoint %`n`
 , @`unicodeToBackslashTrigraphs$` (%`string$`) – convert e.g. \ct to \bsct
@@ -1159,7 +1166,7 @@ Syntax and semantics
 
 ################################################################################
 "`date$`"
-© Paul Boersma 2023
+© Paul Boersma 2003,2023
 
 A function that can be used in @Formulas.
 
@@ -1172,8 +1179,22 @@ Syntax and semantics
 }
 
 ################################################################################
+"`date_iso$`"
+© Paul Boersma 2021,2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`date_iso$` ( )
+: format the current local date and time in ISO 8601 format.
+{
+	writeInfoLine: date_iso$ ()
+}
+
+################################################################################
 "`date#`"
-© Paul Boersma 2023
+© Paul Boersma 2021,2023
 
 A function that can be used in @Formulas.
 
@@ -1188,7 +1209,7 @@ the year, the month number, the day, the hours, the minutes, and the seconds.
 
 ################################################################################
 "`date_utc$`"
-© Paul Boersma 2023
+© Paul Boersma 2021,2023
 
 A function that can be used in @Formulas.
 
@@ -1201,8 +1222,22 @@ Syntax and semantics
 }
 
 ################################################################################
+"`date_utc_iso$`"
+© Paul Boersma 2021,2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`date_utc_iso$` ( )
+: format the current Coordinated Universal Time in a ISO 8601 format.
+{
+	writeInfoLine: date_utc_iso$ ()
+}
+
+################################################################################
 "`date_utc#`"
-© Paul Boersma 2023
+© Paul Boersma 2021,2023
 
 A function that can be used in @Formulas.
 
@@ -1559,6 +1594,22 @@ Why isn’t this function superfluous?
 Because of floating-point rounding errors:
 although one might think that @`erf` ic sufficient,
 #`erfc` is a separate function because @`erf` (%`x`) can be close to 1.
+
+################################################################################
+"`exitScript`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`exitScript` (`...`)
+: show a simple window message that tells the user why the script will be interrupted.
+
+When the user clicks OK in this window, the script will have stopped running.
+
+For details and examples, see @@Scripting 5.9. Quitting@
+and @@Scripting 6.8. Messages to the user@.
 
 ################################################################################
 "`exp`"
@@ -2378,6 +2429,19 @@ Definition
 ~	%result__%i%j_ = %a_%i %b_%j
 
 ################################################################################
+"`pauseScript`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`pauseScript` (`...`)
+: show a message in a simple @@pause window@.
+
+For details and examples, see @@Scripting 6.6. Controlling the user@.
+
+################################################################################
 "`percent$`"
 © Paul Boersma 2023
 
@@ -2973,9 +3037,9 @@ Halves are rounded up:
 
 ################################################################################
 "`round#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2984,9 +3048,9 @@ Syntax and semantics
 
 ################################################################################
 "`round##`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2995,9 +3059,9 @@ Syntax and semantics
 
 ################################################################################
 "`rowSums#`"
-© Paul Boersma 2023-06-30
+© Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -3005,10 +3069,25 @@ Syntax and semantics
 : compute the sum of the elements of each row of the matrix %`m##`.
 
 ################################################################################
+"`runScript`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`runScript` (%`filePath$`, `...`)
+: run the script given by the (relative or absolute) %`filePath$`,
+with optional arguments given in “`...`”.
+
+If there are any arguments, they will be consumed by the `form` in the script.
+For details and examples, see @@Scripting 6.1. Arguments to the script@.
+
+################################################################################
 "`selectObject`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -3020,7 +3099,7 @@ after deselecting any objects that are currently selected.
 "`semitonesToHertz`"
 © Paul Boersma 2023-06-30
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -3536,6 +3615,72 @@ Syntax and semantics
 ====================
 #`transpose##` (%`m##`)
 : flip the matrix %`m##` along its diagonal.
+
+################################################################################
+"`tryToAppendFile`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`tryToAppendFile` (%`filePath$`)
+: check whether this file can be appended to.
+
+The file is opened for appending, then closed
+(if the file already existed, it is not changed).
+
+Return value
+============
+Upon success (i.e. the file already existed and can be appended to,
+or the file didn’t exist yet but was successfully created), this function returns 1 (true).
+Otherwise, the function returns 0 (false); this can happen
+if the folder in the path does not exist,
+or if the file is (or would be) on a read-only device.
+
+For instance, if my TIMIT database is in a read-only disk image called `TIMIT.dmg`,
+and I mounted that disk image on my Mac (by double-clicking `TIMIT.dmg`), then trying
+{
+	\#{tryToAppendFile} ("/Volumes/TIMIT/readme.doc")
+}
+would return 0.
+
+Related function
+================
+For a non-destructive version of this function, see `tryToWriteFile`.
+
+################################################################################
+"`tryToWriteFile`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`tryToWriteFile` (%`filePath$`)
+: check whether this file can be written to.
+
+The file is opened for writing, then closed
+(if the file already existed, it is emptied!).
+
+Return value
+============
+Upon success (i.e. the file already existed and was successfully emptied,
+or the file didn’t exist yet but was successfully created), this function returns 1 (true).
+Otherwise, the function returns 0 (false); this can happen
+if the folder in the path does not exist,
+or if the file is (or would be) on a read-only device.
+
+For instance, if my TIMIT database is in a read-only disk image called `TIMIT.dmg`,
+and I mounted that disk image on my Mac (by double-clicking `TIMIT.dmg`), then trying
+{
+	\#{tryToWriteFile} ("/Volumes/TIMIT/hello.txt")
+}
+would return 0.
+
+Related function
+================
+For a non-destructive version of this function, see `tryToAppendFile`.
 
 ################################################################################
 "`unicode`"
