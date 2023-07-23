@@ -1473,7 +1473,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 			} else if (in [0] == U'@') {
 				/*
 					Detected the second "@" in strings like "@@Link with spaces@".
-					A format like "@@Page linked to|Text shown in blue@" is permitted.
+					A format like "@@Page linked to|Text shown in blue@" is permitted,
+					as is @@PointProcess: ||Draw...@.
 					First step: collect the page text (the link information);
 					it is everything between "@@" and "|" or "@" or end of string.
 				*/
@@ -1484,17 +1485,29 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 					links [numberOfLinks]. name = Melder_calloc_f (char32, MAX_LINK_LENGTH + 1);
 				char32 *to = links [numberOfLinks]. name;
 				char32 *max = to + MAX_LINK_LENGTH;
-				while (*from && *from != U'@' && *from != U'|' && to < max)   // until end-of-string or '@' or '|'...
-					*to ++ = *from ++;   // ... copy one character
+				while (*from && *from != U'@') {   // until end-of-string or '@'...
+					if (*from == U'|') {
+						if (from [1] == U'|' && from [2] != U'\0' && from [2] != U'@') {
+							/*
+								Include the stuff after "||" into the link info.
+							*/
+							from += 2;
+							in += to - links [numberOfLinks]. name + 2;   // skip head of link info as well as "||"
+						} else {
+							/*
+								Second step: collect the link text that is to be drawn.
+								Its characters will be collected during the normal cycles of the loop.
+								If the link info is equal to the link text, no action is needed.
+								If, on the other hand, there is a separate link info, this will have to be skipped.
+							*/
+							in += to - links [numberOfLinks]. name + 1;   // skip link info as well as "|"
+							break;   //  ..or until single '|'...
+						}
+					}
+					if (to < max)
+						*to ++ = *from ++;   // ... copy one character
+				}
 				*to = U'\0';   // close saved link info
-				/*
-					Second step: collect the link text that is to be drawn.
-					Its characters will be collected during the normal cycles of the loop.
-					If the link info is equal to the link text, no action is needed.
-					If, on the other hand, there is a separate link info, this will have to be skipped.
-				*/
-				if (*from == U'|')
-					in += to - links [numberOfLinks]. name + 1;   // skip link info + "|"
 				/*
 					We are entering the link-text-collection mode.
 				*/
