@@ -7664,10 +7664,10 @@ DO
 	CREATE_ONE_END (U"pols1973")
 }
 
-DIRECT (CREATE_ONE__Table_create_esposito2006) {
+DIRECT (CREATE_ONE__Table_create_keatingEsposito2006) {
 	CREATE_ONE
-		autoTable result = Table_create_esposito2006 ();
-	CREATE_ONE_END (U"esposito2006")
+		autoTable result = Table_create_keatingEsposito2006 ();
+	CREATE_ONE_END (U"keatingEsposito2006")
 }
 
 DIRECT (CREATE_ONE__Table_create_ganong1980) {
@@ -9027,9 +9027,9 @@ void praat_David_init () {
 			CREATE_ONE__Table_create_polsVanNierop1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Weenink 1985)", U"Create formant table (Pols & Van Nierop 1973)", 2,
 			CREATE_ONE__Table_create_weenink1983);
-	praat_addMenuCommand (U"Objects", U"New", U"Create H1H2 table (Esposito 2006)", U"Create formant table (Weenink 1985)", 2,
-			CREATE_ONE__Table_create_esposito2006);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Table (Ganong 1980)", U"Create H1H2 table (Esposito 2006)", 2, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create H1H2 table (Keating & Esposito 2006)", U"Create formant table (Weenink 1985)", 2,
+			CREATE_ONE__Table_create_keatingEsposito2006);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Table (Ganong 1980)", U"Create H1H2 table (Keating & Esposito 2006)", 2,
 			CREATE_ONE__Table_create_ganong1980);
 	praat_addMenuCommand (U"Objects", U"New", U"-- new TableOfReal --", U"Create Table (Ganong 1980)", 2, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"-- new TableOfReal --" , 2,

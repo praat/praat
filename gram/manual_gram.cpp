@@ -105,10 +105,24 @@ have the largest say in determining the optimal output.
 See the @@OT learning@ tutorial for many examples.
 
 ################################################################################
+"Create NoCoda grammar"
+© Paul Boersma 2023
+
+A command in the ##Constraint grammars# submenu of the @@New menu@,
+for creating an @OTGrammar object with a N\s{O}C\s{ODA} grammar.
+
+The grammar has a structural constraint N\s{O}C\s{ODA}, and a faithfulness constraint P\s{ARSE}.
+There are only two underlying forms: “pa” and “pat”,
+where the latter can have “pa” and “pat” as surface forms.
+
+For a examples using this grammar, see @@OT learning 2.1. Viewing a grammar@.
+
+################################################################################
 "Create tongue-root grammar..."
 © Paul Boersma 2014,2023
 
-A command in the @@New menu@ for creating an @OTGrammar object with a tongue-root-harmony grammar.
+A command in the ##Constraint grammars# submenu of the @@New menu@,
+for creating an @OTGrammar object with a tongue-root-harmony grammar.
 
 These OTGrammar grammars only accept inputs of the form V_1tV_2, where V_1 and V_2 are
 chosen from the six front vowels i, ɪ, e, ɛ, ə, and a.

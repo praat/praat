@@ -304,6 +304,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`unicode` (%`c$`) – the Unicode codepoint number that corresponds to character %`c$`
 , @`unicode$` (%`n`) – the character that corresponds to Unicode codepoint %`n`
 , @`unicodeToBackslashTrigraphs$` (%`string$`) – convert e.g. \ct to \bsct
+, @`variableExists` (%`variableName$`) – does the variable %`variableName$` exist?
 , @`vertical$` (%`stringArray$#`) – format a string array vertically
 , @`writeFile` (%`filePath$`, `...`) – create a new text file, and write texts, numbers, vectors and so on into it
 , @`writeFileLine` (%`filePath$`, `...`) – create a new text file, write texts, numbers, vectors and so on into it, followed by a newline
@@ -3768,7 +3769,7 @@ Syntax and semantics
 "`unicode$`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -3779,7 +3780,7 @@ Syntax and semantics
 "`unicodeToBackslashTrigraphs$`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -3788,10 +3789,21 @@ Syntax and semantics
 e.g. from “\ct” to “\bsct”.
 
 ################################################################################
+"`variableExists`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`variableExists` (%`variableName$`)
+: return 1 (true) if the variable %`variableName$` exists, else 0 (false).
+
+################################################################################
 "`vertical$`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================

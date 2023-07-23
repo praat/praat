@@ -44,6 +44,26 @@ For more sophisticated techniques, see:
 	• @@Discriminant analysis
 
 ################################################################################
+"Create Corpus..."
+© Paul Boersma 2023
+
+A command in the @@New menu@, to create a #Corpus object.
+
+################################################################################
+"Create TableOfReal"
+© Paul Boersma 2023
+
+A command in the #Tables submenu of the @@New menu@, to create a @TableOfReal object
+with the given number of rows and columns.
+
+################################################################################
+"Create iris data set"
+© Paul Boersma 2023
+
+A command in the ##Datasets from the literature# submenu of the #Tables submenu of the @@New menu@,
+to create a @TableOfReal object with data from the @@iris data set@.
+
+################################################################################
 "Table"
 © Paul Boersma 2003,2023
 
@@ -52,7 +72,7 @@ One of the @@types of objects@ in Praat. See the @Statistics tutorial.
 In the @@New menu@:
 • @@Create Table with column names...
 • @@Create Table without column names...
-• @@Create H1H2 table (Esposito 2006)
+• @@Create H1H2 table (Keating & Esposito 2006)
 • @@Create Table (Ganong 1980)
 
 In the @@Open menu@:
@@ -107,6 +127,20 @@ to create an empty Table with the given names for the columns.
 
 A command in the #Tables submenu of the @@New menu@,
 to create an empty Table.
+
+################################################################################
+"Create H1H2 table (Keating & Esposito 2006)"
+© Paul Boersma 2023
+
+A command in the ##Datasets fromm the literature# submenu of the #Tables submenu of the @@New menu@,
+to create a Table from @@Keating & Esposito (2006)@.
+
+################################################################################
+"Create Table (Ganong 1980)"
+© Paul Boersma 2023
+
+A command in the ##Datasets fromm the literature# submenu of the #Tables submenu of the @@New menu@,
+to create a Table from @@Ganong (1980)@.
 
 ################################################################################
 "Read Table from tab-separated file..."
