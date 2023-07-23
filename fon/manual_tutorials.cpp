@@ -1399,7 +1399,7 @@ MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
 "Intro"
-© Paul Boersma, 2011-01-31
+© Paul Boersma, 2011
 
 This is an introductory tutorial to Praat, a computer program
 with which you can analyse, synthesize, and manipulate speech,
@@ -2525,6 +2525,11 @@ NORMAL (U"The Open menu contains the command @@Read from file...@, which recogni
 	"and perhaps several other commands for reading unrecognizable file types (e.g., raw sound data), "
 	"or for interpreting known file types in a different way "
 	"(e.g., reading two mono sounds from one stereo sound file):")
+MAN_END
+
+MAN_BEGIN (U"pause window", U"ppgb", 20230723)
+INTRO (U"A window, popped up by a script, that asks the user for input.")
+NORMAL (U"For details, see @@Scripting 6.6. Controlling the user@.")
 MAN_END
 
 MAN_BEGIN (U"Remove", U"ppgb", 20021212)

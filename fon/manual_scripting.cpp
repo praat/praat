@@ -3947,118 +3947,164 @@ TERM (U"##--hide-picture#")
 DEFINITION (U"Hide the Picture window at start-up.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 7. Scripting the editors", U"ppgb", 20040222)
-NORMAL (U"With a Praat script, you can automatize your work in the editors.")
-NORMAL (U"#Warning: if the purpose of your script is to get information about "
-	"analyses (pitch, formants, intensity, spectrogram) from the Sound, "
-	"we do %not advise to script the Sound editor window. "
-	"It is much simpler, faster, and more reproducible to create the analyses "
-	"with the commands of the @@dynamic menu@, then use the Query commands of the dynamic menu "
-	"to extract information from the analyses. This also applies if you want to use a TextGrid "
-	"to determine the times at which you want to query the analyses. "
-	"See @@Scripting examples@.")
-LIST_ITEM (U"@@Scripting 7.1. Scripting an editor from a shell script@ (editor/endeditor)")
-LIST_ITEM (U"@@Scripting 7.2. Scripting an editor from within@")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Scripting 7. Scripting the editors"
+© Paul Boersma 2004,2023
 
-MAN_BEGIN (U"Scripting 7.1. Scripting an editor from a shell script", U"ppgb", 20140526)
-NORMAL (U"From a Praat shell script, you can switch to an editor and back again:")
-CODE (U"sound\\$  = \"hallo\"")
-CODE (U"start = 0.3")
-CODE (U"finish = 0.7")
-CODE (U"sound = Read from file: sound\\$  + \".aifc\"")
-CODE (U"View & Edit")
-CODE (U"#editor: sound")
-	CODE1 (U"Zoom: start, finish")
-CODE (U"#endeditor")
-CODE (U"Play")
-NORMAL (U"This script reads a sound file from disk, pops up an editor for the resulting object, "
-	"makes this editor zoom in on the part between 0.3 and 0.7 seconds, "
-	"and returns to the Praat shell to play the entire sound.")
-NORMAL (U"After #editor you can either give the unique id of the object, as above, or its name:")
-CODE (U"#editor: \"Sound \" + sound\\$ ")
-MAN_END
+With a Praat script, you can automate your work in the editors.
 
-MAN_BEGIN (U"Scripting 7.2. Scripting an editor from within", U"ppgb", 20230325)
-NORMAL (U"This section will show how you can permanently extend the functionality of an editor.")
-NORMAL (U"As an example, consider the following problem: you want to see a graphic representation "
-	"of the spectrum of the sound around the cursor position in the SoundEditor. To achieve this, "
-	"follow these steps:")
-LIST_ITEM (U"1. Create a Sound.")
-LIST_ITEM (U"2. View it in a SoundEditor by clicking @@View & Edit@.")
-LIST_ITEM (U"3. Choose ##New editor script# from the @@File menu@ in the SoundEditor. The resulting @ScriptEditor "
-	"will have a name like “untitled script [Sound hallo]”.")
-LIST_ITEM (U"4. Type the following lines into the ScriptEditor:")
-CODE2 (U"cursor = Get cursor")
-CODE2 (U"Select: cursor - 0.02, cursor + 0.02")
-CODE2 (U"Extract selected sound (windowed): \"slice\", \"Kaiser2\", 2, \"no\"")
-CODE1 (U"\\#{endeditor")
-CODE1 (U"To Spectrum: \"yes\"")
-CODE1 (U"View & Edit")
-NORMAL (U"If you choose #Run from the #Run menu in the ScriptEditor, a region of 40 milliseconds around the "
-	"current cursor position in the SoundEditor will become selected. This piece will be copied to the list of objects, "
-	"after applying a double Kaiser window (total length 80 ms). Thus, a Sound named “slice” will appear in the list. "
-	"Subsequently, a Spectrum object also called “slice” will appear in the list, and a SpectrumEditor titled "
-	"“Spectrum slice” will finally appear on your screen.")
-LIST_ITEM (U"5. Save the script to disk, e.g. as /us/miep/spectrum.praat. The title of the ScriptEditor will change accordingly.")
-LIST_ITEM (U"6. Since you will want this script to be available in all future SoundEditors, you choose ##Add to menu...# from the #File menu. "
-	"For the %Window, you specify “SoundEditor” (this is preset). For the %Menu, you may want to choose “Spectrum” "
-	"instead of the preset value (“File”). For the name of the %Command, you type something like “Show spectrum at cursor” "
-	"(instead of “Do it...”). Then you click #OK.")
-NORMAL (U"The command will be visible in every SoundEditor that you create from now on. "
-	"To see this, close the one visible SoundEditor, select the original Sound, choose ##View & Edit# again, and inspect the #Spectrogram menu. "
-	"You can now view the spectrum around the cursor just by choosing this menu command.")
-NORMAL (U"After you leave Praat and start it again, the command will continue to appear in the SoundEditor. "
-	"If you don't like the command any longer, you can remove it with the @ButtonEditor, which you can start "
-	"by choosing #Buttons from the #Settings submenu of the @@Praat menu@.")
-ENTRY (U"Improving your script")
-NORMAL (U"The above spectrum-viewing example has a number of disadvantages. It clutters the object list with a number "
-	"of indiscriminable Sounds and Spectra called \"slice\", and the spectrum is shown up to the Nyquist frequency "
-	"while we may just be interested in the lower 5000 Hz. Furthermore, the original selection in the SoundEditor is lost.")
-NORMAL (U"To improve the script, we open it again with ##Open editor script...# from the #File menu in the SoundEditor. After every change, "
-	"we can run it with #Run from the #Run menu again; alternatively, we could save it (with #Save from the #File menu) and choose our new "
-	"##Show spectrum at cursor# button (this button will always run the version on disk, never the one viewed in a ScriptEditor).")
-NORMAL (U"To zoom in on the first 5000 Hz, we add the following code at the end of our script:")
-CODE (U"\\#{editor}: \"Spectrum slice\"")
-	CODE1 (U"Zoom: 0, 5000")
-NORMAL (U"To get rid of the “Sound slice”, we can add:")
-CODE (U"\\#{endeditor")
-CODE (U"\\#{removeObject}: \"Sound slice\"")
-NORMAL (U"Note that #`endeditor` is needed to change from the environment of a SpectrumEditor to the environment of the object & picture windows.")
-NORMAL (U"If you now choose the ##Show spectrum at cursor# button for several cursor positions, you will notice that all those editors have the same name. "
-	"To remedy the ambiguity of the line `editor Spectrum slice`, we give each slice a better name. For example, if the cursor was at "
-	"635 milliseconds, the slice could be named “635ms”. We can achieve this by changing the extraction in the following way:")
-CODE (U"milliseconds = round (cursor*1000)")
-CODE (U"Extract selection sound (windowed): string$ (milliseconds) + \"ms\", \"Kaiser2\", 2, \"no\"")
-NORMAL (U"The names of the Sound and Spectrum objects will now have more chance of being unique. Two lines will have to be edited trivially.")
-NORMAL (U"Finally, we will reset the selection to the original. At the top of the script, we add two lines to remember the positions of the selection markers:")
-CODE (U"start = Get start of selection")
-CODE (U"end = Get end of selection")
-NORMAL (U"At the bottom, we reset the selection:")
-CODE (U"\\#{editor")
-CODE1 (U"Select: start, end")
-NORMAL (U"Note that the #`editor` directive if not followed by the name of an editor, returns the script to the original environment.")
-NORMAL (U"The complete script is:")
-	CODE1 (U"start = Get start of selection")
-	CODE1 (U"end = Get end of selection")
-	CODE1 (U"cursor = Get cursor")
-	CODE1 (U"Select: cursor - 0.02, cursor + 0.02")
-	CODE1 (U"# Create a name. E.g. \"670ms\" means at 670 milliseconds.")
-	CODE1 (U"milliseconds = round (cursor*1000)")
-	CODE1 (U"Extract windowed selection: string\\$  (milliseconds) + \"ms\", \"Kaiser2\", 2, \"no\"")
-CODE (U"#endeditor")
-CODE (U"To Spectrum: \"yes\"")
-CODE (U"View & Edit")
-CODE (U"\\#{editor}: \"Spectrum \" + string$ (milliseconds) + \"ms\"")
-	CODE1 (U"Zoom: 0, 5000")
-CODE (U"\\#{endeditor")
-CODE (U"\\#{removeObject}: \"Sound \" + string$ (milliseconds) + \"ms\"")
-CODE (U"\\#{editor")
-	CODE1 (U"Select: start, end")
-NORMAL (U"This script is useful as it stands. It is good enough for safe use. For instance, if the created Sound object has the same name "
-	"as an already existing Sound object, it will be the newly created Sound object that will be removed by #removeObject, "
-	"because in case of ambiguity #removeObject always removes the most recently created object of that name.")
-MAN_END
+#Warning: if the purpose of your script is to get information about
+analyses (pitch, formants, intensity, spectrogram) from the Sound,
+we do %not advise to script the Sound editor window.
+It is much simpler, faster, and more reproducible to create the analyses
+with the commands of the @@dynamic menu@, then use the Query commands of the dynamic menu
+to extract information from the analyses. This also applies if you want to use a TextGrid
+to determine the times at which you want to query the analyses.
+See @@Scripting examples@.
+
+, @@Scripting 7.1. Scripting an editor from a shell script@ (editor/endeditor)
+, @@Scripting 7.2. Scripting an editor from within@
+
+################################################################################
+"Scripting 7.1. Scripting an editor from a shell script"
+© Paul Boersma 20140526
+
+From a Praat shell script, you can switch to an editor and back again:
+
+	sound$ = "hallo"
+	start = 0.3
+	finish = 0.7
+	sound = \@{Read from file:} sound$ + ".aifc"
+	\@{View & Edit}
+	\#`{editor}: sound
+		Zoom: start, finish
+		\#`{endeditor}
+	Play
+
+This script reads a sound file from disk, pops up an editor for the resulting object,
+makes this editor zoom in on the part between 0.3 and 0.7 seconds,
+and returns to the Praat shell to play the entire sound.
+
+After @`editor` you can either give the unique id of the object, as above, or its name:
+
+	\#`{editor}: "Sound " + sound$
+
+################################################################################
+"Scripting 7.2. Scripting an editor from within"
+© Paul Boersma 2023
+
+This section shows how you can permanently extend the functionality of an editor.
+
+As an example, consider the following problem: you want to see a graphic representation
+of the spectrum of the sound around the cursor position in the SoundEditor. To achieve this,
+follow these steps:
+
+1. Create a Sound.
+2. View it in a SoundEditor by clicking @@View & Edit@.
+3. Choose ##New editor script# from the @@File menu@ in the SoundEditor. The resulting @ScriptEditor
+	will have a name like “untitled script [Sound hallo]”.
+4. Type the following lines into the ScriptEditor:
+
+			cursor = Get cursor
+			Select: cursor - 0.02, cursor + 0.02
+			Extract selected sound (windowed): "slice", "Kaiser2", 2, "no"
+		\#`{endeditor}
+		To Spectrum: "yes"
+		\@{View & Edit}
+
+If you choose #Run from the #Run menu in the ScriptEditor, a region of 40 milliseconds around the
+current cursor position in the SoundEditor will become selected. This piece will be copied to the list of objects,
+after applying a double Kaiser window (total length 80 ms). Thus, a Sound named “slice” will appear in the list.
+Subsequently, a Spectrum object also called “slice” will appear in the list, and a SpectrumEditor titled
+“Spectrum slice” will finally appear on your screen.
+
+5. Save the script to disk, e.g. as `/us/miep/spectrum.praat`. The title of the ScriptEditor will change accordingly.
+6. Since you will want this script to be available in all future SoundEditors, you choose ##Add to menu...# from the #File menu.
+	For the %Window, you specify “SoundEditor” (this is preset). For the %Menu, you may want to choose “Spectrum”
+	instead of the preset value (“File”). For the name of the %Command, you type something like “Show spectrum at cursor”
+	(instead of “Do it...”). Then you click #OK.
+
+The command will be visible in every SoundEditor that you create from now on.
+To see this, close the one visible SoundEditor, select the original Sound, choose ##View & Edit# again, and inspect the #Spectrogram menu.
+You can now view the spectrum around the cursor just by choosing this menu command.
+
+After you leave Praat and start it again, the command will continue to appear in the SoundEditor.
+If you don't like the command any longer, you can remove it with the @ButtonEditor, which you can start
+by choosing #Buttons from the #Settings submenu of the @@Praat menu@.
+
+Improving your script
+=====================
+The above spectrum-viewing example has a number of disadvantages. It clutters the object list with a number
+of indiscriminable Sounds and Spectra called "slice", and the spectrum is shown up to the Nyquist frequency
+while we may just be interested in the lower 5000 Hz. Furthermore, the original selection in the SoundEditor is lost.
+
+To improve the script, we open it again with ##Open editor script...# from the #File menu in the SoundEditor. After every change,
+we can run it with #Run from the #Run menu again; alternatively, we could save it (with #Save from the #File menu) and choose our new
+##Show spectrum at cursor# button (this button will always run the version on disk, never the one viewed in a ScriptEditor).
+
+To zoom in on the first 5000 Hz, we add the following code at the end of our script:
+
+	\#`{editor}: "Spectrum slice"
+		Zoom: 0, 5000
+
+To get rid of the “Sound slice”, we can add:
+
+	\#`{endeditor}
+	\`{removeObject}: "Sound slice"
+
+Note that @`endeditor` is needed to change from the environment of a SpectrumEditor to the environment of the object & picture windows.
+
+If you now choose the ##Show spectrum at cursor# button for several cursor positions, you will notice that all those editors have the same name.
+To remedy the ambiguity of the line `editor Spectrum slice`, we give each slice a better name. For example, if the cursor was at
+635 milliseconds, the slice could be named “635ms”. We can achieve this by changing the extraction in the following way:
+
+	milliseconds = round (cursor*1000)
+	Extract selection sound (windowed): string$ (milliseconds) + "ms", "Kaiser2", 2, "no"
+
+The names of the Sound and Spectrum objects will now have more chance of being unique. Two lines will have to be edited trivially.
+
+Finally, we will reset the selection to the original. At the top of the script,
+we add two lines to remember the positions of the selection markers:
+
+	start = Get start of selection
+	end = Get end of selection
+
+At the bottom, we reset the selection:
+
+	\#`{editor}
+		Select: start, end
+
+Note that the #`editor` directive if not followed by the name of an editor,
+returns the script to the original environment.
+
+The complete script is:
+
+		start = Get start of selection
+		end = Get end of selection
+		cursor = Get cursor
+		Select: cursor - 0.02, cursor + 0.02
+		# Create a name. E.g. "670ms" means at 670 milliseconds.
+		milliseconds = round (cursor*1000)
+		Extract windowed selection: string$ (milliseconds) + "ms", "Kaiser2", 2, "no"
+	\#`{endeditor}
+	To Spectrum: "yes"
+	View & Edit
+	\#`{editor}: "Spectrum " + string$ (milliseconds) + "ms"
+		Zoom: 0, 5000
+	\#`{endeditor}
+	\`{removeObject}: "Sound " + string$ (milliseconds) + "ms"
+	\#`{editor}
+		Select: start, end
+
+This script is useful as it stands. It is good enough for safe use. For instance, if the created Sound object has the same name
+as an already existing Sound object, it will be the newly created Sound object that will be removed by @`removeObject`,
+because in case of ambiguity @`removeObject` always removes the most recently created object of that name.
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"sendpraat", U"ppgb", 20000927)
 NORMAL (U"See @@Scripting 8. Controlling Praat from another program@.")

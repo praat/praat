@@ -256,13 +256,18 @@ LIST_ITEM (U"\\bu @@Sound files")
 NORMAL (U"You can also use the text and binary (real-valued) formats for Sounds, like for any other class:")
 LIST_ITEM (U"\\bu @@Save as text file...")
 LIST_ITEM (U"\\bu @@Save as binary file...")
+NORMAL (U"Viewing and editing:")
+LIST_ITEM (U"\\bu @SoundEditor, @ManipulationEditor, @TextGridEditor, @PointEditor, @PitchTierEditor, "
+	"@SpectrumEditor")
 NORMAL (U"Playing:")
 LIST_ITEM (U"\\bu @@Sound: Play")
 LIST_ITEM (U"\\bu @@PointProcess: Hum")
 LIST_ITEM (U"\\bu @@PointProcess: Play")
-NORMAL (U"Viewing and editing:")
-LIST_ITEM (U"\\bu @SoundEditor, @ManipulationEditor, @TextGridEditor, @PointEditor, @PitchTierEditor, "
-	"@SpectrumEditor")
+NORMAL (U"Drawing:")
+LIST_ITEM (U"\\bu @@Sound: Draw...")
+LIST_ITEM (U"\\bu @@Sound: Draw where...")
+LIST_ITEM (U"\\bu @@Sound: Paint where...")
+LIST_ITEM (U"\\bu @@Sounds: Paint enclosed...")
 NORMAL (U"Queries:")
 LIST_ITEM (U"structure:")
 LIST_ITEM1 (U"\\bu @@time domain")
@@ -1001,6 +1006,20 @@ ENTRY (U"Usage")
 NORMAL (U"The output level and the choice of the output device(s) depend on the settings "
 	"in your @@audio control panel@.")
 MAN_END
+
+MAN_PAGES_BEGIN
+R"~~~(
+"Sound: Draw..."
+© Paul Boersma 2023
+
+A command that becomes available in the #Draw menu when you select one or more @Sound objects.
+
+Purpose
+=======
+To draw the selected Sound into the selected part of the @@Picture window@.
+
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Sound: Filter (pre-emphasis)...", U"ppgb", 20030309)
 INTRO (U"A command to filter each selected @Sound object. The resulting Sound object has a higher spectral slope.")
