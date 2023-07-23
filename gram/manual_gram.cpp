@@ -315,18 +315,18 @@ We can ask the grammar to produce an output form for any input form that is in i
 © Paul Boersma 20070725
 
 Consider a language where the underlying form /pat/ leads to the surface form [pa],
-	presumably because the structural constraint N\s{O}C\s{ODA} outranks the faithfulness constraint P\s{ARSE}.
+presumably because the structural constraint N\s{O}C\s{ODA} outranks the faithfulness constraint P\s{ARSE}.
 
 To create such a grammar in Praat, choose @@Create NoCoda grammar@ from the ##Constraint grammmars# submenu of the @@New menu@.
-	An @OTGrammar object will then appear in the list of objects.
-	If you click ##View & Edit#, an @OTGrammarEditor will show up, containing:
+An @OTGrammar object will then appear in the list of objects.
+If you click ##View & Edit#, an @OTGrammarEditor will show up, containing:
 
 1. the constraint list, sorted by %#disharmony (= ranking value + noise):
-,
-|                   | %%ranking value% | %disharmony | %plasticity
-| ##N\s{O}C\s{ODA}# |      100.000     |   100.000   |   1.000
-|   ##P\s{ARSE}#    |       90.000     |    90.000   |   1.000
-,
+	,
+	|                   | %%ranking value% | %disharmony | %plasticity |
+	| ##N\s{O}C\s{ODA}# |      100.000     |   100.000   |    1.000    |
+	|   ##P\s{ARSE}#    |       90.000     |    90.000   |    1.000    |
+	,
 2. the tableaus for the two possible inputs /pat/ and /pa/:
 {- 3x1
 	Create NoCoda grammar
@@ -337,16 +337,16 @@ To create such a grammar in Praat, choose @@Create NoCoda grammar@ from the ##Co
 	Draw tableau: “pa”
 }
 From the first tableau, we see that the underlying form /pat/ will surface as [pa],
-	because the alternative [pat] violates a constraint (namely, N\s{O}C\s{ODA}) with a higher disharmony than does [pa],
-	which only violates P\s{ARSE}, which has a lower disharmony.
+because the alternative [pat] violates a constraint (namely, N\s{O}C\s{ODA}) with a higher disharmony than does [pa],
+which only violates P\s{ARSE}, which has a lower disharmony.
 
 Note the standard OT tableau layout: asterisks (*) showing violations, exclamation marks (!) showing crucial violations,
-	greying of cells that do not contribute to determining the winning candidate, and a finger (☞) pointing to the winner
-	(this may look like a plus sign (+) if you don’t have the Zapf Dingbats font installed on your computer or printer).
-	An HG tableau contains asterisks and a pointing finger, but no exclamation marks or grey cells.
+greying of cells that do not contribute to determining the winning candidate, and a finger (☞) pointing to the winner
+(this may look like a plus sign (+) if you don’t have the Zapf Dingbats font installed on your computer or printer).
+An HG tableau contains asterisks and a pointing finger, but no exclamation marks or grey cells.
 
 The second tableau shows that /pa/ always surfaces as [pa], which is no wonder since this is
-	the only candidate. All cells are grey because none of them contributes to the determination of the winner.
+the only candidate. All cells are grey because none of them contributes to the determination of the winner.
 
 ################################################################################
 )~~~"

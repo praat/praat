@@ -561,8 +561,15 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				numberOfLeadingSpaces < 11 ? kManPage_type::DEFINITION2 :
 				kManPage_type::DEFINITION3
 			);
-			if (previousParagraph && previousParagraph -> type == kManPage_type::NORMAL)
-				previousParagraph -> type = kManPage_type::TERM;
+			if (previousParagraph)
+				if (type == kManPage_type::DEFINITION && previousParagraph -> type == kManPage_type::NORMAL)
+					previousParagraph -> type = kManPage_type::TERM;
+				else if (type == kManPage_type::DEFINITION1 && previousParagraph -> type == kManPage_type::CODE)
+					previousParagraph -> type = kManPage_type::TERM1;
+				else if (type == kManPage_type::DEFINITION2 && previousParagraph -> type == kManPage_type::CODE1)
+					previousParagraph -> type = kManPage_type::TERM2;
+				else if (type == kManPage_type::DEFINITION3 && previousParagraph -> type == kManPage_type::CODE2)
+					previousParagraph -> type = kManPage_type::TERM3;
 			line += 2;
 			Melder_skipHorizontalSpace (& line);
 			MelderString_append (& buffer_graphical, line);

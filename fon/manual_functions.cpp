@@ -60,7 +60,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`arctanh` (%`x`) – inverse hyperbolic tangent
 , @`arctanh#` (%`vector#`) – inverse hyperbolic tangent of each element of %`vector#`
 , @`arctanh##` (%`matrix##`) – inverse hyperbolic tangent of each cell of %`matrix##`
-, @`assert` – condition checking
+, @`assert` %`condition` – condition checking
 , @`asynchronous` – let the script continue while the sound is playing
 , @`backslashTrigraphsToUnicode$` (%`string$`) – convert e.g. \bsct to \ct
 , @`barkToHertz` (%`x`) – from Bark-rate to acoustic frequency
@@ -112,6 +112,10 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`demoX` ( ) – the horizontal position of a mouse click in the Demo window
 , @`demoY` ( ) – the vertical position of a mouse click in the Demo window
 , @`differenceLimensToPhon` (%`x`) – from jnd-scale to perceptual loudness
+, @`editor` (%`editor($)`) – enter the environment of an editor (by number or by name)
+, @`empty$#` (%`numberOfStrings`) – create an array of empty strings
+, @`endeditor` – leave the environment of an editor
+, @`endproc` – end a procedure definition
 , @`endsWith` (%`string$`, %`part$`) – determine whether %`string$` ends in %`part$`
 , @`erb` (%`f`) – equivalent rectangular bandwidth for frequency %`f`
 , @`erbToHertz` (%`x`) – from ERB-rate to acoustic frequency
@@ -191,6 +195,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 	with a trailing percent sign and %`precision` digits after the decimal point
 , @`phonToDifferenceLimens` (%`x`) – from perceptual loudness to jnd-scale
 , @`plusObject` (`...`) – extend the selection of objects in the list
+, @`procedure`: %`procedureName`, `...` – start a procedure definition
 , @`randomBernoulli` (%`p`) – Bernoulli-distributed random deviate (0 or 1)
 , @`randomBernoulli#` (%`n`, %`p`) – %`n` independent Bernoulli-distributed zeroes and ones
 , @`randomGamma` (%`shape`, %`rate`) – gamma-distributed random deviate
@@ -1496,9 +1501,9 @@ Syntax and semantics
 
 ################################################################################
 "`differenceLimensToPhon`"
-© Paul Boersma 2002, 2023
+© Paul Boersma 2002,2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -1512,6 +1517,59 @@ Definition
 Related function
 ================
 #`differenceLimensToPhon` is the inverse of @`phonToDifferenceLimens`.
+
+################################################################################
+"`editor`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`editor` (%`editorID`)
+: enter the environment of the editor whose ID is %`editorID`.
+
+#`editor` (%`editorName$`)
+: enter the environment of the editor whose name is %`editorName$`.
+
+For an introduction, see @@Scripting 7. Scripting the editors@.
+
+################################################################################
+"`empty$#`"
+© Paul Boersma 2002, 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`empty$#` (%`numberOfStrings`)
+: create an array of empty strings.
+
+################################################################################
+"`endeditor`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`endeditor`
+: leave the environment of the current editor switching back to the @@List of Objects@.
+
+For an introduction, see @@Scripting 7. Scripting the editors@.
+
+################################################################################
+"`endproc`"
+© Paul Boersma 2023
+
+A keyword that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`endproc`
+: finish the definition of a procedure.
+
+For an introduction, see @@Scripting 5.5. Procedures@.
 
 ################################################################################
 "`endsWith`"
@@ -2505,7 +2563,7 @@ so that the number of difference limens above threshold is
 "`plusObject`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2514,10 +2572,23 @@ Syntax and semantics
 without deselecting any objects that are currently selected.
 
 ################################################################################
+"`procedure`"
+© Paul Boersma 2023
+
+A keyword that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`procedure`: %`procedureName$`, `...`
+: start the definition of the procedure %`procedureName$`, with optional parameters.
+
+For an introduction, see @@Scripting 5.5. Procedures@.
+
+################################################################################
 "`randomBernoulli`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2529,7 +2600,7 @@ which is 1 with probability %`p`, and 0 with probability 1 \-m %`p`.
 "`randomBernoulli#`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2547,7 +2618,7 @@ This is shorthand for doing
 "`randomBernoulli##`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2565,7 +2636,7 @@ This is shorthand for doing
 "`randomGamma`"
 © David Weenink 2019, Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2581,7 +2652,7 @@ according to the method by @@Marsaglia & Tsang (2000)@.
 "`randomGamma#`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2599,7 +2670,7 @@ This is shorthand for doing
 "`randomGamma##`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2617,7 +2688,7 @@ This is shorthand for doing
 "`randomGauss`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2629,7 +2700,7 @@ with true population mean %`mu` and true population standard deviation %`sigma`.
 "`randomGauss#`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
@@ -2647,7 +2718,7 @@ This is shorthand for doing
 "`randomGauss##`"
 © Paul Boersma 2023
 
-A function that can be used in @@Formulas@.
+A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
