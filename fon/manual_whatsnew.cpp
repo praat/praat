@@ -2755,8 +2755,8 @@ Labelling
 Numerics and statistics library
 • @@Multidimensional scaling@ (Kruskal, INDSCAL, etc).
 • @TableOfReal: @@TableOfReal: ||Set value...@, @@Formula...@,
-  @@TableOfReal: Remove column...|Remove column...@, @@TableOfReal: Insert column...|Insert column...@,
-  @@TableOfReal: Draw as squares...|Draw as squares...@, @@TableOfReal: To Matrix|To Matrix@.
+  @@TableOfReal: ||Remove column...@, @@TableOfReal: ||Insert column...@,
+  @@TableOfReal: ||Draw as squares...@, @@TableOfReal: ||To Matrix@.
 
 Phonology library
 • OT learning: new strategies: weighted symmetric plasticity (uncancelled or all).

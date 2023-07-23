@@ -200,24 +200,24 @@ simulate Optimality-Theoretic and Harmonic-Grammar learning with Praat.
 
 You can read this tutorial sequentially with the help of the “##< 1#” and “##1 >#” buttons.
 
-1. @@OT learning 1. Kinds of grammars|Kinds of grammars@ (ordinal and stochastic, @OTGrammar)
-2. @@OT learning 2. The grammar|The grammar@
-	2.1. @@OT learning 2.1. Viewing a grammar|Viewing a grammar@ (N\s{O}C\s{ODA} example, @OTGrammarEditor)
-	2.2. @@OT learning 2.2. Inside the grammar|Inside the grammar@ (saving, inspecting)
-	2.3. @@OT learning 2.3. Defining your own grammar|Defining your own grammar@
-	2.4. @@OT learning 2.4. Evaluation|Evaluation@ (noise)
-	2.5. @@OT learning 2.5. Editing a grammar|Editing a grammar@
-	2.6. @@OT learning 2.6. Variable output|Variable output@ (place assimilation example)
-	2.7. @@OT learning 2.7. Tableau pictures|Tableau pictures@ (printing, EPS)
-	2.8. @@OT learning 2.8. Asking for one output|Asking for one output@
-	2.9. @@OT learning 2.9. Output distributions|Output distributions@
-3. @@OT learning 3. Generating language data|Generating language data@
-	3.1. @@OT learning 3.1. Data from a pair distribution|Data from a pair distribution@
-	3.2. @@OT learning 3.2. Data from another grammar|Data from another grammar@ (tongue-root-harmony example)
-4. @@OT learning 4. Learning an ordinal grammar|Learning an ordinal grammar@
-5. @@OT learning 5. Learning a stochastic grammar|Learning a stochastic grammar@
-6. @@OT learning 6. Shortcut to grammar learning|Shortcut to grammar learning@
-7. @@OT learning 7. Learning from overt forms|Learning from overt forms@
+1. @@OT learning 1. ||Kinds of grammars@ (ordinal and stochastic, @OTGrammar)
+2. @@OT learning 2. ||The grammar@
+	2.1. @@OT learning 2.1. ||Viewing a grammar@ (N\s{O}C\s{ODA} example, @OTGrammarEditor)
+	2.2. @@OT learning 2.2. ||Inside the grammar@ (saving, inspecting)
+	2.3. @@OT learning 2.3. ||Defining your own grammar@
+	2.4. @@OT learning 2.4. ||Evaluation@ (noise)
+	2.5. @@OT learning 2.5. ||Editing a grammar@
+	2.6. @@OT learning 2.6. ||Variable output@ (place assimilation example)
+	2.7. @@OT learning 2.7. ||Tableau pictures@ (printing, EPS)
+	2.8. @@OT learning 2.8. ||Asking for one output@
+	2.9. @@OT learning 2.9. ||Output distributions@
+3. @@OT learning 3. ||Generating language data@
+	3.1. @@OT learning 3.1. ||Data from a pair distribution@
+	3.2. @@OT learning 3.2. ||Data from another grammar@ (tongue-root-harmony example)
+4. @@OT learning 4. ||Learning an ordinal grammar@
+5. @@OT learning 5. ||Learning a stochastic grammar@
+6. @@OT learning 6. ||Shortcut to grammar learning@
+7. @@OT learning 7. ||Learning from overt forms@
 
 ################################################################################
 "OT learning 1. Kinds of grammars"
@@ -300,15 +300,15 @@ In an OTGrammar object, you specify all the constraints, all the possible inputs
 This is chapter 2 of the @@OT learning@ tutorial.
 
 We can ask the grammar to produce an output form for any input form that is in its list of tableaus.
-2.1. @@OT learning 2.1. Viewing a grammar|Viewing a grammar@ (N\s{O}C\s{ODA} example, @OTGrammarEditor)
-2.2. @@OT learning 2.2. Inside the grammar|Inside the grammar@ (saving, inspecting)
-2.3. @@OT learning 2.3. Defining your own grammar|Defining your own grammar@
-2.4. @@OT learning 2.4. Evaluation|Evaluation@ (noise)
-2.5. @@OT learning 2.5. Editing a grammar|Editing a grammar@
-2.6. @@OT learning 2.6. Variable output|Variable output@ (place assimilation example)
-2.7. @@OT learning 2.7. Tableau pictures|Tableau pictures@ (printing, EPS files)
-2.8. @@OT learning 2.8. Asking for one output|Asking for one output@
-2.9. @@OT learning 2.9. Output distributions|Output distributions@
+2.1. @@OT learning 2.1. ||Viewing a grammar@ (N\s{O}C\s{ODA} example, @OTGrammarEditor)
+2.2. @@OT learning 2.2. ||Inside the grammar@ (saving, inspecting)
+2.3. @@OT learning 2.3. ||Defining your own grammar@
+2.4. @@OT learning 2.4. ||Evaluation@ (noise)
+2.5. @@OT learning 2.5. ||Editing a grammar@
+2.6. @@OT learning 2.6. ||Variable output@ (place assimilation example)
+2.7. @@OT learning 2.7. ||Tableau pictures@ (printing, EPS files)
+2.8. @@OT learning 2.8. ||Asking for one output@
+2.9. @@OT learning 2.9. ||Output distributions@
 
 ################################################################################
 "OT learning 2.1. Viewing a grammar"

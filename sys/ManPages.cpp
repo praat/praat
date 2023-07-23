@@ -68,12 +68,31 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 					*to ++ = *from ++;
 				}
 				/*
-					Ignore the "|...@" part.
+					Ignore the "|...@" part, unless it is "||...@".
 				*/
 				if (*from == U'|') {
-					from ++;
-					while (*from != U'@' && *from != U'\0')
+					if (from [1] == U'|') {
+						/*
+							Found a "||xxx@" part. Append the xxx part.
+						*/
+						from += 2;   // skip "||"
+						while (*from != U'@' && *from != U'\0') {
+							if (*from == U'\0')
+								break;
+							if (to - link >= MAXIMUM_LINK_LENGTH)
+								Melder_throw (U"(ManPages::grind:) Link starting with “@@” and containing “||” is too long:\n", text);
+							*to ++ = *from ++;
+						}
+						Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
+						*to = U'\0';
+					} else {
+						/*
+							Found a "|xxx@" part. ignore all of it.
+						*/
 						from ++;
+						while (*from != U'@' && *from != U'\0')
+							from ++;
+					}
 				}
 				Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
 				*to = U'\0';
