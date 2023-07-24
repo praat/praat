@@ -273,15 +273,17 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 				Melder_warning (U"Cannot find script ", MelderFile_messageName (& file2), U".");
 			my executable = true;
 		} else {
-			char32 *q;
 			/*
 				A link to another page: follow it.
 			*/
-			for (q = linkBuffer; *q; q ++)
-				if (! isAllowedFileNameCharacter (*q))
-					*q = U'_';
 			try {
 				Melder_sprint (fileNameBuffer,ManPages_FILENAME_BUFFER_SIZE, linkBuffer, U".man");
+				/*
+					For the `.man` version, we replace every funny symbol with an underscore.
+				*/
+				for (char32 *q = fileNameBuffer; *q; q ++)
+					if (! isAllowedFileNameCharacter (*q))
+						*q = U'_';
 				MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
 				if (MelderFile_exists (& file2)) {
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
@@ -297,14 +299,43 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 						autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 						readOnePage (me, text2.get());
 					} else {
-						Melder_sprint (fileNameBuffer,ManPages_FILENAME_BUFFER_SIZE, linkBuffer, U".praatnb");
+						/*
+							For the `.praatnb` version, we replace most funny symbols with underscores,
+							but `#` with `-H`, `$` with `-S`, and `@` with `-C`.
+						*/
+						char32 *to = fileNameBuffer, *max = fileNameBuffer + ManPages_FILENAME_BUFFER_SIZE - (8 + 1);
+						for (char32 *from = & linkBuffer [0]; *from != U'\0'; from ++) {
+							if (isAllowedFileNameCharacter (*from)) {
+								if (to < max)
+									*to ++ = *from ++;
+							} else if (*from == U'#') {
+								if (to < max)
+									*to ++ = U'-';
+								if (to < max)
+									*to ++ = U'H';
+							} else if (*from == U'$') {
+								if (to < max)
+									*to ++ = U'-';
+								if (to < max)
+									*to ++ = U'S';
+							} else if (*from == U'@') {
+								if (to < max)
+									*to ++ = U'-';
+								if (to < max)
+									*to ++ = U'C';
+							} else {
+								if (to < max)
+									*to ++ = U'_';
+							}
+						}
+						*to = U'\0';
+						str32cat (fileNameBuffer, U".praatnb");
 						MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
 						if (MelderFile_exists (& file2)) {
 							autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 							readOnePage (me, text2.get());
 						} else {
-							linkBuffer [0] = Melder_toLowerCase (linkBuffer [0]);
-							Melder_sprint (fileNameBuffer,ManPages_FILENAME_BUFFER_SIZE, linkBuffer, U".praatnb");
+							fileNameBuffer [0] = Melder_toLowerCase (fileNameBuffer [0]);
 							MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
 							if (MelderFile_exists (& file2)) {
 								autoMelderReadText text2 = MelderReadText_createFromFile (& file2);

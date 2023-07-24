@@ -148,7 +148,7 @@ Any points between ##From time# and ##To Time# (inclusive) are removed from the 
 
 ################################################################################
 "AmplitudeTier"
-© Paul Boersma 2007-08-25
+© Paul Boersma 2007
 
 One of the @@types of objects@ in Praat.
 An AmplitudeTier object represents a time-stamped amplitude contour,
@@ -157,6 +157,25 @@ The amplitude values are in Pascal. To see some applications, consult the @Inten
 the difference between an AmplitudeTier and an IntensityTier is that the former has values in Pascal
 which multiply linearly with a Sound (for instance), and the latter has values in dB,
 which multiply logarithmically with a Sound.
+
+################################################################################
+"AmplitudeTier: Add point..."
+© Paul Boersma 2023
+I
+A command to add a point to each selected @AmplitudeTier.
+
+Settings
+========
+##Time (s)
+: the time at which a point is to be added.
+
+##Sound pressure (Pa)
+: the amplitude value of the requested new point.
+
+Behaviour
+=========
+The tier is modified so that it contains the new point.
+If a point at the specified time was already present in the tier, nothing happens.
 
 ################################################################################
 "Cochleagram"
@@ -171,6 +190,14 @@ of the basilar membrane in the inner ear (see @Excitation) as a function of time
 
 A command for changing the data in all selected @Cochleagram objects.
 See the @Formulas tutorial for examples and explanations.
+
+################################################################################
+"Create AmplitudeTier..."
+© Paul Boersma 2023
+
+A command in the @@New menu@ to create an empty @AmplitudeTier object.
+The resulting object will have the specified name and time domain, but contain no amplitude points.
+To add some points to it, use @@AmplitudeTier: Add point...@.
 
 ################################################################################
 "Create DurationTier..."
@@ -211,23 +238,47 @@ The target duration will be the area under this curve, which is 0.9 + 1/2 · 1.3
 © Paul Boersma 2002-12-04
 
 A command in the @@New menu@ to create an empty @IntensityTier object.
-The resulting object will have the specified name and time domain, but contain no formant points.
+The resulting object will have the specified name and time domain, but contain no intensity points.
 To add some points to it, use @@IntensityTier: Add point...@.
-For an example, see @@Source-filter synthesis@.
 
 ################################################################################
 "Create Matrix..."
 © Paul Boersma 2002-12-12
 
-A command in the @@New menu@ to create a @Matrix with the specified sampling attributes,
+A command in the #Matrix submenu of the #Generics submenu of the @@New menu@,
+to create a @Matrix with the specified sampling attributes,
 filled with values from a formula (see @@Matrix: Formula...@).
 
 ################################################################################
 "Create simple Matrix..."
 © Paul Boersma 2002-12-04
 
-A command in the @@New menu@ to create a @Matrix with the specified number of rows and columns,
+A command in the #Matrix submenu of the #Generics submenu of the @@New menu@,
+to create a @Matrix with the specified number of rows and columns,
 filled with values from a formula (see @@Matrix: Formula...@).
+
+################################################################################
+"Create simple Matrix from values..."
+© Paul Boersma 2023
+
+A command in the #Matrix submenu of the #Generics submenu of the @@New menu@,
+to create a @Matrix with the specified cells.
+
+################################################################################
+"Create Photo..."
+© Paul Boersma 2023
+
+A command in the #Photo submenu of the #Generics submenu of the @@New menu@,
+to create a @Photo with the specified sampling attributes,
+filled with values from a formula for each of the three colour channels.
+
+################################################################################
+"Create simple Photo..."
+© Paul Boersma 2023
+
+A command in the #Photo submenu of the #Generics submenu of the @@New menu@,
+to create a @Photo with the specified number of rows and columns,
+filled with values from a formula for each of the three colour channels.
 
 ################################################################################
 "Create Strings as folder list..."
@@ -253,6 +304,13 @@ R"~~~(}
 
 ##Name
 :	the name of the resulting Strings object.
+
+################################################################################
+"Photo"
+© Paul Boersma 2023
+
+One of the @@types of objects@ in Praat. It is comparable to a @Matrix
+but has a matrix of cells for each of three colour channels: red, green and blue.
 
 ################################################################################
 )~~~"

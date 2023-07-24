@@ -209,7 +209,7 @@ What used to be new?
 
 ##6.2.10# (17 March 2022)
 • TextGrid window: restored the splitting of labels.
-• @@Save Demo Window as PDF file...@ (#Goodies menu).
+• ##Save Demo Window as PDF file...# (#Goodies menu).
 
 ##6.2.09# (15 February 2022)
 • Windows: support for a screen resolution of 204 dpi.
@@ -419,7 +419,7 @@ then dragged the mouse out of that window, then released the mouse button, and t
 ##6.1.22# (24 September 2020)
 • Windows: made the running cursor visible again.
 • Corrected a bug introduced in 6.1.17alpha that could cause incorrect line spacing in the Picture window,
-  such as in @@TableOfReal: Draw as numbers@.
+  such as in ##TableOfReal: Draw as numbers#.
 
 ##6.1.21# (20 September 2020)
 • First fully functional version for BigSur.
@@ -488,7 +488,7 @@ then dragged the mouse out of that window, then released the mouse button, and t
 ##6.1.04# (28 September 2019)
 • @Electroglottography.
 • Sound and other windows: ##Widen or shrink selection...#.
-• @@KlattGrid: Create from vowel...@.
+• @@Create KlattGrid from vowel...|KlattGrid: Create from vowel...@.
 • Fix rectangle playing bug when selection viewer is on.
 • Selection viewer separately visible for Sound window and TextGrid window.
 • Scripting: allow comments after parameter list.
@@ -498,11 +498,11 @@ then dragged the mouse out of that window, then released the mouse button, and t
 • Sound window: ##Widen or shrink selection...#.
 
 ##6.1.02# (25 August 2019)
-• Repaired @@Sound: Concatenate with overlap...@.
+• Repaired @@Sounds: Concatenate with overlap...@.
 • Mac: Info and script windows: prevent line breaks caused by tab stops.
 
 ##6.1.01# (14 August 2019)
-• Repaired @@TextGrid: Replace interval texts...@.
+• Repaired ##TextGrid: Replace interval texts...#.
 
 ################################################################################
 "What was new in 6.1?"
@@ -592,7 +592,7 @@ then dragged the mouse out of that window, then released the mouse button, and t
 • More string matching (case-insensitive, word-level).
 
 ##6.0.38# (29 March 2018)
-• Concordance: @@TextGrid: Tabulate occurrences...@.
+• Concordance: ##TextGrid: Tabulate occurrences...#.
 • Some @@Independent Component Analysis on EEG@.
 • Removed many small bugs.
 
@@ -610,9 +610,9 @@ then dragged the mouse out of that window, then released the mouse button, and t
 • #Inspect: made a button visible that had disappeared in 6.0.33.
 
 ##6.0.33# (26 September 2017)
-• @@Pitch: Subtract linear fit...@: correct a bug that prevented computation in the ERB domain.
+• ##Pitch: Subtract linear fit...#: correct a bug that prevented computation in the ERB domain.
 • Scripting: made `object[xx].xmin` work again.
-• Removed a bug in @@Polynomial: Evaluate...@ introduced in 6.0.32.
+• Removed a bug in ##Polynomial: Evaluate...# introduced in 6.0.32.
 
 ##6.0.32# (16 September 2017)
 • Table: allow spaces in column names.
@@ -823,7 +823,7 @@ the column index was larger than the number of rows.
   upsampling of stereo sounds when the upsampling factor was exactly 2. This bug has caused
   incorrect playing of stereo sounds with a sampling frequency of 22050 Hz on the Mac since January 2015.
 • Removed a bug introduced in 2011 that could cause Praat to crash when you scrolled the LongSound window.
-• @@TextGrid: Count intervals where...@ and @@TextGrid: Count points where...@.
+• ##TextGrid: Count intervals where...# and ##TextGrid: Count points where...#.
 
 ##5.4.09# (1 June 2015)
 • Linux: the tab key can be used to play sounds on more computers.
@@ -924,7 +924,7 @@ the column index was larger than the number of rows.
   Speckles are used in drawing Formant, PitchTier, and several other kinds of objects.
 
 ##5.3.75# (30 April 2014)
-• Linux Matrix graphics bug fix: corrected working of @@Matrix: Draw cells...@.
+• Linux Matrix graphics bug fix: corrected working of ##Matrix: Draw cells...#.
 • Scripting bug fix: ability to use x and y as indexed variables.
 • PowerCepstrogram bug fix: made old version of Paint command available again for scripts.
 
@@ -1047,7 +1047,7 @@ the column index was larger than the number of rows.
 
 ##5.3.43# (27 March 2013)
 • Read and write stereo Kay sound files.
-• Phonetic symbols \\ts, \\tS and \\ap.
+• Phonetic symbols \ts, \tS and \ap.
 • Network: ##Normalize weights...#, ##List weights...#, ##Weights down to Table...#.
 
 ##5.3.42# (2 March 2013)
@@ -1536,7 +1536,7 @@ if the selection ran from the penultimate interval to the end of the TextGrid.
 
 ##5.1.21# (30 November 2009)
 • @@Sound: Draw where...@
-• @@Matrix: Draw contours...@ and @@LogisticRegression: Draw boundary...@ support reversed axes.
+• ##Matrix: Draw contours...# and ##LogisticRegression: Draw boundary...# support reversed axes.
 • Sound window: ##Move frequency cursor to...#.
 
 ##5.1.20# (26 October 2009)
@@ -1616,8 +1616,8 @@ if the selection ran from the penultimate interval to the end of the TextGrid.
 ##5.1.02# (9 March 2009)
 • Allow pause forms without fields.
 • The value “undefined” is disallowed from all fields in command windows
-  except @@Table: Set numeric value...@ and @@TableOfReal: Set value...@.
-• @@TextGrid: List...@ and @@TextGrid: Down to Table...@.
+  except ##Table: Set numeric value...# and @@TableOfReal: Set value...@.
+• ##TextGrid: List...# and ##TextGrid: Down to Table...#.
 • OT learning: Giorgio Magri’s ##Weighted all up, highest down# update rule.
 
 ##5.1.01# (26 February 2009)
@@ -2026,7 +2026,7 @@ if the names of these files or their directory paths contained non-ASCII charact
 ##4.5.17# (19 March 2007)
 • Picture window: can change arrow size.
 • Several #List commands.
-• @@Spectrum: To SpectrumTier (peaks)@.
+• ##Spectrum: To SpectrumTier (peaks)#.
 
 ##4.5.16# (22 February 2007)
 • Sound-to-Intensity: made resistant against undefined settings.
@@ -2129,10 +2129,10 @@ if the names of these files or their directory paths contained non-ASCII charact
 • Table window: corrected vertical scroll bar (on Windows).
 • Formulas: invSigmoid.
 • Logging: added `'power'` (and documented the `'freq'` command).
-• Removed a bug that caused @@Read two Sounds from stereo file...@ not to work in scripts.
+• Removed a bug that caused ##Read two Sounds from stereo file...# not to work in scripts.
 
 ##4.4.26# (24 July 2006)
-• @@Sound & FormantTier: Filter@: much more accurate.
+• ##Sound & FormantTier: Filter#: much more accurate.
 
 ##4.4.25# (16 July 2006)
 • TextGrid reading: don't set first boundary to zero for .wrd label files.
@@ -2166,7 +2166,7 @@ for a selected combination of independent variables.
 • @@Table: Formula...@ accepts string expressions as well as numeric expressions.
 • @@Table: Sort rows...|Table: Sort...@ can sort by any number of columns.
 • @@Create Table with column names...|Table: Create with column names...@.
-• @@Table: Report mean...@.
+• @@Table: Report mean (Student t)...|Table: Report mean...@.
 • Formulas: @@Formulas 8. Attributes of objects|`row$` and `col$` attributes@.
 • Warning when trying to read data files whose format is newer than the Praat version.
 
@@ -2181,7 +2181,7 @@ for a selected combination of independent variables.
 • Source code more compatible with 64-bit compilers.
 
 ##4.4.13# (8 March 2006)
-• @@Table: To TableOfReal...@: better handling of --undefined-- values (are now numeric).
+• ##Table: To TableOfReal...#: better handling of --undefined-- values (are now numeric).
 • MacOS X: TextGrid files can be double-clicked to open.
 • @@Create Strings as file list...@: now handles up to 1,000,000 files per directory.
 
@@ -2199,7 +2199,7 @@ for a selected combination of independent variables.
 
 ##4.4.09# (19 February 2006)
 • Macintosh: first Intel Macintosh version.
-• Windows: @@Create Strings from folder list...@.
+• Windows: @@Create Strings as folder list...|Create Strings from folder list...@.
 
 ##4.4.08# (6 February 2006)
 • Much improved cepstral smoothing.
@@ -2226,9 +2226,9 @@ for a selected combination of independent variables.
 • OT learning: allow the decision strategies of Harmonic Grammar and Linear OT.
 
 ##4.4.01# (2 January 2006)
-• Picture window: @@Logarithmic marks...@ allows reversed axes.
+• Picture window: ##Logarithmic marks...# allows reversed axes.
 • Manipulation window: removed a bug from ##Shift frequencies...# that caused much too small shifts in semitones.
-• @@TextGrid: Remove point...@.
+• ##TextGrid: Remove point...#.
 
 ################################################################################
 "What was new in 4.4?"
@@ -2250,7 +2250,7 @@ for a selected combination of independent variables.
 ##4.3.34# (8 December 2005)
 • Sound window: the arrow scroll step is settable.
 • You can now run multiple listening experiments (@ExperimentMFC) in one #Run.
-• @@Formant: Get quantile of bandwidth...@.
+• ##Formant: Get quantile of bandwidth...#.
 
 ##4.3.33# (6 December 2005)
 • Removed three bugs introduced in 4.3.32 in @ExperimentMFC.
@@ -2281,7 +2281,7 @@ for a selected combination of independent variables.
 • Macintosh: allowed recording with sampling frequencies of 12 and 64 kHz.
 
 ##4.3.24# (26 September 2005)
-• @@Table: Down to TableOfReal...@: one column of the Table can be used as the row labels for the TableOfReal,
+• ##Table: Down to TableOfReal...#: one column of the Table can be used as the row labels for the TableOfReal,
   and the strings in the remaining columns of the Table are replaced with whole numbers assigned in alphabetical order.
 
 ##4.3.23# (24 September 2005)
@@ -2336,10 +2336,10 @@ to reflect the fact that no other programs than Praat have used the Praat shell 
 • TextGrid editor: show number of intervals.
 
 ##4.3.10# (25 April 2005)
-• @@Table: Get logistic regression...@.
+• ##Table: Get logistic regression...#.
 
 ##4.3.08# (19 April 2005)
-• OT learning: store history with @@OTGrammar & Strings: Learn from partial outputs...@.
+• OT learning: store history with ##OTGrammar & Strings: Learn from partial outputs...#.
 
 ##4.3.07# (31 March 2005)
 • Linux: removed a bug that could cause a sound to stop playing.
@@ -2353,16 +2353,16 @@ to reflect the fact that no other programs than Praat have used the Praat shell 
 • Pitch analysis: switched off formant-pulling.
 
 ##4.3.02# (16 February 2005)
-• @@TextGrid: Remove boundary at time...@
+• ##TextGrid: Remove boundary at time...#
 • Scripting: corrected %nowarn.
 • Linux: guard against blocking audio device.
 • Macintosh: guard against out-of-range audio level meter.
 
 ##4.3.01# (9 February 2005)
 • Replaced PostScript font SILDoulosIPA with XIPA (adapted for Praat by Rafael Laboissière).
-• @@Sound: Set part to zero...@
-• @@Pitch: To Sound (sine)...@
-• @@Sound & TextGrid: Clone time domain@.
+• ##Sound: Set part to zero...#
+• ##Pitch: To Sound (sine)...#
+• ##Sound & TextGrid: Clone time domain#.
 
 ################################################################################
 "What was new in 4.3?"
@@ -2494,7 +2494,7 @@ Phonetics:
 
 Listening experiments:
 • Goodness judgments.
-• Multiple @@ResultsMFC: To Table@, so that the whole experiment can go into a single statistics file.
+• Multiple ##ResultsMFC: To Table#, so that the whole experiment can go into a single statistics file.
 • Stimulus file path can be relative to directory of experiment file.
 • @ExperimentMFC: multiple substimuli for discrimination tests.
 
@@ -2614,7 +2614,7 @@ Phonetics library:
   optionally with TextGrid, Subtract linear fit.
 • Spectrum: Draw along logarithmic frequency axis.
 • TextGrid: modification commands, Extract part, Shift to zero, Scale times (with Sound or LongSound).
-• @@Matrix: To TableOfReal@, @@Matrix: Draw contour...@.
+• @@Matrix: To TableOfReal@, ##Matrix: Draw contour...#.
 • Concatenate Sound and LongSound objects.
 • File formats: save PitchTier in spreadsheet format, read CGN syntax files (XML version),
   text files now completely file-server-safe (independent from Windows/Macintosh/Unix line separators).
@@ -2627,11 +2627,11 @@ Statistics and numerics library:
 • @@Covariance: To TableOfReal (random sampling)...@.
 • @@SSCP: Get sigma ellipse area...@.
 • Query @DTW for “weighted distance” of time warp.
-• @@Distributions: To Strings (exact)...@
-• @@Strings: Randomize@.
+• ##Distributions: To Strings (exact)...#
+• ##Strings: Randomize#
 
 Phonology library:
-• @@OTGrammar: To PairDistribution@.
+• ##OTGrammar: To PairDistribution#.
 
 Graphics:
 • Full support for colour inkjet printers on Windows and Macintosh.
@@ -2649,7 +2649,7 @@ Audio:
   in order to reduce clicks on some Linux and Sun computers.
 • LongSound supports mono and stereo, 8-bit and 16-bit, %\\mu-law and A-law,
   big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.
-• @@Read two Sounds from stereo file...@ supports 8-bit and 16-bit, %\\mu-law and A-law,
+•v##Read two Sounds from stereo file...# supports 8-bit and 16-bit, %\\mu-law and A-law,
   big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.
 • SoundRecorder writes to 16-bit AIFC, WAV, NeXT/Sun, and NIST mono and stereo files.
 • Sound & LongSound: write part or whole to mono or stereo audio file.
@@ -2685,8 +2685,8 @@ target duration is exactly as expected from Duration tier or specified lengtheni
 • @SoundRecorder: allows multiple recordings without close; Play button; Write buttons; buffer size can be set.
 • Reverse a Sound or a selection of a Sound.
 • @@Sound: Get nearest zero crossing...@.
-• @@Formant: Scatter plot (reversed axes)...@.
-• @@TextGrid & Pitch: Speckle separately...@.
+• ##Formant: Scatter plot (reversed axes)...#
+• ##TextGrid & Pitch: Speckle separately...#
 • ##Extract Sound selection (preserve times)# in TextGridEditor.
 • More query commands for Matrix, TableOfReal, Spectrum, PointProcess.
 
@@ -2701,8 +2701,8 @@ Platforms
 Files
 • Read more Kay, Sun (.au), and WAV sound files.
 • @@Read Strings from raw text file...@
-• @@Create Strings as file list...@.
-• @@Read IntervalTier from Xwaves...@
+• @@Create Strings as file list...@
+• ##Read IntervalTier from Xwaves...#
 • hidden ##Read from old Windows Praat picture file...#
 
 Graphics
@@ -2755,8 +2755,8 @@ Labelling
 Numerics and statistics library
 • @@Multidimensional scaling@ (Kruskal, INDSCAL, etc).
 • @TableOfReal: @@TableOfReal: ||Set value...@, @@Formula...@,
-  @@TableOfReal: ||Remove column...@, @@TableOfReal: ||Insert column...@,
-  @@TableOfReal: ||Draw as squares...@, @@TableOfReal: ||To Matrix@.
+  ##Remove column...#, ##Insert column...#,
+  ##Draw as squares...#, ##To Matrix#.
 
 Phonology library
 • OT learning: new strategies: weighted symmetric plasticity (uncancelled or all).
@@ -2856,14 +2856,14 @@ Documentation:
 • Logo.
 
 New types:
-• Labelling & segmentation: @TextGrid, @IntervalTier, @TextTier.
+• Labelling & segmentation: @TextGrid, #IntervalTier, #TextTier.
 • Analysis & manipulation: @@Manipulation|Analysis@.
-• Statistics: @TableOfReal, @Distributions, @Transition
+• Statistics: @TableOfReal, @Distributions, #Transition
 
 File formats:
 • Read and write rational numbers in text files.
 • Read 8-bit .au sound files.
-• Read and write raw 8-bit two\'s-complement and offset-binary sound files.
+• Read and write raw 8-bit two’s-complement and offset-binary sound files.
 
 Audio:
 • 16-bit interactive Sound I/O on Mac.
@@ -2906,7 +2906,7 @@ Praat 3.3, 6 October 1996
 • Graphics: eight colours, small caps, text rotation.
 • File formats: Sun/NexT mu-law files, raw matrix text files, Xwaves mark files.
 • Accelerations: keyboard shortcuts, faster dynamic menu, Shift-OK keeps file selector on screen.
-• Object type changes: #StylPitch and #MarkTier are now called @PitchTier and @TextTier, respectively.
+• Object type changes: #StylPitch and #MarkTier are now called @PitchTier and #TextTier, respectively.
   Old files can still be read.
 • Script warning: all times in dialogs are in seconds now: milliseconds have gone.
 
@@ -2964,7 +2964,7 @@ ENTRY (U"To do")
 	• Formant: To Spectrum (slice)... (combines Formant-to-LPC and LPC-to-Spectrum-slice)")
 	• Read and/or write Matlab files, MBROLA files, Xwaves files, CHAT files.") // Aix
 	• Matrix: draw numbers.")
-	• Fractions with \\bsf{a|b}.")
+	• Fractions with \bsf{a|b}.")
 	• Move objects up and down list.")
 	• Spectrogram cross-correlation.")
 	• Labels in AIFC file.") // Theo Veenker 19980323
