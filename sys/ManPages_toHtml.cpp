@@ -80,10 +80,16 @@ static void writeLinkAsHtml (ManPages me, mutablestring32 link, conststring32 li
 				q ++;   // first letter already written
 		}
 		while (*q && q - link < LONGEST_FILE_NAME) {
-			if (! isAllowedFileNameCharacter (*q))
-				MelderString_appendCharacter (buffer, U'_');
-			else
+			if (isAllowedFileNameCharacter (*q))
 				MelderString_appendCharacter (buffer, *q);
+			else if (*q == U'#')
+				MelderString_append (buffer, U"-H");
+			else if (*q == U'$')
+				MelderString_append (buffer, U"-S");
+			else if (*q == U'@')
+				MelderString_append (buffer, U"-C");
+			else
+				MelderString_appendCharacter (buffer, U'_');
 			q ++;
 		}
 		if (link [0] == U'\0')
@@ -256,6 +262,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 		if (isListItem || isTag || isDefinition) {
 			if (! inList) {
 				ul = ( isListItem && (p [0] == U'•' || (p [0] == U'\\' && p [1] == U'b' && p [2] == U'u')) );
+				ul = false;   // TODO
 				MelderString_append (buffer, ul ? U"<ul>\n" : U"<dl>\n");
 				inList = true;
 			}
@@ -372,9 +379,15 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				if (p [1] == U'@' && ! paragraphIsVerbatim) {
 					p += 2;
 					while (*p != U'@' && *p != U'|' && *p != U'\0')
-						MelderString_append (& link, * p ++);
+						MelderString_appendCharacter (& link, * p ++);
 					if (*p == U'|') {
-						p ++;   // skip '|'
+						if (p [1] == U'|') {
+							const char32 *p2 = p + 2;
+							while (*p2 != U'@' && *p2 != U'\0')
+								MelderString_appendCharacter (& link, * p2 ++);
+							p += 2;   // skip "||"
+						} else
+							p += 1;   // skip "|"
 						while (*p != U'@' && *p != U'\0') {
 							if (*p == U'^') {
 								if (inSuper) {
@@ -726,10 +739,16 @@ static void writePageAsHtml (ManPages me, Interpreter optionalInterpreterReferen
 				for (p = & title [0]; *p; p ++) {
 					if (p - title >= LONGEST_FILE_NAME)
 						break;
-					if (! isAllowedFileNameCharacter (*p))
-						MelderString_append (buffer, U"_");
-					else
+					if (isAllowedFileNameCharacter (*p))
 						MelderString_appendCharacter (buffer, *p);
+					else if (*p == U'#')
+						MelderString_append (buffer, U"-H");
+					else if (*p == U'$')
+						MelderString_append (buffer, U"-S");
+					else if (*p == U'@')
+						MelderString_append (buffer, U"-C");
+					else
+						MelderString_appendCharacter (buffer, U'_');
 				}
 				if (title [0] == U'\0')
 					MelderString_append (buffer, U"_");
@@ -764,13 +783,35 @@ void ManPages_writeAllToHtmlDir (ManPages me, Interpreter optionalInterpreterRef
 		char32 fileName [ManPages_FILENAME_BUFFER_SIZE];
 		Melder_assert (Melder_length (page -> title.get()) < ManPages_FILENAME_BUFFER_SIZE - 100);
 		trace (U"page ", ipage, U": ", page -> title.get());
-		Melder_sprint (fileName,ManPages_FILENAME_BUFFER_SIZE,  page -> title.get());
-		for (char32 *p = fileName; *p; p ++)
-			if (! isAllowedFileNameCharacter (*p))
-				*p = U'_';
-		if (fileName [0] == U'\0')
-			str32cpy (fileName, U"_");   // no empty file names please
-		fileName [LONGEST_FILE_NAME] = U'\0';
+		char32 *to = fileName, *max = fileName + ManPages_FILENAME_BUFFER_SIZE - (8 + 1);
+		for (const char32 *from = & page -> title [0]; *from != U'\0'; from ++) {
+			if (isAllowedFileNameCharacter (*from)) {
+				if (to < max)
+					*to ++ = *from;
+			} else if (*from == U'#') {
+				if (to < max)
+					*to ++ = U'-';
+				if (to < max)
+					*to ++ = U'H';
+			} else if (*from == U'$') {
+				if (to < max)
+					*to ++ = U'-';
+				if (to < max)
+					*to ++ = U'S';
+			} else if (*from == U'@') {
+				if (to < max)
+					*to ++ = U'-';
+				if (to < max)
+					*to ++ = U'C';
+			} else {
+				if (to < max)
+					*to ++ = U'_';
+			}
+		}
+		if (to == fileName)
+			*to ++ = U'_';   // no empty file names please
+		*to = U'\0';
+		fileName [LONGEST_FILE_NAME] = U'\0';   //
 		str32cat (fileName, U".html");
 		static MelderString buffer;
 		MelderString_empty (& buffer);

@@ -795,7 +795,7 @@ Syntax and semantics
 
 Definition
 ==========
-#`barkToHertz (%x) = 650 sinh (%x / 7).
+~ #`barkToHertz` (%x) = 650 sinh (%x / 7)
 
 ################################################################################
 "`besselI`"
