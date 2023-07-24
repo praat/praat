@@ -30,6 +30,9 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.3.12# (24 July 2023)
+• Improvements in manual, including corrections on layout problems introduced in version 6.3.11.
+
 ##6.3.11# (17 July 2023)
 • VowelEditor: repaired a bug by which the VowelEditor wouldn’t start up if an incorrect marks file had previously been specified.
 • Mac: use a Cherokee font that distinguishes "ka" and "wo" well.
