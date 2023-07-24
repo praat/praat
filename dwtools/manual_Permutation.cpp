@@ -89,7 +89,7 @@ DEFINITION (U"the name of the new permutation.")
 TERM (U"##Number of elements%")
 DEFINITION (U"the number of elements in the permutation.")
 TERM (U"##Identity permutation")
-DEFINITION (U"determines whether the permution will be a randomly chosen one, or the @@identity permutation@.")
+DEFINITION (U"determines whether the permutation will be a randomly chosen one, or the @@identity permutation@.")
 MAN_END
 
 MAN_BEGIN (U"identity permutation", U"djmw", 20050713)

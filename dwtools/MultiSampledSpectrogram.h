@@ -32,7 +32,7 @@ Thing_define (FrequencyBin, AnalyticSound) {
 /*
 	A MultiSampledSpectrogram is a spectrogram that is evenly sampled in the frequency domain (on some possibly non-linear frequency scale).
 	Each "sample" is a FrequencyBin with real and imaginary values.
-	The original sound can be reconstructed from the data in the frequncy bins.
+	The original sound can be reconstructed from the data in the frequency bins.
 */
 
 autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1);

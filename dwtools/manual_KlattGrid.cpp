@@ -143,7 +143,7 @@ DEFINITION (U"defines the distances between the following formants in hertz. For
 	"If the value is not positive these formants will not be created at all. You would typically choose this value "
 	"as 1000 / 1100 Hz for a male / female voice." )
 ENTRY (U"Examples")
-NORMAL (U"The following script creates a vowel sound with many formants wich will sound like the vowel /a/. "
+NORMAL (U"The following script creates a vowel sound with many formants which will sound like the vowel /a/. "
 	"The formant frequencies will be: F1 = 800 Hz, F2 = 1200 Hz, F3 = 2300 Hz, F4 = 2800 Hz. The frequencies of the higher "
 	"formants will be at intervals of 1000 Hz, starting from F4. Therefore, F5 = 3800 Hz, F6 = 4800 Hz, F7 = 5800 Hz, "
 	"and so on. The bandwidths will be B1 = 80 Hz, B2 = 80 Hz, B3 = 100 Hz. "
@@ -169,8 +169,8 @@ CODE (U"To Sound")
 NORMAL (U"An /au/ diphthong is also easily made by a simple extension with two oral formant frequency points:")
 CODE (U"Create KlattGrid from vowel: \"au\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.05, 1000")
 CODE (U"Add pitch point: 0.3, 100.0")
-CODE (U"Add oral formant frequncy point: 1, 0.3, 300")
-CODE (U"Add oral formant frequncy point: 2, 0.3, 600")
+CODE (U"Add oral formant frequency point: 1, 0.3, 300")
+CODE (U"Add oral formant frequency point: 2, 0.3, 600")
 CODE (U"To Sound")
 NORMAL (U"Formant frequencies and bandwidths for 16 Swedish vowels are presented by "
 	"@@Hawks & Miller (1995)@ in their table 1. They further give equations for bandwidths as a function "

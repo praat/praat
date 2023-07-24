@@ -295,7 +295,7 @@ autoSpectrogram Sound_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 
 		if (isundef (f0_median) || f0_median == 0.0) {
 			f0_median = 100.0;
-			Melder_warning (U"Pitch values undefined. Bandwith fixed to 100 Hz. ");
+			Melder_warning (U"Pitch values undefined. Bandwidth fixed to 100 Hz. ");
 		}
 
 		if (f1_hz <= 0.0)

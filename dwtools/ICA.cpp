@@ -185,7 +185,7 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 }
 
 /*
-	The folowing two routines are modelled after qdiag.m from
+	The following two routines are modelled after qdiag.m from
 	R. Vollgraf and K. Obermayer, Quadratic Optimization for Simultaneous
 	Matrix Diagonalization, IEEE Transaction on Signal Processing, 2006,
 */

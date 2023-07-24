@@ -600,7 +600,7 @@ static autoTextGrid SpeechSynthesizer_Sound_TextInterval_align2 (SpeechSynthesiz
         autoDTW dtw = Sounds_to_DTW (thee_trimmed.get(), synth.get(), analysisWidth, dt, band, constraint);
 		/*
 			6. Warp the synthesis TextGrid
-			First make domains equal, otherwsise the warper protests
+			First make domains equal, otherwise the warper protests
 		*/
         autoTextGrid warp = DTW_TextGrid_to_TextGrid (dtw.get(), tg_syn.get(), precision);
 		/*

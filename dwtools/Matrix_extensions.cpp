@@ -391,7 +391,7 @@ double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double 
 autoDaata IDXFormattedMatrixFileRecognizer (integer numberOfBytesRead, const char *header, MelderFile file) {
 	unsigned int numberOfDimensions, type, pos = 4;
 	/*
-		9: minumum size is 4 bytes (magic number) + 4 bytes for 1 dimension + 1 value of 1 byte
+		9: minimum size is 4 bytes (magic number) + 4 bytes for 1 dimension + 1 value of 1 byte
 	 */
 	if (numberOfBytesRead < 9 || header [0] != 0 ||  header [1] != 0 || (type = header [2]) < 8 ||
 		numberOfBytesRead < 4 + (numberOfDimensions = header [3]) * 4) // each dimension occupies 4 bytes

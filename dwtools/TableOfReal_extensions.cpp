@@ -31,7 +31,7 @@
  djmw 20050221 TableOfReal_meansByRowLabels, extra reduce parameter.
  djmw 20050222 TableOfReal_drawVectors didn't draw rowlabels.
  djmw 20050512 TableOfReal TableOfReal_meansByRowLabels crashed if first label in sorted was NULL.
- djmw 20051116 TableOfReal_drawScatterPlot draw reverse permited by choosing xmin > xmax and/or ymin>ymax
+ djmw 20051116 TableOfReal_drawScatterPlot draw reverse permitted by choosing xmin > xmax and/or ymin>ymax
  djmw 20060301 TableOfReal_meansByRowLabels extra medianize
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20070822 wchar

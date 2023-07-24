@@ -69,7 +69,7 @@ DEFINITION (U"the standard deviation of the noise that is added to each transfor
 	"diagonalizable anymore.")
 ENTRY (U"Algorithm")
 NORMAL (U"All the CrossCorrelationTable matrices are generated as #%V\\'p #%D__%k_ #%V, where #%D__%k_ is a diagonal matrix "
-	"with entries randomly choosen from the [-1,1] interval. The matrix #%V is a \"random\" orthogonal matrix "
+	"with entries randomly chosen from the [-1,1] interval. The matrix #%V is a \"random\" orthogonal matrix "
 	"obtained from the singular value decomposition of a matrix #%M = #%U #%D #%V\\'p, where the cells of the "
 	"matrix #%M are random Gaussian numbers with mean 0 and standard deviation 1.")
 NORMAL (U"If the first matrix has to be positive definite, the numbers on the diagonal of #%D__1_ are randomly "

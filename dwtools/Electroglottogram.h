@@ -30,7 +30,7 @@ Thing_define (Electroglottogram, Sound) {
 };
 
 /*
-	An Electroglottogram represets the degree of contact between the (vibrating) vocal folds during voice production.
+	An Electroglottogram represents the degree of contact between the (vibrating) vocal folds during voice production.
 	It is measured at the throat.
 	It will be represented as a one channel Sound.
 	There might be an accompanying sound. They are both sampled at the same sampling frequency.

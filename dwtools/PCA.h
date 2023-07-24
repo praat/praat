@@ -60,7 +60,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer from, integer to);
 /*	Get fraction variance of the table projected in the pca-space.
 	Shorthand for projecting the Covariance of the TableOfReal on the PCA-space
-	and quering the projected Covariance for 'fraction variance'.
+	and querying the projected Covariance for 'fraction variance'.
 */
 
 autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee);

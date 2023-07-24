@@ -81,7 +81,7 @@ INTRO (U"Splits one component of the selected  @GaussianMixture into two compone
 NORMAL (U"The selected component is split on the basis of a @PCA analysis of its covariance matrix. The new means are situated "
 	"around the old components mean, 1%\\si apart in the first principal components direction, and the new covariances are "
 	"constructed with information from the old covariance matrix. ")
-NORMAL (U"The details of the algorith are described in @@Zhang et al. (2003)@.")
+NORMAL (U"The details of the algorithm are described in @@Zhang et al. (2003)@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture: To PCA", U"djmw", 20101030)
@@ -185,7 +185,7 @@ MAN_END
 MAN_BEGIN (U"GaussianMixture & TableOfReal: Improve likelihood...", U"djmw", 20111130)
 INTRO (U"Try to improve the likelihood of the parameters in the @@GaussianMixture@ by an @@expectation-maximization@ algorithm.")
 ENTRY (U"Settings & EM Algorithm")
-NORMAL (U"As decribed in @@TableOfReal: To GaussianMixture...@.")
+NORMAL (U"As described in @@TableOfReal: To GaussianMixture...@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & TableOfReal: To Correlation (columns)", U"djmw", 20101111)
@@ -222,7 +222,7 @@ TERM (U"##Stability coefficient lambda")
 DEFINITION (U"defines the fraction of the total covariance that is added to the covariance of each component to "
 	"prevent these matrices from becoming singular.")
 TERM (U"##Criterion based on")
-DEFINITION (U"defines whether the function to be optimized is the log likelihood or the related miminum description length.")
+DEFINITION (U"defines whether the function to be optimized is the log likelihood or the related minimum description length.")
 ENTRY (U"Algorithm")
 NORMAL (U"The component-wise optimization algorithm is described in @@Figueiredo & Jain (2002)@ where the function to be optimized "
 	"is the minimum description length defined as:")

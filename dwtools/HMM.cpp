@@ -810,7 +810,7 @@ void HMMBaumWelch_reInit (HMMBaumWelch me) {
 	my lnProb = 0.0;
 
 	/*
-		The _num and _denum matrices are asigned as += in the iteration loop and therefore need to be zeroed
+		The _num and _denum matrices are assigned as += in the iteration loop and therefore need to be zeroed
 		at the start of each new iteration.
 		The elements of alpha, beta, scale, gamma & xi are always calculated directly and need not be
 		initialised.

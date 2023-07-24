@@ -477,7 +477,7 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ALL__HMM_HMMObservationSequence_learn, U"HMM & HMM
 	OK
 DO
 	Melder_require (minimumProbability >= 0.0 && minimumProbability < 1.0,
-		U"The minimum probabilty should be in [0, 1).");
+		U"The minimum probability should be in [0, 1).");
 	MODIFY_FIRST_OF_ONE_AND_ALL (HMM, HMMObservationSequence)
 		HMM_HMMObservationSequenceBag_learn (me, (HMMObservationSequenceBag) & list, relativePrecision_log, minimumProbability, showProgress);
 	MODIFY_FIRST_OF_ONE_AND_ALL_END

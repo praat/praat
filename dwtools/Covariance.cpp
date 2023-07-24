@@ -529,7 +529,7 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 		if (out_chisq)
 			*out_chisq = chisq;
 	} catch (MelderError) {
-		Melder_throw (U"Equality coud not be tested.");
+		Melder_throw (U"Equality could not be tested.");
 	}
 }
 
@@ -726,7 +726,7 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me, integer index1,
 		} else {
 			t = (my centroid [index1] - my centroid [index2] - mu) / sqrt (var_pooled / n);
 			/*
-				Return two sided probabilty.
+				Return two sided probability.
 			*/
 			if (equalVariances)
 				prob = 2.0 * NUMstudentQ (fabs (t), ndof);

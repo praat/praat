@@ -19,7 +19,7 @@
 /*
  djmw 20010718
  djmw 20020813 GPL header
- djmw 20030901 Added fiter function drawing and frequency scale drawing.
+ djmw 20030901 Added filter function drawing and frequency scale drawing.
  djmw 20050731 +FilterBank_and_PCA_drawComponent
  djmw 20071017 Melder_error<n>
  djmw 20071201 Melder_warning<n>

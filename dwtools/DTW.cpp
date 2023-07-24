@@ -32,7 +32,7 @@
  djmw 20071204 DTW_and_Sounds_draw.
  djmw 20080122 float -> double
  djmw 20081123 DTW_and_Sounds_checkDomains did not swap sounds correctly.
- djmw 20091009 Removed a bug in DTW_Path_recode that could cause two identical x and y times in succesion at the end.
+ djmw 20091009 Removed a bug in DTW_Path_recode that could cause two identical x and y times in succession at the end.
  djmw 20100504 extra check in DTW_Path_makeIndex
  djmw 20110304 Thing_new
 */

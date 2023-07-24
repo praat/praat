@@ -49,7 +49,7 @@ FORM (MODIFY_EACH_WEAK__MultiSampledSpectrogram_formula_part, U"MultiSampledSpec
 	REAL (fromTime, U"From time", U"0.0")
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
-	REAL (toFrequency, U"To Frequncy (Hz)", U"200.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"200.0")
 	FORMULA (formula, U"Formula", U"2 * self")
 	OK
 DO

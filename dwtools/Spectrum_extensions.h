@@ -42,7 +42,7 @@ autoMatrix Spectrum_unwrap (Spectrum me);
 
 	Tribolet, J.M. & Quatieri, T.F. (1979), Computation of the Complex
 		Spectrum, in: Programs for Digital Signal Processing,
-		Digital Signal Processing Commitee (eds), IEEE Press,
+		Digital Signal Processing Committee (eds), IEEE Press,
 		chapter 7.1.
 
 	First row of returned matrix contains the amplitudes-squared,
