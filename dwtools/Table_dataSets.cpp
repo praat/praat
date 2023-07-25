@@ -3100,7 +3100,7 @@ autoTable Table_create_weenink1983 () {
 /*
 	P.A. Keating & C. Esposito (2006): "Linguistic voice quality." UCLA Working Papers in Phonetics 105: 85-91.
 */
-autoTable Table_create_esposito2006 () {
+autoTable Table_create_keatingEsposito2006 () {
 	try {
 		const conststring32 columnNames [] = { U"Language", U"Modal", U"Breathy" };
 		autoTable me = Table_createWithColumnNames (10, ARRAY_TO_STRVEC (columnNames));
@@ -3108,8 +3108,8 @@ autoTable Table_create_esposito2006 () {
 		Table_setNumericValue (me.get(), 1, 2, -1.5);
 		Table_setNumericValue (me.get(), 1, 3, 5);
 		Table_setStringValue (me.get(), 2, 1, U"Fuzhou");
-		Table_setNumericValue (me.get(), 2, 2, -1.5);
-		Table_setNumericValue (me.get(), 2, 3, 5);
+		Table_setNumericValue (me.get(), 2, 2, 2);
+		Table_setNumericValue (me.get(), 2, 3, 10);
 		Table_setStringValue (me.get(), 3, 1, U"Green Hmong");
 		Table_setNumericValue (me.get(), 3, 2, 3);
 		Table_setNumericValue (me.get(), 3, 3, 12);

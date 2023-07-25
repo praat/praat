@@ -5099,7 +5099,7 @@ NORMAL (U"In a quantile-quantile plot the quantiles of the data in the first sel
 	"same distribution, the points should fall approximately along the reference line.")
 MAN_END
 
-MAN_BEGIN (U"Table: Bar plot where...", U"djmw", 20140509)
+MAN_BEGIN (U"Table: Bar plot where...", U"djmw", 20140509)  // ppgb 2023
 INTRO (U"Draws a bar plot from data in one or more columns of the selected @Table. In a bar plot the horizontal axis has nominal values (labels). ")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (10.6), U""
@@ -5156,7 +5156,7 @@ NORMAL (U"Sometimes you need to plot only a part of the Table and for the select
 	"used. Since we only have a small table we put a \"1\" in this field which always evaluates to true. "
 	"In effect, all the rows will be selected. The following script line will produce the picture below.")
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
-SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Esposito 2006)\n"
+SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Keating & Esposito 2006)\n"
 	"Font size: 10\n"
 	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
 	"removeObject: h1h2\n")
@@ -5164,7 +5164,7 @@ NORMAL (U"The essentials of the bart plot in their paper are perfectly reproduce
 	"If you want the bars within a group to be placed somewhat more apart, say 0.2 times the bar width, "
 	"you can set the \"Distance between bars in a group\" to a value of 0.2:")
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
-SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Esposito 2006)\n"
+SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Keating & Esposito 2006)\n"
 	"Font size: 10\n"
 	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
 	"removeObject: h1h2\n")
@@ -5172,7 +5172,7 @@ NORMAL (U"Of course we can also work with colours and we can add vertical marks 
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\"")
 CODE (U"Marks left every: 1, 5, 1, 1, 1")
 CODE (U"Text left: 1, \"H__1_-H__2_ (dB)\"")
-SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Esposito 2006)\n"
+SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Keating & Esposito 2006)\n"
 	"Font size: 10\n"
 	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\"\n"
 	"Marks left every: 1, 5, 1, 1, 1\n"
