@@ -5048,18 +5048,36 @@ NORMAL (U"You can perform these %t-tests in Praat by first transforming the "
 	"latter object.")
 MAN_END
 
-MAN_BEGIN (U"BHEP multivariate normality test", U"djmw", 20101124)
-INTRO (U"The Baringhaus–Henze–Epps–Pulley multivariate normality test.")
-NORMAL (U"According to @@Henze & Wagner (1997)@ the test has:")
-LIST_ITEM (U"\\bu affine invariance,")
-LIST_ITEM (U"\\bu consistency against each fixed nonnormal alternative distribution,")
-LIST_ITEM (U"\\bu asymptotic power against contiguous alternatives of order \\Vr (%n),")
-LIST_ITEM (U"\\bu feasibility for any dimension and any sample size.")
-NORMAL (U"The test depends on a smoothing parameter %%h% that can be chosen in various ways:")
-NORMAL (U"@@Henze & Wagner (1997)@ recommend %h = 1.41, while")
-NORMAL (U"@@Tenreiro (2009)@ recommends  %h__%%s% _= 0.448 + 0.026\\.c%d for short tailed alternatives and "
-" %h__%%l%_ = 0.928 + 0.049\\.c%d for long tailed alternatives.")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"BHEP multivariate normality test"
+© David Weenink 2010-11-24
+
+Given a sample of %n independent and identically distributed (i.i.d) observation vectors of dimension %d,
+#%x_1 , #%x_2 , ..., #%x_%n, drawn from an unknown continuous distribution function %F(#%x),
+the Baringhaus–Henze–Epps–Pulley multivariate normality test tests 
+:   H_0: %F(#%x) = %F_0 (#%x) against H_1 : %F(#%x) ≠ %F_0(#%x), where 
+
+%F_0(#%x) is the multivariate normal distribution function %N_%d(#%μ, #%Σ) with mean #%μ and covariance matrix #%Σ
+whose derivative with respect to #%x is the multivariate probability density function
+%f_0(#%x)= (2π)^^-%d/2^ |#%Σ|^½ exp{-½(#%x-#%μ)^T #%Σ^^-1^ (#%x-#%μ)}.
+ 
+According to @@Henze & Wagner (1997)@ the test statistic in BHEP has a number of favourable characteristics:
+. it is affine invariant
+. it is consistent
+
+Settings
+========
+
+The test depends on a smoothing parameter %h that can be chosen in various ways:
+@@Henze & Wagner (1997)@ recommend %h = 1.41, while
+@@Tenreiro (2009)@ recommends  %h__%s _= 0.448 + 0.026\\.c%d for short tailed alternatives and "
+" %h__%l_ = 0.928 + 0.049\\.c%d for long tailed alternatives.
+	
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Table: Normal probability plot...", U"djmw", 20130619)
 NORMAL (U"In a normal probability plot, the data in the selected column of the @Table are plotted "

@@ -552,10 +552,7 @@ double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal the
 		}
 
 		*inout_beta = ( *inout_beta > 0.0 ? NUMsqrt1_2 / *inout_beta : NUMsqrt1_2 * pow ( (1.0 + 2.0 * d) / 4.0, 1.0 / (d + 4.0)) * pow (n, 1.0 / (d + 4.0)) );
-		const double d2 = d / 2.0;
-		const double beta2 = *inout_beta * *inout_beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-		const double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2; // page 15
-		const double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta; // page 15
+		const double d2 = d / 2.0, beta2 = *inout_beta * *inout_beta, gamma = 1.0 + 2.0 * beta2;
 		
 		autoVEC buf = raw_VEC (data.nrow);
 
@@ -563,17 +560,17 @@ double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal the
 			SSCP_expandWithLowerCholeskyInverse (me);
 			const MAT lowerInverse = my lowerCholeskyInverse.get();
 			/*
-				Heinze & Wagner (1997), on page 3 in the formula for W(n,beta) the residuals 
-				y(i)=S^(-1/2)*(x(i)-mean) are used.
+				Heinze & Wagner (1997), on page 3 in the formula for W(n,beta) scaled residuals 
+				Y(i)=S^(-1/2)*(X(i)-mean) are used.
 				However, we can work with the original data and use squared Mahalanobis distances in this calculation because
-				||y(j)-y(k)||^2 = (x(j)-x(k))'S^-1((x(j)-x(k)).
-				This expression is symmetric in j and k, so we can do with half the amount of work
+				||Y(j)-Y(k)||^2 = (X(j)-X(k))'S^-1((X(j)-X(k)), where X(i) and Y(i) are d-dimensional vectors.
+				This expression is symmetric in j and k.
 			*/
 			double doubleSum = 0.0;
 			for (integer j = 1; j <= data.nrow - 1; j ++) {
 				for (integer k = j + 1; k <= data.nrow; k ++) {
 					const double djk_sq = NUMmahalanobisDistanceSquared (lowerInverse, data.row (j), data.row (k));
-					buf [k] = exp (-0.5 * beta2 * djk_sq);
+					buf [k] = exp (- 0.5 * beta2 * djk_sq);
 				}
 				if (weighting)
 					doubleSum += 2.0 * responsibilities [j] * NUMinner (buf.part (j + 1, data.nrow), responsibilities.part (j + 1, data.nrow));
@@ -585,7 +582,7 @@ double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal the
 			double singleSum = 0.0;	
 			for (integer j = 1; j <= data.nrow; j ++) {
 				const double djj_sq = NUMmahalanobisDistanceSquared (lowerInverse, data.row (j), my centroid.get());
-				buf [j] = exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
+				buf [j] = exp (- 0.5 * beta2 * djj_sq / (1.0 + beta2));
 			}
 			if (weighting)
 				singleSum += NUMinner (buf.get(), responsibilities);
@@ -594,12 +591,15 @@ double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal the
 			/*
 				The test statistic is n times the W(n,beta) of page 3.
 			*/
-			testStatistic = (1.0 / n) * doubleSum - 2.0 * pow (1.0 + beta2, - d2) * singleSum + n * pow (gamma, - d2);
+			testStatistic = doubleSum / n - 2.0 * pow (1.0 + beta2, - d2) * singleSum + n * pow (gamma, - d2);
 		} catch (MelderError) {
 			Melder_clearError ();
 			testStatistic = 4.0 * n;
 			covarianceIsSingular = true;
 		}
+		const double beta4 = beta2 * beta2, beta8 = beta4 * beta4;
+		const double gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2; // page 15
+		const double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta; // page 15
 
 		const double mu = 1.0 - pow (gamma, -d2) * (1.0 + d * beta2 / gamma + d * (d + 2.0) * beta4 / (2.0 * gamma2));
 		const double var = 2.0 * pow (1.0 + 4.0 * beta2, -d2)

@@ -198,7 +198,7 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 double TableOfReal_testSphericityOfCovariance (TableOfReal me, integer numberOfPermutations, bool useCorrelation);
 /*
 	Sphericity test of covariance (correlation) matrix
-	This test is a combinaation of two tests:
+	This test is a combination of two tests:
 	1. H0: Sigma = sigma^2 I vs. H1: Sigma = diag (sigma[1]^2, sigma-2[^2, ... sigma[p]^2)
 	2. H0: Sigma = diag (sigma[1]^2, sigma-2[^2, ... sigma[p]^2) vs. H1: Sigma != diag (sigma[1]^2, sigma-2[^2, ... sigma[p]^2)
 	This is test 1 in:
