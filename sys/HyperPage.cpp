@@ -943,7 +943,8 @@ void structHyperPage :: v_createChildren () {
 
 void HyperPage_init1 (HyperPage me, conststring32 title, Daata data, bool backquoteIsVerbatim) {
 	resolution = Gui_getResolution (nullptr);
-	Editor_init (me, 0, 0, (int) floor (6 * resolution + 30), 800, title, data);
+	const int width = 760;   // used to be (int) floor (6 * resolution + 30)
+	Editor_init (me, 0, 0, width, 800, title, data);
 	#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
