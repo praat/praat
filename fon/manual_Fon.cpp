@@ -529,62 +529,6 @@ EQUATION (U"Δ%f ∑ 2^^(%e_%i - 40) / 10")
 NORMAL (U"where Δ%f is the distance between the excitation channels (in Bark).")
 MAN_END
 
-MAN_BEGIN (U"Excitation_hertzToBark", U"ppgb", 19970401)
-INTRO (U"A routine for converting frequency into basilar place, "
-	"the inverse of @Excitation_barkToHertz.")
-ENTRY (U"Syntax")
-PROTOTYPE (U"##double Excitation_hertzToBark (double #%hertz##);")
-ENTRY (U"Algorithm")
-NORMAL (U"Returns 7 · ln (%hertz / 650 + √ (1 + (%hertz / 650)^2)).")
-MAN_END
-
-MAN_BEGIN (U"Excitation_barkToHertz", U"ppgb", 19970401)
-INTRO (U"A routine for converting basilar place into frequency, "
-	"the inverse of @Excitation_hertzToBark.")
-ENTRY (U"Syntax")
-PROTOTYPE (U"##double Excitation_barkToHertz (double #%bark##);")
-ENTRY (U"Algorithm")
-NORMAL (U"Returns 650 · sinh (%bark / 7).")
-MAN_END
-
-/*
-double Excitation_soundPressureToPhon (double soundPressure, double bark);
-Uses auditory filter (width apx. 1 Bark) for masking.
-
-Excitation Excitation_create (double df, integer nf);
-	Function:
-		return a new instance of Excitation.
-	Preconditions:
-		df > 0.0;
-		nf >= 1;
-	Postconditions:
-		result -> xmin == 0.0;		result -> ymin == 1;
-		result -> xmax == 25.6;		result -> ymax == 1;
-		result -> nx == nf;			result -> ny == 1;
-		result -> dx == df;			result -> dy == 1;
-		result -> x1 == 0.5 * df;		result -> y1 == 1;
-		result -> z [1] [1..nt] == 0.0;
-double Excitation_getDistance (Excitation me, Excitation thee);
-
-void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish);
-
-Matrix Excitation_to_Matrix (Excitation me);
-	Function:
-		Create a Matrix from an Excitation,
-		with deep copy of all of its Matrix attributes, except class information and methods.
-Excitation Matrix_to_Excitation (Matrix me);
-	Function:
-		create an Excitation from a Matrix.
-	Postconditions:
-		thy xmin == 0.0;
-		thy xmax == my nx / (1 / my dx);
-		thy nx == my nx;
-		thy dx == 1 / (1 / my dx);
-		thy x1 == 0.5 * thy dx;
-		thy ymin ymax ny dy y1 == 1;
-		thy z [1] [...] == my z [1] [...];
-*/
-
 /*"Any object of one of the types Polygon, PointProcess, Sound, Pitch, Spectrum,\n"
 "Spectrogram, Excitation, Cochleagram, VocalTract\n"
 "is convertible to and from a Matrix.\n"

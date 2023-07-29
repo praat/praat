@@ -34,22 +34,20 @@ double NUMdifferenceLimensToPhon (double ndli) {
 }
 
 double NUMsoundPressureToPhon (double soundPressure, double bark) {
-	double result = 0.0, dum;
-	if (soundPressure <= 0.0 || bark < 0.0) return undefined;
+	if (soundPressure <= 0.0 || bark < 0.0)
+		return undefined;
 
 	/*  dB = 20 * log10 (soundPressure / threshold)  */
-	if (soundPressure > 0.0)
-		result = 20.0 * log10 (soundPressure / 2.0e-5);   /* First approximation: phon = dB */
+	double result = 20.0 * log10 (soundPressure / 2.0e-5);   // first approximation: phon = dB
 
 	/*  Phones from dB  */
-	if (result < 90.0 && bark < 8.0) {
-		dum = (90.0 - result) * (8.0 - bark);
-		result -= dum * dum / 2500.0;
-	}
-	dum = bark / 3.6 - 5.0;
-	result += 5.0 * exp (- dum * dum);
-	if (bark > 20.0) { dum = bark - 20.0; result -= 0.5 * dum * dum; }
-	if (result < 0.0) result = 0.0;
+	if (result < 90.0 && bark < 8.0)
+		result -= sqr ((90.0 - result) * (8.0 - bark)) / 2500.0;
+
+	result += 5.0 * exp (- sqr (bark / 3.6 - 5.0));
+	if (bark > 20.0)
+		result -= 0.5 * sqr (bark - 20.0);
+	Melder_clipLeft (0.0, & result);
 	return result;
 }
 

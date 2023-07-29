@@ -28,8 +28,6 @@ Thing_define (Excitation, Vector) {
 		override { return MelderQuantity_FREQUENCY_BARK; }
 };
 
-double Excitation_soundPressureToPhon (double soundPressure, double bark);
-
 autoExcitation Excitation_create (double frequencyStep, integer numberOfFrequencies);
 double Excitation_getDistance (Excitation me, Excitation thee);
 double Excitation_getLoudness (Excitation me);

@@ -56,7 +56,7 @@ autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 
 		autoExcitation thee = Excitation_create (dbark, nbark);
 		for (integer i = 1; i <= nbark; i ++)
-			thy z [1] [i] = Excitation_soundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.get(), i));
+			thy z [1] [i] = NUMsoundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.get(), i));
 
 		return thee;
 	} catch (MelderError) {
