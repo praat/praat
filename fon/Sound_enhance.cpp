@@ -1,6 +1,6 @@
 /* Sound_enhance.cpp
  *
- * Copyright (C) 1992-2012,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,9 +78,8 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				/*
 					Take a one-bark frequency band.
 				*/
-				double fmid_bark = NUMhertzToBark (fmin) + 0.5;
-				double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1.0);
-				if (fmax > fhigh) fmax = fhigh;
+				const double fmid_bark = NUMhertzToBark (fmin) + 0.5;
+				const double fmax = Melder_clippedRight (NUMbarkToHertz (NUMhertzToBark (fmin) + 1.0), fhigh);
 				Melder_progress (fmin / fhigh, U"Band: ", Melder_fixed (fmin, 0), U" ... ", Melder_fixed (fmax, 0), U" Hz");
 				spec -> z.all()  <<=  orgspec -> z.all();
 				Spectrum_passHannBand (spec.get(), fmin, fmax, bandSmoothing);

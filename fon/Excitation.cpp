@@ -20,36 +20,6 @@
 
 Thing_implement (Excitation, Vector, 2);
 
-double Excitation_hertzToBark (double hertz) {
-	double h650 = hertz / 650;
-	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
-}
-
-double Excitation_barkToHertz (double bark) {
-	return 650.0 * sinh (bark / 7.0);
-}
-
-double Excitation_soundPressureToPhon (double soundPressure, double bark) {
-	double result, dum;
-
-	if (soundPressure <= 0.0) return 0.0;
-
-	/*  dB = 20 * log10 (soundPressure / threshold)  */
-	result = 20.0 * log10 (soundPressure / 2.0e-5);   /* First approximation: phon = dB */
-
-	/*  Phones from dB  */
-	if (result < 90.0 && bark < 8.0)
-	{
-		dum = (90.0 - result) * (8.0 - bark);
-		result -= dum * dum / 2500;
-	}
-	dum = bark / 3.6 - 5.0;
-	result += 5.0 * exp (- dum * dum);
-	if (bark > 20.0) { dum = bark - 20.0; result -= 0.5 * dum * dum; }
-	if (result < 0.0) result = 0.0;
-	return result;
-}
-
 void structExcitation :: v1_info () {
 	structDaata :: v1_info ();
 	constVEC y = z.row (1);

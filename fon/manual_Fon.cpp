@@ -336,34 +336,34 @@ NORMAL (U"The resulting Strings object will contain an alphabetical list of file
 ENTRY (U"Usage")
 NORMAL (U"There are two ways to specify the file path.")
 NORMAL (U"One way is to specify a folder name only. On Unix, the file path could be "
-	"##/usr/people/miep/sounds# or ##/usr/people/miep/sounds/#, for instance. On Windows, "
-	"##C:\\bsUsers\\bsMiep\\bsSounds# or ##C:\\bsUsers\\bsMiep\\bsSounds\\bs#. "
-	"On Macintosh, ##/Users/miep/Sounds# or ##/Users/miep/Sounds/#. Any of these produce "
+	"`/usr/people/miep/sounds` or `/usr/people/miep/sounds/`, for instance. On Windows, "
+	"`C:\\Users\\Miep\\Sounds` or `C:\\Users\\Miep\\Sounds\\`. "
+	"On Macintosh, `/Users/miep/Sounds` or `/Users/miep/Sounds/`. Any of these produce "
 	"a list of all the files in the specified folder.")
 NORMAL (U"The other way is to specify a wildcard (a single asterisk) for the file names. "
-	"To get a list of all the files whose names start with \"hal\" and end in \".wav\", "
-	"type ##/usr/people/miep/sounds/hal*.wav#, ##C:\\bsUsers\\bsMiep\\bsSounds\\bshal*.wav#, "
-	"or ##/Users/miep/Sounds/hal*.wav#.")
+	"To get a list of all the files whose names start with “`hal`” and end in “`.wav`”, "
+	"type `/usr/people/miep/sounds/hal*.wav`, `C:\\Users\\Miep\\Sounds\\hal*.wav`, "
+	"or `/Users/miep/Sounds/hal*.wav`.")
 ENTRY (U"Script usage")
 NORMAL (U"In a script, you can use this command to cycle through the files in a folder. "
 	"For instance, to read in all the sound files in a specified folder, "
 	"you could use the following script:")
-CODE (U"folder$ = \"/usr/people/miep/sounds\"")
-CODE (U"strings = Create Strings as file list: \"list\", folder$ + \"/*.wav\"")
+CODE (U"folder$ = “/usr/people/miep/sounds”")
+CODE (U"strings = Create Strings as file list: “list”, folder$ + “/*.wav”")
 CODE (U"numberOfFiles = Get number of strings")
 CODE (U"for ifile to numberOfFiles")
 	CODE1 (U"selectObject: strings")
 	CODE1 (U"fileName$ = Get string: ifile")
-	CODE1 (U"Read from file: folder$ + \"/\" + fileName$")
+	CODE1 (U"Read from file: folder$ + “/” + fileName$")
 CODE (U"endfor")
 NORMAL (U"If the script has been saved to a script file, you can use file paths that are relative to the folder "
 	"where you saved the script. Thus, with")
-CODE (U"Create Strings as file list: \"list\", \"*.wav\"")
-NORMAL (U"you get a list of all the .wav files that are in the same folder as the script that contains this line. "
-	"And to get a list of all the .wav files in the folder Sounds that resides in the same folder as your script, "
+CODE (U"Create Strings as file list: “list”, “*.wav”")
+NORMAL (U"you get a list of all the `.wav` files that are in the same folder as the script that contains this line. "
+	"And to get a list of all the `.wav` files in the folder Sounds that resides in the same folder as your script, "
 	"you can do")
-CODE (U"Create Strings as file list: \"list\", \"Sounds/*.wav\"")
-NORMAL (U"As is usual in Praat scripting, the forward slash (\"/\") in this example can be used on all platforms, including Windows. "
+CODE (U"Create Strings as file list: “list”, “Sounds/*.wav”")
+NORMAL (U"As is usual in Praat scripting, the forward slash (“/”) in this example can be used on all platforms, including Windows. "
 	"This makes your script portable across platforms.")
 ENTRY (U"See also")
 NORMAL (U"To get a list of folders instead of files, use @@Create Strings as folder list...@.")
@@ -400,10 +400,10 @@ CODE (U"\"the\"     108        1.5")
 CODE (U"\"a\"       58.1       33")
 CODE (U"\"pour\"    0.7        15.5")
 NORMAL (U"If you set %Column to 1 and %%Number of strings% to 1000, "
-	"you will get a @Strings object with approximately 647 occurrences of \"the\", "
-	"348 occurrences of \"a\", and 4 occurrences of \"pour\". "
-	"If you had set %Column to 2 (\"French\"), you would have gotten about "
-	"30 times \"the\", 660 times \"a\", and 310 times \"pour\". "
+	"you will get a @Strings object with approximately 647 occurrences of “the”, "
+	"348 occurrences of “a”, and 4 occurrences of “pour”. "
+	"If you had set %Column to 2 (“French”), you would have gotten about "
+	"30 times “the”, 660 times “a”, and 310 times “pour”. "
 	"The actual numbers will vary because the choice of a string will not depend on previous choices.")
 MAN_END
 
@@ -505,7 +505,7 @@ TERM (U"%dx = 25.6 / %nx")
 DEFINITION (U"Place or frequency step (Bark).")
 TERM (U"%x1 = %dx / 2")
 DEFINITION (U"centre of first place or frequency band (Bark).")
-TERM (U"%ymin = %ymax = %dy = %y__1_ = 1; %ny = 1")
+TERM (U"%ymin = %ymax = %dy = %y_1 = 1; %ny = 1")
 DEFINITION (U"dummies.")
 TERM (U"%z [1]")
 DEFINITION (U"intensity (sensation level) in phon.")
@@ -525,65 +525,9 @@ NORMAL (U"The loudness is defined as")
 EQUATION (U"∫%df 2^^(%e(%f) - 40 phon) / 10^")
 NORMAL (U"where %f is the frequency in Bark, and %e(%f) the excitation in phon. "
 	"For our discrete Excitation object, the loudness is computed as")
-EQUATION (U"Δ%f ∑ 2^^(%e__%i_ - 40) / 10")
+EQUATION (U"Δ%f ∑ 2^^(%e_%i - 40) / 10")
 NORMAL (U"where Δ%f is the distance between the excitation channels (in Bark).")
 MAN_END
-
-MAN_BEGIN (U"Excitation_hertzToBark", U"ppgb", 19970401)
-INTRO (U"A routine for converting frequency into basilar place, "
-	"the inverse of @Excitation_barkToHertz.")
-ENTRY (U"Syntax")
-PROTOTYPE (U"##double Excitation_hertzToBark (double #%hertz##);")
-ENTRY (U"Algorithm")
-NORMAL (U"Returns 7 · ln (%hertz / 650 + √ (1 + (%hertz / 650)^2)).")
-MAN_END
-
-MAN_BEGIN (U"Excitation_barkToHertz", U"ppgb", 19970401)
-INTRO (U"A routine for converting basilar place into frequency, "
-	"the inverse of @Excitation_hertzToBark.")
-ENTRY (U"Syntax")
-PROTOTYPE (U"##double Excitation_barkToHertz (double #%bark##);")
-ENTRY (U"Algorithm")
-NORMAL (U"Returns 650 · sinh (%bark / 7).")
-MAN_END
-
-/*
-double Excitation_soundPressureToPhon (double soundPressure, double bark);
-Uses auditory filter (width apx. 1 Bark) for masking.
-
-Excitation Excitation_create (double df, integer nf);
-	Function:
-		return a new instance of Excitation.
-	Preconditions:
-		df > 0.0;
-		nf >= 1;
-	Postconditions:
-		result -> xmin == 0.0;		result -> ymin == 1;
-		result -> xmax == 25.6;		result -> ymax == 1;
-		result -> nx == nf;			result -> ny == 1;
-		result -> dx == df;			result -> dy == 1;
-		result -> x1 == 0.5 * df;		result -> y1 == 1;
-		result -> z [1] [1..nt] == 0.0;
-double Excitation_getDistance (Excitation me, Excitation thee);
-
-void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish);
-
-Matrix Excitation_to_Matrix (Excitation me);
-	Function:
-		Create a Matrix from an Excitation,
-		with deep copy of all of its Matrix attributes, except class information and methods.
-Excitation Matrix_to_Excitation (Matrix me);
-	Function:
-		create an Excitation from a Matrix.
-	Postconditions:
-		thy xmin == 0.0;
-		thy xmax == my nx / (1 / my dx);
-		thy nx == my nx;
-		thy dx == 1 / (1 / my dx);
-		thy x1 == 0.5 * thy dx;
-		thy ymin ymax ny dy y1 == 1;
-		thy z [1] [...] == my z [1] [...];
-*/
 
 /*"Any object of one of the types Polygon, PointProcess, Sound, Pitch, Spectrum,\n"
 "Spectrogram, Excitation, Cochleagram, VocalTract\n"

@@ -1,6 +1,6 @@
 /* Spectrum_to_Excitation.cpp
  *
- * Copyright (C) 1992-2005,2011,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2014-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 		const autoVEC rFreqs = raw_VEC (nbark + 1);
 		const autoINTVEC iFreqs = raw_INTVEC (nbark + 1);
 		for (integer i = 1; i <= nbark + 1; i ++) {
-			rFreqs [i] = Excitation_barkToHertz (dbark * (i - 1));
+			rFreqs [i] = NUMbarkToHertz (dbark * (i - 1));
 			iFreqs [i] = Sampled_xToNearestIndex (me, rFreqs [i]);
 		}
 		const autoVEC inSig = zero_VEC (nbark);
@@ -56,7 +56,7 @@ autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 
 		autoExcitation thee = Excitation_create (dbark, nbark);
 		for (integer i = 1; i <= nbark; i ++)
-			thy z [1] [i] = Excitation_soundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.get(), i));
+			thy z [1] [i] = NUMsoundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.get(), i));
 
 		return thee;
 	} catch (MelderError) {

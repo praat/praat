@@ -1,6 +1,6 @@
 /* Excitation_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2011,2015-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ autoFormant Excitation_to_Formant (Excitation me, integer maximumNumberOfFormant
 			if (p [i] > p [i - 1] && p [i] >= p [i + 1]) {
 				double firstDerivative = p [i+1] - p [i-1], secondDerivative = 2 * p [i] - p [i-1] - p [i+1];
 				Formant_Formant formant = thy frames [1]. formant. append();
-				formant -> frequency = Excitation_barkToHertz (
+				formant -> frequency = NUMbarkToHertz (
 					my x1 + my dx * (i - 1 + 0.5 * firstDerivative / secondDerivative));
 				double min3phon = p [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative - 3.0;
 				/*
@@ -37,7 +37,7 @@ autoFormant Excitation_to_Formant (Excitation me, integer maximumNumberOfFormant
 				integer j = i - 1;
 				while (p [j] > min3phon && j > 1)
 					j --;
-				const double left = Excitation_barkToHertz (
+				const double left = NUMbarkToHertz (
 						p [j] > min3phon ? my xmin : my x1 + my dx * (j - 1 + (min3phon - p [j]) / (p [j + 1] - p [j])));
 				/*
 					Search to the right.
@@ -45,7 +45,7 @@ autoFormant Excitation_to_Formant (Excitation me, integer maximumNumberOfFormant
 				j = i + 1;
 				while (p [j] > min3phon && j < numberOfFrequencies)
 					j ++;
-				const double right = Excitation_barkToHertz (
+				const double right = NUMbarkToHertz (
 						p [j] > min3phon ? my xmax : my x1 + my dx * (j - 1 - (min3phon - p [j]) / (p [j - 1] - p [j])));
 				formant -> bandwidth = right - left;
 				if (thy frames [1]. formant.size == thy maxnFormants)
