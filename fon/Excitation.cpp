@@ -20,15 +20,6 @@
 
 Thing_implement (Excitation, Vector, 2);
 
-double Excitation_hertzToBark (double hertz) {
-	double h650 = hertz / 650;
-	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
-}
-
-double Excitation_barkToHertz (double bark) {
-	return 650.0 * sinh (bark / 7.0);
-}
-
 double Excitation_soundPressureToPhon (double soundPressure, double bark) {
 	double result, dum;
 

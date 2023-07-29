@@ -1,6 +1,6 @@
 /* Sound_to_Cochleagram.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2014-2018,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ autoCochleagram Sound_to_Cochleagram_edb
 			/* From oval window to basilar membrane response. */
 
 			double midFrequency_Bark = (ifreq - 0.5) * dfreq;
-			double midFrequency_Hertz = Excitation_barkToHertz (midFrequency_Bark);
+			double midFrequency_Hertz = NUMbarkToHertz (midFrequency_Bark);
 			autoSound gammatone = createGammatone (midFrequency_Hertz, 1.0 / my dx);
 			autoSound basil = Sounds_convolve (me, gammatone.get(), kSounds_convolve_scaling::SUM, kSounds_convolve_signalOutsideTimeDomain::ZERO);
 
