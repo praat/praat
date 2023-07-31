@@ -64,7 +64,7 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 				const char32 *from = p + 2;
 				while (*from != U'@' && *from != U'|' && *from != U'\0') {
 					if (to - link >= MAXIMUM_LINK_LENGTH)
-						Melder_throw (U"(ManPages::grind:) Link starting with “@@” is too long:\n", text);
+						Melder_throw (U"(ManPage_Paragraph_extractLink:) Link starting with “@@” is too long:\n", text);
 					*to ++ = *from ++;
 				}
 				/*
@@ -80,11 +80,9 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 							if (*from == U'\0')
 								break;
 							if (to - link >= MAXIMUM_LINK_LENGTH)
-								Melder_throw (U"(ManPages::grind:) Link starting with “@@” and containing “||” is too long:\n", text);
+								Melder_throw (U"(ManPage_Paragraph_extractLink:) Link starting with “@@” and containing “||” is too long:\n", text);
 							*to ++ = *from ++;
 						}
-						Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
-						*to = U'\0';
 					} else {
 						/*
 							Found a "|xxx@" part. ignore all of it.
@@ -106,7 +104,7 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 				*to ++ = *from ++;   // copy opening backquote
 				while (*from != U'`' && *from != U'\0') {
 					if (to - link >= MAXIMUM_LINK_LENGTH)
-						Melder_throw (U"(ManPages::grind:) Link starting with “@`” is too long:\n", text);
+						Melder_throw (U"(ManPage_Paragraph_extractLink:) Link starting with “@`” is too long:\n", text);
 					*to ++ = *from ++;
 				}
 				if (*from == U'`')
@@ -119,7 +117,7 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 				const char32 *from = p + 1;
 				while (isSingleWordCharacter (*from)) {
 					if (to - link >= MAXIMUM_LINK_LENGTH)
-						Melder_throw (U"(ManPages::grind:) Link starting with “@” is too long:\n", text);
+						Melder_throw (U"(ManPage_Paragraph_extractLink:) Link starting with “@” is too long:\n", text);
 					*to ++ = *from ++;
 				}
 				Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
@@ -165,12 +163,12 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 				boldLink ? verbatimLink ? U"\\#`{" : U"\\#@{" : verbatimLink ? U"\\`{" : U"\\@{";
 			if (verbatimLink) {
 				if (to - link >= MAXIMUM_LINK_LENGTH)
-					Melder_throw (U"(ManPages::grind:) Link starting with “", startMessage, U"” is too long:\n", text);
+					Melder_throw (U"(ManPage_Paragraph_extractLink:) Link starting with “", startMessage, U"” is too long:\n", text);
 				*to ++ = U'`';
 			}
 			while (*from != U'}' && *from != U'|' && *from != U'\0') {
 				if (to - link >= MAXIMUM_LINK_LENGTH)
-					Melder_throw (U"(ManPages::grind:) Link starting with “", startMessage, U"” is too long:\n", text);
+					Melder_throw (U"(ManPage_Paragraph_extractLink:) Link starting with “", startMessage, U"” is too long:\n", text);
 				*to ++ = *from ++;
 			}
 			/*
@@ -186,7 +184,7 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 						if (*from == U'\0')
 							break;
 						if (to - link >= MAXIMUM_LINK_LENGTH)
-							Melder_throw (U"(ManPages::grind:) Link starting with “", startMessage, U"” and containing “||” is too long:\n", text);
+							Melder_throw (U"(ManPage_Paragraph_extractLink:) Link starting with “", startMessage, U"” and containing “||” is too long:\n", text);
 						*to ++ = *from ++;
 					}
 					Melder_assert (to - link <= MAXIMUM_LINK_LENGTH);
@@ -212,7 +210,7 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 				to --;
 				for (integer idot = 1; idot <= 3; idot ++) {
 					if (to - link >= MAXIMUM_LINK_LENGTH)
-						Melder_throw (U"(ManPages::grind:) Link starting with “\\@{” is too long:\n", text);
+						Melder_throw (U"(ManPage_Paragraph_extractLink:) Link starting with “\\@{” is too long:\n", text);
 					*to ++ = U'.';
 				}
 			}
@@ -277,13 +275,15 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 				A link to another page: follow it.
 			*/
 			try {
-				Melder_sprint (fileNameBuffer,ManPages_FILENAME_BUFFER_SIZE, linkBuffer, U".man");
+				integer extensionSize = 4;   // .man
+				Melder_sprint (fileNameBuffer,ManPages_FILENAME_BUFFER_SIZE - extensionSize, linkBuffer);
 				/*
 					For the `.man` version, we replace every funny symbol with an underscore.
 				*/
 				for (char32 *q = fileNameBuffer; *q; q ++)
 					if (! isAllowedFileNameCharacter (*q))
 						*q = U'_';
+				str32cat (fileNameBuffer, U".man");
 				MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
 				if (MelderFile_exists (& file2)) {
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
@@ -303,11 +303,12 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 							For the `.praatnb` version, we replace most funny symbols with underscores,
 							but `#` with `-H`, `$` with `-S`, and `@` with `-C`.
 						*/
-						char32 *to = fileNameBuffer, *max = fileNameBuffer + ManPages_FILENAME_BUFFER_SIZE - (8 + 1);
+						extensionSize = 8;   // .praatnb
+						char32 *to = fileNameBuffer, *max = fileNameBuffer + ManPages_FILENAME_BUFFER_SIZE - (extensionSize + 1);
 						for (char32 *from = & linkBuffer [0]; *from != U'\0'; from ++) {
 							if (isAllowedFileNameCharacter (*from)) {
 								if (to < max)
-									*to ++ = *from ++;
+									*to ++ = *from;
 							} else if (*from == U'#') {
 								if (to < max)
 									*to ++ = U'-';
