@@ -22,19 +22,23 @@ oo_DEFINE_CLASS (FormantPath, Sampled)
 	oo_COLLECTION_OF (OrderedOf, formantCandidates, Formant, 2)
 	oo_VEC (ceilings, formantCandidates. size)
 	
+	#if oo_DECLARING
+		oo_OBJECT (TextGrid, 0, path)
+		autoINTVEC dummyPath;
+	#endif
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
 			oo_INTVEC (dummyPath, nx)
 			path = FormantPath_to_TextGrid_version0 (this, dummyPath.get());
 			dummyPath.reset();
 		oo_VERSION_ELSE
-			autoINTVEC dummyPath;
 			oo_OBJECT (TextGrid, 0, path)
 		oo_VERSION_END
-	#else
-		oo_INTVEC (dummyPath, nx)
+	#endif
+	#if oo_WRITING || oo_COMPARING
 		oo_OBJECT (TextGrid, 0, path)
 	#endif
+
 	#if oo_DECLARING
 		void v1_info ()
 			override;
