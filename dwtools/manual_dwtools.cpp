@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2022 David Weenink
+ * Copyright (C) 1993-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -349,14 +349,14 @@ INTRO (U"The bootstrap data set is a random sample of size %n "
 NORMAL (U"More information can be found in @@Efron & Tibshirani (1993)@.")
 MAN_END
 
-MAN_BEGIN (U"canonical variate", U"djmw", 20060328)
+MAN_BEGIN (U"canonical variate", U"djmw", 20230801)
 NORMAL (U"A ##canonical variate# is a new variable (variate) formed by making a linear combination of two "
 	"or more variates (variables) from a data set. "
 	"A linear combination of variables is the same as a weighted sum of variables. "
 	"Because we can in infinitely many ways choose combinations of weights between variables in a data set, "
 	"there are also infinitely many canonical variates possible. ")
 NORMAL (U"In general additional constraints should be satisfied by the weights to get a meaningful canonical variate. "
-	"For example, in @@Canonical correlation analysis|canonical correlation analyis@ a data set is split up into two parts, a %%dependent% and an %%independent% part. "
+	"For example, in @@Canonical correlation analysis|canonical correlation analysis@ a data set is split up into two parts, a %%dependent% and an %%independent% part. "
 	"In both parts we can form a canonical variate and we choose weights that maximize the correlation between these canonical variates "
 	"(there is an @@TableOfReal: To CCA...|algorithm@ that calculates these weights).")
 MAN_END
@@ -948,12 +948,12 @@ NORMAL (U"The \"fraction correct\" is defined as the quotient of the number "
 NORMAL (U"Correct classifications have identical row and column labels.")
 MAN_END
 
-MAN_BEGIN (U"Confusion & ClassificationTable: Increase confusion count", U"djmw", 201411101)
+MAN_BEGIN (U"Confusion & ClassificationTable: Increase confusion count", U"djmw", 20230801)
 INTRO (U"Increases the contents of cell(s) in the selected @@Confusion@. The cells to increase are determined by the selected "
 	"@ClassificationTable.")
 ENTRY (U"Behaviour")
 NORMAL (U"For each row in the ClassificationTable object the contents of one cell in the Confusion we be increased by one. "
-	"This cell is determined as follows: we start by finding the label of the column wich the largest number in it. "
+	"This cell is determined as follows: we start by finding the label of the column which the largest number in it. "
 	"This label is defined as the ##response label#. We use the corresponding row label as the ##stimulus label#. The content "
 	"of the cell in the Confusion object whose row and column are labeled with ##stimulus label# and ##response label#, "
 	"respectively, is increased by one.")
@@ -1395,7 +1395,7 @@ NORMAL (U"To avoid @aliasing in the chirp sound, a sound is only generated durin
 	"instantaneous frequency is greater than zero and smaller than the @@Nyquist frequency@.")
 MAN_END
 
-MAN_BEGIN (U"Create Sound as Shepard tone...", U"djmw", 20161013)
+MAN_BEGIN (U"Create Sound as Shepard tone...", U"djmw", 20230801)
 INTRO (U"One of the commands that create a @Sound.")
 ENTRY (U"Settings")
 TERM (U"##Name")
@@ -1411,7 +1411,7 @@ DEFINITION (U"the number of frequency components in the tone complex.")
 TERM (U"##Frequency change (semitones/s)")
 DEFINITION (U"determines how many semitones the frequency of each component will change in one second. "
 	"The number of seconds needed to change one octave will then be 12 divided by ##Frequency change#. "
-	"You can make rising, falling and monotonous tone complexes by chosing a positive, negative or zero value.")
+	"You can make rising, falling and monotonous tone complexes by choosing a positive, negative or zero value.")
 TERM (U"##Amplitude range% (dB)")
 DEFINITION (U"determines the relative size in decibels of the maximum and the minimum amplitude of the components in a tone complex. These relative amplitudes will then be 10^^\\--%amplitudeRange/20^. ")
 TERM (U"##Octave shift fraction (0-1)")
@@ -2821,10 +2821,10 @@ MAN_BEGIN (U"NMF", U"djmw", 20190312)
 INTRO (U"An object of type ##NMF# represents the @@non-negative matrix factorization@ of a matrix.")
 MAN_END
 
-MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20191024)
+MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20230801)
 INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a data matrix #%D, whose elements are all non-negative, into a feature matrix #%F and a weights matrix #%W such that #%D \\~~ #%F #%W, where the elements of #%F and #%W are also all non-negative.")
 ENTRY (U"Algorithms for computing NMF")
-NORMAL (U"More backgroud on the algorithms used can be found in @@Berry et al. (2007)@")
+NORMAL (U"More background on the algorithms used can be found in @@Berry et al. (2007)@")
 NORMAL (U"The algorithms fall into three general classes:")
 TERM (U"##1. Multiplicative updates#,")
 TERM (U"##2. Alternating Least squares#,")
@@ -3043,7 +3043,7 @@ MAN_BEGIN (U"PitchTier: To Pitch...", U"djmw", 20061128)
 INTRO (U"Synthesizes a new @Pitch from the selected @PitchTier.")
 MAN_END
 
-MAN_BEGIN (U"PitchTier: Modify interval...", U"djmw", 20170801)
+MAN_BEGIN (U"PitchTier: Modify interval...", U"djmw", 20230801)
 INTRO (U"Modifies a selected interval from the chosen @PitchTier by replacing the contents of the interval by newly defined pitch points.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (11), U""
@@ -3098,7 +3098,7 @@ DEFINITION1 (U"the values are slopes in herz per second followed by an end frequ
 TERM1 (U"%%music notes%")
 DEFINITION1 (U"the values are music notes specified on the twelve tone scale as a0, a\\# 0, b0, c0, c\\# 0, d0, d\\# 0, e0, f0, "
 	"f\\# 0, g0, g\\# 0, a1, a\\# 1, ... a4, ..., or g\\# 9. Here the octave is indicated by the number, 0 being the lowest octave "
-	"and 9 the highest. The a4 is choosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below "
+	"and 9 the highest. The a4 is chosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below "
 	"the a4 and corresponds to a frequency of 27.5 Hz. As a scale of reference we give a0 = 27.5 Hz, a1 = 55 Hz, a2 = 110 Hz, "
 	"a3 = 220 Hz, a4 = 440 Hz, a5 = 880 Hz, a6 = 1760 Hz, a7 = 3520 Hz, a8 = 7040 Hz and a9 = 14080 Hz.")
 TERM (U"##...which is the...")
@@ -3731,7 +3731,7 @@ DEFINITION (U"is a real, nonnegative, and diagonal matrix. Its diagonal contains
 	"%%singular values% %\\si__%i_, where %\\si__1_ \\>_ ... \\>_ %\\si__%n_ \\>_ 0.")
 MAN_END
 
-MAN_BEGIN (U"solving matrix equations", U"djmw", 20220111)
+MAN_BEGIN (U"solving matrix equations", U"djmw", 20230801)
 INTRO (U"In this manual you will learn how to solve different kinds of equations involving matrices and vectors.")
 NORMAL (U"Given a matrix #A and a vector #y, the types of equations we like to solve are of the form #y=#A\\.c#x, where #A "
 	"and #y are given. The task is to find the vector #x. The first two subsections show how to deal with this equation with "
@@ -3811,7 +3811,7 @@ NORMAL (U"My info window shows:")
 NORMAL (U"-0.0563380281690141 -3.341667830688472e-17 0.7616819283108669")
 
 ENTRY (U"4.1.2 The solution of the regression without the constraint")
-NORMAL (U"No constraints are involed if we set %\\al = 0")
+NORMAL (U"No constraints are involved if we set %\\al = 0")
 CODE (U"x# = solveWeaklyConstrained# (a##, y#, 0.0, delta)")
 CODE (U"writeInfoLine: x#")
 NORMAL (U"My info window shows:")
@@ -4207,7 +4207,7 @@ NORMAL (U"The old implementation with a simple 8-th order recursive digital filt
 	"4-th power) as suggested by  @@Slaney (1993)@ was not stable for low frequencies. ")
 MAN_END
 
-MAN_BEGIN (U"Sound: Play as frequency shifted...", U"djmw", 20140106)
+MAN_BEGIN (U"Sound: Play as frequency shifted...", U"djmw", 20230801)
 INTRO (U"Plays the selected @Sound with all frequencies shifted by the same amount. This trick can be used to make "
 	"audible those sounds that are normally not audible at all by human beings, like for example ultrasounds or infrasounds.")
 ENTRY (U"Settings")
@@ -4215,7 +4215,7 @@ TERM (U"##Shift by (Hz)")
 DEFINITION (U"the amount by which frequencies are shifted. A positive number shifts frequencies up, a negative number "
 	"shifts frequencies down. ")
 ENTRY (U"##Example")
-NORMAL (U"Rodents produce sounds with frequencies far outside the human audible range. Some meaningfull sqeeks of these animals "
+NORMAL (U"Rodents produce sounds with frequencies far outside the human audible range. Some meaningfull squeaks of these animals "
 	"are present in the frequency range from 54 kHz up to sometimes 100kHz. By choosing a shift value of -54000 Hz and a sampling "
 	"frequency of 44100 Hz, all frequencies between 54000 Hz and (54000+22050=) 76050 Hz  will be shifted down by 54000 Hz. The "
 	"rodents’ frequencies in the interval from 54000 Hz to 76050 Hz will therefore be mapped to the frequency interval between 0 and 22050 Hz. ")
@@ -4538,7 +4538,7 @@ NORMAL (U"First the sound is transformed to the frequency domain with an FFT. Th
 NORMAL (U"")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Sound (derivative)...", U"djmw", 20230323)
+MAN_BEGIN (U"Sound: To Sound (derivative)...", U"djmw", 20230801)
 INTRO (U"Calculates the derivative of a @@Sound@.")
 ENTRY (U"Settings")
 TERM (U"##Low-pass frequency (Hz)")
@@ -4555,7 +4555,7 @@ DEFINITION (U"the new absolute peak of the derivative. By specifying a value sma
 	"without distortion. If you want to listen to the derivative without distortion, it is absolutely necessary to scale the "
 	"peak to a value somewhat smaller than 1.0, like 0.99. For example, for a pure sine tone with a frequency of 300 Hz "
 	"and an amplitude of 1.0 whose formula is %%s(t) = sin(2\\pi300t)% the derivative with respect to time %t% is %%2\\pi300 cos(2\\pi300t)% ."
-	"The result is a cosine of 300 Hz with a huge amplitude of %%2\\pi300%. You can prevent any scaling by suppling a value of 0.0.")
+	"The result is a cosine of 300 Hz with a huge amplitude of %%2\\pi300%. You can prevent any scaling by supplying a value of 0.0.")
 ENTRY (U"Algorithm")
 NORMAL (U"The derivative of a wave form %%x%(%%t%) is most easily calculated in the spectral domain. According to "
 	"Fourier theory, if %%x%(%%t%) = \\in%%X%(%%f%)exp(2\\pi%%ift%) %%dt%, then"
@@ -5959,14 +5959,14 @@ DEFINITION (U"have the same meaning as defined above for the topic and before se
 TERM (U"##Context combination criterion#")
 DEFINITION (U"defines how the before and after sets have to be combined in the matching. The possible options are ##before#, or "
 	"##after# or ##before and after# or ##before or after, not both# or ##before or after, or both# or finally "
-	"##no before and no after#. Given the topic, before and after labels examples defined above, chosing ##before and after# "
+	"##no before and no after#. Given the topic, before and after labels examples defined above, choosing ##before and after# "
 	"would limit the search to vowels preceded by a plosive and followed by a nasal.")
 TERM (U"##Exclude topic labels boolean#")
 DEFINITION (U"when on, only the before and / or the after label set will be used in matching. Of course this effect "
 	"could also be reached by leaving the topic set empty.")
 MAN_END
 
-MAN_BEGIN (U"TextGridNavigator", U"djmw", 20230117)
+MAN_BEGIN (U"TextGridNavigator", U"djmw", 20230801)
 INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi-tier search machine.")
 ENTRY (U"What is a multi-tier search machine?")
 NORMAL (U"A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria "
@@ -6092,7 +6092,7 @@ NORMAL (U"The script starts by creating the navigator for the %topic tier, tier 
 	"##Add search tier# command which was chosen as ##overlaps before and after#. "
 	"Now, only if %tmin2 < %tmin1 and %tmax2 > %tmax1 the two intervals have the desired alignment and the match would succeed. ")
 NORMAL (U"We can, of course, make our match stricter and demand that, for example, the complete three phoneme match of the topic "
-	"tier is located within the match domain of the systax tier by issuing the following command:")
+	"tier is located within the match domain of the syntax tier by issuing the following command:")
 CODE (U"selectObject: navigator")
 CODE (U"Modify match domain: phonemeTierNumber, \"Before start to Topic end\"")
 NORMAL (U"Even more stricter to exact alignment:")

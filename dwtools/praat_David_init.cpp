@@ -34,7 +34,7 @@
  djmw 20040704 BarkFilter... in Thing_recognizeClassesByName.
  djmw 20041020 MelderFile -> structMelderFile.
  djmw 20041105 TableOfReal_createFromVanNieropData_25females.
- djmw 20041108 FormantFilter_drawSpectrum bug correted (wrong field name).
+ djmw 20041108 FormantFilter_drawSpectrum bug corrected (wrong field name).
  djmw 20050308 Find path (slopes), Find path (band)... and others.
  djmw 20050404 TableOfReal_appendColumns -> TableOfReal_appendColumnsMany
  djmw 20050406 Procrustus -> Prorustes
@@ -6061,7 +6061,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To P
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		Melder_require (channel > 0 && channel <= my ny,
-			U"The channel number should be bewteen 1 and ", my ny, U".");
+			U"The channel number should be between 1 and ", my ny, U".");
 		autoPolygon result = Sound_to_Polygon (me, channel, fromTime, toTime, ymin, ymax, connectionY);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -6713,7 +6713,7 @@ FORM (QUERY_ONE_FOR_REAL__SSCP_getConcentrationEllipseArea, U"SSCP: Get sigma el
 DO
 	QUERY_ONE_FOR_REAL (SSCP)
 		const double result = SSCP_getConcentrationEllipseArea (me, numberOfSigmas, 0, xIndex, yIndex);
-	QUERY_ONE_FOR_REAL_END (U" (concentation ellipse area)")
+	QUERY_ONE_FOR_REAL_END (U" (concentration ellipse area)")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__SSCP_getDegreesOfFreedom) {

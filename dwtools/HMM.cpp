@@ -1,6 +1,6 @@
 /* HMM.cpp
  *
- * Copyright (C) 2010-2020 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 2010-2023 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -810,7 +810,7 @@ void HMMBaumWelch_reInit (HMMBaumWelch me) {
 	my lnProb = 0.0;
 
 	/*
-		The _num and _denum matrices are asigned as += in the iteration loop and therefore need to be zeroed
+		The _num and _denum matrices are assigned as += in the iteration loop and therefore need to be zeroed
 		at the start of each new iteration.
 		The elements of alpha, beta, scale, gamma & xi are always calculated directly and need not be
 		initialised.

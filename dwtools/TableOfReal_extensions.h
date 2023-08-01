@@ -218,7 +218,7 @@ double TableOfReal_testCovarianceEqualsIdentityMatrix (TableOfReal me, integer n
 double TableOfReal_testCovarianceCompoundSymmetry (TableOfReal me, integer numberOfPermutations, bool useCorrelation);
 /*
 	H0: Sigma = sigma^2 (1-rho) * I + rho * J,
-	where I is identity matrix and J is sqaure matrix of ones znd rho > 0 (intra-class correlation coefficient
+	where I is identity matrix and J is square matrix of ones znd rho > 0 (intra-class correlation coefficient
 	This is test3 in:
 		L. Wu, C. Weng, X. Wang, K. Wang & X. Liu (2018): Test of covariance and correlation matrices,
 		arXiv: 1812.01172v1 [start.ME] 4 Dec 2018.

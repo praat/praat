@@ -1,6 +1,6 @@
 /* KlattGrid.cpp
  *
- * Copyright (C) 2008-2020 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 2008-2023 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2111,7 +2111,7 @@ autoKlattGrid KlattGrid_createExample () {
 }
 
 // y is the height in units of the height of one section,
-// y1 is the height from the top to the split between the uppper, non-diffed, and lower diffed part
+// y1 is the height from the top to the split between the upper, non-diffed, and lower diffed part
 static void _KlattGrid_queryParallelSplit (KlattGrid me, double dy, double *out_y, double *out_y1) {
 	const integer ny = my vocalTract -> nasal_formants -> formants.size +
 		my vocalTract -> oral_formants -> formants.size + my coupling -> tracheal_formants -> formants.size;
@@ -2250,7 +2250,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, kKlattGridFilterModel filterModel
 		ys1 = ys2 - height_phonation;
 		PhonationGrid_draw_inside (my phonation.get(), g, xs1, xs2, ys1, ys2, dy_phonation, & yout_phonation);
 
-		// units in cascade have same heigth as units in source part.
+		// units in cascade have same height as units in source part.
 
 		xc1 = xmin + accumulatedWidths [2]; // end of phonation
 		xc2 = xc1 + relativeWidths [3]; // same width as vocaltract

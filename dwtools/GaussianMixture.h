@@ -2,7 +2,7 @@
 #define _GaussianMixture_h_
 /* GaussianMixture.h
  *
- * Copyright (C) 2010-2020 David Weenink
+ * Copyright (C) 2010-2020, 2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ void GaussianMixture_TableOfReal_getComponentProbabilities (GaussianMixture me, 
 autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_probabilities (GaussianMixture me, TableOfReal thee);
 
 /*
-	Calculate the responsibities: mixingProbability(k) * N(x(n)|mu(k),Sigma(k)) / Normalization.
+	Calculate the responsibilities: mixingProbability(k) * N(x(n)|mu(k),Sigma(k)) / Normalization.
 	Bishop (2007): Pattern recognition and machine learning, Springer page 438: Eq. 9.23
 	Invariant:
 	The row sum always equals 1.

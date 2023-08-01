@@ -1,6 +1,6 @@
 /* manual_BSS.cpp
  *
- * Copyright (C) 2010-2022 David Weenink
+ * Copyright (C) 2010-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ MAN_BEGIN (U"CrossCorrelationTableList", U"djmw", 20220111)
 INTRO (U"One of the types of objects in Praat. A CrossCorrelationTableList represents a collection of @@CrossCorrelationTable@ objects.")
 MAN_END
 
-MAN_BEGIN (U"CrossCorrelationTableList: Create test set...", U"djmw", 20110212)
+MAN_BEGIN (U"CrossCorrelationTableList: Create test set...", U"djmw", 20230801)
 INTRO (U"Create a collection of @@CrossCorrelationTable@s that are all derived from different diagonal matrices by the same transformation matrix.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
@@ -69,7 +69,7 @@ DEFINITION (U"the standard deviation of the noise that is added to each transfor
 	"diagonalizable anymore.")
 ENTRY (U"Algorithm")
 NORMAL (U"All the CrossCorrelationTable matrices are generated as #%V\\'p #%D__%k_ #%V, where #%D__%k_ is a diagonal matrix "
-	"with entries randomly choosen from the [-1,1] interval. The matrix #%V is a \"random\" orthogonal matrix "
+	"with entries randomly chosen from the [-1,1] interval. The matrix #%V is a \"random\" orthogonal matrix "
 	"obtained from the singular value decomposition of a matrix #%M = #%U #%D #%V\\'p, where the cells of the "
 	"matrix #%M are random Gaussian numbers with mean 0 and standard deviation 1.")
 NORMAL (U"If the first matrix has to be positive definite, the numbers on the diagonal of #%D__1_ are randomly "

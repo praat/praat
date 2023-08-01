@@ -2,7 +2,7 @@
 #define _Configuration_h_
 /* Configuration.h
  *
- * Copyright (C) 1992-2017 David Weenink
+ * Copyright (C) 1992-2017, 2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numb
 
 autoConfiguration Configuration_createLetterRExample (int choice);
 /*
-  	Create a two-dimensional configuartion from the letter R.
+  	Create a two-dimensional configuration from the letter R.
   	choice = 1 : undistorted;
   	choice = 2 : result of monotone fit on distorted (d^2 + 5 +32.5*z)
 */

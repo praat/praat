@@ -506,13 +506,13 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 			ogg_stream_state oggStream; // take physical pages, weld into a logical stream of packets
 			ogg_stream_init (& oggStream, ogg_page_serialno (& oggPage));
 			/* 
-				Eextract the initial header from the first page and verify that the
+				Extract the initial header from the first page and verify that the
 				Ogg bitstream is in fact Vorbis data
 
 				I handle the initial header first instead of just having the code
 				read all three Vorbis headers at once because reading the initial
 				header is an easy way to identify a Vorbis bitstream and it's
-				useful to see that functionality seperated out.
+				useful to see that functionality separated out.
 			*/
 			vorbis_info vorbisInfo; // struct that stores all the static vorbis bitstream settings
 			vorbis_info_init (& vorbisInfo);
@@ -865,7 +865,7 @@ static autoSound Sound_create2 (double minimumTime, double maximumTime, double s
 		sin(a+dx) = sin(a) - (alpha . sin(a) - beta . sin(a))
 	where alpha and beta are precomputed coefficients
 		alpha = 2 sin^2(dx/2) and beta = sin(dx)
-	In this way aplha and beta do not lose significance if the increment
+	In this way alpha and beta do not lose significance if the increment
 	dx is small.
 */
 
@@ -964,7 +964,7 @@ static void NUMgammatoneFilter4 (double *x, double *y, integer n, double centre_
 		Coefficients a & b according to:
 		Slaney (1993), An efficient implementation of the Patterson-Holdsworth
 		auditory filterbank, Apple Computer Technical Report 35, 41 pages.
-		For the a's we have left out an overal scale factor of dt^4.
+		For the a's we have left out an overall scale factor of dt^4.
 		This makes a [0] = 1.
 	*/
 
@@ -1685,7 +1685,7 @@ autoTextGrid Sound_to_TextGrid_speechActivity_lsfm (Sound me, double timeStep, d
 						const conststring32 vadLabel = vadTextInterval -> text.get();
 						const double vadEndTime = vadTextInterval -> xmax;
 						if (vadEndTime > silenceEndTime - timeMargin) {
-							// extends beyound the end 
+							// extends beyond the end 
 							IntervalTier_addBoundaryUnsorted (unionTier, unionIndex, silenceEndTime, vadLabel);
 							unionIndex ++;
 							unionContinues = false;
