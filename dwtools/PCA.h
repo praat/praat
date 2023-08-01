@@ -4,7 +4,7 @@
  *
  * Principal Component Analysis
  * 
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2019, 2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer from, integer to);
 /*	Get fraction variance of the table projected in the pca-space.
 	Shorthand for projecting the Covariance of the TableOfReal on the PCA-space
-	and quering the projected Covariance for 'fraction variance'.
+	and querying the projected Covariance for 'fraction variance'.
 */
 
 autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee);

@@ -1,6 +1,6 @@
 /* GaussianMixture.cpp
  *
- * Copyright (C) 2011-2020 David Weenink
+ * Copyright (C) 2011-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 				lnsum += pp * log (pp); // scaling outside the loop
 			}
 			if (psum > 0)
-				lnpcd += lnsum / psum; // scaling: as reponsibilities
+				lnpcd += lnsum / psum; // scaling: as responsibilities
 		}
 		return lnpcd;
 	}
@@ -142,7 +142,7 @@ static void GaussianMixture_getResponsibilities (GaussianMixture me, constMATVU 
 	Melder_require (responsibilities.nrow == probabilities.nrow && responsibilities.ncol == probabilities.ncol,
 			U"The responsibilities and the probabilities should have the same dimensions.");
 	Melder_require (responsibilities.ncol == my numberOfComponents,
-			U"The number of columns of the responsbilities should equal the number of components.");
+			U"The number of columns of the responsibilities should equal the number of components.");
 	const integer fromComponent = componentToUpdate == 0 ? 1 : componentToUpdate;
 	const integer toComponent = componentToUpdate == 0 ? my numberOfComponents : componentToUpdate;
 	

@@ -2,7 +2,7 @@
 #define _Spectrum_extensions_h_
 /* Spectrum_extensions.h
  *
- * Copyright (C) 1993-2021 David Weenink
+ * Copyright (C) 1993-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ autoMatrix Spectrum_unwrap (Spectrum me);
 
 	Tribolet, J.M. & Quatieri, T.F. (1979), Computation of the Complex
 		Spectrum, in: Programs for Digital Signal Processing,
-		Digital Signal Processing Commitee (eds), IEEE Press,
+		Digital Signal Processing Committee (eds), IEEE Press,
 		chapter 7.1.
 
 	First row of returned matrix contains the amplitudes-squared,

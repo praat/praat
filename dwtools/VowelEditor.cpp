@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2020 David Weenink, 2015-2022 Paul Boersma
+ * Copyright (C) 2008-2023 David Weenink, 2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1263,7 +1263,7 @@ void structVowelEditor :: v_createChildren ()
 	publishButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Publish", gui_button_cb_publish, this, 0);
 	/*
 		Four Text widgets with the label on top: Duration, Extend, f0, Slope.
-		Make the f0 slope button 10 wider to accomodate the text
+		Make the f0 slope button 10 wider to accommodate the text
 		We wil not use a callback from a Text widget. It will get called multiple times during the editing
 		of the text. Better to have all editing done and then query the widget for its value!
 	*/

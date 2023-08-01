@@ -1,6 +1,6 @@
 /* manual_MDS.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2019, 2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -745,7 +745,7 @@ NORMAL (U"In the limit when %order = 0 and %numberOfInteriorKnots = "
 	"%numberOfDissimilarities, monotone regression is performed.")
 MAN_END
 
-MAN_BEGIN (U"Dissimilarity: To Configuration (kruskal)...", U"djmw", 20190510)
+MAN_BEGIN (U"Dissimilarity: To Configuration (kruskal)...", U"djmw", 20230801)
 INTRO (U"A command that creates a @Configuration object from a @Dissimilarity "
 	"object.")
 ENTRY (U"Settings")
@@ -761,7 +761,7 @@ DEFINITION (U"determines the handling of ties in the data. In the %%primary appr
 	"two or more dissimilarities are equal we do not care whether the fitted "
 	"distances are equal or not. "
 	"Consequently, no constraints are imposed on the fitted distances. "
-	"For the %%secondary approach%, however, we impose the constaint that the fitted distances be "
+	"For the %%secondary approach%, however, we impose the constraint that the fitted distances be "
 	"equal whenever the dissimilarities are equal.")
 NORMAL (U"For the calculation of stress:")
 TERM (U"##Kruskal's stress-1 (Formula1, the default)")   // ??
@@ -1446,7 +1446,7 @@ NORMAL (U"Select the Dissimilarity and the Configuration together to "
 PICTURE (4.0, 4.0, drawLetterRRegression)
 NORMAL (U"The following script summarizes:")
 CODE (U"selectObject: dissimilarity, configuration")
-CODE (U"Draw monotone regresion: \"Primary approach\", 0, 200, 0, 2.2, 1, \"+\", \"yes\"")
+CODE (U"Draw monotone regression: \"Primary approach\", 0, 200, 0, 2.2, 1, \"+\", \"yes\"")
 NORMAL (U"When you enter %noiseRange = 0 in the form for the letter #R, perfect "
 	"reconstruction is possible. The Shepard diagram then will show "
 	"a perfectly smooth monotonically increasing function.")

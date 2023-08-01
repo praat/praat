@@ -2,7 +2,7 @@
 #define _MultiSampledSpectrogram_h_
 /* MultiSampledSpectrogram.h
  * 
- * Copyright (C) 2021-2022 David Weenink
+ * Copyright (C) 2021-2023 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ Thing_define (FrequencyBin, AnalyticSound) {
 /*
 	A MultiSampledSpectrogram is a spectrogram that is evenly sampled in the frequency domain (on some possibly non-linear frequency scale).
 	Each "sample" is a FrequencyBin with real and imaginary values.
-	The original sound can be reconstructed from the data in the frequncy bins.
+	The original sound can be reconstructed from the data in the frequency bins.
 */
 
 autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1);

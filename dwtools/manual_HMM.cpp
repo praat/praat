@@ -1,6 +1,6 @@
 /* manual_HMM.cpp
  *
- * Copyright (C) 2011-2019 David Weenink
+ * Copyright (C) 2011-2019, 2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,12 +76,12 @@ NORMAL (U"A marginal distribution is the projection of the (multivariate) p.d.f.
 	"This direction may also be externally defined by selecting a @PCA and a GaussianMixture together.")
 MAN_END
 
-MAN_BEGIN (U"GaussianMixture: Split component...", U"djmw", 20101122)
+MAN_BEGIN (U"GaussianMixture: Split component...", U"djmw", 20230801)
 INTRO (U"Splits one component of the selected  @GaussianMixture into two components.")
 NORMAL (U"The selected component is split on the basis of a @PCA analysis of its covariance matrix. The new means are situated "
 	"around the old components mean, 1%\\si apart in the first principal components direction, and the new covariances are "
 	"constructed with information from the old covariance matrix. ")
-NORMAL (U"The details of the algorith are described in @@Zhang et al. (2003)@.")
+NORMAL (U"The details of the algorithm are described in @@Zhang et al. (2003)@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture: To PCA", U"djmw", 20101030)
@@ -182,10 +182,10 @@ NORMAL (U"In these formulas, %n is the number of data points, %k is the number o
 EQUATION (U"\\ga__%%im%_= \\al__%m_\\.c%p__%%im%_ /(\\Si__%j=1..%k_ \\al__%j_\\.c%p__%%ij%_).")
 MAN_END
 
-MAN_BEGIN (U"GaussianMixture & TableOfReal: Improve likelihood...", U"djmw", 20111130)
+MAN_BEGIN (U"GaussianMixture & TableOfReal: Improve likelihood...", U"djmw", 20230801)
 INTRO (U"Try to improve the likelihood of the parameters in the @@GaussianMixture@ by an @@expectation-maximization@ algorithm.")
 ENTRY (U"Settings & EM Algorithm")
-NORMAL (U"As decribed in @@TableOfReal: To GaussianMixture...@.")
+NORMAL (U"As described in @@TableOfReal: To GaussianMixture...@.")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & TableOfReal: To Correlation (columns)", U"djmw", 20101111)
@@ -208,7 +208,7 @@ NORMAL (U"The classification table is a matrix with the same number of rows as t
 	"that the data in row %i of the TableOfReal belongs to component %j of the mixture.")
 MAN_END
 
-MAN_BEGIN (U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...", U"djmw", 20190709)
+MAN_BEGIN (U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...", U"djmw", 20230801)
 INTRO (U"Find the best @@GaussianMixture@ from the data according to an iterative Component-wise @@expectation-maximization|Expectation-Maximization@ for Mixtures algorithm by which components may be deleted.")
 ENTRY (U"Settings")
 TERM (U"##Minimum number of components")
@@ -222,7 +222,7 @@ TERM (U"##Stability coefficient lambda")
 DEFINITION (U"defines the fraction of the total covariance that is added to the covariance of each component to "
 	"prevent these matrices from becoming singular.")
 TERM (U"##Criterion based on")
-DEFINITION (U"defines whether the function to be optimized is the log likelihood or the related miminum description length.")
+DEFINITION (U"defines whether the function to be optimized is the log likelihood or the related mininum description length.")
 ENTRY (U"Algorithm")
 NORMAL (U"The component-wise optimization algorithm is described in @@Figueiredo & Jain (2002)@ where the function to be optimized "
 	"is the minimum description length defined as:")

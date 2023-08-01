@@ -2,7 +2,7 @@
 #define _Sound_and_Spectrogram_extensions_h_
 /* Sound_and_Spectrogram_extensions.h
  *
- * Copyright (C) 2014-2015 David Weenink
+ * Copyright (C) 2014-2015, 2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 	Filtering with filters on a Bark scale as defined by
 		Andrew Sekey & Brian Hanson (1984), "Improved 1-Bark bandwidth
 		"auditory filter", Jasa 75, 1902-1904.
-	Although not explicitely stated the filter function is defined in the
+	Although not explicitly stated the filter function is defined in the
 	power domain.
 	10 log F(z) = 15.8 + 7.5(z + 0.5) - 17.5 * sqrt(1 + (z + 0.5)^2)
 */

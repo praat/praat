@@ -2,7 +2,7 @@
 #define _CCA_h_
 /* CCA.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@
 	c1 [p] = v1 [p]' . Table1   c2 [p]= v2 [p]' . Table2
 
 	the sample correlation of c1 [1] and c2 [1] is greatest, the sample
-	correlation of c1 [2] and c2 [2] is greatest amoung all linear compounds
+	correlation of c1 [2] and c2 [2] is greatest among all linear compounds
 	uncorrelated with c1 [1] and c2 [1], and so on, for all p possible pairs.
 */
 

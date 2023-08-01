@@ -1,6 +1,6 @@
 /* praat_MultiSampledSpectrogram.cpp
  *
- * Copyright (C) 2021-2022 David Weenink
+ * Copyright (C) 2021-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ FORM (MODIFY_EACH_WEAK__MultiSampledSpectrogram_formula_part, U"MultiSampledSpec
 	REAL (fromTime, U"From time", U"0.0")
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
-	REAL (toFrequency, U"To Frequncy (Hz)", U"200.0")
+	REAL (toFrequency, U"To Frequency (Hz)", U"200.0")
 	FORMULA (formula, U"Formula", U"2 * self")
 	OK
 DO
