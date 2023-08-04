@@ -44,6 +44,15 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 	PraatApplication praatApplication, PraatObjects praatObjects, PraatPicture praatPicture,
 	MelderDir rootDirectory
 ) {
+	theCurrentPraatApplication = praatApplication;
+	theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
+	theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
+	theCurrentPraatObjects = praatObjects;
+	theCurrentPraatPicture = praatPicture;
+
+	void praat_actions_show ();   // TODO: integrate this better
+	praat_actions_show ();   // we have to set the `executable` flags to false, in the global variable `theActions`
+
 	Interpreter interpreterReference;
 	autoInterpreter interpreter;
 	if (optionalInterpreterReference) {
@@ -90,11 +99,6 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
 		Graphics_inqWsWindow (paragraph -> cacheGraphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
 
-		theCurrentPraatApplication = praatApplication;
-		theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
-		theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-		theCurrentPraatObjects = praatObjects;
-		theCurrentPraatPicture = praatPicture;
 		theCurrentPraatPicture -> graphics = paragraph -> cacheGraphics.get();   // has to draw into HyperPage rather than Picture window
 		theCurrentPraatPicture -> font = font;
 		theCurrentPraatPicture -> fontSize = fontSize;
@@ -156,9 +160,6 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 		Graphics_setSpeckleSize (paragraph -> cacheGraphics.get(), 1.0);
 		Graphics_setColour (paragraph -> cacheGraphics.get(), Melder_BLACK);
 		#endif
-		theCurrentPraatApplication = & theForegroundPraatApplication;
-		theCurrentPraatObjects = & theForegroundPraatObjects;
-		theCurrentPraatPicture = & theForegroundPraatPicture;
 
 		#if 0
 		Graphics_resetWsViewport (paragraph -> cacheGraphics.get(), x1DCold, x2DCold, y1DCold, y2DCold);
@@ -169,6 +170,9 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 		Graphics_stopRecording (paragraph -> cacheGraphics.get());
 		#endif
 	}
+	theCurrentPraatApplication = & theForegroundPraatApplication;
+	theCurrentPraatObjects = & theForegroundPraatObjects;
+	theCurrentPraatPicture = & theForegroundPraatPicture;
 	if (anErrorHasOccurred)
 		Melder_flushError (U"Error in code chunk ", errorChunk, U".\n", theErrorThatOccurred.get());
 	praatObjects -> reset();
