@@ -752,9 +752,9 @@ ENTRY (U"Settings")
 TERM (U"##Number of dimensions# (standard value: 2)")
 DEFINITION (U"The dimensionality of the Configuration.")
 TERM (U"##Distance metric% (standard value: 2, i.e. Euclidean)")
-DEFINITION (U"the general distance between points #x__%i_ and #x__%j_ (%i,%j "
+DEFINITION (U"the general distance between points #x_%i and #x_%j (%i, %j "
 	"= 1..%numberOfPoints) is:")
-DEFINITION (U"(\\su__%k=1..%numberOfDimensions_ |%x__%ik_ \\--%x__%jk_|"
+DEFINITION (U"(\\su__%k=1..%numberOfDimensions_ |%x__%ik_ \\-m %x__%jk_|"
 	"^^%metric^)^^1/%metric^")
 TERM (U"##Handling of ties")
 DEFINITION (U"determines the handling of ties in the data. In the %%primary approach%, whenever "
@@ -765,11 +765,11 @@ DEFINITION (U"determines the handling of ties in the data. In the %%primary appr
 	"equal whenever the dissimilarities are equal.")
 NORMAL (U"For the calculation of stress:")
 TERM (U"##Kruskal's stress-1 (Formula1, the default)")   // ??
-EQUATION (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
+EQUATION (U"%stress = \\Vr(\\su(%distance_%k \\-m %fittedDistance_%k)^2 / "
 	"\\su %distance__%k_^2)")
 TERM (U"##Kruskal's stress-2 (Formula2)")
-EQUATION (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
-	"\\su (%distance__%k_ \\-- %averageDistance)^2)")
+EQUATION (U"%stress = \\Vr(\\su(%distance_%k \\-m %fittedDistance_%k)^2 / "
+	"\\su (%distance__%k_ \\-m %averageDistance)^2)")
 DEFINITION (U"Note that values of stress-2 are generally more than double those "
 	"of stress-1 for the same degree of fit.")
 NORMAL (U"Finding the optimal Configuration involves a minimization process:")
@@ -787,7 +787,7 @@ ENTRY (U"Precautions")
 NORMAL (U"When there are few objects it is impossible to recover many "
 	"dimensions. A rough rule of thumb is that there should be at least twice "
 	"as many number of observations, i.e. the %numberOfPoints \\.c "
-	"(%numberOfPoints - 1) / 2 (dis)similarities, than parameters "
+	"(%numberOfPoints \\-m 1) / 2 (dis)similarities, than parameters "
 	"to be estimated, i.e. the %numberOfPoints \\.c %numberOfDimensions "
 	"position coordinates. A practical guide is:")
 	LIST_ITEM (U"for %numberOfDimensions = 1 you need \\>_ 5 objects")
@@ -819,10 +819,10 @@ LIST_ITEM (U"\\bu 3.3 Do a monotone regression of this Distance on the "
 	"Dissimilarity. This results in a new Distance object.")
 LIST_ITEM (U"\\bu 3.4 Calculate stress from this Distance and the Distance "
 	"obtained from Dissimilarity.")
-NORMAL (U"The optimization process is ccontrolledby a conjugate gradient "
+NORMAL (U"The optimization process is controlled by a conjugate gradient "
 	"minimization algorithm that tries to minimize the %stress function. "
 	"In @@Kruskal (1964)@, a steepest descent "
-	"algorithm is used wwhichis less efficient. ")
+	"algorithm is used, which is less efficient.")
 MAN_END
 
 MAN_BEGIN (U"Dissimilarity: To Configuration (monotone mds)...", U"djmw", 20190510)

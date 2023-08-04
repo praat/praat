@@ -30,6 +30,9 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.3.14# (4 August 2023)
+• Repaired a bug that occurred when saving a @FormantPath to disk.
+
 ##6.3.13# (31 July 2023)
 • Repaired a bug introduced in 6.3.12 by which a link to a file wasn’t found in external manual pages.
 
