@@ -6474,7 +6474,16 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText, U"SpeechSynth
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text);
+		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, false);
+	QUERY_ONE_FOR_STRING_END
+}
+
+FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated, U"SpeechSynthesizer: Get phonemes from text", nullptr) {
+	TEXTFIELD (text, U"Text", U"This is some text.", 10)
+	OK
+DO
+	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
+		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, true);
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -10302,6 +10311,8 @@ void praat_David_init () {
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get phonemes from text...", nullptr, 1,
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get phonemes from text (space-separated)...", nullptr, 1,
+				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, GuiMenu_DEPRECATED_2017,
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName);
 		
