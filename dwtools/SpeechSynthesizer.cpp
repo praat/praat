@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2022 David Weenink
+//  * Copyright (C) 2011-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -653,7 +653,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 	}	
 }
 
-conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text) {
+conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces) {
 	try {
 		SpeechSynthesizer_generateSynthesisData (me, text);
 		const double dt = 1.0 / my d_internalSamplingFrequency;
@@ -671,12 +671,18 @@ conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, const
 		const integer numberOfIntervals = phonemeTier -> intervals.size;
 		Melder_require (numberOfIntervals > 0,
 			U"Not enough phonemes.");
-		MelderString phonemes;
+		MelderString phonemes, phoneme;
+		conststring32 phonemeSeparator = ( separateBySpaces ? U" " : U"" );
+		conststring32 wordSeparator = ( separateBySpaces ? U"  " : U" " );
 		for (integer iint = 1; iint <= numberOfIntervals; iint ++) {
 			TextInterval interval = phonemeTier -> intervals .at [iint];
 			conststring32 phonemeLabel = interval -> text.get();
-			conststring32 text = ( Melder_cmp (phonemeLabel, U"") == 0 ? (iint > 1 ? U" " : U"") : phonemeLabel );
-			MelderString_append (& phonemes, text);
+			bool isEmptyLabel = Melder_cmp (phonemeLabel, U"") == 0;
+			if (Melder_cmp (phonemeLabel, U"") == 0) {
+				if (iint > 1 && iint < numberOfIntervals)
+					MelderString_append (& phonemes, wordSeparator);
+			} else
+				MelderString_append (& phonemes, phonemeLabel, (iint < numberOfIntervals ? phonemeSeparator : U"") );
 		}
 		return phonemes . string;
 	} catch (MelderError) {
