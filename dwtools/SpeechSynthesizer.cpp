@@ -653,7 +653,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 	}	
 }
 
-conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces) {
+autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces) {
 	try {
 		SpeechSynthesizer_generateSynthesisData (me, text);
 		const double dt = 1.0 / my d_internalSamplingFrequency;
@@ -671,20 +671,21 @@ conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, const
 		const integer numberOfIntervals = phonemeTier -> intervals.size;
 		Melder_require (numberOfIntervals > 0,
 			U"Not enough phonemes.");
-		MelderString phonemes, phoneme;
-		conststring32 phonemeSeparator = ( separateBySpaces ? U" " : U"" );
-		conststring32 wordSeparator = ( separateBySpaces ? U"  " : U" " );
+		static autoMelderString phonemes;
+		MelderString_empty (& phonemes);
+		const conststring32 phonemeSeparator = ( separateBySpaces ? U" " : U"" );
+		const conststring32 wordSeparator = ( separateBySpaces ? U"  " : U" " );
 		for (integer iint = 1; iint <= numberOfIntervals; iint ++) {
-			TextInterval interval = phonemeTier -> intervals .at [iint];
-			conststring32 phonemeLabel = interval -> text.get();
-			bool isEmptyLabel = Melder_cmp (phonemeLabel, U"") == 0;
-			if (Melder_cmp (phonemeLabel, U"") == 0) {
+			TextInterval interval = phonemeTier -> intervals.at [iint];
+			const conststring32 phonemeLabel = interval -> text.get();
+			const bool isEmptyLabel = Melder_equ (phonemeLabel, U"");
+			if (isEmptyLabel) {
 				if (iint > 1 && iint < numberOfIntervals)
 					MelderString_append (& phonemes, wordSeparator);
 			} else
 				MelderString_append (& phonemes, phonemeLabel, (iint < numberOfIntervals ? phonemeSeparator : U"") );
 		}
-		return phonemes . string;
+		return Melder_dup (phonemes.string);   // TODO: implement MelderString_move()
 	} catch (MelderError) {
 		Melder_throw (U"Phonemes not generated.");
 	}

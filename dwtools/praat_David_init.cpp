@@ -6474,7 +6474,8 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText, U"SpeechSynth
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, false);
+		autostring32 phonemes = SpeechSynthesizer_getPhonemesFromText (me, text, false);
+		conststring32 result = phonemes.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -6483,7 +6484,8 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated,
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, true);
+		autostring32 phonemes = SpeechSynthesizer_getPhonemesFromText (me, text, true);
+		conststring32 result = phonemes.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
