@@ -672,6 +672,7 @@ autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, consts
 		Melder_require (numberOfIntervals > 0,
 			U"Not enough phonemes.");
 		static autoMelderString phonemes;
+		MelderString_empty (& phonemes);
 		const conststring32 phonemeSeparator = ( separateBySpaces ? U" " : U"" );
 		const conststring32 wordSeparator = ( separateBySpaces ? U"  " : U" " );
 		for (integer iint = 1; iint <= numberOfIntervals; iint ++) {
