@@ -671,20 +671,20 @@ conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, const
 		const integer numberOfIntervals = phonemeTier -> intervals.size;
 		Melder_require (numberOfIntervals > 0,
 			U"Not enough phonemes.");
-		MelderString phonemes, phoneme;
-		conststring32 phonemeSeparator = ( separateBySpaces ? U" " : U"" );
-		conststring32 wordSeparator = ( separateBySpaces ? U"  " : U" " );
+		MelderString phonemes;
+		const conststring32 phonemeSeparator = ( separateBySpaces ? U" " : U"" );
+		const conststring32 wordSeparator = ( separateBySpaces ? U"  " : U" " );
 		for (integer iint = 1; iint <= numberOfIntervals; iint ++) {
-			TextInterval interval = phonemeTier -> intervals .at [iint];
-			conststring32 phonemeLabel = interval -> text.get();
-			bool isEmptyLabel = Melder_cmp (phonemeLabel, U"") == 0;
-			if (Melder_cmp (phonemeLabel, U"") == 0) {
+			TextInterval interval = phonemeTier -> intervals.at [iint];
+			const conststring32 phonemeLabel = interval -> text.get();
+			const bool isEmptyLabel = Melder_equ (phonemeLabel, U"");
+			if (isEmptyLabel) {
 				if (iint > 1 && iint < numberOfIntervals)
 					MelderString_append (& phonemes, wordSeparator);
 			} else
 				MelderString_append (& phonemes, phonemeLabel, (iint < numberOfIntervals ? phonemeSeparator : U"") );
 		}
-		return phonemes . string;
+		return phonemes.string;
 	} catch (MelderError) {
 		Melder_throw (U"Phonemes not generated.");
 	}
