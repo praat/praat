@@ -107,8 +107,8 @@ void Table_distributionPlotWhere (Table me, Graphics g,
 );
 
 void Table_barPlotWhere (Table me, Graphics g,
-	conststring32 columnLabels, double ymin, double ymax, conststring32 labelColumn,
-	double xoffsetFraction, double interbarFraction, double interbarsFraction, conststring32 colours,
+	constSTRVEC columnLabels, double ymin, double ymax, conststring32 labelColumn,
+	double xoffsetFraction, double interbarFraction, double interbarsFraction, constSTRVEC colours,
 	double angle, bool garnish, conststring32 formula, Interpreter interpreter
 );
 

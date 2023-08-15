@@ -1166,16 +1166,18 @@ autoINTVEC Table_listRowNumbersWhere (Table me, conststring32 formula, Interpret
 }
 
 void Table_barPlotWhere (Table me, Graphics g,
-	conststring32 columnLabels, double ymin, double ymax, conststring32 factorColumn,
-	double xoffsetFraction, double interbarFraction, double interbarsFraction, conststring32 colours,
+	constSTRVEC columnNames, double ymin, double ymax, conststring32 factorColumn,
+	double xoffsetFraction, double interbarFraction, double interbarsFraction, constSTRVEC colours,
 	double angle, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		autoINTVEC columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
+		autoINTVEC columnIndexes = Table_columnNamesToNumbers (me, columnNames);
 		const integer labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
-		autoStrings colourText = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
+		//autoStrings colourText = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
 		
 		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
+		if (selectedRows.size == 0) // Early test for nothing to do
+			return;
 		if (ymax <= ymin) {   // autoscaling
 			ymin = 1e308;
 			ymax = - ymin;
@@ -1190,6 +1192,8 @@ void Table_barPlotWhere (Table me, Graphics g,
 			ymin = std::min (0.0, ymin);
 			ymax = std::max (0.0, ymax);
 		}
+		if (ymin == ymax)
+			return; // Table still could have equal or zero entries
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, 1, ymin, ymax);
 
@@ -1201,7 +1205,10 @@ void Table_barPlotWhere (Table me, Graphics g,
 		for (integer icol = 1; icol <= groupSize; icol ++) {
 			const double xb = xoffsetFraction * bar_width + (icol - 1) * (1 + interbarFraction) * bar_width;
 			double x1 = xb;
-			MelderColour colour = Strings_colourToValue (colourText.get(), icol);
+			const integer index = std::min (icol, colours.size);
+			MelderColour colour = MelderColour_fromColourNameOrNumberStringOrRGBString (colours [index]);
+			if (! colour.valid())
+				colour = Melder_GREY;
 			for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 				const double x2 = x1 + bar_width;
 				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndexes [icol]);

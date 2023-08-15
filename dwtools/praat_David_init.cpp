@@ -6474,8 +6474,7 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText, U"SpeechSynth
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		autostring32 phonemes = SpeechSynthesizer_getPhonemesFromText (me, text, false);
-		conststring32 result = phonemes.get();
+		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, false).get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -6484,8 +6483,7 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated,
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		autostring32 phonemes = SpeechSynthesizer_getPhonemesFromText (me, text, true);
-		conststring32 result = phonemes.get();
+		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, true).get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -7113,7 +7111,8 @@ DO
 }
 
 FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot where...") {
-	SENTENCE (yColumns_string, U"Vertical column(s)", U"")
+	STRINGARRAY_LINES (2, columns, U"Vertical column(s)", { U"speaker", U"age" })
+	///SENTENCE (yColumns_string, U"Vertical column(s)", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	SENTENCE (markColumn_string, U"Column with labels", U"")
@@ -7121,7 +7120,7 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 	REAL (distanceFromBorder, U"Distance of first bar from border", U"1.0")
 	REAL (distanceBetweenGroups, U"Distance between bar groups", U"1.0")
 	REAL (distanceWithinGroup, U"Distance between bars within group", U"0.0")
-	SENTENCE (colours, U"Colours", U"Grey")
+	STRINGARRAY_LINES (2, colours, U"Colours", { U"Grey", U"Black" })
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"Use data only from rows where the following condition holds.")
@@ -7129,7 +7128,7 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		Table_barPlotWhere (me, GRAPHICS, yColumns_string, ymin, ymax, markColumn_string, distanceFromBorder, 
+		Table_barPlotWhere (me, GRAPHICS, columns, ymin, ymax, markColumn_string, distanceFromBorder, 
 			distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
@@ -7165,6 +7164,9 @@ FORM (GRAPHICS_EACH__Table_boxPlots, U"Table: Box plots", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
+//		autoINTVEC dataColumns = Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string);
+//		Melder_require (dataColumns.size > 0,
+//			U"The data columns entry should not be empty.");
 		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
