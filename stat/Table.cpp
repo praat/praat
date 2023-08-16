@@ -718,7 +718,7 @@ void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVECVU const
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumbers [i]);
 }
 
-static void Table_columns_checkExist (Table me, constSTRVEC columnNames) {
+void Table_columns_checkExist (Table me, constSTRVEC columnNames) {
 	for (integer i = 1; i <= columnNames.size; i ++)
 		if (Table_findColumnIndexFromColumnLabel (me, columnNames [i]) == 0)
 			Melder_throw (me, U": column \"", columnNames [i], U"\" does not exist.");

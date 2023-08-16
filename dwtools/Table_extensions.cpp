@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2022 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1997-2023 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1014,24 +1014,21 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 	}
 }
 
-void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string, integer factorColumn, double ymin, double ymax,
+void Table_boxPlotsWhere (Table me, Graphics g, constINTVEC const& dataColumnNumbers, integer factorColumnNumber, double ymin, double ymax,
 	bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		autoINTVEC dataColumns = Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string);
-		if (factorColumn < 1 || factorColumn > my numberOfColumns)
-			return;
-		const integer numberOfSelectedColumns = dataColumns.size;
+		const integer numberOfSelectedColumns = dataColumnNumbers.size;
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
 		const integer numberOfData = my rows.size;
-		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn, kStrings_sorting::NUMBER_AWARE);
+		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumnNumber, kStrings_sorting::NUMBER_AWARE);
 		const integer numberOfLevels = si -> classes->size;
 		if (ymin == ymax) {
 			ymin = 1e308, ymax = - ymin;
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
-				const double ymaxi = Table_getMaximum (me, dataColumns [icol]);
-				const double ymini = Table_getMinimum (me, dataColumns [icol]);
+				const double ymaxi = Table_getMaximum (me, dataColumnNumbers [icol]);
+				const double ymini = Table_getMinimum (me, dataColumnNumbers [icol]);
 				if (ymaxi > ymax)
 					ymax = ymaxi;
 				if (ymini < ymin)
@@ -1054,9 +1051,9 @@ void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string
 				integer numberOfDataInLevelColumn = 0;
 				for (integer irow = 1; irow <= numberOfData; irow ++) {
 					if (si -> classIndex [irow] == ilevel) {
-						Formula_run (irow, dataColumns [icol], & result);
+						Formula_run (irow, dataColumnNumbers [icol], & result);
 						if (result. numericResult != 0.0)
-							data [++ numberOfDataInLevelColumn] = Table_getNumericValue_Assert (me, irow, dataColumns [icol]);
+							data [++ numberOfDataInLevelColumn] = Table_getNumericValue_Assert (me, irow, dataColumnNumbers [icol]);
 					}
 				}
 				if (numberOfDataInLevelColumn > 0) {
@@ -1097,6 +1094,8 @@ void Table_distributionPlotWhere (Table me, Graphics g, integer dataColumn, doub
 			if (result. numericResult != 0.0)
 				thy z [1] [++ mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
 		}
+		if (mrow == 0) 
+			Melder_throw (me, U": No row matches criterion.");
 		Matrix_drawDistribution (thee.get(), g, 0, 1, 0.5, mrow + 0.5, minimum, maximum, nBins, freqMin, freqMax, false, false);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
@@ -1108,7 +1107,7 @@ void Table_distributionPlotWhere (Table me, Graphics g, integer dataColumn, doub
 		}
 
 	} catch (MelderError) {
-		Melder_clearError ();   // drawing errors shall be ignored
+		throw;
 	}
 }
 
@@ -1166,22 +1165,22 @@ autoINTVEC Table_listRowNumbersWhere (Table me, conststring32 formula, Interpret
 }
 
 void Table_barPlotWhere (Table me, Graphics g,
-	conststring32 columnLabels, double ymin, double ymax, conststring32 factorColumn,
-	double xoffsetFraction, double interbarFraction, double interbarsFraction, conststring32 colours,
+	constINTVEC columnNumbers, double ymin, double ymax, integer labelColumnNumber,
+	double xoffsetFraction, double interbarFraction, double interbarsFraction, constSTRVEC colours,
 	double angle, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		autoINTVEC columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
-		const integer labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
-		autoStrings colourText = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
+		//autoStrings colourText = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
 		
 		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
+		if (selectedRows.size == 0)
+			Melder_throw (me, U": no row matches criterion.");
 		if (ymax <= ymin) {   // autoscaling
 			ymin = 1e308;
 			ymax = - ymin;
-			for (integer icol = 1; icol <= columnIndexes.size; icol ++) {
+			for (integer icol = 1; icol <= columnNumbers.size; icol ++) {
 				double cmin, cmax;
-				Table_columnExtremaFromSelectedRows (me, columnIndexes [icol], selectedRows.get(), & cmin, & cmax);
+				Table_columnExtremaFromSelectedRows (me, columnNumbers [icol], selectedRows.get(), & cmin, & cmax);
 				if (cmin < ymin)
 					ymin = cmin;
 				if (cmax > ymax)
@@ -1190,21 +1189,26 @@ void Table_barPlotWhere (Table me, Graphics g,
 			ymin = std::min (0.0, ymin);
 			ymax = std::max (0.0, ymax);
 		}
+		if (ymin == ymax)
+			return; // Table still could have equal or zero entries
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, 1, ymin, ymax);
 
 		const integer numberOfGroups = selectedRows.size;
-		const integer groupSize = columnIndexes.size;
+		const integer groupSize = columnNumbers.size;
 		const double bar_width = 1.0 / (numberOfGroups * groupSize + 2.0 * xoffsetFraction + (numberOfGroups - 1) * interbarsFraction + numberOfGroups * (groupSize - 1) * interbarFraction);
 		const double dx = (interbarsFraction + groupSize + (groupSize - 1) * interbarFraction) * bar_width;
 
 		for (integer icol = 1; icol <= groupSize; icol ++) {
 			const double xb = xoffsetFraction * bar_width + (icol - 1) * (1 + interbarFraction) * bar_width;
 			double x1 = xb;
-			MelderColour colour = Strings_colourToValue (colourText.get(), icol);
+			const integer index = std::min (icol, colours.size);
+			MelderColour colour = MelderColour_fromColourNameOrNumberStringOrRGBString (colours [index]);
+			if (! colour.valid())
+				colour = Melder_GREY;
 			for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 				const double x2 = x1 + bar_width;
-				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndexes [icol]);
+				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnNumbers [icol]);
 				y2 = y2 > ymax ? ymax : y2 < ymin ? ymin : y2;
 				const double y1 = std::max (0.0, ymin);
 				
@@ -1217,10 +1221,8 @@ void Table_barPlotWhere (Table me, Graphics g,
 			}
 		}
 
-		//Graphics_unsetInner (g);
-
 		if (garnish) {
-			if (labelIndex > 0) {
+			if (labelColumnNumber > 0) {
 				double y = ymin, xb = (xoffsetFraction + 0.5 * (groupSize + (groupSize - 1) * interbarFraction)) * bar_width;
 				const double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0);
 				const double currentFontSize = Graphics_inqFontSize (g);
@@ -1239,7 +1241,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 					Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 				}
 				for (integer irow = 1; irow <= numberOfGroups; irow ++) {
-					conststring32 label = Table_getStringValue_Assert (me, selectedRows [irow], labelIndex);
+					conststring32 label = Table_getStringValue_Assert (me, selectedRows [irow], labelColumnNumber);
 					if (label)
 						Graphics_text (g, xb, ymin - g -> vertTick, label); // was y
 					xb += dx;
@@ -1256,7 +1258,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	} catch (MelderError) {
-		Melder_clearError ();   // drawing errors shall be ignored
+		throw;
 	}
 }
 

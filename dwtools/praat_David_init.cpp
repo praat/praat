@@ -6459,13 +6459,13 @@ DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getLanguageName) {
 
 DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = my d_voiceName.get();
+		const conststring32 result = my d_voiceName.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = my d_phonemeSet.get();
+		const conststring32 result = my d_phonemeSet.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -6474,8 +6474,7 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText, U"SpeechSynth
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		autostring32 phonemes = SpeechSynthesizer_getPhonemesFromText (me, text, false);
-		conststring32 result = phonemes.get();
+		const conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, false);
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -6484,8 +6483,7 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated,
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		autostring32 phonemes = SpeechSynthesizer_getPhonemesFromText (me, text, true);
-		conststring32 result = phonemes.get();
+		const conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, true);
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -7113,15 +7111,16 @@ DO
 }
 
 FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot where...") {
-	SENTENCE (yColumns_string, U"Vertical column(s)", U"")
+	STRINGARRAY_LINES (2, columnNames, U"Vertical column(s)", { U"speaker", U"age" })
+	///SENTENCE (yColumns_string, U"Vertical column(s)", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
-	SENTENCE (markColumn_string, U"Column with labels", U"")
+	SENTENCE (labelColumnName, U"Column with labels", U"")
 	LABEL (U"Distances are in units of 'bar width'")
 	REAL (distanceFromBorder, U"Distance of first bar from border", U"1.0")
 	REAL (distanceBetweenGroups, U"Distance between bar groups", U"1.0")
 	REAL (distanceWithinGroup, U"Distance between bars within group", U"0.0")
-	SENTENCE (colours, U"Colours", U"Grey")
+	STRINGARRAY_LINES (2, colours, U"Colours", { U"Grey", U"Black" })
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"Use data only from rows where the following condition holds.")
@@ -7129,17 +7128,21 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		Table_barPlotWhere (me, GRAPHICS, yColumns_string, ymin, ymax, markColumn_string, distanceFromBorder, 
+		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, columnNames);
+		const integer labelColumnNumber = Table_findColumnIndexFromColumnLabel (me, labelColumnName);
+		if (labelColumnNumber == 0 && Melder_stringMatchesCriterion (labelColumnName, kMelder_string::MATCH_REGEXP, U"\s*[^\s]+", true))
+			Melder_throw (me, U": there is no column named \"", labelColumnName, U"\".");
+		Table_barPlotWhere (me, GRAPHICS, columnNumbers.get(), ymin, ymax, labelColumnNumber, distanceFromBorder, 
 			distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line graph where...") {
-	SENTENCE (yColumn_string, U"Vertical column", U"")
+	SENTENCE (yColumnName, U"Vertical column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
-	SENTENCE (xColumn_string, U"Horizontal column (optional)", U"")
+	SENTENCE (xColumnName, U"Horizontal column (optional)", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
 	WORD (text, U"Text", U"+")
@@ -7150,29 +7153,30 @@ FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: 
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		const integer xcolumn = str32equ (xColumn_string, U"") ? 0 : Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		Table_lineGraphWhere (me, GRAPHICS, xcolumn, xmin, xmax, ycolumn, ymin, ymax, text, angle, garnish, condition, interpreter);
+		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
+		const integer xcolumnNumber = str32equ (xColumnName, U"") ? 0 : Table_getColumnIndexFromColumnLabel (me, xColumnName);
+		Table_lineGraphWhere (me, GRAPHICS, xcolumnNumber, xmin, xmax, ycolumnNumber, ymin, ymax, text, angle, garnish, condition, interpreter);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_boxPlots, U"Table: Box plots", nullptr) {
-	SENTENCE (dataColumns_string, U"Data columns", U"F1 F2")
-	WORD (factorColumn_string, U"Factor column", U"Sex")
+	STRINGARRAY_LINES (2, dataColumnNames, U"Data columns", { U"F1", U"F2" })
+	WORD (factorColumnName, U"Factor column", U"Sex")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
-		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, U"1", interpreter);
+		const integer factorColumnNumber = Table_getColumnIndexFromColumnLabel (me, factorColumnName);
+		autoINTVEC dataColumnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
+		Table_boxPlotsWhere (me, GRAPHICS, dataColumnNumbers.get(), factorColumnNumber, ymin, ymax, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plots where...") {
-	SENTENCE (dataColumns_string, U"Data columns", U"F1 F2")
-	WORD (factorColumn_string, U"Factor column", U"")
+	STRINGARRAY_LINES (2, dataColumnNames, U"Data columns", { U"F1", U"F2" })
+	WORD (factorColumnName, U"Factor column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true);
@@ -7181,8 +7185,9 @@ FORM (GRAPHICS_EACH__Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Bo
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
-		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, condition, interpreter);
+		const integer factorColumnNumber = Table_getColumnIndexFromColumnLabel (me, factorColumnName);
+		autoINTVEC dataColumnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
+		Table_boxPlotsWhere (me, GRAPHICS, dataColumnNumbers.get(), factorColumnNumber, ymin, ymax, garnish, condition, interpreter);
 	GRAPHICS_EACH_END
 }
 
@@ -7256,7 +7261,7 @@ DO
 }
 
 FORM (GRAPHICS_EACH__Table_normalProbabilityPlot, U"Table: Normal probability plot", U"Table: Normal probability plot...") {
-	SENTENCE (column_string, U"Column", U"F1")
+	SENTENCE (columnName, U"Column", U"F1")
 	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
 	REAL (numberOfSigmas, U"Number of sigmas", U"0.0")
 	NATURAL (labelSize, U"Label size", U"12")
@@ -7265,13 +7270,13 @@ FORM (GRAPHICS_EACH__Table_normalProbabilityPlot, U"Table: Normal probability pl
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
-		Table_normalProbabilityPlot (me, GRAPHICS, column, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnName);
+		Table_normalProbabilityPlot (me, GRAPHICS, columnNumber, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_normalProbabilityPlotWhere, U"Table: Normal probability plot where", U"Table: Normal probability plot...") {
-	SENTENCE (column_string, U"Column", U"F0")
+	SENTENCE (columnName, U"Column", U"F0")
 	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
 	REAL (numberOfSigmas, U"Number of sigmas", U"0.0")
 	NATURAL (labelSize, U"Label size", U"12")
@@ -7282,15 +7287,15 @@ FORM (GRAPHICS_EACH__Table_normalProbabilityPlotWhere, U"Table: Normal probabili
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnName);
 		const autoTable thee = Table_extractRowsWhere (me, condition, interpreter);
-		Table_normalProbabilityPlot (thee.get(), GRAPHICS, column, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
+		Table_normalProbabilityPlot (thee.get(), GRAPHICS, columnNumber, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_quantileQuantilePlot, U"Table: Quantile-quantile plot", U"Table: Quantile-quantile plot...") {
-	SENTENCE (xColumn_string, U"Horizontal axis column", U"")
-	SENTENCE (yColumn_string, U"Vertical axis column", U"")
+	SENTENCE (xColumnName, U"Horizontal axis column", U"")
+	SENTENCE (yColumnName, U"Vertical axis column", U"")
 	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
@@ -7302,17 +7307,17 @@ FORM (GRAPHICS_EACH__Table_quantileQuantilePlot, U"Table: Quantile-quantile plot
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		Table_quantileQuantilePlot (me, GRAPHICS, xcolumn, ycolumn, numberOfQuantiles, xmin, xmax, 
+		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
+		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
+		Table_quantileQuantilePlot (me, GRAPHICS, xcolumnNumber, ycolumnNumber, numberOfQuantiles, xmin, xmax, 
 			ymin, ymax, labelSize, label, garnish
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_quantileQuantilePlot_betweenLevels, U"Table: Quantile-quantile plot (between levels)", U"Table: Quantile-quantile plot...") {
-	SENTENCE (dataColumn_string, U"Data column", U"F0")
-	SENTENCE (factorColumn_string, U"Factor column", U"Sex")
+	SENTENCE (dataColumnName, U"Data column", U"F0")
+	SENTENCE (factorColumnName, U"Factor column", U"Sex")
 	SENTENCE (xLevel_string, U"Horizontal factor level", U"")
 	SENTENCE (yLevelString, U"Vertical factor level", U"")
 	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
@@ -7326,16 +7331,16 @@ FORM (GRAPHICS_EACH__Table_quantileQuantilePlot_betweenLevels, U"Table: Quantile
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
-		Table_quantileQuantilePlot_betweenLevels (me, GRAPHICS, dataColumn, factorColumn, xLevel_string, yLevelString,
+		const integer dataColumnNumber = Table_getColumnIndexFromColumnLabel (me, dataColumnName);
+		const integer factorColumnNumber = Table_getColumnIndexFromColumnLabel (me, factorColumnName);
+		Table_quantileQuantilePlot_betweenLevels (me, GRAPHICS, dataColumnNumber, factorColumnNumber, xLevel_string, yLevelString,
 			numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, label, garnish
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_lagPlot, U"Table: lag plot", nullptr) {
-	SENTENCE (dataColumn_string, U"Data column", U"errors")
+	SENTENCE (dataColumnName, U"Data column", U"errors")
 	NATURAL (lag, U"Lag", U"1")
 	REAL (fromXY, U"left Horizontal and vertical range", U"0.0")
 	REAL (toXY, U"right Horizontal and vertical range", U"0.0")
@@ -7345,14 +7350,14 @@ FORM (GRAPHICS_EACH__Table_lagPlot, U"Table: lag plot", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		Table_lagPlotWhere (me, GRAPHICS, dataColumn, lag, fromXY, toXY, label, labelSize, garnish, U"1", interpreter);
+		const integer dataColumnNumber = Table_getColumnIndexFromColumnLabel (me, dataColumnName);
+		Table_lagPlotWhere (me, GRAPHICS, dataColumnNumber, lag, fromXY, toXY, label, labelSize, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
 
 
 FORM (GRAPHICS_EACH__Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
-	SENTENCE (dataColumn_string, U"Data column", U"errors")
+	SENTENCE (dataColumnName, U"Data column", U"errors")
 	NATURAL (lag, U"Lag", U"1")
 	REAL (fromXY, U"left Horizontal and vertical range", U"0.0")
 	REAL (toXY, U"right Horizontal and vertical range", U"0.0")
@@ -7364,13 +7369,13 @@ FORM (GRAPHICS_EACH__Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		Table_lagPlotWhere (me, GRAPHICS, dataColumn, lag, fromXY, toXY, label, labelSize, garnish, condition, interpreter);
+		const integer dataColumnNumber = Table_getColumnIndexFromColumnLabel (me, dataColumnName);
+		Table_lagPlotWhere (me, GRAPHICS, dataColumnNumber, lag, fromXY, toXY, label, labelSize, garnish, condition, interpreter);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_distributionPlot, U"Table: Distribution plot", nullptr) {
-	SENTENCE (dataColumn_string, U"Data column", U"data")
+	SENTENCE (dataColumnName, U"Data column", U"data")
 	REAL (minimumValue, U"Minimum value", U"0.0")
 	REAL (maximumValue, U"Maximum value", U"0.0")
 	LABEL (U"Display of the distribution")
@@ -7381,15 +7386,15 @@ FORM (GRAPHICS_EACH__Table_distributionPlot, U"Table: Distribution plot", nullpt
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, 
+		const integer dataColumnNumber = Table_getColumnIndexFromColumnLabel (me, dataColumnName);
+		Table_distributionPlotWhere (me, GRAPHICS, dataColumnNumber, minimumValue, maximumValue, 
 			numberOfBins, minimumFrequency, maximumFrequency, garnish, U"1", interpreter
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_distributionPlotWhere, U"Table: Distribution plot where", nullptr) {
-	SENTENCE (dataColumn_string, U"Data column", U"data")
+	SENTENCE (dataColumnName, U"Data column", U"data")
 	REAL (minimumValue, U"Minimum value", U"0.0")
 	REAL (maximumValue, U"Maximum value", U"0.0")
 	LABEL (U"Display of the distribution")
@@ -7402,46 +7407,46 @@ FORM (GRAPHICS_EACH__Table_distributionPlotWhere, U"Table: Distribution plot whe
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, numberOfBins, 
+		const integer dataColumnNumber = Table_getColumnIndexFromColumnLabel (me, dataColumnName);
+		Table_distributionPlotWhere (me, GRAPHICS, dataColumnNumber, minimumValue, maximumValue, numberOfBins, 
 			minimumFrequency, maximumFrequency, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlot, U"Table: Horizontal error bars plot", U"Table: Horizontal error bars plot...") {
-	SENTENCE (xColumn_string, U"Horizontal column", U"x")
+	SENTENCE (xColumnName, U"Horizontal column", U"x")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
-	SENTENCE (yColumn_string, U"Vertical column", U"y")
+	SENTENCE (yColumnName, U"Vertical column", U"y")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	SENTENCE (lowerErrorColumn_string, U"Lower error value column", U"error1")
-	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
+	SENTENCE (lowerErrorColumnName, U"Lower error value column", U"error1")
+	SENTENCE (upperErrorColumnName, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		const integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		const integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
-		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax,
-			xl, xu, barSize_mm, garnish, U"1", interpreter
+		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
+		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
+		const integer xlNumber = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumnName);
+		const integer xuNumber = Table_findColumnIndexFromColumnLabel (me, upperErrorColumnName);
+		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumnNumber, ycolumnNumber, xmin, xmax, ymin, ymax,
+			xlNumber, xuNumber, barSize_mm, garnish, U"1", interpreter
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal error bars plot where", U"Table: Horizontal error bars plot where...") {
-	SENTENCE (xColumn_string, U"Horizontal column", U"")
+	SENTENCE (xColumnName, U"Horizontal column", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
-	SENTENCE (yColumn_string, U"Vertical column", U"")
+	SENTENCE (yColumnName, U"Vertical column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	SENTENCE (lowerErrorColumn_string, U"Lower error value column", U"error1")
-	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
+	SENTENCE (lowerErrorColumnName, U"Lower error value column", U"error1")
+	SENTENCE (upperErrorColumnName, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
 	LABEL (U"Use data only in rows where the following condition holds.")
@@ -7449,49 +7454,49 @@ FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal err
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		const integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		const integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
-		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax,
-			xl, xu, barSize_mm, garnish, condition, interpreter
+		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
+		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
+		const integer xlNumber = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumnName);
+		const integer xuNumber = Table_findColumnIndexFromColumnLabel (me, upperErrorColumnName);
+		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumnNumber, ycolumnNumber, xmin, xmax, ymin, ymax,
+			xlNumber, xuNumber, barSize_mm, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlot, U"Table: Vertical error bars plot", U"Table: Vertical error bars plot...") {
-	SENTENCE (xColumn_string, U"Horizontal column", U"")
+	SENTENCE (xColumnName, U"Horizontal column", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
-	SENTENCE (yColumn_string, U"Vertical column", U"")
+	SENTENCE (yColumnName, U"Vertical column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	SENTENCE (lowerErrorColumn_string, U"Lower error value column", U"error1")
-	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
+	SENTENCE (lowerErrorColumnName, U"Lower error value column", U"error1")
+	SENTENCE (upperErrorColumnName, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		const integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		const integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
-		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, 
-			yl, yu, barSize_mm, garnish, U"1", interpreter
+		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
+		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
+		const integer ylNumber = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumnName);
+		const integer yuNumber = Table_findColumnIndexFromColumnLabel (me, upperErrorColumnName);
+		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumnNumber, ycolumnNumber, xmin, xmax, ymin, ymax, 
+			ylNumber, yuNumber, barSize_mm, garnish, U"1", interpreter
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere, U"Table: Vertical error bars plot where", U"Table: Vertical error bars plot where...") {
-	SENTENCE (xColumn_string, U"Horizontal column", U"")
+	SENTENCE (xColumnName, U"Horizontal column", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
-	SENTENCE (yColumn_string, U"Vertical column", U"")
+	SENTENCE (yColumnName, U"Vertical column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
-	SENTENCE (lowerErrorColumn_string, U"Lower error value column", U"error1")
-	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
+	SENTENCE (lowerErrorColumnName, U"Lower error value column", U"error1")
+	SENTENCE (upperErrorColumnName, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
 	LABEL (U"Use data only in rows where the following condition holds.")
@@ -7499,12 +7504,12 @@ FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere, U"Table: Vertical error b
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		const integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		const integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
-		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, 
-			yl, yu, barSize_mm, garnish, condition, interpreter
+		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
+		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
+		const integer ylNumber = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumnName);
+		const integer yuNumber = Table_findColumnIndexFromColumnLabel (me, upperErrorColumnName);
+		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumnNumber, ycolumnNumber, xmin, xmax, ymin, ymax, 
+			ylNumber, yuNumber, barSize_mm, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }

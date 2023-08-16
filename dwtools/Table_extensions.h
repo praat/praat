@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2022 David Weenink
+ * Copyright (C) 1993-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@
  djmw 20131220 Latest modification.
 */
 
+/*
+	TODO : 15/8/23 harmonize all arguments columnnames + columnnumbers
+ */
 #include "TableOfReal.h"
 #include "Collection.h"
 #include "Categories.h"
@@ -88,7 +91,7 @@ void Table_boxPlots (Table me, Graphics g,
 	integer dataColumn, integer factorColumn, double ymin, double ymax, bool garnish);
 
 void Table_boxPlotsWhere (Table me, Graphics g,
-	conststring32 dataColumns_string, integer factorColumn,
+	constINTVEC const& dataColumnNumbers, integer factorColumn,
 	double ymin, double ymax, bool garnish, conststring32 formula, Interpreter interpreter
 );
 
@@ -107,8 +110,8 @@ void Table_distributionPlotWhere (Table me, Graphics g,
 );
 
 void Table_barPlotWhere (Table me, Graphics g,
-	conststring32 columnLabels, double ymin, double ymax, conststring32 labelColumn,
-	double xoffsetFraction, double interbarFraction, double interbarsFraction, conststring32 colours,
+	constINTVEC columnNumbers, double ymin, double ymax, integer labelColumnNumber,
+	double xoffsetFraction, double interbarFraction, double interbarsFraction, constSTRVEC colours,
 	double angle, bool garnish, conststring32 formula, Interpreter interpreter
 );
 
