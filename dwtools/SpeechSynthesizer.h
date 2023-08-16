@@ -61,7 +61,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 
 void SpeechSynthesizer_playText (SpeechSynthesizer me, conststring32 text);
 
-autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces);
+conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces);
 
 /* End of file SpeechSynthesizer.h */
 #endif

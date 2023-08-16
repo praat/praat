@@ -495,10 +495,10 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 		const IntervalTier clauses = (IntervalTier) thy tiers->at [2];
 		const IntervalTier words = (IntervalTier) thy tiers->at [3];
 		const IntervalTier phonemes = (IntervalTier) thy tiers->at [4];
-		for (integer i = 1; i <= numberOfRows; i++) {
-			const double time = Table_getNumericValue_Assert (me, i, timeColumnIndex);
-			const int type = Table_getNumericValue_Assert (me, i, typeColumnIndex);
-			const integer pos = Table_getNumericValue_Assert (me, i, tposColumnIndex);
+		for (integer irow = 1; irow <= numberOfRows; irow ++) {
+			const double time = Table_getNumericValue_Assert (me, irow, timeColumnIndex);
+			const int type = Table_getNumericValue_Assert (me, irow, typeColumnIndex);
+			const integer pos = Table_getNumericValue_Assert (me, irow, tposColumnIndex);
 			integer length;
 			if (type == espeakEVENT_SENTENCE) {
 				/*
@@ -550,20 +550,20 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 				wordEnd = true;
 				p1w = pos;
 			} else if (type == espeakEVENT_PHONEME) {
-				const conststring32 id = Table_getStringValue_Assert (me, i, idColumnIndex);
+				const conststring32 phoneme = Table_getStringValue_Assert (me, irow, idColumnIndex);
 				if (time > time_phon_p) {
 					/*
-						Insert new boudary and label interval with the id
-						TODO: Translate the id to the correct notation
+						Insert new boudary and label interval with the phoneme
+						TODO: Translate the phoneme to the correct notation
 					*/
 					TextInterval ti = phonemes -> intervals.at [phonemes -> intervals.size];
 					if (time > ti -> xmin && time < ti -> xmax)
-						IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, id, false);
+						IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, phoneme, false);
 				} else {
 					/*
 						Just in case the phoneme starts at xmin we only need to set interval text
 					*/
-					TextGrid_setIntervalText (thee.get(), 4, phonemes -> intervals.size, id);
+					TextGrid_setIntervalText (thee.get(), 4, phonemes -> intervals.size, phoneme);
 				}
 				time_phon_p = time;
 			}
@@ -598,9 +598,9 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 		*/
 		autostring32 text = Melder_dup (textToSynthesize);
 		const integer length = Melder_length (text.get());
-		if (Melder_stringMatchesCriterion (text.get(), kMelder_string::STARTS_WITH, U"..", false))
+		if (Melder_startsWith (text.get(), U".."))
 			text [0] = U' ';
-		if (Melder_stringMatchesCriterion (text.get(), kMelder_string::ENDS_WITH, U"..", false))
+		if (Melder_endsWith (text.get(), U".."))
 			text [length - 1] = U' ';
 		
 		int synth_flags = 0;
@@ -669,7 +669,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 	}	
 }
 
-autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces) {
+conststring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, conststring32 text, bool separateBySpaces) {
 	try {
 		SpeechSynthesizer_generateSynthesisData (me, text);
 		const double dt = 1.0 / my d_internalSamplingFrequency;
@@ -686,7 +686,7 @@ autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, consts
 		IntervalTier phonemeTier = static_cast<IntervalTier> (tg -> tiers -> at [4]);
 		const integer numberOfIntervals = phonemeTier -> intervals.size;
 		Melder_require (numberOfIntervals > 0,
-			U"Not enough phonemes.");
+			U"There are no phonemes in the tier.");
 		static autoMelderString phonemes;
 		MelderString_empty (& phonemes);
 		const conststring32 phonemeSeparator = ( separateBySpaces ? U" " : U"" );
@@ -701,7 +701,7 @@ autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, consts
 			} else
 				MelderString_append (& phonemes, phonemeLabel, (iint < numberOfIntervals ? phonemeSeparator : U"") );
 		}
-		return Melder_dup (phonemes.string);   // TODO: implement MelderString_move()
+		return Melder_dup (phonemes.string).get();   // TODO: implement MelderString_move()
 	} catch (MelderError) {
 		Melder_throw (U"Phonemes not generated.");
 	}
