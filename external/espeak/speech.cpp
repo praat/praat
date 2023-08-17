@@ -671,7 +671,7 @@ espeak_ng_Synthesize(const void *text, size_t size,
 {
 	(void)size; // unused in non-async modes
 
-	static unsigned int temp_identifier;
+	static unsigned int temp_identifier = 0;
 
 	if (unique_identifier == NULL)
 		unique_identifier = &temp_identifier;
