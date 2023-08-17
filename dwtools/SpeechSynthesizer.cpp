@@ -502,15 +502,15 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 			integer length;
 			if (type == espeakEVENT_SENTENCE) {
 				/*
-					Only insert a new boundary, no text
-					text will be inserted at end sentence event
+					Insert only a new boundary, no text
+					(text will be inserted at an "end sentence" event).
 				*/
 				if (time > xmin && time < xmax)
 					IntervalTier_addBoundaryUnsorted (clauses, clauses -> intervals.size, time, U"", true);
 				p1c = pos;
 			} else if (type == espeakEVENT_END) {
 				/*
-					End of clause: insert new boundary, and fill left interval with text
+					End of clause: insert new boundary, and fill left interval with text.
 				*/
 				length = pos - p1c + 1;
 				MelderString_ncopy (&mark, text + p1c - 1, length);
@@ -521,7 +521,7 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 					TextGrid_setIntervalText (thee.get(), 2, clauses -> intervals.size, mark.string);
 				p1c = pos;
 				/*
-					End of clause always signals "end of a word"
+					End of clause always signals "end of a word".
 				*/
 				if (pos <= textLength) {
 					length = pos - p1w + 1;
@@ -532,7 +532,7 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 					else
 						TextGrid_setIntervalText (thee.get(), 3, words -> intervals.size, mark.string);
 					/*
-						Now the next word event should not trigger setting the left interval text
+						Now the next word event should not trigger setting the left interval text.
 					*/
 					wordEnd = false;
 				}
@@ -561,7 +561,7 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 						IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, id, false);
 				} else {
 					/*
-						Just in case the phoneme starts at xmin we only need to set interval text
+						Just in case the phoneme starts at xmin, we only need to set interval text.
 					*/
 					TextGrid_setIntervalText (thee.get(), 4, phonemes -> intervals.size, id);
 				}
@@ -577,7 +577,7 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 		IntervalTier_removeVeryShortIntervals (words);
 		IntervalTier_removeVeryShortIntervals (clauses);
 		/*
-			Use empty intervals in phoneme tier for more precision in the word tier
+			Use empty intervals in phoneme tier for more precision in the word tier.
 		*/
 		IntervalTier_insertEmptyIntervalsFromOtherTier (words, phonemes);
 		IntervalTier_mergeSpecialIntervals (words); // Merge neighbouring empty U"" and U"\001" intervals

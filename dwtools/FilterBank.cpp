@@ -150,7 +150,7 @@ static void setDrawingLimits (double *a, integer n, double amin, double amax, in
 	}
 
 	(*ibegin) ++;
-	(*iend)--;
+	(*iend) --;
 }
 
 Thing_implement (FilterBank, Matrix, 2);

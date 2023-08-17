@@ -81,10 +81,11 @@ void MelderString_append (MelderString *me, const MelderArg& first, Args... rest
 	_recursiveTemplate_MelderString_append (me, first, rest...);
 }
 
+constexpr int64 MelderString_FREE_THRESHOLD_BYTES = 10'000LL;
+
 template <typename... Args>
 void MelderString_copy (MelderString *me, const MelderArg& first, Args... rest) {
-	constexpr int64 FREE_THRESHOLD_BYTES = 10'000;
-	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
+	if (my bufferSize * (int64) sizeof (char32) >= MelderString_FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	const integer length = MelderArg__length (first, rest...);
 	const integer sizeNeeded = length + 1;
