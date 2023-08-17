@@ -1038,6 +1038,27 @@ Syntax and semantics
 : compute the sum of the elements of each row of the matrix %`m##`.
 
 ################################################################################
+"`commbine#`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`combine#` (...)
+: combine numbers, vectors and matrices into a new vector.
+
+Examples
+========
+{
+	\`{assert} combine# (7, 4, 99) = { 7, 4, 99 }
+	\`{assert} combine# ({ 7, 4 }, 99) = { 7, 4, 99 }
+	\`{assert} combine# ({ 7, 4 }, { 99, 103, 1 }) = { 7, 4, 99, 103, 1 }
+	\`{assert} combine# ({{ 7, 4 }, { 99, 103 }}, 1, { 8, -1, 2 }) =
+	... { 7, 4, 99, 103, 1, 8, -1, 2 }
+}
+
+################################################################################
 "`correlation`"
 © Paul Boersma 2023
 
@@ -2486,6 +2507,117 @@ Syntax and semantics
 Definition
 ==========
 ~	%result__%i%j_ = %a_%i %b_%j
+
+################################################################################
+"`part#`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`part#` (%`vector#`, %from, %to)
+: compute a subsequence of elements of a vector.
+
+Examples
+========
+{
+	\`{assert} part# ({ 7, 4, 99, 103, 1 }, 3, 4) = { 99, 103 }
+}
+
+Examples of error messages
+==========================
+Checks on the number of arguments (always has to be 3):
+{
+	asserterror The function “part#” requires precisely three arguments
+	... (namely a vector, a starting index, and an end index),
+	... not the 0 given.
+	a# = part# ()
+
+	asserterror The function “part#” requires precisely three arguments
+	... (namely a vector, a starting index, and an end index),
+	... not the 5 given.
+	a# = part# (7, 8, 9, "hello", "world")
+}
+Checks on the types of the arguments (always has to be vector, number, number):
+{
+	asserterror The first argument of the function “part#” should be
+	... a numeric vector, not a number.
+	a# = part# (2, 4, { 5, 6, 7, 9, 8 })
+
+	asserterror The first argument of the function “part#” should be
+	... a numeric vector, not a string.
+	a# = part# ("hello", 4, { 5, 6, 7, 9, 8 })
+
+	asserterror The second argument of the function “part#” should be
+	... a number (the starting index), not a string.
+	a# = part# ({ 5, 6, 7, 9, 8 }, "hello", 4)
+
+	asserterror The second argument of the function “part#” should be
+	... a number (the starting index), not a numeric vector.
+	a# = part# ({ 5, 6, 7, 9, 8 }, { 0 }, 4)
+
+	asserterror The third argument of the function “part#” should be
+	... a number (the end index), not a string.
+	a# = part# ({ 5, 6, 7, 9, 8 }, 4, "hello")
+
+	asserterror The third argument of the function “part#” should be
+	... a number (the end index), not a numeric vector.
+	a# = part# ({ 5, 6, 7, 9, 8 }, 4, { 0 })
+}
+Finally the checks on the preconditions of the arguments:
+both element numbers should be within bounds:
+{
+	asserterror The second argument of the function “part#” (the starting index)
+	... should (after rounding) be a positive whole number, not -3.
+	a# = part# ({ 5, 6, 7, 9, 8 }, -2.98, 0)
+
+	asserterror The second argument of the function “part#” (the starting index)
+	... should (after rounding) be a positive whole number, not 0.
+	a# = part# ({ 5, 6, 7, 9, 8 }, 0, 0)
+
+	asserterror The second argument of the function “part#” (the starting index)
+	... should (after rounding) be at most the number of elements (5), not 99.
+	a# = part# ({ 10, 6, 7, 9, 8 }, 99, 0)
+
+	asserterror The second argument of the function “part#” (the starting index)
+	... should (after rounding) be at most the number of elements (5), not 6.
+	a# = part# ({ 10, 6, 7, 9, 8 }, 5.5, 0)
+
+	asserterror The third argument of the function “part#” (the end index)
+	... should (after rounding) be a positive whole number, not -3.
+	a# = part# ({ 10, 6, 7, 9, 8 }, 3, -2.98)
+
+	asserterror The third argument of the function “part#” (the end index)
+	... should (after rounding) be a positive whole number, not 0.
+	a# = part# ({ 10, 6, 7, 9, 8 }, 3, 0)
+
+	asserterror The third argument of the function “part#” (the end index)
+	... should (after rounding) be at most the number of elements (5), not 99.
+	a# = part# ({ 10, 6, 7, 9, 8 }, 3, 99)
+
+	asserterror The third argument of the function “part#” (the end index)
+	... should (after rounding) be at most the number of elements (5), not 6.
+	a# = part# ({ 10, 6, 7, 9, 8 }, 3, 5.5)
+}
+
+################################################################################
+"`part##`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`part##` (%`matrix#`, %fromRow, %toRow, %fromColumn, %toColummn)
+: compute a subwindow of cells of a matrix.
+
+Examples
+========
+{
+	\`{assert} part## ({{ 7, 4, 9, 3 }, { 1, 4, 3, 22 }, { 0, 8, 6, 5 }},
+	... 3, 4, 1, 2) = {{ 9, 3 }, { 3, 22 }}
+}
 
 ################################################################################
 "`pauseScript`"

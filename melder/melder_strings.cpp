@@ -18,7 +18,6 @@
 
 #include "melder.h"
 #include "../kar/UnicodeData.h"
-#define FREE_THRESHOLD_BYTES 10000LL
 
 static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;
 
@@ -82,7 +81,7 @@ void _private_MelderString_expand (MelderString *me, int64 sizeNeeded) {
 }
 
 void MelderString16_empty (MelderString16 *me) {
-	if (my bufferSize * (int64) sizeof (char16) >= FREE_THRESHOLD_BYTES)
+	if (my bufferSize * (int64) sizeof (char16) >= MelderString_FREE_THRESHOLD_BYTES)
 		MelderString16_free (me);
 	const int64 sizeNeeded = 1;
 	if (sizeNeeded > my bufferSize)
@@ -92,7 +91,7 @@ void MelderString16_empty (MelderString16 *me) {
 }
 
 void MelderString_empty (MelderString *me) {
-	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
+	if (my bufferSize * (int64) sizeof (char32) >= MelderString_FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	const int64 sizeNeeded = 1;
 	if (sizeNeeded > my bufferSize)
@@ -102,7 +101,7 @@ void MelderString_empty (MelderString *me) {
 }
 
 void MelderString_ncopy (MelderString *me, conststring32 sourceOrNull, int64 n) {
-	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
+	if (my bufferSize * (int64) sizeof (char32) >= MelderString_FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	const conststring32 source = ( sourceOrNull ? sourceOrNull : U"" );
 	const int64 numberOfCharactersToCopy = n; //Melder_clippedRight (n, (int64) Melder_length (source));

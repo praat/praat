@@ -175,7 +175,7 @@ enum { NO_SYMBOL_,
 		RANDOM_GAMMA_VEC_, RANDOM_GAMMA_MAT_,
 		SOLVE_SPARSE_VEC_, SOLVE_NONNEGATIVE_VEC_,
 		PEAKS_MAT_,
-		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, COMBINE_VEC_, EDITOR_,
+		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, COMBINE_VEC_, PART_VEC_, PART_MAT_, EDITOR_,
 		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
 		HASH_, HEX_STR_, UNHEX_STR_,
 		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_, FILE_NAMES_STRVEC_, FOLDER_NAMES_STRVEC_,
@@ -319,7 +319,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"randomGauss#", U"randomGauss##",
 	U"randomGamma#", U"randomGamma##", U"solveSparse#", U"solveNonnegative#",
 	U"peaks##",
-	U"size", U"numberOfRows", U"numberOfColumns", U"combine#", U"editor",
+	U"size", U"numberOfRows", U"numberOfColumns", U"combine#", U"part#", U"part##", U"editor",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
 	U"hash", U"hex$", U"unhex$",
 	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#", U"splitBy$#",
@@ -5096,6 +5096,71 @@ static void do_combine_VEC () {
 	}
 	pushNumericVector (result.move());
 }
+static void do_part_VEC () {
+	/*
+		Check the number of arguments: always 3.
+	*/
+	const Stackel s_narg = pop;
+	Melder_assert (s_narg->which == Stackel_NUMBER);
+	const integer narg = s_narg->number;
+	Melder_require (narg == 3,
+		U"The function “part#” requires precisely three arguments (namely a vector, a starting index, and an end index), not the ", narg, U" given.");
+	/*
+		Check the types of the arguments: always vector, number, number.
+	*/
+	const Stackel s_last = pop, s_first = pop, s_vec = pop;
+	Melder_require (s_vec->which == Stackel_NUMERIC_VECTOR,
+		U"The first argument of the function “part#” should be a numeric vector, not ", s_vec->whichText(), U".");
+	Melder_require (s_first->which == Stackel_NUMBER,
+		U"The second argument of the function “part#” should be a number (the starting index), not ", s_first->whichText(), U".");
+	Melder_require (s_last->which == Stackel_NUMBER,
+		U"The third argument of the function “part#” should be a number (the end index), not ", s_last->whichText(), U".");
+	/*
+		Check the preconditions of the arguments.
+	*/
+	const constVEC vec = s_vec->numericVector;
+	const integer numberOfElements = vec.size;
+	const integer first = Melder_iround (s_first->number);
+	Melder_require (first > 0,
+		U"The second argument of the function “part#” (the starting index) should (after rounding) be a positive whole number, not ", first, U".");
+	Melder_require (first <= numberOfElements,
+		U"The second argument of the function “part#” (the starting index) should (after rounding) be at most the number of elements (",
+		numberOfElements, U"), not ", first, U"."
+	);
+	const integer last = Melder_iround (s_last->number);
+	Melder_require (last > 0,
+		U"The third argument of the function “part#” (the end index) should (after rounding) be a positive whole number, not ", last, U".");
+	Melder_require (last <= numberOfElements,
+		U"The third argument of the function “part#” (the end index) should (after rounding) be at most the number of elements (",
+		numberOfElements, U"), not ", last, U"."
+	);
+
+	const integer newSize = last - (first - 1);
+	if (newSize > 0)
+		pushNumericVector (copy_VEC (vec. part (first, last)));
+	else
+		pushNumericVector (autoVEC ());
+}
+static void do_part_MAT () {
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	Melder_require (narg->number == 5,
+		U"The function “part##” requires five arguments, namely a matrix, a starting row, an end row, a starting column, and an end column.");
+	const Stackel endColumn = pop, startingColumn = pop, endRow = pop, startingRow = pop, mat = pop;
+	Melder_require (mat->which == Stackel_NUMERIC_MATRIX,
+		U"The first argument of the function “part##” should be a numeric matrix, not ", mat->whichText(), U".");
+	Melder_require (startingRow->which == Stackel_NUMBER,
+		U"The second argument of the function “part##” should be a number (the starting row), not ", startingRow->whichText(), U".");
+	Melder_require (endRow->which == Stackel_NUMBER,
+		U"The third argument of the function “part##” should be a number (the end row), not ", endRow->whichText(), U".");
+	Melder_require (startingColumn->which == Stackel_NUMBER,
+		U"The fourth argument of the function “part##” should be a number (the starting column), not ", startingColumn->whichText(), U".");
+	Melder_require (endColumn->which == Stackel_NUMBER,
+		U"The fifth argument of the function “part##” should be a number (the end column), not ", endColumn->whichText(), U".");
+	autoMAT result = copy_MAT (mat->numericMatrix. part (Melder_iround (startingRow->number), Melder_iround (endRow->number),
+			Melder_iround (startingColumn->number), Melder_iround (endColumn->number)));
+	pushNumericMatrix (result.move());
+}
 static void do_editor () {
 	const Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -8147,6 +8212,8 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case NUMBER_OF_ROWS_: { do_numberOfRows ();
 } break; case NUMBER_OF_COLUMNS_: { do_numberOfColumns ();
 } break; case COMBINE_VEC_: { do_combine_VEC ();
+} break; case PART_VEC_: { do_part_VEC ();
+} break; case PART_MAT_: { do_part_MAT ();
 } break; case EDITOR_: { do_editor ();
 } break; case RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_: { do_random_initializeWithSeedUnsafelyButPredictably ();
 } break; case RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_: { do_random_initializeSafelyAndUnpredictably ();

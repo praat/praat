@@ -213,8 +213,8 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 		Graphics_setInner (g);
 		const double dx = Graphics_dxMMtoWC (g, bar_mm);
 		for (integer irow = 1; irow <= selectedRows.size; irow ++) {
-			const double x  = Table_getNumericValue_Assert (me, selectedRows [irow], xcolumn);
-			const double y  = Table_getNumericValue_Assert (me, selectedRows [irow], ycolumn);
+			const double x = Table_getNumericValue_Assert (me, selectedRows [irow], xcolumn);
+			const double y = Table_getNumericValue_Assert (me, selectedRows [irow], ycolumn);
 			const double dy1 =
 				yci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows [irow], yci_min) : 0.0;
 			const double dy2 =
@@ -997,7 +997,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 			integer numberOfDataInLevel = 0;
 			for (integer k = 1; k <= numberOfData; k ++)
 				if (si -> classIndex [k] == ilevel)
-					data [ ++ numberOfDataInLevel] = Table_getNumericValue_Assert (me, k, dataColumn);
+					data [++ numberOfDataInLevel] = Table_getNumericValue_Assert (me, k, dataColumn);
 			Graphics_boxAndWhiskerPlot (g, data.part (1, numberOfDataInLevel), ilevel, 0.2, 0.35, ymin, ymax);
 		}
 		Graphics_unsetInner (g);
@@ -1186,8 +1186,8 @@ void Table_barPlotWhere (Table me, Graphics g,
 				if (cmax > ymax)
 					ymax = cmax;
 			}
-			ymin = std::min (0.0, ymin);
-			ymax = std::max (0.0, ymax);
+			Melder_clipRight (& ymin, 0.0);
+			Melder_clipLeft (0.0, & ymax);
 		}
 		if (ymin == ymax)
 			return; // Table still could have equal or zero entries
@@ -1208,9 +1208,8 @@ void Table_barPlotWhere (Table me, Graphics g,
 				colour = Melder_GREY;
 			for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 				const double x2 = x1 + bar_width;
-				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnNumbers [icol]);
-				y2 = y2 > ymax ? ymax : y2 < ymin ? ymin : y2;
-				const double y1 = std::max (0.0, ymin);
+				const double y2 = Melder_clipped (ymin, Table_getNumericValue_Assert (me, selectedRows [irow], columnIndexes [icol]), ymax);
+				const double y1 = Melder_clippedLeft (0.0, ymin);
 				
 				Graphics_setColour (g, colour);
 				Graphics_fillRectangle (g, x1, x2, y1, y2);
