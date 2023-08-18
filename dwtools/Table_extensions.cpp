@@ -1208,7 +1208,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 				colour = Melder_GREY;
 			for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 				const double x2 = x1 + bar_width;
-				const double y2 = Melder_clipped (ymin, Table_getNumericValue_Assert (me, selectedRows [irow], columnIndexes [icol]), ymax);
+				const double y2 = Melder_clipped (ymin, Table_getNumericValue_Assert (me, selectedRows [irow], columnNumbers [icol]), ymax);
 				const double y1 = Melder_clippedLeft (0.0, ymin);
 				
 				Graphics_setColour (g, colour);
