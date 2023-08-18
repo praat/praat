@@ -7130,7 +7130,7 @@ DO
 	GRAPHICS_EACH (Table)
 		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, columnNames);
 		const integer labelColumnNumber = Table_findColumnIndexFromColumnLabel (me, labelColumnName);
-		if (labelColumnNumber == 0 && Melder_stringMatchesCriterion (labelColumnName, kMelder_string::MATCH_REGEXP, U"\s*[^\s]+", true))
+		if (labelColumnNumber == 0 && Melder_stringMatchesCriterion (labelColumnName, kMelder_string::MATCH_REGEXP, U"\\s*[^\\s]+", true))
 			Melder_throw (me, U": there is no column named \"", labelColumnName, U"\".");
 		Table_barPlotWhere (me, GRAPHICS, columnNumbers.get(), ymin, ymax, labelColumnNumber, distanceFromBorder, 
 			distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish, condition, interpreter
