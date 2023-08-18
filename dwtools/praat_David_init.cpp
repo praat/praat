@@ -6459,13 +6459,13 @@ DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getLanguageName) {
 
 DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		const conststring32 result = my d_voiceName.get();
+		conststring32 result = my d_voiceName.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		const conststring32 result = my d_phonemeSet.get();
+		conststring32 result = my d_phonemeSet.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -6474,7 +6474,7 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText, U"SpeechSynth
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		const conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, false);
+		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, false).get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -6483,7 +6483,7 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated,
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		const conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, true);
+		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, true).get();
 	QUERY_ONE_FOR_STRING_END
 }
 
