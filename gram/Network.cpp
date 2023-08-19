@@ -1,6 +1,6 @@
 /* Network.cpp
  *
- * Copyright (C) 2009,2011-2021 Paul Boersma
+ * Copyright (C) 2009,2011-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -526,12 +526,12 @@ autoTable Network_nodes_downto_Table (Network me, integer fromNodeNumber, intege
 		autoTable thee = Table_createWithoutColumnNames (numberOfNodes,
 				includeNodeNumbers + includeX + includeY + includeClamped + includeActivity + includeExcitation);
 		integer icol = 0;
-		if (includeNodeNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"node");
-		if (includeX)           Table_setColumnLabel (thee.get(), ++ icol, U"x");
-		if (includeY)           Table_setColumnLabel (thee.get(), ++ icol, U"y");
-		if (includeClamped)     Table_setColumnLabel (thee.get(), ++ icol, U"clamped");
-		if (includeActivity)    Table_setColumnLabel (thee.get(), ++ icol, U"activity");
-		if (includeExcitation)  Table_setColumnLabel (thee.get(), ++ icol, U"excitation");
+		if (includeNodeNumbers) Table_renameColumn_e (thee.get(), ++ icol, U"node");
+		if (includeX)           Table_renameColumn_e (thee.get(), ++ icol, U"x");
+		if (includeY)           Table_renameColumn_e (thee.get(), ++ icol, U"y");
+		if (includeClamped)     Table_renameColumn_e (thee.get(), ++ icol, U"clamped");
+		if (includeActivity)    Table_renameColumn_e (thee.get(), ++ icol, U"activity");
+		if (includeExcitation)  Table_renameColumn_e (thee.get(), ++ icol, U"excitation");
 		for (integer inode = fromNodeNumber; inode <= toNodeNumber; inode ++) {
 			NetworkNode node = & my nodes [inode];
 			icol = 0;

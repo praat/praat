@@ -269,7 +269,7 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, integer columnNumber, kMelder_number which, double criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
-		Table_numericize_Assert (table, columnNumber);   // extraction should work even if cells are not defined
+		Table_numericize_a (table, columnNumber);   // extraction should work even if cells are not defined
 		if (my points.size != table -> rows.size)
 			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows.size,
 				U") doesn't match the number of events (", my points.size, U").");

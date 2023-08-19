@@ -245,7 +245,7 @@ static conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 		const integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_languageName.get());
 		Melder_require (irow != 0,
 			U"Cannot find language \"", my d_languageName.get(), U"\".");
-		return Table_getStringValue_Assert (espeakdata_languages_propertiesTable.get(), irow, 1);
+		return Table_getStringValue_a (espeakdata_languages_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find language code.");
 	}
@@ -256,7 +256,7 @@ static conststring32 SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
 		const integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_phonemeSet.get());
 		Melder_require (irow != 0,
 			U"Cannot find phoneme set \"", my d_phonemeSet.get(), U"\".");
-		return Table_getStringValue_Assert (espeakdata_languages_propertiesTable.get(), irow, 1);
+		return Table_getStringValue_a (espeakdata_languages_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find phoneme code.");
 	}
@@ -267,7 +267,7 @@ static conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 		const integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName.get());
 		Melder_require (irow != 0,
 			U": Cannot find voice variant \"", my d_voiceName.get(), U"\".");
-		return Table_getStringValue_Assert (espeakdata_voices_propertiesTable.get(), irow, 1);
+		return Table_getStringValue_a (espeakdata_voices_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
 		Melder_throw (me, U": Cannot find voice code.");
 	}
@@ -352,7 +352,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval
 static void Table_setEventTypeString (Table me) {
 	try {
 		for (integer i = 1; i <= my rows.size; i ++) {
-			const int type = Table_getNumericValue_Assert (me, i, 2);
+			const int type = Table_getNumericValue_a (me, i, 2);
 			conststring32 label = U"0";
 			if (type == espeakEVENT_WORD)
 				label = U"word";
@@ -479,10 +479,10 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 	try {
 		const integer textLength = Melder_length (text);
 		const integer numberOfRows = my rows.size;
-		const integer timeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"time");
-		const integer typeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"type");
-		const integer tposColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"t-pos");
-		const integer   idColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"id");
+		const integer timeColumnIndex = Table_columnNameToNumber_e (me, U"time");
+		const integer typeColumnIndex = Table_columnNameToNumber_e (me, U"type");
+		const integer tposColumnIndex = Table_columnNameToNumber_e (me, U"t-pos");
+		const integer   idColumnIndex = Table_columnNameToNumber_e (me, U"id");
 		autoTextGrid thee = TextGrid_create (xmin, xmax, U"sentence clause word phoneme", U"");
 
 		TextGrid_setIntervalText (thee.get(), 1, 1, text);
@@ -496,9 +496,9 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 		const IntervalTier words = (IntervalTier) thy tiers->at [3];
 		const IntervalTier phonemes = (IntervalTier) thy tiers->at [4];
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			const double time = Table_getNumericValue_Assert (me, irow, timeColumnIndex);
-			const int type = Table_getNumericValue_Assert (me, irow, typeColumnIndex);
-			const integer pos = Table_getNumericValue_Assert (me, irow, tposColumnIndex);
+			const double time = Table_getNumericValue_a (me, irow, timeColumnIndex);
+			const int type = Table_getNumericValue_a (me, irow, typeColumnIndex);
+			const integer pos = Table_getNumericValue_a (me, irow, tposColumnIndex);
 			integer length;
 			if (type == espeakEVENT_SENTENCE) {
 				/*
@@ -550,7 +550,7 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 				wordEnd = true;
 				p1w = pos;
 			} else if (type == espeakEVENT_PHONEME) {
-				const conststring32 phoneme = Table_getStringValue_Assert (me, irow, idColumnIndex);
+				const conststring32 phoneme = Table_getStringValue_a (me, irow, idColumnIndex);
 				if (time > time_phon_p) {
 					/*
 						Insert new boudary and label interval with the phoneme
@@ -674,9 +674,9 @@ autostring32 SpeechSynthesizer_getPhonemesFromText (SpeechSynthesizer me, consts
 		SpeechSynthesizer_generateSynthesisData (me, text);
 		const double dt = 1.0 / my d_internalSamplingFrequency;
 		const double tmin = 0.0, tmax = my d_wav.size * dt;
-		double xmin = Table_getNumericValue_Assert (my d_events.get(), 1, 1);
+		double xmin = Table_getNumericValue_a (my d_events.get(), 1, 1);
 		Melder_clipLeft (tmin, & xmin);
-		double xmax = Table_getNumericValue_Assert (my d_events.get(), my d_events -> rows.size, 1);
+		double xmax = Table_getNumericValue_a (my d_events.get(), my d_events -> rows.size, 1);
 		Melder_clipRight (& xmax, tmax);
 		autoTextGrid tg = Table_to_TextGrid (my d_events.get(), text, xmin, xmax);
 		/*
@@ -715,10 +715,10 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 			thee = Sound_resample (thee.get(), my d_samplingFrequency, 50);
 		my d_numberOfSamples = 0; // re-use the wav-buffer
 		if (tg) {
-			double xmin = Table_getNumericValue_Assert (my d_events.get(), 1, 1);
+			double xmin = Table_getNumericValue_a (my d_events.get(), 1, 1);
 			if (xmin > thy xmin)
 				xmin = thy xmin;
-			double xmax = Table_getNumericValue_Assert (my d_events.get(), my d_events -> rows.size, 1);
+			double xmax = Table_getNumericValue_a (my d_events.get(), my d_events -> rows.size, 1);
 			if (xmax < thy xmax)
 				xmax = thy xmax;
 			autoTextGrid tg1 = Table_to_TextGrid (my d_events.get(), text, xmin, xmax);

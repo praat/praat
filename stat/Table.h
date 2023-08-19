@@ -34,18 +34,18 @@ void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVECVU const
 
 autoTable Tables_append (OrderedOf<structTable>* me);
 void Table_appendRow (Table me);
-void Table_appendColumn (Table me, conststring32 label);
-void Table_appendSumColumn (Table me, integer column1, integer column2, conststring32 label);
-void Table_appendDifferenceColumn (Table me, integer column1, integer column2, conststring32 label);
-void Table_appendProductColumn (Table me, integer column1, integer column2, conststring32 label);
-void Table_appendQuotientColumn (Table me, integer column1, integer column2, conststring32 label);
-void Table_removeRow (Table me, integer row);
-void Table_removeColumn (Table me, integer column);
-void Table_insertRow (Table me, integer row);
-void Table_insertColumn (Table me, integer column, conststring32 label /* cattable */);
-void Table_setColumnLabel (Table me, integer column, conststring32 label /* cattable */);
-integer Table_findColumnIndexFromColumnLabel (constTable me, conststring32 label) noexcept;
-integer Table_getColumnIndexFromColumnLabel (constTable me, conststring32 columnLabel);
+void Table_appendColumn (Table me, conststring32 columnName);
+void Table_appendSumColumn (Table me, integer column1, integer column2, conststring32 columnName);
+void Table_appendDifferenceColumn (Table me, integer column1, integer column2, conststring32 columnName);
+void Table_appendProductColumn (Table me, integer column1, integer column2, conststring32 columnName);
+void Table_appendQuotientColumn (Table me, integer column1, integer column2, conststring32 columnName);
+void Table_removeRow (Table me, integer rowNumber);
+void Table_removeColumn (Table me, integer columnNumber);
+void Table_insertRow (Table me, integer rowPosition);
+void Table_insertColumn (Table me, integer columnPosition, conststring32 columnName /* cattable */);
+void Table_renameColumn_e (Table me, integer columnNumber, conststring32 columnName /* cattable */);
+integer Table_columnNameToNumber_0 (constTable me, conststring32 columnName) noexcept;
+integer Table_columnNameToNumber_e (constTable me, conststring32 columnName);
 autoINTVEC Table_columnNamesToNumbers (constTable me, constSTRVEC const& columnNames);
 autoINTVEC Table_getColumnIndicesFromColumnLabelString (constTable me, conststring32 string);
 integer Table_searchColumn (constTable me, integer column, conststring32 value) noexcept;
@@ -54,8 +54,8 @@ integer Table_searchColumn (constTable me, integer column, conststring32 value) 
  * Procedure for reading strings or numbers from table cells:
  * use the following two calls exclusively.
  */
-conststring32 Table_getStringValue_Assert (Table me, integer row, integer column);
-double Table_getNumericValue_Assert (Table me, integer row, integer column);
+conststring32 Table_getStringValue_a (Table me, integer row, integer column);
+double Table_getNumericValue_a (Table me, integer row, integer column);
 
 /*
  * Procedure for writing strings or numbers into table cells:
@@ -65,7 +65,7 @@ void Table_setStringValue (Table me, integer rowNumber, integer columnNumber, co
 void Table_setNumericValue (Table me, integer row, integer column, double value);
 
 /* For optimizations only (e.g. conversion to Matrix or TableOfReal). */
-void Table_numericize_Assert (Table me, integer columnNumber);
+void Table_numericize_a (Table me, integer columnNumber);
 
 autoVEC Table_getAllNumbersInColumn (Table me, integer columnNumber);
 
@@ -98,7 +98,7 @@ bool Table_getExtrema (Table me, integer icol, double *minimum, double *maximum)
 void Table_formula (Table me, integer column, conststring32 formula, Interpreter interpreter);
 void Table_formula_columnRange (Table me, integer column1, integer column2, conststring32 expression, Interpreter interpreter);
 
-void Table_sortRows_Assert (Table me, constINTVECVU const& columns);
+void Table_sortRows_a (Table me, constINTVECVU const& columns);
 void Table_sortRows (Table me, constSTRVEC columns);
 void Table_randomizeRows (Table me) noexcept;
 void Table_reflectRows (Table me) noexcept;

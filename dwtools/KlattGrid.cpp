@@ -2851,11 +2851,11 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 			const double t = (irow - 1) * frameDuration;
 
 			integer icol = 1;
-			double val = Table_getNumericValue_Assert (kt, irow, icol) / 10.0;   // F0hz10
+			double val = Table_getNumericValue_a (kt, irow, icol) / 10.0;   // F0hz10
 			const double f0 = val;
 			RealTier_addPoint (thy phonation -> pitch.get(), t, f0);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // AVdb
+			val = Table_getNumericValue_a (kt, irow, ++ icol); // AVdb
 			// dB values below 13 were put to zero in the DBtoLIN function
 			val -= 7.0;
 			if (val < 13.0)
@@ -2864,28 +2864,28 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 			// RealTier_addPoint (thy source -> voicingAmplitude, t, val);
 
 			for (integer kf = 1; kf <= 6; kf ++) {
-				const double fk = val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Fhz
+				const double fk = val = Table_getNumericValue_a (kt, irow, ++ icol);   // Fhz
 				RealTier_addPoint (thy vocalTract -> oral_formants -> formants.at [kf], t, val);
 				RealTier_addPoint (thy frication -> frication_formants -> formants.at [kf], t, val);   // only amplitudes and bandwidths in frication section
-				val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Bhz
+				val = Table_getNumericValue_a (kt, irow, ++ icol);   // Bhz
 				if (val <= 0.0)
 					val = fk / 10.0;
 				RealTier_addPoint (thy vocalTract -> oral_formants -> bandwidths.at [kf], t, val);
 			}
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // FNZhz
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // FNZhz
 			RealTier_addPoint (thy vocalTract -> nasal_antiformants -> formants.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // BNZhz
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // BNZhz
 			RealTier_addPoint (thy vocalTract -> nasal_antiformants -> bandwidths.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // FNPhz
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // FNPhz
 			RealTier_addPoint (thy vocalTract -> nasal_formants -> formants.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // BNPhz
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // BNPhz
 			RealTier_addPoint (thy vocalTract -> nasal_formants -> bandwidths.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // ah
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // ah
 			if (val < 13.0)
 				val = dBNul;
 			else
@@ -2893,11 +2893,11 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 
 			RealTier_addPoint (thy phonation -> aspirationAmplitude.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Kopen
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // Kopen
 			const double openPhase = ( f0 > 0.0 ? (val / 16000.0) * f0 : 0.7 );
 			RealTier_addPoint (thy phonation -> openPhase.get(), t, openPhase);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Aturb breathinessAmplitude during voicing (max is 8192)
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // Aturb breathinessAmplitude during voicing (max is 8192)
 			if (val < 13.0)
 				val = dBNul;
 			else
@@ -2905,10 +2905,10 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 
 			RealTier_addPoint (thy phonation -> breathinessAmplitude.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // TLTdb
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // TLTdb
 			RealTier_addPoint (thy phonation -> spectralTilt.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // AF
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // AF
 			if (val < 13.0)
 				val = dBNul;
 			else
@@ -2916,11 +2916,11 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 
 			RealTier_addPoint (thy frication -> fricationAmplitude.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Kskew ???
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // Kskew ???
 			//RealTier_addPoint (, t, val);
 
 			for (integer kf = 1; kf <= 6; kf ++) {
-				val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Ap
+				val = Table_getNumericValue_a (kt, irow, ++ icol);   // Ap
 				if (val < 13.0)
 					val = dBNul;
 				else
@@ -2928,11 +2928,11 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 
 				RealTier_addPoint (thy vocalTract -> oral_formants_amplitudes.at [kf], t, val);
 				RealTier_addPoint (thy frication -> frication_formants_amplitudes.at [kf], t, val);
-				val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Bhz
+				val = Table_getNumericValue_a (kt, irow, ++ icol); // Bhz
 				RealTier_addPoint (thy frication -> frication_formants -> bandwidths.at [kf], t, val);
 			}
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // ANP
+			val = Table_getNumericValue_a (kt, irow, ++ icol);   // ANP
 			if (val < 13.0)
 				val = dBNul;
 			else
@@ -2940,7 +2940,7 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 
 			RealTier_addPoint (thy vocalTract -> nasal_formants_amplitudes.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // AB
+			val = Table_getNumericValue_a (kt, irow, ++ icol); // AB
 			if (val < 13.0)
 				val = dBNul;
 			else
@@ -2948,10 +2948,10 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 
 			RealTier_addPoint (thy frication -> bypass.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // AVpdb
+			val = Table_getNumericValue_a (kt, irow, ++ icol); // AVpdb
 			RealTier_addPoint (thy phonation -> voicingAmplitude.get(), t, val + dB_offset_voicing);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Gain0
+			val = Table_getNumericValue_a (kt, irow, ++ icol); // Gain0
 			val -= 3.0;
 			if (val <= 0.0)
 				val = 57.0;

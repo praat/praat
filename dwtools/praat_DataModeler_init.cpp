@@ -1079,9 +1079,9 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Table_to_DataModeler, U"", nullptr) {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0 (= auto)")
-	WORD (columnWithX_string, U"Column with X data", U"")
-	WORD (columnWithY_string, U"Column with Y data", U"")
-	WORD (columnEithSigma_string, U"Column with sigmas", U"")
+	WORD (xColumnName, U"Column with X data", U"")
+	WORD (yColumnName, U"Column with Y data", U"")
+	WORD (sigmaColumnName, U"Column with sigmas", U"")
 	OPTIONMENU_ENUM (kDataModelerFunction, type, U"Basis functions", kDataModelerFunction::DEFAULT)		
 	INTEGER (maximumOrder, U"Maximum order", U"3")
 	OK
@@ -1089,10 +1089,11 @@ DO
 	CONVERT_EACH_TO_ONE (Table)
 		Melder_require (type != kDataModelerFunction::LINEAR,
 			U"No linear functions implemented. Choose another model.");
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, columnWithX_string);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, columnWithY_string);
-		const integer scolumn = Table_findColumnIndexFromColumnLabel (me, columnEithSigma_string);
-		autoDataModeler result = Table_to_DataModeler (me, xmin, xmax, xcolumn, ycolumn, scolumn, maximumOrder + 1, type);
+		const integer xColumnNumber     = Table_columnNameToNumber_e (me, xColumnName);
+		const integer yColumnNumber     = Table_columnNameToNumber_e (me, yColumnName);
+		const integer sigmaColumnNumber = Table_columnNameToNumber_0 (me, sigmaColumnName);
+		autoDataModeler result = Table_to_DataModeler (me, xmin, xmax,
+				xColumnNumber, yColumnNumber, sigmaColumnNumber, maximumOrder + 1, type);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 

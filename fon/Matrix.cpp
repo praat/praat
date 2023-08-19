@@ -793,7 +793,7 @@ autoMatrix Table_to_Matrix (Table me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my rows.size, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			Table_numericize_Assert (me, icol);
+			Table_numericize_a (me, icol);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)

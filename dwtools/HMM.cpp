@@ -291,7 +291,7 @@ autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me) {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = autoSTRVEC (numberOfStrings);
 		for (integer i = 1; i <= numberOfStrings; i ++)
-			thy strings [i] = Melder_dup (Table_getStringValue_Assert (me, i, 1));
+			thy strings [i] = Melder_dup (Table_getStringValue_a (me, i, 1));
 		thy numberOfStrings = numberOfStrings;
 		return thee;
 	} catch (MelderError) {
@@ -851,7 +851,7 @@ static autoINTVEC HMM_HMMObservationSequenceBag_getStateSequences (HMM me, HMMOb
 	for (integer iseq = 1; iseq <= thy size; iseq ++) {
 		const HMMObservationSequence hmm_os = thy at [iseq];
 		for (integer islabel = 1; islabel <= hmm_os -> rows.size; islabel ++) {
-			const conststring32 label = Table_getStringValue_Assert (hmm_os, islabel, 1);
+			const conststring32 label = Table_getStringValue_a (hmm_os, islabel, 1);
 			const integer stateNumber = HMM_getState_notHidden (me, label);
 			Melder_require (stateNumber > 0,
 				U"The ", islabel, U"th observation of sequence ", iseq, U" labeled", label, U" is not a valid state.");

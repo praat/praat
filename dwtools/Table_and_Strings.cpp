@@ -25,7 +25,7 @@ autoStrings Table_column_to_Strings (Table me, integer columnNumber) {
 		thy strings = autoSTRVEC (my rows.size);
 		thy numberOfStrings = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, columnNumber));
+			thy strings [irow] = Melder_dup (Table_getStringValue_a (me, irow, columnNumber));
 			thy numberOfStrings ++;
 		}
 		return thee;

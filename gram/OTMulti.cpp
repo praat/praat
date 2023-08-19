@@ -884,11 +884,11 @@ static autoTable OTMulti_createHistory (OTMulti me, integer storeHistoryEvery, i
 	try {
 		integer numberOfSamplingPoints = numberOfData / storeHistoryEvery;   // e.g. 0, 20, 40, ...
 		autoTable thee = Table_createWithoutColumnNames (1 + numberOfSamplingPoints, 3 + my numberOfConstraints);
-		Table_setColumnLabel (thee.get(), 1, U"Datum");
-		Table_setColumnLabel (thee.get(), 2, U"Form1");
-		Table_setColumnLabel (thee.get(), 3, U"Form2");
+		Table_renameColumn_e (thee.get(), 1, U"Datum");
+		Table_renameColumn_e (thee.get(), 2, U"Form1");
+		Table_renameColumn_e (thee.get(), 3, U"Form2");
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
-			Table_setColumnLabel (thee.get(), 3 + icons, my constraints [icons]. name.get());
+			Table_renameColumn_e (thee.get(), 3 + icons, my constraints [icons]. name.get());
 		Table_setNumericValue (thee.get(), 1, 1, 0);
 		Table_setStringValue (thee.get(), 1, 2, U"(initial)");
 		Table_setStringValue (thee.get(), 1, 3, U"(initial)");

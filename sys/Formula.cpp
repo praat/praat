@@ -5104,7 +5104,7 @@ static void do_part_VEC () {
 	Melder_assert (s_narg->which == Stackel_NUMBER);
 	const integer narg = s_narg->number;
 	Melder_require (narg == 3,
-		U"The function “part#” requires precisely three arguments (namely a vector, a starting index, and an end index), not the ", narg, U" given.");
+		U"The function “part#” requires exactly three arguments (namely a vector, a starting index, and an end index), not the ", narg, U" given.");
 	/*
 		Check the types of the arguments: always vector, number, number.
 	*/
@@ -5142,24 +5142,62 @@ static void do_part_VEC () {
 		pushNumericVector (autoVEC ());
 }
 static void do_part_MAT () {
-	const Stackel narg = pop;
-	Melder_assert (narg->which == Stackel_NUMBER);
-	Melder_require (narg->number == 5,
-		U"The function “part##” requires five arguments, namely a matrix, a starting row, an end row, a starting column, and an end column.");
-	const Stackel endColumn = pop, startingColumn = pop, endRow = pop, startingRow = pop, mat = pop;
-	Melder_require (mat->which == Stackel_NUMERIC_MATRIX,
-		U"The first argument of the function “part##” should be a numeric matrix, not ", mat->whichText(), U".");
-	Melder_require (startingRow->which == Stackel_NUMBER,
-		U"The second argument of the function “part##” should be a number (the starting row), not ", startingRow->whichText(), U".");
-	Melder_require (endRow->which == Stackel_NUMBER,
-		U"The third argument of the function “part##” should be a number (the end row), not ", endRow->whichText(), U".");
-	Melder_require (startingColumn->which == Stackel_NUMBER,
-		U"The fourth argument of the function “part##” should be a number (the starting column), not ", startingColumn->whichText(), U".");
-	Melder_require (endColumn->which == Stackel_NUMBER,
-		U"The fifth argument of the function “part##” should be a number (the end column), not ", endColumn->whichText(), U".");
-	autoMAT result = copy_MAT (mat->numericMatrix. part (Melder_iround (startingRow->number), Melder_iround (endRow->number),
-			Melder_iround (startingColumn->number), Melder_iround (endColumn->number)));
-	pushNumericMatrix (result.move());
+	/*
+		Check the number of arguments: always 5.
+	*/
+	const Stackel s_narg = pop;
+	Melder_assert (s_narg->which == Stackel_NUMBER);
+	const integer narg = s_narg->number;
+	Melder_require (narg == 5,
+		U"The function “part##” requires exactly five arguments (namely a matrix, a starting row, an end row, a starting column, and an end column), not the ", narg, U" given..");
+	/*
+		Check the types of the arguments: always matrix, number, number, number, number.
+	*/
+	const Stackel s_endColumn = pop, s_startingColumn = pop, s_endRow = pop, s_startingRow = pop, s_mat = pop;
+	Melder_require (s_mat->which == Stackel_NUMERIC_MATRIX,
+		U"The first argument of the function “part##” should be a numeric matrix, not ", s_mat->whichText(), U".");
+	Melder_require (s_startingRow->which == Stackel_NUMBER,
+		U"The second argument of the function “part##” should be a number (the starting row), not ", s_startingRow->whichText(), U".");
+	Melder_require (s_endRow->which == Stackel_NUMBER,
+		U"The third argument of the function “part##” should be a number (the end row), not ", s_endRow->whichText(), U".");
+	Melder_require (s_startingColumn->which == Stackel_NUMBER,
+		U"The fourth argument of the function “part##” should be a number (the starting column), not ", s_startingColumn->whichText(), U".");
+	Melder_require (s_endColumn->which == Stackel_NUMBER,
+		U"The fifth argument of the function “part##” should be a number (the end column), not ", s_endColumn->whichText(), U".");
+	/*
+		Check the preconditions of the arguments.
+	*/
+	const constMAT mat = s_mat->numericMatrix;
+	const integer numberOfRows = mat.nrow, numberOfColumns = mat.ncol;
+	const integer startingRow = Melder_iround (s_startingRow->number);
+	Melder_require (startingRow > 0,
+		U"The second argument of the function “part##” (the starting row) should (after rounding) be a positive whole number, not ", startingRow, U".");
+	Melder_require (startingRow <= numberOfRows,
+		U"The second argument of the function “part##” (the starting row) should (after rounding) be at most the number of rows (",
+		numberOfRows, U"), not ", startingRow, U"."
+	);
+	const integer endRow = Melder_iround (s_endRow->number);
+	Melder_require (endRow > 0,
+		U"The third argument of the function “part##” (the end row) should (after rounding) be a positive whole number, not ", endRow, U".");
+	Melder_require (endRow <= numberOfRows,
+		U"The third argument of the function “part##” (the end row) should (after rounding) be at most the number of rows (",
+		numberOfRows, U"), not ", endRow, U"."
+	);
+	const integer startingColumn = Melder_iround (s_startingColumn->number);
+	Melder_require (startingColumn > 0,
+		U"The fourth argument of the function “part##” (the starting column) should (after rounding) be a positive whole number, not ", startingColumn, U".");
+	Melder_require (startingColumn <= numberOfColumns,
+		U"The fourth argument of the function “part##” (the starting column) should (after rounding) be at most the number of columns (",
+		numberOfColumns, U"), not ", startingColumn, U"."
+	);
+	const integer endColumn = Melder_iround (s_endColumn->number);
+	Melder_require (endColumn > 0,
+		U"The fifth argument of the function “part##” (the end column) should (after rounding) be a positive whole number, not ", endColumn, U".");
+	Melder_require (endColumn <= numberOfColumns,
+		U"The fifth argument of the function “part##” (the end column) should (after rounding) be at most the number of columns (",
+		numberOfColumns, U"), not ", endColumn, U"."
+	);
+	pushNumericMatrix (copy_MAT (mat. part (startingRow, endRow, startingColumn, endColumn)));
 }
 static void do_editor () {
 	const Stackel narg = pop;

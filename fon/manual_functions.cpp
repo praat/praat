@@ -2516,7 +2516,7 @@ A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
-#`part#` (%`vector#`, %from, %to)
+#`part#` (%`vector#`, %`from`, %`to`)
 : compute a subsequence of elements of a vector.
 
 Examples
@@ -2529,12 +2529,12 @@ Examples of error messages
 ==========================
 Checks on the number of arguments (always has to be 3):
 {
-	asserterror The function “part#” requires precisely three arguments
+	asserterror The function “part#” requires exactly three arguments
 	... (namely a vector, a starting index, and an end index),
 	... not the 0 given.
 	a# = part# ()
 
-	asserterror The function “part#” requires precisely three arguments
+	asserterror The function “part#” requires exactly three arguments
 	... (namely a vector, a starting index, and an end index),
 	... not the 5 given.
 	a# = part# (7, 8, 9, "hello", "world")
@@ -2609,14 +2609,144 @@ A function that can be used in @Formulas.
 
 Syntax and semantics
 ====================
-#`part##` (%`matrix#`, %fromRow, %toRow, %fromColumn, %toColummn)
+#`part##` (%`matrix#`, %`fromRow`, %`toRow`, %`fromColumn`, %`toColumn`)
 : compute a subwindow of cells of a matrix.
 
 Examples
 ========
 {
 	\`{assert} part## ({{ 7, 4, 9, 3 }, { 1, 4, 3, 22 }, { 0, 8, 6, 5 }},
-	... 3, 4, 1, 2) = {{ 9, 3 }, { 3, 22 }}
+	... 2, 3, 1, 3) = {{ 1, 4, 3 }, { 0, 8, 6 }}
+}
+
+Examples of error messages
+==========================
+Checks on the number of arguments (always has to be 5):
+{
+	asserterror The function “part##” requires exactly five arguments
+	... (namely a matrix, a starting row, an end row, a starting column, and an end column),
+	... not the 0 given.
+	a## = part## ()
+
+	asserterror The function “part##” requires exactly five arguments
+	... (namely a matrix, a starting row, an end row, a starting column, and an end column),
+	... not the 7 given.
+	a## = part## (7, 8, 9, 10, 11, "hello", "world")
+}
+Checks on the types of the arguments (always has to be matrix, number, number, number, number):
+{
+	asserterror The first argument of the function “part##” should be
+	... a numeric matrix, not a number.
+	a## = part## (2, 4, { 5, 6, 7, 9, 8 }, 66, 99)
+
+	asserterror The first argument of the function “part##” should be
+	... a numeric matrix, not a string.
+	a## = part## ("hello", 4, { 5, 6, 7, 9, 8 }, 66, 99)
+
+	asserterror The first argument of the function “part##” should be
+	... a numeric matrix, not a numeric vector.
+	a## = part## ({ 5, 6, 7, 9, 8 }, 4, { 5, 6, 7, 9, 8 }, 66, 99)
+
+	m## = {{ 7, 4, 9, 3 }, { 1, 4, 3, 22 }, { 0, 8, 6, 5 }}   ; three rows, four columns
+
+	asserterror The second argument of the function “part##” should be
+	... a number (the starting row), not a string.
+	a## = part## (m##, "hello", 4, 66, 99)
+
+	asserterror The second argument of the function “part##” should be
+	... a number (the starting row), not a numeric vector.
+	a## = part## (m##, { 0 }, 4, 66, 99)
+
+	asserterror The third argument of the function “part##” should be
+	... a number (the end row), not a string.
+	a## = part## (m##, 4, "hello", 66, 99)
+
+	asserterror The third argument of the function “part##” should be
+	... a number (the end row), not a numeric vector.
+	a## = part## (m##, 4, { 0 }, 66, 99)
+
+	asserterror The fourth argument of the function “part##” should be
+	... a number (the starting column), not a string.
+	a## = part## (m##, 66, 99, "hello", 4)
+
+	asserterror The fourth argument of the function “part##” should be
+	... a number (the starting column), not a numeric vector.
+	a## = part## (m##, 66, 99, { 0 }, 4)
+
+	asserterror The fifth argument of the function “part##” should be
+	... a number (the end column), not a string.
+	a## = part## (m##, 66, 99, 4, "hello")
+
+	asserterror The fifth argument of the function “part##” should be
+	... a number (the end column), not a numeric vector.
+	a## = part## (m##, 66, 99, 4, { 0 })
+}
+Finally the checks on the preconditions of the arguments:
+both row numbers and both column numbers should be within bounds:
+{
+	asserterror The second argument of the function “part##” (the starting row)
+	... should (after rounding) be a positive whole number, not -3.
+	a## = part## (m##, -2.98, 0, 66, 99)
+
+	asserterror The second argument of the function “part##” (the starting row)
+	... should (after rounding) be a positive whole number, not 0.
+	a## = part## (m##, 0, 0, 66, 99)
+
+	asserterror The second argument of the function “part##” (the starting row)
+	... should (after rounding) be at most the number of rows (3), not 99.
+	a## = part## (m##, 99, 0, 66, 99)
+
+	asserterror The second argument of the function “part##” (the starting row)
+	... should (after rounding) be at most the number of rows (3), not 4.
+	a## = part## (m##, 3.5, 0, 66, 99)
+
+	asserterror The third argument of the function “part##” (the end row)
+	... should (after rounding) be a positive whole number, not -3.
+	a## = part## (m##, 2, -2.98, 66, 99)
+
+	asserterror The third argument of the function “part##” (the end row)
+	... should (after rounding) be a positive whole number, not 0.
+	a## = part## (m##, 2, 0, 66, 99)
+
+	asserterror The third argument of the function “part##” (the end row)
+	... should (after rounding) be at most the number of rows (3), not 99.
+	a## = part## (m##, 2, 99, 66, 99)
+
+	asserterror The third argument of the function “part##” (the end row)
+	... should (after rounding) be at most the number of rows (3), not 4.
+	a## = part## (m##, 2, 3.5, 66, 99)
+
+	asserterror The fourth argument of the function “part##” (the starting column)
+	... should (after rounding) be a positive whole number, not -3.
+	a## = part## (m##, 2, 3, -2.98, 0)
+
+	asserterror The fourth argument of the function “part##” (the starting column)
+	... should (after rounding) be a positive whole number, not 0.
+	a## = part## (m##, 2, 3, 0, 0)
+
+	asserterror The fourth argument of the function “part##” (the starting column)
+	... should (after rounding) be at most the number of columns (4), not 99.
+	a## = part## (m##, 2, 3, 99, 0)
+
+	asserterror The fourth argument of the function “part##” (the starting column)
+	... should (after rounding) be at most the number of columns (4), not 5.
+	a## = part## (m##, 2, 3, 4.5, 0)
+
+	asserterror The fifth argument of the function “part##” (the end column)
+	... should (after rounding) be a positive whole number, not -3.
+	a## = part## (m##, 2, 3, 1, -2.98)
+
+	asserterror The fifth argument of the function “part##” (the end column)
+	... should (after rounding) be a positive whole number, not 0.
+	a## = part## (m##, 2, 3, 1, 0)
+
+	asserterror The fifth argument of the function “part##” (the end column)
+	... should (after rounding) be at most the number of columns (4), not 99.
+	a## = part## (m##, 2, 3, 1, 99)
+
+	asserterror The fifth argument of the function “part##” (the end column)
+	... should (after rounding) be at most the number of columns (4), not 5.
+	a## = part## (m##, 2, 3, 1, 4.5)
 }
 
 ################################################################################

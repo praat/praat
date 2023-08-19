@@ -227,17 +227,17 @@ autoTable Spectrum_tabulate (Spectrum me, bool includeBinNumbers, bool includeFr
 				includeBinNumbers + includeFrequency + includeRealPart + includeImaginaryPart + includeEnergyDensity + includePowerDensity);
 		integer icol = 0;
 		if (includeBinNumbers)
-			Table_setColumnLabel (thee.get(), ++ icol, U"bin");
+			Table_renameColumn_e (thee.get(), ++ icol, U"bin");
 		if (includeFrequency)
-			Table_setColumnLabel (thee.get(), ++ icol, U"freq(Hz)");
+			Table_renameColumn_e (thee.get(), ++ icol, U"freq(Hz)");
 		if (includeRealPart)
-			Table_setColumnLabel (thee.get(), ++ icol, U"re(Pa/Hz)");
+			Table_renameColumn_e (thee.get(), ++ icol, U"re(Pa/Hz)");
 		if (includeImaginaryPart)
-			Table_setColumnLabel (thee.get(), ++ icol, U"im(Pa/Hz)");
+			Table_renameColumn_e (thee.get(), ++ icol, U"im(Pa/Hz)");
 		if (includeEnergyDensity)
-			Table_setColumnLabel (thee.get(), ++ icol, U"energy(Pa^2/Hz^2)");
+			Table_renameColumn_e (thee.get(), ++ icol, U"energy(Pa^2/Hz^2)");
 		if (includePowerDensity)
-			Table_setColumnLabel (thee.get(), ++ icol, U"pow(dB/Hz)");
+			Table_renameColumn_e (thee.get(), ++ icol, U"pow(dB/Hz)");
 		for (integer ibin = 1; ibin <= my nx; ibin ++) {
 			icol = 0;
 			if (includeBinNumbers)

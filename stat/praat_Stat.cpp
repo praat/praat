@@ -316,31 +316,31 @@ DO
 // MARK: Draw
 
 FORM (GRAPHICS_EACH__Table_scatterPlot, U"Scatter plot", nullptr) {
-	SENTENCE (horizontalColumn, U"Horizontal column", U"")
+	SENTENCE (horizontalColumnName, U"Horizontal column", U"")
 	REAL (fromHorizontal, U"left Horizontal range", U"0.0")
 	REAL (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	SENTENCE (verticalColumn, U"Vertical column", U"")
+	SENTENCE (verticalColumnName, U"Vertical column", U"")
 	REAL (fromVertical, U"left Vertical range", U"0.0")
 	REAL (toVertical, U"right Vertical range", U"0.0 (= auto)")
-	SENTENCE (columnWithMarks, U"Column with marks", U"")
+	SENTENCE (marksColumnName, U"Column with marks", U"")
 	POSITIVE (fontSize, U"Font size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
-		const integer markColumn = Table_getColumnIndexFromColumnLabel (me, columnWithMarks);
-		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
-				fromHorizontal, toHorizontal, fromVertical, toVertical, markColumn, fontSize, garnish);
+		const integer horizontalColumnNumber = Table_columnNameToNumber_e (me, horizontalColumnName);
+		const integer verticalColumnNumber   = Table_columnNameToNumber_e (me, verticalColumnName);
+		const integer marksColumnNumber      = Table_columnNameToNumber_e (me, marksColumnName);
+		Table_scatterPlot (me, GRAPHICS, horizontalColumnNumber, verticalColumnNumber,
+				fromHorizontal, toHorizontal, fromVertical, toVertical, marksColumnNumber, fontSize, garnish);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__Table_scatterPlot_mark, U"Scatter plot (marks)", nullptr) {
-	SENTENCE (horizontalColumn, U"Horizontal column", U"")
+	SENTENCE (horizontalColumnName, U"Horizontal column", U"")
 	REAL (fromHorizontal, U"left Horizontal range", U"0.0")
 	REAL (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	SENTENCE (verticalColumn, U"Vertical column", U"")
+	SENTENCE (verticalColumnName, U"Vertical column", U"")
 	REAL (fromVertical, U"left Vertical range", U"0.0")
 	REAL (toVertical, U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (markSize, U"Mark size (mm)", U"1.0")
@@ -349,9 +349,9 @@ FORM (GRAPHICS_EACH__Table_scatterPlot_mark, U"Scatter plot (marks)", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
-		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
+		const integer horizontalColumnNumber = Table_columnNameToNumber_e (me, horizontalColumnName);
+		const integer verticalColumnNumber   = Table_columnNameToNumber_e (me, verticalColumnName);
+		Table_scatterPlot_mark (me, GRAPHICS, horizontalColumnNumber, verticalColumnNumber,
 			fromHorizontal, toHorizontal, fromVertical, toVertical,
 			markSize, markString, garnish
 		);
@@ -359,10 +359,10 @@ DO
 }
 
 FORM (GRAPHICS_EACH__Table_drawEllipse, U"Draw ellipse (standard deviation)", nullptr) {
-	SENTENCE (horizontalColumn, U"Horizontal column", U"")
+	SENTENCE (horizontalColumnName, U"Horizontal column", U"")
 	REAL (fromHorizontal, U"left Horizontal range", U"0.0")
 	REAL (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	SENTENCE (verticalColumn, U"Vertical column", U"")
+	SENTENCE (verticalColumnName, U"Vertical column", U"")
 	REAL (fromVertical, U"left Vertical range", U"0.0")
 	REAL (toVertical, U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"2.0")
@@ -370,9 +370,9 @@ FORM (GRAPHICS_EACH__Table_drawEllipse, U"Draw ellipse (standard deviation)", nu
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
-		Table_drawEllipse_e (me, GRAPHICS, xcolumn, ycolumn,
+		const integer horizontalColumnNumber = Table_columnNameToNumber_e (me, horizontalColumnName);
+		const integer verticalColumnNumber   = Table_columnNameToNumber_e (me, verticalColumnName);
+		Table_drawEllipse_e (me, GRAPHICS, horizontalColumnNumber, verticalColumnNumber,
 				fromHorizontal, toHorizontal, fromVertical, toVertical, numberOfSigmas, garnish);
 	GRAPHICS_EACH_END
 }
@@ -384,7 +384,7 @@ FORM (QUERY_ONE_FOR_INTEGER__Table_drawRowFromDistribution, U"Table: Draw row fr
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnWithDistribution);
 		const integer result = Table_drawRowFromDistribution (me, columnNumber);
 	QUERY_ONE_FOR_INTEGER_END (U" (random row number)")
 }
@@ -394,7 +394,7 @@ FORM (QUERY_ONE_FOR_REAL_VECTOR__Table_getAllNumbersInColumn, U"Table: Get all n
 	OK
 DO
 	QUERY_ONE_FOR_REAL_VECTOR (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnLabel);
 		autoVEC result = Table_getAllNumbersInColumn (me, columnNumber);
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
@@ -404,7 +404,7 @@ FORM (QUERY_ONE_FOR_INTEGER__Table_getColumnIndex, U"Table: Get column index", n
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (Table)
-		const integer result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
+		const integer result = Table_columnNameToNumber_0 (me, columnLabel);
 	QUERY_ONE_FOR_INTEGER_END (U" (index of column ", columnLabel, U")")
 }
 
@@ -420,46 +420,46 @@ DO
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getGroupMean, U"Table: Get group mean", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"salary")
-	SENTENCE (groupColumnLabel, U"Group column label", U"gender")
+	SENTENCE (columnName, U"Column to average over", U"salary")
+	SENTENCE (groupColumnName, U"Group column", U"gender")
 	SENTENCE (group, U"Group", U"F")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Table)
-		const integer column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		const integer groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
-		const double result = Table_getGroupMean (me, column, groupColumn, group);
-	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnLabel, U" in group ", group, U")")
+		const integer columnNumber      = Table_columnNameToNumber_e (me, columnName);
+		const integer groupColumnNumber = Table_columnNameToNumber_e (me, groupColumnName);
+		const double result = Table_getGroupMean (me, columnNumber, groupColumnNumber, group);
+	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnName, U" in group ", group, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getMaximum, U"Table: Get maximum", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		const double result = Table_getMaximum (me, columnNumber);
-	QUERY_ONE_FOR_REAL_END (U" (maximum of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (maximum of ", columnName, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getMean, U"Table: Get mean", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		const double result = Table_getMean (me, columnNumber);
-	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnName, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getMinimum, U"Table: Get minimum", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		const double result = Table_getMinimum (me, columnNumber);
-	QUERY_ONE_FOR_REAL_END (U" (minimum of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (minimum of ", columnName, U")")
 }
 
 DIRECT (QUERY_ONE_FOR_INTEGER__Table_getNumberOfColumns) {
@@ -475,44 +475,44 @@ DIRECT (QUERY_ONE_FOR_INTEGER__Table_getNumberOfRows) {
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getQuantile, U"Table: Get quantile", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	POSITIVE (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		const double result = Table_getQuantile (me, columnNumber, quantile);
-	QUERY_ONE_FOR_REAL_END (U" (", quantile, U" quantile of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (", quantile, U" quantile of ", columnName, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getStandardDeviation, U"Table: Get standard deviation", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		const double result = Table_getStdev (me, columnNumber);
-	QUERY_ONE_FOR_REAL_END (U" (standard deviation of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (standard deviation of ", columnName, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getSum, U"Table: Get sum", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		const double result = Table_getSum (me, columnNumber);
-	QUERY_ONE_FOR_REAL_END (U" (sum of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (sum of ", columnName, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getValue, U"Table: Get value", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		conststring32 result = my rows.at [rowNumber] -> cells [columnNumber]. string.get();
 		/*
 			The following lines are a hack:
@@ -525,14 +525,14 @@ DO
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__Table_searchColumn, U"Table: Search column", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column label", U"")
 	SENTENCE (value, U"Value", U"")
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		const integer result = Table_searchColumn (me, columnNumber, value);
-	QUERY_ONE_FOR_INTEGER_END (U" (first row in which ", columnLabel, U" is ", value)
+	QUERY_ONE_FOR_INTEGER_END (U" (first row in which ", columnName, U" is ", value)
 }
 	
 // MARK: Statistics
@@ -544,8 +544,8 @@ FORM (INFO_ONE__Table_reportCorrelation_kendallTau, U"Report correlation (Kendal
 	OK
 DO
 	INFO_ONE (Table)
-		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_columnNameToNumber_e (me, column1);
+		const integer columnNumber2 = Table_columnNameToNumber_e (me, column2);
 		double significance, lowerLimit, upperLimit;
 		const double correlation = Table_getCorrelation_kendallTau (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 				& significance, & lowerLimit, & upperLimit);
@@ -570,8 +570,8 @@ FORM (INFO_ONE__Table_reportCorrelation_pearsonR, U"Report correlation (Pearson 
 	OK
 DO
 	INFO_ONE (Table)
-		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_columnNameToNumber_e (me, column1);
+		const integer columnNumber2 = Table_columnNameToNumber_e (me, column2);
 		double significance, lowerLimit, upperLimit;
 		const double correlation = Table_getCorrelation_pearsonR (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 				& significance, & lowerLimit, & upperLimit);
@@ -597,8 +597,8 @@ FORM (INFO_ONE__Table_reportDifference_studentT, U"Report difference (Student t)
 	OK
 DO
 	INFO_ONE (Table)
-		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_columnNameToNumber_e (me, column1);
+		const integer columnNumber2 = Table_columnNameToNumber_e (me, column2);
 		double t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
 		const double difference = Table_getDifference_studentT (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 				& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
@@ -627,8 +627,8 @@ FORM (INFO_ONE__Table_reportGroupDifference_studentT, U"Report group difference 
 	OK
 DO
 	INFO_ONE (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		const integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		const integer columnNumber = Table_columnNameToNumber_e (me, column);
+		const integer groupColumnNumber = Table_columnNameToNumber_e (me, groupColumn);
 		double tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		const double mean = Table_getGroupDifference_studentT (me, columnNumber, groupColumnNumber, group1, group2, oneTailedUnconfidence,
 				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -656,8 +656,8 @@ FORM (INFO_ONE__Table_reportGroupDifference_wilcoxonRankSum, U"Report group diff
 	OK
 DO
 	INFO_ONE (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		const integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		const integer columnNumber = Table_columnNameToNumber_e (me, column);
+		const integer groupColumnNumber = Table_columnNameToNumber_e (me, groupColumn);
 		double areaUnderCurve, rankSum, significanceFromZero;
 		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, columnNumber, groupColumnNumber, group1, group2,
 				& rankSum, & significanceFromZero);
@@ -680,8 +680,8 @@ FORM (INFO_ONE__Table_reportGroupMean_studentT, U"Report group mean (Student t)"
 	OK
 DO
 	INFO_ONE (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		const integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		const integer columnNumber = Table_columnNameToNumber_e (me, column);
+		const integer groupColumnNumber = Table_columnNameToNumber_e (me, groupColumn);
 		double tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		const double mean = Table_getGroupMean_studentT (me, columnNumber, groupColumnNumber, group, oneTailedUnconfidence,
 				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -707,7 +707,7 @@ FORM (INFO_ONE__Table_reportMean_studentT, U"Report mean (Student t)", nullptr) 
 	OK
 DO
 	INFO_ONE (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		const integer columnNumber = Table_columnNameToNumber_e (me, column);
 		double tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		const double mean = Table_getMean_studentT (me, columnNumber, oneTailedUnconfidence,
 				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -729,11 +729,11 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_EACH__Table_appendColumn, U"Table: Append column", nullptr) {
-	SENTENCE (label, U"Label", U"newcolumn")
+	SENTENCE (name, U"Name", U"newcolumn")
 	OK
 DO
 	MODIFY_EACH (Table)
-		Table_appendColumn (me, label);
+		Table_appendColumn (me, name);
 	MODIFY_EACH_END
 }
 
@@ -744,8 +744,8 @@ FORM (MODIFY_EACH__Table_appendDifferenceColumn, U"Table: Append difference colu
 	OK
 DO
 	MODIFY_EACH (Table)
-		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_columnNameToNumber_e (me, column1);
+		const integer columnNumber2 = Table_columnNameToNumber_e (me, column2);
 		Table_appendDifferenceColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -757,8 +757,8 @@ FORM (MODIFY_EACH__Table_appendProductColumn, U"Table: Append product column", n
 	OK
 DO
 	MODIFY_EACH (Table)
-		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_columnNameToNumber_e (me, column1);
+		const integer columnNumber2 = Table_columnNameToNumber_e (me, column2);
 		Table_appendProductColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -770,8 +770,8 @@ FORM (MODIFY_EACH__Table_appendQuotientColumn, U"Table: Append quotient column",
 	OK
 DO
 	MODIFY_EACH (Table)
-		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_columnNameToNumber_e (me, column1);
+		const integer columnNumber2 = Table_columnNameToNumber_e (me, column2);
 		Table_appendQuotientColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -783,8 +783,8 @@ FORM (MODIFY_EACH__Table_appendSumColumn, U"Table: Append sum column", nullptr) 
 	OK
 DO
 	MODIFY_EACH (Table)
-		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_columnNameToNumber_e (me, column1);
+		const integer columnNumber2 = Table_columnNameToNumber_e (me, column2);
 		Table_appendSumColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -796,36 +796,36 @@ DIRECT (MODIFY_EACH__Table_appendRow) {
 }
 
 FORM (MODIFY_EACH_WEAK__Table_formula, U"Table: Formula", U"Table: Formula...") {
-	SENTENCE (columnLabel, U"Column (label)", U"")
+	SENTENCE (columnName, U"Column (name)", U"")
 	FORMULA (formula, U"Formula", U"abs (self)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		Table_formula (me, columnNumber, formula, interpreter);
 	MODIFY_EACH_WEAK_END
 }
 
 FORM (MODIFY_EACH_WEAK__Table_formula_columnRange, U"Table: Formula (column range)", U"Table: Formula...") {
-	SENTENCE (fromColumn, U"From column (label)", U"")
-	SENTENCE (toColumn, U"To column (label)", U"")
+	SENTENCE (fromColumn, U"From column (name)", U"")
+	SENTENCE (toColumn, U"To column (name)", U"")
 	FORMULA (formula, U"Formula", U"log10 (self)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
-		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, fromColumn);
-		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, toColumn);
+		const integer columnNumber1 = Table_columnNameToNumber_e (me, fromColumn);
+		const integer columnNumber2 = Table_columnNameToNumber_e (me, toColumn);
 		Table_formula_columnRange (me, columnNumber1, columnNumber2, formula, interpreter);
 	MODIFY_EACH_WEAK_END
 }
 
 FORM (MODIFY_EACH__Table_insertColumn, U"Table: Insert column", nullptr) {
 	NATURAL (position, U"Position", U"1")
-	SENTENCE (label, U"Label", U"newcolumn")
+	SENTENCE (name, U"Name", U"newcolumn")
 	OK
 DO
 	MODIFY_EACH (Table)
-		Table_insertColumn (me, position, label);
+		Table_insertColumn (me, position, name);
 	MODIFY_EACH_END
 }
 
@@ -839,11 +839,11 @@ DO
 }
 
 FORM (MODIFY_EACH__Table_removeColumn, U"Table: Remove column", nullptr) {
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		Table_removeColumn (me, columnNumber);
 	MODIFY_EACH_END
 }
@@ -857,47 +857,47 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__Table_setColumnLabel_index, U"Set column label", nullptr) {
+FORM (MODIFY_EACH__Table_renameColumn_byNumber, U"Rename column (by column number)", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
-	SENTENCE (newLabel, U"New label", U"")
+	SENTENCE (newName, U"New name", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
-		Table_setColumnLabel (me, columnNumber, newLabel);
+		Table_renameColumn_e (me, columnNumber, newName);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__Table_setColumnLabel_label, U"Set column label", nullptr) {
-	SENTENCE (oldLabel, U"Old label", U"")
-	SENTENCE (newLabel, U"New label", U"")
+FORM (MODIFY_EACH__Table_renameColumn, U"Rename column", nullptr) {
+	SENTENCE (oldName, U"Old name", U"")
+	SENTENCE (newName, U"New name", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, oldLabel);
-		Table_setColumnLabel (me, columnNumber, newLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, oldName);
+		Table_renameColumn_e (me, columnNumber, newName);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_EACH__Table_setNumericValue, U"Table: Set numeric value", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	REAL_OR_UNDEFINED (numericValue, U"Numeric value", U"1.5")
 	OK
 DO
 	MODIFY_EACH (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		Table_setNumericValue (me, rowNumber, columnNumber, numericValue);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_EACH__Table_setStringValue, U"Table: Set string value", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
-	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (columnName, U"Column name", U"")
 	SENTENCE (stringValue, U"String value", U"xx")
 	OK
 DO
 	MODIFY_EACH (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		Table_setStringValue (me, rowNumber, columnNumber, stringValue);
 	MODIFY_EACH_END
 }
@@ -954,7 +954,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_number, U"Table: Extract
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		const integer columnNumber = Table_columnNameToNumber_e (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Table_messageColumn (me, columnNumber), U"_",
 			isdefined (___theNumber) ? Melder_integer (Melder_iround (___theNumber)) : U"undefined")
@@ -967,7 +967,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhereColumn_text, U"Table: Extract r
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		const integer columnNumber = Table_columnNameToNumber_e (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, ___, ___theText);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
@@ -1012,7 +1012,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_downto_TableOfReal, U"Table: Down to TableOfRea
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		const integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
+		const integer columnNumber = Table_columnNameToNumber_0 (me, columnForRowLabels);
 		autoTableOfReal result = Table_to_TableOfReal (me, columnNumber);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -1031,8 +1031,8 @@ FORM (CONVERT_EACH_TO_ONE__Table_to_RealTier, U"Table: To RealTier", nullptr) {
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		const integer timeColumn = Table_findColumnIndexFromColumnLabel (me, columnWithTimes);
-		const integer valueColumn = Table_findColumnIndexFromColumnLabel (me, columnWithValues);
+		const integer timeColumn = Table_columnNameToNumber_0 (me, columnWithTimes);
+		const integer valueColumn = Table_columnNameToNumber_0 (me, columnWithValues);
 		autoRealTier result = Table_to_RealTier (me, timeColumn, valueColumn, startTime, endTime);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -1295,10 +1295,10 @@ praat_addAction1 (classDistributions, 0, U"Generate", nullptr, 0, nullptr);
 				nullptr, 1, MODIFY_EACH__Table_insertColumn);
 		praat_addAction1 (classTable, 0, U"-- set --",
 				nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 0, U"Set column label (index)...",
-				nullptr, 1, MODIFY_EACH__Table_setColumnLabel_index);
-		praat_addAction1 (classTable, 0, U"Set column label (label)...",
-				nullptr, 1, MODIFY_EACH__Table_setColumnLabel_label);
+		praat_addAction1 (classTable, 0, U"Rename column... || Set column label (label)...",   // alternative deprecated 2023
+				nullptr, 1, MODIFY_EACH__Table_renameColumn);
+		praat_addAction1 (classTable, 0, U"Rename column (by number)... || Set column label (index)...",   // alternative deprecated 2023
+				nullptr, 1, MODIFY_EACH__Table_renameColumn_byNumber);
 	praat_addAction1 (classTable, 0, U"Analyse -", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"To linear regression",
 				nullptr, 1, CONVERT_EACH_TO_ONE__Table_to_LinearRegression);

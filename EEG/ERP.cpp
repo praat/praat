@@ -112,18 +112,20 @@ autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeSampleNumbers + includeTime + my ny);
 		integer icol = 0;
-		if (includeSampleNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"sample");
-		if (includeTime) Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
-		for (integer ichan = 1; ichan <= my ny; ichan ++) {
-			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (my channelNames [ichan].get(), unitText));
-		}
+		if (includeSampleNumbers)
+			Table_renameColumn_e (thee.get(), ++ icol, U"sample");
+		if (includeTime)
+			Table_renameColumn_e (thee.get(), ++ icol, U"time(s)");
+		for (integer ichan = 1; ichan <= my ny; ichan ++)
+			Table_renameColumn_e (thee.get(), ++ icol, Melder_cat (my channelNames [ichan].get(), unitText));
 		for (integer isamp = 1; isamp <= my nx; isamp ++) {
 			icol = 0;
-			if (includeSampleNumbers) Table_setNumericValue (thee.get(), isamp, ++ icol, isamp);
-			if (includeTime) Table_setStringValue (thee.get(), isamp, ++ icol, Melder_fixed (my x1 + (isamp - 1) * my dx, timeDecimals));
-			for (integer ichan = 1; ichan <= my ny; ichan ++) {
+			if (includeSampleNumbers)
+				Table_setNumericValue (thee.get(), isamp, ++ icol, isamp);
+			if (includeTime)
+				Table_setStringValue (thee.get(), isamp, ++ icol, Melder_fixed (my x1 + (isamp - 1) * my dx, timeDecimals));
+			for (integer ichan = 1; ichan <= my ny; ichan ++)
 				Table_setStringValue (thee.get(), isamp, ++ icol, Melder_fixed (voltageScaling * my z [ichan] [isamp], voltageDecimals));
-			}
 		}
 		return thee;
 	} catch (MelderError) {

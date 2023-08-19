@@ -609,10 +609,10 @@ autoTable FormantModeler_to_Table_zscores (FormantModeler me) {
 		const integer icolt = 1, numberOfFormants = my trackmodelers.size;
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoTable ztable = Table_createWithoutColumnNames (numberOfDataPoints, numberOfFormants + 1);
-		Table_setColumnLabel (ztable.get(), icolt, U"time");
+		Table_renameColumn_e (ztable.get(), icolt, U"time");
 		for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
 			const integer icolz = itrack + 1;
-			Table_setColumnLabel (ztable.get(), icolz, Melder_cat (U"z", itrack));
+			Table_renameColumn_e (ztable.get(), icolz, Melder_cat (U"z", itrack));
 			DataModeler ffi = my trackmodelers.at [itrack];
 			if (itrack == 1) {
 				for (integer i = 1; i <= numberOfDataPoints; i ++)   // only once all tracks have same x-values

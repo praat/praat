@@ -230,7 +230,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column, kString
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, column);
 		const integer numberOfRows = my rows.size;
-		Table_numericize_Assert (me, column);
+		Table_numericize_a (me, column);
 		autoSTRVEC groupLabels (numberOfRows);
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
 			groupLabels [irow] = Melder_dup (my rows.at [irow] -> cells [column]. string.get());   // TODO: no dup
