@@ -1671,13 +1671,13 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, integer t
 	autoTable thee = Table_createWithoutColumnNames (numberOfRows, 3 + includeLineNumbers + includeTierNames);
 	integer icol = 0;
 	if (includeLineNumbers)
-		Table_setColumnLabel (thee.get(), ++ icol, U"line");
-	Table_setColumnLabel (thee.get(), ++ icol, U"tmin");
+		Table_renameColumn_e (thee.get(), ++ icol, U"line");
+	Table_renameColumn_e (thee.get(), ++ icol, U"tmin");
 	const integer tmin_columnNumber = icol;
 	if (includeTierNames)
-		Table_setColumnLabel (thee.get(), ++ icol, U"tier");
-	Table_setColumnLabel (thee.get(), ++ icol, U"text");
-	Table_setColumnLabel (thee.get(), ++ icol, U"tmax");
+		Table_renameColumn_e (thee.get(), ++ icol, U"tier");
+	Table_renameColumn_e (thee.get(), ++ icol, U"text");
+	Table_renameColumn_e (thee.get(), ++ icol, U"tmax");
 	const integer tmax_columnNumber = icol;
 	integer irow = 0;
 	for (integer itier = 1; itier <= my tiers->size; itier ++) {

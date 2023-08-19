@@ -511,26 +511,26 @@ autoTable FormantPath_downTo_Table_stresses (FormantPath me, double tmin, double
 		autoTable thee = Table_createWithoutColumnNames (numberOfCandidates, includeIntervalTimes + 1 + includeIntervalTimes + numberOfFormantsInFit + numberOfFormantsInFit - 1);
 		integer icol = 0;
 		if (includeIntervalTimes) {
-			Table_setColumnLabel (thee.get(), 1, U"Start(s)");
-			Table_setColumnLabel (thee.get(), 2, U"End(s)");
+			Table_renameColumn_e (thee.get(), 1, U"Start(s)");
+			Table_renameColumn_e (thee.get(), 2, U"End(s)");
 			for (integer irow = 1; irow <= numberOfCandidates; irow ++) {
 				Table_setStringValue (thee.get(), irow, 1, Melder_fixed (tmin, numberOfTimeDecimals));	
 				Table_setStringValue (thee.get(), irow, 2, Melder_fixed (tmax, numberOfTimeDecimals));	
 			}
 			icol = 2;
 		}
-		Table_setColumnLabel (thee.get(), ++ icol, U"Ceiling(Hz)");
+		Table_renameColumn_e (thee.get(), ++ icol, U"Ceiling(Hz)");
 		for (integer irow = 1; irow <= numberOfCandidates; irow ++)
 				Table_setStringValue (thee.get(), irow, icol, Melder_fixed (my ceilings [irow], 1));
 		
 		for (integer iformant = 1; iformant <= numberOfFormantsInFit; iformant ++) {
-			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"Stress", iformant));
+			Table_renameColumn_e (thee.get(), ++ icol, Melder_cat (U"Stress", iformant));
 			autoVEC stresses_fi = FormantPath_getStressOfCandidates (me, tmin, tmax, iformant, iformant, parameters, powerf);
 			for (integer irow = 1; irow <= numberOfCandidates; irow ++)
 				Table_setStringValue (thee.get(), irow, icol, Melder_fixed (stresses_fi [irow], numberOfStressDecimals));
 		}
 		for (integer iformant = 2; iformant <= numberOfFormantsInFit; iformant ++) {
-			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"Stress", 1, iformant));
+			Table_renameColumn_e (thee.get(), ++ icol, Melder_cat (U"Stress", 1, iformant));
 			autoVEC stresses_fij = FormantPath_getStressOfCandidates (me, tmin, tmax, 1, iformant, parameters, powerf);
 			for (integer irow = 1; irow <= numberOfCandidates; irow ++)
 				Table_setStringValue (thee.get(), irow, icol, Melder_fixed (stresses_fij [irow], numberOfStressDecimals));

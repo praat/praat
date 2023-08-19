@@ -390,7 +390,7 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 		}
 		for (integer i = 1; i <= numberOfMeans - 1; i ++) {
 			Table_setStringValue (meansD.get(), i, 1, my rows.at [i] -> cells [1]. string.get());
-			Table_setColumnLabel (meansD.get(), i + 1, my rows.at [i + 1] -> cells [1]. string.get());
+			Table_renameColumn_e (meansD.get(), i + 1, my rows.at [i + 1] -> cells [1]. string.get());
 		}
 
 		for (integer irow = 1; irow <= numberOfMeans - 1; irow ++) {
@@ -720,9 +720,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		autoTable ameans = Table_createWithoutColumnNames (numberOfLevelsA + 1, numberOfLevelsB + 1 + 1);
 		for (integer k = 2; k <= numberOfLevelsB + 1; k ++) {
 			const SimpleString name = (SimpleString) levelsB -> classes->at [k - 1];
-			Table_setColumnLabel (ameans.get(), k, name -> string.get());
+			Table_renameColumn_e (ameans.get(), k, name -> string.get());
 		}
-		Table_setColumnLabel (ameans.get(), numberOfLevelsB + 1 + 1, U"Mean");
+		Table_renameColumn_e (ameans.get(), numberOfLevelsB + 1 + 1, U"Mean");
 		for (integer j = 1; j <= numberOfLevelsA; j ++) {
 			const SimpleString name = (SimpleString) levelsA -> classes->at [j];
 			Table_setStringValue (ameans.get(), j, 1, name -> string.get());
@@ -736,7 +736,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 
 		if (out_levelSizes) {
 			autoTable asizes = Data_copy (ameans.get());
-			Table_setColumnLabel (asizes.get(), numberOfLevelsB + 1 + 1, U"Total");
+			Table_renameColumn_e (asizes.get(), numberOfLevelsB + 1 + 1, U"Total");
 			Table_setStringValue (asizes.get(), numberOfLevelsA + 1, 1, U"Total");
 			for (integer i = 1; i <= numberOfLevelsA + 1; i ++)
 				for (integer j = 1; j <= numberOfLevelsB + 1; j ++)
@@ -1581,7 +1581,7 @@ autoTable Table_extractColumnsByNumber (Table me, constINTVECVU const& columnNum
 		const integer numberOfRows = my rows.size;
 		autoTable thee = Table_createWithoutColumnNames (numberOfRows, columnNumbers.size);
 		for (integer icol = 1; icol <= columnNumbers.size; icol ++)
-			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnNumbers [icol]));
+			Table_renameColumn_e (thee.get(), icol, my v_getColStr (columnNumbers [icol]));
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= columnNumbers.size; icol ++) {
 				const conststring32 value = Table_getStringValue_Assert (me, irow, columnNumbers [icol]);

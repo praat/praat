@@ -526,17 +526,17 @@ autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 			includeNumberOfFormants + my maxnFormants * (1 + includeBandwidths));
 		integer icol = 0;
 		if (includeFrameNumbers)
-			Table_setColumnLabel (thee.get(), ++ icol, U"frame");
+			Table_renameColumn_e (thee.get(), ++ icol, U"frame");
 		if (includeTimes)
-			Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
+			Table_renameColumn_e (thee.get(), ++ icol, U"time(s)");
 		if (includeIntensity)
-			Table_setColumnLabel (thee.get(), ++ icol, U"intensity");
+			Table_renameColumn_e (thee.get(), ++ icol, U"intensity");
 		if (includeNumberOfFormants)
-			Table_setColumnLabel (thee.get(), ++ icol, U"nformants");
+			Table_renameColumn_e (thee.get(), ++ icol, U"nformants");
 		for (integer iformant = 1; iformant <= my maxnFormants; iformant ++) {
-			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"F", iformant, U"(Hz)"));
+			Table_renameColumn_e (thee.get(), ++ icol, Melder_cat (U"F", iformant, U"(Hz)"));
 			if (includeBandwidths)
-				Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"B", iformant, U"(Hz)"));
+				Table_renameColumn_e (thee.get(), ++ icol, Melder_cat (U"B", iformant, U"(Hz)"));
 		}
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			icol = 0;

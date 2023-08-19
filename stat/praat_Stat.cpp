@@ -857,24 +857,24 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__Table_setColumnName_number, U"Set column name", nullptr) {
+FORM (MODIFY_EACH__Table_renameColumn_byNumber, U"Rename column (by column number)", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	SENTENCE (newName, U"New name", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
-		Table_setColumnLabel (me, columnNumber, newName);
+		Table_renameColumn_e (me, columnNumber, newName);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__Table_setColumnName_name, U"Set column name", nullptr) {
+FORM (MODIFY_EACH__Table_renameColumn, U"Rename column", nullptr) {
 	SENTENCE (oldName, U"Old name", U"")
 	SENTENCE (newName, U"New name", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
 		const integer columnNumber = Table_columnNameToNumber_e (me, oldName);
-		Table_setColumnLabel (me, columnNumber, newName);
+		Table_renameColumn_e (me, columnNumber, newName);
 	MODIFY_EACH_END
 }
 
@@ -1296,9 +1296,9 @@ praat_addAction1 (classDistributions, 0, U"Generate", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"-- set --",
 				nullptr, 1, nullptr);
 		praat_addAction1 (classTable, 0, U"Rename column... || Set column label (label)...",   // alternative deprecated 2023
-				nullptr, 1, MODIFY_EACH__Table_setColumnName_name);
+				nullptr, 1, MODIFY_EACH__Table_renameColumn);
 		praat_addAction1 (classTable, 0, U"Rename column (by number)... || Set column label (index)...",   // alternative deprecated 2023
-				nullptr, 1, MODIFY_EACH__Table_setColumnName_number);
+				nullptr, 1, MODIFY_EACH__Table_renameColumn_byNumber);
 	praat_addAction1 (classTable, 0, U"Analyse -", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"To linear regression",
 				nullptr, 1, CONVERT_EACH_TO_ONE__Table_to_LinearRegression);

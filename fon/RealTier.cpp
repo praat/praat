@@ -434,9 +434,9 @@ autoTable RealTier_downto_Table (RealTier me, conststring32 indexText, conststri
 		autoTable thee = Table_createWithoutColumnNames (my points.size,
 			(!! indexText) + (!! timeText) + (!! valueText));
 		integer icol = 0;
-		if (indexText) Table_setColumnLabel (thee.get(), ++ icol, indexText);
-		if (timeText ) Table_setColumnLabel (thee.get(), ++ icol, timeText);
-		if (valueText) Table_setColumnLabel (thee.get(), ++ icol, valueText);
+		if (indexText) Table_renameColumn_e (thee.get(), ++ icol, indexText);
+		if (timeText ) Table_renameColumn_e (thee.get(), ++ icol, timeText);
+		if (valueText) Table_renameColumn_e (thee.get(), ++ icol, valueText);
 		for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
 			RealPoint point = my points.at [ipoint];
 			icol = 0;

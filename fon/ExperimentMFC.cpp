@@ -414,13 +414,13 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 			}
 		}
 		autoTable thee = Table_create (irow, 3 + hasGoodnesses + hasReactionTimes);
-		Table_setColumnLabel (thee.get(), 1, U"subject");
-		Table_setColumnLabel (thee.get(), 2, U"stimulus");
-		Table_setColumnLabel (thee.get(), 3, U"response");
+		Table_renameColumn_e (thee.get(), 1, U"subject");
+		Table_renameColumn_e (thee.get(), 2, U"stimulus");
+		Table_renameColumn_e (thee.get(), 3, U"response");
 		if (hasGoodnesses)
-			Table_setColumnLabel (thee.get(), 4, U"goodness");
+			Table_renameColumn_e (thee.get(), 4, U"goodness");
 		if (hasReactionTimes)
-			Table_setColumnLabel (thee.get(), 4 + hasGoodnesses, U"reactionTime");
+			Table_renameColumn_e (thee.get(), 4 + hasGoodnesses, U"reactionTime");
 		irow = 0;
 		for (integer iresults = 1; iresults <= my size; iresults ++) {
 			ResultsMFC results = my at [iresults];

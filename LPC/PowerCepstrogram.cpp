@@ -152,12 +152,12 @@ autoTable PowerCepstrogram_to_Table_CPP (PowerCepstrogram me, bool includeFrameN
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeFrameNumber + includeTime + includePeakQuefrency + 1);
 		integer icol = 0;
 		if (includeFrameNumber)
-			Table_setColumnLabel (thee.get(), ++ icol, U"frame");
+			Table_renameColumn_e (thee.get(), ++ icol, U"frame");
 		if (includeTime)
-			Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
+			Table_renameColumn_e (thee.get(), ++ icol, U"time(s)");
 		if (includePeakQuefrency)
-			Table_setColumnLabel (thee.get(), ++ icol, U"quefrency(s)");
-		Table_setColumnLabel (thee.get(), ++ icol, U"CPP(dB)");
+			Table_renameColumn_e (thee.get(), ++ icol, U"quefrency(s)");
+		Table_renameColumn_e (thee.get(), ++ icol, U"CPP(dB)");
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			icol = 0;
