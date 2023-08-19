@@ -287,7 +287,7 @@ integer Table_columnNameToNumber_0 (
 	return 0;
 }
 
-integer Table_getColumnIndexFromColumnLabel (
+integer Table_columnNameToNumber_e (
 	const constTable me,
 	const conststring32 columnLabel
 ) {
@@ -306,7 +306,7 @@ autoINTVEC Table_getColumnIndicesFromColumnLabelString (
 		Melder_throw (me, U": you specified an empty list of columns.");
 	autoINTVEC columns = raw_INTVEC (columnLabels.size);
 	for (integer icol = 1; icol <= columnLabels.size; icol ++)
-		columns [icol] = Table_getColumnIndexFromColumnLabel (me, columnLabels [icol].get());
+		columns [icol] = Table_columnNameToNumber_e (me, columnLabels [icol].get());
 	return columns;
 }
 
@@ -1082,14 +1082,14 @@ autoINTVEC Table_columnNamesToNumbers (
 ) {
 	autoINTVEC columnNumbers = zero_INTVEC (columnNames.size);
 	for (integer i = 1; i <= columnNames.size; i ++)
-		columnNumbers [i] = Table_getColumnIndexFromColumnLabel (me, columnNames [i]);
+		columnNumbers [i] = Table_columnNameToNumber_e (me, columnNames [i]);
 	return columnNumbers;
 }
 
 autoTable Table_rowsToColumns (Table me, constSTRVEC const& factors, conststring32 columnToTranspose, constSTRVEC const& columnsToExpand) {
 	return Table_rowsToColumns (me,
 		Table_columnNamesToNumbers (me, factors).get(),
-		Table_getColumnIndexFromColumnLabel (me, columnToTranspose),
+		Table_columnNameToNumber_e (me, columnToTranspose),
 		Table_columnNamesToNumbers (me, columnsToExpand).get()
 	);
 }

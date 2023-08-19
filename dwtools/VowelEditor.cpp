@@ -221,9 +221,9 @@ static bool isValidVowelMarksTableFile (MelderFile file, autoTable *out_marks) {
 		/*
 			Require columns Vowel F1 and F2 to be present in the Table
 		*/
-		if (! (Table_getColumnIndexFromColumnLabel (marks.get(), U"Vowel") 
-			&& Table_getColumnIndexFromColumnLabel (marks.get(), U"F1")
-			&& Table_getColumnIndexFromColumnLabel (marks.get(), U"F2")))
+		if (! (Table_columnNameToNumber_e (marks.get(), U"Vowel")
+			&& Table_columnNameToNumber_e (marks.get(), U"F1")
+			&& Table_columnNameToNumber_e (marks.get(), U"F2")))
 			return false;
 		if (out_marks)
 			*out_marks = marks.move();
@@ -597,10 +597,10 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		Draw the marks.
 	*/
 	if (my marks) {
-		const integer col_vowel = Table_getColumnIndexFromColumnLabel (my marks.get(), U"Vowel");
-		const integer col_f1 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F1");
-		const integer col_f2 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F2");
-		const integer col_size = Table_columnNameToNumber_0 (my marks.get(), U"Size");
+		const integer col_vowel = Table_columnNameToNumber_e (my marks.get(), U"Vowel");
+		const integer col_f1    = Table_columnNameToNumber_e (my marks.get(), U"F1");
+		const integer col_f2    = Table_columnNameToNumber_e (my marks.get(), U"F2");
+		const integer col_size   = Table_columnNameToNumber_0 (my marks.get(), U"Size");
 		const integer col_colour = Table_columnNameToNumber_0 (my marks.get(), U"Colour");
 		for (integer irow = 1; irow <= my marks -> rows.size; irow ++) {
 			const conststring32 label = Table_getStringValue_Assert (my marks.get(), irow, col_vowel);

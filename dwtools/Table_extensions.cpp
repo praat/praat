@@ -1478,7 +1478,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		autoVEC vector = raw_VEC (numberOfColumns);
 		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)
-			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get()); // throw if not present
+			columnIndex [icol] = Table_columnNameToNumber_e (me, sscp -> columnLabels [icol].get()); // throw if not present
 		autoTable him = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			his columnHeaders [icol].label = Melder_dup (my columnHeaders [icol]. label.get());
