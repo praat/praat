@@ -396,7 +396,7 @@ bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber) {
 	return true;
 }
 
-static void sortRowsByStrings_Assert (Table me, integer columnNumber) {
+static void sortRowsByStrings_a (Table me, integer columnNumber) {
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
 	std::sort (my rows.begin(), my rows.end(),
 		[columnNumber] (TableRow she, TableRow him) {
@@ -415,7 +415,7 @@ static void sortRowsByIndex_NoError (Table me) {
 	);
 }
 
-void Table_numericize_Assert (Table me, integer columnNumber) {
+void Table_numericize_a (Table me, integer columnNumber) {
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
 	if (my columnHeaders [columnNumber]. numericized)
 		return;
@@ -434,7 +434,7 @@ void Table_numericize_Assert (Table me, integer columnNumber) {
 			TableRow row = my rows.at [irow];
 			row -> sortingIndex = irow;
 		}
-		sortRowsByStrings_Assert (me, columnNumber);
+		sortRowsByStrings_a (me, columnNumber);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			conststring32 string = row -> cells [columnNumber]. string.get();
@@ -451,7 +451,7 @@ void Table_numericize_Assert (Table me, integer columnNumber) {
 }
 
 static void Table_numericize_checkDefined (Table me, integer columnNumber) {
-	Table_numericize_Assert (me, columnNumber);
+	Table_numericize_a (me, columnNumber);
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		const TableRow row = my rows.at [irow];
 		if (isundef (row -> cells [columnNumber]. number)) {
@@ -463,14 +463,14 @@ static void Table_numericize_checkDefined (Table me, integer columnNumber) {
 	}
 }
 
-conststring32 Table_getStringValue_Assert (Table me, integer rowNumber, integer columnNumber) {
+conststring32 Table_getStringValue_a (Table me, integer rowNumber, integer columnNumber) {
 	Melder_assert (rowNumber >= 1 && rowNumber <= my rows.size);
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
 	const constTableRow row = my rows.at [rowNumber];
 	return row -> cells [columnNumber]. string ? row -> cells [columnNumber]. string.get() : U"";
 }
 
-double Table_getNumericValue_Assert (Table me, integer rowNumber, integer columnNumber) {
+double Table_getNumericValue_a (Table me, integer rowNumber, integer columnNumber) {
 	Melder_assert (rowNumber >= 1 && rowNumber <= my rows.size);
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
 	#if 1
@@ -480,7 +480,7 @@ double Table_getNumericValue_Assert (Table me, integer rowNumber, integer column
 			Please anybody provide proof of whether the following three lines would be correct or not.
 		*/
 		const constTableRow row = my rows.at [rowNumber];   // the compiler accepts this...
-		Table_numericize_Assert (me, columnNumber);   // ...but due to aliasing this changes the contents of `row`...
+		Table_numericize_a (me, columnNumber);   // ...but due to aliasing this changes the contents of `row`...
 		return row -> cells [columnNumber]. number;   // ...and the new value of `number` is used here
 		/*
 			This may be (potential) Undefined Behavior.
@@ -494,7 +494,7 @@ double Table_getNumericValue_Assert (Table me, integer rowNumber, integer column
 			(last checked 2023-01-23)
 		*/
 	#else
-		Table_numericize_Assert (me, columnNumber);   // order before establishing a const pointer to within `me`
+		Table_numericize_a (me, columnNumber);   // order before establishing a const pointer to within `me`
 		const constTableRow row = my rows.at [rowNumber];   // this establishes a const pointer to within `me`
 		return row -> cells [columnNumber]. number;
 	#endif
@@ -673,7 +673,7 @@ integer Table_drawRowFromDistribution (Table me, integer columnNumber) {
 autoTable Table_extractRowsWhereColumn_number (Table me, integer columnNumber, kMelder_number which, double criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		Table_numericize_Assert (me, columnNumber);   // extraction should work even if cells are not defined
+		Table_numericize_a (me, columnNumber);   // extraction should work even if cells are not defined
 		autoTable thee = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
@@ -820,7 +820,7 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 		/*
 			We will now sort the original table temporarily, by the factors (independent variables) only.
 		*/
-		Table_sortRows_Assert (me, constINTVEC (columns.cells, factors.size));   // this works only because the factors come first
+		Table_sortRows_a (me, constINTVEC (columns.cells, factors.size));   // this works only because the factors come first
 		originalChanged = true;
 		/*
 			Find stretches of identical factors.
@@ -932,7 +932,7 @@ static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 			row -> sortingIndex = irow;
 		}
 		const integer sortingColumns [] = { column };
-		Table_sortRows_Assert (me, ARRAY_TO_INTVEC (sortingColumns));
+		Table_sortRows_a (me, ARRAY_TO_INTVEC (sortingColumns));
 		integer numberOfLevels = 0;
 		integer irow = 1;
 		while (irow <= my rows.size) {
@@ -946,7 +946,7 @@ static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 		irow = 1;
 		while (irow <= my rows.size) {
 			const double value = my rows.at [irow] -> cells [column]. number;
-			result [++ numberOfLevels] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
+			result [++ numberOfLevels] = Melder_dup (Table_getStringValue_a (me, irow, column));
 			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value)
 				;
 		}
@@ -1012,7 +1012,7 @@ static autoTable Table_rowsToColumns (Table me, constINTVECVU const& factorColum
 		/*
 			We will now sort the original table temporarily, by the factors (independent variables) only.
 		*/
-		Table_sortRows_Assert (me, factorColumns);
+		Table_sortRows_a (me, factorColumns);
 		originalChanged = true;
 		/*
 			Find stretches of identical factors.
@@ -1101,16 +1101,16 @@ autoTable Table_transpose (Table me) {
 			Table_setStringValue (thee.get(), icol, 1, my columnHeaders [icol]. label.get());
 		for (integer irow = 1; irow <= my rows.size; irow ++)
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-				Table_setStringValue (thee.get(), icol, 1 + irow, Table_getStringValue_Assert (me, irow, icol));
+				Table_setStringValue (thee.get(), icol, 1 + irow, Table_getStringValue_a (me, irow, icol));
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not transposed.");
 	}
 }
 
-void Table_sortRows_Assert (Table me, constINTVECVU const& columnNumbers) {
+void Table_sortRows_a (Table me, constINTVECVU const& columnNumbers) {
 	for (integer icol = 1; icol <= columnNumbers.size; icol ++)
-		Table_numericize_Assert (me, columnNumbers [icol]);
+		Table_numericize_a (me, columnNumbers [icol]);
 	std::sort (my rows.begin(), my rows.end(),
 		[columnNumbers] (TableRow she, TableRow him) -> bool {
 			for (integer icol = 1; icol <= columnNumbers.size; icol ++) {
@@ -1136,7 +1136,7 @@ void Table_sortRows (Table me, constSTRVEC columnNames) {
 			if (columns [icol] == 0)
 				Melder_throw (U"Column \"", columnNames [icol], U"\" does not exist.");
 		}
-		Table_sortRows_Assert (me, columns.get());
+		Table_sortRows_a (me, columns.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not sorted.");
 	}
@@ -1191,7 +1191,7 @@ autoTable Tables_append (OrderedOf<structTable>* me) {
 			for (integer irow = 1; irow <= thy rows.size; irow ++) {
 				nrow ++;
 				for (integer icol = 1; icol <= ncol; icol ++)
-					Table_setStringValue (him.get(), nrow, icol, Table_getStringValue_Assert (thee, irow, icol));
+					Table_setStringValue (him.get(), nrow, icol, Table_getStringValue_a (thee, irow, icol));
 			}
 		}
 		return him;
@@ -1389,8 +1389,8 @@ double Table_getCorrelation_pearsonR (
 		return undefined;
 	if (n < 2)
 		return undefined;
-	Table_numericize_Assert (me, column1);
-	Table_numericize_Assert (me, column2);
+	Table_numericize_a (me, column1);
+	Table_numericize_a (me, column2);
 	for (integer irow = 1; irow <= n; irow ++) {
 		const TableRow row = my rows.at [irow];
 		sum1 += row -> cells [column1]. number;
@@ -1447,8 +1447,8 @@ double Table_getCorrelation_kendallTau (
 		return undefined;
 	if (column2 < 1 || column2 > my numberOfColumns)
 		return undefined;
-	Table_numericize_Assert (me, column1);
-	Table_numericize_Assert (me, column2);
+	Table_numericize_a (me, column1);
+	Table_numericize_a (me, column2);
 	for (integer irow = 1; irow < n; irow ++) {
 		TableRow rowi = my rows.at [irow];
 		for (integer jrow = irow + 1; jrow <= n; jrow ++) {
@@ -1505,8 +1505,8 @@ double Table_getDifference_studentT (
 		return undefined;
 	if (column2 < 1 || column2 > my numberOfColumns)
 		return undefined;
-	Table_numericize_Assert (me, column1);
-	Table_numericize_Assert (me, column2);
+	Table_numericize_a (me, column1);
+	Table_numericize_a (me, column2);
 	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows.at [irow];
@@ -1559,7 +1559,7 @@ double Table_getMean_studentT (
 	const integer degreesOfFreedom = n - 1;
 	if (out_numberOfDegreesOfFreedom)
 		*out_numberOfDegreesOfFreedom = degreesOfFreedom;
-	Table_numericize_Assert (me, column);
+	Table_numericize_a (me, column);
 	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows.at [irow];
@@ -1606,7 +1606,7 @@ double Table_getGroupMean_studentT (
 	if (out_upperLimit)               *out_upperLimit               = undefined;
 	if (column < 1 || column > my numberOfColumns)
 		return undefined;
-	Table_numericize_Assert (me, column);
+	Table_numericize_a (me, column);
 	integer n = 0;
 	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
@@ -1671,7 +1671,7 @@ double Table_getGroupDifference_studentT (
 		return undefined;
 	if (groupColumn < 1 || groupColumn > my numberOfColumns)
 		return undefined;
-	Table_numericize_Assert (me, column);
+	Table_numericize_a (me, column);
 	/* mutable count */ integer n1 = 0, n2 = 0;
 	/* mutable sum */ longdouble sum1 = 0.0, sum2 = 0.0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
@@ -1737,7 +1737,7 @@ double Table_getGroupDifference_wilcoxonRankSum (
 		return undefined;
 	if (groupColumn < 1 || groupColumn > my numberOfColumns)
 		return undefined;
-	Table_numericize_Assert (me, column);
+	Table_numericize_a (me, column);
 	/* mutable count */ integer n1 = 0, n2 = 0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		const TableRow row = my rows.at [irow];
@@ -1764,11 +1764,11 @@ double Table_getGroupDifference_wilcoxonRankSum (
 			}
 		}
 	}
-	Table_numericize_Assert (ranks.get(), 1);
-	Table_numericize_Assert (ranks.get(), 2);
-	Table_numericize_Assert (ranks.get(), 3);
+	Table_numericize_a (ranks.get(), 1);
+	Table_numericize_a (ranks.get(), 2);
+	Table_numericize_a (ranks.get(), 3);
 	const integer sortingColumns [] = { 2 };
-	Table_sortRows_Assert (ranks.get(), ARRAY_TO_INTVEC (sortingColumns));
+	Table_sortRows_a (ranks.get(), ARRAY_TO_INTVEC (sortingColumns));
 	/* mutable count */ longdouble totalNumberOfTies3 = 0.0;
 	for (integer irow = 1; irow <= ranks -> rows.size; irow ++) {
 		TableRow row = ranks -> rows.at [irow];
@@ -1787,7 +1787,7 @@ double Table_getGroupDifference_wilcoxonRankSum (
 		const integer numberOfTies = rowOfLastTie - irow + 1;
 		totalNumberOfTies3 += double (numberOfTies - 1) * double (numberOfTies) * double (numberOfTies + 1);
 	}
-	Table_numericize_Assert (ranks.get(), 3);
+	Table_numericize_a (ranks.get(), 3);
 	const double maximumRankSum = double (n1) * double (n2);
 	/* mutable sum */ longdouble rankSum = 0.0;
 	for (integer irow = 1; irow <= ranks -> rows.size; irow ++) {
@@ -1820,7 +1820,7 @@ bool Table_getExtrema (
 		*minimum = *maximum = undefined;
 		return false;
 	}
-	Table_numericize_Assert (me, icol);
+	Table_numericize_a (me, icol);
 	MelderExtremaWithInit extrema;
 	for (integer irow = 1; irow <= n; irow ++) {
 		const double value = my rows.at [irow] -> cells [icol]. number;
@@ -1855,8 +1855,8 @@ void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycol
 {
 	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns)
 		return;
-	Table_numericize_Assert (me, xcolumn);
-	Table_numericize_Assert (me, ycolumn);
+	Table_numericize_a (me, xcolumn);
+	Table_numericize_a (me, ycolumn);
 	if (xmin == xmax) {
 		if (! Table_getExtrema (me, xcolumn, & xmin, & xmax))
 			return;
@@ -1904,8 +1904,8 @@ void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
 	const double saveFontSize = Graphics_inqFontSize (g);
 	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns)
 		return;
-	Table_numericize_Assert (me, xcolumn);
-	Table_numericize_Assert (me, ycolumn);
+	Table_numericize_a (me, xcolumn);
+	Table_numericize_a (me, ycolumn);
 	if (xmin == xmax) {
 		if (! Table_getExtrema (me, xcolumn, & xmin, & xmax))
 			return;
@@ -1955,8 +1955,8 @@ void Table_drawEllipse_e (Table me, Graphics g, integer xcolumn, integer ycolumn
 	try {
 		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns)
 			return;
-		Table_numericize_Assert (me, xcolumn);
-		Table_numericize_Assert (me, ycolumn);
+		Table_numericize_a (me, xcolumn);
+		Table_numericize_a (me, ycolumn);
 		if (xmin == xmax) {
 			if (! Table_getExtrema (me, xcolumn, & xmin, & xmax))
 				return;
@@ -1975,8 +1975,8 @@ void Table_drawEllipse_e (Table me, Graphics g, integer xcolumn, integer ycolumn
 		}
 		autoTableOfReal tableOfReal = TableOfReal_create (my rows.size, 2);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			tableOfReal -> data [irow] [1] = Table_getNumericValue_Assert (me, irow, xcolumn);
-			tableOfReal -> data [irow] [2] = Table_getNumericValue_Assert (me, irow, ycolumn);
+			tableOfReal -> data [irow] [1] = Table_getNumericValue_a (me, irow, xcolumn);
+			tableOfReal -> data [irow] [2] = Table_getNumericValue_a (me, irow, ycolumn);
 		}
 		autoSSCP sscp = TableOfReal_to_SSCP (tableOfReal.get(), 0, 0, 0, 0);
 		SSCP_drawConcentrationEllipse (sscp.get(), g, numberOfSigmas, 0, 1, 2, xmin, xmax, ymin, ymax, garnish);

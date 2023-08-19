@@ -981,7 +981,7 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 			labelColumn = 0;
 		autoTableOfReal thee = TableOfReal_create (my rows.size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			Table_numericize_Assert (me, icol);
+			Table_numericize_a (me, icol);
 		if (labelColumn) {
 			for (integer icol = 1; icol < labelColumn; icol ++)
 				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label.get());
@@ -993,10 +993,10 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 				TableOfReal_setRowLabel (thee.get(), irow, string ? string : U"");
 				for (integer icol = 1; icol < labelColumn; icol ++)
 					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
-							//thy data [irow] [icol] = Table_getNumericValue_Assert (me, irow, icol);
+							//thy data [irow] [icol] = Table_getNumericValue_a (me, irow, icol);
 				for (integer icol = labelColumn + 1; icol <= my numberOfColumns; icol ++)
 					thy data [irow] [icol - 1] = row -> cells [icol]. number;   // Optimization.
-							//thy data [irow] [icol - 1] = Table_getNumericValue_Assert (me, irow, icol);
+							//thy data [irow] [icol - 1] = Table_getNumericValue_a (me, irow, icol);
 			}
 		} else {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1006,7 +1006,7 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 				TableRow row = my rows.at [irow];
 				for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
-					//thy data [irow] [icol] = Table_getNumericValue_Assert (me, irow, icol);
+					//thy data [irow] [icol] = Table_getNumericValue_a (me, irow, icol);
 				}
 			}
 		}

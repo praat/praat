@@ -1617,7 +1617,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 		autoVEC y = raw_VEC (numberOfRows);
 		autoVEC sy = raw_VEC (numberOfRows);
 		for (integer i = 1; i <= numberOfRows; i ++) {
-			const double val = Table_getNumericValue_Assert (me, i, xcolumn);
+			const double val = Table_getNumericValue_a (me, i, xcolumn);
 			if (isdefined (val)) {
 				x [++ numberOfData] = val;
 				if (numberOfData > 1) {
@@ -1627,8 +1627,8 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 						Melder_throw (U"All x-values should be different.");
 					}
 				}
-				y [numberOfData] = Table_getNumericValue_Assert (me, i, ycolumn);
-				sy [numberOfData] = ( hasSigmaColumn ? Table_getNumericValue_Assert (me, i, sigmacolumn) : undefined );
+				y [numberOfData] = Table_getNumericValue_a (me, i, ycolumn);
+				sy [numberOfData] = ( hasSigmaColumn ? Table_getNumericValue_a (me, i, sigmacolumn) : undefined );
 			}
 		}
 		if (xmax <= xmin)

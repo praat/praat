@@ -144,7 +144,7 @@ void structTableEditor :: v_draw () {
 		if (cellWidth > columnWidth)
 			columnWidth = cellWidth;
 		for (integer irow = rowmin; irow <= rowmax; irow ++) {
-			conststring32 cell = Table_getStringValue_Assert (our table(), irow, icol);
+			conststring32 cell = Table_getStringValue_a (our table(), irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0')
 				cell = U"?";
@@ -193,7 +193,7 @@ void structTableEditor :: v_draw () {
 				Graphics_setColour (graphics.get(), Melder_BLACK);
 			}
 			const double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2.0;
-			conststring32 cell = Table_getStringValue_Assert (our table(), irow, icol);
+			conststring32 cell = Table_getStringValue_a (our table(), irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0')
 				cell = U"?";

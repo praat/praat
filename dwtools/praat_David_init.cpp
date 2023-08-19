@@ -3414,8 +3414,8 @@ DO
 
 static void print_means (Table me);
 static void print_means (Table me) {
-	Table_numericize_Assert (me, 2);
-	Table_numericize_Assert (me, 3);
+	Table_numericize_a (me, 2);
+	Table_numericize_a (me, 3);
 	if (my numberOfColumns < 3) {
 		MelderInfo_writeLine (U"Table does not have the right format.");
 		return;

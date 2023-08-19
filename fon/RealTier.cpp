@@ -625,8 +625,8 @@ autoRealTier Table_to_RealTier (Table me, integer timeColumn, integer valueColum
 		Melder_require (! (tmax <= tmin),   // NaN-safe
 			U"The end of the time domain (", tmax, U") should be greater than the start of the time domain (", tmin, U").");
 		autoRealTier thee = RealTier_create (tmin, tmax);
-		Table_numericize_Assert (me, timeColumn);
-		Table_numericize_Assert (me, valueColumn);
+		Table_numericize_a (me, timeColumn);
+		Table_numericize_a (me, valueColumn);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			RealTier_addPoint (thee.get(), row -> cells [timeColumn]. number, row -> cells [valueColumn]. number);

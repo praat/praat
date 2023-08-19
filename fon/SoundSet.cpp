@@ -60,7 +60,7 @@ void SoundSet_Table_getRandomizedPatterns (SoundSet me, Table thee, conststring3
 		const integer minimumNumberOfSamples = SoundSet_getMinimumNumberOfSamples (me);
 		Melder_require (inputSize <= minimumNumberOfSamples,
 			U"The input size cannot be ", inputSize, U", because there is a Sound that is only ", minimumNumberOfSamples, U" samples long.");
-		Table_numericize_Assert (thee, columnNumber);
+		Table_numericize_a (thee, columnNumber);
 		autoPatternList inputs = PatternList_create (numberOfPatterns, inputSize);
 		autoPatternList outputs = PatternList_create (numberOfPatterns, outputSize);
 		for (integer ipattern = 1; ipattern <= numberOfPatterns; ipattern ++) {
