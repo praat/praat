@@ -578,7 +578,7 @@ static void VowelEditor_getMarks (VowelEditor me) {
 		autoSTRVEC ({}).get()
 	);
 	const integer col_ipa = Table_columnNameToNumber_0 (newMarks.get(), U"IPA");
-	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
+	Table_renameColumn_e (newMarks.get(), col_ipa, U"Vowel");
 
 	Table_addColumnIfNotExists_size (newMarks.get(), my instancePref_marks_fontSize());
 	Table_addColumnIfNotExists_colour (newMarks.get(), my instancePref_marks_colour());

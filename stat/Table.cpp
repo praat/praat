@@ -114,7 +114,7 @@ conststring32 Table_messageColumn (Table me, integer column) {
 void Table_initWithColumnNames (Table me, integer numberOfRows, constSTRVEC columnNames) {
 	Table_initWithoutColumnNames (me, numberOfRows, columnNames.size);
 	for (integer icol = 1; icol <= columnNames.size; icol ++)
-		Table_setColumnLabel (me, icol, columnNames [icol]);
+		Table_renameColumn_e (me, icol, columnNames [icol]);
 }
 
 autoTable Table_createWithColumnNames (integer numberOfRows, constSTRVEC columnNames) {
@@ -268,7 +268,7 @@ void Table_insertColumn (Table me, integer columnNumber, conststring32 label /* 
 	}
 }
 
-void Table_setColumnLabel (Table me, integer columnNumber, conststring32 label /* cattable */) {
+void Table_renameColumn_e (Table me, integer columnNumber, conststring32 label /* cattable */) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		my columnHeaders [columnNumber]. label = Melder_dup (label);
@@ -778,27 +778,27 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 		{
 			integer icol = 0;
 			for (integer i = 1; i <= factors.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, factors [i]);
+				Table_renameColumn_e (thee.get(), ++ icol, factors [i]);
 				columns [icol] = Table_columnNameToNumber_0 (me, factors [i]);
 			}
 			for (integer i = 1; i <= columnsToSum.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToSum [i]);
+				Table_renameColumn_e (thee.get(), ++ icol, columnsToSum [i]);
 				columns [icol] = Table_columnNameToNumber_0 (me, columnsToSum [i]);
 			}
 			for (integer i = 1; i <= columnsToAverage.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverage [i]);
+				Table_renameColumn_e (thee.get(), ++ icol, columnsToAverage [i]);
 				columns [icol] = Table_columnNameToNumber_0 (me, columnsToAverage [i]);
 			}
 			for (integer i = 1; i <= columnsToMedianize.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianize [i]);
+				Table_renameColumn_e (thee.get(), ++ icol, columnsToMedianize [i]);
 				columns [icol] = Table_columnNameToNumber_0 (me, columnsToMedianize [i]);
 			}
 			for (integer i = 1; i <= columnsToAverageLogarithmically.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverageLogarithmically [i]);
+				Table_renameColumn_e (thee.get(), ++ icol, columnsToAverageLogarithmically [i]);
 				columns [icol] = Table_columnNameToNumber_0 (me, columnsToAverageLogarithmically [i]);
 			}
 			for (integer i = 1; i <= columnsToMedianizeLogarithmically.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianizeLogarithmically [i]);
+				Table_renameColumn_e (thee.get(), ++ icol, columnsToMedianizeLogarithmically [i]);
 				columns [icol] = Table_columnNameToNumber_0 (me, columnsToMedianizeLogarithmically [i]);
 			}
 			Melder_assert (icol == thy numberOfColumns);
@@ -989,15 +989,15 @@ static autoTable Table_rowsToColumns (Table me, constINTVECVU const& factorColum
 		autoTable thee = Table_createWithoutColumnNames (0, numberOfFactors + (numberOfLevels * numberToExpand));
 		Melder_assert (thy numberOfColumns > 0);
 		for (integer ifactor = 1; ifactor <= numberOfFactors; ifactor ++)
-			Table_setColumnLabel (thee.get(), ifactor, my columnHeaders [factorColumns [ifactor]]. label.get());
+			Table_renameColumn_e (thee.get(), ifactor, my columnHeaders [factorColumns [ifactor]]. label.get());
 		for (integer iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 			for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
-				//Melder_casual (U"Number of factors: ", numberOfFactors);
-				//Melder_casual (U"Level: ", ilevel, U" out of ", numberOfLevels);
-				integer columnNumber = numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel;
-				//Melder_casual (U"Column number: ", columnNumber);
-				Table_setColumnLabel (thee.get(), columnNumber,
-					Melder_cat (my columnHeaders [columnsToExpand [iexpand]]. label.get(), U".", levels_names [ilevel].get()));
+				trace (U"Number of factors: ", numberOfFactors);
+				trace (U"Level: ", ilevel, U" out of ", numberOfLevels);
+				const integer columnNumber = numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel;
+				trace (U"Column number: ", columnNumber);
+				Table_renameColumn_e (thee.get(), columnNumber,
+						Melder_cat (my columnHeaders [columnsToExpand [iexpand]]. label.get(), U".", levels_names [ilevel].get()));
 			}
 		}
 		/*
@@ -1184,7 +1184,7 @@ autoTable Tables_append (OrderedOf<structTable>* me) {
 		}
 		autoTable him = Table_createWithoutColumnNames (nrow, ncol);
 		for (integer icol = 1; icol <= ncol; icol ++)
-			Table_setColumnLabel (him.get(), icol, thy columnHeaders [icol]. label.get());
+			Table_renameColumn_e (him.get(), icol, thy columnHeaders [icol]. label.get());
 		nrow = 0;
 		for (integer itab = 1; itab <= my size; itab ++) {
 			thee = my at [itab];
@@ -2158,7 +2158,7 @@ autoTable Table_readFromTableFile (MelderFile file) {
 				MelderString_appendCharacter (& buffer, *p);
 				p ++;
 			}
-			Table_setColumnLabel (me.get(), icol, buffer.string);
+			Table_renameColumn_e (me.get(), icol, buffer.string);
 			MelderString_empty (& buffer);
 		}
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
@@ -2247,7 +2247,7 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 				p ++;
 			}
 			p ++;
-			Table_setColumnLabel (me.get(), icol, buffer.string);
+			Table_renameColumn_e (me.get(), icol, buffer.string);
 		}
 
 		/*

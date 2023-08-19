@@ -43,7 +43,7 @@ void Table_removeRow (Table me, integer rowNumber);
 void Table_removeColumn (Table me, integer columnNumber);
 void Table_insertRow (Table me, integer rowPosition);
 void Table_insertColumn (Table me, integer columnPosition, conststring32 columnName /* cattable */);
-void Table_setColumnLabel (Table me, integer columnNumber, conststring32 columnName /* cattable */);
+void Table_renameColumn_e (Table me, integer columnNumber, conststring32 columnName /* cattable */);
 integer Table_columnNameToNumber_0 (constTable me, conststring32 columnName) noexcept;
 integer Table_columnNameToNumber_e (constTable me, conststring32 columnName);
 autoINTVEC Table_columnNamesToNumbers (constTable me, constSTRVEC const& columnNames);

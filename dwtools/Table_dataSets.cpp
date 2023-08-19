@@ -1626,7 +1626,7 @@ autoTable Table_create_petersonBarney1952 () {
 				row -> cells [j + 6]. string = Melder_dup (Melder_integer (pbdata [i - 1].f [j]));
 		}
 		for (integer j = 1; j <= ncols; j ++) {
-			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
+			Table_renameColumn_e (me.get(), j, columnLabels [j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
 		return me;
@@ -2642,7 +2642,7 @@ autoTable Table_create_polsVanNierop1973 () {
 			}
 		}
 		for (integer j = 1; j <= ncols; j ++) {
-			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
+			Table_renameColumn_e (me.get(), j, columnLabels [j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
 		return me;
@@ -3088,7 +3088,7 @@ autoTable Table_create_weenink1983 () {
 				row -> cells [j + 6]. string = Melder_dup (Melder_integer (weeninkdata [index_in_data]. f [j]));
 		}
 		for (integer j = 1; j <= ncols; j ++) {
-			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
+			Table_renameColumn_e (me.get(), j, columnLabels [j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
 		return me;
@@ -6562,7 +6562,7 @@ autoTable Table_create_hillenbrandEtAl1995 () {
 	}
 			
 	for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-		Table_setColumnLabel (me.get(), icol, columnLabels [icol - 1]);
+		Table_renameColumn_e (me.get(), icol, columnLabels [icol - 1]);
 		my columnHeaders [icol]. numericized = false;
 	}
 	return me;
