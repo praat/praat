@@ -7129,7 +7129,7 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 DO
 	GRAPHICS_EACH (Table)
 		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, columnNames);
-		const integer labelColumnNumber = Table_findColumnIndexFromColumnLabel (me, labelColumnName);
+		const integer labelColumnNumber = Table_columnNameToNumber_0 (me, labelColumnName);
 		if (labelColumnNumber == 0 && Melder_stringMatchesCriterion (labelColumnName, kMelder_string::MATCH_REGEXP, U"\\s*[^\\s]+", true))
 			Melder_throw (me, U": there is no column named \"", labelColumnName, U"\".");
 		Table_barPlotWhere (me, GRAPHICS, columnNumbers.get(), ymin, ymax, labelColumnNumber, distanceFromBorder, 
@@ -7430,8 +7430,8 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
 		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
-		const integer xlNumber = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumnName);
-		const integer xuNumber = Table_findColumnIndexFromColumnLabel (me, upperErrorColumnName);
+		const integer xlNumber = Table_columnNameToNumber_0 (me, lowerErrorColumnName);
+		const integer xuNumber = Table_columnNameToNumber_0 (me, upperErrorColumnName);
 		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumnNumber, ycolumnNumber, xmin, xmax, ymin, ymax,
 			xlNumber, xuNumber, barSize_mm, garnish, U"1", interpreter
 		);
@@ -7456,8 +7456,8 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
 		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
-		const integer xlNumber = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumnName);
-		const integer xuNumber = Table_findColumnIndexFromColumnLabel (me, upperErrorColumnName);
+		const integer xlNumber = Table_columnNameToNumber_0 (me, lowerErrorColumnName);
+		const integer xuNumber = Table_columnNameToNumber_0 (me, upperErrorColumnName);
 		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumnNumber, ycolumnNumber, xmin, xmax, ymin, ymax,
 			xlNumber, xuNumber, barSize_mm, garnish, condition, interpreter
 		);
@@ -7480,8 +7480,8 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
 		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
-		const integer ylNumber = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumnName);
-		const integer yuNumber = Table_findColumnIndexFromColumnLabel (me, upperErrorColumnName);
+		const integer ylNumber = Table_columnNameToNumber_0 (me, lowerErrorColumnName);
+		const integer yuNumber = Table_columnNameToNumber_0 (me, upperErrorColumnName);
 		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumnNumber, ycolumnNumber, xmin, xmax, ymin, ymax, 
 			ylNumber, yuNumber, barSize_mm, garnish, U"1", interpreter
 		);
@@ -7506,8 +7506,8 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer xcolumnNumber = Table_getColumnIndexFromColumnLabel (me, xColumnName);
 		const integer ycolumnNumber = Table_getColumnIndexFromColumnLabel (me, yColumnName);
-		const integer ylNumber = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumnName);
-		const integer yuNumber = Table_findColumnIndexFromColumnLabel (me, upperErrorColumnName);
+		const integer ylNumber = Table_columnNameToNumber_0 (me, lowerErrorColumnName);
+		const integer yuNumber = Table_columnNameToNumber_0 (me, upperErrorColumnName);
 		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumnNumber, ycolumnNumber, xmin, xmax, ymin, ymax, 
 			ylNumber, yuNumber, barSize_mm, garnish, condition, interpreter
 		);

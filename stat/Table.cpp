@@ -75,7 +75,7 @@ conststring32 structTable :: v_getMatrixStr (const integer rowNumber, const inte
 }
 
 double structTable :: v_getColIndex (const conststring32 columnLabel) const {
-	return Table_findColumnIndexFromColumnLabel (this, columnLabel);
+	return Table_columnNameToNumber_0 (this, columnLabel);
 }
 
 static autoTableRow TableRow_create (integer numberOfColumns) {
@@ -277,7 +277,7 @@ void Table_setColumnLabel (Table me, integer columnNumber, conststring32 label /
 	}
 }
 
-integer Table_findColumnIndexFromColumnLabel (
+integer Table_columnNameToNumber_0 (
 	const constTable me,
 	const conststring32 label
 ) noexcept {
@@ -291,9 +291,9 @@ integer Table_getColumnIndexFromColumnLabel (
 	const constTable me,
 	const conststring32 columnLabel
 ) {
-	integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnLabel);
+	const integer columnNumber = Table_columnNameToNumber_0 (me, columnLabel);
 	if (columnNumber == 0)
-		Melder_throw (me, U": there is no column named \"", columnLabel, U"\".");
+		Melder_throw (me, U": there is no column named “", columnLabel, U"”.");
 	return columnNumber;
 }
 
@@ -720,15 +720,15 @@ void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVECVU const
 
 void Table_columns_checkExist (Table me, constSTRVEC columnNames) {
 	for (integer i = 1; i <= columnNames.size; i ++)
-		if (Table_findColumnIndexFromColumnLabel (me, columnNames [i]) == 0)
-			Melder_throw (me, U": column \"", columnNames [i], U"\" does not exist.");
+		if (Table_columnNameToNumber_0 (me, columnNames [i]) == 0)
+			Melder_throw (me, U": column “", columnNames [i], U"” does not exist.");
 }
 
 static void Table_columns_checkCrossSectionEmpty (Table me, constINTVECVU factors, constINTVECVU vars) {
 	for (integer ifactor = 1; ifactor <= factors.size; ifactor ++)
 		for (integer ivar = 1; ivar <= vars.size; ivar ++)
 			if (factors [ifactor] == vars [ivar])
-				Melder_throw (me, U": factor \"", my columnHeaders [factors [ifactor]]. label.get(), U"\" is also used as dependent variable.");
+				Melder_throw (me, U": factor “", my columnHeaders [factors [ifactor]]. label.get(), U"” is also used as dependent variable.");
 }
 
 static void Table_columns_checkCrossSectionEmpty (constSTRVEC factors, constSTRVEC vars) {
@@ -779,27 +779,27 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 			integer icol = 0;
 			for (integer i = 1; i <= factors.size; i ++) {
 				Table_setColumnLabel (thee.get(), ++ icol, factors [i]);
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, factors [i]);
+				columns [icol] = Table_columnNameToNumber_0 (me, factors [i]);
 			}
 			for (integer i = 1; i <= columnsToSum.size; i ++) {
 				Table_setColumnLabel (thee.get(), ++ icol, columnsToSum [i]);
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToSum [i]);
+				columns [icol] = Table_columnNameToNumber_0 (me, columnsToSum [i]);
 			}
 			for (integer i = 1; i <= columnsToAverage.size; i ++) {
 				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverage [i]);
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverage [i]);
+				columns [icol] = Table_columnNameToNumber_0 (me, columnsToAverage [i]);
 			}
 			for (integer i = 1; i <= columnsToMedianize.size; i ++) {
 				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianize [i]);
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianize [i]);
+				columns [icol] = Table_columnNameToNumber_0 (me, columnsToMedianize [i]);
 			}
 			for (integer i = 1; i <= columnsToAverageLogarithmically.size; i ++) {
 				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverageLogarithmically [i]);
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverageLogarithmically [i]);
+				columns [icol] = Table_columnNameToNumber_0 (me, columnsToAverageLogarithmically [i]);
 			}
 			for (integer i = 1; i <= columnsToMedianizeLogarithmically.size; i ++) {
 				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianizeLogarithmically [i]);
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianizeLogarithmically [i]);
+				columns [icol] = Table_columnNameToNumber_0 (me, columnsToMedianizeLogarithmically [i]);
 			}
 			Melder_assert (icol == thy numberOfColumns);
 		}
@@ -1132,7 +1132,7 @@ void Table_sortRows (Table me, constSTRVEC columnNames) {
 			Melder_throw (me, U": you specified an empty list of columns.");
 		autoINTVEC columns = raw_INTVEC (numberOfColumns);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-			columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnNames [icol]);
+			columns [icol] = Table_columnNameToNumber_0 (me, columnNames [icol]);
 			if (columns [icol] == 0)
 				Melder_throw (U"Column \"", columnNames [icol], U"\" does not exist.");
 		}

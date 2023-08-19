@@ -1091,7 +1091,7 @@ DO
 			U"No linear functions implemented. Choose another model.");
 		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, columnWithX_string);
 		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, columnWithY_string);
-		const integer scolumn = Table_findColumnIndexFromColumnLabel (me, columnEithSigma_string);
+		const integer scolumn = Table_columnNameToNumber_0 (me, columnEithSigma_string);
 		autoDataModeler result = Table_to_DataModeler (me, xmin, xmax, xcolumn, ycolumn, scolumn, maximumOrder + 1, type);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }

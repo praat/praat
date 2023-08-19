@@ -1428,7 +1428,7 @@ autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter i
 
 static autoTableOfReal Table_to_TableOfReal_where (Table me, conststring32 columnLabels, conststring32 factorColumn, conststring32 formula, Interpreter interpreter) {
 	try {
-		const integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
+		const integer factorColIndex = Table_columnNameToNumber_0 (me, factorColumn);
 		autoINTVEC columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
 		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		autoTableOfReal thee = TableOfReal_create (selectedRows.size, columnIndexes.size);
@@ -1473,7 +1473,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 
 		const SSCP sscp = thy at [1];
 		const integer numberOfColumns = sscp -> numberOfColumns;
-		const integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
+		const integer factorColIndex = Table_columnNameToNumber_0 (me, factorColumn);   // can be absent
 		autoINTVEC columnIndex = raw_INTVEC (numberOfColumns);
 		autoVEC vector = raw_VEC (numberOfColumns);
 		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);

@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2023 David Weenink, 2015-2022 Paul Boersma
+ * Copyright (C) 2008-2023 David Weenink, 2015-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -516,7 +516,7 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 }
 
 static void Table_addColumnIfNotExists_size (Table me, double size) {
-	const integer sizeColumn = Table_findColumnIndexFromColumnLabel (me, U"Size");
+	const integer sizeColumn = Table_columnNameToNumber_0 (me, U"Size");
 	if (sizeColumn == 0) {
 		Table_appendColumn (me, U"Size");
 		for (integer irow = 1; irow <= my rows.size; irow ++)
@@ -525,7 +525,7 @@ static void Table_addColumnIfNotExists_size (Table me, double size) {
 }
 
 static void Table_addColumnIfNotExists_colour (Table me, conststring32 colour) {
-	const integer colourColumn = Table_findColumnIndexFromColumnLabel (me, U"Colour");
+	const integer colourColumn = Table_columnNameToNumber_0 (me, U"Colour");
 	if (colourColumn == 0) {
 		Table_appendColumn (me, U"Colour");
 		for (integer irow = 1; irow <= my rows.size; irow ++)
@@ -577,7 +577,7 @@ static void VowelEditor_getMarks (VowelEditor me) {
 		autoSTRVEC ({}).get(),
 		autoSTRVEC ({}).get()
 	);
-	const integer col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
+	const integer col_ipa = Table_columnNameToNumber_0 (newMarks.get(), U"IPA");
 	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
 
 	Table_addColumnIfNotExists_size (newMarks.get(), my instancePref_marks_fontSize());
@@ -600,8 +600,8 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		const integer col_vowel = Table_getColumnIndexFromColumnLabel (my marks.get(), U"Vowel");
 		const integer col_f1 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F1");
 		const integer col_f2 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F2");
-		const integer col_size = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Size");
-		const integer col_colour = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Colour");
+		const integer col_size = Table_columnNameToNumber_0 (my marks.get(), U"Size");
+		const integer col_colour = Table_columnNameToNumber_0 (my marks.get(), U"Colour");
 		for (integer irow = 1; irow <= my marks -> rows.size; irow ++) {
 			const conststring32 label = Table_getStringValue_Assert (my marks.get(), irow, col_vowel);
 			const double f1 = Table_getNumericValue_Assert (my marks.get(), irow, col_f1);

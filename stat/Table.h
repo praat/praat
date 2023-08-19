@@ -44,7 +44,7 @@ void Table_removeColumn (Table me, integer column);
 void Table_insertRow (Table me, integer row);
 void Table_insertColumn (Table me, integer column, conststring32 label /* cattable */);
 void Table_setColumnLabel (Table me, integer column, conststring32 label /* cattable */);
-integer Table_findColumnIndexFromColumnLabel (constTable me, conststring32 label) noexcept;
+integer Table_columnNameToNumber_0 (constTable me, conststring32 label) noexcept;
 integer Table_getColumnIndexFromColumnLabel (constTable me, conststring32 columnLabel);
 autoINTVEC Table_columnNamesToNumbers (constTable me, constSTRVEC const& columnNames);
 autoINTVEC Table_getColumnIndicesFromColumnLabelString (constTable me, conststring32 string);
