@@ -1059,7 +1059,7 @@ static int KlattTable_checkLimits (KlattTable me) {
 	integer nv = 0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		for (integer j = 1; j <= KlattTable_NPAR; j ++) {
-			const integer val = Table_getNumericValue_Assert (me, irow, j);   // ppgb: truncatie? kan dat kloppen?
+			const integer val = Table_getNumericValue_a (me, irow, j);   // ppgb: truncatie? kan dat kloppen?
 			if (val < lower [j]) {
 				nviolations_lower [j] ++;
 				nv ++;
@@ -1109,7 +1109,7 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 
 		for (integer irow = 1 ; irow <= my rows.size; irow ++) {
 			for (integer col = 1; col <= KlattTable_NPAR; col ++)
-				par [col] = Table_getNumericValue_Assert (me, irow, col);   // ppgb: truncatie?
+				par [col] = Table_getNumericValue_a (me, irow, col);   // ppgb: truncatie?
 			integer jcol = 1;
 			frame -> F0hz10 = par [jcol ++];
 			frame -> AVdb = par [jcol ++];

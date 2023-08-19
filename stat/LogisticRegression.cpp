@@ -99,14 +99,14 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 		Regression_addParameter (thee.get(), my columnHeaders [factors [ivar]]. label.get(), minimum, maximum, 0.0);
 	}
 	for (integer icell = 1; icell <= numberOfCells; icell ++) {
-		y0 [icell] = Table_getNumericValue_Assert (me, icell, dependent1);
-		y1 [icell] = Table_getNumericValue_Assert (me, icell, dependent2);
+		y0 [icell] = Table_getNumericValue_a (me, icell, dependent1);
+		y1 [icell] = Table_getNumericValue_a (me, icell, dependent2);
 		numberOfY0 += y0 [icell];
 		numberOfY1 += y1 [icell];
 		numberOfData += y0 [icell] + y1 [icell];
 		x [icell] [1+0] = 1.0;   // intercept
 		for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
-			x [icell] [1+ivar] = Table_getNumericValue_Assert (me, icell, factors [ivar]);
+			x [icell] [1+ivar] = Table_getNumericValue_a (me, icell, factors [ivar]);
 			meanX [ivar] += x [icell] [1+ivar] * (y0 [icell] + y1 [icell]);
 		}
 	}
@@ -327,7 +327,7 @@ autoTable Table_LogisticRegression_addProbabilities (Table me, LogisticRegressio
 	for (icell = 1; icell <= numberOfCells; icell ++) {
 		double fittedLogit = parameters [0], fittedP, fittedQ, fittedLogP, fittedLogQ;
 		for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
-			fittedLogit += parameters [ivar] * Table_getNumericValue_Assert (me, icell, ivar);
+			fittedLogit += parameters [ivar] * Table_getNumericValue_a (me, icell, ivar);
 		}
 		if (fittedLogit > 15.0) {
 			fittedLogP = - exp (- fittedLogit);

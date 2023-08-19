@@ -123,10 +123,10 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 		}
 		for (integer icell = 1; icell <= numberOfCells; icell ++) {
 			for (integer ivar = 1; ivar < numberOfParameters; ivar ++) {
-				u [icell] [ivar] = Table_getNumericValue_Assert (me, icell, ivar);
+				u [icell] [ivar] = Table_getNumericValue_a (me, icell, ivar);
 			}
 			u [icell] [numberOfParameters] = 1.0;   // for the intercept
-			b [icell] = Table_getNumericValue_Assert (me, icell, my numberOfColumns);   // the dependent variable
+			b [icell] = Table_getNumericValue_a (me, icell, my numberOfColumns);   // the dependent variable
 		}
 		autoVEC x = newVECsolve (u.get(), b.get(), NUMeps * numberOfCells);
 		thy intercept = x [numberOfParameters];

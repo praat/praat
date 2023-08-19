@@ -603,17 +603,17 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		const integer col_size   = Table_columnNameToNumber_0 (my marks.get(), U"Size");
 		const integer col_colour = Table_columnNameToNumber_0 (my marks.get(), U"Colour");
 		for (integer irow = 1; irow <= my marks -> rows.size; irow ++) {
-			const conststring32 label = Table_getStringValue_Assert (my marks.get(), irow, col_vowel);
-			const double f1 = Table_getNumericValue_Assert (my marks.get(), irow, col_f1);
-			const double f2 = Table_getNumericValue_Assert (my marks.get(), irow, col_f2);
+			const conststring32 label = Table_getStringValue_a (my marks.get(), irow, col_vowel);
+			const double f1 = Table_getNumericValue_a (my marks.get(), irow, col_f1);
+			const double f2 = Table_getNumericValue_a (my marks.get(), irow, col_f2);
 			if (f1 >= my instancePref_window_f1min() && f1 <= my instancePref_window_f1max() && f2 >= my instancePref_window_f2min() && f2 <= my instancePref_window_f2max()) {
 				double x1, y1;
 				VowelEditor_getXYFromF1F2 (me, f1, f2, & x1, & y1);
 				double size = my instancePref_marks_fontSize();
 				if (col_size != 0)
-					size = Table_getNumericValue_Assert (my marks.get(), irow, col_size);
+					size = Table_getNumericValue_a (my marks.get(), irow, col_size);
 				if (col_colour != 0) {
-					conststring32 colourString = Table_getStringValue_Assert (my marks.get(), irow, col_colour);
+					conststring32 colourString = Table_getStringValue_a (my marks.get(), irow, col_colour);
 					MelderColour colour = MelderColour_fromColourNameOrNumberStringOrRGBString (colourString);
 					if (! colour. valid())
 						colour = MelderColour_fromColourName (my instancePref_marks_colour());

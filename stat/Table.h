@@ -54,8 +54,8 @@ integer Table_searchColumn (constTable me, integer column, conststring32 value) 
  * Procedure for reading strings or numbers from table cells:
  * use the following two calls exclusively.
  */
-conststring32 Table_getStringValue_Assert (Table me, integer row, integer column);
-double Table_getNumericValue_Assert (Table me, integer row, integer column);
+conststring32 Table_getStringValue_a (Table me, integer row, integer column);
+double Table_getNumericValue_a (Table me, integer row, integer column);
 
 /*
  * Procedure for writing strings or numbers into table cells:
@@ -65,7 +65,7 @@ void Table_setStringValue (Table me, integer rowNumber, integer columnNumber, co
 void Table_setNumericValue (Table me, integer row, integer column, double value);
 
 /* For optimizations only (e.g. conversion to Matrix or TableOfReal). */
-void Table_numericize_Assert (Table me, integer columnNumber);
+void Table_numericize_a (Table me, integer columnNumber);
 
 autoVEC Table_getAllNumbersInColumn (Table me, integer columnNumber);
 
@@ -98,7 +98,7 @@ bool Table_getExtrema (Table me, integer icol, double *minimum, double *maximum)
 void Table_formula (Table me, integer column, conststring32 formula, Interpreter interpreter);
 void Table_formula_columnRange (Table me, integer column1, integer column2, conststring32 expression, Interpreter interpreter);
 
-void Table_sortRows_Assert (Table me, constINTVECVU const& columns);
+void Table_sortRows_a (Table me, constINTVECVU const& columns);
 void Table_sortRows (Table me, constSTRVEC columns);
 void Table_randomizeRows (Table me) noexcept;
 void Table_reflectRows (Table me) noexcept;
