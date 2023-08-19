@@ -479,10 +479,10 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 	try {
 		const integer textLength = Melder_length (text);
 		const integer numberOfRows = my rows.size;
-		const integer timeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"time");
-		const integer typeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"type");
-		const integer tposColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"t-pos");
-		const integer   idColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"id");
+		const integer timeColumnIndex = Table_columnNameToNumber_e (me, U"time");
+		const integer typeColumnIndex = Table_columnNameToNumber_e (me, U"type");
+		const integer tposColumnIndex = Table_columnNameToNumber_e (me, U"t-pos");
+		const integer   idColumnIndex = Table_columnNameToNumber_e (me, U"id");
 		autoTextGrid thee = TextGrid_create (xmin, xmax, U"sentence clause word phoneme", U"");
 
 		TextGrid_setIntervalText (thee.get(), 1, 1, text);

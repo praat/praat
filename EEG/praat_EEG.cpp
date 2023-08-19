@@ -693,7 +693,7 @@ FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (ERPTier, Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
+		const integer columnNumber = Table_columnNameToNumber_e (you, extractAllEventsWhereColumn___);
 		autoERPTier result = ERPTier_extractEventsWhereColumn_number (me, you, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
@@ -705,7 +705,7 @@ FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where c
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (ERPTier, Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
+		const integer columnNumber = Table_columnNameToNumber_e (you, extractAllEventsWhereColumn___);
 		autoERPTier result = ERPTier_extractEventsWhereColumn_string (me, you, columnNumber, ___, ___theText);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }

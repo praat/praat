@@ -1,6 +1,6 @@
 /* LogisticRegression.cpp
  *
- * Copyright (C) 2005-2012,2015-2022 Paul Boersma
+ * Copyright (C) 2005-2012,2015-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,8 +256,8 @@ autoLogisticRegression Table_to_LogisticRegression (Table me, constSTRVEC const&
 {
 	try {
 		autoINTVEC factors_columnNumbers = Table_columnNamesToNumbers (me, factors_columnNames);
-		const integer dependent1_columnNumber = Table_getColumnIndexFromColumnLabel (me, dependent1_columnName);
-		const integer dependent2_columnNumber = Table_getColumnIndexFromColumnLabel (me, dependent2_columnName);
+		const integer dependent1_columnNumber = Table_columnNameToNumber_e (me, dependent1_columnName);
+		const integer dependent2_columnNumber = Table_columnNameToNumber_e (me, dependent2_columnName);
 		autoLogisticRegression thee = _Table_to_LogisticRegression (me,
 				factors_columnNumbers.get(), dependent1_columnNumber, dependent2_columnNumber);
 		return thee;
