@@ -276,6 +276,11 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`sleep` (%`duration`) – pause script for %`duration` seconds
 , @`softmax#` (%`vector#`)
 , @`softmaxPerRow##` (%`matrix##`)
+, @`solve#` (%`a##`, %`y#`) – find #x for which #A · #x = #y
+, @`solve##` (%`a##`, %`y##`) – find #X for which #A · #X = #Y
+, @`solveNonnegative#` (%`a##`, %`y#` [, %`x`], %`maximumNumberOfIterations`, %`tolerance`, %`infoLevel`)
+, @`solveSparse#` (%`a##`, %`y#` [, %`x`], %`maximumNumberOfNonzeros`, %`maximumNumberOfIterations`, %`tolerance`, %`infoLevel`)
+, @`solveWeaklyConstrained#` (%`a##`, %`y#`, %`alpha`, %`delta`)
 , @`sort#` (%`vector#`) – reshuffle in increasing order
 , @`sort$#` (%`stringVector$#`) – reshuffle in Unicode-alphabetical order
 , @`sort_numberAware$#` (%`stringVector$#`) – reshuffle in Unicode-alphabetical order, with special attention to numbers
@@ -3679,6 +3684,36 @@ Syntax and semantics
 #`softmaxPerRow##` (%`m##`)
 : convert the elements of each row of the matrix %`m`
 into their softmax (@`softmax#`) values (within that row).
+
+################################################################################
+"`solve#`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
+
+################################################################################
+"`solve##`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
+
+################################################################################
+"`solveNonnegative#`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
+
+################################################################################
+"`solveSparse#`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
+
+################################################################################
+"`solveWeaklyConstrained#`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
 
 ################################################################################
 "`sort#`"

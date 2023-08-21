@@ -6723,7 +6723,7 @@ static void do_solve_VEC () {
 	const Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
 		Melder_require (x->numericMatrix.nrow == y->numericVector.size,
-			U"In the function solve#, the number of rows of the matrix and the dimension of the vector should be equal, not ",
+			U"In the function “solve#”, the number of rows of the matrix and the dimension of the vector should be equal, not ",
 			x->numericMatrix.nrow, U" and ", y->numericVector.size
 		);
 		pushNumericVector (newVECsolve (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
@@ -6736,7 +6736,7 @@ static void do_solveWeaklyConstrained_VEC () {
 	const Stackel delta = pop, alpha = pop, y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR && alpha->which == Stackel_NUMBER && delta->which == Stackel_NUMBER) {
 		Melder_require (x->numericMatrix.nrow == y->numericVector.size,
-			U"In the function solveWeaklyConstrained#, the number of rows of the matrix and the dimension of the vector should be equal, not ",
+			U"In the function “solveWeaklyConstrained#”, the number of rows of the matrix and the dimension of the vector should be equal, not ",
 			x->numericMatrix.nrow, U" and ", y->numericVector.size
 		);
 		Melder_require (alpha->number >= 0.0,
@@ -6754,7 +6754,7 @@ static void do_solve_MAT () {
 	const Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
 		Melder_require (x->numericMatrix.nrow == y->numericMatrix.nrow,
-			U"In the function MATsolve##, the two matrices should have the same number of rows, not ",
+			U"In the function “solve##”, the two matrices should have the same number of rows, not ",
 			x->numericMatrix.nrow, U" and ", y->numericMatrix.nrow);
 		pushNumericMatrix (newMATsolve (x->numericMatrix, y->numericMatrix, NUMeps * x->numericMatrix.nrow * x->numericMatrix.ncol));
 	} else {
