@@ -145,7 +145,7 @@ Then type `make` to build `Praat.exe`
 Extract the *praatXXXX_xcodeproj.zip* file from the [latest release](https://github.com/praat/praat/releases)
 into the directory that contains `sys`, `fon`, `dwtools` and so on.
 Then open the project `praat.xcodeproj` in Xcode 13.4 and choose Build or Run for the target `praat_mac`.
-You can compile with the 12.0 (i.e. the newest and standard) SDK, which will work as far back as macOS 10.9,
+You can compile with the 13.3 (i.e. the newest and standard) SDK, which will work as far back as macOS 10.11,
 which is our deployment target.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
@@ -171,7 +171,7 @@ Automatically manage signing -> Upload -> ...wait... (“Package Approved”) ..
 Praat.app that was already there. If on the way you receive an error
 “App Store Connect Operation Error -- You must first sign the relevant contracts online”,
 or “Couldn’t communicate with a helper application“,
-you have to log in to `developer.apple.com` and do Review Agreement -> Agree;
+you will have to log in to `developer.apple.com` and do Review Agreement -> Agree;
 you may then also have to go (or log in) to App Store Connect, then Agreements, Tax, and Banking
 -> Paid Apps -> View or Terms (even if you have no paid apps).
 
@@ -248,7 +248,7 @@ takes 380 seconds for the x86_64 part and ARM64 part together (optimization leve
 
 ### 4.2. Windows development set-up
 
-Under Parallels Desktop 17.1 or later, install Windows 10 or Windows 11. In Windows, install Cygwin,
+Under Parallels Desktop 18 or later, install Windows 10 or Windows 11. In Windows, install Cygwin,
 and create a `praats` folder, as described above in 3.1.
 
 There are two options for your source tree: either it resides on the MacOS disk
@@ -287,7 +287,7 @@ This also defines `praat` for running Praat without first rebuilding it.
 The cycle from editing Praat on the Mac to running the new version on Windows therefore takes only two steps:
 
 1. edit and save the source code in Xcode on your Mac;
-2. type `praat-run` on your Windows 10 (under Parallels Desktop on your Mac).
+2. type `praat-run` on your Windows 10 or 11 (under Parallels Desktop on your Mac).
 
 If you also want to develop the 32-bit edition, you add to `.profile`:
 
@@ -301,10 +301,10 @@ If you also want to develop the 32-bit edition, you add to `.profile`:
 
 ### 4.3. Linux development set-up
 
-Under Parallels Desktop 17 or later, install Ubuntu 18.04 or 20.04 or 22.04, and create
+Under Parallels Desktop 18 or later, install Ubuntu 20.04 or 22.04, and create
 a folder `praats` in your home folder, as described above in 3.3.
 
-In Parallels Desktop, choose `Ubuntu 18.04 or 20.04 or 22.04` -> `Configure`,
+In Parallels Desktop, choose `Ubuntu 20.04 or 22.04` -> `Configure`,
 then `Options`, then `Sharing`, then `Share Mac`, and set `Share folders` to `Home folder only`
 (or use `Custom Folders` instead).
 Your MacOS home folder (i.e. `/Users/yourname`) is now visible on the Ubuntu desktop
@@ -375,8 +375,8 @@ or you transfer it to a Chromebook for the real test.
 
 ### 4.4. Chromebook development set-up
 
-Parallels Desktop 17 has no emulator for Chrome, so the choice is between
-building Praat on a Chromebook directly or building Praat on Ubuntu 18.04 or 20.04 or 22.04.
+Parallels Desktop 18 has no emulator for Chrome, so the choice is between
+building Praat on a Chromebook directly or building Praat on Ubuntu 20.04 or 22.04.
 On a 2019 HP Chromebook with Intel processor, building Praat takes
 a forbidding 27 minutes.
 
@@ -438,7 +438,7 @@ For edits in a `cpp` file (no changes in header files), this whole cycle can be 
 
 ### 4.5. Raspberry Pi development set-up
 
-One could perhaps create the Raspberry Pi edition by cross-compiling on Ubuntu 18.04 or 20.04 or 22.04.
+One could perhaps create the Raspberry Pi edition by cross-compiling on Ubuntu 20.04 or 22.04.
 If any reader of these lines has precise instructions, we would like to know about it
 (the main problem is how to install the GTK etc libraries in the Raspberry Pi toolchain,
 or how to get `dpkg` under Ubuntu-buster to actually find `armhf` libraries).

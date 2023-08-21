@@ -1094,7 +1094,7 @@ INTRO (U"One of the @@types of objects@ in Praat. "
 	"on the domain [%x__%min_, %x__%max_] × [%y__%min_, %y__%max_]. "
 	"The domain has been sampled in the %x and %y directions "
 	"with constant sampling intervals (%dx and %dy) along each direction. "
-	"The samples are thus %z [%i__%y_] [%i__%x_], %i__%x_ = 1 ... %n__%x_, %i__%y_ = 1 ... %n__%y_. "
+	"The samples are thus %z [%i_%y] [%i_%x], %i_%x = 1 ... %n_%x, %i_%y = 1 ... %n_%y. "
 	"The samples represent the function values %z (%x__1_ + (%ix - 1) %dx, %y__1_ + (%iy - 1) %dy).")
 ENTRY (U"Matrix commands")
 NORMAL (U"Creation:")
