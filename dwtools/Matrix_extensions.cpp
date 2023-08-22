@@ -332,7 +332,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 		u.all()  <<=  my z.part (1, nr, 1, nc);
 		b.all()  <<=  my z.column (my nx);
 
-		autoVEC x = newVECsolve (u.get(), b.get(), tolerance);
+		autoVEC x = solve_VEC (u.get(), b.get(), tolerance);
 		thy z.row (1)  <<=  x.all();
 		
 		return thee;

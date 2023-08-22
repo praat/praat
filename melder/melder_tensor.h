@@ -40,7 +40,7 @@
 
 	To return an autoVEC from a function, transfer ownership like this:
 		autoVEC foo () {
-			autoVEC x = newVECero (100);
+			autoVEC x = zero_VEC (100);
 			... // fill in the 100 values
 			return x;
 		}

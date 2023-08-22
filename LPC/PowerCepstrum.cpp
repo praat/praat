@@ -272,7 +272,7 @@ static void PowerCepstrum_smooth_inplaceRectangular_old (PowerCepstrum me, doubl
 
 static void PowerCepstrum_smooth_inplaceGaussian (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
 	try {
-		double numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
+		const double numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
 		if (numberOfQuefrencyBins > 1.0) {
 			/*
 				Applying  two Gaussians after another is associative: (G(s2)*(G(s1)*f) = (G(s2)*G(s1))*f.
@@ -286,7 +286,7 @@ static void PowerCepstrum_smooth_inplaceGaussian (PowerCepstrum me, double quefr
 				Due to imprecise arithmatic some values might turn out to be negative
 				(but very small). Just make them positive.
 			*/
-			VECabs_inplace (my z.row (1));
+			abs_VEC_inout (my z.row (1));
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");

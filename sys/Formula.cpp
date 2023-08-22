@@ -6726,7 +6726,7 @@ static void do_solve_VEC () {
 			U"In the function “solve#”, the number of rows of the matrix and the dimension of the vector should be equal, not ",
 			x->numericMatrix.nrow, U" and ", y->numericVector.size
 		);
-		pushNumericVector (newVECsolve (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
+		pushNumericVector (solve_VEC (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
 	} else {
 		Melder_throw (U"The function “solve#” requires a matrix and a vector, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
@@ -6743,7 +6743,7 @@ static void do_solveWeaklyConstrained_VEC () {
 			U"Argument 3, the weight coefficient of the penalty function should not be negative.");
 		Melder_require (delta->number >= 0.0,
 			U"Argument 4, the squared length of the solution vector should not be negative.");
-		pushNumericVector (newVECsolveWeaklyConstrainedLinearRegression (x->numericMatrix, y->numericVector, alpha->number, delta->number));
+		pushNumericVector (solveWeaklyConstrainedLinearRegression_VEC (x->numericMatrix, y->numericVector, alpha->number, delta->number));
 	} else {
 		Melder_throw (U"The function “solveWeaklyConstrained#” requires a matrix, a vector, and two numbers not ", x->whichText(), U", ",
 			y->whichText(), U", ", alpha->whichText(), U" and ", delta->whichText(), U".");
@@ -6756,7 +6756,7 @@ static void do_solve_MAT () {
 		Melder_require (x->numericMatrix.nrow == y->numericMatrix.nrow,
 			U"In the function “solve##”, the two matrices should have the same number of rows, not ",
 			x->numericMatrix.nrow, U" and ", y->numericMatrix.nrow);
-		pushNumericMatrix (newMATsolve (x->numericMatrix, y->numericMatrix, NUMeps * x->numericMatrix.nrow * x->numericMatrix.ncol));
+		pushNumericMatrix (solve_MAT (x->numericMatrix, y->numericMatrix, NUMeps * x->numericMatrix.nrow * x->numericMatrix.ncol));
 	} else {
 		Melder_throw (U"The function “solve##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
@@ -6780,7 +6780,7 @@ static void do_solveSparse_VEC () {
 			const integer maximumNumberOfIterations = Melder_iround (niter ->number);
 			const integer infoLevel = Melder_iround (info->number);
 			const double tolerance = tol->number;
-			pushNumericVector (newVECsolveSparse_IHT (d, yy, numberOfNonzeros,  maximumNumberOfIterations, tolerance, infoLevel));
+			pushNumericVector (solveSparse_IHT_VEC (d, yy, numberOfNonzeros,  maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
 			Melder_throw (U"The function “solveSparse#” requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
 			niter->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
@@ -6854,7 +6854,7 @@ static void do_solveNonnegative_VEC () {
 			const VEC yy = y->numericVector;
 			Melder_require (a.nrow == yy.size,
 				U"The number of rows in the matrix should equal the size of the vector.");
-			pushNumericVector (newVECsolveNonnegativeLeastSquaresRegression (a, yy, maximumNumberOfIterations, tolerance, infoLevel));
+			pushNumericVector (solveNonnegativeLeastSquaresRegression_VEC (a, yy, maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
 			Melder_throw (U"The function “solveNonnegative#” requires a matrix, a vector, and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", itermax->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}
