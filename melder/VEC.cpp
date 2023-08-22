@@ -221,6 +221,9 @@ void power_VEC_out (VECVU const& target, constVECVU const& vec, double power) {
 			target [i] = pow (vec [i], power);
 	}
 }
+void power_VEC_inout (VECVU const& vec, double power) {
+	power_VEC_out (vec, vec, power);
+}
 
 autoVEC splitByWhitespace_VEC (conststring32 string) {
 	if (! string)

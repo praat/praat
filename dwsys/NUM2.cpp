@@ -415,7 +415,7 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *out_x1,
 	return result;
 }
 
-autoVEC newVECsolve (constMATVU const& a, constVECVU const& b, double tolerance) {
+autoVEC solve_VEC (constMATVU const& a, constVECVU const& b, double tolerance) {
 	Melder_assert (a.nrow == b.size);
 	autoSVD me = SVD_createFromGeneralMatrix (a);
 	SVD_zeroSmallSingularValues (me.get(), tolerance);
@@ -423,7 +423,7 @@ autoVEC newVECsolve (constMATVU const& a, constVECVU const& b, double tolerance)
 	return x;
 }
 
-autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance) {
+autoMAT solve_MAT (constMATVU const& a, constMATVU const& b, double tolerance) {
 	Melder_assert (a.nrow == b.nrow);
 	const double tol = ( tolerance > 0.0 ? tolerance : NUMfpp -> eps * a.nrow );
 	
@@ -670,7 +670,7 @@ static double NUMbolzanoSearch (double (*func) (double x, void *closure), double
 	return 0.5 * (xmax + xmin);
 }
 
-autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVEC const& y, double alpha, double delta) {
+autoVEC solveWeaklyConstrainedLinearRegression_VEC (constMAT const& a, constVEC const& y, double alpha, double delta) {
 	Melder_assert (a.nrow == y.size);
 	Melder_require (a.nrow >= a.ncol,
 		U"The number of rows should not be less than the number of columns.");
@@ -2648,7 +2648,7 @@ autoVEC newVECbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, c
 		}
 		g [i] [i] = 0.0;
 	}
-	autoVEC w = newVECsolve (g.get(), z, 0.0);
+	autoVEC w = solve_VEC (g.get(), z, 0.0);
 	return w;
 }
 
@@ -2895,7 +2895,7 @@ void MATmul3_XYsXt (MATVU const& target, constMATVU const& x, constMATVU const& 
 */
 static void VECupdateDataAndSupport_inplace (VECVU const& v, BOOLVECVU const& support, integer numberOfNonZeros) {
 	Melder_assert (v.size == support.size);
-	autoVEC abs = newVECabs (v);
+	autoVEC abs = abs_VEC (v);
 	autoINTVEC index = to_INTVEC (v.size);
 	NUMsortTogether <double, integer> (abs.get(), index.get()); // sort is always increasing
 	for (integer i = 1; i <= v.size - numberOfNonZeros; i ++) {
@@ -2924,7 +2924,7 @@ static double update (VEC const& x_new, VEC const& y_new, BOOLVECVU const& suppo
 	return xdifsq / ydifsq;
 }
 
-autoVEC newVECsolveSparse_IHT (constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel) {
+autoVEC solveSparse_IHT_VEC (constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel) {
 	try {
 		Melder_assert (dictionary.ncol > dictionary.nrow); // must be underdetermined system
 		Melder_assert (dictionary.nrow == y.size); // y = D.x + e

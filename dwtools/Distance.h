@@ -29,7 +29,7 @@ autoDistance Distance_create (integer numberOfPoints);
 
 autoDistance Configuration_to_Distance (Configuration me);
 
-void Distance_drawDendogram (Distance me, Graphics g, int method);
+void Distance_drawDendrogram (Distance me, Graphics g, int method);
 
 Collection_define (DistanceList, OrderedOf, Distance) {
 	ProximityList asProximityList () {
