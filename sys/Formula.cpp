@@ -153,7 +153,7 @@ enum { NO_SYMBOL_,
 		IMAX_, IMAX_E_, IMAX_IGNORE_UNDEFINED_,
 		NORM_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
-		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_,
+		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_, SELECTED_STRVEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
 		BEGIN_PAUSE_,
 		REAL_, POSITIVE_, INTEGER_, NATURAL_,
@@ -299,7 +299,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"imax", U"imax_e", U"imax_removeUndefined",
 	U"norm",
 	U"left$", U"right$", U"mid$",
-	U"selected", U"selected$", U"numberOfSelected", U"selected#",
+	U"selected", U"selected$", U"numberOfSelected", U"selected#", U"selected$#",
 	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
 	U"beginPause", U"real", U"positive", U"integer", U"natural",
 	U"word", U"sentence", U"text", U"boolean",
@@ -5917,12 +5917,30 @@ static void do_selected_VEC () {
 			const ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			result = praat_idsOfAllSelected (klas);
 		} else {
-			Melder_throw (U"The function “numberOfSelected” requires a string (an object type name), not ", s->whichText(), U".");
+			Melder_throw (U"The function “selected#” requires a string (an object type name), not ", s->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function “numberOfSelected” requires 0 or 1 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “selected#” requires 0 or 1 arguments, not ", n->number, U".");
 	}
 	pushNumericVector (result.move());
+}
+static void do_selected_STRVEC () {
+	const Stackel n = pop;
+	autoSTRVEC result;
+	if (n->number == 0) {
+		result = praat_namesOfAllSelected (nullptr);
+	} else if (n->number == 1) {
+		const Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			const ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
+			result = praat_namesOfAllSelected (klas);
+		} else {
+			Melder_throw (U"The function “selected$#” requires a string (an object type name), not ", s->whichText(), U".");
+		}
+	} else {
+		Melder_throw (U"The function “selected$#” requires 0 or 1 arguments, not ", n->number, U".");
+	}
+	pushStringVector (result.move());
 }
 static void do_selectObject () {
 	const Stackel n = pop;
@@ -8298,6 +8316,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case SELECTED_STR_: { do_selected_STR ();
 } break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();
 } break; case SELECTED_VEC_: { do_selected_VEC ();
+} break; case SELECTED_STRVEC_: { do_selected_STRVEC ();
 } break; case SELECT_OBJECT_: { do_selectObject ();
 } break; case PLUS_OBJECT_  : { do_plusObject   ();
 } break; case MINUS_OBJECT_ : { do_minusObject  ();

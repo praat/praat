@@ -257,6 +257,10 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`round##` (%`matrix##`) – nearest integer of each cell of %`matrix##`
 , @`rowSums#` (%`matrix##`)
 , @`runScript` (%`filePath$`, `...`) – run a script with the given arguments
+, @`selected#` ( ) – the IDs of all selected objects
+, @`selected#` (%`type`) – the IDs of all selected objects of type %`type`
+, @`selected$#` ( ) – the names of all selected objects
+, @`selected$#` (%`type`) – the names of all selected objects of type %`type`
 , @`selectObject` (`...`) – select objects in the list by ID and/or name
 , @`semitonesToHertz` (%`x`) – from logarithmic scale %re 100 Hz to acoustic frequency
 , @`sigmoid` (%`x`) – 1 / (1 + %e^^-%`x`^)
@@ -3421,6 +3425,41 @@ with optional arguments given in “`...`”.
 
 If there are any arguments, they will be consumed by the `form` in the script.
 For details and examples, see @@Scripting 6.1. Arguments to the script@.
+
+################################################################################
+"`selected#`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`selected#` ( )
+: return a list of the IDs of all currently selected objects.
+
+#`selected#` (%`type`)
+: return a list of the IDs of all currently selected objects of type %`type`.
+
+################################################################################
+"`selected$#`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`selected$#` ( )
+: return a list of the names of all currently selected objects.
+
+#`selected$#` (%`type`)
+: return a list of the names of all currently selected objects of type %`type`.
+
+Pitfall
+=======
+You cannot normally use this function to cycle through all selected objects,
+because if two objects happen to have the same name,
+you will select the same object twice. To cycle through all selected objects,
+use #@`selected#` instead, because the IDs are guaranteed to be unique.
 
 ################################################################################
 "`selectObject`"

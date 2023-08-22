@@ -154,6 +154,14 @@ autoVEC praat_idsOfAllSelected (ClassInfo klas) {
 	return result;
 }
 
+autoSTRVEC praat_namesOfAllSelected (ClassInfo klas) {
+	autoSTRVEC result (praat_numberOfSelected (klas));
+	integer selectedObjectNumber = 0, IOBJECT;
+	WHERE (SELECTED && (! klas || CLASS == klas))
+		result [++ selectedObjectNumber] = Melder_dup (klas ? NAME : FULL_NAME);
+	return result;
+}
+
 char32 * praat_nameOfSelected (ClassInfo klas, integer inplace) {
 	integer place = inplace, IOBJECT;
 	if (place == 0)
