@@ -17,7 +17,6 @@
  */
 
 #include "ManPagesM.h"
-#include "praat_version.h"
 
 void manual_functions_init (ManPages me);
 void manual_functions_init (ManPages me) {

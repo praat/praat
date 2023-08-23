@@ -17,7 +17,6 @@
  */
 
 #include "ManPagesM.h"
-#include "praat_version.h"
 
 void manual_whatsnew_init (ManPages me);
 void manual_whatsnew_init (ManPages me) {
@@ -31,8 +30,7 @@ R"~~~(
 Latest changes in Praat.
 
 ##6.3.15# (23 August 2023)
-• SpeechSynthesizer: improvements in ##Get phionemes from text...#
-• FormantPath: correcting reading and writing.
+• SpeechSynthesizer: improvements in ##Get phonemes from text...#
 • Scripting: @`part#`, @`part##`, @`selected$#`.
 
 ##6.3.14# (4 August 2023)
