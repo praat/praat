@@ -30,6 +30,11 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.3.15# (23 August 2023)
+• SpeechSynthesizer: improvements in ##Get phionemes from text...#
+• FormantPath: correcting reading and writing.
+• Scripting: @`part#`, @`part##`, @`selected$#`.
+
 ##6.3.14# (4 August 2023)
 • Repaired a bug that occurred when saving a @FormantPath to disk.
 

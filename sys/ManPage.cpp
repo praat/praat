@@ -48,6 +48,10 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 	theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
 	theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 	theCurrentPraatObjects = praatObjects;
+	Melder_assert (praatObjects -> n == 0);
+	Melder_assert (praatObjects -> totalSelection == 0);
+	Melder_assert (praatObjects -> totalBeingCreated == 0);
+	praatObjects -> uniqueId = 0;
 	theCurrentPraatPicture = praatPicture;
 
 	void praat_actions_show ();   // TODO: integrate this better
