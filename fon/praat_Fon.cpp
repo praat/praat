@@ -3776,6 +3776,7 @@ praat_addAction2 (classIntensity, 1, classPitch, 1, U"Query", nullptr, 0, nullpt
 
 	INCLUDE_MANPAGES (manual_Fon_init)
 	INCLUDE_MANPAGES (manual_whatsnew_init)
+	INCLUDE_MANPAGES (manual_licenses_init)
 	INCLUDE_MANPAGES (manual_tutorials_init)
 	INCLUDE_MANPAGES (manual_glossary_init)
 	INCLUDE_MANPAGES (manual_references_init)

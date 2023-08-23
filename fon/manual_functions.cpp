@@ -3440,6 +3440,52 @@ Syntax and semantics
 #`selected#` (%`type`)
 : return a list of the IDs of all currently selected objects of type %`type`.
 
+Example
+=======
+Assume that at the start of the following script, the list of objects is empty:
+{
+	sound = Create Sound from formula: "sine377", 1, 0, 0.1, 44100,
+	... ~ sin (2*pi*377*x)
+	pitch = To Pitch: 0.01, 75, 600
+	plusObject: sound
+	pulses = To PointProcess (cc)
+	plusObject: sound
+}
+At this point, the list of objects will contain three objects,
+which will look as follows (ID, type name, given name),
+where the two that stand selected are given in bold:
+{;
+	\#{1. Sound sine377}
+	2. Pitch sine377
+	\#{3. PointProcess sine377_sine377}
+}
+The IDs of the two selected objects are 1 and 3, respectively,
+and this is what `selected#` ( ) will show:
+{
+	writeInfoLine: \#{selected#} ()
+}
+We can also just list the selected Sound objects:
+{
+	writeInfoLine: \#{selected#} ("Sound")
+}
+or the selected Pitch objects (there should be none):
+{
+	writeInfoLine: \#{selected#} ("Pitch")
+}
+or the selected PointProcess objects:
+{
+	writeInfoLine: \#{selected#} ("PointProcess")
+}
+Test
+====
+An automated test:
+{
+	\`{assert} \#{selected#} () = { 1, 3 }
+	\`{assert} \#{selected#} ("Sound") = { 1 }
+	\`{assert} \#{selected#} ("Pitch") = zero# (0)
+	\`{assert} \#{selected#} ("PointProcess") = { 3 }
+}
+
 ################################################################################
 "`selected$#`"
 © Paul Boersma 2023
@@ -3459,7 +3505,62 @@ Pitfall
 You cannot normally use this function to cycle through all selected objects,
 because if two objects happen to have the same name,
 you will select the same object twice. To cycle through all selected objects,
-use #@`selected#` instead, because the IDs are guaranteed to be unique.
+use @`selected#` instead, because the IDs are guaranteed to be unique.
+
+Example
+=======
+Assume that at the start of the following script, the list of objects is empty:
+{
+	sound = Create Sound from formula: "sine377", 1, 0, 0.1, 44100,
+	... ~ sin (2*pi*377*x)
+	pitch = To Pitch: 0.01, 75, 600
+	plusObject: sound
+	pulses = To PointProcess (cc)
+	plusObject: sound
+}
+At this point, the list of objects will contain three objects,
+which will look as follows (ID, type name, given name),
+where the two that stand selected are given in bold:
+{;
+	\#{1. Sound sine377}
+	2. Pitch sine377
+	\#{3. PointProcess sine377_sine377}
+}
+The full names of the two selected objects are `Sound sine377`
+and `PointProcess sine377_sine377`, respectively,
+and this is what `selected$#` ( ) will show:
+{
+	writeInfoLine: \#{selected$#} ()
+}
+or
+{
+	writeInfoLine: vertical$: \#{selected$#} ()
+}
+We can also just list the given names of the selected Sound objects:
+{
+	writeInfoLine: \#{selected$#} ("Sound")
+}
+or of the selected Pitch objects (there should be none):
+{
+	writeInfoLine: \#{selected$#} ("Pitch")
+}
+or of the selected PointProcess objects:
+{
+	writeInfoLine: \#{selected$#} ("PointProcess")
+}
+Note that here we see only the given names (not the full names),
+because the type names are already known.
+
+Test
+====
+An automated test:
+{
+	\`{assert} \#{selected$#} () = { “Sound sine377”,
+	... “PointProcess sine377_sine377” }
+	\`{assert} \#{selected$#} ("Sound") = { “sine377” }
+	\`{assert} \#{selected$#} ("Pitch") = empty$# (0)
+	\`{assert} \#{selected$#} ("PointProcess") = { “sine377_sine377” }
+}
 
 ################################################################################
 "`selectObject`"

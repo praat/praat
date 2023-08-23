@@ -44,9 +44,15 @@ appendInfoLine: "Texture: <<", texture$, ">>"
 # if called from test/script/form1.praat:
 assert numbers1# = { 16, -17.6, 5 }
 assert numbers2# = { 6, 7, 8 }
-assert endsWith (input_file$, "test/script/2345")   ; should not be possible
-assert endsWith (output_file$, "test/script/../abc.txt")
-assert endsWith (folder$, "test/script/subfolder/wav2vec")
+if windows
+	assert endsWith (input_file$, "test\script\2345")   ; should not be possible
+	assert endsWith (output_file$, "test\script\..\abc.txt")
+	assert endsWith (folder$, "test\script\subfolder\wav2vec")
+else
+	assert endsWith (input_file$, "test/script/2345")   ; should not be possible
+	assert endsWith (output_file$, "test/script/../abc.txt")
+	assert endsWith (folder$, "test/script/subfolder/wav2vec")
+endif
 assert texture$ = "With holes"
 assert any_word$ = "there you are"
 
