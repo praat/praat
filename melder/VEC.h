@@ -204,6 +204,21 @@ inline void add_VEC_out (VECVU const& target, constVECVU const& x, constVECVU co
 		target [i] = x [i] + y [i];
 }
 
+inline void abs_VEC_out (VECVU const& target, constVECVU const& v) {
+	Melder_assert (target.size == v.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = fabs (v [i]);
+}
+inline void abs_VEC_inout (VECVU const& vec) noexcept {
+	for (integer i = 1; i <= vec.size; i ++)
+		vec [i] = fabs (vec [i]);
+}
+inline autoVEC abs_VEC (constVECVU const& vec) {
+	autoVEC result = raw_VEC (vec.size);
+	abs_VEC_out (result.all(), vec);
+	return result;
+}
+
 inline void centre_VEC_inout (VECVU const& x, double *out_mean = nullptr) noexcept {
 	const double xmean = NUMmean (x);
 	for (integer i = 1; i <= x.size; i ++)
@@ -235,6 +250,7 @@ extern autoVEC mul_VEC (constVECVU const& vec, constMATVU const& mat);
 extern autoVEC mul_VEC (constMATVU const& mat, constVECVU const& vec);
 
 extern void power_VEC_out (VECVU const& target, constVECVU const& vec, double power);
+extern void power_VEC_inout (VECVU const& vec, double power);
 inline autoVEC power_VEC (constVECVU const& vec, double power) {
 	autoVEC result = raw_VEC (vec.size);
 	power_VEC_out (result.all(), vec, power);

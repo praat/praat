@@ -314,6 +314,7 @@ In an OTGrammar object, you specify all the constraints, all the possible inputs
 This is chapter 2 of the @@OT learning@ tutorial.
 
 We can ask the grammar to produce an output form for any input form that is in its list of tableaus.
+
 2.1. @@OT learning 2.1. ||Viewing a grammar@ (N\s{O}C\s{ODA} example, @OTGrammarEditor)
 2.2. @@OT learning 2.2. ||Inside the grammar@ (saving, inspecting)
 2.3. @@OT learning 2.3. ||Defining your own grammar@

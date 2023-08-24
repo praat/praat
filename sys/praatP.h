@@ -98,6 +98,7 @@ integer praat_numberOfSelected (ClassInfo klas);
 integer praat_idOfSelected (ClassInfo klas, integer inplace);
 autoVEC praat_idsOfAllSelected (ClassInfo klas);
 char32 * praat_nameOfSelected (ClassInfo klas, integer inplace);
+autoSTRVEC praat_namesOfAllSelected (ClassInfo klas);
 
 /* Used by praat.cpp; defined in praat_picture.cpp.
 */

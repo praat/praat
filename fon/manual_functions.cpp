@@ -17,7 +17,6 @@
  */
 
 #include "ManPagesM.h"
-#include "praat_version.h"
 
 void manual_functions_init (ManPages me);
 void manual_functions_init (ManPages me) {
@@ -257,6 +256,10 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`round##` (%`matrix##`) – nearest integer of each cell of %`matrix##`
 , @`rowSums#` (%`matrix##`)
 , @`runScript` (%`filePath$`, `...`) – run a script with the given arguments
+, @`selected#` ( ) – the IDs of all selected objects
+, @`selected#` (%`type`) – the IDs of all selected objects of type %`type`
+, @`selected$#` ( ) – the names of all selected objects
+, @`selected$#` (%`type`) – the names of all selected objects of type %`type`
 , @`selectObject` (`...`) – select objects in the list by ID and/or name
 , @`semitonesToHertz` (%`x`) – from logarithmic scale %re 100 Hz to acoustic frequency
 , @`sigmoid` (%`x`) – 1 / (1 + %e^^-%`x`^)
@@ -276,6 +279,11 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`sleep` (%`duration`) – pause script for %`duration` seconds
 , @`softmax#` (%`vector#`)
 , @`softmaxPerRow##` (%`matrix##`)
+, @`solve#` (%`a##`, %`y#`) – find #x for which #A · #x = #y
+, @`solve##` (%`a##`, %`y##`) – find #X for which #A · #X = #Y
+, @`solveNonnegative#` (%`a##`, %`y#` [, %`x`], %`maximumNumberOfIterations`, %`tolerance`, %`infoLevel`)
+, @`solveSparse#` (%`a##`, %`y#` [, %`x`], %`maximumNumberOfNonzeros`, %`maximumNumberOfIterations`, %`tolerance`, %`infoLevel`)
+, @`solveWeaklyConstrained#` (%`a##`, %`y#`, %`alpha`, %`delta`)
 , @`sort#` (%`vector#`) – reshuffle in increasing order
 , @`sort$#` (%`stringVector$#`) – reshuffle in Unicode-alphabetical order
 , @`sort_numberAware$#` (%`stringVector$#`) – reshuffle in Unicode-alphabetical order, with special attention to numbers
@@ -3418,6 +3426,142 @@ If there are any arguments, they will be consumed by the `form` in the script.
 For details and examples, see @@Scripting 6.1. Arguments to the script@.
 
 ################################################################################
+"`selected#`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`selected#` ( )
+: return a list of the IDs of all currently selected objects.
+
+#`selected#` (%`type`)
+: return a list of the IDs of all currently selected objects of type %`type`.
+
+Example
+=======
+Assume that at the start of the following script, the list of objects is empty:
+{
+	sound = Create Sound from formula: "sine377", 1, 0, 0.1, 44100,
+	... ~ sin (2*pi*377*x)
+	pitch = To Pitch: 0.01, 75, 600
+	plusObject: sound
+	pulses = To PointProcess (cc)
+	plusObject: sound
+}
+At this point, the list of objects will contain three objects,
+which will look as follows (ID, type name, given name),
+where the two that stand selected are given in bold:
+{;
+	\#{1. Sound sine377}
+	2. Pitch sine377
+	\#{3. PointProcess sine377_sine377}
+}
+The IDs of the two selected objects are 1 and 3, respectively,
+and this is what `selected#` ( ) will show:
+{
+	writeInfoLine: \#{selected#} ()
+}
+We can also just list the selected Sound objects:
+{
+	writeInfoLine: \#{selected#} ("Sound")
+}
+or the selected Pitch objects (there should be none):
+{
+	writeInfoLine: \#{selected#} ("Pitch")
+}
+or the selected PointProcess objects:
+{
+	writeInfoLine: \#{selected#} ("PointProcess")
+}
+Test
+====
+An automated test:
+{
+	\`{assert} \#{selected#} () = { 1, 3 }
+	\`{assert} \#{selected#} ("Sound") = { 1 }
+	\`{assert} \#{selected#} ("Pitch") = zero# (0)
+	\`{assert} \#{selected#} ("PointProcess") = { 3 }
+}
+
+################################################################################
+"`selected$#`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`selected$#` ( )
+: return a list of the names of all currently selected objects.
+
+#`selected$#` (%`type`)
+: return a list of the names of all currently selected objects of type %`type`.
+
+Pitfall
+=======
+You cannot normally use this function to cycle through all selected objects,
+because if two objects happen to have the same name,
+you will select the same object twice. To cycle through all selected objects,
+use @`selected#` instead, because the IDs are guaranteed to be unique.
+
+Example
+=======
+Assume that at the start of the following script, the list of objects is empty:
+{
+	sound = Create Sound from formula: "sine377", 1, 0, 0.1, 44100,
+	... ~ sin (2*pi*377*x)
+	pitch = To Pitch: 0.01, 75, 600
+	plusObject: sound
+	pulses = To PointProcess (cc)
+	plusObject: sound
+}
+At this point, the list of objects will contain three objects,
+which will look as follows (ID, type name, given name),
+where the two that stand selected are given in bold:
+{;
+	\#{1. Sound sine377}
+	2. Pitch sine377
+	\#{3. PointProcess sine377_sine377}
+}
+The full names of the two selected objects are `Sound sine377`
+and `PointProcess sine377_sine377`, respectively,
+and this is what `selected$#` ( ) will show:
+{
+	writeInfoLine: \#{selected$#} ()
+}
+or
+{
+	writeInfoLine: vertical$: \#{selected$#} ()
+}
+We can also just list the given names of the selected Sound objects:
+{
+	writeInfoLine: \#{selected$#} ("Sound")
+}
+or of the selected Pitch objects (there should be none):
+{
+	writeInfoLine: \#{selected$#} ("Pitch")
+}
+or of the selected PointProcess objects:
+{
+	writeInfoLine: \#{selected$#} ("PointProcess")
+}
+Note that here we see only the given names (not the full names),
+because the type names are already known.
+
+Test
+====
+An automated test:
+{
+	\`{assert} \#{selected$#} () = { “Sound sine377”,
+	... “PointProcess sine377_sine377” }
+	\`{assert} \#{selected$#} ("Sound") = { “sine377” }
+	\`{assert} \#{selected$#} ("Pitch") = empty$# (0)
+	\`{assert} \#{selected$#} ("PointProcess") = { “sine377_sine377” }
+}
+
+################################################################################
 "`selectObject`"
 © Paul Boersma 2023
 
@@ -3679,6 +3823,36 @@ Syntax and semantics
 #`softmaxPerRow##` (%`m##`)
 : convert the elements of each row of the matrix %`m`
 into their softmax (@`softmax#`) values (within that row).
+
+################################################################################
+"`solve#`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
+
+################################################################################
+"`solve##`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
+
+################################################################################
+"`solveNonnegative#`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
+
+################################################################################
+"`solveSparse#`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
+
+################################################################################
+"`solveWeaklyConstrained#`"
+© Paul Boersma 2023
+
+See @@solving matrix equations@.
 
 ################################################################################
 "`sort#`"

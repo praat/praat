@@ -153,7 +153,7 @@ enum { NO_SYMBOL_,
 		IMAX_, IMAX_E_, IMAX_IGNORE_UNDEFINED_,
 		NORM_,
 		LEFT_STR_, RIGHT_STR_, MID_STR_,
-		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_,
+		SELECTED_, SELECTED_STR_, NUMBER_OF_SELECTED_, SELECTED_VEC_, SELECTED_STRVEC_,
 		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
 		BEGIN_PAUSE_,
 		REAL_, POSITIVE_, INTEGER_, NATURAL_,
@@ -299,7 +299,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"imax", U"imax_e", U"imax_removeUndefined",
 	U"norm",
 	U"left$", U"right$", U"mid$",
-	U"selected", U"selected$", U"numberOfSelected", U"selected#",
+	U"selected", U"selected$", U"numberOfSelected", U"selected#", U"selected$#",
 	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
 	U"beginPause", U"real", U"positive", U"integer", U"natural",
 	U"word", U"sentence", U"text", U"boolean",
@@ -5917,12 +5917,30 @@ static void do_selected_VEC () {
 			const ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			result = praat_idsOfAllSelected (klas);
 		} else {
-			Melder_throw (U"The function “numberOfSelected” requires a string (an object type name), not ", s->whichText(), U".");
+			Melder_throw (U"The function “selected#” requires a string (an object type name), not ", s->whichText(), U".");
 		}
 	} else {
-		Melder_throw (U"The function “numberOfSelected” requires 0 or 1 arguments, not ", n->number, U".");
+		Melder_throw (U"The function “selected#” requires 0 or 1 arguments, not ", n->number, U".");
 	}
 	pushNumericVector (result.move());
+}
+static void do_selected_STRVEC () {
+	const Stackel n = pop;
+	autoSTRVEC result;
+	if (n->number == 0) {
+		result = praat_namesOfAllSelected (nullptr);
+	} else if (n->number == 1) {
+		const Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			const ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
+			result = praat_namesOfAllSelected (klas);
+		} else {
+			Melder_throw (U"The function “selected$#” requires a string (an object type name), not ", s->whichText(), U".");
+		}
+	} else {
+		Melder_throw (U"The function “selected$#” requires 0 or 1 arguments, not ", n->number, U".");
+	}
+	pushStringVector (result.move());
 }
 static void do_selectObject () {
 	const Stackel n = pop;
@@ -6723,10 +6741,10 @@ static void do_solve_VEC () {
 	const Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
 		Melder_require (x->numericMatrix.nrow == y->numericVector.size,
-			U"In the function solve#, the number of rows of the matrix and the dimension of the vector should be equal, not ",
+			U"In the function “solve#”, the number of rows of the matrix and the dimension of the vector should be equal, not ",
 			x->numericMatrix.nrow, U" and ", y->numericVector.size
 		);
-		pushNumericVector (newVECsolve (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
+		pushNumericVector (solve_VEC (x->numericMatrix, y->numericVector, NUMeps * y->numericVector.size));
 	} else {
 		Melder_throw (U"The function “solve#” requires a matrix and a vector, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
@@ -6736,14 +6754,14 @@ static void do_solveWeaklyConstrained_VEC () {
 	const Stackel delta = pop, alpha = pop, y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR && alpha->which == Stackel_NUMBER && delta->which == Stackel_NUMBER) {
 		Melder_require (x->numericMatrix.nrow == y->numericVector.size,
-			U"In the function solveWeaklyConstrained#, the number of rows of the matrix and the dimension of the vector should be equal, not ",
+			U"In the function “solveWeaklyConstrained#”, the number of rows of the matrix and the dimension of the vector should be equal, not ",
 			x->numericMatrix.nrow, U" and ", y->numericVector.size
 		);
 		Melder_require (alpha->number >= 0.0,
 			U"Argument 3, the weight coefficient of the penalty function should not be negative.");
 		Melder_require (delta->number >= 0.0,
 			U"Argument 4, the squared length of the solution vector should not be negative.");
-		pushNumericVector (newVECsolveWeaklyConstrainedLinearRegression (x->numericMatrix, y->numericVector, alpha->number, delta->number));
+		pushNumericVector (solveWeaklyConstrainedLinearRegression_VEC (x->numericMatrix, y->numericVector, alpha->number, delta->number));
 	} else {
 		Melder_throw (U"The function “solveWeaklyConstrained#” requires a matrix, a vector, and two numbers not ", x->whichText(), U", ",
 			y->whichText(), U", ", alpha->whichText(), U" and ", delta->whichText(), U".");
@@ -6754,9 +6772,9 @@ static void do_solve_MAT () {
 	const Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
 		Melder_require (x->numericMatrix.nrow == y->numericMatrix.nrow,
-			U"In the function MATsolve##, the two matrices should have the same number of rows, not ",
+			U"In the function “solve##”, the two matrices should have the same number of rows, not ",
 			x->numericMatrix.nrow, U" and ", y->numericMatrix.nrow);
-		pushNumericMatrix (newMATsolve (x->numericMatrix, y->numericMatrix, NUMeps * x->numericMatrix.nrow * x->numericMatrix.ncol));
+		pushNumericMatrix (solve_MAT (x->numericMatrix, y->numericMatrix, NUMeps * x->numericMatrix.nrow * x->numericMatrix.ncol));
 	} else {
 		Melder_throw (U"The function “solve##” requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
@@ -6780,7 +6798,7 @@ static void do_solveSparse_VEC () {
 			const integer maximumNumberOfIterations = Melder_iround (niter ->number);
 			const integer infoLevel = Melder_iround (info->number);
 			const double tolerance = tol->number;
-			pushNumericVector (newVECsolveSparse_IHT (d, yy, numberOfNonzeros,  maximumNumberOfIterations, tolerance, infoLevel));
+			pushNumericVector (solveSparse_IHT_VEC (d, yy, numberOfNonzeros,  maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
 			Melder_throw (U"The function “solveSparse#” requires a matrix, a vector, and four numbers, not ", dict->whichText(), U", ", y->whichText(), U", ", nonzeros->whichText(), U", ",
 			niter->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
@@ -6854,7 +6872,7 @@ static void do_solveNonnegative_VEC () {
 			const VEC yy = y->numericVector;
 			Melder_require (a.nrow == yy.size,
 				U"The number of rows in the matrix should equal the size of the vector.");
-			pushNumericVector (newVECsolveNonnegativeLeastSquaresRegression (a, yy, maximumNumberOfIterations, tolerance, infoLevel));
+			pushNumericVector (solveNonnegativeLeastSquaresRegression_VEC (a, yy, maximumNumberOfIterations, tolerance, infoLevel));
 		} else {
 			Melder_throw (U"The function “solveNonnegative#” requires a matrix, a vector, and three numbers, not ", m->whichText(), U", ", y->whichText(), U", ", itermax->whichText(), U", ", tol->whichText(), U" and ", info->whichText());
 		}
@@ -8298,6 +8316,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case SELECTED_STR_: { do_selected_STR ();
 } break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();
 } break; case SELECTED_VEC_: { do_selected_VEC ();
+} break; case SELECTED_STRVEC_: { do_selected_STRVEC ();
 } break; case SELECT_OBJECT_: { do_selectObject ();
 } break; case PLUS_OBJECT_  : { do_plusObject   ();
 } break; case MINUS_OBJECT_ : { do_minusObject  ();

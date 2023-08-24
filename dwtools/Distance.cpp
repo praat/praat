@@ -38,11 +38,6 @@ autoDistance Distance_create (integer numberOfPoints) {
 	}
 }
 
-static void VECpow (VECVU const& v, double power) {
-	for (integer i = 1; i <= v.size; i++)
-		v [i] = pow (v [i], power);
-}
-
 autoDistance Configuration_to_Distance (Configuration me) {
 	try {
 		autoDistance thee = Distance_create (my numberOfRows);
@@ -51,12 +46,12 @@ autoDistance Configuration_to_Distance (Configuration me) {
 		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
 				dist.all()  <<=  my data.row (i)  -  my data.row (j);
-				VECabs_inplace (dist.get());
+				abs_VEC_inout (dist.get());
 				const double dmax = NUMmax_e (dist.get());
 				double d = 0.0;
 				if (dmax > 0.0) {
 					dist.all()  /=  dmax;   // prevent overflow
-					VECpow (dist.get(), my metric);
+					power_VEC_inout (dist.get(), my metric);
 					d = NUMinner (my w.all(), dist.get());
 					d = dmax * pow (d, 1.0 / my metric);   // scale back
 				}
@@ -69,7 +64,7 @@ autoDistance Configuration_to_Distance (Configuration me) {
 	}
 }
 
-void Distance_drawDendogram (Distance me, Graphics g, int method) {
+void Distance_drawDendrogram (Distance me, Graphics g, int method) {
 	(void) me;
 	(void) g;
 	(void) method;
