@@ -5307,7 +5307,7 @@ INTRO (U"Draws vertical lines that represent the error intervals of a data colum
 NORMAL (U"For more info see @@Table: Vertical error bars plot where...@")
 MAN_END
 
-MAN_BEGIN (U"Table: Vertical error bars plot where...", U"djmw", 20131223)
+MAN_BEGIN (U"Table: Vertical error bars plot where...", U"djmw", 20230825)
 INTRO (U"Draws vertical lines that represent the error intervals of a data column from the selected @@Table@.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9.6), U""
@@ -5339,7 +5339,7 @@ DEFINITION (U"determine the size of the vertical lines that will be drawn. These
 	"one-sided and two-sided error bars. If your errors are symmetric around the y-position, your table only needs "
 	"one column and you can supply the name of this column in both fields.")
 TERM (U"##Bar size (mm)#")
-DEFINITION (U"determines the width of the horizontal bars or whishers at the lower an postion of the drawn line. ")
+DEFINITION (U"determines the width of the horizontal bars or whishers at the lower end position of the drawn line. ")
 TERM (U"##Garnish#")
 DEFINITION (U"determines whether or not some decoration is drawn.")
 TERM (U"##Formula")

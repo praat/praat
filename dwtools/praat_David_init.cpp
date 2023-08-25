@@ -7106,7 +7106,7 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer xColumnNumber = Table_columnNameToNumber_e (me, xColumnName);
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
-		autoTable part = Table_extractRowsWhere (me, condition, interpreter);
+		autoTable part = Table_extractRowsWhere_e (me, condition, interpreter);
 		Table_scatterPlot_mark (part.get(), GRAPHICS, xColumnNumber, yColumnNumber,
 				xmin, xmax, ymin, ymax, markSize_mm, mark_string, garnish);
 	GRAPHICS_EACH_END
@@ -7131,11 +7131,10 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 DO
 	GRAPHICS_EACH (Table)
 		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, columnNames);
-		const integer labelColumnNumber = Table_columnNameToNumber_0 (me, labelColumnName);
-		if (labelColumnNumber == 0 && Melder_stringMatchesCriterion (labelColumnName, kMelder_string::MATCH_REGEXP, U"\\s*[^\\s]+", true))
-			Melder_throw (me, U": there is no column named \"", labelColumnName, U"\".");
-		Table_barPlotWhere (me, GRAPHICS, columnNumbers.get(), ymin, ymax, labelColumnNumber, distanceFromBorder, 
-				distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish, condition, interpreter);
+		const integer labelColumnNumber = Table_columnNameToNumber_0 (me, labelColumnName); // can be empty
+		autoTable part = Table_extractRowsWhere_e (me, condition, interpreter);
+		Table_barPlot (part.get(), GRAPHICS, columnNumbers.get(), ymin, ymax, labelColumnNumber, distanceFromBorder,
+				distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7156,8 +7155,9 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer xColumnNumber = str32equ (xColumnName, U"") ? 0 : Table_columnNameToNumber_e (me, xColumnName);
-		Table_lineGraphWhere (me, GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
-				angle, garnish, condition, interpreter);
+		autoTable part = Table_extractRowsWhere_e (me, condition, interpreter);
+		Table_lineGraph (part.get(), GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
+				angle, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7172,7 +7172,7 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer factorColumnNumber = Table_columnNameToNumber_e (me, factorColumnName);
 		autoINTVEC dataColumnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
-		Table_boxPlotsWhere (me, GRAPHICS, dataColumnNumbers.get(), factorColumnNumber, ymin, ymax, garnish, U"1", interpreter);
+		Table_boxPlots (me, GRAPHICS, dataColumnNumbers.get(), factorColumnNumber, ymin, ymax, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7189,7 +7189,8 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer factorColumnNumber = Table_columnNameToNumber_e (me, factorColumnName);
 		autoINTVEC dataColumnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
-		Table_boxPlotsWhere (me, GRAPHICS, dataColumnNumbers.get(), factorColumnNumber, ymin, ymax, garnish, condition, interpreter);
+		autoTable part = Table_extractRowsWhere_e (me, condition, interpreter);
+		Table_boxPlots (part.get(), GRAPHICS, dataColumnNumbers.get(), factorColumnNumber, ymin, ymax, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7209,7 +7210,7 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer xColumnNumber = Table_columnNameToNumber_e (me, xColumnName);
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
-		autoTable thee = Table_extractRowsWhere (me, condition, interpreter);
+		autoTable thee = Table_extractRowsWhere_e (me, condition, interpreter);
 		Table_drawEllipse_e (thee.get(), GRAPHICS, xColumnNumber, yColumnNumber,
 				xmin, xmax, ymin, ymax, numberOfSigmas, garnish);
 	GRAPHICS_EACH_END
@@ -7232,8 +7233,8 @@ DO
 		const integer xColumnNumber      = Table_columnNameToNumber_e (me, xColumnName);
 		const integer yColumnNumber      = Table_columnNameToNumber_e (me, yColumnName);
 		const integer factorColumnNumber = Table_columnNameToNumber_e (me, factorColumnName);
-		Table_drawEllipsesWhere (me, GRAPHICS, xColumnNumber, yColumnNumber, factorColumnNumber,
-				xmin, xmax, ymin, ymax, numberOfSigmas, fontSize, garnish, U"1", interpreter);
+		Table_drawEllipses (me, GRAPHICS, xColumnNumber, yColumnNumber, factorColumnNumber,
+				xmin, xmax, ymin, ymax, numberOfSigmas, fontSize, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7256,8 +7257,9 @@ DO
 		const integer xColumnNumber      = Table_columnNameToNumber_e (me, xColumnName);
 		const integer yColumnNumber      = Table_columnNameToNumber_e (me, yColumnName);
 		const integer factorColumnNumber = Table_columnNameToNumber_e (me, factorColumnName);
-		Table_drawEllipsesWhere (me, GRAPHICS, xColumnNumber, yColumnNumber, factorColumnNumber,
-				xmin, xmax, ymin, ymax, numberOfSigmas, fontSize, garnish, condition, interpreter);
+		Table_extractRowsWhere_e (me, condition, interpreter);
+		Table_drawEllipses (me, GRAPHICS, xColumnNumber, yColumnNumber, factorColumnNumber,
+			xmin, xmax, ymin, ymax, numberOfSigmas, fontSize, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7350,7 +7352,7 @@ FORM (GRAPHICS_EACH__Table_lagPlot, U"Table: lag plot", nullptr) {
 DO
 	GRAPHICS_EACH (Table)
 		const integer dataColumnNumber = Table_columnNameToNumber_e (me, dataColumnName);
-		Table_lagPlotWhere (me, GRAPHICS, dataColumnNumber, lag, fromXY, toXY, label, labelSize, garnish, U"1", interpreter);
+		Table_lagPlot (me, GRAPHICS, dataColumnNumber, lag, fromXY, toXY, label, labelSize, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7369,7 +7371,8 @@ FORM (GRAPHICS_EACH__Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 DO
 	GRAPHICS_EACH (Table)
 		const integer dataColumnNumber = Table_columnNameToNumber_e (me, dataColumnName);
-		Table_lagPlotWhere (me, GRAPHICS, dataColumnNumber, lag, fromXY, toXY, label, labelSize, garnish, condition, interpreter);
+		autoTable thee = Table_extractRowsWhere_e (me, condition, interpreter);
+		Table_lagPlot (me, GRAPHICS, dataColumnNumber, lag, fromXY, toXY, label, labelSize, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7386,8 +7389,8 @@ FORM (GRAPHICS_EACH__Table_distributionPlot, U"Table: Distribution plot", nullpt
 DO
 	GRAPHICS_EACH (Table)
 		const integer dataColumnNumber = Table_columnNameToNumber_e (me, dataColumnName);
-		Table_distributionPlotWhere (me, GRAPHICS, dataColumnNumber, minimumValue, maximumValue, 
-			numberOfBins, minimumFrequency, maximumFrequency, garnish, U"1", interpreter
+		Table_distributionPlot (me, GRAPHICS, dataColumnNumber, minimumValue, maximumValue, 
+			numberOfBins, minimumFrequency, maximumFrequency, garnish
 		);
 	GRAPHICS_EACH_END
 }
@@ -7407,8 +7410,9 @@ FORM (GRAPHICS_EACH__Table_distributionPlotWhere, U"Table: Distribution plot whe
 DO
 	GRAPHICS_EACH (Table)
 		const integer dataColumnNumber = Table_columnNameToNumber_e (me, dataColumnName);
-		Table_distributionPlotWhere (me, GRAPHICS, dataColumnNumber, minimumValue, maximumValue, numberOfBins, 
-			minimumFrequency, maximumFrequency, garnish, condition, interpreter
+		autoTable thee = Table_extractRowsWhere_e (me, condition, interpreter);
+		Table_distributionPlot (thee.get(), GRAPHICS, dataColumnNumber, minimumValue, maximumValue, numberOfBins, 
+			minimumFrequency, maximumFrequency, garnish
 		);
 	GRAPHICS_EACH_END
 }
@@ -7431,8 +7435,8 @@ DO
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer xlColumnNumber = Table_columnNameToNumber_0 (me, lowerErrorColumnName);
 		const integer xuColumnNumber = Table_columnNameToNumber_0 (me, upperErrorColumnName);
-		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xColumnNumber, yColumnNumber,
-				xmin, xmax, ymin, ymax, xlColumnNumber, xuColumnNumber, barSize_mm, garnish, U"1", interpreter);
+		Table_horizontalErrorBarsPlot (me, GRAPHICS, xColumnNumber, yColumnNumber,
+				xmin, xmax, ymin, ymax, xlColumnNumber, xuColumnNumber, barSize_mm, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7456,8 +7460,9 @@ DO
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer xlColumnNumber = Table_columnNameToNumber_0 (me, lowerErrorColumnName);
 		const integer xuColumnNumber = Table_columnNameToNumber_0 (me, upperErrorColumnName);
-		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xColumnNumber, yColumnNumber,
-				xmin, xmax, ymin, ymax, xlColumnNumber, xuColumnNumber, barSize_mm, garnish, condition, interpreter);
+		autoTable thee = Table_extractRowsWhere_e (me, condition, interpreter);
+		Table_horizontalErrorBarsPlot (me, GRAPHICS, xColumnNumber, yColumnNumber,
+				xmin, xmax, ymin, ymax, xlColumnNumber, xuColumnNumber, barSize_mm, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7479,8 +7484,8 @@ DO
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer ylColumnNumber = Table_columnNameToNumber_0 (me, lowerErrorColumnName);
 		const integer yuColumnNumber = Table_columnNameToNumber_0 (me, upperErrorColumnName);
-		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xColumnNumber, yColumnNumber,
-				xmin, xmax, ymin, ymax, ylColumnNumber, yuColumnNumber, barSize_mm, garnish, U"1", interpreter);
+		Table_verticalErrorBarsPlot (me, GRAPHICS, xColumnNumber, yColumnNumber,
+				xmin, xmax, ymin, ymax, ylColumnNumber, yuColumnNumber, barSize_mm, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7504,8 +7509,9 @@ DO
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer ylColumnNumber = Table_columnNameToNumber_0 (me, lowerErrorColumnName);
 		const integer yuColumnNumber = Table_columnNameToNumber_0 (me, upperErrorColumnName);
-		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xColumnNumber, yColumnNumber,
-				xmin, xmax, ymin, ymax,	ylColumnNumber, yuColumnNumber, barSize_mm, garnish, condition, interpreter);
+		autoTable thee = Table_extractRowsWhere_e (me, condition, interpreter);
+		Table_verticalErrorBarsPlot (thee.get(), GRAPHICS, xColumnNumber, yColumnNumber,
+				xmin, xmax, ymin, ymax,	ylColumnNumber, yuColumnNumber, barSize_mm, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7520,19 +7526,20 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
-	SENTENCE (dataColumns_string, U"Extract all rows where columns...", U"F1 F2 F3")
-	CHOICE_ENUM (kMelder_number, haveAMahalanobisDistance,
+	STRINGARRAY_LINES (2, dataColumnNames, U"Extract all rows where columns...", { U"F1", U"F2", U"F3" })
+	CHOICE_ENUM (kMelder_number, which,
 			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
 	REAL (numberOfSigmas, U"...the number", U"2.0")
-	SENTENCE (factorColumn_string, U"Factor column", U"")
+	SENTENCE (factorColumnName, U"Factor column", U"")
 	LABEL (U"Process only rows where the following condition holds.")
 	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		autoTable result = Table_extractMahalanobisWhere (me, dataColumns_string, factorColumn_string, 
-			numberOfSigmas, haveAMahalanobisDistance, condition, interpreter
-		);
+		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
+		const integer factorColumnNumber = Table_columnNameToNumber_e (me, factorColumnName);
+		autoTable thee = Table_extractRowsWhere_e (me, condition, interpreter);
+		autoTable result = Table_extractMahalanobis (thee.get(), columnNumbers.get(), which, numberOfSigmas, factorColumnNumber);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
 }
 
