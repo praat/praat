@@ -34,6 +34,11 @@
 #include "SSCP.h"
 #include "Table.h"
 
+autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter interpreter);
+autoTable Table_extractRowsWhere_e (Table me, conststring32 formula, Interpreter interpreter);
+
+autoTable Table_extractColumnsByNumber (Table me, constINTVECVU const& columnNumbers);
+
 integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter interpreter);
 
 autoINTVEC Table_listRowNumbersWhere (Table me, conststring32 formula, Interpreter interpreter);
@@ -60,22 +65,28 @@ void Table_reportHuberMStatistics (Table me, integer columnNumber, double k_std,
 
 // Two one-way tests for normal and non-normally distributed data, respectively.
 autoTable Table_getOneWayAnalysisOfVarianceF (Table me,
-	integer column, integer groupColumn, autoTable *means, autoTable *meansDiff, autoTable *meansDiffProbabilities);
+	integer column, integer groupColumn, autoTable *means, autoTable *meansDiff, autoTable *meansDiffProbabilities
+);
 
 autoTable Table_getOneWayKruskalWallis (Table me,
-	integer column, integer factorColumn, double *p_prob, double *p_kruskalWallis, double *p_df);
+	integer column, integer factorColumn, double *p_prob, double *p_kruskalWallis, double *p_df
+);
 
 autoTable Table_getTwoWayAnalysisOfVarianceF (Table me,
-	integer column, integer groupColumnA, integer groupColumnB, autoTable *means, autoTable *factorLevelSizes);
+	integer column, integer groupColumnA, integer groupColumnB, autoTable *means, autoTable *factorLevelSizes
+);
 
-void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, integer ycolumn, double xmin, double xmax, 
-	double ymin, double ymax, integer yci_min, integer yci_max, double bar_mm, bool garnish, conststring32 formula, Interpreter interpreter);
+void Table_verticalErrorBarsPlot (Table me, Graphics g, integer xcolumn, integer ycolumn, double xmin, double xmax, 
+	double ymin, double ymax, integer yci_min, integer yci_max, double bar_mm, bool garnish
+);
 
-void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, integer ycolumn, double xmin, double xmax, 
-	double ymin, double ymax, integer xci_min, integer xci_max, double bar_mm, bool garnish, conststring32 formula, Interpreter interpreter);
+void Table_horizontalErrorBarsPlot (Table me, Graphics g, integer xcolumn, integer ycolumn, double xmin, double xmax, 
+	double ymin, double ymax, integer xci_min, integer xci_max, double bar_mm, bool garnish
+);
 
 void Table_normalProbabilityPlot (Table me, Graphics g,
-	integer column, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish);
+	integer column, integer numberOfQuantiles, double numberOfSigmas, double labelSize, conststring32 label, bool garnish
+);
 
 void Table_quantileQuantilePlot (Table me, Graphics g,
 	integer xcolumn, integer ycolumn, integer numberOfQuantiles,
@@ -90,44 +101,39 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 void Table_boxPlots (Table me, Graphics g,
 	integer dataColumn, integer factorColumn, double ymin, double ymax, bool garnish);
 
-void Table_boxPlotsWhere (Table me, Graphics g,
+void Table_boxPlots (Table me, Graphics g,
 	constINTVEC const& dataColumnNumbers, integer factorColumn,
-	double ymin, double ymax, bool garnish, conststring32 formula, Interpreter interpreter
+	double ymin, double ymax, bool garnish
 );
 
-autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter interpreter);
-
-autoTable Table_extractColumnsByNumber (Table me, constINTVECVU const& columnNumbers);
-
-autoTable Table_extractMahalanobisWhere (Table me,
-	conststring32 columnLabels, conststring32 factorColumn, double numberOfSigmas,
-	kMelder_number which, conststring32 formula, Interpreter interpreter
-);
-
-void Table_distributionPlotWhere (Table me, Graphics g,
+void Table_distributionPlot (Table me, Graphics g,
 	integer dataColumn, double minimum, double maximum, integer nBins,
-	double freqMin, double freqMax, bool garnish, conststring32 formula, Interpreter interpreter
+	double freqMin, double freqMax, bool garnish
 );
 
-void Table_barPlotWhere (Table me, Graphics g,
+void Table_barPlot (Table me, Graphics g,
 	constINTVEC columnNumbers, double ymin, double ymax, integer labelColumnNumber,
 	double xoffsetFraction, double interbarFraction, double interbarsFraction, constSTRVEC colours,
-	double angle, bool garnish, conststring32 formula, Interpreter interpreter
+	double angle, bool garnish
 );
 
-void Table_lineGraphWhere (Table me, Graphics g,
+void Table_lineGraph (Table me, Graphics g,
 	integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax,
-	conststring32 symbol, double angle, bool garnish, conststring32 formula, Interpreter interpreter
+	conststring32 symbol, double angle, bool garnish
 );
 
-void Table_lagPlotWhere (Table me, Graphics g,
+void Table_lagPlot (Table me, Graphics g,
 	integer column, integer lag, double xmin, double xmax,
-	conststring32 symbol, double labelSize, bool garnish, conststring32 formula, Interpreter interpreter
+	conststring32 symbol, double labelSize, bool garnish
 );
 
-void Table_drawEllipsesWhere (Table me, Graphics g,
+void Table_drawEllipses (Table me, Graphics g,
 	integer xcolumn, integer ycolumn, integer labelcolumn, double xmin, double xmax, double ymin, double ymax,
-	double numberOfSigmas, double labelSize, bool garnish, conststring32 formula, Interpreter interpreter);
+	double numberOfSigmas, double labelSize, bool garnish
+);
+
+autoTable Table_extractMahalanobis (Table me, INTVEC const& columnNumbers,
+	kMelder_number which, double numberOfSigmas, integer factorColumn);
 
 void Table_printAsAnovaTable (Table me);
 
