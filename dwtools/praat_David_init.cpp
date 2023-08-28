@@ -6474,7 +6474,8 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText, U"SpeechSynth
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, false).get();
+		autostring32 result_auto = SpeechSynthesizer_getPhonemesFromText (me, text, false);
+		conststring32 result = result_auto.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -6483,7 +6484,8 @@ FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated,
 	OK
 DO
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		conststring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, true).get();
+		autostring32 result_auto = SpeechSynthesizer_getPhonemesFromText (me, text, true);
+		conststring32 result = result_auto.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -6514,22 +6516,22 @@ DO
 FORM (MODIFY_EACH__SpeechSynthesizer_speechOutputSettings, U"SpeechSynthesizer: Speech output settings", U"SpeechSynthesizer: Speech output settings...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	REAL (wordGap, U"Gap between words (s)", U"0.01")
-	POSITIVE (pitchAdjustment, U"Pitch multiplier (0.5-2.0)", U"1.0")
-	REAL (pitchRange, U"Pitch range multiplier (0-2.0)", U"1.0");
+	POSITIVE (pitchMultiplier, U"Pitch multiplier (0.5-2.0)", U"1.0")
+	REAL (pitchRangeMultiplier, U"Pitch range multiplier (0-2.0)", U"1.0");
 	POSITIVE (wordsPerMinute, U"Words per minute (80-450)", U"175.0");
 	OPTIONMENU (outputPhonemeCodes, U"Output phoneme codes are", 2)
 		OPTION (U"Kirshenbaum_espeak")
 		OPTION (U"IPA")
 	OK
 DO
-	if (wordGap < 0.0) wordGap = 0.0;
-	Melder_require (pitchAdjustment >= 0.5 && pitchAdjustment <= 2.0,
-		U"The pitch adjustment should be between 0.5 and 2.0.");
-	Melder_require (pitchRange >= 0.0 && pitchRange <= 2.0,
+	Melder_clipLeft (0.0, & wordGap);
+	Melder_require (pitchMultiplier >= 0.5 && pitchMultiplier <= 2.0,
+		U"The pitch multiplier should be between 0.5 and 2.0.");
+	Melder_require (pitchRangeMultiplier >= 0.0 && pitchRangeMultiplier <= 2.0,
 		U"The pitch range multiplier should be between 0.0 and 2.0.");
 	MODIFY_EACH (SpeechSynthesizer)
 		SpeechSynthesizer_setSpeechOutputSettings (
-			me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes
+			me, samplingFrequency, wordGap, pitchMultiplier, pitchRangeMultiplier, wordsPerMinute, outputPhonemeCodes
 		);
 	MODIFY_EACH_END
 }
