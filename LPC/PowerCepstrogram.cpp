@@ -337,11 +337,9 @@ autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
 		const double analysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
-		double windowDuration = 2.0 * analysisWidth; // gaussian window
+		volatile const double windowDuration = Melder_clippedRight (2.0 * analysisWidth, my dx * my nx);   // gaussian window
 
 		// Convenience: analyse the whole sound into one Cepstrogram_frame
-		if (windowDuration > my dx * my nx)
-			windowDuration = my dx * my nx;
 		const double samplingFrequency = 2.0 * maximumFrequency;
 		autoSound sound = Sound_resample (me, samplingFrequency, 50);
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);

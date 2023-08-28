@@ -38,7 +38,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		const double minimumFreqStep2 = effectiveFreqWidth / maximumFreqOversampling;
 		const double timeStep = std::max (minimumTimeStep1, minimumTimeStep2);
 		double freqStep = std::max (minimumFreqStep1, minimumFreqStep2);
-		const double physicalDuration = my dx * my nx;
+		volatile const double physicalDuration = my dx * my nx;   // volatile, because we need to truncate to 64 bits
 
 		/*
 			Compute the time sampling.

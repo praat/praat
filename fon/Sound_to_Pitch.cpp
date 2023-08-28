@@ -349,7 +349,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 				interpolation_depth = 1.0;
 				break;
 		}
-		const double duration = my dx * my nx;
+		volatile const double duration = my dx * my nx;   // volatile, because we need to truncate to 64 bits
 		if (pitchFloor < periodsPerWindow / duration)
 			Melder_throw (U"To analyse this Sound, “pitch floor” must not be less than ", periodsPerWindow / duration, U" Hz.");
 

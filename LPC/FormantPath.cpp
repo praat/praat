@@ -300,9 +300,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step size' or the 'number of steps' or both.");
-		volatile double windowDuration = 2.0 * analysisWidth;
-		if (windowDuration > my dx * my nx)
-			windowDuration = my dx * my nx;
+		volatile const double windowDuration = Melder_clippedRight (2.0 * analysisWidth, my dx * my nx);
 		/*
 			Get the data for the LPC from the resampled sound with 'middleCeiling' as maximum frequency
 			to make the sampling exactly equal as if performed with a standard LPC analysis.
