@@ -71,7 +71,7 @@ void Sampled_init (Sampled me, double xmin, double xmax, integer nx, double dx, 
 void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeStep, integer *numberOfFrames, double *firstTime) {
 	Melder_assert (windowDuration > 0.0);
 	Melder_assert (timeStep > 0.0);
-	volatile double myDuration = my dx * my nx;
+	volatile double myDuration = my dx * my nx;   // volatile, because we need to truncate to 64 bits
 	if (windowDuration > myDuration)
 		Melder_throw (me, U": shorter than window length.");
 	*numberOfFrames = Melder_ifloor ((myDuration - windowDuration) / timeStep) + 1;
