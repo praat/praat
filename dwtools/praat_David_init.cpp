@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2023 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2023 David Weenink, 2015,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5744,7 +5744,7 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...") {
 	LABEL (U"Parameters for the intensity analysis")
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"100")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	LABEL (U"Silent intervals detection")
 	REAL (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
@@ -5755,7 +5755,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_TextGrid_detectSilences, U"Sound: To TextGri
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoTextGrid result = Sound_to_TextGrid_detectSilences (me, minimumPitch, timeStep, silenceThreshold, 
+		autoTextGrid result = Sound_to_TextGrid_detectSilences (me, pitchFloor, timeStep, silenceThreshold,
 			minimumSilenceDuration, minimumSoundingDuration, silenceLabel, soundingLabel
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
@@ -5806,25 +5806,25 @@ FORM (CONVERT_EACH_TO_ONE__Sound_trimSilences, U"Sound: Trim silences", U"Sound:
     REAL (trimDuration, U"Trim duration (s)", U"0.08")
 	BOOLEAN (onlyAtStartAndEnd, U"Only at start and end", true);
 	LABEL (U"Parameters for the intensity analysis")
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"100")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	LABEL (U"Silent intervals detection")
 	REAL (silenceThreshold, U"Silence threshold (dB)", U"-35.0")
 	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
 	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
-    BOOLEAN (saveTextGrid, U"Save trimming info as TextGrid", false)
-    WORD (trim_string, U"Trim label", U"trimmed")
+	BOOLEAN (saveTextGrid, U"Save trimming info as TextGrid", false)
+	WORD (trim_string, U"Trim label", U"trimmed")
 	OK
 DO
-    trimDuration = ( trimDuration < 0.0 ? 0.0 : trimDuration );
+	trimDuration = ( trimDuration < 0.0 ? 0.0 : trimDuration );
 	CONVERT_EACH_TO_ONE (Sound)
-        autoTextGrid tg;
-		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minimumPitch, timeStep, 
+		autoTextGrid tg;
+		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, pitchFloor, timeStep,
 			silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, 
 			( saveTextGrid ? & tg : nullptr ), trim_string
 		);
 		if (saveTextGrid)
-            praat_new (tg.move(), my name.get(), U"_trimmed");
+			praat_new (tg.move(), my name.get(), U"_trimmed");
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_trimmed")
 }
 
@@ -5880,13 +5880,13 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantFilter, U"Sound: To FormantFilter", U
 	REAL (maximumFrequency, U"Maximum frequency", U"0.0");
 	POSITIVE (relativeBandwidth, U"Relative bandwidth", U"1.1")
 	LABEL (U"Pitch analysis")
-	REAL (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	REAL (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	REAL (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	REAL (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoFormantFilter result = Sound_to_FormantFilter (me, windowLength, timeStep, 
-			firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth, minimumPitch, maximumPitch
+			firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth, pitchFloor, pitchCeiling
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -5900,13 +5900,13 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrogram_pitchDependent, U"Sound: To Spec
 	REAL (maximumFrequency, U"Maximum frequency", U"0.0");
 	POSITIVE (relativeBandwidth, U"Relative bandwidth", U"1.1")
 	LABEL (U"Pitch analysis")
-	REAL (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	REAL (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	REAL (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	REAL (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoSpectrogram result = Sound_to_Spectrogram_pitchDependent (me, windowLength, timeStep, firstFrequency, 
-			maximumFrequency, deltaFrequency, relativeBandwidth, minimumPitch, maximumPitch
+			maximumFrequency, deltaFrequency, relativeBandwidth, pitchFloor, pitchCeiling
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -5954,20 +5954,20 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_shs, U"Sound: To Pitch (shs)", U"Sound: To Pitch (shs)...") {
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
-	POSITIVE (pitchFloor, U"Minimum pitch (Hz)", U"50.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates (Hz)", U"15")
 	LABEL (U"Algorithm parameters")
 	POSITIVE (maximumFrequency, U"Maximum frequency component (Hz)", U"1250.0")
 	NATURAL (maximumNumberOfSubharmonics, U"Max. number of subharmonics", U"15")
 	POSITIVE (compressionFactor, U"Compression factor (<=1)", U"0.84")
-	POSITIVE (pitchCeiling, U"Ceiling (Hz)", U"600.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	NATURAL (numberOfPointsPerOctave, U"Number of points per octave", U"48");
 	OK
 DO
 	Melder_require (pitchFloor < pitchCeiling,
-		U"The minimum pitch should be less than the ceiling.");
+		U"The pitch floor should be less than the pitch ceiling.");
 	Melder_require (pitchCeiling < maximumFrequency, 
-		U"The maximum frequency should be greater than or equal to the ceiling.");
+		U"The maximum frequency should be greater than or equal to the pitch ceiling.");
 	CONVERT_EACH_TO_ONE (Sound)
 		autoPitch result = Sound_to_Pitch_shs (me, timeStep, pitchFloor, maximumFrequency, pitchCeiling, 
 			maximumNumberOfSubharmonics, maximumNumberOfCandidates, compressionFactor, numberOfPointsPerOctave
@@ -6010,13 +6010,13 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_KlattGrid_simple, U"Sound: To KlattGrid (sim
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"60.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	LABEL (U"Intensity determination")
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100.0")
+	POSITIVE (pitchFloorForIntensity, U"Pitch floor for intensity (Hz)", U"100.0")
 	BOOLEAN (subtractMean, U"Subtract mean", true)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoKlattGrid result = Sound_to_KlattGrid_simple (me, timeStep, numberOfFormants, formantCeiling, windowLength,
-			preEmphasisFrequency, pitchFloor, pitchCeiling, minimumPitch, subtractMean
+			preEmphasisFrequency, pitchFloor, pitchCeiling, pitchFloorForIntensity, subtractMean
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }

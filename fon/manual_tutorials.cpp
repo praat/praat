@@ -1006,7 +1006,7 @@ INTRO (U"To see the intensity contour of a sound as a function of time, select a
 	"This also works in the @TextGridEditor.")
 MAN_END
 
-MAN_BEGIN (U"Intro 6.2. Configuring the intensity contour", U"ppgb", 20041123)
+MAN_BEGIN (U"Intro 6.2. Configuring the intensity contour", U"ppgb", 20041123)   // 2023
 INTRO (U"With ##Intensity settings...# from the #Intensity menu, "
 	"you can control how the intensity contour is computed and how it is shown.")
 ENTRY (U"The view range")
@@ -1024,8 +1024,8 @@ NORMAL (U"The intensity curve is %smoothed, since you usually do not want the in
 	"the intensity variations within a pitch period. To avoid such pitch-synchronous variations, "
 	"the intensity at every time point is a weighted average over many neighbouring time points. "
 	"The weighting is performed by a Gaussian (“double Kaiser”) window that has a duration that is determined by the "
-	"##Minimum pitch# setting (see @@Intro 4.2. Configuring the pitch contour@). "
-	"To see more detail than usual, raise the minimum pitch; to get more smoothing than usual, lower it. "
+	"##Pitch floor# setting (see @@Intro 4.2. Configuring the pitch contour@). "
+	"To see more detail than usual, raise the pitch floor; to get more smoothing than usual, lower it. "
 	"For more information, see @@Sound: To Intensity...@.")
 ENTRY (U"Subtract mean pressure or not?")
 NORMAL (U"Many microphones, microphone preamplifiers, or other components in the recording system "

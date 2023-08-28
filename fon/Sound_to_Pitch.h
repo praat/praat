@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.h
  *
- * Copyright (C) 1992-2011,2015,2019 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2019,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +20,25 @@
 #include "Pitch.h"
 
 autoPitch Sound_to_Pitch (Sound me, double timeStep,
-	double minimumPitch, double maximumPitch);
+	double pitchFloor, double pitchCeiling);
 /* Calls Sound_to_Pitch_ac with default arguments. */
 
-autoPitch Sound_to_Pitch_ac (Sound me, double timeStep, double minimumPitch,
+autoPitch Sound_to_Pitch_ac (Sound me, double timeStep, double pitchFloor,
 	double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold, double octaveCost,
-	double octaveJumpCost, double voicedUnvoicedCost, double maximumPitch);
+	double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling);
 /* Calls Sound_to_Pitch_any with AC method. */
 
-autoPitch Sound_to_Pitch_cc (Sound me, double timeStep, double minimumPitch,
+autoPitch Sound_to_Pitch_cc (Sound me, double timeStep, double pitchFloor,
 	double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold, double octaveCost,
-	double octaveJumpCost, double voicedUnvoicedCost, double maximumPitch);
+	double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling);
 /* Calls Sound_to_Pitch_any with FCC method. */
 
 autoPitch Sound_to_Pitch_any (Sound me,
 
-	double dt,                 /* time step (seconds); 0.0 = automatic = periodsPerWindow / minimumPitch / 4 */
-	double minimumPitch,       /* (Hz) */
+	double dt,                 /* time step (seconds); 0.0 = automatic = periodsPerWindow / pitchFloor / 4 */
+	double pitchFloor,         /* (Hz) */
 	double periodsPerWindow,   /* ac3 for pitch analysis, 6 or 4.5 for HNR, 1 for FCC */
 	integer maxnCandidates,    /* maximum number of candidates per frame */
 	int method,                /* 0 or 1 = AC, 2 or 3 = FCC, 0 or 2 = fast, 1 or 3 = accurate */
@@ -48,19 +48,19 @@ autoPitch Sound_to_Pitch_any (Sound me,
 	double octaveCost,         /* favours higher pitches; default 0.01 */
 	double octaveJumpCost,     /* default 0.35 */
 	double voicedUnvoicedCost, /* default 0.14 */
-	double maximumPitch);      /* (Hz) */
+	double pitchCeiling);      /* (Hz) */
 /*
 	Function:
 		acoustic periodicity analysis.
 	Preconditions:
-		minimumPitch > 0.0;
+		pitchFloor > 0.0;
 		maxnCandidates >= 2;
 	Return value:
 		the resulting pitch contour.
 	Failures:
 		Out of memory.
-		Minimum frequency too low.
-		Maximum frequency should not be greater than the Sound's Nyquist frequency.
+		Pitch floor too low.
+		Pitch ceiling should not be greater than the Sound's Nyquist frequency.
 	Description for method 0 or 1:
 		There is a Hanning window (method == 0) or Gaussian window (method == 1)
 		over the analysis window, in order to avoid phase effects.
@@ -79,7 +79,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		A Viterbi algorithm is used to find a smooth path through the candidates,
 		using the last six arguments of this function.
 
-		The 'maximumPitch' argument has no influence on the search for candidates.
+		The 'pitchCeiling' argument has no influence on the search for candidates.
 		It is directly copied into the Pitch object as a hint for considering
 		pitches above a certain value "voiceless".
 */

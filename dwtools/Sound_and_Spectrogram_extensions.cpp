@@ -263,19 +263,21 @@ static int Sound_into_Spectrogram_frame (Sound me, Spectrogram thee, integer fra
 	return 1;
 }
 
-autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw, double minimumPitch, double maximumPitch) {
+autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
+	double pitchFloor, double pitchCeiling)
+{
 	try {
-		constexpr double floor = 80.0, ceiling = 600.0;
-		if (minimumPitch >= maximumPitch) {
-			minimumPitch = floor;
-			maximumPitch = ceiling;
+		constexpr double arbitraryDefaultPitchFloor = 80.0, arbitraryDefaultPitchCeiling = 600.0;
+		if (pitchFloor >= pitchCeiling) {
+			pitchFloor = arbitraryDefaultPitchFloor;
+			pitchCeiling = arbitraryDefaultPitchCeiling;
 		}
-		if (minimumPitch <= 0.0)
-			minimumPitch = floor;
-		if (maximumPitch <= 0.0)
-			maximumPitch = ceiling;
+		if (pitchFloor <= 0.0)
+			pitchFloor = arbitraryDefaultPitchFloor;
+		if (pitchCeiling <= 0.0)
+			pitchCeiling = arbitraryDefaultPitchCeiling;
 
-		autoPitch thee = Sound_to_Pitch (me, dt, minimumPitch, maximumPitch);
+		autoPitch thee = Sound_to_Pitch (me, dt, pitchFloor, pitchCeiling);
 		autoSpectrogram ff = Sound_Pitch_to_Spectrogram (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff;
 	} catch (MelderError) {

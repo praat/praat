@@ -1105,15 +1105,15 @@ DIRECT (HELP__Sound_help) {
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_lengthen_overlapAdd, U"Sound: Lengthen (overlap-add)", U"Sound: Lengthen (overlap-add)...") {
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	POSITIVE (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	POSITIVE (factor, U"Factor", U"1.5")
 	OK
 DO
-	Melder_require (minimumPitch < maximumPitch,
-		U"Maximum pitch should be greater than minimum pitch.");
+	Melder_require (pitchFloor < pitchCeiling,
+		U"The pitch ceiling should be greater than the pitch floor.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSound result = Sound_lengthen_overlapAdd (me, minimumPitch, maximumPitch, factor);
+		autoSound result = Sound_lengthen_overlapAdd (me, pitchFloor, pitchCeiling, factor);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_fixed (factor, 2));
 }
 
@@ -1382,14 +1382,14 @@ DIRECT (MODIFY_Sound_subtractMean) {
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Manipulation, U"Sound: To Manipulation", U"Manipulation") {
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	POSITIVE (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
-	Melder_require (maximumPitch > minimumPitch,
-		U"The maximum pitch should be greater than the minimum pitch.");
+	Melder_require (pitchCeiling > pitchFloor,
+		U"The pitch ceiling should be greater than the pitch floor.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoManipulation result = Sound_to_Manipulation (me, timeStep, minimumPitch, maximumPitch);
+		autoManipulation result = Sound_to_Manipulation (me, timeStep, pitchFloor, pitchCeiling);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1467,29 +1467,29 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Harmonicity_ac, U"Sound: To Harmonicity (ac)", U"Sound: To Harmonicity (ac)...") {
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	REAL (silenceThreshold, U"Silence threshold", U"0.1")
 	POSITIVE (periodsPerWindow, U"Periods per window", U"4.5")
 	OK
 DO
 	Melder_require (periodsPerWindow >= 3.0,
-		U"Number of periods per window must be at least 3.0.");
+		U"The number of periods per window must be at least 3.0.");
 	CONVERT_EACH_TO_ONE (Sound)
 		autoHarmonicity result = Sound_to_Harmonicity_ac (me, timeStep,
-				minimumPitch, silenceThreshold, periodsPerWindow);
+				pitchFloor, silenceThreshold, periodsPerWindow);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Harmonicity_cc, U"Sound: To Harmonicity (cc)", U"Sound: To Harmonicity (cc)...") {
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	REAL (silenceThreshold, U"Silence threshold", U"0.1")
 	POSITIVE (periodsPerWindow, U"Periods per window", U"1.0")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoHarmonicity result = Sound_to_Harmonicity_cc (me, timeStep,
-				minimumPitch, silenceThreshold, periodsPerWindow);
+				pitchFloor, silenceThreshold, periodsPerWindow);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1507,37 +1507,37 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__old_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity...") {
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"100.0")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoIntensity result = Sound_to_Intensity (me,
-				minimumPitch, timeStep, false);
+				pitchFloor, timeStep, false);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity...") {
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"100.0")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	BOOLEAN (subtractMean, U"Subtract mean", true)
 	OK
 DO_ALTERNATIVE (CONVERT_EACH_TO_ONE__old_Sound_to_Intensity)
 	CONVERT_EACH_TO_ONE (Sound)
 		autoIntensity result = Sound_to_Intensity (me,
-				minimumPitch, timeStep, subtractMean);
+				pitchFloor, timeStep, subtractMean);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_IntensityTier, U"Sound: To IntensityTier", nullptr) {
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"100.0")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	BOOLEAN (subtractMean, U"Subtract mean", true)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoIntensityTier result = Sound_to_IntensityTier (me,
-				minimumPitch, timeStep, subtractMean);
+				pitchFloor, timeStep, subtractMean);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1557,8 +1557,8 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Ltas_pitchCorrected, U"Sound: To Ltas (pitch-corrected)", U"Sound: To Ltas (pitch-corrected)...") {
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	POSITIVE (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"100.0")
 	REAL (shortestPeriod, U"Shortest period (s)", U"0.0001")
@@ -1566,10 +1566,10 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Ltas_pitchCorrected, U"Sound: To Ltas (pitch
 	POSITIVE (maximumPeriodFactor, U"Maximum period factor", U"1.3")
 	OK
 DO
-	Melder_require (maximumPitch > minimumPitch,
-		U"Your maximum pitch should be greater than your minimum pitch.");
+	Melder_require (pitchCeiling > pitchFloor,
+		U"Your pitch ceiling should be greater than your pitch floor.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoLtas result = Sound_to_Ltas_pitchCorrected (me, minimumPitch, maximumPitch,
+		autoLtas result = Sound_to_Ltas_pitchCorrected (me, pitchFloor, pitchCeiling,
 				maximumFrequency, bandwidth, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -1662,29 +1662,29 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_PointProcess_periodic_cc, U"Sound: To PointProcess (periodic, cc)", U"Sound: To PointProcess (periodic, cc)...") {
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	POSITIVE (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
-	Melder_require (maximumPitch > minimumPitch,
-		U"Your maximum pitch should be greater than your minimum pitch.");
+	Melder_require (pitchCeiling > pitchFloor,
+		U"Your pitch ceiling should be greater than your pitch floor.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPointProcess result = Sound_to_PointProcess_periodic_cc (me, minimumPitch, maximumPitch);
+		autoPointProcess result = Sound_to_PointProcess_periodic_cc (me, pitchFloor, pitchCeiling);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_PointProcess_periodic_peaks, U"Sound: To PointProcess (periodic, peaks)", U"Sound: To PointProcess (periodic, peaks)...") {
-	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	POSITIVE (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	BOOLEAN (includeMaxima, U"Include maxima", true)
 	BOOLEAN (includeMinima, U"Include minima", false)
 	OK
 DO
-	Melder_require (maximumPitch > minimumPitch,
-		U"Your maximum pitch should be greater than your minimum pitch.");
+	Melder_require (pitchCeiling > pitchFloor,
+		U"Your pitch ceiling should be greater than your pitch floor.");
 	CONVERT_EACH_TO_ONE (Sound)
 		autoPointProcess result = Sound_to_PointProcess_periodic_peaks (me,
-				minimumPitch, maximumPitch, includeMaxima, includeMinima);
+				pitchFloor, pitchCeiling, includeMaxima, includeMinima);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 

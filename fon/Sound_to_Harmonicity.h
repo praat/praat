@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2026,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,16 @@
 #include "Sound.h"
 #include "Harmonicity.h"
 
-autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
+autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double pitchFloor,
 	double silenceThreshold, double periodsPerWindow);
 
-autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
+autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double pitchFloor,
 	double silenceThreshold, double periodsPerWindow);
 
 autoMatrix Sound_to_Harmonicity_GNE (Sound me,
-	double fmin,   /* 500 Hz */
-	double fmax,   /* 4500 Hz */
-	double bandwidth,  /* 1000 Hz */
-	double step);   /* 80 Hz */
+	double fmin,   // 500 Hz
+	double fmax,   // 4500 Hz
+	double bandwidth,  // 1000 Hz
+	double step);   // 80 Hz
 
 /* End of file Sound_to_Harmonicity.h */

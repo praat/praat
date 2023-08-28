@@ -958,15 +958,15 @@ NORMAL (U"Beware of the following pitfall: because of the nature of scripts, you
 	"will answer the #Get queries...")
 MAN_END
 
-MAN_BEGIN (U"Manipulation", U"ppgb", 20030316)
+MAN_BEGIN (U"Manipulation", U"ppgb", 20030316)   // 2023
 INTRO (U"One of the @@types of objects@ in Praat, for changing the pitch and duration contours of a sound.")
 ENTRY (U"Inside a manipulation object")
 NORMAL (U"With @Inspect, you will see the following attributes:")
 TERM (U"##timeStep")
 DEFINITION (U"the time step (or %%frame length%) used in the pitch analysis. A common value is 0.010 seconds.")
-TERM (U"##minimumPitch")
+TERM (U"##pitchFloor")
 DEFINITION (U"the minimum pitch frequency considered in the pitch analysis. A common value is 75 hertz.")
-TERM (U"##maximumPitch")
+TERM (U"##pitchCeiling")
 DEFINITION (U"the maximum pitch frequency considered in the pitch analysis. A common value is 600 hertz.")
 NORMAL (U"A Manipulation object also contains the following smaller objects:")
 LIST_ITEM (U"1. The original @Sound.")
@@ -976,7 +976,7 @@ LIST_ITEM (U"4. A @DurationTier.")
 ENTRY (U"Analysis")
 NORMAL (U"When a Manipulation object is created from a sound, the following steps are performed:")
 LIST_ITEM (U"1. A pitch analysis is performed on the original sound, with the method of @@Sound: To Pitch...@. "
-	"This uses the time step, minimum pitch, and maximum pitch parameters.")
+	"This uses the time step, pitch floor, and pitch ceiling parameters.")
 LIST_ITEM (U"2. The information of the resulting pitch contour (frequency and voiced/unvoiced decisions) "
 	"is used to posit glottal pulses where the original sound contains much energy. "
 	"The method is the same as in @@Sound & Pitch: To PointProcess (cc)@.")
@@ -1526,22 +1526,22 @@ NORMAL (U"You can import this text file as a Matrix object with @@Read Matrix fr
 	"You can then choose ##To RealTier...# from the Cast menu.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Intensity...", U"ppgb", 20100605)
+MAN_BEGIN (U"Sound: To Intensity...", U"ppgb", 20100605)   // 2023
 INTRO (U"A command to create an @Intensity object from every selected @Sound.")
 ENTRY (U"Settings")
-TERM (U"##Minimum pitch (Hz)")
+TERM (U"##Pitch floor (Hz)")
 DEFINITION (U"the minimum periodicity frequency in your signal. If you set it too high, "
 	"you will end up with a pitch-synchronous intensity modulation. If you set it too low, "
 	"your intensity contour may appear smeared, so you should set it as high as allowed by the signal "
 	"if you want a sharp contour.")
 TERM (U"##Time step (s)")
 DEFINITION (U"the time step of the resulting intensity contour. If you set it to zero, the time step is computed as "
-	"one quarter of the effective window length, i.e. as 0.8 / %minimumPitch.")
+	"one quarter of the effective window length, i.e. as 0.8 / %pitchFloor.")
 TERM (U"##Subtract mean")
 DEFINITION (U"See @@Intro 6.2. Configuring the intensity contour@.")
 ENTRY (U"Algorithm")
 NORMAL (U"The values in the sound are first squared, then convolved with a Gaussian analysis window (Kaiser-20; sidelobes below -190 dB). "
-	"The effective duration of this analysis window is 3.2 / %minimumPitch, which will guarantee that a periodic signal is analysed as having a "
+	"The effective duration of this analysis window is 3.2 / %pitchFloor, which will guarantee that a periodic signal is analysed as having a "
 	"pitch-synchronous intensity ripple not greater than 0.00001 dB.")
 MAN_END
 

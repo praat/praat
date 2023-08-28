@@ -85,12 +85,12 @@ static void spec_smoooth_SHS (VEC const& a) {
 	a [a.size] = 0.25 * (a_i_minus_1 + 2.0 * a [a.size]);
 }
 
-autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, double maximumFrequency,
-	double ceiling, integer maxnSubharmonics, integer maxnCandidates, double compressionFactor, integer numberOfPointsPerOctave)
+autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double pitchFloor, double maximumFrequency,
+	double pitchCeiling, integer maxnSubharmonics, integer maxnCandidates, double compressionFactor, integer numberOfPointsPerOctave)
 {
 	try {
 		const double newSamplingFrequency = 2.0 * maximumFrequency;
-		const double windowDuration = 2.0 / minimumPitch, halfWindow = 0.5 * windowDuration;
+		const double windowDuration = 2.0 / pitchFloor, halfWindow = 0.5 * windowDuration;
 		const double atans = numberOfPointsPerOctave * NUMlog2 (65.0 / 50.0) - 1.0;
 		/*
 			Number of speech samples in the downsampled signal in each frame:
@@ -106,7 +106,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		/*
 			The number of points on the octave scale.
 		*/
-		const double fminl2 = NUMlog2 (minimumPitch), fmaxl2 = NUMlog2 (maximumFrequency);
+		const double fminl2 = NUMlog2 (pitchFloor), fmaxl2 = NUMlog2 (maximumFrequency);
 		const integer numberOfFrequencyPoints = Melder_ifloor ((fmaxl2 - fminl2) * numberOfPointsPerOctave);
 		const double dfl2 = (fmaxl2 - fminl2) / (numberOfFrequencyPoints - 1);
 
@@ -117,7 +117,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		autoSound fftframe = Sound_createSimple (1, fftframeDuration, newSamplingFrequency);
 		autoSound analysisframe = Sound_createSimple (1, frameDuration, newSamplingFrequency);
 		autoSound hamming = Sound_createHamming (frameDuration, newSamplingFrequency);
-		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);
+		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, pitchCeiling, maxnCandidates);
 		autoVEC cc = zero_VEC (numberOfFrames);
 		autoVEC specAmp = raw_VEC (nfft2);
 		autoVEC fl2 = raw_VEC (nfft2);

@@ -27,12 +27,12 @@
 #include "Sound_extensions.h"
 #include "Pitch.h"
 
-autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
-	double maximumFrequency, double ceiling, integer maxnSubharmonics, integer maxnCandidates,
+autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double pitchFloor,
+	double maximumFrequency, double pitchCeiling, integer maxnSubharmonics, integer maxnCandidates,
 	double compressionFactor, integer nDivisionsPerOctave);
 
 autoPitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
 	double minimumFrequencyHz, double maximumFrequencyHz, integer nFilters,
-	double ceiling, int maxnCandidates);
+	double pitchCeiling, int maxnCandidates);
 
 #endif /* _Sound_to_Pitch2_h_ */

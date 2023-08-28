@@ -227,6 +227,7 @@ autoSound Sound_KlattGrid_filterByVocalTract (Sound me, KlattGrid thee, kKlattGr
 
 autoSound Sound_KlattGrid_filter_frication (Sound me, KlattGrid thee);
 
-autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preEmphasisFrequency, double minimumPitch, double maximumPitch, double minimumPitchIntensity, int subtractMean);
+autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maximumNumberOfFormants, double maximumFormantFrequency,
+		double windowLength, double preEmphasisFrequency, double pitchFloor, double pitchCeiling, double pitchFloorForIntensity, int subtractMean);
 
 #endif /* _KlattGrid_h_ */

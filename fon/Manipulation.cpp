@@ -1,6 +1,6 @@
 /* Manipulation.cpp
  *
- * Copyright (C) 1992-2012,2014-2022 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,12 +111,12 @@ void Manipulation_replaceDurationTier (Manipulation me, DurationTier duration) {
 	}
 }
 
-autoManipulation Sound_to_Manipulation (Sound me, double timeStep, double minimumPitch, double maximumPitch) {
+autoManipulation Sound_to_Manipulation (Sound me, double timeStep, double pitchFloor, double pitchCeiling) {
 	try {
 		autoManipulation thee = Manipulation_create (my xmin, my xmax);
 		thy sound = Sound_convertToMono (me);
 		Vector_subtractMean (thy sound.get());
-		autoPitch pitch = Sound_to_Pitch (thy sound.get(), timeStep, minimumPitch, maximumPitch);
+		autoPitch pitch = Sound_to_Pitch (thy sound.get(), timeStep, pitchFloor, pitchCeiling);
 		thy pulses = Sound_Pitch_to_PointProcess_cc (thy sound.get(), pitch.get());
 		thy pitch = Pitch_to_PitchTier (pitch.get());
 		/* (DurationTier has been done at creation time) */

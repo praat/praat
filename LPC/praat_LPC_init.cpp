@@ -1182,7 +1182,7 @@ DIRECT (CONVERT_EACH_TO_ONE__LPC_downto_Matrix_area) {
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_PowerCepstrogram, U"Sound: To PowerCepstrogram", U"Sound: To PowerCepstrogram...") {
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"60.0")
-	POSITIVE (timeStep,U"Time step (s)", U"0.002")
+	POSITIVE (timeStep, U"Time step (s)", U"0.002")
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
