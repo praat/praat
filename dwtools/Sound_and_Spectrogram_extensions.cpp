@@ -267,19 +267,8 @@ autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWi
 	double pitchFloor, double pitchCeiling)
 {
 	try {
-		constexpr double arbitraryDefaultPitchFloor = 80.0, arbitraryDefaultPitchCeiling = 600.0;
-		if (pitchFloor >= pitchCeiling) {
-			pitchFloor = arbitraryDefaultPitchFloor;
-			pitchCeiling = arbitraryDefaultPitchCeiling;
-		}
-		if (pitchFloor <= 0.0)
-			pitchFloor = arbitraryDefaultPitchFloor;
-		if (pitchCeiling <= 0.0)
-			pitchCeiling = arbitraryDefaultPitchCeiling;
-
 		autoPitch thee = Sound_to_Pitch (me, dt, pitchFloor, pitchCeiling);
-		autoSpectrogram ff = Sound_Pitch_to_Spectrogram (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
-		return ff;
+		return Sound_Pitch_to_Spectrogram (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrogram created.");
 	}

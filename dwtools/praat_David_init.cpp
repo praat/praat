@@ -5880,8 +5880,8 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantFilter, U"Sound: To FormantFilter", U
 	REAL (maximumFrequency, U"Maximum frequency", U"0.0");
 	POSITIVE (relativeBandwidth, U"Relative bandwidth", U"1.1")
 	LABEL (U"Pitch analysis")
-	REAL (pitchFloor, U"Pitch floor (Hz)", U"75.0")
-	REAL (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
@@ -5900,8 +5900,8 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrogram_pitchDependent, U"Sound: To Spec
 	REAL (maximumFrequency, U"Maximum frequency", U"0.0");
 	POSITIVE (relativeBandwidth, U"Relative bandwidth", U"1.1")
 	LABEL (U"Pitch analysis")
-	REAL (pitchFloor, U"Pitch floor (Hz)", U"75.0")
-	REAL (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)

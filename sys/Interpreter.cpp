@@ -2837,7 +2837,7 @@ void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables) {
 									Formula_Result result;
 									Interpreter_anyExpression (me, index.string, & result);
 									if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
-										double numericIndexValue = result. numericResult;
+										const double numericIndexValue = result. numericResult;
 										MelderString_append (& indexedVariableName, numericIndexValue);
 									} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
 										MelderString_append (& indexedVariableName, U"\"", result. stringResult.get(), U"\"");
