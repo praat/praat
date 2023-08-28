@@ -7537,7 +7537,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract r
 DO
 	CONVERT_EACH_TO_ONE (Table)
 		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
-		const integer factorColumnNumber = Table_columnNameToNumber_e (me, factorColumnName);
+		const integer factorColumnNumber = Table_columnNameToNumber_0 (me, factorColumnName);
 		autoTable thee = Table_extractRowsWhere_e (me, condition, interpreter);
 		autoTable result = Table_extractMahalanobis (thee.get(), columnNumbers.get(), which, numberOfSigmas, factorColumnNumber);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
