@@ -6469,24 +6469,22 @@ DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName) {
 	QUERY_ONE_FOR_STRING_END
 }
 
-FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText, U"SpeechSynthesizer: Get phonemes from text", nullptr) {
+FORM (QUERY_ONE_FOR_AUTOSTRING__SpeechSynthesizer_getPhonemesFromText, U"SpeechSynthesizer: Get phonemes from text", nullptr) {
 	TEXTFIELD (text, U"Text", U"This is some text.", 10)
 	OK
 DO
-	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		autostring32 result_auto = SpeechSynthesizer_getPhonemesFromText (me, text, false);
-		conststring32 result = result_auto.get();
-	QUERY_ONE_FOR_STRING_END
+	QUERY_ONE_FOR_AUTOSTRING (SpeechSynthesizer)
+		autostring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, false);
+	QUERY_ONE_FOR_AUTOSTRING_END
 }
 
-FORM (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated, U"SpeechSynthesizer: Get phonemes from text", nullptr) {
+FORM (QUERY_ONE_FOR_AUTOSTRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated, U"SpeechSynthesizer: Get phonemes from text", nullptr) {
 	TEXTFIELD (text, U"Text", U"This is some text.", 10)
 	OK
 DO
-	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
-		autostring32 result_auto = SpeechSynthesizer_getPhonemesFromText (me, text, true);
-		conststring32 result = result_auto.get();
-	QUERY_ONE_FOR_STRING_END
+	QUERY_ONE_FOR_AUTOSTRING (SpeechSynthesizer)
+		autostring32 result = SpeechSynthesizer_getPhonemesFromText (me, text, true);
+	QUERY_ONE_FOR_AUTOSTRING_END
 }
 
 FORM (MODIFY_EACH__SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
@@ -10321,9 +10319,9 @@ void praat_David_init () {
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get phoneme set name", nullptr, 1,
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get phonemes from text...", nullptr, 1,
-				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromText);
+				QUERY_ONE_FOR_AUTOSTRING__SpeechSynthesizer_getPhonemesFromText);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get phonemes from text (space-separated)...", nullptr, 1,
-				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated);
+				QUERY_ONE_FOR_AUTOSTRING__SpeechSynthesizer_getPhonemesFromTextSpaceSeparated);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, GuiMenu_DEPRECATED_2017,
 				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName);
 		
