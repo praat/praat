@@ -705,6 +705,11 @@
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	Melder_information (result);
 
+#define FOR_AUTOSTRING__  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	Melder_information (result.get());
+
 #define QUERY_END__  \
 	END_NO_NEW_DATA
 
@@ -746,6 +751,10 @@
 
 #define QUERY_FOR_STRING_END__  \
 	FOR_STRING__ \
+	QUERY_END__
+
+#define QUERY_FOR_AUTOSTRING_END__  \
+	FOR_AUTOSTRING__ \
 	QUERY_END__
 
 #define QUERY_WEAK_FOR_STRING_END__  \
@@ -865,6 +874,11 @@
 	FIND_ONE (klas)
 #define QUERY_ONE_FOR_STRING_END  \
 	QUERY_FOR_STRING_END__
+
+#define QUERY_ONE_FOR_AUTOSTRING(klas)  \
+	FIND_ONE (klas)
+#define QUERY_ONE_FOR_AUTOSTRING_END  \
+	QUERY_FOR_AUTOSTRING_END__
 
 #define QUERY_ONE_WEAK_FOR_STRING(klas)  \
 	FIND_ONE (klas) \
