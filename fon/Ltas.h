@@ -91,7 +91,7 @@ autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 /* Shortcuts. */
 
 autoLtas Sound_to_Ltas (Sound me, double bandwidth);
-autoLtas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maximumPitch,
+autoLtas Sound_to_Ltas_pitchCorrected (Sound sound, double pitchFloor, double pitchCeiling,
 	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 

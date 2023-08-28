@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017,2019 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017,2019,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 #include "Sound_to_Pitch.h"
 #include "Sound_to_Harmonicity.h"
 
-autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
+autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double pitchFloor,
 	double silenceThreshold, double periodsPerWindow)
 {
 	try {
-		autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 1,
+		autoPitch pitch = Sound_to_Pitch_any (me, dt, pitchFloor, periodsPerWindow, 15, 1,
 				silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 				pitch -> dx, pitch -> x1);
@@ -41,11 +41,11 @@ autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitc
 	}
 }
 
-autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
+autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double pitchFloor,
 	double silenceThreshold, double periodsPerWindow)
 {
 	try {
-		autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 3,
+		autoPitch pitch = Sound_to_Pitch_any (me, dt, pitchFloor, periodsPerWindow, 15, 3,
 				silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 				pitch -> dx, pitch -> x1);

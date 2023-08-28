@@ -3975,15 +3975,15 @@ ENTRY (U"Settings")
 NORMAL (U"The settings are described in @@Sound: Change gender...@. ")
 MAN_END
 
-MAN_BEGIN (U"Sound: Change gender...", U"djmw", 20030205)
+MAN_BEGIN (U"Sound: Change gender...", U"djmw", 20030205)   // 2023
 /* INTRO (U"Deprecated: use @@Sound: Change speaker...@") */
 NORMAL (U"A command to create a new @Sound with manipulated characteristics.")
 ENTRY (U"Settings")
 NORMAL (U"The quality of the @@overlap-add|manipulation@ depends on the pitch measurement.")
 NORMAL (U"The arguments that control the pitch measurement are:")
-TERM (U"##Minimum pitch (Hz)# (standard value: 75 Hz)")
+TERM (U"##Pitch floor (Hz)# (standard value: 75 Hz)")
 DEFINITION (U"pitch candidates below this frequency will not be considered.")
-TERM (U"##Maximum pitch (Hz)# (standard value: 600 Hz)")
+TERM (U"##Pitch ceiling (Hz)# (standard value: 600 Hz)")
 DEFINITION (U"pitch candidates above this frequency will be ignored.")
 NORMAL (U"The arguments that control the manipulation are:")
 TERM (U"##Formant shift ratio")
@@ -4466,7 +4466,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"The speech activity algorithm is described in @@Ma & Nishihara (2013)@.")
 MAN_END
 
-MAN_BEGIN (U"Intensity: To TextGrid (silences)...", U"djmw", 20061201)
+MAN_BEGIN (U"Intensity: To TextGrid (silences)...", U"djmw", 20061201)   // 2023
 INTRO (U"A command that creates a @TextGrid in which the silent and sounding intervals of the selected @Intensity are marked.")
 ENTRY (U"Settings")
 xxx_to_TextGrid_detectSilences_COMMON_PARAMETERS_HELP
@@ -4481,7 +4481,7 @@ NORMAL (U"Experience showed that first removing short intensity bursts instead o
 ENTRY (U"Important")
 NORMAL (U"The effectiveness of the %%Minimum silent interval duration% and %%Minimum sounding interval duration% "
 	"depends on the effective analysis window duration that was used to determine the intensity contour. "
-	"For example, if you have chosen 100 Hz for the \"Minimum pitch\" parameter in the @@Sound: To Intensity...@ analysis, "
+	"For example, if you have chosen 100 Hz for the “Pitch floor” parameter in the @@Sound: To Intensity...@ analysis, "
 	"the effective analysis window duration was 32 ms. Don't expect to find sounding "
 	"or silent intervals with a duration smaller than this effective analysis window duration.")
 MAN_END
@@ -4623,7 +4623,7 @@ INTRO (U"A command that creates from the selected @Sound a new sound with silenc
 ENTRY (U"Settings")
 TERM (U"##Trim duration (s)#")
 DEFINITION (U"specifies the maximum allowed silence duration.")
-TERM (U"##Minimum pitch (Hz)#, and, ##Time step (s)#")
+TERM (U"##Pitch floor (Hz)#, and, ##Time step (s)#")
 DEFINITION (U"determine how we measure the intensities on which the determination of silent intervals is based. See @@Sound: To Intensity...@ for more info.")
 TERM (U"##Silence threshold (dB)#, ##Minimum silent interval duration (s)#, and ##Minimum sounding interval duration#")
 DEFINITION (U"determine how the silent intervals will be determined. See @@Intensity: To TextGrid (silences)...@ for more info.")
@@ -4666,7 +4666,7 @@ EQUATION (U"%#H(%f) = (%f__%h_ - %f) / (%f__%h_ - %f__%c_) for %f__%c_ \\<_ %f \
 NORMAL (U"In general the number of filter values stored in each frame of the MelSpectrogram is an order of magnitude smaller than the number of sound samples in the corresponding analysis frame.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Pitch (shs)...", U"djmw", 19970402)
+MAN_BEGIN (U"Sound: To Pitch (shs)...", U"djmw", 19970402)   // 2023
 INTRO (U"A command that creates a @Pitch object from every selected @Sound object.")
 ENTRY (U"Purpose")
 NORMAL (U"to perform a pitch analysis based on a spectral compression model. "
@@ -4687,7 +4687,7 @@ NORMAL (U"The spectral compression consists of the summation of a sequence of "
 ENTRY (U"Settings")
 TERM (U"##Time step (s)# (standard value: 0.01 s)")
 DEFINITION (U"the measurement interval (frame duration), in seconds.")
-TERM (U"##Minimum pitch (Hz)# (standard value: 50 Hz)")
+TERM (U"##Pitch floor (Hz)# (standard value: 50 Hz)")
 DEFINITION (U"candidates below this frequency will not be recruited. This parameter "
 	"determines the length of the analysis window.")
 TERM (U"##Max. number of candidates# (standard value: 15)")
@@ -4700,7 +4700,7 @@ TERM (U"##Compression factor# (standard value: 0.84)")
 DEFINITION (U"the factor by which successive compressed spectra are multiplied before the summation.")
 TERM (U"##Number of points per octave# (standard value: 48)")
 DEFINITION (U"determines the sampling of the logarithmic frequency scale.")
-TERM (U"##Ceiling (Hz)# (standard value: 500 Hz)")
+TERM (U"##Pitch ceiling (Hz)# (standard value: 500 Hz)")
 DEFINITION (U"candidates above this frequency will be ignored.")
 MAN_END
 

@@ -1,6 +1,6 @@
 /* KlattGrid.cpp
  *
- * Copyright (C) 2008-2023 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 2008-2023 David Weenink, 2015,2017,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2966,7 +2966,9 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 	}
 }
 
-autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preEmphasisFrequency, double minimumPitch, double maximumPitch, double pitchFloorIntensity, int subtractMean) {
+autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maximumNumberOfFormants, double maximumFormantFrequency,
+	double windowLength, double preEmphasisFrequency, double pitchFloor, double pitchCeiling, double pitchFloorForIntensity, int subtractMean)
+{
 	try {
 		const integer numberOfFormants = maximumNumberOfFormants;
 		const integer numberOfNasalFormants = 1;
@@ -2980,11 +2982,12 @@ autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maxi
 		autoFormant f = Sound_to_Formant_burg (sound.get(), timeStep, maximumNumberOfFormants,
 		                                       maximumFormantFrequency, windowLength, preEmphasisFrequency);
 		autoFormantGrid fgrid = Formant_downto_FormantGrid (f.get());
-		autoPitch p = Sound_to_Pitch (sound.get(), timeStep, minimumPitch, maximumPitch);
+		autoPitch p = Sound_to_Pitch (sound.get(), timeStep, pitchFloor, pitchCeiling);
 		autoPitchTier ptier = Pitch_to_PitchTier (p.get());
-		autoIntensity i = Sound_to_Intensity (sound.get(), pitchFloorIntensity, timeStep, subtractMean);
+		autoIntensity i = Sound_to_Intensity (sound.get(), pitchFloorForIntensity, timeStep, subtractMean);
 		autoIntensityTier itier = Intensity_downto_IntensityTier (i.get());
-		autoKlattGrid thee = KlattGrid_create (my xmin, my xmax, numberOfFormants, numberOfNasalFormants,                            numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants);
+		autoKlattGrid thee = KlattGrid_create (my xmin, my xmax, numberOfFormants, numberOfNasalFormants, numberOfNasalAntiFormants,
+				numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants);
 		KlattGrid_replacePitchTier (thee.get(), ptier.get());
 		KlattGrid_replaceFormantGrid (thee.get(), kKlattGridFormantType::ORAL, fgrid.get());
 		KlattGrid_replaceVoicingAmplitudeTier (thee.get(), itier.get());
@@ -2994,7 +2997,9 @@ autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, integer maxi
 	}
 }
 
-autoKlattGrid KlattGrid_createFromVowel (double duration, double f0start, double f1, double b1, double f2, double b2, double f3, double b3, double f4, double bandWidthFraction, double formantFrequencyInterval) {
+autoKlattGrid KlattGrid_createFromVowel (double duration, double f0start, double f1, double b1, double f2, double b2, double f3, double b3, double f4,
+	double bandWidthFraction, double formantFrequencyInterval)
+{
 	const integer numberOfOralFormants = 15;
 	const double tstart = 0.0;
 	autoKlattGrid me = KlattGrid_create (0.0, duration, numberOfOralFormants, 0, 0, 0, 0, 0, 0);

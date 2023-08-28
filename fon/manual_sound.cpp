@@ -966,13 +966,13 @@ DEFINITION (U"the interpolation method, see @@vector value interpolation@. "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Lengthen (overlap-add)...", U"ppgb", 20030916)
+MAN_BEGIN (U"Sound: Lengthen (overlap-add)...", U"ppgb", 20030916)   // 2023
 INTRO (U"A command to convert each selected @Sound object into a longer new @Sound object.")
 ENTRY (U"Settings")
-TERM (U"##Minimum frequency (Hz)")
+TERM (U"##Pitch floor (Hz)")
 DEFINITION (U"the minimum pitch used in the periodicity analysis. The standard value is 75 Hz. For the voice of a young child, set this to 150 Hz."
 	"The shortest voiceless interval in the decomposition is taken as 1.5 divided by %%minimum frequency%.")
-TERM (U"##Maximum frequency (Hz)")
+TERM (U"##Pitch ceiling (Hz)")
 DEFINITION (U"the maximum pitch used in the periodicity analysis. The standard value is 600 Hz. For an adult male voice, set this to 300 Hz.")
 TERM (U"##Factor")
 DEFINITION (U"the factor with which the sound will be lengthened. The standard value is 1.5. If you take a value less than 1, "

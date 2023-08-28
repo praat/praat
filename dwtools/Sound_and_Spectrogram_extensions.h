@@ -2,7 +2,7 @@
 #define _Sound_and_Spectrogram_extensions_h_
 /* Sound_and_Spectrogram_extensions.h
  *
- * Copyright (C) 2014-2015, 2023 David Weenink
+ * Copyright (C) 2014-2015,2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 
 autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWidth,
 	double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
-	double minimumPitch, double maximumPitch);
+	double pitchFloor, double pitchCeiling);
 
 autoSpectrogram Sound_Pitch_to_Spectrogram (Sound me, Pitch thee,
 	double analysisWidth, double dt, double f1_hz, double fmax_hz,

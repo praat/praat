@@ -1561,13 +1561,13 @@ static autoIntensity Spectrogram_to_Intensity_silenceDetection (Spectrogram me) 
 		/*
 			Scale intensity.
 		*/
-		intensityBins  /=  4.0e-10; // threshold of hearing
-		const double halfWindow = 3.2 * 0.01; // as if minimumPitch were 100 Hz
+		intensityBins  /=  4.0e-10;   // threshold of hearing
+		const double halfWindow = 3.2 * 0.01;   // as if pitchFloor were 100 Hz
 		autoIntensity him = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const double xmid = Sampled_indexToX (thee.get(), iframe);
 			const double intensity = Sampled_getMean (thee.get(), xmid - halfWindow, xmid + halfWindow, 1, 0, true);
-			his z [1] [iframe] = (intensity < 1.0e-30 ? -300.0 : 10.0 * log10 (intensity) );
+			his z [1] [iframe] = ( intensity < 1.0e-30 ? -300.0 : 10.0 * log10 (intensity) );
 		}
 		return him;
 	} catch (MelderError) {
@@ -1577,7 +1577,8 @@ static autoIntensity Spectrogram_to_Intensity_silenceDetection (Spectrogram me) 
 
 autoTextGrid Sound_to_TextGrid_speechActivity_lsfm (Sound me, double timeStep, double longTermWindow, double shorttimeWindow, double fmin, double fmax, 
 	double lsfmThreshold, double nonspeechThreshold_dB, double minNonspeechDuration, double minSpeechDuration, 
-	conststring32 nonspeechLabel, conststring32 speechLabel) {
+	conststring32 nonspeechLabel, conststring32 speechLabel)
+{
 	try {
 		if (timeStep <= 0.0)
 			timeStep = 0.01;

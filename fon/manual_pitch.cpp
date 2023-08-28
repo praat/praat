@@ -610,7 +610,7 @@ NORMAL (U"The algorithm performs an acoustic periodicity detection on the basis 
 ENTRY (U"Settings")
 TERM (U"%%Time step% (standard value: 0.01 s)")
 DEFINITION (U"the measurement interval (frame duration), in seconds.")
-TERM (U"%%Minimum pitch% (standard value: 75 Hz)")
+TERM (U"%%Pitch floor% (standard value: 75 Hz)")
 DEFINITION (U"determines the length of the analysis window.")
 TERM (U"%%Silence threshold% (standard value: 0.1)")
 DEFINITION (U"frames that do not contain amplitudes above this threshold (relative to the global maximum amplitude), "
@@ -622,7 +622,7 @@ DEFINITION (U"4.5 is best for speech: "
 	"but the algorithm becomes more sensitive to dynamic changes in the signal.")
 ENTRY (U"Usage")
 NORMAL (U"You will normally use @@Sound: To Harmonicity (cc)...@ instead of this command, "
-	"because that has a much better time resolution (though its sensitivity is 60, not 80 dB).")
+	"because that has a much better time resolution (though its sensitivity is 60, not 80 dB).")   // TODO: check these values, because we say 60 dB above
 MAN_END
 
 MAN_BEGIN (U"Sound: To Harmonicity (cc)...", U"ppgb", 19961003)

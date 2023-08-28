@@ -938,19 +938,21 @@ static int Sound_into_FormantFilter_frame (Sound me, FormantFilter thee, integer
 	return 1;
 }
 
-autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw, double minimumPitch, double maximumPitch) {
+autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
+	double pitchFloor, double pitchCeiling)
+{
 	try {
 		const double floor = 80.0, ceiling = 600.0;
-		if (minimumPitch >= maximumPitch) {
-			minimumPitch = floor;
-			maximumPitch = ceiling;
+		if (pitchFloor >= pitchCeiling) {
+			pitchFloor = floor;
+			pitchCeiling = ceiling;
 		}
-		if (minimumPitch <= 0.0)
-			minimumPitch = floor;
-		if (maximumPitch <= 0.0)
-			maximumPitch = ceiling;
+		if (pitchFloor <= 0.0)
+			pitchFloor = floor;
+		if (pitchCeiling <= 0.0)
+			pitchCeiling = ceiling;
 
-		autoPitch thee = Sound_to_Pitch (me, dt, minimumPitch, maximumPitch);
+		autoPitch thee = Sound_to_Pitch (me, dt, pitchFloor, pitchCeiling);
 		autoFormantFilter ff = Sound_Pitch_to_FormantFilter (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff;
 	} catch (MelderError) {

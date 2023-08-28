@@ -2,7 +2,7 @@
 #define _Manipulation_h_
 /* Manipulation.h
  *
- * Copyright (C) 1992-2005,2007,2011,2015,2016,2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015,2016,2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ void Manipulation_replaceIntensityTier (Manipulation me, IntensityTier intensity
 void Manipulation_replacePitchTier (Manipulation me, PitchTier pitch);
 void Manipulation_replaceDurationTier (Manipulation me, DurationTier duration);
 
-autoManipulation Sound_to_Manipulation (Sound me, double timeStep, double minimumPitch, double maximumPitch);
+autoManipulation Sound_to_Manipulation (Sound me, double timeStep, double pitchFloor, double pitchCeiling);
 autoManipulation Sound_Pitch_to_Manipulation (Sound sound, Pitch pitch);
 autoManipulation Sound_PointProcess_to_Manipulation (Sound sound, PointProcess point);
 autoManipulation Manipulation_AnyTier_to_Manipulation (Manipulation manip, AnyTier tier);

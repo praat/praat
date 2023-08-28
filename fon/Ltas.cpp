@@ -1,6 +1,6 @@
 /* Ltas.cpp
  *
- * Copyright (C) 1992-2012,2015-2018,2022 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2018,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,23 +354,23 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 				ltas -> z [1] [iband] = undefined;
 			} else {
 				/*
-				 * Each bin now contains a total energy in Pa2 sec.
-				 * To convert this to power density, we
-				 */
-				double totalEnergyInThisBand = ltas -> z [1] [iband];
+					Each bin now contains a total energy in Pa2 sec.
+					We convert this to power density.
+				*/
+				const double totalEnergyInThisBand = ltas -> z [1] [iband];
 				if (false /* i.e. if you just want to have a spectrum of the voiced parts... */) {
-					double energyDensityInThisBand = totalEnergyInThisBand / ltas -> dx;
-					double powerDensityInThisBand = energyDensityInThisBand / (sound -> xmax - sound -> xmin);
+					const double energyDensityInThisBand = totalEnergyInThisBand / ltas -> dx;
+					const double powerDensityInThisBand = energyDensityInThisBand / (sound -> xmax - sound -> xmin);
 					ltas -> z [1] [iband] = 10.0 * log10 (powerDensityInThisBand / 4.0e-10);
 				} else {
 					/*
-					 * And this is what we really want. The total energy has to be redistributed.
-					 */
-					double meanEnergyInThisBand = totalEnergyInThisBand / numbers -> z [1] [iband];
-					double meanNumberOfEnergiesPerBand = (double) totalNumberOfEnergies / ltas -> nx;
-					double redistributedEnergyInThisBand = meanEnergyInThisBand * meanNumberOfEnergiesPerBand;
-					double redistributedEnergyDensityInThisBand = redistributedEnergyInThisBand / ltas -> dx;
-					double redistributedPowerDensityInThisBand = redistributedEnergyDensityInThisBand / (sound -> xmax - sound -> xmin);
+						And this is what we really want. The total energy has to be redistributed.
+					*/
+					const double meanEnergyInThisBand = totalEnergyInThisBand / numbers -> z [1] [iband];
+					const double meanNumberOfEnergiesPerBand = (double) totalNumberOfEnergies / ltas -> nx;
+					const double redistributedEnergyInThisBand = meanEnergyInThisBand * meanNumberOfEnergiesPerBand;
+					const double redistributedEnergyDensityInThisBand = redistributedEnergyInThisBand / ltas -> dx;
+					const double redistributedPowerDensityInThisBand = redistributedEnergyDensityInThisBand / (sound -> xmax - sound -> xmin);
 					ltas -> z [1] [iband] = 10.0 * log10 (redistributedPowerDensityInThisBand / 4.0e-10);
 					/* OLD: ltas -> z [1] [iband] = 10.0 * log10 (ltas -> z [1] [iband] / numbers -> z [1] [iband] * sound -> nx);*/
 				}
@@ -379,8 +379,10 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 		for (integer iband = 1; iband <= ltas -> nx; iband ++) {
 			if (isundef (ltas -> z [1] [iband])) {
 				integer ibandleft = iband - 1, ibandright = iband + 1;
-				while (ibandleft >= 1 && isundef (ltas -> z [1] [ibandleft])) ibandleft --;
-				while (ibandright <= ltas -> nx && isundef (ltas -> z [1] [ibandright])) ibandright ++;
+				while (ibandleft >= 1 && isundef (ltas -> z [1] [ibandleft]))
+					ibandleft --;
+				while (ibandright <= ltas -> nx && isundef (ltas -> z [1] [ibandright]))
+					ibandright ++;
 				if (ibandleft < 1 && ibandright > ltas -> nx)
 					Melder_throw (U"Cannot create an Ltas without energy in any bins.");
 				if (ibandleft < 1) {
@@ -388,9 +390,9 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 				} else if (ibandright > ltas -> nx) {
 					ltas -> z [1] [iband] = ltas -> z [1] [ibandleft];
 				} else {
-					double frequency = ltas -> x1 + (iband - 1) * ltas -> dx;
-					double fleft = ltas -> x1 + (ibandleft - 1) * ltas -> dx;
-					double fright = ltas -> x1 + (ibandright - 1) * ltas -> dx;
+					const double frequency = ltas -> x1 + (iband - 1) * ltas -> dx;
+					const double fleft = ltas -> x1 + (ibandleft - 1) * ltas -> dx;
+					const double fright = ltas -> x1 + (ibandright - 1) * ltas -> dx;
 					ltas -> z [1] [iband] = ((fright - frequency) * ltas -> z [1] [ibandleft]
 						+ (frequency - fleft) * ltas -> z [1] [ibandright]) / (fright - fleft);
 				}
@@ -402,14 +404,14 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 	}
 }
 
-autoLtas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maximumPitch,
+autoLtas Sound_to_Ltas_pitchCorrected (Sound sound, double pitchFloor, double pitchCeiling,
 	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
 {
 	try {
-		autoPointProcess pulses = Sound_to_PointProcess_periodic_cc (sound, minimumPitch, maximumPitch);
+		autoPointProcess pulses = Sound_to_PointProcess_periodic_cc (sound, pitchFloor, pitchCeiling);
 		autoLtas ltas = PointProcess_Sound_to_Ltas (pulses.get(), sound, maximumFrequency, bandWidth,
-			shortestPeriod, longestPeriod, maximumPeriodFactor);
+				shortestPeriod, longestPeriod, maximumPeriodFactor);
 		return ltas;
 	} catch (MelderError) {
 		Melder_throw (sound, U": pitch-corrected LTAS analysis not performed.");
@@ -428,9 +430,9 @@ autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 			Melder_throw (U"There are no periods in the point process.");
 		autoMelderProgress progress (U"LTAS (harmonics) analysis...");
 		for (integer ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
-			double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
-			double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
-			double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
+			const double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
+			const double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
+			const double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
 			Melder_progress ((double) ipulse / pulses -> nt, U"Sound & PointProcess: To Ltas: pulse ", ipulse, U" out of ", pulses -> nt);
 			if (leftInterval >= shortestPeriod && leftInterval <= longestPeriod &&
 				rightInterval >= shortestPeriod && rightInterval <= longestPeriod &&
@@ -442,13 +444,14 @@ autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 				integer localMaximumHarmonic;
 				autoSound period = Sound_extractPart (sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
-					kSound_windowShape::RECTANGULAR, 1.0, false);
+					kSound_windowShape::RECTANGULAR, 1.0, false
+				);
 				autoSpectrum spectrum = Sound_to_Spectrum (period.get(), false);
 				localMaximumHarmonic = maximumHarmonic < spectrum -> nx ? maximumHarmonic : spectrum -> nx;
 				for (integer iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {
-					double realPart = spectrum -> z [1] [iharm];
-					double imaginaryPart = spectrum -> z [2] [iharm];
-					double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * 2.0 * spectrum -> dx;
+					const double realPart = spectrum -> z [1] [iharm];
+					const double imaginaryPart = spectrum -> z [2] [iharm];
+					const double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * 2.0 * spectrum -> dx;
 					ltas -> z [1] [iharm] += energy;
 				}
 			} else {

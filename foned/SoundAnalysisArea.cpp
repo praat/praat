@@ -1034,7 +1034,7 @@ static void menu_cb_moveCursorToMinimumPitch (SoundAnalysisArea me, EDITOR_ARGS)
 		} else {
 			double time;
 			Pitch_getMinimumAndTime (my d_pitch.get(), my startSelection(), my endSelection(),
-				my instancePref_pitch_unit(), 1, nullptr, & time);
+					my instancePref_pitch_unit(), 1, nullptr, & time);
 			if (isundef (time))
 				Melder_throw (U"Selection is voiceless.");
 			my setSelection (time, time);

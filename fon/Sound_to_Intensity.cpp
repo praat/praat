@@ -1,6 +1,6 @@
 /* Sound_to_Intensity.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,33 +33,33 @@
 
 #include "Sound_to_Intensity.h"
 
-static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double timeStep, bool subtractMeanPressure) {
+static autoIntensity Sound_to_Intensity_ (Sound me, double pitchFloor, double timeStep, bool subtractMeanPressure) {
 	try {
 		/*
 			Preconditions.
 		*/
-		Melder_require (isdefined (minimumPitch),
-			U"Minimum pitch is undefined.");
+		Melder_require (isdefined (pitchFloor),
+			U"The pitch floor is undefined.");
 		Melder_require (isdefined (timeStep),
-			U"Time step is undefined.");
+			U"The time step is undefined.");
 		Melder_require (timeStep >= 0.0,
-			U"Time step should be zero (= automatic) or positive, instead of ", timeStep, U" seconds.");
+			U"The time step should be zero (= automatic) or positive, instead of ", timeStep, U" seconds.");
 		Melder_require (my dx > 0.0,
 			U"The Sound's time step should be positive, instead of ", my dx, U" seconds.");
-		Melder_require (minimumPitch > 0.0,
-			U"Minimum pitch should be positive, instead of ", minimumPitch, U" Hz.");
+		Melder_require (pitchFloor > 0.0,
+			U"The pitch floor should be positive, instead of ", pitchFloor, U" Hz.");
 		/*
 			Defaults.
 		*/
 		constexpr double minimumNumberOfPeriodsNeededForReliablePitchMeasurement = 3.2;
-		const double maximumPeriod = 1.0 / minimumPitch;
-		const double logicalWindowDuration = minimumNumberOfPeriodsNeededForReliablePitchMeasurement * maximumPeriod;   // == 3.2 / minimumPitch
+		const double periodCeiling = 1.0 / pitchFloor;
+		const double logicalWindowDuration = minimumNumberOfPeriodsNeededForReliablePitchMeasurement * periodCeiling;   // == 3.2 / pitchFloor
 		if (timeStep == 0.0) {
 			constexpr double defaultOversampling = 4.0;
-			timeStep = logicalWindowDuration / defaultOversampling;   // == 0.8 / minimumPitch
+			timeStep = logicalWindowDuration / defaultOversampling;   // == 0.8 / pitchFloor
 		}
 
-		const double physicalWindowDuration = 2.0 * logicalWindowDuration;   // == 6.4 / minimumPitch
+		const double physicalWindowDuration = 2.0 * logicalWindowDuration;   // == 6.4 / pitchFloor
 		Melder_assert (physicalWindowDuration > 0.0);
 		const double halfWindowDuration = 0.5 * physicalWindowDuration;
 		const integer halfWindowSamples = Melder_ifloor (halfWindowDuration / my dx);
@@ -81,7 +81,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 		} catch (MelderError) {
 			const double physicalSoundDuration = my nx * my dx;
 			Melder_throw (U"The physical duration of the sound (the number of samples times the sampling period) in an intensity analysis "
-				"should be at least 6.4 divided by the minimum pitch (", minimumPitch, U" Hz), "
+				"should be at least 6.4 divided by the pitch floor (", pitchFloor, U" Hz), "
 				U"i.e. at least ", physicalWindowDuration, U" s, instead of ", physicalSoundDuration, U" s.");
 		}
 		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
@@ -126,19 +126,19 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 	}
 }
 
-autoIntensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, bool subtractMeanPressure) {
+autoIntensity Sound_to_Intensity (Sound me, double pitchFloor, double timeStep, bool subtractMeanPressure) {
 	const bool veryAccurate = false;
 	if (veryAccurate) {
 		autoSound up = Sound_upsample (me);   // because squaring doubles the frequency content, i.e. you get super-Nyquist components
-		return Sound_to_Intensity_ (up.get(), minimumPitch, timeStep, subtractMeanPressure);
+		return Sound_to_Intensity_ (up.get(), pitchFloor, timeStep, subtractMeanPressure);
 	} else {
-		return Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
+		return Sound_to_Intensity_ (me, pitchFloor, timeStep, subtractMeanPressure);
 	}
 }
 
-autoIntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, bool subtractMean) {
+autoIntensityTier Sound_to_IntensityTier (Sound me, double pitchFloor, double timeStep, bool subtractMean) {
 	try {
-		autoIntensity intensity = Sound_to_Intensity (me, minimumPitch, timeStep, subtractMean);
+		autoIntensity intensity = Sound_to_Intensity (me, pitchFloor, timeStep, subtractMean);
 		return Intensity_downto_IntensityTier (intensity.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": no IntensityTier created.");
