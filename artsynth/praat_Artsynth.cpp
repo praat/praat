@@ -109,7 +109,8 @@ FORM (MODIFY_EACH_Artword_setTarget, U"Set one Artword target", nullptr) {
 		OPTION (kArt_muscle_getText ((kArt_muscle) ienum))
 	OK
 DO
-	if (time < 0.0) Melder_throw (U"The specified time should not be less than 0.");
+	if (time < 0.0)
+		Melder_throw (U"The specified time should not be less than 0.");
 	MODIFY_EACH (Artword)
 		Artword_setTarget (me, (kArt_muscle) muscle, time, targetValue);
 	MODIFY_EACH_END

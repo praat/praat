@@ -942,19 +942,8 @@ autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth, double
 	double pitchFloor, double pitchCeiling)
 {
 	try {
-		const double floor = 80.0, ceiling = 600.0;
-		if (pitchFloor >= pitchCeiling) {
-			pitchFloor = floor;
-			pitchCeiling = ceiling;
-		}
-		if (pitchFloor <= 0.0)
-			pitchFloor = floor;
-		if (pitchCeiling <= 0.0)
-			pitchCeiling = ceiling;
-
 		autoPitch thee = Sound_to_Pitch (me, dt, pitchFloor, pitchCeiling);
-		autoFormantFilter ff = Sound_Pitch_to_FormantFilter (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
-		return ff;
+		return Sound_Pitch_to_FormantFilter (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 	} catch (MelderError) {
 		Melder_throw (me, U": no FormantFilter created.");
 	}
