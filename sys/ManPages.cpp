@@ -752,6 +752,8 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			if (! shouldShowOutput)
 				MelderString_empty (& buffer_graphical);
 		} else if (numberOfLeadingSpaces >= 3) {
+			//TRACE
+			trace (U"Bare code found in: ", firstLine);
 			type = (
 				numberOfLeadingSpaces <  7 ? kManPage_type::CODE  :
 				numberOfLeadingSpaces < 11 ? kManPage_type::CODE1 :
