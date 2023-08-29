@@ -1835,11 +1835,14 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 	if (my instancePref_intensity_show())
 		tryToHaveIntensity (me);
 	if (my instancePref_intensity_show() && my d_intensity) {
-		Graphics_setColour (my graphics(), my instancePref_spectrogram_show() ? Melder_YELLOW : Melder_LIME);
-		Graphics_setLineWidth (my graphics(), my instancePref_spectrogram_show() ? 1.0 : 3.0);
+		Graphics_setColour (my graphics(), Melder_LIME);
+		Graphics_setLineWidth (my graphics(), 3.0);
 		Intensity_drawInside (my d_intensity.get(), my graphics(), my startWindow(), my endWindow(),
 				my instancePref_intensity_viewFrom(), my instancePref_intensity_viewTo());
+		Graphics_setColour (my graphics(), Melder_GREEN);
 		Graphics_setLineWidth (my graphics(), 1.0);
+		Intensity_drawInside (my d_intensity.get(), my graphics(), my startWindow(), my endWindow(),
+				my instancePref_intensity_viewFrom(), my instancePref_intensity_viewTo());
 		Graphics_setColour (my graphics(), Melder_BLACK);
 	}
 
