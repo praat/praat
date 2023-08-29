@@ -7602,7 +7602,7 @@ DO
 	INFO_ONE (TableOfReal)
 		const double p = TableOfReal_testSphericityOfCovariance (me, numberOfPermutations, useCorrelation);
 		MelderInfo_open ();
-		MelderInfo_writeLine (p, U" (=probability from ", numberOfPermutations, U" permutations.");
+		MelderInfo_writeLine (p, U" (probability from ", numberOfPermutations, U" permutations).");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -7615,7 +7615,7 @@ DO
 	INFO_ONE (TableOfReal)
 		const double p = TableOfReal_testCovarianceCompoundSymmetry (me, numberOfPermutations, useCorrelation);
 		MelderInfo_open ();
-		MelderInfo_writeLine (p, U" (=probability from ", numberOfPermutations, U" permutations.");
+		MelderInfo_writeLine (p, U" (probability from ", numberOfPermutations, U" permutations).");
 		MelderInfo_close ();
 	INFO_ONE_END	
 }
@@ -7628,7 +7628,7 @@ DO
 	INFO_ONE (TableOfReal)
 		const double p = TableOfReal_testCovarianceEqualsIdentityMatrix (me, numberOfPermutations, useCorrelation);
 		MelderInfo_open ();
-		MelderInfo_writeLine (p, U" (=probability from ", numberOfPermutations, U" permutations.");
+		MelderInfo_writeLine (p, U" (probability from ", numberOfPermutations, U" permutations).");
 		MelderInfo_close ();
 	INFO_ONE_END	
 }
@@ -7641,7 +7641,7 @@ DO
 	INFO_TWO (TableOfReal)
 		const double p = TableOfReal_testEqualityOfCovariances (me, you, numberOfPermutations, useCorrelation);
 		MelderInfo_open ();
-		MelderInfo_writeLine (p, U" (=probability from ", numberOfPermutations, U" permutations.");
+		MelderInfo_writeLine (p, U" (probability from ", numberOfPermutations, U" permutations).");
 		MelderInfo_close ();
 	INFO_ONE_END	
 }
