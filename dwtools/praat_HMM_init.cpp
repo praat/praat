@@ -420,8 +420,8 @@ FORM (QUERY_TWO_FOR_REAL__HMM_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entrop
 DO
 	QUERY_TWO_FOR_REAL (HMM)
 		const double result = HMM_HMM_getCrossEntropy (me, you, observationLength, symmetric);
-	QUERY_TWO_FOR_REAL_END (U" (", (symmetric ? U"symmetric" : U""),
-			U" cross-entropy between models for observation length ", observationLength, U")")
+	QUERY_TWO_FOR_REAL_END (U" (", (symmetric ? U"symmetric " : U""),
+			U"cross-entropy between models for observation length ", observationLength, U")")
 }
 
 DIRECT (QUERY_TWO_AND_ONE_FOR_REAL__HMM_HMM_HMMObservationSequence_getCrossEntropy) {
