@@ -29,6 +29,15 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.3.16# (29 August 2023)
+• Sound analysis areas: better visible contrast in intensity curve (green on lime).
+• Windows: repaired a bug introduced in 6.3.10 (as a result of the repair mentioned there)
+  by which the Demo window would be insensitive to arrow keys.
+• SpeechSynthesizer: repaired a bug that caused ##Get phonemes from text...#
+  to return empty text.
+• Repaired a bug that caused Praat to crash when you supplied 0
+  for the channel number in @@Sound: Get nearest zero crossing...@.
+
 ##6.3.15# (23 August 2023)
 • SpeechSynthesizer: improvements in ##Get phonemes from text...#
 • Scripting: @`part#`, @`part##`, @`selected$#`.
