@@ -2669,7 +2669,7 @@ static void on_key (HWND window, UINT key, BOOL down, int repeat, UINT flags) {
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me && key >= VK_LEFT && key <= VK_DOWN) {
 		//Melder_warning (U"Widget type ", my widgetClass);
-		if (MEMBER (me, Shell)) {
+		if (MEMBER (me, Shell) || my widgetClass == xmDrawingAreaWidgetClass) {   // any change in this condition should be mirrored in `on_char`
 			GuiObject drawingArea = _motif_findDrawingArea (me);
 			if (drawingArea) {
 				GuiObject textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
@@ -2685,7 +2685,7 @@ static void on_key (HWND window, UINT key, BOOL down, int repeat, UINT flags) {
 static void on_char (HWND window, TCHAR kar, int repeat) {
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me) {
-		if (MEMBER (me, Shell) || my widgetClass == xmDrawingAreaWidgetClass) {
+		if (MEMBER (me, Shell) || my widgetClass == xmDrawingAreaWidgetClass) {   // any change in this condition should be mirrored in `on_key`
 			GuiObject drawingArea = _motif_findDrawingArea (me);
 			if (drawingArea) {
 				GuiObject textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
