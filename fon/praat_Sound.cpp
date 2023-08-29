@@ -927,7 +927,8 @@ FORM (QUERY_ONE_FOR_REAL__old_Sound_getNearestZeroCrossing, U"Sound: Get nearest
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Sound)
-		if (my ny > 1) Melder_throw (U"Cannot determine a zero crossing for a stereo sound.");
+		if (my ny > 1)
+			Melder_throw (U"Cannot determine a zero crossing for a stereo sound.");
 		const double result = Sound_getNearestZeroCrossing (me, time, 1);
 	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
@@ -938,7 +939,10 @@ FORM (QUERY_ONE_FOR_REAL__Sound_getNearestZeroCrossing, U"Sound: Get nearest zer
 	OK
 DO_ALTERNATIVE (QUERY_ONE_FOR_REAL__old_Sound_getNearestZeroCrossing)
 	QUERY_ONE_FOR_REAL (Sound)
-		if (channel > my ny) channel = 1;
+		Melder_require (channel >= 1,
+			U"The channel number should be at least 1.");
+		Melder_require (channel <= my ny,
+			U"The channel number should be at most the number of channels (", my ny, U").");
 		const double result = Sound_getNearestZeroCrossing (me, time, channel);
 	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
