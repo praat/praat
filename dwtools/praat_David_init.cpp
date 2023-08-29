@@ -7555,14 +7555,11 @@ DO
 
 FORM (QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere, U"Table: List rows where", U"") {
 	LABEL (U"List rows where the following condition holds true.")
-	FORMULA (condition, U"Condition", U"self [row,\"F1\"] > 800.0")
+	FORMULA (condition, U"Condition", U"self [row, \"F1\"] > 800.0")
 	OK
 DO
 	QUERY_ONE_FOR_REAL_VECTOR (Table)
-		autoINTVEC resulti = Table_listRowNumbersWhere (me, condition, interpreter);
-		autoVEC result = raw_VEC (resulti.size);
-		for (integer i = 1; i <= resulti.size; i ++)
-			result [i] = resulti [i];
+		autoVEC result = cast_VEC (Table_listRowNumbersWhere (me, condition, interpreter).get());
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
