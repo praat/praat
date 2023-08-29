@@ -10435,7 +10435,7 @@ void praat_David_init () {
 				GRAPHICS_EACH__Table_verticalErrorBarsPlot);
 		praat_addAction1 (classTable, 0, U"Distribution plot...", U"Quantile-quantile plot...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 				GRAPHICS_EACH__Table_distributionPlot);
-		praat_addAction1 (classTable, 1, U"Draw where",  U"Lag plot...", 1 , 0);
+		praat_addAction1 (classTable, 1, U"Draw where", U"Lag plot...", 1, 0);
 			praat_addAction1 (classTable, 0, U"Scatter plot where...", U"Draw where", 2, 
 					GRAPHICS_EACH__Table_scatterPlotWhere);
 			praat_addAction1 (classTable, 0, U"Scatter plot where (mark)...", U"Scatter plot where...", 2, 
@@ -10464,7 +10464,7 @@ void praat_David_init () {
 	praat_addAction1 (classTable, 1, U"List row numbers where...", U"Get number of rows", GuiMenu_DEPTH_1,
 			QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere);
 	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
-		QUERY_ONE_FOR_INTEGER__Table_getNumberOfRowsWhere);
+			QUERY_ONE_FOR_INTEGER__Table_getNumberOfRowsWhere);
 	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			INFO_ONE__Table_reportOneWayAnova);
 	praat_addAction1 (classTable, 1, U"Report one-way Kruskal-Wallis...", U"Report one-way anova...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,

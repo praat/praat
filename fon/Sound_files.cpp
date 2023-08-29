@@ -1,6 +1,6 @@
 /* Sound_files.cpp
  *
- * Copyright (C) 1992-2018,2020,2022 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2018,2020,2022,2023 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,8 +103,8 @@ autoSound Sound_readFromSesamFile (MelderFile file) {
 		int32 numberOfSamples = header [127];
 		if (samplingFrequency == 0.0 || numberOfSamples == 0) {
 			/*
-			 * Try LVS header.
-			 */
+				Try LVS header.
+			*/
 			samplingFrequency = header [62];
 			numberOfSamples = (header [6] << 8) - header [68];
 		}
@@ -126,8 +126,8 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 		autofile f = Melder_fopen (file, "rb");
 
 		/*
-		 * Check identity of file: first line is "SIG", second line contains a number.
-		 */
+			Check identity of file: first line is "SIG", second line contains a number.
+		*/
 		char tag [200];
 		if (fread (tag, 1, 16, f) < 16 || ! strnequ (tag, "SIG\n", 4))
 			Melder_throw (U"Not a Bell-Labs sound file.");
@@ -140,9 +140,9 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 			Melder_throw (U"Wrong header-length info.");
 
 		/*
-		 * Read data from header.
-		 * Use defaults if necessary.
-		 */
+			Read data from header.
+			Use defaults if necessary.
+		*/
 		autostring8 lines (headerLength);
 		if ((int64) fread (lines.get(), 1, (size_t) headerLength, f) < headerLength)
 			Melder_throw (U"Header too short.");
@@ -165,13 +165,13 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 			samplingFrequency = 16000.0;
 
 		/*
-		 * Create sound.
-		 */
+			Create sound.
+		*/
 		autoSound me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 
 		/*
-		 * Read samples.
-		 */
+			Read samples.
+		*/
 		fseek (f, tagLength + headerLength, SEEK_SET);
 		for (integer i = 1; i <= numberOfSamples; i ++)
 			my z [1] [i] = (double) bingeti16 (f) * (1.0 / 32768);   // 16-bits big-endian
@@ -427,20 +427,27 @@ void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
 		integer header [1 + 128];
-		for (integer i = 1; i <= 128; i ++) header [i] = 0;
-		/* ILS header. */
-			header [6] = ((my nx - 1) >> 8) + 1;   // number of disk blocks
-			header [64] = 32149;   // ILS magic
-		/* LVS header. */
-			header [62] = Melder_iround_tieDown (1.0 / my dx);   // sampling frequency, rounded to n Hz
-			header [63] = -32000;   // magic: "sampled signal"
-			header [66] = INT12_MAX;   // maximum absolute value: 12 bits
-			header [67] = 2047;   // LVS magic
-			header [68] = my nx % 256;   // number of samples in last block
-			header [69] = 1;   // ?
-		/* Sesam header. */
-			header [126] = Melder_iround_tieDown (1.0 / my dx);   // sampling frequency, rounded to n Hz
-			header [127] = my nx;   // number of samples
+		for (integer i = 1; i <= 128; i ++)
+			header [i] = 0;
+		/*
+			ILS header.
+		*/
+		header [6] = ((my nx - 1) >> 8) + 1;   // number of disk blocks
+		header [64] = 32149;   // ILS magic
+		/*
+			LVS header.
+		*/
+		header [62] = Melder_iround_tieDown (1.0 / my dx);   // sampling frequency, rounded to n Hz
+		header [63] = -32000;   // magic: "sampled signal"
+		header [66] = INT12_MAX;   // maximum absolute value: 12 bits
+		header [67] = 2047;   // LVS magic
+		header [68] = my nx % 256;   // number of samples in last block
+		header [69] = 1;   // ?
+		/*
+			Sesam header.
+		*/
+		header [126] = Melder_iround_tieDown (1.0 / my dx);   // sampling frequency, rounded to n Hz
+		header [127] = my nx;   // number of samples
 		for (integer i = 1; i <= 128; i ++)
 			binputi32LE (header [i], f);
 		for (integer i = 1; i <= my nx; i ++)
@@ -460,12 +467,18 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 	try {
 		Melder_require (my ny <= 8,
 			U"Cannot write more than 8 channels into a Kay sound file.");
+		constexpr int maximumNumberOfSamples32 = (INT_MAX - 48) / 2;
+		Melder_require (my nx <= maximumNumberOfSamples32,
+			U"Cannot write more than ", maximumNumberOfSamples32, U" samples into a Kay sound file.");
+		const int numberOfSamples32 = int (my nx);
 
 		autoMelderFile mfile = MelderFile_create (file);
 
-		/* Form Chunk: contains all other chunks. */
+		/*
+			Form Chunk: contains all other chunks.
+		*/
 		fwrite ("FORMDS16", 1, 8, file -> filePointer);
-		binputi32LE (48 + my nx * 2, file -> filePointer);   // size of Form Chunk
+		binputi32LE (48 + numberOfSamples32 * 2, file -> filePointer);   // size of Form Chunk
 		fwrite (my ny > 2 ? "HDR8" : "HEDR", 1, 4, file -> filePointer);
 		binputi32LE (my ny > 2 ? 44 : 32, file -> filePointer);
 
@@ -475,12 +488,14 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 		fwrite (date+4, 1, 20, file -> filePointer);   // skip weekday
 
 		binputi32LE (Melder_iround_tieDown (1.0 / my dx), file -> filePointer);   // sampling frequency
-		binputi32LE (my nx, file -> filePointer);   // number of samples
+		binputi32LE (numberOfSamples32, file -> filePointer);   // number of samples
 		int maximumA = 0;
 		for (integer i = 1; i <= my nx; i ++) {
-			integer value = Melder_iround_tieDown (my z [1] [i] * 32768.0);
-			if (value < - maximumA) maximumA = - value;
-			if (value > maximumA) maximumA = value;
+			const integer value = Melder_iround_tieDown (my z [1] [i] * 32768.0);
+			if (value < - maximumA)
+				maximumA = - value;
+			if (value > maximumA)
+				maximumA = value;
 		}
 		binputi16LE (maximumA, file -> filePointer);   // absolute maximum window A
 		if (my ny == 1) {
@@ -489,9 +504,11 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 			for (integer ichannel = 2; ichannel <= my ny; ichannel ++) {
 				int maximum = 0;
 				for (integer i = 1; i <= my nx; i ++) {
-					integer value = Melder_iround_tieDown (my z [ichannel] [i] * 32768.0);
-					if (value < - maximum) maximum = - value;
-					if (value > maximum) maximum = value;
+					const integer value = Melder_iround_tieDown (my z [ichannel] [i] * 32768.0);
+					if (value < - maximum)
+						maximum = - value;
+					if (value > maximum)
+						maximum = value;
 				}
 				binputi16LE (maximum, file -> filePointer);   // absolute maximum window B
 			}
@@ -500,18 +517,18 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 					binputi16LE (-1, file -> filePointer);
 		}
 		fwrite ("SDA_", 1, 4, file -> filePointer);
-		binputi32LE (my nx * 2, file -> filePointer);   // chunk size
+		binputi32LE (numberOfSamples32 * 2, file -> filePointer);   // chunk size
 		MelderFile_writeFloatToAudio (file,
 				my z.horizontalBand (1, 1), Melder_LINEAR_16_LITTLE_ENDIAN, true);
 		if (my ny > 1) {
 			fwrite ("SD_B", 1, 4, file -> filePointer);
-			binputi32LE (my nx * 2, file -> filePointer);   // chunk size
+			binputi32LE (numberOfSamples32 * 2, file -> filePointer);   // chunk size
 			MelderFile_writeFloatToAudio (file,
 					my z.horizontalBand (2, 2), Melder_LINEAR_16_LITTLE_ENDIAN, true);
 		}
 		for (integer ichannel = 3; ichannel <= my ny; ichannel ++) {
 			fwrite (Melder_peek32to8 (Melder_cat (U"SD_", ichannel)), 1, 4, file -> filePointer);
-			binputi32LE (my nx * 2, file -> filePointer);   // chunk size
+			binputi32LE (numberOfSamples32 * 2, file -> filePointer);   // chunk size
 			MelderFile_writeFloatToAudio (file,
 					my z.horizontalBand (ichannel, ichannel), Melder_LINEAR_16_LITTLE_ENDIAN, true);
 		}
