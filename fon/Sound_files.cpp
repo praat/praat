@@ -467,7 +467,7 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 	try {
 		Melder_require (my ny <= 8,
 			U"Cannot write more than 8 channels into a Kay sound file.");
-		constexpr int maximumNumberOfSamples32 = (INT_MAX - 48) / 2;
+		constexpr int maximumNumberOfSamples32 = (INT32_MAX - 48) / 2;
 		Melder_require (my nx <= maximumNumberOfSamples32,
 			U"Cannot write more than ", maximumNumberOfSamples32, U" samples into a Kay sound file.");
 		const int numberOfSamples32 = int (my nx);
