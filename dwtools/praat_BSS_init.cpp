@@ -263,7 +263,7 @@ FORM (QUERY_ONE_FOR_REAL__CrossCorrelationTableList_getDiagonalityMeasure, U"Cro
 DO
 	QUERY_ONE_FOR_REAL (CrossCorrelationTableList)
 		const double result = CrossCorrelationTableList_getDiagonalityMeasure (me, 0, fromTable, toTable);
-	QUERY_ONE_FOR_REAL_END (U" (= average sum of squared off-diagonal elements)")
+	QUERY_ONE_FOR_REAL_END (U" (average sum of squared off-diagonal elements)")
 }
 
 FORM (CONVERT_EACH_TO_ONE__CrossCorrelationTableList_extractCrossCorrelationTable, U"CrossCorrelationTableList: Extract one CrossCorrelationTable", nullptr) {
@@ -314,7 +314,7 @@ FORM (QUERY_ONE_AND_ONE_FOR_REAL__CrossCorrelationTableList_Diagonalizer_getDiag
 DO
 	QUERY_ONE_AND_ONE_FOR_REAL (CrossCorrelationTableList, Diagonalizer)
 		const double result = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (me, you, nullptr, fromTable, toTable);
-	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= average sum of squared off-diagonal elements)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (average sum of squared off-diagonal elements)")
 }
 
 DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__CrossCorrelationTable_Diagonalizer_diagonalize) {
@@ -472,7 +472,7 @@ DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__Sound_MixingMatrix_mix) {
 
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_MixingMatrix_mixPart, U"Sound & MixingMatrix: Mix part", U"MixingMatrix") {
 	REAL (fromTime, U"left Time_range (s)", U"0.0")
-	REAL (toTime, U"right Time_range (s)", U"0.0 (=all)")
+	REAL (toTime, U"right Time_range (s)", U"0.0 (= all)")
 	OK
 DO
 	Melder_require (toTime >= fromTime,
