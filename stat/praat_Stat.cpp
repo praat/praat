@@ -532,7 +532,7 @@ DO
 	QUERY_ONE_FOR_INTEGER (Table)
 		const integer columnNumber = Table_columnNameToNumber_e (me, columnName);
 		const integer result = Table_searchColumn (me, columnNumber, value);
-	QUERY_ONE_FOR_INTEGER_END (U" (first row in which ", columnName, U" is ", value)
+	QUERY_ONE_FOR_INTEGER_END (U" (first row in which ", columnName, U" is ", value, U")")
 }
 	
 // MARK: Statistics

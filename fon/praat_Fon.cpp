@@ -3768,6 +3768,7 @@ praat_addAction2 (classIntensity, 1, classPitch, 1, U"Query", nullptr, 0, nullpt
 	praat_addAction4 (classDurationTier, 1, classPitchTier, 1, classPointProcess, 1, classSound, 1, U"To Sound...",
 			nullptr, 0, NEW1_Sound_Point_Pitch_Duration_to_Sound);
 
+	Melder_stopwatch ();
 	INCLUDE_MANPAGES (manual_Manual_init)
 	INCLUDE_MANPAGES (manual_scripting_init)
 	INCLUDE_MANPAGES (manual_demoWindow_init)
@@ -3787,6 +3788,8 @@ praat_addAction2 (classIntensity, 1, classPitch, 1, U"Query", nullptr, 0, nullpt
 	INCLUDE_MANPAGES (manual_gram_init)
 	INCLUDE_MANPAGES (manual_ExperimentMFC_init)
 	INCLUDE_MANPAGES (manual_EEG_init)
+	//TRACE
+	trace (U"manuals: ", Melder_stopwatch ());
 
 	INCLUDE_LIBRARY (praat_EEG_init)
 	praat_addMenuCommand (U"Objects", U"New", U"-- new synthesis --", nullptr, 0, nullptr);
