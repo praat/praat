@@ -114,8 +114,8 @@ FORM (GRAPHICS_EACH__FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullp
 	POSITIVE (xSpaceFraction, U"X space fraction", U"0.1")
 	POSITIVE (ySpaceFraction, U"Y space fraction", U"0.2")
 	POSITIVE (lineEvery_Hz, U"Horizontal line every (Hz)", U"1000.0")
-	REAL (xCursor, U"X cursor line at (s)", U"-0.1 (=no line)")
-	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (=no line)")
+	REAL (xCursor, U"X cursor line at (s)", U"-0.1 (= no line)")
+	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (= no line)")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3 3")
 	BOOLEAN (markCandidatesWithinPath, U"Mark candidates within path", false)
 	COLOUR (markColour, U"Mark colour", U"{0.984,0.984, 0.7}")
@@ -191,7 +191,7 @@ DIRECT (QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listCeilingFrequencies) {
 
 FORM (QUERY_ONE_FOR_REAL__FormantPath_getOptimalCeiling, U"FormantPath: Get optimal ceiling", U"") {
 	REAL (tmin, U"left Time range (s)", U"0.0")
-	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	REAL (tmax, U"right Time range (s)", U"0.0 (= all)")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
@@ -203,7 +203,7 @@ DO
 
 FORM (QUERY_ONE_FOR_REAL__FormantPath_getStressOfCandidate, U"FormantPath: Get stress of candidate", U"") {
 	REAL (tmin, U"left Time range (s)", U"0.0")
-	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	REAL (tmax, U"right Time range (s)", U"0.0 (= all)")
 	NATURAL (candidate, U"Candidate number", U"5")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
@@ -216,7 +216,7 @@ DO
 
 FORM (QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listStressOfCandidates, U"FormantPath: List stress of candidates", U"") {
 	REAL (tmin, U"left Time range (s)", U"0.0")
-	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	REAL (tmax, U"right Time range (s)", U"0.0 (= all)")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
@@ -228,7 +228,7 @@ DO
 
 FORM (MODIFY_EACH__FormantPath_setPath, U"FormantPath: Set path", U"") {
 	REAL (tmin, U"left Time range (s)", U"0.0")
-	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	REAL (tmax, U"right Time range (s)", U"0.0 (= all)")
 	NATURAL (candidate, U"Candidate number", U"5")
 	OK
 DO
@@ -239,7 +239,7 @@ DO
 
 FORM (MODIFY_EACH__FormantPath_setOptimalPath, U"", U"") {
 	REAL (tmin, U"left Time range (s)", U"0.0")
-	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	REAL (tmax, U"right Time range (s)", U"0.0 (= all)")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
@@ -433,8 +433,8 @@ DO
 }
 
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakInQuefrencyInterval, U"", nullptr) {
-	REAL (fromQuefrency, U"left Quefrency interval (s)", U"0.0033 (=300 Hz)")
-	REAL (toQuefrency, U"right Quefrency interval (s)", U"0.01667 (=60 Hz)")
+	REAL (fromQuefrency, U"left Quefrency interval (s)", U"0.0033 (= 300 Hz)")
+	REAL (toQuefrency, U"right Quefrency interval (s)", U"0.01667 (= 60 Hz)")
 	CHOICE_ENUM (kCepstrum_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kCepstrum_peakInterpolation :: PARABOLIC)
 	OK
@@ -891,7 +891,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Cepstrumc_to_Matrix) {
 FORM (QUERY_ONE_FOR_REAL_VECTOR__Formant_listFormantSlope, U"Formant: List formant slope", U"Formant: List formant slope...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (tmin, U"left Time range (s)", U"0.0")
-	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	REAL (tmax, U"right Time range (s)", U"0.0 (= all)")
 	OPTIONMENU_ENUM (kSlopeCurve, slopeCurve, U"Slope curve", kSlopeCurve::DEFAULT)
 	OK
 DO

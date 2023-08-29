@@ -557,7 +557,7 @@ DO
 	QUERY_ONE_FOR_REAL (CCA)
 		double result, chisq, ndof;
 		CCA_getZeroCorrelationProbability (me, coefficientNumber, & result, & chisq, & ndof);
-	QUERY_ONE_FOR_REAL_END (U" (= probability for chisq = ", chisq, U" and ndf = ", ndof, U")");
+	QUERY_ONE_FOR_REAL_END (U" (probability for chisq = ", chisq, U" and ndf = ", ndof, U")");
 }
 
 DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__CCA_Correlation_to_TableOfReal_loadings) {
@@ -948,7 +948,7 @@ DO
 	QUERY_ONE_FOR_REAL (Correlation)
 		double chisq, result, ndof;
 		Correlation_testDiagonality_bartlett (me, numberOfConstraints, & chisq, & result, & ndof);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndof, U")")
+	QUERY_ONE_FOR_REAL_END (U" (probability, based on chisq = ", chisq, U" and ndf = ", ndof, U")")
 }
 
 DIRECT (CONVERT_EACH_TO_ONE__Correlation_to_PCA) {
@@ -981,7 +981,7 @@ FORM (QUERY_ONE_FOR_REAL__Covariance_getProbabilityAtPosition, U"Covariance: Get
 DO
 	QUERY_ONE_FOR_REAL (Covariance)
 		const double result = Covariance_getProbabilityAtPosition_string (me, position_string);
-	QUERY_ONE_FOR_REAL_END (U" (= probability at position ", position_string, U")")
+	QUERY_ONE_FOR_REAL_END (U" (probability at position ", position_string, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfOneMean, U"Covariance: Get significance of one mean", U"Covariance: Get significance of one mean...") {
@@ -995,7 +995,7 @@ DO
 	QUERY_ONE_FOR_REAL (Covariance)
 		double result, t, ndof;
 		Covariance_getSignificanceOfOneMean (me, index, value, & result, & t, & ndof);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on t = ", t, U" and ndf = ", ndof)
+	QUERY_ONE_FOR_REAL_END (U" (probability, based on t = ", t, U" and ndf = ", ndof)
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significance of means difference", U"Covariance: Get significance of means difference...") {
@@ -1013,7 +1013,7 @@ DO
 	QUERY_ONE_FOR_REAL (Covariance)
 		double result, t, ndof;
 		Covariance_getSignificanceOfMeansDifference (me, index1, index2, value, paired, equalVariances, & result, & t, & ndof);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on t = ", t, U" and ndf = ", ndof, U")")
+	QUERY_ONE_FOR_REAL_END (U" (probability, based on t = ", t, U" and ndf = ", ndof, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfOneVariance, U"Covariance: Get significance of one variance", U"Covariance: Get significance of one variance...") {
@@ -1027,7 +1027,7 @@ DO
 	QUERY_ONE_FOR_REAL (Covariance)
 		double result, chisq, ndof;
 		Covariance_getSignificanceOfOneVariance (me, index, value, & result, & chisq, & ndof);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndof, U")")
+	QUERY_ONE_FOR_REAL_END (U" (probability, based on chisq = ", chisq, U" and ndf = ", ndof, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", nullptr) {
@@ -1042,7 +1042,7 @@ DO
 	QUERY_ONE_FOR_REAL (Covariance)
 		double result, f, ndof;
 		Covariance_getSignificanceOfVariancesRatio (me, index1, index2, value, & result, & f , & ndof);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on F = ", f, U" and ndf1 = ", ndof, U" and ndf2 = ", ndof, U")")
+	QUERY_ONE_FOR_REAL_END (U" (probability, based on F = ", f, U" and ndf1 = ", ndof, U" and ndf2 = ", ndof, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getFractionVariance, U"Covariance: Get fraction variance", U"Covariance: Get fraction variance...") {
@@ -1733,37 +1733,37 @@ DO
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getStartTime_x) {
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my xmin;
-	QUERY_ONE_FOR_REAL_END (U" seconds (= start time along x)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (start time along x)")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getEndTime_x) {
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my xmax;
-	QUERY_ONE_FOR_REAL_END (U" seconds (= end time along x)");
+	QUERY_ONE_FOR_REAL_END (U" seconds (end time along x)");
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getTotalDuration_x) {
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my xmax - my xmin;
-	QUERY_ONE_FOR_REAL_END (U" seconds (= total duration along x)");
+	QUERY_ONE_FOR_REAL_END (U" seconds (total duration along x)");
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getStartTime_y) {
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my ymin;
-	QUERY_ONE_FOR_REAL_END (U" seconds (= start time along y)");
+	QUERY_ONE_FOR_REAL_END (U" seconds (start time along y)");
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getEndTime_y) {
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my ymax;
-	QUERY_ONE_FOR_REAL_END (U" seconds (= end time along y)");
+	QUERY_ONE_FOR_REAL_END (U" seconds (end time along y)");
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getTotalDuration_y) {
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my ymax - my ymin;
-	QUERY_ONE_FOR_REAL_END (U" seconds (= total duration along y)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (total duration along y)")
 }
 
 DIRECT (QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_x) {
@@ -1775,7 +1775,7 @@ DIRECT (QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_x) {
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getTimeStep_x) {
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my dx;
-	QUERY_ONE_FOR_REAL_END (U" seconds (= time step along x)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (time step along x)")
 }
 
 FORM (QUERY_ONE_FOR_REAL__DTW_getTimeFromFrameNumber_x, U"DTW: Get time from frame number (x)", nullptr) {
@@ -1784,7 +1784,7 @@ FORM (QUERY_ONE_FOR_REAL__DTW_getTimeFromFrameNumber_x, U"DTW: Get time from fra
 DO
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = Matrix_columnToX (me, frameNumber);
-	QUERY_ONE_FOR_REAL_END (U" seconds (= y time at x frame ", frameNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" seconds (y time at x frame ", frameNumber, U")")
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__DTW_getFrameNumberFromTime_x, U"DTW: Get frame number from time (x)", nullptr) {
@@ -1795,19 +1795,19 @@ DO
 		Melder_require (xTime >= my xmin && xTime <= my xmax, 
 			U"Time outside x domain.");
 		const integer result = Melder_iround (Matrix_xToColumn (me, xTime));
-	QUERY_ONE_FOR_INTEGER_END (U" (= x frame at y time ", xTime, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (x frame at y time ", xTime, U")")
 }
 
 DIRECT (QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_y) {
 	QUERY_ONE_FOR_INTEGER (DTW)
 		const integer result = my ny;
-	QUERY_ONE_FOR_INTEGER_END (U" (= number of frames along y)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of frames along y)")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getTimeStep_y) {
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my dy;
-	QUERY_ONE_FOR_REAL_END (U" seconds (= time step along y)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (time step along y)")
 }
 
 
@@ -1817,7 +1817,7 @@ FORM (QUERY_ONE_FOR_REAL__DTW_getTimeFromFrameNumber_y, U"DTW: Get time from fra
 DO
 	QUERY_ONE_FOR_REAL (DTW)
 		const double result = Matrix_rowToY (me, frameNumber);
-	QUERY_ONE_FOR_REAL_END (U" seconds (= x time at y frame ", frameNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" seconds (x time at y frame ", frameNumber, U")")
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__DTW_getFrameNumberFromTime_y, U"DTW: Get frame number from time (y)", nullptr) {
@@ -1828,7 +1828,7 @@ DO
 		Melder_require (yTime >= my ymin && yTime <= my ymax, 
 			U"Time outside y domain.");
 		const integer result = Melder_iround (Matrix_yToRow (me, yTime));
-	QUERY_ONE_FOR_INTEGER_END (U" (= y frame at x time ", yTime, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (y frame at x time ", yTime, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path...") {
@@ -1869,7 +1869,7 @@ DO
 	conststring32 direction_string [] = { U"", U"x", U"y", U"diagonal" };
 	QUERY_ONE_FOR_INTEGER (DTW)
 		integer result = DTW_getMaximumConsecutiveSteps (me, direction_code [direction]);
-	QUERY_ONE_FOR_INTEGER_END (U" (= maximum number of consecutive steps in ", direction_string [direction], U" direction)")
+	QUERY_ONE_FOR_INTEGER_END (U" (maximum number of consecutive steps in ", direction_string [direction], U" direction)")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getDistance_weighted) {
@@ -1890,7 +1890,7 @@ DO
 			integer icol = Matrix_xToNearestColumn (me, xTime);
 			result = my z [irow] [icol];
 		}
-	QUERY_ONE_FOR_REAL_END (U" (= distance at (", xTime, U", ", yTime, U"))")
+	QUERY_ONE_FOR_REAL_END (U" (distance at (", xTime, U", ", yTime, U"))")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__DTW_getMinimumDistance) {
@@ -2413,7 +2413,7 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Electroglottogram_derivative, U"Electroglottogram: Derivative", U"Electroglottogram: Derivative...") {
 	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
-	REAL (newAbsolutePeak, U"New absolute peak", U"0.0 (=do not scale)")
+	REAL (newAbsolutePeak, U"New absolute peak", U"0.0 (= don't scale)")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Electroglottogram)
@@ -2422,7 +2422,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Electroglottogram_firstCentralDifference, U"Electroglottogram: First central difference", U"Electroglottogram: First central difference...") {
-	REAL (scalePeak, U"New absolute peak", U"0.0 (=do not scale)")
+	REAL (scalePeak, U"New absolute peak", U"0.0 (= don't scale)")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Electroglottogram)
@@ -4389,9 +4389,9 @@ DIRECT (HELP__NMF_help) {
 
 FORM (GRAPHICS_EACH__NMF_paintFeatures, U"NMF: Paint features", U"") {
 	NATURAL (fromFeature, U"From feature", U"1")
-	INTEGER (toFeature, U"To feature", U"0 (=all)")
+	INTEGER (toFeature, U"To feature", U"0 (= all)")
 	NATURAL (fromRow, U"From row", U"1")
-	INTEGER (toRow, U"To row", U"0 (=all)")
+	INTEGER (toRow, U"To row", U"0 (= all)")
 	REAL (minimum, U"Minimum", U"0.0")
 	REAL (maximum, U"maximum", U"0.0")
 	BOOLEAN (garnish, U"Garnish", 1)
@@ -4404,9 +4404,9 @@ DO
 
 FORM (GRAPHICS_EACH__NMF_paintWeights, U"NMF: Paint weights", U"") {
 	NATURAL (fromWeight, U"From weight", U"1")
-	INTEGER (toWeight, U"To weight", U"0 (=all)")
+	INTEGER (toWeight, U"To weight", U"0 (= all)")
 	NATURAL (fromRow, U"From row", U"1")
-	INTEGER (toRow, U"To row", U"0 (=all)")
+	INTEGER (toRow, U"To row", U"0 (= all)")
 	REAL (minimum, U"Minimum", U"0.0")
 	REAL (maximum, U"maximum", U"0.0")	
 	BOOLEAN (garnish, U"Garnish", 1)
@@ -4628,7 +4628,7 @@ DO
 		PCA_getEqualityOfEigenvalues (me, fromEigenvalue, toEigenvalue,
 			conservativeTest, & result, & chisq, & df
 		);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and df = ", df)
+	QUERY_ONE_FOR_REAL_END (U" (probability, based on chisq = ", chisq, U" and df = ", df, U")")
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__PCA_getNumberOfComponents_VAF, U"PCA: Get number of components (VAF)", U"PCA: Get number of components (VAF)...") {
@@ -4636,7 +4636,7 @@ FORM (QUERY_ONE_FOR_INTEGER__PCA_getNumberOfComponents_VAF, U"PCA: Get number of
 	OK
 DO
 	Melder_require (varianceFraction >= 0.0 && varianceFraction <= 1.0, 
-		U"The variance fraction should be in interval [0-1].");
+		U"The variance fraction should be in the interval [0, 1].");
 	QUERY_ONE_FOR_INTEGER (PCA)
 		const integer result = Eigen_getDimensionOfFraction (me, varianceFraction);
 	QUERY_ONE_FOR_INTEGER_END (U" (for variance fraction)")
@@ -4711,7 +4711,7 @@ DIRECT (QUERY_TWO_FOR_REAL__PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
 		Melder_require (your numberOfEigenvalues > 1, 
 			U"There must be at least two eigenvectors in the second PCA.");
 		const double result = Eigens_getAngleBetweenEigenplanes_degrees (me, you);
-	QUERY_TWO_FOR_REAL_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
+	QUERY_TWO_FOR_REAL_END (U" degrees (angle of intersection between the two pc1-pc2 eigenplanes)")
 }
 
 DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__PCA_SSCP_project) {
@@ -6110,7 +6110,7 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Sound_derivative, U"Sound: To Sound (derivative)", U"Sound: To Sound (derivative)...") {
 	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
-	REAL (newAbsolutePeak, U"New absolute peak", U"0 (=do not scale)")
+	REAL (newAbsolutePeak, U"New absolute peak", U"0 (= don't scale)")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
@@ -6768,7 +6768,7 @@ DO
 	QUERY_ONE_FOR_REAL (SSCP)
 		double chisq, result, ndof;
 		SSCP_getDiagonality_bartlett (me, numberOfConstraints, & chisq, & result, & ndof);
-	QUERY_ONE_FOR_REAL_END (U" (= probability for chisq = ", chisq, U" and ndf = ", ndof, U")")
+	QUERY_ONE_FOR_REAL_END (U" (probability for chisq = ", chisq, U" and ndf = ", ndof, U")")
 }
 
 DIRECT (CONVERT_EACH_TO_ONE__SSCP_to_Correlation) {
@@ -6926,19 +6926,19 @@ DIRECT (QUERY_ONE_FOR_INTEGER__SVD_getNumberOfRows) {
 DIRECT (QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns) {
 	QUERY_ONE_FOR_INTEGER (SVD)
 		const integer result = ( my isTransposed ? my numberOfRows : my numberOfColumns );
-	QUERY_ONE_FOR_INTEGER_END (U" (= number of columns)")	
+	QUERY_ONE_FOR_INTEGER_END (U" (number of columns)")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__SVD_getRank) {
 	QUERY_ONE_FOR_REAL (SVD)
 		const double result = SVD_getRank (me);
-	QUERY_ONE_FOR_REAL_END (U" (= rank)")
+	QUERY_ONE_FOR_REAL_END (U" (rank)")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__SVD_getConditionNumber) {
 	QUERY_ONE_FOR_REAL (SVD)
 		const double result = SVD_getConditionNumber (me);
-	QUERY_ONE_FOR_REAL_END (U" (= condition number)")
+	QUERY_ONE_FOR_REAL_END (U" (condition number)")
 }
 
 FORM (QUERY_ONE_FOR_REAL__SVD_getSingularValue, U"SVD: Get singular values", nullptr) {
@@ -6949,12 +6949,12 @@ DO
 		Melder_require (index <= my numberOfColumns, 
 			U"Index must be in the range [1,", my numberOfColumns, U"].");
 		const double result = my d [index];
-	QUERY_ONE_FOR_REAL_END (U" (= singular value [", index, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (singular value ", index, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__SVD_getSumOfSingularValues, U"SVD: Get sum of singular values", nullptr) {
 	NATURAL (from, U"From", U"1")
-	INTEGER (to, U"To", U"0 (=last)")
+	INTEGER (to, U"To", U"0 (= last)")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SVD)
@@ -6964,12 +6964,12 @@ DO
 
 FORM (QUERY_ONE_FOR_REAL__SVD_getSumOfSingularValuesAsFractionOfTotal, U"SVD: Get sum of singular values as fraction of total", nullptr) {
 	NATURAL (from, U"From", U"1")
-	INTEGER (to, U"To", U"0 (=last)")
+	INTEGER (to, U"To", U"0 (= last)")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SVD)
 		const double result = SVD_getSumOfSingularValuesAsFractionOfTotal (me, from, to);
-	QUERY_ONE_FOR_REAL_END (U" (= fraction of total sum of singular values)")
+	QUERY_ONE_FOR_REAL_END (U" (fraction of total sum of singular values)")
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__SVD_getMinimumNumberOfSingularValues, U"SVD: Get minimum number of singular values", U"SVD: Get minimum number of singular values...") {
@@ -6980,7 +6980,7 @@ DO
 		U"Fraction must be a number in (0,1).");
 	QUERY_ONE_FOR_INTEGER (SVD)
 		const integer result = SVD_getMinimumNumberOfSingularValues (me, fraction);
-	QUERY_ONE_FOR_INTEGER_END (U" (= number of singular values needed)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of singular values needed)")
 }
 
 FORM (QUERY_ONE_FOR_REAL__SVD_getShrinkageParameter, U"SVD: Get shrinkage parameter", nullptr) {
@@ -6989,7 +6989,7 @@ FORM (QUERY_ONE_FOR_REAL__SVD_getShrinkageParameter, U"SVD: Get shrinkage parame
 DO
 	QUERY_ONE_FOR_REAL (SVD)
 		const double result = SVD_getShrinkageParameter (me, edf);
-	QUERY_ONE_FOR_REAL_END (U" (= shrinkage parameter for ridge regression with ", edf, U" effective degrees of freedom)")
+	QUERY_ONE_FOR_REAL_END (U" (shrinkage parameter for ridge regression with ", edf, U" effective degrees of freedom)")
 }
 
 FORM (QUERY_ONE_FOR_REAL__SVD_getEffectiveDegreesOfFreedom, U"SVD: Get effective degrees of freedom", nullptr) {
@@ -6998,7 +6998,7 @@ FORM (QUERY_ONE_FOR_REAL__SVD_getEffectiveDegreesOfFreedom, U"SVD: Get effective
 DO
 	QUERY_ONE_FOR_REAL (SVD)
 		const double result = SVD_getEffectiveDegreesOfFreedom (me, lambda);
-	QUERY_ONE_FOR_REAL_END (U" (= effective degrees of freedom for ridge regression with ", lambda, U" shrinkage factor)")
+	QUERY_ONE_FOR_REAL_END (U" (effective degrees of freedom for ridge regression with ", lambda, U" shrinkage factor)")
 }
 
 FORM (CONVERT_EACH_TO_ONE__SVD_to_Matrix, U"SVD: To Matrix", U"SVD: To Matrix...") {
@@ -7720,9 +7720,9 @@ DIRECT (CREATE_ONE__Table_create_sandwell1987) {
 
 FORM (GRAPHICS_EACH__TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalable squares", U"TableOfReal: Draw as scalable squares...") {
 	NATURAL (rowmin, U"From row", U"1");
-	INTEGER (rowmax, U"To row", U"0 (=all)");
+	INTEGER (rowmax, U"To row", U"0 (= all)");
 	NATURAL (colmin, U"From column", U"1");
-	INTEGER (colmax, U"To column", U"0 (=all)");
+	INTEGER (colmax, U"To column", U"0 (= all)");
 	OPTIONMENU_ENUM (kGraphicsMatrixOrigin, origin,
 			U"Origin", kGraphicsMatrixOrigin::DEFAULT)
 	POSITIVE (scaleFactor, U"Cell area scale factor", U"0.95")

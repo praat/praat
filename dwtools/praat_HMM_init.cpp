@@ -86,13 +86,13 @@ DO
 DIRECT (QUERY_ONE_FOR_INTEGER__GaussianMixture_getNumberOfComponents) {
 	QUERY_ONE_FOR_INTEGER (GaussianMixture)
 		const integer result = my numberOfComponents;
-	QUERY_ONE_FOR_INTEGER_END (U"(= number of components)")
+	QUERY_ONE_FOR_INTEGER_END (U" components")
 }
 
 DIRECT (QUERY_ONE_FOR_INTEGER__GaussianMixture_getDimensionOfComponent) {
 	QUERY_ONE_FOR_INTEGER (GaussianMixture)
 		const integer result = my dimension;
-	QUERY_ONE_FOR_INTEGER_END (U"(= dimension of component)")
+	QUERY_ONE_FOR_INTEGER_END (U" (dimension of component)")
 }
 
 FORM (QUERY_ONE_FOR_REAL__GaussianMixture_getProbabilityAtPosition, U"GaussianMixture: Get probability at position", nullptr) {
@@ -101,7 +101,7 @@ FORM (QUERY_ONE_FOR_REAL__GaussianMixture_getProbabilityAtPosition, U"GaussianMi
 DO
 	QUERY_ONE_FOR_REAL (GaussianMixture)
 		const double result = GaussianMixture_getProbabilityAtPosition_string (me, position_string);
-	QUERY_ONE_FOR_REAL_END (U" (= probability at position ", position_string, U")")
+	QUERY_ONE_FOR_REAL_END (U" (probability at position ", position_string, U")")
 }
 
 FORM (MODIFY_GaussianMixture_splitComponent, U"GaussianMixture: Split component", U"GaussianMixture: Split component...") {
@@ -420,14 +420,14 @@ FORM (QUERY_TWO_FOR_REAL__HMM_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entrop
 DO
 	QUERY_TWO_FOR_REAL (HMM)
 		const double result = HMM_HMM_getCrossEntropy (me, you, observationLength, symmetric);
-	QUERY_TWO_FOR_REAL_END (U" (= ", (symmetric ? U"symmetric " : U""), 
-			U" cross-entropy between models for observation length = ", observationLength, U")")
+	QUERY_TWO_FOR_REAL_END (U" (", (symmetric ? U"symmetric" : U""),
+			U" cross-entropy between models for observation length ", observationLength, U")")
 }
 
 DIRECT (QUERY_TWO_AND_ONE_FOR_REAL__HMM_HMM_HMMObservationSequence_getCrossEntropy) {
 	QUERY_TWO_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		const double result = HMM_HMM_HMMObservationSequence_getCrossEntropy (me, you, him);
-	QUERY_TWO_AND_ONE_FOR_REAL_END (U"(= symmetric cross-entropy between models)")
+	QUERY_TWO_AND_ONE_FOR_REAL_END (U" (symmetric cross-entropy between models)")
 }
 
 FORM (CONVERT_EACH_TO_ONE__HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {
@@ -455,13 +455,13 @@ DIRECT (QUERY_ONE_AND_ONE_FOR_REAL__HMM_HMMObservationSequence_getProbability) {
 DIRECT (QUERY_ONE_AND_ONE_FOR_REAL__HMM_HMMObservationSequence_getCrossEntropy) {
 	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		const double result = HMM_HMMObservationSequence_getCrossEntropy (me, you);
-	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= cross-entropy)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (cross-entropy)")
 }
 
 DIRECT (QUERY_ONE_AND_ONE_FOR_REAL__HMM_HMMObservationSequence_getPerplexity) {
 	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		const double result = HMM_HMMObservationSequence_getPerplexity (me, you);
-	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= perplexity)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (perplexity)")
 }
 
 DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__HMM_HMMObservationSequence_to_HMMStateSequence) {
