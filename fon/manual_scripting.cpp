@@ -1390,10 +1390,10 @@ Suppose now that you want to distribute those two commands to other guinea pig v
 
 What you do is that you create a Praat script called `setup.praat` (in the same folder as the two other scripts),
 that contains the following two lines:
-
+{;
 	\@{Add action command:} "Sound", 1, "", 0, "", 0, "Analyse queak", "", 0, "analyseQueak.praat"
 	\@{Add menu command:} "Objects", "New", "Create queak...", "", 0, "createQueak.praat"
-
+}
 (If you ran this script, Praat would install those two commands in the correct menus, and remember them in the @@buttons file@;
 but you are now going to install them in a different way.)
 
@@ -1417,9 +1417,9 @@ occur without any folder information. This works because Praat regards these fil
 where `setup.praat` is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into
 the folder `plugin_Queak`. For instance, if you put `analyseQueak.praat` into the subfolder `analysis`,
 your line in the `setup.praat` script would look as follows:
-
+{;
 	\@{Add action command:} "Sound", 1, "", 0, "", 0, "Analyse queak", "", 0, "analysis/analyseQueak.praat"
-
+}
 The forward slash (“/”) in this example makes your plug-in platform-independent: it will work unchanged
 on Windows, Macintosh, and Unix.
 
@@ -1436,9 +1436,9 @@ in the following way:
 2. Put this script where everybody can see it,
 	for instance in `U:\\MaldenGuineaPigResearchButtons.praat`, where `U` is your shared computer.
 3. Create a file `setup.praat` that contains only the following line:
-
+`
 		runScript: "U:\MaldenGuineaPigResearchButtons.praat"
-
+`
 4. Put the `setup.praat` file in a new folder called `plugin_MaldenGuineaPigResearch`,
 	and distribute this folder among your local colleagues.
 
@@ -2629,14 +2629,14 @@ In this section we will see how %procedures (also called %subroutines) can help 
 Imagine that you want to play a musical note with a frequency of 440 Hz (an “A”)
 followed by a note that is one octave higher, i.e. has a frequency of 880 Hz (an “a”).
 You could achieve this with the following script:
-
+{;
 	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01
 	Play
 	Remove
 	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 880, 0.2, 0.01, 0.01
 	Play
 	Remove
-
+}
 This script creates a sound with a sine wave with an amplitude of 0.4 and a frequency of 440 Hz,
 then plays this sound, then changes the sound into a sine wave with a frequency of 880 Hz,
 then plays this changed sound, and then removes the Sound object from the object list.
@@ -2644,7 +2644,7 @@ then plays this changed sound, and then removes the Sound object from the object
 This script is perfect if all you want to do is to play those two notes and nothing more.
 But now imagine that you want to play such an octave jump not only for a note of 440 Hz,
 but also for a note of 400 Hz and for a note of 500 Hz. You could use the following script:
-
+{;
 	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 440, 0.2, 0.01, 0.01
 	Play
 	Remove
@@ -2663,13 +2663,13 @@ but also for a note of 400 Hz and for a note of 500 Hz. You could use the follow
 	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, 1000, 0.2, 0.01, 0.01
 	Play
 	Remove
-
+}
 This script works but is no longer perfect. It contains many similar lines, and is difficult to read.
 
 Here is where %procedures come in handy. With procedures, you can re-use similar pieces of code.
 To make the three parts of the above script more similar, I’ll rewrite it using two variables
 (%`frequency` and %`octaveHigher`):
-
+{;
 	frequency = 440
 	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
 	Play
@@ -2694,10 +2694,10 @@ To make the three parts of the above script more similar, I’ll rewrite it usin
 	Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01
 	Play
 	Remove
-
+}
 You can now see that seven lines of the script appear identically three times.
 I'll put those seven lines into a %procedure that I name #`playOctave`:
-
+{;
 	\#{procedure} playOctave
 		Create Sound as pure tone: “note”, 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01
 		Play
@@ -2707,7 +2707,7 @@ I'll put those seven lines into a %procedure that I name #`playOctave`:
 		Play
 		Remove
 	\#{endproc}
-
+}
 As you see, a %%procedure definition% in Praat consists of three parts:
 
 1. a line with the word #`procedure`, followed by the name of the procedure, followed by a pair of parentheses;
@@ -2719,7 +2719,7 @@ the beginning or end of the script are common places.
 
 The bodies of procedures are executed only if you %call the procedure explicitly,
 which you can do anywhere in the rest of your script:
-
+{;
 	frequency = 440
 	@playOctave
 	frequency = 400
@@ -2735,7 +2735,7 @@ which you can do anywhere in the rest of your script:
 		Play
 		Remove
 	\#{endproc}
-
+}
 This script works as follows. First, the number 440 is assigned to the variable %`frequency` in line 1.
 Then, execution of the script arrives at the #`@` (“call”) statement of line 2.
 Praat then knows that it has to jump to the procedure called %`playOctave`,
@@ -2755,11 +2755,11 @@ Arguments
 
 The above example contains something awkward. The procedure %`playOctave` requires that the variable %`frequency`
 is set to an appropriate value, so before calling %`playOctave` you always have to insert a line like
-
+{;
 	frequency = 440
-
+}
 This can be improved upon. In the following version of the script, the procedure %`playOctave` requires an explicit %argument:
-
+{;
 	@playOctave: 440
 	@playOctave: 400
 	@playOctave: 500
@@ -2772,7 +2772,7 @@ This can be improved upon. In the following version of the script, the procedure
 		Play
 		Remove
 	\#{endproc}
-
+}
 This works as follows. The first line of the procedure now not only contains the name (%`playOctave`),
 but also a list of variables (here only one: %`frequency`). In the first line of the script,
 the procedure %`playOctave` is called with the %%argument% 440.
@@ -2784,7 +2784,7 @@ Encapsulation and local variables
 
 Although the size of the script has now been reduced to 12 lines, which cannot be further improved upon,
 there is still something wrong with it. Imagine the following script:
-
+{;
 	frequency = 300
 	@playOctave: 440
 	@playOctave: 400
@@ -2799,7 +2799,7 @@ there is still something wrong with it. Imagine the following script:
 		Play
 		Remove
 	\#{endproc
-
+}
 You might have thought that this script will write “300” to the Info window,
 because that is what you expect if you look at the first five lines.
 However, the procedure will assign the values 440, 400, and 500 to the variable %`frequency`,
@@ -2809,7 +2809,7 @@ is the last (fourth!) value that was assigned to the variable %`frequency`.
 What you would want is that variables that are used inside procedures, such as %`frequency` and %`octaveHigher` here,
 could somehow be made not to “clash” with variable names used outside the procedure.
 A trick that works would be to include the procedure name into the names of these variables:
-
+{;
 	frequency = 300
 	@playOctave: 440
 	@playOctave: 400
@@ -2824,13 +2824,13 @@ A trick that works would be to include the procedure name into the names of thes
 		Play
 		Remove
 	\#{endproc
-
+}
 This works. The six tones will be played, and \"300\" will be written to the Info window.
 But the formulation is a bit wordy, isn't it?
 
 Fortunately, Praat allows an abbreviated version of these long names:
 just leave “playOctave” off from the names of the variables, but keep the period (`.`):
-
+{;
 	frequency = 300
 	@playOctave: 440
 	@playOctave: 400
@@ -2845,7 +2845,7 @@ just leave “playOctave” off from the names of the variables, but keep the pe
 		Play
 		Remove
 	\#{endproc
-
+}
 This is the final version of the script. It works because Praat knows that
 you are using the variable names %`.frequency` and %`.octaveHigher` in the context of the procedure %`playOctave`,
 so that Praat knows that by these variable names you actually mean to refer to %`playOctave.frequency` and %`playOctave.octaveHigher`.
@@ -2860,15 +2860,15 @@ A list of numeric and string arguments
 ======================================
 
 You can use multiple arguments, separated by commas, and string arguments (with a dollar sign in the variable name):
-
+{;
 	@listSpeaker: “Bart”, 38
 	@listSpeaker: “Katja“, 24
 	\#{procedure} listSpeaker: .name$, .age
 		appendInfoLine: “Speaker ”, .name$, “ is ”, .age, “ years old.”
 	\#{endproc
-
+}
 or
-
+{;
 	@conjugateVerb: “be”, “I am”, “you are”, “she is”
 	\#{procedure} conjugateVerb: .verb$, .first$, .second$, .third$
 		writeInfoLine: “Conjugation of 'to ”, .verb$, “':”
@@ -2876,27 +2876,27 @@ or
 		appendInfoLine: “2sg ”, .second$
 		appendInfoLine: “3sg ”, .third$
 	\#{endproc}
-
+}
 For the arguments you can use expressions:
-
+{;
 	@playOctave: 400 + 100
-
+}
 As with all string literals, the double quotes in literal string arguments should be doubled:
-
+{;
 	\#{procedure} texts: .top$, .bottom$
 		Text top: “yes”, .top$
 		Text bottom: “yes”, .bottom$
 	\#{endproc")
 	@texts: """ hello"" at the top", """goodbye"" at the bottom"
-
+}
 unless you use curly quotes:
-
+{;
 	@texts: “" hello" at the top”, “"goodbye" at the bottom”
-
+}
 or even
-
+{;
 	@texts: ““ hello” at the top”, ““goodbye” at the bottom”
-
+}
 Functions
 =========
 
@@ -2905,22 +2905,23 @@ A function is a procedure that returns a number, a string, a vector, a matrix, o
 For instance, you can imagine the function `squareNumber` (),
 which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25).
 Here is an example of how you can do that, using the global availability of local variables:
-
+{;
 	@squareNumber: 5
 	writeInfoLine: “The square of 5 is ”, squareNumber.result, “.”
 	\#{procedure} squareNumber: .number
 		.result = .number ^ 2
 	\#{endproc
-
+}
 Another way to emulate functions is to use a variable name as an argument:
-
+{;
 	@squareNumber: 5, “square5”
 	writeInfoLine: “The square of 5 is ”, square5, “.”
 	\#{procedure} squareNumber: .number, .squareVariableName$
 		'.squareVariableName$' = .number ^ 2
 	\#{endproc
-
+}
 However, this uses variable substitution, a trick better avoided.
+
 ################################################################################
 )~~~"
 MAN_PAGES_END
@@ -3185,7 +3186,8 @@ CODE (U"\\#{form}: \"Play a sine wave\"")
 	CODE1 (U"\\#{positive}: \"Sine frequency (Hz)\", \"377.0\"")
 	CODE1 (U"\\#{positive}: \"Gain (0..1)\", \"0.3 (= not too loud)\"")
 CODE (U"\\#{endform}")
-CODE (U"Create Sound as pure tone: \"sine\" + string$ (sine_frequency), 1, 0, 1, 44100, sine_frequency, gain, 0.01, 0.01")
+CODE (U"Create Sound as pure tone: \"sine\" + string$ (sine_frequency), 1, 0, 1, 44100,")
+CODE (U"... sine_frequency, gain, 0.01, 0.01")
 CODE (U"Play")
 CODE (U"Remove")
 NORMAL (U"When running this script, the interpreter puts a settings window (%form) on your screen, "
@@ -3277,7 +3279,7 @@ CODE (U"\\#{form}: \"Fill attributes\"")
 CODE (U"\\#{endform}")
 CODE (U"\\`{writeInfoLine}: \"You chose the colour \", colour$, \" and the texture \", texture$, \".\"")
 NORMAL (U"This shows two multiple-choice boxes. In the Colour box, the fifth button (Black) is the standard value here. "
-	"If you click “Navy blue” and then #%OK, the variable %colour will have the value 3, "
+	"If you click “Navy blue” and then #%OK, the variable %`colour` will have the value 3, "
 	"and the variable %`colour$` will have the value “Navy blue”. "
 	"So you can test the value of the Colour box in either of the following ways:")
 CODE (U"if colour = 4")
@@ -3730,7 +3732,7 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20220122)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20220122)   // 2023
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -3886,6 +3888,23 @@ NORMAL (U"into a Console or Terminal window by hand, Praat will typically run th
 	"Also, the `--run` option can probably be left out from the Python call above. "
 	"However, if you redirect the output of Praat to a file or pipe, you cannot typically leave out the `--run` option; "
 	"if you do, Praat may start its GUI and %open the file rather than run it.")
+NORMAL (U"“Why this strange behaviour?”, you may ask. The reason is that several platforms (e.g. Windows) "
+	"use this same mechanismm when you double-click a file, or drop a file on an application icon. "
+	"For instance, when you double-click `hello.wav` or `doSomething.praat`, "
+	"or drop `hello.wav` or `doSomething.praat` on the Praat icon, "
+	"you expect Praat to %open that sound file or script, not to %run it. "
+	"However, when you double-click or drop `doSomething.praat`, "
+	"Windows will send Praat a message %%as if% you had typed `praat doSomething.praat` into a Console window. "
+	"This means that in this case Praat will have to interpret `praat doSomething.praat` "
+	"as an indication that you want to %open that file, not %run it. "
+	"Praat will try to be a bit smart, though: when receiving the message `praat doSomething.praat` from the operating system, "
+	"Praat will try to figure out whether you meant to %run or %open the file. "
+	"If Praat detects that you typed `praat doSomething.praat` into the Console "
+	"by hand, Praat will %run this script; if not, then Praat will %open this script; "
+	"this includes double-clicking and dropping (appropriately), but may also include some indirect invocations "
+	"such as through a shell script or redirection or pipe. "
+	"After all, if Praat is in doubt, wrongly assuming that you want to %open the script is safer than wrongly "
+	"assuming that you want to %run the script.")
 
 ENTRY (U"9. Running Praat interactively from the command line")
 NORMAL (U"On the Mac and Linux, you have the possibility of running the program interactively from the command line:")
@@ -3972,7 +3991,7 @@ See @@Scripting examples@.
 © Paul Boersma 20140526
 
 From a Praat shell script, you can switch to an editor and back again:
-
+{;
 	sound$ = "hallo"
 	start = 0.3
 	finish = 0.7
@@ -3982,15 +4001,15 @@ From a Praat shell script, you can switch to an editor and back again:
 		Zoom: start, finish
 		\#`{endeditor}
 	Play
-
+}
 This script reads a sound file from disk, pops up an editor for the resulting object,
 makes this editor zoom in on the part between 0.3 and 0.7 seconds,
 and returns to the Praat shell to play the entire sound.
 
 After @`editor` you can either give the unique id of the object, as above, or its name:
-
+{;
 	\#`{editor}: "Sound " + sound$
-
+}
 ################################################################################
 "Scripting 7.2. Scripting an editor from within"
 © Paul Boersma 2023
@@ -4006,14 +4025,14 @@ follow these steps:
 3. Choose ##New editor script# from the @@File menu@ in the SoundEditor. The resulting @ScriptEditor
 	will have a name like “untitled script [Sound hallo]”.
 4. Type the following lines into the ScriptEditor:
-
+{;
 			cursor = Get cursor
 			Select: cursor - 0.02, cursor + 0.02
 			Extract selected sound (windowed): "slice", "Kaiser2", 2, "no"
 		\#`{endeditor}
 		To Spectrum: "yes"
 		\@{View & Edit}
-
+}
 If you choose #Run from the #Run menu in the ScriptEditor, a region of 40 milliseconds around the
 current cursor position in the SoundEditor will become selected. This piece will be copied to the list of objects,
 after applying a double Kaiser window (total length 80 ms). Thus, a Sound named “slice” will appear in the list.
@@ -4045,42 +4064,42 @@ we can run it with #Run from the #Run menu again; alternatively, we could save i
 ##Show spectrum at cursor# button (this button will always run the version on disk, never the one viewed in a ScriptEditor).
 
 To zoom in on the first 5000 Hz, we add the following code at the end of our script:
-
+{;
 	\#`{editor}: "Spectrum slice"
 		Zoom: 0, 5000
-
+}
 To get rid of the “Sound slice”, we can add:
-
+{;
 	\#`{endeditor}
 	\`{removeObject}: "Sound slice"
-
+}
 Note that @`endeditor` is needed to change from the environment of a SpectrumEditor to the environment of the object & picture windows.
 
 If you now choose the ##Show spectrum at cursor# button for several cursor positions, you will notice that all those editors have the same name.
 To remedy the ambiguity of the line `editor Spectrum slice`, we give each slice a better name. For example, if the cursor was at
 635 milliseconds, the slice could be named “635ms”. We can achieve this by changing the extraction in the following way:
-
+{;
 	milliseconds = round (cursor*1000)
 	Extract selection sound (windowed): string$ (milliseconds) + "ms", "Kaiser2", 2, "no"
-
+}
 The names of the Sound and Spectrum objects will now have more chance of being unique. Two lines will have to be edited trivially.
 
 Finally, we will reset the selection to the original. At the top of the script,
 we add two lines to remember the positions of the selection markers:
-
+{;
 	start = Get start of selection
 	end = Get end of selection
-
+}
 At the bottom, we reset the selection:
-
+{;
 	\#`{editor}
 		Select: start, end
-
+}
 Note that the #`editor` directive if not followed by the name of an editor,
 returns the script to the original environment.
 
 The complete script is:
-
+{;
 		start = Get start of selection
 		end = Get end of selection
 		cursor = Get cursor
@@ -4097,7 +4116,7 @@ The complete script is:
 	\`{removeObject}: "Sound " + string$ (milliseconds) + "ms"
 	\#`{editor}
 		Select: start, end
-
+}
 This script is useful as it stands. It is good enough for safe use. For instance, if the created Sound object has the same name
 as an already existing Sound object, it will be the newly created Sound object that will be removed by @`removeObject`,
 because in case of ambiguity @`removeObject` always removes the most recently created object of that name.
