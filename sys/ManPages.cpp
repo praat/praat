@@ -629,14 +629,13 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			line += 2;
 			Melder_skipHorizontalSpace (& line);
 			MelderString_append (& buffer_graphical, line);
-		} else if (line [0] == U'`' && ! stringHasInk (line + 1)) {
+		} else if (numberOfLeadingSpaces == 0 && line [0] == U'`' && ! stringHasInk (line + 1)) {
 			type = kManPage_type::SCRIPT;   // TODO: make different type, such as kManPage_type::VERBATIM
 			do {
 				line = MelderReadText_readLine (text);
 				if (! line)
-					break;//Melder_throw (U"Verbatim chunk not closed.");
-				const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
-				if (*firstNonspace == U'`' && ! stringHasInk (firstNonspace + 1)) {
+					break;
+				if (line [0] == U'`' && ! stringHasInk (line + 1)) {
 					line = MelderReadText_readLine (text);
 					break;
 				}
@@ -825,7 +824,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					stringStartsWithNumberAndDot (firstNonSpace) ||
 					*firstNonSpace == U'|' && Melder_isHorizontalSpace (firstNonSpace [1]) ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'{' ||
-					*firstNonSpace == U'`' && ! stringHasInk (firstNonSpace + 1) ||
+					firstNonSpace == continuationLine && *firstNonSpace == U'`' && ! stringHasInk (firstNonSpace + 1) ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
 					Melder_startsWith (firstNonSpace, U"===") ||
 					*firstNonSpace == U'/' && firstNonSpace [1] == U'/' ||
