@@ -629,6 +629,31 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			line += 2;
 			Melder_skipHorizontalSpace (& line);
 			MelderString_append (& buffer_graphical, line);
+		} else if (line [0] == U'`' && ! stringHasInk (line + 1)) {
+			type = kManPage_type::SCRIPT;   // TODO: make different type, such as kManPage_type::VERBATIM
+			do {
+				line = MelderReadText_readLine (text);
+				if (! line)
+					break;//Melder_throw (U"Verbatim chunk not closed.");
+				const char32 *firstNonspace = Melder_findEndOfHorizontalSpace (line);
+				if (*firstNonspace == U'`' && ! stringHasInk (firstNonspace + 1)) {
+					line = MelderReadText_readLine (text);
+					break;
+				}
+				MelderString_empty (& buffer_graphicalCode);
+				const char32 *p = & line [0];
+				while (*p) {
+					if (*p == U'\t') {
+						MelderString_append (& buffer_graphicalCode, p == line ? nullptr : U"    ");
+					} else
+						MelderString_appendCharacter (& buffer_graphicalCode, *p);
+					p ++;
+				}
+				ManPage_Paragraph par = page -> paragraphs. append ();
+				par -> type = kManPage_type::CODE;
+				par -> text = Melder_dup (buffer_graphicalCode. string).transfer();
+			} while (1);
+			MelderString_empty (& buffer_graphical);
 		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
 			const bool shouldShowCode = ! str32chr (line, U'-');
 			const char32 *sizeLocation = str32chr (line, U'x');
@@ -752,7 +777,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			if (! shouldShowOutput)
 				MelderString_empty (& buffer_graphical);
 		} else if (numberOfLeadingSpaces >= 3) {
-			//TRACE
+			TRACE
 			trace (U"Bare code found in: ", firstLine);
 			type = (
 				numberOfLeadingSpaces <  7 ? kManPage_type::CODE  :
@@ -800,6 +825,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					stringStartsWithNumberAndDot (firstNonSpace) ||
 					*firstNonSpace == U'|' && Melder_isHorizontalSpace (firstNonSpace [1]) ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'{' ||
+					*firstNonSpace == U'`' && ! stringHasInk (firstNonSpace + 1) ||
 					firstNonSpace == continuationLine && *firstNonSpace == U'~' ||
 					Melder_startsWith (firstNonSpace, U"===") ||
 					*firstNonSpace == U'/' && firstNonSpace [1] == U'/' ||

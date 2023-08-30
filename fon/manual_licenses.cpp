@@ -30,7 +30,7 @@ R"~~~(
 
 The Praat source code contains a copy of the FLAC software (see @Acknowledgments).
 Here is the FLAC license text:
-{;
+`
 	libFLAC - Free Lossless Audio Codec library
 	Copyright (C) 2001-2009  Josh Coalson
 	Copyright (C) 2011-2016  Xiph.Org Foundation
@@ -61,14 +61,14 @@ Here is the FLAC license text:
 	LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-}
+`
 ################################################################################
 "Ogg Vorbis BSD 3-clause license"
 © Paul Boersma 2020
 
 The Praat source code contains a copy of the Ogg Vorbis software (see @Acknowledgments).
 Here is the Ogg Vorbis license text:
-{;
+`
 	Copyright (c) 2002-2020 Xiph.org Foundation
 
 	Redistribution and use in source and binary forms, with or without
@@ -97,14 +97,14 @@ Here is the Ogg Vorbis license text:
 	THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-}
+`
 ################################################################################
 "Opus BSD 3-clause license"
 © Paul Boersma 2021
 
 The Praat source code contains a copy of the Opus software (see @Acknowledgments).
 Here is the Opus license text:
-{;
+`
 	Copyright (c) 2001-2011 Xiph.Org, Skype Limited, Octasic,
 	                        Jean-Marc Valin, Timothy B. Terriberry,
 	                        CSIRO, Gregory Maxwell, Mark Borgerding,
@@ -149,15 +149,15 @@ Here is the Opus license text:
 
 	Broadcom Corporation:
 	https://datatracker.ietf.org/ipr/1526/
-}
+`
 ################################################################################
 "Skype Limited BSD 3-clause license"
 © Paul Boersma 2022
 
 The Praat source code contains a copy of the SILK software (see @Acknowledgments).
 Here is the Skype Limited license text:
-{;
-	Copyright (c) 2006-2011 Skype Limited. All rights reserved.")
+`
+	Copyright (c) 2006-2011 Skype Limited. All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions
@@ -186,7 +186,7 @@ Here is the Skype Limited license text:
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-}
+`
 ################################################################################
 "Unicode Inc. license agreement"
 © Paul Boersma 2022
@@ -194,7 +194,7 @@ Here is the Skype Limited license text:
 The Praat source code contains a copy of the Unicode Character Database,
 as well as derived software (see @Acknowledgments).
 Here is the Unicode Inc. license text:
-{;
+`
 	UNICODE, INC. LICENSE AGREEMENT - DATA FILES AND SOFTWARE
 
 	See Terms of Use <https://www.unicode.org/copyright.html>
@@ -240,7 +240,7 @@ Here is the Unicode Inc. license text:
 	shall not be used in advertising or otherwise to promote the sale,
 	use or other dealings in these Data Files or Software without prior
 	written authorization of the copyright holder.
-}
+`
 ################################################################################
 "Acknowledgments"
 © Paul Boersma 2022
@@ -332,7 +332,7 @@ that are included in Praat.
 © Paul Boersma 2021
 
 This is the license under which Praat as a whole is distributed.
-{;
+`
 						GNU GENERAL PUBLIC LICENSE
 						   Version 3, 29 June 2007
 
@@ -1007,7 +1007,7 @@ This is the license under which Praat as a whole is distributed.
 	the library.  If this is what you want to do, use the GNU Lesser General
 	Public License instead of this License.  But first, please read
 	<https://www.gnu.org/licenses/why-not-lgpl.html>.
-}
+`
 ################################################################################
 "Privacy and security"
 © Paul Boersma 2022

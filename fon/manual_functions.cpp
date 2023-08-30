@@ -921,11 +921,11 @@ would target the white keys at least 597 times. This is compared with a %\ci^2 t
 	appendInfoLine: “P (chi-square) = ”, fixed$ (px2, 6)
 }
 The result is:
-
+`
 	*** Binomial test 597, 403, p = 0.583333 ***
 	P (binomial) = 0.199330
 	P (chi-square) = 0.398365
-
+`
 The %\ci^2 test is two-sided (it signals a preference for the white or for the black keys),
 so it has twice the probability of the binomial test.
 
@@ -2882,9 +2882,9 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent Bernoulli-distributed zeroes and ones.
 This is shorthand for doing
-
+`
 	\#{randomBernoulli#} (\`{size} (model#), \%{p})
-
+`
 ################################################################################
 "`randomBernoulli##`"
 © Paul Boersma 2023
@@ -2900,9 +2900,9 @@ Syntax and semantics
 : create a matrix with the same number of rows and columns as %`model#`,
 and fill all cells with independent Bernoulli-distributed zeroes and ones.
 This is shorthand for doing
-
+`
 	\#{randomBernoulli##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), \%{p})
-
+`
 ################################################################################
 "`randomGamma`"
 © David Weenink 2019, Paul Boersma 2023
@@ -2934,9 +2934,9 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent \Ga-distributed numbers.
 This is shorthand for doing
-
+`
 	\#{randomGamma#} (\`{size} (model#), %`shape`, %`rate`)
-
+`
 ################################################################################
 "`randomGamma##`"
 © Paul Boersma 2023
@@ -2952,9 +2952,9 @@ Syntax and semantics
 : create a matrix with the same number of rows and columns as %`model#`,
 and fill all cells with independent \Ga-distributed numbers.
 This is shorthand for doing
-
+`
 	\#{randomGammma##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`shape`, %`rate`)
-
+`
 ################################################################################
 "`randomGauss`"
 © Paul Boersma 2023
@@ -2982,9 +2982,9 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent normally distributed numbers.
 This is shorthand for doing
-
+`
 	\#{randomGauss#} (\`{size} (model#), %`mu`, %`sigma`)
-
+`
 ################################################################################
 "`randomGauss##`"
 © Paul Boersma 2023
@@ -3000,9 +3000,9 @@ Syntax and semantics
 : create a matrix with the same number of rows and columns as %`model#`,
 and fill all cells with independent normally distributed numbers.
 This is shorthand for doing
-
+`
 	\#{randomGauss##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`mu`, %`sigma`)
-
+`
 ################################################################################
 "`randomInteger`"
 © Paul Boersma 2023
@@ -3030,9 +3030,9 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent uniformly distributed integer numbers.
 This is shorthand for doing
-
+`
 	\#{randomInteger#} (\`{size} (model#), %`min`, %`max`)
-
+`
 ################################################################################
 "`randomInteger##`"
 © Paul Boersma 2023
@@ -3048,9 +3048,9 @@ Syntax and semantics
 : create a matrix with the same number of rows and columns as %`model#`,
 and fill all cells with independent uniformly distributed integer numbers.
 This is shorthand for doing
-
+`
 	\#{randomInteger##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`min`, %`max`)
-
+`
 ################################################################################
 "`randomPoisson`"
 © Paul Boersma 2023
@@ -3077,9 +3077,9 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent Poisson-distributed numbers.
 This is shorthand for doing
-
+`
 	\#{randomPoisson#} (\`{size} (model#), %`mean`)
-
+`
 ################################################################################
 "`randomPoisson##`"
 © Paul Boersma 2023
@@ -3095,9 +3095,9 @@ Syntax and semantics
 : create a matrix with the same number of rows and columns as %`model#`,
 and fill all cells with independent Poisson-distributed numbers.
 This is shorthand for doing
-
+`
 	\#{randomPoisson##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`mean`)
-
+`
 ################################################################################
 "`randomUniform`"
 © Paul Boersma 2023
@@ -3125,9 +3125,9 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent uniformly distributed numbers.
 This is shorthand for doing
-
+`
 	\#{randomUniform#} (\`{size} (model#), %`min`, %`max`)
-
+`
 ################################################################################
 "`randomUniform##`"
 © Paul Boersma 2023
@@ -3143,9 +3143,9 @@ Syntax and semantics
 : create a matrix with the same number of rows and columns as %`model#`,
 and fill all cells with independent uniformly distributed numbers.
 This is shorthand for doing
-
+`
 	\#{randomUniform##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`min`, %`max`)
-
+`
 ################################################################################
 "`random_initializeSafelyAndUnpredictably`"
 © Paul Boersma 2023
@@ -3453,11 +3453,11 @@ Assume that at the start of the following script, the list of objects is empty:
 At this point, the list of objects will contain three objects,
 which will look as follows (ID, type name, given name),
 where the two that stand selected are given in bold:
-{;
+`
 	\#{1. Sound sine377}
 	2. Pitch sine377
 	\#{3. PointProcess sine377_sine377}
-}
+`
 The IDs of the two selected objects are 1 and 3, respectively,
 and this is what `selected#` ( ) will show:
 {
@@ -3520,11 +3520,11 @@ Assume that at the start of the following script, the list of objects is empty:
 At this point, the list of objects will contain three objects,
 which will look as follows (ID, type name, given name),
 where the two that stand selected are given in bold:
-{;
+`
 	\#{1. Sound sine377}
 	2. Pitch sine377
 	\#{3. PointProcess sine377_sine377}
-}
+`
 The full names of the two selected objects are `Sound sine377`
 and `PointProcess sine377_sine377`, respectively,
 and this is what `selected$#` ( ) will show:

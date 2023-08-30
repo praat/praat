@@ -66,14 +66,14 @@ Example 1: a single document
 
 If you create a single ManPages text file, it will look like a manual with a single page.
 Here is an example:
-
+`
 	ManPagesTextFile
 	"Welkom" "miep" 19970820 0
 	<intro> "Hallo allemaal!"
 	<entry> "Belangrijk..."
 	<normal> "Hoogge\e""erd publiek!"
 	<normal> "Einde."
-
+`
 A ManPages text file should start with the following information:
 
 1. The word “ManPagesTextFile” on the first line.
@@ -95,10 +95,10 @@ the four required pieces of information are there in the correct order,
 and there is a correct alternation between paragraph texts and types.
 If you put multiple elements on a line, there should be at least one space between them.
 You may distribute texts across multiple lines, as long as you do not add any spaces:
-
+`
 	<normal> "Hoogge\e""erd
 	publiek!"
-
+`
 This will have exactly the same effect as above.
 
 Example 2: multiple documents
@@ -106,7 +106,7 @@ Example 2: multiple documents
 
 The above example with a single document is not very useful.
 You will usually want to refer to other documents:
-
+`
 	ManPagesTextFile
 	"Welcome" "Paul Boersma" 19970820 1.0
 	<intro> "Welcome to Paul's transcription course."
@@ -116,7 +116,7 @@ You will usually want to refer to other documents:
 	pronounced by a %single speaker (#me):"
 	<list_item> "@Vowels, quite problematic for Dutch students!"
 	<list_item> "@@Dorsal fricatives@, equally problematic!"
-
+`
 With the symbol “`@`”, you create a %link to another ManPages text file.
 A link will be drawn in blue on your screen.
 In this example, you have created links to the files `Vowels.man`
@@ -153,12 +153,12 @@ have type `<entry>`. This will be drawn in a larger character size.
 
 For lists, you use the type `<list_item>`. You will often combine this with %button symbols,
 like in the following:
-
+`
 	<normal> "Choose a colour:"
 	<list_item> "\bu @Red."
 	<list_item> "\bu @Green."
 	<list_item> "\bu @Blue."
-
+`
 For text that should appear with a fixed character width, you use the type `<code>`.
 
 For a paragraph that should be connected with the following paragraph
@@ -188,10 +188,10 @@ Sound links
 
 Your text may contain links to sound files. They are drawn in blue.
 The format is:
-
+`
 	<normal> "You should know that @@\FIct.aifc|\ct@ is more open than
 		@@\FIo.aifc|o@."
-
+`
 On your screen, you will see an #\ct and an #o symbol, both drawn in blue.
 If you click on one of these sound links, one of the sound files `ct.aifc`
 or `o.aifc` will be played.
@@ -214,13 +214,13 @@ Pictures as embedded scripts
 
 Your text may contain Praat scripts. They typically draw a picture in your manual page,
 with the font and font size of the manual until you specify otherwise in the script. The format is:
-
+`
 	<script> 4.5 4 "
 		Draw inner box
 		Axes: 0, 100, 0, 100
 		Text: 50, "Centre", 50, "Half", "Hello!!"
 	"
-
+`
 The two numbers after `<script>` are the width and the height of the picture
 (the “outer viewport”) in inches, if the font size of the manual is 12.
 If the font size is larger, the viewport will be scaled up accordingly.
@@ -230,7 +230,7 @@ Therefore, you will have to double any double quotes that occur in the script.
 
 If needed, a script like this can create objects in the object list of the manual.
 However, you have to make sure that you remove them after use:
-
+`
 	<script> 6 3 "
 		Create Sound from formula: "sineWithNoise", 1, 0.0, 1.0, 44100,
 		... ~1/2 * sin (2 * pi * 377 * x) + randomGauss (0, 0.1)
@@ -239,7 +239,7 @@ However, you have to make sure that you remove them after use:
 		plusObject: "Sound sineWithNoise"
 		Remove
 	"
-
+`
 Note that this script does not set the font and font size.
 This means that the drawing will use the font and font size of the manual page,
 which is usually what you want.
@@ -257,7 +257,7 @@ The commands ##Set outer viewport...# and ##Set inner viewport...# are available
 they count in inches (if the font size of the manual is 12). The (0, 0) point is in the upper left corner,
 as in the Picture window, so that you can test your picture with a normal Praat script;
 for instance, the following script draws a cross in the upper half of the picture and a rectangle in the lower half:
-
+`
 	<script> 4.5 4 "
 		Axes: 0, 100, 0, 100
 		Select inner viewport: 0, 4.5, 0, 2
@@ -266,6 +266,7 @@ for instance, the following script draws a cross in the upper half of the pictur
 		Select inner viewport: 0, 4.5, 2, 4
 		Draw rectangle: 0, 100, 0, 100
 	"
+`
 {- 4.5x4
 	Font size: 12   ; BUG
 	Axes: 0, 100, 0, 100
@@ -281,22 +282,22 @@ Script links
 
 Your text may contain links to Praat scripts. They are drawn in blue.
 The format is:
-
+`
 	<normal> "Here is a script that @@\SCdraw.praat|draws@ what you have selected."
-
+`
 On your screen, you will see the word #draws, drawn in blue.
 If you click on it, the script `draw.praat` will be executed. The string “`\SC`” indicates
 that a script file name follows. As with sounds, you can use relative file paths. The script can take
 arguments:
-
+`
 	<normal> "This script @@\SCload2files.praat hello.wav hello.TextGrid|loads@ some files."
-
+`
 If the script file name or any arguments except the last contain spaces, they have to be enclosed
 within double quotes, which have to be doubled again in the ManPage code:
-
+`
 	<normal> "Here is a script that @@\SC""my scripts/draw.praat""|draws@ what you have selected."
 	<normal> "This script @@\SC""my scripts/load2files.praat"" ""my sounds/hello.wav"" my textgrids/hello.TextGrid|loads@ some files."
-
+`
 For safety reasons, the user will see a warning about
 "trusting the author of the manual pages" if you include script links in your manual.
 
