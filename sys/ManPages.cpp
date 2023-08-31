@@ -125,9 +125,10 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 				p = from;
 				return p;
 			}
-		} else if (*p == U'`' && verbatimAware) {
+		} else if (*p == U'`' && verbatimAware && ! paragraphIsVerbatim) {
 			/*
-				We found "`", starting a verbatim stretch in which '@' is to be ignored. BUG: but should "\@{" be honoured?
+				We found "`", starting a verbatim stretch in which '@' is to be ignored.
+				Doesn't count if part of a backslash trigraph.
 			*/
 			if (p - text <= 0 || (p [-1] != U'\\' && (p - text <= 1 || p [-2] != U'\\'))) {
 				/*
@@ -145,16 +146,15 @@ static conststring32 ManPage_Paragraph_extractLink (ManPage_Paragraph par, const
 					p ++;
 				}
 			}
-		} else if (
-			*p == U'\\' && p [1] == U'@' && p [2] == U'{' ||
-			*p == U'\\' && p [1] == U'#' && p [2] == U'@' && p [3] == U'{' ||
-			*p == U'\\' && p [1] == U'`' && p [2] == U'{' ||
-			*p == U'\\' && p [1] == U'#' && p [2] == U'`' && p [3] == U'{'
+		} else if (paragraphIsVerbatim &&
+			(*p == U'\\' && p [1] == U'@' && p [2] == U'{' ||
+			 *p == U'\\' && p [1] == U'#' && p [2] == U'@' && p [3] == U'{' ||
+			 *p == U'\\' && p [1] == U'`' && p [2] == U'{' ||
+			 *p == U'\\' && p [1] == U'#' && p [2] == U'`' && p [3] == U'{')
 		) {
 			/*
 				We found "\@{" or "\#@{" or "\`{" or "\#`{",
-				starting a link in running text or in verbatim code.
-				TODO: should not occur in running text.
+				starting a link in verbatim text or in code.
 			*/
 			const bool boldLink = ( p [1] == U'#' );
 			const char32 *from = p + 3 + boldLink;
@@ -561,7 +561,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			Now we try several kinds of list items.
 			To not prepend a character, use ",".
 			To prepend a bullet, use "-" or "*" or "•".
-		 */
+		*/
 		} else if (
 			line [0] == U',' && (Melder_isHorizontalSpace (line [1]) || line [1] == U'\0') ||
 			line [0] == U'-' && Melder_isHorizontalSpace (line [1]) ||
@@ -652,7 +652,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				par -> type = kManPage_type::CODE;
 				par -> text = Melder_dup (buffer_graphicalCode. string).transfer();
 			} while (1);
-			MelderString_empty (& buffer_graphical);
+			MelderString_empty (& buffer_graphical);   // this makes sure that no actual SCRIPT (or VERBATIM) paragraph will be added
 		} else if (numberOfLeadingSpaces == 0 && line [0] == U'{') {
 			const bool shouldShowCode = ! str32chr (line, U'-');
 			const char32 *sizeLocation = str32chr (line, U'x');
@@ -774,7 +774,10 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				}
 			} while (1);
 			if (! shouldShowOutput)
-				MelderString_empty (& buffer_graphical);
+				MelderString_empty (& buffer_graphical);   // add no SCRIPT paragraph
+		/*
+			TODO: remove the following (2023-08-31).
+		*/
 		} else if (numberOfLeadingSpaces >= 3) {
 			TRACE
 			trace (U"Bare code found in: ", firstLine);
