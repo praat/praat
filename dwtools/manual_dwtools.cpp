@@ -5099,11 +5099,11 @@ NORMAL (U"In a quantile-quantile plot the quantiles of the data in the first sel
 	"same distribution, the points should fall approximately along the reference line.")
 MAN_END
 
-MAN_BEGIN (U"Table: Bar plot where...", U"djmw", 20140509)  // ppgb 2023
+MAN_BEGIN (U"Table: Bar plot...", U"djmw", 20230901)  // ppgb 2023
 INTRO (U"Draws a bar plot from data in one or more columns of the selected @Table. In a bar plot the horizontal axis has nominal values (labels). ")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (10.6), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Table: Bar plot where", 10.6)   // 0.6 extra for the text
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Bar plot", 10.6)   // 0.6 extra for the text
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column(s)", "")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Column with labels", "")
@@ -5113,7 +5113,6 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (10.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colours (0-1, name, {r,g,b})", "Grey")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Label text angle (degrees)", "0.0")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", 1)
-	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Formula:", "row>1 and row < 10")
 )
 TERM (U"##Vertical column(s)")
 DEFINITION (U"you list the table columns that you want to represent in the bar plot. The number of selected columns is the group size.")
@@ -5131,8 +5130,6 @@ TERM (U"##Colours")
 DEFINITION (U"determines the colours of the bars in a group.")
 TERM (U"##Label text angle (degrees)")
 DEFINITION (U"determines the angle of the labels written below the plot. If you have very long label texts you can prevent the label texts from overlapping.")
-TERM (U"##Formula:")
-DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression evaluates to %%true%. A 1 value always evaluates to %%true%.")
 ENTRY (U"Examples")
 NORMAL (U"@@Keating & Esposito (2006)@ present a bar plot in their fig. 3 from which we estimate the following data table")
 CODE (U"Language        Modal  Breathy")
@@ -5152,56 +5149,59 @@ NORMAL (U"As you can see the labels in the first column are very long texts and 
 	"plotted at the bottom of a plot. We therefore use a value of 15 degrees for the \"Label text angle\" " "parameter. This "
 	"will make the label texts nonoverlapping. We cannot make this angle much larger, because then the label texts would run out of "
 	"the viewport. ")
-NORMAL (U"Sometimes you need to plot only a part of the Table and for the selection of this part, the \"Formula\" field can be "
-	"used. Since we only have a small table we put a \"1\" in this field which always evaluates to true. "
-	"In effect, all the rows will be selected. The following script line will produce the picture below.")
-CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
+NORMAL (U"The following script line will produce the picture below.")
+CODE (U"Bar plot: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\"")
 SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Keating & Esposito 2006)\n"
 	"Font size: 10\n"
-	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
+	"Bar plot: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\"\n"
 	"removeObject: h1h2\n")
 NORMAL (U"The essentials of the bart plot in their paper are perfectly reproduced in the figure above. "
 	"If you want the bars within a group to be placed somewhat more apart, say 0.2 times the bar width, "
 	"you can set the \"Distance between bars in a group\" to a value of 0.2:")
-CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
+CODE (U"Bar plot: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\"")
 SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Keating & Esposito 2006)\n"
 	"Font size: 10\n"
-	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
+	"Bar plot: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\"\n"
 	"removeObject: h1h2\n")
 NORMAL (U"Of course we can also work with colours and we can add vertical marks as the following scriptlet shows")
-CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\"")
+CODE (U"Bar plot: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\"")
 CODE (U"Marks left every: 1, 5, 1, 1, 1")
 CODE (U"Text left: 1, \"H__1_-H__2_ (dB)\"")
 SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Keating & Esposito 2006)\n"
 	"Font size: 10\n"
-	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\"\n"
+	"Bar plot: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\"\n"
 	"Marks left every: 1, 5, 1, 1, 1\n"
 	"Text left: 1, \"H__1_-H__2_ (dB)\"\n"
 	"removeObject: h1h2\n")
 MAN_END
 
-MAN_BEGIN (U"Table: Box plots where...", U"djmw", 20140509)
+MAN_BEGIN (U"Table: Box plots...", U"djmw", 20230901)
 INTRO (U"A command to draw a @@box plot@s for each factor from the data in other column(s) of the selected @Table object, "
 	"where the factors will be sorted in @@natural sort order@.")
 ENTRY (U"Example")
 NORMAL (U"To draw separate box plots for the male, female and children F0 for the @@Peterson & Barney (1952)@ data: ")
 CODE (U"Create formant table (Peterson & Barney 1952)")
-CODE (U"Box plots where: \"F0\", \"Type\", 70, 400, \"1\"")
+CODE (U"Box plots: \"F0\", \"Type\", 70, 400")
 CODE (U"Text left: \"yes\", \"F0 (Hz)\"")
 SCRIPT (5,3, U"pb = Create formant table (Peterson & Barney 1952)\n"
-	"Box plots where: \"F0\", \"Type\", 70, 400, \"yes\", \"1\"\n"
+	"Box plots: \"F0\", \"Type\", 70, 400, \"yes\"\n"
 	"Text left: \"yes\", \"F0 (Hz)\"\n"
 	"removeObject: pb\n"
 )
 MAN_END
 
-MAN_BEGIN (U"Table: Line graph where...", U"djmw", 20200629)
+MAN_BEGIN (U"Table: Line graph where...", U"djmw", 20230901)
+INTRO (U"Draws a line graph from the data in a column of the selected @Table."
+	"More info @@Table: Line graph...@.")
+MAN_END
+
+MAN_BEGIN (U"Table: Line graph...", U"djmw", 20230901)
 INTRO (U"Draws a line graph from the data in a column of the selected @Table. "
 	"In a line plot, the horizontal axis can have a nominal scale or a numeric scale. "
 	"The data points are connected by line segments.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (8.6), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Table: Line graph where", 8.6)   // 0.6 extra for the text
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Line graph", 8.6)   // 0.6 extra for the text
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column", "")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Horizontal column", "")
@@ -5209,7 +5209,6 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (8.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Text", "+")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Label text angle (degrees)", "0.0")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
-	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula:", "1; (= everything)")
 )
 TERM (U"##Vertical column")
 DEFINITION (U"The column whose data points you want to plot.")
@@ -5229,9 +5228,6 @@ TERM (U"##Label text angle (degrees)")
 DEFINITION (U"determines the angle of the labels written %%below% the plot. If you have very long label texts in the "
 	"\"Horizontal column\", you can prevent the label texts from overlapping. This only has effect for a horizontal "
 	"column with nominal values.")
-TERM (U"##Formula")
-DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression "
-	"evaluates to %%true%. A 1 value always evaluates to %%true%.")
 ENTRY (U"Examples")
 NORMAL (U"The following table was estimated from fig. 3 in @@Ganong (1980)@ and represents the fraction /d/ responses as a function of a "
 	"voice onset time (VOT) continuum. The second column shows the responses in a word - nonword continuum, while the third column shows "
@@ -5245,9 +5241,9 @@ CODE (U"  7.5   0.12      0.02")
 CODE (U" 17.5   0.10      0.02")
 NORMAL (U"We can reproduce fig. 3 from Ganong (1980) with the following script, where we labeled the word - nonword curve with \"wn\" and the nonword - word curve with \"nw\". We deselect \"Garnish\" because we want to put special marks at the bottom.")
 CODE (U"Dotted line\n")
-CODE (U"Line graph where: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, \"no\", \"1\"")
+CODE (U"Line graph: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, \"no\"")
 CODE (U"Dashed line\n")
-CODE (U"Line graph where: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, \"no\", \"1\"")
+CODE (U"Line graph: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, \"no\"")
 CODE (U"Draw inner box")
 CODE (U"One mark bottom: 2.5, \"no\", \"yes\", \"no\", \"+2.5\"")
 CODE (U"One mark bottom: -2.5, \"yes\", \"yes\", \"no\", \"\"")
@@ -5262,9 +5258,9 @@ CODE (U"Text left: 1, \"Prop. of voiced responses\"")
 
 SCRIPT (5,3, U"ganong = Create Table (Ganong 1980)\n"
 	"Dotted line\n"
-	"Line graph where: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, \"no\", ~1\n"
+	"Line graph: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, \"no\"\n"
 	"Dashed line\n"
-	"Line graph where: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, \"no\", ~1\n"
+	"Line graph: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, \"no\"\n"
 	"Draw inner box\n"
 	"One mark bottom: 2.5, 0, \"yes\", \"no\", \"+2.5\"\n"
 	"One mark bottom: -2.5, \"yes\", \"yes\", \"no\", \"\"\n"
@@ -5282,36 +5278,26 @@ NORMAL (U"As an example of what happens if you don't supply an argument for the 
 	"the same table as for the previous plot. However the resulting plot may not be as meaningful (note that the "
 	"horizontal nominal scale makes all points equidistant in the horizontal direction.)")
 CODE (U"Dotted line\n")
-CODE (U"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, \"yes\", ~ 1")
+CODE (U"Line graph: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, \"yes\"")
 CODE (U"One mark bottom: 1, \"no\", \"yes\", \"no\", \"Short VOT\"")
 SCRIPT (5,3, U"ganong = Create Table (Ganong 1980)\n"
 	"Dotted line\n"
-	"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, \"yes\", ~1\n"
+	"Line graph: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, \"yes\"\n"
 	"One mark bottom: 1, \"no\", \"yes\", \"no\", \"Short VOT\"\n"
 	"removeObject: ganong\n"
 )
 MAN_END
 
-MAN_BEGIN (U"Table: Horizontal error bars plot where...", U"djmw", 20131220)
+MAN_BEGIN (U"Table: Horizontal error bars plot...", U"djmw", 20230901)
 INTRO (U"Draws horizontal lines that represent the error intervals of a data column from the selected @@Table@.")
-NORMAL (U"This command behaves analogous to @@Table: Vertical error bars plot where...@.")
+NORMAL (U"This command behaves analogous to @@Table: Vertical error bars plot...@.")
 MAN_END
 
-MAN_BEGIN (U"Table: Horizontal error bars plot...", U"djmw", 20131220)
-INTRO (U"Draws horizontal lines that represent the error intervals of a data column from the selected @@Table@.")
-NORMAL (U"This command behaves analogous to @@Table: Vertical error bars plot where...@.")
-MAN_END
-
-MAN_BEGIN (U"Table: Vertical error bars plot...", U"djmw", 20131223)
-INTRO (U"Draws vertical lines that represent the error intervals of a data column from the selected @@Table@.")
-NORMAL (U"For more info see @@Table: Vertical error bars plot where...@")
-MAN_END
-
-MAN_BEGIN (U"Table: Vertical error bars plot where...", U"djmw", 20230825)
+MAN_BEGIN (U"Table: Vertical error bars plot...", U"djmw", 20230901)
 INTRO (U"Draws vertical lines that represent the error intervals of a data column from the selected @@Table@.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9.6), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Table: Vertical confidence intervals plot where", 9.6)   // 0.6 extra for the text
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Vertical error bars plot", 9.6)   // 0.6 extra for the text
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Horizontal column", "")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Horizontal range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column", "")
@@ -5320,7 +5306,6 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Upper error value column", "")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Bar size (mm)", "1.0")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
-	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula", "1; (= everything)")
 )
 TERM (U"##Horizontal column#")
 DEFINITION (U"determines the data along the horizontal axis.")
@@ -5342,9 +5327,6 @@ TERM (U"##Bar size (mm)#")
 DEFINITION (U"determines the width of the horizontal bars or whishers at the lower end position of the drawn line. ")
 TERM (U"##Garnish#")
 DEFINITION (U"determines whether or not some decoration is drawn.")
-TERM (U"##Formula")
-DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression "
-	"evaluates to %%true%. A 1 value always evaluates to %%true%.")
 MAN_END
 
 MAN_BEGIN (U"Table: Get median absolute deviation...", U"djmw", 20120405)
