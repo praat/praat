@@ -1,6 +1,6 @@
 /* Sound_and_LPC.cpp
  *
- * Copyright (C) 1994-2020 David Weenink
+ * Copyright (C) 1994-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,19 @@ static void LPC_Frame_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
 		for (integer j = 1; j <= m; j ++)
 			y [i] -= my a [j] * y [i - j];
 	}
+}
+
+void checkLPCAnalysisParameters_e (double sound_dx, integer sound_nx, double physicalAnalysisWidth, integer predictionOrder) {
+	volatile const double physicalDuration = sound_dx * sound_nx;
+	Melder_require (physicalAnalysisWidth <= physicalDuration,
+		U"Your sound is too short: it should be at least as long as two window lengths.");
+	// we round the minimum duration to be able to use asserterror in testing scripts.
+	conststring32 minimumDurationRounded = Melder_fixed (predictionOrder * sound_dx , 5);
+	const integer approximateNumberOfSamplesPerWindow = Melder_roundDown (physicalAnalysisWidth / sound_dx);
+	Melder_require (approximateNumberOfSamplesPerWindow > predictionOrder,
+		U"Analysis window duration too short. For a prediction order of ", predictionOrder,
+		U", the analysis window duration should be greater than ", minimumDurationRounded,
+		U" s. Please increase the analysis window duration or lower the prediction order.");
 }
 
 static integer getLPCAnalysisWorkspaceSize (integer numberOfSamples, integer numberOfCoefficients, kLPC_Analysis method) {
@@ -438,17 +451,16 @@ end:
 	return status == 1 || status == 4 || status == 5;
 }
 
+/*
+	Preconditions
+		my xmin/xmax = thy xmin/xmax
+		Sound is long enough
+*/
 static void Sound_into_LPC_noThreads (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
-	Melder_require (my xmin == thy xmin && my xmax == thy xmax, 
-		U"The Sound and the LPC should have the same domain.");
 	const double samplingFrequency = 1.0 / my dx;
 	const integer predictionOrder = thy maxnCoefficients;
 	const double suggestedWindowDuration = 2.0 * analysisWidth;   // Gaussian window
-	const double actualWindowDuration = Melder_clippedRight (suggestedWindowDuration, my dx * my nx);   // convenience: analyse whole sound into 1 frame
-	Melder_require (Melder_roundDown (actualWindowDuration / my dx) > predictionOrder,
-		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
-		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1),
-		U" s. Please increase the analysis window duration or lower the prediction order.");
+	const double actualWindowDuration = Melder_clippedRight (suggestedWindowDuration, my dx * my nx); // convenience: analyse whole sound into 1 frame
 
 	integer numberOfFrames = thy nx;
 	autoSound sound = Data_copy (me);
@@ -488,27 +500,25 @@ static void Sound_into_LPC_noThreads (Sound me, LPC thee, double analysisWidth, 
 }
 
 void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
-	const integer numberOfProcessors = std::thread::hardware_concurrency ();
-	/*
-		If the duration of the sound is smaller than the analysis window duration we don't do multithreading.
-	*/
-	if (numberOfProcessors <= 1 || (my xmax - my xmin) <= analysisWidth) {
-		/*
-			Don't use multithreading.
-		*/
-		Sound_into_LPC_noThreads (me, thee, analysisWidth, preEmphasisFrequency, method, tol1, tol2);
-	}
-	const double samplingFrequency = 1.0 / my dx;
-	Melder_require (my xmin == thy xmin && my xmax == thy xmax, 
+	Melder_require (my xmin == thy xmin && my xmax == thy xmax,
 		U"The Sound and the LPC should have the same domain.");
 	const integer predictionOrder = thy maxnCoefficients;
 	const double suggestedWindowDuration = 2.0 * analysisWidth;   // Gaussian window
-	const double actualWindowDuration = Melder_clippedRight (suggestedWindowDuration, my dx * my nx);   // convenience: analyse whole sound into 1 frame
-	Melder_require (Melder_roundDown (actualWindowDuration / my dx) > predictionOrder,
-		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
-		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1),
-		U" s. Please increase the analysis window duration or lower the prediction order.");
+	const double actualWindowDuration = Melder_clippedRight (suggestedWindowDuration, my dx * my nx); // convenience: only 1 frame	
+
+	checkLPCAnalysisParameters_e (my dx, my nx, actualWindowDuration, predictionOrder);
+	
+	const integer numberOfProcessors = std::thread::hardware_concurrency ();
 	integer numberOfFrames = thy nx;
+	
+	if (numberOfProcessors <= 1 || numberOfFrames < 2) {
+		/*
+			No multithreading if the duration of "not enough" number of frames.
+		*/
+		Sound_into_LPC_noThreads (me, thee, analysisWidth, preEmphasisFrequency, method, tol1, tol2);
+	}
+	
+	const double samplingFrequency = 1.0 / my dx;
 	autoSound sound = Data_copy (me);
 	autoSound window = Sound_createGaussian (actualWindowDuration, samplingFrequency);
 	/*
@@ -582,16 +592,13 @@ void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasi
 }
 
 static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
-	const double suggestedWindowDuration = 2.0 * analysisWidth;   // Gaussian window
-	const double actualWindowDuration = Melder_clippedRight (suggestedWindowDuration, my dx * my nx);
-	Melder_require (Melder_roundDown (actualWindowDuration / my dx) > predictionOrder,
-		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
-		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1),
-		U" s. Please increase the analysis window duration or lower the prediction order."
-	);
+	double physicalAnalysisWidth = 2.0 * analysisWidth;   // Gaussian window
+	
+	checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, predictionOrder);
+	
 	double t1;
 	integer numberOfFrames;
-	Sampled_shortTermAnalysis (me, actualWindowDuration, dt, & numberOfFrames, & t1);
+	Sampled_shortTermAnalysis (me, physicalAnalysisWidth, dt, & numberOfFrames, & t1);
 	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);
 	Sound_into_LPC (me, thee.get(), analysisWidth, preEmphasisFrequency, method, tol1, tol2);
 	return thee;

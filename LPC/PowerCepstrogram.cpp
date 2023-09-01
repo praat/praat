@@ -337,8 +337,12 @@ autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
 		const double analysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
+		const double physicalAnalysisWidth = 2.0 * analysisWidth;
+		const double physicalDuration = my dx * my nx;
 		volatile const double windowDuration = Melder_clippedRight (2.0 * analysisWidth, my dx * my nx);   // gaussian window
-
+		Melder_require (physicalDuration >= physicalAnalysisWidth,
+			U"Your sound is too short:\n"
+			U"it should be longer than 6.0 / pitchFloor (", physicalAnalysisWidth, U" s).");
 		// Convenience: analyse the whole sound into one Cepstrogram_frame
 		const double samplingFrequency = 2.0 * maximumFrequency;
 		autoSound sound = Sound_resample (me, samplingFrequency, 50);
@@ -359,7 +363,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 		autoMelderProgress progress (U"Cepstrogram analysis");
 
 		for (integer iframe = 1; iframe <= nFrames; iframe++) {
-			const double t = Sampled_indexToX (thee.get(), iframe);
+			const double t = Sampled_indexToX (thee.get(), iframe); // TODO express the following 3 lines more clearly
 			Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
 			Vector_subtractMean (sframe.get());
 			Sounds_multiply (sframe.get(), window.get());

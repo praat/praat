@@ -3,6 +3,8 @@
 
 printline test_LPC
 
+@testCornerCases
+
 @testLPCInterface
 
 # formants of straight tube
@@ -155,4 +157,29 @@ procedure testLPCInterface
 	.lineSpectralFrequencies = To LineSpectralFrequencies: 0.0
 	removeObject: .spectrogram, .formant1, .formant2, .lineSpectralFrequencies, .sound, .lpc
 endproc
-	
+
+procedure testCornerCases
+	appendInfoLine: tab$, "Test corner cases"
+	.samplingFrequency = 10000
+	.predictionOrder = 20
+	.shorty = Create Sound from formula: "Shorty", 1, 0, 
+	... 0.004, .samplingFrequency, ~ 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)
+	asserterror Your sound is too short: it should be at least as long as two window lengths.
+	.lpc = To LPC (burg): .predictionOrder, 0.025, 0.005, 50
+	.notEnoughSamples = Create Sound from formula: "Shorty", 1, 0, 
+	... 0.002, .samplingFrequency, ~ 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)
+
+	.error$ = "Analysis window duration too short."
+		... + " For a prediction order of " + string$ (.predictionOrder)
+		... + ", the analysis window duration should be greater than "
+		... + fixed$ (.predictionOrder / .samplingFrequency, 5)
+		... + " s. Please increase the analysis window duration or "
+		... + "lower the prediction order."
+
+	# asserterror cannot deal with varables, we need the evaluation quotes ' '
+	asserterror '.error$'
+	.lpc = To LPC (burg): .predictionOrder, 0.001, 0.005, 50
+
+	removeObject: .shorty,.notEnoughSamples 
+	appendInfoLine: tab$, "Test corner cases OK"
+endproc

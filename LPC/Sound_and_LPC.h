@@ -2,7 +2,7 @@
 #define _Sound_and_LPC_h_
 /* Sound_and_LPC.h
  *
- * Copyright (C) 1994-2020 David Weenink
+ * Copyright (C) 1994-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,5 +94,10 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee);
 autoSound LPC_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, integer channel, double time);
 
 void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time);
+
+/*
+	For all LPC analysis
+*/
+void checkLPCAnalysisParameters_e (double sound_dx, integer sound_nx, double physicalAnalysisWidth, integer predictionOrder);
 
 #endif /* _Sound_and_LPC_h_ */
