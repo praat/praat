@@ -7065,6 +7065,7 @@ DIRECT (CREATE_ONE__Table_create_weenink1983) {
 	CREATE_ONE_END (U"m10w10c10")
 }
 
+// deprecated 2023
 FORM (GRAPHICS_EACH__Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr) {
 	WORD (xColumnName, U"Horizontal column", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
@@ -7089,6 +7090,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
+// deprecated 2023
 FORM (GRAPHICS_EACH__Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", nullptr) {
 	WORD (xColumnName, U"Horizontal column", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
@@ -7112,7 +7114,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot where...") {
+FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot...") { // deprecated 2023
 	STRINGARRAY_LINES (2, columnNames, U"Vertical column(s)", { U"speaker", U"age" })
 	///SENTENCE (yColumns_string, U"Vertical column(s)", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -7138,7 +7140,30 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line graph where...") {
+FORM (GRAPHICS_EACH__Table_barPlot, U"Table: Bar plot", U"Table: Bar plot...") {
+	STRINGARRAY_LINES (2, columnNames, U"Vertical column(s)", { U"speaker", U"age" })
+	///SENTENCE (yColumns_string, U"Vertical column(s)", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	SENTENCE (labelColumnName, U"Column with labels", U"")
+	LABEL (U"Distances are in units of 'bar width'")
+	REAL (distanceFromBorder, U"Distance of first bar from border", U"1.0")
+	REAL (distanceBetweenGroups, U"Distance between bar groups", U"1.0")
+	REAL (distanceWithinGroup, U"Distance between bars within group", U"0.0")
+	STRINGARRAY_LINES (2, colours, U"Colours", { U"Grey", U"Black" })
+	REAL (angle, U"Label text angle (degrees)", U"0.0");
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (Table)
+		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, columnNames);
+		const integer labelColumnNumber = Table_columnNameToNumber_0 (me, labelColumnName); // can be empty
+		Table_barPlot (me, GRAPHICS, columnNumbers.get(), ymin, ymax, labelColumnNumber, distanceFromBorder,
+				distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line graph...") {
 	SENTENCE (yColumnName, U"Vertical column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
@@ -7161,7 +7186,27 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__Table_boxPlots, U"Table: Box plots", nullptr) {
+FORM (GRAPHICS_EACH__Table_LineGraph, U"Table: Line graph", U"Table: Line graph...") {
+	SENTENCE (yColumnName, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	SENTENCE (xColumnName, U"Horizontal column (optional)", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (text, U"Text", U"+")
+	REAL (angle, U"Label text angle (degrees)", U"0.0");
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (Table)
+		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
+		const integer xColumnNumber = str32equ (xColumnName, U"") ? 0 : Table_columnNameToNumber_e (me, xColumnName);
+		Table_lineGraph (me, GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
+				angle, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (GRAPHICS_EACH__Table_boxPlots, U"Table: Box plots", U"Table: Box plots...") {
 	STRINGARRAY_LINES (2, dataColumnNames, U"Data columns", { U"F1", U"F2" })
 	WORD (factorColumnName, U"Factor column", U"Sex")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -7176,7 +7221,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plots where...") {
+FORM (GRAPHICS_EACH__Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plots...") { // deprecated 2023
 	STRINGARRAY_LINES (2, dataColumnNames, U"Data columns", { U"F1", U"F2" })
 	WORD (factorColumnName, U"Factor column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -7194,7 +7239,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", nullptr) {
+FORM (GRAPHICS_EACH__Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", nullptr) { // deprecated 2023
 	SENTENCE (xColumnName, U"Horizontal column", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
@@ -7238,7 +7283,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) {
+FORM (GRAPHICS_EACH__Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) { // deprecated 2023
 	SENTENCE (xColumnName, U"Horizontal column", U"F2")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
@@ -7278,6 +7323,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
+// deprecated 2023
 FORM (GRAPHICS_EACH__Table_normalProbabilityPlotWhere, U"Table: Normal probability plot where", U"Table: Normal probability plot...") {
 	SENTENCE (columnName, U"Column", U"F0")
 	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
@@ -7356,7 +7402,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-
+// deprecated 2023
 FORM (GRAPHICS_EACH__Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	SENTENCE (dataColumnName, U"Data column", U"errors")
 	NATURAL (lag, U"Lag", U"1")
@@ -7395,6 +7441,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
+// deprecated 2023
 FORM (GRAPHICS_EACH__Table_distributionPlotWhere, U"Table: Distribution plot where", nullptr) {
 	SENTENCE (dataColumnName, U"Data column", U"data")
 	REAL (minimumValue, U"Minimum value", U"0.0")
@@ -7440,6 +7487,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
+// deprecated 2023
 FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal error bars plot where", U"Table: Horizontal error bars plot where...") {
 	SENTENCE (xColumnName, U"Horizontal column", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
@@ -7489,6 +7537,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
+// deprecated 2023
 FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere, U"Table: Vertical error bars plot where", U"Table: Vertical error bars plot where...") {
 	SENTENCE (xColumnName, U"Horizontal column", U"")
 	REAL (xmin, U"left Horizontal range", U"0.0")
@@ -7525,6 +7574,22 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_formula")
 }
 
+FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhereMahalanobis, U"Table: Extract rows where (mahalanobis)", nullptr) {
+	STRINGARRAY_LINES (2, dataColumnNames, U"Extract all rows where columns...", { U"F1", U"F2", U"F3" })
+	CHOICE_ENUM (kMelder_number, which,
+			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
+	REAL (numberOfSigmas, U"...the number", U"2.0")
+	SENTENCE (factorColumnName, U"Factor column", U"")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Table)
+		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
+		const integer factorColumnNumber = Table_columnNameToNumber_0 (me, factorColumnName);
+		autoTable result = Table_extractMahalanobis (me, columnNumbers.get(), which, numberOfSigmas, factorColumnNumber);
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
+}
+
+// deprecated 2023
 FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
 	STRINGARRAY_LINES (2, dataColumnNames, U"Extract all rows where columns...", { U"F1", U"F2", U"F3" })
 	CHOICE_ENUM (kMelder_number, which,
@@ -10419,48 +10484,56 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__SVD_extractSingularValues);
 		praat_addAction1 (classTable, 0, U"Draw ellipses...", U"Draw ellipse (standard deviation)...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_drawEllipses);
-		praat_addAction1 (classTable, 0, U"Box plots...", U"Draw ellipses...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+		praat_addAction1 (classTable, 0, U"Box plots...", U"Draw ellipses...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_boxPlots);
-		praat_addAction1 (classTable, 0, U"Normal probability plot...", U"Box plots...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+		praat_addAction1 (classTable, 0, U"Normal probability plot...", U"Box plots...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_normalProbabilityPlot);
-		praat_addAction1 (classTable, 0, U"Quantile-quantile plot...", U"Normal probability plot...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+		praat_addAction1 (classTable, 0, U"Quantile-quantile plot...", U"Normal probability plot...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_quantileQuantilePlot);
-		praat_addAction1 (classTable, 0, U"Quantile-quantile plot (between levels)...", U"Quantile-quantile plot...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+		praat_addAction1 (classTable, 0, U"Quantile-quantile plot (between levels)...", U"Quantile-quantile plot...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_quantileQuantilePlot_betweenLevels);
-		praat_addAction1 (classTable, 0, U"Lag plot...", U"Quantile-quantile plot (between levels)...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+		praat_addAction1 (classTable, 0, U"Lag plot...", U"Quantile-quantile plot (between levels)...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_lagPlot);
-		praat_addAction1 (classTable, 0, U"Horizontal error bars plot...", U"Scatter plot (mark)...", GuiMenu_DEPTH_1,
-				GRAPHICS_EACH__Table_horizontalErrorBarsPlot);
-		praat_addAction1 (classTable, 0, U"Vertical error bars plot...", U"Scatter plot (mark)...", GuiMenu_DEPTH_1,
-				GRAPHICS_EACH__Table_verticalErrorBarsPlot);
-		praat_addAction1 (classTable, 0, U"Distribution plot...", U"Quantile-quantile plot...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+		praat_addAction1 (classTable, 0, U"Bar plot...", U"Lag plot...", GuiMenu_DEPTH_1,
+					GRAPHICS_EACH__Table_barPlot);
+		praat_addAction1 (classTable, 0, U"Line graph...", U"Bar plot...", GuiMenu_DEPTH_1,
+					GRAPHICS_EACH__Table_LineGraph);
+		praat_addAction1 (classTable, 0, U"Distribution plot...", U"Line graph...", GuiMenu_DEPTH_1,
 				GRAPHICS_EACH__Table_distributionPlot);
-		praat_addAction1 (classTable, 1, U"Draw where", U"Lag plot...", 1, 0);
-			praat_addAction1 (classTable, 0, U"Scatter plot where...", U"Draw where", 2, 
+		praat_addAction1 (classTable, 0, U"Horizontal error bars plot...", U"Distribution plot...", GuiMenu_DEPTH_1,
+				GRAPHICS_EACH__Table_horizontalErrorBarsPlot);
+		praat_addAction1 (classTable, 0, U"Vertical error bars plot...", U"Horizontal error bars plot...", GuiMenu_DEPTH_1,
+				GRAPHICS_EACH__Table_verticalErrorBarsPlot);
+		
+		
+		// The Draw_where's are deprecated 2023
+			praat_addAction1 (classTable, 0, U"Draw where", U"Vertical error bars plot...", GuiMenu_DEPRECATED_2023, nullptr);
+			praat_addAction1 (classTable, 0, U"Scatter plot where...", U"Draw where", GuiMenu_DEPRECATED_2023,
 					GRAPHICS_EACH__Table_scatterPlotWhere);
-			praat_addAction1 (classTable, 0, U"Scatter plot where (mark)...", U"Scatter plot where...", 2, 
+			praat_addAction1 (classTable, 0, U"Scatter plot where (mark)...", U"Scatter plot where...", GuiMenu_DEPRECATED_2023,
 					GRAPHICS_EACH__Table_scatterPlotMarkWhere);
-			praat_addAction1 (classTable, 0, U"Horizontal error bars plot where...", U"Scatter plot where (mark)...", GuiMenu_DEPTH_2,
-					GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere);
-			praat_addAction1 (classTable, 0, U"Vertical error bars plot where...", U"Scatter plot where (mark)...", GuiMenu_DEPTH_2,
-					GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere);
-			praat_addAction1 (classTable, 0, U"Distribution plot where...", U"Scatter plot where (mark)...", 2, 
-					GRAPHICS_EACH__Table_distributionPlotWhere);
-			praat_addAction1 (classTable, 0, U"Draw ellipse where (standard deviation)...", U"Distribution plot where...", 2,
-					GRAPHICS_EACH__Table_drawEllipseWhere);
-			praat_addAction1 (classTable, 0, U"Box plots where...", U"Draw ellipse where (standard deviation)...", 2, 
-					GRAPHICS_EACH__Table_boxPlotsWhere);
-			praat_addAction1 (classTable, 0, U"Normal probability plot where...", U"Box plots where...", 2,
-					GRAPHICS_EACH__Table_normalProbabilityPlotWhere);
-			praat_addAction1 (classTable, 0, U"Bar plot where...", U"Normal probability plot where...", 2, 
-					GRAPHICS_EACH__Table_barPlotWhere);
-			praat_addAction1 (classTable, 0, U"Line graph where...", U"Bar plot where...", 2, 
-					GRAPHICS_EACH__Table_LineGraphWhere);
-			praat_addAction1 (classTable, 0, U"Lag plot where...", U"Line graph where...", 2, 
-					GRAPHICS_EACH__Table_lagPlotWhere);
-			praat_addAction1 (classTable, 0, U"Draw ellipses where...", U"Lag plot where...", 2, 
+			praat_addAction1 (classTable, 0, U"Draw ellipses where...", U"Scatter plot where (mark)...", GuiMenu_DEPRECATED_2023,
 					GRAPHICS_EACH__Table_drawEllipsesWhere);
-
+			praat_addAction1 (classTable, 0, U"Box plots where...", U"Draw ellipses where...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_boxPlotsWhere);
+			praat_addAction1 (classTable, 0, U"Normal probability plot where...", U"Box plots where...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_normalProbabilityPlotWhere);
+			praat_addAction1 (classTable, 0, U"Distribution plot where...", U"Scatter plot where (mark)...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_distributionPlotWhere);
+			praat_addAction1 (classTable, 0, U"Draw ellipse where (standard deviation)...", U"Distribution plot where...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_drawEllipseWhere);
+			praat_addAction1 (classTable, 0, U"Bar plot where...", U"Draw ellipse where (standard deviation)...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_barPlotWhere);
+			praat_addAction1 (classTable, 0, U"Line graph where...", U"Bar plot where...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_LineGraphWhere);
+			praat_addAction1 (classTable, 0, U"Lag plot where...", U"Line graph where...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_lagPlotWhere);
+			praat_addAction1 (classTable, 0, U"Horizontal error bars plot where...", U"Lag plot where...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere);
+			praat_addAction1 (classTable, 0, U"Vertical error bars plot where...", U"Horizontal error bars plot where...", GuiMenu_DEPRECATED_2023,
+					GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere);
+	// End of deprecated 2023
+			
 	praat_addAction1 (classTable, 1, U"List row numbers where...", U"Get number of rows", GuiMenu_DEPTH_1,
 			QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere);
 	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
@@ -10475,8 +10548,8 @@ void praat_David_init () {
 			INFO_ONE__Table_reportRobustStatistics);
 	praat_addAction1 (classTable, 0, U"Extract rows where...", U"Extract rows where column (text)...", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Table_extractRowsWhere);
-	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
-			CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere);
+	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", GuiMenu_DEPTH_1,
+			CONVERT_EACH_TO_ONE__Table_extractRowsWhereMahalanobis);
 	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, 0);
 	praat_addAction1 (classTable, 0, U"Extract columns by number...", U"-- Extract columns ----", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber);
