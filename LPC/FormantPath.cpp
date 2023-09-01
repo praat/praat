@@ -284,6 +284,17 @@ autoFormant FormantPath_extractFormant (FormantPath me) {
 	return thee;
 }
 
+static autoVEC getCeilings (double middleCeiling, double stepSize, integer numberOfStepsUpDown) {
+	const integer numberOfCeilings = 2 * numberOfStepsUpDown + 1, mid = numberOfStepsUpDown + 1;
+	autoVEC ceilings = raw_VEC (numberOfCeilings);
+	for (integer istep = 1; istep <= numberOfStepsUpDown; istep ++) {
+		ceilings [mid + istep] = middleCeiling * exp (  stepSize * istep);
+		ceilings [mid - istep] = middleCeiling * exp (- stepSize * istep);
+	}
+	ceilings [mid] = middleCeiling;
+	return ceilings;
+}
+
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
 	double middleCeiling, double analysisWidth, double preemphasisFrequency, double ceilingStepSize, 
 	integer numberOfStepsUpDown, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
@@ -294,13 +305,23 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			U"The timeStep needs to greater than zero seconds.");
 		Melder_require (ceilingStepSize > 0.0,
 			U"The ceiling step size should larger than 0.0.");
+		autoVEC ceilings = getCeilings (middleCeiling, ceilingStepSize, numberOfStepsUpDown);
+		const integer numberOfCandidates = ceilings.size;
+		const double maximumCeiling = ceilings [numberOfCandidates];
 		const double nyquistFrequency = 0.5 / my dx;
-		const integer numberOfCandidates = 2 * numberOfStepsUpDown + 1;
-		const double maximumCeiling = middleCeiling *  exp (ceilingStepSize * numberOfStepsUpDown);
 		Melder_require (maximumCeiling <= nyquistFrequency,
-			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
+			U"The calculated maximum ceiling is higher than the Nyquist frequency of the sound (", nyquistFrequency, U" Hz). "
 			"Decrease the 'ceiling step size' or the 'number of steps' or both.");
-		volatile const double windowDuration = Melder_clippedRight (2.0 * analysisWidth, my dx * my nx);
+		volatile const double physicalAnalysisWidth = Melder_clippedRight (2.0 * analysisWidth, my dx * my nx);
+		/*
+			If the resampled sound with the lowest sampling frequency passes the minimal duration tests then all will.
+		*/
+		const double samplingFrequencyLowest = 2.0 * ceilings [1], dxLowest = 1.0 / samplingFrequencyLowest;
+		const integer nxLowest = Melder_iroundDown (my dx * my nx / dxLowest);
+		const integer predictionOrder = Melder_iround (2.0 * maximumNumberOfFormants);
+		
+		checkLPCAnalysisParameters_e (dxLowest, nxLowest, physicalAnalysisWidth, predictionOrder);
+		
 		/*
 			Get the data for the LPC from the resampled sound with 'middleCeiling' as maximum frequency
 			to make the sampling exactly equal as if performed with a standard LPC analysis.
@@ -308,20 +329,15 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		integer numberOfFrames;
 		double t1;
 		autoSound midCeiling = Sound_resample (me, 2.0 * middleCeiling, 50);
-		Sampled_shortTermAnalysis (midCeiling.get(), windowDuration, timeStep, & numberOfFrames, & t1); // Gaussian window
-		const integer predictionOrder = Melder_iround (2.0 * maximumNumberOfFormants);
+		Sampled_shortTermAnalysis (midCeiling.get(), physicalAnalysisWidth, timeStep, & numberOfFrames, & t1); // Gaussian window
 		autoFormantPath thee = FormantPath_create (my xmin, my xmax, numberOfFrames, timeStep, t1, numberOfCandidates);
 		autoSound multiChannelSound;
 		if (out_sourcesMultiChannel)
 			multiChannelSound = Sound_create (numberOfCandidates, midCeiling -> xmin, midCeiling -> xmax, midCeiling -> nx, midCeiling -> dx, midCeiling -> x1);
 		const double formantSafetyMargin = 50.0;
-		thy ceilings [numberOfStepsUpDown + 1] = middleCeiling;
+		thy ceilings = ceilings.move();
 		for (integer candidate  = 1; candidate <= numberOfCandidates; candidate ++) {
 			autoFormant formant;
-			if (candidate <= numberOfStepsUpDown)
-				thy ceilings [candidate] = middleCeiling * exp (-ceilingStepSize * (numberOfStepsUpDown - candidate + 1));
-			else if (candidate > numberOfStepsUpDown + 1)
-				thy ceilings [candidate] = middleCeiling * exp ( ceilingStepSize * (candidate - numberOfStepsUpDown - 1));
 			autoSound resampled;
 			if (candidate != numberOfStepsUpDown + 1)
 				resampled = Sound_resample (me, 2.0 * thy ceilings [candidate], 50);
