@@ -1,7 +1,7 @@
 # File: Makefile
 
 # Makefile for Praat
-# Paul Boersma & David Weenink, 6 June 2022
+# Paul Boersma & David Weenink, 2 September 2023
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -16,7 +16,7 @@ all: all-external all-self
 	$(LINK) -o $(EXECUTABLE) main/main_Praat.o $(MAIN_ICON) fon/libfon.a \
 		artsynth/libartsynth.a FFNet/libFFNet.a \
 		gram/libgram.a EEG/libEEG.a \
-		LPC/libLPC.a dwtools/libdwtools.a \
+		LPC/libLPC.a dwtools/libdwtools.a  EMA/libEMA.a \
 		foned/libfoned.a fon/libfon.a stat/libstat.a \
 		dwsys/libdwsys.a sys/libsys.a melder/libmelder.a kar/libkar.a \
 		external/espeak/libespeak.a \
@@ -51,6 +51,7 @@ all-self:
 	$(MAKE) -C dwtools
 	$(MAKE) -C LPC
 	$(MAKE) -C EEG
+	$(MAKE) -C EMA
 	$(MAKE) -C gram
 	$(MAKE) -C FFNet
 	$(MAKE) -C artsynth
@@ -81,6 +82,7 @@ clean-self:
 	$(MAKE) -C dwtools clean
 	$(MAKE) -C LPC clean
 	$(MAKE) -C EEG clean
+	$(MAKE) -C EMA clean
 	$(MAKE) -C gram clean
 	$(MAKE) -C FFNet clean
 	$(MAKE) -C artsynth clean
