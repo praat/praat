@@ -96,10 +96,17 @@ void Melder_system (conststring32 command) {
 		siStartInfo. hStdInput = GetStdHandle (STD_INPUT_HANDLE);
 		siStartInfo. hStdOutput = GetStdHandle (STD_OUTPUT_HANDLE);
 		siStartInfo. hStdError = GetStdHandle (STD_ERROR_HANDLE);
-		if (! CreateProcess (nullptr, (WCHAR *) Melder_peek32toW_fileSystem (buffer.string), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
+		memset (& piProcInfo, 0, sizeof (piProcInfo));
+		autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
+		if (! CreateProcess (nullptr, bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
 			Melder_throw (U"Cannot create subprocess.");
-		if (WaitForSingleObject (piProcInfo. hProcess, -1) != 0)
+		if (WaitForSingleObject (piProcInfo. hProcess, INFINITE) != 0)
 			Melder_throw (U"System command failed.");
+		DWORD exitCode;
+		if (! GetExitCodeProcess (piProcInfo. hProcess, & exitCode))
+			Melder_throw (U"System command failed.");
+		if (exitCode != 0)
+			Melder_throw (U"System command failed (exit code ", exitCode, U").");
 		CloseHandle (piProcInfo. hProcess);
 		CloseHandle (piProcInfo. hThread);
 	#endif
