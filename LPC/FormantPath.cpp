@@ -102,7 +102,7 @@ conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*
 Thing_implement (FormantPath, Sampled, 1);   // version 0: INTVEC path; version 1: TextGrid path
 
 
-MelderIntegerRange FormantPath_getPathTierIndicesRange (FormantPath me, double tmin, double tmax) {
+static MelderIntegerRange FormantPath_getPathTierIndicesRange (FormantPath me, double tmin, double tmax) {
 	Melder_assert (tmin < tmax);
 	MelderIntegerRange range = {1, 1};
 	IntervalTier intervalTier = static_cast <IntervalTier> (my path -> tiers -> at [1]);
@@ -517,7 +517,8 @@ void FormantPath_setOptimalPath (FormantPath me, double tmin, double tmax, const
 }
 
 autoTable FormantPath_downTo_Table_stresses (FormantPath me, double tmin, double tmax, constINTVEC const& parameters,
-	double powerf, integer numberOfStressDecimals, bool includeIntervalTimes, integer numberOfTimeDecimals) {
+	double powerf, integer numberOfStressDecimals, bool includeIntervalTimes, integer numberOfTimeDecimals)
+{
 	try {
 		autoVEC stresses = FormantPath_getStressOfCandidates (me, tmin, tmax, 0, 0, parameters, powerf);
 		const integer numberOfCandidates = my formantCandidates.size;

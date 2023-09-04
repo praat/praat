@@ -27,6 +27,7 @@
 	#if ! defined (__CYGWIN__) && ! defined (__MINGW32__)
 		#include <crtl.h>
 	#endif
+	#include <fcntl.h>
 	#include <windows.h>
 	#include <errno.h>
 	#include <stdlib.h>
@@ -56,11 +57,149 @@ conststring32 Melder_getenv (conststring32 variableName) {
 	#endif
 }
 
-void Melder_system (conststring32 command) {
-	if (! command) command = U"";
+static void ensureThatStdoutAndStderrAreInitialized () {
+	#if defined (_WIN32)
+		/*
+			Stdout and stderr are initialized automatically if we are redirected to a pipe or file.
+			Stdout and stderr are not initialized, however, if Praat is started from the console,
+			neither in GUI mode nor in console mode; in these latter cases,
+			we manually attach stdout and stderr to the calling console.
+		*/
+		auto ensureThatStreamIsInitialized = [] (FILE *stream, int handle) {
+			const bool streamHasBeenInitialized = ( _fileno (stream) >= 0 );
+			if (! streamHasBeenInitialized) {
+				/*
+					Don't change the following four lines into
+						freopen ("CONOUT$", "w", stream);
+					because if you did that, the distinction between stdout and stderr would be lost.
+				*/
+				HANDLE osfHandle = GetStdHandle (handle);
+				if (osfHandle) {
+					const int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
+					Melder_assert (fileDescriptor != 0);
+					FILE *f = _fdopen (fileDescriptor, "w");
+					if (! f)
+						return;   // this can happen under Cygwin
+					*stream = *f;
+				}
+			}
+		};
+		ensureThatStreamIsInitialized (stdout, STD_OUTPUT_HANDLE);
+		ensureThatStreamIsInitialized (stderr, STD_ERROR_HANDLE);
+	#endif
+}
+autostring32 runSystem_STR (conststring32 command) {
+	autostring32 result;
+	if (! command)
+		command = U"";
+	autostring8 command8 = Melder_32to8 (command);
 	#if defined (macintosh) || defined (UNIX)
-		if (system (Melder_peek32to8 (command)) != 0)
-			Melder_throw (U"System command failed.");
+		int stdoutPipe [2], stderrPipe [2];
+		TRACE
+		trace (U"Before pipe <<", command, U">>");
+		if (pipe (stdoutPipe) == -1 || pipe (stderrPipe) == -1)
+			Melder_throw (U"Cannot start system command <<", command, U">> (“pipe error”).");
+		trace (U"After pipe");
+		pid_t childProcess = fork ();
+		trace (U"After fork");
+		if (childProcess == -1)
+			Melder_throw (U"Cannot start system command <<", command, U">> (“fork error”).");
+		if (childProcess == 0) {
+			/*
+				We are in the child process.
+			*/
+			trace (U"In child process (1).");
+			trace (U"In child process (2).");
+			while ((dup2 (stdoutPipe [1], STDOUT_FILENO) == -1) && (errno == EINTR)) {
+				//trace (U"Dupping stdout");
+			}
+			while ((dup2 (stderrPipe [1], STDERR_FILENO) == -1) && (errno == EINTR)) {
+				//trace (U"Dupping stderr");
+			}
+			//trace (U"After dup2.");
+			close (stdoutPipe [1]);
+			close (stderrPipe [1]);
+			close (stdoutPipe [0]);
+			close (stderrPipe [0]);
+			//trace (U"Before execl.");
+			execl ("/bin/ls", " -al /", /*command8.get(),*/ (char *) 0);   // if all goes right, this implicity closes the child process
+			//trace (U"After execl.");
+			/*
+				If we arrive here, then execl must have returned,
+				which is an error condition.
+			*/
+			_exit (1);   // close the child process explicitly
+		}
+		/*
+			We are in the parent process.
+		*/
+		trace (U"In parent process.");
+		close (stdoutPipe [1]);
+		close (stderrPipe [1]);
+		/*
+			Collect the output of the child process.
+		*/
+		autoMelderString stdout_string, stderr_string;
+		char buffer8 [1+4096];
+		for (;;) {
+			ssize_t count = read (stdoutPipe [0], buffer8, 4096);
+			trace (U"Count stdout: ", count);
+			if (count == -1) {
+				if (errno == EINTR)
+					continue;
+				Melder_throw (U"Error while handling child process output.");
+			}
+			if (count == 0)
+				break;
+			buffer8 [count] = '\0';
+			MelderString_append (& stdout_string, Melder_peek8to32 (buffer8));
+		}
+		for (;;) {
+			ssize_t count = read (stderrPipe [0], buffer8, 4096);
+			trace (U"Count stderr: ", count);
+			if (count == -1) {
+				if (errno == EINTR)
+					continue;
+				Melder_throw (U"Error while handling child process output.");
+			}
+			if (count == 0)
+				break;
+			buffer8 [count] = '\0';
+			MelderString_append (& stderr_string, Melder_peek8to32 (buffer8));
+		}
+		trace (U"After collection.");
+		close (stdoutPipe [0]);
+		close (stderrPipe [0]);
+		wait (0);
+		trace (U"***", stderr_string. string, U"***");
+		trace (U"+++", stdout_string. string, U"+++");
+		result = Melder_dup (stdout_string. string);
+		trace (U"+++", stdout_string. string, U"+++");
+	#elif defined (_WIN32)
+	#endif
+	return result;
+}
+void Melder_system (conststring32 command) {
+	if (! command)
+		command = U"";
+	#if defined (macintosh) || defined (UNIX)
+		constexpr bool USE_PIPES = true;
+		if (USE_PIPES) {
+			try {
+				autostring32 output = runSystem_STR (command);
+				trace (U"+++", output.get(), U"+++");
+				if (output) {
+					MelderInfo_open ();
+					MelderInfo_write (output.get());
+					MelderInfo_close ();
+				}
+			} catch (MelderError) {
+				Melder_throw (U"system: command not finished.");
+			}
+		} else {
+			if (system (Melder_peek32to8 (command)) != 0)
+				Melder_throw (U"System command failed.");
+		}
 	#elif defined (_WIN32)
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;
@@ -89,26 +228,63 @@ void Melder_system (conststring32 command) {
 				}
 			}
 		}
+		constexpr bool tryStdPassThrough = false;
+		int savedModeStdout, savedModeStderr;
+		if (tryStdPassThrough) {
+			ensureThatStdoutAndStderrAreInitialized ();
+			Melder_assert (_fileno (stdout) >= 0);
+			Melder_assert (_fileno (stderr) >= 0);
+			fflush (stdout);
+			fflush (stderr);
+			savedModeStdout = _setmode (_fileno (stdout), _O_U16TEXT);   // without line-break translation
+			savedModeStderr = _setmode (_fileno (stderr), _O_U16TEXT);   // without line-break translation
+		}
+		Melder_assert (! str32chr (buffer.string, ' '));
 		MelderString_append (& buffer, U" /c ", command);
 		memset (& siStartInfo, 0, sizeof (siStartInfo));
 		siStartInfo. cb = sizeof (siStartInfo);
 		siStartInfo. dwFlags = STARTF_USESTDHANDLES;
-		siStartInfo. hStdInput = GetStdHandle (STD_INPUT_HANDLE);
+		//siStartInfo. hStdInput = GetStdHandle (STD_INPUT_HANDLE);
 		siStartInfo. hStdOutput = GetStdHandle (STD_OUTPUT_HANDLE);
 		siStartInfo. hStdError = GetStdHandle (STD_ERROR_HANDLE);
 		memset (& piProcInfo, 0, sizeof (piProcInfo));
 		autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
 		if (! CreateProcess (nullptr, bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
-			Melder_throw (U"Cannot create subprocess.");
+			Melder_throw (U"Cannot start system command <<", command, U">>.");
+		if (0) {
+			HANDLE stdoutDup, stderrDup;
+			DuplicateHandle (GetCurrentProcess(),
+				GetStdHandle (STD_OUTPUT_HANDLE),
+				piProcInfo. hProcess,
+				& stdoutDup,
+				0,
+				TRUE,
+				DUPLICATE_SAME_ACCESS
+			);
+			DuplicateHandle (GetCurrentProcess(),
+				GetStdHandle (STD_ERROR_HANDLE),
+				piProcInfo. hProcess,
+				& stderrDup,
+				0,
+				TRUE,
+				DUPLICATE_SAME_ACCESS
+			);
+		}
 		if (WaitForSingleObject (piProcInfo. hProcess, INFINITE) != 0)
-			Melder_throw (U"System command failed.");
+			Melder_throw (U"Cannot finish system command <<", command, U">>.");
 		DWORD exitCode;
 		if (! GetExitCodeProcess (piProcInfo. hProcess, & exitCode))
-			Melder_throw (U"System command failed.");
+			Melder_throw (U"Cannot evaluate system command <<", command, U">>.");
 		if (exitCode != 0)
-			Melder_throw (U"System command failed (exit code ", exitCode, U").");
+			Melder_throw (U"Error in system command <<", command, U">> (exit code ", exitCode, U").");
 		CloseHandle (piProcInfo. hProcess);
 		CloseHandle (piProcInfo. hThread);
+		if (tryStdPassThrough) {
+			fflush (stdout);
+			fflush (stderr);
+			_setmode (_fileno (stdout), savedModeStdout);
+			_setmode (_fileno (stderr), savedModeStderr);
+		}
 	#endif
 }
 

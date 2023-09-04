@@ -146,7 +146,7 @@ enum { NO_SYMBOL_,
 		DO_, DOSTR_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
-		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_,
+		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_STR_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_,
 		MIN_, MIN_E_, MIN_IGNORE_UNDEFINED_,
 		MAX_, MAX_E_, MAX_IGNORE_UNDEFINED_,
 		IMIN_, IMIN_E_, IMIN_IGNORE_UNDEFINED_,
@@ -292,7 +292,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"do", U"do$",
 	U"writeInfo", U"writeInfoLine", U"appendInfo", U"appendInfoLine",
 	U"writeFile", U"writeFileLine", U"appendFile", U"appendFileLine",
-	U"pauseScript", U"exitScript", U"runScript", U"runSystem", U"runSystem_nocheck", U"runSubprocess",
+	U"pauseScript", U"exitScript", U"runScript", U"runSystem", U"runSystem$", U"runSystem_nocheck", U"runSubprocess",
 	U"min", U"min_e", U"min_removeUndefined",
 	U"max", U"max_e", U"max_removeUndefined",
 	U"imin", U"imin_e", U"imin_removeUndefined",
@@ -4240,10 +4240,34 @@ static void do_runSystem () {
 	try {
 		Melder_system (text.string);
 	} catch (MelderError) {
-		Melder_throw (U"System command “", text.string, U"” returned error status;\n"
-			U"if you want to ignore this, use `runSystem_nocheck' instead of `runSystem'.");
+		Melder_throw (U"System command <<", text.string, U">> returned error status;\n"
+			U"if you want to ignore this, use `runSystem_nocheck` instead of `runSystem`.");
 	}
 	pushNumber (1);
+}
+static void do_runSystem_STR () {
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “runSystem$” is not available inside manuals.");
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	const integer numberOfArguments = Melder_iround (narg->number);
+	stackPointer -= numberOfArguments;
+	autoMelderString text;
+	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		const Stackel arg = & theStack [stackPointer + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderString_append (& text, arg->number);
+		else if (arg->which == Stackel_STRING)
+			MelderString_append (& text, arg->getString());
+	}
+	autostring32 result;
+	try {
+		result = runSystem_STR (text.string);
+	} catch (MelderError) {
+		Melder_throw (U"System command <<", text.string, U">> returned error status;\n"
+			U"if you want to ignore this, use `runSystem_nocheck$` instead of `runSystem$`.");
+	}
+	pushString (result.move());
 }
 static void do_runSystem_nocheck () {
 	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
@@ -8224,6 +8248,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case EXIT_SCRIPT_: { do_exitScript ();
 } break; case RUN_SCRIPT_: { do_runScript ();
 } break; case RUN_SYSTEM_: { do_runSystem ();
+} break; case RUN_SYSTEM_STR_: { do_runSystem_STR ();
 } break; case RUN_SYSTEM_NOCHECK_: { do_runSystem_nocheck ();
 } break; case RUN_SUBPROCESS_: { do_runSubprocess ();
 } break; case MIN_: { do_min ();

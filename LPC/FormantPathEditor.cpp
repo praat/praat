@@ -209,7 +209,7 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 	EDITOR_END
 }
 
-double FormantPath_getRoundedMaximumCeiling (FormantPath me) {
+static double FormantPath_getRoundedMaximumCeiling (FormantPath me) {
 	const integer ceiling = 100 * Melder_iroundDown ((my ceilings [my ceilings.size] + 100.1) / 100.0);
 	return (double) ceiling;
 }
