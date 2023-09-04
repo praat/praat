@@ -88,7 +88,7 @@ static void ensureThatStdoutAndStderrAreInitialized () {
 		ensureThatStreamIsInitialized (stderr, STD_ERROR_HANDLE);
 	#endif
 }
-static autostring32 runSystem_STR (conststring32 command) {
+autostring32 runSystem_STR (conststring32 command) {
 	autostring32 result;
 	if (! command)
 		command = U"";
@@ -96,7 +96,7 @@ static autostring32 runSystem_STR (conststring32 command) {
 	#if defined (macintosh) || defined (UNIX)
 		int stdoutPipe [2], stderrPipe [2];
 		TRACE
-		trace (U"Before pipe");
+		trace (U"Before pipe <<", command, U">>");
 		if (pipe (stdoutPipe) == -1 || pipe (stderrPipe) == -1)
 			Melder_throw (U"Cannot start system command <<", command, U">> (“pipe error”).");
 		trace (U"After pipe");
@@ -111,19 +111,19 @@ static autostring32 runSystem_STR (conststring32 command) {
 			trace (U"In child process (1).");
 			trace (U"In child process (2).");
 			while ((dup2 (stdoutPipe [1], STDOUT_FILENO) == -1) && (errno == EINTR)) {
-				trace (U"Dupping stdout");
+				//trace (U"Dupping stdout");
 			}
 			while ((dup2 (stderrPipe [1], STDERR_FILENO) == -1) && (errno == EINTR)) {
-				trace (U"Dupping stderr");
+				//trace (U"Dupping stderr");
 			}
-			trace (U"After dup2.");
+			//trace (U"After dup2.");
 			close (stdoutPipe [1]);
 			close (stderrPipe [1]);
 			close (stdoutPipe [0]);
 			close (stderrPipe [0]);
-			trace (U"Before execl.");
-			execl ("/bin/bash", "-c", command8.get(), nullptr);   // if all goes right, this implicity closes the child process
-			trace (U"After execl.");
+			//trace (U"Before execl.");
+			execl ("/bin/ls", " -al /", /*command8.get(),*/ (char *) 0);   // if all goes right, this implicity closes the child process
+			//trace (U"After execl.");
 			/*
 				If we arrive here, then execl must have returned,
 				which is an error condition.
@@ -172,7 +172,9 @@ static autostring32 runSystem_STR (conststring32 command) {
 		close (stderrPipe [0]);
 		wait (0);
 		trace (U"***", stderr_string. string, U"***");
+		trace (U"+++", stdout_string. string, U"+++");
 		result = Melder_dup (stdout_string. string);
+		trace (U"+++", stdout_string. string, U"+++");
 	#elif defined (_WIN32)
 	#endif
 	return result;
@@ -185,6 +187,7 @@ void Melder_system (conststring32 command) {
 		if (USE_PIPES) {
 			try {
 				autostring32 output = runSystem_STR (command);
+				trace (U"+++", output.get(), U"+++");
 				if (output) {
 					MelderInfo_open ();
 					MelderInfo_write (output.get());

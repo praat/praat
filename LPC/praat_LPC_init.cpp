@@ -76,8 +76,8 @@ DIRECT (HELP__FormantPath_help) {
 
 static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata publication) {
 	/*
-	 * Keep the gate for error handling.
-	 */
+		Keep the gate for error handling.
+	*/
 	try {
 		praat_new (publication.move());
 		praat_updateSelection ();
@@ -173,7 +173,7 @@ FORM (NEW__FormantPath_downTo_Table_stresses, U"FormantPath: Down to Table (stre
 DO
 	CONVERT_EACH_TO_ONE (FormantPath)
 		autoTable result = FormantPath_downTo_Table_stresses (me, tmin, tmax, parameters, 
-			numberOfStressDecimals, powerf, includeIntervalTimes, numberOfTimeDecimals);
+				powerf, numberOfStressDecimals, includeIntervalTimes, numberOfTimeDecimals);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -197,7 +197,7 @@ FORM (QUERY_ONE_FOR_REAL__FormantPath_getOptimalCeiling, U"FormantPath: Get opti
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FormantPath)
-		double result = FormantPath_getOptimalCeiling (me, tmin, tmax, parameters, powerf);
+		const double result = FormantPath_getOptimalCeiling (me, tmin, tmax, parameters, powerf);
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
@@ -210,7 +210,7 @@ FORM (QUERY_ONE_FOR_REAL__FormantPath_getStressOfCandidate, U"FormantPath: Get s
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FormantPath)
-		double result = FormantPath_getStressOfCandidate (me, tmin, tmax, 0, 0, parameters, powerf, candidate);
+		const double result = FormantPath_getStressOfCandidate (me, tmin, tmax, 0, 0, parameters, powerf, candidate);
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
