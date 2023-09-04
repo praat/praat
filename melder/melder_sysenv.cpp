@@ -1,6 +1,6 @@
 /* melder_sysenv.cpp
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2019,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,6 @@
 	#include <errno.h>
 	#include <stdlib.h>
 #else
-	#if defined (linux)
-		#include  <sys/wait.h>
-	#endif
 	#include <unistd.h>
 	#include <sys/types.h>
 	#include <sys/wait.h>
@@ -95,35 +92,39 @@ autostring32 runSystem_STR (conststring32 command) {
 	autostring8 command8 = Melder_32to8 (command);
 	#if defined (macintosh) || defined (UNIX)
 		int stdoutPipe [2], stderrPipe [2];
-		TRACE
-		trace (U"Before pipe <<", command, U">>");
 		if (pipe (stdoutPipe) == -1 || pipe (stderrPipe) == -1)
 			Melder_throw (U"Cannot start system command <<", command, U">> (“pipe error”).");
-		trace (U"After pipe");
 		pid_t childProcess = fork ();
-		trace (U"After fork");
 		if (childProcess == -1)
 			Melder_throw (U"Cannot start system command <<", command, U">> (“fork error”).");
 		if (childProcess == 0) {
 			/*
 				We are in the child process.
 			*/
-			trace (U"In child process (1).");
-			trace (U"In child process (2).");
 			while ((dup2 (stdoutPipe [1], STDOUT_FILENO) == -1) && (errno == EINTR)) {
-				//trace (U"Dupping stdout");
 			}
 			while ((dup2 (stderrPipe [1], STDERR_FILENO) == -1) && (errno == EINTR)) {
-				//trace (U"Dupping stderr");
 			}
-			//trace (U"After dup2.");
 			close (stdoutPipe [1]);
 			close (stderrPipe [1]);
 			close (stdoutPipe [0]);
 			close (stderrPipe [0]);
-			//trace (U"Before execl.");
-			execl ("/bin/ls", " -al /", /*command8.get(),*/ (char *) 0);   // if all goes right, this implicity closes the child process
-			//trace (U"After execl.");
+			//
+			//	From the execl man page:
+			//		int execl(const char *path, const char *arg0, ..., /*, (char *)0, */);
+			//	With more quotes from the execl man page:
+			//
+			execl (
+				"/bin/sh",   // "The initial argument for these functions is the pathname of a file which is to be executed."
+				// "The const char *arg0 and subsequent ellipses in the execl(), execlp(), and execle() functions"
+				// "can be thought of as arg0, arg1, ..., argn.  Together they describe a list of one or more pointers"
+				// "to null-terminated strings that represent the argument list available to the executed program."
+				"sh",   // "The first argument, by convention, should point to the file name associated with the file being executed."
+					// (that is, this is arg0, which should to sh become argv[0], which should generally be the app name)
+				"-c",   // (from the bash man page: "If the -c option is present, then commands are read from `string`."; this is argv[1])
+				command8.get(),   // (the `string`, combining the complete space-separated command that sh should execute)
+				nullptr   // "The list of arguments *must* be terminated by a NULL pointer."
+			);   // if all goes right, this implicity closes the child process
 			/*
 				If we arrive here, then execl must have returned,
 				which is an error condition.
@@ -133,7 +134,6 @@ autostring32 runSystem_STR (conststring32 command) {
 		/*
 			We are in the parent process.
 		*/
-		trace (U"In parent process.");
 		close (stdoutPipe [1]);
 		close (stderrPipe [1]);
 		/*
@@ -143,7 +143,6 @@ autostring32 runSystem_STR (conststring32 command) {
 		char buffer8 [1+4096];
 		for (;;) {
 			ssize_t count = read (stdoutPipe [0], buffer8, 4096);
-			trace (U"Count stdout: ", count);
 			if (count == -1) {
 				if (errno == EINTR)
 					continue;
@@ -156,25 +155,22 @@ autostring32 runSystem_STR (conststring32 command) {
 		}
 		for (;;) {
 			ssize_t count = read (stderrPipe [0], buffer8, 4096);
-			trace (U"Count stderr: ", count);
 			if (count == -1) {
 				if (errno == EINTR)
 					continue;
-				Melder_throw (U"Error while handling child process output.");
+				Melder_throw (U"Error while handling child process error output.");
 			}
 			if (count == 0)
 				break;
 			buffer8 [count] = '\0';
 			MelderString_append (& stderr_string, Melder_peek8to32 (buffer8));
 		}
-		trace (U"After collection.");
 		close (stdoutPipe [0]);
 		close (stderrPipe [0]);
 		wait (0);
-		trace (U"***", stderr_string. string, U"***");
-		trace (U"+++", stdout_string. string, U"+++");
+		if (stderr_string.length > 0)
+			Melder_throw (U"runSystem$: error:\n", stderr_string.string);
 		result = Melder_dup (stdout_string. string);
-		trace (U"+++", stdout_string. string, U"+++");
 	#elif defined (_WIN32)
 	#endif
 	return result;
@@ -183,23 +179,8 @@ void Melder_system (conststring32 command) {
 	if (! command)
 		command = U"";
 	#if defined (macintosh) || defined (UNIX)
-		constexpr bool USE_PIPES = true;
-		if (USE_PIPES) {
-			try {
-				autostring32 output = runSystem_STR (command);
-				trace (U"+++", output.get(), U"+++");
-				if (output) {
-					MelderInfo_open ();
-					MelderInfo_write (output.get());
-					MelderInfo_close ();
-				}
-			} catch (MelderError) {
-				Melder_throw (U"system: command not finished.");
-			}
-		} else {
-			if (system (Melder_peek32to8 (command)) != 0)
-				Melder_throw (U"System command failed.");
-		}
+		if (system (Melder_peek32to8 (command)) != 0)
+			Melder_throw (U"System command failed.");
 	#elif defined (_WIN32)
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;
