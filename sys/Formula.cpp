@@ -4240,8 +4240,8 @@ static void do_runSystem () {
 	try {
 		Melder_system (text.string);
 	} catch (MelderError) {
-		Melder_throw (U"System command “", text.string, U"” returned error status;\n"
-			U"if you want to ignore this, use `runSystem_nocheck' instead of `runSystem'.");
+		Melder_throw (U"System command <<", text.string, U">> returned error status;\n"
+			U"if you want to ignore this, use `runSystem_nocheck` instead of `runSystem`.");
 	}
 	pushNumber (1);
 }
