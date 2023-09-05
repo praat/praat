@@ -86,7 +86,6 @@ static void ensureThatStdoutAndStderrAreInitialized () {
 	#endif
 }
 autostring32 runSystem_STR (conststring32 command) {
-	autostring32 result;
 	if (! command)
 		command = U"";
 	autostring8 command8 = Melder_32to8 (command);
@@ -152,13 +151,13 @@ autostring32 runSystem_STR (conststring32 command) {
 				If we arrive here, then execl must have returned,
 				which is an error condition.
 			*/
-			_exit (1);   // close the child process explicitly
+			_exit (EXIT_FAILURE);   // close the child process explicitly
 		}
 		/*
 			We are in the parent process.
 		*/
 	#elif defined (_WIN32)
-		conststring32 comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
+		conststring32 comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe" or "C:\WINDOWS\system32\cmd.exe"
 		if (! comspec)
 			comspec = Melder_getenv (U"ComSpec");
 		if (! comspec)
@@ -200,8 +199,6 @@ autostring32 runSystem_STR (conststring32 command) {
 		#elif defined (_WIN32)
 			DWORD count;
 			BOOL success = ReadFile (stdoutReadPipe, buffer8, 4096, & count, NULL);
-			TRACE
-			trace (success, U" ", count);
 		#endif
 		if (count == 0)   // on Windows, this has to go before the success test
 			break;
@@ -274,101 +271,10 @@ autostring32 runSystem_STR (conststring32 command) {
 		CloseHandle (piProcInfo. hProcess);
 		CloseHandle (piProcInfo. hThread);
 	#endif
-	result = Melder_dup (stdout_string. string);
-	return result;
+	return Melder_dup (stdout_string. string);
 }
-void Melder_system (conststring32 command) {
-	if (! command)
-		command = U"";
-	#if defined (macintosh) || defined (UNIX)
-		if (system (Melder_peek32to8 (command)) != 0)
-			Melder_throw (U"System command failed.");
-	#elif defined (_WIN32)
-		STARTUPINFO siStartInfo;
-		PROCESS_INFORMATION piProcInfo;
-		conststring32 comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
-		if (! comspec)
-			comspec = Melder_getenv (U"ComSpec");
-		autoMelderString buffer;
-		if (comspec) {
-			MelderString_copy (& buffer, comspec);
-		} else {
-			OSVERSIONINFOEX osVersionInfo;
-			memset (& osVersionInfo, 0, sizeof (OSVERSIONINFOEX));
-			osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFOEX);
-			if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo)) {
-				osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-				if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo))
-					Melder_throw (U"System command cannot find system version.");
-			}
-			switch (osVersionInfo. dwPlatformId) {
-				case VER_PLATFORM_WIN32_NT: {
-					MelderString_copy (& buffer, U"cmd.exe");
-				} break; case VER_PLATFORM_WIN32_WINDOWS: {
-					MelderString_copy (& buffer, U"command.com");
-				} break; default: {
-					MelderString_copy (& buffer, U"command.com");
-				}
-			}
-		}
-		constexpr bool tryStdPassThrough = false;
-		int savedModeStdout, savedModeStderr;
-		if (tryStdPassThrough) {
-			ensureThatStdoutAndStderrAreInitialized ();
-			Melder_assert (_fileno (stdout) >= 0);
-			Melder_assert (_fileno (stderr) >= 0);
-			fflush (stdout);
-			fflush (stderr);
-			savedModeStdout = _setmode (_fileno (stdout), _O_U16TEXT);   // without line-break translation
-			savedModeStderr = _setmode (_fileno (stderr), _O_U16TEXT);   // without line-break translation
-		}
-		Melder_assert (! str32chr (buffer.string, ' '));
-		MelderString_append (& buffer, U" /c ", command);
-		memset (& siStartInfo, 0, sizeof (siStartInfo));
-		siStartInfo. cb = sizeof (siStartInfo);
-		siStartInfo. dwFlags = STARTF_USESTDHANDLES;
-		//siStartInfo. hStdInput = GetStdHandle (STD_INPUT_HANDLE);
-		siStartInfo. hStdOutput = GetStdHandle (STD_OUTPUT_HANDLE);
-		siStartInfo. hStdError = GetStdHandle (STD_ERROR_HANDLE);
-		memset (& piProcInfo, 0, sizeof (piProcInfo));
-		autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
-		if (! CreateProcess (nullptr, bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
-			Melder_throw (U"Cannot start system command <<", command, U">>.");
-		if (0) {
-			HANDLE stdoutDup, stderrDup;
-			DuplicateHandle (GetCurrentProcess(),
-				GetStdHandle (STD_OUTPUT_HANDLE),
-				piProcInfo. hProcess,
-				& stdoutDup,
-				0,
-				TRUE,
-				DUPLICATE_SAME_ACCESS
-			);
-			DuplicateHandle (GetCurrentProcess(),
-				GetStdHandle (STD_ERROR_HANDLE),
-				piProcInfo. hProcess,
-				& stderrDup,
-				0,
-				TRUE,
-				DUPLICATE_SAME_ACCESS
-			);
-		}
-		if (WaitForSingleObject (piProcInfo. hProcess, INFINITE) != 0)
-			Melder_throw (U"Cannot finish system command <<", command, U">>.");
-		DWORD exitCode;
-		if (! GetExitCodeProcess (piProcInfo. hProcess, & exitCode))
-			Melder_throw (U"Cannot evaluate system command <<", command, U">>.");
-		if (exitCode != 0)
-			Melder_throw (U"Error in system command <<", command, U">> (exit code ", exitCode, U").");
-		CloseHandle (piProcInfo. hProcess);
-		CloseHandle (piProcInfo. hThread);
-		if (tryStdPassThrough) {
-			fflush (stdout);
-			fflush (stderr);
-			_setmode (_fileno (stdout), savedModeStdout);
-			_setmode (_fileno (stderr), savedModeStderr);
-		}
-	#endif
+void Melder_runSystem (conststring32 command) {
+	(void) runSystem_STR (command);
 }
 
 void Melder_execv (conststring32 executableFileName, integer narg, char32 ** args) {

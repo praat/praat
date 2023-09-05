@@ -4238,7 +4238,7 @@ static void do_runSystem () {
 			MelderString_append (& text, arg->getString());
 	}
 	try {
-		Melder_system (text.string);
+		Melder_runSystem (text.string);
 	} catch (MelderError) {
 		Melder_throw (U"System command <<", text.string, U">> returned error status;\n"
 			U"if you want to ignore this, use `runSystem_nocheck` instead of `runSystem`.");
@@ -4285,7 +4285,7 @@ static void do_runSystem_nocheck () {
 			MelderString_append (& text, arg->getString());
 	}
 	try {
-		Melder_system (text.string);
+		Melder_runSystem (text.string);
 	} catch (MelderError) {
 		Melder_clearError ();
 	}

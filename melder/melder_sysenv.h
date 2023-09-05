@@ -20,7 +20,7 @@
 
 conststring32 Melder_getenv (conststring32 variableName);
 
-void Melder_system (conststring32 command);   // spawn a system command
+void Melder_runSystem (conststring32 command);   // spawn a system command
 autostring32 runSystem_STR (conststring32 command);   // spawn a system command, capturing the stdout output
 
 void Melder_execv (conststring32 executableFileName, integer narg, char32 **args);   // spawn a subprocess
