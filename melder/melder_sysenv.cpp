@@ -90,10 +90,33 @@ autostring32 runSystem_STR (conststring32 command) {
 	if (! command)
 		command = U"";
 	autostring8 command8 = Melder_32to8 (command);
+	/*
+		Create a pipe for stdout and a pipe for stderr.
+	*/
 	#if defined (macintosh) || defined (UNIX)
 		int stdoutPipe [2], stderrPipe [2];
 		if (pipe (stdoutPipe) == -1 || pipe (stderrPipe) == -1)
 			Melder_throw (U"Cannot start system command <<", command, U">> (“pipe error”).");
+	#elif defined (_WIN32)
+		HANDLE stdoutReadPipe = NULL, stdoutWritePipe = NULL, stderrReadPipe = NULL, stderrWritePipe = NULL;
+		SECURITY_ATTRIBUTES securityAttributes;
+		securityAttributes. nLength = sizeof (SECURITY_ATTRIBUTES);
+		securityAttributes. bInheritHandle = TRUE;
+		securityAttributes. lpSecurityDescriptor = NULL;
+		if (
+			! CreatePipe (& stdoutReadPipe, & stdoutWritePipe, & securityAttributes, 0) ||
+			! CreatePipe (& stderrReadPipe, & stderrWritePipe, & securityAttributes, 0)
+		)
+			Melder_throw (U"Cannot start system command <<", command, U">> (“pipe error”).");
+	#endif
+	/*
+		Create a child process that shall run
+			/bin/sh with arguments: (1) argv[0] = "sh", (2) argv[1] = "-c", (3) argv[2..n] = command
+		or
+			cmd.exe /c command
+		attaching the stdout and stderr write pipes to the child process.
+	*/
+	#if defined (macintosh) || defined (UNIX)
 		pid_t childProcess = fork ();
 		if (childProcess == -1)
 			Melder_throw (U"Cannot start system command <<", command, U">> (“fork error”).");
@@ -101,9 +124,9 @@ autostring32 runSystem_STR (conststring32 command) {
 			/*
 				We are in the child process.
 			*/
-			while ((dup2 (stdoutPipe [1], STDOUT_FILENO) == -1) && (errno == EINTR)) {
+			while ((dup2 (stdoutPipe [1], STDOUT_FILENO) == -1) && (errno == EINTR)) {   // attach stdout write pipe to child process
 			}
-			while ((dup2 (stderrPipe [1], STDERR_FILENO) == -1) && (errno == EINTR)) {
+			while ((dup2 (stderrPipe [1], STDERR_FILENO) == -1) && (errno == EINTR)) {   // attach stderr write pipe to child process
 			}
 			close (stdoutPipe [1]);
 			close (stderrPipe [1]);
@@ -134,45 +157,124 @@ autostring32 runSystem_STR (conststring32 command) {
 		/*
 			We are in the parent process.
 		*/
+	#elif defined (_WIN32)
+		conststring32 comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
+		if (! comspec)
+			comspec = Melder_getenv (U"ComSpec");
+		if (! comspec)
+			comspec = U"cmd.exe";
+		autoMelderString buffer;
+		MelderString_copy (& buffer, comspec);
+		Melder_assert (! str32chr (buffer.string, ' '));
+		MelderString_append (& buffer, U" /c ", command);
+		STARTUPINFO siStartInfo;
+		memset (& siStartInfo, 0, sizeof (siStartInfo));
+		siStartInfo. cb = sizeof (siStartInfo);
+		siStartInfo. dwFlags = STARTF_USESTDHANDLES;
+		siStartInfo. hStdOutput = stdoutWritePipe;   // attach stdout write pipe to child process
+		siStartInfo. hStdError = stderrWritePipe;   // attach stderr write pipe to child process
+		PROCESS_INFORMATION piProcInfo;
+		memset (& piProcInfo, 0, sizeof (piProcInfo));
+		autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
+		if (! CreateProcess (nullptr, bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
+			Melder_throw (U"Cannot start system command <<", command, U">>.");
+	#endif
+	/*
+		Close the write pipes; no longer should anything be written to them.
+	*/
+	#if defined (macintosh) || defined (UNIX)
 		close (stdoutPipe [1]);
 		close (stderrPipe [1]);
-		/*
-			Collect the output of the child process.
-		*/
-		autoMelderString stdout_string, stderr_string;
-		char buffer8 [1+4096];
-		for (;;) {
+	#elif defined (_WIN32)
+		CloseHandle (stdoutWritePipe);
+		CloseHandle (stderrWritePipe);
+	#endif
+	/*
+		Collect the output of the child process.
+	*/
+	autoMelderString stdout_string, stderr_string;
+	char buffer8 [1+4096];
+	for (;;) {
+		#if defined (macintosh) || defined (UNIX)
 			ssize_t count = read (stdoutPipe [0], buffer8, 4096);
+		#elif defined (_WIN32)
+			DWORD count;
+			BOOL success = ReadFile (stdoutReadPipe, buffer8, 4096, & count, NULL);
+			TRACE
+			trace (success, U" ", count);
+		#endif
+		if (count == 0)   // on Windows, this has to go before the success test
+			break;
+		#if defined (macintosh) || defined (UNIX)
 			if (count == -1) {
 				if (errno == EINTR)
 					continue;
 				Melder_throw (U"Error while handling child process output.");
 			}
-			if (count == 0)
-				break;
-			buffer8 [count] = '\0';
-			MelderString_append (& stdout_string, Melder_peek8to32 (buffer8));
-		}
-		for (;;) {
+		#elif defined (_WIN32)
+			if (! success)
+				Melder_throw (U"Error while handling child process output.");
+		#endif
+		buffer8 [count] = '\0';
+		MelderString_append (& stdout_string, Melder_peek8to32 (buffer8));
+	}
+	for (;;) {
+		#if defined (macintosh) || defined (UNIX)
 			ssize_t count = read (stderrPipe [0], buffer8, 4096);
+		#elif defined (_WIN32)
+			DWORD count;
+			BOOL success = ReadFile (stderrReadPipe, buffer8, 4096, & count, NULL);
+		#endif
+		if (count == 0)   // on Windows, this has to go before the success test
+			break;
+		#if defined (macintosh) || defined (UNIX)
 			if (count == -1) {
 				if (errno == EINTR)
 					continue;
 				Melder_throw (U"Error while handling child process error output.");
 			}
-			if (count == 0)
-				break;
-			buffer8 [count] = '\0';
-			MelderString_append (& stderr_string, Melder_peek8to32 (buffer8));
-		}
+		#elif defined (_WIN32)
+			if (! success)
+				Melder_throw (U"Error while handling child process output.");
+		#endif
+		buffer8 [count] = '\0';
+		MelderString_append (& stderr_string, Melder_peek8to32 (buffer8));
+	}
+	trace (U"read");
+	/*
+		Close the read pipes, which are no longer needed.
+	*/
+	#if defined (macintosh) || defined (UNIX)
 		close (stdoutPipe [0]);
 		close (stderrPipe [0]);
-		wait (0);
-		if (stderr_string.length > 0)
-			Melder_throw (U"runSystem$: error:\n", stderr_string.string);
-		result = Melder_dup (stdout_string. string);
 	#elif defined (_WIN32)
+		CloseHandle (stdoutReadPipe);
+		CloseHandle (stderrReadPipe);
 	#endif
+	/*
+		"Wait" for the child process to finish completely.
+	*/
+	#if defined (macintosh) || defined (UNIX)
+		int childProcessStatus;
+		waitpid (childProcess, & childProcessStatus, 0);   // unzombie child process
+		if (! WIFEXITED (childProcessStatus))
+			Melder_throw (U"runSystem$: subprocess not exited (probably stopped by a signal):\n", stderr_string.string);
+		if (WEXITSTATUS (childProcessStatus) != 0)
+			Melder_throw (stderr_string.string, U"\nrunSystem$: subprocess exited with error ", WEXITSTATUS (childProcessStatus));
+		if (stderr_string.length > 0)
+			Melder_casual (U"runSystem$ casual message:\n", stderr_string.string);
+	#elif defined (_WIN32)
+		if (WaitForSingleObject (piProcInfo. hProcess, INFINITE) != 0)
+			Melder_throw (U"Cannot finish system command <<", command, U">>.");
+		DWORD exitCode;
+		if (! GetExitCodeProcess (piProcInfo. hProcess, & exitCode))
+			Melder_throw (U"Cannot evaluate system command <<", command, U">>.");
+		if (exitCode != 0)
+			Melder_throw (stderr_string.string, U"\nrunSystem$: subprocess exited with error ", exitCode);
+		CloseHandle (piProcInfo. hProcess);
+		CloseHandle (piProcInfo. hThread);
+	#endif
+	result = Melder_dup (stdout_string. string);
 	return result;
 }
 void Melder_system (conststring32 command) {
