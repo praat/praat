@@ -4310,7 +4310,7 @@ static void do_runSubprocess () {
 			arguments [iarg] = Melder_dup (arg->getString());
 	}
 	try {
-		Melder_execv (commandFile->getString(), numberOfArguments - 1, arguments.peek2());
+		Melder_runSubprocess (commandFile->getString(), numberOfArguments - 1, arguments.peek2());
 	} catch (MelderError) {
 		Melder_throw (U"Command “", commandFile->getString(), U"” returned error status.");
 	}

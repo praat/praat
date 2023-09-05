@@ -277,7 +277,7 @@ void Melder_runSystem (conststring32 command) {
 	(void) runSystem_STR (command);
 }
 
-void Melder_execv (conststring32 executableFileName, integer narg, char32 ** args) {
+void Melder_runSubprocess (conststring32 executableFileName, integer narg, char32 ** args) {
 	#if defined (macintosh) || defined (UNIX)
 		Melder_casual (U"Command: <<", executableFileName, U">>");
 		autostring8vector args8 (narg + 2);
