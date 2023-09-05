@@ -149,7 +149,7 @@ autoEMA EMA_readFromCarstensEMA50xPosFile (MelderFile file) {
 			for (integer isensor = 1; isensor <= numberOfSensors; isensor ++) {
 				Sensor sensor = my sensors.at [isensor];
 				for (integer ichannel = 1; ichannel <= numberOfChannelsPerSensor; ichannel ++)
-					sensor -> z [ichannel] [isample] =  bingetr32LE (f);
+					sensor -> z [ichannel] [isample] = bingetr32LE (f);
 			}
 		
 		f.close (file);
@@ -163,12 +163,12 @@ autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file) {
 	try {
 		integer version, headerSizeBytes;
 		autofile f = Melder_fopen (file, "rb");
-		const integer nchar12 = 24;
+		constexpr integer nchar12 = 24;
 		char lines12 [nchar12];
 		(void) fread (lines12, 1, nchar12, f);
 		processLines12 (lines12, nchar12, & version, & headerSizeBytes);
 		const integer bufferSize = headerSizeBytes - nchar12;
-		char buffer [bufferSize + 1];
+		char buffer [bufferSize + 1];   // TODO: no VLA
 		buffer [bufferSize] = 0; // just in case
 		char *pend = buffer + bufferSize - 1;
 		integer numberOfSensors, samplingFrequency;
@@ -180,7 +180,7 @@ autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file) {
 		constexpr integer numberOfTransmitters = 9;
 		const integer ncharCalf = 13;
 		pbuf = strstr (pbuf, "Calf_Channel_");
-		Melder_require (pbuf != nullptr,
+		Melder_require (pbuf,
 			U"The calibration part is missing.");
 		/*
 			Create the EMAamp
@@ -196,7 +196,7 @@ autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file) {
 		autoEMAamp me = EMAamp_create (0.0, duration, numberOfSensors, numberOfTransmitters, numberOfSamples, dt, 0.5 * dt);
 
 		for (integer isensor = 1; isensor <= numberOfSensors; isensor ++) {
-			Melder_require ( strnequ (pbuf, "Calf_Channel_", ncharCalf),
+			Melder_require (strnequ (pbuf, "Calf_Channel_", ncharCalf),
 				U"We expected 'Calf_Channel_'.");
 			pbuf += ncharCalf; // start of channel number
 			char *qbuf = pbuf;
@@ -208,7 +208,7 @@ autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file) {
 			pbuf = qbuf + 3; // skip "=[ "
 			for (integer itrans = 1; itrans <= numberOfTransmitters; itrans ++) {
 				qbuf = pbuf;
-				while (*qbuf ++ != ' ' && qbuf < pend );
+				while (*qbuf ++ != ' ' && qbuf < pend);
 				*(--qbuf) = '\0';
 				my sensorCalibrations [isensor] [itrans] = atof (pbuf);
 				pbuf = qbuf + 1;

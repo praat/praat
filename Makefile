@@ -16,7 +16,7 @@ all: all-external all-self
 	$(LINK) -o $(EXECUTABLE) main/main_Praat.o $(MAIN_ICON) fon/libfon.a \
 		artsynth/libartsynth.a FFNet/libFFNet.a \
 		gram/libgram.a EEG/libEEG.a \
-		LPC/libLPC.a dwtools/libdwtools.a  EMA/libEMA.a \
+		LPC/libLPC.a dwtools/libdwtools.a EMA/libEMA.a \
 		foned/libfoned.a fon/libfon.a stat/libstat.a \
 		dwsys/libdwsys.a sys/libsys.a melder/libmelder.a kar/libkar.a \
 		external/espeak/libespeak.a \
