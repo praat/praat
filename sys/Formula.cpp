@@ -146,7 +146,8 @@ enum { NO_SYMBOL_,
 		DO_, DOSTR_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
-		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_STR_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_,
+		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_,
+		RUN_SYSTEM_, RUN_SYSTEM_STR_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_, RUN_SUBPROCESS_STR_,
 		MIN_, MIN_E_, MIN_IGNORE_UNDEFINED_,
 		MAX_, MAX_E_, MAX_IGNORE_UNDEFINED_,
 		IMIN_, IMIN_E_, IMIN_IGNORE_UNDEFINED_,
@@ -292,7 +293,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"do", U"do$",
 	U"writeInfo", U"writeInfoLine", U"appendInfo", U"appendInfoLine",
 	U"writeFile", U"writeFileLine", U"appendFile", U"appendFileLine",
-	U"pauseScript", U"exitScript", U"runScript", U"runSystem", U"runSystem$", U"runSystem_nocheck", U"runSubprocess",
+	U"pauseScript", U"exitScript", U"runScript",
+	U"runSystem", U"runSystem$", U"runSystem_nocheck", U"runSubprocess", U"runSubprocess$",
 	U"min", U"min_e", U"min_removeUndefined",
 	U"max", U"max_e", U"max_removeUndefined",
 	U"imin", U"imin_e", U"imin_removeUndefined",
@@ -4238,7 +4240,7 @@ static void do_runSystem () {
 			MelderString_append (& text, arg->getString());
 	}
 	try {
-		Melder_system (text.string);
+		Melder_runSystem (text.string);
 	} catch (MelderError) {
 		Melder_throw (U"System command <<", text.string, U">> returned error status;\n"
 			U"if you want to ignore this, use `runSystem_nocheck` instead of `runSystem`.");
@@ -4285,7 +4287,7 @@ static void do_runSystem_nocheck () {
 			MelderString_append (& text, arg->getString());
 	}
 	try {
-		Melder_system (text.string);
+		Melder_runSystem (text.string);
 	} catch (MelderError) {
 		Melder_clearError ();
 	}
@@ -4310,11 +4312,37 @@ static void do_runSubprocess () {
 			arguments [iarg] = Melder_dup (arg->getString());
 	}
 	try {
-		Melder_execv (commandFile->getString(), numberOfArguments - 1, arguments.peek2());
+		Melder_runSubprocess (commandFile->getString(), numberOfArguments - 1, arguments.peek2());
 	} catch (MelderError) {
 		Melder_throw (U"Command “", commandFile->getString(), U"” returned error status.");
 	}
 	pushNumber (1);
+}
+static void do_runSubprocess_STR () {
+	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
+		U"The function “runSubprocess$” is not available inside manuals.");
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	const integer numberOfArguments = Melder_iround (narg->number);
+	stackPointer -= numberOfArguments;
+	const Stackel commandFile = & theStack [stackPointer + 1];
+	Melder_require (commandFile->which == Stackel_STRING,
+		U"The first argument to “runSubprocess$” should be a command name.");
+	autoSTRVEC arguments (numberOfArguments - 1);
+	for (int iarg = 1; iarg < numberOfArguments; iarg ++) {
+		const Stackel arg = & theStack [stackPointer + 1 + iarg];
+		if (arg->which == Stackel_NUMBER)
+			arguments [iarg] = Melder_dup (Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			arguments [iarg] = Melder_dup (arg->getString());
+	}
+	autostring32 result;
+	try {
+		result = runSubprocess_STR (commandFile->getString(), numberOfArguments - 1, arguments.peek2());
+	} catch (MelderError) {
+		Melder_throw (U"Command “", commandFile->getString(), U"” returned error status.");
+	}
+	pushString (result.move());
 }
 static void do_min () {
 	const Stackel n = pop;
@@ -8251,6 +8279,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case RUN_SYSTEM_STR_: { do_runSystem_STR ();
 } break; case RUN_SYSTEM_NOCHECK_: { do_runSystem_nocheck ();
 } break; case RUN_SUBPROCESS_: { do_runSubprocess ();
+} break; case RUN_SUBPROCESS_STR_: { do_runSubprocess_STR ();
 } break; case MIN_: { do_min ();
 } break; case MIN_E_: { do_min_e ();
 } break; case MIN_IGNORE_UNDEFINED_: { do_min_removeUndefined ();
