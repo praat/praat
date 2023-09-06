@@ -16,13 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 2004/10/14 made Cygwin-compatible
- * Eric Carlson & Paul Boersma 2005/05/19 made MinGW-compatible
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2011/04/05 C++
- */
-
 #if defined (_WIN32)
 	#if ! defined (__CYGWIN__) && ! defined (__MINGW32__)
 		#include <crtl.h>
@@ -54,41 +47,9 @@ conststring32 Melder_getenv (conststring32 variableName) {
 	#endif
 }
 
-static void ensureThatStdoutAndStderrAreInitialized () {
-	#if defined (_WIN32)
-		/*
-			Stdout and stderr are initialized automatically if we are redirected to a pipe or file.
-			Stdout and stderr are not initialized, however, if Praat is started from the console,
-			neither in GUI mode nor in console mode; in these latter cases,
-			we manually attach stdout and stderr to the calling console.
-		*/
-		auto ensureThatStreamIsInitialized = [] (FILE *stream, int handle) {
-			const bool streamHasBeenInitialized = ( _fileno (stream) >= 0 );
-			if (! streamHasBeenInitialized) {
-				/*
-					Don't change the following four lines into
-						freopen ("CONOUT$", "w", stream);
-					because if you did that, the distinction between stdout and stderr would be lost.
-				*/
-				HANDLE osfHandle = GetStdHandle (handle);
-				if (osfHandle) {
-					const int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
-					Melder_assert (fileDescriptor != 0);
-					FILE *f = _fdopen (fileDescriptor, "w");
-					if (! f)
-						return;   // this can happen under Cygwin
-					*stream = *f;
-				}
-			}
-		};
-		ensureThatStreamIsInitialized (stdout, STD_OUTPUT_HANDLE);
-		ensureThatStreamIsInitialized (stderr, STD_ERROR_HANDLE);
-	#endif
-}
-autostring32 runSystem_STR (conststring32 command) {
+static autostring32 runAny_STR (conststring32 command, conststring32 executableFileName, integer narg, char32 ** args) {
 	if (! command)
 		command = U"";
-	autostring8 command8 = Melder_32to8 (command);
 	/*
 		Create a pipe for stdout and a pipe for stderr.
 	*/
@@ -131,22 +92,37 @@ autostring32 runSystem_STR (conststring32 command) {
 			close (stderrPipe [1]);
 			close (stdoutPipe [0]);
 			close (stderrPipe [0]);
-			//
-			//	From the execl man page:
-			//		int execl(const char *path, const char *arg0, ..., /*, (char *)0, */);
-			//	With more quotes from the execl man page:
-			//
-			execl (
-				"/bin/sh",   // "The initial argument for these functions is the pathname of a file which is to be executed."
-				// "The const char *arg0 and subsequent ellipses in the execl(), execlp(), and execle() functions"
-				// "can be thought of as arg0, arg1, ..., argn.  Together they describe a list of one or more pointers"
-				// "to null-terminated strings that represent the argument list available to the executed program."
-				"sh",   // "The first argument, by convention, should point to the file name associated with the file being executed."
-					// (that is, this is arg0, which should to sh become argv[0], which should generally be the app name)
-				"-c",   // (from the bash man page: "If the -c option is present, then commands are read from `string`."; this is argv[1])
-				command8.get(),   // (the `string`, combining the complete space-separated command that sh should execute)
-				nullptr   // "The list of arguments *must* be terminated by a NULL pointer."
-			);   // if all goes right, this implicity closes the child process
+			if (executableFileName) {
+				autostring8vector args8 (narg + 2);
+				args8 [1] = Melder_32to8 (executableFileName);
+				for (integer i = 1; i <= narg; i ++) {
+					Melder_casual (U"Argument ", i, U": <<", args [i], U">>");
+					args8 [1 + i] = Melder_32to8 (args [i]);
+				}
+				args8 [narg + 2] = autostring8();
+				execvp (
+					Melder_peek32to8 (executableFileName),
+					& args8.peek2() [1]
+				);
+			} else {
+				//
+				//	From the execl man page:
+				//		int execl(const char *path, const char *arg0, ..., /*, (char *)0, */);
+				//	With more quotes from the execl man page:
+				//
+				autostring8 command8 = Melder_32to8 (command);
+				execl (
+					"/bin/sh",   // "The initial argument for these functions is the pathname of a file which is to be executed."
+					// "The const char *arg0 and subsequent ellipses in the execl(), execlp(), and execle() functions"
+					// "can be thought of as arg0, arg1, ..., argn.  Together they describe a list of one or more pointers"
+					// "to null-terminated strings that represent the argument list available to the executed program."
+					"sh",   // "The first argument, by convention, should point to the file name associated with the file being executed."
+						// (that is, this is arg0, which should to sh become argv[0], which should generally be the app name)
+					"-c",   // (from the bash man page: "If the -c option is present, then commands are read from `string`."; this is argv[1])
+					command8.get(),   // (the `string`, combining the complete space-separated command that sh should execute)
+					nullptr   // "The list of arguments *must* be terminated by a NULL pointer."
+				);   // if all goes right, this implicity closes the child process
+			}
 			/*
 				If we arrive here, then execl must have returned,
 				which is an error condition.
@@ -232,7 +208,7 @@ autostring32 runSystem_STR (conststring32 command) {
 			}
 		#elif defined (_WIN32)
 			if (! success)
-				Melder_throw (U"Error while handling child process output.");
+				Melder_throw (U"Error while handling child process error output.");
 		#endif
 		buffer8 [count] = '\0';
 		MelderString_append (& stderr_string, Melder_peek8to32 (buffer8));
@@ -273,31 +249,19 @@ autostring32 runSystem_STR (conststring32 command) {
 	#endif
 	return Melder_dup (stdout_string. string);
 }
-void Melder_runSystem (conststring32 command) {
-	(void) runSystem_STR (command);
-}
 
+autostring32 runSystem_STR (conststring32 command) {
+	return runAny_STR (command, nullptr, 0, nullptr);
+}
+void Melder_runSystem (conststring32 command) {
+	(void) runAny_STR (command, nullptr, 0, nullptr);
+}
+autostring32 runSubprocess_STR (conststring32 executableFileName, integer narg, char32 ** args) {
+	return runAny_STR (nullptr, executableFileName, narg, args);
+}
 void Melder_runSubprocess (conststring32 executableFileName, integer narg, char32 ** args) {
 	#if defined (macintosh) || defined (UNIX)
-		Melder_casual (U"Command: <<", executableFileName, U">>");
-		autostring8vector args8 (narg + 2);
-		args8 [1] = Melder_32to8 (executableFileName);
-		for (integer i = 1; i <= narg; i ++) {
-			Melder_casual (U"Argument ", i, U": <<", args [i], U">>");
-			args8 [1 + i] = Melder_32to8 (args [i]);
-		}
-		args8 [narg + 2] = autostring8();
-		pid_t processID = fork ();
-		if (processID == 0) {   // we are in the child process
-			execvp (Melder_peek32to8 (executableFileName), & args8.peek2() [1]);
-			/* if we arrive here, some error occurred */
-			fprintf (stderr, "Some error occurred");
-			_exit (EXIT_FAILURE);
-		} else if (processID > 0) {   // we are still in the calling Praat
-			waitpid (processID, nullptr, 0);
-		} else {
-			Melder_throw (U"Could not fork.");
-		}
+		(void) runAny_STR (nullptr, executableFileName, narg, args);
 	#elif defined (_WIN32)
 	#endif
 }
