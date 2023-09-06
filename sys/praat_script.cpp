@@ -241,7 +241,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 				U"The script command “unix” is not available inside manuals.");
 			try {
-				Melder_system (command + 5);
+				Melder_runSystem (command + 5);
 			} catch (MelderError) {
 				Melder_throw (U"Unix command “", command + 5, U"” returned error status;\n"
 					U"if you want to ignore this, use `unix_nocheck' instead of `unix'.");
@@ -250,7 +250,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 				U"The script command “unix_nocheck” is not available inside manuals.");
 			try {
-				Melder_system (command + 13);
+				Melder_runSystem (command + 13);
 			} catch (MelderError) {
 				Melder_clearError ();
 			}
@@ -258,7 +258,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 				U"The script command “system” is not available inside manuals.");
 			try {
-				Melder_system (command + 7);
+				Melder_runSystem (command + 7);
 			} catch (MelderError) {
 				Melder_throw (U"System command “", command + 7, U"” returned error status;\n"
 					U"if you want to ignore this, use “system_nocheck” instead of “system”.");
@@ -267,7 +267,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 			Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 				U"The script command “system_nocheck” is not available inside manuals.");
 			try {
-				Melder_system (command + 15);
+				Melder_runSystem (command + 15);
 			} catch (MelderError) {
 				Melder_clearError ();
 			}

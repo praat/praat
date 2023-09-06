@@ -16,13 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 2004/10/14 made Cygwin-compatible
- * Eric Carlson & Paul Boersma 2005/05/19 made MinGW-compatible
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2011/04/05 C++
- */
-
 #if defined (_WIN32)
 	#if ! defined (__CYGWIN__) && ! defined (__MINGW32__)
 		#include <crtl.h>
@@ -54,49 +47,20 @@ conststring32 Melder_getenv (conststring32 variableName) {
 	#endif
 }
 
-static void ensureThatStdoutAndStderrAreInitialized () {
-	#if defined (_WIN32)
-		/*
-			Stdout and stderr are initialized automatically if we are redirected to a pipe or file.
-			Stdout and stderr are not initialized, however, if Praat is started from the console,
-			neither in GUI mode nor in console mode; in these latter cases,
-			we manually attach stdout and stderr to the calling console.
-		*/
-		auto ensureThatStreamIsInitialized = [] (FILE *stream, int handle) {
-			const bool streamHasBeenInitialized = ( _fileno (stream) >= 0 );
-			if (! streamHasBeenInitialized) {
-				/*
-					Don't change the following four lines into
-						freopen ("CONOUT$", "w", stream);
-					because if you did that, the distinction between stdout and stderr would be lost.
-				*/
-				HANDLE osfHandle = GetStdHandle (handle);
-				if (osfHandle) {
-					const int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
-					Melder_assert (fileDescriptor != 0);
-					FILE *f = _fdopen (fileDescriptor, "w");
-					if (! f)
-						return;   // this can happen under Cygwin
-					*stream = *f;
-				}
-			}
-		};
-		ensureThatStreamIsInitialized (stdout, STD_OUTPUT_HANDLE);
-		ensureThatStreamIsInitialized (stderr, STD_ERROR_HANDLE);
-	#endif
-}
-autostring32 runSystem_STR (conststring32 command) {
-	autostring32 result;
+static autostring32 runAny_STR (
+	conststring32 procedureMessageName,
+	conststring32 command,   // it's either this one...
+	conststring32 executableFileName, integer narg, char32 ** args   // ... or these three
+) {
 	if (! command)
 		command = U"";
-	autostring8 command8 = Melder_32to8 (command);
 	/*
 		Create a pipe for stdout and a pipe for stderr.
 	*/
 	#if defined (macintosh) || defined (UNIX)
 		int stdoutPipe [2], stderrPipe [2];
 		if (pipe (stdoutPipe) == -1 || pipe (stderrPipe) == -1)
-			Melder_throw (U"Cannot start system command <<", command, U">> (“pipe error”).");
+			Melder_throw (procedureMessageName, U": cannot start system command <<", command, U">> (“pipe error”).");
 	#elif defined (_WIN32)
 		HANDLE stdoutReadPipe = NULL, stdoutWritePipe = NULL, stderrReadPipe = NULL, stderrWritePipe = NULL;
 		SECURITY_ATTRIBUTES securityAttributes;
@@ -107,7 +71,7 @@ autostring32 runSystem_STR (conststring32 command) {
 			! CreatePipe (& stdoutReadPipe, & stdoutWritePipe, & securityAttributes, 0) ||
 			! CreatePipe (& stderrReadPipe, & stderrWritePipe, & securityAttributes, 0)
 		)
-			Melder_throw (U"Cannot start system command <<", command, U">> (“pipe error”).");
+			Melder_throw (procedureMessageName, U": cannot start system command <<", command, U">> (“pipe error”).");
 	#endif
 	/*
 		Create a child process that shall run
@@ -119,7 +83,7 @@ autostring32 runSystem_STR (conststring32 command) {
 	#if defined (macintosh) || defined (UNIX)
 		pid_t childProcess = fork ();
 		if (childProcess == -1)
-			Melder_throw (U"Cannot start system command <<", command, U">> (“fork error”).");
+			Melder_throw (procedureMessageName, U": cannot start system command <<", command, U">> (“fork error”).");
 		if (childProcess == 0) {
 			/*
 				We are in the child process.
@@ -132,41 +96,47 @@ autostring32 runSystem_STR (conststring32 command) {
 			close (stderrPipe [1]);
 			close (stdoutPipe [0]);
 			close (stderrPipe [0]);
-			//
-			//	From the execl man page:
-			//		int execl(const char *path, const char *arg0, ..., /*, (char *)0, */);
-			//	With more quotes from the execl man page:
-			//
-			execl (
-				"/bin/sh",   // "The initial argument for these functions is the pathname of a file which is to be executed."
-				// "The const char *arg0 and subsequent ellipses in the execl(), execlp(), and execle() functions"
-				// "can be thought of as arg0, arg1, ..., argn.  Together they describe a list of one or more pointers"
-				// "to null-terminated strings that represent the argument list available to the executed program."
-				"sh",   // "The first argument, by convention, should point to the file name associated with the file being executed."
-					// (that is, this is arg0, which should to sh become argv[0], which should generally be the app name)
-				"-c",   // (from the bash man page: "If the -c option is present, then commands are read from `string`."; this is argv[1])
-				command8.get(),   // (the `string`, combining the complete space-separated command that sh should execute)
-				nullptr   // "The list of arguments *must* be terminated by a NULL pointer."
-			);   // if all goes right, this implicity closes the child process
+			if (executableFileName) {
+				autostring8vector args8 (narg + 2);
+				args8 [1] = Melder_32to8 (executableFileName);
+				for (integer i = 1; i <= narg; i ++) {
+					trace (U"Argument ", i, U": <<", args [i], U">>");
+					args8 [1 + i] = Melder_32to8 (args [i]);
+				}
+				args8 [narg + 2] = autostring8();
+				execvp (
+					Melder_peek32to8 (executableFileName),
+					& args8.peek2() [1]
+				);
+			} else {
+				//
+				//	From the execl man page:
+				//		int execl(const char *path, const char *arg0, ..., /*, (char *)0, */);
+				//	With more quotes from the execl man page:
+				//
+				autostring8 command8 = Melder_32to8 (command);
+				execl (
+					"/bin/sh",   // "The initial argument for these functions is the pathname of a file which is to be executed."
+					// "The const char *arg0 and subsequent ellipses in the execl(), execlp(), and execle() functions"
+					// "can be thought of as arg0, arg1, ..., argn.  Together they describe a list of one or more pointers"
+					// "to null-terminated strings that represent the argument list available to the executed program."
+					"sh",   // "The first argument, by convention, should point to the file name associated with the file being executed."
+						// (that is, this is arg0, which should to sh become argv[0], which should generally be the app name)
+					"-c",   // (from the bash man page: "If the -c option is present, then commands are read from `string`."; this is argv[1])
+					command8.get(),   // (the `string`, combining the complete space-separated command that sh should execute)
+					nullptr   // "The list of arguments *must* be terminated by a NULL pointer."
+				);   // if all goes right, this implicity closes the child process
+			}
 			/*
-				If we arrive here, then execl must have returned,
+				If we arrive here, then execl or execvp must have returned,
 				which is an error condition.
 			*/
-			_exit (1);   // close the child process explicitly
+			_exit (EXIT_FAILURE);   // close the child process explicitly
 		}
 		/*
 			We are in the parent process.
 		*/
 	#elif defined (_WIN32)
-		conststring32 comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
-		if (! comspec)
-			comspec = Melder_getenv (U"ComSpec");
-		if (! comspec)
-			comspec = U"cmd.exe";
-		autoMelderString buffer;
-		MelderString_copy (& buffer, comspec);
-		Melder_assert (! str32chr (buffer.string, ' '));
-		MelderString_append (& buffer, U" /c ", command);
 		STARTUPINFO siStartInfo;
 		memset (& siStartInfo, 0, sizeof (siStartInfo));
 		siStartInfo. cb = sizeof (siStartInfo);
@@ -175,9 +145,54 @@ autostring32 runSystem_STR (conststring32 command) {
 		siStartInfo. hStdError = stderrWritePipe;   // attach stderr write pipe to child process
 		PROCESS_INFORMATION piProcInfo;
 		memset (& piProcInfo, 0, sizeof (piProcInfo));
-		autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
-		if (! CreateProcess (nullptr, bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
-			Melder_throw (U"Cannot start system command <<", command, U">>.");
+		conststring32 comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe" or "C:\WINDOWS\system32\cmd.exe"
+		if (! comspec)
+			comspec = Melder_getenv (U"ComSpec");
+		if (! comspec)
+			comspec = U"cmd.exe";
+		autoMelderString buffer;
+		MelderString_copy (& buffer, comspec);
+		Melder_assert (! str32chr (buffer.string, ' '));
+		MelderString_append (& buffer, U" /c");
+		if (executableFileName) {
+			const bool needSurroundingQuotes = str32chr (executableFileName, U' ');
+			if (needSurroundingQuotes)
+				MelderString_append (& buffer, U"\"\"", executableFileName, U"\"");
+			else
+				MelderString_append (& buffer, executableFileName);
+			for (integer i = 1; i <= narg; i ++) {
+				TRACE
+				trace (U"Argument ", i, U": <<", args [i], U">>");
+				MelderString_append (& buffer, U" ");
+				if (str32chr (args [i], U' '))
+					MelderString_append (& buffer, U"\"", args [i], U"\"");
+				else
+					MelderString_append (& buffer, args [i]);
+			}
+			if (needSurroundingQuotes)
+				MelderString_append (& buffer, U"\"");
+			autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
+			if (! CreateProcess (nullptr, bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
+				Melder_throw (procedureMessageName, U": cannot start subprocess <<", executableFileName, U">>.");
+			#if 0
+			autostringW executableFileNameW = Melder_32toW_fileSystem (executableFileName);
+			for (integer i = 1; i <= narg; i ++) {
+				TRACE
+				trace (U"Argument ", i, U": <<", args [i], U">>");
+				if (i > 1)
+					MelderString_append (& buffer, U" ");
+				MelderString_append (& buffer, U"\"", args [i], U"\"");
+			}
+			autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
+			if (! CreateProcess (executableFileNameW.get(), bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
+				Melder_throw (procedureMessageName, U": cannot start subprocess <<", executableFileName, U">>.");
+			#endif
+		} else {
+			MelderString_append (& buffer, U" ", command);
+			autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
+			if (! CreateProcess (nullptr, bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
+				Melder_throw (procedureMessageName, U": cannot start system command <<", command, U">>.");
+		}
 	#endif
 	/*
 		Close the write pipes; no longer should anything be written to them.
@@ -200,8 +215,6 @@ autostring32 runSystem_STR (conststring32 command) {
 		#elif defined (_WIN32)
 			DWORD count;
 			BOOL success = ReadFile (stdoutReadPipe, buffer8, 4096, & count, NULL);
-			TRACE
-			trace (success, U" ", count);
 		#endif
 		if (count == 0)   // on Windows, this has to go before the success test
 			break;
@@ -209,11 +222,11 @@ autostring32 runSystem_STR (conststring32 command) {
 			if (count == -1) {
 				if (errno == EINTR)
 					continue;
-				Melder_throw (U"Error while handling child process output.");
+				Melder_throw (procedureMessageName, U": error while handling child process output.");
 			}
 		#elif defined (_WIN32)
 			if (! success)
-				Melder_throw (U"Error while handling child process output.");
+				Melder_throw (procedureMessageName, U": error while handling child process output.");
 		#endif
 		buffer8 [count] = '\0';
 		MelderString_append (& stdout_string, Melder_peek8to32 (buffer8));
@@ -231,11 +244,11 @@ autostring32 runSystem_STR (conststring32 command) {
 			if (count == -1) {
 				if (errno == EINTR)
 					continue;
-				Melder_throw (U"Error while handling child process error output.");
+				Melder_throw (procedureMessageName, U": error while handling child process error output.");
 			}
 		#elif defined (_WIN32)
 			if (! success)
-				Melder_throw (U"Error while handling child process output.");
+				Melder_throw (procedureMessageName, U": error while handling child process error output.");
 		#endif
 		buffer8 [count] = '\0';
 		MelderString_append (& stderr_string, Melder_peek8to32 (buffer8));
@@ -258,142 +271,36 @@ autostring32 runSystem_STR (conststring32 command) {
 		int childProcessStatus;
 		waitpid (childProcess, & childProcessStatus, 0);   // unzombie child process
 		if (! WIFEXITED (childProcessStatus))
-			Melder_throw (U"runSystem$: subprocess not exited (probably stopped by a signal):\n", stderr_string.string);
+			Melder_throw (procedureMessageName, U": subprocess not exited (probably stopped by a signal):\n", stderr_string.string);
 		if (WEXITSTATUS (childProcessStatus) != 0)
-			Melder_throw (stderr_string.string, U"\nrunSystem$: subprocess exited with error ", WEXITSTATUS (childProcessStatus));
+			Melder_throw (stderr_string.string, U".\n", procedureMessageName, U": subprocess exited with error ", WEXITSTATUS (childProcessStatus));
 		if (stderr_string.length > 0)
-			Melder_casual (U"runSystem$ casual message:\n", stderr_string.string);
+			Melder_casual (procedureMessageName, U": casual message:\n", stderr_string.string);
 	#elif defined (_WIN32)
 		if (WaitForSingleObject (piProcInfo. hProcess, INFINITE) != 0)
-			Melder_throw (U"Cannot finish system command <<", command, U">>.");
+			Melder_throw (procedureMessageName, U": cannot finish system command <<", command, U">>.");
 		DWORD exitCode;
 		if (! GetExitCodeProcess (piProcInfo. hProcess, & exitCode))
-			Melder_throw (U"Cannot evaluate system command <<", command, U">>.");
+			Melder_throw (procedureMessageName, U": cannot evaluate system command <<", command, U">>.");
 		if (exitCode != 0)
-			Melder_throw (stderr_string.string, U"\nrunSystem$: subprocess exited with error ", exitCode);
+			Melder_throw (stderr_string.string, U".\n", procedureMessageName, U": subprocess exited with error ", (int) exitCode);
 		CloseHandle (piProcInfo. hProcess);
 		CloseHandle (piProcInfo. hThread);
 	#endif
-	result = Melder_dup (stdout_string. string);
-	return result;
-}
-void Melder_system (conststring32 command) {
-	if (! command)
-		command = U"";
-	#if defined (macintosh) || defined (UNIX)
-		if (system (Melder_peek32to8 (command)) != 0)
-			Melder_throw (U"System command failed.");
-	#elif defined (_WIN32)
-		STARTUPINFO siStartInfo;
-		PROCESS_INFORMATION piProcInfo;
-		conststring32 comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
-		if (! comspec)
-			comspec = Melder_getenv (U"ComSpec");
-		autoMelderString buffer;
-		if (comspec) {
-			MelderString_copy (& buffer, comspec);
-		} else {
-			OSVERSIONINFOEX osVersionInfo;
-			memset (& osVersionInfo, 0, sizeof (OSVERSIONINFOEX));
-			osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFOEX);
-			if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo)) {
-				osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-				if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo))
-					Melder_throw (U"System command cannot find system version.");
-			}
-			switch (osVersionInfo. dwPlatformId) {
-				case VER_PLATFORM_WIN32_NT: {
-					MelderString_copy (& buffer, U"cmd.exe");
-				} break; case VER_PLATFORM_WIN32_WINDOWS: {
-					MelderString_copy (& buffer, U"command.com");
-				} break; default: {
-					MelderString_copy (& buffer, U"command.com");
-				}
-			}
-		}
-		constexpr bool tryStdPassThrough = false;
-		int savedModeStdout, savedModeStderr;
-		if (tryStdPassThrough) {
-			ensureThatStdoutAndStderrAreInitialized ();
-			Melder_assert (_fileno (stdout) >= 0);
-			Melder_assert (_fileno (stderr) >= 0);
-			fflush (stdout);
-			fflush (stderr);
-			savedModeStdout = _setmode (_fileno (stdout), _O_U16TEXT);   // without line-break translation
-			savedModeStderr = _setmode (_fileno (stderr), _O_U16TEXT);   // without line-break translation
-		}
-		Melder_assert (! str32chr (buffer.string, ' '));
-		MelderString_append (& buffer, U" /c ", command);
-		memset (& siStartInfo, 0, sizeof (siStartInfo));
-		siStartInfo. cb = sizeof (siStartInfo);
-		siStartInfo. dwFlags = STARTF_USESTDHANDLES;
-		//siStartInfo. hStdInput = GetStdHandle (STD_INPUT_HANDLE);
-		siStartInfo. hStdOutput = GetStdHandle (STD_OUTPUT_HANDLE);
-		siStartInfo. hStdError = GetStdHandle (STD_ERROR_HANDLE);
-		memset (& piProcInfo, 0, sizeof (piProcInfo));
-		autostringW bufferW = Melder_32toW_fileSystem (buffer.string);
-		if (! CreateProcess (nullptr, bufferW.get(), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
-			Melder_throw (U"Cannot start system command <<", command, U">>.");
-		if (0) {
-			HANDLE stdoutDup, stderrDup;
-			DuplicateHandle (GetCurrentProcess(),
-				GetStdHandle (STD_OUTPUT_HANDLE),
-				piProcInfo. hProcess,
-				& stdoutDup,
-				0,
-				TRUE,
-				DUPLICATE_SAME_ACCESS
-			);
-			DuplicateHandle (GetCurrentProcess(),
-				GetStdHandle (STD_ERROR_HANDLE),
-				piProcInfo. hProcess,
-				& stderrDup,
-				0,
-				TRUE,
-				DUPLICATE_SAME_ACCESS
-			);
-		}
-		if (WaitForSingleObject (piProcInfo. hProcess, INFINITE) != 0)
-			Melder_throw (U"Cannot finish system command <<", command, U">>.");
-		DWORD exitCode;
-		if (! GetExitCodeProcess (piProcInfo. hProcess, & exitCode))
-			Melder_throw (U"Cannot evaluate system command <<", command, U">>.");
-		if (exitCode != 0)
-			Melder_throw (U"Error in system command <<", command, U">> (exit code ", exitCode, U").");
-		CloseHandle (piProcInfo. hProcess);
-		CloseHandle (piProcInfo. hThread);
-		if (tryStdPassThrough) {
-			fflush (stdout);
-			fflush (stderr);
-			_setmode (_fileno (stdout), savedModeStdout);
-			_setmode (_fileno (stderr), savedModeStderr);
-		}
-	#endif
+	return Melder_dup (stdout_string. string);
 }
 
-void Melder_execv (conststring32 executableFileName, integer narg, char32 ** args) {
-	#if defined (macintosh) || defined (UNIX)
-		Melder_casual (U"Command: <<", executableFileName, U">>");
-		autostring8vector args8 (narg + 2);
-		args8 [1] = Melder_32to8 (executableFileName);
-		for (integer i = 1; i <= narg; i ++) {
-			Melder_casual (U"Argument ", i, U": <<", args [i], U">>");
-			args8 [1 + i] = Melder_32to8 (args [i]);
-		}
-		args8 [narg + 2] = autostring8();
-		pid_t processID = fork ();
-		if (processID == 0) {   // we are in the child process
-			execvp (Melder_peek32to8 (executableFileName), & args8.peek2() [1]);
-			/* if we arrive here, some error occurred */
-			fprintf (stderr, "Some error occurred");
-			_exit (EXIT_FAILURE);
-		} else if (processID > 0) {   // we are still in the calling Praat
-			waitpid (processID, nullptr, 0);
-		} else {
-			Melder_throw (U"Could not fork.");
-		}
-	#elif defined (_WIN32)
-	#endif
+autostring32 runSystem_STR (conststring32 command) {
+	return runAny_STR (U"runSystem$", command, nullptr, 0, nullptr);
+}
+void Melder_runSystem (conststring32 command) {
+	(void) runAny_STR (U"runSystem", command, nullptr, 0, nullptr);
+}
+autostring32 runSubprocess_STR (conststring32 executableFileName, integer narg, char32 ** args) {
+	return runAny_STR (U"runSubprocess$", nullptr, executableFileName, narg, args);
+}
+void Melder_runSubprocess (conststring32 executableFileName, integer narg, char32 ** args) {
+	(void) runAny_STR (U"runSubprocess", nullptr, executableFileName, narg, args);
 }
 
 /* End of file melder_sysenv.cpp */
