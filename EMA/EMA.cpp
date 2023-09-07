@@ -122,34 +122,36 @@ autoEMA EMA_readFromCarstensEMA50xPosFile (MelderFile file) {
 	try {
 		integer version, headerSizeBytes;
 		autofile f = Melder_fopen (file, "rb");
-		const integer nchar12 = 24;
+		constexpr integer nchar12 = 24;
 		char lines12 [nchar12];
 		(void) fread (lines12, 1, nchar12, f);
 		processLines12 (lines12, nchar12, & version, & headerSizeBytes);
 		const integer bufferSize = headerSizeBytes - nchar12;
-		char buffer [bufferSize + 1];
+		autostring8 buffer (bufferSize, false);
 		buffer [bufferSize] = 0; // just in case
+		size_t nread = fread (& buffer [0], 1, bufferSize, f);
+		Melder_require (nread == bufferSize,
+			U"Header size does not match its specification.");
 		integer numberOfSensors, samplingFrequency;
-		(void) fread (buffer, 1, bufferSize, f);
-		(void) processLines34 (buffer, bufferSize, & numberOfSensors, & samplingFrequency);
+		(void) processLines34 (& buffer [0], bufferSize, & numberOfSensors, & samplingFrequency);
 		/*
 			The data section
 		*/
 		const integer numberOfBytes = MelderFile_length (file);
 		constexpr integer numberOfChannelsPerSensor = 7;
 		constexpr integer numberOfBytesPerValue = 4;
-		const integer sampleSizeBytes = numberOfSensors * numberOfChannelsPerSensor * numberOfBytesPerValue;
+		const integer frameSizeBytes = numberOfSensors * numberOfChannelsPerSensor * numberOfBytesPerValue;
 		const integer numberOfPosBytes = numberOfBytes - headerSizeBytes;
-		const integer numberOfSamples = numberOfPosBytes / sampleSizeBytes;
+		const integer numberOfFrames = numberOfPosBytes / frameSizeBytes;
 		const double dt = 1.0 / samplingFrequency;
-		const double duration = numberOfSamples * dt;
-		autoEMA me = EMA_create (0.0, duration, numberOfSensors, numberOfChannelsPerSensor, numberOfSamples, dt, 0.5 * dt);
+		const double duration = numberOfFrames * dt;
+		autoEMA me = EMA_create (0.0, duration, numberOfSensors, numberOfChannelsPerSensor, numberOfFrames, dt, 0.5 * dt);
 		
-		for (integer isample = 1; isample <= numberOfSamples; isample ++)
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++)
 			for (integer isensor = 1; isensor <= numberOfSensors; isensor ++) {
 				Sensor sensor = my sensors.at [isensor];
 				for (integer ichannel = 1; ichannel <= numberOfChannelsPerSensor; ichannel ++)
-					sensor -> z [ichannel] [isample] = bingetr32LE (f);
+					sensor -> z [ichannel] [iframe] = bingetr32LE (f);
 			}
 		
 		f.close (file);
@@ -168,12 +170,14 @@ autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file) {
 		(void) fread (lines12, 1, nchar12, f);
 		processLines12 (lines12, nchar12, & version, & headerSizeBytes);
 		const integer bufferSize = headerSizeBytes - nchar12;
-		char buffer [bufferSize + 1];   // TODO: no VLA
+		autostring8 buffer (bufferSize, false);
+		size_t nread = fread (& buffer [0], 1, bufferSize, f);
+		Melder_require (nread == bufferSize,
+			U"Header size does not match its specification.");
 		buffer [bufferSize] = 0; // just in case
-		char *pend = buffer + bufferSize - 1;
+		char *pend = & buffer [0] + bufferSize - 1;
 		integer numberOfSensors, samplingFrequency;
-		(void) fread (buffer, 1, bufferSize, f);
-		char *pbuf = processLines34 (buffer, bufferSize, & numberOfSensors, & samplingFrequency);
+		char *pbuf = processLines34 (& buffer [0] , bufferSize, & numberOfSensors, & samplingFrequency);
 		/*
 			The calibration part
 		*/
@@ -188,12 +192,12 @@ autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file) {
 		const integer numberOfBytes = MelderFile_length (file);
 		const integer numberOfAmpBytes = numberOfBytes - headerSizeBytes;
 		constexpr integer numberOfBytesPerValue = 4;
-		const integer sampleSizeBytes = numberOfSensors * numberOfTransmitters * numberOfBytesPerValue;
-		const integer numberOfSamples = numberOfAmpBytes / sampleSizeBytes;
+		const integer frameSizeBytes = numberOfSensors * numberOfTransmitters * numberOfBytesPerValue;
+		const integer numberOfFrames = numberOfAmpBytes / frameSizeBytes;
 		const double dt = 1.0 / samplingFrequency;
-		const double duration = numberOfSamples * dt;
+		const double duration = numberOfFrames * dt;
 		
-		autoEMAamp me = EMAamp_create (0.0, duration, numberOfSensors, numberOfTransmitters, numberOfSamples, dt, 0.5 * dt);
+		autoEMAamp me = EMAamp_create (0.0, duration, numberOfSensors, numberOfTransmitters, numberOfFrames, dt, 0.5 * dt);
 
 		for (integer isensor = 1; isensor <= numberOfSensors; isensor ++) {
 			Melder_require (strnequ (pbuf, "Calf_Channel_", ncharCalf),
@@ -219,11 +223,11 @@ autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file) {
 		/*
 			The data section
 		*/
-		for (integer isample = 1; isample <= numberOfSamples; isample ++)
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++)
 			for (integer isensor = 1; isensor <= numberOfSensors; isensor ++) {
 				Sensor sensor = my sensors.at [isensor];
 				for (integer ichannel = 1; ichannel <= numberOfTransmitters; ichannel ++)
-					sensor -> z [ichannel] [isample] =  bingetr32LE (f);
+					sensor -> z [ichannel] [iframe] =  bingetr32LE (f);
 			}
 		
 		f.close (file);
@@ -233,19 +237,19 @@ autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file) {
 	}
 }
 
-void EMA_init (EMA me, double tmin, double tmax, integer numberOfSensors, integer numberOfChannelsPerSensor, integer numberOfSamples, double dt, double t1) {
+void EMA_init (EMA me, double tmin, double tmax, integer numberOfSensors, integer numberOfChannelsPerSensor, integer numberOfFrames, double dt, double t1) {
 	my xmin = tmin;
 	my xmax = tmax;
 	my numberOfSensors = numberOfSensors;
 	for (integer isensor = 1; isensor <= numberOfSensors; isensor ++) {
-		autoSensor sensor = Sensor_create (numberOfChannelsPerSensor, tmin, tmax, numberOfSamples, dt, t1);
+		autoSensor sensor = Sensor_create (numberOfChannelsPerSensor, tmin, tmax, numberOfFrames, dt, t1);
 		my sensors.addItem_move (sensor.move());
 	}
 }
 
-autoEMA EMA_create (double tmin, double tmax, integer numberOfSensors, integer numberOfChannelsPerSensor, integer numberOfSamples, double dt, double t1) {
+autoEMA EMA_create (double tmin, double tmax, integer numberOfSensors, integer numberOfChannelsPerSensor, integer numberOfFrames, double dt, double t1) {
 	autoEMA me = Thing_new (EMA);
-	EMA_init (me.get(), tmin, tmax, numberOfSensors, numberOfChannelsPerSensor, numberOfSamples, dt, t1);
+	EMA_init (me.get(), tmin, tmax, numberOfSensors, numberOfChannelsPerSensor, numberOfFrames, dt, t1);
 	return me;
 }
 
@@ -255,9 +259,9 @@ void structEMAamp :: v1_info () {
 	structDaata :: v1_info ();
 }
 
-autoEMAamp EMAamp_create (double tmin, double tmax, integer numberOfSensors, integer numberOfTransmitters, integer numberOfSamples, double dt, double t1) {
+autoEMAamp EMAamp_create (double tmin, double tmax, integer numberOfSensors, integer numberOfTransmitters, integer numberOfFrames, double dt, double t1) {
 	autoEMAamp me = Thing_new (EMAamp);
-	EMA_init (me.get(), tmin, tmax, numberOfSensors, numberOfTransmitters, numberOfSamples, dt, t1);
+	EMA_init (me.get(), tmin, tmax, numberOfSensors, numberOfTransmitters, numberOfFrames, dt, t1);
 	my numberOfTransmitters = numberOfTransmitters;
 	my sensorCalibrations = zero_MAT (numberOfSensors, numberOfTransmitters);
 	return me;
