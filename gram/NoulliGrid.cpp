@@ -1,6 +1,6 @@
 /* NoulliGrid.cpp
  *
- * Copyright (C) 2018,2020,2021 Paul Boersma
+ * Copyright (C) 2018,2020,2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ autoNoulliPoint NoulliGrid_average (NoulliGrid me, integer tierNumber, double tm
 		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 			NoulliPoint inpoint = tier -> points.at [ipoint];
 			if (inpoint -> xmax > tmin && inpoint -> xmin < tmax) {
-				double duration = inpoint -> xmax - inpoint -> xmin;
+				const double duration = inpoint -> xmax - inpoint -> xmin;
 				for (integer icat = 1; icat <= my numberOfCategories; icat ++)
 					your probabilities [icat] += inpoint -> probabilities [icat] * duration;
 				numberOfSeconds += duration;
