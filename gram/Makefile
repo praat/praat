@@ -1,5 +1,5 @@
 # Makefile of the library "gram"
-# Paul Boersma, 2 August 2022
+# Paul Boersma, 7 September 2023
 
 include ../makefile.defs
 
@@ -9,7 +9,7 @@ OBJECTS = Network.o \
    OTGrammar.o OTGrammarEditor.o manual_gram.o praat_gram.o OTMulti.o OTMultiEditor.o \
    OTGrammar_ex_metrics.o OTGrammar_ex_NoCoda.o OTGrammar_ex_NPA.o OTGrammar_ex_tongueRoot.o \
    OTMulti_ex_metrics.o Layer.o Net.o \
-   NoulliGrid.o NoulliGridArea.o NoulliGridEditor.o
+   NoulliGrid.o NoulliGridArea.o NoulliGridEditor.o CubeGrid.o CubeGridArea.o CubeGridEditor.o
 
 .PHONY: all clean
 

@@ -23,6 +23,7 @@
 #include "OTMultiEditor.h"
 #include "Net.h"
 #include "NoulliGridEditor.h"
+#include "CubeGridEditor.h"
 
 #include "praat_TableOfReal.h"
 #include "praat_TimeFunction.h"
@@ -1643,6 +1644,37 @@ DO
 	GRAPHICS_EACH_END
 }
 
+// MARK: - CUBEGRID
+
+// MARK: View & Edit
+
+DIRECT (EDITOR_ONE_WITH_ONE__CubeGrid_viewAndEdit) {
+	EDITOR_ONE_WITH_ONE (a,CubeGrid, Sound)   // Sound may be null
+		autoCubeGridEditor editor = CubeGridEditor_create (ID_AND_FULL_NAME, me, you);
+	EDITOR_ONE_WITH_ONE_END
+}
+
+FORM (QUERY_ONE_FOR_REAL_VECTOR__CubeGrid_getAverage, U"CubeGrid: Get average", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	REAL (fromTime, U"From time (s)", U"0")
+	REAL (toTime, U"To time (s)", U"10.0")
+	OK
+DO
+	QUERY_ONE_FOR_REAL_VECTOR (CubeGrid)
+		autoVEC result = CubeGrid_getAverages (me, tierNumber, fromTime, toTime);
+	QUERY_ONE_FOR_REAL_VECTOR_END
+}
+
+FORM (GRAPHICS_CubeGrid_paint, U"CubeGrid: Paint", U"CubeGrid: Paint...") {
+	praat_TimeFunction_RANGE (fromTime, toTime)
+	BOOLEAN (garnish, U"Garnish", 1)
+	OK
+DO
+	GRAPHICS_EACH (CubeGrid)
+		CubeGrid_paint (me, GRAPHICS, fromTime, toTime, garnish);
+	GRAPHICS_EACH_END
+}
+
 // MARK: - buttons
 
 void praat_uvafon_gram_init ();
@@ -1650,12 +1682,13 @@ void praat_uvafon_gram_init () {
 	Thing_recognizeClassesByName (classNetwork,
 		classOTGrammar, classOTHistory, classOTMulti,
 		classRBMLayer, classFullyConnectedLayer, classNet,
-		classNoulliTier, classNoulliGrid,
+		classNoulliTier, classNoulliGrid, classCubeGrid,
 		nullptr
 	);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
 	structNoulliGridEditor :: f_preferences ();
+	structCubeGridEditor :: f_preferences ();
 
 	praat_addMenuCommand (U"Objects", U"New", U"Constraint grammars", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"OT learning tutorial", nullptr, GuiMenu_DEPTH_1 | GuiMenu_NO_API,
@@ -1979,6 +2012,17 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classNoulliGrid, 0, U"Paint...", nullptr, 1, GRAPHICS_NoulliGrid_paint);
 	praat_addAction2 (classNoulliGrid, 1, classSound, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
 			EDITOR_ONE_WITH_ONE__NoulliGrid_viewAndEdit);
+
+	praat_addAction1 (classCubeGrid, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
+			EDITOR_ONE_WITH_ONE__CubeGrid_viewAndEdit);
+	praat_addAction1 (classCubeGrid, 0, U"Query -", nullptr, 0, nullptr);
+		praat_TimeFunction_query_init (classCubeGrid);
+		praat_addAction1 (classCubeGrid, 1, U"Get average...", nullptr, 1,
+			QUERY_ONE_FOR_REAL_VECTOR__CubeGrid_getAverage);
+	praat_addAction1 (classCubeGrid, 0, U"Draw -", nullptr, 0, nullptr);
+		praat_addAction1 (classCubeGrid, 0, U"Paint...", nullptr, 1, GRAPHICS_CubeGrid_paint);
+	praat_addAction2 (classCubeGrid, 1, classSound, 1, U"View & Edit", nullptr, GuiMenu_ATTRACTIVE,
+			EDITOR_ONE_WITH_ONE__CubeGrid_viewAndEdit);
 }
 
 /* End of file praat_gram.cpp */
