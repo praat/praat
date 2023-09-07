@@ -27,9 +27,9 @@ autoEMA EMA_readFromCarstensEMA50xPosFile (MelderFile file);
 
 autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file);
 
-autoEMA EMA_create (double tmin, double tmax, integer numberOfSensors, integer numberOfChannelsPerSensor, integer numberOfSamples, double dt, double x1);
+autoEMA EMA_create (double tmin, double tmax, integer numberOfSensors, integer numberOfChannelsPerSensor, integer numberOfFrames, double dt, double x1);
 
-autoEMAamp EMAamp_create (double tmin, double tmax, integer numberOfSensors, integer numberOfTransmittersPerSensor, integer numberOfSamples, double dt, double x1);
+autoEMAamp EMAamp_create (double tmin, double tmax, integer numberOfSensors, integer numberOfTransmittersPerSensor, integer numberOfFrames, double dt, double x1);
 
 void EMA_setSensorName (EMA me, integer index, conststring32 name);
 
