@@ -436,6 +436,19 @@ static void menu_cb_redo (Editor me, EDITOR_ARGS) {
 	Editor_broadcastDataChanged (me);
 }
 
+static void menu_cb_clearUndoHistory (Editor me, EDITOR_ARGS) {
+	for (integer i = 1; i <= my undo.MAX_DEPTH; i ++) {
+		my undo.data [i]. reset();
+		my undo.description [i]. reset();
+	}
+	my undo.position = 0;
+	GuiThing_setSensitive (my undoButton, false);
+	GuiThing_setSensitive (my redoButton, false);
+	GuiThing_setSensitive (my clearUndoHistoryButton, false);
+	GuiMenuItem_setText (my undoButton, U"Can't undo");
+	GuiMenuItem_setText (my redoButton, U"Can't redo");
+}
+
 static void menu_cb_searchManual (Editor /* me */, EDITOR_ARGS) {
 	Melder_search ();
 }
@@ -455,6 +468,7 @@ void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
 	if (our data()) {
 		our undoButton = EditorMenu_addCommand (menu, U"Can't undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 		our redoButton = EditorMenu_addCommand (menu, U"Can't redo", GuiMenu_INSENSITIVE + 'Y', menu_cb_redo);
+		our clearUndoHistoryButton = EditorMenu_addCommand (menu, U"Clear undo history", GuiMenu_INSENSITIVE, menu_cb_clearUndoHistory);
 	}
 }
 
@@ -634,12 +648,13 @@ void Editor_save (Editor me, conststring32 cattableDescription) {
 		my undo.description [i]. reset();
 	}
 	/*
-		Update the Undo button.
+		Update some Undo buttons.
 	*/
 	if (! my undoButton)
 		return;
 	GuiThing_setSensitive (my undoButton, true);
 	GuiMenuItem_setText (my undoButton, undoText);
+	GuiThing_setSensitive (my clearUndoHistoryButton, true);
 }
 
 /* End of file Editor.cpp */
