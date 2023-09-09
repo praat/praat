@@ -35,7 +35,7 @@ bool NotebookEditors_dirty () {
 }
 
 void structNotebookEditor :: v9_destroy () noexcept {
-	our argsDialog.reset();   // don't delay till delete
+	our argsDialog. reset();   // don't delay till delete
 	theReferencesToAllOpenNotebookEditors. undangleItem (this);
 	NotebookEditor_Parent :: v9_destroy ();
 }

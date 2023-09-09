@@ -688,7 +688,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 		MelderString_append (buffer, ul ? U"</ul>\n" : U"</dl>\n");
 		inList = false;
 	}
-	praatObjects.reset();
+	praatObjects. reset();
 }
 
 static void writeTitleAsHtml (conststring32 title, MelderString *buffer) {

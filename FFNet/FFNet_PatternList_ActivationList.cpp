@@ -114,7 +114,7 @@ void FFNet_PatternList_ActivationList_learnSD (FFNet me, PatternList p, Activati
 		Did we choose another minimizer
 	*/
 	if (my minimizer && ! Thing_isa (my minimizer.get(), classSteepestDescentMinimizer)) {
-		my minimizer.reset();
+		my minimizer. reset();
 		resetMinimizer = true;
 	}
 	/*
@@ -135,7 +135,7 @@ void FFNet_PatternList_ActivationList_learnSM (FFNet me, PatternList p, Activati
 		Did we choose another minimizer
 	*/
 	if (my minimizer.get() && ! Thing_isa (my minimizer.get(), classVDSmagtMinimizer)) {
-		my minimizer.reset();
+		my minimizer. reset();
 		resetMinimizer = true;
 	}
 	/*

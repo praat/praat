@@ -819,7 +819,7 @@ void SSCP_expandWithLowerCholeskyInverse (SSCP me) {
 }
 
 void SSCP_unExpandLowerCholesky (SSCP me) {
-	my lowerCholeskyInverse.reset();
+	my lowerCholeskyInverse. reset();
 	my lnd = 0.0;
 }
 
@@ -828,7 +828,7 @@ void SSCP_expandWithPCA (SSCP me) {
 }
 
 void SSCP_unExpandPCA (SSCP me) {
-	my pca.reset();
+	my pca. reset();
 }
 
 /* End of file SSCP.c */

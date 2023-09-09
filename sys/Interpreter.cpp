@@ -254,7 +254,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 	const bool scriptTextIsNotebookText = Melder_scriptTextIsNotebookText (text);
 	char32 *formLocation = nullptr;
 	integer npar = 0;
-	my dialogTitle.reset();
+	my dialogTitle. reset();
 	autoMelderString string;
 	/*
 		Look for a "form" line.

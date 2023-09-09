@@ -92,7 +92,8 @@ autoCategories Categories_selectUniqueItems (Categories me) {
 }
 
 void Categories_drawItem (Categories me, Graphics g, integer position, double xWC, double yWC) {
-	if (position < 1 || position > my size) return;
+	if (position < 1 || position > my size)
+		return;
 	SimpleString item = my at [position];
 	Graphics_text (g, xWC, yWC, item -> string.get());
 }
@@ -101,7 +102,6 @@ void Categories_drawItem (Categories me, Graphics g, integer position, double xW
 autoCategories TableOfReal_to_CategoriesRow (TableOfReal me) {
 	try {
 		autoCategories thee = Categories_create ();
-
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			if (my rowLabels [i]) {
 				autoSimpleString s = SimpleString_create (my rowLabels [i].get());
@@ -117,7 +117,6 @@ autoCategories TableOfReal_to_CategoriesRow (TableOfReal me) {
 autoCategories TableOfReal_to_CategoriesColumn (TableOfReal me) {
 	try {
 		autoCategories thee = Categories_create ();
-
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
 			if (my columnLabels [i]) {
 				autoSimpleString s = SimpleString_create (my columnLabels [i].get());
@@ -126,7 +125,7 @@ autoCategories TableOfReal_to_CategoriesColumn (TableOfReal me) {
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": columnlabels not converted to Categories.");
+		Melder_throw (me, U": column labels not converted to Categories.");
 	}
 }
 

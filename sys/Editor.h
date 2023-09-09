@@ -55,10 +55,22 @@ typedef MelderCallback <void, structEditor, autoDaata /* publication */> Editor_
 
 Thing_define (Editor, DataGui) {
 	GuiWindow windowForm;
-	GuiMenuItem undoButton, searchButton;
+	GuiMenuItem undoButton, redoButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
-	autoDaata previousData;   // the data that can be displayed and edited
-	char32 undoText [100];
+
+	struct Undo {
+		static constexpr integer MAX_DEPTH = 10;
+		autoDaata data [1+MAX_DEPTH];   // the data that can be displayed and edited
+		autostring32 description [1+MAX_DEPTH];
+		integer position = 0;
+	} undo;
+	virtual autoDaata v_dataToSaveForUndo () {
+		return our data() ? Data_copy (our data()) : autoDaata();
+	}
+	virtual void v_restoreDataFromUndo (Daata savedData) {
+		Thing_swap (our data(), savedData);
+	}
+
 	Editor_DataChangedCallback d_dataChangedCallback;
 	Editor_DestructionCallback d_destructionCallback;
 	Editor_PublicationCallback d_publicationCallback;
@@ -89,8 +101,6 @@ Thing_define (Editor, DataGui) {
 	virtual void v_createChildren () { }
 
 	virtual void v1_dataChanged (Editor /* sender */) { }
-	virtual void v_saveData ();
-	virtual void v_restoreData ();
 
 	#include "Editor_prefs.h"
 };

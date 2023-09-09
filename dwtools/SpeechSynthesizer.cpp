@@ -728,7 +728,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 			Table_setEventTypeString (my d_events.get());
 			*events = my d_events.move();
 		}
-		my d_events.reset();
+		my d_events. reset();
 		return thee;
 	} catch (MelderError) {
 		espeak_Terminate ();

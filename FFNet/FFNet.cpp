@@ -308,7 +308,7 @@ void FFNet_reset (FFNet me, double weightRange) {
 		my activity [i] = ( my isbias [i] ? 1.0 : 0.0 );
 
 	my accumulatedCost = 0.0;
-	my minimizer.reset();
+	my minimizer. reset();
 }
 
 conststring32 FFNet_getCategoryOfOutputUnit (FFNet me, integer outputUnit) {
