@@ -477,16 +477,16 @@ autoKlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 
 static void KlattGlobal_free (KlattGlobal me) {
 	for (integer i = 1; i <= 8; i ++) {
-		my rc [i].reset();
+		my rc [i]. reset();
 		if (i <= 6)
-			my rp [i].reset();
+			my rp [i]. reset();
 	}
-	my rnpp.reset();
-	my rnpc.reset();
-	my rnz.reset();
-	my rgl.reset();
-	my rlp.reset();
-	my rout.reset();
+	my rnpp. reset();
+	my rnpc. reset();
+	my rnz. reset();
+	my rgl. reset();
+	my rlp. reset();
+	my rout. reset();
 	Melder_free (me);
 }
 

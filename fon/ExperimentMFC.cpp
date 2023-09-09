@@ -87,7 +87,7 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 	#if defined (_WIN32)
 		for (;;) { char32 *slash = str32chr (fileNames, U'/'); if (! slash) break; *slash = U'\\'; }
 	#endif
-	sound->reset();
+	sound -> reset();
 	char32 pathName [kMelder_MAXPATH+1];
 	/*
 		`fileNames` can contain commas, which separate partial file names.
@@ -180,7 +180,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		integer responseCarrierBeforeSamples = 0, responseCarrierAfterSamples = 0, maximumResponseSamples = 0;
 		Melder_warningOff ();
 		my trial = 0;
-		my playBuffer.reset();   // is this needed?
+		my playBuffer. reset();   // is this needed?
 		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
 		my stimuli = zero_INTVEC (my numberOfTrials);

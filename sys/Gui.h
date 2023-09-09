@@ -842,6 +842,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 
 void GuiMenuItem_check (GuiMenuItem me, bool check);
+void GuiMenuItem_setText (GuiMenuItem me, conststring32 text);
 
 /********** GuiOptionMenu **********/
 

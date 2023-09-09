@@ -477,7 +477,7 @@ static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 			samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
 			my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt );
 	if (! MelderAudio_isPlaying) {
-		my outputBuffer.reset();   // get a bit of privacy
+		my outputBuffer. reset();   // get a bit of privacy
 		phase = 3;
 	}
 	if (my callback)

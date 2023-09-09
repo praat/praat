@@ -35,7 +35,7 @@ bool ScriptEditors_dirty () {
 }
 
 void structScriptEditor :: v9_destroy () noexcept {
-	our argsDialog.reset();   // don't delay till delete
+	our argsDialog. reset();   // don't delay till delete
 	theReferencesToAllOpenScriptEditors. undangleItem (this);
 	ScriptEditor_Parent :: v9_destroy ();
 }

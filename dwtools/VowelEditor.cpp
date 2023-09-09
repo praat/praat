@@ -562,7 +562,7 @@ static void VowelEditor_getMarks (VowelEditor me) {
 					( my instancePref_marks_speakerType() == kVowelEditor_speakerType::MAN ? U"m" : my instancePref_marks_speakerType() == kVowelEditor_speakerType::WOMAN ? U"f" : U"f" ));
 		}
 	} else if (my instancePref_marks_dataSet() == kVowelEditor_marksDataSet::NONE) {
-		my marks.reset();
+		my marks. reset();
 		return;
 	} else {  // other
 		VowelEditor_getVowelMarksFromFile (me);

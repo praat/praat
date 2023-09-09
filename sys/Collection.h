@@ -251,7 +251,7 @@ struct CollectionOf : structDaata {
 			return our _insertItem_move (thing.move(), index);
 		} else {
 			our _initializeOwnership (true);
-			thing.reset();   // could not insert; I am the owner, so I must dispose of the data
+			thing. reset();   // could not insert; I am the owner, so I must dispose of the data
 			return nullptr;
 		}
 	}

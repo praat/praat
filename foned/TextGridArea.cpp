@@ -556,7 +556,7 @@ bool structTextGridArea :: v_mouse (GuiDrawingArea_MouseEvent event, double x_wo
 			return false;
 		Melder_assert (our clickedLeftBoundary == 0);
 		Melder_assert (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce);
-		our draggingTiers.reset();
+		our draggingTiers. reset();
 		/*
 			The user clicked in the grid part.
 			We select the tier in which they clicked.

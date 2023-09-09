@@ -2212,7 +2212,7 @@ static void OTGrammar_opt_deleteOutputMatching (OTGrammar me) {
 		for (integer icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate cand = & tab -> candidates [icand];
 			cand -> numberOfPotentialPartialOutputsMatching = 0;
-			cand -> partialOutputMatches.reset();
+			cand -> partialOutputMatches. reset();
 		}
 	}
 }

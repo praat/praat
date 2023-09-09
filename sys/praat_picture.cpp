@@ -1598,7 +1598,7 @@ GuiMenu praat_picture_resolveMenu (conststring32 menu) {
 }
 
 void praat_picture_exit () {
-	praat_picture.reset();
+	praat_picture. reset();
 }
 
 void praat_picture_open () {

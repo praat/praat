@@ -2076,7 +2076,7 @@ static int recordFromFileProc (MelderFile file) {
 	if (! melderSoundFromFile)
 		return 0;
 	if (! Thing_isa (melderSoundFromFile.get(), classSound)) {
-		melderSoundFromFile.reset();
+		melderSoundFromFile. reset();
 		return 0;
 	}
 	last = melderSoundFromFile.get();

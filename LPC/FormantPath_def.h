@@ -30,7 +30,7 @@ oo_DEFINE_CLASS (FormantPath, Sampled)
 		oo_VERSION_UNTIL (1)
 			oo_INTVEC (dummyPath, nx)
 			path = FormantPath_to_TextGrid_version0 (this, dummyPath.get());
-			dummyPath.reset();
+			dummyPath. reset();
 		oo_VERSION_ELSE
 			oo_OBJECT (TextGrid, 0, path)
 		oo_VERSION_END

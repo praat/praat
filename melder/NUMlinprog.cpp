@@ -32,8 +32,8 @@ void NUMlinprog_delete (NUMlinprog me) {
 		return;
 	if (my linearProgram)
 		glp_delete_prob (my linearProgram);
-	my ind.reset();
-	my val.reset();
+	my ind. reset();
+	my val. reset();
 	Melder_free (me);
 }
 

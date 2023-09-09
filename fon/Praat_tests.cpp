@@ -588,9 +588,9 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 					const VEC gggg = g.get();
 					//gggg [3] = 6.0;   // should be refused by the compiler
 					//return f;   // call to deleted constructor
-					//gggg.reset();   // should be refused by the compiler
-					//ggg.reset();   // should be refused by the compiler
-					//gg.reset();
+					//gggg. reset();   // should be refused by the compiler
+					//ggg. reset();   // should be refused by the compiler
+					//gg. reset();
 				}
 				{
 					double x [3], *px = & x [0];

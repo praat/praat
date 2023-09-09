@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2018,2020,2022 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2018,2020,2022,2023 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -455,6 +455,18 @@ void GuiMenuItem_check (GuiMenuItem me, bool check) {
 	#elif cocoa
 		GuiCocoaMenuItem *item = (GuiCocoaMenuItem *) my d_widget;
 		[item   setState: check];
+	#endif
+}
+
+void GuiMenuItem_setText (GuiMenuItem me, conststring32 text) {
+	#if gtk
+		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my d_widget))), Melder_peek32to8 (text));
+	#elif motif
+		conststring8 text_utf8 = Melder_peek32to8 (text);
+		XtVaSetValues (my d_widget, XmNlabelString, text_utf8, nullptr);
+	#elif cocoa
+		GuiCocoaMenuItem *item = (GuiCocoaMenuItem *) my d_widget;
+		[item   setTitle: (NSString *) Melder_peek32toCfstring (text)];
 	#endif
 }
 

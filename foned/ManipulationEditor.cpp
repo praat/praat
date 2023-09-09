@@ -450,17 +450,17 @@ static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me,
 
 /***** EDIT MENU *****/
 
-void structManipulationEditor :: v_saveData () {
-	our previousPulses   = Data_copy (our manipulation() -> pulses.get());     // could be null
-	our previousPitch    = Data_copy (our manipulation() -> pitch.get());      // could be null
-	our previousDuration = Data_copy (our manipulation() -> duration.get());   // could be null
-}
+//void structManipulationEditor :: v_saveData () {
+//	our previousPulses   = Data_copy (our manipulation() -> pulses.get());     // could be null
+//	our previousPitch    = Data_copy (our manipulation() -> pitch.get());      // could be null
+//	our previousDuration = Data_copy (our manipulation() -> duration.get());   // could be null
+//}
 
-void structManipulationEditor :: v_restoreData () {
-	std::swap (our manipulation() -> pulses,   our previousPulses);     // could be null
-	std::swap (our manipulation() -> pitch,    our previousPitch);      // could be null
-	std::swap (our manipulation() -> duration, our previousDuration);   // could be null
-}
+//void structManipulationEditor :: v_restoreData () {
+//	std::swap (our manipulation() -> pulses,   our previousPulses);     // could be null
+//	std::swap (our manipulation() -> pitch,    our previousPitch);      // could be null
+//	std::swap (our manipulation() -> duration, our previousDuration);   // could be null
+//}
 
 
 static void menu_cb_ManipulationEditorHelp (ManipulationEditor, EDITOR_ARGS) { Melder_help (U"ManipulationEditor"); }
