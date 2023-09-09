@@ -2,7 +2,7 @@
 #define _SoundArea_h_
 /* SoundArea.h
  *
- * Copyright (C) 2022 Paul Boersma
+ * Copyright (C) 2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +149,7 @@ public:
 	void v_updateMenuItems ()
 		override;
 	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
-	GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
+	GuiMenuItem cutButton, copyButton, pasteBeforeButton, pasteOverButton, pasteAfterButton, zeroButton, reverseButton;
 	GuiMenuItem drawButton;
 	GuiMenuItem publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
 
