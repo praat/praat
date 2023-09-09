@@ -585,10 +585,8 @@ static void menu_cb_Cut (SoundArea me, EDITOR_ARGS) {
 		Melder_throw (U"Sound selection not cut to clipboard.");
 	}
 }
-static void menu_cb_Paste (SoundArea me, EDITOR_ARGS) {
+static void paste (SoundArea me, int where) {
 	Melder_assert (my sound());
-	integer leftSample = Sampled_xToLowIndex (my sound(), my endSelection());
-	const integer oldNumberOfSamples = my sound() -> nx;
 	if (! Sound_clipboard) {
 		Melder_warning (U"Clipboard is empty; nothing pasted.");
 		return;
@@ -603,8 +601,19 @@ static void menu_cb_Paste (SoundArea me, EDITOR_ARGS) {
 		U"the sampling frequency of the clipboard is not equal to\n"
 		U"the sampling frequency of the edited sound."
 	);
-	Melder_clip (0_integer, & leftSample, oldNumberOfSamples);
-	const integer newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
+	const integer oldNumberOfSamples = my sound() -> nx;
+	const integer leftSample = Melder_clipped (
+		0_integer,
+		Sampled_xToLowIndex (my sound(), where == 3 ? my endSelection() : my startSelection()),
+		oldNumberOfSamples
+	);
+	const integer rightSample = Melder_clipped (
+		0_integer,
+		Sampled_xToLowIndex (my sound(), where == 1 ? my startSelection() : my endSelection()),
+		oldNumberOfSamples
+	);
+	const integer newNumberOfSamples =
+			oldNumberOfSamples + Sound_clipboard -> nx - (rightSample - leftSample);
 	/*
 		Check without change.
 	*/
@@ -615,11 +624,11 @@ static void menu_cb_Paste (SoundArea me, EDITOR_ARGS) {
 			newData [channel] [++ j] = my sound() -> z [channel] [i];
 		for (integer i = 1; i <= Sound_clipboard -> nx; i ++)
 			newData [channel] [++ j] = Sound_clipboard -> z [channel] [i];
-		for (integer i = leftSample + 1; i <= oldNumberOfSamples; i ++)
+		for (integer i = rightSample + 1; i <= oldNumberOfSamples; i ++)
 			newData [channel] [++ j] = my sound() -> z [channel] [i];
 		Melder_assert (j == newData.ncol);
 	}
-	FunctionArea_save (me, U"Paste");
+	FunctionArea_save (me, where == 1 ? U"Paste before" : where == 2 ? U"Paste over" : U"Paste after");
 	/*
 		Change without error.
 	*/
@@ -645,6 +654,15 @@ static void menu_cb_Paste (SoundArea me, EDITOR_ARGS) {
 	FunctionEditor_windowMarksChanged (my functionEditor(), true);
 	FunctionArea_broadcastDataChanged (me);
 }
+static void menu_cb_PasteBefore (SoundArea me, EDITOR_ARGS) {
+	paste (me, 1);
+}
+static void menu_cb_PasteOver (SoundArea me, EDITOR_ARGS) {
+	paste (me, 2);
+}
+static void menu_cb_PasteAfter (SoundArea me, EDITOR_ARGS) {
+	paste (me, 3);
+}
 void structSoundArea :: v_createMenuItems_edit (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"-- cut copy paste --", 0, nullptr, this);
 	const bool weMayUseShortcuts = ! our functionEditor() -> textArea;
@@ -653,9 +671,14 @@ void structSoundArea :: v_createMenuItems_edit (EditorMenu menu) {
 				menu_cb_Cut, this);
 	our copyButton = FunctionAreaMenu_addCommand (menu, U"Copy selection to Sound clipboard", 'C' * weMayUseShortcuts,
 			menu_cb_Copy, this);
-	if (our editable())
-		our pasteButton = FunctionAreaMenu_addCommand (menu, U"Paste after selection", 'V' * weMayUseShortcuts,
-				menu_cb_Paste, this);
+	if (our editable()) {
+		our pasteBeforeButton = FunctionAreaMenu_addCommand (menu, U"Paste before selection", (GuiMenu_SHIFT | 'V') * weMayUseShortcuts,
+				menu_cb_PasteBefore, this);
+		our pasteOverButton = FunctionAreaMenu_addCommand (menu, U"Paste over selection", 'V' * weMayUseShortcuts,
+				menu_cb_PasteOver, this);
+		our pasteAfterButton = FunctionAreaMenu_addCommand (menu, U"Paste after selection", (GuiMenu_OPTION | 'V') * weMayUseShortcuts,
+				menu_cb_PasteAfter, this);
+	}
 }
 
 
