@@ -55,7 +55,7 @@ typedef MelderCallback <void, structEditor, autoDaata /* publication */> Editor_
 
 Thing_define (Editor, DataGui) {
 	GuiWindow windowForm;
-	GuiMenuItem undoButton, redoButton, searchButton;
+	GuiMenuItem undoButton, redoButton, clearUndoHistoryButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
 
 	struct Undo {
