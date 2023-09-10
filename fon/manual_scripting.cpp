@@ -1308,32 +1308,49 @@ NORMAL (U"This macro mechanism is much more flexible than the usual opaque macro
 	"See the @Scripting tutorial for all the things that you can do in scripts.")
 MAN_END
 
-MAN_BEGIN (U"initialization script", U"ppgb", 20201229)
-INTRO (U"Your initialization script is a normal @@Praat script@ that is run as soon as you start Praat.")
-NORMAL (U"On Unix or macOS, you create an initialization script by creating a file named \"praat-startUp\" "
-	"in the folder /usr/local, "
-	"or putting a file “.praat-user-startUp” or “praat-user-startUp” in your home folder "
-	"(if you rename the Praat executable, these names have to change as well).")
-NORMAL (U"If you have more than one of these files, they are run in the above order.")
-NORMAL (U"On Windows, you create an initialization script by creating a file named "
-	"“praat-user-startUp” in your home folder, "
-	"which could be C:\\bsUsers\\bsMiep if you are Miep.")
-NORMAL (U"If you have both of these files, they are run in the above order.")
-ENTRY (U"Example")
-NORMAL (U"If you like to be greeted by your husband when Praat starts up, "
-	"you could put the following lines in your initialization script:")
-CODE (U"Read from file: \"C:\\bsUsers\\bsMiep\\bshelloMiep.wav\"   ! Windows")
-CODE (U"Read from file: \"/Users/miep/helloMiep.wav\"   ! Mac")
-CODE (U"Read from file: \"/home/miep/helloMiep.wav\"   ! Linux")
-CODE (U"Play")
-CODE (U"Remove")
-ENTRY (U"What not to use an initialization script for")
-NORMAL (U"You could set preferences like the default font in your initialization script, "
-	"but these will be automatically remembered between invocations of Praat anyway (in your @@preferences file@), "
-	"so this would often be superfluous.")
-NORMAL (U"For installing sets of menu commands at start-up you will probably prefer to use @@plug-ins@ "
-	"rather than a single start-up file.")
-MAN_END
+MAN_PAGES_BEGIN R"~~~(
+"initialization script"
+© Paul Boersma 2020,2023
+
+Your initialization script is a normal @@Praat script@ that is run as soon as you start Praat.
+
+On Unix or macOS, you create an initialization script by creating a file named `praat-startUp`
+in the folder `/usr/local`,
+or putting a file `.praat-user-startUp` or `praat-user-startUp` in your home folder
+(if you rename the Praat executable, these names have to change as well).
+
+If you have more than one of these files, they are run in the above order.
+
+On Windows, you create an initialization script by creating a file named
+`praat-user-startUp` in your home folder,
+which could be `C:\Users\Miep` if you are Miep.
+
+If you have both of these files, they are run in the above order.
+
+Example
+=======
+If you like to be greeted by your husband when Praat starts up,
+you could put the following lines in your initialization script:
+{;
+	if windows
+		Read from file: "C:\Users\Miep\helloMiep.wav"
+	elsif macintosh
+		Read from file: "/Users/miep/helloMiep.wav"
+	else
+		Read from file: "/home/miep/helloMiep.wav"
+	endif
+	Play
+	Remove
+}
+What not to use an initialization script for
+============================================
+You could set preferences like the default font in your initialization script,
+but these will be automatically remembered between invocations of Praat anyway (in your @@preferences file@),
+so this would often be superfluous, or indeed confusing.
+
+For installing sets of menu commands at start-up you will probably prefer to use @@plug-ins@
+rather than a single start-up file.
+)~~~" MAN_PAGES_END
 
 MAN_BEGIN (U"New Praat script", U"ppgb", 20050822)
 INTRO (U"A command in the @@Praat menu@ for creating a new Praat script. "
@@ -1434,7 +1451,7 @@ in the following way:
 	@@Add menu command...@ and @@Add action command...@. This script could be a slightly edited copy of someone’s
 	@@buttons file@.
 2. Put this script where everybody can see it,
-	for instance in `U:\\MaldenGuineaPigResearchButtons.praat`, where `U` is your shared computer.
+	for instance in `U:\MaldenGuineaPigResearchButtons.praat`, where `U` is your shared computer.
 3. Create a file `setup.praat` that contains only the following line:
 `
 		runScript: "U:\MaldenGuineaPigResearchButtons.praat"
@@ -3363,30 +3380,30 @@ NORMAL (U"With the @Info button and several commands in the @@Query submenu@ (or
 	"the text goes to the console window or to %stdout instead; see @@Scripting 6.9. Calling from the command line|\\SS6.9).")
 NORMAL (U"The commands #`writeInfo`, #`writeInfoLine`, #`appendInfo` and #`appendInfoLine` "
 	"allow you to write to the Info window from a script. Those with #`write` in their name clear the Info window "
-	"before they write to it, those with #append in their name do not. Those with #Line in their name make sure "
+	"before they write to it, those with #append in their name do not. Those with #`Line` in their name make sure "
 	"that a following #`appendInfo` or #`appendInfoLine` will write on the next line.")
 NORMAL (U"These four functions take a variable number of numeric and/or string arguments, separated by commas. "
 	"The following script builds a table with statistics about a pitch contour:")
-CODE (U"#writeInfoLine: \"  Minimum   Maximum\"")
+CODE (U"\\`{writeInfoLine}: \"  Minimum   Maximum\"")
 CODE (U"Create Sound as pure tone: \"sine\", 1, 0, 0.1, 44100, 377, 0.2, 0.01, 0.01")
 CODE (U"To Pitch: 0.01, 75, 600")
 CODE (U"minimum = Get minimum: 0, 0, \"Hertz\", \"Parabolic\"")
-CODE (U"#appendInfo: minimum")
-CODE (U"#appendInfo: tab\\$ ")
+CODE (U"\\`{appendInfo}: minimum")
+CODE (U"\\`{appendInfo}: tab$")
 CODE (U"maximum = Get maximum: 0, 0, \"Hertz\", \"Parabolic\"")
-CODE (U"#appendInfo: maximum")
-CODE (U"#appendInfoLine: \"\"")
+CODE (U"\\`{appendInfo}: maximum")
+CODE (U"\\`{appendInfoLine}: \"\"")
 NORMAL (U"You could combine the last four print statements into:")
-CODE (U"#appendInfoLine: minimum, tab\\$ , maximum")
+CODE (U"\\`{appendInfoLine}: minimum, tab$, maximum")
 NORMAL (U"which is the same as:")
-CODE (U"#appendInfo: minimum, tab\\$ , maximum, newline\\$ ")
-NORMAL (U"The little string ##tab\\$ # is a %tab character; it allows you to create "
-	"table files that can be read by some spreadsheet programs. The little string `newline$` is a %newline character; "
+CODE (U"\\`{appendInfo}: minimum, tab$, maximum, newline$")
+NORMAL (U"The little string #`tab$` is a %tab character; it allows you to create "
+	"table files that can be read by some spreadsheet programs. The little string #`newline$` is a %newline character; "
 	"it moves the following text to the next line.")
 NORMAL (U"To clear the Info window, you can do")
-CODE (U"#writeInfo: \"\"")
+CODE (U"\\`{writeInfo}: \"\"")
 NORMAL (U"or")
-CODE (U"#clearinfo")
+CODE (U"\\`{clearinfo}")
 MAN_END
 
 MAN_BEGIN (U"Scripting 6.3. Query commands", U"ppgb", 20140107)

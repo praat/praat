@@ -316,13 +316,13 @@ ENTRY (U"Behaviour")
 NORMAL (U"The information will appear in the @@Info window@.")
 MAN_END
 
-MAN_BEGIN (U"Info window", U"ppgb", 20030528)
+MAN_BEGIN (U"Info window", U"ppgb", 20030528)   // 2023
 INTRO (U"A text window into which many query commands write their answers.")
 NORMAL (U"You can select text from this window and copy it to other places.")
 NORMAL (U"In a @@Praat script@, you can bypass the Info window by having a query command "
 	"writing directly into a script variable.")
 NORMAL (U"Apart from the @Info command, which writes general information about the selected object, "
-	"the following more specific commands also write into the Info window:")
+	"most commands in any @@Query submenu@ also write into the Info window.")
 MAN_END
 
 MAN_BEGIN (U"Inspect", U"ppgb", 19960904)
