@@ -161,7 +161,7 @@ static autostring32 runAny_STR (
 			else
 				MelderString_append (& buffer, executableFileName);
 			for (integer i = 1; i <= narg; i ++) {
-				TRACE
+				//TRACE
 				trace (U"Argument ", i, U": <<", args [i], U">>");
 				MelderString_append (& buffer, U" ");
 				if (str32chr (args [i], U' '))
