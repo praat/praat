@@ -2967,6 +2967,7 @@ void praat_uvafon_init () {
 	
 	structFunctionArea       :: f_preferences ();
 	structSpectrumArea       :: f_preferences ();
+	structPointArea          :: f_preferences ();
 	structRealTierArea       :: f_preferences ();
 	structPitchTierArea      :: f_preferences ();
 	structIntensityTierArea  :: f_preferences ();

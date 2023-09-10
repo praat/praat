@@ -3491,38 +3491,68 @@ NORMAL (U"you can also write")
 CODE (U"\\#{deleteFile} (\\%{fileName$})")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.5. Calling system commands", U"ppgb", 20201229)
-INTRO (U"From a Praat script you can call system commands. "
-	"These are the same commands that you would normally type into a terminal window or into the Window command line prompt. "
-	"The syntax is the same as that of the #writeInfo command.")
-NORMAL (U"Most system commands are different on different platforms. "
-	"For instance, to throw away all WAV files in the folder whose path (relative to the script’s folder) is "
-	"in the variable `folder$`, you would write")
-CODE (U"\\#{runSystem}: \"del \", folder$, \"\\*.wav\"")
-NORMAL (U"on Windows, but")
-CODE (U"\\#{runSystem}: \"rm \", folder$, \"/*.wav\"")
-NORMAL (U"on Macintosh and Linux.")
-NORMAL (U"The script will stop running if a system command returns an error. For instance,")
-CODE (U"\\#{runSystem}: \"rm \", folder$, \"/*.wav\"")
-NORMAL (U"will stop the script if there are no WAV files in the folder. "
-	"In order to prevent this, you can tell Praat to ignore the return value of the runSystem command.")
-NORMAL (U"Thus, to make sure that the folder contains no WAV files, you would write")
-CODE (U"\\#{runSystem_nocheck}: \"rm \", folder$, \"/*.wav\"")
-ENTRY (U"Getting the values of system variables")
-TERM (U"#`environment$` (%`symbol-string`)")
-DEFINITION (U"returns the value of an environment variable, e.g.")
-CODE1 (U"homeFolder$ = \\#{environment$} (\"HOME\")")
-ENTRY (U"Getting system duration")
-TERM (U"#`stopwatch`")
-DEFINITION (U"returns the time that has elapsed since the previous #stopwatch.")
-NORMAL (U"Here is a Praat script that measures how long it takes to do a million assignments:")
-CODE (U"stopwatch")
-CODE (U"for i to 1000000")
-	CODE1 (U"a = 1.23456789e123")
-CODE (U"endfor")
-CODE (U"time = stopwatch")
-CODE (U"writeInfoLine: a, \" \", fixed$ (time, 3)")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+"Scripting 6.5. Calling system commands"
+© Paul Boersma 2020,2023
+
+From a Praat script you can call system commands.
+These are the same commands that you would normally type into a terminal window or into the Windows command line prompt.
+The syntax is the same as that of the @`writeInfo` command.
+
+Most system commands are different on different platforms.
+For instance, to throw away all WAV files in the folder whose path (relative to the script’s folder) is
+in the variable `folder$`, you would write
+{;
+	\`{runSystem}: "del ", folder$, "\*.wav"
+}
+on Windows, but
+{;
+	\`{runSystem}: "rm ", folder$, "/*.wav"
+}
+on Macintosh and Linux.
+
+The script will stop running if a system command returns an error. For instance,
+{;
+	\`{runSystem}: "rm ", folder$, "/*.wav"
+}
+will stop the script if there are no WAV files in the folder,
+with a message like “No such file or directory”.
+
+In order to prevent this, you can tell Praat to ignore the return value of \@{runSystem}.
+
+Thus, to make sure that the folder contains no WAV files, you would write
+{;
+	\#{runSystem_nocheck}: "rm ", folder$, "/*.wav"
+}
+Getting the values of system variables
+======================================
+#`environment$` (%`symbol-string`)
+: returns the value of an environment variable, e.g.
+{;
+		homeFolder$ = \`{environment$} ("HOME")
+}
+Getting system duration
+=======================
+#`stopwatch`
+: returns the time that has elapsed since the previous #stopwatch.
+
+Here is a Praat script that measures how long it takes to do a hundred thousand assignments on your computer
+(if you are reading this in Praat’s own Help, not on the web):
+{
+	stopwatch
+	for i to 100000
+		a = 1.23456789e123
+	endfor
+	time = stopwatch
+	writeInfoLine: a, " ", fixed$ (time, 3)
+}
+How many nanoseconds is that per assignment?
+{
+	writeInfoLine: round (time / 100000 * 1e9)
+}
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20230130)
 INTRO (U"You can temporarily halt a Praat script:")
