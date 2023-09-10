@@ -353,6 +353,15 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 					writeLinkAsHtml (me, link.string, linkText.string, buffer, page -> title.get());
 					if (isBold)
 						MelderString_append (buffer, U"</b>");
+				} else if (*p == U'<') {
+					MelderString_append (buffer, U"&lt;");
+					p ++;
+				} else if (*p == U'>') {
+					MelderString_append (buffer, U"&gt;");
+					p ++;
+				} else if (*p == U'&') {
+					MelderString_append (buffer, U"&amp;");
+					p ++;
 				} else
 					MelderString_append (buffer, *p ++);
 			}
