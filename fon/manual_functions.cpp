@@ -79,6 +79,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`chooseFolder$` (%`title$`) – pops up a folder selection window
 , @`chooseReadFile$` (%`title$`) – pops up a file selection window for opening (or appending to) an existing file
 , @`chooseWriteFile$` (%`title$`, %`defaultFilename$`) – pops up a file selection window for saving to a new file
+, @`clearinfo` – clear the Info window
 , @`columnSums#` (%`matrix##`)
 , @`correlation` (%`u#`, %`v#`) – correlation (between \-m1 and +1) of two vectors
 , @`cos` (%`x`) – cosine
@@ -1038,6 +1039,17 @@ Syntax and semantics
 ====================
 #`chooseWriteFile$` (%`title$`, %`defaultFilename$`)
 : pop up a file selection window for saving to a new file.
+
+################################################################################
+"`clearinfo`"
+© Paul Boersma 2023
+
+A command that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`clearinfo`
+: clear the @@Info window@.
 
 ################################################################################
 "`columnSums#`"

@@ -3446,7 +3446,7 @@ NORMAL (U"Some regular expressions match only one string, i.e., the set they des
 NORMAL (U"You can read the rest of this tutorial sequentially with the help of "
 	"the \"<1\" and \">1\" buttons.")
 LIST_ITEM (U"1. @@Regular expressions 1. Special characters|Special characters@ "
-	"(\\bs \\^  \\$ { } [ ] ( ) . + ? \\|  - &)")
+	"(\\bs \\^  \\$  { } [ ] ( ) . + ? \\|  - &)")
 LIST_ITEM (U"2. @@Regular expressions 2. Quantifiers|Quantifiers@ "
 	"(how often do we match).")
 LIST_ITEM (U"3. @@Regular expressions 3. Anchors|Anchors@ (where do we match)")
