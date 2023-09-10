@@ -116,6 +116,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`endeditor` – leave the environment of an editor
 , @`endproc` – end a procedure definition
 , @`endsWith` (%`string$`, %`part$`) – determine whether %`string$` ends in %`part$`
+, @`environment$` (%`string$`) – look up a system environment string
 , @`erb` (%`f`) – equivalent rectangular bandwidth for frequency %`f`
 , @`erbToHertz` (%`x`) – from ERB-rate to acoustic frequency
 , @`erf` (%`x`) – error function, the integral of the Gaussian
@@ -256,6 +257,10 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`round##` (%`matrix##`) – nearest integer of each cell of %`matrix##`
 , @`rowSums#` (%`matrix##`)
 , @`runScript` (%`filePath$`, `...`) – run a script with the given arguments
+, @`runSubprocess` (%`executableFilePath$`, `...`) – run an external program with the given arguments
+, @`runSubprocess$` (%`executableFilePath$`, `...`) – run an external program with the given arguments, and return its output
+, @`runSystem` (`...`) – run a system command line with the given arguments concatenated
+, @`runSystem$` (`...`) – run a system command line with the given arguments concatenated, and return its output
 , @`selected#` ( ) – the IDs of all selected objects
 , @`selected#` (%`type`) – the IDs of all selected objects of type %`type`
 , @`selected$#` ( ) – the names of all selected objects
@@ -1611,6 +1616,19 @@ Syntax and semantics
 ====================
 #`endsWith` (%`string$`, %`part$`)
 : determine whether %`string$` ends in %`part$`.
+
+################################################################################
+"`environment$`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`environment$` (%`string$`)
+: look up a system environment string.
+
+For details and examples, see @@Scripting 6.5. Calling system commands@.
 
 ################################################################################
 "`erb`"
@@ -3424,6 +3442,63 @@ with optional arguments given in “`...`”.
 
 If there are any arguments, they will be consumed by the `form` in the script.
 For details and examples, see @@Scripting 6.1. Arguments to the script@.
+
+################################################################################
+"`runSubprocess`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`runSubprocess` (%`executableFilePath$`, `...`)
+: run the program given by the (relative or absolute) %`executableFilePath$`,
+with optional arguments given in “`...`”.
+
+For details and examples, see @@Scripting 6.5. Calling system commands@.
+
+################################################################################
+"`runSubprocess$`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`runSubprocess$` (%`executableFilePath$`, `...`)
+: run the program given by the (relative or absolute) %`executableFilePath$`,
+with optional arguments given in “`...`”, and return the output of that program.
+
+For details and examples, see @@Scripting 6.5. Calling system commands@.
+
+################################################################################
+"`runSystem`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`runSystem` (`...`)
+: run the command line given by the arguments in “`...`”,
+which are plainly concatenated (in the same way as in `writeInfo`).
+
+For details and examples, see @@Scripting 6.5. Calling system commands@.
+
+################################################################################
+"`runSystem$`"
+© Paul Boersma 2023
+
+A function that can be used in @Scripting.
+
+Syntax and semantics
+====================
+#`runSystem$` (`...`)
+: run the command line given by the arguments in “`...`”,
+which are plainly concatenated (in the same way as in `writeInfo`),
+and return the output of that command line.
+
+For details and examples, see @@Scripting 6.5. Calling system commands@.
 
 ################################################################################
 "`selected#`"

@@ -674,9 +674,9 @@ void structSoundArea :: v_createMenuItems_edit (EditorMenu menu) {
 	if (our editable()) {
 		our pasteBeforeButton = FunctionAreaMenu_addCommand (menu, U"Paste before selection", (GuiMenu_SHIFT | 'V') * weMayUseShortcuts,
 				menu_cb_PasteBefore, this);
-		our pasteOverButton = FunctionAreaMenu_addCommand (menu, U"Paste over selection", 'V' * weMayUseShortcuts,
+		our pasteOverButton = FunctionAreaMenu_addCommand (menu, U"Paste over selection", (GuiMenu_OPTION | 'V') * weMayUseShortcuts,
 				menu_cb_PasteOver, this);
-		our pasteAfterButton = FunctionAreaMenu_addCommand (menu, U"Paste after selection", (GuiMenu_OPTION | 'V') * weMayUseShortcuts,
+		our pasteAfterButton = FunctionAreaMenu_addCommand (menu, U"Paste after selection", 'V' * weMayUseShortcuts,
 				menu_cb_PasteAfter, this);
 	}
 }

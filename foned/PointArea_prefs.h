@@ -1,8 +1,6 @@
-#ifndef _PointArea_h_
-#define _PointArea_h_
-/* PointArea.h
+/* PointArea_prefs.h
  *
- * Copyright (C) 1992-2011,2012,2015,2016,2018,2022,2023 Paul Boersma
+ * Copyright (C) 2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "FunctionArea.h"
-#include "PointProcess.h"
+Prefs_begin (PointArea)
 
-Thing_declare (SoundArea);
+	InstancePrefs_addDouble (PointArea, periodFloor,            1, U"1e-4")   // seconds
+	InstancePrefs_addDouble (PointArea, periodCeiling,          1, U"0.02")   // seconds
+	InstancePrefs_addDouble (PointArea, maximumPeriodFactor,    1, U"1.3")
+	InstancePrefs_addDouble (PointArea, maximumAmplitudeFactor, 1, U"1.6")
 
-Thing_define (PointArea, FunctionArea) {
-	PointProcess pointProcess() { return static_cast <PointProcess> (our function()); }
-	SoundArea borrowedSoundArea = nullptr;
+Prefs_end (PointArea)
 
-	void v_createMenus ()
-		override;
-	void v_drawInside ()
-		override;
-
-	#include "PointArea_prefs.h"
-};
-
-DEFINE_FunctionArea_create (PointArea, PointProcess)
-
-/* End of file PointArea.h */
-#endif
+/* End of file PointArea_prefs.h */
