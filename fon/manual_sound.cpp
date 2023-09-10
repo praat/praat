@@ -1150,10 +1150,13 @@ ENTRY (U"Recording sounds on the Mac or in Linux")
 NORMAL (U"On the Mac or in Linux, you can record from the list on the left in the SoundRecorder window. "
 	"The list can contain several devices, such as the internal microphone, a line input, or external USB devices. "
 	"Audio tracks on a CD can be opened directly with @@Read from file...@ or @@Open long sound file...@.")
-ENTRY (U"Recording sounds in Windows 10")
-NORMAL (U"In Windows 10, you can choose your input device by right-clicking on the loudspeaker icon in the Start bar; "
-	"then ##Open Sound settings#, then ##Choose your input device#. "
-	"To set some input #Properties, right-click the loudspeaker icon, then #Sounds, then #Recording.")
+ENTRY (U"Recording sounds in Windows")
+NORMAL (U"In Windows 10, you can choose your input device by right-clicking on the loudspeaker icon in the Start bar, "
+	"then choosing ##Open Sound settings# \\-> ##Choose your input device#. In Windows 11, "
+	"you right-click the loudspeaker icon and choose ##Sound settings# \\-> ##Choose a device for speaking or recording# instead."
+	"To set some input properties, right-click the loudspeaker icon, "
+	"then on Windows 10 you choose #Sounds \\-> #Recording \\-> #Properties, "
+	"while on Windows 11 you choose ##Sound settings# \\-> #Advanced \\-> ##All sound devices# \\-> ##Input devices# \\-> #Microphone.")
 ENTRY (U"Watching the input level")
 NORMAL (U"While recording, you can watch the input level as a green rectangle whose size changes. "
 	"Whenever the input is loud, the top of the rectangle becomes yellow; if it turns red, the sound may have been clipped. "
