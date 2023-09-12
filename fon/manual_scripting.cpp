@@ -1890,7 +1890,7 @@ SCRIPT (6, 3, U""
 	"Text: 0, “left”, 90, “half”, “\\s{How do you do?}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
-NORMAL (U"This works because #appendInfoLine writes a line without erasing the Info window first.")
+NORMAL (U"This works because @`appendInfoLine` writes a line without erasing the Info window first.")
 NORMAL (U"Finally, try the following script:")
 CODE (U"appendInfoLine: “Another try”")
 CODE (U"appendInfoLine: “Goodbye”")
@@ -1904,8 +1904,8 @@ SCRIPT (6, 3, U""
 	"Text: 0, “left”, 120, “half”, “\\s{Goodbye}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
-NORMAL (U"In other words, #appendInfoLine writes lines into the Info window without erasing it, even if you run a script anew. "
-	"This is why many Praat scripts that write into the Info window do a #writeInfoLine first, and follow it with a series of #appendInfoLine calls.")
+NORMAL (U"In other words, @`appendInfoLine` writes lines into the Info window without erasing it, even if you run a script anew. "
+	"This is why many Praat scripts that write into the Info window do a #writeInfoLine first, and follow it with a series of @`appendInfoLine` calls.")
 NORMAL (U"For more information on these commands, see @@Scripting 6.2. Writing to the Info window@.")
 ENTRY (U"2. “Hello world” in the Picture window.")
 NORMAL (U"You can also show text in the Picture window. If you are an experienced Praat user, you have probably used the comamnd ##Text top...# before. "
@@ -3380,7 +3380,7 @@ NORMAL (U"With the @Info button and several commands in the @@Query submenu@ (or
 	"the text goes to the console window or to %stdout instead; see @@Scripting 6.9. Calling from the command line|\\SS6.9).")
 NORMAL (U"The commands #`writeInfo`, #`writeInfoLine`, #`appendInfo` and #`appendInfoLine` "
 	"allow you to write to the Info window from a script. Those with #`write` in their name clear the Info window "
-	"before they write to it, those with #append in their name do not. Those with #`Line` in their name make sure "
+	"before they write to it, those with #`append` in their name do not. Those with #`Line` in their name make sure "
 	"that a following #`appendInfo` or #`appendInfoLine` will write on the next line.")
 NORMAL (U"These four functions take a variable number of numeric and/or string arguments, separated by commas. "
 	"The following script builds a table with statistics about a pitch contour:")
