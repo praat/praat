@@ -28,6 +28,7 @@
 #include "dictionary.h"
 #include "string.h"
 #include "translate.h"
+#include "voice.h"
 
 #include "oo_DESTROY.h"
 #include "SpeechSynthesizer_def.h"

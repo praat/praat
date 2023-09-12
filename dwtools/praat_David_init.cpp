@@ -10771,7 +10771,7 @@ void praat_David_init () {
 	INCLUDE_LIBRARY (praat_MDS_actions_init)
 	INCLUDE_LIBRARY (praat_HMM_init)
 	INCLUDE_LIBRARY (praat_BSS_init)
-	INCLUDE_LIBRARY (praat_EMA_init)
+	INCLUDE_LIBRARY (praat_Sensors_init)
 }
 
 /* End of file praat_David.cpp */
