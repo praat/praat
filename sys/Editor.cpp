@@ -180,10 +180,37 @@ static GuiMenuItem EditorMenu_addCommandScript (EditorMenu me, conststring32 ite
 	cmd -> d_editor = my d_editor;
 	cmd -> sender = my d_editor;
 	cmd -> menu = me;
+	const bool titleIsHeader = Melder_endsWith (itemTitle, U":");
+	if (titleIsHeader) {
+		if (itemTitle [0] == U'-' && itemTitle [1] == U' ') {
+			flags |= GuiMenu_UNDERLINED;
+			GuiMenu_addSeparator (my menuWidget);
+			itemTitle += 2;
+		}
+		cmd -> commandCallback = nullptr;
+		flags |= GuiMenu_INSENSITIVE;
+	} else
+		cmd -> commandCallback = Editor_scriptCallback;
+	const int depth = (flags & GuiMenu_DEPTH_3) >> 16;   // the maximum depth in editor windows is 3
+	if (depth > 0) {
+		/*
+			bikeshed choices for indented menu items
+		*/
+		[[maybe_unused]] constexpr conststring32 space = U"      ";   // minimalist
+		[[maybe_unused]] constexpr conststring32 fourDots = U"\u205E   ";   // not evenly dispersed
+		[[maybe_unused]] constexpr conststring32 twoDots = U"\u205A   ";   // dispersion OKish
+		[[maybe_unused]] constexpr conststring32 oneDot = U"·   ";   // dispersion good, not too prominent, not really thin
+		[[maybe_unused]] constexpr conststring32 hyphenationPoint = U"\u2027   ";   // xx
+		[[maybe_unused]] constexpr conststring32 pipe = U"|   ";   // not long enough, prominent
+		[[maybe_unused]] constexpr conststring32 boxDrawingLightVertical = U"\u2502   ";   // not long enough, prominent
+		[[maybe_unused]] constexpr conststring32 boxDrawingLightQuadrupleDashVertical = U"\u250A   ";   // not long enough, but nicely thin
+		itemTitle = Melder_cat (space, itemTitle);
+	}
 	cmd -> itemTitle = Melder_dup (itemTitle);
-	cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (my menuWidget) :
-		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, cmd.get());   // DANGLE BUG
-	cmd -> commandCallback = Editor_scriptCallback;
+	cmd -> itemWidget = ( script == nullptr || ! itemTitle ? GuiMenu_addSeparator (my menuWidget) :
+		titleIsHeader ?
+		GuiMenu_addItem (my menuWidget, itemTitle, flags, nullptr, nullptr) :
+		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, cmd.get()) );   // DANGLE BUG
 	if (script [0] == U'\0') {
 		cmd -> script = Melder_dup (U"");
 	} else {

@@ -42,9 +42,10 @@ MAN_END
 
 MAN_BEGIN (U"Add menu command...", U"ppgb", 20230130)
 INTRO (U"One of the hidden commands in the Praat menu of the @@Objects window@. "
-	"With this command, you add a button to any of the fixed menus in the Objects or Picture window.")
+	"With this command, you add a button to any of the fixed menus in the Objects window, "
+	"the Picture window, or any type of editor window.")
 ENTRY (U"Settings")
-NORMAL (U"See @@Add to fixed menu...@.")
+NORMAL (U"See @@Add to fixed menu...@ and @@Add to menu...@.")
 ENTRY (U"Usage")
 NORMAL (U"You can use this command in your @@initialization script@ or in @@plug-ins@.")
 NORMAL (U"Normally, however, if you want to add a command to a fixed menu, "
@@ -108,45 +109,116 @@ NORMAL (U"To add a dynamic button from a script (perhaps your @@initialization s
 	"use the hidden shell command @@Add action command...@ instead.")
 MAN_END
 
-MAN_BEGIN (U"Add to fixed menu...", U"ppgb", 20140107)
-INTRO (U"A command in the File menu of the @ScriptEditor.")
-NORMAL (U"With this command, you add a button to any fixed menu in the @@Objects window@ or in the @@Picture window@. "
-	"Clicking the added button will invoke the specified @@Praat script@.")
-ENTRY (U"Settings")
-TERM (U"#Window")
-DEFINITION (U"the name of the window (“Objects” or “Picture”) that contains the menu that you want to change.")
-TERM (U"#Menu")
-DEFINITION (U"the title of the menu that you want to change. If #Window is “Objects”, you can specify "
-	"the Praat, New, Open, Help, Goodies, Settings, or Technical menu (for the Save menu, "
-	"which depends on the objects selected, "
-	"you would use @@Add to dynamic menu...@ instead). If #Window is “Picture”, you can specify "
-	"the File, Edit, Margins, World, Select, Pen, Font, or Help menu.")
-TERM (U"#Command")
-DEFINITION (U"the title of the new menu button. To get a separator line instead of a command text, "
-	"you specify a unique string that starts with a hyphen (“-”); the @ButtonEditor contains many examples of this.")
-TERM (U"##After command")
-DEFINITION (U"a button title in the menu or submenu after which you want your new button to be inserted. "
-	"If you specify the empty string (“”), your button will be put in the main menu.")
-TERM (U"#Depth")
-DEFINITION (U"0 if you want your button in the main menu, 1 if you want it in a submenu.")
-TERM (U"%Script")
-DEFINITION (U"the full path name of the script to invoke. If you saved the script you are editing, "
-	"its name will already have been filled in here. If you do not specify a script, "
-	"you will get a cascading menu title instead.")
-ENTRY (U"Example 1")
-NORMAL (U"In the Matrix submenu of the @@New menu@, you want a separator line followed by the command #Peaks:")
-CODE (U"Add to fixed menu: \"Objects\", \"New\", \"-- peaks --\", \"Create simple Matrix...\", 1, \"\"")
-CODE (U"Add to fixed menu: \"Objects\", \"New\", \"Peaks\", \"-- peaks --\", 1, \"/u/praats/demo/peaks.praat\"")
-ENTRY (U"Example 2")
-NORMAL (U"In the @@New menu@, you want a submenu called “Demo”, with a subitem titled “Lorenz...”:")
-CODE (U"Add to fixed menu: \"Objects\", \"New\", \"Demo\", \"\", 0,, \"\"")
-CODE (U"Add to fixed menu: \"Objects\", \"New\", \"Lorenz...\", \"Demo\", 1, \"/u/praats/demo/lorenz.praat\"")
-ENTRY (U"Usage convention")
-NORMAL (U"Please adhere to the convention that commands that take arguments, such as “Lorenz...” above, end in three dots.")
-ENTRY (U"Using this command in a script")
-NORMAL (U"To add a fixed button from a script (perhaps your @@initialization script@ or a @@plug-ins|plug-in@), "
-	"use the hidden shell command @@Add menu command...@ instead.")
-MAN_END
+MAN_PAGES_BEGIN R"~~~(
+"Add to fixed menu..."
+© Paul Boersma 2014,2023
+
+A command in the File menu of the @ScriptEditor.
+
+With this command, you add a button to any fixed menu in the @@Objects window@ or in the @@Picture window@.
+Clicking the added button will invoke the specified @@Praat script@.
+
+Settings
+========
+#Window
+: the name of the window (“Objects” or “Picture”) that contains the menu that you want to change.
+
+#Menu
+: the title of the menu that you want to change. If #Window is “Objects”, you can specify
+  the Praat, New, Open, Help, Goodies, Settings, or Technical menu (for the Save menu,
+  which depends on the objects selected,
+  you would use @@Add to dynamic menu...@ instead). If #Window is “Picture”, you can specify
+  the File, Edit, Margins, World, Select, Pen, Font, or Help menu.
+
+#Command
+: the title of the new menu button. To get a separator line instead of a command text,
+  you specify a unique string that starts with a hyphen (“-”); the @ButtonEditor contains many examples of this.
+
+##After command
+: a button title in the menu or submenu after which you want your new button to be inserted.
+  If you specify the empty string (“”), your button will be put in the main menu.
+
+#Depth
+: 0 if you want your button in the main menu, 1 if you want it in a submenu.
+
+#Script
+: the full path name of the script to invoke. If you saved the script you are editing,
+  its name will already have been filled in here. If you do not specify a script,
+  you will get a cascading menu title instead.
+
+Example 1
+=========
+In the Matrix submenu of the @@New menu@, you want a separator line followed by the command #Peaks:
+{;
+	Add to fixed menu: "Objects", "New", "-- peaks --", "Create simple Matrix...", 1, ""
+	Add to fixed menu: "Objects", "New", "Peaks", "-- peaks --", 1, "/u/praats/demo/peaks.praat"
+}
+Example 2
+=========
+In the @@New menu@, you want a submenu called “Demo”, with a subitem titled “Lorenz...”:
+{;
+	Add to fixed menu: "Objects", "New", "Demo", "", 0, ""
+	Add to fixed menu: "Objects", "New", "Lorenz...", "Demo", 1, "/u/praats/demo/lorenz.praat"
+}
+Usage convention
+================
+Please adhere to the convention that commands that take arguments, such as “Lorenz...” above, end in three dots.
+
+Using this command in a script
+==============================
+To add a fixed button from a script (perhaps your @@initialization script@ or a @@plug-ins|plug-in@),
+use the hidden shell command @@Add menu command...@ instead. It has the exact same list of parameters.
+)~~~"
+MAN_PAGES_END
+
+MAN_PAGES_BEGIN R"~~~(
+"Add to menu..."
+© Paul Boersma 2023
+
+A command in the File menu of a @ScriptEditor that was created in an editor (e.g. SoundEditor) window.
+
+With this command, you add a button to any fixed menu in an editor window.
+Clicking the added button will invoke the specified @@Praat script@.
+
+Settings
+========
+#Window
+: the name of the type of window (e.g. “TextGridEditor”) that contains the menu that you want to change.
+
+#Menu
+: the title of the menu that you want to change. If #Window is “SoundEditor”, you can specify
+  the File, Edit, Time, Play, Sound, Analyses, Spectrogram, Pitch, Intensity, Formants, or Pulses menu.
+
+#Command
+: the title of the new menu button. To get a separator line instead of a command text,
+  you specify a unique string that starts with a hyphen (“-”).
+  To get a command with a rectangle to its right (like e.g. ##Save sound to disk:# in the File menu
+  of the SoundEditor), have the command end in a colon (“:”).
+  To get a command with a rectangle to its right and a separator line above it,
+  you can use e.g. `- Save sound to disk:` as a shorthand.
+
+##After command
+: not used; always keep this empty (i.e. an empty string).
+
+#Depth
+: 0 if you want your button left-aligned in the menu, 1 if you want it indented
+  (as e.g. the command ##Save selected sound as WAV file...# in the File menu of the SoundEditor).
+
+#Script
+: the full path name of the script to invoke. If you saved the script you are editing,
+  its name will already have been filled in here. If you do not specify a script,
+  you will get a separator line instead.
+
+Usage convention
+================
+Please adhere to the convention that commands that take arguments, such as “Lorenz...” above, end in three dots.
+
+Using this command in a script
+==============================
+To add a fixed button from a script (perhaps your @@initialization script@ or a @@plug-ins|plug-in@),
+use the hidden shell command @@Add menu command...@ instead. It has the exact same list of parameters.
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"ButtonEditor", U"ppgb", 20060920)
 INTRO (U"An editor for viewing, hiding, showing, removing, and executing the commands "
@@ -1890,7 +1962,7 @@ SCRIPT (6, 3, U""
 	"Text: 0, “left”, 90, “half”, “\\s{How do you do?}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
-NORMAL (U"This works because #appendInfoLine writes a line without erasing the Info window first.")
+NORMAL (U"This works because @`appendInfoLine` writes a line without erasing the Info window first.")
 NORMAL (U"Finally, try the following script:")
 CODE (U"appendInfoLine: “Another try”")
 CODE (U"appendInfoLine: “Goodbye”")
@@ -1904,8 +1976,8 @@ SCRIPT (6, 3, U""
 	"Text: 0, “left”, 120, “half”, “\\s{Goodbye}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
-NORMAL (U"In other words, #appendInfoLine writes lines into the Info window without erasing it, even if you run a script anew. "
-	"This is why many Praat scripts that write into the Info window do a #writeInfoLine first, and follow it with a series of #appendInfoLine calls.")
+NORMAL (U"In other words, @`appendInfoLine` writes lines into the Info window without erasing it, even if you run a script anew. "
+	"This is why many Praat scripts that write into the Info window do a #writeInfoLine first, and follow it with a series of @`appendInfoLine` calls.")
 NORMAL (U"For more information on these commands, see @@Scripting 6.2. Writing to the Info window@.")
 ENTRY (U"2. “Hello world” in the Picture window.")
 NORMAL (U"You can also show text in the Picture window. If you are an experienced Praat user, you have probably used the comamnd ##Text top...# before. "
@@ -3380,7 +3452,7 @@ NORMAL (U"With the @Info button and several commands in the @@Query submenu@ (or
 	"the text goes to the console window or to %stdout instead; see @@Scripting 6.9. Calling from the command line|\\SS6.9).")
 NORMAL (U"The commands #`writeInfo`, #`writeInfoLine`, #`appendInfo` and #`appendInfoLine` "
 	"allow you to write to the Info window from a script. Those with #`write` in their name clear the Info window "
-	"before they write to it, those with #append in their name do not. Those with #`Line` in their name make sure "
+	"before they write to it, those with #`append` in their name do not. Those with #`Line` in their name make sure "
 	"that a following #`appendInfo` or #`appendInfoLine` will write on the next line.")
 NORMAL (U"These four functions take a variable number of numeric and/or string arguments, separated by commas. "
 	"The following script builds a table with statistics about a pitch contour:")
