@@ -60,23 +60,23 @@
 #define MAN_END  { } }; ManPages_addPage (me, title, copyright, page); }
 
 #define Manual_DRAW_WINDOW(height,title,menu) \
-	"Select inner viewport... 0.2 5.8 0.2 " #height "-0.2\n" \
-	"Axes... 0 100*5.6 100*(" #height "-0.4) 0\n" \
-	"Paint rectangle... 0.8 0 560 0 30\n" \
-	"Paint circle... {1,0.5,0.5} 15 15 8\n" \
-	"Draw line... 15-5 10 15+5 20\n" \
-	"Draw line... 15+5 10 15-5 20\n" \
-	"Paint circle... {1,1,0.25} 40 15 8\n" \
-	"Draw line... 40-7 15 40+7 15\n" \
-	"Paint circle... {0.25,1,0.25} 65 15 8\n" \
-	"Draw rectangle... 65-5 65+5 15-5 15+5\n" \
-	"Helvetica\n" \
-	"Text... 280 centre 15 half " title "\n" \
-	"Paint rectangle... 0.9 0 560 30 60\n" \
-	"Text... 5 left 45 half " menu "\n" \
-	"Draw line... 0 30 560 30\n" \
-	"info$ = Picture info\n" \
-	"fontSize = extractNumber (info$, \"Font size: \")\n"
+	"	Select inner viewport... 0.2 5.8 0.2 " #height "-0.2\n" \
+	"	Axes... 0 100*5.6 100*(" #height "-0.4) 0\n" \
+	"	Paint rectangle... 0.8 0 560 0 30\n" \
+	"	Paint circle... {1,0.5,0.5} 15 15 8\n" \
+	"	Draw line... 15-5 10 15+5 20\n" \
+	"	Draw line... 15+5 10 15-5 20\n" \
+	"	Paint circle... {1,1,0.25} 40 15 8\n" \
+	"	Draw line... 40-7 15 40+7 15\n" \
+	"	Paint circle... {0.25,1,0.25} 65 15 8\n" \
+	"	Draw rectangle... 65-5 65+5 15-5 15+5\n" \
+	"	Helvetica\n" \
+	"	Text... 280 centre 15 half " title "\n" \
+	"	Paint rectangle... 0.9 0 560 30 60\n" \
+	"	Text... 5 left 45 half " menu "\n" \
+	"	Draw line... 0 30 560 30\n" \
+	"	info$ = Picture info\n" \
+	"	fontSize = extractNumber (info$, \"Font size: \")\n"
 
 #define Manual_SETTINGS_WINDOW_HEIGHT(numberOfVerticalFields)  1.4+numberOfVerticalFields*0.4
 #define Manual_DRAW_SETTINGS_WINDOW(title,numberOfVerticalFields) \

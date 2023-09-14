@@ -295,12 +295,13 @@ A command in the @@New menu@ to create a @Strings object containing a list of fi
 
 Settings
 ========
-{- 5.4x2.44)~~~"
-	"Font size: 12\n"
+{- 5.4x2.44
+)~~~"
 	Manual_DRAW_SETTINGS_WINDOW ("Create Strings as file list", 2.6)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Name", "fileList")
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("File path", "/Users/miep/Sounds/*.wav")
-R"~~~(}
+R"~~~(
+}
 
 ##Name
 :	the name of the resulting Strings object.

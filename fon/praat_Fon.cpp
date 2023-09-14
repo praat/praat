@@ -3771,6 +3771,8 @@ praat_addAction2 (classIntensity, 1, classPitch, 1, U"Query", nullptr, 0, nullpt
 
 	Melder_stopwatch ();
 	INCLUDE_MANPAGES (manual_Manual_init)
+	INCLUDE_MANPAGES (manual_commands_init)
+	INCLUDE_MANPAGES (manual_formulas_init)
 	INCLUDE_MANPAGES (manual_scripting_init)
 	INCLUDE_MANPAGES (manual_demoWindow_init)
 	INCLUDE_MANPAGES (manual_functions_init)
