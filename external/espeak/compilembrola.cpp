@@ -31,6 +31,7 @@
 #include "mbrola.h"
 
 #include "error.h"                // for create_file_error_context
+#include "common.h"               // for StringToWord
 #include "mbrola.h"               // for MBROLA_TAB
 #include "phoneme.h"              // for N_PHONEME_TAB
 #include "speech.h"               // for path_home
@@ -42,25 +43,6 @@ static const char *basename(const char *filename)
 	while (current != filename && !(*current == '/' || *current == '\\'))
 		--current;
 	return current == filename ? current : current + 1;
-}
-
-static unsigned int StringToWord(const char *string)
-{
-	// Pack 4 characters into a word
-	int ix;
-	unsigned char c;
-	unsigned int word;
-
-	if (string == NULL)
-		return 0;
-
-	word = 0;
-	for (ix = 0; ix < 4; ix++) {
-		if (string[ix] == 0) break;
-		c = string[ix];
-		word |= (c << (ix*8));
-	}
-	return word;
 }
 
 #pragma GCC visibility push(default)
@@ -87,7 +69,7 @@ espeak_ng_STATUS espeak_ng_CompileMbrolaVoice(const char *filepath, FILE *log, e
 	MBROLA_TAB data[N_PHONEME_TAB];
 
 	if ((f_in = fopen(filepath, "r")) == NULL)
-		return create_file_error_context(context, (espeak_ng_STATUS) errno, filepath);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), filepath);
 
 	while (fgets(buf, sizeof(phoneme), f_in) != NULL) {
 		buf[sizeof(phoneme)-1] = 0;
@@ -95,7 +77,7 @@ espeak_ng_STATUS espeak_ng_CompileMbrolaVoice(const char *filepath, FILE *log, e
 		if ((p = strstr(buf, "//")) != NULL)
 			*p = 0; // truncate line at comment
 
-		if (memcmp(buf, "volume", 6) == 0) {
+               if (strncmp(buf, "volume", 6) == 0) {
 			mbrola_ctrl = atoi(&buf[6]);
 			continue;
 		}
@@ -126,7 +108,7 @@ espeak_ng_STATUS espeak_ng_CompileMbrolaVoice(const char *filepath, FILE *log, e
 	strcpy(mbrola_voice, basename(filepath));
 	sprintf(buf, "%s/mbrola_ph/%s_phtrans", path_home, mbrola_voice);
 	if ((f_out = fopen(buf, "wb")) == NULL)
-		return create_file_error_context(context, (espeak_ng_STATUS) errno, buf);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), buf);
 
 	memset(&data[count], 0, sizeof(data[count]));
 	data[count].name = 0; // list terminator

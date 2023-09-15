@@ -26,7 +26,15 @@ extern "C"
 {
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#ifdef LIBESPEAK_NG_EXPORT
+#define ESPEAK_NG_API __declspec(dllexport)
+#else
+#define ESPEAK_NG_API __declspec(dllimport)
+#endif
+#else
 #define ESPEAK_NG_API
+#endif
 
 #define ESPEAKNG_DEFAULT_VOICE "en"
 
@@ -114,6 +122,9 @@ espeak_ng_SetParameter(espeak_PARAMETER parameter,
                        int relative);
 
 ESPEAK_NG_API espeak_ng_STATUS
+espeak_ng_SetPhonemeEvents(int enable, int ipa);
+
+ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_SetPunctuationList(const wchar_t *punctlist);
 
 ESPEAK_NG_API espeak_ng_STATUS
@@ -180,6 +191,13 @@ ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_CompileIntonation(FILE *log,
                             espeak_ng_ERROR_CONTEXT *context);
 
+
+ESPEAK_NG_API espeak_ng_STATUS
+espeak_ng_CompileIntonationPath(const char *source_path,
+                                const char *destination_path,
+                                FILE *log,
+                                espeak_ng_ERROR_CONTEXT *context);
+
 /* eSpeak NG 1.49.1 */
 
 ESPEAK_NG_API espeak_ng_STATUS
@@ -193,6 +211,9 @@ ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_SetOutputHooks(espeak_ng_OUTPUT_HOOKS* hooks);
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_SetConstF0(int f0);
+
+ESPEAK_NG_API espeak_ng_STATUS
+espeak_ng_SetRandSeed(long seed);
 
 
 #ifdef __cplusplus

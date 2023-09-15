@@ -1,4 +1,4 @@
-/* praat_EMA_init.cpp
+/* praat_Sensors_init.cpp
  *
  * Copyright (C) 2023 David Weenink
  *
@@ -40,9 +40,9 @@ static autoDaata CarstensEMA50xV3AmpFileRecognizer (integer nread, const char *h
 		return autoDaata ();
 }
 
-void praat_EMA_init ();
+void praat_Sensors_init ();
 
-void praat_EMA_init () {
+void praat_Sensors_init () {
 	Thing_recognizeClassesByName (classSensor, classEMA, classEMAamp, nullptr);
 
 	Data_recognizeFileType (CarstensEMA50xV3PosFileRecognizer);
@@ -50,4 +50,4 @@ void praat_EMA_init () {
 
 }
 
-/* End of file praat_EMA_init.cpp */
+/* End of file praat_Sensors_init.cpp */
