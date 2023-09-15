@@ -52,18 +52,21 @@ void praat_sortMenuCommands () {
 	);
 }
 
-static integer lookUpMatchingMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
-/*
- * A menu command is fully specified by its environment (window + menu) and its title.
- */
+static integer lookUpMatchingMenuCommand_0 (conststring32 window, conststring32 menu, conststring32 title) {
+	/*
+		A menu command is fully specified by its environment (window + menu) and its title.
+	*/
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
 		conststring32 tryWindow = command -> window.get();
 		conststring32 tryMenu = command -> menu.get();
 		conststring32 tryTitle = command -> title.get();
-		if ((window == tryWindow || (window && tryWindow && str32equ (window, tryWindow))) &&
-		    (menu == tryMenu || (menu && tryMenu && str32equ (menu, tryMenu))) &&
-		    (title == tryTitle || (title && tryTitle && str32equ (title, tryTitle)))) return i;
+		if (
+			(window == tryWindow || (window && tryWindow && str32equ (window, tryWindow))) &&
+			(menu == tryMenu || (menu && tryMenu && str32equ (menu, tryMenu))) &&
+			(title == tryTitle || (title && tryTitle && str32equ (title, tryTitle)))
+		)
+			return i;
 	}
 	return 0;   // not found
 }
@@ -110,7 +113,6 @@ static GuiMenu windowMenuToWidget (conststring32 window, conststring32 menu) {
 static GuiMenuItem praat_addMenuCommand__ (conststring32 window, conststring32 menu, conststring32 title /* cattable */,
 	conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 {
-	integer position;
 	uint32 depth = flags, key = 0;
 	bool unhidable = false, hidden = false, noApi = false, forceApi = false;
 	int deprecationYear = 0;
@@ -133,16 +135,16 @@ static GuiMenuItem praat_addMenuCommand__ (conststring32 window, conststring32 m
 	/*
 		Determine the position of the new command.
 	*/
+	integer position;
 	if (after && after [0] != U'*') {   // search for existing command with same selection
-		integer found = lookUpMatchingMenuCommand (window, menu, after);
-		if (found) {
-			position = found + 1;   // after 'after'
-		} else {
+		const integer found = lookUpMatchingMenuCommand_0 (window, menu, after);
+		if (found == 0) {
 			Melder_flushError (U"praat_addMenuCommand: the command \"", title, U"\" cannot be put after \"", after, U"\",\n"
 				U"in the menu \"", menu, U"\" in the window \"", window, U"\"\n"
 				U"because the latter command does not exist.");
 			return nullptr;
 		}
+		position = found + 1;   // after 'after'
 	} else {
 		position = theCommands.size + 1;   // at end
 	}
@@ -272,15 +274,14 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 		*/
 		integer position;
 		if (Melder_length (after) && after [0] != U'*') {   // search for existing command with same selection
-			integer found = lookUpMatchingMenuCommand (window, menu, after);
-			if (found) {
-				position = found + 1;   // after 'after'
-			} else {
+			const integer found = lookUpMatchingMenuCommand_0 (window, menu, after);
+			if (found == 0) {
 				/*Melder_throw (U"The menu command \"", title, U"\" cannot be put after \"", after, U"\",\n"
 					U"in the menu \"", menu, "\" in the window \"", window, U"\"\n"
 					U"because the latter command does not exist.");*/
 				position = theCommands.size + 1;   // default: at end
-			}
+			} else
+				position = found + 1;   // after 'after'
 		} else {
 			position = theCommands.size + 1;   // at end
 		}
@@ -359,26 +360,34 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 }
 
 void praat_hideMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
-	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
-	integer found = lookUpMatchingMenuCommand (window, menu, title);
-	if (! found) return;
+	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title)
+		return;
+	const integer found = lookUpMatchingMenuCommand_0 (window, menu, title);
+	if (found == 0)
+		return;
 	Praat_Command command = theCommands.at [found];
 	if (! command -> hidden && ! command -> unhidable) {
 		command -> hidden = true;
-		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
-		if (command -> button) GuiThing_hide (command -> button);
+		if (praatP.phase >= praat_READING_BUTTONS)
+			command -> toggled = ! command -> toggled;
+		if (command -> button)
+			GuiThing_hide (command -> button);
 	}
 }
 
 void praat_showMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
-	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
-	integer found = lookUpMatchingMenuCommand (window, menu, title);
-	if (! found) return;
+	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title)
+		return;
+	const integer found = lookUpMatchingMenuCommand_0 (window, menu, title);
+	if (found == 0)
+		return;
 	Praat_Command command = theCommands.at [found];
 	if (command -> hidden) {
 		command -> hidden = false;
-		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
-		if (command -> button) GuiThing_show (command -> button);
+		if (praatP.phase >= praat_READING_BUTTONS)
+			command -> toggled = ! command -> toggled;
+		if (command -> button)
+			GuiThing_show (command -> button);
 	}
 }
 
