@@ -35,23 +35,19 @@
 #include "speak_lib.h"
 
 #include "klatt.h"
+#include "common.h"      // for espeak_rand
 #include "synthesize.h"  // for frame_t, WGEN_DATA, STEPSIZE, N_KLATTP, echo...
 #include "voice.h"       // for voice_t, N_PEAKS
-#ifdef INCLUDE_SPEECHPLAYER
+#if USE_SPEECHPLAYER
 #include "sPlayer.h"
 #endif
 
 extern unsigned char *out_ptr;
-extern unsigned char *out_start;
 extern unsigned char *out_end;
 static int nsamples;
 static int sample_count;
 
-#ifdef _MSC_VER
-#define getrandom(min, max) ((rand()%(int)(((max)+1)-(min)))+(min))
-#else
-#define getrandom(min, max) ((rand()%(long)(((max)+1)-(min)))+(min))
-#endif
+#define getrandom(min, max) espeak_rand((min), (max))
 
 // function prototypes for functions private to this file
 
@@ -72,10 +68,10 @@ static klatt_global_t kt_globals;
 
 #define NUMBER_OF_SAMPLES 100
 
-static int scale_wav_tab[] = { 45, 38, 45, 45, 55, 45 }; // scale output from different voicing sources
+static const int scale_wav_tab[] = { 45, 38, 45, 45, 55, 45 }; // scale output from different voicing sources
 
 // For testing, this can be overwritten in KlattInit()
-static short natural_samples2[256] = {
+static const short natural_samples2[256] = {
 	 2583,  2516,  2450,  2384,  2319,  2254,  2191,  2127,
 	 2067,  2005,  1946,  1890,  1832,  1779,  1726,  1675,
 	 1626,  1579,  1533,  1491,  1449,  1409,  1372,  1336,
@@ -109,7 +105,7 @@ static short natural_samples2[256] = {
 	-1680, -1732, -1783, -1839, -1894, -1952, -2010, -2072,
 	-2133, -2196, -2260, -2325, -2390, -2456, -2522, -2589,
 };
-static short natural_samples[100] = {
+static const short natural_samples[100] = {
 	 -310,  -400,   530,   356,   224,    89,   23,  -10, -58, -16, 461,  599,  536,   701,   770,
 	  605,   497,   461,   560,   404,   110,  224,  131, 104, -97, 155,  278, -154, -1165,
 	 -598,   737,   125,  -592,    41,    11, -247,  -10,  65,  92,  80, -304,   71,   167,    -1, 122,
@@ -148,7 +144,7 @@ Output = (rnz.a * input) + (rnz.b * oldin1) + (rnz.c * oldin2)
 
 static double antiresonator(resonator_ptr r, double input)
 {
-	double x = (double)r->a * (double)input + (double)r->b * (double)r->p1 + (double)r->c * (double)r->p2;
+	/*register*/ double x = (double)r->a * (double)input + (double)r->b * (double)r->p1 + (double)r->c * (double)r->p2;
 	r->p2 = (double)r->p1;
 	r->p1 = (double)input;
 	return (double)x;
@@ -198,7 +194,7 @@ static double sampled_source(int source_num)
 	int current_value;
 	int next_value;
 	double temp_diff;
-	short *samples;
+	const short *samples;
 
 	if (source_num == 0) {
 		samples = natural_samples;
@@ -216,13 +212,13 @@ static double sampled_source(int source_num)
 
 		temp_diff = ftemp - (double)itemp;
 
-		current_value = samples[itemp];
-		next_value = samples[itemp+1];
+		current_value = samples[(itemp) % kt_globals.num_samples];
+		next_value = samples[(itemp+1) % kt_globals.num_samples];
 
 		diff_value = (double)next_value - (double)current_value;
 		diff_value = diff_value * temp_diff;
 
-		result = samples[itemp] + diff_value;
+		result = samples[(itemp) % kt_globals.num_samples] + diff_value;
 		result = result * kt_globals.sample_factor;
 	} else
 		result = 0;
@@ -248,7 +244,7 @@ static int parwave(klatt_frame_ptr frame, WGEN_DATA *wdata)
 	double casc_next_in;
 	double par_glotout;
 	static double noise;
-	static double voiceKlatt;
+	static double klattVoice;
 	static double vlast;
 	static double glotlast;
 	static double sourc;
@@ -279,16 +275,16 @@ static int parwave(klatt_frame_ptr frame, WGEN_DATA *wdata)
 			switch (kt_globals.glsource)
 			{
 			case IMPULSIVE:
-				voiceKlatt = impulsive_source();
+				klattVoice = impulsive_source();
 				break;
 			case NATURAL:
-				voiceKlatt = natural_source();
+				klattVoice = natural_source();
 				break;
 			case SAMPLED:
-				voiceKlatt = sampled_source(0);
+				klattVoice = sampled_source(0);
 				break;
 			case SAMPLED2:
-				voiceKlatt = sampled_source(1);
+				klattVoice = sampled_source(1);
 				break;
 			}
 
@@ -301,7 +297,7 @@ static int parwave(klatt_frame_ptr frame, WGEN_DATA *wdata)
 			// Low-pass filter voicing waveform before downsampling from 4*samrate
 			// to samrate samples/sec.  Resonator f=.09*samrate, bw=.06*samrate
 
-			voiceKlatt = resonator(&(kt_globals.rsn[RLP]), voiceKlatt);
+			klattVoice = resonator(&(kt_globals.rsn[RLP]), klattVoice);
 
 			// Increment counter that keeps track of 4*samrate samples per sec
 			kt_globals.nper++;
@@ -310,25 +306,25 @@ static int parwave(klatt_frame_ptr frame, WGEN_DATA *wdata)
 		if(kt_globals.glsource==5) {
 			double v=(kt_globals.nper/(double)kt_globals.T0);
 			v=(v*2)-1;
-			voiceKlatt=v*6000;
+			klattVoice=v*6000;
 		}
 
 		// Tilt spectrum of voicing source down by soft low-pass filtering, amount
 		// of tilt determined by TLTdb
 
-		voiceKlatt = (voiceKlatt * kt_globals.onemd) + (vlast * kt_globals.decay);
-		vlast = voiceKlatt;
+		klattVoice = (klattVoice * kt_globals.onemd) + (vlast * kt_globals.decay);
+		vlast = klattVoice;
 
 		// Add breathiness during glottal open phase. Amount of breathiness
 		// determined by parameter Aturb Use nrand rather than noise because
 		// noise is low-passed.
 
 		if (kt_globals.nper < kt_globals.nopen)
-			voiceKlatt += kt_globals.amp_breth * kt_globals.nrand;
+			klattVoice += kt_globals.amp_breth * kt_globals.nrand;
 
 		// Set amplitude of voicing
-		glotout = kt_globals.amp_voice * voiceKlatt;
-		par_glotout = kt_globals.par_amp_voice * voiceKlatt;
+		glotout = kt_globals.amp_voice * klattVoice;
+		par_glotout = kt_globals.par_amp_voice * klattVoice;
 
 		// Compute aspiration amplitude and add to voicing source
 		aspiration = kt_globals.amp_aspir * noise;
@@ -437,6 +433,10 @@ void KlattReset(int control)
 {
 	int r_ix;
 
+#if USE_SPEECHPLAYER
+	KlattResetSP();
+#endif
+
 	if (control == 2) {
 		// Full reset
 		kt_globals.FLPhz = (950 * kt_globals.samrate) / 10000;
@@ -464,6 +464,13 @@ void KlattReset(int control)
 	}
 }
 
+void KlattFini(void)
+{
+#if USE_SPEECHPLAYER
+	KlattFiniSP();
+#endif
+}
+
 /*
    function FRAME_INIT
 
@@ -473,7 +480,7 @@ void KlattReset(int control)
 static void frame_init(klatt_frame_ptr frame)
 {
 	double amp_par[7];
-	static double amp_par_factor[7] = { 0.6, 0.4, 0.15, 0.06, 0.04, 0.022, 0.03 };
+	static const double amp_par_factor[7] = { 0.6, 0.4, 0.15, 0.06, 0.04, 0.022, 0.03 };
 	long Gain0_tmp;
 	int ix;
 
@@ -540,9 +547,9 @@ static void frame_init(klatt_frame_ptr frame)
    to Kopen.
  */
 
-static double impulsive_source()
+static double impulsive_source(void)
 {
-	static double doublet[] = { 0.0, 13000000.0, -13000000.0 };
+	static const double doublet[] = { 0.0, 13000000.0, -13000000.0 };
 	static double vwave;
 
 	if (kt_globals.nper < 3)
@@ -560,7 +567,7 @@ static double impulsive_source()
    spectral zero around 800 Hz, magic constants a,b reset pitch synchronously.
  */
 
-static double natural_source()
+static double natural_source(void)
 {
 	double lgtemp;
 	static double vwave;
@@ -613,7 +620,7 @@ static void pitch_synch_par_reset(klatt_frame_ptr frame)
 	long temp;
 	double temp1;
 	static long skew;
-	static short B0[224] = {
+	static const short B0[224] = {
 		1200, 1142, 1088, 1038, 991, 948, 907, 869, 833, 799, 768, 738, 710, 683, 658,
 		 634,  612,  590,  570, 551, 533, 515, 499, 483, 468, 454, 440, 427, 415, 403,
 		 391,  380,  370,  360, 350, 341, 332, 323, 315, 307, 300, 292, 285, 278, 272,
@@ -826,7 +833,7 @@ static double gen_noise(double noise)
 
 static double DBtoLIN(long dB)
 {
-	static short amptable[88] = {
+	static const short amptable[88] = {
 		   0,      0,     0,     0,     0,     0,     0,    0,     0,    0,   0,   0,  0, 6, 7,
 		   8,      9,    10,    11,    13,    14,    16,   18,    20,   22,  25,  28, 32,
 		   35,    40,    45,    51,    57,    64,    71,   80,    90,  101, 114, 128,
@@ -852,6 +859,11 @@ static double klattp_inc[N_KLATTP];
 
 int Wavegen_Klatt(int length, int resume, frame_t *fr1, frame_t *fr2, WGEN_DATA *wdata, voice_t *wvoice)
 {
+#if USE_SPEECHPLAYER
+	if(wvoice->klattv[0] == 6)
+	return Wavegen_KlattSP(wdata, wvoice, length, resume, fr1, fr2);
+#endif
+
 	if (resume == 0)
 		SetSynth_Klatt(length, fr1, fr2, wvoice, 1);
 
@@ -985,9 +997,7 @@ static void SetSynth_Klatt(int length, frame_t *fr1, frame_t *fr2, voice_t *wvoi
 			if ((cmd == WCMD_WAVE) || (cmd == WCMD_PAUSE))
 				break; // next is not from spectrum, so continue until end of wave cycle
 		}
-	}
 
-	if (control & 1) {
 		for (ix = 1; ix < 6; ix++) {
 			if (prev_fr.ffreq[ix] != fr1->ffreq[ix]) {
 				// Discontinuity in formants.
@@ -1000,7 +1010,7 @@ static void SetSynth_Klatt(int length, frame_t *fr1, frame_t *fr2, voice_t *wvoi
 	}
 
 	for (ix = 0; ix < N_KLATTP; ix++) {
-		if ((ix >= 5) && ((fr1->frflags & FRFLAG_KLATT) == 0)) {
+		if ((ix >= 5) || ((fr1->frflags & FRFLAG_KLATT) == 0)) {
 			klattp1[ix] = klattp[ix] = 0;
 			klattp_inc[ix] = 0;
 		} else {
@@ -1058,15 +1068,19 @@ static void SetSynth_Klatt(int length, frame_t *fr1, frame_t *fr2, voice_t *wvoi
 	}
 }
 
-void KlattInit()
+void KlattInit(void)
 {
 
-	static short formant_hz[10] = { 280, 688, 1064, 2806, 3260, 3700, 6500, 7000, 8000, 280 };
-	static short bandwidth[10] = { 89, 160, 70, 160, 200, 200, 500, 500, 500, 89 };
-	static short parallel_amp[10] = { 0, 59, 59, 59, 59, 59, 59, 0, 0, 0 };
-	static short parallel_bw[10] = { 59, 59, 89, 149, 200, 200, 500, 0, 0, 0 };
+	static const short formant_hz[10] = { 280, 688, 1064, 2806, 3260, 3700, 6500, 7000, 8000, 280 };
+	static const short bandwidth[10] = { 89, 160, 70, 160, 200, 200, 500, 500, 500, 89 };
+	static const short parallel_amp[10] = { 0, 59, 59, 59, 59, 59, 59, 0, 0, 0 };
+	static const short parallel_bw[10] = { 59, 59, 89, 149, 200, 200, 500, 0, 0, 0 };
 
 	int ix;
+
+#if USE_SPEECHPLAYER
+	KlattInitSP();
+#endif
 
 	sample_count = 0;
 

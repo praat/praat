@@ -26,7 +26,7 @@ extern "C"
 #endif
 
 #include <stdint.h>
-//#include <stdbool.h>
+#include <stdbool.h>
 #include "espeak_ng.h"
 #include "phoneme.h"              // for PHONEME_TAB, N_PHONEME_TAB
 
@@ -76,7 +76,7 @@ extern "C"
 
 #define N_EMBEDDED_VALUES    15
 extern int embedded_value[N_EMBEDDED_VALUES];
-extern int embedded_default[N_EMBEDDED_VALUES];
+extern const int embedded_default[N_EMBEDDED_VALUES];
 
 #define N_KLATTP   10 // this affects the phoneme data file format
 #define N_KLATTP2  14 // used in vowel files, with extra parameters for future extensions
@@ -122,7 +122,7 @@ typedef struct { // 44 bytes
 } frame_t2; // without the extra Klatt parameters
 
 typedef struct {
-	unsigned char *pitch_env;
+	const unsigned char *pitch_env;
 	int pitch;      // pitch Hz*256
 	int pitch_ix;   // index into pitch envelope (*256)
 	int pitch_inc;  // increment to pitch_ix
@@ -382,8 +382,7 @@ typedef struct {
 	int spare2; // the struct length should be a multiple of 4 bytes
 } TUNE;
 
-extern int n_tunes;
-extern TUNE *tunes;
+
 
 // phoneme table
 extern PHONEME_TAB *phoneme_tab[N_PHONEME_TAB];
@@ -393,12 +392,7 @@ extern int n_phoneme_list;
 extern PHONEME_LIST phoneme_list[N_PHONEME_LIST+1];
 extern unsigned int embedded_list[];
 
-extern unsigned char env_fall[128];
-extern unsigned char env_rise[128];
-extern unsigned char env_frise[128];
-
-#define MAX_PITCH_VALUE  101
-extern unsigned char pitch_adjust_tab[MAX_PITCH_VALUE+1];
+extern const unsigned char env_fall[128];
 
 // queue of commands for wavegen
 #define WCMD_KLATT  1
@@ -429,7 +423,6 @@ void MarkerEvent(int type, unsigned int char_position, int value, int value2, un
 
 extern unsigned char *wavefile_data;
 extern int samplerate;
-extern int samplerate_native;
 
 #define N_ECHO_BUF 5500   // max of 250mS at 22050 Hz
 extern int echo_head;
@@ -445,13 +438,16 @@ void SetEmbedded(int control, int value);
 int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
 
 void Write4Bytes(FILE *f, int value);
-int Read4Bytes(FILE *f);
+
+#if USE_LIBSONIC
+void DoSonicSpeed(int value);
+#endif
 
 #define ENV_LEN  128    // length of pitch envelopes
 #define PITCHfall   0  // standard pitch envelopes
 #define PITCHrise   2
 #define N_ENVELOPE_DATA   20
-extern unsigned char *envelope_data[N_ENVELOPE_DATA];
+extern const unsigned char *const envelope_data[N_ENVELOPE_DATA];
 
 extern int formant_rate[];         // max rate of change of each formant
 extern SPEED_FACTORS speed;
@@ -459,7 +455,6 @@ extern SPEED_FACTORS speed;
 extern unsigned char *out_ptr;
 extern unsigned char *out_end;
 extern espeak_EVENT *event_list;
-extern t_espeak_callback *synth_callback;
 extern const int version_phdata;
 
 void DoEmbedded(int *embix, int sourceix);
@@ -468,7 +463,7 @@ void DoPhonemeMarker(int type, int char_posn, int length, char *name);
 int DoSample3(PHONEME_DATA *phdata, int length_mod, int amp);
 int DoSpect2(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,  PHONEME_LIST *plist, int modulation);
 int PauseLength(int pause, int control);
-const char *WordToString(unsigned int word);
+const char *WordToString(char buf[5], unsigned int word);
 
 #ifdef __cplusplus
 }

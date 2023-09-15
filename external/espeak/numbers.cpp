@@ -20,24 +20,27 @@
 #include "config.h"
 
 #include <ctype.h>
-//#include <stdbool.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wctype.h>
+#include <errno.h>
+#include <limits.h>
 
 #include "espeak_ng.h"
 #include "speak_lib.h"
 #include "encoding.h"
 
 #include "numbers.h"
+#include "common.h"
 #include "dictionary.h"  // for Lookup, TranslateRules, EncodePhonemes, Look...
 #include "phoneme.h"     // for phonSWITCH, PHONEME_TAB, phonEND_WORD, phonP...
-#include "readclause.h"  // for WordToString2, towlower2
+#include "readclause.h"  // for WordToString2
 #include "synthdata.h"   // for SelectPhonemeTable
 #include "synthesize.h"  // for phoneme_tab
-#include "translate.h"   // for Translator, LANGUAGE_OPTIONS, IsDigit09, WOR...
+#include "translate.h"   // for Translator, LANGUAGE_OPTIONS, WOR...
 #include "voice.h"       // for voice, voice_t
 
 #define M_LIGATURE  0x8000
@@ -80,7 +83,7 @@ typedef struct {
 } ACCENTS;
 
 // these are tokens to look up in the *_list file.
-static ACCENTS accents_tab[] = {
+static const ACCENTS accents_tab[] = {
 	{ "_lig", 1 },
 	{ "_smc", 0 },  // smallcap
 	{ "_tur", 0 },  // turned
@@ -479,7 +482,7 @@ void LookupLetter(Translator *tr, unsigned int letter, int next_byte, char *ph_b
 	// control, bit 0:  not the first letter of a word
 
 	int len;
-	static char single_letter[10] = { 0, 0 };
+	char single_letter[10] = { 0, 0 };
 	unsigned int dict_flags[2];
 	char ph_buf3[40];
 
@@ -500,8 +503,8 @@ void LookupLetter(Translator *tr, unsigned int letter, int next_byte, char *ph_b
 		if (tr->translator_name == L('e', 'n'))
 			return; // we are already using English
 
-		SetTranslator2(ESPEAKNG_DEFAULT_VOICE);
-		if (Lookup(translator2, &single_letter[2], ph_buf3) != 0) {
+		SetTranslator3(ESPEAKNG_DEFAULT_VOICE);
+		if (Lookup(translator3, &single_letter[2], ph_buf3) != 0) {
 			// yes, switch to English and re-translate the word
 			sprintf(ph_buf1, "%c", phonSWITCH);
 		}
@@ -543,36 +546,14 @@ void LookupLetter(Translator *tr, unsigned int letter, int next_byte, char *ph_b
 	SetWordStress(tr, ph_buf1, dict_flags, -1, control & 1);
 }
 
-// unicode ranges for non-ascii digits 0-9 (these must be in ascending order)
-static const int number_ranges[] = {
-	0x660, 0x6f0, // arabic
-	0x966, 0x9e6, 0xa66, 0xae6, 0xb66, 0xbe6, 0xc66, 0xce6, 0xd66, // indic
-	0xe50, 0xed0, 0xf20, 0x1040, 0x1090,
-	0
-};
-
-static int NonAsciiNumber(int letter)
-{
-	// Change non-ascii digit into ascii digit '0' to '9', (or -1 if not)
-	const int *p;
-	int base;
-
-	for (p = number_ranges; (base = *p) != 0; p++) {
-		if (letter < base)
-			break; // not found
-		if (letter < (base+10))
-			return letter-base+'0';
-	}
-	return -1;
-}
 
 #define L_SUB 0x4000 // subscript
 #define L_SUP 0x8000 // superscript
 
-static const char *modifiers[] = { NULL, "_sub", "_sup", NULL };
+
 
 // this list must be in ascending order
-static unsigned short derived_letters[] = {
+static const unsigned short derived_letters[] = {
 	0x00aa, 'a'+L_SUP,
 	0x00b2, '2'+L_SUP,
 	0x00b3, '3'+L_SUP,
@@ -638,15 +619,7 @@ static unsigned short derived_letters[] = {
 	0, 0
 };
 
-// names, using phonemes available to all languages
-static const char *hex_letters[] = {
-	"'e:j",
-	"b'i:",
-	"s'i:",
-	"d'i:",
-	"'i:",
-	"'ef"
-};
+
 
 int IsSuperscript(int letter)
 {
@@ -661,247 +634,6 @@ int IsSuperscript(int letter)
 			return derived_letters[ix+1];
 	}
 	return 0;
-}
-
-int TranslateLetter(Translator *tr, char *word, char *phonemes, int control, ALPHABET *current_alphabet)
-{
-	// get pronunciation for an isolated letter
-	// return number of bytes used by the letter
-	// control bit 0:  a non-initial letter in a word
-	//         bit 1:  say 'capital'
-	//         bit 2:  say character code for unknown letters
-
-	int n_bytes;
-	int letter;
-	int len;
-	int ix;
-	int c;
-	char *p2;
-	char *pbuf;
-	const char *modifier;
-	ALPHABET *alphabet;
-	int al_offset;
-	int al_flags;
-	int language;
-	int number;
-	int phontab_1;
-	int speak_letter_number;
-	char capital[30];
-	char ph_buf[80];
-	char ph_buf2[80];
-	char ph_alphabet[80];
-	char hexbuf[12];
-	static char pause_string[] = { phonPAUSE, 0 };
-
-	ph_buf[0] = 0;
-	ph_alphabet[0] = 0;
-	capital[0] = 0;
-	phontab_1 = translator->phoneme_tab_ix;
-
-	n_bytes = utf8_in(&letter, word);
-
-	if ((letter & 0xfff00) == 0x0e000)
-		letter &= 0xff; // uncode private usage area
-
-	if (control & 2) {
-		// include CAPITAL information
-		if (iswupper(letter))
-			Lookup(tr, "_cap", capital);
-	}
-	letter = towlower2(letter, tr);
-	LookupLetter(tr, letter, word[n_bytes], ph_buf, control & 1);
-
-	if (ph_buf[0] == 0) {
-		// is this a subscript or superscript letter ?
-		if ((c = IsSuperscript(letter)) != 0) {
-			letter = c & 0x3fff;
-			if ((control & 4 ) && ((modifier = modifiers[c >> 14]) != NULL)) {
-				// don't say "superscript" during normal text reading
-				Lookup(tr, modifier, capital);
-				if (capital[0] == 0) {
-					capital[2] = SetTranslator2(ESPEAKNG_DEFAULT_VOICE); // overwrites previous contents of translator2
-					Lookup(translator2, modifier, &capital[3]);
-					if (capital[3] != 0) {
-						capital[0] = phonPAUSE;
-						capital[1] = phonSWITCH;
-						len = strlen(&capital[3]);
-						capital[len+3] = phonSWITCH;
-						capital[len+4] = phontab_1;
-						capital[len+5] = 0;
-					}
-				}
-			}
-		}
-		LookupLetter(tr, letter, word[n_bytes], ph_buf, control & 1);
-	}
-
-	if (ph_buf[0] == phonSWITCH) {
-		strcpy(phonemes, ph_buf);
-		return 0;
-	}
-
-
-	if ((ph_buf[0] == 0) && ((number = NonAsciiNumber(letter)) > 0)) {
-		// convert a non-ascii number to 0-9
-		LookupLetter(tr, number, 0, ph_buf, control & 1);
-	}
-
-	al_offset = 0;
-	al_flags = 0;
-	if ((alphabet = AlphabetFromChar(letter)) != NULL) {
-		al_offset = alphabet->offset;
-		al_flags = alphabet->flags;
-	}
-
-	if (alphabet != current_alphabet) {
-		// speak the name of the alphabet
-		current_alphabet = alphabet;
-		if ((alphabet != NULL) && !(al_flags & AL_DONT_NAME) && (al_offset != translator->letter_bits_offset)) {
-			if ((al_flags & AL_DONT_NAME) || (al_offset == translator->langopts.alt_alphabet) || (al_offset == translator->langopts.our_alphabet)) {
-				// don't say the alphabet name
-			} else {
-				ph_buf2[0] = 0;
-				if (Lookup(translator, alphabet->name, ph_alphabet) == 0) { // the original language for the current voice
-					// Can't find the local name for this alphabet, use the English name
-					ph_alphabet[2] = SetTranslator2(ESPEAKNG_DEFAULT_VOICE); // overwrites previous contents of translator2
-					Lookup(translator2, alphabet->name, ph_buf2);
-				} else if (translator != tr) {
-					phontab_1 = tr->phoneme_tab_ix;
-					strcpy(ph_buf2, ph_alphabet);
-					ph_alphabet[2] = translator->phoneme_tab_ix;
-				}
-
-				if (ph_buf2[0] != 0) {
-					// we used a different language for the alphabet name (now in ph_buf2)
-					ph_alphabet[0] = phonPAUSE;
-					ph_alphabet[1] = phonSWITCH;
-					strcpy(&ph_alphabet[3], ph_buf2);
-					len = strlen(ph_buf2) + 3;
-					ph_alphabet[len] = phonSWITCH;
-					ph_alphabet[len+1] = phontab_1;
-					ph_alphabet[len+2] = 0;
-				}
-			}
-		}
-	}
-
-	// caution: SetWordStress() etc don't expect phonSWITCH + phoneme table number
-
-	if (ph_buf[0] == 0) {
-		if ((al_offset != 0) && (al_offset == translator->langopts.alt_alphabet))
-			language = translator->langopts.alt_alphabet_lang;
-		else if ((alphabet != NULL) && (alphabet->language != 0) && !(al_flags & AL_NOT_LETTERS))
-			language = alphabet->language;
-		else
-			language = L('e', 'n');
-
-		if ((language != tr->translator_name) || (language == L('k', 'o'))) {
-			char *p3;
-			int initial, code;
-			char hangul_buf[12];
-
-			// speak in the language for this alphabet (or English)
-			ph_buf[2] = SetTranslator2(WordToString2(language));
-
-			if (translator2 != NULL) {
-				if (((code = letter - 0xac00) >= 0) && (letter <= 0xd7af)) {
-					// Special case for Korean letters.
-					// break a syllable hangul into 2 or 3 individual jamo
-
-					hangul_buf[0] = ' ';
-					p3 = &hangul_buf[1];
-					if ((initial = (code/28)/21) != 11) {
-						p3 += utf8_out(initial + 0x1100, p3);
-					}
-					utf8_out(((code/28) % 21) + 0x1161, p3); // medial
-					utf8_out((code % 28) + 0x11a7, &p3[3]); // final
-					p3[6] = ' ';
-					p3[7] = 0;
-					ph_buf[3] = 0;
-					TranslateRules(translator2, &hangul_buf[1], &ph_buf[3], sizeof(ph_buf)-3, NULL, 0, NULL);
-					SetWordStress(translator2, &ph_buf[3], NULL, -1, 0);
-				} else
-					LookupLetter(translator2, letter, word[n_bytes], &ph_buf[3], control & 1);
-
-				if (ph_buf[3] == phonSWITCH) {
-					// another level of language change
-					ph_buf[2] = SetTranslator2(&ph_buf[4]);
-					LookupLetter(translator2, letter, word[n_bytes], &ph_buf[3], control & 1);
-				}
-
-				SelectPhonemeTable(voice->phoneme_tab_ix); // revert to original phoneme table
-
-				if (ph_buf[3] != 0) {
-					ph_buf[0] = phonPAUSE;
-					ph_buf[1] = phonSWITCH;
-					len = strlen(&ph_buf[3]) + 3;
-					ph_buf[len] = phonSWITCH; // switch back
-					ph_buf[len+1] = tr->phoneme_tab_ix;
-					ph_buf[len+2] = 0;
-				}
-			}
-		}
-	}
-
-	if (ph_buf[0] == 0) {
-		// character name not found
-
-		if (ph_buf[0] == 0) {
-			speak_letter_number = 1;
-			if (!(al_flags & AL_NO_SYMBOL)) {
-				if (iswalpha(letter))
-					Lookup(translator, "_?A", ph_buf);
-
-				if ((ph_buf[0] == 0) && !iswspace(letter))
-					Lookup(translator, "_??", ph_buf);
-
-				if (ph_buf[0] == 0)
-					EncodePhonemes("l'et@", ph_buf, NULL);
-			}
-
-			if (!(control & 4) && (al_flags & AL_NOT_CODE)) {
-				// don't speak the character code number, unless we want full details of this character
-				speak_letter_number = 0;
-			}
-
-			if (speak_letter_number) {
-				if (al_offset == 0x2800) {
-					// braille dots symbol, list the numbered dots
-					p2 = hexbuf;
-					for (ix = 0; ix < 8; ix++) {
-						if (letter & (1 << ix))
-							*p2++ = '1'+ix;
-					}
-					*p2 = 0;
-				} else {
-					// speak the hexadecimal number of the character code
-					sprintf(hexbuf, "%x", letter);
-				}
-
-				pbuf = ph_buf;
-				for (p2 = hexbuf; *p2 != 0; p2++) {
-					pbuf += strlen(pbuf);
-					*pbuf++ = phonPAUSE_VSHORT;
-					LookupLetter(translator, *p2, 0, pbuf, 1);
-					if (((pbuf[0] == 0) || (pbuf[0] == phonSWITCH)) && (*p2 >= 'a')) {
-						// This language has no translation for 'a' to 'f', speak English names using base phonemes
-						EncodePhonemes(hex_letters[*p2 - 'a'], pbuf, NULL);
-					}
-				}
-				strcat(pbuf, pause_string);
-			}
-		}
-	}
-
-	len = strlen(phonemes);
-
-	if (tr->langopts.accents & 2)  // 'capital' before or after the word ?
-		sprintf(ph_buf2, "%c%s%s%s", 0xff, ph_alphabet, ph_buf, capital);
-	else
-		sprintf(ph_buf2, "%c%s%s%s", 0xff, ph_alphabet, capital, ph_buf); // the 0xff marker will be removed or replaced in SetSpellingStress()
-	if ((len + strlen(ph_buf2)) < N_WORD_PHONEMES)
-		strcpy(&phonemes[len], ph_buf2);
-	return n_bytes;
 }
 
 void SetSpellingStress(Translator *tr, char *phonemes, int control, int n_chars)
@@ -927,7 +659,7 @@ void SetSpellingStress(Translator *tr, char *phonemes, int control, int n_chars)
 		if ((c == phonSTRESS_P) && (n_chars > 1) && (prev != phonSWITCH)) {
 			count++;
 
-			if (tr->langopts.spelling_stress == 1) {
+			if (tr->langopts.spelling_stress) {
 				// stress on initial letter when spelling
 				if (count > 1)
 					c = phonSTRESS_3;
@@ -1031,15 +763,14 @@ int TranslateRoman(Translator *tr, char *word, char *ph_out, WORD_TAB *wtab)
 	int value;
 	int subtract;
 	int repeat = 0;
-	int n_digits = 0;
 	char *word_start;
 	int num_control = 0;
 	unsigned int flags[2];
 	char ph_roman[30];
 	char number_chars[N_WORD_BYTES];
 
-	static const char *roman_numbers = "ixcmvld";
-	static int roman_values[] = { 1, 10, 100, 1000, 5, 50, 500 };
+	static const char roman_numbers[] = "ixcmvld";
+	static const int roman_values[] = { 1, 10, 100, 1000, 5, 50, 500 };
 
 	acc = 0;
 	prev = 0;
@@ -1085,7 +816,6 @@ int TranslateRoman(Translator *tr, char *word, char *ph_out, WORD_TAB *wtab)
 		else
 			acc += prev;
 		prev = value;
-		n_digits++;
 	}
 
 	if (IsDigit09(word[0]))
@@ -1150,9 +880,13 @@ static const char *M_Variant(int value)
 
 	switch (translator->langopts.numbers2 & NUM2_THOUSANDS_VAR_BITS)
 	{
-	case NUM2_THOUSANDS_VAR1: // lang=ru  use singular for xx1 except for x11
-		if ((teens == false) && ((value % 10) == 1))
-			return "1M";
+	case NUM2_THOUSANDS_VAR1: // lang=ru
+		if (teens == false) {
+			if ((value % 10) == 1)
+				return "1MA";
+			if (((value % 10) >= 2) && ((value % 10) <= 4))
+				return "0MA";
+		}
 		break;
 	case NUM2_THOUSANDS_VAR2: // lang=cs,sk
 		if ((value >= 2) && (value <= 4))
@@ -1185,7 +919,7 @@ static int LookupThousands(Translator *tr, int value, int thousandplex, int thou
 	// thousands_exact:  bit 0  no hundreds,tens,or units,  bit 1  ordinal numberr
 	int found;
 	int found_value = 0;
-	char string[12];
+	char string[14];
 	char ph_of[12];
 	char ph_thousands[40];
 	char ph_buf[40];
@@ -1582,7 +1316,7 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, bool suppress_nul
 
 			if (LookupThousands(tr, hundreds / 10, tplex, exact | ordinal, ph_10T) == 0) {
 				x = 0;
-				if (tr->langopts.numbers2 & (1 << tplex))
+				if (tr->langopts.numbers2 & (1 << tplex) && tplex <= 3)
 					x = 8; // use variant (feminine) for before thousands and millions
 				if (tr->translator_name == L('m', 'l'))
 					x = 0x208;
@@ -1685,7 +1419,7 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, bool suppress_nul
 				x |= 4; // tens and units only, no higher digits
 			if (ordinal & 0x20)
 				x |= 0x20; // variant form of ordinal number
-		} else if (tr->langopts.numbers2 & (1 << thousandplex))
+		} else if (tr->langopts.numbers2 & (1 << thousandplex) && thousandplex <= 3)
 			x = 8; // use variant (feminine) for before thousands and millions
 
 		if ((tr->translator_name == L('m', 'l')) && (thousandplex == 1))
@@ -1719,13 +1453,14 @@ static bool CheckThousandsGroup(char *word, int group_len)
 	// Is this a group of 3 digits which looks like a thousands group?
 	int ix;
 
-	if (IsDigit09(word[group_len]) || IsDigit09(-1))
-		return false;
-
 	for (ix = 0; ix < group_len; ix++) {
 		if (!IsDigit09(word[ix]))
 			return false;
 	}
+
+	if (IsDigit09(word[group_len]) || IsDigit09(word[-1]))
+		return false;
+
 	return true;
 }
 
@@ -1736,7 +1471,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	// "words" of 3 digits may be preceded by another number "word" for thousands or millions
 
 	int n_digits;
-	int value;
+	long value;
 	int ix;
 	int digix;
 	unsigned char c;
@@ -1747,7 +1482,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	int thousands_inc = 0;
 	int prev_thousands = 0;
 	int ordinal = 0;
-	int this_value;
+	long this_value;
 	int decimal_count;
 	int max_decimal_count;
 	int decimal_mode;
@@ -1767,6 +1502,8 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 
 	static const char str_pause[2] = { phonPAUSE_NOLINK, 0 };
 
+	char *end;
+
 	*flags = 0;
 	n_digit_lookup = 0;
 	buf_digit_lookup[0] = 0;
@@ -1775,7 +1512,11 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 
 	for (ix = 0; IsDigit09(word[ix]); ix++) ;
 	n_digits = ix;
-	value = this_value = atoi(word);
+	errno = 0;
+	this_value = strtol(word, &end, 10);
+	if (errno || end == word || this_value > INT_MAX)
+		return 0; // long number, speak as individual digits
+	value = this_value;
 
 	group_len = 3;
 	if (tr->langopts.numbers2 & NUM2_MYRIADS)
@@ -1941,7 +1682,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 		if (prev_thousands == 0) {
 			if ((decimal_point == 0) && (ordinal == 0)) {
 				// Look for special pronunciation for this number in isolation (LANG=kl)
-				sprintf(string, "_%dn", value);
+				sprintf(string, "_%ldn", value);
 				if (Lookup(tr, string, ph_out))
 					return 1;
 			}
@@ -2052,12 +1793,12 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	}
 	if ((ph_out[0] != 0) && (ph_out[0] != phonSWITCH)) {
 		int next_char;
-		char *plocal;
-		plocal = &word[n_digits+1];
+		char *p1;
+		p1 = &word[n_digits+1];
 
-		plocal += utf8_in(&next_char, plocal);
+		p1 += utf8_in(&next_char, p1);
 		if ((tr->langopts.numbers & NUM_NOPAUSE) && (next_char == ' '))
-			utf8_in(&next_char, plocal);
+			utf8_in(&next_char, p1);
 
 		if (!iswalpha(next_char) && (thousands_exact == 0))
 			strcat(ph_out, str_pause); // don't add pause for 100s,  6th, etc.

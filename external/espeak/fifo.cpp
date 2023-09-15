@@ -23,7 +23,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <pthread.h>
-//#include <stdbool.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,8 +36,9 @@
 #include "speech.h"
 #include "espeak_command.h"
 #include "fifo.h"
+#include "event.h"
 
-#ifdef USE_ASYNC
+#if USE_ASYNC
 
 // my_mutex: protects my_thread_is_talking,
 // my_stop_is_required, and the command fifo
@@ -45,7 +46,7 @@ static pthread_mutex_t my_mutex;
 static bool my_command_is_running = false;
 static pthread_cond_t my_cond_command_is_running;
 static bool my_stop_is_required = false;
-static bool my_terminate_is_required = false;
+static bool my_terminate_is_required = 0;
 
 // my_thread: reads commands from the fifo, and runs them.
 static pthread_t my_thread;
@@ -62,6 +63,7 @@ static espeak_ng_STATUS push(t_espeak_command *the_command);
 static t_espeak_command *pop(void);
 static void init(int process_parameters);
 static int node_counter = 0;
+static bool thread_inited = false;
 
 enum {
 	MAX_NODE_COUNTER = 400,
@@ -69,15 +71,19 @@ enum {
 	MAX_INACTIVITY_CHECK = 2
 };
 
-void fifo_init()
+void fifo_init(void)
 {
 	// security
 	pthread_mutex_init(&my_mutex, (const pthread_mutexattr_t *)NULL);
 	init(0);
 
-	assert(-1 != pthread_cond_init(&my_cond_command_is_running, NULL));
-	assert(-1 != pthread_cond_init(&my_cond_start_is_required, NULL));
-	assert(-1 != pthread_cond_init(&my_cond_stop_is_acknowledged, NULL));
+	int a_status;
+	a_status = pthread_cond_init(&my_cond_command_is_running, NULL);
+	assert(-1 != a_status);
+	a_status = pthread_cond_init(&my_cond_start_is_required, NULL);
+	assert(-1 != a_status);
+	a_status = pthread_cond_init(&my_cond_stop_is_acknowledged, NULL);
+	assert(-1 != a_status);
 
 	pthread_attr_t a_attrib;
 	if (pthread_attr_init(&a_attrib)
@@ -88,11 +94,14 @@ void fifo_init()
 	                      (void *)NULL)) {
 		assert(0);
 	}
+	thread_inited = true;
 
 	pthread_attr_destroy(&a_attrib);
 
 	// leave once the thread is actually started
-	assert(-1 != pthread_mutex_lock(&my_mutex));
+	a_status = pthread_mutex_lock(&my_mutex);
+	assert(-1 != a_status);
+	(void)a_status;
 	while (my_stop_is_acknowledged == false) {
 		while ((pthread_cond_wait(&my_cond_stop_is_acknowledged, &my_mutex) == -1) && errno == EINTR)
 			;
@@ -130,6 +139,9 @@ espeak_ng_STATUS fifo_add_command(t_espeak_command *the_command)
 espeak_ng_STATUS fifo_add_commands(t_espeak_command *command1, t_espeak_command *command2)
 {
 	espeak_ng_STATUS status;
+	if (!thread_inited) {
+		return ENS_NOT_INITIALIZED;
+	}
 	if ((status = pthread_mutex_lock(&my_mutex)) != ENS_OK)
 		return status;
 
@@ -163,8 +175,9 @@ espeak_ng_STATUS fifo_add_commands(t_espeak_command *command1, t_espeak_command 
 	return ENS_OK;
 }
 
-espeak_ng_STATUS fifo_stop()
+espeak_ng_STATUS fifo_stop(void)
 {
+	if (!thread_inited) return ENS_OK;
 	espeak_ng_STATUS status;
 	if ((status = pthread_mutex_lock(&my_mutex)) != ENS_OK)
 		return status;
@@ -190,12 +203,16 @@ espeak_ng_STATUS fifo_stop()
 	return ENS_OK;
 }
 
-int fifo_is_busy()
+int fifo_is_busy(void)
 {
-	return my_command_is_running;
+	if (!thread_inited) return false;
+	pthread_mutex_lock(&my_mutex);
+	bool running = my_command_is_running;
+	pthread_mutex_unlock(&my_mutex);
+	return running;
 }
 
-static int sleep_until_start_request_or_inactivity()
+static int sleep_until_start_request_or_inactivity(void)
 {
 	int a_start_is_required = false;
 
@@ -212,7 +229,6 @@ static int sleep_until_start_request_or_inactivity()
 		i++;
 
 		struct timespec ts;
-		struct timeval tv;
 
 		clock_gettime2(&ts);
 
@@ -222,8 +238,6 @@ static int sleep_until_start_request_or_inactivity()
 		       && errno == EINTR)
 			continue;
 
-		assert(gettimeofday(&tv, NULL) != -1);
-
 		if (err == 0)
 			a_start_is_required = true;
 	}
@@ -231,7 +245,7 @@ static int sleep_until_start_request_or_inactivity()
 	return a_start_is_required;
 }
 
-static espeak_ng_STATUS close_stream()
+static espeak_ng_STATUS close_stream(void)
 {
 	espeak_ng_STATUS status = pthread_mutex_lock(&my_mutex);
 	if (status != ENS_OK)
@@ -282,11 +296,16 @@ static void *say_thread(void *p)
 {
 	(void)p; // unused
 
+	int a_status;
+
 	// announce that thread is started
-	assert(-1 != pthread_mutex_lock(&my_mutex));
+	a_status = pthread_mutex_lock(&my_mutex);
+	assert(-1 != a_status);
 	my_stop_is_acknowledged = true;
-	assert(-1 != pthread_cond_signal(&my_cond_stop_is_acknowledged));
-	assert(-1 != pthread_mutex_unlock(&my_mutex));
+	a_status = pthread_cond_signal(&my_cond_stop_is_acknowledged);
+	assert(-1 != a_status);
+	a_status = pthread_mutex_unlock(&my_mutex);
+	assert(-1 != a_status);
 
 	bool look_for_inactivity = false;
 
@@ -299,7 +318,7 @@ static void *say_thread(void *p)
 		}
 		look_for_inactivity = true;
 
-		int a_status = pthread_mutex_lock(&my_mutex);
+		a_status = pthread_mutex_lock(&my_mutex);
 		assert(!a_status);
 
 		if (!a_start_is_required) {
@@ -312,11 +331,13 @@ static void *say_thread(void *p)
 
 		my_command_is_running = true;
 
-		assert(-1 != pthread_cond_broadcast(&my_cond_command_is_running));
-		assert(-1 != pthread_mutex_unlock(&my_mutex));
+		a_status = pthread_cond_broadcast(&my_cond_command_is_running);
+		assert(-1 != a_status);
+		a_status = pthread_mutex_unlock(&my_mutex);
+		assert(-1 != a_status);
 
 		while (my_command_is_running && !my_terminate_is_required) {
-			int a_status = pthread_mutex_lock(&my_mutex);
+			a_status = pthread_mutex_lock(&my_mutex);
 			assert(!a_status);
 			t_espeak_command *a_command = (t_espeak_command *)pop();
 
@@ -341,23 +362,25 @@ static void *say_thread(void *p)
 			// and waiting for my_cond_stop_is_acknowledged
 			init(1);
 
-			assert(-1 != pthread_mutex_lock(&my_mutex));
+			a_status = pthread_mutex_lock(&my_mutex);
+			assert(-1 != a_status);
 			my_start_is_required = false;
 
 			// acknowledge the stop request
 			my_stop_is_acknowledged = true;
-			int a_status = pthread_cond_signal(&my_cond_stop_is_acknowledged);
+			a_status = pthread_cond_signal(&my_cond_stop_is_acknowledged);
 			assert(a_status != -1);
 			pthread_mutex_unlock(&my_mutex);
 
 		}
 		// and wait for the next start
 	}
+	(void)a_status;
 
 	return NULL;
 }
 
-int fifo_is_command_enabled()
+int fifo_is_command_enabled(void)
 {
 	return 0 == my_stop_is_required;
 }
@@ -382,7 +405,7 @@ static espeak_ng_STATUS push(t_espeak_command *the_command)
 
 	node *n = (node *)malloc(sizeof(node));
 	if (n == NULL)
-		return ENOMEM;
+		return static_cast<espeak_ng_STATUS> (ENOMEM);
 
 	if (head == NULL) {
 		head = n;
@@ -402,7 +425,7 @@ static espeak_ng_STATUS push(t_espeak_command *the_command)
 	return ENS_OK;
 }
 
-static t_espeak_command *pop()
+static t_espeak_command *pop(void)
 {
 	t_espeak_command *the_command = NULL;
 
@@ -435,12 +458,17 @@ static void init(int process_parameters)
 	node_counter = 0;
 }
 
-void fifo_terminate()
+void fifo_terminate(void)
 {
+	if (!thread_inited) return;
+
+	pthread_mutex_lock(&my_mutex);
 	my_terminate_is_required = true;
+	pthread_mutex_unlock(&my_mutex);
 	pthread_cond_signal(&my_cond_start_is_required);
 	pthread_join(my_thread, NULL);
 	my_terminate_is_required = false;
+	thread_inited = false;
 
 	pthread_mutex_destroy(&my_mutex);
 	pthread_cond_destroy(&my_cond_start_is_required);

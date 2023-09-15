@@ -1,3 +1,3 @@
 
-#define PACKAGE_VERSION "1.51-dev"
+#define PACKAGE_VERSION "1.52-dev"
 
