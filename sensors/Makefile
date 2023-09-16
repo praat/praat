@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 # makefile for library "Sensors".
 # David Weenink 20230923
+=======
+# makefile for library "sensors"
+# David Weenink 20230817
+>>>>>>> ae15782530c800273532a33ab6de8f5020e7ce91
 
 include ../makefile.defs
 

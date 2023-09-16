@@ -7,7 +7,7 @@ CPPFLAGS = -I ../../kar -I ../../melder -I ../../dwtools -I ../../sys -I ../../d
 
 OBJECTS = case.o categories.o common.o compiledata.o compiledict.o \
 	dictionary.o \
-	encoding.o error.o  espeak_api.o \
+	encoding.o error.o espeak_api.o \
 	intonation.o klatt.o langopts.o mnemonics.o \
 	numbers.o phonemelist.o proplist.o readclause.o \
 	setlengths.o soundicon.o speech.o \
