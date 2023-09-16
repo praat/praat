@@ -1,27 +1,27 @@
-# makefile for library "EMA".
+# makefile for library "Sensors".
 # David Weenink 20230817
 
 include ../makefile.defs
 
 CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../external/clapack -I ../kar -I ../dwtools
 
-all: libEMA.a
+all: libSensors.a
 
-OBJECTS = EMA.o praat_EMA_init.o Sensor.o
+OBJECTS = EMA.o praat_Sensors_init.o Sensor.o
 
 .PHONY: all clean
 
-all: libEMA.a
+all: libSensors.a
 
 clean:
 	$(RM) $(OBJECTS)
-	$(RM) libEMA.a
+	$(RM) libSensors.a
 
-libEMA.a: $(OBJECTS)
-	touch libEMA.a
-	rm libEMA.a
-	$(AR) cq libEMA.a $(OBJECTS)
-	$(RANLIB) libEMA.a
+libSensors.a: $(OBJECTS)
+	touch libSensors.a
+	rm libSensors.a
+	$(AR) cq libSensors.a $(OBJECTS)
+	$(RANLIB) libSensors.a
 
 $(OBJECTS): *.h ../melder/*.h ../stat/*.h ../sys/*.h ../fon/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
 

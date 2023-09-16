@@ -19,7 +19,6 @@
 #define ESPEAK_NG_ERROR_API
 
 #include "espeak_ng.h"
-#include "melder.h"
 
 #ifdef __cplusplus
 extern "C"

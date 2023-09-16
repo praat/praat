@@ -24,14 +24,14 @@
 #include "translate.h"
 
 #ifdef __cplusplus
-//extern "C"
-//{
+extern "C"
+{
 #endif
 
 void CalcPitches(Translator *tr, int clause_type);
 
 #ifdef __cplusplus
-//}
+}
 #endif
 
 #endif

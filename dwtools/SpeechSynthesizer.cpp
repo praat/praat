@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2023 David Weenink
+ * Copyright (C) 2011-2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "dictionary.h"
 #include "string.h"
 #include "translate.h"
+#include "voice.h"
 
 #include "oo_DESTROY.h"
 #include "SpeechSynthesizer_def.h"
@@ -644,7 +645,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 			const int index_phon_table_list = LookupPhonemeTable (Melder_peek32to8 (phonemeCode));
 			if (index_phon_table_list > 0) {
 				voice -> phoneme_tab_ix = index_phon_table_list;
-				DoVoiceChange(voice);
+				(void) DoVoiceChange(voice);
 			}
 		}
 

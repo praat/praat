@@ -17,6 +17,7 @@
  */
 
 #include "config.h"
+#include "melder.h"
 
 #include <errno.h>
 #include <stdint.h>
@@ -27,7 +28,7 @@
 #include "espeak_ng.h"
 
 #include "error.h"
-#include "dictionary.h"           // for strncpy0
+#include "common.h"           // for strncpy0
 
 espeak_ng_STATUS
 create_file_error_context(espeak_ng_ERROR_CONTEXT *context,
@@ -138,11 +139,11 @@ espeak_ng_GetStatusCodeMessage(espeak_ng_STATUS status,
 		break;
 	default:
 		if ((status & ENS_GROUP_MASK) == ENS_GROUP_ERRNO)
-			#ifdef _WIN32
-				strerror_s(buffer, length, status);
-			#else
-				strerror_r(status, buffer, length);
-			#endif
+		#ifdef _WIN32
+			strerror_s(buffer, length, status);
+		#else
+			strerror_r(status, buffer, length);
+		#endif
 		else
 			snprintf(buffer, length, "Unspecified error 0x%x", status);
 		break;
@@ -160,16 +161,18 @@ espeak_ng_PrintStatusCodeMessage(espeak_ng_STATUS status,
 		switch (context->type)
 		{
 		case ERROR_CONTEXT_FILE:
-			//fprintf(out, "Error processing file '%s': %s.\n", context->name, error);
-			Melder_throw (U"Error processing file \"", Melder_peek8to32 (context->name), U"\":", Melder_peek8to32  (error));
+			Melder_throw (U"Error processing file\"", Melder_peek8to32 (context->name), 
+				U"\":", Melder_peek8to32 (error)
+			);
 			break;
 		case ERROR_CONTEXT_VERSION:
-			//fprintf(out, "Error: %s at '%s' (expected 0x%x, got 0x%x).\n", error, context->name, context->expected_version, context->version);
-			Melder_throw (U"eSpeak error: ", Melder_peek8to32  (error), U" at \"", Melder_peek8to32 (context->name), U"\" (expected ", context->expected_version, U", got ", context->version);
+			Melder_throw (U"eSpeak error: ", Melder_peek8to32  (error), U" at \"", 
+				Melder_peek8to32 (context->name), U"\" (expected ", context->expected_version, 
+				U", got ", context->version
+			);
 			break;
 		}
 	} else
-		//fprintf(out, "Error: %s.\n", error);
 		Melder_throw (U"eSpeak error: ", Melder_peek8to32  (error));
 }
 

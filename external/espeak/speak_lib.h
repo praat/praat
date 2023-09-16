@@ -28,7 +28,15 @@
 #include <stdio.h>
 #include <stddef.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#ifdef LIBESPEAK_NG_EXPORT
+#define ESPEAK_API __declspec(dllexport)
+#else
+#define ESPEAK_API __declspec(dllimport)
+#endif
+#else
 #define ESPEAK_API
+#endif
 
 #define ESPEAK_API_REVISION  12
 /*
@@ -408,8 +416,8 @@ typedef enum {
   espeakWORDGAP=7,
   espeakOPTIONS=8,   // reserved for misc. options.  not yet used
   espeakINTONATION=9,
+  espeakSSML_BREAK_MUL=10,
 
-  espeakRESERVED1=10,
   espeakRESERVED2=11,
   espeakEMPHASIS,   /* internal use */
   espeakLINELENGTH, /* internal use */
@@ -418,6 +426,7 @@ typedef enum {
 } espeak_PARAMETER;
 
 extern const int param_defaults[N_SPEECH_PARAM];
+
 typedef enum {
   espeakPUNCT_NONE=0,
   espeakPUNCT_ALL=1,

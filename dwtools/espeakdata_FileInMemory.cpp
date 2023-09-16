@@ -22,6 +22,7 @@
 
 #include "NUM2.h"
 #include "espeak_ng.h"
+#include "espeak_io.h"
 #include "FileInMemoryManager.h"
 #include "speech.h"
 #include "voice.h"
