@@ -7,7 +7,7 @@ CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../
 
 all: libSensors.a
 
-OBJECTS = EMA.o praat_sensors_init.o Sensor.o
+OBJECTS = EMA.o praat_Sensors_init.o Sensor.o
 
 .PHONY: all clean
 
@@ -17,7 +17,7 @@ clean:
 	$(RM) $(OBJECTS)
 	$(RM) libsensors.a
 
-libSensors.a: $(OBJECTS)
+libsensors.a: $(OBJECTS)
 	touch libsensors.a
 	rm libsensors.a
 	$(AR) cq libsensors.a $(OBJECTS)
