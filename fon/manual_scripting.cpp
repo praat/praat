@@ -100,6 +100,10 @@ INTRO (U" A text document with which you can create things that look like Praat�
 	"with capabilities of graphics and @scripting.")
 MAN_END
 
+MAN_BEGIN (U"NotebookEditor", U"ppgb", 20230325)
+INTRO (U"An aid to documented @@scripting@ as well as to creating manual pages.")
+MAN_END
+
 MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
@@ -160,7 +164,7 @@ Also see the @@scripting examples@.
 
 ################################################################################
 "Scripting 1. Your first scripts"
-© Paul Boersma 2000,2002,2004,2005,2008(“Scripting 1. My first script”),2011,2013,2014,2020,2023
+© Paul Boersma 2000,2002,2004,2005,2008(“My first script”),2011,2013,2014,2020,2023
 
 This page tells you how to create, run and save a script.
 To get a feel for how it works, you are advised to try out all the steps.
@@ -506,7 +510,7 @@ SCRIPT (6, 3, U""
 	"Text: 0, “left”, 75, “half”, “\\s{Hello world}”\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
-NORMAL (U"Now suppose that you to write two lines instead of just one, so you try a script with two lines:")
+NORMAL (U"Now suppose that you want to write two lines instead of just one, so you try a script with two lines:")
 CODE (U"writeInfoLine: “Hello world”")
 CODE (U"writeInfoLine: “How do you do?”")
 NORMAL (U"This turns out not to do what you want: it seems to write only the text “How do you do?”. "
@@ -2802,110 +2806,170 @@ as an already existing Sound object, it will be the newly created Sound object t
 because in case of ambiguity @`removeObject` always removes the most recently created object of that name.
 
 ################################################################################
+"sendpraat"
+© Paul Boersma #1997,2000
+
+See @@Scripting 8. Controlling Praat from another program@.
+
+################################################################################
+"Scripting 8. Controlling Praat from another program"
+© Paul Boersma 2000,2002,2021,2022
+
+Sendpraat is a function for sending messages to a %running Praat.
+It is also a Windows, MacOS, or Linux console program with the same purpose.
+
+As sendpraat cannot start up a new instance of Praat, you may often want to use
+`praat --send` instead (see @@Scripting 6.9. Calling from the command line@).
+
+, @@Scripting 8.1. The sendpraat subroutine@
+, @@Scripting 8.2. The sendpraat program@
+
+################################################################################
+"Scripting 8.1. The sendpraat subroutine"
+© Paul Boersma 2002,2003,2005,2009,2014,2015,2021,2023
+
+Sendpraat can be a subroutine for sending messages to a %running Praat program.
+
+C syntax
+========
+{; C
+	\#{sendpraat} (void *\%{display}, const char *\%{program}, long \%{timeOut}, char *\%{text});
+}
+Arguments
+=========
+%`display`
+: this argument is ignored; you can supply NULL.
+
+%`program`
+: the name of a running program that uses the Praat shell, e.g. "Praat" or "ALS".
+  The first letter may be specified as lower or upper case; it will be converted
+  to upper case for Windows or MacOS and to lower case for Linux.
+
+%`timeOut` (MacOS and Linux only)
+: the number of seconds that `sendpraat` will wait for an answer
+  before writing an error message. A %`timeOut` of 0 means that
+  the message will be sent asynchronously, i.e., that sendpraat
+  will return immediately without issuing any error message.
+
+%`text`
+: the script text to be sent. Sendpraat may alter this text!
+
+Example 1: killing a program
+============================
+{; C
+	char message [100], *errorMessage;
+	strcpy (message, "Quit");
+	errorMessage = \#{sendpraat} (NULL, "praat", 0, message);
+	if (errorMessage) fprintf (stderr, "%s", errorMessage);
+}
+This causes the program #Praat to quit (gracefully), because #Quit is a fixed
+command in one of the menus of that program.
+On MacOS and Linux, sendpraat returns immediately; on Windows, the %timeOut argument is ignored.
+The return value %errorMessage is a statically allocated string internal to sendpraat,
+and is overwritten by the next call to sendpraat.
+
+Example 2: playing a sound file in reverse
+==========================================
+Suppose you have a sound file whose name is in the variable %`fileName`,
+and you want the program #Praat, which can play sounds,
+to play this sound backwards.
+{; C
+	char message [1000], *errorMessage;
+	snprintf (message,1000, "Read from file: ~%s\nPlay reverse\nRemove", fileName);
+	errorMessage = \#{sendpraat} (NULL, "praat", 3000, message);
+}
+This will work because ##Play reverse# is an action command
+that becomes available in the dynamic menu when a Sound is selected.
+On Linux, sendpraat will allow #Praat at most 3000 seconds to perform this.
+
+Example 3: executing a large script file
+========================================
+Sometimes, it may be unpractical to send a large script directly to #sendpraat.
+Fortunately, the receiving program knows #runScript:
+{; C
+	char message [100], *errorMessage;
+	strcpy (message, "runScript: \"doAll.praat\", 20");
+	errorMessage = \#{sendpraat} (NULL, "praat", 0, message);
+}
+This causes the program #Praat to run the script `doAll.praat` with an argument of "20".
+
+How to download
+===============
+You can download the source code of the sendpraat subroutine
+via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.
+
+Instead
+=======
+Instead of using `sendpraat`, you can also just take the following simple steps in your program:
+1. on Linux, write the Praat script that you want to run, and save it as `~/.praat-dir/message`;
+2. get Praat's process id from `~/.praat-dir/pid`;
+3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: `kill -USR1 1178`
+
+If the first line of your script is the comment “`# 999`”, where 999 stands for the process id of your program,
+Praat will send your program a SIGUSR2 signal back when it finishes handling the script.
+If you do not want to receive such a message (if your program has no handler for it, the SIGUSR2 signal will kill your program),
+then do not include such a line.
+
+See also
+========
+To start a program from the command line instead and sending it a message,
+you would not use #sendpraat, but instead run the program with a script file as an argument.
+See @@Scripting 6.9. Calling from the command line@.
+
+################################################################################
+"Scripting 8.2. The sendpraat program"
+© Paul Boersma #1997,2000,2003,2005,2014,2015,2021,2023
+
+Sendpraat can be a Windows console or Unix (MacOS, Linux) terminal program for sending messages to a %running Praat program.
+
+Command line syntax
+===================
+{; sh
+	\#{sendpraat} [\%{timeOut}] \%{program} \%{message} ...
+}
+For the meaning of the arguments, see @@Scripting 8.1. The sendpraat subroutine|the sendpraat subroutine@.
+
+Example 1: killing a program
+============================
+{; sh
+	\#{sendpraat} 0 praat Quit
+}
+Causes the program #Praat to quit (gracefully), because #Quit is a fixed command in one of its menus.
+On Unix, `sendpraat` returns immediately; on Windows, you leave out the %`timeOut` argument.
+
+Example 2: playing a sound file in reverse
+==========================================
+{; sh
+	\#{sendpraat} 1000 praat "Read from file... hello.wav" "Play reverse" "Remove"
+}
+This works because ##Play reverse# is an action command
+that becomes available in the dynamic menu of the #Praat program when a Sound is selected.
+On Unix, `sendpraat` will allow #Praat at most 1000 seconds to perform this.
+
+Each line is a separate argument. Lines that contain spaces should be put inside double quotes.
+
+Example 3: drawing
+==================
+{; sh
+	\#{sendpraat} als "for i from 1 to 5" "Draw circle: 0.5, 0.5, i" "endfor"
+}
+This causes the program #Als to draw five concentric circles into the Picture window.
+
+Example 4: running a large script
+{; sh
+	\#{sendpraat} praat "runScript: \"doAll.praat\", 20"
+}
+This causes the program #Praat to execute the script ##doAll.praat# with an argument of "20".
+
+How to download
+===============
+You can download the sendpraat program
+via `www.praat.org` or from `http://www.fon.hum.uva.nl/praat/sendpraat.html`.
+
+################################################################################
 )~~~"
 MAN_PAGES_END
 
-MAN_BEGIN (U"sendpraat", U"ppgb", 20000927)
-NORMAL (U"See @@Scripting 8. Controlling Praat from another program@.")
-MAN_END
-
-MAN_BEGIN (U"Scripting 8. Controlling Praat from another program", U"ppgb", 20220514)
-INTRO (U"Sendpraat is a function for sending messages to a %running Praat. "
-	"It is also a Windows, MacOS, or Linux console program with the same purpose.")
-NORMAL (U"As sendpraat cannot start up a new instance of Praat, you may often want to use "
-	"`praat --send` instead (see @@Scripting 6.9. Calling from the command line@).")
-LIST_ITEM (U"@@Scripting 8.1. The sendpraat subroutine")
-LIST_ITEM (U"@@Scripting 8.2. The sendpraat program")
-MAN_END
-
-MAN_BEGIN (U"Scripting 8.1. The sendpraat subroutine", U"ppgb", 20230204)
-INTRO (U"Sendpraat can be a subroutine for sending messages to a %running Praat program.")
-ENTRY (U"Syntax")
-LIST_ITEM (U"##sendpraat (void *#%display##, const char *#%program##, long #%timeOut##, char *#%text##);")
-ENTRY (U"Arguments")
-TERM (U"%display")
-DEFINITION (U"this argument is ignored; you can supply NULL.")
-TERM (U"%program")
-DEFINITION (U"the name of a running program that uses the Praat shell, e.g. \"Praat\" or \"ALS\". "
-	"The first letter may be specified as lower or upper case; it will be converted "
-	"to upper case for Windows or MacOS and to lower case for Linux.")
-TERM (U"%timeOut (MacOS and Linux only)")
-DEFINITION (U"the number of seconds that sendpraat will wait for an answer "
-	"before writing an error message. A %timeOut of 0 means that "
-	"the message will be sent asynchronously, i.e., that sendpraat "
-	"will return immediately without issuing any error message.")
-TERM (U"%text")
-DEFINITION (U"the script text to be sent. Sendpraat may alter this text!")
-ENTRY (U"Example 1: killing a program")
-CODE (U"char message [100], *errorMessage;")
-CODE (U"strcpy (message, \"Quit\");")
-CODE (U"errorMessage = \\#{sendpraat} (NULL, \"praat\", 0, message);")
-CODE (U"if (errorMessage) fprintf (stderr, \"%s\", errorMessage);")
-NORMAL (U"This causes the program #Praat to quit (gracefully), because #Quit is a fixed "
-	"command in one of the menus of that program. "
-	"On MacOS and Linux, sendpraat returns immediately; on Windows, the %timeOut argument is ignored. "
-	"The return value %errorMessage is a statically allocated string internal to sendpraat, "
-	"and is overwritten by the next call to sendpraat.")
-ENTRY (U"Example 2: playing a sound file in reverse")
-NORMAL (U"Suppose you have a sound file whose name is in the variable $fileName, "
-	"and you want the program #Praat, which can play sounds, "
-	"to play this sound backwards.")
-CODE (U"char message [1000], *errorMessage;")
-CODE (U"snprintf (message,1000, \"Read from file: ~%s\\nPlay reverse\\nRemove\", fileName);")
-CODE (U"errorMessage = \\#{sendpraat} (NULL, \"praat\", 3000, message);")
-NORMAL (U"This will work because ##Play reverse# is an action command "
-	"that becomes available in the dynamic menu when a Sound is selected. "
-	"On Linux, sendpraat will allow #Praat at most 3000 seconds to perform this.")
-ENTRY (U"Example 3: executing a large script file")
-NORMAL (U"Sometimes, it may be unpractical to send a large script directly to #sendpraat. "
-	"Fortunately, the receiving program knows #runScript:")
-CODE (U"char message [100], *errorMessage;")
-CODE (U"strcpy (message, \"runScript: \\bs\"doAll.praat\\bs\", 20\");")
-CODE (U"errorMessage = \\#{sendpraat} (NULL, \"praat\", 0, message);")
-NORMAL (U"This causes the program #Praat to run the script ##doAll.praat# with an argument of \"20\".")
-ENTRY (U"How to download")
-NORMAL (U"You can download the source code of the sendpraat subroutine "
-	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
-ENTRY (U"Instead")
-NORMAL (U"Instead of using sendpraat, you can also just take the following simple steps in your program:")
-LIST_ITEM (U"1. on Linux, write the Praat script that you want to run, and save it as ##~/.praat-dir/message#;")
-LIST_ITEM (U"2. get Praat's process id from `~/.praat-dir/pid`;")
-LIST_ITEM (U"3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: `kill -USR1 1178`")
-NORMAL (U"If the first line of your script is the comment “`# 999`”, where 999 stands for the process id of your program, "
-	"Praat will send your program a SIGUSR2 signal back when it finishes handling the script. "
-	"If you do not want to receive such a message (if your program has no handler for it, the SIGUSR2 signal will kill your program), "
-	"then do not include such a line.")
-ENTRY (U"See also")
-NORMAL (U"To start a program from the command line instead and sending it a message, "
-	"you would not use #sendpraat, but instead run the program with a script file as an argument. "
-	"See @@Scripting 6.9. Calling from the command line@.")
-MAN_END
-
-MAN_BEGIN (U"Scripting 8.2. The sendpraat program", U"ppgb", 20211207)
-INTRO (U"Sendpraat can be a Windows console or Unix (MacOS, Linux) terminal program for sending messages to a %running Praat program.")
-ENTRY (U"Syntax")
-CODE (U"#sendpraat [%timeOut] %program %message...")
-NORMAL (U"For the meaning of the arguments, see @@Scripting 8.1. The sendpraat subroutine|the sendpraat subroutine@.")
-ENTRY (U"Example 1: killing a program")
-CODE (U"sendpraat 0 praat Quit")
-NORMAL (U"Causes the program #Praat to quit (gracefully), because #Quit is a fixed command in one of its menus. "
-	"On Unix, #sendpraat returns immediately; on Windows, you leave out the %timeOut argument.")
-ENTRY (U"Example 2: playing a sound file in reverse")
-CODE (U"sendpraat 1000 praat \"Read from file... hello.wav\" \"Play reverse\" \"Remove\"")
-NORMAL (U"This works because ##Play reverse# is an action command "
-	"that becomes available in the dynamic menu of the #Praat program when a Sound is selected. "
-	"On Unix, sendpraat will allow #Praat at most 1000 seconds to perform this.")
-NORMAL (U"Each line is a separate argument. Lines that contain spaces should be put inside double quotes.")
-ENTRY (U"Example 3: drawing")
-CODE (U"sendpraat als \"for i from 1 to 5\" \"Draw circle: 0.5, 0.5, i\" \"endfor\"")
-NORMAL (U"This causes the program #Als to draw five concentric circles into the Picture window.")
-ENTRY (U"Example 4: running a large script")
-CODE (U"sendpraat praat \"runScript: \\bs\"doAll.praat\\bs\", 20\"")
-NORMAL (U"This causes the program #Praat to execute the script ##doAll.praat# with an argument of \"20\".")
-ENTRY (U"How to download")
-NORMAL (U"You can download the sendpraat program "
-	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
-MAN_END
 
 /*
 ENTRY (U"How to run a script")
@@ -3040,36 +3104,6 @@ LIST_ITEM (U"2. Choose @@Add to dynamic menu...@ from the #File menu. Supply \"S
 LIST_ITEM (U"3. Click #OK and ensure that the button is clickable if you select one or more Sound objects. "
 	"This button will still be available after you leave the program and enter it again; "
 	"to remove it from the dynamic menus, use the @ButtonEditor.")
-MAN_END
-
-MAN_BEGIN (U"NotebookEditor", U"ppgb", 20230325)
-INTRO (U"An aid to documented @@scripting@ as well as to creating manual pages.")
-MAN_END
-
-MAN_BEGIN (U"undefined", U"ppgb", 20170910)
-INTRO (U"When you give a query command for a numeric value, Praat sometimes writes the numeric value ##--undefined--# "
-	"into the @@Info window@ (two hyphens at both sides of the word). This happens if the value you ask for is not defined, "
-	"as in the following examples:")
-LIST_ITEM (U"\\bu You select a Sound with a finishing time of 1.0 seconds and ask for the minimum point in the wave form "
-	"between 1.5 and 2.0 seconds (with the query command ##Get minimum...#).")
-LIST_ITEM (U"\\bu You ask for a pitch value in a voiceless part of the sound (select a #Pitch, "
-	"then choose ##Get value at time...#).")
-LIST_ITEM (U"\\bu You type into the @Calculator the following formula: 10\\^ 400.")
-ENTRY (U"Usage in a script")
-NORMAL (U"In a Praat script, this value is simply represented as \"undefined\". You use it to test whether "
-	"a query command returned a valid number:")
-CODE (U"selectObject: \"Pitch hallo\"")
-CODE (U"meanPitch = Get mean: 0.1, 0.2, \"Hertz\", \"Parabolic\"")
-CODE (U"if meanPitch = undefined")
-	CODE1 (U"# Take some exceptional action.")
-CODE (U"else")
-	CODE1 (U"# Take the normal action.")
-CODE (U"endif")
-ENTRY (U"Details for hackers")
-NORMAL (U"In text files, this value is written as ##--undefined--#. "
-	"In binary files, it is written as a big-endian IEEE positive infinity. "
-	"In memory, it is usually a specific \"not-a-number\" (NaN), namely the result of dividing 0 by 0, "
-	"although other NaNs, and also infinities, will equally be reported as --undefined--.")
 MAN_END
 
 MAN_BEGIN (U"Scripting examples", U"ppgb", 20040222)
