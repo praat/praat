@@ -34,6 +34,32 @@ INTRO (U"A command in the @Goodies submenu of the @@Praat menu@ of the @@Objects
 	"Choosing this command brings up Praat's @calculator.")
 MAN_END
 
+MAN_BEGIN (U"undefined", U"ppgb", 20170910)
+INTRO (U"When you give a query command for a numeric value, Praat sometimes writes the numeric value ##--undefined--# "
+	"into the @@Info window@ (two hyphens at both sides of the word). This happens if the value you ask for is not defined, "
+	"as in the following examples:")
+LIST_ITEM (U"\\bu You select a Sound with a finishing time of 1.0 seconds and ask for the minimum point in the wave form "
+	"between 1.5 and 2.0 seconds (with the query command ##Get minimum...#).")
+LIST_ITEM (U"\\bu You ask for a pitch value in a voiceless part of the sound (select a #Pitch, "
+	"then choose ##Get value at time...#).")
+LIST_ITEM (U"\\bu You type into the @Calculator the following formula: 10\\^ 400.")
+ENTRY (U"Usage in a script")
+NORMAL (U"In a Praat script, this value is simply represented as \"undefined\". You use it to test whether "
+	"a query command returned a valid number:")
+CODE (U"selectObject: \"Pitch hallo\"")
+CODE (U"meanPitch = Get mean: 0.1, 0.2, \"Hertz\", \"Parabolic\"")
+CODE (U"if meanPitch = undefined")
+	CODE1 (U"# Take some exceptional action.")
+CODE (U"else")
+	CODE1 (U"# Take the normal action.")
+CODE (U"endif")
+ENTRY (U"Details for hackers")
+NORMAL (U"In text files, this value is written as ##--undefined--#. "
+	"In binary files, it is written as a big-endian IEEE positive infinity. "
+	"In memory, it is usually a specific \"not-a-number\" (NaN), namely the result of dividing 0 by 0, "
+	"although other NaNs, and also infinities, will equally be reported as --undefined--.")
+MAN_END
+
 MAN_BEGIN (U"Formulas", U"ppgb", 20170916)
 INTRO (U"You can use numeric expressions and string (text) expressions in many places in Praat:")
 LIST_ITEM (U"\\bu in the @calculator in Praat’s @Goodies submenu;")

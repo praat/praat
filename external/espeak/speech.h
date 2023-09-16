@@ -20,7 +20,8 @@
 #ifndef ESPEAK_NG_SPEECH_H
 #define ESPEAK_NG_SPEECH_H
 
-#include <endian.h>               // for BYTE_ORDER, BIG_ENDIAN
+#include <sys/types.h>               // for BYTE_ORDER, BIG_ENDIAN
+	//ppgb 20230916 replaced <endian.h> with <sys/types.h>
 #include "espeak_ng.h"
 
 #if defined(__has_feature)
