@@ -1182,7 +1182,7 @@ char const *SelectVoice(espeak_VOICE *voice_select, int *found)
 }
 
 #if ! DATA_FROM_SOURCECODE_FILES
-static void GetVoices(const char *path, int len_path_voices, int is_language_file)
+void _________GetVoices(const char *path, int len_path_voices, int is_language_file)
 {
 	char fname[sizeof(path_home)+100];
 
