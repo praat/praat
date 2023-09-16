@@ -1,27 +1,25 @@
 # makefile for library "Sensors".
-# David Weenink 20230817
+# David Weenink 20230923
 
 include ../makefile.defs
 
 CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../external/clapack -I ../kar -I ../dwtools
 
-all: libSensors.a
-
-OBJECTS = EMA.o praat_Sensors_init.o Sensor.o
+OBJECTS = EMA.o praat_sensors_init.o Sensor.o
 
 .PHONY: all clean
 
-all: libSensors.a
+all: libsensors.a
 
 clean:
 	$(RM) $(OBJECTS)
-	$(RM) libSensors.a
+	$(RM) libsensors.a
 
-libSensors.a: $(OBJECTS)
-	touch libSensors.a
-	rm libSensors.a
-	$(AR) cq libSensors.a $(OBJECTS)
-	$(RANLIB) libSensors.a
+libsensors.a: $(OBJECTS)
+	touch libsensors.a
+	rm libsensors.a
+	$(AR) cq libsensors.a $(OBJECTS)
+	$(RANLIB) libsensors.a
 
 $(OBJECTS): *.h ../melder/*.h ../stat/*.h ../sys/*.h ../fon/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
 

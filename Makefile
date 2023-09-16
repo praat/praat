@@ -16,7 +16,7 @@ all: all-external all-self
 	$(LINK) -o $(EXECUTABLE) main/main_Praat.o $(MAIN_ICON) fon/libfon.a \
 		artsynth/libartsynth.a FFNet/libFFNet.a \
 		gram/libgram.a EEG/libEEG.a \
-		LPC/libLPC.a dwtools/libdwtools.a Sensors/libSensors.a \
+		LPC/libLPC.a dwtools/libdwtools.a sensors/libsensors.a \
 		foned/libfoned.a fon/libfon.a stat/libstat.a \
 		dwsys/libdwsys.a sys/libsys.a melder/libmelder.a kar/libkar.a \
 		external/espeak/libespeak.a \
@@ -51,7 +51,7 @@ all-self:
 	$(MAKE) -C dwtools
 	$(MAKE) -C LPC
 	$(MAKE) -C EEG
-	$(MAKE) -C Sensors
+	$(MAKE) -C sensors
 	$(MAKE) -C gram
 	$(MAKE) -C FFNet
 	$(MAKE) -C artsynth
@@ -82,7 +82,7 @@ clean-self:
 	$(MAKE) -C dwtools clean
 	$(MAKE) -C LPC clean
 	$(MAKE) -C EEG clean
-	$(MAKE) -C Sensors clean
+	$(MAKE) -C sensors clean
 	$(MAKE) -C gram clean
 	$(MAKE) -C FFNet clean
 	$(MAKE) -C artsynth clean
