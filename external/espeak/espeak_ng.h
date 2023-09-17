@@ -36,6 +36,11 @@ extern "C"
 #define ESPEAK_NG_API
 //ppgb #endif
 
+//ppgb:
+#ifndef DATA_FROM_SOURCECODE_FILES
+	#define DATA_FROM_SOURCECODE_FILES  1
+#endif
+
 #define ESPEAKNG_DEFAULT_VOICE "en"
 
 typedef enum {
