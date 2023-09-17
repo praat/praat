@@ -189,7 +189,7 @@ FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, c
 		}
 		return reinterpret_cast<FILE *> (index);
 	} catch (MelderError) {
-		Melder_throw (U"File ", Melder_peek8to32(filename), U" cannot be opended.");
+		Melder_throw (U"File ", Melder_peek8to32(filename), U" cannot be opened.");
 	}
 }
 
