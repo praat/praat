@@ -38,14 +38,55 @@ make
 Compile all code and dictonaries.
 
 **** 
-We have replaced the file io based on fopen, fclose, fgets etc... with our own io (see espeak_ng_io.cpp)
+We have replaced the file io based on fopen, fclose, fgets etc... with our own io (see espeak_io.cpp)
 
-We inserted a number of expilicy casts:
+We inserted a number of explicit casts:
 static_cast<espeak_ng_STATUS> (errno)
 
 Adapted some of the header files.
 
-#include "espeak_ng.h"
+In "espeak_ng.h", we should ignore all the dllexport and dllimport labels:
+	//ppgb #if defined(_WIN32) || defined(_WIN64)
+	//ppgb #ifdef LIBESPEAK_NG_EXPORT
+	//ppgb #define ESPEAK_NG_API __declspec(dllexport)
+	//ppgb #else
+	//ppgb #define ESPEAK_NG_API __declspec(dllimport)
+	//ppgb #endif
+	//ppgb #else
+	#define ESPEAK_NG_API
+	//ppgb #endif
+
+In "speak_ng.h", we make sure that DATA_FROM_SOURCECODE_FILES is true by default:
+	//ppgb:
+	#ifndef DATA_FROM_SOURCECODE_FILES
+		#define DATA_FROM_SOURCECODE_FILES  1
+	#endif
+
+In "speak_ng.h", we replace the Windows-specific part
+	#define PLATFORM_WINDOWS  1
+	#define PATHSEP '\\'
+with
+	#if DATA_FROM_SOURCECODE_FILES
+		#define PLATFORM_WINDOWS  0
+		#define PATHSEP '/'
+	#else
+		#define PLATFORM_WINDOWS  1
+		#define PATHSEP '\\'
+	#endif
+#endif
+This is because David hard-coded the paths to the data files with forward slashes.
+
+In "speech.cpp", in the function espeak_ng_Initialize, we remove setlocale,
+because the locale of the entire program shouldn't be overwritten by a library:
+	//ppgb if (set lo ca le(LC_CTYPE, "C.UTF-8") == NULL) {
+	//ppgb 	if (set lo ca le(LC_CTYPE, "UTF-8") == NULL) {
+	//ppgb 		if (set lo ca le(LC_CTYPE, "en_US.UTF-8") == NULL)
+	//ppgb 			set lo ca le(LC_CTYPE, "");
+	//ppgb 	}
+	//ppgb }
+(the inserted spaces are there because the absence of setlocale in this file
+ is automatically checked in the Praat test suite)
+
 #include "speak_lib.h"
 #include "encoding.h"
 #include "ucd.h"
@@ -54,7 +95,6 @@ Adapted some of the header files.
 #undef PLATFORM_POSIX
 #undef PLATFORM_WINDOWS
 #undef USE_NANOSLEEP
-#define DATA_FROM_SOURCECODE_FILES
 
 ****
 
