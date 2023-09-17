@@ -591,6 +591,8 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 
 static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, conststring32 textToSynthesize) {
 	try {
+TRACE
+trace(0);
 		/*
 			As it happens whenever a text starts or ends with two dots '..' we get an 
 			'Out Of Memory' error (in 1.51-dev)
@@ -605,9 +607,12 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 			text [length - 1] = U' ';
 		
 		int synth_flags = 0;
+trace(11);
 		espeak_ng_InitializePath (nullptr); // PATH_ESPEAK_DATA
+trace(12);
 		espeak_ng_ERROR_CONTEXT context = { 0 };
 		espeak_ng_STATUS status = espeak_ng_Initialize (& context);
+trace(13);
 		Melder_require (status == ENS_OK,
 			U"Internal espeak error. ", status);
 		if (my d_inputTextFormat == SpeechSynthesizer_INPUT_TAGGEDTEXT)
@@ -619,6 +624,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 			option_phoneme_events |= espeakINITIALIZE_PHONEME_IPA;
 
 		espeak_ng_SetParameter (espeakRATE, my d_wordsPerMinute, 0);
+trace(1);
 		/*
 			pitchAdjustment_0_99 = a * log10 (my d_pitchAdjustment) + b,
 			where 0.5 <= my d_pitchAdjustment <= 2
@@ -633,13 +639,15 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 		const conststring32 voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
 		espeak_ng_SetVoiceByName (Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
+trace(2);
 		const int wordGap_10ms = my d_wordGap * 100;   // espeak word gap is in units of 10 ms
 		espeak_ng_SetParameter (espeakWORDGAP, wordGap_10ms, 0);
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
-		
+trace(3);
 		status = espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
+trace(4);
 		if (! Melder_equ (my d_phonemeSet.get(), my d_languageName.get())) {
 			const conststring32 phonemeCode = SpeechSynthesizer_getPhonemeCode (me);
 			const int index_phon_table_list = LookupPhonemeTable (Melder_peek32to8 (phonemeCode));
@@ -648,11 +656,13 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 				(void) DoVoiceChange(voice);
 			}
 		}
+trace(5);
 
 		const conststring32 columnNames [] =
 				{ U"time", U"type", U"type-t", U"t-pos", U"length", U"a-pos", U"sample", U"id", U"uniq" };
 		my d_events = Table_createWithColumnNames (0, ARRAY_TO_STRVEC (columnNames));
 		unsigned int unique_identifier = 0;
+trace(6);
 		#ifdef _WIN32
 			conststringW textW = Melder_peek32toW (text.get());
 			synth_flags |= espeakCHARS_WCHAR;
@@ -662,7 +672,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 			synth_flags |= espeakCHARS_UTF8;
 			espeak_ng_Synthesize (textUTF8, Melder_length_utf8 (text.get(), false) + 1, 0, POS_CHARACTER, 0, synth_flags, & unique_identifier, me);
 		#endif
-				
+trace(7);
 		espeak_ng_Terminate ();
 	} catch (MelderError) {
 		espeak_Terminate ();
