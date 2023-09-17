@@ -366,10 +366,10 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Initialize(espeak_ng_ERROR_CONTEXT *con
 	// It seems that the wctype functions don't work until the locale has been set
 	// to something other than the default "C".  Then, not only Latin1 but also the
 	// other characters give the correct results with iswalpha() etc.
-	//ppgb if (setlocale(LC_CTYPE, "C.UTF-8") == NULL) {
-	//ppgb 	if (setlocale(LC_CTYPE, "UTF-8") == NULL) {
-	//ppgb 		if (setlocale(LC_CTYPE, "en_US.UTF-8") == NULL)
-	//ppgb 			setlocale(LC_CTYPE, "");
+	//ppgb if (set lo ca le(LC_CTYPE, "C.UTF-8") == NULL) {
+	//ppgb 	if (set lo ca le(LC_CTYPE, "UTF-8") == NULL) {
+	//ppgb 		if (set lo ca le(LC_CTYPE, "en_US.UTF-8") == NULL)
+	//ppgb 			set loc a le(LC_CTYPE, "");
 	//ppgb 	}
 	//ppgb }
 
