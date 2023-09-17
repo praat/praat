@@ -5,7 +5,7 @@ include ../makefile.defs
 
 CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../external/clapack -I ../kar -I ../dwtools
 
-all: libSensors.a
+all: libsensors.a
 
 OBJECTS = EMA.o praat_Sensors_init.o Sensor.o
 
