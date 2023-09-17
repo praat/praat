@@ -28,15 +28,15 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#if defined(_WIN32) || defined(_WIN64)
-#ifdef LIBESPEAK_NG_EXPORT
-#define ESPEAK_API __declspec(dllexport)
-#else
-#define ESPEAK_API __declspec(dllimport)
-#endif
-#else
+//ppgb #if defined(_WIN32) || defined(_WIN64)
+//ppgb #ifdef LIBESPEAK_NG_EXPORT
+//ppgb #define ESPEAK_API __declspec(dllexport)
+//ppgb #else
+//ppgb #define ESPEAK_API __declspec(dllimport)
+//ppgb #endif
+//ppgb #else
 #define ESPEAK_API
-#endif
+//ppgb #endif
 
 #define ESPEAK_API_REVISION  12
 /*

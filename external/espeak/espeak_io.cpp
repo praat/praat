@@ -20,6 +20,7 @@
 	djmw 20171024
 */
 
+#include "espeak_io.h"   //ppgb
 #include "espeakdata_FileInMemory.h"
 #include "espeak_ng.h"
 #include "speech.h"
@@ -77,19 +78,6 @@ int espeak_io_fprintf (FILE * stream, ... ) {
 
 int espeak_io_ungetc (int character, FILE * stream) {
 	return FileInMemoryManager_ungetc (ESPEAK_FILEINMEMORYMANAGER, character,stream);
-}
-/* This mimics GetFileLength of espeak-ng */
-int FileInMemoryManager_GetFileLength (FileInMemoryManager me, const char *filename) {
-		integer index = FileInMemorySet_lookUp (my files.get(), Melder_peek8to32(filename));
-		if (index > 0) {
-			FileInMemory fim = static_cast<FileInMemory> (my files -> at [index]);
-			return fim -> d_numberOfBytes;
-		}
-		// Directory ??
-		if (FileInMemorySet_hasDirectory (my files.get(), Melder_peek8to32(filename))) {
-			return -EISDIR;
-		}
-		return -1;
 }
 
 /* 

@@ -637,7 +637,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 		espeak_ng_SetParameter (espeakWORDGAP, wordGap_10ms, 0);
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
-		
+
 		status = espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
 		if (! Melder_equ (my d_phonemeSet.get(), my d_languageName.get())) {
@@ -662,7 +662,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 			synth_flags |= espeakCHARS_UTF8;
 			espeak_ng_Synthesize (textUTF8, Melder_length_utf8 (text.get(), false) + 1, 0, POS_CHARACTER, 0, synth_flags, & unique_identifier, me);
 		#endif
-				
+
 		espeak_ng_Terminate ();
 	} catch (MelderError) {
 		espeak_Terminate ();

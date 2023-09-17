@@ -1,16 +1,17 @@
-<<<<<<< HEAD
-# makefile for library "Sensors".
-# David Weenink 20230923
-=======
 # makefile for library "sensors"
 # David Weenink 20230817
->>>>>>> ae15782530c800273532a33ab6de8f5020e7ce91
 
 include ../makefile.defs
 
 CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../external/clapack -I ../kar -I ../dwtools
 
+<<<<<<< HEAD
 OBJECTS = EMA.o praat_sensors_init.o Sensor.o
+=======
+all: libsensors.a
+
+OBJECTS = EMA.o praat_Sensors_init.o Sensor.o
+>>>>>>> 5fb533860cd336f9097174359e9d603c666ded5a
 
 .PHONY: all clean
 

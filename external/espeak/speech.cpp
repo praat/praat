@@ -326,7 +326,7 @@ ESPEAK_NG_API void espeak_ng_InitializePath(const char *path)
 	var_type = REG_SZ;
 	RegQueryValueExA(RegKey, "Path", 0, &var_type, buf, &size);
 
-	if (check_data_path(buf, 1))
+	if (check_data_path((char *)buf, 1))   //ppgb casty
 		return;
 #elif !defined(PLATFORM_DOS)
 	if (check_data_path(getenv("ESPEAK_DATA_PATH"), 1))
@@ -366,12 +366,12 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Initialize(espeak_ng_ERROR_CONTEXT *con
 	// It seems that the wctype functions don't work until the locale has been set
 	// to something other than the default "C".  Then, not only Latin1 but also the
 	// other characters give the correct results with iswalpha() etc.
-	if (setlocale(LC_CTYPE, "C.UTF-8") == NULL) {
-		if (setlocale(LC_CTYPE, "UTF-8") == NULL) {
-			if (setlocale(LC_CTYPE, "en_US.UTF-8") == NULL)
-				setlocale(LC_CTYPE, "");
-		}
-	}
+	//ppgb if (set lo ca le(LC_CTYPE, "C.UTF-8") == NULL) {
+	//ppgb 	if (set lo ca le(LC_CTYPE, "UTF-8") == NULL) {
+	//ppgb 		if (set lo ca le(LC_CTYPE, "en_US.UTF-8") == NULL)
+	//ppgb 			set loc a le(LC_CTYPE, "");
+	//ppgb 	}
+	//ppgb }
 
 	espeak_ng_STATUS result = LoadPhData(&srate, context);
 	if (result != ENS_OK)

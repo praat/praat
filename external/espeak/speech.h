@@ -55,8 +55,13 @@ extern "C"
 
 #if defined(_WIN32) || defined(_WIN64) // Windows
 
-#define PLATFORM_WINDOWS 1
-#define PATHSEP '\\'
+#if DATA_FROM_SOURCECODE_FILES
+	#define PLATFORM_WINDOWS  0
+	#define PATHSEP '/'
+#else
+	#define PLATFORM_WINDOWS  1
+	#define PATHSEP '\\'
+#endif
 #define N_PATH_HOME_DEF  230
 #define NO_VARIADIC_MACROS
 
