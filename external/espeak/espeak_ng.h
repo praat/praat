@@ -26,15 +26,15 @@ extern "C"
 {
 #endif
 
-#if defined(_WIN32) || defined(_WIN64)
-#ifdef LIBESPEAK_NG_EXPORT
-#define ESPEAK_NG_API __declspec(dllexport)
-#else
-#define ESPEAK_NG_API __declspec(dllimport)
-#endif
-#else
+//ppgb #if defined(_WIN32) || defined(_WIN64)
+//ppgb #ifdef LIBESPEAK_NG_EXPORT
+//ppgb #define ESPEAK_NG_API __declspec(dllexport)
+//ppgb #else
+//ppgb #define ESPEAK_NG_API __declspec(dllimport)
+//ppgb #endif
+//ppgb #else
 #define ESPEAK_NG_API
-#endif
+//ppgb #endif
 
 #define ESPEAKNG_DEFAULT_VOICE "en"
 
