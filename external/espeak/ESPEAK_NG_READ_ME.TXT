@@ -8,7 +8,7 @@ The espeak-ng program and its library are the successor of espeak
 (espeak was maintained by Jonathan Duddington). Espeak-ng is a fork 
 maintained by Reece H. Dunn.
 We have cloned espeak-ng's git repository with the command 
-'git clone https://github.com/espeak-ng/espeak-ng.git'.
+`git clone https://github.com/espeak-ng/espeak-ng.git`.
 
 In espeak-ng, the espeak-ng-data directory is used to supply the 
 data the synthesizer needs. The synthesizer needs the location of 
@@ -45,7 +45,10 @@ static_cast<espeak_ng_STATUS> (errno)
 
 Adapted some of the header files.
 
-In "espeak_ng.h", we should ignore all the dllexport and dllimport labels:
+The overaching header file is `espeak_ng.h`,
+so any #defines that should be global to espeak should be defined in `espeak_ng.h`.
+
+In `espeak_ng.h`, we should ignore all the `dllexport` and `dllimport` labels:
 	//ppgb #if defined(_WIN32) || defined(_WIN64)
 	//ppgb #ifdef LIBESPEAK_NG_EXPORT
 	//ppgb #define ESPEAK_NG_API __declspec(dllexport)
@@ -56,13 +59,17 @@ In "espeak_ng.h", we should ignore all the dllexport and dllimport labels:
 	#define ESPEAK_NG_API
 	//ppgb #endif
 
-In "speak_ng.h", we make sure that DATA_FROM_SOURCECODE_FILES is true by default:
+In `speak_ng.h`, we make sure that `DATA_FROM_SOURCECODE_FILES` is true by default:
 	//ppgb:
 	#ifndef DATA_FROM_SOURCECODE_FILES
 		#define DATA_FROM_SOURCECODE_FILES  1
 	#endif
+This is because the compilation in Praat should be the default,
+whereas compilation in the environment of actually existing data files
+should be restricted to special debugging cases
+(compile with `-DDATA_FROM_SOURCECODE_FILES=0` in that case).
 
-In "speak_ng.h", we replace the Windows-specific part
+In `speak_ng.h`, we replace the Windows-specific part
 	#define PLATFORM_WINDOWS  1
 	#define PATHSEP '\\'
 with
@@ -76,7 +83,7 @@ with
 #endif
 This is because David hard-coded the paths to the data files with forward slashes.
 
-In "speech.cpp", in the function espeak_ng_Initialize, we remove setlocale,
+In `speech.cpp`, in the function `espeak_ng_Initialize`, we remove `setlocale`,
 because the locale of the entire program shouldn't be overwritten by a library:
 	//ppgb if (set lo ca le(LC_CTYPE, "C.UTF-8") == NULL) {
 	//ppgb 	if (set lo ca le(LC_CTYPE, "UTF-8") == NULL) {
@@ -84,8 +91,11 @@ because the locale of the entire program shouldn't be overwritten by a library:
 	//ppgb 			set lo ca le(LC_CTYPE, "");
 	//ppgb 	}
 	//ppgb }
-(the inserted spaces are there because the absence of setlocale in this file
+(the inserted spaces are there because the absence of `setlocale` in this file
  is automatically checked in the Praat test suite)
+
+Finally, make sure not to include `<windows.h>` or `melder.h`
+after `espeak_ng.h`, because they may redefine `fopen`.
 
 #include "speak_lib.h"
 #include "encoding.h"
@@ -98,7 +108,7 @@ because the locale of the entire program shouldn't be overwritten by a library:
 
 ****
 
-More details can be found in the "espeak_ng_data_to_code.praat" file.
+More details can be found in the `espeak_ng_data_to_code.praat` file.
 
 
 
