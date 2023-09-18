@@ -179,7 +179,8 @@ enum { NO_SYMBOL_,
 		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, COMBINE_VEC_, PART_VEC_, PART_MAT_, EDITOR_,
 		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
 		HASH_, HEX_STR_, UNHEX_STR_,
-		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_, FILE_NAMES_STRVEC_, FOLDER_NAMES_STRVEC_,
+		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_,
+		FILE_NAMES_STRVEC_, FOLDER_NAMES_STRVEC_, FILE_NAMES_CASE_INSENSITIVE_STRVEC_, FOLDER_NAMES_CASE_INSENSITIVE_STRVEC_,
 		SPLIT_BY_WHITESPACE_STRVEC_, SPLIT_BY_STRVEC_,
 	#define HIGH_FUNCTION_N  SPLIT_BY_STRVEC_
 
@@ -324,7 +325,9 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"size", U"numberOfRows", U"numberOfColumns", U"combine#", U"part#", U"part##", U"editor",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
 	U"hash", U"hex$", U"unhex$",
-	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#", U"splitBy$#",
+	U"empty$#", U"readLinesFromFile$#",
+	U"fileNames$#", U"folderNames$#", U"fileNames_caseInsensitive$#", U"folderNames_caseInsensitive$#",
+	U"splitByWhitespace$#", U"splitBy$#",
 
 	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
 	U"createFolder", U"createDirectory", U"setWorkingDirectory", U"variableExists",
@@ -5423,6 +5426,28 @@ static void do_folderNames_STRVEC () {
 	autoSTRVEC result = folderNames_STRVEC (folderPattern->getString());
 	pushStringVector (result.move());
 }
+static void do_fileNames_caseInsensitive_STRVEC () {
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	Melder_require (narg->number == 1,
+		U"The function “fileNames_caseInsensitive$#” requires one argument, namely the file pattern.");
+	const Stackel filePattern = pop;
+	if (filePattern->which != Stackel_STRING)
+		Melder_throw (U"The argument of the function “fileNames_caseInsensitive$#” should be a string (namely the file path and pattern), not ", filePattern->whichText(), U".");
+	autoSTRVEC result = fileNames_caseInsensitive_STRVEC (filePattern->getString());
+	pushStringVector (result.move());
+}
+static void do_folderNames_caseInsensitive_STRVEC () {
+	const Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	Melder_require (narg->number == 1,
+		U"The function “folderNames_caseInsensitive$#” requires one argument, namely the file pattern.");
+	const Stackel folderPattern = pop;
+	Melder_require (folderPattern->which == Stackel_STRING,
+		U"The argument of the function “folderNames_caseInsensitive$#” should be a string (namely the folder path), not ", folderPattern->whichText(), U".");
+	autoSTRVEC result = folderNames_caseInsensitive_STRVEC (folderPattern->getString());
+	pushStringVector (result.move());
+}
 static void do_splitByWhitespace_STRVEC () {
 	const Stackel narg = pop;
 	Melder_assert (narg -> which == Stackel_NUMBER);
@@ -8334,6 +8359,8 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case READ_LINES_FROM_FILE_STRVEC_: { do_readLinesFromFile_STRVEC ();
 } break; case FILE_NAMES_STRVEC_: { do_fileNames_STRVEC ();
 } break; case FOLDER_NAMES_STRVEC_: { do_folderNames_STRVEC ();
+} break; case FILE_NAMES_CASE_INSENSITIVE_STRVEC_: { do_fileNames_caseInsensitive_STRVEC ();
+} break; case FOLDER_NAMES_CASE_INSENSITIVE_STRVEC_: { do_folderNames_caseInsensitive_STRVEC ();
 } break; case SPLIT_BY_WHITESPACE_STRVEC_: { do_splitByWhitespace_STRVEC ();
 } break; case SPLIT_BY_STRVEC_: { do_splitBy_STRVEC ();
 /********** String functions: **********/

@@ -1,7 +1,7 @@
 #pragma once
 /* STRVEC.h
  *
- * Copyright (C) 1992-2022 Paul Boersma
+ * Copyright (C) 1992-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
  */
 
 autoSTRVEC fileNames_STRVEC (conststring32 path /* cattable */);
-
 autoSTRVEC folderNames_STRVEC (conststring32 path /* cattable */);
+autoSTRVEC fileNames_caseInsensitive_STRVEC (conststring32 path /* cattable */);
+autoSTRVEC folderNames_caseInsensitive_STRVEC (conststring32 path /* cattable */);
 
 autoSTRVEC readLinesFromFile_STRVEC (MelderFile file);
 

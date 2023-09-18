@@ -25,9 +25,13 @@ MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
 "What's new?"
-© Paul Boersma 2023
+© Paul Boersma 1995–2023
 
 Latest changes in Praat.
+
+##6.3.18# (xx September 2023)
+• @SpeechSynthesizer: included the new version of eSpeak (development 1.52), which has 133 languages.
+• @@Add to menu...@: you can now add separators, headers and indented submenus to menus in editor windows.
 
 ##6.3.17# (10 September 2023)
 • SoundEditor: three Paste options, namely ##Paste before selection# (Shift-Command-V),
@@ -159,7 +163,7 @@ What used to be new?
 
 ################################################################################
 "What was new in 6.3?"
-© Paul Boersma 2022
+© Paul Boersma 2021,2022
 
 ##6.3# (15 November 2022)
 • Number-aware sorting for labels when drawing tables.
@@ -282,7 +286,7 @@ What used to be new?
 
 ################################################################################
 "What was new in 6.2?"
-© Paul Boersma 2021
+© Paul Boersma 2019–2021
 
 ##6.2# (15 November 2021)
 • TextGrid window: closing box and opening triangle for IPA chart.
@@ -540,7 +544,7 @@ then dragged the mouse out of that window, then released the mouse button, and t
 
 ################################################################################
 "What was new in 6.1?"
-© Paul Boersma 2019
+© Paul Boersma 2015–2019
 
 ##6.1# (13 July 2019)
 
@@ -787,7 +791,7 @@ then dragged the mouse out of that window, then released the mouse button, and t
 
 ################################################################################
 "What was new in 6.0?"
-© Paul Boersma 2015
+© Paul Boersma 2014,2015
 
 ##6.0# (28 October 2015)
 • Linux: use PulseAudio as the server for playing sound.
@@ -896,7 +900,7 @@ the column index was larger than the number of rows.
 
 ################################################################################
 "What was new in 5.4?"
-© Paul Boersma 2014
+© Paul Boersma 2011–2014
 
 ##5.4# (4 October 2014)
 
@@ -1234,7 +1238,7 @@ the column index was larger than the number of rows.
 
 ################################################################################
 "What was new in 5.3?"
-© Paul Boersma 2011
+© Paul Boersma 2010,2011
 
 ##5.3# (15 October 2011)
 
@@ -1426,7 +1430,7 @@ if the selection ran from the penultimate interval to the end of the TextGrid.
 
 ################################################################################
 "What was new in 5.2?"
-© Paul Boersma 2010
+© Paul Boersma 2009,2010
 
 ##5.2# (29 October 2010)
 
@@ -1659,7 +1663,7 @@ if the selection ran from the penultimate interval to the end of the TextGrid.
 
 ################################################################################
 "What was new in 5.1?"
-© Paul Boersma 2009-01-31
+© Paul Boersma 2007–2009
 
 ##5.1# (31 January 2009)
 • Editors for Klatt synthesis.
@@ -1841,7 +1845,7 @@ if the names of these files or their directory paths contained non-ASCII charact
 
 ################################################################################
 "What was new in 5.0?"
-© Paul Boersma 2007-12-10
+© Paul Boersma 2007
 
 ##5.0# (10 December 2007)
 • Corrected many bugs.
@@ -2012,7 +2016,7 @@ if the names of these files or their directory paths contained non-ASCII charact
 
 ################################################################################
 "What was new in 4.6?"
-© Paul Boersma 2007
+© Paul Boersma 2006,2007
 
 ##4.6# (12 May 2007)
 
