@@ -7574,21 +7574,6 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_formula")
 }
 
-FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhereMahalanobis, U"Table: Extract rows where (mahalanobis)", nullptr) {
-	STRINGARRAY_LINES (2, dataColumnNames, U"Extract all rows where columns...", { U"F1", U"F2", U"F3" })
-	CHOICE_ENUM (kMelder_number, which,
-			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
-	REAL (numberOfSigmas, U"...the number", U"2.0")
-	SENTENCE (factorColumnName, U"Factor column", U"")
-	OK
-DO
-	CONVERT_EACH_TO_ONE (Table)
-		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
-		const integer factorColumnNumber = Table_columnNameToNumber_0 (me, factorColumnName);
-		autoTable result = Table_extractMahalanobis (me, columnNumbers.get(), which, numberOfSigmas, factorColumnNumber);
-	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
-}
-
 // deprecated 2023
 FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
 	STRINGARRAY_LINES (2, dataColumnNames, U"Extract all rows where columns...", { U"F1", U"F2", U"F3" })
@@ -7605,6 +7590,21 @@ DO
 		const integer factorColumnNumber = Table_columnNameToNumber_0 (me, factorColumnName);
 		autoTable thee = Table_extractRowsWhere_e (me, condition, interpreter);
 		autoTable result = Table_extractMahalanobis (thee.get(), columnNumbers.get(), which, numberOfSigmas, factorColumnNumber);
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
+}
+
+FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhereMahalanobis, U"Table: Extract rows where (mahalanobis)", nullptr) {
+	STRINGARRAY_LINES (2, dataColumnNames, U"Extract all rows where columns...", { U"F1", U"F2", U"F3" })
+	CHOICE_ENUM (kMelder_number, which,
+			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
+	REAL (numberOfSigmas, U"...the number", U"2.0")
+	SENTENCE (factorColumnName, U"Factor column", U"")
+	OK
+DO_ALTERNATIVE (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere)
+	CONVERT_EACH_TO_ONE (Table)
+		autoINTVEC columnNumbers = Table_columnNamesToNumbers (me, dataColumnNames);
+		const integer factorColumnNumber = Table_columnNameToNumber_0 (me, factorColumnName);
+		autoTable result = Table_extractMahalanobis (me, columnNumbers.get(), which, numberOfSigmas, factorColumnNumber);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
 }
 
@@ -10771,7 +10771,7 @@ void praat_David_init () {
 	INCLUDE_LIBRARY (praat_MDS_actions_init)
 	INCLUDE_LIBRARY (praat_HMM_init)
 	INCLUDE_LIBRARY (praat_BSS_init)
-	INCLUDE_LIBRARY (praat_Sensors_init)
+	INCLUDE_LIBRARY (praat_sensors_init)
 }
 
 /* End of file praat_David.cpp */
