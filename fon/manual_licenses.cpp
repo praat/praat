@@ -243,7 +243,7 @@ Here is the Unicode Inc. license text:
 `
 ################################################################################
 "Acknowledgments"
-© Paul Boersma 2022
+© Paul Boersma 2002,2003,2005–2008,2010–2016,2020–2023
 
 The following people contributed source code to Praat:
 
@@ -273,7 +273,8 @@ We included the following freely available software libraries in Praat (sometime
 	contains AMD software by the same author (LGPL 2.1 or later).
 , PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs,
 	version 19.7.0 of April 2021 (CC-BY-like license).
-, Espeak: text-to-speech synthesizer by Jonathan Duddington and Reece Dunn (GPL 3 or later).
+, Espeak(-NG): text-to-speech synthesizer by Jonathan Duddington and Reece Dunn,
+	development version 1.52 of August 2023 (GPL 3 or later).
 , MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).
 , FLAC: Free Lossless Audio Codec by Josh Coalson and Xiph.Org, version 1.3.3 (@@FLAC BSD 3-clause license@).
 , Ogg Vorbis: audio compression by Christopher Montgomery (@@Ogg Vorbis BSD 3-clause license@).
