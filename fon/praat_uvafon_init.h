@@ -1,6 +1,6 @@
-#ifndef _praat_uvafon_h_
-#define _praat_uvafon_h_
-/* praat_uvafon.h
+#ifndef _praat_uvafon_init_h_
+#define _praat_uvafon_init_h_
+/* praat_uvafon_init.h
  *
  * Copyright (C) 2016,2021 Paul Boersma
  *
@@ -24,4 +24,4 @@ void praat_uvafon_init ();
 void praat_uvafon_TextGrid_init ();
 
 #endif
-/* End of file praat_uvafon.h */
+/* End of file praat_uvafon_init.h */

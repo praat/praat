@@ -1,4 +1,4 @@
-/* praat_Fon.cpp
+/* praat_uvafon_init.cpp
  *
  * Copyright (C) 1992-2023 Paul Boersma
  *
@@ -65,7 +65,7 @@
 #include "praat_Matrix.h"
 #include "praat_Tiers.h"
 #include "praat_ExperimentMFC.h"
-#include "praat_uvafon.h"
+#include "praat_uvafon_init.h"
 
 static const conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
 static const conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
@@ -3806,4 +3806,4 @@ praat_addAction2 (classIntensity, 1, classPitch, 1, U"Query", nullptr, 0, nullpt
 	praat_ExperimentMFC_init ();
 }
 
-/* End of file praat_Fon.cpp */
+/* End of file praat_uvafon_init.cpp */
