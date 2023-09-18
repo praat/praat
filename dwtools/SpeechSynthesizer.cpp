@@ -589,6 +589,12 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 	}
 }
 
+static autostring8 ipa_to_kirshenbaum (conststring32 text) {
+	autostring8 result;
+	return result;
+	
+}
+
 static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, conststring32 text) {
 	try {
 		int synth_flags = 0;
