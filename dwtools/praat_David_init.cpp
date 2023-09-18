@@ -149,7 +149,7 @@
 #include "praat_TimeFrameSampled.h"
 #include "praat_Matrix.h"
 #include "praat_TableOfReal.h"
-#include "praat_uvafon.h"
+#include "praat_uvafon_init.h"
 
 void praat_TableOfReal_init2 (ClassInfo klas);
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
