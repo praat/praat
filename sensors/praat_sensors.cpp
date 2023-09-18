@@ -1,4 +1,4 @@
-/* praat_sensors_init.cpp
+/* praat_sensors.cpp
  *
  * Copyright (C) 2023 David Weenink
  *
@@ -50,4 +50,4 @@ void praat_sensors_init () {
 
 }
 
-/* End of file praat_sensors_init.cpp */
+/* End of file praat_sensors.cpp */
