@@ -589,21 +589,8 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 	}
 }
 
-static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, conststring32 textToSynthesize) {
+static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, conststring32 text) {
 	try {
-		/*
-			As it happens whenever a text starts or ends with two dots '..' we get an 
-			'Out Of Memory' error (in 1.51-dev)
-			For the moment we simply change one of the dots into a space.
-			TODO: newer version of espeak where this e
-		*/
-		autostring32 text = Melder_dup (textToSynthesize);
-		const integer length = Melder_length (text.get());
-		if (Melder_startsWith (text.get(), U".."))
-			text [0] = U' ';
-		if (Melder_endsWith (text.get(), U".."))
-			text [length - 1] = U' ';
-		
 		int synth_flags = 0;
 		espeak_ng_InitializePath (nullptr); // PATH_ESPEAK_DATA
 		espeak_ng_ERROR_CONTEXT context = { 0 };
@@ -658,9 +645,9 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 			synth_flags |= espeakCHARS_WCHAR;
 			espeak_ng_Synthesize (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, & unique_identifier, me);
 		#else
-			conststring8 textUTF8 = Melder_peek32to8 (text.get());
+			conststring8 textUTF8 = Melder_peek32to8 (text);
 			synth_flags |= espeakCHARS_UTF8;
-			espeak_ng_Synthesize (textUTF8, Melder_length_utf8 (text.get(), false) + 1, 0, POS_CHARACTER, 0, synth_flags, & unique_identifier, me);
+			espeak_ng_Synthesize (textUTF8, Melder_length_utf8 (text, false) + 1, 0, POS_CHARACTER, 0, synth_flags, & unique_identifier, me);
 		#endif
 
 		espeak_ng_Terminate ();
