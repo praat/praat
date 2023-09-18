@@ -207,7 +207,7 @@ static GuiMenuItem EditorMenu_addCommandScript (EditorMenu me, conststring32 ite
 		itemTitle = Melder_cat (space, itemTitle);
 	}
 	cmd -> itemTitle = Melder_dup (itemTitle);
-	cmd -> itemWidget = ( script == nullptr || ! itemTitle ? GuiMenu_addSeparator (my menuWidget) :
+	cmd -> itemWidget = ( script == nullptr || ! itemTitle || itemTitle [0] == U'-' ? GuiMenu_addSeparator (my menuWidget) :
 		titleIsHeader ?
 		GuiMenu_addItem (my menuWidget, itemTitle, flags, nullptr, nullptr) :
 		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, cmd.get()) );   // DANGLE BUG

@@ -50,4 +50,8 @@ void praat_sensors_init () {
 
 }
 
+<<<<<<< HEAD
 /* End of file praat_sensors_init.cpp */
+=======
+/* End of file praat_sensors.cpp */
+>>>>>>> 88dcbc5dc456000143b024286b391e735e487fc0

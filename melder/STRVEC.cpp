@@ -1,6 +1,6 @@
 /* STRVEC.cpp
  *
- * Copyright (C) 2006,2007,2009,2011,2012,2015-2022 Paul Boersma
+ * Copyright (C) 2006,2007,2009,2011,2012,2015-2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 #include "melder.h"
 
-static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, bool wantDirectories) {
+static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, bool wantDirectories, bool caseSensitive) {
 	#if defined (_WIN32)
 		try {
 			char32 searchPath [kMelder_MAXPATH+1];
@@ -36,7 +36,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 			const bool hasAsterisk = !! str32chr (path, U'*');
 			const bool endsInSeparator = ( len != 0 && path [len - 1] == U'\\' );
 			autoSTRVEC strings;
-			Melder_sprint (searchPath, kMelder_MAXPATH+1, path, hasAsterisk || endsInSeparator ? U"" : U"\\", hasAsterisk ? U"" : U"*");
+			Melder_sprint (searchPath,kMelder_MAXPATH+1, path, hasAsterisk || endsInSeparator ? U"" : U"\\", hasAsterisk ? U"" : U"*");
 			WIN32_FIND_DATAW findData;
 			HANDLE searchHandle = FindFirstFileW (Melder_peek32toW_fileSystem (searchPath), & findData);
 			if (searchHandle != INVALID_HANDLE_VALUE) {
@@ -124,13 +124,13 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 					integer numberOfMatchedCharacters = 0;
 					bool doesTheLeftMatch = true;
 					if (left. length != 0) {
-						doesTheLeftMatch = str32nequ (buffer32, left. string, left. length);
+						doesTheLeftMatch = str32nequ_optionallyCaseSensitive (buffer32, left. string, left. length, caseSensitive);
 						if (doesTheLeftMatch)
 							numberOfMatchedCharacters = left.length;
 					}
 					bool doesTheMiddleMatch = true;
 					if (middle. length != 0) {
-						const char32 * const position = str32str (buffer32 + numberOfMatchedCharacters, middle. string);
+						const char32 * const position = str32str_optionallyCaseSensitive (buffer32 + numberOfMatchedCharacters, middle. string, caseSensitive);
 						doesTheMiddleMatch = !! position;
 						if (doesTheMiddleMatch)
 							numberOfMatchedCharacters = position - buffer32 + middle.length;
@@ -139,7 +139,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 					if (right. length != 0) {
 						const int64 startOfRight = length - right. length;
 						doesTheRightMatch = startOfRight >= numberOfMatchedCharacters &&
-							str32equ (buffer32 + startOfRight, right. string);
+							str32equ_optionallyCaseSensitive (buffer32 + startOfRight, right. string, caseSensitive);
 					}
 					if (buffer32 [0] != U'.' && doesTheLeftMatch && doesTheMiddleMatch && doesTheRightMatch)
 						strings. append (buffer32);
@@ -156,10 +156,16 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 	#endif
 }
 autoSTRVEC fileNames_STRVEC (conststring32 path /* cattable */) {
-	return fileOrFolderNames_STRVEC (path, false);
+	return fileOrFolderNames_STRVEC (path, false, true);
 }
 autoSTRVEC folderNames_STRVEC (conststring32 path /* cattable */) {
-	return fileOrFolderNames_STRVEC (path, true);
+	return fileOrFolderNames_STRVEC (path, true, true);
+}
+autoSTRVEC fileNames_caseInsensitive_STRVEC (conststring32 path /* cattable */) {
+	return fileOrFolderNames_STRVEC (path, false, false);
+}
+autoSTRVEC folderNames_caseInsensitive_STRVEC (conststring32 path /* cattable */) {
+	return fileOrFolderNames_STRVEC (path, true, false);
 }
 
 autoSTRVEC readLinesFromFile_STRVEC (MelderFile file) {
