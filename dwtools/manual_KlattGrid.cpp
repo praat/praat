@@ -65,7 +65,7 @@ The source is modelled by the following tiers:
   If the tier is empty, a default of 0.7 will be used.
 
 ##Power1#, ##Power2#
-: model the shape of the glottal flow function %flow(%t)=%t^^%%power1%^-%t^^%%power2%^ for 0 \<_ %t \<_ 1.
+: model the shape of the glottal flow function %flow(%t)=%t^^%power1^\-m%t^^%power2^ for 0 \<_ %t \<_ 1.
   To make glottal closure possible, %power2 has to be larger than %power1.
   If the power1 tier is empty, a default value of 3 will be used.
   If the power2 tier is empty, a default of 4 will be used.
@@ -280,8 +280,8 @@ Settings
 
 ##Flow function
 : determines what flow function will be used. The flow function is determined by two parameters, %power1 and %power2, as %flow(%t)=%x^^%power1^\-m%x^^%power2^.
-  If the option "Powers in tier" is chosen the power1 and power2 tiers will be used for the values of %%power1% and %%power2%.
-  The other choices switch the two tiers off and instead fixed values will be used for %%power1% and %%power2%.
+  If the option "Powers in tier" is chosen the power1 and power2 tiers will be used for the values of %power1 and %power2.
+  The other choices switch the two tiers off and instead fixed values will be used for %power1 and %power2.
 
 ##Flow derivative
 : determines whether the flow or the flow derivative is used for phonation.
@@ -294,7 +294,7 @@ Settings
 
 ################################################################################
 "KlattGrid: Play special..."
-© David Weenink 2009-04-21
+© David Weenink 2009-04-21, Paul Boersma 2023
 
 A command to play part of a @@KlattGrid@.
 
@@ -305,14 +305,8 @@ Settings
 : determines the part of the sound’s time domain that you want to hear.
   If both arguments equal zero, the complete sound will be played.
 
-##Sampling frequency (Hz)
-: determines the @@sampling frequency@ of the resulting sound.
-
 ##Scale peak
 : determines whether the peak value of the sound will be set to 0.99. In this way the sound will always play well.
-
-##Sampling frequency (Hz)
-: the @@sampling frequency@ of the resulting sound.
 
 ##Voicing
 : switches voicing on or off.
@@ -331,8 +325,8 @@ Settings
 
 ##Flow function
 : determines what flow function will be used. The flow function is determined by two parameters, %power1 and %power2, as %flow(%t)=%x^^%power1^\-m%x^^%power2^.
-  If the option "Powers in tier" is chosen the power1 and power2 tiers will be used for the values of %%power1% and %%power2%.
-  The other choices switch the two tiers off and instead fixed values will be used for %%power1% and %%power2%.
+  If the option "Powers in tier" is chosen the power1 and power2 tiers will be used for the values of %power1 and %power2.
+  The other choices switch the two tiers off and instead fixed values will be used for %power1 and %power2.
 
 ##Flow derivative
 : determines whether the flow or the flow derivative is used for phonation.
@@ -355,7 +349,7 @@ Settings
 
 ################################################################################
 "KlattGrid: To Sound (special)..."
-© David Weenink 2009-04-15
+© David Weenink 2009-04-15, Paul Boersma 2023
 
 A command to synthesize a Sound from the selected @@KlattGrid@.
 
@@ -371,9 +365,6 @@ Settings
 
 ##Scale peak
 : determines whether the peak value of the sound will be set to 0.99. In this way the sound will always play well and can be saved to a file with minimal loss of resolution.
-
-##Sampling frequency (Hz)
-: the @@sampling frequency@ of the resulting sound.
 
 ##Voicing
 : switches voicing on or off.
@@ -392,8 +383,8 @@ Settings
 
 ##Flow function
 : determines what flow function will be used. The flow function is determined by two parameters, %power1 and %power2, as %flow(%t)=%x^^%power1^\-m%x^^%power2^.
-  If the option "Powers in tier" is chosen the power1 and power2 tiers will be used for the values of %%power1% and %%power2%.
-  The other choices switch the two tiers off and instead fixed values will be used for %%power1% and %%power2%.
+  If the option "Powers in tier" is chosen the power1 and power2 tiers will be used for the values of %power1 and %power2.
+  The other choices switch the two tiers off and instead fixed values will be used for %power1 and %power2.
 
 ##Flow derivative
 : determines whether the flow or the flow derivative is used for phonation.
