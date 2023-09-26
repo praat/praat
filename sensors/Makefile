@@ -5,7 +5,7 @@ include ../makefile.defs
 
 CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../fon -I ../external/gsl -I ../external/clapack -I ../kar -I ../dwtools
 
-OBJECTS = EMA.o praat_sensors_init.o Sensor.o
+OBJECTS = Electroglottogram.o EMA.o praat_sensors_init.o Sensor.o
 
 
 .PHONY: all clean

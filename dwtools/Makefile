@@ -17,7 +17,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	DataModeler.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
 	Discriminant.o  Discriminant_PatternList_Categories.o \
-	Electroglottogram.o EditDistanceTable.o EEG_extensions.o \
+	EditDistanceTable.o EEG_extensions.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
