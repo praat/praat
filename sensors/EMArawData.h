@@ -1,6 +1,6 @@
-#ifndef _Sensor_h_
-#define _Sensor_h_
-/* Sensor.h
+#ifndef _EMArawData_h_
+#define _EMArawData_h_
+/* EMA.h
  *
  * Copyright (C) 2023 David Weenink
  *
@@ -18,15 +18,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Vector.h"
+#include "Sampled.h"
 
-#include "Sensor_def.h"
+#include "EMArawData_def.h"
 
-autoSensor Sensor_create (integer numberOfChannels, double xmin, double xmax, integer nx, double dx, double x1);
+autoEMArawData EMArawData_readFromCarstensEMA50xAmpFile (MelderFile file);
 
-void Sensor_setChannelName (Sensor me, integer channel, conststring32 newName);
+autoEMArawData EMArawData_create (double tmin, double tmax, integer numberOfSensors, integer numberOfTransmittersPerSensor, integer numberOfFrames, double dt, double x1);
 
-integer Sensor_getChannelNumber (Sensor me, conststring32 channelName);
 
-#endif /* _Sensor_h_ */
- 
+#endif /* _EMArawData_h_ */

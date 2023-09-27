@@ -81,7 +81,6 @@
 #include "EditDistanceTable.h"
 #include "Editor.h"
 #include "EditDistanceTable.h"
-#include "Electroglottogram.h"
 #include "Eigen_and_Matrix.h"
 #include "Eigen_and_Procrustes.h"
 #include "Eigen_and_SSCP.h"
@@ -2358,82 +2357,6 @@ DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__Eigen_Covariance_project) {
 	CONVERT_ONE_AND_ONE_TO_ONE (Eigen, Covariance)
 		autoCovariance result = Eigen_Covariance_project (me, you);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
-}
-
-/******************** Electroglottogram ********************************************/
-
-FORM (CONVERT_EACH_TO_ONE__Electroglottogram_highPassFilter, U"Electroglottogram: High-pass filter", U"Electroglottogram: High-pass filter...") {
-	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
-	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
-	OK
-DO
-	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoElectroglottogram result = Electroglottogram_highPassFilter (me, fromFrequency, smoothing);
-	CONVERT_EACH_TO_ONE_END (my name.get(), U"_filtered")
-}
-
-FORM (CONVERT_EACH_TO_ONE__Electroglottogram_to_TextGrid_closedGlottis, U"Electroglottogram: To TextGrid (closed glottis)",
-	U"Electroglottogram: To TextGrid (closed glottis)...") {
-	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
-	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
-	POSITIVE (peakThresholdFraction, U"Peak threshold (0-1)", U"0.05")
-	OK
-DO
-	Melder_require (closingThreshold < 1.0,
-		U"The closing threshold should be smaller than 1.");
-	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoTextGrid result = Electroglottogram_to_TextGrid_closedGlottis (me, pitchFloor, pitchCeiling, 
-			closingThreshold, peakThresholdFraction
-		);
-	CONVERT_EACH_TO_ONE_END (my name.get())
-}
-
-FORM (CONVERT_EACH_TO_ONE__Electroglottogram_to_AmplitudeTier_levels, U"Electroglottogram: To AmplitudeTier (levels)", U"") {
-	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"500.0")
-	POSITIVE (closingThreshold, U"Closing threshold", U"0.30")
-	BOOLEAN (wantPeaks, U"Peaks", 0)
-	BOOLEAN (wantValleys, U"Valleys", 0)
-	OK
-DO
-	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoAmplitudeTier peaks, valleys;
-		autoAmplitudeTier result = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, 
-			closingThreshold, & peaks, & valleys
-		);
-		if (wantPeaks)
-			praat_new (peaks.move(), my name.get(), U"_peaks");
-		if (wantValleys)
-			praat_new (valleys.move(), my name.get(), U"_valleys");
-	CONVERT_EACH_TO_ONE_END (my name.get())
-
-}
-
-FORM (CONVERT_EACH_TO_ONE__Electroglottogram_derivative, U"Electroglottogram: Derivative", U"Electroglottogram: Derivative...") {
-	POSITIVE (lowPassFrequency, U"Low-pass frequency (Hz)", U"5000.0")
-	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
-	REAL (newAbsolutePeak, U"New absolute peak", U"0.0 (= don't scale)")
-	OK
-DO
-	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoSound result = Sound_derivative (me, lowPassFrequency, smoothing, newAbsolutePeak);
-	CONVERT_EACH_TO_ONE_END (my name.get(), U"_derivative")
-}
-
-FORM (CONVERT_EACH_TO_ONE__Electroglottogram_firstCentralDifference, U"Electroglottogram: First central difference", U"Electroglottogram: First central difference...") {
-	REAL (scalePeak, U"New absolute peak", U"0.0 (= don't scale)")
-	OK
-DO
-	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoSound result = Electroglottogram_firstCentralDifference (me, scalePeak);
-	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cdiff")
-}
-
-DIRECT (CONVERT_EACH_TO_ONE__Electroglottogram_to_Sound) {
-	CONVERT_EACH_TO_ONE (Electroglottogram)
-		autoSound result = Electroglottogram_to_Sound (me);
-	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /******************** Index ********************************************/
@@ -6040,16 +5963,6 @@ DO
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
-
-FORM (CONVERT_EACH_TO_ONE__Sound_extractElectroglottogram, U"Sound: Extract Electroglottogram", U"Sound: Extract Electroglottogram...") {
-	NATURAL (channelNumber, U"Channel number", U"1")
-	BOOLEAN (invert, U"Invert", 0)
-	OK
-DO
-	CONVERT_EACH_TO_ONE (Sound)
-		autoElectroglottogram result = Sound_extractElectroglottogram (me, channelNumber, invert);
-	CONVERT_EACH_TO_ONE_END (my name.get())
-}
 	
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To Polygon...") {
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
@@ -6488,7 +6401,7 @@ DO
 }
 
 FORM (MODIFY_EACH__SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
-	OPTIONMENU (inputTextFormat, U"Input text format is", 1)
+	OPTIONMENU (inputTextFormat, U"Input text format is", 3)
 		OPTION (U"text only")
 		OPTION (U"phoneme codes only")
 		OPTION (U"mixed with tags")
@@ -9055,7 +8968,6 @@ void praat_David_init () {
 		classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
-		classElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
 		classFormantFilter,
 		classIndex, classKlattTable, classNMF,
@@ -9666,19 +9578,6 @@ void praat_David_init () {
 			MODIFY_EditCostsTable_setCosts_others);
 	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__EditCostsTable_to_TableOfReal);
-
-	praat_addAction1 (classElectroglottogram, 0, U"High-pass filter...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Electroglottogram_highPassFilter);
-	praat_addAction1 (classElectroglottogram, 0, U"To TextGrid (closed glottis)... || Get closed glottis intervals...", nullptr, 0,
-			CONVERT_EACH_TO_ONE__Electroglottogram_to_TextGrid_closedGlottis);
-	praat_addAction1 (classElectroglottogram, 0, U"To AmplitudeTier (levels)...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Electroglottogram_to_AmplitudeTier_levels);
-	praat_addAction1 (classElectroglottogram, 0, U"Derivative...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Electroglottogram_derivative);
-	praat_addAction1 (classElectroglottogram, 0, U"First central difference...", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Electroglottogram_firstCentralDifference);
-	praat_addAction1 (classElectroglottogram, 0, U"To Sound", nullptr, 0, 
-			CONVERT_EACH_TO_ONE__Electroglottogram_to_Sound);
 	
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP__Index_help);
 	praat_addAction1 (classStringsIndex, 0, U"Query -", nullptr, 0, nullptr);
@@ -10295,8 +10194,6 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Sound_to_MelSpectrogram);
 	praat_addAction1 (classSound, 0, U"To ComplexSpectrogram...", U"To MelSpectrogram...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_ComplexSpectrogram);
-    praat_addAction1 (classSound, 0, U"Extract Electroglottogram...", U"Extract part for overlap...", 1,
-			CONVERT_EACH_TO_ONE__Sound_extractElectroglottogram);
 
 	praat_addAction1 (classSound, 0, U"To Polygon...", U"Down to Matrix", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_Polygon);

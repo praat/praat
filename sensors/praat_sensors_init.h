@@ -1,4 +1,6 @@
-/* Sensor_def.h
+#ifndef _praat_sensors_init_h_
+#define _praat_sensors_init_h_
+/* praat_sensors_init.h
  *
  * Copyright (C) 2023 David Weenink
  *
@@ -9,26 +11,16 @@
  *
  * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT Sensor
-oo_DEFINE_CLASS (Sensor, Vector) // or Sound??
+#include "praatM.h"
 
-	oo_STRING_VECTOR (channelNames, ny)
-	
-	#if oo_DECLARING
-		void v1_info ()
-			override;
-		int v_domainQuantity () const
-			override { return MelderQuantity_TIME_SECONDS; }
-	#endif
-	
-oo_END_CLASS (Sensor)
-#undef ooSTRUCT
+void praat_sensors_init ();
 
-/* End of file Sensor_def.h */
+#endif
+/* End of file praat_sensors_init.h */

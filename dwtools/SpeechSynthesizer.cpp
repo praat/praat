@@ -49,11 +49,115 @@
 #include "oo_DESCRIPTION.h"
 #include "SpeechSynthesizer_def.h"
 
-#define espeak_SAMPLINGFREQUENCY 22050
+#define espeak_SAMPLINGFREQUENCY 22050.h""
+
+#include "UnicodeData.h"
 
 extern int option_phoneme_events;   // BUG: external declaration outside header file (ppgb 20210307)
 
 Thing_implement (EspeakVoice, Daata, 1);
+
+
+static autostring8 ipa_to_kirshenbaum (conststring32 text) {
+	const struct ipaksymbol {
+		char32 ipa; 
+		char32 kirshenbaum;
+	} ipaksymbols [] = {
+		{UNICODE_LATIN_SMALL_LETTER_A, U'a'},					// a
+		{UNICODE_LATIN_SMALL_LETTER_B, U'b'},					// b
+		{UNICODE_LATIN_SMALL_LETTER_C, U'c'},					// c
+		{UNICODE_LATIN_SMALL_LETTER_D, U'd'},					// d
+		{UNICODE_LATIN_SMALL_LETTER_E, U'e'},					// e
+		{UNICODE_LATIN_SMALL_LETTER_F, U'f'},					// f
+		{UNICODE_LATIN_SMALL_LETTER_G, U'g'},					// g
+		{UNICODE_LATIN_SMALL_LETTER_SCRIPT_G, U'g'},			// ɡ
+		{UNICODE_LATIN_SMALL_LETTER_H, U'h'},					// h
+		{UNICODE_LATIN_SMALL_LETTER_I, U'i'},					// i
+		{UNICODE_LATIN_SMALL_LETTER_J, U'j'},					// j
+		{UNICODE_LATIN_SMALL_LETTER_K, U'k'},					// k
+		{UNICODE_LATIN_SMALL_LETTER_L, U'l'},					// l
+		{UNICODE_LATIN_SMALL_LETTER_M, U'm'},					// m
+		{UNICODE_LATIN_SMALL_LETTER_N, U'n'},					// n
+		{UNICODE_LATIN_SMALL_LETTER_O, U'o'},					// o
+		{UNICODE_LATIN_SMALL_LETTER_P, U'p'},					// p
+		{UNICODE_LATIN_SMALL_LETTER_Q, U'q'},					// q
+		{UNICODE_LATIN_SMALL_LETTER_TURNED_R, U'r'},			// ɹ
+		{UNICODE_LATIN_SMALL_LETTER_S, U's'},					// s
+		{UNICODE_LATIN_SMALL_LETTER_T, U't'},					// t
+		{UNICODE_LATIN_SMALL_LETTER_U, U'u'},					// u
+		{UNICODE_LATIN_SMALL_LETTER_V, U'v'},					// v
+		{UNICODE_LATIN_SMALL_LETTER_W, U'w'},					// w
+		{UNICODE_LATIN_SMALL_LETTER_X, U'x'},					// x
+		{UNICODE_LATIN_SMALL_LETTER_Y, U'y'},					// y
+		{UNICODE_LATIN_SMALL_LETTER_Z, U'z'},					// z
+		{UNICODE_LATIN_SMALL_LETTER_ALPHA, U'A'},				// ɑ
+		{UNICODE_GREEK_SMALL_LETTER_BETA, U'B'},				// β
+		{UNICODE_LATIN_SMALL_LETTER_C_WITH_CEDILLA, U'C'},		// ç
+		{UNICODE_LATIN_SMALL_LETTER_ETH, U'D'},					// ð
+		{UNICODE_LATIN_SMALL_LETTER_OPEN_E, U'E'},				// ɛ
+		// F unused
+		{UNICODE_LATIN_LETTER_SMALL_CAPITAL_G, U'G'},			// ɢ
+		{UNICODE_LATIN_SMALL_LETTER_H_WITH_STROKE, U'H'},		// ħ
+		{UNICODE_LATIN_LETTER_SMALL_CAPITAL_I, U'I'},			// ɪ
+		{UNICODE_LATIN_SMALL_LETTER_IOTA, U'I'},				// ɩ
+		{UNICODE_LATIN_SMALL_LETTER_DOTLESS_J_WITH_STROKE, U'J'},// ɟ
+		// K unused
+		{UNICODE_LATIN_SMALL_LETTER_L_WITH_MIDDLE_TILDE, U'L'},	// ɫ
+		{UNICODE_LATIN_LETTER_SMALL_CAPITAL_L, U'L'},			// ʟ
+		{UNICODE_LATIN_SMALL_LETTER_L_WITH_BELT, U'L'},			// ɬ
+		{UNICODE_LATIN_SMALL_LETTER_M_WITH_HOOK, U'M'},			// ɱ
+		{UNICODE_LATIN_SMALL_LETTER_ENG, U'N'},					// ŋ
+		{UNICODE_LATIN_SMALL_LETTER_OPEN_O, U'O'},				// ɔ
+		{UNICODE_GREEK_CAPITAL_LETTER_PHI, U'P'},				// Φ
+		{UNICODE_LATIN_SMALL_LETTER_GAMMA, U'Q'},				// ɣ
+		{UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK, U'R'},		// ɚ
+		{UNICODE_LATIN_LETTER_SMALL_CAPITAL_R, U'R'},			// ʀ
+		{UNICODE_LATIN_SMALL_LETTER_ESH, U'S'},					// ʃ
+		{UNICODE_GREEK_SMALL_LETTER_THETA, U'T'},				// θ
+		{UNICODE_LATIN_SMALL_LETTER_UPSILON, U'U'},				// ʊ
+		{UNICODE_LATIN_SMALL_LETTER_CLOSED_OMEGA, U'U'},		// ɷ
+		{UNICODE_LATIN_SMALL_LETTER_TURNED_V, U'V'},			// ʌ
+		{UNICODE_LATIN_SMALL_LIGATURE_OE, U'W'},				// œ
+		{UNICODE_GREEK_SMALL_LETTER_CHI, U'X'},					// χ
+		{UNICODE_LATIN_SMALL_LETTER_O_WITH_STROKE, U'Y'},		// ø
+		{UNICODE_LATIN_SMALL_LETTER_EZH, U'Z'},					// ʒ
+		{UNICODE_LATIN_LETTER_GLOTTAL_STOP, U'?'},				// ʔ
+		{UNICODE_LATIN_SMALL_LETTER_SCHWA, U'@'},				// ə
+		{UNICODE_LATIN_SMALL_LETTER_AE, U'&'},					// æ
+		{UNICODE_LATIN_SMALL_LETTER_R_WITH_FISHHOOK, U'*'}		// ɾ	
+	};
+	const struct ipaksymbol2 {
+		char32 ipa; 
+		char32 kirshenbaum[3];
+	} ipaksymbols2 [] = {
+		// alveoalars
+		{UNICODE_LATIN_LETTER_SMALL_CAPITAL_B, U"b"},			// ʙ unsupported: b<trl>
+		{UNICODE_LATIN_SMALL_LETTER_B_WITH_HOOK, U"b"},			// ɓ unsupported: b`
+		{UNICODE_LATIN_SMALL_LETTER_D_WITH_HOOK, U"d"},			// ɗ unsupported: d`
+		{UNICODE_LATIN_SMALL_LETTER_TURNED_T, U"t"},			// ʇ unsupported: t!
+		{UNICODE_LATIN_SMALL_LETTER_L_WITH_BELT, U"s"},			// ɬ unsupported: s<lat>
+		{UNICODE_LATIN_SMALL_LETTER_LEZH, U"z"},				// ɮ unsupported: z<lat>
+		{UNICODE_LATIN_LETTER_SMALL_CAPITAL_R, U"r"},			// ʀ unsupported: r<trl>
+		{UNICODE_LATIN_SMALL_LETTER_R_WITH_FISHHOOK, U"*"},		// ɾ 
+		{UNICODE_LATIN_SMALL_LETTER_TURNED_R_WITH_LONG_LEG, U"*"},// ɺ unsupported: *<lat>
+		{UNICODE_LATIN_LETTER_STRETCHED_C, U"c"},		// ʗ unsupported: c!
+		{UNICODE_LATIN_LETTER_INVERTED_GLOTTAL_STOP, U"l"},		// ʖ unsupported: l!
+/*		{, U""},		//  
+		{, U""},		//  
+		{, U""},		//  
+		{, U""},		//  
+		{, U""},		//  
+		{, U""},		//  
+*/		
+	};
+	autostring8 result;
+	return result;
+	
+}
+
+
+
+
 
 autoEspeakVoice EspeakVoice_create () {
 	try {
@@ -283,7 +387,7 @@ autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, cons
 		my d_voiceName = Melder_dup (voiceName);
 		(void) SpeechSynthesizer_getVoiceCode (me.get());  // existence check
 		my d_phonemeSet = Melder_dup (languageName);
-		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
+		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TAGGEDTEXT, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100.0, 0.01, 1.0, 1.0, 175.0, SpeechSynthesizer_PHONEMECODINGS_IPA);
 		SpeechSynthesizer_setEstimateSpeechRateFromSpeech (me.get(), true);
 		return me;
