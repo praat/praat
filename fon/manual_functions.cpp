@@ -2110,7 +2110,7 @@ Syntax and semantics
 : return the first location of the substring %`part$` inside %`string$`, or 0 if not found.
 
 #`index` (%`strings$#`, %`s$`)
-: look up whether and where %`s$` first occurs in %`strings$`.
+: look up whether and where %`s$` first occurs in %`strings$#`.
 
 ################################################################################
 "`index_regex`"
