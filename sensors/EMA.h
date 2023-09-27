@@ -18,21 +18,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Vector.h"
-#include "Sensor.h"
+#include "melder.h"
+#include "Sampled.h"
 
 #include "EMA_def.h"
 
 autoEMA EMA_readFromCarstensEMA50xPosFile (MelderFile file);
 
-autoEMAamp EMAamp_readFromCarstensEMA50xAmpFile (MelderFile file);
+autoEMA EMA_create (double tmin, double tmax, integer numberOfSensors, integer numberOfFrames, double dt, double x1);
 
-autoEMA EMA_create (double tmin, double tmax, integer numberOfSensors, integer numberOfChannelsPerSensor, integer numberOfFrames, double dt, double x1);
-
-autoEMAamp EMAamp_create (double tmin, double tmax, integer numberOfSensors, integer numberOfTransmittersPerSensor, integer numberOfFrames, double dt, double x1);
-
-void EMA_setSensorName (EMA me, integer index, conststring32 name);
-
-integer EMA_getSensorNumber (EMA me, conststring32 sensorName);
-
+void CarstensEMA_processHeader (MelderFile file, integer *out_version, integer *out_headerSizeBytes, 
+	integer *out_numberOfSensors, integer *out_samplingFrequencyHz, integer *out_numberOfBytesInLines1234);
 #endif /* _EMA_h_ */

@@ -21,6 +21,7 @@
 #include "Electroglottogram.h"
 
 #include "EMA.h"
+#include "EMArawData.h"
 #include "praat_sensors_init.h"
 #include "Sound_extensions.h"
 
@@ -39,7 +40,7 @@ static autoDaata CarstensEMA50xV3AmpFileRecognizer (integer nread, const char *h
 		(strstr (header, "NumberOfChannels=") != nullptr) && 
 		(strstr (header, "SamplingFrequencyHz=") != nullptr) &&
 		(strstr (header, "Calf_Channel_0") != nullptr))
-		return EMAamp_readFromCarstensEMA50xAmpFile (file);
+		return EMArawData_readFromCarstensEMA50xAmpFile (file);
 	else
 		return autoDaata ();
 }
@@ -133,7 +134,7 @@ DO
 void praat_sensors_init ();
 
 void praat_sensors_init () {
-	Thing_recognizeClassesByName (classElectroglottogram, classEMA, classEMAamp, classSensor, nullptr);
+	Thing_recognizeClassesByName (classElectroglottogram, classEMA, classEMArawData, classSensor, nullptr);
 
 	Data_recognizeFileType (CarstensEMA50xV3PosFileRecognizer);
 	Data_recognizeFileType (CarstensEMA50xV3AmpFileRecognizer);
