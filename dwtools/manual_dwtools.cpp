@@ -558,15 +558,15 @@ INTRO (U"This tutorial will show you how to perform canonical correlation "
 ENTRY (U"1. Objective of canonical correlation analysis")
 NORMAL (U"In canonical correlation analysis we try to find the correlations between "
 	"two data sets. One data set is called the %dependent set, the other the "
-	"%independent set. In Praat these two sets must reside into one "
+	"%independent set. In Praat these two sets must reside in one "
 	"@TableOfReal object. The lower numbered columns of this table will then be "
 	"interpreted as the dependent part, the rest of the columns as the "
 	"independent part. "
-	"The dimension of, i.e., the number of columns in, the dependent part may not "
+	"The dimension of (i.e. the number of columns in) the dependent part may not "
 	"exceed the dimension of the independent part.")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
-	"Dutch monophthongal vowels as spoken in /h\\_ t/ context by 50 male speakers. "
+	"Dutch monophthongal vowels as spoken in a /h\\_ t/ context by 50 male speakers. "
 	"We will try to find the canonical correlation between formant frequencies "
 	"(the %dependent part) and levels (the %independent part). "
 	"The dimension of both groups of variates is 3. "
@@ -621,7 +621,7 @@ NORMAL (U"Select the TableOfReal and choose from the dynamic menu the option "
 CODE (U"selectObject: pols50m")
 CODE (U"cca = To CCA: 3")
 ENTRY (U"3. How to get the canonical correlation coefficients")
-NORMAL (U"You can get the canonical correlation coefficients by queries of the CCA "
+NORMAL (U"You can get the canonical correlation coefficients by querying the CCA "
 	"object. You will find that the three canonical correlation coefficients, "
 	"\\ro(%u__1_, %v__1_), \\ro(%u__2_, %v__2_) and \\ro(%u__3_, %v__3_) are "
 	" approximately 0.86, 0.53 and 0.07, respectively. "
@@ -641,17 +641,17 @@ NORMAL (U"You can get the canonical scores by selecting a CCA object together wi
 NORMAL (U"When we now calculate the ##Correlation# matrix of these canonical variates we "
 	"get the following table:")
 CODE (U"       u1     u2     u3     v1     v2     v3")
-CODE (U"u1     1      .      .     0.860   .      .")
-CODE (U"u2     .      1      .      .     0.531   .")
-CODE (U"u3     .      .      1      .      .     0.070")
-CODE (U"v1    0.860   .      .      1      .      .")
-CODE (U"v2     .     0.531     .      .      1      .")
-CODE (U"v3     .      .     0.070   .      .      1")
+CODE (U"u1     1      .      .    0.860    .      .")
+CODE (U"u2     .      1      .      .    0.531    .")
+CODE (U"u3     .      .      1      .      .    0.070")
+CODE (U"v1   0.860    .      .      1      .      .")
+CODE (U"v2     .    0.531    .      .      1      .")
+CODE (U"v3     .      .    0.070    .      .      1")
 NORMAL (U"The scores with a dot are zero to numerical precision. In this table the "
 	"only correlations that differ from zero are the canonical correlations. "
 	"The following script summarizes:")
 CODE (U"selectObject: cca, pols50m")
-CODE (U"To TableOfReal (scores): 3)")
+CODE (U"To TableOfReal (scores): 3")
 CODE (U"To Correlation")
 CODE (U"Draw as numbers if: 1, 0, \"decimal\", 2, ~ abs(self) > 1e-14")
 ENTRY (U"5. How to predict one dataset from the other")
@@ -1658,7 +1658,7 @@ NORMAL (U"Select the TableOfReal and choose from the dynamic menu the option "
 	"object will bear the same name as the TableOfReal object. The following "
 	"script summarizes:")
 CODE (U"selectObject: table")
-CODE (U"discrimimant = To Discriminant")
+CODE (U"discriminant = To Discriminant")
 ENTRY (U"2. How to project data on the discriminant space")
 NORMAL (U"You select a TableOfReal and a Discriminant object together and choose: "
 	"@@Discriminant & TableOfReal: To Configuration...|To Configuration...@. "
