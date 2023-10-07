@@ -641,7 +641,7 @@ static void SpeechSynthesizer_generateSynthesisData (SpeechSynthesizer me, const
 		my d_events = Table_createWithColumnNames (0, ARRAY_TO_STRVEC (columnNames));
 		unsigned int unique_identifier = 0;
 		#ifdef _WIN32
-			conststringW textW = Melder_peek32toW (text.get());
+			conststringW textW = Melder_peek32toW (text);
 			synth_flags |= espeakCHARS_WCHAR;
 			espeak_ng_Synthesize (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, & unique_identifier, me);
 		#else
