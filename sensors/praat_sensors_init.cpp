@@ -17,7 +17,6 @@
  */
 
 #include <string.h>
-#include "Sensor.h"
 #include "Electroglottogram.h"
 
 #include "EMA.h"
@@ -134,7 +133,7 @@ DO
 void praat_sensors_init ();
 
 void praat_sensors_init () {
-	Thing_recognizeClassesByName (classElectroglottogram, classEMA, classEMArawData, classSensor, nullptr);
+	Thing_recognizeClassesByName (classElectroglottogram, classEMA, classEMArawData, nullptr);
 
 	Data_recognizeFileType (CarstensEMA50xV3PosFileRecognizer);
 	Data_recognizeFileType (CarstensEMA50xV3AmpFileRecognizer);
