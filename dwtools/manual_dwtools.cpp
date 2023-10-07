@@ -1617,8 +1617,7 @@ NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"Dutch monophthongal vowels as spoken in /h\\_ t/ context by 50 male speakers. "
 	"This data set has been incorporated into "
 	"Praat and can be called into play with the @@Create TableOfReal "
-	"(Pols 1973)...@ command that can be found in the \"New / "
-	"TableOfReal\" menu.")
+	"(Pols 1973)...@ command that can be found under #New \\-> #Tables \\-> ##Data sets from the literature#.")
 NORMAL (U"In the list of objects a new TableOfReal object will appear with 6 "
 	"columns and 600 rows "
 	"(50 speakers \\xx 12 vowels). The first three columns contain "

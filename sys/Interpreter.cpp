@@ -1470,6 +1470,25 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 					} else if (*p == U'(' || *p == U'[' || *p == U'{') {
 						expressionDepth ++;
 						MelderString_appendCharacter (& argument, *p);
+					} else if (*p == U'“') {
+						/*
+							Enter a string literal.
+						*/
+						MelderString_appendCharacter (& argument, U'\"');
+						p ++;
+						for (;; p ++) {
+							if (*p == U'\0') {
+								Melder_throw (U"Incomplete curly string literal: the quotes don't match.");
+							} else if (*p == U'\"') {
+								MelderString_appendCharacter (& argument, U'\"');
+								MelderString_appendCharacter (& argument, U'\"');
+							} else if (*p == U'”') {
+								MelderString_appendCharacter (& argument, U'\"');
+								break;
+							} else {
+								MelderString_appendCharacter (& argument, *p);
+							}
+						}
 					} else if (*p == U'\"') {
 						/*
 							Enter a string literal.

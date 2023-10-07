@@ -155,7 +155,7 @@ static autostring32 runAny_STR (
 		Melder_assert (! str32chr (buffer.string, ' '));
 		MelderString_append (& buffer, U" /c");
 		if (executableFileName) {
-			const bool needSurroundingQuotes = str32chr (executableFileName, U' ');
+			const bool needSurroundingQuotes = str32chr (executableFileName, U' ') ;
 			if (needSurroundingQuotes)
 				MelderString_append (& buffer, U"\"\"", executableFileName, U"\"");
 			else
@@ -163,11 +163,13 @@ static autostring32 runAny_STR (
 			for (integer i = 1; i <= narg; i ++) {
 				//TRACE
 				trace (U"Argument ", i, U": <<", args [i], U">>");
-				MelderString_append (& buffer, U" ");
-				if (str32chr (args [i], U' '))
-					MelderString_append (& buffer, U"\"", args [i], U"\"");
-				else
-					MelderString_append (& buffer, args [i]);
+				MelderString_append (& buffer, U" \"");
+				for (const char32 *p = & args [i] [0]; *p != U'\0'; p ++) {
+					if (*p == U'"')
+						MelderString_append (& buffer, U"\"\"");
+					MelderString_appendCharacter (& buffer, *p);
+				}
+				MelderString_appendCharacter (& buffer, U'"');
 			}
 			if (needSurroundingQuotes)
 				MelderString_append (& buffer, U"\"");
