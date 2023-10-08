@@ -117,6 +117,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`endeditor` – leave the environment of an editor
 , @`endproc` – end a procedure definition
 , @`endsWith` (%`string$`, %`part$`) – determine whether %`string$` ends in %`part$`
+, @`endsWith_caseInsensitive` (%`string$`, %`part$`) – determine whether %`string$` ends in %`part$`
 , @`environment$` (%`string$`) – look up a system environment string
 , @`erb` (%`f`) – equivalent rectangular bandwidth for frequency %`f`
 , @`erbToHertz` (%`x`) – from ERB-rate to acoustic frequency
@@ -132,6 +133,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`extractWord$` (%`string$`, %`part$`) – the first “word” after the first occurrence of %`part$% in %`string$`
 , @`fileNames$#` (%`folderNameOrPattern$`) – get the names (not the whole paths) of the files in a folder
 	or that match a pattern with an asterisk
+, @`fileNames_caseInsensitive$#` (%`folderNameOrPattern$`) – get the names (not the whole paths) of the files in a folder
+	or that match a pattern with an asterisk
 , @`fileReadable` (%`filePath$`) – 1 if the file exists and can be read, 0 otherwise
 , @`fisherP` (%`f`, %`df1`, %`df2`) – area under the Fisher %F curve up to %`f`
 , @`fisherQ` (%`f`, %`df1`, %`df2`) – area under the Fisher %F curve after %`f`
@@ -140,6 +143,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`floor#` (%`vector#`) – round down each element of %`vector#`
 , @`floor##` (%`matrix##`) – round down each cell of %`matrix##`
 , @`folderNames$#` (%`folderNameOrPattern$`) – get the names (not the whole paths) of the subfolders in a folder
+	or that match a pattern with an asterisk
+, @`folderNames_caseInsensitive$#` (%`folderNameOrPattern$`) – get the names (not the whole paths) of the subfolders in a folder
 	or that match a pattern with an asterisk
 , @`from_to#` (%`m`, %`n`) – the integers from %`m` through %`n`
 , @`from_to_by#` (%`m`, %`n`, %`step`) – numbers from %`m` through %`n`, in steps of %`step`
@@ -155,6 +160,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`imin` (%`x`, `...`) – location of the minimum
 , @`index` (%`string$`, %`part$`) – look up a substring, or 0 if not found
 , @`index` (%`strings$#`, %`s$`) – look up whether and where %`s$` first occurs in %`strings$`
+, @`index_caseInsensitive` (%`string$`, %`part$`) – look up a substring, or 0 if not found
+, @`index_caseInsensitive` (%`strings$#`, %`s$`) – look up whether and where %`s$` first occurs in %`strings$`
 , @`index_regex` (%`string$`, %`regex$`) – determine whether and where %`string$` first matches %`regex$`
 , @`inner` (%`a#`, %`b#`) – inner product
 , @`invBinomialP` (%`P`, %`k`, %`n`) – inverse of `binomialP`
@@ -252,6 +259,8 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`right$` (%`string$`, %`n`) – the %n last characters in %`string$`
 , @`rindex` (%`string$`, %`part$`) – look up a substring from the end, or 0 if not found
 , @`rindex` (%`strings$#`, %`s$`) – look up whether and where %`s$` last occurs in %`strings$#`
+, @`rindex_caseInsensitive` (%`string$`, %`part$`) – look up a substring from the end, or 0 if not found
+, @`rindex_caseInsensitive` (%`strings$#`, %`s$`) – look up whether and where %`s$` last occurs in %`strings$#`
 , @`rindex_regex` (%`string$`, %`regex$`) – determine whether and where %`string$` last matches %`regex$`
 , @`round` (%`x`) – nearest integer
 , @`round#` (%`vector#`) – nearest integer of each element of %`vector#`
@@ -298,6 +307,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`sqrt#` (%`vector#`) – square root of each element of %`vector#`
 , @`sqrt##` (%`matrix##`) – square root of each cell of %`matrix##`
 , @`startsWith` (%`string$`, %`part$`) – determine whether %`string$` starts with %`part$`
+, @`startsWith_caseInsensitive` (%`string$`, %`part$`) – determine whether %`string$` starts with %`part$`
 , @`stdev` (%`v#`) – standard deviation of the elements of a vector
 , @`stopwatch` – give the current value of the timer, which is then immediately reset to zero (note: no parentheses)
 , @`string$` (%`number`) – format a number as a string
@@ -1629,6 +1639,27 @@ Syntax and semantics
 #`endsWith` (%`string$`, %`part$`)
 : determine whether %`string$` ends in %`part$`.
 
+See also
+========
+- @`startsWith` for determining whether %`string$` %starts with %`part$`.
+- @`endsWith_caseInsensitive` for %%case-insensitive% matching.
+
+################################################################################
+"`endsWith_caseInsensitive`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`endsWith_caseInsensitive` (%`string$`, %`part$`)
+: determine whether %`string$` ends in %`part$`.
+
+See also
+========
+- @`startsWith_caseInsensitive` for determining whether %`string$` %starts with %`part$`.
+- @`endsWith` for %%case-sensitive% matching.
+
 ################################################################################
 "`environment$`"
 © Paul Boersma 2023
@@ -1811,6 +1842,28 @@ Syntax and semantics
 : return the names (not the whole paths) of the files in a folder
 	or that match a pattern with an asterisk.
 
+See also
+========
+- @`folderNames$#` for finding %folder names
+- @`fileNames_caseInsensitive$#` for %%case-insensitive% matching
+
+################################################################################
+"`fileNames_caseInsensitive$#`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@, especially in @Scripting.
+
+Syntax and semantics
+====================
+#`fileNames_caseInsensitive$#` (%`folderNameOrPattern$`)
+: return the names (not the whole paths) of the files in a folder
+	or that match a pattern with an asterisk.
+
+See also
+========
+- @`folderNames_caseInsensitive$#` for finding %folder names
+- @`fileNames$#` for %%case-sensitive% matching
+
 ################################################################################
 "`fileReadable`"
 © Paul Boersma 2023
@@ -1915,6 +1968,28 @@ Syntax and semantics
 #`folderNames$#` (%`folderNameOrPattern$`)
 : return the names (not the whole paths) of the subfolders in a folder
 	or that match a pattern with an asterisk.
+
+See also
+========
+- @`fileNames$#` for finding %file names
+- @`folderNames_caseInsensitive$#` for %%case-insensitive% matching
+
+################################################################################
+"`folderNames_caseInsensitive$#`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@, especially in @Scripting.
+
+Syntax and semantics
+====================
+#`folderNames_caseInsensitive$#` (%`folderNameOrPattern$`)
+: return the names (not the whole paths) of the subfolders in a folder
+	or that match a pattern with an asterisk.
+
+See also
+========
+- @`fileNames_caseInsensitive$#` for finding %file names
+- @`folderNames$#` for %%case-sensitive% matching
 
 ################################################################################
 "`from_to#`"
@@ -2112,6 +2187,46 @@ Syntax and semantics
 #`index` (%`strings$#`, %`s$`)
 : look up whether and where %`s$` first occurs in %`strings$#`.
 
+See also
+========
+- @`rindex` for the %last occurrence
+- @`index_caseInsensitive` for %%case-insensitive% matching
+- @`index_regex` for %%regular-expression% matching
+
+################################################################################
+"`index_caseInsensitive`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`index_caseInsensitive` (%`string$`, %`part$`)
+: return the first location of the substring %`part$` inside %`string$`, or 0 if not found.
+
+#`index_caseInsensitive` (%`strings$#`, %`s$`)
+: look up whether and where %`s$` first occurs in %`strings$#`.
+
+Case insensitivity
+==================
+For determining where the substring is located,
+it doesn’t matter whether %`string$` and/or %`part$` are in lower case or upper case.
+Here is a comparison with @`index`:
+{
+	assert \`{index} ("hello", "L") = 0
+	assert \#{index_caseInsensitive} ("hello", "L") = 3
+	assert \`{index} ("heLlo", "L") = 3
+	assert \#{index_caseInsensitive} ("heLlo", "L") = 3
+	assert \`{index} ("helLo", "L") = 4
+	assert \#{index_caseInsensitive} ("helLo", "L") = 3
+	assert \`{index} ("heLLo", "L") = 3
+	assert \#{index_caseInsensitive} ("heLLo", "L") = 3
+}
+See also
+========
+- @`rindex_caseInsensitive` for the %last occurrence
+- @`index` for %%case-sensitive% matching
+
 ################################################################################
 "`index_regex`"
 © Paul Boersma 2023
@@ -2122,6 +2237,7 @@ Syntax and semantics
 ====================
 #`index_regex` (%`string$`, %`regex$`)
 : determine whether and where %`string$` first matches %`regex$`.
+  See @@Regular expressions@.
 
 ################################################################################
 "`inner`"
@@ -3343,6 +3459,7 @@ Syntax and semantics
 #`replace_regex$` (%`a$`, %`b$`, %`c$`, %`n`)
 : within %`a$`, replaces the first %`n` matches of regular expression %`b$`
 with the regular expression %`c$`, or all if %`n` = 0.
+  See @@Regular expressions@.
 
 ################################################################################
 "`right$`"
@@ -3369,6 +3486,46 @@ Syntax and semantics
 #`rindex` (%`strings$#`, %`s$`)
 : look up whether and where %`s$` last occurs in %`strings$`.
 
+See also
+========
+- @`index` for the %first occurrence
+- @`rindex_caseInsensitive` for %%case-insensitive% matching
+- @`rindex_regex` for %%regular-expression% matching
+
+################################################################################
+"`rindex_caseInsensitive`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`rindex_caseInsensitive` (%`string$`, %`part$`)
+: return the last location of the substring %`part$` inside %`string$`, or 0 if not found.
+
+#`rindex_caseInsensitive` (%`strings$#`, %`s$`)
+: look up whether and where %`s$` last occurs in %`strings$#`.
+
+Case insensitivity
+==================
+For determining where the substring is located,
+it doesn’t matter whether %`string$` and/or %`part$` are in lower case or upper case.
+Here is a comparison with @`rindex`:
+{
+	assert \`{rindex} ("hello", "L") = 0
+	assert \#{rindex_caseInsensitive} ("hello", "L") = 4
+	assert \`{rindex} ("heLlo", "L") = 3
+	assert \#{rindex_caseInsensitive} ("heLlo", "L") = 4
+	assert \`{rindex} ("helLo", "L") = 4
+	assert \#{rindex_caseInsensitive} ("helLo", "L") = 4
+	assert \`{rindex} ("heLLo", "L") = 4
+	assert \#{rindex_caseInsensitive} ("heLLo", "L") = 4
+}
+See also
+========
+- @`index_caseInsensitive` for the %first occurrence
+- @`rindex` for %%case-sensitive% matching
+
 ################################################################################
 "`rindex_regex`"
 © Paul Boersma 2023
@@ -3379,6 +3536,7 @@ Syntax and semantics
 ====================
 #`rindex_regex` (%`string$`, %`regex$`)
 : return the last match of the regular expression %`regex$` inside %`string$`, or 0 if not found.
+  See @@Regular expressions@.
 
 ################################################################################
 "`round`"
@@ -4037,6 +4195,27 @@ Syntax and semantics
 ====================
 #`startsWith` (%`string$`, %`part$`)
 : determine whether %`string$` starts with %`part$`.
+
+See also
+========
+- @`endsWith` for determining whether %`string$` %ends in %`part$`.
+- @`startsWith_caseInsensitive` for %%case-insensitive% matching.
+
+################################################################################
+"`startsWith_caseInsensitive`"
+© Paul Boersma 2023
+
+A function that can be used in @@Formulas@.
+
+Syntax and semantics
+====================
+#`startsWith_caseInsensitive` (%`string$`, %`part$`)
+: determine whether %`string$` starts with %`part$`.
+
+See also
+========
+- @`endsWith_caseInsensitive` for determining whether %`string$` %ends in %`part$`.
+- @`startsWith` for %%case-sensitive% matching.
 
 ################################################################################
 "`stdev`"
