@@ -146,7 +146,8 @@ Extract the *praatXXXX_xcodeproj.zip* file from the [latest release](https://git
 into the directory that contains `sys`, `fon`, `dwtools` and so on.
 Then open the project `praat.xcodeproj` in Xcode 15 and choose Build or Run for the target `praat_mac`.
 You can compile with the 13.3 (i.e. the newest and standard) SDK, which will work as far back as macOS 10.11,
-which is our deployment target.
+which is our deployment target, and will look good even on macOS 15 Sonoma
+(Praat 6.3.18 has some graphics glitches, e.g. when scrolling the manual, if compiled with the 14.0 SDK).
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
 code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build,
@@ -171,6 +172,7 @@ Automatically manage signing -> Upload -> ...wait... (“Package Approved”) ..
 Praat.app that was already there. If on the way you receive an error
 “App Store Connect Operation Error -- You must first sign the relevant contracts online”,
 or “Couldn’t communicate with a helper application“,
+or just a crash (happens with Xcode 15.0),
 you will have to log in to `developer.apple.com` and do Review Agreement -> Agree;
 you may then also have to go (or log in) to App Store Connect, then Agreements, Tax, and Banking
 -> Paid Apps -> View or Terms (even if you have no paid apps).
@@ -327,7 +329,7 @@ assuming that it uses the `bash` shell):
     alias praat="~/praats/praat"
     alias praat-run="praat-build && praat"
 
-Building Praat this way takes 2 minutes and 10 seconds (optimization level O3).
+Building Praat this way takes 7 minutes and 50 seconds (optimization level O3).
 
 To build `praat_barren`, create a folder `praatsb`, and define
 
