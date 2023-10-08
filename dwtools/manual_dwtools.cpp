@@ -29,7 +29,7 @@
 #include "Table_extensions.h"
 #include "Configuration.h"
 #include "Discriminant.h"
-#include "Electroglottogram.h"
+#include "../sensors/Electroglottogram.h"
 #include "Sound_and_Spectrum.h"
 #include "Sound_and_Spectrum_dft.h"
 
