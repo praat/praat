@@ -32,6 +32,9 @@ Latest changes in Praat.
 ##6.3.18# (xx September 2023)
 • @SpeechSynthesizer: included the new version of eSpeak (development 1.52), which has 133 languages.
 • @@Add to menu...@: you can now add separators, headers and indented submenus to menus in editor windows.
+• Scripting: new functions @`index_caseInsensitive`, @`rindex_caseInsensitive`,
+  @`startsWith_caseInsensitive`, @`endsWith_caseInsensitive`
+  @`fileNames_caseInsensitive$#`, @`folderNames_caseInsensitive$#`.
 
 ##6.3.17# (10 September 2023)
 • SoundEditor: three Paste options, namely ##Paste before selection# (Shift-Command-V),

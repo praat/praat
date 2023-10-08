@@ -211,7 +211,19 @@ inline integer NUMfindFirst (constSTRVEC const& strvec, conststring32 str) {
 			return i;
 	return 0;
 }
+inline integer NUMfindFirst_caseInsensitive (constSTRVEC const& strvec, conststring32 str) {
+	for (integer i = 1; i <= strvec.size; i ++)
+		if (Melder_equ_caseInsensitive (strvec [i], str))
+			return i;
+	return 0;
+}
 inline integer NUMfindLast (constSTRVEC const& strvec, conststring32 str) {
+	for (integer i = strvec.size; i >= 1; i --)
+		if (Melder_equ (strvec [i], str))
+			return i;
+	return 0;
+}
+inline integer NUMfindLast_caseInsensitive (constSTRVEC const& strvec, conststring32 str) {
 	for (integer i = strvec.size; i >= 1; i --)
 		if (Melder_equ (strvec [i], str))
 			return i;

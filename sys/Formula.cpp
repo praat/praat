@@ -186,16 +186,22 @@ enum { NO_SYMBOL_,
 
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
-	#define LOW_FUNCTION_STR1  LENGTH_
-		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_,
-		CREATE_FOLDER_, CREATE_DIRECTORY_, SET_WORKING_DIRECTORY_, VARIABLE_EXISTS_,
-		READ_FILE_, READ_FILE_STR_, READ_FILE_VEC_, READ_FILE_MAT_,
-		UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
-	#define HIGH_FUNCTION_STR1  ENVIRONMENT_STR_
-		DATE_STR_, DATE_UTC_STR_, DATE_ISO_STR_, DATE_UTC_ISO_STR_, DATE_VEC_, DATE_UTC_VEC_, INFO_STR_,   // TODO: two of those aren't really string functions
-		INDEX_, RINDEX_,
-		STARTS_WITH_, ENDS_WITH_, REPLACE_STR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEX_STR_,
-		EXTRACT_NUMBER_, EXTRACT_WORD_STR_, EXTRACT_LINE_STR_,
+		#define LOW_FUNCTION_STR1  LENGTH_
+			LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_,
+			CREATE_FOLDER_, CREATE_DIRECTORY_, SET_WORKING_DIRECTORY_, VARIABLE_EXISTS_,
+			READ_FILE_, READ_FILE_STR_, READ_FILE_VEC_, READ_FILE_MAT_,
+			UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
+		#define HIGH_FUNCTION_STR1  ENVIRONMENT_STR_
+		#define LOW_FUNCTION_STR0  DATE_STR_
+			DATE_STR_, DATE_UTC_STR_, DATE_ISO_STR_, DATE_UTC_ISO_STR_, DATE_VEC_, DATE_UTC_VEC_, INFO_STR_,   // TODO: two of those aren't really string functions
+		#define HIGH_FUNCTION_STR0  INFO_STR_
+		#define LOW_FUNCTION_STR2  INDEX_
+			INDEX_, INDEX_CASE_INSENSITIVE_, RINDEX_, RINDEX_CASE_INSENSITIVE_,
+			STARTS_WITH_, STARTS_WITH_CASE_INSENSITIVE_, ENDS_WITH_, ENDS_WITH_CASE_INSENSITIVE_,
+			INDEX_REGEX_, RINDEX_REGEX_, EXTRACT_NUMBER_,
+		#define HIGH_FUNCTION_STR2  EXTRACT_NUMBER_
+		EXTRACT_WORD_STR_, EXTRACT_LINE_STR_,
+		REPLACE_STR_, REPLACE_REGEX_STR_,
 		FIXED_STR_, PERCENT_STR_, HEXADECIMAL_STR_,
 	#define HIGH_STRING_FUNCTION  HEXADECIMAL_STR_
 
@@ -329,14 +335,20 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"fileNames$#", U"folderNames$#", U"fileNames_caseInsensitive$#", U"folderNames_caseInsensitive$#",
 	U"splitByWhitespace$#", U"splitBy$#",
 
-	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
-	U"createFolder", U"createDirectory", U"setWorkingDirectory", U"variableExists",
-	U"readFile", U"readFile$", U"readFile#", U"readFile##",
-	U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
+	// LOW_FUNCTION_STR1
+		U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
+		U"createFolder", U"createDirectory", U"setWorkingDirectory", U"variableExists",
+		U"readFile", U"readFile$", U"readFile#", U"readFile##",
+		U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
+	// HIGH_FUNCTION_STR1
 	U"date$", U"date_utc$", U"date_iso$", U"date_utc_iso$", U"date#", U"date_utc#", U"info$",
-	U"index", U"rindex",
-	U"startsWith", U"endsWith", U"replace$", U"index_regex", U"rindex_regex", U"replace_regex$",
-	U"extractNumber", U"extractWord$", U"extractLine$",
+	// LOW_FUNCTION_STR2
+		U"index", U"index_caseInsensitive", U"rindex", U"rindex_caseInsensitive",
+		U"startsWith", U"startsWith_caseInsensitive", U"endsWith", U"endsWith_caseInsensitive",
+		U"index_regex", U"rindex_regex", U"extractNumber",
+	// HIGH_FUNCTION_STR2
+	U"extractWord$", U"extractLine$",
+	U"replace$", U"replace_regex$",
 	U"fixed$", U"percent$", U"hexadecimal$",
 	U"sumOver",
 	U".",
@@ -1632,38 +1644,36 @@ static void parsePowerFactor () {
 
 	if (symbol >= LOW_STRING_FUNCTION && symbol <= HIGH_STRING_FUNCTION) {
 		if (symbol >= LOW_FUNCTION_STR1 && symbol <= HIGH_FUNCTION_STR1) {
-            bool isParenthesis = fitArguments ();
+			const bool isParenthesis = fitArguments ();
 			parseExpression ();
-			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
-		} else if (symbol == INDEX_ || symbol == RINDEX_ ||
-			symbol == STARTS_WITH_ || symbol == ENDS_WITH_ ||
-			symbol == INDEX_REGEX_ || symbol == RINDEX_REGEX_ || symbol == EXTRACT_NUMBER_)
-		{
-            const bool isParenthesis = fitArguments ();
+			if (isParenthesis)
+				fit (CLOSING_PARENTHESIS_);
+		} else if (symbol >= LOW_FUNCTION_STR2 && symbol <= HIGH_FUNCTION_STR2) {
+			const bool isParenthesis = fitArguments ();
 			parseExpression ();
 			fit (COMMA_);
 			parseExpression ();
 			if (isParenthesis)
 				fit (CLOSING_PARENTHESIS_);
-		} else if (symbol >= DATE_STR_ && symbol <= INFO_STR_) {
+		} else if (symbol >= LOW_FUNCTION_STR0 && symbol <= HIGH_FUNCTION_STR0) {
 			fit (OPENING_PARENTHESIS_);
 			fit (CLOSING_PARENTHESIS_);
 		} else if (symbol == EXTRACT_WORD_STR_ || symbol == EXTRACT_LINE_STR_) {
-            const bool isParenthesis = fitArguments ();
+			const bool isParenthesis = fitArguments ();
 			parseExpression ();
 			fit (COMMA_);
 			parseExpression ();
 			if (isParenthesis)
 				fit (CLOSING_PARENTHESIS_);
 		} else if (symbol == FIXED_STR_ || symbol == PERCENT_STR_ || symbol == HEXADECIMAL_STR_) {
-            const bool isParenthesis = fitArguments ();
+			const bool isParenthesis = fitArguments ();
 			parseExpression ();
 			fit (COMMA_);
 			parseExpression ();
 			if (isParenthesis)
 				fit (CLOSING_PARENTHESIS_);
 		} else if (symbol == REPLACE_STR_ || symbol == REPLACE_REGEX_STR_) {
-            const bool isParenthesis = fitArguments ();
+			const bool isParenthesis = fitArguments ();
 			parseExpression ();
 			fit (COMMA_);
 			parseExpression ();
@@ -5755,6 +5765,19 @@ static void do_index () {
 			s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
+static void do_index_caseInsensitive () {
+	const Stackel t = pop, s = pop;
+	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
+		char32 *substring = str32str_caseInsensitive (s->getString(), t->getString());
+		const integer result = ( substring ? substring - s->getString() + 1 : 0 );   // 0 is the special case, meaning "not found"
+		pushNumber (result);
+	} else if (s->which == Stackel_STRING_ARRAY && t->which == Stackel_STRING) {
+		pushNumber (NUMfindFirst_caseInsensitive (s->stringArray, t->getString()));
+	} else {
+		Melder_throw (U"The function “index_caseInsensitive” requires two strings, not ",
+			s->whichText(), U" and ", t->whichText(), U".");
+	}
+}
 static void do_rindex () {
 	const Stackel part = pop, whole = pop;
 	if (whole->which == Stackel_STRING && part->which == Stackel_STRING) {
@@ -5773,19 +5796,36 @@ static void do_rindex () {
 		} else {
 			pushNumber (0);   // 0 is the special case, meaning "not found"
 		}
+	} else if (whole->which == Stackel_STRING_ARRAY && part->which == Stackel_STRING) {
+		pushNumber (NUMfindLast (whole->stringArray, part->getString()));
 	} else {
 		Melder_throw (U"The function “rindex” requires two strings, not ",
 			whole->whichText(), U" and ", part->whichText(), U".");
 	}
 }
-static void do_stringMatchesCriterion (kMelder_string criterion) {
-	const Stackel t = pop, s = pop;
-	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		const bool result = Melder_stringMatchesCriterion (s->getString(), criterion, t->getString(), true);
-		pushNumber (result);
+static void do_rindex_caseInsensitive () {
+	const Stackel part = pop, whole = pop;
+	if (whole->which == Stackel_STRING && part->which == Stackel_STRING) {
+		char32 *lastSubstring = str32str_caseInsensitive (whole->getString(), part->getString());
+		if (part->getString() [0] == U'\0') {
+			const integer result = Melder_length (whole->getString());
+			pushNumber (result);
+		} else if (lastSubstring) {
+			for (;;) {
+				char32 *substring = str32str_caseInsensitive (lastSubstring + 1, part->getString());
+				if (! substring)
+					break;
+				lastSubstring = substring;
+			}
+			pushNumber (lastSubstring - whole->getString() + 1);
+		} else {
+			pushNumber (0);   // 0 is the special case, meaning "not found"
+		}
+	} else if (whole->which == Stackel_STRING_ARRAY && part->which == Stackel_STRING) {
+		pushNumber (NUMfindLast_caseInsensitive (whole->stringArray, part->getString()));
 	} else {
-		Melder_throw (U"The function “", Formula_instructionNames [parse [programPointer]. symbol],
-			U"” requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
+		Melder_throw (U"The function “rindex_caseInsensitive” requires two strings, not ",
+			whole->whichText(), U" and ", part->whichText(), U".");
 	}
 }
 static void do_index_regex (int backward) {
@@ -5809,28 +5849,14 @@ static void do_index_regex (int backward) {
 			U"” requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
-static void do_replace_STR () {
-	const Stackel x = pop, u = pop, t = pop, s = pop;
-	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		autostring32 result = replace_STR (s->getString(), t->getString(), u->getString(), Melder_iround (x->number));
-		pushString (result.move());
+static void do_stringMatchesCriterion (kMelder_string criterion, bool caseSensitive) {
+	const Stackel t = pop, s = pop;
+	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
+		const bool result = Melder_stringMatchesCriterion (s->getString(), criterion, t->getString(), caseSensitive);
+		pushNumber (result);
 	} else {
-		Melder_throw (U"The function “replace$” requires three strings and a number.");
-	}
-}
-static void do_replace_regex_STR () {
-	const Stackel x = pop, u = pop, t = pop, s = pop;
-	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		conststring32 errorMessage;
-		regexp *compiled_regexp = CompileRE (t->getString(), & errorMessage, 0);
-		if (! compiled_regexp) {
-			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
-		} else {
-			autostring32 result = replace_regex_STR (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number));
-			pushString (result.move());
-		}
-	} else {
-		Melder_throw (U"The function “replace_regex$” requires three strings and a number.");
+		Melder_throw (U"The function “", Formula_instructionNames [parse [programPointer]. symbol],
+			U"” requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
 static void do_extractNumber () {
@@ -5907,6 +5933,30 @@ static void do_extractText_STR (bool singleWord) {
 	} else {
 		Melder_throw (U"The function “", Formula_instructionNames [parse [programPointer]. symbol],
 			U"” requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
+	}
+}
+static void do_replace_STR () {
+	const Stackel x = pop, u = pop, t = pop, s = pop;
+	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
+		autostring32 result = replace_STR (s->getString(), t->getString(), u->getString(), Melder_iround (x->number));
+		pushString (result.move());
+	} else {
+		Melder_throw (U"The function “replace$” requires three strings and a number.");
+	}
+}
+static void do_replace_regex_STR () {
+	const Stackel x = pop, u = pop, t = pop, s = pop;
+	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
+		conststring32 errorMessage;
+		regexp *compiled_regexp = CompileRE (t->getString(), & errorMessage, 0);
+		if (! compiled_regexp) {
+			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
+		} else {
+			autostring32 result = replace_regex_STR (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number));
+			pushString (result.move());
+		}
+	} else {
+		Melder_throw (U"The function “replace_regex$” requires three strings and a number.");
 	}
 }
 static void do_selected () {
@@ -8363,12 +8413,13 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case FOLDER_NAMES_CASE_INSENSITIVE_STRVEC_: { do_folderNames_caseInsensitive_STRVEC ();
 } break; case SPLIT_BY_WHITESPACE_STRVEC_: { do_splitByWhitespace_STRVEC ();
 } break; case SPLIT_BY_STRVEC_: { do_splitBy_STRVEC ();
-/********** String functions: **********/
+/********** String functions of 1 variable: **********/
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();
 } break; case FILE_READABLE_: { do_fileReadable ();
 } break; case TRY_TO_WRITE_FILE_: { do_tryToWriteFile ();
 } break; case TRY_TO_APPEND_FILE_: { do_tryToAppendFile ();
+/********** String functions of 0 variables: **********/
 } break; case DATE_STR_: { do_date_STR ();
 } break; case DATE_UTC_STR_: { do_date_utc_STR ();
 } break; case DATE_ISO_STR_: { do_date_iso_STR ();
@@ -8376,6 +8427,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case DATE_VEC_: { do_date_VEC ();
 } break; case DATE_UTC_VEC_: { do_date_utc_VEC ();
 } break; case INFO_STR_: { do_info_STR ();
+/********** String functions of 2 variables: **********/
 } break; case LEFT_STR_: { do_left_STR ();
 } break; case RIGHT_STR_: { do_right_STR ();
 } break; case MID_STR_: { do_mid_STR ();
@@ -8383,16 +8435,21 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_: { do_backslashTrigraphsToUnicode_STR ();
 } break; case ENVIRONMENT_STR_: { do_environment_STR ();
 } break; case INDEX_: { do_index ();
+} break; case INDEX_CASE_INSENSITIVE_: { do_index_caseInsensitive ();
 } break; case RINDEX_: { do_rindex ();
-} break; case STARTS_WITH_: { do_stringMatchesCriterion (kMelder_string::STARTS_WITH);
-} break; case ENDS_WITH_: { do_stringMatchesCriterion (kMelder_string::ENDS_WITH);
-} break; case REPLACE_STR_: { do_replace_STR ();
+} break; case RINDEX_CASE_INSENSITIVE_: { do_rindex_caseInsensitive ();
+} break; case STARTS_WITH_: { do_stringMatchesCriterion (kMelder_string::STARTS_WITH, true);
+} break; case STARTS_WITH_CASE_INSENSITIVE_: { do_stringMatchesCriterion (kMelder_string::STARTS_WITH, false);
+} break; case ENDS_WITH_: { do_stringMatchesCriterion (kMelder_string::ENDS_WITH, true);
+} break; case ENDS_WITH_CASE_INSENSITIVE_: { do_stringMatchesCriterion (kMelder_string::ENDS_WITH, false);
 } break; case INDEX_REGEX_: { do_index_regex (false);
 } break; case RINDEX_REGEX_: { do_index_regex (true);
-} break; case REPLACE_REGEX_STR_: { do_replace_regex_STR ();
 } break; case EXTRACT_NUMBER_: { do_extractNumber ();
+/********** Other string functions: **********/
 } break; case EXTRACT_WORD_STR_: { do_extractText_STR (true);
 } break; case EXTRACT_LINE_STR_: { do_extractText_STR (false);
+} break; case REPLACE_STR_: { do_replace_STR ();
+} break; case REPLACE_REGEX_STR_: { do_replace_regex_STR ();
 } break; case SELECTED_: { do_selected ();
 } break; case SELECTED_STR_: { do_selected_STR ();
 } break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();
