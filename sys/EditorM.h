@@ -368,8 +368,8 @@ _form_inited_: \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = UiOutfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
-#define EDITOR_DO_SAVE  \
-	UiOutfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile _file2 { }; \
+#define _EDITOR_DO_SAVE(outfile_do) \
+	outfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile _file2 { }; \
 	if (_args_) { \
 		Melder_require (_narg_ == 1, \
 			U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \
@@ -383,6 +383,8 @@ _form_inited_: \
 	} else { \
 		file = UiFile_getFile (cmd -> d_uiform.get()); \
 	}
+#define EDITOR_DO_SAVE _EDITOR_DO_SAVE(UiOutfile_do)
+#define EDITOR_DO_SAVE_DEFAULT _EDITOR_DO_SAVE(UiOutfile_do_default)
 
 #define EDITOR_FORM_READ(title, helpTitle)  \
 	if (! cmd -> d_uiform) { \

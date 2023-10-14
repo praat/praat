@@ -108,7 +108,24 @@ autoUiForm UiInfile_createE (EditorCommand cmd, conststring32 title, conststring
 }
 
 void UiOutfile_do (UiForm me, conststring32 defaultName) {
-	autostring32 outfileName = GuiFileSelect_getOutfileName (my d_dialogParent, my name.get(), defaultName);
+	autostring32 outfileName = Melder_dup(defaultName);
+	Melder_pathToFile (outfileName.get(), & my file);
+	structMelderFile file { };
+	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
+	UiHistory_write (U"\n");
+	UiHistory_write_colonize (my invokingButtonTitle.get());
+	try {
+		my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure, my optionalEditor);
+	} catch (MelderError) {
+		Melder_flushError (U"File ", & file, U" not finished.");
+	}
+	UiHistory_write (U" \"");
+	UiHistory_write (outfileName.get());
+	UiHistory_write (U"\"");
+}
+
+void UiOutfile_do_default (UiForm me, conststring32 defaultName) {
+	autostring32 outfileName = Melder_dup(defaultName); //GuiFileSelect_getOutfileName (my d_dialogParent, my name.get(), defaultName);
 	if (! outfileName)
 		return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {

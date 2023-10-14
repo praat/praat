@@ -343,6 +343,7 @@ autoUiForm UiOutfile_create (GuiWindow parent, Editor optionalEditor, conststrin
 void UiInfile_do (UiForm me);
 
 void UiOutfile_do (UiForm me, conststring32 defaultName);
+void UiOutfile_do_default (UiForm me, conststring32 defaultName);
 
 MelderFile UiFile_getFile (UiForm me);
 
