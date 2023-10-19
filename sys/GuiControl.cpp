@@ -1,6 +1,6 @@
 /* GuiControl.cpp
  *
- * Copyright (C) 1993-2012,2013,2015,2017,2020,2021 Paul Boersma,
+ * Copyright (C) 1993-2012,2013,2015,2017,2020,2021,2023 Paul Boersma,
  *               2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		//parentHeight = parent -> d_top;
 		if (left   <  0) left   += parentWidth;
 		if (right  <= 0) right  += parentWidth;
-        if (top    <  0) top    += parentHeight;
+		if (top    <  0) top    += parentHeight;
 		if (bottom <= 0) bottom += parentHeight;
 		trace (U"fixed: parent width ", parentWidth, U" height ", parentHeight);
 		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
@@ -73,28 +73,26 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 			XtVaSetValues (widget, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, bottom - top, nullptr);
 		}
 	#elif cocoa
-        NSView *superView = (NSView *) parent -> d_widget;
-        NSView *widgetView = (NSView *) widget;
+		NSView *superView = (NSView *) parent -> d_widget;
+		NSView *widgetView = (NSView *) widget;
 		NSRect parentRect = [superView frame];
-        int parentWidth = parentRect.size.width;
-        int parentHeight = parentRect.size.height;
-    
-        NSUInteger horizMask = 0;
-        if (left >= 0) {
-            if (right <= 0) {
-                horizMask = NSViewWidthSizable;
-            }
-        } else {
-            horizMask = NSViewMinXMargin;
-        }
-        
-        NSUInteger vertMask = 0;
-        if (top >= 0) {
-            vertMask = NSViewMinYMargin;
-            if (bottom <= 0) {
-                vertMask = NSViewHeightSizable;
-            }
-        }
+		int parentWidth = parentRect.size.width;
+		int parentHeight = parentRect.size.height;
+
+		NSUInteger horizMask = 0;
+		if (left >= 0) {
+			if (right <= 0)
+				horizMask = NSViewWidthSizable;
+		} else {
+			horizMask = NSViewMinXMargin;
+		}
+
+		NSUInteger vertMask = 0;
+		if (top >= 0) {
+			vertMask = NSViewMinYMargin;
+			if (bottom <= 0)
+				vertMask = NSViewHeightSizable;
+		}
 
 		if (left   <  0) left   += parentWidth;
 		if (right  <= 0) right  += parentWidth;
@@ -102,8 +100,8 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		if (bottom <= 0) bottom += parentHeight;
 		top = parentHeight - top;         // flip
 		bottom = parentHeight - bottom;   // flip
-        int width = right - left;
-        int height = top - bottom;
+		int width = right - left;
+		int height = top - bottom;
 		if ([widgetView isKindOfClass: [NSButton class]]) {
 			if (! [widgetView isKindOfClass: [NSPopUpButton class]]) {
 				/*
@@ -116,10 +114,11 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 				height += 5;
 			}
 		}
-        NSRect rect = NSMakeRect (left, bottom, width, height);
-        [widgetView setAutoresizingMask: horizMask | vertMask];
-        [superView addSubview: widgetView];   // parent will retain the subview...
-        [widgetView setFrame: rect];
+		NSRect rect = NSMakeRect (left, bottom, width, height);
+		[widgetView setAutoresizingMask: horizMask | vertMask];
+		[superView addSubview: widgetView];   // parent will retain the subview...
+		[widgetView setFrame: rect];
+		[widgetView setClipsToBounds: true];   // 20231019: seems to be needed from SDK 14.0
 		[widgetView release];   // ... so we can release the item already
 	#endif
 }
