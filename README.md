@@ -145,9 +145,8 @@ Then type `make` to build `Praat.exe`
 Extract the *praatXXXX_xcodeproj.zip* file from the [latest release](https://github.com/praat/praat/releases)
 into the directory that contains `sys`, `fon`, `dwtools` and so on.
 Then open the project `praat.xcodeproj` in Xcode 15 and choose Build or Run for the target `praat_mac`.
-You can compile with the 13.3 SDK, which will work as far back as macOS 10.11,
-which is our deployment target, and will look good even on macOS 15 Sonoma
-(Praat 6.3.18 has some graphics glitches, e.g. when scrolling the manual, if compiled with the 14.0 SDK).
+You can compile with the 14.0 SDK, which will work as far back as macOS 10.11,
+which is our deployment target, and will look good even on macOS 15 Sonoma.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
 code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build,
