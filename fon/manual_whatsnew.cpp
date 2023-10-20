@@ -29,6 +29,10 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.3.19# (20 October 2023)
+• MacOS: resolved a crash when Praat started up on macOS 12 or older
+  (worked around a bug in the Xcode linker that comes with macOS 14 Sonoma).
+
 ##6.3.18# (8 October 2023)
 • @SpeechSynthesizer: included the new version of eSpeak (development 1.52), which has 133 languages.
 • @@Add to menu...@: you can now add separators, headers and indented submenus to menus in editor windows.
