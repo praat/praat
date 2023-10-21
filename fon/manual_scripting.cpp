@@ -2708,7 +2708,7 @@ TERM (U"##--no-pref-files#")
 DEFINITION (U"Ignore the preferences file and the buttons file at start-up, and don't write them when quitting (see above).")
 TERM (U"##--no-plugins#")
 DEFINITION (U"Don't activate the plugins at start-up.")
-TERM (U"##--pref-dir=#/var/www/praat_plugins")
+TERM (U"##--pref-dir=#`/var/www/praat_plugins`")
 DEFINITION (U"Set the preferences folder to `/var/www/praat_plugins` (for instance). "
 	"This can come in handy if you require access to preference files and/or plugins that are not in your home folder.")
 TERM (U"##-8#, ##--utf8#")

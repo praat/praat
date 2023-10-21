@@ -535,7 +535,7 @@ void MarkerEvent(int type, unsigned int char_position, int value, int value2, un
 		int *p;
 		p = (int *)(ep->id.string);
 		p[0] = value;
-		p[1] = value2;
+		p[1] = 0;//value2;   // ppgb UGLY HACK IN ORDER TO MAKE FEWER MISTAKES (20231022)
 	} else
 		ep->id.number = value;
 }
