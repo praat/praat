@@ -329,7 +329,10 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 			} else {
 				// Ugly hack because id.string is not 0-terminated if 8 chars long!
 				memcpy (phoneme_name, events -> id.string, 8);
-				phoneme_name [8] = 0;
+				//phoneme_name [8] = 0;
+				phoneme_name [4] = 0;   // ppgb UGLY HACK IN ORDER TO MAKE FEWER MISTAKES (20231022)
+				//TRACE
+				trace (U"phoneme name <<", Melder_peek8to32 (phoneme_name), U">>");
 				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (phoneme_name));
 			}
 			Table_setNumericValue (my d_events.get(), irow, 9, events -> unique_identifier);
@@ -436,8 +439,16 @@ static autoSound buffer_to_Sound (constINTVEC const& wav, double samplingFrequen
 }
 
 static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval, double time, conststring32 newLabel, bool isNewleftLabel) {
+	//TRACE
+	trace (U"size before: ", my intervals.size);
+	for (integer i = 1; i <= my intervals.size; i ++)
+		trace (U"phoneme ", i, U" ", my intervals.at [i] -> xmin, U" ", my intervals.at [i] -> xmax,
+				U" ", Melder_length (my intervals.at [i] -> text.get()), U" ", my intervals.at [i] -> text.get());
+
+	trace (U"isNewLeftLabel: ", isNewleftLabel);
+	trace (U"iinterval: ", iinterval);
 	Melder_require (time > my xmin && time < my xmax,
-		U"Time is outside interval domains.");
+		U"The time (", time, U" seconds) is not inside the domain of the interval tier (", my xmin, U" .. ", my xmax, U" seconds).");
 	/*
 		Find interval to split
 	*/
@@ -447,11 +458,19 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval
 		Modify end time of left label
 	*/
 	const TextInterval ti = my intervals.at [iinterval];
+	trace (U"end time ", ti -> xmax, U" overridden by ", time);
 	ti -> xmax = time;
-	if (isNewleftLabel)
+	if (isNewleftLabel) {
+		trace (U"label <<", ti -> text.get(), U">> overridden by ", newLabel);
 		TextInterval_setText (ti, newLabel);
+	}
 	autoTextInterval ti_new = TextInterval_create (time, my xmax, (! isNewleftLabel ? newLabel : U"" ));
 	my intervals. addItem_unsorted_move (ti_new.move());
+
+	trace (U"size after: ", my intervals.size);
+	for (integer i = 1; i <= my intervals.size; i ++)
+		trace (U"phoneme ", i, U" ", my intervals.at [i] -> xmin, U" ", my intervals.at [i] -> xmax,
+				U" ", Melder_length (my intervals.at [i] -> text.get()), U" ", my intervals.at [i] -> text.get());
 }
 
 static void Table_setEventTypeString (Table me) {
@@ -601,7 +620,7 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 		const IntervalTier words = (IntervalTier) thy tiers->at [3];
 		const IntervalTier phonemes = (IntervalTier) thy tiers->at [4];
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			const double time = Table_getNumericValue_a (me, irow, timeColumnIndex);
+			/*const*/ double time = Table_getNumericValue_a (me, irow, timeColumnIndex);
 			const int type = Table_getNumericValue_a (me, irow, typeColumnIndex);
 			const integer pos = Table_getNumericValue_a (me, irow, tposColumnIndex);
 			integer length;
@@ -656,19 +675,47 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 				p1w = pos;
 			} else if (type == espeakEVENT_PHONEME) {
 				const conststring32 phoneme = Table_getStringValue_a (me, irow, idColumnIndex);
-				if (time > time_phon_p) {
-					/*
-						Insert new boudary and label interval with the phoneme
-						TODO: Translate the phoneme to the correct notation
-					*/
-					TextInterval ti = phonemes -> intervals.at [phonemes -> intervals.size];
-					if (time > ti -> xmin && time < ti -> xmax)
-						IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, phoneme, false);
+				//TRACE
+				trace (U"found in table the phoneme <<", phoneme, U">>, to be inserted at ", time, U" (usually after ", time_phon_p, U")");
+				const TextInterval lastPhonemeInterval = phonemes -> intervals.at [phonemes -> intervals.size];
+				if (false) {
+					if (time > time_phon_p) {
+						/*
+							Insert new boundary and label interval with the phoneme.
+							TODO: Translate the phoneme to the correct notation
+						*/
+						if (time > lastPhonemeInterval -> xmin && time < lastPhonemeInterval -> xmax) {
+							trace (U"add boundary (1) for phoneme <<", phoneme, U">> at ", time);
+							IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, phoneme, false);
+						}
+					} else {
+						/*
+							Just in case the phoneme starts at xmin, we only need to set interval text.
+						*/
+						trace (U"overriding <<", lastPhonemeInterval -> text.get(), U">> with <<", phoneme, U">>");
+						TextGrid_setIntervalText (thee.get(), 4, phonemes -> intervals.size, phoneme);
+					}
 				} else {
-					/*
-						Just in case the phoneme starts at xmin, we only need to set interval text.
-					*/
-					TextGrid_setIntervalText (thee.get(), 4, phonemes -> intervals.size, phoneme);
+					if (time > time_phon_p) {
+						/*
+							Insert new boundary and label interval with the phoneme.
+							TODO: Translate the phoneme to the correct notation
+						*/
+						if (time > lastPhonemeInterval -> xmin && time < lastPhonemeInterval -> xmax) {
+							trace (U"add boundary (1) for phoneme <<", phoneme, U">> at ", time);
+							IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, phoneme, false);
+						}
+					} else if (! Melder_equ (phoneme, U"")) {
+						/*
+							Just in case the phoneme starts at xmin, we only need to set interval text.
+						*/
+						trace (U"overriding <<", lastPhonemeInterval -> text.get(), U">> with <<", phoneme, U">>");
+						TextGrid_setIntervalText (thee.get(), 4, phonemes -> intervals.size, phoneme);
+					} else {
+						time = 0.001 * lastPhonemeInterval -> xmax + 0.999 * lastPhonemeInterval -> xmin;
+						trace (U"add boundary (2) for phoneme <<", phoneme, U">> at ", time);
+						IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, phoneme, false);
+					}
 				}
 				time_phon_p = time;
 			}
