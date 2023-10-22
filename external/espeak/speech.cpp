@@ -49,6 +49,8 @@
 #include "speak_lib.h"
 #include "encoding.h"
 
+#include "melder.h"
+
 #include "speech.h"
 #include "common.h"               // for GetFileLength
 #include "dictionary.h"           // for GetTranslatedPhonemeString, strncpy0
@@ -534,8 +536,11 @@ void MarkerEvent(int type, unsigned int char_position, int value, int value2, un
 	else if (type == espeakEVENT_PHONEME) {
 		int *p;
 		p = (int *)(ep->id.string);
+		//TRACE
+		trace (U"values ", ((char*)&value)[0], U" ", ((char*)&value)[1], U" ", ((char*)&value)[2], U" ", ((char*)&value)[3], U" ",
+			((char*)&value2)[0], U" ", ((char*)&value2)[1], U" ", ((char*)&value2)[2], U" ", ((char*)&value2)[3]);
 		p[0] = value;
-		p[1] = 0;//value2;   // ppgb UGLY HACK IN ORDER TO MAKE FEWER MISTAKES (20231022)
+		p[1] = value2;   // ppgb SETTING THIS TO 0 HAS BEEN AN UGLY HACK IN ORDER TO MAKE FEWER MISTAKES (20231022)
 	} else
 		ep->id.number = value;
 }
