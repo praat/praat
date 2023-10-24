@@ -29,6 +29,13 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.3.20# (24 October 2023)
+• SpeechSynthesizer and automatic alignment in TextGridEditor: worked around a bug
+  introduced in 6.3.18 that caused incorrect rendering of phonemes consisting
+  of four UTF-8 bytes (such as /ɔː/).
+• SpeechSynthesizer and automatic alignment in TextGridEditor: worked around a very
+  old bug that deleted word-final /l/ in Dutch and English.
+
 ##6.3.19# (20 October 2023)
 • MacOS: resolved a crash when Praat started up on macOS 12 or older
   (worked around a bug in the Xcode linker that comes with macOS 14 Sonoma).
