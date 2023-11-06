@@ -29,7 +29,7 @@ static const struct stylesInfo {
 /* INTRO: */ { U"<p>", U"</p>" },
 /* ENTRY: */ { U"<h3>", U"</h3>" },
 /* NORMAL: */ { U"<p>", U"</p>" },
-/* LIST_ITEM: */ { U"<dd style=\"position:relative;left:1em;text-indent:-2em;\">", U"" },
+/* LIST_ITEM: */ { U"<dd style=\"position:relative;padding-left:1em;text-indent:-2em\">", U"" },
 /* TERM: */ { U"<dt>", U"" },
 /* DEFINITION: */ { U"<dd>", U"" },
 /* CODE: */ { U"<code>&nbsp;&nbsp;&nbsp;", U"<br></code>" },
@@ -50,7 +50,8 @@ static const struct stylesInfo {
 /* CODE2: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
 /* CODE3: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
 /* CODE4: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
-/* CODE5: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" }
+/* CODE5: */ { U"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", U"<br></code>" },
+/* CAPTION: */ { U"<p style=\"position:relative;padding-left:4em;text-indent:-2em;font-size:86%\">", U"</font></p>" },
 };
 
 static void writeLinkAsHtml (ManPages me, mutablestring32 link, conststring32 linkText, MelderString *buffer, conststring32 pageTitle) {
