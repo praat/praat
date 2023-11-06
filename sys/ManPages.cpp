@@ -612,14 +612,14 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 				numberOfLeadingSpaces < 11 ? kManPage_type::DEFINITION2 :
 				kManPage_type::DEFINITION3
 			);
-			if (previousParagraph)
-				if (type == kManPage_type::DEFINITION && previousParagraph -> type == kManPage_type::NORMAL)
+			if (previousParagraph && (previousParagraph -> type == kManPage_type::NORMAL || previousParagraph -> type == kManPage_type::CAPTION))
+				if (type == kManPage_type::DEFINITION)
 					previousParagraph -> type = kManPage_type::TERM;
-				else if (type == kManPage_type::DEFINITION1 && previousParagraph -> type == kManPage_type::CODE)
+				else if (type == kManPage_type::DEFINITION1)
 					previousParagraph -> type = kManPage_type::TERM1;
-				else if (type == kManPage_type::DEFINITION2 && previousParagraph -> type == kManPage_type::CODE1)
+				else if (type == kManPage_type::DEFINITION2)
 					previousParagraph -> type = kManPage_type::TERM2;
-				else if (type == kManPage_type::DEFINITION3 && previousParagraph -> type == kManPage_type::CODE2)
+				else if (type == kManPage_type::DEFINITION3)
 					previousParagraph -> type = kManPage_type::TERM3;
 			line += 2;
 			Melder_skipHorizontalSpace (& line);
@@ -775,20 +775,8 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			} while (1);
 			if (! shouldShowOutput)
 				MelderString_empty (& buffer_graphical);   // add no SCRIPT paragraph
-		/*
-			TODO: remove the following (2023-08-31).
-		*/
 		} else if (numberOfLeadingSpaces >= 3) {
-			TRACE
-			trace (U"Bare code found in: ", firstLine);
-			type = (
-				numberOfLeadingSpaces <  7 ? kManPage_type::CODE  :
-				numberOfLeadingSpaces < 11 ? kManPage_type::CODE1 :
-				numberOfLeadingSpaces < 15 ? kManPage_type::CODE2 :
-				numberOfLeadingSpaces < 19 ? kManPage_type::CODE3 :
-				numberOfLeadingSpaces < 23 ? kManPage_type::CODE4 :
-				kManPage_type::CODE5
-			);
+			type = kManPage_type::CAPTION;
 			MelderString_append (& buffer_graphical, line);
 		} else {
 			type = kManPage_type::NORMAL;

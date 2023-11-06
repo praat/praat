@@ -108,6 +108,7 @@ void HyperPage_code2 (HyperPage me, conststring32 text);
 void HyperPage_code3 (HyperPage me, conststring32 text);
 void HyperPage_code4 (HyperPage me, conststring32 text);
 void HyperPage_code5 (HyperPage me, conststring32 text);
+void HyperPage_caption (HyperPage me, conststring32 text);
 void HyperPage_prototype (HyperPage me, conststring32 text);
 void HyperPage_formula (HyperPage me, conststring32 formula);
 void HyperPage_picture (HyperPage me, double width_inches, double height_inches, void (*draw) (Graphics g));

@@ -41,12 +41,12 @@ enums_begin (kManPage_type, 1)
 	enums_add (kManPage_type, 18, DEFINITION1, U"definition1")
 	enums_add (kManPage_type, 19, DEFINITION2, U"definition2")
 	enums_add (kManPage_type, 20, DEFINITION3, U"definition3")
-	enums_add (kManPage_type, 21, CODE1, U"code1")
-	enums_add (kManPage_type, 22, CODE2, U"code2")
-	enums_add (kManPage_type, 23, CODE3, U"code3")
-	enums_add (kManPage_type, 24, CODE4, U"code4")
-	enums_add (kManPage_type, 25, CODE5, U"code5")
-	enums_add (kManPage_type, 26, PAGE_TITLE, U"page_title")
+	enums_add (kManPage_type, 21, CODE1, U"code1")   // only in pre-2023 man pages
+	enums_add (kManPage_type, 22, CODE2, U"code2")   // only in pre-2023 man pages
+	enums_add (kManPage_type, 23, CODE3, U"code3")   // only in pre-2023 man pages
+	enums_add (kManPage_type, 24, CODE4, U"code4")   // only in pre-2023 man pages
+	enums_add (kManPage_type, 25, CODE5, U"code5")   // only in pre-2023 man pages
+	enums_add (kManPage_type, 26, CAPTION, U"caption")
 enums_end (kManPage_type, 26, NORMAL)
 
 /* End of file ManPage_enums.h */
