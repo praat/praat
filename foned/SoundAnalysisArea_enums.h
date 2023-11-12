@@ -1,6 +1,6 @@
 /* SoundAnalysisArea_enums.h
  *
- * Copyright (C) 2007,2013,2015-2017,2022 Paul Boersma
+ * Copyright (C) 2007,2013,2015-2017,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,11 @@ enums_begin (kSoundAnalysisArea_pitch_drawingMethod, 1)
 enums_end (kSoundAnalysisArea_pitch_drawingMethod, 3, AUTOMATIC)
 
 enums_begin (kSoundAnalysisArea_pitch_analysisMethod, 1)
-	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 1, AUTOCORRELATION, U"autocorrelation")
-	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 2, CROSS_CORRELATION, U"cross-correlation")
-enums_end (kSoundAnalysisArea_pitch_analysisMethod, 2, AUTOCORRELATION)
+	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 1, LOW_PASS_AUTOCORRELATION, U"low-pass autocorrelation")
+	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 2, CROSS_CORRELATION, U"raw cross-correlation")
+	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 3, AUTOCORRELATION, U"raw autocorrelation")
+	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 4, LOW_PASS_CROSS_CORRELATION, U"low-pass cross-correlation")
+enums_end (kSoundAnalysisArea_pitch_analysisMethod, 4, LOW_PASS_AUTOCORRELATION)
 
 enums_begin (kSoundAnalysisArea_intensity_averagingMethod, 0)
 	enums_add (kSoundAnalysisArea_intensity_averagingMethod, 0, MEDIAN, U"median")   // BUG: this HAS to be zero!

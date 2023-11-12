@@ -1,6 +1,6 @@
 /* SoundAnalysisArea_prefs.h
  *
- * Copyright (C) 2013,2015-2017,2020,2022 Paul Boersma
+ * Copyright (C) 2013,2015-2017,2020,2022,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,14 @@ Prefs_begin (SoundAnalysisArea)
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_octaveCost,                1, U"0.01")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_octaveJumpCost,            1, U"0.35")
 	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_voicedUnvoicedCost,        1, U"0.14")
+	InstancePrefs_addBool    (SoundAnalysisArea, pitch_lowPass_veryAccurate,              1, false)
+	InstancePrefs_addInteger (SoundAnalysisArea, pitch_lowPass_maximumNumberOfCandidates, 1, U"15")
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_lowPass_silenceThreshold,          1, U"0.03")
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_lowPass_voicingThreshold,          1, U"0.45")
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_lowPass_octaveCost,                1, U"0.055")
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_lowPass_octaveJumpCost,            1, U"0.35")
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_lowPass_voicedUnvoicedCost,        1, U"0.14")
+	InstancePrefs_addDouble  (SoundAnalysisArea, pitch_lowPass_lowPassCutoffFrequency,    1, U"300.0")
 	InstancePrefs_addBool    (SoundAnalysisArea, pitch_picture_speckle,           1, false)
 	InstancePrefs_addBool    (SoundAnalysisArea, pitch_picture_garnish,           1, true)
 	InstancePrefs_addBool    (SoundAnalysisArea, intensity_show,                  1, false)
