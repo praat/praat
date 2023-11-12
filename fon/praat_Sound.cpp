@@ -1652,6 +1652,60 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_phonation_ac, U"Sound: To Pitch (phonation, ac)", U"Sound: To Pitch (phonation, ac)...") {
+	LABEL (U"Finding the candidates")
+	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"40.0")
+	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
+	BOOLEAN (veryAccurate, U"Very accurate", false)
+	LABEL (U"Finding a path")
+	REAL (silenceThreshold, U"Silence threshold", U"0.03")
+	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
+	REAL (octaveCost, U"Octave cost", U"0.055")
+	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
+	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
+	POSITIVE (lowPassCutoffFrequency, U"Low-pass cut-off frequency (Hz)", U"300.0")
+	OK
+DO
+	Melder_require (maximumNumberOfCandidates > 1,
+		U"Your maximum number of candidates should be greater than 1.");
+	CONVERT_EACH_TO_ONE (Sound)
+		autoPitch result = Sound_to_Pitch_phonation_ac (me, timeStep,
+			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling,
+			lowPassCutoffFrequency
+		);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_phonation_cc, U"Sound: To Pitch (phonation, cc)", U"Sound: To Pitch (phonation, cc)...") {
+	LABEL (U"Finding the candidates")
+	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"40.0")
+	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
+	BOOLEAN (veryAccurate, U"Very accurate", false)
+	LABEL (U"Finding a path")
+	REAL (silenceThreshold, U"Silence threshold", U"0.03")
+	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
+	REAL (octaveCost, U"Octave cost", U"0.055")
+	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
+	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
+	POSITIVE (lowPassCutoffFrequency, U"Low-pass cut-off frequency (Hz)", U"300.0")
+	OK
+DO
+	Melder_require (maximumNumberOfCandidates > 1,
+		U"Your maximum number of candidates should be greater than 1.");
+	CONVERT_EACH_TO_ONE (Sound)
+		autoPitch result = Sound_to_Pitch_phonation_cc (me, timeStep,
+			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling,
+			lowPassCutoffFrequency
+		);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (CONVERT_EACH_TO_ONE__Sound_to_PointProcess_extrema, U"Sound: To PointProcess (extrema)", nullptr) {
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
 	BOOLEAN (includeMaxima, U"Include maxima", true)
@@ -2397,6 +2451,10 @@ void praat_Sound_init () {
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch_ac);
 		praat_addAction1 (classSound, 0, U"To Pitch (cc)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch_cc);
+		praat_addAction1 (classSound, 0, U"To Pitch (phonation, ac)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_phonation_ac);
+		praat_addAction1 (classSound, 0, U"To Pitch (phonation, cc)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_phonation_cc);
 		praat_addAction1 (classSound, 0, U"To PointProcess (periodic, cc)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_PointProcess_periodic_cc);
 		praat_addAction1 (classSound, 0, U"To PointProcess (periodic, peaks)...", nullptr, 1,

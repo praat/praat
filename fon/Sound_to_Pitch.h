@@ -84,4 +84,16 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		pitches above a certain value "voiceless".
 */
 
+autoPitch Sound_to_Pitch_phonation_ac (Sound me,
+	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+	double silenceThreshold, double voicingThreshold,
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
+	double lowPassCutoffFrequency);
+
+autoPitch Sound_to_Pitch_phonation_cc (Sound me,
+	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+	double silenceThreshold, double voicingThreshold,
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
+	double lowPassCutoffFrequency);
+
 /* End of file Sound_to_Pitch.h */

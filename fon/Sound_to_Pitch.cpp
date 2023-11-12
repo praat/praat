@@ -35,6 +35,7 @@
 #include "Sound_to_Pitch.h"
 #include "NUM2.h"
 #include "MelderThread.h"
+#include "Sound_and_Spectrum.h"
 
 #define AC_HANNING  0
 #define AC_GAUSS  1
@@ -220,7 +221,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 					High frequencies are to be favoured
 					if we want to analyze a perfectly periodic signal correctly.
 				*/
-				double localStrength = pitchFrame -> candidates [iweak]. strength - octaveCost *
+				const double localStrength = pitchFrame -> candidates [iweak]. strength - octaveCost *
 					NUMlog2 (pitchFloor / pitchFrame -> candidates [iweak]. frequency);
 				if (localStrength < weakest) {
 					weakest = localStrength;
@@ -567,6 +568,84 @@ autoPitch Sound_to_Pitch_cc (Sound me,
 {
 	return Sound_to_Pitch_any (me, dt, pitchFloor, periodsPerWindow, maxnCandidates, 2 + accurate,
 		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+}
+
+autoPitch Sound_to_Pitch_phonation_ac (Sound me,
+	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+	double silenceThreshold, double voicingThreshold,
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
+	double lowPassCutoffFrequency)
+{
+	try {
+		autoSound thee = Data_copy (me);
+		if (my ny == 1) {
+			autoSpectrum spec = Sound_to_Spectrum (me, true);
+			for (integer ibin = 1; ibin <= spec -> nx; ibin ++) {
+				const double frequency = Sampled_indexToX (spec.get(), ibin);
+				const double factor = exp (-0.5 * sqr (frequency / lowPassCutoffFrequency));
+				spec -> z [1] [ibin] *= factor;
+				spec -> z [2] [ibin] *= factor;
+			}
+			autoSound him = Spectrum_to_Sound (spec.get());
+			thy z.row (1)  <<=  his z.row (1).part (1, thy nx);
+		} else {
+			for (integer ichan = 1; ichan <= my ny; ichan ++) {
+				autoSound channel = Sound_extractChannel (me, ichan);
+				autoSpectrum spec = Sound_to_Spectrum (channel.get(), true);
+				for (integer ibin = 1; ibin <= spec -> nx; ibin ++) {
+					const double frequency = Sampled_indexToX (spec.get(), ibin);
+					const double factor = exp (-0.5 * sqr (frequency / lowPassCutoffFrequency));
+					spec -> z [1] [ibin] *= factor;
+					spec -> z [2] [ibin] *= factor;
+				}
+				autoSound him = Spectrum_to_Sound (spec.get());
+				thy z.row (ichan)  <<=  his z.row (1).part (1, thy nx);
+			}
+		}
+		return Sound_to_Pitch_any (thee.get(), dt, pitchFloor, periodsPerWindow, maxnCandidates, accurate,
+				silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+	} catch (MelderError) {
+		Melder_throw (me, U": phonation-based pitch analysis not performed.");
+	}
+}
+
+autoPitch Sound_to_Pitch_phonation_cc (Sound me,
+	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+	double silenceThreshold, double voicingThreshold,
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
+	double lowPassCutoffFrequency)
+{
+	try {
+		autoSound thee = Data_copy (me);
+		if (my ny == 1) {
+			autoSpectrum spec = Sound_to_Spectrum (me, true);
+			for (integer ibin = 1; ibin <= spec -> nx; ibin ++) {
+				const double frequency = Sampled_indexToX (spec.get(), ibin);
+				const double factor = exp (-0.5 * sqr (frequency / lowPassCutoffFrequency));
+				spec -> z [1] [ibin] *= factor;
+				spec -> z [2] [ibin] *= factor;
+			}
+			autoSound him = Spectrum_to_Sound (spec.get());
+			thy z.row (1)  <<=  his z.row (1).part (1, thy nx);
+		} else {
+			for (integer ichan = 1; ichan <= my ny; ichan ++) {
+				autoSound channel = Sound_extractChannel (me, ichan);
+				autoSpectrum spec = Sound_to_Spectrum (channel.get(), true);
+				for (integer ibin = 1; ibin <= spec -> nx; ibin ++) {
+					const double frequency = Sampled_indexToX (spec.get(), ibin);
+					const double factor = exp (-0.5 * sqr (frequency / lowPassCutoffFrequency));
+					spec -> z [1] [ibin] *= factor;
+					spec -> z [2] [ibin] *= factor;
+				}
+				autoSound him = Spectrum_to_Sound (spec.get());
+				thy z.row (ichan)  <<=  his z.row (1).part (1, thy nx);
+			}
+		}
+		return Sound_to_Pitch_any (thee.get(), dt, pitchFloor, periodsPerWindow, maxnCandidates, 2 + accurate,
+				silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+	} catch (MelderError) {
+		Melder_throw (me, U": phonation-based pitch analysis not performed.");
+	}
 }
 
 /* End of file Sound_to_Pitch.cpp */

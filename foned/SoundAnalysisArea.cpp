@@ -891,14 +891,14 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 			my instancePref_pitch_octaveJumpCost()            != Melder_atof (my default_pitch_octaveJumpCost()) ||
 			my instancePref_pitch_voicedUnvoicedCost()        != Melder_atof (my default_pitch_voicedUnvoicedCost()))
 		{
-			SET_STRING (note1, U"Warning: you have some non-standard \"advanced settings\".")
+			SET_STRING (note1, U"Warning: you have some non-standard “advanced settings”.")
 		} else {
-			SET_STRING (note1, U"(all of your \"advanced settings\" have their standard values)")
+			SET_STRING (note1, U"(all of your “advanced settings” have their standard values)")
 		}
 		if (my instancePref_timeStepStrategy() != my default_timeStepStrategy ()) {
-			SET_STRING (note2, U"Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (note2, U"Warning: you have a non-standard “time step strategy”.")
 		} else {
-			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (note2, U"(your “time step strategy” has its standard value: automatic)")
 		}
 	EDITOR_DO
 		Melder_require (pitchCeiling > pitchFloor,
