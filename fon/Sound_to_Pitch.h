@@ -84,13 +84,13 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		pitches above a certain value "voiceless".
 */
 
-autoPitch Sound_to_Pitch_phonation_ac (Sound me,
+autoPitch Sound_to_Pitch_lpac (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
 	double lowPassCutoffFrequency);
 
-autoPitch Sound_to_Pitch_phonation_cc (Sound me,
+autoPitch Sound_to_Pitch_lpcc (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,

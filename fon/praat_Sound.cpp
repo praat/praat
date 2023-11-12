@@ -1652,7 +1652,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_phonation_ac, U"Sound: To Pitch (phonation, ac)", U"Sound: To Pitch (phonation, ac)...") {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_lpac, U"Sound: To Pitch (lp-ac)", U"Sound: To Pitch (lp-ac)...") {
 	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"40.0")
@@ -1671,7 +1671,7 @@ DO
 	Melder_require (maximumNumberOfCandidates > 1,
 		U"Your maximum number of candidates should be greater than 1.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPitch result = Sound_to_Pitch_phonation_ac (me, timeStep,
+		autoPitch result = Sound_to_Pitch_lpac (me, timeStep,
 			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
 			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling,
 			lowPassCutoffFrequency
@@ -1679,7 +1679,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_phonation_cc, U"Sound: To Pitch (phonation, cc)", U"Sound: To Pitch (phonation, cc)...") {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_lpcc, U"Sound: To Pitch (lp-cc)", U"Sound: To Pitch (lp-cc)...") {
 	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"40.0")
@@ -1698,7 +1698,7 @@ DO
 	Melder_require (maximumNumberOfCandidates > 1,
 		U"Your maximum number of candidates should be greater than 1.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPitch result = Sound_to_Pitch_phonation_cc (me, timeStep,
+		autoPitch result = Sound_to_Pitch_lpcc (me, timeStep,
 			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
 			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling,
 			lowPassCutoffFrequency
@@ -2447,14 +2447,15 @@ void praat_Sound_init () {
 	praat_addAction1 (classSound, 0, U"Analyse periodicity -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"To Pitch...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch);
-		praat_addAction1 (classSound, 0, U"To Pitch (ac)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_ac);
+		praat_addAction1 (classSound, 0, U"To Pitch (lp-ac)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_lpac);
 		praat_addAction1 (classSound, 0, U"To Pitch (cc)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch_cc);
-		praat_addAction1 (classSound, 0, U"To Pitch (phonation, ac)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_phonation_ac);
-		praat_addAction1 (classSound, 0, U"To Pitch (phonation, cc)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_phonation_cc);
+		praat_addAction1 (classSound, 0, U"To Pitch (ac)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_ac);
+		praat_addAction1 (classSound, 0, U"To Pitch (lp-cc)...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_lpcc);
+
 		praat_addAction1 (classSound, 0, U"To PointProcess (periodic, cc)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_PointProcess_periodic_cc);
 		praat_addAction1 (classSound, 0, U"To PointProcess (periodic, peaks)...", nullptr, 1,

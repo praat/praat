@@ -570,7 +570,7 @@ autoPitch Sound_to_Pitch_cc (Sound me,
 		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
 }
 
-autoPitch Sound_to_Pitch_phonation_ac (Sound me,
+autoPitch Sound_to_Pitch_lpac (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
@@ -609,7 +609,7 @@ autoPitch Sound_to_Pitch_phonation_ac (Sound me,
 	}
 }
 
-autoPitch Sound_to_Pitch_phonation_cc (Sound me,
+autoPitch Sound_to_Pitch_lpcc (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
