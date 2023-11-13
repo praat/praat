@@ -30,11 +30,11 @@ enums_begin (kSoundAnalysisArea_pitch_drawingMethod, 1)
 enums_end (kSoundAnalysisArea_pitch_drawingMethod, 3, AUTOMATIC)
 
 enums_begin (kSoundAnalysisArea_pitch_analysisMethod, 1)
-	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 1, LOW_PASS_AUTOCORRELATION, U"low-pass autocorrelation")
-	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 2, CROSS_CORRELATION, U"raw cross-correlation")
-	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 3, AUTOCORRELATION, U"raw autocorrelation")
-	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 4, LOW_PASS_CROSS_CORRELATION, U"low-pass cross-correlation")
-enums_end (kSoundAnalysisArea_pitch_analysisMethod, 4, LOW_PASS_AUTOCORRELATION)
+	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 1, FILTERED_AUTOCORRELATION, U"filtered autocorrelation")
+	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 2, RAW_CROSS_CORRELATION, U"raw cross-correlation")
+	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 3, RAW_AUTOCORRELATION, U"raw autocorrelation")
+	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 4, FILTERED_CROSS_CORRELATION, U"filtered cross-correlation")
+enums_end (kSoundAnalysisArea_pitch_analysisMethod, 4, FILTERED_AUTOCORRELATION)
 
 enums_begin (kSoundAnalysisArea_intensity_averagingMethod, 0)
 	enums_add (kSoundAnalysisArea_intensity_averagingMethod, 0, MEDIAN, U"median")   // BUG: this HAS to be zero!

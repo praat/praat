@@ -23,13 +23,13 @@ autoPitch Sound_to_Pitch (Sound me, double timeStep,
 	double pitchFloor, double pitchCeiling);
 /* Calls Sound_to_Pitch_ac with default arguments. */
 
-autoPitch Sound_to_Pitch_ac (Sound me, double timeStep, double pitchFloor,
+autoPitch Sound_to_Pitch_rawAc (Sound me, double timeStep, double pitchFloor,
 	double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold, double octaveCost,
 	double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling);
 /* Calls Sound_to_Pitch_any with AC method. */
 
-autoPitch Sound_to_Pitch_cc (Sound me, double timeStep, double pitchFloor,
+autoPitch Sound_to_Pitch_rawCc (Sound me, double timeStep, double pitchFloor,
 	double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold, double octaveCost,
 	double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling);
@@ -84,13 +84,13 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		pitches above a certain value "voiceless".
 */
 
-autoPitch Sound_to_Pitch_lpac (Sound me,
+autoPitch Sound_to_Pitch_filteredAc (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
 	double lowPassCutoffFrequency);
 
-autoPitch Sound_to_Pitch_lpcc (Sound me,
+autoPitch Sound_to_Pitch_filteredCc (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,

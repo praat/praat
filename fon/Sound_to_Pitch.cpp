@@ -548,11 +548,11 @@ autoPitch Sound_to_Pitch_any (Sound me,
 }
 
 autoPitch Sound_to_Pitch (Sound me, double timeStep, double pitchFloor, double pitchCeiling) {
-	return Sound_to_Pitch_ac (me, timeStep, pitchFloor,
+	return Sound_to_Pitch_rawAc (me, timeStep, pitchFloor,
 		3.0, 15, false, 0.03, 0.45, 0.01, 0.35, 0.14, pitchCeiling);
 }
 
-autoPitch Sound_to_Pitch_ac (Sound me,
+autoPitch Sound_to_Pitch_rawAc (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling)
@@ -561,7 +561,7 @@ autoPitch Sound_to_Pitch_ac (Sound me,
 		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
 }
 
-autoPitch Sound_to_Pitch_cc (Sound me,
+autoPitch Sound_to_Pitch_rawCc (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling)
@@ -570,7 +570,7 @@ autoPitch Sound_to_Pitch_cc (Sound me,
 		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
 }
 
-autoPitch Sound_to_Pitch_lpac (Sound me,
+autoPitch Sound_to_Pitch_filteredAc (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
@@ -609,7 +609,7 @@ autoPitch Sound_to_Pitch_lpac (Sound me,
 	}
 }
 
-autoPitch Sound_to_Pitch_lpcc (Sound me,
+autoPitch Sound_to_Pitch_filteredCc (Sound me,
 	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,

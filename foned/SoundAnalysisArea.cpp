@@ -51,42 +51,56 @@ void structSoundAnalysisArea :: v_reset_analysis () {
 
 static bool dynamic_instancePref_pitch_veryAccurate (SoundAnalysisArea me) {
 	switch (my instancePref_pitch_method()) {
-		case kSoundAnalysisArea_pitch_analysisMethod::AUTOCORRELATION:
-			return my instancePref_pitch_veryAccurate();
-		case kSoundAnalysisArea_pitch_analysisMethod::CROSS_CORRELATION:
-			return my instancePref_pitch_veryAccurate();
-		case kSoundAnalysisArea_pitch_analysisMethod::LOW_PASS_AUTOCORRELATION:
-			return my instancePref_pitch_lowPass_veryAccurate();
-		case kSoundAnalysisArea_pitch_analysisMethod::LOW_PASS_CROSS_CORRELATION:
-			return my instancePref_pitch_lowPass_veryAccurate();
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION:
+			return my instancePref_pitch_rawAcCc_veryAccurate();
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION:
+			return my instancePref_pitch_rawAcCc_veryAccurate();
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION:
+			return my instancePref_pitch_filteredAcCc_veryAccurate();
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION:
+			return my instancePref_pitch_filteredAcCc_veryAccurate();
 		default:
 			Melder_fatal (U"Unknown pitch analysis method ", (int) my instancePref_pitch_method(), U".");
 	}
 }
 static double dynamic_instancePref_pitch_silenceThreshold (SoundAnalysisArea me) {
 	switch (my instancePref_pitch_method()) {
-		case kSoundAnalysisArea_pitch_analysisMethod::AUTOCORRELATION:
-			return my instancePref_pitch_silenceThreshold();
-		case kSoundAnalysisArea_pitch_analysisMethod::CROSS_CORRELATION:
-			return my instancePref_pitch_silenceThreshold();
-		case kSoundAnalysisArea_pitch_analysisMethod::LOW_PASS_AUTOCORRELATION:
-			return my instancePref_pitch_lowPass_silenceThreshold();
-		case kSoundAnalysisArea_pitch_analysisMethod::LOW_PASS_CROSS_CORRELATION:
-			return my instancePref_pitch_lowPass_silenceThreshold();
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION:
+			return my instancePref_pitch_rawAcCc_silenceThreshold();
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION:
+			return my instancePref_pitch_rawAcCc_silenceThreshold();
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION:
+			return my instancePref_pitch_filteredAcCc_silenceThreshold();
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION:
+			return my instancePref_pitch_filteredAcCc_silenceThreshold();
 		default:
 			Melder_fatal (U"Unknown pitch analysis method ", (int) my instancePref_pitch_method(), U".");
 	}
 }
 static double dynamic_instancePref_pitch_voicingThreshold (SoundAnalysisArea me) {
 	switch (my instancePref_pitch_method()) {
-		case kSoundAnalysisArea_pitch_analysisMethod::AUTOCORRELATION:
-			return my instancePref_pitch_voicingThreshold();
-		case kSoundAnalysisArea_pitch_analysisMethod::CROSS_CORRELATION:
-			return my instancePref_pitch_voicingThreshold();
-		case kSoundAnalysisArea_pitch_analysisMethod::LOW_PASS_AUTOCORRELATION:
-			return my instancePref_pitch_lowPass_voicingThreshold();
-		case kSoundAnalysisArea_pitch_analysisMethod::LOW_PASS_CROSS_CORRELATION:
-			return my instancePref_pitch_lowPass_voicingThreshold();
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION:
+			return my instancePref_pitch_rawAcCc_voicingThreshold();
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION:
+			return my instancePref_pitch_rawAcCc_voicingThreshold();
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION:
+			return my instancePref_pitch_filteredAcCc_voicingThreshold();
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION:
+			return my instancePref_pitch_filteredAcCc_voicingThreshold();
+		default:
+			Melder_fatal (U"Unknown pitch analysis method ", (int) my instancePref_pitch_method(), U".");
+	}
+}
+static double periodsPerAnalysisWindow (SoundAnalysisArea me) {
+	switch (my instancePref_pitch_method()) {
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION:
+			return 3.0;
+		case kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION:
+			return 1.0;
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION:
+			return 3.0;
+		case kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION:
+			return 1.0;
 		default:
 			Melder_fatal (U"Unknown pitch analysis method ", (int) my instancePref_pitch_method(), U".");
 	}
@@ -146,43 +160,43 @@ static void tryToComputePitch (SoundAnalysisArea me) {
 			my instancePref_timeStepStrategy() == kSoundAnalysisArea_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow() - my startWindow()) / my instancePref_numberOfTimeStepsPerView() :
 			0.0   // the default: determined by pitch floor
 		);
-		if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::AUTOCORRELATION)
-			my d_pitch = Sound_to_Pitch_ac (sound.get(), pitchTimeStep,
+		if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION)
+			my d_pitch = Sound_to_Pitch_rawAc (sound.get(), pitchTimeStep,
 				my instancePref_pitch_floor(),
 				3.0,   // periods per window
-				my instancePref_pitch_maximumNumberOfCandidates(), my instancePref_pitch_veryAccurate(),
-				my instancePref_pitch_silenceThreshold(), my instancePref_pitch_voicingThreshold(),
-				my instancePref_pitch_octaveCost(), my instancePref_pitch_octaveJumpCost(),
-				my instancePref_pitch_voicedUnvoicedCost(), my instancePref_pitch_ceiling()
+				my instancePref_pitch_rawAcCc_maximumNumberOfCandidates(), my instancePref_pitch_rawAcCc_veryAccurate(),
+				my instancePref_pitch_rawAcCc_silenceThreshold(), my instancePref_pitch_rawAcCc_voicingThreshold(),
+				my instancePref_pitch_rawAcCc_octaveCost(), my instancePref_pitch_rawAcCc_octaveJumpCost(),
+				my instancePref_pitch_rawAcCc_voicedUnvoicedCost(), my instancePref_pitch_ceiling()
 			);
-		else if	(my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::CROSS_CORRELATION)
-			my d_pitch = Sound_to_Pitch_cc (sound.get(), pitchTimeStep,
+		else if	(my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION)
+			my d_pitch = Sound_to_Pitch_rawCc (sound.get(), pitchTimeStep,
 				my instancePref_pitch_floor(),
 				1.0,   // periods per window
-				my instancePref_pitch_maximumNumberOfCandidates(), my instancePref_pitch_veryAccurate(),
-				my instancePref_pitch_silenceThreshold(), my instancePref_pitch_voicingThreshold(),
-				my instancePref_pitch_octaveCost(), my instancePref_pitch_octaveJumpCost(),
-				my instancePref_pitch_voicedUnvoicedCost(), my instancePref_pitch_ceiling()
+				my instancePref_pitch_rawAcCc_maximumNumberOfCandidates(), my instancePref_pitch_rawAcCc_veryAccurate(),
+				my instancePref_pitch_rawAcCc_silenceThreshold(), my instancePref_pitch_rawAcCc_voicingThreshold(),
+				my instancePref_pitch_rawAcCc_octaveCost(), my instancePref_pitch_rawAcCc_octaveJumpCost(),
+				my instancePref_pitch_rawAcCc_voicedUnvoicedCost(), my instancePref_pitch_ceiling()
 			);
-		else if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::LOW_PASS_AUTOCORRELATION)
-			my d_pitch = Sound_to_Pitch_lpac (sound.get(), pitchTimeStep,
+		else if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION)
+			my d_pitch = Sound_to_Pitch_filteredAc (sound.get(), pitchTimeStep,
 				my instancePref_pitch_floor(),
 				3.0,   // periods per window
-				my instancePref_pitch_lowPass_maximumNumberOfCandidates(), my instancePref_pitch_lowPass_veryAccurate(),
-				my instancePref_pitch_lowPass_silenceThreshold(), my instancePref_pitch_lowPass_voicingThreshold(),
-				my instancePref_pitch_lowPass_octaveCost(), my instancePref_pitch_lowPass_octaveJumpCost(),
-				my instancePref_pitch_lowPass_voicedUnvoicedCost(), my instancePref_pitch_ceiling(),
-				my instancePref_pitch_lowPass_lowPassCutoffFrequency()
+				my instancePref_pitch_filteredAcCc_maximumNumberOfCandidates(), my instancePref_pitch_filteredAcCc_veryAccurate(),
+				my instancePref_pitch_filteredAcCc_silenceThreshold(), my instancePref_pitch_filteredAcCc_voicingThreshold(),
+				my instancePref_pitch_filteredAcCc_octaveCost(), my instancePref_pitch_filteredAcCc_octaveJumpCost(),
+				my instancePref_pitch_filteredAcCc_voicedUnvoicedCost(), my instancePref_pitch_ceiling(),
+				my instancePref_pitch_filteredAcCc_lowPassCutoffFrequency()
 			);
-		else if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::LOW_PASS_CROSS_CORRELATION)
-			my d_pitch = Sound_to_Pitch_lpcc (sound.get(), pitchTimeStep,
+		else if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION)
+			my d_pitch = Sound_to_Pitch_filteredCc (sound.get(), pitchTimeStep,
 				my instancePref_pitch_floor(),
 				1.0,   // periods per window
-				my instancePref_pitch_lowPass_maximumNumberOfCandidates(), my instancePref_pitch_lowPass_veryAccurate(),
-				my instancePref_pitch_lowPass_silenceThreshold(), my instancePref_pitch_lowPass_voicingThreshold(),
-				my instancePref_pitch_lowPass_octaveCost(), my instancePref_pitch_lowPass_octaveJumpCost(),
-				my instancePref_pitch_lowPass_voicedUnvoicedCost(), my instancePref_pitch_ceiling(),
-				my instancePref_pitch_lowPass_lowPassCutoffFrequency()
+				my instancePref_pitch_filteredAcCc_maximumNumberOfCandidates(), my instancePref_pitch_filteredAcCc_veryAccurate(),
+				my instancePref_pitch_filteredAcCc_silenceThreshold(), my instancePref_pitch_filteredAcCc_voicingThreshold(),
+				my instancePref_pitch_filteredAcCc_octaveCost(), my instancePref_pitch_filteredAcCc_octaveJumpCost(),
+				my instancePref_pitch_filteredAcCc_voicedUnvoicedCost(), my instancePref_pitch_ceiling(),
+				my instancePref_pitch_filteredAcCc_lowPassCutoffFrequency()
 			);
 		else
 			Melder_fatal (U"Unknown pitch method ", (int) my instancePref_pitch_method(), U".");
@@ -396,21 +410,21 @@ void structSoundAnalysisArea :: v_pitchInfo () const {
 	MelderInfo_writeLine (U"Pitch view to: ", our instancePref_pitch_viewTo(), U" ",
 			Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
 	MelderInfo_writeLine (U"Pitch method: ", kSoundAnalysisArea_pitch_analysisMethod_getText (our instancePref_pitch_method()));
-	MelderInfo_writeLine (U"Pitch very accurate: ", our instancePref_pitch_veryAccurate());
-	MelderInfo_writeLine (U"Pitch max. number of candidates: ", our instancePref_pitch_maximumNumberOfCandidates());
-	MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_silenceThreshold(), U" of global peak");
-	MelderInfo_writeLine (U"Pitch voicing threshold: ", our instancePref_pitch_voicingThreshold(), U" (periodic power / total power)");
-	MelderInfo_writeLine (U"Pitch octave cost: ", our instancePref_pitch_octaveCost(), U" per octave");
-	MelderInfo_writeLine (U"Pitch octave jump cost: ", our instancePref_pitch_octaveJumpCost(), U" per octave");
-	MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", our instancePref_pitch_voicedUnvoicedCost());
-	MelderInfo_writeLine (U"Pitch (LP-AC/CC) very accurate: ", our instancePref_pitch_lowPass_veryAccurate());
-	MelderInfo_writeLine (U"Pitch (LP-AC/CC) max. number of candidates: ", our instancePref_pitch_lowPass_maximumNumberOfCandidates());
-	MelderInfo_writeLine (U"Pitch (LP-AC/CC) silence threshold: ", our instancePref_pitch_lowPass_silenceThreshold(), U" of global peak");
-	MelderInfo_writeLine (U"Pitch (LP-AC/CC) voicing threshold: ", our instancePref_pitch_lowPass_voicingThreshold(), U" (periodic power / total power)");
-	MelderInfo_writeLine (U"Pitch (LP-AC/CC) octave cost: ", our instancePref_pitch_lowPass_octaveCost(), U" per octave");
-	MelderInfo_writeLine (U"Pitch (LP-AC/CC) octave jump cost: ", our instancePref_pitch_lowPass_octaveJumpCost(), U" per octave");
-	MelderInfo_writeLine (U"Pitch (LP-AC/CC) voiced/unvoiced cost: ", our instancePref_pitch_lowPass_voicedUnvoicedCost());
-	MelderInfo_writeLine (U"Pitch (LP-AC/CC) low-pass cut-off frequency: ", our instancePref_pitch_lowPass_voicedUnvoicedCost());
+	MelderInfo_writeLine (U"Pitch (raw AC and CC) very accurate: ", our instancePref_pitch_rawAcCc_veryAccurate());
+	MelderInfo_writeLine (U"Pitch (raw AC and CC) max. number of candidates: ", our instancePref_pitch_rawAcCc_maximumNumberOfCandidates());
+	MelderInfo_writeLine (U"Pitch (raw AC and CC) silence threshold: ", our instancePref_pitch_rawAcCc_silenceThreshold(), U" of global peak");
+	MelderInfo_writeLine (U"Pitch (raw AC and CC) voicing threshold: ", our instancePref_pitch_rawAcCc_voicingThreshold(), U" (periodic power / total power)");
+	MelderInfo_writeLine (U"Pitch (raw AC and CC) octave cost: ", our instancePref_pitch_rawAcCc_octaveCost(), U" per octave");
+	MelderInfo_writeLine (U"Pitch (raw AC and CC) octave jump cost: ", our instancePref_pitch_rawAcCc_octaveJumpCost(), U" per octave");
+	MelderInfo_writeLine (U"Pitch (raw AC and CC) voiced/unvoiced cost: ", our instancePref_pitch_rawAcCc_voicedUnvoicedCost());
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) low-pass cut-off frequency: ", our instancePref_pitch_filteredAcCc_voicedUnvoicedCost());
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) very accurate: ", our instancePref_pitch_filteredAcCc_veryAccurate());
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) max. number of candidates: ", our instancePref_pitch_filteredAcCc_maximumNumberOfCandidates());
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) silence threshold: ", our instancePref_pitch_filteredAcCc_silenceThreshold(), U" of global peak");
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) voicing threshold: ", our instancePref_pitch_filteredAcCc_voicingThreshold(), U" (periodic power / total power)");
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) octave cost: ", our instancePref_pitch_filteredAcCc_octaveCost(), U" per octave");
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) octave jump cost: ", our instancePref_pitch_filteredAcCc_octaveJumpCost(), U" per octave");
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) voiced/unvoiced cost: ", our instancePref_pitch_filteredAcCc_voicedUnvoicedCost());
 }
 void structSoundAnalysisArea :: v_intensityInfo () const {
 	/* Intensity flag: */
@@ -949,7 +963,7 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_ceiling())
 		OPTIONMENU_ENUM (kPitch_unit, unit,
 				U"Unit", my default_pitch_unit ())
-		LABEL (U"The low-pass autocorrelation method optimizes for")
+		LABEL (U"The filtered autocorrelation method optimizes for")
 		LABEL (U"   vocal fold vibration and intonation research;")
 		LABEL (U"the raw cross-correlation method optimizes for voice research;")
 		LABEL (U"and the raw autocorrelation method optimizes for pure periodicity:")
@@ -970,21 +984,21 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 		SET_ENUM (drawingMethod, kSoundAnalysisArea_pitch_drawingMethod, my instancePref_pitch_drawingMethod())
 		SET_REAL (viewFrom, my instancePref_pitch_viewFrom())
 		SET_REAL (viewTo,   my instancePref_pitch_viewTo())
-		if (my instancePref_pitch_veryAccurate()                      != my default_pitch_veryAccurate() ||
-			my instancePref_pitch_maximumNumberOfCandidates()         != Melder_atoi (my default_pitch_maximumNumberOfCandidates()) ||
-			my instancePref_pitch_silenceThreshold()                  != Melder_atof (my default_pitch_silenceThreshold()) ||
-			my instancePref_pitch_voicingThreshold()                  != Melder_atof (my default_pitch_voicingThreshold()) ||
-			my instancePref_pitch_octaveCost()                        != Melder_atof (my default_pitch_octaveCost()) ||
-			my instancePref_pitch_octaveJumpCost()                    != Melder_atof (my default_pitch_octaveJumpCost()) ||
-			my instancePref_pitch_voicedUnvoicedCost()                != Melder_atof (my default_pitch_voicedUnvoicedCost()) ||
-			my instancePref_pitch_lowPass_veryAccurate()              != my default_pitch_lowPass_veryAccurate() ||
-			my instancePref_pitch_lowPass_maximumNumberOfCandidates() != Melder_atoi (my default_pitch_lowPass_maximumNumberOfCandidates()) ||
-			my instancePref_pitch_lowPass_silenceThreshold()          != Melder_atof (my default_pitch_lowPass_silenceThreshold()) ||
-			my instancePref_pitch_lowPass_voicingThreshold()          != Melder_atof (my default_pitch_lowPass_voicingThreshold()) ||
-			my instancePref_pitch_lowPass_octaveCost()                != Melder_atof (my default_pitch_lowPass_octaveCost()) ||
-			my instancePref_pitch_lowPass_octaveJumpCost()            != Melder_atof (my default_pitch_lowPass_octaveJumpCost()) ||
-			my instancePref_pitch_lowPass_voicedUnvoicedCost()        != Melder_atof (my default_pitch_lowPass_voicedUnvoicedCost()) ||
-			my instancePref_pitch_lowPass_lowPassCutoffFrequency()    != Melder_atof (my default_pitch_lowPass_lowPassCutoffFrequency())
+		if (my instancePref_pitch_rawAcCc_veryAccurate()                   != my default_pitch_rawAcCc_veryAccurate() ||
+			my instancePref_pitch_rawAcCc_maximumNumberOfCandidates()      != Melder_atoi (my default_pitch_rawAcCc_maximumNumberOfCandidates()) ||
+			my instancePref_pitch_rawAcCc_silenceThreshold()               != Melder_atof (my default_pitch_rawAcCc_silenceThreshold()) ||
+			my instancePref_pitch_rawAcCc_voicingThreshold()               != Melder_atof (my default_pitch_rawAcCc_voicingThreshold()) ||
+			my instancePref_pitch_rawAcCc_octaveCost()                     != Melder_atof (my default_pitch_rawAcCc_octaveCost()) ||
+			my instancePref_pitch_rawAcCc_octaveJumpCost()                 != Melder_atof (my default_pitch_rawAcCc_octaveJumpCost()) ||
+			my instancePref_pitch_rawAcCc_voicedUnvoicedCost()             != Melder_atof (my default_pitch_rawAcCc_voicedUnvoicedCost()) ||
+			my instancePref_pitch_filteredAcCc_lowPassCutoffFrequency()    != Melder_atof (my default_pitch_filteredAcCc_lowPassCutoffFrequency()) ||
+			my instancePref_pitch_filteredAcCc_veryAccurate()              != my default_pitch_filteredAcCc_veryAccurate() ||
+			my instancePref_pitch_filteredAcCc_maximumNumberOfCandidates() != Melder_atoi (my default_pitch_filteredAcCc_maximumNumberOfCandidates()) ||
+			my instancePref_pitch_filteredAcCc_silenceThreshold()          != Melder_atof (my default_pitch_filteredAcCc_silenceThreshold()) ||
+			my instancePref_pitch_filteredAcCc_voicingThreshold()          != Melder_atof (my default_pitch_filteredAcCc_voicingThreshold()) ||
+			my instancePref_pitch_filteredAcCc_octaveCost()                != Melder_atof (my default_pitch_filteredAcCc_octaveCost()) ||
+			my instancePref_pitch_filteredAcCc_octaveJumpCost()            != Melder_atof (my default_pitch_filteredAcCc_octaveJumpCost()) ||
+			my instancePref_pitch_filteredAcCc_voicedUnvoicedCost()        != Melder_atof (my default_pitch_filteredAcCc_voicedUnvoicedCost())
 		)
 		{
 			SET_STRING (note1, U"Warning: you have some non-standard “advanced settings”.")
@@ -1015,34 +1029,35 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void menu_cb_advancedPitchSettings_ac_cc (SoundAnalysisArea me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Advanced pitch settings (AC & CC)", U"Advanced pitch settings...")
-		LABEL   (U"Settings for the raw autocorrelation and cross-correlation methods:")
+static void menu_cb_advancedPitchSettings_rawAcCc (SoundAnalysisArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Advanced pitch settings (raw AC and CC)", U"Advanced pitch settings (raw AC and CC)...")
+		LABEL   (U"Settings for the RAW autocorrelation and cross-correlation methods only.")
+		LABEL   (U"")
 		BOOLEAN (veryAccurate,              U"Very accurate", false)
-		NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_maximumNumberOfCandidates ())
-		REAL    (silenceThreshold,          U"Silence threshold",         my default_pitch_silenceThreshold          ())
-		REAL    (voicingThreshold,          U"Voicing threshold",         my default_pitch_voicingThreshold          ())
-		REAL    (octaveCost,                U"Octave cost",               my default_pitch_octaveCost                ())
-		REAL    (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_octaveJumpCost            ())
-		REAL    (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_voicedUnvoicedCost        ())
+		NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_rawAcCc_maximumNumberOfCandidates ())
+		REAL    (silenceThreshold,          U"Silence threshold",         my default_pitch_rawAcCc_silenceThreshold          ())
+		REAL    (voicingThreshold,          U"Voicing threshold",         my default_pitch_rawAcCc_voicingThreshold          ())
+		REAL    (octaveCost,                U"Octave cost",               my default_pitch_rawAcCc_octaveCost                ())
+		REAL    (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawAcCc_octaveJumpCost            ())
+		REAL    (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawAcCc_voicedUnvoicedCost        ())
 	EDITOR_OK
-		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_veryAccurate())
-		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_maximumNumberOfCandidates())
-		SET_REAL    (silenceThreshold,          my instancePref_pitch_silenceThreshold())
-		SET_REAL    (voicingThreshold,          my instancePref_pitch_voicingThreshold())
-		SET_REAL    (octaveCost,                my instancePref_pitch_octaveCost())
-		SET_REAL    (octaveJumpCost,            my instancePref_pitch_octaveJumpCost())
-		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_voicedUnvoicedCost())
+		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_rawAcCc_veryAccurate())
+		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_rawAcCc_maximumNumberOfCandidates())
+		SET_REAL    (silenceThreshold,          my instancePref_pitch_rawAcCc_silenceThreshold())
+		SET_REAL    (voicingThreshold,          my instancePref_pitch_rawAcCc_voicingThreshold())
+		SET_REAL    (octaveCost,                my instancePref_pitch_rawAcCc_octaveCost())
+		SET_REAL    (octaveJumpCost,            my instancePref_pitch_rawAcCc_octaveJumpCost())
+		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_rawAcCc_voicedUnvoicedCost())
 	EDITOR_DO
 		if (maximumNumberOfCandidates < 2)
 			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
-		my setInstancePref_pitch_veryAccurate (veryAccurate);
-		my setInstancePref_pitch_maximumNumberOfCandidates (maximumNumberOfCandidates);
-		my setInstancePref_pitch_silenceThreshold (silenceThreshold);
-		my setInstancePref_pitch_voicingThreshold (voicingThreshold);
-		my setInstancePref_pitch_octaveCost (octaveCost);
-		my setInstancePref_pitch_octaveJumpCost (octaveJumpCost);
-		my setInstancePref_pitch_voicedUnvoicedCost (voicedUnvoicedCost);
+		my setInstancePref_pitch_rawAcCc_veryAccurate (veryAccurate);
+		my setInstancePref_pitch_rawAcCc_maximumNumberOfCandidates (maximumNumberOfCandidates);
+		my setInstancePref_pitch_rawAcCc_silenceThreshold (silenceThreshold);
+		my setInstancePref_pitch_rawAcCc_voicingThreshold (voicingThreshold);
+		my setInstancePref_pitch_rawAcCc_octaveCost (octaveCost);
+		my setInstancePref_pitch_rawAcCc_octaveJumpCost (octaveJumpCost);
+		my setInstancePref_pitch_rawAcCc_voicedUnvoicedCost (voicedUnvoicedCost);
 		my d_pitch.     reset();
 		my d_intensity. reset();
 		my d_pulses.    reset();
@@ -1050,37 +1065,38 @@ static void menu_cb_advancedPitchSettings_ac_cc (SoundAnalysisArea me, EDITOR_AR
 	EDITOR_END
 }
 
-static void menu_cb_advancedPitchSettings_lpac_lpcc (SoundAnalysisArea me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Advanced pitch settings (LP-AC & LP-CC)", U"Advanced pitch settings...")
-		LABEL    (U"Settings for the low-pass autocorrelation and cross-correlation methods:")
+static void menu_cb_advancedPitchSettings_filteredAcCc (SoundAnalysisArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Advanced pitch settings (filtered AC and CC)", U"Advanced pitch settings (filtered AC and CC)...")
+		LABEL    (U"Settings for the FILTERED autocorrelation and cross-correlation methods only.")
+		LABEL    (U"")
+		POSITIVE (lowPassCutoffFrequency,    U"Low-pass cut-off frequency", my default_pitch_filteredAcCc_lowPassCutoffFrequency    ())
 		BOOLEAN  (veryAccurate,              U"Very accurate", false)
-		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates",  my default_pitch_lowPass_maximumNumberOfCandidates ())
-		REAL     (silenceThreshold,          U"Silence threshold",          my default_pitch_lowPass_silenceThreshold          ())
-		REAL     (voicingThreshold,          U"Voicing threshold",          my default_pitch_lowPass_voicingThreshold          ())
-		REAL     (octaveCost,                U"Octave cost",                my default_pitch_lowPass_octaveCost                ())
-		REAL     (octaveJumpCost,            U"Octave-jump cost",           my default_pitch_lowPass_octaveJumpCost            ())
-		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",     my default_pitch_lowPass_voicedUnvoicedCost        ())
-		POSITIVE (lowPassCutoffFrequency,    U"Low-pass cut-off frequency", my default_pitch_lowPass_lowPassCutoffFrequency    ())
+		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates",  my default_pitch_filteredAcCc_maximumNumberOfCandidates ())
+		REAL     (silenceThreshold,          U"Silence threshold",          my default_pitch_filteredAcCc_silenceThreshold          ())
+		REAL     (voicingThreshold,          U"Voicing threshold",          my default_pitch_filteredAcCc_voicingThreshold          ())
+		REAL     (octaveCost,                U"Octave cost",                my default_pitch_filteredAcCc_octaveCost                ())
+		REAL     (octaveJumpCost,            U"Octave-jump cost",           my default_pitch_filteredAcCc_octaveJumpCost            ())
+		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",     my default_pitch_filteredAcCc_voicedUnvoicedCost        ())
 	EDITOR_OK
-		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_lowPass_veryAccurate())
-		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_lowPass_maximumNumberOfCandidates())
-		SET_REAL    (silenceThreshold,          my instancePref_pitch_lowPass_silenceThreshold())
-		SET_REAL    (voicingThreshold,          my instancePref_pitch_lowPass_voicingThreshold())
-		SET_REAL    (octaveCost,                my instancePref_pitch_lowPass_octaveCost())
-		SET_REAL    (octaveJumpCost,            my instancePref_pitch_lowPass_octaveJumpCost())
-		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_lowPass_voicedUnvoicedCost())
-		SET_REAL    (lowPassCutoffFrequency,    my instancePref_pitch_lowPass_lowPassCutoffFrequency())
+		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredAcCc_veryAccurate())
+		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_filteredAcCc_maximumNumberOfCandidates())
+		SET_REAL    (silenceThreshold,          my instancePref_pitch_filteredAcCc_silenceThreshold())
+		SET_REAL    (voicingThreshold,          my instancePref_pitch_filteredAcCc_voicingThreshold())
+		SET_REAL    (octaveCost,                my instancePref_pitch_filteredAcCc_octaveCost())
+		SET_REAL    (octaveJumpCost,            my instancePref_pitch_filteredAcCc_octaveJumpCost())
+		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_filteredAcCc_voicedUnvoicedCost())
+		SET_REAL    (lowPassCutoffFrequency,    my instancePref_pitch_filteredAcCc_lowPassCutoffFrequency())
 	EDITOR_DO
 		if (maximumNumberOfCandidates < 2)
 			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
-		my setInstancePref_pitch_lowPass_veryAccurate (veryAccurate);
-		my setInstancePref_pitch_lowPass_maximumNumberOfCandidates (maximumNumberOfCandidates);
-		my setInstancePref_pitch_lowPass_silenceThreshold (silenceThreshold);
-		my setInstancePref_pitch_lowPass_voicingThreshold (voicingThreshold);
-		my setInstancePref_pitch_lowPass_octaveCost (octaveCost);
-		my setInstancePref_pitch_lowPass_octaveJumpCost (octaveJumpCost);
-		my setInstancePref_pitch_lowPass_voicedUnvoicedCost (voicedUnvoicedCost);
-		my setInstancePref_pitch_lowPass_lowPassCutoffFrequency (lowPassCutoffFrequency);
+		my setInstancePref_pitch_filteredAcCc_veryAccurate (veryAccurate);
+		my setInstancePref_pitch_filteredAcCc_maximumNumberOfCandidates (maximumNumberOfCandidates);
+		my setInstancePref_pitch_filteredAcCc_silenceThreshold (silenceThreshold);
+		my setInstancePref_pitch_filteredAcCc_voicingThreshold (voicingThreshold);
+		my setInstancePref_pitch_filteredAcCc_octaveCost (octaveCost);
+		my setInstancePref_pitch_filteredAcCc_octaveJumpCost (octaveJumpCost);
+		my setInstancePref_pitch_filteredAcCc_voicedUnvoicedCost (voicedUnvoicedCost);
+		my setInstancePref_pitch_filteredAcCc_lowPassCutoffFrequency (lowPassCutoffFrequency);
 		my d_pitch.     reset();
 		my d_intensity. reset();
 		my d_pulses.    reset();
@@ -1632,10 +1648,19 @@ static void INFO_DATA__voiceReport (SoundAnalysisArea me, EDITOR_ARGS) {
 		autoSound sound = extractSound (me, tmin, tmax);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"-- Voice report for ", my name.get(), U" --\nDate: ", Melder_peek8to32 (ctime (& today)));
-		if (my instancePref_pitch_method() != kSoundAnalysisArea_pitch_analysisMethod::CROSS_CORRELATION)
-			MelderInfo_writeLine (U"WARNING: some of the following measurements may be imprecise.\n"
-				"For more precision, go to \"Pitch settings\" and choose\n"
-				"the cross-correlation analysis method to optimize for voice research.\n");
+		if (my instancePref_pitch_method() != kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION) {
+			if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION)
+				MelderInfo_writeLine (U"WARNING: some of the following measurements may be imprecise.\n"
+					"For more precision, go to “Pitch settings” and choose\n"
+					"the raw cross-correlation analysis method to optimize for voice research.\n"
+				);
+			else
+				MelderInfo_writeLine (U"WARNING: several of the following measurements will be incorrect,\n"
+					"because they are based on a sound from which higher frequencies have been filtered out.\n"
+					"For more correctness, go to “Pitch settings” and choose\n"
+					"the raw cross-correlation analysis method to optimize for voice research.\n"
+				);
+		}
 		MelderInfo_writeLine (U"Time range of ", SoundAnalysisArea_partString (part));
 		Sound_Pitch_PointProcess_voiceReport (sound.get(), my d_pitch.get(), my d_pulses.get(), tmin, tmax,
 			my instancePref_pitch_floor(), my instancePref_pitch_ceiling(),
@@ -1792,10 +1817,10 @@ void structSoundAnalysisArea :: v_createMenus () {
 		);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings...", 0,
 				menu_cb_pitchSettings, this);
-		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (LP-AC & LP-CC)...", 0,
-				menu_cb_advancedPitchSettings_lpac_lpcc, this);
-		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (AC & CC)...", 0,
-				menu_cb_advancedPitchSettings_ac_cc, this);
+		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (filtered AC and CC)...", 0,
+				menu_cb_advancedPitchSettings_filteredAcCc, this);
+		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (raw AC and CC)...", 0,
+				menu_cb_advancedPitchSettings_rawAcCc, this);
 		FunctionAreaMenu_addCommand (menu, U"- Query pitch:", 0, nullptr, this);
 		FunctionAreaMenu_addCommand (menu, U"Pitch listing", 1,
 				INFO_DATA__pitchListing, this);
@@ -1927,8 +1952,7 @@ static void SoundAnalysisArea_v_draw_analysis (SoundAnalysisArea me) {
 	if (my instancePref_pitch_show())
 		tryToHavePitch (me);
 	if (my instancePref_pitch_show() && my d_pitch) {
-		const double periodsPerAnalysisWindow = ( my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0 );
-		const double greatestNonUndersamplingTimeStep = 0.5 * periodsPerAnalysisWindow / my instancePref_pitch_floor();
+		const double greatestNonUndersamplingTimeStep = 0.5 * periodsPerAnalysisWindow (me) / my instancePref_pitch_floor();
 		const double defaultTimeStep = 0.5 * greatestNonUndersamplingTimeStep;
 		const double timeStep = (
 			my instancePref_timeStepStrategy() == kSoundAnalysisArea_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
