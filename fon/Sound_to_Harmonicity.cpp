@@ -23,8 +23,8 @@ autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double pitchFloor,
 	double silenceThreshold, double periodsPerWindow)
 {
 	try {
-		autoPitch pitch = Sound_to_Pitch_any (me, dt, pitchFloor, periodsPerWindow, 15, 1,
-				silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
+		autoPitch pitch = Sound_to_Pitch_any (me, 1, periodsPerWindow, dt, pitchFloor, 0.5 / my dx, 15,
+				silenceThreshold, 0.0, 0.0, 0.0, 0.0);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 				pitch -> dx, pitch -> x1);
 		for (integer i = 1; i <= thy nx; i ++) {
@@ -45,15 +45,15 @@ autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double pitchFloor,
 	double silenceThreshold, double periodsPerWindow)
 {
 	try {
-		autoPitch pitch = Sound_to_Pitch_any (me, dt, pitchFloor, periodsPerWindow, 15, 3,
-				silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
+		autoPitch pitch = Sound_to_Pitch_any (me, 3, periodsPerWindow, dt, pitchFloor, 0.5 / my dx, 15,
+				silenceThreshold, 0.0, 0.0, 0.0, 0.0);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 				pitch -> dx, pitch -> x1);
 		for (integer i = 1; i <= thy nx; i ++) {
 			if (pitch -> frames [i]. candidates [1]. frequency == 0.0) {
 				thy z [1] [i] = -200.0;
 			} else {
-				double r = pitch -> frames [i]. candidates [1]. strength;
+				const double r = pitch -> frames [i]. candidates [1]. strength;
 				thy z [1] [i] = ( r <= 1e-15 ? -150.0 : r > 1.0 - 1e-15 ? 150.0 : 10.0 * log10 (r / (1.0 - r)) );
 			}
 		}

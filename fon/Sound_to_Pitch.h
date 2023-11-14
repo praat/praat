@@ -21,34 +21,36 @@
 
 autoPitch Sound_to_Pitch (Sound me, double timeStep,
 	double pitchFloor, double pitchCeiling);
-/* Calls Sound_to_Pitch_ac with default arguments. */
+/* Calls Sound_to_Pitch_rawAc with default arguments. */
 
-autoPitch Sound_to_Pitch_ac (Sound me, double timeStep, double pitchFloor,
-	double periodsPerWindow, integer maxnCandidates, int accurate,
+autoPitch Sound_to_Pitch_rawAc (Sound me,
+	double timeStep, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates, bool veryAccurate,
 	double silenceThreshold, double voicingThreshold, double octaveCost,
-	double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling);
+	double octaveJumpCost, double voicedUnvoicedCost);
 /* Calls Sound_to_Pitch_any with AC method. */
 
-autoPitch Sound_to_Pitch_cc (Sound me, double timeStep, double pitchFloor,
-	double periodsPerWindow, integer maxnCandidates, int accurate,
+autoPitch Sound_to_Pitch_rawCc (Sound me,
+	double timeStep, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates, bool veryAccurate,
 	double silenceThreshold, double voicingThreshold, double octaveCost,
-	double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling);
+	double octaveJumpCost, double voicedUnvoicedCost);
 /* Calls Sound_to_Pitch_any with FCC method. */
 
 autoPitch Sound_to_Pitch_any (Sound me,
+	int method,                 // 0 or 1 = AC, 2 or 3 = FCC, 0 or 2 = fast, 1 or 3 = accurate
+	double periodsPerWindow,    // ac3 for pitch analysis, 6 or 4.5 for HNR, 1 for FCC
 
-	double dt,                 /* time step (seconds); 0.0 = automatic = periodsPerWindow / pitchFloor / 4 */
-	double pitchFloor,         /* (Hz) */
-	double periodsPerWindow,   /* ac3 for pitch analysis, 6 or 4.5 for HNR, 1 for FCC */
-	integer maxnCandidates,    /* maximum number of candidates per frame */
-	int method,                /* 0 or 1 = AC, 2 or 3 = FCC, 0 or 2 = fast, 1 or 3 = accurate */
+	double timeStep,            // in seconds; 0.0 = automatic = periodsPerWindow / pitchFloor / 4
+	double pitchFloor,          // in Hz
+	double pitchCeiling,        // in Hz
+	integer maxnCandidates,     // maximum number of candidates per frame
 
-	double silenceThreshold,   /* relative to purely periodic; default 0.03 */
-	double voicingThreshold,   /* relative to purely periodic; default 0.45 */
-	double octaveCost,         /* favours higher pitches; default 0.01 */
-	double octaveJumpCost,     /* default 0.35 */
-	double voicedUnvoicedCost, /* default 0.14 */
-	double pitchCeiling);      /* (Hz) */
+	double silenceThreshold,    /* relative to purely periodic; default 0.03 */
+	double voicingThreshold,    /* relative to purely periodic; default 0.45 */
+	double octaveCost,          /* favours higher pitches; default 0.01 */
+	double octaveJumpCost,      /* default 0.35 */
+	double voicedUnvoicedCost); /* default 0.14 */
 /*
 	Function:
 		acoustic periodicity analysis.
@@ -84,16 +86,18 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		pitches above a certain value "voiceless".
 */
 
-autoPitch Sound_to_Pitch_lpac (Sound me,
-	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+autoPitch Sound_to_Pitch_filteredAc (Sound me,
+	double timeStep, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates, bool veryAccurate,
+	double attenuationAtCeiling,
 	double silenceThreshold, double voicingThreshold,
-	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
-	double lowPassCutoffFrequency);
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost);
 
-autoPitch Sound_to_Pitch_lpcc (Sound me,
-	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+autoPitch Sound_to_Pitch_filteredCc (Sound me,
+	double timeStep, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates, bool veryAccurate,
+	double attenuationAtCeiling,
 	double silenceThreshold, double voicingThreshold,
-	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
-	double lowPassCutoffFrequency);
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost);
 
 /* End of file Sound_to_Pitch.h */
