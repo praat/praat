@@ -308,10 +308,11 @@ static void Sound_into_Pitch (Sound_into_Pitch_Args me)
 }
 
 autoPitch Sound_to_Pitch_any (Sound me,
-	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates,
-	int method,
+	int method, double periodsPerWindow,
+	double dt, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates,
 	double silenceThreshold, double voicingThreshold,
-	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling)
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
 	try {
 		autoNUMfft_Table fftTable;
@@ -548,35 +549,45 @@ autoPitch Sound_to_Pitch_any (Sound me,
 }
 
 autoPitch Sound_to_Pitch (Sound me, double timeStep, double pitchFloor, double pitchCeiling) {
-	return Sound_to_Pitch_rawAc (me, timeStep, pitchFloor,
-		3.0, 15, false, 0.03, 0.45, 0.01, 0.35, 0.14, pitchCeiling);
+	return Sound_to_Pitch_rawAc (me, timeStep, pitchFloor, pitchCeiling,
+			15, false, 0.03, 0.45, 0.01, 0.35, 0.14);
 }
 
 autoPitch Sound_to_Pitch_rawAc (Sound me,
-	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+	double timeStep, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates, bool veryAccurate,
 	double silenceThreshold, double voicingThreshold,
-	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling)
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
-	return Sound_to_Pitch_any (me, dt, pitchFloor, periodsPerWindow, maxnCandidates, accurate,
-		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+	return Sound_to_Pitch_any (me, (int) veryAccurate, 3.0,
+		timeStep, pitchFloor, pitchCeiling,
+		maxnCandidates,
+		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
+	);
 }
 
 autoPitch Sound_to_Pitch_rawCc (Sound me,
-	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+	double timeStep, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates, bool veryAccurate,
 	double silenceThreshold, double voicingThreshold,
-	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling)
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
-	return Sound_to_Pitch_any (me, dt, pitchFloor, periodsPerWindow, maxnCandidates, 2 + accurate,
-		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+	return Sound_to_Pitch_any (me, 2 + (int) veryAccurate, 1.0,
+		timeStep, pitchFloor, pitchCeiling,
+		maxnCandidates,
+		silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
+	);
 }
 
 autoPitch Sound_to_Pitch_filteredAc (Sound me,
-	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+	double timeStep, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates, bool veryAccurate,
+	double attenuationAtCeiling,
 	double silenceThreshold, double voicingThreshold,
-	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
-	double lowPassCutoffFrequency)
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
 	try {
+		const double lowPassCutoffFrequency = pitchCeiling / NUMsqrt (-2.0 * log (attenuationAtCeiling));   // TODO: sqrt_e
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, true);
@@ -602,20 +613,25 @@ autoPitch Sound_to_Pitch_filteredAc (Sound me,
 				thy z.row (ichan)  <<=  his z.row (1).part (1, thy nx);
 			}
 		}
-		return Sound_to_Pitch_any (thee.get(), dt, pitchFloor, periodsPerWindow, maxnCandidates, accurate,
-				silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+		return Sound_to_Pitch_any (thee.get(), (int) veryAccurate, 3.0,
+			timeStep, pitchFloor, pitchCeiling,
+			maxnCandidates,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
+		);
 	} catch (MelderError) {
-		Melder_throw (me, U": phonation-based pitch analysis not performed.");
+		Melder_throw (me, U": pitch analysis (filtered AC) not performed.");
 	}
 }
 
 autoPitch Sound_to_Pitch_filteredCc (Sound me,
-	double dt, double pitchFloor, double periodsPerWindow, integer maxnCandidates, int accurate,
+	double timeStep, double pitchFloor, double pitchCeiling,
+	integer maxnCandidates, bool veryAccurate,
+	double attenuationAtCeiling,
 	double silenceThreshold, double voicingThreshold,
-	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double pitchCeiling,
-	double lowPassCutoffFrequency)
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
 	try {
+		const double lowPassCutoffFrequency = pitchCeiling / NUMsqrt (-2.0 * log (attenuationAtCeiling));   // TODO: sqrt_e
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, true);
@@ -641,10 +657,13 @@ autoPitch Sound_to_Pitch_filteredCc (Sound me,
 				thy z.row (ichan)  <<=  his z.row (1).part (1, thy nx);
 			}
 		}
-		return Sound_to_Pitch_any (thee.get(), dt, pitchFloor, periodsPerWindow, maxnCandidates, 2 + accurate,
-				silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+		return Sound_to_Pitch_any (thee.get(), 2 + (int) veryAccurate, 1.0,
+			timeStep, pitchFloor, pitchCeiling,
+			maxnCandidates,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
+		);
 	} catch (MelderError) {
-		Melder_throw (me, U": phonation-based pitch analysis not performed.");
+		Melder_throw (me, U": pitch analysis (filtered CC) not performed.");
 	}
 }
 

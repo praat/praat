@@ -161,42 +161,38 @@ static void tryToComputePitch (SoundAnalysisArea me) {
 			0.0   // the default: determined by pitch floor
 		);
 		if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::RAW_AUTOCORRELATION)
-			my d_pitch = Sound_to_Pitch_rawAc (sound.get(), pitchTimeStep,
-				my instancePref_pitch_floor(),
-				3.0,   // periods per window
+			my d_pitch = Sound_to_Pitch_rawAc (sound.get(),
+				pitchTimeStep, my instancePref_pitch_floor(), my instancePref_pitch_ceiling(),
 				my instancePref_pitch_rawAcCc_maximumNumberOfCandidates(), my instancePref_pitch_rawAcCc_veryAccurate(),
 				my instancePref_pitch_rawAcCc_silenceThreshold(), my instancePref_pitch_rawAcCc_voicingThreshold(),
 				my instancePref_pitch_rawAcCc_octaveCost(), my instancePref_pitch_rawAcCc_octaveJumpCost(),
-				my instancePref_pitch_rawAcCc_voicedUnvoicedCost(), my instancePref_pitch_ceiling()
+				my instancePref_pitch_rawAcCc_voicedUnvoicedCost()
 			);
 		else if	(my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::RAW_CROSS_CORRELATION)
-			my d_pitch = Sound_to_Pitch_rawCc (sound.get(), pitchTimeStep,
-				my instancePref_pitch_floor(),
-				1.0,   // periods per window
+			my d_pitch = Sound_to_Pitch_rawCc (sound.get(),
+				pitchTimeStep, my instancePref_pitch_floor(), my instancePref_pitch_ceiling(),
 				my instancePref_pitch_rawAcCc_maximumNumberOfCandidates(), my instancePref_pitch_rawAcCc_veryAccurate(),
 				my instancePref_pitch_rawAcCc_silenceThreshold(), my instancePref_pitch_rawAcCc_voicingThreshold(),
 				my instancePref_pitch_rawAcCc_octaveCost(), my instancePref_pitch_rawAcCc_octaveJumpCost(),
-				my instancePref_pitch_rawAcCc_voicedUnvoicedCost(), my instancePref_pitch_ceiling()
+				my instancePref_pitch_rawAcCc_voicedUnvoicedCost()
 			);
 		else if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::FILTERED_AUTOCORRELATION)
-			my d_pitch = Sound_to_Pitch_filteredAc (sound.get(), pitchTimeStep,
-				my instancePref_pitch_floor(),
-				3.0,   // periods per window
+			my d_pitch = Sound_to_Pitch_filteredAc (sound.get(),
+				pitchTimeStep, my instancePref_pitch_floor(), my instancePref_pitch_ceiling(),
 				my instancePref_pitch_filteredAcCc_maximumNumberOfCandidates(), my instancePref_pitch_filteredAcCc_veryAccurate(),
+				my instancePref_pitch_filteredAcCc_attenuationAtCeiling(),
 				my instancePref_pitch_filteredAcCc_silenceThreshold(), my instancePref_pitch_filteredAcCc_voicingThreshold(),
 				my instancePref_pitch_filteredAcCc_octaveCost(), my instancePref_pitch_filteredAcCc_octaveJumpCost(),
-				my instancePref_pitch_filteredAcCc_voicedUnvoicedCost(), my instancePref_pitch_ceiling(),
-				my instancePref_pitch_filteredAcCc_lowPassCutoffFrequency()
+				my instancePref_pitch_filteredAcCc_voicedUnvoicedCost()
 			);
 		else if (my instancePref_pitch_method() == kSoundAnalysisArea_pitch_analysisMethod::FILTERED_CROSS_CORRELATION)
 			my d_pitch = Sound_to_Pitch_filteredCc (sound.get(), pitchTimeStep,
-				my instancePref_pitch_floor(),
-				1.0,   // periods per window
+				my instancePref_pitch_floor(), my instancePref_pitch_ceiling(),
 				my instancePref_pitch_filteredAcCc_maximumNumberOfCandidates(), my instancePref_pitch_filteredAcCc_veryAccurate(),
+				my instancePref_pitch_filteredAcCc_attenuationAtCeiling(),
 				my instancePref_pitch_filteredAcCc_silenceThreshold(), my instancePref_pitch_filteredAcCc_voicingThreshold(),
 				my instancePref_pitch_filteredAcCc_octaveCost(), my instancePref_pitch_filteredAcCc_octaveJumpCost(),
-				my instancePref_pitch_filteredAcCc_voicedUnvoicedCost(), my instancePref_pitch_ceiling(),
-				my instancePref_pitch_filteredAcCc_lowPassCutoffFrequency()
+				my instancePref_pitch_filteredAcCc_voicedUnvoicedCost()
 			);
 		else
 			Melder_fatal (U"Unknown pitch method ", (int) my instancePref_pitch_method(), U".");
@@ -396,30 +392,39 @@ void structSoundAnalysisArea :: v_spectrogramInfo () const {
 	MelderInfo_writeLine (U"Spectrogram cursor frequency: ", our d_spectrogram_cursor, U" Hz");
 }
 void structSoundAnalysisArea :: v_pitchInfo () const {
-	/* Pitch flag: */
+	/*
+		Pitch flag:
+	*/
 	MelderInfo_writeLine (U"Pitch show: ", our instancePref_pitch_show());
-	/* Pitch settings: */
+	/*
+		General pitch settings:
+	*/
+	MelderInfo_writeLine (U"Pitch method: ", kSoundAnalysisArea_pitch_analysisMethod_getText (our instancePref_pitch_method()));
 	MelderInfo_writeLine (U"Pitch floor: ", our instancePref_pitch_floor(), U" Hz");
 	MelderInfo_writeLine (U"Pitch ceiling: ", our instancePref_pitch_ceiling(), U" Hz");
 	MelderInfo_writeLine (U"Pitch unit: ",
 			Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
 	MelderInfo_writeLine (U"Pitch drawing method: ", kSoundAnalysisArea_pitch_drawingMethod_getText (instancePref_pitch_drawingMethod()));
-	/* Advanced pitch settings: */
 	MelderInfo_writeLine (U"Pitch view from: ", our instancePref_pitch_viewFrom(), U" ",
 			Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
 	MelderInfo_writeLine (U"Pitch view to: ", our instancePref_pitch_viewTo(), U" ",
 			Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our instancePref_pitch_unit(), Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine (U"Pitch method: ", kSoundAnalysisArea_pitch_analysisMethod_getText (our instancePref_pitch_method()));
-	MelderInfo_writeLine (U"Pitch (raw AC and CC) very accurate: ", our instancePref_pitch_rawAcCc_veryAccurate());
+	/*
+		Advanced pitch settings for raw AC and CC:
+	*/
 	MelderInfo_writeLine (U"Pitch (raw AC and CC) max. number of candidates: ", our instancePref_pitch_rawAcCc_maximumNumberOfCandidates());
+	MelderInfo_writeLine (U"Pitch (raw AC and CC) very accurate: ", our instancePref_pitch_rawAcCc_veryAccurate());
 	MelderInfo_writeLine (U"Pitch (raw AC and CC) silence threshold: ", our instancePref_pitch_rawAcCc_silenceThreshold(), U" of global peak");
 	MelderInfo_writeLine (U"Pitch (raw AC and CC) voicing threshold: ", our instancePref_pitch_rawAcCc_voicingThreshold(), U" (periodic power / total power)");
 	MelderInfo_writeLine (U"Pitch (raw AC and CC) octave cost: ", our instancePref_pitch_rawAcCc_octaveCost(), U" per octave");
 	MelderInfo_writeLine (U"Pitch (raw AC and CC) octave jump cost: ", our instancePref_pitch_rawAcCc_octaveJumpCost(), U" per octave");
 	MelderInfo_writeLine (U"Pitch (raw AC and CC) voiced/unvoiced cost: ", our instancePref_pitch_rawAcCc_voicedUnvoicedCost());
-	MelderInfo_writeLine (U"Pitch (filtered AC and CC) low-pass cut-off frequency: ", our instancePref_pitch_filteredAcCc_voicedUnvoicedCost());
-	MelderInfo_writeLine (U"Pitch (filtered AC and CC) very accurate: ", our instancePref_pitch_filteredAcCc_veryAccurate());
+	/*
+		Advanced pitch settings for filtered AC and CC:
+	*/
 	MelderInfo_writeLine (U"Pitch (filtered AC and CC) max. number of candidates: ", our instancePref_pitch_filteredAcCc_maximumNumberOfCandidates());
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) very accurate: ", our instancePref_pitch_filteredAcCc_veryAccurate());
+	MelderInfo_writeLine (U"Pitch (filtered AC and CC) attenuation at ceiling: ", our instancePref_pitch_filteredAcCc_attenuationAtCeiling());
 	MelderInfo_writeLine (U"Pitch (filtered AC and CC) silence threshold: ", our instancePref_pitch_filteredAcCc_silenceThreshold(), U" of global peak");
 	MelderInfo_writeLine (U"Pitch (filtered AC and CC) voicing threshold: ", our instancePref_pitch_filteredAcCc_voicingThreshold(), U" (periodic power / total power)");
 	MelderInfo_writeLine (U"Pitch (filtered AC and CC) octave cost: ", our instancePref_pitch_filteredAcCc_octaveCost(), U" per octave");
@@ -991,9 +996,9 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 			my instancePref_pitch_rawAcCc_octaveCost()                     != Melder_atof (my default_pitch_rawAcCc_octaveCost()) ||
 			my instancePref_pitch_rawAcCc_octaveJumpCost()                 != Melder_atof (my default_pitch_rawAcCc_octaveJumpCost()) ||
 			my instancePref_pitch_rawAcCc_voicedUnvoicedCost()             != Melder_atof (my default_pitch_rawAcCc_voicedUnvoicedCost()) ||
-			my instancePref_pitch_filteredAcCc_lowPassCutoffFrequency()    != Melder_atof (my default_pitch_filteredAcCc_lowPassCutoffFrequency()) ||
 			my instancePref_pitch_filteredAcCc_veryAccurate()              != my default_pitch_filteredAcCc_veryAccurate() ||
 			my instancePref_pitch_filteredAcCc_maximumNumberOfCandidates() != Melder_atoi (my default_pitch_filteredAcCc_maximumNumberOfCandidates()) ||
+			my instancePref_pitch_filteredAcCc_attenuationAtCeiling()      != Melder_atof (my default_pitch_filteredAcCc_attenuationAtCeiling()) ||
 			my instancePref_pitch_filteredAcCc_silenceThreshold()          != Melder_atof (my default_pitch_filteredAcCc_silenceThreshold()) ||
 			my instancePref_pitch_filteredAcCc_voicingThreshold()          != Melder_atof (my default_pitch_filteredAcCc_voicingThreshold()) ||
 			my instancePref_pitch_filteredAcCc_octaveCost()                != Melder_atof (my default_pitch_filteredAcCc_octaveCost()) ||
@@ -1033,16 +1038,18 @@ static void menu_cb_advancedPitchSettings_rawAcCc (SoundAnalysisArea me, EDITOR_
 	EDITOR_FORM (U"Advanced pitch settings (raw AC and CC)", U"Advanced pitch settings (raw AC and CC)...")
 		LABEL   (U"Settings for the RAW autocorrelation and cross-correlation methods only.")
 		LABEL   (U"")
-		BOOLEAN (veryAccurate,              U"Very accurate", false)
+		LABEL (U"Finding the candidates")
 		NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_rawAcCc_maximumNumberOfCandidates ())
+		BOOLEAN (veryAccurate,              U"Very accurate", false)
+		LABEL (U"Finding a path")
 		REAL    (silenceThreshold,          U"Silence threshold",         my default_pitch_rawAcCc_silenceThreshold          ())
 		REAL    (voicingThreshold,          U"Voicing threshold",         my default_pitch_rawAcCc_voicingThreshold          ())
 		REAL    (octaveCost,                U"Octave cost",               my default_pitch_rawAcCc_octaveCost                ())
 		REAL    (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawAcCc_octaveJumpCost            ())
 		REAL    (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawAcCc_voicedUnvoicedCost        ())
 	EDITOR_OK
-		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_rawAcCc_veryAccurate())
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_rawAcCc_maximumNumberOfCandidates())
+		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_rawAcCc_veryAccurate())
 		SET_REAL    (silenceThreshold,          my instancePref_pitch_rawAcCc_silenceThreshold())
 		SET_REAL    (voicingThreshold,          my instancePref_pitch_rawAcCc_voicingThreshold())
 		SET_REAL    (octaveCost,                my instancePref_pitch_rawAcCc_octaveCost())
@@ -1051,8 +1058,8 @@ static void menu_cb_advancedPitchSettings_rawAcCc (SoundAnalysisArea me, EDITOR_
 	EDITOR_DO
 		if (maximumNumberOfCandidates < 2)
 			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
-		my setInstancePref_pitch_rawAcCc_veryAccurate (veryAccurate);
 		my setInstancePref_pitch_rawAcCc_maximumNumberOfCandidates (maximumNumberOfCandidates);
+		my setInstancePref_pitch_rawAcCc_veryAccurate (veryAccurate);
 		my setInstancePref_pitch_rawAcCc_silenceThreshold (silenceThreshold);
 		my setInstancePref_pitch_rawAcCc_voicingThreshold (voicingThreshold);
 		my setInstancePref_pitch_rawAcCc_octaveCost (octaveCost);
@@ -1069,34 +1076,37 @@ static void menu_cb_advancedPitchSettings_filteredAcCc (SoundAnalysisArea me, ED
 	EDITOR_FORM (U"Advanced pitch settings (filtered AC and CC)", U"Advanced pitch settings (filtered AC and CC)...")
 		LABEL    (U"Settings for the FILTERED autocorrelation and cross-correlation methods only.")
 		LABEL    (U"")
-		POSITIVE (lowPassCutoffFrequency,    U"Low-pass cut-off frequency", my default_pitch_filteredAcCc_lowPassCutoffFrequency    ())
+		LABEL (U"Finding the candidates")
+		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredAcCc_maximumNumberOfCandidates ())
 		BOOLEAN  (veryAccurate,              U"Very accurate", false)
-		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates",  my default_pitch_filteredAcCc_maximumNumberOfCandidates ())
-		REAL     (silenceThreshold,          U"Silence threshold",          my default_pitch_filteredAcCc_silenceThreshold          ())
-		REAL     (voicingThreshold,          U"Voicing threshold",          my default_pitch_filteredAcCc_voicingThreshold          ())
-		REAL     (octaveCost,                U"Octave cost",                my default_pitch_filteredAcCc_octaveCost                ())
-		REAL     (octaveJumpCost,            U"Octave-jump cost",           my default_pitch_filteredAcCc_octaveJumpCost            ())
-		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",     my default_pitch_filteredAcCc_voicedUnvoicedCost        ())
+		LABEL (U"Preprocessing")
+		POSITIVE (attenuationAtCeiling,      U"Attenuation at ceiling",    my default_pitch_filteredAcCc_attenuationAtCeiling      ())
+		LABEL (U"Finding a path")
+		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_filteredAcCc_silenceThreshold          ())
+		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_filteredAcCc_voicingThreshold          ())
+		REAL     (octaveCost,                U"Octave cost",               my default_pitch_filteredAcCc_octaveCost                ())
+		REAL     (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_filteredAcCc_octaveJumpCost            ())
+		REAL     (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_filteredAcCc_voicedUnvoicedCost        ())
 	EDITOR_OK
-		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredAcCc_veryAccurate())
 		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_filteredAcCc_maximumNumberOfCandidates())
+		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_filteredAcCc_veryAccurate())
+		SET_REAL    (attenuationAtCeiling,      my instancePref_pitch_filteredAcCc_attenuationAtCeiling())
 		SET_REAL    (silenceThreshold,          my instancePref_pitch_filteredAcCc_silenceThreshold())
 		SET_REAL    (voicingThreshold,          my instancePref_pitch_filteredAcCc_voicingThreshold())
 		SET_REAL    (octaveCost,                my instancePref_pitch_filteredAcCc_octaveCost())
 		SET_REAL    (octaveJumpCost,            my instancePref_pitch_filteredAcCc_octaveJumpCost())
 		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_filteredAcCc_voicedUnvoicedCost())
-		SET_REAL    (lowPassCutoffFrequency,    my instancePref_pitch_filteredAcCc_lowPassCutoffFrequency())
 	EDITOR_DO
 		if (maximumNumberOfCandidates < 2)
 			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
-		my setInstancePref_pitch_filteredAcCc_veryAccurate (veryAccurate);
 		my setInstancePref_pitch_filteredAcCc_maximumNumberOfCandidates (maximumNumberOfCandidates);
+		my setInstancePref_pitch_filteredAcCc_veryAccurate (veryAccurate);
+		my setInstancePref_pitch_filteredAcCc_attenuationAtCeiling (attenuationAtCeiling);
 		my setInstancePref_pitch_filteredAcCc_silenceThreshold (silenceThreshold);
 		my setInstancePref_pitch_filteredAcCc_voicingThreshold (voicingThreshold);
 		my setInstancePref_pitch_filteredAcCc_octaveCost (octaveCost);
 		my setInstancePref_pitch_filteredAcCc_octaveJumpCost (octaveJumpCost);
 		my setInstancePref_pitch_filteredAcCc_voicedUnvoicedCost (voicedUnvoicedCost);
-		my setInstancePref_pitch_filteredAcCc_lowPassCutoffFrequency (lowPassCutoffFrequency);
 		my d_pitch.     reset();
 		my d_intensity. reset();
 		my d_pulses.    reset();

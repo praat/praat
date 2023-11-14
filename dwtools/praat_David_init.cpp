@@ -9777,8 +9777,8 @@ void praat_David_init () {
 			QUERY_ONE_FOR_REAL__Matrix_getMean);
 	praat_addAction1 (classMatrix, 0, U"Get standard deviation...", U"Get mean...", 1, 
 			QUERY_ONE_FOR_REAL__Matrix_getStandardDeviation);
-	praat_addAction1 (classMatrix, 0, U"Mathematical -", U"Get standard deviation...", 1, nullptr);
-	praat_addAction1 (classMatrix, 0, U"Get norm...", U"Mathematical -", 2,
+	praat_addAction1 (classMatrix, 0, U"Mathematical", U"Get standard deviation...", 1, nullptr);
+	praat_addAction1 (classMatrix, 0, U"Get norm...", U"Mathematical", 2,
 			QUERY_ONE_FOR_REAL__Matrix_getNorm);
 	
 	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, 

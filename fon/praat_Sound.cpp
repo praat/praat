@@ -1602,7 +1602,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAc, U"Sound: To Pitch (raw ac)", U"Sound: To Pitch (raw ac)...") {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_ac, U"Sound: To Pitch (ac)", U"Sound: To Pitch (ac)...") {
 	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
@@ -1620,9 +1620,61 @@ DO
 	Melder_require (maximumNumberOfCandidates > 1,
 		U"Your maximum number of candidates should be greater than 1.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPitch result = Sound_to_Pitch_rawAc (me, timeStep,
-			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
-			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling
+		autoPitch result = Sound_to_Pitch_rawAc (me,
+			timeStep, pitchFloor, pitchCeiling,
+			maximumNumberOfCandidates, veryAccurate,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
+		);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)...") {
+	LABEL (U"Finding the candidates")
+	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
+	BOOLEAN (veryAccurate, U"Very accurate", false)
+	LABEL (U"Finding a path")
+	REAL (silenceThreshold, U"Silence threshold", U"0.03")
+	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
+	REAL (octaveCost, U"Octave cost", U"0.01")
+	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
+	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	OK
+DO
+	Melder_require (maximumNumberOfCandidates > 1,
+		U"Your maximum number of candidates should be greater than 1.");
+	CONVERT_EACH_TO_ONE (Sound)
+		autoPitch result = Sound_to_Pitch_rawCc (me,
+			timeStep, pitchFloor, pitchCeiling,
+			maximumNumberOfCandidates, veryAccurate,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
+		);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAc, U"Sound: To Pitch (raw ac)", U"Sound: To Pitch (raw ac)...") {
+	LABEL (U"Finding the candidates")
+	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
+	BOOLEAN (veryAccurate, U"Very accurate", false)
+	LABEL (U"Finding a path")
+	REAL (silenceThreshold, U"Silence threshold", U"0.03")
+	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
+	REAL (octaveCost, U"Octave cost", U"0.01")
+	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
+	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
+	OK
+DO
+	Melder_require (maximumNumberOfCandidates > 1,
+		U"Your maximum number of candidates should be greater than 1.");
+	CONVERT_EACH_TO_ONE (Sound)
+		autoPitch result = Sound_to_Pitch_rawAc (me,
+			timeStep, pitchFloor, pitchCeiling,
+			maximumNumberOfCandidates, veryAccurate,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -1631,6 +1683,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCc, U"Sound: To Pitch (raw cc)", U"
 	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
 	LABEL (U"Finding a path")
@@ -1639,15 +1692,15 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCc, U"Sound: To Pitch (raw cc)", U"
 	REAL (octaveCost, U"Octave cost", U"0.01")
 	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
 	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
 	Melder_require (maximumNumberOfCandidates > 1,
 		U"Your maximum number of candidates should be greater than 1.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPitch result = Sound_to_Pitch_rawCc (me, timeStep,
-			pitchFloor, 1.0, maximumNumberOfCandidates, veryAccurate,
-			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling
+		autoPitch result = Sound_to_Pitch_rawCc (me,
+			timeStep, pitchFloor, pitchCeiling,
+			maximumNumberOfCandidates, veryAccurate,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -1656,25 +1709,26 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAc, U"Sound: To Pitch (filtere
 	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"40.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
+	LABEL (U"Preprocessing")
+	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
 	LABEL (U"Finding a path")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.055")
 	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
 	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
-	POSITIVE (lowPassCutoffFrequency, U"Low-pass cut-off frequency (Hz)", U"300.0")
 	OK
 DO
 	Melder_require (maximumNumberOfCandidates > 1,
 		U"Your maximum number of candidates should be greater than 1.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPitch result = Sound_to_Pitch_filteredAc (me, timeStep,
-			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
-			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling,
-			lowPassCutoffFrequency
+		autoPitch result = Sound_to_Pitch_filteredAc (me,
+			timeStep, pitchFloor, pitchCeiling,
+			maximumNumberOfCandidates, veryAccurate, attenuationAtCeiling,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -1683,25 +1737,26 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCc, U"Sound: To Pitch (filtere
 	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"40.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
+	LABEL (U"Preprocessing")
+	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
 	LABEL (U"Finding a path")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.055")
 	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
 	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
-	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
-	POSITIVE (lowPassCutoffFrequency, U"Low-pass cut-off frequency (Hz)", U"300.0")
 	OK
 DO
 	Melder_require (maximumNumberOfCandidates > 1,
 		U"Your maximum number of candidates should be greater than 1.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPitch result = Sound_to_Pitch_filteredCc (me, timeStep,
-			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
-			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling,
-			lowPassCutoffFrequency
+		autoPitch result = Sound_to_Pitch_filteredCc (me,
+			timeStep, pitchFloor, pitchCeiling,
+			maximumNumberOfCandidates, veryAccurate, attenuationAtCeiling,
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -2450,11 +2505,15 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 0, U"To Pitch (filtered ac)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAc);
 		praat_addAction1 (classSound, 0, U"To Pitch (raw cc)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCc);
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCc);
 		praat_addAction1 (classSound, 0, U"To Pitch (raw ac)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAc);
 		praat_addAction1 (classSound, 0, U"To Pitch (filtered cc)...", nullptr, 1,
-				CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCc);
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCc);
+		praat_addAction1 (classSound, 0, U"To Pitch (ac)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_ac);
+		praat_addAction1 (classSound, 0, U"To Pitch (cc)...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+				CONVERT_EACH_TO_ONE__Sound_to_Pitch_cc);
 
 		praat_addAction1 (classSound, 0, U"To PointProcess (periodic, cc)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_PointProcess_periodic_cc);
