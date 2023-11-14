@@ -4415,7 +4415,7 @@ MAN_END
 
 MAN_BEGIN (U"Sound: To TextGrid (speech activity)...", U"djmw", 20230323)
 INTRO (U"A command that creates a @@TextGrid@ for the selected @@Sound@ in which the non-speech intervals and the "
-	"intervals with speech activity are marked. The discrimination between the two is based on a spectral flatnes measure.")
+	"intervals with speech activity are marked. The discrimination between the two is based on a spectral flatness measure.")
 NORMAL (U"Speech activity detection, in the technical literature often referred to as voice activity detection, "
 	"is a method to discriminate speech segments from input noisy speech. "
 	"According to the article of @@Ma & Nishihara (2013)@, spectral flatness is a measure of the width, uniformity, "
@@ -4463,6 +4463,21 @@ TERM (U"##Speech / Non-speech interval label#")
 DEFINITION (U"determine the labels for the corresponding intervals in the newly created TextGrid.")
 ENTRY (U"Algorithm")
 NORMAL (U"The speech activity algorithm is described in @@Ma & Nishihara (2013)@.")
+NORMAL (U"The logarithm of the speech flatness at frame %m is defined as:")
+EQUATION (U"L (m) = \\Si__k_ log (GM(%m, %f__%k_) / AM (%m, %f__%k_)), ")
+NORMAL (U" where GM(%m, %f__%k_) and AM (%m, %f__%k_) are the geometric and arithmetic means for spectrum "
+	"component %f__%k_, respectively. "
+	"The geometric mean GM (%m, %f__%k_) is defined as ")
+EQUATION (U"GM(%m, %f__%k_) = {\\Pi^^%m^__%n=%m-%R+1_ %S(%n, %f__%k_)}^^(1/%R)^")
+NORMAL (U" where the number of frames %R is determined by the setting of the %%long term window% parameter. "
+	"AM(%m, %f__%k_) is defined as ")
+EQUATION (U"AM(%m, %f__%k_) = {\\Si^^m^__n=%m-%R+1_ %S(%n, %f__%k_)} / %R")
+NORMAL (U"The %short term window comes into play is the the definition of the %S(%n, %f__%k_), because this is "
+	"itself the average of %M local spectral frames")
+EQUATION (U"%S(%n, %f__%k_) = {\\Si^^M^__p=%m-%M+1_ |X(p, %f__%k_)|^^2^} / %M,")
+NORMAL (U"where the number of frames %M is determined by the setting of the %%short term window% length. ")
+NORMAL (U"The ratio between the geometric and arithmetic mean is always smaller than or equal to one. "
+	"Only when all numbers are equal, this means a flat spectrum, the ratio becomes equal to one. ")
 MAN_END
 
 MAN_BEGIN (U"Intensity: To TextGrid (silences)...", U"djmw", 20061201)   // 2023

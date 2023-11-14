@@ -1,6 +1,6 @@
 /* Spectrogram_extensions.cpp
  *
- * Copyright (C) 2014-2021 David Weenink
+ * Copyright (C) 2014-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -589,23 +589,46 @@ static void BandFilterSpectrogram_PCA_drawComponent (BandFilterSpectrogram me, P
 }
 #endif
 
+void Spectrogram_drawLongTermFlatness (Spectrogram me, Graphics g, double tmin, double tmax, double minimumFlatness_db,
+	double longtimeWindow, double shorttimeWindow, double fmin, double fmax, bool garnish)
+{
+	Melder_require (minimumFlatness_db < 0,
+		U"The minimum flatness should be a negative number.");
+	autoMatrix thee = Spectrogram_getLongtermSpectralFlatness (me, longtimeWindow, shorttimeWindow, fmin, fmax);
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
+	integer itmin, itmax;
+	Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
+	double ymax = 0.0, ymin = minimumFlatness_db;
+	Graphics_setInner (g);
+	Graphics_setWindow (g, tmin, tmax, ymin, ymax);
+	Graphics_function (g, & thy z [1] [0], itmin, itmax,
+		Matrix_columnToX (me, itmin), Matrix_columnToX (thee.get(), itmax));
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_markLeft (g, ymin, true, true, false, nullptr);
+		Graphics_markLeft (g, ymax, true, true, false, nullptr);
+	}
+}
 /*
 	Implementation of Yanna Ma & Akinori Nishihara (2013), Efficient voice activity detection algorithm
 		using long-term spectral flatness measure,  EURASIP Journal on Audio, Speech, and Music Processing.
 */
-autoMatrix Spectrogram_getLongtermSpectralFlatnessMeasure (Spectrogram me, double longtermWindow, double shorttermWindow,
+autoMatrix Spectrogram_getLongtermSpectralFlatness (Spectrogram me, double longtimeWindow, double shorttimeWindow,
 	double fmin, double fmax) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 					0.5, 1.5, 1, 1.0, 1.0);
 		VEC longtermSpectralFlatness = thy z.row (1);
-		const integer numberOfShorttermFrames = Melder_ifloor (shorttermWindow / my dx);
+		const integer numberOfShorttermFrames = Melder_ifloor (shorttimeWindow / my dx);
 		/*
-			For the time being we just round the longtermWindow to the nearest number of frames to compute
+			For the time being we just round the longtimeWindow to the nearest number of frames to compute
 			the geometric mean and the arithmetic mean because this is not very critical.
 		*/
-		const integer numberOfLongtermFrames = Melder_round_tieUp (longtermWindow / my dx);
-		const double halfWindwow = 0.5 * shorttermWindow;
+		const integer numberOfLongtermFrames = Melder_round_tieUp (longtimeWindow / my dx);
+		const double halfWindwow = 0.5 * shorttimeWindow;
 		const integer ifreqFrom = std::max (1_integer, Melder_ifloor (fmin / my dy));
 		const integer ifreqTo = std::min (my ny, Melder_ifloor (fmax / my dy));
 		Melder_require (ifreqFrom < ifreqTo,
@@ -632,13 +655,15 @@ autoMatrix Spectrogram_getLongtermSpectralFlatnessMeasure (Spectrogram me, doubl
 				integer count = 0;
 				for (integer i = iframeFrom; i <= iframe; i ++) {
 					if (frequencyBins [i] > 0.0) {
-						log10_geometricMean += log10 (frequencyBins [i]); 
+						log10_geometricMean += log10 (frequencyBins [i]);
 						arithmeticMean += frequencyBins [i];
 						count ++;
 					}
 				}
-				log10_geometricMean /= count;
-				arithmeticMean /= count;
+				if (count > 0) {
+					log10_geometricMean /= count;
+					arithmeticMean /= count;
+				}
 				const double log_gm_div_am = ( arithmeticMean <= 0.0 ? 0.0 : double (log10_geometricMean - log10 (double (arithmeticMean))) );
 				longtermSpectralFlatness [iframe] += log_gm_div_am; // Eq. (1)
 			}
