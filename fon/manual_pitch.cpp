@@ -747,7 +747,26 @@ You are still advised to use filtered AC, but to lower the silence threshold to 
 Raw periodicity
 ===============
 
-Mathematically generated periodic signals aren’t necessarily speechlike.
+Mathematically generated periodic signals aren’t necessarily speechlike. For instance:
+{
+	sine = Create Sound from formula: "sine", 1, 0, 0.1, 44100, "0.4*sin(2*pi*200*x)"
+	tricky = Create Sound from formula: "tricky", 1, 0, 0.1, 44100, "0.001*sin(2*pi*400*x)
+	... + 0.001*sin(2*pi*600*x) - 0.2*cos(2*pi*800*x+1.5) - 0.2*cos(2*pi*1000*x+1.5)"
+	selectObject: sine, tricky
+	Concatenate
+	Erase all
+	Draw: 0.08, 0.12, 0, 0, "yes", "curve"
+}
+Both the left part of this sound and the right part have a period of 5 ms,
+and therefore an F0 of 200 Hz. @@Sound: To Pitch (raw ac)...@ measures an equally
+strong pitch of 200 Hz throughout this signal, while @@Sound: To Pitch (filtered ac)...@
+considers the right part voiceless. This is because the right part contains
+only components at 800 and 1000 Hz, which will be filtered out by the low-pass filter,
+and only very small components at 200, 400 or 600 Hz.
+This problem of the %%missing fundamental% was the reason why low-pass filtering
+was not included in @@Sound: To Pitch (raw ac)...@ in 1993. However,
+this situation is %very rare in speech, so for speech we do nowadays recommend @@Sound: To Pitch (filtered ac)...@,
+while we recommend @@Sound: To Pitch (raw ac)...@ only if you want to measure %raw periodicity.
 
 ################################################################################
 "Sound: To Pitch..."
