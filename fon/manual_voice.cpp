@@ -214,7 +214,7 @@ NORMAL (U"The difference between Praat's and MDVP's jitter measures is due to a 
 	"For detailed illustrations, see @@Boersma (2009a)@.")
 MAN_END
 
-MAN_BEGIN (U"Voice 6. Automating voice analysis with a script", U"ppgb", 20221202)
+MAN_BEGIN (U"Voice 6. Automating voice analysis with a script", U"ppgb", 20231115 /*20221202*/)
 INTRO (U"In a Praat script you usually do not want to raise a Sound window. "
 	"Instead, you probably want to work with objects in the Objects window only. "
 	"This page tells you how to do that for voice analysis.")
@@ -225,16 +225,16 @@ NORMAL (U"The pulses you see as blue lines are a @PointProcess object. You can s
 NORMAL (U"You can also create a PointProcess in the Objects window directly. To do this, "
 	"select a Sound and choose @@Sound: To PointProcess (periodic, cc)...@ from the #Periodicity menu.")
 NORMAL (U"You can also do this in two steps. First you create a Pitch with "
-	"@@Sound: To Pitch...@ or @@Sound: To Pitch (ac)...@ or @@Sound: To Pitch (cc)...@. "
+	"@@Sound: To Pitch (raw ac)...@ or @@Sound: To Pitch (raw cc)...@. "
 	"Then you select the resulting Pitch %together with the original Sound "
 	"and choose @@Sound & Pitch: To PointProcess (cc)@.")
 NORMAL (U"Since the direct method of @@Sound: To PointProcess (periodic, cc)...@ actually uses the AC method "
 	"for computing the Pitch (which is optimal for intonation analysis), "
 	"you may prefer the two-step version if your goal is to do voice analysis. "
-	"In that case, you use @@Sound: To Pitch (cc)...@ as the first step, "
+	"In that case, you use @@Sound: To Pitch (raw cc)...@ as the first step, "
 	"and @@Sound & Pitch: To PointProcess (cc)@ as the second step. "
 	"This is also how the Sound window does it: if you choose ##Optimize for voice analysis# in the @@Pitch settings...|Pitch settings@, "
-	"Praat uses @@Sound: To Pitch (cc)...@ for pitch analysis.")
+	"Praat uses @@Sound: To Pitch (raw cc)...@ for pitch analysis.")
 NORMAL (U"What you should %not do if you want to perform voice analysis is to create the PointProcess "
 	"by selecting a Pitch only and then choosing @@Pitch: To PointProcess@. In that way, "
 	"the resulting pulses would not be aligned to the periods in the Sound.")
@@ -251,12 +251,12 @@ NORMAL (U"If you select the Sound, the Pitch, and the PointProcess together (all
 	"although you will have to specify the time range by manually typing it.")
 NORMAL (U"In a script, you can get the jitter and shimmer from the voice report by doing something like:")
 CODE (U"voiceReport$ = Voice report: 0, 0, 75, 500, 1.3, 1.6, 0.03, 0.45")
-CODE (U"jitter = extractNumber (voiceReport$, \"Jitter (local): \")")
-CODE (U"shimmer = extractNumber (voiceReport$, \"Shimmer (local): \")")
-CODE (U"writeInfoLine: \"Jitter = \", percent$ (jitter, 3), \", shimmer = \", percent$ (shimmer, 3)")
+CODE (U"jitter = extractNumber (voiceReport$, “Jitter (local): ”)")
+CODE (U"shimmer = extractNumber (voiceReport$, “Shimmer (local): ”)")
+CODE (U"writeInfoLine: “Jitter = ”, percent$ (jitter, 3), “, shimmer = ”, percent$ (shimmer, 3)")
 ENTRY (U"5. Disadvantage of automating voice analysis")
 NORMAL (U"In all the commands mentioned above, you have to guess the time range, "
-	"and you would usually supply \"0.0\" and \"0.0\", in which case "
+	"and you would usually supply “0.0” and “0.0”, in which case "
 	"you will get the average jitter and shimmer for the whole sound. "
 	"This may include parts of the sound that you are often not interested in, such as false starts. "
 	"You do not have these problems when asking for a voice report in the sound window, "

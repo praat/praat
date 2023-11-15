@@ -138,39 +138,41 @@ NORMAL (U"Boersma, Paul (2001). Praat, a system for doing phonetics by computer.
 NORMAL (U"This paper can be downloaded from Boersma's website.")
 MAN_END
 
-MAN_BEGIN (U"FAQ: Pitch analysis", U"ppgb", 20221202)
+MAN_BEGIN (U"FAQ: Pitch analysis", U"ppgb", 20231115)   // 20221202
+NORMAL (U"Please also consult @@How to choose a pitch analysis method@.")
 NORMAL (U"#Question: what algorithm is used for pitch analysis?")
-NORMAL (U"Answer: see @@Sound: To Pitch (ac)...@. The 1993 article is downloadable from "
+NORMAL (U"Answer: for how the raw pitch analysis method works, "
+	"see @@Sound: To Pitch (ac)...@. The 1993 article is downloadable from "
 	"https://www.fon.hum.uva.nl/paul/")
 NORMAL (U"#Question: why does Praat consider my sound voiceless while I hear it as voiced?")
 NORMAL (U"There are at least five possibilities. Most of them can be checked by zooming in on the @waveform.")
 NORMAL (U"The first possibility is that the pitch has fallen below the @@pitch floor@. For instance, "
-	"your pitch floor could be 75 Hz but the English speaker produces creak at the end of the utterance. "
-	"Or your pitch floor could be 75 Hz but the Chinese speaker is in the middle of a third tone. "
-	"If this happens, it may help to lower the pitch floor to e.g. 40 Hz (@@Pitch settings...@), "
+	"your pitch floor could be 50 Hz but the English speaker produces creak at the end of the utterance. "
+	"Or your pitch floor could be 50 Hz but the Chinese speaker is in the middle of a third tone. "
+	"If this happens, it may help to lower the pitch floor to e.g. 30 Hz (@@Pitch settings...@), "
 	"although that may also smooth the pitch curve too much in other places.")
 NORMAL (U"The second possibility is that the pitch has moved too fast. This could happen at the end of a Chinese fourth tone, "
 	"which drops very fast. If this happens, it may help to use the ##optimize for voice analysis# setting, "
 	"(@@Pitch settings...@), although Praat may then hallucinate pitches in other places that you would prefer to consider voiceless.")
 NORMAL (U"The third possibility is that the periods are very irregular, as in some pathological voices. "
 	"If you want to see a pitch in those cases, it may help to use the ##optimize for voice analysis# setting "
-	"(@@Pitch settings...@). Or it may help to lower the ##voicing threshold# setting (@@Advanced pitch settings...@) "
-	"to 0.25 (instead of the standard 0.45) or so.")
+	"(@@Pitch settings...@). Or it may help to lower the ##voicing threshold# setting (@@Advanced pitch settings (filtered AC and CC)...@) "
+	"to 0.25 (instead of the standard 0.50) or so.")
 NORMAL (U"The fourth possibility is that there is a lot of background noise, as in a recording on a busy street. "
-	"In such a case, it may help to lower the ##voicing threshold# setting (@@Advanced pitch settings...@) "
-	"to 0.25 (instead of the standard 0.45) or so. The disadvantage of lowering this setting is that for non-noisy "
+	"In such a case, it may help to lower the ##voicing threshold# setting (@@Advanced pitch settings (filtered AC and CC)...@) "
+	"to 0.25 (instead of the standard 0.50) or so. The disadvantage of lowering this setting is that for non-noisy "
 	"recordings, Praat will become too eager to find voicing in some places that you would prefer to consider voiceless; "
-	"so make sure to set it back to 0.45 once you have finished analysing the noisy recordings.")
+	"so make sure to set it back to 0.50 once you have finished analysing the noisy recordings.")
 NORMAL (U"The fifth possibility is that the part analysed as voiceless is much less loud than the rest of the sound, "
 	"or that the sound contains a loud noise elsewhere. This can be checked by zooming in on the part analysed as voiceless: "
 	"if Praat suddenly considers it as voiced, this is a sign that this part is much quieter than the rest. "
 	"To make Praat analyse this part as voiced, you can lower the ##silence threshold# setting to 0.01 "
-	"(instead of the standard 0.03) or so. The disadvantage of lowering this setting is that Praat may start to consider "
+	"(instead of the standard 0.09) or so. The disadvantage of lowering this setting is that Praat may start to consider "
 	"some distant background sounds (and quiet echos, for instance) as voiced.")
 NORMAL (U"#Question: why do I get different results for the maximum pitch if...?")
-NORMAL (U"If you select a Sound and choose @@Sound: To Pitch...@, the time step will usually "
-	"be 0.01 seconds. The resulting @Pitch object will have values for times that are "
-	"0.01 seconds apart. If you then click Info or choose ##Get maximum pitch# from the @@Query submenu@, "
+NORMAL (U"If you select a Sound and choose @@Sound: To Pitch (filtered ac)...@, the time step will usually "
+	"be 0.015 seconds. The resulting @Pitch object will have values for times that are "
+	"0.015 seconds apart. If you then click Info or choose ##Get maximum pitch# from the @@Query submenu@, "
 	"the result is based on those time points. By contrast, if you choose ##Get maximum pitch# "
 	"from the @@Pitch menu@ in the SoundEditor window, the result will be based on the visible points, "
 	"of which there tend to be a hundred in the visible window. These different time spacings will "
@@ -805,43 +807,53 @@ NORMAL (U"To the right of the window, you may see three pitch values, written wi
 	"at the cursor, or the average pitch in the selection.")
 MAN_END
 
-MAN_BEGIN (U"Intro 4.2. Configuring the pitch contour", U"ppgb", 20190331)
+MAN_BEGIN (U"Intro 4.2. Configuring the pitch contour", U"ppgb", 20231115 /*20190331*/)
 NORMAL (U"With @@Pitch settings...@ from the #Pitch menu, "
 	"you can determine how the pitch contour is displayed and how it is computed. "
 	"These settings will be remembered across Praat sessions. "
-	"All these settings have standard values (\"factory settings\"), which appear "
+	"All these settings have standard values (“factory settings”), which appear "
 	"when you click #Standards.")
 ENTRY (U"The %%pitch range% setting")
-NORMAL (U"This is the most important setting for pitch analysis. The standard range is from 75 to 500 hertz, "
-	"which means that the pitch analysis method will only find values between 75 and 500 Hz. "
+NORMAL (U"This is the most important setting for pitch analysis. The standard range is from 50 to 800 hertz, "
+	"which means that the pitch analysis method will only find values between 50 and 800 Hz. "
 	"The range that you set here will be shown to the right of the analysis window.")
-NORMAL (U"You should set the range to values appropriate for your speaker, "
-	"but a problem is that speakers vary enormously in their pitch ranges. "
-	"For many low-pitched (e.g. average male) voices, you may want to set the floor to 75 Hz, and the ceiling to 300 Hz; "
-	"for many high-pitched (e.g. average female) voices, a range of 100-500 Hz may instead be appropriate. "
-	"On the high side, some children can reach almost 2000 Hz when yelling; "
-	"on the low side, creaky voice can go as low as 40 Hz; "
-	"for the speakers you are investigating, you may therefore want to experiment with this setting.")
-NORMAL (U"Here is why you have to supply these settings. If the pitch floor is 75 Hz, "
-	"the pitch analysis method requires a 40-millisecond analysis window, "
+NORMAL (U"You may have set the range to values appropriate for your speaker, "
+	"because speakers can vary enormously in their pitch ranges. "
+	"For some low-pitched (e.g. average male) voices, you might want to set the floor to 50 Hz, and the ceiling to 300 Hz; "
+	"for some high-pitched (e.g. average female) voices, a range of 100-600 Hz might instead be appropriate; "
+	"however, it may well be the case that the standard setting of 50–800 Hz will work for all of these voices. "
+	"On the high side, however, some children can reach almost 2000 Hz when yelling; "
+	"on the low side, creaky voice can go as low as 30 Hz; "
+	"if you investigate such cases, you may therefore want to experiment with this setting.")
+NORMAL (U"Here is why you have to supply these settings. If the pitch floor is 50 Hz, "
+	"the pitch analysis method requires a 60-millisecond analysis window, "
 	"i.e., in order to measure the F0 at a time of, say, 0.850 seconds, "
-	"Praat needs to consider a part of the sound that runs from 0.830 to 0.870 seconds. "
-	"These 40 milliseconds correspond to 3 maximum pitch periods (3/75 = 0.040). "
+	"Praat needs to consider a part of the sound that runs from 0.820 to 0.880 seconds. "
+	"These 60 milliseconds correspond to 3 maximum pitch periods (3/50 = 0.060). "
 	"If you set the pitch floor down to 25 Hz, the analysis window will grow to 120 milliseconds "
 	"(which is again 3 maximum pitch periods), i.e., all times between 0.790 and 0.910 seconds will be considered. "
 	"This makes it less easy to see fast F0 changes.")
 NORMAL (U"So setting the floor of the pitch range is a technical requirement for the pitch analysis. "
 	"If you set it too low, you will miss very fast F0 changes, and if you set it too high, "
 	"you will miss very low F0 values. For children's voices you can often use 200 Hz, "
-	"although 75 Hz will still give you the same time resolution as you get for low-pitched voices.")
+	"although 50 Hz will still give you the same time resolution as you get for low-pitched voices.")
 ENTRY (U"The %units setting")
 NORMAL (U"This setting determines the units of the vertical pitch scale. Most people like to see the pitch range "
 	"in hertz, but there are several other possibilities.")
+ENTRY (U"View range different from analysis range")
+NORMAL (U"Normally, the range of pitch values that can be seen in the editor window is equal to the range of pitch values "
+	"that the analysis algorithm can determine. If you set the analysis range from 50 to 800 Hz, this will be the range "
+	"you see in the editor window as well. If the pitch values in the curve happen to be between 350 and 400 Hz, "
+	"you may want to zoom in to the 350-400 Hz pitch region. "
+	"You will usually do this by changing the pitch range in the @@Pitch settings...@ window. "
+	"However, the analysis range will also change in that case, so that the curve itself may change. "
+	"If you do not want that, you can change the %%View range% settings "
+	"from “0.0 (= auto)” - “0.0 (= auto)” to something else, perhaps “350” - “400”.")
 ENTRY (U"Advanced settings")
-NORMAL (U"The Pitch menu also contains @@Advanced pitch settings...@.")
+NORMAL (U"The Pitch menu also contains @@Advanced pitch settings (raw AC and CC)...@ and @@Advanced pitch settings (filtered AC and CC)...@.")
 MAN_END
 
-MAN_BEGIN (U"Time step settings...", U"ppgb", 20220814 /*20031003*/)
+MAN_BEGIN (U"Time step settings...", U"ppgb", 20231115 /*20031003,20220814*/)
 INTRO (U"A command in the #Analysis menu of the @SoundEditor and @TextGridEditor "
 	"to determine the time interval between consecutive measurements "
 	"of pitch, formants, and intensity.")
@@ -849,16 +861,17 @@ ENTRY (U"Automatic time steps")
 NORMAL (U"It is recommended that you set the %%Time step strategy% to #Automatic. "
 	"In this way, Praat computes just enough pitch, formant, and intensity values to draw "
 	"reliable pitch, formant, and intensity contours. In general, Praat will compute 4 values "
-	"within an analysis window (\"four times oversampling\").")
-NORMAL (U"As described in @@Sound: To Pitch...@, Praat's standard time step for pitch analysis is 0.75 divided by the pitch floor, "
-	"e.g., if the pitch floor is 75 Hz, the time step will be 0.01 seconds. "
-	"In this way, there will be 4 pitch measurements within an analysis window, which is 3 / (75 Hz) = 40 milliseconds long.")
+	"within an analysis window (“four times oversampling”).")
+NORMAL (U"As described in @@Sound: To Pitch (filtered ac)...@, "
+	"Praat's standard time step for pitch analysis is 0.75 divided by the pitch floor, "
+	"e.g., if the pitch floor is 50 Hz, the time step will be 0.015 seconds. "
+	"In this way, there will be 4 pitch measurements within an analysis window, which is 3 / (50 Hz) = 60 milliseconds long.")
 NORMAL (U"As described in @@Sound: To Formant (burg)...@, Praat's standard time step for formant measurements is the %%Window length% divided by 4, "
 	"e.g. if the window length is 0.025 seconds, the time step will be 6.25 milliseconds.")
 NORMAL (U"As described in @@Sound: To Intensity...@, Praat's standard time step for intensity measurements is 0.8 divided by the pitch floor, "
-	"e.g. if the pitch floor is 75 Hz, the time step will be 10.6666667 milliseconds. "
+	"e.g. if the pitch floor is 50 Hz, the time step will be 16 milliseconds. "
 	"In this way, there will be 4 intensity measurements within an intensity analysis window, "
-	"which is 3.2 / (75 Hz) = 42.6666667 milliseconds long.")
+	"which is 3.2 / (50 Hz) = 64 milliseconds long.")
 ENTRY (U"Fixed time step")
 NORMAL (U"You can override the automatic time step by setting the %%Time step strategy% to #Fixed. "
 	"The %%Fixed time step% setting then determines the time step that Praat will use: "
@@ -883,23 +896,26 @@ NORMAL (U"Another way to override the standard time step is by setting the %%Tim
 	"of zooming.")
 MAN_END
 
-MAN_BEGIN (U"Advanced pitch settings...", U"ppgb", 20110808)
+MAN_BEGIN (U"Advanced pitch settings (raw AC and CC)...", U"ppgb", 20231115 /*20110808*/)
 INTRO (U"A command in the #Pitch menu of the @SoundEditor or @TextGridEditor windows. "
 	"Before changing the advanced pitch settings, make sure you understand "
 	"@@Intro 4.2. Configuring the pitch contour@.")
-ENTRY (U"View range different from analysis range")
-NORMAL (U"Normally, the range of pitch values that can be seen in the editor window is equal to the range of pitch values "
-	"that the analysis algorithm can determine. If you set the analysis range from 75 to 500 Hz, this will be the range "
-	"you see in the editor window as well. If the pitch values in the curve happen to be between 350 and 400 Hz, "
-	"you may want to zoom in to the 350-400 Hz pitch region. "
-	"You will usually do this by changing the pitch range in the @@Pitch settings...@ window. "
-	"However, the analysis range will also change in that case, so that the curve itself may change. "
-	"If you do not want that, you can change the %%View range% settings "
-	"from \"0.0 (= auto)\" - \"0.0 (= auto)\" to something else, perhaps \"350\" - \"400\".")
 ENTRY (U"Pitch analysis settings")
-NORMAL (U"For information about these, see @@Sound: To Pitch (ac)...@. The standard settings are best in most cases. "
+NORMAL (U"For information about these, see @@Sound: To Pitch (raw ac)...@. The standard settings are best in most cases. "
 	"For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.45, "
-	"in order to get pitch values even in irregular parts of the signal.")
+	"in order to get pitch values even in irregular parts of the signal. "
+	"For prevocied plosives, you may want to lower the silence threshold from 0.03 to 0.01 or so.")
+MAN_END
+
+MAN_BEGIN (U"Advanced pitch settings (filtered AC and CC)...", U"ppgb", 20231115 /*20110808*/)
+INTRO (U"A command in the #Pitch menu of the @SoundEditor or @TextGridEditor windows. "
+	"Before changing the advanced pitch settings, make sure you understand "
+	"@@Intro 4.2. Configuring the pitch contour@.")
+ENTRY (U"Pitch analysis settings")
+NORMAL (U"For information about these, see @@Sound: To Pitch (filtered ac)...@. The standard settings are best in most cases. "
+	"For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.50, "
+	"in order to get pitch values even in irregular parts of the signal. "
+	"For prevocied plosives, you may want to lower the silence threshold from 0.09 to 0.01 or so.")
 MAN_END
 
 MAN_BEGIN (U"Intro 4.3. Querying the pitch contour", U"ppgb", 20040614)
@@ -1370,12 +1386,14 @@ LIST_ITEM (U"• The @@Save menu@: for writing objects from memory to file.")
 LIST_ITEM (U"• The ##Help menu#: for viewing the manual.")
 MAN_END
 
-MAN_BEGIN (U"Periodicity menu", U"ppgb", 20010417)
+MAN_BEGIN (U"Periodicity menu", U"ppgb", 20231115 /*20010417*/)
 INTRO (U"A menu that occurs in the @@Dynamic menu@ for a @Sound.")
 NORMAL (U"This menu contains commands for analysing the pitch contour of the selected Sound:")
-LIST_ITEM (U"@@Sound: To Pitch...")
-LIST_ITEM (U"@@Sound: To Pitch (ac)...")
-LIST_ITEM (U"@@Sound: To Pitch (cc)...")
+LIST_ITEM (U"@@Sound: To Pitch (filtered ac)...")
+LIST_ITEM (U"@@Sound: To Pitch (raw cc)...")
+LIST_ITEM (U"@@Sound: To Pitch (raw ac)...")
+LIST_ITEM (U"@@Sound: To Pitch (filtered ac)...")
+LIST_ITEM (U"@@Sound: To Pitch (shs)...")
 LIST_ITEM (U"@@Sound: To Harmonicity (cc)...")
 LIST_ITEM (U"@@Sound: To Harmonicity (ac)...")
 MAN_END
