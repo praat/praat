@@ -1591,6 +1591,10 @@ DIRECT (CONVERT_TWO_TO_ONE__Sounds_to_ParamCurve) {
 	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
+DIRECT (HELP__How_to_choose_a_pitch_analysis_method) {
+	HELP (U"How to choose a pitch analysis method")
+}
+
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch, U"Sound: To Pitch", U"Sound: To Pitch...") {
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
@@ -1708,15 +1712,15 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAc, U"Sound: To Pitch (filtered ac)", U"Sound: To Pitch (filtered ac)...") {
 	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"40.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
 	LABEL (U"Preprocessing")
 	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
 	LABEL (U"Finding a path")
-	REAL (silenceThreshold, U"Silence threshold", U"0.03")
-	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
+	REAL (silenceThreshold, U"Silence threshold", U"0.09")
+	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
 	REAL (octaveCost, U"Octave cost", U"0.055")
 	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
 	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
@@ -1736,15 +1740,15 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCc, U"Sound: To Pitch (filtered cc)", U"Sound: To Pitch (filtered cc)...") {
 	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
-	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"40.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
 	LABEL (U"Preprocessing")
 	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
 	LABEL (U"Finding a path")
-	REAL (silenceThreshold, U"Silence threshold", U"0.03")
-	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
+	REAL (silenceThreshold, U"Silence threshold", U"0.09")
+	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
 	REAL (octaveCost, U"Octave cost", U"0.055")
 	REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
 	REAL (voicedUnvoicedCost, U"Voiced / unvoiced cost", U"0.14")
@@ -2500,7 +2504,9 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 0, U"To IntervalTier", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 				CONVERT_EACH_TO_ONE__Sound_to_IntervalTier);
 	praat_addAction1 (classSound, 0, U"Analyse periodicity -", nullptr, 0, nullptr);
-		praat_addAction1 (classSound, 0, U"To Pitch...", nullptr, 1,
+		praat_addAction1 (classSound, 0, U"How to choose a pitch analysis method", nullptr, 1,
+				HELP__How_to_choose_a_pitch_analysis_method);
+		praat_addAction1 (classSound, 0, U"To Pitch...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch);
 		praat_addAction1 (classSound, 0, U"To Pitch (filtered ac)...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAc);
