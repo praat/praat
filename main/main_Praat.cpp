@@ -1,6 +1,6 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2008,2010-2021 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2021,2023 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ static void logo (Graphics graphics) {
 	Graphics_setFontSize (graphics, 10.0);
 	Graphics_text (graphics, 0.5, 0.20, U"Copyright © 1992–" stringize(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.10, U"Website: praat.org");
+	Graphics_text (graphics, 0.5, 0.10, U"Website: https://www.fon.hum.uva.nl/praat (or praat.org)");
 }
 
 int main (int argc, char *argv []) {
