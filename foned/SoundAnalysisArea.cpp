@@ -691,6 +691,7 @@ static void do_log (SoundAnalysisArea me, int which) {
 				value = Pitch_getValueAtTime (my d_pitch.get(), tmin, my instancePref_pitch_unit(), 1);
 			else
 				value = Pitch_getMean (my d_pitch.get(), tmin, tmax, my instancePref_pitch_unit());
+			value = Function_convertToNonlogarithmic (my d_pitch.get(), value, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		} else if (varName [0] == U'f' && varName [1] >= U'1' && varName [1] <= U'5' && varName [2] == U'\0') {
 			SoundAnalysisArea_haveVisibleFormants (me);
 			if (part == SoundAnalysisArea_PART_CURSOR)
