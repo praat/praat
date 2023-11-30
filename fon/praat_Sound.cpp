@@ -1607,12 +1607,12 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_ac, U"Sound: To Pitch (ac)", U"Sound: To Pitch (ac)...") {
-	LABEL (U"Finding the candidates")
+	LABEL (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Finding a path")
+	LABEL (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1632,12 +1632,12 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)...") {
-	LABEL (U"Finding the candidates")
+	LABEL (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Finding a path")
+	LABEL (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1658,13 +1658,13 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawAc, U"Sound: To Pitch (raw ac)", U"Sound: To Pitch (raw ac)...") {
-	LABEL (U"Finding the candidates")
+	LABEL (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Finding a path")
+	LABEL (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1684,13 +1684,13 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_rawCc, U"Sound: To Pitch (raw cc)", U"Sound: To Pitch (raw cc)...") {
-	LABEL (U"Finding the candidates")
+	LABEL (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Finding a path")
+	LABEL (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1710,15 +1710,15 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredAc, U"Sound: To Pitch (filtered ac)", U"Sound: To Pitch (filtered ac)...") {
-	LABEL (U"Finding the candidates")
+	LABEL (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Preprocessing")
+	LABEL (U"Preprocessing...")
 	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
-	LABEL (U"Finding a path")
+	LABEL (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.09")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
 	REAL (octaveCost, U"Octave cost", U"0.055")
@@ -1738,15 +1738,15 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_filteredCc, U"Sound: To Pitch (filtered cc)", U"Sound: To Pitch (filtered cc)...") {
-	LABEL (U"Finding the candidates")
+	LABEL (U"Finding the candidates...")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"50.0")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"800.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"Preprocessing")
+	LABEL (U"Preprocessing...")
 	POSITIVE (attenuationAtCeiling, U"Attenuation at ceiling", U"0.03")
-	LABEL (U"Finding a path")
+	LABEL (U"Finding a path...")
 	REAL (silenceThreshold, U"Silence threshold", U"0.09")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.50")
 	REAL (octaveCost, U"Octave cost", U"0.055")
