@@ -32,7 +32,9 @@ enums_end (kSoundAnalysisArea_pitch_drawingMethod, 3, AUTOMATIC)
 enums_begin (kSoundAnalysisArea_pitch_analysisMethod, 1)
 	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 1, FILTERED_AUTOCORRELATION, U"filtered autocorrelation")
 	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 2, RAW_CROSS_CORRELATION, U"raw cross-correlation")
+	enums_alt (kSoundAnalysisArea_pitch_analysisMethod,    RAW_CROSS_CORRELATION, U"cross-correlation")   // COMPATIBILITY < 6400
 	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 3, RAW_AUTOCORRELATION, U"raw autocorrelation")
+	enums_alt (kSoundAnalysisArea_pitch_analysisMethod,    RAW_AUTOCORRELATION, U"autocorrelation")   // COMPATIBILITY < 6400
 	enums_add (kSoundAnalysisArea_pitch_analysisMethod, 4, FILTERED_CROSS_CORRELATION, U"filtered cross-correlation")
 enums_end (kSoundAnalysisArea_pitch_analysisMethod, 4, FILTERED_AUTOCORRELATION)
 

@@ -934,7 +934,9 @@ static UiField UiForm_addField (UiForm me, _kUiField_type type, conststring32 la
 	return my field [my numberOfFields].get();
 }
 
-UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::REAL_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -943,7 +945,9 @@ UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName,
 	return thee;
 }
 
-UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::REAL_OR_UNDEFINED_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -952,7 +956,9 @@ UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 va
 	return thee;
 }
 
-UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVE_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -961,7 +967,9 @@ UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableN
 	return thee;
 }
 
-UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::INTEGER_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -970,7 +978,9 @@ UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableN
 	return thee;
 }
 
-UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::NATURAL_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -979,7 +989,9 @@ UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableN
 	return thee;
 }
 
-UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::WORD_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -988,7 +1000,9 @@ UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variab
 	return thee;
 }
 
-UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::SENTENCE_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -1005,7 +1019,9 @@ UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label
 	return thee;
 }
 
-UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName, conststring32 labelText, bool defaultValue) {
+UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName,
+	conststring32 labelText, bool defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::BOOLEAN_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy integerDefaultValue = defaultValue;
@@ -1151,7 +1167,9 @@ UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 v
 	return thee;
 }
 
-UiField UiForm_addChoice (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
+UiField UiForm_addChoice (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
+	conststring32 labelText, int defaultValue, int base)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::CHOICE_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = thee;
 	thy integerDefaultValue = defaultValue;
@@ -1162,7 +1180,23 @@ UiField UiForm_addChoice (UiForm me, int *intVariable, conststring32 *stringVari
 	return thee;
 }
 
-UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, int defaultValue, int base) {
+UiField UiForm_addChoiceEnum (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
+	conststring32 labelText, int defaultValue, int base, enum_generic_getValue getValueFunction)
+{
+	UiField thee = UiForm_addField (me, _kUiField_type::CHOICE_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = thee;
+	thy integerDefaultValue = defaultValue;
+	thy intVariable = intVariable;
+	thy stringVariable = stringVariable;
+	thy variableName = variableName;
+	thy subtract = ( base == 1 ? 0 : 1 );
+	thy getValueFunction = getValueFunction;
+	return thee;
+}
+
+UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
+	conststring32 labelText, int defaultValue, int base)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::OPTIONMENU_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = thee;
 	thy integerDefaultValue = defaultValue;
@@ -1173,7 +1207,23 @@ UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *string
 	return thee;
 }
 
-UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 labelText, constSTRVEC strings, integer defaultValue) {
+UiField UiForm_addOptionMenuEnum (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
+	conststring32 labelText, int defaultValue, int base, enum_generic_getValue getValueFunction)
+{
+	UiField thee = UiForm_addField (me, _kUiField_type::OPTIONMENU_, labelText);
+	my referenceToLatestUsedChoiceOrOptionMenu = thee;
+	thy integerDefaultValue = defaultValue;
+	thy intVariable = intVariable;
+	thy stringVariable = stringVariable;
+	thy variableName = variableName;
+	thy subtract = ( base == 1 ? 0 : 1 );
+	thy getValueFunction = getValueFunction;
+	return thee;
+}
+
+UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName,
+	conststring32 labelText, constSTRVEC strings, integer defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::LIST_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy strings = strings;
@@ -1184,7 +1234,9 @@ UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stri
 	return thee;
 }
 
-UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::COLOUR_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -1193,7 +1245,9 @@ UiField UiForm_addColour (UiForm me, MelderColour *colourVariable, conststring32
 	return thee;
 }
 
-UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName, conststring32 labelText, conststring32 defaultValue) {
+UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName,
+	conststring32 labelText, conststring32 defaultValue)
+{
 	UiField thee = UiForm_addField (me, _kUiField_type::CHANNEL_, labelText);
 	my referenceToLatestUsedChoiceOrOptionMenu = nullptr;
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -2034,20 +2088,24 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		{
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Option argument “", my name.get(), U"” should be a string, not ", arg -> whichText(), U".");
-			my integerValue = 0;
-			for (int i = 1; i <= my options.size; i ++) {
-				UiOption b = my options.at [i];
-				if (str32equ (arg -> getString(), b -> name.get()))
-					my integerValue = i;
-			}
-			if (my integerValue == 0) {
-				/*
-					Retry with different case.
-				*/
+			if (my getValueFunction) {
+				my integerValue = my getValueFunction (arg -> getString()) + my subtract;
+			} else {
+				my integerValue = 0;
 				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
-					if (Melder_equ_firstCharacterCaseInsensitive (arg -> getString(), b -> name.get()))
+					if (str32equ (arg -> getString(), b -> name.get()))
 						my integerValue = i;
+				}
+				if (my integerValue == 0) {
+					/*
+						Retry with different case.
+					*/
+					for (int i = 1; i <= my options.size; i ++) {
+						UiOption b = my options.at [i];
+						if (Melder_equ_firstCharacterCaseInsensitive (arg -> getString(), b -> name.get()))
+							my integerValue = i;
+					}
 				}
 			}
 			if (my integerValue == 0) {
@@ -2229,20 +2287,24 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::CHOICE_:
 		case _kUiField_type::OPTIONMENU_:
 		{
-			my integerValue = 0;
-			for (int i = 1; i <= my options.size; i ++) {
-				UiOption b = my options.at [i];
-				if (str32equ (string, b -> name.get()))
-					my integerValue = i;
-			}
-			if (my integerValue == 0) {
-				/*
-					Retry with different case.
-				*/
+			if (my getValueFunction) {
+				my integerValue = my getValueFunction (string) + my subtract;
+			} else {
+				my integerValue = 0;
 				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
-					if (Melder_equ_firstCharacterCaseInsensitive (string, b -> name.get()))
+					if (str32equ (string, b -> name.get()))
 						my integerValue = i;
+				}
+				if (my integerValue == 0) {
+					/*
+						Retry with different case.
+					*/
+					for (int i = 1; i <= my options.size; i ++) {
+						UiOption b = my options.at [i];
+						if (Melder_equ_firstCharacterCaseInsensitive (string, b -> name.get()))
+							my integerValue = i;
+					}
 				}
 			}
 			if (my integerValue == 0)

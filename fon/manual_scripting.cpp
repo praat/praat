@@ -671,28 +671,28 @@ MAN_BEGIN (U"Scripting 3.2. Numeric variables", U"ppgb", 20230201)
 INTRO (U"In any general procedural programming language you can work with %variables, "
 	"which are places in your computer's memory where you can store a number or anything else.")
 NORMAL (U"For instance, you could put the number 3.1 into the variable $%b in the following way:")
-CODE (U"%b = 3.1")
-NORMAL (U"This statement is called as %assignment, i.e., you %assign the %value 3.1 to the %variable $%b. "
-	"We read this statement aloud as “$%b becomes 3.1” (or “$%b gets 3.1”, but not “$%b is 3.1”). "
-	"What this means is that after this statement, the memory location $%b %contains the numeric value (number) 3.1.")
-NORMAL (U"You can regard a variable as a box: you put the value 3.1 into the box named $%b. "
-	"Or you can regard a variable as a house: the house is called $%b and now the family “3.1” is living there. "
+CODE (U"b = 3.1")
+NORMAL (U"This statement is called as %assignment, i.e., you %assign the %value 3.1 to the %variable %`b`. "
+	"We read this statement aloud as “%`b` becomes 3.1” (or “%`b` gets 3.1”, but not “%`b` is 3.1”). "
+	"What this means is that after this statement, the memory location %`b` %contains the numeric value (number) 3.1.")
+NORMAL (U"You can regard a variable as a box: you put the value 3.1 into the box named %`b`. "
+	"Or you can regard a variable as a house: the house is called %`b` and now the family “3.1” is living there. "
 	"Or you can regard it as any other storage location.")
 NORMAL (U"To see what value a variable contains (what’s in the box, or who lives in the house), "
-	"you can use the $#writeInfoLine function:")
-CODE (U"%b = 3.1")
-CODE (U"writeInfoLine: “The value is ”, %b, “.”")
+	"you can use the #`writeInfoLine` function:")
+CODE (U"b = 3.1")
+CODE (U"writeInfoLine: “The value is ”, b, “.”")
 NORMAL (U"This will put the text “`The value is 3.1.`” into the Info window, as you are invited to verify.")
 NORMAL (U"A variable is called a variable because it is %variable, i.e. its value can change. Try the script")
-CODE (U"%b = 3.1")
-CODE (U"%b = 5.8")
-CODE (U"writeInfoLine: “The value is ”, %b, “.”")
-NORMAL (U"You will see that `b` ends up having the value 5.8. The first line puts the value 3.1 there, but the second line "
+CODE (U"b = 3.1")
+CODE (U"b = 5.8")
+CODE (U"writeInfoLine: “The value is ”, b, “.”")
+NORMAL (U"You will see that %`b` ends up having the value 5.8. The first line puts the value 3.1 there, but the second line "
 	"replaces it with 5.8. It’s like taking the 3.1 out of the box and putting the 5.8 in its stead. "
 	"Or the family 3.1 moves from the house, and the family called 5.8 moves in.")
 NORMAL (U"In an assignment, the part to the right of the “becomes” sign (the “=” sign) doesn’t have to be a number; "
 	"it can be any %formula that %evaluates to a number. For instance, the script")
-CODE (U"%b = 3.1 * 2")
+CODE (U"b = 3.1 * 2")
 CODE (U"writeInfoLine: “The value is ”, b, “.”")
 NORMAL (U"puts the text “`The value is 6.2.`” into the Info window. This works because Praat handles the first line "
 	"in the following way:")
@@ -701,22 +701,22 @@ LIST_ITEM (U"2. the value 6.2 is subsequently stored in the variable `b`.")
 NORMAL (U"After line 1 has been executed, the variable %`b` just contains the value 6.2, nothing more; "
 	"the variable %`b` doesn’t remember that that value has been computed by multiplying 3.1 with 2.")
 NORMAL (U"Formulas can contain more things than numbers: they can also contain other variables:")
-CODE (U"%b = 3.1")
-CODE (U"%c = %b * 2")
-CODE (U"writeInfoLine: “The value of b is ”, %b, “, and the value of c is ”, %c, “.”")
+CODE (U"b = 3.1")
+CODE (U"c = b * 2")
+CODE (U"writeInfoLine: “The value of b is ”, b, “, and the value of c is ”, c, “.”")
 NORMAL (U"In the first line, %`b` gets the value 3.1. In the second line, the formula `b * 2` first has to be evaluated. "
 	"Praat looks up the value of %`b` (which is 3.1), so that it knows that the formula actually means `3.1 * 2`. "
 	"Praat evaluates this formula and stores the result (namely the value 6.2) "
 	"into the variable %`c`, which will then contain nothing else than the value 6.2. "
 	"The Info window thus reports “`The value of b is 3.1, and the value of c is 6.2.`”.")
 NORMAL (U"After these explanations, consider the following script:")
-CODE (U"%b = 3.1")
-CODE (U"%c = %b * 2")
-CODE (U"%b = 5.8")
-CODE (U"writeInfoLine: “The value of c is ”, %c, “.”")
+CODE (U"b = 3.1")
+CODE (U"c = b * 2")
+CODE (U"b = 5.8")
+CODE (U"writeInfoLine: “The value of c is ”, c, “.”")
 NORMAL (U"Can you figure out what the Info will report? If you think it will report "
 	"“`The value of c is 6.2.`”, then you are correct: after the first line, %`b` contains the value 3.1; "
-	"after the second line, the value of $%c is therefore 6.2, and nothing more; "
+	"after the second line, the value of %`c` is therefore 6.2, and nothing more; "
 	"after line 3, the value of %`b` has changed to 5.8, but the value of %`c` hasn’t changed and is still 6.2.")
 NORMAL (U"If you thought that %`c` would end up having the value 11.6, then you’re thinking in terms "
 	"of a non-procedural language such as Prolog; you may have thought that the thing assigned to %`c` in the second line "
@@ -746,10 +746,10 @@ NORMAL (U"This is the mean power of the whole Sound.")
 NORMAL (U"In a script, you want to use the value of this power in the script itself, not in the Info window, "
 	"perhaps because you want to do computations with it or because you want to report the value with a nice text around it. "
 	"This is how you do the latter:")
-CODE (U"%power = Get power: 0.0, 0.0")
-CODE (U"writeInfoLine: “The power of this sound is ”, %power, “ Pascal-squared.”")
+CODE (U"power = Get power: 0.0, 0.0")
+CODE (U"writeInfoLine: “The power of this sound is ”, power, “ Pascal-squared.”")
 NORMAL (U"The first line of this script executes the menu command ##Get power...#, "
-	"but puts the value 0.1350605005239421 into the variable $%power instead of into the Info window "
+	"but puts the value 0.1350605005239421 into the variable %`power` instead of into the Info window "
 	"(the variable can have any name you like, as long as it starts with a lower-case letter "
 	"and consists of letters and digits; see @@Scripting 5.1. Variables@).")
 NORMAL (U"The second line then reports the value in the Info window, this time with a nice text around it:")
@@ -827,8 +827,8 @@ SCRIPT (6, 3, U""
 )
 NORMAL (U"A numeric query stores in a numeric variable only the first number that it can find in the text that would appear in the Info window. "
 	"For instance, the script")
-CODE (U"%power = Get power: 0.0, 0.0")
-CODE (U"writeInfoLine: %power")
+CODE (U"power = Get power: 0.0, 0.0")
+CODE (U"writeInfoLine: power")
 NORMAL (U"could give you the following result:")
 SCRIPT (6, 3, U""
 	Manual_DRAW_WINDOW (3, "Praat Info", "File   Edit   Search   Convert   Font   Help")
@@ -995,38 +995,38 @@ MAN_END
 
 MAN_BEGIN (U"Scripting 4.1. Selecting objects", U"ppgb", 20180428)
 NORMAL (U"To simulate the mouse-clicked and dragged selection in the list of objects, "
-	"you have the functions #`selectObject`, #`plusObject` and #`minusObject`.")
+	"you have the functions @`selectObject`, @`plusObject` and @`minusObject`.")
 NORMAL (U"Suppose you start Praat and use ##Create Sound as tone...# to create a Sound called %tone. "
 	"In the object list it looks like “1. Sound tone”. "
 	"Suppose you then do ##To Spectrum...# from the ##Analyse Spectrum# menu. "
 	"A second object, called “2. Spectrum tone” appears in the list and is selected. "
 	"To select and play the Sound, you can do either")
-CODE (U"selectObject: 1")
+CODE (U"\\#`{selectObject}: 1")
 CODE (U"Play")
 NORMAL (U"or")
-CODE (U"selectObject: “Sound tone”")
+CODE (U"\\#`{selectObject}: “Sound tone”")
 CODE (U"Play")
 NORMAL (U"So you can select an object either by its unique ID (identifier: the unique number by which it appears in the list) "
 	"or by name.")
-NORMAL (U"The function #selectObject works by first deselecting all objects, and then selecting the one you mention. "
-	"If you don’t want to deselect the existing selection, you can use #plusObject or #minusObject. "
+NORMAL (U"The function @`selectObject` works by first deselecting all objects, and then selecting the one you mention. "
+	"If you don’t want to deselect the existing selection, you can use @`plusObject` or @`minusObject`. "
 	"When the Sound is selected, you can select the Spectrum as well by doing")
-CODE (U"plusObject: 2")
+CODE (U"\\#`{plusObject}: 2")
 NORMAL (U"or")
-CODE (U"plusObject: “Spectrum tone”")
+CODE (U"\\#`{plusObject}: “Spectrum tone”")
 NORMAL (U"If you then want to deselect the Sound, and keep the Spectrum selected, you can do")
 CODE (U"\\#`{minusObject}: 1")
 NORMAL (U"or")
-CODE (U"minusObject: “Sound tone”")
+CODE (U"\\#`{minusObject}: “Sound tone”")
 NORMAL (U"All these functions can take more than one argument. To select the Sound and the Spectrum together, you can do")
 CODE (U"\\#`{selectObject}: 1, 2")
 NORMAL (U"or")
-CODE (U"selectObject: “Sound tone”, “Spectrum tone”")
+CODE (U"\\#`{selectObject}: “Sound tone”, “Spectrum tone”")
 NORMAL (U"or even")
-CODE (U"selectObject: 1, “Spectrum tone”")
+CODE (U"\\#`{selectObject}: 1, “Spectrum tone”")
 NORMAL (U"or, using a numeric vector:")
 CODE (U"myObjects# = { 1, 2 }")
-CODE (U"selectObject: myObjects#")
+CODE (U"\\#`{selectObject}: myObjects#")
 ENTRY (U"How to refer to objects created in your script")
 NORMAL (U"In a script, you typically don't know whether the IDs of the objects are 1 and 2, or much higher numbers. "
 	"Fortunately, commands that create a new object give you the ID of the object that is created, "
@@ -1038,7 +1038,7 @@ CODE (U"Play   ; the Sound is selected, so it plays")
 CODE (U"To Spectrum: “yes”")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
 CODE (U"# Remove the created Spectrum and Sound:")
-CODE (U"plusObject: sound   ; the Spectrum was already selected")
+CODE (U"\\#`{plusObject}: sound   ; the Spectrum was already selected")
 CODE (U"Remove")
 NORMAL (U"You could also select the objects by name:")
 CODE (U"Create Sound as pure tone: “sine377”,")
@@ -1047,10 +1047,10 @@ CODE (U"Play   ; the Sound is selected, so it plays")
 CODE (U"To Spectrum: “yes”")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
 CODE (U"# Remove the created Spectrum and Sound:")
-CODE (U"plusObject: “Sound sine377”   ; the Spectrum was already selected")
+CODE (U"\\#`{plusObject}: “Sound sine377”   ; the Spectrum was already selected")
 CODE (U"Remove")
 NORMAL (U"This works even if there are multiple objects called “Sound sine377”, "
-	"because if there are more objects with the same name, #selectObject and #plusObject select the most recently created one, "
+	"because if there are more objects with the same name, @`selectObject` and @`plusObject` select the most recently created one, "
 	"i.e., the one nearest to the bottom of the list of objects.")
 MAN_END
 
@@ -1063,7 +1063,7 @@ CODE (U"Play   ; the Sound is selected, so it plays")
 CODE (U"spectrum = To Spectrum: “yes”   ; remember the ID of the Spectrum")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
 CODE (U"# Remove the created Spectrum and Sound:")
-CODE (U"\\#{removeObject}: sound, spectrum   ; remove one selected and one unselected object")
+CODE (U"\\#`{removeObject}: sound, spectrum   ; remove one selected and one unselected object")
 NORMAL (U"The #removeObject function keeps the objects selected that were selected before "
 	"(except of course the ones it throws away). "
 	"This allows you to easily throw away objects as soon as you no longer need them:")
@@ -1071,9 +1071,9 @@ CODE (U"sound = Create Sound as pure tone: “sine377”,")
 CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
 CODE (U"Play   ; the Sound is selected, so it plays")
 CODE (U"spectrum = To Spectrum: “yes”")
-CODE (U"\\#{removeObject}: sound   ; we no longer need the Sound, so we remove it")
+CODE (U"\\#`{removeObject}: sound   ; we no longer need the Sound, so we remove it")
 CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is still selected, so it is drawn")
-CODE (U"\\#{removeObject}: spectrum   ; remove the last object created by the script")
+CODE (U"\\#`{removeObject}: spectrum   ; remove the last object created by the script")
 ENTRY (U"Selecting and removing all objects from the list (don't)")
 NORMAL (U"A very strange command, which you should not normally use, is `select all`:")
 	CODE1 (U"\\#{select all}")
@@ -1089,7 +1089,7 @@ MAN_BEGIN (U"Scripting 4.3. Querying objects", U"ppgb", 20180427)
 NORMAL (U"You can get the name of a selected object into a string variable. "
 	"For instance, the following reads the name of the second selected Sound "
 	"(as counted from the top of the list of objects) into the variable %`name$`:")
-CODE (U"name$ = selected$ (“Sound”, 2)")
+CODE (U"name$ = \\#`{selected$} (“Sound”, 2)")
 NORMAL (U"If the Sound was called “Sound hallo”, the variable %`name$` will contain the string “hallo”. "
 	"To get the name of the topmost selected Sound object, you can leave out the number:")
 CODE (U"name$ = selected$ (“Sound”)")
@@ -1098,8 +1098,8 @@ CODE (U"fullName$ = selected$ (3)")
 NORMAL (U"To get the full name of the topmost selected object, you do:")
 CODE (U"fullName$ = selected$ ()")
 NORMAL (U"To get the type and name out of the full name, you do:")
-CODE (U"type$ = extractWord$ (fullName$, “”)")
-CODE (U"name$ = extractLine$ (fullName$, “ ”)")
+CODE (U"type$ = \\`{extractWord$} (fullName$, “”)")
+CODE (U"name$ = \\`{extractLine$} (fullName$, “ ”)")
 NORMAL (U"Negative numbers count from the bottom. Thus, to get the name of the bottom-most selected Sound "
 	"object, you say")
 CODE (U"name$ = selected$ (“Sound”, -1)")

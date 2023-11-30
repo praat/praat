@@ -134,6 +134,7 @@ Thing_define (UiField, Thing) {
 	GuiRadioButton radioButton;   // for CHOICE_
 	GuiList list;
 	GuiOptionMenu optionMenu;
+	enum_generic_getValue getValueFunction;
 	GuiButton pushButton;   // like "Browse..." for INFILE_, OUTFILE_, FOLDER_ (2021-03-30)
 	int y;
 
@@ -244,8 +245,12 @@ UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 v
 		conststring32 labelText, constSTRVEC defaultValue, integer numberOfLines = 7);
 UiField UiForm_addChoice (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
 		conststring32 labelText, int defaultValue, int base);
+UiField UiForm_addChoiceEnum (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
+		conststring32 labelText, int defaultValue, int base, enum_generic_getValue getValueFunction);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
 		conststring32 labelText, int defaultValue, int base);
+UiField UiForm_addOptionMenuEnum (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
+		conststring32 labelText, int defaultValue, int base, enum_generic_getValue getValueFunction);
 UiOption UiForm_addOption (UiForm me, conststring32 optionText);
 UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName,
 		conststring32 labelText, constSTRVEC strings, integer defaultValue);
