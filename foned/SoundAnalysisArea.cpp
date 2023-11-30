@@ -482,6 +482,17 @@ void structSoundAnalysisArea :: v1_info () {
 	MelderInfo_writeLine (U"Log 2 format: ", our instancePref_log2_format());
 	MelderInfo_writeLine (U"Log 3 script: ", our instancePref_logScript3());
 	MelderInfo_writeLine (U"Log 4 script: ", our instancePref_logScript4());
+	/*
+		COMPATIBILITY < 6400
+	*/
+	MelderInfo_writeLine (U"\nCOMPATIBILITY (obsolete settings for the benefit of old scripts):");
+	MelderInfo_writeLine (U"Pitch max. number of candidates: ", our instancePref_pitch_rawAcCc_maximumNumberOfCandidates());
+	MelderInfo_writeLine (U"Pitch very accurate: ", our instancePref_pitch_rawAcCc_veryAccurate());
+	MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_rawAcCc_silenceThreshold(), U" of global peak");
+	MelderInfo_writeLine (U"Pitch voicing threshold: ", our instancePref_pitch_rawAcCc_voicingThreshold(), U" (periodic power / total power)");
+	MelderInfo_writeLine (U"Pitch octave cost: ", our instancePref_pitch_rawAcCc_octaveCost(), U" per octave");
+	MelderInfo_writeLine (U"Pitch octave jump cost: ", our instancePref_pitch_rawAcCc_octaveJumpCost(), U" per octave");
+	MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", our instancePref_pitch_rawAcCc_voicedUnvoicedCost());
 }
 
 
@@ -691,6 +702,7 @@ static void do_log (SoundAnalysisArea me, int which) {
 				value = Pitch_getValueAtTime (my d_pitch.get(), tmin, my instancePref_pitch_unit(), 1);
 			else
 				value = Pitch_getMean (my d_pitch.get(), tmin, tmax, my instancePref_pitch_unit());
+			value = Function_convertToNonlogarithmic (my d_pitch.get(), value, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		} else if (varName [0] == U'f' && varName [1] >= U'1' && varName [1] <= U'5' && varName [2] == U'\0') {
 			SoundAnalysisArea_haveVisibleFormants (me);
 			if (part == SoundAnalysisArea_PART_CURSOR)
@@ -962,6 +974,33 @@ static void menu_cb_showPitch (SoundAnalysisArea me, EDITOR_ARGS) {
 	VOID_EDITOR_END
 }
 
+static void menu_cb_pitchSettings_BEFORE_6400 (SoundAnalysisArea me, EDITOR_ARGS) {
+	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
+		LABEL   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
+		LABEL   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
+		POSITIVE (pitchFloor,   U"left Pitch range (Hz)",  my default_pitch_floor())
+		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_ceiling())
+		OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", my default_pitch_unit ())
+		CHOICE_ENUM (kSoundAnalysisArea_pitch_analysisMethod, analysisMethod, U"Analysis method", my default_pitch_method())
+		OPTIONMENU_ENUM (kSoundAnalysisArea_pitch_drawingMethod, drawingMethod, U"Drawing method", my default_pitch_drawingMethod())
+	EDITOR_OK
+	EDITOR_DO
+		Melder_require (pitchCeiling > pitchFloor,
+			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
+			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
+		);
+		my setInstancePref_pitch_floor (pitchFloor);
+		my setInstancePref_pitch_ceiling (pitchCeiling);
+		my setInstancePref_pitch_unit (unit);
+		my setInstancePref_pitch_method (analysisMethod);
+		my setInstancePref_pitch_drawingMethod (drawingMethod);
+		my d_pitch. reset();
+		my d_intensity. reset();
+		my d_pulses. reset();
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
 static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
 		POSITIVE (pitchFloor,   U"left Pitch range (Hz)",  my default_pitch_floor())
@@ -1015,7 +1054,7 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 		} else {
 			SET_STRING (note2, U"(your “time step strategy” has its standard value: automatic)")
 		}
-	EDITOR_DO
+	EDITOR_DO_ALTERNATIVE (menu_cb_pitchSettings_BEFORE_6400)
 		Melder_require (pitchCeiling > pitchFloor,
 			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
 			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
@@ -1034,14 +1073,56 @@ static void menu_cb_pitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_END
 }
 
+static void menu_cb_advancedPitchSettings (SoundAnalysisArea me, EDITOR_ARGS) {   // COMPATIBILITY < 6400
+	EDITOR_FORM (U"Advanced pitch settings", U"Advanced pitch settings...")
+		LABEL   (U"YOU SHOULD NEVER SEE THIS OBSOLETE SETTINGS WINDOW;")
+		LABEL   (U"IT IS HERE ONLY FOR COMPATIBILITY WITH OLD SCRIPTS.")
+		REAL    (viewFrom,                  U"left View range (units)",   my default_pitch_viewFrom                  ())
+		REAL    (viewTo,                    U"right View range (units)",  my default_pitch_viewTo                    ())
+		BOOLEAN (veryAccurate,              U"Very accurate",             false)
+		NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_rawAcCc_maximumNumberOfCandidates ())
+		REAL    (silenceThreshold,          U"Silence threshold",         my default_pitch_rawAcCc_silenceThreshold          ())
+		REAL    (voicingThreshold,          U"Voicing threshold",         my default_pitch_rawAcCc_voicingThreshold          ())
+		REAL    (octaveCost,                U"Octave cost",               my default_pitch_rawAcCc_octaveCost                ())
+		REAL    (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_rawAcCc_octaveJumpCost            ())
+		REAL    (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_rawAcCc_voicedUnvoicedCost        ())
+	EDITOR_OK
+		SET_REAL    (viewFrom,                  my instancePref_pitch_viewFrom())
+		SET_REAL    (viewTo,                    my instancePref_pitch_viewTo())
+		SET_BOOLEAN (veryAccurate,              my instancePref_pitch_rawAcCc_veryAccurate())
+		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_rawAcCc_maximumNumberOfCandidates())
+		SET_REAL    (silenceThreshold,          my instancePref_pitch_rawAcCc_silenceThreshold())
+		SET_REAL    (voicingThreshold,          my instancePref_pitch_rawAcCc_voicingThreshold())
+		SET_REAL    (octaveCost,                my instancePref_pitch_rawAcCc_octaveCost())
+		SET_REAL    (octaveJumpCost,            my instancePref_pitch_rawAcCc_octaveJumpCost())
+		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_rawAcCc_voicedUnvoicedCost())
+	EDITOR_DO
+		if (maximumNumberOfCandidates < 2)
+			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
+		my setInstancePref_pitch_viewFrom (viewFrom);
+		my setInstancePref_pitch_viewTo (viewTo);
+		my setInstancePref_pitch_rawAcCc_veryAccurate (veryAccurate);
+		my setInstancePref_pitch_rawAcCc_maximumNumberOfCandidates (maximumNumberOfCandidates);
+		my setInstancePref_pitch_rawAcCc_silenceThreshold (silenceThreshold);
+		my setInstancePref_pitch_rawAcCc_voicingThreshold (voicingThreshold);
+		my setInstancePref_pitch_rawAcCc_octaveCost (octaveCost);
+		my setInstancePref_pitch_rawAcCc_octaveJumpCost (octaveJumpCost);
+		my setInstancePref_pitch_rawAcCc_voicedUnvoicedCost (voicedUnvoicedCost);
+		my d_pitch.     reset();
+		my d_intensity. reset();
+		my d_pulses.    reset();
+		FunctionEditor_redraw (my functionEditor());
+	EDITOR_END
+}
+
 static void menu_cb_advancedPitchSettings_rawAcCc (SoundAnalysisArea me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Advanced pitch settings (raw AC and CC)", U"Advanced pitch settings (raw AC and CC)...")
 		LABEL   (U"Settings for the RAW autocorrelation and cross-correlation methods only.")
 		LABEL   (U"")
-		LABEL (U"Finding the candidates")
+		LABEL (U"Finding the candidates...")
 		NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_rawAcCc_maximumNumberOfCandidates ())
 		BOOLEAN (veryAccurate,              U"Very accurate", false)
-		LABEL (U"Finding a path")
+		LABEL (U"Finding a path...")
 		REAL    (silenceThreshold,          U"Silence threshold",         my default_pitch_rawAcCc_silenceThreshold          ())
 		REAL    (voicingThreshold,          U"Voicing threshold",         my default_pitch_rawAcCc_voicingThreshold          ())
 		REAL    (octaveCost,                U"Octave cost",               my default_pitch_rawAcCc_octaveCost                ())
@@ -1076,12 +1157,12 @@ static void menu_cb_advancedPitchSettings_filteredAcCc (SoundAnalysisArea me, ED
 	EDITOR_FORM (U"Advanced pitch settings (filtered AC and CC)", U"Advanced pitch settings (filtered AC and CC)...")
 		LABEL    (U"Settings for the FILTERED autocorrelation and cross-correlation methods only.")
 		LABEL    (U"")
-		LABEL (U"Finding the candidates")
+		LABEL (U"Finding the candidates...")
 		NATURAL  (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_filteredAcCc_maximumNumberOfCandidates ())
 		BOOLEAN  (veryAccurate,              U"Very accurate", false)
-		LABEL (U"Preprocessing")
+		LABEL (U"Preprocessing...")
 		POSITIVE (attenuationAtCeiling,      U"Attenuation at ceiling",    my default_pitch_filteredAcCc_attenuationAtCeiling      ())
-		LABEL (U"Finding a path")
+		LABEL (U"Finding a path...")
 		REAL     (silenceThreshold,          U"Silence threshold",         my default_pitch_filteredAcCc_silenceThreshold          ())
 		REAL     (voicingThreshold,          U"Voicing threshold",         my default_pitch_filteredAcCc_voicingThreshold          ())
 		REAL     (octaveCost,                U"Octave cost",               my default_pitch_filteredAcCc_octaveCost                ())
@@ -1827,6 +1908,8 @@ void structSoundAnalysisArea :: v_createMenus () {
 		);
 		FunctionAreaMenu_addCommand (menu, U"Pitch settings...", 0,
 				menu_cb_pitchSettings, this);
+		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings...", GuiMenu_HIDDEN,
+				menu_cb_advancedPitchSettings, this);
 		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (filtered AC and CC)...", 0,
 				menu_cb_advancedPitchSettings_filteredAcCc, this);
 		FunctionAreaMenu_addCommand (menu, U"Advanced pitch settings (raw AC and CC)...", 0,

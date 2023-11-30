@@ -225,8 +225,10 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		UiForm_addChoice (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
-				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+		UiForm_addChoiceEnum (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
+			labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN, \
+			(enum_generic_getValue) EnumeratedType##_getValue \
+		); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
 			UiForm_addOption (_dia_.get(), EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
@@ -236,8 +238,10 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		UiForm_addOptionMenu (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
-				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+		UiForm_addOptionMenuEnum (_dia_.get(), (int *) & enumeratedVariable, nullptr, U"" #enumeratedVariable, \
+			labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN, \
+			(enum_generic_getValue) EnumeratedType##_getValue \
+		); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
 			UiForm_addOption (_dia_.get(), EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
@@ -247,8 +251,10 @@
 			[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 			_compilerTypeCheckDummy = enumeratedVariable; \
 		} \
-		UiForm_addOptionMenu (_dia_.get(), nullptr, & enumeratedVariableAsString, U"" #enumeratedVariableAsString, \
-				labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+		UiForm_addOptionMenuEnum (_dia_.get(), nullptr, & enumeratedVariableAsString, U"" #enumeratedVariableAsString, \
+			labelText, (int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN, \
+			(enum_generic_getValue) EnumeratedType##_getValue \
+		); \
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
 			UiForm_addOption (_dia_.get(), EnumeratedType##_getText ((enum EnumeratedType) ienum));
 

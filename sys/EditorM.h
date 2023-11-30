@@ -46,6 +46,37 @@ _form_inited_: \
 		UiForm_parseStringE (cmd, _narg_, _args_, _sendingString_, optionalInterpreter); \
 	} else {
 
+#define EDITOR_DO_ALTERNATIVE(alternative)  \
+		UiForm_do (cmd -> d_uiform.get(), false); \
+	} else if (! _sendingForm_) { \
+		try { \
+			UiForm_parseStringE (cmd, _narg_, _args_, _sendingString_, optionalInterpreter); \
+		} catch (MelderError) { \
+			if (Melder_hasCrash ()) \
+				throw; \
+			autostring32 _parkedError = Melder_dup_f (Melder_getError ()); \
+			Melder_clearError (); \
+			try { \
+				static autoEditorCommand _alternativeCmd; \
+				if (! _alternativeCmd) \
+					_alternativeCmd = Thing_new (EditorCommand); \
+				_alternativeCmd -> d_editor = cmd -> d_editor; \
+				_alternativeCmd -> sender = cmd -> sender; \
+				_alternativeCmd -> menu = cmd -> menu; \
+				_alternativeCmd -> itemTitle = Melder_dup (cmd -> itemTitle.get()); \
+				_alternativeCmd -> itemWidget = nullptr; \
+				_alternativeCmd -> commandCallback = cmd -> commandCallback; \
+				_alternativeCmd -> script = Melder_dup (cmd -> script.get()); \
+				_alternativeCmd -> d_uiform = autoUiForm (); \
+				alternative (me, _alternativeCmd.get(), _sendingForm_, _narg_, _args_, _sendingString_, optionalInterpreter); \
+			} catch (MelderError) { \
+				Melder_clearError (); \
+				Melder_appendError (_parkedError.get()); \
+				throw; \
+			} \
+		} \
+	} else {
+
 #define EDITOR_END  \
 	}
 
@@ -301,8 +332,10 @@ _form_inited_: \
 		[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
 	} \
-	UiForm_addChoice (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
-			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+	UiForm_addChoiceEnum (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
+		(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN, \
+		(enum_generic_getValue) EnumeratedType##_getValue \
+	); \
 	for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
 		UiForm_addOption (cmd -> d_uiform.get(), EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
 
@@ -319,8 +352,10 @@ _form_inited_: \
 		[[maybe_unused]] enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
 	} \
-	UiForm_addOptionMenu (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
-			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+	UiForm_addOptionMenuEnum (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
+		(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN, \
+		(enum_generic_getValue) EnumeratedType##_getValue \
+	); \
 	for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
 		UiForm_addOption (cmd -> d_uiform.get(), EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
 
