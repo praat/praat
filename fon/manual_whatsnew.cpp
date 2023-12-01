@@ -29,6 +29,19 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.01# (30 November 2023)
+• Removed some visible percent signs before variable names from the scripting tutorial.
+• SoundEditor/TextGridEditor logging: when logging 'f0',
+  Praat now correctly reports values in Hz (rather than logarithms)
+  if Unit is set to “Hertz (logarithmic)”.
+  This bug had existed since Praat version 4.3.16 (June 2005).
+• SoundEditor/TextGridEditor scripting compatibility: made old versions of “Pitch settings...”
+  and “Advanced pitch settings...” available to scripts again, made the old denominations
+  “autocorrelation” and “cross-correlation” (as pitch analysis methods) available to scripts again,
+  and made obsolete versions of pitch analysis settings (such as “Pitch silence threshold”)
+  available again, now under the COMPATIBILITY section of the output of “Editor info”.
+  This will allow older editor scripts to continue to run without change.
+
 ##6.4# (15 November 2023)
 • New pitch analysis methods: @@Sound: To Pitch (filtered ac)...@ and
   @@Sound: To Pitch (filtered cc)...@.
