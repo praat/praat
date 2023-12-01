@@ -271,10 +271,21 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`runSubprocess$` (%`executableFilePath$`, `...`) – run an external program with the given arguments, and return its output
 , @`runSystem` (`...`) – run a system command line with the given arguments concatenated
 , @`runSystem$` (`...`) – run a system command line with the given arguments concatenated, and return its output
+, @`selected` ( ) – the ID of the topmost selected object
+, @`selected` (%`i`) – the ID of the %%i%th selected object (as counted from the top, or from the bottom if negative)
+, @`selected` (%`type$`) – the ID of the topmost selected object of type %`type$`
+, @`selected` (%`type$`, %`i`) – the ID of the %%i%th selected object of type %`type$` (as counted from the top,
+  or from the bottom if negative)
+, @`selected$` ( ) – the full name (type + name) of the topmost selected object
+, @`selected$` (%`i`) – the full name (type + name) of the %%i%th selected object (as counted from the top,
+  or from the bottom if negative)
+, @`selected$` (%`type$`) – the name of the topmost selected object of type %`type$`
+, @`selected$` (%`type$`, %`i`) – the name of the %%i%th selected object of type %`type$` (as counted from the top,
+  or from the bottom if negative)
 , @`selected#` ( ) – the IDs of all selected objects
-, @`selected#` (%`type`) – the IDs of all selected objects of type %`type`
+, @`selected#` (%`type$`) – the IDs of all selected objects of type %`type$`
 , @`selected$#` ( ) – the names of all selected objects
-, @`selected$#` (%`type`) – the names of all selected objects of type %`type`
+, @`selected$#` (%`type$`) – the names of all selected objects of type %`type$`
 , @`selectObject` (`...`) – select objects in the list by ID and/or name
 , @`semitonesToHertz` (%`x`) – from logarithmic scale %re 100 Hz to acoustic frequency
 , @`sigmoid` (%`x`) – 1 / (1 + %e^^-%`x`^)
@@ -3671,6 +3682,56 @@ and return the output of that command line.
 For details and examples, see @@Scripting 6.5. Calling system commands@.
 
 ################################################################################
+"`selected`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`selected` ( )
+: return the ID of the topmost selected object.
+
+#`selected` (%`i`)
+: return the ID of the %%i%th selected object (as counted from the top, or from the bottom if %`i` is negative).
+
+#`selected` (%`type$`)
+: return the ID of the topmost selected object of type %`type$`.
+
+#`selected` (%`type$`, %`i`)
+: return the ID of the %%i%th selected object of type %`type$` (as counted from the top, or from the bottom if %`i` is negative).
+
+Usage
+=====
+For examples, see @@Scripting 4.3. Querying objects@.
+
+################################################################################
+"`selected$`"
+© Paul Boersma 2023
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`selected$` ( )
+: return the full name (type + name) of the topmost selected object.
+
+#`selected$` (%`i`)
+: return the full name (type + name) of the %%i%th selected object (as counted from the top, or from the bottom if %`i` is negative).
+
+#`selected$` (%`type$`)
+: return the name of the topmost selected object of type %`type$`.
+
+#`selected$` (%`type$`, %`i`)
+: return the name of the %%i%th selected object of type %`type$` (as counted from the top, or from the bottom if %`i` is negative).
+
+Usage
+=====
+This function is useful if you want to write or draw the name of the object.
+For selecting an object, using @`selected` is safer,
+as explained in @@Scripting 4.3. Querying objects@.
+
+################################################################################
 "`selected#`"
 © Paul Boersma 2023
 
@@ -3681,8 +3742,8 @@ Syntax and semantics
 #`selected#` ( )
 : return a list of the IDs of all currently selected objects.
 
-#`selected#` (%`type`)
-: return a list of the IDs of all currently selected objects of type %`type`.
+#`selected#` (%`type$`)
+: return a list of the IDs of all currently selected objects of type %`type$`.
 
 Example
 =======
@@ -3741,8 +3802,8 @@ Syntax and semantics
 #`selected$#` ( )
 : return a list of the names of all currently selected objects.
 
-#`selected$#` (%`type`)
-: return a list of the names of all currently selected objects of type %`type`.
+#`selected$#` (%`type$`)
+: return a list of the names of all currently selected objects of type %`type$`.
 
 Pitfall
 =======

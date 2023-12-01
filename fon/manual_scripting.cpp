@@ -1054,90 +1054,134 @@ NORMAL (U"This works even if there are multiple objects called “Sound sine377�
 	"i.e., the one nearest to the bottom of the list of objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 4.2. Removing objects", U"ppgb", 20140111)
-NORMAL (U"In @@Scripting 4.1. Selecting objects|\\SS4.1@ we saw that objects could be removed by selecting them first and then calling the #Remove command. "
-	"A faster way is the #removeObject function, which can also remove unselected objects:")
-CODE (U"sound = Create Sound as pure tone: “sine377”,")
-CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
-CODE (U"Play   ; the Sound is selected, so it plays")
-CODE (U"spectrum = To Spectrum: “yes”   ; remember the ID of the Spectrum")
-CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn")
-CODE (U"# Remove the created Spectrum and Sound:")
-CODE (U"\\#`{removeObject}: sound, spectrum   ; remove one selected and one unselected object")
-NORMAL (U"The #removeObject function keeps the objects selected that were selected before "
-	"(except of course the ones it throws away). "
-	"This allows you to easily throw away objects as soon as you no longer need them:")
-CODE (U"sound = Create Sound as pure tone: “sine377”,")
-CODE (U"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound")
-CODE (U"Play   ; the Sound is selected, so it plays")
-CODE (U"spectrum = To Spectrum: “yes”")
-CODE (U"\\#`{removeObject}: sound   ; we no longer need the Sound, so we remove it")
-CODE (U"Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is still selected, so it is drawn")
-CODE (U"\\#`{removeObject}: spectrum   ; remove the last object created by the script")
-ENTRY (U"Selecting and removing all objects from the list (don't)")
-NORMAL (U"A very strange command, which you should not normally use, is `select all`:")
-	CODE1 (U"\\#{select all}")
-	CODE1 (U"Remove")
-NORMAL (U"This selects all objects in the list and then removes them. "
-	"Please try not to use this, because it will remove even the objects that your script did not create! "
-	"After all, you don’t want the users of your script to lose the objects they created! "
-	"So please try to remove in your script only the objects that your script created, "
-	"even if the script is for your own use (because if it is a nice script, others will want to use it).")
-MAN_END
 
-MAN_BEGIN (U"Scripting 4.3. Querying objects", U"ppgb", 20180427)
-NORMAL (U"You can get the name of a selected object into a string variable. "
-	"For instance, the following reads the name of the second selected Sound "
-	"(as counted from the top of the list of objects) into the variable %`name$`:")
-CODE (U"name$ = \\#`{selected$} (“Sound”, 2)")
-NORMAL (U"If the Sound was called “Sound hallo”, the variable %`name$` will contain the string “hallo”. "
-	"To get the name of the topmost selected Sound object, you can leave out the number:")
-CODE (U"name$ = selected$ (“Sound”)")
-NORMAL (U"To get the full name (type + name) of the third selected object, you do:")
-CODE (U"fullName$ = selected$ (3)")
-NORMAL (U"To get the full name of the topmost selected object, you do:")
-CODE (U"fullName$ = selected$ ()")
-NORMAL (U"To get the type and name out of the full name, you do:")
-CODE (U"type$ = \\`{extractWord$} (fullName$, “”)")
-CODE (U"name$ = \\`{extractLine$} (fullName$, “ ”)")
-NORMAL (U"Negative numbers count from the bottom. Thus, to get the name of the bottom-most selected Sound "
-	"object, you say")
-CODE (U"name$ = selected$ (“Sound”, -1)")
-NORMAL (U"You would use `selected$` () for drawing the object name in a picture:")
-CODE (U"Draw: 0, 0, 0, 0, \"yes\"")
-CODE (U"name$ = selected$ (“Sound”)")
-CODE (U"Text top: “no”, “This is sound ” + name$")
-NORMAL (U"For identifying previously selected objects, this method is not very suitable, since "
-	"there may be multiple objects with the same name:")
-CODE (U"# The following two lines are OK:")
-CODE (U"soundName$ = selected$ (“Sound”, -1)")
-CODE (U"pitchName$ = selected$ (“Pitch”)")
-CODE (U"# But the following line is questionable, since it doesn't")
-CODE (U"# necessarily select the previously selected Pitch again:")
-CODE (U"selectObject: “Pitch ” + pitchName$")
-NORMAL (U"Instead of this error-prone approach, you should get the object’s unique ID. "
-	"The correct version of our example becomes:")
-CODE (U"sound = selected (“Sound”, -1)")
-CODE (U"pitch = selected (“Pitch”)")
-CODE (U"# Correct:")
-CODE (U"selectObject: pitch")
-NORMAL (U"To get the number of selected Sound objects into a variable, use")
-CODE (U"numberOfSelectedSounds = numberOfSelected (“Sound”)")
-NORMAL (U"To get the number of selected objects into a variable, use")
-CODE (U"numberOfSelectedObjects = numberOfSelected ()")
-ENTRY (U"Example: doing something to every selected Sound")
-CODE (U"sounds# = selected# (“Sound”)")
-CODE (U"# Median pitches of all selected sounds:")
-CODE (U"for i to size (sounds#)")
-	CODE1 (U"selectObject: sounds# [i]")
-	CODE1 (U"To Pitch: 0.0, 75, 600")
-	CODE1 (U"f0 = Get quantile: 0, 0, 0.50, “Hertz”")
-	CODE1 (U"appendInfoLine: f0")
-	CODE1 (U"Remove")
-CODE (U"endfor")
-CODE (U"# Restore selection:")
-CODE (U"selectObject (sounds#)")
-MAN_END
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"Scripting 4.2. Removing objects"
+© Paul Boersma 1999,2004,2006–2008,2011,2013,2014
+
+In @@Scripting 4.1. Selecting objects|\SS4.1@ we saw that objects could be removed by
+selecting them first and then calling the #Remove command.
+A faster way is the #removeObject function, which can also remove unselected objects:
+{;
+	sound = Create Sound as pure tone: “sine377”,
+	... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound
+	Play   ; the Sound is selected, so it plays
+	spectrum = To Spectrum: “yes”   ; remember the ID of the Spectrum
+	Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is selected, so it is drawn
+	# Remove the created Spectrum and Sound:
+	\#`{removeObject}: sound, spectrum   ; remove one selected and one unselected object
+}
+The #removeObject function keeps the objects selected that were selected before
+(except of course the ones it throws away).
+This allows you to easily throw away objects as soon as you no longer need them:
+{;
+	sound = Create Sound as pure tone: “sine377”,
+	... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01   ; remember the ID of the Sound
+	Play   ; the Sound is selected, so it plays
+	spectrum = To Spectrum: “yes”
+	\#`{removeObject}: sound   ; we no longer need the Sound, so we remove it
+	Draw: 0, 5000, 20, 80, “yes”   ; the Spectrum is still selected, so it is drawn
+	\#`{removeObject}: spectrum   ; remove the last object created by the script
+}
+Selecting and removing all objects from the list (don’t)
+========================================================
+A very strange command, which you should not normally use, is `select all`:
+{;
+	\#{select all}
+	Remove
+}
+This selects all objects in the list and then removes them.
+Please try not to use this, because it will remove even the objects that your script did not create!
+After all, you don’t want the users of your script to lose the objects they created!
+So please try to remove in your script only the objects that your script created,
+even if the script is for your own use (because if it is a nice script, others will want to use it).
+
+################################################################################
+"Scripting 4.3. Querying objects"
+© Paul Boersma 1999,2004,2006–2008,2011,2013,2014,2018,2023
+
+You can get the name of a selected object into a string variable.
+For instance, the following reads the name of the second selected Sound
+(as counted from the top of the list of objects) into the variable %`name$`:
+{;
+	name$ = \#`{selected$} (“Sound”, 2)
+}
+If the Sound was called “Sound hallo”, the variable %`name$` will contain the string “hallo”.
+To get the name of the topmost selected Sound object, you can leave out the number:
+{;
+	name$ = selected$ (“Sound”)
+}
+To get the full name (type + name) of the third selected object, you do:
+{;
+	fullName$ = selected$ (3)
+}
+To get the full name of the topmost selected object, you do:
+{;
+	fullName$ = selected$ ()
+}
+To get the type and name out of the full name, you do:
+{;
+	type$ = \`{extractWord$} (fullName$, “”)
+	name$ = \`{extractLine$} (fullName$, “ ”)
+}
+Negative numbers count from the bottom. Thus, to get the name of the bottom-most selected Sound
+object, you say
+{;
+	name$ = selected$ (“Sound”, -1)
+}
+You would use `selected$` () for drawing the object name in a picture:
+{;
+	Draw: 0, 0, 0, 0, “yes”
+	name$ = selected$ (“Sound”)
+	Text top: “no”, “This is sound ” + name$
+}
+For identifying previously selected objects, this method is not very suitable, since
+there may be multiple objects with the same name:
+{;
+	# The following two lines are OK:
+	soundName$ = selected$ (“Sound”, -1)
+	pitchName$ = selected$ (“Pitch”)
+	# But the following line is questionable, since it doesn’t
+	# necessarily select the previously selected Pitch again:
+	selectObject: “Pitch ” + pitchName$
+}
+Instead of this error-prone approach, you should get the object’s unique ID.
+The correct version of our example becomes:
+{;
+	sound = selected (“Sound”, -1)
+	pitch = selected (“Pitch”)
+	# Correct:
+	selectObject: pitch
+}
+To get the number of selected Sound objects into a variable, use
+{;
+	numberOfSelectedSounds = numberOfSelected (“Sound”)
+}
+To get the number of selected objects into a variable, use
+{;
+	numberOfSelectedObjects = numberOfSelected ()
+}
+Example: doing something to every selected Sound
+================================================
+{;
+	sounds# = \#`{selected#} (“Sound”)
+	# Median pitches of all selected sounds:
+	for i to size (sounds#)
+		selectObject: sounds# [i]
+		To Pitch (filtered ac): 0.0, 50, 800, 15, “no”, 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
+		f0 = Get quantile: 0, 0, 0.50, “Hertz”
+		appendInfoLine: f0
+		Remove
+	endfor
+	# Restore selection:
+	selectObject (sounds#)
+}
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20170718)
 NORMAL (U"In a Praat script, you can use variables, expressions, and functions, of numeric as well as string type, "
