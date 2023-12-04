@@ -96,7 +96,7 @@ and with writing Praat scripts. The Praat program can be downloaded from https:/
 ### 2.1. License
 
 All of the code is available on GitHub under the
-[GNU General Public License](http://www.fon.hum.uva.nl/praat/GNU_General_Public_License.txt).
+[GNU General Public License](https://www.fon.hum.uva.nl/praat/manual/General_Public_License__version_3.html).
 Of course, any improvements are welcomed by the authors.
 
 ### 2.2. Downloading the archive
