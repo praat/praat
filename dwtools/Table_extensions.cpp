@@ -1264,11 +1264,12 @@ void Table_barPlot (Table me, Graphics g,
 	}
 }
 
-static bool Graphics_getConnectingLine (Graphics g, conststring32 text1, double x1, double y1, conststring32 text2, double x2, double y2, double *x3, double *y3, double *x4, double *y4) {
+// TODO extra parameter font size
+static bool Graphics_getConnectingLine (Graphics g, conststring32 text1, double fontSize, double x1, double y1, conststring32 text2, double x2, double y2, double *x3, double *y3, double *x4, double *y4) {
 	bool drawLine = false;
 	const double width1 = Graphics_textWidth (g, text1);
 	const double width2 = Graphics_textWidth (g, text2);
-	const double h = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0) / 1.5;
+	const double h = Graphics_dyMMtoWC (g, 1.5 * fontSize * 25.4 / 72.0) / 1.5;
 	const double xleft = x1 < x2 ? x1 : x2, xright = x2 > x1 ? x2 : x1;
 	double xi [3], yi [3];
 	int numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xleft - width1 / 2.0, y1 - h/2, xleft + width1 / 2.0, y1 + h/2, xi, yi);
@@ -1287,8 +1288,9 @@ static bool Graphics_getConnectingLine (Graphics g, conststring32 text1, double 
 
 /*
 	Take the xcolumn as labels if non-numeric column else as numbers and arrange distances accordingly.
+	TODO We need an extra argument Label size!
 */
-void Table_lineGraph (Table me, Graphics g, integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax, conststring32 symbol, double angle, bool garnish) {
+void Table_lineGraph (Table me, Graphics g, integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax, conststring32 symbol, double symbolFontSize, double angle, bool garnish) {
 	try {
 		if (ycolumn < 1 || ycolumn > my numberOfColumns || xcolumn < 0 || xcolumn > my numberOfColumns)
 			return;
@@ -1309,12 +1311,14 @@ void Table_lineGraph (Table me, Graphics g, integer xcolumn, double xmin, double
 				xmax = my rows.size + 1;
 			}
 		}
+		double currentFontSize = Graphics_inqFontSize (g);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		const double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0);
 		//double symbolHeight = lineSpacing / 1.5;
 		double x1, y1;
+		Graphics_setFontSize (g, symbolFontSize);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			const double y2 = Table_getNumericValue_a (me, irow, ycolumn);
 			double x2 = xIsNumeric ? Table_getNumericValue_a (me, irow, xcolumn) : irow;
@@ -1324,7 +1328,7 @@ void Table_lineGraph (Table me, Graphics g, integer xcolumn, double xmin, double
 					Graphics_text (g, x2, y2, symbol);
 				if (irow > 1) {
 					double x3, y3, x4, y4, xo1, yo1, xo2, yo2;
-					if (Graphics_getConnectingLine (g, symbol, x1, y1, symbol, x2, y2, & x3, & y3, & x4, & y4) && 
+					if (Graphics_getConnectingLine (g, symbol, symbolFontSize, x1, y1, symbol, x2, y2, & x3, & y3, & x4, & y4) && 
 							NUMclipLineWithinRectangle (x3, y3, x4, y4, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2))
 						Graphics_line (g, xo1, yo1, xo2, yo2);
 				}
@@ -1334,9 +1338,9 @@ void Table_lineGraph (Table me, Graphics g, integer xcolumn, double xmin, double
 			x1 = x2;
 			y1 = y2;
 		}
+		Graphics_setFontSize (g, currentFontSize);
 		
 		if (garnish && ! xIsNumeric && xcolumn > 0) {
-			const double currentFontSize = Graphics_inqFontSize (g);
 			double y = ymin, dx = 0.0;
 			Graphics_setTextRotation (g, angle);
 			if (angle < 0.0) {
@@ -1374,6 +1378,11 @@ void Table_lineGraph (Table me, Graphics g, integer xcolumn, double xmin, double
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
 	}
+}
+
+void Table_lineGraph_old (Table me, Graphics g, integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax, conststring32 symbol, double angle, bool garnish) {
+	double fontSize = Graphics_inqFontSize (g);
+	Table_lineGraph (me, g, xcolumn, xmin, xmax, ycolumn, ymin, ymax, symbol, fontSize, angle, garnish);
 }
 
 void Table_lagPlot (Table me, Graphics g, integer column, integer lag, double xmin, double xmax,

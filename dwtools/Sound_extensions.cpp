@@ -1591,7 +1591,7 @@ autoTextGrid Sound_to_TextGrid_speechActivity_lsfm (Sound me, double timeStep, d
 		const double maximumTimeOversampling = 8.0, maximumFreqOversampling = 8.0;
 		autoSpectrogram spectrogram = Sound_to_Spectrogram (me, effectiveAnalysisWidth, fmax, timeStep, minimumFreqStep,
 			kSound_to_Spectrogram_windowShape::HANNING, maximumTimeOversampling, maximumFreqOversampling);
-		autoMatrix lsfmMatrix = Spectrogram_getLongtermSpectralFlatnessMeasure (spectrogram.get(), longTermWindow, shorttimeWindow, fmin, fmax);
+		autoMatrix lsfmMatrix = Spectrogram_getLongtermSpectralFlatness (spectrogram.get(), longTermWindow, shorttimeWindow, fmin, fmax);
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"VAD", U"");
 		const IntervalTier vadTier = (IntervalTier) thy tiers->at [1];
 		TextInterval_setText (vadTier -> intervals.at [1], speechLabel);

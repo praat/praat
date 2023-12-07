@@ -6150,15 +6150,34 @@ DO
 	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Spectrogram_getLongtermSpectralFlatnessMeasure, U"Spectrogram_getLongtermSpectralFlatness", nullptr) {
-	POSITIVE (longtimeWindow, U"Long time window", U"0.2")
-	POSITIVE (shorttimeWindow, U"Short time window", U"0.04")
+FORM (GRAPHICS_EACH__Spectrogram_drawLongtermSpectralFlatness, U"Spectrogram: Draw long-term spectral flatness", U"") {
+//double tmin, double tmax, double minimumFlatness_db,
+//	double longtermWindow, double shorttermWindow, double fmin, double fmax, bool garnish
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range", U"0.0 (= all)")
+	REAL (minimumFlatness_db, U"Minimum flatness (dB)", U"-30.0")
+	POSITIVE (longtimeWindow, U"Long time window", U"0.3")
+	POSITIVE (shorttimeWindow, U"Short time window", U"0.1")
 	POSITIVE (fmin, U"left Frequency range_(Hz)", U"400.0")
 	POSITIVE (fmax, U"right Frequency range_(Hz)", U"4000.0")
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (Spectrogram)
+		Spectrogram_drawLongTermFlatness (me, GRAPHICS, fromTime, toTime, minimumFlatness_db,
+			longtimeWindow, shorttimeWindow, fmin, fmax, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (CONVERT_EACH_TO_ONE__Spectrogram_getLongtermSpectralFlatness, U"Spectrogram: Get long-term spectral flatness", nullptr) {
+	POSITIVE (longtimeWindow, U"Long time window", U"0.3")
+	POSITIVE (shorttimeWindow, U"Short time window", U"0.1")
+	POSITIVE (fmin, U"left Frequency range_(Hz)", U"400.0")
+	POSITIVE (fmax, U"right Frequency range_(Hz)", U"6000.0")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Spectrogram)
-		autoMatrix result = Spectrogram_getLongtermSpectralFlatnessMeasure (me, longtimeWindow, shorttimeWindow, fmin, fmax);
+		autoMatrix result = Spectrogram_getLongtermSpectralFlatness (me, longtimeWindow, shorttimeWindow, fmin, fmax);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 /**************** Spectrum *******************************************/
@@ -7094,12 +7113,12 @@ DO
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer xColumnNumber = str32equ (xColumnName, U"") ? 0 : Table_columnNameToNumber_e (me, xColumnName);
 		autoTable part = Table_extractRowsWhere_e (me, condition, interpreter);
-		Table_lineGraph (part.get(), GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
+		Table_lineGraph_old (part.get(), GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
 				angle, garnish);
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__Table_LineGraph, U"Table: Line graph", U"Table: Line graph...") {
+FORM (GRAPHICS_EACH__Table_LineGraph_old, U"Table: Line graph", U"Table: Line graph...") {
 	SENTENCE (yColumnName, U"Vertical column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
@@ -7114,8 +7133,29 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer xColumnNumber = str32equ (xColumnName, U"") ? 0 : Table_columnNameToNumber_e (me, xColumnName);
-		Table_lineGraph (me, GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
+		Table_lineGraph_old (me, GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
 				angle, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (GRAPHICS_EACH__Table_LineGraph, U"Table: Line graph", U"Table: Line graph...") {
+	SENTENCE (yColumnName, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	SENTENCE (xColumnName, U"Horizontal column (optional)", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (text, U"Text", U"+")
+	REAL (textFontSize, U"Text font size", U"12")
+	REAL (angle, U"Label text angle (degrees)", U"0.0");
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO_ALTERNATIVE (GRAPHICS_EACH__Table_LineGraph_old)
+	GRAPHICS_EACH (Table)
+		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
+		const integer xColumnNumber = str32equ (xColumnName, U"") ? 0 : Table_columnNameToNumber_e (me, xColumnName);
+		Table_lineGraph (me, GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
+				textFontSize, angle, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -10236,8 +10276,10 @@ void praat_David_init () {
 
 	praat_addAction1 (classSpectrogram, 2, U"To DTW...", U"To Spectrum (slice)...", 1, 
 			CONVERT_TWO_TO_ONE__Spectrograms_to_DTW);
-	praat_addAction1 (classSpectrogram, 0, U"Get longterm spectral flatness...", U"To DTW...", GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
-			CONVERT_EACH_TO_ONE__Spectrogram_getLongtermSpectralFlatnessMeasure);
+	praat_addAction1 (classSpectrogram, 0, U"Draw long-term spectral flatness...", U"Paint...", GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
+			GRAPHICS_EACH__Spectrogram_drawLongtermSpectralFlatness);
+	praat_addAction1 (classSpectrogram, 0, U"Get long-term spectral flatness...", U"To DTW...", GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
+			CONVERT_EACH_TO_ONE__Spectrogram_getLongtermSpectralFlatness);
 
 	praat_addAction1 (classSpectrum, 0, U"To Sound (resampled)...", U"To Sound", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Spectrum_to_Sound_resampled);
