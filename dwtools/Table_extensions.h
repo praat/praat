@@ -119,6 +119,11 @@ void Table_barPlot (Table me, Graphics g,
 
 void Table_lineGraph (Table me, Graphics g,
 	integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax,
+	conststring32 symbol, double symbolFontSize, double angle, bool garnish
+);
+
+void Table_lineGraph_old (Table me, Graphics g,
+	integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax,
 	conststring32 symbol, double angle, bool garnish
 );
 

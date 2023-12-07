@@ -7113,12 +7113,12 @@ DO
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer xColumnNumber = str32equ (xColumnName, U"") ? 0 : Table_columnNameToNumber_e (me, xColumnName);
 		autoTable part = Table_extractRowsWhere_e (me, condition, interpreter);
-		Table_lineGraph (part.get(), GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
+		Table_lineGraph_old (part.get(), GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
 				angle, garnish);
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__Table_LineGraph, U"Table: Line graph", U"Table: Line graph...") {
+FORM (GRAPHICS_EACH__Table_LineGraph_old, U"Table: Line graph", U"Table: Line graph...") {
 	SENTENCE (yColumnName, U"Vertical column", U"")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
@@ -7133,8 +7133,29 @@ DO
 	GRAPHICS_EACH (Table)
 		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
 		const integer xColumnNumber = str32equ (xColumnName, U"") ? 0 : Table_columnNameToNumber_e (me, xColumnName);
-		Table_lineGraph (me, GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
+		Table_lineGraph_old (me, GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
 				angle, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (GRAPHICS_EACH__Table_LineGraph, U"Table: Line graph", U"Table: Line graph...") {
+	SENTENCE (yColumnName, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	SENTENCE (xColumnName, U"Horizontal column (optional)", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (text, U"Text", U"+")
+	REAL (textFontSize, U"Text font size", U"12")
+	REAL (angle, U"Label text angle (degrees)", U"0.0");
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO_ALTERNATIVE (GRAPHICS_EACH__Table_LineGraph_old)
+	GRAPHICS_EACH (Table)
+		const integer yColumnNumber = Table_columnNameToNumber_e (me, yColumnName);
+		const integer xColumnNumber = str32equ (xColumnName, U"") ? 0 : Table_columnNameToNumber_e (me, xColumnName);
+		Table_lineGraph (me, GRAPHICS, xColumnNumber, xmin, xmax, yColumnNumber, ymin, ymax, text,
+				textFontSize, angle, garnish);
 	GRAPHICS_EACH_END
 }
 

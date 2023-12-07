@@ -5209,7 +5209,7 @@ INTRO (U"Draws a line graph from the data in a column of the selected @Table."
 	"More info @@Table: Line graph...@.")
 MAN_END
 
-MAN_BEGIN (U"Table: Line graph...", U"djmw", 20230901)
+MAN_BEGIN (U"Table: Line graph...", U"djmw", 20231207)
 INTRO (U"Draws a line graph from the data in a column of the selected @Table. "
 	"In a line plot, the horizontal axis can have a nominal scale or a numeric scale. "
 	"The data points are connected by line segments.")
@@ -5221,6 +5221,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (8.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Horizontal column", "")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Horizontal range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Text", "+")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Text font size", "12")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Label text angle (degrees)", "0.0")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
 )
@@ -5238,6 +5239,8 @@ TERM (U"##Horizontal range")
 DEFINITION (U"determines the left and right limit of the plot.")
 TERM (U"##Text")
 DEFINITION (U"The text to put at the position of the data point in the plot.")
+TERM (U"##Text font size")
+DEFINITION (U"defines the size of the text.")
 TERM (U"##Label text angle (degrees)")
 DEFINITION (U"determines the angle of the labels written %%below% the plot. If you have very long label texts in the "
 	"\"Horizontal column\", you can prevent the label texts from overlapping. This only has effect for a horizontal "
@@ -5254,10 +5257,11 @@ CODE (U"  2.5   0.29      0.10")
 CODE (U"  7.5   0.12      0.02")
 CODE (U" 17.5   0.10      0.02")
 NORMAL (U"We can reproduce fig. 3 from Ganong (1980) with the following script, where we labeled the word - nonword curve with \"wn\" and the nonword - word curve with \"nw\". We deselect \"Garnish\" because we want to put special marks at the bottom.")
+CODE (U"Font size: 10\n")
 CODE (U"Dotted line\n")
-CODE (U"Line graph: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, \"no\"")
+CODE (U"Line graph: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 12, 0, \"no\"")
 CODE (U"Dashed line\n")
-CODE (U"Line graph: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, \"no\"")
+CODE (U"Line graph: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 12, 0, \"no\"")
 CODE (U"Draw inner box")
 CODE (U"One mark bottom: 2.5, \"no\", \"yes\", \"no\", \"+2.5\"")
 CODE (U"One mark bottom: -2.5, \"yes\", \"yes\", \"no\", \"\"")
@@ -5270,11 +5274,12 @@ CODE (U"Text bottom: 1, \"VOT (ms)\"")
 CODE (U"Marks left every: 1, 0.2, \"yes\", \"yes\", \"no\"")
 CODE (U"Text left: 1, \"Prop. of voiced responses\"")
 
-SCRIPT (5,3, U"ganong = Create Table (Ganong 1980)\n"
+SCRIPT (5, 3, U"ganong = Create Table (Ganong 1980)\n"
 	"Dotted line\n"
-	"Line graph: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, \"no\"\n"
+	"Font size: 10\n"
+	"Line graph: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 12, 0, \"no\"\n"
 	"Dashed line\n"
-	"Line graph: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, \"no\"\n"
+	"Line graph: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 12, 0, \"no\"\n"
 	"Draw inner box\n"
 	"One mark bottom: 2.5, 0, \"yes\", \"no\", \"+2.5\"\n"
 	"One mark bottom: -2.5, \"yes\", \"yes\", \"no\", \"\"\n"
@@ -5292,11 +5297,12 @@ NORMAL (U"As an example of what happens if you don't supply an argument for the 
 	"the same table as for the previous plot. However the resulting plot may not be as meaningful (note that the "
 	"horizontal nominal scale makes all points equidistant in the horizontal direction.)")
 CODE (U"Dotted line\n")
-CODE (U"Line graph: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, \"yes\"")
+CODE (U"Line graph: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 12,  0, \"yes\"")
 CODE (U"One mark bottom: 1, \"no\", \"yes\", \"no\", \"Short VOT\"")
-SCRIPT (5,3, U"ganong = Create Table (Ganong 1980)\n"
+SCRIPT (5, 3, U"ganong = Create Table (Ganong 1980)\n"
 	"Dotted line\n"
-	"Line graph: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, \"yes\"\n"
+	"Font size: 10\n"
+	"Line graph: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 12, 0, \"yes\"\n"
 	"One mark bottom: 1, \"no\", \"yes\", \"no\", \"Short VOT\"\n"
 	"removeObject: ganong\n"
 )
