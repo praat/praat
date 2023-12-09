@@ -4413,7 +4413,7 @@ NORMAL (U"First a copy of the sound is @@Sound: Filter (pass Hann band)...|bandp
 	"Finally the silent and sounding intervals are determined @@Intensity: To TextGrid (silences)...|from the intensity curve@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To TextGrid (speech activity)...", U"djmw", 20230323)
+MAN_BEGIN (U"Sound: To TextGrid (speech activity)...", U"djmw", 20231209)
 INTRO (U"A command that creates a @@TextGrid@ for the selected @@Sound@ in which the non-speech intervals and the "
 	"intervals with speech activity are marked. The discrimination between the two is based on a spectral flatness measure.")
 NORMAL (U"Speech activity detection, in the technical literature often referred to as voice activity detection, "
@@ -4447,8 +4447,8 @@ DEFINITION (U"determines the frequency range used in the calculation of the spec
 	"In this way we increase chances that sounds at start or end positions with mainly low frequency components, "
 	"like nasals, are detected.")
 TERM (U"##Flatness threshold#")
-DEFINITION (U"determines whether a frame is considered %%speech% or not based on a spectral flatness measure. Values of the flatness below the threshold are "
-	"considered speech.")
+DEFINITION (U"determines whether a frame is considered %%speech% or not, based on a spectral flatness measure. "
+	"Values of the flatness below the threshold are considered speech.")
 TERM (U"##Non-speech threshold (dB)#")
 DEFINITION (U"also determines whether a frame is considered %%speech% or not, but based on intensity. "
 	"Intervals with an intensity smaller than this value below the sound's maximum intensity value "
@@ -4472,7 +4472,7 @@ EQUATION (U"GM(%m, %f__%k_) = {\\Pi^^%m^__%n=%m-%R+1_ %S(%n, %f__%k_)}^^(1/%R)^"
 NORMAL (U" where the number of frames %R is determined by the setting of the %%long term window% parameter. "
 	"AM(%m, %f__%k_) is defined as ")
 EQUATION (U"AM(%m, %f__%k_) = {\\Si^^m^__n=%m-%R+1_ %S(%n, %f__%k_)} / %R")
-NORMAL (U"The %short term window comes into play is the the definition of the %S(%n, %f__%k_), because this is "
+NORMAL (U"The %short term window comes into play in the definition of the %S(%n, %f__%k_), because this is "
 	"itself the average of %M local spectral frames")
 EQUATION (U"%S(%n, %f__%k_) = {\\Si^^M^__p=%m-%M+1_ |X(p, %f__%k_)|^^2^} / %M,")
 NORMAL (U"where the number of frames %M is determined by the setting of the %%short term window% length. ")
