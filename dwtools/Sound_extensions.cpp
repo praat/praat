@@ -2590,4 +2590,27 @@ void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingF
 	}
 }
 
+void Sound_saveAsMP3file (Sound me, kSoundToMP3Encoding mp3Encoding, integer kbitsPerSecond) {
+	try {
+#if 0
+		const integer samplingFrequency = 1,0 / my dx;
+		Melder_require (kbitsPerSecond >= 8 && kbitsPerSecond <= 320,
+			U"The number of kbits per second should be in the interval [8, 320].")
+		lame_global_flags *lameSettings = lame_init ();
+		lame_set_num_channels (lameSettings, my ny);
+		lame_set_in_samplerate (lameSettings, samplingFrequency);
+		lame_set_brate (lameSettings,  kbitsPerSecond);
+		
+		const integer returnCode = lame_init_params (lameSettings);
+		Melder_require (lame_init_params (lameSettings) >= 0,
+			U"Some of the parameter do not combine. ")
+		/* encoding */
+		
+		
+		lame_close (lameSettings);
+#endif	
+	} catch (MelderError) {
+		Melder_throw (U"");
+	}
+}
 /* End of file Sound_extensions.cpp */

@@ -27,4 +27,10 @@ enums_begin (kSoundNoiseReductionMethod, 1)
 	enums_add (kSoundNoiseReductionMethod, 1, SPECTRAL_SUBTRACTION, U"spectral-subtraction")
 enums_end (kSoundNoiseReductionMethod, 1, SPECTRAL_SUBTRACTION)
 
+enums_begin (kSoundToMP3Encoding, 1)
+	enums_add (kSoundToMP3Encoding, 1, ABR, U"Average bit rate")
+	enums_add (kSoundToMP3Encoding, 2, CBR, U"Constant bit rate")
+	enums_add (kSoundToMP3Encoding, 3, VBR, U"Variable bit rate")
+enums_end (kSoundToMP3Encoding, 3, 1)
+
 /* End of file Sound_extensions_enums.h */
