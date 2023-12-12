@@ -29,6 +29,9 @@ Thing_declare (Interpreter);
 
 int Sound_writeToNistAudioFile (Sound me, MelderFile file);
 
+void Sound_saveAsMP3file (Sound me, kSoundToMP3Encoding mp3Encoding, integer kbitsPerSecond);
+/* kbitsPerSecond for L.A.M.E.: between 6 and 320 kbits/s*/
+
 autoSound Sound_readFromCmuAudioFile (MelderFile file);
 
 /* only 16 bit signed has been tested !! */
@@ -51,8 +54,6 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate);
 
 autoSound Sound_readFromOggVorbisFile (MelderFile file);
 autoSound Sound_readFromOggOpusFile (MelderFile file);
-
-void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool littleEndian, int nBitsCoding, bool unSigned);
 
 void Sound_into_Sound (Sound me, Sound to, double startTime);
 /* precondition: my dx == to->dx (equal sampling times */
