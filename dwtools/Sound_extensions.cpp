@@ -242,13 +242,12 @@ autoSound Sound_readFromCmuAudioFile (MelderFile file) {
 		Melder_require (bingeti16LE (f) > 0,
 			U"Incorrect sampling frequency.");
 		
-		const integer numberofSamples = bingeti32LE (f);
-		Melder_require (numberofSamples > 0,
+		const integer nSamples = bingeti32LE (f);
+		Melder_require (nSamples > 0,
 			U"Incorrect number of samples.");
 		
-		autoSound me = Sound_createSimple (1, numberofSamples / 16000.0, 16000);
-		for (integer isample = 1 ; isample <= numberofSamples; isample ++)
-			my z [1] [isample] = bingeti16LE (f) / 32768.0;
+		autoSound me = Sound_createSimple (1, nSamples / 16000.0, 16000);
+		i2read (me.get(), f, littleEndian);
 		f.close (file);
 		return me;
 	} catch (MelderError) {
@@ -295,6 +294,46 @@ autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsC
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from raw audio file ", MelderFile_messageName (file), U".");
+	}
+}
+
+void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool littleEndian, int nBitsCoding, bool unSigned) {
+	try {
+		integer nClip = 0;
+		autofile f = Melder_fopen (file, "wb");
+		if (! format)
+			format = "integer";
+		if (nBitsCoding <= 0)
+			nBitsCoding = 16;
+		integer nBytesPerSample = (nBitsCoding + 7) / 8;
+		if (strequ (format, "float"))
+			nBytesPerSample = 4;
+		Melder_require (! (nBytesPerSample == 3),
+			U"number of bytes per sample should be 1, 2 or 4.");
+		
+		if (nBytesPerSample == 1 && unSigned)
+			u1write (me, f, & nClip);
+		else if (nBytesPerSample == 1 && ! unSigned)
+			i1write (me, f, & nClip);
+		else if (nBytesPerSample == 2 && unSigned)
+			u2write (me, f, littleEndian, & nClip);
+		else if (nBytesPerSample == 2 && ! unSigned)
+			i2write (me, f, littleEndian, & nClip);
+		else if (nBytesPerSample == 4 && unSigned)
+			u4write (me, f, littleEndian, & nClip);
+		else if (nBytesPerSample == 4 && ! unSigned)
+			i4write (me, f, littleEndian, & nClip);
+		else if (nBytesPerSample == 4 && strequ (format, "float")) 
+			r4write (me, f);
+		if (nClip > 0)
+			Melder_warning (nClip, U" from ", my nx, U" samples have been clipped.\nAdvice: you could scale the amplitudes or save as a binary file.");
+		
+		Melder_require (feof ((FILE *) f) == 0 && ferror ((FILE *) f) == 0,
+			U"Sound_writeToRawFile: not completed");
+		
+		f.close (file);
+	} catch (MelderError) {
+		Melder_throw (me, U": saving as raw file not performed.");
 	}
 }
 
@@ -733,7 +772,7 @@ autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing,
 		for (integer ifreq = 1; ifreq <= thy nx - 1; ifreq ++) {
 			const double frequency = Sampled_indexToX (thee.get(), ifreq);
 			const double im = thy z [2] [ifreq];
-			thy z [2] [ifreq] = NUM2pi * frequency * thy z [1] [ifreq];
+			thy z [2] [ifreq] = NUM2pi * frequency * thy z [1] [ifreq]; // forget about scale factor 2*pi
 			thy z [1] [ifreq] = - NUM2pi * frequency * im;
 		}
 		thy z [2] [thy nx] = thy z [1] [thy nx] = 0.0;
@@ -746,6 +785,28 @@ autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing,
 		Melder_throw (me, U": cannot create the derivative of the Sound.");
 	}
 }
+
+static autoSound Sound_derivative2 (Sound me, double lowPassFrequency, double smoothing, double peakAmplitude) {
+		try {
+			autoSpectrum thee = Sound_to_Spectrum (me, false);
+			for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
+				const double frequency = Sampled_indexToX (thee.get(), ifreq);
+				const double im = thy z [2] [ifreq];
+				thy z [2] [ifreq] = NUM2pi * frequency * thy z [1] [ifreq]; // forget about scale factor 2*pi
+				thy z [1] [ifreq] = - NUM2pi * frequency * im;
+			}
+			const double nyquistFrequency = 0.5 / my dx;
+			if (lowPassFrequency < nyquistFrequency)
+				Spectrum_passHannBand (thee.get(), 0.0, lowPassFrequency, smoothing);
+			autoSound him = Spectrum_to_Sound (thee.get());
+			if (peakAmplitude != 0.0)
+				Vector_scale (him.get(), peakAmplitude);
+			return him;
+		} catch (MelderError) {
+			Melder_throw (me, U": cannot create the derivative of the Sound.");
+		}
+}
+
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
@@ -2552,5 +2613,4 @@ void Sound_saveAsMP3file (Sound me, kSoundToMP3Encoding mp3Encoding, integer kbi
 		Melder_throw (U"");
 	}
 }
-
 /* End of file Sound_extensions.cpp */
