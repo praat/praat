@@ -849,10 +849,10 @@ void praat_Matrix_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from LVS AP file...", nullptr, GuiMenu_HIDDEN, READ1_Matrix_readAP);
 
 	praat_addAction1 (classMatrix, 0, U"Matrix help", nullptr, 0, HELP_Matrix_help);
-	praat_addAction1 (classMatrix, 1, U"Save as matrix text file...", nullptr, 0, SAVE_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", GuiMenu_DEPRECATED_2011, SAVE_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, GuiMenu_DEPRECATED_2011, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1, U"Save as matrix text file... || Write to matrix text file...", nullptr, 0,
+			SAVE_Matrix_writeToMatrixTextFile);   // alternative COMPATIBILITY <= 2011
+	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file... || Write to headerless spreadsheet file...", nullptr, 0,
+			SAVE_Matrix_writeToHeaderlessSpreadsheetFile);   // alternative COMPATIBILITY <= 2011
 	praat_addAction1 (classMatrix, 1, U"Play movie", nullptr, 0, MOVIE_Matrix_playMovie);
 	praat_addAction1 (classMatrix, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classMatrix, 0, U"Draw rows...", nullptr, 1, GRAPHICS_Matrix_drawRows);

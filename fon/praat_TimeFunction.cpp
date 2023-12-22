@@ -94,22 +94,23 @@ DO
 
 void praat_TimeFunction_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Query time domain", nullptr, 1, nullptr);
-	praat_addAction1 (klas, 1, U"Get start time", nullptr, 2, REAL_TimeFunction_getStartTime);
-	praat_addAction1 (klas, 1,   U"Get starting time", U"*Get start time", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2006, REAL_TimeFunction_getStartTime);
-	praat_addAction1 (klas, 1, U"Get end time", nullptr, 2, REAL_TimeFunction_getEndTime);
-	praat_addAction1 (klas, 1,   U"Get finishing time", U"*Get end time", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2006, REAL_TimeFunction_getEndTime);
-	praat_addAction1 (klas, 1, U"Get total duration", nullptr, 2, REAL_TimeFunction_getTotalDuration);
-	praat_addAction1 (klas, 1,   U"Get duration", U"*Get total duration", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2004, REAL_TimeFunction_getTotalDuration);
+	praat_addAction1 (klas, 1, U"Get start time || Get starting time", nullptr, 2, REAL_TimeFunction_getStartTime);
+			// alternatives COMPATIBILITY <= 2006
+	praat_addAction1 (klas, 1, U"Get end time || Get finishing time", nullptr, 2, REAL_TimeFunction_getEndTime);
+			// alternatives COMPATIBILITY <= 2006
+	praat_addAction1 (klas, 1, U"Get total duration || Get duration", nullptr, 2, REAL_TimeFunction_getTotalDuration);
+			// alternatives COMPATIBILITY <= 2004
 }
 
 void praat_TimeFunction_modify_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Modify times", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 0, U"Shift times by...", nullptr, 2, MODIFY_TimeFunction_shiftTimesBy);
 	praat_addAction1 (klas, 0, U"Shift times to...", nullptr, 2, MODIFY_TimeFunction_shiftTimesTo);
-	praat_addAction1 (klas, 0,   U"Shift to zero", U"*Shift times to...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2008, MODIFY_TimeFunction_shiftToZero);
+	praat_addAction1 (klas, 0,   U"Shift to zero", nullptr, GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2008, MODIFY_TimeFunction_shiftToZero);
+			// replace with "Shift times to..."
 	praat_addAction1 (klas, 0, U"Scale times by...", nullptr, 2, MODIFY_TimeFunction_scaleTimesBy);
-	praat_addAction1 (klas, 0, U"Scale times to...", nullptr, 2, MODIFY_TimeFunction_scaleTimesTo);
-	praat_addAction1 (klas, 0,   U"Scale times...", U"*Scale times to...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2008, MODIFY_TimeFunction_scaleTimesTo);
+	praat_addAction1 (klas, 0, U"Scale times to... || Scale times...", nullptr, 2, MODIFY_TimeFunction_scaleTimesTo);
+			// alternatives COMPATIBILITY <= 2008
 }
 
 /* End of file praat_TimeFunction.cpp */

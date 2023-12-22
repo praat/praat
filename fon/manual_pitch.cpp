@@ -699,7 +699,7 @@ This reduces the self-similarity of the waveform, leading to the “raw AC” me
 some of these transitions as “unvoiced”. With low-pass filtering, the transitions become
 more sine-like, which leads “filtered AC” being more likely to judge these transitions as “voiced”.
 
-On a database containing EGG recordings as a gold standard (AtakaDB),
+On a database containing EGG recordings as a gold standard (AtakeDB),
 the incidence of unwanted big frequency drops falls from 0.54% (of voiced frames) for raw AC to 0.15% for filtered AC,
 and the number of unwanted big frequency rises falls from 0.25% to 0.10% (of voiced frames);
 together, these numbers indicate that the incidence of gross frequency errors is better

@@ -276,17 +276,17 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`selected` (%`type$`) – the ID of the topmost selected object of type %`type$`
 , @`selected` (%`type$`, %`i`) – the ID of the %%i%th selected object of type %`type$` (as counted from the top,
   or from the bottom if negative)
-, @`selected$` ( ) – the full name (type + name) of the topmost selected object
-, @`selected$` (%`i`) – the full name (type + name) of the %%i%th selected object (as counted from the top,
+, @`selected$` ( ) – the full name (type + given name) of the topmost selected object
+, @`selected$` (%`i`) – the full name (type + given name) of the %%i%th selected object (as counted from the top,
   or from the bottom if negative)
-, @`selected$` (%`type$`) – the name of the topmost selected object of type %`type$`
-, @`selected$` (%`type$`, %`i`) – the name of the %%i%th selected object of type %`type$` (as counted from the top,
+, @`selected$` (%`type$`) – the given name of the topmost selected object of type %`type$`
+, @`selected$` (%`type$`, %`i`) – the given name of the %%i%th selected object of type %`type$` (as counted from the top,
   or from the bottom if negative)
 , @`selected#` ( ) – the IDs of all selected objects
 , @`selected#` (%`type$`) – the IDs of all selected objects of type %`type$`
-, @`selected$#` ( ) – the names of all selected objects
-, @`selected$#` (%`type$`) – the names of all selected objects of type %`type$`
-, @`selectObject` (`...`) – select objects in the list by ID and/or name
+, @`selected$#` ( ) – the full names of all selected objects
+, @`selected$#` (%`type$`) – the given names of all selected objects of type %`type$`
+, @`selectObject` (`...`) – select object(s) in the list by ID and/or full name
 , @`semitonesToHertz` (%`x`) – from logarithmic scale %re 100 Hz to acoustic frequency
 , @`sigmoid` (%`x`) – 1 / (1 + %e^^-%`x`^)
 , @`sigmoid#` (%`vector#`) – sigmoid of each element of %`vector#`
@@ -2601,7 +2601,7 @@ A function that can be used in @@Formulas@.
 Syntax and semantics
 ====================
 #`minusObject` (`...`)
-: deselect the objects given by IDs and/or names.
+: deselect the objects given by IDs and/or full names.
 
 ################################################################################
 "`mul##`"
@@ -2996,7 +2996,7 @@ A function that can be used in @Formulas.
 Syntax and semantics
 ====================
 #`plusObject` (`...`)
-: select the objects given by IDs and/or names,
+: select the objects given by IDs and/or full names,
 without deselecting any objects that are currently selected.
 
 ################################################################################
@@ -3433,7 +3433,7 @@ A function that can be used in @@Formulas@.
 Syntax and semantics
 ====================
 #`removeObject` (`...`)
-: remove the objects given by IDs and/or names,
+: remove the objects given by IDs and/or full names,
 without (further) changing the selection.
 
 ################################################################################
@@ -3714,16 +3714,16 @@ A function that can be used in @Formulas.
 Syntax and semantics
 ====================
 #`selected$` ( )
-: return the full name (type + name) of the topmost selected object.
+: return the full name (type + given name) of the topmost selected object.
 
 #`selected$` (%`i`)
-: return the full name (type + name) of the %%i%th selected object (as counted from the top, or from the bottom if %`i` is negative).
+: return the full name (type + given name) of the %%i%th selected object (as counted from the top, or from the bottom if %`i` is negative).
 
 #`selected$` (%`type$`)
-: return the name of the topmost selected object of type %`type$`.
+: return the given name of the topmost selected object of type %`type$`.
 
 #`selected$` (%`type$`, %`i`)
-: return the name of the %%i%th selected object of type %`type$` (as counted from the top, or from the bottom if %`i` is negative).
+: return the given name of the %%i%th selected object of type %`type$` (as counted from the top, or from the bottom if %`i` is negative).
 
 Usage
 =====
@@ -3800,15 +3800,15 @@ A function that can be used in @Formulas.
 Syntax and semantics
 ====================
 #`selected$#` ( )
-: return a list of the names of all currently selected objects.
+: return a list of the full names of all currently selected objects.
 
 #`selected$#` (%`type$`)
-: return a list of the names of all currently selected objects of type %`type$`.
+: return a list of the given names of all currently selected objects of type %`type$`.
 
 Pitfall
 =======
 You cannot normally use this function to cycle through all selected objects,
-because if two objects happen to have the same name,
+because if two objects happen to have the same full name,
 you will select the same object twice. To cycle through all selected objects,
 use @`selected#` instead, because the IDs are guaranteed to be unique.
 
@@ -3876,7 +3876,7 @@ A function that can be used in @Formulas.
 Syntax and semantics
 ====================
 #`selectObject` (`...`)
-: select the objects given by IDs and/or names,
+: select the object(s) given by IDs and/or full names (full name = type + given name),
 after deselecting any objects that are currently selected.
 
 ################################################################################

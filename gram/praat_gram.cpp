@@ -1706,10 +1706,8 @@ void praat_uvafon_gram_init () {
 				CREATE_ONE__Create_metrics_grammar);
 		praat_addMenuCommand (U"Objects", U"New", U"Create multi-level metrics grammar...", nullptr, 1,
 				CREATE_ONE__Create_multi_level_metrics_grammar);
-	praat_addAction1 (classOTGrammar, 1, U"Save as headerless spreadsheet file...", nullptr, 0,
-			SAVE_ONE__OTGrammar_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classOTGrammar, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", GuiMenu_DEPRECATED_2011,
-			SAVE_ONE__OTGrammar_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classOTGrammar, 1, U"Save as headerless spreadsheet file... || Write to headerless spreadsheet file...", nullptr, 0,
+			SAVE_ONE__OTGrammar_writeToHeaderlessSpreadsheetFile);   // alternative COMPATIBILITY <= 2011
 
 	praat_addAction1 (classOTGrammar, 0, U"OTGrammar help", nullptr, 0,
 			HELP__OTGrammar_help);
