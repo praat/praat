@@ -136,7 +136,7 @@ static GuiMenuItem praat_addMenuCommand__ (conststring32 window, conststring32 m
 		Determine the position of the new command.
 	*/
 	integer position;
-	if (after && after [0] != U'*') {   // search for existing command with same selection
+	if (after) {   // search for existing command with same selection
 		const integer found = lookUpMatchingMenuCommand_0 (window, menu, after);
 		if (found == 0) {
 			Melder_flushError (U"praat_addMenuCommand: the command \"", title, U"\" cannot be put after \"", after, U"\",\n"
@@ -273,7 +273,7 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 			Determine the position of the new command.
 		*/
 		integer position;
-		if (Melder_length (after) && after [0] != U'*') {   // search for existing command with same selection
+		if (Melder_length (after)) {   // search for existing command with same selection
 			const integer found = lookUpMatchingMenuCommand_0 (window, menu, after);
 			if (found == 0) {
 				/*Melder_throw (U"The menu command \"", title, U"\" cannot be put after \"", after, U"\",\n"

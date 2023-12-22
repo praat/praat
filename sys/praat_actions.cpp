@@ -146,8 +146,8 @@ static void praat_addAction4__ (ClassInfo class1, integer n1, ClassInfo class2, 
 			Determine the position of the new command.
 		*/
 		integer position;
-		if (after && after [0] != U'*') {   // search for existing command with same selection
-			integer found = lookUpMatchingAction (class1, class2, class3, class4, after);
+		if (after) {   // search for existing command with same selection
+			const integer found = lookUpMatchingAction (class1, class2, class3, class4, after);
 			if (found == 0)
 				Melder_throw (U"The action command \"", title, U"\" cannot be put after \"", after, U"\",\n"
 					U"because the latter command does not exist.");

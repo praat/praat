@@ -2188,7 +2188,7 @@ praat_addAction1 (classRealTier, 0, U"Cast", nullptr, 0, nullptr);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"Multiply...",
 			nullptr, 0, NEW1_Sound_IntensityTier_multiply);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1,   U"Multiply",
-			U"*Multiply...", GuiMenu_DEPRECATED_2005, NEW1_Sound_IntensityTier_multiply_old);
+			nullptr, GuiMenu_DEPRECATED_2005, NEW1_Sound_IntensityTier_multiply_old);   // replace with Multiply: 1
 	praat_addAction2 (classPitchTier, 1, classPointProcess, 1, U"To PitchTier",
 			nullptr, 0, NEW1_PitchTier_PointProcess_to_PitchTier);
 	praat_addAction2 (classPitchTier, 1, classSound, 1, U"View & Edit || Edit",

@@ -8686,7 +8686,7 @@ static void praat_Eigen_query_init (ClassInfo klas) {
 static void praat_Eigen_draw_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Draw eigenvalues...", nullptr, 1,
 			GRAPHICS_EACH__Eigen_drawEigenvalues);
-	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", U"*Draw eigenvalues...", GuiMenu_DEPRECATED_2010 | GuiMenu_DEPTH_1,
+	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", nullptr, GuiMenu_DEPRECATED_2010 | GuiMenu_DEPTH_1,
 			WARNING__Eigen_drawEigenvalues_scree);
 	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1,
 			GRAPHICS_EACH__Eigen_drawEigenvector);
@@ -8994,14 +8994,10 @@ void praat_David_init () {
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get incomplete gamma...", 0, GuiMenu_HIDDEN,
 			QUERY_NONE_FOR_COMPLEX__Praat_getIncompleteGamma);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as gammatone...", U"Create Sound as tone complex...", 1,
-			CREATE_ONE__Sound_createAsGammaTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gammatone...", U"*Create Sound as gammatone...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016,
-			CREATE_ONE__Sound_createAsGammaTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as Shepard tone...", U"Create Sound as gammatone...", GuiMenu_DEPTH_1,
-			CREATE_ONE__Sound_createAsShepardTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from Shepard tone...", U"*Create Sound as Shepard tone...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2016,
-			CREATE_ONE__Sound_createAsShepardTone);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as gammatone... || Create Sound from gammatone...", U"Create Sound as tone complex...", 1,
+			CREATE_ONE__Sound_createAsGammaTone);   // alternative COMPATIBILITY <= 2016
+	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as Shepard tone... || Create Sound from Shepard tone...", U"Create Sound as gammatone...", GuiMenu_DEPTH_1,
+			CREATE_ONE__Sound_createAsShepardTone);   // alternative COMPATIBILITY <= 2016
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", GuiMenu_DEPTH_1 | GuiMenu_NO_API,
 			CREATION_WINDOW__VowelEditor_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TextGridNavigator...", U"Create Corpus...", GuiMenu_HIDDEN,
@@ -9294,11 +9290,11 @@ void praat_David_init () {
 		QUERY_ONE_FOR_INTEGER__ClassificationTable_getClassIndexAtMaximumInRow);
 	praat_addAction1 (classClassificationTable, 0, U"Get class label at maximum in row...", U"Get class index at maximum in row...", 1,
 		QUERY_ONE_FOR_STRING__ClassificationTable_getClassLabelAtMaximumInRow);
-	praat_addAction1 (classClassificationTable, 0, U"To Confusion", U"*To Confusion...", GuiMenu_DEPRECATED_2014,
-			CONVERT_EACH_TO_ONE__ClassificationTable_to_Confusion_old); // deprecated 2014
-	praat_addAction1 (classClassificationTable, 0, U"To Confusion...", nullptr, 0, 
+	praat_addAction1 (classClassificationTable, 0, U"To Confusion...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ClassificationTable_to_Confusion);
-	praat_addAction1 (classClassificationTable, 0, U"To Correlation (columns)", nullptr, 0, 
+	praat_addAction1 (classClassificationTable, 0, U"To Confusion", nullptr, GuiMenu_DEPRECATED_2014,
+			CONVERT_EACH_TO_ONE__ClassificationTable_to_Confusion_old);   // replace with To Confusion: 0
+	praat_addAction1 (classClassificationTable, 0, U"To Correlation (columns)", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ClassificationTable_to_Correlation_columns);
 	praat_addAction1 (classClassificationTable, 0, U"To Strings (max. prob.)", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ClassificationTable_to_Strings_maximumProbability); // TODO name?
@@ -9813,7 +9809,7 @@ void praat_David_init () {
 	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, 
 			CONVERT_ONE_AND_ONE_TO_ONE__Matrix_Categories_to_TableOfReal);
 
-	praat_addAction1 (classMelSpectrogram, 0, U"MelSpectrogram help", nullptr, 0, 
+	praat_addAction1 (classMelSpectrogram, 0, U"MelSpectrogram help", nullptr, 0,
 			HELP__MelSpectrogram_help);
 	praat_BandFilterSpectrogram_draw_init (classMelSpectrogram);
 	praat_addAction1 (classMelSpectrogram, 0, U"Paint image...", nullptr, 1,
@@ -9838,8 +9834,8 @@ void praat_David_init () {
 	praat_addAction1 (classMelSpectrogram, 2, U"Convolve...", nullptr, 0, 
 			CONVERT_TWO_TO_ONE__BandFilterSpectrograms_convolve);
 
-	praat_addAction1 (classMelFilter, 0, U"MelFilter help", U"*MelSpectrogram help", 0, 
-			HELP__MelFilter_help);
+	praat_addAction1 (classMelFilter, 0, U"MelFilter help", nullptr, 0,
+			HELP__MelFilter_help);   //
 	praat_FilterBank_all_init (classMelFilter); // deprecated 2014
 	praat_addAction1 (classMelFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2014,
 			GRAPHICS_EACH__MelFilter_drawSpectrum);
@@ -9941,7 +9937,7 @@ void praat_David_init () {
 	praat_addAction1 (classPCA, 1, U"Get fraction variance accounted for...", nullptr, 1,
 			QUERY_ONE_FOR_REAL__PCA_getFractionVAF);
 	praat_addAction1 (classPCA, 1, U"Get number of components (VAF)...", nullptr, 1, 
-		QUERY_ONE_FOR_INTEGER__PCA_getNumberOfComponents_VAF);
+			QUERY_ONE_FOR_INTEGER__PCA_getNumberOfComponents_VAF);
 	praat_addAction1 (classPCA, 2, U"Get angle between pc1-pc2 planes", nullptr, 1,
 			QUERY_TWO_FOR_REAL__PCAs_getAngleBetweenPc1Pc2Plane_degrees);
 	praat_addAction1 (classPCA, 0, U"Modify -", nullptr, 0, nullptr);
@@ -10092,10 +10088,8 @@ void praat_David_init () {
 	praat_addAction1 (classPolynomial, 0, U"-- area --", U"Get x of maximum...", 1, 0);
 	praat_addAction1 (classPolynomial, 1, U"Get area...", U"-- area --", 1,
 			QUERY_ONE_FOR_REAL__Polynomial_getArea);
-	praat_addAction1 (classPolynomial, 1, U"Get remainder after division...", U"Get area...", 1, 
-			QUERY_ONE_FOR_REAL__Polynomial_getRemainderAfterDivision);
-	praat_addAction1 (classPolynomial, 1, U"Get remainder...", U"*Get remainder after division...", GuiMenu_DEPRECATED_2016,
-			QUERY_ONE_FOR_REAL__Polynomial_getRemainderAfterDivision);
+	praat_addAction1 (classPolynomial, 1, U"Get remainder after division... || Get remainder...", U"Get area...", 1,
+			QUERY_ONE_FOR_REAL__Polynomial_getRemainderAfterDivision);   // alternative COMPATIBILITY <= 2016
 	praat_addAction1 (classPolynomial, 0, U"-- monic --", U"Set coefficient...", 1, 0);
 	praat_addAction1 (classPolynomial, 0, U"Scale coefficients (monic)", U"-- monic --", 1, 
 			MODIFY_Polynomial_scaleCoefficients_monic);
@@ -10448,9 +10442,7 @@ void praat_David_init () {
 	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Table_extractRowsWhereMahalanobis);
 	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN, 0);
-	praat_addAction1 (classTable, 0, U"Extract columns by number...", U"-- Extract columns ----", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
-			CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber);
-	praat_addAction1 (classTable, 0, U"Extract column ranges...", U"*Extract columns by number...", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
+	praat_addAction1 (classTable, 0, U"Extract columns by number... || Extract column ranges...", U"-- Extract columns ----", GuiMenu_DEPTH_1 | GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber);
 
 	praat_addAction1 (classTable, 0, U"To KlattTable", nullptr, GuiMenu_HIDDEN,
@@ -10505,12 +10497,8 @@ void praat_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			CONVERT_TWO_TO_ONE__TableOfReal_TableOfReal_crossCorrelations);
 
-	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories...", U"To Matrix", 1,
-			CONVERT_EACH_TO_ONE__TableOfReal_to_PatternList_and_Categories);
-	praat_addAction1 (classTableOfReal, 1, U"To Pattern and Categories...", U"*To PatternList and Categories...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2015,
-			CONVERT_EACH_TO_ONE__TableOfReal_to_PatternList_and_Categories);
-	praat_addAction1 (classTableOfReal, 1, U"Split into Pattern and Categories...", U"*To PatternList and Categories...", GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2015,
-			CONVERT_EACH_TO_ONE__TableOfReal_to_PatternList_and_Categories);
+	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories... || To PatternList and Categories... || Split into Pattern and Categories...", U"To Matrix", 1,
+			CONVERT_EACH_TO_ONE__TableOfReal_to_PatternList_and_Categories);   // alternatives COMPATIBILITY <= 2015
 	praat_addAction1 (classTableOfReal, 0, U"To Permutation (sort row labels)", U"To Matrix", 1,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_Permutation_sortRowlabels);
 
@@ -10558,15 +10546,11 @@ void praat_David_init () {
 			MODIFY_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1,
 			MODIFY_EACH__TextGrid_setTierName);
-	praat_addAction1 (classTextGrid, 0, U"Replace interval texts...", U"Set interval text...", 2, 
-			MODIFY_TextGrid_replaceIntervalTexts);
-	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"*Replace interval texts...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2018,
-			MODIFY_TextGrid_replaceIntervalTexts);
-	praat_addAction1 (classTextGrid, 0, U"Replace point texts...", U"Set point text...", 2, 
-			MODIFY_TextGrid_replacePointTexts);
-	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"*Replace point texts...", GuiMenu_DEPTH_2 | GuiMenu_DEPRECATED_2018,
-			MODIFY_TextGrid_replacePointTexts);
-	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, 
+	praat_addAction1 (classTextGrid, 0, U"Replace interval texts... || Replace interval text...", U"Set interval text...", 2,
+			MODIFY_TextGrid_replaceIntervalTexts);   // alternatives COMPATIBILITY <= 2018
+	praat_addAction1 (classTextGrid, 0, U"Replace point texts... || Replace point text...", U"Set point text...", 2,
+			MODIFY_TextGrid_replacePointTexts);   // alternatives COMPATIBILITY <= 2018
+	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0,
 			CONVERT_TWO_TO_ONE__TextGrids_to_Table_textAlignment);
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, 
 			CONVERT_EACH_TO_ONE__TextGrid_to_DurationTier);

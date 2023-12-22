@@ -510,10 +510,8 @@ void praat_BSS_init () {
 			HELP__CrossCorrelationTable_help);
 	praat_SSCP_as_TableOfReal_init (classCrossCorrelationTable);
 
-	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTableList", nullptr, 0,
-			COMBINE_ALL_TO_ONE__CrossCorrelationTables_to_CrossCorrelationTableList);
-	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTables", U"*To CrossCorrelationTableList", GuiMenu_DEPRECATED_2015,
-			COMBINE_ALL_TO_ONE__CrossCorrelationTables_to_CrossCorrelationTableList);
+	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTableList || To CrossCorrelationTables", nullptr, 0,
+			COMBINE_ALL_TO_ONE__CrossCorrelationTables_to_CrossCorrelationTableList);   // alternative COMPATIBILITY <= 2015
 
 	praat_addAction1 (classCrossCorrelationTableList, 0, U"CrossCorrelationTableList help", 0, 0,
 			HELP__CrossCorrelationTableList_help);
