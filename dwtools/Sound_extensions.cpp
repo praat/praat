@@ -2611,40 +2611,31 @@ void Sound_saveAsMP3File (Sound me, MelderFile file, kSoundToMP3Encoding mp3Enco
 		Melder_require (lame_init_params (encoderSettings) >= 0,
 			U"Some of the parameter do not combine. ");
 		/* encoding */
-		int numberOfSamplesToEncode = my nx;
-		const int mp3bufferSize = 1.25 * numberOfSamplesToEncode + 7200; // conservative estimate
+		const integer mp3bufferSize = 262144; // 2^18: large enough, we don't use album art pictures
 		autoBYTEVEC mp3buffer = raw_BYTEVEC (mp3bufferSize);
 		unsigned char *mp3buffer_p = mp3buffer.asArgumentToFunctionThatExpectsZeroBasedArray();
-		const int frameSize = lame_get_framesize (encoderSettings);
-		size_t id3v2_size = lame_get_id3v2_tag (encoderSettings, 0, 0);
 		file -> filePointer = Melder_fopen (file, "wb");
-		if (id3v2_size > 0) {
-			unsigned char *id3v2tag = (unsigned char *) _Melder_malloc(id3v2_size);
-			if (id3v2tag) {
-				size_t  n_bytes = lame_get_id3v2_tag(encoderSettings, id3v2tag, id3v2_size);
-				size_t  n_bytes_written = fwrite (id3v2tag, 1, n_bytes, file -> filePointer);
-				Melder_free (id3v2tag);
-				Melder_require (n_bytes_written == n_bytes,
-					U"Error writing ID3v2 tag.");
-			}
-		}
+		/*
+			We do not need to write an id3v2 tag
+		*/
 		double *left = my z [1].asArgumentToFunctionThatExpectsZeroBasedArray();
 		double *right = (my ny == 2) ? my z [2].asArgumentToFunctionThatExpectsZeroBasedArray() : nullptr;
-		int maxNumSamplesPerEncodingStep = lame_get_maximum_number_of_samples (encoderSettings, mp3bufferSize);
-		maxNumSamplesPerEncodingStep = std::min (maxNumSamplesPerEncodingStep, numberOfSamplesToEncode);
+		integer numberOfSamplesToEncode = my nx;
+		integer numberOfSamplesPerEncodingStep = lame_get_maximum_number_of_samples (encoderSettings, mp3bufferSize);
+		numberOfSamplesPerEncodingStep = std::min (numberOfSamplesPerEncodingStep, numberOfSamplesToEncode);
 		do {
-			int numberOfBytesOutput = lame_encode_buffer_ieee_double (encoderSettings, left, right, maxNumSamplesPerEncodingStep,
-				mp3buffer_p, mp3bufferSize);
+			integer numberOfBytesOutput = lame_encode_buffer_ieee_double (encoderSettings, left, right, 
+				numberOfSamplesPerEncodingStep, mp3buffer_p, mp3bufferSize);
 			Melder_require (numberOfBytesOutput >= 0,
 				U"MP3 internal error (", numberOfBytesOutput, U",).");
 			if (numberOfBytesOutput > 0)
 				fwrite (mp3buffer_p, 1, numberOfBytesOutput, file -> filePointer);
-			numberOfSamplesToEncode -= maxNumSamplesPerEncodingStep;
-			left  += maxNumSamplesPerEncodingStep;
+			numberOfSamplesToEncode -= numberOfSamplesPerEncodingStep;
+			left  += numberOfSamplesPerEncodingStep;
 			if (my ny == 2)
-				right += maxNumSamplesPerEncodingStep;
+				right += numberOfSamplesPerEncodingStep;
 		} while (numberOfSamplesToEncode > 0);
-		int numberOfBytesToFlush = lame_encode_flush (encoderSettings, mp3buffer_p, mp3bufferSize);
+		const integer numberOfBytesToFlush = lame_encode_flush (encoderSettings, mp3buffer_p, mp3bufferSize);
 		if (numberOfBytesToFlush > 0)
 			fwrite (mp3buffer_p, 1, numberOfBytesToFlush, file -> filePointer);
 		lame_close (encoderSettings);
