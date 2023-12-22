@@ -36,9 +36,11 @@
 #include "Ltas.h"
 #include "Manipulation.h"
 #include "NUMcomplex.h"
+#include "melder.h"
 #include "../external/vorbis/vorbis_codec.h"
 #include "../external/vorbis/vorbisfile.h"
 #include "../external/opusfile/opusfile.h"
+#include "../external/lame/lame.h"
 
 #include "enums_getText.h"
 #include "Sound_extensions_enums.h"
@@ -2590,27 +2592,66 @@ void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingF
 	}
 }
 
-void Sound_saveAsMP3file (Sound me, kSoundToMP3Encoding mp3Encoding, integer kbitsPerSecond) {
+void Sound_saveAsMP3File (Sound me, MelderFile file, kSoundToMP3Encoding mp3Encoding, integer kbitsPerSecond) {
 	try {
-#if 0
-		const integer samplingFrequency = 1,0 / my dx;
+		const integer samplingFrequency = 1.0 / my dx;
 		Melder_require (kbitsPerSecond >= 8 && kbitsPerSecond <= 320,
-			U"The number of kbits per second should be in the interval [8, 320].")
-		lame_global_flags *lameSettings = lame_init ();
-		lame_set_num_channels (lameSettings, my ny);
-		lame_set_in_samplerate (lameSettings, samplingFrequency);
-		lame_set_brate (lameSettings,  kbitsPerSecond);
+			U"The number of kilo bits per second should be in the interval [8, 320].");
+		Melder_require (my ny <= 2,
+			U"Your sound should not have more than two channels.");
+		lame_global_flags *encoderSettings = lame_init ();
+		Melder_require (encoderSettings != nullptr,
+			U"The L.A.M.E. encoder settings could not be initialised.");
 		
-		const integer returnCode = lame_init_params (lameSettings);
-		Melder_require (lame_init_params (lameSettings) >= 0,
-			U"Some of the parameter do not combine. ")
+		lame_set_num_channels (encoderSettings, my ny);
+		lame_set_in_samplerate (encoderSettings, samplingFrequency);
+		lame_set_out_samplerate (encoderSettings, samplingFrequency);
+		lame_set_VBR_max_bitrate_kbps (encoderSettings, kbitsPerSecond);
+		
+		Melder_require (lame_init_params (encoderSettings) >= 0,
+			U"Some of the parameter do not combine. ");
 		/* encoding */
-		
-		
-		lame_close (lameSettings);
-#endif	
+		int numberOfSamplesToEncode = my nx;
+		const int mp3bufferSize = 1.25 * numberOfSamplesToEncode + 7200; // conservative estimate
+		autoBYTEVEC mp3buffer = raw_BYTEVEC (mp3bufferSize);
+		unsigned char *mp3buffer_p = mp3buffer.asArgumentToFunctionThatExpectsZeroBasedArray();
+		const int frameSize = lame_get_framesize (encoderSettings);
+		size_t id3v2_size = lame_get_id3v2_tag (encoderSettings, 0, 0);
+		file -> filePointer = Melder_fopen (file, "wb");
+		if (id3v2_size > 0) {
+			unsigned char *id3v2tag = (unsigned char *) _Melder_malloc(id3v2_size);
+			if (id3v2tag) {
+				size_t  n_bytes = lame_get_id3v2_tag(encoderSettings, id3v2tag, id3v2_size);
+				size_t  n_bytes_written = fwrite (id3v2tag, 1, n_bytes, file -> filePointer);
+				Melder_free (id3v2tag);
+				Melder_require (n_bytes_written == n_bytes,
+					U"Error writing ID3v2 tag.");
+			}
+		}
+		double *left = my z [1].asArgumentToFunctionThatExpectsZeroBasedArray();
+		double *right = (my ny == 2) ? my z [2].asArgumentToFunctionThatExpectsZeroBasedArray() : nullptr;
+		int maxNumSamplesPerEncodingStep = lame_get_maximum_number_of_samples (encoderSettings, mp3bufferSize);
+		maxNumSamplesPerEncodingStep = std::min (maxNumSamplesPerEncodingStep, numberOfSamplesToEncode);
+		do {
+			int numberOfBytesOutput = lame_encode_buffer_ieee_double (encoderSettings, left, right, maxNumSamplesPerEncodingStep,
+				mp3buffer_p, mp3bufferSize);
+			Melder_require (numberOfBytesOutput >= 0,
+				U"MP3 internal error (", numberOfBytesOutput, U",).");
+			if (numberOfBytesOutput > 0)
+				fwrite (mp3buffer_p, 1, numberOfBytesOutput, file -> filePointer);
+			numberOfSamplesToEncode -= maxNumSamplesPerEncodingStep;
+			left  += maxNumSamplesPerEncodingStep;
+			if (my ny == 2)
+				right += maxNumSamplesPerEncodingStep;
+		} while (numberOfSamplesToEncode > 0);
+		int numberOfBytesToFlush = lame_encode_flush (encoderSettings, mp3buffer_p, mp3bufferSize);
+		if (numberOfBytesToFlush > 0)
+			fwrite (mp3buffer_p, 1, numberOfBytesToFlush, file -> filePointer);
+		lame_close (encoderSettings);
+		Melder_fclose (file, file -> filePointer);
 	} catch (MelderError) {
 		Melder_throw (U"");
 	}
 }
+
 /* End of file Sound_extensions.cpp */

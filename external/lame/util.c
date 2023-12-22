@@ -155,7 +155,7 @@ freegfc(lame_internal_flags * const gfc)
 
 #ifdef DECODE_ON_THE_FLY
     if (gfc->hip) {
-        hip_decode_exit(gfc->hip);
+      hip_decode_exit(gfc->hip);
         gfc->hip = 0;
     }
 #endif

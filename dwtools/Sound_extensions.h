@@ -29,7 +29,7 @@ Thing_declare (Interpreter);
 
 int Sound_writeToNistAudioFile (Sound me, MelderFile file);
 
-void Sound_saveAsMP3file (Sound me, kSoundToMP3Encoding mp3Encoding, integer kbitsPerSecond);
+void Sound_saveAsMP3File (Sound me, MelderFile file, kSoundToMP3Encoding mp3Encoding, integer kbitsPerSecond);
 /* kbitsPerSecond for L.A.M.E.: between 6 and 320 kbits/s*/
 
 autoSound Sound_readFromCmuAudioFile (MelderFile file);

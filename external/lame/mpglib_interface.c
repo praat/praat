@@ -33,7 +33,7 @@
 #include "lame.h"
 #include "machine.h"
 #include "encoder.h"
-#include "interface.h"
+#include "mpglib_interface.h"
 
 #include "util.h"
 

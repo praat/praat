@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Free Software Fhipoundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
 
@@ -1300,7 +1300,7 @@ lame_init_params(lame_global_flags * gfp)
 #ifdef DECODE_ON_THE_FLY
     if (cfg->decode_on_the_fly && !gfp->decode_only) {
         if (gfc->hip) {
-            hip_decode_exit(gfc->hip);
+           hip_decode_exit(gfc->hip);
         }
         gfc->hip = hip_decode_init();
         /* report functions */

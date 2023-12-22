@@ -24,7 +24,7 @@
 /* #undef DEBUG */
 
 /* allow to compute a more accurate replaygain value */
-#define DECODE_ON_THE_FLY 1
+/* #define DECODE_ON_THE_FLY 1  djmw: or we have to get in all the mpglib routines*/
 
 /* double is faster than float on Alpha */
 /* #undef FLOAT */
@@ -37,16 +37,16 @@
 #define HAVE_ALLOCA_H 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-#define HAVE_DLFCN_H 1
+/* #define HAVE_DLFCN_H 1 */
 
 /* we link against libefence */
 /* #undef HAVE_EFENCE */
 
 /* Define to 1 if you have the <errno.h> header file. */
-#define HAVE_ERRNO_H 1
+/* #define HAVE_ERRNO_H 1 */
 
 /* Define to 1 if you have the <fcntl.h> header file. */
-#define HAVE_FCNTL_H 1
+/* #define HAVE_FCNTL_H 1 */
 
 /* Define to 1 if you have the `gettimeofday' function. */
 #define HAVE_GETTIMEOFDAY 1
@@ -67,7 +67,7 @@
 #endif
 
 /* system has 80 bit floats */
-#define HAVE_IEEE854_FLOAT80 1
+/* #define HAVE_IEEE854_FLOAT80 1 */
 
 /* add ieee854_float80_t type */
 /* #undef HAVE_IEEE854_FLOAT80_T */
@@ -149,7 +149,7 @@
 #define HAVE_STRTOL 1
 
 /* Define to 1 if you have the <sys/soundcard.h> header file. */
-#define HAVE_SYS_SOUNDCARD_H 1
+/* #define HAVE_SYS_SOUNDCARD_H 1 */
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -161,10 +161,10 @@
 #define HAVE_SYS_TYPES_H 1
 
 /* have termcap */
-#define HAVE_TERMCAP 1
+/* #define HAVE_TERMCAP 1 */
 
 /* Define to 1 if you have the <termcap.h> header file. */
-#define HAVE_TERMCAP_H 1
+/* #define HAVE_TERMCAP_H 1 */
 
 /* add uint16_t type */
 #define HAVE_UINT16_T 1
@@ -193,10 +193,10 @@
 #endif
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#define HAVE_UNISTD_H 1
+/* #define HAVE_UNISTD_H 1 */
 
 /* Define if SSE intrinsics work. */
-#define HAVE_XMMINTRIN_H 1
+/* #define HAVE_XMMINTRIN_H 1 */
 
 /* Define as const if the declaration of iconv() needs const. */
 #define ICONV_CONST 
@@ -246,8 +246,8 @@
 /* The size of `int', as computed by sizeof. */
 #define SIZEOF_INT 4
 
-/* The size of `long', as computed by sizeof. */
-#define SIZEOF_LONG 8
+/* The size of `long', as computed by sizeof. win64 compatibility */
+#define SIZEOF_LONG 4
 
 /* The size of `long double', as computed by sizeof. */
 /* #undef SIZEOF_LONG_DOUBLE */
@@ -261,8 +261,8 @@
 /* The size of `unsigned int', as computed by sizeof. */
 #define SIZEOF_UNSIGNED_INT 4
 
-/* The size of `unsigned long', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_LONG 8
+/* The size of `unsigned long', as computed by sizeof. win64 compatibility*/
+#define SIZEOF_UNSIGNED_LONG 4
 
 /* The size of `unsigned long long', as computed by sizeof. */
 #define SIZEOF_UNSIGNED_LONG_LONG 8
