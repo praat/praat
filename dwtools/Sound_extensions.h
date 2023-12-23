@@ -29,8 +29,11 @@ Thing_declare (Interpreter);
 
 int Sound_writeToNistAudioFile (Sound me, MelderFile file);
 
-void Sound_saveAsMP3File (Sound me, MelderFile file, kSoundToMP3Encoding mp3Encoding, integer kbitsPerSecond);
-/* kbitsPerSecond for L.A.M.E.: between 6 and 320 kbits/s*/
+void Sound_saveAsMP3File_VBR (Sound me, MelderFile file, double inverseQuality);
+/*
+	0 <= inverseQuality < 10
+	0 is highest quality, 9.99 is lowest quality
+*/
 
 autoSound Sound_readFromCmuAudioFile (MelderFile file);
 
