@@ -73,8 +73,8 @@ The meaning of the names of binary files available on GitHub is as follows (edit
 ### 1.3. Unix binaries
 - **`praatXXXX_rpi_armv7.tar.gz`: gzipped tarred executable for 32-bit Linux on the Raspberry Pi 4B (GTK** 2 or **3)**
 - **`praatXXXX_chrome64.tar.gz`: gzipped tarred executable for 64-bit Linux on Chromebooks (GTK** 2 or **3)**
-- **`praatXXXX_linux64barren.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI or graphics**
-- **`praatXXXX_linux64nogui.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI but with graphics (Cairo and Pango)**
+- **`praatXXXX_linux64barren.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI, sound and graphics**
+- **`praatXXXX_linux64nogui.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI and sound but with graphics (Cairo and Pango)**
 - **`praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK** 2 or **3)**
 - `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux (GTK 2)
 - `praatXXXX_linux_motif64.tar.gz`: gzipped tarred executable for 64-bit Linux (Motif)
@@ -144,9 +144,10 @@ Then type `make` to build `Praat.exe`
 
 Extract the *praatXXXX_xcodeproj.zip* file from the [latest release](https://github.com/praat/praat/releases)
 into the directory that contains `sys`, `fon`, `dwtools` and so on.
-Then open the project `praat.xcodeproj` in Xcode 15 and choose Build or Run for the target `praat_mac`.
-You can compile with the 14.0 SDK, which will work as far back as macOS 10.11,
-which is our deployment target, and will look good even on macOS 15 Sonoma.
+Then open the project `praat.xcodeproj` in Xcode 15.1 (or perhaps later, but not in Xcode 15.0)
+and choose Build or Run for the target `praat_mac`.
+You can compile with the 14.2 SDK, which will work as far back as macOS 10.11,
+which is our deployment target, and will look good even on macOS 14 Sonoma.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
 code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build,
