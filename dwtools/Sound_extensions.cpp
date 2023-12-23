@@ -36,9 +36,11 @@
 #include "Ltas.h"
 #include "Manipulation.h"
 #include "NUMcomplex.h"
+#include "melder.h"
 #include "../external/vorbis/vorbis_codec.h"
 #include "../external/vorbis/vorbisfile.h"
 #include "../external/opusfile/opusfile.h"
+#include "../external/lame/lame.h"
 
 #include "enums_getText.h"
 #include "Sound_extensions_enums.h"
@@ -2590,4 +2592,116 @@ void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingF
 	}
 }
 
+void Sound_saveAsMP3File (Sound me, MelderFile file, kSoundToMP3Encoding mp3Encoding, integer kbitsPerSecond) {
+	try {
+		const integer samplingFrequency = 1.0 / my dx;
+		Melder_require (kbitsPerSecond >= 8 && kbitsPerSecond <= 320,
+			U"The number of kilo bits per second should be in the interval [8, 320].");
+		Melder_require (my ny <= 2,
+			U"Your sound should not have more than two channels.");
+		lame_global_flags *encoderSettings = lame_init ();
+		Melder_require (encoderSettings != nullptr,
+			U"The L.A.M.E. encoder settings could not be initialised.");
+		
+		lame_set_num_channels (encoderSettings, my ny);
+		lame_set_in_samplerate (encoderSettings, samplingFrequency);
+		lame_set_out_samplerate (encoderSettings, samplingFrequency);
+		vbr_mode vbrMode = (mp3Encoding == kSoundToMP3Encoding::CBR ? vbr_off :
+			(mp3Encoding == kSoundToMP3Encoding::ABR) ? vbr_abr : vbr_mtrh);
+		Melder_require (lame_set_VBR (encoderSettings, vbrMode) == 0,
+			U"Error setting bit rate mode.");
+			
+		lame_set_VBR_max_bitrate_kbps (encoderSettings, kbitsPerSecond);
+		
+		Melder_require (lame_init_params (encoderSettings) >= 0,
+			U"Some of the parameter do not combine. ");
+		/* encoding */
+		const integer mp3bufferSize = 262144; // 2^18: large enough, we don't use album art pictures
+		autoBYTEVEC mp3buffer = raw_BYTEVEC (mp3bufferSize);
+		unsigned char *mp3buffer_p = mp3buffer.asArgumentToFunctionThatExpectsZeroBasedArray();
+		file -> filePointer = Melder_fopen (file, "wb");
+		/*
+			We do not need to write an id3v2 tag
+		*/
+		double *left = my z [1].asArgumentToFunctionThatExpectsZeroBasedArray();
+		double *right = (my ny == 2) ? my z [2].asArgumentToFunctionThatExpectsZeroBasedArray() : nullptr;
+		integer numberOfSamplesToEncode = my nx;
+		integer numberOfSamplesPerEncodingStep = lame_get_maximum_number_of_samples (encoderSettings, mp3bufferSize);
+		numberOfSamplesPerEncodingStep = std::min (numberOfSamplesPerEncodingStep, numberOfSamplesToEncode);
+		do {
+			integer numberOfBytesOutput = lame_encode_buffer_ieee_double (encoderSettings, left, right, 
+				numberOfSamplesPerEncodingStep, mp3buffer_p, mp3bufferSize);
+			Melder_require (numberOfBytesOutput >= 0,
+				U"MP3 internal error (", numberOfBytesOutput, U",).");
+			if (numberOfBytesOutput > 0)
+				fwrite (mp3buffer_p, 1, numberOfBytesOutput, file -> filePointer);
+			numberOfSamplesToEncode -= numberOfSamplesPerEncodingStep;
+			left  += numberOfSamplesPerEncodingStep;
+			if (my ny == 2)
+				right += numberOfSamplesPerEncodingStep;
+		} while (numberOfSamplesToEncode > 0);
+		const integer numberOfBytesToFlush = lame_encode_flush (encoderSettings, mp3buffer_p, mp3bufferSize);
+		if (numberOfBytesToFlush > 0)
+			fwrite (mp3buffer_p, 1, numberOfBytesToFlush, file -> filePointer);
+		lame_close (encoderSettings);
+		Melder_fclose (file, file -> filePointer);
+	} catch (MelderError) {
+		Melder_throw (U"");
+	}
+}
+
+void Sound_saveAsMP3File_VBR (Sound me, MelderFile file, double inverseQuality) {
+	try {
+		const integer samplingFrequency = 1.0 / my dx;
+		Melder_require (inverseQuality >= 0.0 && inverseQuality < 10.0,
+			U"The quality should be in the interval [0, 10).");
+		Melder_require (my ny <= 2,
+			U"Your sound should not have more than two channels.");
+		lame_global_flags *encoderSettings = lame_init ();
+		Melder_require (encoderSettings != nullptr,
+			U"The L.A.M.E. encoder settings could not be initialised.");
+		
+		lame_set_num_channels (encoderSettings, my ny);
+		lame_set_in_samplerate (encoderSettings, samplingFrequency);
+		lame_set_out_samplerate (encoderSettings, samplingFrequency);
+		lame_set_VBR_quality (encoderSettings, inverseQuality);
+		Melder_require (lame_set_VBR (encoderSettings, vbr_mtrh) == 0,
+			U"Error setting bit rate mode.");
+		
+		Melder_require (lame_init_params (encoderSettings) >= 0,
+			U"Some of the parameter do not combine. ");
+		
+		const integer mp3bufferSize = 262144; // 2^18: large enough, we don't use album art pictures
+		autoBYTEVEC mp3buffer = raw_BYTEVEC (mp3bufferSize);
+		unsigned char *mp3buffer_p = mp3buffer.asArgumentToFunctionThatExpectsZeroBasedArray();
+		file -> filePointer = Melder_fopen (file, "wb");
+		/*
+			We do not need to write an id3v2 tag
+		*/
+		double *left = my z [1].asArgumentToFunctionThatExpectsZeroBasedArray();
+		double *right = (my ny == 2) ? my z [2].asArgumentToFunctionThatExpectsZeroBasedArray() : nullptr;
+		integer numberOfSamplesToEncode = my nx;
+		integer numberOfSamplesPerEncodingStep = lame_get_maximum_number_of_samples (encoderSettings, mp3bufferSize);
+		do {
+			numberOfSamplesPerEncodingStep = std::min (numberOfSamplesPerEncodingStep, numberOfSamplesToEncode);
+			const integer numberOfBytesOutput = lame_encode_buffer_ieee_double (encoderSettings, left, right, 
+				numberOfSamplesPerEncodingStep, mp3buffer_p, mp3bufferSize);
+			Melder_require (numberOfBytesOutput >= 0,
+				U"MP3 internal error (", numberOfBytesOutput, U",).");
+			if (numberOfBytesOutput > 0)
+				fwrite (mp3buffer_p, 1, numberOfBytesOutput, file -> filePointer);
+			numberOfSamplesToEncode -= numberOfSamplesPerEncodingStep;
+			left  += numberOfSamplesPerEncodingStep;
+			if (my ny == 2)
+				right += numberOfSamplesPerEncodingStep;
+		} while (numberOfSamplesToEncode > 0);
+		const integer numberOfBytesToFlush = lame_encode_flush (encoderSettings, mp3buffer_p, mp3bufferSize);
+		if (numberOfBytesToFlush > 0)
+			fwrite (mp3buffer_p, 1, numberOfBytesToFlush, file -> filePointer);
+		lame_close (encoderSettings);
+		Melder_fclose (file, file -> filePointer);
+	} catch (MelderError) {
+		Melder_throw (U"");
+	}
+}
 /* End of file Sound_extensions.cpp */

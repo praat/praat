@@ -5476,6 +5476,12 @@ static void Sound_create_checkCommonFields (double startTime, double endTime, do
 				U" samples; the maximum is ", Melder_bigInteger (INTEGER_MAX), U" samples.");
 }
 
+FORM_SAVE (SAVE__Sound_saveAsHighestQualityMP3File, U"Sound: Save as MP3 file", nullptr, U"mp3") {
+	SAVE_ONE (Sound)
+		Sound_saveAsMP3File_VBR (me, file, 0.0);
+	SAVE_ONE_END
+}
+
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_to_FormantFilter, U"Sound & Pitch: To FormantFilter", U"Sound & Pitch: To Spectrogram...") {
 	POSITIVE (windowLength, U"Analysis window duration (s)", U"0.015")
 	POSITIVE (timeStep, U"Time step (s)", U"0.005")
@@ -10210,6 +10216,8 @@ void praat_David_init () {
 	praat_addAction1 (classSound, 0, U"To Pitch (SPINET)...", U"To Pitch (shs)...", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_Pitch_SPINET);
 
+	praat_addAction1 (classSound, 1, U"Save as highest quality MP3 file...", U"Save as 32-bit WAV file...", 1,
+			SAVE__Sound_saveAsHighestQualityMP3File);
 	praat_addAction1 (classSound, 0, U"To Spectrum (resampled)...", U"To Spectrum...", GuiMenu_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Sound_to_Spectrum_resampled);
 	praat_addAction1 (classSound, 0, U"To FormantFilter...", U"To Cochleagram (edb)...", GuiMenu_DEPRECATED_2014 | GuiMenu_DEPTH_1,
