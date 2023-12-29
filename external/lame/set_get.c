@@ -22,9 +22,9 @@
 
 /* $Id: set_get.c,v 1.104 2017/09/06 15:07:30 robert Exp $ */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+//#ifdef HAVE_CONFIG_H
+#include "lame__config.h"
+//#endif
 
 #include "lame.h"
 #include "machine.h"
