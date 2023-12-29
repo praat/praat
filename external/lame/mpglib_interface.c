@@ -24,9 +24,9 @@
 
 /* $Id: mpglib_interface.c,v 1.44 2012/02/18 13:09:00 robert Exp $ */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+//#ifdef HAVE_CONFIG_H
+#include "lame__config.h"
+//#endif
 
 #ifdef HAVE_MPGLIB
 #define hip_global_struct mpstr_tag 
