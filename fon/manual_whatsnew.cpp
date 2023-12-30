@@ -29,6 +29,9 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.02# (30 December 2023)
+• Saving sounds as MP3 files.
+
 ##6.4.01# (30 November 2023)
 • Removed some visible percent signs before variable names from the scripting tutorial.
 • SoundEditor/TextGridEditor logging: when logging 'f0',
