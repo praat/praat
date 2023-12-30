@@ -140,9 +140,9 @@ blocktype_d[2]        block type to use for previous granule
 
 
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+//#ifdef HAVE_CONFIG_H
+#include "lame__config.h"
+//#endif
 
 #include <float.h>
 

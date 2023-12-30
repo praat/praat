@@ -58,7 +58,7 @@ char   *strchr(), *strrchr();
 # include <fcntl.h>
 #endif
 
-#if defined(macintosh)
+#if defined(macintoshXXX)   // lame ppgb
 # include <types.h>
 # include <stat.h>
 #else

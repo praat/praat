@@ -26,9 +26,9 @@
 
 /* $Id: lame.c,v 1.377 2017/09/26 12:14:02 robert Exp $ */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+//#ifdef HAVE_CONFIG_H
+#include "lame__config.h"
+//#endif
 
 
 #include "lame.h"

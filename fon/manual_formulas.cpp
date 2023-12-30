@@ -885,10 +885,10 @@ TERM (U"#`backslashTrigraphsToUnicode$ (x$), unicodeToBackslashTrigraphs$ (x$)")
 DEFINITION (U"converts e.g. \\bsct to \\ct or the reverse. See @@Special symbols@.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 7. Control structures", U"ppgb", 20030519)
+MAN_BEGIN (U"Formulas 7. Control structures", U"ppgb", 20031228)
 ENTRY (U"if ... then ... else ... fi")
 NORMAL (U"You can use conditional expressions in all formulas. For example, ")
-CODE (U"3 * if 52% * 3809 > 2000 then 5 else 6 fi")
+CODE (U"3 * if 52% * 3908 > 2000 then 5 else 6 fi")
 NORMAL (U"evaluates to 15. Instead of #`fi`, you can also use #`endif`.")
 NORMAL (U"Another example: you can clip the absolute amplitude of a Sound to 0.5 by supplying the following formula:")
 CODE (U"if abs(self)>0.5 then if self>0 then 0.5 else -0.5 fi else self fi")

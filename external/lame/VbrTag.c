@@ -22,9 +22,9 @@
 
 /* $Id: VbrTag.c,v 1.106 2017/08/06 18:15:47 robert Exp $ */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+//#ifdef HAVE_CONFIG_H
+#include "lame__config.h"
+//#endif
 
 #include "lame.h"
 #include "machine.h"

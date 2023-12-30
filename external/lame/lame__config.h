@@ -1,6 +1,4 @@
-/* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.in by autoheader.  */
-
+/* lame ppgb hand-edited to comply with C11 */
 
 #ifndef LAME_CONFIG_H
 #define LAME_CONFIG_H
@@ -53,6 +51,9 @@
 
 /* Define if you have the iconv() function and it works. */
 #define HAVE_ICONV 1
+
+// lame ppgb
+#define HAVE_MEMCPY 1
 
 /* add ieee754_float32_t type */
 /* #undef HAVE_IEEE754_FLOAT32_T */
@@ -167,16 +168,16 @@
 /* #define HAVE_TERMCAP_H 1 */
 
 /* add uint16_t type */
-#define HAVE_UINT16_T 1
+//#define HAVE_UINT16_T 1   // lame ppgb
 #ifndef HAVE_UINT16_T
 	typedef unsigned short uint16_t;
 #endif
 
 /* add uint32_t type */
-#define HAVE_UINT32_T 1
+//#define HAVE_UINT32_T 1
 #ifndef HAVE_UINT32_T
 #define A_UINT32_T unsigned int
-	typedef A_UINT32_T uint32_t;
+	typedef A_UINT32_T uint32_t;   // lame ppgb
 #endif
 
 /* add uint64_t type */
@@ -187,7 +188,7 @@
 #endif
 
 /* add uint8_t type */
-#define HAVE_UINT8_T 1
+//#define HAVE_UINT8_T 1   // lame ppgb
 #ifndef HAVE_UINT8_T
 	typedef unsigned char uint8_t;
 #endif
