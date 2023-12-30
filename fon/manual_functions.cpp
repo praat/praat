@@ -1851,7 +1851,7 @@ Syntax and semantics
 ====================
 #`fileNames$#` (%`folderNameOrPattern$`)
 : return the names (not the whole paths) of the files in a folder
-	or that match a pattern with an asterisk.
+	or that match a file-name pattern with up to two asterisks.
 
 See also
 ========
@@ -1868,7 +1868,7 @@ Syntax and semantics
 ====================
 #`fileNames_caseInsensitive$#` (%`folderNameOrPattern$`)
 : return the names (not the whole paths) of the files in a folder
-	or that match a pattern with an asterisk.
+	or that match a file-name pattern with up to two asterisks.
 
 See also
 ========
@@ -1978,7 +1978,7 @@ Syntax and semantics
 ====================
 #`folderNames$#` (%`folderNameOrPattern$`)
 : return the names (not the whole paths) of the subfolders in a folder
-	or that match a pattern with an asterisk.
+	or that match a subfolder-name pattern with up to two asterisks.
 
 See also
 ========
@@ -1995,7 +1995,7 @@ Syntax and semantics
 ====================
 #`folderNames_caseInsensitive$#` (%`folderNameOrPattern$`)
 : return the names (not the whole paths) of the subfolders in a folder
-	or that match a pattern with an asterisk.
+	or that match a subfolder-name pattern with up to two asterisks.
 
 See also
 ========
