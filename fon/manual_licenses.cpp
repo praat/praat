@@ -25,6 +25,98 @@ void manual_licenses_init (ManPages me) {
 MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
+"Acknowledgments"
+© Paul Boersma 2002,2003,2005–2008,2010–2016,2020–2023
+
+The following people contributed source code to Praat:
+
+, Paul Boersma: user interface, graphics, @printing, @@Intro|sound@,
+	@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@,
+	@@Intro 5. Formant analysis|formant analysis@, @@Intro 6. Intensity analysis|intensity analysis@,
+	@@Intro 7. Annotation|annotation@, @@Intro 8. Manipulation|speech manipulation@, @@voice|voice report@,
+	@@ExperimentMFC|listening experiments@,
+	@@articulatory synthesis@, @@OT learning|optimality-theoretic learning@,
+	tables, @formulas, @scripting, and adaptation of PortAudio, GLPK, regular expressions, Opus and LAME.
+, David Weenink:
+	@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC,
+	@VowelEditor,
+	and adaptation of GSL, LAPACK, fftpack, regular expressions, Espeak, Ogg Vorbis, Opus and LAME.
+, Stefan de Konink and Franz Brauße: major help in port to GTK.
+, Tom Naughton: major help in port to Cocoa.
+, Erez Volk: adaptation of FLAC and MAD.
+, Ola Söder: kNN classifiers, k-means clustering.
+, Rafael Laboissière: adaptation of XIPA, audio bug fixes for Linux.
+, Darryl Purnell created the first version of audio for Praat for Linux.
+
+We included the following freely available software libraries in Praat (sometimes with adaptations):
+
+, XIPA: IPA font for Unix by Fukui Rei (GPL).
+, GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL 3 or later).
+, GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL 3 or later);
+	contains AMD software by the same author (LGPL 2.1 or later).
+, PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs,
+	version 19.7.0 of April 2021 (CC-BY-like license).
+, Espeak(-NG): text-to-speech synthesizer by Jonathan Duddington and Reece Dunn,
+	development version 1.52 of August 2023 (GPL 3 or later).
+, MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).
+, LAME: MP3 encoding by Mike Cheng, Mark Taylor, Takehiro Tominaga, Robert Hegemann, Gabriel Bouvigne, Alexander Leidinger,
+	Naoki Shibata, John Dahlstrom, Jonathan Dee, Rogério Brito,
+	Frank Klemm, Don Melton, Albert L. Faber, Roberto Amorim, Josep Maria Antolín Segura, Dominique Duvivier,
+	Joseph Flynn, Peter Gubanov, Guillaume Lessard, Steve Lhomme, Darin Morrison, Dyle VanderBeek,
+	David Robinson, Glen Sawyer, Marcel Muller, Olcios, version 3.100 of October 2017 (GPL 2 or later).
+, FLAC: Free Lossless Audio Codec by Josh Coalson and Xiph.Org, version 1.3.3 (@@FLAC BSD 3-clause license@).
+, Ogg Vorbis: audio compression by Christopher Montgomery (@@Ogg Vorbis BSD 3-clause license@).
+, Opus: audio compression by Jean-Marc Valin, Gregory Maxwell, Christopher Montgomery, Timothy Terriberry,
+	Koen Vos, Andrew Allen and others (@@Opus BSD 3-clause license@).
+, SILK: audio compression by Skype Limited (@@Skype Limited BSD 3-clause license@).
+, fftpack: public-domain Fourier transforms by Paul Swarztrauber, translated to C by Christopher Montgomery.
+, @LAPACK: public-domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+	Courant Institute, Argonne National Lab, and Rice University,
+	C edition by Peng Du, Keith Seymour and Julie Langdou, version 3.2.1 of June 2009.
+, Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).
+, Unicode Character Database by Unicode Inc., version 14.0 of September 2021 (@@Unicode Inc. license agreement@)
+
+Most of the source code of Praat is distributed under the General Public License, version 2 or later.
+However, as Praat includes the above software written by others,
+the whole of Praat is distributed under the General Public License, version 3 or later.
+
+For their financial support during the development of Praat:
+, Netherlands Organization for Scientific Research (NWO) (1996–1999).
+, Nederlandse Taalunie (2006–2008).
+, Talkbank project, Carnegie Mellon / Linguistic Data Consortium (2002–2003).
+, Stichting Spraaktechnologie (2014–2016).
+, Spoken Dutch Corpus (CGN) (1999–2001).
+, Laboratorium Experimentele OtoRhinoLaryngologie, KU Leuven.
+, DFG-Projekt Dialektintonation, Universität Freiburg.
+, Department of Linguistics and Phonetics, Lund University.
+, Centre for Cognitive Neuroscience, University of Turku.
+, Linguistics Department, University of Joensuu.
+, Laboratoire de Sciences Cognitives et Psycholinguistique, Paris.
+, Department of Linguistics, Northwestern University.
+, Department of Finnish and General Linguistics, University of Tampere.
+, Institute for Language and Speech Processing, Paradissos Amaroussiou.
+, Jörg Jescheniak, Universität Leipzig.
+, The Linguistics Teaching Laboratory, Ohio State University.
+, Linguistics & Cognitive Science, Dartmouth College, Hanover NH.
+, Cornell Phonetics Lab, Ithaca NY.
+
+Finally we thank:
+, Ton Wempe and Dirk Jan Vet, for technical support and advice.
+, Daniel Hirst and Daniel McCloy, for managing the Praat Users List.
+, Rafael Laboissière and Andreas Tille, for maintaining the Debian package.
+, Jason Bacon and Adriaan de Groot, for maintaining the FreeBSD port.
+, José Joaquín Atria and Ingmar Steiner, for setting up the source-code repository on GitHub.
+, Hundreds of Praat users, for sending suggestions and notifying us of problems and thus helping us to improve Praat.
+
+################################################################################
+"License"
+© Paul Boersma 2021
+
+Praat is free software distributed under the @@General Public License, version 3@ or higher.
+See @Acknowledgments for details on the licenses of software libraries by others
+that are included in Praat.
+
+################################################################################
 "FLAC BSD 3-clause license"
 © Paul Boersma 2021
 
@@ -241,93 +333,6 @@ Here is the Unicode Inc. license text:
 	use or other dealings in these Data Files or Software without prior
 	written authorization of the copyright holder.
 `
-################################################################################
-"Acknowledgments"
-© Paul Boersma 2002,2003,2005–2008,2010–2016,2020–2023
-
-The following people contributed source code to Praat:
-
-, Paul Boersma: user interface, graphics, @printing, @@Intro|sound@,
-	@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@,
-	@@Intro 5. Formant analysis|formant analysis@, @@Intro 6. Intensity analysis|intensity analysis@,
-	@@Intro 7. Annotation|annotation@, @@Intro 8. Manipulation|speech manipulation@, @@voice|voice report@,
-	@@ExperimentMFC|listening experiments@,
-	@@articulatory synthesis@, @@OT learning|optimality-theoretic learning@,
-	tables, @formulas, @scripting, and adaptation of PortAudio, GLPK, regular expressions, and Opus.
-, David Weenink:
-	@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC,
-	@VowelEditor,
-	and adaptation of GSL, LAPACK, fftpack, regular expressions, Espeak, Ogg Vorbis, and Opus.
-, Stefan de Konink and Franz Brauße: major help in port to GTK.
-, Tom Naughton: major help in port to Cocoa.
-, Erez Volk: adaptation of FLAC and MAD.
-, Ola Söder: kNN classifiers, k-means clustering.
-, Rafael Laboissière: adaptation of XIPA, audio bug fixes for Linux.
-, Darryl Purnell created the first version of audio for Praat for Linux.
-
-We included the following freely available software libraries in Praat (sometimes with adaptations):
-
-, XIPA: IPA font for Unix by Fukui Rei (GPL).
-, GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL 3 or later).
-, GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL 3 or later);
-	contains AMD software by the same author (LGPL 2.1 or later).
-, PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs,
-	version 19.7.0 of April 2021 (CC-BY-like license).
-, Espeak(-NG): text-to-speech synthesizer by Jonathan Duddington and Reece Dunn,
-	development version 1.52 of August 2023 (GPL 3 or later).
-, MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).
-, FLAC: Free Lossless Audio Codec by Josh Coalson and Xiph.Org, version 1.3.3 (@@FLAC BSD 3-clause license@).
-, Ogg Vorbis: audio compression by Christopher Montgomery (@@Ogg Vorbis BSD 3-clause license@).
-, Opus: audio compression by Jean-Marc Valin, Gregory Maxwell, Christopher Montgomery, Timothy Terriberry,
-	Koen Vos, Andrew Allen and others (@@Opus BSD 3-clause license@).
-, SILK: audio compression by Skype Limited (@@Skype Limited BSD 3-clause license@).
-, fftpack: public-domain Fourier transforms by Paul Swarztrauber, translated to C by Christopher Montgomery.
-, @LAPACK: public-domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-	Courant Institute, Argonne National Lab, and Rice University,
-	C edition by Peng Du, Keith Seymour and Julie Langdou, version 3.2.1 of June 2009.
-, Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).
-, Unicode Character Database by Unicode Inc., version 14.0 of September 2021 (@@Unicode Inc. license agreement@)
-
-Most of the source code of Praat is distributed under the General Public License, version 2 or later.
-However, as Praat includes the above software written by others,
-the whole of Praat is distributed under the General Public License, version 3 or later.
-
-For their financial support during the development of Praat:
-, Netherlands Organization for Scientific Research (NWO) (1996–1999).
-, Nederlandse Taalunie (2006–2008).
-, Talkbank project, Carnegie Mellon / Linguistic Data Consortium (2002–2003).
-, Stichting Spraaktechnologie (2014–2016).
-, Spoken Dutch Corpus (CGN) (1999–2001).
-, Laboratorium Experimentele OtoRhinoLaryngologie, KU Leuven.
-, DFG-Projekt Dialektintonation, Universität Freiburg.
-, Department of Linguistics and Phonetics, Lund University.
-, Centre for Cognitive Neuroscience, University of Turku.
-, Linguistics Department, University of Joensuu.
-, Laboratoire de Sciences Cognitives et Psycholinguistique, Paris.
-, Department of Linguistics, Northwestern University.
-, Department of Finnish and General Linguistics, University of Tampere.
-, Institute for Language and Speech Processing, Paradissos Amaroussiou.
-, Jörg Jescheniak, Universität Leipzig.
-, The Linguistics Teaching Laboratory, Ohio State University.
-, Linguistics & Cognitive Science, Dartmouth College, Hanover NH.
-, Cornell Phonetics Lab, Ithaca NY.
-
-Finally we thank:
-, Ton Wempe and Dirk Jan Vet, for technical support and advice.
-, Daniel Hirst and Daniel McCloy, for managing the Praat Users List.
-, Rafael Laboissière and Andreas Tille, for maintaining the Debian package.
-, Jason Bacon and Adriaan de Groot, for maintaining the FreeBSD port.
-, José Joaquín Atria and Ingmar Steiner, for setting up the source-code repository on GitHub.
-, Hundreds of Praat users, for sending suggestions and notifying us of problems and thus helping us to improve Praat.
-
-################################################################################
-"License"
-© Paul Boersma 2021
-
-Praat is free software distributed under the @@General Public License, version 3@ or higher.
-See @Acknowledgments for details on the licenses of software libraries by others
-that are included in Praat.
-
 ################################################################################
 "General Public License, version 3"
 © Paul Boersma 2021
