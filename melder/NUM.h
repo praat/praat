@@ -97,7 +97,7 @@ inline bool NUMequal (double x, double y) {
 		but any undefined value (inf or NaN) *is* equal to --undefined--.
 		This is different from how "==" works in C, hence the following complication.
 	*/
-	return x == y || isundef (x) && isundef (y);
+	return x == y || (isundef (x) && isundef (y));
 }
 inline bool NUMequal (integer x, integer y) {
 	return x == y;

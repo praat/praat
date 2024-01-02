@@ -66,8 +66,8 @@
 	{ \
 		integer _size = (n); \
 		Melder_assert (_size == our x.size); \
-		for (integer _i = 1; _i <= _size; _i ++) \
-			binput##storage (our x [_i].get(), _filePointer_); { \
+		for (integer _i = 1; _i <= _size; _i ++) { \
+			binput##storage (our x [_i].get(), _filePointer_);  \
 		} \
 	}
 
