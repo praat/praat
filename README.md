@@ -141,7 +141,7 @@ Then type `make` to build `Praat.exe`
 (use `make -j12` to speed this up, i.e. to use 12 processors in parallel).
 
 Testing on multiple platform versions can be done with virtual machines
-for Windows 7 (32-bit), Windows 8.1 (32-bit), 64-bit Windows 10 (1507, 1803, 23H2) and Windows 11,
+for Windows 7 (32-bit), Windows 8.1 (32-bit), 64-bit Windows 10 (1507, 1803, 22H2) and Windows 11,
 for instance on an Intel64 Mac with Parallels Desktop.
 
 ### 3.2. Compiling for Macintosh

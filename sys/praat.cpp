@@ -31,6 +31,7 @@
 	#include <windows.h>
 	#include <fcntl.h>
 	#include <io.h>
+	#include <process.h>   // getpid
 #endif
 
 #include "praatP.h"
