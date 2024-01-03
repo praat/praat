@@ -1198,7 +1198,7 @@ LIST_ITEM (U"@@Scripting 5.8. Including other scripts@")
 LIST_ITEM (U"@@Scripting 5.9. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.1. Variables", U"ppgb", 20201229;20230416)
+MAN_BEGIN (U"Scripting 5.1. Variables", U"ppgb", 20201229;20230416;20240103)
 INTRO (U"A %variable is a location in your computer’s memory that has a name and where you can store something, "
 	"as explained in @@Scripting 3.2. Numeric variables|\\SS3.2@ and @@Scripting 3.4. String variables|\\SS3.4@. "
 	"In a Praat script, you can store numbers and texts, i.e. you can use %%numeric variables% and %%string variables%.")
@@ -1275,7 +1275,12 @@ NORMAL (U"All of the variables you saw earlier in this tutorial were defined at 
 	"Some variables, however, are already defined implicitly at the start of your script.")
 NORMAL (U"Some predefined ##numeric variables# are `macintosh`, `windows`, and `unix`, which are 1 if the script "
 	"is running on a Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. "
-	"Another one is `praatVersion`, which is e.g. " stringize(PRAAT_VERSION_NUM) " for the current version of Praat.")
+	"Likewise, we have `bit32` and `bit64`, of which one is 1 and the other 0, "
+	"depending on whether your edition of Praat was built for 32-bit or 64-bit computers. "
+	"More precisely, we have `intel32`, `intel64` and `arm64`, one of which is 1 (and the others 0) "
+	"depending on whether the type of processor chip that your edition of Praat was made for is "
+	"32-bit Intel (= x86, i386, i686), or 64-bit Intel (= AMD64), or ARM64 (= Aarch64). "
+	"Another predefined numeric variable is `praatVersion`, which is e.g. " stringize(PRAAT_VERSION_NUM) " for the current version of Praat.")
 NORMAL (U"Some ##predefined string variables# are `newline$`, `tab$`, and `shellDirectory$`. "
 	"The last one specifies the folder that was the default folder when Praat started up; "
 	"you can use it in scripts that run from the Unix or Windows command line. "

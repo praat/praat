@@ -3,7 +3,7 @@
 # 2008-04-07: more accuracy in fisherQ because of GSL (n.b. GSL not to be used in invFisherQ)
 # Computes a significance from zero, given a measured F value.
 # 2020-04-17: checks on behalf of i386
-# 2023-12-30: reduced precision requirements for Mac, because ARM is less precise than Intel64
+# 2024-01-03: reduced precision requirements for ARM64, because it is less precise than Intel64
 
 df1 = 2
 df2 = 70
@@ -14,7 +14,7 @@ writeInfoLine: "fisherQ test: ", fisherQ, " ", fisherQ$
 assert fisherQ$ = "0.00000000005932714540"
 for i to 10000
 	a = randomUniform (3, 4)
-	if macintosh
+	if arm64
 		assert fisherQ (a, 1, 10000) <> undefined   ; 'i' 'a'
 	else
 		assert fisherQ (a, 1, 100000) <> undefined   ; 'i' 'a'
@@ -24,7 +24,7 @@ endfor
 appendInfoLine: "invFisherQ"
 @invFisherQ: 2, 70, 1e-14
 @invFisherQ: 70, 2, 1e-14
-@invFisherQ: 1, if windows then 100 else if macintosh then 10000 else 100000 fi fi, 1e-11
+@invFisherQ: 1, if windows then 100 else if arm64 then 10000 else 100000 fi fi, 1e-11
 @invFisherQ: 1, 1, 1e-14
 @invFisherQ: 100000, 1, 1e-11
 @invFisherQ: 100, 100, 1e-9
@@ -83,7 +83,7 @@ endproc
 #
 # Things that used to go wrong.
 #
-if macintosh
+if arm64
 	assert invFisherQ (0.13, 1, 1e5) <> undefined ; used to exceed 60 iterations
 else
 	assert invFisherQ (0.13, 1, 1e9) <> undefined ; used to exceed 60 iterations
