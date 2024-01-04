@@ -1,0 +1,31 @@
+# meson.build for library "dwsys".
+# David Weenink 4 January 2024
+
+sources = '''
+	ChebyshevSeries.cpp Collection_extensions.cpp Command.cpp
+	DoublyLinkedList.cpp Eigen.cpp
+	FileInMemory.cpp FileInMemorySet.cpp FileInMemoryManager.cpp
+	FunctionSeries.cpp
+	Graphics_extensions.cpp Index.cpp
+	LegendreSeries.cpp
+	MAT_numerics.cpp
+	NMF.cpp NUM2.cpp NUMhuber.cpp NUMmachar.cpp 
+	NUMcomplex.cpp NUMfft_d.cpp NUMsorting.cpp
+	NUMmathlib.cpp NUMstring.cpp
+	Permutation.cpp Permutation_and_Index.cpp
+	Polynomial.cpp
+	Roots.cpp
+	Spline.cpp SVD.cpp'''.split()
+
+libdwsys = static_library (
+	'dwsys',
+	sources : sources,
+	dependencies: gtk_dep,
+	include_directories : [clapack_inc, melder_inc, dwtools_inc, fon_inc, gsl_inc, kar_inc, stat_inc, sys_inc]
+)
+
+libdwsys_dep = declare_dependency (
+	include_directories : include_directories('.'), link_with: libdwsys
+)
+
+
