@@ -10547,7 +10547,7 @@ void praat_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", nullptr, GuiMenu_HIDDEN | GuiMenu_DEPTH_1,
 			CONVERT_TWO_TO_ONE__TableOfReal_TableOfReal_crossCorrelations);
 
-	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories... || To PatternList and Categories... || Split into Pattern and Categories...", U"To Matrix", 1,
+	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories... || To Pattern and Categories... || Split into Pattern and Categories...", U"To Matrix", 1,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_PatternList_and_Categories);   // alternatives COMPATIBILITY <= 2015
 	praat_addAction1 (classTableOfReal, 0, U"To Permutation (sort row labels)", U"To Matrix", 1,
 			CONVERT_EACH_TO_ONE__TableOfReal_to_Permutation_sortRowlabels);
