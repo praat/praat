@@ -25,9 +25,13 @@ MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
 "What's new?"
-© Paul Boersma 1995–2023
+© Paul Boersma 1995–2024
 
 Latest changes in Praat.
+
+##6.4.03# (4 January 2024)
+• ARM64 edition for Linux.
+• ARM64 edition for Windows.
 
 ##6.4.02# (30 December 2023)
 • Saving sounds as MP3 files.

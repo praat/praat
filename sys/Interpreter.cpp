@@ -2145,16 +2145,16 @@ void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables) {
 				Interpreter_addNumericVariable (me, U"unix", 0);
 			#endif
 			#if defined (__aarch64__) || defined (_M_ARM64_)
-				Interpreter_addNumericVariable (me, U"intel32", 0);
-				Interpreter_addNumericVariable (me, U"intel64", 0);
-				Interpreter_addNumericVariable (me, U"arm64", 1);
+				Interpreter_addNumericVariable (me, U"praat_intel32", 0);
+				Interpreter_addNumericVariable (me, U"praat_intel64", 0);
+				Interpreter_addNumericVariable (me, U"praat_arm64", 1);
 			#else
-				Interpreter_addNumericVariable (me, U"intel32", sizeof (void *) == 4);
-				Interpreter_addNumericVariable (me, U"intel64", sizeof (void *) == 8);
-				Interpreter_addNumericVariable (me, U"arm64", 0);
+				Interpreter_addNumericVariable (me, U"praat_intel32", sizeof (void *) == 4);
+				Interpreter_addNumericVariable (me, U"praat_intel64", sizeof (void *) == 8);
+				Interpreter_addNumericVariable (me, U"praat_arm64", 0);
 			#endif
-			Interpreter_addNumericVariable (me, U"bit32", sizeof (void *) == 4);
-			Interpreter_addNumericVariable (me, U"bit64", sizeof (void *) == 8);
+			Interpreter_addNumericVariable (me, U"praat_32bit", sizeof (void *) == 4);
+			Interpreter_addNumericVariable (me, U"praat_64bit", sizeof (void *) == 8);
 			Interpreter_addNumericVariable (me, U"left", 1);   // deprecated 2010 (Praat 5.2.06)
 			Interpreter_addNumericVariable (me, U"right", 2);   // deprecated 2010 (Praat 5.2.06)
 			Interpreter_addNumericVariable (me, U"mono", 1);   // deprecated 2010 (Praat 5.2.06)
