@@ -169,9 +169,9 @@ void praat_reportSystemProperties () {
 		MelderInfo_writeLine (U"Display protocol: probably ", Melder_systemVersion == 'w' ? U"Wayland" : U"X11", U" (but use xeyes to make sure).");
 	#endif
 	#if defined (__aarch64__) || defined (_M_ARM64_)
-		MelderInfo_writeLine (U"Processor type: ", U"arm64");
+		MelderInfo_writeLine (U"Built for processor type: ", U"arm64");
 	#else
-		MelderInfo_writeLine (U"Processor type: ", sizeof (void *) == 4 ? U"intel32" : U"intel64");
+		MelderInfo_writeLine (U"Built for processor type: ", sizeof (void *) == 4 ? U"intel32" : U"intel64");
 	#endif
 	structMelderDir dir {};
 	Melder_getHomeDir (& dir);

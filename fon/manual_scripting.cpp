@@ -1273,11 +1273,11 @@ CODE (U"The jitter is 0.00002%.")
 ENTRY (U"Predefined variables")
 NORMAL (U"All of the variables you saw earlier in this tutorial were defined at the first moment a value was assigned to them. "
 	"Some variables, however, are already defined implicitly at the start of your script.")
-NORMAL (U"Some predefined ##numeric variables# are `macintosh`, `windows`, and `unix`, which are 1 if the script "
-	"is running on a Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. "
-	"Likewise, we have `bit32` and `bit64`, of which one is 1 and the other 0, "
+NORMAL (U"Some predefined ##numeric variables# are `macintosh`, `windows`, and `unix`, which are 1 if your edition of Praat "
+	"was built for the Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. "
+	"Likewise, we have `praat_32bit` and `praat_64bit`, of which one is 1 and the other 0, "
 	"depending on whether your edition of Praat was built for 32-bit or 64-bit computers. "
-	"More precisely, we have `intel32`, `intel64` and `arm64`, one of which is 1 (and the others 0) "
+	"More precisely, we have `praat_intel32`, `praat_intel64` and `praat_arm64`, one of which is 1 (and the others 0) "
 	"depending on whether the type of processor chip that your edition of Praat was made for is "
 	"32-bit Intel (= x86, i386, i686), or 64-bit Intel (= AMD64), or ARM64 (= Aarch64). "
 	"Another predefined numeric variable is `praatVersion`, which is e.g. " stringize(PRAAT_VERSION_NUM) " for the current version of Praat.")
