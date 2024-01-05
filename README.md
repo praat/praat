@@ -273,99 +273,97 @@ If your Unix isn’t Linux, you may have to edit the library names in the makefi
 The above works exactly the same for Intel64 and ARM64 processors, with the same makefiles.
 
 Testing on multiple platform versions can be done with virtual machines
-for e.g. Ubuntu 18.04, Ubuntu 20.04, Ubuntu 22.04, Fedora 35, Fedora 37, Mint 20.2,
+for e.g. Ubuntu 20.04, Ubuntu 22.04, Fedora 35, Fedora 37, Mint 20.2,
 Debian GNU Linux 10.10, CentOS 8.4, and CentOS Stream 9, 
 for instance on an Intel64 with Parallels Desktop.
 On an ARM64 Mac, we test with virtual machines for Ubuntu 22.04, Fedora 38,
 and Debian GNU Linux 12 ARM64.
 
-## 4. Compiling the source code on all platforms simultaneously
+## 4. Developing Praat on all platforms simultaneously
 
-An easy way to develop your Praat clone on all platforms simultaneously, is to share
-the Praat source folders via a cloud service (in the examples here, that is Dropbox).
-Praat is currently developed by editing the source code on an M3 Mac (with Xcode)
-and using virtual Windows and Linux computers (via Parallels Desktop on an Intel64 Mac)
-for building and testing, but you can of course use separate computers as well.
-In this set-up, building Praat involves no more than typing Command-B into Xcode
-(or Command-R to build and run)
-or `praat-build` into a Windows or Linux terminal (or `praat-run` to build and run).
+At the time of writing (5 January 2024), we develop 12 of the 13 Praat editions on a single
+computer, which is a 2023 M3 Macbook Pro. The Mac edition is built natively with Xcode,
+the three Windows editions are built via Parallels Desktop 19,
+and the six Linux editions and the two Chromebook editions are built via ObsStack;
+only the Raspberry Pi edition is built separately (on a Raspberry Pi).
+We put all 13 editions into a `bin` folder on Dropbox, so that it is easy to test
+the Windows and Linux editions on other computers.
+
+In the following we assume that you want to create all of those editions as well.
+We hope that our example will be useful to you.
 
 ### 4.1. MacOS development set-up
 
 Your source code folders, such as `fon` and `sys`,
 will reside in a folder like `~/Dropbox/Praats/src`,
 where you also put `praat.xcodeproj`, as described above in 3.2.
-On a 2018 MacBook Pro (Intel64, maximum configuration) with Xcode 15.1,
-building Praat with Command-B or Command-R, after cleaning the build folder with Shift-Command-K,
-takes 367 seconds for the x86_64 part and ARM64 part together (optimization level O3);
-on a 2023 MacBook Pro (M3, maximum configuration) this takes only 56 seconds.
+On our 2023 Mac with Xcode 15.1, building Praat with Command-B or Command-R,
+after cleaning the build folder with Shift-Command-K,
+takes only 56 seconds for the ARM64 part and Intel64 part together (optimization level O3).
 
 ### 4.2. Windows development set-up
 
-On a Windows 10 or Windows 11 computer, install Cygwin (for Intel64) or MSYS (for ARM64),
-and create a `praats` folder, as described above in 3.1.
+On a Windows 10 or Windows 11 computer, you can install MSYS2 or Cygwin,
+and create some `praats` folders, as described above in 3.1.
 
-If you work under Parallels Desktop (19 or later) on an Intel64 or ARM64 Mac,
-there are two options for your source tree: either it resides on the MacOS disk
-(which you will mount from Windows anyway), or it resides on the Windows disk.
-Compiling Praat for Windows on the MacOS disk takes 13 minutes (optimization level O3),
-whereas compiling Praat on the Windows disk takes only 4 minutes and 20 seconds
-(measured on a 2018 Intel Mac).
-So we go with installing the source tree under the Cygwin or MSYS home folder, as follows.
-
-You need to get the source from the MacOS disk, so you have to mount the MacOS disk
-from Cygwin or MSYS. This is easy: in Parallels Desktop, choose `Windows 10 or 11` -> `Configure`,
+If you work under Parallels Desktop on an ARM64 Mac,
+you will want MSYS2, because it has an edition for ARM64.
+Your source tree will reside on the Windows disk,
+which can be much faster than building directly on the MacOS disk.
+To move the source from the MacOS disk to the Windows disk,
+you “mount” the MacOS disk from MSYS2 or Cygwin; this is easy:
+in Parallels Desktop, choose `Windows 11 ARM` -> `Configure`,
 then `Options`, then `Sharing`, then `Share Mac`, and set `Share folders` to `Home folder only`
 (if this scares you, then use `Custom Folders` instead).
 Your MacOS home folder (i.e. `/Users/yourname`) is now visible anywhere on Windows
-as the `Z` drive (or so); from the `Cygwin64 Terminal` you can access it as `/cygdrive/z`;
-and from the `MSYS2 CLANGARM64 Shell` you can access it as `/z`.
+as the `Z` drive (or so); from the `MSYS2 CLANGARM64 Shell` you can access it as `/z`,
+and from the `Cygwin64 Terminal` you can access it as `/cygdrive/z`.
 
 When developing Praat for Windows, you just edit your files in Xcode;
 do not forget to save them (as you do e.g. by building in Xcode).
 Then, just as you use Command-B and Command-R in Xcode,
 you will be able to type `praat-build` (which only builds) or `praat-run` (which builds and runs)
-into your `Cygwin64 Terminal` or `MSYS2 CLANGARM64 Shell`. To accomplish this,
-add the following definitions into `/home/yourname/.profile` or `/home/yourname/.bashrc`
-in your Cygwin or MSYS home folder,
+into your `MSYS2 CLANGARM64 Shell` or `Cygwin64 Terminal`. To accomplish this,
+add the following definitions into `/home/yourname/.bashrc` or `/home/yourname/.bash_profile`
+in your MSYS2 Shell home folder or your Cygwin home folder,
 so that the `bash` shell will automatically execute them whenever you start your
-Cygwin terminalor MSYS shell (you will need to have installed `rsync` and `make`):
-
-    # in Cygwin:~/.profile
-    PRAAT_SOURCES="/cygdrive/z/Dropbox/Praats/src"
-    PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*" --exclude="*kanweg*"'
-    alias praat-build="( cd ~/praats &&\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
-        cp makefiles/makefile.defs.mingw64 makefile.defs &&\
-        make -j12 )"
-    alias praat="~/praats/Praat.exe"
-    alias praat-run="praat-build && praat"
+MSYS shell or Cygwin terminal (you will need to have installed `rsync` and `make`).
+On our 2023 Mac, the ARM64 edition will be the default,
+but the Intel64 and Intel32 versions will also be available:
 
     # in MSYS2:~/.bashrc
     PRAAT_SOURCES="/z/Dropbox/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*" --exclude="*kanweg*"'
+
     alias praat-build="( cd ~/praats &&\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
         cp makefiles/makefile.defs.msys-arm64 makefile.defs &&\
-        make -j12 )"
+        make -j20 )"
     alias praat="~/praats/Praat.exe"
     alias praat-run="praat-build && praat"
 
-This also defines `praat` for running Praat without first rebuilding it.
+    alias praat64-build="( cd ~/praats64 &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.msys-intel64 makefile.defs &&\
+        make -j20 )"
+    alias praat64="~/praats64/Praat.exe"
+    alias praat64-run="praat-build64 && praat64"
+
+    alias praat32-build="( cd ~/praats32 &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.msys-intel32 makefile.defs &&\
+        make -j20 )"
+    alias praat32="~/praats32/Praat.exe"
+    alias praat32-run="praat-build32 && praat32"
+
+This also defines `praat` (and `praat64` and `praat32`) for running Praat without first rebuilding it.
 The cycle from editing Praat on the Mac to running the new version on Windows therefore takes only two steps:
 
 1. edit and save the source code in Xcode on your Mac;
-2. type `praat-run` on your Windows 10 or 11 (under Parallels Desktop on your Mac).
+2. type `praat-run` on your Windows 11 (under Parallels Desktop on your Mac).
 
-If you also want to develop the Intel 32-bit edition, you add to `.profile`:
-
-    # in Cygwin:~/.profile
-    alias praat32-build="( cd ~/praats32 &&\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
-        cp makefiles/makefile.defs.mingw32 makefile.defs &&\
-        make -j12 )"
-    alias praat32="~/praats32/Praat.exe"
-    alias praat32-run="praat32-build && praat32"
+On ur 2023 Mac, the three builds cost 89 seconds for ARM64,
+and 215 seconds (under emulation) for Intel64 and Intel32.
 
 ### 4.3. Linux development set-up
 
@@ -379,24 +377,34 @@ then `Options`, then `Sharing`, then `Share Mac`, and set `Share folders` to `Ho
 Your MacOS home folder (i.e. `/Users/yourname`) is now visible on the Ubuntu desktop
 as `Home`, and from the `Terminal` you can access it as `/media/psf/Home`.
 
+However, on an ARM64 Mac this procedure with Parallels Desktop works only for the ARM64 edition.
+With OrbStack we can instead create the Intel64 edition as well
+(and building the ARM64 edition is also faster). Your Mac home folder is known
+simply as `/Users/yourname` or so.
+
 When developing Praat for Linux, you just edit and save your files in Xcode.
 You will be able to type `praat-build` (which only builds) or `praat-run` (which builds and runs)
 into your `Terminal` after you add the following definitions into
-`/home/parallels/.bash_aliases` in your Ubuntu home folder
+`/home/yourname/.bash_aliases` in your Ubuntu home folder
 (this will be run automatically by `.bashrc` whenever you start a `Terminal` window,
-assuming that it uses the `bash` shell):
+assuming that it uses the `bash` shell; please note the subtle but crucial difference
+between `/Users/yourname` and `/home/yourname`):
 
-    # in Ubuntu:~/.bash_aliases
-    PRAAT_SOURCES="/media/psf/Home/Praats/src"
+    # in Ubuntu:/home/yourname/.bash_aliases
+    PRAAT_SOURCES="/Users/yourname/Dropbox/Praats/src"
     PRAAT_EXCLUDES='--exclude="*.xcodeproj" --exclude="Icon*" --exclude=".*" --exclude="*kanweg*"'
     alias praat-build="( cd ~/praats &&\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
         cp makefiles/makefile.defs.linux.pulse makefile.defs &&\
-        make -j12 )"
+        make -j20 )"
     alias praat="~/praats/praat"
     alias praat-run="praat-build && praat"
 
-Building Praat this way takes 7 minutes and 50 seconds (optimization level O3) on an 2018 Intel64.
+(In OrbStack, Praat will not have a GUI, so try `praat-run --version` instead,
+and test later on a Linux computer or Linux virtual machine.)
+
+On our 2023 Mac, building Praat this way takes 63 seconds for the ARM64 edition
+and 150 seconds (under emulation) for the Intel64 edition (optimization level O3).
 
 To build `praat_barren`, create a folder `praatsb`, and define
 
@@ -404,7 +412,7 @@ To build `praat_barren`, create a folder `praatsb`, and define
     alias praatb-build="( cd ~/praatsb &&\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
         cp makefiles/makefile.defs.linux.barren makefile.defs &&\
-        make -j12 )"
+        make -j20 )"
     alias praatb="~/praatsb/praat_barren"
     alias praatb-run="praatb-build && praatb"
 
@@ -419,7 +427,7 @@ To build `praat_nogui`, create a folder `praatsn`, and define
     alias praatn-build="( cd ~/praatsn &&\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
         cp makefiles/makefile.defs.linux.nogui makefile.defs &&\
-        make -j12 )"
+        make -j20 )"
     alias praatn="~/praatsn/praat_nogui"
     alias praatn-run="praatn-build && praatn"
 
@@ -435,7 +443,7 @@ create a folder `praatc`, and define
     alias praatc-build="( cd ~/praatsc &&\
         rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
         cp makefiles/makefile.defs.chrome64 makefile.defs &&\
-        make -j12 )"
+        make -j20 )"
     alias praatc="~/praatsc/praat"
     alias praatc-run="praatc-build && praat"
 
@@ -450,8 +458,8 @@ On a 2019 HP Chromebook with Intel processor, building Praat takes
 a forbidding 27 minutes.
 
 So we choose to build Praat on Ubuntu (under Parallels Desktop on an Intel64 Mac),
-because building the Intel Chrome64 edition on Ubuntu 20.04 takes only
-2 minutes and 10 seconds. If you have the Linux set-up described in 4.3,
+because building the Intel Chrome64 edition on OrbStack Ubuntu 20.04 takes only
+63 seconds (ARM64) or 215 seconds (Intel64). If you have the Linux set-up described in 4.3,
 you can do this with the `praatc-build` command.
 
 Next, you need a way to get the executable `praat` from Mac/Ubuntu to your Chromebook.
@@ -587,42 +595,38 @@ The Windows executables have to be sent from your Cygwin terminal or MSYS shell 
 It is easiest to do this without a version number (so that you have to supply the number only once),
 so you send them to the intermediate Mac folders `~/Dropbox/Praats/bin/win-intel64`
 and `~/Dropbox/Praats/bin/win-intel32` and `~/Dropbox/Praats/bin/win-arm64`.
-On Cygwin or MSYS you can define:
-
-    # in Cygwin:~/.profile
-    alias praat-dist="praat-build && rsync -t ~/praats/Praat.exe /cygdrive/z/Dropbox/Praats/bin/win-intel64"
-    alias praat32-dist="praat32-build && rsync -t ~/praats32/Praat.exe /cygdrive/z/Dropbox/Praats/bin/win-intel32"
+On MSYS you can define:
 
     # in MSYS:~/.bashrc
     alias praat-dist="praat-build && rsync -t ~/praats/Praat.exe /z/Dropbox/Praats/bin/win-arm64"
+    alias praat64-dist="praat64-build && rsync -t ~/praats64/Praat.exe /z/Dropbox/Praats/bin/win-intel64"
+    alias praat32-dist="praat32-build && rsync -t ~/praats32/Praat.exe /z/Dropbox/Praats/bin/win-intel32"
 
 so that you can “upload” the two executables to the Mac with
 
-    # on Cygwin command line
-    praat-dist
-    praat32-dist
-
     # on MSYS command line
     praat-dist
+    praat64-dist
+    praat32-dist
 
 The four Linux executables have to be sent from your Ubuntu terminal to your Mac,
 namely to the folder `~/Dropbox/Praats/bin/linux_intel64` or `~/Dropbox/Praats/bin/linux_arm64`
-(which will contain `praat`, `praat_barren` and `praat_nogui`), and to the folder
+(each of which will contain `praat`, `praat_barren` and `praat_nogui`), and to the folder
 `~/Dropbox/Praats/bin/chrome_intel64` or `~/Dropbox/Praats/bin/chrome_arm64`
 (which will contain only `praat`).
 On Ubuntu you can define
 
-    # in Intel64 Ubuntu:~/.bash_aliases
-    alias praat-dist="praat-build && rsync -t ~/praats/praat /media/psf/Home/Dropbox/Praats/bin/linux-intel64"
-    alias praatb-dist="praatb-build && rsync -t ~/praatsb/praat_barren /media/psf/Home/Dropbox/Praats/bin/linux-intel64"
-    alias praatn-dist="praatn-build && rsync -t ~/praatsn/praat_nogui /media/psf/Home/Dropbox/Praats/bin/linux-intel64"
-    alias praatc-dist="praatc-build && rsync -t ~/praatsc/praat /media/psf/Home/Dropbox/Praats/bin/chrome-intel64"
+    # in MSYS2 Intel64 Ubuntu:~/.bash_aliases
+    alias praat-dist="praat-build && rsync -t ~/praats/praat /Users/yourname/Dropbox/Praats/bin/linux-intel64"
+    alias praatb-dist="praatb-build && rsync -t ~/praatsb/praat_barren /Users/yourname/Dropbox/Praats/bin/linux-intel64"
+    alias praatn-dist="praatn-build && rsync -t ~/praatsn/praat_nogui /Users/yourname/Dropbox/Praats/bin/linux-intel64"
+    alias praatc-dist="praatc-build && rsync -t ~/praatsc/praat /Users/yourname/Dropbox/Praats/bin/chrome-intel64"
 
-    # in ARM64 Ubuntu:~/.bash_aliases
-    alias praat-dist="praat-build && rsync -t ~/praats/praat /media/psf/Home/Dropbox/Praats/bin/linux-arm64"
-    alias praatb-dist="praatb-build && rsync -t ~/praatsb/praat_barren /media/psf/Home/Dropbox/Praats/bin/linux-arm64"
-    alias praatn-dist="praatn-build && rsync -t ~/praatsn/praat_nogui /media/psf/Home/Dropbox/Praats/bin/linux-arm64"
-    alias praatc-dist="praatc-build && rsync -t ~/praatsc/praat /media/psf/Home/Dropbox/Praats/bin/chrome-arm64"
+    # in MSYS2 ARM64 Ubuntu:~/.bash_aliases
+    alias praat-dist="praat-build && rsync -t ~/praats/praat /Users/yourname/Dropbox/Praats/bin/linux-arm64"
+    alias praatb-dist="praatb-build && rsync -t ~/praatsb/praat_barren /Users/yourname/Dropbox/Praats/bin/linux-arm64"
+    alias praatn-dist="praatn-build && rsync -t ~/praatsn/praat_nogui /Users/yourname/Dropbox/Praats/bin/linux-arm64"
+    alias praatc-dist="praatc-build && rsync -t ~/praatsc/praat /Users/yourname/Dropbox/Praats/bin/chrome-arm64"
 
 so that you can “upload” the four executables to the Mac with
 
