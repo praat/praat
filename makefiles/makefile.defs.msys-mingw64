@@ -1,0 +1,29 @@
+# File: makefile.defs.msys-mingw64
+
+# System: MinGW on Windows under MSYS2
+# Paul Boersma 2024-01-05
+
+PREFIX ?=
+
+CC = $(PREFIX)gcc
+CXX = $(PREFIX)g++
+LINK = $(CXX)
+
+COMMONFLAGS = -municode -D_FILE_OFFSET_BITS=64 \
+	-O3
+# Probably implicit: -m64 -mwin32 -march=x86_64 -mtune=generic
+
+CFLAGS = -std=gnu99 $(COMMONFLAGS)
+
+# gnu++17 instead of c++17 is necessary to define M_PI in external code
+CXXFLAGS = -std=gnu++17 $(COMMONFLAGS) -Wshadow
+
+EXECUTABLE = Praat.exe
+
+LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -lwinspool -static-libgcc -static-libstdc++ -mwindows -static
+
+AR = $(PREFIX)ar
+RANLIB = $(PREFIX)ranlib
+WINDRES = $(PREFIX)windres
+ICON = praat_win.o
+MAIN_ICON = main/praat_win.o
