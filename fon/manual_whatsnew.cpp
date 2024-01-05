@@ -30,8 +30,9 @@ R"~~~(
 Latest changes in Praat.
 
 ##6.4.03# (4 January 2024)
-• ARM64 edition for Linux.
 • ARM64 edition for Windows.
+• ARM64 edition for Linux.
+• ARM64 edition for Chromebook.
 
 ##6.4.02# (30 December 2023)
 • Saving sounds as MP3 files.
