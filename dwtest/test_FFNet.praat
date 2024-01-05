@@ -15,7 +15,7 @@ selectObject: ffnet
 
 selectObject: pattern, cat
 tab = To TableOfReal
-To Pattern and Categories: 0, 0, 0, 0
+To PatternList and Categories: 0, 0, 0, 0
 Remove
 removeObject: tab
 
