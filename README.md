@@ -128,9 +128,31 @@ Consult the manual page on [Programming](http://www.fon.hum.uva.nl/praat/manual/
 Most of the source code is written in C++, but some parts are written in C.
 The code requires that your compiler supports C99 and C++17.
 
-## 3. Compiling the source code on one platform
+## 3. Developing Praat for one platform
 
-### 3.1. Compiling for Windows
+Developing Praat means two things: *building* the Praat executable from the Praat
+source code, and *testing* the Praat executable.
+
+**Building** is largely automated:
+you use an existing Xcode project (for the Mac; these files are included in the releases)
+or existing makefiles (for other platforms; these files are included in the source tree).
+
+**Testing** on a platform can be done by starting up Praat on that platform,
+and then go through the following steps:
+
+- Basic GUI functionality:
+	1. record a sound (New -> `Record mono Sound...`)
+	2. open the sound (`View & Edit`)
+	3. select a part of the sound (drag the mouse across the waveform)
+	4. play the sound (click on the rectangle below or above the selection)
+- Integrity of the signal processing and the scripting language:
+	1. open the script `test/runAlltests.praat` (Praat -> `Open Praat script...`)
+	2. run the script (Run -> `Run`)
+	3. after 2 to 10 minutes, the Info window should contain a big “OK” graph
+	4. go through steps 1 through 3 for `dwtest/runAllTests.praat`
+	5. if you feel adventurous, try some tests in the folder `test/manually`
+
+### 3.1. Developing Praat for Windows
 
 To compile Praat’s Windows edition on an Intel 64-bit Windows computer,
 install Cygwin on that computer,
@@ -142,12 +164,12 @@ the folders `fon` and `sys` should be visible within these folders.
 If you want to build Praat's Intel 64-bit edition, type
 
     cd ~/praats
-    cp makefiles/makefile.defs.mingw64 ./makefile.defs
+    cp makefiles/makefile.defs.cygwin-mingw64 ./makefile.defs
 
 or if you want to build Praat's Intel 32-bit edition, type
 
     cd ~/praats32
-    cp makefiles/makefile.defs.mingw32 ./makefile.defs
+    cp makefiles/makefile.defs.cygwin-mingw32 ./makefile.defs
 
 Then type `make` to build `Praat.exe`
 (use `make -j12` to speed this up, i.e. to use 12 processors in parallel).
@@ -284,7 +306,7 @@ and Debian GNU Linux 12 ARM64.
 At the time of writing (5 January 2024), we develop 12 of the 13 Praat editions on a single
 computer, which is a 2023 M3 Macbook Pro. The Mac edition is built natively with Xcode,
 the three Windows editions are built via Parallels Desktop 19,
-and the six Linux editions and the two Chromebook editions are built via ObsStack;
+and the six Linux editions and the two Chromebook editions are built via OrbStack;
 only the Raspberry Pi edition is built separately (on a Raspberry Pi).
 We put all 13 editions into a `bin` folder on Dropbox, so that it is easy to test
 the Windows and Linux editions on other computers.
