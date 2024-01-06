@@ -29,10 +29,15 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.04# (6 January 2024)
+• Typo in example script in manual.
+• ARM64 edition for Linux (Ubuntu 20.04 and up).
+• ARM64 edition for Chromebook (Ubuntu 20.04 and up).
+
 ##6.4.03# (4 January 2024)
 • ARM64 edition for Windows.
-• ARM64 edition for Linux.
-• ARM64 edition for Chromebook.
+• ARM64 edition for Linux (Ubuntu 22.04 and up).
+• ARM64 edition for Chromebook (Ubuntu 22.04 and up).
 
 ##6.4.02# (30 December 2023)
 • Saving sounds as MP3 files.
