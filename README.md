@@ -131,7 +131,7 @@ The code requires that your compiler supports C99 and C++17.
 ## 3. Developing Praat for one platform
 
 Developing Praat means two things: *building* the Praat executable from the Praat
-source code, and *testing* the Praat executable.
+source code, and *testing* the correctness of the Praat executable.
 
 **Building** is largely automated:
 you use an existing Xcode project (for the Mac; these files are included in the releases)
@@ -188,7 +188,7 @@ If you want to build Praat's ARM64 edition, type
     cp makefiles/makefile.defs.msys-arm64 ./makefile.defs
 
 Testing on multiple platform versions can be done with virtual machines
-for Windows 7 (32-bit), Windows 8.1 (32-bit), 64-bit Windows 10 (1507, 1803, 22H2) and Windows 11,
+for Windows 7 (64-bit), Windows 8.1 (64-bit), 64-bit Windows 10 (1507, 1803, 22H2) and Windows 11,
 for instance on an Intel64 Mac with Parallels Desktop.
 On an ARM64 Mac with Parallels Desktop, you can test only on Windows 11.
 
