@@ -138,19 +138,21 @@ you use an existing Xcode project (for the Mac; these files are included in the 
 or existing makefiles (for other platforms; these files are included in the source tree).
 
 **Testing** on a platform can be done by starting up Praat on that platform,
-and then go through the following steps:
+and then go through to types of tests. Basic GUI functionality is tested as follows:
 
-- Basic GUI functionality:
-	1. record a sound (New -> `Record mono Sound...`)
-	2. open the sound (`View & Edit`)
-	3. select a part of the sound (drag the mouse across the waveform)
-	4. play the sound (click on the rectangle below or above the selection)
-- Integrity of the signal processing and the scripting language:
-	1. open the script `test/runAlltests.praat` (Praat -> `Open Praat script...`)
-	2. run the script (Run -> `Run`)
-	3. after 2 to 10 minutes, the Info window should contain a big “OK” graph
-	4. go through steps 1 through 3 for `dwtest/runAllTests.praat`
-	5. if you feel adventurous, try some tests in the folder `test/manually`
+1. record a sound (New -> `Record mono Sound...`)
+2. open the sound (`View & Edit`)
+3. select a part of the sound (drag the mouse across the waveform)
+4. play the sound (click on the rectangle below or above the selection)
+
+The integrity of Praats’s algorithms (e.g. signal processing)
+and of the Praat scripting language is tested as follows:
+
+1. open the script `test/runAlltests.praat` (Praat -> `Open Praat script...`)
+2. run the script (Run -> `Run`)
+3. after 2 to 10 minutes, the Info window should contain a big “OK” graph
+4. go through steps 1 through 3 for `dwtest/runAllTests.praat`
+5. if you feel adventurous, try some tests in the folder `test/manually`
 
 ### 3.1. Developing Praat for Windows
 
