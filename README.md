@@ -37,7 +37,7 @@ as well as several kinds of neural-network models.
 Praat allows you to perform several statistical techniques, among which
 multidimensional scaling, principal component analysis, and discriminant analysis.
 
-For more information, consult the website [praat.org](https://praat.org) or [praat.org](praat.org), which has Praat tutorials in several languages.
+For more information, consult the website [praat.org](https://praat.org) or [praat.org](praat.org) or [praat.org](http://praat.org) , which has Praat tutorials in several languages.
 
 ## 1. Binary executables
 
