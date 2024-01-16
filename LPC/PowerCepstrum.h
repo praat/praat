@@ -2,7 +2,7 @@
 #define _PowerCepstrum_h_
 /* PowerCepstrum.h
  *
- * Copyright (C) 2012-2021 David Weenink
+ * Copyright (C) 2012-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +85,8 @@ autoTable PowerCepstrum_tabulateRhamonics (PowerCepstrum me, double pitchFloor, 
 double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod, double *qpeak);
 
 void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_slope, double *out_intercept, kCepstrum_trendType lineType, kCepstrum_trendFit method);
+
+double PowerCepstrum_getTrendLineValue (PowerCepstrum me, double quefrency, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 
 autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod);
 

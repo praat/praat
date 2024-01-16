@@ -1,6 +1,6 @@
 /* PowerCepstrum.cpp
  *
- * Copyright (C) 2012-2021 David Weenink
+ * Copyright (C) 2012-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,6 +199,12 @@ static void PowerCepstrum_subtractTrendLine_inline2 (PowerCepstrum me, double sl
 }
 #endif
 
+
+static inline double getTrendLineValueAtQuefrency (double quefrency, double slope, double intercept, kCepstrum_trendType lineType) {
+	const double xq = ( lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? log (quefrency) : quefrency );
+	return slope * xq + intercept;
+}
+
 // clip with tilt line
 static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double slope, double intercept, kCepstrum_trendType lineType) {
 	for (integer j = 1; j <= my nx; j ++) {
@@ -208,14 +214,22 @@ static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double sl
 			This is no problem because the value at quefrency == 0 is not relevant.
 		*/
 		const double quefrency = ( j == 1 && lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? 0.5 * my dx : (j - 1) * my dx );
-		const double xq = ( lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? log (quefrency) : quefrency );
-		const double db_background = slope * xq + intercept;
+		const double db_background = getTrendLineValueAtQuefrency (quefrency, slope, intercept, lineType);
 		const double db_cepstrum = my v_getValueAtSample (j, 1, 1);
 		const double diff = Melder_clippedLeft (0.0, db_cepstrum - db_background);
 		my z [1] [j] = exp (diff * NUMln10 / 10.0);
 	}
 }
 
+double PowerCepstrum_getTrendLineValue (PowerCepstrum me, double quefrency, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
+	double trend_db = undefined;
+	if (quefrency >= my xmin && quefrency <= my xmax) {
+		double slope, intercept;
+		PowerCepstrum_fitTrendLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
+		trend_db =  getTrendLineValueAtQuefrency (quefrency, slope, intercept, lineType);
+	}
+	return trend_db;
+}
 
 void PowerCepstrum_subtractTrend_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
 	double slope, intercept;
