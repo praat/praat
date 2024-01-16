@@ -1,6 +1,6 @@
 /* praat_LPC_init.cpp
  *
- * Copyright (C) 1994-2021 David Weenink
+ * Copyright (C) 1994-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -546,7 +546,21 @@ DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_fitTrendLine (me, fromQuefrency_trendLine, toQuefrency_trendLine, nullptr, & result, lineType, fitMethod);
-	QUERY_ONE_FOR_REAL_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB (intercept)")
+}
+
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineValue, U"PowerCepstrum: Get trend line value", U"PowerCepstrum: Get trend line value...") {
+	REAL (quefrency, U"Quefrency (s)", U"0.001")
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
+	OPTIONMENU_ENUM (kCepstrum_trendType, lineType, U"Trend type", kCepstrum_trendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrum_trendFit, fitMethod, U"Fit method", kCepstrum_trendFit::DEFAULT)
+	OK
+DO
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
+		double result =	PowerCepstrum_getTrendLineValue (me, quefrency, fromQuefrency_trendLine, toQuefrency_trendLine,
+			lineType, fitMethod);
+	QUERY_ONE_FOR_REAL_END (U" dB (quefrency = ", quefrency, U" s")
 }
 
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getValueInBin, U"PowerCepstrum: Get value in bin", nullptr) {
@@ -1731,6 +1745,8 @@ void praat_uvafon_LPC_init () {
 				nullptr, 1, QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineSlope);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line intercept... || Get tilt line intercept...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineIntercept);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line value...", nullptr, 1,
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineValue);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get value in bin...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getValueInBin);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get rhamonics to noise ratio...", nullptr, 1, 
