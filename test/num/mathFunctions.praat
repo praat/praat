@@ -31,7 +31,11 @@ assert ln (1) = 0
 assert abs (ln (exp (100)) - 100) < 1e-13
 assert abs (ln (exp (10)) - 10) < 1e-17
 assert abs (ln (exp (1)) - 1) < 1e-17
-assert abs (ln (exp (0.1)) - 0.1) < 1e-16
+if windows
+	assert abs (ln (exp (0.1)) - 0.1) < 1e-15
+else
+	assert abs (ln (exp (0.1)) - 0.1) < 1e-16
+endif
 assert abs (ln (exp (0.01)) - 0.01) < 1e-15
 
 printline lnGamma

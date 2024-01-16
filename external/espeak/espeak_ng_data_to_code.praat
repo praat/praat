@@ -1,7 +1,7 @@
 # espeak_ng_data_to_code.praat
 # djmw 20120117, 20120124, 20151130, 20171004, 20211207, 20231009
 #
-# This script is specific for my situation (althought it can be adapted easily to 
+# This script is specific for my situation (although it can be adapted easily to 
 # any directory structure and non-Linux system).
 # My espeak-work/ has subdirectories espeak-ng-work, espeak-ng-current and espeak-ng-previous.
 # Into espeak-ng-work are copied from the original espeak-ng project only those *.c and *.h files 
