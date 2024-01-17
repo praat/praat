@@ -42,7 +42,7 @@ static void logo (Graphics graphics) {
 	Graphics_setFontSize (graphics, 10.0);
 	Graphics_text (graphics, 0.5, 0.20, U"Copyright © 1992–" stringize(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 	Graphics_setFontSize (graphics, 10.0);
-	Graphics_text (graphics, 0.5, 0.10, U"Website: https://www.fon.hum.uva.nl/praat (or praat.org)");
+	Graphics_text (graphics, 0.5, 0.10, U"Website: http://praat.org or https://www.fon.hum.uva.nl/praat");
 }
 
 int main (int argc, char *argv []) {
