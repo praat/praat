@@ -263,7 +263,7 @@ macOS 11 Big Sur, macOS 12 Monterey, and macOS 13 Ventura (and macOS 14 Sonoma n
 To set up the system libraries required for **building**,
 install the necessary build tools as well as some graphics and sound packages:
 
-    sudo apt install make gcc g++ rsync
+    sudo apt install make gcc g++ rsync pkg-config
     sudo apt install libgtk-3-dev
     sudo apt install libasound2-dev
     sudo apt install libpulse-dev

@@ -1,7 +1,7 @@
-# File: makefile.defs.msys-arm64
+# File: makefile.defs.msys-clang
 
 # System: clang on Windows under MSYS2
-# Paul Boersma 2024-01-03
+# Paul Boersma 2024-01-18
 
 PREFIX ?=
 

@@ -1,9 +1,9 @@
-# File: makefile.defs.linux.pulse
+# File: makefile.defs.linux.pulse-clang
 # System: Linux
-# David Weenink and Paul Boersma 2024-01-21
+# David Weenink and Paul Boersma 2024-01-20
 
-CC ?= gcc
-CXX ?= g++
+CC ?= clang
+CXX ?= clang
 LINK ?= $(CXX)
 
 PKG_CONFIG ?= "pkg-config"
@@ -13,11 +13,11 @@ COMMONFLAGS = -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
-CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) --stdlib=libc++ -Wshadow
 
 EXECUTABLE = praat
 
-LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -lpthread
+LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -lpthread --stdlib=libc++
 # erased: -L /usr/lib/x86_64-linux-gnu
 
 AR = ar
