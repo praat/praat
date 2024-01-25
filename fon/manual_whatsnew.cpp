@@ -29,6 +29,9 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.05# (27 January 2024)
+• Many typos in manual.
+
 ##6.4.04# (6 January 2024)
 • Typo in example script in manual.
 • ARM64 edition for Linux (Ubuntu 20.04 and up).
@@ -683,7 +686,7 @@ then dragged the mouse out of that window, then released the mouse button, and t
 • Removed many small bugs.
 
 ##6.0.37# (3 February 2018)
-• Graphics: fixed crashing bug with \\bsun trigraph.
+• Graphics: fixed crashing bug with \bsun trigraph (\un).
 
 ##6.0.36# (11 November 2017)
 • Many more languages for SpeechSynthesizer and automatic alignment (new eSpeak).
@@ -1265,7 +1268,7 @@ the column index was larger than the number of rows.
 ##5.3.06# (28 February 2012)
 
 ##5.3.05# (19 February 2012)
-• SpeechSynthesizer (#New menu \\-> #Sound): text-to-speech.
+• SpeechSynthesizer (#New menu \-> #Sound): text-to-speech.
 • @EEG: better scalp distribution drawing for both 32-channel and 64-channel recordings.
 
 ##5.3.04# (12 January 2012)
@@ -1281,7 +1284,7 @@ the column index was larger than the number of rows.
 
 ##5.3.01# (1 November 2011)
 • Macintosh and Windows: better window positioning if the Dock or Task Bar is on the left or right.
-• IPA symbol: you can now use \\bs.f for the half-length sign (\\.f).
+• IPA symbol: you can now use \bs.f for the half-length sign (\.f).
 • EEG window.
 
 ################################################################################
@@ -1327,12 +1330,12 @@ the column index was larger than the number of rows.
 • Corrected several bugs that were introduced in 5.2.36 in the Inspect window.
 
 ##5.2.37# (2 September 2011)
-• Graphics: added the Chinese phonetic symbols \\id and \\ir. See @@Phonetic symbols: vowels@.
+• Graphics: added the Chinese phonetic symbols \id and \ir. See @@Phonetic symbols: vowels@.
 • Corrected a bug introduced in 5.2.36 that caused Praat to crash when querying formant quantiles.
 
 ##5.2.36# (30 August 2011)
-• Graphics: added superscript diacritics as single symbols: \\^h (\\bs\\^ h), \\^j (\\bs\\^ j),
-and many more; also \\_u (\\bs\\_ u). See @@Phonetic symbols: diacritics@.
+• Graphics: added superscript diacritics as single symbols: \^h (\bs\^ h), \^j (\bs\^ j),
+and many more; also \_u (\bs\_ u). See @@Phonetic symbols: diacritics@.
 • Praat fully converted to C++ (this may initially cause some bugs, but will be more reliable in the end).
 
 ##5.2.35# (5 August 2011)
@@ -1484,7 +1487,7 @@ if the selection ran from the penultimate interval to the end of the TextGrid.
 
 ##5.1.45# (26 October 2010)
 • Linux/GTK: allow Praat to run without an X display.
-• Sounds are played synchronously in scripts run from ManPages with \\bsSC.
+• Sounds are played synchronously in scripts run from ManPages with \bsSC.
 
 ##5.1.44# (4 October 2010)
 • Linux/GTK: visibility of ExperimentMFC window.
@@ -1610,7 +1613,7 @@ if the selection ran from the penultimate interval to the end of the TextGrid.
 
 ##5.1.24# (15 January 2010)
 • Formulas run 10 to 20 percent faster.
-• Macintosh: support for forward delete key and Command-\\` .
+• Macintosh: support for forward delete key and Command-\` .
 
 ##5.1.23# (1 January 2010)
 • Allowed multiple files to be selected with e.g. @@Read from file...@.
@@ -1785,7 +1788,7 @@ in a window without text fields.
 • Windows: audio output uses DirectX (next to Multi-Media Extensions).
 
 ##5.0.27# (28 June 2008)
-• @@Phonetic symbols@: breve (a\\N^).
+• @@Phonetic symbols@: breve (a\N^).
 • Annotation: improved some SpellingChecker commands.
 • Table: can now set string values that contain spaces.
 
@@ -1835,7 +1838,7 @@ in a window without text fields.
 • Windows: more reliable dropping of files on the Praat icon when Praat is already running.
 
 ##5.0.14# (20 March 2008)
-• David's vowel editor (New \\-> Sound).
+• David's vowel editor (New \-> Sound).
 • Formulas: corrected scaling of sinc function.
 
 ##5.0.13# (18 March 2008)
@@ -1846,13 +1849,13 @@ in a window without text fields.
 • Formulas: sinc function.
 
 ##5.0.12# (12 March 2008)
-• Bigger ligature symbol (k\\lip).
+• Bigger ligature symbol (k\lip).
 
 ##5.0.11# (7 March 2008)
 • Corrected saving of new binary Manipulation files (you can send any unreadable Manipulation files to Paul Boersma for correction).
 
 ##5.0.10# (27 February 2008)
-• Added the characters \\d- and \\D-.
+• Added the characters \d- and \D-.
 • Windows: made ##praatcon.exe# compatible with Unicode command lines.
 
 ##5.0.09# (16 February 2008)
@@ -1968,7 +1971,7 @@ if the names of these files or their directory paths contained non-ASCII charact
 • @ExperimentMFC: can set font size for response buttons.
 
 ##4.6.24# (24 September 2007)
-• Czech, Polish, Croatian, and Hungarian characters such as \c< \uo \t< \e; \s' \l/ \c\' \o: (see @@Special symbols@).
+• Czech, Polish, Croatian, and Hungarian characters such as \c< \uo \t< \e; \s' \l/ \c' \o: (see @@Special symbols@).
 • Some support for Hebrew characters such as \?+ \B+ \sU (see @@Special symbols@).
 
 ##4.6.23# (22 September 2007)
@@ -1976,7 +1979,7 @@ if the names of these files or their directory paths contained non-ASCII charact
 • Info commands in editors.
 
 ##4.6.22# (17 September 2007)
-• Phonetic symbols: added the nonsyllabicity diacritic (a\\nv).
+• Phonetic symbols: added the nonsyllabicity diacritic (a\nv).
 • Macintosh: worked around a feature of a system library that could cause strange behaviour of forms in scripts with non-ASCII characters.
 
 ##4.6.21# (5 September 2007)
@@ -2140,7 +2143,7 @@ if the names of these files or their directory paths contained non-ASCII charact
 ##4.5.11# (29 January 2007)
 • Sound objects can be stereo, for better playback quality
   (most analyses will work on the averaged mono signal).
-• Macintosh: recording a sound now uses CoreAudio instead of SoundManager, "
+• Macintosh: recording a sound now uses CoreAudio instead of SoundManager,
   for more compatibility with modern recording devices,
   and the possibility to record with a sampling frequency of 96 kHz.
 • @ManPages allow picture scripts with separate object lists.
@@ -2585,7 +2588,7 @@ Listening experiments:
 • @ExperimentMFC: multiple substimuli for discrimination tests.
 
 Statistics:
-• New @Table object for column @statistics: Pearson's %r, Kendall's %\\ta-%b, %t-test.
+• New @Table object for column @statistics: Pearson's %r, Kendall's %\ta-%b, %t-test.
 • Table: scatter plot.
 • Table: column names as variables.
 • @@T-test@.
@@ -2616,7 +2619,7 @@ Scripting:
 • Stopped support of things that had been undocumented for the last four years:
   #let, #getnumber, #getstring, #ARGS, #copy, #proc, variables with capitals, and strings in numeric variables;
   there are messages about how to modify your old scripts.
-• Disallowed ambiguous expressions like -3\\^ 2.
+• Disallowed ambiguous expressions like -3\^ 2.
 
 ################################################################################
 "What was new in 4.0?"
@@ -2733,9 +2736,9 @@ Audio:
 • Linux: solved problems with /dev/mixer (“Cannot read MIC gain.”) on many computers.
 • Added possibility of zero padding for sound playing,
   in order to reduce clicks on some Linux and Sun computers.
-• LongSound supports mono and stereo, 8-bit and 16-bit, %\\mu-law and A-law,
+• LongSound supports mono and stereo, 8-bit and 16-bit, %\mu-law and A-law,
   big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.
-•v##Read two Sounds from stereo file...# supports 8-bit and 16-bit, %\\mu-law and A-law,
+•v##Read two Sounds from stereo file...# supports 8-bit and 16-bit, %\mu-law and A-law,
   big-endian and little-endian, AIFC, WAV, NeXT/Sun, and NIST files.
 • SoundRecorder writes to 16-bit AIFC, WAV, NeXT/Sun, and NIST mono and stereo files.
 • Sound & LongSound: write part or whole to mono or stereo audio file.
@@ -2743,7 +2746,7 @@ Audio:
 • Artword & Speaker (& Sound) movie: real time on all platforms.
 
 Scripting:
-• @@Formulas 5. Mathematical functions@: added statistical functions: %\\ci^2, Student T, Fisher F, binomial,
+• @@Formulas 5. Mathematical functions@: added statistical functions: %\ci^2, Student T, Fisher F, binomial,
   and their inverse functions.
 • Windows: program #`praatcon` for use as a Unix-style console application.
 • Windows and Unix: Praat can be run with a command-line interface without quitting on errors.

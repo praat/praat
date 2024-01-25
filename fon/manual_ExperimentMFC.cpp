@@ -161,7 +161,7 @@ NORMAL (U"Instead of a relative path, you can also supply a %%full file path%. "
 	"Such a path depends on your computer and on your operating system. "
 	"For instance, if you have a Windows computer and the stimuli are in the folder ##D:\\bsCorpus\\bsAutumn\\bsSpeaker23#, "
 	"you can write")
-CODE (U"fileNameHead = \"D:\\bsCorpus\\bsAutumn\\bsSpeaker23\\bs\"")
+CODE (U"fileNameHead = \"D:\\Corpus\\Autumn\\Speaker23\\\"")
 NORMAL (U"If you have a Macintosh (OS X) or Unix computer and the stimuli are in ##/Users/mietta/Sounds/Dutch#, you write")
 CODE (U"fileNameHead = \"/Users/mietta/Sounds/Dutch/\"")
 NORMAL (U"But relative file paths will usually be preferred: they are more %portable. "
@@ -265,7 +265,7 @@ NORMAL (U"The border of the rectangles will be maroon, the background of the scr
 	"The colour of clickable rectangles will be yellow, that of non-clickable rectangles (those with "
 	"empty category specifications) light grey.")
 NORMAL (U"You can have a picture instead of a text on a response button, by using \\bsFI:")
-CODE1 (U"0.2 0.3 0.7 0.8 \"\\bsFIpictures/hello.jpg\" 40 \"m\" \"i\"")
+CODE1 (U"0.2 0.3 0.7 0.8 \"\\FIpictures/hello.jpg\" 40 \"m\" \"i\"")
 NORMAL (U"In this example, the picture ##hello.jpg# from the subfolder #pictures "
 	"(i.e. a subfolder of the folder where your experiment file is) "
 	"will be drawn into the rectangle [0.2, 0.3] \\xx [0.7, 0.8]. "
