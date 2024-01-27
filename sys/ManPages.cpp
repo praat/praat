@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2023 Paul Boersma
+ * Copyright (C) 1996-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 		} else if (linkBuffer [0] == U'\\' && linkBuffer [1] == U'S' && linkBuffer [2] == U'C') {
 			/*
 				A link to a script: see if it exists.
-			s*/
+			*/
 			char32 *p = linkBuffer + 3;
 			if (*p == U'"') {
 				char32 *q = fileNameBuffer;
@@ -830,10 +830,12 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			} while (1);
 		}
 		if (par) {
-			resolveLinks (me, par, page -> verbatimAware);
+			if (my dynamic)
+				resolveLinks (me, par, page -> verbatimAware);
 			previousParagraph = par;
 		}
 	}
+	trace (U"end");
 }
 static void readOnePage (ManPages me, MelderReadText text) {
 	const bool isNotebook = (
@@ -892,7 +894,7 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 signature
 	page -> signature = Melder_dup (signature);
 	my pages. addItem_move (page.move());
 }
-void ManPages_addPagesFromNotebook (ManPages me, conststring8 multiplePagesText) {
+void ManPages_addPagesFromNotebookText (ManPages me, conststring8 multiplePagesText) {
 	autoMelderReadText multiplePagesReader = MelderReadText_createFromText (Melder_8to32 (multiplePagesText));
 	autoMelderString pageText;
 	for (;;) {
@@ -910,7 +912,7 @@ void ManPages_addPagesFromNotebook (ManPages me, conststring8 multiplePagesText)
 			MelderString_append (& pageText, line, U"\n");
 	}
 }
-integer ManPages_addPagesFromNotebook (ManPages me, MelderReadText multiplePagesReader, integer startOfSelection, integer endOfSelection) {
+integer ManPages_addPagesFromNotebookReader (ManPages me, MelderReadText multiplePagesReader, integer startOfSelection, integer endOfSelection) {
 	bool foundFirstPage = false;
 	integer numberOfCharactersRead = 0;
 	integer startingPage = -1, numberOfPages = 0;
