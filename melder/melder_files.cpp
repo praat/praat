@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2008,2010-2022 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2008,2010-2024 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -496,14 +496,16 @@ static size_t read_URL_data_from_file (void *buffer, size_t size, size_t nmemb, 
 #endif
 
 FILE * Melder_fopen (MelderFile file, const char *type) {
-	if (MelderFile_isNull (file)) Melder_throw (U"Cannot open null file.");
+	if (MelderFile_isNull (file))
+		Melder_throw (U"Cannot open null file.");
 	if (! Melder_isTracingGlobally)
 		Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
 	/*
-	 * On the Unix-like systems (including MacOS), the path has to be converted to 8-bit characters in UTF-8 encoding.
-	 * On MacOS, the characters also have to be decomposed.
-	 * On Windows, the characters have to be precomposed.
-	 */
+		On the Unix-like systems (including MacOS), the path has to be converted to 8-bit characters in UTF-8 encoding.
+		On MacOS, the characters also have to be decomposed.
+		On Windows, the characters have to be precomposed.
+	*/
+	bool isFolder = false;
 	char utf8path [kMelder_MAXPATH+1];
 	Melder_32to8_fileSystem_inplace (file -> path, utf8path);
 	FILE *f;
@@ -552,20 +554,31 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 		if (f) rewind (f);
 	#endif
 	} else {
+		//TRACE
 		#if defined (_WIN32) && ! defined (__CYGWIN__)
 			f = _wfopen (Melder_peek32toW_fileSystem (file -> path), Melder_peek32toW (Melder_peek8to32 (type)));
 		#else
-			f = fopen ((char *) utf8path, type);
+			struct stat statbuf;
+			stat ((char *) utf8path, & statbuf);
+			if (S_ISDIR (statbuf. st_mode)) {
+				isFolder = true;
+				trace (U"A folder is not a file!");
+				f = nullptr;
+			} else {
+				f = fopen ((char *) utf8path, type);
+			}
 		#endif
 	}
 	if (! f) {
 		char32 *path = file -> path;
 		Melder_appendError (
-			( errno == EPERM ? U"No permission to " : U"Cannot " ),
+			( errno == EPERM || errno == EACCES ? U"No permission to " : U"Cannot " ),
 			( type [0] == 'r' ? U"open" : type [0] == 'a' ? U"append to" : U"create" ),
 			U" file ", file, U"."
 		);
-		if (path [0] == U'\0')
+		if (isFolder)
+			Melder_appendError (U"Hint: this is a folder, not a file.");
+		else if (path [0] == U'\0')
 			Melder_appendError (U"Hint: empty file name.");
 		else if (path [0] == U' ' || path [0] == U'\t')
 			Melder_appendError (U"Hint: file name starts with a space or tab.");

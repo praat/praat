@@ -1,6 +1,6 @@
 /* manual_functions.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1877,14 +1877,15 @@ See also
 
 ################################################################################
 "`fileReadable`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @@Formulas@, especially in @Scripting.
 
 Syntax and semantics
 ====================
 #`fileReadable` (%`filePath$`)
-: return 1 if the file exists and can be read, or 0 otherwise.
+: return 1 if the file exists and can be read, or 0 otherwise
+  (e.g. if %`filePath$` does not exist or refers to a folder).
 
 ################################################################################
 "`fisherP`"

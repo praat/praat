@@ -159,7 +159,7 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, 
 	bool phnFile = false;
 	integer it [5];
 	if (nread < 12 || sscanf (header, "%td%td%511s%n\n", & it [1], & it [2], label1, & length) != 3 ||
-		it [1] < 0 || it [2] <= it [1] || sscanf (& header [length], "%ld%ld%511s\n", & it [3], & it [4], label2) != 3 ||
+		it [1] < 0 || it [2] <= it [1] || sscanf (& header [length], "%td%td%511s\n", & it [3], & it [4], label2) != 3 ||
 		it [4] <= it [3]) {
 		/*
 			20120512 djmw removed the extra "it [3] < it [2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read

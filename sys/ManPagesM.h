@@ -2,7 +2,7 @@
 #define _ManPagesM_h_
 /* ManPagesM.h
  *
- * Copyright (C) 1996-2005,2007,2009,2011,2014-2018,2021,2023 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2009,2011,2014-2018,2021,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #endif
 
 #define MAN_PAGES_BEGIN  { conststring8 text = &
-#define MAN_PAGES_END  [1]; ManPages_addPagesFromNotebook (me, text); }
+#define MAN_PAGES_END  [1]; ManPages_addPagesFromNotebookText (me, text); }
 
 
 #define MAN_EXCESS_INITIALIZERS_  autoGraphics(), autoMelderString(), nullptr

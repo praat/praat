@@ -2,7 +2,7 @@
 #define _melder_int_h_
 /* melder_int.h
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2021,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ inline integer Melder_iroundUpToPowerOfTwo (integer n) {
 inline integer integer_abs (integer n) {
 	Melder_assert (sizeof (integer) == sizeof (long) || sizeof (integer) == sizeof (long long));
 	if (sizeof (integer) == sizeof (long))
-		return labs (n);
+		return labs ((long_not_integer) n);
 	else // sizeof (integer) == sizeof (long long)
 		return llabs (n);
 }

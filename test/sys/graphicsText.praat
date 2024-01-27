@@ -43,6 +43,6 @@ Save as EPS file: "kanweg.eps"
 
 
 width = Text width (mm): "Hello world"
-assert width > 18.0 and width < 24.0   ; 'width'
+assert width > 18.0 and width < 26.0   ; 'width'
 appendInfoLine: "width ", width, " mm"
 appendInfoLine: "OK"

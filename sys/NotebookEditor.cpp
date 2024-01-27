@@ -121,7 +121,7 @@ static void menu_cb_run (NotebookEditor me, EDITOR_ARGS) {
 		autoMelderReadText readText = MelderReadText_createFromText (text.move());
 		autoManPages you = Thing_new (ManPages);
 		your dynamic = false;
-		integer startingPage = ManPages_addPagesFromNotebook (you.get(), readText.get(), startOfSelection, endOfSelection);
+		integer startingPage = ManPages_addPagesFromNotebookReader (you.get(), readText.get(), startOfSelection, endOfSelection);
 		Melder_clip (1_integer, & startingPage, your pages.size);
 		ManPage firstPage = your pages.at [startingPage];
 		autoManual manual = Manual_create (firstPage -> title.get(), my interpreter.get(), you.releaseToAmbiguousOwner(), true, true);
