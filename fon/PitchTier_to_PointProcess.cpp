@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2005,2011,2012,2015-2017,2019,2023 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2012,2015-2017,2019,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,22 +27,24 @@ autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 		if (size == 0)
 			return thee;
 		for (integer interval = 0; interval <= size; interval ++) {
-			double t1 = ( interval == 0 ? my xmin : my points.at [interval] -> number );
-			Melder_assert (isdefined (t1));
-			double t2 = ( interval == size ? my xmax : my points.at [interval + 1] -> number );
-			Melder_assert (isdefined (t2));
-			double f1 = my points.at [interval == 0 ? 1 : interval] -> value;
-			Melder_assert (isdefined (f1));
-			double f2 = my points.at [interval == size ? size : interval + 1] -> value;
-			Melder_assert (isdefined (f2));
+			const double t1 = ( interval == 0 ? my xmin : my points.at [interval] -> number );
+			Melder_require (isdefined (t1),
+				U"Time of point ", interval, U" not defined.");
+			const double t2 = ( interval == size ? my xmax : my points.at [interval + 1] -> number );
+			Melder_require (isdefined (t2),
+				U"Time of point ", interval + 1, U" not defined.");
+			const double f1 = my points.at [interval == 0 ? 1 : interval] -> value;
+			Melder_require (isdefined (f1),
+				U"Pitch of point ", interval == 0 ? 1 : interval, U" not defined.");
+			const double f2 = my points.at [interval == size ? size : interval + 1] -> value;
+			Melder_require (isdefined (f2),
+				U"Pitch of point ", interval == size ? size : interval + 1, U" not defined.");
 			area += (t2 - t1) * 0.5 * (f1 + f2);
 			while (area >= 1.0) {
 				const double slope = (f2 - f1) / (t2 - t1);
 				area -= 1.0;
-				double discriminant = f2 * f2 - 2.0 * area * slope;
-				if (discriminant < 0.0)
-					discriminant = 0.0;   // catch rounding errors
-				PointProcess_addPoint (thee.get(), t2 - 2.0 * area / (f2 + sqrt (discriminant)));
+				const double discriminant = f2 * f2 - 2.0 * area * slope;
+				PointProcess_addPoint (thee.get(), t2 - 2.0 * area / (f2 + NUMsqrt_0 (discriminant)));
 			}
 		}
 		return thee;
@@ -56,10 +58,10 @@ autoPointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 		autoPointProcess fullPoint = PitchTier_to_PointProcess (me);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, fullPoint -> nt);
 		/*
-		 * Copy only voiced parts to result.
-		 */
+			Copy only voiced parts to result.
+		*/
 		for (integer i = 1; i <= fullPoint -> nt; i ++) {
-			double t = fullPoint -> t [i];
+			const double t = fullPoint -> t [i];
 			if (Pitch_isVoiced_t (vuv, t))
 				PointProcess_addPoint (thee.get(), t);
 		}
@@ -69,13 +71,13 @@ autoPointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 	}
 }
 
-static bool PointProcess_isVoiced_t (PointProcess me, double t, double maxT) {
-	integer imid = PointProcess_getNearestIndex (me, t);
+static bool PointProcess_isVoiced_t (PointProcess me, const double t, const double maximumPeriod) {
+	const integer imid = PointProcess_getNearestIndex (me, t);
 	if (imid == 0)
 		return false;
-	double tmid = my t [imid];
-	bool leftVoiced = ( imid > 1 && tmid - my t [imid - 1] <= maxT );
-	bool rightVoiced = ( imid < my nt && my t [imid + 1] - tmid <= maxT );
+	const double tmid = my t [imid];
+	const bool leftVoiced = ( imid > 1 && tmid - my t [imid - 1] <= maximumPeriod );
+	const bool rightVoiced = ( imid < my nt && my t [imid + 1] - tmid <= maximumPeriod );
 	if (leftVoiced && t <= tmid || rightVoiced && t >= tmid)
 		return true;
 	if (leftVoiced && t < 1.5 * tmid - 0.5 * my t [imid - 1])
@@ -85,16 +87,16 @@ static bool PointProcess_isVoiced_t (PointProcess me, double t, double maxT) {
 	return false;
 }
 
-autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, double maxT) {
+autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, const double maximumPeriod) {
 	try {
 		autoPointProcess fullPoint = PitchTier_to_PointProcess (me);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, fullPoint -> nt);
 		/*
-		 * Copy only voiced parts to result.
-		 */
+			Copy only voiced parts to result.
+		*/
 		for (integer i = 1; i <= fullPoint -> nt; i ++) {
-			double t = fullPoint -> t [i];
-			if (PointProcess_isVoiced_t (vuv, t, maxT))
+			const double t = fullPoint -> t [i];
+			if (PointProcess_isVoiced_t (vuv, t, maximumPeriod))
 				PointProcess_addPoint (thee.get(), t);
 		}
 		return thee;
@@ -103,12 +105,12 @@ autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv
 	}
 }
 
-autoPitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
+autoPitchTier PointProcess_to_PitchTier (PointProcess me, const double maximumPeriod) {
 	try {
 		autoPitchTier thee = PitchTier_create (my xmin, my xmax);
 		for (integer i = 1; i < my nt; i ++) {
-			double interval = my t [i + 1] - my t [i];
-			if (interval <= maximumInterval)
+			const double interval = my t [i + 1] - my t [i];
+			if (interval <= maximumPeriod)
 				RealTier_addPoint (thee.get(), my t [i] + 0.5 * interval, 1.0 / interval);
 		}
 		return thee;
@@ -129,11 +131,12 @@ autoPitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
 
 autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 	try {
-		if (my points.size == 0) Melder_throw (U"No pitch points.");
+		Melder_require (my points.size > 0,
+			U"No pitch points.");
 		autoPitchTier thee = PitchTier_create (pp -> xmin, pp -> xmax);
 		for (integer i = 1; i <= pp -> nt; i ++) {
-			double time = pp -> t [i];
-			double value = RealTier_getValueAtTime (me, time);
+			const double time = pp -> t [i];
+			const double value = RealTier_getValueAtTime (me, time);
 			RealTier_addPoint (thee.get(), time, value);
 		}
 		return thee;
