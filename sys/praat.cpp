@@ -2139,7 +2139,7 @@ void praat_run () {
 	{
 		double x = sqrt (-10.0);
 		//if (! isnan (x)) printf ("sqrt (-10.0) = %g\n", x);   // -10.0 on Windows
-		x = NUMsqrt (-10.0);
+		x = NUMsqrt_u (-10.0);
 		Melder_assert (isundef (x));
 	}
 	Melder_assert (isdefined (0.0));

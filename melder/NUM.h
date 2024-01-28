@@ -298,10 +298,23 @@ inline double NUMpow (double base, double exponent) {
 	return base <= 0.0 ? 0.0 : pow (base, exponent);
 }
 
-inline double NUMsqrt (double x) {
+inline double NUMsqrt_u (const double x) {
 	#if defined (_WIN32)
-		if (x < 0.0) return undefined;
+		if (x < 0.0)
+			return undefined;
 	#endif
+	return sqrt (x);
+}
+
+inline double NUMsqrt_0 (const double x) {
+	if (x < 0.0)
+		return 0.0;
+	return sqrt (x);
+}
+
+inline double NUMsqrt_e (const double x) {
+	Melder_require (x >= 0.0,
+		U"You cannot take the square root of a negative number (", x, U").");
 	return sqrt (x);
 }
 

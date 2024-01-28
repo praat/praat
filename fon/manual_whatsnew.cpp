@@ -31,6 +31,9 @@ Latest changes in Praat.
 
 ##6.4.05# (27 January 2024)
 • Many typos in manual.
+• Made TIMIT label files readable on Windows.
+• Prevented 8000 files from being read at start-up.
+• Mac and Linux scripting: @`fileReadable` now returns 0 if the argument is a folder (as already on Windows).
 
 ##6.4.04# (6 January 2024)
 • Typo in example script in manual.

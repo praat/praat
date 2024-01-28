@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.h
  *
- * Copyright (C) 1992-2011,2015,2016,2023 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,14 @@ autoPointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv);
 /* Keeps only the parts that are voiced according to 'vuv'. */
 /* Voiced means: inside voiced frame of 'pitch'. */
 
-autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, double maxT);
+autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, const double maximumPeriod);
 /* Keeps only the parts that are voiced according to 'vuv'. */
-/* Voiced means: within an interval no longer than 'maxT', */
+/* Voiced means: within an interval no longer than 'maximumPeriod', */
 /* or within half an adjacent short-enough interval from any pulse. */
 
-autoPitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval);
+autoPitchTier PointProcess_to_PitchTier (PointProcess me, const double maximumPeriod);
 autoPitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp);
 autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp);
-autoTableOfReal PitchTier_downto_TableOfReal (constPitchTier me, bool useSemitones);
+autoTableOfReal PitchTier_downto_TableOfReal (constPitchTier me, const bool useSemitones);
 
 /* End of file PitchTier_to_PointProcess.h */

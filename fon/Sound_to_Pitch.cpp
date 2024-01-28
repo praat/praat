@@ -587,7 +587,7 @@ autoPitch Sound_to_Pitch_filteredAc (Sound me,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
 	try {
-		const double lowPassCutoffFrequency = pitchCeiling / NUMsqrt (-2.0 * log (attenuationAtCeiling));   // TODO: sqrt_e
+		const double lowPassCutoffFrequency = pitchCeiling / NUMsqrt_e (-2.0 * log (attenuationAtCeiling));
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, true);
@@ -631,7 +631,7 @@ autoPitch Sound_to_Pitch_filteredCc (Sound me,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost)
 {
 	try {
-		const double lowPassCutoffFrequency = pitchCeiling / NUMsqrt (-2.0 * log (attenuationAtCeiling));   // TODO: sqrt_e
+		const double lowPassCutoffFrequency = pitchCeiling / NUMsqrt_e (-2.0 * log (attenuationAtCeiling));
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, true);
