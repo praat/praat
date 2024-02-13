@@ -2,7 +2,7 @@
 #define _Spectrogram_h_
 /* Spectrogram.h
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2019,2022,2023 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2019,2022,2023,2024 David Weenink & Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,10 +61,10 @@ autoSpectrogram Spectrogram_create (double tmin, double tmax, integer nt, double
 */
 
 void Spectrogram_paintInside (Spectrogram me, Graphics g,
-	double tmin, double tmax, double fmin, double fmax, double maximum, int autoscaling,
+	double tmin, double tmax, double fmin, double fmax, double maximum, bool autoscaling,
 	double dynamicRange, double preemphasis, double dynamicCompression);
 void Spectrogram_paint (Spectrogram me, Graphics g,
-	double tmin, double tmax, double fmin, double fmax, double maximum, int autoscaling,
+	double tmin, double tmax, double fmin, double fmax, double maximum, bool autoscaling,
 	double dynamicRange, double preemphasis, double dynamicCompression,
 	bool garnish);
 /*
