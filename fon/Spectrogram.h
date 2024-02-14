@@ -60,10 +60,10 @@ autoSpectrogram Spectrogram_create (double tmin, double tmax, integer nt, double
 		result -> z [1..nf] [1..nt] == 0.0;
 */
 
-void Spectrogram_paintInside (Spectrogram me, Graphics g,
+void Spectrogram_paintInside (constSpectrogram me, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, double maximum, bool autoscaling,
 	double dynamicRange, double preemphasis, double dynamicCompression);
-void Spectrogram_paint (Spectrogram me, Graphics g,
+void Spectrogram_paint (constSpectrogram me, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, double maximum, bool autoscaling,
 	double dynamicRange, double preemphasis, double dynamicCompression,
 	bool garnish);
@@ -82,13 +82,13 @@ void Spectrogram_paint (Spectrogram me, Graphics g,
 			a boolean that determines if a box, ticks, numbers, and text are written in the margins.
 */
 
-autoSpectrogram Matrix_to_Spectrogram (Matrix me);
+autoSpectrogram Matrix_to_Spectrogram (constMatrix me);
 /*
 	Create a Spectrogram from a Matrix,
 	with deep copy of all its attributes, except class information and methods.
 */
 
-autoMatrix Spectrogram_to_Matrix (Spectrogram me);
+autoMatrix Spectrogram_to_Matrix (constSpectrogram me);
 /*
 	Create a Matrix from a Spectrogram,
 	with deep copy of all its attributes, except class information and methods.

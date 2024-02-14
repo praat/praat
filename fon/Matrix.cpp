@@ -1,6 +1,6 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,27 +145,27 @@ autoMatrix Matrix_createSimple (integer numberOfRows, integer numberOfColumns) {
 	}
 }
 
-double Matrix_columnToX (Matrix me, double column) { return my x1 + (column - 1.0) * my dx; }   // FIXME inline and use Sampled
+double Matrix_columnToX (const constMatrix me, const double column) { return my x1 + (column - 1.0) * my dx; }   // FIXME inline and use Sampled
 
-double Matrix_rowToY (Matrix me, double row) { return my y1 + (row - 1.0) * my dy; }
+double Matrix_rowToY (const constMatrix me, const double row) { return my y1 + (row - 1.0) * my dy; }
 
-double Matrix_xToColumn (Matrix me, double x) { return (x - my x1) / my dx + 1.0; }
+double Matrix_xToColumn (const constMatrix me, const double x) { return (x - my x1) / my dx + 1.0; }
 
-integer Matrix_xToLowColumn (Matrix me, double x) { return Melder_ifloor (Matrix_xToColumn (me, x)); }
+integer Matrix_xToLowColumn (const constMatrix me, const double x) { return Melder_ifloor (Matrix_xToColumn (me, x)); }
 
-integer Matrix_xToHighColumn (Matrix me, double x) { return Melder_iceiling (Matrix_xToColumn (me, x)); }
+integer Matrix_xToHighColumn (const constMatrix me, const double x) { return Melder_iceiling (Matrix_xToColumn (me, x)); }
 
-integer Matrix_xToNearestColumn (Matrix me, double x) { return Melder_iround (Matrix_xToColumn (me, x)); }
+integer Matrix_xToNearestColumn (const constMatrix me, const double x) { return Melder_iround (Matrix_xToColumn (me, x)); }
 
-double Matrix_yToRow (Matrix me, double y) { return (y - my y1) / my dy + 1.0; }
+double Matrix_yToRow (const constMatrix me, const double y) { return (y - my y1) / my dy + 1.0; }
 
-integer Matrix_yToLowRow (Matrix me, double y) { return Melder_ifloor (Matrix_yToRow (me, y)); }
+integer Matrix_yToLowRow (const constMatrix me, const double y) { return Melder_ifloor (Matrix_yToRow (me, y)); }
 
-integer Matrix_yToHighRow (Matrix me, double y) { return Melder_iceiling (Matrix_yToRow (me, y)); }
+integer Matrix_yToHighRow (const constMatrix me, const double y) { return Melder_iceiling (Matrix_yToRow (me, y)); }
 
-integer Matrix_yToNearestRow (Matrix me, double y) { return Melder_iround (Matrix_yToRow (me, y)); }
+integer Matrix_yToNearestRow (const constMatrix me, const double y) { return Melder_iround (Matrix_yToRow (me, y)); }
 
-integer Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, integer *ixmin, integer *ixmax) {
+integer Matrix_getWindowSamplesX (const constMatrix me, const double xmin, const double xmax, integer * const ixmin, integer * const ixmax) {
 	*ixmin = 1 + Melder_iceiling ((xmin - my x1) / my dx);
 	*ixmax = 1 + Melder_ifloor   ((xmax - my x1) / my dx);
 	if (*ixmin < 1)
@@ -177,7 +177,10 @@ integer Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, integer *
 	return *ixmax - *ixmin + 1;
 }
 
-integer Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, integer *iymin, integer *iymax) {
+integer Matrix_getWindowSamplesY (const constMatrix me,
+	const double ymin, const double ymax,
+	integer * const iymin, integer * const iymax
+) {
 	*iymin = 1 + Melder_iceiling ((ymin - my y1) / my dy);
 	*iymax = 1 + Melder_ifloor   ((ymax - my y1) / my dy);
 	if (*iymin < 1)
@@ -189,8 +192,10 @@ integer Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, integer *
 	return *iymax - *iymin + 1;
 }
 
-integer Matrix_getWindowExtrema (Matrix me, integer ixmin, integer ixmax, integer iymin, integer iymax,
-	double *minimum, double *maximum)
+integer Matrix_getWindowExtrema (const constMatrix me,
+	integer ixmin, integer ixmax,
+	integer iymin, integer iymax,
+	double * const minimum, double * const maximum)
 {
 	if (ixmin == 0)   // default = all
 		ixmin = 1;
@@ -211,7 +216,7 @@ integer Matrix_getWindowExtrema (Matrix me, integer ixmin, integer ixmax, intege
 	return (ixmax - ixmin + 1) * (iymax - iymin + 1);
 }
 
-double Matrix_getValueAtXY (Matrix me, double x, double y) {
+double Matrix_getValueAtXY (const constMatrix me, const double x, const double y) {
 	const double row_real = (y - my y1) / my dy + 1.0;
 	const double col_real = (x - my x1) / my dx + 1.0;
 	/*

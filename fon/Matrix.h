@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2005,2007-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2019,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,9 @@ autoMatrix Matrix_createSimple (integer numberOfRows, integer numberOfColumns);
 			you cannot use them to change the meaning or order of the data.
 */
 
-integer Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, integer *ixmin, integer *ixmax);
+integer Matrix_getWindowSamplesX (constMatrix me,
+	double xmin, double xmax,
+	integer *ixmin, integer *ixmax);
 /*
 	Function:
 		return the number of samples with x values in [xmin, xmax].
@@ -132,7 +134,7 @@ integer Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, integer *
 		if (result != 0) result == *ixmax - *ixmin + 1;
 */
 
-double Matrix_getValueAtXY (Matrix me, double x, double y);
+double Matrix_getValueAtXY (constMatrix me, double x, double y);
 /*
 	Linear interpolation between matrix points,
 	constant extrapolation in cells on the edge,
@@ -142,30 +144,46 @@ double Matrix_getValueAtXY (Matrix me, double x, double y);
 double Matrix_getSum (Matrix me);
 double Matrix_getNorm (Matrix me);
 
-double Matrix_columnToX (Matrix me, double column);   // return my x1 + (column - 1) * my dx
+double Matrix_columnToX (constMatrix me, double column);
+	// return my x1 + (column - 1) * my dx
 
-double Matrix_rowToY (Matrix me, double row);   // return my y1 + (row - 1) * my dy
+double Matrix_rowToY (constMatrix me, double row);
+	// return my y1 + (row - 1) * my dy
 
-double Matrix_xToColumn (Matrix me, double x);   // return (x - xmin) / my dx + 1
+double Matrix_xToColumn (constMatrix me, double x);
+	// return (x - xmin) / my dx + 1
 
-integer Matrix_xToLowColumn (Matrix me, double x);   // return Melder_ifloor (Matrix_xToColumn (me, x))
+integer Matrix_xToLowColumn (constMatrix me, double x);
+	// return Melder_ifloor (Matrix_xToColumn (me, x))
 
-integer Matrix_xToHighColumn (Matrix me, double x);   // return Melder_iceiling (Matrix_xToColumn (me, x))
+integer Matrix_xToHighColumn (constMatrix me, const double x);
+	// return Melder_iceiling (Matrix_xToColumn (me, x))
 
-integer Matrix_xToNearestColumn (Matrix me, double x);   // return Melder_iround (Matrix_xToColumn (me, x))
+integer Matrix_xToNearestColumn (constMatrix me, const double x);
+	// return Melder_iround (Matrix_xToColumn (me, x))
 
-double Matrix_yToRow (Matrix me, double y);   // return (y - ymin) / my dy + 1
+double Matrix_yToRow (constMatrix me, double y);
+	// return (y - ymin) / my dy + 1
 
-integer Matrix_yToLowRow (Matrix me, double y);   // return Melder_ifloor (Matrix_yToRow (me, y))
+integer Matrix_yToLowRow (constMatrix me, double y);
+	// return Melder_ifloor (Matrix_yToRow (me, y))
 
-integer Matrix_yToHighRow (Matrix me, double x);   // return Melder_iceiling (Matrix_yToRow (me, y))
+integer Matrix_yToHighRow (constMatrix me, double x);
+	// return Melder_iceiling (Matrix_yToRow (me, y))
 
-integer Matrix_yToNearestRow (Matrix me, double y);   // return Melder_iround (Matrix_yToRow (me, y))
+integer Matrix_yToNearestRow (constMatrix me, double y);
+	// return Melder_iround (Matrix_yToRow (me, y))
 
-integer Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, integer *iymin, integer *iymax);
+integer Matrix_getWindowSamplesY (constMatrix me,
+	double ymin, double ymax,
+	integer * const iymin, integer * const iymax
+);
 
-integer Matrix_getWindowExtrema (Matrix me, integer ixmin, integer ixmax, integer iymin, integer iymax,
-	double *minimum, double *maximum);
+integer Matrix_getWindowExtrema (constMatrix me,
+	integer ixmin, integer ixmax,
+	integer iymin, integer iymax,
+	double * const minimum, double * const maximum
+);
 /*
 	Function:
 		compute the minimum and maximum values of my z over all samples inside [ixmin, ixmax] * [iymin, iymax].
