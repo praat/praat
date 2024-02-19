@@ -236,8 +236,8 @@ static void menu_cb_showFormants (FormantPathArea me, EDITOR_ARGS) {
 	FunctionEditor_redraw (my functionEditor());
 }
 
-static void INFO_DATA__formantListing (FormantPathArea me, EDITOR_ARGS) {
-	INFO_DATA
+static void INFO_EDITOR__formantListing (FormantPathArea me, EDITOR_ARGS) {
+	INFO_EDITOR
 		const double startTime = my startSelection(), endTime = my endSelection();
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
@@ -260,7 +260,7 @@ static void INFO_DATA__formantListing (FormantPathArea me, EDITOR_ARGS) {
 			}
 		}
 		MelderInfo_close ();
-	INFO_DATA_END
+	INFO_EDITOR_END
 }
 void structFormantPathArea :: v_createMenuItems_formant (EditorMenu menu) {
 	our formantToggle = FunctionAreaMenu_addCommand (menu, U"Show formants",
@@ -276,7 +276,7 @@ void structFormantPathArea :: v_createMenuItems_formant (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"Draw visible formant contour...", 0,
 			menu_cb_DrawVisibleFormantContour, this);
 	FunctionAreaMenu_addCommand (menu, U"Formant listing", 0,
-			INFO_DATA__formantListing, this);
+			INFO_EDITOR__formantListing, this);
 }
 
 
