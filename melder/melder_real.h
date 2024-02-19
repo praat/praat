@@ -2,7 +2,7 @@
 #define _melder_real_h_
 /* melder_real.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ inline bool isundef (const MelderRealRange me) {
 struct MelderExtremaWithInit {
 	double min = std::numeric_limits<double>::max();
 	double max = std::numeric_limits<double>::lowest();
-	void update (double val) {
+	void update (const double val) {
 		if (val < min)
 			min = val;
 		if (val > max)

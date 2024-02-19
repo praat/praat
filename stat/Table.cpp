@@ -353,7 +353,7 @@ void Table_setNumericValue (Table me, integer rowNumber, integer columnNumber, d
 		/*
 			Change without errors.
 		*/
-		TableRow row = my rows.at [rowNumber];
+		const mutableTableRow row = my rows.at [rowNumber];
 		row -> cells [columnNumber]. string = newLabel.move();
 		my columnHeaders [columnNumber]. numericized = false;
 	} catch (MelderError) {
@@ -552,10 +552,10 @@ double Table_getMaximum (Table me, integer columnNumber) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			return undefined;
-		TableRow firstRow = my rows.at [1];
-		double maximum = firstRow -> cells [columnNumber]. number;
+		const constTableRow firstRow = my rows.at [1];
+		/* mutable extremum */ double maximum = firstRow -> cells [columnNumber]. number;
 		for (integer irow = 2; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const constTableRow row = my rows.at [irow];
 			if (row -> cells [columnNumber]. number > maximum)
 				maximum = row -> cells [columnNumber]. number;
 		}
@@ -571,10 +571,10 @@ double Table_getMinimum (Table me, integer columnNumber) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			return undefined;
-		TableRow firstRow = my rows.at [1];
-		double minimum = firstRow -> cells [columnNumber]. number;
+		const constTableRow firstRow = my rows.at [1];
+		/* mutable extremum */ double minimum = firstRow -> cells [columnNumber]. number;
 		for (integer irow = 2; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const constTableRow row = my rows.at [irow];
 			if (row -> cells [columnNumber]. number < minimum)
 				minimum = row -> cells [columnNumber]. number;
 		}
@@ -589,9 +589,9 @@ double Table_getGroupMean (Table me, integer columnNumber, integer groupColumnNu
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		integer n = 0;
-		longdouble sum = 0.0;
+		/* mutable accumulator */ longdouble sum = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const constTableRow row = my rows.at [irow];
 			if (Melder_equ (row -> cells [groupColumnNumber]. string.get(), group)) {
 				n += 1;
 				sum += row -> cells [columnNumber]. number;
@@ -614,7 +614,7 @@ double Table_getQuantile (Table me, integer columnNumber, double quantile) {
 			return undefined;
 		autoVEC sortingColumn = raw_VEC (my rows.size);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			const TableRow row = my rows.at [irow];
+			const constTableRow row = my rows.at [irow];
 			sortingColumn [irow] = row -> cells [columnNumber]. number;
 		}
 		sort_VEC_inout (sortingColumn.get());
@@ -629,9 +629,9 @@ double Table_getStdev (Table me, integer columnNumber) {
 		const double mean = Table_getMean (me, columnNumber);   // already checks for columnNumber and undefined cells
 		if (my rows.size < 2)
 			return undefined;
-		longdouble sum = 0.0;
+		/* mutable accumulator */ longdouble sum = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const constTableRow row = my rows.at [irow];
 			sum += sqr (row -> cells [columnNumber]. number - mean);
 		}
 		return sqrt (double (sum) / (my rows.size - 1));
@@ -646,9 +646,9 @@ integer Table_drawRowFromDistribution (Table me, integer columnNumber) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			Melder_throw (me, U": no rows.");
-		longdouble total = 0.0;
+		/* mutable accumulator */ longdouble total = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const constTableRow row = my rows.at [irow];
 			total += row -> cells [columnNumber]. number;
 		}
 		if (total <= 0.0)
@@ -656,9 +656,9 @@ integer Table_drawRowFromDistribution (Table me, integer columnNumber) {
 		integer irow;
 		do {
 			const double rand = NUMrandomUniform (0.0, double (total));
-			longdouble sum = 0.0;
+			/* mutable accumulator */ longdouble sum = 0.0;
 			for (irow = 1; irow <= my rows.size; irow ++) {
-				TableRow row = my rows.at [irow];
+				const constTableRow row = my rows.at [irow];
 				sum += row -> cells [columnNumber]. number;
 				if (rand <= sum)
 					break;
@@ -678,7 +678,7 @@ autoTable Table_extractRowsWhereColumn_number (Table me, integer columnNumber, k
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const constTableRow row = my rows.at [irow];
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which, criterion)) {
 				autoTableRow newRow = Data_copy (row);
 				thy rows. addItem_move (newRow.move());
@@ -699,7 +699,7 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const constTableRow row = my rows.at [irow];
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string.get(), which, criterion, true)) {
 				autoTableRow newRow = Data_copy (row);
 				thy rows. addItem_move (newRow.move());
@@ -826,7 +826,7 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 			Find stretches of identical factors.
 		*/
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			integer rowmin = irow, rowmax = irow;
+			/* mutable search */ integer rowmin = irow, rowmax = irow;
 			for (;;) {
 				bool identical = true;
 				if (++ rowmax > my rows.size)
@@ -848,7 +848,7 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 			*/
 			Table_insertRow (thee.get(), thy rows.size + 1);
 			{// scope
-				integer icol = 0;
+				/* mutable count */ integer icol = 0;
 				for (integer i = 1; i <= factors.size; i ++) {
 					++ icol;
 					Table_setStringValue (thee.get(), thy rows.size, icol,
@@ -856,14 +856,14 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 				}
 				for (integer i = 1; i <= columnsToSum.size; i ++) {
 					++ icol;
-					longdouble sum = 0.0;
+					/* mutable accumulator */ longdouble sum = 0.0;
 					for (integer jrow = rowmin; jrow <= rowmax; jrow ++)
 						sum += my rows.at [jrow] -> cells [columns [icol]]. number;
 					Table_setNumericValue (thee.get(), thy rows.size, icol, double (sum));
 				}
 				for (integer i = 1; i <= columnsToAverage.size; i ++) {
 					++ icol;
-					longdouble sum = 0.0;
+					/* mutable accumulator */ longdouble sum = 0.0;
 					for (integer jrow = rowmin; jrow <= rowmax; jrow ++)
 						sum += my rows.at [jrow] -> cells [columns [icol]]. number;
 					Table_setNumericValue (thee.get(), thy rows.size, icol, double (sum) / (rowmax - rowmin + 1));
@@ -879,7 +879,7 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 				}
 				for (integer i = 1; i <= columnsToAverageLogarithmically.size; i ++) {
 					++ icol;
-					longdouble sum = 0.0;
+					/* mutable accumulator */ longdouble sum = 0.0;
 					for (integer jrow = rowmin; jrow <= rowmax; jrow ++) {
 						const double value = my rows.at [jrow] -> cells [columns [icol]]. number;
 						if (value <= 0.0) {
@@ -928,13 +928,13 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 	try {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const TableRow row = my rows.at [irow];
 			row -> sortingIndex = irow;
 		}
 		const integer sortingColumns [] = { column };
 		Table_sortRows_a (me, ARRAY_TO_INTVEC (sortingColumns));
-		integer numberOfLevels = 0;
-		integer irow = 1;
+		/* mutable count */ integer numberOfLevels = 0;
+		/* mutable search */ integer irow = 1;
 		while (irow <= my rows.size) {
 			const double value = my rows.at [irow] -> cells [column]. number;
 			numberOfLevels ++;
@@ -1006,7 +1006,7 @@ static autoTable Table_rowsToColumns (Table me, constINTVECVU const& factorColum
 			But this cannot be done before the previous blocks that numericize!
 		*/
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			TableRow row = my rows.at [irow];
+			const TableRow row = my rows.at [irow];
 			row -> sortingIndex = irow;
 		}
 		/*

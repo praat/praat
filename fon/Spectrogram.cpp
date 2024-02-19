@@ -52,10 +52,14 @@ autoSpectrogram Spectrogram_create (double tmin, double tmax, integer nt, double
 	}
 }
 
-void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	double maximum, bool autoscaling, double dynamic,
-	double preemphasis_dbPerOctave,
-	double dynamicCompression
+void Spectrogram_paintInside (const constSpectrogram me, const Graphics g,
+	/* mutable autowindow */ double tmin, /* mutable autowindow */ double tmax,
+	/* mutable autowindow */ double fmin, /* mutable autowindow */ double fmax,
+	/* mutable autoscaling */ double maximum,
+	const bool autoscaling,
+	const double dynamic,
+	const double preemphasis_dbPerOctave,
+	const double dynamicCompression
 ) {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	SampledXY_unidirectionalAutowindowY (me, & fmin, & fmax);
@@ -83,8 +87,9 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 			Before taking the logarithm, we add a tiny number, namely 1e-308,
 			so that for a frequency of 0 Hz the preemphasis term is typically 6.0 * log2 (1e-308) = -6139 dB,
 			or 0 dB in case the preemphasis is 0 dB/octave.
+			For purposes of preemphasis, negative frequencies (which don't normally occur) are treated as 0 Hz.
 		*/
-		const double preemphasisTerm_db = (preemphasis_dbPerOctave / NUMln2) * log (frequency / 1000.0 + 1e-308);
+		const double preemphasisTerm_db = (preemphasis_dbPerOctave / NUMln2) * log (Melder_clippedLeft (0.0, frequency) / 1000.0 + 1e-308);
 		for (integer itime = 1; itime <= nt; itime ++) {
 			const double psd_pascal2PerHz = part [ifreq] [itime];
 			/*
@@ -94,7 +99,7 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 					log10 (x) = ln (x) / ln (10)
 				Before taking the logarithm, we add a tiny number, namely 1e-308,
 				so that in silence the PSD (before adding preemphasis) is -3080 dB;
-				this becomes visible if you Paint the Spectrogram under the following settings:
+				this becomes visible if you `Paint` the Spectrogram under the following settings:
 				- `autoscaling` off
 				- `maximum` 0.0 dB/Hz
 				- `pre-emphasis` 0 dB/oct
@@ -102,8 +107,7 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 				Then when the `dynamic range` passes 3080 dB, you will start to see some light grey.
 			*/
 			constexpr double oneByReferencePsd_pascal2 = 1.0 / 4.0e-10;
-			const double psd_db =
-					(10.0/NUMln10) * log (oneByReferencePsd_pascal2 * psd_pascal2PerHz + 1e-308) + preemphasisTerm_db;
+			const double psd_db = (10.0/NUMln10) * log (oneByReferencePsd_pascal2 * psd_pascal2PerHz + 1e-308) + preemphasisTerm_db;
 			if (psd_db > dynamicFactors [itime])
 				dynamicFactors [itime] = psd_db;   // local maximum
 			part [ifreq] [itime] = psd_db;
@@ -135,10 +139,11 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 	);
 }
 
-void Spectrogram_paint (Spectrogram me, Graphics g,
-	double tmin, double tmax, double fmin, double fmax, double maximum, bool autoscaling,
-	double dynamic, double preemphasis, double dynamicCompression,
-	bool garnish)
+void Spectrogram_paint (const constSpectrogram me, const Graphics g,
+	const double tmin, const double tmax, const double fmin, const double fmax,
+	const double maximum, const bool autoscaling,
+	const double dynamic, const double preemphasis, const double dynamicCompression,
+	const bool garnish)
 {
 	Graphics_setInner (g);
 	Spectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, maximum, autoscaling, dynamic, preemphasis, dynamicCompression);
@@ -152,7 +157,7 @@ void Spectrogram_paint (Spectrogram me, Graphics g,
 	}
 }
 
-autoSpectrogram Matrix_to_Spectrogram (Matrix me) {
+autoSpectrogram Matrix_to_Spectrogram (constMatrix me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		thy z.all()  <<=  my z.all();
@@ -162,7 +167,7 @@ autoSpectrogram Matrix_to_Spectrogram (Matrix me) {
 	}
 }
 
-autoMatrix Spectrogram_to_Matrix (Spectrogram me) {
+autoMatrix Spectrogram_to_Matrix (constSpectrogram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		thy z.all()  <<=  my z.all();

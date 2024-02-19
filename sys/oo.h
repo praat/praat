@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2013,2015-2020,2022,2023 Paul Boersma
+ * Copyright (C) 1994-2013,2015-2020,2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,6 +172,7 @@
 
 #define oo_DEFINE_CLASS(klas,parent) \
 	typedef struct struct##klas *klas; \
+	typedef struct struct##klas *mutable##klas; \
 	typedef const struct struct##klas *const##klas; \
 	typedef autoSomeThing <struct##klas> auto##klas; \
 	typedef struct##parent klas##_Parent; \
