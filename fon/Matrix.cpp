@@ -107,10 +107,10 @@ double structMatrix :: v_getFunction2 (double x, double y) const {
 	return (1.0 - drow) * (1.0 - dcol) * z1 + drow * (1.0 - dcol) * z2 + (1.0 - drow) * dcol * z3 + drow * dcol * z4;
 }
 
-void Matrix_init
-	(Matrix me, double xmin, double xmax, integer nx, double dx, double x1,
-	            double ymin, double ymax, integer ny, double dy, double y1)
-{
+void Matrix_init (const mutableMatrix me,
+	const double xmin, const double xmax, const integer nx, const double dx, const double x1,
+	const double ymin, const double ymax, const integer ny, const double dy, const double y1
+) {
 	Sampled_init (me, xmin, xmax, nx, dx, x1);
 	my ymin = ymin;
 	my ymax = ymax;
@@ -120,10 +120,10 @@ void Matrix_init
 	my z = zero_MAT (my ny, my nx);
 }
 
-autoMatrix Matrix_create
-	(double xmin, double xmax, integer nx, double dx, double x1,
-	 double ymin, double ymax, integer ny, double dy, double y1)
-{
+autoMatrix Matrix_create (
+	const double xmin, const double xmax, const integer nx, const double dx, const double x1,
+	const double ymin, const double ymax, const integer ny, const double dy, const double y1
+) {
 	try {
 		autoMatrix me = Thing_new (Matrix);
 		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
@@ -133,12 +133,13 @@ autoMatrix Matrix_create
 	}
 }
 
-autoMatrix Matrix_createSimple (integer numberOfRows, integer numberOfColumns) {
+autoMatrix Matrix_createSimple (const integer numberOfRows, const integer numberOfColumns) {
 	try {
 		autoMatrix me = Thing_new (Matrix);
 		Matrix_init (me.get(),
-				0.5, numberOfColumns + 0.5, numberOfColumns, 1.0, 1.0,
-				0.5, numberOfRows    + 0.5, numberOfRows   , 1.0, 1.0);
+			0.5, numberOfColumns + 0.5, numberOfColumns, 1.0, 1.0,
+			0.5, numberOfRows    + 0.5, numberOfRows   , 1.0, 1.0
+		);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix object not created.");
@@ -165,7 +166,9 @@ integer Matrix_yToHighRow (const constMatrix me, const double y) { return Melder
 
 integer Matrix_yToNearestRow (const constMatrix me, const double y) { return Melder_iround (Matrix_yToRow (me, y)); }
 
-integer Matrix_getWindowSamplesX (const constMatrix me, const double xmin, const double xmax, integer * const ixmin, integer * const ixmax) {
+integer Matrix_getWindowSamplesX (const constMatrix me,
+	const double xmin, const double xmax, integer * const ixmin, integer * const ixmax
+) {
 	*ixmin = 1 + Melder_iceiling ((xmin - my x1) / my dx);
 	*ixmax = 1 + Melder_ifloor   ((xmax - my x1) / my dx);
 	if (*ixmin < 1)
@@ -254,17 +257,19 @@ double Matrix_getValueAtXY (const constMatrix me, const double x, const double y
 		drow * dcol * my z [topRow] [rightCol];
 }
 
-double Matrix_getSum (Matrix me) {
+double Matrix_getSum (const constMatrix me) {
 	return NUMsum (my z.all());
 }
 
-double Matrix_getNorm (Matrix me) {
+double Matrix_getNorm (const constMatrix me) {
 	return NUMnorm (my z.get(), 2.0);
 }
 
-void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double minimum, double maximum)
-{
+void Matrix_drawRows (const constMatrix me, Graphics g,
+	/* mutable autowindow */ double xmin, /* mutable autowindow */ double xmax,
+	/* mutable autowindow */ double ymin, /* mutable autowindow */ double ymax,
+	/* mutable autoscaling */ double minimum, /* mutable autoscaling */ double maximum
+) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
@@ -292,9 +297,11 @@ void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ym
 		Graphics_setWindow (g, xmin, xmax, my y1 + (iymin - 1.5) * my dy, my y1 + (iymax - 0.5) * my dy);
 }
 
-void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double height)
-{
+void Matrix_drawOneContour (const constMatrix me, Graphics g,
+	/* mutable autowindow */ double xmin, /* mutable autowindow */ double xmax,
+	/* mutable autowindow */ double ymin, /* mutable autowindow */ double ymax,
+	const double height
+) {
 	Function_bidirectionalAutowindow (me, & xmin, & xmax);
 	SampledXY_bidirectionalAutowindowY (me, & ymin, & ymax);
 	const bool xreversed = xmin > xmax;
@@ -327,9 +334,11 @@ void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, dou
 	Graphics_unsetInner (g);
 }
 
-void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double minimum, double maximum)
-{
+void Matrix_drawContours (const constMatrix me, Graphics g,
+	/* mutable autowindow */ double xmin, /* mutable autowindow */ double xmax,
+	/* mutable autowindow */ double ymin, /* mutable autowindow */ double ymax,
+	/* mutable autoscaling */ double minimum, /* mutable autoscaling */ double maximum
+) {
 	Function_bidirectionalAutowindow (me, & xmin, & xmax);
 	SampledXY_bidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
@@ -361,9 +370,11 @@ void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, doubl
 	Graphics_unsetInner (g);
 }
 
-void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double minimum, double maximum)
-{
+void Matrix_paintContours (const constMatrix me, Graphics g,
+	/* mutable autowindow */ double xmin, /* mutable autowindow */ double xmax,
+	/* mutable autowindow */ double ymin, /* mutable autowindow */ double ymax,
+	/* mutable autoscaling */ double minimum, /* mutable autoscaling */ double maximum
+) {
 	double border [1 + 30];
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
@@ -395,9 +406,12 @@ void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, doub
 	Graphics_unsetInner (g);
 }
 
-static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double minimum, double maximum, bool interpolate)
-{
+static void cellArrayOrImage (const constMatrix me, Graphics g,
+	/* mutable autowindow */ double xmin, /* mutable autowindow */ double xmax,
+	/* mutable autowindow */ double ymin, /* mutable autowindow */ double ymax,
+	/* mutable autoscaling */ double minimum, /* mutable autoscaling */ double maximum,
+	const bool interpolate
+) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
@@ -418,20 +432,20 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	if (interpolate)
 		Graphics_image (g,
 			my z.part (iymin, iymax, ixmin, ixmax),
-			Sampled_indexToX   (me, ixmin - 0.5),
-			Sampled_indexToX   (me, ixmax + 0.5),
-			SampledXY_indexToY (me, iymin - 0.5),
-			SampledXY_indexToY (me, iymax + 0.5),
+			Matrix_columnToX (me, ixmin - 0.5),
+			Matrix_columnToX (me, ixmax + 0.5),
+			Matrix_rowToY (me, iymin - 0.5),
+			Matrix_rowToY (me, iymax + 0.5),
 			minimum,
 			maximum
 		);
 	else
 		Graphics_cellArray (g,
 			my z.part (iymin, iymax, ixmin, ixmax),
-			Sampled_indexToX   (me, ixmin - 0.5),
-			Sampled_indexToX   (me, ixmax + 0.5),
-			SampledXY_indexToY (me, iymin - 0.5),
-			SampledXY_indexToY (me, iymax + 0.5),
+			Matrix_columnToX (me, ixmin - 0.5),
+			Matrix_columnToX (me, ixmax + 0.5),
+			Matrix_rowToY (me, iymin - 0.5),
+			Matrix_rowToY (me, iymax + 0.5),
 			minimum,
 			maximum
 		);
@@ -439,21 +453,28 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	Graphics_unsetInner (g);
 }
 
-void Matrix_paintImage (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double minimum, double maximum)
-{
+void Matrix_paintImage (const constMatrix me, Graphics g,
+	const double xmin, const double xmax,
+	const double ymin, const double ymax,
+	const double minimum, const double maximum
+) {
 	cellArrayOrImage (me, g, xmin, xmax, ymin, ymax, minimum, maximum, true);
 }
 
-void Matrix_paintCells (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double minimum, double maximum)
-{
+void Matrix_paintCells (const constMatrix me, Graphics g,
+	const double xmin, const double xmax,
+	const double ymin, const double ymax,
+	const double minimum, const double maximum
+) {
 	cellArrayOrImage (me, g, xmin, xmax, ymin, ymax, minimum, maximum, false);
 }
 
-void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	double minimum, double maximum, double elevation, double azimuth)
-{
+void Matrix_paintSurface (const constMatrix me, Graphics g,
+	/* mutable autowindow */ double xmin, /* mutable autowindow */ double xmax,
+	/* mutable autowindow */ double ymin, /* mutable autowindow */ double ymax,
+	/* mutable autoscaling */ double minimum, /* mutable autoscaling */ double maximum,
+	const double elevation, const double azimuth
+) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	SampledXY_unidirectionalAutowindowY (me, & ymin, & ymax);
 	integer ixmin, ixmax, iymin, iymax;
@@ -481,13 +502,13 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 	Graphics_unsetInner (g);
 }
 
-void Matrix_playMovie (Matrix me, Graphics g) {
+void Matrix_playMovie (const constMatrix me, Graphics g) {
 	Melder_require (my ny >= 2,
 		me, U": cannot play a movie for a Matrix with less than 2 rows.");
 	if (my xmin == my xmax || my ymin == my ymax)
 		return;
 	autoVEC column = raw_VEC (my ny);
-	double minimum = 0.0, maximum = 1.0;
+	/* mutable init */ double minimum = 0.0, maximum = 1.0;
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
 	if (minimum == maximum) {
 		minimum -= 0.5;
@@ -535,7 +556,7 @@ autoMatrix Matrix_readAP (MelderFile file) {
 	}
 }
 
-autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
+autoMatrix Matrix_appendRows (const constMatrix me, const constMatrix thee, ClassInfo klas) {
 	try {
 		autoMatrix him = Thing_newFromClass (klas).static_cast_move<structMatrix>();
 		Matrix_init (him.get(),
@@ -621,7 +642,7 @@ autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-
 	}
 }
 
-static bool isSymmetric (Matrix me) {
+static bool isSymmetric (const constMatrix me) {
 	for (integer irow = 1; irow <= my ny - 1; irow ++)
 		for (integer icol = irow + 1; icol <= my nx; icol ++)
 			if (my z [irow] [icol] != my z [icol] [irow])
@@ -629,7 +650,7 @@ static bool isSymmetric (Matrix me) {
 	return true;
 }
 
-void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues) {
+void Matrix_eigen (const constMatrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues) {
 	try {
 		Melder_require (my nx == my ny, 
 			U"The number of rows (here ", my ny, U") should be equal to the number of columns (here ", my nx, U").");
@@ -651,7 +672,7 @@ void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eige
 	}
 }
 
-autoMatrix Matrix_power (Matrix me, integer power) {
+autoMatrix Matrix_power (const constMatrix me, const integer power) {
 	try {
 		Melder_require (my nx == my ny,
 			U"The number of rows (here ", my ny, U") should be equal to the number of columns (here ", my nx, U").");
@@ -673,7 +694,7 @@ autoMatrix Matrix_power (Matrix me, integer power) {
 	}
 }
 
-void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
+void Matrix_writeToMatrixTextFile (const constMatrix me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "w");
 		fprintf (f, "\"ooTextFile\"\n\"Matrix\"\n%s %s %s %s %s\n%s %s %s %s %s\n",
@@ -695,7 +716,7 @@ void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 	}
 }
 
-void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
+void Matrix_writeToHeaderlessSpreadsheetFile (const constMatrix me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "w");
 		for (integer i = 1; i <= my ny; i ++) {
@@ -712,7 +733,9 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 	}
 }
 
-void Matrix_formula (Matrix me, conststring32 expression, Interpreter interpreter, Matrix target) {
+void Matrix_formula (const mutableMatrix me,
+	conststring32 expression, Interpreter interpreter, /* mutable default */ mutableMatrix target)
+{
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
@@ -729,8 +752,8 @@ void Matrix_formula (Matrix me, conststring32 expression, Interpreter interprete
 	}
 }
 
-void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
-	conststring32 expression, Interpreter interpreter, Matrix target)
+void Matrix_formula_part (const mutableMatrix me, double xmin, double xmax, double ymin, double ymax,
+	conststring32 expression, Interpreter interpreter, /* mutable default */ mutableMatrix target)
 {
 	try {
 		Function_unidirectionalAutowindow (me, & xmin, & xmax);
@@ -756,7 +779,7 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 	}
 }
 
-void Matrix_scaleAbsoluteExtremum (Matrix me, double scale) {
+void Matrix_scaleAbsoluteExtremum (const constMatrix me, const double scale) {
 	double extremum = 0.0;
 	for (integer i = 1; i <= my ny; i ++)
 		for (integer j = 1; j <= my nx; j ++)
@@ -770,7 +793,7 @@ void Matrix_scaleAbsoluteExtremum (Matrix me, double scale) {
 	}
 }
 
-autoMatrix TableOfReal_to_Matrix (TableOfReal me) {
+autoMatrix TableOfReal_to_Matrix (const constTableOfReal me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns);
 		for (integer i = 1; i <= my numberOfRows; i ++)
@@ -782,7 +805,7 @@ autoMatrix TableOfReal_to_Matrix (TableOfReal me) {
 	}
 }
 
-autoTableOfReal Matrix_to_TableOfReal (Matrix me) {
+autoTableOfReal Matrix_to_TableOfReal (const constMatrix me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my ny, my nx);
 		for (integer i = 1; i <= my ny; i ++)

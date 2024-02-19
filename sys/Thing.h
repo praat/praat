@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2009,2011-2020,2022 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ struct structClassInfo {
 
 #define Thing_declare(klas) \
 	typedef struct struct##klas *klas; \
+	typedef struct struct##klas *mutable##klas; \
 	typedef const struct struct##klas *const##klas; \
 	typedef autoSomeThing <struct##klas> auto##klas; \
 	extern struct structClassInfo theClassInfo_##klas; \

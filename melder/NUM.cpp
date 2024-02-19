@@ -1,6 +1,6 @@
 /* NUM.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ static longdouble NUMsum_longdouble (constMATVU const& mat) {
 		return sum;
 	}
 }
-static longdouble NUMsumOfSquaredDifferences_longdouble (constVECVU const& vec, double mean) {
+static longdouble NUMsumOfSquaredDifferences_longdouble (constVECVU const& vec, const double mean) {
 	if (vec.stride == 1) {
 		PAIRWISE_SUM (
 			longdouble, sum,
@@ -184,7 +184,7 @@ static longdouble NUMsumAbs_longdouble (constMATVU const& mat) {
 		return sum;
 	}
 }
-static longdouble NUMsumPower_longdouble (constVECVU const& vec, longdouble power) {
+static longdouble NUMsumPower_longdouble (constVECVU const& vec, const longdouble power) {
 	if (vec.stride == 1) {
 		PAIRWISE_SUM (
 			longdouble, sum,
@@ -205,7 +205,7 @@ static longdouble NUMsumPower_longdouble (constVECVU const& vec, longdouble powe
 		return sum;
 	}
 }
-static longdouble NUMsumPower_longdouble (constMATVU const& mat, longdouble power) {
+static longdouble NUMsumPower_longdouble (constMATVU const& mat, const longdouble power) {
 	if (mat.nrow <= mat.ncol) {
 		PAIRWISE_SUM (
 			longdouble, sum,
@@ -325,7 +325,7 @@ double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
 	}
 }
 
-static longdouble NUMinnerMinusMean_longdouble (constVECVU const& x, longdouble meanX, constVECVU const& y, longdouble meanY) noexcept {
+static longdouble NUMinnerMinusMean_longdouble (constVECVU const& x, const longdouble meanX, constVECVU const& y, const longdouble meanY) noexcept {
 	if (x.stride == 1) {
 		if (y.stride == 1) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.size,
@@ -781,7 +781,7 @@ double NUMmaximumLength (constSTRVEC const& x) noexcept {
 	return result;
 }
 
-double NUMnorm (constVECVU const& vec, double power) noexcept {
+double NUMnorm (constVECVU const& vec, const double power) noexcept {
 	if (power < 0.0)
 		return undefined;
 	if (power == 2.0) {
@@ -795,7 +795,7 @@ double NUMnorm (constVECVU const& vec, double power) noexcept {
 		return double (powl (sumPower, longdouble (1.0) / power));
 	}
 }
-double NUMnorm (constMATVU const& mat, double power) noexcept {
+double NUMnorm (constMATVU const& mat, const double power) noexcept {
 	if (power < 0.0)
 		return undefined;
 	if (power == 2.0) {
@@ -810,7 +810,7 @@ double NUMnorm (constMATVU const& mat, double power) noexcept {
 	}
 }
 
-integer NUMnumberOfTokens (conststring32 string) noexcept {
+integer NUMnumberOfTokens (const conststring32 string) noexcept {
 	integer numberOfTokens = 0;
 	const char32 *p = & string [0];
 	for (;;) {
@@ -859,7 +859,7 @@ double NUMsum2 (constMATVU const& mat) {
 	return double (NUMsum2_longdouble (mat));
 }
 
-double NUMsumOfSquaredDifferences (constVECVU const& vec, double mean) {
+double NUMsumOfSquaredDifferences (constVECVU const& vec, const double mean) {
 	return double (NUMsumOfSquaredDifferences_longdouble (vec, mean));
 }
 
