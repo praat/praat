@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -579,7 +579,7 @@ FORM (PRAAT_ManPages_saveToHtmlFolder, U"Save all pages as HTML files", nullptr)
 OK
 	LOOP {
 		iam_LOOP (ManPages);
-		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
+		SET_STRING (folder, Melder_folderToPath (& my rootDirectory))
 	}
 DO
 	LOOP {
@@ -636,9 +636,9 @@ DO
 FORM (HELP_SaveManualToHtmlFolder, U"Save all pages as HTML files", nullptr) {
 	FOLDER (folder, U"Folder", U"")
 OK
-	structMelderDir currentDirectory { };
-	Melder_getDefaultDir (& currentDirectory);
-	SET_STRING (folder, Melder_dirToPath (& currentDirectory))
+	structMelderFolder currentFolder { };
+	Melder_getDefaultDir (& currentFolder);
+	SET_STRING (folder, Melder_folderToPath (& currentFolder))
 DO
 	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, nullptr, folder);
 	END_NO_NEW_DATA

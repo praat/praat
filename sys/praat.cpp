@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ bool praat_commandsWithExternalSideEffectsAreAllowed () {
 };
 
 static char32 programName [64];
-static structMelderDir homeDir { };
+static structMelderFolder homeDir { };
 
 /*
  * Melder_preferencesFolder: a folder containing preferences file, buttons file, message files, tracing file, plugins.
@@ -83,7 +83,7 @@ static structMelderDir homeDir { };
  *                         or:   C:\Users\Miep\Praat
  *    MacOS:   /Users/Miep/Library/Preferences/Praat Prefs
  */
-// inline structMelderDir Melder_preferencesFolder { };   // already declared in Melder_files.h (checked 2021-03-07)
+// inline structMelderFolder Melder_preferencesFolder { };   // already declared in Melder_files.h (checked 2021-03-07)
 
 /*
  * prefsFile: preferences file.
@@ -1267,9 +1267,9 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 			praat --send [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
 		*/
 		MelderString_append (& text32, U"setWorkingDirectory: ");
-		structMelderDir defaultFolder { };
+		structMelderFolder defaultFolder { };
 		Melder_getDefaultDir (& defaultFolder);
-		MelderString_append (& text32, quote_doubleSTR (Melder_dirToPath (& defaultFolder)).get());
+		MelderString_append (& text32, quote_doubleSTR (Melder_folderToPath (& defaultFolder)).get());
 		MelderString_append (& text32, U"\nrunScript: ");
 		structMelderFile scriptFile { };
 		Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & scriptFile);
@@ -1434,7 +1434,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		Also create names for message and tracing files.
 	*/
 	if (MelderDir_isNull (& Melder_preferencesFolder)) {   // not yet set by the --pref-dir option?
-		structMelderDir parentPreferencesFolder { };   // folder under which to store our preferences folder
+		structMelderFolder parentPreferencesFolder { };   // folder under which to store our preferences folder
 		Melder_getParentPreferencesFolder (& parentPreferencesFolder);
 
 		/*
@@ -1877,7 +1877,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	trace (U"after picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 }
 
-static void executeStartUpFile (MelderDir startUpDirectory, conststring32 fileNameHead, conststring32 fileNameTail) {
+static void executeStartUpFile (MelderFolder startUpDirectory, conststring32 fileNameHead, conststring32 fileNameTail) {
 	char32 name [256];
 	Melder_sprint (name,256, fileNameHead, programName, fileNameTail);
 	if (! MelderDir_isNull (startUpDirectory)) {   // should not occur on modern systems
@@ -1963,7 +1963,7 @@ void praat_run () {
 	 * On Unix and the Mac, we try no less than three start-up file names.
 	 */
 	#if defined (UNIX) || defined (macintosh)
-		structMelderDir usrLocal { };
+		structMelderFolder usrLocal { };
 		Melder_pathToDir (U"/usr/local", & usrLocal);
 		executeStartUpFile (& usrLocal, U"", U"-startUp");
 	#endif
@@ -1985,10 +1985,10 @@ void praat_run () {
 		try {
 			autoSTRVEC folderNames = folderNames_STRVEC (Melder_fileToPath (& searchPattern));
 			for (integer i = 1; i <= folderNames.size; i ++) {
-				structMelderDir pluginDir { };
+				structMelderFolder pluginFolder { };
 				structMelderFile plugin { };
-				MelderDir_getSubdir (& Melder_preferencesFolder, folderNames [i].get(), & pluginDir);
-				MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
+				MelderDir_getSubdir (& Melder_preferencesFolder, folderNames [i].get(), & pluginFolder);
+				MelderDir_getFile (& pluginFolder, U"setup.praat", & plugin);
 				if (MelderFile_readable (& plugin)) {
 					Melder_backgrounding = true;
 					try {

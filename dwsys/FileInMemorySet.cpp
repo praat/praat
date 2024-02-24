@@ -77,7 +77,7 @@ autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& li
 
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 fileGlobber) {
 	try {
-		structMelderDir parent { };
+		structMelderFolder parent { };
 		Melder_pathToDir (dirpath, & parent);
 		autoStrings thee = Strings_createAsFileList (Melder_cat (dirpath, U"/", fileGlobber));
 		Melder_require (thy numberOfStrings > 0,

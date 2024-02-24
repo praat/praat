@@ -51,7 +51,7 @@ struct MelderArg {
 	MelderArg (STRVEC const&             arg) : _arg (Melder_STRVEC            (arg)) { }
 	MelderArg (constThing                arg) : _arg (Thing_messageName        (arg)) { }
 	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName   (arg)) { }
-	MelderArg (MelderDir                 arg) : _arg (MelderFolder_messageName (arg)) { }
+	MelderArg (MelderFolder              arg) : _arg (MelderFolder_messageName (arg)) { }
 	/*
 		There could be more types of arguments, but those are rare;
 		you have to use explicit conversion to one of the types above.
