@@ -6391,13 +6391,9 @@ static void do_createFolder () {
 		U"The function “createFolder” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
-		structMelderDir currentDirectory { };
-		Melder_getDefaultDir (& currentDirectory);
-		#if defined (UNIX) || defined (macintosh)
-			Melder_createDirectory (& currentDirectory, f->getString(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		#else
-			Melder_createDirectory (& currentDirectory, f->getString(), 0);
-		#endif
+		structMelderDir folder { };
+		Melder_relativePathToFolder (f->getString(), & folder);
+		MelderFolder_create (& folder);
 		pushNumber (1);
 	} else {
 		Melder_throw (U"The function “createFolder” requires a string, not ", f->whichText(), U".");

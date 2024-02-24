@@ -2,7 +2,7 @@
 #define _melder_arg_h_
 /* MelderArg.h
  *
- * Copyright (C) 1992-2020,2022 Paul Boersma
+ * Copyright (C) 1992-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,29 +28,30 @@ struct MelderArg {
 		The types of arguments that never involve memory allocation:
 	*/
 	MelderArg (conststring32             arg) : _arg (arg) { }
-	MelderArg (const double              arg) : _arg (Melder_double          (arg)) { }
-	MelderArg (const          long long  arg) : _arg (Melder_integer         (arg)) { }
-	MelderArg (const unsigned long long  arg) : _arg (Melder_integer         ((int64) arg)) { }
-	MelderArg (const          long       arg) : _arg (Melder_integer         (arg)) { }
-	MelderArg (const unsigned long       arg) : _arg (Melder_integer         ((int64) arg)) { }   // ignore ULL above 2^63
-	MelderArg (const          int        arg) : _arg (Melder_integer         (arg)) { }
-	MelderArg (const unsigned int        arg) : _arg (Melder_integer         (arg)) { }
-	MelderArg (const          short      arg) : _arg (Melder_integer         (arg)) { }
-	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
-	MelderArg (const dcomplex            arg) : _arg (Melder_dcomplex        (arg)) { }
-	MelderArg (const char32              arg) : _arg (Melder_character       (arg)) { }
-	MelderArg (const MelderColour        arg) : _arg (Melder_colour          (arg)) { }
+	MelderArg (const double              arg) : _arg (Melder_double            (arg)) { }
+	MelderArg (const          long long  arg) : _arg (Melder_integer           (arg)) { }
+	MelderArg (const unsigned long long  arg) : _arg (Melder_integer           ((int64) arg)) { }
+	MelderArg (const          long       arg) : _arg (Melder_integer           (arg)) { }
+	MelderArg (const unsigned long       arg) : _arg (Melder_integer           ((int64) arg)) { }   // ignore ULL above 2^63
+	MelderArg (const          int        arg) : _arg (Melder_integer           (arg)) { }
+	MelderArg (const unsigned int        arg) : _arg (Melder_integer           (arg)) { }
+	MelderArg (const          short      arg) : _arg (Melder_integer           (arg)) { }
+	MelderArg (const unsigned short      arg) : _arg (Melder_integer           (arg)) { }
+	MelderArg (const dcomplex            arg) : _arg (Melder_dcomplex          (arg)) { }
+	MelderArg (const char32              arg) : _arg (Melder_character         (arg)) { }
+	MelderArg (const MelderColour        arg) : _arg (Melder_colour            (arg)) { }
 	/*
 		The types of arguments that sometimes involve memory allocation:
 	*/
-	MelderArg (constVECVU const&         arg) : _arg (Melder_VEC             (arg)) { }
-	MelderArg (constMATVU const&         arg) : _arg (Melder_MAT             (arg)) { }
-	MelderArg (constSTRVEC const&        arg) : _arg (Melder_STRVEC          (arg)) { }
-	MelderArg (VECVU const&              arg) : _arg (Melder_VEC             (arg)) { }
-	MelderArg (MATVU const&              arg) : _arg (Melder_MAT             (arg)) { }
-	MelderArg (STRVEC const&             arg) : _arg (Melder_STRVEC          (arg)) { }
-	MelderArg (constThing                arg) : _arg (Thing_messageName      (arg)) { }
-	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName (arg)) { }
+	MelderArg (constVECVU const&         arg) : _arg (Melder_VEC               (arg)) { }
+	MelderArg (constMATVU const&         arg) : _arg (Melder_MAT               (arg)) { }
+	MelderArg (constSTRVEC const&        arg) : _arg (Melder_STRVEC            (arg)) { }
+	MelderArg (VECVU const&              arg) : _arg (Melder_VEC               (arg)) { }
+	MelderArg (MATVU const&              arg) : _arg (Melder_MAT               (arg)) { }
+	MelderArg (STRVEC const&             arg) : _arg (Melder_STRVEC            (arg)) { }
+	MelderArg (constThing                arg) : _arg (Thing_messageName        (arg)) { }
+	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName   (arg)) { }
+	MelderArg (MelderDir                 arg) : _arg (MelderFolder_messageName (arg)) { }
 	/*
 		There could be more types of arguments, but those are rare;
 		you have to use explicit conversion to one of the types above.

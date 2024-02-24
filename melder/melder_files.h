@@ -90,14 +90,18 @@ FILE * Melder_fopen (MelderFile file, const char *type);
 void Melder_fclose (MelderFile file, FILE *stream);
 void Melder_files_cleanUp ();
 
-/* Use the following functions to pass unchanged text or file names to Melder_* functions. */
-/* Backslashes are replaced by "\bs". */
-/* The trick is that they return one of 11 cyclically used static strings, */
-/* so you can use up to 11 strings in a single Melder_* call. */
-char32 * Melder_peekExpandBackslashes (conststring32 message);
+char32 * Melder_peekExpandBackslashes (conststring32 message);   // replace backslashes with "\bs"
+
+/*
+	Use the following functions to pass unchanged text or file names to Melder_* functions.
+	The trick is that they return one of 11 cyclically used static strings,
+	so you can use up to 11 strings in a single Melder_* call.
+*/
 conststring32 MelderFile_messageName (MelderFile file);   // calls Melder_peekExpandBackslashes ()
+conststring32 MelderFolder_messageName (MelderDir folder);   // calls Melder_peekExpandBackslashes ()
 
 void Melder_createDirectory (MelderDir parent, conststring32 subdirName, int mode);
+void MelderFolder_create (MelderDir folder);
 
 void Melder_getDefaultDir (MelderDir dir);
 void Melder_setDefaultDir (MelderDir dir);

@@ -229,27 +229,31 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 
 void Melder_relativePathToFolder (conststring32 path, MelderDir folder) {
 	/*
-		This handles complete and partial path names,
+		This handles complete, partial and home-relative path names,
 		and translates slashes to native directory separators.
 
 		Used if we do not know for sure that we have a complete path name,
 		i.e. if the user determined the name (scripting).
 	*/
 	#if defined (UNIX)
-		/*
-			We assume that Unix complete path names start with a slash.
-		*/
-		if (path [0] == U'~' && path [1] == U'/') {
+		if (const bool pathIsHomeRelative = ( path [0] == U'~' && (path [1] == U'/' || path [1] == U'\0') )) {
 			Melder_sprint (folder -> path,kMelder_MAXPATH+1, Melder_peek8to32 (getenv ("HOME")), & path [1]);
-		} else if (path [0] == U'/' || str32str (path, U"://")) {
+		} else if (const bool pathIsAbsolute = (
+				path [0] == U'/'   // path is on local disk
+				||
+				str32str (path, U"://")   // path is on a service through a URL; is this needed and/or safe?
+			))
+		{
 			Melder_sprint (folder -> path,kMelder_MAXPATH+1, path);
 		} else {
-			structMelderDir dir { };
-			Melder_getDefaultDir (& dir);   // BUG
-			if (dir. path [0] == U'/' && dir. path [1] == U'\0')
-				Melder_sprint (folder -> path,kMelder_MAXPATH+1, U"/", path);
-			else
-				Melder_sprint (folder -> path,kMelder_MAXPATH+1, dir. path, U"/", path);
+			/*
+				Remaining case: the path must be current-folder-relative.
+			*/
+			structMelderDir currentFolder { };
+			Melder_getDefaultDir (& currentFolder);   // BUG if in library? check in Python, for instance
+			const bool weAreInTheRootFolder = ( currentFolder. path [0] == U'/' && currentFolder. path [1] == U'\0' );
+			conststring32 folderSeparator = ( weAreInTheRootFolder ? nullptr : U"/" );   // prevent a double slash
+			Melder_sprint (folder -> path,kMelder_MAXPATH+1, currentFolder. path, folderSeparator, path);
 		}
 	#elif defined (_WIN32)
 		/*
@@ -843,6 +847,10 @@ conststring32 MelderFile_messageName (MelderFile file) {
 	return Melder_cat (U"“", file -> path, U"”");   // BUG: is cat allowed here?
 }
 
+conststring32 MelderFolder_messageName (MelderDir folder) {
+	return Melder_cat (U"“", folder -> path, U"”");   // BUG: is cat allowed here?
+}
+
 #if defined (UNIX)
 	/*
 		From macOS 10.15 Catalina on, getcwd() has failed if a part of the path
@@ -913,6 +921,30 @@ void Melder_createDirectory (MelderDir parent, conststring32 dirName, int mode) 
 #else
 	//#error Unsupported operating system.
 #endif
+}
+
+void MelderFolder_create (MelderDir folder) {
+	#if defined (UNIX)
+		const int status = mkdir (Melder_peek32to8_fileSystem (folder -> path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		if (status == 0)
+			return;   // successfully created a new folder
+		if (errno == EEXIST)
+			return;   // it is no failure if the folder already existed
+		Melder_throw (U"Cannot create folder ", folder, U".");
+	#elif defined (_WIN32)
+		SECURITY_ATTRIBUTES securityAttributes;
+		securityAttributes. nLength = sizeof (SECURITY_ATTRIBUTES);
+		securityAttributes. lpSecurityDescriptor = nullptr;
+		securityAttributes. bInheritHandle = false;
+		const int status = CreateDirectoryW (Melder_peek32toW_fileSystem (folder -> path), & securityAttributes);
+		if (status == 0)
+			return;   // successfully created a new folder
+		if (GetLastError () == ERROR_ALREADY_EXISTS)
+			return;   // it is no failure if the folder already existed
+		Melder_throw (U"Cannot create folder ", folder, U".");
+	#else
+		#error Unsupported operating system.
+	#endif
 }
 
 static size_t fread_multi (char *buffer, size_t numberOfBytes, FILE *f) {
