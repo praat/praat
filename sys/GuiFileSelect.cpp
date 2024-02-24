@@ -23,24 +23,24 @@
 #endif
 
 autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststring32 title, bool allowMultipleFiles) {
-	autoMelderSaveDefaultDir saveDir;
+	autoMelderSaveCurrentFolder saveFolder;
 	autoStringSet me = StringSet_create ();
 	#if gtk
-		static structMelderFolder dir { };
+		static structMelderFolder folder { };
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 		Melder_assert (dialog);
 		if (optionalParent)
 			gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (optionalParent -> d_gtkWindow));
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
-		if (MelderDir_isNull (& dir))   // first time?
-			Melder_getDefaultDir (& dir);
-		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (Melder_folderToPath (& dir)));
+		if (MelderFolder_isNull (& folder))   // first time?
+			Melder_getCurrentFolder (& folder);
+		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (Melder_folderToPath (& folder)));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *infolderName_utf8 = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (dialog));
 			if (infolderName_utf8) {
 				conststring32 infolderName = Melder_peek8to32 (infolderName_utf8);   // dangle
-				Melder_pathToDir (infolderName, & dir);
+				Melder_pathToFolder (infolderName, & folder);
 				g_free (infolderName_utf8);
 			}
 			GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
@@ -95,11 +95,11 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststrin
 					The user selected multiple files.
 					'fullFileNameW' is a folder name; the file names follow.
 				*/
-				structMelderFolder dir { };
-				Melder_pathToDir (Melder_peekWto32 (fullFileNameW.get()), & dir);
+				structMelderFolder folder { };
+				Melder_pathToFolder (Melder_peekWto32 (fullFileNameW.get()), & folder);
 				for (const WCHAR *p = & fullFileNameW [firstFileNameLength + 1]; *p != L'\0'; p += wcslen (p) + 1) {
 					structMelderFile file { };
-					MelderDir_getFile (& dir, Melder_peekWto32 (p), & file);
+					MelderFolder_getFile (& folder, Melder_peekWto32 (p), & file);
 					my addString_copy (Melder_fileToPath (& file));
 				}
 			}
@@ -124,7 +124,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststrin
 }
 
 autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring32 title, conststring32 defaultName) {
-	autoMelderSaveDefaultDir saveDir;
+	autoMelderSaveCurrentFolder saveFolder;
 	autostring32 outfileName;
 	#if gtk
 		static structMelderFile file;
@@ -187,8 +187,8 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow optionalParent, conststring
 }
 
 autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring32 title) {
-	autoMelderSaveDefaultDir saveDir;
-	autostring32 directoryName;
+	autoMelderSaveCurrentFolder saveFolder;
+	autostring32 folderName;
 	#if gtk
 		static structMelderFile file;
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
@@ -198,10 +198,10 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 		if (file. path [0] != U'\0')
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-			char *directoryName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			directoryName = Melder_8to32 (directoryName_utf8);
-			g_free (directoryName_utf8);
-			Melder_pathToFile (directoryName.get(), & file);
+			char *folderName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+			folderName = Melder_8to32 (folderName_utf8);
+			g_free (folderName_utf8);
+			Melder_pathToFile (folderName.get(), & file);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		setlocale (LC_ALL, "C");
@@ -221,7 +221,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 		LPITEMIDLIST idList = SHBrowseForFolder (& info);
 		SHGetPathFromIDList (idList, fullFileNameW);
 		CoTaskMemFree (idList);
-		directoryName = Melder_Wto32 (fullFileNameW);
+		folderName = Melder_Wto32 (fullFileNameW);
 		setlocale (LC_ALL, "C");
 	#elif cocoa
 		(void) optionalParent;
@@ -233,15 +233,15 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 		[openPanel setPrompt: @"Choose"];
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
-				const char *directoryName_utf8 = [[url path] UTF8String];
-				structMelderFolder dir { };
-				Melder_8bitFileRepresentationToStr32_inplace (directoryName_utf8, dir. path);   // BUG: unsafe buffer
-				directoryName = Melder_dup (dir. path);
+				const char *folderName_utf8 = [[url path] UTF8String];
+				structMelderFolder folder { };
+				Melder_8bitFileRepresentationToStr32_inplace (folderName_utf8, folder. path);   // BUG: unsafe buffer
+				folderName = Melder_dup (folder. path);
 			}
 		}
 		setlocale (LC_ALL, "en_US");
 	#endif
-	return directoryName;
+	return folderName;
 }
 
 /* End of file GuiFileSelect.cpp */

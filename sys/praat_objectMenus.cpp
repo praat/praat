@@ -398,9 +398,9 @@ FORM (SETTINGS__debug, U"Set debugging options", nullptr) {
 	LABEL (U"information about what goes on in Praat")
 	structMelderFile file;
 	#ifdef UNIX
-		MelderDir_getFile (& Melder_preferencesFolder, U"tracing", & file);
+		MelderFolder_getFile (& Melder_preferencesFolder, U"tracing", & file);
 	#else
-		MelderDir_getFile (& Melder_preferencesFolder, U"Tracing.txt", & file);
+		MelderFolder_getFile (& Melder_preferencesFolder, U"Tracing.txt", & file);
 	#endif
 	LABEL (Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
 	BOOLEAN (tracing, U"Tracing", false)
@@ -637,7 +637,7 @@ FORM (HELP_SaveManualToHtmlFolder, U"Save all pages as HTML files", nullptr) {
 	FOLDER (folder, U"Folder", U"")
 OK
 	structMelderFolder currentFolder { };
-	Melder_getDefaultDir (& currentFolder);
+	Melder_getCurrentFolder (& currentFolder);
 	SET_STRING (folder, Melder_folderToPath (& currentFolder))
 DO
 	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, nullptr, folder);

@@ -2120,13 +2120,16 @@ void Interpreter_run (Interpreter me, char32 *text, const bool reuseVariables) {
 			Interpreter_addStringVariable (me, U"newline$", U"\n");
 			Interpreter_addStringVariable (me, U"tab$", U"\t");
 			Interpreter_addStringVariable (me, U"shellDirectory$", Melder_getShellDirectory ());
-			structMelderFolder dir { }; Melder_getDefaultDir (& dir);
-			Interpreter_addStringVariable (me, U"defaultDirectory$", Melder_folderToPath (& dir));
-			Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_folderToPath (& Melder_preferencesFolder));
-			Melder_getHomeDir (& dir);
-			Interpreter_addStringVariable (me, U"homeDirectory$", Melder_folderToPath (& dir));
-			Melder_getTempDir (& dir);
-			Interpreter_addStringVariable (me, U"temporaryDirectory$", Melder_folderToPath (& dir));
+			{// scope
+				structMelderFolder folder { };
+				Melder_getCurrentFolder (& folder);
+				Interpreter_addStringVariable (me, U"defaultDirectory$", Melder_folderToPath (& folder));
+				Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_folderToPath (& Melder_preferencesFolder));
+				Melder_getHomeDir (& folder);
+				Interpreter_addStringVariable (me, U"homeDirectory$", Melder_folderToPath (& folder));
+				Melder_getTempDir (& folder);
+				Interpreter_addStringVariable (me, U"temporaryDirectory$", Melder_folderToPath (& folder));
+			}
 			#if defined (macintosh)
 				Interpreter_addNumericVariable (me, U"macintosh", 1);
 				Interpreter_addNumericVariable (me, U"windows", 0);

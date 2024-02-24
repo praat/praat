@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2023 Paul Boersma
+ * Copyright (C) 1996-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -463,9 +463,9 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 				{// scope
 					autoMelderProgressOff progress;
 					autoMelderWarningOff warning;
-					autoMelderSaveDefaultDir saveDir;
-					if (! MelderDir_isNull (& my rootDirectory))
-						Melder_setDefaultDir (& my rootDirectory);
+					autoMelderSaveCurrentFolder saveFolder;
+					if (! MelderFolder_isNull (& my rootDirectory))
+						Melder_setCurrentFolder (& my rootDirectory);
 					Melder_assert (cacheGraphics);
 					const bool dollarSignWasCode = my graphics -> dollarSignIsCode;
 					const bool backquoteWasVerbatim = my graphics -> backquoteIsVerbatim;
@@ -561,9 +561,9 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 			{// scope
 				autoMelderProgressOff progress;
 				autoMelderWarningOff warning;
-				autoMelderSaveDefaultDir saveDir;
-				if (! MelderDir_isNull (& my rootDirectory))
-					Melder_setDefaultDir (& my rootDirectory);
+				autoMelderSaveCurrentFolder saveFolder;
+				if (! MelderFolder_isNull (& my rootDirectory))
+					Melder_setCurrentFolder (& my rootDirectory);
 				try {
 					//Interpreter_run (interpreter, text.get(), false);   // BUG: implement
 				} catch (MelderError) {

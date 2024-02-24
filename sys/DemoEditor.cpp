@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2023 Paul Boersma
+ * Copyright (C) 2009-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 	theReferenceToTheOnlyDemoEditor -> keyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
-		autoMelderSaveDefaultDir saveDir;
+		autoMelderSaveCurrentFolder saveFolder;
 		const bool wasBackgrounding = Melder_backgrounding;
 		if (wasBackgrounding)
 			praat_foreground ();
@@ -300,7 +300,7 @@ void Demo_peekInput (Interpreter interpreter) {
 	theReferenceToTheOnlyDemoEditor -> optionKeyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
-		autoMelderSaveDefaultDir saveDir;
+		autoMelderSaveCurrentFolder saveFolder;
 		//bool wasBackgrounding = Melder_backgrounding;
 		//if (wasBackgrounding) praat_foreground ();
 		try {

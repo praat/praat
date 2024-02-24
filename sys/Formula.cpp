@@ -5618,7 +5618,7 @@ static void do_folderExists () {
 	if (s->which == Stackel_STRING) {
 		structMelderFolder folder { };
 		Melder_relativePathToFolder (s->getString(), & folder);
-		pushNumber (MelderDir_exists (& folder));
+		pushNumber (MelderFolder_exists (& folder));
 	} else {
 		Melder_throw (U"The function “folderExists” requires a string, not ", s->whichText(), U".");
 	}
@@ -6404,13 +6404,9 @@ static void do_createDirectory () {
 		U"The function “createDirectory” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
-		structMelderFolder currentFolder { };
-		Melder_getDefaultDir (& currentFolder);
-		#if defined (UNIX) || defined (macintosh)
-			Melder_createDirectory (& currentFolder, f->getString(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		#else
-			Melder_createDirectory (& currentFolder, f->getString(), 0);
-		#endif
+		structMelderFolder folder { };
+		Melder_relativePathToFolder (f->getString(), & folder);
+		MelderFolder_create (& folder);
 		pushNumber (1);
 	} else {
 		Melder_throw (U"The function “createDirectory” requires a string, not ", f->whichText(), U".");
@@ -6420,8 +6416,8 @@ static void do_setWorkingDirectory () {
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderFolder folder { };
-		Melder_pathToDir (f->getString(), & folder);
-		Melder_setDefaultDir (& folder);
+		Melder_pathToFolder (f->getString(), & folder);
+		Melder_setCurrentFolder (& folder);
 		pushNumber (1);
 	} else {
 		Melder_throw (U"The function “setWorkingDirectory” requires a string, not ", f->whichText(), U".");
