@@ -1,5 +1,6 @@
 Praats/external/flac/READ_ME.TXT
 Paul Boersma, 20 August 2021
+24 February 2024: "Obsolete repairs"
 
 This file describes the adaptations to the FLAC 1.3.3 sources
 that are needed to make them compatible with Praat.
@@ -137,3 +138,20 @@ typedef struct FLAC__StreamEncoder {   //ppgb 20071120
 Before #including any FLAC header files, do
 
 #define FLAC__NO_DLL
+
+Obsolete repairs
+================
+
+At the end of flac_FLAC_format.h, we used to include the following,
+so that file names with special characters were handled correctly on Windows:
+
+// pb 20080502
+#if defined (_WIN32) && ! defined (__CYGWIN__)
+	#ifndef __cplusplus
+		uint32_t * Melder_peek8to32 (const char *string);
+		const uint16_t * Melder_peek32to16 (const uint32_t *string);
+	#endif
+	#define fopen(filename,mode)  _wfopen (Melder_peek32to16 (Melder_peek8to32 (filename)), L"" mode)
+#endif
+
+However, from FLAC 1.3.3 on, we just call flac_set_utf8_filenames() in Melder_audiofiles_init().

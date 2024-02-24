@@ -283,7 +283,7 @@ void Melder_relativePathToFolder (conststring32 path, MelderDir folder) {
 					break;
 				*slash = U'\\';
 			}
-			Melder_relativePathToFile (winPath, file);
+			Melder_relativePathToFolder (winPath, folder);
 			return;
 		}
 		if (str32chr (path, U':') || path [0] == U'\\' && path [1] == U'\\') {
@@ -754,14 +754,7 @@ bool MelderDir_exists (MelderDir folder) {
 			return false;
 		return S_ISDIR (fileOrFolderStatus. st_mode);
 	#else
-		try {
-			autofile f = Melder_fopen (file, "rb");
-			f.close (file);
-			return true;
-		} catch (MelderError) {
-			Melder_clearError ();
-			return false;
-		}
+		Melder_throw (U"MelderDir_exists() not implemented on Windows");
 	#endif
 }
 

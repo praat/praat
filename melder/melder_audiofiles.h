@@ -2,7 +2,7 @@
 #define _melder_audiofiles_h_
 /* melder_audiofiles.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2019,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,8 @@ void Melder_readAudioToShort (FILE *f, integer numberOfChannels, int encoding, s
  */
 void MelderFile_writeFloatToAudio (MelderFile file, constMATVU const& buffer, int encoding, bool warnIfClipped);
 void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, int encoding, const short *buffer, integer numberOfSamples);
+
+void Melder_audiofiles_init ();
 
 /* End of file melder_audiofiles.h */
 #endif

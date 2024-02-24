@@ -21,6 +21,9 @@
 #include "../external/flac/flac_FLAC_metadata.h"
 #include "../external/flac/flac_FLAC_stream_decoder.h"
 #include "../external/flac/flac_FLAC_stream_encoder.h"
+#ifdef _WIN32
+	#include "../external/flac/flac_share_windows_unicode_filenames.h"
+#endif
 #include "../external/mp3/mp3.h"
 
 /***** WRITING *****/
@@ -1584,6 +1587,12 @@ void MelderFile_writeFloatToAudio (MelderFile file, constMATVU const& buffer, in
 	} catch (MelderError) {
 		Melder_throw (U"Samples not written to audio file.");
 	}
+}
+
+void Melder_audiofiles_init () {
+	#ifdef _WIN32
+		flac_set_utf8_filenames (true);
+	#endif
 }
 
 /* End of file melder_audiofiles.cpp */
