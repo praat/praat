@@ -2,7 +2,7 @@
 #define _melder_files_h_
 /* melder_files.h
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ conststring32 MelderDir_name (MelderDir dir);
 void Melder_pathToDir (conststring32 path, MelderDir dir);
 void Melder_pathToFile (conststring32 path, MelderFile file);
 void Melder_relativePathToFile (conststring32 path, MelderFile file);
+void Melder_relativePathToFolder (conststring32 path, MelderDir folder);
 conststring32 Melder_dirToPath (MelderDir dir);
 	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
 conststring32 Melder_fileToPath (MelderFile file);
@@ -77,6 +78,7 @@ void Melder_getParentPreferencesFolder (MelderDir prefDir);
 void Melder_getTempDir (MelderDir tempDir);
 
 bool MelderFile_exists (MelderFile file);
+bool MelderDir_exists (MelderDir folder);
 bool MelderFile_readable (MelderFile file);
 bool Melder_tryToWriteFile (MelderFile file);
 bool Melder_tryToAppendFile (MelderFile file);

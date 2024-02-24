@@ -187,7 +187,7 @@ enum { NO_SYMBOL_,
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
 		#define LOW_FUNCTION_STR1  LENGTH_
-			LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_,
+			LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, FOLDER_EXISTS_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_,
 			CREATE_FOLDER_, CREATE_DIRECTORY_, SET_WORKING_DIRECTORY_, VARIABLE_EXISTS_,
 			READ_FILE_, READ_FILE_STR_, READ_FILE_VEC_, READ_FILE_MAT_,
 			UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
@@ -336,7 +336,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"splitByWhitespace$#", U"splitBy$#",
 
 	// LOW_FUNCTION_STR1
-		U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
+		U"length", U"number", U"fileReadable", U"folderExists", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile",
 		U"createFolder", U"createDirectory", U"setWorkingDirectory", U"variableExists",
 		U"readFile", U"readFile$", U"readFile#", U"readFile##",
 		U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
@@ -5613,6 +5613,16 @@ static void do_fileReadable () {
 		Melder_throw (U"The function “fileReadable” requires a string, not ", s->whichText(), U".");
 	}
 }
+static void do_folderExists () {
+	const Stackel s = pop;
+	if (s->which == Stackel_STRING) {
+		structMelderDir folder { };
+		Melder_relativePathToFolder (s->getString(), & folder);
+		pushNumber (MelderDir_exists (& folder));
+	} else {
+		Melder_throw (U"The function “folderExists” requires a string, not ", s->whichText(), U".");
+	}
+}
 static void do_tryToWriteFile () {
 	Melder_require (praat_commandsWithExternalSideEffectsAreAllowed (),
 		U"The function “tryToWriteFile” is not available inside manuals.");
@@ -8417,6 +8427,7 @@ CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();
 } break; case FILE_READABLE_: { do_fileReadable ();
+} break; case FOLDER_EXISTS_: { do_folderExists ();
 } break; case TRY_TO_WRITE_FILE_: { do_tryToWriteFile ();
 } break; case TRY_TO_APPEND_FILE_: { do_tryToAppendFile ();
 /********** String functions of 0 variables: **********/
