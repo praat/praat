@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2007,2009,2011-2020 Paul Boersma
+ * Copyright (C) 1994-2007,2009,2011-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,8 +103,8 @@
 #define oo_FILE(x)  \
 	MelderFile_copy (& our x, & thy x);
 
-#define oo_DIR(x)  \
-	MelderDir_copy (& our x, & thy x);
+#define oo_FOLDER(x)  \
+	MelderFolder_copy (& our x, & thy x);
 
 #define oo_DEFINE_STRUCT(Type)  \
 	void struct##Type :: copy (Type thee) const {

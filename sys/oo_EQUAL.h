@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2007,2009,2011-2020 Paul Boersma
+ * Copyright (C) 1994-2007,2009,2011-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,8 +110,8 @@
 #define oo_FILE(x)  \
 	if (! MelderFile_equal (& our x, & thy x)) return false;
 
-#define oo_DIR(x)  \
-	if (! MelderDir_equal (& our x, & thy x)) return false;
+#define oo_FOLDER(x)  \
+	if (! MelderFolder_equal (& our x, & thy x)) return false;
 
 #define oo_DEFINE_STRUCT(Type)  \
 	bool struct##Type :: equal (Type thee) {

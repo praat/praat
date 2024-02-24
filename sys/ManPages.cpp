@@ -246,7 +246,7 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 			/*
 				A link to a sound file: see if it exists.
 			*/
-			MelderDir_relativePathToFile (& my rootDirectory, linkBuffer + 3, & file2);
+			MelderFolder_relativePathToFile (& my rootDirectory, linkBuffer + 3, & file2);
 			if (! MelderFile_exists (& file2))
 				Melder_warning (U"Cannot find sound file ", MelderFile_messageName (& file2), U".");
 		} else if (linkBuffer [0] == U'\\' && linkBuffer [1] == U'S' && linkBuffer [2] == U'C') {
@@ -266,7 +266,7 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 					* q ++ = * p ++;   // one word, up to the next space
 				*q = U'\0';
 			}
-			MelderDir_relativePathToFile (& my rootDirectory, fileNameBuffer, & file2);
+			MelderFolder_relativePathToFile (& my rootDirectory, fileNameBuffer, & file2);
 			if (! MelderFile_exists (& file2))
 				Melder_warning (U"Cannot find script ", MelderFile_messageName (& file2), U".");
 			my executable = true;
@@ -284,7 +284,7 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 					if (! isAllowedFileNameCharacter (*q))
 						*q = U'_';
 				str32cat (fileNameBuffer, U".man");
-				MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
+				MelderFolder_getFile (& my rootDirectory, fileNameBuffer, & file2);
 				if (MelderFile_exists (& file2)) {
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 					readOnePage (me, text2.get());
@@ -294,7 +294,7 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 					*/
 					linkBuffer [0] = Melder_toUpperCase (linkBuffer [0]);
 					Melder_sprint (fileNameBuffer,ManPages_FILENAME_BUFFER_SIZE, linkBuffer, U".man");
-					MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
+					MelderFolder_getFile (& my rootDirectory, fileNameBuffer, & file2);
 					if (MelderFile_exists (& file2)) {
 						autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 						readOnePage (me, text2.get());
@@ -331,13 +331,13 @@ static void resolveLinks (ManPages me, ManPage_Paragraph par, bool verbatimAware
 						}
 						*to = U'\0';
 						str32cat (fileNameBuffer, U".praatnb");
-						MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
+						MelderFolder_getFile (& my rootDirectory, fileNameBuffer, & file2);
 						if (MelderFile_exists (& file2)) {
 							autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 							readOnePage (me, text2.get());
 						} else {
 							fileNameBuffer [0] = Melder_toLowerCase (fileNameBuffer [0]);
-							MelderDir_getFile (& my rootDirectory, fileNameBuffer, & file2);
+							MelderFolder_getFile (& my rootDirectory, fileNameBuffer, & file2);
 							if (MelderFile_exists (& file2)) {
 								autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 								readOnePage (me, text2.get());
@@ -851,7 +851,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 }
 void structManPages :: v1_readText (MelderReadText text, int /*formatVersion*/) {
 	our dynamic = true;
-	MelderDir_copy (& Data_directoryBeingRead, & our rootDirectory);
+	MelderFolder_copy (& Data_directoryBeingRead, & our rootDirectory);
 	readOnePage (this, text);
 }
 
@@ -863,7 +863,7 @@ autoManPages ManPages_create () {
 autoManPages ManPages_createFromText (MelderReadText text, MelderFile file) {
 	autoManPages me = Thing_new (ManPages);
 	my dynamic = true;
-	MelderFile_getParentDir (file, & my rootDirectory);
+	MelderFile_getParentFolder (file, & my rootDirectory);
 	readOnePage (me.get(), text);
 	return me;
 }

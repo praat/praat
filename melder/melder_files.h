@@ -48,28 +48,28 @@ typedef struct structMelderFolder *MelderFolder;
 typedef const struct structMelderFolder *constMelderFolder;
 
 conststring32 MelderFile_name (MelderFile file);
-conststring32 MelderDir_name (MelderFolder dir);
+conststring32 MelderFolder_name (MelderFolder folder);
 void Melder_pathToFile (conststring32 path, MelderFile file);
-void Melder_pathToDir (conststring32 path, MelderFolder dir);
+void Melder_pathToFolder (conststring32 path, MelderFolder folder);
 void Melder_relativePathToFile (conststring32 path, MelderFile file);
 void Melder_relativePathToFolder (conststring32 path, MelderFolder folder);
 conststring32 Melder_folderToPath (MelderFolder folder);
 	/* Returns a pointer internal to 'folder', like "/u/paul/praats" or "D:\Paul\Praats" */
 conststring32 Melder_fileToPath (MelderFile file);
 void MelderFile_copy (constMelderFile file, MelderFile copy);
-void MelderDir_copy (constMelderFolder dir, MelderFolder copy);
+void MelderFolder_copy (constMelderFolder folder, MelderFolder copy);
 bool MelderFile_equal (MelderFile file1, MelderFile file2);
-bool MelderDir_equal (MelderFolder dir1, MelderFolder dir2);
+bool MelderFolder_equal (MelderFolder folder1, MelderFolder folder2);
 void MelderFile_setToNull (MelderFile file);
 bool MelderFile_isNull (MelderFile file);
-void MelderDir_setToNull (MelderFolder dir);
-bool MelderDir_isNull (MelderFolder dir);
-void MelderDir_getFile (MelderFolder parent, conststring32 fileName, MelderFile file);
-void MelderDir_relativePathToFile (MelderFolder dir, conststring32 path, MelderFile file);
-void MelderFile_getParentDir (MelderFile file, MelderFolder parent);
-void MelderDir_getParentDir (MelderFolder file, MelderFolder parent);
-bool MelderDir_isDesktop (MelderFolder dir);
-void MelderDir_getSubdir (MelderFolder parent, conststring32 subdirName, MelderFolder subdir);
+void MelderFolder_setToNull (MelderFolder folder);
+bool MelderFolder_isNull (MelderFolder folder);
+void MelderFolder_getFile (MelderFolder parent, conststring32 fileName, MelderFile file);
+void MelderFolder_relativePathToFile (MelderFolder folder, conststring32 path, MelderFile file);
+void MelderFile_getParentFolder (MelderFile file, MelderFolder parent);
+void MelderFolder_getParentFolder (MelderFolder file, MelderFolder parent);
+bool MelderFolder_isDesktop (MelderFolder folder);
+void MelderFolder_getSubfolder (MelderFolder parentFolder, conststring32 subfolderName, MelderFolder subfolder);
 void Melder_rememberShellDirectory ();
 conststring32 Melder_getShellDirectory ();
 void Melder_getHomeDir (MelderFolder homeDir);
@@ -78,7 +78,7 @@ void Melder_getParentPreferencesFolder (MelderFolder prefDir);
 void Melder_getTempDir (MelderFolder tempDir);
 
 bool MelderFile_exists (MelderFile file);
-bool MelderDir_exists (MelderFolder folder);
+bool MelderFolder_exists (MelderFolder folder);
 bool MelderFile_readable (MelderFile file);
 bool Melder_tryToWriteFile (MelderFile file);
 bool Melder_tryToAppendFile (MelderFile file);
@@ -103,8 +103,8 @@ conststring32 MelderFolder_messageName (MelderFolder folder);   // calls Melder_
 void Melder_createDirectory (MelderFolder parent, conststring32 subdirName, int mode);
 void MelderFolder_create (MelderFolder folder);
 
-void Melder_getDefaultDir (MelderFolder dir);
-void Melder_setDefaultDir (MelderFolder dir);
+void Melder_getCurrentFolder (MelderFolder folder);
+void Melder_setCurrentFolder (MelderFolder folder);
 void MelderFile_setDefaultDir (MelderFile file);
 
 class autofile {
@@ -135,54 +135,54 @@ public:
 	}
 };
 
-class autoMelderSaveDefaultDir {
+class autoMelderSaveCurrentFolder {
 	structMelderFolder _savedFolder;
 public:
-	autoMelderSaveDefaultDir () {
-		Melder_getDefaultDir (& our _savedFolder);
+	autoMelderSaveCurrentFolder () {
+		Melder_getCurrentFolder (& our _savedFolder);
 	}
-	~autoMelderSaveDefaultDir () {
-		Melder_setDefaultDir (& our _savedFolder);
+	~autoMelderSaveCurrentFolder () {
+		Melder_setCurrentFolder (& our _savedFolder);
 	}
 	/*
 		Disable copying.
 	*/
-	autoMelderSaveDefaultDir (const autoMelderSaveDefaultDir&) = delete;   // disable copy constructor
-	autoMelderSaveDefaultDir& operator= (const autoMelderSaveDefaultDir&) = delete;   // disable copy assignment
+	autoMelderSaveCurrentFolder (const autoMelderSaveCurrentFolder&) = delete;   // disable copy constructor
+	autoMelderSaveCurrentFolder& operator= (const autoMelderSaveCurrentFolder&) = delete;   // disable copy assignment
 };
 
-class autoMelderSetDefaultDir {
+class autoMelderSetCurrentFolder {
 	structMelderFolder _savedFolder;
 public:
-	autoMelderSetDefaultDir (MelderFolder dir) {
-		Melder_getDefaultDir (& our _savedFolder);
-		Melder_setDefaultDir (dir);
+	autoMelderSetCurrentFolder (MelderFolder folder) {
+		Melder_getCurrentFolder (& our _savedFolder);
+		Melder_setCurrentFolder (folder);
 	}
-	~autoMelderSetDefaultDir () {
-		Melder_setDefaultDir (& our _savedFolder);
+	~autoMelderSetCurrentFolder () {
+		Melder_setCurrentFolder (& our _savedFolder);
 	}
 	/*
 		Disable copying.
 	*/
-	autoMelderSetDefaultDir (const autoMelderSetDefaultDir&) = delete;   // disable copy constructor
-	autoMelderSetDefaultDir& operator= (const autoMelderSetDefaultDir&) = delete;   // disable copy assignment
+	autoMelderSetCurrentFolder (const autoMelderSetCurrentFolder&) = delete;   // disable copy constructor
+	autoMelderSetCurrentFolder& operator= (const autoMelderSetCurrentFolder&) = delete;   // disable copy assignment
 };
 
-class autoMelderFileSetDefaultDir {
+class autoMelderFileSetCurrentFolder {
 	structMelderFolder _savedFolder;
 public:
-	autoMelderFileSetDefaultDir (MelderFile file) {
-		Melder_getDefaultDir (& our _savedFolder);
+	autoMelderFileSetCurrentFolder (MelderFile file) {
+		Melder_getCurrentFolder (& our _savedFolder);
 		MelderFile_setDefaultDir (file);
 	}
-	~autoMelderFileSetDefaultDir () {
-		Melder_setDefaultDir (& our _savedFolder);
+	~autoMelderFileSetCurrentFolder () {
+		Melder_setCurrentFolder (& our _savedFolder);
 	}
 	/*
 		Disable copying.
 	*/
-	autoMelderFileSetDefaultDir (const autoMelderFileSetDefaultDir&) = delete;   // disable copy constructor
-	autoMelderFileSetDefaultDir& operator= (const autoMelderFileSetDefaultDir&) = delete;   // disable copy assignment
+	autoMelderFileSetCurrentFolder (const autoMelderFileSetCurrentFolder&) = delete;   // disable copy constructor
+	autoMelderFileSetCurrentFolder& operator= (const autoMelderFileSetCurrentFolder&) = delete;   // disable copy assignment
 };
 
 /* Read and write whole text files. */

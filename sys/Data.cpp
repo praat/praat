@@ -1,6 +1,6 @@
 /* Data.cpp
  *
- * Copyright (C) 1992-2018,2021,2022 Paul Boersma
+ * Copyright (C) 1992-2018,2021,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,7 +186,7 @@ autoDaata Data_readFromTextFile (MelderFile file) {
 			me = Thing_newFromClassName (line, nullptr).static_cast_move <structDaata> ();
 			formatVersion = -1;   // old version
 		}
-		MelderFile_getParentDir (file, & Data_directoryBeingRead);
+		MelderFile_getParentFolder (file, & Data_directoryBeingRead);
 		Data_readText (me.get(), text.get(), formatVersion);
 		file -> format = structMelderFile :: Format :: text;
 		return me;
@@ -244,7 +244,7 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 			rewind (f);
 			fread (line, 1, (size_t) (end - line) + strlen ("BinaryFile"), f);
 		}
-		MelderFile_getParentDir (file, & Data_directoryBeingRead);
+		MelderFile_getParentFolder (file, & Data_directoryBeingRead);
 		Data_readBinary (me.get(), f, formatVersion);
 		file -> format = structMelderFile :: Format :: binary;
 		f.close (file);
@@ -334,7 +334,7 @@ autoDaata Data_readFromFile (MelderFile file) {
 		Possibility 3: is this file of a type for which a recognizer has been installed?
 	*/
 
-	MelderFile_getParentDir (file, & Data_directoryBeingRead);
+	MelderFile_getParentFolder (file, & Data_directoryBeingRead);
 	for (int i = 1; i <= numFileTypeRecognizers; i ++) {
 		autoDaata object = fileTypeRecognizers [i] (nread, header, file);
 		if (object) {

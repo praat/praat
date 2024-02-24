@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2024 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,7 +384,7 @@ void structEditor :: v_nameChanged () {
 static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS) {
 	if (my data()) {
 		structMelderFile file { };
-		MelderDir_getFile (& Melder_preferencesFolder, U"praat_backToCaller.Data", & file);
+		MelderFolder_getFile (& Melder_preferencesFolder, U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data(), & file);
 		sendsocket (Melder_peek32to8 (my callbackSocket.get()), Melder_peek32to8 (my data() -> name.get()));
 	}

@@ -141,9 +141,9 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 		} else {
 			autoMelderProgressOff progress;
 			autoMelderWarningOff warning;
-			autoMelderSaveDefaultDir saveDir;
-			if (! MelderDir_isNull (rootDirectory))
-				Melder_setDefaultDir (rootDirectory);
+			autoMelderSaveCurrentFolder saveFolder;
+			if (! MelderFolder_isNull (rootDirectory))
+				Melder_setCurrentFolder (rootDirectory);
 			try {
 				autostring32 text = Melder_dup (paragraph -> text);
 				Interpreter_run (interpreterReference, text.get(), chunkNumber > 1);

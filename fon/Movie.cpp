@@ -73,7 +73,7 @@ autoMovie Movie_openFromSoundFile (MelderFile file)
 		fileNameHead.length = extensionLocation - fileNameHead.string;
 		autoStrings strings = Strings_createAsFileList (Melder_cat (fileNameHead.string, U"*.png"));
 		structMelderFolder folder { };
-		MelderFile_getParentDir (file, & folder);
+		MelderFile_getParentFolder (file, & folder);
 		Movie_init (me.get(), sound.move(), Melder_folderToPath (& folder), strings.move());
 		return me;
 	} catch (MelderError) {
@@ -91,9 +91,9 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, integer frameNumber
 		Melder_assert (my d_fileNames);
 		Melder_assert (my d_fileNames -> numberOfStrings == my nx);
 		structMelderFolder folder { };
-		Melder_pathToDir (my d_folderName.get(), & folder);
+		Melder_pathToFolder (my d_folderName.get(), & folder);
 		structMelderFile file { };
-		MelderDir_getFile (& folder, my d_fileNames -> strings [frameNumber].get(), & file);
+		MelderFolder_getFile (& folder, my d_fileNames -> strings [frameNumber].get(), & file);
 		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), xmin, xmax, ymin, ymax);
 	} catch (MelderError) {
 		Melder_throw (me, U": image ", frameNumber, U" not painted.");
