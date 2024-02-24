@@ -263,6 +263,11 @@ void Melder_relativePathToFolder (conststring32 path, MelderDir folder) {
 				\\host\path
 		*/
 		structMelderDir dir { };
+		if (path [0] == U'~' && path [1] == U'\0') {
+			Melder_getHomeDir (& dir);
+			Melder_sprint (folder -> path,kMelder_MAXPATH+1, dir. path);
+			return;
+		}
 		if (path [0] == U'~' && path [1] == U'/') {
 			Melder_getHomeDir (& dir);
 			Melder_sprint (folder -> path,kMelder_MAXPATH+1, dir. path, & path [1]);
@@ -730,31 +735,31 @@ void Melder_files_cleanUp () {
 
 bool MelderFile_exists (MelderFile file) {
 	#if defined (UNIX)
-		struct stat statistics;
-		return ! stat (Melder_peek32to8_fileSystem (file -> path), & statistics);
-	#else
-		try {
-			autofile f = Melder_fopen (file, "rb");
-			f.close (file);
-			return true;
-		} catch (MelderError) {
-			Melder_clearError ();
+		struct stat fileOrFolderStatus;
+		const bool exists = ( stat (Melder_peek32to8_fileSystem (file -> path), & fileOrFolderStatus) == 0 );
+		if (! exists)
 			return false;
-		}
+		return ! S_ISDIR (fileOrFolderStatus. st_mode);
+	#else
+		DWORD fileOrFolderAttributes = GetFileAttributesW (Melder_peek32toW_fileSystem (file -> path));
+		if (fileOrFolderAttributes == INVALID_FILE_ATTRIBUTES)
+			return false;
+		return (fileOrFolderAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
 	#endif
 }
 
 bool MelderDir_exists (MelderDir folder) {
 	#if defined (UNIX)
-		char utf8path [kMelder_MAXPATH+1];
-		Melder_32to8_fileSystem_inplace (folder -> path, utf8path);
 		struct stat fileOrFolderStatus;
-		const bool exists = ( stat (utf8path, & fileOrFolderStatus) == 0 );
+		const bool exists = ( stat (Melder_peek32to8_fileSystem (folder -> path), & fileOrFolderStatus) == 0 );
 		if (! exists)
 			return false;
 		return S_ISDIR (fileOrFolderStatus. st_mode);
 	#else
-		Melder_throw (U"MelderDir_exists() not implemented on Windows");
+		DWORD fileOrFolderAttributes = GetFileAttributesW (Melder_peek32toW_fileSystem (folder -> path));
+		if (fileOrFolderAttributes == INVALID_FILE_ATTRIBUTES)
+			return false;
+		return (fileOrFolderAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 	#endif
 }
 
@@ -930,7 +935,7 @@ void MelderFolder_create (MelderDir folder) {
 		securityAttributes. lpSecurityDescriptor = nullptr;
 		securityAttributes. bInheritHandle = false;
 		const int status = CreateDirectoryW (Melder_peek32toW_fileSystem (folder -> path), & securityAttributes);
-		if (status == 0)
+		if (status != 0)
 			return;   // successfully created a new folder
 		if (GetLastError () == ERROR_ALREADY_EXISTS)
 			return;   // it is no failure if the folder already existed
