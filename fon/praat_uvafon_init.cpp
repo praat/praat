@@ -1,6 +1,6 @@
 /* praat_uvafon_init.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ FORM (REAL_Cochleagram_difference, U"Cochleagram difference", nullptr) {
 	OK
 DO
 	QUERY_TWO_FOR_REAL (Cochleagram)
-		double result = Cochleagram_difference (me, you, fromTime, toTime);
+		const double result = Cochleagram_difference (me, you, fromTime, toTime);
 	QUERY_TWO_FOR_REAL_END (U" hertz (root-mean-square)")
 }
 
@@ -244,7 +244,7 @@ DO
 
 DIRECT (REAL_Excitation_getLoudness) {
 	QUERY_ONE_FOR_REAL (Excitation)
-		double result = Excitation_getLoudness (me);
+		const double result = Excitation_getLoudness (me);
 	QUERY_ONE_FOR_REAL_END (U" sones")
 }
 
@@ -327,7 +327,8 @@ DO
 	GRAPHICS_EACH (Formant)
 		Formant_scatterPlot (me, GRAPHICS, fromTime, toTime,
 			horizontalFormantNumber, left, right, verticalFormantNumber, bottom, top,
-			markSize, markString, garnish);
+			markSize, markString, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -347,7 +348,8 @@ DO
 	INFO_ONE (Formant)
 		Formant_list (me, includeFrameNumber, includeTime, numberOfTimeDecimals,
 			includeIntensity, numberOfIntensityDecimals, includeNumberOfFormants, numberOfFrequencyDecimals,
-			includeBandwidths);
+			includeBandwidths
+		);
 	INFO_ONE_END
 }
 
@@ -365,7 +367,8 @@ DO
 	CONVERT_EACH_TO_ONE (Formant)
 		autoTable result = Formant_downto_Table (me, includeFrameNumber, includeTime, numberOfTimeDecimals,
 			includeIntensity, numberOfIntensityDecimals, includeNumberOfFormants, numberOfFrequencyDecimals,
-			includeBandwidths);
+			includeBandwidths
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -908,19 +911,19 @@ FORM (GRAPHICS_Pitch_Intensity_draw, U"Plot intensity by pitch", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (Pitch, Intensity)
 		Pitch_Intensity_draw (me, you, GRAPHICS,
-			fromFrequency, toFrequency, fromIntensity, toIntensity, garnish, drawingMethod);
+				fromFrequency, toFrequency, fromIntensity, toIntensity, garnish, drawingMethod);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (REAL_Pitch_Intensity_getMean) {
 	QUERY_ONE_AND_ONE_FOR_REAL (Pitch, Intensity)
-		double result = Pitch_Intensity_getMean (me, you);
+		const double result = Pitch_Intensity_getMean (me, you);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" dB")
 }
 
 DIRECT (REAL_Pitch_Intensity_getMeanAbsoluteSlope) {
 	QUERY_ONE_AND_ONE_FOR_REAL (Pitch, Intensity)
-		double result = Pitch_Intensity_getMeanAbsoluteSlope (me, you);
+		const double result = Pitch_Intensity_getMeanAbsoluteSlope (me, you);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" dB/second")
 }
 
@@ -2417,7 +2420,8 @@ FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullp
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Spectrum)
-		if (binNumber > my nx) Melder_throw (U"Bin number should not exceed number of bins.");
+		if (binNumber > my nx)
+			Melder_throw (U"Bin number should not exceed number of bins.");
 		const double result = my z [1] [binNumber];
 	QUERY_ONE_FOR_REAL_END (U" (real value in bin ", binNumber, U")")
 }
@@ -2427,7 +2431,8 @@ FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in b
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Spectrum)
-		if (binNumber > my nx) Melder_throw (U"The bin number should not exceed the number of bins.");
+		if (binNumber > my nx)
+			Melder_throw (U"The bin number should not exceed the number of bins.");
 		const double result = my z [2] [binNumber];
 	QUERY_ONE_FOR_REAL_END (U" (imaginary value in bin ", binNumber, U")")
 }
@@ -2446,7 +2451,7 @@ FORM (REAL_Spectrum_getSoundPressureLevelOfNearestMaximum, U"Spectrum: Get sound
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Spectrum)
-		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
+		const MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
 		const double result = maximum. y;
 	QUERY_ONE_FOR_REAL_END (U" \"dB/Hz\"")
 }
@@ -2456,7 +2461,7 @@ FORM (REAL_Spectrum_getFrequencyOfNearestMaximum, U"Spectrum: Get frequency of n
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Spectrum)
-		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
+		const MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
 		const double result = maximum. x;
 	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
@@ -2609,9 +2614,9 @@ DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
 
 FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...") {
 	SENTENCE (name, U"Name", U"fileList")
-	static structMelderDir defaultDir { };
-	Melder_getHomeDir (& defaultDir);
-	static conststring32 homeDirectory = Melder_dirToPath (& defaultDir);
+	static structMelderFolder defaultFolder { };
+	Melder_getHomeDir (& defaultFolder);
+	static conststring32 homeDirectory = Melder_folderToPath (& defaultFolder);
 	static char32 defaultPath [kMelder_MAXPATH+1];
 	#if defined (UNIX)
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
@@ -2634,9 +2639,9 @@ DO
 
 FORM (NEW1_Strings_createAsFolderList, U"Create Strings as folder list", U"Create Strings as folder list...") {
 	SENTENCE (name, U"Name", U"folderList")
-	static structMelderDir defaultDir { };
-	Melder_getHomeDir (& defaultDir);
-	static conststring32 homeDirectory = Melder_dirToPath (& defaultDir);
+	static structMelderFolder defaultFolder { };
+	Melder_getHomeDir (& defaultFolder);
+	static conststring32 homeDirectory = Melder_folderToPath (& defaultFolder);
 	static char32 defaultPath [kMelder_MAXPATH+1];
 	#if defined (UNIX)
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
@@ -2705,7 +2710,7 @@ FORM (STRING_Strings_getString, U"Get string", nullptr) {
 	OK
 DO
 	QUERY_ONE_FOR_STRING (Strings)
-		conststring32 result = position > my numberOfStrings ? U"" : my strings [position].get();   // TODO
+		const conststring32 result = position > my numberOfStrings ? U"" : my strings [position].get();   // TODO
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -2811,7 +2816,8 @@ FORM (NEW1_TextGrid_create, U"Create TextGrid", U"Create TextGrid...") {
 	SENTENCE (whichOfTheseArePointTiers, U"Which of these are point tiers?", U"bell")
 	OK
 DO
-	if (endTime <= startTime) Melder_throw (U"The end time should be greater than the start time");
+	if (endTime <= startTime)
+		Melder_throw (U"The end time should be greater than the start time");
 	CREATE_ONE
 		autoTextGrid result = TextGrid_create (startTime, endTime, allTierNames, whichOfTheseArePointTiers);
 	CREATE_ONE_END (allTierNames)

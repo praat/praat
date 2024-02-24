@@ -2,7 +2,7 @@
 #define _ManPage_h_
 /* ManPage.h
  *
- * Copyright (C) 1996-2008,2011,2012,2014-2020,2023 Paul Boersma
+ * Copyright (C) 1996-2008,2011,2012,2014-2020,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ void ManPage_runAllChunksToCache (
 	PraatApplication praatApplication,
 	PraatObjects praatObjects,
 	PraatPicture praatPicture,
-	MelderDir rootDirectory
+	MelderFolder rootDirectory
 );
 
 /* End of file ManPage.h */

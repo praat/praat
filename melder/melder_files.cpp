@@ -72,9 +72,9 @@ extern "C" void FLAC__stream_encoder_delete (FLAC__StreamEncoder *);
 
 static char32 theShellDirectory [kMelder_MAXPATH+1];
 void Melder_rememberShellDirectory () {
-	structMelderDir shellDir { };
-	Melder_getDefaultDir (& shellDir);
-	str32cpy (theShellDirectory, Melder_dirToPath (& shellDir));
+	structMelderFolder shellFolder { };
+	Melder_getDefaultDir (& shellFolder);
+	str32cpy (theShellDirectory, Melder_folderToPath (& shellFolder));
 }
 conststring32 Melder_getShellDirectory () {
 	return & theShellDirectory [0];
@@ -133,7 +133,7 @@ conststring32 MelderFile_name (MelderFile file) {
 	#endif
 }
 
-conststring32 MelderDir_name (MelderDir dir) {
+conststring32 MelderDir_name (MelderFolder dir) {
 	#if defined (UNIX)
 		char32 *slash = str32rchr (dir -> path, U'/');
 		return slash ? slash + 1 : dir -> path;
@@ -145,7 +145,7 @@ conststring32 MelderDir_name (MelderDir dir) {
 	#endif
 }
 
-void Melder_pathToDir (conststring32 path, MelderDir dir) {
+void Melder_pathToDir (conststring32 path, MelderFolder dir) {
 	Melder_sprint (dir -> path,kMelder_MAXPATH+1, path);
 }
 
@@ -176,12 +176,12 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 		} else if (path [0] == U'/' || str32equ (path, U"<stdout>") || str32str (path, U"://")) {
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, path);
 		} else {
-			structMelderDir dir { };
-			Melder_getDefaultDir (& dir);   // BUG
-			if (dir. path [0] == U'/' && dir. path [1] == U'\0')
+			structMelderFolder currentFolder { };
+			Melder_getDefaultDir (& currentFolder);   // BUG
+			if (currentFolder. path [0] == U'/' && currentFolder. path [1] == U'\0')
 				Melder_sprint (file -> path,kMelder_MAXPATH+1, U"/", path);
 			else
-				Melder_sprint (file -> path,kMelder_MAXPATH+1, dir. path, U"/", path);
+				Melder_sprint (file -> path,kMelder_MAXPATH+1, currentFolder. path, U"/", path);
 		}
 	#elif defined (_WIN32)
 		/*
@@ -190,10 +190,10 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 				LPT1:
 				\\host\path
 		*/
-		structMelderDir dir { };
+		structMelderFolder currentFolder { };
 		if (path [0] == U'~' && path [1] == U'/') {
-			Melder_getHomeDir (& dir);
-			Melder_sprint (file -> path,kMelder_MAXPATH+1, dir. path, & path [1]);
+			Melder_getHomeDir (& currentFolder);
+			Melder_sprint (file -> path,kMelder_MAXPATH+1, currentFolder. path, & path [1]);
 			for (;;) {
 				char32 *slash = str32chr (file -> path, U'/');
 				if (! slash)
@@ -217,17 +217,17 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 		if (str32chr (path, U':') || path [0] == U'\\' && path [1] == U'\\' || str32equ (path, U"<stdout>")) {
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, path);
 		} else {
-			Melder_getDefaultDir (& dir);   // BUG
+			Melder_getDefaultDir (& currentFolder);   // BUG
 			Melder_sprint (file -> path,kMelder_MAXPATH+1,
-				dir. path,
-				dir. path [0] != U'\0' && dir. path [Melder_length (dir. path) - 1] == U'\\' ? U"" : U"\\",
+				currentFolder. path,
+				currentFolder. path [0] != U'\0' && currentFolder. path [Melder_length (currentFolder. path) - 1] == U'\\' ? U"" : U"\\",
 				path
 			);
 		}
 	#endif
 }
 
-void Melder_relativePathToFolder (conststring32 path, MelderDir folder) {
+void Melder_relativePathToFolder (conststring32 path, MelderFolder folder) {
 	/*
 		This handles complete, partial and home-relative path names,
 		and translates slashes to native directory separators.
@@ -249,7 +249,7 @@ void Melder_relativePathToFolder (conststring32 path, MelderDir folder) {
 			/*
 				Remaining case: the path must be current-folder-relative.
 			*/
-			structMelderDir currentFolder { };
+			structMelderFolder currentFolder { };
 			Melder_getDefaultDir (& currentFolder);   // BUG if in library? check in Python, for instance
 			const bool weAreInTheRootFolder = ( currentFolder. path [0] == U'/' && currentFolder. path [1] == U'\0' );
 			conststring32 folderSeparator = ( weAreInTheRootFolder ? nullptr : U"/" );   // prevent a double slash
@@ -262,15 +262,15 @@ void Melder_relativePathToFolder (conststring32 path, MelderDir folder) {
 				LPT1:
 				\\host\path
 		*/
-		structMelderDir dir { };
+		structMelderFolder currentFolder { };
 		if (path [0] == U'~' && path [1] == U'\0') {
-			Melder_getHomeDir (& dir);
-			Melder_sprint (folder -> path,kMelder_MAXPATH+1, dir. path);
+			Melder_getHomeDir (& currentFolder);
+			Melder_sprint (folder -> path,kMelder_MAXPATH+1, currentFolder. path);
 			return;
 		}
 		if (path [0] == U'~' && path [1] == U'/') {
-			Melder_getHomeDir (& dir);
-			Melder_sprint (folder -> path,kMelder_MAXPATH+1, dir. path, & path [1]);
+			Melder_getHomeDir (& currentFolder);
+			Melder_sprint (folder -> path,kMelder_MAXPATH+1, currentFolder. path, & path [1]);
 			for (;;) {
 				char32 *slash = str32chr (folder -> path, U'/');
 				if (! slash)
@@ -294,29 +294,29 @@ void Melder_relativePathToFolder (conststring32 path, MelderDir folder) {
 		if (str32chr (path, U':') || path [0] == U'\\' && path [1] == U'\\') {
 			Melder_sprint (folder -> path,kMelder_MAXPATH+1, path);
 		} else {
-			Melder_getDefaultDir (& dir);   // BUG
+			Melder_getDefaultDir (& currentFolder);   // BUG
 			Melder_sprint (folder -> path,kMelder_MAXPATH+1,
-				dir. path,
-				dir. path [0] != U'\0' && dir. path [Melder_length (dir. path) - 1] == U'\\' ? U"" : U"\\",
+				currentFolder. path,
+				currentFolder. path [0] != U'\0' && currentFolder. path [Melder_length (currentFolder. path) - 1] == U'\\' ? U"" : U"\\",
 				path
 			);
 		}
 	#endif
 }
 
-conststring32 Melder_dirToPath (MelderDir dir) {
-	return & dir -> path [0];
-}
-
 conststring32 Melder_fileToPath (MelderFile file) {
 	return & file -> path [0];
+}
+
+conststring32 Melder_folderToPath (MelderFolder folder) {
+	return & folder -> path [0];
 }
 
 void MelderFile_copy (constMelderFile file, MelderFile copy) {
 	str32cpy (copy -> path, file -> path);
 }
 
-void MelderDir_copy (constMelderDir dir, MelderDir copy) {
+void MelderDir_copy (constMelderFolder dir, MelderFolder copy) {
 	str32cpy (copy -> path, dir -> path);
 }
 
@@ -324,7 +324,7 @@ bool MelderFile_equal (MelderFile file1, MelderFile file2) {
 	return str32equ (file1 -> path, file2 -> path);
 }
 
-bool MelderDir_equal (MelderDir dir1, MelderDir dir2) {
+bool MelderDir_equal (MelderFolder dir1, MelderFolder dir2) {
 	return str32equ (dir1 -> path, dir2 -> path);
 }
 
@@ -336,15 +336,15 @@ bool MelderFile_isNull (MelderFile file) {
 	return ! file || file -> path [0] == U'\0';
 }
 
-void MelderDir_setToNull (MelderDir dir) {
+void MelderDir_setToNull (MelderFolder dir) {
 	dir -> path [0] = U'\0';
 }
 
-bool MelderDir_isNull (MelderDir dir) {
+bool MelderDir_isNull (MelderFolder dir) {
 	return dir -> path [0] == U'\0';
 }
 
-void MelderDir_getFile (MelderDir parent, conststring32 fileName, MelderFile file) {
+void MelderDir_getFile (MelderFolder parent, conststring32 fileName, MelderFile file) {
 	#if defined (UNIX)
 		if (parent -> path [0] == U'/' && parent -> path [1] == U'\0')
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, U"/", fileName);
@@ -358,18 +358,18 @@ void MelderDir_getFile (MelderDir parent, conststring32 fileName, MelderFile fil
 	#endif
 }
 
-void MelderDir_relativePathToFile (MelderDir dir, conststring32 path, MelderFile file) {
+void MelderDir_relativePathToFile (MelderFolder dir, conststring32 path, MelderFile file) {
 	autoMelderSetDefaultDir saveDir (dir);
 	Melder_relativePathToFile (path, file);
 }
 
 #ifndef UNIX
-static void Melder_getDesktop (MelderDir dir) {
+static void Melder_getDesktop (MelderFolder dir) {
 	dir -> path [0] = U'\0';
 }
 #endif
 
-void MelderFile_getParentDir (MelderFile file, MelderDir parent) {
+void MelderFile_getParentDir (MelderFile file, MelderFolder parent) {
 	#if defined (UNIX)
 		/*
 			The parent of /usr/hello.txt is /usr.
@@ -419,7 +419,7 @@ void MelderFile_getParentDir (MelderFile file, MelderDir parent) {
 	#endif
 }
 
-void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
+void MelderDir_getParentDir (MelderFolder dir, MelderFolder parent) {
 	#if defined (UNIX)
 		/*
 			The parent of /usr/local is /usr.
@@ -486,11 +486,11 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 	#endif
 }
 
-bool MelderDir_isDesktop (MelderDir dir) {
+bool MelderDir_isDesktop (MelderFolder dir) {
 	return dir -> path [0] == U'\0';
 }
 
-void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir subdir) {
+void MelderDir_getSubdir (MelderFolder parent, conststring32 subdirName, MelderFolder subdir) {
 	#if defined (UNIX)
 		if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
 			Melder_sprint (subdir -> path,kMelder_MAXPATH+1, U"/", subdirName);
@@ -508,7 +508,7 @@ void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir 
 	#endif
 }
 
-void Melder_getHomeDir (MelderDir homeDir) {
+void Melder_getHomeDir (MelderFolder homeDir) {
 	#if defined (UNIX)
 		char *home = getenv ("HOME");
 		Melder_sprint (homeDir -> path,kMelder_MAXPATH+1, home ? Melder_peek8to32 (home) : U"/");
@@ -533,32 +533,32 @@ void Melder_getHomeDir (MelderDir homeDir) {
 	#endif
 }
 
-void Melder_getParentPreferencesFolder (MelderDir prefDir) {
+void Melder_getParentPreferencesFolder (MelderFolder preferencesFolder) {
 	#if defined (macintosh)
-		structMelderDir homeDir { };
-		Melder_getHomeDir (& homeDir);
-		Melder_sprint (prefDir -> path,kMelder_MAXPATH+1, homeDir. path, U"/Library/Preferences");
+		structMelderFolder homeFolder { };
+		Melder_getHomeDir (& homeFolder);
+		Melder_sprint (preferencesFolder -> path,kMelder_MAXPATH+1, homeFolder. path, U"/Library/Preferences");
 	#elif defined (UNIX)
 		/*
-		 * Preferences files go into the home directory.
-		 */
-		Melder_getHomeDir (prefDir);
+			Preferences files go into the home directory.
+		*/
+		Melder_getHomeDir (preferencesFolder);
 	#elif defined (_WIN32)
 		/*
-		 * On Windows 95, preferences files went into the Windows directory.
-		 * On shared systems (NT, 2000, XP), preferences files go into the home directory.
-		 * TODO: at some point, these files should be moved to HOME\AppData\Roaming\Praat.
-		 */
-		Melder_getHomeDir (prefDir);
+			On Windows 95, preferences files went into the Windows directory.
+			On shared systems (NT, 2000, XP), preferences files go into the home directory.
+			TODO: at some point, these files should be moved to HOME\AppData\Roaming\Praat.
+		*/
+		Melder_getHomeDir (preferencesFolder);
 	#endif
 }
 
-void Melder_getTempDir (MelderDir tempDir) {
+void Melder_getTempDir (MelderFolder temporaryFolder) {
 	#if defined (macintosh)
-		Melder_sprint (tempDir -> path,kMelder_MAXPATH+1, Melder_peek8to32 (getenv ("TMPDIR")));   // or append /TemporaryItems
+		Melder_sprint (temporaryFolder -> path,kMelder_MAXPATH+1, Melder_peek8to32 (getenv ("TMPDIR")));   // or append /TemporaryItems
 		// confstr with _CS_DARWIN_USER_TEMP_DIR
 	#else
-		(void) tempDir;
+		(void) temporaryFolder;
 	#endif
 }
 
@@ -748,7 +748,7 @@ bool MelderFile_exists (MelderFile file) {
 	#endif
 }
 
-bool MelderDir_exists (MelderDir folder) {
+bool MelderDir_exists (MelderFolder folder) {
 	#if defined (UNIX)
 		struct stat fileOrFolderStatus;
 		const bool exists = ( stat (Melder_peek32to8_fileSystem (folder -> path), & fileOrFolderStatus) == 0 );
@@ -845,7 +845,7 @@ conststring32 MelderFile_messageName (MelderFile file) {
 	return Melder_cat (U"“", file -> path, U"”");   // BUG: is cat allowed here?
 }
 
-conststring32 MelderFolder_messageName (MelderDir folder) {
+conststring32 MelderFolder_messageName (MelderFolder folder) {
 	return Melder_cat (U"“", folder -> path, U"”");   // BUG: is cat allowed here?
 }
 
@@ -854,10 +854,10 @@ conststring32 MelderFolder_messageName (MelderDir folder) {
 		From macOS 10.15 Catalina on, getcwd() has failed if a part of the path
 		is inaccessible, such as when you open a script that is attached to an email message.
 	*/
-	static structMelderDir theDefaultDir;
+	static structMelderFolder theDefaultDir;
 #endif
 
-void Melder_getDefaultDir (MelderDir dir) {
+void Melder_getDefaultDir (MelderFolder dir) {
 	#if defined (UNIX)
 		char path [kMelder_MAXPATH+1];
 		char *pathResult = getcwd (path, kMelder_MAXPATH+1);
@@ -875,7 +875,7 @@ void Melder_getDefaultDir (MelderDir dir) {
 	#endif
 }
 
-void Melder_setDefaultDir (MelderDir dir) {
+void Melder_setDefaultDir (MelderFolder dir) {
 	#if defined (UNIX)
 		chdir (Melder_peek32to8_fileSystem (dir -> path));
 		str32cpy (theDefaultDir. path, dir -> path);
@@ -885,12 +885,12 @@ void Melder_setDefaultDir (MelderDir dir) {
 }
 
 void MelderFile_setDefaultDir (MelderFile file) {
-	structMelderDir dir { };
-	MelderFile_getParentDir (file, & dir);
-	Melder_setDefaultDir (& dir);
+	structMelderFolder folder { };
+	MelderFile_getParentDir (file, & folder);
+	Melder_setDefaultDir (& folder);
 }
 
-void Melder_createDirectory (MelderDir parent, conststring32 dirName, int mode) {
+void Melder_createDirectory (MelderFolder parent, conststring32 dirName, int mode) {
 #if defined (UNIX)
 	structMelderFile file { };
 	if (dirName [0] == U'/') {
@@ -921,7 +921,7 @@ void Melder_createDirectory (MelderDir parent, conststring32 dirName, int mode) 
 #endif
 }
 
-void MelderFolder_create (MelderDir folder) {
+void MelderFolder_create (MelderFolder folder) {
 	#if defined (UNIX)
 		const int status = mkdir (Melder_peek32to8_fileSystem (folder -> path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		if (status == 0)

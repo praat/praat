@@ -1,6 +1,6 @@
 /* ManPage.cpp
  *
- * Copyright (C) 1996-2011,2016,2023 Paul Boersma
+ * Copyright (C) 1996-2011,2016,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +35,14 @@ static void manualInfoProc (conststring32 infoText) {
 static void ManPageParagraph_runChunkToCache (ManPage_Paragraph me, Interpreter interpreter,
 	const kGraphics_font font, const double fontSize,
 	PraatApplication praatApplication, PraatObjects praatObjects, PraatPicture praatPicture,
-	MelderDir rootDirectory
+	MelderFolder rootDirectory
 ) {
 }
 
 void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterReference,
 	const kGraphics_font font, const double fontSize,
 	PraatApplication praatApplication, PraatObjects praatObjects, PraatPicture praatPicture,
-	MelderDir rootDirectory
+	MelderFolder rootDirectory
 ) {
 	theCurrentPraatApplication = praatApplication;
 	theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows

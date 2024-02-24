@@ -1,6 +1,6 @@
 /* ManPages_toHtml.cpp
  *
- * Copyright (C) 1996-2023 Paul Boersma
+ * Copyright (C) 1996-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -786,7 +786,7 @@ void ManPages_writeOneToHtmlFile (ManPages me, Interpreter optionalInterpreterRe
 }
 
 void ManPages_writeAllToHtmlDir (ManPages me, Interpreter optionalInterpreterReference, conststring32 dirPath) {
-	structMelderDir dir { };
+	structMelderFolder dir { };
 	Melder_pathToDir (dirPath, & dir);
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];

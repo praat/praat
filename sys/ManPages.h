@@ -30,7 +30,7 @@ Thing_define (ManPages, Daata) {
 
 	autoSTRVEC titles;
 	bool ground, dynamic, executable, commandsWithExternalSideEffectsAreAllowed = true;
-	structMelderDir rootDirectory;
+	structMelderFolder rootDirectory;
 
 	void v9_destroy () noexcept
 		override;

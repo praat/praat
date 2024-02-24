@@ -41,44 +41,44 @@ struct structMelderFile {
 typedef struct structMelderFile *MelderFile;
 typedef const struct structMelderFile *constMelderFile;
 
-struct structMelderDir {
+struct structMelderFolder {
 	char32 path [kMelder_MAXPATH+1];
 };
-typedef struct structMelderDir *MelderDir;
-typedef const struct structMelderDir *constMelderDir;
+typedef struct structMelderFolder *MelderFolder;
+typedef const struct structMelderFolder *constMelderFolder;
 
 conststring32 MelderFile_name (MelderFile file);
-conststring32 MelderDir_name (MelderDir dir);
-void Melder_pathToDir (conststring32 path, MelderDir dir);
+conststring32 MelderDir_name (MelderFolder dir);
 void Melder_pathToFile (conststring32 path, MelderFile file);
+void Melder_pathToDir (conststring32 path, MelderFolder dir);
 void Melder_relativePathToFile (conststring32 path, MelderFile file);
-void Melder_relativePathToFolder (conststring32 path, MelderDir folder);
-conststring32 Melder_dirToPath (MelderDir dir);
-	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
+void Melder_relativePathToFolder (conststring32 path, MelderFolder folder);
+conststring32 Melder_folderToPath (MelderFolder folder);
+	/* Returns a pointer internal to 'folder', like "/u/paul/praats" or "D:\Paul\Praats" */
 conststring32 Melder_fileToPath (MelderFile file);
 void MelderFile_copy (constMelderFile file, MelderFile copy);
-void MelderDir_copy (constMelderDir dir, MelderDir copy);
+void MelderDir_copy (constMelderFolder dir, MelderFolder copy);
 bool MelderFile_equal (MelderFile file1, MelderFile file2);
-bool MelderDir_equal (MelderDir dir1, MelderDir dir2);
+bool MelderDir_equal (MelderFolder dir1, MelderFolder dir2);
 void MelderFile_setToNull (MelderFile file);
 bool MelderFile_isNull (MelderFile file);
-void MelderDir_setToNull (MelderDir dir);
-bool MelderDir_isNull (MelderDir dir);
-void MelderDir_getFile (MelderDir parent, conststring32 fileName, MelderFile file);
-void MelderDir_relativePathToFile (MelderDir dir, conststring32 path, MelderFile file);
-void MelderFile_getParentDir (MelderFile file, MelderDir parent);
-void MelderDir_getParentDir (MelderDir file, MelderDir parent);
-bool MelderDir_isDesktop (MelderDir dir);
-void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir subdir);
+void MelderDir_setToNull (MelderFolder dir);
+bool MelderDir_isNull (MelderFolder dir);
+void MelderDir_getFile (MelderFolder parent, conststring32 fileName, MelderFile file);
+void MelderDir_relativePathToFile (MelderFolder dir, conststring32 path, MelderFile file);
+void MelderFile_getParentDir (MelderFile file, MelderFolder parent);
+void MelderDir_getParentDir (MelderFolder file, MelderFolder parent);
+bool MelderDir_isDesktop (MelderFolder dir);
+void MelderDir_getSubdir (MelderFolder parent, conststring32 subdirName, MelderFolder subdir);
 void Melder_rememberShellDirectory ();
 conststring32 Melder_getShellDirectory ();
-void Melder_getHomeDir (MelderDir homeDir);
-inline structMelderDir Melder_preferencesFolder { };
-void Melder_getParentPreferencesFolder (MelderDir prefDir);
-void Melder_getTempDir (MelderDir tempDir);
+void Melder_getHomeDir (MelderFolder homeDir);
+inline structMelderFolder Melder_preferencesFolder { };
+void Melder_getParentPreferencesFolder (MelderFolder prefDir);
+void Melder_getTempDir (MelderFolder tempDir);
 
 bool MelderFile_exists (MelderFile file);
-bool MelderDir_exists (MelderDir folder);
+bool MelderDir_exists (MelderFolder folder);
 bool MelderFile_readable (MelderFile file);
 bool Melder_tryToWriteFile (MelderFile file);
 bool Melder_tryToAppendFile (MelderFile file);
@@ -98,13 +98,13 @@ char32 * Melder_peekExpandBackslashes (conststring32 message);   // replace back
 	so you can use up to 11 strings in a single Melder_* call.
 */
 conststring32 MelderFile_messageName (MelderFile file);   // calls Melder_peekExpandBackslashes ()
-conststring32 MelderFolder_messageName (MelderDir folder);   // calls Melder_peekExpandBackslashes ()
+conststring32 MelderFolder_messageName (MelderFolder folder);   // calls Melder_peekExpandBackslashes ()
 
-void Melder_createDirectory (MelderDir parent, conststring32 subdirName, int mode);
-void MelderFolder_create (MelderDir folder);
+void Melder_createDirectory (MelderFolder parent, conststring32 subdirName, int mode);
+void MelderFolder_create (MelderFolder folder);
 
-void Melder_getDefaultDir (MelderDir dir);
-void Melder_setDefaultDir (MelderDir dir);
+void Melder_getDefaultDir (MelderFolder dir);
+void Melder_setDefaultDir (MelderFolder dir);
 void MelderFile_setDefaultDir (MelderFile file);
 
 class autofile {
@@ -136,13 +136,13 @@ public:
 };
 
 class autoMelderSaveDefaultDir {
-	structMelderDir _savedDir;
+	structMelderFolder _savedFolder;
 public:
 	autoMelderSaveDefaultDir () {
-		Melder_getDefaultDir (& our _savedDir);
+		Melder_getDefaultDir (& our _savedFolder);
 	}
 	~autoMelderSaveDefaultDir () {
-		Melder_setDefaultDir (& our _savedDir);
+		Melder_setDefaultDir (& our _savedFolder);
 	}
 	/*
 		Disable copying.
@@ -152,14 +152,14 @@ public:
 };
 
 class autoMelderSetDefaultDir {
-	structMelderDir _savedDir;
+	structMelderFolder _savedFolder;
 public:
-	autoMelderSetDefaultDir (MelderDir dir) {
-		Melder_getDefaultDir (& our _savedDir);
+	autoMelderSetDefaultDir (MelderFolder dir) {
+		Melder_getDefaultDir (& our _savedFolder);
 		Melder_setDefaultDir (dir);
 	}
 	~autoMelderSetDefaultDir () {
-		Melder_setDefaultDir (& our _savedDir);
+		Melder_setDefaultDir (& our _savedFolder);
 	}
 	/*
 		Disable copying.
@@ -169,14 +169,14 @@ public:
 };
 
 class autoMelderFileSetDefaultDir {
-	structMelderDir _savedDir;
+	structMelderFolder _savedFolder;
 public:
 	autoMelderFileSetDefaultDir (MelderFile file) {
-		Melder_getDefaultDir (& our _savedDir);
+		Melder_getDefaultDir (& our _savedFolder);
 		MelderFile_setDefaultDir (file);
 	}
 	~autoMelderFileSetDefaultDir () {
-		Melder_setDefaultDir (& our _savedDir);
+		Melder_setDefaultDir (& our _savedFolder);
 	}
 	/*
 		Disable copying.

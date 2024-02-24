@@ -173,9 +173,9 @@ void praat_reportSystemProperties () {
 	#else
 		MelderInfo_writeLine (U"Built for processor type: ", sizeof (void *) == 4 ? U"intel32" : U"intel64");
 	#endif
-	structMelderDir dir {};
-	Melder_getHomeDir (& dir);
-	MelderInfo_writeLine (U"Home folder: ", dir. path);
+	structMelderFolder homeFolder {};
+	Melder_getHomeDir (& homeFolder);
+	MelderInfo_writeLine (U"Home folder: ", homeFolder. path);
 	#ifdef macintosh
 		MelderInfo_writeLine (U"Full Disk Access: ", Melder_kleenean (hasFullDiskAccess ()));
 		MelderInfo_writeLine (U"Sandboxed: ", Melder_boolean (isSandboxed ()));

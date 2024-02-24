@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2018,2020-2023 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -803,7 +803,7 @@ int praat_doAction (conststring32 title, conststring32 arguments, Interpreter in
 		return 0;
 	if (actionFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		const conststring32 scriptPath = actionFound -> script.get();
-		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
+		const conststring32 preferencesFolderPath = Melder_folderToPath (& Melder_preferencesFolder);
 		const bool scriptIsInPlugin = Melder_startsWith (scriptPath, preferencesFolderPath);
 		Melder_throw (
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
@@ -833,7 +833,7 @@ int praat_doAction (conststring32 title, integer narg, Stackel args, Interpreter
 		return 0;
 	if (actionFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		const conststring32 scriptPath = actionFound -> script.get();
-		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
+		const conststring32 preferencesFolderPath = Melder_folderToPath (& Melder_preferencesFolder);
 		const bool scriptIsInPlugin = Melder_startsWith (scriptPath, preferencesFolderPath);
 		Melder_throw (
 			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",

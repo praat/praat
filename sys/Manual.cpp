@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2023 Paul Boersma
+ * Copyright (C) 1996-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
 		FOLDER (folder, U"Folder", U"")
 	EDITOR_OK
-		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
+		SET_STRING (folder, Melder_folderToPath (& my rootDirectory))
 	EDITOR_DO
 		ManPages_writeAllToHtmlDir (my manPages(), nullptr, folder);
 	EDITOR_END

@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ Thing_define (HyperPage, Editor) {
 	PraatApplication praatApplication;
 	PraatObjects praatObjects;
 	PraatPicture praatPicture;
-	structMelderDir rootDirectory;
+	structMelderFolder rootDirectory;
 
 	void v9_destroy () noexcept
 		override;

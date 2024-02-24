@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2023 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 2010-2024 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststrin
 	autoMelderSaveDefaultDir saveDir;
 	autoStringSet me = StringSet_create ();
 	#if gtk
-		static structMelderDir dir { };
+		static structMelderFolder dir { };
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 		Melder_assert (dialog);
@@ -35,7 +35,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststrin
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
 		if (MelderDir_isNull (& dir))   // first time?
 			Melder_getDefaultDir (& dir);
-		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (Melder_dirToPath (& dir)));
+		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (Melder_folderToPath (& dir)));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *infolderName_utf8 = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (dialog));
 			if (infolderName_utf8) {
@@ -95,7 +95,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststrin
 					The user selected multiple files.
 					'fullFileNameW' is a folder name; the file names follow.
 				*/
-				structMelderDir dir { };
+				structMelderFolder dir { };
 				Melder_pathToDir (Melder_peekWto32 (fullFileNameW.get()), & dir);
 				for (const WCHAR *p = & fullFileNameW [firstFileNameLength + 1]; *p != L'\0'; p += wcslen (p) + 1) {
 					structMelderFile file { };
@@ -234,7 +234,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow optionalParent, conststring3
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
 				const char *directoryName_utf8 = [[url path] UTF8String];
-				structMelderDir dir { };
+				structMelderFolder dir { };
 				Melder_8bitFileRepresentationToStr32_inplace (directoryName_utf8, dir. path);   // BUG: unsafe buffer
 				directoryName = Melder_dup (dir. path);
 			}
