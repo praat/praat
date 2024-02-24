@@ -198,7 +198,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular (PowerCepstrogram
 		/*
 			1. average across time
 		*/
-		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
+		const integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
 		if (numberOfFrames > 1) {
 			const double halfWindow = 0.5 * timeAveragingWindow;
 			autoVEC qout = raw_VEC (my nx);
@@ -213,7 +213,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular (PowerCepstrogram
 		/*
 			2. average across quefrencies
 		*/
-		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
+		const integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
 		if (numberOfQuefrencyBins > 1) {
 			autoPowerCepstrum smooth = PowerCepstrum_create (thy ymax, thy ny);
 			for (integer iframe = 1; iframe <= thy nx; iframe ++) {
@@ -234,14 +234,14 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_old (PowerCepstro
 		/*
 			1. average across time
 		*/
-		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
+		const integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
 		if (numberOfFrames > 1)
 			for (integer iq = 1; iq <= my ny; iq ++)
 				VECsmoothByMovingAverage_preallocated (thy z.row (iq), my z.row (iq), numberOfFrames);
 		/*
 			2. average across quefrencies
 		*/
-		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
+		const integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
 		if (numberOfQuefrencyBins > 1) {
 			autoVEC qin = raw_VEC (thy ny);
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
