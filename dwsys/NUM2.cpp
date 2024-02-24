@@ -2063,19 +2063,19 @@ void NUMfitLine_theil_preallocated (VEC const& out_lineParameters, constVEC cons
 void NUMfitLine_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept) {
 	Melder_require (x.size == y.size,
 		U"NUMfitLine_LS: the sizes of the two vectors should be equal.");
-	const double sx = NUMsum (x);
-	const double xmean = sx / x.size;
-	longdouble st2 = 0.0, m = 0.0;
+	const double xsum = NUMsum (x);
+	const double xmean = xsum / x.size;
+	longdouble variance = 0.0, m = 0.0;
 	for (integer i = 1; i <= x.size; i ++) {
 		const double t = x [i] - xmean;
-		st2 += t * t;
+		variance += t * t;
 		m += t * y [i];
 	}
 	// y = m*x + b
-	m /= st2;
+	m /= variance;
 	if (out_intercept) {
-		const double sy = NUMsum (y);
-		*out_intercept = (sy - m * sx) / x.size;
+		const double ysum = NUMsum (y);
+		*out_intercept = (ysum - m * xsum) / x.size;
 	}
 	if (out_m)
 		*out_m = m;
