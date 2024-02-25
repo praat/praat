@@ -1,6 +1,6 @@
 /* manual_Fon.cpp
  *
- * Copyright (C) 1992-2008,2010,2011,2014-2017,2019-2023 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017,2019-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -288,7 +288,7 @@ A command in the @@New menu@ to create a @Strings object containing a list of di
 It works completely analogously to @@Create Strings as file list...@.
 
 ################################################################################
-"Create Strings as file list..."
+"Create Strings as file list [BUG]..."
 © Paul Boersma 2020-12-29
 
 A command in the @@New menu@ to create a @Strings object containing a list of files in a given folder.

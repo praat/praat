@@ -1,6 +1,6 @@
 /* FormantPathEditor.cpp
  *
- * Copyright (C) 2020-2023 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -485,7 +485,13 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
 		if (soundToCopy)
 			my soundArea() = SoundArea_create (false, soundToCopy, me.get());
-		my formantPathArea() = FormantPathArea_create (true, soundToCopy, me.get());
+		my formantPathArea() =
+			soundToCopy
+				?
+			FormantPathArea_create (true, soundToCopy, me.get())
+				:
+			(autoFormantPathArea) FormantPathArea_without_Sound_create (true, nullptr, me.get())
+		;
 		my formantPathArea() -> _formantPath = formantPath;
 		if (textGridToCopy)
 			my textGridArea() = TextGridArea_create (false, textGridToCopy, me.get());
