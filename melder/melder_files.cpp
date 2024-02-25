@@ -162,7 +162,7 @@ void Melder_pathToFile (conststring32 path, MelderFile file) {
 void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 	/*
 		This handles complete and partial path names,
-		and translates slashes to native directory separators.
+		and translates slashes to native folder separators.
 
 		Used if we do not know for sure that we have a complete path name,
 		i.e. if the user determined the name (scripting).
@@ -230,7 +230,7 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 void Melder_relativePathToFolder (conststring32 path, MelderFolder folder) {
 	/*
 		This handles complete, partial and home-relative path names,
-		and translates slashes to native directory separators.
+		and translates slashes to native folder separators.
 
 		Used if we do not know for sure that we have a complete path name,
 		i.e. if the user determined the name (scripting).
@@ -316,16 +316,16 @@ void MelderFile_copy (constMelderFile file, MelderFile copy) {
 	str32cpy (copy -> path, file -> path);
 }
 
-void MelderFolder_copy (constMelderFolder dir, MelderFolder copy) {
-	str32cpy (copy -> path, dir -> path);
+void MelderFolder_copy (constMelderFolder folder, MelderFolder copy) {
+	str32cpy (copy -> path, folder -> path);
 }
 
 bool MelderFile_equal (MelderFile file1, MelderFile file2) {
 	return str32equ (file1 -> path, file2 -> path);
 }
 
-bool MelderFolder_equal (MelderFolder dir1, MelderFolder dir2) {
-	return str32equ (dir1 -> path, dir2 -> path);
+bool MelderFolder_equal (MelderFolder folder1, MelderFolder folder2) {
+	return str32equ (folder1 -> path, folder2 -> path);
 }
 
 void MelderFile_setToNull (MelderFile file) {
@@ -336,12 +336,12 @@ bool MelderFile_isNull (MelderFile file) {
 	return ! file || file -> path [0] == U'\0';
 }
 
-void MelderFolder_setToNull (MelderFolder dir) {
-	dir -> path [0] = U'\0';
+void MelderFolder_setToNull (MelderFolder folder) {
+	folder -> path [0] = U'\0';
 }
 
-bool MelderFolder_isNull (MelderFolder dir) {
-	return dir -> path [0] == U'\0';
+bool MelderFolder_isNull (MelderFolder folder) {
+	return folder -> path [0] == U'\0';
 }
 
 void MelderFolder_getFile (MelderFolder parent, conststring32 fileName, MelderFile file) {
@@ -358,14 +358,14 @@ void MelderFolder_getFile (MelderFolder parent, conststring32 fileName, MelderFi
 	#endif
 }
 
-void MelderFolder_relativePathToFile (MelderFolder dir, conststring32 path, MelderFile file) {
-	autoMelderSetCurrentFolder saveDir (dir);
+void MelderFolder_relativePathToFile (MelderFolder folder, conststring32 path, MelderFile file) {
+	autoMelderSetCurrentFolder saveFolder (folder);
 	Melder_relativePathToFile (path, file);
 }
 
 #ifndef UNIX
-static void Melder_getDesktop (MelderFolder dir) {
-	dir -> path [0] = U'\0';
+static void Melder_getDesktop (MelderFolder folder) {
+	folder -> path [0] = U'\0';
 }
 #endif
 
@@ -419,19 +419,19 @@ void MelderFile_getParentFolder (MelderFile file, MelderFolder parent) {
 	#endif
 }
 
-void MelderFolder_getParentFolder (MelderFolder dir, MelderFolder parent) {
+void MelderFolder_getParentFolder (MelderFolder subfolder, MelderFolder parentFolder) {
 	#if defined (UNIX)
 		/*
 			The parent of /usr/local is /usr.
 			The parent of /usr is /.
 			The parent of / is "".
 		*/
-		str32cpy (parent -> path, dir -> path);
-		char32 *slash = str32rchr (parent -> path, U'/');
+		str32cpy (parentFolder -> path, subfolder -> path);
+		char32 *slash = str32rchr (parentFolder -> path, U'/');
 		if (slash) {
-			if (slash - parent -> path == 0) {
+			if (slash - parentFolder -> path == 0) {
 				if (slash [1] == U'\0') {   // child is "/"
-					parent -> path [0] = U'\0';   // parent is ""
+					parentFolder -> path [0] = U'\0';   // parent is ""
 				} else {   // child is "/usr"
 					slash [1] = '\0';   // parent is "/"
 				}
@@ -439,7 +439,7 @@ void MelderFolder_getParentFolder (MelderFolder dir, MelderFolder parent) {
 				*slash = U'\0';   // parent is "/usr"
 			}
 		} else {
-			parent -> path [0] = U'\0';   // some failure; desktop
+			parentFolder -> path [0] = U'\0';   // some failure; desktop
 		}
 	#elif defined (_WIN32)
 		/*
@@ -447,30 +447,30 @@ void MelderFolder_getParentFolder (MelderFolder dir, MelderFolder parent) {
 			The parent of E:\ is the desktop.
 			The parent of \\Swine\ is the desktop.   (BUG ?)
 		*/
-		str32cpy (parent -> path, dir -> path);
-		char32 *colon = str32chr (parent -> path, U':');
+		str32cpy (parentFolder -> path, subfolder -> path);
+		char32 *colon = str32chr (parentFolder -> path, U':');
 		if (colon) {
-			const integer length = Melder_length (parent -> path);
-			char32 *backslash = str32rchr (parent -> path, U'\\');
+			const integer length = Melder_length (parentFolder -> path);
+			char32 *backslash = str32rchr (parentFolder -> path, U'\\');
 			if (backslash) {   //   C:\WINDOWS\FONTS or C:\WINDOWS or C:\   - (cannot add a line comment with a backslash)
-				if (backslash - parent -> path == length - 1) {   //   C:\   -
-					Melder_getDesktop (parent);   // empty string
+				if (backslash - parentFolder -> path == length - 1) {   //   C:\   -
+					Melder_getDesktop (parentFolder);   // empty string
 				} else if (backslash - colon == 1) {   //   C:\WINDOWS
 					* (backslash + 1) = U'\0';   //   C:\   -
 				} else {   //   C:\WINDOWS\FONTS
 					*backslash = U'\0';   //   C:\WINDOWS
 				}
 			} else {   //   LPT1:   ???
-				Melder_getDesktop (parent);   // empty string
+				Melder_getDesktop (parentFolder);   // empty string
 			}
-		} else if (parent -> path [0] == U'\\' && parent -> path [1] == U'\\') {
-			const integer length = Melder_length (parent -> path);
-			char32 *backslash = str32rchr (parent -> path + 2, U'\\');
+		} else if (parentFolder -> path [0] == U'\\' && parentFolder -> path [1] == U'\\') {
+			const integer length = Melder_length (parentFolder -> path);
+			char32 *backslash = str32rchr (parentFolder -> path + 2, U'\\');
 			if (backslash) {   //   \\Swine\Apps\Praats or \\Swine\Apps or \\Swine\   -
-				if (backslash - parent -> path == length - 1) {   //   \\Swine\   -
-					Melder_getDesktop (parent);   // empty string
+				if (backslash - parentFolder -> path == length - 1) {   //   \\Swine\   -
+					Melder_getDesktop (parentFolder);   // empty string
 				} else {   //   \\Swine\Apps\Praats or \\Swine\Apps
-					char32 *leftBackslash = str32chr (parent -> path + 2, U'\\');
+					char32 *leftBackslash = str32chr (parentFolder -> path + 2, U'\\');
 					if (backslash - leftBackslash == 0) {   //   \\Swine\Apps
 						* (backslash + 1) = U'\0';   //   \\Swine\   -
 					} else {   //   \\Swine\Apps\Praats
@@ -478,16 +478,16 @@ void MelderFolder_getParentFolder (MelderFolder dir, MelderFolder parent) {
 					}
 				}
 			} else {   //   \\Swine   ???
-				Melder_getDesktop (parent);   // empty string
+				Melder_getDesktop (parentFolder);   // empty string
 			}
 		} else {   // unknown path type.
-			Melder_getDesktop (parent);   // empty string
+			Melder_getDesktop (parentFolder);   // empty string
 		}
 	#endif
 }
 
-bool MelderFolder_isDesktop (MelderFolder dir) {
-	return dir -> path [0] == U'\0';
+bool MelderFolder_isDesktop (MelderFolder folder) {
+	return folder -> path [0] == U'\0';
 }
 
 void MelderFolder_getSubfolder (MelderFolder parentFolder, conststring32 subfolderName, MelderFolder subfolder) {
@@ -516,7 +516,7 @@ void Melder_getHomeDir (MelderFolder homeDir) {
 		WCHAR driveW [kMelder_MAXPATH+1], pathW [kMelder_MAXPATH+1];
 		DWORD n = GetEnvironmentVariableW (L"USERPROFILE", pathW, kMelder_MAXPATH+1);
 		if (n > kMelder_MAXPATH)
-			Melder_throw (U"Home directory name too long.");
+			Melder_throw (U"Home folder name too long.");
 		if (n > 0) {
 			Melder_sprint (homeDir -> path,kMelder_MAXPATH+1, Melder_peekWto32 (pathW));
 			return;
@@ -540,13 +540,13 @@ void Melder_getParentPreferencesFolder (MelderFolder preferencesFolder) {
 		Melder_sprint (preferencesFolder -> path,kMelder_MAXPATH+1, homeFolder. path, U"/Library/Preferences");
 	#elif defined (UNIX)
 		/*
-			Preferences files go into the home directory.
+			Preferences files go into the home folder.
 		*/
 		Melder_getHomeDir (preferencesFolder);
 	#elif defined (_WIN32)
 		/*
-			On Windows 95, preferences files went into the Windows directory.
-			On shared systems (NT, 2000, XP), preferences files go into the home directory.
+			On Windows 95, preferences files went into the Windows folder.
+			On shared systems (NT, 2000, XP), preferences files go into the home folder.
 			TODO: at some point, these files should be moved to HOME\AppData\Roaming\Praat.
 		*/
 		Melder_getHomeDir (preferencesFolder);
@@ -857,30 +857,30 @@ conststring32 MelderFolder_messageName (MelderFolder folder) {
 	static structMelderFolder theDefaultDir;
 #endif
 
-void Melder_getCurrentFolder (MelderFolder dir) {
+void Melder_getCurrentFolder (MelderFolder folder) {
 	#if defined (UNIX)
 		char path [kMelder_MAXPATH+1];
 		char *pathResult = getcwd (path, kMelder_MAXPATH+1);
 		if (pathResult)
-			Melder_8bitFileRepresentationToStr32_inplace (path, dir -> path);
+			Melder_8bitFileRepresentationToStr32_inplace (path, folder -> path);
 		else if (errno == EPERM)
-			str32cpy (dir -> path, theDefaultDir. path);
+			str32cpy (folder -> path, theDefaultDir. path);
 		else
 			Melder_throw (Melder_peek8to32 (strerror (errno)));
-		Melder_assert (Melder_length (dir -> path) <= kMelder_MAXPATH);
+		Melder_assert (Melder_length (folder -> path) <= kMelder_MAXPATH);
 	#elif defined (_WIN32)
-		static WCHAR dirPathW [kMelder_MAXPATH+1];
-		GetCurrentDirectory (kMelder_MAXPATH+1, dirPathW);
-		Melder_sprint (dir -> path,kMelder_MAXPATH+1, Melder_peekWto32 (dirPathW));
+		static WCHAR folderPathW [kMelder_MAXPATH+1];
+		GetCurrentDirectory (kMelder_MAXPATH+1, folderPathW);
+		Melder_sprint (folder -> path,kMelder_MAXPATH+1, Melder_peekWto32 (folderPathW));
 	#endif
 }
 
-void Melder_setCurrentFolder (MelderFolder dir) {
+void Melder_setCurrentFolder (MelderFolder folder) {
 	#if defined (UNIX)
-		chdir (Melder_peek32to8_fileSystem (dir -> path));
-		str32cpy (theDefaultDir. path, dir -> path);
+		chdir (Melder_peek32to8_fileSystem (folder -> path));
+		str32cpy (theDefaultDir. path, folder -> path);
 	#elif defined (_WIN32)
-		SetCurrentDirectory (Melder_peek32toW_fileSystem (dir -> path));
+		SetCurrentDirectory (Melder_peek32toW_fileSystem (folder -> path));
 	#endif
 }
 
@@ -890,17 +890,17 @@ void MelderFile_setDefaultDir (MelderFile file) {
 	Melder_setCurrentFolder (& folder);
 }
 
-void Melder_createDirectory (MelderFolder parent, conststring32 dirName, int mode) {
+void Melder_createDirectory (MelderFolder parent, conststring32 folderName, int mode) {
 #if defined (UNIX)
 	structMelderFile file { };
-	if (dirName [0] == U'/') {
-		Melder_sprint (file. path,kMelder_MAXPATH+1, dirName);   // absolute path
+	if (folderName [0] == U'/') {
+		Melder_sprint (file. path,kMelder_MAXPATH+1, folderName);   // absolute path
 	} else if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
-		Melder_sprint (file. path,kMelder_MAXPATH+1, U"/", dirName);   // relative path in root directory
+		Melder_sprint (file. path,kMelder_MAXPATH+1, U"/", folderName);   // relative path in root folder
 	} else {
-		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", dirName);   // relative path
+		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", folderName);   // relative path
 	}
-	if (mkdir (Melder_peek32to8_fileSystem (file. path), mode) == -1 && errno != EEXIST)   // ignore if directory already exists
+	if (mkdir (Melder_peek32to8_fileSystem (file. path), mode) == -1 && errno != EEXIST)   // ignore if folder already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #elif defined (_WIN32)
 	structMelderFile file { };
@@ -909,12 +909,12 @@ void Melder_createDirectory (MelderFolder parent, conststring32 dirName, int mod
 	sa. nLength = sizeof (SECURITY_ATTRIBUTES);
 	sa. lpSecurityDescriptor = nullptr;
 	sa. bInheritHandle = false;
-	if (str32chr (dirName, U':') || dirName [0] == U'/' && dirName [1] == U'/') {
-		Melder_sprint (file. path,kMelder_MAXPATH+1, dirName);   // absolute path
+	if (str32chr (folderName, U':') || folderName [0] == U'/' && folderName [1] == U'/') {
+		Melder_sprint (file. path,kMelder_MAXPATH+1, folderName);   // absolute path
 	} else {
-		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", dirName);   // relative path
+		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", folderName);   // relative path
 	}
-	if (! CreateDirectoryW (Melder_peek32toW_fileSystem (file. path), & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if directory already exists
+	if (! CreateDirectoryW (Melder_peek32toW_fileSystem (file. path), & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if folder already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #else
 	//#error Unsupported operating system.

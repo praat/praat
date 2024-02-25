@@ -1,6 +1,6 @@
 /* STRVEC.cpp
  *
- * Copyright (C) 2006,2007,2009,2011,2012,2015-2023 Paul Boersma
+ * Copyright (C) 2006,2007,2009,2011,2012,2015-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,16 @@
 #include "melder.h"
 
 static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, bool wantDirectories, bool caseSensitive) {
+	/*
+		Resolve home-relative paths.
+	*/
+	if (const bool pathIsHomeRelative = ( path [0] == U'~' &&
+		(path [1] == U'/' || path [1] == Melder_DIRECTORY_SEPARATOR || path [1] == U'\0') )
+	) {
+		char32 absolutePath [kMelder_MAXPATH+1];
+		Melder_sprint (absolutePath,kMelder_MAXPATH+1, Melder_peek8to32 (getenv ("HOME")), & path [1]);
+		return fileOrFolderNames_STRVEC (absolutePath, wantDirectories, caseSensitive);
+	}
 	#if defined (_WIN32)
 		try {
 			/*
