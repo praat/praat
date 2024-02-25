@@ -29,6 +29,15 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.06# (25 February 2024)
+• Sound files on Windows: corrected a bug (existing since July 2021)
+  that prevented reading FLAC files with special characters in their names.
+• FormantPathEditor without Sound: corrected several bugs that caused Praat to crash (such as ##Formant listing#, using the Pitch menu...).
+• Spectrogram painting: improved painting of very quiet spectrograms at extreme dynamic ranges.
+• Scripting: @`folderExists`.
+• Scripting: home-relative paths (such as `~/sounds/*.wav`) in more locations,
+  such as @`fileNames$#`, @@Create Strings as file list...@, and @`createFolder`.
+
 ##6.4.05# (27 January 2024)
 • Many typos in manual.
 • Made TIMIT label files readable on Windows.

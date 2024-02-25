@@ -1,6 +1,6 @@
 /* SoundAnalysisArea.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -485,14 +485,16 @@ void structSoundAnalysisArea :: v1_info () {
 	/*
 		COMPATIBILITY < 6400
 	*/
-	MelderInfo_writeLine (U"\nCOMPATIBILITY (obsolete settings for the benefit of old scripts):");
-	MelderInfo_writeLine (U"Pitch max. number of candidates: ", our instancePref_pitch_rawAcCc_maximumNumberOfCandidates());
-	MelderInfo_writeLine (U"Pitch very accurate: ", our instancePref_pitch_rawAcCc_veryAccurate());
-	MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_rawAcCc_silenceThreshold(), U" of global peak");
-	MelderInfo_writeLine (U"Pitch voicing threshold: ", our instancePref_pitch_rawAcCc_voicingThreshold(), U" (periodic power / total power)");
-	MelderInfo_writeLine (U"Pitch octave cost: ", our instancePref_pitch_rawAcCc_octaveCost(), U" per octave");
-	MelderInfo_writeLine (U"Pitch octave jump cost: ", our instancePref_pitch_rawAcCc_octaveJumpCost(), U" per octave");
-	MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", our instancePref_pitch_rawAcCc_voicedUnvoicedCost());
+	if (v_hasPitch ()) {
+		MelderInfo_writeLine (U"\nCOMPATIBILITY (obsolete settings for the benefit of old scripts):");
+		MelderInfo_writeLine (U"Pitch max. number of candidates: ", our instancePref_pitch_rawAcCc_maximumNumberOfCandidates());
+		MelderInfo_writeLine (U"Pitch very accurate: ", our instancePref_pitch_rawAcCc_veryAccurate());
+		MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_rawAcCc_silenceThreshold(), U" of global peak");
+		MelderInfo_writeLine (U"Pitch voicing threshold: ", our instancePref_pitch_rawAcCc_voicingThreshold(), U" (periodic power / total power)");
+		MelderInfo_writeLine (U"Pitch octave cost: ", our instancePref_pitch_rawAcCc_octaveCost(), U" per octave");
+		MelderInfo_writeLine (U"Pitch octave jump cost: ", our instancePref_pitch_rawAcCc_octaveJumpCost(), U" per octave");
+		MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", our instancePref_pitch_rawAcCc_voicedUnvoicedCost());
+	}
 }
 
 
@@ -1860,20 +1862,22 @@ void structSoundAnalysisArea :: v_createMenuItems_formant (EditorMenu menu) {
 }
 
 void structSoundAnalysisArea :: v_createMenus () {
-	EditorMenu menu = Editor_addMenu (our functionEditor(), U"Analyses", 0);
-	FunctionAreaMenu_addCommand (menu, U"Show analyses...", 0, menu_cb_showAnalyses, this);
-	FunctionAreaMenu_addCommand (menu, U"Time step settings...", 0, menu_cb_timeStepSettings, this);
-	FunctionAreaMenu_addCommand (menu, U"-- query log --", 0, nullptr, this);
-	FunctionAreaMenu_addCommand (menu, U"Log settings...", 0, menu_cb_logSettings, this);
-	FunctionAreaMenu_addCommand (menu, U"Delete log file 1", 0, menu_cb_deleteLogFile1, this);
-	FunctionAreaMenu_addCommand (menu, U"Delete log file 2", 0, menu_cb_deleteLogFile2, this);
-	FunctionAreaMenu_addCommand (menu, U"Log 1", GuiMenu_F12, menu_cb_log1, this);
-	FunctionAreaMenu_addCommand (menu, U"Log 2", GuiMenu_F12 | GuiMenu_SHIFT, menu_cb_log2, this);
-	FunctionAreaMenu_addCommand (menu, U"Log script 3 (...)", GuiMenu_F12 | GuiMenu_OPTION, menu_cb_logScript3, this);
-	FunctionAreaMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 | GuiMenu_COMMAND, menu_cb_logScript4, this);
+	if (our v_hasSpectrogram () && our v_hasPitch () && our v_hasIntensity () && our v_hasPulses ()) {
+		EditorMenu menu = Editor_addMenu (our functionEditor(), U"Analyses", 0);
+		FunctionAreaMenu_addCommand (menu, U"Show analyses...", 0, menu_cb_showAnalyses, this);
+		FunctionAreaMenu_addCommand (menu, U"Time step settings...", 0, menu_cb_timeStepSettings, this);
+		FunctionAreaMenu_addCommand (menu, U"-- query log --", 0, nullptr, this);
+		FunctionAreaMenu_addCommand (menu, U"Log settings...", 0, menu_cb_logSettings, this);
+		FunctionAreaMenu_addCommand (menu, U"Delete log file 1", 0, menu_cb_deleteLogFile1, this);
+		FunctionAreaMenu_addCommand (menu, U"Delete log file 2", 0, menu_cb_deleteLogFile2, this);
+		FunctionAreaMenu_addCommand (menu, U"Log 1", GuiMenu_F12, menu_cb_log1, this);
+		FunctionAreaMenu_addCommand (menu, U"Log 2", GuiMenu_F12 | GuiMenu_SHIFT, menu_cb_log2, this);
+		FunctionAreaMenu_addCommand (menu, U"Log script 3 (...)", GuiMenu_F12 | GuiMenu_OPTION, menu_cb_logScript3, this);
+		FunctionAreaMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 | GuiMenu_COMMAND, menu_cb_logScript4, this);
+	}
 
 	if (our v_hasSpectrogram ()) {
-		menu = Editor_addMenu (our functionEditor(), U"Spectrogram", 0);
+		EditorMenu menu = Editor_addMenu (our functionEditor(), U"Spectrogram", 0);
 		our spectrogramToggle = FunctionAreaMenu_addCommand (menu, U"Show spectrogram",
 			GuiMenu_CHECKBUTTON | (instancePref_spectrogram_show() ? GuiMenu_TOGGLE_ON : 0),
 			menu_cb_showSpectrogram, this
@@ -1901,7 +1905,7 @@ void structSoundAnalysisArea :: v_createMenus () {
 	}
 
 	if (our v_hasPitch ()) {
-		menu = Editor_addMenu (our functionEditor(), U"Pitch", 0);
+		EditorMenu menu = Editor_addMenu (our functionEditor(), U"Pitch", 0);
 		our pitchToggle = FunctionAreaMenu_addCommand (menu, U"Show pitch",
 			GuiMenu_CHECKBUTTON | (instancePref_pitch_show() ? GuiMenu_TOGGLE_ON : 0),
 			menu_cb_showPitch, this
@@ -1937,7 +1941,7 @@ void structSoundAnalysisArea :: v_createMenus () {
 	}
 
 	if (our v_hasIntensity ()) {
-		menu = Editor_addMenu (our functionEditor(), U"Intensity", 0);
+		EditorMenu menu = Editor_addMenu (our functionEditor(), U"Intensity", 0);
 		our intensityToggle = FunctionAreaMenu_addCommand (menu, U"Show intensity",
 			GuiMenu_CHECKBUTTON | (instancePref_intensity_show() ? GuiMenu_TOGGLE_ON : 0),
 			menu_cb_showIntensity, this
@@ -1961,12 +1965,12 @@ void structSoundAnalysisArea :: v_createMenus () {
 				CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour, this);
 	}
 	if (our v_hasFormants ()) {
-		menu = Editor_addMenu (our functionEditor(), U"Formants", 0);
+		EditorMenu menu = Editor_addMenu (our functionEditor(), U"Formants", 0);
 		our v_createMenuItems_formant (menu);
 	}
 
 	if (our v_hasPulses ()) {
-		menu = Editor_addMenu (our functionEditor(), U"Pulses", 0);
+		EditorMenu menu = Editor_addMenu (our functionEditor(), U"Pulses", 0);
 		our pulsesToggle = FunctionAreaMenu_addCommand (menu, U"Show pulses",
 			GuiMenu_CHECKBUTTON | (instancePref_pulses_show() ? GuiMenu_TOGGLE_ON : 0),
 			menu_cb_showPulses, this
