@@ -2626,6 +2626,17 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+FORM (CONVERT_EACH_TO_ONE__FileInMemorySet_removeFiles, U"FileInMemorySet: Remove files", nullptr) {
+	LABEL (U"Remove all files where the file name ")
+	OPTIONMENU_ENUM (kMelder_string, which, U"...", kMelder_string::CONTAINS)
+	SENTENCE (criterion, U"...the text", U"/voices/")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (FileInMemorySet)
+		autoFileInMemorySet result = FileInMemorySet_removeFiles (me, which, criterion);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (INFO_ONE__FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
 	WORD (name, U"Name", U"example")
 	INTEGER (numberOfBytesPerLine, U"Number of bytes per line", U"20")
@@ -9685,51 +9696,53 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__ExcitationList_to_PatternList);
 	praat_addAction1 (classExcitationList, 0, U"To Pattern...", nullptr, GuiMenu_HIDDEN,
 			CONVERT_EACH_TO_ONE__ExcitationList_to_PatternList);
-	praat_addAction1 (classExcitationList, 0, U"To TableOfReal", nullptr, 0, 
+	praat_addAction1 (classExcitationList, 0, U"To TableOfReal", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ExcitationList_to_TableOfReal);
 
-	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to ExcitationList", nullptr, 0, 
+	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to ExcitationList", nullptr, 0,
 			MODIFY_ExcitationList_addItem);
 	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to Excitations", nullptr, GuiMenu_HIDDEN,
 			MODIFY_ExcitationList_addItem);
 
-	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0, 
+	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0,
 			INFO_ONE__FileInMemory_showAsCode);
-	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0, 
+	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0,
 			MODIFY_EACH__FileInMemory_setId);
-	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, 
+	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0,
 			COMBINE_ALL_TO_ONE__FilesInMemory_to_FileInMemorySet);
 	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, GuiMenu_DEPRECATED_2015,
 			COMBINE_ALL_TO_ONE__FilesInMemory_to_FileInMemorySet);
 
 	praat_addAction1 (classFileInMemorySet, 1, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1, 
+	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__FileInMemorySet_getNumberOfFiles);
-	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1, 
+	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1,
 			QUERY_ONE_FOR_BOOLEAN__FileInMemorySet_hasDirectory);
 
-	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, 
+	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0,
 			INFO_ONE__FileInMemorySet_showAsCode);
-	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, 
+	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0,
 			INFO_ONE__FileInMemorySet_showOneFileAsCode);
-	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0, 
+	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0,
 			COMBINE_ALL_TO_ONE__FileInMemorySets_merge);
-	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, 
+	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FileInMemorySet_to_Strings_id);
-	praat_addAction1 (classFileInMemorySet, 0, U"Extract files...", nullptr, 0, 
+	praat_addAction1 (classFileInMemorySet, 0, U"Extract files...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FileInMemorySet_extractFiles);
-	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0, 
+	praat_addAction1 (classFileInMemorySet, 0, U"Remove files...", nullptr, 0,
+			CONVERT_EACH_TO_ONE__FileInMemorySet_removeFiles);
+	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__FileInMemorySet_addItemsToSet);
 
 	praat_addAction1 (classFileInMemoryManager, 1, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1, 
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__FileInMemoryManager_getNumberOfFiles);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1, 
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__FileInMemoryManager_getNumberOfOpenFiles);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Has directory?", nullptr, 1, 
+	praat_addAction1 (classFileInMemoryManager, 1, U"Has directory?", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__FileInMemoryManager_hasDirectory);
 	
-	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0, 
+	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__FileInMemoryManager_extractFiles);
 	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__FileInMemoryManager_downto_Table);

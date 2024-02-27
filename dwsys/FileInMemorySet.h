@@ -2,7 +2,7 @@
 #define _FileInMemorySet_h_
 /* FileInMemorySet.h
  *
- * Copyright (C) 2011-2020 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2011-2024 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 d
 autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemory>& list);
 
 autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion);
+autoFileInMemorySet FileInMemorySet_removeFiles  (FileInMemorySet me, kMelder_string which, conststring32 criterion);
 
 /* Only creates references to files in memory. Once me is deleted, the references are not valid any more!! */
 autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion);
