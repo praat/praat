@@ -1,6 +1,6 @@
 /* ManPages_toHtml.cpp
  *
- * Copyright (C) 1996-2023 Paul Boersma
+ * Copyright (C) 1996-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,9 +229,9 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				{// scope
 					autoMelderProgressOff progress;
 					autoMelderWarningOff warning;
-					autoMelderSaveDefaultDir saveDir;
-					if (! MelderDir_isNull (& my rootDirectory))
-						Melder_setDefaultDir (& my rootDirectory);
+					autoMelderSaveCurrentFolder saveFolder;
+					if (! MelderFolder_isNull (& my rootDirectory))
+						Melder_setCurrentFolder (& my rootDirectory);
 					const bool dollarSignWasCode = graphics -> dollarSignIsCode;
 					const bool backquoteWasVerbatim = graphics -> backquoteIsVerbatim;
 					const bool atSignWasLink = graphics -> atSignIsLink;
@@ -786,8 +786,8 @@ void ManPages_writeOneToHtmlFile (ManPages me, Interpreter optionalInterpreterRe
 }
 
 void ManPages_writeAllToHtmlDir (ManPages me, Interpreter optionalInterpreterReference, conststring32 dirPath) {
-	structMelderDir dir { };
-	Melder_pathToDir (dirPath, & dir);
+	structMelderFolder dir { };
+	Melder_pathToFolder (dirPath, & dir);
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
 		char32 fileName [ManPages_FILENAME_BUFFER_SIZE];
@@ -826,7 +826,7 @@ void ManPages_writeAllToHtmlDir (ManPages me, Interpreter optionalInterpreterRef
 		static MelderString buffer;
 		MelderString_empty (& buffer);
 		structMelderFile file { };
-		MelderDir_getFile (& dir, fileName, & file);
+		MelderFolder_getFile (& dir, fileName, & file);
 		writePageAsHtml (me, optionalInterpreterReference, & file, ipage, & buffer);
 		/*
 			An optimization because reading is much faster than writing:

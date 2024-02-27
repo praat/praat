@@ -20,8 +20,11 @@ assert not folderExists: "../speedometers"
 assert not folderExists: "hffghfdjkgh"
 assert not folderExists: "hffghfdjkgh/"
 assert not folderExists: "up/hffghfdjkgh"
-assert folderExists: "~"
 assert folderExists: "~/"
 assert not folderExists: "~/hfglkygghjglj"
+assert folderExists: "~"
+
+createFolder: "kanweg1"
+createFolder: "kanweg2"
 
 appendInfoLine: "OK"

@@ -1,6 +1,6 @@
 /* oo_DESCRIPTION.h
  *
- * Copyright (C) 1994-2013,2015-2020,2023 Paul Boersma
+ * Copyright (C) 1994-2013,2015-2020,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@
 #define oo_COLLECTION_OF(Type,x,ItemType,version)  { U"" #x, collectionofwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_Collection, 0, (conststring32) & theClassInfo_##ItemType, nullptr, nullptr, nullptr },
 #define oo_COLLECTION(Type,x,ItemType,version)  { U"" #x, collectionwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_##Type, 0, (conststring32) & theClassInfo_##ItemType, nullptr, nullptr, nullptr },
 #define oo_FILE(x)
-#define oo_DIR(x)
+#define oo_FOLDER(x)
 
 #define oo_DEFINE_STRUCT(Type) \
 	static struct structData_Description the##Type##_description [] = {

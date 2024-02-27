@@ -77,8 +77,8 @@ autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& li
 
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 fileGlobber) {
 	try {
-		structMelderDir parent { };
-		Melder_pathToDir (dirpath, & parent);
+		structMelderFolder parent { };
+		Melder_pathToFolder (dirpath, & parent);
 		autoStrings thee = Strings_createAsFileList (Melder_cat (dirpath, U"/", fileGlobber));
 		Melder_require (thy numberOfStrings > 0,
 			U"No files found.");
@@ -86,7 +86,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 d
 		autoFileInMemorySet me = FileInMemorySet_create ();
 		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			structMelderFile file { };
-			MelderDir_getFile (& parent, thy strings [i].get(), & file);
+			MelderFolder_getFile (& parent, thy strings [i].get(), & file);
 			autoFileInMemory fim = FileInMemory_create (& file);
 			my addItem_move (fim.move());
 		}

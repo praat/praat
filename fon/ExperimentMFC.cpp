@@ -1,6 +1,6 @@
 /* ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2009,2011-2013,2015-2021 Paul Boersma
+ * Copyright (C) 2001-2009,2011-2013,2015-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * pb 2002/07/16 GPL
  * pb 2002/10/31 NUMlog2
  * pb 2003/03/08 inter-stimulus interval; version 2
- * pb 2003/09/14 MelderDir_relativePathToFile
+ * pb 2003/09/14 MelderFolder_relativePathToFile
  * pb 2004/06/22 added response keys; version 3
  * pb 2004/08/12 removed a bug (something said carrierBefore instead of carrierAfter)
  *     that caused Praat to crash if the carrier before was longer than the carrier after
@@ -107,7 +107,7 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 		/*
 			Make sure we are in the correct folder.
 		*/
-		if (MelderDir_isNull (& my rootDirectory)) {
+		if (MelderFolder_isNull (& my rootDirectory)) {
 			/*
 				Absolute file name.
 			*/
@@ -116,7 +116,7 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 			/*
 				Relative or absolute file name.
 			*/
-			MelderDir_relativePathToFile (& my rootDirectory, pathName, & file);
+			MelderFolder_relativePathToFile (& my rootDirectory, pathName, & file);
 			if (Melder_debug == 32) {
 				MelderInfo_open ();
 				MelderInfo_writeLine (U"Path name <", pathName, U">");

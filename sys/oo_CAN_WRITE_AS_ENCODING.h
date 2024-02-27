@@ -1,6 +1,6 @@
 /* oo_CAN_WRITE_AS_ENCODING.h
  *
- * Copyright (C) 2007,2009,2011-2020 Paul Boersma
+ * Copyright (C) 2007,2009,2011-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@
 #define oo_FILE(x)  \
 	if (! Melder_isEncodable (our x. path, encoding)) return false;
 
-#define oo_DIR(x)  \
+#define oo_FOLDER(x)  \
 	if (! Melder_isEncodable (our x. path, encoding)) return false;
 
 #define oo_DEFINE_STRUCT(Type)  \

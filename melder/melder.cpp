@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2021,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ void Melder_init () {
 	gsl_set_error_handler_off ();
 	NUMrandom_initializeSafelyAndUnpredictably ();
 	Melder_alloc_init ();
+	Melder_audiofiles_init ();
 	#ifdef macintosh
 		SInt32 sys1, sys2, sys3;
 		Gestalt ('sys1', & sys1);

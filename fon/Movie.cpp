@@ -1,6 +1,6 @@
 /* Movie.cpp
  *
- * Copyright (C) 2011-2012,2014-2018,2022 Paul Boersma
+ * Copyright (C) 2011-2012,2014-2018,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,9 +72,9 @@ autoMovie Movie_openFromSoundFile (MelderFile file)
 		*extensionLocation = U'\0';
 		fileNameHead.length = extensionLocation - fileNameHead.string;
 		autoStrings strings = Strings_createAsFileList (Melder_cat (fileNameHead.string, U"*.png"));
-		structMelderDir folder { };
-		MelderFile_getParentDir (file, & folder);
-		Movie_init (me.get(), sound.move(), Melder_dirToPath (& folder), strings.move());
+		structMelderFolder folder { };
+		MelderFile_getParentFolder (file, & folder);
+		Movie_init (me.get(), sound.move(), Melder_folderToPath (& folder), strings.move());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie object not read from file ", file, U".");
@@ -84,14 +84,16 @@ autoMovie Movie_openFromSoundFile (MelderFile file)
 void Movie_paintOneImageInside (Movie me, Graphics graphics, integer frameNumber, double xmin, double xmax, double ymin, double ymax)
 {
 	try {
-		if (frameNumber < 1) Melder_throw (U"Specified frame number is ", frameNumber, U" but should be at least 1.");
-		if (frameNumber > my nx) Melder_throw (U"Specified frame number is ", frameNumber, U" but there are only ", my nx, U"frames.");
+		if (frameNumber < 1)
+			Melder_throw (U"Specified frame number is ", frameNumber, U" but should be at least 1.");
+		if (frameNumber > my nx)
+			Melder_throw (U"Specified frame number is ", frameNumber, U" but there are only ", my nx, U"frames.");
 		Melder_assert (my d_fileNames);
 		Melder_assert (my d_fileNames -> numberOfStrings == my nx);
-		structMelderDir folder { };
-		Melder_pathToDir (my d_folderName.get(), & folder);
+		structMelderFolder folder { };
+		Melder_pathToFolder (my d_folderName.get(), & folder);
 		structMelderFile file { };
-		MelderDir_getFile (& folder, my d_fileNames -> strings [frameNumber].get(), & file);
+		MelderFolder_getFile (& folder, my d_fileNames -> strings [frameNumber].get(), & file);
 		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), xmin, xmax, ymin, ymax);
 	} catch (MelderError) {
 		Melder_throw (me, U": image ", frameNumber, U" not painted.");

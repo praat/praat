@@ -142,6 +142,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`floor` (%`x`) – round down to integer
 , @`floor#` (%`vector#`) – round down each element of %`vector#`
 , @`floor##` (%`matrix##`) – round down each cell of %`matrix##`
+, @`folderExists` (%`folderPath$`) – 1 if the folder exists and can be read, 0 otherwise
 , @`folderNames$#` (%`folderNameOrPattern$`) – get the names (not the whole paths) of the subfolders in a folder
 	or that match a pattern with an asterisk
 , @`folderNames_caseInsensitive$#` (%`folderNameOrPattern$`) – get the names (not the whole paths) of the subfolders in a folder
@@ -1968,6 +1969,18 @@ Syntax and semantics
 ====================
 #`floor##` (%`m##`)
 : round down (@`floor`) each cell of the matrix %`m##`.
+
+################################################################################
+"`folderExists`"
+© Paul Boersma 2024
+
+A function that can be used in @@Formulas@, especially in @Scripting.
+
+Syntax and semantics
+====================
+#`folderExists` (%`folderPath$`)
+: return 1 if the folder exists, or 0 otherwise
+  (e.g. if %`folderPath$` does not exist or refers to a file).
 
 ################################################################################
 "`folderNames$#`"

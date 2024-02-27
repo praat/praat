@@ -2,7 +2,7 @@
 #define _FormantPathArea_h_
 /* FormantPathEditor.h
  *
- * Copyright (C) 2020-2023 David Weenink, 2022,2023 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,15 @@ Thing_define (FormantPathArea, SoundAnalysisArea) {
 	#include "FormantPathArea_prefs.h"
 };
 
+Thing_define (FormantPathArea_without_Sound, FormantPathArea) {
+	virtual bool v_hasSpectrogram () { return false; }
+	virtual bool v_hasPitch       () { return false; }
+	virtual bool v_hasIntensity   () { return false; }
+	virtual bool v_hasPulses      () { return false; }
+};
+
 DEFINE_FunctionArea_create (FormantPathArea, Sound)
+DEFINE_FunctionArea_create (FormantPathArea_without_Sound, Sound)
 
 /* End of file FormantPathArea.h */
 #endif

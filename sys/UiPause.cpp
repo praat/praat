@@ -1,6 +1,6 @@
 /* UiPause.cpp
  *
- * Copyright (C) 2009-2020,2022,2023 Paul Boersma
+ * Copyright (C) 2009-2020,2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 		Wait for the user to click Stop or Continue.
 	*/
 	{// scope
-		autoMelderSaveDefaultDir saveDir;
+		autoMelderSaveCurrentFolder saveFolder;
 		thePauseForm_clicked = 0;
 		Melder_assert (theEventLoopDepth == 0);
 		theEventLoopDepth ++;

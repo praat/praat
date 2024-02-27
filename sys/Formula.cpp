@@ -1,6 +1,6 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5616,9 +5616,9 @@ static void do_fileReadable () {
 static void do_folderExists () {
 	const Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		structMelderDir folder { };
+		structMelderFolder folder { };
 		Melder_relativePathToFolder (s->getString(), & folder);
-		pushNumber (MelderDir_exists (& folder));
+		pushNumber (MelderFolder_exists (& folder));
 	} else {
 		Melder_throw (U"The function “folderExists” requires a string, not ", s->whichText(), U".");
 	}
@@ -6391,7 +6391,7 @@ static void do_createFolder () {
 		U"The function “createFolder” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
-		structMelderDir folder { };
+		structMelderFolder folder { };
 		Melder_relativePathToFolder (f->getString(), & folder);
 		MelderFolder_create (& folder);
 		pushNumber (1);
@@ -6404,13 +6404,9 @@ static void do_createDirectory () {
 		U"The function “createDirectory” is not available inside manuals.");
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
-		structMelderDir currentDirectory { };
-		Melder_getDefaultDir (& currentDirectory);
-		#if defined (UNIX) || defined (macintosh)
-			Melder_createDirectory (& currentDirectory, f->getString(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		#else
-			Melder_createDirectory (& currentDirectory, f->getString(), 0);
-		#endif
+		structMelderFolder folder { };
+		Melder_relativePathToFolder (f->getString(), & folder);
+		MelderFolder_create (& folder);
 		pushNumber (1);
 	} else {
 		Melder_throw (U"The function “createDirectory” requires a string, not ", f->whichText(), U".");
@@ -6419,9 +6415,9 @@ static void do_createDirectory () {
 static void do_setWorkingDirectory () {
 	const Stackel f = pop;
 	if (f->which == Stackel_STRING) {
-		structMelderDir folder { };
-		Melder_pathToDir (f->getString(), & folder);
-		Melder_setDefaultDir (& folder);
+		structMelderFolder folder { };
+		Melder_pathToFolder (f->getString(), & folder);
+		Melder_setCurrentFolder (& folder);
 		pushNumber (1);
 	} else {
 		Melder_throw (U"The function “setWorkingDirectory” requires a string, not ", f->whichText(), U".");

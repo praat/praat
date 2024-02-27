@@ -149,7 +149,7 @@
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  Class<struct##ItemClass> x;
 #define oo_COLLECTION(Class,x,ItemClass,version)  auto##Class x;
 #define oo_FILE(x)  structMelderFile x;
-#define oo_DIR(x)  structMelderDir x;
+#define oo_FOLDER(x)  structMelderFolder x;
 
 /* Struct and class definitions. */
 

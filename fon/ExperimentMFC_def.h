@@ -1,6 +1,6 @@
 /* ExperimentMFC_def.h
  *
- * Copyright (C) 2001-2007,2009,2011,2013,2015-2019 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011,2013,2015-2019,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,9 +184,9 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 		oo_VEC (reactionTimes, numberOfTrials)
 		oo_OBJECT (Sound, 0, playBuffer)
 	#endif
-	oo_DIR (rootDirectory)
+	oo_FOLDER (rootDirectory)
 	#if oo_READING
-		MelderDir_copy (& Data_directoryBeingRead, & rootDirectory);
+		MelderFolder_copy (& Data_directoryBeingRead, & rootDirectory);
 		oo_VERSION_UNTIL (4)
 			stimuliAreSounds = true;
 		oo_VERSION_END

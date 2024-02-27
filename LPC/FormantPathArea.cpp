@@ -1,6 +1,6 @@
 /* FormantPathArea.cpp
  *
- * Copyright (C) 2020-2023 David Weenink, 2022 Paul Boersma
+ * Copyright (C) 2020-2023 David Weenink, 2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "EditorM.h"
 
 Thing_implement (FormantPathArea, SoundAnalysisArea, 0);
+Thing_implement (FormantPathArea_without_Sound, FormantPathArea, 0);
 
 #include "Prefs_define.h"
 #include "FormantPathArea_prefs.h"

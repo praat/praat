@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2023 Paul Boersma
+ * Copyright (C) 1996-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
 		FOLDER (folder, U"Folder", U"")
 	EDITOR_OK
-		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
+		SET_STRING (folder, Melder_folderToPath (& my rootDirectory))
 	EDITOR_DO
 		ManPages_writeAllToHtmlDir (my manPages(), nullptr, folder);
 	EDITOR_END
@@ -460,11 +460,11 @@ int structManual :: v_goToPage (conststring32 title) {
 	Melder_assert (title);
 	if (title [0] == U'\\' && title [1] == U'F' && title [2] == U'I') {
 		structMelderFile file { };
-		MelderDir_relativePathToFile (& our manPages() -> rootDirectory, title + 3, & file);
+		MelderFolder_relativePathToFile (& our manPages() -> rootDirectory, title + 3, & file);
 		Melder_recordFromFile (& file);
 		return -1;
 	} else if (title [0] == U'\\' && title [1] == U'S' && title [2] == U'C') {
-		autoMelderSetDefaultDir saveDir (& our manPages() -> rootDirectory);
+		autoMelderSetCurrentFolder saveFolder (& our manPages() -> rootDirectory);
 		autoPraatBackground background;
 		try {
 			autostring32 fileNameWithArguments = Melder_dup (title + 3);
@@ -512,7 +512,7 @@ autoManual Manual_create (conststring32 openingPageTitle, Interpreter optionalIn
 		}
 		my ownManPages = ownManPages;
 		HyperPage_init1 (me.get(), windowTitle, manPages, backquoteIsVerbatim);
-		MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
+		MelderFolder_copy (& manPages -> rootDirectory, & my rootDirectory);
 		my history [0]. page = Melder_dup_f (openingPageTitle);   // BAD
 		/*
 			Cache the output of the opening page.
