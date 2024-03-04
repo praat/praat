@@ -21,7 +21,7 @@ libdwsys = static_library (
 	'dwsys',
 	sources : sources,
 	dependencies: gtk_dep,
-	include_directories : [clapack_inc, melder_inc, dwtools_inc, fon_inc, gsl_inc, kar_inc, stat_inc, sys_inc]
+	include_directories : [sys_inc, clapack_inc, melder_inc, dwtools_inc, fon_inc, gsl_inc, kar_inc, stat_inc]
 )
 
 libdwsys_dep = declare_dependency (

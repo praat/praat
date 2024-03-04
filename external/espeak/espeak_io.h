@@ -2,7 +2,7 @@
 #define _espeak_io_h_
 
 /* espeak_io.h
- * Copyright (C) David Weenink 2017
+ * Copyright (C) David Weenink 2017-2024
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <cstdint>
 	
-#define PATH_ESPEAK_DATA "/home/david/projects/espeak-ng/espeak-ng-data"
+#define PATH_ESPEAK_DATA "/home/david/projects/praat/generate/espeak/espeak-ng-data"
 	
 #define fopen(filename,mode) espeak_io_fopen (filename, mode)
 #define fclose(stream) espeak_io_fclose (stream)

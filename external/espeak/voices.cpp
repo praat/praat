@@ -69,7 +69,7 @@ static const int formant_rate_22050[9] = { 240, 170, 170, 170, 170, 170, 170, 17
 int formant_rate[9]; // values adjusted for actual sample rate
 
 #define DEFAULT_LANGUAGE_PRIORITY  5
-#define N_VOICES_LIST  350
+#define N_VOICES_LIST 350
 int n_voices_list = 0;
 espeak_VOICE *voices_list[N_VOICES_LIST];
 
@@ -441,6 +441,10 @@ voice_t *LoadVoice(const char *vname, int control)
 		MAKE_MEM_UNDEFINED(&voice_identifier, sizeof(voice_identifier));
 		MAKE_MEM_UNDEFINED(&voice_name, sizeof(voice_name));
 		MAKE_MEM_UNDEFINED(&voice_languages, sizeof(voice_languages));
+	}
+
+	if ((vname == NULL || vname[0] == 0) && !(control & 8)) {
+		return NULL;
 	}
 
 	strncpy0(voicename, vname, sizeof(voicename));

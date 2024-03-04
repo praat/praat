@@ -1,6 +1,6 @@
 /* FileInMemorySet.cpp
  *
- * Copyright (C) 2012-2020 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2012-2024 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +119,20 @@ autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_st
 				autoFileInMemory item = Data_copy (fim);
 				thy addItem_move (item.move());
 			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot extract files.");
+	}
+}
+
+autoFileInMemorySet FileInMemorySet_removeFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
+	try {
+		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
+			const FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
+			if (Melder_stringMatchesCriterion (fim -> d_path.get(), which, criterion, true))
+				thy addItem_move (my subtractItem_move (ifile));
 		}
 		return thee;
 	} catch (MelderError) {
