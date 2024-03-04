@@ -60,7 +60,7 @@ libdwtools = static_library (
 	'dwtools',
 	sources : sources,
 	dependencies: gtk_dep,
-	include_directories : [clapack_inc, dwsys_inc, EEG_inc, espeak_inc, fon_inc, foned_inc, opusfile_inc, vorbis_inc, kar_inc, LPC_inc, melder_inc, stat_inc, sys_inc]
+	include_directories : [dwsys_inc, clapack_inc, EEG_inc, espeak_inc, fon_inc, foned_inc, opusfile_inc, vorbis_inc, kar_inc, LPC_inc, melder_inc, stat_inc, sys_inc]
 	)
 
 libdwtools_dep = declare_dependency (

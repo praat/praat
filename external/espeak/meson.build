@@ -1,9 +1,10 @@
 # meson.build of the external library "espeak"
-# David Weenink, 3 January 2024
+# David Weenink, 6 January 2024
 
 sources = '''
-	case.cpp categories.cpp 
-	create_espeak_ng_FileInMemoryManager.cpp create_espeak_ng_FileInMemorySet.cpp
+	case.cpp categories.cpp
+	create_espeak_ng_FileInMemoryManager.cpp
+	create_espeak_ng_FileInMemorySet.cpp create_espeak_ng_FileInMemorySet__ru.cpp
 	espeak_io.cpp
 	common.cpp compiledata.cpp compiledict.cpp
 	dictionary.cpp
