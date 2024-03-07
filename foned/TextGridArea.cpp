@@ -863,11 +863,24 @@ static void menu_cb_SaveWholeTextGridAsTextFile (TextGridArea me, EDITOR_ARGS) {
 		Data_writeToTextFile (my textGrid(), file);
 	EDITOR_END
 }
+
+static void menu_cb_SaveTextGridWithDefaultName (TextGridArea me, EDITOR_ARGS) {
+	EDITOR_FORM_SAVE (U"Save TextGrid with default name", nullptr)
+		Melder_sprint (defaultName,300, my textGrid() -> name.get(), U".TextGrid");
+	EDITOR_DO_SAVE_DEFAULT
+		Data_writeToTextFile (my textGrid(), file);
+	EDITOR_END
+}
+
 void structTextGridArea :: v_createMenuItems_save (EditorMenu menu) {
 	FunctionAreaMenu_addCommand (menu, U"- Save TextGrid to disk:", 0, nullptr, this);
 	FunctionAreaMenu_addCommand (menu,
 		U"Save whole TextGrid as text file... || Save TextGrid as text file... || Write TextGrid to text file...",
 		'S' | GuiMenu_DEPTH_1, menu_cb_SaveWholeTextGridAsTextFile, this
+	);
+	FunctionAreaMenu_addCommand (menu,
+		U"Save TextGrid with default name",
+		'S' | GuiMenu_OPTION | GuiMenu_DEPTH_1, menu_cb_SaveTextGridWithDefaultName, this
 	);
 }
 
