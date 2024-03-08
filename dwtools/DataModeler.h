@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2022 David Weenink
+ * Copyright (C) 2014-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,6 +160,8 @@ autoVEC DataModeler_getZScores (DataModeler me);
 autoVEC DataModeler_getChisqScoresFromZScores (DataModeler me, constVEC zscores, bool substituteAverage);
 
 double DataModeler_getDegreesOfFreedom (DataModeler me);
+
+autoMAT DataModeler_getHessian (DataModeler me);
 
 double DataModeler_getChiSquaredQ (DataModeler me, double *out_probability, double *out_ndf);
 

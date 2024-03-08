@@ -1,6 +1,6 @@
 /* DataModeler.cpp
  *
- * Copyright (C) 2014-2022 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2014-2024 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,6 +158,62 @@ static void legendre_evaluateBasisFunctions (DataModeler me, double x, VEC term)
 	}
 }
 
+static autoMAT sigmoid_plus_constant_getHessian (DataModeler me) {
+	try {
+		bool hasSigmaY = isdefined (my data [1].sigmaY);
+		/*
+			y(x;a,b,c,d) = a + b / (1+exp (-(x-c)/d));
+			Define e(x;c,d) = exp (-(x-c)/d) and n(x;c,d) = 1 + e(x;c,d)
+			Then y(x;a,b,c,d) = a + b / n(x;c,d)
+			First order derivatives of n(x;c,d):
+				dn/dc (x;c,d) = e(x;c,d) / d
+				dn/dd (x;c,d) = e(x;c,d) (x-c)/d^2
+				
+			First order derivatives of y(x;a,b, c,d) w.r.t. a,c and d:
+				dy/da = 1
+				dy/db (x;a,b,c,d) = 1 / n(x;c,d)
+				dy/dc (x;a,b,c,d) = -b / n(x;c,d)^2 * dn/dc(x;c,d) = -b / n(x;c,d)^2 * e(x;c,d) / d
+				dy/dd (x;a,b,c,d) = -b / n(x;c,d)^2 * dn/dd(x;c,d) = -b / n(x;c,d)^2 * e(x;c,d) * (x-c)/d^2
+							  = dy/dc (x;a,b,c,d) * (x-c)/d
+		*/		
+		const double a = my parameters [1].value;
+		const double b = my parameters [2].value;
+		const double c = my parameters [3].value;
+		const double d = my parameters [4].value;
+		autoMAT hessian = zero_MAT (my numberOfParameters, my numberOfParameters);
+		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
+			const double multiplier = hasSigmaY ? 1.0 / my data [i].sigmaY : 1.0;
+			const double z = (my data [i].x - b) / c;
+			const double expz = exp (- z);
+			const double denom = 1.0 + expz;
+			const double dyda = multiplier;
+			const double dydb = multiplier / denom;
+			const double dydc = multiplier * -b * dydb * dydb * expz / c;
+			const double dydd = dydc * z; // ! multiplier already included !
+			
+			hessian [1] [1] += dyda * dyda;
+			hessian [1] [2] += dyda * dydb;
+			hessian [1] [3] += dyda * dydc;
+			hessian [1] [4] += dyda * dydd;
+			hessian [2] [2] += dydb * dydb;
+			hessian [2] [3] += dydb * dydc;
+			hessian [2] [4] += dydb * dydd;
+			hessian [3] [3] += dydc * dydc;
+			hessian [3] [4] += dydc * dydd;
+			hessian [4] [4] += dydd * dydd;
+		}
+		hessian [2] [1] = hessian [1] [2];
+		hessian [3] [1] = hessian [1] [3];
+		hessian [3] [2] = hessian [2] [3];
+		hessian [4] [1] = hessian [1] [4];
+		hessian [4] [2] = hessian [2] [4];
+		hessian [4] [3] = hessian [3] [4];
+			
+		return hessian;
+	} catch (MelderError) {
+		Melder_throw (U"Error in sigmoid_plus_constant_getHessian.");
+	}
+}
 static double sigmoid_plus_constant_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
 	/*
@@ -170,6 +226,53 @@ static double sigmoid_plus_constant_evaluate (DataModeler me, double x, vector<s
 	return (double) result;
 }
 
+static autoMAT sigmoid_getHessian (DataModeler me) {
+	try {
+		bool hasSigmaY = isdefined (my data [1].sigmaY);
+		/*
+			y(x;a,b,c) = a / (1+exp (-(x-b)/c));
+			Define e(x;b,c) = exp (-(x-b)/c) and n(x;b,c) = 1 + e(x;b,c)
+			Then y(x;a,b,c) = a / n(x;b,c)
+			First order derivatives of n(x;b,c):
+				dn/db (x;b,c) = e(x;b,c) / c
+				dn/dc (x;b,c) = e(x;b,c) (x-b)/c^2
+				
+			First order derivatives of y(x;a,b,c) w.r.t. a,b and c:
+				dy/da (x;a,b,c) = 1 / n(x;b,c)
+				dy/db (x;a,b,c) = -a / n(x;b,c)^2 * dn/db(x;b,c) = -a / n(x;b,c)^2 * e(x;b,c) / c
+				dy/dc (x;a,b,c) = -a / n(x;b,c)^2 * dn/dc(x;b,c) = -a / n(x;b,c)^2 * e(x;b,c) * (x-b)/c^2
+							  = dy/db (x;a,b,c) * (x-b)/c
+		*/		
+		const double a = my parameters [1].value;
+		const double b = my parameters [2].value;
+		const double c = my parameters [3].value;
+		autoMAT hessian = zero_MAT (my numberOfParameters, my numberOfParameters);
+		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
+			const double multiplier = hasSigmaY ? 1.0 / my data [i].sigmaY : 1.0;
+			const double z = (my data [i].x - b) / c;
+			const double expz = exp (- z);
+			const double denom = 1.0 + expz;
+			const double dyda = multiplier / denom;
+			const double dydb = multiplier * -a * dyda * dyda * expz / c;
+			const double dydc = dydb * z; // ! multiplier already included !
+			
+			hessian [1] [1] += dyda * dyda;
+			hessian [1] [2] += dyda * dydb;
+			hessian [1] [3] += dyda * dydc;
+			hessian [2] [2] += dydb * dydb;			
+			hessian [2] [3] += dydb * dydc;			
+			hessian [3] [3] += dydc * dydc;			
+		}
+		hessian [2] [1] = hessian [1] [2];
+		hessian [3] [1] = hessian [1] [3];
+		hessian [3] [2] = hessian [2] [3];
+			
+		return hessian;
+	} catch (MelderError) {
+		Melder_throw (U"exponential_getHessian error.");
+	}
+}
+
 static double sigmoid_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
 	/*
@@ -178,6 +281,35 @@ static double sigmoid_evaluate (DataModeler me, double x, vector<structDataModel
 	*/
 	const double result = p [1]. value / (1.0 + exp (- (x - p [2]. value) / p [3]. value));
 	return result;
+}
+
+static autoMAT exponential_getHessian (DataModeler me) {
+	try {
+		bool hasSigmaY = isdefined (my data [1].sigmaY);
+		autoMAT hessian = zero_MAT (my numberOfParameters, my numberOfParameters);
+		/*
+			y(x;a,b) = a*exp (b*x)
+			dy/da = exp (b*x)
+			dy/db = a*b*exp(b*x)
+		*/
+		const double a = my parameters [1].value;
+		const double b = my parameters [2].value;
+		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
+			const double multiplier = hasSigmaY ? 1.0 / my data [i].sigmaY : 1.0;
+			const double x = my data [i].x - 0.5 * (my xmin + my xmax); // see exponential_evaluate ()
+			const double expb = exp (b * x);
+			const double dyda = multiplier * expb;
+			const double dydb = multiplier * a * b * expb;
+
+			hessian [1] [1] += dyda * dyda;
+			hessian [1] [2] += dyda * dydb;
+			hessian [2] [2] += dydb * dydb;			
+		}
+		hessian [2] [1] = hessian [1] [2];
+		return hessian;
+	} catch (MelderError) {
+		Melder_throw (U"exponential_getHessian error.");
+	}
 }
 
 static double exponential_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
@@ -189,6 +321,42 @@ static double exponential_evaluate (DataModeler me, double x, vector<structDataM
 	return p [1]. value * exp (p [2]. value * xscaled);
 }
 
+static autoMAT exponential_plus_constant_getHessian (DataModeler me) {
+	try {
+		bool hasSigmaY = isdefined (my data [1].sigmaY);
+		autoMAT hessian = zero_MAT (my numberOfParameters, my numberOfParameters);
+		/*
+			y(x;a,b,c) = a + b*exp (c*x)
+			dy/da = 1
+			dy/db = exp (c*x)
+			dy/dc = b*c*exp(c*x)
+		*/
+		const double a = my parameters [1].value;
+		const double b = my parameters [2].value;
+		const double c = my parameters [3].value;
+		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
+			const double multiplier = hasSigmaY ? 1.0 / my data [i].sigmaY : 1.0;
+			const double x = my data [i].x - 0.5 * (my xmin + my xmax); // see exponential_evaluate ()
+			const double expc = exp (c * x);
+			const double dyda = multiplier;
+			const double dydb = multiplier * expc;
+			const double dydc = multiplier * b * c * expc;
+
+			hessian [1] [1] += dyda * dyda;
+			hessian [1] [2] += dyda * dydb;
+			hessian [1] [3] += dyda * dydc;
+			hessian [2] [2] += dydb * dydb;			
+			hessian [2] [3] += dydb * dydc;			
+			hessian [3] [3] += dydc * dydc;			
+		}
+		hessian [2] [1] = hessian [1] [2];
+		hessian [3] [1] = hessian [1] [3];
+		hessian [3] [2] = hessian [2] [3];
+		return hessian;
+	} catch (MelderError) {
+		Melder_throw (U"Error in exponential_plus_constant_getHessian.");
+	}
+}
 static double exponential_plus_constant_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size >= 3);
 	/*
@@ -450,7 +618,7 @@ static void modelLinearTrendWithSigmoid (DataModeler me, double *out_lambda, dou
 /*
 	Function: y(x) = b / (1 + exp (- (x - mu) / sigma))
 	Model: z(x) = A * f1(x) + b * f2(x) + C * f3(x), where 
-		z (x)= y (x) * ln (y (x)), f1 (x) = integral (0, x, y(x)dx), f2 (x) = x * y (x), f3 = y (x),
+		z (x) = y (x) * ln (y (x)), f1 (x) = integral (0, x, y(x)dx), f2 (x) = x * y (x), f3 = y (x),
 		A = -1 / (lambda * sigma), B = 1 / sigma, C = ln (lambda) - ln (1 + exp ((mu - x1) / sigma))
 	Non-iterative solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
 	pages 16-17.
@@ -1527,7 +1695,7 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	my parameters = newvectorzero<structDataModelerParameter> (my numberOfParameters);
 	for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
 		my parameters [ipar]. status = kDataModelerParameterStatus::FREE;
-	my parameterNames = Strings_createFixedLength (my numberOfParameters);
+	my parameterNames = autoSTRVEC (my numberOfParameters);
 	my parameterCovariances = Covariance_create (my numberOfParameters);
 	my type = type;
 }
@@ -1585,6 +1753,14 @@ void DataModeler_fit (DataModeler me) {
 		my fit (me);
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler no fit.");
+	}
+}
+
+autoMAT DataModeler_getHessian (DataModeler me) {
+	try {
+		my getHessian (me);
+	} catch (MelderError) {
+		Melder_throw (U"DataModeler: Hessian could not be evaluated.");
 	}
 }
 
