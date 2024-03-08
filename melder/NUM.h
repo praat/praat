@@ -1,7 +1,7 @@
 #pragma once
 /* NUM.h
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,6 +315,11 @@ inline double NUMsqrt_0 (const double x) {
 inline double NUMsqrt_e (const double x) {
 	Melder_require (x >= 0.0,
 		U"You cannot take the square root of a negative number (", x, U").");
+	return sqrt (x);
+}
+
+inline double NUMsqrt_a (const double x) {
+	Melder_assert (x >= 0.0);
 	return sqrt (x);
 }
 

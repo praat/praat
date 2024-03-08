@@ -1,6 +1,6 @@
 /* OTMulti.cpp
  *
- * Copyright (C) 2005-2023 Paul Boersma
+ * Copyright (C) 2005-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -867,13 +867,13 @@ int OTMulti_learnOne (OTMulti me, conststring32 form1, conststring32 form2,
 	if (direction & OTMulti_LEARN_FORWARD) {
 		if (Melder_debug == 47) OTMulti_newDisharmonies (me, 2.0);
 		integer iwinner = OTMulti_getWinner (me, form1, U"");
-		if (Melder_debug != 47 || ! OTMulti_candidateMatches (me, iwinner, form2, U""))
+		if (! (Melder_debug == 47) || ! OTMulti_candidateMatches (me, iwinner, form2, U""))
 			OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise);
 	}
 	if (direction & OTMulti_LEARN_BACKWARD) {
 		if (Melder_debug == 47) OTMulti_newDisharmonies (me, 2.0);
 		integer iwinner = OTMulti_getWinner (me, form2, U"");
-		if (Melder_debug != 47 || ! OTMulti_candidateMatches (me, iwinner, form1, U""))
+		if (! (Melder_debug == 47) || ! OTMulti_candidateMatches (me, iwinner, form1, U""))
 			OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise);
 	}
 	return 1;

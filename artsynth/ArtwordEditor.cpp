@@ -47,6 +47,8 @@ static void gui_button_cb_removeTarget (ArtwordEditor me, GuiButtonEvent /* even
 static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event */) {
 	autostring32 timeText = GuiText_getString (my time);
 	double tim = Melder_atof (timeText.get());
+	if (isundef (tim))
+		tim = 0.0;
 	autostring32 valueText = GuiText_getString (my value);
 	const double value = Melder_atof (valueText.get());
 	ArtwordData a = & my artword -> data [(int) my muscle];
