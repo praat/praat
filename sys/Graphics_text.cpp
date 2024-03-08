@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
+ * Copyright (C) 1992-2024 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ extern const char * ipaSerifRegularPS [];
 			  font == kGraphics_font_CHINESE ? FF_DONTCARE :
 			  font == kGraphics_font_JAPANESE ? FF_DONTCARE :
 			  font >= kGraphics_font_IPATIMES ? FF_DONTCARE : FF_ROMAN );
-		if (font == kGraphics_font_IPATIMES && ! ipaInited && Melder_debug != 15) {
+		if (font == kGraphics_font_IPATIMES && ! ipaInited && ! (Melder_debug == 15)) {
 			LOGFONTW logFont;
 			logFont. lfCharSet = DEFAULT_CHARSET;
 			logFont. lfPitchAndFamily = 0;
@@ -244,9 +244,9 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 			  my font == kGraphics_font::HELVETICA ?
 				(int) kGraphics_font::HELVETICA :   // sans serif, so fall back on Lucida Grande or so for phonetic characters
 			  /* my font must be kGraphics_font_PALATINO */
-			  hasCharis && Melder_debug != 900 ?
+			  hasCharis && ! (Melder_debug == 900) ?
 				kGraphics_font_IPAPALATINO :
-			  hasDoulos && Melder_debug != 900 ?
+			  hasDoulos && ! (Melder_debug == 900) ?
 				( lc -> style == 0 ?
 					kGraphics_font_IPATIMES :
 					(int) kGraphics_font::TIMES
@@ -273,7 +273,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 		my font == kGraphics_font::HELVETICA ?
 			(int) kGraphics_font::HELVETICA :
 		my font == kGraphics_font::PALATINO ?
-			( hasCharis && Melder_debug != 900 ?
+			( hasCharis && ! (Melder_debug == 900) ?
 				kGraphics_font_IPAPALATINO :
 				(int) kGraphics_font::PALATINO
 			) :

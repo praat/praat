@@ -1,6 +1,6 @@
 /* abcio.cpp
  *
- * Copyright (C) 1992-2011,2015,2017-2020,2022 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -844,7 +844,7 @@ void bingetb (FILE *f) { (void) f; bitsInReadBuffer = 0; }
 
 int16 bingeti16 (FILE *f) {
 	try {
-		if (binario_16bitBE && Melder_debug != 18) {
+		if (binario_16bitBE && ! (Melder_debug == 18)) {
 			int16 s;
 			if (fread (& s, sizeof (int16), 1, f) != 1) readError (f, U"a signed 16-bit integer.");
 			return s;
@@ -862,7 +862,7 @@ int16 bingeti16 (FILE *f) {
 
 int16 bingeti16LE (FILE *f) {
 	try {
-		if (binario_16bitLE && Melder_debug != 18) {
+		if (binario_16bitLE && ! (Melder_debug == 18)) {
 			int16 s;
 			if (fread (& s, sizeof (int16), 1, f) != 1) readError (f, U"a signed 16-bit integer.");
 			return s;
@@ -880,7 +880,7 @@ int16 bingeti16LE (FILE *f) {
 
 integer bingetinteger16BE (FILE *f) {
 	try {
-		if (binario_16bitBE && Melder_debug != 18) {
+		if (binario_16bitBE && ! (Melder_debug == 18)) {
 			int16 s;
 			if (fread (& s, sizeof (int16), 1, f) != 1) readError (f, U"a signed 16-bit integer.");
 			return s;
@@ -898,7 +898,7 @@ integer bingetinteger16BE (FILE *f) {
 
 uint16 bingetu16 (FILE *f) {
 	try {
-		if (binario_16bitBE && Melder_debug != 18) {
+		if (binario_16bitBE && ! (Melder_debug == 18)) {
 			uint16 s;
 			if (fread (& s, sizeof (uint16), 1, f) != 1) readError (f, U"an unsigned 16-bit integer.");
 			return s;   // without sign extension
@@ -916,7 +916,7 @@ uint16 bingetu16 (FILE *f) {
 
 uint16 bingetu16LE (FILE *f) {
 	try {
-		if (binario_16bitLE && Melder_debug != 18) {
+		if (binario_16bitLE && ! (Melder_debug == 18)) {
 			uint16 s;
 			if (fread (& s, sizeof (uint16), 1, f) != 1) readError (f, U"an unsigned 16-bit integer.");
 			return s;   // without sign extension
@@ -935,7 +935,7 @@ uint16 bingetu16LE (FILE *f) {
 int bingete16 (FILE *f, int min, int max, conststring32 type) {
 	try {
 		int16 result;
-		if (binario_16bitBE && Melder_debug != 18) {
+		if (binario_16bitBE && ! (Melder_debug == 18)) {
 			if (fread (& result, sizeof (int16), 1, f) != 1) readError (f, U"a signed 16-bit integer.");
 		} else {
 			uint8 bytes [2];
@@ -987,7 +987,7 @@ int32 bingeti24LE (FILE *f) {
 
 int32 bingeti32 (FILE *f) {
 	try {
-		if (binario_32bitBE && Melder_debug != 18) {
+		if (binario_32bitBE && ! (Melder_debug == 18)) {
 			int32 l;
 			if (fread (& l, sizeof (int32), 1, f) != 1) readError (f, U"a signed 32-bit integer.");
 			return l;
@@ -1007,7 +1007,7 @@ int32 bingeti32 (FILE *f) {
 
 int32 bingeti32LE (FILE *f) {
 	try {
-		if (binario_32bitLE && Melder_debug != 18) {
+		if (binario_32bitLE && ! (Melder_debug == 18)) {
 			int32 l;
 			if (fread (& l, sizeof (int32), 1, f) != 1) readError (f, U"a signed 32-bit integer.");
 			return l;
@@ -1027,7 +1027,7 @@ int32 bingeti32LE (FILE *f) {
 
 integer bingetinteger32BE (FILE *f) {
 	try {
-		if (binario_32bitBE && Melder_debug != 18) {
+		if (binario_32bitBE && ! (Melder_debug == 18)) {
 			int32 l;
 			if (fread (& l, sizeof (int32), 1, f) != 1) readError (f, U"a signed 32-bit integer.");
 			return (integer) l;
@@ -1047,7 +1047,7 @@ integer bingetinteger32BE (FILE *f) {
 
 uint32 bingetu32 (FILE *f) {
 	try {
-		if (binario_32bitBE && Melder_debug != 18) {
+		if (binario_32bitBE && ! (Melder_debug == 18)) {
 			uint32 l;
 			if (fread (& l, sizeof (uint32), 1, f) != 1) readError (f, U"an unsigned 32-bit integer.");
 			return l;
@@ -1067,7 +1067,7 @@ uint32 bingetu32 (FILE *f) {
 
 uint32 bingetu32LE (FILE *f) {
 	try {
-		if (binario_32bitLE && Melder_debug != 18) {
+		if (binario_32bitLE && ! (Melder_debug == 18)) {
 			uint32 l;
 			if (fread (& l, sizeof (uint32), 1, f) != 1) readError (f, U"an unsigned 32-bit integer.");
 			return l;
@@ -1087,7 +1087,7 @@ uint32 bingetu32LE (FILE *f) {
 
 double bingetr32 (FILE *f) {
 	try {
-		if (binario_floatIEEE4msb && Melder_debug != 18) {
+		if (binario_floatIEEE4msb && ! (Melder_debug == 18)) {
 			float x;
 			if (fread (& x, sizeof (float), 1, f) != 1) readError (f, U"a 32-bit floating-point number.");
 			return x;
@@ -1118,7 +1118,7 @@ double bingetr32 (FILE *f) {
 
 double bingetr32LE (FILE *f) {
 	try {
-		if (binario_floatIEEE4lsb && Melder_debug != 18) {
+		if (binario_floatIEEE4lsb && ! (Melder_debug == 18)) {
 			float x;
 			if (fread (& x, sizeof (float), 1, f) != 1) readError (f, U"a 32-bit floating-point number.");
 			return x;
@@ -1149,7 +1149,7 @@ double bingetr32LE (FILE *f) {
 
 double bingetr64 (FILE *f) {
 	try {
-		if (binario_doubleIEEE8msb && Melder_debug != 18 || Melder_debug == 181) {
+		if (binario_doubleIEEE8msb && ! (Melder_debug == 18) || Melder_debug == 181) {
 			double x;
 			if (fread (& x, sizeof (double), 1, f) != 1) readError (f, U"a 64-bit floating-point number.");
 			return x;
@@ -1187,7 +1187,7 @@ double bingetr64 (FILE *f) {
 
 double bingetr64LE (FILE *f) {
 	try {
-		if (binario_doubleIEEE8lsb && Melder_debug != 18 || Melder_debug == 181) {
+		if (binario_doubleIEEE8lsb && ! (Melder_debug == 18) || Melder_debug == 181) {
 			double x;
 			if (fread (& x, sizeof (double), 1, f) != 1) readError (f, U"a 64-bit floating-point number.");
 			return x;
@@ -1283,7 +1283,7 @@ void binputb (FILE *f) {
 
 void binputi16 (int16 i, FILE *f) {
 	try {
-		if (binario_16bitBE && Melder_debug != 18) {
+		if (binario_16bitBE && ! (Melder_debug == 18)) {
 			if (fwrite (& i, sizeof (short), 1, f) != 1) writeError (U"a signed 16-bit integer.");
 		} else {
 			uint8 bytes [2];
@@ -1298,7 +1298,7 @@ void binputi16 (int16 i, FILE *f) {
 
 void binputi16LE (int16 i, FILE *f) {
 	try {
-		if (binario_16bitLE && Melder_debug != 18) {
+		if (binario_16bitLE && ! (Melder_debug == 18)) {
 			if (fwrite (& i, sizeof (short), 1, f) != 1) writeError (U"a signed 16-bit integer.");
 		} else {
 			uint8 bytes [2];
@@ -1326,7 +1326,7 @@ void binputinteger16BE (integer i, FILE *f) {
 
 void binputu16 (uint16 u, FILE *f) {
 	try {
-		if (binario_16bitBE && Melder_debug != 18) {
+		if (binario_16bitBE && ! (Melder_debug == 18)) {
 			if (fwrite (& u, sizeof (uint16), 1, f) != 1) writeError (U"an unsigned 16-bit integer.");
 		} else {
 			uint8 bytes [2];
@@ -1341,7 +1341,7 @@ void binputu16 (uint16 u, FILE *f) {
 
 void binputu16LE (uint16 u, FILE *f) {
 	try {
-		if (binario_16bitLE && Melder_debug != 18) {
+		if (binario_16bitLE && ! (Melder_debug == 18)) {
 			if (fwrite (& u, sizeof (uint16), 1, f) != 1) writeError (U"an unsigned 16-bit integer.");
 		} else {
 			uint8 bytes [2];
@@ -1356,7 +1356,7 @@ void binputu16LE (uint16 u, FILE *f) {
 
 void binpute16 (int value, FILE *f) {
 	try {
-		if (binario_16bitBE && Melder_debug != 18) {
+		if (binario_16bitBE && ! (Melder_debug == 18)) {
 			short s = value;
 			if (fwrite (& s, sizeof (short), 1, f) != 1) writeError (U"a signed 16-bit integer");
 		} else {
@@ -1396,7 +1396,7 @@ void binputi24LE (int32 i, FILE *f) {
 
 void binputi32 (int32 i, FILE *f) {
 	try {
-		if (binario_32bitBE && Melder_debug != 18) {
+		if (binario_32bitBE && ! (Melder_debug == 18)) {
 			if (fwrite (& i, sizeof (int32), 1, f) != 1) writeError (U"a signed 32-bit integer.");
 		} else {
 			uint8 bytes [4];
@@ -1413,7 +1413,7 @@ void binputi32 (int32 i, FILE *f) {
 
 void binputi32LE (int32 i, FILE *f) {
 	try {
-		if (binario_32bitLE && Melder_debug != 18) {
+		if (binario_32bitLE && ! (Melder_debug == 18)) {
 			if (fwrite (& i, sizeof (int32), 1, f) != 1) writeError (U"a signed 32-bit integer.");
 		} else {
 			uint8 bytes [4];
@@ -1445,7 +1445,7 @@ void binputinteger32BE (integer i, FILE *f) {
 
 void binputu32 (uint32 u, FILE *f) {
 	try {
-		if (binario_32bitBE && Melder_debug != 18) {
+		if (binario_32bitBE && ! (Melder_debug == 18)) {
 			if (fwrite (& u, sizeof (uint32), 1, f) != 1) writeError (U"an unsigned 32-bit integer.");
 		} else {
 			uint8 bytes [4];
@@ -1462,7 +1462,7 @@ void binputu32 (uint32 u, FILE *f) {
 
 void binputu32LE (uint32 u, FILE *f) {
 	try {
-		if (binario_32bitLE && Melder_debug != 18) {
+		if (binario_32bitLE && ! (Melder_debug == 18)) {
 			if (fwrite (& u, sizeof (uint32), 1, f) != 1) writeError (U"an unsigned 32-bit integer.");
 		} else {
 			uint8 bytes [4];
@@ -1479,7 +1479,7 @@ void binputu32LE (uint32 u, FILE *f) {
 
 void binputr32 (double x, FILE *f) {
 	try {
-		if (binario_floatIEEE4msb && Melder_debug != 18) {
+		if (binario_floatIEEE4msb && ! (Melder_debug == 18)) {
 			float x32 = (float) x;   // convert down, with loss of precision
 			if (fwrite (& x32, sizeof (float), 1, f) != 1) writeError (U"a 32-bit floating-point number.");
 		} else {
@@ -1519,7 +1519,7 @@ void binputr32 (double x, FILE *f) {
 
 void binputr32LE (double x, FILE *f) {
 	try {
-		if (binario_floatIEEE4lsb && Melder_debug != 18) {
+		if (binario_floatIEEE4lsb && ! (Melder_debug == 18)) {
 			float x32 = (float) x;   // convert down, with loss of precision
 			if (fwrite (& x32, sizeof (float), 1, f) != 1) writeError (U"a 32-bit floating-point number.");
 		} else {
@@ -1559,9 +1559,9 @@ void binputr32LE (double x, FILE *f) {
 
 void binputr64 (double x, FILE *f) {
 	try {
-		if (binario_doubleIEEE8msb && Melder_debug != 18 || Melder_debug == 181) {
+		if (binario_doubleIEEE8msb && ! (Melder_debug == 18) || Melder_debug == 181) {
 			if (fwrite (& x, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
-		} else if (binario_doubleIEEE8lsb && Melder_debug != 18) {
+		} else if (binario_doubleIEEE8lsb && ! (Melder_debug == 18)) {
 			union { double xx; uint8 bytes [8]; };
 			xx = x;
 			std::swap (bytes [0], bytes [7]);
@@ -1613,9 +1613,9 @@ void binputr64 (double x, FILE *f) {
 
 void binputr64LE (double x, FILE *f) {
 	try {
-		if (binario_doubleIEEE8lsb && Melder_debug != 18 || Melder_debug == 181) {
+		if (binario_doubleIEEE8lsb && ! (Melder_debug == 18) || Melder_debug == 181) {
 			if (fwrite (& x, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
-		} else if (binario_doubleIEEE8msb && Melder_debug != 18) {
+		} else if (binario_doubleIEEE8msb && ! (Melder_debug == 18)) {
 			union { double xx; uint8 bytes [8]; };
 			xx = x;
 			std::swap (bytes [0], bytes [7]);

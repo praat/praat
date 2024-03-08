@@ -197,15 +197,14 @@ static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLe
 		r1 = r2;
 		r2 = r3;
 		/*
-			r3 is the new autocorrelation value. It can be positive or negative.
-
-			We shan't divide by zero, so both `norm1` and `norm2` should be checked for zero;
-			however, an OPTIMIZATION is that in that case all `amp1` *and* `amp2` values
-			must have been zero (i.e. silence), to that `product` must also be zero.
-			In silence we'll safely define `r3` as 0.0, so the following works
-			(the optimization is that we save one check).
+			r3 is the new autocorrelation value. It can be positive, negative, or zero.
+			If `amp1` or `amp2` is silent (i.e. all zeroes, i.e. `norm1` or `norm2` is zero),
+			then we'll safely define `r3` as 0.0.
 		*/
-		r3 = ( product != 0.0 ? double (product) / sqrt (double (norm1 * norm2)) : 0.0 );
+		if (norm1 == 0.0 || norm2 == 0.0)   // one or both signals are silent
+			r3 = 0.0;
+		else
+			r3 = double (product) / sqrt (double (norm1 * norm2));   // well-defined correlation
 
 		if (r2 > maximumCorrelation /* true on first test */ && r2 >= r1 && r2 >= r3) {
 			r1_best = r1;
@@ -223,30 +222,26 @@ static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLe
 		Melder_assert (isdefined (r1_best) && isdefined (r3_best) && isdefined (ir));
 		double interpolatedPeakHeight = undefined;
 		const double d2r = 2.0 * maximumCorrelation - r1_best - r3_best;
-		if (d2r != 0.0) {
+		if (d2r != 0.0 && ! (Melder_debug == 57)) {
 			const double dr = 0.5 * (r3_best - r1_best);
 			interpolatedPeakHeight = maximumCorrelation + 0.5 * dr * dr / d2r;
 			ir += dr / d2r;
 		}
-		const double interpolatedPeakTime = t1 + (ir - ileft1) * my dx;
-		if (interpolatedPeakTime < tmin2 || interpolatedPeakTime > tmax2) {
-			const double middleTime =
-				tmin2 < t1
-					?
-				t1 - sqrt ((t1 - tmin2) * (t1 - tmax2))
-					:
-				t1 + sqrt ((tmin2 - t1) * (tmax2 - t1))
-			;   // geometric mean, e.g. for 0.8*F0 and 1.25*F0 it's precisely F0
+		const double peakTime = t1 + (ir - ileft1) * my dx;   // can be interpolated or not
+		if (peakTime >= tmin2 && peakTime <= tmax2) {   // NaN-safe
+			*tout = peakTime;
+			if (isdefined (interpolatedPeakHeight))
+				maximumCorrelation = interpolatedPeakHeight;
+		} else {
+			const double middleDistanceToT1 = NUMsqrt_a ((tmin2 - t1) * (tmax2 - t1));   // e.g. for 0.8*F0 and 1.25*F0 it's precisely F0
+					// crash if tmin2 and tmax are not on the same side of t1
+			const double middleTime = ( tmin2 < t1 ? t1 - middleDistanceToT1 : t1 + middleDistanceToT1 );
 			*tout = middleTime;
 			//Melder_casual (U"Sound_findMaximumCorrelation: fell back to middle time ", middleTime, U"; correlation last ",
 			//	U" ", r1, U" ", r2, U" ", r3, U" best ", r1_best, U" ", maximumCorrelation, U" ", r3_best,
 			//	U" interpolated ", interpolatedPeakHeight);
 			if (r3 > maximumCorrelation)
-				maximumCorrelation = r3;
-		} else {
-			*tout = t1 + (ir - ileft1) * my dx;
-			if (isdefined (interpolatedPeakHeight))
-				maximumCorrelation = interpolatedPeakHeight;
+				maximumCorrelation = r3;   // HACK
 		}
 	}
 	return maximumCorrelation;
@@ -270,8 +265,8 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			Melder_assert (tright > t);
 
 			/*
-			 * Go to the middle of the voice stretch.
-			 */
+				Go to the middle of the voiced interval.
+			*/
 			const double tmiddle = 0.5 * (tleft + tright);
 			Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), U"Sound & Pitch to PointProcess");
 			const double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit::HERTZ, Pitch_LINEAR);
@@ -365,7 +360,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 			/*
 				Go to the middle of the voiced interval.
 			*/
-			const double tmiddle = (tleft + tright) / 2.0;
+			const double tmiddle = 0.5 * (tleft + tright);
 			Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), U"Sound & Pitch: To PointProcess");
 			const double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit::HERTZ, Pitch_LINEAR);
 
