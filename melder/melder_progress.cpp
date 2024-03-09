@@ -1,6 +1,6 @@
 /* melder_progress.cpp
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ void Melder_progressOff () { MelderProgress::_depth --; }
 void Melder_progressOn () { MelderProgress::_depth ++; }
 
 void MelderProgress::_doProgress (double progress, conststring32 message) {
-	if (! Melder_batch && MelderProgress::_depth >= 0 && Melder_debug != 14)
+	if (! Melder_batch && MelderProgress::_depth >= 0 && ! (Melder_debug == 14))
 		MelderProgress::_p_progressProc (progress, message);
 }
 

@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ static void win_waveInOpen (SoundRecorder me) {
 	try {
 		my err = waveInOpen (& my hWaveIn, WAVE_MAPPER, & my waveFormat, 0, 0, CALLBACK_NULL);
 		win_waveInCheck (me);
-		if (Melder_debug != 8)
+		if (! (Melder_debug == 8)
 			waveInReset (my hWaveIn);
 	} catch (MelderError) {
 		Melder_throw (U"Audio input not opened.");
