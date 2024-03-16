@@ -228,6 +228,12 @@ DIRECT (INFO_ONE__DataModeler_reportChiSquared) {
 	INFO_ONE_END
 }
 
+DIRECT (QUERY_ONE_FOR_MATRIX__DataModeler_getHessian) {
+	QUERY_ONE_FOR_MATRIX (DataModeler)
+		autoMAT result = DataModeler_getHessian (me);
+	QUERY_ONE_FOR_MATRIX_END
+}
+
 DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getDegreesOfFreedom) {
 	QUERY_ONE_FOR_REAL (DataModeler)
 		const double result = DataModeler_getDegreesOfFreedom (me);
@@ -1155,6 +1161,8 @@ void praat_DataModeler_init () {
 				INFO_ONE__DataModeler_reportChiSquared);
 		praat_addAction1 (classDataModeler, 0, U"Get degrees of freedom", 0, 1,
 				QUERY_ONE_FOR_REAL__DataModeler_getDegreesOfFreedom);
+		praat_addAction1 (classDataModeler, 0, U"Get hessian matrix", 0, 1,
+				QUERY_ONE_FOR_MATRIX__DataModeler_getHessian);
 
 		praat_addAction1 (classDataModeler, 1, U"Modify -", 0, 0, 0);
 		praat_addAction1 (classDataModeler, 0, U"Set data weighing...", 0, 1, 

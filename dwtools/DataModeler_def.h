@@ -41,6 +41,7 @@ oo_END_STRUCT (DataModelerParameter)
 oo_DEFINE_CLASS (DataModeler, Function)
 
 	oo_ENUM (kDataModelerFunction, type)	// polynomial, legendre ...
+	oo_LSTRING (fitTypeDesciption)
 	oo_INTEGER (numberOfDataPoints)
 	oo_INTEGER (numberOfParameters)
 	oo_STRUCTVEC (DataModelerData, data, numberOfDataPoints)
@@ -53,7 +54,7 @@ oo_DEFINE_CLASS (DataModeler, Function)
 		double (*f_evaluate) (DataModeler me, double x, vector<structDataModelerParameter> p);
 		void (*f_evaluateBasisFunctions) (DataModeler me, double x, VEC term) { };
 		void (*fit) (DataModeler me);
-		autoMAT (*getHessian) (DataModeler me);
+		void (*evaluateDerivative) (DataModeler me, double x, vector<structDataModelerParameter> p, VEC derivative);
 		void v1_info ()
 			override;
 	#endif

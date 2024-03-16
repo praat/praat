@@ -112,6 +112,9 @@ autoVEC DataModeler_listParameterValues (DataModeler me);
 
 kDataModelerParameterStatus DataModeler_getParameterStatus (DataModeler me, integer index);
 
+
+void DataModeler_getParameterCovariances (DataModeler me);
+
 double DataModeler_getParameterStandardDeviation (DataModeler me, integer index);
 
 double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, integer toIndex, integer *numberOfFreeParameters);

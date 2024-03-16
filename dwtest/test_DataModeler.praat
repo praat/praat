@@ -311,7 +311,7 @@ endproc
 procedure test_sigmoid_plus_constant
 	appendInfoLine: tab$, "Test sigmoid plus constant"
 	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, no noise"
-	.table = Create Table with column names: "sig", 500, "x y"
+	.table = Create Table with column names: "sigpc", 500, "x y"
 	.xxmin = -100
 	.xxmax = 800
 	.pars# = {10, 40, 300, 200} ; gamma, lambda, mu, sigma
