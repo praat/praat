@@ -14,7 +14,7 @@ appendInfoLine: "test_DataModeler.praat"
 appendInfoLine: "test_DataModeler.praat OK"
 
 procedure testDataModelerInterface
-	appendInfoLine: tab$, "Test interface"
+	appendInfo: tab$, "Test interface:"
 	# create a table for model y = 2x +3
 	.xmin = -1
 	.xmax = 3
@@ -91,7 +91,7 @@ procedure testDataModelerInterface
 	selectObject: .dm
 	.zscores = To Table (z-scores)
 	removeObject: .zscores, .covar, .table, .dm
-	appendInfoLine: tab$, "Test interface OK"
+	appendInfoLine: " OK"
 endproc
 
 procedure createData: .xmin, .xmax, .nx, .ynoise_stdev
@@ -109,7 +109,7 @@ procedure createData: .xmin, .xmax, .nx, .ynoise_stdev
 endproc
 
 procedure test_Jacquelin_page18
-	appendInfoLine: tab$, tab$, "Test with data from Jacquelin, page 18"
+	appendInfo: tab$, tab$, "Test with data from Jacquelin, page 18:"
 	xk# = {-0.99,-0.945,-0.874,-0.859,-0.64,-0.573,-0.433, -0.042,-0.007,0.054,
 	... 0.088, 0.222,0.401,0.465,0.633,0.637,0.735,0.762,0.791,0.981}
 	yk# = {0.418,0.412,0.452,0.48,0.453,0.501,0.619,0.9,0.911,0.966,
@@ -125,7 +125,7 @@ procedure test_Jacquelin_page18
 		assert abs (parsFitJacquelin# [ipar] - parsFit# [ipar]) < 1e-6
 	endfor
 	removeObject: .table, .dm
-	appendInfoLine: tab$, tab$, "Test with data from Jacquelin, page 18 OK"
+	appendInfoLine: " OK"
 endproc
 
 procedure test_exponential
@@ -139,18 +139,18 @@ procedure test_exponential
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
 
-	appendInfoLine: tab$, tab$, "Test exponential, parameter 1 fixed"
+	appendInfo: tab$, tab$, "Test exponential, parameter 1 fixed:"
 	Set parameter value: 1, 0.5, "Fixed"
 	Fit model
 	assert rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test exponential, parameter 1 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test exponential, parameter 2 fixed"
+	appendInfo: tab$, tab$, "Test exponential, parameter 2 fixed:"
 	Set parameter free: 1, 2
 	Set parameter value: 2, 1.7, "Fixed"
 	Fit model
 	assert rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test exponential, parameter 2 fixed OK"
+	appendInfoLine: " OK"
 
 	appendInfoLine: tab$, "Test exponential OK"
 	removeObject: .dm, .table
@@ -160,7 +160,7 @@ procedure test_exponential_plus_constant
 	appendInfoLine: tab$, "Test exponential plus constant"
 	@test_Jacquelin_page18
 	# example Jacquelin page 18 with own data
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, self"
+	appendInfo: tab$, tab$, "Test exponential plus constant, self:"
 	.table = Create Table with column names: "epc", 20, "x y"
 	Formula: "x", ~ randomUniform (-1, 1)
 	par# = { 0.3, 0.6, 1.7 }
@@ -169,71 +169,72 @@ procedure test_exponential_plus_constant
 	.dm = To DataModeler: -1, 1, "x", "y", "", "Exponential plus constant", 3	
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, self OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 1 fixed"
+	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 1 fixed:"
 	Set parameter value: 1, 0.3, "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 1 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 2 fixed"
+	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 2 fixed:"
 	Set parameter free: 1, 3
 	Set parameter value: 2, 0.6, "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.99
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 2 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 3 fixed"
+	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 3 fixed:"
 	Set parameter free: 1, 3
 	Set parameter value: 3, 1.7, "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 3 fixed OK"
+	appendInfoLine: " OK"
 	
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 1 & 2 fixed"
+	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 1 & 2 fixed:"
 	Set parameter free: 1, 3
 	Set parameter value: 1, 0.3, "Fixed"
 	Set parameter value: 2, 0.6, "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 1 & 2 fixed OK"
+	appendInfoLine: " OK"
 	
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 1 & 3 fixed"
+	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 1 & 3 fixed:"
 	Set parameter free: 1, 3
 	Set parameter value: 1, 0.3, "Fixed"
 	Set parameter value: 3, 1.7, "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 1 & 3 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 2 & 3 fixed"
+	appendInfo: tab$, tab$, "Test exponential plus constant, parameter 2 & 3 fixed:"
 	Set parameter free: 1, 3
 	Set parameter value: 2, 0.6, "Fixed"
 	Set parameter value: 3, 1.7, "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 2 & 3 fixed OK"
+	appendInfoLine: " OK"
 
 	selectObject: .table
 	Formula: "y", ~ self + randomUniform (-0.1 * self, 0.1 * self)
+	appendInfo: tab$, tab$, "Test exponential plus constant, noisy data, self:"
 	.dm2 = To DataModeler: -1, 1, "x", "y", "", "Exponential plus constant", 3	
 	rSquared = Get coefficient of determination
 	assert rSquared > 0.95
 	removeObject: .table, .dm, .dm2
-	appendInfoLine: tab$, tab$, "Test exponential plus constant, self OK"
+	appendInfoLine: " OK"
 	appendInfoLine: tab$, "Test exponential plus constant OK"
 endproc
 
 procedure test_sigmoid
 	appendInfoLine: tab$, "Test sigmoid"
-	appendInfoLine: tab$, tab$, "Test sigmoid, no noise"
+	appendInfo: tab$, tab$, "Test sigmoid, no noise:"
 	# example Jacquelin page 39
 	.table = Create Table with column names: "sig", 500, "x y"
 	.xxmin = -100
@@ -245,72 +246,72 @@ procedure test_sigmoid
 	.dm = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Sigmoid", 3
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.99
-	appendInfoLine: tab$, tab$, "Test sigmoid, no noise OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 1 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid, parameter 1 fixed:"
 	Set parameter value: 1, 50, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.99
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 1 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 2 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid, parameter 2 fixed"
 	Set parameter free: 1, 3
 	Set parameter value: 2, 300, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.99
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 2 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 3 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid, parameter 3 fixed"
 	Set parameter free: 1, 3
 	Set parameter value: 3, 200, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.99
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 3 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 1 & 2 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid, parameter 1 & 2 fixed:"
 	Set parameter free: 1, 3
 	Set parameter value: 1, 50, "Fixed"
 	Set parameter value: 2, 300, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.99
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 1 & 2 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 1 & 3 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid, parameter 1 & 3 fixed:"
 	Set parameter free: 1, 3
 	Set parameter value: 1, 50, "Fixed"
 	Set parameter value: 3, 200, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.99
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 1 & 3 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 2 & 3 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid, parameter 2 & 3 fixed:"
 	Set parameter free: 1, 3
 	Set parameter value: 2, 300, "Fixed"
 	Set parameter value: 3, 200, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.99
-	appendInfoLine: tab$, tab$, "Test sigmoid, parameter 2 & 3 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid, max noise fraction 0.25"
+	appendInfo: tab$, tab$, "Test sigmoid, max noise fraction 0.25:"
 	selectObject: .table
 	Formula: "y", ~ self * (1 + 0.25*randomUniform (-1,1))
 	.dm2 = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Sigmoid", 3
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.85
 	removeObject: .table, .dm, .dm2
-	appendInfoLine: tab$, tab$, "Test sigmoid, max noise fraction 0.25 OK"
+	appendInfoLine: " OK"
 	appendInfoLine: tab$, "Test sigmoid OK"
 endproc
 
 procedure test_sigmoid_plus_constant
 	appendInfoLine: tab$, "Test sigmoid plus constant"
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, no noise"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, no noise:"
 	.table = Create Table with column names: "sigpc", 500, "x y"
 	.xxmin = -100
 	.xxmax = 800
@@ -321,70 +322,97 @@ procedure test_sigmoid_plus_constant
 	.dm = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Sigmoid plus constant", 4
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, no noise OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 1 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 1 fixed:"
 	Set parameter value: 1, 10, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 1 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 2 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 2 fixed:"
 	Set parameter free: 1, 4
 	Set parameter value: 2, 40, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 2 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 3 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 3 fixed:"
 	Set parameter free: 1, 4
 	Set parameter value: 3, 300, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 3 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 4 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 4 fixed:"
 	Set parameter free: 1, 4
 	Set parameter value: 4, 200, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 4 fixed OK"
+	appendInfoLine: " OK"
 	
 	# combinations with parameter 1 fixed are always delegated to sigmoid and 
 	# are tested in test_sigmoid. No need to repeat here.
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 2 & 3 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 1 & 2 fixed:"
+	Set parameter free: 1, 4
+	Set parameter value: 1, 10, "Fixed"
+	Set parameter value: 2, 40, "Fixed"
+	Fit model
+	.rSquared = Get coefficient of determination
+	assert .rSquared > 0.999
+	appendInfoLine: " OK"
+
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 1 & 3 fixed:"
+	Set parameter free: 1, 4
+	Set parameter value: 1, 10, "Fixed"
+	Set parameter value: 3, 300, "Fixed"
+	Fit model
+	.rSquared = Get coefficient of determination
+	assert .rSquared > 0.999
+	appendInfoLine: " OK"
+
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 1 & 4 fixed:"
+	Set parameter free: 1, 4
+	Set parameter value: 1, 10, "Fixed"
+	Set parameter value: 4, 200, "Fixed"
+	Fit model
+	.rSquared = Get coefficient of determination
+	assert .rSquared > 0.999
+	appendInfoLine: " OK"
+	
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 2 & 3 fixed:"
 	Set parameter free: 1, 4
 	Set parameter value: 2, 40, "Fixed"
 	Set parameter value: 3, 300, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 2 & 3 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 2 & 4 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 2 & 4 fixed:"
 	Set parameter free: 1, 4
 	Set parameter value: 2, 40, "Fixed"
 	Set parameter value: 4, 200, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 2 & 4 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 3 & 4 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 3 & 4 fixed:"
 	Set parameter free: 1, 4
 	Set parameter value: 3, 300, "Fixed"
 	Set parameter value: 4, 200, "Fixed"
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 3 & 4 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 2, 3 & 4 fixed"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, parameter 2, 3 & 4 fixed:"
 	Set parameter free: 1, 4
 	Set parameter value: 2, 40, "Fixed"
 	Set parameter value: 3, 300, "Fixed"
@@ -392,15 +420,15 @@ procedure test_sigmoid_plus_constant
 	Fit model
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.999
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, parameter 2, 3 & 4 fixed OK"
+	appendInfoLine: " OK"
 
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, max noise fraction 0.1"
+	appendInfo: tab$, tab$, "Test sigmoid plus constant, max noise fraction 0.1:"
 	selectObject: .table
 	Formula: "y", ~ self * (1 + 0.1*randomUniform (-1,1))
 	.dm2 = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Sigmoid plus constant", 4
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.95
 	removeObject: .table, .dm, .dm2	
-	appendInfoLine: tab$, tab$, "Test sigmoid plus constant, max noise fraction 0.1 OK"
+	appendInfoLine: " OK"
 	appendInfoLine: tab$, "Test sigmoid plus constant OK"
 endproc
