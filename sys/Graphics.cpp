@@ -1,6 +1,6 @@
 /* Graphics.cpp
  *
- * Copyright (C) 1992-2008,2010-2022 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,8 @@ void Graphics_init (Graphics me, int resolution) {
 		my resolutionNumber = kGraphics_resolution::DPI_96;
 	} else if (resolution == 100) {
 		my resolutionNumber = kGraphics_resolution::DPI_100;
+	} else if (resolution == 119) {
+		my resolutionNumber = kGraphics_resolution::DPI_119;
 	} else if (resolution == 120) {
 		my resolutionNumber = kGraphics_resolution::DPI_120;
 	} else if (resolution == 150) {

@@ -1,6 +1,6 @@
 /* Graphics_enums.h
  *
- * Copyright (C) 1992-2007,2013-2019,2022 Paul Boersma
+ * Copyright (C) 1992-2007,2013-2019,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ enums_begin (kGraphics_resolution, 0)
 	enums_add (kGraphics_resolution, 0, DPI_90, U"90 dpi")
 	enums_add (kGraphics_resolution, 1, DPI_96, U"96 dpi")
 	enums_add (kGraphics_resolution, 2, DPI_100, U"100 dpi")
+	enums_add (kGraphics_resolution, 2, DPI_119, U"119 dpi")
 	enums_add (kGraphics_resolution, 3, DPI_120, U"120 dpi")
 	enums_add (kGraphics_resolution, 4, DPI_150, U"150 dpi")
 	enums_add (kGraphics_resolution, 5, DPI_180, U"180 dpi")
