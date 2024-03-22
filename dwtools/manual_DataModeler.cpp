@@ -29,7 +29,7 @@ MAN_PAGES_BEGIN
 R"~~~(
 ################################################################################
 "DataModeler"
-© David Weenink 2024
+© David Weenink, 2024
 
 One of the @@types of objects@ in Praat. A #DataModeler models (%x_%i, %y_%i) data points as lying on a particular kind of curve,
 where the %y is the dependent variable and the %x the independent variable.
@@ -39,22 +39,36 @@ Drawing
 
 ################################################################################
 "DataModeler: Speckle..."
-© David Weenink 2024
+© David Weenink, 2024
 
 Draws the data as (x_i, y_i) points.
 
 ################################################################################
 "DataModeler: Draw model..."
-© David Weenink 2024
+© David Weenink, 2024
 
 Draws the model function as a continuous curve.
 
 
 ################################################################################
 "DataModeler: Draw estimated track..."
-© David Weenink 2024
+© David Weenink, 2024
 
 Draws the model function as a continuous curve.
+
+
+################################################################################
+"DataModeler: Get coefficient of determination"
+© David Weenink, 2024
+
+Get the coefficient of determination (%R^2) of the model.
+The %R^2 goodness of fit is a number between 0 and 1 that measures how well a model predicts an outcome.
+A value of 1 means a perfect fit.
+If all dependent data, the %y values, have the same variance the %R^2 is simply 1 - %SS__model_/%SS__total_,
+where %SS__model_ is the sum of the squared differences between %y's predicted by the model and the actual %y values from the data,
+and %SS__total_ the sum of the squared differences between the actual data y values and the mean of the data.
+
+Because our data points can have different weights we use adapted formula from @@Buse (1973)@.
 
 
 ################################################################################
