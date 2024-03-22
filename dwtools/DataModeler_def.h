@@ -41,14 +41,25 @@ oo_END_STRUCT (DataModelerParameter)
 oo_DEFINE_CLASS (DataModeler, Function)
 
 	oo_ENUM (kDataModelerFunction, type)	// polynomial, legendre ...
-	oo_LSTRING (fitTypeDesciption)
 	oo_INTEGER (numberOfDataPoints)
 	oo_INTEGER (numberOfParameters)
 	oo_STRUCTVEC (DataModelerData, data, numberOfDataPoints)
 	oo_STRUCTVEC (DataModelerParameter, parameters, numberOfParameters)
+	oo_STRING_VECTOR (parameterNames, numberOfParameters)
+	#if ! oo_READING
+		oo_STRING (xVariableName)
+		oo_STRING (yVariableName)
+	#else
+		oo_VERSION_UNTIL (2)
+			xVariableName = Melder_dup (U"");
+			yVariableName = Melder_dup (U"");
+		oo_VERSION_ELSE
+			oo_STRING (xVariableName)
+			oo_STRING (yVariableName)
+		oo_VERSION_END
+	#endif
 	oo_DOUBLE (tolerance)
 	oo_ENUM (kDataModelerWeights, weighData)
-	oo_STRING_VECTOR (parameterNames, numberOfParameters) // oo_OBJECT (Strings, 0, parameterNames)
 	oo_OBJECT (Covariance, 0, parameterCovariances)
 	#if oo_DECLARING
 		double (*f_evaluate) (DataModeler me, double x, vector<structDataModelerParameter> p);

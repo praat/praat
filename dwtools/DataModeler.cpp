@@ -48,7 +48,7 @@
 #include "enums_getValue.h"
 #include "DataModeler_enums.h"
 
-Thing_implement (DataModeler, Function, 1);
+Thing_implement (DataModeler, Function, 2);
 
 void structDataModeler :: v1_info () {
 	// skipping parent classes?
@@ -59,7 +59,7 @@ void structDataModeler :: v1_info () {
 	const double rSquared = DataModeler_getCoefficientOfDetermination (this, nullptr, nullptr);
 	double ndof, probability;
 	const double chisq = DataModeler_getChiSquaredQ (this, & probability, & ndof);
-	MelderInfo_writeLine (U"   Fit: ", fitTypeDesciption.get());
+	MelderInfo_writeLine (U"   Fit: ", kDataModelerFunction_getText (type));
 	MelderInfo_writeLine (U"      Number of data points: ", numberOfDataPoints);
 	MelderInfo_writeLine (U"      Number of parameters: ", numberOfParameters);
 	MelderInfo_writeLine (U"      Each data point has ",  
@@ -72,9 +72,12 @@ void structDataModeler :: v1_info () {
 	MelderInfo_writeLine (U"      Probability: ", probability);
 	MelderInfo_writeLine (U"      R-squared: ", rSquared);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++) {
-		const double sigma = ( parameters [ipar]. status == kDataModelerParameterStatus::FIXED_ ? 0 :
-			(isdefined (parameterCovariances -> data [ipar] [ipar]) ? sqrt (parameterCovariances -> data [ipar] [ipar]) : undefined) );
-		MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar]. value, U"; sigma = ", sigma);
+		if (parameters [ipar]. status == kDataModelerParameterStatus::FIXED_)
+			MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar]. value, U" (FIXED)");
+		else {
+			const double sigma = (isdefined (parameterCovariances -> data [ipar] [ipar]) ? sqrt (parameterCovariances -> data [ipar] [ipar]) : undefined);
+			MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar]. value, U"; sigma = ", sigma);
+		}
 	}
 }
 
@@ -94,7 +97,7 @@ static void linear_evaluateBasisFunctions (DataModeler /* me */, double /* xin *
 	terms  <<=  undefined;
 }
 
-static void linear_evaluateDerivative (DataModeler me, double /* xin */, vector<structDataModelerParameter> /* p */, VEC dydp) {
+static void linear_evaluateDerivative (DataModeler /* me */, double /* xin */, vector<structDataModelerParameter> /* p */, VEC dydp) {
 	dydp <<= undefined;
 }
 
@@ -782,6 +785,7 @@ static void sigmoid_plus_constant_fit (DataModeler me) {
 		autoDataModeler thee = DataModeler_createFromDataModeler (me, 3, kDataModelerFunction::SIGMOID);
 		for (integer ipar = 1; ipar <= 3; ipar ++)
 			thy parameters [ipar] = my parameters [ipar + 1];
+
 		for (integer k = 1; k <= my numberOfDataPoints; k ++)
 			thy data [k]. y -= gamma;
 
@@ -1420,7 +1424,7 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 	Graphics_setFontSize (g, currentFontSize);
 }
 
-void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_wc, bool drawDots)
+void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, bool errorbars, bool connectPoints, double barWidth_wc, bool drawDots)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 
@@ -1432,8 +1436,6 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 		ixmax --;
 	if (ixmin > ixmax)
 		return; // nothing to draw
-	getAutoNaturalNumberWithinRange (& numberOfParameters, my numberOfParameters);	
-	vector<structDataModelerParameter> parameters = my parameters.part (1, numberOfParameters);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	double x1, y1, x2, y2;
 	bool x1defined = false, x2defined = false;
@@ -1442,11 +1444,11 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 			const double x = my data [ipoint]. x, y = my data [ipoint]. y;
 			if (! x1defined) {
 				x1 = x;
-				y1 = ( estimated ? my f_evaluate (me, x, parameters) : y );
+				y1 = ( estimated ? my f_evaluate (me, x, my parameters.get()) : y );
 				x1defined = true;
 			} else {
 				x2 = x;
-				y2 = ( estimated ? my f_evaluate (me, x, parameters) : y );
+				y2 = ( estimated ? my f_evaluate (me, x, my parameters.get()) : y );
 				x2defined = true;
 			}
 			if (x1defined && drawDots) {
@@ -1522,50 +1524,54 @@ void DataModeler_drawModel (DataModeler me, Graphics g, double xmin, double xmax
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, my yVariableName.get());
+		Graphics_textBottom (g, true, my xVariableName.get());
 	}
 }
 
-void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters)
-{
+void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated) {
 	const bool errorbars = false, connectPoints = true;
 	const double barWidth_mm = 0;
-	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, connectPoints, barWidth_mm, 0);
+	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, errorbars, connectPoints, barWidth_mm, 0);
 }
 
 void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool garnish) {
+	bool estimated, bool garnish) {
 	if (ymax <= ymin)
 		DataModeler_getExtremaY (me, & ymin, & ymax);
 	Graphics_setInner (g);
-	DataModeler_drawTrack_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters);
+	DataModeler_drawTrack_inside (me, g, xmin, xmax, ymin, ymax, estimated);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, my yVariableName.get());
+		Graphics_textBottom (g, true, my xVariableName.get());
 	}
 }
 
-void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, double barWidth_wc) {
+void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated,
+	bool errorbars, double barWidth_wc)
+{
 	bool connectPoints = false;
-	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, connectPoints, barWidth_wc, 1);
+	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, errorbars, connectPoints, barWidth_wc, 1);
 }
 
 void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, bool garnish)
+	bool estimated, bool errorbars, double barWidth_mm, bool garnish)
 {
 	if (ymax <= ymin)
 		DataModeler_getExtremaY (me, & ymin, & ymax);
 	Graphics_setInner (g);
-	if (numberOfParameters == 0)
-		numberOfParameters = my numberOfParameters;
-	DataModeler_speckle_inside (me, g, xmin, xmax, ymin, ymax,
-		estimated, numberOfParameters, errorbars, barWidth_mm);
+	DataModeler_speckle_inside (me, g, xmin, xmax, ymin, ymax, 		estimated, errorbars, barWidth_mm);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, my yVariableName.get());
+		Graphics_textBottom (g, true, my xVariableName.get());
 	}
 }
 
@@ -1595,43 +1601,36 @@ void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, integer numb
 
 void DataModeler_setBasisFunctions (DataModeler me, kDataModelerFunction type) {
 	if (type == kDataModelerFunction::LINEAR) {
-		my fitTypeDesciption = Melder_dup (U"Linear");
 		my f_evaluate = linear_evaluate;
 		my f_evaluateBasisFunctions = linear_evaluateBasisFunctions;
 		my fit = series_fit;
 		my evaluateDerivative = linear_evaluateDerivative;
 	} else if (type == kDataModelerFunction::LEGENDRE) {
-		my fitTypeDesciption = Melder_dup (U"Legendre polynomials");
 		my f_evaluate = legendre_evaluate;
 		my f_evaluateBasisFunctions = legendre_evaluateBasisFunctions;
 		my fit = series_fit;
 		my evaluateDerivative = legendre_evaluateDerivative;
 	} else if (type == kDataModelerFunction::POLYNOME) {
-		my fitTypeDesciption = Melder_dup (U"Polynomials");
 		my f_evaluate = polynomial_evaluate;
 		my f_evaluateBasisFunctions = polynome_evaluateBasisFunctions;
 		my fit = series_fit;
 		my evaluateDerivative = polynomial_evaluateDerivative;
 	} else if (type == kDataModelerFunction::SIGMOID) {
-		my fitTypeDesciption = Melder_dup (U"Sigmoid");
 		my f_evaluate = sigmoid_evaluate;
 		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
 		my fit = sigmoid_fit;
 		my evaluateDerivative = sigmoid_evaluateDerivative;
 	} else if (type == kDataModelerFunction::SIGMOID_PLUS_CONSTANT) {
-		my fitTypeDesciption = Melder_dup (U"Sigmoid plus constant");
 		my f_evaluate = sigmoid_plus_constant_evaluate;
 		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
 		my fit = sigmoid_plus_constant_fit;
 		my evaluateDerivative = sigmoid_plus_constant_evaluateDerivative;
 	} else if (type == kDataModelerFunction::EXPONENTIAL) {
-		my fitTypeDesciption = Melder_dup (U"Exponential");
 		my f_evaluate = exponential_evaluate;
 		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
 		my fit = exponential_fit;
 		my evaluateDerivative = exponential_evaluateDerivative;
 	} else if (type == kDataModelerFunction::EXPONENTIAL_PLUS_CONSTANT) {
-		my fitTypeDesciption = Melder_dup (U"Exponential plus constant");
 		my f_evaluate = exponential_plus_constant_evaluate;
 		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
 		my fit = exponential_plus_constant_fit;
@@ -1727,6 +1726,7 @@ static autoMAT getParameterCovariancesOrHessian (DataModeler me, bool covariance
 		Covariance is (J'J)^-1
 	*/
 	autoSVD thee = SVD_createFromGeneralMatrix (jmat.get());
+	integer numberOfZeroed = SVD_zeroSmallSingularValues (thee.get(), 0.0);
 	autoMAT mat = SVD_getSquared (thee.get(), covariance);
 	return mat;
 
@@ -1735,20 +1735,10 @@ static autoMAT getParameterCovariancesOrHessian (DataModeler me, bool covariance
 void DataModeler_getParameterCovariances (DataModeler me) {
 	try {
 		autoMAT covar =  getParameterCovariancesOrHessian (me, true);
-		my parameterCovariances -> data.get() <<= 0.0;
-		integer irowp = 0;
-		for (integer irow = 1; irow <= my numberOfParameters; irow ++){
-			my parameterCovariances -> centroid [irow] = my parameters [irow].value;
-			integer icolp = 0;
-			if (my parameters [irow].status == kDataModelerParameterStatus::FREE) {
-				irowp ++;
-				for (integer icol = 1; icol <= my numberOfParameters; icol ++)
-					if (my parameters [icol].status == kDataModelerParameterStatus::FREE)
-						my parameterCovariances -> data [irow] [icol] = covar [irowp] [++ icolp];
-			}
-		}
+		my parameterCovariances -> data.get() <<= covar.get();
+		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
+			my parameterCovariances ->centroid [ipar] = my parameters [ipar].value;
 		my parameterCovariances -> numberOfObservations = DataModeler_getNumberOfValidDataPoints (me);
-		
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler: Parameter covariances could not be evaluated.");
 	}
@@ -1837,6 +1827,8 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 			U"The number of parameters should not exceed the number of data points.");
 		
 		DataModeler_setDataWeighing (thee.get(), ( hasSigmaColumn ? kDataModelerWeights::ONE_OVER_SIGMA : kDataModelerWeights::EQUAL_WEIGHTS));
+		thy xVariableName = Melder_dup (my columnHeaders [xcolumn].label.get());
+		thy yVariableName = Melder_dup (my columnHeaders [ycolumn].label.get());
 		thy tolerance = 1e-8;
 		DataModeler_fit (thee.get());
 		return thee;

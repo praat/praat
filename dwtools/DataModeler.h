@@ -72,18 +72,19 @@ void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xm
 void DataModeler_drawModel (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints, bool garnish);
 void DataModeler_drawModel_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints);
 
-void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_mm, bool drawDots);
+void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated,
+	bool errorbars, bool connectPoints, double barWidth_mm, bool drawDots);
 
-void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm);
+void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated,
+	bool errorbars, double barWidth_mm);
 
 void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, bool garnish);
+	bool estimated, bool errorbars, double barWidth_mm, bool garnish);
 
 void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool garnish);
+	bool estimated, bool garnish);
 
-void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters);
+void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated);
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double numberOfSigmas, conststring32 mark, double marksFontSize);
