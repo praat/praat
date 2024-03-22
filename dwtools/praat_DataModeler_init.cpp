@@ -1,6 +1,6 @@
 /* praat_DataModeler_init.cpp
  *
- * Copyright (C) 2014-2022 David Weenink
+ * Copyright (C) 2014-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ FORM (GRAPHICS_EACH__DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (DataModeler)
-		DataModeler_speckle (me, GRAPHICS, xmin, xmax, ymin, ymax, false, 0, errorBars, barWidth_wc, garnish);
+		DataModeler_speckle (me, GRAPHICS, xmin, xmax, ymin, ymax, false, errorBars, barWidth_wc, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -76,12 +76,11 @@ FORM (GRAPHICS_EACH__DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimat
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
 	REAL (ymax, U"right Y range", U"0.0")
-	INTEGER (numberOfParameters, U"Number of parameters", U"0 (= all)")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (DataModeler)
-		DataModeler_drawTrack (me, GRAPHICS, xmin, xmax, ymin, ymax, 1,numberOfParameters, garnish);
+		DataModeler_drawTrack (me, GRAPHICS, xmin, xmax, ymin, ymax, 1, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -1208,7 +1207,7 @@ void praat_DataModeler_init () {
 			GRAPHICS_EACH__FormantModeler_drawTracks);
 	praat_addAction1 (classFormantModeler, 0, U"Draw estimated tracks...", 0, 1, 
 			GRAPHICS_EACH__FormantModeler_drawEstimatedTracks);
-	praat_addAction1 (classFormantModeler, 0, U"Draw variances of shifted tracks...", 0, 1,
+	praat_addAction1 (classFormantModeler, 0, U"Draw variances of shifted tracks...", 0, GuiMenu_HIDDEN + GuiMenu_DEPTH_1,
 			GRAPHICS_EACH__FormantModeler_drawVariancesOfShiftedTracks);
 	praat_addAction1 (classFormantModeler, 0, U"Draw outliers marked...", 0, 1, 
 			GRAPHICS_EACH__FormantModeler_drawOutliersMarked);

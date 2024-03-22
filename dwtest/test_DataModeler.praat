@@ -130,7 +130,7 @@ endproc
 
 procedure test_exponential
 	appendInfoLine: tab$, "Test exponential"
-	.table = Create Table with column names: "epc", 20, "x y"
+	.table = Create Table with column names: "exponential", 20, "x y"
 	Formula: "x", ~ randomUniform (-1, 1)
 	par# = {  0.6, 1.7 }
 	Formula: "y", ~ par#[1] * exp (par# [2] * self ["x"])
@@ -304,7 +304,7 @@ procedure test_sigmoid
 	.dm2 = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Sigmoid", 3
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.85
-	removeObject: .table, .dm, .dm2
+	;removeObject: .table, .dm, .dm2
 	appendInfoLine: " OK"
 	appendInfoLine: tab$, "Test sigmoid OK"
 endproc
