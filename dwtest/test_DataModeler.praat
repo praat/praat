@@ -304,7 +304,7 @@ procedure test_sigmoid
 	.dm2 = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Sigmoid", 3
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.85
-	;removeObject: .table, .dm, .dm2
+	removeObject: .table, .dm, .dm2
 	appendInfoLine: " OK"
 	appendInfoLine: tab$, "Test sigmoid OK"
 endproc
