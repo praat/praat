@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2022 David Weenink
+ * Copyright (C) 2014-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,18 +72,19 @@ void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xm
 void DataModeler_drawModel (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints, bool garnish);
 void DataModeler_drawModel_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints);
 
-void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_mm, bool drawDots);
+void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated,
+	bool errorbars, bool connectPoints, double barWidth_mm, bool drawDots);
 
-void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm);
+void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated,
+	bool errorbars, double barWidth_mm);
 
 void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, bool garnish);
+	bool estimated, bool errorbars, double barWidth_mm, bool garnish);
 
 void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool garnish);
+	bool estimated, bool garnish);
 
-void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters);
+void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated);
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double numberOfSigmas, conststring32 mark, double marksFontSize);
@@ -111,6 +112,9 @@ double DataModeler_getParameterValue (DataModeler me, integer index);
 autoVEC DataModeler_listParameterValues (DataModeler me);
 
 kDataModelerParameterStatus DataModeler_getParameterStatus (DataModeler me, integer index);
+
+
+void DataModeler_getParameterCovariances (DataModeler me);
 
 double DataModeler_getParameterStandardDeviation (DataModeler me, integer index);
 
@@ -160,6 +164,8 @@ autoVEC DataModeler_getZScores (DataModeler me);
 autoVEC DataModeler_getChisqScoresFromZScores (DataModeler me, constVEC zscores, bool substituteAverage);
 
 double DataModeler_getDegreesOfFreedom (DataModeler me);
+
+autoMAT DataModeler_getHessian (DataModeler me);
 
 double DataModeler_getChiSquaredQ (DataModeler me, double *out_probability, double *out_ndf);
 

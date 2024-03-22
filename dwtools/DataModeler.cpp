@@ -1,6 +1,6 @@
 /* DataModeler.cpp
  *
- * Copyright (C) 2014-2022 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2014-2024 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@
 #include "enums_getValue.h"
 #include "DataModeler_enums.h"
 
-Thing_implement (DataModeler, Function, 1);
+Thing_implement (DataModeler, Function, 2);
 
 void structDataModeler :: v1_info () {
 	// skipping parent classes?
@@ -59,10 +59,11 @@ void structDataModeler :: v1_info () {
 	const double rSquared = DataModeler_getCoefficientOfDetermination (this, nullptr, nullptr);
 	double ndof, probability;
 	const double chisq = DataModeler_getChiSquaredQ (this, & probability, & ndof);
-	MelderInfo_writeLine (U"   Fit:");
+	MelderInfo_writeLine (U"   Fit: ", kDataModelerFunction_getText (type));
 	MelderInfo_writeLine (U"      Number of data points: ", numberOfDataPoints);
 	MelderInfo_writeLine (U"      Number of parameters: ", numberOfParameters);
-	MelderInfo_writeLine (U"      Each data point has ",  (weighData == kDataModelerWeights::EQUAL_WEIGHTS ? U" the same weight (estimated)." :
+	MelderInfo_writeLine (U"      Each data point has ",  
+		(weighData == kDataModelerWeights::EQUAL_WEIGHTS ? U" the same weight (estimated)." :
 		( weighData == kDataModelerWeights::ONE_OVER_SIGMA ? U"a different weight (sigmaY)." : 
 		( weighData == kDataModelerWeights::RELATIVE_ ? U"a different relative weight (Y_value/sigmaY)." :
 		U"a different weight (SQRT(sigmaY))." ) ) ));
@@ -71,9 +72,12 @@ void structDataModeler :: v1_info () {
 	MelderInfo_writeLine (U"      Probability: ", probability);
 	MelderInfo_writeLine (U"      R-squared: ", rSquared);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++) {
-		const double sigma = ( parameters [ipar]. status == kDataModelerParameterStatus::FIXED_ ? 0 :
-			(isdefined (parameterCovariances -> data [ipar] [ipar]) ? sqrt (parameterCovariances -> data [ipar] [ipar]) : undefined) );
-		MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar]. value, U"; sigma = ", sigma);
+		if (parameters [ipar]. status == kDataModelerParameterStatus::FIXED_)
+			MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar]. value, U" (FIXED)");
+		else {
+			const double sigma = (isdefined (parameterCovariances -> data [ipar] [ipar]) ? sqrt (parameterCovariances -> data [ipar] [ipar]) : undefined);
+			MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar]. value, U"; sigma = ", sigma);
+		}
 	}
 }
 
@@ -93,17 +97,8 @@ static void linear_evaluateBasisFunctions (DataModeler /* me */, double /* xin *
 	terms  <<=  undefined;
 }
 
-static double polynomial_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
-	/*
-		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-	*/
-	const longdouble xscaled = (2.0 * x - my xmin - my xmax) / 2.0;
-	longdouble xpi = 1.0, result = p [1]. value;
-	for (integer ipar = 2; ipar <= p.size; ipar ++) {
-		xpi *= xscaled;
-		result += p [ipar]. value * xpi;
-	}
-	return (double) result;
+static void linear_evaluateDerivative (DataModeler /* me */, double /* xin */, vector<structDataModelerParameter> /* p */, VEC dydp) {
+	dydp <<= undefined;
 }
 
 static void polynome_evaluateBasisFunctions (DataModeler me, double x, VEC term) {
@@ -119,6 +114,25 @@ static void polynome_evaluateBasisFunctions (DataModeler me, double x, VEC term)
 	}
 }
 
+static double polynomial_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+	*/
+	const longdouble xscaled = (2.0 * x - my xmin - my xmax) / 2.0;
+	longdouble xpi = 1.0, result = p [1]. value;
+	for (integer ipar = 2; ipar <= p.size; ipar ++) {
+		xpi *= xscaled;
+		result += p [ipar]. value * xpi;
+	}
+	return (double) result;
+}
+
+static void polynomial_evaluateDerivative (DataModeler me, double x, vector<structDataModelerParameter> p, VEC dydp) {
+	(void) p;
+	polynome_evaluateBasisFunctions (me, x, dydp);
+}
+
+
 static double legendre_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	/*
 		From domain [xmin, xmax] to domain [-1, 1]
@@ -127,7 +141,7 @@ static double legendre_evaluate (DataModeler me, double x, vector<structDataMode
 	longdouble result = p [1]. value;
 	if (p.size > 1) {
 		const longdouble twox = 2.0 * xscaled;
-		longdouble pti, ptim1, ptim2 = 1.0,f2 = xscaled, d = 1.0;
+		longdouble pti, ptim1, ptim2 = 1.0, f2 = xscaled, d = 1.0;
 		result += p [2]. value * (ptim1 = xscaled);
 		for (integer ipar = 3; ipar <= p.size; ipar ++) {
 			const longdouble f1 = d ++;
@@ -158,6 +172,11 @@ static void legendre_evaluateBasisFunctions (DataModeler me, double x, VEC term)
 	}
 }
 
+static void legendre_evaluateDerivative (DataModeler me, double x, vector<structDataModelerParameter> p, VEC dydp) {
+	(void) p;
+	legendre_evaluateBasisFunctions (me, x, dydp);
+}
+
 static double sigmoid_plus_constant_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
 	/*
@@ -165,19 +184,75 @@ static double sigmoid_plus_constant_evaluate (DataModeler me, double x, vector<s
 		No need to translate because x and p [3] are in the same domain. 
 	*/
 	longdouble result = p [1]. value;
-	if (p [2]. value != 0.0)
-		result += p [2]. value / (1.0 + exp (- (x - p [3]. value) / p [4]. value));
+	result += p [2]. value / (1.0 + exp (- (x - p [3]. value) / p [4]. value));
 	return (double) result;
+}
+
+static void sigmoid_plus_constant_evaluateDerivative (DataModeler me, double x, vector<structDataModelerParameter> p, VEC dydp) {
+	Melder_assert (p.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+		No need to translate because x and p [3] are in the same domain. 
+			y(x;a,b,c,d) = a + b / (1+exp (-(x-c)/d));
+			Define e(x;c,d) = exp (-(x-c)/d) and n(x;c,d) = 1 + e(x;c,d)
+			Then y(x;a,b,c,d) = a + b / n(x;c,d)
+			First order derivatives of n(x;c,d):
+				dn/dc (x;c,d) = e(x;c,d) / d
+				dn/dd (x;c,d) = e(x;c,d) (x-c)/d^2
+				
+			First order derivatives of y(x;a,b, c,d) w.r.t. a,c and d:
+				dy/da = 1
+				dy/db (x;a,b,c,d) = 1 / n(x;c,d)
+				dy/dc (x;a,b,c,d) = -b / n(x;c,d)^2 * dn/dc(x;c,d) = -b / n(x;c,d)^2 * e(x;c,d) / d
+				dy/dd (x;a,b,c,d) = -b / n(x;c,d)^2 * dn/dd(x;c,d) = -b / n(x;c,d)^2 * e(x;c,d) * (x-c) / d^2
+							  = dy/dc (x;a,b,c,d) * (x-c) / d
+	*/
+	const double z = (x - p [3].value) / p [4].value;
+	const double expz = exp (- z);
+	const double denom = 1.0 + expz;
+	const double sigmoid = p [2]. value / denom;
+	dydp [1]  = 1.0;
+	dydp [2] = 1.0 / denom;
+	dydp [3] =  - sigmoid / denom * expz / p [4].value;
+	dydp [4] = dydp [3] * z;	
 }
 
 static double sigmoid_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-		No need to translate because x and p [3] are in the same domain.
+		No need to translate because x - p [3] is invariant w.r.t.this translation.
 	*/
 	const double result = p [1]. value / (1.0 + exp (- (x - p [2]. value) / p [3]. value));
 	return result;
+}
+
+static void sigmoid_evaluateDerivative (DataModeler me, double x, vector<structDataModelerParameter> p, VEC dydp) {
+	Melder_assert (p.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+		No need to translate because x - p [3] are in the same domain.
+		
+		y(x;a,b,c) = a / (1+exp (-(x-b)/c));
+			Define e(x;b,c) = exp (-(x-b)/c) and n(x;b,c) = 1 + e(x;b,c)
+			Then y(x;a,b,c) = a / n(x;b,c)
+		First order derivatives of n(x;b,c):
+				dn/db (x;b,c) = e(x;b,c) / c
+				dn/dc (x;b,c) = e(x;b,c) (x-b)/c^2
+				
+		First order derivatives of y(x;a,b,c) w.r.t. a, b and c:
+			dy/da (x;a,b,c) = 1 / n(x;b,c)
+			dy/db (x;a,b,c) = -a / n(x;b,c)^2 * dn/db (x;b,c) = -a / n(x;b,c)^2 * e(x;b,c) / c
+			dy/dc (x;a,b,c) = -a / n(x;b,c)^2 * dn/dc (x;b,c) = -a / n(x;b,c)^2 * e(x;b,c) * (x-b)/c^2
+							  = dy/db (x;a,b,c) * (x-b)/c
+	*/
+	const double z = (x - p [2].value) / p [3].value;
+	const double expz = exp (-z);
+	const double denom = 1.0 + expz;
+	const double sigmoid = p [1].value / denom;
+	dydp [1] = 1.0 / denom;
+	dydp [2] = - sigmoid / denom * expz / p [3].value;
+	dydp [3] = dydp [2] * z;
 }
 
 static double exponential_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
@@ -189,6 +264,20 @@ static double exponential_evaluate (DataModeler me, double x, vector<structDataM
 	return p [1]. value * exp (p [2]. value * xscaled);
 }
 
+static void exponential_evaluateDerivative (DataModeler me, double x, vector<structDataModelerParameter> p, VEC dydp) {
+	Melder_assert (p.size == my numberOfParameters && dydp.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+		y(x;a,b) = a*exp (b*x)
+			dy/da = exp (b*x)
+			dy/db = a*b*exp(b*x) = b * y
+	*/
+	const double xs = x - 0.5 * (my xmin + my xmax);
+	dydp [1] = exp (p [2]. value * xs);
+	const double y = p [1]. value * dydp [1];
+	dydp [2] = p [2]. value * y;
+}
+
 static double exponential_plus_constant_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size >= 3);
 	/*
@@ -196,6 +285,23 @@ static double exponential_plus_constant_evaluate (DataModeler me, double x, vect
 	*/
 	const double xscaled = x - 0.5 * (my xmin + my xmax);
 	return p [1]. value + p [2]. value * exp (p [3]. value * xscaled);
+}
+
+static void exponential_plus_constant_evaluateDerivative (DataModeler me, double x, vector<structDataModelerParameter> p, VEC dydp) {
+	Melder_assert (p.size >= 3 && dydp.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+		
+		y(x;a,b,c) = a + b*exp (c*x)
+			dy/da = 1
+			dy/db = exp (c*x)
+			dy/dc = b*c*exp(c*x)
+	*/
+	const double xs = x - 0.5 * (my xmin + my xmax);
+	dydp [2] = exp (p [3].value * xs);
+	dydp [1] = 1.0;
+	const double bexp = p [2]. value * dydp [2];
+	dydp [3] = p [3].value * bexp;
 }
 
 static void dummy_evaluateBasisFunctions (DataModeler /* me */, double /* x */, VEC term) {
@@ -291,6 +397,7 @@ static void exponential_fit (DataModeler me) {
 		my parameters [1]. value = ( sign >= 0.0 ? a : - a );
 		my parameters [2]. value = solution [2];
 	}
+	DataModeler_getParameterCovariances (me);
 }
 
 /*
@@ -360,6 +467,7 @@ static void exponential_plus_constant_fit (DataModeler me) {
 		}
 	} else {
 		/*
+			Parameter 1 (a) and 3 (c) are FREE
 			First we determine c.
 			Model: z(x) = A * f1(x) + B * f2(x), where z(x) = y(x) - y [1], f1(x) = x - x [1], f2(x) = integral (x1, x, y(x)dx)
 			A = - a * c, B = c
@@ -368,10 +476,10 @@ static void exponential_plus_constant_fit (DataModeler me) {
 		autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
 		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 		const longdouble x1 = my data [1].x, y1 = my data [1].y;
-		longdouble xkm1 = x1, ykm1 = y1, sk = 0.0;
 		/*
 			First row of design has only zero's, skip it.
 		*/
+		longdouble xkm1 = x1, ykm1 = y1, sk = 0.0;
 		integer index = 0;
 		for (integer k = 2; k <= my numberOfDataPoints; k ++) {
 			if (my data [k] .status != kDataModelerData::INVALID) {
@@ -421,10 +529,7 @@ static void exponential_plus_constant_fit (DataModeler me) {
 			my parameters [3]. value = c;
 		}
 	}
-	/*
-		error propagation ?
-	*/
-	my parameterCovariances -> data.get()  <<=  undefined;
+	DataModeler_getParameterCovariances (me);
 }
 
 static void modelLinearTrendWithSigmoid (DataModeler me, double *out_lambda, double *out_sigma) {
@@ -450,7 +555,7 @@ static void modelLinearTrendWithSigmoid (DataModeler me, double *out_lambda, dou
 /*
 	Function: y(x) = b / (1 + exp (- (x - mu) / sigma))
 	Model: z(x) = A * f1(x) + b * f2(x) + C * f3(x), where 
-		z (x)= y (x) * ln (y (x)), f1 (x) = integral (0, x, y(x)dx), f2 (x) = x * y (x), f3 = y (x),
+		z (x) = y (x) * ln (y (x)), f1 (x) = integral (0, x, y(x)dx), f2 (x) = x * y (x), f3 = y (x),
 		A = -1 / (lambda * sigma), B = 1 / sigma, C = ln (lambda) - ln (1 + exp ((mu - x1) / sigma))
 	Non-iterative solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
 	pages 16-17.
@@ -463,6 +568,8 @@ static void sigmoid_fit (DataModeler me) {
 	double mu = my parameters [2]. value;
 	double sigma = my parameters [3]. value;
 	if (my parameters [1]. status == kDataModelerParameterStatus::FIXED_) {
+		Melder_require (my parameters [1]. value != 0.0,
+			U"The first parameter should not be zero.");
 		if (my parameters [2]. status == kDataModelerParameterStatus::FIXED_) {
 			if (my parameters [3]. status == kDataModelerParameterStatus::FIXED_)
 				return;
@@ -493,6 +600,8 @@ static void sigmoid_fit (DataModeler me) {
 			autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
 			sigma = 1.0 /solution [1];
 		} else if (my parameters [3]. status == kDataModelerParameterStatus::FIXED_) {
+			Melder_require (my parameters [3]. value != 0.0,
+				U"The third parameter should not be zero.");
 			/*
 				Model: z(X)*ln(z(X) = C * f3 (X), where z(X)= y(X)/lambda + f1 (X) / sigma - f2 (X) / sigma, X [l] = x [k] - x1
 			*/
@@ -553,6 +662,8 @@ static void sigmoid_fit (DataModeler me) {
 		}
 	} else if (my parameters [2]. status == kDataModelerParameterStatus::FIXED_ &&
 		my parameters [3]. status == kDataModelerParameterStatus::FIXED_) {
+			Melder_require (my parameters [3]. value != 0.0,
+				U"The third parameter should not be zero.");
 			/*
 				Model: y(x) = E * f4 (x), where f4(x) = 1 /(1 + exp (- (x - mu) / sigma))
 			*/
@@ -571,6 +682,8 @@ static void sigmoid_fit (DataModeler me) {
 			autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
 			lambda = solution [1];
 	} else if (my parameters [3]. status == kDataModelerParameterStatus::FIXED_) {
+		Melder_require (my parameters [3]. value != 0.0,
+			U"The third parameter should not be zero.");
 		/*
 			Model: z(x) = A * f1 (x) + C * f3(x), where z(x) = y(x)*ln(y(x)) - f2 (x) / sigma
 		*/
@@ -642,10 +755,8 @@ static void sigmoid_fit (DataModeler me) {
 	my parameters [1]. value = lambda;
 	my parameters [2]. value = mu;
 	my parameters [3]. value = sigma;
-	/*
-		error propagation ?
-	*/
-	my parameterCovariances -> data.get()  <<=  undefined;
+
+	DataModeler_getParameterCovariances (me);
 }
 
 /*
@@ -654,7 +765,7 @@ static void sigmoid_fit (DataModeler me) {
 	pages 38 and following.
 	The author makes a mistake in the derivation of the relation between the a,b,c,d and
 	gamma, lambda, mu and sigma of the model.
-	lambda = ± 1/s * sqrt (b^2-4ac) (the artile wrongly shows "sqrt (b^2+4ac)")
+	lambda = ± 1/s * sqrt (b^2-4ac) (the article wrongly shows "sqrt (b^2+4ac)")
 	gamma = (−b ∓ sqrt (b^2 − 4ac))/ (2*a)
 	sigma = ∓ 1 / sqrt (b^2 − 4ac)
 	mu = x [1]+ sigma * ln (lambda/(d-gamma) - 1)
@@ -672,10 +783,18 @@ static void sigmoid_plus_constant_fit (DataModeler me) {
 			Model z(x) = lambda / (1 + exp (- (x - mu) / sigma)) where z(x) = y(x) - gamma.
 		*/
 		autoDataModeler thee = DataModeler_createFromDataModeler (me, 3, kDataModelerFunction::SIGMOID);
-		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-			if (my data [k]. status != kDataModelerData::INVALID)
-				thy data [k]. y -= gamma;
-		}
+		for (integer ipar = 1; ipar <= 3; ipar ++)
+			thy parameters [ipar] = my parameters [ipar + 1];
+
+		for (integer k = 1; k <= my numberOfDataPoints; k ++)
+			thy data [k]. y -= gamma;
+
+		if (my parameters [2]. status == kDataModelerParameterStatus::FIXED_)
+			thy parameters [1]. status = kDataModelerParameterStatus::FIXED_;
+		if (my parameters [3]. status == kDataModelerParameterStatus::FIXED_)
+			thy parameters [2]. status = kDataModelerParameterStatus::FIXED_;
+		if (my parameters [4]. status == kDataModelerParameterStatus::FIXED_)
+			thy parameters [3]. status = kDataModelerParameterStatus::FIXED_;
 		DataModeler_fit (thee.get());
 		lambda = thy parameters [1]. value;
 		mu = thy parameters [2]. value;
@@ -799,10 +918,8 @@ static void sigmoid_plus_constant_fit (DataModeler me) {
 	my parameters [2]. value = lambda;
 	my parameters [3]. value = mu;
 	my parameters [4]. value = sigma;
-	/*
-		error propagation ?
-	*/
-	my parameterCovariances -> data.get()  <<=  undefined;
+	
+	DataModeler_getParameterCovariances (me);
 }
 
 static void series_fit (DataModeler me) {
@@ -1307,7 +1424,7 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 	Graphics_setFontSize (g, currentFontSize);
 }
 
-void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_wc, bool drawDots)
+void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, bool errorbars, bool connectPoints, double barWidth_wc, bool drawDots)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 
@@ -1319,8 +1436,6 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 		ixmax --;
 	if (ixmin > ixmax)
 		return; // nothing to draw
-	getAutoNaturalNumberWithinRange (& numberOfParameters, my numberOfParameters);	
-	vector<structDataModelerParameter> parameters = my parameters.part (1, numberOfParameters);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	double x1, y1, x2, y2;
 	bool x1defined = false, x2defined = false;
@@ -1329,11 +1444,11 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 			const double x = my data [ipoint]. x, y = my data [ipoint]. y;
 			if (! x1defined) {
 				x1 = x;
-				y1 = ( estimated ? my f_evaluate (me, x, parameters) : y );
+				y1 = ( estimated ? my f_evaluate (me, x, my parameters.get()) : y );
 				x1defined = true;
 			} else {
 				x2 = x;
-				y2 = ( estimated ? my f_evaluate (me, x, parameters) : y );
+				y2 = ( estimated ? my f_evaluate (me, x, my parameters.get()) : y );
 				x2defined = true;
 			}
 			if (x1defined && drawDots) {
@@ -1409,50 +1524,54 @@ void DataModeler_drawModel (DataModeler me, Graphics g, double xmin, double xmax
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, my yVariableName.get());
+		Graphics_textBottom (g, true, my xVariableName.get());
 	}
 }
 
-void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters)
-{
+void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated) {
 	const bool errorbars = false, connectPoints = true;
 	const double barWidth_mm = 0;
-	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, connectPoints, barWidth_mm, 0);
+	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, errorbars, connectPoints, barWidth_mm, 0);
 }
 
 void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool garnish) {
+	bool estimated, bool garnish) {
 	if (ymax <= ymin)
 		DataModeler_getExtremaY (me, & ymin, & ymax);
 	Graphics_setInner (g);
-	DataModeler_drawTrack_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters);
+	DataModeler_drawTrack_inside (me, g, xmin, xmax, ymin, ymax, estimated);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, my yVariableName.get());
+		Graphics_textBottom (g, true, my xVariableName.get());
 	}
 }
 
-void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, double barWidth_wc) {
+void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated,
+	bool errorbars, double barWidth_wc)
+{
 	bool connectPoints = false;
-	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, connectPoints, barWidth_wc, 1);
+	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, errorbars, connectPoints, barWidth_wc, 1);
 }
 
 void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, bool garnish)
+	bool estimated, bool errorbars, double barWidth_mm, bool garnish)
 {
 	if (ymax <= ymin)
 		DataModeler_getExtremaY (me, & ymin, & ymax);
 	Graphics_setInner (g);
-	if (numberOfParameters == 0)
-		numberOfParameters = my numberOfParameters;
-	DataModeler_speckle_inside (me, g, xmin, xmax, ymin, ymax,
-		estimated, numberOfParameters, errorbars, barWidth_mm);
+	DataModeler_speckle_inside (me, g, xmin, xmax, ymin, ymax, 		estimated, errorbars, barWidth_mm);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, my yVariableName.get());
+		Graphics_textBottom (g, true, my xVariableName.get());
 	}
 }
 
@@ -1485,30 +1604,37 @@ void DataModeler_setBasisFunctions (DataModeler me, kDataModelerFunction type) {
 		my f_evaluate = linear_evaluate;
 		my f_evaluateBasisFunctions = linear_evaluateBasisFunctions;
 		my fit = series_fit;
+		my evaluateDerivative = linear_evaluateDerivative;
 	} else if (type == kDataModelerFunction::LEGENDRE) {
 		my f_evaluate = legendre_evaluate;
 		my f_evaluateBasisFunctions = legendre_evaluateBasisFunctions;
 		my fit = series_fit;
+		my evaluateDerivative = legendre_evaluateDerivative;
 	} else if (type == kDataModelerFunction::POLYNOME) {
 		my f_evaluate = polynomial_evaluate;
 		my f_evaluateBasisFunctions = polynome_evaluateBasisFunctions;
 		my fit = series_fit;
+		my evaluateDerivative = polynomial_evaluateDerivative;
 	} else if (type == kDataModelerFunction::SIGMOID) {
 		my f_evaluate = sigmoid_evaluate;
 		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
 		my fit = sigmoid_fit;
+		my evaluateDerivative = sigmoid_evaluateDerivative;
 	} else if (type == kDataModelerFunction::SIGMOID_PLUS_CONSTANT) {
 		my f_evaluate = sigmoid_plus_constant_evaluate;
 		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
 		my fit = sigmoid_plus_constant_fit;
+		my evaluateDerivative = sigmoid_plus_constant_evaluateDerivative;
 	} else if (type == kDataModelerFunction::EXPONENTIAL) {
 		my f_evaluate = exponential_evaluate;
 		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
 		my fit = exponential_fit;
+		my evaluateDerivative = exponential_evaluateDerivative;
 	} else if (type == kDataModelerFunction::EXPONENTIAL_PLUS_CONSTANT) {
 		my f_evaluate = exponential_plus_constant_evaluate;
 		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
 		my fit = exponential_plus_constant_fit;
+		my evaluateDerivative = exponential_plus_constant_evaluateDerivative;
 	}
 	my type = type;
 }
@@ -1527,7 +1653,7 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	my parameters = newvectorzero<structDataModelerParameter> (my numberOfParameters);
 	for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
 		my parameters [ipar]. status = kDataModelerParameterStatus::FREE;
-	my parameterNames = Strings_createFixedLength (my numberOfParameters);
+	my parameterNames = autoSTRVEC (my numberOfParameters);
 	my parameterCovariances = Covariance_create (my numberOfParameters);
 	my type = type;
 }
@@ -1569,14 +1695,11 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax,
 autoDataModeler DataModeler_createFromDataModeler (DataModeler thee, integer numberOfParameters, kDataModelerFunction type) {
 	try {
 		autoDataModeler me = DataModeler_create (thy xmin, thy xmax, thy numberOfDataPoints, numberOfParameters, type);
-		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-			my data [k]. status = my data [k]. status;
-			my data [k]. x = thy data [k]. x;
-			my data [k]. y = thy data [k]. y;
-		}
+		for (integer k = 1; k <= my numberOfDataPoints; k ++)
+			my data [k] = thy data [k];
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"No DataModeler could be created.");
+		Melder_throw (U"No DataModeler could be created from other DataModeler.");
 	}
 }
 
@@ -1585,6 +1708,47 @@ void DataModeler_fit (DataModeler me) {
 		my fit (me);
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler no fit.");
+	}
+}
+
+static autoMAT getParameterCovariancesOrHessian (DataModeler me, bool covariance) {
+	bool hasSigmaY = isdefined (my data [1].sigmaY);
+	autoMAT jmat = raw_MAT (my numberOfDataPoints, my numberOfParameters);
+	autoVEC dydp = raw_VEC (my numberOfParameters);
+	for (integer i = 1; i <= my numberOfDataPoints; i ++) {
+		const double sigma = ( hasSigmaY ? my data [i].sigmaY : 1.0 );
+		my evaluateDerivative (me, my data [i].x, my parameters.get(), dydp.get());
+		dydp.get() /= sigma;
+		jmat.row (i)  <<= dydp.get();
+	}
+	/*
+		The Hessian is J'J
+		Covariance is (J'J)^-1
+	*/
+	autoSVD thee = SVD_createFromGeneralMatrix (jmat.get());
+	integer numberOfZeroed = SVD_zeroSmallSingularValues (thee.get(), 0.0);
+	autoMAT mat = SVD_getSquared (thee.get(), covariance);
+	return mat;
+
+}
+
+void DataModeler_getParameterCovariances (DataModeler me) {
+	try {
+		autoMAT covar =  getParameterCovariancesOrHessian (me, true);
+		my parameterCovariances -> data.get() <<= covar.get();
+		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
+			my parameterCovariances ->centroid [ipar] = my parameters [ipar].value;
+		my parameterCovariances -> numberOfObservations = DataModeler_getNumberOfValidDataPoints (me);
+	} catch (MelderError) {
+		Melder_throw (U"DataModeler: Parameter covariances could not be evaluated.");
+	}
+}
+
+autoMAT DataModeler_getHessian (DataModeler me) {
+	try {
+		return getParameterCovariancesOrHessian (me, false);
+	} catch (MelderError) {
+		Melder_throw (U"DataModeler: Hessian could not be evaluated.");
 	}
 }
 
@@ -1663,6 +1827,8 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 			U"The number of parameters should not exceed the number of data points.");
 		
 		DataModeler_setDataWeighing (thee.get(), ( hasSigmaColumn ? kDataModelerWeights::ONE_OVER_SIGMA : kDataModelerWeights::EQUAL_WEIGHTS));
+		thy xVariableName = Melder_dup (my columnHeaders [xcolumn].label.get());
+		thy yVariableName = Melder_dup (my columnHeaders [ycolumn].label.get());
 		thy tolerance = 1e-8;
 		DataModeler_fit (thee.get());
 		return thee;

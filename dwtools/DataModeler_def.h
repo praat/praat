@@ -1,6 +1,6 @@
 /* DataModeler_def.h
  *
- * Copyright (C) 2014-2020 David Weenink
+ * Copyright (C) 2014-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,27 @@ oo_DEFINE_CLASS (DataModeler, Function)
 	oo_INTEGER (numberOfParameters)
 	oo_STRUCTVEC (DataModelerData, data, numberOfDataPoints)
 	oo_STRUCTVEC (DataModelerParameter, parameters, numberOfParameters)
+	oo_STRING_VECTOR (parameterNames, numberOfParameters)
+	#if ! oo_READING
+		oo_STRING (xVariableName)
+		oo_STRING (yVariableName)
+	#else
+		oo_VERSION_UNTIL (2)
+			xVariableName = Melder_dup (U"");
+			yVariableName = Melder_dup (U"");
+		oo_VERSION_ELSE
+			oo_STRING (xVariableName)
+			oo_STRING (yVariableName)
+		oo_VERSION_END
+	#endif
 	oo_DOUBLE (tolerance)
 	oo_ENUM (kDataModelerWeights, weighData)
-	oo_OBJECT (Strings, 0, parameterNames)
 	oo_OBJECT (Covariance, 0, parameterCovariances)
 	#if oo_DECLARING
 		double (*f_evaluate) (DataModeler me, double x, vector<structDataModelerParameter> p);
 		void (*f_evaluateBasisFunctions) (DataModeler me, double x, VEC term) { };
 		void (*fit) (DataModeler me);
+		void (*evaluateDerivative) (DataModeler me, double x, vector<structDataModelerParameter> p, VEC derivative);
 		void v1_info ()
 			override;
 	#endif

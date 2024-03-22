@@ -1,6 +1,6 @@
 /* manual_DataModeler.cpp
  *
- * Copyright (C) 2014 David Weenink
+ * Copyright (C) 2014-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,43 @@
 #include "ManPagesM.h"
 
 void manual_DataModeler (ManPages me);
-void manual_DataModeler (ManPages me)
-{
+void manual_DataModeler (ManPages me) {
+
+MAN_PAGES_BEGIN
+R"~~~(
+################################################################################
+"DataModeler"
+© David Weenink 2024
+
+One of the @@types of objects@ in Praat. A #DataModeler models (%x_%i, %y_%i) data points as lying on a particular kind of curve,
+where the %y is the dependent variable and the %x the independent variable.
+
+Drawing
+=======
+
+################################################################################
+"DataModeler: Speckle..."
+© David Weenink 2024
+
+Draws the data as (x_i, y_i) points.
+
+################################################################################
+"DataModeler: Draw model..."
+© David Weenink 2024
+
+Draws the model function as a continuous curve.
+
+
+################################################################################
+"DataModeler: Draw estimated track..."
+© David Weenink 2024
+
+Draws the model function as a continuous curve.
+
+
+################################################################################
+)~~~"
+MAN_PAGES_END
 
 MAN_BEGIN (U"FormantModeler: Get residual sum of squares...", U"djmw", 20140421)
 INTRO (U"Get the residual sum of squares for a formant in the selected FormantModeler.")

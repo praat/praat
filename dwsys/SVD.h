@@ -2,7 +2,7 @@
 #define _SVD_h_
 /* SVD.h
  *
- * Copyright (C) 1994-2022 David Weenink
+ * Copyright (C) 1994-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,8 +94,6 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to);
 	Synthesize matrix as U D(sv_from:sv_to) V'.
 	(The synthesized matrix is an approximation of the svd'ed matrix if
 	only a selected number of sv's is used).
-	Matrix m is [numberOfRows x numberOfColumns] and must be allocated
-	by caller!
 */
 
 autoMAT SVD_getSquared (SVD me, bool inverse);
