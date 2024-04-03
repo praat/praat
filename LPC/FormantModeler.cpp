@@ -215,7 +215,7 @@ void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmi
 static integer FormantModeler_drawingSpecifiers_x (FormantModeler me, double *xmin, double *xmax, integer *ixmin, integer *ixmax) {
 	Melder_assert (my trackmodelers.size > 0);
 	const DataModeler fm = my trackmodelers.at [1];
-	return DataModeler_drawingSpecifiers_x (fm, xmin, xmax, ixmin, ixmax);
+	return DataModeler_getDrawingSpecifiers_x (fm, xmin, xmax, ixmin, ixmax);
 }
 
 static void FormantModeler_getCumulativeChiScores (FormantModeler me, VEC chisq) {
@@ -674,18 +674,19 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 
 autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, constINTVEC const& numberOfParametersPerTrack) {
 	try {
-		integer ifmin, ifmax, posInCollection = 0;
+		integer ifmin, ifmax;
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
+		Melder_require (numberOfDataPoints > 0,
+			U"There are no formant frames in the selection.");
 		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfDataPoints, numberOfParametersPerTrack);
 		Thing_setName (thee.get(), my name.get());
 		for (integer iformant = 1; iformant <= numberOfParametersPerTrack.size; iformant ++) {
-			posInCollection ++;
-			const DataModeler ffi = thy trackmodelers.at [posInCollection];
-			integer idata = 0, validData = 0;
-			for (integer iframe = ifmin; iframe <= ifmax; iframe ++) {
+			const DataModeler ffi = thy trackmodelers.at [iformant];
+			integer validData = 0;
+			for (integer iframe = ifmin, idata = 1; iframe <= ifmax; iframe ++, idata ++) {
 				const Formant_Frame curFrame = & my frames [iframe];
-				ffi -> data [++ idata] .x = Sampled_indexToX (me, iframe);
+				ffi -> data [idata] .x = Sampled_indexToX (me, iframe);
 				ffi -> data [idata] .status = kDataModelerData::INVALID;
 				if (iformant <= curFrame -> numberOfFormants) {
 					const double frequency = curFrame -> formant [iformant]. frequency;
