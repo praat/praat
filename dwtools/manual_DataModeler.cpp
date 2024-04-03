@@ -31,8 +31,15 @@ R"~~~(
 "DataModeler"
 © David Weenink, 2024
 
-One of the @@types of objects@ in Praat. A #DataModeler models (%x_%i, %y_%i) data points as lying on a particular kind of curve,
-where the %y is the dependent variable and the %x the independent variable.
+One of the @@types of objects@ in Praat. A #DataModeler tries to fit %N data points (%x_%i, %y_%i) as lying on a particular kind 
+of model function f(%x; #%p) that depends on %M %parameters #%p. 
+The parameters #%p are determined by minimizing the chi squared function
+%\ci^^2^(#p%)=\Si ((%y__%i_ - %f(%x__%i_, #%p))/%\si__%i_)^^2^,
+where the sum is over all %N data points. 
+
+If the individual uncertainties %\si__%i_of the data are not known before hand, the model parameter are determined by assuming that
+all uncertainties %\si__$i_ are equal. However an independent assessment of the goodness-of-fit cannot be determined in this case. 
+A good guess for %\si^^2^ for this case could be %\si^^2^=\Si  (%y__%i_ - %f(%x__%i_, #%p))^^2^.
 
 Drawing
 =======
@@ -54,7 +61,8 @@ Draws the model function as a continuous curve.
 "DataModeler: Draw estimated track..."
 © David Weenink, 2024
 
-Draws the model function as a continuous curve.
+Draws the model function as a sequence of straight line segments between the estimated values at the data %x_%i values.
+If there are many data this curve is almost indistinguishable from a the curve drawn by @@DataModeler: Draw model...|Draw model...@.
 
 
 ################################################################################
@@ -62,13 +70,27 @@ Draws the model function as a continuous curve.
 © David Weenink, 2024
 
 Get the coefficient of determination (%R^2) of the model.
-The %R^2 goodness of fit is a number between 0 and 1 that measures how well a model predicts an outcome.
+The %R^2 goodness of fit is a number between 0 and 1 that measures how well a model predicts the data.
 A value of 1 means a perfect fit.
 If all dependent data, the %y values, have the same variance the %R^2 is simply 1 - %SS__model_/%SS__total_,
 where %SS__model_ is the sum of the squared differences between %y's predicted by the model and the actual %y values from the data,
-and %SS__total_ the sum of the squared differences between the actual data y values and the mean of the data.
+and %SS__total_ the sum of the squared differences between the actual data %y values and the mean of the data.
 
 Because our data points can have different weights we use adapted formula from @@Buse (1973)@.
+
+
+################################################################################
+"DataModeler: Get residual sum of squares"
+© David Weenink, 2024
+
+Get the residual sum of squares which is defined as 
+EQUATION (\Si (y[i] - ))
+
+################################################################################
+"DataModeler: To Table (z-scores)"
+© David Weenink, 2024
+
+For each data point get the difference between the model and the data as a z-score.
 
 
 ################################################################################

@@ -10,6 +10,7 @@ appendInfoLine: "test_DataModeler.praat"
 @test_exponential_plus_constant
 @test_sigmoid
 @test_sigmoid_plus_constant
+@test_certified_norris_data
 
 appendInfoLine: "test_DataModeler.praat OK"
 
@@ -302,6 +303,7 @@ procedure test_sigmoid
 	selectObject: .table
 	Formula: "y", ~ self * (1 + 0.25*randomUniform (-1,1))
 	.dm2 = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Sigmoid", 3
+	Rename: "sig_noisy"
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.85
 	removeObject: .table, .dm, .dm2
@@ -426,9 +428,52 @@ procedure test_sigmoid_plus_constant
 	selectObject: .table
 	Formula: "y", ~ self * (1 + 0.1*randomUniform (-1,1))
 	.dm2 = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Sigmoid plus constant", 4
+	Rename: "sigpc_noisy"
 	.rSquared = Get coefficient of determination
 	assert .rSquared > 0.95
-	removeObject: .table, .dm, .dm2	
+;	removeObject: .table, .dm, .dm2	
 	appendInfoLine: " OK"
 	appendInfoLine: tab$, "Test sigmoid plus constant OK"
+endproc
+
+procedure test_certified_norris_data
+	appendInfo: tab$, "Test line with Norris data"
+	# https://itl.nist.gov/div898/strd/lls/data/LINKS/DATA/Norris.dat
+	#
+	.xy## = {{0.1, 0.2},    {338.8, 337.4}, {118.1, 118.2}, {888.0, 884.6},
+		... {9.2, 10.1},    {228.1, 226.5}, {668.5, 666.3}, {998.5, 996.3},
+		... {449.1, 448.6}, {778.9, 777.0}, {559.2, 558.2}, {0.3, 0.4},
+		... {0.1, 0.6},     {778.1, 775.5}, {668.8, 666.9}, {339.3, 338.0},
+		... {448.9, 447.5}, {10.8, 11.6},   {557.7, 556.0}, {228.3, 228.1},
+		... {998.0, 995.8}, {888.8, 887.6}, {119.6, 120.2}, {0.3, 0.3},
+		... {0.6, 0.3},     {557.6, 556.8}, {339.3, 339.1}, {888.0, 887.2},
+		... {998.5, 999.0}, {778.9, 779.0}, {10.2, 11.1},   {117.6, 118.3},
+		... {228.9, 229.2}, {668.4, 669.1}, {449.2, 448.9}, {0.2, 0.5}}
+		.table = Create Table with column names: "norris", 36, "x y"
+	
+	.pCertified# = {-0.262323073774029, 1.00211681802045}
+	.rsquaredCertified = 0.999993745883712
+	.residualStdevCertified = 0.884796396144373
+	.pSigmaCertified# = {0.232818234301152,0.000429796848199937} 
+
+	for .irow to 36
+		Set numeric value: .irow, "y", .xy## [.irow, 1]
+		Set numeric value: .irow, "x", .xy## [.irow, 2]
+	endfor
+	Sort rows: "x"
+	.xxmin = 0
+	.xxmax = 1000
+	.dm = To DataModeler: .xxmin, .xxmax, "x", "y", "", "Standard polynomials", 1
+
+	for .ipar to 2
+		.pari = Get parameter value: .ipar
+		assert abs(.pari - .pCertified# [.ipar]) < 1e-11
+		.pariSigma = Get parameter standard deviation: .ipar
+		assert abs (.pariSigma - .pSigmaCertified# [.ipar]) < 1e-11
+	endfor
+	.rSquared = Get coefficient of determination
+	assert abs(.rSquared - .rsquaredCertified) < 1e-13
+	.residualStdev = Get residual standard deviation
+	assert abs(.residualStdev - .residualStdevCertified) < 1e-14
+	appendInfoLine: " OK"
 endproc

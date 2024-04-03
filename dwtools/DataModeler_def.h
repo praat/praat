@@ -66,6 +66,7 @@ oo_DEFINE_CLASS (DataModeler, Function)
 		void (*f_evaluateBasisFunctions) (DataModeler me, double x, VEC term) { };
 		void (*fit) (DataModeler me);
 		void (*evaluateDerivative) (DataModeler me, double x, vector<structDataModelerParameter> p, VEC derivative);
+		long double (*scaleX) (DataModeler me, double x);
 		void v1_info ()
 			override;
 	#endif

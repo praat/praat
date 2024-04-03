@@ -42,7 +42,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (GRAPHICS_EACH__DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
+FORM (GRAPHICS_EACH__DataModeler_speckle, U"DataModeler: Speckle", U"DataModeler: Speckle...") {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
@@ -57,7 +57,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__DataModeler_drawModel, U"DataModeler: Draw model", nullptr) {
+FORM (GRAPHICS_EACH__DataModeler_drawModel, U"DataModeler: Draw model", U"DataModeler: Draw model...") {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
@@ -71,7 +71,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_EACH__DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated track", nullptr) {
+FORM (GRAPHICS_EACH__DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated track", U"DataModeler: Draw estimated track...") {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
@@ -80,7 +80,20 @@ FORM (GRAPHICS_EACH__DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimat
 	OK
 DO
 	GRAPHICS_EACH (DataModeler)
-		DataModeler_drawTrack (me, GRAPHICS, xmin, xmax, ymin, ymax, 1, garnish);
+		DataModeler_drawTrack (me, GRAPHICS, xmin, xmax, ymin, ymax, true, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (GRAPHICS_EACH__DataModeler_drawResiduals, U"DataModeler: Draw residuals", U"DataModeler: Draw residuals...") {
+	REAL (xmin, U"left X range", U"0.0")
+	REAL (xmax, U"right X range", U"0.0")
+	REAL (ymin, U"left Y range", U"0.0")
+	REAL (ymax, U"right Y range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (DataModeler)
+		DataModeler_drawResiduals (me, GRAPHICS, xmin, xmax, ymin, ymax, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -170,6 +183,12 @@ DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getResidualSumOfSquares) {
 	QUERY_ONE_FOR_REAL_END (U"  (for ", n, U" datapoints)")
 }
 
+DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getResidualStandardDeviation) {
+	QUERY_ONE_FOR_REAL (DataModeler)
+		const double result = DataModeler_getResidualStandardDeviation (me);
+	QUERY_ONE_FOR_REAL_END (U"  (residual standard deviation)")
+}
+
 DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getDataStandardDeviation) {
 	QUERY_ONE_FOR_REAL (DataModeler)
 		const double result = DataModeler_getDataStandardDeviation (me);
@@ -257,6 +276,16 @@ DO
 	MODIFY_EACH_END
 }
 
+FORM (MODIFY_EACH__DataModeler_setParameterName, U"DataModeler: Set parameter name", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	SENTENCE (parameterName, U"Name", U"p [1]")
+	OK
+DO
+	MODIFY_EACH (DataModeler)
+		DataModeler_setParameterName (me, index, parameterName);
+	MODIFY_EACH_END
+}
+
 FORM (MODIFY_EACH__DataModeler_setParameterValue, U"DataModeler: Set parameter value", nullptr) {
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	REAL (value, U"Value", U"0.0")
@@ -277,6 +306,7 @@ DO
 		DataModeler_setParametersFree (me, fromParameter, toParameter);
 	MODIFY_EACH_END
 }
+
 
 FORM (MODIFY_EACH__DataModeler_setParameterValuesToZero, U"DataModeler: Set parameter values to zero", nullptr) {
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
@@ -1117,6 +1147,8 @@ void praat_DataModeler_init () {
 			GRAPHICS_EACH__DataModeler_drawModel);
 	praat_addAction1 (classDataModeler, 0, U"Draw estimated track...", 0, 0, 
 			GRAPHICS_EACH__DataModeler_drawEstimatedTrack);
+	praat_addAction1 (classDataModeler, 0, U"Draw residuals...", 0, 0, 
+			GRAPHICS_EACH__DataModeler_drawResiduals);
 
 	praat_addAction1 (classDataModeler, 1, U"Query -", 0, 0, 0);
 		praat_addAction1 (classDataModeler, 0, U"Get number of parameters", 0, 1,
@@ -1152,6 +1184,8 @@ void praat_DataModeler_init () {
 		
 		praat_addAction1 (classDataModeler, 0, U"Get residual sum of squares", 0, 1, 
 				QUERY_ONE_FOR_REAL__DataModeler_getResidualSumOfSquares);
+		praat_addAction1 (classDataModeler, 0, U"Get residual standard deviation", 0, 1, 
+				QUERY_ONE_FOR_REAL__DataModeler_getResidualStandardDeviation);
 		praat_addAction1 (classDataModeler, 0, U"Get data standard deviation", 0, 1,
 				QUERY_ONE_FOR_REAL__DataModeler_getDataStandardDeviation);
 		praat_addAction1 (classDataModeler, 0, U"Get coefficient of determination", 0, 1,
@@ -1169,6 +1203,8 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classDataModeler, 0, U"Set tolerance...", 0, 1, 
 				MODIFY_EACH__DataModeler_setTolerance);
 		praat_addAction1 (classDataModeler, 1, U"-- set parameter values --", 0, 1, 0);
+		praat_addAction1 (classDataModeler, 0, U"Set parameter name...", 0, 1, 
+				MODIFY_EACH__DataModeler_setParameterName);
 		praat_addAction1 (classDataModeler, 0, U"Set parameter value...", 0, 1, 
 				MODIFY_EACH__DataModeler_setParameterValue);
 		praat_addAction1 (classDataModeler, 0, U"Set parameter free...", 0, 1,
