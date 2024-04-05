@@ -206,7 +206,7 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 		// Determine the number of filters.
 
 		const integer numberOfFilters = Melder_iround ((fmax_mel - f1_mel) / df_mel);
-		//fmax_mel = f1_mel + numberOfFilters * df_mel;
+
 
 		integer numberOfFrames;
 		double t1;

@@ -440,6 +440,9 @@ static void exponential_plus_constant_fit (DataModeler me) {
 			/*
 				Model: z(x) = a + b * f(x), where f(x) = exp (c * x).
 				Fit as linear model with the third parameter fixed!
+				We need the third parameter for the 'linear_exponent_evaluateBasisFunctions'
+				We therefore extend the parameters struct with one element without increasing the 
+				numberofParameters value which stays at 2!
 			*/
 			autoDataModeler thee = DataModeler_createFromDataModeler (me, 2, kDataModelerFunction::LINEAR);
 			thy parameters.resize (thy numberOfParameters + 1);
@@ -1250,7 +1253,14 @@ autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights we
 				After the fit we can get an estimate of sigmaY from the redidual standard deviation.
 			*/
 			const double residualStdev = DataModeler_getResidualStandardDeviation (me);
-			weights.get()  <<=  1.0 / residualStdev;
+			/*
+				For a perfect fit the residualStdev might equal zero.
+				We then set the weights equal to 1.0
+			*/
+			if (residualStdev > 0)
+				weights.get()  <<=  1.0 / residualStdev;
+			else
+				weights.get()  <<=  1.0;
 		}
 	} else {	
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
@@ -1709,6 +1719,7 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	my parameterNames = autoSTRVEC (my numberOfParameters);
 	my parameterCovariances = Covariance_create (my numberOfParameters);
 	my type = type;
+	my tolerance = 1e-32;
 }
 
 autoDataModeler DataModeler_create (double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, kDataModelerFunction type) {
@@ -1820,10 +1831,7 @@ autoMAT DataModeler_getHessian (DataModeler me) {
 }
 
 void DataModeler_setDataWeighing (DataModeler me, kDataModelerWeights weighData) {
-	if (my weighData != weighData) {
-		my weighData = weighData;
-		DataModeler_fit (me); // because sigma has changed!
-	}
+	my weighData = weighData;
 }
 
 autoCovariance DataModeler_to_Covariance_parameters (DataModeler me) {
@@ -1893,14 +1901,13 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 		Melder_require (validData >= thy numberOfParameters,
 			U"The number of parameters should not exceed the number of data points.");
 		
-		DataModeler_setDataWeighing (thee.get(), ( hasSigmaColumn ? kDataModelerWeights::ONE_OVER_SIGMA : kDataModelerWeights::EQUAL_WEIGHTS));
+		thy weighData = ( hasSigmaColumn ? kDataModelerWeights::ONE_OVER_SIGMA : kDataModelerWeights::EQUAL_WEIGHTS);
 		thy xVariableName = Melder_dup (my columnHeaders [xcolumn].label.get());
 		thy yVariableName = Melder_dup (my columnHeaders [ycolumn].label.get());
-		thy tolerance = 1e-8;
 		DataModeler_fit (thee.get());
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Datamodeler not created from Table.");
+		Melder_throw (U"DataModeler not created from Table.");
 	}
 }
 
