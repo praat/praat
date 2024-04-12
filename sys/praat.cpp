@@ -1442,7 +1442,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		*/
 		char32 subfolderName [256];
 		#if defined (UNIX)
-			Melder_sprint (subfolderName,256, U".", programName, U"-dir");   // for example .praat-dir
+			Melder_sprint (subfolderName,256, programName);   // for example praat
 		#elif defined (macintosh)
 			Melder_sprint (subfolderName,256, praatP.title.get(), U" Prefs");   // for example Praat Prefs
 		#elif defined (_WIN32)
