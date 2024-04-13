@@ -17,9 +17,19 @@ appendInfoLine: "test test_spectrogramTypes.praat OK"
 procedure testMelSpectrogramInterface
 	.tone = Create Sound as pure tone: "t", 1, startTime, endTime, 44100, 440, 0.5, 0.01, 0.01
 	.mels = To MelSpectrogram: 0.015, 0.005, 100, 100, 0
+	#
+	# some non-default values
+	#
+	selectObject: .tone
+	.mels2 = To MelSpectrogram: 0.015, 0.005, 70, 100, 0
+	selectObject: .tone
+	.mels3 = To MelSpectrogram: 0.015, 0.005, 100, 200, 0
+	selectObject: .tone
+	.mels4 = To MelSpectrogram: 0.015, 0.005, 100, 200, 3000
 	# 
 	# Draw
 	#
+	selectObject: .mels
 	Erase all
 	Select outer viewport: 0, 4, 0, 3
 	Draw frequency scale: 0, 0, 0, 0, "yes"
@@ -41,7 +51,7 @@ procedure testMelSpectrogramInterface
 	.intensity = To Intensity
 	selectObject: .mels
 	.matrix = To Matrix: "yes"
-	removeObject: .matrix, .intensity, .mfcc, .mels, .tone
+	removeObject: .matrix, .intensity, .mfcc, .mels, .mels2, .mels3, .mels4, .tone
 endproc
 
 procedure queryCommons

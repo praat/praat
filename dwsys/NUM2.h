@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2023 David Weenink
+ * Copyright (C) 1997-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,6 +291,13 @@ autoVEC newVECmonotoneRegression (constVEC x);
 
 autoMAT newMATlowerCholeslyInverse_fromLowerCholesky (constMAT const& m);
 
+/* 
+	Pre: matrices must be square.
+*/
+autoMAT newMATsymmetricPositiveDefinte_inverse (constMAT m);
+autoMAT newMATsymmetric_inverse (constMAT m);
+autoMAT newMATinverse (constMAT m);
+
 void MATlowerCholesky_inplace (MAT a, double *out_lnd);
 
 autoMAT newMATlowerCholesky (constMATVU const& a, double *out_lnd);
@@ -321,7 +328,7 @@ double NUMdeterminant_fromSymmetricMatrix (constMAT m);
 double NUMmahalanobisDistanceSquared (constMAT lowerInverse, constVEC v, constVEC m);
 /*
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).
-	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'
+	Input matrix is the inverse L^-1 of the Cholesky decomposition S = L.L'
 	as calculated by NUMlowerCholeskyInverse or 1-row for a diagonal matrix (nr =1)
 	Mahalanobis distance calculation. S = L.L' -> S**-1 = L**-1' . L**-1
 		(x-m)'S**-1 (x-m) = (x-m)'L**-1' . L**-1. (x-m) =

@@ -1,6 +1,6 @@
 /* FormantModeler.cpp
  *
- * Copyright (C) 2014-2021 David Weenink
+ * Copyright (C) 2014-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmi
 static integer FormantModeler_drawingSpecifiers_x (FormantModeler me, double *xmin, double *xmax, integer *ixmin, integer *ixmax) {
 	Melder_assert (my trackmodelers.size > 0);
 	const DataModeler fm = my trackmodelers.at [1];
-	return DataModeler_drawingSpecifiers_x (fm, xmin, xmax, ixmin, ixmax);
+	return DataModeler_getDrawingSpecifiers_x (fm, xmin, xmax, ixmin, ixmax);
 }
 
 static void FormantModeler_getCumulativeChiScores (FormantModeler me, VEC chisq) {
@@ -416,7 +416,7 @@ void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmi
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		DataModeler ffi = my trackmodelers.at [itrack];
 		Graphics_setColour (g, itrack % 2 == 1 ? oddTracks : evenTracks );
-		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0.0, fmax, useEstimatedTrack, numberOfParameters);
+		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0.0, fmax, useEstimatedTrack);
 	}
 }
 
@@ -438,12 +438,12 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 }
 
 void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, MelderColour oddTracks, MelderColour evenTracks) {
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, bool errorBars, MelderColour oddTracks, MelderColour evenTracks) {
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
 		Graphics_setColour (g, itrack % 2 == 1 ? oddTracks : evenTracks);
-		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, useEstimatedTrack, numberOfParameters, errorBars, 0.0);
+		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, useEstimatedTrack, errorBars, 0.0);
 	}
 }
 
@@ -454,7 +454,7 @@ void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double 
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
-	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, errorBars, oddTracks, evenTracks);
+	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, errorBars, oddTracks, evenTracks);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -674,18 +674,19 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 
 autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, constINTVEC const& numberOfParametersPerTrack) {
 	try {
-		integer ifmin, ifmax, posInCollection = 0;
+		integer ifmin, ifmax;
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
+		Melder_require (numberOfDataPoints > 0,
+			U"There are no formant frames in the selection.");
 		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfDataPoints, numberOfParametersPerTrack);
 		Thing_setName (thee.get(), my name.get());
 		for (integer iformant = 1; iformant <= numberOfParametersPerTrack.size; iformant ++) {
-			posInCollection ++;
-			const DataModeler ffi = thy trackmodelers.at [posInCollection];
-			integer idata = 0, validData = 0;
-			for (integer iframe = ifmin; iframe <= ifmax; iframe ++) {
+			const DataModeler ffi = thy trackmodelers.at [iformant];
+			integer validData = 0;
+			for (integer iframe = ifmin, idata = 1; iframe <= ifmax; iframe ++, idata ++) {
 				const Formant_Frame curFrame = & my frames [iframe];
-				ffi -> data [++ idata] .x = Sampled_indexToX (me, iframe);
+				ffi -> data [idata] .x = Sampled_indexToX (me, iframe);
 				ffi -> data [idata] .status = kDataModelerData::INVALID;
 				if (iformant <= curFrame -> numberOfFormants) {
 					const double frequency = curFrame -> formant [iformant]. frequency;
