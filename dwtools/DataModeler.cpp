@@ -111,7 +111,7 @@ static void linear_evaluateBasisFunctions (DataModeler /* me */, double /* xin *
 }
 
 static void linear_evaluateDerivative (DataModeler /* me */, double /* xin */, vector<structDataModelerParameter> /* p */, VEC dydp) {
-	dydp <<= undefined;
+	dydp  <<=  undefined;
 }
 
 static void polynome_evaluateBasisFunctions (DataModeler me, double x, VEC term) {

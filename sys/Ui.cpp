@@ -2089,7 +2089,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Option argument “", my name.get(), U"” should be a string, not ", arg -> whichText(), U".");
 			if (my getValueFunction) {
-				my integerValue = my getValueFunction (arg -> getString()) + my subtract;
+				int value = my getValueFunction (arg -> getString());
+				if (value == -1)
+					my integerValue = 0;   // zero
+				else
+					my integerValue = my getValueFunction (arg -> getString()) + my subtract;   // 1 or greater
 			} else {
 				my integerValue = 0;
 				for (int i = 1; i <= my options.size; i ++) {
@@ -2288,7 +2292,11 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::OPTIONMENU_:
 		{
 			if (my getValueFunction) {
-				my integerValue = my getValueFunction (string) + my subtract;
+				int value = my getValueFunction (string);
+				if (value == -1)
+					my integerValue = 0;   // zero
+				else
+					my integerValue = my getValueFunction (string) + my subtract;   // 1 or greater
 			} else {
 				my integerValue = 0;
 				for (int i = 1; i <= my options.size; i ++) {
