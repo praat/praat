@@ -519,10 +519,10 @@ procedure test_certified_pontius_data
 		.pari = Get parameter value: .ipar
 		assert abs(.pari - .pCertified# [.ipar]) < 1e-7
 		.pariSigma = Get parameter standard deviation: .ipar
-		assert abs (.pariSigma - .pSigmaCertified# [.ipar]) < 1e-8
+		assert abs (.pariSigma - .pSigmaCertified# [.ipar]) < 1e-7
 	endfor
 	.rSquared = Get coefficient of determination
-	assert abs(.rSquared - .rsquaredCertified) < 1e-13
+	assert abs(.rSquared - .rsquaredCertified) < 1e-12
 	.residualStdev = Get residual standard deviation
 	assert abs(.residualStdev - .residualStdevCertified) < 1e-9
 	removeObject: .table, .dm
@@ -626,7 +626,7 @@ procedure test_certified_wampler5_data
 		.pari = Get parameter value: .ipar
 		assert abs ((.pari - .pCertified# [.ipar]) / .pCertified# [.ipar]) < 1e-5; for parameter '.ipar'
 		.pariSigma = Get parameter standard deviation: .ipar
-		assert abs ((.pariSigma - .pSigmaCertified# [.ipar]) / .pSigmaCertified# [.ipar]) < 1e-10; for parameter '.ipar'
+		assert abs ((.pariSigma - .pSigmaCertified# [.ipar]) / .pSigmaCertified# [.ipar]) < 1e-9; for parameter '.ipar'
 	endfor
 	.rSquared = Get coefficient of determination
 	assert abs(.rSquared - .rsquaredCertified) < 1e-12

@@ -24,7 +24,7 @@ void manual_functions_init (ManPages me) {
 MAN_PAGES_BEGIN R"~~~(
 ################################################################################
 "Functions"
-© Paul Boersma 2022,2023
+© Paul Boersma 2022-2024
 
 A growing list of functions that you can use in @formulas and @scripting...
 
@@ -80,7 +80,9 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`chooseReadFile$` (%`title$`) – pops up a file selection window for opening (or appending to) an existing file
 , @`chooseWriteFile$` (%`title$`, %`defaultFilename$`) – pops up a file selection window for saving to a new file
 , @`clearinfo` – clear the Info window
+, @`col#` (%`matrix##`, %`columnNumber`) - extract one column from a matrix
 , @`columnSums#` (%`matrix##`)
+, @`combine#` (...) - combine numbers, vectors and matrices into a new vector
 , @`correlation` (%`u#`, %`v#`) – correlation (between \-m1 and +1) of two vectors
 , @`cos` (%`x`) – cosine
 , @`cos#` (%`vector#`) – cosine of each element of %`vector#`
@@ -266,6 +268,7 @@ A growing list of functions that you can use in @formulas and @scripting...
 , @`round` (%`x`) – nearest integer
 , @`round#` (%`vector#`) – nearest integer of each element of %`vector#`
 , @`round##` (%`matrix##`) – nearest integer of each cell of %`matrix##`
+, @`row#` (%`matrix##`, %`rowNumber`) - extract one row from a matrix
 , @`rowSums#` (%`matrix##`)
 , @`runScript` (%`filePath$`, `...`) – run a script with the given arguments
 , @`runSubprocess` (%`executableFilePath$`, `...`) – run an external program with the given arguments
@@ -1074,6 +1077,24 @@ Syntax and semantics
 : clear the @@Info window@.
 
 ################################################################################
+"`col#`"
+© Paul Boersma 2024
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`col#` (%`m##`, %`i`)
+: extract the %`i`th column from the matrix %`m##`.
+
+Examples
+========
+{
+	mat## = {{ 7, 4 }, { 99, 103 }}
+	\`{assert} col# (mat##, 2) = { 4, 103 }
+}
+
+################################################################################
 "`columnSums#`"
 © Paul Boersma 2023
 
@@ -1085,7 +1106,7 @@ Syntax and semantics
 : compute the sum of the elements of each row of the matrix %`m##`.
 
 ################################################################################
-"`commbine#`"
+"`combine#`"
 © Paul Boersma 2023
 
 A function that can be used in @Formulas.
@@ -3611,6 +3632,23 @@ Syntax and semantics
 ====================
 #`round##` (%`m##`)
 : round (@`round`) each cell of the matrix %`m##`.
+
+################################################################################
+"`row#`"
+© Paul Boersma 2024
+
+A function that can be used in @Formulas.
+
+Syntax and semantics
+====================
+#`row#` (%`m##`, %`i`)
+: extract the %`i`th row from the matrix %`m##`.
+
+Examples
+========
+{
+	\`{assert} row# ({{ 7, 4 }, { 99, 103 }}, 2) = { 99, 103 }
+}
 
 ################################################################################
 "`rowSums#`"
