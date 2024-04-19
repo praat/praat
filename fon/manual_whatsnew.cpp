@@ -29,6 +29,13 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.08# (14 April 2024)
+• Windows: fixed a problem with the right and bottom edges of windows (half-visible scroll bars)
+	for the Intel editions (the ARM64 edition still has this problem).
+• Scripting: fixed a bug that could cause Praat to crash when an unknown choice was given to an option menu.
+• MelSpectrogram: fixed a bug that could cause Praat to crash if a mel value was negative.
+• DataModeler: improved confidence limits on estimated model parameters.
+
 ##6.4.07# (17 March 2024)
 • The command @@Sound & Pitch: To PointProcess (cc)@, which is also used when computing the times of pulses
   in the Sound window, could cause Praat to freeze when the pitch ceiling (and the measured pitch)
