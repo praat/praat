@@ -2,7 +2,7 @@
 #define _espeakdata_FileInMemory_h_
 
 /* espeakdata_FileInMemory.h
- * Copyright (C) David Weenink 2012-2017
+ * Copyright (C) David Weenink 2012-2017, Paul Boersma 2024
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "Table.h"
 
 autoFileInMemorySet create_espeak_ng_FileInMemorySet ();
+autoFileInMemorySet create_espeak_ng_FileInMemorySet__ru ();
 
 autoFileInMemoryManager create_espeak_ng_FileInMemoryManager ();
 inline autoFileInMemoryManager espeak_ng_FileInMemoryManager;
