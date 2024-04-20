@@ -31,6 +31,7 @@ Latest changes in Praat.
 
 ##6.4.09# (20 April 2024)
 • TextGrid window: fixed a rare problem with ##Align interval# that could lead to a zero-length interval.
+• Windows ARM64 edition: fixed a bug that would cause ##Align interval# to crash.
 • ##Sound & TextGrid: Align interval...# now also available in the Objects window.
 
 ##6.4.08# (14 April 2024)
