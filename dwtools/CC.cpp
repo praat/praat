@@ -1,6 +1,6 @@
 /* CC.cpp
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2020 David Weenink, 2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +170,7 @@ void CC_getNumberOfCoefficients_extrema (CC me, integer startFrame, integer endF
 		const integer nc = f -> numberOfCoefficients;
 		if (nc < min)
 			min = nc;
-		else if (nc > max)
+		if (nc > max)
 			max = nc;
 	}
 	if (out_min)

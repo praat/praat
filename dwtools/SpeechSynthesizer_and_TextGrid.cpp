@@ -1,6 +1,6 @@
 /* SpeechSynthesizer_and_TextGrid.cpp
  *
- * Copyright (C) 2011-2019, 2023 David Weenink
+ * Copyright (C) 2011-2019,2023 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
-	djmw 20111214
-*/
 
 #include "DTW.h"
 #include "Sounds_to_DTW.h"
@@ -118,179 +114,178 @@ static void IntervalTier_getLabelInfo (IntervalTier me, conststring32 label, dou
 
 #define TIMES_ARE_CLOSE(x,y) (fabs((x)-(y)) < precision)
 void IntervalTier_splitInterval (IntervalTier me, double time, conststring32 leftLabel, integer interval, double precision) {
-    try {
+	try {
 		Melder_assert (interval > 0);
-        TextInterval ti = nullptr;
+		TextInterval ti = nullptr;
 		integer index = 0;
-        for (integer i = interval; i <= my intervals.size; i ++) {
-            ti = my intervals.at [i];
-            if (time < ti -> xmax + precision && time > ti -> xmin - precision) {
-                index = i;
-                break;
+		for (integer i = interval; i <= my intervals.size; i ++) {
+			ti = my intervals.at [i];
+			if (time < ti -> xmax + precision && time > ti -> xmin - precision) {
+				index = i;
+				break;
 			}
-        }
-        // if index == 0 then search left intervals??
-        if (index == 0 || TIMES_ARE_CLOSE(time, ti -> xmin) || TIMES_ARE_CLOSE(time, ti -> xmax))
-            return;
-        autoTextInterval newInterval = TextInterval_create (ti -> xmin, time, leftLabel);
-        /*
+		}
+		// TODO: if index == 0 then search left intervals??
+		if (index == 0 || TIMES_ARE_CLOSE(time, ti -> xmin) || TIMES_ARE_CLOSE(time, ti -> xmax))
+			return;
+		autoTextInterval newInterval = TextInterval_create (ti -> xmin, time, leftLabel);
+		/*
 			Make start of current and begin of new interval equal
 		*/
-        ti -> xmin = time;
-        my intervals. addItem_move (newInterval.move());
-    } catch (MelderError) {
-        Melder_throw (U"Boundary not inserted.");
-    }
-
+		ti -> xmin = time;
+		my intervals. addItem_move (newInterval.move());
+	} catch (MelderError) {
+		Melder_throw (U"Boundary not inserted.");
+	}
 }
 
 static autoTextTier TextTier_IntervalTier_cutPartsMatchingLabel (TextTier me, IntervalTier thee, conststring32 label, double precision) {
-    try {
-       Melder_require (my xmin == thy xmin && my xmax == thy xmax,
-            U"Domains should be equal.");
-        integer myIndex = 1;
+	try {
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
+			U"Domains should be equal.");
+		integer myIndex = 1;
 		double timeCut = 0.0;
-        autoTextTier him = TextTier_create (0.0, my xmax - my xmin);
-        for (integer j = 1; j <= thy intervals.size; j ++) {
-            const TextInterval cut = thy intervals.at [j];
-            if (Melder_equ (cut -> text.get(), label))
-                timeCut += cut -> xmax - cut -> xmin;
-            else {
-                 while (myIndex <= my points.size) {
-                    const TextPoint tp = my points.at [myIndex];
-                    if (tp -> number < cut -> xmin - precision) {
-                        // point is left of cut
-                        myIndex ++;
-                    } else if (tp -> number < cut -> xmax + precision) {
-                        // point is in (no)cut
-                        const double time = tp -> number - my xmin - timeCut;
-                        TextTier_addPoint (him.get(), time, tp -> mark.get());
-                        myIndex ++;
-                    } else {
-                        break;
-                    }
-                 }
-            }
-        }
-        his xmax -= timeCut;
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": parts not cut.");
-    }
+		autoTextTier him = TextTier_create (0.0, my xmax - my xmin);
+		for (integer j = 1; j <= thy intervals.size; j ++) {
+			const TextInterval cut = thy intervals.at [j];
+			if (Melder_equ (cut -> text.get(), label))
+				timeCut += cut -> xmax - cut -> xmin;
+			else {
+				while (myIndex <= my points.size) {
+					const TextPoint tp = my points.at [myIndex];
+					if (tp -> number < cut -> xmin - precision) {
+						// point is left of cut
+						myIndex ++;
+					} else if (tp -> number < cut -> xmax + precision) {
+						// point is in (no)cut
+						const double time = tp -> number - my xmin - timeCut;
+						TextTier_addPoint (him.get(), time, tp -> mark.get());
+						myIndex ++;
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		his xmax -= timeCut;
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": parts not cut.");
+	}
 }
 
 // Cut parts from me marked by labels in thee
 autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, conststring32 label, double precision) {
-    try {
-        Melder_require (my xmin == thy xmin && my xmax != thy xmax,
-            U"Domains should be identical.");
-        autoVEC durations = raw_VEC (my intervals.size);
-        for (integer i = 1; i <= my intervals.size; i ++) {
-            const TextInterval ti = my intervals.at [i];
-            durations [i] = ti -> xmax - ti -> xmin;
-        }
-        integer myInterval = 1;
-        for (integer j = 1; j <= thy intervals.size; j ++) {
-            const TextInterval cut = thy intervals.at [j];
-            if (Melder_equ (cut -> text.get(), label)) { // trim
-                while (myInterval <= my intervals.size) {
-                    const TextInterval ti = my intervals.at [myInterval];
-                    if (ti -> xmin > cut -> xmin - precision && ti -> xmax < cut -> xmax + precision) {
+	try {
+		Melder_require (my xmin == thy xmin && my xmax != thy xmax,
+			U"Domains should be identical.");
+		autoVEC durations = raw_VEC (my intervals.size);
+		for (integer i = 1; i <= my intervals.size; i ++) {
+			const TextInterval ti = my intervals.at [i];
+			durations [i] = ti -> xmax - ti -> xmin;
+		}
+		integer myInterval = 1;
+		for (integer j = 1; j <= thy intervals.size; j ++) {
+			const TextInterval cut = thy intervals.at [j];
+			if (Melder_equ (cut -> text.get(), label)) { // trim
+				while (myInterval <= my intervals.size) {
+					const TextInterval ti = my intervals.at [myInterval];
+					if (ti -> xmin > cut -> xmin - precision && ti -> xmax < cut -> xmax + precision) {
 						/*
 							1. Interval completely within cut
-                        */
-                        durations [myInterval] = 0.0;
-                        myInterval ++;
-                    } else if (ti -> xmin < cut -> xmin + precision && cut -> xmin < ti -> xmax + precision) {
+						*/
+						durations [myInterval] = 0.0;
+						myInterval ++;
+					} else if (ti -> xmin < cut -> xmin + precision && cut -> xmin < ti -> xmax + precision) {
 						/*
 							2. Cut start is within interval
 						*/
-                        if (cut -> xmax > ti -> xmax - precision) {
+						if (cut -> xmax > ti -> xmax - precision) {
 							/*
 								Interval end is in cut, interval start before
 							*/
-                            durations [myInterval] -= ti -> xmax - cut -> xmin;
-                            myInterval ++;
-                        } else {
+							durations [myInterval] -= ti -> xmax - cut -> xmin;
+							myInterval ++;
+						} else {
 							/*
 								3. cut completely within interval
-                            */
-                            durations [myInterval] -= cut -> xmax - cut -> xmin;
-                            break;
-                        }
-                    } else if (cut -> xmax > ti -> xmin - precision && cut -> xmin < ti -> xmax + precision) {
+							*/
+							durations [myInterval] -= cut -> xmax - cut -> xmin;
+							break;
+						}
+					} else if (cut -> xmax > ti -> xmin - precision && cut -> xmin < ti -> xmax + precision) {
 						/*
 							1+2 : cut end is within interval, cut start before
-                        */
-                        durations [myInterval] -= cut -> xmax - ti -> xmin;
-                        break;
-                    } else if (ti -> xmax < cut -> xmin + precision) {
-                        myInterval ++;
-                    }
-                }
-            }
-        }
-        longdouble totalDuration = 0.0;
-        for (integer i = 1; i <= my intervals.size; i ++) {
-            if (durations [i] < precision)
-                durations [i] = 0.0;
-            totalDuration += durations [i];
-        }
-        autoIntervalTier him = IntervalTier_create (0, double (totalDuration));
-        double time = 0.0;
-        integer hisInterval = 1;
-        for (integer i = 1; i <= my intervals.size; i ++) {
-            if (durations [i] <= 0.0)
-            	continue;
-            const TextInterval ti = my intervals.at [i];
-            time += durations [i];
-            if (fabs (time - totalDuration) > precision) {
-                IntervalTier_splitInterval (him.get(), time, ti -> text.get(), hisInterval, precision);
-                hisInterval ++;
-            } else { // last interval
-                const TextInterval histi = his intervals.at [hisInterval];
-                TextInterval_setText (histi, ti -> text.get());
-            }
-        }
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": parts not cut.");
-    }
+						*/
+						durations [myInterval] -= cut -> xmax - ti -> xmin;
+						break;
+					} else if (ti -> xmax < cut -> xmin + precision) {
+						myInterval ++;
+					}
+				}
+			}
+		}
+		longdouble totalDuration = 0.0;
+		for (integer i = 1; i <= my intervals.size; i ++) {
+			if (durations [i] < precision)
+				durations [i] = 0.0;
+			totalDuration += durations [i];
+		}
+		autoIntervalTier him = IntervalTier_create (0, double (totalDuration));
+		double time = 0.0;
+		integer hisInterval = 1;
+		for (integer i = 1; i <= my intervals.size; i ++) {
+			if (durations [i] <= 0.0)
+				continue;
+			const TextInterval ti = my intervals.at [i];
+			time += durations [i];
+			if (fabs (time - totalDuration) > precision) {
+				IntervalTier_splitInterval (him.get(), time, ti -> text.get(), hisInterval, precision);
+				hisInterval ++;
+			} else { // last interval
+				const TextInterval histi = his intervals.at [hisInterval];
+				TextInterval_setText (histi, ti -> text.get());
+			}
+		}
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": parts not cut.");
+	}
 }
 
 autoTextGrid TextGrid_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, conststring32 label, double precision) {
-    try {
-        Melder_require (my xmin == thy xmin && my xmax == thy xmax,
-           U"Domains should be equal.");
-        double cutDurations = 0;
-        for (integer i = 1; i <= thy intervals.size; i ++) {
-            const TextInterval cut = thy intervals.at [i];
-            if (Melder_equ (cut -> text.get(), label))
-                cutDurations += cut -> xmax - cut -> xmin;
-        }
-        if (cutDurations <= precision) // Nothing to patch
-            return Data_copy (me);
-        autoTextGrid him = TextGrid_createWithoutTiers (0, thy xmax - thy xmin - cutDurations);
-        for (integer itier = 1; itier <= my tiers->size; itier ++) {
-            const Function anyTier = my tiers->at [itier];
-            if (anyTier -> classInfo == classIntervalTier) {
-                autoIntervalTier newTier = IntervalTier_IntervalTier_cutPartsMatchingLabel ((IntervalTier) anyTier, thee, label, precision);
-                his tiers -> addItem_move (newTier.move());
-            } else {
-                autoTextTier newTier = TextTier_IntervalTier_cutPartsMatchingLabel ((TextTier) anyTier, thee, label, precision);
-                his tiers -> addItem_move (newTier.move());
-            }
-        }
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": no parts cut.");
-    }
+	try {
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
+			U"Domains should be equal.");
+		double cutDurations = 0;
+		for (integer i = 1; i <= thy intervals.size; i ++) {
+			const TextInterval cut = thy intervals.at [i];
+			if (Melder_equ (cut -> text.get(), label))
+				cutDurations += cut -> xmax - cut -> xmin;
+		}
+		if (cutDurations <= precision) // Nothing to patch
+			return Data_copy (me);
+		autoTextGrid him = TextGrid_createWithoutTiers (0, thy xmax - thy xmin - cutDurations);
+		for (integer itier = 1; itier <= my tiers->size; itier ++) {
+			const Function anyTier = my tiers->at [itier];
+			if (anyTier -> classInfo == classIntervalTier) {
+				autoIntervalTier newTier = IntervalTier_IntervalTier_cutPartsMatchingLabel ((IntervalTier) anyTier, thee, label, precision);
+				his tiers -> addItem_move (newTier.move());
+			} else {
+				autoTextTier newTier = TextTier_IntervalTier_cutPartsMatchingLabel ((TextTier) anyTier, thee, label, precision);
+				his tiers -> addItem_move (newTier.move());
+			}
+		}
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": no parts cut.");
+	}
 }
 
 // Patch thy intervals that match patchLabel into my intervals
 // The resulting IntervalTier has thy xmin as starting time and thy xmax as end time
 autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, conststring32 patchLabel, double precision) {
-    try {
+	try {
 		autoVEC durations = zero_VEC (my intervals.size + 1);
 		for (integer i = 1; i <= my intervals.size; i ++) {
 			const TextInterval myti = my intervals.at [i];
@@ -298,9 +293,9 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 		}
 		integer myInterval = 1;
 		double xShift = thy xmin - my xmin, firstShift = 0.0;
-        for (integer interval = 1; interval <= thy intervals.size; interval ++) {
-            const TextInterval patch = thy intervals.at [interval];
-            if (Melder_equ (patch -> text.get(), patchLabel)) {
+		for (integer interval = 1; interval <= thy intervals.size; interval ++) {
+			const TextInterval patch = thy intervals.at [interval];
+			if (Melder_equ (patch -> text.get(), patchLabel)) {
 				if (interval == 1)
 					xShift += firstShift = patch -> xmax - patch -> xmin;
 				else if (interval == thy intervals.size) 
@@ -316,7 +311,7 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 						}
 						myInterval++;
 					}
-            } else
+			} else
 				while (myInterval <= my intervals.size) {
 					TextInterval ti = my intervals.at [myInterval];
 					double tixmax = ti -> xmax + xShift;
@@ -325,9 +320,9 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 					else
 						break;
 				}
-        }
-        autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
-        // first interval
+		}
+		autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
+		// first interval
 		double time = thy xmin + firstShift;
 		integer hisInterval = 1;
 		if (firstShift > 0.0) {
@@ -344,10 +339,10 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 			time += durations [my intervals.size + 1];
 			IntervalTier_splitInterval (him.get(), time , U"", hisInterval, precision);
 		}
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": not patched.");
-    }
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": not patched.");
+	}
 }
 
 #if 0
@@ -481,6 +476,8 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		Melder_require (fabs (1.0 / thy dx - my d_samplingFrequency) < 1e-9, 
 			U"The sampling frequencies of the SpeechSynthesizer and the Sound should be equal.");
 
+//TRACE
+trace(1);
 		autoSTRVEC tokens = splitByWhitespace_STRVEC (his text.get());
 		const integer numberOfTokens = tokens.size;
 		Melder_require (numberOfTokens > 0,
@@ -490,11 +487,13 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 			1. it will improve the word rate guess
 			2. it will improve the DTW matching.
 		*/
+trace(2);
 		const double minPitch = 200.0, timeStep = 0.005, precision = thy dx;
 		double startTimeOfSounding, endTimeOfSounding;
 		autoSound soundTrimmed = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & startTimeOfSounding, & endTimeOfSounding);
 		const double duration_soundTrimmed = soundTrimmed -> xmax - soundTrimmed -> xmin;
 		const bool hasSilence_sound = fabs (startTimeOfSounding - thy xmin) > precision || fabs (endTimeOfSounding - thy xmax) > precision;
+trace(3);
 
 		if (my d_estimateSpeechRate) {
 			/*
@@ -507,7 +506,8 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 			const double wordsPerMinute_rawText = 60.0 * (Melder_length (his text.get()) / 5.0) / duration_soundTrimmed;
 			my d_wordsPerMinute = Melder_ifloor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
-		
+trace(4);
+
 		autoTextGrid textgrid_synth, textgrid_synth_sounding;
 		autoSound synth = SpeechSynthesizer_TextInterval_to_Sound (me, him, & textgrid_synth);
 		/*
@@ -524,6 +524,7 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		const double synthTrimmed_duration = synthTrimmed -> xmax - synthTrimmed -> xmin;
 		const bool hasSilence_synth = fabs (startTimeOfSounding_synth - synth -> xmin) > precision || 
 								fabs (endTimeOfSounding_synth - synth -> xmax) > precision;
+trace(5);
 
 		if (hasSilence_synth)
 			textgrid_synth_sounding = TextGrid_extractPart (textgrid_synth.get(), startTimeOfSounding_synth, endTimeOfSounding_synth, true);
@@ -534,19 +535,22 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		slope = ( slope > 1.0 ? slope : 1.0 / slope );
 		const int constraint = ( slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1 ); // TODO enums
 
-		//TRACE
+trace(6);
 		trace (hasSilence_sound, hasSilence_synth);
 		const double analysisWidth = 0.02, dt = 0.005, band = 0.0;
 		autoDTW dtw = Sounds_to_DTW ((hasSilence_sound ? soundTrimmed.get() : thee),
 				(hasSilence_synth ? synthTrimmed.get() : synth.get()), analysisWidth, dt, band, constraint);
-		
+trace(7);
+
 		autoTextGrid result = DTW_TextGrid_to_TextGrid (dtw.get(), (hasSilence_synth ? textgrid_synth_sounding.get() : textgrid_synth.get()), precision);
+trace(8);
 		if (hasSilence_sound) {
 			if (startTimeOfSounding > thy xmin)
 				TextGrid_setEarlierStartTime (result.get(), thy xmin, U"", U"");
 			if (endTimeOfSounding < thy xmax || result -> xmax < thy xmax)
 					TextGrid_setLaterEndTime (result.get(), thy xmax, U"", U"");
 		}
+trace(9);
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Sound and TextInterval not aligned.");
@@ -568,102 +572,102 @@ typedef struct structAlignmentOfSoundAndTextStruct {
 } *SpeechSynthesizer_alignmentStruct;*/
 
 static autoTextGrid SpeechSynthesizer_Sound_TextInterval_align2 (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
-    try {
+	try {
 		Melder_require (thy xmin == his xmin && thy xmax == his xmax,
 			U"Domains of Sound and TextGrid should be equal.");
 		Melder_require (fabs (1.0 / thy dx - my d_samplingFrequency) < 1e-9, 
 			U"The sampling frequencies of the SpeechSynthesizer and the Sound should be equal.");
 
-        const conststring32 trimLabel = U"trim";
-        /*
+		const conststring32 trimLabel = U"trim";
+		/*
 			1. Trim the silences of the sound
 			
 			For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives 
 			will not be found as sounding! This is ok since silences are almost at zero amplitudes
 			We also have to decrease the minimum silence and minimum sounding duration to catch, 
 			for example, the final plosive "t" from the word "text"
-         */
-        const double minPitch = 200, timeStep = 0.005, precision = thy dx;
-        autoTextGrid thee_trimmer;
-        autoSound thee_trimmed = Sound_trimSilences (thee, trimDuration, false, minPitch, timeStep, silenceThreshold,  minSilenceDuration, minSoundingDuration, &thee_trimmer, trimLabel);
+		*/
+		const double minPitch = 200, timeStep = 0.005, precision = thy dx;
+		autoTextGrid thee_trimmer;
+		autoSound thee_trimmed = Sound_trimSilences (thee, trimDuration, false, minPitch, timeStep, silenceThreshold,  minSilenceDuration, minSoundingDuration, &thee_trimmer, trimLabel);
 		/*
 			2. Synthesize the sound from the TextInterval
 		*/
-        autoTextGrid tg_syn;
-        autoSound synth = SpeechSynthesizer_TextInterval_to_Sound (me, him, &tg_syn);
+		autoTextGrid tg_syn;
+		autoSound synth = SpeechSynthesizer_TextInterval_to_Sound (me, him, &tg_syn);
 		/*
 			3. There should be no silences in the synthesized sound except at the start and finish.
 			Set the wordwarp parameter to a small value like 0.001 s.
 
 			4. Get DTW from the two sounds
 		*/
-        const double analysisWidth = 0.02, dt = 0.005, band = 0.0;
-        const int constraint = 4;
-        autoDTW dtw = Sounds_to_DTW (thee_trimmed.get(), synth.get(), analysisWidth, dt, band, constraint);
+		const double analysisWidth = 0.02, dt = 0.005, band = 0.0;
+		const int constraint = 4;
+		autoDTW dtw = Sounds_to_DTW (thee_trimmed.get(), synth.get(), analysisWidth, dt, band, constraint);
 		/*
 			6. Warp the synthesis TextGrid
 			First make domains equal, otherwise the warper protests
 		*/
-        autoTextGrid warp = DTW_TextGrid_to_TextGrid (dtw.get(), tg_syn.get(), precision);
+		autoTextGrid warp = DTW_TextGrid_to_TextGrid (dtw.get(), tg_syn.get(), precision);
 		/*
 			6. Patch the trimmed intervals back into the warped TextGrid
 		*/
-        autoTextGrid result = TextGrid_IntervalTier_patch (warp.get(), (IntervalTier) thee_trimmer -> tiers->at [1], U"trim", 2 * thy dx);
+		autoTextGrid result = TextGrid_IntervalTier_patch (warp.get(), (IntervalTier) thee_trimmer -> tiers->at [1], U"trim", 2 * thy dx);
 
-        return result;
-    } catch (MelderError) {
-        Melder_throw (thee, U": sound and TextInterval not aligned.");
-    }
+		return result;
+	} catch (MelderError) {
+		Melder_throw (thee, U": sound and TextInterval not aligned.");
+	}
 }
 
 autoTextGrid SpeechSynthesizer_Sound_IntervalTier_align (SpeechSynthesizer me, Sound thee, IntervalTier him, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
-    try {
+	try {
 		IntervalTier_checkRange (him, istart, iend);
-        const TextInterval tib = his intervals.at [istart];
-        const TextInterval tie = his intervals.at [iend];
-		Melder_require (tib -> xmin >= thy xmin && tie -> xmax <= thy xmax, 
+		const TextInterval tib = his intervals.at [istart];
+		const TextInterval tie = his intervals.at [iend];
+		Melder_require (tib -> xmin >= thy xmin && tie -> xmax <= thy xmax,
 			U"The chosen interval(s) must lie within the sound.");
-        OrderedOf<structTextGrid> textgrids;
-        autoTextGrid result = TextGrid_create (tib -> xmin, tie -> xmax, U"sentence clause word phoneme", U"");
-        for (integer iint = istart; iint <= iend; iint ++) {
+		OrderedOf<structTextGrid> textgrids;
+		autoTextGrid result = TextGrid_create (tib -> xmin, tie -> xmax, U"sentence clause word phoneme", U"");
+		for (integer iint = istart; iint <= iend; iint ++) {
 			const TextInterval ti = his intervals.at [iint];
-            if (ti -> text && ti -> text [0] != U'\0') {
-                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
-                autoTextGrid grid = SpeechSynthesizer_Sound_TextInterval_align (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
-                textgrids. addItem_move (grid.move());
-            }
-        }
-        Melder_require (textgrids.size > 0,
+			if (ti -> text && ti -> text [0] != U'\0') {
+				autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
+				autoTextGrid grid = SpeechSynthesizer_Sound_TextInterval_align (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
+				textgrids. addItem_move (grid.move());
+			}
+		}
+		Melder_require (textgrids.size > 0,
 			U"Nothing could be aligned. Was your IntervalTier empty?");
-        autoTextGrid aligned = TextGrids_to_TextGrid_appendContinuous (& textgrids, true);
-        return aligned;
-    } catch (MelderError) {
-        Melder_throw (U"No aligned TextGrid created.");
-    }
+		autoTextGrid aligned = TextGrids_to_TextGrid_appendContinuous (& textgrids, true);
+		return aligned;
+	} catch (MelderError) {
+		Melder_throw (U"No aligned TextGrid created.");
+	}
 }
 
 static autoTextGrid SpeechSynthesizer_Sound_IntervalTier_align2 (SpeechSynthesizer me, Sound thee, IntervalTier him, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
-    try {
+	try {
 		IntervalTier_checkRange (him, istart, iend);
-        const TextInterval tb = his intervals.at [istart];
-        const TextInterval te = his intervals.at [iend];
-        autoTextGrid result = TextGrid_create (tb -> xmin, te -> xmax, U"sentence clause word phoneme", U"");
-        OrderedOf<structTextGrid> textgrids;
-        for (integer iint = istart; iint <= iend; iint ++) {
-            const TextInterval ti = his intervals.at [iint];
-            if (ti -> text && ti -> text [0] != U'\0') {
-                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
-                autoTextGrid grid = SpeechSynthesizer_Sound_TextInterval_align2 (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
-                textgrids. addItem_move (grid.move());
-            }
-        }
-        Melder_require (textgrids.size > 0, U"Nothing could be aligned. Was your IntervalTier empty?");
+		const TextInterval tb = his intervals.at [istart];
+		const TextInterval te = his intervals.at [iend];
+		autoTextGrid result = TextGrid_create (tb -> xmin, te -> xmax, U"sentence clause word phoneme", U"");
+		OrderedOf<structTextGrid> textgrids;
+		for (integer iint = istart; iint <= iend; iint ++) {
+			const TextInterval ti = his intervals.at [iint];
+			if (ti -> text && ti -> text [0] != U'\0') {
+				autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
+				autoTextGrid grid = SpeechSynthesizer_Sound_TextInterval_align2 (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
+				textgrids. addItem_move (grid.move());
+			}
+		}
+		Melder_require (textgrids.size > 0, U"Nothing could be aligned. Was your IntervalTier empty?");
 
-        autoTextGrid aligned = TextGrids_to_TextGrid_appendContinuous (& textgrids, true);
-        return aligned;
-    } catch (MelderError) {
-        Melder_throw (U"No aligned TextGrid created.");
-    }
+		autoTextGrid aligned = TextGrids_to_TextGrid_appendContinuous (& textgrids, true);
+		return aligned;
+	} catch (MelderError) {
+		Melder_throw (U"No aligned TextGrid created.");
+	}
 }
 
 autoTextGrid SpeechSynthesizer_Sound_TextGrid_align (SpeechSynthesizer me, Sound thee, TextGrid him, integer tierNumber, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
@@ -680,13 +684,13 @@ autoTextGrid SpeechSynthesizer_Sound_TextGrid_align (SpeechSynthesizer me, Sound
 
 
 autoTextGrid SpeechSynthesizer_Sound_TextGrid_align2 (SpeechSynthesizer me, Sound thee, TextGrid him, integer tierNumber, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
-    try {//TODO: check not empty tier
-    	const IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
-        autoTextGrid grid = SpeechSynthesizer_Sound_IntervalTier_align2 (me, thee, tier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
-        return grid;
-    } catch (MelderError) {
-        Melder_throw (U"");
-    }
+	try {//TODO: check not empty tier
+		const IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
+		autoTextGrid grid = SpeechSynthesizer_Sound_IntervalTier_align2 (me, thee, tier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
+		return grid;
+	} catch (MelderError) {
+		Melder_throw (U"");
+	}
 }
 
 static autoStrings IntervalTier_to_Strings_withOriginData (IntervalTier me, INTVEC from) {
