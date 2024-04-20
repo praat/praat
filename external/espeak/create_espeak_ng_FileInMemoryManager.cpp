@@ -1,6 +1,6 @@
 /* create_espeak_ng_FileInMemoryManager.cpp
  *
- * Copyright (C) 2017 David Weenink
+ * Copyright (C) 2017 David Weenink, 2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,12 @@
 
 autoFileInMemoryManager create_espeak_ng_FileInMemoryManager () {
 	try{
-		autoFileInMemorySet espeak_ng = create_espeak_ng_FileInMemorySet ();
+		autoFileInMemorySet espeak_ng_noRussian = create_espeak_ng_FileInMemorySet ();
+		autoFileInMemorySet espeak_ng_Russian = create_espeak_ng_FileInMemorySet__ru ();
+		OrderedOf <structFileInMemorySet> list;
+		list. addItem_move (espeak_ng_noRussian.move());
+		list. addItem_move (espeak_ng_Russian.move());
+		autoFileInMemorySet espeak_ng = FileInMemorySets_merge (list);
 		autoFileInMemoryManager me = FileInMemoryManager_create (espeak_ng.get());
 		return me;
 	} catch (MelderError) {
