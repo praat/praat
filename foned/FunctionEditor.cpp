@@ -1021,38 +1021,67 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 			return;
 		}
 		const integer otherGroupMember = findOtherGroupMember (me);
-		const FunctionEditor thee = theGroupMembers [otherGroupMember];
+		const FunctionEditor she = theGroupMembers [otherGroupMember];
+		/*
+			Adapt my domain.
+		*/
+		Melder_clipRight (& my tmin, her tmin);
+		Melder_clipLeft (her tmax, & my tmax);
+		/*
+			Adapt my window.
+		*/
 		if (my classPref_synchronizedZoomAndScroll()) {
-			my startWindow = thy startWindow;
-			my endWindow = thy endWindow;
+			my startWindow = her startWindow;
+			my endWindow = her endWindow;
 			my v_windowChanged ();
 		}
-		my startSelection = thy startSelection;
-		my endSelection = thy endSelection;
-		if (my tmin > thy tmin || my tmax < thy tmax) {
-			Melder_clipRight (& my tmin, thy tmin);
-			Melder_clipLeft (thy tmax, & my tmax);
-			Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
-			my v_updateText ();
-			updateScrollBar (me);
-			FunctionEditor_redraw (me);
-		} else {
-			Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
-			my v_updateText ();
-			updateScrollBar (me);
-			FunctionEditor_redraw (me);
-			if (my tmin < thy tmin || my tmax > thy tmax) {
-				for (integer imember = 1; imember <= THE_MAXIMUM_GROUP_SIZE; imember ++) {
-					if (theGroupMembers [imember] && theGroupMembers [imember] != me) {
-						if (my tmin < thy tmin)
-							theGroupMembers [imember] -> tmin = my tmin;
-						if (my tmax > thy tmax)
-							theGroupMembers [imember] -> tmax = my tmax;
-						Melder_assert (isdefined (theGroupMembers [imember] -> startSelection));   // precondition of FunctionEditor_updateText()
-						FunctionEditor_updateText (theGroupMembers [imember]);
-						updateScrollBar (theGroupMembers [imember]);
-						FunctionEditor_redraw (theGroupMembers [imember]);
+		/*
+			Adapt my selection.
+			Or should I impose my selection on the others? Votes?
+		*/
+		my startSelection = her startSelection;
+		my endSelection = her endSelection;
+		/*
+			Update me.
+		*/
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
+		my v_updateText ();
+		updateScrollBar (me);
+		FunctionEditor_redraw (me);
+		/*
+			Adapt all the other windows.
+		*/
+		if (my tmin < her tmin || my tmax > her tmax) {
+			for (integer imember = 1; imember <= THE_MAXIMUM_GROUP_SIZE; imember ++) {
+				FunctionEditor you = theGroupMembers [imember];
+				if (you && you != me) {
+					/*
+						Adapt your domain.
+					*/
+					Melder_clipRight (& your tmin, my tmin);
+					Melder_clipLeft (my tmax, & your tmax);
+					/*
+						Adapt your window.
+					 */
+					if (my classPref_synchronizedZoomAndScroll()) {
+						your startWindow = my startWindow;
+						your endWindow = my endWindow;
+						your v_windowChanged ();
 					}
+					/*
+						Adapt your selection.
+						Should already have been set equal earlier, but why not
+						(to keep it compatible with the imposure suggested above).
+					*/
+					your startSelection = my startSelection;   // probably void
+					your endSelection = my endSelection;   // probably void
+					/*
+						Update you.
+					*/
+					Melder_assert (isdefined (your startSelection));   // precondition of FunctionEditor_updateText()
+					FunctionEditor_updateText (you);
+					updateScrollBar (you);
+					FunctionEditor_redraw (you);
 				}
 			}
 		}
@@ -1063,8 +1092,8 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);   // for setting buttons in draw method
+		updateGroup (me, true, true);
 	}
-	updateGroup (me, true, true);
 }
 
 static void HELP__intro (FunctionEditor /* me */, EDITOR_ARGS) {
