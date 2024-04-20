@@ -1,6 +1,6 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2020,2022 Paul Boersma
+ * Copyright (C) 1992-2020,2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,8 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 	Melder_assert (tmin >= my xmin);
 	Melder_assert (tmax <= my xmax);
 	/*
-	 * Make sure that the tier has boundaries at the edges of the interval.
-	 */
+		Make sure that the tier has boundaries at the edges of the interval.
+	*/
 	integer firstIntervalNumber = IntervalTier_hasTime (me, tmin);
 	if (! firstIntervalNumber) {
 		integer intervalNumber = IntervalTier_timeToIndex (me, tmin);
@@ -57,8 +57,8 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 			Melder_throw (U"Cannot add a boundary at ", Melder_fixed (tmin, 6), U" seconds, because this is outside the time domain of the intervals.");
 		TextInterval interval = my intervals.at [intervalNumber];
 		/*
-		 * Move the text to the left of the boundary.
-		 */
+			Move the text to the left of the boundary.
+		*/
 		autoTextInterval newInterval = TextInterval_create (tmin, interval -> xmax, U"");
 		interval -> xmax = tmin;
 		my intervals. addItem_move (newInterval.move());
@@ -72,8 +72,8 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 			Melder_throw (U"Cannot add a boundary at ", Melder_fixed (tmin, 6), U" seconds, because this is outside the time domain of the intervals.");
 		TextInterval interval = my intervals.at [intervalNumber];
 		/*
-		 * Move the text to the right of the boundary.
-		 */
+			Move the text to the right of the boundary.
+		*/
 		autoTextInterval newInterval = TextInterval_create (interval -> xmin, tmax, U"");
 		interval -> xmin = tmax;
 		my intervals. addItem_move (newInterval.move());
@@ -81,8 +81,8 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 	}
 	Melder_assert (lastIntervalNumber >= 1 && lastIntervalNumber <= my intervals.size);
 	/*
-	 * Empty the interval in the word tier.
-	 */
+		Empty the interval in the word tier.
+	*/
 	trace (U"Empty interval ", lastIntervalNumber, U" down to ", U".", firstIntervalNumber);
 	for (integer iinterval = lastIntervalNumber; iinterval >= firstIntervalNumber; iinterval --) {
 		TextInterval interval = my intervals.at [iinterval];
@@ -119,18 +119,17 @@ static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier bos
 	if (my intervals.size < 2)
 		return;
 	TextInterval lastInterval = my intervals.at [my intervals.size];
-	if (Melder_equ (lastInterval -> text.get(), U"")) {
+	if (Melder_equ (lastInterval -> text.get(), U""))
 		IntervalTier_removeLeftBoundary (me, my intervals.size);
-	}
 	if (my intervals.size < 3)
 		return;
 	for (integer iinterval = my intervals.size - 1; iinterval >= 2; iinterval --) {
 		TextInterval interval = my intervals.at [iinterval];
 		if (Melder_equ (interval -> text.get(), U"")) {
 			/*
-			 * Distribute the empty interval between its neigbours.
-			 */
-			double newBoundaryTime =
+				Distribute the empty interval between its neigbours.
+			*/
+			const double newBoundaryTime =
 				boss ?
 				IntervalTier_boundaryTimeClosestTo (boss, interval -> xmin, interval -> xmax) :
 				0.5 * (interval -> xmin + interval -> xmax);
@@ -143,7 +142,12 @@ static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier bos
 	}
 }
 
-void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer tierNumber, integer intervalNumber, conststring32 languageName, bool includeWords, bool includePhonemes) {
+void TextGrid_anySound_alignInterval (
+	const TextGrid me, const Function anySound,
+	const integer tierNumber, const integer intervalNumber,
+	const conststring32 languageName,
+	const bool includeWords, const bool includePhonemes
+) {
 	try {
 		IntervalTier headTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		if (intervalNumber < 1 || intervalNumber > headTier -> intervals.size)
@@ -151,7 +155,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 		TextInterval interval = headTier -> intervals.at [intervalNumber];
 		if (! includeWords && ! includePhonemes)
 			Melder_throw (U"Nothing to be done, because you asked neither for word alignment nor for phoneme alignment.");
-		if (str32str (headTier -> name.get(), U"/") )
+		if (str32str (headTier -> name.get(), U"/"))
 			Melder_throw (U"The current tier already has a slash (\"/\") in its name. Cannot create a word or phoneme tier from it.");
 		autoSound part =
 			anySound -> classInfo == classLongSound ? 
@@ -165,14 +169,13 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 		);
 		double silenceThreshold = -30.0, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
 		autoTextGrid analysis;
-		if (! Melder_equ (interval -> text.get(), U"")) {
+		if (! Melder_equ (interval -> text.get(), U""))
 			analysis = SpeechSynthesizer_Sound_TextInterval_align
-				(synthesizer.get(), part.get(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
-		}
+					(synthesizer.get(), part.get(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
 		if (analysis) {
 			/*
-			 * Clean up the analysis.
-			 */
+				Clean up the analysis.
+			*/
 			Melder_assert (fabs (analysis -> xmin - interval -> xmin) < 1e-12);
 			if (analysis -> xmax != interval -> xmax) {
 				//Melder_fatal (U"Analysis ends at ", analysis -> xmax, U" but interval at ", interval -> xmax, U"seconds.");
@@ -218,8 +221,8 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 		integer wordTierNumber = 0, phonemeTierNumber = 0;
 		IntervalTier wordTier = nullptr, phonemeTier = nullptr;
 		/*
-		 * Include a word tier.
-		 */
+			Include a word tier.
+		*/
 		if (includeWords) {
 			/*
 			 * Make sure that the word tier exists.
@@ -244,13 +247,13 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 			Melder_assert (wordTierNumber >= 1 && wordTierNumber <= my tiers->size);
 			wordTier = static_cast <IntervalTier> (my tiers->at [wordTierNumber]);
 			/*
-			 * Make sure that the word tier has boundaries at the edges of the interval.
-			 */
+				Make sure that the word tier has boundaries at the edges of the interval.
+			*/
 			IntervalTier_insertIntervalDestructively (wordTier, interval -> xmin, interval -> xmax);
 			/*
-			 * Copy the contents of the word analysis into the interval in the word tier.
-			 */
-			integer wordIntervalNumber = IntervalTier_hasTime (wordTier, interval -> xmin);
+				Copy the contents of the word analysis into the interval in the word tier.
+			*/
+			/* mutable */ integer wordIntervalNumber = IntervalTier_hasTime (wordTier, interval -> xmin);
 			Melder_assert (wordIntervalNumber != 0);
 			if (analysis) {
 				IntervalTier analysisWordTier = analysis -> intervalTier_cast (3);
@@ -261,7 +264,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 				for (integer ianalysisInterval = 1; ianalysisInterval <= analysisWordTier -> intervals.size; ianalysisInterval ++) {
 					TextInterval analysisInterval = analysisWordTier -> intervals.at [ianalysisInterval];
 					TextInterval wordInterval = nullptr;
-					double tmin = analysisInterval -> xmin, tmax = analysisInterval -> xmax;
+					const double tmin = analysisInterval -> xmin, tmax = analysisInterval -> xmax;
 					if (tmax == analysis -> xmax) {
 						wordInterval = wordTier -> intervals.at [wordIntervalNumber];
 						TextInterval_setText (wordInterval, analysisInterval -> text.get());
@@ -280,12 +283,12 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 			}
 		}
 		/*
-		 * Include a phoneme tier.
-		 */
+			Include a phoneme tier.
+		*/
 		if (includePhonemes) {
 			/*
-			 * Make sure that the phoneme tier exists.
-			 */
+				Make sure that the phoneme tier exists.
+			*/
 			autoMelderString newPhonemeTierName;
 			MelderString_copy (& newPhonemeTierName, headTier -> name.get(), U"/phon");
 			for (integer itier = 1; itier <= my tiers->size; itier ++) {
@@ -307,12 +310,12 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 			Melder_assert (phonemeTierNumber >= 1 && phonemeTierNumber <= my tiers->size);
 			phonemeTier = my intervalTier_cast (phonemeTierNumber);
 			/*
-			 * Make sure that the phoneme tier has boundaries at the edges of the interval.
-			 */
+				Make sure that the phoneme tier has boundaries at the edges of the interval.
+			*/
 			IntervalTier_insertIntervalDestructively (phonemeTier, interval -> xmin, interval -> xmax);
 			/*
-			 * Copy the contents of the phoneme analysis into the interval in the phoneme tier.
-			 */
+				Copy the contents of the phoneme analysis into the interval in the phoneme tier.
+			*/
 			integer phonemeIntervalNumber = IntervalTier_hasTime (phonemeTier, interval -> xmin);
 			Melder_assert (phonemeIntervalNumber != 0);
 			if (analysis) {
@@ -335,8 +338,8 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 			}
 			if (includeWords) {
 				/*
-				 * Synchronize the boundaries between the word tier and the phoneme tier.
-				 */
+					Synchronize the boundaries between the word tier and the phoneme tier.
+				*/
 				//for (integer iinterval = 1; iinterval <=
 			}
 		}
@@ -345,9 +348,12 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 	}
 }
 
-void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
-	bool showBoundaries, bool useTextStyles, bool garnish) {
-	integer numberOfTiers = my tiers ->size;
+void TextGrid_Sound_draw (
+	const TextGrid me, const Sound sound, const Graphics g,
+	/* mutable autowindow */ double tmin, /* mutable autowindow */ double tmax,
+	const bool showBoundaries, const bool useTextStyles, const bool garnish
+) {
+	const integer numberOfTiers = my tiers ->size;
 
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 
@@ -363,7 +369,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 		Graphics_line (g, tmin, 0.0, tmax, 0.0);
 		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_function (g, & sound -> z [1] [0], first, last,
-			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 
 	/*
@@ -376,16 +382,15 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	Graphics_setUnderscoreIsSubscript (g, useTextStyles);
 	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 		Function anyTier = my tiers->at [itier];
-		double ymin = -1.0 - 0.5 * itier, ymax = ymin + 0.5;
+		const double ymin = -1.0 - 0.5 * itier, ymax = ymin + 0.5;
 		Graphics_rectangle (g, tmin, tmax, ymin, ymax);
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
-			integer ninterval = tier -> intervals.size;
+			const integer ninterval = tier -> intervals.size;
 			for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
-				double intmin = interval -> xmin, intmax = interval -> xmax;
-				if (intmin < tmin) intmin = tmin;
-				if (intmax > tmax) intmax = tmax;
+				const double intmin = Melder_clippedLeft (tmin, interval -> xmin);
+				const double intmax = Melder_clippedRight (interval -> xmax, tmax);
 				if (intmin >= intmax)
 					continue;
 				if (showBoundaries && intmin > tmin && intmin < tmax) {
@@ -393,21 +398,26 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 					Graphics_line (g, intmin, -1.0, intmin, 1.0);   // in sound part
 					Graphics_setLineType (g, Graphics_DRAWN);
 				}
-				/* Draw left boundary. */
-				if (intmin > tmin && intmin < tmax) Graphics_line (g, intmin, ymin, intmin, ymax);
-				/* Draw label text. */
+				/*
+					Draw left boundary.
+				*/
+				if (intmin > tmin && intmin < tmax)
+					Graphics_line (g, intmin, ymin, intmin, ymax);
+				/*
+					Draw label text.
+				*/
 				if (interval -> text && intmax >= tmin && intmin <= tmax) {
-					double t1 = tmin > intmin ? tmin : intmin;
-					double t2 = tmax < intmax ? tmax : intmax;
+					const double t1 = tmin > intmin ? tmin : intmin;
+					const double t2 = tmax < intmax ? tmax : intmax;
 					Graphics_text (g, 0.5 * (t1 + t2), 0.5 * (ymin + ymax), interval -> text.get());
 				}
 			}
 		} else {
 			TextTier tier = static_cast <TextTier> (anyTier);
-			integer numberOfPoints = tier -> points.size;
+			const integer numberOfPoints = tier -> points.size;
 			for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
-				double t = point -> number;
+				const double t = point -> number;
 				if (t > tmin && t < tmax) {
 					if (showBoundaries) {
 						Graphics_setLineType (g, Graphics_DOTTED);
@@ -462,7 +472,8 @@ autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound,
 				list -> addItem_move (interval.move());
 			}
 		}
-		if (list->size == 0) Melder_warning (U"No non-empty intervals were found.");
+		if (list->size == 0)
+			Melder_warning (U"No non-empty intervals were found.");
 		return list;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", sound, U": non-empty intervals not extracted.");
@@ -475,9 +486,9 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, in
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoSoundList list = SoundList_create ();
-		integer count = 0;
+		/* mutable counter */ integer count = 0;
 		for (integer iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
-			TextInterval segment = tier -> intervals.at [iseg];
+			const TextInterval segment = tier -> intervals.at [iseg];
 			if (Melder_stringMatchesCriterion (segment -> text.get(), which, text, true)) {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.get(), Melder_cat (sound -> name ? sound -> name.get() : U"", U"_", text, U"_", ++ count));
@@ -493,34 +504,35 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, in
 }
 
 static void autoMarks (Graphics g, double ymin, double ymax, bool haveDottedLines) {
-	double dy = ymax - ymin;
+	const double dy = ymax - ymin;
 	if (dy < 26.0) {
-		integer imin = Melder_iroundUp ((ymin + 2.0) / 5.0), imax = Melder_ifloor ((ymax - 2.0) / 5.0);
+		const integer imin = Melder_iroundUp ((ymin + 2.0) / 5.0), imax = Melder_ifloor ((ymax - 2.0) / 5.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 5.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 110.0) {
-		integer imin = Melder_iroundUp ((ymin + 8.0) / 20.0), imax = Melder_ifloor ((ymax - 8.0) / 20.0);
+		const integer imin = Melder_iroundUp ((ymin + 8.0) / 20.0), imax = Melder_ifloor ((ymax - 8.0) / 20.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 20.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 260.0) {
-		integer imin = Melder_iroundUp ((ymin + 20.0) / 50.0), imax = Melder_ifloor ((ymax - 20.0) / 50.0);
+		const integer imin = Melder_iroundUp ((ymin + 20.0) / 50.0), imax = Melder_ifloor ((ymax - 20.0) / 50.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 50.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 510.0) {
-		integer imin = Melder_iroundUp ((ymin + 40.0) / 100.0), imax = Melder_ifloor ((ymax - 40.0) / 100.0);
+		const integer imin = Melder_iroundUp ((ymin + 40.0) / 100.0), imax = Melder_ifloor ((ymax - 40.0) / 100.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 100.0, true, true, haveDottedLines, nullptr);
 	}
 }
 
 static void autoMarks_logarithmic (Graphics g, double ymin, double ymax, bool haveDottedLines) {
-	double fy = ymax / ymin;
+	const double fy = ymax / ymin;
 	for (int i = -12; i <= 12; i ++) {
-		double power = pow (10, i), y = power;
+		const double power = pow (10, i);
+		/* mutable */ double y = power;
 		if (y > ymin * 1.2 && y < ymax / 1.2)
 			Graphics_markLeftLogarithmic (g, y, true, true, haveDottedLines, nullptr);
 		if (fy > 2100) {
-			;   /* Enough. */
+			;   // enough
 		} else if (fy > 210) {
 			y = 3.0 * power;
 			if (y > ymin * 1.2 && y < ymax / 1.2)
@@ -553,30 +565,33 @@ static void autoMarks_logarithmic (Graphics g, double ymin, double ymax, bool ha
 }
 
 static void autoMarks_semitones (Graphics g, double ymin, double ymax, bool haveDottedLines) {
-	double dy = ymax - ymin;
+	const double dy = ymax - ymin;
 	if (dy < 16.0) {
-		integer imin = Melder_iroundUp ((ymin + 1.2) / 3.0), imax = Melder_ifloor ((ymax - 1.2) / 3.0);
+		const integer imin = Melder_iroundUp ((ymin + 1.2) / 3.0), imax = Melder_ifloor ((ymax - 1.2) / 3.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 3.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 32.0) {
-		integer imin = Melder_iroundUp ((ymin + 2.4) / 6.0), imax = Melder_ifloor ((ymax - 2.4) / 6.0);
+		const integer imin = Melder_iroundUp ((ymin + 2.4) / 6.0), imax = Melder_ifloor ((ymax - 2.4) / 6.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 6.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 64.0) {
-		integer imin = Melder_iroundUp ((ymin + 4.8) / 12.0), imax = Melder_ifloor ((ymax - 4.8) / 12.0);
+		const integer imin = Melder_iroundUp ((ymin + 4.8) / 12.0), imax = Melder_ifloor ((ymax - 4.8) / 12.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 12.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 128.0) {
-		integer imin = Melder_iroundUp ((ymin + 9.6) / 24.0), imax = Melder_ifloor ((ymax - 9.6) / 24.0);
+		const integer imin = Melder_iroundUp ((ymin + 9.6) / 24.0), imax = Melder_ifloor ((ymax - 9.6) / 24.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 24.0, true, true, haveDottedLines, nullptr);
 	}
 }
 
-void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, bool showBoundaries, bool useTextStyles, bool garnish, bool speckle, kPitch_unit unit)
-{
-	integer numberOfTiers = grid -> tiers->size;
+void TextGrid_Pitch_drawSeparately (
+	const TextGrid grid, const Pitch pitch, const Graphics g,
+	/* mutable autowindow */ double tmin, /* mutable autowindow */ double tmax,
+	/* mutable conversion */ double fmin, /* mutable conversion */ double fmax,
+	const bool showBoundaries, const bool useTextStyles, const bool garnish, const bool speckle, const kPitch_unit unit
+) {
+	const integer numberOfTiers = grid -> tiers->size;
 	Function_unidirectionalAutowindow (grid, & tmin, & tmax);
 	if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, (int) unit)) {
 		fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, (int) unit);
@@ -588,8 +603,8 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 		Pitch_draw (pitch, g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * numberOfTiers, fmax, false, speckle, unit);
 	TextGrid_Sound_draw (grid, nullptr, g, tmin, tmax, showBoundaries, useTextStyles, false);
 	/*
-	 * Restore window for the sake of margin drawing.
-	 */
+		Restore window for the sake of margin drawing.
+	*/
 	Graphics_setWindow (g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * numberOfTiers, fmax);
 	if (unit == kPitch_unit::HERTZ_LOGARITHMIC)
 		fmin = pow (10, fmin), fmax = pow (10.0, fmax);
@@ -614,10 +629,13 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 	}
 }
 
-void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
-	integer tierNumber, double tmin, double tmax, double fmin, double fmax,
-	double fontSize, bool useTextStyles, int horizontalAlignment, bool garnish, bool speckle, kPitch_unit unit)
-{
+void TextGrid_Pitch_draw (
+	const TextGrid grid, const Pitch pitch, const Graphics g,
+	const integer tierNumber,
+	/* mutable autowindow */ double tmin, /* mutable autowindow */ double tmax,
+	/* mutable conversion */ double fmin, /* mutable conversion */ double fmax,
+	const double fontSize, const bool useTextStyles, const int horizontalAlignment, const bool garnish, const bool speckle, const kPitch_unit unit
+) {
 	try {
 		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (grid, tierNumber);
 		const double oldFontSize = Graphics_inqFontSize (g);
@@ -636,7 +654,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Graphics_setCircumflexIsSuperscript (g, useTextStyles);
 		Graphics_setUnderscoreIsSubscript (g, useTextStyles);
 		if (anyTier -> classInfo == classIntervalTier) {
-			IntervalTier tier = static_cast <IntervalTier> (anyTier);
+			const IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (integer i = 1; i <= tier -> intervals.size; i ++) {
 				TextInterval interval = tier -> intervals.at [i];
 				if (! interval -> text || ! interval -> text [0])
@@ -655,7 +673,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				);
 			}
 		} else {
-			TextTier tier = static_cast <TextTier> (anyTier);
+			const TextTier tier = static_cast <TextTier> (anyTier);
 			for (integer i = 1; i <= tier -> points.size; i ++) {
 				TextPoint point = tier -> points.at [i];
 				const double t = point -> number;
