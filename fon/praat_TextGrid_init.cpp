@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 
 #include "Pitch_AnyTier_to_PitchTier.h"
 #include "SpectrumEditor.h"
+#include "SpeechSynthesizer.h"
 #include "SpellingChecker.h"
+#include "Strings_extensions.h"
 #include "TextGridEditor.h"
 #include "TextGrid_extensions.h"
 #include "TextGrid_Sound.h"
@@ -529,6 +531,21 @@ DO
 			extractEveryIntervalWhoseLabel___, __theText, preserveTimes);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
 	CONVERT_ONE_AND_ONE_TO_ONE_END (U"dummy")
+}
+
+FORM (MODIFY_TextGrid_Sound_alignInterval, U"TextGrid & Sound: Align interval", nullptr) {
+	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	OPTIONMENUSTR (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++)
+		OPTION ((conststring32) espeakdata_languages_names -> strings [i].get());
+	BOOLEAN (includeWords,    U"Include words",    true)
+	BOOLEAN (includePhonemes, U"Include phonemes", true)
+	OK
+DO
+	MODIFY_FIRST_OF_ONE_AND_ONE (TextGrid, Sound)
+		TextGrid_anySound_alignInterval (me, you, tierNumber, intervalNumber, language, includeWords, includePhonemes);
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_TextGrid_Sound_scaleTimes) {
@@ -1741,6 +1758,7 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Extract intervals...", nullptr, GuiMenu_DEPTH_1 | GuiMenu_DEPRECATED_2005,
 			NEW1_TextGrid_Sound_extractIntervals);   // replace with Extract intervals where: arg1, arg2, "is equal to", arg3
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Modify TextGrid", nullptr, 0, nullptr);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Align interval...", nullptr, 0, MODIFY_TextGrid_Sound_alignInterval);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Scale times", nullptr, 0, MODIFY_TextGrid_Sound_scaleTimes);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Modify Sound", nullptr, 0, nullptr);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Clone time domain", nullptr, 0, MODIFY_TextGrid_Sound_cloneTimeDomain);

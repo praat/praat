@@ -63,6 +63,10 @@ autoTextTier DTW_TextTier_to_TextTier (DTW me, TextTier thee, double precision) 
 
 autoIntervalTier DTW_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, double precision) {
 	try {
+		//TRACE
+		trace (U"size: ", thy intervals.size);
+		trace (U"text: ", thy intervals.at [1] -> text.get());
+		trace (U"time range: ", thy intervals.at [1] -> xmin, U" to ", thy intervals.at [1] -> xmax);
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) { // map from Y to X
 			autoIntervalTier him = Data_copy (thee);
 			his xmin = my xmin;
@@ -89,15 +93,20 @@ autoIntervalTier DTW_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, do
 			textinterval -> xmin = his xmin;
 			double xmax = DTW_getYTimeFromXTime (me, textinterval -> xmax);
 			textinterval -> xmax = xmax;
+			trace (U"interval 1: from ", textinterval -> xmin, U" to ", textinterval -> xmax, U", label <<", textinterval -> text.get(), U">>");
 			for (integer i = 2; i <= his intervals.size; i ++) {
 				textinterval = his intervals.at [i];
 				textinterval -> xmin = xmax;
 				xmax = DTW_getYTimeFromXTime (me, textinterval -> xmax);
 				textinterval -> xmax = xmax;
+				trace (U"interval ", i, U": from ", textinterval -> xmin, U" to ", textinterval -> xmax, U", label <<", textinterval -> text.get(), U">>");
 			}
 			textinterval = his intervals.at [his intervals.size];
 			textinterval -> xmax = his xmax;
+			trace (U"interval ", his intervals.size, U": from ", textinterval -> xmin, U" to ", textinterval -> xmax, U", label <<", textinterval -> text.get(), U">>");
 			Melder_assert (textinterval -> xmin < textinterval -> xmax);
+			Melder_require (textinterval -> xmin < textinterval -> xmax,
+				U"Interval runs from ", textinterval -> xmin, U" to ", textinterval -> xmax, U" seconds.");
 			return him;
 		} else {
 			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW should be equal.");
@@ -123,6 +132,8 @@ autoTextGrid DTW_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) 
 		autoTextGrid him = TextGrid_createWithoutTiers (tmin, tmax);
 
 		for (integer i = 1; i <= thy tiers->size; i ++) {
+			//TRACE
+			trace (U"tier ", i);
 			const Function anyTier = thy tiers->at [i];
 
 			if (anyTier -> classInfo == classIntervalTier) {

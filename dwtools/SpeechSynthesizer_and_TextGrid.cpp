@@ -532,10 +532,12 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		*/
 		double slope = duration_soundTrimmed / synthTrimmed_duration;
 		slope = ( slope > 1.0 ? slope : 1.0 / slope );
-        const int constraint = ( slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1 ); // TODO enums
-		
+		const int constraint = ( slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1 ); // TODO enums
+
+		//TRACE
+		trace (hasSilence_sound, hasSilence_synth);
 		const double analysisWidth = 0.02, dt = 0.005, band = 0.0;
-        autoDTW dtw = Sounds_to_DTW ((hasSilence_sound ? soundTrimmed.get() : thee),
+		autoDTW dtw = Sounds_to_DTW ((hasSilence_sound ? soundTrimmed.get() : thee),
 				(hasSilence_synth ? synthTrimmed.get() : synth.get()), analysisWidth, dt, band, constraint);
 		
 		autoTextGrid result = DTW_TextGrid_to_TextGrid (dtw.get(), (hasSilence_synth ? textgrid_synth_sounding.get() : textgrid_synth.get()), precision);
