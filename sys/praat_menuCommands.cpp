@@ -343,10 +343,10 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 				*/
 				if (title [0] == U'\0' || title [0] == U'-') {
 					command -> button = GuiMenu_addSeparator (parentMenu);
-				} else if (script [0] == '\0') {
-					command -> button = GuiMenu_createInMenu (parentMenu, title, 0) -> d_menuItem.get();
+				} else if (script [0] == U'\0') {
+					command -> button = GuiMenu_createInMenu (parentMenu, Melder_cat (U"\u207A", title), 0) -> d_menuItem.get();
 				} else {
-					command -> button = GuiMenu_addItem (parentMenu, title, 0, gui_cb_menu, command.get());
+					command -> button = GuiMenu_addItem (parentMenu, Melder_cat (U"\u207A", title), 0, gui_cb_menu, command.get());
 				}
 			}
 		}

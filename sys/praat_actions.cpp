@@ -339,6 +339,7 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 			static integer uniqueID = 0;
 			action -> uniqueID = ++ uniqueID;
 		}
+		action -> added = true;
 
 		/*
 			Insert new command.
@@ -692,14 +693,14 @@ void praat_actions_show () {
 					}
 				}
 				if (parentMenu) {
-					my button = GuiMenu_addItem (parentMenu, my title.get(),
+					my button = GuiMenu_addItem (parentMenu, my added ? Melder_cat (U"\u207A", my title.get()) : my title.get(),
 						( my executable ? 0 : GuiMenu_INSENSITIVE ),
 						cb_menu, me
 					);
 				} else {
 					my button = GuiButton_createShown (praat_form,
 						BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
-						my title.get(), gui_button_cb_menu,
+						my added ? Melder_cat (U"\u207A", my title.get()) : my title.get(), gui_button_cb_menu,
 						me, ( my executable ? 0 : GuiButton_INSENSITIVE ) | ( my attractive ? GuiButton_ATTRACTIVE : 0 )
 					);
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
@@ -708,7 +709,7 @@ void praat_actions_show () {
 				/*
 					Apparently a labelled separator.
 				*/
-				my button = GuiLabel_createShown (praat_form, BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_LABEL_HEIGHT, my title.get(), 0);
+				my button = GuiLabel_createShown (praat_form, BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_LABEL_HEIGHT, my added ? Melder_cat (U"\u207A", my title.get()) : my title.get(), 0);
 				y += Gui_LABEL_HEIGHT + BUTTON_VSPACING;
 			} else if (! my title || my title [0] == U'-') {
 				/*
@@ -725,12 +726,12 @@ void praat_actions_show () {
 				if (my depth == 0 || ! currentSubmenu1) {
 					currentSubmenu1 = GuiMenu_createInForm (praat_form,
 						BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
-						my title.get(), 0
+						my added ? Melder_cat (U"\u207A", my title.get()) : my title.get(), 0
 					);
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
 					my button = currentSubmenu1 -> d_cascadeButton.get();
 				} else {
-					currentSubmenu2 = GuiMenu_createInMenu (currentSubmenu1, my title.get(), 0);
+					currentSubmenu2 = GuiMenu_createInMenu (currentSubmenu1, my added ? Melder_cat (U"\u207A", my title.get()) : my title.get(), 0);
 					my button = currentSubmenu2 -> d_menuItem.get();
 				}
 				GuiThing_show (my button);

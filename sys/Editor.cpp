@@ -191,6 +191,8 @@ static GuiMenuItem EditorMenu_addCommandScript (EditorMenu me, conststring32 ite
 		flags |= GuiMenu_INSENSITIVE;
 	} else
 		cmd -> commandCallback = Editor_scriptCallback;
+	if (itemTitle && itemTitle [0] != U'-')
+		itemTitle = Melder_cat (U"\u207A", itemTitle);
 	const int depth = (flags & GuiMenu_DEPTH_3) >> 16;   // the maximum depth in editor windows is 3
 	if (depth > 0) {
 		/*
