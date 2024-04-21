@@ -29,6 +29,10 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.10# (21 April 2024)
+• Function windows: fixed a problem that could cause Praat to crash when doing #all after #Group
+  when windows had a different duration.
+
 ##6.4.09# (20 April 2024)
 • TextGrid window: fixed a rare problem with ##Align interval# that could lead to a zero-length interval.
 • Windows ARM64 edition: fixed a bug that would cause ##Align interval# to crash.
