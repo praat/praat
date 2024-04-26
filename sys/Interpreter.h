@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2018,2020-2023 Paul Boersma
+ * Copyright (C) 1993-2018,2020-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,8 @@ Thing_define (Interpreter, Thing) {
 		Forgetting. The owning editor's class will always be remembered, though. That's our identity, so to say.
 
 		The dynamic editor's class will also be remembered,
-		on behalf of an error message by a continuing pause script. (last checked 5 March 2023)
+		on behalf of an error message by a continuing pause script.
+		(last checked 2023-03-05)
 	*/
 	void undangleOwningEditor () noexcept {
 		our _owningEditorEnvironment. _optionalInstance = nullptr;

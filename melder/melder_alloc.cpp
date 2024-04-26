@@ -1,6 +1,6 @@
 /* melder_alloc.cpp
  *
- * Copyright (C) 1992-2007,2009,2011,2012,2014-2020,2022,2023 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2020,2022-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include <wctype.h>
 #include <assert.h>
 
 static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0,

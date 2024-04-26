@@ -1,9 +1,9 @@
 # Makefile of the library "kar"
-# Paul Boersma, 10 August 2018
+# Paul Boersma, 26 April 2024
 
 include ../makefile.defs
 
-OBJECTS = ipaSerifRegularPS.o longchar.o
+OBJECTS = ipaSerifRegularPS.o longchar.o wctype_portable.o
 
 CPPFLAGS = -I ../melder
 

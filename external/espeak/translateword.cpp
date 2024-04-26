@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
-#include <wctype.h>
+#include "wctype_portable.h"
 
 #include "espeak_ng.h"
 #include "speak_lib.h"
@@ -210,7 +210,7 @@ int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char *word_
 			spell_word = 1;
 		}
 
-		if (!found && iswdigit(first_char)) {
+		if (!found && iswdigit_portable(first_char)) {
 			Lookup(tr, "_0lang", word_phonemes);
 			if (word_phonemes[0] == phonSWITCH)
 				return 0;
@@ -236,7 +236,7 @@ int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char *word_
 			}
 		}
 
-		if ((wflags & FLAG_ALL_UPPER) && (word_length > 1) && iswalpha(first_char)) {
+		if ((wflags & FLAG_ALL_UPPER) && (word_length > 1) && iswalpha_portable(first_char)) {
 			if ((option_tone_flags & OPTION_EMPHASIZE_ALLCAPS) && !(dictionary_flags[0] & FLAG_ABBREV)) {
 				// emphasize words which are in capitals
 				emphasize_allcaps = FLAG_EMPHASIZED;
@@ -655,7 +655,7 @@ int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char *word_
 			tr->expect_past--;
 	}
 
-	if ((word_length == 1) && (tr->translator_name == L('e', 'n')) && iswalpha(first_char) && (first_char != 'i')) {
+	if ((word_length == 1) && (tr->translator_name == L('e', 'n')) && iswalpha_portable(first_char) && (first_char != 'i')) {
 		// English Specific !!!!
 		// any single letter before a dot is an abbreviation, except 'I'
 		dictionary_flags[0] |= FLAG_ALLOW_DOT;
@@ -817,7 +817,7 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 
 	if (control & 2) {
 		// include CAPITAL information
-		if (iswupper(letter))
+		if (iswupper_portable(letter))
 			Lookup(tr, "_cap", capital);
 	}
 	letter = towlower2(letter, tr);
@@ -966,10 +966,10 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 		// character name not found
 		int speak_letter_number = 1;
 		if (!(al_flags & AL_NO_SYMBOL)) {
-			if (iswalpha(letter))
+			if (iswalpha_portable(letter))
 				Lookup(translator, "_?A", ph_buf);
 
-			if ((ph_buf[0] == 0) && !iswspace(letter))
+			if ((ph_buf[0] == 0) && !iswspace_portable(letter))
 				Lookup(translator, "_??", ph_buf);
 
 			if (ph_buf[0] == 0)
@@ -1165,7 +1165,7 @@ static int Unpronouncable(Translator *tr, char *word, int posn)
 			break;
 		}
 
-		if ((c != '\'') && !iswalpha(c))
+		if ((c != '\'') && !iswalpha_portable(c))
 			return 0;
 	}
 

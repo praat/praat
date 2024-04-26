@@ -29,7 +29,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <wchar.h>
-#include <wctype.h>
+#include "wctype_portable.h"
 
 #include "espeak_ng.h"
 #include "speak_lib.h"
@@ -523,7 +523,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 	}
 
 	while (!Eof() || (ungot_char != 0) || (ungot_char2 != 0) || (ungot_string_ix >= 0)) {
-		if (!iswalnum(c1)) {
+		if (!iswalnum_portable(c1)) {
 			if ((end_character_position > 0) && (count_characters > end_character_position)) {
 				return CLAUSE_EOF;
 			}
@@ -564,7 +564,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 			if ((c1 == '&') && ((c2 == '#') || ((c2 >= 'a') && (c2 <= 'z')))) {
 				n_xml_buf = 0;
 				c1 = c2;
-				while (!Eof() && (iswalnum(c1) || (c1 == '#')) && (n_xml_buf < N_XML_BUF2)) {
+				while (!Eof() && (iswalnum_portable(c1) || (c1 == '#')) && (n_xml_buf < N_XML_BUF2)) {
 					xml_buf2[n_xml_buf++] = c1;
 					c1 = GetC();
 				}
@@ -590,7 +590,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 				if ((c1 <= 0x20) && ((sayas_mode == SAYAS_SINGLE_CHARS) || (sayas_mode == SAYAS_KEY)))
 					c1 += 0xe000; // move into unicode private usage area
 			} else if (c1 == '<') {
-				if ((c2 == '/') || iswalpha(c2) || c2 == '!' || c2 == '?') {
+				if ((c2 == '/') || iswalpha_portable(c2) || c2 == '!' || c2 == '?') {
 					// check for space in the output buffer for embedded commands produced by the SSML tag
 					if (ix > (n_buf - 20)) {
 						// Perhaps not enough room, end the clause before the SSML tag
@@ -646,7 +646,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
  			// an embedded command. If it's a voice change, end the clause
 			if (c2 == 'V') {
 				buf[ix++] = 0; // end the clause at this point
-				while (!Eof() && !iswspace(c1 = GetC()) && (ix < (n_buf-1)))
+				while (!Eof() && !iswspace_portable(c1 = GetC()) && (ix < (n_buf-1)))
 					buf[ix++] = c1; // add voice name to end of buffer, after the text
 				buf[ix++] = 0;
 				return CLAUSE_VOICE;
@@ -664,7 +664,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 					if (c2 != '1') {
 						// a list of punctuation characters to be spoken, terminated by space
 						j = 0;
-						while (!Eof() && !iswspace(c2) && (j < N_PUNCTLIST-1)) {
+						while (!Eof() && !iswspace_portable(c2) && (j < N_PUNCTLIST-1)) {
 							option_punctlist[j++] = c2;
 							c2 = GetC();
 							buf[ix++] = ' ';
@@ -685,7 +685,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 		    continue;
 
 
-		if (iswalnum(c1))
+		if (iswalnum_portable(c1))
 			any_alnum = true;
 		else {
 			if (stressed_word) {
@@ -705,10 +705,10 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 			}
 		}
 
-		if (iswupper(c1)) {
+		if (iswupper_portable(c1)) {
 			tr->clause_upper_count++;
 
-			if ((option_capitals == 2) && (sayas_mode == 0) && !iswupper(cprev)) {
+			if ((option_capitals == 2) && (sayas_mode == 0) && !iswupper_portable(cprev)) {
 				char text_buf[30];
 				if (LookupSpecial(tr, "_cap", text_buf) != NULL) {
 					j = strlen(text_buf);
@@ -718,7 +718,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 					}
 				}
 			}
-		} else if (iswalpha(c1))
+		} else if (iswalpha_portable(c1))
 			tr->clause_lower_count++;
 
 		phoneme_mode = CheckPhonemeMode(option_phoneme_input, phoneme_mode, c1, c2);
@@ -727,7 +727,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 			parag = 0;
 
 			// count consecutive newlines, ignoring other spaces
-			while (!Eof() && iswspace(c2)) {
+			while (!Eof() && iswspace_portable(c2)) {
 				if (c2 == '\n')
 					parag++;
 				c2 = GetC();
@@ -762,8 +762,8 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 				// next non-blank character to decide whether to end the clause
 				// i.e. is dot followed by an upper-case letter?
 
-				if (!iswspace(c1)) {
-					if (!IsAlpha(c1) || !iswlower(c1)) {
+				if (!iswspace_portable(c1)) {
+					if (!IsAlpha(c1) || !iswlower_portable(c1)) {
 						ungot_char2 = c1;
 						TerminateBufWithSpaceAndZero(buf, end_clause_index, &c2);
 						return end_clause_after_tag;
@@ -803,7 +803,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 					continue;
 				}
 
-				if (iswspace(c2) || (punct_data & CLAUSE_OPTIONAL_SPACE_AFTER) || IsBracket(c2) || (c2 == '?') || Eof() || c2 == CTRL_EMBEDDED) { // don't check for '-' because it prevents recognizing ':-)'
+				if (iswspace_portable(c2) || (punct_data & CLAUSE_OPTIONAL_SPACE_AFTER) || IsBracket(c2) || (c2 == '?') || Eof() || c2 == CTRL_EMBEDDED) { // don't check for '-' because it prevents recognizing ':-)'
 					// note: (c2='?') is for when a smart-quote has been replaced by '?'
 					is_end_clause = true;
 				}
@@ -811,7 +811,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 
 			// don't announce punctuation for the alternative text inside inside <audio> ... </audio>
 			if (c1 == 0xe000+'<')  c1 = '<';
-			if (option_punctuation && iswpunct(c1) && (audio_text == false)) {
+			if (option_punctuation && iswpunct_portable(c1) && (audio_text == false)) {
 				// option is set to explicitly speak punctuation characters
 				// if a list of allowed punctuation has been set up, check whether the character is in it
 				if ((option_punctuation == 1) || (wcschr(option_punctlist, c1) != NULL)) {
@@ -840,8 +840,8 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 				nl_count = 0;
 				c_next = c2;
 
-				if (iswspace(c_next)) {
-					while (!Eof() && iswspace(c_next)) {
+				if (iswspace_portable(c_next)) {
+					while (!Eof() && iswspace_portable(c_next)) {
 						if (c_next == '\n')
 							nl_count++;
 						c_next = GetC(); // skip past space(s)
@@ -852,7 +852,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 					punct_data |= CLAUSE_DOT_AFTER_LAST_WORD;
 
 				if (nl_count == 0) {
-					if ((c1 == ',') && (cprev == '.') && (tr->translator_name == L('h', 'u')) && iswdigit(cprev2) && (iswdigit(c_next) || (iswlower(c_next)))) {
+					if ((c1 == ',') && (cprev == '.') && (tr->translator_name == L('h', 'u')) && iswdigit_portable(cprev2) && (iswdigit_portable(c_next) || (iswlower_portable(c_next)))) {
 						// lang=hu, fix for ordinal numbers, eg:  "december 2., szerda", ignore ',' after ordinal number
 						c1 = CHAR_COMMA_BREAK;
 						is_end_clause = false;
@@ -866,14 +866,14 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 
 					if (c1 == '.') {
 						if ((tr->langopts.numbers & NUM_ORDINAL_DOT) &&
-						    (iswdigit(cprev) || (IsRomanU(cprev) && (IsRomanU(cprev2) || iswspace(cprev2))))) { // lang=hu
+						    (iswdigit_portable(cprev) || (IsRomanU(cprev) && (IsRomanU(cprev2) || iswspace_portable(cprev2))))) { // lang=hu
 							// dot after a number indicates an ordinal number
-							if (!iswdigit(cprev))
+							if (!iswdigit_portable(cprev))
 								is_end_clause = false; // Roman number followed by dot
-							else if (iswlower(c_next) || (c_next == '-')) // hyphen is needed for lang-hu (eg. 2.-kal)
+							else if (iswlower_portable(c_next) || (c_next == '-')) // hyphen is needed for lang-hu (eg. 2.-kal)
 								is_end_clause = false; // only if followed by lower-case, (or if there is a XML tag)
 						} 
-						if (iswlower(c_next) && tr->langopts.lowercase_sentence == false) {
+						if (iswlower_portable(c_next) && tr->langopts.lowercase_sentence == false) {
 							// next word has no capital letter, this dot is probably from an abbreviation
 							is_end_clause = false;
 						}
@@ -901,7 +901,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 				if (is_end_clause) {
 					TerminateBufWithSpaceAndZero(buf, ix, &c_next);
 
-					if (iswdigit(cprev) && !IsAlpha(c_next)) // ????
+					if (iswdigit_portable(cprev) && !IsAlpha(c_next)) // ????
 						punct_data &= ~CLAUSE_DOT_AFTER_LAST_WORD;
 					if (nl_count > 1) {
 						if ((punct_data == CLAUSE_QUESTION) || (punct_data == CLAUSE_EXCLAMATION))
@@ -910,7 +910,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 					}
 					return punct_data; // only recognise punctuation if followed by a blank or bracket/quote
 				} else if (!Eof()) {
-					if (iswspace(c2))
+					if (iswspace_portable(c2))
 						UngetC(c_next);
 				}
 			}
@@ -933,14 +933,14 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 		if (c1 == 0xe000 + '<') c1 = '<';
 
 		ix += utf8_out(c1, &buf[ix]);
-		if (!iswspace(c1) && !IsBracket(c1)) {
+		if (!iswspace_portable(c1) && !IsBracket(c1)) {
 			charix[ix] = count_characters - clause_start_char;
 			while (j < ix)
 				charix[j++] = -1; // subsequent bytes of a multibyte character
 		}
 		*charix_top = ix;
 
-		if (((ix > (n_buf-75)) && !IsAlpha(c1) && !iswdigit(c1))  ||  (ix >= (n_buf-4))) {
+		if (((ix > (n_buf-75)) && !IsAlpha(c1) && !iswdigit_portable(c1))  ||  (ix >= (n_buf-4))) {
 			// clause too long, getting near end of buffer, so break here
 			// try to break at a word boundary (unless we actually reach the end of buffer).
 			// (n_buf-4) is to allow for 3 bytes of multibyte character plus terminator.

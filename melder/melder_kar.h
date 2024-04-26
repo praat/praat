@@ -313,5 +313,7 @@ inline const char32 * Melder_findHorizontalOrVerticalSpace (conststring32 str) n
 	return p;
 }
 
+#include "../kar/wctype_portable.h"
+
 /* End of file melder_kar.h */
 #endif

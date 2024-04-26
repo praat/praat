@@ -1,6 +1,6 @@
 /* espeakdata_FileInMemory.cpp
  *
- * Copyright (C) David Weenink 2012-2021
+ * Copyright (C) David Weenink 2012-2021, Paul Boersma 2024
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #include "FileInMemoryManager.h"
 #include "speech.h"
 #include "voice.h"
-#include <wctype.h>
 #include "Strings_extensions.h"
 #include "Table_and_Strings.h"
 

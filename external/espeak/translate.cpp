@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
-#include <wctype.h>
+#include "wctype_portable.h"
 
 #include "espeak_ng.h"
 #include "speak_lib.h"
@@ -162,7 +162,7 @@ int TranslateWord(Translator *tr, char *word_start, WORD_TAB *wtab, char *word_o
 		while (*word_out && available > 1) {
 			int c;
 			utf8_in(&c, word_out);
-			if (iswupper(c)) {
+			if (iswupper_portable(c)) {
 				wtab->flags |= FLAG_FIRST_UPPER;
 				utf8_out(tolower(c), word_out);
 			} else {
@@ -800,7 +800,7 @@ static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, 
 
 	// there is a list of character codes to be substituted with alternative codes
 
-	if (iswupper(c_lower = c)) {
+	if (iswupper_portable(c_lower = c)) {
 		c_lower = towlower2(c, tr);
 		upper_case = 1;
 	}
@@ -817,7 +817,7 @@ static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, 
 		// there is a second character to be inserted
 		// don't convert the case of the second character unless the next letter is also upper case
 		to += utf8_in((int *)&c2, to);
-		if (upper_case && iswupper(next_in))
+		if (upper_case && iswupper_portable(next_in))
 			c2 = ucd_toupper(c2);
 		*insert = c2;
 	}
@@ -875,7 +875,7 @@ static int TranslateChar(Translator *tr, char *ptr, int prev_in, unsigned int c,
 	case L('n', 'l'):
 		// look for 'n  and replace by a special character (unicode: schwa)
 
-		if ((c == '\'') && !iswalpha(prev_in)) {
+		if ((c == '\'') && !iswalpha_portable(prev_in)) {
 			utf8_in(&next2, &ptr[1]);
 
 			if (IsSpace(next2)) {
@@ -1128,7 +1128,7 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 				c = ' ';
 			}
 		} else if ((option_sayas2 & 0xf0) == SAYAS_DIGITS) {
-			if (iswdigit(c)) {
+			if (iswdigit_portable(c)) {
 				count_sayas_digits++;
 				if (count_sayas_digits > (option_sayas2 & 0xf)) {
 					// break after the specified number of digits
@@ -1138,7 +1138,7 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 				}
 			} else {
 				count_sayas_digits = 0;
-				if (iswdigit(prev_out)) {
+				if (iswdigit_portable(prev_out)) {
 					c = ' ';
 					space_inserted = true;
 				}
@@ -1184,8 +1184,8 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 				}
 			}
 
-			if (iswdigit(prev_out)) {
-				if (!iswdigit(c) && (c != '.') && (c != ',') && (c != ' ')) {
+			if (iswdigit_portable(prev_out)) {
+				if (!iswdigit_portable(c) && (c != '.') && (c != ',') && (c != ' ')) {
 					c = ' '; // terminate digit string with a space
 					space_inserted = true;
 				}
@@ -1223,10 +1223,10 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 						if (!IsBracket(prev_out)) // ?? perhaps only set FLAG_NOSPACE for . - /  (hyphenated words, URLs, etc)
 							next_word_flags |= FLAG_NOSPACE;
 					} else {
-						if (iswupper(c))
+						if (iswupper_portable(c))
 							word_flags |= FLAG_FIRST_UPPER;
 
-						if ((prev_out == ' ') && iswdigit(sbuf[ix-2]) && !iswdigit(prev_in)) {
+						if ((prev_out == ' ') && iswdigit_portable(sbuf[ix-2]) && !iswdigit_portable(prev_in)) {
 							// word, following a number, but with a space between
 							// Add an extra space, to distinguish "2 a" from "2a"
 							sbuf[ix++] = ' ';
@@ -1253,7 +1253,7 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 					}
 				}
 
-				if (iswupper(c)) {
+				if (iswupper_portable(c)) {
 					c = towlower2(c, tr);
 
 					if (tr->langopts.param[LOPT_CAPS_IN_WORD]) {
@@ -1263,14 +1263,14 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 							syllable_marked = true;
 						}
 					} else {
-						if (iswlower(prev_in)) {
+						if (iswlower_portable(prev_in)) {
 							// lower case followed by upper case, possibly CamelCase
 							if ((prev_out != ' ') && UpperCaseInWord(tr, &sbuf[ix], c) == 0) { // start a new word
 								c = ' ';
 								space_inserted = true;
 								prev_in_save = c;
 							}
-						} else if ((c != ' ') && iswupper(prev_in) && iswlower(next_in)) {
+						} else if ((c != ' ') && iswupper_portable(prev_in) && iswlower_portable(next_in)) {
 							int next2_in;
 							utf8_in(&next2_in, &source[source_index + next_in_nbytes]);
 
@@ -1339,7 +1339,7 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 						c = ' '; // remove the dot if it's followed by a space or hyphen, so that it's not pronounced
 				}
 			} else if (c == '\'') {
-				if (((prev_in == '.' && next_in == 's') || iswalnum(prev_in)) && IsAlpha(next_in)) {
+				if (((prev_in == '.' && next_in == 's') || iswalnum_portable(prev_in)) && IsAlpha(next_in)) {
 					// between two letters, or in an abbreviation (eg. u.s.a.'s). Consider the apostrophe as part of the word
 					single_quoted = false;
 				} else if ((tr->langopts.param[LOPT_APOSTROPHE] & 1) && IsAlpha(next_in))
@@ -1367,9 +1367,9 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 				}
 			} else if (lookupwchar(breaks, c) != 0)
 				c = ' '; // various characters to treat as space
-			else if (iswdigit(c)) {
+			else if (iswdigit_portable(c)) {
 				if (tr->langopts.tone_numbers && IsAlpha(prev_out) && !IsDigit(next_in)) {
-				} else if ((prev_out != ' ') && !iswdigit(prev_out)) {
+				} else if ((prev_out != ' ') && !iswdigit_portable(prev_out)) {
 					if ((prev_out != tr->langopts.decimal_sep) || ((decimal_sep_count == true) && (tr->langopts.decimal_sep == ','))) {
 						c = ' ';
 						space_inserted = true;
@@ -1507,14 +1507,14 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 		// digits should have been converted to Latin alphabet ('0' to '9')
 		word = pw = &sbuf[words[ix].start];
 
-		if (iswdigit(word[0]) && (tr->langopts.break_numbers != BREAK_THOUSANDS)) {
+		if (iswdigit_portable(word[0]) && (tr->langopts.break_numbers != BREAK_THOUSANDS)) {
 			// Languages with 100000 numbers.  Remove thousands separators so that we can insert them again later
 			pn = number_buf;
 			while (pn < &number_buf[sizeof(number_buf)-20]) {
-				if (iswdigit(*pw))
+				if (iswdigit_portable(*pw))
 					*pn++ = *pw++;
 				else if ((*pw == tr->langopts.thousands_sep) && (pw[1] == ' ')
-				           && iswdigit(pw[2]) && (pw[3] != ' ') && (pw[4] != ' ')) { // don't allow only 1 or 2 digits in the final part
+				           && iswdigit_portable(pw[2]) && (pw[3] != ' ') && (pw[4] != ' ')) { // don't allow only 1 or 2 digits in the final part
 					pw += 2;
 					ix++; // skip "word"
 				} else {
@@ -1528,7 +1528,7 @@ void TranslateClause(Translator *tr, int *tone_out, char **voice_change)
 			pw = word;
 		}
 
-		for (n_digits = 0; iswdigit(word[n_digits]); n_digits++) // count consecutive digits
+		for (n_digits = 0; iswdigit_portable(word[n_digits]); n_digits++) // count consecutive digits
 			;
 
 		if (n_digits > 4 && n_digits <= 32) {
@@ -1701,7 +1701,7 @@ static void CombineFlag(Translator *tr, WORD_TAB *wtab, char *word, int *flags, 
 
 	utf8_in(&c_word2, p2+1); // first character of the next word;
 
-	if (!iswalpha(c_word2))
+	if (!iswalpha_portable(c_word2))
 		ok = false;
 
 	int flags2[2];

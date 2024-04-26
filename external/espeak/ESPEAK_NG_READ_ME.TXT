@@ -106,6 +106,9 @@ because the locale of the entire program shouldn't be overwritten by a library:
 			}
 		}
 	#endif
+However, eSpeak does need Unicode knowledge to work correctly,
+so that iswalpha and all other isw* functions should be replaced
+with iswalpha_portable and so on.
 
 Finally, make sure not to include `<windows.h>` or `melder.h`
 after `espeak_ng.h`, because they may redefine `fopen`.

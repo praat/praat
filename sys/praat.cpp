@@ -1036,26 +1036,20 @@ static bool tryToAttachToTheCommandLine ()
 }
 
 static void setThePraatLocale () {
-	#if defined (UNIX)
-		setlocale (LC_ALL, "C");
-		//setenv ("PULSE_LATENCY_MSEC", "1", 0);   // Rafael Laboissiere, August 2014
-		/*
-			The following is required to make iswalpha (and the like) work correctly
-			in the eSpeak library. The file test/dwtools/SpeechSynthesizer.praat
-			checks this.
-		*/
-		if (
-			! setlocale (LC_CTYPE, "C.UTF-8") &&
-			! setlocale (LC_CTYPE, "UTF-8") &&
-			! setlocale (LC_CTYPE, "en_US.UTF-8")
-		)
-			setlocale (LC_CTYPE, "");
-
-	#elif defined (_WIN32)
-		setlocale (LC_ALL, "C");   // said to be superfluous
-	#elif defined (macintosh)
-		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
-	#endif
+	/*
+		We use only the "C" locale, because iswalpha works differently
+		on different platforms, even if UTF-8 is specified (e.g. try 0x0905),
+		which is an `alpha` on Windows but not on Mac and Linux.
+		We do have to replace everything from <wctype.h>:
+		- all iswalpha by iswalpha_portable
+		- all iswalnum by iswalnum_portable
+		- all iswpunct by iswpunct_portable
+		- all iswspace by iswspace_portable
+		- all iswdigit by iswdigit_portable
+		- all iswlower by iswlower_portable
+		- all iswupper by iswupper_portable
+	*/
+	setlocale (LC_ALL, "C");   // said to be superfluous on Windows, but cannot hurt
 }
 
 static void installPraatShellPreferences () {
@@ -2070,8 +2064,6 @@ void praat_run () {
 	Melder_assert (! Melder_isHorizontalOrVerticalSpace (UNICODE_ZERO_WIDTH_NON_JOINER));
 	Melder_assert (! Melder_isHorizontalOrVerticalSpace (UNICODE_ZERO_WIDTH_JOINER));
 	Melder_assert (! Melder_isHorizontalOrVerticalSpace (UNICODE_ZERO_WIDTH_NO_BREAK_SPACE));   // this is the byte-order mark!
-	//Melder_assert (iswspace (UNICODE_LEFT_TO_RIGHT_MARK));
-	//Melder_assert (iswspace (UNICODE_RIGHT_TO_LEFT_MARK));
 	Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_LINE_SEPARATOR));   // ISO 30112
 	Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_PARAGRAPH_SEPARATOR));   // ISO 30112
 	Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_NARROW_NO_BREAK_SPACE));

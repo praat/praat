@@ -24,7 +24,6 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <wchar.h>
-#include <wctype.h>
 #ifdef __MINGW32__
 	#include <sys/types.h>   // for off_t
 #endif

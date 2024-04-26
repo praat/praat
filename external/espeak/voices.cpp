@@ -21,7 +21,7 @@
 #include "config.h"
 
 #include <ctype.h>
-#include <wctype.h>
+#include "wctype_portable.h"
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -181,7 +181,7 @@ espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file)
 
 	while (fgets_strip(linebuf, sizeof(linebuf), f_in) != NULL) {
 		// isolate the attribute name
-		for (p = linebuf; (*p != 0) && !iswspace(*p); p++) ;
+		for (p = linebuf; (*p != 0) && !iswspace_portable(*p); p++) ;
 		*p++ = 0;
 
 		if (linebuf[0] == 0) continue;

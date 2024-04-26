@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wctype.h>
+#include "wctype_portable.h"
 #include <errno.h>
 #include <limits.h>
 
@@ -512,7 +512,7 @@ void LookupLetter(Translator *tr, unsigned int letter, int next_byte, char *ph_b
 		return;
 	}
 
-	if ((letter <= 32) || iswspace(letter)) {
+	if ((letter <= 32) || iswspace_portable(letter)) {
 		// lookup space as _&32 etc.
 		sprintf(&single_letter[1], "_#%d ", letter);
 		Lookup(tr, &single_letter[1], ph_buf1);
@@ -717,7 +717,7 @@ static int CheckDotOrdinal(Translator *tr, char *word, char *word_end, WORD_TAB 
 					if (IsAlpha(c2))
 						nextflags = TranslateWord(tr, &word_end[2], NULL, NULL);
 
-					if ((tr->prev_dict_flags[0] & FLAG_ALT_TRANS) && ((c2 == 0) || (wtab[0].flags & FLAG_COMMA_AFTER) || iswdigit(c2)))
+					if ((tr->prev_dict_flags[0] & FLAG_ALT_TRANS) && ((c2 == 0) || (wtab[0].flags & FLAG_COMMA_AFTER) || iswdigit_portable(c2)))
 						ordinal = 0; // TEST  09.02.10
 
 					if (nextflags & FLAG_ALT_TRANS)
@@ -1800,7 +1800,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 		if ((tr->langopts.numbers & NUM_NOPAUSE) && (next_char == ' '))
 			utf8_in(&next_char, p1);
 
-		if (!iswalpha(next_char) && (thousands_exact == 0))
+		if (!iswalpha_portable(next_char) && (thousands_exact == 0))
 			strcat(ph_out, str_pause); // don't add pause for 100s,  6th, etc.
 	}
 

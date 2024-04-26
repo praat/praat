@@ -3041,11 +3041,11 @@ static void TrimString(wchar_t* str, size_t length)
     wchar_t* e = 0;
 
     /* Find start of string */
-    while (iswspace(*s)) ++s;
+    while (iswspace_portable(*s)) ++s;
     e=s+min(length,wcslen(s))-1;
 
     /* Find end of string */
-    while(e>s && iswspace(*e)) --e;
+    while(e>s && iswspace_portable(*e)) --e;
     ++e;
 
     length = e - s;

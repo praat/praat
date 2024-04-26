@@ -90,6 +90,7 @@
 
 #include <limits.h>
 #include "melder.h"
+#include "../kar/wctype_portable.h"
 
 /* The first byte of the regexp internal `program' is a magic number to help
    guard against corrupted data; the compiled regex code really begins in the
@@ -2223,27 +2224,27 @@ static char32 *shortcut_escape (
 		case U'd':
 		case U'D':
 			if (emit == EMIT_NODE)
-				ret_val = (iswlower ((int) c) ? emit_node (DIGIT) : emit_node (NOT_DIGIT));
+				ret_val = (iswlower_portable ((int) c) ? emit_node (DIGIT) : emit_node (NOT_DIGIT));
 			break;
 		case U'l':
 		case U'L':
 			if (emit == EMIT_NODE)
-				ret_val = (iswlower ((int) c) ? emit_node (LETTER) : emit_node (NOT_LETTER));
+				ret_val = (iswlower_portable ((int) c) ? emit_node (LETTER) : emit_node (NOT_LETTER));
 			break;
 		case U's':
 		case U'S':
 			if (emit == EMIT_NODE) {
 				if (Match_Newline) {
-					ret_val = (iswlower ((int) c) ? emit_node (SPACE_NL) : emit_node (NOT_SPACE_NL));
+					ret_val = (iswlower_portable ((int) c) ? emit_node (SPACE_NL) : emit_node (NOT_SPACE_NL));
 				} else {
-					ret_val = (iswlower ((int) c) ? emit_node (SPACE) : emit_node (NOT_SPACE));
+					ret_val = (iswlower_portable ((int) c) ? emit_node (SPACE) : emit_node (NOT_SPACE));
 				}
 			}
 			break;
 		case U'w':
 		case U'W':
 			if (emit == EMIT_NODE) {
-				ret_val = (iswlower ((int) c) ? emit_node (WORD_CHAR) : emit_node (NOT_WORD_CHAR));
+				ret_val = (iswlower_portable ((int) c) ? emit_node (WORD_CHAR) : emit_node (NOT_WORD_CHAR));
 			} else {
 				REG_FAIL (U"internal error #105 `shortcut_escape\'");
 			}
@@ -3825,7 +3826,7 @@ static void adjustcase (char32 *str, int len, char32 chgcase) {
 	/* The tokens \u and \l only modify the first character while the tokens
 	   \U and \L modify the entire string. */
 
-	if (iswlower ((int) chgcase) && len > 0)
+	if (iswlower_portable ((int) chgcase) && len > 0)
 		len = 1;
 	switch (chgcase) {
 		case U'u':
