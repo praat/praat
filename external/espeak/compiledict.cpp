@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wctype.h>
+#include "wctype_portable.h"
 
 #include "espeak_ng.h"
 #include "speak_lib.h"
@@ -609,7 +609,7 @@ static int compile_line(CompileContext *ctx, char *linebuf, char *dict_line, int
 			ix = utf8_in(&c2, p);
 			if (c2 == 0)
 				break;
-			if (iswupper(c2))
+			if (iswupper_portable(c2))
 				utf8_out(towlower2(c2, translator), p);
 			else
 				all_upper_case = false;

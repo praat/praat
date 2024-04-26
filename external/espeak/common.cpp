@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <wctype.h>
+#include "wctype_portable.h"
 
 #include "espeak_ng.h"
 #include "speak_lib.h"
@@ -180,7 +180,7 @@ int IsAlpha(unsigned int c)
 		0
 	};
 
-	if (iswalpha(c))
+	if (iswalpha_portable(c))
 		return 1;
 
 	if (c < 0x300)
@@ -250,7 +250,7 @@ int IsDigit09(unsigned int c)
 
 int IsDigit(unsigned int c)
 {
-	if (iswdigit(c))
+	if (iswdigit_portable(c))
 		return 1;
 
 	if ((c >= 0x966) && (c <= 0x96f))
@@ -267,7 +267,7 @@ int IsSpace(unsigned int c)
 		return 1; // box drawing characters
 	if ((c >= 0xfff9) && (c <= 0xffff))
 		return 1; // unicode specials
-	return iswspace(c);
+	return iswspace_portable(c);
 }
 
 int isspace2(unsigned int c)

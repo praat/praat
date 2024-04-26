@@ -89,6 +89,10 @@ void praat_reportTextProperties () {
 		MelderInfo_writeLine (U"A \"char\" is ", charIsSigned ? U"signed." : U"unsigned.");
 	MelderInfo_writeLine (U"A \"char16_t\" is ",           sizeof (char16_t)    * 8, U" bits.");
 	MelderInfo_writeLine (U"A \"wchar_t\" is ",            sizeof (wchar_t)     * 8, U" bits.");
+	if constexpr ((wchar_t) -1 < 0)
+		MelderInfo_writeLine (U"A \"wchar_t\" is signed.");
+	else
+		MelderInfo_writeLine (U"A \"wchar_t\" is unsigned.");
 	MelderInfo_writeLine (U"A \"char32_t\" is ",           sizeof (char32_t)    * 8, U" bits.");
 	MelderInfo_close ();
 }

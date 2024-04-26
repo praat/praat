@@ -1,6 +1,6 @@
 /* longchar.cpp
  *
- * Copyright (C) 1992-2009,2011-2019 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2019,2021,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -646,7 +646,8 @@ void Longchar_init () {
 char32 * Longchar_nativize (conststring32 generic, char32 *native, bool educateQuotes) {
 	integer nquote = 0;
 	char32 kar, kar1, kar2;
-	if (! inited) Longchar_init ();
+	if (! inited)
+		Longchar_init ();
 	while ((kar = *generic++) != U'\0') {
 		if (educateQuotes) {
 			if (kar == U'\"') {
@@ -681,7 +682,8 @@ char32 * Longchar_nativize (conststring32 generic, char32 *native, bool educateQ
 
 char32 *Longchar_genericize (conststring32 native, char32 *g) {
 	char32 kar;
-	if (! inited) Longchar_init ();
+	if (! inited)
+		Longchar_init ();
 	while ((kar = *native++) != U'\0') {
 		if (kar > 128 && kar <= kUCD_TOP_OF_LIST && theUnicodeDatabase [kar]. first != U'\0') {
 			*g++ = '\\';
@@ -696,7 +698,8 @@ char32 *Longchar_genericize (conststring32 native, char32 *g) {
 }
 
 Longchar_Info Longchar_getInfo (char32 kar1, char32 kar2) {
-	if (! inited) Longchar_init ();
+	if (! inited)
+		Longchar_init ();
 	short position = kar1 < 32 || kar1 > 126 || kar2 < 32 || kar2 > 126 ?
 		0 :   /* Return the 'space' character. */
 		where [kar1 - 32] [kar2 - 32];
@@ -704,7 +707,8 @@ Longchar_Info Longchar_getInfo (char32 kar1, char32 kar2) {
 }
 
 Longchar_Info Longchar_getInfoFromNative (char32 kar) {
-	if (! inited) Longchar_init ();
+	if (! inited)
+		Longchar_init ();
 	return kar > kUCD_TOP_OF_LIST ? Longchar_getInfo (U' ', U' ') : Longchar_getInfo (theUnicodeDatabase [kar]. first, theUnicodeDatabase [kar]. second);
 }
 

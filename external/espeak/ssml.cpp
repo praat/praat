@@ -31,7 +31,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <wchar.h>
-#include <wctype.h>
+#include "wctype_portable.h"
 
 
 #include "espeak_ng.h"
@@ -163,7 +163,7 @@ static int attr_prosody_value(int param_type, const wchar_t *pw, int *value_out)
 	wchar_t *tail;
 	double value;
 
-	while (iswspace(*pw)) pw++;
+	while (iswspace_portable(*pw)) pw++;
 	if (*pw == '+') {
 		pw++;
 		sign = 1;
@@ -293,7 +293,7 @@ static const wchar_t *GetSsmlAttribute(wchar_t *pw, const char *name)
 	static const wchar_t empty[1] = { 0 };
 
 	while (*pw != 0) {
-		if (iswspace(pw[-1])) {
+		if (iswspace_portable(pw[-1])) {
 			ix = 0;
 			while (*pw == name[ix]) {
 				pw++;
@@ -301,12 +301,12 @@ static const wchar_t *GetSsmlAttribute(wchar_t *pw, const char *name)
 			}
 			if (name[ix] == 0) {
 				// found the attribute, now get the value
-				while (iswspace(*pw)) pw++;
+				while (iswspace_portable(*pw)) pw++;
 				if (*pw == '=') pw++;
-				while (iswspace(*pw)) pw++;
+				while (iswspace_portable(*pw)) pw++;
 				if ((*pw == '"') || (*pw == '\'')) // allow single-quotes ?
 					return pw+1;
-				else if (iswspace(*pw) || (*pw == '/')) // end of attribute
+				else if (iswspace_portable(*pw) || (*pw == '/')) // end of attribute
 					return empty;
 				else
 					return pw;
@@ -662,7 +662,7 @@ int ProcessSsmlTag(wchar_t *xml_buf, char *outbuf, int *outix, int n_outbuf, con
 
 	for (ix = 0; ix < (sizeof(tag_name)-1); ix++) {
 		int c;
-		if (((c = xml_buf[ix]) == 0) || iswspace(c))
+		if (((c = xml_buf[ix]) == 0) || iswspace_portable(c))
 			break;
 		tag_name[ix] = tolower((char)c);
 	}
