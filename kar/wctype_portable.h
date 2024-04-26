@@ -35,13 +35,16 @@ int iswspace_portable (wint_t wc);   // implemented by Melder_isHorizontalOrVert
 int iswlower_portable (wint_t wc);   // implemented by Melder_isLowerCaseLetter()
 int iswupper_portable (wint_t wc);   // implemented by Melder_isUpperCaseLetter()
 
-#define iswalpha  DONT_USE_ISWALPHA
-#define iswalnum  DONT_USE_ISWALNUM
-#define iswpunct  DONT_USE_ISWPUNCT
-#define iswdigit  DONT_USE_ISWDIGIT
-#define iswspace  DONT_USE_ISWSPACE
-#define iswlower  DONT_USE_ISWLOWER
-#define iswupper  DONT_USE_ISWUPPER
+#ifndef linux
+	// on Linux this is unfortunately not possible, because of "::iswalpha"
+	#define iswalpha  DONT_USE_ISWALPHA
+	#define iswalnum  DONT_USE_ISWALNUM
+	#define iswpunct  DONT_USE_ISWPUNCT
+	#define iswdigit  DONT_USE_ISWDIGIT
+	#define iswspace  DONT_USE_ISWSPACE
+	#define iswlower  DONT_USE_ISWLOWER
+	#define iswupper  DONT_USE_ISWUPPER
+#endif
 
 #ifdef __cplusplus
 }
