@@ -368,12 +368,28 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Initialize(espeak_ng_ERROR_CONTEXT *con
 	// It seems that the wctype functions don't work until the locale has been set
 	// to something other than the default "C".  Then, not only Latin1 but also the
 	// other characters give the correct results with iswalpha() etc.
-	//ppgb if (set lo ca le(LC_CTYPE, "C.UTF-8") == NULL) {
-	//ppgb 	if (set lo ca le(LC_CTYPE, "UTF-8") == NULL) {
-	//ppgb 		if (set lo ca le(LC_CTYPE, "en_US.UTF-8") == NULL)
-	//ppgb 			set loc a le(LC_CTYPE, "");
-	//ppgb 	}
-	//ppgb }
+
+	/*
+		(Paul Boersma 20240426:)
+		When using this library in an app, e.g. Praat,
+		we should not set the locale, because it will interfere with the locale
+		that has been set in praat_init().
+		To nevertheless experiment with setting the locale here,
+		remove the space from "set locale" in the definition of SET_LOCALE
+		and set USE_SET_LOCALE_IN_THIS_LIBRARY to 1 instead of 0.
+		(The space is needed to be able to automatically determine that the name
+		 of the function does not appear in the present source file `speech.cpp`.)
+	*/
+	#define SET_LOCALE  setlocale   /* should normally contain a space between "set" and "locale" */
+	#define USE_SET_LOCALE_IN_THIS_LIBRARY  1   /* should normally be 0 */
+	#if USE_SET_LOCALE_IN_THIS_LIBRARY
+		if (SET_LOCALE(LC_CTYPE, "C.UTF-8") == NULL) {
+			if (SET_LOCALE(LC_CTYPE, "UTF-8") == NULL) {
+				if (SET_LOCALE(LC_CTYPE, "en_US.UTF-8") == NULL)
+					SET_LOCALE(LC_CTYPE, "");
+			}
+		}
+	#endif
 
 	espeak_ng_STATUS result = LoadPhData(&srate, context);
 	if (result != ENS_OK)

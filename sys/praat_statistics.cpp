@@ -84,6 +84,9 @@ void praat_reportTextProperties () {
 	MelderInfo_writeLine (U"Text properties of this edition of Praat on this computer:\n");
 	MelderInfo_writeLine (U"Locale: ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 	MelderInfo_writeLine (U"A \"char\" is ",                                      8, U" bits.");
+	constexpr bool charIsSigned = ( (int) (char) 200 < 0 );
+	if (charIsSigned)
+		MelderInfo_writeLine (U"A \"char\" is ", charIsSigned ? U"signed." : U"unsigned.");
 	MelderInfo_writeLine (U"A \"char16_t\" is ",           sizeof (char16_t)    * 8, U" bits.");
 	MelderInfo_writeLine (U"A \"wchar_t\" is ",            sizeof (wchar_t)     * 8, U" bits.");
 	MelderInfo_writeLine (U"A \"char32_t\" is ",           sizeof (char32_t)    * 8, U" bits.");
