@@ -1,6 +1,6 @@
 /* manual_whatsnew.cpp
  *
- * Copyright (C) 1992-2023 Paul Boersma
+ * Copyright (C) 1992-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,12 @@ R"~~~(
 © Paul Boersma 1995–2024
 
 Latest changes in Praat.
+
+##6.4.11# (26 April 2024)
+• Menu commands that call a script (e.g. those that were added from a plug-in)
+  are now visible as such by being marked with a little “+” sign.
+• Fixed a bug that could cause the SpeechSynthesizer to mishandle European
+  characters with accents on Linux.
 
 ##6.4.10# (21 April 2024)
 • Function windows: fixed a problem that could cause Praat to crash when doing #all after #Group
