@@ -1039,6 +1039,18 @@ static void setThePraatLocale () {
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
 		//setenv ("PULSE_LATENCY_MSEC", "1", 0);   // Rafael Laboissiere, August 2014
+		/*
+			The following is required to make iswalpha (and the like) work correctly
+			in the eSpeak library. The file test/dwtools/SpeechSynthesizer.praat
+			checks this.
+		*/
+		if (
+			! setlocale (LC_CTYPE, "C.UTF-8") &&
+			! setlocale (LC_CTYPE, "UTF-8") &&
+			! setlocale (LC_CTYPE, "en_US.UTF-8")
+		)
+			setlocale (LC_CTYPE, "");
+
 	#elif defined (_WIN32)
 		setlocale (LC_ALL, "C");   // said to be superfluous
 	#elif defined (macintosh)

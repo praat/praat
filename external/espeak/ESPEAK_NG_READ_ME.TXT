@@ -85,14 +85,27 @@ This is because David hard-coded the paths to the data files with forward slashe
 
 In `speech.cpp`, in the function `espeak_ng_Initialize`, we remove `setlocale`,
 because the locale of the entire program shouldn't be overwritten by a library:
-	//ppgb if (set lo ca le(LC_CTYPE, "C.UTF-8") == NULL) {
-	//ppgb 	if (set lo ca le(LC_CTYPE, "UTF-8") == NULL) {
-	//ppgb 		if (set lo ca le(LC_CTYPE, "en_US.UTF-8") == NULL)
-	//ppgb 			set lo ca le(LC_CTYPE, "");
-	//ppgb 	}
-	//ppgb }
-(the inserted spaces are there because the absence of `setlocale` in this file
- is automatically checked in the Praat test suite)
+	/*
+		(Paul Boersma 20240426:)
+		When using this library in an app, e.g. Praat,
+		we should not set the locale, because it will interfere with the locale
+		that has been set in praat_init().
+		To nevertheless experiment with setting the locale here,
+		remove the space from "set locale" in the definition of SET_LOCALE
+		and set USE_SET_LOCALE_IN_THIS_LIBRARY to 1 instead of 0.
+		(The space is needed to be able to automatically determine that the name
+		 of the function does not appear in the present source file `speech.cpp`.)
+	*/
+	#define SET_LOCALE  set locale
+	#define USE_SET_LOCALE_IN_THIS_LIBRARY  0
+	#if USE_SET_LOCALE_IN_THIS_LIBRARY
+		if (SET_LOCALE(LC_CTYPE, "C.UTF-8") == NULL) {
+			if (SET_LOCALE(LC_CTYPE, "UTF-8") == NULL) {
+				if (SET_LOCALE(LC_CTYPE, "en_US.UTF-8") == NULL)
+					SET_LOCALE(LC_CTYPE, "");
+			}
+		}
+	#endif
 
 Finally, make sure not to include `<windows.h>` or `melder.h`
 after `espeak_ng.h`, because they may redefine `fopen`.
