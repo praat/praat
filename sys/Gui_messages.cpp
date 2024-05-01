@@ -300,11 +300,7 @@ static void * gui_monitor (double progress, conststring32 message) {
 		}
 		/*
 			Display the alert dialog and synchronously wait for the user to click OK.
-			But: it is not impossible that the program crashes during `runModal`,
-			especially if `runModal` is called at expose time.
-			Write the message to stdout just in case.
 		*/
-		Melder_casual (message32);
 		[alert runModal];
 		[alert release];
 	}
@@ -315,6 +311,7 @@ static char * theMessageFund = nullptr;
 
 static void gui_fatal (conststring32 message) {
 	free (theMessageFund);
+	Melder_casual (U"PRAAT CRASH MESSAGE:\n", message, U"\n(END OF PRAAT CRASH MESSAGE)");
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE, "%s", Melder_peek32to8 (message));
@@ -333,6 +330,12 @@ static void gui_error (conststring32 message) {
 	const bool memoryIsLow = str32str (message, U"Out of memory");
 	if (memoryIsLow)
 		free (theMessageFund);
+	/*
+		It is not impossible that the program crashes during `gtk_dialog_run` or `MessageBox` or `runModal`,
+		especially if these are called at expose time.
+		Write the message to stdout just in case.
+	*/
+	Melder_casual (U"PRAAT ERROR MESSAGE:\n", message, U"(END OF PRAAT ERROR MESSAGE)");
 	#if gtk
 		trace (U"create dialog");
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -364,6 +367,7 @@ static void gui_error (conststring32 message) {
 }
 
 static void gui_warning (conststring32 message) {
+	Melder_casual (U"PRAAT WARNING MESSAGE:\n", message, U"\n(END OF PRAAT WARNING MESSAGE)");
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", Melder_peek32to8 (message));
