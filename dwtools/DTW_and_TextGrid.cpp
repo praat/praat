@@ -83,7 +83,9 @@ autoIntervalTier DTW_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, do
 			}
 			textinterval = his intervals.at [his intervals.size];
 			textinterval -> xmax = his xmax;
-			Melder_assert (textinterval -> xmin < textinterval -> xmax);
+			//Melder_assert (textinterval -> xmin < textinterval -> xmax);
+			Melder_require (textinterval -> xmin < textinterval -> xmax,
+				U"Interval runs from ", textinterval -> xmin, U" to ", textinterval -> xmax, U" seconds.");
 			return him;
 		} else if (fabs (my xmin - thy xmin) <= precision && fabs (my xmax - thy xmax) <= precision) { // map from X to Y
 			autoIntervalTier him = Data_copy (thee);
@@ -104,7 +106,7 @@ autoIntervalTier DTW_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, do
 			textinterval = his intervals.at [his intervals.size];
 			textinterval -> xmax = his xmax;
 			trace (U"interval ", his intervals.size, U": from ", textinterval -> xmin, U" to ", textinterval -> xmax, U", label <<", textinterval -> text.get(), U">>");
-			Melder_assert (textinterval -> xmin < textinterval -> xmax);
+			//Melder_assert (textinterval -> xmin < textinterval -> xmax);
 			Melder_require (textinterval -> xmin < textinterval -> xmax,
 				U"Interval runs from ", textinterval -> xmin, U" to ", textinterval -> xmax, U" seconds.");
 			return him;
@@ -112,7 +114,7 @@ autoIntervalTier DTW_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, do
 			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW should be equal.");
 		}
 	} catch (MelderError) {
-		Melder_throw (U"IntervalTier not created from DTW & IntervalTier.");
+		Melder_throw (U"DTW & IntervalTier: new IntervalTier not created.");
 	}
 }
 
@@ -148,7 +150,7 @@ autoTextGrid DTW_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) 
 		}
 		return him;
 	} catch (MelderError) {
-		Melder_throw (U"TextGrid not created from DTW & TextGrid.");
+		Melder_throw (U"DTW & TextGrid: new TextGrid not created.");
 	}
 }
 

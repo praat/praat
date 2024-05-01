@@ -412,7 +412,7 @@ extern const unsigned char env_fall[128];
 #define WCMD_SONIC_SPEED 15
 #define WCMD_PHONEME_ALIGNMENT 16
 
-#define N_WCMDQ   170
+#define N_WCMDQ   170   // normally 170
 #define MIN_WCMDQ  25   // need this many free entries before adding new phoneme
 
 extern intptr_t wcmdq[N_WCMDQ][4];

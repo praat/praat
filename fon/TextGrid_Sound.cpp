@@ -30,7 +30,8 @@ static bool IntervalTier_check (IntervalTier me) {
 			return false;
 		}
 	}
-	if (my intervals.size < 2) return true;
+	if (my intervals.size < 2)
+		return true;
 	for (integer iinterval = 1; iinterval < my intervals.size; iinterval ++) {
 		TextInterval thisInterval = my intervals.at [iinterval];
 		TextInterval nextInterval = my intervals.at [iinterval + 1];
@@ -149,6 +150,7 @@ void TextGrid_anySound_alignInterval (
 	const bool includeWords, const bool includePhonemes
 ) {
 	try {
+		//TRACE
 		IntervalTier headTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		if (intervalNumber < 1 || intervalNumber > headTier -> intervals.size)
 			Melder_throw (U"Interval ", intervalNumber, U" does not exist.");
@@ -157,6 +159,8 @@ void TextGrid_anySound_alignInterval (
 			Melder_throw (U"Nothing to be done, because you asked neither for word alignment nor for phoneme alignment.");
 		if (str32str (headTier -> name.get(), U"/"))
 			Melder_throw (U"The current tier already has a slash (\"/\") in its name. Cannot create a word or phoneme tier from it.");
+		trace (U"tier ", tierNumber, U" interval ", intervalNumber,
+				U" (", interval -> xmin, U" .. ", interval -> xmax, U" “", interval -> text.get(), U"”)");
 		autoSound part =
 			anySound -> classInfo == classLongSound ? 
 				LongSound_extractPart (static_cast <LongSound> (anySound), interval -> xmin, interval -> xmax, true) :
@@ -169,16 +173,31 @@ void TextGrid_anySound_alignInterval (
 		);
 		double silenceThreshold = -30.0, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
 		autoTextGrid analysis;
+int tries = 0;
+constexpr int maxTries = 5;
+again:
 		if (! Melder_equ (interval -> text.get(), U""))
-			analysis = SpeechSynthesizer_Sound_TextInterval_align
-					(synthesizer.get(), part.get(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
+			try {
+				analysis = SpeechSynthesizer_Sound_TextInterval_align
+						(synthesizer.get(), part.get(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
+			} catch (MelderError) {
+				if (++ tries < maxTries) {
+					Melder_casual (U"TRY ", tries, U" FAILED (SpeechSynthesizer & Sound & TextInterval: align):");
+					Melder_casual (U"    Tier ", tierNumber);
+					Melder_casual (U"    Interval ", intervalNumber, U": ", interval -> xmin, U" .. ", interval -> xmax, U" “", interval -> text.get(), U"”");
+					Melder_casual (U"REASON OF THIS TEMPORARY FAILURE (suppressed Praat error message):\n", Melder_getError (), U"(GOING TO RETRY...)");
+					Melder_clearError ();
+					goto again;
+				} else
+					Melder_throw (U"All ", maxTries, U" tries failed.");
+			}
 		if (analysis) {
 			/*
 				Clean up the analysis.
 			*/
 			Melder_assert (fabs (analysis -> xmin - interval -> xmin) < 1e-12);
 			if (analysis -> xmax != interval -> xmax) {
-				//Melder_fatal (U"Analysis ends at ", analysis -> xmax, U" but interval at ", interval -> xmax, U"seconds.");
+				Melder_casual (U"Analysis ends at ", analysis -> xmax, U" but interval at ", interval -> xmax, U" seconds.");
 				analysis -> xmax = interval -> xmax;
 				analysis -> intervalTier_cast (1) -> xmax = interval -> xmax;
 				analysis -> intervalTier_cast (2) -> xmax = interval -> xmax;
@@ -191,8 +210,19 @@ void TextGrid_anySound_alignInterval (
 			}
 			Melder_assert (analysis -> tiers->size == 4);
 			IntervalTier analysisWordTier = analysis -> intervalTier_cast (3);
-			if (! IntervalTier_check (analysisWordTier))
-				Melder_throw (U"Analysis word tier out of order.");
+			tries += 1;
+			if (! IntervalTier_check (analysisWordTier)) {
+				if (tries < maxTries) {
+					Melder_casual (U"TRY ", tries, U" FAILED (SpeechSynthesizer & Sound & TextInterval: align):");
+					Melder_casual (U"    Tier ", tierNumber);
+					Melder_casual (U"    Interval ", intervalNumber, U": ", interval -> xmin, U" .. ", interval -> xmax, U" “", interval -> text.get(), U"”");
+					Melder_casual (U"REASON OF THIS TEMPORARY FAILURE:\n");
+					Melder_casual (U"Analysis word tier out of order.\n(GOING TO RETRY...)");
+					goto again;
+				} else
+					Melder_throw (U"All ", maxTries, U" tries failed.");
+			} else if (tries > 1)
+				Melder_casual (U"(TRY ", tries, U" SUCCEEDED)");
 			IntervalTier_removeEmptyIntervals (analysisWordTier, nullptr);
 			Melder_assert (analysisWordTier -> xmax == analysis -> xmax);
 			Melder_assert (analysisWordTier -> intervals.size >= 1);
