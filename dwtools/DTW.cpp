@@ -134,12 +134,16 @@ double DTW_getYTimeFromXTime (DTW me, double tx) {
 	/*
 		If `eps` were zero, then the condition would rely on floating-point equality,
 		which is a bad idea (e.g. the result would be platform-dependent).
-		(fix ppgb 20241020, after this crashed on Windows only)
+		(fix ppgb 20240420, after this crashed on Windows only)
+		(rewind 20240501, because of retries in SpeechSynthesizer & Sound & TextGrid alignment)
 	*/
-	const double eps = 1e-6 * (my xmax - my xmin);
+	const double eps = 0.0 * (my xmax - my xmin);
 	if (tx > my xmin + eps && tx < my xmax - eps) {
 		DTW_Path_Query thee = & my pathQuery;
 		time = RealTier_getValueAtTime (thy yfromx.get(), tx);
+	} else {
+		//TRACE
+		trace (U"Time set to ", tx, U" instead of between ", my xmin, U" and ", my xmax, U".");
 	}
 	return time;
 }
@@ -149,9 +153,10 @@ double DTW_getXTimeFromYTime (DTW me, double ty) {
 	/*
 		If `eps` were zero, then the condition would rely on floating-point equality,
 		which is a bad idea (e.g. the result would be platform-dependent).
-		(fix ppgb 20241020, after this crashed on Windows only)
+		(fix ppgb 20240420, after this crashed on Windows only)
+		(rewind 20240501, because of retries in SpeechSynthesizer & Sound & TextGrid alignment)
 	*/
-	const double eps = 1e-6 * (my ymax - my ymin);
+	const double eps = 0.0 * (my ymax - my ymin);
 	if (ty > my ymin + eps && ty < my ymax - eps) {
 		DTW_Path_Query thee = & my pathQuery;
 		time = RealTier_getValueAtTime (thy xfromy.get(), ty);

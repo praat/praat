@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
- * Copyright (C) 2011-2023 David Weenink
+ * Copyright (C) 2011-2023 David Weenink, 2012,2013,2015-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

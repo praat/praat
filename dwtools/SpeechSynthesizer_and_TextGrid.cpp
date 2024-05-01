@@ -101,15 +101,15 @@ static double TextGrid_getEndTimeOfLastOccurrence (TextGrid thee, integer tierNu
 #endif
 
 static void IntervalTier_getLabelInfo (IntervalTier me, conststring32 label, double *labelDurations, integer *numberOfOccurences) {
-    *labelDurations = 0.0;
-    *numberOfOccurences = 0;
-    for (integer i = 1; i <= my intervals.size; i ++) {
+	*labelDurations = 0.0;
+	*numberOfOccurences = 0;
+	for (integer i = 1; i <= my intervals.size; i ++) {
 		const TextInterval ti = my intervals.at [i];
-        if (Melder_equ (ti -> text.get(), label)) {
-            *labelDurations += ti -> xmax - ti -> xmin;
-            (*numberOfOccurences) ++;
-        }
-    }
+		if (Melder_equ (ti -> text.get(), label)) {
+			*labelDurations += ti -> xmax - ti -> xmin;
+			(*numberOfOccurences) ++;
+		}
+	}
 }
 
 #define TIMES_ARE_CLOSE(x,y) (fabs((x)-(y)) < precision)
@@ -469,7 +469,11 @@ autoTextGrid TextGrid_IntervalTier_patch (TextGrid me, IntervalTier thee, consts
 }
 
 // We assume that the Sound and the SpeechSynthesizer have the same samplingFrequency
-autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
+autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (
+	const SpeechSynthesizer me, const Sound thee, const TextInterval him,
+	const double silenceThreshold,
+	const double minSilenceDuration, const double minSoundingDuration
+) {
 	try {
 		Melder_require (thy xmin == his xmin && thy xmax == his xmax,
 			U"Domains of Sound and TextGrid should be equal.");
@@ -477,7 +481,8 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 			U"The sampling frequencies of the SpeechSynthesizer and the Sound should be equal.");
 
 //TRACE
-trace(1);
+trace(U"original sound: ", thy xmin, U" .. ", thy xmax);
+trace(U"interval: ", his xmin, U" .. ", his xmax, U" ", his text.get());
 		autoSTRVEC tokens = splitByWhitespace_STRVEC (his text.get());
 		const integer numberOfTokens = tokens.size;
 		Melder_require (numberOfTokens > 0,
@@ -490,7 +495,9 @@ trace(1);
 trace(2);
 		const double minPitch = 200.0, timeStep = 0.005, precision = thy dx;
 		double startTimeOfSounding, endTimeOfSounding;
-		autoSound soundTrimmed = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & startTimeOfSounding, & endTimeOfSounding);
+		autoSound soundTrimmed = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep,
+				silenceThreshold, minSilenceDuration, minSoundingDuration, & startTimeOfSounding, & endTimeOfSounding);
+trace (U"- silence-trimmed: ", soundTrimmed -> xmin, U" .. ", soundTrimmed -> xmax);
 		const double duration_soundTrimmed = soundTrimmed -> xmax - soundTrimmed -> xmin;
 		const bool hasSilence_sound = fabs (startTimeOfSounding - thy xmin) > precision || fabs (endTimeOfSounding - thy xmax) > precision;
 trace(3);
@@ -522,7 +529,10 @@ trace(4);
 		autoSound synthTrimmed = Sound_trimSilencesAtStartAndEnd (synth.get(), 0.0, minPitch, timeStep, silenceThreshold_synth,
 			minSilenceDuration_synth, minSoundingDuration_synth, & startTimeOfSounding_synth, & endTimeOfSounding_synth);
 		const double synthTrimmed_duration = synthTrimmed -> xmax - synthTrimmed -> xmin;
-		const bool hasSilence_synth = fabs (startTimeOfSounding_synth - synth -> xmin) > precision || 
+trace (U"synthesized sound: ", synth -> xmin, U" .. ", synth -> xmax);
+trace (U"- silence-trimmed: ", synthTrimmed -> xmin, U" .. ", synthTrimmed -> xmax);
+trace (U"-        sounding: ", startTimeOfSounding_synth, U" .. ", endTimeOfSounding_synth);
+		const bool hasSilence_synth = fabs (startTimeOfSounding_synth - synth -> xmin) > precision ||
 								fabs (endTimeOfSounding_synth - synth -> xmax) > precision;
 trace(5);
 
@@ -536,7 +546,7 @@ trace(5);
 		const int constraint = ( slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1 ); // TODO enums
 
 trace(6);
-		trace (hasSilence_sound, hasSilence_synth);
+trace (hasSilence_sound, hasSilence_synth);
 		const double analysisWidth = 0.02, dt = 0.005, band = 0.0;
 		autoDTW dtw = Sounds_to_DTW ((hasSilence_sound ? soundTrimmed.get() : thee),
 				(hasSilence_synth ? synthTrimmed.get() : synth.get()), analysisWidth, dt, band, constraint);
@@ -545,15 +555,19 @@ trace(7);
 		autoTextGrid result = DTW_TextGrid_to_TextGrid (dtw.get(), (hasSilence_synth ? textgrid_synth_sounding.get() : textgrid_synth.get()), precision);
 trace(8);
 		if (hasSilence_sound) {
-			if (startTimeOfSounding > thy xmin)
+			if (startTimeOfSounding > thy xmin) {
+				trace (U"Have to set earlier start time ", thy xmin);
 				TextGrid_setEarlierStartTime (result.get(), thy xmin, U"", U"");
-			if (endTimeOfSounding < thy xmax || result -> xmax < thy xmax)
-					TextGrid_setLaterEndTime (result.get(), thy xmax, U"", U"");
+			}
+			if (endTimeOfSounding < thy xmax || result -> xmax < thy xmax) {
+				trace (U"Have to set later end time ", thy xmax);
+				TextGrid_setLaterEndTime (result.get(), thy xmax, U"", U"");
+			}
 		}
 trace(9);
 		return result;
 	} catch (MelderError) {
-		Melder_throw (U"Sound and TextInterval not aligned.");
+		Melder_throw (U"SpeechSynthesizer & Sound & TextInterval: not aligned.");
 	}
 }
 /*

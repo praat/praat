@@ -1789,7 +1789,7 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 	try {
 		autoTextGrid tg;
 		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, 
-			minSilenceDuration, minSoundingDuration, & tg, U"trimmed");
+				minSilenceDuration, minSoundingDuration, & tg, U"trimmed");
 		const IntervalTier trim = (IntervalTier) tg -> tiers->at [2];
 		const TextInterval ti1 = trim -> intervals.at [1];
 		if (startTimeOfSounding) {

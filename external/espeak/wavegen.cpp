@@ -37,6 +37,8 @@
 #include "synthesize.h"               // for WGEN_DATA, RESONATOR, frame_t
 #include "mbrola.h"                  // for MbrolaFill, MbrolaReset, mbrola...
 
+#include "melder.h"   // for tracing
+
 #if USE_KLATT
 #include "klatt.h"
 #endif
@@ -269,6 +271,8 @@ void WcmdqInc(void)
 {
 	wcmdq_tail++;
 	if (wcmdq_tail >= N_WCMDQ) wcmdq_tail = 0;
+	//TRACE
+	trace (U"Tail now ", wcmdq_tail);
 }
 
 static void WcmdqIncHead(void)
@@ -276,6 +280,8 @@ static void WcmdqIncHead(void)
 	MAKE_MEM_UNDEFINED(&wcmdq[wcmdq_head], sizeof(wcmdq[wcmdq_head]));
 	wcmdq_head++;
 	if (wcmdq_head >= N_WCMDQ) wcmdq_head = 0;
+	//TRACE
+	trace (U"Head now ", wcmdq_head);
 }
 
 #define PEAKSHAPEW 256
