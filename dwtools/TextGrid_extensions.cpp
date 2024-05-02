@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2019, 2023 David Weenink, Paul Boersma 2019
+ * Copyright (C) 1993-2019,2023 David Weenink, 2015-2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,29 +385,39 @@ void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, conststring
 	}
 }
 
-void IntervalTier_moveBoundary (IntervalTier me, integer iint, bool atStart, double newTime) {
-    try {
-		Melder_require (iint >= 1 && iint <= my intervals.size,
-            U"The interval number is out of the valid range.");
-		Melder_require (! ((iint == 1 && atStart) or (iint == my intervals.size && ! atStart)),
-			U"Cannot change the domain.");
-        TextInterval interval = my intervals.at [iint];
-        if (atStart) {
-            const TextInterval pinterval = my intervals.at [iint-1];
-			Melder_require (newTime > pinterval -> xmin,
-				U"Cannot move past the start of previous interval.");
-            pinterval -> xmax = interval -> xmin = newTime;
-        } else {
-            const TextInterval ninterval = my intervals.at [iint+1];
-			Melder_require (newTime < ninterval -> xmax,
-				U"Cannot move past the end of next interval.");
-            ninterval -> xmin = interval -> xmax = newTime;
-        }
-    } catch (MelderError) {
-        Melder_throw (me, U": boundary not moved.");
-    }
+void IntervalTier_moveBoundary (const IntervalTier me, const integer intervalNumber, const bool atStart, const double newTime) {
+	try {
+		Melder_require (intervalNumber >= 1 && intervalNumber <= my intervals.size,
+			U"The interval number (", intervalNumber, U" is out of the valid range (1 ..", my intervals.size, U").");
+		TextInterval currentInterval = my intervals.at [intervalNumber];
+		if (atStart) {
+			Melder_require (newTime < currentInterval -> xmax,
+				U"Cannot move boundary forward from ", currentInterval -> xmin, U" to ", newTime, U" seconds, ",
+				U"because that would be past the end of the current interval (", currentInterval -> xmax, U" seconds).");
+			Melder_require (intervalNumber > 1,
+				U"Trying to change the end of the previous interval (", intervalNumber - 1, U"), but there is no previous interval.");
+			const TextInterval previousInterval = my intervals.at [intervalNumber - 1];
+			Melder_require (newTime > previousInterval -> xmin,
+				U"Cannot move boundary back from ", currentInterval -> xmin, U" to ", newTime, U" seconds, ",
+				U"because that would be past the start of the previous interval (", previousInterval -> xmin, U" seconds).");
+			previousInterval -> xmax = currentInterval -> xmin = newTime;
+		} else {
+			Melder_require (newTime > currentInterval -> xmin,
+				U"Cannot move boundary back from ", currentInterval -> xmax, U" to ", newTime, U" seconds, ",
+				U"because that would be past the start of the current interval (", currentInterval -> xmin, U" seconds).");
+			Melder_require (intervalNumber < my intervals.size,
+				U"Trying to change the start of the next interval (", intervalNumber + 1, U"), but there is no next interval.");
+			const TextInterval nextInterval = my intervals.at [intervalNumber + 1];
+			Melder_require (newTime < nextInterval -> xmax,
+				U"Cannot move boundary forward from ", currentInterval -> xmax, U" to ", newTime, U" seconds, ",
+				U"because that would be past the end of the next interval (", nextInterval -> xmax, U" seconds).");
+			nextInterval -> xmin = currentInterval -> xmax = newTime;
+		}
+		Melder_assert (my intervals.size >= 2);   // otherwise we would have thrown in either branch
+	} catch (MelderError) {
+		Melder_throw (me, U": boundary not moved.");
+	}
 }
-
 
 void TextTier_setLaterEndTime (TextTier me, double xmax, conststring32 mark) {
 	try {
@@ -565,7 +575,7 @@ static void IntervalTier_cutInterval (IntervalTier me, integer index, int extend
 }
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, conststring32 label) {
-    try {
+	try {
 		for (integer iinterval = my intervals.size; iinterval > 1; iinterval --) {
 			const TextInterval thisInterval = my intervals.at [iinterval];
 			if (Melder_equ (thisInterval -> text.get(), label)) {

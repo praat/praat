@@ -499,17 +499,20 @@ trace(2);
 		{// scope
 			autoMelderWarningOff nowarn;
 			soundTrimmed = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep,
-				 silenceThreshold, minSilenceDuration, minSoundingDuration, & startTimeOfSounding, & endTimeOfSounding);
+					silenceThreshold, minSilenceDuration, minSoundingDuration, & startTimeOfSounding, & endTimeOfSounding);
 		}
 trace (U"- silence-trimmed: ", soundTrimmed -> xmin, U" .. ", soundTrimmed -> xmax);
 		const double duration_soundTrimmed = soundTrimmed -> xmax - soundTrimmed -> xmin;
+		Melder_require (duration_soundTrimmed > 0.0,
+			soundTrimmed.get(), U" is silent, so we cannot align it with text.");
 		const bool hasSilence_sound = fabs (startTimeOfSounding - thy xmin) > precision || fabs (endTimeOfSounding - thy xmax) > precision;
 trace(3);
 
-		if (my d_estimateSpeechRate) {
+		if (my d_estimateSpeechRate && duration_soundTrimmed != 0.0) {
 			/*
 				Estimate speaking rate with the number of words per minute from the text
 			*/
+			Melder_assert (duration_soundTrimmed != 0.0);
 			const double wordsPerMinute_rawTokens = 60.0 * numberOfTokens / duration_soundTrimmed;
 			/*
 				Compensation for long words: 5 characters / word
@@ -549,9 +552,11 @@ trace(5);
 		/*
 			Compare the durations of the two sounds to get an indication of the slope constraint needed for the DTW
 		*/
+		Melder_assert (synthTrimmed_duration != 0.0);
 		double slope = duration_soundTrimmed / synthTrimmed_duration;
+		Melder_assert (slope != 0.0);
 		slope = ( slope > 1.0 ? slope : 1.0 / slope );
-		const int constraint = ( slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1 ); // TODO enums
+		const int constraint = ( slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1 );   // TODO enums
 
 trace(6);
 trace (hasSilence_sound, hasSilence_synth);
