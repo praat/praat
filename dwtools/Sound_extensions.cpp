@@ -1758,18 +1758,18 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
 					// all of the sound is silent: do nothing
 				} else if (iint == 1) {   // first is special
 					const double trim_t = ti -> xmax - trimDuration;
-					IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
+					IntervalTier_moveRightBoundary (itg.get(), iint, trim_t);
 				} else if (iint == tier -> intervals.size) {   // last is special
 					const double trim_t = ti -> xmin + trimDuration;
-					IntervalTier_moveBoundary (itg.get(), iint, true, trim_t);
+					IntervalTier_moveLeftBoundary (itg.get(), iint, trim_t);
 				} else {
 					if (onlyAtStartAndEnd) {
 						label = ati -> text.get();
 					} else {
 						double trim_t = ti -> xmin + 0.5 * trimDuration;
-						IntervalTier_moveBoundary (itg.get(), iint, true, trim_t);
+						IntervalTier_moveLeftBoundary (itg.get(), iint, trim_t);
 						trim_t = ti -> xmax - 0.5 * trimDuration;
-						IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
+						IntervalTier_moveRightBoundary (itg.get(), iint, trim_t);
 					}
 				}
 				TextInterval_setText (ati, label);

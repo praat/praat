@@ -221,7 +221,6 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 		
 		Melder_require (ny == nev,
 			U"There are not enough correlations present for prediction.");
-		
 
 		if (from == 0)
 			from = 1;

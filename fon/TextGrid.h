@@ -58,6 +58,8 @@ autoPointProcess IntervalTier_getCentrePoints (IntervalTier me, conststring32 te
 autoPointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointProcess point, double phase);
 autoPointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProcess point, double phase);
 void IntervalTier_removeLeftBoundary (IntervalTier me, integer intervalNumber);
+void IntervalTier_moveLeftBoundary (IntervalTier me, integer interval, double newTime);
+void IntervalTier_moveRightBoundary (IntervalTier me, integer interval, double newTime);
 
 void TextTier_removePoint (TextTier me, integer pointNumber);
 

@@ -102,8 +102,6 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, conststring32 m
 
 void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, conststring32 mark);
 
-void IntervalTier_moveBoundary (IntervalTier me, integer interval, bool atStart, double newTime);
-
 void TextTier_setLaterEndTime (TextTier me, double xmax, conststring32 mark);
 
 void TextTier_setEarlierStartTime (TextTier me, double xmin, conststring32 mark);
