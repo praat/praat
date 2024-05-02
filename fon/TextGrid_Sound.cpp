@@ -185,7 +185,7 @@ again:
 					Melder_casual (U"TRY ", tries, U" FAILED (SpeechSynthesizer & Sound & TextInterval: align):");
 					Melder_casual (U"    Tier ", tierNumber);
 					Melder_casual (U"    Interval ", intervalNumber, U": ", interval -> xmin, U" .. ", interval -> xmax, U" “", interval -> text.get(), U"”");
-					Melder_casual (U"REASON OF THIS TEMPORARY FAILURE (suppressed Praat error message):\n", Melder_getError (), U"(GOING TO RETRY...)");
+					Melder_casual (U"REASON OF THIS TEMPORARY FAILURE (now comes a suppressed Praat error message):\n", Melder_getError (), U"(GOING TO RETRY...)");
 					Melder_clearError ();
 					goto again;
 				} else

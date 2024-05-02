@@ -495,8 +495,12 @@ trace(U"interval: ", his xmin, U" .. ", his xmax, U" ", his text.get());
 trace(2);
 		const double minPitch = 200.0, timeStep = 0.005, precision = thy dx;
 		double startTimeOfSounding, endTimeOfSounding;
-		autoSound soundTrimmed = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep,
-				silenceThreshold, minSilenceDuration, minSoundingDuration, & startTimeOfSounding, & endTimeOfSounding);
+		autoSound soundTrimmed;
+		{// scope
+			autoMelderWarningOff nowarn;
+			soundTrimmed = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep,
+				 silenceThreshold, minSilenceDuration, minSoundingDuration, & startTimeOfSounding, & endTimeOfSounding);
+		}
 trace (U"- silence-trimmed: ", soundTrimmed -> xmin, U" .. ", soundTrimmed -> xmax);
 		const double duration_soundTrimmed = soundTrimmed -> xmax - soundTrimmed -> xmin;
 		const bool hasSilence_sound = fabs (startTimeOfSounding - thy xmin) > precision || fabs (endTimeOfSounding - thy xmax) > precision;
@@ -526,8 +530,12 @@ trace(4);
 		const double silenceThreshold_synth = -40.0, minSilenceDuration_synth = 0.05; 
 		const double minSoundingDuration_synth = 0.05;
 		double startTimeOfSounding_synth, endTimeOfSounding_synth;
-		autoSound synthTrimmed = Sound_trimSilencesAtStartAndEnd (synth.get(), 0.0, minPitch, timeStep, silenceThreshold_synth,
-			minSilenceDuration_synth, minSoundingDuration_synth, & startTimeOfSounding_synth, & endTimeOfSounding_synth);
+		autoSound synthTrimmed;
+		{// scope
+			autoMelderWarningOff nowarn;
+			synthTrimmed = Sound_trimSilencesAtStartAndEnd (synth.get(), 0.0, minPitch, timeStep, silenceThreshold_synth,
+					minSilenceDuration_synth, minSoundingDuration_synth, & startTimeOfSounding_synth, & endTimeOfSounding_synth);
+		}
 		const double synthTrimmed_duration = synthTrimmed -> xmax - synthTrimmed -> xmin;
 trace (U"synthesized sound: ", synth -> xmin, U" .. ", synth -> xmax);
 trace (U"- silence-trimmed: ", synthTrimmed -> xmin, U" .. ", synthTrimmed -> xmax);
@@ -603,7 +611,11 @@ static autoTextGrid SpeechSynthesizer_Sound_TextInterval_align2 (SpeechSynthesiz
 		*/
 		const double minPitch = 200, timeStep = 0.005, precision = thy dx;
 		autoTextGrid thee_trimmer;
-		autoSound thee_trimmed = Sound_trimSilences (thee, trimDuration, false, minPitch, timeStep, silenceThreshold,  minSilenceDuration, minSoundingDuration, &thee_trimmer, trimLabel);
+		autoSound thee_trimmed;
+		{// scope
+			autoMelderWarningOff nowarn;
+			thee_trimmed = Sound_trimSilences (thee, trimDuration, false, minPitch, timeStep, silenceThreshold,  minSilenceDuration, minSoundingDuration, & thee_trimmer, trimLabel);
+		}
 		/*
 			2. Synthesize the sound from the TextInterval
 		*/

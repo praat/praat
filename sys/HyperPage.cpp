@@ -462,7 +462,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 
 				{// scope
 					autoMelderProgressOff progress;
-					autoMelderWarningOff warning;
+					autoMelderWarningOff nowarn;
 					autoMelderSaveCurrentFolder saveFolder;
 					if (! MelderFolder_isNull (& my rootDirectory))
 						Melder_setCurrentFolder (& my rootDirectory);
@@ -560,7 +560,7 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 
 			{// scope
 				autoMelderProgressOff progress;
-				autoMelderWarningOff warning;
+				autoMelderWarningOff nowarn;
 				autoMelderSaveCurrentFolder saveFolder;
 				if (! MelderFolder_isNull (& my rootDirectory))
 					Melder_setCurrentFolder (& my rootDirectory);

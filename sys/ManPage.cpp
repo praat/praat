@@ -140,7 +140,7 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 			MelderInfo_close ();
 		} else {
 			autoMelderProgressOff progress;
-			autoMelderWarningOff warning;
+			autoMelderWarningOff nowarn;
 			autoMelderSaveCurrentFolder saveFolder;
 			if (! MelderFolder_isNull (rootDirectory))
 				Melder_setCurrentFolder (rootDirectory);
