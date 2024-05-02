@@ -228,7 +228,7 @@ static void writeParagraphsAsHtml (ManPages me, Interpreter optionalInterpreterR
 				);
 				{// scope
 					autoMelderProgressOff progress;
-					autoMelderWarningOff warning;
+					autoMelderWarningOff nowarn;
 					autoMelderSaveCurrentFolder saveFolder;
 					if (! MelderFolder_isNull (& my rootDirectory))
 						Melder_setCurrentFolder (& my rootDirectory);
