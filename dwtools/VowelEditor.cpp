@@ -772,9 +772,9 @@ static void menu_cb_settings (VowelEditor me, EDITOR_ARGS) {
 		}
 		const integer numberOfPairs = extraFrequencyBandwidthPairs.size / 2;
 		Melder_require (numberOfFormants <= numberOfPairs + 2,
-			U"The “Number of formants for synthesis” should not exceed 2 plus the number of extra frequency–bandwidth pairs (i.e. 2+",
-			numberOfPairs, U"). Either lower the number of formants for synthesis or specify more "
-			"frequency–bandwidth pairs.");
+			U"The “Number of formants for synthesis” should not exceed 2 plus the number of extra frequency–bandwidth pairs "
+			U"(i.e. 2+", numberOfPairs,
+			U"). Either lower the number of formants for synthesis, or specify more frequency–bandwidth pairs.");
 		/*
 			Formants and bandwidths are valid. It is safe to copy them.
 		*/

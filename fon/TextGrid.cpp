@@ -1189,6 +1189,49 @@ void TextGrid_removeBoundaryAtTime (TextGrid me, integer tierNumber, double t) {
 	}
 }
 
+void IntervalTier_moveLeftBoundary (const IntervalTier me, const integer intervalNumber, const double newTime) {
+	try {
+		Melder_require (intervalNumber >= 1 && intervalNumber <= my intervals.size,
+			U"The interval number (", intervalNumber, U" is out of the valid range (1 ..", my intervals.size, U").");
+		TextInterval currentInterval = my intervals.at [intervalNumber];
+		Melder_require (newTime < currentInterval -> xmax,
+			U"Cannot move boundary forward from ", currentInterval -> xmin, U" to ", newTime, U" seconds, ",
+			U"because that would be past the end of the current interval (", currentInterval -> xmax, U" seconds).");
+		Melder_require (intervalNumber > 1,
+			U"Trying to change the end of the previous interval (", intervalNumber - 1, U"), but there is no previous interval.");
+		Melder_assert (my intervals.size >= 2);   // otherwise we would have thrown
+		const TextInterval previousInterval = my intervals.at [intervalNumber - 1];
+		Melder_require (newTime > previousInterval -> xmin,
+			U"Cannot move boundary back from ", currentInterval -> xmin, U" to ", newTime, U" seconds, ",
+			U"because that would be past the start of the previous interval (", previousInterval -> xmin, U" seconds).");
+		previousInterval -> xmax = currentInterval -> xmin = newTime;
+	} catch (MelderError) {
+		Melder_throw (me, U": left boundary not moved.");
+	}
+}
+
+void IntervalTier_moveRightBoundary (const IntervalTier me, const integer intervalNumber, const double newTime) {
+	try {
+		Melder_require (intervalNumber >= 1 && intervalNumber <= my intervals.size,
+			U"The interval number (", intervalNumber, U" is out of the valid range (1 ..", my intervals.size, U").");
+		TextInterval currentInterval = my intervals.at [intervalNumber];
+		Melder_require (newTime > currentInterval -> xmin,
+			U"Cannot move boundary back from ", currentInterval -> xmax, U" to ", newTime, U" seconds, ",
+			U"because that would be past the start of the current interval (", currentInterval -> xmin, U" seconds).");
+		Melder_require (intervalNumber < my intervals.size,
+			U"Trying to change the start of the next interval (", intervalNumber + 1, U"), but there is no next interval.");
+		Melder_assert (my intervals.size >= 2);   // otherwise we would have thrown
+		const TextInterval nextInterval = my intervals.at [intervalNumber + 1];
+		Melder_require (newTime < nextInterval -> xmax,
+			U"Cannot move boundary forward from ", currentInterval -> xmax, U" to ", newTime, U" seconds, ",
+			U"because that would be past the end of the next interval (", nextInterval -> xmax, U" seconds)."
+		);
+		nextInterval -> xmin = currentInterval -> xmax = newTime;
+	} catch (MelderError) {
+		Melder_throw (me, U": right boundary not moved.");
+	}
+}
+
 void TextGrid_setIntervalText (TextGrid me, integer tierNumber, integer intervalNumber, conststring32 text) {
 	try {
 		IntervalTier intervalTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
