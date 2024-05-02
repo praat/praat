@@ -1,6 +1,6 @@
 /* Sound_and_TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2022 David Weenink
+ * Copyright (C) 1993-2022 David Weenink, 2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 
 #include "Intensity_extensions.h"
+#include "Sound_extensions.h"
 #include "Sound_and_TextGrid_extensions.h"
 #include "Sound_and_Spectrum.h"
 #include "Sound_to_Intensity.h"
@@ -69,16 +70,16 @@ autoTextGrid Sound_to_TextGrid_highMidLowIntervals (Sound me, double min, double
 }
 
 autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, conststring32 match) {
-    try {
+	try {
 		/*
 			Count samples of the trimmed sound
 		*/
-        integer ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
+		integer ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
 		double xmin = my xmin; // start time of output sound is start time of input sound
-        for (integer iint = 1; iint <= thy intervals.size; iint ++) {
-            TextInterval interval = thy intervals.at [iint];
-            if (! Melder_equ (interval -> text.get(), match)) {
-                numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
+		for (integer iint = 1; iint <= thy intervals.size; iint ++) {
+			TextInterval interval = thy intervals.at [iint];
+			if (! Melder_equ (interval -> text.get(), match)) {
+				numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
 				/*
 					If two contiguous intervals have to be copied then the last sample of previous interval
 					and first sample of current interval might sometimes be equal
@@ -89,31 +90,31 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
 			} else { // matches label
 				if (iint == 1) // Start time of output sound is end time of first interval
 					xmin = interval -> xmax;
-            }
-        }
-        /*
+			}
+		}
+		/*
 			Now copy the parts. The output sound starts at xmin
 		*/
-        autoSound him = Sound_create (my ny, xmin, xmin + numberOfSamples * my dx, numberOfSamples, my dx, xmin + 0.5 * my dx);
-        numberOfSamples = 0;
+		autoSound him = Sound_create (my ny, xmin, xmin + numberOfSamples * my dx, numberOfSamples, my dx, xmin + 0.5 * my dx);
+		numberOfSamples = 0;
 		previous_ixmax = 0;
-        for (integer iint = 1; iint <= thy intervals.size; iint ++) {
-            const TextInterval interval = thy intervals.at [iint];
-            if (! Melder_equ (interval -> text.get(), match)) {
-                Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
+		for (integer iint = 1; iint <= thy intervals.size; iint ++) {
+			const TextInterval interval = thy intervals.at [iint];
+			if (! Melder_equ (interval -> text.get(), match)) {
+				Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
 				if (ixmin == previous_ixmax)
 					ixmin ++;
 				previous_ixmax = ixmax;
 				integer numberOfSamplesToCopy = ixmax - ixmin + 1;
 				his z.part (1, my ny, numberOfSamples + 1, numberOfSamples + numberOfSamplesToCopy)  <<=  my z.part (1, my ny, ixmin, ixmax);
-                numberOfSamples += numberOfSamplesToCopy;
-            }
-        }
-        Melder_assert (numberOfSamples == his nx);
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": intervals not trimmed.");
-    }
+				numberOfSamples += numberOfSamplesToCopy;
+			}
+		}
+		Melder_assert (numberOfSamples == his nx);
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": intervals not trimmed.");
+	}
 }
 
 autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
