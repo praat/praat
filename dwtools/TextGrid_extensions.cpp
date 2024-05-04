@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2019, 2023 David Weenink, Paul Boersma 2019
+ * Copyright (C) 1993-2019,2023 David Weenink, 2015-2022,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,30 +385,6 @@ void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, conststring
 	}
 }
 
-void IntervalTier_moveBoundary (IntervalTier me, integer iint, bool atStart, double newTime) {
-    try {
-		Melder_require (iint >= 1 && iint <= my intervals.size,
-            U"The interval number is out of the valid range.");
-		Melder_require (! ((iint == 1 && atStart) or (iint == my intervals.size && ! atStart)),
-			U"Cannot change the domain.");
-        TextInterval interval = my intervals.at [iint];
-        if (atStart) {
-            const TextInterval pinterval = my intervals.at [iint-1];
-			Melder_require (newTime > pinterval -> xmin,
-				U"Cannot move past the start of previous interval.");
-            pinterval -> xmax = interval -> xmin = newTime;
-        } else {
-            const TextInterval ninterval = my intervals.at [iint+1];
-			Melder_require (newTime < ninterval -> xmax,
-				U"Cannot move past the end of next interval.");
-            ninterval -> xmin = interval -> xmax = newTime;
-        }
-    } catch (MelderError) {
-        Melder_throw (me, U": boundary not moved.");
-    }
-}
-
-
 void TextTier_setLaterEndTime (TextTier me, double xmax, conststring32 mark) {
 	try {
 		if (xmax <= my xmax)
@@ -565,7 +541,7 @@ static void IntervalTier_cutInterval (IntervalTier me, integer index, int extend
 }
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, conststring32 label) {
-    try {
+	try {
 		for (integer iinterval = my intervals.size; iinterval > 1; iinterval --) {
 			const TextInterval thisInterval = my intervals.at [iinterval];
 			if (Melder_equ (thisInterval -> text.get(), label)) {

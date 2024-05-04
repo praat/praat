@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2023 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2023 David Weenink, 2017,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1146,19 +1146,18 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime, double sa
 	Sound me; integer i, j, nComponents = 1 + log2 (maximumFrequency / 2 / baseFrequency);
 	double lmin = pow (10, - amplitudeRange / 10);
 	double twoPi = NUM2pi, f = baseFrequency * (1 + frequencyShiftFraction);
-	if (nComponents < 2) Melder_warning (U"Sound_createShepardTone: only 1 component.");
+	if (nComponents < 2)
+		Melder_warning (U"Sound_createShepardTone: only 1 component.");
 	Melder_casual (U"Sound_createShepardTone: ", nComponents, U" components.");
-	if (! (me = Sound_create2 (minimumTime, maximumTime, samplingFrequency))) return nullptr;
+	if (! (me = Sound_create2 (minimumTime, maximumTime, samplingFrequency)))
+		return nullptr;
 
-	for (j=1; j <= nComponents; j ++)
-	{
+	for (j=1; j <= nComponents; j ++) {
 		double fj = f * pow (2, j-1), wj = twoPi * fj;
 		double amplitude = lmin + (1 - lmin) *
 			(1 - cos (twoPi * log (fj + 1) / log (maximumFrequency + 1))) / 2;
 		for (i=1; i <= my nx; i ++)
-		{
 			my z [1] [i] += amplitude * sin (wj * (i - 0.5) * my dx);
-		}
 	}
 	Vector_scale (me, 0.99996948);
 	return me;
@@ -1735,52 +1734,58 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 	}
 }
 
-autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, conststring32 trimLabel) {
-    try {
+autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd,
+	double minPitch, double timeStep, double silenceThreshold,
+	double minSilenceDuration, double minSoundingDuration,
+	autoTextGrid *out_tg, conststring32 trimLabel
+) {
+	try {
 		Melder_require (my ny == 1,
 			U"The sound should be a mono sound.");
-		
-        const conststring32 silentLabel = U"silent", soundingLabel = U"sounding";
-        const conststring32 copyLabel = U"";
-        autoTextGrid tg = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
-        autoIntervalTier itg = Data_copy ((IntervalTier) tg -> tiers->at [1]);
-        IntervalTier tier = (IntervalTier) tg -> tiers->at [1];
-        for (integer iint = 1; iint <= tier -> intervals.size; iint ++) {
-            const TextInterval ti = tier -> intervals.at [iint];
-            const TextInterval ati = itg -> intervals.at [iint];
-            const double duration = ti -> xmax - ti -> xmin;
-            if (duration > trimDuration && Melder_equ (ti -> text.get(), silentLabel)) {   // silent
+
+		const conststring32 silentLabel = U"silent", soundingLabel = U"sounding";
+		const conststring32 copyLabel = U"";
+		autoTextGrid tg = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
+		autoIntervalTier itg = Data_copy ((IntervalTier) tg -> tiers->at [1]);
+		IntervalTier tier = (IntervalTier) tg -> tiers->at [1];
+		for (integer iint = 1; iint <= tier -> intervals.size; iint ++) {
+			const TextInterval ti = tier -> intervals.at [iint];
+			const TextInterval ati = itg -> intervals.at [iint];
+			const double duration = ti -> xmax - ti -> xmin;
+			if (duration > trimDuration && Melder_equ (ti -> text.get(), silentLabel)) {   // silent
 				conststring32 label = trimLabel;
-                if (iint == 1) { // first is special
-                    const double trim_t = ti -> xmax - trimDuration;
-                    IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
-                } else if (iint == tier -> intervals.size) {   // last is special
-                    const double trim_t = ti -> xmin + trimDuration;
-                    IntervalTier_moveBoundary (itg.get(), iint, true, trim_t);
-                } else {
+				if (tier -> intervals.size == 1) {   // current interval is both the first and the last: very special
+					// all of the sound is silent: do nothing
+				} else if (iint == 1) {   // first is special
+					const double trim_t = ti -> xmax - trimDuration;
+					IntervalTier_moveRightBoundary (itg.get(), iint, trim_t);
+				} else if (iint == tier -> intervals.size) {   // last is special
+					const double trim_t = ti -> xmin + trimDuration;
+					IntervalTier_moveLeftBoundary (itg.get(), iint, trim_t);
+				} else {
 					if (onlyAtStartAndEnd) {
 						label = ati -> text.get();
 					} else {
-                    	double trim_t = ti -> xmin + 0.5 * trimDuration;
-						IntervalTier_moveBoundary (itg.get(), iint, true, trim_t);
-                    	trim_t = ti -> xmax - 0.5 * trimDuration;
-                    	IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
+						double trim_t = ti -> xmin + 0.5 * trimDuration;
+						IntervalTier_moveLeftBoundary (itg.get(), iint, trim_t);
+						trim_t = ti -> xmax - 0.5 * trimDuration;
+						IntervalTier_moveRightBoundary (itg.get(), iint, trim_t);
 					}
-                }
-                TextInterval_setText (ati, label);
-            } else {   // sounding
-                TextInterval_setText (ati, copyLabel);
-            }
-        }
-        autoSound thee = Sound_IntervalTier_cutPartsMatchingLabel (me, itg.get(), trimLabel);
-        if (p_tg) {
+				}
+				TextInterval_setText (ati, label);
+			} else {   // sounding
+				TextInterval_setText (ati, copyLabel);
+			}
+		}
+		autoSound thee = Sound_IntervalTier_cutPartsMatchingLabel (me, itg.get(), trimLabel);
+		if (out_tg) {
 			TextGrid_addTier_copy (tg.get(), itg.get());
-            *p_tg = tg.move();
-        }
-        return thee;
-    } catch (MelderError) {
-        Melder_throw (me, U": silences not trimmed.");
-    }
+			*out_tg = tg.move();
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": silences not trimmed.");
+	}
 }
 
 autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double minPitch, double timeStep,
@@ -1805,7 +1810,7 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": silences not trimmed.");
+		Melder_throw (me, U": silences at start and end not trimmed.");
 	}
 }
 

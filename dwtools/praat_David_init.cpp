@@ -5743,7 +5743,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silences...") {
-    REAL (trimDuration, U"Trim duration (s)", U"0.08")
+	REAL (trimDuration, U"Trim duration (s)", U"0.08")
 	BOOLEAN (onlyAtStartAndEnd, U"Only at start and end", true);
 	LABEL (U"Parameters for the intensity analysis")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"100")
@@ -5756,7 +5756,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_trimSilences, U"Sound: Trim silences", U"Sound:
 	WORD (trim_string, U"Trim label", U"trimmed")
 	OK
 DO
-	trimDuration = ( trimDuration < 0.0 ? 0.0 : trimDuration );
+	Melder_clipLeft (0.0, & trimDuration);
 	CONVERT_EACH_TO_ONE (Sound)
 		autoTextGrid tg;
 		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, pitchFloor, timeStep,

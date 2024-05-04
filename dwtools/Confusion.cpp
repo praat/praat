@@ -341,7 +341,7 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 		integer nmatches, nstringmatches;
 		Melder_require (my rowLabels && my columnLabels,
 			U"Both row and column labels should be present.");
-		
+
 		autoSTRVEC rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
 				search, replace, maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
 
