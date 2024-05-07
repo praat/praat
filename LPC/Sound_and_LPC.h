@@ -21,22 +21,29 @@
 /*
  djmw 19971103
  djmw 20020812 GPL header
- djmw 20110307 Latest modification
 */
 
 
 #include "LPC.h"
 #include "Sound.h"
 
-autoLPC Sound_to_LPC_autocorrelation (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
+Thing_define (LPCAnalysisWorkspace, Daata) {
+	integer numberOfCoefficients, numberOfSamples;
+	autoVEC workspace;
+};
 
-autoLPC Sound_to_LPC_covariance (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
+int soundFrame_into_LPC_Frame (constVEC sound, LPC_Frame thee, LPCAnalysisWorkspace workspace);
 
-autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
 
-autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2);
+autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
 
-void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2);
+autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+
+autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2);
+
+void Sound_into_LPC_threaded (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, 
+	int *soundFrame_into_LPC_Frame (constVEC, LPC_Frame, LPCAnalysisWorkspace), LPCAnalysisWorkspace workspace);
 /*
  * Function:
  *	Calculate linear prediction coefficients according to following model:
@@ -99,5 +106,13 @@ void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, intege
 	For all LPC analysis
 */
 void checkLPCAnalysisParameters_e (double sound_dx, integer sound_nx, double physicalAnalysisWidth, integer predictionOrder);
+
+/* Special */
+
+void _Sound_into_LPC_auto (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
+void _Sound_into_LPC_covar (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
+void _Sound_into_LPC_burg (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
+void _Sound_into_LPC_marple (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, double tol1, double tol2);
+
 
 #endif /* _Sound_and_LPC_h_ */
