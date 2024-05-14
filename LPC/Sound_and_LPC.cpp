@@ -157,12 +157,17 @@ end:
 
 void Sound_into_LPC_auto (Sound me, LPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	autoSound sound = Data_copy (me);
+	Sound soundToAnalyze = sound.get();
+	const double samplingFrequency = 1.0 / my dx;
+	if (preEmphasisFrequency < samplingFrequency / 2.0)
+		Sound_preEmphasis (soundToAnalyze, preEmphasisFrequency);
+	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (soundToAnalyze, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	workspace -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_auto;
 	workspace -> v1 = raw_VEC (thy maxnCoefficients + 1);	// r
 	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);	// a
 	workspace -> v3 = raw_VEC (thy maxnCoefficients);		// rc
-	Sound_into_LPC_threaded (me, thee, preEmphasisFrequency, workspace.get());
+	LPCAnalysis_threaded (thee, workspace.get());
 }
 
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -267,7 +272,12 @@ end:
 
 void Sound_into_LPC_covar (Sound me, LPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	autoSound sound = Data_copy (me);
+	Sound soundToAnalyze = sound.get();
+	const double samplingFrequency = 1.0 / my dx;
+	if (preEmphasisFrequency < samplingFrequency / 2.0)
+		Sound_preEmphasis (soundToAnalyze, preEmphasisFrequency);
+	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (soundToAnalyze, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	workspace -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_covar;
 	workspace -> v1 = raw_VEC (thy maxnCoefficients * (thy maxnCoefficients + 1) / 2);
 	workspace -> v2 = raw_VEC (thy maxnCoefficients);
@@ -275,7 +285,7 @@ void Sound_into_LPC_covar (Sound me, LPC thee, double effectiveAnalysisWidth, do
 	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);
 	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);
 	
-	Sound_into_LPC_threaded (me, thee, preEmphasisFrequency, workspace.get());
+	LPCAnalysis_threaded (thee, workspace.get());
 }
 
 autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -374,12 +384,17 @@ static int soundFrame_into_LPC_Frame_burg (LPCAnalysisWorkspace me, constVEC x, 
 
 void Sound_into_LPC_burg (Sound me, LPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	autoSound sound = Data_copy (me);
+	Sound soundToAnalyze = sound.get();
+	const double samplingFrequency = 1.0 / my dx;
+	if (preEmphasisFrequency < samplingFrequency / 2.0)
+		Sound_preEmphasis (soundToAnalyze, preEmphasisFrequency);
+	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (soundToAnalyze, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	workspace -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_burg;
 	workspace -> v1 = raw_VEC (workspace -> analysisFrameSize);
 	workspace -> v2 = raw_VEC (workspace -> analysisFrameSize);
 	workspace -> v3 = raw_VEC (thy maxnCoefficients + 1);
-	Sound_into_LPC_threaded (me, thee, preEmphasisFrequency, workspace.get());
+	LPCAnalysis_threaded (thee, workspace.get());
 }
 
 autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -535,14 +550,19 @@ end:
 
 void Sound_into_LPC_marple (Sound me, LPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency, double tol1, double tol2) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	autoSound sound = Data_copy (me);
+	Sound soundToAnalyze = sound.get();
+	const double samplingFrequency = 1.0 / my dx;
+	if (preEmphasisFrequency < samplingFrequency / 2.0)
+		Sound_preEmphasis (soundToAnalyze, preEmphasisFrequency);
+	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (soundToAnalyze, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	workspace -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_marple;
 	workspace ->tolerance1 = tol1;
 	workspace ->tolerance2 = tol2;
 	workspace -> v1 = raw_VEC (thy maxnCoefficients + 1);
 	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);
 	workspace -> v3 = raw_VEC (thy maxnCoefficients + 1);
-	Sound_into_LPC_threaded (me, thee, preEmphasisFrequency, workspace.get());
+	LPCAnalysis_threaded (thee, workspace.get());
 }
 
 autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
@@ -705,9 +725,15 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double effectiveAnalysi
 		double location = 0.0;
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, thy maxnCoefficients);
 		autoLPC tobeRefined = Data_copy (thee);
-		autoLPCRobustAnalysisWorkspace workspace = LPCRobustAnalysisWorkspace_create (me, tobeRefined.get(), effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, thee, k_stdev, itermax, tol, location, wantlocation);
+		autoSound sound = Data_copy (me);
+		Sound soundToAnalyze = sound.get();
+		const double samplingFrequency = 1.0 / my dx;
+		if (preEmphasisFrequency < samplingFrequency / 2.0)
+			Sound_preEmphasis (soundToAnalyze, preEmphasisFrequency);
+		autoLPCRobustAnalysisWorkspace workspace = LPCRobustAnalysisWorkspace_create (soundToAnalyze, tobeRefined.get(), effectiveAnalysisWidth,
+			kSound_windowShape::GAUSSIAN_2, thee, k_stdev, itermax, tol, location, wantlocation);
 		workspace -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_robust;
-		Sound_into_LPC_threaded (me, tobeRefined.get(), preEmphasisFrequency, workspace.get());
+		LPCAnalysis_threaded (tobeRefined.get(), workspace.get()); 
 		return tobeRefined;
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC created.");
@@ -732,7 +758,6 @@ autoLPC Sound_to_LPC_robust (Sound me, int predictionOrder, double effectiveAnal
 		Melder_throw (me, U": no LPC (robust) created.");
 	}
 }
-
 
 /*********************** analysis ******************************/
 
@@ -759,19 +784,13 @@ void Sound_fillAnalysisFrame (Sound me, double startTime, VEC inout_frame) {
 	}
 }
 
-void Sound_into_LPC_threaded (Sound me, LPC thee, double preEmphasisFrequency, LPCAnalysisWorkspace workspace)
+void LPCAnalysis_threaded (LPC thee, LPCAnalysisWorkspace workspace)
 {
 	try {
-		// Melder_assert ...
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
-		U"The Sound and the LPC should have the same domain.");
 		
 		const integer predictionOrder = thy maxnCoefficients, numberOfFrames = thy nx;
 		const integer numberOfProcessors = std::thread::hardware_concurrency ();
 
-		const double samplingFrequency = 1.0 / my dx;
-		autoSound sound = Data_copy (me);
-		
 		/*
 			Because of threading we need to initialise the frames beforehand: 
 			we try to avoid allocation of memory within a thread.
@@ -780,10 +799,8 @@ void Sound_into_LPC_threaded (Sound me, LPC thee, double preEmphasisFrequency, L
 			const LPC_Frame lpcFrame = & thy d_frames [iframe];
 			LPC_Frame_init (lpcFrame, predictionOrder);
 		}
-		if (preEmphasisFrequency < samplingFrequency / 2.0)
-			Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 
-		constexpr integer maximumNumberOfThreads = 1;//16;
+		constexpr integer maximumNumberOfThreads = 16;
 		integer numberOfThreads, numberOfFramesPerThread = 25;
 		NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
 		/*
@@ -825,7 +842,7 @@ void Sound_into_LPC_threaded (Sound me, LPC thee, double preEmphasisFrequency, L
 			throw;
 		}
 	} catch (MelderError) {
-			Melder_throw (me, U"The LPC could not be created from sound ", thee, U".");
+			Melder_throw (thee, U"The LPC could not be calculated.");
 	}
 }
 

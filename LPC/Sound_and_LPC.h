@@ -139,7 +139,7 @@ void Sound_into_LPC_robust (Sound me, LPC thee, double analysisWidth, double pre
 
 autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder, double physicalAnalysisWidth, double dt);
 
-void Sound_into_LPC_threaded (Sound me, LPC thee, double preEmphasisFrequency, LPCAnalysisWorkspace workspace);
+void LPCAnalysis_threaded (LPC thee, LPCAnalysisWorkspace workspace);
 /*
  * Function:
  *	Calculate linear prediction coefficients according to following model:
