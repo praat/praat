@@ -2,8 +2,42 @@
 # David Weenink 4 January 2024
 
 project('praat', 'cpp', 'c',
-	default_options : ['cpp_std=c++17', 'c_std=gnu99']
+	default_options : ['cpp_std=c++17', 'c_std=c99']
 )
+
+system_libs = []
+compiler_arguments_c = []
+compiler_arguments_cpp = []
+
+os_name = build_machine.system()
+
+if os_name == 'linux'
+
+	common_compiler_arguments = '''-DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 -Wreturn-type 
+		-Wunused -Wunused-parameter -Wuninitialized'''.split()
+	compiler_arguments_cpp = common_compiler_arguments
+	compiler_arguments_c = ['-std=gnu99'] + common_compiler_arguments + ['-Wshadow']
+	system_libs = '-no-pie -lm -lpulse -lasound -lpthread -L/usr/lib/x86_64-linux-gnu'.split()
+	
+elif os_name == 'freebsd'
+	
+
+elif os_name == 'darwin' # either OSX or iOS
+
+elif os_name == 'cygwin'
+
+elif os_name == 'android' # chrome os
+
+	common_compiler_arguments = '''-DUNIX -Dlinux -Dchrome -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64
+		-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized'''
+	compiler_arguments_cpp = ['cpp_std=g++'] + common_compiler_arguments + ['-Wshadow']
+	compiler_arguments_c = ['-std=gnu99'] + common_compiler_arguments + ['-Werror=missing-prototypes -Werror=implicit']
+	system_libs = '-no-pie -lm -lpulse -lasound -static-libgcc -static-libstdc++ -L/usr/lib/x86_64-linux-gnu'.split()
+else
+	message ('Unknown os_name ================ ', os_name)
+endif
+
+
 
 dwsys_inc = include_directories ('dwsys')
 dwtools_inc = include_directories ('dwtools')
@@ -31,10 +65,8 @@ threads_dep = dependency('threads')
 
 gtk_dep = dependency('gtk+-3.0')
 
-system_libs = ['-lX11', '-lm', '-lpulse', '-lasound']
-
-add_global_arguments ('''-DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 
-	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -g0 -ggdb'''.split(), language: ['cpp', 'c'])
+add_project_arguments (compiler_arguments_c, language: 'c')
+add_project_arguments (compiler_arguments_cpp, language: 'cpp')
 
 praat_dirs = ['artsynth', 'dwsys', 'dwtools', 'EEG', 'FFNet', 'fon', 'foned', 'gram', 'kar', 'LPC', 'melder', 'sensors', 'stat', 'sys']
 praat_external_dirs = ['clapack', 'espeak', 'flac', 'gsl', 'glpk', 'lame', 'mp3', 'opusfile', 'portaudio', 'vorbis']
