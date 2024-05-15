@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2022 David Weenink
+ * Copyright (C) 1994-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ void SVD_compute (SVD me) {
 		integer info;
 		const integer lwork = SVD_getWorkspaceSize (me);
 		autoVEC work = raw_VEC (lwork);
-		NUMlapack_dgesvd_ ("S", "O", my numberOfColumns, my numberOfColumns, & my u [1] [1], my numberOfColumns,
+		NUMlapack_dgesvd_ ("S", "O", my numberOfColumns, my numberOfRows, & my u [1] [1], my numberOfColumns,
 			& my d [1], & my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & work [1], lwork, & info);		
 		Melder_require (info == 0,
 			U"NUMlapack_dgesvd_ returns error ", info, U".");
