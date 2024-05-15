@@ -456,7 +456,8 @@
 #define FIND_ONE_AND_ONE_WITH_IOBJECT(klas1,klas2)  \
 	klas1 me = nullptr; klas2 you = nullptr; integer _klas1_position = 0; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; \
-		else if (CLASS == class##klas2) you = (klas2) OBJECT; if (me && you) break; } \
+		else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+		if (me && you) break; } \
 	IOBJECT = _klas1_position;
 
 #define FIND_TWO(klas)  \
@@ -482,12 +483,15 @@
 #define FIND_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3)  \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
-	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; }
+	else if (CLASS == class##klas3) him = (klas3) OBJECT; \
+	if (me && you && him) break; }
 	
 #define FIND_ONE_AND_ONE_AND_ONE_WITH_IOBJECT(klas1,klas2,klas3)  \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; integer _klas1_position = 0;\
-	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
-	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; } \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; \
+		else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+		else if (CLASS == class##klas3) him = (klas3) OBJECT; \
+		if (me && you && him) break; } \
 	IOBJECT = _klas1_position;
 
 #define FIND_1_1_1_1(klas1,klas2,klas3,klas4)  \
