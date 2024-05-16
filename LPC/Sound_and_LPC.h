@@ -47,6 +47,13 @@ Thing_define (LPCAnalysisWorkspace, Daata) {
 	
 	void (*soundFrames_into_LPC_Frames) (LPCAnalysisWorkspace me, integer fromFrame, integer toFrame);
 	
+	void replaceSound (Sound s) {
+		Melder_assert (sound -> xmin == s -> xmin && sound -> xmax == s -> xmax);
+		Melder_assert (sound -> y1 == s -> y1 && sound -> nx == s -> nx);
+		Melder_assert (sound -> dx == s -> dx);
+		sound = s;
+	}
+	
 	void v1_copy (Daata data_to) const override {
 		LPCAnalysisWorkspace thee = reinterpret_cast<LPCAnalysisWorkspace> (data_to);
 		structDaata :: v1_copy (thee);
@@ -94,9 +101,9 @@ Thing_define (LPCRobustAnalysisWorkspace, LPCAnalysisWorkspace) {
 		LPCRobustAnalysisWorkspace thee = reinterpret_cast<LPCRobustAnalysisWorkspace> (data_to);
 		structLPCAnalysisWorkspace :: v1_copy (thee);
 		thy workspace_svdCompute = copy_VEC (workspace_svdCompute.get());
-		thy workspace_svdSolve = copy_VEC (workspace_svdCompute.get());
-		thy workspace_huber = copy_VEC (workspace_svdCompute.get());
-		thy workspace_inversefiltering = copy_VEC (workspace_svdCompute.get());
+		thy workspace_svdSolve = copy_VEC (workspace_svdSolve.get());
+		thy workspace_huber = copy_VEC (workspace_huber.get());
+		thy workspace_inversefiltering = copy_VEC (workspace_inversefiltering.get());
 		thy original = original;
 		thy k_stdev = k_stdev;
 		thy predictionOrder = predictionOrder;
@@ -139,7 +146,7 @@ void Sound_into_LPC_robust (Sound me, LPC thee, double analysisWidth, double pre
 
 autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder, double physicalAnalysisWidth, double dt);
 
-void LPCAnalysis_threaded (LPC thee, LPCAnalysisWorkspace workspace);
+void LPCAnalysis_threaded (Sound me, LPC thee, double preEmphasisFrequency, LPCAnalysisWorkspace workspace);
 /*
  * Function:
  *	Calculate linear prediction coefficients according to following model:
