@@ -54,6 +54,14 @@ Thing_define (LPCAnalysisWorkspace, Daata) {
 		sound = s;
 	}
 	
+	virtual void allocateLPCFrames (LPCAnalysisWorkspace me) {
+		Melder_assert (my lpc != nullptr);
+		for (integer iframe = 1; iframe <= my lpc -> nx; iframe ++) {
+			const LPC_Frame lpcFrame = & my lpc -> d_frames [iframe];
+			LPC_Frame_init (lpcFrame, my lpc -> maxnCoefficients);
+		}
+	}
+	
 	void v1_copy (Daata data_to) const override {
 		LPCAnalysisWorkspace thee = reinterpret_cast<LPCAnalysisWorkspace> (data_to);
 		structDaata :: v1_copy (thee);
@@ -96,6 +104,18 @@ Thing_define (LPCRobustAnalysisWorkspace, LPCAnalysisWorkspace) {
 	autoVEC sampleWeights, coefficients, covariancesw;
 	autoMAT covarmatrixw;
 	autoSVD svd;
+	
+	void allocateLPCFrames (LPCAnalysisWorkspace thee) override {
+		LPCRobustAnalysisWorkspace me = reinterpret_cast<LPCRobustAnalysisWorkspace> (thee);
+		Melder_assert (my lpc != nullptr);
+		Melder_assert (my original != nullptr);
+		
+		for (integer iframe = 1; iframe <= my lpc -> nx; iframe ++) {
+			LPC_Frame toFrame = & my lpc -> d_frames [iframe];
+			const LPC_Frame fromFrame = & my original -> d_frames [iframe];
+			fromFrame -> copy (toFrame);
+		}
+	}
 	
 	void v1_copy (Daata data_to) const override {
 		LPCRobustAnalysisWorkspace thee = reinterpret_cast<LPCRobustAnalysisWorkspace> (data_to);
@@ -146,7 +166,7 @@ void Sound_into_LPC_robust (Sound me, LPC thee, double analysisWidth, double pre
 
 autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder, double physicalAnalysisWidth, double dt);
 
-void LPCAnalysis_threaded (Sound me, LPC thee, double preEmphasisFrequency, LPCAnalysisWorkspace workspace);
+void LPCAnalysis_threaded (Sound me, double preEmphasisFrequency, LPCAnalysisWorkspace workspace);
 /*
  * Function:
  *	Calculate linear prediction coefficients according to following model:

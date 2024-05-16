@@ -57,9 +57,9 @@ static void soundFrames_into_LPC_Frames (LPCAnalysisWorkspace me, integer fromFr
 		const double mean = NUMmean (my soundAnalysisFrame.get());
 		my soundAnalysisFrame.get()  -=  mean;
 		my soundAnalysisFrame.get()  *=  my windowFunction.get();
-		if (my soundFrame_into_LPC_Frame (me, my soundAnalysisFrame.get(), lpcframe) != 0)
+		if (my soundFrame_into_LPC_Frame (me, my soundAnalysisFrame.get(), lpcframe) != 1)
 			++ my frameErrorCount;
-	}		
+	}	
 }
 
 static double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape) {
@@ -88,6 +88,7 @@ autoLPCAnalysisWorkspace LPCAnalysisWorkspace_create (Sound thee, LPC him, doubl
 		Melder_assert (thy xmax = his xmax);
 		autoLPCAnalysisWorkspace me = Thing_new (LPCAnalysisWorkspace);
 		LPCAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
+		my allocateLPCFrames (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LPCAnalysisWorkspace not created.");
@@ -162,7 +163,7 @@ void Sound_into_LPC_auto (Sound me, LPC thee, double effectiveAnalysisWidth, dou
 	workspace -> v1 = raw_VEC (thy maxnCoefficients + 1);	// r
 	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);	// a
 	workspace -> v3 = raw_VEC (thy maxnCoefficients);		// rc
-	LPCAnalysis_threaded (me, thee, preEmphasisFrequency, workspace.get());
+	LPCAnalysis_threaded (me, preEmphasisFrequency, workspace.get());
 }
 
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -275,7 +276,7 @@ void Sound_into_LPC_covar (Sound me, LPC thee, double effectiveAnalysisWidth, do
 	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);
 	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);
 	
-	LPCAnalysis_threaded (me, thee, preEmphasisFrequency, workspace.get());
+	LPCAnalysis_threaded (me, preEmphasisFrequency, workspace.get());
 }
 
 autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -379,7 +380,7 @@ void Sound_into_LPC_burg (Sound me, LPC thee, double effectiveAnalysisWidth, dou
 	workspace -> v1 = raw_VEC (workspace -> analysisFrameSize);
 	workspace -> v2 = raw_VEC (workspace -> analysisFrameSize);
 	workspace -> v3 = raw_VEC (thy maxnCoefficients + 1);
-	LPCAnalysis_threaded (me, thee, preEmphasisFrequency, workspace.get());
+	LPCAnalysis_threaded (me, preEmphasisFrequency, workspace.get());
 }
 
 autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -542,7 +543,7 @@ void Sound_into_LPC_marple (Sound me, LPC thee, double effectiveAnalysisWidth, d
 	workspace -> v1 = raw_VEC (thy maxnCoefficients + 1);
 	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);
 	workspace -> v3 = raw_VEC (thy maxnCoefficients + 1);
-	LPCAnalysis_threaded (me, thee, preEmphasisFrequency, workspace.get());
+	LPCAnalysis_threaded (me, preEmphasisFrequency, workspace.get());
 }
 
 autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
@@ -585,10 +586,11 @@ autoLPCRobustAnalysisWorkspace LPCRobustAnalysisWorkspace_create (Sound thee, LP
 		autoLPCRobustAnalysisWorkspace me = Thing_new (LPCRobustAnalysisWorkspace);
 		LPCAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
 		my original = original;
+		my allocateLPCFrames (me.get()); 
 		my error = zero_VEC (my analysisFrameSize);
 		my k_stdev = k_stdev;
 		my tolerance1 = tol;
-		my tolerance2 = 0.0; // tol_svd 
+		my tolerance2 = 1e-6; // tol_svd 
 		my scale = 0.0;
 		my iter = 0;
 		my itermax = itermax;
@@ -602,6 +604,7 @@ autoLPCRobustAnalysisWorkspace LPCRobustAnalysisWorkspace_create (Sound thee, LP
 		my covariancesw = zero_VEC (his maxnCoefficients);
 		my covarmatrixw = zero_MAT (his maxnCoefficients, his maxnCoefficients);
 		my svd = SVD_create (his maxnCoefficients, his maxnCoefficients);
+		SVD_setTolerance (my svd.get(), my tolerance2);
 		/*
 			Calculate workspace size
 		*/
@@ -616,11 +619,12 @@ autoLPCRobustAnalysisWorkspace LPCRobustAnalysisWorkspace_create (Sound thee, LP
 }
 
 void LPCRobustAnalysisWorkspace_resize (LPCRobustAnalysisWorkspace me, integer newPredictionOrder) {
-	Melder_assert (newPredictionOrder <= my lpc -> maxnCoefficients);
-	if (newPredictionOrder == my predictionOrder)
+	if (newPredictionOrder == my svd -> numberOfColumns)
 		return;
+	Melder_assert (newPredictionOrder <= my lpc -> maxnCoefficients);
 	my coefficients.resize (newPredictionOrder);
 	my covariancesw.resize (newPredictionOrder);
+	my covarmatrixw.resize (newPredictionOrder, newPredictionOrder);
 	SVD_resizeWithinOldBounds (my svd.get(), my lpc -> maxnCoefficients, my lpc -> maxnCoefficients, newPredictionOrder, newPredictionOrder);
 }
 
@@ -629,7 +633,7 @@ static void setSampleWeights (LPCRobustAnalysisWorkspace me, constVEC const& err
 	const double kstdev = my k_stdev * my scale;
 	for (integer isamp = 1 ; isamp <= my analysisFrameSize; isamp ++) {
 		const double absDiff = fabs (error [isamp] - my location);
-		my sampleWeights [isamp] = absDiff < kstdev ? 1.0 : kstdev / absDiff;
+		my sampleWeights [isamp] = ( absDiff <= kstdev ? 1.0 : kstdev / absDiff );
 	}
 }
 
@@ -651,14 +655,13 @@ static void setCovariances (LPCRobustAnalysisWorkspace me, constVEC const& s) {
 }
 
 static void solvelpc (LPCRobustAnalysisWorkspace me) {
-	// we cannot resize the svd-matrices therefore add zero's and svd the full matrix
-	if (my predictionOrder < my lpc -> maxnCoefficients) {
-		my covarmatrixw.part (my predictionOrder + 1, my lpc -> maxnCoefficients, 1, my lpc -> maxnCoefficients)  <<=  0.0;
-		my covarmatrixw.part (1, my predictionOrder, my predictionOrder + 1,my lpc -> maxnCoefficients)  <<=  0.0;
-		my coefficients.resize (my lpc -> maxnCoefficients);
-	}
+	// we do not resize the svd-matrices (yet) therefore add zero's and svd the full matrix
+	//if (my predictionOrder < my lpc -> maxnCoefficients) {
+	//	my covarmatrixw.part (my predictionOrder + 1, my lpc -> maxnCoefficients, 1, my lpc -> maxnCoefficients)  <<=  0.0;
+	//	my covarmatrixw.part (1, my predictionOrder, my predictionOrder + 1, my lpc -> maxnCoefficients)  <<=  0.0;
+	//	my coefficients.resize (my lpc -> maxnCoefficients);
+	//}
 	my svd -> u.all()  <<=  my covarmatrixw.all();
-	SVD_setTolerance (my svd.get(), my tolerance2);
 	SVD_compute (my svd.get(), my workspace_svdCompute.get());
 	SVD_solve_preallocated (my svd.get(), my covariancesw.get(), my coefficients.get(), my workspace_svdSolve.get());
 	my coefficients.resize (my predictionOrder); // maintain invariant
@@ -666,17 +669,18 @@ static void solvelpc (LPCRobustAnalysisWorkspace me) {
 
 static int soundFrame_into_LPC_Frame_robust (LPCAnalysisWorkspace him, constVEC soundFrame, LPC_Frame thee) {
 	LPCRobustAnalysisWorkspace me = reinterpret_cast<LPCRobustAnalysisWorkspace> (him);
-	const LPC_Frame origin_frame = & my lpc -> d_frames [his currentFrame];
-	VEC lpcofTo = thy a.get();
-	VEC lpcofFrom = origin_frame -> a.get();
-	lpcofTo  <<= lpcofFrom;
+	const LPC_Frame fromFrame = & my  lpc -> d_frames [his currentFrame];
+	my predictionOrder = fromFrame -> nCoefficients;
+	thy a.get() <<= fromFrame -> a.get();
+	thy gain = fromFrame -> gain;
 	my iter = 0;
 	my scale = 1e308;
 	bool farFromScale = true;
+	LPCRobustAnalysisWorkspace_resize (me, my predictionOrder);
 	do {
 		const double previousScale = my scale;
 		my error.all()  <<=  soundFrame;
-		VECfilterInverse_inplace (my error.get(), lpcofTo, my workspace_inversefiltering.get());
+		VECfilterInverse_inplace (my error.get(), thy a.get(), my workspace_inversefiltering.get());
 		NUMstatistics_huber (my error.get(), & my location, my wantlocation, & my scale, my wantscale, my k_stdev, my tolerance1,
 			my huber_iterations, my workspace_huber.get());
 		setSampleWeights (me, my error.get());
@@ -688,12 +692,13 @@ static int soundFrame_into_LPC_Frame_robust (LPCAnalysisWorkspace him, constVEC 
 		try {
 			solvelpc (me);
 		} catch (MelderError) {
-			lpcofTo  <<=  lpcofFrom; // No change could be made
+			thy a.get()  <<=  fromFrame -> a.get(); // No change could be made
 			throw MelderError();
 		}
-		lpcofTo  <<=  my coefficients.all();
+		thy a.get()  <<=  my coefficients.all();
 		farFromScale = ( fabs (my scale - previousScale) > std::max (my tolerance1 * fabs (my scale), NUMeps) );
 	} while (++ my iter < my itermax && farFromScale);
+	
 	return 1;
 }
 
@@ -711,7 +716,7 @@ void LPC_and_Sound_into_LPC_robust (LPC thee, Sound me, LPC result, double effec
 		autoLPCRobustAnalysisWorkspace workspace = LPCRobustAnalysisWorkspace_create (me, result, effectiveAnalysisWidth,
 			kSound_windowShape::GAUSSIAN_2, thee, k_stdev, itermax, tol, location, wantlocation);
 		workspace -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_robust;
-		LPCAnalysis_threaded (me, result, preEmphasisFrequency, workspace.get());
+		LPCAnalysis_threaded (me, preEmphasisFrequency, workspace.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC calculated.");
 	}	
@@ -776,7 +781,7 @@ void Sound_fillAnalysisFrame (Sound me, double startTime, VEC inout_frame) {
 	}
 }
 
-void LPCAnalysis_threaded (Sound me, LPC thee, double preEmphasisFrequency, LPCAnalysisWorkspace workspace)
+void LPCAnalysis_threaded (Sound me, double preEmphasisFrequency, LPCAnalysisWorkspace workspace)
 {
 	try {
 		autoSound sound;
@@ -787,16 +792,9 @@ void LPCAnalysis_threaded (Sound me, LPC thee, double preEmphasisFrequency, LPCA
 			workspace -> replaceSound (sound.get());
 		}	
 
-		/*
-			Because of threading we need to initialise the frames beforehand: 
-			we try to avoid allocation of memory within a thread.
-		*/
-		const integer numberOfFrames = thy nx;
-		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			const LPC_Frame lpcFrame = & thy d_frames [iframe];
-			LPC_Frame_init (lpcFrame, thy maxnCoefficients);
-		}
-
+		workspace -> allocateLPCFrames (workspace);
+		
+		const integer numberOfFrames = workspace -> lpc -> nx;
 		const integer numberOfProcessors = std::thread::hardware_concurrency ();
 		constexpr integer maximumNumberOfThreads = 1;//16;
 		integer numberOfThreads, numberOfFramesPerThread = 25;
@@ -840,7 +838,7 @@ void LPCAnalysis_threaded (Sound me, LPC thee, double preEmphasisFrequency, LPCA
 			throw;
 		}
 	} catch (MelderError) {
-			Melder_throw (thee, U"The LPC could not be calculated.");
+			Melder_throw (me, U"The LPC could not be calculated.");
 	}
 }
 
