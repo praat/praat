@@ -2461,7 +2461,7 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 	try {
 		Melder_require (my dx == noise -> dx,
 			U"The sound and the noise should have the same sampling frequency.");
-		Melder_require (noise -> ny == 1 && noise -> ny == 1,
+		Melder_require (my ny == 1 && noise -> ny == 1,
 			U"The number of channels in the noise and the sound should equal 1.");
 
 		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 / my dx;
