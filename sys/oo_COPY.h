@@ -100,11 +100,17 @@
 #define oo_COLLECTION(Class, x, ItemClass, version)  \
 	if (our x) thy x = Data_copy (our x.get());
 
-#define oo_FILE(x)  \
+#define oo_TRANSIENT_FILE(x)  \
 	MelderFile_copy (& our x, & thy x);
 
-#define oo_FOLDER(x)  \
+#define oo_TRANSIENT_FOLDER(x)  \
 	MelderFolder_copy (& our x, & thy x);
+
+#define oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE(Class, x)  \
+	thy x = our x;   // reference copy
+
+#define oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE(Class, x)  \
+	thy x = our x;   // reference copy
 
 #define oo_DEFINE_STRUCT(Type)  \
 	void struct##Type :: copy (Type thee) const {

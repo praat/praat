@@ -107,11 +107,17 @@
 #define oo_COLLECTION(Class, x, ItemClass, version)  \
 	if (! our x != ! thy x || (our x && ! Data_equal (our x.get(), thy x.get()))) return false;
 
-#define oo_FILE(x)  \
+#define oo_TRANSIENT_FILE(x)  \
 	if (! MelderFile_equal (& our x, & thy x)) return false;
 
-#define oo_FOLDER(x)  \
+#define oo_TRANSIENT_FOLDER(x)  \
 	if (! MelderFolder_equal (& our x, & thy x)) return false;
+
+#define oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE(Class, x)  \
+	our x == thy x;   // pointer comparison
+
+#define oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE(Class, x)  \
+	our x == thy x;   // pointer comparison
 
 #define oo_DEFINE_STRUCT(Type)  \
 	bool struct##Type :: equal (Type thee) {

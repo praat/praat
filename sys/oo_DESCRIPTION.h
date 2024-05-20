@@ -141,8 +141,10 @@
 #define oo_OBJECT(Type,version,x)  { U"" #x, objectwa, Melder_offsetof (ooSTRUCT, x), sizeof (Type), U"" #Type, & theClassInfo_##Type, 0, nullptr, nullptr, nullptr, nullptr },
 #define oo_COLLECTION_OF(Type,x,ItemType,version)  { U"" #x, collectionofwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_Collection, 0, (conststring32) & theClassInfo_##ItemType, nullptr, nullptr, nullptr },
 #define oo_COLLECTION(Type,x,ItemType,version)  { U"" #x, collectionwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_##Type, 0, (conststring32) & theClassInfo_##ItemType, nullptr, nullptr, nullptr },
-#define oo_FILE(x)
-#define oo_FOLDER(x)
+#define oo_TRANSIENT_FILE(x)
+#define oo_TRANSIENT_FOLDER(x)
+#define oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE(Class, x)
+#define oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE(Class, x)
 
 #define oo_DEFINE_STRUCT(Type) \
 	static struct structData_Description the##Type##_description [] = {

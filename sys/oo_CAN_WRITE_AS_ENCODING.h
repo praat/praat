@@ -78,11 +78,17 @@
 #define oo_COLLECTION(Class, x, ItemClass, version)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 
-#define oo_FILE(x)  \
-	if (! Melder_isEncodable (our x. path, encoding)) return false;
+#define oo_TRANSIENT_FILE(x)  \
+	return true;   // because it won't actually be written
 
-#define oo_FOLDER(x)  \
-	if (! Melder_isEncodable (our x. path, encoding)) return false;
+#define oo_TRANSIENT_FOLDER(x)  \
+	return true;   // because it won't actually be written
+
+#define oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE(Class, x)  \
+	return true;   // because it won't actually be written
+
+#define oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE(Class, x)  \
+	return true;   // because it won't actually be written
 
 #define oo_DEFINE_STRUCT(Type)  \
 	bool struct##Type :: canWriteAsEncoding (int encoding) { \
