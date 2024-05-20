@@ -148,8 +148,10 @@
 #define oo_OBJECT(Class,version,x)  auto##Class x;
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  Class<struct##ItemClass> x;
 #define oo_COLLECTION(Class,x,ItemClass,version)  auto##Class x;
-#define oo_FILE(x)  structMelderFile x;
-#define oo_FOLDER(x)  structMelderFolder x;
+#define oo_TRANSIENT_FILE(x)  structMelderFile x;
+#define oo_TRANSIENT_FOLDER(x)  structMelderFolder x;
+#define oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE(Class,x)  const##Class x;
+#define oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE(Class,x)  mutable##Class x;
 
 /* Struct and class definitions. */
 

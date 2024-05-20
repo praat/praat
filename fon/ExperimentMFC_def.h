@@ -184,7 +184,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 		oo_VEC (reactionTimes, numberOfTrials)
 		oo_OBJECT (Sound, 0, playBuffer)
 	#endif
-	oo_FOLDER (rootDirectory)
+	oo_TRANSIENT_FOLDER (rootDirectory)
 	#if oo_READING
 		MelderFolder_copy (& Data_directoryBeingRead, & rootDirectory);
 		oo_VERSION_UNTIL (4)

@@ -29,6 +29,9 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.12# (2 May 2024)
+• ##Align interval#: fewer error messages.
+
 ##6.4.11# (26 April 2024)
 • Menu commands that call a script (e.g. those that were added from a plug-in)
   are now visible as such by being marked with a little “+” sign.
