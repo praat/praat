@@ -133,9 +133,13 @@
 		} \
 	}
 
-#define oo_FILE(x)
+#define oo_TRANSIENT_FILE(x)
 
-#define oo_FOLDER(x)
+#define oo_TRANSIENT_FOLDER(x)
+
+#define oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE(Class, x)
+
+#define oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE(Class, x)
 
 #define oo_DEFINE_STRUCT(Type)  \
 	void struct##Type :: readText (MelderReadText _textSource_, int _formatVersion_) { \
