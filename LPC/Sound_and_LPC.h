@@ -24,47 +24,34 @@
 */
 
 #include "LPC.h"
-#include "Sound_extensions.h"
+#include "SoundAnalysisWorkspace.h"
 #include "SVD.h"
 
-Thing_define (LPCAnalysisWorkspace, Daata) {
+Thing_define (LPCAnalysisWorkspace, SoundAnalysisWorkspace) {
+	/*
+		Instead of creating a different LPCAnalysisWorkspace type for each different analysis,
+		we create a generic LPCAnalysisWorkspace that can handle the auto, covar, marple and burg 
+		algorithm.
+	*/
+	autoVEC v1, v2, v3;	// for auto, burg, marple
+	autoVEC v4, v5;		// for covar
+	double tolerance1, tolerance2; // for marple
 	
-	autoVEC v1, v2, v3, v4, v5; // workspaces for the  algorithms that transform a soundframe to LPC_Framerame
-	double tolerance1, tolerance2;
-	
-	Sound sound;	// the sound to analyze
-	LPC lpc;		// the LPC with results
-	
-	integer analysisFrameSize;
-	double physicalAnalysisWidth;
-	autoVEC soundAnalysisFrame;
-	
-	kSound_windowShape windowShape;
-	autoVEC windowFunction;
-	integer frameErrorCount, currentFrame;
 
-	int (*soundFrame_into_LPC_Frame) (LPCAnalysisWorkspace me, constVEC sound, LPC_Frame thee);
+	void getAutocorrelations (LPCAnalysisWorkspace me, VEC);
 	
-	void (*soundFrames_into_LPC_Frames) (LPCAnalysisWorkspace me, integer fromFrame, integer toFrame);
-	
-	void replaceSound (Sound s) {
-		Melder_assert (sound -> xmin == s -> xmin && sound -> xmax == s -> xmax);
-		Melder_assert (sound -> y1 == s -> y1 && sound -> nx == s -> nx);
-		Melder_assert (sound -> dx == s -> dx);
-		sound = s;
-	}
-	
-	virtual void allocateLPCFrames (LPCAnalysisWorkspace me) {
-		Melder_assert (my lpc != nullptr);
-		for (integer iframe = 1; iframe <= my lpc -> nx; iframe ++) {
-			const LPC_Frame lpcFrame = & my lpc -> d_frames [iframe];
-			LPC_Frame_init (lpcFrame, my lpc -> maxnCoefficients);
+	virtual void allocateSampledFrames (SoundAnalysisWorkspace me) override {
+		Melder_assert (my result != nullptr);
+		LPC thee = reinterpret_cast<LPC> (my result);
+		for (integer iframe = 1; iframe <= thy nx; iframe ++) {
+			const LPC_Frame lpcFrame = & thy d_frames [iframe];
+			LPC_Frame_init (lpcFrame, thy maxnCoefficients);
 		}
 	}
 	
 	void v1_copy (Daata data_to) const override {
 		LPCAnalysisWorkspace thee = reinterpret_cast<LPCAnalysisWorkspace> (data_to);
-		structDaata :: v1_copy (thee);
+		structSoundAnalysisWorkspace :: v1_copy (thee);
 		thy v1 = copy_VEC (v1.get());
 		thy v2 = copy_VEC (v2.get());
 		thy v3 = copy_VEC (v3.get());
@@ -72,21 +59,11 @@ Thing_define (LPCAnalysisWorkspace, Daata) {
 		thy v5 = copy_VEC (v5.get());
 		thy tolerance1 = tolerance1;
 		thy tolerance2 = tolerance2;
-		thy sound = sound;
-		thy lpc = lpc;
-		thy analysisFrameSize = analysisFrameSize;
-		thy physicalAnalysisWidth = physicalAnalysisWidth;
-		thy soundAnalysisFrame = copy_VEC (soundAnalysisFrame.get());
-		thy windowShape = windowShape;
-		thy windowFunction = copy_VEC (windowFunction.get());
-		thy frameErrorCount = frameErrorCount;
-		thy currentFrame = currentFrame;
-		thy soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame;
-		thy soundFrames_into_LPC_Frames = soundFrames_into_LPC_Frames;
 	}
 };
 
 void LPCAnalysisWorkspace_init (LPCAnalysisWorkspace me, Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+
 autoLPCAnalysisWorkspace LPCAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
 
@@ -105,13 +82,14 @@ Thing_define (LPCRobustAnalysisWorkspace, LPCAnalysisWorkspace) {
 	autoMAT covarmatrixw;
 	autoSVD svd;
 	
-	void allocateLPCFrames (LPCAnalysisWorkspace thee) override {
-		LPCRobustAnalysisWorkspace me = reinterpret_cast<LPCRobustAnalysisWorkspace> (thee);
-		Melder_assert (my lpc != nullptr);
+	void allocateSampledFrames (SoundAnalysisWorkspace him) override {
+		LPCRobustAnalysisWorkspace me = reinterpret_cast<LPCRobustAnalysisWorkspace> (him);
+		Melder_assert (my result != nullptr);
 		Melder_assert (my original != nullptr);
-		
-		for (integer iframe = 1; iframe <= my lpc -> nx; iframe ++) {
-			LPC_Frame toFrame = & my lpc -> d_frames [iframe];
+		LPC thee = reinterpret_cast<LPC> (result);
+		Melder_assert (thy nx == original -> nx);
+		for (integer iframe = 1; iframe <= thy nx; iframe ++) {
+			LPC_Frame toFrame = & thy d_frames [iframe];
 			const LPC_Frame fromFrame = & my original -> d_frames [iframe];
 			fromFrame -> copy (toFrame);
 		}
