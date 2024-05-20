@@ -1,9 +1,20 @@
 # createFileInMemorySets.praat
 # djmw 20240210
+# Paul Boersma 20 May 2024: relative paths,
+#   to make it work on other computers than just David's
 # up-to-date with the espeak-ng git repository until:
 #   commit cb62d93fd7b61d8593b9ae432e6e2a78e3711a77 
 #   Date:   Thu Feb 8 16:21:15 2024 +0300
 # 
+
+#
+# BUG:
+#   if `fromdir$` is a relative path (as it should be), 
+#   then `Create FileInMemory...` gives a full path,
+#   whereas `Create FileInMemorySet from directory contents...` gives relative paths
+#   We will have to remove the full paths from `create_espeak_ng_FileInMemorySet.cpp` by hand.
+#
+
 myscriptname$ = "createFileInMemorySets.praat"
 date$ = date$()
 notify$ = "This file was created automatically on " + date$ + "."
@@ -11,10 +22,10 @@ clearinfo
 
 form Espeakdata to code
 	word Espeak_version 1.52-dev
-	boolean Create_FileInMemorySet 0
+	boolean Create_FileInMemorySet 1
 endform
 
-gpltext$ =  " * Copyright (C) David Weenink 2012-2024" + newline$ +
+gpltext$ =  " * Copyright (C) David Weenink 2012-2024, Paul Boersma 2024" + newline$ +
 	... " *" + newline$ +
 	... " * This program is free software; you can redistribute it and/or modify " + newline$ +
  	... " * it under the terms of the GNU General Public License as published by" + newline$ +
@@ -30,7 +41,7 @@ gpltext$ =  " * Copyright (C) David Weenink 2012-2024" + newline$ +
   	... " * along with this program; if not, write to the Free Software" + newline$ +
  	... " * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA." + newline$
 
-fromdir$ = "/home/david/projects/praat/generate/espeak"
+fromdir$ = "."
 todir$ = "./"
 
 espeakdata_dir$ = fromdir$ + "/espeak-ng-data"
@@ -48,6 +59,8 @@ if create_FileInMemorySet
 
 	dict_fims = Create FileInMemorySet from directory contents: "dicts", espeakdata_dir$, "*_dict"
 	ru_dict_fims = Extract files: "contains", "ru_dict"
+	selectObject: dict_fims
+	dict_fims = Extract files: "does not contain", "ru_dict"
 
 	selectObject: language_fims, phon_fims, dict_fims, voice_fims
 	espeak_ng_fims = Merge
