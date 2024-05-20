@@ -7,23 +7,15 @@
 #   Date:   Thu Feb 8 16:21:15 2024 +0300
 # 
 
-#
-# BUG:
-#   if `fromdir$` is a relative path (as it should be), 
-#   then `Create FileInMemory...` gives a full path,
-#   whereas `Create FileInMemorySet from directory contents...` gives relative paths
-#   We will have to remove the full paths from `create_espeak_ng_FileInMemorySet.cpp` by hand.
-#
-
 myscriptname$ = "createFileInMemorySets.praat"
 date$ = date$()
 notify$ = "This file was created automatically on " + date$ + "."
-clearinfo
+writeInfo ()
 
-form Espeakdata to code
-	word Espeak_version 1.52-dev
-	boolean Create_FileInMemorySet 1
-endform
+espeakVersion$ = "1.52-dev"
+espeakdata_dir$ = "./espeak-ng-data"
+espeakdata_voices_dir$ = espeakdata_dir$ + "/voices/!v"
+espeakdata_lang_dir$ = espeakdata_dir$ + "/lang"
 
 gpltext$ =  " * Copyright (C) David Weenink 2012-2024, Paul Boersma 2024" + newline$ +
 	... " *" + newline$ +
@@ -41,59 +33,50 @@ gpltext$ =  " * Copyright (C) David Weenink 2012-2024, Paul Boersma 2024" + newl
   	... " * along with this program; if not, write to the Free Software" + newline$ +
  	... " * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA." + newline$
 
-fromdir$ = "."
-todir$ = "./"
-
-espeakdata_dir$ = fromdir$ + "/espeak-ng-data"
-espeakdata_voices_dir$ = espeakdata_dir$ + "/voices/!v"
-espeakdata_lang_dir$ = espeakdata_dir$ + "/lang"
-
 include_header$ = "#include "+ """" + "espeakdata_FileInMemory.h" + """" + newline$
 
-if create_FileInMemorySet
+@create_phonFileInMemorySet
+@create_languageFileInMemorySet
+voice_fims = Create FileInMemorySet from directory contents: "voices", espeakdata_dir$ + "/voices/!v", "*"
+dict_fims = Create FileInMemorySet from directory contents: "dicts", espeakdata_dir$, "*_dict"
+ru_dict_fims = Extract files: "contains", "/ru_dict"
+selectObject: dict_fims
+Remove files: "contains", "/ru_dict"
+selectObject: language_fims, phon_fims, dict_fims, voice_fims
+espeak_ng_fims = Merge
+@saveFileInMemorySet_asCppFile: espeak_ng_fims, ""
+@saveFileInMemorySet_asCppFile: ru_dict_fims, "__ru"
 
-	@create_phonFileInMemorySet
-
-	@create_languageFileInMemorySet
-	voice_fims = Create FileInMemorySet from directory contents: "voices", espeakdata_dir$ + "/voices/!v", "*"
-
-	dict_fims = Create FileInMemorySet from directory contents: "dicts", espeakdata_dir$, "*_dict"
-	ru_dict_fims = Extract files: "contains", "ru_dict"
-	selectObject: dict_fims
-	dict_fims = Extract files: "does not contain", "ru_dict"
-
-	selectObject: language_fims, phon_fims, dict_fims, voice_fims
-	espeak_ng_fims = Merge
-
-	@saveFileInMemorySet_asCPPFile: espeak_ng_fims, ""
-	@saveFileInMemorySet_asCPPFile: ru_dict_fims, "__ru"
-endif
-
-procedure saveFileInMemorySet_asCPPFile: .fims, .specification$
+procedure saveFileInMemorySet_asCppFile: .fims, .specification$
 	selectObject: .fims 
 	.cppFile$ = "create_espeak_ng_FileInMemorySet" + .specification$ + ".cpp"
 	.message$ = "/* " + .cppFile$ + newline$
-	... + " * This file was automatically created from files in espeak-ng-data by" + newline$
-	... + " * the script " + myscriptname$ + newline$
-	... + " * Espeak-ng version: " + espeak_version$ + "." + newline$
+	... + " * This file was automatically created from files in the folder `espeak-ng-data`" + newline$
+	... + " * by the script `" + myscriptname$ + "`." + newline$
+	... + " * Espeak-ng version: " + espeakVersion$ + "." + newline$
 	... + " * Date: " + date$() + "." + newline$
 	... + "*/" + newline$ + newline$
 	... + "#include ""espeakdata_FileInMemory.h""" + newline$
 	.cppCode$ = Show as code: "espeak_ng_FileInMemorySet" + .specification$, 30
 	.cppCode$ = .message$ + .cppCode$ 
 	writeInfoLine: .cppCode$
-	writeFile: todir$ + .cppFile$, .cppCode$
-
+	writeFile: .cppFile$, .cppCode$
 endproc
 
 procedure create_phonFileInMemorySet
-	fim1 = Create FileInMemory: espeakdata_dir$ + "/phondata"
-	fim2 = Create FileInMemory: espeakdata_dir$ + "/phonindex"
-	fim3 = Create FileInMemory: espeakdata_dir$ + "/phontab"
-	fim4 = Create FileInMemory: espeakdata_dir$ + "/intonations"
-	fim5 = Create FileInMemory: espeakdata_dir$ + "/phondata-manifest"
+	#
+	# HACK:
+	# We have to make five sets of one, because `Create FileInMemory...` turns the relative path
+	# into an absolute path, while `Create FileInMemorySet from directory contents`
+	# retains the relative path, which is what we want.
+	#
+	fim1 = Create FileInMemorySet from directory contents: "fim1", espeakdata_dir$, "*phondata"
+	fim2 = Create FileInMemorySet from directory contents: "fim2", espeakdata_dir$, "*phonindex"
+	fim3 = Create FileInMemorySet from directory contents: "fim3", espeakdata_dir$, "*phontab"
+	fim4 = Create FileInMemorySet from directory contents: "fim4", espeakdata_dir$, "*intonations"
+	fim5 = Create FileInMemorySet from directory contents: "fim5", espeakdata_dir$, "*phondata-manifest"
 	selectObject: fim1, fim2, fim3, fim4, fim5
-	phon_fims = To FileInMemorySet
+	phon_fims = Merge
 	removeObject: fim1, fim2, fim3, fim4, fim5
 endproc
 
@@ -109,4 +92,3 @@ procedure create_languageFileInMemorySet
 		language_fims = .merged
 	endfor
 endproc
-

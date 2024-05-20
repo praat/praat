@@ -111,14 +111,12 @@ void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numbe
 	if (numberOfBytesPerLine < 1)
 		numberOfBytesPerLine = 20;
 
-	MelderInfo_writeLine (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
-	MelderInfo_write (U"\t\t\t");
-	for (integer i = 1; i < my d_numberOfBytes; i++) {
+	MelderInfo_write (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
+	for (integer i = 1; i <= my d_numberOfBytes; i ++) {
 		const unsigned char number = my d_data [i];
-		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? U"\t\t\t" : U""), number, U",",
-				i % numberOfBytesPerLine == numberOfBytesPerLine - 1 ? U"\n" : U" ");
+		MelderInfo_write (( i % numberOfBytesPerLine == 1 ? U"\n\t\t\t" : U"" ), number, U",");
 	}
-	MelderInfo_writeLine ((my d_numberOfBytes - 1) % numberOfBytesPerLine == (numberOfBytesPerLine - 1) ? U"\t\t\t0};" : U"0};");
+	MelderInfo_writeLine (U"0};");
 	MelderInfo_write (U"\t\tautoFileInMemory ", name, U" = FileInMemory_createWithData (");
 	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (&",
 		name, U"_data), true, \n\t\t\tU\"", my d_path.get(), U"\", \n\t\t\tU\"", my d_id.get(), U"\");");
