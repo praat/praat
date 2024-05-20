@@ -1,6 +1,7 @@
 ESPEAK_NG_READ_ME.TXT
 
 djmw 20230915
+ppgb 20240520
 
 Espeak-ng Version 1.52-dev
 
@@ -124,7 +125,7 @@ after `espeak_ng.h`, because they may redefine `fopen`.
 
 ****
 
-More details can be found in the `espeak_ng_data_to_code.praat` file.
+More details can be found in `espeak_ng_data_to_code.praat`.
 
 
 
