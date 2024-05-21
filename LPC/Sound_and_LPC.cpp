@@ -85,30 +85,29 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder
 	}
 }
 
-static void SoundToLPCAnalysisWorkspace_allocate_v1To5 (SoundToLPCAnalysisWorkspace me, integer v1workSize, integer v2workSize, integer v3workSize, 
-	integer v4workSize, integer v5workSize)
+static void SoundToLPCAnalysisWorkspace_allocate_v1To5 (SoundToLPCAnalysisWorkspace me, integer v1workCapacity, integer v2workCapacity,
+	integer v3workCapacity, integer v4workCapacity, integer v5workCapacity)
 {
-	if (v1workSize > 0) {
-		my v1work = raw_VEC (v1workSize);
-		my v1workSize = v1workSize;
+	if (v1workCapacity > 0) {
+		my v1work = raw_VEC (v1workCapacity);
+		my v1workCapacity = v1workCapacity;
 	}
-	if (v2workSize > 0) {
-		my v2work = raw_VEC (v2workSize);
-		my v2workSize = v2workSize;
+	if (v2workCapacity > 0) {
+		my v2work = raw_VEC (v2workCapacity);
+		my v2workCapacity = v2workCapacity;
 	}
-	if (v3workSize > 0) {
-		my v3work = raw_VEC (v3workSize);
-		my v3workSize = v3workSize;
+	if (v3workCapacity > 0) {
+		my v3work = raw_VEC (v3workCapacity);
+		my v3workCapacity = v3workCapacity;
 	}
-	if (v4workSize > 0) {
-		my v4work = raw_VEC (v4workSize);
-		my v4workSize = v4workSize;
+	if (v4workCapacity > 0) {
+		my v4work = raw_VEC (v4workCapacity);
+		my v4workCapacity = v4workCapacity;
 	}
-	if (v5workSize > 0) {
-		my v5work = raw_VEC (v5workSize);
-		my v5workSize = v5workSize;
+	if (v5workCapacity > 0) {
+		my v5work = raw_VEC (v5workCapacity);
+		my v5workCapacity = v5workCapacity;
 	}
-
 }
 
 /************************ autocorrelation method *****************************/
@@ -745,6 +744,7 @@ void LPC_and_Sound_into_LPC_robust (LPC thee, Sound me, LPC result, double effec
 		autoSoundToLPCRobustAnalysisWorkspace ws = SoundToLPCRobustAnalysisWorkspace_create (me, result, effectiveAnalysisWidth,
 			kSound_windowShape::GAUSSIAN_2, thee, k_stdev, itermax, tol, location, wantlocation);
 		ws -> analyseOneFrame = analyseOneFrame_robust;
+		ws -> minimumNumberOfFramesPerThread /= 2;
 		SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC calculated.");

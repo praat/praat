@@ -1,4 +1,4 @@
-/* SoundAnalysisWorkspace_def.h
+/* SoundToLPCAnalysisWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -21,18 +21,18 @@ oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
 	/*
 		Instead of creating a different SoundToLPCAnalysisWorkspace type for each different analysis,
 		we create a generic SoundToLPCAnalysisWorkspace that can handle the auto, covar, marple and burg 
-		algorithm.
+		algorithms.
 	*/
-	oo_INTEGER (v1workSize)
-	oo_VEC (v1work, v1workSize) // for covar, auto, burg, marple, robust
-	oo_INTEGER (v2workSize)
-	oo_VEC (v2work, v2workSize) // for covar, auto, burg, marple, robust
-	oo_INTEGER (v3workSize)
-	oo_VEC (v3work, v3workSize) // for covar, auto, burg, marple, robust
-	oo_INTEGER (v4workSize)
-	oo_VEC (v4work, v4workSize) // for covar, robust
-	oo_INTEGER (v5workSize)
-	oo_VEC (v5work, v5workSize) // for covar
+	oo_INTEGER (v1workCapacity)
+	oo_VEC (v1work, v1workCapacity) // for covar, auto, burg, marple, robust
+	oo_INTEGER (v2workCapacity)
+	oo_VEC (v2work, v2workCapacity) // for covar, auto, burg, marple, robust
+	oo_INTEGER (v3workCapacity)
+	oo_VEC (v3work, v3workCapacity) // for covar, auto, burg, marple, robust
+	oo_INTEGER (v4workCapacity)
+	oo_VEC (v4work, v4workCapacity) // for covar, robust
+	oo_INTEGER (v5workCapacity)
+	oo_VEC (v5work, v5workCapacity) // for covar
 	oo_DOUBLE (tolerance1)		// for marple
 	oo_DOUBLE (tolerance2)		// for marple
 	

@@ -26,6 +26,8 @@
 
 void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
+void SoundAnalysisWorkspace_getThreadingInfo (SoundAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
+
 void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee);
 /*
 	Preconditions: 
@@ -42,6 +44,11 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 inline void SoundAnalysisWorkspace_subtractLocalMean (SoundAnalysisWorkspace me, bool subtractLocalMean) {
 		my subtractLocalMean = subtractLocalMean;
 }
+
+inline void SoundAnalysisWorkspace_useMultiThreading (SoundAnalysisWorkspace me, bool useMultiThreading) {
+	my useMultiThreading = useMultiThreading;
+}
+
 
 #endif /* _SoundAnalysisWorkspace_h_ */
  

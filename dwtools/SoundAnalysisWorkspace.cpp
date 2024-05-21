@@ -84,6 +84,8 @@ void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound thee, Sampled
 	Melder_assert (thy xmin == his xmin && thy xmax == his xmax); // equal domains
 	my sound = thee;
 	my result = him;
+	my useMultiThreading = true;
+	my minimumNumberOfFramesPerThread = 40;
 	my windowShape = windowShape;
 	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
 	my analysisFrameSize = my getAnalysisFrameSize_uneven (me, my physicalAnalysisWidth);
@@ -99,6 +101,22 @@ void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee)
 		my sound = thee;
 }
 
+
+void SoundAnalysisWorkspace_getThreadingInfo (SoundAnalysisWorkspace me, integer *out_numberOfThreads) {
+	const integer numberOfProcessors = std::thread::hardware_concurrency ();
+	/*
+		Our processes are compute bound, therefore it makes no sense to start more than two threads on one processor
+	*/
+	if (my minimumNumberOfFramesPerThread <= 0)
+		my minimumNumberOfFramesPerThread = 40;
+	const integer maximumNumberOfThreads = 2 * numberOfProcessors;
+	const integer numberOfFrames = my result -> nx;
+	integer numberOfThreads = (numberOfFrames - 1) / my minimumNumberOfFramesPerThread + 1;
+	Melder_clip (1_integer, & numberOfThreads, maximumNumberOfThreads);
+	if (out_numberOfThreads)
+		*out_numberOfThreads = numberOfThreads;
+}
+
 void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound thee, double preEmphasisFrequency)
 {
 	try {
@@ -111,49 +129,54 @@ void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound th
 		}	
 
 		my allocateSampledFrames (me);
-		
+
 		const integer numberOfFrames = my result -> nx;
-		const integer numberOfProcessors = std::thread::hardware_concurrency ();
-		constexpr integer maximumNumberOfThreads = 1;//16;
-		integer numberOfThreads, numberOfFramesPerThread = 25;
-		NUMgetThreadingInfo (numberOfFrames, std::min (numberOfProcessors, maximumNumberOfThreads), & numberOfFramesPerThread, & numberOfThreads);
-		/*
-			We have to reserve all the needed working memory for each thread beforehand.
-		*/
-		OrderedOf<structSoundAnalysisWorkspace> workspaces;
-		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-			autoSoundAnalysisWorkspace threadWorkspace = Data_copy (me);
-			workspaces.addItem_move (threadWorkspace.move());
-		}
 		
-		autovector<std::thread> threads = autovector<std::thread> (numberOfThreads, MelderArray::kInitializationType::ZERO);
+		std::atomic<integer> frameErrorCount (0);
 		
-		try {
-			std::atomic<integer> frameErrorCount (0);
-
+		
+		if (my useMultiThreading) {
+			integer numberOfThreads;
+			SoundAnalysisWorkspace_getThreadingInfo (me, & numberOfThreads);
+			const integer numberOfFramesPerThread = my minimumNumberOfFramesPerThread;
+			/*
+				We have to reserve all the needed working memory for each thread beforehand.
+			*/
+			OrderedOf<structSoundAnalysisWorkspace> workspaces;
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-				SoundAnalysisWorkspace threadWorkspace = workspaces.at [ithread];
-				const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
-				const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
-				
-				auto analyseFrames = [&frameErrorCount] (SoundAnalysisWorkspace threadWorkspace, integer fromFrame, integer toFrame) {
-					threadWorkspace -> analyseManyFrames (threadWorkspace, fromFrame, toFrame);
-					frameErrorCount += threadWorkspace -> frameErrorCount;
-				};
-				
-				threads [ithread] = std::thread (analyseFrames, threadWorkspace, firstFrame, lastFrame);
+				autoSoundAnalysisWorkspace threadWorkspace = Data_copy (me);
+				workspaces.addItem_move (threadWorkspace.move());
 			}
+		
+			autovector<std::thread> threads = autovector<std::thread> (numberOfThreads, MelderArray::kInitializationType::ZERO);
 			
-			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
-				threads [ithread]. join ();
+			try {
+				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
+					SoundAnalysisWorkspace threadWorkspace = workspaces.at [ithread];
+					const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
+					const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
+					
+					auto analyseFrames = [&frameErrorCount] (SoundAnalysisWorkspace threadWorkspace, integer fromFrame, integer toFrame) {
+						threadWorkspace -> analyseManyFrames (threadWorkspace, fromFrame, toFrame);
+						frameErrorCount += threadWorkspace -> frameErrorCount;
+					};
 
-		} catch (MelderError) {
-			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-			if (threads [ithread]. joinable ())
-				threads [ithread]. join ();
+					threads [ithread] = std::thread (analyseFrames, threadWorkspace, firstFrame, lastFrame);
+				}
+				
+				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
+					threads [ithread]. join ();
+			} catch (MelderError) {
+				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
+					if (threads [ithread]. joinable ())
+						threads [ithread]. join ();
+					}
+				Melder_clearError ();
+				throw;
 			}
-			Melder_clearError ();
-			throw;
+		} else {
+			my analyseManyFrames (me, 1, numberOfFrames);
+			frameErrorCount += my frameErrorCount;
 		}
 	} catch (MelderError) {
 			Melder_throw (me, U"The sound analysis could not be done.");
