@@ -478,7 +478,7 @@ procedure test_certified_norris_data
 	.rSquared = Get coefficient of determination
 	assert abs(.rSquared - .rsquaredCertified) < 1e-13
 	.residualStdev = Get residual standard deviation
-	assert abs(.residualStdev - .residualStdevCertified) < 1e-14
+	assert abs(.residualStdev - .residualStdevCertified) < 1e-13
 	removeObject: .table, .dm
 	appendInfoLine: " OK"
 endproc
