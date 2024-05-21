@@ -1,0 +1,119 @@
+File type = "ooTextFile"
+Object class = "ExperimentMFC 7"
+
+blankWhilePlaying? <yes> 
+stimuliAreSounds? <yes> 
+stimulusFileNameHead = "../Sounds/" 
+stimulusFileNameTail = ".wav" 
+stimulusCarrierBefore:
+    name = "weSayTheWord" 
+stimulusCarrierAfter:
+    name = "again" 
+stimulusInitialSilenceDuration = 0.5 
+stimulusMedialSilenceDuration = 0 
+stimulusFinalSilenceDuration = 0.5 
+numberOfDifferentStimuli = 4 
+stimulus []: 
+    stimulus [1]:
+        name = "heed" 
+        visibleText = "" 
+    stimulus [2]:
+        name = "hid" 
+        visibleText = "" 
+    stimulus [3]:
+        name = "hood" 
+        visibleText = "" 
+    stimulus [4]:
+        name = "hud" 
+        visibleText = "" 
+numberOfReplicationsPerStimulus = 3 
+breakAfterEvery = 4 
+randomize = <PermuteBalancedNoDoublets> 
+startText = "This is a listening experiment.
+After hearing a sound, you choose the vowel that is most similar.
+
+Click to start." 
+runText = "Choose the vowel that you heard." 
+pauseText = "You can have a short break if you like.
+
+Click to proceed." 
+endText = "The experiment
+has finished." 
+maximumNumberOfReplays = 1 
+replay_left = 0 
+replay_right = 0 
+replay_bottom = 0 
+replay_top = 0 
+replay_label = "" 
+replay_key = "" 
+ok_left = 0 
+ok_right = 0 
+ok_bottom = 0 
+ok_top = 0 
+ok_label = "" 
+ok_key = "" 
+oops_left = 0 
+oops_right = 0 
+oops_bottom = 0 
+oops_top = 0 
+oops_label = "" 
+oops_key = "" 
+responsesAreSounds? <no> 
+responseFileNameHead = "" 
+responseFileNameTail = "" 
+responseCarrierBefore:
+    name = "" 
+responseCarrierAfter:
+    name = "" 
+responseInitialSilenceDuration = 0 
+responseMedialSilenceDuration = 0 
+responseFinalSilenceDuration = 0 
+numberOfDifferentResponses = 5 
+response []: 
+    response [1]:
+        left = 0.25 
+        right = 0.35 
+        bottom = 0.8 
+        top = 0.9 
+        label = "h I d" 
+        fontSize = 40 
+        key = "i" 
+        name = "hid" 
+    response [2]:
+        left = 0.35 
+        right = 0.45 
+        bottom = 0.6 
+        top = 0.7 
+        label = "h E d" 
+        fontSize = 40 
+        key = "e" 
+        name = "hid" 
+    response [3]:
+        left = 0.45 
+        right = 0.55 
+        bottom = 0.4 
+        top = 0.5 
+        label = "h A d" 
+        fontSize = 40 
+        key = "a" 
+        name = "hud" 
+    response [4]:
+        left = 0.55 
+        right = 0.65 
+        bottom = 0.6 
+        top = 0.7 
+        label = "h O d" 
+        fontSize = 40 
+        key = "o" 
+        name = "hood" 
+    response [5]:
+        left = 0.65 
+        right = 0.75 
+        bottom = 0.8 
+        top = 0.9 
+        label = "h U d" 
+        fontSize = 40 
+        key = "u" 
+        name = "hud" 
+numberOfGoodnessCategories = 0 
+goodness []: (empty)
