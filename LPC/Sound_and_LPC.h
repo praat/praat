@@ -26,102 +26,12 @@
 #include "LPC.h"
 #include "SoundAnalysisWorkspace.h"
 #include "SVD.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
 
-Thing_define (LPCAnalysisWorkspace, SoundAnalysisWorkspace) {
-	/*
-		Instead of creating a different LPCAnalysisWorkspace type for each different analysis,
-		we create a generic LPCAnalysisWorkspace that can handle the auto, covar, marple and burg 
-		algorithm.
-	*/
-	autoVEC v1, v2, v3;	// for auto, burg, marple
-	autoVEC v4, v5;		// for covar
-	double tolerance1, tolerance2; // for marple
-	
-
-	void getAutocorrelations (LPCAnalysisWorkspace me, VEC);
-	
-	virtual void allocateSampledFrames (SoundAnalysisWorkspace me) override {
-		Melder_assert (my result != nullptr);
-		LPC thee = reinterpret_cast<LPC> (my result);
-		for (integer iframe = 1; iframe <= thy nx; iframe ++) {
-			const LPC_Frame lpcFrame = & thy d_frames [iframe];
-			LPC_Frame_init (lpcFrame, thy maxnCoefficients);
-		}
-	}
-	
-	void v1_copy (Daata data_to) const override {
-		LPCAnalysisWorkspace thee = reinterpret_cast<LPCAnalysisWorkspace> (data_to);
-		structSoundAnalysisWorkspace :: v1_copy (thee);
-		thy v1 = copy_VEC (v1.get());
-		thy v2 = copy_VEC (v2.get());
-		thy v3 = copy_VEC (v3.get());
-		thy v4 = copy_VEC (v4.get());
-		thy v5 = copy_VEC (v5.get());
-		thy tolerance1 = tolerance1;
-		thy tolerance2 = tolerance2;
-	}
-};
-
-void LPCAnalysisWorkspace_init (LPCAnalysisWorkspace me, Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
-
-autoLPCAnalysisWorkspace LPCAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+autoSoundToLPCAnalysisWorkspace SoundToLPCAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
 
-Thing_define (LPCRobustAnalysisWorkspace, LPCAnalysisWorkspace) {
-	// workSpaces;
-	autoVEC workspace_svdCompute, workspace_svdSolve, workspace_huber, workspace_inversefiltering;
-	
-	LPC original; 	// read-only original
-	double k_stdev;	// tol1, tol2 ; tol, tol_svd;
-	integer predictionOrder;
-	integer iter, itermax, huber_iterations = 5;
-	bool wantlocation, wantscale;
-	double location, scale;
-	autoVEC error;
-	autoVEC sampleWeights, coefficients, covariancesw;
-	autoMAT covarmatrixw;
-	autoSVD svd;
-	
-	void allocateSampledFrames (SoundAnalysisWorkspace him) override {
-		LPCRobustAnalysisWorkspace me = reinterpret_cast<LPCRobustAnalysisWorkspace> (him);
-		Melder_assert (my result != nullptr);
-		Melder_assert (my original != nullptr);
-		LPC thee = reinterpret_cast<LPC> (result);
-		Melder_assert (thy nx == original -> nx);
-		for (integer iframe = 1; iframe <= thy nx; iframe ++) {
-			LPC_Frame toFrame = & thy d_frames [iframe];
-			const LPC_Frame fromFrame = & my original -> d_frames [iframe];
-			fromFrame -> copy (toFrame);
-		}
-	}
-	
-	void v1_copy (Daata data_to) const override {
-		LPCRobustAnalysisWorkspace thee = reinterpret_cast<LPCRobustAnalysisWorkspace> (data_to);
-		structLPCAnalysisWorkspace :: v1_copy (thee);
-		thy workspace_svdCompute = copy_VEC (workspace_svdCompute.get());
-		thy workspace_svdSolve = copy_VEC (workspace_svdSolve.get());
-		thy workspace_huber = copy_VEC (workspace_huber.get());
-		thy workspace_inversefiltering = copy_VEC (workspace_inversefiltering.get());
-		thy original = original;
-		thy k_stdev = k_stdev;
-		thy predictionOrder = predictionOrder;
-		thy iter = iter;
-		thy itermax = itermax;
-		thy huber_iterations = huber_iterations;
-		thy wantlocation = wantlocation;
-		thy wantscale = wantscale;
-		thy location = location;
-		thy scale = scale;
-		thy error = copy_VEC (error.get());
-		thy sampleWeights = copy_VEC (sampleWeights.get());
-		thy coefficients = copy_VEC (coefficients.get());
-		thy covariancesw = copy_VEC (covariancesw.get());
-		thy covarmatrixw = copy_MAT (covarmatrixw.get());
-		thy svd = Data_copy (svd.get()); // TODO maximumCapacity
-	}
-};
-
-autoLPCRobustAnalysisWorkspace LPCRobustAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth,
+autoSoundToLPCRobustAnalysisWorkspace SoundToLPCRobustAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape, LPC original, double k_stdev, integer itermax, double tol, double location, bool wantlocation);
 
 
@@ -144,7 +54,7 @@ void Sound_into_LPC_robust (Sound me, LPC thee, double analysisWidth, double pre
 
 autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder, double physicalAnalysisWidth, double dt);
 
-void LPCAnalysis_threaded (Sound me, double preEmphasisFrequency, LPCAnalysisWorkspace workspace);
+void LPCAnalysis_threaded (Sound me, double preEmphasisFrequency, SoundToLPCAnalysisWorkspace workspace);
 /*
  * Function:
  *	Calculate linear prediction coefficients according to following model:

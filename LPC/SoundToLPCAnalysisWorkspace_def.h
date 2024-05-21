@@ -23,22 +23,22 @@ oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
 		we create a generic SoundToLPCAnalysisWorkspace that can handle the auto, covar, marple and burg 
 		algorithm.
 	*/
-	oo_INTEGER (v1Size) // for auto, burg, marple
-	oo_VEC (v1, v1Size)
-	oo_INTEGER (v2Size) // for auto, burg, marple
-	oo_VEC (v2, v2Size)
-	oo_INTEGER (v3Size) // for auto, burg, marple
-	oo_VEC (v3, v3Size)
-	oo_INTEGER (v4Size) // for covar
-	oo_VEC (v4, v4Size)
-	oo_INTEGER (v5Size) // for covar
-	oo_VEC (v5, v5Size)
-	oo_DOUBLE (tolerance1)	// for marple
-	oo_DOUBLE (tolerance2)	// for marple
+	oo_INTEGER (v1workSize)
+	oo_VEC (v1work, v1workSize) // for covar, auto, burg, marple, robust
+	oo_INTEGER (v2workSize)
+	oo_VEC (v2work, v2workSize) // for covar, auto, burg, marple, robust
+	oo_INTEGER (v3workSize)
+	oo_VEC (v3work, v3workSize) // for covar, auto, burg, marple, robust
+	oo_INTEGER (v4workSize)
+	oo_VEC (v4work, v4workSize) // for covar, robust
+	oo_INTEGER (v5workSize)
+	oo_VEC (v5work, v5workSize) // for covar
+	oo_DOUBLE (tolerance1)		// for marple
+	oo_DOUBLE (tolerance2)		// for marple
 	
 	#if oo_DECLARING
 		
-		virtual void getAutocorrelations (SoundToLPCAnalysisWorkspace me, VEC) {};
+		virtual void getAutocorrelations (SoundToLPCAnalysisWorkspace /* me */, VEC) {};
 		
 		void allocateSampledFrames (SoundAnalysisWorkspace me) override {
 			Melder_assert (my result != nullptr);
@@ -58,12 +58,6 @@ oo_END_CLASS (SoundToLPCAnalysisWorkspace)
 oo_DEFINE_CLASS (SoundToLPCRobustAnalysisWorkspace, SoundToLPCAnalysisWorkspace)
 
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, original) // read-only original
-	oo_INTEGER (workspace_svdComputeSize)
-	oo_VEC (workspace_svdCompute, workspace_svdComputeSize)
-	oo_VEC (workspace_svdSolve, original -> maxnCoefficients)
-	oo_VEC (workspace_huber, analysisFrameSize)
-	oo_VEC (workspace_inversefiltering, analysisFrameSize)
-	
 	
 	oo_DOUBLE (k_stdev)
 	oo_INTEGER (predictionOrder)

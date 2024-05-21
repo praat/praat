@@ -30,7 +30,26 @@
 #include <vector>
 #include "NUM2.h"
 
-Thing_implement (LPCAnalysisWorkspace, Daata, 0);
+#include "oo_DESTROY.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "oo_COPY.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "oo_EQUAL.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "oo_READ_TEXT.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "oo_READ_BINARY.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "oo_DESCRIPTION.h"
+#include "SoundToLPCAnalysisWorkspace_def.h"
+
+Thing_implement (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace, 0);
 
 static void Sound_and_LPC_require_equalDomainsAndSamplingPeriods (Sound me, LPC thee) {
 	Melder_require (my dx == thy samplingPeriod,
@@ -39,22 +58,17 @@ static void Sound_and_LPC_require_equalDomainsAndSamplingPeriods (Sound me, LPC 
 			U"The domains of the Sound and the LPC should be equal.");
 }
 
-void LPCAnalysisWorkspace_init (LPCAnalysisWorkspace me, Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
-	SoundAnalysisWorkspace_init (me, thee, effectiveAnalysisWidth, windowShape);
-	my result = him;
-}
-
-autoLPCAnalysisWorkspace LPCAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+autoSoundToLPCAnalysisWorkspace SoundToLPCAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
 	try {
 		Melder_assert (thy dx == his samplingPeriod);
 		Melder_assert (thy xmin == his xmin);
 		Melder_assert (thy xmax = his xmax);
-		autoLPCAnalysisWorkspace me = Thing_new (LPCAnalysisWorkspace);
-		LPCAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
+		autoSoundToLPCAnalysisWorkspace me = Thing_new (SoundToLPCAnalysisWorkspace);
+		SoundAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
 		my allocateSampledFrames (me.get());
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"LPCAnalysisWorkspace not created.");
+		Melder_throw (U"SoundToLPCAnalysisWorkspace not created.");
 	}
 }
 
@@ -71,6 +85,32 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder
 	}
 }
 
+static void SoundToLPCAnalysisWorkspace_allocate_v1To5 (SoundToLPCAnalysisWorkspace me, integer v1workSize, integer v2workSize, integer v3workSize, 
+	integer v4workSize, integer v5workSize)
+{
+	if (v1workSize > 0) {
+		my v1work = raw_VEC (v1workSize);
+		my v1workSize = v1workSize;
+	}
+	if (v2workSize > 0) {
+		my v2work = raw_VEC (v2workSize);
+		my v2workSize = v2workSize;
+	}
+	if (v3workSize > 0) {
+		my v3work = raw_VEC (v3workSize);
+		my v3workSize = v3workSize;
+	}
+	if (v4workSize > 0) {
+		my v4work = raw_VEC (v4workSize);
+		my v4workSize = v4workSize;
+	}
+	if (v5workSize > 0) {
+		my v5work = raw_VEC (v5workSize);
+		my v5workSize = v5workSize;
+	}
+
+}
+
 /************************ autocorrelation method *****************************/
 
 /* 
@@ -78,16 +118,16 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder
 */
 
 static void analyseOneFrame_auto (SoundAnalysisWorkspace saw, integer iframe) {
-	LPCAnalysisWorkspace me = reinterpret_cast<LPCAnalysisWorkspace> (saw);
+	SoundToLPCAnalysisWorkspace me = reinterpret_cast<SoundToLPCAnalysisWorkspace> (saw);
 	LPC result = reinterpret_cast<LPC> (my result);
 	Melder_assert (iframe > 0 && iframe <= result -> nx);
 	LPC_Frame thee = & result -> d_frames [iframe];
 	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	const integer m = thy nCoefficients;
 
-	VEC  r = my v1.get();
-	VEC  a = my v2.get();
-	VEC rc = my v3.get();
+	VEC  r = my v1work.get();
+	VEC  a = my v2work.get();
+	VEC rc = my v3work.get();
 	integer i = 1; // For error condition at end:
 	for (i = 1; i <= m + 1; i ++)
 		r [i] = NUMinner (my analysisFrame.part (1, my analysisFrame.size - i + 1), my analysisFrame.part (i, my analysisFrame.size));
@@ -126,12 +166,10 @@ end:
 
 void Sound_into_LPC_auto (Sound me, LPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-	workspace -> v1 = raw_VEC (thy maxnCoefficients + 1);	// r
-	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);	// a
-	workspace -> v3 = raw_VEC (thy maxnCoefficients);		// rc
-	workspace -> analyseOneFrame = analyseOneFrame_auto;
-	SoundAnalysisWorkspace_analyseThreaded (workspace.get(), me, preEmphasisFrequency);
+	autoSoundToLPCAnalysisWorkspace ws =  SoundToLPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	SoundToLPCAnalysisWorkspace_allocate_v1To5 (ws.get(), thy maxnCoefficients + 1, thy maxnCoefficients + 1, thy maxnCoefficients, 0, 0);
+	ws -> analyseOneFrame = analyseOneFrame_auto;
+	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 }
 
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -153,18 +191,18 @@ autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalys
 */
 
 static void analyseOneFrame_covar (SoundAnalysisWorkspace saw, integer iframe) {
-	LPCAnalysisWorkspace me = reinterpret_cast<LPCAnalysisWorkspace> (saw);
+	SoundToLPCAnalysisWorkspace me = reinterpret_cast<SoundToLPCAnalysisWorkspace> (saw);
 	LPC result = reinterpret_cast<LPC> (my result);
 	Melder_assert (iframe > 0 && iframe <= result -> nx);
 	LPC_Frame thee = & result -> d_frames [iframe];
 	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	const integer m = thy nCoefficients, n = my analysisFrameSize;
 	
-	VEC b = my v1.get();		// m * (m + 1) / 2;
-	VEC grc = my v2.get();	// m
-	VEC beta = my v3.get();	// m	
-	VEC a = my v4.get();		// m + 1
-	VEC cc = my v5.get(); 	//m + 1
+	VEC b = my v1work.get();		// m * (m + 1) / 2;
+	VEC grc = my v2work.get();	// m
+	VEC beta = my v3work.get();	// m	
+	VEC a = my v4work.get();		// m + 1
+	VEC cc = my v5work.get(); 	//m + 1
 	VEC x = my analysisFrame.get();
 	
 	thy gain = 0.0;
@@ -242,14 +280,11 @@ end:
 
 void Sound_into_LPC_covar (Sound me, LPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-	workspace -> v1 = raw_VEC (thy maxnCoefficients * (thy maxnCoefficients + 1) / 2);
-	workspace -> v2 = raw_VEC (thy maxnCoefficients);
-	workspace -> v3 = raw_VEC (thy maxnCoefficients);
-	workspace -> v4 = raw_VEC (thy maxnCoefficients + 1);
-	workspace -> v5 = raw_VEC (thy maxnCoefficients + 1);
-	workspace -> analyseOneFrame = analyseOneFrame_covar;
-	SoundAnalysisWorkspace_analyseThreaded (workspace.get(), me, preEmphasisFrequency);
+	autoSoundToLPCAnalysisWorkspace ws =  SoundToLPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	SoundToLPCAnalysisWorkspace_allocate_v1To5 (ws.get(), thy maxnCoefficients * (thy maxnCoefficients + 1) / 2, thy maxnCoefficients, 
+		thy maxnCoefficients, thy maxnCoefficients + 1, thy maxnCoefficients + 1);
+	ws -> analyseOneFrame = analyseOneFrame_covar;
+	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 }
 
 autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -266,16 +301,16 @@ autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnaly
 
 /************************ burg method *****************************/
 
-static double VECburg_buffered (VEC const& a, constVEC const& x, LPCAnalysisWorkspace me) {
+static double VECburg_buffered (VEC const& a, constVEC const& x, SoundToLPCAnalysisWorkspace me) {
 	const integer n = x.size, m = a.size;
 	a   <<=  0.0; // necessary??
 	if (n <= 2) {
 		a [1] = -1.0;
 		return ( n == 2 ? 0.5 * (x [1] * x [1] + x [2] * x [2]) : x [1] * x [1] );
 	}
-	VEC b1 = my v1.get();	// (n);
-	VEC b2 = my v2.get();	// (n);
-	VEC aa = my v3.get();	// (m + 1);
+	VEC b1 = my v1work.get();	// (n);
+	VEC b2 = my v2work.get();	// (n);
+	VEC aa = my v3work.get();	// (m + 1);
 
 	// (3)
 
@@ -333,12 +368,11 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, LPCAnalysisWork
 }
 
 static void analyseOneFrame_burg (SoundAnalysisWorkspace saw, integer iframe) {
-	LPCAnalysisWorkspace me = reinterpret_cast<LPCAnalysisWorkspace> (saw);
+	SoundToLPCAnalysisWorkspace me = reinterpret_cast<SoundToLPCAnalysisWorkspace> (saw);
 	LPC result = reinterpret_cast<LPC> (my result);
 	Melder_assert (iframe > 0 && iframe <= result -> nx);
 	LPC_Frame thee = & result -> d_frames [iframe];
 	Melder_assert (thy nCoefficients == thy a.size); // check invariant
-	const integer m = thy nCoefficients;
 	
 	thy gain = VECburg_buffered (thy a.get(), my analysisFrame.get(), me);
 	if (thy gain <= 0.0) {
@@ -355,12 +389,10 @@ static void analyseOneFrame_burg (SoundAnalysisWorkspace saw, integer iframe) {
 
 void Sound_into_LPC_burg (Sound me, LPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-	workspace -> v1 = raw_VEC (workspace -> analysisFrameSize);
-	workspace -> v2 = raw_VEC (workspace -> analysisFrameSize);
-	workspace -> v3 = raw_VEC (thy maxnCoefficients + 1);
-	workspace -> analyseOneFrame = analyseOneFrame_burg;
-	SoundAnalysisWorkspace_analyseThreaded (workspace.get(), me, preEmphasisFrequency);
+	autoSoundToLPCAnalysisWorkspace ws =  SoundToLPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	SoundToLPCAnalysisWorkspace_allocate_v1To5 (ws.get(), ws -> analysisFrameSize, ws -> analysisFrameSize, thy maxnCoefficients + 1, 0, 0);
+	ws -> analyseOneFrame = analyseOneFrame_burg;
+	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 }
 
 autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -378,7 +410,7 @@ autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double effectiveAnalys
 /************************ marple method *****************************/
 
 static void analyseOneFrame_marple (SoundAnalysisWorkspace saw, integer iframe) {
-	LPCAnalysisWorkspace me = reinterpret_cast<LPCAnalysisWorkspace> (saw);
+	SoundToLPCAnalysisWorkspace me = reinterpret_cast<SoundToLPCAnalysisWorkspace> (saw);
 	LPC result = reinterpret_cast<LPC> (my result);
 	Melder_assert (iframe > 0 && iframe <= result -> nx);
 	LPC_Frame thee = & result -> d_frames [iframe];
@@ -386,9 +418,9 @@ static void analyseOneFrame_marple (SoundAnalysisWorkspace saw, integer iframe) 
 	const integer mmax = thy nCoefficients, n = my analysisFrame.size;
 
 	int status = 0;
-	VEC c = my v1.get();	// (mmax + 1);
-	VEC d = my v2.get();	// (mmax + 1);
-	VEC r = my v3.get();	// (mmax + 1);
+	VEC c = my v1work.get();	// (mmax + 1);
+	VEC d = my v2work.get();	// (mmax + 1);
+	VEC r = my v3work.get();	// (mmax + 1);
 	VEC x = my analysisFrame.get();
 	
 	double e0 = 2.0 * NUMsum2 (x);
@@ -525,14 +557,12 @@ end:
 
 void Sound_into_LPC_marple (Sound me, LPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency, double tol1, double tol2) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPCAnalysisWorkspace workspace =  LPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-	workspace ->tolerance1 = tol1;
-	workspace ->tolerance2 = tol2;
-	workspace -> v1 = raw_VEC (thy maxnCoefficients + 1);
-	workspace -> v2 = raw_VEC (thy maxnCoefficients + 1);
-	workspace -> v3 = raw_VEC (thy maxnCoefficients + 1);
-	workspace -> analyseOneFrame = analyseOneFrame_marple;
-	SoundAnalysisWorkspace_analyseThreaded (workspace.get(), me, preEmphasisFrequency);
+	autoSoundToLPCAnalysisWorkspace ws =  SoundToLPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	SoundToLPCAnalysisWorkspace_allocate_v1To5 (ws.get(), thy maxnCoefficients + 1, thy maxnCoefficients + 1, thy maxnCoefficients + 1, 0, 0);
+	ws ->tolerance1 = tol1;
+	ws ->tolerance2 = tol2;
+	ws -> analyseOneFrame = analyseOneFrame_marple;
+	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 }
 
 autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
@@ -551,7 +581,7 @@ autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double effectiveAnal
 
 /*********************** robust method ******************************/
 
-Thing_implement (LPCRobustAnalysisWorkspace, LPCAnalysisWorkspace, 0);
+Thing_implement (SoundToLPCRobustAnalysisWorkspace, SoundToLPCAnalysisWorkspace, 0);
 
 static void SVD_resizeWithinOldBounds (SVD me, integer nrowmax, integer ncolmax, integer nrownew, integer ncolnew) {
 	Melder_require (nrownew <= nrowmax && ncolnew <= ncolmax,
@@ -563,7 +593,7 @@ static void SVD_resizeWithinOldBounds (SVD me, integer nrowmax, integer ncolmax,
 	my d.resize (ncolnew);
 }
 
-autoLPCRobustAnalysisWorkspace LPCRobustAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, 
+autoSoundToLPCRobustAnalysisWorkspace SoundToLPCRobustAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, 
 	kSound_windowShape windowShape, LPC original, double k_stdev, integer itermax, double tol, double location, bool wantlocation)
 {
 	try {
@@ -572,10 +602,10 @@ autoLPCRobustAnalysisWorkspace LPCRobustAnalysisWorkspace_create (Sound thee, LP
 		Melder_assert (his nx == original -> nx);
 		Melder_assert (his maxnCoefficients == original -> maxnCoefficients);
 		
-		autoLPCRobustAnalysisWorkspace me = Thing_new (LPCRobustAnalysisWorkspace);
-		LPCAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
+		autoSoundToLPCRobustAnalysisWorkspace me = Thing_new (SoundToLPCRobustAnalysisWorkspace);
+		SoundAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
 		my original = original;
-		my allocateSampledFrames (me.get()); 
+		my allocateSampledFrames (me.get());
 		my error = zero_VEC (my analysisFrameSize);
 		my k_stdev = k_stdev;
 		my tolerance1 = tol;
@@ -587,6 +617,7 @@ autoLPCRobustAnalysisWorkspace LPCRobustAnalysisWorkspace_create (Sound thee, LP
 		if (! wantlocation)
 			my location = location;
 		my wantscale = true;
+		my huber_iterations = 5;
 		my predictionOrder = his maxnCoefficients;
 		my sampleWeights = zero_VEC (my analysisFrameSize);
 		my coefficients = raw_VEC (his maxnCoefficients);
@@ -596,18 +627,20 @@ autoLPCRobustAnalysisWorkspace LPCRobustAnalysisWorkspace_create (Sound thee, LP
 		SVD_setTolerance (my svd.get(), my tolerance2);
 		/*
 			Calculate workspace size
+			v1work : inversefiltering
+			v2work : SVD_compute
+			v3work : svdSolve
+			v4work : workspace_huber
 		*/
-		my workspace_inversefiltering = raw_VEC (my analysisFrameSize);
-		my workspace_svdCompute = raw_VEC (SVD_getWorkspaceSize (my svd.get()));
-		my workspace_svdSolve = raw_VEC (his maxnCoefficients);
-		my workspace_huber = raw_VEC (my analysisFrameSize);
+		const integer svdComputeSize = SVD_getWorkspaceSize (my svd.get());
+		SoundToLPCAnalysisWorkspace_allocate_v1To5 (me.get(), my analysisFrameSize, svdComputeSize, his maxnCoefficients, my analysisFrameSize, 0);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"LPCRobustAnalysisWorkspace not created.");
+		Melder_throw (U"SoundToLPCRobustAnalysisWorkspace not created.");
 	}
 }
 
-void LPCRobustAnalysisWorkspace_resize (LPCRobustAnalysisWorkspace me, integer newPredictionOrder) {
+void SoundToLPCRobustAnalysisWorkspace_resize (SoundToLPCRobustAnalysisWorkspace me, integer newPredictionOrder) {
 	if (newPredictionOrder == my svd -> numberOfColumns)
 		return;
 	LPC result = reinterpret_cast<LPC> (my result);
@@ -618,7 +651,7 @@ void LPCRobustAnalysisWorkspace_resize (LPCRobustAnalysisWorkspace me, integer n
 	SVD_resizeWithinOldBounds (my svd.get(), result -> maxnCoefficients, result -> maxnCoefficients, newPredictionOrder, newPredictionOrder);
 }
 
-static void setSampleWeights (LPCRobustAnalysisWorkspace me, constVEC const& error) {
+static void setSampleWeights (SoundToLPCRobustAnalysisWorkspace me, constVEC const& error) {
 	Melder_assert (error.size == my analysisFrameSize);
 	const double kstdev = my k_stdev * my scale;
 	for (integer isamp = 1 ; isamp <= my analysisFrameSize; isamp ++) {
@@ -627,7 +660,7 @@ static void setSampleWeights (LPCRobustAnalysisWorkspace me, constVEC const& err
 	}
 }
 
-static void setCovariances (LPCRobustAnalysisWorkspace me, constVEC const& s) {
+static void setCovariances (SoundToLPCRobustAnalysisWorkspace me, constVEC const& s) {
 	Melder_assert (s.size == my analysisFrameSize);
 	MATVU covar = MATVU (my covarmatrixw.part (1, my predictionOrder, 1, my predictionOrder));
 	for (integer i = 1; i <= my predictionOrder; i ++) {
@@ -644,7 +677,7 @@ static void setCovariances (LPCRobustAnalysisWorkspace me, constVEC const& s) {
 	}
 }
 
-static void solvelpc (LPCRobustAnalysisWorkspace me) {
+static void solvelpc (SoundToLPCRobustAnalysisWorkspace me) {
 	// we do not resize the svd-matrices (yet) therefore add zero's and svd the full matrix
 	//if (my predictionOrder < my lpc -> maxnCoefficients) {
 	//	my covarmatrixw.part (my predictionOrder + 1, my lpc -> maxnCoefficients, 1, my lpc -> maxnCoefficients)  <<=  0.0;
@@ -652,13 +685,13 @@ static void solvelpc (LPCRobustAnalysisWorkspace me) {
 	//	my coefficients.resize (my lpc -> maxnCoefficients);
 	//}
 	my svd -> u.all()  <<=  my covarmatrixw.all();
-	SVD_compute (my svd.get(), my workspace_svdCompute.get());
-	SVD_solve_preallocated (my svd.get(), my covariancesw.get(), my coefficients.get(), my workspace_svdSolve.get());
+	SVD_compute (my svd.get(), my v2work.get());
+	SVD_solve_preallocated (my svd.get(), my covariancesw.get(), my coefficients.get(), my v3work.get());
 	my coefficients.resize (my predictionOrder); // maintain invariant
 }
 
 static void analyseOneFrame_robust (SoundAnalysisWorkspace saw, integer iframe) {
-	LPCRobustAnalysisWorkspace me = reinterpret_cast<LPCRobustAnalysisWorkspace> (saw);
+	SoundToLPCRobustAnalysisWorkspace me = reinterpret_cast<SoundToLPCRobustAnalysisWorkspace> (saw);
 	LPC result = reinterpret_cast<LPC> (my result);
 	Melder_assert (iframe > 0 && iframe <= result -> nx);
 	LPC_Frame thee = & result -> d_frames [iframe];
@@ -671,13 +704,13 @@ static void analyseOneFrame_robust (SoundAnalysisWorkspace saw, integer iframe) 
 	my iter = 0;
 	my scale = 1e308;
 	bool farFromScale = true;
-	LPCRobustAnalysisWorkspace_resize (me, my predictionOrder);
+	SoundToLPCRobustAnalysisWorkspace_resize (me, my predictionOrder);
 	do {
 		const double previousScale = my scale;
 		my error.all()  <<=  my analysisFrame.get();
-		VECfilterInverse_inplace (my error.get(), thy a.get(), my workspace_inversefiltering.get());
+		VECfilterInverse_inplace (my error.get(), thy a.get(), my v1work.get());
 		NUMstatistics_huber (my error.get(), & my location, my wantlocation, & my scale, my wantscale, my k_stdev, my tolerance1,
-			my huber_iterations, my workspace_huber.get());
+			my huber_iterations, my v4work.get());
 		setSampleWeights (me, my error.get());
 
 		setCovariances (me, my analysisFrame.get());
@@ -709,10 +742,10 @@ void LPC_and_Sound_into_LPC_robust (LPC thee, Sound me, LPC result, double effec
 		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 		double location = 0.0;
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, thy maxnCoefficients);
-		autoLPCRobustAnalysisWorkspace workspace = LPCRobustAnalysisWorkspace_create (me, result, effectiveAnalysisWidth,
+		autoSoundToLPCRobustAnalysisWorkspace ws = SoundToLPCRobustAnalysisWorkspace_create (me, result, effectiveAnalysisWidth,
 			kSound_windowShape::GAUSSIAN_2, thee, k_stdev, itermax, tol, location, wantlocation);
-		workspace -> analyseOneFrame = analyseOneFrame_robust;
-		SoundAnalysisWorkspace_analyseThreaded (workspace.get(), me, preEmphasisFrequency);
+		ws -> analyseOneFrame = analyseOneFrame_robust;
+		SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC calculated.");
 	}	

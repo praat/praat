@@ -19,8 +19,8 @@
 #define ooSTRUCT SoundAnalysisWorkspace
 oo_DEFINE_CLASS (SoundAnalysisWorkspace, Daata)
 
-//	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sound, sound) // Needs too many casts now, TODO Sampled_getNearestIndex (constSampled,...)
-	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sound, sound)
+	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sound, sound) // Needs too many casts now, TODO Sampled_getNearestIndex (constSampled,...)
+//	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sound, sound)
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, result)
 	oo_DOUBLE (physicalAnalysisWidth)
 	oo_INTEGER (analysisFrameSize)
