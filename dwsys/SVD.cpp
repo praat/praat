@@ -85,6 +85,16 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
 	}
 }
 
+void SVD_resizeWithinOldBounds (SVD me, integer nrowmax, integer ncolmax, integer nrownew, integer ncolnew) {
+	Melder_require (nrownew <= nrowmax && ncolnew <= ncolmax,
+		U"The new size must fit within the old size.");
+	my numberOfRows = nrownew;
+	my numberOfColumns = ncolnew;
+	my u.resize (nrownew, ncolnew);
+	my v.resize (ncolnew, ncolnew);
+	my d.resize (ncolnew);
+}
+
 autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 	try {
 		autoSVD me = SVD_create (m.nrow, m.ncol);

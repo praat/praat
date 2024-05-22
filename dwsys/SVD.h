@@ -48,6 +48,8 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns);
 	where eps is the floating point precision, approximately 2.2e-16
 */
 
+void SVD_resizeWithinOldBounds (SVD me, integer nrowmax, integer ncolmax, integer nrownew, integer ncolnew);
+
 autoSVD SVD_createFromGeneralMatrix (constMATVU const& m);
 
 void SVD_update (SVD me, constMATVU const& m);
