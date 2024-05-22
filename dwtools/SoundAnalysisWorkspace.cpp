@@ -134,7 +134,6 @@ void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound th
 		
 		std::atomic<integer> frameErrorCount (0);
 		
-		
 		if (my useMultiThreading) {
 			integer numberOfThreads;
 			SoundAnalysisWorkspace_getThreadingInfo (me, & numberOfThreads);

@@ -37,9 +37,11 @@ oo_DEFINE_CLASS (SoundAnalysisWorkspace, Daata)
 	
 	#if oo_DECLARING
 		void (*analyseOneFrame) (SoundAnalysisWorkspace me, integer iframe); // has to set frameAnalysisIsOK to true or false
+		void (*allocateSampledFrames) (SoundAnalysisWorkspace me);
 	#endif
 	#if oo_COPYING
 		thy analyseOneFrame = our analyseOneFrame;
+		thy allocateSampledFrames = our allocateSampledFrames;
 	#endif	
 		
 	#if oo_DECLARING
@@ -54,9 +56,6 @@ oo_DEFINE_CLASS (SoundAnalysisWorkspace, Daata)
 		
 		virtual void getSoundFrame (SoundAnalysisWorkspace me, integer iframe);
 		
-		virtual void allocateSampledFrames (SoundAnalysisWorkspace me) {
-			(void) me;
-		};
 	#endif
 
 oo_END_CLASS (SoundAnalysisWorkspace)

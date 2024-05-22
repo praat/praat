@@ -36,31 +36,33 @@ oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
 	oo_DOUBLE (tolerance1)		// for marple
 	oo_DOUBLE (tolerance2)		// for marple
 	
+	oo_OBJECT (Daata, 0, extraData)  // e.g. for robust analysis
+	
 	#if oo_DECLARING
 		
 		virtual void getAutocorrelations (SoundToLPCAnalysisWorkspace /* me */, VEC) {};
-		
-		void allocateSampledFrames (SoundAnalysisWorkspace me) override {
-			Melder_assert (my result != nullptr);
-			LPC thee = reinterpret_cast<LPC> (my result);
-			for (integer iframe = 1; iframe <= thy nx; iframe ++) {
-				const LPC_Frame lpcFrame = & thy d_frames [iframe];
-				LPC_Frame_init (lpcFrame, thy maxnCoefficients);
-			}
-		}
 		
 	#endif
 
 oo_END_CLASS (SoundToLPCAnalysisWorkspace)
 #undef ooSTRUCT
 
-#define ooSTRUCT SoundToLPCRobustAnalysisWorkspace
-oo_DEFINE_CLASS (SoundToLPCRobustAnalysisWorkspace, SoundToLPCAnalysisWorkspace)
+#define ooSTRUCT RobustAnalysisExtraData
+oo_DEFINE_CLASS (RobustAnalysisExtraData, Daata)
 
+	oo_INTEGER (inverseFilteringCapacity)
+	oo_VEC (work_inverseFiltering, inverseFilteringCapacity)
+	oo_INTEGER (computeSVDCapacity)
+	oo_VEC (work_computeSVD, computeSVDCapacity)
+	oo_INTEGER (svdSolveCapacity)
+	oo_VEC (work_svdSolve, svdSolveCapacity)
+	oo_INTEGER (huberCapacity)
+	oo_VEC (work_huber, huberCapacity)
+	
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, original) // read-only original
 	
 	oo_DOUBLE (k_stdev)
-	oo_INTEGER (predictionOrder)
+	oo_INTEGER (localPredictionOrder) // can change from frame to frame
 	oo_INTEGER (iter)
 	oo_INTEGER (itermax)
 	oo_INTEGER (huber_iterations) // = 5;
@@ -68,31 +70,15 @@ oo_DEFINE_CLASS (SoundToLPCRobustAnalysisWorkspace, SoundToLPCAnalysisWorkspace)
 	oo_BOOLEAN (wantscale)
 	oo_DOUBLE (location)
 	oo_DOUBLE (scale)
+	oo_INTEGER (analysisFrameSize)
 	oo_VEC (error, analysisFrameSize)
 	oo_VEC (sampleWeights, analysisFrameSize)
 	oo_VEC (coefficients, original -> maxnCoefficients)
 	oo_VEC (covariancesw, original -> maxnCoefficients)
 	oo_MAT (covarmatrixw, original -> maxnCoefficients, original -> maxnCoefficients)
 	oo_OBJECT (SVD, 1, svd)
-	
-	#if oo_DECLARING
 
-		void allocateSampledFrames (SoundAnalysisWorkspace him) override {
-			SoundToLPCRobustAnalysisWorkspace me = reinterpret_cast<SoundToLPCRobustAnalysisWorkspace> (him);
-			Melder_assert (my result != nullptr);
-			Melder_assert (my original != nullptr);
-			LPC thee = reinterpret_cast<LPC> (result);
-			Melder_assert (thy nx == original -> nx);
-			for (integer iframe = 1; iframe <= thy nx; iframe ++) {
-				LPC_Frame toFrame = & thy d_frames [iframe];
-				const LPC_Frame fromFrame = & my original -> d_frames [iframe];
-				fromFrame -> copy (toFrame);
-			}
-		}
-
-	#endif
-
-oo_END_CLASS (SoundToLPCRobustAnalysisWorkspace)
+oo_END_CLASS (RobustAnalysisExtraData)
 #undef ooSTRUCT
 
 /* End of file SoundToLPCAnalysisWorkspace_def.h */

@@ -31,7 +31,7 @@
 autoSoundToLPCAnalysisWorkspace SoundToLPCAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
 
-autoSoundToLPCRobustAnalysisWorkspace SoundToLPCRobustAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth,
+autoSoundToLPCAnalysisWorkspace SoundToLPCAnalysisWorkspace_createRobust (Sound thee, LPC him, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape, LPC original, double k_stdev, integer itermax, double tol, double location, bool wantlocation);
 
 
