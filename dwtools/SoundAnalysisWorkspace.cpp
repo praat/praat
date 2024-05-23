@@ -77,10 +77,11 @@ void SoundAnalysisWorkspace_initWorkvectorPool (SoundAnalysisWorkspace me, INTVE
 		Melder_throw (U"Could not initialize the WorkvectorPool.");
 	}
 }
+
 Thing_implement (ExtraAnalysisData, Daata, 0);
 
 void ExtraAnalysisData_init (ExtraAnalysisData me, SoundAnalysisWorkspace thee) {
-	Melder_assert (my soundAnalysisWorkspace != nullptr);
+	Melder_assert (thee != nullptr);
 	my soundAnalysisWorkspace = thee;
 }
 
