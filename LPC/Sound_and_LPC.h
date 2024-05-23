@@ -28,13 +28,11 @@
 #include "SVD.h"
 #include "SoundToLPCAnalysisWorkspace_def.h"
 
-autoSoundToLPCAnalysisWorkspace SoundToLPCAnalysisWorkspace_create (Sound thee, LPC him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+autoExtraAnalysisDataRobust ExtraAnalysisDataRobust_create (SoundAnalysisWorkspace thee, LPC original, double k_stdev,
+	integer itermax, double tol, double location, bool wantlocation);
 
-
-autoSoundToLPCAnalysisWorkspace SoundToLPCAnalysisWorkspace_createRobust (Sound thee, LPC him, double effectiveAnalysisWidth,
-	kSound_windowShape windowShape, LPC original, double k_stdev, integer itermax, double tol, double location, bool wantlocation);
-
-
+autoExtraAnalysisDataTolerances ExtraAnalysisDataTolerances_create (SoundAnalysisWorkspace thee, double tol1, double tol2);
+	
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
 autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
 autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
@@ -54,7 +52,6 @@ void Sound_into_LPC_robust (Sound me, LPC thee, double analysisWidth, double pre
 
 autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder, double physicalAnalysisWidth, double dt);
 
-void LPCAnalysis_threaded (Sound me, double preEmphasisFrequency, SoundToLPCAnalysisWorkspace workspace);
 /*
  * Function:
  *	Calculate linear prediction coefficients according to following model:

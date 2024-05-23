@@ -16,51 +16,22 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT SoundToLPCAnalysisWorkspace
-oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
-	/*
-		Instead of creating a different SoundToLPCAnalysisWorkspace type for each different analysis,
-		we create a generic SoundToLPCAnalysisWorkspace that can handle the auto, covar, marple and burg 
-		algorithms.
-	*/
-	oo_INTEGER (v1workCapacity)
-	oo_VEC (v1work, v1workCapacity) // for covar, auto, burg, marple, robust
-	oo_INTEGER (v2workCapacity)
-	oo_VEC (v2work, v2workCapacity) // for covar, auto, burg, marple, robust
-	oo_INTEGER (v3workCapacity)
-	oo_VEC (v3work, v3workCapacity) // for covar, auto, burg, marple, robust
-	oo_INTEGER (v4workCapacity)
-	oo_VEC (v4work, v4workCapacity) // for covar, robust
-	oo_INTEGER (v5workCapacity)
-	oo_VEC (v5work, v5workCapacity) // for covar
+#define ooSTRUCT ExtraAnalysisDataTolerances
+oo_DEFINE_CLASS (ExtraAnalysisDataTolerances, ExtraAnalysisData)
+
 	oo_DOUBLE (tolerance1)		// for marple
 	oo_DOUBLE (tolerance2)		// for marple
-	
-	oo_OBJECT (Daata, 0, extraData)  // e.g. for robust analysis
-	
-	#if oo_DECLARING
-		
-		virtual void getAutocorrelations (SoundToLPCAnalysisWorkspace /* me */, VEC) {};
-		
-	#endif
 
-oo_END_CLASS (SoundToLPCAnalysisWorkspace)
+oo_END_CLASS (ExtraAnalysisDataTolerances)
 #undef ooSTRUCT
 
-#define ooSTRUCT RobustAnalysisExtraData
-oo_DEFINE_CLASS (RobustAnalysisExtraData, Daata)
+#define ooSTRUCT ExtraAnalysisDataRobust
+oo_DEFINE_CLASS (ExtraAnalysisDataRobust, ExtraAnalysisData)
 
-	oo_INTEGER (inverseFilteringCapacity)
-	oo_VEC (work_inverseFiltering, inverseFilteringCapacity)
-	oo_INTEGER (computeSVDCapacity)
-	oo_VEC (work_computeSVD, computeSVDCapacity)
-	oo_INTEGER (svdSolveCapacity)
-	oo_VEC (work_svdSolve, svdSolveCapacity)
-	oo_INTEGER (huberCapacity)
-	oo_VEC (work_huber, huberCapacity)
-	
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, original) // read-only original
-	
+	oo_INTEGER (computeSVDworksize)
+	oo_DOUBLE (tol)
+	oo_DOUBLE (tol_svd)
 	oo_DOUBLE (k_stdev)
 	oo_INTEGER (localPredictionOrder) // can change from frame to frame
 	oo_INTEGER (iter)
@@ -78,7 +49,7 @@ oo_DEFINE_CLASS (RobustAnalysisExtraData, Daata)
 	oo_MAT (covarmatrixw, original -> maxnCoefficients, original -> maxnCoefficients)
 	oo_OBJECT (SVD, 1, svd)
 
-oo_END_CLASS (RobustAnalysisExtraData)
+oo_END_CLASS (ExtraAnalysisDataRobust)
 #undef ooSTRUCT
 
 /* End of file SoundToLPCAnalysisWorkspace_def.h */

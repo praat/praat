@@ -20,11 +20,20 @@
 
 #include "Sampled.h"
 #include "Sound.h"
-#include "Sound_extensions.h"
 
 #include "SoundAnalysisWorkspace_def.h"
 
+void ExtraAnalysisData_init (ExtraAnalysisData me, SoundAnalysisWorkspace thee);
+
+autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes);
+
 void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+
+autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+
+//void SoundAnalysisWorkspace_initExtraAnalysisData (SoundAnalysisWorkspace me, ExtraAnalysisData thee);
+
+void SoundAnalysisWorkspace_initWorkvectorPool (SoundAnalysisWorkspace me, INTVEC const& vectorSizes);
 
 void SoundAnalysisWorkspace_getThreadingInfo (SoundAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
 
@@ -40,15 +49,6 @@ void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee)
 void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound thee, double preEmphasisFrequency);
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape);
-
-inline void SoundAnalysisWorkspace_subtractLocalMean (SoundAnalysisWorkspace me, bool subtractLocalMean) {
-		my subtractLocalMean = subtractLocalMean;
-}
-
-inline void SoundAnalysisWorkspace_useMultiThreading (SoundAnalysisWorkspace me, bool useMultiThreading) {
-	my useMultiThreading = useMultiThreading;
-}
-
 
 #endif /* _SoundAnalysisWorkspace_h_ */
  

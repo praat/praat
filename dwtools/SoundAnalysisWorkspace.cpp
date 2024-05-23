@@ -17,6 +17,7 @@
 */
 
 #include "SoundAnalysisWorkspace.h"
+#include "Sound_extensions.h"
 #include <thread>
 #include <atomic>
 #include <functional>
@@ -41,6 +42,47 @@
 #include "oo_DESCRIPTION.h"
 #include "SoundAnalysisWorkspace_def.h"
 
+Thing_implement (WorkvectorPool, Daata, 0);
+
+autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes) {
+	try {
+		autoWorkvectorPool me = Thing_new (WorkvectorPool);
+		my numberOfVectors = vectorSizes.size;
+		Melder_assert (my numberOfVectors > 0);
+
+		my poolMemorySize = 0;
+		my domains = raw_MAT (my numberOfVectors, 2);
+		integer vecstart = 1;
+		for (integer ivec = 1; ivec <= my numberOfVectors; ivec ++) {
+			const integer vecsize = vectorSizes [ivec];
+			Melder_assert (vecsize > 0);
+			my poolMemorySize += vecsize;
+			my domains [ivec] [1] = vecstart;
+			my domains [ivec] [2] = vecstart + vecsize - 1;
+			vecstart = my domains [ivec] [2] + 1;
+		}
+		my vectorSizes = copy_INTVEC (vectorSizes);
+		my memoryPool = raw_VEC (my poolMemorySize);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"WorkvectorPool not created.");
+	}	
+}
+
+void SoundAnalysisWorkspace_initWorkvectorPool (SoundAnalysisWorkspace me, INTVEC const& vectorSizes) {
+	try {
+		Melder_assert (vectorSizes.size > 0);
+		my workvectorPool = WorkvectorPool_create (vectorSizes);
+	} catch (MelderError) {
+		Melder_throw (U"Could not initialize the WorkvectorPool.");
+	}
+}
+Thing_implement (ExtraAnalysisData, Daata, 0);
+
+void ExtraAnalysisData_init (ExtraAnalysisData me, SoundAnalysisWorkspace thee) {
+	Melder_assert (my soundAnalysisWorkspace != nullptr);
+	my soundAnalysisWorkspace = thee;
+}
 
 Thing_implement (SoundAnalysisWorkspace, Daata, 0);
 
@@ -94,11 +136,21 @@ void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound thee, Sampled
 	windowShape_into_VEC (windowShape, my windowFunction.get());
 }
 
+autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+	try {
+		autoSoundAnalysisWorkspace me = Thing_new (SoundAnalysisWorkspace);
+		SoundAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"SoundAnalysisWorkspace not created.");
+	}
+}
+
 void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee) {
 	Melder_assert (my sound -> xmin == thy xmin && my sound -> xmax == thy xmax);
-		Melder_assert (my sound -> x1 == thy x1 && my sound -> nx == thy nx);
-		Melder_assert (my sound -> dx == thy dx);
-		my sound = thee;
+	Melder_assert (my sound -> x1 == thy x1 && my sound -> nx == thy nx);
+	Melder_assert (my sound -> dx == thy dx);
+	my sound = thee;
 }
 
 
