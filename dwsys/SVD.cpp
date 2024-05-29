@@ -86,6 +86,14 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
 }
 
 void SVD_resizeWithinOldBounds (SVD me, integer nrowmax, integer ncolmax, integer nrownew, integer ncolnew) {
+	/*
+		An automatrix does not have a _capacity variable, only nrow and ncol values. Therefoe we cannot check whether 
+		nrowmax and ncolmax are valid.
+		We can only check if ncolmax confirms with the size of the singular values array
+	*/
+	Melder_require (nrowmax >= ncolmax,
+		U"The number of rows should not be less than the number of columns."); // for the time being
+	Melder_assert (ncolmax <= my d._capacity);
 	Melder_require (nrownew <= nrowmax && ncolnew <= ncolmax,
 		U"The new size must fit within the old size.");
 	my numberOfRows = nrownew;

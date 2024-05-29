@@ -34,7 +34,8 @@ oo_DEFINE_CLASS (WorkvectorPool, Daata)
 			Melder_assert (size <= vectorSizes [vectorIndex]);
 			Melder_assert (reusable || (! reusable && ! inuse [vectorIndex]));
 			inuse [vectorIndex] = true;
-			return memoryPool.part (vectorStart [vectorIndex], size);
+			const integer end = vectorStart [vectorIndex] + size - 1;
+			return memoryPool.part (vectorStart [vectorIndex], end);
 		}
 		
 		VEC getZeroVEC (integer vectorIndex, integer size) {
@@ -48,7 +49,8 @@ oo_DEFINE_CLASS (WorkvectorPool, Daata)
 			const integer wantedSize = nrow * ncol;
 			Melder_assert (wantedSize <= vectorSizes [vectorIndex]);
 			inuse [vectorIndex] = true;
-			VEC pool = memoryPool.part (vectorStart [vectorIndex], wantedSize);
+			const integer end = vectorStart [vectorIndex] + wantedSize - 1;
+			VEC pool = memoryPool.part (vectorStart [vectorIndex], end);
 			return pool.asmatrix (nrow, ncol);
 		}
 		
