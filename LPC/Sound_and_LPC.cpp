@@ -80,7 +80,7 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder
 
 /************************ autocorrelation method *****************************/
 
-/* 
+/*
 	Markel & Gray, Linear Prediction of Speech, page 219
 	
 	Precondition:
@@ -92,15 +92,21 @@ static void analyseOneFrame_auto (SampledAnalysisWorkspace ws) {
 	Melder_assert (my currentFrame > 0 && my currentFrame <= output -> nx);
 	LPC_Frame thee = & output -> d_frames [my currentFrame];
 	Melder_assert (thy nCoefficients == thy a.size); // check invariant
-	const integer m = std::max (2, thy nCoefficients);
-
+	const integer m = thy nCoefficients;
+	
+	my frameAnalysisIsOK = false;
+	if (thy nCoefficients == 0) {
+		my frameAnalysisInfo = 6;
+		return;
+	}
 	VEC  r = my workvectorPool -> getRawVEC (1, m + 1);
 	VEC  a = my workvectorPool -> getRawVEC (2, m + 1);
 	VEC rc = my workvectorPool -> getRawVEC (3, m);
-	thy a.get()  <<=  0.0;
+
 	/*
 		Compute the autocorrelations
 	*/
+	thy a.get()  <<=  0.0;
 	for (integer i = 1; i <= m + 1; i ++)
 		r [i] = NUMinner (my analysisFrame.part (1, my analysisFrame.size - i + 1), my analysisFrame.part (i, my analysisFrame.size));
 	if (r [1] == 0.0) {
@@ -175,8 +181,14 @@ static void analyseOneFrame_covar (SampledAnalysisWorkspace ws) {
 	Melder_assert (my currentFrame > 0 && my currentFrame <= result -> nx);
 	LPC_Frame thee = & result -> d_frames [my currentFrame];
 	Melder_assert (thy nCoefficients == thy a.size); // check invariant
-	const integer m = std::max (2, thy nCoefficients), n = my analysisFrameSize;
+	const integer m = thy nCoefficients, n = my analysisFrameSize;
 	
+	my frameAnalysisIsOK = false;
+	if (thy nCoefficients == 0) {
+		my frameAnalysisInfo = 6;
+		return;
+	}
+		
 	VEC b = my workvectorPool -> getRawVEC (1, m * (m + 1) / 2);
 	VEC grc = my workvectorPool -> getRawVEC (2, m);
 	VEC beta = my workvectorPool -> getRawVEC (3, m);
@@ -197,7 +209,6 @@ static void analyseOneFrame_covar (SampledAnalysisWorkspace ws) {
 
 	if (thy gain == 0.0) {
 		my frameAnalysisInfo = 1;
-		my frameAnalysisIsOK = false;
 		return;
 	}
 
@@ -292,6 +303,7 @@ autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnaly
 
 static double VECburg_buffered (VEC const& a, constVEC const& x, SoundAnalysisWorkspace me) {
 	const integer n = x.size, m = a.size;
+
 	a   <<=  0.0; // necessary??
 	if (n <= 2) {
 		a [1] = -1.0;
@@ -303,14 +315,11 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, SoundAnalysisWo
 
 	// (3)
 
-	longdouble p = 0.0;
-	for (integer j = 1; j <= n; j ++)
-		p += x [j] * x [j];
+	double p = NUMinner (x,x);
 
-	longdouble xms = p / n;
-	if (xms <= 0.0) {
+	if (p == 0.0) {
 		my frameAnalysisInfo = 1;
-		return double (xms);	// warning empty
+		return 0.0;
 	}
 	// (9)
 
@@ -319,6 +328,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, SoundAnalysisWo
 	for (integer j = 2; j <= n - 1; j ++)
 		b1 [j] = b2 [j - 1] = x [j];
 
+	longdouble xms = p / n;
 	for (integer i = 1; i <= m; i ++) {
 		// (7)
 

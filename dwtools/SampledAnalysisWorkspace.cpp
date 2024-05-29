@@ -48,8 +48,8 @@ autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes, bool reusab
 	try {
 		autoWorkvectorPool me = Thing_new (WorkvectorPool);
 		my numberOfVectors = vectorSizes.size;
-		my reusable = reusable;
 		Melder_assert (my numberOfVectors > 0);
+		my reusable = reusable;
 
 		my vectorStart = raw_INTVEC (my numberOfVectors);
 		integer vecstart = 1;
@@ -105,8 +105,8 @@ autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (Sound input, Sampl
 }
 
 void SampledAnalysisWorkspace_replaceInput (SampledAnalysisWorkspace me, Sampled thee) {
-	Melder_assert (my input -> xmin == thy xmin && my input -> xmax == thy xmax);
-	Melder_assert (my input -> x1 == thy x1 && my input -> nx == thy nx);
+	Melder_assert (my input -> xmin == thy xmin && my input -> xmax == thy xmax); // equal domains
+	Melder_assert (my input -> x1 == thy x1 && my input -> nx == thy nx); // + equal sampling
 	Melder_assert (my input -> dx == thy dx);
 	my input = thee;
 }
@@ -123,7 +123,7 @@ void SampledAnalysisWorkspace_getThreadingInfo (SampledAnalysisWorkspace me, int
 	if (my maximumNumberOfThreads > 0)
 		 maximumNumberOfThreads = std::min (my maximumNumberOfThreads, maximumNumberOfThreads);
 	const integer numberOfFrames = my output -> nx;
-	integer numberOfThreads = (numberOfFrames - 1) / my minimumNumberOfFramesPerThread + 1;
+	integer numberOfThreads = 1 + (numberOfFrames - 1) / my minimumNumberOfFramesPerThread;
 	Melder_clip (1_integer, & numberOfThreads, maximumNumberOfThreads);
 	if (out_numberOfThreads)
 		*out_numberOfThreads = numberOfThreads;

@@ -99,10 +99,7 @@ autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (Sound thee, Sampled hi
 }
 
 void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee) {
-	Melder_assert (my input -> xmin == thy xmin && my input -> xmax == thy xmax);
-	Melder_assert (my input -> x1 == thy x1 && my input -> nx == thy nx);
-	Melder_assert (my input -> dx == thy dx);
-	my input = thee;
+	SampledAnalysisWorkspace_replaceInput (me, thee);
 }
 
 void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound thee, double preEmphasisFrequency) {
