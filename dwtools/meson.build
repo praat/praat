@@ -1,5 +1,5 @@
 # meson.build of the library "dwtools"
-# David Weenink, 20 May 2024
+# David Weenink, 25 May 2024
 
 sources = '''
 	ActivationList.cpp AffineTransform.cpp AnalyticSound.cpp
@@ -38,7 +38,7 @@ sources = '''
 	Polygon_extensions.cpp Procrustes.cpp
 	Proximity.cpp Proximity_and_Distance.cpp
 	Resonator.cpp Roots_to_Spectrum.cpp
-	SoundAnalysisWorkspace.cpp
+	SampledAnalysisWorkspace.cpp SoundAnalysisWorkspace.cpp
 	Sound_and_MultiSampledSpectrogram.cpp Sound_and_MixingMatrix.cpp
 	Sound_and_Spectrum_dft.cpp
 	Sound_and_Spectrogram_extensions.cpp Sound_and_PCA.cpp

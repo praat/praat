@@ -16,22 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT ExtraAnalysisDataTolerances
-oo_DEFINE_CLASS (ExtraAnalysisDataTolerances, ExtraAnalysisData)
 
-	oo_DOUBLE (tolerance1)		// for marple
-	oo_DOUBLE (tolerance2)		// for marple
-
-oo_END_CLASS (ExtraAnalysisDataTolerances)
-#undef ooSTRUCT
-
-#define ooSTRUCT ExtraAnalysisDataRobust
-oo_DEFINE_CLASS (ExtraAnalysisDataRobust, ExtraAnalysisData)
-
+#define ooSTRUCT SoundToRobustLPCAnalysisWorkspace
+oo_DEFINE_CLASS (SoundToRobustLPCAnalysisWorkspace, SoundAnalysisWorkspace)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, original) // read-only original
 	oo_INTEGER (computeSVDworksize)
-	oo_DOUBLE (tol)
-	oo_DOUBLE (tol_svd)
 	oo_DOUBLE (k_stdev)
 	oo_INTEGER (localPredictionOrder) // can change from frame to frame
 	oo_INTEGER (iter)
@@ -49,7 +38,7 @@ oo_DEFINE_CLASS (ExtraAnalysisDataRobust, ExtraAnalysisData)
 	oo_MAT (covarmatrixw, original -> maxnCoefficients, original -> maxnCoefficients)
 	oo_OBJECT (SVD, 1, svd)
 
-oo_END_CLASS (ExtraAnalysisDataRobust)
+oo_END_CLASS (SoundToRobustLPCAnalysisWorkspace)
 #undef ooSTRUCT
 
 /* End of file SoundToLPCAnalysisWorkspace_def.h */

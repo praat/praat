@@ -16,13 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	These forwad declarations are needed because we define new classes with reference to each other
-*/
-typedef struct structSampledAnalysisSpecificData *SampledAnalysisSpecificData;
-typedef const struct structSampledAnalysisSpecificData *constSampledAnalysisSpecificData;
-typedef autoSomeThing<structSampledAnalysisSpecificData> autoSampledAnalysisSpecificData;
-
 #define ooSTRUCT WorkvectorPool
 oo_DEFINE_CLASS (WorkvectorPool, Daata)
 
@@ -39,9 +32,15 @@ oo_DEFINE_CLASS (WorkvectorPool, Daata)
 		VEC getRawVEC (integer vectorIndex, integer size) {
 			Melder_assert (vectorIndex > 0 && vectorIndex <= numberOfVectors);
 			Melder_assert (size <= vectorSizes [vectorIndex]);
-			Melder_assert (! reusable || (reusable && ! inuse [vectorIndex]));
+			Melder_assert (reusable || (! reusable && ! inuse [vectorIndex]));
 			inuse [vectorIndex] = true;
 			return memoryPool.part (vectorStart [vectorIndex], size);
+		}
+		
+		VEC getZeroVEC (integer vectorIndex, integer size) {
+			VEC result = getRawVEC (vectorIndex, size);
+			result  <<=  0.0;
+			return result;
 		}
 		
 		MAT getRawMAT (integer vectorIndex, integer nrow, integer ncol) {
@@ -51,6 +50,12 @@ oo_DEFINE_CLASS (WorkvectorPool, Daata)
 			inuse [vectorIndex] = true;
 			VEC pool = memoryPool.part (vectorStart [vectorIndex], wantedSize);
 			return pool.asmatrix (nrow, ncol);
+		}
+		
+		MAT getZeroMAT (integer vectorIndex, integer nrow, integer ncol) {
+			MAT result = getRawMAT (vectorIndex, nrow, ncol);
+			result  <<=  0.0;
+			return result;
 		}
 		
 		void freeVEC (integer vectorIndex) {
@@ -63,7 +68,6 @@ oo_DEFINE_CLASS (WorkvectorPool, Daata)
 
 oo_END_CLASS (WorkvectorPool)
 #undef ooSTRUCT
-
 
 /*
 	A separate deep copy of the SampledAnalysisWorkspace is needed for each thread
@@ -89,9 +93,10 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_INTEGER (minimumNumberOfFramesPerThread) // 40 ?
 	oo_INTEGER (maximumNumberOfThreads)
 	
-	oo_BOOLEAN (frameAnalysisIsOK)
-	oo_INTEGER (globalFrameErrorCount)			// the number of frames where some error occured
-	oo_INTEGER (currentFrame)					// the frame we are working on
+	oo_INTEGER (frameAnalysisInfo)			// signals different error conditions etc in an analysis
+	oo_BOOLEAN (frameAnalysisIsOK)			// determines on the basis of the frameAnalysisInfo whether the analysis is OK or not
+	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
+	oo_INTEGER (currentFrame)				// the frame we are working on
 	
 	/*
 		For approximations we need tolerances
@@ -103,8 +108,6 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 		For all temporary work vectors in the analysis
 	*/
 	oo_OBJECT (WorkvectorPool, 0, workvectorPool)
-	
-	oo_OBJECT (SampledAnalysisSpecificData, 0, specificData)
 	
 	#if oo_DECLARING
 		void (*getInputFrame) (SampledAnalysisWorkspace me, integer iframe);
@@ -125,14 +128,6 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	#endif
 
 oo_END_CLASS (SampledAnalysisWorkspace)
-#undef ooSTRUCT
-
-
-#define ooSTRUCT SampledAnalysisSpecificData
-oo_DEFINE_CLASS (SampledAnalysisSpecificData, Daata)
-	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (SampledAnalysisWorkspace, analysisWorkspace)
-	oo_OBJECT (WorkvectorPool, 0, workvectorPool)
-oo_END_CLASS (SampledAnalysisSpecificData)
 #undef ooSTRUCT
 
 /* End of file SampledAnalysisWorkspace_def.h */

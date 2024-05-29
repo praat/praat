@@ -26,12 +26,8 @@
 #include "LPC.h"
 #include "SoundAnalysisWorkspace.h"
 #include "SVD.h"
+
 #include "SoundToLPCAnalysisWorkspace_def.h"
-
-autoExtraAnalysisDataRobust ExtraAnalysisDataRobust_create (SoundAnalysisWorkspace thee, LPC original, double k_stdev,
-	integer itermax, double tol, double location, bool wantlocation);
-
-autoExtraAnalysisDataTolerances ExtraAnalysisDataTolerances_create (SoundAnalysisWorkspace thee, double tol1, double tol2);
 	
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
 autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);

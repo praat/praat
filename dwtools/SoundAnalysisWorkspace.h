@@ -20,12 +20,11 @@
 
 #include "Sampled.h"
 #include "Sound.h"
+#include "SampledAnalysisWorkspace.h"
 
 #include "SoundAnalysisWorkspace_def.h"
 
-void ExtraAnalysisData_init (ExtraAnalysisData me, SoundAnalysisWorkspace thee);
-
-autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes);
+autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes, bool reusable);
 
 void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
@@ -49,6 +48,8 @@ void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee)
 void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound thee, double preEmphasisFrequency);
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape);
+
+void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound thee, double preEmphasisFrequency);
 
 #endif /* _SoundAnalysisWorkspace_h_ */
  

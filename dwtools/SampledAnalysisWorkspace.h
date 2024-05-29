@@ -23,15 +23,11 @@
 
 #include "SampledAnalysisWorkspace_def.h"
 
-void ExtraAnalysisData_init (ExtraAnalysisData me, SampledAnalysisWorkspace thee);
-
 autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes, bool reusable);
 
 void SampledAnalysisWorkspace_init (SampledAnalysisWorkspace me, Sampled input, Sampled output);
 
 autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (Sampled input, Sampled output);
-
-//void SampledAnalysisWorkspace_initExtraAnalysisData (SampledAnalysisWorkspace me, ExtraAnalysisData thee);
 
 void SampledAnalysisWorkspace_initWorkvectorPool (SampledAnalysisWorkspace me, INTVEC const& vectorSizes);
 

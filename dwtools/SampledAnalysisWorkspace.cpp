@@ -73,13 +73,6 @@ void SampledAnalysisWorkspace_initWorkvectorPool (SampledAnalysisWorkspace me, I
 	my workvectorPool = WorkvectorPool_create (vectorSizes, true);
 }
 
-Thing_implement (SampledAnalysisSpecificData, Daata, 0);
-
-void SampledAnalysisSpecificData_init (SampledAnalysisSpecificData me, SampledAnalysisWorkspace thee) {
-	Melder_assert (thee != nullptr);
-	my sampledAnalysisWorkspace = thee;
-}
-
 Thing_implement (SampledAnalysisWorkspace, Daata, 0);
 
 void structSampledAnalysisWorkspace :: analyseManyInputFrames (SampledAnalysisWorkspace me, integer fromFrame, integer toFrame) {
@@ -177,6 +170,7 @@ void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me)
 				
 				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
 					threads [ithread]. join ();
+				
 			} catch (MelderError) {
 				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
 					if (threads [ithread]. joinable ())
@@ -185,9 +179,9 @@ void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me)
 				Melder_clearError ();
 				throw;
 			}
+			my globalFrameErrorCount = globalFrameErrorCount;
 		} else {
 			my analyseManyInputFrames (me, 1, numberOfFrames);
-			globalFrameErrorCount += my globalFrameErrorCount;
 		}
 	} catch (MelderError) {
 			Melder_throw (me, U"The sound analysis could not be done.");
