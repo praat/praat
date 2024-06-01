@@ -2592,7 +2592,6 @@ EQUATION (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al−1^e^^-%t^dt, \\Ga(\\al)
 NORMAL (U"where \\al and %x are complex numbers and Re(\\al) > 0.")
 NORMAL (U"The complementary incomplete gamma function is defined as:")
 EQUATION (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al−1^e^^-%t^dt = \\Ga(\\al)−\\Ga(\\al, %x).")
-
 MAN_END
 
 MAN_BEGIN (U"IDX file format", U"djmw", 20160220)
@@ -2613,7 +2612,7 @@ CODE (U"0x0B: short (2 bytes)")
 CODE (U"0x0C: int (4 bytes)")
 CODE (U"0x0D: float (4 bytes)")
 CODE (U"0x0E: double (8 bytes)")
-NORMAL (U"The fouth byte codes the number of dimensions of the vector/matrix: 1 for vectors, 2 for matrices....")
+NORMAL (U"The fourth byte codes the number of dimensions of the vector/matrix: 1 for vectors, 2 for matrices....")
 NORMAL (U"The sizes in each dimension are 4-byte integers (big endian, like in most non-Intel processors).")
 NORMAL (U"The data is stored like in a C array, i.e. the index in the last dimension changes the fastest.")
 ENTRY (U"Behaviour")
