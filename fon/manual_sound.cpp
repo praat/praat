@@ -1593,19 +1593,17 @@ For how to obtain the true air pressures, perform a @@sound pressure calibration
 © Paul Boersma 2011-02-11
 
 A command to concatenate all selected @Sound objects into a single large Sound.
-
-All sounds must have equal sampling frequencies and equal numbers of channels.
-They are concatenated in the order in which they appear in the list of objects (not in the order in which you select them; remember: What You See Is What You Get).
+	All sounds must have equal sampling frequencies and equal numbers of channels.
+They are concatenated in the order in which they appear in the list of objects
+(not in the order in which you select them; remember: What You See Is What You Get).
 
 How to concatenate directly to a file
 =====================================
-
 If the resulting sound does not fit into memory, use one of the
 commands in the @@Save menu@. See @@How to concatenate sound files@.
 
 See also
 ========
-
 If you want the sounds to fade into each other smoothly, choose @@Sounds: Concatenate with overlap...@ instead.
 
 // 5 fields, of which 0 texts and 0 additional radio buttons,
@@ -1951,20 +1949,18 @@ the resulting sound is divided by %\Det.
 
 3. Normalized cross-correlation
 ===============================
-
 The %%normalized cross-correlation% is defined as
 ~	norm-cross-corr (%f, %g) (%\ta) \=3 \in %f(%t) %g(%t+%\ta) %dt
 / \Vr (\in %f^2(%t) %dt \in %g^2(%t) %dt)
 
 4. Shape scaling
 ================
-
 The boundaries of the integral in 1 are −\oo and +\oo.
 However, %f and %g are Sound objects in Praat and therefore have finite time domains.
 If %f runs from %t_1 to %t_2 and is assumed to be #zero before %t_1 and after %t_2, and
 %g runs from %t_3 to %t_4 and is assumed to be zero outside that domain,
 then the cross-correlation will be zero before %t_3−%t_2 and after %t_4−%t_1,
-while between %t_3−%t_2 and %t__4_ - %t_1 it is
+while between %t_3−%t_2 and %t__4_−%t_1 it is
 ~	cross-corr (%f, %g) (%\ta) = \in__%t1_^^%t2^ %f(%t) %g(%t+%\ta) %dt
 
 In this formula, the argument of %f runs from %t_1 to %t_2,
