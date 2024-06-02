@@ -82,6 +82,7 @@ void HyperPage_clear (HyperPage me);
 /* "Methods" */
 #define HyperPage_ADD_BORDER  1
 #define HyperPage_USE_ENTRY_HINT  2
+#define HyperPage_EXECUTABLE  4
 
 void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, double size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, uint32 method);
