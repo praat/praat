@@ -2651,7 +2651,7 @@ Syntax and semantics
 
 ################################################################################
 "`number`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @@Formulas@.
 
@@ -2659,6 +2659,45 @@ Syntax and semantics
 ====================
 #`number` (%`a$`)
 : interpret a string as a number.
+
+{
+	\`{assert} \#{number} ("junk") = undefined   ; i.e. not zero as in C++ !
+	\`{assert} \#{number} ("  -0.0000000123junk") = -1.23e-08   ; maximize digits, then ignore
+	\`{assert} \#{number} ("0.0") = 0
+	\`{assert} \#{number} ("0.012") = 0.012
+	\`{assert} \#{number} ("15e16") = 1.5e+17
+	\`{assert} \#{number} ("1.0e+309") = undefined
+	\`{assert} \#{number} ("1.0e-309") <> 0   ; denormalized
+	\`{assert} \#{number} ("1.0e-319") <> 0   ; denormalized
+	\`{assert} \#{number} ("1.0e-329") = 0   ; underflow
+	\`{assert} \#{number} ("32278") = 32278
+	\`{assert} \#{number} ("-32278") = -32278
+	\`{assert} \#{number} ("32278.64785") = 32278.64785
+	\`{assert} \#{number} ("-32278.64785") = -32278.64785
+	\`{assert} \#{number} ("32278.647e85") = 32278.647e85
+	\`{assert} \#{number} ("-32278.647e85") = -32278.647e85
+	\`{assert} \#{number} ("32278.647e-85") = 32278.647e-85
+	\`{assert} \#{number} ("-32278.647e-85") = -32278.647e-85
+	\`{assert} \#{number} ("32278.647e-305") = 32278.647e-305
+	\`{assert} \#{number} ("-32278.647e-305") = -32278.647e-305
+	\`{assert} \#{number} ("32278.647e-315") = 32278.647e-315
+	\`{assert} \#{number} ("-32278.647e-315") = -32278.647e-315
+	\`{assert} \#{number} ("32278.647e-325") = 32278.647e-325
+	\`{assert} \#{number} ("-32278.647e-325") = -32278.647e-325
+	\`{assert} \#{number} ("32278.647e305") = 32278.647e305
+	\`{assert} \#{number} ("-32278.647e305") = -32278.647e305
+	\`{assert} \#{number} ("32278.647e315") = 32278.647e315
+	\`{assert} \#{number} ("-32278.647e315") = -32278.647e315
+	\`{assert} \#{number} ("32278.647e325") = 32278.647e325
+	\`{assert} \#{number} ("-32278.647e325") = -32278.647e325
+}
+Hexadecimal:
+{
+	\`{assert} \#{number} ("0x32278") = 0x32278
+	\`{assert} \#{number} ("0x000001ABCDEFGH") = 0x00001abcdef   ; maximize digits, then ignore
+	\`{assert} \#{number} ("-0x1afp-2") = -107.75   ; from `cppreference.com`
+	\`{assert} \#{number} ("0x123.456") = 291.27099609375
+}
 
 ################################################################################
 "`number#`"
