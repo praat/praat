@@ -295,7 +295,7 @@ MAN_END
 	
 #define PowerCepstrum_manual_trendRange \
 	U"the quefrency range for which the amplitudes (in dB) will be modelled by a straight line. " \
-	"The lower value for this range in the @@Hillenbrand et al. (1994)@ article was chosen as 0.001 s " \
+	"In @@Hillenbrand et al. (1994)@, the lower value for this range was chosen as 0.001 s " \
 	"in order to reduce the effect of very low quefrency data on the straight line fit. In our analysis this value " \
 	"is not so critical if we use the robust fitting procedure. If you choose the \"Least squares\" fit method " \
 	"then it matters more."
@@ -319,8 +319,8 @@ MAN_END
 	U"determines the width of the averaging window in the time domain. The result " \
 	"of the smoothing will be that in the new smoothed PowerCepstrogram each cepstral value is the average of the cepstral values " \
 	"within the averaging window that was positioned symmetrically around the center of this frame in the selected PowerCepstrogram. " \
-	"By chosing a value of zero, you can prevent any smoothing in the time dimension. "
-		
+	"By choosing a value of zero, you can prevent any smoothing in the time dimension. "
+
 MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
 INTRO (U"One of the @@types of objects@ in Praat. A cepstrogram represents a time-quefrency representation of a sound. "
 	"Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")

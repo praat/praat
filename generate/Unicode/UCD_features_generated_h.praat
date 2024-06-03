@@ -1,5 +1,5 @@
 # UCD_features_generated_h.praat
-# Paul Boersma 20190617
+# Paul Boersma 2018,2019,2022,2024
 
 Text writing preferences: "UTF-8"
 
@@ -7,7 +7,7 @@ table = Read Table from semicolon-separated file: "UnicodeData.txt"
 numberOfRows = Get number of rows
 
 stopwatch
-outfile$ = "../../kar/UCD_features_generated.h"
+outfile$ = "UCD_features_generated.h"
 writeFileLine: outfile$, "/* This file was generated automatically by generate/Unicode/UCD_features_generated_h.praat */"
 
 previousLineCodePoint = -1
