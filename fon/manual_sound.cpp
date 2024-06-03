@@ -1606,20 +1606,6 @@ See also
 ========
 If you want the sounds to fade into each other smoothly, choose @@Sounds: Concatenate with overlap...@ instead.
 
-// 5 fields, of which 0 texts and 0 additional radio buttons,
-// hence lines = 5 + 0 * 0.6 - 0 * 0.3 = 5.0,
-// hence height = 1.4 + 5.0 * 0.4 = 3.4
-{- 5.4x3.4
-	)~~~"
-		Manual_DRAW_SETTINGS_WINDOW ("Praat picture: Paint rectangle", 5.0)
-		Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colour (0-1, name, or {r,g,b})", "0.5")
-		Manual_DRAW_SETTINGS_WINDOW_FIELD ("From x", "0.0")
-		Manual_DRAW_SETTINGS_WINDOW_FIELD ("To x", "1.0")
-		Manual_DRAW_SETTINGS_WINDOW_FIELD ("From y", "0.0")
-		Manual_DRAW_SETTINGS_WINDOW_FIELD ("To y", "1.0")
-	R"~~~(
-}
-
 ################################################################################
 "Sounds: Concatenate with overlap..."
 © Paul Boersma 2017-09-04

@@ -1,5 +1,5 @@
 File generate/Unicode/README.TXT
-Paul Boersma 2022-05-17
+Paul Boersma 2018,2022,2024
 
 Steps to generate the source file UCD_features_generated.h,
 which is to be put in the kar folder:
@@ -21,8 +21,11 @@ For information on the meanings of the features, see the following attached file
 - UnicodeData File Format.html
 - UnicodeStandard.pdf
 
-3. Run the script UCD_features_generated_h.praat. This creates UCD_features_generated.h.
+3. Run the script UCD_features_generated_h.praat.
+This creates UCD_features_generated.h in the current folder.
 The details of the process are discussed in UCD_features_generated_h.praat.
+
+4. Inspect UCD_features_generated.h and put it in the kar folder by hand.
 
 ## Timing.
 
@@ -32,3 +35,7 @@ Praat scripting language.
 The measured time on my 2018 MacBook Pro with 2.9 GHz Intel Core i9:
 
 Praat 6.2.12: 24.6 seconds.
+
+The measured time on my 2023 MacBook Pro with M3 Max processor:
+
+Praat 6.4.12: 10.0 seconds.
