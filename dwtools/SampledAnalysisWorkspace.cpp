@@ -111,11 +111,18 @@ void SampledAnalysisWorkspace_replaceInput (SampledAnalysisWorkspace me, Sampled
 	my input = thee;
 }
 
+void SampledAnalysisWorkspace_replaceOutput (SampledAnalysisWorkspace me, Sampled thee) {
+	Melder_assert (my output -> xmin == thy xmin && my output -> xmax == thy xmax); // equal domains
+	Melder_assert (my output -> x1 == thy x1 && my output -> nx == thy nx); // + equal sampling
+	Melder_assert (my output -> dx == thy dx);
+	my output = thee;
+}
+
 
 void SampledAnalysisWorkspace_getThreadingInfo (SampledAnalysisWorkspace me, integer *out_numberOfThreads) {
 	const integer numberOfProcessors = std::thread::hardware_concurrency ();
 	/*
-		Our processes are compute bound, therefore it makes no sense to start more than two threads on one processor
+		Our processes are compute bound, therefore it probably makes no sense to start more than two threads on one processor
 	*/
 	if (my minimumNumberOfFramesPerThread <= 0)
 		my minimumNumberOfFramesPerThread = 40;
@@ -181,10 +188,10 @@ void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me)
 			}
 			my globalFrameErrorCount = globalFrameErrorCount;
 		} else {
-			my analyseManyInputFrames (me, 1, numberOfFrames);
+			my analyseManyInputFrames (me, 1, numberOfFrames); // no threading
 		}
 	} catch (MelderError) {
-			Melder_throw (me, U"The sound analysis could not be done.");
+			Melder_throw (me, U"The Sampled analysis could not be done.");
 	}
 }
 

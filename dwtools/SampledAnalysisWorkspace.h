@@ -33,13 +33,24 @@ void SampledAnalysisWorkspace_initWorkvectorPool (SampledAnalysisWorkspace me, I
 
 void SampledAnalysisWorkspace_getThreadingInfo (SampledAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
 
+void SampledAnalysisWorkspace_replaceOutput (SampledAnalysisWorkspace me, Sampled thee);
+/*
+	Preconditions:
+		my output -> xmin == thy xmin
+		my output -> xmax == thy xmax
+		my output -> nx   == thy nx
+		my output -> dx   == thy dx
+		my output -> x1   == thy x1
+*/
+
 void SampledAnalysisWorkspace_replaceInput (SampledAnalysisWorkspace me, Sampled input);
 /*
 	Preconditions:
-		my input->xmin/xmax = thy xmin/xmax
-		my input->nx = thy nx
-		my input->dx = thy dx
-		my input->x1 = thy x1
+		my output -> xmin == thy xmin
+		my output -> xmax == thy xmax
+		my output -> nx   == thy nx
+		my output -> dx   == thy dx
+		my output -> x1   == thy x1
 */
 
 void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me);

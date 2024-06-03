@@ -16,13 +16,28 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define ooSTRUCT SoundToLPCAnalysisWorkspace
+oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
+	#if oo_DECLARING
+
+		void (*soundFrame_into_LPC_Frame) (SoundToLPCAnalysisWorkspace me, LPC_Frame thee);
+
+	#endif
+
+	#if oo_COPYING
+
+		thy soundFrame_into_LPC_Frame = our soundFrame_into_LPC_Frame;
+
+	#endif
+oo_END_CLASS (SoundToLPCAnalysisWorkspace)
+#undef ooSTRUCT
 
 #define ooSTRUCT SoundToRobustLPCAnalysisWorkspace
-oo_DEFINE_CLASS (SoundToRobustLPCAnalysisWorkspace, SoundAnalysisWorkspace)
+oo_DEFINE_CLASS (SoundToRobustLPCAnalysisWorkspace, SoundToLPCAnalysisWorkspace)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, original) // read-only original
 	oo_INTEGER (computeSVDworksize)
 	oo_DOUBLE (k_stdev)
-	oo_INTEGER (localPredictionOrder) // can change from frame to frame
+	oo_INTEGER (localPredictionOrder) // may change from frame to frame
 	oo_INTEGER (iter)
 	oo_INTEGER (itermax)
 	oo_INTEGER (huber_iterations) // = 5;

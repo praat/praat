@@ -84,9 +84,9 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
 
 	/*
-		Each thread accesses the same disjoint parts in the result.
+		Each thread only accesses disjoint parts in the result object.
 		Precondition:
-			input -> xmin == output -> xmin;
+			input -> xmin == output -> xmin; // equal domains
 			input -> xmax == output -> xmax;
 	*/
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
@@ -95,8 +95,8 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_INTEGER (minimumNumberOfFramesPerThread) // 40 ?
 	oo_INTEGER (maximumNumberOfThreads)
 	
-	oo_INTEGER (frameAnalysisInfo)			// signals different error conditions etc in an analysis
-	oo_BOOLEAN (frameAnalysisIsOK)			// determines on the basis of the frameAnalysisInfo whether the analysis is OK or not
+	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in an analysis
+	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo 
 	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
 	oo_INTEGER (currentFrame)				// the frame we are working on
 	
@@ -113,7 +113,7 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	
 	#if oo_DECLARING
 		void (*getInputFrame) (SampledAnalysisWorkspace me, integer iframe);
-		void (*analyseOneInputFrame) (SampledAnalysisWorkspace me); // has to set frameAnalysisIsOK to true or false
+		void (*analyseOneInputFrame) (SampledAnalysisWorkspace me); // sets the frameAnalysisInfo and also frameAnalysisIsOK
 		void (*allocateOutputFrames) (SampledAnalysisWorkspace me);
 	#endif
 		
