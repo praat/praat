@@ -49,6 +49,16 @@ static const T *findEndOfNumericString (const T *string) {
 		p += 2;
 		while (Melder_isHexadecimalDigit (*p))
 			p ++;
+		if (*p == '.')
+			p ++;
+		while (Melder_isHexadecimalDigit (*p))
+			p ++;
+		if (*p == 'p' || *p == 'P')
+			p ++;
+		if (*p == '+' || *p == '-')
+			p ++;
+		while (Melder_isAsciiDecimalNumber (*p))   // not hexadecimal!
+			p ++;
 		return p;
 	}
 	p ++;
