@@ -22,7 +22,7 @@ oo_DEFINE_CLASS (SoundAnalysisWorkspace, SampledAnalysisWorkspace)
 	oo_DOUBLE (physicalAnalysisWidth) 			// depends on the effectiveAnalysiswidth and the window windowFunction
 	oo_INTEGER (analysisFrameSize) 				// determined by the physicalAnalysisWidth and the samplingFrequency of the Sound
 	oo_VEC (analysisFrame, analysisFrameSize)
-	oo_BOOLEAN (subtractFrameMean)				// if true, the frame mean will be subtracted before the windowing operation		// the 
+	oo_BOOLEAN (subtractFrameMean)				// if true, the frame mean will be subtracted before the windowing operation
 	oo_ENUM (kSound_windowShape, windowShape)
 	oo_VEC (windowFunction, analysisFrameSize)
 
@@ -39,4 +39,3 @@ oo_END_CLASS (SoundAnalysisWorkspace)
 #undef ooSTRUCT
 
 /* End of file SoundAnalysisWorkspace_def.h */
- 

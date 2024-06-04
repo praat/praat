@@ -18,9 +18,6 @@
 
 #include "SoundAnalysisWorkspace.h"
 #include "Sound_extensions.h"
-#include <thread>
-#include <atomic>
-#include <functional>
 #include "NUM2.h"
 
 #include "oo_DESTROY.h"

@@ -24,10 +24,6 @@
 #include "Sound_extensions.h"
 #include "Vector.h"
 #include "Spectrum.h"
-#include <thread>
-#include <atomic>
-#include <functional>
-#include <vector>
 #include "NUM2.h"
 
 #include "oo_DESTROY.h"

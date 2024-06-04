@@ -30,9 +30,6 @@
 #include "Sound_and_LPC.h"
 #include "Sound_and_LPC_robust.h"
 #include "Sound_extensions.h"
-#include "SVD.h"
-#include "Vector.h"
-#include "NUM2.h"
 
 autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
 	double halfdt_window, double preEmphasisFrequency, double safetyMargin, double k, integer itermax, double tol, bool wantlocation) {

@@ -14,7 +14,7 @@ sources = '''
 	LPC_and_Tube.cpp PowerCepstrum.cpp PowerCepstrogram.cpp
 	Sound_and_LPC.cpp  Sound_and_LPC_robust.cpp
 	Sound_and_Cepstrum.cpp Tube.cpp
-	VocalTractTier.cpp WarpedLPC.cpp
+	VocalTractTier.cpp
 	praat_LPC_init.cpp manual_LPC.cpp'''.split()
 
 libLPC = static_library (

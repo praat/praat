@@ -36,7 +36,7 @@
 		This means that the window function also always has an odd number of samples. Therefore the sample at the centre of the sound frame always has weight 1.0.
 		Previously the number of samples could be even or odd, depending on how rounding turned out.
 	2. The gaussian window function was slightly improved.
-	3. The precision of the autocorrelation and covariance method have been improved a little by using some long double accumulators.
+	3. The precision of the autocorrelation and covariance method have been improved a little by using some 'long double' accumulators.
 */
 	
 autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
