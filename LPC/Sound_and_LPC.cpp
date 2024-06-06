@@ -195,7 +195,7 @@ static void soundFrame_into_LPC_Frame_covar (SoundToLPCAnalysisWorkspace me, LPC
 		return;
 	}
 		
-	VEC b = my workvectorPool -> getRawVEC (1, m * (m + 1) / 2);
+	VEC b = my workvectorPool -> getZeroVEC (1, m * (m + 1) / 2);
 	VEC grc = my workvectorPool -> getRawVEC (2, m);
 	VEC beta = my workvectorPool -> getRawVEC (3, m);
 	VEC a = my workvectorPool -> getRawVEC (4, m + 1);
@@ -207,11 +207,10 @@ static void soundFrame_into_LPC_Frame_covar (SoundToLPCAnalysisWorkspace me, LPC
 	/*
 		Compute the covariances
 	*/
-	for (integer i = m + 1; i <= n; i ++) {
-		thy gain += x [i] * x [i];
-		cc [1] += x [i] * x [i - 1];
-		cc [2] += x [i - 1] * x [i - 1];
-	}
+	VEC xi = x.part(m + 1, n), xim1 = x.part(m, n - 1);
+	thy gain = NUMinner (xi, xi);
+	cc [1] = NUMinner (xi, xim1);
+	cc [2] = NUMinner (xim1, xim1);
 
 	if (thy gain == 0.0) {
 		my frameAnalysisInfo = 1;
@@ -241,11 +240,10 @@ static void soundFrame_into_LPC_Frame_covar (SoundToLPCAnalysisWorkspace me, LPC
 			} else if (beta [j] == 0.0)
 				continue;
 
-			long double gam = 0.0;
+			s = 0.0;
 			for (integer k = 1; k <= j; k ++)
-				gam += cc [k + 1] * b [j * (j - 1) / 2 + k]; // 50
-
-			gam /= beta [j];
+				s += cc [k + 1] * b [j * (j - 1) / 2 + k]; // 50
+			const double gam = s / beta [j];
 			for (integer k = 1; k <= j; k ++)
 				b [i * (i - 1) / 2 + k] -= gam * b [j * (j - 1) / 2 + k]; // 60
 		}

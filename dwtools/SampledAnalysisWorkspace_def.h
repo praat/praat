@@ -20,12 +20,12 @@
 oo_DEFINE_CLASS (WorkvectorPool, Daata)
 
 	oo_INTEGER (poolMemorySize)
+	oo_VEC (memoryPool, poolMemorySize)
 	oo_INTEGER (numberOfVectors)
 	oo_INTVEC (vectorSizes, numberOfVectors)
 	oo_INTVEC (vectorStart, numberOfVectors)
-	oo_VEC (memoryPool, poolMemorySize)
-	oo_BOOLEAN (reusable)
 	oo_BOOLVEC (inuse, numberOfVectors)
+	oo_BOOLEAN (reusable)
 	
 	#if oo_DECLARING
 	
@@ -84,21 +84,22 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
 
 	/*
-		Each thread only accesses disjoint parts in the result object.
+		Each thread should only access disjoint parts in the result object.
 		Precondition:
 			input -> xmin == output -> xmin; // equal domains
 			input -> xmax == output -> xmax;
+		The input and output objects can have different sampling (y1, nx, dx).
 	*/
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
 	
 	oo_BOOLEAN (useMultiThreading)
-	oo_INTEGER (minimumNumberOfFramesPerThread) // 40 ?
+	oo_INTEGER (minimumNumberOfFramesPerThread) // default 40
 	oo_INTEGER (maximumNumberOfThreads)
 	
-	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in an analysis
+	oo_INTEGER (currentFrame)				// the frame we are working on
+	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
 	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo 
 	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
-	oo_INTEGER (currentFrame)				// the frame we are working on
 	
 	/*
 		For approximations we need tolerances
@@ -107,7 +108,7 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_DOUBLE (tol2)
 		
 	/*
-		For all temporary work vectors in the analysis
+		For all temporary work vectors in a frame analysis
 	*/
 	oo_OBJECT (WorkvectorPool, 0, workvectorPool)
 	
@@ -125,7 +126,7 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 		
 	#if oo_DECLARING
 		
-		void analyseManyInputFrames (SampledAnalysisWorkspace me, integer fromFrame, integer toFrame);
+		void analyseManyInputFrames (SampledAnalysisWorkspace me, integer fromFrame, integer toFrame); // sets currentFrame
 		
 	#endif
 

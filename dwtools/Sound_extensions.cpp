@@ -2744,17 +2744,9 @@ void windowShape_into_VEC (kSound_windowShape windowShape, VEC inout_window) {
 			}
 		} break; case kSound_windowShape::GAUSSIAN_2: {
 			const double edge = exp (-12.0), onebyedge1 = 1.0 / (1.0 - edge);
-			if (Melder_debug == - 7) {
-				/*
-					Previous to 20240603, a division by size+1 instead of size
-				*/
-				for (integer i = 1; i <= size; i ++)
-					inout_window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (size + 1) / (size + 1)) - edge) / (1 - edge);
-			} else {
-				for (integer i = 1; i <= size; i ++) {
-					const double phase = ((double) i - imid) / size;
-					inout_window [i] = (exp (-48.0 * phase * phase) - edge) * onebyedge1;
-				}
+			for (integer i = 1; i <= size; i ++) {
+				const double phase = ((double) i - imid) / size;
+				inout_window [i] = (exp (-48.0 * phase * phase) - edge) * onebyedge1;
 			}
 		} break; case kSound_windowShape::GAUSSIAN_3: {
 			const double edge = exp (-27.0), onebyedge1 = 1.0 / (1.0 - edge);
