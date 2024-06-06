@@ -282,14 +282,28 @@ filled with values from a formula for each of the three colour channels.
 
 ################################################################################
 "Create Strings as folder list..."
-© Paul Boersma 2020-12-26
+© Paul Boersma 2006(with “directory list”),2020,2024
 
-A command in the @@New menu@ to create a @Strings object containing a list of directories in a given parent directory.
+A command in the @@New menu@ to create a @Strings object containing a list of folders in a given parent folder.
 It works completely analogously to @@Create Strings as file list...@.
 
+Script usage
+============
+See @@Create Strings as file list...@.
+If you don’t need the resulting @Strings object,
+it may be easier to use @`folderNames$#` instead.
+
 ################################################################################
-"Create Strings as file list [BUG]..."
-© Paul Boersma 2020-12-29
+"Create Strings as directory list..."
+
+A synonym for @@Create Strings as folder list...@.
+
+You can see this command in older scripts, but not in Praat’s menus.
+This command is kept for reasons of compatibility.
+
+################################################################################
+"Create Strings as file list..."
+© Paul Boersma 1998,2006,2013-2015,2020,2024
 
 A command in the @@New menu@ to create a @Strings object containing a list of files in a given folder.
 
@@ -304,7 +318,74 @@ R"~~~(
 }
 
 ##Name
-:	the name of the resulting Strings object.
+: the name of the resulting Strings object.
+
+##File path
+: the folder name, with an optional %wildcard (see below) for selecting files.
+
+Behaviour
+=========
+The resulting Strings object will contain an alphabetical list of file names (by naïve Unicode-sorting),
+without the preceding path through the folder structures. If there are no files that match the file path,
+the Strings object will contain no strings.
+
+Usage
+=====
+There are two ways to specify the file path.
+
+One way is to specify a folder name only. On Unix, the file path could be
+`/usr/people/miep/sounds` or `/usr/people/miep/sounds/`, for instance. On Windows,
+`C:\Users\Miep\Sounds` or `C:\Users\Miep\Sounds\`.
+On Macintosh, `/Users/miep/Sounds` or `/Users/miep/Sounds/`. Any of these produce
+a list of all the files in the specified folder.
+
+The other way is to specify a wildcard (a single asterisk) for the file names.
+To get a list of all the files whose names start with “`hal`” and end in “`.wav`”,
+type `/usr/people/miep/sounds/hal*.wav`, `C:\Users\Miep\Sounds\hal*.wav`,
+or `/Users/miep/Sounds/hal*.wav`.
+
+Script usage
+============
+In a script, you can use this command to cycle through the files in a folder.
+For instance, to read in all the sound files in a specified folder,
+you could use the following script:
+{;
+	folder$ = “/usr/people/miep/sounds”
+	strings = \#{Create Strings as file list:} “list”, folder$ + “/*.wav”
+	numberOfFiles = Get number of strings
+	for ifile to numberOfFiles
+		\`{selectObject}: strings
+		fileName$ = Get string: ifile
+		\@{Read from file:} folder$ + “/” + fileName$
+	endfor
+}
+If the script has been saved to a script file, you can use file paths that are relative to the folder
+where you saved the script. Thus, with
+{;
+	\#{Create Strings as file list:} “list”, “*.wav”
+}
+you get a list of all the `.wav` files that are in the same folder as the script that contains this line.
+And to get a list of all the `.wav` files in the folder `Sounds` that resides in the same folder as your script,
+you can do
+{;
+	\#{Create Strings as file list:} “list”, “Sounds/*.wav”
+}
+As is usual in Praat scripting, the forward slash (“/”) in this example can be used on all platforms, including Windows.
+This makes your script portable across platforms.
+
+Note that the above functionality can also be written three lines shorter, using built-in functions:
+{;
+	folder$ = “/usr/people/miep/sounds”
+	list$# = \#`{fileNames$#}: folder$ + “/*.wav”
+	for ifile to \`{size} (list$#)
+		\@{Read from file:} folder$ + “/” + list$# [ifile]
+	endfor
+}
+This doesn’t produce a Strings object.
+
+See also
+========
+To get a list of folders instead of files, use @@Create Strings as folder list...@.
 
 ################################################################################
 "Photo"
@@ -316,59 +397,6 @@ but has a matrix of cells for each of three colour channels: red, green and blue
 ################################################################################
 )~~~"
 MAN_PAGES_END
-
-
-MAN_BEGIN (U"Create Strings as file list...", U"ppgb", 20201229)
-INTRO (U"A command in the @@New menu@ to create a @Strings object containing a list of files in a given folder.")
-ENTRY (U"Settings")
-SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Create Strings as file list", 2.6)
-	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Name", "fileList")
-	Manual_DRAW_SETTINGS_WINDOW_TEXT ("File path", "/Users/miep/Sounds/*.wav")
-)
-TERM (U"##Name")
-DEFINITION (U"the name of the resulting Strings object.")
-TERM (U"##File path")
-DEFINITION (U"the folder name, with an optional %wildcard (see below) for selecting files.")
-ENTRY (U"Behaviour")
-NORMAL (U"The resulting Strings object will contain an alphabetical list of file names, "
-	"without the preceding path through the folder structures. If there are no files that match the file path, "
-	"the Strings object will contain no strings.")
-ENTRY (U"Usage")
-NORMAL (U"There are two ways to specify the file path.")
-NORMAL (U"One way is to specify a folder name only. On Unix, the file path could be "
-	"`/usr/people/miep/sounds` or `/usr/people/miep/sounds/`, for instance. On Windows, "
-	"`C:\\Users\\Miep\\Sounds` or `C:\\Users\\Miep\\Sounds\\`. "
-	"On Macintosh, `/Users/miep/Sounds` or `/Users/miep/Sounds/`. Any of these produce "
-	"a list of all the files in the specified folder.")
-NORMAL (U"The other way is to specify a wildcard (a single asterisk) for the file names. "
-	"To get a list of all the files whose names start with “`hal`” and end in “`.wav`”, "
-	"type `/usr/people/miep/sounds/hal*.wav`, `C:\\Users\\Miep\\Sounds\\hal*.wav`, "
-	"or `/Users/miep/Sounds/hal*.wav`.")
-ENTRY (U"Script usage")
-NORMAL (U"In a script, you can use this command to cycle through the files in a folder. "
-	"For instance, to read in all the sound files in a specified folder, "
-	"you could use the following script:")
-CODE (U"folder$ = “/usr/people/miep/sounds”")
-CODE (U"strings = Create Strings as file list: “list”, folder$ + “/*.wav”")
-CODE (U"numberOfFiles = Get number of strings")
-CODE (U"for ifile to numberOfFiles")
-	CODE1 (U"selectObject: strings")
-	CODE1 (U"fileName$ = Get string: ifile")
-	CODE1 (U"Read from file: folder$ + “/” + fileName$")
-CODE (U"endfor")
-NORMAL (U"If the script has been saved to a script file, you can use file paths that are relative to the folder "
-	"where you saved the script. Thus, with")
-CODE (U"Create Strings as file list: “list”, “*.wav”")
-NORMAL (U"you get a list of all the `.wav` files that are in the same folder as the script that contains this line. "
-	"And to get a list of all the `.wav` files in the folder Sounds that resides in the same folder as your script, "
-	"you can do")
-CODE (U"Create Strings as file list: “list”, “Sounds/*.wav”")
-NORMAL (U"As is usual in Praat scripting, the forward slash (“/”) in this example can be used on all platforms, including Windows. "
-	"This makes your script portable across platforms.")
-ENTRY (U"See also")
-NORMAL (U"To get a list of folders instead of files, use @@Create Strings as folder list...@.")
-MAN_END
 
 MAN_BEGIN (U"Distributions", U"ppgb", 20030316)
 INTRO (U"One of the @@types of objects@ in Praat. Inherits most actions from @TableOfReal.")

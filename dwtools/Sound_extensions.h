@@ -211,4 +211,9 @@ autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, doubl
 
 void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, integer precision);
 
+/**** the following functions belongs to a numeric library. However there is an unwanted dependency on fon/Sound_enums.h */
+
+void windowShape_into_VEC (kSound_windowShape windowShape, VEC inout_window);
+
+
 #endif /* _Sound_extensions_h_ */

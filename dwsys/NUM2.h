@@ -720,6 +720,9 @@ double VECburg (VEC const& a, constVEC const& x);
 
 autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, double *out_xms);
 
+/*
+	assertion: filtermemory.size >= filter.size
+*/
 void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& filterMemory);
 
 void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor);

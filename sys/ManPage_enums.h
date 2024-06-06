@@ -25,7 +25,7 @@ enums_begin (kManPage_type, 1)
 	enums_alt (kManPage_type, TERM, U"tag")
 	enums_add (kManPage_type, 6, DEFINITION, U"definition")
 	enums_add (kManPage_type, 7, CODE, U"code")
-	enums_add (kManPage_type, 8, PROTOTYPE, U"prototype")
+	enums_add (kManPage_type, 8, PROTOTYPE, U"prototype")   // probably unused
 	enums_add (kManPage_type, 9, EQUATION, U"formula")
 	enums_add (kManPage_type, 10, PICTURE, U"picture")
 	enums_add (kManPage_type, 11, SCRIPT, U"script")
