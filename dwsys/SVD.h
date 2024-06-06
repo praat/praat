@@ -41,11 +41,14 @@
 */
 void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns);
 
+
 autoSVD SVD_create (integer numberOfRows, integer numberOfColumns);
 /*
 	my tolerance = eps * MAX (numberOfRows, numberOfColumns)
 	where eps is the floating point precision, approximately 2.2e-16
 */
+
+void SVD_resizeWithinOldBounds (SVD me, integer nrowmax, integer ncolmax, integer nrownew, integer ncolnew);
 
 autoSVD SVD_createFromGeneralMatrix (constMATVU const& m);
 
@@ -114,6 +117,8 @@ double SVD_getShrinkageParameter (SVD me, double effectiveDegreesOfFreedom);
 		f(lambda) = sum(i=1, p, d[i]^2 / (d[i]^2 + lambda)) - df = 0,
 */
 
+integer SVD_getWorkspaceSize (SVD me);
+
 autoGSVD GSVD_create (integer numberOfColumns);
 
 autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2);
@@ -121,5 +126,16 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2);
 void GSVD_setTolerance (GSVD me, double tolerance);
 
 double GSVD_getTolerance (GSVD me);
+
+/**** with workspace for multithreading *********************/
+
+integer SVD_getWorkspaceSize (SVD me);
+
+void SVD_compute (SVD me, VEC const& workspace);
+// workspace size should be computed by SVD_getWorkspaceSize
+
+void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result, VEC const& workspace);
+// workspace size >= svd->numberOfColumns
+
 
 #endif /* _SVD_h_ */

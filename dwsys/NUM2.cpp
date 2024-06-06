@@ -1499,7 +1499,7 @@ autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, d
 
 void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& filterMemory) {
 	Melder_assert (filterMemory.size >= filter.size);
-	filterMemory  <<=  0.0;
+	filterMemory.part (1, filter.size)  <<=  0.0;
 	for (integer i = 1; i <= s.size; i ++) {
 		const double y0 = s [i];
 		for (integer j = 1; j <= filter.size; j ++)

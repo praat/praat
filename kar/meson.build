@@ -1,7 +1,7 @@
 # meson.build of the library "kar"
 # David Weenink, 3 January 2024
 
-sources = 'ipaSerifRegularPS.cpp longchar.cpp'.split()
+sources = 'ipaSerifRegularPS.cpp longchar.cpp wctype_portable.cpp'.split()
 
 libkar = static_library (
 	'kar',

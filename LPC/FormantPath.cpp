@@ -344,11 +344,18 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			else 
 				resampled = midCeiling.move();
 			autoLPC lpc = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, t1, predictionOrder, resampled -> dx);
-			if (lpcType != kLPC_Analysis::ROBUST) {
-				Sound_into_LPC (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency, lpcType, marple_tol1, marple_tol2);
-			} else {
-				Sound_into_LPC (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency, kLPC_Analysis::AUTOCORRELATION, marple_tol1, marple_tol2);
-				lpc = LPC_Sound_to_LPC_robust (lpc.get(), resampled.get(), analysisWidth, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
+			if (lpcType == kLPC_Analysis::BURG) {
+				Sound_into_LPC_burg (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency);
+			} else if (lpcType == kLPC_Analysis::AUTOCORRELATION) {
+				Sound_into_LPC_auto (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency);
+			} else if (lpcType == kLPC_Analysis::COVARIANCE) {
+				Sound_into_LPC_covar (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency);
+			} else if (lpcType == kLPC_Analysis::MARPLE) {
+				Sound_into_LPC_marple (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency, marple_tol1, marple_tol2);
+			} else if (lpcType == kLPC_Analysis::ROBUST) {
+				Sound_into_LPC_auto (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency);
+				lpc = LPC_and_Sound_to_LPC_robust (lpc.get(), resampled.get(), analysisWidth, preemphasisFrequency, 
+					huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
 			thy formantCandidates . addItem_move (formant.move());

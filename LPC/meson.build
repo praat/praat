@@ -1,5 +1,5 @@
 # meson.build of the library "LPC"
-# David Weenink, 3 January 2024
+# David Weenink, 17 May 2024
 
 sources = '''
 	Cepstrum.cpp Cepstrumc.cpp Cepstrum_and_Spectrum.cpp
