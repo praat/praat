@@ -2,7 +2,7 @@
 #define _Function_h_
 /* Function.h
  *
- * Copyright (C) 1992-2012,2015-2018,2020,2023 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2018,2020,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ void Function_init (Function me, double xmin, double xmax);
 		result -> xmax == xmax;
 */
 
-int Function_getDomainQuantity (Function me);   // as input for MelderQuantity_getXXX
+int Function_getDomainQuantity (constFunction me);   // as input for MelderQuantity_getXXX
 
 /*
 	A function value is often expressed in some unit, such as:
@@ -48,19 +48,19 @@ int Function_getDomainQuantity (Function me);   // as input for MelderQuantity_g
 	`unit` is an enumerated type that has to be defined in the header files of the descendant class,
 	starting from 0, which should be the default unit; e.g. for pitch: 0 = Hz, 1 = logHz, 2 = semitones, 3 = mel.
 */
-int Function_getMinimumUnit (Function me, integer ilevel);
-int Function_getMaximumUnit (Function me, integer ilevel);
+int Function_getMinimumUnit (constFunction me, integer ilevel);
+int Function_getMaximumUnit (constFunction me, integer ilevel);
 
 #define Function_UNIT_TEXT_SHORT            0x0000'0001
 #define Function_UNIT_TEXT_GRAPHICAL        0x0000'0002
 #define Function_UNIT_TEXT_MENU             0x0000'0004
-conststring32 Function_getUnitText (Function me, integer level, int unit, uint32 flags);
+conststring32 Function_getUnitText (constFunction me, integer level, int unit, uint32 flags);
 
-bool Function_isUnitLogarithmic (Function me, integer level, int unit);
+bool Function_isUnitLogarithmic (constFunction me, integer level, int unit);
 
-double Function_convertStandardToSpecialUnit (Function me, double value, integer level, int unit);
-double Function_convertSpecialToStandardUnit (Function me, double value, integer level, int unit);
-double Function_convertToNonlogarithmic (Function me, double value, integer level, int unit);
+double Function_convertStandardToSpecialUnit (constFunction me, double value, integer level, int unit);
+double Function_convertSpecialToStandardUnit (constFunction me, double value, integer level, int unit);
+double Function_convertToNonlogarithmic (constFunction me, double value, integer level, int unit);
 
 /*
 	The domain of a function can be changed by windowing.
@@ -141,10 +141,10 @@ bool Function_intersectRangeWithDomain (
 	double *const x2
 );
 
-void Function_shiftXBy (Function me, double shift);
-void Function_shiftXTo (Function me, double xfrom, double xto);
-void Function_scaleXBy (Function me, double factor);
-void Function_scaleXTo (Function me, double xminto, double xmaxto);
+void Function_shiftXBy (mutableFunction me, double shift);
+void Function_shiftXTo (mutableFunction me, double xfrom, double xto);
+void Function_scaleXBy (mutableFunction me, double factor);
+void Function_scaleXTo (mutableFunction me, double xminto, double xmaxto);
 
 /* End of file Function.h */
 #endif
