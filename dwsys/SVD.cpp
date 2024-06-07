@@ -136,9 +136,9 @@ integer SVD_getWorkspaceSize (SVD me) {
 	double wtmp;
 	integer lwork = -1, info;
 	NUMlapack_dgesvd_ ("S", "O", my numberOfColumns, my numberOfRows, & my u [1] [1], my numberOfColumns, & my d [1], 
-		& my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & wtmp, lwork, & info);
+			& my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & wtmp, lwork, & info);
 	Melder_require (info == 0,
-			U"NUMlapack_dgesvd_ query returns error ", info, U".");	
+		U"NUMlapack_dgesvd_ query returns error ", info, U".");
 	return Melder_roundUp (wtmp);
 }
 
@@ -148,7 +148,7 @@ void SVD_compute (SVD me) {
 		const integer lwork = SVD_getWorkspaceSize (me);
 		autoVEC work = raw_VEC (lwork);
 		NUMlapack_dgesvd_ ("S", "O", my numberOfColumns, my numberOfRows, & my u [1] [1], my numberOfColumns,
-			& my d [1], & my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & work [1], lwork, & info);		
+				& my d [1], & my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & work [1], lwork, & info);
 		Melder_require (info == 0,
 			U"NUMlapack_dgesvd_ returns error ", info, U".");
 		/*
@@ -167,7 +167,7 @@ void SVD_compute (SVD me, VEC const& workspace) {
 		Melder_require (lwork <= workspace.size,
 			U"Your workspace size, ", workspace.size, U",  is too small (required ", lwork, U").");
 		NUMlapack_dgesvd_ ("S", "O", my numberOfColumns, my numberOfColumns, & my u [1] [1], my numberOfColumns,
-			& my d [1], & my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & workspace [1], lwork, & info);		
+				& my d [1], & my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & workspace [1], lwork, & info);		
 		Melder_require (info == 0,
 			U"NUMlapack_dgesvd_ returns error ", info, U".");
 		/*

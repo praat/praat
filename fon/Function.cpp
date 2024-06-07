@@ -1,6 +1,6 @@
 /* Function.cpp
  *
- * Copyright (C) 1992-2012,2015-2018,2020,2022,2023 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2018,2020,2022,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,58 +56,58 @@ void structFunction :: v_scaleX (double xminfrom, double xmaxfrom, double xminto
 	NUMscale (& xmax, xminfrom, xmaxfrom, xminto, xmaxto);
 }
 
-void Function_init (Function me, double xmin_, double xmax_) {
+void Function_init (mutableFunction me, double xmin_, double xmax_) {
 	my xmin = xmin_;
 	my xmax = xmax_;
 }
 
-int Function_getMinimumUnit (Function me, integer level) {
+int Function_getMinimumUnit (constFunction me, integer level) {
 	return my v_getMinimumUnit (level);
 }
 
-int Function_getMaximumUnit (Function me, integer level) {
+int Function_getMaximumUnit (constFunction me, integer level) {
 	return my v_getMaximumUnit (level);
 }
 
-int Function_getDomainQuantity (Function me) {
+int Function_getDomainQuantity (constFunction me) {
 	return my v_domainQuantity ();
 }
 
-conststring32 Function_getUnitText (Function me, integer level, int unit, uint32 flags) {
+conststring32 Function_getUnitText (constFunction me, integer level, int unit, uint32 flags) {
 	Melder_assert (unit >= my v_getMinimumUnit (level) && unit <= my v_getMaximumUnit (level));
 	return my v_getUnitText (level, unit, flags);
 }
 
-bool Function_isUnitLogarithmic (Function me, integer level, int unit) {
+bool Function_isUnitLogarithmic (constFunction me, integer level, int unit) {
 	Melder_assert (unit >= my v_getMinimumUnit (level) && unit <= my v_getMaximumUnit (level));
 	return my v_isUnitLogarithmic (level, unit);
 }
 
-double Function_convertStandardToSpecialUnit (Function me, double value, integer level, int unit) {
+double Function_convertStandardToSpecialUnit (constFunction me, double value, integer level, int unit) {
 	return isdefined (value) ? my v_convertStandardToSpecialUnit (value, level, unit) : undefined;
 }
 
-double Function_convertSpecialToStandardUnit (Function me, double value, integer level, int unit) {
+double Function_convertSpecialToStandardUnit (constFunction me, double value, integer level, int unit) {
 	return isdefined (value) ? my v_convertSpecialToStandardUnit (value, level, unit) : undefined;
 }
 
-double Function_convertToNonlogarithmic (Function me, double value, integer level, int unit) {
+double Function_convertToNonlogarithmic (constFunction me, double value, integer level, int unit) {
 	return isdefined (value) && my v_isUnitLogarithmic (level, unit) ? pow (10.0, value) : value;
 }
 
-void Function_shiftXBy (Function me, double shift) {
+void Function_shiftXBy (mutableFunction me, double shift) {
 	my v_shiftX (0.0, shift);
 }
 
-void Function_shiftXTo (Function me, double xfrom, double xto) {
+void Function_shiftXTo (mutableFunction me, double xfrom, double xto) {
 	my v_shiftX (xfrom, xto);
 }
 
-void Function_scaleXBy (Function me, double factor) {
+void Function_scaleXBy (mutableFunction me, double factor) {
 	my v_scaleX (0.0, 1.0, 0.0, factor);
 }
 
-void Function_scaleXTo (Function me, double xminto, double xmaxto) {
+void Function_scaleXTo (mutableFunction me, double xminto, double xmaxto) {
 	my v_scaleX (my xmin, my xmax, xminto, xmaxto);
 }
 

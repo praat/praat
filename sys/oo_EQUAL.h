@@ -117,7 +117,7 @@
 	if (our x != thy x) return false;   // pointer comparison
 
 #define oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE(Class, x)  \
-	if ( our x != thy x) return false;   // pointer comparison
+	if (our x != thy x) return false;   // pointer comparison
 
 #define oo_DEFINE_STRUCT(Type)  \
 	bool struct##Type :: equal (Type thee) {
