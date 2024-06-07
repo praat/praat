@@ -2709,4 +2709,81 @@ void Sound_saveAsMP3File_VBR (Sound me, MelderFile file, double inverseQuality) 
 		Melder_throw (U"");
 	}
 }
+
+void windowShape_into_VEC (kSound_windowShape windowShape, VEC inout_window) {
+	const integer size = inout_window.size;
+	const double imid = 0.5 * (double) (size + 1);
+	switch (windowShape) {
+		case kSound_windowShape::RECTANGULAR: {
+			inout_window  <<=  1.0; 
+		} break; case kSound_windowShape::TRIANGULAR: {  // "Bartlett"
+			for (integer i = 1; i <= size; i ++) {
+				const double phase = (double) (i - 0.5) / size;
+				inout_window [i] = 1.0 - fabs ((2.0 * phase - 1.0));
+			} 
+		} break; case kSound_windowShape::PARABOLIC: {  // "Welch"
+			for (integer i = 1; i <= size; i ++) { 
+				const double phase = (double) (i - 0.5) / size;
+				inout_window [i] = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
+			}
+		} break; case kSound_windowShape::HANNING: {
+			for (integer i = 1; i <= size; i ++) {
+				const double phase = (double) (i - 0.5) / size;
+				inout_window [i] = 0.5 * (1.0 - cos (NUM2pi * phase));
+			}
+		} break; case kSound_windowShape::HAMMING: {
+			for (integer i = 1; i <= size; i ++) { 
+				const double phase = (double) (i - 0.5) / size;
+				inout_window [i] = 0.54 - 0.46 * cos (NUM2pi * phase);
+			}
+		} break; case kSound_windowShape::GAUSSIAN_1: {
+			const double edge = exp (-3.0), onebyedge1 = 1.0 / (1.0 - edge);   // -0.5..+0.5
+			for (integer i = 1; i <= size; i ++) {
+				const double phase = ((double) i - imid) / size;
+				inout_window [i] = (exp (-12.0 * phase * phase) - edge) * onebyedge1;
+			}
+		} break; case kSound_windowShape::GAUSSIAN_2: {
+			const double edge = exp (-12.0), onebyedge1 = 1.0 / (1.0 - edge);
+			for (integer i = 1; i <= size; i ++) {
+				const double phase = ((double) i - imid) / size;
+				inout_window [i] = (exp (-48.0 * phase * phase) - edge) * onebyedge1;
+			}
+		} break; case kSound_windowShape::GAUSSIAN_3: {
+			const double edge = exp (-27.0), onebyedge1 = 1.0 / (1.0 - edge);
+			for (integer i = 1; i <= size; i ++) {
+				const double phase = ((double) i - imid) / size;
+				inout_window [i] = (exp (-108.0 * phase * phase) - edge) * onebyedge1;
+			}
+		} break; case kSound_windowShape::GAUSSIAN_4: {
+			const double edge = exp (-48.0), onebyedge1 = 1.0 / (1.0 - edge);
+			for (integer i = 1; i <= size; i ++) { 
+				const double phase = ((double) i - imid) / size;
+				inout_window [i] = (exp (-192.0 * phase * phase) - edge) * onebyedge1; 
+			}
+		} break; case kSound_windowShape::GAUSSIAN_5: {
+			const double edge = exp (-75.0), onebyedge1 = 1.0 / (1.0 - edge);
+			for (integer i = 1; i <= size; i ++) { 
+				const double phase = ((double) i - imid) / size;
+				inout_window [i] = (exp (-300.0 * phase * phase) - edge) * onebyedge1;
+			}
+		} break; case kSound_windowShape::KAISER_1: {
+			const double factor = 1.0 / NUMbessel_i0_f (NUM2pi);
+			for (integer i = 1; i <= size; i ++) { 
+				const double phase = 2.0 * ((double) i - imid) / size;   // -1..+1
+				const double root = 1.0 - phase * phase;
+				inout_window [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (NUM2pi * sqrt (root)) );
+			}
+		} break; case kSound_windowShape::KAISER_2: {
+			const double factor = 1.0 / NUMbessel_i0_f (NUM2pi * NUMpi + 0.5);
+			for (integer i = 1; i <= size; i ++) { 
+				const double phase = 2.0 * ((double) i - imid) / size;   // -1..+1
+				const double root = 1.0 - phase * phase;
+				inout_window [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((NUM2pi * NUMpi + 0.5) * sqrt (root)) ); 
+			}
+		} break; default: {
+			inout_window  <<=  1.0;
+		}
+	}
+}
+
 /* End of file Sound_extensions.cpp */

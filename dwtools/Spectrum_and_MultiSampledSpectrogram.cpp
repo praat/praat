@@ -19,84 +19,9 @@
 #include "Spectrum_and_AnalyticSound.h"
 #include "Spectrum_and_MultiSampledSpectrogram.h"
 #include "Sound_and_Spectrum.h"
+#include "Sound_extensions.h"
 #include "Spectrum_extensions.h"
 #include "NUM2.h"
-
-static void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape windowShape) {
-	const integer n = target.size;
-	const double imid = 0.5 * (double) (n + 1);
-	switch (windowShape) {
-		case kSound_windowShape::RECTANGULAR: {
-			target  <<=  1.0; 
-		} break; case kSound_windowShape::TRIANGULAR: {  // "Bartlett"
-			for (integer i = 1; i <= n; i ++) {
-				const double phase = (double) (i - 0.5) / n;
-				target [i] = 1.0 - fabs ((2.0 * phase - 1.0));
-			} 
-		} break; case kSound_windowShape::PARABOLIC: {  // "Welch"
-			for (integer i = 1; i <= n; i ++) { 
-				const double phase = (double) (i - 0.5) / n;
-				target [i] = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
-			}
-		} break; case kSound_windowShape::HANNING: {
-			for (integer i = 1; i <= n; i ++) {
-				const double phase = (double) (i - 0.5) / n;
-				target [i] = 0.5 * (1.0 - cos (NUM2pi * phase));
-			}
-		} break; case kSound_windowShape::HAMMING: {
-			for (integer i = 1; i <= n; i ++) { 
-				const double phase = (double) (i - 0.5) / n;
-				target [i] = 0.54 - 0.46 * cos (NUM2pi * phase);
-			}
-		} break; case kSound_windowShape::GAUSSIAN_1: {
-			const double edge = exp (-3.0), onebyedge1 = 1.0 / (1.0 - edge);   // -0.5..+0.5
-			for (integer i = 1; i <= n; i ++) {
-				const double phase = ((double) i - imid) / n;
-				target [i] = (exp (-12.0 * phase * phase) - edge) * onebyedge1;
-			}
-		} break; case kSound_windowShape::GAUSSIAN_2: {
-			const double edge = exp (-12.0), onebyedge1 = 1.0 / (1.0 - edge);
-			for (integer i = 1; i <= n; i ++) {
-				const double phase = ((double) i - imid) / n;
-				target [i] = (exp (-48.0 * phase * phase) - edge) * onebyedge1;
-			}
-		} break; case kSound_windowShape::GAUSSIAN_3: {
-			const double edge = exp (-27.0), onebyedge1 = 1.0 / (1.0 - edge);
-			for (integer i = 1; i <= n; i ++) {
-				const double phase = ((double) i - imid) / n;
-				target [i] = (exp (-108.0 * phase * phase) - edge) * onebyedge1;
-			}
-		} break; case kSound_windowShape::GAUSSIAN_4: {
-			const double edge = exp (-48.0), onebyedge1 = 1.0 / (1.0 - edge);
-			for (integer i = 1; i <= n; i ++) { 
-				const double phase = ((double) i - imid) / n;
-				target [i] = (exp (-192.0 * phase * phase) - edge) * onebyedge1; 
-			}
-		} break; case kSound_windowShape::GAUSSIAN_5: {
-			const double edge = exp (-75.0), onebyedge1 = 1.0 / (1.0 - edge);
-			for (integer i = 1; i <= n; i ++) { 
-				const double phase = ((double) i - imid) / n;
-				target [i] = (exp (-300.0 * phase * phase) - edge) * onebyedge1;
-			}
-		} break; case kSound_windowShape::KAISER_1: {
-			const double factor = 1.0 / NUMbessel_i0_f (NUM2pi);
-			for (integer i = 1; i <= n; i ++) { 
-				const double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
-				const double root = 1.0 - phase * phase;
-				target [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (NUM2pi * sqrt (root)) );
-			}
-		} break; case kSound_windowShape::KAISER_2: {
-			const double factor = 1.0 / NUMbessel_i0_f (NUM2pi * NUMpi + 0.5);
-			for (integer i = 1; i <= n; i ++) { 
-				const double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
-				const double root = 1.0 - phase * phase;
-				target [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((NUM2pi * NUMpi + 0.5) * sqrt (root)) ); 
-			}
-		} break; default: {
-			target  <<=  1.0;
-		}
-	}
-}
 
 void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram thee, double approximateTimeOverSampling,
 	kSound_windowShape filterShape) 
@@ -114,7 +39,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			Melder_require (numberOfSpectralValues > 0,
 				U"The number of spectral values for bin number ", ifreq, U" should be larger than zero.");
 			window.resize (numberOfSpectralValues);
-			windowShape_VEC_preallocated (window.get(), filterShape);
+			windowShape_into_VEC (filterShape, window.get());
 			autoAnalyticSound him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, window.get());
 			thy frequencyAmplifications.part (spectrum_imin, spectrum_imax)  +=  window.get();
 			autoFrequencyBin bin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);

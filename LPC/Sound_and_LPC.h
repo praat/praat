@@ -2,7 +2,7 @@
 #define _Sound_and_LPC_h_
 /* Sound_and_LPC.h
  *
- * Copyright (C) 1994-2023 David Weenink
+ * Copyright (C) 1994-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,22 +21,43 @@
 /*
  djmw 19971103
  djmw 20020812 GPL header
- djmw 20110307 Latest modification
 */
 
-
 #include "LPC.h"
-#include "Sound.h"
+#include "SoundAnalysisWorkspace.h"
+#include "SVD.h"
 
-autoLPC Sound_to_LPC_autocorrelation (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
+#include "SoundToLPCAnalysisWorkspace_def.h"
 
-autoLPC Sound_to_LPC_covariance (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
+/*
+	20240603:
+	The output of the Sound_to_LPC_<x> might be a little bit different from previous outputs because:
+	1. The sound frame now always has an odd number of samples, irrespective of the sampling frequency or the window shape.
+		This means that the window function also always has an odd number of samples. Therefore the sample at the centre of the sound frame always has weight 1.0.
+		Previously the number of samples could be even or odd, depending on how rounding turned out.
+	2. The gaussian window function was slightly improved.
+	3. The precision of the autocorrelation and covariance method have been improved a little by using some 'long double' accumulators.
+*/
+	
+autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2);
+autoLPC Sound_to_LPC_robust (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
+	double k_stdev,	integer itermax, double tol, bool wantlocation);
+autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k_stdev,
+	integer itermax, double tol, bool wantlocation);
 
-autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
 
-autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2);
+void Sound_into_LPC_auto (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
+void Sound_into_LPC_covar (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
+void Sound_into_LPC_burg (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
+void Sound_into_LPC_marple (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, double tol1, double tol2);
+void Sound_into_LPC_robust (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency,
+	double k_stdev,	integer itermax, double tol, bool wantlocation);
 
-void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2);
+autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder, double physicalAnalysisWidth, double dt);
+
 /*
  * Function:
  *	Calculate linear prediction coefficients according to following model:

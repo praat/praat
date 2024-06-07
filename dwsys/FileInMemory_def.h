@@ -21,7 +21,7 @@ oo_DEFINE_CLASS (FileInMemory, Daata)
 
 	oo_LSTRING (d_path)
 	oo_LSTRING (d_id)
-	oo_INTEGER (d_numberOfBytes)
+	oo_INTEGER (d_numberOfBytes)  // last byte is \0 byte
 	oo_INTEGER (d_position)
 	oo_INTEGER (d_errno)
 	oo_INT32 (ungetChar)

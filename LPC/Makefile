@@ -1,5 +1,5 @@
 # Makefile of the library "LPC"
-# David Weenink and Paul Boersma, 22 July 2022
+# David Weenink and Paul Boersma, 30 April 2024
 
 include ../makefile.defs
 

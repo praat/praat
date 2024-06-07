@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2022 David Weenink
+ * Copyright (C) 1994-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,7 @@
  */
 
 /*
- djmw 20010719
- djmw 20020408 GPL + cosmetic changes.
- djmw 20020415 +SVD_synthesize.
- djmw 20030624 Removed NRC svd calls.
- djmw 20030825 Removed praat_USE_LAPACK external variable.
- djmw 20031018 Removed  bug in SVD_solve that caused incorrect output when nrow > ncol
- djmw 20031101 Changed documentation in SVD_compute + bug correction in SVD_synthesize.
- djmw 20031111 Added GSVD_create_d.
- djmw 20051201 Adapt for numberOfRows < numberOfColumns
- djmw 20060810 Removed #include praat.h
- djmw 20061212 Changed info to Melder_writeLine<x> format.
- djmw 20070102 Removed the #include "TableOfReal.h"
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
- djmw 20110304 Thing_new
+	djmw 20010719
 */
 
 #include "SVD.h"
@@ -98,6 +85,24 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
 	}
 }
 
+void SVD_resizeWithinOldBounds (SVD me, integer nrowmax, integer ncolmax, integer nrownew, integer ncolnew) {
+	/*
+		An automatrix does not have a _capacity variable, only nrow and ncol values. Therefoe we cannot check whether 
+		nrowmax and ncolmax are valid.
+		We can only check if ncolmax confirms with the size of the singular values array
+	*/
+	Melder_require (nrowmax >= ncolmax,
+		U"The number of rows should not be less than the number of columns."); // for the time being
+	Melder_assert (ncolmax <= my d._capacity);
+	Melder_require (nrownew <= nrowmax && ncolnew <= ncolmax,
+		U"The new size must fit within the old size.");
+	my numberOfRows = nrownew;
+	my numberOfColumns = ncolnew;
+	my u.resize (nrownew, ncolnew);
+	my v.resize (ncolnew, ncolnew);
+	my d.resize (ncolnew);
+}
+
 autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 	try {
 		autoSVD me = SVD_create (m.nrow, m.ncol);
@@ -108,7 +113,6 @@ autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 		Melder_throw (U"SVD not created from general matrix.");
 	}
 }
-
 
 void SVD_update (SVD me, constMATVU const& m) {
 	Melder_assert ((! my isTransposed && my numberOfRows == m.nrow && my numberOfColumns == m.ncol) ||
@@ -125,20 +129,26 @@ double SVD_getTolerance (SVD me) {
 	return my tolerance;
 }
 
+integer SVD_getWorkspaceSize (SVD me) {
+	/*
+		To compute the SVD
+	*/
+	double wtmp;
+	integer lwork = -1, info;
+	NUMlapack_dgesvd_ ("S", "O", my numberOfColumns, my numberOfRows, & my u [1] [1], my numberOfColumns, & my d [1], 
+		& my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & wtmp, lwork, & info);
+	Melder_require (info == 0,
+			U"NUMlapack_dgesvd_ query returns error ", info, U".");	
+	return Melder_roundUp (wtmp);
+}
+
 void SVD_compute (SVD me) {
 	try {
-		autoMAT a = copy_MAT (my u.get());
-		integer m = my numberOfColumns; // number of rows of input matrix
-		integer n = my numberOfRows; // number of columns of input matrix
-		double wtmp;
-		integer lwork = -1, info;
-		NUMlapack_dgesvd_ ("S", "O", m, n, & my u [1] [1], m, & my d [1], & my v [1] [1], m, nullptr, m, & wtmp, lwork, & info);
-		Melder_require (info == 0,
-			U"NUMlapack_dgesvd_ query returns error ", info, U".");
-		
-		lwork =  Melder_roundUp (wtmp);
+		integer info;
+		const integer lwork = SVD_getWorkspaceSize (me);
 		autoVEC work = raw_VEC (lwork);
-		NUMlapack_dgesvd_ ("S", "O", m, n, & my u [1] [1], m, & my d [1], & my v [1] [1], m, nullptr, m, & work [1], lwork, & info);		
+		NUMlapack_dgesvd_ ("S", "O", my numberOfColumns, my numberOfRows, & my u [1] [1], my numberOfColumns,
+			& my d [1], & my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & work [1], lwork, & info);		
 		Melder_require (info == 0,
 			U"NUMlapack_dgesvd_ returns error ", info, U".");
 		/*
@@ -149,6 +159,26 @@ void SVD_compute (SVD me) {
 		Melder_throw (me, U": SVD could not be computed.");
 	}
 }
+
+void SVD_compute (SVD me, VEC const& workspace) {
+	try {
+		integer info;
+		const integer lwork = SVD_getWorkspaceSize (me);
+		Melder_require (lwork <= workspace.size,
+			U"Your workspace size, ", workspace.size, U",  is too small (required ", lwork, U").");
+		NUMlapack_dgesvd_ ("S", "O", my numberOfColumns, my numberOfColumns, & my u [1] [1], my numberOfColumns,
+			& my d [1], & my v [1] [1], my numberOfColumns, nullptr, my numberOfColumns, & workspace [1], lwork, & info);		
+		Melder_require (info == 0,
+			U"NUMlapack_dgesvd_ returns error ", info, U".");
+		/*
+			Because we store the eigenvectors row-wise, they must be transposed
+		*/
+		transpose_mustBeSquare_MAT_inout (my v.get());
+	} catch (MelderError) {
+		Melder_throw (me, U": SVD could not be computed.");
+	}
+}
+
 
 // V D^2 V'or V D^-2 V
 void SVD_getSquared_preallocated (SVD me, bool inverse, MAT const& m) {
@@ -174,20 +204,22 @@ autoMAT SVD_getSquared (SVD me, bool inverse) {
 	return result;
 }
 
-void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result) {
+void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result, VEC const& workspace) {
 	try {
 		/*
 			Solve UDV' x = b.
 			Solution: x = V D^-1 U' b
 		*/
-		autoVEC t = zero_VEC (my numberOfColumns);
+		Melder_assert (workspace.size >= my numberOfColumns);
+		VEC work = workspace.part (1, my numberOfColumns);
+		work   <<=  0.0;
 		if (! my isTransposed) {
 			Melder_assert (my numberOfRows == b.size);
 			Melder_assert (result.size == my numberOfColumns);
 			for (integer j = 1; j <= my numberOfColumns; j ++)
 				if (my d [j] > 0.0)
-					t [j] = NUMinner (my u.column (j), b) / my d [j];
-			mul_VEC_out (result, my v.get(), t.get());
+					work [j] = NUMinner (my u.column (j), b) / my d [j];
+			mul_VEC_out (result, my v.get(), work);
 		} else {
 			/*
 				Solve (UDV')' x = b or VDU' x = b.
@@ -197,13 +229,18 @@ void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result) {
 			Melder_assert (result.size == my numberOfRows);
 			for (integer i = 1; i <= my numberOfColumns; i ++)
 				if (my d [i] > 0.0)
-					t [i] = NUMinner (my v.column (i), b) / my d [i];
+					work [i] = NUMinner (my v.column (i), b) / my d [i];
 			for (integer i = 1; i <= my numberOfColumns; i ++)
-				result [i] = NUMinner (my u.row (i), t.get());
+				result [i] = NUMinner (my u.row (i), work);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not solved.");
 	}
+}
+
+void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result) {
+	autoVEC workspace = raw_VEC (my numberOfColumns);
+	SVD_solve_preallocated (me, b, result, workspace.get());
 }
 
 autoVEC SVD_solve (SVD me, constVECVU const& b) {
