@@ -473,8 +473,8 @@ Tests
 =====
 {
 	\`{assert} \#{arccos} (-1.1) = undefined
-	\`{assert} abs (\#{arccos} (-1.0) - pi) < 1e-17
-	\`{assert} abs (\#{arccos} (0.0) - pi/2) < 1e-17
+	\`{assert} \`{abs} (\#{arccos} (-1.0) - pi) < 1e-17
+	\`{assert} \`{abs} (\#{arccos} (0.0) - pi/2) < 1e-17
 	\`{assert} \#{arccos} (1.0) = 0
 	\`{assert} \#{arccos} (1.1) = undefined
 	\`{assert} \#{arccos} (undefined) = undefined
@@ -574,9 +574,9 @@ Tests
 =====
 {
 	\`{assert} \#{arcsin} (-1.1) = undefined
-	\`{assert} abs (\#{arcsin} (-1.0) - -pi/2) < 1e-17
+	\`{assert} \`{abs} (\#{arcsin} (-1.0) - -pi/2) < 1e-17
 	\`{assert} \#{arcsin} (0.0) = 0
-	\`{assert} abs (\#{arcsin} (1.0) - pi/2) < 1e-17
+	\`{assert} \`{abs} (\#{arcsin} (1.0) - pi/2) < 1e-17
 	\`{assert} \#{arcsin} (1.1) = undefined
 	\`{assert} \#{arcsin} (undefined) = undefined
 }
@@ -707,13 +707,13 @@ Tests
 =====
 {
 	\`{assert} \#{arctan2} (0.0, 3.0) = 0
-	\`{assert} abs (\#{arctan2} (3.0, 3.0) - pi/4) < 1e-17
-	\`{assert} abs (\#{arctan2} (3.0, 0.0) - pi/2) < 1e-17
-	\`{assert} abs (\#{arctan2} (3.0, -3.0) - 3*pi/4) < 1e-17
-	\`{assert} abs (\#{arctan2} (0.0, -3.0) - pi) < 1e-17
-	\`{assert} abs (\#{arctan2} (-3.0, -3.0) + 3*pi/4) < 1e-17
-	\`{assert} abs (\#{arctan2} (-3.0, 0.0) + pi/2) < 1e-17
-	\`{assert} abs (\#{arctan2} (-3.0, 3.0) + pi/4) < 1e-17
+	\`{assert} \`{abs} (\#{arctan2} (3.0, 3.0) - pi/4) < 1e-17
+	\`{assert} \`{abs} (\#{arctan2} (3.0, 0.0) - pi/2) < 1e-17
+	\`{assert} \`{abs} (\#{arctan2} (3.0, -3.0) - 3*pi/4) < 1e-17
+	\`{assert} \`{abs} (\#{arctan2} (0.0, -3.0) - pi) < 1e-17
+	\`{assert} \`{abs} (\#{arctan2} (-3.0, -3.0) + 3*pi/4) < 1e-17
+	\`{assert} \`{abs} (\#{arctan2} (-3.0, 0.0) + pi/2) < 1e-17
+	\`{assert} \`{abs} (\#{arctan2} (-3.0, 3.0) + pi/4) < 1e-17
 	;\`{assert} \#{arctan2} (0.0, 0.0) = undefined
 }
 Edge cases
@@ -834,7 +834,7 @@ Syntax and semantics
 
 Definition
 ==========
-~ #`barkToHertz` (%x) = 650 sinh (%x / 7)
+~ #`barkToHertz` (%x) = 650 @`sinh` (%x / 7)
 
 ################################################################################
 "`besselI`"
@@ -1119,10 +1119,10 @@ Syntax and semantics
 Examples
 ========
 {
-	\`{assert} combine# (7, 4, 99) = { 7, 4, 99 }
-	\`{assert} combine# ({ 7, 4 }, 99) = { 7, 4, 99 }
-	\`{assert} combine# ({ 7, 4 }, { 99, 103, 1 }) = { 7, 4, 99, 103, 1 }
-	\`{assert} combine# ({{ 7, 4 }, { 99, 103 }}, 1, { 8, -1, 2 }) =
+	\`{assert} \#{combine#} (7, 4, 99) = { 7, 4, 99 }
+	\`{assert} \#{combine#} ({ 7, 4 }, 99) = { 7, 4, 99 }
+	\`{assert} \#{combine#} ({ 7, 4 }, { 99, 103, 1 }) = { 7, 4, 99, 103, 1 }
+	\`{assert} \#{combine#} ({{ 7, 4 }, { 99, 103 }}, 1, { 8, -1, 2 }) =
 	... { 7, 4, 99, 103, 1, 8, -1, 2 }
 }
 
@@ -2570,7 +2570,7 @@ Syntax and semantics
 Tests
 =====
 {
-	assert max (7.2, -5, 3) = 7.2
+	\`{assert} \#{max} (7.2, -5, 3) = 7.2
 }
 
 ################################################################################
@@ -2661,11 +2661,11 @@ Syntax and semantics
 : interpret a string as a number.
 
 {
+	\`{assert} \#{number} ("0.0") = 0
+	\`{assert} \#{number} ("0.00123") = 0.00123   ; decimal point
+	\`{assert} \#{number} ("12e34") = 1.2e+35   ; exponent introduced by "e" or "E"
 	\`{assert} \#{number} ("junk") = undefined   ; i.e. not zero as in C++ !
 	\`{assert} \#{number} ("  -0.0000000123junk") = -1.23e-08   ; maximize digits, then ignore
-	\`{assert} \#{number} ("0.0") = 0
-	\`{assert} \#{number} ("0.012") = 0.012
-	\`{assert} \#{number} ("15e16") = 1.5e+17
 	\`{assert} \#{number} ("1.0e+309") = undefined
 	\`{assert} \#{number} ("1.0e-309") <> 0   ; denormalized
 	\`{assert} \#{number} ("1.0e-319") <> 0   ; denormalized
@@ -2694,9 +2694,15 @@ Syntax and semantics
 Hexadecimal:
 {
 	\`{assert} \#{number} ("0x32278") = 0x32278
+	\`{assert} \#{number} ("0x123") = 291
 	\`{assert} \#{number} ("0x000001ABCDEFGH") = 0x00001abcdef   ; maximize digits, then ignore
-	\`{assert} \#{number} ("-0x1afp-2") = -107.75   ; from `cppreference.com`
 	\`{assert} \#{number} ("0x123.456") = 291.27099609375
+	\`{assert} \#{number} ("0x123.abc") = 291.6708984375   ; hexadecimal point
+	\`{assert} \#{number} ("0x123.abcp-1") = 145.83544921875   ; exponent introduced by "p" or "P"
+	\`{assert} \#{number} ("0x123.abcP-2") = 72.917724609375
+	\`{assert} \#{number} ("0x123.abcp-12") = 0.07120871543884277   ; the exponent is decimal !
+	\`{assert} \#{number} ("0x123.abcp-1A2") = 145.83544921875   ; the exponent is decimal !
+	\`{assert} \#{number} ("-0x1afp-2") = -107.75   ; from `cppreference.com`
 }
 
 ################################################################################
@@ -3114,11 +3120,11 @@ Syntax and semantics
 and fill all elements with independent Bernoulli-distributed zeroes and ones.
 This is shorthand for doing
 `
-	\#{randomBernoulli#} (\`{size} (model#), \%{p})
+	\#{randomBernoulli#} (\`{size} (\%{model#}), \%{p})
 `
 ################################################################################
 "`randomBernoulli##`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @Formulas.
 
@@ -3127,12 +3133,12 @@ Syntax and semantics
 #`randomBernoulli##` (%`nrow`, %`ncol`, %`p`)
 : generate %`nrow` \xx %`ncol` independent Bernoulli-distributed (@`randomBernoulli`) zeroes and ones.
 
-#`randomBernoulli##` (%`model#`, %`p`)
-: create a matrix with the same number of rows and columns as %`model#`,
+#`randomBernoulli##` (%`model##`, %`p`)
+: create a matrix with the same number of rows and columns as %`model##`,
 and fill all cells with independent Bernoulli-distributed zeroes and ones.
 This is shorthand for doing
 `
-	\#{randomBernoulli##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), \%{p})
+	\#{randomBernoulli##} (\`{numberOfRows} (\%{model##}), \`{numberOfColumns} (\%{model##}), \%{p})
 `
 ################################################################################
 "`randomGamma`"
@@ -3152,7 +3158,7 @@ according to the method by @@Marsaglia & Tsang (2000)@.
 
 ################################################################################
 "`randomGamma#`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @Formulas.
 
@@ -3165,12 +3171,12 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent \Ga-distributed numbers.
 This is shorthand for doing
-`
-	\#{randomGamma#} (\`{size} (model#), %`shape`, %`rate`)
-`
+{;
+	\#{randomGamma#} (\`{size} (model#), \%{shape}, \%{rate})
+}
 ################################################################################
 "`randomGamma##`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @Formulas.
 
@@ -3179,13 +3185,13 @@ Syntax and semantics
 #`randomGamma##` (%`nrow`, %`ncol`, %`shape`, %`rate`)
 : generate %`nrow` \xx %`ncol` independent \Ga-distributed (@`randomGamma`) numbers.
 
-#`randomGamma##` (%`model#`, %`shape`, %`rate`)
-: create a matrix with the same number of rows and columns as %`model#`,
+#`randomGamma##` (%`model##`, %`shape`, %`rate`)
+: create a matrix with the same number of rows and columns as %`model##`,
 and fill all cells with independent \Ga-distributed numbers.
 This is shorthand for doing
-`
-	\#{randomGammma##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`shape`, %`rate`)
-`
+{;
+	\#{randomGammma##} (\`{numberOfRows} (\%{model##}), \`{numberOfColumns} (\%{model##}), \%{shape}, \%{rate})
+}
 ################################################################################
 "`randomGauss`"
 © Paul Boersma 2023
@@ -3200,7 +3206,7 @@ with true population mean %`mu` and true population standard deviation %`sigma`.
 
 ################################################################################
 "`randomGauss#`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @Formulas.
 
@@ -3213,12 +3219,12 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent normally distributed numbers.
 This is shorthand for doing
-`
-	\#{randomGauss#} (\`{size} (model#), %`mu`, %`sigma`)
-`
+{;
+	\#{randomGauss#} (\`{size} (\%{model#}), \%{mu}, \%{sigma})
+}
 ################################################################################
 "`randomGauss##`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @Formulas.
 
@@ -3227,13 +3233,13 @@ Syntax and semantics
 #`randomGauss##` (%`nrow`, %`ncol`, %`mu`, %`sigma`)
 : generate %`nrow` \xx %`ncol` independent normally distributed (@`randomGauss`) numbers.
 
-#`randomGauss##` (%`model#`, %`mu`, %`sigma`)
-: create a matrix with the same number of rows and columns as %`model#`,
+#`randomGauss##` (%`model##`, %`mu`, %`sigma`)
+: create a matrix with the same number of rows and columns as %`model##`,
 and fill all cells with independent normally distributed numbers.
 This is shorthand for doing
-`
-	\#{randomGauss##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`mu`, %`sigma`)
-`
+{;
+	\#{randomGauss##} (\`{numberOfRows} (\%{model##}), \`{numberOfColumns} (\%{model##}), \%{mu}, \%{sigma})
+}
 ################################################################################
 "`randomInteger`"
 © Paul Boersma 2023
@@ -3248,7 +3254,7 @@ with minimum %`min` and maximum %`max`.
 
 ################################################################################
 "`randomInteger#`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @@Formulas@.
 
@@ -3261,12 +3267,12 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent uniformly distributed integer numbers.
 This is shorthand for doing
-`
-	\#{randomInteger#} (\`{size} (model#), %`min`, %`max`)
-`
+{;
+	\#{randomInteger#} (\`{size} (\%{model#}), \%{min}, \%{max})
+}
 ################################################################################
 "`randomInteger##`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @@Formulas@.
 
@@ -3275,13 +3281,13 @@ Syntax and semantics
 #`randomInteger##` (%`nrow`, %`ncol`, %`min`, %`max`)
 : generate %`nrow` \xx %`ncol` independent normally distributed (@`randomInteger`) numbers.
 
-#`randomInteger##` (%`model#`, %`min`, %`max`)
-: create a matrix with the same number of rows and columns as %`model#`,
+#`randomInteger##` (%`model##`, %`min`, %`max`)
+: create a matrix with the same number of rows and columns as %`model##`,
 and fill all cells with independent uniformly distributed integer numbers.
 This is shorthand for doing
-`
-	\#{randomInteger##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`min`, %`max`)
-`
+{;
+	\#{randomInteger##} (\`{numberOfRows} (\%{model##}), \`{numberOfColumns} (\%{model##}), \%{min}, \%{max})
+}
 ################################################################################
 "`randomPoisson`"
 © Paul Boersma 2023
@@ -3295,7 +3301,7 @@ Syntax and semantics
 
 ################################################################################
 "`randomPoisson#`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @@Formulas@.
 
@@ -3308,12 +3314,12 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent Poisson-distributed numbers.
 This is shorthand for doing
-`
-	\#{randomPoisson#} (\`{size} (model#), %`mean`)
-`
+{;
+	\#{randomPoisson#} (\`{size} (\%{model#}), \%{mean})
+}
 ################################################################################
 "`randomPoisson##`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @@Formulas@.
 
@@ -3322,13 +3328,13 @@ Syntax and semantics
 #`randomPoisson##` (%`nrow`, %`ncol`, %`mean`)
 : generate %`nrow` \xx %`ncol` independent Poisson-distributed (@`randomPoisson`) numbers.
 
-#`randomPoisson##` (%`model#`, %`mean`)
-: create a matrix with the same number of rows and columns as %`model#`,
+#`randomPoisson##` (%`model##`, %`mean`)
+: create a matrix with the same number of rows and columns as %`model##`,
 and fill all cells with independent Poisson-distributed numbers.
 This is shorthand for doing
-`
-	\#{randomPoisson##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`mean`)
-`
+{;
+	\#{randomPoisson##} (\`{numberOfRows} (\%{model##}), \`{numberOfColumns} (\%{model##}), \%{mean})
+}
 ################################################################################
 "`randomUniform`"
 © Paul Boersma 2023
@@ -3343,7 +3349,7 @@ with true minimum %`min` (included) and true maximum %`max` (excluded).
 
 ################################################################################
 "`randomUniform#`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @@Formulas@.
 
@@ -3356,12 +3362,12 @@ Syntax and semantics
 : create a vector with the same number of elements as %`model#`,
 and fill all elements with independent uniformly distributed numbers.
 This is shorthand for doing
-`
-	\#{randomUniform#} (\`{size} (model#), %`min`, %`max`)
-`
+{;
+	\#{randomUniform#} (\`{size} (\%{model#}), \%{min}, \%{max})
+}
 ################################################################################
 "`randomUniform##`"
-© Paul Boersma 2023
+© Paul Boersma 2023,2024
 
 A function that can be used in @@Formulas@.
 
@@ -3370,13 +3376,13 @@ Syntax and semantics
 #`randomUniform##` (%`nrow`, %`ncol`, %`min`, %`max`)
 : generate %`nrow` \xx %`ncol` independent uniformly distributed (@`randomUniform`) numbers.
 
-#`randomUniform##` (%`model#`, %`min`, %`max`)
-: create a matrix with the same number of rows and columns as %`model#`,
+#`randomUniform##` (%`model##`, %`min`, %`max`)
+: create a matrix with the same number of rows and columns as %`model##`,
 and fill all cells with independent uniformly distributed numbers.
 This is shorthand for doing
-`
-	\#{randomUniform##} (\`{numberOfRows} (model##), \`{numberOfColumns} (model##), %`min`, %`max`)
-`
+{;
+	\#{randomUniform##} (\`{numberOfRows} (\%{model##}), \`{numberOfColumns} (\%{model##}), \%{min}, \%{max})
+}
 ################################################################################
 "`random_initializeSafelyAndUnpredictably`"
 © Paul Boersma 2023
