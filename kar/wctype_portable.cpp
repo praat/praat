@@ -18,7 +18,6 @@
 
 #include "wctype_portable.h"
 #include "melder.h"
-#include <wctype.h>   // for debugging
 
 int iswalpha_portable (wint_t wc) {
 	return Melder_isLetter ((char32) wc);

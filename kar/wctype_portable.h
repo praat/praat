@@ -17,7 +17,14 @@
  */
 
 /*
-	This makes use of the Unicode Character Database.
+	The behaviour of several functions in `wctype.h` is locale-dependent.
+	Praat is international software in the sense that it should be able
+	to be used for exchange between researchers internationally.
+	This means that its behaviour should not depend on localized settings.
+	We therefore replace the `wctype.h` functions by fixed international ones,
+	making use of the Unicode Character Database,
+	with a fixed interpretation of the semantics of Unicode and scripts.
+	Any divergences will have to be expressed explicitly.
 */
 
 #include <wchar.h>
