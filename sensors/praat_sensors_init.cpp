@@ -91,7 +91,6 @@ DO
 		if (wantValleys)
 			praat_new (valleys.move(), my name.get(), U"_valleys");
 	CONVERT_EACH_TO_ONE_END (my name.get())
-
 }
 
 FORM (CONVERT_EACH_TO_ONE__Electroglottogram_derivative, U"Electroglottogram: Derivative", U"Electroglottogram: Derivative...") {

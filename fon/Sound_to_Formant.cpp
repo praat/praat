@@ -264,13 +264,6 @@ loopEnd:
 	return result;
 }
 
-static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
-	const double preEmphasis = exp (-2.0 * NUMpi * preEmphasisFrequency * my dx);
-	for (integer channel = 1; channel <= my ny; channel ++)
-		for (integer i = my nx; i >= 2; i --)
-			my z [channel] [i] -= preEmphasis * my z [channel] [i - 1];
-}
-
 void Formant_sort (Formant me) {
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		Formant_Frame frame = & my frames [iframe];
@@ -317,7 +310,7 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer
 	autoMelderProgress progress (U"Formant analysis...");
 
 	/* Pre-emphasis. */
-	Sound_preEmphasis (me, preemphasisFrequency);
+	Sound_preEmphasize_inplace (me, preemphasisFrequency);
 
 	/* Gaussian window. */
 	autoVEC window = raw_VEC (nsamp_window);

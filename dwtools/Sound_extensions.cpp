@@ -809,27 +809,6 @@ static autoSound Sound_derivative2 (Sound me, double lowPassFrequency, double sm
 		}
 }
 
-
-void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
-	if (preEmphasisFrequency >= 0.5 / my dx)
-		return;    // above Nyquist?
-	const double preEmphasis = exp (- NUM2pi * preEmphasisFrequency * my dx);
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		VEC s = my z.row (channel);
-		for (integer i = my nx; i >= 2; i --)
-			s [i] -= preEmphasis * s [i - 1];
-	}
-}
-
-void Sound_deEmphasis (Sound me, double deEmphasisFrequency) {
-	const double deEmphasis = exp (- NUM2pi * deEmphasisFrequency * my dx);
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		VEC s = my z.row (channel);
-		for (integer i = 2; i <= my nx; i ++)
-			s [i] += deEmphasis * s [i - 1];
-	}
-}
-
 autoSound Sound_createGaussian (double windowDuration, double samplingFrequency) {
 	try {
 		autoSound me = Sound_createSimple (1, windowDuration, samplingFrequency);
