@@ -18,7 +18,7 @@
 
 #include "Roots_to_Spectrum.h"
 
-autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numberOfFrequencies, double radius) {
+autoSpectrum Roots_to_Spectrum (constRoots me, double nyquistFrequency, integer numberOfFrequencies, double radius) {
 	try {
 		Melder_require (numberOfFrequencies > 1,
 			U"Number of frequencies should be greater than 1.");

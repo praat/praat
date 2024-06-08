@@ -35,7 +35,7 @@
 /* Evaluate polynomial and derivative jointly
 	c [1..n] -> degree n-1 !!
 */
-void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *out_f, double *out_df) {
+void Polynomial_evaluateWithDerivative (constPolynomial me, double x, double *out_f, double *out_df) {
 	longdouble p = my coefficients [my numberOfCoefficients], dp = 0.0;
 
 	for (integer i = my numberOfCoefficients - 1; i > 0; i --) {
@@ -48,7 +48,7 @@ void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *out_f, 
 		*out_df = (double) dp;
 }
 
-autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDerivatives) {
+autoVEC Polynomial_evaluateDerivatives (constPolynomial me, double x, long numberOfDerivatives) {
 	/* 
 		Evaluate polynomial c [1]+c [2]*x+...degree*x^degree in derivative [1] and the numberOfDerivatives 
 		in derivatives in derivatives [2..numberOfDerivatives+1].
@@ -504,14 +504,14 @@ void Polynomial_divide_secondOrderFactor (Polynomial me, double factor) {
 	}
 }
 
-void Roots_setRoot (Roots me, integer index, double re, double im) {
+void Roots_setRoot (mutableRoots me, integer index, double re, double im) {
 	Melder_require (index >= 1 && index <= my numberOfRoots,
 		U"Index should be in interval [1, ", my numberOfRoots, U"].");
 	my roots [index]. real (re);
 	my roots [index]. imag (im);
 }
 
-dcomplex Roots_evaluate_z (Roots me, dcomplex z) {
+dcomplex Roots_evaluate_z (constRoots me, dcomplex z) {
 	dcomplex result = {1, 0};
 	for (integer i = 1; i <= my numberOfRoots; i ++) {
 		dcomplex t = dcomplex_sub (z, my roots [i]);
