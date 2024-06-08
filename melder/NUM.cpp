@@ -396,11 +396,12 @@ MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept {
 
 template <bool canError>
 double NUMmin (constVECVU const& vec) {   // propagate NaNs (including -inf and +inf)
-	if (NUMisEmpty (vec))
+	if (NUMisEmpty (vec)) {
 		if constexpr (canError)
 			Melder_throw (U"min_e: cannot determine the minimum of an empty vector.");
 		else
 			return undefined;
+	}
 	/*
 		The following procedure is the simplest, and possibly the best.
 
@@ -418,11 +419,12 @@ double NUMmin (constVECVU const& vec) {   // propagate NaNs (including -inf and 
 	double minimum = + std::numeric_limits<double>::infinity();
 	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
-		if (isundef (value))
+		if (isundef (value)) {
 			if constexpr (canError)
 				Melder_throw (U"min_e: cannot determine the minimum of a vector: element ", i, U" is undefined.");
 			else
 				return undefined;
+		}
 		if (value < minimum)
 			minimum = value;
 	}
@@ -448,12 +450,12 @@ double NUMmin_removeUndefined (constVECVU const& vec) {
 		This includes the case of a zero-sized vector.
 	*/
 	if (isundef (minimum))   // including the original infinity
-		if constexpr (canError)
+		if constexpr (canError) {
 			if (NUMisEmpty (vec))
 				Melder_throw (U"min_e: cannot determine the minimum of an empty vector.");
 			else
 				Melder_throw (U"min_e: cannot determine the minimum of a vector with only undefined elements.");
-		else
+		} else
 			return undefined;
 	return minimum;
 }
@@ -466,11 +468,12 @@ double NUMmin_removeUndefined_u (constVECVU const& vec) noexcept {
 
 template <bool canError>
 integer NUMmin (constINTVECVU const& vec) {
-	if (NUMisEmpty (vec))
+	if (NUMisEmpty (vec)) {
 		if constexpr (canError)
 			Melder_throw (U"min_e: cannot determine the minimum of an empty integer vector.");
 		else
 			return INTEGER_MAX;
+	}
 	integer minimum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const integer value = vec [i];
@@ -488,20 +491,22 @@ integer NUMmin_u (constINTVECVU const& vec) noexcept {
 
 template <bool canError>
 double NUMmin (constMATVU const& mat) {   // propagate NaNs (including -inf and +inf)
-	if (NUMisEmpty (mat))
+	if (NUMisEmpty (mat)) {
 		if constexpr (canError)
 			Melder_throw (U"min_e: cannot determine the minimum of an empty matrix.");
 		else
 			return undefined;
+	}
 	double minimum = + std::numeric_limits<double>::infinity();
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {
 			const double value = mat [irow] [icol];
-			if (isundef (value))
+			if (isundef (value)) {
 				if (canError)
 					Melder_throw (U"min_e: cannot determine the minimum of a matrix: element [", irow, U", ", icol, U"] is undefined.");
 				else
 					return undefined;
+			}
 			if (value < minimum)
 				minimum = value;
 		}
@@ -526,12 +531,12 @@ double NUMmin_removeUndefined (constMATVU const& mat) {
 		}
 	}
 	if (isundef (minimum))   // including the original infinity
-		if constexpr (canError)
+		if constexpr (canError) {
 			if (NUMisEmpty (mat))
 				Melder_throw (U"min_removeUndefined_e: cannot determine the minimum of an empty matrix.");
 			else
 				Melder_throw (U"min_removeUndefined_e: cannot determine the minimum of a matrix with only undefined cells.");
-		else
+		} else
 			return undefined;
 	return minimum;
 }
@@ -544,19 +549,21 @@ double NUMmin_removeUndefined_u (constMATVU const& mat) noexcept {
 
 template <bool canError>
 double NUMmax (constVECVU const& vec) {   // propagate NaNs (including -inf and +inf)
-	if (NUMisEmpty (vec))
+	if (NUMisEmpty (vec)) {
 		if constexpr (canError)
 			Melder_throw (U"max_e: cannot determine the maximum of an empty vector.");
 		else
 			return undefined;
+	}
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
-		if (isundef (value))
+		if (isundef (value)) {
 			if constexpr (canError)
 				Melder_throw (U"max_e: cannot determine the maximum of a vector: element ", i, U" is undefined.");
 			else
 				return undefined;
+		}
 		if (value > maximum)
 			maximum = value;
 	}
@@ -578,12 +585,12 @@ double NUMmax_removeUndefined (constVECVU const& vec) {
 			maximum = value;
 	}
 	if (isundef (maximum))   // including the original -infinity
-		if constexpr (canError)
+		if constexpr (canError) {
 			if (NUMisEmpty (vec))
 				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of an empty vector.");
 			else
 				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of a vector with only undefined elements.");
-		else
+		} else
 			return undefined;
 	return maximum;
 }
@@ -596,11 +603,12 @@ double NUMmax_removeUndefined_u (constVECVU const& vec) noexcept {
 
 template <bool canError>
 integer NUMmax (constINTVECVU const& vec) {
-	if (NUMisEmpty (vec))
+	if (NUMisEmpty (vec)) {
 		if constexpr (canError)
 			Melder_throw (U"max_e: cannot determine the maximum of an empty integer vector.");
 		else
 			return INTEGER_MIN;
+	}
 	integer maximum = vec [1];
 	for (integer i = 2; i <= vec.size; i ++) {
 		const integer value = vec [i];
@@ -618,20 +626,22 @@ integer NUMmax_u (constINTVECVU const& vec) noexcept {
 
 template <bool canError>
 double NUMmax (constMATVU const& mat) {   // propagate NaNs (including -inf and +inf)
-	if (NUMisEmpty (mat))
+	if (NUMisEmpty (mat)) {
 		if constexpr (canError)
 			Melder_throw (U"max_e: cannot determine the maximum of an empty matrix.");
 		else
 			return undefined;
+	}
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {
 			const double value = mat [irow] [icol];
-			if (isundef (value))
+			if (isundef (value)) {
 				if constexpr (canError)
 					Melder_throw (U"max_e: cannot determine the maximum of a matrix: element [", irow, U", ", icol, U"] is undefined.");
 				else
 					return undefined;
+			}
 			if (value > maximum)
 				maximum = value;
 		}
@@ -656,12 +666,12 @@ double NUMmax_removeUndefined (constMATVU const& mat) {
 		}
 	}
 	if (isundef (maximum))   // including the original -infinity
-		if constexpr (canError)
+		if constexpr (canError) {
 			if (NUMisEmpty (mat))
 				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of an empty matrix.");
 			else
 				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of a matrix with only undefined cells.");
-		else
+		} else
 			return undefined;
 	return maximum;
 }
@@ -674,20 +684,22 @@ double NUMmax_removeUndefined_u (constMATVU const& mat) noexcept {
 
 template <bool canError>
 MelderRealRange NUMextrema (constVECVU const& vec) {
-	if (NUMisEmpty (vec))
+	if (NUMisEmpty (vec)) {
 		if constexpr (canError)
 			Melder_throw (U"extrema_e: cannot compute the extrema of an empty vector.");
 		else
 			return { undefined, undefined };
+	}
 	double minimum = + std::numeric_limits<double>::infinity();
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer i = 1; i <= vec.size; i ++) {
 		const double value = vec [i];
-		if (isundef (value))
+		if (isundef (value)) {
 			if constexpr (canError)
 				Melder_throw (U"extrema_e: cannot compute the extrema of a vector: element ", i, U" is undefined.");
 			else
 				return { undefined, undefined };
+		}
 		if (value < minimum)
 			minimum = value;
 		if (value > maximum)
@@ -704,21 +716,23 @@ MelderRealRange NUMextrema_u (constVECVU const& vec) noexcept {
 
 template <bool canError>
 MelderRealRange NUMextrema (constMATVU const& mat) {
-	if (NUMisEmpty (mat))
+	if (NUMisEmpty (mat)) {
 		if constexpr (canError)
 			Melder_throw (U"extrema_e: cannot compute the extrema of an empty matrix.");
 		else
 			return { undefined, undefined };
+	}
 	double minimum = + std::numeric_limits<double>::infinity();
 	double maximum = - std::numeric_limits<double>::infinity();
 	for (integer irow = 1; irow <= mat.nrow; irow ++) {
 		for (integer icol = 1; icol <= mat.ncol; icol ++) {
 			const double value = mat [irow] [icol];
-			if (isundef (value))
+			if (isundef (value)) {
 				if constexpr (canError)
 					Melder_throw (U"extrema_e: cannot the compute extrema of a matrix: element [", irow, U", ", icol, U"] is undefined.");
 				else
 					return { undefined, undefined };
+			}
 			if (value < minimum)
 				minimum = value;
 			if (value > maximum)
@@ -736,11 +750,12 @@ MelderRealRange NUMextrema_u (constMATVU const& mat) noexcept {
 
 template <bool canError>
 MelderIntegerRange NUMextrema (constINTVECVU const& vec) {
-	if (NUMisEmpty (vec))
+	if (NUMisEmpty (vec)) {
 		if constexpr (canError)
 			Melder_throw (U"extrema_e: cannot compute the extrema of an empty integer vector.");
 		else
 			return { INTEGER_MIN, INTEGER_MAX };
+	}
 	integer minimum = vec [1], maximum = minimum;
 	for (integer i = 2; i <= vec.size; i ++) {
 		const integer value = vec [i];

@@ -475,11 +475,12 @@ int structManual :: v_goToPage (conststring32 title) {
 		return 0;
 	} else {
 		const integer i = ManPages_lookUp (our manPages(), title);
-		if (i == 0)
+		if (i == 0) {
 			if (title [0] == U'`')
 				Melder_throw (U"Page ", title, U" not found.");
 			else
 				Melder_throw (U"Page “", title, U"” not found.");
+		}
 		our v_goToPage_number (i);
 		return 1;
 	}
