@@ -23,15 +23,15 @@
 
 #include "SampledAnalysisWorkspace_def.h"
 
-void SampledAnalysisWorkspace_init (SampledAnalysisWorkspace me, Sampled input, Sampled output);
+void SampledAnalysisWorkspace_init (mutableSampledAnalysisWorkspace me, constSampled input, mutableSampled output);
 
-autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (Sampled input, Sampled output);
+autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (constSampled input, mutableSampled output);
 
-void SampledAnalysisWorkspace_initWorkvectorPool (SampledAnalysisWorkspace me, INTVEC const& vectorSizes);
+void SampledAnalysisWorkspace_initWorkvectorPool (mutableSampledAnalysisWorkspace me, constINTVEC const& vectorSizes);
 
-void SampledAnalysisWorkspace_getThreadingInfo (SampledAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
+void SampledAnalysisWorkspace_getThreadingInfo (constSampledAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
 
-void SampledAnalysisWorkspace_replaceOutput (SampledAnalysisWorkspace me, Sampled thee);
+void SampledAnalysisWorkspace_replaceOutput (mutableSampledAnalysisWorkspace me, mutableSampled thee);
 /*
 	Preconditions:
 		my output -> xmin == thy xmin
@@ -41,7 +41,7 @@ void SampledAnalysisWorkspace_replaceOutput (SampledAnalysisWorkspace me, Sample
 		my output -> x1   == thy x1
 */
 
-void SampledAnalysisWorkspace_replaceInput (SampledAnalysisWorkspace me, Sampled input);
+void SampledAnalysisWorkspace_replaceInput (mutableSampledAnalysisWorkspace me, constSampled input);
 /*
 	Preconditions:
 		my output -> xmin == thy xmin
@@ -51,7 +51,7 @@ void SampledAnalysisWorkspace_replaceInput (SampledAnalysisWorkspace me, Sampled
 		my output -> x1   == thy x1
 */
 
-void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me);
+void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace me);
 
 #endif /* _SampledAnalysisWorkspace_h_ */
  

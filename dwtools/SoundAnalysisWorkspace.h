@@ -23,17 +23,15 @@
 
 #include "SoundAnalysisWorkspace_def.h"
 
-void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+void SoundAnalysisWorkspace_init (mutableSoundAnalysisWorkspace me, constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
-autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
-//void SoundAnalysisWorkspace_initExtraAnalysisData (SoundAnalysisWorkspace me, ExtraAnalysisData thee);
+void SoundAnalysisWorkspace_initWorkvectorPool (mutableSoundAnalysisWorkspace me, constINTVEC const& vectorSizes);
 
-void SoundAnalysisWorkspace_initWorkvectorPool (SoundAnalysisWorkspace me, INTVEC const& vectorSizes);
+void SoundAnalysisWorkspace_getThreadingInfo (constSoundAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
 
-void SoundAnalysisWorkspace_getThreadingInfo (SoundAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
-
-void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee);
+void SoundAnalysisWorkspace_replaceSound (mutableSoundAnalysisWorkspace me, constSound thee);
 /*
 	Preconditions: 
 		my sound->xmin/xmax = thy xmin/xmax
@@ -42,11 +40,9 @@ void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee)
 		my sound->x1 = thy x1
 */
 
-void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound thee, double preEmphasisFrequency);
+void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, constSound thee, double preEmphasisFrequency);
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape);
-
-void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound thee, double preEmphasisFrequency);
 
 #endif /* _SoundAnalysisWorkspace_h_ */
  

@@ -46,13 +46,13 @@ void SoundAnalysisWorkspace_initWorkvectorPool (SoundAnalysisWorkspace me, INTVE
 
 Thing_implement (SoundAnalysisWorkspace, Daata, 0);
 
-integer structSoundAnalysisWorkspace :: getAnalysisFrameSize_uneven (SoundAnalysisWorkspace me, double approximatePhysicalAnalysisWidth) {
+integer structSoundAnalysisWorkspace :: getAnalysisFrameSize_uneven (constSoundAnalysisWorkspace me, double approximatePhysicalAnalysisWidth) {
 	const double halfFrameDuration = 0.5 * approximatePhysicalAnalysisWidth;
 	const integer halfFrameSamples = Melder_ifloor (halfFrameDuration / my input -> dx);
 	return 2 * halfFrameSamples + 1;
 }
 
-void getInputFrame_sound (SampledAnalysisWorkspace ws, integer iframe) {
+void getInputFrame_sound (mutableSampledAnalysisWorkspace ws, integer iframe) {
 	SoundAnalysisWorkspace me = reinterpret_cast<SoundAnalysisWorkspace> (ws);
 	constSound sound = reinterpret_cast<constSound> (my input);
 	const double midTime = Sampled_indexToX (my output, iframe);
@@ -73,7 +73,7 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 	return physicalAnalysisWidth;
 }
 
-void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound input, Sampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+void SoundAnalysisWorkspace_init (mutableSoundAnalysisWorkspace me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
 	Melder_assert (input -> xmin == output -> xmin && input -> xmax == output -> xmax); // equal domains
 	SampledAnalysisWorkspace_init (me, input, output);
 	my windowShape = windowShape;
@@ -85,7 +85,7 @@ void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound input, Sample
 	windowShape_into_VEC (windowShape, my windowFunction.get());
 }
 
-autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
 	try {
 		autoSoundAnalysisWorkspace me = Thing_new (SoundAnalysisWorkspace);
 		SoundAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
@@ -95,11 +95,11 @@ autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (Sound thee, Sampled hi
 	}
 }
 
-void SoundAnalysisWorkspace_replaceSound (SoundAnalysisWorkspace me, Sound thee) {
+void SoundAnalysisWorkspace_replaceSound (mutableSoundAnalysisWorkspace me, Sound thee) {
 	SampledAnalysisWorkspace_replaceInput (me, thee);
 }
 
-void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound thee, double preEmphasisFrequency) {
+void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, constSound thee, double preEmphasisFrequency) {
 	Melder_assert (my input == thee);
 	
 	autoSound sound;

@@ -42,14 +42,14 @@
 #include "SampledAnalysisWorkspace_def.h"
 
 
-void SampledAnalysisWorkspace_initWorkvectorPool (SampledAnalysisWorkspace me, INTVEC const& vectorSizes) {
+void SampledAnalysisWorkspace_initWorkvectorPool (mutableSampledAnalysisWorkspace me, constINTVEC const& vectorSizes) {
 	Melder_assert (vectorSizes.size > 0);
 	my workvectorPool = WorkvectorPool_create (vectorSizes, true);
 }
 
 Thing_implement (SampledAnalysisWorkspace, Daata, 0);
 
-void structSampledAnalysisWorkspace :: analyseManyInputFrames (SampledAnalysisWorkspace me, integer fromFrame, integer toFrame) {
+void structSampledAnalysisWorkspace :: analyseManyInputFrames (mutableSampledAnalysisWorkspace me, integer fromFrame, integer toFrame) {
 	my globalFrameErrorCount = 0;
 	for (integer iframe = fromFrame; iframe <= toFrame; iframe ++) {
 		my currentFrame = iframe;
@@ -60,15 +60,20 @@ void structSampledAnalysisWorkspace :: analyseManyInputFrames (SampledAnalysisWo
 	}	
 }
 
-void SampledAnalysisWorkspace_init (SampledAnalysisWorkspace me, Sampled input, Sampled output) {
+inline void getInputFrame (mutableSampledAnalysisWorkspace /* me */, integer /* iframe */) {
+	return;
+}
+
+void SampledAnalysisWorkspace_init (mutableSampledAnalysisWorkspace me, constSampled input, mutableSampled output) {
 	Melder_assert (input -> xmin == output -> xmin && input -> xmax == output -> xmax); // equal domains
 	my input = input;
 	my output = output;
-	my useMultiThreading = true;
+	my getInputFrame = getInputFrame;
+	my useMultiThreading = ( Melder_debug != -8 ? true : false );
 	my minimumNumberOfFramesPerThread = 40;
 }
 
-autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (Sound input, Sampled output) {
+autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (constSound input, mutableSampled output) {
 	try {
 		autoSampledAnalysisWorkspace me = Thing_new (SampledAnalysisWorkspace);
 		SampledAnalysisWorkspace_init (me.get(), input, output);
@@ -78,14 +83,14 @@ autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (Sound input, Sampl
 	}
 }
 
-void SampledAnalysisWorkspace_replaceInput (SampledAnalysisWorkspace me, Sampled thee) {
+void SampledAnalysisWorkspace_replaceInput (mutableSampledAnalysisWorkspace me, constSampled thee) {
 	Melder_assert (my input -> xmin == thy xmin && my input -> xmax == thy xmax); // equal domains
 	Melder_assert (my input -> x1 == thy x1 && my input -> nx == thy nx); // + equal sampling
 	Melder_assert (my input -> dx == thy dx);
 	my input = thee;
 }
 
-void SampledAnalysisWorkspace_replaceOutput (SampledAnalysisWorkspace me, Sampled thee) {
+void SampledAnalysisWorkspace_replaceOutput (mutableSampledAnalysisWorkspace me, mutableSampled thee) {
 	Melder_assert (my output -> xmin == thy xmin && my output -> xmax == thy xmax); // equal domains
 	Melder_assert (my output -> x1 == thy x1 && my output -> nx == thy nx); // + equal sampling
 	Melder_assert (my output -> dx == thy dx);
@@ -93,13 +98,11 @@ void SampledAnalysisWorkspace_replaceOutput (SampledAnalysisWorkspace me, Sample
 }
 
 
-void SampledAnalysisWorkspace_getThreadingInfo (SampledAnalysisWorkspace me, integer *out_numberOfThreads) {
+void SampledAnalysisWorkspace_getThreadingInfo (constSampledAnalysisWorkspace me, integer *out_numberOfThreads) {
 	const integer numberOfProcessors = std::thread::hardware_concurrency ();
 	/*
 		Our processes are compute bound, therefore it probably makes no sense to start more than two threads on one processor
 	*/
-	if (my minimumNumberOfFramesPerThread <= 0)
-		my minimumNumberOfFramesPerThread = 40;
 	integer maximumNumberOfThreads = 2 * numberOfProcessors;
 	if (my maximumNumberOfThreads > 0)
 		 maximumNumberOfThreads = std::min (my maximumNumberOfThreads, maximumNumberOfThreads);

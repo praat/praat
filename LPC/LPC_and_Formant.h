@@ -23,27 +23,26 @@
 #include "Roots.h"
 #include "Formant.h"
 
-#include "SampledAnalysisWorkspace_def.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantAnalysisWorkspace.h"
 
-autoFormant LPC_to_Formant (LPC me, double margin);
+autoFormant LPC_to_Formant (constLPC me, double margin);
 
-autoLPC Formant_to_LPC (Formant me, double samplingPeriod);
+autoLPC Formant_to_LPC (constFormant me, double samplingPeriod);
 
-void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin);
+void LPC_Frame_into_Formant_Frame (constLPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin);
 
 /*
 	No extra memory allocations
 	The workspace size is at least 
 */
-void LPC_Frame_into_Formant_Frame_mt (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin, Polynomial p, Roots r, VEC const& workspace);
+void LPC_Frame_into_Formant_Frame_mt (constLPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin, Polynomial p, Roots r, VEC const& workspace);
 
 
-void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod);
+void Formant_Frame_into_LPC_Frame (constFormant_Frame me, LPC_Frame thee, double samplingPeriod);
 
 void Formant_Frame_scale (Formant_Frame me, double scale);
 
-void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin);
+void Roots_into_Formant_Frame (constRoots me, Formant_Frame thee, double samplingFrequency, double margin);
 
 void Formant_Frame_init (Formant_Frame me, integer nFormants);
 

@@ -28,9 +28,9 @@
 #include "LPC.h"
 #include "Polynomial.h"
 
-autoPolynomial LPC_to_Polynomial (LPC me, double t);
+autoPolynomial LPC_to_Polynomial (constLPC me, double t);
 
-autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me);
-void LPC_Frame_into_Polynomial (LPC_Frame me, Polynomial p);
+autoPolynomial LPC_Frame_to_Polynomial (constLPC_Frame me);
+void LPC_Frame_into_Polynomial (constLPC_Frame me, mutablePolynomial p);
 
 #endif /* _LPC_and_Polynomial_h_ */
