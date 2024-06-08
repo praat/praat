@@ -72,16 +72,6 @@ autoSound Sound_derivative (Sound me, double lowPassFrequency, double smoothing,
 	The real derivative
 */
 
-void Sound_preEmphasis (Sound me, double preEmphasisFrequency);
-/*
-	Approximation of derivative by first order difference.
-	deEmphasis = exp(- 2 * NUMpi * deEmphasisFrequency * my dx);
-	for (i=my nx; i >=2; i-- ) my z [1] [i] -= preEmphasis * my z [1] [i-1];
-*/
-
-void Sound_deEmphasis (Sound me, double preEmphasisFrequency);
-/*	for (i=2; i <= my nx; i++ ) my z [1] [i] += deEmphasis * my z [1] [i-1]; */
-
 autoSound Sound_createGaussian (double windowDuration, double samplingFrequency);
 
 autoSound Sound_createHamming (double windowDuration, double samplingFrequency);

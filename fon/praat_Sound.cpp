@@ -589,8 +589,8 @@ FORM (MODIFY_Sound_deemphasizeInplace, U"Sound: De-emphasize (in-place)", U"Soun
 	REAL (fromFrequency, U"From frequency (Hz)", U"50.0")
 	OK
 DO
-	MODIFY_EACH (Sound)
-		Sound_deEmphasis (me, fromFrequency);
+	MODIFY_EACH (mutableSound)
+		Sound_deEmphasize_inplace (me, fromFrequency);
 		Vector_scale (me, 0.99);
 	MODIFY_EACH_END
 }
@@ -1135,7 +1135,7 @@ FORM (MODIFY_Sound_multiplyByWindow, U"Sound: Multiply by window", nullptr) {
 	OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", kSound_windowShape::HANNING)
 	OK
 DO
-	MODIFY_EACH (Sound)
+	MODIFY_EACH (mutableSound)
 		Sound_multiplyByWindow (me, windowShape);
 	MODIFY_EACH_END
 }
@@ -1144,7 +1144,7 @@ FORM (MODIFY_Sound_overrideSamplingFrequency, U"Sound: Override sampling frequen
 	POSITIVE (newSamplingFrequency, U"New sampling frequency (Hz)", U"16000.0")
 	OK
 DO
-	MODIFY_EACH (Sound)
+	MODIFY_EACH (mutableSound)
 		Sound_overrideSamplingFrequency (me, newSamplingFrequency);
 	MODIFY_EACH_END
 }
@@ -1160,7 +1160,7 @@ FORM (MODIFY_Sound_preemphasizeInplace, U"Sound: Pre-emphasize (in-place)", U"So
 	OK
 DO
 	MODIFY_EACH (Sound)
-		Sound_preEmphasis (me, fromFrequency);
+		Sound_preEmphasize_inplace (me, fromFrequency);
 		Vector_scale (me, 0.99);
 	MODIFY_EACH_END
 }

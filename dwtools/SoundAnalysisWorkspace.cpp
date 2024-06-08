@@ -106,7 +106,7 @@ void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound th
 	const double nyQuistFrequency = 0.5 / thy dx;
 	if (preEmphasisFrequency < nyQuistFrequency) {
 		sound = Data_copy (thee);
-		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
+		Sound_preEmphasize_inplace (sound.get(), preEmphasisFrequency);
 		SoundAnalysisWorkspace_replaceSound (me, sound.get());
 	}
 	SampledAnalysisWorkspace_analyseThreaded (me);

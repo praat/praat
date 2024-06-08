@@ -346,7 +346,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 		// Convenience: analyse the whole sound into one Cepstrogram_frame
 		const double samplingFrequency = 2.0 * maximumFrequency;
 		autoSound sound = Sound_resample (me, samplingFrequency, 50);
-		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
+		Sound_preEmphasize_inplace (sound.get(), preEmphasisFrequency);
 		double t1;
 		integer nFrames;
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
