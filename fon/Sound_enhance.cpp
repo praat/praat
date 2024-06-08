@@ -1,6 +1,6 @@
 /* Sound_enhance.cpp
  *
- * Copyright (C) 1992-2012,2015-2020,2023 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2020,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "Pitch_to_PointProcess.h"
 #include "Sound_and_Spectrum.h"
 
-autoSound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor) {
+autoSound Sound_lengthen_overlapAdd (constSound me, double fmin, double fmax, double factor) {
 	try {
 		if (my ny > 1)
 			Melder_throw (U"Overlap-add works only on mono sounds.");
@@ -49,7 +49,7 @@ autoSound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double 
 	}
 }
 
-autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
+autoSound Sound_deepenBandModulation (constSound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing)
 {
 	try {

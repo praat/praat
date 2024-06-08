@@ -1,6 +1,6 @@
 /* Sound_files.cpp
  *
- * Copyright (C) 1992-2018,2020,2022,2023 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2018,2020,2022-2024 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -411,7 +411,7 @@ autoSound Sound_readFromRawAlawFile (MelderFile file) {
 	}
 }
 
-void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
+void Sound_saveAsAudioFile (constSound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_iround_tieDown (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
@@ -423,7 +423,7 @@ void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int nu
 	}
 }
 
-void Sound_saveAsSesamFile (Sound me, MelderFile file) {
+void Sound_saveAsSesamFile (constSound me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
 		integer header [1 + 128];
@@ -463,7 +463,7 @@ void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 	}
 }
 
-void Sound_saveAsKayFile (Sound me, MelderFile file) {
+void Sound_saveAsKayFile (constSound me, MelderFile file) {
 	try {
 		Melder_require (my ny <= 8,
 			U"Cannot write more than 8 channels into a Kay sound file.");
@@ -538,7 +538,7 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 	}
 }
 
-void Sound_saveAsRawSoundFile (Sound me, MelderFile file, int encoding) {
+void Sound_saveAsRawSoundFile (constSound me, MelderFile file, int encoding) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeFloatToAudio (file, my z.get(), encoding, true);
