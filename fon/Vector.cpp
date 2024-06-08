@@ -1,6 +1,6 @@
 /* Vector.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2021,2023 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2021,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ integer kVector_peakInterpolation_to_interpolationDepth (kVector_peakInterpolati
 	Vector_getValueAtX () returns the interpolated value in channel `ilevel`,
 	or if `ilevel` == 0, then the average of all the interpolated channels.
 */
-double Vector_getValueAtX (Vector me, double x, integer ilevel, kVector_valueInterpolation valueInterpolationType) {
+double Vector_getValueAtX (constVector me, double x, integer ilevel, kVector_valueInterpolation valueInterpolationType) {
 	const volatile double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;   // Sound_to_Polygon depends on this weird computation
 	if (x <  leftEdge || x > rightEdge)
 		return undefined;
@@ -180,7 +180,7 @@ double Vector_getValueAtX (Vector me, double x, integer ilevel, kVector_valueInt
 
 /***** Get shape. *****/
 
-void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channelNumber, kVector_peakInterpolation peakInterpolationType,
+void Vector_getMinimumAndX (constVector me, double xmin, double xmax, integer channelNumber, kVector_peakInterpolation peakInterpolationType,
 	double *out_minimum, double *out_xOfMinimum)
 {
 	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
@@ -229,7 +229,7 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 		*out_xOfMinimum = x;
 }
 
-void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
+void Vector_getMinimumAndXAndChannel (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
 	double *out_minimum, double *out_xOfMinimum, integer *out_channelOfMinimum)
 {
 	double minimum, xOfMinimum;
@@ -252,25 +252,25 @@ void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, kVect
 		*out_channelOfMinimum = channelOfMinimum;
 }
 
-double Vector_getMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
+double Vector_getMinimum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	double minimum;
 	Vector_getMinimumAndXAndChannel (me, xmin, xmax, peakInterpolationType, & minimum, nullptr, nullptr);
 	return minimum;
 }
 
-double Vector_getXOfMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
+double Vector_getXOfMinimum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	double xOfMinimum;
 	Vector_getMinimumAndXAndChannel (me, xmin, xmax, peakInterpolationType, nullptr, & xOfMinimum, nullptr);
 	return xOfMinimum;
 }
 
-integer Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
+integer Vector_getChannelOfMinimum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	integer channelOfMinimum;
 	Vector_getMinimumAndXAndChannel (me, xmin, xmax, peakInterpolationType, nullptr, nullptr, & channelOfMinimum);
 	return channelOfMinimum;
 }
 
-void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channelNumber, kVector_peakInterpolation peakInterpolationType,
+void Vector_getMaximumAndX (constVector me, double xmin, double xmax, integer channelNumber, kVector_peakInterpolation peakInterpolationType,
 	double *out_maximum, double *out_xOfMaximum)
 {
 	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
@@ -319,7 +319,7 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 		*out_xOfMaximum = x;
 }
 
-void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
+void Vector_getMaximumAndXAndChannel (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
 	double *out_maximum, double *out_xOfMaximum, integer *out_channelOfMaximum)
 {
 	double maximum, xOfMaximum;
@@ -342,25 +342,25 @@ void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, kVect
 		*out_channelOfMaximum = channelOfMaximum;
 }
 
-double Vector_getMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
+double Vector_getMaximum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	double maximum;
 	Vector_getMaximumAndXAndChannel (me, xmin, xmax, peakInterpolationType, & maximum, nullptr, nullptr);
 	return maximum;
 }
 
-double Vector_getXOfMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
+double Vector_getXOfMaximum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	double xOfMaximum;
 	Vector_getMaximumAndXAndChannel (me, xmin, xmax, peakInterpolationType, nullptr, & xOfMaximum, nullptr);
 	return xOfMaximum;
 }
 
-integer Vector_getChannelOfMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
+integer Vector_getChannelOfMaximum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	integer channelOfMaximum;
 	Vector_getMaximumAndXAndChannel (me, xmin, xmax, peakInterpolationType, nullptr, nullptr, & channelOfMaximum);
 	return channelOfMaximum;
 }
 
-double Vector_getAbsoluteExtremum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
+double Vector_getAbsoluteExtremum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	const double minimum = Vector_getMinimum (me, xmin, xmax, peakInterpolationType);
 	const double maximum = Vector_getMaximum (me, xmin, xmax, peakInterpolationType);
 	return std::max (fabs (minimum), fabs (maximum));
@@ -368,11 +368,11 @@ double Vector_getAbsoluteExtremum (Vector me, double xmin, double xmax, kVector_
 
 /***** Get statistics. *****/
 
-double Vector_getMean (Vector me, double xmin, double xmax, integer channel) {
+double Vector_getMean (constVector me, double xmin, double xmax, integer channel) {
 	return Sampled_getMean (me, xmin, xmax, channel, 0, true);
 }
 
-double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer ilevel) {
+double Vector_getStandardDeviation (constVector me, double xmin, double xmax, integer ilevel) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer imin, imax, n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
 	if (n < 2)
@@ -401,22 +401,22 @@ double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer
 
 /***** Modify. *****/
 
-void Vector_addScalar (Vector me, double scalar) {
+void Vector_addScalar (mutableVector me, double scalar) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++)
 		my channel (ichan)  +=  scalar;
 }
 
-void Vector_subtractMean (Vector me) {
+void Vector_subtractMean (mutableVector me) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++)
 		centre_VEC_inout (my channel (ichan));
 }
 
-void Vector_multiplyByScalar (Vector me, double scalar) {
+void Vector_multiplyByScalar (mutableVector me, double scalar) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++)
 		my channel (ichan)  *=  scalar;
 }
 
-void Vector_scale (Vector me, double scale) {
+void Vector_scale (mutableVector me, double scale) {
 	const double extremum = NUMextremum_e (my z.get());
 	if (extremum != 0.0)
 		Vector_multiplyByScalar (me, scale / extremum);
@@ -424,7 +424,7 @@ void Vector_scale (Vector me, double scale) {
 
 /***** Graphics. *****/
 
-void Vector_draw (Vector me, Graphics graphics, double *pxmin, double *pxmax, double *pymin, double *pymax,
+void Vector_draw (constVector me, Graphics graphics, double *pxmin, double *pxmax, double *pymin, double *pymax,
 	double defaultDy, conststring32 method)
 {
 	const bool xreversed = ( *pxmin > *pxmax ), yreversed = ( *pymin > *pymax );

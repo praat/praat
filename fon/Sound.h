@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2005,2006-2008,2010-2019,2021-2023 Paul Boersma
+ * Copyright (C) 1992-2005,2006-2008,2010-2019,2021-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,10 +97,10 @@ autoSound Sound_createSimple (integer numberOfChannels, double duration, double 
 		thy z [i] [1..nx] == 0.0;
 */
 
-autoSound Sound_convertToMono (Sound me);
-autoSound Sound_convertToStereo (Sound me);
-autoSound Sound_extractChannel (Sound me, integer ichannel);
-autoSound Sound_extractChannels (Sound me, constINTVECVU const& channelNumbers);
+autoSound Sound_convertToMono (constSound me);
+autoSound Sound_convertToStereo (constSound me);
+autoSound Sound_extractChannel (constSound me, integer ichannel);
+autoSound Sound_extractChannels (constSound me, constINTVECVU const& channelNumbers);
 autoSound Sounds_combineToStereo (OrderedOf<structSound>* me);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */
@@ -108,16 +108,16 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me);
 #define Sound_LEVEL_LEFT  1
 #define Sound_LEVEL_RIGHT  2
 
-autoSound Sound_upsample (Sound me);   /* By a factor 2. */
+autoSound Sound_upsample (constSound me);   /* By a factor 2. */
 
-autoSound Sound_resample (Sound me, double samplingFrequency, integer precision);
+autoSound Sound_resample (constSound me, double samplingFrequency, integer precision);
 /*
 	Method:
 		precision <= 1: linear interpolation.
 		precision >= 2: sinx/x interpolation with maximum depth equal to 'precision'.
 */
 
-autoSound Sounds_append (Sound me, double silenceDuration, Sound thee);
+autoSound Sounds_append (constSound me, double silenceDuration, constSound thee);
 /*
 	Function:
 		append two Sounds.
@@ -135,7 +135,7 @@ autoSound Sounds_append (Sound me, double silenceDuration, Sound thee);
 		result -> z [1] [i + my nx + Melder_iround (silenceDuration / my dx)] == thy z [1] [i]
 */
  
-autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sounds_convolve (constSound me, constSound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 /*
 	Function:
 		convolve two Sounds.
@@ -151,19 +151,19 @@ autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scalin
 			result -> z [1] [i] == result -> dx *
 				sum (j = 1..i, my z [1] [j] * thy z [1] [i - j + 1])
 */
-autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
-autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, bool normalize);
-autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sounds_crossCorrelate (constSound me, constSound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sounds_crossCorrelate_short (constSound me, constSound thee, double tmin, double tmax, bool normalize);
+autoSound Sound_autoCorrelate (constSound me, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 
-double Sound_getRootMeanSquare (Sound me, double xmin, double xmax);
-double Sound_getEnergy (Sound me, double xmin, double xmax);
-double Sound_getPower (Sound me, double xmin, double xmax);
-double Sound_getEnergyInAir (Sound me);
-double Sound_getPowerInAir (Sound me);
-double Sound_getIntensity_dB (Sound me);
+double Sound_getRootMeanSquare (constSound me, double xmin, double xmax);
+double Sound_getEnergy (constSound me, double xmin, double xmax);
+double Sound_getPower (constSound me, double xmin, double xmax);
+double Sound_getEnergyInAir (constSound me);
+double Sound_getPowerInAir (constSound me);
+double Sound_getIntensity_dB (constSound me);
 
-double Sound_getNearestZeroCrossing (Sound me, double position, integer ichannel);
-void Sound_setZero (Sound me, double tmin, double tmax, bool roundTimesToNearestZeroCrossing);
+double Sound_getNearestZeroCrossing (constSound me, double position, integer ichannel);
+void Sound_setZero (mutableSound me, double tmin, double tmax, bool roundTimesToNearestZeroCrossing);
 
 autoSound Sound_createAsPureTone (integer numberOfChannels, double startingTime, double endTime,
 	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration);
@@ -174,33 +174,33 @@ autoSound Sound_createAsToneComplex (double startingTime, double endTime,
 #define Sound_TONE_COMPLEX_SINE  0
 #define Sound_TONE_COMPLEX_COSINE  1
 
-void Sound_multiplyByWindow (Sound me, kSound_windowShape windowShape);
-void Sound_scaleIntensity (Sound me, double newAverageIntensity);
-void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);
-autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
-autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overlap);
-void Sound_filterWithFormants (Sound me, double tmin, double tmax,
-	int numberOfFormants, double formant [], double bandwidth []);
-autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth);
-void Sound_filterWithOneFormantInplace (Sound me, double frequency, double bandwidth);
-autoSound Sound_filter_preemphasis (Sound me, double frequency);
-autoSound Sound_filter_deemphasis (Sound me, double frequency);
+void Sound_multiplyByWindow (mutableSound me, kSound_windowShape windowShape);
+void Sound_scaleIntensity (mutableSound me, double newAverageIntensity);
+void Sound_overrideSamplingFrequency (mutableSound me, double newSamplingFrequency);
+autoSound Sound_extractPart (constSound me, double t1, double t2, kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
+autoSound Sound_extractPartForOverlap (constSound me, double t1, double t2, double overlap);
+void Sound_filterWithFormants (mutableSound me, double tmin, double tmax,
+		int numberOfFormants, double formant [], double bandwidth []);
+autoSound Sound_filter_oneFormant (constSound me, double frequency, double bandwidth);
+void Sound_filterWithOneFormantInplace (mutableSound me, double frequency, double bandwidth);
+autoSound Sound_filter_preemphasis (constSound me, double frequency);
+autoSound Sound_filter_deemphasis (constSound me, double frequency);
 
-void Sound_reverse (Sound me, double tmin, double tmax);
+void Sound_reverse (mutableSound me, double tmin, double tmax);
 
-void Sound_draw (Sound me, Graphics g,
+void Sound_draw (constSound me, Graphics g,
 	double tmin, double tmax, double minimum, double maximum, bool garnish, conststring32 method);
 /* For method, see Vector_draw. */
 
-autoMatrix Sound_to_Matrix (Sound me);
+autoMatrix Sound_to_Matrix (constSound me);
 /*
 	Create a Matrix from a Sound,
 	with deep copy of all its Matrix attributes, except class information and methods.
 */
 
-autoSound Matrix_to_Sound (Matrix me);
+autoSound Matrix_to_Sound (constMatrix me);
 
-autoSound Matrix_to_Sound_mono (Matrix me, integer row);
+autoSound Matrix_to_Sound_mono (constMatrix me, integer row);
 /*
 	Function:
 		create a Sound from one row of a Matrix.
@@ -260,7 +260,7 @@ autoSound Sound_record_fixedTime (int inputSource,
 
 typedef MelderCallback <int, structThing /* boss */, int /* phase */, double /* tmin */, double /* tmax */, double /* t */> Sound_PlayCallback;
 
-void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback playCallback, Thing playBoss);
+void Sound_playPart (constSound me, double tmin, double tmax, Sound_PlayCallback playCallback, Thing playBoss);
 /*
  * Play a sound. The playing can be interrupted with the Escape key (also Command-period on the Mac).
  * If playCallback is not null, Sound_play will call it repeatedly, with five parameters:
@@ -293,16 +293,16 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback play
  *
  * Sound_playPart () usually runs asynchronously, and kills an already playing sound.
  */
-void Sound_play (Sound me, Sound_PlayCallback playCallback, Thing playBoss);
+void Sound_play (constSound me, Sound_PlayCallback playCallback, Thing playBoss);
 	/* The same as Sound_playPart (me, my xmin, my xmax, playCallback, playBoss); */
 
 /********** Sound_files.cpp **********/
 
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
-void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
-void Sound_saveAsKayFile (Sound me, MelderFile file);   // 16-bit
-void Sound_saveAsSesamFile (Sound me, MelderFile file);   // 12-bit SESAM/LVS
+void Sound_saveAsAudioFile (constSound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
+void Sound_saveAsKayFile (constSound me, MelderFile file);   // 16-bit
+void Sound_saveAsSesamFile (constSound me, MelderFile file);   // 12-bit SESAM/LVS
 
 autoSound Sound_readFromSoundFile (MelderFile file);   // AIFF, WAV, NeXT/Sun, or NIST
 autoDaata Sound_readFromAnyKayFile (MelderFile file);   // 16-bit
@@ -323,7 +323,7 @@ autoSound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberO
 	'numberOfChannels' is 1 (mono) or 2 (stereo)
 	'sampleRate' is in hertz
 */
-void Sound_saveAsRawSoundFile (Sound me, MelderFile file, int encoding);
+void Sound_saveAsRawSoundFile (constSound me, MelderFile file, int encoding);
 /*
 	'encoding' is any of the following:
 		Melder_LINEAR_8_SIGNED
@@ -335,8 +335,8 @@ void Sound_saveAsRawSoundFile (Sound me, MelderFile file, int encoding);
 
 /********** Sound_enhance.cpp **********/
 
-autoSound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor);
-autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
+autoSound Sound_lengthen_overlapAdd (constSound me, double fmin, double fmax, double factor);
+autoSound Sound_deepenBandModulation (constSound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing);
 
 /*

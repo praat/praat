@@ -779,7 +779,7 @@ void Matrix_formula_part (const mutableMatrix me, double xmin, double xmax, doub
 	}
 }
 
-void Matrix_scaleAbsoluteExtremum (const constMatrix me, const double scale) {
+void Matrix_scaleAbsoluteExtremum (const mutableMatrix me, const double scale) {
 	double extremum = 0.0;
 	for (integer i = 1; i <= my ny; i ++)
 		for (integer j = 1; j <= my nx; j ++)
