@@ -166,7 +166,7 @@ void Melder_includeIncludeFiles (autostring32 *inout_text, bool onlyInCodeChunks
 					continue;   // if the text starts with "include", it cannot be within a code chunk
 				integer braceDepth = 0;
 				for (const char32 *p = head; p != includeLocation; p ++)
-					if (*p == U'\n')
+					if (*p == U'\n') {
 						if (p [1] == U'{') {
 							if (braceDepth > 0)
 								Melder_throw (U"Opening brace within a code chunk. Don't know whether or not to include an include file.");
@@ -176,6 +176,7 @@ void Melder_includeIncludeFiles (autostring32 *inout_text, bool onlyInCodeChunks
 								Melder_throw (U"Closing brace outside a code chunk. Don't know whether or not to include an include file.");
 							braceDepth -= 1;
 						}
+					}
 				if (braceDepth == 0) {
 					head = includeLocation + 8;
 					continue;
@@ -313,12 +314,13 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				Melder_throw (U"The title of a form should start with a double quote character (\").");
 			char32* p = dialogTitle + 1;   // BUG: could be const (change Melder_skipHorizontalSpace())
 			for (; p < endOfLine; p ++) {
-				if (*p == U'"')
+				if (*p == U'"') {
 					if (p [1] == U'"') {
 						p ++;
 						continue;
 					} else
 						break;
+				}
 				MelderString_appendCharacter (& string, *p);
 			}
 			if (*p != U'"')
@@ -512,12 +514,13 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					}
 					p ++;   // skip opening quote
 					for (; p < endOfLine; p ++) {
-						if (*p == U'"')
+						if (*p == U'"') {
 							if (p [1] == U'"') {   // look ahead
 								p ++;
 								continue;
 							} else
 								break;
+						}
 						MelderString_appendCharacter (& string, *p);
 					}
 					if (*p != U'"') {
@@ -562,12 +565,13 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				}
 				p ++;   // skip opening quote
 				for (; p < endOfLine; p ++) {
-					if (*p == U'"')
+					if (*p == U'"') {
 						if (p [1] == U'"') {   // look ahead
 							p ++;
 							continue;
 						} else
 							break;
+					}
 					MelderString_appendCharacter (& string, *p);
 				}
 				if (*p != U'"') {
@@ -618,12 +622,13 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					}
 					p ++;   // skip opening quote
 					for (; p < endOfLine; p ++) {
-						if (*p == U'"')
+						if (*p == U'"') {
 							if (p [1] == U'"') {
 								p ++;
 								continue;
 							} else
 								break;
+						}
 						MelderString_appendCharacter (& string, *p);
 					}
 					if (*p != U'"') {

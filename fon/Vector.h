@@ -2,7 +2,7 @@
 #define _Vector_h_
 /* Vector.h
  *
- * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2020,2023 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2020,2023,2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,33 +49,33 @@ integer kVector_peakInterpolation_to_interpolationDepth (kVector_peakInterpolati
 #define Vector_CHANNEL_AVERAGE  0
 #define Vector_CHANNEL_1  1
 #define Vector_CHANNEL_2  2
-double Vector_getValueAtX (Vector me, double x, integer channel, kVector_valueInterpolation valueInterpolationType);
+double Vector_getValueAtX (constVector me, double x, integer channel, kVector_valueInterpolation valueInterpolationType);
 
-void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel, kVector_peakInterpolation peakInterpolationType,
+void Vector_getMinimumAndX (constVector me, double xmin, double xmax, integer channel, kVector_peakInterpolation peakInterpolationType,
 	double *return_minimum, double *return_xOfMinimum);
-void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
+void Vector_getMinimumAndXAndChannel (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
 	double *return_minimum, double *return_xOfMinimum, integer *return_channelOfMinimum);
-void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel, kVector_peakInterpolation peakInterpolationType,
+void Vector_getMaximumAndX (constVector me, double xmin, double xmax, integer channel, kVector_peakInterpolation peakInterpolationType,
 	double *return_maximum, double *return_xOfMaximum);
-void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
+void Vector_getMaximumAndXAndChannel (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
 	double *return_maximum, double *return_xOfMaximum, integer *return_channelOfMaximum);
-double Vector_getMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
-double Vector_getMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
-double Vector_getAbsoluteExtremum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
-double Vector_getXOfMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
-double Vector_getXOfMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
-integer Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
-integer Vector_getChannelOfMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
+double Vector_getMinimum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
+double Vector_getMaximum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
+double Vector_getAbsoluteExtremum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
+double Vector_getXOfMinimum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
+double Vector_getXOfMaximum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
+integer Vector_getChannelOfMinimum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
+integer Vector_getChannelOfMaximum (constVector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType);
 
-double Vector_getMean (Vector me, double xmin, double xmax, integer channel);
-double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer channel);
+double Vector_getMean (constVector me, double xmin, double xmax, integer channel);
+double Vector_getStandardDeviation (constVector me, double xmin, double xmax, integer channel);
 
-void Vector_addScalar (Vector me, double scalar);
-void Vector_subtractMean (Vector me);
-void Vector_multiplyByScalar (Vector me, double scalar);
-void Vector_scale (Vector me, double scale);
+void Vector_addScalar (mutableVector me, double scalar);
+void Vector_subtractMean (mutableVector me);
+void Vector_multiplyByScalar (mutableVector me, double scalar);
+void Vector_scale (mutableVector me, double scale);
 
-void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *pymin, double *pymax,
+void Vector_draw (constVector me, Graphics g, double *pxmin, double *pxmax, double *pymin, double *pymax,
 	double defaultDy, conststring32 method);
 /*
 	If *pxmin equals *pxmax, then autowindowing from my xmin to my xmax.

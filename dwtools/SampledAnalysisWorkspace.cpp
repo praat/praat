@@ -20,7 +20,6 @@
 #include "Sound_extensions.h"
 #include <thread>
 #include <atomic>
-#include <functional>
 #include "NUM2.h"
 
 #include "oo_DESTROY.h"
@@ -154,10 +153,9 @@ void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me)
 					threads [ithread]. join ();
 				
 			} catch (MelderError) {
-				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
+				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++)
 					if (threads [ithread]. joinable ())
 						threads [ithread]. join ();
-					}
 				Melder_clearError ();
 				throw;
 			}
@@ -166,7 +164,7 @@ void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me)
 			my analyseManyInputFrames (me, 1, numberOfFrames); // no threading
 		}
 	} catch (MelderError) {
-			Melder_throw (me, U"The Sampled analysis could not be done.");
+		Melder_throw (me, U"The Sampled analysis could not be done.");
 	}
 }
 
