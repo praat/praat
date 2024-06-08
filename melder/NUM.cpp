@@ -449,7 +449,7 @@ double NUMmin_removeUndefined (constVECVU const& vec) {
 		We have been ignoring undefineds, but this is inappropriate if *all* elements are undefined.
 		This includes the case of a zero-sized vector.
 	*/
-	if (isundef (minimum))   // including the original infinity
+	if (isundef (minimum)) {   // including the original infinity
 		if constexpr (canError) {
 			if (NUMisEmpty (vec))
 				Melder_throw (U"min_e: cannot determine the minimum of an empty vector.");
@@ -457,6 +457,7 @@ double NUMmin_removeUndefined (constVECVU const& vec) {
 				Melder_throw (U"min_e: cannot determine the minimum of a vector with only undefined elements.");
 		} else
 			return undefined;
+	}
 	return minimum;
 }
 double NUMmin_removeUndefined_e (constVECVU const& vec) {
@@ -530,7 +531,7 @@ double NUMmin_removeUndefined (constMATVU const& mat) {
 				minimum = value;
 		}
 	}
-	if (isundef (minimum))   // including the original infinity
+	if (isundef (minimum)) {   // including the original infinity
 		if constexpr (canError) {
 			if (NUMisEmpty (mat))
 				Melder_throw (U"min_removeUndefined_e: cannot determine the minimum of an empty matrix.");
@@ -538,6 +539,7 @@ double NUMmin_removeUndefined (constMATVU const& mat) {
 				Melder_throw (U"min_removeUndefined_e: cannot determine the minimum of a matrix with only undefined cells.");
 		} else
 			return undefined;
+	}
 	return minimum;
 }
 double NUMmin_removeUndefined_e (constMATVU const& mat) {
@@ -584,7 +586,7 @@ double NUMmax_removeUndefined (constVECVU const& vec) {
 		if (value > maximum)   // NaN-safe, because false if value is undefined
 			maximum = value;
 	}
-	if (isundef (maximum))   // including the original -infinity
+	if (isundef (maximum)) {   // including the original -infinity
 		if constexpr (canError) {
 			if (NUMisEmpty (vec))
 				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of an empty vector.");
@@ -592,6 +594,7 @@ double NUMmax_removeUndefined (constVECVU const& vec) {
 				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of a vector with only undefined elements.");
 		} else
 			return undefined;
+	}
 	return maximum;
 }
 double NUMmax_removeUndefined_e (constVECVU const& vec) {
@@ -665,7 +668,7 @@ double NUMmax_removeUndefined (constMATVU const& mat) {
 				maximum = value;
 		}
 	}
-	if (isundef (maximum))   // including the original -infinity
+	if (isundef (maximum)) {   // including the original -infinity
 		if constexpr (canError) {
 			if (NUMisEmpty (mat))
 				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of an empty matrix.");
@@ -673,6 +676,7 @@ double NUMmax_removeUndefined (constMATVU const& mat) {
 				Melder_throw (U"max_removeUndefined_e: cannot determine the maximum of a matrix with only undefined cells.");
 		} else
 			return undefined;
+	}
 	return maximum;
 }
 double NUMmax_removeUndefined_e (constMATVU const& mat) {
