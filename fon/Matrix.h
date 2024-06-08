@@ -274,7 +274,7 @@ autoMatrix Matrix_appendRows (constMatrix me, constMatrix thee, ClassInfo klas);
 void Matrix_eigen (constMatrix me, autoMatrix *eigenvectors, autoMatrix *eigenvalues);
 autoMatrix Matrix_power (constMatrix me, integer power);
 
-void Matrix_scaleAbsoluteExtremum (constMatrix me, double scale);
+void Matrix_scaleAbsoluteExtremum (mutableMatrix me, double scale);
 
 autoMatrix Table_to_Matrix (Table me);
 void Matrix_writeToMatrixTextFile (constMatrix me, MelderFile file);
