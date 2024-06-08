@@ -183,8 +183,12 @@ void Sound_filterWithFormants (mutableSound me, double tmin, double tmax,
 		int numberOfFormants, double formant [], double bandwidth []);
 autoSound Sound_filter_oneFormant (constSound me, double frequency, double bandwidth);
 void Sound_filterWithOneFormantInplace (mutableSound me, double frequency, double bandwidth);
-autoSound Sound_filter_preemphasis (constSound me, double frequency);
-autoSound Sound_filter_deemphasis (constSound me, double frequency);
+
+double Sound_computeEmphasisFactor (constSound me, double cutoffFrequency);
+void Sound_preEmphasize_inplace (mutableSound me, double cutoffFrequency);
+void Sound_deEmphasize_inplace (Sound me, double cutoffFrequency);
+autoSound Sound_filter_preemphasis (constSound me, double cutoffFrequency);
+autoSound Sound_filter_deemphasis (constSound me, double cutoffFrequency);
 
 void Sound_reverse (mutableSound me, double tmin, double tmax);
 

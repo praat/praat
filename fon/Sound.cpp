@@ -1238,10 +1238,34 @@ void Sound_filterWithOneFormantInplace (mutableSound me, double frequency, doubl
 	Matrix_scaleAbsoluteExtremum (me, 0.99);
 }
 
+double Sound_computeEmphasisFactor (constSound me, double cutoffFrequency) {
+	return exp (- NUM2pi * cutoffFrequency * my dx);
+}
+
+void Sound_preEmphasize_inplace (mutableSound me, double cutoffFrequency) {
+	const double emphasisFactor = Sound_computeEmphasisFactor (me, cutoffFrequency);
+	if (emphasisFactor != 0.0)   // OPTIMIZE; will happen for cut-off frequencies above 119 times the sampling frequency
+		for (integer channel = 1; channel <= my ny; channel ++) {
+			VEC s = my z.row (channel);
+			for (integer i = my nx; i >= 2; i --)
+				s [i] -= emphasisFactor * s [i - 1];
+		}
+}
+
+void Sound_deEmphasize_inplace (Sound me, double cutoffFrequency) {
+	const double emphasisFactor = Sound_computeEmphasisFactor (me, cutoffFrequency);
+	if (emphasisFactor != 0.0)   // OPTIMIZE; will happen for cut-off frequencies above 119 times the sampling frequency
+		for (integer channel = 1; channel <= my ny; channel ++) {
+			VEC s = my z.row (channel);
+			for (integer i = 2; i <= my nx; i ++)
+				s [i] += emphasisFactor * s [i - 1];
+		}
+}
+
 autoSound Sound_filter_preemphasis (constSound me, double frequency) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_preEmphasis (thee.get(), frequency);
+		Sound_preEmphasize_inplace (thee.get(), frequency);
 		Matrix_scaleAbsoluteExtremum (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
@@ -1252,7 +1276,7 @@ autoSound Sound_filter_preemphasis (constSound me, double frequency) {
 autoSound Sound_filter_deemphasis (constSound me, double frequency) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_deEmphasis (thee.get(), frequency);
+		Sound_deEmphasize_inplace (thee.get(), frequency);
 		Matrix_scaleAbsoluteExtremum (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
