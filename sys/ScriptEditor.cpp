@@ -1,6 +1,6 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2005,2007-2018,2020-2023 Paul Boersma
+ * Copyright (C) 1997-2005,2007-2018,2020-2024 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +56,12 @@ void structScriptEditor :: v_nameChanged () {
 	const bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);   // (3) on the Mac (last checked 2023-02-25)
 	static MelderString buffer;
 	MelderString_copy (& buffer, MelderFile_isNull (& our file) ? U"untitled script" : U"Script");   // (1)
-	if (our wasCreatedInAnEditor())
+	if (our wasCreatedInAnEditor()) {
 		if (our optionalReferenceToOwningEditor)
 			MelderString_append (& buffer, U" [editor “", Thing_getName (our optionalReferenceToOwningEditor), U"”]");   // (4), (5)
 		else
 			MelderString_append (& buffer, U" [closed ", our optionalOwningEditorClassName.get(), U"]");   // (4)
+	}
 	if (! MelderFile_isNull (& our file))
 		MelderString_append (& buffer, U" ", MelderFile_messageName (& our file));   // (2)
 	if (our dirty && ! dirtinessAlreadyShown)
