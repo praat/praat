@@ -18,13 +18,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Sampled.h"
 #include "Sound.h"
 #include "SampledAnalysisWorkspace.h"
 
 #include "SoundAnalysisWorkspace_def.h"
-
-autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes, bool reusable);
 
 void SoundAnalysisWorkspace_init (SoundAnalysisWorkspace me, Sound thee, Sampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 

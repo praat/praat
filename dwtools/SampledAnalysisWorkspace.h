@@ -19,11 +19,9 @@
  */
 
 #include "Sampled.h"
-#include "Sound.h"
+#include "WorkvectorPool.h"
 
 #include "SampledAnalysisWorkspace_def.h"
-
-autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes, bool reusable);
 
 void SampledAnalysisWorkspace_init (SampledAnalysisWorkspace me, Sampled input, Sampled output);
 

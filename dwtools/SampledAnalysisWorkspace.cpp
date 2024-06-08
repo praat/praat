@@ -42,31 +42,6 @@
 #include "oo_DESCRIPTION.h"
 #include "SampledAnalysisWorkspace_def.h"
 
-Thing_implement (WorkvectorPool, Daata, 0);
-
-autoWorkvectorPool WorkvectorPool_create (INTVEC const& vectorSizes, bool reusable) {
-	try {
-		autoWorkvectorPool me = Thing_new (WorkvectorPool);
-		my numberOfVectors = vectorSizes.size;
-		Melder_assert (my numberOfVectors > 0);
-		my reusable = reusable;
-
-		my vectorStart = raw_INTVEC (my numberOfVectors);
-		integer vecstart = 1;
-		for (integer ivec = 1; ivec <= my numberOfVectors; ivec ++) {
-			Melder_assert (vectorSizes [ivec] > 0);
-			my vectorStart [ivec] = vecstart;
-			vecstart += vectorSizes [ivec];
-		}
-		my poolMemorySize = vecstart - 1;
-		my vectorSizes = copy_INTVEC (vectorSizes);
-		my inuse = zero_BOOLVEC (my numberOfVectors);
-		my memoryPool = raw_VEC (my poolMemorySize);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"WorkvectorPool not created.");
-	}	
-}
 
 void SampledAnalysisWorkspace_initWorkvectorPool (SampledAnalysisWorkspace me, INTVEC const& vectorSizes) {
 	Melder_assert (vectorSizes.size > 0);

@@ -23,6 +23,9 @@
 #include "Roots.h"
 #include "Formant.h"
 
+#include "SampledAnalysisWorkspace_def.h"
+#include "LPCToFormantAnalysisWorkspace_def.h"
+
 autoFormant LPC_to_Formant (LPC me, double margin);
 
 autoLPC Formant_to_LPC (Formant me, double samplingPeriod);

@@ -1,5 +1,5 @@
 # makefile for library "dwsys".
-# David Weenink 20221107
+# David Weenink 20240607
 # Paul Boersma 2018-08-10
 
 include ../makefile.defs
@@ -21,7 +21,7 @@ OBJECTS = ChebyshevSeries.o Collection_extensions.o Command.o \
 	Permutation.o Permutation_and_Index.o \
 	Polynomial.o \
 	Roots.o \
-	Spline.o SVD.o
+	Spline.o SVD.o WorkvectorPool.o
 
 .PHONY: all clean
 
