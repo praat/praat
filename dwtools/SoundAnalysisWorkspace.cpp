@@ -103,8 +103,8 @@ void SoundAnalysisWorkspace_analyseThreaded (SoundAnalysisWorkspace me, Sound th
 	Melder_assert (my input == thee);
 	
 	autoSound sound;
-	const double nyQuistFrequency = 0.5 / thy dx;
-	if (preEmphasisFrequency < nyQuistFrequency) {
+	const double emphasisFactor = Sound_computeEmphasisFactor (thee, preEmphasisFrequency);
+	if (emphasisFactor != 0.0) {   // OPTIMIZE; will happen for cut-off frequencies above 119 times the sampling frequency
 		sound = Data_copy (thee);
 		Sound_preEmphasize_inplace (sound.get(), preEmphasisFrequency);
 		SoundAnalysisWorkspace_replaceSound (me, sound.get());

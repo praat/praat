@@ -582,7 +582,7 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 						U"File too small: expected ", chunkSize, U" bytes of data, but found ", i, U".");
 			} else {
 				if (formatChunkPresent)
-					break;   // OPTIMIZATION: do not read the whole data chunk if we have already read the format chunk
+					break;   // OPTIMIZE: do not read the whole data chunk if we have already read the format chunk
 			}
 		} else {   // ignore other chunks
 			if (chunkSize & 1)

@@ -184,6 +184,7 @@ void Sound_filterWithFormants (mutableSound me, double tmin, double tmax,
 autoSound Sound_filter_oneFormant (constSound me, double frequency, double bandwidth);
 void Sound_filterWithOneFormantInplace (mutableSound me, double frequency, double bandwidth);
 
+double Sound_computeEmphasisFactor (constSound me, double cutoffFrequency);
 void Sound_preEmphasize_inplace (mutableSound me, double cutoffFrequency);
 void Sound_deEmphasize_inplace (Sound me, double cutoffFrequency);
 autoSound Sound_filter_preemphasis (constSound me, double cutoffFrequency);
