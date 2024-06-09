@@ -670,6 +670,7 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 			} else
 				width = 6.0;
 			type = kManPage_type::SCRIPT;
+			integer procedureDepth = 0;
 			do {
 				line = MelderReadText_readLine (text);
 				if (! line)
@@ -679,6 +680,10 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					line = MelderReadText_readLine (text);
 					break;
 				}
+				if (Melder_startsWith (firstNonspace, U"procedure "))
+					procedureDepth += 1;
+				else if (Melder_startsWith (firstNonspace, U"endproc"))
+					procedureDepth -= 1;
 				if (shouldShowCode) {
 					/*
 						Convert to graphical code.
@@ -714,6 +719,8 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 					)
 						firstNonspace += 3 + ( firstNonspace [2] == U'@' );
 					if (
+						procedureDepth == 0 &&
+						height == 0.001 &&
 						(Melder_startsWith (firstNonspace, U"Draw")  ||
 						 Melder_startsWith (firstNonspace, U"Paint")  ||
 						 Melder_startsWith (firstNonspace, U"Axes:")  ||
@@ -722,7 +729,6 @@ static void readOnePage_notebook (ManPages me, MelderReadText text) {
 						 Melder_startsWith (firstNonspace, U"Text:")  ||
 						 Melder_startsWith (firstNonspace, U"Text}:")  ||
 						 Melder_startsWith (firstNonspace, U"Marks "))
-						&& height == 0.001
 					)
 						height = 3.0;
 

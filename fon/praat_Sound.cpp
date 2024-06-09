@@ -48,7 +48,7 @@ DIRECT (INFO_NONE__LongSound_concatenate) {
 	INFO_NONE_END
 }
 
-FORM (NEW_LongSound_extractPart, U"LongSound: Extract part", nullptr) {
+FORM (NEW_LongSound_extractPart, U"LongSound: Extract part", U"LongSound: Extract part...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"1.0")
 	BOOLEAN (preserveTimes, U"Preserve times", true)
@@ -703,7 +703,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Sound_extractLeftChannel) {
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_left")
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_extractPart, U"Sound: Extract part", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Sound_extractPart, U"Sound: Extract part", U"Sound: Extract part...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.1")
 	OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", kSound_windowShape::DEFAULT)
@@ -1131,7 +1131,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_Sound_multiplyByWindow, U"Sound: Multiply by window", nullptr) {
+FORM (MODIFY_Sound_multiplyByWindow, U"Sound: Multiply by window", U"Sound: Multiply by window...") {
 	OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", kSound_windowShape::HANNING)
 	OK
 DO
