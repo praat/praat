@@ -32,11 +32,14 @@ static void manualInfoProc (conststring32 infoText) {
 			// FIXME: this overrides a growing info buffer, which is an O(N^2) algorithm if in a loop
 }
 
-static void ManPageParagraph_runChunkToCache (ManPage_Paragraph me, Interpreter interpreter,
-	const kGraphics_font font, const double fontSize,
-	PraatApplication praatApplication, PraatObjects praatObjects, PraatPicture praatPicture,
-	MelderFolder rootDirectory
-) {
+static void collectProcedures (ManPage me, MelderString *procedures) {
+	for (integer ipar = 1; ipar <= my paragraphs.size; ipar ++) {
+		ManPage_Paragraph paragraph = & my paragraphs [ipar];
+		if (paragraph -> type == kManPage_type::SCRIPT) {
+			if (Melder_startsWith (paragraph -> text, U"\tprocedure ") && Melder_endsWith (paragraph -> text, U"\tendproc\n"))
+				MelderString_append (procedures, paragraph -> text);
+		}
+	}
 }
 
 void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterReference,
@@ -70,6 +73,8 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 		all the script parts have to be run,
 		so that the outputs of drawing and info can be cached.
 	*/
+	autoMelderString procedures;
+	collectProcedures (me, & procedures);
 	integer chunkNumber = 0;
 	bool anErrorHasOccurred = false;
 	autostring32 theErrorThatOccurred;
@@ -145,8 +150,10 @@ void ManPage_runAllChunksToCache (ManPage me, Interpreter optionalInterpreterRef
 			if (! MelderFolder_isNull (rootDirectory))
 				Melder_setCurrentFolder (rootDirectory);
 			try {
-				autostring32 text = Melder_dup (paragraph -> text);
-				Interpreter_run (interpreterReference, text.get(), chunkNumber > 1);
+				autoMelderString program;
+				MelderString_append (& program, paragraph -> text);
+				MelderString_append (& program, procedures.string);
+				Interpreter_run (interpreterReference, program.string, chunkNumber > 1);
 			} catch (MelderError) {
 				anErrorHasOccurred = true;
 				errorChunk = chunkNumber;
