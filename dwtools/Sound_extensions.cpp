@@ -1286,7 +1286,7 @@ autoSound Sound_createPattersonWightmanTone (double minimumTime, double maximumT
 
 autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double samplingFrequency, double baseFrequency, double frequencyFraction, integer m) {
 	try {
-		Melder_require (12.0 * (1.0 + frequencyFraction) * baseFrequency <=  samplingFrequency / 2.0,
+		Melder_require (12.0 * (1.0 + frequencyFraction) * baseFrequency <= samplingFrequency / 2.0,
 			U"Sound_createPlompTone: frequency of one or more components too large.");
 		
 		const double w1 = NUM2pi * (1.0 - frequencyFraction) * baseFrequency;

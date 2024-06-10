@@ -1283,6 +1283,113 @@ Algorithm
 @@overlap-add@.
 
 ################################################################################
+"Sound: Multiply by window..."
+© Paul Boersma 2024
+
+A command to multiply each selected @Sound object by a window shape.
+
+Settings
+========
+
+##Window shape
+:	one of 12 possible window shapes.
+
+Window shapes.
+==============
+
+Suppose we have the following sound:
+{ 6x3
+	Create Sound from formula: "sweep", 1, 0.0, 0.1, 44100, ~ sin(2*pi*1000*x^2)
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+The shape of a ##Hanning window# is
+{ 6x3
+	Create Sound from formula: "window", 1, 0.0, 0.1, 44100, ~ 1
+	Multiply by window: "Hanning"
+	Draw: 0, 0, 0.0, 1.0, "yes", "curve"
+}
+If you multiply these with each other, the result will be
+{ 6x3
+	selectObject: "Sound sweep"
+	Multiply by window: "Hanning"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+In short:
+{-
+	procedure drawWindowing: .windowShape$
+		Create Sound from formula: "sweep", 1, 0.0, 0.1, 44100, ~ sin(2*pi*1000*x^2)
+		Select outer viewport: 0, 3.1, 0, 2.5
+		Draw: 0, 0, -1.1, 1.1, "yes", "curve"
+		Create Sound from formula: "window", 1, 0.0, 0.1, 44100, ~ 1
+		Multiply by window: .windowShape$
+		Select outer viewport: 2.2, 5.3, 0, 2.5
+		Draw: 0, 0, -1.1, 1.1, "no", "curve"
+		Draw inner box
+		Text bottom: "yes", "Time (s)"
+		Marks bottom: 2, "yes", "yes", "no"
+		Marks left: 2, "yes", "yes", "no"
+		One mark left: 0.0, "no", "no", "yes", ""
+		selectObject: "Sound sweep"
+		Multiply by window: .windowShape$
+		Text top: "no", "##" + .windowShape$
+		Select outer viewport: 4.4, 7.5, 0, 2.5
+		Draw: 0, 0, -1.1, 1.1, "no", "curve"
+		Draw inner box
+		Text bottom: "yes", "Time (s)"
+		Marks bottom: 2, "yes", "yes", "no"
+		Marks left: 2, "yes", "yes", "no"
+		One mark left: 0.0, "no", "no", "yes", ""
+		Axes: 0, 100, 0, 100
+		info$ = Picture info
+		fontSize = extractNumber (info$, "Font size: ")
+		Select outer viewport: 2.2, 3.1, 0, 2.5
+		Text special: 50, "centre", 50, "half", "Times", 2*fontSize, "0", "\xx"
+		Select outer viewport: 4.4, 5.3, 0, 2.5
+		Text special: 50, "centre", 50, "half", "Times", 2*fontSize, "0", "="
+	endproc
+}
+{- 7.5x2.5
+	@drawWindowing: "Hanning"
+}
+Other windows:
+{- 7.5x2.5
+	@drawWindowing: "Hamming"
+}
+{- 7.5x2.5
+	@drawWindowing: "triangular"
+}
+{- 7.5x2.5
+	@drawWindowing: "parabolic"
+}
+{- 7.5x2.5
+	@drawWindowing: "Gaussian1"
+}
+{- 7.5x2.5
+	@drawWindowing: "Kaiser1"
+}
+The following one does nothing:
+{- 7.5x2.5
+	@drawWindowing: "rectangular"
+}
+These two have an effective duration that is 50 percent shorter:
+{- 7.5x2.5
+	@drawWindowing: "Gaussian2"
+}
+{- 7.5x2.5
+	@drawWindowing: "Kaiser2"
+}
+And these are narrower again:
+{- 7.5x2.5
+	@drawWindowing: "Gaussian3"
+}
+{- 7.5x2.5
+	@drawWindowing: "Gaussian4"
+}
+{- 7.5x2.5
+	@drawWindowing: "Gaussian5"
+}
+
+################################################################################
 "audio control panel"
 © Paul Boersma 2022-09-11,2024
 
