@@ -723,6 +723,146 @@ Finally, the original filtered sound %x (%t), multiplied by this factor, is adde
 }
 
 ################################################################################
+"Sound: Extract part..."
+© Paul Boersma 2024
+
+A command to copy a part of each selected @Sound object to the Objects window.
+
+Settings
+========
+
+##Time range (s)
+: the time range (%t_1, %t_2) of the part that has to be extracted.
+
+##Window shape# (standard: “rectangular”)
+:	one of 12 possible window shapes; see below.
+
+##Relative width# (standard: 1.0)
+:	the relative width of the extracted part, as compared to the duration %t_2 \-m %t_1.
+If the relative width is 1.0, then the part from %t_1 to %t_2 will be extracted.
+If the relative width is 2.0, then the part from %t_1 \-m 0.5 %dur to %t_2 + 0.5 %dur will be extracted,
+where %dur is %t_2 \-m %t_1. See below for when and why this is useful.
+
+##Preserve times# (standard: off)
+: if %on, then the time domain of the resulting extracted Sound object will run from %t_1 to %t_2.
+If %off, then the resulting extracted Sound will be time-shifted to start at zero,
+i.e. its time domain will run from 0 seconds to %t_2 \-m %t_1.
+
+Window shapes
+=============
+
+Suppose we have the following sound, with the part we want to extract (from 0.06 to 0.16 seconds)
+already marked:
+{ 6x3
+	sweep = Create Sound from formula: "sweep", 1, 0.0, 0.3, 44100, ~ sin(2*pi*1000*x^2)
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+	One mark bottom: 0.06, "yes", "yes", "no", ""
+	One mark bottom: 0.16, "yes", "yes", "no", ""
+}
+We now extract the part form 0.05 to 0.15 seconds:
+{
+	Extract part: 0.06, 0.16, "rectangular", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+With %%Preserve times% off, we instead get:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "rectangular", 1.0, "no"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+These were extracted with a rectangular window. We have many other shapes
+(see @@Sound: Multiply by window...@). With a Hanning window, we get:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "Hanning", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+With a Hamming window, we get:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "Hamming", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+With a triangular window, we get:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "triangular", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+With a parabolic window, we get:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "parabolic", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+With a Gaussian1 window, we get:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "Gaussian1", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+With a Kaiser1 window, we get:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "Kaiser1", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+These last six windows have a comparable effective duration.
+The names of the last two windows, however, sound as if they
+want to approximate a Gaussian shape, but they obviously don’t
+(they don’t go to zero fast enough at the edges).
+We can improve the Gaussianness of the window shape
+by halving the effective duration.
+With a Gaussian2 window, we get:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "Gaussian2", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+and the very similar Kaiser2 window:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "Kaiser2", 1.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+}
+The advantage of these two windows is that they cut away too muich of the signal at the edges.
+To make the effective window duration similar again, we would like to
+extract a part that is physically twice as long.
+We can do that by setting %%Relative width% to 2.0 instead of 1.0.
+The Gaussian2 window then results in:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "Gaussian2", 2.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+	One mark bottom: 0.06, "yes", "yes", "yes", ""
+	One mark bottom: 0.16, "yes", "yes", "yes", ""
+}
+and the very similar Kaiser2 window:
+{
+	selectObject: sweep
+	Extract part: 0.06, 0.16, "Kaiser2", 2.0, "yes"
+	Draw: 0, 0, -1.0, 1.0, "yes", "curve"
+	One mark bottom: 0.06, "yes", "yes", "yes", ""
+	One mark bottom: 0.16, "yes", "yes", "yes", ""
+}
+The Gaussian3, Gaussian4 and Gaussian5 windows approximate the Gaussian shape
+even better than Gaussian2 and Kaiser2 do,
+but they require even longer relative widths, namely 3.0, 4.0 and 5.0 respectively.
+
+In Praat, most acoustical analyses are done with Kaiser2 windows,
+such as @@Sound: To Spectrogram...@ and @@Sound: To Pitch (ac)...@
+(the latter with the %%Very accurate% setting switched on).
+
+################################################################################
+"Extract selected sound (windowed)..."
+© Paul Boersma 2024
+
+A command in the Sound menu of several windows (SoundEditor, TextGridEditor...),
+to copy the selected part of the sound to the Objects window.
+
+For settings and behaviour, see @@Sound: Extract part...@.
+
+################################################################################
 "Sound: Filter (de-emphasis)..."
 © Paul Boersma 2003-03-09
 
@@ -1294,8 +1434,8 @@ Settings
 ##Window shape
 :	one of 12 possible window shapes.
 
-Window shapes.
-==============
+Window shapes
+=============
 
 Suppose we have the following sound:
 { 6x3
