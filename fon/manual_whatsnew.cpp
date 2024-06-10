@@ -29,6 +29,12 @@ R"~~~(
 
 Latest changes in Praat.
 
+##6.4.13# (10 June 2024)
+• More manual pages.
+• @@Sounds: Concatenate with overlap...@: guard against a crash that would occur
+  if the total overlap time was longer than the original sounds together.
+• @`number` recognizes hexadecimal numbers again (bug since February 2023).
+
 ##6.4.12# (2 May 2024)
 • ##Align interval#: fewer error messages.
 
