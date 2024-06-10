@@ -58,9 +58,9 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_OBJECT (WorkvectorPool, 0, workvectorPool)
 	
 	#if oo_DECLARING
-		void (*getInputFrame) (SampledAnalysisWorkspace me, integer iframe);
-		void (*analyseOneInputFrame) (SampledAnalysisWorkspace me); // sets the frameAnalysisInfo and also frameAnalysisIsOK
-		void (*allocateOutputFrames) (SampledAnalysisWorkspace me);
+		void (*getInputFrame) (mutableSampledAnalysisWorkspace me, integer iframe);
+		void (*analyseOneInputFrame) (mutableSampledAnalysisWorkspace me); // sets the frameAnalysisInfo and also frameAnalysisIsOK
+		void (*allocateOutputFrames) (mutableSampledAnalysisWorkspace me);
 	#endif
 		
 	#if oo_COPYING

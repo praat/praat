@@ -20,6 +20,7 @@
 
 #include "Sound.h"
 #include "SampledAnalysisWorkspace.h"
+#include "WorkvectorPool.h"
 
 #include "SoundAnalysisWorkspace_def.h"
 

@@ -20,7 +20,7 @@
 oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
 	#if oo_DECLARING
 
-		void (*soundFrame_into_LPC_Frame) (SoundToLPCAnalysisWorkspace me, LPC_Frame thee);
+		void (*soundFrame_into_LPC_Frame) (mutableSoundToLPCAnalysisWorkspace me, LPC_Frame thee);
 
 	#endif
 

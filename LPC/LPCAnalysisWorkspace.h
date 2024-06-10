@@ -22,6 +22,6 @@
 #include "SampledAnalysisWorkspace.h"
 #include "LPCAnalysisWorkspace_def.h"
 
-void LPCAnalysisWorkspace_init (integer numberOfCoefficients);
+void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer numberOfCoefficients);
 
 #endif /* _LPCAnalysisWorkspace_h_ */
