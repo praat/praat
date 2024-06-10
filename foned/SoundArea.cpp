@@ -936,7 +936,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes (SoundArea m
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed (SoundArea me, EDITOR_ARGS) {
-	EDITOR_FORM (U"Extract selected sound (windowed)", nullptr)
+	EDITOR_FORM (U"Extract selected sound (windowed)", U"Extract selected sound (windowed)...")
 		WORD (name, U"Name", U"slice")
 		OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", my default_extract_windowShape())
 		POSITIVE (relativeWidth, U"Relative width", my default_extract_relativeWidth())
