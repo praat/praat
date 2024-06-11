@@ -493,6 +493,8 @@ autoSound Sounds_concatenate (SoundList list, double overlapTime) {
 		}
 		const integer numberOfSmoothingSamples = Melder_iround (overlapTime / sharedTimeStep);
 		totalNumberOfSamples -= numberOfSmoothingSamples * (list->size - 1);
+		Melder_require (totalNumberOfSamples > 0,
+			U"The joint overlap should not exceed the total duration of the sounds.\nChoose a shorter overlap time.");
 		autoSound thee = Sound_create (sharedNumberOfChannels, 0.0, totalNumberOfSamples * sharedTimeStep,
 				totalNumberOfSamples, sharedTimeStep, 0.5 * sharedTimeStep);
 		autoVEC smoother;
