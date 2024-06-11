@@ -115,9 +115,10 @@ static void soundFrame_into_LPC_Frame_auto (mutableSoundToLPCAnalysisWorkspace m
 void Sound_into_LPC_auto (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace ws = SoundToLPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth,
-		kSound_windowShape::GAUSSIAN_2, soundFrame_into_LPC_Frame_auto);
+		kSound_windowShape::GAUSSIAN_2);
 	autoINTVEC workvectorSizes { thy maxnCoefficients + 1, thy maxnCoefficients + 1, thy maxnCoefficients };
 	ws -> workvectorPool = WorkvectorPool_create (workvectorSizes.get(), true);
+	ws -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_auto;
 	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 }
 
@@ -236,10 +237,11 @@ end:
 void Sound_into_LPC_covar (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace ws = SoundToLPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth,
-		kSound_windowShape::GAUSSIAN_2, soundFrame_into_LPC_Frame_auto);
+		kSound_windowShape::GAUSSIAN_2);
 	autoINTVEC workvectorSizes { thy maxnCoefficients * (thy maxnCoefficients + 1) / 2, thy maxnCoefficients,
 		thy maxnCoefficients, thy maxnCoefficients + 1, thy maxnCoefficients + 1};
 	ws -> workvectorPool = WorkvectorPool_create (workvectorSizes.get(), true);
+	ws -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_covar;
 	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 }
 
@@ -343,9 +345,10 @@ static void soundFrame_into_LPC_Frame_burg (mutableSoundToLPCAnalysisWorkspace m
 void Sound_into_LPC_burg (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace ws = SoundToLPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth,
-		kSound_windowShape::GAUSSIAN_2, soundFrame_into_LPC_Frame_burg);
+		kSound_windowShape::GAUSSIAN_2);
 	autoINTVEC workvectorSizes { ws -> analysisFrameSize, ws -> analysisFrameSize, thy maxnCoefficients + 1 };
 	ws -> workvectorPool = WorkvectorPool_create (workvectorSizes.get(), true);
+	ws -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_burg;
 	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 }
 
@@ -509,11 +512,12 @@ end:
 void Sound_into_LPC_marple (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency, double tol1, double tol2) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace ws = SoundToLPCAnalysisWorkspace_create (me, thee, effectiveAnalysisWidth,
-		kSound_windowShape::GAUSSIAN_2, soundFrame_into_LPC_Frame_marple);
+		kSound_windowShape::GAUSSIAN_2);
 	ws -> tol1 = tol1;
 	ws -> tol2 = tol2;
 	autoINTVEC workvectorSizes { thy maxnCoefficients + 1, thy maxnCoefficients + 1, thy maxnCoefficients + 1 };
 	ws -> workvectorPool = WorkvectorPool_create (workvectorSizes.get(), true);
+	ws -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_marple;
 	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 }
 
@@ -655,8 +659,8 @@ void LPC_and_Sound_into_LPC_robust (constLPC original, constSound me, mutableLPC
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, output -> maxnCoefficients);
 		
 		autoSoundToRobustLPCAnalysisWorkspace ws = SoundToRobustLPCAnalysisWorkspace_create (me, original, output,
-			effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation, soundFrame_into_LPC_Frame_robust);
-		
+			effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation);
+		ws -> soundFrame_into_LPC_Frame = soundFrame_into_LPC_Frame_robust;
 		SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC calculated.");
