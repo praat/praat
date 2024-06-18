@@ -53,5 +53,33 @@ void SampledAnalysisWorkspace_replaceInput (mutableSampledAnalysisWorkspace me, 
 
 void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace me);
 
+inline void Sampled_requireEqualSampling (constSampled me,  constSampled thee) {
+	Melder_require (my x1 == thy x1 && my nx == thy nx && my dx == thy dx,
+		U"The sampling of ", me, U" and ", thee, U" should be equal.");
+}
+
+inline void Sampled_assertEqualSampling (constSampled me,  constSampled thee) {
+	Melder_assert (my x1 == thy x1 && my nx == thy nx && my dx == thy dx);
+}
+
+inline void Sampled_requireEqualDomains (constSampled me,  constSampled thee) {
+	Melder_require (my xmin == thy xmin && my xmax == thy xmax,
+		U"The domains of ", me, U" and ", thee, U" should be equal.");
+}
+
+inline void Sampled_assertEqualDomains (constSampled me,  constSampled thee) {
+	Melder_assert (my xmin == thy xmin && my xmax == thy xmax);
+}
+
+inline void Sampled_requireEqualDomainsAndSampling (constSampled me,  constSampled thee) {
+	Sampled_requireEqualDomains (me, thee);
+	Sampled_requireEqualSampling (me, thee);
+}
+
+inline void Sampled_assertEqualDomainsAndSampling (constSampled me,  constSampled thee) {
+	Sampled_assertEqualDomains (me, thee);
+	Sampled_assertEqualSampling (me, thee);
+}
+
 #endif /* _SampledAnalysisWorkspace_h_ */
  

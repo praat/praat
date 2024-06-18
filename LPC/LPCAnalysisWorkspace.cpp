@@ -40,7 +40,7 @@
 
 Thing_implement (LPCAnalysisWorkspace, SampledAnalysisWorkspace, 0);
 
-void LPCAnalysisWorkspace_init (LPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer numberOfCoefficients) {
+void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer numberOfCoefficients) {
 	SampledAnalysisWorkspace_init (me, input, output);
 	LPC_Frame_init (& my lpcFrame, numberOfCoefficients);
 }

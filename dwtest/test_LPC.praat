@@ -165,6 +165,7 @@ procedure testCornerCases
 	.shorty = Create Sound from formula: "Shorty", 1, 0, 
 	... 0.004, .samplingFrequency, ~ 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)
 	asserterror Your sound is too short: it should be at least as long as two window lengths.
+	... Either your sound is too short or your window is too long.
 	.lpc = To LPC (burg): .predictionOrder, 0.025, 0.005, 50
 	.notEnoughSamples = Create Sound from formula: "Shorty", 1, 0, 
 	... 0.002, .samplingFrequency, ~ 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)

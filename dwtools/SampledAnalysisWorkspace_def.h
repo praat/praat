@@ -46,6 +46,7 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo 
 	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
 	
+	oo_BOOLEAN (saveOutput)					// default is 'true'; shorthand, if the output is intermediate!
 	/*
 		For approximations we need tolerances
 	*/
@@ -58,21 +59,17 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_OBJECT (WorkvectorPool, 0, workvectorPool)
 	
 	#if oo_DECLARING
-		void (*getInputFrame) (mutableSampledAnalysisWorkspace me, integer iframe);
-		void (*analyseOneInputFrame) (mutableSampledAnalysisWorkspace me); // sets the frameAnalysisInfo and also frameAnalysisIsOK
-		void (*allocateOutputFrames) (mutableSampledAnalysisWorkspace me);
-	#endif
+
+		virtual void getInputFrame (integer iframe);
 		
-	#if oo_COPYING
-		thy getInputFrame = getInputFrame;
-		thy analyseOneInputFrame = our analyseOneInputFrame;
-		thy allocateOutputFrames = our allocateOutputFrames;
-	#endif	
+		virtual bool inputFrameToOutputFrame (void); // sets the frameAnalysisInfo and also frameAnalysisIsOK
 		
-	#if oo_DECLARING
+		virtual void saveOutputFrame (void);
 		
-		void analyseManyInputFrames (SampledAnalysisWorkspace me, integer fromFrame, integer toFrame); // sets currentFrame
-		
+		virtual void inputFramesToOutputFrames (integer fromFrame, integer toFrame); // sets currentFrame
+
+		virtual void allocateOutputFrames (void);
+
 	#endif
 
 oo_END_CLASS (SampledAnalysisWorkspace)

@@ -32,16 +32,6 @@ autoPolynomial LPC_Frame_to_Polynomial (constLPC_Frame me) {
 	return thee;
 }
 
-void LPC_Frame_into_Polynomial (constLPC_Frame me, mutablePolynomial p) {
-	Melder_assert (my nCoefficients  == my a.size); // check invariant
-
-	p -> coefficients.resize (my nCoefficients + 1);
-	for (integer icof = 1; icof <= my nCoefficients; icof ++)
-		p -> coefficients [icof] = my a [my nCoefficients + 1 - icof];
-	p -> coefficients [my nCoefficients + 1] = 1.0;
-	p -> numberOfCoefficients = p -> coefficients.size; // maintain invariant
-}
-
 autoPolynomial LPC_to_Polynomial (constLPC me, double time) {
 	try {
 		integer iFrame = Sampled_xToIndex (me, time);

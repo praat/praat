@@ -20,10 +20,19 @@
 oo_DEFINE_CLASS (LPCToFormantAnalysisWorkspace, LPCAnalysisWorkspace)
 
 	oo_DOUBLE (margin)
-
+	oo_STRUCT (Formant_Frame, formantFrame)
 	oo_OBJECT (Polynomial, 0, p)
 	oo_OBJECT (Roots, 0, roots)
-	
+
+	#if oo_DECLARING
+
+		void getInputFrame (integer iframe) override;
+		void allocateOutputFrames () override;
+		bool inputFrameToOutputFrame () override;
+		void saveOutputFrame () override;
+		
+	#endif
+
 oo_END_CLASS (LPCToFormantAnalysisWorkspace)
 #undef ooSTRUCT
 

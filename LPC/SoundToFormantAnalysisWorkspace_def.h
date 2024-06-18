@@ -16,12 +16,19 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #define ooSTRUCT SoundToFormantAnalysisWorkspace
-oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace, SampledAnalysisWorkspace)
+oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace, SoundToLPCAnalysisWorkspace)
 
-	oo_OBJECT (SoundToLPCAnalysisWorkspace, soundToLPC)
-	oo_OBJECT (LPCToFormantAnalysisWorkspace, lpcToFormant)
+	oo_OBJECT (LPCToFormantAnalysisWorkspace, 0, lpcToFormant)
+
+	#if oo_DECLARING
+
+		void getInputFrame (integer iframe) override;
+		void allocateOutputFrames () override;
+		bool inputFrameToOutputFrame (void) override;
+		void saveOutputFrame (void) override;
+		
+	#endif
 
 oo_END_CLASS (SoundToFormantAnalysisWorkspace)
 #undef ooSTRUCT

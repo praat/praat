@@ -20,26 +20,12 @@
 
 #include "Sound.h"
 #include "SampledAnalysisWorkspace.h"
-#include "WorkvectorPool.h"
 
 #include "SoundAnalysisWorkspace_def.h"
 
 void SoundAnalysisWorkspace_init (mutableSoundAnalysisWorkspace me, constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
 autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
-
-void SoundAnalysisWorkspace_initWorkvectorPool (mutableSoundAnalysisWorkspace me, constINTVEC const& vectorSizes);
-
-void SoundAnalysisWorkspace_getThreadingInfo (constSoundAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
-
-void SoundAnalysisWorkspace_replaceSound (mutableSoundAnalysisWorkspace me, constSound thee);
-/*
-	Preconditions: 
-		my sound->xmin/xmax = thy xmin/xmax
-		my sound->nx = thy nx
-		my sound->dx = thy dx
-		my sound->x1 = thy x1
-*/
 
 void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, constSound thee, double preEmphasisFrequency);
 

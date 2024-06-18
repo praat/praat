@@ -16,62 +16,32 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20030616 Formant_Frame_into_LPC_Frame: remove formant with f >= Nyquist +
- 		change lpc indexing from -1..m
- djmw 20080122 float -> double
-*/
-
 #include "LPCToFormantAnalysisWorkspace.h"
 #include "LPC_and_Formant.h"
 #include "LPC_and_Polynomial.h"
 #include "NUM2.h"
-#include <thread>
-#include <atomic>
-#include <vector>
+#include "Roots_and_Formant.h"
 
-void LPC_Frame_into_Formant_Frame_roots (mutableLPCToFormantAnalysisWorkspace me, constLPC_Frame in, Formant_Frame out) {
-	constLPC lpc = reinterpret_cast<constLPC> (my input);
-	Melder_assert (in ->  nCoefficients == in -> a.size); // check invariant
-	out -> intensity = in -> gain;
-	if (in -> nCoefficients == 0) {
-		out -> formant.resize (0);
-		out -> numberOfFormants =out -> formant.size; // maintain invariant
-		return;
-	}
-	const double samplingFrequency = 1.0 / lpc -> samplingPeriod;
-	LPC_Frame_into_Polynomial (in, my p.get());
-	Polynomial_into_Roots (my p.get(), my roots.get(), my workvectorPool.get());
-	Roots_fixIntoUnitCircle (my roots.get());
-	Roots_into_Formant_Frame (my roots.get(), out, samplingFrequency, my margin);
-}
-
-static void analyseOneInputFrame (mutableSampledAnalysisWorkspace ws) {
-	LPCToFormantAnalysisWorkspace me = reinterpret_cast<LPCToFormantAnalysisWorkspace> (ws);
-	mutableFormant formant = reinterpret_cast<mutableFormant> (my output);
-	constLPC lpc = reinterpret_cast<constLPC> (my input);
-	LPC_Frame_into_Formant_Frame_roots (me, & lpc -> d_frames [my currentFrame], & formant -> frames [my currentFrame]);
-	my frameAnalysisInfo = 0;
-	my frameAnalysisIsOK = true;
+void LPC_into_Formant (constLPC me, mutableFormant thee, double margin) {
+	Sampled_requireEqualDomainsAndSampling (me, thee);
+	
+	
 }
 
 autoFormant LPC_to_Formant (constLPC me, double margin) {
 	try {
-		const double samplingFrequency = 1.0 / my samplingPeriod;
 		/*
 			In very extreme case all roots of the lpc polynomial might be real.
 			A real root gives either a frequency at 0 Hz or at the Nyquist frequency.
 			If margin > 0 these frequencies are filtered out and the number of formants can never exceed
-			my maxnCoefficients / 2.
+			(my maxnCoefficients+1) / 2.
 		*/
 		const integer maximumNumberOfFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1) / 2 );
 		Melder_require (my maxnCoefficients < 100,
 			U"We cannot find the roots of a polynomial of order > 99.");
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, maximumNumberOfFormants);
-		autoLPCToFormantAnalysisWorkspace ws = LPCToFormantAnalysisWorkspace_create (me, thee.get());
-		autoINTVEC sizes {my maxnCoefficients * my maxnCoefficients, my maxnCoefficients, my maxnCoefficients, 11 * my maxnCoefficients};
-		ws -> workvectorPool = WorkvectorPool_create (sizes.get(), true);
-		ws -> analyseOneInputFrame = analyseOneInputFrame;
+		autoLPCToFormantAnalysisWorkspace ws = LPCToFormantAnalysisWorkspace_create (me, thee.get(), margin);
+		
 		SampledAnalysisWorkspace_analyseThreaded (ws.get());
 		
 		Formant_sort (thee.get());
@@ -83,39 +53,11 @@ autoFormant LPC_to_Formant (constLPC me, double margin) {
 	}
 }
 
-void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
-	if (numberOfFormants > 0)
-		my formant = newvectorzero <structFormant_Formant> (numberOfFormants);
-	my numberOfFormants = my formant.size; // maintain invariant
-}
-
 void Formant_Frame_scale (Formant_Frame me, double scale) {
 	for (integer iformant = 1; iformant <= my numberOfFormants; iformant ++) {
 		my formant [iformant]. frequency *= scale;
 		my formant [iformant]. bandwidth *= scale;
 	}
-}
-
-void Roots_into_Formant_Frame (constRoots me, Formant_Frame thee, double samplingFrequency, double margin) {
-	/*
-		Determine the formants and bandwidths
-	*/
-	Melder_assert (my numberOfRoots == my roots.size); // check invariant
-	thy formant.resize (0);
-	const double nyquistFrequency = 0.5 * samplingFrequency;
-	const double fLow = margin, fHigh = nyquistFrequency - margin;
-	for (integer iroot = 1; iroot <= my numberOfRoots; iroot ++) {
-		if (my roots [iroot].imag() < 0.0)
-			continue;
-		const double frequency = fabs (atan2 (my roots [iroot].imag(), my roots [iroot].real())) * nyquistFrequency / NUMpi;
-		if (frequency >= fLow && frequency <= fHigh) {
-			const double bandwidth = - log (norm (my roots [iroot])) * nyquistFrequency / NUMpi;
-			Formant_Formant newff = thy formant . append ();
-			newff -> frequency = frequency;
-			newff -> bandwidth = bandwidth;
-		}
-	}
-	thy numberOfFormants = thy formant.size; // maintain invariant
 }
 
 void LPC_Frame_into_Formant_Frame (constLPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin) {

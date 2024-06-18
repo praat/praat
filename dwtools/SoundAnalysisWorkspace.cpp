@@ -39,31 +39,26 @@
 #include "oo_DESCRIPTION.h"
 #include "SoundAnalysisWorkspace_def.h"
 
-void SoundAnalysisWorkspace_initWorkvectorPool (SoundAnalysisWorkspace me, INTVEC const& vectorSizes) {
-	Melder_assert (vectorSizes.size > 0);
-	my workvectorPool = WorkvectorPool_create (vectorSizes, true);
-}
-
 Thing_implement (SoundAnalysisWorkspace, Daata, 0);
 
-integer structSoundAnalysisWorkspace :: getAnalysisFrameSize_uneven (constSoundAnalysisWorkspace me, double approximatePhysicalAnalysisWidth) {
+// TODO should physicalAnalysisWidth be modified to (2*halfFrameSamples + 1)*dx?
+integer structSoundAnalysisWorkspace :: getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth) {
 	const double halfFrameDuration = 0.5 * approximatePhysicalAnalysisWidth;
-	const integer halfFrameSamples = Melder_ifloor (halfFrameDuration / my input -> dx);
+	const integer halfFrameSamples = Melder_ifloor (halfFrameDuration / input -> dx);
 	return 2 * halfFrameSamples + 1;
 }
 
-void getInputFrame_sound (mutableSampledAnalysisWorkspace ws, integer iframe) {
-	SoundAnalysisWorkspace me = reinterpret_cast<SoundAnalysisWorkspace> (ws);
-	constSound sound = reinterpret_cast<constSound> (my input);
-	const double midTime = Sampled_indexToX (my output, iframe);
-	const integer soundCentreSampleNumber = Sampled_xToNearestIndex (my input, midTime);   // time accuracy is half a sampling period
-	integer soundIndex = soundCentreSampleNumber - my analysisFrameSize / 2;
-	for (integer isample = 1; isample <= my analysisFrame.size; isample ++, soundIndex ++) {
-		my analysisFrame [isample] = ( soundIndex > 0 && soundIndex <= my input -> nx ? sound -> z [1] [soundIndex] : 0.0 );
+void structSoundAnalysisWorkspace :: getInputFrame (integer iframe) {
+	constSound sound = reinterpret_cast<constSound> (input);
+	const double midTime = Sampled_indexToX (output, iframe);
+	const integer soundCentreSampleNumber = Sampled_xToNearestIndex (input, midTime);   // time accuracy is half a sampling period
+	integer soundIndex = soundCentreSampleNumber - soundFrameSize / 2;
+	for (integer isample = 1; isample <= soundFrame.size; isample ++, soundIndex ++) {
+		soundFrame [isample] = ( soundIndex > 0 && soundIndex <= input -> nx ? sound -> z [1] [soundIndex] : 0.0 );
 	}
-	if (my subtractFrameMean)
-		centre_VEC_inout (my analysisFrame.get(), nullptr);
-	my analysisFrame.get()  *=  my windowFunction.get();
+	if (subtractFrameMean)
+		centre_VEC_inout (soundFrame.get(), nullptr);
+	soundFrame.get()  *=  windowFunction.get();
 }
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape) {
@@ -74,14 +69,13 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 }
 
 void SoundAnalysisWorkspace_init (mutableSoundAnalysisWorkspace me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
-	Melder_assert (input -> xmin == output -> xmin && input -> xmax == output -> xmax); // equal domains
+	Sampled_assertEqualDomains (input, output);
 	SampledAnalysisWorkspace_init (me, input, output);
 	my windowShape = windowShape;
-	my getInputFrame = getInputFrame_sound;
 	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
-	my analysisFrameSize = my getAnalysisFrameSize_uneven (me, my physicalAnalysisWidth);
-	my analysisFrame = raw_VEC (my analysisFrameSize);
-	my windowFunction = raw_VEC (my analysisFrameSize);
+	my soundFrameSize = my getSoundFrameSize_uneven (my physicalAnalysisWidth);
+	my soundFrame = raw_VEC (my soundFrameSize);
+	my windowFunction = raw_VEC (my soundFrameSize);
 	windowShape_into_VEC (windowShape, my windowFunction.get());
 }
 
@@ -95,10 +89,6 @@ autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (constSound thee, mutab
 	}
 }
 
-void SoundAnalysisWorkspace_replaceSound (mutableSoundAnalysisWorkspace me, Sound thee) {
-	SampledAnalysisWorkspace_replaceInput (me, thee);
-}
-
 void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, constSound thee, double preEmphasisFrequency) {
 	Melder_assert (my input == thee);
 	
@@ -107,7 +97,7 @@ void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, c
 	if (emphasisFactor != 0.0) {   // OPTIMIZE; will happen for cut-off frequencies above 119 times the sampling frequency
 		sound = Data_copy (thee);
 		Sound_preEmphasize_inplace (sound.get(), preEmphasisFrequency);
-		SoundAnalysisWorkspace_replaceSound (me, sound.get());
+		SampledAnalysisWorkspace_replaceInput (me, sound.get());
 	}
 	SampledAnalysisWorkspace_analyseThreaded (me);
 }

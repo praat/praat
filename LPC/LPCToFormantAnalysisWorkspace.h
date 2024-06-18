@@ -18,14 +18,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LPC_and_Formant.h"
+#include "Formant.h"
+#include "LPC.h"
 #include "Polynomial.h"
 #include "Roots.h"
 #include "LPCAnalysisWorkspace.h"
 #include "LPCToFormantAnalysisWorkspace_def.h"
 
-void LPCToFormantAnalysisWorkspace_init (mutableLPCToFormantAnalysisWorkspace me, constLPC input, mutableFormant output);
-
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, mutableFormant output);
+autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, mutableFormant output, double margin);
 
 #endif /*_LPCToFormantAnalysisWorkspace_h_ */

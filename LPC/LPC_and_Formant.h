@@ -2,7 +2,7 @@
 #define  _LPC_and_Formant_h_
 /* LPC_and_Formant.h
  *
- * Copyright (C) 1994-2020 David Weenink
+ * Copyright (C) 1994-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,8 @@
  */
 
 #include "LPC.h"
-//#include "Polynomial.h"
 #include "Roots.h"
 #include "Formant.h"
-
-#include "LPCToFormantAnalysisWorkspace.h"
 
 autoFormant LPC_to_Formant (constLPC me, double margin);
 
@@ -41,9 +38,5 @@ void LPC_Frame_into_Formant_Frame_mt (constLPC_Frame me, Formant_Frame thee, dou
 void Formant_Frame_into_LPC_Frame (constFormant_Frame me, LPC_Frame thee, double samplingPeriod);
 
 void Formant_Frame_scale (Formant_Frame me, double scale);
-
-void Roots_into_Formant_Frame (constRoots me, Formant_Frame thee, double samplingFrequency, double margin);
-
-void Formant_Frame_init (Formant_Frame me, integer nFormants);
 
 #endif /* _LPC_and_Formant_h_ */

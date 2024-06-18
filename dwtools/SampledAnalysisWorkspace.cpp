@@ -41,34 +41,43 @@
 #include "oo_DESCRIPTION.h"
 #include "SampledAnalysisWorkspace_def.h"
 
+Thing_implement (SampledAnalysisWorkspace, Daata, 0);
+
+void structSampledAnalysisWorkspace :: getInputFrame (integer /* iframe */) {
+	return;
+}
+
+bool structSampledAnalysisWorkspace :: inputFrameToOutputFrame () {
+	return true;
+}
+
+void structSampledAnalysisWorkspace :: saveOutputFrame () {
+	return;
+}
+
+void structSampledAnalysisWorkspace :: inputFramesToOutputFrames (integer fromFrame, integer toFrame) {
+	globalFrameErrorCount = 0;
+	for (integer iframe = fromFrame; iframe <= toFrame; iframe ++) {
+		currentFrame = iframe;
+		getInputFrame (iframe);
+		if (! inputFrameToOutputFrame ())
+			globalFrameErrorCount ++;
+		if (saveOutput)
+			saveOutputFrame ();
+	}	
+}
 
 void SampledAnalysisWorkspace_initWorkvectorPool (mutableSampledAnalysisWorkspace me, constINTVEC const& vectorSizes) {
 	Melder_assert (vectorSizes.size > 0);
 	my workvectorPool = WorkvectorPool_create (vectorSizes, true);
 }
 
-Thing_implement (SampledAnalysisWorkspace, Daata, 0);
-
-void structSampledAnalysisWorkspace :: analyseManyInputFrames (mutableSampledAnalysisWorkspace me, integer fromFrame, integer toFrame) {
-	my globalFrameErrorCount = 0;
-	for (integer iframe = fromFrame; iframe <= toFrame; iframe ++) {
-		my currentFrame = iframe;
-		my getInputFrame (me, iframe);
-		my analyseOneInputFrame (me);
-		if (! my frameAnalysisIsOK)
-			my globalFrameErrorCount ++;
-	}	
-}
-
-inline void getInputFrame (mutableSampledAnalysisWorkspace /* me */, integer /* iframe */) {
-	return;
-}
 
 void SampledAnalysisWorkspace_init (mutableSampledAnalysisWorkspace me, constSampled input, mutableSampled output) {
-	Melder_assert (input -> xmin == output -> xmin && input -> xmax == output -> xmax); // equal domains
+	Sampled_assertEqualDomains (input, output);
 	my input = input;
 	my output = output;
-	my getInputFrame = getInputFrame;
+	my saveOutput = true;
 	my useMultiThreading = ( Melder_debug != -8 ? true : false );
 	my minimumNumberOfFramesPerThread = 40;
 }
@@ -84,16 +93,12 @@ autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (constSound input, 
 }
 
 void SampledAnalysisWorkspace_replaceInput (mutableSampledAnalysisWorkspace me, constSampled thee) {
-	Melder_assert (my input -> xmin == thy xmin && my input -> xmax == thy xmax); // equal domains
-	Melder_assert (my input -> x1 == thy x1 && my input -> nx == thy nx); // + equal sampling
-	Melder_assert (my input -> dx == thy dx);
+	Sampled_assertEqualDomainsAndSampling (my input, thee);
 	my input = thee;
 }
 
 void SampledAnalysisWorkspace_replaceOutput (mutableSampledAnalysisWorkspace me, mutableSampled thee) {
-	Melder_assert (my output -> xmin == thy xmin && my output -> xmax == thy xmax); // equal domains
-	Melder_assert (my output -> x1 == thy x1 && my output -> nx == thy nx); // + equal sampling
-	Melder_assert (my output -> dx == thy dx);
+	Sampled_assertEqualDomainsAndSampling (my output, thee);
 	my output = thee;
 }
 
@@ -113,11 +118,11 @@ void SampledAnalysisWorkspace_getThreadingInfo (constSampledAnalysisWorkspace me
 		*out_numberOfThreads = numberOfThreads;
 }
 
-void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me)
+void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace me)
 {
 	try {
 
-		my allocateOutputFrames (me);
+		my allocateOutputFrames ();
 
 		const integer numberOfFrames = my output -> nx;
 		
@@ -145,7 +150,7 @@ void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me)
 					const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
 					
 					auto analyseFrames = [&globalFrameErrorCount] (SampledAnalysisWorkspace threadWorkspace, integer fromFrame, integer toFrame) {
-						threadWorkspace -> analyseManyInputFrames (threadWorkspace, fromFrame, toFrame);
+						threadWorkspace -> inputFramesToOutputFrames (fromFrame, toFrame);
 						globalFrameErrorCount += threadWorkspace -> globalFrameErrorCount;
 					};
 
@@ -164,7 +169,7 @@ void SampledAnalysisWorkspace_analyseThreaded (SampledAnalysisWorkspace me)
 			}
 			my globalFrameErrorCount = globalFrameErrorCount;
 		} else {
-			my analyseManyInputFrames (me, 1, numberOfFrames); // no threading
+			my inputFramesToOutputFrames (1, numberOfFrames); // no threading
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U"The Sampled analysis could not be done.");
