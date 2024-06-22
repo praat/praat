@@ -57,6 +57,7 @@ static void LPC_Frame_into_Polynomial (constLPC_Frame me, mutablePolynomial p) {
 }
 
 void structLPCToFormantAnalysisWorkspace :: allocateOutputFrames () {
+	if (! outputObjectPresent) return;
 	Melder_assert (output != nullptr);
 	Formant thee = reinterpret_cast<Formant> (output);
 	for (integer iframe = 1; iframe <= thy nx; iframe ++) {
@@ -65,9 +66,10 @@ void structLPCToFormantAnalysisWorkspace :: allocateOutputFrames () {
 	}
 }
 
-void structLPCToFormantAnalysisWorkspace :: getInputFrame (integer iframe) {
+void structLPCToFormantAnalysisWorkspace :: getInputFrame () {
+	if (! inputObjectPresent) return;
 	constLPC me = reinterpret_cast<constLPC> (input);
-	my d_frames [iframe].copy (& lpcFrame);
+	my d_frames [currentFrame].copy (& lpcFrame);
 	
 }
 
@@ -91,6 +93,7 @@ bool structLPCToFormantAnalysisWorkspace :: inputFrameToOutputFrame () {
 }
 
 void structLPCToFormantAnalysisWorkspace :: saveOutputFrame () {
+	if (! outputObjectPresent) return;
 	mutableFormant me = reinterpret_cast<mutableFormant> (output);
 	formantFrame.copy (& my frames [currentFrame]);
 }

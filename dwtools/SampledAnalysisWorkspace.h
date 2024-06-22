@@ -34,21 +34,15 @@ void SampledAnalysisWorkspace_getThreadingInfo (constSampledAnalysisWorkspace me
 void SampledAnalysisWorkspace_replaceOutput (mutableSampledAnalysisWorkspace me, mutableSampled thee);
 /*
 	Preconditions:
-		my output -> xmin == thy xmin
-		my output -> xmax == thy xmax
-		my output -> nx   == thy nx
-		my output -> dx   == thy dx
-		my output -> x1   == thy x1
+		my output -> xmin == thy xmin && my output -> xmax == thy xmax
+		my output -> nx   == thy nx && my output -> dx   == thy dx && my output -> x1   == thy x1
 */
 
 void SampledAnalysisWorkspace_replaceInput (mutableSampledAnalysisWorkspace me, constSampled input);
 /*
 	Preconditions:
-		my output -> xmin == thy xmin
-		my output -> xmax == thy xmax
-		my output -> nx   == thy nx
-		my output -> dx   == thy dx
-		my output -> x1   == thy x1
+		my output -> xmin == thy xmin && my output -> xmax == thy xmax
+		my output -> nx   == thy nx && my output -> dx   == thy dx && my output -> x1   == thy x1
 */
 
 void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace me);

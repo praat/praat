@@ -47,7 +47,7 @@ autoLPC LPC_and_Sound_to_LPC_robust (constLPC thee, constSound me, double analys
 
 
 void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency);
-void Sound_into_LPC_covar (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency);
+void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency);
 void Sound_into_LPC_burg (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency);
 void Sound_into_LPC_marple (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency, double tol1, double tol2);
 void Sound_into_LPC_robust (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency,

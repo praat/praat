@@ -26,7 +26,7 @@ oo_DEFINE_CLASS (LPCToFormantAnalysisWorkspace, LPCAnalysisWorkspace)
 
 	#if oo_DECLARING
 
-		void getInputFrame (integer iframe) override;
+		void getInputFrame () override;
 		void allocateOutputFrames () override;
 		bool inputFrameToOutputFrame () override;
 		void saveOutputFrame () override;

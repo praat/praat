@@ -16,18 +16,58 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT SoundToFormantAnalysisWorkspace
-oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace, SoundToLPCAnalysisWorkspace)
+/*
 
+#define ooSTRUCT SoundToFormantAnalysisWorkspace_robust
+oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace_robust, SoundAnalysisWorkspace)
+
+	oo_OBJECT (SoundToLPCAnalysisWorkspace_robust, 0, soundToLPC)
 	oo_OBJECT (LPCToFormantAnalysisWorkspace, 0, lpcToFormant)
 
 	#if oo_DECLARING
 
-		void getInputFrame (integer iframe) override;
-		void allocateOutputFrames () override;
+		void getInputFrame (void) override;
+		void allocateOutputFrames (void) override;
 		bool inputFrameToOutputFrame (void) override;
 		void saveOutputFrame (void) override;
-		
+
+	#endif
+
+oo_END_CLASS (SoundToFormantAnalysisWorkspace_robust)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT SoundToFormantAnalysisWorkspace_burg
+oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace_burg, SoundToLPCAnalysisWorkspace_burg)
+
+	oo_OBJECT (SoundToLPCAnalysisWorkspace_robust, 0, soundToLPC)
+	oo_OBJECT (LPCToFormantAnalysisWorkspace, 0, lpcToFormant)
+
+	#if oo_DECLARING
+
+		void getInputFrame (void) override;
+		void allocateOutputFrames (void) override;
+		bool inputFrameToOutputFrame (void) override;
+		void saveOutputFrame (void) override;
+
+	#endif
+
+oo_END_CLASS (SoundToFormantAnalysisWorkspace_burg)
+#undef ooSTRUCT
+*/
+
+#define ooSTRUCT SoundToFormantAnalysisWorkspace
+oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace, SoundAnalysisWorkspace)
+
+	oo_OBJECT (SoundToLPCAnalysisWorkspace, 0, soundToLPC)
+	oo_OBJECT (LPCToFormantAnalysisWorkspace, 0, lpcToFormant)
+
+	#if oo_DECLARING
+
+		void allocateOutputFrames (void) override;
+		bool inputFrameToOutputFrame (void) override;
+		void saveOutputFrame (void) override;
+
 	#endif
 
 oo_END_CLASS (SoundToFormantAnalysisWorkspace)

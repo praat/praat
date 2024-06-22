@@ -43,15 +43,19 @@
 
 Thing_implement (SampledAnalysisWorkspace, Daata, 0);
 
-void structSampledAnalysisWorkspace :: getInputFrame (integer /* iframe */) {
+void structSampledAnalysisWorkspace :: getInputFrame (void) {
 	return;
 }
 
-bool structSampledAnalysisWorkspace :: inputFrameToOutputFrame () {
+bool structSampledAnalysisWorkspace :: inputFrameToOutputFrame (void) {
 	return true;
 }
 
-void structSampledAnalysisWorkspace :: saveOutputFrame () {
+void structSampledAnalysisWorkspace :: saveOutputFrame (void) {
+	return;
+}
+
+void structSampledAnalysisWorkspace :: allocateOutputFrames (void) {
 	return;
 }
 
@@ -59,11 +63,10 @@ void structSampledAnalysisWorkspace :: inputFramesToOutputFrames (integer fromFr
 	globalFrameErrorCount = 0;
 	for (integer iframe = fromFrame; iframe <= toFrame; iframe ++) {
 		currentFrame = iframe;
-		getInputFrame (iframe);
+		getInputFrame ();
 		if (! inputFrameToOutputFrame ())
 			globalFrameErrorCount ++;
-		if (saveOutput)
-			saveOutputFrame ();
+		saveOutputFrame ();
 	}	
 }
 
@@ -74,10 +77,16 @@ void SampledAnalysisWorkspace_initWorkvectorPool (mutableSampledAnalysisWorkspac
 
 
 void SampledAnalysisWorkspace_init (mutableSampledAnalysisWorkspace me, constSampled input, mutableSampled output) {
-	Sampled_assertEqualDomains (input, output);
-	my input = input;
-	my output = output;
-	my saveOutput = true;
+	if (input && output)
+		Sampled_assertEqualDomains (input, output);
+	if (input) {
+		my input = input;
+		my inputObjectPresent = true;
+	}
+	if (output) {
+		my output = output;
+		my outputObjectPresent = true;
+	}
 	my useMultiThreading = ( Melder_debug != -8 ? true : false );
 	my minimumNumberOfFramesPerThread = 40;
 }

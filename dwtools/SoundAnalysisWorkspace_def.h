@@ -33,7 +33,7 @@ oo_DEFINE_CLASS (SoundAnalysisWorkspace, SampledAnalysisWorkspace)
 		*/
 		integer getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth);
 		
-		void getInputFrame (integer iframe) override;
+		void getInputFrame () override;
 	#endif
 
 oo_END_CLASS (SoundAnalysisWorkspace)

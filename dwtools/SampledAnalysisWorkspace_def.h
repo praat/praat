@@ -26,8 +26,9 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 		Only a reference to the Sampled that is analysed is needed in a thread because
 		each thread only accesses disjoint parts of it.
 	*/
+	oo_BOOLEAN (inputObjectPresent)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
-
+	
 	/*
 		Each thread should only access disjoint parts in the result object.
 		Precondition:
@@ -35,6 +36,7 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 			input -> xmax == output -> xmax;
 		The input and output objects can have different sampling (y1, nx, dx).
 	*/
+	oo_BOOLEAN (outputObjectPresent)
 	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
 	
 	oo_BOOLEAN (useMultiThreading)
@@ -46,7 +48,6 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo 
 	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
 	
-	oo_BOOLEAN (saveOutput)					// default is 'true'; shorthand, if the output is intermediate!
 	/*
 		For approximations we need tolerances
 	*/
@@ -60,7 +61,7 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 	
 	#if oo_DECLARING
 
-		virtual void getInputFrame (integer iframe);
+		virtual void getInputFrame (void);
 		
 		virtual bool inputFrameToOutputFrame (void); // sets the frameAnalysisInfo and also frameAnalysisIsOK
 		

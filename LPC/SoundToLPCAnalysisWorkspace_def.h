@@ -19,14 +19,14 @@
 #define ooSTRUCT SoundToLPCAnalysisWorkspace
 oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
 
-	oo_INTEGER (maxnCoefficients) // avoids casting the output
-	oo_STRUCT (LPC_Frame, lpcFrame) // we don't do multiple inheritance
+	oo_INTEGER (maxnCoefficients) 			// if output object not present!
+	oo_STRUCT (LPC_Frame, outputLPCFrame)	// we don't do multiple inheritance
 
 	#if oo_DECLARING
 
-		void allocateOutputFrames () override;
-		bool inputFrameToOutputFrame () override;
-		void saveOutputFrame () override;
+		void allocateOutputFrames (void) override;
+		bool inputFrameToOutputFrame (void) override;
+		void saveOutputFrame (void) override;
 
 		#endif
 
@@ -35,10 +35,14 @@ oo_END_CLASS (SoundToLPCAnalysisWorkspace)
 
 #define ooSTRUCT SoundAndLPCToLPCAnalysisWorkspace_robust
 oo_DEFINE_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWorkspace)
-	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, original) // read-only original
+
+	oo_BOOLEAN (intermediateObjectPresent)
+	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, intermediate) // read-only original
+	oo_STRUCT (LPC_Frame, intermediateLPCFrame)
+	
 	oo_INTEGER (computeSVDworksize)
 	oo_DOUBLE (k_stdev)
-	oo_INTEGER (localPredictionOrder) // may change from frame to frame
+	oo_INTEGER (currentPredictionOrder) // may change from frame to frame
 	oo_INTEGER (iter)
 	oo_INTEGER (itermax)
 	oo_INTEGER (huber_iterations) // = 5;
@@ -48,15 +52,16 @@ oo_DEFINE_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWor
 	oo_DOUBLE (scale)
 	oo_VEC (error, soundFrameSize)
 	oo_VEC (sampleWeights, soundFrameSize)
-	oo_VEC (coefficients, original -> maxnCoefficients)
-	oo_VEC (covariancesw, original -> maxnCoefficients)
-	oo_MAT (covarmatrixw, original -> maxnCoefficients, original -> maxnCoefficients)
+	oo_VEC (coefficients, intermediate -> maxnCoefficients)
+	oo_VEC (covariancesw, intermediate -> maxnCoefficients)
+	oo_MAT (covarmatrixw, intermediate -> maxnCoefficients, intermediate -> maxnCoefficients)
 	oo_OBJECT (SVD, 1, svd)
 
 	#if oo_DECLARING
 
-		bool inputFrameToOutputFrame () override;
-		void saveOutputFrame () override;
+		void getInputFrame (void) override;
+		bool inputFrameToOutputFrame (void) override;
+		void saveOutputFrame (void) override;
 
 	#endif
 		
@@ -65,16 +70,20 @@ oo_END_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust)
 
 #define ooSTRUCT SoundToLPCAnalysisWorkspace_robust
 oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWorkspace)
-
+	/*
+		We inherit from SoundToLPCAnalysisWorkspace (instead of SampledAnalysisWorkspace)
+		to determine the timing because we can't do multiple inheritance
+	*/
+	oo_OBJECT (SoundToLPCAnalysisWorkspace, 0, soundToLPC)
 	oo_OBJECT (SoundAndLPCToLPCAnalysisWorkspace_robust, 0, soundAndLPCToLPC)
 
 	#if oo_DECLARING
-	
-		void getInputFrame (integer iframe) override;
-		void allocateOutputFrames () override;
-		bool inputFrameToOutputFrame () override;
-		void saveOutputFrame () override;
-		
+
+		void getInputFrame (void) override;
+		void allocateOutputFrames (void) override;
+		bool inputFrameToOutputFrame (void) override;
+		void saveOutputFrame (void) override;
+
 	#endif
 
 oo_END_CLASS (SoundToLPCAnalysisWorkspace_robust)

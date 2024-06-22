@@ -48,9 +48,10 @@ integer structSoundAnalysisWorkspace :: getSoundFrameSize_uneven (double approxi
 	return 2 * halfFrameSamples + 1;
 }
 
-void structSoundAnalysisWorkspace :: getInputFrame (integer iframe) {
+void structSoundAnalysisWorkspace :: getInputFrame () {
+	if (! inputObjectPresent) return;
 	constSound sound = reinterpret_cast<constSound> (input);
-	const double midTime = Sampled_indexToX (output, iframe);
+	const double midTime = Sampled_indexToX (output, currentFrame);
 	const integer soundCentreSampleNumber = Sampled_xToNearestIndex (input, midTime);   // time accuracy is half a sampling period
 	integer soundIndex = soundCentreSampleNumber - soundFrameSize / 2;
 	for (integer isample = 1; isample <= soundFrame.size; isample ++, soundIndex ++) {

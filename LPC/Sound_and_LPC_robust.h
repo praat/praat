@@ -27,6 +27,6 @@
 #include "Sound_and_LPC.h"
 
 autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
-	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, integer itermax, double tol, bool wantlocation);
+	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, integer itermax, double tol, double location, bool wantlocation);
 
 #endif /* _Sound_and_LPC_robust_h_ */
