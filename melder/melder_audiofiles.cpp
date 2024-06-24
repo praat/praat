@@ -1,6 +1,6 @@
 /* melder_audiofiles.cpp
  *
- * Copyright (C) 1992-2008,2010-2019,2021,2023 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2008,2010-2019,2021,2023,2024 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -884,6 +884,11 @@ static void Melder_readMp3File (FILE *f, MAT buffer) {
 		Melder_throw (U"Error decoding MP3 file.");
 }
 
+static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
+	Melder_casual (U"Reading Polyphone file with ", buffer.nrow, U" channels and ", buffer.ncol, U" samples.");
+	Melder_throw (U"Polyphone sound files cannot yet be opened. Write to paul.boersma@uva.nl for more information.");
+}
+
 void Melder_readAudioToFloat (FILE *f, int encoding, MAT buffer) {
 	try {
 		integer numberOfChannels = buffer.nrow;
@@ -1266,6 +1271,9 @@ void Melder_readAudioToFloat (FILE *f, int encoding, MAT buffer) {
 			case Melder_MPEG_COMPRESSION_24:
 			case Melder_MPEG_COMPRESSION_32:
 				Melder_readMp3File (f, buffer);
+				break;
+			case Melder_POLYPHONE:
+				Melder_readPolyphoneFile (f, buffer);
 				break;
 			default:
 				Melder_throw (U"Unknown encoding ", encoding, U".");
