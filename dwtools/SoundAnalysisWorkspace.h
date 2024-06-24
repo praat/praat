@@ -25,6 +25,11 @@
 
 void SoundAnalysisWorkspace_init (mutableSoundAnalysisWorkspace me, constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
+/*
+	If the input == nullptr ad we need to initialize the input soundFrame.
+*/
+void SoundAnalysisWorkspace_initSoundFrame (mutableSoundAnalysisWorkspace me, double sound_dx);
+
 autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
 void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, constSound thee, double preEmphasisFrequency);

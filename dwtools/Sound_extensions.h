@@ -205,5 +205,6 @@ void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingF
 
 void windowShape_into_VEC (kSound_windowShape windowShape, VEC inout_window);
 
+autoSound Sound_resampleAndOrPreemphasize (constSound me, double maximumFrequency, integer depth, double preEmphasisFrequency);
 
 #endif /* _Sound_extensions_h_ */

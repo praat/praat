@@ -20,15 +20,23 @@
 oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
 
 	oo_INTEGER (maxnCoefficients) 			// if output object not present!
-	oo_STRUCT (LPC_Frame, outputLPCFrame)	// we don't do multiple inheritance
+	oo_STRUCT (LPC_Frame, outputLPCFrame)
 
 	#if oo_DECLARING
+
+		LPC_Frame outputLPCFrameRef = & outputLPCFrame;
 
 		void allocateOutputFrames (void) override;
 		bool inputFrameToOutputFrame (void) override;
 		void saveOutputFrame (void) override;
 
-		#endif
+	#endif
+
+	#if oo_COPYING
+
+		thy outputLPCFrameRef = outputLPCFrameRef;
+
+	#endif
 
 oo_END_CLASS (SoundToLPCAnalysisWorkspace)
 #undef ooSTRUCT
@@ -59,9 +67,17 @@ oo_DEFINE_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWor
 
 	#if oo_DECLARING
 
+		LPC_Frame intermediateLPCFrameRef = & intermediateLPCFrame;
+		
 		void getInputFrame (void) override;
 		bool inputFrameToOutputFrame (void) override;
 		void saveOutputFrame (void) override;
+
+	#endif
+
+	#if oo_COPYING
+
+		thy intermediateLPCFrameRef = intermediateLPCFrameRef;
 
 	#endif
 		

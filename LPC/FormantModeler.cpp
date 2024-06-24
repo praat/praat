@@ -1183,7 +1183,7 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me,
 		const double frequencyStep = ( numberOfFrequencySteps > 1 ? (maxCeiling - minCeiling) / (numberOfFrequencySteps - 1) : 0.0 );
 		for (integer i = 1; i <= numberOfFrequencySteps; i ++) {
 			const double ceiling = minCeiling + (i - 1) * frequencyStep;
-			autoFormant formant = Sound_to_Formant_burg_mt (me, timeStep, 5, ceiling, windowLength, preemphasisFrequency, 50.0);
+			autoFormant formant = Sound_to_Formant_burg_mt (me, timeStep, 5.0, ceiling, windowLength, preemphasisFrequency, 50.0);
 			formants. addItem_move (formant.move());
 		}
 		integer numberOfFrames;

@@ -25,6 +25,11 @@
 #include "LPCAnalysisWorkspace.h"
 #include "LPCToFormantAnalysisWorkspace_def.h"
 
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, mutableFormant output, double margin);
+/*
+	if (input)
+		assert input->maxnCoeffciets == maxnCoefficients
+
+*/
+autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, integer maxnCoefficients, mutableFormant output, double margin);
 
 #endif /*_LPCToFormantAnalysisWorkspace_h_ */

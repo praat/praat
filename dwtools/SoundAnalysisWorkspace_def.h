@@ -21,7 +21,7 @@ oo_DEFINE_CLASS (SoundAnalysisWorkspace, SampledAnalysisWorkspace)
 
 	oo_DOUBLE (physicalAnalysisWidth) 			// depends on the effectiveAnalysiswidth and the window window shape
 	oo_INTEGER (soundFrameSize) 				// determined by the physicalAnalysisWidth and the samplingFrequency of the Sound
-	oo_VEC (soundFrame, soundFrameSize)	// the sound samples to analyse
+	oo_VEC (soundFrame, soundFrameSize)			// the sound samples to analyse
 	oo_BOOLEAN (subtractFrameMean)				// if true, the frame mean will be subtracted before the windowing operation
 	oo_ENUM (kSound_windowShape, windowShape)	// Type: Rectangular, triangular, hamming, etc..
 	oo_VEC (windowFunction, soundFrameSize)
@@ -31,9 +31,18 @@ oo_DEFINE_CLASS (SoundAnalysisWorkspace, SampledAnalysisWorkspace)
 			Make the sound frame size always uneven. This guarantees that in case of windowing
 			the sample at the center gets weight 1.0
 		*/
-		integer getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth);
-		
+		integer getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double input_dx);
+
 		void getInputFrame () override;
+
+		VEC soundFrameVEC = soundFrame.get();
+
+	#endif
+
+	#if oo_COPYING
+
+		thy soundFrameVEC = soundFrameVEC;
+
 	#endif
 
 oo_END_CLASS (SoundAnalysisWorkspace)

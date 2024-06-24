@@ -25,12 +25,20 @@ oo_DEFINE_CLASS (LPCToFormantAnalysisWorkspace, LPCAnalysisWorkspace)
 	oo_OBJECT (Roots, 0, roots)
 
 	#if oo_DECLARING
+	
+		Formant_Frame formantFrameRef = & formantFrame;
 
 		void getInputFrame () override;
 		void allocateOutputFrames () override;
 		bool inputFrameToOutputFrame () override;
 		void saveOutputFrame () override;
 		
+	#endif
+		
+	#if oo_COPYING
+	
+		thy formantFrameRef = formantFrameRef;
+
 	#endif
 
 oo_END_CLASS (LPCToFormantAnalysisWorkspace)

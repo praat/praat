@@ -20,6 +20,18 @@
 oo_DEFINE_CLASS (LPCAnalysisWorkspace, SampledAnalysisWorkspace)
 
 	oo_STRUCT (LPC_Frame, lpcFrame)
+	
+	#if oo_DECLARING
+
+		LPC_Frame lpcFrameRef = & lpcFrame;
+
+	#endif
+
+	#if oo_COPYING
+
+		thy lpcFrameRef = lpcFrameRef;
+
+	#endif
 
 oo_END_CLASS (LPCAnalysisWorkspace)
 #undef ooSTRUCT

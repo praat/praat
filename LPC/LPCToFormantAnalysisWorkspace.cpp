@@ -93,16 +93,22 @@ bool structLPCToFormantAnalysisWorkspace :: inputFrameToOutputFrame () {
 }
 
 void structLPCToFormantAnalysisWorkspace :: saveOutputFrame () {
-	if (! outputObjectPresent) return;
+	if (! outputObjectPresent)
+		return;
 	mutableFormant me = reinterpret_cast<mutableFormant> (output);
 	formantFrame.copy (& my frames [currentFrame]);
 }
 
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, mutableFormant output, double margin) {
+autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, integer maxnCoefficients, mutableFormant output, double margin) {
 	try {
-		Sampled_assertEqualDomainsAndSampling (input, output);
+		if (input) {
+			Melder_assert (input -> maxnCoefficients == maxnCoefficients);
+			if (output)
+				Sampled_assertEqualDomainsAndSampling (input, output);
+		}
+		if (! output)
+			Melder_throw (U"Output Formant needed.");
 		autoLPCToFormantAnalysisWorkspace me = Thing_new (LPCToFormantAnalysisWorkspace);
-		const integer maxnCoefficients = input -> maxnCoefficients;
 		LPCAnalysisWorkspace_init (me.get(), input, output, maxnCoefficients);
 		Formant_Frame_init (& my formantFrame, output -> maxnFormants);
 		autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};

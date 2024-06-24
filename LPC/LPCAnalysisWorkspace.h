@@ -22,6 +22,12 @@
 #include "SampledAnalysisWorkspace.h"
 #include "LPCAnalysisWorkspace_def.h"
 
-void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer numberOfCoefficients);
+/*
+	The last argument is in fact redundant if the input is present,
+	nevertheless we assert:
+		if (input)
+			assert input->maxnCoefficients == maxnCoefficients
+*/
+void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer maxnCoefficients);
 
 #endif /* _LPCAnalysisWorkspace_h_ */

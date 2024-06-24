@@ -41,15 +41,15 @@
 
 Thing_implement (SoundAnalysisWorkspace, Daata, 0);
 
-// TODO should physicalAnalysisWidth be modified to (2*halfFrameSamples + 1)*dx?
-integer structSoundAnalysisWorkspace :: getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth) {
+integer structSoundAnalysisWorkspace :: getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double input_dx) {
 	const double halfFrameDuration = 0.5 * approximatePhysicalAnalysisWidth;
-	const integer halfFrameSamples = Melder_ifloor (halfFrameDuration / input -> dx);
+	const integer halfFrameSamples = Melder_ifloor (halfFrameDuration / input_dx);
 	return 2 * halfFrameSamples + 1;
 }
 
 void structSoundAnalysisWorkspace :: getInputFrame () {
-	if (! inputObjectPresent) return;
+	if (! inputObjectPresent)
+		return;
 	constSound sound = reinterpret_cast<constSound> (input);
 	const double midTime = Sampled_indexToX (output, currentFrame);
 	const integer soundCentreSampleNumber = Sampled_xToNearestIndex (input, midTime);   // time accuracy is half a sampling period
@@ -70,18 +70,25 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 }
 
 void SoundAnalysisWorkspace_init (mutableSoundAnalysisWorkspace me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
-	Sampled_assertEqualDomains (input, output);
 	SampledAnalysisWorkspace_init (me, input, output);
 	my windowShape = windowShape;
 	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
-	my soundFrameSize = my getSoundFrameSize_uneven (my physicalAnalysisWidth);
+	if (! my inputObjectPresent)
+		return;
+	SoundAnalysisWorkspace_initSoundFrame (me, my input -> dx);
+}
+
+void SoundAnalysisWorkspace_initSoundFrame (mutableSoundAnalysisWorkspace me, double sound_dx) {
+	my soundFrameSize = my getSoundFrameSize_uneven (my physicalAnalysisWidth, sound_dx);
 	my soundFrame = raw_VEC (my soundFrameSize);
 	my windowFunction = raw_VEC (my soundFrameSize);
-	windowShape_into_VEC (windowShape, my windowFunction.get());
+	my soundFrameVEC = my soundFrame.get();
+	windowShape_into_VEC (my windowShape, my windowFunction.get());
 }
 
 autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
 	try {
+		Melder_assert (thee);
 		autoSoundAnalysisWorkspace me = Thing_new (SoundAnalysisWorkspace);
 		SoundAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
 		return me;
