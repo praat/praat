@@ -40,7 +40,7 @@ autoFormant LPC_to_Formant (constLPC me, double margin) {
 		Melder_require (my maxnCoefficients < 100,
 			U"We cannot find the roots of a polynomial of order > 99.");
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, maximumNumberOfFormants);
-		autoLPCToFormantAnalysisWorkspace ws = LPCToFormantAnalysisWorkspace_create (me, my maxnCoefficients, thee.get(), margin);
+		autoLPCToFormantAnalysisWorkspace ws = LPCToFormantAnalysisWorkspace_create (me, my maxnCoefficients, my samplingPeriod, thee.get(), margin);
 		
 		SampledAnalysisWorkspace_analyseThreaded (ws.get());
 		

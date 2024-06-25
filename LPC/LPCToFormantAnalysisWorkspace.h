@@ -30,6 +30,7 @@
 		assert input->maxnCoeffciets == maxnCoefficients
 
 */
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, integer maxnCoefficients, mutableFormant output, double margin);
+autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, integer maxnCoefficients, double samplingPeriod,
+	mutableFormant output, double margin);
 
 #endif /*_LPCToFormantAnalysisWorkspace_h_ */

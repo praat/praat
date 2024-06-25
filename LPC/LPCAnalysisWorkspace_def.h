@@ -19,7 +19,8 @@
 #define ooSTRUCT LPCAnalysisWorkspace
 oo_DEFINE_CLASS (LPCAnalysisWorkspace, SampledAnalysisWorkspace)
 
-	oo_STRUCT (LPC_Frame, lpcFrame)
+	oo_STRUCT (LPC_Frame, lpcFrame)	
+	oo_DOUBLE (samplingPeriod)
 	
 	#if oo_DECLARING
 
@@ -29,7 +30,7 @@ oo_DEFINE_CLASS (LPCAnalysisWorkspace, SampledAnalysisWorkspace)
 
 	#if oo_COPYING
 
-		thy lpcFrameRef = lpcFrameRef;
+		thy lpcFrameRef = & thy lpcFrame;
 
 	#endif
 

@@ -74,21 +74,20 @@ void structLPCToFormantAnalysisWorkspace :: getInputFrame () {
 }
 
 bool structLPCToFormantAnalysisWorkspace :: inputFrameToOutputFrame () {
-	constLPC lpc = reinterpret_cast<constLPC> (input);
 	
-	formantFrame. intensity = lpcFrame. gain;
-	if (lpcFrame. nCoefficients == 0) {
-		formantFrame. numberOfFormants = 0;
-		formantFrame. formant.resize (formantFrame. numberOfFormants); // maintain invariant
+	formantFrameRef -> intensity = lpcFrameRef -> gain;
+	if (lpcFrameRef -> nCoefficients == 0) {
+		formantFrameRef -> numberOfFormants = 0;
+		formantFrameRef -> formant.resize (formantFrameRef -> numberOfFormants); // maintain invariant
 		frameAnalysisInfo = 1;	
 		return true;
 	}
 	frameAnalysisInfo = 0;
-	const double samplingFrequency = 1.0 / lpc -> samplingPeriod;
-	LPC_Frame_into_Polynomial (& lpcFrame, p.get());
+	const double samplingFrequency = 1.0 / samplingPeriod;
+	LPC_Frame_into_Polynomial (lpcFrameRef, p.get());
 	Polynomial_into_Roots (p.get(), roots.get(), workvectorPool.get());
 	Roots_fixIntoUnitCircle (roots.get());
-	Roots_into_Formant_Frame (roots.get(), & formantFrame, samplingFrequency, margin);
+	Roots_into_Formant_Frame (roots.get(), formantFrameRef, samplingFrequency, margin);
 	return true;
 }
 
@@ -99,7 +98,7 @@ void structLPCToFormantAnalysisWorkspace :: saveOutputFrame () {
 	formantFrame.copy (& my frames [currentFrame]);
 }
 
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, integer maxnCoefficients, mutableFormant output, double margin) {
+autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, integer maxnCoefficients, double samplingPeriod, mutableFormant output, double margin) {
 	try {
 		if (input) {
 			Melder_assert (input -> maxnCoefficients == maxnCoefficients);
@@ -109,7 +108,7 @@ autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC
 		if (! output)
 			Melder_throw (U"Output Formant needed.");
 		autoLPCToFormantAnalysisWorkspace me = Thing_new (LPCToFormantAnalysisWorkspace);
-		LPCAnalysisWorkspace_init (me.get(), input, output, maxnCoefficients);
+		LPCAnalysisWorkspace_init (me.get(), input, output, maxnCoefficients, samplingPeriod);
 		Formant_Frame_init (& my formantFrame, output -> maxnFormants);
 		autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};
 		my workvectorPool = WorkvectorPool_create (sizes.get(), true);		

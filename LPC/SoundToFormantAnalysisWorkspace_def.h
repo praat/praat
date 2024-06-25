@@ -24,6 +24,7 @@ oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace, SoundAnalysisWorkspace)
 
 	#if oo_DECLARING
 
+		void getInputFrame (void) override;
 		void allocateOutputFrames (void) override;
 		bool inputFrameToOutputFrame (void) override;
 		void saveOutputFrame (void) override;
@@ -34,4 +35,4 @@ oo_END_CLASS (SoundToFormantAnalysisWorkspace)
 #undef ooSTRUCT
 
 /* End of file SoundToFormantAnalysisWorkspace_def.h */
- 
+

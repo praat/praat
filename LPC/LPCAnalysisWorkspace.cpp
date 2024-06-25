@@ -40,11 +40,13 @@
 
 Thing_implement (LPCAnalysisWorkspace, SampledAnalysisWorkspace, 0);
 
-void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer numberOfCoefficients) {
+void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer numberOfCoefficients, double samplingPeriod) {
 	SampledAnalysisWorkspace_init (me, input, output);
+	my samplingPeriod = samplingPeriod;
 	if (! my inputObjectPresent)
 		return;
 	Melder_assert (input -> maxnCoefficients == numberOfCoefficients);
+	Melder_assert (input -> samplingPeriod == samplingPeriod);
 	LPC_Frame_init (& my lpcFrame, numberOfCoefficients);
 }
 

@@ -23,11 +23,13 @@
 #include "LPCAnalysisWorkspace_def.h"
 
 /*
-	The last argument is in fact redundant if the input is present,
+	The last two arguments are in fact redundant if the input is present,
 	nevertheless we assert:
-		if (input)
+		if (input) {
 			assert input->maxnCoefficients == maxnCoefficients
+			assert input -> samplingPeriod == samplingPeriod
+		}
 */
-void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer maxnCoefficients);
+void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer maxnCoefficients, double samplingPeriod);
 
 #endif /* _LPCAnalysisWorkspace_h_ */
