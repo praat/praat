@@ -34,7 +34,7 @@ oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
 
 	#if oo_COPYING
 
-		thy outputLPCFrameRef = outputLPCFrameRef;
+		thy outputLPCFrameRef = & thy outputLPCFrame;
 
 	#endif
 
@@ -77,7 +77,7 @@ oo_DEFINE_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWor
 
 	#if oo_COPYING
 
-		thy intermediateLPCFrameRef = intermediateLPCFrameRef;
+		thy intermediateLPCFrameRef = & thy intermediateLPCFrame;
 
 	#endif
 		

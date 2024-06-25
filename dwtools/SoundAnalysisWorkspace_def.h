@@ -35,13 +35,13 @@ oo_DEFINE_CLASS (SoundAnalysisWorkspace, SampledAnalysisWorkspace)
 
 		void getInputFrame () override;
 
-		VEC soundFrameVEC = soundFrame.get();
+		VEC soundFrameVEC;
 
 	#endif
 
 	#if oo_COPYING
 
-		thy soundFrameVEC = soundFrameVEC;
+		thy soundFrameVEC = thy soundFrame.get();
 
 	#endif
 

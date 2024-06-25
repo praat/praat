@@ -48,71 +48,72 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (constSound me, int prediction
 	}
 }
 
-void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
+void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace ws = SoundToLPCAnalysisWorkspace_autocorrelation_create (
 		me, thee, thy maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2
 	);
-	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
+	SampledAnalysisWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_autocorrelation (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
 	try {
 		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, predictionOrder);
-		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (me, predictionOrder, physicalAnalysisWidth, dt);
-		Sound_into_LPC_autocorrelation (me, thee.get(), effectiveAnalysisWidth, preEmphasisFrequency);
+		autoSound emphasized = Sound_resampleAndOrPreemphasize (me, 0.0, 0, preEmphasisFrequency);
+		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (emphasized.get(), predictionOrder, physicalAnalysisWidth, dt);
+		Sound_into_LPC_autocorrelation (emphasized.get(), thee.get(), effectiveAnalysisWidth);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (auto) created.");
 	}
 }
 
-void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
+void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace ws = SoundToLPCAnalysisWorkspace_covariance_create (
 		me, thee, thy maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
+	SampledAnalysisWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_covariance (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
 	try {
 		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, predictionOrder);
-		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (me, predictionOrder, physicalAnalysisWidth, dt);
-		Sound_into_LPC_covariance (me, thee.get(), effectiveAnalysisWidth, preEmphasisFrequency);
+		autoSound emphasized = Sound_resampleAndOrPreemphasize (me, 0.0, 0, preEmphasisFrequency);
+		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (emphasized.get(), predictionOrder, physicalAnalysisWidth, dt);
+		Sound_into_LPC_covariance (emphasized.get(), thee.get(), effectiveAnalysisWidth);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (covar) created.");
 	}
 }
 
-
-
-void Sound_into_LPC_burg (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency) {
+void Sound_into_LPC_burg (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace_burg ws = SoundToLPCAnalysisWorkspace_burg_create (
 		me, thee, thy maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
+	SampledAnalysisWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_burg (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
 	try {
 		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, predictionOrder);
-		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (me, predictionOrder, physicalAnalysisWidth, dt);
-		Sound_into_LPC_burg (me, thee.get(), effectiveAnalysisWidth, preEmphasisFrequency);
+		autoSound emphasized = Sound_resampleAndOrPreemphasize (me, 0.0, 0, preEmphasisFrequency);
+		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (emphasized.get(), predictionOrder, physicalAnalysisWidth, dt);
+		Sound_into_LPC_burg (emphasized.get(), thee.get(), effectiveAnalysisWidth);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (burg) created.");
 	}
 }
 
-void Sound_into_LPC_marple (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double preEmphasisFrequency, double tol1, double tol2) {
+void Sound_into_LPC_marple (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double tol1, double tol2) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace_marple ws = SoundToLPCAnalysisWorkspace_marple_create (
 		me, thee, thy maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, tol1, tol2);
-	SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
+	SampledAnalysisWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_marple (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
@@ -121,8 +122,9 @@ autoLPC Sound_to_LPC_marple (constSound me, int predictionOrder, double effectiv
 	try {
 		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, predictionOrder);
-		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (me, predictionOrder, physicalAnalysisWidth, dt);
-		Sound_into_LPC_marple (me, thee.get(), effectiveAnalysisWidth, preEmphasisFrequency, tol1, tol2);
+		autoSound emphasized = Sound_resampleAndOrPreemphasize (me, 0.0, 0, preEmphasisFrequency);
+		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (emphasized.get(), predictionOrder, physicalAnalysisWidth, dt);
+		Sound_into_LPC_marple (emphasized.get(), thee.get(), effectiveAnalysisWidth, tol1, tol2);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (marple) created.");
@@ -130,7 +132,7 @@ autoLPC Sound_to_LPC_marple (constSound me, int predictionOrder, double effectiv
 }
 
 
-void LPC_and_Sound_into_LPC_robust (constLPC original, constSound me, mutableLPC output, double effectiveAnalysisWidth, double preEmphasisFrequency, double k_stdev,
+void LPC_and_Sound_into_LPC_robust (constLPC original, constSound me, mutableLPC output, double effectiveAnalysisWidth, double k_stdev,
 	integer itermax, double tol, bool wantlocation)
 {
 	try {
@@ -144,7 +146,7 @@ void LPC_and_Sound_into_LPC_robust (constLPC original, constSound me, mutableLPC
 		
 		autoSoundAndLPCToLPCAnalysisWorkspace_robust ws = SoundAndLPCToLPCAnalysisWorkspace_robust_create (me, original, output,
 			original -> maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation);		
-		SoundAnalysisWorkspace_analyseThreaded (ws.get(), me, preEmphasisFrequency);
+		SampledAnalysisWorkspace_analyseThreaded (ws.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC calculated.");
 	}	
@@ -155,8 +157,9 @@ autoLPC LPC_and_Sound_to_LPC_robust (constLPC thee, constSound me, double effect
 {
 	try {
 		Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);	
+		autoSound emphasized = Sound_resampleAndOrPreemphasize (me, 0.0, 0, preEmphasisFrequency);
 		autoLPC result = LPC_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, thy maxnCoefficients, thy samplingPeriod);
-		LPC_and_Sound_into_LPC_robust (thee, me, result.get(), effectiveAnalysisWidth, preEmphasisFrequency, k_stdev, itermax, tol, wantlocation);
+		LPC_and_Sound_into_LPC_robust (thee, emphasized.get(), result.get(), effectiveAnalysisWidth, k_stdev, itermax, tol, wantlocation);
 		return result;
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC created.");
@@ -164,20 +167,21 @@ autoLPC LPC_and_Sound_to_LPC_robust (constLPC thee, constSound me, double effect
 }
 
 void Sound_into_LPC_robust (constSound me, mutableLPC thee, double effectiveAnalysisWidth, 
-	double preEmphasisFrequency, double k_stdev,	integer itermax, double tol, bool wantlocation)
+	double k_stdev, integer itermax, double tol, bool wantlocation)
 {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoLPC input = LPC_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, thy maxnCoefficients, thy samplingPeriod);
-	Sound_into_LPC_autocorrelation (me, input.get(), effectiveAnalysisWidth, preEmphasisFrequency);	
-	LPC_and_Sound_into_LPC_robust (input.get(), me, thee, effectiveAnalysisWidth, preEmphasisFrequency, k_stdev, itermax, tol, wantlocation);
+	Sound_into_LPC_autocorrelation (me, input.get(), effectiveAnalysisWidth);	
+	LPC_and_Sound_into_LPC_robust (input.get(), me, thee, effectiveAnalysisWidth, k_stdev, itermax, tol, wantlocation);
 }
 
 autoLPC Sound_to_LPC_robust (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
 	double k_stdev,	integer itermax, double tol, bool wantlocation) {
 	try {
 		const double physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (me, predictionOrder, physicalAnalysisWidth, dt);
-		Sound_into_LPC_robust (me, thee.get(), effectiveAnalysisWidth, preEmphasisFrequency, k_stdev, itermax, tol, wantlocation);
+		autoSound emphasized = Sound_resampleAndOrPreemphasize (me, 0.0, 0, preEmphasisFrequency);
+		autoLPC thee = LPC_createEmptyFromAnalysisSpecifications (emphasized.get(), predictionOrder, physicalAnalysisWidth, dt);
+		Sound_into_LPC_robust (emphasized.get(), thee.get(), effectiveAnalysisWidth, k_stdev, itermax, tol, wantlocation);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LPC (robust) created.");

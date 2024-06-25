@@ -45,12 +45,15 @@ autoLPC Sound_to_LPC_robust (constSound me, int predictionOrder, double effectiv
 autoLPC LPC_and_Sound_to_LPC_robust (constLPC thee, constSound me, double analysisWidth, double preEmphasisFrequency, double k_stdev,
 	integer itermax, double tol, bool wantlocation);
 
-
-void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency);
-void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency);
-void Sound_into_LPC_burg (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency);
-void Sound_into_LPC_marple (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency, double tol1, double tol2);
-void Sound_into_LPC_robust (constSound me, mutableLPC thee, double analysisWidth, double preEmphasisFrequency,
+/*
+	Precondition:
+		Sound has been resampled and pre-emphasized
+*/
+void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double analysisWidth);
+void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double analysisWidth);
+void Sound_into_LPC_burg (constSound me, mutableLPC thee, double analysisWidth);
+void Sound_into_LPC_marple (constSound me, mutableLPC thee, double analysisWidth, double tol1, double tol2);
+void Sound_into_LPC_robust (constSound me, mutableLPC thee, double analysisWidth,
 	double k_stdev,	integer itermax, double tol, bool wantlocation);
 
 autoLPC LPC_createEmptyFromAnalysisSpecifications (constSound me, int predictionOrder, double physicalAnalysisWidth, double dt);
