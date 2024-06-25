@@ -80,7 +80,7 @@ autoSound Sound_readFromSoundFile (MelderFile file) {
 			Melder_throw (U"Audio file contains 0 samples.");
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / sampleRate, sampleRate);
 		Melder_assert (my z.ncol == numberOfSamples);
-		if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE)
+		if (encoding == Melder_SHORTEN)
 			Melder_throw (U"Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
 		Melder_readAudioToFloat (file -> filePointer, encoding, my z.get());
 		mfile.close ();
