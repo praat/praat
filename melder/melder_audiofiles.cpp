@@ -884,8 +884,38 @@ static void Melder_readMp3File (FILE *f, MAT buffer) {
 		Melder_throw (U"Error decoding MP3 file.");
 }
 
+static uint32 readBits_u32 (FILE *f, const integer numberOfBits) {
+	Melder_assert (numberOfBits >= 0 && numberOfBits <= 32);
+	uint32 result = 0;
+	for (integer i = 1; i <= numberOfBits; i ++) {
+		uint32 bit = bingetb1 (f);
+		result = (result << 1) + bit;
+	}
+	return result;
+}
+
 static void Melder_readPolyphoneFile (FILE *f, MAT buffer) {
-	Melder_casual (U"Reading Polyphone file with ", buffer.nrow, U" channels and ", buffer.ncol, U" samples.");
+	//TRACE
+	Melder_require (buffer.nrow == 1,
+		U"Can read Polyphone files only if they are mono. Write to paul.boersma@uva.nl for more information.");
+	trace (U"expecting ", buffer.ncol, U" samples");
+	const integer startOfData = ftell (f);
+	fseek (f, 0, SEEK_END);
+	const integer endOfData = ftell (f);
+	const integer numberOfDataBytesInFile = endOfData - startOfData;
+	trace (numberOfDataBytesInFile, U" data bytes in file");
+	fseek (f, startOfData, SEEK_SET);
+	for (integer ibyte = 1; ibyte <= numberOfDataBytesInFile; ibyte ++) {
+		uint32 byte = readBits_u32 (f, 8);
+		trace (U"byte ", ibyte, U" is ", byte);
+		// 97 106 107 103 1   255 114 224 19 50   214 203 0 73 2
+		// 97 106 107 103 1   255 114 224 19 50   214 200 3 73 36
+		// 97 106 107 103 1   255 114 224 19 50   214 221 136 63 4
+		// 255 = 0b11111111
+		// 114 = 0b01110010 = 0111~ carry 0010 = 7 = mulaw, but Alaw in the case of Polyphone
+		// 224 = 0b11100000 = 00101110~ 00~ 0~ carry 0 = 46~0~0
+		// 19 = 0b00010011
+	}
 	Melder_throw (U"Polyphone sound files cannot yet be opened. Write to paul.boersma@uva.nl for more information.");
 }
 
