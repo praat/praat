@@ -20,7 +20,7 @@
  djmw 20020625 GPL header
 */
 
-#include "SoundToLPCAnalysisWorkspace.h"
+#include "SoundToLPCWorkspace.h"
 
 #include "Sound_and_LPC.h"
 #include "Sound_extensions.h"
@@ -50,7 +50,7 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (constSound me, int prediction
 
 void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCAnalysisWorkspace_autocorrelation ws = SoundToLPCAnalysisWorkspace_autocorrelation_create (
+	autoSoundToLPCWorkspace_autocorrelation ws = SoundToLPCWorkspace_autocorrelation_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2
 	);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
@@ -71,7 +71,7 @@ autoLPC Sound_to_LPC_autocorrelation (constSound me, int predictionOrder, double
 
 void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCAnalysisWorkspace_covariance ws = SoundToLPCAnalysisWorkspace_covariance_create (
+	autoSoundToLPCWorkspace_covariance ws = SoundToLPCWorkspace_covariance_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
@@ -91,7 +91,7 @@ autoLPC Sound_to_LPC_covariance (constSound me, int predictionOrder, double effe
 
 void Sound_into_LPC_burg (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCAnalysisWorkspace_burg ws = SoundToLPCAnalysisWorkspace_burg_create (
+	autoSoundToLPCWorkspace_burg ws = SoundToLPCWorkspace_burg_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
@@ -111,7 +111,7 @@ autoLPC Sound_to_LPC_burg (constSound me, int predictionOrder, double effectiveA
 
 void Sound_into_LPC_marple (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double tol1, double tol2) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCAnalysisWorkspace_marple ws = SoundToLPCAnalysisWorkspace_marple_create (
+	autoSoundToLPCWorkspace_marple ws = SoundToLPCWorkspace_marple_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, tol1, tol2);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }

@@ -16,7 +16,7 @@ sources = '''
 	LPC_to_Spectrum.cpp  LPC_to_Spectrogram.cpp
 	LPC_and_Tube.cpp PowerCepstrum.cpp PowerCepstrogram.cpp
 	Roots_and_Formant.cpp
-	SoundToLPCAnalysisWorkspace.cpp SoundToFormantAnalysisWorkspace.cpp
+	SoundToLPCWorkspace.cpp SoundToFormantWorkspace.cpp
 	Sound_and_LPC.cpp Sound_to_Formant_mt.cpp
 	Sound_and_Cepstrum.cpp Tube.cpp
 	VocalTractTier.cpp
