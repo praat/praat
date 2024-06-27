@@ -1,4 +1,4 @@
-/* LPCToFormantAnalysisWorkspace.cpp
+/* LPCToFormantWorkspace.cpp
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,29 +16,29 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LPCToFormantAnalysisWorkspace.h"
+#include "LPCToFormantWorkspace.h"
 #include "Roots_and_Formant.h"
 
 #include "oo_DESTROY.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 #include "oo_COPY.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 #include "oo_EQUAL.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 #include "oo_CAN_WRITE_AS_ENCODING.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 #include "oo_WRITE_TEXT.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 #include "oo_WRITE_BINARY.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 #include "oo_READ_TEXT.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 #include "oo_READ_BINARY.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 #include "oo_DESCRIPTION.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 
-Thing_implement (LPCToFormantAnalysisWorkspace, LPCToSampledWorkspace, 0);
+Thing_implement (LPCToFormantWorkspace, LPCToSampledWorkspace, 0);
 
 static void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
 	if (numberOfFormants > 0)
@@ -56,7 +56,7 @@ static void LPC_Frame_into_Polynomial (constLPC_Frame me, mutablePolynomial p) {
 	p -> numberOfCoefficients = p -> coefficients.size; // maintain invariant
 }
 
-void structLPCToFormantAnalysisWorkspace :: allocateOutputFrames () {
+void structLPCToFormantWorkspace :: allocateOutputFrames () {
 	if (! outputObjectPresent) return;
 	Melder_assert (output != nullptr);
 	Formant thee = reinterpret_cast<Formant> (output);
@@ -66,14 +66,14 @@ void structLPCToFormantAnalysisWorkspace :: allocateOutputFrames () {
 	}
 }
 
-void structLPCToFormantAnalysisWorkspace :: getInputFrame () {
+void structLPCToFormantWorkspace :: getInputFrame () {
 	if (! inputObjectPresent) return;
 	constLPC me = reinterpret_cast<constLPC> (input);
 	my d_frames [currentFrame].copy (& lpcFrame);
 	
 }
 
-bool structLPCToFormantAnalysisWorkspace :: inputFrameToOutputFrame () {
+bool structLPCToFormantWorkspace :: inputFrameToOutputFrame () {
 	
 	formantFrameRef -> intensity = lpcFrameRef -> gain;
 	if (lpcFrameRef -> nCoefficients == 0) {
@@ -91,14 +91,14 @@ bool structLPCToFormantAnalysisWorkspace :: inputFrameToOutputFrame () {
 	return true;
 }
 
-void structLPCToFormantAnalysisWorkspace :: saveOutputFrame () {
+void structLPCToFormantWorkspace :: saveOutputFrame () {
 	if (! outputObjectPresent)
 		return;
 	mutableFormant me = reinterpret_cast<mutableFormant> (output);
 	formantFrame.copy (& my frames [currentFrame]);
 }
 
-void LPCToFormantAnalysisWorkspace_initFormantDependency (LPCToFormantAnalysisWorkspace me, integer maxnFormants) {
+void LPCToFormantWorkspace_initFormantDependency (LPCToFormantWorkspace me, integer maxnFormants) {
 	if (my outputObjectPresent) {
 		Formant output = reinterpret_cast<Formant> (my output);
 		Melder_assert (output -> maxnFormants == maxnFormants);
@@ -108,7 +108,7 @@ void LPCToFormantAnalysisWorkspace_initFormantDependency (LPCToFormantAnalysisWo
 	
 }
 
-void LPCToFormantAnalysisWorkspace_initLPCDependency (LPCToFormantAnalysisWorkspace me, integer maxnCoefficients, double samplingPeriod) {
+void LPCToFormantWorkspace_initLPCDependency (LPCToFormantWorkspace me, integer maxnCoefficients, double samplingPeriod) {
 	LPCToSampledWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
 	//Formant_Frame_init (& my formantFrame, my maxnFormants);
 	autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};
@@ -117,22 +117,22 @@ void LPCToFormantAnalysisWorkspace_initLPCDependency (LPCToFormantAnalysisWorksp
 	my roots = Roots_create (maxnCoefficients);	
 }
 
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, mutableFormant output, double margin) {
+autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin) {
 	try {
 		if (input && output)
 			Sampled_assertEqualDomainsAndSampling (input, output);
-		autoLPCToFormantAnalysisWorkspace me = Thing_new (LPCToFormantAnalysisWorkspace);
+		autoLPCToFormantWorkspace me = Thing_new (LPCToFormantWorkspace);
 		LPCToSampledWorkspace_init (me.get(), input, output);
 		if (input)
-			LPCToFormantAnalysisWorkspace_initLPCDependency (me.get(), input -> maxnCoefficients, input -> samplingPeriod);
+			LPCToFormantWorkspace_initLPCDependency (me.get(), input -> maxnCoefficients, input -> samplingPeriod);
 		if (output)
-			LPCToFormantAnalysisWorkspace_initFormantDependency (me.get(), output -> maxnFormants);
+			LPCToFormantWorkspace_initFormantDependency (me.get(), output -> maxnFormants);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"LPCToFormantAnalysisWorkspace not created.");
+		Melder_throw (U"LPCToFormantWorkspace not created.");
 	}
 }
 
 
-/* End of file LPCToFormantAnalysisWorkspace.cpp */
+/* End of file LPCToFormantWorkspace.cpp */
 

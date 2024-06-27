@@ -1,6 +1,6 @@
-#ifndef _LPCToFormantAnalysisWorkspace_h_
-#define _LPCToFormantAnalysisWorkspace_h_
-/* LPCToFormantAnalysisWorkspace.h
+#ifndef _LPCToFormantWorkspace_h_
+#define _LPCToFormantWorkspace_h_
+/* LPCToFormantWorkspace.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -23,15 +23,15 @@
 #include "Polynomial.h"
 #include "Roots.h"
 #include "LPCToSampledWorkspace.h"
-#include "LPCToFormantAnalysisWorkspace_def.h"
+#include "LPCToFormantWorkspace_def.h"
 
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, mutableFormant output, double margin);
+autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin);
 
 /*
 	If the input LPC was missing
  */
-void LPCToFormantAnalysisWorkspace_initLPCDependency (LPCToFormantAnalysisWorkspace me, integer maxnCoefficients, double samplingPeriod);
+void LPCToFormantWorkspace_initLPCDependency (LPCToFormantWorkspace me, integer maxnCoefficients, double samplingPeriod);
 
-void LPCToFormantAnalysisWorkspace_initFormantDependency (LPCToFormantAnalysisWorkspace me, integer maxnFormants);
+void LPCToFormantWorkspace_initFormantDependency (LPCToFormantWorkspace me, integer maxnFormants);
 
-#endif /*_LPCToFormantAnalysisWorkspace_h_ */
+#endif /*_LPCToFormantWorkspace_h_ */

@@ -1,4 +1,4 @@
-/* LPCToFormantAnalysisWorkspace_def.h
+/* LPCToFormantWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,8 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT LPCToFormantAnalysisWorkspace
-oo_DEFINE_CLASS (LPCToFormantAnalysisWorkspace, LPCToSampledWorkspace)
+#define ooSTRUCT LPCToFormantWorkspace
+oo_DEFINE_CLASS (LPCToFormantWorkspace, LPCToSampledWorkspace)
 
 	oo_DOUBLE (margin)
 	oo_INTEGER (maxnFormants) // if output object is missing
@@ -42,8 +42,8 @@ oo_DEFINE_CLASS (LPCToFormantAnalysisWorkspace, LPCToSampledWorkspace)
 
 	#endif
 
-oo_END_CLASS (LPCToFormantAnalysisWorkspace)
+oo_END_CLASS (LPCToFormantWorkspace)
 #undef ooSTRUCT
 
-/* End of file LPCToFormantAnalysisWorkspace_def.h */
+/* End of file LPCToFormantWorkspace_def.h */
 

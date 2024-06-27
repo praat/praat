@@ -1,5 +1,5 @@
 # meson.build of the library "LPC"
-# David Weenink, 9 June 2024
+# David Weenink, 27 June 2024
 
 sources = '''
 	Cepstrum.cpp Cepstrumc.cpp Cepstrum_and_Spectrum.cpp
@@ -8,7 +8,7 @@ sources = '''
 	FormantModeler.cpp FormantModelerList.cpp
 	FormantPath.cpp FormantPath_to_IntervalTier.cpp FormantPathArea.cpp FormantPathEditor.cpp
 	LineSpectralFrequencies.cpp
-	LPCToSampledWorkspace.cpp LPCToFormantAnalysisWorkspace.cpp
+	LPCToSampledWorkspace.cpp LPCToFormantWorkspace.cpp
 	LPC.cpp
 	LPC_and_Formant.cpp LPC_and_Cepstrumc.cpp
 	LPC_and_LFCC.cpp

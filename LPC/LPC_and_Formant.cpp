@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LPCToFormantAnalysisWorkspace.h"
+#include "LPCToFormantWorkspace.h"
 #include "LPC_and_Formant.h"
 #include "LPC_and_Polynomial.h"
 #include "NUM2.h"
@@ -40,7 +40,7 @@ autoFormant LPC_to_Formant (constLPC me, double margin) {
 		Melder_require (my maxnCoefficients < 100,
 			U"We cannot find the roots of a polynomial of order > 99.");
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, maximumNumberOfFormants);
-		autoLPCToFormantAnalysisWorkspace ws = LPCToFormantAnalysisWorkspace_create (me, thee.get(), margin);
+		autoLPCToFormantWorkspace ws = LPCToFormantWorkspace_create (me, thee.get(), margin);
 		
 		SampledToSampledWorkspace_analyseThreaded (ws.get());
 		

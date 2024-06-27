@@ -19,8 +19,8 @@
 #define ooSTRUCT SoundToFormantAnalysisWorkspace
 oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace, SoundToSampledWorkspace)
 
-	oo_OBJECT (SoundToLPCAnalysisWorkspace, 0, soundToLPC)
-	oo_OBJECT (LPCToFormantAnalysisWorkspace, 0, lpcToFormant)
+	oo_OBJECT (SoundToLPCWorkspace, 0, soundToLPC)
+	oo_OBJECT (LPCToFormantWorkspace, 0, lpcToFormant)
 
 	#if oo_DECLARING
 
