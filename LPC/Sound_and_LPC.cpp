@@ -50,10 +50,10 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (constSound me, int prediction
 
 void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCAnalysisWorkspace ws = SoundToLPCAnalysisWorkspace_autocorrelation_create (
-		me, thee, thy maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2
+	autoSoundToLPCAnalysisWorkspace_autocorrelation ws = SoundToLPCAnalysisWorkspace_autocorrelation_create (
+		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2
 	);
-	SampledAnalysisWorkspace_analyseThreaded (ws.get());
+	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_autocorrelation (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -71,9 +71,9 @@ autoLPC Sound_to_LPC_autocorrelation (constSound me, int predictionOrder, double
 
 void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCAnalysisWorkspace ws = SoundToLPCAnalysisWorkspace_covariance_create (
-		me, thee, thy maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-	SampledAnalysisWorkspace_analyseThreaded (ws.get());
+	autoSoundToLPCAnalysisWorkspace_covariance ws = SoundToLPCAnalysisWorkspace_covariance_create (
+		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_covariance (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -92,8 +92,8 @@ autoLPC Sound_to_LPC_covariance (constSound me, int predictionOrder, double effe
 void Sound_into_LPC_burg (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace_burg ws = SoundToLPCAnalysisWorkspace_burg_create (
-		me, thee, thy maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
-	SampledAnalysisWorkspace_analyseThreaded (ws.get());
+		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
+	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_burg (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency) {
@@ -112,8 +112,8 @@ autoLPC Sound_to_LPC_burg (constSound me, int predictionOrder, double effectiveA
 void Sound_into_LPC_marple (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double tol1, double tol2) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
 	autoSoundToLPCAnalysisWorkspace_marple ws = SoundToLPCAnalysisWorkspace_marple_create (
-		me, thee, thy maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, tol1, tol2);
-	SampledAnalysisWorkspace_analyseThreaded (ws.get());
+		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, tol1, tol2);
+	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_marple (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
@@ -145,8 +145,8 @@ void LPC_and_Sound_into_LPC_robust (constLPC original, constSound me, mutableLPC
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, output -> maxnCoefficients);
 		
 		autoSoundAndLPCToLPCAnalysisWorkspace_robust ws = SoundAndLPCToLPCAnalysisWorkspace_robust_create (me, original, output,
-			original -> maxnCoefficients, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation);		
-		SampledAnalysisWorkspace_analyseThreaded (ws.get());
+			effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation);		
+		SampledToSampledWorkspace_analyseThreaded (ws.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust LPC calculated.");
 	}	

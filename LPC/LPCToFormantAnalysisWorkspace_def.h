@@ -17,9 +17,10 @@
  */
 
 #define ooSTRUCT LPCToFormantAnalysisWorkspace
-oo_DEFINE_CLASS (LPCToFormantAnalysisWorkspace, LPCAnalysisWorkspace)
+oo_DEFINE_CLASS (LPCToFormantAnalysisWorkspace, LPCToSampledWorkspace)
 
 	oo_DOUBLE (margin)
+	oo_INTEGER (maxnFormants) // if output object is missing
 	oo_STRUCT (Formant_Frame, formantFrame)
 	oo_OBJECT (Polynomial, 0, p)
 	oo_OBJECT (Roots, 0, roots)

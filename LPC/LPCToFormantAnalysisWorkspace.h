@@ -22,15 +22,16 @@
 #include "LPC.h"
 #include "Polynomial.h"
 #include "Roots.h"
-#include "LPCAnalysisWorkspace.h"
+#include "LPCToSampledWorkspace.h"
 #include "LPCToFormantAnalysisWorkspace_def.h"
 
-/*
-	if (input)
-		assert input->maxnCoeffciets == maxnCoefficients
+autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, mutableFormant output, double margin);
 
-*/
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, integer maxnCoefficients, double samplingPeriod,
-	mutableFormant output, double margin);
+/*
+	If the input LPC was missing
+ */
+void LPCToFormantAnalysisWorkspace_initLPCDependency (LPCToFormantAnalysisWorkspace me, integer maxnCoefficients, double samplingPeriod);
+
+void LPCToFormantAnalysisWorkspace_initFormantDependency (LPCToFormantAnalysisWorkspace me, integer maxnFormants);
 
 #endif /*_LPCToFormantAnalysisWorkspace_h_ */

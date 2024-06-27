@@ -1,6 +1,6 @@
-#ifndef _LPCAnalysisWorkspace_h_
-#define _LPCAnalysisWorkspace_h_
-/* LPCAnalysisWorkspace.h
+#ifndef _LPCToSampledWorkspace_h_
+#define _LPCToSampledWorkspace_h_
+/* LPCToSampledWorkspace.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -19,17 +19,18 @@
  */
 
 #include "LPC.h"
-#include "SampledAnalysisWorkspace.h"
-#include "LPCAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace.h"
+#include "LPCToSampledWorkspace_def.h"
+
+void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output);
 
 /*
-	The last two arguments are in fact redundant if the input is present,
-	nevertheless we assert:
-		if (input) {
-			assert input->maxnCoefficients == maxnCoefficients
-			assert input -> samplingPeriod == samplingPeriod
-		}
+	If output not present
 */
-void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output, integer maxnCoefficients, double samplingPeriod);
+inline void LPCToSampledWorkspace_initLPCDependency (mutableLPCToSampledWorkspace me, integer maxnCoefficients, double samplingPeriod) {
+	my samplingPeriod = samplingPeriod;
+	my maxnCoefficients = maxnCoefficients;
+	LPC_Frame_init (& my lpcFrame, my maxnCoefficients);
+}
 
-#endif /* _LPCAnalysisWorkspace_h_ */
+#endif /* _LPCToSampledWorkspace_h_ */

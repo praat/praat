@@ -1,4 +1,4 @@
-/* SampledAnalysisWorkspace.cpp
+/* SampledToSampledWorkspace.cpp
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,50 +16,50 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SampledAnalysisWorkspace.h"
+#include "SampledToSampledWorkspace.h"
 #include "Sound_extensions.h"
 #include <thread>
 #include <atomic>
 #include "NUM2.h"
 
 #include "oo_DESTROY.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 #include "oo_COPY.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 #include "oo_EQUAL.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 #include "oo_CAN_WRITE_AS_ENCODING.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 #include "oo_WRITE_TEXT.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 #include "oo_WRITE_BINARY.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 #include "oo_READ_TEXT.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 #include "oo_READ_BINARY.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 #include "oo_DESCRIPTION.h"
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 
-Thing_implement (SampledAnalysisWorkspace, Daata, 0);
+Thing_implement (SampledToSampledWorkspace, Daata, 0);
 
-void structSampledAnalysisWorkspace :: getInputFrame (void) {
+void structSampledToSampledWorkspace :: getInputFrame (void) {
 	return;
 }
 
-bool structSampledAnalysisWorkspace :: inputFrameToOutputFrame (void) {
+bool structSampledToSampledWorkspace :: inputFrameToOutputFrame (void) {
 	return true;
 }
 
-void structSampledAnalysisWorkspace :: saveOutputFrame (void) {
+void structSampledToSampledWorkspace :: saveOutputFrame (void) {
 	return;
 }
 
-void structSampledAnalysisWorkspace :: allocateOutputFrames (void) {
+void structSampledToSampledWorkspace :: allocateOutputFrames (void) {
 	return;
 }
 
-void structSampledAnalysisWorkspace :: inputFramesToOutputFrames (integer fromFrame, integer toFrame) {
+void structSampledToSampledWorkspace :: inputFramesToOutputFrames (integer fromFrame, integer toFrame) {
 	globalFrameErrorCount = 0;
 	for (integer iframe = fromFrame; iframe <= toFrame; iframe ++) {
 		currentFrame = iframe;
@@ -70,13 +70,13 @@ void structSampledAnalysisWorkspace :: inputFramesToOutputFrames (integer fromFr
 	}	
 }
 
-void SampledAnalysisWorkspace_initWorkvectorPool (mutableSampledAnalysisWorkspace me, constINTVEC const& vectorSizes) {
+void SampledToSampledWorkspace_initWorkvectorPool (mutableSampledToSampledWorkspace me, constINTVEC const& vectorSizes) {
 	Melder_assert (vectorSizes.size > 0);
 	my workvectorPool = WorkvectorPool_create (vectorSizes, true);
 }
 
 
-void SampledAnalysisWorkspace_init (mutableSampledAnalysisWorkspace me, constSampled input, mutableSampled output) {
+void SampledToSampledWorkspace_init (mutableSampledToSampledWorkspace me, constSampled input, mutableSampled output) {
 	if (input && output)
 		Sampled_assertEqualDomains (input, output);
 	if (input) {
@@ -91,28 +91,28 @@ void SampledAnalysisWorkspace_init (mutableSampledAnalysisWorkspace me, constSam
 	my minimumNumberOfFramesPerThread = 40;
 }
 
-autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (constSound input, mutableSampled output) {
+autoSampledToSampledWorkspace SampledToSampledWorkspace_create (constSound input, mutableSampled output) {
 	try {
-		autoSampledAnalysisWorkspace me = Thing_new (SampledAnalysisWorkspace);
-		SampledAnalysisWorkspace_init (me.get(), input, output);
+		autoSampledToSampledWorkspace me = Thing_new (SampledToSampledWorkspace);
+		SampledToSampledWorkspace_init (me.get(), input, output);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SampledAnalysisWorkspace not created.");
+		Melder_throw (U"SampledToSampledWorkspace not created.");
 	}
 }
 
-void SampledAnalysisWorkspace_replaceInput (mutableSampledAnalysisWorkspace me, constSampled thee) {
+void SampledToSampledWorkspace_replaceInput (mutableSampledToSampledWorkspace me, constSampled thee) {
 	Sampled_assertEqualDomainsAndSampling (my input, thee);
 	my input = thee;
 }
 
-void SampledAnalysisWorkspace_replaceOutput (mutableSampledAnalysisWorkspace me, mutableSampled thee) {
+void SampledToSampledWorkspace_replaceOutput (mutableSampledToSampledWorkspace me, mutableSampled thee) {
 	Sampled_assertEqualDomainsAndSampling (my output, thee);
 	my output = thee;
 }
 
 
-void SampledAnalysisWorkspace_getThreadingInfo (constSampledAnalysisWorkspace me, integer *out_numberOfThreads) {
+void SampledToSampledWorkspace_getThreadingInfo (constSampledToSampledWorkspace me, integer *out_numberOfThreads) {
 	const integer numberOfProcessors = std::thread::hardware_concurrency ();
 	/*
 		Our processes are compute bound, therefore it probably makes no sense to start more than two threads on one processor
@@ -127,7 +127,7 @@ void SampledAnalysisWorkspace_getThreadingInfo (constSampledAnalysisWorkspace me
 		*out_numberOfThreads = numberOfThreads;
 }
 
-void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace me)
+void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace me)
 {
 	try {
 
@@ -139,14 +139,14 @@ void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace m
 		
 		if (my useMultiThreading) {
 			integer numberOfThreads;
-			SampledAnalysisWorkspace_getThreadingInfo (me, & numberOfThreads);
+			SampledToSampledWorkspace_getThreadingInfo (me, & numberOfThreads);
 			const integer numberOfFramesPerThread = my minimumNumberOfFramesPerThread;
 			/*
 				We have to reserve all the needed working memory for each thread beforehand.
 			*/
-			OrderedOf<structSampledAnalysisWorkspace> workspaces;
+			OrderedOf<structSampledToSampledWorkspace> workspaces;
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-				autoSampledAnalysisWorkspace threadWorkspace = Data_copy (me);
+				autoSampledToSampledWorkspace threadWorkspace = Data_copy (me);
 				workspaces.addItem_move (threadWorkspace.move());
 			}
 		
@@ -154,11 +154,11 @@ void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace m
 			
 			try {
 				for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-					SampledAnalysisWorkspace threadWorkspace = workspaces.at [ithread];
+					SampledToSampledWorkspace threadWorkspace = workspaces.at [ithread];
 					const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
 					const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
 					
-					auto analyseFrames = [&globalFrameErrorCount] (SampledAnalysisWorkspace threadWorkspace, integer fromFrame, integer toFrame) {
+					auto analyseFrames = [&globalFrameErrorCount] (SampledToSampledWorkspace threadWorkspace, integer fromFrame, integer toFrame) {
 						threadWorkspace -> inputFramesToOutputFrames (fromFrame, toFrame);
 						globalFrameErrorCount += threadWorkspace -> globalFrameErrorCount;
 					};
@@ -185,4 +185,4 @@ void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace m
 	}
 }
 
-/* End of file SampledAnalysisWorkspace.cpp */
+/* End of file SampledToSampledWorkspace.cpp */

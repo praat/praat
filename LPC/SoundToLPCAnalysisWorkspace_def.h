@@ -17,9 +17,10 @@
  */
 
 #define ooSTRUCT SoundToLPCAnalysisWorkspace
-oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundAnalysisWorkspace)
+oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundToSampledWorkspace)
 
 	oo_INTEGER (maxnCoefficients) 			// if output object not present!
+	oo_DOUBLE (samplingPeriod)				// if input object not present
 	oo_STRUCT (LPC_Frame, outputLPCFrame)
 
 	#if oo_DECLARING
@@ -87,7 +88,7 @@ oo_END_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust)
 #define ooSTRUCT SoundToLPCAnalysisWorkspace_robust
 oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWorkspace)
 	/*
-		We inherit from SoundToLPCAnalysisWorkspace (instead of SampledAnalysisWorkspace)
+		We inherit from SoundToLPCAnalysisWorkspace (instead of SampledToSampledWorkspace)
 		to determine the timing because we can't do multiple inheritance
 	*/
 	oo_OBJECT (SoundToLPCAnalysisWorkspace, 0, soundToLPC)

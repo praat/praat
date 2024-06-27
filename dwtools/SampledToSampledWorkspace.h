@@ -1,6 +1,6 @@
-#ifndef _SampledAnalysisWorkspace_h_
-#define _SampledAnalysisWorkspace_h_
-/* SampledAnalysisWorkspace.h
+#ifndef _SampledToSampledWorkspace_h_
+#define _SampledToSampledWorkspace_h_
+/* SampledToSampledWorkspace.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -21,31 +21,31 @@
 #include "Sampled.h"
 #include "WorkvectorPool.h"
 
-#include "SampledAnalysisWorkspace_def.h"
+#include "SampledToSampledWorkspace_def.h"
 
-void SampledAnalysisWorkspace_init (mutableSampledAnalysisWorkspace me, constSampled input, mutableSampled output);
+void SampledToSampledWorkspace_init (mutableSampledToSampledWorkspace me, constSampled input, mutableSampled output);
 
-autoSampledAnalysisWorkspace SampledAnalysisWorkspace_create (constSampled input, mutableSampled output);
+autoSampledToSampledWorkspace SampledToSampledWorkspace_create (constSampled input, mutableSampled output);
 
-void SampledAnalysisWorkspace_initWorkvectorPool (mutableSampledAnalysisWorkspace me, constINTVEC const& vectorSizes);
+void SampledToSampledWorkspace_initWorkvectorPool (mutableSampledToSampledWorkspace me, constINTVEC const& vectorSizes);
 
-void SampledAnalysisWorkspace_getThreadingInfo (constSampledAnalysisWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
+void SampledToSampledWorkspace_getThreadingInfo (constSampledToSampledWorkspace me, integer maximumNumberOfThreads, integer numberOfFramesPerThread, integer *out_numberOfThreads);
 
-void SampledAnalysisWorkspace_replaceOutput (mutableSampledAnalysisWorkspace me, mutableSampled thee);
+void SampledToSampledWorkspace_replaceOutput (mutableSampledToSampledWorkspace me, mutableSampled thee);
 /*
 	Preconditions:
 		my output -> xmin == thy xmin && my output -> xmax == thy xmax
 		my output -> nx   == thy nx && my output -> dx   == thy dx && my output -> x1   == thy x1
 */
 
-void SampledAnalysisWorkspace_replaceInput (mutableSampledAnalysisWorkspace me, constSampled input);
+void SampledToSampledWorkspace_replaceInput (mutableSampledToSampledWorkspace me, constSampled input);
 /*
 	Preconditions:
 		my output -> xmin == thy xmin && my output -> xmax == thy xmax
 		my output -> nx   == thy nx && my output -> dx   == thy dx && my output -> x1   == thy x1
 */
 
-void SampledAnalysisWorkspace_analyseThreaded (mutableSampledAnalysisWorkspace me);
+void SampledToSampledWorkspace_analyseThreaded (mutableSampledToSampledWorkspace me);
 
 inline void Sampled_requireEqualSampling (constSampled me,  constSampled thee) {
 	Melder_require (my x1 == thy x1 && my nx == thy nx && my dx == thy dx,
@@ -75,5 +75,5 @@ inline void Sampled_assertEqualDomainsAndSampling (constSampled me,  constSample
 	Sampled_assertEqualSampling (me, thee);
 }
 
-#endif /* _SampledAnalysisWorkspace_h_ */
+#endif /* _SampledToSampledWorkspace_h_ */
  

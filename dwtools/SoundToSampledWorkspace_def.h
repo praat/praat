@@ -1,4 +1,4 @@
-/* SoundAnalysisWorkspace_def.h
+/* SoundToSampledWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,8 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT SoundAnalysisWorkspace
-oo_DEFINE_CLASS (SoundAnalysisWorkspace, SampledAnalysisWorkspace)
+#define ooSTRUCT SoundToSampledWorkspace
+oo_DEFINE_CLASS (SoundToSampledWorkspace, SampledToSampledWorkspace)
 
 	oo_DOUBLE (physicalAnalysisWidth) 			// depends on the effectiveAnalysiswidth and the window window shape
 	oo_INTEGER (soundFrameSize) 				// determined by the physicalAnalysisWidth and the samplingFrequency of the Sound
@@ -45,7 +45,7 @@ oo_DEFINE_CLASS (SoundAnalysisWorkspace, SampledAnalysisWorkspace)
 
 	#endif
 
-oo_END_CLASS (SoundAnalysisWorkspace)
+oo_END_CLASS (SoundToSampledWorkspace)
 #undef ooSTRUCT
 
-/* End of file SoundAnalysisWorkspace_def.h */
+/* End of file SoundToSampledWorkspace_def.h */

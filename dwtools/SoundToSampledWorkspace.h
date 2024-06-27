@@ -1,6 +1,6 @@
-#ifndef _SoundAnalysisWorkspace_h_
-#define _SoundAnalysisWorkspace_h_
-/* SoundAnalysisWorkspace.h
+#ifndef _SoundToSampledWorkspace_h_
+#define _SoundToSampledWorkspace_h_
+/* SoundToSampledWorkspace.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -19,22 +19,22 @@
  */
 
 #include "Sound.h"
-#include "SampledAnalysisWorkspace.h"
+#include "SampledToSampledWorkspace.h"
 
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 
-void SoundAnalysisWorkspace_init (mutableSoundAnalysisWorkspace me, constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
 /*
 	If the input == nullptr ad we need to initialize the input soundFrame.
 */
-void SoundAnalysisWorkspace_initSoundFrame (mutableSoundAnalysisWorkspace me, double sound_dx);
+void SoundToSampledWorkspace_initSoundFrame (mutableSoundToSampledWorkspace me, double sound_dx);
 
-autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+autoSoundToSampledWorkspace SoundToSampledWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
-void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, constSound thee, double preEmphasisFrequency);
+void SoundToSampledWorkspace_analyseThreaded (mutableSoundToSampledWorkspace me, constSound thee, double preEmphasisFrequency);
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
-#endif /* _SoundAnalysisWorkspace_h_ */
+#endif /* _SoundToSampledWorkspace_h_ */
  

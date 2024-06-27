@@ -1,4 +1,4 @@
-/* SampledAnalysisWorkspace_def.h
+/* SampledToSampledWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -17,10 +17,10 @@
  */
 
 /*
-	A separate deep copy of the SampledAnalysisWorkspace is needed for each thread
+	A separate deep copy of the SampledToSampledWorkspace is needed for each thread
 */
-#define ooSTRUCT SampledAnalysisWorkspace
-oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
+#define ooSTRUCT SampledToSampledWorkspace
+oo_DEFINE_CLASS (SampledToSampledWorkspace, Daata)
 
 	/*
 		Only a reference to the Sampled that is analysed is needed in a thread because
@@ -73,8 +73,8 @@ oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
 
 	#endif
 
-oo_END_CLASS (SampledAnalysisWorkspace)
+oo_END_CLASS (SampledToSampledWorkspace)
 #undef ooSTRUCT
 
-/* End of file SampledAnalysisWorkspace_def.h */
+/* End of file SampledToSampledWorkspace_def.h */
  

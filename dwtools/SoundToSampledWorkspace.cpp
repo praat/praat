@@ -1,4 +1,4 @@
-/* SoundAnalysisWorkspace.cpp
+/* SoundToSampledWorkspace.cpp
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,38 +16,38 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SoundAnalysisWorkspace.h"
+#include "SoundToSampledWorkspace.h"
 #include "Sound_extensions.h"
 #include "NUM2.h"
 
 #include "oo_DESTROY.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 #include "oo_COPY.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 #include "oo_EQUAL.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 #include "oo_CAN_WRITE_AS_ENCODING.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 #include "oo_WRITE_TEXT.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 #include "oo_WRITE_BINARY.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 #include "oo_READ_TEXT.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 #include "oo_READ_BINARY.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 #include "oo_DESCRIPTION.h"
-#include "SoundAnalysisWorkspace_def.h"
+#include "SoundToSampledWorkspace_def.h"
 
-Thing_implement (SoundAnalysisWorkspace, Daata, 0);
+Thing_implement (SoundToSampledWorkspace, Daata, 0);
 
-integer structSoundAnalysisWorkspace :: getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double input_dx) {
+integer structSoundToSampledWorkspace :: getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double input_dx) {
 	const double halfFrameDuration = 0.5 * approximatePhysicalAnalysisWidth;
 	const integer halfFrameSamples = Melder_ifloor (halfFrameDuration / input_dx);
 	return 2 * halfFrameSamples + 1;
 }
 
-void structSoundAnalysisWorkspace :: getInputFrame () {
+void structSoundToSampledWorkspace :: getInputFrame () {
 	if (! inputObjectPresent)
 		return;
 	constSound sound = reinterpret_cast<constSound> (input);
@@ -69,16 +69,16 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 	return physicalAnalysisWidth;
 }
 
-void SoundAnalysisWorkspace_init (mutableSoundAnalysisWorkspace me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
-	SampledAnalysisWorkspace_init (me, input, output);
+void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+	SampledToSampledWorkspace_init (me, input, output);
 	my windowShape = windowShape;
 	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
 	if (! my inputObjectPresent)
 		return;
-	SoundAnalysisWorkspace_initSoundFrame (me, my input -> dx);
+	SoundToSampledWorkspace_initSoundFrame (me, my input -> dx);
 }
 
-void SoundAnalysisWorkspace_initSoundFrame (mutableSoundAnalysisWorkspace me, double sound_dx) {
+void SoundToSampledWorkspace_initSoundFrame (mutableSoundToSampledWorkspace me, double sound_dx) {
 	my soundFrameSize = my getSoundFrameSize_uneven (my physicalAnalysisWidth, sound_dx);
 	my soundFrame = raw_VEC (my soundFrameSize);
 	my windowFunction = raw_VEC (my soundFrameSize);
@@ -86,18 +86,18 @@ void SoundAnalysisWorkspace_initSoundFrame (mutableSoundAnalysisWorkspace me, do
 	windowShape_into_VEC (my windowShape, my windowFunction.get());
 }
 
-autoSoundAnalysisWorkspace SoundAnalysisWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+autoSoundToSampledWorkspace SoundToSampledWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
 	try {
 		Melder_assert (thee);
-		autoSoundAnalysisWorkspace me = Thing_new (SoundAnalysisWorkspace);
-		SoundAnalysisWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
+		autoSoundToSampledWorkspace me = Thing_new (SoundToSampledWorkspace);
+		SoundToSampledWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SoundAnalysisWorkspace not created.");
+		Melder_throw (U"SoundToSampledWorkspace not created.");
 	}
 }
 
-void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, constSound thee, double preEmphasisFrequency) {
+void SoundToSampledWorkspace_analyseThreaded (mutableSoundToSampledWorkspace me, constSound thee, double preEmphasisFrequency) {
 	Melder_assert (my input == thee);
 	
 	autoSound sound;
@@ -105,9 +105,9 @@ void SoundAnalysisWorkspace_analyseThreaded (mutableSoundAnalysisWorkspace me, c
 	if (emphasisFactor != 0.0) {   // OPTIMIZE; will happen for cut-off frequencies above 119 times the sampling frequency
 		sound = Data_copy (thee);
 		Sound_preEmphasize_inplace (sound.get(), preEmphasisFrequency);
-		SampledAnalysisWorkspace_replaceInput (me, sound.get());
+		SampledToSampledWorkspace_replaceInput (me, sound.get());
 	}
-	SampledAnalysisWorkspace_analyseThreaded (me);
+	SampledToSampledWorkspace_analyseThreaded (me);
 }
 
-/* End of file SoundAnalysisWorkspace.cpp */
+/* End of file SoundToSampledWorkspace.cpp */

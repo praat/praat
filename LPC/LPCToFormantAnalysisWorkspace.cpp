@@ -38,7 +38,7 @@
 #include "oo_DESCRIPTION.h"
 #include "LPCToFormantAnalysisWorkspace_def.h"
 
-Thing_implement (LPCToFormantAnalysisWorkspace, LPCAnalysisWorkspace, 0);
+Thing_implement (LPCToFormantAnalysisWorkspace, LPCToSampledWorkspace, 0);
 
 static void Formant_Frame_init (Formant_Frame me, integer numberOfFormants) {
 	if (numberOfFormants > 0)
@@ -98,27 +98,41 @@ void structLPCToFormantAnalysisWorkspace :: saveOutputFrame () {
 	formantFrame.copy (& my frames [currentFrame]);
 }
 
-autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, integer maxnCoefficients, double samplingPeriod, mutableFormant output, double margin) {
+void LPCToFormantAnalysisWorkspace_initFormantDependency (LPCToFormantAnalysisWorkspace me, integer maxnFormants) {
+	if (my outputObjectPresent) {
+		Formant output = reinterpret_cast<Formant> (my output);
+		Melder_assert (output -> maxnFormants == maxnFormants);
+	}
+	my maxnFormants = maxnFormants;
+	Formant_Frame_init (& my formantFrame, maxnFormants);
+	
+}
+
+void LPCToFormantAnalysisWorkspace_initLPCDependency (LPCToFormantAnalysisWorkspace me, integer maxnCoefficients, double samplingPeriod) {
+	LPCToSampledWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
+	//Formant_Frame_init (& my formantFrame, my maxnFormants);
+	autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};
+	my workvectorPool = WorkvectorPool_create (sizes.get(), true);		
+	my p = Polynomial_create (-1.0, 1.0, maxnCoefficients);
+	my roots = Roots_create (maxnCoefficients);	
+}
+
+autoLPCToFormantAnalysisWorkspace LPCToFormantAnalysisWorkspace_create (constLPC input, mutableFormant output, double margin) {
 	try {
-		if (input) {
-			Melder_assert (input -> maxnCoefficients == maxnCoefficients);
-			if (output)
-				Sampled_assertEqualDomainsAndSampling (input, output);
-		}
-		if (! output)
-			Melder_throw (U"Output Formant needed.");
+		if (input && output)
+			Sampled_assertEqualDomainsAndSampling (input, output);
 		autoLPCToFormantAnalysisWorkspace me = Thing_new (LPCToFormantAnalysisWorkspace);
-		LPCAnalysisWorkspace_init (me.get(), input, output, maxnCoefficients, samplingPeriod);
-		Formant_Frame_init (& my formantFrame, output -> maxnFormants);
-		autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};
-		my workvectorPool = WorkvectorPool_create (sizes.get(), true);		
-		my p = Polynomial_create (-1.0, 1.0, maxnCoefficients);
-		my roots = Roots_create (maxnCoefficients);
+		LPCToSampledWorkspace_init (me.get(), input, output);
+		if (input)
+			LPCToFormantAnalysisWorkspace_initLPCDependency (me.get(), input -> maxnCoefficients, input -> samplingPeriod);
+		if (output)
+			LPCToFormantAnalysisWorkspace_initFormantDependency (me.get(), output -> maxnFormants);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LPCToFormantAnalysisWorkspace not created.");
 	}
 }
+
 
 /* End of file LPCToFormantAnalysisWorkspace.cpp */
 

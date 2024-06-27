@@ -8,7 +8,7 @@ sources = '''
 	FormantModeler.cpp FormantModelerList.cpp
 	FormantPath.cpp FormantPath_to_IntervalTier.cpp FormantPathArea.cpp FormantPathEditor.cpp
 	LineSpectralFrequencies.cpp
-	LPCAnalysisWorkspace.cpp LPCToFormantAnalysisWorkspace.cpp
+	LPCToSampledWorkspace.cpp LPCToFormantAnalysisWorkspace.cpp
 	LPC.cpp
 	LPC_and_Formant.cpp LPC_and_Cepstrumc.cpp
 	LPC_and_LFCC.cpp
