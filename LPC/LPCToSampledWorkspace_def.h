@@ -1,6 +1,4 @@
-#ifndef _LPCToSampledWorkspace_h_
-#define _LPCToSampledWorkspace_h_
-/* LPCToSampledWorkspace.h
+/* LPCAnalysisWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -18,19 +16,27 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LPC.h"
-#include "SampledToSampledWorkspace.h"
-#include "LPCToSampledWorkspace_def.h"
+#define ooSTRUCT LPCAnalysisWorkspace
+oo_DEFINE_CLASS (LPCAnalysisWorkspace, SampledToSampledWorkspace)
 
-void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output);
+	oo_STRUCT (LPC_Frame, lpcFrame)
+	oo_DOUBLE (samplingPeriod)
+	oo_INTEGER (maxnCoefficients)
+	
+	#if oo_DECLARING
 
-/*
-	If output not present
-*/
-inline void LPCToSampledWorkspace_initLPCDependency (mutableLPCToSampledWorkspace me, integer maxnCoefficients, double samplingPeriod) {
-	my samplingPeriod = samplingPeriod;
-	my maxnCoefficients = maxnCoefficients;
-	LPC_Frame_init (& my lpcFrame, my maxnCoefficients);
-}
+		LPC_Frame lpcFrameRef = & lpcFrame;
 
-#endif /* _LPCToSampledWorkspace_h_ */
+	#endif
+
+	#if oo_COPYING
+
+		thy lpcFrameRef = & thy lpcFrame;
+
+	#endif
+
+oo_END_CLASS (LPCAnalysisWorkspace)
+#undef ooSTRUCT
+
+/* End of file LPCAnalysisWorkspace_def.h */
+
