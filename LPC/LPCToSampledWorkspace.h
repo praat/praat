@@ -1,6 +1,6 @@
-#ifndef _LPCAnalysisWorkspace_h_
-#define _LPCAnalysisWorkspace_h_
-/* LPCAnalysisWorkspace.h
+#ifndef _LPCToSampledWorkspace_h_
+#define _LPCToSampledWorkspace_h_
+/* LPCToSampledWorkspace.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -20,17 +20,17 @@
 
 #include "LPC.h"
 #include "SampledToSampledWorkspace.h"
-#include "LPCAnalysisWorkspace_def.h"
+#include "LPCToSampledWorkspace_def.h"
 
-void LPCAnalysisWorkspace_init (mutableLPCAnalysisWorkspace me, constLPC input, mutableSampled output);
+void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output);
 
 /*
 	If output not present
 */
-inline void LPCAnalysisWorkspace_initLPCDependency (mutableLPCAnalysisWorkspace me, integer maxnCoefficients, double samplingPeriod) {
+inline void LPCToSampledWorkspace_initLPCDependency (mutableLPCToSampledWorkspace me, integer maxnCoefficients, double samplingPeriod) {
 	my samplingPeriod = samplingPeriod;
 	my maxnCoefficients = maxnCoefficients;
 	LPC_Frame_init (& my lpcFrame, my maxnCoefficients);
 }
 
-#endif /* _LPCAnalysisWorkspace_h_ */
+#endif /* _LPCToSampledWorkspace_h_ */

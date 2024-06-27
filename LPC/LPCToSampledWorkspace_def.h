@@ -1,4 +1,4 @@
-/* LPCAnalysisWorkspace_def.h
+/* LPCToSampledWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,8 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT LPCAnalysisWorkspace
-oo_DEFINE_CLASS (LPCAnalysisWorkspace, SampledToSampledWorkspace)
+#define ooSTRUCT LPCToSampledWorkspace
+oo_DEFINE_CLASS (LPCToSampledWorkspace, SampledToSampledWorkspace)
 
 	oo_STRUCT (LPC_Frame, lpcFrame)
 	oo_DOUBLE (samplingPeriod)
@@ -35,8 +35,8 @@ oo_DEFINE_CLASS (LPCAnalysisWorkspace, SampledToSampledWorkspace)
 
 	#endif
 
-oo_END_CLASS (LPCAnalysisWorkspace)
+oo_END_CLASS (LPCToSampledWorkspace)
 #undef ooSTRUCT
 
-/* End of file LPCAnalysisWorkspace_def.h */
+/* End of file LPCToSampledWorkspace_def.h */
 
