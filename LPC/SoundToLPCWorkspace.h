@@ -1,6 +1,6 @@
-#ifndef _SoundToLPCAnalysisWorkspace_h_
-#define _SoundToLPCAnalysisWorkspace_h_
-/* SoundToLPCAnalysisWorkspace_def.h
+#ifndef _SoundToLPCWorkspace_h_
+#define _SoundToLPCWorkspace_h_
+/* SoundToLPCWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -23,81 +23,81 @@
 #include "SVD.h"
 #include "SoundToSampledWorkspace.h"
 
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 
-Thing_define (SoundToLPCAnalysisWorkspace_autocorrelation, SoundToLPCAnalysisWorkspace) {
+Thing_define (SoundToLPCWorkspace_autocorrelation, SoundToLPCWorkspace) {
 	bool inputFrameToOutputFrame (void) override;
 };
 
-Thing_define (SoundToLPCAnalysisWorkspace_covariance, SoundToLPCAnalysisWorkspace) {
+Thing_define (SoundToLPCWorkspace_covariance, SoundToLPCWorkspace) {
 	bool inputFrameToOutputFrame (void) override;
 };
 
-Thing_define (SoundToLPCAnalysisWorkspace_burg, SoundToLPCAnalysisWorkspace) {
+Thing_define (SoundToLPCWorkspace_burg, SoundToLPCWorkspace) {
 	bool inputFrameToOutputFrame (void) override;
 };
 
-Thing_define (SoundToLPCAnalysisWorkspace_marple, SoundToLPCAnalysisWorkspace) {
+Thing_define (SoundToLPCWorkspace_marple, SoundToLPCWorkspace) {
 	bool inputFrameToOutputFrame (void) override;
 };
 
-void SoundToLPCAnalysisWorkspace_init (mutableSoundToLPCAnalysisWorkspace me,
+void SoundToLPCWorkspace_init (mutableSoundToLPCWorkspace me,
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
 /*
-	If the output LPC is not present, as can be the case when SoundToLPCAnalysisWorkspace is part of a 
+	If the output LPC is not present, as can be the case when SoundToLPCWorkspace is part of a 
 	chain of workspaces, we need to supply the maxnCoefficients and samplingPeriod  from external sources.
 */
-void SoundToLPCAnalysisWorkspace_initLPCDependency (mutableSoundToLPCAnalysisWorkspace me, integer maxnCoefficients, double samplingPeriod);
+void SoundToLPCWorkspace_initLPCDependency (mutableSoundToLPCWorkspace me, integer maxnCoefficients, double samplingPeriod);
 
 /*
 	If input Sound not present we need to supply the sampling time
 */
-inline void SoundToLPCAnalysisWorkspace_initSoundDependency (mutableSoundToLPCAnalysisWorkspace me, double samplingPeriod) {
+inline void SoundToLPCWorkspace_initSoundDependency (mutableSoundToLPCWorkspace me, double samplingPeriod) {
 	my samplingPeriod = samplingPeriod;
 	if (my input)
 		Melder_assert (my input -> dx == samplingPeriod);
 }
 
-void SoundToLPCAnalysisWorkspace_autocorrelation_init (SoundToLPCAnalysisWorkspace_autocorrelation me,
+void SoundToLPCWorkspace_autocorrelation_init (SoundToLPCWorkspace_autocorrelation me,
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
-autoSoundToLPCAnalysisWorkspace_autocorrelation SoundToLPCAnalysisWorkspace_autocorrelation_create (
+autoSoundToLPCWorkspace_autocorrelation SoundToLPCWorkspace_autocorrelation_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
-autoSoundToLPCAnalysisWorkspace_covariance SoundToLPCAnalysisWorkspace_covariance_create (
+autoSoundToLPCWorkspace_covariance SoundToLPCWorkspace_covariance_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
-void SoundToLPCAnalysisWorkspace_burg_init (SoundToLPCAnalysisWorkspace_burg me,
+void SoundToLPCWorkspace_burg_init (SoundToLPCWorkspace_burg me,
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
-autoSoundToLPCAnalysisWorkspace_burg SoundToLPCAnalysisWorkspace_burg_create (
+autoSoundToLPCWorkspace_burg SoundToLPCWorkspace_burg_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
-autoSoundToLPCAnalysisWorkspace_marple SoundToLPCAnalysisWorkspace_marple_create (
+autoSoundToLPCWorkspace_marple SoundToLPCWorkspace_marple_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape,
 	double tol1, double tol2
 );
 
-autoSoundAndLPCToLPCAnalysisWorkspace_robust SoundAndLPCToLPCAnalysisWorkspace_robust_create (
+autoSoundAndLPCToLPCWorkspace_robust SoundAndLPCToLPCWorkspace_robust_create (
 	constSound input, constLPC intermediate, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, double location, bool wantlocation
 );
 
-void SoundToLPCAnalysisWorkspace_robust_init (SoundToLPCAnalysisWorkspace_robust me,
+void SoundToLPCWorkspace_robust_init (SoundToLPCWorkspace_robust me,
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, 
 	kSound_windowShape windowShape, double k_stdev,	integer itermax, double tol, double location, bool wantlocation
 );
 
-autoSoundToLPCAnalysisWorkspace_robust SoundToLPCAnalysisWorkspace_robust_create (
+autoSoundToLPCWorkspace_robust SoundToLPCWorkspace_robust_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape,	double k_stdev,	integer itermax, double tol, double location, bool wantlocation
 );
 
-#endif /*_SoundToLPCAnalysisWorkspace_h_ */
+#endif /*_SoundToLPCWorkspace_h_ */

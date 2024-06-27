@@ -1,6 +1,6 @@
-#ifndef _SoundToFormantAnalysisWorkspace_h_
-#define _SoundToFormantAnalysisWorkspace_h_
-/* SoundToFormantAnalysisWorkspace_def.h
+#ifndef _SoundToFormantWorkspace_h_
+#define _SoundToFormantWorkspace_h_
+/* SoundToFormantWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -24,26 +24,26 @@
 #include "LPCToFormantWorkspace.h"
 #include "SoundToLPCWorkspace.h"
 
-#include "SoundToFormantAnalysisWorkspace_def.h"
+#include "SoundToFormantWorkspace_def.h"
 
-Thing_define (SoundToFormantAnalysisWorkspace_burg, SoundToFormantAnalysisWorkspace) {
+Thing_define (SoundToFormantWorkspace_burg, SoundToFormantWorkspace) {
 };
 
-Thing_define (SoundToFormantAnalysisWorkspace_robust, SoundToFormantAnalysisWorkspace) {
+Thing_define (SoundToFormantWorkspace_robust, SoundToFormantWorkspace) {
 };
 
-void SoundToFormantAnalysisWorkspace_initFormantDependency (SoundToFormantAnalysisWorkspace me, integer maxnFormants);
-void SoundToFormantAnalysisWorkspace_initSoundDependency (SoundToFormantAnalysisWorkspace me, double samplingPeriod);
+void SoundToFormantWorkspace_initFormantDependency (SoundToFormantWorkspace me, integer maxnFormants);
+void SoundToFormantWorkspace_initSoundDependency (SoundToFormantWorkspace me, double samplingPeriod);
 
-autoSoundToFormantAnalysisWorkspace_burg SoundToFormantAnalysisWorkspace_burg_create (constSound input,
+autoSoundToFormantWorkspace_burg SoundToFormantWorkspace_burg_create (constSound input,
 	mutableFormant output, integer numberOfFormants, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape, double margin
 );
 
-autoSoundToFormantAnalysisWorkspace_robust SoundToFormantAnalysisWorkspace_robust_create (constSound input,
-	mutableFormant output, integer numberOfFormants, double effectiveAnalysisWidth,
-	kSound_windowShape windowShape, double margin, double k_stdev, integer itermax, double tol
+autoSoundToFormantWorkspace_robust SoundToFormantWorkspace_robust_create (constSound input,
+	mutableFormant output, double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin,
+	double k_stdev, integer itermax, double tol
 );
 
-#endif /*_SoundToFormantAnalysisWorkspace_h_ */
+#endif /*_SoundToFormantWorkspace_h_ */
 

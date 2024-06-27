@@ -1,4 +1,4 @@
-/* SoundToLPCAnalysisWorkspace.cpp
+/* SoundToLPCWorkspace.cpp
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,73 +16,73 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SoundToLPCAnalysisWorkspace.h"
+#include "SoundToLPCWorkspace.h"
 
 #include "oo_DESTROY.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 #include "oo_COPY.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 #include "oo_EQUAL.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 #include "oo_CAN_WRITE_AS_ENCODING.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 #include "oo_WRITE_TEXT.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 #include "oo_WRITE_BINARY.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 #include "oo_READ_TEXT.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 #include "oo_READ_BINARY.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 #include "oo_DESCRIPTION.h"
-#include "SoundToLPCAnalysisWorkspace_def.h"
+#include "SoundToLPCWorkspace_def.h"
 
-Thing_implement (SoundToLPCAnalysisWorkspace, SoundToSampledWorkspace, 0);
+Thing_implement (SoundToLPCWorkspace, SoundToSampledWorkspace, 0);
 
-void structSoundToLPCAnalysisWorkspace :: allocateOutputFrames (void) {
+void structSoundToLPCWorkspace :: allocateOutputFrames (void) {
 	if (! outputObjectPresent) return;
 	LPC thee = reinterpret_cast<LPC> (output);
 	for (integer iframe = 1; iframe <= thy nx; iframe ++)
 		LPC_Frame_init (& thy d_frames [iframe], thy maxnCoefficients);
 }
 
-void structSoundToLPCAnalysisWorkspace :: saveOutputFrame (void) {
+void structSoundToLPCWorkspace :: saveOutputFrame (void) {
 	if (! outputObjectPresent)
 		return;
 	LPC me = reinterpret_cast<LPC> (output);
 	outputLPCFrameRef -> copy (& my d_frames [currentFrame]);
 }
 
-bool structSoundToLPCAnalysisWorkspace :: inputFrameToOutputFrame (void) {
+bool structSoundToLPCWorkspace :: inputFrameToOutputFrame (void) {
 	return true;
 }
 
-void SoundToLPCAnalysisWorkspace_initLPCDependency (mutableSoundToLPCAnalysisWorkspace me, integer maxnCoefficients, double samplingPeriod) {
+void SoundToLPCWorkspace_initLPCDependency (mutableSoundToLPCWorkspace me, integer maxnCoefficients, double samplingPeriod) {
 	my maxnCoefficients = maxnCoefficients;
 	my samplingPeriod = samplingPeriod;
 	LPC_Frame_init (& my outputLPCFrame, my maxnCoefficients);
 
 }
 
-void SoundToLPCAnalysisWorkspace_init (mutableSoundToLPCAnalysisWorkspace me, constSound input, mutableLPC output,
+void SoundToLPCWorkspace_init (mutableSoundToLPCWorkspace me, constSound input, mutableLPC output,
 	double effectiveAnalysisWidth, kSound_windowShape windowShape)
 {
 	SoundToSampledWorkspace_init (me, input, output, effectiveAnalysisWidth, windowShape);
 	if (my inputObjectPresent)
 		my samplingPeriod = input -> dx;
 	if (my outputObjectPresent)
-		SoundToLPCAnalysisWorkspace_initLPCDependency (me, my maxnCoefficients, my samplingPeriod);
+		SoundToLPCWorkspace_initLPCDependency (me, output -> maxnCoefficients, output -> samplingPeriod);
 }
 
 /************************ autocorrelation method *****************************/
 
-Thing_implement (SoundToLPCAnalysisWorkspace_autocorrelation, SoundToLPCAnalysisWorkspace, 0);
+Thing_implement (SoundToLPCWorkspace_autocorrelation, SoundToLPCWorkspace, 0);
 
 /*
 	Markel & Gray, Linear Prediction of Speech, page 219
 */
 
-bool structSoundToLPCAnalysisWorkspace_autocorrelation :: inputFrameToOutputFrame (void)  {
+bool structSoundToLPCWorkspace_autocorrelation :: inputFrameToOutputFrame (void)  {
 	const integer m = maxnCoefficients;
 	
 	LPC_Frame thee = outputLPCFrameRef;
@@ -139,37 +139,37 @@ bool structSoundToLPCAnalysisWorkspace_autocorrelation :: inputFrameToOutputFram
 	return true;
 }
 
-void SoundToLPCAnalysisWorkspace_autocorrelation_initLPCDependency (SoundToLPCAnalysisWorkspace_autocorrelation me,
+void SoundToLPCWorkspace_autocorrelation_initLPCDependency (SoundToLPCWorkspace_autocorrelation me,
 	integer maxnCoefficients, double samplingPeriod)
 {
-	SoundToLPCAnalysisWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
+	SoundToLPCWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
 	autoINTVEC workvectorSizes { my maxnCoefficients + 1, my maxnCoefficients + 1, my maxnCoefficients };
 	my workvectorPool = WorkvectorPool_create (workvectorSizes.get(), true);
 }
 
-autoSoundToLPCAnalysisWorkspace_autocorrelation SoundToLPCAnalysisWorkspace_autocorrelation_create (
-	constSound input, mutableLPC output, integer maxnCoefficients, double effectiveAnalysisWidth, kSound_windowShape windowShape)
+autoSoundToLPCWorkspace_autocorrelation SoundToLPCWorkspace_autocorrelation_create (
+	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape)
 {
 	try {
-		autoSoundToLPCAnalysisWorkspace_autocorrelation me = Thing_new (SoundToLPCAnalysisWorkspace_autocorrelation);
-		SoundToLPCAnalysisWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
+		autoSoundToLPCWorkspace_autocorrelation me = Thing_new (SoundToLPCWorkspace_autocorrelation);
+		SoundToLPCWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
 		if (output)
-			SoundToLPCAnalysisWorkspace_autocorrelation_initLPCDependency (me.get(), my maxnCoefficients, my samplingPeriod);
+			SoundToLPCWorkspace_autocorrelation_initLPCDependency (me.get(), my maxnCoefficients, my samplingPeriod);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SoundToLPCAnalysisWorkspace_autocorrelation could not be created.");
+		Melder_throw (U"SoundToLPCWorkspace_autocorrelation could not be created.");
 	}	
 }
 
 /************************ covariance method *****************************/
 
-Thing_implement (SoundToLPCAnalysisWorkspace_covariance, SoundToLPCAnalysisWorkspace, 0);
+Thing_implement (SoundToLPCWorkspace_covariance, SoundToLPCWorkspace, 0);
 
 /*
 	Markel & Gray, Linear Prediction of Speech, page 221
 */
 
-bool structSoundToLPCAnalysisWorkspace_covariance :: inputFrameToOutputFrame () {
+bool structSoundToLPCWorkspace_covariance :: inputFrameToOutputFrame () {
 	LPC_Frame thee = outputLPCFrameRef;
 	const integer m = maxnCoefficients, n = soundFrameSize;
 	
@@ -264,33 +264,33 @@ end:
 	return true;
 }
 
-void SoundToLPCAnalysisWorkspace_covariance_initLPCDependency (SoundToLPCAnalysisWorkspace_covariance me,
+void SoundToLPCWorkspace_covariance_initLPCDependency (SoundToLPCWorkspace_covariance me,
 	integer maxnCoefficients, double samplingPeriod)
 {
-	SoundToLPCAnalysisWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
+	SoundToLPCWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
 	autoINTVEC workvectorSizes { my maxnCoefficients * (my maxnCoefficients + 1) / 2, my maxnCoefficients, my maxnCoefficients,
 			my maxnCoefficients + 1, my maxnCoefficients + 1
 		};
 	my workvectorPool = WorkvectorPool_create (workvectorSizes.get(), true);
 }
 
-autoSoundToLPCAnalysisWorkspace_covariance SoundToLPCAnalysisWorkspace_covariance_create (
-	constSound input, mutableLPC output, integer maxnCoefficients, double effectiveAnalysisWidth, kSound_windowShape windowShape)
+autoSoundToLPCWorkspace_covariance SoundToLPCWorkspace_covariance_create (
+	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape)
 {
 	try {
-		autoSoundToLPCAnalysisWorkspace_covariance me = Thing_new (SoundToLPCAnalysisWorkspace_covariance);
-		SoundToLPCAnalysisWorkspace_init (me.get(), input, output, effectiveAnalysisWidth,  windowShape);
+		autoSoundToLPCWorkspace_covariance me = Thing_new (SoundToLPCWorkspace_covariance);
+		SoundToLPCWorkspace_init (me.get(), input, output, effectiveAnalysisWidth,  windowShape);
 		if (output)
-			SoundToLPCAnalysisWorkspace_covariance_initLPCDependency (me.get(),	my maxnCoefficients, my samplingPeriod);
+			SoundToLPCWorkspace_covariance_initLPCDependency (me.get(),	my maxnCoefficients, my samplingPeriod);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SoundToLPCAnalysisWorkspace_covariance could not be created.");
+		Melder_throw (U"SoundToLPCWorkspace_covariance could not be created.");
 	}	
 }
 
 /************************ burg method *****************************/
 
-Thing_implement (SoundToLPCAnalysisWorkspace_burg, SoundToLPCAnalysisWorkspace, 0);
+Thing_implement (SoundToLPCWorkspace_burg, SoundToLPCWorkspace, 0);
 
 static double VECburg_buffered (VEC const& a, constVEC const& x, SoundToSampledWorkspace me) {
 	const integer n = x.size, m = a.size;
@@ -359,7 +359,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, SoundToSampledW
 	return double (xms);
 }
 
-bool structSoundToLPCAnalysisWorkspace_burg :: inputFrameToOutputFrame () {
+bool structSoundToLPCWorkspace_burg :: inputFrameToOutputFrame () {
 
 	LPC_Frame thee = outputLPCFrameRef;
 	VEC x = soundFrameVEC;
@@ -377,33 +377,33 @@ bool structSoundToLPCAnalysisWorkspace_burg :: inputFrameToOutputFrame () {
 	}
 }
 
-void SoundToLPCAnalysisWorkspace_burg_initLPCDependency (SoundToLPCAnalysisWorkspace_burg me,
+void SoundToLPCWorkspace_burg_initLPCDependency (SoundToLPCWorkspace_burg me,
 	integer maxnCoefficients, double samplingPeriod)
 {
-	SoundToLPCAnalysisWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
+	SoundToLPCWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
 	autoINTVEC workvectorSizes { my soundFrameSize, my soundFrameSize, my maxnCoefficients + 1 };
 	my workvectorPool = WorkvectorPool_create (workvectorSizes.get(), true);
 }
 
-autoSoundToLPCAnalysisWorkspace_burg SoundToLPCAnalysisWorkspace_burg_create (
+autoSoundToLPCWorkspace_burg SoundToLPCWorkspace_burg_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape)
 {
 	try {
-		autoSoundToLPCAnalysisWorkspace_burg me = Thing_new (SoundToLPCAnalysisWorkspace_burg);
-		SoundToLPCAnalysisWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
+		autoSoundToLPCWorkspace_burg me = Thing_new (SoundToLPCWorkspace_burg);
+		SoundToLPCWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
 		if (output)
-			SoundToLPCAnalysisWorkspace_burg_initLPCDependency (me.get(), my maxnCoefficients, my samplingPeriod);
+			SoundToLPCWorkspace_burg_initLPCDependency (me.get(), my maxnCoefficients, my samplingPeriod);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SoundToLPCAnalysisWorkspace_burg could not be created.");
+		Melder_throw (U"SoundToLPCWorkspace_burg could not be created.");
 	}	
 }
 
 /************************ marple method *****************************/
 
-Thing_implement (SoundToLPCAnalysisWorkspace_marple, SoundToLPCAnalysisWorkspace, 0);
+Thing_implement (SoundToLPCWorkspace_marple, SoundToLPCWorkspace, 0);
 
-bool structSoundToLPCAnalysisWorkspace_marple :: inputFrameToOutputFrame () {
+bool structSoundToLPCWorkspace_marple :: inputFrameToOutputFrame () {
 
 	const integer mmax = maxnCoefficients, n = soundFrame.size;
 	LPC_Frame thee = outputLPCFrameRef;
@@ -547,36 +547,36 @@ end:
 	return frameAnalysisInfo == 0 || frameAnalysisInfo == 4 || frameAnalysisInfo == 5;
 }
 
-void SoundToLPCAnalysisWorkspace_marple_initLPCDependency (SoundToLPCAnalysisWorkspace_marple me,
+void SoundToLPCWorkspace_marple_initLPCDependency (SoundToLPCWorkspace_marple me,
 	integer maxnCoefficients, double samplingPeriod)
 {
-	SoundToLPCAnalysisWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
+	SoundToLPCWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
 	autoINTVEC workvectorSizes { my maxnCoefficients + 1, my maxnCoefficients + 1, my maxnCoefficients + 1 };
 	my workvectorPool = WorkvectorPool_create (workvectorSizes.get(), true);
 }
 
-autoSoundToLPCAnalysisWorkspace_marple SoundToLPCAnalysisWorkspace_marple_create (
-	constSound input, mutableLPC output, integer maxnCoefficients, double effectiveAnalysisWidth, kSound_windowShape windowShape,
+autoSoundToLPCWorkspace_marple SoundToLPCWorkspace_marple_create (
+	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape,
 	double tol1, double tol2)
 {
 	try {
-		autoSoundToLPCAnalysisWorkspace_marple me = Thing_new (SoundToLPCAnalysisWorkspace_marple);
-		SoundToLPCAnalysisWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
+		autoSoundToLPCWorkspace_marple me = Thing_new (SoundToLPCWorkspace_marple);
+		SoundToLPCWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
 		if (output)
-			SoundToLPCAnalysisWorkspace_marple_initLPCDependency (me.get(), my maxnCoefficients, my samplingPeriod);
+			SoundToLPCWorkspace_marple_initLPCDependency (me.get(), my maxnCoefficients, my samplingPeriod);
 		my tol1 = tol1;
 		my tol2 = tol2;
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SoundToLPCAnalysisWorkspace_marple could not be created.");
+		Melder_throw (U"SoundToLPCWorkspace_marple could not be created.");
 	}	
 }
 
 /*********************** robust method ******************************/
 
-Thing_implement (SoundAndLPCToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWorkspace, 0);
+Thing_implement (SoundAndLPCToLPCWorkspace_robust, SoundToLPCWorkspace, 0);
 
-void SoundAndLPCToLPCAnalysisWorkspace_robust_resize (mutableSoundAndLPCToLPCAnalysisWorkspace_robust me, integer newPredictionOrder) {
+void SoundAndLPCToLPCWorkspace_robust_resize (mutableSoundAndLPCToLPCWorkspace_robust me, integer newPredictionOrder) {
 	if (newPredictionOrder == my svd -> numberOfColumns)
 		return;
 	Melder_assert (newPredictionOrder <= my maxnCoefficients);
@@ -586,7 +586,7 @@ void SoundAndLPCToLPCAnalysisWorkspace_robust_resize (mutableSoundAndLPCToLPCAna
 	SVD_resizeWithinOldBounds (my svd.get(), my maxnCoefficients, my maxnCoefficients, newPredictionOrder, newPredictionOrder);
 }
 
-static void SoundAndLPCToLPCAnalysisWorkspace_robust_setSampleWeights (mutableSoundAndLPCToLPCAnalysisWorkspace_robust me, constVEC const& error) {
+static void SoundAndLPCToLPCWorkspace_robust_setSampleWeights (mutableSoundAndLPCToLPCWorkspace_robust me, constVEC const& error) {
 	const double kstdev = my k_stdev * my scale;
 	for (integer isamp = 1 ; isamp <= error.size; isamp ++) {
 		const double absDiff = fabs (error [isamp] - my location);
@@ -594,7 +594,7 @@ static void SoundAndLPCToLPCAnalysisWorkspace_robust_setSampleWeights (mutableSo
 	}
 }
 
-static void SoundAndLPCToLPCAnalysisWorkspace_robust_setCovariances (mutableSoundAndLPCToLPCAnalysisWorkspace_robust me, constVEC const& s) {
+static void SoundAndLPCToLPCWorkspace_robust_setCovariances (mutableSoundAndLPCToLPCWorkspace_robust me, constVEC const& s) {
 	MATVU covar = MATVU (my covarmatrixw.part (1, my currentPredictionOrder, 1, my currentPredictionOrder));
 	for (integer i = 1; i <= my currentPredictionOrder; i ++) {
 		for (integer j = i; j <= my currentPredictionOrder; j ++) {
@@ -611,7 +611,7 @@ static void SoundAndLPCToLPCAnalysisWorkspace_robust_setCovariances (mutableSoun
 }
 
 
-static void SoundAndLPCToLPCAnalysisWorkspace_robust_solvelpc (mutableSoundAndLPCToLPCAnalysisWorkspace_robust me) {
+static void SoundAndLPCToLPCWorkspace_robust_solvelpc (mutableSoundAndLPCToLPCWorkspace_robust me) {
 	my svd -> u.all()  <<=  my covarmatrixw.all();
 	VEC workvector1 = my workvectorPool -> getRawVEC (1, my computeSVDworksize);
 	VEC workvector2 = my workvectorPool -> getRawVEC (2, my currentPredictionOrder);
@@ -620,7 +620,7 @@ static void SoundAndLPCToLPCAnalysisWorkspace_robust_solvelpc (mutableSoundAndLP
 	my coefficients.resize (my currentPredictionOrder); // maintain invariant
 }
 
-bool structSoundAndLPCToLPCAnalysisWorkspace_robust :: inputFrameToOutputFrame () {
+bool structSoundAndLPCToLPCWorkspace_robust :: inputFrameToOutputFrame () {
 	currentPredictionOrder = intermediateLPCFrameRef -> nCoefficients;
 	intermediateLPCFrameRef -> copy (outputLPCFrameRef);
 	LPC_Frame thee = outputLPCFrameRef;
@@ -629,7 +629,7 @@ bool structSoundAndLPCToLPCAnalysisWorkspace_robust :: inputFrameToOutputFrame (
 	iter = 0;
 	scale = 1e308;
 	bool farFromScale = true;
-	SoundAndLPCToLPCAnalysisWorkspace_robust_resize (this, currentPredictionOrder);
+	SoundAndLPCToLPCWorkspace_robust_resize (this, currentPredictionOrder);
 	VEC filterMemory = workvectorPool -> getRawVEC (3, currentPredictionOrder);
 	VEC workHuber = workvectorPool -> getRawVEC (4, soundFrameVEC.size);
 	frameAnalysisInfo = 0;
@@ -638,14 +638,14 @@ bool structSoundAndLPCToLPCAnalysisWorkspace_robust :: inputFrameToOutputFrame (
 		error.all()  <<=  soundFrameVEC;
 		VECfilterInverse_inplace (error.get(), inout_a, filterMemory);
 		NUMstatistics_huber (error.get(), & location, wantlocation, & scale, wantscale, k_stdev, tol1, huber_iterations, workHuber);
-		SoundAndLPCToLPCAnalysisWorkspace_robust_setSampleWeights (this, error.get());
+		SoundAndLPCToLPCWorkspace_robust_setSampleWeights (this, error.get());
 
-		SoundAndLPCToLPCAnalysisWorkspace_robust_setCovariances (this, soundFrameVEC);
+		SoundAndLPCToLPCWorkspace_robust_setCovariances (this, soundFrameVEC);
 		/*
 			Solve C a = [-] c
 		*/
 		try {
-			SoundAndLPCToLPCAnalysisWorkspace_robust_solvelpc (this);
+			SoundAndLPCToLPCWorkspace_robust_solvelpc (this);
 			inout_a  <<=  coefficients.all();
 			farFromScale = ( fabs (scale - previousScale) > std::max (tol1 * fabs (scale), NUMeps) );
 		} catch (MelderError) {
@@ -660,24 +660,24 @@ bool structSoundAndLPCToLPCAnalysisWorkspace_robust :: inputFrameToOutputFrame (
 	return true;
 }
 
-void structSoundAndLPCToLPCAnalysisWorkspace_robust :: getInputFrame () {
-	SoundAndLPCToLPCAnalysisWorkspace_robust_Parent :: getInputFrame (); // soundFrame
+void structSoundAndLPCToLPCWorkspace_robust :: getInputFrame () {
+	SoundAndLPCToLPCWorkspace_robust_Parent :: getInputFrame (); // soundFrame
 	if (! intermediateObjectPresent)
 		return;
 	intermediate -> d_frames [currentFrame].copy (intermediateLPCFrameRef);
 }
 
-void structSoundAndLPCToLPCAnalysisWorkspace_robust :: saveOutputFrame () {
+void structSoundAndLPCToLPCWorkspace_robust :: saveOutputFrame () {
 	if (! outputObjectPresent)
 		return;
 	mutableLPC thee = reinterpret_cast<mutableLPC> (output);
 	outputLPCFrame.copy (& thy d_frames [currentFrame]);
 }
 
-void SoundAndLPCToLPCAnalysisWorkspace_robust_initLPCDependency (SoundAndLPCToLPCAnalysisWorkspace_robust me,
+void SoundAndLPCToLPCWorkspace_robust_initLPCDependency (SoundAndLPCToLPCWorkspace_robust me,
 	integer maxnCoefficients, double samplingPeriod)
 {
-	SoundToLPCAnalysisWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
+	SoundToLPCWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
 	my currentPredictionOrder = my maxnCoefficients;
 	LPC_Frame_init (& my intermediateLPCFrame, maxnCoefficients);
 	my coefficients = raw_VEC (my maxnCoefficients);
@@ -691,8 +691,8 @@ void SoundAndLPCToLPCAnalysisWorkspace_robust_initLPCDependency (SoundAndLPCToLP
 	my workvectorPool = WorkvectorPool_create (vectorSizes.get(), true);
 }
 
-autoSoundAndLPCToLPCAnalysisWorkspace_robust SoundAndLPCToLPCAnalysisWorkspace_robust_create (
-	constSound input, constLPC intermediate, mutableLPC output, integer maxnCoefficients, double effectiveAnalysisWidth,
+autoSoundAndLPCToLPCWorkspace_robust SoundAndLPCToLPCWorkspace_robust_create (
+	constSound input, constLPC intermediate, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, double location, bool wantlocation)
 {
 	try {
@@ -700,14 +700,14 @@ autoSoundAndLPCToLPCAnalysisWorkspace_robust SoundAndLPCToLPCAnalysisWorkspace_r
 			Sampled_assertEqualDomainsAndSampling (output, intermediate);
 		if (output && intermediate)
 			Melder_assert (output -> maxnCoefficients == intermediate -> maxnCoefficients);
-		autoSoundAndLPCToLPCAnalysisWorkspace_robust me = Thing_new (SoundAndLPCToLPCAnalysisWorkspace_robust);
-		SoundToLPCAnalysisWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
+		autoSoundAndLPCToLPCWorkspace_robust me = Thing_new (SoundAndLPCToLPCWorkspace_robust);
+		SoundToLPCWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
 		if (output)
-			SoundAndLPCToLPCAnalysisWorkspace_robust_initLPCDependency (me.get(), output -> maxnCoefficients, output -> samplingPeriod);
+			SoundAndLPCToLPCWorkspace_robust_initLPCDependency (me.get(), output -> maxnCoefficients, output -> samplingPeriod);
 		else if (intermediate) {
 			my intermediate = intermediate;
 			my intermediateObjectPresent = true;
-			SoundAndLPCToLPCAnalysisWorkspace_robust_initLPCDependency (me.get(), intermediate -> maxnCoefficients, intermediate -> samplingPeriod);
+			SoundAndLPCToLPCWorkspace_robust_initLPCDependency (me.get(), intermediate -> maxnCoefficients, intermediate -> samplingPeriod);
 		}
 		
 		my minimumNumberOfFramesPerThread /= 2;
@@ -728,18 +728,18 @@ autoSoundAndLPCToLPCAnalysisWorkspace_robust SoundAndLPCToLPCAnalysisWorkspace_r
 		my currentPredictionOrder = my maxnCoefficients;
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SoundAndLPCToLPCAnalysisWorkspace_robust not created");
+		Melder_throw (U"SoundAndLPCToLPCWorkspace_robust not created");
 	}
 }
 
-Thing_implement (SoundToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWorkspace, 0);
+Thing_implement (SoundToLPCWorkspace_robust, SoundToLPCWorkspace, 0);
 
-void structSoundToLPCAnalysisWorkspace_robust :: getInputFrame (void) {
+void structSoundToLPCWorkspace_robust :: getInputFrame (void) {
 	/*
 		Get the sound frame and pass its reference to the other objects 
 		and make sure they all refer to the same frame.
 	*/
-	SoundToLPCAnalysisWorkspace_robust_Parent :: getInputFrame ();
+	SoundToLPCWorkspace_robust_Parent :: getInputFrame ();
 	soundToLPC -> currentFrame = currentFrame;
 	soundToLPC -> soundFrameVEC = soundFrameVEC;
 	soundAndLPCToLPC -> currentFrame = currentFrame;
@@ -747,11 +747,11 @@ void structSoundToLPCAnalysisWorkspace_robust :: getInputFrame (void) {
 	soundAndLPCToLPC -> intermediateLPCFrameRef = soundToLPC -> outputLPCFrameRef;
 }
 
-void structSoundToLPCAnalysisWorkspace_robust :: allocateOutputFrames (void) {
+void structSoundToLPCWorkspace_robust :: allocateOutputFrames (void) {
 	soundAndLPCToLPC -> allocateOutputFrames ();
 }
 
-bool structSoundToLPCAnalysisWorkspace_robust :: inputFrameToOutputFrame (void) {
+bool structSoundToLPCWorkspace_robust :: inputFrameToOutputFrame (void) {
 	bool step1 = soundToLPC -> inputFrameToOutputFrame ();
 	soundAndLPCToLPC -> intermediateLPCFrameRef = soundToLPC -> outputLPCFrameRef;
 	bool step2 = soundAndLPCToLPC -> inputFrameToOutputFrame ();
@@ -759,46 +759,46 @@ bool structSoundToLPCAnalysisWorkspace_robust :: inputFrameToOutputFrame (void) 
 	return step1 && step2;
 }
 
-void structSoundToLPCAnalysisWorkspace_robust :: saveOutputFrame (void) {
+void structSoundToLPCWorkspace_robust :: saveOutputFrame (void) {
 	if (! outputObjectPresent)
 		return;
 	LPC me = reinterpret_cast<LPC> (output);
 	soundAndLPCToLPC -> outputLPCFrame.copy (& my d_frames [currentFrame]);
 }
 
-void SoundToLPCAnalysisWorkspace_robust_initLPCDependency (SoundToLPCAnalysisWorkspace_robust me, integer maxnCoefficients, double samplingPeriod) {
-	SoundToLPCAnalysisWorkspace_initLPCDependency (my soundToLPC.get(), maxnCoefficients, samplingPeriod);
-	SoundAndLPCToLPCAnalysisWorkspace_robust_initLPCDependency (my soundAndLPCToLPC.get(), maxnCoefficients, samplingPeriod);
+void SoundToLPCWorkspace_robust_initLPCDependency (SoundToLPCWorkspace_robust me, integer maxnCoefficients, double samplingPeriod) {
+	SoundToLPCWorkspace_initLPCDependency (my soundToLPC.get(), maxnCoefficients, samplingPeriod);
+	SoundAndLPCToLPCWorkspace_robust_initLPCDependency (my soundAndLPCToLPC.get(), maxnCoefficients, samplingPeriod);
 }
 
-void SoundToLPCAnalysisWorkspace_robust_initSoundDependency (SoundToLPCAnalysisWorkspace_robust me, double samplinPeriod) {
+void SoundToLPCWorkspace_robust_initSoundDependency (SoundToLPCWorkspace_robust me, double samplinPeriod) {
 	
 }
 
-void SoundToLPCAnalysisWorkspace_robust_init (SoundToLPCAnalysisWorkspace_robust me,
-	constSound input, mutableLPC output, integer maxnCoefficients, double effectiveAnalysisWidth,
+void SoundToLPCWorkspace_robust_init (SoundToLPCWorkspace_robust me,
+	constSound input, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape,	double k_stdev,	integer itermax, double tol, double location, bool wantlocation)
 {
 	SoundToSampledWorkspace_init (me, input, output, effectiveAnalysisWidth, windowShape);
-	my soundToLPC = SoundToLPCAnalysisWorkspace_autocorrelation_create (input, nullptr, maxnCoefficients, effectiveAnalysisWidth, windowShape);
-	my soundAndLPCToLPC = SoundAndLPCToLPCAnalysisWorkspace_robust_create (
-		input, nullptr, nullptr, maxnCoefficients, effectiveAnalysisWidth, windowShape,
+	my soundToLPC = SoundToLPCWorkspace_autocorrelation_create (nullptr, nullptr, effectiveAnalysisWidth, windowShape);
+	my soundAndLPCToLPC = SoundAndLPCToLPCWorkspace_robust_create (
+		nullptr, nullptr, nullptr, effectiveAnalysisWidth, windowShape,
 		k_stdev, itermax, tol, location, wantlocation
 	);
 }
 
-autoSoundToLPCAnalysisWorkspace_robust SoundToLPCAnalysisWorkspace_robust_create (
-	constSound input, mutableLPC output, integer maxnCoefficients, double effectiveAnalysisWidth,
+autoSoundToLPCWorkspace_robust SoundToLPCWorkspace_robust_create (
+	constSound input, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape, double k_stdev,	integer itermax, double tol, double location, bool wantlocation)
 {
 	try {
-		autoSoundToLPCAnalysisWorkspace_robust me = Thing_new (SoundToLPCAnalysisWorkspace_robust);
-		SoundToLPCAnalysisWorkspace_robust_init (me.get(), input, output, maxnCoefficients, effectiveAnalysisWidth,
+		autoSoundToLPCWorkspace_robust me = Thing_new (SoundToLPCWorkspace_robust);
+		SoundToLPCWorkspace_robust_init (me.get(), input, output, effectiveAnalysisWidth,
 			windowShape, k_stdev, itermax, tol, location, wantlocation);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SoundToLPCAnalysisWorkspace_robust not created");
+		Melder_throw (U"SoundToLPCWorkspace_robust not created");
 	}
 }
 
-/* End of file SoundToLPCAnalysisWorkspace.cpp */
+/* End of file SoundToLPCWorkspace.cpp */

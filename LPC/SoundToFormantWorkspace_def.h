@@ -1,4 +1,4 @@
-/* SoundToFormantAnalysisWorkspace_def.h
+/* SoundToFormantWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,8 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT SoundToFormantAnalysisWorkspace
-oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace, SoundToSampledWorkspace)
+#define ooSTRUCT SoundToFormantWorkspace
+oo_DEFINE_CLASS (SoundToFormantWorkspace, SoundToSampledWorkspace)
 
 	oo_OBJECT (SoundToLPCWorkspace, 0, soundToLPC)
 	oo_OBJECT (LPCToFormantWorkspace, 0, lpcToFormant)
@@ -31,8 +31,8 @@ oo_DEFINE_CLASS (SoundToFormantAnalysisWorkspace, SoundToSampledWorkspace)
 
 	#endif
 
-oo_END_CLASS (SoundToFormantAnalysisWorkspace)
+oo_END_CLASS (SoundToFormantWorkspace)
 #undef ooSTRUCT
 
-/* End of file SoundToFormantAnalysisWorkspace_def.h */
+/* End of file SoundToFormantWorkspace_def.h */
 

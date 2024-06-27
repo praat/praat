@@ -1,4 +1,4 @@
-/* SoundToLPCAnalysisWorkspace_def.h
+/* SoundToLPCWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,8 +16,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT SoundToLPCAnalysisWorkspace
-oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundToSampledWorkspace)
+#define ooSTRUCT SoundToLPCWorkspace
+oo_DEFINE_CLASS (SoundToLPCWorkspace, SoundToSampledWorkspace)
 
 	oo_INTEGER (maxnCoefficients) 			// if output object not present!
 	oo_DOUBLE (samplingPeriod)				// if input object not present
@@ -39,11 +39,11 @@ oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace, SoundToSampledWorkspace)
 
 	#endif
 
-oo_END_CLASS (SoundToLPCAnalysisWorkspace)
+oo_END_CLASS (SoundToLPCWorkspace)
 #undef ooSTRUCT
 
-#define ooSTRUCT SoundAndLPCToLPCAnalysisWorkspace_robust
-oo_DEFINE_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWorkspace)
+#define ooSTRUCT SoundAndLPCToLPCWorkspace_robust
+oo_DEFINE_CLASS (SoundAndLPCToLPCWorkspace_robust, SoundToLPCWorkspace)
 
 	oo_BOOLEAN (intermediateObjectPresent)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, intermediate) // read-only original
@@ -82,17 +82,17 @@ oo_DEFINE_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWor
 
 	#endif
 		
-oo_END_CLASS (SoundAndLPCToLPCAnalysisWorkspace_robust)
+oo_END_CLASS (SoundAndLPCToLPCWorkspace_robust)
 #undef ooSTRUCT
 
-#define ooSTRUCT SoundToLPCAnalysisWorkspace_robust
-oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWorkspace)
+#define ooSTRUCT SoundToLPCWorkspace_robust
+oo_DEFINE_CLASS (SoundToLPCWorkspace_robust, SoundToLPCWorkspace)
 	/*
-		We inherit from SoundToLPCAnalysisWorkspace (instead of SampledToSampledWorkspace)
+		We inherit from SoundToLPCWorkspace (instead of SampledToSampledWorkspace)
 		to determine the timing because we can't do multiple inheritance
 	*/
-	oo_OBJECT (SoundToLPCAnalysisWorkspace, 0, soundToLPC)
-	oo_OBJECT (SoundAndLPCToLPCAnalysisWorkspace_robust, 0, soundAndLPCToLPC)
+	oo_OBJECT (SoundToLPCWorkspace, 0, soundToLPC)
+	oo_OBJECT (SoundAndLPCToLPCWorkspace_robust, 0, soundAndLPCToLPC)
 
 	#if oo_DECLARING
 
@@ -103,8 +103,8 @@ oo_DEFINE_CLASS (SoundToLPCAnalysisWorkspace_robust, SoundToLPCAnalysisWorkspace
 
 	#endif
 
-oo_END_CLASS (SoundToLPCAnalysisWorkspace_robust)
+oo_END_CLASS (SoundToLPCWorkspace_robust)
 #undef ooSTRUCT
 
-/* End of file SoundToLPCAnalysisWorkspace_def.h */
+/* End of file SoundToLPCWorkspace_def.h */
  

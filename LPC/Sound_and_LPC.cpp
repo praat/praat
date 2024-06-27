@@ -144,7 +144,7 @@ void LPC_and_Sound_into_LPC_robust (constLPC original, constSound me, mutableLPC
 		double location = 0.0;
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, output -> maxnCoefficients);
 		
-		autoSoundAndLPCToLPCAnalysisWorkspace_robust ws = SoundAndLPCToLPCAnalysisWorkspace_robust_create (me, original, output,
+		autoSoundAndLPCToLPCWorkspace_robust ws = SoundAndLPCToLPCWorkspace_robust_create (me, original, output,
 			effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation);		
 		SampledToSampledWorkspace_analyseThreaded (ws.get());
 	} catch (MelderError) {
