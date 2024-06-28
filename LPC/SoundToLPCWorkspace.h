@@ -52,43 +52,57 @@ void SoundToLPCWorkspace_init (mutableSoundToLPCWorkspace me,
 void SoundToLPCWorkspace_initLPCDependency (mutableSoundToLPCWorkspace me, integer maxnCoefficients, double samplingPeriod);
 
 /*
-	If input Sound not present we need to supply the sampling time
+	If the input Sound is not present we need to supply the sampling time
 */
-inline void SoundToLPCWorkspace_initSoundDependency (mutableSoundToLPCWorkspace me, double samplingPeriod) {
-	my samplingPeriod = samplingPeriod;
-	if (my input)
-		Melder_assert (my input -> dx == samplingPeriod);
-}
+void SoundToLPCWorkspace_initSoundDependency (mutableSoundToLPCWorkspace me, double samplingPeriod);
 
 void SoundToLPCWorkspace_autocorrelation_init (SoundToLPCWorkspace_autocorrelation me,
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
+void SoundToLPCWorkspace_autocorrelation_initLPCDependency (SoundToLPCWorkspace_autocorrelation me, integer maxnCoefficients, double samplingPeriod);
+
 autoSoundToLPCWorkspace_autocorrelation SoundToLPCWorkspace_autocorrelation_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
+
+void SoundToLPCWorkspace_covariance_initLPCDependency (SoundToLPCWorkspace_covariance me, integer maxnCoefficients, double samplingPeriod);
 
 autoSoundToLPCWorkspace_covariance SoundToLPCWorkspace_covariance_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
-void SoundToLPCWorkspace_burg_init (SoundToLPCWorkspace_burg me,
-	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
-);
+void SoundToLPCWorkspace_burg_initLPCDependency (SoundToLPCWorkspace_burg me, integer maxnCoefficients, double samplingPeriod);
 
 autoSoundToLPCWorkspace_burg SoundToLPCWorkspace_burg_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
+
+void SoundToLPCWorkspace_marple_initLPCDependency (SoundToLPCWorkspace_marple me, integer maxnCoefficients, double samplingPeriod);
 
 autoSoundToLPCWorkspace_marple SoundToLPCWorkspace_marple_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape,
 	double tol1, double tol2
 );
 
+/**************** SoundAndLPCToLPCWorkspace_robust *************************************/
+
+void SoundAndLPCToLPCWorkspace_robust_initSoundDependency (SoundAndLPCToLPCWorkspace_robust me, double samplingPeriod);
+
+void SoundAndLPCToLPCWorkspace_robust_initLPCDependency (SoundAndLPCToLPCWorkspace_robust me,
+	integer maxnCoefficients, double samplingPeriod
+);
+
 autoSoundAndLPCToLPCWorkspace_robust SoundAndLPCToLPCWorkspace_robust_create (
 	constSound input, constLPC intermediate, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, double location, bool wantlocation
 );
+
+/**************** SoundToLPCWorkspace_robust *************************************/
+
+void SoundToLPCWorkspace_robust_initLPCDependency (SoundToLPCWorkspace_robust me, integer maxnCoefficients, double samplingPeriod);
+
+void SoundToLPCWorkspace_robust_initSoundDependency (SoundToLPCWorkspace_robust me, double samplingPeriod);
 
 void SoundToLPCWorkspace_robust_init (SoundToLPCWorkspace_robust me,
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, 

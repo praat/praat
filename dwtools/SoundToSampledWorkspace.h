@@ -26,13 +26,11 @@
 void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
 
 /*
-	If the input == nullptr ad we need to initialize the input soundFrame.
+	If the input == nullptr and we need to initialize the input soundFrame.
 */
-void SoundToSampledWorkspace_initSoundFrame (mutableSoundToSampledWorkspace me, double sound_dx);
+void SoundToSampledWorkspace_initSoundDependency (mutableSoundToSampledWorkspace me, double samplingPeriod);
 
 autoSoundToSampledWorkspace SoundToSampledWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
-
-void SoundToSampledWorkspace_analyseThreaded (mutableSoundToSampledWorkspace me, constSound thee, double preEmphasisFrequency);
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape);
 

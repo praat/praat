@@ -41,9 +41,9 @@
 
 Thing_implement (SoundToSampledWorkspace, Daata, 0);
 
-integer structSoundToSampledWorkspace :: getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double input_dx) {
+integer structSoundToSampledWorkspace :: getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double samplingPeriod) {
 	const double halfFrameDuration = 0.5 * approximatePhysicalAnalysisWidth;
-	const integer halfFrameSamples = Melder_ifloor (halfFrameDuration / input_dx);
+	const integer halfFrameSamples = Melder_ifloor (halfFrameDuration / samplingPeriod);
 	return 2 * halfFrameSamples + 1;
 }
 
@@ -69,21 +69,22 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 	return physicalAnalysisWidth;
 }
 
-void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
-	SampledToSampledWorkspace_init (me, input, output);
-	my windowShape = windowShape;
-	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
+void SoundToSampledWorkspace_initSoundDependency (mutableSoundToSampledWorkspace me, double samplingPeriod) {
+	my soundFrameSize = my getSoundFrameSize_uneven (my physicalAnalysisWidth, samplingPeriod);
 	if (! my inputObjectPresent)
 		return;
-	SoundToSampledWorkspace_initSoundFrame (me, my input -> dx);
-}
-
-void SoundToSampledWorkspace_initSoundFrame (mutableSoundToSampledWorkspace me, double sound_dx) {
-	my soundFrameSize = my getSoundFrameSize_uneven (my physicalAnalysisWidth, sound_dx);
 	my soundFrame = raw_VEC (my soundFrameSize);
 	my windowFunction = raw_VEC (my soundFrameSize);
 	my soundFrameVEC = my soundFrame.get();
 	windowShape_into_VEC (my windowShape, my windowFunction.get());
+}
+
+void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+	SampledToSampledWorkspace_init (me, input, output);
+	my windowShape = windowShape;
+	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
+	if (my inputObjectPresent)
+		SoundToSampledWorkspace_initSoundDependency (me, my input -> dx);
 }
 
 autoSoundToSampledWorkspace SoundToSampledWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
@@ -95,19 +96,6 @@ autoSoundToSampledWorkspace SoundToSampledWorkspace_create (constSound thee, mut
 	} catch (MelderError) {
 		Melder_throw (U"SoundToSampledWorkspace not created.");
 	}
-}
-
-void SoundToSampledWorkspace_analyseThreaded (mutableSoundToSampledWorkspace me, constSound thee, double preEmphasisFrequency) {
-	Melder_assert (my input == thee);
-	
-	autoSound sound;
-	const double emphasisFactor = Sound_computeEmphasisFactor (thee, preEmphasisFrequency);
-	if (emphasisFactor != 0.0) {   // OPTIMIZE; will happen for cut-off frequencies above 119 times the sampling frequency
-		sound = Data_copy (thee);
-		Sound_preEmphasize_inplace (sound.get(), preEmphasisFrequency);
-		SampledToSampledWorkspace_replaceInput (me, sound.get());
-	}
-	SampledToSampledWorkspace_analyseThreaded (me);
 }
 
 /* End of file SoundToSampledWorkspace.cpp */

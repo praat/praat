@@ -20,7 +20,7 @@
 oo_DEFINE_CLASS (SoundToLPCWorkspace, SoundToSampledWorkspace)
 
 	oo_INTEGER (maxnCoefficients) 			// if output object not present!
-	oo_DOUBLE (samplingPeriod)				// if input object not present
+	oo_DOUBLE (samplingPeriod)				// if input && output object not present
 	oo_STRUCT (LPC_Frame, outputLPCFrame)
 
 	#if oo_DECLARING
@@ -89,7 +89,7 @@ oo_END_CLASS (SoundAndLPCToLPCWorkspace_robust)
 oo_DEFINE_CLASS (SoundToLPCWorkspace_robust, SoundToLPCWorkspace)
 	/*
 		We inherit from SoundToLPCWorkspace (instead of SampledToSampledWorkspace)
-		to determine the timing because we can't do multiple inheritance
+		to determine the timing (redundant because we can't do multiple inheritance)
 	*/
 	oo_OBJECT (SoundToLPCWorkspace, 0, soundToLPC)
 	oo_OBJECT (SoundAndLPCToLPCWorkspace_robust, 0, soundAndLPCToLPC)

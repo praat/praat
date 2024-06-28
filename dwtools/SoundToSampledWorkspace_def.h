@@ -31,7 +31,7 @@ oo_DEFINE_CLASS (SoundToSampledWorkspace, SampledToSampledWorkspace)
 			Make the sound frame size always uneven. This guarantees that in case of windowing
 			the sample at the center gets weight 1.0
 		*/
-		integer getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double input_dx);
+		integer getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double samplingPeriod);
 
 		void getInputFrame () override;
 
