@@ -69,7 +69,7 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 	return physicalAnalysisWidth;
 }
 
-void SoundToSampledWorkspace_initSoundDependency (mutableSoundToSampledWorkspace me, double samplingPeriod) {
+void SoundToSampledWorkspace_initInputDependency (mutableSoundToSampledWorkspace me, double samplingPeriod) {
 	my soundFrameSize = my getSoundFrameSize_uneven (my physicalAnalysisWidth, samplingPeriod);
 	if (! my inputObjectPresent)
 		return;
@@ -84,7 +84,7 @@ void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, constSound
 	my windowShape = windowShape;
 	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
 	if (my inputObjectPresent)
-		SoundToSampledWorkspace_initSoundDependency (me, my input -> dx);
+		SoundToSampledWorkspace_initInputDependency (me, my input -> dx);
 }
 
 autoSoundToSampledWorkspace SoundToSampledWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {

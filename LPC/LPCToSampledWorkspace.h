@@ -22,15 +22,8 @@
 #include "SampledToSampledWorkspace.h"
 #include "LPCToSampledWorkspace_def.h"
 
-void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output);
+void LPCToSampledWorkspace_initInputDependency (mutableLPCToSampledWorkspace me, double samplingPeriod, integer maxnCoefficients);
 
-/*
-	If output not present
-*/
-inline void LPCToSampledWorkspace_initLPCDependency (mutableLPCToSampledWorkspace me, integer maxnCoefficients, double samplingPeriod) {
-	my samplingPeriod = samplingPeriod;
-	my maxnCoefficients = maxnCoefficients;
-	LPC_Frame_init (& my lpcFrame, my maxnCoefficients);
-}
+void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output);
 
 #endif /* _LPCToSampledWorkspace_h_ */

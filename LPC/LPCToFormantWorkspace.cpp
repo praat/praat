@@ -98,23 +98,29 @@ void structLPCToFormantWorkspace :: saveOutputFrame () {
 	formantFrame.copy (& my frames [currentFrame]);
 }
 
-void LPCToFormantWorkspace_initFormantDependency (LPCToFormantWorkspace me, integer maxnFormants) {
-	if (my outputObjectPresent) {
-		Formant output = reinterpret_cast<Formant> (my output);
-		Melder_assert (output -> maxnFormants == maxnFormants);
-	}
-	my maxnFormants = maxnFormants;
-	Formant_Frame_init (& my formantFrame, maxnFormants);
-	
-}
-
-void LPCToFormantWorkspace_initLPCDependency (LPCToFormantWorkspace me, integer maxnCoefficients, double samplingPeriod) {
-	LPCToSampledWorkspace_initLPCDependency (me, maxnCoefficients, samplingPeriod);
-	//Formant_Frame_init (& my formantFrame, my maxnFormants);
+void LPCToFormantWorkspace_initInputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnCoefficients) {
+	LPCToSampledWorkspace_initInputDependency (me, samplingPeriod, maxnCoefficients);
 	autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};
 	my workvectorPool = WorkvectorPool_create (sizes.get(), true);		
 	my p = Polynomial_create (-1.0, 1.0, maxnCoefficients);
 	my roots = Roots_create (maxnCoefficients);	
+}
+
+void LPCToFormantWorkspace_initOutputDependency (LPCToFormantWorkspace me, integer maxnFormants) {
+	my maxnFormants = maxnFormants;
+	const integer maxnCoefficients = Melder_ifloor (2 * maxnFormants);
+	if (my inputObjectPresent) {
+		constLPC thee = reinterpret_cast <constLPC> (my output);
+		Melder_assert (thy maxnCoefficients == maxnCoefficients);
+	} else
+		my maxnCoefficients = maxnCoefficients;
+	if (! my outputObjectPresent)
+		Formant_Frame_init (& my formantFrame, maxnFormants);
+}
+
+void LPCToFormantWorkspace_initInputAndOutputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnFormants) {
+	LPCToFormantWorkspace_initOutputDependency (me, maxnFormants);
+	LPCToFormantWorkspace_initInputDependency (me, samplingPeriod, my maxnCoefficients);
 }
 
 autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin) {
@@ -124,15 +130,14 @@ autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableF
 		autoLPCToFormantWorkspace me = Thing_new (LPCToFormantWorkspace);
 		LPCToSampledWorkspace_init (me.get(), input, output);
 		if (input)
-			LPCToFormantWorkspace_initLPCDependency (me.get(), input -> maxnCoefficients, input -> samplingPeriod);
+			LPCToFormantWorkspace_initInputDependency (me.get(), input -> samplingPeriod, input -> maxnCoefficients);
 		if (output)
-			LPCToFormantWorkspace_initFormantDependency (me.get(), output -> maxnFormants);
+			LPCToFormantWorkspace_initOutputDependency (me.get(), output -> maxnFormants);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LPCToFormantWorkspace not created.");
 	}
 }
-
 
 /* End of file LPCToFormantWorkspace.cpp */
 

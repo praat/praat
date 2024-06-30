@@ -45,9 +45,9 @@ oo_END_CLASS (SoundToLPCWorkspace)
 #define ooSTRUCT SoundAndLPCToLPCWorkspace_robust
 oo_DEFINE_CLASS (SoundAndLPCToLPCWorkspace_robust, SoundToLPCWorkspace)
 
-	oo_BOOLEAN (intermediateObjectPresent)
-	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, intermediate) // read-only original
-	oo_STRUCT (LPC_Frame, intermediateLPCFrame)
+	oo_BOOLEAN (otherInputObjectPresent)
+	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, otherInput)
+	oo_STRUCT (LPC_Frame, otherInputLPCFrame)
 	
 	oo_INTEGER (computeSVDworksize)
 	oo_DOUBLE (k_stdev)
@@ -61,14 +61,14 @@ oo_DEFINE_CLASS (SoundAndLPCToLPCWorkspace_robust, SoundToLPCWorkspace)
 	oo_DOUBLE (scale)
 	oo_VEC (error, soundFrameSize)
 	oo_VEC (sampleWeights, soundFrameSize)
-	oo_VEC (coefficients, intermediate -> maxnCoefficients)
-	oo_VEC (covariancesw, intermediate -> maxnCoefficients)
-	oo_MAT (covarmatrixw, intermediate -> maxnCoefficients, intermediate -> maxnCoefficients)
+	oo_VEC (coefficients, otherInput -> maxnCoefficients)
+	oo_VEC (covariancesw, otherInput -> maxnCoefficients)
+	oo_MAT (covarmatrixw, otherInput -> maxnCoefficients, otherInput -> maxnCoefficients)
 	oo_OBJECT (SVD, 1, svd)
 
 	#if oo_DECLARING
 
-		LPC_Frame intermediateLPCFrameRef = & intermediateLPCFrame;
+		LPC_Frame otherInputLPCFrameRef = & otherInputLPCFrame;
 		
 		void getInputFrame (void) override;
 		bool inputFrameToOutputFrame (void) override;
@@ -78,7 +78,7 @@ oo_DEFINE_CLASS (SoundAndLPCToLPCWorkspace_robust, SoundToLPCWorkspace)
 
 	#if oo_COPYING
 
-		thy intermediateLPCFrameRef = & thy intermediateLPCFrame;
+		thy otherInputLPCFrameRef = & thy otherInputLPCFrame;
 
 	#endif
 		
@@ -89,7 +89,7 @@ oo_END_CLASS (SoundAndLPCToLPCWorkspace_robust)
 oo_DEFINE_CLASS (SoundToLPCWorkspace_robust, SoundToLPCWorkspace)
 	/*
 		We inherit from SoundToLPCWorkspace (instead of SampledToSampledWorkspace)
-		to determine the timing (redundant because we can't do multiple inheritance)
+		to determine the time info (redundant because we can't do multiple inheritance)
 	*/
 	oo_OBJECT (SoundToLPCWorkspace, 0, soundToLPC)
 	oo_OBJECT (SoundAndLPCToLPCWorkspace_robust, 0, soundAndLPCToLPC)

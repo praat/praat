@@ -30,7 +30,7 @@ static integer getNumberOfFormants (double numberOfFormants) {
 
 void Sound_into_Formant_burg_mt (constSound me, Formant thee, double effectiveAnalysisWidth, double safetyMargin) {
 	autoSoundToFormantWorkspace_burg ws = SoundToFormantWorkspace_burg_create (me, thee,
-		thy maxnFormants, effectiveAnalysisWidth, kSound_windowShape :: GAUSSIAN_2, safetyMargin);
+		effectiveAnalysisWidth, kSound_windowShape :: GAUSSIAN_2, safetyMargin);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
 

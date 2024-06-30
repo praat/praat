@@ -35,7 +35,7 @@ oo_DEFINE_CLASS (SoundToSampledWorkspace, SampledToSampledWorkspace)
 
 		void getInputFrame () override;
 
-		VEC soundFrameVEC;
+		VEC soundFrameVEC = soundFrame.get();
 
 	#endif
 

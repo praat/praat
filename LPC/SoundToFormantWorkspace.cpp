@@ -41,14 +41,7 @@
 Thing_implement (SoundToFormantWorkspace, SoundToSampledWorkspace, 0);
 
 void structSoundToFormantWorkspace :: getInputFrame (void) {
-	/*
-		Get the sound frame and pass its reference to the other objects
-		and make sure they all refer to the same frame.
-	*/
 	SoundToFormantWorkspace_Parent :: getInputFrame ();
-	soundToLPC -> currentFrame = currentFrame;
-	soundToLPC -> soundFrameVEC = soundFrameVEC;
-	lpcToFormant -> currentFrame = currentFrame;
 }
 
 void structSoundToFormantWorkspace :: allocateOutputFrames () {
@@ -60,32 +53,28 @@ void structSoundToFormantWorkspace :: saveOutputFrame () {
 }
 
 bool structSoundToFormantWorkspace :: inputFrameToOutputFrame () {
+	soundToLPC -> currentFrame = currentFrame;
+	soundToLPC -> soundFrameVEC = soundFrameVEC;
 	bool step1 = soundToLPC -> inputFrameToOutputFrame ();
 	lpcToFormant -> lpcFrameRef = soundToLPC -> outputLPCFrameRef;
+	//lpcToFormant -> formantFrameRef = 
 	bool step2 = lpcToFormant -> inputFrameToOutputFrame ();
 	return step1 && step2;
 }
 
-void SoundToFormantWorkspace_initSoundDependency (SoundToFormantWorkspace me, double samplingPeriod) {
-	my lpcToFormant -> samplingPeriod = samplingPeriod;
-	if (my soundToLPC -> outputObjectPresent)
-		Melder_assert (my soundToLPC -> samplingPeriod == samplingPeriod);
+void SoundToFormantWorkspace_initInputDependency (SoundToFormantWorkspace me, double samplingPeriod) {
+	SoundToLPCWorkspace_initInputDependency (my soundToLPC.get(), samplingPeriod);
 }
 	
-void SoundToFormantWorkspace_initFormantDependency (SoundToFormantWorkspace me, integer maxnFormants, double margin)
+void SoundToFormantWorkspace_initOutputDependency (SoundToFormantWorkspace me, integer maxnFormants)
 {
-	Formant output = reinterpret_cast<Formant> (my output);
-	my lpcToFormant = LPCToFormantWorkspace_create (nullptr, nullptr, margin);
-	my lpcToFormant -> maxnFormants = maxnFormants;
+	LPCToFormantWorkspace_initOutputDependency (my lpcToFormant.get(), maxnFormants);
 }
 
-void SoundToFormantWorkspace_initLPCDependency (SoundToFormantWorkspace me, integer maxnCoefficients, double samplingPeriod, double margin) {
-	SoundToLPCWorkspace_initLPCDependency (my soundToLPC.get(), maxnCoefficients, samplingPeriod);
-	Formant output = reinterpret_cast<Formant> (my output);
-	
-	my lpcToFormant = LPCToFormantWorkspace_create (nullptr, nullptr, margin);
-	if (! my outputObjectPresent)
-		my lpcToFormant -> samplingPeriod = samplingPeriod;
+void SoundToFormantWorkspace_initInputAndOutputDependency (SoundToFormantWorkspace me, integer maxnFormants, double samplingPeriod) {
+	SoundToLPCWorkspace_initInputDependency (my soundToLPC.get(), samplingPeriod);
+	const integer maxnCoefficients = Melder_ifloor (2 * maxnFormants);
+	LPCToFormantWorkspace_initOutputDependency (my lpcToFormant.get (), maxnFormants);
 }
 
 Thing_implement (SoundToFormantWorkspace_burg, SoundToFormantWorkspace, 0);
@@ -95,16 +84,10 @@ autoSoundToFormantWorkspace_burg SoundToFormantWorkspace_burg_create (
 	kSound_windowShape windowShape,	double margin)
 {
 	try {
-		Melder_assert (input);
-		if (output)
-			Sampled_assertEqualDomains (input, output);
 		autoSoundToFormantWorkspace_burg me = Thing_new (SoundToFormantWorkspace_burg);
 		SoundToSampledWorkspace_init (me.get(), input, output, effectiveAnalysisWidth, windowShape);
-		my soundToLPC = SoundToLPCWorkspace_burg_create (nullptr, nullptr,
-			effectiveAnalysisWidth, windowShape);
-		const integer maxnCoefficients = Melder_ifloor (2 * numberOfFormants);
-		if (input && output)
-			SoundToFormantWorkspace_initLPCDependency (me.get(), maxnCoefficients, input -> dx, margin);
+		my soundToLPC = SoundToLPCWorkspace_burg_create (nullptr, nullptr, effectiveAnalysisWidth, windowShape);
+		my lpcToFormant = LPCToFormantWorkspace_create (nullptr, nullptr, margin);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SoundToFormantWorkspace_burg not created.");

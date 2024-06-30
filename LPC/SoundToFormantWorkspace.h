@@ -33,11 +33,11 @@ Thing_define (SoundToFormantWorkspace_robust, SoundToFormantWorkspace) {
 };
 
 void SoundToFormantWorkspace_initFormantDependency (SoundToFormantWorkspace me, integer maxnFormants);
+
 void SoundToFormantWorkspace_initSoundDependency (SoundToFormantWorkspace me, double samplingPeriod);
 
 autoSoundToFormantWorkspace_burg SoundToFormantWorkspace_burg_create (constSound input,
-	mutableFormant output, integer numberOfFormants, double effectiveAnalysisWidth,
-	kSound_windowShape windowShape, double margin
+	mutableFormant output, double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin
 );
 
 autoSoundToFormantWorkspace_robust SoundToFormantWorkspace_robust_create (constSound input,

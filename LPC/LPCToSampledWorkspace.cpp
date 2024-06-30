@@ -40,13 +40,16 @@
 
 Thing_implement (LPCToSampledWorkspace, SampledToSampledWorkspace, 0);
 
+void LPCToSampledWorkspace_initInputDependency (mutableLPCToSampledWorkspace me, double samplingPeriod, integer maxnCoefficients) {
+	my samplingPeriod = samplingPeriod;
+	my maxnCoefficients = maxnCoefficients;
+	LPC_Frame_init (& my lpcFrame, my maxnCoefficients);
+}
+
 void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output) {
 	SampledToSampledWorkspace_init (me, input, output);
-	if (my inputObjectPresent) {
-		my samplingPeriod = input -> samplingPeriod;
-		my maxnCoefficients = input -> maxnCoefficients;
-		LPC_Frame_init (& my lpcFrame, my maxnCoefficients);
-	}
+	if (input)
+		LPCToSampledWorkspace_initInputDependency (me, my samplingPeriod, my maxnCoefficients);
 }
 
 /* End of file LPCToSampledWorkspace.cpp */

@@ -27,11 +27,12 @@
 
 autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin);
 
-/*
-	If the input LPC was missing
- */
-void LPCToFormantWorkspace_initLPCDependency (LPCToFormantWorkspace me, integer maxnCoefficients, double samplingPeriod);
+void LPCToFormantWorkspace_initInputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnCoefficients);
 
-void LPCToFormantWorkspace_initFormantDependency (LPCToFormantWorkspace me, integer maxnFormants);
+void LPCToFormantWorkspace_initOutputDependency (LPCToFormantWorkspace me, integer maxnFormants);
+
+void LPCToFormantWorkspace_initInputAndOutputDependency (LPCToFormantWorkspace me, double samplingPeriod,
+	integer maxnCoefficients, integer maxnFormants
+);
 
 #endif /*_LPCToFormantWorkspace_h_ */
