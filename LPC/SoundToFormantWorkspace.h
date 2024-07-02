@@ -26,19 +26,42 @@
 
 #include "SoundToFormantWorkspace_def.h"
 
+/*
+	Workspace to calculate formant frequencies from intermediate LPC coefficients.
+	To specify the SoundToFormantWorkspace completely we need both the input object and the output object.
+		input  : supplies the samplingPeriod
+		output : supplies the maxnFormants from which the maxnCoefficients (= 2 * maxnFormants) for the LPC are calulated.
+*/
+
 Thing_define (SoundToFormantWorkspace_burg, SoundToFormantWorkspace) {
 };
 
 Thing_define (SoundToFormantWorkspace_robust, SoundToFormantWorkspace) {
 };
 
-void SoundToFormantWorkspace_initFormantDependency (SoundToFormantWorkspace me, integer maxnFormants);
+void SoundToFormantWorkspace_initPartialOutputDependency_sampling (SoundToFormantWorkspace me, double samplingPeriod);
 
-void SoundToFormantWorkspace_initSoundDependency (SoundToFormantWorkspace me, double samplingPeriod);
+void SoundToFormantWorkspace_initPartialOutputDependency_number (SoundToFormantWorkspace me, integer maxnFormants);
+
+/* *********************** burg ********************************************** */
+
+void SoundToFormantWorkspace_burg_initInputDependency (SoundToFormantWorkspace me, double samplingPeriod);
+
+void SoundToFormantWorkspace_burg_initOutputDependency (SoundToFormantWorkspace me, integer maxnFormants);
+
+void SoundToFormantWorkspace_burg_initInputAndOutputDependency (SoundToFormantWorkspace me, double samplingPeriod, integer maxnFormants);
 
 autoSoundToFormantWorkspace_burg SoundToFormantWorkspace_burg_create (constSound input,
 	mutableFormant output, double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin
 );
+
+/* *********************** robust ********************************************** */
+
+void SoundToFormantWorkspace_robust_initInputDependency (SoundToFormantWorkspace me, double samplingPeriod);
+
+void SoundToFormantWorkspace_robust_initOutputDependency (SoundToFormantWorkspace me, integer maxnFormants);
+
+void SoundToFormantWorkspace_robust_initInputAndOutputDependency (SoundToFormantWorkspace me, double samplingPeriod, integer maxnFormants);
 
 autoSoundToFormantWorkspace_robust SoundToFormantWorkspace_robust_create (constSound input,
 	mutableFormant output, double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin,

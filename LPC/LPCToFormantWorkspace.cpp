@@ -58,7 +58,6 @@ static void LPC_Frame_into_Polynomial (constLPC_Frame me, mutablePolynomial p) {
 
 void structLPCToFormantWorkspace :: allocateOutputFrames () {
 	if (! outputObjectPresent) return;
-	Melder_assert (output != nullptr);
 	Formant thee = reinterpret_cast<Formant> (output);
 	for (integer iframe = 1; iframe <= thy nx; iframe ++) {
 		const Formant_Frame formantFrame = & thy frames [iframe];
@@ -70,11 +69,9 @@ void structLPCToFormantWorkspace :: getInputFrame () {
 	if (! inputObjectPresent) return;
 	constLPC me = reinterpret_cast<constLPC> (input);
 	my d_frames [currentFrame].copy (& lpcFrame);
-	
 }
 
 bool structLPCToFormantWorkspace :: inputFrameToOutputFrame () {
-	
 	formantFrameRef -> intensity = lpcFrameRef -> gain;
 	if (lpcFrameRef -> nCoefficients == 0) {
 		formantFrameRef -> numberOfFormants = 0;
@@ -100,6 +97,9 @@ void structLPCToFormantWorkspace :: saveOutputFrame () {
 
 void LPCToFormantWorkspace_initInputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnCoefficients) {
 	LPCToSampledWorkspace_initInputDependency (me, samplingPeriod, maxnCoefficients);
+	/*
+		upperHessenberg (n*n), real part (n), imaginary part (n), dhseqr workspace (11*n)
+	*/
 	autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};
 	my workvectorPool = WorkvectorPool_create (sizes.get(), true);		
 	my p = Polynomial_create (-1.0, 1.0, maxnCoefficients);
@@ -114,8 +114,10 @@ void LPCToFormantWorkspace_initOutputDependency (LPCToFormantWorkspace me, integ
 		Melder_assert (thy maxnCoefficients == maxnCoefficients);
 	} else
 		my maxnCoefficients = maxnCoefficients;
-	if (! my outputObjectPresent)
-		Formant_Frame_init (& my formantFrame, maxnFormants);
+	/*
+		We always need one formant frame for output
+	*/
+	Formant_Frame_init (& my formantFrame, maxnFormants);
 }
 
 void LPCToFormantWorkspace_initInputAndOutputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnFormants) {

@@ -75,7 +75,6 @@ void SampledToSampledWorkspace_initWorkvectorPool (mutableSampledToSampledWorksp
 	my workvectorPool = WorkvectorPool_create (vectorSizes, true);
 }
 
-
 void SampledToSampledWorkspace_init (mutableSampledToSampledWorkspace me, constSampled input, mutableSampled output) {
 	if (input && output)
 		Sampled_assertEqualDomains (input, output);

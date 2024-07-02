@@ -50,6 +50,7 @@ void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, constLPC input
 	SampledToSampledWorkspace_init (me, input, output);
 	if (input)
 		LPCToSampledWorkspace_initInputDependency (me, my samplingPeriod, my maxnCoefficients);
+	// if (output) : no extra output dependency needed
 }
 
 /* End of file LPCToSampledWorkspace.cpp */

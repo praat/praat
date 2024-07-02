@@ -170,9 +170,9 @@ void Sound_into_LPC_robust (constSound me, mutableLPC thee, double effectiveAnal
 	double k_stdev, integer itermax, double tol, bool wantlocation)
 {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoLPC input = LPC_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, thy maxnCoefficients, thy samplingPeriod);
-	Sound_into_LPC_autocorrelation (me, input.get(), effectiveAnalysisWidth);	
-	LPC_and_Sound_into_LPC_robust (input.get(), me, thee, effectiveAnalysisWidth, k_stdev, itermax, tol, wantlocation);
+	autoSoundToLPCWorkspace_robust ws = SoundToLPCWorkspace_robust_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, 0.0, wantlocation);
+	
+	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
 
 autoLPC Sound_to_LPC_robust (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
