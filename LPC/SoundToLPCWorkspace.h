@@ -25,19 +25,19 @@
 
 #include "SoundToLPCWorkspace_def.h"
 
-Thing_define (SoundToLPCWorkspace_autocorrelation, SoundToLPCWorkspace) {
+Thing_define (SoundToLPCAutocorrelationWorkspace, SoundToLPCWorkspace) {
 	bool inputFrameToOutputFrame (void) override;
 };
 
-Thing_define (SoundToLPCWorkspace_covariance, SoundToLPCWorkspace) {
+Thing_define (SoundToLPCCovarianceWorkspace, SoundToLPCWorkspace) {
 	bool inputFrameToOutputFrame (void) override;
 };
 
-Thing_define (SoundToLPCWorkspace_burg, SoundToLPCWorkspace) {
+Thing_define (SoundToLPCBurgWorkspace, SoundToLPCWorkspace) {
 	bool inputFrameToOutputFrame (void) override;
 };
 
-Thing_define (SoundToLPCWorkspace_marple, SoundToLPCWorkspace) {
+Thing_define (SoundToLPCMarpleWorkspace, SoundToLPCWorkspace) {
 	bool inputFrameToOutputFrame (void) override;
 };
 
@@ -63,124 +63,124 @@ void SoundToLPCWorkspace_initInputAndOutputDependency (mutableSoundToLPCWorkspac
 
 /* ******************** autocorrelation method ***********************/
 
-#define SoundToLPCWorkspace_autocorrelation_initInputDependency SoundToLPCWorkspace_initInputDependency
+#define SoundToLPCAutocorrelationWorkspace_initInputDependency SoundToLPCWorkspace_initInputDependency
 
-void SoundToLPCWorkspace_autocorrelation_initOutputDependency (SoundToLPCWorkspace_autocorrelation me,
+void SoundToLPCAutocorrelationWorkspace_initOutputDependency (SoundToLPCAutocorrelationWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundToLPCWorkspace_autocorrelation_initInputAndOutputDependency (SoundToLPCWorkspace_autocorrelation me,
+void SoundToLPCAutocorrelationWorkspace_initInputAndOutputDependency (SoundToLPCAutocorrelationWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundToLPCWorkspace_autocorrelation_initOutputDependency (SoundToLPCWorkspace_autocorrelation me,
+void SoundToLPCAutocorrelationWorkspace_initOutputDependency (SoundToLPCAutocorrelationWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-autoSoundToLPCWorkspace_autocorrelation SoundToLPCWorkspace_autocorrelation_create (
+autoSoundToLPCAutocorrelationWorkspace SoundToLPCAutocorrelationWorkspace_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
 /* ******************** covariance method ***********************/
 
-#define SoundToLPCWorkspace_covariance_initInputDependency SoundToLPCWorkspace_initInputDependency
+#define SoundToLPCCovarianceWorkspace_initInputDependency SoundToLPCWorkspace_initInputDependency
 
-void SoundToLPCWorkspace_covariance_initOutputDependency (SoundToLPCWorkspace_covariance me, 
+void SoundToLPCCovarianceWorkspace_initOutputDependency (SoundToLPCCovarianceWorkspace me, 
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundToLPCWorkspace_covariance_initInputAndOutputDependency (SoundToLPCWorkspace_covariance me,
+void SoundToLPCCovarianceWorkspace_initInputAndOutputDependency (SoundToLPCCovarianceWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-autoSoundToLPCWorkspace_covariance SoundToLPCWorkspace_covariance_create (
+autoSoundToLPCCovarianceWorkspace SoundToLPCCovarianceWorkspace_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
 /* ******************** burg method ***********************/
 
-#define SoundToLPCWorkspace_burg_initInputDependency SoundToLPCWorkspace_initInputDependency
+#define SoundToLPCBurgWorkspace_initInputDependency SoundToLPCWorkspace_initInputDependency
 
-void SoundToLPCWorkspace_burg_initOutputDependency (SoundToLPCWorkspace_burg me,
+void SoundToLPCBurgWorkspace_initOutputDependency (SoundToLPCBurgWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundToLPCWorkspace_burg_initInputAndOutputDependency (SoundToLPCWorkspace_burg me, 
+void SoundToLPCBurgWorkspace_initInputAndOutputDependency (SoundToLPCBurgWorkspace me, 
 	double samplingPeriod, integer maxnCoefficients
 );
 
-autoSoundToLPCWorkspace_burg SoundToLPCWorkspace_burg_create (
+autoSoundToLPCBurgWorkspace SoundToLPCBurgWorkspace_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape
 );
 
 /* ******************** marple method ***********************/
 
-#define SoundToLPCWorkspace_burg_initInputDependency SoundToLPCWorkspace_initInputDependency
+#define SoundToLPCBurgWorkspace_initInputDependency SoundToLPCWorkspace_initInputDependency
 
-void SoundToLPCWorkspace_marple_initOutputDependency (SoundToLPCWorkspace_marple me,
+void SoundToLPCMarpleWorkspace_initOutputDependency (SoundToLPCMarpleWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundToLPCWorkspace_marple_initInputAndOutputDependency (SoundToLPCWorkspace_marple me,
+void SoundToLPCMarpleWorkspace_initInputAndOutputDependency (SoundToLPCMarpleWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-autoSoundToLPCWorkspace_marple SoundToLPCWorkspace_marple_create (
+autoSoundToLPCMarpleWorkspace SoundToLPCMarpleWorkspace_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth, kSound_windowShape windowShape,
 	double tol1, double tol2
 );
 
-/**************** SoundAndLPCToLPCWorkspace_robust *************************************/
+/**************** SoundAndLPCToLPCRobustWorkspace *************************************/
 
 
-void SoundAndLPCToLPCWorkspace_robust_initInputDependency (SoundAndLPCToLPCWorkspace_robust me,
+void SoundAndLPCToLPCRobustWorkspace_initInputDependency (SoundAndLPCToLPCRobustWorkspace me,
 	double samplingPeriod
 );
 
-void SoundAndLPCToLPCWorkspace_robust_initOtherInputDependency (SoundAndLPCToLPCWorkspace_robust me,
+void SoundAndLPCToLPCRobustWorkspace_initOtherInputDependency (SoundAndLPCToLPCRobustWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundAndLPCToLPCWorkspace_robust_initOutputDependency (SoundAndLPCToLPCWorkspace_robust me,
+void SoundAndLPCToLPCRobustWorkspace_initOutputDependency (SoundAndLPCToLPCRobustWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundAndLPCToLPCWorkspace_robust_initInputAndOtherInputDependency (SoundAndLPCToLPCWorkspace_robust me,
+void SoundAndLPCToLPCRobustWorkspace_initInputAndOtherInputDependency (SoundAndLPCToLPCRobustWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundAndLPCToLPCWorkspace_robust_initInputAndOutputDependency (SoundAndLPCToLPCWorkspace_robust me,
+void SoundAndLPCToLPCRobustWorkspace_initInputAndOutputDependency (SoundAndLPCToLPCRobustWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundAndLPCToLPCWorkspace_robust_initOtherInputAndOutputDependency (SoundAndLPCToLPCWorkspace_robust me,
+void SoundAndLPCToLPCRobustWorkspace_initOtherInputAndOutputDependency (SoundAndLPCToLPCRobustWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundAndLPCToLPCWorkspace_robust_initInputAndOtherInputAndOutputDependency (SoundAndLPCToLPCWorkspace_robust me,
+void SoundAndLPCToLPCRobustWorkspace_initInputAndOtherInputAndOutputDependency (SoundAndLPCToLPCRobustWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-autoSoundAndLPCToLPCWorkspace_robust SoundAndLPCToLPCWorkspace_robust_create (
+autoSoundAndLPCToLPCRobustWorkspace SoundAndLPCToLPCRobustWorkspace_create (
 	constSound input, constLPC otherInput, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, double location, bool wantlocation
 );
 
-/**************** SoundToLPCWorkspace_robust *************************************/
+/**************** SoundToLPCRobustWorkspace *************************************/
 
-void SoundToLPCWorkspace_robust_initInputDependency (SoundToLPCWorkspace_robust me,
+void SoundToLPCRobustWorkspace_initInputDependency (SoundToLPCRobustWorkspace me,
 	double samplingPeriod
 );
 
-void SoundToLPCWorkspace_robust_initOutputDependency (SoundToLPCWorkspace_robust me,
+void SoundToLPCRobustWorkspace_initOutputDependency (SoundToLPCRobustWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-void SoundToLPCWorkspace_robust_initInputAndOutputDependency (SoundToLPCWorkspace_robust me,
+void SoundToLPCRobustWorkspace_initInputAndOutputDependency (SoundToLPCRobustWorkspace me,
 	double samplingPeriod, integer maxnCoefficients
 );
 
-autoSoundToLPCWorkspace_robust SoundToLPCWorkspace_robust_create (
+autoSoundToLPCRobustWorkspace SoundToLPCRobustWorkspace_create (
 	constSound input, mutableLPC output, double effectiveAnalysisWidth,
 	kSound_windowShape windowShape,	double k_stdev,	integer itermax, double tol, double location, bool wantlocation
 );

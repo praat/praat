@@ -50,7 +50,7 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (constSound me, int prediction
 
 void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCWorkspace_autocorrelation ws = SoundToLPCWorkspace_autocorrelation_create (
+	autoSoundToLPCAutocorrelationWorkspace ws = SoundToLPCAutocorrelationWorkspace_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2
 	);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
@@ -71,7 +71,7 @@ autoLPC Sound_to_LPC_autocorrelation (constSound me, int predictionOrder, double
 
 void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCWorkspace_covariance ws = SoundToLPCWorkspace_covariance_create (
+	autoSoundToLPCCovarianceWorkspace ws = SoundToLPCCovarianceWorkspace_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
@@ -91,7 +91,7 @@ autoLPC Sound_to_LPC_covariance (constSound me, int predictionOrder, double effe
 
 void Sound_into_LPC_burg (constSound me, mutableLPC thee, double effectiveAnalysisWidth) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCWorkspace_burg ws = SoundToLPCWorkspace_burg_create (
+	autoSoundToLPCBurgWorkspace ws = SoundToLPCBurgWorkspace_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
@@ -111,7 +111,7 @@ autoLPC Sound_to_LPC_burg (constSound me, int predictionOrder, double effectiveA
 
 void Sound_into_LPC_marple (constSound me, mutableLPC thee, double effectiveAnalysisWidth, double tol1, double tol2) {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCWorkspace_marple ws = SoundToLPCWorkspace_marple_create (
+	autoSoundToLPCMarpleWorkspace ws = SoundToLPCMarpleWorkspace_create (
 		me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, tol1, tol2);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
@@ -144,7 +144,7 @@ void LPC_and_Sound_into_LPC_robust (constLPC original, constSound me, mutableLPC
 		double location = 0.0;
 		checkLPCAnalysisParameters_e (my dx, my nx, physicalAnalysisWidth, output -> maxnCoefficients);
 		
-		autoSoundAndLPCToLPCWorkspace_robust ws = SoundAndLPCToLPCWorkspace_robust_create (me, original, output,
+		autoSoundAndLPCToLPCRobustWorkspace ws = SoundAndLPCToLPCRobustWorkspace_create (me, original, output,
 			effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation);		
 		SampledToSampledWorkspace_analyseThreaded (ws.get());
 	} catch (MelderError) {
@@ -170,7 +170,7 @@ void Sound_into_LPC_robust (constSound me, mutableLPC thee, double effectiveAnal
 	double k_stdev, integer itermax, double tol, bool wantlocation)
 {
 	Sound_and_LPC_require_equalDomainsAndSamplingPeriods (me, thee);
-	autoSoundToLPCWorkspace_robust ws = SoundToLPCWorkspace_robust_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, 0.0, wantlocation);
+	autoSoundToLPCRobustWorkspace ws = SoundToLPCRobustWorkspace_create (me, thee, effectiveAnalysisWidth, kSound_windowShape::GAUSSIAN_2, k_stdev, itermax, tol, 0.0, wantlocation);
 	
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }

@@ -42,8 +42,8 @@ oo_DEFINE_CLASS (SoundToLPCWorkspace, SoundToSampledWorkspace)
 oo_END_CLASS (SoundToLPCWorkspace)
 #undef ooSTRUCT
 
-#define ooSTRUCT SoundAndLPCToLPCWorkspace_robust
-oo_DEFINE_CLASS (SoundAndLPCToLPCWorkspace_robust, SoundToLPCWorkspace)
+#define ooSTRUCT SoundAndLPCToLPCRobustWorkspace
+oo_DEFINE_CLASS (SoundAndLPCToLPCRobustWorkspace, SoundToLPCWorkspace)
 
 	oo_BOOLEAN (otherInputObjectPresent)
 	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (LPC, otherInput)
@@ -82,17 +82,17 @@ oo_DEFINE_CLASS (SoundAndLPCToLPCWorkspace_robust, SoundToLPCWorkspace)
 
 	#endif
 		
-oo_END_CLASS (SoundAndLPCToLPCWorkspace_robust)
+oo_END_CLASS (SoundAndLPCToLPCRobustWorkspace)
 #undef ooSTRUCT
 
-#define ooSTRUCT SoundToLPCWorkspace_robust
-oo_DEFINE_CLASS (SoundToLPCWorkspace_robust, SoundToLPCWorkspace)
+#define ooSTRUCT SoundToLPCRobustWorkspace
+oo_DEFINE_CLASS (SoundToLPCRobustWorkspace, SoundToLPCWorkspace)
 	/*
 		We inherit from SoundToLPCWorkspace (instead of SampledToSampledWorkspace)
 		to determine the time info (redundant because we can't do multiple inheritance)
 	*/
 	oo_OBJECT (SoundToLPCWorkspace, 0, soundToLPC)
-	oo_OBJECT (SoundAndLPCToLPCWorkspace_robust, 0, soundAndLPCToLPC)
+	oo_OBJECT (SoundAndLPCToLPCRobustWorkspace, 0, soundAndLPCToLPC)
 
 	#if oo_DECLARING
 
@@ -103,7 +103,7 @@ oo_DEFINE_CLASS (SoundToLPCWorkspace_robust, SoundToLPCWorkspace)
 
 	#endif
 
-oo_END_CLASS (SoundToLPCWorkspace_robust)
+oo_END_CLASS (SoundToLPCRobustWorkspace)
 #undef ooSTRUCT
 
 /* End of file SoundToLPCWorkspace_def.h */

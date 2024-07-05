@@ -108,9 +108,9 @@ void LPCToFormantWorkspace_initInputDependency (LPCToFormantWorkspace me, double
 
 void LPCToFormantWorkspace_initOutputDependency (LPCToFormantWorkspace me, integer maxnFormants) {
 	my maxnFormants = maxnFormants;
-	const integer maxnCoefficients = Melder_ifloor (2 * maxnFormants);
+	const integer maxnCoefficients = 2 * maxnFormants;
 	if (my inputObjectPresent) {
-		constLPC thee = reinterpret_cast <constLPC> (my output);
+		constLPC thee = reinterpret_cast <constLPC> (my input);
 		Melder_assert (thy maxnCoefficients == maxnCoefficients);
 	} else
 		my maxnCoefficients = maxnCoefficients;
@@ -122,7 +122,8 @@ void LPCToFormantWorkspace_initOutputDependency (LPCToFormantWorkspace me, integ
 
 void LPCToFormantWorkspace_initInputAndOutputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnFormants) {
 	LPCToFormantWorkspace_initOutputDependency (me, maxnFormants);
-	LPCToFormantWorkspace_initInputDependency (me, samplingPeriod, my maxnCoefficients);
+	const integer maxnCoefficients = 2 * maxnFormants;
+	LPCToFormantWorkspace_initInputDependency (me, samplingPeriod, maxnCoefficients);
 }
 
 autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin) {
@@ -131,10 +132,14 @@ autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableF
 			Sampled_assertEqualDomainsAndSampling (input, output);
 		autoLPCToFormantWorkspace me = Thing_new (LPCToFormantWorkspace);
 		LPCToSampledWorkspace_init (me.get(), input, output);
-		if (input)
+		if (input && output)
+			LPCToFormantWorkspace_initInputAndOutputDependency (me.get(), input -> samplingPeriod, output -> maxnFormants);
+		else if (input)
 			LPCToFormantWorkspace_initInputDependency (me.get(), input -> samplingPeriod, input -> maxnCoefficients);
-		if (output)
+		else if (output)
 			LPCToFormantWorkspace_initOutputDependency (me.get(), output -> maxnFormants);
+		// else : minimal initialisation
+		my margin = margin;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LPCToFormantWorkspace not created.");
