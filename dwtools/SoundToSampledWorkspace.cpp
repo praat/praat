@@ -69,7 +69,13 @@ double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowSha
 	return physicalAnalysisWidth;
 }
 
-void SoundToSampledWorkspace_initInputDependency (mutableSoundToSampledWorkspace me, double samplingPeriod) {
+void SoundToSampledWorkspace_initSkeleton (mutableSoundToSampledWorkspace me, constSound input, mutableSampled output) {
+	SampledToSampledWorkspace_init (me, input, output);
+}
+
+void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, double samplingPeriod, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
+	my windowShape = windowShape;
+	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
 	my soundFrameSize = my getSoundFrameSize_uneven (my physicalAnalysisWidth, samplingPeriod);
 	if (! my inputObjectPresent)
 		return;
@@ -77,25 +83,6 @@ void SoundToSampledWorkspace_initInputDependency (mutableSoundToSampledWorkspace
 	my windowFunction = raw_VEC (my soundFrameSize);
 	my soundFrameVEC = my soundFrame.get();
 	windowShape_into_VEC (my windowShape, my windowFunction.get());
-}
-
-void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, constSound input, mutableSampled output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
-	SampledToSampledWorkspace_init (me, input, output);
-	my windowShape = windowShape;
-	my physicalAnalysisWidth = getPhysicalAnalysisWidth (effectiveAnalysisWidth, windowShape);
-	if (my inputObjectPresent)
-		SoundToSampledWorkspace_initInputDependency (me, my input -> dx);
-}
-
-autoSoundToSampledWorkspace SoundToSampledWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
-	try {
-		Melder_assert (thee);
-		autoSoundToSampledWorkspace me = Thing_new (SoundToSampledWorkspace);
-		SoundToSampledWorkspace_init (me.get(), thee, him, effectiveAnalysisWidth, windowShape);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"SoundToSampledWorkspace not created.");
-	}
 }
 
 /* End of file SoundToSampledWorkspace.cpp */

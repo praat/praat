@@ -23,14 +23,11 @@
 
 #include "SoundToSampledWorkspace_def.h"
 
-void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+void SoundToSampledWorkspace_initSkeleton (mutableSoundToSampledWorkspace me, constSound input, mutableSampled output);
 
-/*
-	If the input == nullptr and we need to initialize the input soundFrame.
-*/
-void SoundToSampledWorkspace_initInputDependency (mutableSoundToSampledWorkspace me, double samplingPeriod);
-
-autoSoundToSampledWorkspace SoundToSampledWorkspace_create (constSound thee, mutableSampled him, double effectiveAnalysisWidth, kSound_windowShape windowShape);
+void SoundToSampledWorkspace_init (mutableSoundToSampledWorkspace me, double samplingPeriod, double effectiveAnalysisWidth,
+	kSound_windowShape windowShape
+);
 
 double getPhysicalAnalysisWidth (double effectiveAnalysisWidth, kSound_windowShape windowShape);
 

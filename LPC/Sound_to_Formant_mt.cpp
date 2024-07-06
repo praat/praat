@@ -29,9 +29,13 @@ static integer getNumberOfFormants (double numberOfFormants) {
 }
 
 void Sound_into_Formant_burg_mt (constSound me, Formant thee, double effectiveAnalysisWidth, double safetyMargin) {
-	autoSoundToFormantWorkspace_burg ws = SoundToFormantWorkspace_burg_create (me, thee,
-		effectiveAnalysisWidth, kSound_windowShape :: GAUSSIAN_2, safetyMargin);
-	SampledToSampledWorkspace_analyseThreaded (ws.get());
+	try {
+		autoSoundToFormantBurgWorkspace ws = SoundToFormantBurgWorkspace_create (me, thee, effectiveAnalysisWidth,
+			kSound_windowShape :: GAUSSIAN_2, safetyMargin);
+		SampledToSampledWorkspace_analyseThreaded (ws.get());
+	} catch (MelderError) {
+		Melder_throw (me, U": Formant could not be calculated.");
+	}
 }
 
 autoFormant Sound_to_Formant_burg_mt (constSound me, double dt_in, double numberOfFormants, double maximumFrequency,
@@ -57,8 +61,8 @@ autoFormant Sound_to_Formant_burg_mt (constSound me, double dt_in, double number
 void Sound_into_Formant_robust_mt (constSound me, mutableFormant thee, double effectiveAnalysisWidth, double safetyMargin, 
 	double k_stdev, integer itermax, double tol, double location, bool wantlocation)
 {
-	autoSoundToFormantWorkspace_robust ws = SoundToFormantWorkspace_robust_create (me, thee,
-		effectiveAnalysisWidth, kSound_windowShape :: GAUSSIAN_2, safetyMargin, k_stdev, itermax, tol);
+	autoSoundToFormantRobustWorkspace ws = SoundToFormantRobustWorkspace_create (me, thee,
+		effectiveAnalysisWidth, kSound_windowShape :: GAUSSIAN_2, k_stdev, itermax, tol, location, wantlocation, safetyMargin);
 	SampledToSampledWorkspace_analyseThreaded (ws.get());
 }
 

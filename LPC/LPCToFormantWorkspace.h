@@ -25,14 +25,10 @@
 #include "LPCToSampledWorkspace.h"
 #include "LPCToFormantWorkspace_def.h"
 
+void LPCToFormantWorkspace_init (LPCToFormantWorkspace me, double samplingPeriod, integer maxnCoefficients, double margin);
+
+autoLPCToFormantWorkspace LPCToFormantWorkspace_createSkeleton (constLPC input, mutableFormant output);
+
 autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin);
-
-void LPCToFormantWorkspace_initInputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnCoefficients);
-
-void LPCToFormantWorkspace_initOutputDependency (LPCToFormantWorkspace me, integer maxnFormants);
-
-void LPCToFormantWorkspace_initInputAndOutputDependency (LPCToFormantWorkspace me, double samplingPeriod,
-	integer maxnCoefficients, integer maxnFormants
-);
 
 #endif /*_LPCToFormantWorkspace_h_ */

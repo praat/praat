@@ -95,51 +95,37 @@ void structLPCToFormantWorkspace :: saveOutputFrame () {
 	formantFrame.copy (& my frames [currentFrame]);
 }
 
-void LPCToFormantWorkspace_initInputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnCoefficients) {
-	LPCToSampledWorkspace_initInputDependency (me, samplingPeriod, maxnCoefficients);
+void LPCToFormantWorkspace_init (LPCToFormantWorkspace me, double samplingPeriod, integer maxnCoefficients, double margin) {
+	LPCToSampledWorkspace_init (me, samplingPeriod, maxnCoefficients);
+	my margin = margin;
+	const integer maxnFormants = ( margin == 0.0 ? my maxnCoefficients : (my maxnCoefficients + 1) / 2 );
+	if (my output) {
+		Formant f = reinterpret_cast<Formant> (my output);
+		Melder_assert (f -> maxnFormants == maxnFormants);
+	}
+	my maxnFormants = maxnFormants;
+	Formant_Frame_init (& my formantFrame, maxnFormants);
 	/*
 		upperHessenberg (n*n), real part (n), imaginary part (n), dhseqr workspace (11*n)
 	*/
 	autoINTVEC sizes {maxnCoefficients * maxnCoefficients, maxnCoefficients, maxnCoefficients, 11 * maxnCoefficients};
 	my workvectorPool = WorkvectorPool_create (sizes.get(), true);		
 	my p = Polynomial_create (-1.0, 1.0, maxnCoefficients);
-	my roots = Roots_create (maxnCoefficients);	
+	my roots = Roots_create (maxnCoefficients);
 }
 
-void LPCToFormantWorkspace_initOutputDependency (LPCToFormantWorkspace me, integer maxnFormants) {
-	my maxnFormants = maxnFormants;
-	const integer maxnCoefficients = 2 * maxnFormants;
-	if (my inputObjectPresent) {
-		constLPC thee = reinterpret_cast <constLPC> (my input);
-		Melder_assert (thy maxnCoefficients == maxnCoefficients);
-	} else
-		my maxnCoefficients = maxnCoefficients;
-	/*
-		We always need one formant frame for output
-	*/
-	Formant_Frame_init (& my formantFrame, maxnFormants);
-}
-
-void LPCToFormantWorkspace_initInputAndOutputDependency (LPCToFormantWorkspace me, double samplingPeriod, integer maxnFormants) {
-	LPCToFormantWorkspace_initOutputDependency (me, maxnFormants);
-	const integer maxnCoefficients = 2 * maxnFormants;
-	LPCToFormantWorkspace_initInputDependency (me, samplingPeriod, maxnCoefficients);
+autoLPCToFormantWorkspace LPCToFormantWorkspace_createSkeleton (constLPC input, mutableFormant output) {
+	autoLPCToFormantWorkspace me = Thing_new (LPCToFormantWorkspace);
+	LPCToSampledWorkspace_initSkeleton (me.get(), input, output);
+	return me;
 }
 
 autoLPCToFormantWorkspace LPCToFormantWorkspace_create (constLPC input, mutableFormant output, double margin) {
 	try {
-		if (input && output)
-			Sampled_assertEqualDomainsAndSampling (input, output);
-		autoLPCToFormantWorkspace me = Thing_new (LPCToFormantWorkspace);
-		LPCToSampledWorkspace_init (me.get(), input, output);
-		if (input && output)
-			LPCToFormantWorkspace_initInputAndOutputDependency (me.get(), input -> samplingPeriod, output -> maxnFormants);
-		else if (input)
-			LPCToFormantWorkspace_initInputDependency (me.get(), input -> samplingPeriod, input -> maxnCoefficients);
-		else if (output)
-			LPCToFormantWorkspace_initOutputDependency (me.get(), output -> maxnFormants);
-		// else : minimal initialisation
-		my margin = margin;
+		Melder_assert (input && output);
+		Sampled_assertEqualDomainsAndSampling (input, output);
+		autoLPCToFormantWorkspace me = LPCToFormantWorkspace_createSkeleton (input, output);
+		LPCToFormantWorkspace_init (me.get(), input -> samplingPeriod, input -> maxnCoefficients, margin);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LPCToFormantWorkspace not created.");

@@ -33,39 +33,39 @@
 		output : supplies the maxnFormants from which the maxnCoefficients (= 2 * maxnFormants) for the LPC are calulated.
 */
 
-Thing_define (SoundToFormantWorkspace_burg, SoundToFormantWorkspace) {
-};
+void SoundToFormantWorkspace_initSkeleton (SoundToFormantWorkspace me, constSound input, mutableFormant output);
 
-Thing_define (SoundToFormantWorkspace_robust, SoundToFormantWorkspace) {
-};
-
-void SoundToFormantWorkspace_initPartialOutputDependency_sampling (SoundToFormantWorkspace me, double samplingPeriod);
-
-void SoundToFormantWorkspace_initPartialOutputDependency_number (SoundToFormantWorkspace me, integer maxnFormants);
+void SoundToFormantWorkspace_init (SoundToFormantWorkspace me, double samplingTime, double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin);
 
 /* *********************** burg ********************************************** */
 
-void SoundToFormantWorkspace_burg_initInputDependency (SoundToFormantWorkspace me, double samplingPeriod);
+Thing_define (SoundToFormantBurgWorkspace, SoundToFormantWorkspace) {
+};
 
-void SoundToFormantWorkspace_burg_initOutputDependency (SoundToFormantWorkspace me, integer maxnFormants);
+void SoundToFormantBurgWorkspace_init (SoundToFormantBurgWorkspace me, double samplingPeriod, integer maxnFormants, double margin);
 
-void SoundToFormantWorkspace_burg_initInputAndOutputDependency (SoundToFormantWorkspace me, double samplingPeriod, integer maxnFormants);
+autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_createSkeleton (constSound input, mutableFormant output);
 
-autoSoundToFormantWorkspace_burg SoundToFormantWorkspace_burg_create (constSound input,
-	mutableFormant output, double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin
+autoSoundToFormantBurgWorkspace SoundToFormantBurgWorkspace_create (constSound input, mutableFormant output,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin
 );
 
 /* *********************** robust ********************************************** */
 
-void SoundToFormantWorkspace_robust_initInputDependency (SoundToFormantWorkspace me, double samplingPeriod);
+Thing_define (SoundToFormantRobustWorkspace, SoundToFormantWorkspace) {
+};
 
-void SoundToFormantWorkspace_robust_initOutputDependency (SoundToFormantWorkspace me, integer maxnFormants);
+void SoundToFormantRobustWorkspace_init (SoundToFormantRobustWorkspace me, double samplingPeriod, integer maxnFormants,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax,
+	double tol, double location, bool wantlocation, double margin
+);
 
-void SoundToFormantWorkspace_robust_initInputAndOutputDependency (SoundToFormantWorkspace me, double samplingPeriod, integer maxnFormants);
 
-autoSoundToFormantWorkspace_robust SoundToFormantWorkspace_robust_create (constSound input,
-	mutableFormant output, double effectiveAnalysisWidth, kSound_windowShape windowShape, double margin,
-	double k_stdev, integer itermax, double tol
+autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_createSkeleton (constSound input, mutableFormant output);
+
+autoSoundToFormantRobustWorkspace SoundToFormantRobustWorkspace_create (constSound input, mutableFormant output,
+	double effectiveAnalysisWidth, kSound_windowShape windowShape, double k_stdev, integer itermax, double tol, 
+	double location, bool wantlocation, double margin
 );
 
 #endif /*_SoundToFormantWorkspace_h_ */

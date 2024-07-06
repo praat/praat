@@ -41,7 +41,6 @@ autoFormant LPC_to_Formant (constLPC me, double margin) {
 			U"We cannot find the roots of a polynomial of order > 99.");
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, maximumNumberOfFormants);
 		autoLPCToFormantWorkspace ws = LPCToFormantWorkspace_create (me, thee.get(), margin);
-		
 		SampledToSampledWorkspace_analyseThreaded (ws.get());
 		
 		Formant_sort (thee.get());
