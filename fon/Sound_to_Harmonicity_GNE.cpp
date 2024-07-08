@@ -78,7 +78,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		 * in the LPC object of the high frequencies, so that inverse
 		 * filtering would yield weakened high frequencies.
 		 */
-		autoLPC lpc = Sound_to_LPC_auto (original10k.get(), 13, 30e-3, 10e-3, 1e9);
+		autoLPC lpc = Sound_to_LPC_autocorrelation (original10k.get(), 13, 30e-3, 10e-3, 1e9);
 		autoSound flat = LPC_Sound_filterInverse (lpc.get(), original10k.get());
 		autoSpectrum flatSpectrum = Sound_to_Spectrum (flat.get(), true);
 		autoSpectrum hilbertSpectrum = Data_copy (flatSpectrum.get());

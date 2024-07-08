@@ -1,4 +1,4 @@
-/* SampledAnalysisWorkspace_def.h
+/* WorkvectorPool_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -71,67 +71,4 @@ oo_DEFINE_CLASS (WorkvectorPool, Daata)
 oo_END_CLASS (WorkvectorPool)
 #undef ooSTRUCT
 
-/*
-	A separate deep copy of the SampledAnalysisWorkspace is needed for each thread
-*/
-#define ooSTRUCT SampledAnalysisWorkspace
-oo_DEFINE_CLASS (SampledAnalysisWorkspace, Daata)
-
-	/*
-		Only a reference to the Sampled that is analysed is needed in a thread because
-		each thread only accesses disjoint parts of it.
-	*/
-	oo_UNSAFE_BORROWED_TRANSIENT_CONST_OBJECT_REFERENCE (Sampled, input)
-
-	/*
-		Each thread should only access disjoint parts in the result object.
-		Precondition:
-			input -> xmin == output -> xmin; // equal domains
-			input -> xmax == output -> xmax;
-		The input and output objects can have different sampling (y1, nx, dx).
-	*/
-	oo_UNSAFE_BORROWED_TRANSIENT_MUTABLE_OBJECT_REFERENCE (Sampled, output)
-	
-	oo_BOOLEAN (useMultiThreading)
-	oo_INTEGER (minimumNumberOfFramesPerThread) // default 40
-	oo_INTEGER (maximumNumberOfThreads)
-	
-	oo_INTEGER (currentFrame)				// the frame we are working on
-	oo_INTEGER (frameAnalysisInfo)			// signals different "error" conditions etc in a frame analysis
-	oo_BOOLEAN (frameAnalysisIsOK)			// signals whether the analysis is OK or not on the basis of the frameAnalysisInfo 
-	oo_INTEGER (globalFrameErrorCount)		// the number of frames where some error occured
-	
-	/*
-		For approximations we need tolerances
-	*/
-	oo_DOUBLE (tol1)
-	oo_DOUBLE (tol2)
-		
-	/*
-		For all temporary work vectors in a frame analysis
-	*/
-	oo_OBJECT (WorkvectorPool, 0, workvectorPool)
-	
-	#if oo_DECLARING
-		void (*getInputFrame) (SampledAnalysisWorkspace me, integer iframe);
-		void (*analyseOneInputFrame) (SampledAnalysisWorkspace me); // sets the frameAnalysisInfo and also frameAnalysisIsOK
-		void (*allocateOutputFrames) (SampledAnalysisWorkspace me);
-	#endif
-		
-	#if oo_COPYING
-		thy getInputFrame = getInputFrame;
-		thy analyseOneInputFrame = our analyseOneInputFrame;
-		thy allocateOutputFrames = our allocateOutputFrames;
-	#endif	
-		
-	#if oo_DECLARING
-		
-		void analyseManyInputFrames (SampledAnalysisWorkspace me, integer fromFrame, integer toFrame); // sets currentFrame
-		
-	#endif
-
-oo_END_CLASS (SampledAnalysisWorkspace)
-#undef ooSTRUCT
-
-/* End of file SampledAnalysisWorkspace_def.h */
- 
+/* End of file WorkvectorPool_def.h */

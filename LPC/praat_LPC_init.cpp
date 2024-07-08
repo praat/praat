@@ -50,7 +50,7 @@
 #include "PowerCepstrum.h"
 #include "PowerCepstrogram.h"
 #include "Sound_and_LPC.h"
-#include "Sound_and_LPC_robust.h"
+#include "Sound_to_Formant_mt.h"
 #include "Sound_and_Cepstrum.h"
 #include "Sound_to_MFCC.h"
 #include "VocalTractTier.h"
@@ -1219,7 +1219,7 @@ DO
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Formant (robust)...") {
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (middleCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
+	REAL (formantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	POSITIVE (numberOfStandardDeviations, U"Number of std. dev.", U"1.5")
@@ -1228,7 +1228,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Formant_robust, U"Sound: To Formant (robust)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoFormant result = Sound_to_Formant_robust (me, timeStep, maximumNumberOfFormants, middleCeiling, windowLength, preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, true);
+		autoFormant result = Sound_to_Formant_robust_mt (me, timeStep, maximumNumberOfFormants, formantCeiling, windowLength, 
+			preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 0.0, true
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1315,7 +1317,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_LPC_autocorrelation, U"Sound: To LPC (autoco
 DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH_TO_ONE (Sound)
-		autoLPC result = Sound_to_LPC_auto (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
+		autoLPC result = Sound_to_LPC_autocorrelation (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1329,7 +1331,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_LPC_covariance, U"Sound: To LPC (covariance)
 DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH_TO_ONE (Sound)
-		autoLPC result = Sound_to_LPC_covar (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
+		autoLPC result = Sound_to_LPC_covariance (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 

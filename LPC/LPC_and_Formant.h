@@ -2,7 +2,7 @@
 #define  _LPC_and_Formant_h_
 /* LPC_and_Formant.h
  *
- * Copyright (C) 1994-2020 David Weenink
+ * Copyright (C) 1994-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,24 @@
  */
 
 #include "LPC.h"
-//#include "Polynomial.h"
 #include "Roots.h"
 #include "Formant.h"
 
-autoFormant LPC_to_Formant (LPC me, double margin);
+autoFormant LPC_to_Formant (constLPC me, double margin);
 
-autoLPC Formant_to_LPC (Formant me, double samplingPeriod);
+autoLPC Formant_to_LPC (constFormant me, double samplingPeriod);
 
-void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin);
+void LPC_Frame_into_Formant_Frame (constLPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin);
 
 /*
 	No extra memory allocations
 	The workspace size is at least 
 */
-void LPC_Frame_into_Formant_Frame_mt (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin, Polynomial p, Roots r, VEC const& workspace);
+void LPC_Frame_into_Formant_Frame_mt (constLPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin, Polynomial p, Roots r, VEC const& workspace);
 
 
-void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod);
+void Formant_Frame_into_LPC_Frame (constFormant_Frame me, LPC_Frame thee, double samplingPeriod);
 
 void Formant_Frame_scale (Formant_Frame me, double scale);
-
-void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin);
-
-void Formant_Frame_init (Formant_Frame me, integer nFormants);
 
 #endif /* _LPC_and_Formant_h_ */

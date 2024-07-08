@@ -59,17 +59,17 @@ autoRoots Roots_create (integer numberOfRoots) {
 	}
 }
 
-integer Roots_getNumberOfRoots (Roots me) {
+integer Roots_getNumberOfRoots (constRoots me) {
 	return my numberOfRoots;
 }
 
-dcomplex Roots_getRoot (Roots me, integer index) {
+dcomplex Roots_getRoot (constRoots me, integer index) {
 	Melder_require (index > 0 && index <= my numberOfRoots,
 		U"Root index out of range.");
 	return my roots [index];
 }
 
-void Roots_fixIntoUnitCircle (Roots me) {
+void Roots_fixIntoUnitCircle (mutableRoots me) {
 	dcomplex z10 { 1.0, 0.0 };
 	for (integer iroot = 1; iroot <= my numberOfRoots; iroot ++)
 		if (abs (my roots [iroot]) > 1.0)
@@ -102,7 +102,7 @@ static void NUMdcvector_extrema_im (COMPVEC const& v, integer lo, integer hi, do
 		*out_max = max;
 }
 
-void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
+void Roots_draw (constRoots me, Graphics g, double rmin, double rmax, double imin, double imax,
 	conststring32 symbol, double fontSize, bool garnish) {
 	const double oldFontSize = Graphics_inqFontSize (g);
 	const double eps = 1e-6;
@@ -150,7 +150,7 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 	}
 }
 
-autoRoots Polynomial_to_Roots (Polynomial me) {
+autoRoots Polynomial_to_Roots (constPolynomial me) {
 	try {
 		Melder_assert (my numberOfCoefficients == my coefficients.size); // check invariant
 		integer np1 = my numberOfCoefficients, n = np1 - 1;
@@ -216,12 +216,63 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 }
 
 /*
-	workspace.size >= n * n + 9 * n =
+	workspace.size >= n * n + 2 * n + 11 * n =
 		n * n		; for hessenberg matrix
 		+ 2 * n 	; for real and imaginary parts
-		+ 6 * n		; the maximum for dhseqr_
+		+ 11 * n	; the maximum for dhseqr_
 */
-void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
+void Polynomial_into_Roots (constPolynomial me, mutableRoots r, mutableWorkvectorPool workplace) {
+	Melder_assert (my numberOfCoefficients == my coefficients.size); // check invariant
+	r -> roots.resize (0);
+	r -> numberOfRoots = r -> roots.size;	
+	integer np1 = my numberOfCoefficients, n = np1 - 1;
+	if (n == 0)
+		return;
+	/*
+		Use the workspace reserve storage for Hessenberg matrix (n * n)
+	*/
+	
+	MAT upperHessenberg = workplace -> getZeroMAT (1, n, n);
+	MATVU uh_CM (upperHessenberg);
+	uh_CM.rowStride = 1; uh_CM.colStride = n;
+	uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);
+	for (integer irow = 2; irow <= n; irow ++) {
+		uh_CM [irow] [n] = - (my coefficients [irow] / my coefficients [np1]);
+		uh_CM [irow] [irow - 1] = 1.0;
+	}
+	/*
+		We don't need to find out size of the working storage needed because for the current version 
+		of NUMlapack_dhseqr (20240608) its size equals maximally 11*n.
+	*/
+	VEC wr = workplace -> getRawVEC (2, n);
+	VEC wi = workplace -> getRawVEC (3, n);
+	VEC work = workplace -> getRawVEC (4, 11 * n);
+	integer lwork = work.size, info;
+	NUMlapack_dhseqr_ ("E", "N", n, 1, n, & uh_CM [1] [1], n, & wr [1], & wi [1], nullptr, n, & work [1], lwork, & info);
+	integer numberOfEigenvaluesFound = n, ioffset = 0;
+	if (info > 0) {
+		/*
+			if INFO = i, NUMlapack_dhseqr failed to compute all of the eigenvalues. Elements i+1:n of
+		WR and WI contain those eigenvalues which have been successfully computed
+		*/
+		numberOfEigenvaluesFound -= info;
+		Melder_require (numberOfEigenvaluesFound > 0,
+			U"No eigenvalues found.");
+		ioffset = info;
+	} else if (info < 0) {
+		Melder_throw (U"NUMlapack_dhseqr_ returns error ", info, U".");
+	}
+
+	for (integer i = 1; i <= numberOfEigenvaluesFound; i ++) {
+		dcomplex *root = r -> roots . append();
+		(*root) . real (wr [ioffset + i]);
+		(*root) . imag (wi [ioffset + i]);
+	}
+	r -> numberOfRoots = r -> roots . size; // maintain invariant
+	Roots_Polynomial_polish (r, me);
+}
+
+void Polynomial_into_Roots_old (constPolynomial me, mutableRoots r, VEC const& workspace) {
 	Melder_assert (my numberOfCoefficients == my coefficients.size); // check invariant
 	r -> roots.resize (0);
 	r -> numberOfRoots = r -> roots.size; 	
@@ -282,7 +333,7 @@ void Roots_sort (Roots me) {
 }
 
 /* Get value and derivative */
-static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *in_z, dcomplex *out_p, dcomplex *out_dp) {
+static void Polynomial_evaluateWithDerivative_z (constPolynomial me, dcomplex *in_z, dcomplex *out_p, dcomplex *out_dp) {
 	longdouble pr = my coefficients [my numberOfCoefficients], pi = 0.0;
 	longdouble dpr = 0.0, dpi = 0.0, x = in_z->real(), y = in_z->imag();
 
@@ -300,7 +351,7 @@ static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *in_z, 
 		*out_dp = { (double) dpr, (double) dpi };
 }
 
-static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *root, integer maxit) {
+static void Polynomial_polish_complexroot_nr (constPolynomial me, dcomplex *root, integer maxit) {
 	if (! NUMfpp)
 		NUMmachar ();
 	dcomplex zbest = *root;
@@ -327,7 +378,7 @@ static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *root, int
 	// Melder_throw (U"Maximum number of iterations exceeded.");
 }
 
-static double Polynomial_polish_realroot (Polynomial me, double x, integer maxit) {
+static double Polynomial_polish_realroot (constPolynomial me, double x, integer maxit) {
 	if (! NUMfpp)
 		NUMmachar ();
 	double xbest = x, ymin = 1e308;
@@ -355,7 +406,7 @@ static double Polynomial_polish_realroot (Polynomial me, double x, integer maxit
 }
 
 // Precondition: complex roots occur in pairs (a,bi), (a,-bi) with b>0
-void Roots_Polynomial_polish (Roots me, Polynomial thee) {
+void Roots_Polynomial_polish (mutableRoots me, constPolynomial thee) {
 	const integer maxit = 80;
 	integer i = 1;
 	while (i <= my numberOfRoots) {

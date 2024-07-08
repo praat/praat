@@ -1,8 +1,8 @@
-#ifndef _Sound_and_LPC_robust_h_
-#define _Sound_and_LPC_robust_h_
-/* Sound_and_LPC_robust.h
+#ifndef _LPCToSampledWorkspace_h_
+#define _LPCToSampledWorkspace_h_
+/* LPCToSampledWorkspace.h
  *
- * Copyright (C) 1993-2024 David Weenink
+ * Copyright (C) 2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20030815 GPL header
-*/
-
 #include "LPC.h"
-#include "Formant.h"
-#include "Sound_and_LPC.h"
+#include "SampledToSampledWorkspace.h"
+#include "LPCToSampledWorkspace_def.h"
 
-autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
-	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, integer itermax, double tol, double location, bool wantlocation);
+void LPCToSampledWorkspace_init (mutableLPCToSampledWorkspace me, double samplingPeriod, integer maxnCoefficients);
 
-#endif /* _Sound_and_LPC_robust_h_ */
+void LPCToSampledWorkspace_initSkeleton (mutableLPCToSampledWorkspace me, constLPC input, mutableSampled output);
+
+#endif /* _LPCToSampledWorkspace_h_ */

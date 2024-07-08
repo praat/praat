@@ -40,10 +40,10 @@ autoPolynomial Polynomial_create (double xmin, double xmax, integer degree);
 
 autoPolynomial Polynomial_createWithCoefficients (double xmin, double xmax, constVECVU const& coefficients);
 
-void Polynomial_scaleCoefficients_monic (Polynomial me);
+void Polynomial_scaleCoefficients_monic (mutablePolynomial me);
 /* Make coefficent of leading term 1.0 */
 
-autoPolynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax);
+autoPolynomial Polynomial_scaleX (mutablePolynomial me, double xmin, double xmax);
 /* x' = (x-location) / scale */
 
 dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z);
@@ -70,9 +70,9 @@ void Polynomial_draw (Polynomial me, Graphics g, double xmin, double xmax, doubl
 
 double Polynomial_evaluate (Polynomial me, double x);
 
-void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *fx, double *dfx);
+void Polynomial_evaluateWithDerivative (constPolynomial me, double x, double *fx, double *dfx);
 
-autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDerivatives);
+autoVEC Polynomial_evaluateDerivatives (constPolynomial me, double x, long numberOfDerivatives);
 /* result [1] is function value at x, result [2..numberOfDerivatives+1] are derivatives at x. */
 
 void Polynomial_evaluateTerms (Polynomial me, double x, double terms []);

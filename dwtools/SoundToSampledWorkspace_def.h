@@ -1,4 +1,4 @@
-/* SoundAnalysisWorkspace_def.h
+/* SoundToSampledWorkspace_def.h
  *
  * Copyright (C) 2024 David Weenink
  *
@@ -16,26 +16,36 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT SoundAnalysisWorkspace
-oo_DEFINE_CLASS (SoundAnalysisWorkspace, SampledAnalysisWorkspace)
+#define ooSTRUCT SoundToSampledWorkspace
+oo_DEFINE_CLASS (SoundToSampledWorkspace, SampledToSampledWorkspace)
 
 	oo_DOUBLE (physicalAnalysisWidth) 			// depends on the effectiveAnalysiswidth and the window window shape
-	oo_INTEGER (analysisFrameSize) 				// determined by the physicalAnalysisWidth and the samplingFrequency of the Sound
-	oo_VEC (analysisFrame, analysisFrameSize)	// the sound samples to analyse
+	oo_INTEGER (soundFrameSize) 				// determined by the physicalAnalysisWidth and the samplingFrequency of the Sound
+	oo_VEC (soundFrame, soundFrameSize)			// the sound samples to analyse
 	oo_BOOLEAN (subtractFrameMean)				// if true, the frame mean will be subtracted before the windowing operation
 	oo_ENUM (kSound_windowShape, windowShape)	// Type: Rectangular, triangular, hamming, etc..
-	oo_VEC (windowFunction, analysisFrameSize)
+	oo_VEC (windowFunction, soundFrameSize)
 
 	#if oo_DECLARING
 		/*
-			Make the analysis frame size always uneven. This guarantees that in case of windowing
+			Make the sound frame size always uneven. This guarantees that in case of windowing
 			the sample at the center gets weight 1.0
 		*/
-		integer getAnalysisFrameSize_uneven (SoundAnalysisWorkspace me, double approximatePhysicalAnalysisWidth);
-		
+		integer getSoundFrameSize_uneven (double approximatePhysicalAnalysisWidth, double samplingPeriod);
+
+		void getInputFrame () override;
+
+		VEC soundFrameVEC = soundFrame.get();
+
 	#endif
 
-oo_END_CLASS (SoundAnalysisWorkspace)
+	#if oo_COPYING
+
+		thy soundFrameVEC = thy soundFrame.get();
+
+	#endif
+
+oo_END_CLASS (SoundToSampledWorkspace)
 #undef ooSTRUCT
 
-/* End of file SoundAnalysisWorkspace_def.h */
+/* End of file SoundToSampledWorkspace_def.h */

@@ -24,7 +24,7 @@
 #include "Matrix.h"
 #include "Sound_to_Formant.h"
 #include "Sound_and_LPC.h"
-#include "Sound.h"
+#include "Sound_extensions.h"
 #include "Sound_and_LPC_robust.h"
 #include "TextGrid_extensions.h"
 
@@ -328,7 +328,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		*/
 		integer numberOfFrames;
 		double t1;
-		autoSound midCeiling = Sound_resample (me, 2.0 * middleCeiling, 50);
+		autoSound midCeiling = Sound_resampleAndOrPreemphasize (me, 2.0 * middleCeiling, 50, preemphasisFrequency);
 		Sampled_shortTermAnalysis (midCeiling.get(), physicalAnalysisWidth, timeStep, & numberOfFrames, & t1); // Gaussian window
 		autoFormantPath thee = FormantPath_create (my xmin, my xmax, numberOfFrames, timeStep, t1, numberOfCandidates);
 		autoSound multiChannelSound;
@@ -338,29 +338,30 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		thy ceilings = ceilings.move();
 		for (integer candidate  = 1; candidate <= numberOfCandidates; candidate ++) {
 			autoFormant formant;
-			autoSound resampled;
+			autoSound resampledAndPreemphasized;
 			if (candidate != numberOfStepsUpDown + 1)
-				resampled = Sound_resample (me, 2.0 * thy ceilings [candidate], 50);
+				resampledAndPreemphasized = Sound_resampleAndOrPreemphasize (me, 2.0 * thy ceilings [candidate], 50, preemphasisFrequency);
 			else 
-				resampled = midCeiling.move();
-			autoLPC lpc = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, t1, predictionOrder, resampled -> dx);
+				resampledAndPreemphasized = midCeiling.move();
+			autoLPC lpc = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, t1, predictionOrder, resampledAndPreemphasized -> dx);
 			if (lpcType == kLPC_Analysis::BURG) {
-				Sound_into_LPC_burg (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency);
+				Sound_into_LPC_burg (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
 			} else if (lpcType == kLPC_Analysis::AUTOCORRELATION) {
-				Sound_into_LPC_auto (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency);
+				Sound_into_LPC_autocorrelation (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
 			} else if (lpcType == kLPC_Analysis::COVARIANCE) {
-				Sound_into_LPC_covar (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency);
+				Sound_into_LPC_covariance (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
 			} else if (lpcType == kLPC_Analysis::MARPLE) {
-				Sound_into_LPC_marple (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency, marple_tol1, marple_tol2);
+				Sound_into_LPC_marple (resampledAndPreemphasized.get(), lpc.get(), analysisWidth, marple_tol1, marple_tol2);
 			} else if (lpcType == kLPC_Analysis::ROBUST) {
-				Sound_into_LPC_auto (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency);
-				lpc = LPC_and_Sound_to_LPC_robust (lpc.get(), resampled.get(), analysisWidth, preemphasisFrequency, 
+				Sound_into_LPC_autocorrelation (resampledAndPreemphasized.get(), lpc.get(), analysisWidth);
+				lpc = LPC_and_Sound_to_LPC_robust (lpc.get(), resampledAndPreemphasized.get(), analysisWidth, preemphasisFrequency, 
 					huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
 			thy formantCandidates . addItem_move (formant.move());
 			if (out_sourcesMultiChannel) {
-				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
+				// TODO 20240625 is this still correct because we have already pre-emphasized the sound??
+				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampledAndPreemphasized.get ());
 				autoSound source_resampled = Sound_resample (source.get(), 2.0 * middleCeiling, 50);
 				const integer numberOfSamples = std::min (midCeiling -> nx, source_resampled -> nx);
 				multiChannelSound -> z.row (candidate).part (1, numberOfSamples)  <<=  source_resampled -> z.row (1).part (1, numberOfSamples);

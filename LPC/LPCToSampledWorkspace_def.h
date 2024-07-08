@@ -1,8 +1,6 @@
-#ifndef _Sound_and_LPC_robust_h_
-#define _Sound_and_LPC_robust_h_
-/* Sound_and_LPC_robust.h
+/* LPCToSampledWorkspace_def.h
  *
- * Copyright (C) 1993-2024 David Weenink
+ * Copyright (C) 2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +16,27 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20030815 GPL header
-*/
+#define ooSTRUCT LPCToSampledWorkspace
+oo_DEFINE_CLASS (LPCToSampledWorkspace, SampledToSampledWorkspace)
 
-#include "LPC.h"
-#include "Formant.h"
-#include "Sound_and_LPC.h"
+	oo_DOUBLE (samplingPeriod)
+	oo_INTEGER (maxnCoefficients)
+	oo_STRUCT (LPC_Frame, lpcFrame)
+	
+	#if oo_DECLARING
 
-autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
-	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, integer itermax, double tol, double location, bool wantlocation);
+		LPC_Frame lpcFrameRef = & lpcFrame;
 
-#endif /* _Sound_and_LPC_robust_h_ */
+	#endif
+
+	#if oo_COPYING
+
+		thy lpcFrameRef = & thy lpcFrame;
+
+	#endif
+
+oo_END_CLASS (LPCToSampledWorkspace)
+#undef ooSTRUCT
+
+/* End of file LPCToSampledWorkspace_def.h */
+

@@ -38,7 +38,7 @@ sources = '''
 	Polygon_extensions.cpp Procrustes.cpp
 	Proximity.cpp Proximity_and_Distance.cpp
 	Resonator.cpp Roots_to_Spectrum.cpp
-	SampledAnalysisWorkspace.cpp SoundAnalysisWorkspace.cpp
+	SampledToSampledWorkspace.cpp SoundToSampledWorkspace.cpp
 	Sound_and_MultiSampledSpectrogram.cpp Sound_and_MixingMatrix.cpp
 	Sound_and_Spectrum_dft.cpp
 	Sound_and_Spectrogram_extensions.cpp Sound_and_PCA.cpp

@@ -23,40 +23,40 @@
  djmw 20020812 GPL header
 */
 
+#include "Sound.h"
 #include "LPC.h"
-#include "SoundAnalysisWorkspace.h"
-#include "SVD.h"
-
-#include "SoundToLPCAnalysisWorkspace_def.h"
 
 /*
 	20240603:
 	The output of the Sound_to_LPC_<x> might be a little bit different from previous outputs because:
 	1. The sound frame now always has an odd number of samples, irrespective of the sampling frequency or the window shape.
-		This means that the window function also always has an odd number of samples. Therefore the sample at the centre of the sound frame always has weight 1.0.
+		This means that also the window function will have an odd number of samples. Therefore the sample at the centre of the sound frame always has weight 1.0.
 		Previously the number of samples could be even or odd, depending on how rounding turned out.
 	2. The gaussian window function was slightly improved.
 	3. The precision of the autocorrelation and covariance method have been improved a little by using some 'long double' accumulators.
 */
 	
-autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
-autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
-autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
-autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2);
-autoLPC Sound_to_LPC_robust (Sound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
+autoLPC Sound_to_LPC_autocorrelation (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_covariance (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_burg (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_marple (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency, double tol1, double tol2);
+autoLPC Sound_to_LPC_robust (constSound me, int predictionOrder, double effectiveAnalysisWidth, double dt, double preEmphasisFrequency,
 	double k_stdev,	integer itermax, double tol, bool wantlocation);
-autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k_stdev,
+autoLPC LPC_and_Sound_to_LPC_robust (constLPC thee, constSound me, double analysisWidth, double preEmphasisFrequency, double k_stdev,
 	integer itermax, double tol, bool wantlocation);
 
-
-void Sound_into_LPC_auto (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
-void Sound_into_LPC_covar (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
-void Sound_into_LPC_burg (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency);
-void Sound_into_LPC_marple (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, double tol1, double tol2);
-void Sound_into_LPC_robust (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency,
+/*
+	Precondition:
+		Sound has been resampled and pre-emphasized
+*/
+void Sound_into_LPC_autocorrelation (constSound me, mutableLPC thee, double analysisWidth);
+void Sound_into_LPC_covariance (constSound me, mutableLPC thee, double analysisWidth);
+void Sound_into_LPC_burg (constSound me, mutableLPC thee, double analysisWidth);
+void Sound_into_LPC_marple (constSound me, mutableLPC thee, double analysisWidth, double tol1, double tol2);
+void Sound_into_LPC_robust (constSound me, mutableLPC thee, double analysisWidth,
 	double k_stdev,	integer itermax, double tol, bool wantlocation);
 
-autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder, double physicalAnalysisWidth, double dt);
+autoLPC LPC_createEmptyFromAnalysisSpecifications (constSound me, int predictionOrder, double physicalAnalysisWidth, double dt);
 
 /*
  * Function:
@@ -87,7 +87,7 @@ autoLPC LPC_createEmptyFromAnalysisSpecifications (Sound me, int predictionOrder
  *	tol2 : stop iteration when (E(m)-E(m-1)) / E(m-1) < tol2,
  */
 
-autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain);
+autoSound LPC_Sound_filter (constLPC me, constSound thee, bool useGain);
 /*
 	E(z) = X(z)A(z),
 	A(z) = 1 + Sum (k=1, k=m, a(k)z^-k);
@@ -98,11 +98,11 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain);
 	useGain determines whether the LPC-gain is used in the synthesis.
 */
 
-void LPC_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time);
+void LPC_Sound_filterWithFilterAtTime_inplace (constLPC me, mutableSound thee, integer channel, double time);
 
-autoSound LPC_Sound_filterWithFilterAtTime (LPC me, Sound thee, integer channel, double time);
+autoSound LPC_Sound_filterWithFilterAtTime (constLPC me, constSound thee, integer channel, double time);
 
-autoSound LPC_Sound_filterInverse (LPC me, Sound thee);
+autoSound LPC_Sound_filterInverse (constLPC me, constSound thee);
 /*
 	E(z) = X(z)A(z),
 	A(z) = 1 + Sum (k=1, k=m, a(k)z^-k);
@@ -112,9 +112,9 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee);
 		e(n) = x(n) + Sum (k=1, m, a(k)x(n-k))
 */
 
-autoSound LPC_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, integer channel, double time);
+autoSound LPC_Sound_filterInverseWithFilterAtTime (constLPC me, constSound thee, integer channel, double time);
 
-void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time);
+void LPC_Sound_filterInverseWithFilterAtTime_inplace (constLPC me, mutableSound thee, integer channel, double time);
 
 /*
 	For all LPC analysis

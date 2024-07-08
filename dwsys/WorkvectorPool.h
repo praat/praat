@@ -1,8 +1,8 @@
-#ifndef _Sound_and_LPC_robust_h_
-#define _Sound_and_LPC_robust_h_
-/* Sound_and_LPC_robust.h
+#ifndef _WorkvectorPool_h_
+#define _WorkvectorPool_h_
+/* WorkvectorPool.h
  *
- * Copyright (C) 1993-2024 David Weenink
+ * Copyright (C) 2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20030815 GPL header
-*/
+#include "Data.h"
+#include "melder.h"
 
-#include "LPC.h"
-#include "Formant.h"
-#include "Sound_and_LPC.h"
+#include "WorkvectorPool_def.h"
 
-autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
-	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, integer itermax, double tol, double location, bool wantlocation);
+autoWorkvectorPool WorkvectorPool_create (constINTVEC const& sizes, bool reusable);
 
-#endif /* _Sound_and_LPC_robust_h_ */
+#endif /* _WorkvectorPool_h_ */

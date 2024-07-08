@@ -1,5 +1,5 @@
 # meson.build of the library "LPC"
-# David Weenink, 17 May 2024
+# David Weenink, 27 June 2024
 
 sources = '''
 	Cepstrum.cpp Cepstrumc.cpp Cepstrum_and_Spectrum.cpp
@@ -8,11 +8,16 @@ sources = '''
 	FormantModeler.cpp FormantModelerList.cpp
 	FormantPath.cpp FormantPath_to_IntervalTier.cpp FormantPathArea.cpp FormantPathEditor.cpp
 	LineSpectralFrequencies.cpp
-	LPC.cpp LPC_and_Cepstrumc.cpp LPC_and_Formant.cpp LPC_and_LFCC.cpp
+	LPCToSampledWorkspace.cpp LPCToFormantWorkspace.cpp
+	LPC.cpp
+	LPC_and_Formant.cpp LPC_and_Cepstrumc.cpp
+	LPC_and_LFCC.cpp
 	LPC_and_LineSpectralFrequencies.cpp LPC_and_Polynomial.cpp
 	LPC_to_Spectrum.cpp  LPC_to_Spectrogram.cpp
 	LPC_and_Tube.cpp PowerCepstrum.cpp PowerCepstrogram.cpp
-	Sound_and_LPC.cpp  Sound_and_LPC_robust.cpp
+	Roots_and_Formant.cpp
+	SoundToLPCWorkspace.cpp SoundToFormantWorkspace.cpp
+	Sound_and_LPC.cpp Sound_to_Formant_mt.cpp
 	Sound_and_Cepstrum.cpp Tube.cpp
 	VocalTractTier.cpp
 	praat_LPC_init.cpp manual_LPC.cpp'''.split()

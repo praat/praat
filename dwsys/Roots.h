@@ -2,7 +2,7 @@
 #define _Roots_h_
 /* Roots.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,42 +26,43 @@
 #include "Data.h"
 #include "Graphics.h"
 #include "Polynomial.h"
+#include "WorkvectorPool.h"
 
 #include "Roots_def.h"
 
 
 autoRoots Roots_create (integer numberOfRoots);
 
-void Roots_fixIntoUnitCircle (Roots me);
+void Roots_fixIntoUnitCircle (mutableRoots me);
 
-void Roots_sort (Roots me);
+void Roots_sort (mutableRoots me);
 /* Sort to size of real part a+bi, a-bi*/
 
-dcomplex Roots_evaluate_z (Roots me, dcomplex z);
+dcomplex Roots_evaluate_z (constRoots me, dcomplex z);
 
-autoRoots Polynomial_to_Roots_ev (Polynomial me);
+autoRoots Polynomial_to_Roots_ev (constPolynomial me);
 
-integer Roots_getNumberOfRoots (Roots me);
+integer Roots_getNumberOfRoots (constRoots me);
 
-void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
+void Roots_draw (constRoots me, Graphics g, double rmin, double rmax, double imin, double imax,
 	conststring32 symbol, double fontSize, bool garnish);
 
-dcomplex Roots_getRoot (Roots me, integer index);
+dcomplex Roots_getRoot (constRoots me, integer index);
 
-void Roots_setRoot (Roots me, integer index, double re, double im);
+void Roots_setRoot (mutableRoots me, integer index, double re, double im);
 
-autoRoots Polynomial_to_Roots (Polynomial me);
+autoRoots Polynomial_to_Roots (constPolynomial me);
 /* Find roots of polynomial and polish them */
 
-void Roots_Polynomial_polish (Roots me, Polynomial thee);
+void Roots_Polynomial_polish (mutableRoots me, constPolynomial thee);
 
-autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal);
+autoPolynomial Roots_to_Polynomial (constRoots me, bool rootsAreReal);
 
 /*
-	workspace.size >= n * n + 3 * n =
+	workspace >= n * n + 3 * n =
 		n * n		; for hessenberg matrix
 		+ 2 * n 	; for real and imaginary parts
-		+ n			; for dhseqr_
+		+ 6 * n		; the maximum for dhseqr_
 */
-void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace);
+void Polynomial_into_Roots (constPolynomial me, mutableRoots r, mutableWorkvectorPool workspace);
 #endif /* _Roots_h_ */

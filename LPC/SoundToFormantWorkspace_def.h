@@ -1,8 +1,6 @@
-#ifndef _Sound_and_LPC_robust_h_
-#define _Sound_and_LPC_robust_h_
-/* Sound_and_LPC_robust.h
+/* SoundToFormantWorkspace_def.h
  *
- * Copyright (C) 1993-2024 David Weenink
+ * Copyright (C) 2024 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +16,23 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20030815 GPL header
-*/
+#define ooSTRUCT SoundToFormantWorkspace
+oo_DEFINE_CLASS (SoundToFormantWorkspace, SoundToSampledWorkspace)
 
-#include "LPC.h"
-#include "Formant.h"
-#include "Sound_and_LPC.h"
+	oo_OBJECT (SoundToLPCWorkspace, 0, soundToLPC)
+	oo_OBJECT (LPCToFormantWorkspace, 0, lpcToFormant)
 
-autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
-	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, integer itermax, double tol, double location, bool wantlocation);
+	#if oo_DECLARING
 
-#endif /* _Sound_and_LPC_robust_h_ */
+		void getInputFrame (void) override;
+		void allocateOutputFrames (void) override;
+		bool inputFrameToOutputFrame (void) override;
+		void saveOutputFrame (void) override;
+
+	#endif
+
+oo_END_CLASS (SoundToFormantWorkspace)
+#undef ooSTRUCT
+
+/* End of file SoundToFormantWorkspace_def.h */
+

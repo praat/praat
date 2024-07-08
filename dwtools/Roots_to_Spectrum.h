@@ -21,6 +21,6 @@
 #include "Roots.h"
 #include "Spectrum.h"
 
-autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numberOfFrequencies, double radius);
+autoSpectrum Roots_to_Spectrum (constRoots me, double nyquistFrequency, integer numberOfFrequencies, double radius);
 
 #endif /* _Roots_to_Spectrum_h_ */

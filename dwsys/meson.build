@@ -1,5 +1,5 @@
 # meson.build for library "dwsys".
-# David Weenink 4 January 2024
+# David Weenink 7 June 2024
 
 sources = '''
 	ChebyshevSeries.cpp Collection_extensions.cpp Command.cpp
@@ -15,7 +15,7 @@ sources = '''
 	Permutation.cpp Permutation_and_Index.cpp
 	Polynomial.cpp
 	Roots.cpp
-	Spline.cpp SVD.cpp'''.split()
+	Spline.cpp SVD.cpp WorkvectorPool.cpp'''.split()
 
 libdwsys = static_library (
 	'dwsys',

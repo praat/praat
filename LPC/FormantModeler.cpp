@@ -24,6 +24,7 @@
 #include "SVD.h"
 #include "Strings_extensions.h"
 #include "Sound_and_LPC_robust.h"
+#include "Sound_to_Formant_mt.h"
 #include "Table_extensions.h"
 
 #include "oo_DESTROY.h"
@@ -1070,7 +1071,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		Melder_progressOff ();
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
 			const double currentCeiling = minFreq + (istep - 1) * df;
-			autoFormant formant = Sound_to_Formant_burg (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
+			autoFormant formant = Sound_to_Formant_burg_mt (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, noPararametersPerTrack.get());
 			//TODO FormantModeler_setFormantWeighting (me, weighFormants);
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
@@ -1134,9 +1135,9 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		OrderedOf<structFormant> formants;
 		Melder_progressOff ();
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
-			const double currentCeiling = minFreq + (istep - 1) * df;
-			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0,
-					currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, true);
+			const double currentCeiling = minFreq + (istep - 1) * df;			
+			autoFormant formant = Sound_to_Formant_robust_mt (resampled.get(), timeStep, 5.0,
+					currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 0.0, true);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, noPararametersPerTrack.get());
 			// TODO set weighing
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
@@ -1182,7 +1183,7 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me,
 		const double frequencyStep = ( numberOfFrequencySteps > 1 ? (maxCeiling - minCeiling) / (numberOfFrequencySteps - 1) : 0.0 );
 		for (integer i = 1; i <= numberOfFrequencySteps; i ++) {
 			const double ceiling = minCeiling + (i - 1) * frequencyStep;
-			autoFormant formant = Sound_to_Formant_burg (me, timeStep, 5, ceiling, windowLength, preemphasisFrequency);
+			autoFormant formant = Sound_to_Formant_burg_mt (me, timeStep, 5.0, ceiling, windowLength, preemphasisFrequency, 50.0);
 			formants. addItem_move (formant.move());
 		}
 		integer numberOfFrames;

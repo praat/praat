@@ -17,18 +17,11 @@
  */
 
 /*
- djmw 20030814 First version
- djmw 20061218 To Melder_information<x> format
- djmw 20070103 Sound interface changes
- djmw 20080122 float -> double
- djmw 20101008 New LPC_Frame_filterInverse interface.
- djmw 20110302 Corrected a number of pointer initialisations
- djmw 20111027 +Sound_to_Formant_robust
+	djmw 20030814 First version
 */
 
 #include "LPC_and_Formant.h"
 #include "Sound_and_LPC.h"
-#include "Sound_and_LPC_robust.h"
 #include "Sound_extensions.h"
 
 autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
@@ -43,7 +36,7 @@ autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfForm
 		else
 			sound = Sound_resample (me, maximumFrequency * 2.0, 50);
 
-		autoLPC lpc = Sound_to_LPC_auto (sound.get(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
+		autoLPC lpc = Sound_to_LPC_autocorrelation (sound.get(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
 		autoLPC lpcRobust = LPC_and_Sound_to_LPC_robust (lpc.get(), sound.get(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
 		autoFormant thee = LPC_to_Formant (lpcRobust.get(), safetyMargin);
 		return thee;
